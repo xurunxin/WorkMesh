@@ -1,0 +1,1903 @@
+openapi: 3.1.0
+info:
+  title: WorkMesh API
+  version: 0.1.0
+  summary: Human and coding-agent collaboration control plane
+  description: |
+    Initial REST contract for WorkMesh. All mutation endpoints require an
+    Idempotency-Key. Resources with revisions use ETag and If-Match.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Work Items
+  - name: Agents
+  - name: Sessions
+  - name: Plans
+  - name: Activities
+  - name: Collaboration
+  - name: Approvals
+  - name: Artifacts
+  - name: Events
+
+paths:
+  /work-items:
+    get:
+      tags: [Work Items]
+      operationId: listWorkItems
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: teamId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: projectId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: responsibleHumanActorId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: leadAgentActorId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: sessionState
+          in: query
+          schema: { $ref: '#/components/schemas/SessionState' }
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Work item page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemPage'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags: [Work Items]
+      operationId: createWorkItem
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkItemRequest'
+      responses:
+        '201':
+          description: Work item created
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /work-items/{workItemId}:
+    parameters:
+      - $ref: '#/components/parameters/WorkItemId'
+    get:
+      tags: [Work Items]
+      operationId: getWorkItem
+      responses:
+        '200':
+          description: Work item
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        default:
+          $ref: '#/components/responses/Error'
+    patch:
+      tags: [Work Items]
+      operationId: updateWorkItem
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkItemRequest'
+      responses:
+        '200':
+          description: Updated
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItem'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags: [Work Items]
+      operationId: deleteWorkItem
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '204':
+          description: Soft deleted
+        default:
+          $ref: '#/components/responses/Error'
+
+  /work-items/{workItemId}/delegations:
+    parameters:
+      - $ref: '#/components/parameters/WorkItemId'
+    post:
+      tags: [Sessions]
+      operationId: delegateWorkItem
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDelegationRequest'
+      responses:
+        '201':
+          description: Delegation and session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [delegationId, session]
+                properties:
+                  delegationId: { type: string, format: uuid }
+                  session: { $ref: '#/components/schemas/AgentSession' }
+        default:
+          $ref: '#/components/responses/Error'
+
+  /work-items/{workItemId}/relations:
+    parameters:
+      - $ref: '#/components/parameters/WorkItemId'
+    post:
+      tags: [Work Items]
+      operationId: addWorkItemRelation
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetWorkItemId, kind]
+              properties:
+                targetWorkItemId: { type: string, format: uuid }
+                kind:
+                  type: string
+                  enum: [blocks, related, duplicate_of]
+      responses:
+        '201':
+          description: Relation added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkItemRelation'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects:
+    get:
+      tags: [Work Items]
+      operationId: listProjects
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: statusCategory
+          in: query
+          schema: { $ref: '#/components/schemas/StatusCategory' }
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Project page
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Project' }
+                  nextCursor: { type: [string, 'null'] }
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags: [Work Items]
+      operationId: createProject
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /projects/{projectId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Work Items]
+      operationId: getProject
+      responses:
+        '200':
+          description: Project
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/Error'
+    patch:
+      tags: [Work Items]
+      operationId: updateProject
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name: { type: string }
+                summary: { type: [string, 'null'] }
+                descriptionMarkdown: { type: [string, 'null'] }
+                statusCategory: { $ref: '#/components/schemas/StatusCategory' }
+                statusName: { type: [string, 'null'] }
+                health:
+                  type: string
+                  enum: [unknown, on_track, at_risk, off_track]
+                leadHumanActorId: { type: [string, 'null'], format: uuid }
+                leadAgentActorId: { type: [string, 'null'], format: uuid }
+                startAt: { type: [string, 'null'], format: date }
+                targetAt: { type: [string, 'null'], format: date }
+      responses:
+        '200':
+          description: Updated
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agents/register:
+    post:
+      tags: [Agents]
+      operationId: registerAgent
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentManifest'
+      responses:
+        '201':
+          description: Agent registered
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [agentActorId, status]
+                properties:
+                  agentActorId: { type: string, format: uuid }
+                  status:
+                    type: string
+                    enum: [active, pending_approval]
+                  challenge:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agents/{agentActorId}:
+    parameters:
+      - name: agentActorId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Agents]
+      operationId: getAgent
+      responses:
+        '200':
+          description: Agent definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentManifest'
+        default:
+          $ref: '#/components/responses/Error'
+    patch:
+      tags: [Agents]
+      operationId: updateAgent
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Updated
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions:
+    post:
+      tags: [Sessions]
+      operationId: createAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '201':
+          description: Session created
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [Sessions]
+      operationId: getAgentSession
+      responses:
+        '200':
+          description: Session
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/context:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [Sessions]
+      operationId: getAgentSessionContext
+      responses:
+        '200':
+          description: Immutable context manifest for the session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContextSnapshot'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/ack:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [Sessions]
+      operationId: acknowledgeAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalUrls:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ExternalUrl'
+                summary:
+                  type: string
+      responses:
+        '200':
+          description: Acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/heartbeat:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [Sessions]
+      operationId: heartbeatAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentStepId: { type: string, format: uuid }
+                usage:
+                  $ref: '#/components/schemas/Usage'
+      responses:
+        '204':
+          description: Heartbeat accepted
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/activities:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [Activities]
+      operationId: listAgentActivities
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Activity page
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AgentActivity'
+                  nextCursor:
+                    type: [string, 'null']
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags: [Activities]
+      operationId: appendAgentActivity
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityRequest'
+      responses:
+        '201':
+          description: Activity appended
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentActivity'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/plan:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    get:
+      tags: [Plans]
+      operationId: getCurrentPlan
+      responses:
+        '200':
+          description: Current plan
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPlan'
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags: [Plans]
+      operationId: publishPlanVersion
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishPlanRequest'
+      responses:
+        '201':
+          description: New plan version
+          headers:
+            ETag:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentPlan'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/signals:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [Sessions]
+      operationId: signalAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signal]
+              properties:
+                signal:
+                  type: string
+                  enum: [stop, pause, resume, retry, request_status, revoke_lease, lower_budget]
+                reason:
+                  type: string
+                payload:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '202':
+          description: Signal accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/complete:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [Sessions]
+      operationId: completeAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [summary]
+              properties:
+                summary: { type: string }
+                artifactIds:
+                  type: array
+                  items: { type: string, format: uuid }
+                checks:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CheckResult'
+                limitations:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /agent-sessions/{sessionId}/fail:
+    parameters:
+      - $ref: '#/components/parameters/SessionId'
+    post:
+      tags: [Sessions]
+      operationId: failAgentSession
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, summary]
+              properties:
+                code: { type: string }
+                summary: { type: string }
+                retryable: { type: boolean, default: false }
+                artifactIds:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /messages:
+    post:
+      tags: [Collaboration]
+      operationId: sendTypedMessage
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageRequest'
+      responses:
+        '201':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypedMessage'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /leases:
+    post:
+      tags: [Collaboration]
+      operationId: claimResource
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimLeaseRequest'
+      responses:
+        '201':
+          description: Lease acquired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lease'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /leases/{leaseId}/renew:
+    parameters:
+      - name: leaseId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      tags: [Collaboration]
+      operationId: renewLease
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ttlSeconds:
+                  type: integer
+                  minimum: 10
+                  maximum: 3600
+      responses:
+        '200':
+          description: Renewed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lease'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /leases/{leaseId}:
+    parameters:
+      - name: leaseId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    delete:
+      tags: [Collaboration]
+      operationId: releaseLease
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '204':
+          description: Released
+        default:
+          $ref: '#/components/responses/Error'
+
+  /handoffs:
+    post:
+      tags: [Collaboration]
+      operationId: createHandoff
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHandoffRequest'
+      responses:
+        '201':
+          description: Handoff requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Handoff'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /handoffs/{handoffId}/accept:
+    parameters:
+      - name: handoffId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      tags: [Collaboration]
+      operationId: acceptHandoff
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agentActorId: { type: string, format: uuid }
+                note: { type: string }
+      responses:
+        '201':
+          description: Handoff accepted atomically
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [handoff, session]
+                properties:
+                  handoff: { $ref: '#/components/schemas/Handoff' }
+                  session: { $ref: '#/components/schemas/AgentSession' }
+                  lease: { $ref: '#/components/schemas/Lease' }
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /approvals:
+    post:
+      tags: [Approvals]
+      operationId: requestApproval
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApprovalRequest'
+      responses:
+        '201':
+          description: Approval requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Approval'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /approvals/{approvalId}/decide:
+    parameters:
+      - name: approvalId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      tags: [Approvals]
+      operationId: decideApproval
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [approve, reject]
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Decision recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Approval'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /artifacts:
+    post:
+      tags: [Artifacts]
+      operationId: publishArtifact
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateArtifactRequest'
+      responses:
+        '201':
+          description: Artifact published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /events:
+    get:
+      tags: [Events]
+      operationId: listEvents
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: sessionId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: aggregateType
+          in: query
+          schema: { type: string }
+        - name: aggregateId
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Event page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventPage'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /events/stream:
+    get:
+      tags: [Events]
+      operationId: streamEvents
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - name: channel
+          in: query
+          schema:
+            type: string
+            examples: [workspace, team:uuid, session:uuid]
+      responses:
+        '200':
+          description: |
+            Server-Sent Events. The `id` field is a durable event cursor.
+            Clients reconnect with Last-Event-ID or cursor.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        default:
+          $ref: '#/components/responses/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT-or-opaque-session-token
+
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      schema: { type: string }
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+    WorkItemId:
+      name: workItemId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 200
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 200
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Current quoted revision/ETag.
+
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Revision, lease, idempotency, or state conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ActorRef:
+      type: object
+      required: [id, kind, displayName]
+      properties:
+        id: { type: string, format: uuid }
+        kind:
+          type: string
+          enum: [human, agent, service]
+        displayName: { type: string }
+        avatarUrl: { type: [string, 'null'], format: uri }
+
+    StatusCategory:
+      type: string
+      enum: [backlog, planned, started, completed, canceled]
+
+    WorkPriority:
+      type: string
+      enum: [none, low, medium, high, urgent]
+
+    WorkItem:
+      type: object
+      required:
+        - id
+        - identifier
+        - teamId
+        - title
+        - statusId
+        - statusCategory
+        - priority
+        - revision
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: string, format: uuid }
+        identifier: { type: string, examples: [ENG-42] }
+        teamId: { type: string, format: uuid }
+        projectId: { type: [string, 'null'], format: uuid }
+        milestoneId: { type: [string, 'null'], format: uuid }
+        cycleId: { type: [string, 'null'], format: uuid }
+        parentId: { type: [string, 'null'], format: uuid }
+        type:
+          type: string
+          enum: [issue, task, bug, feature, chore, incident]
+        title: { type: string }
+        descriptionMarkdown: { type: [string, 'null'] }
+        statusId: { type: string, format: uuid }
+        statusCategory: { $ref: '#/components/schemas/StatusCategory' }
+        priority: { $ref: '#/components/schemas/WorkPriority' }
+        estimate: { type: [number, 'null'] }
+        dueAt: { type: [string, 'null'], format: date-time }
+        responsibleHuman:
+          oneOf:
+            - $ref: '#/components/schemas/ActorRef'
+            - type: 'null'
+        leadAgent:
+          oneOf:
+            - $ref: '#/components/schemas/ActorRef'
+            - type: 'null'
+        acceptanceCriteria:
+          type: array
+          items: { type: string }
+        requiredChecks:
+          type: array
+          items: { type: string }
+        labels:
+          type: array
+          items: { type: string }
+        revision: { type: integer, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateWorkItemRequest:
+      type: object
+      required: [teamId, title]
+      properties:
+        teamId: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        milestoneId: { type: string, format: uuid }
+        parentId: { type: string, format: uuid }
+        type:
+          type: string
+          enum: [issue, task, bug, feature, chore, incident]
+          default: issue
+        title: { type: string, minLength: 1, maxLength: 500 }
+        descriptionMarkdown: { type: string }
+        statusId: { type: string, format: uuid }
+        priority: { $ref: '#/components/schemas/WorkPriority' }
+        estimate: { type: number, minimum: 0 }
+        dueAt: { type: string, format: date-time }
+        responsibleHumanActorId: { type: string, format: uuid }
+        leadAgentActorId: { type: string, format: uuid }
+        acceptanceCriteria:
+          type: array
+          items: { type: string }
+        requiredChecks:
+          type: array
+          items: { type: string }
+        labelIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    UpdateWorkItemRequest:
+      type: object
+      minProperties: 1
+      properties:
+        title: { type: string, minLength: 1, maxLength: 500 }
+        descriptionMarkdown: { type: [string, 'null'] }
+        statusId: { type: string, format: uuid }
+        priority: { $ref: '#/components/schemas/WorkPriority' }
+        estimate: { type: [number, 'null'], minimum: 0 }
+        dueAt: { type: [string, 'null'], format: date-time }
+        projectId: { type: [string, 'null'], format: uuid }
+        milestoneId: { type: [string, 'null'], format: uuid }
+        cycleId: { type: [string, 'null'], format: uuid }
+        responsibleHumanActorId: { type: [string, 'null'], format: uuid }
+        leadAgentActorId: { type: [string, 'null'], format: uuid }
+        acceptanceCriteria:
+          type: array
+          items: { type: string }
+        requiredChecks:
+          type: array
+          items: { type: string }
+
+    WorkItemPage:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkItem'
+        nextCursor: { type: [string, 'null'] }
+
+    WorkItemRelation:
+      type: object
+      required: [id, sourceWorkItemId, targetWorkItemId, kind, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        sourceWorkItemId: { type: string, format: uuid }
+        targetWorkItemId: { type: string, format: uuid }
+        kind:
+          type: string
+          enum: [blocks, related, duplicate_of]
+        createdBy: { $ref: '#/components/schemas/ActorRef' }
+        createdAt: { type: string, format: date-time }
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - statusCategory
+        - health
+        - revision
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        slug: { type: string }
+        summary: { type: [string, 'null'] }
+        descriptionMarkdown: { type: [string, 'null'] }
+        statusCategory: { $ref: '#/components/schemas/StatusCategory' }
+        statusName: { type: [string, 'null'] }
+        health:
+          type: string
+          enum: [unknown, on_track, at_risk, off_track]
+        leadHuman:
+          oneOf:
+            - $ref: '#/components/schemas/ActorRef'
+            - type: 'null'
+        leadAgent:
+          oneOf:
+            - $ref: '#/components/schemas/ActorRef'
+            - type: 'null'
+        teamIds:
+          type: array
+          items: { type: string, format: uuid }
+        startAt: { type: [string, 'null'], format: date }
+        targetAt: { type: [string, 'null'], format: date }
+        revision: { type: integer, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateProjectRequest:
+      type: object
+      required: [name, teamIds, leadHumanActorId]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 300 }
+        slug: { type: string }
+        summary: { type: string }
+        descriptionMarkdown: { type: string }
+        statusCategory:
+          allOf:
+            - $ref: '#/components/schemas/StatusCategory'
+          default: planned
+        statusName: { type: string }
+        leadHumanActorId: { type: string, format: uuid }
+        leadAgentActorId: { type: string, format: uuid }
+        teamIds:
+          type: array
+          minItems: 1
+          items: { type: string, format: uuid }
+        startAt: { type: string, format: date }
+        targetAt: { type: string, format: date }
+
+    ContextSnapshot:
+      type: object
+      required: [id, version, sourceHash, contentManifest, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        workItemId: { type: [string, 'null'], format: uuid }
+        projectId: { type: [string, 'null'], format: uuid }
+        version: { type: integer, minimum: 1 }
+        sourceHash: { type: string }
+        contentManifest:
+          type: object
+          additionalProperties: true
+        renderedContext: { type: [string, 'null'] }
+        tokenEstimate: { type: [integer, 'null'], minimum: 0 }
+        truncationSummary: { type: [string, 'null'] }
+        createdAt: { type: string, format: date-time }
+
+    AgentManifest:
+      type: object
+      required: [name, slug, supportedProtocols, skills, requestedCapabilities]
+      properties:
+        name: { type: string }
+        slug: { type: string, pattern: '^[a-z0-9][a-z0-9-]*$' }
+        description: { type: string }
+        iconUrl: { type: string, format: uri }
+        provider: { type: string }
+        version: { type: string }
+        endpointUrl: { type: string, format: uri }
+        supportedProtocols:
+          type: array
+          items:
+            type: string
+            enum: [native_http, mcp, a2a]
+        skills:
+          type: array
+          items: { type: string }
+        requestedCapabilities:
+          type: array
+          items: { type: string }
+        outputArtifactTypes:
+          type: array
+          items: { $ref: '#/components/schemas/ArtifactType' }
+        maxConcurrency:
+          type: integer
+          minimum: 1
+          default: 1
+        heartbeatIntervalSeconds:
+          type: integer
+          minimum: 5
+          default: 30
+        metadata:
+          type: object
+          additionalProperties: true
+
+    CreateDelegationRequest:
+      type: object
+      required: [principalHumanActorId, agentActorId, role]
+      properties:
+        principalHumanActorId: { type: string, format: uuid }
+        agentActorId: { type: string, format: uuid }
+        role:
+          type: string
+          enum: [executor, reviewer, researcher, coordinator, triager]
+        reason: { type: string }
+        requestedCapabilities:
+          type: array
+          items: { type: string }
+        budget:
+          $ref: '#/components/schemas/Budget'
+        initialPrompt: { type: string }
+        requirePlanApproval: { type: boolean, default: false }
+
+    CreateSessionRequest:
+      type: object
+      required: [delegationId]
+      properties:
+        delegationId: { type: string, format: uuid }
+        workItemId: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        parentSessionId: { type: string, format: uuid }
+        planStepId: { type: string, format: uuid }
+        initialPrompt: { type: string }
+        budget: { $ref: '#/components/schemas/Budget' }
+
+    SessionState:
+      type: string
+      enum:
+        - queued
+        - acknowledged
+        - planning
+        - executing
+        - awaiting_input
+        - awaiting_approval
+        - blocked
+        - paused
+        - stopping
+        - completed
+        - failed
+        - canceled
+        - stale
+
+    ExternalUrl:
+      type: object
+      required: [label, url]
+      properties:
+        label: { type: string }
+        url: { type: string, format: uri }
+
+    Budget:
+      type: object
+      properties:
+        maxRuntimeSeconds: { type: integer, minimum: 1 }
+        maxTokens: { type: integer, minimum: 1 }
+        maxCost:
+          type: object
+          properties:
+            amount: { type: number, minimum: 0 }
+            currency: { type: string, default: USD }
+        maxToolCalls: { type: integer, minimum: 1 }
+        maxChildSessions: { type: integer, minimum: 0 }
+        maxRetries: { type: integer, minimum: 0 }
+        deadlineAt: { type: string, format: date-time }
+
+    Usage:
+      type: object
+      properties:
+        runtimeSeconds: { type: integer, minimum: 0 }
+        inputTokens: { type: integer, minimum: 0 }
+        outputTokens: { type: integer, minimum: 0 }
+        costAmount: { type: number, minimum: 0 }
+        costCurrency: { type: string }
+        toolCalls: { type: integer, minimum: 0 }
+
+    AgentSession:
+      type: object
+      required:
+        - id
+        - agent
+        - principalHuman
+        - delegationId
+        - state
+        - sequence
+        - revision
+        - createdAt
+      properties:
+        id: { type: string, format: uuid }
+        agent: { $ref: '#/components/schemas/ActorRef' }
+        principalHuman: { $ref: '#/components/schemas/ActorRef' }
+        delegationId: { type: string, format: uuid }
+        workItemId: { type: [string, 'null'], format: uuid }
+        projectId: { type: [string, 'null'], format: uuid }
+        parentSessionId: { type: [string, 'null'], format: uuid }
+        state: { $ref: '#/components/schemas/SessionState' }
+        stateReason: { type: [string, 'null'] }
+        sequence: { type: integer, minimum: 0 }
+        contextSnapshotId: { type: [string, 'null'], format: uuid }
+        currentPlanRevision: { type: [integer, 'null'] }
+        externalUrls:
+          type: array
+          items: { $ref: '#/components/schemas/ExternalUrl' }
+        budget: { $ref: '#/components/schemas/Budget' }
+        usage: { $ref: '#/components/schemas/Usage' }
+        revision: { type: integer, minimum: 1 }
+        startedAt: { type: [string, 'null'], format: date-time }
+        lastHeartbeatAt: { type: [string, 'null'], format: date-time }
+        endedAt: { type: [string, 'null'], format: date-time }
+        errorCode: { type: [string, 'null'] }
+        errorSummary: { type: [string, 'null'] }
+        createdAt: { type: string, format: date-time }
+
+    ActivityKind:
+      type: string
+      enum:
+        - ack
+        - status
+        - plan_published
+        - plan_changed
+        - action_started
+        - action_completed
+        - evidence
+        - question
+        - decision_request
+        - message
+        - artifact_published
+        - handoff_requested
+        - handoff_accepted
+        - warning
+        - error
+        - completion
+        - heartbeat
+
+    CreateActivityRequest:
+      type: object
+      required: [kind, summary]
+      properties:
+        kind: { $ref: '#/components/schemas/ActivityKind' }
+        summary: { type: string, minLength: 1, maxLength: 1000 }
+        detailsMarkdown: { type: string }
+        toolInvocation:
+          $ref: '#/components/schemas/ToolInvocation'
+        artifactIds:
+          type: array
+          items: { type: string, format: uuid }
+        references:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        payload:
+          type: object
+          additionalProperties: true
+        visibility:
+          type: string
+          enum: [private, team, workspace]
+          default: team
+        ephemeral: { type: boolean, default: false }
+
+    AgentActivity:
+      allOf:
+        - $ref: '#/components/schemas/CreateActivityRequest'
+        - type: object
+          required: [id, sessionId, actor, sequence, occurredAt]
+          properties:
+            id: { type: string, format: uuid }
+            sessionId: { type: string, format: uuid }
+            actor: { $ref: '#/components/schemas/ActorRef' }
+            sequence: { type: integer, minimum: 1 }
+            occurredAt: { type: string, format: date-time }
+
+    ToolInvocation:
+      type: object
+      required: [toolName, status]
+      properties:
+        toolName: { type: string }
+        inputSanitized:
+          type: object
+          additionalProperties: true
+        status:
+          type: string
+          enum: [started, succeeded, failed, canceled]
+        resultSummary: { type: string }
+        externalTraceUrl: { type: string, format: uri }
+        approvalId: { type: string, format: uuid }
+        usage: { $ref: '#/components/schemas/Usage' }
+        errorCode: { type: string }
+        errorSummary: { type: string }
+
+    PlanStepStatus:
+      type: string
+      enum: [pending, in_progress, blocked, completed, canceled]
+
+    PlanStep:
+      type: object
+      required: [id, title, status, ordinal]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        descriptionMarkdown: { type: string }
+        status: { $ref: '#/components/schemas/PlanStepStatus' }
+        ownerActorId: { type: [string, 'null'], format: uuid }
+        ordinal: { type: integer, minimum: 0 }
+        dependsOn:
+          type: array
+          items: { type: string, format: uuid }
+        acceptanceCriteria:
+          type: array
+          items: { type: string }
+        expectedArtifacts:
+          type: array
+          items: { $ref: '#/components/schemas/ArtifactType' }
+        requiredCapabilities:
+          type: array
+          items: { type: string }
+        estimate:
+          type: object
+          additionalProperties: true
+        risk: { type: string }
+        blockedReason: { type: string }
+
+    PublishPlanRequest:
+      type: object
+      required: [changeSummary, steps]
+      properties:
+        changeSummary: { type: string, minLength: 1 }
+        steps:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/PlanStep' }
+
+    AgentPlan:
+      type: object
+      required: [sessionId, revision, authoredBy, steps, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        sessionId: { type: string, format: uuid }
+        revision: { type: integer, minimum: 1 }
+        authoredBy: { $ref: '#/components/schemas/ActorRef' }
+        changeSummary: { type: string }
+        steps:
+          type: array
+          items: { $ref: '#/components/schemas/PlanStep' }
+        createdAt: { type: string, format: date-time }
+
+    MessageIntent:
+      type: string
+      enum:
+        - inform
+        - ask
+        - answer
+        - propose
+        - decide
+        - claim
+        - handoff
+        - blocker
+        - review_request
+        - review_result
+        - status
+
+    CreateMessageRequest:
+      type: object
+      required: [channelId, intent, bodyMarkdown]
+      properties:
+        channelId: { type: string, format: uuid }
+        threadId: { type: string, format: uuid }
+        intent: { $ref: '#/components/schemas/MessageIntent' }
+        bodyMarkdown: { type: string }
+        recipientActorIds:
+          type: array
+          items: { type: string, format: uuid }
+        replyToMessageId: { type: string, format: uuid }
+        structuredPayload:
+          type: object
+          additionalProperties: true
+        references:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        requiresResponse: { type: boolean, default: false }
+        dueAt: { type: string, format: date-time }
+
+    TypedMessage:
+      allOf:
+        - $ref: '#/components/schemas/CreateMessageRequest'
+        - type: object
+          required: [id, sender, createdAt, revision]
+          properties:
+            id: { type: string, format: uuid }
+            sender: { $ref: '#/components/schemas/ActorRef' }
+            responseStatus:
+              type: string
+              enum: [none, open, resolved]
+            revision: { type: integer, minimum: 1 }
+            createdAt: { type: string, format: date-time }
+
+    ClaimLeaseRequest:
+      type: object
+      required: [resourceType, resourceId, sessionId]
+      properties:
+        resourceType:
+          type: string
+          enum: [work_item, plan_step, repository_path, artifact_review]
+        resourceId: { type: string }
+        sessionId: { type: string, format: uuid }
+        mode:
+          type: string
+          enum: [exclusive, shared]
+          default: exclusive
+        ttlSeconds:
+          type: integer
+          minimum: 10
+          maximum: 3600
+          default: 120
+        metadata:
+          type: object
+          additionalProperties: true
+
+    Lease:
+      type: object
+      required: [id, resourceType, resourceId, holderSessionId, mode, status, version, expiresAt]
+      properties:
+        id: { type: string, format: uuid }
+        resourceType: { type: string }
+        resourceId: { type: string }
+        holderSessionId: { type: string, format: uuid }
+        mode:
+          type: string
+          enum: [exclusive, shared]
+        status:
+          type: string
+          enum: [active, released, expired, revoked]
+        version: { type: integer, minimum: 1 }
+        acquiredAt: { type: string, format: date-time }
+        heartbeatAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        metadata:
+          type: object
+          additionalProperties: true
+
+    CreateHandoffRequest:
+      type: object
+      required:
+        - sourceSessionId
+        - scopeType
+        - scopeId
+        - summary
+        - remainingWork
+        - contextSnapshotId
+        - requestedAction
+      properties:
+        sourceSessionId: { type: string, format: uuid }
+        targetAgentActorId: { type: string, format: uuid }
+        targetSkill: { type: string }
+        scopeType:
+          type: string
+          enum: [work_item, plan_step, project]
+        scopeId: { type: string }
+        summary: { type: string }
+        completedWork:
+          type: array
+          items: { type: string }
+        remainingWork:
+          type: array
+          items: { type: string }
+        contextSnapshotId: { type: string, format: uuid }
+        artifactIds:
+          type: array
+          items: { type: string, format: uuid }
+        openQuestions:
+          type: array
+          items: { type: string }
+        risks:
+          type: array
+          items: { type: string }
+        acceptanceCriteria:
+          type: array
+          items: { type: string }
+        requestedAction: { type: string }
+        leaseTransferPolicy:
+          type: string
+          enum: [none, transfer, new]
+          default: transfer
+
+    Handoff:
+      allOf:
+        - $ref: '#/components/schemas/CreateHandoffRequest'
+        - type: object
+          required: [id, status, sourceActor, createdAt]
+          properties:
+            id: { type: string, format: uuid }
+            status:
+              type: string
+              enum: [draft, requested, accepted, rejected, canceled, completed]
+            sourceActor: { $ref: '#/components/schemas/ActorRef' }
+            acceptedSessionId: { type: [string, 'null'], format: uuid }
+            createdAt: { type: string, format: date-time }
+            respondedAt: { type: [string, 'null'], format: date-time }
+
+    CreateApprovalRequest:
+      type: object
+      required:
+        - sessionId
+        - approvalType
+        - actionName
+        - actionPayloadSanitized
+        - actionPayloadHash
+        - riskLevel
+        - rationaleSummary
+      properties:
+        sessionId: { type: string, format: uuid }
+        approvalType: { type: string }
+        actionName: { type: string }
+        actionPayloadSanitized:
+          type: object
+          additionalProperties: true
+        actionPayloadHash: { type: string }
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        rationaleSummary: { type: string }
+        requiredApprovals:
+          type: integer
+          minimum: 1
+          default: 1
+        expiresAt: { type: string, format: date-time }
+
+    Approval:
+      allOf:
+        - $ref: '#/components/schemas/CreateApprovalRequest'
+        - type: object
+          required: [id, status, requestedBy, createdAt]
+          properties:
+            id: { type: string, format: uuid }
+            status:
+              type: string
+              enum: [pending, approved, rejected, expired, canceled, consumed]
+            requestedBy: { $ref: '#/components/schemas/ActorRef' }
+            createdAt: { type: string, format: date-time }
+            decidedAt: { type: [string, 'null'], format: date-time }
+
+    ArtifactType:
+      type: string
+      enum:
+        - note
+        - document
+        - patch
+        - diff
+        - branch
+        - commit
+        - pull_request
+        - code_review
+        - test_report
+        - build_report
+        - log
+        - screenshot
+        - preview_url
+        - external_link
+
+    CreateArtifactRequest:
+      type: object
+      required: [type, title]
+      properties:
+        sessionId: { type: string, format: uuid }
+        workItemId: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        type: { $ref: '#/components/schemas/ArtifactType' }
+        title: { type: string }
+        uri: { type: string, format: uri }
+        uploadToken: { type: string }
+        mimeType: { type: string }
+        checksum: { type: string }
+        sizeBytes: { type: integer, minimum: 0 }
+        repository:
+          type: object
+          additionalProperties: true
+        sourceTool: { type: string }
+        metadata:
+          type: object
+          additionalProperties: true
+
+    Artifact:
+      allOf:
+        - $ref: '#/components/schemas/CreateArtifactRequest'
+        - type: object
+          required: [id, producedBy, reviewStatus, createdAt]
+          properties:
+            id: { type: string, format: uuid }
+            producedBy: { $ref: '#/components/schemas/ActorRef' }
+            reviewStatus:
+              type: string
+              enum: [unreviewed, approved, changes_requested, rejected]
+            createdAt: { type: string, format: date-time }
+
+    CheckResult:
+      type: object
+      required: [name, status]
+      properties:
+        name: { type: string }
+        command: { type: string }
+        status:
+          type: string
+          enum: [passed, failed, skipped]
+        summary: { type: string }
+        artifactId: { type: string, format: uuid }
+
+    DomainEvent:
+      type: object
+      required:
+        - id
+        - type
+        - version
+        - workspaceId
+        - aggregate
+        - actor
+        - occurredAt
+        - payload
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string }
+        version: { type: integer, minimum: 1 }
+        workspaceId: { type: string, format: uuid }
+        aggregate:
+          type: object
+          required: [type, id]
+          properties:
+            type: { type: string }
+            id: { type: string }
+            revision: { type: integer }
+        actor: { $ref: '#/components/schemas/ActorRef' }
+        subject:
+          type: object
+          properties:
+            type: { type: string }
+            id: { type: string }
+        correlationId: { type: string }
+        causationId: { type: string, format: uuid }
+        sessionId: { type: string, format: uuid }
+        sequence: { type: integer }
+        occurredAt: { type: string, format: date-time }
+        visibility:
+          type: string
+          enum: [private, team, workspace]
+        payload:
+          type: object
+          additionalProperties: true
+
+    EventPage:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/DomainEvent' }
+        nextCursor: { type: [string, 'null'] }
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, correlationId]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details:
+              type: object
+              additionalProperties: true
+            correlationId: { type: string }

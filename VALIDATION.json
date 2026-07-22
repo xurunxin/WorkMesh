@@ -1,0 +1,28 @@
+{
+  "validated_at": "2026-07-22",
+  "openapi": {
+    "version": "3.1.0",
+    "paths": 29,
+    "operations": 37,
+    "unique_operation_ids": 37,
+    "local_references_resolved": 218,
+    "path_parameters_consistent": true,
+    "mutations_require_idempotency_key": true
+  },
+  "postgresql_schema_static_checks": {
+    "tables": 48,
+    "foreign_key_target_tables": 25,
+    "enum_types": 22,
+    "indexes": 26,
+    "balanced_delimiters": true,
+    "foreign_key_targets_declared": true,
+    "live_postgresql_execution_performed": false,
+    "note": "Static consistency checks only; execute the migration against the target PostgreSQL version before production use."
+  },
+  "documents": {
+    "core_files_present": 7,
+    "cross_document_terms_checked": 10,
+    "roadmap_phases_present": 5,
+    "standalone_prd_matches_package_prd": true
+  }
+}
