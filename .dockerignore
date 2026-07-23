@@ -1,0 +1,35 @@
+# Dependencies are installed inside each image; never copy host installs.
+node_modules
+**/node_modules
+
+# Build and test output.
+.next
+**/.next
+dist
+**/dist
+coverage
+**/coverage
+playwright-report
+test-results
+**/test-results
+
+# Local metadata and credentials.
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs and editor/OS files.
+*.log
+*.tsbuildinfo
+.turbo
+.cache
+.DS_Store
+Thumbs.db
+
+# Local database backups (keep schema and migrations in the build context).
+/backups/
+/workmesh-*.sql
+/acceptance-*-backup.sql

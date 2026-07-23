@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-workmesh}
+      POSTGRES_USER: ${POSTGRES_USER:-workmesh}
+      # Development-only fallback. Set this explicitly to a unique secret before deployment.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}
+    ports: ["127.0.0.1:${POSTGRES_PORT:-5432}:5432"]
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d postgres"], interval: 5s, timeout: 3s, retries: 20 }
+  redis:
+    image: redis:7-alpine
+    volumes: [redis-data:/data]
+    healthcheck: { test: ["CMD","redis-cli","ping"], interval: 5s, timeout: 3s, retries: 20 }
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
+      # Development-only fallback. Set this explicitly to a unique secret before deployment.
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
+    volumes: [minio-data:/data]
+    healthcheck: { test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null"], interval: 10s, timeout: 5s, retries: 10 }
+  migrate:
+    build: { context: ., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+    depends_on: { postgres: { condition: service_healthy } }
+    command: ["pnpm", "db:migrate"]
+    restart: "no"
+  api:
+    build: { context: ., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      API_PORT: 3001
+    ports: ["127.0.0.1:${API_HOST_PORT:-3001}:3001"]
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy }, migrate: { condition: service_completed_successfully } }
+    healthcheck: { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health"], interval: 10s, timeout: 3s, retries: 15 }
+  worker:
+    build: { context: ., dockerfile: infra/docker/worker.Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+    depends_on: { postgres: { condition: service_healthy }, migrate: { condition: service_completed_successfully } }
+  mcp:
+    profiles: ["agent"]
+    build: { context: ., dockerfile: infra/docker/mcp.Dockerfile }
+    environment:
+      WORKMESH_API_URL: ${WORKMESH_API_URL:-http://api:3001}
+      WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
+      WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
+      WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}
+      HOST: 0.0.0.0
+      PORT: 3002
+    ports: ["127.0.0.1:${MCP_HOST_PORT:-3002}:3002"]
+    depends_on: { api: { condition: service_healthy } }
+  web:
+    build: { context: ., dockerfile: infra/docker/web.Dockerfile }
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    ports: ["127.0.0.1:${WEB_HOST_PORT:-3000}:3000"]
+    depends_on: { api: { condition: service_healthy } }
+volumes: { postgres-data: {}, redis-data: {}, minio-data: {} }
