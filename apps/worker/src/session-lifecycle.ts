@@ -31,6 +31,7 @@ export type SessionLifecycleWorker = {
   reconcileHeartbeatLiveness: (limit?: number) => Promise<number>
   expireStopGrace: (limit?: number) => Promise<number>
   expireApprovals: (limit?: number) => Promise<number>
+  expireLeases: (limit?: number) => Promise<number>
   tick: () => Promise<void>
 }
 
@@ -216,12 +217,33 @@ export function createSessionLifecycleWorker({
     return changed
   })
 
+  /** Lease expiry is a durable projection update.  It never changes delegation
+   * authority; stale/ended sessions simply lose any remaining coordination leases. */
+  const expireLeases = async (limit = 50): Promise<number> => withTx(db, async tx => {
+    const candidates = await tx.query<{ id:string; workspace_id:string; session_id:string; resource_type:string; resource_id:string }>(`
+      SELECT l.id,l.workspace_id,l.session_id,l.resource_type,l.resource_id
+      FROM leases l LEFT JOIN agent_sessions s ON s.id=l.session_id
+      WHERE l.status='active' AND (l.expires_at <= now() OR s.state IN ('stale','completed','failed','canceled'))
+      ORDER BY l.expires_at FOR UPDATE OF l SKIP LOCKED LIMIT $1
+    `, [limit])
+    let changed = 0
+    for (const lease of candidates.rows) {
+      const result = await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason='worker expiry' WHERE id=$1 AND status='active' RETURNING id", [lease.id])
+      if (!result.rowCount) continue
+      const actorId = await systemActorId(tx, lease.workspace_id)
+      await appendOutboxEvent(tx, { workspaceId: lease.workspace_id, actorId, correlationId: `${workerId}:lease-expiry:${lease.id}`, eventType: 'lease.expired', aggregateType: 'lease', aggregateId: lease.id, revision: 1, sessionId: lease.session_id, payload: { resourceType: lease.resource_type, resourceId: lease.resource_id } })
+      changed += 1
+    }
+    return changed
+  })
+
   const tick = async (): Promise<void> => {
     await expireAckDeadlines()
     await reconcileHeartbeatLiveness()
     await expireStopGrace()
     await expireApprovals()
+    await expireLeases()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, tick }
 }
