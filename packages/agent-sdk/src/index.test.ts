@@ -30,6 +30,18 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[2]?.[1].headers.authorization).toBe('Bearer refreshed-session-token')
   })
 
+  it('uses installation authority only for pending handoff inspection and idle-target rejection', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ handoff: { id: 'handoff-1' }, contextSnapshot: { id: 'snapshot-1' } }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'handoff-1', status: 'rejected' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', installationToken: 'installation-token', fetch })
+    await expect(client.inspectPendingHandoff('handoff-1')).resolves.toMatchObject({ handoff: { id: 'handoff-1' } })
+    await expect(client.rejectHandoff('handoff-1', { machineReason: 'context_incomplete' })).resolves.toMatchObject({ status: 'rejected' })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/handoffs/handoff-1/inspect')
+    expect(fetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer installation-token')
+    expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-token')
+  })
+
   it('redacts nested sensitive values before logging', () => {
     expect(redactForLog({ outer: [{ nested: { token: 'never-log', safe: 'ok' } }], authorization: 'Bearer never-log' })).toEqual({ outer: [{ nested: { token: '[REDACTED]', safe: 'ok' } }], authorization: '[REDACTED]' })
   })
