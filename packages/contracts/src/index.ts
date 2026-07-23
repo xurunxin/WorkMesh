@@ -130,7 +130,42 @@ export const approvalStatusSchema = z.enum(['pending', 'approved', 'rejected', '
 export const approvalRiskLevelSchema = z.enum(['low', 'medium', 'high', 'critical'])
 export const checkStatusSchema = z.enum(['passed', 'failed', 'skipped'])
 export const visibilitySchema = z.enum(['workspace', 'team', 'private'])
-export const artifactTypeSchema = z.enum(['commit', 'pull_request', 'test_report', 'document', 'link', 'file', 'other'])
+export const artifactTypeSchema = z.enum(['commit', 'pull_request', 'test_report', 'code_review', 'document', 'link', 'file', 'other'])
+
+// Stage 2: all collaboration messages are visible to authorized humans.  This
+// intentionally has no private/hidden visibility option for agent-to-agent use.
+export const roomSubjectKindSchema = z.enum(['work_item', 'project', 'session'])
+export const roomMessageIntentSchema = z.enum(['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
+export const roomMessageInputSchema = z.object({
+  intent: roomMessageIntentSchema, body: z.string().min(1).max(50_000), recipientActorId: idSchema.optional(), recipientActorIds: z.array(idSchema).min(1).max(50).optional(), replyToMessageId: idSchema.optional(), threadId: idSchema.optional(),
+  payload: z.record(z.unknown()).default({}), requiresResponse: z.boolean().default(false), sessionId: idSchema.optional(),
+}).strict().superRefine((value, context) => {
+  const visibility = value.payload.visibility
+  if (visibility === 'private' || visibility === 'hidden') context.addIssue({ code: z.ZodIssueCode.custom, path: ['payload', 'visibility'], message: 'Work Room messages cannot be private or hidden from authorized humans' })
+  if (value.recipientActorId && value.recipientActorIds) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientActorIds'], message: 'Use recipientActorId or recipientActorIds, not both' })
+})
+export const decisionInputSchema = z.object({ title: z.string().min(1).max(500), rationale: z.string().min(1).max(20_000), options: z.array(z.string().min(1).max(2_000)).max(50).default([]), selectedOption: z.string().max(2_000).optional(), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]), affectedResources: z.array(z.object({ resourceType: z.enum(['work_item', 'plan_step', 'artifact', 'session']), resourceId: idSchema, impact: z.string().min(1).max(2_000).default('affected') })).max(100).default([]), sessionId: idSchema.optional() })
+export const leaseKindSchema = z.enum(['exclusive', 'review_shared'])
+export const leaseResourceTypeSchema = z.enum(['work_item', 'plan_step'])
+export const acquireLeaseInputSchema = z.object({ sessionId: idSchema, resourceType: leaseResourceTypeSchema, resourceId: idSchema, kind: leaseKindSchema.default('exclusive'), ttlSeconds: z.number().int().min(10).max(3_600).default(300), reason: z.string().min(1).max(2_000) })
+export const handoffInputSchema = z.object({ fromSessionId: idSchema, targetAgentId: idSchema.optional(), targetSkill: z.string().min(1).max(160).optional(), scopeType: z.enum(['workspace', 'project', 'work_item', 'plan_step']).optional(), scopeId: idSchema.optional(), summary: z.string().min(1).max(20_000), completedWork: z.array(z.string().min(1).max(10_000)).max(100).default([]), remainingWork: z.array(z.string().min(1).max(10_000)).max(100).default([]), openQuestions: z.array(z.string().min(1).max(2_000)).max(100).default([]), risks: z.array(z.string().min(1).max(2_000)).max(100).default([]), acceptanceCriteria: z.array(z.string().min(1).max(2_000)).max(100).default([]), requestedAction: z.string().min(1).max(10_000).optional(), leaseTransferPolicy: z.enum(['retain', 'transfer', 'release']).default('retain'), artifactIds: z.array(idSchema).max(100).default([]), contextSnapshotId: idSchema.optional(), requestedCapabilities: z.array(capabilitySchema).max(50).default([]), status: z.enum(['draft', 'requested']).default('requested') }).refine(value => Boolean(value.targetAgentId) !== Boolean(value.targetSkill), 'Specify exactly one target agent or skill')
+export const handoffMachineRejectReasonSchema = z.enum(['capability_missing', 'budget_insufficient', 'concurrency_limit', 'context_incomplete', 'conflict', 'manual_reject'])
+export const handoffRejectInputSchema = z.object({ reason: z.string().min(1).max(10_000).optional(), machineReason: handoffMachineRejectReasonSchema.optional() }).superRefine((value, context) => { if (!value.reason && !value.machineReason) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide a human reason or a machine rejection reason' }) })
+export const contextDeltaInputSchema = z.object({
+  baseSnapshotId: idSchema,
+  additions: z.array(z.object({
+    sourceType: z.enum(['artifact', 'message', 'work_item', 'plan_step', 'guidance']),
+    sourceId: idSchema.optional(),
+    uri: z.string().url().optional(),
+    hash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  }).superRefine((value, context) => {
+    if (value.sourceType === 'guidance') {
+      if (!value.uri || value.sourceId) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Guidance additions require only an authorized URI' })
+    } else if (!value.sourceId || value.uri) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Internal context additions require only a source id' })
+  })).min(1).max(100),
+  rationale: z.string().min(1).max(10_000),
+})
+export const assignmentProposalInputSchema = z.object({ planStepId: idSchema, agentId: idSchema.optional(), skill: z.string().min(1).max(160).optional(), rationale: z.string().min(1).max(10_000) }).refine(value => Boolean(value.agentId) !== Boolean(value.skill), 'Specify exactly one agent or skill')
 
 const agentRegistrationFieldsSchema = z.object({
   name: z.string().min(1).max(120),
@@ -309,6 +344,8 @@ export const stage1ApiErrorCodeSchema = z.enum([
   'AGENT_ADMIN_REQUIRED', 'APPROVED_CAPABILITY_NOT_REQUESTED', 'AGENT_TEAM_ACCESS_NOT_FOUND',
   'AGENT_SESSION_RETRY_NOT_ALLOWED', 'INSTALLATION_TOKEN_REQUIRED', 'INSTALLATION_TOKEN_REVOKED', 'APPROVAL_QUORUM_NOT_REACHED',
   'APPROVAL_SESSION_MISMATCH', 'APPROVAL_CONSUME_CONFLICT',
+  'CHILD_SESSION_LIMIT', 'PARENT_CHILDREN_INCOMPLETE', 'CHILD_BUDGET_EXCEEDED', 'COMPLETION_PLAN_INCOMPLETE', 'LEASE_CONFLICT', 'LEASE_EXPIRED',
+  'HANDOFF_STATE_CONFLICT', 'STALE_PLAN_VERSION',
 ])
 export const agentApiErrorCodeSchema = z.union([apiErrorCodeSchema, stage1ApiErrorCodeSchema])
 export const agentErrorResponseSchema = z.object({ error: z.object({ code: agentApiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
@@ -354,7 +391,40 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/approvals/{id}/decide', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/approvals/{id}/consume', authenticated: true, mutation: true, revisioned: true },
 ] as const
-export const agentRouteManifest = [...stage0RouteManifest, ...stage1RouteManifest] as const
+export const stage2RouteManifest = [
+  { method: 'GET', path: '/api/v1/rooms', authenticated: true },
+  { method: 'GET', path: '/api/v1/rooms/{id}/timeline', authenticated: true },
+  { method: 'POST', path: '/api/v1/rooms/{id}/messages', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/messages/{id}/resolve', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/inbox', authenticated: true },
+  { method: 'POST', path: '/api/v1/work-items/{id}/decisions', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/decisions', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/decisions', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/decisions/{id}', authenticated: true },
+  { method: 'POST', path: '/api/v1/decisions/{id}/finalize', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/decisions/{id}/supersede', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/decisions/{id}/reverse', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/leases', authenticated: true },
+  { method: 'POST', path: '/api/v1/leases', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/leases/{id}/heartbeat', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/leases/{id}/renew', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/leases/{id}/release', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/leases/{id}/force-release', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/plan/comments', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/assignment-proposals', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/children', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/context-deltas', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/review-delegations', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/handoffs', authenticated: true },
+  { method: 'POST', path: '/api/v1/handoffs', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/handoffs/{id}/inspect', authenticated: true },
+  { method: 'POST', path: '/api/v1/handoffs/{id}/request', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/handoffs/{id}/accept', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/handoffs/{id}/reject', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/handoffs/{id}/cancel', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/handoffs/{id}/complete', authenticated: true, mutation: true },
+] as const
+export const agentRouteManifest = [...stage0RouteManifest, ...stage1RouteManifest, ...stage2RouteManifest] as const
 
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>

@@ -133,8 +133,9 @@ export async function createAdmin(db: Db, input: { email: string; password: stri
   })
 }
 
-export async function appendEvent(tx: PoolClient, input: { workspaceId: string; teamId?: string; audienceActorId?: string; actorId: string; correlationId: string; idempotencyKey?: string; type: string; aggregateType: string; aggregateId: string; revision?: number; payload?: Record<string, unknown> }): Promise<void> {
+export async function appendEvent(tx: PoolClient, input: { workspaceId: string; teamId?: string; audienceActorId?: string; actorId: string; correlationId: string; idempotencyKey?: string; type: string; aggregateType: string; aggregateId: string; revision?: number; payload?: Record<string, unknown> }): Promise<string> {
   const event = await tx.query<{ id: string }>('INSERT INTO domain_events(workspace_id,team_id,audience_actor_id,event_type,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,idempotency_key,payload) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id', [input.workspaceId, input.teamId ?? null, input.audienceActorId ?? null, input.type, input.aggregateType, input.aggregateId, input.revision ?? null, input.actorId, input.correlationId, input.idempotencyKey ?? null, input.payload ?? {}])
   await tx.query('INSERT INTO outbox_events(domain_event_id,topic,partition_key) VALUES($1,$2,$3)', [event.rows[0]!.id, input.type, input.aggregateId])
+  return event.rows[0]!.id
 }
 export const rows = <T extends QueryResultRow>(result: { rows: T[] }) => result.rows

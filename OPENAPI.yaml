@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: WorkMesh API
   version: 0.2.0
-  description: Human-first work management plus the Stage 1 single-agent execution control plane. Lease, handoff, Git and A2A are intentionally excluded.
+  description: Human-first work management plus Stage 1 agent execution and Stage 2 durable multi-agent collaboration.
 servers:
   - url: http://localhost:3001
 security:
@@ -1133,6 +1133,71 @@ paths:
             "409": { $ref: "#/components/responses/Conflict" },
           },
       }
+  /api/v1/rooms:
+    get:
+      { operationId: getWorkRoom, parameters: [{ name: workItemId, in: query, schema: { type: string, format: uuid } }, { name: projectId, in: query, schema: { type: string, format: uuid } }, { name: sessionId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/rooms/{id}/timeline:
+    get:
+      { operationId: getWorkRoomTimeline, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/rooms/{id}/messages:
+    post:
+      { operationId: postWorkRoomMessage, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/CorrelationId" }], requestBody: { $ref: "#/components/requestBodies/RoomMessageInput" }, responses: { "201": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/messages/{id}/resolve:
+    post:
+      { operationId: resolveWorkRoomMessage, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/inbox:
+    get:
+      { operationId: listInbox, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/leases:
+    get: { operationId: listLeases, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: acquireLease, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/AcquireLeaseInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/leases/{id}/heartbeat:
+    post: { operationId: heartbeatLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/leases/{id}/renew:
+    post: { operationId: renewLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/leases/{id}/release:
+    post: { operationId: releaseLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/leases/{id}/force-release:
+    post: { operationId: forceReleaseLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/handoffs:
+    get: { operationId: listHandoffs, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: offerHandoff, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/handoffs/{id}/inspect:
+    get: { operationId: inspectExactTargetHandoff, description: Exact target installation identity may read only its own requested handoff package and immutable context snapshot; this grants no work-resource authority., parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "404": { $ref: "#/components/responses/NotFound" } } }
+  /api/v1/handoffs/{id}/request:
+    post: { operationId: requestHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/handoffs/{id}/accept:
+    post: { operationId: acceptHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffAcceptInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/handoffs/{id}/reject:
+    post: { operationId: rejectHandoff, description: A human supplies reason. The exact target agent may authenticate with its installation credential only for this operation and supplies a protocol machineReason., parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffRejectInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/handoffs/{id}/cancel:
+    post: { operationId: cancelHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/handoffs/{id}/complete:
+    post: { operationId: completeHandoff, description: Requires the accepted child session to be completed with evidence and the lease policy to be satisfied., parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/work-items/{id}/decisions:
+    post: { operationId: createWorkItemDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/DecisionInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/projects/{id}/decisions:
+    post: { operationId: createProjectDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/DecisionInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/agent-sessions/{id}/decisions:
+    post: { operationId: createSessionDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/DecisionInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/decisions/{id}:
+    get: { operationId: getDecision, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/decisions/{id}/finalize:
+    post: { operationId: finalizeDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/decisions/{id}/supersede:
+    post: { operationId: supersedeDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/decisions/{id}/reverse:
+    post: { operationId: reverseDecision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/agent-sessions/{id}/plan/comments:
+    post: { operationId: commentOnPlanStep, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/agent-sessions/{id}/assignment-proposals:
+    post: { operationId: proposePlanAssignment, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/agent-sessions/{id}/children:
+    post: { operationId: createChildAgentSession, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ChildSessionInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/agent-sessions/{id}/context-deltas:
+    post: { operationId: appendContextDelta, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ContextDeltaInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+  /api/v1/agent-sessions/{id}/review-delegations:
+    post: { operationId: createReviewDelegation, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ReviewDelegationInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/workspaces/{id}/guidance:
     get:
       {
@@ -1265,6 +1330,24 @@ components:
     SearchQuery:
       { name: search, in: query, schema: { type: string, minLength: 1 } }
   requestBodies:
+    RoomMessageInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RoomMessageInput" } } } }
+    AcquireLeaseInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AcquireLeaseInput" } } } }
+    HandoffInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/HandoffInput" } } } }
+    HandoffAcceptInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/HandoffAcceptInput" } } } }
+    HandoffRejectInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/HandoffRejectInput" } } } }
+    DecisionInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DecisionInput" } } } }
+    ChildSessionInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ChildSessionInput" } } } }
+    ContextDeltaInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ContextDeltaInput" } } } }
+    ReviewDelegationInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ReviewDelegationInput" } } } }
     InstallInput:
       {
         required: true,
@@ -1629,6 +1712,8 @@ components:
           },
       }
   responses:
+    Json:
+      { description: Stage 2 collaboration resource, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
     Health:
       {
         description: Database is reachable,
@@ -2121,6 +2206,55 @@ components:
           },
       }
   schemas:
+    RoomMessageInput:
+      { type: object, additionalProperties: false, required: [intent, body], properties: { intent: { type: string, enum: [inform, ask, answer, propose, decide, claim, handoff, blocker, review_request, review_result, status] }, body: { type: string }, recipientActorId: { type: string, format: uuid }, recipientActorIds: { type: array, minItems: 1, maxItems: 50, items: { type: string, format: uuid } }, replyToMessageId: { type: string, format: uuid }, threadId: { type: string, format: uuid }, payload: { type: object, additionalProperties: true }, requiresResponse: { type: boolean }, sessionId: { type: string, format: uuid } } }
+    AcquireLeaseInput:
+      { type: object, required: [sessionId, resourceType, resourceId, reason], properties: { sessionId: { type: string, format: uuid }, resourceType: { type: string, enum: [work_item, plan_step] }, resourceId: { type: string, format: uuid }, kind: { type: string, enum: [exclusive, review_shared] }, ttlSeconds: { type: integer }, reason: { type: string } } }
+    HandoffInput:
+      { type: object, required: [fromSessionId, summary], properties: { fromSessionId: { type: string, format: uuid }, targetAgentId: { type: string, format: uuid }, targetSkill: { type: string }, scopeType: { type: string, enum: [workspace, project, work_item, plan_step] }, scopeId: { type: string, format: uuid }, summary: { type: string }, completedWork: { type: array, items: { type: string } }, remainingWork: { type: array, items: { type: string } }, openQuestions: { type: array, items: { type: string } }, risks: { type: array, items: { type: string } }, acceptanceCriteria: { type: array, items: { type: string } }, requestedAction: { type: string }, leaseTransferPolicy: { type: string, enum: [retain, transfer, release] }, artifactIds: { type: array, items: { type: string, format: uuid } }, contextSnapshotId: { type: string, format: uuid }, requestedCapabilities: { type: array, items: { type: string } }, status: { type: string, enum: [draft, requested], default: requested } } }
+    HandoffAcceptInput:
+      { type: object, additionalProperties: false, properties: { agentId: { type: string, format: uuid, description: Allowed only for a skill-targeted handoff and must be in the deterministic shortlist. }, initialPrompt: { type: string, minLength: 1, maxLength: 50000, default: Accepted handoff } } }
+    HandoffRejectInput:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [reason]
+        - required: [machineReason]
+      properties:
+        reason: { type: string, minLength: 1, maxLength: 10000, description: Human rejection rationale. }
+        machineReason: { type: string, enum: [capability_missing, budget_insufficient, concurrency_limit, context_incomplete, conflict, manual_reject] }
+    DecisionInput:
+      { type: object, required: [title, rationale], properties: { title: { type: string }, rationale: { type: string }, options: { type: array, items: { type: string } }, selectedOption: { type: string }, evidence: { type: array, items: { type: string } }, affectedResources: { type: array, items: { type: object, required: [resourceType, resourceId], properties: { resourceType: { type: string, enum: [work_item, plan_step, artifact, session] }, resourceId: { type: string, format: uuid }, impact: { type: string } } } }, sessionId: { type: string, format: uuid } } }
+    ChildSessionInput:
+      { type: object, required: [agentId, planStepId, planVersionId, initialPrompt], properties: { agentId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, planVersionId: { type: string, format: uuid }, role: { type: string, enum: [executor, reviewer, researcher] }, initialPrompt: { type: string }, required: { type: boolean }, budget: { type: object, additionalProperties: { type: number } } } }
+    ContextDeltaInput:
+      type: object
+      additionalProperties: false
+      required: [baseSnapshotId, additions, rationale]
+      properties:
+        baseSnapshotId: { type: string, format: uuid }
+        additions:
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+              - type: object
+                additionalProperties: false
+                required: [sourceType, sourceId, hash]
+                properties:
+                  sourceType: { type: string, enum: [artifact, message, work_item, plan_step] }
+                  sourceId: { type: string, format: uuid }
+                  hash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+              - type: object
+                additionalProperties: false
+                required: [sourceType, uri, hash]
+                properties:
+                  sourceType: { type: string, const: guidance }
+                  uri: { type: string, format: uri, description: Must match an authorized workmesh workspace, Team, or project guidance URI. }
+                  hash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        rationale: { type: string }
+    ReviewDelegationInput:
+      { type: object, required: [reviewerAgentId, planStepId, planVersionId, initialPrompt], properties: { reviewerAgentId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, planVersionId: { type: string, format: uuid }, initialPrompt: { type: string }, ttlSeconds: { type: integer, minimum: 10, maximum: 3600 } } }
     Id: { type: string, format: uuid }
     Timestamp: { type: string, format: date-time }
     Date: { type: string, format: date }

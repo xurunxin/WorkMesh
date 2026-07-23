@@ -63,13 +63,16 @@ export const validatePlanSteps = (steps: readonly PlanStepLike[], previousSteps:
   }
   const byId = new Map(steps.map(step => [step.id, step]))
   const visiting = new Set<string>()
+  const path: string[] = []
   const visited = new Set<string>()
   const visit = (id: string): void => {
     if (visited.has(id)) return
-    if (visiting.has(id)) throw new DomainError('PLAN_STEP_DEPENDENCY_CYCLE', 'Plan steps must form an acyclic dependency graph', { stepId: id })
+    if (visiting.has(id)) { const from = path.indexOf(id); throw new DomainError('PLAN_STEP_DEPENDENCY_CYCLE', 'Plan steps must form an acyclic dependency graph', { stepId: id, path: [...path.slice(from), id] }) }
     visiting.add(id)
+    path.push(id)
     for (const dependencyId of byId.get(id)?.dependsOn ?? []) visit(dependencyId)
     visiting.delete(id)
+    path.pop()
     visited.add(id)
   }
   for (const id of byId.keys()) visit(id)
@@ -86,6 +89,57 @@ export const assertPlanStepReady = (step: PlanStepLike, steps: readonly PlanStep
   const unresolvedDependencies = step.dependsOn.filter(id => byId.get(id)?.status !== 'completed')
   if (unresolvedDependencies.length > 0) throw new DomainError('PLAN_STEP_NOT_READY', 'Plan step dependencies must complete before it starts', { stepId: step.id, unresolvedDependencies })
 }
+
+/** A child can receive a tighter budget but may not silently exceed the parent. */
+export const inheritChildBudget = (parent: Record<string, number>, requested: Record<string, number> = {}): Record<string, number> => {
+  for (const [key, value] of Object.entries(requested)) {
+    const ceiling = parent[key]
+    if (ceiling !== undefined && value > ceiling) throw new DomainError('CHILD_BUDGET_EXCEEDED', 'Child budget cannot exceed its parent budget', { key, parent: ceiling, requested: value })
+  }
+  return { ...parent, ...requested }
+}
+
+export const reserveChildBudget = (parent: Record<string, number>, existingReservations: readonly Record<string, number>[], requested: Record<string, number>): Record<string, number> => {
+  for (const [key, amount] of Object.entries(requested)) {
+    const reserved = existingReservations.reduce((sum, item) => sum + (item[key] ?? 0), 0)
+    if (amount < 0 || (parent[key] !== undefined && reserved + amount > parent[key])) throw new DomainError('CHILD_BUDGET_RESERVATION_EXCEEDED', 'Child reservation exceeds the remaining parent budget', { key, parent: parent[key], reserved, requested: amount })
+  }
+  return { ...requested }
+}
+
+export const assertChildSessionLimit = (maxChildren: number, existingChildren: number): void => {
+  if (existingChildren >= maxChildren) throw new DomainError('CHILD_SESSION_LIMIT_REACHED', 'Parent session child limit has been reached', { maxChildren, existingChildren })
+}
+
+export const assertRequiredChildrenCompleted = (children: readonly { id: string; requiredForParent: boolean; state: AgentSessionState }[]): void => {
+  const blockers = children.filter(child => child.requiredForParent && child.state !== 'completed').map(child => child.id).sort()
+  if (blockers.length) throw new DomainError('REQUIRED_CHILDREN_INCOMPLETE', 'Required child sessions must complete first', { blockerSessionIds: blockers })
+}
+
+export const assertDecisionRelationAcyclic = (relations: readonly { decisionId: string; relatedDecisionId: string }[]): void => {
+  const edges = new Map<string, string[]>()
+  for (const relation of relations) edges.set(relation.decisionId, [...(edges.get(relation.decisionId) ?? []), relation.relatedDecisionId])
+  const active: string[] = []; const done = new Set<string>()
+  const visit = (id: string): void => { const at = active.indexOf(id); if (at >= 0) throw new DomainError('DECISION_RELATION_CYCLE', 'Decision relations must be acyclic', { path: [...active.slice(at), id] }); if (done.has(id)) return; active.push(id); for (const next of edges.get(id) ?? []) visit(next); active.pop(); done.add(id) }
+  for (const id of edges.keys()) visit(id)
+}
+
+export const assertLeaseAcquirable = (active: readonly { id: string; kind: 'exclusive' | 'review_shared'; sessionId: string; expiresAt: Date | string }[], requested: 'exclusive' | 'review_shared', now: Date = new Date()): void => {
+  const conflict = active.find(lease => new Date(lease.expiresAt).getTime() > now.getTime() && (lease.kind === 'exclusive' || requested === 'exclusive'))
+  if (conflict) throw new DomainError('LEASE_CONFLICT', 'Resource is already leased', { leaseId: conflict.id, holderSessionId: conflict.sessionId, expiresAt: conflict.expiresAt })
+}
+
+export interface RoutingCandidate { id: string; slug: string; skills: readonly string[]; activeSessions: number; capabilities: readonly Capability[] }
+/** Deterministic, auditable routing order; callers already filtered access. */
+export const selectRoutingCandidate = (candidates: readonly RoutingCandidate[], input: { exactAgentId?: string; skill?: string; requiredCapabilities: readonly Capability[] }): RoutingCandidate | undefined => candidates
+  .filter(candidate => input.requiredCapabilities.every(capability => candidate.capabilities.includes(capability)))
+  .sort((left, right) => {
+    const exact = Number(right.id === input.exactAgentId) - Number(left.id === input.exactAgentId)
+    if (exact) return exact
+    const skill = Number(Boolean(input.skill && right.skills.includes(input.skill))) - Number(Boolean(input.skill && left.skills.includes(input.skill)))
+    if (skill) return skill
+    return left.activeSessions - right.activeSessions || left.slug.localeCompare(right.slug)
+  })[0]
 
 export const assertCompletionEvidence = (completion: Pick<CompleteAgentSessionInput, 'artifactIds' | 'checks' | 'noArtifactReason'>): void => {
   const hasEvidence = completion.artifactIds.length > 0 || completion.checks.length > 0
