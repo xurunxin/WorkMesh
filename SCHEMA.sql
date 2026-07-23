@@ -1,884 +1,325 @@
--- WorkMesh initial PostgreSQL schema
--- Version: 0.1
--- Snapshot: 2026-07-22
---
--- This is a starting migration for vibe coding. Keep all later changes in
--- numbered migrations. Business invariants that depend on actor kind, scope,
--- or policy are enforced in the application/domain layer and tested there.
+-- WorkMesh Stage 1 consolidated schema. Sources: 0001_stage0.sql through 0006_stage1_review_fixes.sql.
+BEGIN;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS citext;
+CREATE TYPE actor_kind AS ENUM ('human','agent','service');
+CREATE TYPE workspace_role AS ENUM ('admin','member');
+CREATE TYPE membership_role AS ENUM ('admin','maintainer','member');
+CREATE TYPE status_category AS ENUM ('backlog','planned','started','completed','canceled');
+CREATE TYPE outbox_status AS ENUM ('pending','delivering','delivered','dead');
+CREATE TABLE workspaces (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name text NOT NULL, slug text NOT NULL UNIQUE, revision integer NOT NULL DEFAULT 1 CHECK(revision>0), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE actors (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, kind actor_kind NOT NULL, workspace_role workspace_role, email citext, display_name text NOT NULL, password_hash text, is_active boolean NOT NULL DEFAULT true, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(workspace_id,email), UNIQUE(workspace_id,id), CHECK((kind='human' AND email IS NOT NULL AND password_hash IS NOT NULL) OR kind <> 'human'), CHECK((kind='human' AND workspace_role IS NOT NULL) OR (kind <> 'human' AND workspace_role IS NULL)));
+CREATE TABLE teams (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, name text NOT NULL, key text NOT NULL, next_work_item_number integer NOT NULL DEFAULT 1 CHECK(next_work_item_number>0), revision integer NOT NULL DEFAULT 1 CHECK(revision>0), deleted_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(workspace_id,key), UNIQUE(workspace_id,id));
+CREATE TABLE platform_installation (singleton boolean PRIMARY KEY DEFAULT true CHECK(singleton), workspace_id uuid NOT NULL UNIQUE REFERENCES workspaces(id) ON DELETE RESTRICT, system_actor_id uuid NOT NULL UNIQUE, created_at timestamptz NOT NULL DEFAULT now(), FOREIGN KEY(workspace_id,system_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT);
+CREATE TABLE memberships (workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid REFERENCES teams(id) ON DELETE CASCADE, actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE, role membership_role NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(team_id,actor_id), FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE CASCADE, FOREIGN KEY(workspace_id,actor_id) REFERENCES actors(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE workflow_states (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL, team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE, name text NOT NULL, category status_category NOT NULL, color text NOT NULL DEFAULT '#64748b', position integer NOT NULL DEFAULT 0, is_archived boolean NOT NULL DEFAULT false, revision integer NOT NULL DEFAULT 1 CHECK(revision>0), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(team_id,name), UNIQUE(workspace_id,team_id,id), FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE projects (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE, name text NOT NULL, summary text, description text, status text NOT NULL DEFAULT 'planned', lead_actor_id uuid REFERENCES actors(id), target_date date, revision integer NOT NULL DEFAULT 1 CHECK(revision>0), deleted_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(workspace_id,id), UNIQUE(workspace_id,team_id,id), FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE CASCADE, FOREIGN KEY(workspace_id,lead_actor_id) REFERENCES actors(workspace_id,id) ON DELETE SET NULL);
+CREATE TABLE work_items (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid NOT NULL REFERENCES teams(id) ON DELETE RESTRICT, number integer NOT NULL CHECK(number>0), title text NOT NULL, description text, status_id uuid NOT NULL REFERENCES workflow_states(id), priority text NOT NULL DEFAULT 'none' CHECK(priority IN ('none','urgent','high','medium','low')), due_date date, responsible_human_actor_id uuid REFERENCES actors(id), labels text[] NOT NULL DEFAULT '{}', project_id uuid REFERENCES projects(id) ON DELETE SET NULL, revision integer NOT NULL DEFAULT 1 CHECK(revision>0), deleted_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(team_id,number), UNIQUE(workspace_id,id), FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE RESTRICT, FOREIGN KEY(workspace_id,team_id,status_id) REFERENCES workflow_states(workspace_id,team_id,id) ON DELETE RESTRICT, FOREIGN KEY(workspace_id,responsible_human_actor_id) REFERENCES actors(workspace_id,id) ON DELETE SET NULL, FOREIGN KEY(workspace_id,team_id,project_id) REFERENCES projects(workspace_id,team_id,id) ON DELETE SET NULL(project_id));
+CREATE TABLE channels (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, work_item_id uuid NOT NULL UNIQUE REFERENCES work_items(id) ON DELETE CASCADE, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(workspace_id,id), FOREIGN KEY(workspace_id,work_item_id) REFERENCES work_items(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE comments (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL, channel_id uuid NOT NULL REFERENCES channels(id) ON DELETE CASCADE, author_actor_id uuid NOT NULL REFERENCES actors(id), parent_comment_id uuid REFERENCES comments(id) ON DELETE SET NULL, reply_to_comment_id uuid REFERENCES comments(id) ON DELETE SET NULL, body text NOT NULL, is_resolved boolean NOT NULL DEFAULT false, revision integer NOT NULL DEFAULT 1 CHECK(revision>0), deleted_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(workspace_id,id), UNIQUE(channel_id,id), FOREIGN KEY(workspace_id,channel_id) REFERENCES channels(workspace_id,id) ON DELETE CASCADE, FOREIGN KEY(workspace_id,author_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT, FOREIGN KEY(channel_id,parent_comment_id) REFERENCES comments(channel_id,id) ON DELETE SET NULL(parent_comment_id), FOREIGN KEY(channel_id,reply_to_comment_id) REFERENCES comments(channel_id,id) ON DELETE SET NULL(reply_to_comment_id));
+CREATE TABLE comment_mentions (workspace_id uuid NOT NULL, comment_id uuid NOT NULL, actor_id uuid NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(comment_id,actor_id), FOREIGN KEY(workspace_id,comment_id) REFERENCES comments(workspace_id,id) ON DELETE CASCADE, FOREIGN KEY(workspace_id,actor_id) REFERENCES actors(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE saved_views (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, owner_actor_id uuid NOT NULL REFERENCES actors(id), team_id uuid REFERENCES teams(id) ON DELETE CASCADE, name text NOT NULL, filters jsonb NOT NULL DEFAULT '{}'::jsonb, layout text NOT NULL CHECK(layout IN ('list','board')), revision integer NOT NULL DEFAULT 1, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), FOREIGN KEY(workspace_id,owner_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT, FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE sessions (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE, token_hash text NOT NULL UNIQUE, csrf_token text NOT NULL, expires_at timestamptz NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE api_idempotency_keys (workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE, idempotency_key text NOT NULL, operation text NOT NULL DEFAULT 'unknown', request_hash text NOT NULL, response_status integer, response_body jsonb, created_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(workspace_id,actor_id,idempotency_key), FOREIGN KEY(workspace_id,actor_id) REFERENCES actors(workspace_id,id) ON DELETE CASCADE);
+CREATE TABLE domain_events (cursor bigserial PRIMARY KEY, id uuid NOT NULL UNIQUE DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid, audience_actor_id uuid, event_type text NOT NULL, event_version integer NOT NULL DEFAULT 1, aggregate_type text NOT NULL, aggregate_id uuid NOT NULL, aggregate_revision integer, actor_id uuid NOT NULL REFERENCES actors(id), correlation_id text NOT NULL, idempotency_key text, payload jsonb NOT NULL DEFAULT '{}'::jsonb, occurred_at timestamptz NOT NULL DEFAULT now(), FOREIGN KEY(workspace_id,actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT, FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE SET NULL, FOREIGN KEY(workspace_id,audience_actor_id) REFERENCES actors(workspace_id,id) ON DELETE SET NULL);
+CREATE TABLE outbox_events (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), domain_event_id uuid NOT NULL UNIQUE REFERENCES domain_events(id) ON DELETE CASCADE, topic text NOT NULL, partition_key text NOT NULL, status outbox_status NOT NULL DEFAULT 'pending', attempt_count integer NOT NULL DEFAULT 0 CHECK(attempt_count BETWEEN 0 AND 8), available_at timestamptz NOT NULL DEFAULT now(), locked_at timestamptz, locked_by text, delivered_at timestamptz, last_error text, created_at timestamptz NOT NULL DEFAULT now());
+CREATE FUNCTION enforce_human_comment_mention() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NOT EXISTS (SELECT 1 FROM actors WHERE id=NEW.actor_id AND workspace_id=NEW.workspace_id AND kind='human') THEN RAISE EXCEPTION 'COMMENT_MENTION_REQUIRES_HUMAN_ACTOR'; END IF; RETURN NEW; END; $$;
+CREATE TRIGGER comment_mentions_require_human BEFORE INSERT OR UPDATE OF workspace_id,actor_id ON comment_mentions FOR EACH ROW EXECUTE FUNCTION enforce_human_comment_mention();
+CREATE FUNCTION enforce_platform_system_actor() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NOT EXISTS (SELECT 1 FROM actors WHERE id=NEW.system_actor_id AND workspace_id=NEW.workspace_id AND kind='service') THEN RAISE EXCEPTION 'PLATFORM_SYSTEM_ACTOR_REQUIRES_SERVICE_ACTOR'; END IF; RETURN NEW; END; $$;
+CREATE TRIGGER platform_installation_requires_service_actor BEFORE INSERT OR UPDATE OF workspace_id,system_actor_id ON platform_installation FOR EACH ROW EXECUTE FUNCTION enforce_platform_system_actor();
+CREATE INDEX work_items_active_team_status ON work_items(team_id,status_id) WHERE deleted_at IS NULL;
+CREATE INDEX work_items_search_trgm ON work_items USING gin(title gin_trgm_ops);
+CREATE INDEX work_items_search_fts ON work_items USING gin(to_tsvector('simple',coalesce(title,'')||' '||coalesce(description,'')));
+CREATE INDEX comments_search_fts ON comments USING gin(to_tsvector('simple',body));
+CREATE INDEX domain_events_workspace_cursor ON domain_events(workspace_id,cursor);
+CREATE INDEX domain_events_workspace_team_cursor ON domain_events(workspace_id,team_id,cursor) WHERE team_id IS NOT NULL;
+CREATE INDEX domain_events_workspace_audience_cursor ON domain_events(workspace_id,audience_actor_id,cursor) WHERE audience_actor_id IS NOT NULL;
+CREATE INDEX outbox_claim ON outbox_events(available_at,created_at) WHERE status IN ('pending','delivering') AND attempt_count < 8;
+
+CREATE TYPE agent_protocol AS ENUM ('native_http','mcp','a2a');
+CREATE TYPE delegation_role AS ENUM ('executor','reviewer','researcher','coordinator','triager');
+CREATE TYPE delegation_scope_type AS ENUM ('work_item','plan_step','project','automation');
+CREATE TYPE delegation_status AS ENUM ('active','revoked','expired','completed');
+CREATE TYPE webhook_secret_status AS ENUM ('active','retiring','revoked');
+
+ALTER TABLE work_items ADD CONSTRAINT work_items_workspace_team_id_key UNIQUE (workspace_id,team_id,id);
+
+CREATE TABLE agent_definitions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  actor_id uuid NOT NULL, slug text NOT NULL, display_name text NOT NULL, description text,
+  endpoint_url text, manifest jsonb NOT NULL DEFAULT '{}'::jsonb,
+  supported_protocols agent_protocol[] NOT NULL DEFAULT '{}', skills text[] NOT NULL DEFAULT '{}',
+  requested_capabilities text[] NOT NULL DEFAULT '{}', approved_capabilities text[] NOT NULL DEFAULT '{}',
+  output_artifact_types text[] NOT NULL DEFAULT '{}', max_concurrency integer NOT NULL DEFAULT 1 CHECK(max_concurrency > 0),
+  is_active boolean NOT NULL DEFAULT true, revision integer NOT NULL DEFAULT 1 CHECK(revision > 0),
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id), UNIQUE(workspace_id,actor_id), UNIQUE(workspace_id,slug),
+  FOREIGN KEY(workspace_id,actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  CHECK(array_length(supported_protocols,1) IS NULL OR cardinality(supported_protocols) > 0),
+  CHECK(approved_capabilities <@ requested_capabilities)
+);
+
+CREATE FUNCTION enforce_agent_definition_actor_kind() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM actors WHERE workspace_id=NEW.workspace_id AND id=NEW.actor_id AND kind='agent'
+  ) THEN RAISE EXCEPTION 'AGENT_DEFINITION_REQUIRES_AGENT_ACTOR'; END IF;
+  RETURN NEW;
+END; $$;
+CREATE FUNCTION enforce_work_item_responsible_human() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.responsible_human_actor_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM actors WHERE workspace_id=NEW.workspace_id AND id=NEW.responsible_human_actor_id AND kind='human'
+  ) THEN RAISE EXCEPTION 'WORK_ITEM_RESPONSIBLE_REQUIRES_HUMAN_ACTOR'; END IF;
+  RETURN NEW;
+END; $$;
+CREATE FUNCTION enforce_delegation_actor_kinds() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF (
+    NOT EXISTS (SELECT 1 FROM actors WHERE workspace_id=NEW.workspace_id AND id=NEW.principal_human_actor_id AND kind='human') OR
+    NOT EXISTS (SELECT 1 FROM actors WHERE workspace_id=NEW.workspace_id AND id=NEW.agent_actor_id AND kind='agent')
+  ) THEN RAISE EXCEPTION 'DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR'; END IF;
+  RETURN NEW;
+END; $$;
+
+CREATE TRIGGER agent_definitions_require_agent_actor BEFORE INSERT OR UPDATE OF workspace_id,actor_id ON agent_definitions FOR EACH ROW EXECUTE FUNCTION enforce_agent_definition_actor_kind();
+CREATE TRIGGER work_items_require_human_responsible BEFORE INSERT OR UPDATE OF workspace_id,responsible_human_actor_id ON work_items FOR EACH ROW EXECUTE FUNCTION enforce_work_item_responsible_human();
+
+CREATE TABLE agent_team_access (
+  workspace_id uuid NOT NULL, agent_id uuid NOT NULL, team_id uuid NOT NULL, granted_by_actor_id uuid NOT NULL,
+  approved_capabilities text[] NOT NULL DEFAULT '{}', created_at timestamptz NOT NULL DEFAULT now(), revoked_at timestamptz,
+  PRIMARY KEY(agent_id,team_id),
+  FOREIGN KEY(workspace_id,agent_id) REFERENCES agent_definitions(workspace_id,id) ON DELETE CASCADE,
+  FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE CASCADE,
+  FOREIGN KEY(workspace_id,granted_by_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT
+);
+
+CREATE TABLE agent_webhook_endpoints (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), agent_id uuid NOT NULL REFERENCES agent_definitions(id) ON DELETE CASCADE,
+  url text NOT NULL, is_active boolean NOT NULL DEFAULT true, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(agent_id,id), UNIQUE(agent_id,url)
+);
+CREATE TABLE agent_webhook_secrets (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), endpoint_id uuid NOT NULL REFERENCES agent_webhook_endpoints(id) ON DELETE CASCADE,
+  version integer NOT NULL CHECK(version > 0), secret_ciphertext bytea NOT NULL, iv bytea NOT NULL, auth_tag bytea NOT NULL, key_version text NOT NULL,
+  status webhook_secret_status NOT NULL DEFAULT 'active', valid_from timestamptz NOT NULL DEFAULT now(), valid_until timestamptz,
+  revoked_at timestamptz, created_by_actor_id uuid REFERENCES actors(id) ON DELETE SET NULL, created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(endpoint_id,version), CHECK(octet_length(iv)=12), CHECK(octet_length(auth_tag)=16),
+  CHECK(valid_until IS NULL OR valid_until > valid_from), CHECK((status='revoked') = (revoked_at IS NOT NULL))
+);
+CREATE UNIQUE INDEX agent_webhook_secrets_one_active ON agent_webhook_secrets(endpoint_id) WHERE status='active';
+
+CREATE TABLE agent_installation_tokens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), agent_id uuid NOT NULL REFERENCES agent_definitions(id) ON DELETE CASCADE,
+  token_hash text NOT NULL UNIQUE, expires_at timestamptz, last_used_at timestamptz, revoked_at timestamptz,
+  created_by_actor_id uuid REFERENCES actors(id) ON DELETE SET NULL, created_at timestamptz NOT NULL DEFAULT now(),
+  CHECK(expires_at IS NULL OR expires_at > created_at)
+);
+ALTER TABLE agent_installation_tokens ADD CONSTRAINT agent_installation_tokens_id_agent_id_key UNIQUE(id,agent_id);
+CREATE INDEX agent_installation_tokens_active ON agent_installation_tokens(agent_id,expires_at) WHERE revoked_at IS NULL;
+
+CREATE TABLE delegations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid NOT NULL,
+  agent_id uuid NOT NULL, agent_actor_id uuid NOT NULL, principal_human_actor_id uuid NOT NULL, work_item_id uuid,
+  role delegation_role NOT NULL, scope_type delegation_scope_type NOT NULL, scope_id uuid NOT NULL,
+  permissions_snapshot text[] NOT NULL DEFAULT '{}', capability_scope jsonb NOT NULL DEFAULT '{}'::jsonb,
+  status delegation_status NOT NULL DEFAULT 'active', revision integer NOT NULL DEFAULT 1 CHECK(revision > 0),
+  parent_delegation_id uuid REFERENCES delegations(id) ON DELETE RESTRICT, revoked_at timestamptz, revoked_by_actor_id uuid,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id),
+  FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,agent_id) REFERENCES agent_definitions(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,agent_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,principal_human_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,team_id,work_item_id) REFERENCES work_items(workspace_id,team_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,revoked_by_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  CHECK((scope_type='work_item') = (work_item_id IS NOT NULL)),
+  CHECK((status='revoked') = (revoked_at IS NOT NULL))
+);
+CREATE TRIGGER delegations_require_actor_kinds BEFORE INSERT OR UPDATE OF workspace_id,agent_actor_id,principal_human_actor_id ON delegations FOR EACH ROW EXECUTE FUNCTION enforce_delegation_actor_kinds();
+CREATE UNIQUE INDEX delegations_one_active_executor_per_work_item ON delegations(work_item_id) WHERE status='active' AND role='executor' AND work_item_id IS NOT NULL;
+CREATE INDEX delegations_active_agent_team ON delegations(agent_id,team_id) WHERE status='active';
+CREATE INDEX delegations_principal_active ON delegations(principal_human_actor_id,created_at DESC) WHERE status='active';
+
+COMMIT;
+
 
 BEGIN;
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-
-CREATE TYPE actor_kind AS ENUM ('human', 'agent', 'service');
-CREATE TYPE workspace_role AS ENUM ('admin', 'maintainer', 'member', 'guest');
-CREATE TYPE status_category AS ENUM ('backlog', 'planned', 'started', 'completed', 'canceled');
-CREATE TYPE work_item_type AS ENUM ('issue', 'task', 'bug', 'feature', 'chore', 'incident');
-CREATE TYPE work_priority AS ENUM ('none', 'low', 'medium', 'high', 'urgent');
-CREATE TYPE project_health AS ENUM ('unknown', 'on_track', 'at_risk', 'off_track');
-CREATE TYPE relation_kind AS ENUM ('blocks', 'related', 'duplicate_of');
-CREATE TYPE delegation_role AS ENUM ('executor', 'reviewer', 'researcher', 'coordinator', 'triager');
-CREATE TYPE delegation_status AS ENUM ('active', 'paused', 'completed', 'revoked', 'expired');
-CREATE TYPE session_state AS ENUM (
-  'queued',
-  'acknowledged',
-  'planning',
-  'executing',
-  'awaiting_input',
-  'awaiting_approval',
-  'blocked',
-  'paused',
-  'stopping',
-  'completed',
-  'failed',
-  'canceled',
-  'stale'
-);
-CREATE TYPE plan_step_status AS ENUM ('pending', 'in_progress', 'blocked', 'completed', 'canceled');
-CREATE TYPE activity_kind AS ENUM (
-  'ack',
-  'status',
-  'plan_published',
-  'plan_changed',
-  'action_started',
-  'action_completed',
-  'evidence',
-  'question',
-  'decision_request',
-  'message',
-  'artifact_published',
-  'handoff_requested',
-  'handoff_accepted',
-  'warning',
-  'error',
-  'completion',
-  'heartbeat'
-);
-CREATE TYPE message_intent AS ENUM (
-  'inform',
-  'ask',
-  'answer',
-  'propose',
-  'decide',
-  'claim',
-  'handoff',
-  'blocker',
-  'review_request',
-  'review_result',
-  'status'
-);
-CREATE TYPE lease_mode AS ENUM ('exclusive', 'shared');
-CREATE TYPE lease_status AS ENUM ('active', 'released', 'expired', 'revoked');
-CREATE TYPE handoff_status AS ENUM ('draft', 'requested', 'accepted', 'rejected', 'canceled', 'completed');
-CREATE TYPE approval_status AS ENUM ('pending', 'approved', 'rejected', 'expired', 'canceled', 'consumed');
-CREATE TYPE artifact_type AS ENUM (
-  'note',
-  'document',
-  'patch',
-  'diff',
-  'branch',
-  'commit',
-  'pull_request',
-  'code_review',
-  'test_report',
-  'build_report',
-  'log',
-  'screenshot',
-  'preview_url',
-  'external_link'
-);
-CREATE TYPE artifact_review_status AS ENUM ('unreviewed', 'approved', 'changes_requested', 'rejected');
-CREATE TYPE outbox_status AS ENUM ('pending', 'delivering', 'delivered', 'dead_letter');
-CREATE TYPE automation_status AS ENUM ('active', 'paused', 'disabled');
-CREATE TYPE automation_run_status AS ENUM ('queued', 'running', 'succeeded', 'failed', 'canceled');
-
-CREATE TABLE workspaces (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  slug text NOT NULL UNIQUE,
-  name text NOT NULL,
-  settings jsonb NOT NULL DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  deleted_at timestamptz
-);
-
-CREATE TABLE actors (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  kind actor_kind NOT NULL,
-  display_name text NOT NULL,
-  slug text NOT NULL,
-  avatar_url text,
-  is_active boolean NOT NULL DEFAULT true,
-  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (workspace_id, slug)
-);
-
-CREATE TABLE human_accounts (
-  actor_id uuid PRIMARY KEY REFERENCES actors(id) ON DELETE CASCADE,
-  email text NOT NULL,
-  password_hash text,
-  oidc_subject text,
-  locale text NOT NULL DEFAULT 'zh-CN',
-  timezone text NOT NULL DEFAULT 'UTC',
-  last_login_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (email)
-);
-
-CREATE TABLE agent_definitions (
-  actor_id uuid PRIMARY KEY REFERENCES actors(id) ON DELETE CASCADE,
-  provider text,
-  version text,
-  description text,
-  endpoint_url text,
-  webhook_secret_hash text,
-  public_key text,
-  supported_protocols text[] NOT NULL DEFAULT ARRAY['native_http']::text[],
-  skills text[] NOT NULL DEFAULT '{}'::text[],
-  requested_capabilities text[] NOT NULL DEFAULT '{}'::text[],
-  approved_capabilities text[] NOT NULL DEFAULT '{}'::text[],
-  output_artifact_types artifact_type[] NOT NULL DEFAULT '{}'::artifact_type[],
-  max_concurrency integer NOT NULL DEFAULT 1 CHECK (max_concurrency > 0),
-  heartbeat_interval_seconds integer NOT NULL DEFAULT 30 CHECK (heartbeat_interval_seconds > 0),
-  default_timeout_seconds integer NOT NULL DEFAULT 3600 CHECK (default_timeout_seconds > 0),
-  manifest jsonb NOT NULL DEFAULT '{}'::jsonb,
-  status text NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'disabled', 'revoked')),
-  installed_by_actor_id uuid REFERENCES actors(id),
-  installed_at timestamptz NOT NULL DEFAULT now(),
-  revoked_at timestamptz
-);
-
-CREATE TABLE service_definitions (
-  actor_id uuid PRIMARY KEY REFERENCES actors(id) ON DELETE CASCADE,
-  provider text NOT NULL,
-  external_account_id text,
-  configuration jsonb NOT NULL DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE teams (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  parent_team_id uuid REFERENCES teams(id) ON DELETE SET NULL,
-  key text NOT NULL,
-  name text NOT NULL,
-  description text,
-  icon text,
-  settings jsonb NOT NULL DEFAULT '{}'::jsonb,
-  issue_sequence bigint NOT NULL DEFAULT 0 CHECK (issue_sequence >= 0),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  deleted_at timestamptz,
-  UNIQUE (workspace_id, key)
-);
-
-CREATE TABLE team_memberships (
-  team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  role workspace_role NOT NULL DEFAULT 'member',
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (team_id, actor_id)
-);
-
-CREATE TABLE workspace_memberships (
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  role workspace_role NOT NULL DEFAULT 'member',
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (workspace_id, actor_id)
-);
-
-CREATE TABLE guidance_documents (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  scope_type text NOT NULL CHECK (scope_type IN ('workspace', 'team', 'project', 'repository', 'work_item')),
-  scope_id uuid,
-  title text NOT NULL,
-  body_markdown text NOT NULL,
-  mode text NOT NULL DEFAULT 'append' CHECK (mode IN ('append', 'override')),
-  version integer NOT NULL DEFAULT 1 CHECK (version > 0),
-  content_hash text NOT NULL,
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  supersedes_id uuid REFERENCES guidance_documents(id)
-);
-
-CREATE TABLE workflow_states (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  category status_category NOT NULL,
-  color text,
-  description text,
-  position integer NOT NULL DEFAULT 0,
-  is_default boolean NOT NULL DEFAULT false,
-  is_archived boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (team_id, name)
-);
-
-CREATE TABLE projects (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  slug text NOT NULL,
-  summary text,
-  description_markdown text,
-  status_category status_category NOT NULL DEFAULT 'planned',
-  status_name text,
-  health project_health NOT NULL DEFAULT 'unknown',
-  lead_human_actor_id uuid REFERENCES actors(id),
-  lead_agent_actor_id uuid REFERENCES actors(id),
-  start_at date,
-  target_at date,
-  settings jsonb NOT NULL DEFAULT '{}'::jsonb,
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  deleted_at timestamptz,
-  UNIQUE (workspace_id, slug)
-);
-
-CREATE TABLE project_teams (
-  project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-  team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (project_id, team_id)
-);
-
-CREATE TABLE milestones (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  description_markdown text,
-  target_at date,
-  position integer NOT NULL DEFAULT 0,
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (project_id, name)
-);
-
-CREATE TABLE cycles (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  team_id uuid NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-  number integer NOT NULL,
-  name text,
-  starts_at date NOT NULL,
-  ends_at date NOT NULL,
-  status text NOT NULL DEFAULT 'upcoming' CHECK (status IN ('upcoming', 'active', 'completed', 'archived')),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  CHECK (ends_at >= starts_at),
-  UNIQUE (team_id, number)
-);
-
-CREATE TABLE work_items (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  team_id uuid NOT NULL REFERENCES teams(id),
-  sequence_number bigint NOT NULL CHECK (sequence_number > 0),
-  identifier text NOT NULL,
-  type work_item_type NOT NULL DEFAULT 'issue',
-  title text NOT NULL,
-  description_markdown text,
-  status_id uuid NOT NULL REFERENCES workflow_states(id),
-  priority work_priority NOT NULL DEFAULT 'none',
-  estimate numeric(8,2),
-  due_at timestamptz,
-  project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
-  milestone_id uuid REFERENCES milestones(id) ON DELETE SET NULL,
-  cycle_id uuid REFERENCES cycles(id) ON DELETE SET NULL,
-  parent_id uuid REFERENCES work_items(id) ON DELETE SET NULL,
-  responsible_human_actor_id uuid REFERENCES actors(id),
-  lead_agent_actor_id uuid REFERENCES actors(id),
-  acceptance_criteria jsonb NOT NULL DEFAULT '[]'::jsonb,
-  required_checks jsonb NOT NULL DEFAULT '[]'::jsonb,
-  source jsonb NOT NULL DEFAULT '{}'::jsonb,
-  context_version integer NOT NULL DEFAULT 1 CHECK (context_version > 0),
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  updated_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  completed_at timestamptz,
-  canceled_at timestamptz,
-  deleted_at timestamptz,
-  UNIQUE (workspace_id, identifier),
-  UNIQUE (team_id, sequence_number)
-);
-
-CREATE TABLE work_item_relations (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  source_work_item_id uuid NOT NULL REFERENCES work_items(id) ON DELETE CASCADE,
-  target_work_item_id uuid NOT NULL REFERENCES work_items(id) ON DELETE CASCADE,
-  kind relation_kind NOT NULL,
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  CHECK (source_work_item_id <> target_work_item_id),
-  UNIQUE (source_work_item_id, target_work_item_id, kind)
-);
-
-CREATE TABLE labels (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  team_id uuid REFERENCES teams(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  color text,
-  description text,
-  group_name text,
-  is_archived boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE NULLS NOT DISTINCT (workspace_id, team_id, name)
-);
-
-CREATE TABLE work_item_labels (
-  work_item_id uuid NOT NULL REFERENCES work_items(id) ON DELETE CASCADE,
-  label_id uuid NOT NULL REFERENCES labels(id) ON DELETE CASCADE,
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (work_item_id, label_id)
-);
-
-CREATE TABLE saved_views (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  owner_actor_id uuid NOT NULL REFERENCES actors(id),
-  name text NOT NULL,
-  entity_type text NOT NULL CHECK (entity_type IN ('work_item', 'project', 'session', 'initiative')),
-  scope text NOT NULL DEFAULT 'private' CHECK (scope IN ('private', 'team', 'workspace')),
-  scope_team_id uuid REFERENCES teams(id) ON DELETE CASCADE,
-  filters jsonb NOT NULL DEFAULT '{}'::jsonb,
-  grouping jsonb NOT NULL DEFAULT '{}'::jsonb,
-  ordering jsonb NOT NULL DEFAULT '{}'::jsonb,
-  visible_fields jsonb NOT NULL DEFAULT '[]'::jsonb,
-  layout text NOT NULL DEFAULT 'list' CHECK (layout IN ('list', 'board', 'timeline')),
-  is_favorite boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE channels (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  channel_type text NOT NULL CHECK (channel_type IN ('work_item', 'project', 'session')),
-  work_item_id uuid REFERENCES work_items(id) ON DELETE CASCADE,
-  project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
-  session_id uuid,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  CHECK (
-    (channel_type = 'work_item' AND work_item_id IS NOT NULL AND project_id IS NULL)
-    OR (channel_type = 'project' AND project_id IS NOT NULL AND work_item_id IS NULL)
-    OR (channel_type = 'session' AND session_id IS NOT NULL)
-  )
-);
-
-CREATE TABLE threads (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  channel_id uuid NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
-  title text,
-  status text NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'resolved')),
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  resolved_by_actor_id uuid REFERENCES actors(id),
-  resolved_at timestamptz
-);
-
-CREATE TABLE messages (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  channel_id uuid NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
-  thread_id uuid REFERENCES threads(id) ON DELETE CASCADE,
-  sender_actor_id uuid NOT NULL REFERENCES actors(id),
-  intent message_intent NOT NULL DEFAULT 'inform',
-  body_markdown text NOT NULL,
-  reply_to_message_id uuid REFERENCES messages(id) ON DELETE SET NULL,
-  structured_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-  references_json jsonb NOT NULL DEFAULT '[]'::jsonb,
-  requires_response boolean NOT NULL DEFAULT false,
-  response_status text NOT NULL DEFAULT 'none' CHECK (response_status IN ('none', 'open', 'resolved')),
-  due_at timestamptz,
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  deleted_at timestamptz
-);
-
-CREATE TABLE message_recipients (
-  message_id uuid NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  read_at timestamptz,
-  PRIMARY KEY (message_id, actor_id)
-);
-
-CREATE TABLE message_revisions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  message_id uuid NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
-  revision integer NOT NULL,
-  body_markdown text NOT NULL,
-  structured_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-  edited_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  edited_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (message_id, revision)
-);
-
-CREATE TABLE decisions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  channel_id uuid NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
-  question text NOT NULL,
-  options jsonb NOT NULL DEFAULT '[]'::jsonb,
-  decision text NOT NULL,
-  rationale_summary text,
-  decided_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  affected_resources jsonb NOT NULL DEFAULT '[]'::jsonb,
-  supersedes_id uuid REFERENCES decisions(id),
-  status text NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'superseded', 'reversed')),
-  decided_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE delegations (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  principal_human_actor_id uuid NOT NULL REFERENCES actors(id),
-  agent_actor_id uuid NOT NULL REFERENCES actors(id),
-  role delegation_role NOT NULL,
-  scope_type text NOT NULL CHECK (scope_type IN ('work_item', 'plan_step', 'project', 'automation')),
-  scope_id uuid NOT NULL,
-  permissions_snapshot jsonb NOT NULL DEFAULT '{}'::jsonb,
-  status delegation_status NOT NULL DEFAULT 'active',
-  reason text,
-  parent_delegation_id uuid REFERENCES delegations(id) ON DELETE SET NULL,
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  starts_at timestamptz NOT NULL DEFAULT now(),
-  ends_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  revoked_at timestamptz,
-  CHECK (principal_human_actor_id <> agent_actor_id)
-);
+CREATE TYPE agent_session_state AS ENUM ('queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale','completed','failed','canceled');
+CREATE TYPE plan_step_status AS ENUM ('pending','in_progress','blocked','completed','canceled');
+CREATE TYPE activity_visibility AS ENUM ('team','workspace','private');
+CREATE TYPE approval_status AS ENUM ('pending','approved','rejected','expired','consumed','canceled');
+CREATE TYPE approval_risk_level AS ENUM ('low','medium','high','critical');
 
 CREATE TABLE context_snapshots (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  work_item_id uuid REFERENCES work_items(id) ON DELETE SET NULL,
-  project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
-  version integer NOT NULL DEFAULT 1 CHECK (version > 0),
-  content_manifest jsonb NOT NULL,
-  rendered_context text,
-  source_hash text NOT NULL,
-  token_estimate integer CHECK (token_estimate IS NULL OR token_estimate >= 0),
-  truncation_summary text,
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now()
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  work_item_id uuid REFERENCES work_items(id) ON DELETE RESTRICT, manifest jsonb NOT NULL, sources jsonb NOT NULL DEFAULT '[]'::jsonb,
+  content_hash text NOT NULL, token_estimate integer NOT NULL DEFAULT 0 CHECK(token_estimate >= 0),
+  truncation jsonb NOT NULL DEFAULT '{}'::jsonb, created_by_actor_id uuid REFERENCES actors(id) ON DELETE RESTRICT, created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id), UNIQUE(workspace_id,content_hash), FOREIGN KEY(workspace_id,work_item_id) REFERENCES work_items(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,created_by_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT
 );
 
 CREATE TABLE agent_sessions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  team_id uuid REFERENCES teams(id) ON DELETE SET NULL,
-  agent_actor_id uuid NOT NULL REFERENCES actors(id),
-  principal_human_actor_id uuid NOT NULL REFERENCES actors(id),
-  delegation_id uuid NOT NULL REFERENCES delegations(id),
-  work_item_id uuid REFERENCES work_items(id) ON DELETE SET NULL,
-  project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
-  parent_session_id uuid REFERENCES agent_sessions(id) ON DELETE SET NULL,
-  state session_state NOT NULL DEFAULT 'queued',
-  state_reason text,
-  sequence bigint NOT NULL DEFAULT 0 CHECK (sequence >= 0),
-  context_snapshot_id uuid REFERENCES context_snapshots(id) ON DELETE SET NULL,
-  current_plan_version_id uuid,
-  external_urls jsonb NOT NULL DEFAULT '[]'::jsonb,
-  budget jsonb NOT NULL DEFAULT '{}'::jsonb,
-  usage jsonb NOT NULL DEFAULT '{}'::jsonb,
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  started_at timestamptz,
-  last_heartbeat_at timestamptz,
-  stop_requested_at timestamptz,
-  ended_at timestamptz,
-  error_code text,
-  error_summary text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, team_id uuid,
+  agent_id uuid NOT NULL, agent_actor_id uuid NOT NULL, delegation_id uuid NOT NULL, parent_session_id uuid,
+  retry_of_session_id uuid, retry_reason text, retry_count integer NOT NULL DEFAULT 0 CHECK(retry_count >= 0),
+  work_item_id uuid, project_id uuid, plan_step_id uuid, state agent_session_state NOT NULL DEFAULT 'queued', state_reason text,
+  sequence bigint NOT NULL DEFAULT 0 CHECK(sequence >= 0), revision integer NOT NULL DEFAULT 1 CHECK(revision > 0), current_plan_version_id uuid,
+  context_snapshot_id uuid, budget jsonb NOT NULL DEFAULT '{}'::jsonb, external_urls jsonb NOT NULL DEFAULT '[]'::jsonb,
+  acknowledged_at timestamptz, last_heartbeat_at timestamptz, stop_requested_at timestamptz, stop_acknowledged_at timestamptz,
+  result_summary text, result_evidence jsonb NOT NULL DEFAULT '[]'::jsonb, no_artifact_reason text, error_code text, error_summary text, ended_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id),
+  FOREIGN KEY(workspace_id,team_id) REFERENCES teams(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,agent_id) REFERENCES agent_definitions(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,agent_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,delegation_id) REFERENCES delegations(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(parent_session_id) REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,retry_of_session_id) REFERENCES agent_sessions(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,work_item_id) REFERENCES work_items(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,project_id) REFERENCES projects(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,context_snapshot_id) REFERENCES context_snapshots(workspace_id,id) ON DELETE RESTRICT,
+  CHECK(retry_of_session_id IS NULL OR retry_of_session_id <> id),
+  CHECK(num_nonnulls(work_item_id,project_id,plan_step_id) = 1),
+  CHECK((state IN ('completed','failed','canceled')) = (ended_at IS NOT NULL))
 );
-
-ALTER TABLE channels
-  ADD CONSTRAINT channels_session_fk
-  FOREIGN KEY (session_id) REFERENCES agent_sessions(id) ON DELETE CASCADE;
+CREATE INDEX agent_sessions_active_agent ON agent_sessions(agent_id,created_at DESC) WHERE state NOT IN ('completed','failed','canceled');
+CREATE INDEX agent_sessions_work_item_active ON agent_sessions(work_item_id,created_at DESC) WHERE state NOT IN ('completed','failed','canceled');
+CREATE INDEX agent_sessions_parent ON agent_sessions(parent_session_id) WHERE parent_session_id IS NOT NULL;
+CREATE INDEX agent_sessions_retry_of ON agent_sessions(workspace_id,retry_of_session_id) WHERE retry_of_session_id IS NOT NULL;
+ALTER TABLE agent_sessions ADD CONSTRAINT agent_sessions_id_agent_id_key UNIQUE(id,agent_id);
 
 CREATE TABLE agent_plan_versions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE CASCADE,
-  revision integer NOT NULL CHECK (revision > 0),
-  authored_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  change_summary text,
-  is_current boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (session_id, revision)
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  revision integer NOT NULL CHECK(revision > 0), parent_version_id uuid REFERENCES agent_plan_versions(id) ON DELETE RESTRICT,
+  change_summary text NOT NULL, author_actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE RESTRICT, created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(session_id,revision)
 );
-
-ALTER TABLE agent_sessions
-  ADD CONSTRAINT agent_sessions_current_plan_fk
-  FOREIGN KEY (current_plan_version_id) REFERENCES agent_plan_versions(id) ON DELETE SET NULL;
-
+ALTER TABLE agent_sessions ADD CONSTRAINT agent_sessions_current_plan_fk FOREIGN KEY(current_plan_version_id) REFERENCES agent_plan_versions(id) ON DELETE RESTRICT;
 CREATE TABLE agent_plan_steps (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  plan_version_id uuid NOT NULL REFERENCES agent_plan_versions(id) ON DELETE CASCADE,
-  stable_step_id uuid NOT NULL,
-  title text NOT NULL,
-  description_markdown text,
-  status plan_step_status NOT NULL DEFAULT 'pending',
-  owner_actor_id uuid REFERENCES actors(id),
-  ordinal integer NOT NULL DEFAULT 0,
-  acceptance_criteria jsonb NOT NULL DEFAULT '[]'::jsonb,
-  expected_artifacts artifact_type[] NOT NULL DEFAULT '{}'::artifact_type[],
-  required_capabilities text[] NOT NULL DEFAULT '{}'::text[],
-  estimate jsonb NOT NULL DEFAULT '{}'::jsonb,
-  risk text,
-  blocked_reason text,
-  started_at timestamptz,
-  completed_at timestamptz,
-  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
-  UNIQUE (plan_version_id, stable_step_id)
+  plan_version_id uuid NOT NULL REFERENCES agent_plan_versions(id) ON DELETE RESTRICT, id uuid NOT NULL, title text NOT NULL, description text,
+  status plan_step_status NOT NULL DEFAULT 'pending', ordinal integer NOT NULL CHECK(ordinal >= 0), owner_actor_id uuid REFERENCES actors(id) ON DELETE SET NULL,
+  acceptance_criteria jsonb NOT NULL DEFAULT '[]'::jsonb, expected_artifacts text[] NOT NULL DEFAULT '{}', cancellation_reason text,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY(plan_version_id,id), UNIQUE(plan_version_id,ordinal)
 );
-
-CREATE TABLE plan_step_dependencies (
-  plan_version_id uuid NOT NULL REFERENCES agent_plan_versions(id) ON DELETE CASCADE,
-  step_stable_id uuid NOT NULL,
-  depends_on_step_stable_id uuid NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (plan_version_id, step_stable_id, depends_on_step_stable_id),
-  CHECK (step_stable_id <> depends_on_step_stable_id)
-);
-
-CREATE TABLE tool_invocations (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id),
-  tool_name text NOT NULL,
-  input_sanitized jsonb NOT NULL DEFAULT '{}'::jsonb,
-  status text NOT NULL CHECK (status IN ('started', 'succeeded', 'failed', 'canceled')),
-  result_summary text,
-  external_trace_url text,
-  approval_id uuid,
-  usage jsonb NOT NULL DEFAULT '{}'::jsonb,
-  retry_count integer NOT NULL DEFAULT 0 CHECK (retry_count >= 0),
-  started_at timestamptz NOT NULL DEFAULT now(),
-  ended_at timestamptz,
-  error_code text,
-  error_summary text
+CREATE TABLE agent_plan_step_dependencies (
+  plan_version_id uuid NOT NULL, step_id uuid NOT NULL, depends_on_step_id uuid NOT NULL,
+  PRIMARY KEY(plan_version_id,step_id,depends_on_step_id), CHECK(step_id <> depends_on_step_id),
+  FOREIGN KEY(plan_version_id,step_id) REFERENCES agent_plan_steps(plan_version_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(plan_version_id,depends_on_step_id) REFERENCES agent_plan_steps(plan_version_id,id) ON DELETE RESTRICT
 );
 
 CREATE TABLE agent_activities (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id),
-  sequence bigint NOT NULL CHECK (sequence > 0),
-  kind activity_kind NOT NULL,
-  summary text NOT NULL,
-  details_markdown text,
-  tool_invocation_id uuid REFERENCES tool_invocations(id) ON DELETE SET NULL,
-  references_json jsonb NOT NULL DEFAULT '[]'::jsonb,
-  payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-  visibility text NOT NULL DEFAULT 'team' CHECK (visibility IN ('private', 'team', 'workspace')),
-  is_ephemeral boolean NOT NULL DEFAULT false,
-  correlation_id text,
-  occurred_at timestamptz NOT NULL DEFAULT now(),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (session_id, sequence)
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE RESTRICT, sequence bigint NOT NULL CHECK(sequence > 0), kind text NOT NULL, summary text NOT NULL,
+  details_markdown text, tool_invocation jsonb, artifact_ids uuid[] NOT NULL DEFAULT '{}', references_json jsonb NOT NULL DEFAULT '[]'::jsonb,
+  visibility activity_visibility NOT NULL DEFAULT 'team', ephemeral boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(session_id,sequence)
+);
+CREATE INDEX agent_activities_session_sequence ON agent_activities(session_id,sequence);
+
+CREATE TABLE agent_session_prompts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  author_actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE RESTRICT, body_markdown text NOT NULL, plan_revision integer, work_item_revision integer,
+  created_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE artifacts (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  session_id uuid REFERENCES agent_sessions(id) ON DELETE SET NULL,
-  work_item_id uuid REFERENCES work_items(id) ON DELETE SET NULL,
-  project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
-  produced_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  type artifact_type NOT NULL,
-  title text NOT NULL,
-  uri text,
-  storage_key text,
-  mime_type text,
-  checksum text,
-  size_bytes bigint CHECK (size_bytes IS NULL OR size_bytes >= 0),
-  repository jsonb NOT NULL DEFAULT '{}'::jsonb,
-  source_tool text,
-  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
-  review_status artifact_review_status NOT NULL DEFAULT 'unreviewed',
-  created_at timestamptz NOT NULL DEFAULT now(),
-  deleted_at timestamptz
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  work_item_id uuid, producer_actor_id uuid NOT NULL, type text NOT NULL, title text NOT NULL, uri text, storage_key text, mime_type text, size_bytes bigint CHECK(size_bytes >= 0),
+  checksum text, source_tool text, repository jsonb, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id), FOREIGN KEY(workspace_id,work_item_id) REFERENCES work_items(workspace_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(workspace_id,producer_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  CHECK(uri IS NOT NULL OR storage_key IS NOT NULL OR metadata <> '{}'::jsonb)
 );
+CREATE INDEX artifacts_session_created ON artifacts(session_id,created_at DESC);
 
-CREATE TABLE activity_artifacts (
-  activity_id uuid NOT NULL REFERENCES agent_activities(id) ON DELETE CASCADE,
-  artifact_id uuid NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
-  PRIMARY KEY (activity_id, artifact_id)
+CREATE TABLE approvals (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE, session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE RESTRICT,
+  requested_by_actor_id uuid NOT NULL, approval_type text NOT NULL, action_name text NOT NULL, action_payload_sanitized jsonb NOT NULL, action_payload_hash text NOT NULL,
+  risk_level approval_risk_level NOT NULL, rationale_summary text NOT NULL, required_approvals integer NOT NULL DEFAULT 1 CHECK(required_approvals > 0),
+  status approval_status NOT NULL DEFAULT 'pending', expires_at timestamptz NOT NULL, consumed_at timestamptz, revision integer NOT NULL DEFAULT 1 CHECK(revision > 0), created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,id), FOREIGN KEY(workspace_id,requested_by_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  CHECK(expires_at > created_at), CHECK((status='consumed') = (consumed_at IS NOT NULL))
 );
-
-CREATE TABLE work_leases (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  resource_type text NOT NULL CHECK (resource_type IN ('work_item', 'plan_step', 'repository_path', 'artifact_review')),
-  resource_id text NOT NULL,
-  mode lease_mode NOT NULL DEFAULT 'exclusive',
-  holder_session_id uuid NOT NULL REFERENCES agent_sessions(id) ON DELETE CASCADE,
-  status lease_status NOT NULL DEFAULT 'active',
-  version integer NOT NULL DEFAULT 1 CHECK (version > 0),
-  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
-  acquired_at timestamptz NOT NULL DEFAULT now(),
-  heartbeat_at timestamptz NOT NULL DEFAULT now(),
-  expires_at timestamptz NOT NULL,
-  released_at timestamptz,
-  CHECK (expires_at > acquired_at)
-);
-
--- Enforce one active exclusive lease per resource. PostgreSQL partial indexes
--- cannot use enum comparisons ambiguously, so values are explicit.
-CREATE UNIQUE INDEX work_leases_one_active_exclusive
-  ON work_leases (workspace_id, resource_type, resource_id)
-  WHERE status = 'active' AND mode = 'exclusive';
-
-CREATE TABLE handoffs (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  source_session_id uuid NOT NULL REFERENCES agent_sessions(id),
-  source_actor_id uuid NOT NULL REFERENCES actors(id),
-  target_agent_actor_id uuid REFERENCES actors(id),
-  target_skill text,
-  scope_type text NOT NULL CHECK (scope_type IN ('work_item', 'plan_step', 'project')),
-  scope_id text NOT NULL,
-  status handoff_status NOT NULL DEFAULT 'draft',
-  summary text NOT NULL,
-  completed_work jsonb NOT NULL DEFAULT '[]'::jsonb,
-  remaining_work jsonb NOT NULL DEFAULT '[]'::jsonb,
-  context_snapshot_id uuid NOT NULL REFERENCES context_snapshots(id),
-  artifact_ids uuid[] NOT NULL DEFAULT '{}'::uuid[],
-  open_questions jsonb NOT NULL DEFAULT '[]'::jsonb,
-  risks jsonb NOT NULL DEFAULT '[]'::jsonb,
-  acceptance_criteria jsonb NOT NULL DEFAULT '[]'::jsonb,
-  requested_action text NOT NULL,
-  lease_transfer_policy text NOT NULL DEFAULT 'transfer' CHECK (lease_transfer_policy IN ('none', 'transfer', 'new')),
-  accepted_session_id uuid REFERENCES agent_sessions(id),
-  created_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  responded_at timestamptz,
-  completed_at timestamptz
-);
-
-CREATE TABLE approval_requests (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  session_id uuid REFERENCES agent_sessions(id) ON DELETE CASCADE,
-  requested_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  approval_type text NOT NULL,
-  action_name text NOT NULL,
-  action_payload_sanitized jsonb NOT NULL,
-  action_payload_hash text NOT NULL,
-  risk_level text NOT NULL CHECK (risk_level IN ('low', 'medium', 'high')),
-  rationale_summary text NOT NULL,
-  status approval_status NOT NULL DEFAULT 'pending',
-  required_approvals integer NOT NULL DEFAULT 1 CHECK (required_approvals > 0),
-  expires_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  decided_at timestamptz,
-  consumed_at timestamptz
-);
-
-ALTER TABLE tool_invocations
-  ADD CONSTRAINT tool_invocations_approval_fk
-  FOREIGN KEY (approval_id) REFERENCES approval_requests(id) ON DELETE SET NULL;
-
 CREATE TABLE approval_decisions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  approval_request_id uuid NOT NULL REFERENCES approval_requests(id) ON DELETE CASCADE,
-  decided_by_actor_id uuid NOT NULL REFERENCES actors(id),
-  decision text NOT NULL CHECK (decision IN ('approve', 'reject')),
-  comment text,
-  decided_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (approval_request_id, decided_by_actor_id)
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), approval_id uuid NOT NULL REFERENCES approvals(id) ON DELETE RESTRICT, actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE RESTRICT,
+  decision text NOT NULL CHECK(decision IN ('approved','rejected')), reason text NOT NULL, decided_at timestamptz NOT NULL DEFAULT now(), UNIQUE(approval_id,actor_id)
 );
+CREATE INDEX approvals_pending_expiry ON approvals(expires_at) WHERE status='pending';
 
-CREATE TABLE subscriptions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  resource_type text NOT NULL,
-  resource_id text NOT NULL,
-  events text[] NOT NULL DEFAULT '{}'::text[],
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (actor_id, resource_type, resource_id)
+CREATE FUNCTION prevent_stage1_fact_mutation() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'IMMUTABLE_STAGE1_FACT'; END; $$;
+CREATE TRIGGER context_snapshots_immutable BEFORE UPDATE OR DELETE ON context_snapshots FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER agent_plan_versions_immutable BEFORE UPDATE OR DELETE ON agent_plan_versions FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER agent_plan_steps_immutable BEFORE UPDATE OR DELETE ON agent_plan_steps FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER agent_plan_step_dependencies_immutable BEFORE UPDATE OR DELETE ON agent_plan_step_dependencies FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER agent_activities_immutable BEFORE UPDATE OR DELETE ON agent_activities FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER agent_session_prompts_immutable BEFORE UPDATE OR DELETE ON agent_session_prompts FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER artifacts_immutable BEFORE UPDATE OR DELETE ON artifacts FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+CREATE TRIGGER approval_decisions_immutable BEFORE UPDATE OR DELETE ON approval_decisions FOR EACH ROW EXECUTE FUNCTION prevent_stage1_fact_mutation();
+
+COMMIT;
+
+
+BEGIN;
+
+CREATE TYPE webhook_delivery_status AS ENUM ('pending','delivering','delivered','dead');
+CREATE TYPE inbox_item_kind AS ENUM ('waiting_input','approval','session_stale');
+CREATE TYPE inbox_item_status AS ENUM ('open','resolved');
+
+CREATE TABLE agent_session_tokens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), session_id uuid NOT NULL, agent_id uuid NOT NULL, installation_token_id uuid NOT NULL,
+  token_hash text NOT NULL UNIQUE, exchange_nonce_hash text NOT NULL UNIQUE, expires_at timestamptz NOT NULL,
+  exchanged_at timestamptz, revoked_at timestamptz, issued_by_actor_id uuid REFERENCES actors(id) ON DELETE SET NULL, created_at timestamptz NOT NULL DEFAULT now(),
+  CHECK(expires_at > created_at), CHECK(exchanged_at IS NULL OR exchanged_at >= created_at)
 );
+ALTER TABLE agent_session_tokens ADD CONSTRAINT agent_session_tokens_session_agent_fk FOREIGN KEY(session_id,agent_id) REFERENCES agent_sessions(id,agent_id) ON DELETE RESTRICT;
+ALTER TABLE agent_session_tokens ADD CONSTRAINT agent_session_tokens_installation_agent_fk FOREIGN KEY(installation_token_id,agent_id) REFERENCES agent_installation_tokens(id,agent_id) ON DELETE RESTRICT;
+CREATE UNIQUE INDEX agent_session_tokens_one_live_exchange ON agent_session_tokens(session_id) WHERE exchanged_at IS NULL AND revoked_at IS NULL;
+CREATE INDEX agent_session_tokens_expiry ON agent_session_tokens(expires_at) WHERE revoked_at IS NULL;
 
-CREATE TABLE notifications (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  recipient_actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  category text NOT NULL,
-  title text NOT NULL,
-  body text,
-  resource_type text,
-  resource_id text,
-  priority integer NOT NULL DEFAULT 0,
-  is_read boolean NOT NULL DEFAULT false,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  read_at timestamptz
+CREATE TABLE agent_webhook_deliveries (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), agent_id uuid NOT NULL REFERENCES agent_definitions(id) ON DELETE RESTRICT,
+  endpoint_id uuid NOT NULL, secret_version integer NOT NULL, event_id uuid REFERENCES domain_events(id) ON DELETE SET NULL,
+  delivery_id text NOT NULL, event_type text NOT NULL,
+  session_id uuid REFERENCES agent_sessions(id) ON DELETE SET NULL, payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+  status webhook_delivery_status NOT NULL DEFAULT 'pending', attempt_count integer NOT NULL DEFAULT 0 CHECK(attempt_count BETWEEN 0 AND 8),
+  available_at timestamptz NOT NULL DEFAULT now(), locked_at timestamptz, locked_by text, delivered_at timestamptz, last_error text, dead_lettered_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(agent_id,delivery_id), FOREIGN KEY(agent_id,endpoint_id) REFERENCES agent_webhook_endpoints(agent_id,id) ON DELETE RESTRICT,
+  FOREIGN KEY(endpoint_id,secret_version) REFERENCES agent_webhook_secrets(endpoint_id,version) ON DELETE RESTRICT,
+  CHECK((status='dead') = (dead_lettered_at IS NOT NULL))
 );
+CREATE INDEX agent_webhook_deliveries_claim ON agent_webhook_deliveries(available_at,created_at) WHERE status IN ('pending','delivering') AND attempt_count < 8;
 
-CREATE TABLE automation_rules (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  owner_actor_id uuid NOT NULL REFERENCES actors(id),
-  status automation_status NOT NULL DEFAULT 'active',
-  trigger_config jsonb NOT NULL,
-  condition_config jsonb NOT NULL DEFAULT '{}'::jsonb,
-  action_config jsonb NOT NULL,
-  budget jsonb NOT NULL DEFAULT '{}'::jsonb,
-  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+CREATE TABLE inbox_items (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  recipient_human_actor_id uuid NOT NULL, session_id uuid REFERENCES agent_sessions(id) ON DELETE CASCADE,
+  kind inbox_item_kind NOT NULL, source_type text NOT NULL, source_id uuid NOT NULL, status inbox_item_status NOT NULL DEFAULT 'open',
+  payload jsonb NOT NULL DEFAULT '{}'::jsonb, resolved_at timestamptz, resolved_by_actor_id uuid REFERENCES actors(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(workspace_id,recipient_human_actor_id,kind,source_type,source_id),
+  FOREIGN KEY(workspace_id,recipient_human_actor_id) REFERENCES actors(workspace_id,id) ON DELETE RESTRICT,
+  CHECK((status='resolved') = (resolved_at IS NOT NULL))
 );
+CREATE FUNCTION enforce_inbox_recipient_human() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM actors WHERE workspace_id=NEW.workspace_id AND id=NEW.recipient_human_actor_id AND kind='human') THEN RAISE EXCEPTION 'INBOX_RECIPIENT_REQUIRES_HUMAN_ACTOR'; END IF;
+  RETURN NEW;
+END; $$;
+CREATE TRIGGER inbox_items_require_human_recipient BEFORE INSERT OR UPDATE OF workspace_id,recipient_human_actor_id ON inbox_items FOR EACH ROW EXECUTE FUNCTION enforce_inbox_recipient_human();
+CREATE INDEX inbox_items_open_recipient ON inbox_items(recipient_human_actor_id,created_at DESC) WHERE status='open';
 
-CREATE TABLE automation_runs (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  automation_rule_id uuid NOT NULL REFERENCES automation_rules(id) ON DELETE CASCADE,
-  status automation_run_status NOT NULL DEFAULT 'queued',
-  trigger_event_id uuid,
-  session_id uuid REFERENCES agent_sessions(id) ON DELETE SET NULL,
-  attempt integer NOT NULL DEFAULT 1 CHECK (attempt > 0),
-  input_snapshot jsonb NOT NULL DEFAULT '{}'::jsonb,
-  result_summary text,
-  error_summary text,
-  queued_at timestamptz NOT NULL DEFAULT now(),
-  started_at timestamptz,
-  ended_at timestamptz
-);
-
-CREATE TABLE domain_events (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  event_type text NOT NULL,
-  event_version integer NOT NULL DEFAULT 1 CHECK (event_version > 0),
-  aggregate_type text NOT NULL,
-  aggregate_id text NOT NULL,
-  aggregate_revision bigint,
-  actor_id uuid NOT NULL REFERENCES actors(id),
-  subject_type text,
-  subject_id text,
-  session_id uuid REFERENCES agent_sessions(id) ON DELETE SET NULL,
-  sequence bigint,
-  correlation_id text,
-  causation_id uuid REFERENCES domain_events(id) ON DELETE SET NULL,
-  idempotency_key text,
-  visibility text NOT NULL DEFAULT 'team' CHECK (visibility IN ('private', 'team', 'workspace')),
-  payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-  occurred_at timestamptz NOT NULL DEFAULT now(),
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE UNIQUE INDEX domain_events_idempotency
-  ON domain_events (workspace_id, actor_id, idempotency_key)
-  WHERE idempotency_key IS NOT NULL;
-
-CREATE INDEX domain_events_aggregate_order
-  ON domain_events (workspace_id, aggregate_type, aggregate_id, occurred_at, id);
-
-CREATE UNIQUE INDEX domain_events_session_sequence
-  ON domain_events (session_id, sequence)
-  WHERE session_id IS NOT NULL AND sequence IS NOT NULL;
-
-ALTER TABLE automation_runs
-  ADD CONSTRAINT automation_runs_trigger_event_fk
-  FOREIGN KEY (trigger_event_id) REFERENCES domain_events(id) ON DELETE SET NULL;
-
-CREATE TABLE outbox_events (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  domain_event_id uuid NOT NULL REFERENCES domain_events(id) ON DELETE CASCADE,
-  topic text NOT NULL,
-  partition_key text NOT NULL,
-  destination jsonb NOT NULL DEFAULT '{}'::jsonb,
-  status outbox_status NOT NULL DEFAULT 'pending',
-  attempt_count integer NOT NULL DEFAULT 0 CHECK (attempt_count >= 0),
-  available_at timestamptz NOT NULL DEFAULT now(),
-  locked_at timestamptz,
-  delivered_at timestamptz,
-  last_error text,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE webhook_deliveries (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  outbox_event_id uuid NOT NULL REFERENCES outbox_events(id) ON DELETE CASCADE,
-  endpoint_url text NOT NULL,
-  delivery_id text NOT NULL UNIQUE,
-  request_headers_sanitized jsonb NOT NULL DEFAULT '{}'::jsonb,
-  response_status integer,
-  response_body_truncated text,
-  attempted_at timestamptz NOT NULL DEFAULT now(),
-  duration_ms integer CHECK (duration_ms IS NULL OR duration_ms >= 0)
-);
-
-CREATE TABLE api_idempotency_keys (
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  actor_id uuid NOT NULL REFERENCES actors(id) ON DELETE CASCADE,
-  idempotency_key text NOT NULL,
-  request_hash text NOT NULL,
-  response_status integer,
-  response_body jsonb,
-  resource_type text,
-  resource_id text,
-  expires_at timestamptz NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (workspace_id, actor_id, idempotency_key)
-);
-
-CREATE TABLE audit_logs (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  workspace_id uuid NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  actor_id uuid REFERENCES actors(id) ON DELETE SET NULL,
-  action text NOT NULL,
-  resource_type text,
-  resource_id text,
-  outcome text NOT NULL CHECK (outcome IN ('allowed', 'denied', 'error')),
-  reason text,
-  ip inet,
-  user_agent text,
-  correlation_id text,
-  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
-  occurred_at timestamptz NOT NULL DEFAULT now()
-);
-
--- Query indexes
-
-CREATE INDEX actors_workspace_kind ON actors (workspace_id, kind, is_active);
-CREATE INDEX teams_workspace_active ON teams (workspace_id) WHERE deleted_at IS NULL;
-CREATE INDEX workflow_states_team_position ON workflow_states (team_id, position) WHERE is_archived = false;
-CREATE INDEX projects_workspace_status ON projects (workspace_id, status_category) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_team_status ON work_items (team_id, status_id) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_project_status ON work_items (project_id, status_id) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_owner_active ON work_items (responsible_human_actor_id, status_id) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_agent_active ON work_items (lead_agent_actor_id, status_id) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_parent ON work_items (parent_id) WHERE parent_id IS NOT NULL;
-CREATE INDEX work_items_updated ON work_items (workspace_id, updated_at DESC) WHERE deleted_at IS NULL;
-CREATE INDEX work_items_title_trgm ON work_items USING gin (title gin_trgm_ops);
-CREATE INDEX messages_channel_created ON messages (channel_id, created_at) WHERE deleted_at IS NULL;
-CREATE INDEX notifications_recipient_unread ON notifications (recipient_actor_id, created_at DESC) WHERE is_read = false;
-CREATE INDEX delegations_agent_active ON delegations (agent_actor_id, status) WHERE status = 'active';
-CREATE INDEX agent_sessions_agent_state ON agent_sessions (agent_actor_id, state, updated_at DESC);
-CREATE INDEX agent_sessions_work_item ON agent_sessions (work_item_id, created_at DESC) WHERE work_item_id IS NOT NULL;
-CREATE INDEX agent_sessions_heartbeat ON agent_sessions (state, last_heartbeat_at)
-  WHERE state IN ('queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked', 'paused', 'stopping');
-CREATE INDEX agent_activities_session_time ON agent_activities (session_id, sequence);
-CREATE INDEX artifacts_work_item ON artifacts (work_item_id, created_at DESC) WHERE deleted_at IS NULL;
-CREATE INDEX approvals_pending ON approval_requests (workspace_id, created_at) WHERE status = 'pending';
-CREATE INDEX outbox_pending ON outbox_events (available_at, created_at) WHERE status IN ('pending', 'delivering');
-CREATE INDEX audit_workspace_time ON audit_logs (workspace_id, occurred_at DESC);
+ALTER TABLE domain_events ADD COLUMN session_id uuid;
+ALTER TABLE domain_events ADD COLUMN session_sequence bigint;
+ALTER TABLE domain_events ADD COLUMN causation_id uuid;
+ALTER TABLE domain_events ADD CONSTRAINT domain_events_session_fk FOREIGN KEY(session_id) REFERENCES agent_sessions(id) ON DELETE SET NULL;
+ALTER TABLE domain_events ADD CONSTRAINT domain_events_session_sequence_check CHECK(session_sequence IS NULL OR session_sequence >= 0);
+ALTER TABLE domain_events ADD CONSTRAINT domain_events_causation_fk FOREIGN KEY(causation_id) REFERENCES domain_events(id) ON DELETE SET NULL;
+CREATE INDEX domain_events_session_sequence ON domain_events(session_id,session_sequence,cursor) WHERE session_id IS NOT NULL;
+CREATE INDEX domain_events_causation ON domain_events(causation_id) WHERE causation_id IS NOT NULL;
 
 COMMIT;
