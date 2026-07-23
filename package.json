@@ -1,0 +1,22 @@
+{
+  "name": "workmesh",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:integration": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
+    "test:e2e": "turbo run test:e2e",
+    "db:migrate": "pnpm --filter @workmesh/db migrate",
+    "db:seed": "pnpm --filter @workmesh/db seed",
+    "db:create-admin": "pnpm --filter @workmesh/db create-admin",
+    "db:backup": "pnpm --filter @workmesh/db backup",
+    "db:restore": "pnpm --filter @workmesh/db restore",
+    "mcp:inspector": "pnpm --filter @workmesh/mcp inspector",
+    "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke"
+  },
+  "devDependencies": { "@playwright/test": "^1.55.0", "@types/node": "^22.15.2", "eslint": "^9.25.1", "prettier": "^3.5.3", "turbo": "^2.5.3", "typescript": "^5.8.3", "vitest": "^3.1.3" }
+}

@@ -1,56 +1,15 @@
-# Dependencies
 node_modules
-
-# Build output
+.turbo
+.next
 dist
-
-# IDE
-.idea
-.vscode
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-logs
-npm-debug.log*
-logs/*.log
-
-# Environment
+coverage
 .env
-.env.local
-.env.*.local
-
-# worktrees
-.worktrees
-
-# Python uv
-uv.lock
-scripts/.venv
-
-# Agents
-.slim/deepwork/
-.claude
-.omo
-
-
-# claude
-.claude/
-.rtk/filters.toml
-
-outputs/
-
-# BEGIN oh-my-opencode-slim clonedeps
-.slim/clonedeps/repos/
-# END oh-my-opencode-slim clonedeps
-
-# Local / Mavis runtime state (not for git)
-.local/
-.mavis/
-
-# Temporary files
+playwright-report
+test-results
 .tmp/
+*.tsbuildinfo
+
+# Local database backups (keep SCHEMA.sql and packages/db/migrations tracked).
+/backups/
+/workmesh-*.sql
+/acceptance-*-backup.sql
