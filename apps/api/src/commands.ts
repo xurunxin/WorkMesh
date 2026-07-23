@@ -426,6 +426,7 @@ export const commands = {
           )
         ).rows,
       );
+      await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'project',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [c.actor.workspaceId, item.id, input.teamId]);
       await event(
         tx,
         c,
@@ -607,6 +608,7 @@ export const commands = {
         "INSERT INTO channels(workspace_id,work_item_id) VALUES($1,$2)",
         [c.actor.workspaceId, item.id],
       );
+      await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'work_item',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [c.actor.workspaceId, item.id, input.teamId]);
       await event(
         tx,
         c,

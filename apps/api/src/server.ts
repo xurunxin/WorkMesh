@@ -35,6 +35,7 @@ import {
   type CommandContext,
 } from "./commands.js";
 import { registerAgentRoutes } from "./agent/routes.js";
+import { registerCollaborationRoutes } from "./collaboration/routes.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -199,6 +200,10 @@ export const buildApp = () => {
       const agent = (await db.query<{
         actor_id: string; workspace_id: string; display_name: string; session_id: string;
       }>("SELECT a.id AS actor_id,a.workspace_id,a.display_name,s.id AS session_id FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id JOIN actors a ON a.id=s.agent_actor_id JOIN agent_definitions d ON d.id=s.agent_id WHERE t.token_hash=$1 AND t.expires_at>now() AND t.exchanged_at IS NOT NULL AND t.revoked_at IS NULL AND a.is_active AND d.is_active", [tokenHash(bearer)])).rows[0];
+      if (!agent && (request.routeOptions.url === '/api/v1/handoffs/:id/reject' || request.routeOptions.url === '/api/v1/handoffs/:id/inspect')) {
+        const installation = (await db.query<{ actor_id:string;workspace_id:string;display_name:string }>("SELECT a.id AS actor_id,a.workspace_id,a.display_name FROM agent_installation_tokens t JOIN agent_definitions d ON d.id=t.agent_id JOIN actors a ON a.id=d.actor_id WHERE t.token_hash=$1 AND t.revoked_at IS NULL AND (t.expires_at IS NULL OR t.expires_at>now()) AND d.is_active AND a.is_active", [tokenHash(bearer)])).rows[0]
+        if (installation) { request.actor = { id: installation.actor_id, workspaceId: installation.workspace_id, displayName: installation.display_name, csrfToken: '', workspaceRole: 'member', kind: 'agent' }; return }
+      }
       if (!agent) throw new DomainError("UNAUTHENTICATED", "Agent session token is invalid or expired");
       request.actor = { id: agent.actor_id, workspaceId: agent.workspace_id, displayName: agent.display_name, csrfToken: "", workspaceRole: "member", kind: "agent", agentSessionId: agent.session_id };
       return;
@@ -279,7 +284,7 @@ export const buildApp = () => {
               : error.code.includes("CONFLICT") ||
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
-                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH"].includes(error.code)
+                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT"].includes(error.code)
                 ? 409
                 : 400;
       return reply
@@ -640,6 +645,7 @@ export const buildApp = () => {
     sse(request, reply),
   );
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
+  registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   return app;
 };
 

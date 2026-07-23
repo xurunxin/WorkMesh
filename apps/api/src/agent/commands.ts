@@ -44,9 +44,22 @@ const event = async (tx: PoolClient, meta: RequestMeta, type: string, aggregateT
   return inserted.rows[0]!.id;
 };
 
-async function queueWebhookDeliveries(tx: PoolClient, agentId: string, eventId: string, eventType: string, sessionId: string | undefined, payload: Record<string, unknown>): Promise<void> {
+export async function queueWebhookDeliveries(tx: PoolClient, agentId: string, eventId: string, eventType: string, sessionId: string | undefined, payload: Record<string, unknown>): Promise<void> {
   const targets = await tx.query<{ endpoint_id: string; version: number }>("SELECT e.id AS endpoint_id,s.version FROM agent_webhook_endpoints e JOIN agent_webhook_secrets s ON s.endpoint_id=e.id WHERE e.agent_id=$1 AND e.is_active AND s.status='active' AND (s.valid_until IS NULL OR s.valid_until>now())", [agentId]);
   for (const target of targets.rows) await tx.query("INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,$3,$4,$5,$6,$7,$8)", [agentId, target.endpoint_id, target.version, eventId, crypto.randomUUID(), eventType, sessionId ?? null, payload]);
+}
+
+/**
+ * Provision delivery for a newly-created session inside the caller's existing
+ * transaction.  The exchange nonce is deliberately only placed in the target
+ * agent's webhook delivery, never returned to the coordinating session.
+ */
+export async function provisionNewSessionDelivery(tx: PoolClient, meta: RequestMeta, input: { sessionId: string; agentId: string; delegationId: string; teamId: string; workItemId: string | null; initialPrompt: string }): Promise<void> {
+  const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) ORDER BY created_at DESC LIMIT 1 FOR UPDATE", [input.agentId])).rows);
+  const exchangeToken = opaqueToken();
+  await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)", [input.sessionId, input.agentId, installation.id, tokenHash(opaqueToken()), tokenHash(exchangeToken), meta.actor.id]);
+  const eventId = await event(tx, meta, "agent.session.created", "agent_session", input.sessionId, 1, { delegationId: input.delegationId, workItemId: input.workItemId }, input.teamId, input.sessionId, 0);
+  await queueWebhookDeliveries(tx, input.agentId, eventId, "agent.session.created", input.sessionId, { sessionId: input.sessionId, exchangeToken, initialPrompt: input.initialPrompt });
 }
 
 /** Same idempotency record as Stage 0, deliberately scoped to the authenticated actor. */
@@ -232,6 +245,7 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
       contextSnapshotId = created.rows[0]?.id ?? one((await tx.query<{ id: string }>("SELECT id FROM context_snapshots WHERE workspace_id=$1 AND content_hash=$2", [meta.actor.workspaceId,contentHash])).rows).id;
     }
     const session = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *", [meta.actor.workspaceId, delegation.team_id, delegation.agent_id, delegation.agent_actor_id, delegation.id, workItemId ?? null, input.projectId ?? null, input.planStepId ?? null, contextSnapshotId, input.budget])).rows);
+    await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, (session as { id: string }).id, delegation.team_id]);
     const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) ORDER BY created_at DESC LIMIT 1 FOR UPDATE", [delegation.agent_id])).rows);
     const exchangeNonce = opaqueToken();
     await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)", [(session as { id: string }).id, delegation.agent_id, installation.id, tokenHash(opaqueToken()), tokenHash(exchangeNonce), meta.actor.id]);
@@ -271,6 +285,7 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
     if (contextId) one((await tx.query("SELECT id FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3",[contextId,meta.actor.workspaceId,workItemId])).rows);
     if (!contextId) { const manifest={workItem:{id:workItemId,title:work.title,description:work.description,revision:work.revision}}; const hash=crypto.createHash("sha256").update(JSON.stringify(manifest)).digest("hex"); const created=await tx.query<{id:string}>("INSERT INTO context_snapshots(workspace_id,work_item_id,manifest,content_hash,created_by_actor_id) VALUES($1,$2,$3,$4,$5) ON CONFLICT(workspace_id,content_hash) DO NOTHING RETURNING id",[meta.actor.workspaceId,workItemId,manifest,hash,meta.actor.id]); contextId=created.rows[0]?.id??one((await tx.query<{id:string}>("SELECT id FROM context_snapshots WHERE workspace_id=$1 AND content_hash=$2",[meta.actor.workspaceId,hash])).rows).id; }
     const session=one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",[meta.actor.workspaceId,work.team_id,input.agentId,agent.actor_id,delegation.id,workItemId,contextId,input.budget])).rows) as Record<string,unknown>;
+    await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, session.id as string, work.team_id]);
     const install=one((await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) ORDER BY created_at DESC LIMIT 1 FOR UPDATE",[input.agentId])).rows);
     const exchange=opaqueToken(); await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)",[session.id,input.agentId,install.id,tokenHash(opaqueToken()),tokenHash(exchange),meta.actor.id]);
     await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)",[session.id,meta.actor.id,input.initialPrompt]);
@@ -321,6 +336,7 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     const activeCount=await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[source.agent_id]); if((activeCount.rows[0]?.count??0)>=Number(source.max_concurrency)) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
     const prompt = input.initialPrompt ?? `Retry: ${input.reason}`;
     const row = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget,retry_of_session_id,retry_reason,retry_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *", [source.workspace_id,source.team_id,source.agent_id,source.agent_actor_id,source.delegation_id,source.work_item_id,source.project_id,source.plan_step_id,input.reuseContext ? source.context_snapshot_id : null,source.budget,sourceId,input.reason,(source.retry_count as number)+1])).rows);
+    await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [source.workspace_id as string, (row as { id: string }).id, source.team_id as string]);
     const install = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) ORDER BY created_at DESC LIMIT 1 FOR UPDATE", [source.agent_id])).rows); const exchange = opaqueToken();
     await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes')", [(row as {id:string}).id,source.agent_id,install.id,tokenHash(opaqueToken()),tokenHash(exchange)]);
     await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)", [(row as {id:string}).id,meta.actor.id,prompt]);
@@ -375,6 +391,8 @@ export async function publishPlan(db: Pool, meta: RequestMeta, sessionId: string
   const result = await agentMutate(db, meta, async tx => {
     assertSafeText(input.changeSummary,"plan summary"); for(const step of input.steps){assertSafeText(step.title,"plan title");assertSafeText(step.description,"plan description");}
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "plan:write", operation: "plan", idempotencyKey: meta.idempotencyKey, expectedRevision });
+    const delegation = one((await tx.query<{ role: string }>("SELECT role FROM delegations WHERE id=$1", [session.delegation_id])).rows);
+    if (delegation.role === "reviewer") throw new DomainError("FORBIDDEN", "Reviewer sessions cannot publish implementation plans");
     if (session.state === "awaiting_approval") {
       if (!input.approvalId || !input.approvalPayloadHash) throw new DomainError("APPROVAL_REQUIRED", "Publishing a plan while awaiting approval requires an approval id and payload hash");
       const consumed = await consumeApprovalInTx(tx,meta,sessionId,input.approvalId,input.approvalPayloadHash,"agent.plan.publish");
@@ -384,7 +402,7 @@ export async function publishPlan(db: Pool, meta: RequestMeta, sessionId: string
     validatePlanSteps(input.steps, previous);
     const planRevision = Number((await tx.query<{ revision: number }>("SELECT coalesce(max(revision),0)+1 AS revision FROM agent_plan_versions WHERE session_id=$1", [sessionId])).rows[0]?.revision ?? 1);
     const version = one((await tx.query<{ id: string }>("INSERT INTO agent_plan_versions(session_id,revision,parent_version_id,change_summary,author_actor_id) VALUES($1,$2,$3,$4,$5) RETURNING id", [sessionId, planRevision, session.current_plan_version_id ?? null, input.changeSummary, meta.actor.id])).rows);
-    for (const step of input.steps) await tx.query("INSERT INTO agent_plan_steps(plan_version_id,id,title,description,status,ordinal,owner_actor_id,acceptance_criteria,expected_artifacts,cancellation_reason) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", [version.id, step.id, step.title, step.description ?? null, step.status, step.ordinal, step.ownerActorId ?? null, step.acceptanceCriteria, step.expectedArtifacts, step.cancellationReason ?? null]);
+    for (const step of input.steps) await tx.query("INSERT INTO agent_plan_steps(plan_version_id,id,title,description,status,ordinal,owner_actor_id,acceptance_criteria,expected_artifacts,cancellation_reason) VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9,$10)", [version.id, step.id, step.title, step.description ?? null, step.status, step.ordinal, step.ownerActorId ?? null, JSON.stringify(step.acceptanceCriteria), step.expectedArtifacts, step.cancellationReason ?? null]);
     for (const step of input.steps) for (const dependency of step.dependsOn) await tx.query("INSERT INTO agent_plan_step_dependencies(plan_version_id,step_id,depends_on_step_id) VALUES($1,$2,$3)", [version.id, step.id, dependency]);
     const row = one((await tx.query("UPDATE agent_sessions SET current_plan_version_id=$2,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, version.id])).rows);
     await event(tx, meta, "agent.plan.published", "agent_plan_version", version.id, Number((row as { revision: number }).revision), { planRevision }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return { ...row as object, plan: { id: version.id, revision: planRevision, steps: input.steps } };
@@ -414,6 +432,10 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
     const session = one((await tx.query<{ state: AgentSessionState; revision: number; team_id: string }>("SELECT state,revision,team_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id); assertRevision(expectedRevision, session.revision);
     const next: AgentSessionState = input.signal === "stop" ? "stopping" : input.signal === "pause" ? "paused" : "executing"; assertAgentSessionTransition(session.state, next);
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2::agent_session_state,state_reason=$3,stop_requested_at=CASE WHEN $2::agent_session_state='stopping' THEN now() ELSE stop_requested_at END,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, next, input.reason])).rows);
+    if (input.signal === "stop") {
+      const leases = (await tx.query<{ id: string }>("UPDATE leases SET status='released',released_at=now(),released_by_actor_id=$2,audit_reason='stop requested',version=version+1,updated_at=now() WHERE session_id=$1 AND status='active' RETURNING id", [sessionId, meta.actor.id])).rows;
+      for (const lease of leases) await event(tx, meta, "lease.released", "lease", lease.id, 1, { reason: "stop requested", sessionId }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
+    }
     const eventType=`agent.session.signal.${input.signal}`;
     const eventId = await event(tx, meta, eventType, "agent_session", sessionId, Number((row as { revision: number }).revision), { signal: input.signal, reason: input.reason, state: next }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
     await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, eventType, sessionId, { sessionId, signal: input.signal, reason: input.reason, state:next }); return row;
@@ -424,8 +446,19 @@ export async function finishSession(db: Pool, meta: RequestMeta, sessionId: stri
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.summary,"session summary");
     assertSanitized(failed ? { evidence: (input as { evidence: string[] }).evidence } : { checks: (input as CompleteAgentSessionInput).checks, limitations: (input as CompleteAgentSessionInput).limitations, noArtifactReason: (input as CompleteAgentSessionInput).noArtifactReason });
-    const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: failed ? "fail" : "complete", idempotencyKey: meta.idempotencyKey, expectedRevision });
+    const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId);
+    const sessionDelegation = one((await tx.query<{ role: string }>("SELECT role FROM delegations WHERE id=$1", [session.delegation_id])).rows);
+    assertAgentWrite({ actor: meta.actor, session, sessionId, capability: sessionDelegation.role === "reviewer" ? "artifact:write" : "work:write", operation: failed ? "fail" : "complete", idempotencyKey: meta.idempotencyKey, expectedRevision });
     const completion = input as CompleteAgentSessionInput; if (!failed) assertCompletionEvidence(completion);
+    if (!failed) {
+      const blockers = (await tx.query<{ id: string }>("SELECT id FROM agent_sessions WHERE parent_session_id=$1 AND required_for_parent=true AND state<>'completed' ORDER BY created_at", [sessionId])).rows.map(row => row.id);
+      if (blockers.length) throw new DomainError("COMPLETION_PLAN_INCOMPLETE", "Required child sessions must complete before the parent session", { blockerSessionIds: blockers });
+      if (sessionDelegation.role === "reviewer") {
+        const reviewResult = await tx.query("SELECT 1 FROM room_messages WHERE workspace_id=$1 AND session_id=$2 AND author_actor_id=$3 AND intent='review_result' LIMIT 1", [meta.actor.workspaceId, sessionId, meta.actor.id]);
+        const codeReview = await tx.query("SELECT 1 FROM artifacts WHERE workspace_id=$1 AND session_id=$2 AND producer_actor_id=$3 AND type='code_review' LIMIT 1", [meta.actor.workspaceId, sessionId, meta.actor.id]);
+        if (!reviewResult.rowCount || !codeReview.rowCount) throw new DomainError("REVIEW_COMPLETION_EVIDENCE_REQUIRED", "Reviewer completion requires a review_result message and code_review artifact");
+      }
+    }
     const next: AgentSessionState = failed ? "failed" : "completed"; assertAgentSessionTransition(session.state, next);
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2,state_reason=$3,result_summary=$3,result_evidence=$4,no_artifact_reason=$5,error_code=$6,error_summary=$7,ended_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, next, input.summary, failed ? { evidence:(input as { evidence: string[] }).evidence,retryable:(input as { retryable:boolean }).retryable } : { artifactIds: completion.artifactIds, checks: completion.checks, limitations: completion.limitations }, failed ? null : completion.noArtifactReason ?? null, failed ? (input as { code: string }).code : null, failed ? input.summary : null])).rows);
     await event(tx, meta, failed ? "agent.session.failed" : "agent.session.completed", "agent_session", sessionId, Number((row as { revision: number }).revision), { summary: input.summary }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
@@ -449,6 +482,8 @@ export async function publishArtifact(db: Pool, meta: RequestMeta, input: { sess
     const session = await loadAgentSessionForMutation(tx, meta.actor, input.sessionId);
     if (input.workItemId && input.workItemId !== session.work_item_id) throw new DomainError("RESOURCE_SCOPE_DENIED", "Artifact work item must match the session work item");
     assertAgentWrite({ actor: meta.actor, session, sessionId: input.sessionId, capability: "artifact:write", operation: "artifact", idempotencyKey: meta.idempotencyKey, resourceId: input.workItemId ?? session.work_item_id });
+    const delegation = one((await tx.query<{ role: string }>("SELECT role FROM delegations WHERE id=$1", [session.delegation_id])).rows);
+    if (delegation.role === "reviewer" && input.type !== "code_review") throw new DomainError("REVIEW_ARTIFACT_REQUIRED", "Reviewer sessions may publish only a code_review artifact");
     const row = one((await tx.query("INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri,checksum,source_tool,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *", [meta.actor.workspaceId, input.sessionId, input.workItemId ?? session.work_item_id, meta.actor.id, input.type, input.title, input.uri ?? null, input.checksum ?? null, input.sourceTool ?? null, input.metadata])).rows);
     await event(tx, meta, "artifact.published", "artifact", String((row as { id: string }).id), session.revision, { type: input.type }, session.team_id, input.sessionId, undefined); return row;
   });
