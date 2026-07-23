@@ -1,1903 +1,3936 @@
 openapi: 3.1.0
 info:
   title: WorkMesh API
-  version: 0.1.0
-  summary: Human and coding-agent collaboration control plane
-  description: |
-    Initial REST contract for WorkMesh. All mutation endpoints require an
-    Idempotency-Key. Resources with revisions use ETag and If-Match.
+  version: 0.2.0
+  description: Human-first work management plus the Stage 1 single-agent execution control plane. Lease, handoff, Git and A2A are intentionally excluded.
 servers:
-  - url: /api/v1
+  - url: http://localhost:3001
 security:
-  - bearerAuth: []
-tags:
-  - name: Work Items
-  - name: Agents
-  - name: Sessions
-  - name: Plans
-  - name: Activities
-  - name: Collaboration
-  - name: Approvals
-  - name: Artifacts
-  - name: Events
-
+  - SessionCookie: []
 paths:
-  /work-items:
+  /health:
     get:
-      tags: [Work Items]
-      operationId: listWorkItems
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-        - name: teamId
-          in: query
-          schema: { type: string, format: uuid }
-        - name: projectId
-          in: query
-          schema: { type: string, format: uuid }
-        - name: responsibleHumanActorId
-          in: query
-          schema: { type: string, format: uuid }
-        - name: leadAgentActorId
-          in: query
-          schema: { type: string, format: uuid }
-        - name: sessionState
-          in: query
-          schema: { $ref: '#/components/schemas/SessionState' }
-        - name: q
-          in: query
-          schema: { type: string }
-      responses:
-        '200':
-          description: Work item page
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItemPage'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: health,
+        security: [],
+        responses: { "200": { $ref: "#/components/responses/Health" } },
+      }
+  /api/v1/install-status:
+    get:
+      {
+        operationId: getInstallStatus,
+        security: [],
+        responses:
+          { "200": { $ref: "#/components/responses/InstallationStatus" } },
+      }
+  /api/v1/auth/install:
     post:
-      tags: [Work Items]
-      operationId: createWorkItem
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateWorkItemRequest'
-      responses:
-        '201':
-          description: Work item created
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItem'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /work-items/{workItemId}:
-    parameters:
-      - $ref: '#/components/parameters/WorkItemId'
+      {
+        operationId: installWorkspace,
+        security: [],
+        parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
+        requestBody: { $ref: "#/components/requestBodies/InstallInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Session" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/auth/login:
+    post:
+      {
+        operationId: login,
+        security: [],
+        parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
+        requestBody: { $ref: "#/components/requestBodies/LoginInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Session" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/auth/logout:
+    post:
+      {
+        operationId: logout,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Ok" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/auth/me:
     get:
-      tags: [Work Items]
-      operationId: getWorkItem
-      responses:
-        '200':
-          description: Work item
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItem'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: getCurrentActor,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AuthMe" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/workspace:
+    get:
+      {
+        operationId: getWorkspace,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Workspace" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
     patch:
-      tags: [Work Items]
-      operationId: updateWorkItem
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-        - $ref: '#/components/parameters/IfMatch'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateWorkItemRequest'
-      responses:
-        '200':
-          description: Updated
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItem'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: updateWorkspace,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/WorkspacePatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/teams:
+    get:
+      {
+        operationId: listTeams,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Teams" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+    post:
+      {
+        operationId: createTeam,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/TeamInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/teams/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    patch:
+      {
+        operationId: updateTeam,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/TeamPatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
     delete:
-      tags: [Work Items]
-      operationId: deleteWorkItem
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      responses:
-        '204':
-          description: Soft deleted
-        default:
-          $ref: '#/components/responses/Error'
-
-  /work-items/{workItemId}/delegations:
-    parameters:
-      - $ref: '#/components/parameters/WorkItemId'
-    post:
-      tags: [Sessions]
-      operationId: delegateWorkItem
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateDelegationRequest'
-      responses:
-        '201':
-          description: Delegation and session created
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [delegationId, session]
-                properties:
-                  delegationId: { type: string, format: uuid }
-                  session: { $ref: '#/components/schemas/AgentSession' }
-        default:
-          $ref: '#/components/responses/Error'
-
-  /work-items/{workItemId}/relations:
-    parameters:
-      - $ref: '#/components/parameters/WorkItemId'
-    post:
-      tags: [Work Items]
-      operationId: addWorkItemRelation
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [targetWorkItemId, kind]
-              properties:
-                targetWorkItemId: { type: string, format: uuid }
-                kind:
-                  type: string
-                  enum: [blocks, related, duplicate_of]
-      responses:
-        '201':
-          description: Relation added
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WorkItemRelation'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /projects:
+      {
+        operationId: deleteTeam,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/teams/{id}/states:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
     get:
-      tags: [Work Items]
-      operationId: listProjects
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-        - name: statusCategory
-          in: query
-          schema: { $ref: '#/components/schemas/StatusCategory' }
-        - name: q
-          in: query
-          schema: { type: string }
-      responses:
-        '200':
-          description: Project page
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items]
-                properties:
-                  items:
-                    type: array
-                    items: { $ref: '#/components/schemas/Project' }
-                  nextCursor: { type: [string, 'null'] }
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: listWorkflowStates,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/WorkflowStates" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
     post:
-      tags: [Work Items]
-      operationId: createProject
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateProjectRequest'
-      responses:
-        '201':
-          description: Project created
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /projects/{projectId}:
-    parameters:
-      - name: projectId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
+      {
+        operationId: createWorkflowState,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/WorkflowStateInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/projects:
     get:
-      tags: [Work Items]
-      operationId: getProject
-      responses:
-        '200':
-          description: Project
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: listProjects,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Projects" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+    post:
+      {
+        operationId: createProject,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/ProjectInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/projects/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      {
+        operationId: getProject,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Project" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
     patch:
-      tags: [Work Items]
-      operationId: updateProject
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-        - $ref: '#/components/parameters/IfMatch'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              minProperties: 1
-              properties:
-                name: { type: string }
-                summary: { type: [string, 'null'] }
-                descriptionMarkdown: { type: [string, 'null'] }
-                statusCategory: { $ref: '#/components/schemas/StatusCategory' }
-                statusName: { type: [string, 'null'] }
-                health:
-                  type: string
-                  enum: [unknown, on_track, at_risk, off_track]
-                leadHumanActorId: { type: [string, 'null'], format: uuid }
-                leadAgentActorId: { type: [string, 'null'], format: uuid }
-                startAt: { type: [string, 'null'], format: date }
-                targetAt: { type: [string, 'null'], format: date }
-      responses:
-        '200':
-          description: Updated
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agents/register:
-    post:
-      tags: [Agents]
-      operationId: registerAgent
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AgentManifest'
-      responses:
-        '201':
-          description: Agent registered
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [agentActorId, status]
-                properties:
-                  agentActorId: { type: string, format: uuid }
-                  status:
-                    type: string
-                    enum: [active, pending_approval]
-                  challenge:
-                    type: string
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agents/{agentActorId}:
-    parameters:
-      - name: agentActorId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
+      {
+        operationId: updateProject,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/ProjectPatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+    delete:
+      {
+        operationId: deleteProject,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/actors/humans:
     get:
-      tags: [Agents]
-      operationId: getAgent
-      responses:
-        '200':
-          description: Agent definition
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentManifest'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: listHumanActors,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/HumanActors" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/work-items:
+    get:
+      {
+        operationId: listWorkItems,
+        parameters:
+          [
+            { $ref: "#/components/parameters/TeamIdQuery" },
+            { $ref: "#/components/parameters/StatusIdQuery" },
+            { $ref: "#/components/parameters/ProjectIdQuery" },
+            { $ref: "#/components/parameters/PriorityQuery" },
+            { $ref: "#/components/parameters/StatusCategoryQuery" },
+            { $ref: "#/components/parameters/ResponsibleHumanActorIdQuery" },
+            { $ref: "#/components/parameters/OwnerIdQuery" },
+            { $ref: "#/components/parameters/MineQuery" },
+            { $ref: "#/components/parameters/LabelQuery" },
+            { $ref: "#/components/parameters/SearchQuery" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/WorkItems" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+    post:
+      {
+        operationId: createWorkItem,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/WorkItemInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/work-items/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      {
+        operationId: getWorkItem,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/WorkItem" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
     patch:
-      tags: [Agents]
-      operationId: updateAgent
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: true
-      responses:
-        '200':
-          description: Updated
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions:
-    post:
-      tags: [Sessions]
-      operationId: createAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSessionRequest'
-      responses:
-        '201':
-          description: Session created
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
+      {
+        operationId: updateWorkItem,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/WorkItemPatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+    delete:
+      {
+        operationId: deleteWorkItem,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/work-items/{id}/comments:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
     get:
-      tags: [Sessions]
-      operationId: getAgentSession
-      responses:
-        '200':
-          description: Session
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/context:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
-    get:
-      tags: [Sessions]
-      operationId: getAgentSessionContext
-      responses:
-        '200':
-          description: Immutable context manifest for the session
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContextSnapshot'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/ack:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
+      {
+        operationId: listWorkItemComments,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Comments" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
     post:
-      tags: [Sessions]
-      operationId: acknowledgeAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                externalUrls:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/ExternalUrl'
-                summary:
-                  type: string
-      responses:
-        '200':
-          description: Acknowledged
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/heartbeat:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
-    post:
-      tags: [Sessions]
-      operationId: heartbeatAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                currentStepId: { type: string, format: uuid }
-                usage:
-                  $ref: '#/components/schemas/Usage'
-      responses:
-        '204':
-          description: Heartbeat accepted
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/activities:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
+      {
+        operationId: createComment,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/CommentInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/comments/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    patch:
+      {
+        operationId: updateComment,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/CommentPatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/views:
     get:
-      tags: [Activities]
-      operationId: listAgentActivities
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-      responses:
-        '200':
-          description: Activity page
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items]
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AgentActivity'
-                  nextCursor:
-                    type: [string, 'null']
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: listSavedViews,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/SavedViews" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
     post:
-      tags: [Activities]
-      operationId: appendAgentActivity
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateActivityRequest'
-      responses:
-        '201':
-          description: Activity appended
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentActivity'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/plan:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
+      {
+        operationId: createSavedView,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/SavedViewInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/events:
     get:
-      tags: [Plans]
-      operationId: getCurrentPlan
-      responses:
-        '200':
-          description: Current plan
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentPlan'
-        default:
-          $ref: '#/components/responses/Error'
+      {
+        operationId: listEvents,
+        parameters: [{ $ref: "#/components/parameters/CursorQuery" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Events" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/events/stream:
+    get:
+      {
+        operationId: streamEvents,
+        parameters:
+          [
+            { $ref: "#/components/parameters/CursorQuery" },
+            { $ref: "#/components/parameters/LastEventId" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/EventStream" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/agents:
+    get:
+      {
+        operationId: listAgents,
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Agents" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+          },
+      }
+  /api/v1/agents/register:
+    post:
+      {
+        operationId: registerAgent,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/AgentRegistrationInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/Agent" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agents/{id}:
+    get:
+      {
+        operationId: getAgent,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Agent" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+    patch:
+      {
+        operationId: updateAgent,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/AgentPatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Agent" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agents/{id}/team-access/{teamId}:
     put:
-      tags: [Plans]
-      operationId: publishPlanVersion
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-        - $ref: '#/components/parameters/IfMatch'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PublishPlanRequest'
-      responses:
-        '201':
-          description: New plan version
-          headers:
-            ETag:
-              schema: { type: string }
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentPlan'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/signals:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
-    post:
-      tags: [Sessions]
-      operationId: signalAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [signal]
-              properties:
-                signal:
-                  type: string
-                  enum: [stop, pause, resume, retry, request_status, revoke_lease, lower_budget]
-                reason:
-                  type: string
-                payload:
-                  type: object
-                  additionalProperties: true
-      responses:
-        '202':
-          description: Signal accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/complete:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
-    post:
-      tags: [Sessions]
-      operationId: completeAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [summary]
-              properties:
-                summary: { type: string }
-                artifactIds:
-                  type: array
-                  items: { type: string, format: uuid }
-                checks:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/CheckResult'
-                limitations:
-                  type: array
-                  items: { type: string }
-      responses:
-        '200':
-          description: Completed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /agent-sessions/{sessionId}/fail:
-    parameters:
-      - $ref: '#/components/parameters/SessionId'
-    post:
-      tags: [Sessions]
-      operationId: failAgentSession
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [code, summary]
-              properties:
-                code: { type: string }
-                summary: { type: string }
-                retryable: { type: boolean, default: false }
-                artifactIds:
-                  type: array
-                  items: { type: string, format: uuid }
-      responses:
-        '200':
-          description: Failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /messages:
-    post:
-      tags: [Collaboration]
-      operationId: sendTypedMessage
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateMessageRequest'
-      responses:
-        '201':
-          description: Message sent
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TypedMessage'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /leases:
-    post:
-      tags: [Collaboration]
-      operationId: claimResource
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClaimLeaseRequest'
-      responses:
-        '201':
-          description: Lease acquired
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lease'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /leases/{leaseId}/renew:
-    parameters:
-      - name: leaseId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
-    post:
-      tags: [Collaboration]
-      operationId: renewLease
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/IfMatch'
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ttlSeconds:
-                  type: integer
-                  minimum: 10
-                  maximum: 3600
-      responses:
-        '200':
-          description: Renewed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lease'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /leases/{leaseId}:
-    parameters:
-      - name: leaseId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
+      {
+        operationId: approveAgentTeamAccess,
+        description: Workspace admin grants a requested capability subset for one team.,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/TeamId" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/AgentTeamAccessInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentTeamAccess" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
     delete:
-      tags: [Collaboration]
-      operationId: releaseLease
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      responses:
-        '204':
-          description: Released
-        default:
-          $ref: '#/components/responses/Error'
-
-  /handoffs:
+      {
+        operationId: revokeAgentTeamAccess,
+        description: Workspace admin immediately revokes an agent's access to one team.,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/TeamId" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentTeamAccess" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/work-items/{id}/delegations:
     post:
-      tags: [Collaboration]
-      operationId: createHandoff
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateHandoffRequest'
-      responses:
-        '201':
-          description: Handoff requested
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Handoff'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /handoffs/{handoffId}/accept:
-    parameters:
-      - name: handoffId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
+      {
+        operationId: createDelegation,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/DelegationInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/Delegation" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/work-items/{id}/agent-session:
     post:
-      tags: [Collaboration]
-      operationId: acceptHandoff
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                agentActorId: { type: string, format: uuid }
-                note: { type: string }
-      responses:
-        '201':
-          description: Handoff accepted atomically
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [handoff, session]
-                properties:
-                  handoff: { $ref: '#/components/schemas/Handoff' }
-                  session: { $ref: '#/components/schemas/AgentSession' }
-                  lease: { $ref: '#/components/schemas/Lease' }
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /approvals:
-    post:
-      tags: [Approvals]
-      operationId: requestApproval
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateApprovalRequest'
-      responses:
-        '201':
-          description: Approval requested
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Approval'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /approvals/{approvalId}/decide:
-    parameters:
-      - name: approvalId
-        in: path
-        required: true
-        schema: { type: string, format: uuid }
-    post:
-      tags: [Approvals]
-      operationId: decideApproval
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [decision]
-              properties:
-                decision:
-                  type: string
-                  enum: [approve, reject]
-                comment:
-                  type: string
-      responses:
-        '200':
-          description: Decision recorded
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Approval'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /artifacts:
-    post:
-      tags: [Artifacts]
-      operationId: publishArtifact
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-        - $ref: '#/components/parameters/CorrelationId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateArtifactRequest'
-      responses:
-        '201':
-          description: Artifact published
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artifact'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /events:
+      {
+        operationId: delegateAndStartAgentSession,
+        description: Atomically create an executor delegation and its initial queued session for this work item.,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          {
+            $ref: "#/components/requestBodies/DelegateAndStartAgentSessionInput",
+          },
+        responses:
+          {
+            "201":
+              { $ref: "#/components/responses/DelegateAndStartAgentSession" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/delegations/{id}:
     get:
-      tags: [Events]
-      operationId: listEvents
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-        - name: sessionId
-          in: query
-          schema: { type: string, format: uuid }
-        - name: aggregateType
-          in: query
-          schema: { type: string }
-        - name: aggregateId
-          in: query
-          schema: { type: string }
-      responses:
-        '200':
-          description: Event page
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EventPage'
-        default:
-          $ref: '#/components/responses/Error'
-
-  /events/stream:
+      {
+        operationId: getDelegation,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Delegation" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+  /api/v1/delegations/{id}/revoke:
+    post:
+      {
+        operationId: revokeDelegation,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/ReasonInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Delegation" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions:
     get:
-      tags: [Events]
-      operationId: streamEvents
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - name: channel
-          in: query
-          schema:
-            type: string
-            examples: [workspace, team:uuid, session:uuid]
-      responses:
-        '200':
-          description: |
-            Server-Sent Events. The `id` field is a durable event cursor.
-            Clients reconnect with Last-Event-ID or cursor.
-          content:
-            text/event-stream:
-              schema:
-                type: string
-        default:
-          $ref: '#/components/responses/Error'
-
+      {
+        operationId: listAgentSessions,
+        parameters:
+          [
+            { name: teamId, in: query, schema: { type: string, format: uuid } },
+            {
+              name: workItemId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+            {
+              name: agentId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+            {
+              name: principalHumanActorId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+            {
+              name: state,
+              in: query,
+              schema: { $ref: "#/components/schemas/AgentSessionState" },
+            },
+          ],
+        responses: { "200": { $ref: "#/components/responses/AgentSessions" } },
+      }
+    post:
+      {
+        operationId: createAgentSession,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/CreateAgentSessionInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/AgentSession" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}:
+    get:
+      {
+        operationId: getAgentSession,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/token/exchange:
+    post:
+      {
+        operationId: exchangeAgentSessionToken,
+        security: [],
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/ExchangeAgentSessionTokenInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSessionToken" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/token/refresh:
+    post:
+      {
+        operationId: refreshAgentSessionToken,
+        description: Issue a new short-lived session token after validating the installation credential and current session authority.,
+        security: [{ AgentInstallationToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/RefreshAgentSessionTokenInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSessionToken" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/ack:
+    post:
+      {
+        operationId: acknowledgeAgentSession,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/AcknowledgeAgentSessionInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/heartbeat:
+    post:
+      {
+        operationId: heartbeatAgentSession,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/HeartbeatInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/prompt:
+    post:
+      {
+        operationId: promptAgentSession,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/PromptAgentSessionInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/activities:
+    get:
+      {
+        operationId: listAgentActivities,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          { "200": { $ref: "#/components/responses/AgentActivities" } },
+      }
+    post:
+      {
+        operationId: appendAgentActivity,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/AppendActivityInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/AgentActivity" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/plan:
+    get:
+      {
+        operationId: getAgentPlan,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/PlanVersion" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+    put:
+      {
+        operationId: publishAgentPlan,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/PublishPlanInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/PlanVersion" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/plans:
+    get:
+      {
+        operationId: listAgentPlanVersions,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/PlanVersions" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/context:
+    get:
+      {
+        operationId: getAgentSessionContext,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/SessionContext" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/signals:
+    post:
+      {
+        operationId: signalAgentSession,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/SignalAgentSessionInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/stop-ack:
+    post:
+      {
+        operationId: acknowledgeAgentSessionStop,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/StopAcknowledgementInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/complete:
+    post:
+      {
+        operationId: completeAgentSession,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/CompleteAgentSessionInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/fail:
+    post:
+      {
+        operationId: failAgentSession,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/FailAgentSessionInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/AgentSession" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/agent-sessions/{id}/retry:
+    post:
+      {
+        operationId: retryAgentSession,
+        description: Human control-plane command that creates a new queued session linked by retry_of_session_id; the source session remains immutable.,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/RetryAgentSessionInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/AgentSession" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/artifacts:
+    get:
+      {
+        operationId: listArtifacts,
+        parameters:
+          [
+            {
+              name: sessionId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+            {
+              name: workItemId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+          ],
+        responses: { "200": { $ref: "#/components/responses/Artifacts" } },
+      }
+    post:
+      {
+        operationId: publishArtifact,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/ArtifactInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/Artifact" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/approvals:
+    get:
+      {
+        operationId: listApprovals,
+        parameters:
+          [
+            {
+              name: status,
+              in: query,
+              schema: { $ref: "#/components/schemas/ApprovalStatus" },
+            },
+            {
+              name: sessionId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+            {
+              name: recipientActorId,
+              in: query,
+              schema: { type: string, format: uuid },
+            },
+          ],
+        responses: { "200": { $ref: "#/components/responses/Approvals" } },
+      }
+    post:
+      {
+        operationId: requestApproval,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/RequestApprovalInput" },
+        responses:
+          {
+            "201": { $ref: "#/components/responses/Approval" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/approvals/{id}:
+    get:
+      {
+        operationId: getApproval,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Approval" },
+            "404": { $ref: "#/components/responses/NotFound" },
+          },
+      }
+  /api/v1/approvals/{id}/decide:
+    post:
+      {
+        operationId: decideApproval,
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/DecideApprovalInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/ApprovalDecision" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/approvals/{id}/consume:
+    post:
+      {
+        operationId: consumeApproval,
+        description: Atomically consume an approved quorum for the exact sanitized action payload hash.,
+        security: [{ AgentSessionToken: [] }],
+        parameters:
+          [
+            { $ref: "#/components/parameters/Id" },
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/IfMatch" },
+            { $ref: "#/components/parameters/CorrelationId" },
+          ],
+        requestBody:
+          { $ref: "#/components/requestBodies/ConsumeApprovalInput" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/ApprovalConsumption" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
+  /api/v1/workspaces/{id}/guidance:
+    get:
+      {
+        operationId: getWorkspaceGuidance,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses: { "200": { $ref: "#/components/responses/Guidance" } },
+      }
+  /api/v1/teams/{id}/guidance:
+    get:
+      {
+        operationId: getTeamGuidance,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses: { "200": { $ref: "#/components/responses/Guidance" } },
+      }
+  /api/v1/projects/{id}/guidance:
+    get:
+      {
+        operationId: getProjectGuidance,
+        parameters: [{ $ref: "#/components/parameters/Id" }],
+        responses: { "200": { $ref: "#/components/responses/Guidance" } },
+      }
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT-or-opaque-session-token
-
+    SessionCookie:
+      {
+        type: apiKey,
+        in: cookie,
+        name: workmesh_session,
+        description: HttpOnly server-side session cookie.,
+      }
+    AgentSessionToken:
+      {
+        type: http,
+        scheme: bearer,
+        bearerFormat: WorkMeshSessionToken,
+        description: Short-lived agent session token; revocation is checked server-side.,
+      }
+    AgentInstallationToken:
+      {
+        type: http,
+        scheme: bearer,
+        bearerFormat: WorkMeshInstallationToken,
+        description: Installation-scoped bearer credential. It cannot perform ordinary session work and is required for session-token refresh.,
+      }
   parameters:
-    Cursor:
-      name: cursor
-      in: query
-      schema: { type: string }
-    Limit:
-      name: limit
-      in: query
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 200
-        default: 50
-    WorkItemId:
-      name: workItemId
-      in: path
-      required: true
-      schema: { type: string, format: uuid }
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      schema: { type: string, format: uuid }
+    Id:
+      {
+        name: id,
+        in: path,
+        required: true,
+        schema: { type: string, format: uuid },
+      }
+    TeamId:
+      {
+        name: teamId,
+        in: path,
+        required: true,
+        schema: { type: string, format: uuid },
+      }
     IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      required: true
-      schema:
-        type: string
-        minLength: 8
-        maxLength: 200
-    CorrelationId:
-      name: X-Correlation-Id
-      in: header
-      required: false
-      schema:
-        type: string
-        maxLength: 200
+      {
+        name: Idempotency-Key,
+        in: header,
+        required: true,
+        schema: { type: string, minLength: 1 },
+      }
+    CsrfToken:
+      {
+        name: X-CSRF-Token,
+        in: header,
+        required: true,
+        schema: { type: string, minLength: 1 },
+      }
     IfMatch:
-      name: If-Match
-      in: header
-      required: true
-      schema:
-        type: string
-      description: Current quoted revision/ETag.
-
+      {
+        name: If-Match,
+        in: header,
+        required: true,
+        schema: { type: string, pattern: '^"?revision-[1-9][0-9]*"?$' },
+      }
+    CorrelationId:
+      {
+        name: X-Correlation-Id,
+        in: header,
+        required: true,
+        schema: { type: string, minLength: 1, maxLength: 200 },
+      }
+    CursorQuery:
+      { name: cursor, in: query, schema: { type: integer, minimum: 0 } }
+    LastEventId:
+      { name: Last-Event-ID, in: header, schema: { type: integer, minimum: 0 } }
+    TeamIdQuery:
+      { name: teamId, in: query, schema: { type: string, format: uuid } }
+    StatusIdQuery:
+      { name: statusId, in: query, schema: { type: string, format: uuid } }
+    ProjectIdQuery:
+      { name: projectId, in: query, schema: { type: string, format: uuid } }
+    PriorityQuery:
+      {
+        name: priority,
+        in: query,
+        schema: { $ref: "#/components/schemas/Priority" },
+      }
+    StatusCategoryQuery:
+      {
+        name: statusCategory,
+        in: query,
+        schema: { $ref: "#/components/schemas/StatusCategory" },
+      }
+    ResponsibleHumanActorIdQuery:
+      {
+        name: responsibleHumanActorId,
+        in: query,
+        schema: { type: string, format: uuid },
+      }
+    OwnerIdQuery:
+      {
+        name: ownerId,
+        in: query,
+        deprecated: true,
+        schema: { type: string, format: uuid },
+      }
+    MineQuery: { name: mine, in: query, schema: { type: boolean } }
+    LabelQuery:
+      {
+        name: label,
+        in: query,
+        schema: { type: string, minLength: 1, maxLength: 60 },
+      }
+    SearchQuery:
+      { name: search, in: query, schema: { type: string, minLength: 1 } }
+  requestBodies:
+    InstallInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/InstallInput" } },
+          },
+      }
+    LoginInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/LoginInput" } },
+          },
+      }
+    WorkspacePatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkspaceInput" } },
+          },
+      }
+    TeamInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/TeamInput" } },
+          },
+      }
+    TeamPatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/TeamPatch" } },
+          },
+      }
+    WorkflowStateInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkflowStateInput" } },
+          },
+      }
+    ProjectInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ProjectInput" } },
+          },
+      }
+    ProjectPatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ProjectPatch" } },
+          },
+      }
+    WorkItemInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkItemInput" } },
+          },
+      }
+    WorkItemPatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkItemPatch" } },
+          },
+      }
+    CommentInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/CommentInput" } },
+          },
+      }
+    CommentPatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/CommentPatch" } },
+          },
+      }
+    SavedViewInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/SavedViewInput" } },
+          },
+      }
+    AgentRegistrationInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema: { $ref: "#/components/schemas/AgentRegistrationInput" },
+              },
+          },
+      }
+    AgentPatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentPatch" } },
+          },
+      }
+    AgentTeamAccessInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentTeamAccessInput" } },
+          },
+      }
+    DelegationInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/DelegationInput" } },
+          },
+      }
+    DelegateAndStartAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    $ref: "#/components/schemas/DelegateAndStartAgentSessionInput",
+                  },
+              },
+          },
+      }
+    CreateAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/CreateAgentSessionInput" },
+              },
+          },
+      }
+    ExchangeAgentSessionTokenInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    $ref: "#/components/schemas/ExchangeAgentSessionTokenInput",
+                  },
+              },
+          },
+      }
+    RefreshAgentSessionTokenInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    $ref: "#/components/schemas/RefreshAgentSessionTokenInput",
+                  },
+              },
+          },
+      }
+    AcknowledgeAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/AcknowledgeAgentSessionInput" },
+              },
+          },
+      }
+    HeartbeatInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/HeartbeatInput" } },
+          },
+      }
+    PromptAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/PromptAgentSessionInput" },
+              },
+          },
+      }
+    AppendActivityInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AppendActivityInput" } },
+          },
+      }
+    PublishPlanInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/PublishPlanInput" } },
+          },
+      }
+    SignalAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/SignalAgentSessionInput" },
+              },
+          },
+      }
+    StopAcknowledgementInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/StopAcknowledgementInput" },
+              },
+          },
+      }
+    RetryAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema: { $ref: "#/components/schemas/RetryAgentSessionInput" },
+              },
+          },
+      }
+    CompleteAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/CompleteAgentSessionInput" },
+              },
+          },
+      }
+    FailAgentSessionInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              {
+                schema: { $ref: "#/components/schemas/FailAgentSessionInput" },
+              },
+          },
+      }
+    ArtifactInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ArtifactInput" } },
+          },
+      }
+    RequestApprovalInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/RequestApprovalInput" } },
+          },
+      }
+    DecideApprovalInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/DecideApprovalInput" } },
+          },
+      }
+    ConsumeApprovalInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ConsumeApprovalInput" } },
+          },
+      }
+    ReasonInput:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ReasonInput" } },
+          },
+      }
   responses:
-    Error:
-      description: Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Conflict:
-      description: Revision, lease, idempotency, or state conflict
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-
-  schemas:
-    ActorRef:
-      type: object
-      required: [id, kind, displayName]
-      properties:
-        id: { type: string, format: uuid }
-        kind:
-          type: string
-          enum: [human, agent, service]
-        displayName: { type: string }
-        avatarUrl: { type: [string, 'null'], format: uri }
-
-    StatusCategory:
-      type: string
-      enum: [backlog, planned, started, completed, canceled]
-
-    WorkPriority:
-      type: string
-      enum: [none, low, medium, high, urgent]
-
-    WorkItem:
-      type: object
-      required:
-        - id
-        - identifier
-        - teamId
-        - title
-        - statusId
-        - statusCategory
-        - priority
-        - revision
-        - createdAt
-        - updatedAt
-      properties:
-        id: { type: string, format: uuid }
-        identifier: { type: string, examples: [ENG-42] }
-        teamId: { type: string, format: uuid }
-        projectId: { type: [string, 'null'], format: uuid }
-        milestoneId: { type: [string, 'null'], format: uuid }
-        cycleId: { type: [string, 'null'], format: uuid }
-        parentId: { type: [string, 'null'], format: uuid }
-        type:
-          type: string
-          enum: [issue, task, bug, feature, chore, incident]
-        title: { type: string }
-        descriptionMarkdown: { type: [string, 'null'] }
-        statusId: { type: string, format: uuid }
-        statusCategory: { $ref: '#/components/schemas/StatusCategory' }
-        priority: { $ref: '#/components/schemas/WorkPriority' }
-        estimate: { type: [number, 'null'] }
-        dueAt: { type: [string, 'null'], format: date-time }
-        responsibleHuman:
-          oneOf:
-            - $ref: '#/components/schemas/ActorRef'
-            - type: 'null'
-        leadAgent:
-          oneOf:
-            - $ref: '#/components/schemas/ActorRef'
-            - type: 'null'
-        acceptanceCriteria:
-          type: array
-          items: { type: string }
-        requiredChecks:
-          type: array
-          items: { type: string }
-        labels:
-          type: array
-          items: { type: string }
-        revision: { type: integer, minimum: 1 }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
-
-    CreateWorkItemRequest:
-      type: object
-      required: [teamId, title]
-      properties:
-        teamId: { type: string, format: uuid }
-        projectId: { type: string, format: uuid }
-        milestoneId: { type: string, format: uuid }
-        parentId: { type: string, format: uuid }
-        type:
-          type: string
-          enum: [issue, task, bug, feature, chore, incident]
-          default: issue
-        title: { type: string, minLength: 1, maxLength: 500 }
-        descriptionMarkdown: { type: string }
-        statusId: { type: string, format: uuid }
-        priority: { $ref: '#/components/schemas/WorkPriority' }
-        estimate: { type: number, minimum: 0 }
-        dueAt: { type: string, format: date-time }
-        responsibleHumanActorId: { type: string, format: uuid }
-        leadAgentActorId: { type: string, format: uuid }
-        acceptanceCriteria:
-          type: array
-          items: { type: string }
-        requiredChecks:
-          type: array
-          items: { type: string }
-        labelIds:
-          type: array
-          items: { type: string, format: uuid }
-
-    UpdateWorkItemRequest:
-      type: object
-      minProperties: 1
-      properties:
-        title: { type: string, minLength: 1, maxLength: 500 }
-        descriptionMarkdown: { type: [string, 'null'] }
-        statusId: { type: string, format: uuid }
-        priority: { $ref: '#/components/schemas/WorkPriority' }
-        estimate: { type: [number, 'null'], minimum: 0 }
-        dueAt: { type: [string, 'null'], format: date-time }
-        projectId: { type: [string, 'null'], format: uuid }
-        milestoneId: { type: [string, 'null'], format: uuid }
-        cycleId: { type: [string, 'null'], format: uuid }
-        responsibleHumanActorId: { type: [string, 'null'], format: uuid }
-        leadAgentActorId: { type: [string, 'null'], format: uuid }
-        acceptanceCriteria:
-          type: array
-          items: { type: string }
-        requiredChecks:
-          type: array
-          items: { type: string }
-
-    WorkItemPage:
-      type: object
-      required: [items]
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkItem'
-        nextCursor: { type: [string, 'null'] }
-
-    WorkItemRelation:
-      type: object
-      required: [id, sourceWorkItemId, targetWorkItemId, kind, createdAt]
-      properties:
-        id: { type: string, format: uuid }
-        sourceWorkItemId: { type: string, format: uuid }
-        targetWorkItemId: { type: string, format: uuid }
-        kind:
-          type: string
-          enum: [blocks, related, duplicate_of]
-        createdBy: { $ref: '#/components/schemas/ActorRef' }
-        createdAt: { type: string, format: date-time }
-
+    Health:
+      {
+        description: Database is reachable,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Health" } },
+          },
+      }
+    InstallationStatus:
+      {
+        description: Installation state,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/InstallationStatus" } },
+          },
+      }
+    Session:
+      {
+        description: Session established; response also sets the workmesh_session cookie,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Session" } },
+          },
+      }
+    AuthMe:
+      {
+        description: Current authenticated human and CSRF token,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AuthMe" } },
+          },
+      }
+    Ok:
+      {
+        description: Operation completed,
+        content:
+          { application/json: { schema: { $ref: "#/components/schemas/Ok" } } },
+      }
+    Workspace:
+      {
+        description: Workspace,
+        headers:
+          { ETag: { schema: { type: string }, description: Revision ETag } },
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Workspace" } },
+          },
+      }
+    Teams:
+      {
+        description: Teams,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { type: array, items: { $ref: "#/components/schemas/Team" } },
+              },
+          },
+      }
+    WorkflowStates:
+      {
+        description: Workflow states,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/WorkflowState" },
+                  },
+              },
+          },
+      }
+    Projects:
+      {
+        description: Projects,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/Project" },
+                  },
+              },
+          },
+      }
     Project:
-      type: object
-      required:
-        - id
-        - name
-        - slug
-        - statusCategory
-        - health
-        - revision
-        - createdAt
-        - updatedAt
-      properties:
-        id: { type: string, format: uuid }
-        name: { type: string }
-        slug: { type: string }
-        summary: { type: [string, 'null'] }
-        descriptionMarkdown: { type: [string, 'null'] }
-        statusCategory: { $ref: '#/components/schemas/StatusCategory' }
-        statusName: { type: [string, 'null'] }
-        health:
-          type: string
-          enum: [unknown, on_track, at_risk, off_track]
-        leadHuman:
-          oneOf:
-            - $ref: '#/components/schemas/ActorRef'
-            - type: 'null'
-        leadAgent:
-          oneOf:
-            - $ref: '#/components/schemas/ActorRef'
-            - type: 'null'
-        teamIds:
-          type: array
-          items: { type: string, format: uuid }
-        startAt: { type: [string, 'null'], format: date }
-        targetAt: { type: [string, 'null'], format: date }
-        revision: { type: integer, minimum: 1 }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: string, format: date-time }
-
-    CreateProjectRequest:
-      type: object
-      required: [name, teamIds, leadHumanActorId]
-      properties:
-        name: { type: string, minLength: 1, maxLength: 300 }
-        slug: { type: string }
-        summary: { type: string }
-        descriptionMarkdown: { type: string }
-        statusCategory:
-          allOf:
-            - $ref: '#/components/schemas/StatusCategory'
-          default: planned
-        statusName: { type: string }
-        leadHumanActorId: { type: string, format: uuid }
-        leadAgentActorId: { type: string, format: uuid }
-        teamIds:
-          type: array
-          minItems: 1
-          items: { type: string, format: uuid }
-        startAt: { type: string, format: date }
-        targetAt: { type: string, format: date }
-
-    ContextSnapshot:
-      type: object
-      required: [id, version, sourceHash, contentManifest, createdAt]
-      properties:
-        id: { type: string, format: uuid }
-        workItemId: { type: [string, 'null'], format: uuid }
-        projectId: { type: [string, 'null'], format: uuid }
-        version: { type: integer, minimum: 1 }
-        sourceHash: { type: string }
-        contentManifest:
-          type: object
-          additionalProperties: true
-        renderedContext: { type: [string, 'null'] }
-        tokenEstimate: { type: [integer, 'null'], minimum: 0 }
-        truncationSummary: { type: [string, 'null'] }
-        createdAt: { type: string, format: date-time }
-
-    AgentManifest:
-      type: object
-      required: [name, slug, supportedProtocols, skills, requestedCapabilities]
-      properties:
-        name: { type: string }
-        slug: { type: string, pattern: '^[a-z0-9][a-z0-9-]*$' }
-        description: { type: string }
-        iconUrl: { type: string, format: uri }
-        provider: { type: string }
-        version: { type: string }
-        endpointUrl: { type: string, format: uri }
-        supportedProtocols:
-          type: array
-          items:
-            type: string
-            enum: [native_http, mcp, a2a]
-        skills:
-          type: array
-          items: { type: string }
-        requestedCapabilities:
-          type: array
-          items: { type: string }
-        outputArtifactTypes:
-          type: array
-          items: { $ref: '#/components/schemas/ArtifactType' }
-        maxConcurrency:
-          type: integer
-          minimum: 1
-          default: 1
-        heartbeatIntervalSeconds:
-          type: integer
-          minimum: 5
-          default: 30
-        metadata:
-          type: object
-          additionalProperties: true
-
-    CreateDelegationRequest:
-      type: object
-      required: [principalHumanActorId, agentActorId, role]
-      properties:
-        principalHumanActorId: { type: string, format: uuid }
-        agentActorId: { type: string, format: uuid }
-        role:
-          type: string
-          enum: [executor, reviewer, researcher, coordinator, triager]
-        reason: { type: string }
-        requestedCapabilities:
-          type: array
-          items: { type: string }
-        budget:
-          $ref: '#/components/schemas/Budget'
-        initialPrompt: { type: string }
-        requirePlanApproval: { type: boolean, default: false }
-
-    CreateSessionRequest:
-      type: object
-      required: [delegationId]
-      properties:
-        delegationId: { type: string, format: uuid }
-        workItemId: { type: string, format: uuid }
-        projectId: { type: string, format: uuid }
-        parentSessionId: { type: string, format: uuid }
-        planStepId: { type: string, format: uuid }
-        initialPrompt: { type: string }
-        budget: { $ref: '#/components/schemas/Budget' }
-
-    SessionState:
-      type: string
-      enum:
-        - queued
-        - acknowledged
-        - planning
-        - executing
-        - awaiting_input
-        - awaiting_approval
-        - blocked
-        - paused
-        - stopping
-        - completed
-        - failed
-        - canceled
-        - stale
-
-    ExternalUrl:
-      type: object
-      required: [label, url]
-      properties:
-        label: { type: string }
-        url: { type: string, format: uri }
-
-    Budget:
-      type: object
-      properties:
-        maxRuntimeSeconds: { type: integer, minimum: 1 }
-        maxTokens: { type: integer, minimum: 1 }
-        maxCost:
-          type: object
-          properties:
-            amount: { type: number, minimum: 0 }
-            currency: { type: string, default: USD }
-        maxToolCalls: { type: integer, minimum: 1 }
-        maxChildSessions: { type: integer, minimum: 0 }
-        maxRetries: { type: integer, minimum: 0 }
-        deadlineAt: { type: string, format: date-time }
-
-    Usage:
-      type: object
-      properties:
-        runtimeSeconds: { type: integer, minimum: 0 }
-        inputTokens: { type: integer, minimum: 0 }
-        outputTokens: { type: integer, minimum: 0 }
-        costAmount: { type: number, minimum: 0 }
-        costCurrency: { type: string }
-        toolCalls: { type: integer, minimum: 0 }
-
+      {
+        description: Project,
+        headers: { ETag: { schema: { type: string } } },
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Project" } },
+          },
+      }
+    HumanActors:
+      {
+        description: Active human actors,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/HumanActor" },
+                  },
+              },
+          },
+      }
+    WorkItems:
+      {
+        description: Filtered work items,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/WorkItem" },
+                  },
+              },
+          },
+      }
+    WorkItem:
+      {
+        description: Work item,
+        headers: { ETag: { schema: { type: string } } },
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkItem" } },
+          },
+      }
+    Comments:
+      {
+        description: Work item comments,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/Comment" },
+                  },
+              },
+          },
+      }
+    SavedViews:
+      {
+        description: Private saved and built-in views,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/SavedView" },
+                  },
+              },
+          },
+      }
+    Events:
+      {
+        description: Durable event cursor page,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/EventEnvelope" },
+                  },
+              },
+          },
+      }
+    EventStream:
+      {
+        description: Durable SSE stream; reconnect using Last-Event-ID or cursor,
+        content:
+          {
+            text/event-stream:
+              {
+                schema: { type: string },
+                examples:
+                  {
+                    event:
+                      {
+                        value: 'id: 42\ndata: {"cursor":42,"event_type":"work_item.created"}\n\n',
+                      },
+                  },
+              },
+          },
+      }
+    Command:
+      {
+        description: Mutation result,
+        headers:
+          {
+            ETag:
+              {
+                schema: { type: string },
+                description: Revision ETag when the result includes revision,
+              },
+          },
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Command" } },
+          },
+      }
+    BadRequest:
+      {
+        description: Invalid input or request precondition,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    Unauthorized:
+      {
+        description: Missing,
+        expired,
+        or invalid session,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    Forbidden:
+      {
+        description: CSRF or authorization failure,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    NotFound:
+      {
+        description: Resource does not exist in the current workspace,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    Conflict:
+      {
+        description: Revision or idempotency conflict,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    Agents:
+      {
+        description: Agent definitions,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/Agent" },
+                  },
+              },
+          },
+      }
+    Agent:
+      {
+        description: Agent definition,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Agent" } },
+          },
+      }
+    AgentTeamAccess:
+      {
+        description: Agent capability approval for one team.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentTeamAccess" } },
+          },
+      }
+    Delegation:
+      {
+        description: Delegation,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Delegation" } },
+          },
+      }
+    DelegateAndStartAgentSession:
+      {
+        description: Atomically created delegation and initial queued session.,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  { $ref: "#/components/schemas/DelegateAndStartAgentSession" },
+              },
+          },
+      }
+    AgentSessions:
+      {
+        description: Agent sessions,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/AgentSession" },
+                  },
+              },
+          },
+      }
     AgentSession:
-      type: object
-      required:
-        - id
-        - agent
-        - principalHuman
-        - delegationId
-        - state
-        - sequence
-        - revision
-        - createdAt
-      properties:
-        id: { type: string, format: uuid }
-        agent: { $ref: '#/components/schemas/ActorRef' }
-        principalHuman: { $ref: '#/components/schemas/ActorRef' }
-        delegationId: { type: string, format: uuid }
-        workItemId: { type: [string, 'null'], format: uuid }
-        projectId: { type: [string, 'null'], format: uuid }
-        parentSessionId: { type: [string, 'null'], format: uuid }
-        state: { $ref: '#/components/schemas/SessionState' }
-        stateReason: { type: [string, 'null'] }
-        sequence: { type: integer, minimum: 0 }
-        contextSnapshotId: { type: [string, 'null'], format: uuid }
-        currentPlanRevision: { type: [integer, 'null'] }
-        externalUrls:
-          type: array
-          items: { $ref: '#/components/schemas/ExternalUrl' }
-        budget: { $ref: '#/components/schemas/Budget' }
-        usage: { $ref: '#/components/schemas/Usage' }
-        revision: { type: integer, minimum: 1 }
-        startedAt: { type: [string, 'null'], format: date-time }
-        lastHeartbeatAt: { type: [string, 'null'], format: date-time }
-        endedAt: { type: [string, 'null'], format: date-time }
-        errorCode: { type: [string, 'null'] }
-        errorSummary: { type: [string, 'null'] }
-        createdAt: { type: string, format: date-time }
-
-    ActivityKind:
-      type: string
-      enum:
-        - ack
-        - status
-        - plan_published
-        - plan_changed
-        - action_started
-        - action_completed
-        - evidence
-        - question
-        - decision_request
-        - message
-        - artifact_published
-        - handoff_requested
-        - handoff_accepted
-        - warning
-        - error
-        - completion
-        - heartbeat
-
-    CreateActivityRequest:
-      type: object
-      required: [kind, summary]
-      properties:
-        kind: { $ref: '#/components/schemas/ActivityKind' }
-        summary: { type: string, minLength: 1, maxLength: 1000 }
-        detailsMarkdown: { type: string }
-        toolInvocation:
-          $ref: '#/components/schemas/ToolInvocation'
-        artifactIds:
-          type: array
-          items: { type: string, format: uuid }
-        references:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        payload:
-          type: object
-          additionalProperties: true
-        visibility:
-          type: string
-          enum: [private, team, workspace]
-          default: team
-        ephemeral: { type: boolean, default: false }
-
+      {
+        description: Agent session,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentSession" } },
+          },
+      }
+    AgentSessionToken:
+      {
+        description: Short-lived session token,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentSessionToken" } },
+          },
+      }
+    AgentActivities:
+      {
+        description: Append-only agent activity stream,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/AgentActivity" },
+                  },
+              },
+          },
+      }
     AgentActivity:
-      allOf:
-        - $ref: '#/components/schemas/CreateActivityRequest'
-        - type: object
-          required: [id, sessionId, actor, sequence, occurredAt]
-          properties:
-            id: { type: string, format: uuid }
-            sessionId: { type: string, format: uuid }
-            actor: { $ref: '#/components/schemas/ActorRef' }
-            sequence: { type: integer, minimum: 1 }
-            occurredAt: { type: string, format: date-time }
-
-    ToolInvocation:
-      type: object
-      required: [toolName, status]
-      properties:
-        toolName: { type: string }
-        inputSanitized:
-          type: object
-          additionalProperties: true
-        status:
-          type: string
-          enum: [started, succeeded, failed, canceled]
-        resultSummary: { type: string }
-        externalTraceUrl: { type: string, format: uri }
-        approvalId: { type: string, format: uuid }
-        usage: { $ref: '#/components/schemas/Usage' }
-        errorCode: { type: string }
-        errorSummary: { type: string }
-
-    PlanStepStatus:
-      type: string
-      enum: [pending, in_progress, blocked, completed, canceled]
-
-    PlanStep:
-      type: object
-      required: [id, title, status, ordinal]
-      properties:
-        id: { type: string, format: uuid }
-        title: { type: string }
-        descriptionMarkdown: { type: string }
-        status: { $ref: '#/components/schemas/PlanStepStatus' }
-        ownerActorId: { type: [string, 'null'], format: uuid }
-        ordinal: { type: integer, minimum: 0 }
-        dependsOn:
-          type: array
-          items: { type: string, format: uuid }
-        acceptanceCriteria:
-          type: array
-          items: { type: string }
-        expectedArtifacts:
-          type: array
-          items: { $ref: '#/components/schemas/ArtifactType' }
-        requiredCapabilities:
-          type: array
-          items: { type: string }
-        estimate:
-          type: object
-          additionalProperties: true
-        risk: { type: string }
-        blockedReason: { type: string }
-
-    PublishPlanRequest:
-      type: object
-      required: [changeSummary, steps]
-      properties:
-        changeSummary: { type: string, minLength: 1 }
-        steps:
-          type: array
-          minItems: 1
-          items: { $ref: '#/components/schemas/PlanStep' }
-
-    AgentPlan:
-      type: object
-      required: [sessionId, revision, authoredBy, steps, createdAt]
-      properties:
-        id: { type: string, format: uuid }
-        sessionId: { type: string, format: uuid }
-        revision: { type: integer, minimum: 1 }
-        authoredBy: { $ref: '#/components/schemas/ActorRef' }
-        changeSummary: { type: string }
-        steps:
-          type: array
-          items: { $ref: '#/components/schemas/PlanStep' }
-        createdAt: { type: string, format: date-time }
-
-    MessageIntent:
-      type: string
-      enum:
-        - inform
-        - ask
-        - answer
-        - propose
-        - decide
-        - claim
-        - handoff
-        - blocker
-        - review_request
-        - review_result
-        - status
-
-    CreateMessageRequest:
-      type: object
-      required: [channelId, intent, bodyMarkdown]
-      properties:
-        channelId: { type: string, format: uuid }
-        threadId: { type: string, format: uuid }
-        intent: { $ref: '#/components/schemas/MessageIntent' }
-        bodyMarkdown: { type: string }
-        recipientActorIds:
-          type: array
-          items: { type: string, format: uuid }
-        replyToMessageId: { type: string, format: uuid }
-        structuredPayload:
-          type: object
-          additionalProperties: true
-        references:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        requiresResponse: { type: boolean, default: false }
-        dueAt: { type: string, format: date-time }
-
-    TypedMessage:
-      allOf:
-        - $ref: '#/components/schemas/CreateMessageRequest'
-        - type: object
-          required: [id, sender, createdAt, revision]
-          properties:
-            id: { type: string, format: uuid }
-            sender: { $ref: '#/components/schemas/ActorRef' }
-            responseStatus:
-              type: string
-              enum: [none, open, resolved]
-            revision: { type: integer, minimum: 1 }
-            createdAt: { type: string, format: date-time }
-
-    ClaimLeaseRequest:
-      type: object
-      required: [resourceType, resourceId, sessionId]
-      properties:
-        resourceType:
-          type: string
-          enum: [work_item, plan_step, repository_path, artifact_review]
-        resourceId: { type: string }
-        sessionId: { type: string, format: uuid }
-        mode:
-          type: string
-          enum: [exclusive, shared]
-          default: exclusive
-        ttlSeconds:
-          type: integer
-          minimum: 10
-          maximum: 3600
-          default: 120
-        metadata:
-          type: object
-          additionalProperties: true
-
-    Lease:
-      type: object
-      required: [id, resourceType, resourceId, holderSessionId, mode, status, version, expiresAt]
-      properties:
-        id: { type: string, format: uuid }
-        resourceType: { type: string }
-        resourceId: { type: string }
-        holderSessionId: { type: string, format: uuid }
-        mode:
-          type: string
-          enum: [exclusive, shared]
-        status:
-          type: string
-          enum: [active, released, expired, revoked]
-        version: { type: integer, minimum: 1 }
-        acquiredAt: { type: string, format: date-time }
-        heartbeatAt: { type: string, format: date-time }
-        expiresAt: { type: string, format: date-time }
-        metadata:
-          type: object
-          additionalProperties: true
-
-    CreateHandoffRequest:
-      type: object
-      required:
-        - sourceSessionId
-        - scopeType
-        - scopeId
-        - summary
-        - remainingWork
-        - contextSnapshotId
-        - requestedAction
-      properties:
-        sourceSessionId: { type: string, format: uuid }
-        targetAgentActorId: { type: string, format: uuid }
-        targetSkill: { type: string }
-        scopeType:
-          type: string
-          enum: [work_item, plan_step, project]
-        scopeId: { type: string }
-        summary: { type: string }
-        completedWork:
-          type: array
-          items: { type: string }
-        remainingWork:
-          type: array
-          items: { type: string }
-        contextSnapshotId: { type: string, format: uuid }
-        artifactIds:
-          type: array
-          items: { type: string, format: uuid }
-        openQuestions:
-          type: array
-          items: { type: string }
-        risks:
-          type: array
-          items: { type: string }
-        acceptanceCriteria:
-          type: array
-          items: { type: string }
-        requestedAction: { type: string }
-        leaseTransferPolicy:
-          type: string
-          enum: [none, transfer, new]
-          default: transfer
-
-    Handoff:
-      allOf:
-        - $ref: '#/components/schemas/CreateHandoffRequest'
-        - type: object
-          required: [id, status, sourceActor, createdAt]
-          properties:
-            id: { type: string, format: uuid }
-            status:
-              type: string
-              enum: [draft, requested, accepted, rejected, canceled, completed]
-            sourceActor: { $ref: '#/components/schemas/ActorRef' }
-            acceptedSessionId: { type: [string, 'null'], format: uuid }
-            createdAt: { type: string, format: date-time }
-            respondedAt: { type: [string, 'null'], format: date-time }
-
-    CreateApprovalRequest:
-      type: object
-      required:
-        - sessionId
-        - approvalType
-        - actionName
-        - actionPayloadSanitized
-        - actionPayloadHash
-        - riskLevel
-        - rationaleSummary
-      properties:
-        sessionId: { type: string, format: uuid }
-        approvalType: { type: string }
-        actionName: { type: string }
-        actionPayloadSanitized:
-          type: object
-          additionalProperties: true
-        actionPayloadHash: { type: string }
-        riskLevel:
-          type: string
-          enum: [low, medium, high]
-        rationaleSummary: { type: string }
-        requiredApprovals:
-          type: integer
-          minimum: 1
-          default: 1
-        expiresAt: { type: string, format: date-time }
-
-    Approval:
-      allOf:
-        - $ref: '#/components/schemas/CreateApprovalRequest'
-        - type: object
-          required: [id, status, requestedBy, createdAt]
-          properties:
-            id: { type: string, format: uuid }
-            status:
-              type: string
-              enum: [pending, approved, rejected, expired, canceled, consumed]
-            requestedBy: { $ref: '#/components/schemas/ActorRef' }
-            createdAt: { type: string, format: date-time }
-            decidedAt: { type: [string, 'null'], format: date-time }
-
-    ArtifactType:
-      type: string
-      enum:
-        - note
-        - document
-        - patch
-        - diff
-        - branch
-        - commit
-        - pull_request
-        - code_review
-        - test_report
-        - build_report
-        - log
-        - screenshot
-        - preview_url
-        - external_link
-
-    CreateArtifactRequest:
-      type: object
-      required: [type, title]
-      properties:
-        sessionId: { type: string, format: uuid }
-        workItemId: { type: string, format: uuid }
-        projectId: { type: string, format: uuid }
-        type: { $ref: '#/components/schemas/ArtifactType' }
-        title: { type: string }
-        uri: { type: string, format: uri }
-        uploadToken: { type: string }
-        mimeType: { type: string }
-        checksum: { type: string }
-        sizeBytes: { type: integer, minimum: 0 }
-        repository:
-          type: object
-          additionalProperties: true
-        sourceTool: { type: string }
-        metadata:
-          type: object
-          additionalProperties: true
-
+      {
+        description: Agent activity,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/AgentActivity" } },
+          },
+      }
+    PlanVersion:
+      {
+        description: Immutable plan version,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/PlanVersion" } },
+          },
+      }
+    PlanVersions:
+      {
+        description: Immutable plan versions in ascending revision order for compare views,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/PlanVersion" },
+                  },
+              },
+          },
+      }
+    Artifacts:
+      {
+        description: Artifact metadata,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/Artifact" },
+                  },
+              },
+          },
+      }
     Artifact:
-      allOf:
-        - $ref: '#/components/schemas/CreateArtifactRequest'
-        - type: object
-          required: [id, producedBy, reviewStatus, createdAt]
-          properties:
-            id: { type: string, format: uuid }
-            producedBy: { $ref: '#/components/schemas/ActorRef' }
-            reviewStatus:
-              type: string
-              enum: [unreviewed, approved, changes_requested, rejected]
-            createdAt: { type: string, format: date-time }
-
-    CheckResult:
-      type: object
-      required: [name, status]
-      properties:
-        name: { type: string }
-        command: { type: string }
-        status:
-          type: string
-          enum: [passed, failed, skipped]
-        summary: { type: string }
-        artifactId: { type: string, format: uuid }
-
-    DomainEvent:
-      type: object
-      required:
-        - id
-        - type
-        - version
-        - workspaceId
-        - aggregate
-        - actor
-        - occurredAt
-        - payload
-      properties:
-        id: { type: string, format: uuid }
-        type: { type: string }
-        version: { type: integer, minimum: 1 }
-        workspaceId: { type: string, format: uuid }
-        aggregate:
-          type: object
-          required: [type, id]
-          properties:
-            type: { type: string }
-            id: { type: string }
-            revision: { type: integer }
-        actor: { $ref: '#/components/schemas/ActorRef' }
-        subject:
-          type: object
-          properties:
-            type: { type: string }
-            id: { type: string }
-        correlationId: { type: string }
-        causationId: { type: string, format: uuid }
-        sessionId: { type: string, format: uuid }
-        sequence: { type: integer }
-        occurredAt: { type: string, format: date-time }
-        visibility:
-          type: string
-          enum: [private, team, workspace]
-        payload:
-          type: object
-          additionalProperties: true
-
-    EventPage:
-      type: object
-      required: [items]
-      properties:
-        items:
-          type: array
-          items: { $ref: '#/components/schemas/DomainEvent' }
-        nextCursor: { type: [string, 'null'] }
-
-    ErrorResponse:
-      type: object
-      required: [error]
-      properties:
-        error:
-          type: object
-          required: [code, message, correlationId]
-          properties:
-            code: { type: string }
-            message: { type: string }
-            details:
-              type: object
-              additionalProperties: true
-            correlationId: { type: string }
+      {
+        description: Artifact metadata,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Artifact" } },
+          },
+      }
+    Approvals:
+      {
+        description: Approval requests,
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: array,
+                    items: { $ref: "#/components/schemas/Approval" },
+                  },
+              },
+          },
+      }
+    Approval:
+      {
+        description: Approval request,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Approval" } },
+          },
+      }
+    ApprovalDecision:
+      {
+        description: Recorded decision plus current quorum and approval status.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ApprovalDecision" } },
+          },
+      }
+    ApprovalConsumption:
+      {
+        description: Approval consumption receipt for one exact payload hash.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ApprovalConsumption" } },
+          },
+      }
+    SessionContext:
+      {
+        description: Bounded session context manifest,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/SessionContext" } },
+          },
+      }
+    Guidance:
+      {
+        description: Scoped guidance,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Guidance" } },
+          },
+      }
+  schemas:
+    Id: { type: string, format: uuid }
+    Timestamp: { type: string, format: date-time }
+    Date: { type: string, format: date }
+    Revision: { type: integer, minimum: 1 }
+    StatusCategory:
+      { type: string, enum: [backlog, planned, started, completed, canceled] }
+    Priority: { type: string, enum: [none, urgent, high, medium, low] }
+    MembershipRole: { type: string, enum: [admin, maintainer, member] }
+    WorkspaceInput:
+      {
+        type: object,
+        minProperties: 1,
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 120 },
+            slug: { type: string, pattern: "^[a-z0-9-]+$", maxLength: 80 },
+          },
+      }
+    InstallInput:
+      {
+        allOf:
+          [
+            { $ref: "#/components/schemas/WorkspaceInput" },
+            {
+              type: object,
+              required: [name, slug, adminName, email, password],
+              properties:
+                {
+                  adminName: { type: string, minLength: 1, maxLength: 120 },
+                  email: { type: string, format: email },
+                  password: { type: string, minLength: 12 },
+                },
+            },
+          ],
+      }
+    DelegateAndStartAgentSessionInput:
+      {
+        type: object,
+        required:
+          [
+            agentId,
+            principalHumanActorId,
+            requestedCapabilities,
+            initialPrompt,
+          ],
+        properties:
+          {
+            agentId: { $ref: "#/components/schemas/Id" },
+            principalHumanActorId: { $ref: "#/components/schemas/Id" },
+            role: { $ref: "#/components/schemas/DelegationRole" },
+            requestedCapabilities:
+              {
+                type: array,
+                minItems: 1,
+                maxItems: 50,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            initialPrompt: { type: string, minLength: 1, maxLength: 50000 },
+            contextSnapshotId: { $ref: "#/components/schemas/Id" },
+            budget:
+              {
+                type: object,
+                properties:
+                  {
+                    maxRuntimeSeconds: { type: integer, minimum: 1 },
+                    maxInputTokens: { type: integer, minimum: 0 },
+                    maxOutputTokens: { type: integer, minimum: 0 },
+                    maxCostUsd: { type: number, minimum: 0 },
+                  },
+              },
+          },
+      }
+    LoginInput:
+      {
+        type: object,
+        required: [email, password],
+        properties:
+          {
+            email: { type: string, format: email },
+            password: { type: string, minLength: 1 },
+          },
+      }
+    TeamInput:
+      {
+        type: object,
+        required: [name, key],
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 120 },
+            key: { type: string, pattern: "^[A-Z][A-Z0-9]{1,9}$" },
+          },
+      }
+    TeamPatch:
+      {
+        type: object,
+        minProperties: 1,
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 120 },
+            key: { type: string, pattern: "^[A-Z][A-Z0-9]{1,9}$" },
+          },
+      }
+    WorkflowStateInput:
+      {
+        type: object,
+        required: [name, category],
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 80 },
+            category: { $ref: "#/components/schemas/StatusCategory" },
+            color: { type: string, pattern: "^#[0-9a-fA-F]{6}$" },
+            position: { type: integer, minimum: 0 },
+          },
+      }
+    ProjectInput:
+      {
+        type: object,
+        required: [teamId, name],
+        properties:
+          {
+            teamId: { $ref: "#/components/schemas/Id" },
+            name: { type: string, minLength: 1, maxLength: 180 },
+            summary: { type: string, maxLength: 500 },
+            description: { type: [string, "null"], maxLength: 20000 },
+            status: { type: string, maxLength: 80 },
+            leadActorId: { type: [string, "null"], format: uuid },
+            targetDate: { type: [string, "null"], format: date },
+          },
+      }
+    ProjectPatch:
+      {
+        type: object,
+        minProperties: 1,
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 180 },
+            summary: { type: string, maxLength: 500 },
+            description: { type: [string, "null"], maxLength: 20000 },
+            status: { type: string, maxLength: 80 },
+            leadActorId: { type: [string, "null"], format: uuid },
+            targetDate: { type: [string, "null"], format: date },
+          },
+      }
+    WorkItemInput:
+      {
+        type: object,
+        required: [teamId, title, statusId],
+        properties:
+          {
+            teamId: { $ref: "#/components/schemas/Id" },
+            title: { type: string, minLength: 1, maxLength: 500 },
+            description: { type: string, maxLength: 50000 },
+            statusId: { $ref: "#/components/schemas/Id" },
+            priority: { $ref: "#/components/schemas/Priority" },
+            dueDate: { $ref: "#/components/schemas/Date" },
+            responsibleHumanActorId: { $ref: "#/components/schemas/Id" },
+            labels:
+              {
+                type: array,
+                maxItems: 30,
+                items: { type: string, minLength: 1, maxLength: 60 },
+              },
+            projectId: { $ref: "#/components/schemas/Id" },
+          },
+      }
+    WorkItemPatch:
+      {
+        type: object,
+        minProperties: 1,
+        properties:
+          {
+            title: { type: string, minLength: 1, maxLength: 500 },
+            description: { type: [string, "null"], maxLength: 50000 },
+            statusId: { $ref: "#/components/schemas/Id" },
+            priority: { $ref: "#/components/schemas/Priority" },
+            dueDate: { type: [string, "null"], format: date },
+            responsibleHumanActorId: { type: [string, "null"], format: uuid },
+            labels:
+              {
+                type: array,
+                maxItems: 30,
+                items: { type: string, minLength: 1, maxLength: 60 },
+              },
+            projectId: { type: [string, "null"], format: uuid },
+          },
+      }
+    CommentInput:
+      {
+        type: object,
+        required: [body],
+        properties:
+          {
+            body: { type: string, minLength: 1, maxLength: 50000 },
+            parentCommentId: { $ref: "#/components/schemas/Id" },
+            replyToCommentId: { $ref: "#/components/schemas/Id" },
+            mentions:
+              {
+                type: array,
+                maxItems: 20,
+                items: { $ref: "#/components/schemas/Id" },
+              },
+          },
+      }
+    CommentPatch:
+      {
+        type: object,
+        minProperties: 1,
+        properties:
+          {
+            body: { type: string, minLength: 1, maxLength: 50000 },
+            isResolved: { type: boolean },
+            deleted: { type: boolean },
+          },
+      }
+    SavedViewInput:
+      {
+        type: object,
+        required: [name],
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 80 },
+            teamId: { $ref: "#/components/schemas/Id" },
+            filters: { type: object, additionalProperties: true },
+            layout: { type: string, enum: [list, board] },
+          },
+      }
+    Health:
+      {
+        type: object,
+        required: [status],
+        properties: { status: { const: ok } },
+      }
+    InstallationStatus:
+      {
+        type: object,
+        required: [installed],
+        properties: { installed: { type: boolean } },
+      }
+    Session:
+      {
+        type: object,
+        required: [csrf_token],
+        properties: { csrf_token: { type: string } },
+      }
+    AuthMe:
+      {
+        type: object,
+        required: [actor, csrf_token],
+        properties:
+          {
+            actor: { $ref: "#/components/schemas/HumanActor" },
+            csrf_token: { type: string },
+          },
+      }
+    Ok: { type: object, required: [ok], properties: { ok: { const: true } } }
+    Workspace:
+      {
+        type: object,
+        required: [id, name, slug, revision, created_at, updated_at],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            name: { type: string },
+            slug: { type: string },
+            revision: { $ref: "#/components/schemas/Revision" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    Team:
+      {
+        type: object,
+        required:
+          [
+            id,
+            workspace_id,
+            name,
+            key,
+            next_work_item_number,
+            revision,
+            deleted_at,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            name: { type: string },
+            key: { type: string },
+            next_work_item_number: { type: integer, minimum: 1 },
+            revision: { $ref: "#/components/schemas/Revision" },
+            deleted_at: { type: [string, "null"], format: date-time },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    Membership:
+      {
+        type: object,
+        required: [workspace_id, team_id, actor_id, role, created_at],
+        properties:
+          {
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            team_id: { type: [string, "null"], format: uuid },
+            actor_id: { $ref: "#/components/schemas/Id" },
+            role: { $ref: "#/components/schemas/MembershipRole" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    WorkflowState:
+      {
+        type: object,
+        required:
+          [
+            id,
+            team_id,
+            name,
+            category,
+            color,
+            position,
+            is_archived,
+            revision,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            team_id: { $ref: "#/components/schemas/Id" },
+            name: { type: string },
+            category: { $ref: "#/components/schemas/StatusCategory" },
+            color: { type: string },
+            position: { type: integer, minimum: 0 },
+            is_archived: { type: boolean },
+            revision: { $ref: "#/components/schemas/Revision" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    HumanActor:
+      {
+        type: object,
+        required: [id, email, display_name],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            email: { type: string, format: email },
+            display_name: { type: string },
+            kind: { const: human },
+            is_active: { type: boolean },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    Project:
+      {
+        type: object,
+        required:
+          [
+            id,
+            workspace_id,
+            team_id,
+            name,
+            summary,
+            description,
+            status,
+            lead_actor_id,
+            target_date,
+            revision,
+            deleted_at,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            team_id: { $ref: "#/components/schemas/Id" },
+            name: { type: string },
+            summary: { type: [string, "null"] },
+            description: { type: [string, "null"] },
+            status: { type: string },
+            lead_actor_id: { type: [string, "null"], format: uuid },
+            target_date: { type: [string, "null"], format: date },
+            revision: { $ref: "#/components/schemas/Revision" },
+            deleted_at: { type: [string, "null"], format: date-time },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    WorkItem:
+      {
+        type: object,
+        required:
+          [
+            id,
+            workspace_id,
+            team_id,
+            number,
+            title,
+            description,
+            status_id,
+            priority,
+            due_date,
+            responsible_human_actor_id,
+            labels,
+            project_id,
+            revision,
+            deleted_at,
+            created_at,
+            updated_at,
+            team_key,
+            status_name,
+            status_category,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            team_id: { $ref: "#/components/schemas/Id" },
+            number: { type: integer, minimum: 1 },
+            title: { type: string },
+            description: { type: [string, "null"] },
+            status_id: { $ref: "#/components/schemas/Id" },
+            priority: { $ref: "#/components/schemas/Priority" },
+            due_date: { type: [string, "null"], format: date },
+            responsible_human_actor_id:
+              { type: [string, "null"], format: uuid },
+            labels: { type: array, items: { type: string } },
+            project_id: { type: [string, "null"], format: uuid },
+            revision: { $ref: "#/components/schemas/Revision" },
+            deleted_at: { type: [string, "null"], format: date-time },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+            team_key: { type: string },
+            status_name: { type: string },
+            status_category: { $ref: "#/components/schemas/StatusCategory" },
+          },
+      }
+    Mention:
+      {
+        type: object,
+        required: [actor_id],
+        properties:
+          {
+            actor_id: { $ref: "#/components/schemas/Id" },
+            display_name: { type: string },
+          },
+      }
+    Comment:
+      {
+        type: object,
+        required:
+          [
+            id,
+            channel_id,
+            author_actor_id,
+            author_name,
+            parent_comment_id,
+            reply_to_comment_id,
+            body,
+            mentions,
+            is_resolved,
+            revision,
+            deleted_at,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            channel_id: { $ref: "#/components/schemas/Id" },
+            author_actor_id: { $ref: "#/components/schemas/Id" },
+            author_name: { type: string },
+            parent_comment_id: { type: [string, "null"], format: uuid },
+            reply_to_comment_id: { type: [string, "null"], format: uuid },
+            body: { type: string },
+            mentions:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            is_resolved: { type: boolean },
+            revision: { $ref: "#/components/schemas/Revision" },
+            deleted_at: { type: [string, "null"], format: date-time },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    SavedView:
+      {
+        type: object,
+        required: [id, name, filters, layout],
+        properties:
+          {
+            id: { type: string },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            owner_actor_id: { $ref: "#/components/schemas/Id" },
+            team_id: { type: [string, "null"], format: uuid },
+            name: { type: string },
+            filters: { type: object, additionalProperties: true },
+            layout: { type: string, enum: [list, board] },
+            built_in: { type: boolean },
+            revision: { $ref: "#/components/schemas/Revision" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    EventEnvelope:
+      {
+        type: object,
+        required:
+          [
+            cursor,
+            id,
+            event_type,
+            event_version,
+            workspace_id,
+            team_id,
+            audience_actor_id,
+            aggregate_type,
+            aggregate_id,
+            aggregate_revision,
+            actor_id,
+            correlation_id,
+            idempotency_key,
+            payload,
+            occurred_at,
+          ],
+        additionalProperties: true,
+        properties:
+          {
+            cursor: { type: integer, minimum: 0 },
+            id: { $ref: "#/components/schemas/Id" },
+            event_type: { type: string },
+            event_version: { type: integer, minimum: 1 },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            team_id: { type: [string, "null"], format: uuid },
+            audience_actor_id: { type: [string, "null"], format: uuid },
+            aggregate_type: { type: string },
+            aggregate_id: { $ref: "#/components/schemas/Id" },
+            aggregate_revision: { type: [integer, "null"], minimum: 1 },
+            actor_id: { $ref: "#/components/schemas/Id" },
+            correlation_id: { type: string },
+            idempotency_key: { type: [string, "null"] },
+            payload: {},
+            occurred_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    Command:
+      {
+        type: object,
+        required: [id, revision],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            revision: { $ref: "#/components/schemas/Revision" },
+          },
+      }
+    Error:
+      {
+        type: object,
+        required: [error],
+        properties:
+          {
+            error:
+              {
+                type: object,
+                required: [code, message, correlationId],
+                properties:
+                  {
+                    code:
+                      {
+                        type: string,
+                        enum:
+                          [
+                            VALIDATION_ERROR,
+                            UNAUTHENTICATED,
+                            FORBIDDEN,
+                            NOT_FOUND,
+                            CONFLICT,
+                            LAST_ACTIVE_TEAM_CONFLICT,
+                            REVISION_CONFLICT,
+                            IF_MATCH_REQUIRED,
+                            IDEMPOTENCY_KEY_REQUIRED,
+                            IDEMPOTENCY_KEY_REUSED,
+                            IDEMPOTENCY_REPLAY_UNAVAILABLE,
+                            CSRF_FAILED,
+                            INVALID_CREDENTIALS,
+                            INSTALLATION_ALREADY_COMPLETED,
+                            RESPONSIBLE_HUMAN_REQUIRED,
+                            AGENT_NOT_ACTIVE,
+                            AGENT_CONCURRENCY_LIMIT,
+                            AGENT_IDENTITY_REQUIRED,
+                            AGENT_SESSION_NOT_FOUND,
+                            AGENT_SESSION_TOKEN_MISMATCH,
+                            SESSION_NOT_ACTIVE,
+                            SESSION_STOPPED,
+                            STOP_ACK_ALREADY_RECORDED,
+                            INVALID_SESSION_TRANSITION,
+                            DELEGATION_NOT_ACTIVE,
+                            CAPABILITY_DENIED,
+                            RESOURCE_SCOPE_DENIED,
+                            APPROVAL_REQUIRED,
+                            APPROVAL_NOT_APPROVED,
+                            APPROVAL_EXPIRED,
+                            APPROVAL_PAYLOAD_MISMATCH,
+                            APPROVAL_ALREADY_CONSUMED,
+                            PLAN_REVISION_CONFLICT,
+                            PLAN_STEP_ID_REUSED,
+                            PLAN_STEP_DEPENDENCY_MISSING,
+                            PLAN_STEP_DEPENDENCY_CYCLE,
+                            PLAN_STEP_REMOVAL_INVALID,
+                            PLAN_STEP_NOT_READY,
+                            COMPLETION_EVIDENCE_REQUIRED,
+                            COMPLETION_PLAN_INCOMPLETE,
+                            LEASE_REQUIRED,
+                            AGENT_ADMIN_REQUIRED,
+                            APPROVED_CAPABILITY_NOT_REQUESTED,
+                            AGENT_TEAM_ACCESS_NOT_FOUND,
+                            AGENT_SESSION_RETRY_NOT_ALLOWED,
+                            INSTALLATION_TOKEN_REQUIRED,
+                            INSTALLATION_TOKEN_REVOKED,
+                            APPROVAL_QUORUM_NOT_REACHED,
+                            APPROVAL_SESSION_MISMATCH,
+                            APPROVAL_CONSUME_CONFLICT,
+                            INTERNAL_ERROR,
+                          ],
+                      },
+                    message: { type: string },
+                    details: {},
+                    correlationId: { type: string },
+                  },
+              },
+          },
+      }
+    AgentProtocol: { type: string, enum: [native_http, mcp, a2a] }
+    Capability:
+      {
+        type: string,
+        enum:
+          [
+            work:read,
+            work:write,
+            comment:write,
+            plan:write,
+            message:write,
+            artifact:write,
+            repo:read,
+            repo:write_branch,
+            repo:open_pr,
+            repo:merge,
+            ci:run,
+            deploy:staging,
+            deploy:production,
+            secrets:use,
+            automation:manage,
+            "admin:*",
+          ],
+      }
+    DelegationRole:
+      {
+        type: string,
+        enum: [executor, reviewer, researcher, coordinator, triager],
+      }
+    DelegationScopeType:
+      { type: string, enum: [work_item, plan_step, project, automation] }
+    DelegationStatus:
+      { type: string, enum: [active, revoked, expired, completed] }
+    AgentSessionState:
+      {
+        type: string,
+        enum:
+          [
+            queued,
+            acknowledged,
+            planning,
+            executing,
+            awaiting_input,
+            awaiting_approval,
+            blocked,
+            paused,
+            stopping,
+            stale,
+            completed,
+            failed,
+            canceled,
+          ],
+      }
+    PlanStepStatus:
+      {
+        type: string,
+        enum: [pending, in_progress, blocked, completed, canceled],
+      }
+    ActivityKind:
+      {
+        type: string,
+        enum:
+          [
+            ack,
+            status,
+            plan_published,
+            plan_changed,
+            action_started,
+            action_completed,
+            evidence,
+            question,
+            decision_request,
+            message,
+            artifact_published,
+            warning,
+            error,
+            completion,
+            heartbeat,
+            stop_ack,
+          ],
+      }
+    ApprovalStatus:
+      {
+        type: string,
+        enum: [pending, approved, rejected, expired, consumed, canceled],
+      }
+    ArtifactType:
+      {
+        type: string,
+        enum: [commit, pull_request, test_report, document, link, file, other],
+      }
+    AgentRegistrationInput:
+      {
+        type: object,
+        description: requestedCapabilities are agent-declared. approvedCapabilities may be submitted only by a workspace admin and must be a subset.,
+        required: [name, slug, provider, version, supportedProtocols],
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 120 },
+            slug: { type: string, pattern: "^[a-z0-9][a-z0-9-]{0,79}$" },
+            description: { type: string, maxLength: 2000 },
+            icon: { type: string, format: uri },
+            provider: { type: string },
+            version: { type: string },
+            endpointUrl: { type: string, format: uri },
+            supportedProtocols:
+              {
+                type: array,
+                minItems: 1,
+                items: { $ref: "#/components/schemas/AgentProtocol" },
+              },
+            skills: { type: array, items: { type: string } },
+            requestedCapabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            approvedCapabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+                description: Optional admin-only initial approval; must be a subset of requestedCapabilities.,
+              },
+            outputArtifactTypes:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/ArtifactType" },
+              },
+            maxConcurrency: { type: integer, minimum: 1 },
+            heartbeatIntervalSeconds: { type: integer, minimum: 1 },
+            metadata: { type: object, additionalProperties: true },
+          },
+      }
+    AgentPatch:
+      {
+        type: object,
+        description: requestedCapabilities are agent-declared. approvedCapabilities is admin-only and is checked against the resulting requested set.,
+        minProperties: 1,
+        properties:
+          {
+            name: { type: string },
+            description: { type: string },
+            icon: { type: string, format: uri },
+            provider: { type: string },
+            version: { type: string },
+            endpointUrl: { type: string, format: uri },
+            supportedProtocols:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/AgentProtocol" },
+              },
+            skills: { type: array, items: { type: string } },
+            requestedCapabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            approvedCapabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+                description: Admin-only approval; must be a subset of the persisted or submitted requested capabilities.,
+              },
+            outputArtifactTypes:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/ArtifactType" },
+              },
+            maxConcurrency: { type: integer, minimum: 1 },
+            heartbeatIntervalSeconds: { type: integer, minimum: 1 },
+            metadata: { type: object, additionalProperties: true },
+            isActive: { type: boolean },
+          },
+      }
+    AgentTeamAccessInput:
+      {
+        type: object,
+        required: [approvedCapabilities],
+        properties:
+          {
+            approvedCapabilities:
+              {
+                type: array,
+                minItems: 1,
+                maxItems: 50,
+                items: { $ref: "#/components/schemas/Capability" },
+                description: Admin-approved subset of this agent's requested capabilities.,
+              },
+          },
+      }
+    CapabilityScope:
+      {
+        type: object,
+        required: [workspaceId, capabilities],
+        properties:
+          {
+            workspaceId: { $ref: "#/components/schemas/Id" },
+            teamIds:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            projectIds:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            workItemIds:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            repositoryIds: { type: array, items: { type: string } },
+            capabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+          },
+      }
+    DelegationInput:
+      {
+        type: object,
+        required:
+          [
+            agentId,
+            principalHumanActorId,
+            role,
+            scopeType,
+            scopeId,
+            permissionsSnapshot,
+            capabilityScope,
+          ],
+        properties:
+          {
+            agentId: { $ref: "#/components/schemas/Id" },
+            principalHumanActorId: { $ref: "#/components/schemas/Id" },
+            role: { $ref: "#/components/schemas/DelegationRole" },
+            scopeType: { $ref: "#/components/schemas/DelegationScopeType" },
+            scopeId: { $ref: "#/components/schemas/Id" },
+            permissionsSnapshot:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            capabilityScope: { $ref: "#/components/schemas/CapabilityScope" },
+            startsAt: { $ref: "#/components/schemas/Timestamp" },
+            endsAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    CreateAgentSessionInput:
+      {
+        type: object,
+        required: [delegationId, initialPrompt],
+        properties:
+          {
+            delegationId: { $ref: "#/components/schemas/Id" },
+            workItemId: { $ref: "#/components/schemas/Id" },
+            projectId: { $ref: "#/components/schemas/Id" },
+            planStepId: { $ref: "#/components/schemas/Id" },
+            initialPrompt: { type: string, minLength: 1, maxLength: 50000 },
+            contextSnapshotId: { $ref: "#/components/schemas/Id" },
+            budget:
+              {
+                type: object,
+                additionalProperties: false,
+                properties:
+                  {
+                    maxRuntimeSeconds: { type: integer, minimum: 1 },
+                    maxInputTokens: { type: integer, minimum: 0 },
+                    maxOutputTokens: { type: integer, minimum: 0 },
+                    maxCostUsd: { type: number, minimum: 0 },
+                  },
+              },
+          },
+        oneOf:
+          [
+            { required: [workItemId] },
+            { required: [projectId] },
+            { required: [planStepId] },
+          ],
+      }
+    ExchangeAgentSessionTokenInput:
+      {
+        type: object,
+        required: [exchangeToken],
+        properties: { exchangeToken: { type: string, minLength: 32 } },
+      }
+    RefreshAgentSessionTokenInput:
+      {
+        type: object,
+        properties: { tokenId: { type: string, minLength: 1, maxLength: 500 } },
+      }
+    AgentSessionToken:
+      {
+        type: object,
+        required: [sessionToken, expiresAt],
+        properties:
+          {
+            sessionToken: { type: string },
+            expiresAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    AcknowledgeAgentSessionInput:
+      {
+        type: object,
+        required: [summary],
+        properties:
+          {
+            summary: { type: string, minLength: 1, maxLength: 2000 },
+            externalUrls:
+              {
+                type: array,
+                items:
+                  {
+                    type: object,
+                    required: [label, url],
+                    properties:
+                      {
+                        label: { type: string },
+                        url: { type: string, format: uri },
+                      },
+                  },
+              },
+          },
+      }
+    HeartbeatInput:
+      {
+        type: object,
+        required: [usage],
+        properties:
+          {
+            currentStepId: { $ref: "#/components/schemas/Id" },
+            usage:
+              {
+                type: object,
+                required: [runtimeSeconds],
+                properties:
+                  {
+                    runtimeSeconds: { type: integer, minimum: 0 },
+                    inputTokens: { type: integer, minimum: 0 },
+                    outputTokens: { type: integer, minimum: 0 },
+                    toolCalls: { type: integer, minimum: 0 },
+                  },
+              },
+          },
+      }
+    PromptAgentSessionInput:
+      {
+        type: object,
+        required: [bodyMarkdown],
+        properties:
+          {
+            bodyMarkdown: { type: string, minLength: 1, maxLength: 50000 },
+            planRevision: { $ref: "#/components/schemas/Revision" },
+            workItemRevision: { $ref: "#/components/schemas/Revision" },
+          },
+      }
+    PlanStepInput:
+      {
+        type: object,
+        required: [id, title, ordinal],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            title: { type: string },
+            description: { type: string },
+            status: { $ref: "#/components/schemas/PlanStepStatus" },
+            ordinal: { type: integer, minimum: 0 },
+            ownerActorId: { $ref: "#/components/schemas/Id" },
+            dependsOn:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            acceptanceCriteria: { type: array, items: { type: string } },
+            expectedArtifacts:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/ArtifactType" },
+              },
+            cancellationReason: { type: string },
+          },
+      }
+    PublishPlanInput:
+      {
+        type: object,
+        required: [changeSummary, steps],
+        dependentRequired:
+          {
+            approvalId: [approvalPayloadHash],
+            approvalPayloadHash: [approvalId],
+          },
+        properties:
+          {
+            changeSummary: { type: string, minLength: 1, maxLength: 5000 },
+            steps:
+              {
+                type: array,
+                minItems: 1,
+                items: { $ref: "#/components/schemas/PlanStepInput" },
+              },
+            approvalId: { $ref: "#/components/schemas/Id" },
+            approvalPayloadHash:
+              { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+          },
+      }
+    AppendActivityInput:
+      {
+        type: object,
+        required: [kind, summary],
+        properties:
+          {
+            kind: { $ref: "#/components/schemas/ActivityKind" },
+            summary: { type: string, minLength: 1, maxLength: 10000 },
+            detailsMarkdown: { type: string, maxLength: 50000 },
+            toolInvocation:
+              {
+                type: object,
+                properties:
+                  {
+                    toolName: { type: string },
+                    inputSanitized:
+                      { type: object, additionalProperties: true },
+                    status:
+                      { type: string, enum: [started, succeeded, failed] },
+                    resultSummary: { type: string },
+                    externalTraceUrl: { type: string, format: uri },
+                  },
+              },
+            artifactIds:
+              { type: array, items: { $ref: "#/components/schemas/Id" } },
+            references:
+              {
+                type: array,
+                items:
+                  {
+                    type: object,
+                    required: [type, id],
+                    properties:
+                      {
+                        type:
+                          {
+                            type: string,
+                            enum: [work_item, plan_step, artifact, approval],
+                          },
+                        id: { $ref: "#/components/schemas/Id" },
+                      },
+                  },
+              },
+            visibility: { type: string, enum: [workspace, team, private] },
+            ephemeral: { type: boolean },
+          },
+      }
+    SignalAgentSessionInput:
+      {
+        type: object,
+        required: [signal, reason],
+        properties:
+          {
+            signal: { type: string, enum: [stop, pause, resume] },
+            reason: { type: string, minLength: 1, maxLength: 2000 },
+          },
+      }
+    StopAcknowledgementInput:
+      {
+        type: object,
+        required: [cleanupSummary],
+        properties:
+          {
+            cleanupSummary: { type: string, minLength: 1 },
+            residualRisks: { type: array, items: { type: string } },
+          },
+      }
+    RetryAgentSessionInput:
+      {
+        type: object,
+        required: [reason],
+        properties:
+          {
+            reason: { type: string, minLength: 1, maxLength: 2000 },
+            initialPrompt: { type: string, minLength: 1, maxLength: 50000 },
+            reuseContext: { type: boolean, default: true },
+          },
+      }
+    CompleteAgentSessionInput:
+      {
+        type: object,
+        required: [summary],
+        anyOf:
+          [
+            { required: [artifactIds] },
+            { required: [checks] },
+            { required: [noArtifactReason] },
+          ],
+        properties:
+          {
+            summary: { type: string, minLength: 1 },
+            artifactIds:
+              {
+                type: array,
+                minItems: 1,
+                items: { $ref: "#/components/schemas/Id" },
+              },
+            checks:
+              {
+                type: array,
+                minItems: 1,
+                items:
+                  {
+                    type: object,
+                    required: [name, status, summary],
+                    properties:
+                      {
+                        name: { type: string },
+                        command: { type: string },
+                        status:
+                          { type: string, enum: [passed, failed, skipped] },
+                        summary: { type: string },
+                      },
+                  },
+              },
+            limitations: { type: array, items: { type: string } },
+            noArtifactReason: { type: string, minLength: 1 },
+          },
+      }
+    FailAgentSessionInput:
+      {
+        type: object,
+        required: [code, summary],
+        properties:
+          {
+            code: { type: string },
+            summary: { type: string },
+            retryable: { type: boolean },
+            evidence: { type: array, items: { type: string } },
+          },
+      }
+    ArtifactInput:
+      {
+        type: object,
+        required: [sessionId, type, title],
+        properties:
+          {
+            sessionId: { $ref: "#/components/schemas/Id" },
+            workItemId: { $ref: "#/components/schemas/Id" },
+            type: { $ref: "#/components/schemas/ArtifactType" },
+            title: { type: string },
+            uri: { type: string, format: uri },
+            checksum: { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+            sourceTool: { type: string },
+            metadata: { type: object, additionalProperties: true },
+          },
+      }
+    RequestApprovalInput:
+      {
+        type: object,
+        required:
+          [
+            sessionId,
+            approvalType,
+            actionName,
+            actionPayloadSanitized,
+            actionPayloadHash,
+            riskLevel,
+            rationaleSummary,
+            expiresAt,
+          ],
+        properties:
+          {
+            sessionId: { $ref: "#/components/schemas/Id" },
+            approvalType: { type: string },
+            actionName: { type: string },
+            actionPayloadSanitized:
+              { type: object, additionalProperties: true },
+            actionPayloadHash:
+              { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+            riskLevel: { type: string, enum: [low, medium, high, critical] },
+            rationaleSummary: { type: string },
+            requiredApprovals: { type: integer, minimum: 1 },
+            expiresAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    DecideApprovalInput:
+      {
+        type: object,
+        required: [decision, reason],
+        properties:
+          {
+            decision: { type: string, enum: [approved, rejected] },
+            reason: { type: string, minLength: 1 },
+          },
+      }
+    ConsumeApprovalInput:
+      {
+        type: object,
+        required: [actionPayloadHash],
+        properties:
+          {
+            actionPayloadHash:
+              { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+          },
+      }
+    ReasonInput:
+      {
+        type: object,
+        required: [reason],
+        properties: { reason: { type: string, minLength: 1, maxLength: 2000 } },
+      }
+    Agent:
+      {
+        type: object,
+        required:
+          [
+            id,
+            actor_id,
+            name,
+            slug,
+            provider,
+            version,
+            supported_protocols,
+            requested_capabilities,
+            approved_capabilities,
+            team_access,
+            revision,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            actor_id: { $ref: "#/components/schemas/Id" },
+            name: { type: string },
+            slug: { type: string },
+            provider: { type: string },
+            version: { type: string },
+            endpoint_url: { type: [string, "null"], format: uri },
+            supported_protocols:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/AgentProtocol" },
+              },
+            skills: { type: array, items: { type: string } },
+            requested_capabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            approved_capabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            team_access:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/AgentTeamAccess" },
+              },
+            is_active: { type: boolean },
+            revision: { $ref: "#/components/schemas/Revision" },
+          },
+      }
+    AgentTeamAccess:
+      {
+        type: object,
+        required:
+          [
+            agent_id,
+            team_id,
+            approved_capabilities,
+            status,
+            approved_by_actor_id,
+            revision,
+            created_at,
+            updated_at,
+            revoked_at,
+          ],
+        properties:
+          {
+            agent_id: { $ref: "#/components/schemas/Id" },
+            team_id: { $ref: "#/components/schemas/Id" },
+            approved_capabilities:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/Capability" },
+              },
+            status: { type: string, enum: [active, revoked] },
+            approved_by_actor_id: { $ref: "#/components/schemas/Id" },
+            revision: { $ref: "#/components/schemas/Revision" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+            revoked_at: { type: [string, "null"], format: date-time },
+          },
+      }
+    Delegation:
+      {
+        type: object,
+        required:
+          [
+            id,
+            agent_id,
+            principal_human_actor_id,
+            role,
+            scope_type,
+            scope_id,
+            status,
+            revision,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            agent_id: { $ref: "#/components/schemas/Id" },
+            principal_human_actor_id: { $ref: "#/components/schemas/Id" },
+            role: { $ref: "#/components/schemas/DelegationRole" },
+            scope_type: { $ref: "#/components/schemas/DelegationScopeType" },
+            scope_id: { $ref: "#/components/schemas/Id" },
+            status: { $ref: "#/components/schemas/DelegationStatus" },
+            capability_scope: { $ref: "#/components/schemas/CapabilityScope" },
+            revision: { $ref: "#/components/schemas/Revision" },
+          },
+      }
+    AgentSession:
+      {
+        type: object,
+        required:
+          [
+            id,
+            agent_id,
+            agent_actor_id,
+            delegation_id,
+            state,
+            sequence,
+            revision,
+            retry_of_session_id,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            agent_id: { $ref: "#/components/schemas/Id" },
+            agent_actor_id: { $ref: "#/components/schemas/Id" },
+            delegation_id: { $ref: "#/components/schemas/Id" },
+            work_item_id: { type: [string, "null"], format: uuid },
+            project_id: { type: [string, "null"], format: uuid },
+            plan_step_id: { type: [string, "null"], format: uuid },
+            state: { $ref: "#/components/schemas/AgentSessionState" },
+            state_reason: { type: [string, "null"] },
+            sequence: { type: integer, minimum: 0 },
+            revision: { $ref: "#/components/schemas/Revision" },
+            current_plan_version_id: { type: [string, "null"], format: uuid },
+            retry_of_session_id: { type: [string, "null"], format: uuid },
+            last_heartbeat_at: { type: [string, "null"], format: date-time },
+            stop_requested_at: { type: [string, "null"], format: date-time },
+            ended_at: { type: [string, "null"], format: date-time },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    DelegateAndStartAgentSession:
+      {
+        type: object,
+        required: [delegation, session],
+        properties:
+          {
+            delegation: { $ref: "#/components/schemas/Delegation" },
+            session: { $ref: "#/components/schemas/AgentSession" },
+          },
+      }
+    PlanVersion:
+      {
+        type: object,
+        required:
+          [
+            id,
+            session_id,
+            revision,
+            change_summary,
+            author_actor_id,
+            created_at,
+            steps,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            session_id: { $ref: "#/components/schemas/Id" },
+            revision: { $ref: "#/components/schemas/Revision" },
+            parent_version_id: { type: [string, "null"], format: uuid },
+            change_summary: { type: string },
+            author_actor_id: { $ref: "#/components/schemas/Id" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            steps:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/PlanStepInput" },
+              },
+          },
+      }
+    AgentActivity:
+      {
+        allOf:
+          [
+            { $ref: "#/components/schemas/AppendActivityInput" },
+            {
+              type: object,
+              required: [id, session_id, actor_id, sequence, created_at],
+              properties:
+                {
+                  id: { $ref: "#/components/schemas/Id" },
+                  session_id: { $ref: "#/components/schemas/Id" },
+                  actor_id: { $ref: "#/components/schemas/Id" },
+                  sequence: { type: integer, minimum: 1 },
+                  created_at: { $ref: "#/components/schemas/Timestamp" },
+                },
+            },
+          ],
+      }
+    Artifact:
+      {
+        allOf:
+          [
+            { $ref: "#/components/schemas/ArtifactInput" },
+            {
+              type: object,
+              required: [id, producer_actor_id, created_at],
+              properties:
+                {
+                  id: { $ref: "#/components/schemas/Id" },
+                  producer_actor_id: { $ref: "#/components/schemas/Id" },
+                  created_at: { $ref: "#/components/schemas/Timestamp" },
+                },
+            },
+          ],
+      }
+    Approval:
+      {
+        allOf:
+          [
+            { $ref: "#/components/schemas/RequestApprovalInput" },
+            {
+              type: object,
+              required:
+                [
+                  id,
+                  requested_by_actor_id,
+                  status,
+                  decisions,
+                  quorum,
+                  created_at,
+                  updated_at,
+                ],
+              properties:
+                {
+                  id: { $ref: "#/components/schemas/Id" },
+                  requested_by_actor_id: { $ref: "#/components/schemas/Id" },
+                  status: { $ref: "#/components/schemas/ApprovalStatus" },
+                  decisions:
+                    {
+                      type: array,
+                      items:
+                        {
+                          type: object,
+                          required: [actor_id, decision, reason, decided_at],
+                          properties:
+                            {
+                              actor_id: { $ref: "#/components/schemas/Id" },
+                              decision:
+                                { type: string, enum: [approved, rejected] },
+                              reason: { type: string },
+                              decided_at:
+                                { $ref: "#/components/schemas/Timestamp" },
+                            },
+                        },
+                    },
+                  quorum:
+                    {
+                      type: object,
+                      required: [required, approved, rejected, reached],
+                      properties:
+                        {
+                          required: { type: integer, minimum: 1 },
+                          approved: { type: integer, minimum: 0 },
+                          rejected: { type: integer, minimum: 0 },
+                          reached: { type: boolean },
+                        },
+                    },
+                  consumed_at: { type: [string, "null"], format: date-time },
+                  created_at: { $ref: "#/components/schemas/Timestamp" },
+                  updated_at: { $ref: "#/components/schemas/Timestamp" },
+                },
+            },
+          ],
+      }
+    ApprovalDecision:
+      {
+        type: object,
+        required: [approval, decision, quorum, status],
+        properties:
+          {
+            approval: { $ref: "#/components/schemas/Approval" },
+            decision:
+              {
+                type: object,
+                required: [actor_id, decision, reason, decided_at],
+                properties:
+                  {
+                    actor_id: { $ref: "#/components/schemas/Id" },
+                    decision: { type: string, enum: [approved, rejected] },
+                    reason: { type: string },
+                    decided_at: { $ref: "#/components/schemas/Timestamp" },
+                  },
+              },
+            quorum:
+              {
+                type: object,
+                required: [required, approved, rejected, reached],
+                properties:
+                  {
+                    required: { type: integer, minimum: 1 },
+                    approved: { type: integer, minimum: 0 },
+                    rejected: { type: integer, minimum: 0 },
+                    reached: { type: boolean },
+                  },
+              },
+            status: { $ref: "#/components/schemas/ApprovalStatus" },
+          },
+      }
+    ApprovalConsumption:
+      {
+        type: object,
+        required: [approval_id, status, consumed_at, action_payload_hash],
+        properties:
+          {
+            approval_id: { $ref: "#/components/schemas/Id" },
+            status: { const: consumed },
+            consumed_at: { $ref: "#/components/schemas/Timestamp" },
+            action_payload_hash:
+              { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+          },
+      }
+    ApprovalEventType:
+      {
+        type: string,
+        enum:
+          [
+            approval.requested,
+            approval.decision.recorded,
+            approval.approved,
+            approval.rejected,
+            approval.expired,
+          ],
+      }
+    ApprovalQuorum:
+      {
+        type: object,
+        required: [required, approved, rejected, reached],
+        properties:
+          {
+            required: { type: integer, minimum: 1 },
+            approved: { type: integer, minimum: 0 },
+            rejected: { type: integer, minimum: 0 },
+            reached: { type: boolean },
+          },
+      }
+    ApprovalDecisionRecord:
+      {
+        type: object,
+        required: [actor_id, decision, reason, decided_at],
+        properties:
+          {
+            actor_id: { $ref: "#/components/schemas/Id" },
+            decision: { type: string, enum: [approved, rejected] },
+            reason: { type: string },
+            decided_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    ApprovalRequestedEventPayload:
+      {
+        type: object,
+        required:
+          [
+            approvalId,
+            sessionId,
+            status,
+            actionName,
+            actionPayloadHash,
+            requiredApprovals,
+            expiresAt,
+          ],
+        properties:
+          {
+            approvalId: { $ref: "#/components/schemas/Id" },
+            sessionId: { $ref: "#/components/schemas/Id" },
+            status: { const: pending },
+            actionName: { type: string, minLength: 1 },
+            actionPayloadHash:
+              { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+            requiredApprovals: { type: integer, minimum: 1 },
+            expiresAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    ApprovalDecisionRecordedEventPayload:
+      {
+        type: object,
+        required: [approvalId, decision, quorum, status],
+        properties:
+          {
+            approvalId: { $ref: "#/components/schemas/Id" },
+            decision: { $ref: "#/components/schemas/ApprovalDecisionRecord" },
+            quorum: { $ref: "#/components/schemas/ApprovalQuorum" },
+            status: { type: string, enum: [pending, approved, rejected] },
+          },
+      }
+    ApprovalApprovedEventPayload:
+      {
+        type: object,
+        required: [approvalId, status, quorum, finalizedAt],
+        properties:
+          {
+            approvalId: { $ref: "#/components/schemas/Id" },
+            status: { const: approved },
+            quorum: { $ref: "#/components/schemas/ApprovalQuorum" },
+            finalizedAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    ApprovalRejectedEventPayload:
+      {
+        type: object,
+        required: [approvalId, status, quorum, finalizedAt],
+        properties:
+          {
+            approvalId: { $ref: "#/components/schemas/Id" },
+            status: { const: rejected },
+            quorum: { $ref: "#/components/schemas/ApprovalQuorum" },
+            finalizedAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    ApprovalExpiredEventPayload:
+      {
+        type: object,
+        required: [approvalId, status, expiredAt],
+        properties:
+          {
+            approvalId: { $ref: "#/components/schemas/Id" },
+            status: { const: expired },
+            expiredAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    ApprovalEventEnvelope:
+      {
+        oneOf:
+          [
+            {
+              allOf:
+                [
+                  { $ref: "#/components/schemas/EventEnvelope" },
+                  {
+                    type: object,
+                    required: [event_type, session_id, sequence, payload],
+                    properties:
+                      {
+                        event_type: { const: approval.requested },
+                        session_id: { $ref: "#/components/schemas/Id" },
+                        sequence: { type: integer, minimum: 1 },
+                        payload:
+                          {
+                            $ref: "#/components/schemas/ApprovalRequestedEventPayload",
+                          },
+                      },
+                  },
+                ],
+            },
+            {
+              allOf:
+                [
+                  { $ref: "#/components/schemas/EventEnvelope" },
+                  {
+                    type: object,
+                    required: [event_type, session_id, sequence, payload],
+                    properties:
+                      {
+                        event_type: { const: approval.decision.recorded },
+                        session_id: { $ref: "#/components/schemas/Id" },
+                        sequence: { type: integer, minimum: 1 },
+                        payload:
+                          {
+                            $ref: "#/components/schemas/ApprovalDecisionRecordedEventPayload",
+                          },
+                      },
+                  },
+                ],
+            },
+            {
+              allOf:
+                [
+                  { $ref: "#/components/schemas/EventEnvelope" },
+                  {
+                    type: object,
+                    required: [event_type, session_id, sequence, payload],
+                    properties:
+                      {
+                        event_type: { const: approval.approved },
+                        session_id: { $ref: "#/components/schemas/Id" },
+                        sequence: { type: integer, minimum: 1 },
+                        payload:
+                          {
+                            $ref: "#/components/schemas/ApprovalApprovedEventPayload",
+                          },
+                      },
+                  },
+                ],
+            },
+            {
+              allOf:
+                [
+                  { $ref: "#/components/schemas/EventEnvelope" },
+                  {
+                    type: object,
+                    required: [event_type, session_id, sequence, payload],
+                    properties:
+                      {
+                        event_type: { const: approval.rejected },
+                        session_id: { $ref: "#/components/schemas/Id" },
+                        sequence: { type: integer, minimum: 1 },
+                        payload:
+                          {
+                            $ref: "#/components/schemas/ApprovalRejectedEventPayload",
+                          },
+                      },
+                  },
+                ],
+            },
+            {
+              allOf:
+                [
+                  { $ref: "#/components/schemas/EventEnvelope" },
+                  {
+                    type: object,
+                    required: [event_type, session_id, sequence, payload],
+                    properties:
+                      {
+                        event_type: { const: approval.expired },
+                        session_id: { $ref: "#/components/schemas/Id" },
+                        sequence: { type: integer, minimum: 1 },
+                        payload:
+                          {
+                            $ref: "#/components/schemas/ApprovalExpiredEventPayload",
+                          },
+                      },
+                  },
+                ],
+            },
+          ],
+        discriminator: { propertyName: event_type },
+        description: requested is emitted once for initial pending state; decision.recorded is emitted per vote; approved/rejected are terminal-only; expired is a distinct terminal event.,
+      }
+    SessionContext:
+      {
+        type: object,
+        required: [session, workItem, plan, contextSnapshotId, guidanceUris],
+        properties:
+          {
+            session: { $ref: "#/components/schemas/AgentSession" },
+            workItem:
+              {
+                anyOf:
+                  [{ $ref: "#/components/schemas/WorkItem" }, { type: "null" }],
+              },
+            plan:
+              {
+                anyOf:
+                  [
+                    { $ref: "#/components/schemas/PlanVersion" },
+                    { type: "null" },
+                  ],
+              },
+            contextSnapshotId: { type: [string, "null"], format: uuid },
+            guidanceUris: { type: array, items: { type: string, format: uri } },
+          },
+      }
+    Guidance:
+      {
+        type: object,
+        required: [scope, scopeId, revision, markdown, updatedAt],
+        properties:
+          {
+            scope: { type: string, enum: [workspace, team, project] },
+            scopeId: { $ref: "#/components/schemas/Id" },
+            revision: { $ref: "#/components/schemas/Revision" },
+            markdown: { type: string },
+            updatedAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
