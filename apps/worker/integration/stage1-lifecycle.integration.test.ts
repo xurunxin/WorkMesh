@@ -1,0 +1,145 @@
+import { randomUUID } from 'node:crypto'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { applyMigrations, createDb, type Db } from '@workmesh/db'
+import { createAgentWebhookWorker, encryptWebhookSecretForTest } from '../src/agent-webhook.js'
+import { createSessionLifecycleWorker } from '../src/session-lifecycle.js'
+
+const databaseUrl = process.env.DATABASE_URL
+if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Worker integration tests require RUN_INTEGRATION=1 and DATABASE_URL.')
+if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Worker integration tests require DATABASE_URL to name a dedicated test database.')
+
+const db = createDb(databaseUrl)
+const key = Buffer.alloc(32, 9)
+const publicDns = async () => [{ address: '8.8.8.8', family: 4 as const }]
+
+type Fixture = { workspaceId: string; serviceActorId: string; humanActorId: string; agentId: string; endpointId: string; workItemId: string; delegationId: string }
+
+const fixture = async (): Promise<Fixture> => {
+  const workspace = await db.query<{ id: string }>("INSERT INTO workspaces(name,slug) VALUES('Worker Stage 1','worker-stage-1') RETURNING id")
+  const workspaceId = workspace.rows[0]!.id
+  const service = await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','System') RETURNING id", [workspaceId])
+  const human = await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin','worker@example.test','Owner','unused') RETURNING id", [workspaceId])
+  const agentActor = await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Webhook Agent') RETURNING id", [workspaceId])
+  await db.query('INSERT INTO platform_installation(singleton,workspace_id,system_actor_id) VALUES(true,$1,$2)', [workspaceId, service.rows[0]!.id])
+  const team = await db.query<{ id: string }>("INSERT INTO teams(workspace_id,name,key) VALUES($1,'Stage','STG') RETURNING id", [workspaceId])
+  const state = await db.query<{ id: string }>("INSERT INTO workflow_states(workspace_id,team_id,name,category) VALUES($1,$2,'Todo','backlog') RETURNING id", [workspaceId, team.rows[0]!.id])
+  const workItem = await db.query<{ id: string }>('INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) VALUES($1,$2,1,$3,$4,$5) RETURNING id', [workspaceId, team.rows[0]!.id, 'Verify worker', state.rows[0]!.id, human.rows[0]!.id])
+  const agent = await db.query<{ id: string }>("INSERT INTO agent_definitions(workspace_id,actor_id,slug,display_name,supported_protocols) VALUES($1,$2,'worker-agent','Worker agent',ARRAY['native_http']::agent_protocol[]) RETURNING id", [workspaceId, agentActor.rows[0]!.id])
+  const endpoint = await db.query<{ id: string }>("INSERT INTO agent_webhook_endpoints(agent_id,url) VALUES($1,'https://agent.example.test/events') RETURNING id", [agent.rows[0]!.id])
+  const encrypted = encryptWebhookSecretForTest(Buffer.from('integration-secret'), key)
+  await db.query('INSERT INTO agent_webhook_secrets(endpoint_id,version,secret_ciphertext,iv,auth_tag,key_version,status,created_by_actor_id) VALUES($1,1,$2,$3,$4,$5,$6,$7)', [endpoint.rows[0]!.id, Buffer.from(encrypted.ciphertext, 'base64'), Buffer.from(encrypted.iv, 'base64'), Buffer.from(encrypted.authTag, 'base64'), '1', 'active', service.rows[0]!.id])
+  const delegation = await db.query<{ id: string }>("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read']) RETURNING id", [workspaceId, team.rows[0]!.id, agent.rows[0]!.id, agentActor.rows[0]!.id, human.rows[0]!.id, workItem.rows[0]!.id])
+  return { workspaceId, serviceActorId: service.rows[0]!.id, humanActorId: human.rows[0]!.id, agentId: agent.rows[0]!.id, endpointId: endpoint.rows[0]!.id, workItemId: workItem.rows[0]!.id, delegationId: delegation.rows[0]!.id }
+}
+
+const createSession = async (data: Fixture, state = 'queued'): Promise<string> => {
+  const result = await db.query<{ id: string }>(`
+    INSERT INTO agent_sessions(workspace_id,agent_id,agent_actor_id,delegation_id,work_item_id,state)
+    SELECT $1,d.agent_id,d.agent_actor_id,d.id,$2,$3 FROM delegations d WHERE d.id=$4 RETURNING id
+  `, [data.workspaceId, data.workItemId, state, data.delegationId])
+  return result.rows[0]!.id
+}
+
+const createDelivery = async (data: Fixture, sessionId: string, deliveryId = `del_${randomUUID()}`): Promise<string> => {
+  const event = await db.query<{ id: string }>("INSERT INTO domain_events(workspace_id,event_type,aggregate_type,aggregate_id,actor_id,correlation_id,payload) VALUES($1,'agent.session.created','agent_session',$2,$3,$4,$5) RETURNING id", [data.workspaceId, sessionId, data.serviceActorId, deliveryId, { sessionId }])
+  const delivery = await db.query<{ id: string }>('INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,1,$3,$4,$5,$6,$7) RETURNING id', [data.agentId, data.endpointId, event.rows[0]!.id, deliveryId, 'agent.session.created', sessionId, { sessionId }])
+  return delivery.rows[0]!.id
+}
+
+describe('stage 1 worker durability', () => {
+  beforeAll(async () => { await applyMigrations(db) }, 120_000)
+  beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
+  afterAll(async () => { await db.end() })
+
+  it('treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids', async () => {
+    const data = await fixture()
+    const sessionId = await createSession(data)
+    const deliveryId = `del_${randomUUID()}`
+    const delivery = await createDelivery(data, sessionId, deliveryId)
+    const worker = createAgentWebhookWorker({ db, masterKey: key, dnsLookup: publicDns, fetcher: async () => ({ status: 409 }) })
+    await worker.tick()
+    expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [delivery])).rows[0]?.status).toBe('delivered')
+    await expect(createDelivery(data, sessionId, deliveryId)).rejects.toThrow()
+  })
+
+  it('retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors', async () => {
+    const data = await fixture()
+    const sessionId = await createSession(data)
+    const retryId = await createDelivery(data, sessionId)
+    let online = false
+    const retryWorker = createAgentWebhookWorker({ db, masterKey: key, dnsLookup: publicDns, fetcher: async () => { if (!online) throw new Error('secret must not appear'); return { status: 204 } } })
+    await retryWorker.tick()
+    expect((await db.query<{ status: string; last_error: string }>('SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1', [retryId])).rows[0]).toMatchObject({ status: 'pending', last_error: 'NETWORK_ERROR' })
+    await db.query('UPDATE agent_webhook_deliveries SET available_at=now() WHERE id=$1', [retryId]); online = true; await retryWorker.tick()
+    expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [retryId])).rows[0]?.status).toBe('delivered')
+
+    const reclaimId = await createDelivery(data, sessionId)
+    const beforeCrash = createAgentWebhookWorker({ db, workerId: 'before-crash', masterKey: key, dnsLookup: publicDns, fetcher: async () => ({ status: 204 }) })
+    expect(await beforeCrash.claimDeliveries(1, 60)).toHaveLength(1)
+    await db.query("UPDATE agent_webhook_deliveries SET locked_at=now()-interval '61 seconds' WHERE id=$1", [reclaimId])
+    await createAgentWebhookWorker({ db, workerId: 'after-crash', masterKey: key, dnsLookup: publicDns, fetcher: async () => ({ status: 204 }) }).tick()
+    expect((await db.query<{ status: string; attempt_count: number }>('SELECT status,attempt_count FROM agent_webhook_deliveries WHERE id=$1', [reclaimId])).rows[0]).toMatchObject({ status: 'delivered', attempt_count: 2 })
+
+    const deadId = await createDelivery(data, sessionId)
+    const deadWorker = createAgentWebhookWorker({ db, masterKey: key, maxAttempts: 2, dnsLookup: publicDns, fetcher: async () => ({ status: 503 }) })
+    await deadWorker.tick(); await db.query('UPDATE agent_webhook_deliveries SET available_at=now() WHERE id=$1', [deadId]); await deadWorker.tick()
+    expect((await db.query<{ status: string; dead_lettered_at: Date | null }>('SELECT status,dead_lettered_at FROM agent_webhook_deliveries WHERE id=$1', [deadId])).rows[0]).toMatchObject({ status: 'dead', dead_lettered_at: expect.any(Date) })
+  })
+
+  it('dead-letters a private target without sending and permits the explicit private-network override', async () => {
+    const data = await fixture()
+    const sessionId = await createSession(data)
+    await db.query("UPDATE agent_webhook_endpoints SET url='http://agent.internal/events' WHERE id=$1", [data.endpointId])
+    const rejectedId = await createDelivery(data, sessionId)
+    let requests = 0
+    const privateDns = async () => [{ address: '10.20.30.40', family: 4 as const }]
+    await createAgentWebhookWorker({
+      db,
+      masterKey: key,
+      dnsLookup: privateDns,
+      fetcher: async () => { requests += 1; return { status: 204 } },
+    }).tick()
+    expect(requests).toBe(0)
+    expect((await db.query<{ status: string; attempt_count: number; last_error: string }>(
+      'SELECT status,attempt_count,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [rejectedId],
+    )).rows[0]).toMatchObject({ status: 'dead', attempt_count: 1, last_error: 'UNSAFE_WEBHOOK_TARGET' })
+
+    const allowedId = await createDelivery(data, sessionId)
+    await createAgentWebhookWorker({
+      db,
+      masterKey: key,
+      dnsLookup: privateDns,
+      allowPrivateAgentWebhooks: true,
+      fetcher: async () => { requests += 1; return { status: 204 } },
+    }).tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [allowedId])).rows[0]?.status).toBe('delivered')
+  })
+
+  it('handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions', async () => {
+    const data = await fixture()
+    const queued = await createSession(data)
+    const lifecycle = createSessionLifecycleWorker({ db, ackTimeoutSeconds: 1, heartbeatStaleAfterSeconds: 1, stopGraceSeconds: 1 })
+    await db.query("UPDATE agent_sessions SET created_at=now()-interval '10 minutes' WHERE id=$1", [queued])
+    expect(await lifecycle.expireAckDeadlines()).toBe(1)
+    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [queued])).rows[0]?.state).toBe('stale')
+    await db.query("UPDATE agent_sessions SET state='acknowledged', acknowledged_at=now(), last_heartbeat_at=now(), revision=revision+1 WHERE id=$1 AND state='stale'", [queued])
+    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [queued])).rows[0]?.state).toBe('acknowledged')
+
+    const active = await createSession(data, 'executing')
+    await db.query("UPDATE agent_sessions SET last_heartbeat_at=now()-interval '10 minutes' WHERE id=$1", [active])
+    expect(await lifecycle.reconcileHeartbeatLiveness()).toBe(1)
+    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [active])).rows[0]?.state).toBe('stale')
+    expect((await db.query<{ count: string }>('SELECT count(*) FROM agent_activities WHERE session_id=$1', [active])).rows[0]?.count).toBe('0')
+
+    const stopping = await createSession(data, 'stopping')
+    await db.query("UPDATE agent_sessions SET stop_requested_at=now()-interval '10 minutes' WHERE id=$1", [stopping])
+    expect(await lifecycle.expireStopGrace()).toBe(1)
+    expect((await db.query<{ state: string; ended_at: Date | null }>('SELECT state,ended_at FROM agent_sessions WHERE id=$1', [stopping])).rows[0]).toMatchObject({ state: 'canceled', ended_at: expect.any(Date) })
+
+    const approval = await db.query<{ id: string }>("INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,created_at,expires_at) VALUES($1,$2,$3,'merge','git.merge','{}','sha256:abc','high','Needs approval',now()-interval '2 minutes',now()-interval '1 minute') RETURNING id", [data.workspaceId, queued, data.humanActorId])
+    expect(await lifecycle.expireApprovals()).toBe(1)
+    expect((await db.query<{ status: string }>('SELECT status FROM approvals WHERE id=$1', [approval.rows[0]!.id])).rows[0]?.status).toBe('expired')
+  })
+})
