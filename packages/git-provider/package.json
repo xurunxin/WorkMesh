@@ -1,0 +1,16 @@
+{
+  "name": "@workmesh/git-provider",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "vitest": "^3.1.3"
+  }
+}

@@ -15,8 +15,8 @@ export const workspaceInputSchema = z.object({ name: z.string().min(1).max(120),
 export const teamInputSchema = z.object({ name: z.string().min(1).max(120), key: z.string().regex(/^[A-Z][A-Z0-9]{1,9}$/) })
 export const stateInputSchema = z.object({ name: z.string().min(1).max(80), category: statusCategorySchema, color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), position: z.number().int().nonnegative().optional() })
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
-export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional() })
-export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional() })
+export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() })
+export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() })
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
@@ -31,7 +31,7 @@ export const membershipResponseSchema = z.object({ workspace_id: idSchema, team_
 export const workflowStateResponseSchema = z.object({ id: idSchema, team_id: idSchema, name: z.string(), category: statusCategorySchema, color: z.string(), position: z.number().int().nonnegative(), is_archived: z.boolean(), revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema })
 export const humanActorResponseSchema = z.object({ id: idSchema, email: z.string().email(), display_name: z.string(), kind: z.literal('human').optional(), is_active: z.boolean().optional(), workspace_id: idSchema.optional(), created_at: timestampSchema.optional() })
 export const projectResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, name: z.string(), summary: z.string().nullable(), description: z.string().nullable(), status: z.string(), lead_actor_id: idSchema.nullable(), target_date: dateSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), labels: z.array(z.string()), project_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema })
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema })
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const savedViewResponseSchema = z.object({ id: z.string(), workspace_id: idSchema.optional(), owner_actor_id: idSchema.optional(), team_id: idSchema.nullable().optional(), name: z.string(), filters: savedViewFiltersSchema, layout: savedViewLayoutSchema, built_in: z.boolean().optional(), revision: revisionSchema.optional(), created_at: timestampSchema.optional(), updated_at: timestampSchema.optional() })
@@ -130,7 +130,7 @@ export const approvalStatusSchema = z.enum(['pending', 'approved', 'rejected', '
 export const approvalRiskLevelSchema = z.enum(['low', 'medium', 'high', 'critical'])
 export const checkStatusSchema = z.enum(['passed', 'failed', 'skipped'])
 export const visibilitySchema = z.enum(['workspace', 'team', 'private'])
-export const artifactTypeSchema = z.enum(['commit', 'pull_request', 'test_report', 'code_review', 'document', 'link', 'file', 'other'])
+export const artifactTypeSchema = z.enum(['branch', 'commit', 'diff', 'pull_request', 'test_report', 'build', 'preview', 'code_review', 'document', 'link', 'file', 'other'])
 
 // Stage 2: all collaboration messages are visible to authorized humans.  This
 // intentionally has no private/hidden visibility option for agent-to-agent use.
@@ -346,6 +346,12 @@ export const stage1ApiErrorCodeSchema = z.enum([
   'APPROVAL_SESSION_MISMATCH', 'APPROVAL_CONSUME_CONFLICT',
   'CHILD_SESSION_LIMIT', 'PARENT_CHILDREN_INCOMPLETE', 'CHILD_BUDGET_EXCEEDED', 'COMPLETION_PLAN_INCOMPLETE', 'LEASE_CONFLICT', 'LEASE_EXPIRED',
   'HANDOFF_STATE_CONFLICT', 'STALE_PLAN_VERSION',
+  'PROVIDER_CONNECTION_NOT_FOUND', 'REPOSITORY_NOT_FOUND', 'REPOSITORY_ACCESS_DENIED',
+  'PROVIDER_SIGNATURE_INVALID', 'PROVIDER_DELIVERY_CONFLICT', 'PROVIDER_ACTION_CONFLICT',
+  'REPOSITORY_HEAD_CHANGED', 'REPOSITORY_PATH_DENIED', 'REPOSITORY_GUIDANCE_INVALID',
+  'REVIEWER_CONFLICT', 'MERGE_HEAD_CHANGED', 'MERGE_REVIEW_BLOCKED', 'MERGE_CHECKS_BLOCKED',
+  'MERGE_APPROVAL_REQUIRED', 'MERGE_APPROVAL_MISMATCH', 'PROJECT_DEPENDENCY_CYCLE',
+  'ARTIFACT_CHECKSUM_MISMATCH', 'ARTIFACT_UPLOAD_EXPIRED',
 ])
 export const agentApiErrorCodeSchema = z.union([apiErrorCodeSchema, stage1ApiErrorCodeSchema])
 export const agentErrorResponseSchema = z.object({ error: z.object({ code: agentApiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
@@ -424,7 +430,194 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/handoffs/{id}/cancel', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/handoffs/{id}/complete', authenticated: true, mutation: true },
 ] as const
-export const agentRouteManifest = [...stage0RouteManifest, ...stage1RouteManifest, ...stage2RouteManifest] as const
+
+// Stage 3: provider-neutral delivery control-plane contracts.
+export const providerKindSchema = z.enum(['fake', 'github'])
+export const strictExternalUrlSchema = z.string().max(2_048).superRefine((value, context) => {
+  let parsed: URL
+  try {
+    parsed = new URL(value)
+  } catch {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'A valid external URL is required' })
+    return
+  }
+  if (parsed.protocol !== 'https:' || !parsed.hostname || parsed.username || parsed.password)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'External URLs must use HTTPS and must not contain credentials' })
+})
+export const repositoryBranchPatternSchema = z.string().min(1).max(500).superRefine((value, context) => {
+  if (!value.includes('{workItemKey}'))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Branch pattern must include {workItemKey}' })
+  const literal = value.replaceAll('{workItemKey}', 'WORK-1').replaceAll('{slug}', 'slug')
+  if (literal.includes('{') || literal.includes('}') || !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(literal)
+      || literal.endsWith('/') || literal.includes('//') || literal.includes('..') || literal.endsWith('.lock'))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Branch pattern contains an unsupported token or Git ref character' })
+})
+export const providerConnectionInputSchema = z.object({
+  provider: providerKindSchema,
+  externalAccountId: z.string().min(1).max(500),
+  displayName: z.string().min(1).max(160),
+  webhookSecret: z.string().min(16).max(4_096),
+  installationId: z.string().min(1).max(500).optional(),
+  appId: z.string().min(1).max(100).optional(),
+  privateKey: z.string().min(64).max(100_000).optional(),
+}).superRefine((value, context) => {
+  if (value.provider === 'github' && (!value.installationId || !value.appId || !value.privateKey))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'GitHub connections require installationId, appId, and privateKey' })
+})
+export const repositoryInputSchema = z.object({
+  connectionId: idSchema,
+  teamId: idSchema,
+  externalId: z.string().min(1).max(500),
+  fullName: z.string().min(1).max(500),
+  defaultBranch: z.string().min(1).max(500),
+  cloneUrl: strictExternalUrlSchema.optional(),
+  requiredChecks: z.array(z.string().min(1).max(300)).max(100).default([]),
+})
+export const repositoryGuidanceEntrySchema = z.object({
+  path: z.string().min(1).max(2_000),
+  blobSha: z.string().min(1).max(200),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  content: z.string().max(1_000_000),
+})
+export const repositoryContextInputSchema = z.object({
+  projectId: idSchema.optional(),
+  workItemId: idSchema.optional(),
+  sessionId: idSchema.optional(),
+  baseBranch: z.string().min(1).max(500),
+  baseSha: z.string().min(1).max(200),
+  branchPattern: repositoryBranchPatternSchema.default('workmesh/{workItemKey}-{slug}'),
+  allowedPaths: z.array(z.string().min(1).max(2_000)).min(1).max(500),
+  permissions: z.array(z.enum(['read', 'write_branch', 'open_pr', 'review', 'merge', 'ci'])).min(1).max(6),
+}).strict().superRefine((value, context) => {
+  if ([value.projectId, value.workItemId, value.sessionId].filter(Boolean).length !== 1)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Repository context requires exactly one resource link' })
+})
+const deliveryLinkFields = {
+  workItemId: idSchema,
+  sessionId: idSchema,
+  projectId: idSchema.optional(),
+  planStepId: idSchema.optional(),
+}
+export const providerActionInputSchema = z.discriminatedUnion('kind', [
+  z.object({ ...deliveryLinkFields, kind: z.literal('create_branch'), repositoryId: idSchema, name: z.string().min(1).max(500), baseSha: z.string().min(1).max(200) }),
+  z.object({ ...deliveryLinkFields, kind: z.literal('create_commit'), repositoryId: idSchema, branch: z.string().min(1).max(500), expectedHeadSha: z.string().min(1).max(200), message: z.string().min(1).max(10_000), files: z.array(z.object({ path: z.string().min(1).max(2_000), content: z.string().max(2_000_000) })).min(1).max(500) }),
+  z.object({ ...deliveryLinkFields, kind: z.literal('open_pull_request'), repositoryId: idSchema, baseBranch: z.string().min(1).max(500), headBranch: z.string().min(1).max(500), title: z.string().min(1).max(500), body: z.string().max(50_000), draft: z.boolean().default(true) }),
+])
+export const deliveryArtifactInputSchema = z.object({
+  ...deliveryLinkFields,
+  repositoryId: idSchema.optional(),
+  pullRequestId: idSchema.optional(),
+  headSha: z.string().min(1).max(200).optional(),
+  type: artifactTypeSchema,
+  title: z.string().min(1).max(500),
+  uri: strictExternalUrlSchema.optional(),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  sourceTool: z.string().min(1).max(160),
+  command: z.string().max(10_000).optional(),
+  result: z.enum(['passed', 'failed', 'skipped']).optional(),
+  metadata: z.record(z.unknown()).default({}),
+}).superRefine((value, context) => {
+  if ((value.pullRequestId === undefined) !== (value.headSha === undefined))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Delivery artifact pullRequestId and headSha must be supplied together' })
+})
+export const artifactUploadIntentInputSchema = z.object({
+  ...deliveryLinkFields,
+  repositoryId: idSchema,
+  pullRequestId: idSchema.optional(),
+  headSha: z.string().min(1).max(200).optional(),
+  sourceTool: z.string().min(1).max(160),
+  filename: z.string().min(1).max(500),
+  mimeType: z.string().min(1).max(200),
+  sizeBytes: z.number().int().positive().max(52_428_800),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+}).superRefine((value, context) => {
+  if ((value.pullRequestId === undefined) !== (value.headSha === undefined))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Upload pullRequestId and headSha must be supplied together' })
+})
+export const structuredFindingInputSchema = z.object({
+  severity: z.enum(['blocking', 'high', 'medium', 'low']),
+  file: z.string().min(1).max(2_000),
+  line: z.number().int().positive(),
+  summary: z.string().min(1).max(2_000),
+  evidence: z.string().min(1).max(20_000),
+  recommendation: z.string().min(1).max(20_000),
+})
+export const structuredReviewInputSchema = z.object({
+  sessionId: idSchema,
+  artifactId: idSchema,
+  headSha: z.string().min(1).max(200),
+  verdict: z.enum(['approved', 'changes_requested', 'commented']),
+  summary: z.string().min(1).max(20_000),
+  findings: z.array(structuredFindingInputSchema).max(500),
+  evidence: z.array(z.string().min(1).max(20_000)).max(100).default([]),
+  metadata: z.record(z.unknown()).default({}),
+})
+export const mergeIntentInputSchema = z.object({
+  sessionId: idSchema,
+  approvalId: idSchema,
+  actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  headSha: z.string().min(1).max(200),
+  method: z.enum(['merge', 'squash', 'rebase']),
+})
+export const ciRetryInputSchema = z.object({
+  sessionId: idSchema,
+  approvalId: idSchema,
+  actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  headSha: z.string().min(1).max(200),
+})
+export const milestoneInputSchema = z.object({
+  name: z.string().min(1).max(180),
+  description: z.string().max(10_000).optional(),
+  targetDate: z.coerce.date().optional(),
+})
+export const projectUpdateInputSchema = z.object({
+  health: z.enum(['on_track', 'at_risk', 'off_track']),
+  body: z.string().min(1).max(20_000),
+  status: z.literal('draft').default('draft'),
+  evidenceArtifactIds: z.array(idSchema).max(100).default([]),
+})
+export const projectUpdatePublishInputSchema = z.object({}).strict()
+export const projectDependencyInputSchema = z.object({ dependsOnProjectId: idSchema })
+export const completionSuggestionInputSchema = z.object({
+  workItemId: idSchema,
+  pullRequestId: idSchema.optional(),
+  rationale: z.string().min(1).max(10_000),
+  evidenceArtifactIds: z.array(idSchema).max(100).default([]),
+})
+export const completionSuggestionDecisionInputSchema = z.object({
+  decision: z.enum(['accepted', 'dismissed']),
+})
+
+export const stage3RouteManifest = [
+  { method: 'POST', path: '/api/v1/provider-connections', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/provider-webhooks/{connectionId}/github', authenticated: false, mutation: true },
+  { method: 'GET', path: '/api/v1/repositories', authenticated: true },
+  { method: 'POST', path: '/api/v1/repositories', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/repositories/{id}/context', authenticated: true },
+  { method: 'POST', path: '/api/v1/repositories/{id}/context', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/provider-actions', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/delivery-artifacts', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/artifact-upload-intents', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/artifact-upload-intents/{id}/finalize', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/artifact-upload-intents/{id}/download', authenticated: true },
+  { method: 'POST', path: '/api/v1/pull-requests/{id}/reviews', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/pull-requests/{id}/merge', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/pull-requests/{id}/checks/{checkId}/retry', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/delivery', authenticated: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/milestones', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/updates', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/updates/{updateId}/publish', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/dependencies', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/completion-suggestions', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/completion-suggestions/{id}/decision', authenticated: true, mutation: true },
+] as const
+
+export type ProviderActionInput = z.infer<typeof providerActionInputSchema>
+export type RepositoryContextInput = z.infer<typeof repositoryContextInputSchema>
+export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
+export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
+export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
+export const agentRouteManifest = [...stage0RouteManifest, ...stage1RouteManifest, ...stage2RouteManifest, ...stage3RouteManifest] as const
 
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>

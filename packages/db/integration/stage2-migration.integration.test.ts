@@ -22,11 +22,11 @@ async function migrateFrom0001(): Promise<void> {
 describe('Stage 2 migration chain and PostgreSQL constraints', () => {
   afterAll(async () => { await db.end() }, 300_000)
 
-  it('upgrades a 0001 database through 0007 and enforces handoff and active-exclusive lease constraints', async () => {
+  it('upgrades a 0001 database through the current chain and enforces handoff and active-exclusive lease constraints', async () => {
     await migrateFrom0001()
     const versions = await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version')
     expect(versions.rows.map(row => row.version)).toEqual([
-      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs',
+      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds',
     ])
     const tables = await db.query<{ table_name: string }>("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('work_room_channels','room_messages','leases','handoffs','routing_attempts','routing_records','context_deltas','decision_transition_consumptions') ORDER BY table_name")
     expect(tables.rows.map(row => row.table_name)).toEqual(['context_deltas', 'decision_transition_consumptions', 'handoffs', 'leases', 'room_messages', 'routing_attempts', 'routing_records', 'work_room_channels'])

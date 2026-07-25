@@ -238,3 +238,112 @@ export const authorizeAgentMutation = (gate: AgentMutationGate): void => {
 }
 
 export const assertAgentMutationAllowed = authorizeAgentMutation
+
+// Stage 3 delivery policy. Provider identifiers remain opaque strings so the
+// domain layer is not coupled to GitHub numeric IDs or REST payloads.
+export type NormalizedCheckStatus = 'queued' | 'running' | 'passed' | 'failed' | 'skipped'
+export type MergeApprovalPayload = {
+  provider: string
+  connectionId: string
+  repositoryId: string
+  pullRequestId: string
+  headSha: string
+  method: 'merge' | 'squash' | 'rebase'
+}
+export type StructuredFinding = {
+  severity: 'blocking' | 'high' | 'medium' | 'low'
+  file: string
+  line: number
+  summary: string
+  evidence: string
+  recommendation: string
+}
+
+const stableJson = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(stableJson)
+  if (!value || typeof value !== 'object') return value
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => [key, stableJson(item)]),
+  )
+}
+
+export function canonicalMergeApprovalPayload(input: MergeApprovalPayload): string {
+  return canonicalActionApprovalPayload(input)
+}
+
+export function canonicalActionApprovalPayload(input: unknown): string {
+  return JSON.stringify(stableJson(input))
+}
+
+export function normalizeProviderCheck(status: string, conclusion?: string | null): NormalizedCheckStatus {
+  if (status === 'queued' || status === 'pending' || status === 'requested') return 'queued'
+  if (status === 'in_progress' || status === 'running') return 'running'
+  if (conclusion === 'success') return 'passed'
+  if (conclusion === 'skipped' || conclusion === 'neutral') return 'skipped'
+  return 'failed'
+}
+
+export function assertMergeReady(input: {
+  approvalHeadSha: string
+  currentHeadSha: string
+  producerActorId: string
+  reviews: readonly {
+    reviewerActorId: string
+    headSha: string
+    verdict: 'approved' | 'changes_requested' | 'commented'
+  }[]
+  findings: readonly StructuredFinding[]
+  checks: readonly { name: string; status: NormalizedCheckStatus; required: boolean; headSha: string }[]
+}): void {
+  if (input.approvalHeadSha !== input.currentHeadSha ||
+      input.reviews.some(review => review.headSha !== input.currentHeadSha))
+    throw new DomainError('MERGE_HEAD_CHANGED', 'Approval and every considered review must bind the current pull-request head')
+  if (input.reviews.some(review => review.verdict === 'changes_requested'))
+    throw new DomainError('MERGE_REVIEW_BLOCKED', 'A current-head review requests changes')
+  const approvals = input.reviews.filter(review => review.verdict === 'approved')
+  if (approvals.length === 0)
+    throw new DomainError('MERGE_REVIEW_BLOCKED', 'An independent current-head approval is required')
+  if (approvals.some(review => review.reviewerActorId === input.producerActorId))
+    throw new DomainError('REVIEWER_CONFLICT', 'A producer cannot approve their own change')
+  if (input.findings.some((finding) => finding.severity === 'blocking' || finding.severity === 'high'))
+    throw new DomainError('MERGE_REVIEW_BLOCKED', 'Blocking or High review findings remain')
+  const required = input.checks.filter((check) => check.required)
+  if (required.some((check) => check.headSha !== input.currentHeadSha || check.status !== 'passed'))
+    throw new DomainError('MERGE_CHECKS_BLOCKED', 'All required checks must pass on the current head')
+}
+
+export function applicableAgentsPaths(changedPath: string): string[] {
+  const segments = changedPath.replaceAll('\\', '/').split('/').filter(Boolean)
+  const paths = ['AGENTS.md']
+  for (let index = 1; index < segments.length; index += 1)
+    paths.push(`${segments.slice(0, index).join('/')}/AGENTS.md`)
+  return paths
+}
+
+export function assertAcyclicProjectDependencies(edges: readonly { projectId: string; dependsOnProjectId: string }[]): void {
+  const graph = new Map<string, string[]>()
+  for (const edge of edges) {
+    if (edge.projectId === edge.dependsOnProjectId)
+      throw new DomainError('PROJECT_DEPENDENCY_CYCLE', 'A project cannot depend on itself')
+    graph.set(edge.projectId, [...(graph.get(edge.projectId) ?? []), edge.dependsOnProjectId])
+  }
+  const visiting = new Set<string>()
+  const visited = new Set<string>()
+  const visit = (node: string): void => {
+    if (visiting.has(node)) throw new DomainError('PROJECT_DEPENDENCY_CYCLE', 'Project dependencies must be acyclic')
+    if (visited.has(node)) return
+    visiting.add(node)
+    for (const next of graph.get(node) ?? []) visit(next)
+    visiting.delete(node)
+    visited.add(node)
+  }
+  for (const node of graph.keys()) visit(node)
+}
+
+export function milestoneProgress(items: readonly { statusCategory: string }[]): { completed: number; total: number; percent: number } {
+  const total = items.length
+  const completed = items.filter((item) => item.statusCategory === 'completed').length
+  return { completed, total, percent: total === 0 ? 0 : Math.round((completed / total) * 100) }
+}
