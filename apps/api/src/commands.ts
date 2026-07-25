@@ -551,6 +551,7 @@ export const commands = {
       responsibleHumanActorId?: string;
       labels: string[];
       projectId?: string;
+      milestoneId?: string;
     },
   ) =>
     mutate(db, c, async (tx) => {
@@ -572,6 +573,11 @@ export const commands = {
         );
       if (input.projectId)
         await activeProject(tx, c, input.teamId, input.projectId);
+      if (input.milestoneId && !input.projectId)
+        throw new DomainError(
+          "INVALID_INPUT",
+          "A milestone requires a project",
+        );
       assertResponsibleHumanForStarted(
         state.category,
         input.responsibleHumanActorId,
@@ -587,7 +593,7 @@ export const commands = {
       const item = one(
         (
           await tx.query<{ id: string; revision: number; number: number }>(
-            "INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id,revision,number",
+            "INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id,revision,number",
             [
               c.actor.workspaceId,
               input.teamId,
@@ -600,6 +606,7 @@ export const commands = {
               input.responsibleHumanActorId ?? null,
               input.labels,
               input.projectId ?? null,
+              input.milestoneId ?? null,
             ],
           )
         ).rows,
@@ -637,8 +644,9 @@ export const commands = {
             team_id: string;
             responsible_human_actor_id: string | null;
             category: StatusCategory;
+            project_id: string | null;
           }>(
-            "SELECT w.revision,w.team_id,w.responsible_human_actor_id,s.category FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL FOR UPDATE",
+            "SELECT w.revision,w.team_id,w.responsible_human_actor_id,w.project_id,s.category FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL FOR UPDATE",
             [id, c.actor.workspaceId],
           )
         ).rows,
@@ -663,11 +671,19 @@ export const commands = {
       if (owner) await activeHumanInTeam(tx, c, current.team_id, owner);
       if (has("projectId") && input.projectId)
         await activeProject(tx, c, current.team_id, input.projectId as string);
+      const projectId = has("projectId")
+        ? (input.projectId as string | null)
+        : current.project_id;
+      if (has("milestoneId") && input.milestoneId && !projectId)
+        throw new DomainError(
+          "INVALID_INPUT",
+          "A milestone requires a project",
+        );
       assertResponsibleHumanForStarted(status, owner);
       const item = one(
         (
           await tx.query<{ id: string; revision: number }>(
-            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,revision=revision+1,updated_at=now() WHERE id=$17 RETURNING id,revision",
+            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,revision=revision+1,updated_at=now() WHERE id=$19 RETURNING id,revision",
             [
               has("title"),
               input.title ?? null,
@@ -685,6 +701,8 @@ export const commands = {
               input.labels ?? null,
               has("projectId"),
               input.projectId ?? null,
+              has("milestoneId"),
+              input.milestoneId ?? null,
               id,
             ],
           )

@@ -36,12 +36,14 @@ import {
 } from "./commands.js";
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
+import { registerDeliveryRoutes } from "./delivery/routes.js";
 
 declare module "fastify" {
   interface FastifyRequest {
     actor?: Actor;
     correlationId: string;
     idempotencyKey?: string;
+    rawBody?: Buffer;
   }
 }
 
@@ -183,16 +185,31 @@ export const buildApp = () => {
   app.addHook("onRequest", async (request) => {
     request.correlationId = header(request, "x-correlation-id") ?? request.id;
     request.idempotencyKey = header(request, "idempotency-key");
-    if (mutationMethods.has(request.method) && !request.idempotencyKey)
+    const providerWebhook = request.url.startsWith("/api/v1/provider-webhooks/");
+    if (mutationMethods.has(request.method) && !request.idempotencyKey && !providerWebhook)
       throw new DomainError(
         "IDEMPOTENCY_KEY_REQUIRED",
         "Idempotency-Key is required",
       );
   });
+  app.addHook("preParsing", async (request, _reply, payload) => {
+    if (!request.url.startsWith("/api/v1/provider-webhooks/")) return payload;
+    const chunks: Buffer[] = [];
+    let size = 0;
+    payload.on("data", (chunk: Buffer | string) => {
+      const value = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      size += value.length;
+      if (size <= 1_048_576) chunks.push(value);
+    });
+    payload.on("end", () => {
+      if (size <= 1_048_576) request.rawBody = Buffer.concat(chunks);
+    });
+    return payload;
+  });
   app.addHook("preHandler", async (request) => {
     if (
       publicPaths.has(request.routeOptions.url ?? "") ||
-      request.routeOptions.url === "/health" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/exchange" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/refresh"
+      request.routeOptions.url === "/health" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/exchange" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/refresh" || request.routeOptions.url === "/api/v1/provider-webhooks/:connectionId/github"
     )
       return;
     const bearer = header(request, "authorization")?.replace(/^Bearer\s+/i, "");
@@ -277,14 +294,14 @@ export const buildApp = () => {
       const status =
         error.code === "UNAUTHENTICATED"
           ? 401
-          : error.code === "FORBIDDEN" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED"
+          : error.code === "FORBIDDEN" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
             : error.code === "NOT_FOUND"
               ? 404
               : error.code.includes("CONFLICT") ||
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
-                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT"].includes(error.code)
+                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED"].includes(error.code)
                 ? 409
                 : 400;
       return reply
@@ -646,6 +663,7 @@ export const buildApp = () => {
   );
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
+  registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   return app;
 };
 

@@ -1219,6 +1219,58 @@ paths:
         parameters: [{ $ref: "#/components/parameters/Id" }],
         responses: { "200": { $ref: "#/components/responses/Guidance" } },
       }
+  /api/v1/provider-connections:
+    post:
+      { operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+  /api/v1/provider-webhooks/{connectionId}/github:
+    post:
+      { operationId: receiveGitHubWebhook, security: [], parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/repositories:
+    get: { operationId: listRepositories, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post:
+      { operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/repositories/{id}/context:
+    get: { operationId: getRepositoryContext, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "404": { $ref: "#/components/responses/NotFound" } } }
+    post:
+      { operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/provider-actions:
+    post:
+      { operationId: requestProviderAction, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderActionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/delivery-artifacts:
+    post:
+      { operationId: publishDeliveryArtifact, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DeliveryArtifactInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/artifact-upload-intents:
+    post:
+      { operationId: requestArtifactUpload, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ArtifactUploadIntentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/artifact-upload-intents/{id}/finalize:
+    post:
+      { operationId: finalizeArtifactUpload, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "400": { $ref: "#/components/responses/BadRequest" } } }
+  /api/v1/artifact-upload-intents/{id}/download:
+    get:
+      { operationId: downloadVerifiedArtifact, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/pull-requests/{id}/reviews:
+    post:
+      { operationId: publishStructuredReview, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/StructuredReviewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/pull-requests/{id}/merge:
+    post:
+      { operationId: requestPullRequestMerge, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MergeIntentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/pull-requests/{id}/checks/{checkId}/retry:
+    post:
+      { operationId: retryPullRequestCheck, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { name: checkId, in: path, required: true, schema: { type: string, maxLength: 500 } }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CiRetryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/projects/{id}/delivery:
+    get: { operationId: getProjectDelivery, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/projects/{id}/milestones:
+    post: { operationId: createProjectMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MilestoneInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/projects/{id}/updates:
+    post: { operationId: createProjectUpdateDraft, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectUpdateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/projects/{id}/updates/{updateId}/publish:
+    post: { operationId: publishProjectUpdate, security: [{ SessionCookie: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { name: updateId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: false, content: { application/json: { schema: { type: object, additionalProperties: false } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/projects/{id}/dependencies:
+    post: { operationId: createProjectDependency, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectDependencyInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/projects/{id}/completion-suggestions:
+    post: { operationId: suggestWorkItemCompletion, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CompletionSuggestionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/completion-suggestions/{id}/decision:
+    post: { operationId: decideCompletionSuggestion, security: [{ SessionCookie: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CompletionSuggestionDecisionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
 components:
   securitySchemes:
     SessionCookie:
@@ -2206,6 +2258,43 @@ components:
           },
       }
   schemas:
+    ProviderConnectionInput:
+      oneOf:
+        - { type: object, additionalProperties: false, required: [provider, externalAccountId, displayName, webhookSecret], properties: { provider: { const: fake }, externalAccountId: { type: string }, displayName: { type: string }, webhookSecret: { type: string, minLength: 16, writeOnly: true } } }
+        - { type: object, additionalProperties: false, required: [provider, externalAccountId, displayName, webhookSecret, installationId, appId, privateKey], properties: { provider: { const: github }, externalAccountId: { type: string }, displayName: { type: string }, installationId: { type: string }, appId: { type: string }, privateKey: { type: string, minLength: 64, writeOnly: true }, webhookSecret: { type: string, minLength: 16, writeOnly: true } } }
+      discriminator: { propertyName: provider }
+    RepositoryInput:
+      { type: object, additionalProperties: false, required: [connectionId, teamId, externalId, fullName, defaultBranch], properties: { connectionId: { type: string, format: uuid }, teamId: { type: string, format: uuid }, externalId: { type: string }, fullName: { type: string }, defaultBranch: { type: string }, cloneUrl: { type: string, format: uri, pattern: "^https://(?![^/]*@)[^\\s]+$" }, requiredChecks: { type: array, items: { type: string }, default: [] } } }
+    RepositoryGuidanceEntry:
+      { type: object, additionalProperties: false, required: [path, blobSha, contentHash, content], properties: { path: { type: string }, blobSha: { type: string }, contentHash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }, content: { type: string, maxLength: 1000000 } } }
+    RepositoryContextInput:
+      { type: object, additionalProperties: false, required: [baseBranch, baseSha, allowedPaths, permissions], oneOf: [{ required: [projectId] }, { required: [workItemId] }, { required: [sessionId] }], properties: { projectId: { type: string, format: uuid }, workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, baseBranch: { type: string }, baseSha: { type: string }, branchPattern: { type: string, pattern: "^(?=.*\\{workItemKey\\})[A-Za-z0-9._/{}-]+$", default: "workmesh/{workItemKey}-{slug}" }, allowedPaths: { type: array, minItems: 1, items: { type: string } }, permissions: { type: array, minItems: 1, items: { type: string, enum: [read, write_branch, open_pr, review, merge, ci] } } } }
+    ProviderActionInput:
+      { oneOf: [
+        { type: object, required: [kind, repositoryId, workItemId, sessionId, name, baseSha], properties: { kind: { const: create_branch }, repositoryId: { type: string, format: uuid }, workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, projectId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, name: { type: string }, baseSha: { type: string } } },
+        { type: object, required: [kind, repositoryId, workItemId, sessionId, branch, expectedHeadSha, message, files], properties: { kind: { const: create_commit }, repositoryId: { type: string, format: uuid }, workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, projectId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, branch: { type: string }, expectedHeadSha: { type: string }, message: { type: string }, files: { type: array, items: { type: object, required: [path, content], properties: { path: { type: string }, content: { type: string } } } } } },
+        { type: object, required: [kind, repositoryId, workItemId, sessionId, baseBranch, headBranch, title, body], properties: { kind: { const: open_pull_request }, repositoryId: { type: string, format: uuid }, workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, projectId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, baseBranch: { type: string }, headBranch: { type: string }, title: { type: string }, body: { type: string }, draft: { type: boolean, default: true } } }
+      ], discriminator: { propertyName: kind } }
+    DeliveryArtifactInput:
+      { type: object, additionalProperties: false, required: [workItemId, sessionId, type, title, checksum, sourceTool], dependentRequired: { pullRequestId: [headSha], headSha: [pullRequestId] }, properties: { workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, projectId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, repositoryId: { type: string, format: uuid }, pullRequestId: { type: string, format: uuid }, headSha: { type: string }, type: { $ref: "#/components/schemas/ArtifactType" }, title: { type: string }, uri: { type: string, format: uri, pattern: "^https://(?![^/]*@)[^\\s]+$" }, checksum: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }, sourceTool: { type: string }, command: { type: string }, result: { type: string, enum: [passed, failed, skipped] }, metadata: { type: object, additionalProperties: true } } }
+    ArtifactUploadIntentInput:
+      { type: object, additionalProperties: false, required: [workItemId, sessionId, repositoryId, sourceTool, filename, mimeType, sizeBytes, checksum], dependentRequired: { pullRequestId: [headSha], headSha: [pullRequestId] }, properties: { workItemId: { type: string, format: uuid }, sessionId: { type: string, format: uuid }, projectId: { type: string, format: uuid }, planStepId: { type: string, format: uuid }, repositoryId: { type: string, format: uuid }, pullRequestId: { type: string, format: uuid }, headSha: { type: string }, sourceTool: { type: string }, filename: { type: string }, mimeType: { type: string }, sizeBytes: { type: integer, minimum: 1, maximum: 52428800 }, checksum: { type: string, pattern: "^sha256:[a-f0-9]{64}$" } } }
+    StructuredReviewInput:
+      { type: object, additionalProperties: false, required: [sessionId, artifactId, headSha, verdict, summary, findings], properties: { sessionId: { type: string, format: uuid }, artifactId: { type: string, format: uuid }, headSha: { type: string }, verdict: { type: string, enum: [approved, changes_requested, commented] }, summary: { type: string }, findings: { type: array, items: { type: object, additionalProperties: false, required: [severity, file, line, summary, evidence, recommendation], properties: { severity: { type: string, enum: [blocking, high, medium, low] }, file: { type: string }, line: { type: integer, minimum: 1 }, summary: { type: string }, evidence: { type: string }, recommendation: { type: string } } } }, evidence: { type: array, maxItems: 100, items: { type: string } }, metadata: { type: object, additionalProperties: true } } }
+    MergeIntentInput:
+      { type: object, additionalProperties: false, required: [sessionId, approvalId, actionPayloadHash, headSha, method], properties: { sessionId: { type: string, format: uuid }, approvalId: { type: string, format: uuid }, actionPayloadHash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }, headSha: { type: string }, method: { type: string, enum: [merge, squash, rebase] } } }
+    CiRetryInput:
+      { type: object, additionalProperties: false, required: [sessionId, approvalId, actionPayloadHash, headSha], properties: { sessionId: { type: string, format: uuid }, approvalId: { type: string, format: uuid }, actionPayloadHash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }, headSha: { type: string } } }
+    MilestoneInput:
+      { type: object, additionalProperties: false, required: [name], properties: { name: { type: string, minLength: 1, maxLength: 180 }, description: { type: string, maxLength: 10000 }, targetDate: { type: string, format: date } } }
+    ProjectUpdateInput:
+      { type: object, additionalProperties: false, required: [health, body], properties: { health: { type: string, enum: [on_track, at_risk, off_track] }, body: { type: string, minLength: 1, maxLength: 20000 }, status: { const: draft, default: draft }, evidenceArtifactIds: { type: array, maxItems: 100, items: { type: string, format: uuid } } } }
+    ProjectDependencyInput:
+      { type: object, additionalProperties: false, required: [dependsOnProjectId], properties: { dependsOnProjectId: { type: string, format: uuid } } }
+    CompletionSuggestionInput:
+      { type: object, additionalProperties: false, required: [workItemId, rationale], properties: { workItemId: { type: string, format: uuid }, pullRequestId: { type: string, format: uuid }, rationale: { type: string, minLength: 1, maxLength: 10000 }, evidenceArtifactIds: { type: array, maxItems: 100, items: { type: string, format: uuid } } } }
+    CompletionSuggestionDecisionInput:
+      { type: object, additionalProperties: false, required: [decision], properties: { decision: { type: string, enum: [accepted, dismissed] } } }
     RoomMessageInput:
       { type: object, additionalProperties: false, required: [intent, body], properties: { intent: { type: string, enum: [inform, ask, answer, propose, decide, claim, handoff, blocker, review_request, review_result, status] }, body: { type: string }, recipientActorId: { type: string, format: uuid }, recipientActorIds: { type: array, minItems: 1, maxItems: 50, items: { type: string, format: uuid } }, replyToMessageId: { type: string, format: uuid }, threadId: { type: string, format: uuid }, payload: { type: object, additionalProperties: true }, requiresResponse: { type: boolean }, sessionId: { type: string, format: uuid } } }
     AcquireLeaseInput:
@@ -2418,6 +2507,7 @@ components:
                 items: { type: string, minLength: 1, maxLength: 60 },
               },
             projectId: { $ref: "#/components/schemas/Id" },
+            milestoneId: { $ref: "#/components/schemas/Id" },
           },
       }
     WorkItemPatch:
@@ -2439,6 +2529,7 @@ components:
                 items: { type: string, minLength: 1, maxLength: 60 },
               },
             projectId: { type: [string, "null"], format: uuid },
+            milestoneId: { type: [string, "null"], format: uuid },
           },
       }
     CommentInput:
@@ -2663,6 +2754,7 @@ components:
             responsible_human_actor_id,
             labels,
             project_id,
+            milestone_id,
             revision,
             deleted_at,
             created_at,
@@ -2686,6 +2778,7 @@ components:
               { type: [string, "null"], format: uuid },
             labels: { type: array, items: { type: string } },
             project_id: { type: [string, "null"], format: uuid },
+            milestone_id: { type: [string, "null"], format: uuid },
             revision: { $ref: "#/components/schemas/Revision" },
             deleted_at: { type: [string, "null"], format: date-time },
             created_at: { $ref: "#/components/schemas/Timestamp" },
@@ -2879,6 +2972,7 @@ components:
                             APPROVAL_QUORUM_NOT_REACHED,
                             APPROVAL_SESSION_MISMATCH,
                             APPROVAL_CONSUME_CONFLICT,
+                            ARTIFACT_UPLOAD_EXPIRED,
                             INTERNAL_ERROR,
                           ],
                       },
@@ -2978,7 +3072,7 @@ components:
     ArtifactType:
       {
         type: string,
-        enum: [commit, pull_request, test_report, document, link, file, other],
+        enum: [branch, commit, diff, pull_request, test_report, build, preview, code_review, document, link, file, other],
       }
     AgentRegistrationInput:
       {

@@ -12,7 +12,12 @@ import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 
 const one = <T>(rows: T[]): T => { const value = rows[0]; if (!value) throw new DomainError("NOT_FOUND", "Resource not found"); return value; };
-const sensitiveKey = /(^|[_-])(token|password|secret|authorization|cookie|api[_-]?key)([_-]|$)/i;
+const normalizedSensitiveKeys = new Set([
+  "token", "accessToken", "refreshToken", "authToken", "password", "passwd",
+  "secret", "authorization", "cookie", "apiKey", "privateKey", "accessKeyId",
+  "secretAccessKey", "clientSecret", "webhookSecret", "credential", "credentials",
+].map(key => key.toLowerCase()));
+const normalizedKey = (key: string): string => key.replace(/[^a-z0-9]/gi, "").toLowerCase();
 const canonical = (value: unknown): unknown => Array.isArray(value) ? value.map(canonical) : value && typeof value === "object" ? Object.fromEntries(Object.entries(value as Record<string,unknown>).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])) : value;
 const canonicalPayloadHash = (value: unknown) => `sha256:${crypto.createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex")}`;
 /** Operational facts may be persisted, but credentials must never enter an event, activity, artifact, or approval payload. */
@@ -20,11 +25,12 @@ export function assertSanitized(value: unknown, path = "payload"): void {
   if (typeof value === "string") { assertSafeText(value, path); return; }
   if (Array.isArray(value)) { value.forEach((item, index) => assertSanitized(item, `${path}[${index}]`)); return; }
   if (!value || typeof value !== "object") return;
-  for (const [key, item] of Object.entries(value as Record<string, unknown>)) { if (sensitiveKey.test(key)) throw new DomainError("VALIDATION_ERROR", `Sensitive field is not permitted in ${path}`); assertSanitized(item, `${path}.${key}`); }
+  for (const [key, item] of Object.entries(value as Record<string, unknown>)) { if (normalizedSensitiveKeys.has(normalizedKey(key))) throw new DomainError("VALIDATION_ERROR", `Sensitive field is not permitted in ${path}`); assertSanitized(item, `${path}.${key}`); }
 }
-const sensitiveText = /\b(?:bearer\s+[a-z0-9._~-]{12,}|(?:token|secret|password|api[_-]?key)\s*=\s*\S+)/i;
-const jwtLike = /\beyJ[a-zA-Z0-9_-]{8,}\.[a-zA-Z0-9_-]{8,}\.[a-zA-Z0-9_-]{8,}\b/;
-export function assertSafeText(value: string | undefined, field: string): void { if(!value) return; if(sensitiveText.test(value)||jwtLike.test(value)||/https?:\/\/[^\s/@:]+:[^\s/@]+@/i.test(value)) throw new DomainError("VALIDATION_ERROR",`Sensitive content is not permitted in ${field}`); }
+const sensitiveText = /\b(?:bearer\s+[a-z0-9+/_.=~-]{8,}|(?:token|access[_ -]?token|secret|password|api[_ -]?key|client[_ -]?secret|webhook[_ -]?secret|private[_ -]?key|secret[_ -]?access[_ -]?key)\s*[:=]\s*["']?\S{4,}|x-api-key\s*:\s*\S{4,}|(?:AKIA|ASIA)[A-Z0-9]{16}|(?:gh[oprsu]_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{16,}))/i;
+const jwtLike = /\b(?:eyJ[a-zA-Z0-9_-]{4,}\.[a-zA-Z0-9_-]{4,}\.[a-zA-Z0-9_-]{4,}|[a-zA-Z0-9_-]{16,}\.[a-zA-Z0-9_-]{16,}\.[a-zA-Z0-9_-]{16,})\b/;
+const pemPrivateKey = /-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/i;
+export function assertSafeText(value: string | undefined, field: string): void { if(!value) return; if(sensitiveText.test(value)||jwtLike.test(value)||pemPrivateKey.test(value)||/https?:\/\/[^\s/@:]+:[^\s/@]+@/i.test(value)) throw new DomainError("VALIDATION_ERROR",`Sensitive content is not permitted in ${field}`); }
 const masterKey = (): Buffer => {
   const raw = process.env.WORKMESH_MASTER_KEY;
   if (!raw) throw new DomainError("INTERNAL_ERROR", "WORKMESH_MASTER_KEY is required for agent secret operations");
@@ -197,10 +203,18 @@ export async function revokeDelegation(db: Pool, meta: RequestMeta, delegationId
   });
 }
 
-export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: string, input: { agentId: string; principalHumanActorId: string; role: string; scopeType: string; scopeId: string; permissionsSnapshot: Capability[]; capabilityScope: unknown; startsAt?: string; endsAt?: string }) {
+export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: string, input: {
+  agentId: string; principalHumanActorId: string; role: string; scopeType: string; scopeId: string;
+  permissionsSnapshot: Capability[];
+  capabilityScope: {
+    workspaceId: string; teamIds: string[]; projectIds: string[]; workItemIds: string[];
+    repositoryIds: string[]; capabilities: Capability[];
+  };
+  startsAt?: string; endsAt?: string;
+}) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can delegate work");
   return agentMutate(db, meta, async tx => {
-    const work = one((await tx.query<{ team_id: string; responsible_human_actor_id: string | null }>("SELECT team_id,responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE", [workItemId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, work.team_id);
+    const work = one((await tx.query<{ team_id: string; project_id: string | null; responsible_human_actor_id: string | null }>("SELECT team_id,project_id,responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE", [workItemId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, work.team_id);
     if (input.scopeType !== "work_item" || input.scopeId !== workItemId) throw new DomainError("VALIDATION_ERROR", "A work-item delegation must scope exactly that work item");
     if (!work.responsible_human_actor_id || input.principalHumanActorId !== work.responsible_human_actor_id) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED", "Delegation principal must be the work item's responsible human");
     const agent = one((await tx.query<{ id: string; approved_capabilities: Capability[]; max_concurrency: number }>("SELECT id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true FOR UPDATE", [input.agentId, meta.actor.workspaceId])).rows);
@@ -208,9 +222,34 @@ export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: 
     const grant = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL FOR UPDATE", [meta.actor.workspaceId, input.agentId, work.team_id])).rows);
     const granted = agent.approved_capabilities.filter(capability => grant.approved_capabilities.includes(capability));
     if (input.permissionsSnapshot.some(capability => !granted.includes(capability))) throw new DomainError("CAPABILITY_DENIED", "Requested delegation capabilities exceed definition or team approval");
+    const scope = input.capabilityScope;
+    const scopeCapabilities = new Set(scope.capabilities);
+    if (
+      scope.workspaceId !== meta.actor.workspaceId
+      || scope.teamIds.length !== 1 || scope.teamIds[0] !== work.team_id
+      || scope.workItemIds.length !== 1 || scope.workItemIds[0] !== workItemId
+      || scope.projectIds.some(projectId => projectId !== work.project_id)
+      || scope.capabilities.some(capability => !input.permissionsSnapshot.includes(capability))
+      || input.permissionsSnapshot.some(capability => !scopeCapabilities.has(capability))
+    ) throw new DomainError("RESOURCE_SCOPE_DENIED", "Delegation capability scope must match its exact workspace, team, work item, project, and capabilities");
+    if (scope.repositoryIds.length > 0) {
+      const repositories = await tx.query(
+        "SELECT id FROM repositories WHERE workspace_id=$1 AND team_id=$2 AND active AND id::text=ANY($3::text[])",
+        [meta.actor.workspaceId, work.team_id, scope.repositoryIds],
+      );
+      if (repositories.rowCount !== new Set(scope.repositoryIds).size)
+        throw new DomainError("RESOURCE_SCOPE_DENIED", "Delegation repository scope contains an unauthorized repository");
+    }
     const active = await tx.query<{ count: number }>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')", [input.agentId]);
     if ((active.rows[0]?.count ?? 0) >= agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT", "Agent concurrency limit reached");
-    const capabilityScope = { workspaceId: meta.actor.workspaceId, teamIds: [work.team_id], projectIds: [], workItemIds: [workItemId], repositoryIds: [], capabilities: input.permissionsSnapshot };
+    const capabilityScope = {
+      workspaceId: meta.actor.workspaceId,
+      teamIds: [work.team_id],
+      projectIds: work.project_id ? [work.project_id] : [],
+      workItemIds: [workItemId],
+      repositoryIds: [...new Set(scope.repositoryIds)],
+      capabilities: input.permissionsSnapshot,
+    };
     const row = one((await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,status) SELECT $1,$2,a.id,a.actor_id,$3,$4,$5,$6,$4,$8,$9,'active' FROM agent_definitions a WHERE a.id=$7 AND a.workspace_id=$1 RETURNING *", [meta.actor.workspaceId, work.team_id, input.principalHumanActorId, workItemId, input.role, input.scopeType, input.agentId, input.permissionsSnapshot, capabilityScope])).rows);
     await event(tx, meta, "agent.delegation.created", "delegation", String((row as { id: string }).id), Number((row as { revision: number }).revision), { workItemId, agentId: input.agentId }, work.team_id);
     return row;
@@ -531,6 +570,7 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
 async function consumeApprovalInTx(tx: PoolClient, meta: RequestMeta, sessionId:string, approvalId:string, hash:string, expectedActionName?:string) {
   const approval=one((await tx.query<{id:string;session_id:string;action_name:string;action_payload_sanitized:unknown;action_payload_hash:string;status:string;expires_at:Date;revision:number;required_approvals:number;team_id:string;agent_id:string}>("SELECT a.*,s.team_id,s.agent_id FROM approvals a JOIN agent_sessions s ON s.id=a.session_id WHERE a.id=$1 AND a.workspace_id=$2 FOR UPDATE",[approvalId,meta.actor.workspaceId])).rows);
   if(approval.session_id!==sessionId) throw new DomainError("APPROVAL_SESSION_MISMATCH","Approval belongs to another session");
+  if(!expectedActionName && approval.action_name==="provider.pull_request.merge") throw new DomainError("APPROVAL_CONSUME_CONFLICT","Merge approvals may only be consumed by the exact-head provider worker");
   if(expectedActionName && approval.action_name!==expectedActionName) throw new DomainError("APPROVAL_PAYLOAD_MISMATCH","Approval action does not authorize this operation");
   if(approval.action_payload_hash!==hash || canonicalPayloadHash(approval.action_payload_sanitized)!==hash) throw new DomainError("APPROVAL_PAYLOAD_MISMATCH","Approval payload hash does not match");
   if(approval.expires_at.getTime()<=Date.now()){ const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 AND status='approved' RETURNING revision,updated_at",[approvalId])).rows); const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,sessionId); await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",sessionId,{...payload,sessionId}); return {expired:true as const}; }
