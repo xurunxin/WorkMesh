@@ -20,8 +20,22 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
       # Development-only fallback. Set this explicitly to a unique secret before deployment.
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
+    ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000"]
     volumes: [minio-data:/data]
     healthcheck: { test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null"], interval: 10s, timeout: 5s, retries: 10 }
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    depends_on: { minio: { condition: service_healthy } }
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        mc alias set workmesh http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
+        mc mb --ignore-existing workmesh/"$${S3_BUCKET}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+    restart: "no"
   migrate:
     build: { context: ., dockerfile: infra/docker/api.Dockerfile }
     environment:
@@ -41,8 +55,14 @@ services:
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       API_PORT: 3001
+      S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:9000}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-workmesh}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-workmesh-local-minio-change-me}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
     ports: ["127.0.0.1:${API_HOST_PORT:-3001}:3001"]
-    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy }, migrate: { condition: service_completed_successfully } }
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
     healthcheck: { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health"], interval: 10s, timeout: 3s, retries: 15 }
   worker:
     build: { context: ., dockerfile: infra/docker/worker.Dockerfile }
@@ -51,7 +71,14 @@ services:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
-    depends_on: { postgres: { condition: service_healthy }, migrate: { condition: service_completed_successfully } }
+      S3_ENDPOINT: ${S3_INTERNAL_ENDPOINT:-http://minio:9000}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-workmesh}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-workmesh-local-minio-change-me}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
+    depends_on: { postgres: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
   mcp:
     profiles: ["agent"]
     build: { context: ., dockerfile: infra/docker/mcp.Dockerfile }

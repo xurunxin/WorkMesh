@@ -3,9 +3,15 @@ import { createClient, type RedisClientType } from 'redis'
 import { createDb, type Db, withTx } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
 import { createSessionLifecycleWorker } from './session-lifecycle.js'
+import { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
+import { createArtifactUploadWorker } from './artifact-uploads.js'
+import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
+import { FakeGitProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
+export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
+export { createArtifactUploadWorker } from './artifact-uploads.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
@@ -162,6 +168,37 @@ const startWorkerProcess = (): void => {
   const outboxWorker = createOutboxWorker({ db })
   const agentWebhookWorker = createAgentWebhookWorker({ db })
   const sessionLifecycleWorker = createSessionLifecycleWorker({ db })
+  const fakeProvider = new FakeGitProvider()
+  const githubProviders = new Map<string, GitProvider>()
+  const providerActionWorker = createProviderActionWorker({
+    db,
+    resolveProvider: async (provider, connectionId) => {
+      if (provider === 'fake') return fakeProvider
+      const cached = githubProviders.get(connectionId)
+      if (cached) return cached
+      const masterKey = process.env.WORKMESH_MASTER_KEY
+      if (!masterKey) throw new Error('WORKMESH_MASTER_KEY is required for GitHub App credentials')
+      const row = (await db.query<{ installation_id: string; credentials: string }>(
+        `SELECT installation_id,pgp_sym_decrypt(credentials_ciphertext,$2) AS credentials
+           FROM provider_connections
+          WHERE id=$1 AND provider='github' AND active`,
+        [connectionId, masterKey],
+      )).rows[0]
+      if (!row?.installation_id) throw new Error('GITHUB_APP_CONNECTION_NOT_FOUND')
+      const credentials = JSON.parse(row.credentials) as { appId?: unknown; privateKey?: unknown }
+      if (typeof credentials.appId !== 'string' || typeof credentials.privateKey !== 'string')
+        throw new Error('GITHUB_APP_CREDENTIALS_INVALID')
+      const github = new GitHubAppProvider({
+        appId: credentials.appId,
+        privateKey: credentials.privateKey,
+        installationId: row.installation_id,
+        apiBaseUrl: process.env.GITHUB_API_URL,
+      })
+      githubProviders.set(connectionId, github)
+      return github
+    },
+  })
+  const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
   let stopping = false
   let timer: NodeJS.Timeout | undefined
 
@@ -170,6 +207,8 @@ const startWorkerProcess = (): void => {
       await outboxWorker.tick()
       await agentWebhookWorker.tick()
       await sessionLifecycleWorker.tick()
+      await providerActionWorker.tick()
+      await artifactUploadWorker.tick()
     } catch (error) {
       console.error('outbox worker tick failed', error)
     }
