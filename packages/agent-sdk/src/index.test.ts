@@ -54,6 +54,63 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[0]?.[1].headers['if-match']).toBe('"revision-7"')
   })
 
+  it('preserves exact pull-request head provenance for delivery artifacts', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'artifact-1' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await client.publishDeliveryArtifact({
+      workItemId: 'work-1',
+      sessionId: 'session-1',
+      projectId: 'project-1',
+      repositoryId: 'repository-1',
+      pullRequestId: 'pull-request-1',
+      headSha: 'reviewed-head',
+      type: 'code_review',
+      title: 'Review evidence',
+      checksum: `sha256:${'a'.repeat(64)}`,
+      sourceTool: 'workmesh-mcp-reviewer',
+    }, { idempotencyKey: 'review-artifact' })
+    expect(JSON.parse(String(fetch.mock.calls[0]?.[1].body))).toMatchObject({
+      workItemId: 'work-1',
+      sessionId: 'session-1',
+      projectId: 'project-1',
+      repositoryId: 'repository-1',
+      pullRequestId: 'pull-request-1',
+      headSha: 'reviewed-head',
+      checksum: `sha256:${'a'.repeat(64)}`,
+      sourceTool: 'workmesh-mcp-reviewer',
+    })
+  })
+
+  it('exposes approved CI retry and agent project-update draft without publishing', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'retry-action' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'update-draft', status: 'draft' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await client.retryCiCheck('pull-request-1', 'check-42', {
+      sessionId: 'session-1',
+      approvalId: 'approval-1',
+      actionPayloadHash: `sha256:${'a'.repeat(64)}`,
+      headSha: 'head-1',
+    })
+    await client.draftProjectUpdate('project-1', {
+      health: 'at_risk',
+      body: 'CI is still failing.',
+      evidenceArtifactIds: ['artifact-1'],
+    }, { sessionId: 'session-1' })
+    expect(fetch.mock.calls[0]?.[0]).toBe(
+      'https://workmesh.test/api/v1/pull-requests/pull-request-1/checks/check-42/retry',
+    )
+    expect(fetch.mock.calls[1]?.[0]).toBe(
+      'https://workmesh.test/api/v1/projects/project-1/updates',
+    )
+    expect(JSON.parse(String(fetch.mock.calls[1]?.[1].body))).toMatchObject({
+      health: 'at_risk',
+      body: 'CI is still failing.',
+      status: 'draft',
+    })
+    expect(String(fetch.mock.calls[1]?.[0])).not.toContain('publish')
+  })
+
   it('uses a new default key per public mutation while retaining it for retry and explicit callers', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'one', revision: 1 }), { status: 200 }))

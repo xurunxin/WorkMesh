@@ -5,6 +5,11 @@ import { createWorkMeshMcpServer } from './index.js'
 import type { WorkMeshClient } from '@workmesh/agent-sdk'
 
 const sessionId = '00000000-0000-4000-8000-000000000001'
+const workItemId = '00000000-0000-4000-8000-000000000002'
+const projectId = '00000000-0000-4000-8000-000000000003'
+const repositoryId = '00000000-0000-4000-8000-000000000004'
+const pullRequestId = '00000000-0000-4000-8000-000000000005'
+const artifactId = '00000000-0000-4000-8000-000000000006'
 
 async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient) {
   const server = createWorkMeshMcpServer({ client, mode })
@@ -36,6 +41,154 @@ describe('WorkMesh MCP adapter', () => {
       const result = await protocol.callTool({ name: 'send_message', arguments: { sessionId, bodyMarkdown: 'Please verify the test evidence.' } })
       expect(result.isError).not.toBe(true)
       expect(sendMessage).toHaveBeenCalledWith(sessionId, 'Please verify the test evidence.', { idempotencyKey: undefined })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('uses direct exact-head code_review evidence and keeps signed uploads file-only', async () => {
+    const publishDeliveryArtifact = vi.fn().mockResolvedValue({ id: artifactId })
+    const publishStructuredReview = vi.fn().mockResolvedValue({ id: '00000000-0000-4000-8000-000000000007' })
+    const api = {
+      publishDeliveryArtifact,
+      publishStructuredReview,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api)
+    const headSha = 'reviewed-head'
+    const checksum = `sha256:${'a'.repeat(64)}`
+    try {
+      const tools = (await protocol.listTools()).tools
+      expect(tools.map(item => item.name)).toEqual(expect.arrayContaining([
+        'publish_delivery_artifact',
+        'request_artifact_upload',
+        'finalize_artifact_upload',
+        'publish_structured_review',
+      ]))
+      const byName = (name: string) => tools.find(item => item.name === name)!
+      expect(byName('publish_delivery_artifact').description).toContain(
+        'official structured-review path publishes type code_review here',
+      )
+      expect(byName('request_artifact_upload').description).toContain(
+        'artifact type file, which cannot satisfy publish_structured_review',
+      )
+      expect(byName('finalize_artifact_upload').description).toContain(
+        'type file artifact is not structured-review authority',
+      )
+      expect(byName('publish_structured_review').description).toContain(
+        'artifactId must come from publish_delivery_artifact with type code_review',
+      )
+      const reviewArtifactSchema = byName('publish_structured_review').inputSchema
+        .properties?.artifactId as { description?: string } | undefined
+      expect(reviewArtifactSchema?.description).toContain(
+        'request/finalize_artifact_upload produces ineligible file evidence',
+      )
+      const artifact = await protocol.callTool({
+        name: 'publish_delivery_artifact',
+        arguments: {
+          repositoryId,
+          pullRequestId,
+          headSha,
+          workItemId,
+          sessionId,
+          projectId,
+          type: 'code_review',
+          title: 'MCP exact-head review evidence',
+          checksum,
+          sourceTool: 'workmesh-mcp-reviewer',
+          result: 'passed',
+        },
+      })
+      expect(artifact.isError).not.toBe(true)
+      expect(publishDeliveryArtifact).toHaveBeenCalledWith({
+        repositoryId,
+        pullRequestId,
+        headSha,
+        workItemId,
+        sessionId,
+        projectId,
+        planStepId: undefined,
+        type: 'code_review',
+        title: 'MCP exact-head review evidence',
+        uri: undefined,
+        checksum,
+        sourceTool: 'workmesh-mcp-reviewer',
+        command: undefined,
+        result: 'passed',
+        metadata: {},
+      }, { idempotencyKey: undefined })
+      const review = await protocol.callTool({
+        name: 'publish_structured_review',
+        arguments: {
+          pullRequestId,
+          sessionId,
+          artifactId,
+          headSha,
+          verdict: 'approved',
+          summary: 'MCP evidence satisfies the exact-head precondition.',
+          findings: [],
+        },
+      })
+      expect(review.isError).not.toBe(true)
+      expect(publishStructuredReview).toHaveBeenCalledWith(pullRequestId, {
+        sessionId,
+        artifactId,
+        headSha,
+        verdict: 'approved',
+        summary: 'MCP evidence satisfies the exact-head precondition.',
+        findings: [],
+        evidence: [],
+        metadata: {},
+      }, { idempotencyKey: undefined })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('exposes exact approved CI retry and agent draft-only project updates', async () => {
+    const retryCiCheck = vi.fn().mockResolvedValue({ id: 'retry-action' })
+    const draftProjectUpdate = vi.fn().mockResolvedValue({ id: 'update', status: 'draft' })
+    const api = {
+      retryCiCheck,
+      draftProjectUpdate,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api)
+    try {
+      const tools = (await protocol.listTools()).tools
+      expect(tools.map(tool => tool.name)).toEqual(expect.arrayContaining([
+        'retry_ci_check',
+        'draft_project_update',
+      ]))
+      await protocol.callTool({
+        name: 'retry_ci_check',
+        arguments: {
+          pullRequestId,
+          checkRunId: 'check-42',
+          sessionId,
+          approvalId: artifactId,
+          actionPayloadHash: `sha256:${'a'.repeat(64)}`,
+          headSha: 'head',
+        },
+      })
+      await protocol.callTool({
+        name: 'draft_project_update',
+        arguments: {
+          projectId,
+          sessionId,
+          health: 'at_risk',
+          body: 'CI is still failing.',
+        },
+      })
+      expect(retryCiCheck).toHaveBeenCalledWith(pullRequestId, 'check-42', {
+        sessionId,
+        approvalId: artifactId,
+        actionPayloadHash: `sha256:${'a'.repeat(64)}`,
+        headSha: 'head',
+      }, { idempotencyKey: undefined })
+      expect(draftProjectUpdate).toHaveBeenCalledWith(projectId, {
+        health: 'at_risk',
+        body: 'CI is still failing.',
+        evidenceArtifactIds: undefined,
+      }, { sessionId, idempotencyKey: undefined })
     } finally { await protocol.close(); await server.close() }
   })
 })
