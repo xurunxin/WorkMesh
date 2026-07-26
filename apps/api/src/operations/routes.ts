@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
+import type { FeatureConfig } from '@workmesh/config'
 import {
   advancedViewFiltersSchema,
   advancedViewInputSchema,
@@ -62,6 +63,7 @@ type Helpers = {
   meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta
   header: (request: FastifyRequest, name: string) => string | undefined
   readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>
+  features: FeatureConfig
 }
 
 const uuid = z.string().uuid()
@@ -108,6 +110,37 @@ const requireHuman = (current: ApiActor): void => {
 const requireAdmin = (current: ApiActor): void => {
   requireHuman(current)
   if (current.workspaceRole !== 'admin') throw new DomainError('FORBIDDEN', 'Workspace administrator role is required')
+}
+const requireExternalWebhooks = (
+  features: FeatureConfig,
+  requested: boolean,
+): void => {
+  if (!requested || features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return
+  throw new DomainError(
+    'FEATURE_DISABLED',
+    'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS is disabled for this deployment',
+    { feature: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental' },
+  )
+}
+const requireAutomationActionFeatures = (
+  features: FeatureConfig,
+  actions: ReadonlyArray<{ type: string }>,
+): void => {
+  requireExternalWebhooks(features, actions.some(action => action.type === 'call_webhook'))
+  if (!actions.some(action => action.type === 'notify') || features.WORKMESH_BETA_PLANNING) return
+  throw new DomainError(
+    'FEATURE_DISABLED',
+    'WORKMESH_BETA_PLANNING is disabled for this deployment',
+    { feature: 'WORKMESH_BETA_PLANNING', tier: 'beta' },
+  )
+}
+const requireCosts = (features: FeatureConfig, requested: boolean): void => {
+  if (!requested || features.WORKMESH_BETA_COSTS) return
+  throw new DomainError(
+    'FEATURE_DISABLED',
+    'WORKMESH_BETA_COSTS is disabled for this deployment',
+    { feature: 'WORKMESH_BETA_COSTS', tier: 'beta' },
+  )
 }
 const viewLayoutAllowed = (entityType: 'issue' | 'project' | 'session' | 'initiative', layout: 'list' | 'board' | 'timeline'): boolean =>
   entityType !== 'session' || layout !== 'board'
@@ -404,7 +437,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
                       coalesce(sum(record.cost_minor) FILTER (WHERE record.cost_source<>'unknown'),0) AS known_cost_minor,
                       bool_or(record.cost_source='unknown') AS has_unknown_cost
                  FROM usage_records record
-                WHERE record.project_id=project.id
+                WHERE $5::boolean AND record.project_id=project.id
                 GROUP BY record.currency
              ) bucket
          ) usage ON true
@@ -419,7 +452,13 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             WHERE member.workspace_id=project.workspace_id AND member.team_id=project.team_id AND member.actor_id=$4
           ))
         `,
-      [initiativeId, current.workspaceId, current.workspaceRole === 'admin', current.id],
+      [
+        initiativeId,
+        current.workspaceId,
+        current.workspaceRole === 'admin',
+        current.id,
+        helpers.features.WORKMESH_BETA_COSTS,
+      ],
     )).rows
     return rollupInitiative(projects.map(project => ({
       id: project.id,
@@ -457,7 +496,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       requireHuman(actor(request))
       if (!viewLayoutAllowed(body.entityType, body.layout))
         throw new DomainError('VIEW_LAYOUT_UNSUPPORTED', 'The selected layout is not supported for this entity type')
-      assertViewCostCurrency(body.filters, body.ordering, body.visibleFields)
+      const costRequested = assertViewCostCurrency(body.filters, body.ordering, body.visibleFields)
+      requireCosts(helpers.features, costRequested)
       if (body.scope === 'team') await requireTeamWrite(tx, actor(request), body.teamId)
       if (body.scope !== 'team' && body.teamId)
         throw new DomainError('VIEW_SCOPE_INVALID', 'Only Team Views may set teamId')
@@ -507,6 +547,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       throw new DomainError('VIEW_LAYOUT_UNSUPPORTED', 'The selected layout is not supported for this entity type')
     const filters = parseAdvancedViewFilters(view.filters)
     const costRequested = assertViewCostCurrency(filters, view.ordering, view.visible_fields)
+    requireCosts(helpers.features, costRequested)
     const values: unknown[] = [current.workspaceId, current.workspaceRole === 'admin', current.id]
     const add = (value: unknown): string => {
       values.push(value)
@@ -802,6 +843,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.post('/api/v1/automation-rules', async request => {
     const body = automationRuleInputSchema.parse(request.body)
+    requireAutomationActionFeatures(helpers.features, body.actions)
     const meta = helpers.meta(request, body)
     return command(db, meta, async tx => {
       await requireTeamWrite(tx, actor(request), body.teamId)
@@ -827,6 +869,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
   app.post('/api/v1/automation-rules/:id/versions', async request => {
     const ruleId = id(request)
     const body = automationRuleVersionInputSchema.parse(request.body)
+    requireAutomationActionFeatures(helpers.features, body.actions)
     const meta = helpers.meta(request, body, { id: ruleId })
     const expected = parseRevision(helpers.header(request, 'if-match'))
     return command(db, meta, async tx => {
@@ -856,21 +899,41 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     const ruleId = id(request)
     const body = automationDryRunInputSchema.parse(request.body)
     const meta = helpers.meta(request, body, { id: ruleId })
-    return command(db, meta, tx => admitAutomationOccurrence(tx, {
-      meta: stage4Meta(meta), ruleId, occurrenceKey: body.occurrenceKey, payload: body.payload, dryRun: true,
-      authorization: admissionAuthorization(actor(request)),
-    }))
+    return command(db, meta, async tx => {
+      const rule = one((await tx.query<{ team_id: string | null; actions: Array<{ type: string }> }>(
+        `SELECT rule.team_id,version.actions FROM automation_rules rule
+         JOIN automation_rule_versions version ON version.id=rule.current_version_id
+         WHERE rule.id=$1 AND rule.workspace_id=$2`,
+        [ruleId, meta.actor.workspaceId],
+      )).rows)
+      await requireTeamWrite(tx, actor(request), rule.team_id)
+      requireAutomationActionFeatures(helpers.features, rule.actions)
+      return admitAutomationOccurrence(tx, {
+        meta: stage4Meta(meta), ruleId, occurrenceKey: body.occurrenceKey, payload: body.payload, dryRun: true,
+        authorization: admissionAuthorization(actor(request)),
+      })
+    })
   })
 
   app.post('/api/v1/automation-rules/:id/trigger', async request => {
     const ruleId = id(request)
     const body = automationTriggerInputSchema.parse(request.body)
     const meta = helpers.meta(request, body, { id: ruleId })
-    return command(db, meta, tx => admitAutomationOccurrence(tx, {
-      meta: stage4Meta(meta), ruleId, occurrenceKey: body.occurrenceKey, eventId: body.eventId,
-      scheduledFor: body.scheduledFor, payload: body.payload, dryRun: false,
-      authorization: admissionAuthorization(actor(request)),
-    }))
+    return command(db, meta, async tx => {
+      const rule = one((await tx.query<{ team_id: string | null; actions: Array<{ type: string }> }>(
+        `SELECT rule.team_id,version.actions FROM automation_rules rule
+         JOIN automation_rule_versions version ON version.id=rule.current_version_id
+         WHERE rule.id=$1 AND rule.workspace_id=$2`,
+        [ruleId, meta.actor.workspaceId],
+      )).rows)
+      await requireTeamWrite(tx, actor(request), rule.team_id)
+      requireAutomationActionFeatures(helpers.features, rule.actions)
+      return admitAutomationOccurrence(tx, {
+        meta: stage4Meta(meta), ruleId, occurrenceKey: body.occurrenceKey, eventId: body.eventId,
+        scheduledFor: body.scheduledFor, payload: body.payload, dryRun: false,
+        authorization: admissionAuthorization(actor(request)),
+      })
+    })
   })
 
   app.post('/api/v1/automation-rules/:id/state', async request => {
@@ -961,6 +1024,11 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     return command(db, meta, tx => admitLoopRun(tx, {
       meta: stage4Meta(meta), loopId, occurrenceKey: body.occurrenceKey, scheduledFor: body.scheduledFor,
       authorization: admissionAuthorization(actor(request)),
+      notificationChannels: !helpers.features.WORKMESH_BETA_PLANNING
+        ? []
+        : helpers.features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS
+          ? ['in_app', 'browser', 'webhook']
+          : ['in_app', 'browser'],
     }))
   })
 
@@ -1127,6 +1195,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.post('/api/v1/notifications', async request => {
     const body = notificationInputSchema.parse(request.body)
+    requireExternalWebhooks(helpers.features, body.channels.includes('webhook'))
     const meta = helpers.meta(request, body)
     return command(db, meta, async tx => {
       requireHuman(actor(request))
@@ -1155,6 +1224,10 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.put('/api/v1/notification-preferences', async request => {
     const body = notificationPreferenceInputSchema.parse(request.body)
+    requireExternalWebhooks(
+      helpers.features,
+      body.channels.includes('webhook') || body.webhookUrl !== undefined,
+    )
     if (body.webhookUrl) await assertWebhookUrl(body.webhookUrl)
     const meta = helpers.meta(request, body)
     return command(db, meta, async tx => {

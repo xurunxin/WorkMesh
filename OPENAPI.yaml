@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: WorkMesh API
-  version: 0.4.0
-  description: Human-first work management plus Stage 1 agent execution and Stage 2 durable multi-agent collaboration.
+  version: "1.0"
+  description: WorkMesh server 1.0.0 REST API 1.0. Non-stable capabilities are deployment-gated and default disabled.
 servers:
   - url: http://localhost:3001
 security:
@@ -15,6 +15,55 @@ paths:
         security: [],
         responses: { "200": { $ref: "#/components/responses/Health" } },
       }
+  /api/v1/info:
+    get:
+      operationId: getServerInfo
+      security: []
+      responses:
+        "200":
+          description: Safe release, build, protocol, and schema metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [serverVersion, restApiVersion, agentProtocolVersion, mcpVersion, a2aUpstreamVersion, schemaBaseline, buildSha]
+                properties:
+                  serverVersion: { const: "1.0.0" }
+                  restApiVersion: { const: "1.0" }
+                  agentProtocolVersion: { const: "1.0" }
+                  mcpVersion: { const: "1.0.0" }
+                  a2aUpstreamVersion: { const: "0.3" }
+                  schemaBaseline: { const: 1 }
+                  buildSha: { type: string, minLength: 1, maxLength: 128 }
+  /api/v1/features:
+    get:
+      operationId: getDeploymentFeatures
+      responses:
+        "200":
+          description: Authenticated feature support tiers and enabled state.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [features]
+                properties:
+                  features:
+                    type: array
+                    minItems: 10
+                    maxItems: 10
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required: [key, tier, enabled]
+                      properties:
+                        key:
+                          type: string
+                          enum: [WORKMESH_BETA_PLANNING, WORKMESH_BETA_TEMPLATES, WORKMESH_BETA_COSTS, WORKMESH_BETA_GITEA, WORKMESH_BETA_OPERATIONS_UI, WORKMESH_EXPERIMENTAL_AUTOMATION, WORKMESH_EXPERIMENTAL_AGENT_LOOPS, WORKMESH_EXPERIMENTAL_A2A, WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS, WORKMESH_EXPERIMENTAL_MULTI_RUNTIME]
+                        tier: { type: string, enum: [beta, experimental] }
+                        enabled: { type: boolean }
+        "401": { $ref: "#/components/responses/Unauthorized" }
   /api/v1/install-status:
     get:
       {
@@ -1221,21 +1270,21 @@ paths:
       }
   /api/v1/provider-connections:
     post:
-      { operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+      { operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/provider-webhooks/{connectionId}/github:
     post:
-      { operationId: receiveGitHubWebhook, security: [], parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { operationId: receiveGitHubWebhook, security: [], parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ProviderSignatureInvalid" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/repositories:
-    get: { operationId: listRepositories, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listRepositories, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
     post:
-      { operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/repositories/{id}/context:
-    get: { operationId: getRepositoryContext, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "404": { $ref: "#/components/responses/NotFound" } } }
+    get: { operationId: getRepositoryContext, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "404": { $ref: "#/components/responses/NotFound" } } }
     post:
-      { operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { operationId: pinRepositoryContext, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryContextInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/provider-actions:
     post:
-      { operationId: requestProviderAction, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderActionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { operationId: requestProviderAction, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderActionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/delivery-artifacts:
     post:
       { operationId: publishDeliveryArtifact, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DeliveryArtifactInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
@@ -1250,15 +1299,15 @@ paths:
       { operationId: downloadVerifiedArtifact, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/pull-requests/{id}/reviews:
     post:
-      { operationId: publishStructuredReview, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/StructuredReviewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { operationId: publishStructuredReview, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/StructuredReviewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/pull-requests/{id}/merge:
     post:
-      { operationId: requestPullRequestMerge, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MergeIntentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { operationId: requestPullRequestMerge, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MergeIntentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/pull-requests/{id}/checks/{checkId}/retry:
     post:
-      { operationId: retryPullRequestCheck, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { name: checkId, in: path, required: true, schema: { type: string, maxLength: 500 } }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CiRetryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+      { operationId: retryPullRequestCheck, security: [{ AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { name: checkId, in: path, required: true, schema: { type: string, maxLength: 500 } }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CiRetryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/projects/{id}/delivery:
-    get: { operationId: getProjectDelivery, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: getProjectDelivery, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/projects/{id}/milestones:
     post: { operationId: createProjectMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MilestoneInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/projects/{id}/updates:
@@ -1272,76 +1321,76 @@ paths:
   /api/v1/completion-suggestions/{id}/decision:
     post: { operationId: decideCompletionSuggestion, security: [{ SessionCookie: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CompletionSuggestionDecisionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/cycles:
-    get: { operationId: listCycles, parameters: [{ name: teamId, in: query, schema: { type: string, format: uuid } }, { name: state, in: query, schema: { type: string, enum: [current, upcoming, history] } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createCycle, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listCycles, parameters: [{ name: teamId, in: query, schema: { type: string, format: uuid } }, { name: state, in: query, schema: { type: string, enum: [current, upcoming, history] } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createCycle, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/cycles/generate:
-    post: { operationId: generateCycles, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleGenerationInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: generateCycles, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleGenerationInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/cycles/{id}/carry-over:
-    post: { operationId: carryOverCycleWork, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [targetCycleId], properties: { targetCycleId: { type: string, format: uuid }, workItemIds: { type: array, items: { type: string, format: uuid } } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: carryOverCycleWork, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [targetCycleId], properties: { targetCycleId: { type: string, format: uuid }, workItemIds: { type: array, items: { type: string, format: uuid } } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/work-items/{id}/cycle:
-    patch: { operationId: setWorkItemCycle, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [cycleId], properties: { cycleId: { type: [string, "null"], format: uuid } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    patch: { operationId: setWorkItemCycle, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [cycleId], properties: { cycleId: { type: [string, "null"], format: uuid } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/initiatives:
-    get: { operationId: listInitiatives, responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createInitiative, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listInitiatives, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createInitiative, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/initiatives/{id}/rollup:
-    get: { operationId: getInitiativeRollup, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Currency-safe Initiative rollup, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeRollup" } } } } } }
+    get: { operationId: getInitiativeRollup, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Currency-safe Initiative rollup, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeRollup" } } } }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/advanced-views:
-    get: { operationId: listAdvancedViews, responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createAdvancedView, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AdvancedViewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listAdvancedViews, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createAdvancedView, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AdvancedViewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/advanced-views/{id}/results:
-    get: { operationId: evaluateAdvancedView, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+    get: { operationId: evaluateAdvancedView, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/projects/{id}/health:
-    get: { operationId: getProjectHealthHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createProjectHealthUpdate, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectHealthInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    get: { operationId: getProjectHealthHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createProjectHealthUpdate, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectHealthInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/automation-rules:
-    get: { operationId: listAutomationRules, responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createAutomationRule, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listAutomationRules, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createAutomationRule, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-rules/{id}/versions:
-    post: { operationId: createAutomationRuleVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: createAutomationRuleVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/automation-rules/{id}/dry-run:
-    post: { operationId: dryRunAutomationRule, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationOccurrenceInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: dryRunAutomationRule, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationOccurrenceInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-rules/{id}/trigger:
-    post: { operationId: triggerAutomationRule, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationOccurrenceInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: triggerAutomationRule, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationOccurrenceInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-rules/{id}/state:
-    post: { operationId: setAutomationRuleState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: setAutomationRuleState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/automation-runs:
-    get: { operationId: listAutomationRuns, parameters: [{ name: ruleId, in: query, schema: { type: string, format: uuid } }, { name: loopId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listAutomationRuns, parameters: [{ name: ruleId, in: query, schema: { type: string, format: uuid } }, { name: loopId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-runs/{runId}:
-    get: { operationId: getAutomationRun, parameters: [{ name: runId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: getAutomationRun, parameters: [{ name: runId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/loops:
-    get: { operationId: listLoops, responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createLoop, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/LoopInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listLoops, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createLoop, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/LoopInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/loops/{id}/run:
-    post: { operationId: runLoopNow, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [occurrenceKey], properties: { occurrenceKey: { type: string }, scheduledFor: { $ref: "#/components/schemas/Timestamp" } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: runLoopNow, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [occurrenceKey], properties: { occurrenceKey: { type: string }, scheduledFor: { $ref: "#/components/schemas/Timestamp" } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/loops/{id}/state:
-    post: { operationId: setLoopState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: setLoopState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/usage-records:
-    post: { operationId: recordUsage, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/UsageInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: recordUsage, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/UsageInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/usage-summary:
-    get: { operationId: getUsageSummary, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: getUsageSummary, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/budget-policies:
-    post: { operationId: setBudgetPolicy, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/BudgetPolicyInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: setBudgetPolicy, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/BudgetPolicyInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/notifications:
-    post: { operationId: createNotification, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/NotificationInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: createNotification, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/NotificationInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/notification-preferences:
-    put: { operationId: updateNotificationPreferences, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/NotificationPreferencesInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    put: { operationId: updateNotificationPreferences, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/NotificationPreferencesInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/templates:
-    get: { operationId: listTemplates, responses: { "200": { $ref: "#/components/responses/Json" } } }
-    post: { operationId: createTemplate, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: listTemplates, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { operationId: createTemplate, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/templates/{id}/versions:
-    post: { operationId: createTemplateVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: createTemplateVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/templates/{id}/state:
-    post: { operationId: setTemplateState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateStateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { operationId: setTemplateState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateStateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/templates/export:
-    get: { operationId: exportTemplates, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { operationId: exportTemplates, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/templates/import:
-    post: { operationId: importTemplatesAsDrafts, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateImportInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: importTemplatesAsDrafts, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateImportInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/a2a-bindings:
-    post: { operationId: configureA2ABinding, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ABindingInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { operationId: configureA2ABinding, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ABindingInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/a2a-bindings/{id}/tasks:
-    post: { operationId: acceptA2ATask, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ATaskInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+    post: { operationId: acceptA2ATask, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ATaskInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/a2a-bindings/{id}/tasks/{taskId}/events:
-    get: { operationId: streamA2ATaskEvents, parameters: [{ $ref: "#/components/parameters/Id" }, { name: taskId, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 500 } }, { name: after, in: query, description: Decimal PostgreSQL bigint cursor returned as a string to preserve precision., schema: { type: string, pattern: "^[0-9]{1,19}$", default: "0" } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
+    get: { operationId: streamA2ATaskEvents, parameters: [{ $ref: "#/components/parameters/Id" }, { name: taskId, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 500 } }, { name: after, in: query, description: Decimal PostgreSQL bigint cursor returned as a string to preserve precision., schema: { type: string, pattern: "^[0-9]{1,19}$", default: "0" } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
 components:
   securitySchemes:
     SessionCookie:
@@ -1836,7 +1885,7 @@ components:
       }
   responses:
     Json:
-      { description: Stage 2 collaboration resource, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+      { description: WorkMesh 1.0 resource, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
     Health:
       {
         description: Database is reachable,
@@ -2085,6 +2134,33 @@ components:
     Forbidden:
       {
         description: CSRF or authorization failure,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    FeatureDisabled:
+      {
+        description: The authenticated deployment has disabled this non-stable capability. The structured error code is FEATURE_DISABLED.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    ForbiddenOrFeatureDisabled:
+      {
+        description: The authenticated request failed CSRF or authorization checks, or the deployment disabled the requested non-stable capability with structured error code FEATURE_DISABLED.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Error" } },
+          },
+      }
+    ProviderSignatureInvalid:
+      {
+        description: Provider webhook signature validation failed. The structured error code is PROVIDER_SIGNATURE_INVALID.,
         content:
           {
             application/json:
@@ -3047,6 +3123,7 @@ components:
                             VALIDATION_ERROR,
                             UNAUTHENTICATED,
                             FORBIDDEN,
+                            FEATURE_DISABLED,
                             NOT_FOUND,
                             CONFLICT,
                             LAST_ACTIVE_TEAM_CONFLICT,

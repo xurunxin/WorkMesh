@@ -97,22 +97,26 @@ export function createProviderActionWorker(input: {
   db: Pool
   resolveProvider: ProviderResolver
   workerId?: string
+  allowedProviders?: ReadonlyArray<'fake' | 'github' | 'gitea'>
 }) {
   const workerId = input.workerId ?? `provider-${randomUUID()}`
+  const allowedProviders = input.allowedProviders ?? ['fake', 'github', 'gitea']
 
   const claimAction = (): Promise<ClaimedAction | undefined> => withTx(input.db, async tx => {
     const result = await tx.query<ClaimedAction>(
       `WITH candidate AS (
-         SELECT id FROM provider_actions
-          WHERE attempt_count < 8 AND available_at<=now()
-            AND (status IN ('pending','failed') OR (status='claimed' AND claimed_at<now()-interval '60 seconds'))
-          ORDER BY available_at,created_at FOR UPDATE SKIP LOCKED LIMIT 1
+         SELECT action.id FROM provider_actions action
+         JOIN provider_connections connection ON connection.id=action.connection_id
+          WHERE action.attempt_count < 8 AND action.available_at<=now()
+            AND connection.provider::text=ANY($2::text[])
+            AND (action.status IN ('pending','failed') OR (action.status='claimed' AND action.claimed_at<now()-interval '60 seconds'))
+          ORDER BY action.available_at,action.created_at FOR UPDATE OF action SKIP LOCKED LIMIT 1
        )
        UPDATE provider_actions a SET status='claimed',claimed_at=now(),claimed_by=$1,attempt_count=a.attempt_count+1,updated_at=now()
        FROM candidate,repositories r,provider_connections c
        WHERE a.id=candidate.id AND r.id=a.repository_id AND c.id=a.connection_id
        RETURNING a.*,c.provider,r.external_id,r.full_name,r.team_id,r.default_branch`,
-      [workerId],
+      [workerId, allowedProviders],
     )
     return result.rows[0]
   })
@@ -143,7 +147,40 @@ export function createProviderActionWorker(input: {
     })
   }
 
-  const authorizeProviderSideEffect = async (action: ClaimedAction): Promise<boolean> => withTx(input.db, async tx => {
+  const revalidateClaimedProvider = async (action: ClaimedAction): Promise<boolean> =>
+    withTx(input.db, async tx => {
+      const current = (await tx.query<{ provider: ProviderKind }>(
+        `SELECT connection.provider
+           FROM provider_actions provider_action
+           JOIN provider_connections connection ON connection.id=provider_action.connection_id
+          WHERE provider_action.id=$1
+            AND provider_action.claimed_by=$2
+            AND provider_action.status='claimed'
+          FOR UPDATE OF provider_action,connection`,
+        [action.id, workerId],
+      )).rows[0]
+      if (!current) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+      if (allowedProviders.includes(current.provider)) {
+        action.provider = current.provider
+        return true
+      }
+      // A deployment gate is reversible, so release the claim without charging
+      // an execution attempt or emitting a terminal domain fact.
+      const released = await tx.query(
+        `UPDATE provider_actions
+            SET status='pending',claimed_at=NULL,claimed_by=NULL,
+                attempt_count=GREATEST(0,attempt_count-1),available_at=now(),
+                last_error=$3,updated_at=now()
+          WHERE id=$1 AND claimed_by=$2 AND status='claimed'`,
+        [action.id, workerId, `PROVIDER_DISABLED:${current.provider}`],
+      )
+      if (released.rowCount !== 1) throw new Error('PROVIDER_ACTION_CLAIM_LOST')
+      return false
+    })
+
+  const authorizeProviderSideEffect = async (action: ClaimedAction): Promise<boolean> => {
+    if (!await revalidateClaimedProvider(action)) return false
+    return withTx(input.db, async tx => {
     const current = await tx.query(
       "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
       [action.id, workerId],
@@ -347,9 +384,11 @@ export function createProviderActionWorker(input: {
       return false
     }
   })
+  }
 
-  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> =>
-    withTx(input.db, async tx => {
+  const authorizeRepositoryContextResolution = async (action: ClaimedAction): Promise<boolean> => {
+    if (!await revalidateClaimedProvider(action)) return false
+    return withTx(input.db, async tx => {
       const current = await tx.query(
         "SELECT 1 FROM provider_actions WHERE id=$1 AND claimed_by=$2 AND status='claimed' FOR UPDATE",
         [action.id, workerId],
@@ -419,6 +458,7 @@ export function createProviderActionWorker(input: {
       })
       return false
     })
+  }
 
   const checkpointProviderResult = async (
     action: ClaimedAction,
@@ -998,6 +1038,7 @@ export function createProviderActionWorker(input: {
   const executeAction = async (action: ClaimedAction): Promise<void> => {
     if (process.env.PROVIDER_INJECT_FAILURE_AFTER_CLAIM === 'true') throw new Error('PROVIDER_INJECTED_FAILURE_AFTER_CLAIM')
     if (action.result) {
+      if (!await revalidateClaimedProvider(action)) return
       await finishAction(action, action.result)
       return
     }
@@ -1032,6 +1073,7 @@ export function createProviderActionWorker(input: {
       const provider = await input.resolveProvider(action.provider, action.connection_id)
       result = await provider.retryCheck({ ...common, checkRunId: payload.checkRunId })
     } else if (action.kind === 'merge_pull_request') {
+      if (!await authorizeProviderSideEffect(action)) return
       const payload = action.payload as { pullRequestId: string; headSha: string; method: 'merge' | 'squash' | 'rebase' }
       const provider = await input.resolveProvider(action.provider, action.connection_id)
       const live = await provider.getPullRequest({ ...common, pullRequestId: payload.pullRequestId })
@@ -1045,7 +1087,6 @@ export function createProviderActionWorker(input: {
         result = { merged: true, mergeSha: live.mergeSha }
       } else {
         if (live.state !== 'open') throw new Error('PROVIDER_PULL_REQUEST_NOT_OPEN')
-        if (!await authorizeProviderSideEffect(action)) return
         const expiresAt = await revalidateMergeExecution(action, payload)
         if (!expiresAt) return
         if (expiresAt.getTime() <= Date.now()) {
@@ -1108,6 +1149,7 @@ export function createProviderActionWorker(input: {
            JOIN provider_connections c ON c.id=d.connection_id
            LEFT JOIN repositories r ON r.id=d.repository_id
           WHERE d.attempt_count < 12 AND d.available_at<=now()
+            AND c.provider::text=ANY($2::text[])
             AND (d.status='received' OR (d.status='claimed' AND d.claimed_at<now()-interval '60 seconds'))
           ORDER BY d.available_at,d.created_at FOR UPDATE OF d SKIP LOCKED LIMIT 1
        )
@@ -1116,7 +1158,7 @@ export function createProviderActionWorker(input: {
        FROM candidate
        WHERE d.id=candidate.id
        RETURNING d.*,candidate.workspace_id,candidate.service_actor_id,candidate.team_id`,
-      [workerId],
+      [workerId, allowedProviders],
     )
     return result.rows[0]
   })
@@ -1124,8 +1166,12 @@ export function createProviderActionWorker(input: {
   const finishWebhook = async (delivery: ClaimedWebhook): Promise<void> => {
     await withTx(input.db, async tx => {
       const claim = await tx.query(
-        "SELECT 1 FROM provider_webhook_deliveries WHERE id=$1 AND status='claimed' AND claimed_by=$2 FOR UPDATE",
-        [delivery.id, workerId],
+        `SELECT 1 FROM provider_webhook_deliveries delivery
+          JOIN provider_connections connection ON connection.id=delivery.connection_id
+         WHERE delivery.id=$1 AND delivery.status='claimed' AND delivery.claimed_by=$2
+           AND connection.provider::text=ANY($3::text[])
+         FOR UPDATE OF delivery`,
+        [delivery.id, workerId, allowedProviders],
       )
       // A reclaimed delivery belongs exclusively to the new worker. The stale
       // worker must not touch provider projections, approvals, events or outbox.

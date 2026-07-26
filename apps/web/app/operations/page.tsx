@@ -75,6 +75,9 @@ type Snapshot = {
   usage: Usage
   templates: Template[]
 }
+type FeatureRegistry = {
+  features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }>
+}
 
 const when = (value: string | null) => value ? new Date(value).toLocaleString() : 'Not scheduled'
 const message = (reason: unknown) => reason instanceof Error ? reason.message : 'Request failed'
@@ -82,17 +85,32 @@ const message = (reason: unknown) => reason instanceof Error ? reason.message : 
 export default function OperationsPage() {
   const [data, setData] = useState<Snapshot | null>(null)
   const [error, setError] = useState('')
+  const [features, setFeatures] = useState<Set<string> | null>(null)
   const load = useCallback(async () => {
     try {
       setError('')
+      const registry = await apiRequest<FeatureRegistry>('/api/v1/features')
+      const enabled = new Set(registry.features.filter(feature => feature.enabled).map(feature => feature.key))
+      setFeatures(enabled)
+      if (!enabled.has('WORKMESH_BETA_OPERATIONS_UI')) {
+        setData(null)
+        return
+      }
       const [cycles, initiatives, rules, loops, runs, usage, templates] = await Promise.all([
-        apiRequest<Cycle[]>('/api/v1/cycles'),
-        apiRequest<Initiative[]>('/api/v1/initiatives'),
-        apiRequest<Rule[]>('/api/v1/automation-rules'),
-        apiRequest<Loop[]>('/api/v1/loops'),
-        apiRequest<Run[]>('/api/v1/automation-runs?limit=100'),
-        apiRequest<Usage>('/api/v1/usage-summary'),
-        apiRequest<Template[]>('/api/v1/templates'),
+        enabled.has('WORKMESH_BETA_PLANNING') ? apiRequest<Cycle[]>('/api/v1/cycles') : Promise.resolve([]),
+        enabled.has('WORKMESH_BETA_PLANNING') ? apiRequest<Initiative[]>('/api/v1/initiatives') : Promise.resolve([]),
+        enabled.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? apiRequest<Rule[]>('/api/v1/automation-rules') : Promise.resolve([]),
+        enabled.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') ? apiRequest<Loop[]>('/api/v1/loops') : Promise.resolve([]),
+        enabled.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? apiRequest<Run[]>('/api/v1/automation-runs?limit=100') : Promise.resolve([]),
+        enabled.has('WORKMESH_BETA_COSTS') ? apiRequest<Usage>('/api/v1/usage-summary') : Promise.resolve({
+          input_tokens: '0',
+          output_tokens: '0',
+          runtime_ms: '0',
+          tool_calls: '0',
+          unknown_cost_records: 0,
+          currency_buckets: [],
+        }),
+        enabled.has('WORKMESH_BETA_TEMPLATES') ? apiRequest<Template[]>('/api/v1/templates') : Promise.resolve([]),
       ])
       setData({ cycles, initiatives, rules, loops, runs, usage, templates })
     } catch (reason) {
@@ -143,7 +161,9 @@ export default function OperationsPage() {
     }
   }
 
-  if (!data && !error) return <main className="center">Loading operations...</main>
+  if (!features && !error) return <main className="center">Loading operations...</main>
+  if (features && !features.has('WORKMESH_BETA_OPERATIONS_UI'))
+    return <main className="center" data-testid="operations-disabled">Operations UI is disabled for this deployment.</main>
   return (
     <main className="operations-shell">
       <header className="operations-header">
@@ -157,7 +177,7 @@ export default function OperationsPage() {
       {error && <p className="error" role="alert">{error}</p>}
       {data && (
         <>
-          <section className="operations-metrics" aria-label="Usage and cost">
+          {features?.has('WORKMESH_BETA_COSTS') && <section className="operations-metrics" aria-label="Usage and cost">
             <article>
               <span>Known cost</span>
               {data.usage.currency_buckets.length === 0
@@ -169,9 +189,9 @@ export default function OperationsPage() {
             <article><span>Tokens</span><strong>{Number(data.usage.input_tokens) + Number(data.usage.output_tokens)}</strong></article>
             <article><span>Runtime</span><strong>{Math.round(Number(data.usage.runtime_ms) / 1000)}s</strong></article>
             <article><span>Tool calls</span><strong>{data.usage.tool_calls}</strong></article>
-          </section>
+          </section>}
           <div className="operations-grid">
-            <section className="operations-panel" data-testid="cycles-panel">
+            {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="cycles-panel">
               <h2>Cycles</h2>
               {data.cycles.map(cycle => (
                 <article key={cycle.id}>
@@ -181,8 +201,8 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.cycles.length === 0 && <p className="empty">No Cycles configured.</p>}
-            </section>
-            <section className="operations-panel" data-testid="initiatives-panel">
+            </section>}
+            {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="initiatives-panel">
               <h2>Initiatives</h2>
               {data.initiatives.map(initiative => (
                 <article key={initiative.id}>
@@ -191,8 +211,8 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.initiatives.length === 0 && <p className="empty">No Initiatives configured.</p>}
-            </section>
-            <section className="operations-panel wide" data-testid="automation-panel">
+            </section>}
+            {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="automation-panel">
               <h2>Automation rules</h2>
               {data.rules.map(rule => (
                 <article key={rule.id} className="automation-row">
@@ -203,8 +223,8 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.rules.length === 0 && <p className="empty">No Rules configured.</p>}
-            </section>
-            <section className="operations-panel wide" data-testid="loops-panel">
+            </section>}
+            {features?.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') && <section className="operations-panel wide" data-testid="loops-panel">
               <h2>Loops</h2>
               {data.loops.map(loop => (
                 <article key={loop.id} className="automation-row">
@@ -214,8 +234,8 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.loops.length === 0 && <p className="empty">No Loops configured.</p>}
-            </section>
-            <section className="operations-panel wide" data-testid="runs-panel">
+            </section>}
+            {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="runs-panel">
               <h2>Recent runs</h2>
               <div className="operations-table">
                 <div className="table-head"><span>Run</span><span>Kind</span><span>Status</span><span>Attempts</span><span>Session</span><span>Created</span></div>
@@ -232,8 +252,8 @@ export default function OperationsPage() {
                 ))}
               </div>
               {data.runs.length === 0 && <p className="empty">No run history yet.</p>}
-            </section>
-            <section className="operations-panel wide" data-testid="templates-panel">
+            </section>}
+            {features?.has('WORKMESH_BETA_TEMPLATES') && <section className="operations-panel wide" data-testid="templates-panel">
               <h2>Templates &amp; playbooks</h2>
               <div className="template-list">
                 {data.templates.map(template => (
@@ -244,7 +264,7 @@ export default function OperationsPage() {
                 ))}
               </div>
               {data.templates.length === 0 && <p className="empty">No Templates configured.</p>}
-            </section>
+            </section>}
           </div>
         </>
       )}

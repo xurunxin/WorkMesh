@@ -1,5 +1,90 @@
 import { z } from 'zod'
 
+export const releaseMetadata = Object.freeze({
+  serverVersion: '1.0.0',
+  restApiVersion: '1.0',
+  agentProtocolVersion: '1.0',
+  mcpVersion: '1.0.0',
+  a2aUpstreamVersion: '0.3',
+  schemaBaseline: 1,
+})
+
+export const featureKeySchema = z.enum([
+  'WORKMESH_BETA_PLANNING',
+  'WORKMESH_BETA_TEMPLATES',
+  'WORKMESH_BETA_COSTS',
+  'WORKMESH_BETA_GITEA',
+  'WORKMESH_BETA_OPERATIONS_UI',
+  'WORKMESH_EXPERIMENTAL_AUTOMATION',
+  'WORKMESH_EXPERIMENTAL_AGENT_LOOPS',
+  'WORKMESH_EXPERIMENTAL_A2A',
+  'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS',
+  'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME',
+])
+export const supportTierSchema = z.enum(['beta', 'experimental'])
+export type FeatureKey = z.infer<typeof featureKeySchema>
+export type SupportTier = z.infer<typeof supportTierSchema>
+export type ReleaseInfo = z.infer<typeof releaseInfoResponseSchema>
+export type FeatureState = z.infer<typeof featureStateSchema>
+export type FeatureRegistry = z.infer<typeof featureRegistryResponseSchema>
+export type FeatureRuntime = 'api' | 'web' | 'worker' | 'sdk-mcp' | 'reserved'
+
+export const featureDefinitions = Object.freeze([
+  { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
+  { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
+  { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
+  { key: 'WORKMESH_BETA_GITEA', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
+  { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
+  { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
+  { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['reserved'] },
+] as const satisfies readonly {
+  key: FeatureKey
+  tier: SupportTier
+  defaultEnabled: false
+  runtimeDependencies: readonly FeatureRuntime[]
+}[])
+
+export const releaseInfoResponseSchema = z.object({
+  serverVersion: z.literal(releaseMetadata.serverVersion),
+  restApiVersion: z.literal(releaseMetadata.restApiVersion),
+  agentProtocolVersion: z.literal(releaseMetadata.agentProtocolVersion),
+  mcpVersion: z.literal(releaseMetadata.mcpVersion),
+  a2aUpstreamVersion: z.literal(releaseMetadata.a2aUpstreamVersion),
+  schemaBaseline: z.literal(releaseMetadata.schemaBaseline),
+  buildSha: z.string().min(1).max(128),
+}).strict()
+export const featureStateSchema = z.object({
+  key: featureKeySchema,
+  tier: supportTierSchema,
+  enabled: z.boolean(),
+}).strict()
+export const featureRegistryResponseSchema = z.object({
+  features: z.array(featureStateSchema).length(featureDefinitions.length),
+}).strict()
+
+const featureRoutePrefixes = [
+  ['/api/v1/cycles', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/initiatives', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/advanced-views', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/projects/:id/health', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/work-items/:id/cycle', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/templates', 'WORKMESH_BETA_TEMPLATES'],
+  ['/api/v1/usage-', 'WORKMESH_BETA_COSTS'],
+  ['/api/v1/budget-policies', 'WORKMESH_BETA_COSTS'],
+  ['/api/v1/automation-rules', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
+  ['/api/v1/automation-runs', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
+  ['/api/v1/notifications', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/notification-preferences', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
+  ['/api/v1/a2a-bindings', 'WORKMESH_EXPERIMENTAL_A2A'],
+] as const satisfies readonly (readonly [string, FeatureKey])[]
+
+export const featureForApiRoute = (route: string): FeatureKey | undefined =>
+  featureRoutePrefixes.find(([prefix]) => route.startsWith(prefix))?.[1]
+
 export const idSchema = z.string().uuid()
 export const timestampSchema = z.string().datetime({ offset: true })
 export const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -48,6 +133,7 @@ export const apiErrorCodeSchema = z.enum([
   'VALIDATION_ERROR',
   'UNAUTHENTICATED',
   'FORBIDDEN',
+  'FEATURE_DISABLED',
   'NOT_FOUND',
   'CONFLICT',
   'LAST_ACTIVE_TEAM_CONFLICT',
@@ -69,6 +155,8 @@ export const errorBody = (code: string, message: string, correlationId: string, 
 
 export const stage0RouteManifest = [
   { method: 'GET', path: '/health', authenticated: false },
+  { method: 'GET', path: '/api/v1/info', authenticated: false },
+  { method: 'GET', path: '/api/v1/features', authenticated: true },
   { method: 'GET', path: '/api/v1/install-status', authenticated: false },
   { method: 'POST', path: '/api/v1/auth/install', authenticated: false, mutation: true },
   { method: 'POST', path: '/api/v1/auth/login', authenticated: false, mutation: true },

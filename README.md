@@ -1,6 +1,40 @@
-# WorkMesh Stage 4
+# WorkMesh 1.0
 
-WorkMesh Stage 4 is a self-hosted collaboration control plane for humans and external coding agents. In addition to work management, scoped Agent sessions, approvals, handoffs, rooms, artifacts, and Git delivery, it includes Cycles, two-level Initiatives, advanced Views, source-linked project health, durable Automation Rules, recurring Agent Loops, notifications, append-only usage/cost facts, budgets, versioned Templates, an A2A `0.3` adapter, and Gitea support through the Git-provider abstraction.
+WorkMesh is a self-hosted collaboration control plane for humans and external
+coding agents. Version 1.0 has a Stable core for work management, scoped Agent
+execution, human-visible collaboration, and governed Git delivery. Optional
+Beta and Experimental capabilities are explicit, default-disabled deployment
+choices; their presence does not widen identity, delegation, resource, approval,
+lease, revision, or idempotency authority.
+
+## 1.0 release contract
+
+WorkMesh server `1.0.0` exposes REST API `1.0`, Agent Protocol `1.0`, MCP server
+`1.0.0`, the version-isolated upstream A2A `0.3` adapter, and database schema
+baseline `1`. `GET /api/v1/info` is public and returns only those versions, the
+schema baseline, and `WORKMESH_BUILD_SHA` (or `unknown`); it never returns
+deployment secrets. Authenticated `GET /api/v1/features` returns only the
+deployment flag, support tier, and enabled state of non-stable capabilities. It
+is not an inventory of every shipped Stable capability.
+
+All Beta and Experimental flags default to `false`. Enabling a flag exposes a
+deployment capability but grants no authorization. Disabled API routes return a
+structured `FEATURE_DISABLED` only after normal authentication. The API,
+worker, Web UI, SDK/MCP adapters all use this registry so disabled work is not
+admitted, claimed, executed, or presented as enabled. Migrations are never
+conditional on feature flags.
+
+Planning (including notifications), Templates, Costs, Gitea, and the Operations
+UI are Beta. Automation, Agent Loops, A2A, and external outbound webhooks are
+Experimental. The multi-runtime flag is reserved and has no shipped runtime
+path. The Operations UI flag controls only the UI surface; each API and worker
+path remains gated by its own capability.
+
+See [Version and support policy](docs/VERSION_POLICY.md) for the complete
+Stable/Beta/Experimental capability boundary, compatibility guarantees, flags,
+runtime dependencies, and upgrade policy. See
+[v1 release policy](docs/V1_RELEASE_POLICY.md) for RC promotion, supply-chain
+evidence, limitations, and GA criteria.
 
 ## Clean start
 
@@ -52,13 +86,20 @@ SSE uses `GET /api/v1/events/stream?cursor=N` or `Last-Event-ID`; its source is 
 
 The UI reads humans, projects, work items, comments and saved/built-in views from the API. Built-in views are My Work, Active and Backlog. List filtering accepts team, status, project, priority, responsible human, label, exact identifier and PostgreSQL full-text/trigram search. Revisioned PATCH/DELETE calls use the ETag returned by reads; nullable fields such as descriptions, due dates, project, responsible human, project lead and target date can be explicitly cleared with JSON `null`. A started work item cannot clear its responsible human.
 
-## Stage 4 operations
+## Beta and Experimental operations
 
-Open `http://localhost:3000/operations` for the API-backed operational surface. It shows current/upcoming/history Cycles, Initiative rollups, Automation Rules and their dry-run/pause controls, Loops and run state, usage with explicit unknown-cost counts, and versioned Templates. The page never simulates successful execution locally: controls call the same API commands used by external clients and refresh the durable state returned by PostgreSQL.
+When `WORKMESH_BETA_OPERATIONS_UI=true`, open
+`http://localhost:3000/operations` for the API-backed optional-capability
+surface. Each panel also requires its own feature flag. The page shows
+current/upcoming/history Cycles, Initiative rollups, Automation Rules and their
+dry-run/pause controls, Loops and run state, usage with explicit unknown-cost
+counts, and versioned Templates. It never simulates successful execution
+locally: controls call the same API commands used by external clients and
+refresh the durable state returned by PostgreSQL.
 
 Rules pin an immutable version at admission. Occurrences are deduplicated, dry-runs cannot create effect rows, workers checkpoint every ordered effect with a fencing token, and exhausted retries enter a durable dead-letter state. Loop admission atomically checks live capability/resource authority, no-overlap, and hard budget before it creates both the Automation Run and one real Agent Session. It does not create a synthetic Work Item.
 
-Project-health publications retain confidence, uncertainty, and immutable typed sources. Agent-authored publications additionally require an exact approval. Usage records are append-only; `costSource=unknown` requires an absent `costMinor`, and Initiative rollups, summaries, and Advanced Views never sum unlike currencies. All Stage 4 minor-unit amounts cross the API as canonical decimal strings and are aggregated with integer arithmetic, so values above JavaScript's safe-integer range are never silently rounded. Advanced View filters use a strict allowlist, and any View that exposes, filters, or orders cost requires an explicit currency. Imported JSON templates are sanitized and remain inert drafts until a human activates them.
+Project-health publications retain confidence, uncertainty, and immutable typed sources. Agent-authored publications additionally require an exact approval. Usage records are append-only; `costSource=unknown` requires an absent `costMinor`, and Initiative rollups, summaries, and Advanced Views never sum unlike currencies. All minor-unit amounts cross the API as canonical decimal strings and are aggregated with integer arithmetic, so values above JavaScript's safe-integer range are never silently rounded. Advanced View filters use a strict allowlist, and any View that exposes, filters, or orders cost requires an explicit currency. Imported JSON templates are sanitized and remain inert drafts until a human activates them.
 
 The built-in scheduler intentionally supports a bounded five-field UTC cron subset (`*`, `*/n`, exact numbers, comma lists, and ranges); other time zones and extended cron syntax are rejected at validation. Hourly and daily notification preferences defer delivery to the next matching window, but do not yet coalesce multiple notifications into a single digest payload.
 

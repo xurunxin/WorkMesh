@@ -1,8 +1,10 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
-  CiRetryInput, ProviderActionInput, StructuredReviewInput,
+  CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
+  ReleaseInfo,
 } from '@workmesh/contracts'
+export { releaseMetadata } from '@workmesh/contracts'
 
 export type WorkMeshErrorCode =
   | 'NETWORK_ERROR'
@@ -99,6 +101,14 @@ export class WorkMeshClient {
   }
 
   setSessionToken(token: string | undefined): void { this.sessionToken = token }
+
+  getServerInfo(options?: RequestOptions): Promise<ReleaseInfo> {
+    return this.request('GET', '/api/v1/info', undefined, options)
+  }
+
+  getFeatures(options?: RequestOptions): Promise<FeatureRegistry> {
+    return this.request('GET', '/api/v1/features', undefined, options)
+  }
 
   async exchangeSessionToken(sessionId: string, exchangeToken: string, installationToken: string, options: RequestOptions = {}): Promise<TokenExchange> {
     // The one-time code is not a bearer credential: the active installation token proves the Agent identity.

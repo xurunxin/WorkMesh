@@ -1,4 +1,4 @@
-# Stage 1 Agent SDK, MCP, and Fake Agent
+# Agent SDK, MCP, and Fake Agent
 
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
 
@@ -50,4 +50,4 @@ $env:FAKE_AGENT_REQUEST_APPROVAL = 'true'
 pnpm --filter @workmesh/fake-agent dev
 ```
 
-Run `pnpm smoke:agents` for SDK retry/HMAC coverage plus MCP construction and fake-agent signed-delivery/deduplication smoke checks. The full fake-agent workflow requires a running Stage 1 API and a real created session.
+Run `pnpm smoke:agents` for SDK retry/HMAC coverage plus MCP construction and fake-agent signed-delivery/deduplication smoke checks. The full fake-agent workflow requires a running WorkMesh REST v1 API with the applicable support-tier features enabled and a real created session.
