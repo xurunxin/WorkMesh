@@ -1,6 +1,6 @@
-# WorkMesh Stage 0
+# WorkMesh Stage 4
 
-WorkMesh Stage 1 is a self-hosted collaboration control plane for humans and external coding agents. It includes the Stage 0 work-management base plus Agent registry, scoped delegation, auditable sessions, immutable context/activity/plan facts, approvals, signed webhooks, a TypeScript SDK, MCP, a fake agent, and the Agent Control Center. Multi-Agent handoff/lease orchestration, Git providers, A2A, cycles, initiatives, and advanced analytics remain later-stage work.
+WorkMesh Stage 4 is a self-hosted collaboration control plane for humans and external coding agents. In addition to work management, scoped Agent sessions, approvals, handoffs, rooms, artifacts, and Git delivery, it includes Cycles, two-level Initiatives, advanced Views, source-linked project health, durable Automation Rules, recurring Agent Loops, notifications, append-only usage/cost facts, budgets, versioned Templates, an A2A `0.3` adapter, and Gitea support through the Git-provider abstraction.
 
 ## Clean start
 
@@ -51,3 +51,34 @@ SSE uses `GET /api/v1/events/stream?cursor=N` or `Last-Event-ID`; its source is 
 ## Work management
 
 The UI reads humans, projects, work items, comments and saved/built-in views from the API. Built-in views are My Work, Active and Backlog. List filtering accepts team, status, project, priority, responsible human, label, exact identifier and PostgreSQL full-text/trigram search. Revisioned PATCH/DELETE calls use the ETag returned by reads; nullable fields such as descriptions, due dates, project, responsible human, project lead and target date can be explicitly cleared with JSON `null`. A started work item cannot clear its responsible human.
+
+## Stage 4 operations
+
+Open `http://localhost:3000/operations` for the API-backed operational surface. It shows current/upcoming/history Cycles, Initiative rollups, Automation Rules and their dry-run/pause controls, Loops and run state, usage with explicit unknown-cost counts, and versioned Templates. The page never simulates successful execution locally: controls call the same API commands used by external clients and refresh the durable state returned by PostgreSQL.
+
+Rules pin an immutable version at admission. Occurrences are deduplicated, dry-runs cannot create effect rows, workers checkpoint every ordered effect with a fencing token, and exhausted retries enter a durable dead-letter state. Loop admission atomically checks live capability/resource authority, no-overlap, and hard budget before it creates both the Automation Run and one real Agent Session. It does not create a synthetic Work Item.
+
+Project-health publications retain confidence, uncertainty, and immutable typed sources. Agent-authored publications additionally require an exact approval. Usage records are append-only; `costSource=unknown` requires an absent `costMinor`, and Initiative rollups, summaries, and Advanced Views never sum unlike currencies. All Stage 4 minor-unit amounts cross the API as canonical decimal strings and are aggregated with integer arithmetic, so values above JavaScript's safe-integer range are never silently rounded. Advanced View filters use a strict allowlist, and any View that exposes, filters, or orders cost requires an explicit currency. Imported JSON templates are sanitized and remain inert drafts until a human activates them.
+
+The built-in scheduler intentionally supports a bounded five-field UTC cron subset (`*`, `*/n`, exact numbers, comma lists, and ranges); other time zones and extended cron syntax are rejected at validation. Hourly and daily notification preferences defer delivery to the next matching window, but do not yet coalesce multiple notifications into a single digest payload.
+
+### Scheduled triage demonstration
+
+1. Start PostgreSQL, Redis, API, worker, and web; run all migrations through `0021_stage4_a2a_direction_and_prompt_identity.sql`.
+2. Create an `agent_run` Template and a pinned Template version, then register an active Agent with Team access and the capabilities required by that Template.
+3. Create a Loop with a UTC schedule trigger, `noOverlap: true`, a hard budget, and the pinned `runTemplateVersionId`.
+4. Use `POST /api/v1/loops/{id}/run` with a unique `Idempotency-Key` and occurrence key to run it immediately, or let the worker admit the next due schedule.
+5. Inspect `GET /api/v1/automation-runs?loopId={id}` and `GET /api/v1/automation-runs/{runId}`. The admitted run, Session, delegation, budget reservation, domain events, and outbox records are committed together.
+6. Record Session usage with `POST /api/v1/usage-records`; inspect `GET /api/v1/usage-summary`. End the Session to let worker reconciliation project the terminal result and send the configured failure notification if needed.
+
+The deterministic integration form of this demo is:
+
+```powershell
+$env:RUN_INTEGRATION = '1'
+$env:DATABASE_URL = 'postgres://workmesh:workmesh-local-postgres-change-me@localhost:5432/workmesh_test'
+$env:SESSION_SECRET = 'acceptance-test-session-secret-0123456789'
+pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts --maxWorkers=1 integration/stage4-automation.integration.test.ts
+pnpm --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts --maxWorkers=1 integration/stage4-operations.integration.test.ts
+```
+
+The first suite proves duplicate-trigger suppression, one-time action effects, bounded retry/DLQ, overlap and budget cutoffs, rollback, revocation, and scheduled-triage Session/outbox creation. The second proves Cycle carry-over, currency-safe Initiative/View projections, strict View filters, source-linked health, effect-free dry-run, inert template import, and an authorized fake-A2A task progressing through one real Session while inbound sequence and outbound cursor remain independent.

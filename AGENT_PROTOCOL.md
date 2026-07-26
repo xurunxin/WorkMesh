@@ -1065,6 +1065,21 @@ Prompt Template 只是建议，不应含 Secret 或不可见平台策略。
 - A2A 版本升级不改变内部 Domain Event；
 - 外部 Agent Card 的能力必须映射到平台 Capability 并由 Admin 批准。
 
+## 17.3 Stage 4 适配边界
+
+- 首个适配包固定处理 A2A `0.3`；Binding 持久化精确协议版本，后续版本通过新的映射层接入；
+- Adapter 在任何 Task 映射、Session 创建或 Context 构造前调用授权回调；
+- API 必须实时证明 Binding、Agent、发起人 Team Membership、Agent Team Access、Capability 与 Work Item Resource Scope；
+- 授权成功后，Task 才映射为真实 `Agent Session`，不会创建虚构 Work Item；
+- Task Envelope、State、Message、Part、File URI 与 Artifact 必须经过严格、限长的 typed validation；Task ID 在 Envelope 与 Event 路径中统一上限为 500 字符；错误返回稳定 `A2A_*` code；
+- `deliveryId` 在 Binding 内幂等，并绑定 Binding/协议版本、Team、Work Item、Capability 集合、inbound `sequence` 与 typed Task payload 的完整授权包络；重放必须先根据持久化 Binding、Session、Delegation 与 Task Binding 重新核对，冲突稳定返回 `A2A_DELIVERY_CONFLICT` 且不得泄露跨 Team Session；
+- 后续 delivery 在同一事务内锁定并更新既有 Session，状态变化受 WorkMesh Session transition table 约束，重复历史 Message/Artifact 不得重复追加；
+- inbound sequence 与 outbound Domain Event cursor 是独立单调域；相同数值不得冲突。Cursor 以十进制字符串传输，避免 JavaScript number 精度损失；
+- Message/Prompt、Artifact 与 Task/Session 对应关系写入标准持久表；Streaming 按原始 durable Domain Event 页推进 cursor，即使当前页没有可映射事件；授权撤销后不得继续读取；
+- Message、Artifact、Task Status 与 Streaming Update 仅映射为稳定的 WorkMesh Command/Event，不把 A2A Envelope 写入内部领域模型；
+- 未知协议版本、状态或能力返回 typed unsupported error，不做静默降级；
+- Fake A2A Agent 是确定性验收实现，覆盖 Card、Task、Status、Message、Artifact 与 Streaming 映射。
+
 ---
 
 # 18. TypeScript Agent SDK 草案

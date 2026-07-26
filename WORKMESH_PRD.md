@@ -585,6 +585,8 @@ View 保存：
 - owner；
 - favorite。
 
+`filters` 采用严格 allowlist；未知 filter 必须返回稳定的 `VIEW_FILTER_UNSUPPORTED`，不得静默忽略。任何筛选、排序或展示 cost 的 View 必须指定单一 currency；Issue、Project、Session View 与 Initiative rollup 不得跨 currency 求和，而应返回或选择明确的 currency bucket。Stage 4 API 中所有 minor-unit 金额均使用 PostgreSQL bigint 范围内的规范十进制字符串；写入、筛选、预算比较及 rollup 不得经由 JavaScript `number`，避免超过 safe-integer 范围后静默舍入。
+
 必须内置：
 
 - My Work；
@@ -1412,6 +1414,8 @@ Session Budget：
 - approval.timeout；
 - webhook.received。
 
+Rule/Loop 写入与激活只接受有界的五字段 UTC cron。旧数据若无法解析，调度器必须隔离并暂停该行，不得阻塞其他合法 schedule。
+
 ## 13.2 Condition
 
 JSON 条件树：
@@ -1451,6 +1455,10 @@ Loop 是带共享可见性的重复 Agent 工作：
 - 每次生成 Automation Run 和可审计 Session；
 - 可以暂停；
 - 不允许静默无限失败重试。
+
+`noOverlap=true` 只约束该次 admission 的 active run；`noOverlap=false` 明确允许并行运行。手动 dry-run/trigger/run 必须证明调用者的 Team 权限，后台 scheduler 使用独立的 trusted-worker admission。每个 effect 在执行前重新验证 owner、Team membership、Session/Delegation/Agent grant、Capability、Resource Scope、Approval 与 pause/revoke 状态。
+
+Webhook effect 必须在事务内先写 durable intent，执行时重新解析 DNS，拒绝 private 与 IPv4-mapped IPv6 地址，固定验证后的 IP 且保留 TLS hostname/SNI，并限制 redirect、timeout 与 response body。远端成功后本地 ACK 前崩溃时标记 `uncertain`，不得自动重复。
 
 ---
 
@@ -1906,7 +1914,7 @@ MCP Server 应提供：
 
 ## 17.5 A2A
 
-后续 Adapter 映射：
+Stage 4 Adapter 映射：
 
 - Agent Card → Agent Manifest；
 - A2A Task → Agent Session；
@@ -1916,6 +1924,8 @@ MCP Server 应提供：
 - Streaming → SSE / Webhook。
 
 WorkMesh 内部领域模型不得依赖某一 A2A 版本；Adapter 负责转换。
+
+Stage 4 首个实现固定在 A2A `0.3` 的隔离包中。协议 Binding 必须持久化精确版本；授权回调必须先于 Task 映射、Context 构造和 Session 创建。只有同时证明发起人 Team Membership、Agent Team Access、Capability 与 Work Item Scope 后，外部 Task 才能创建真实 Session。Envelope/State/Message/Part/Artifact 必须严格验证；Task ID 在 Task Envelope 与 Event 路径中统一限制为 500 字符，Delivery ID 幂等且 inbound sequence 单调递增。后续 Delivery 必须在一个事务内将状态、增量 Prompt/Artifact、Domain Event 与 Outbox 应用到同一 Session，且状态变化受 Session 状态机约束。Inbound sequence 与 outbound Domain Event cursor 是独立域；stream 按已扫描的原始 cursor 分页推进，即使本页没有映射结果，cursor 也不得停滞或用 JavaScript number 丢失精度。Prompt、Artifact、Task/Session 映射与 outbound delivery 必须持久化，读取 stream 时重新验证授权。未知版本、状态或不支持的能力返回稳定结构化错误，不能静默套用其他版本语义。
 
 ---
 
