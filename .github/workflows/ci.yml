@@ -1,0 +1,501 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  source-gates:
+    name: Source gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Validate CI policy
+        run: |
+          set -o pipefail
+          pnpm ci:validate 2>&1 | tee ci-logs/ci-validate.log
+      - name: Lint
+        run: |
+          set -o pipefail
+          pnpm lint 2>&1 | tee ci-logs/lint.log
+      - name: Typecheck
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee ci-logs/typecheck.log
+      - name: Contracts
+        run: |
+          set -o pipefail
+          pnpm --filter @workmesh/contracts test 2>&1 | tee ci-logs/contracts.log
+      - name: Build
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee ci-logs/build.log
+      - name: Unit tests
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee ci-logs/test.log
+      - name: Render Compose
+        run: |
+          set -o pipefail
+          docker compose config 2>&1 | tee ci-logs/compose-config.log
+      - name: Verify clean tracked tree
+        run: |
+          set -o pipefail
+          {
+            git diff --exit-code
+            git diff --cached --exit-code
+            git status --short --untracked-files=no
+          } 2>&1 | tee ci-logs/clean-tree.log
+      - name: Upload raw source logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: source-gates-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  db-integration:
+    name: Database integration
+    needs: source-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RUN_INTEGRATION: '1'
+      DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_db_integration_test
+      SESSION_SECRET: workmesh-ci-session-secret-database-0001
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_USER: workmesh
+          POSTGRES_PASSWORD: workmesh-ci-postgres
+          POSTGRES_DB: workmesh_db_integration_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U workmesh -d workmesh_db_integration_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Run database integration
+        run: |
+          set -o pipefail
+          pnpm test:integration:db 2>&1 | tee ci-logs/db-integration.log
+      - name: Capture service logs
+        if: ${{ failure() }}
+        run: |
+          mkdir -p ci-logs/services
+          for id in $(docker ps -aq); do
+            name="$(docker inspect --format '{{.Name}}' "$id" | sed 's#^/##')"
+            docker logs "$id" > "ci-logs/services/${name}.log" 2>&1
+          done
+      - name: Upload raw database logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: db-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  api-integration:
+    name: API integration
+    needs: source-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      RUN_INTEGRATION: '1'
+      DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_api_integration_test
+      SESSION_SECRET: workmesh-ci-session-secret-api-00000001
+      WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_BUCKET: workmesh-artifacts
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: workmesh
+      S3_SECRET_ACCESS_KEY: workmesh-ci-minio-password
+      S3_FORCE_PATH_STYLE: 'true'
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_USER: workmesh
+          POSTGRES_PASSWORD: workmesh-ci-postgres
+          POSTGRES_DB: workmesh_api_integration_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U workmesh -d workmesh_api_integration_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Start artifact storage
+        run: |
+          set -o pipefail
+          {
+            docker run --detach --name workmesh-ci-minio \
+              --publish 9000:9000 \
+              --env MINIO_ROOT_USER=workmesh \
+              --env MINIO_ROOT_PASSWORD=workmesh-ci-minio-password \
+              minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
+              server /data
+            ready=false
+            for attempt in $(seq 1 30); do
+              if curl --fail --silent http://127.0.0.1:9000/minio/health/ready > /dev/null; then
+                ready=true
+                break
+              fi
+              sleep 2
+            done
+            if [ "$ready" != "true" ]; then
+              docker logs workmesh-ci-minio
+              exit 1
+            fi
+          } 2>&1 | tee ci-logs/minio-start.log
+      - name: Initialize artifact bucket
+        run: |
+          set -o pipefail
+          docker run --rm --network host \
+            --entrypoint /bin/sh \
+            minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3 \
+            -c "mc alias set ci http://127.0.0.1:9000 workmesh workmesh-ci-minio-password && mc mb --ignore-existing ci/workmesh-artifacts" \
+            2>&1 | tee ci-logs/minio-init.log
+      - name: Run API integration
+        run: |
+          set -o pipefail
+          pnpm test:integration:api 2>&1 | tee ci-logs/api-integration.log
+      - name: Capture service logs
+        if: ${{ failure() }}
+        run: |
+          mkdir -p ci-logs/services
+          for id in $(docker ps -aq); do
+            name="$(docker inspect --format '{{.Name}}' "$id" | sed 's#^/##')"
+            docker logs "$id" > "ci-logs/services/${name}.log" 2>&1
+          done
+      - name: Upload raw API logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: api-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  worker-integration:
+    name: Worker integration
+    needs: source-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      RUN_INTEGRATION: '1'
+      DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_worker_integration_test
+      SESSION_SECRET: workmesh-ci-session-secret-worker-0001
+      WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_USER: workmesh
+          POSTGRES_PASSWORD: workmesh-ci-postgres
+          POSTGRES_DB: workmesh_worker_integration_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U workmesh -d workmesh_worker_integration_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Run worker integration
+        run: |
+          set -o pipefail
+          pnpm test:integration:worker 2>&1 | tee ci-logs/worker-integration.log
+      - name: Capture service logs
+        if: ${{ failure() }}
+        run: |
+          mkdir -p ci-logs/services
+          for id in $(docker ps -aq); do
+            name="$(docker inspect --format '{{.Name}}' "$id" | sed 's#^/##')"
+            docker logs "$id" > "ci-logs/services/${name}.log" 2>&1
+          done
+      - name: Upload raw worker logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: worker-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  e2e:
+    name: Browser acceptance
+    needs: source-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      RUN_INTEGRATION: '1'
+      DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_e2e_test
+      SESSION_SECRET: workmesh-ci-session-secret-e2e-0000001
+      WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_USER: workmesh
+          POSTGRES_PASSWORD: workmesh-ci-postgres
+          POSTGRES_DB: workmesh_e2e_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U workmesh -d workmesh_e2e_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Install Playwright Chromium
+        run: |
+          set -o pipefail
+          pnpm exec playwright install --with-deps chromium 2>&1 | tee ci-logs/playwright-install.log
+      - name: Run browser acceptance
+        run: |
+          set -o pipefail
+          pnpm test:e2e 2>&1 | tee ci-logs/e2e.log
+      - name: Capture service logs
+        if: ${{ failure() }}
+        run: |
+          mkdir -p ci-logs/services
+          for id in $(docker ps -aq); do
+            name="$(docker inspect --format '{{.Name}}' "$id" | sed 's#^/##')"
+            docker logs "$id" > "ci-logs/services/${name}.log" 2>&1
+          done
+      - name: Upload raw E2E logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2e-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload Playwright evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2e-playwright-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: error
+          retention-days: 14
+
+  agent-smoke:
+    name: Agent construction and protocol smoke
+    needs: source-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Construction and protocol smoke
+        run: |
+          set -o pipefail
+          pnpm smoke:agents 2>&1 | tee ci-logs/agent-smoke.log
+      - name: Upload raw agent smoke logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  required-ci:
+    name: Required CI
+    needs: [source-gates, db-integration, api-integration, worker-integration, e2e, agent-smoke]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.15.0
+      - name: Aggregate required results
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          node --input-type=module -e "
+            const needs = JSON.parse(process.env.NEEDS_JSON)
+            const failed = Object.entries(needs).filter(([, value]) => value.result !== 'success')
+            for (const [name, value] of Object.entries(needs)) console.log(name + ': ' + value.result)
+            if (failed.length > 0) {
+              console.error('Required CI failed: ' + failed.map(([name, value]) => name + '=' + value.result).join(', '))
+              process.exit(1)
+            }
+          " 2>&1 | tee ci-logs/required-ci.log
+      - name: Upload raw aggregate log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
