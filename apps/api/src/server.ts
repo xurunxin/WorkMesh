@@ -45,6 +45,17 @@ import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
+import { installRoutePolicyInventory } from "./authz/route-policy.js";
+import {
+  authorizeRequest,
+  policyForRequest,
+  recordAuthorizationDenial,
+} from "./authz/authorize.js";
+import { validateExternalCorrelationId } from "./authz/request-metadata.js";
+import {
+  assertEventAudienceActive,
+  eventAudienceQuery,
+} from "./authz/event-audience.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -181,6 +192,7 @@ export const buildApp = (options: {
   const features = options.features ?? loadFeatureConfig();
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
   const app = Fastify({ logger: true, genReqId: () => crypto.randomUUID() });
+  installRoutePolicyInventory(app);
   void app.register(cookie);
   void app.register(cors, {
     origin: config.WEB_ORIGIN,
@@ -197,14 +209,10 @@ export const buildApp = (options: {
     exposedHeaders: ["ETag"],
   });
   app.addHook("onRequest", async (request) => {
-    request.correlationId = header(request, "x-correlation-id") ?? request.id;
+    request.correlationId =
+      validateExternalCorrelationId(header(request, "x-correlation-id"))
+      ?? request.id;
     request.idempotencyKey = header(request, "idempotency-key");
-    const providerWebhook = request.url.startsWith("/api/v1/provider-webhooks/");
-    if (mutationMethods.has(request.method) && !request.idempotencyKey && !providerWebhook)
-      throw new DomainError(
-        "IDEMPOTENCY_KEY_REQUIRED",
-        "Idempotency-Key is required",
-      );
   });
   app.addHook("preParsing", async (request, _reply, payload) => {
     if (!request.url.startsWith("/api/v1/provider-webhooks/")) return payload;
@@ -233,10 +241,10 @@ export const buildApp = (options: {
       }>("SELECT a.id AS actor_id,a.workspace_id,a.display_name,s.id AS session_id FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id JOIN actors a ON a.id=s.agent_actor_id JOIN agent_definitions d ON d.id=s.agent_id WHERE t.token_hash=$1 AND t.expires_at>now() AND t.exchanged_at IS NOT NULL AND t.revoked_at IS NULL AND a.is_active AND d.is_active", [tokenHash(bearer)])).rows[0];
       if (!agent && (request.routeOptions.url === '/api/v1/handoffs/:id/reject' || request.routeOptions.url === '/api/v1/handoffs/:id/inspect')) {
         const installation = (await db.query<{ actor_id:string;workspace_id:string;display_name:string }>("SELECT a.id AS actor_id,a.workspace_id,a.display_name FROM agent_installation_tokens t JOIN agent_definitions d ON d.id=t.agent_id JOIN actors a ON a.id=d.actor_id WHERE t.token_hash=$1 AND t.revoked_at IS NULL AND (t.expires_at IS NULL OR t.expires_at>now()) AND d.is_active AND a.is_active", [tokenHash(bearer)])).rows[0]
-        if (installation) { request.actor = { id: installation.actor_id, workspaceId: installation.workspace_id, displayName: installation.display_name, csrfToken: '', workspaceRole: 'member', kind: 'agent' }; return }
+        if (installation) { request.actor = { id: installation.actor_id, workspaceId: installation.workspace_id, displayName: installation.display_name, csrfToken: '', workspaceRole: 'member', kind: 'agent', authentication: 'installation_target', credentialHash: tokenHash(bearer) }; return }
       }
       if (!agent) throw new DomainError("UNAUTHENTICATED", "Agent session token is invalid or expired");
-      request.actor = { id: agent.actor_id, workspaceId: agent.workspace_id, displayName: agent.display_name, csrfToken: "", workspaceRole: "member", kind: "agent", agentSessionId: agent.session_id };
+      request.actor = { id: agent.actor_id, workspaceId: agent.workspace_id, displayName: agent.display_name, csrfToken: "", workspaceRole: "member", kind: "agent", agentSessionId: agent.session_id, authentication: "agent_session", credentialHash: tokenHash(bearer) };
       return;
     }
     const token = request.cookies[sessionCookie];
@@ -266,12 +274,30 @@ export const buildApp = (options: {
       csrfToken: actor.csrf_token,
       workspaceRole: actor.workspace_role,
       kind: "human",
+      authentication: "human_session",
+      credentialHash: tokenHash(token),
     };
     if (
-      request.actor.kind === "human" && mutationMethods.has(request.method) &&
+      request.actor?.kind === "human" && mutationMethods.has(request.method) &&
       header(request, "x-csrf-token") !== actor.csrf_token
     )
       throw new DomainError("CSRF_FAILED", "Missing or invalid CSRF token");
+  });
+  app.addHook("preHandler", async (request) => {
+    const policy = policyForRequest(request);
+    // Installation-token exchange/refresh authenticate their one-time token in
+    // the handler. Other installation-target routes already resolved an actor.
+    if (policy.authentication !== "installation_target" || request.actor)
+      await authorizeRequest(db, request, policy);
+    if (policy.idempotency === "required" && !request.idempotencyKey)
+      throw new DomainError(
+        "IDEMPOTENCY_KEY_REQUIRED",
+        "Idempotency-Key is required",
+        {
+          authorizationStage: "idempotency",
+          policyId: policy.policyId,
+        },
+      );
   });
   app.addHook("preHandler", async (request) => {
     const feature = featureForApiRoute(request.routeOptions.url ?? "");
@@ -301,7 +327,7 @@ export const buildApp = (options: {
     }
     return payload;
   });
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler(async (error, request, reply) => {
     const correlationId = request.correlationId ?? request.id;
     if (error instanceof ZodError)
       return reply
@@ -315,10 +341,20 @@ export const buildApp = (options: {
           ),
         );
     if (error instanceof DomainError) {
+      try {
+        await recordAuthorizationDenial({
+          db,
+          request,
+          error,
+          auditSecret: config.SESSION_SECRET,
+        });
+      } catch (auditError) {
+        request.log.error(auditError, "Authorization denial audit failed");
+      }
       const status =
         error.code === "UNAUTHENTICATED"
           ? 401
-          : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
+          : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "SESSION_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "APPROVAL_REQUIRED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
             : error.code === "NOT_FOUND"
               ? 404
@@ -848,17 +884,8 @@ function eventSql(
   request: FastifyRequest,
   cursor: number,
 ): { sql: string; values: unknown[] } {
-  const values: unknown[] = [
-    request.actor!.workspaceId,
-    cursor,
-    request.actor!.id,
-  ];
-  let sql =
-    "SELECT cursor,id,event_type,event_version,workspace_id,team_id,audience_actor_id,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,idempotency_key,payload,session_id,session_sequence AS sequence,session_id AS \"sessionId\",session_sequence AS \"sessionSequence\",occurred_at FROM domain_events e WHERE e.workspace_id=$1 AND e.cursor>$2 AND (e.audience_actor_id IS NULL OR e.audience_actor_id=$3)";
-  if (request.actor!.workspaceRole !== "admin")
-    sql +=
-      " AND (e.team_id IS NULL OR EXISTS (SELECT 1 FROM memberships m JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id WHERE m.workspace_id=e.workspace_id AND m.team_id=e.team_id AND m.actor_id=$3 AND t.deleted_at IS NULL))";
-  return { sql, values };
+  const query = eventAudienceQuery(request.actor!, cursor);
+  return { sql: query.sql, values: [...query.values] };
 }
 
 const eventResponse = (row: Record<string, unknown>) => ({
@@ -899,6 +926,7 @@ async function sse(request: FastifyRequest, reply: FastifyReply) {
   const wait = () => new Promise<void>((resolve) => setTimeout(resolve, 750));
   const send = async () => {
     if (closed) return;
+    await assertEventAudienceActive(db, request.actor!);
     const query = eventSql(request, cursor);
     const rows = (
       await db.query(query.sql + " ORDER BY e.cursor LIMIT 500", query.values)
@@ -921,6 +949,18 @@ async function sse(request: FastifyRequest, reply: FastifyReply) {
         await wait();
       }
     } catch (error) {
+      if (error instanceof DomainError) {
+        try {
+          await recordAuthorizationDenial({
+            db,
+            request,
+            error,
+            auditSecret: config.SESSION_SECRET,
+          });
+        } catch (auditError) {
+          request.log.error(auditError, "SSE authorization denial audit failed");
+        }
+      }
       request.log.error(error, "SSE stream failed");
       if (!closed) {
         closed = true;

@@ -118,6 +118,10 @@ X-Correlation-Id: <trace-id>
 Content-Type: application/json
 ```
 
+`X-Correlation-Id` 是可选的调用方追踪值，最长 200 个字符，只允许 ASCII
+字母、数字、点、下划线、冒号、斜杠和连字符；凭证样式的前缀会被拒绝。
+授权拒绝审计始终使用服务端生成的 request id，不把调用方值写入不可变账本。
+
 高冲突资源还要：
 
 ```http

@@ -2,8 +2,9 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
-  ReleaseInfo,
+  ReleaseInfo, RoutePolicyManifestEntry,
 } from '@workmesh/contracts'
+import { routePolicyManifest } from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
 
 export type WorkMeshErrorCode =
@@ -82,6 +83,30 @@ export interface HandoffInput { fromSessionId: string; targetAgentId?: string; t
 export interface HandoffTransitionInput { reason?: string }
 export type HandoffMachineRejectReason = 'capability_missing' | 'budget_insufficient' | 'concurrency_limit' | 'context_incomplete' | 'conflict' | 'manual_reject'
 export interface HandoffRejectInput { reason?: string; machineReason?: HandoffMachineRejectReason }
+
+const sdkRouteMatchers = routePolicyManifest.map(policy => ({
+  policy,
+  pattern: new RegExp(`^${policy.path
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    .replace(/\\\{[^}]+\\\}/g, '[^/]+')}$`),
+}))
+
+export function resolveSdkRoutePolicy(
+  method: string,
+  pathname: string,
+): RoutePolicyManifestEntry {
+  const match = sdkRouteMatchers.find(candidate =>
+    candidate.policy.method === method.toUpperCase()
+    && candidate.pattern.test(pathname),
+  )
+  if (!match) {
+    throw new WorkMeshSdkError('The SDK operation has no registered route policy', {
+      code: 'SDK_ROUTE_POLICY_MISSING',
+      details: { method: method.toUpperCase(), pathname },
+    })
+  }
+  return match.policy
+}
 
 export class WorkMeshClient {
   private readonly baseUrl: string
@@ -205,25 +230,19 @@ export class WorkMeshClient {
 
   private async request<T>(method: string, path: string, body?: unknown, options: RequestOptions & { authorizationToken?: string; skipTokenRefresh?: boolean; refreshSessionId?: string } = {}): Promise<T> {
     const url = new URL(path, `${this.baseUrl}/`).toString()
+    resolveSdkRoutePolicy(method, new URL(url).pathname)
     const headers: Record<string, string> = { accept: 'application/json' }
     if (body !== undefined) headers['content-type'] = 'application/json'
     if (options.authorizationToken ?? this.sessionToken) headers.authorization = `Bearer ${options.authorizationToken ?? this.sessionToken}`
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey
     if (options.correlationId) headers['x-correlation-id'] = options.correlationId
     if (options.ifMatch !== undefined) headers['if-match'] = typeof options.ifMatch === 'number' ? `"revision-${options.ifMatch}"` : options.ifMatch
-    let refreshedToken = false
     for (let attempt = 1; ; attempt += 1) {
       try {
         const response = await this.requestFetch(url, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), signal: options.signal })
         if (!response.ok) {
           const payload = await readErrorPayload(response)
           const error = toSdkError(response.status, payload)
-          if (response.status === 401 && !refreshedToken && !options.skipTokenRefresh && this.installationToken && options.refreshSessionId && error.code !== 'SESSION_STOPPED') {
-            refreshedToken = true
-            await this.refreshSessionToken(options.refreshSessionId, this.installationToken, { signal: options.signal, correlationId: options.correlationId })
-            if (this.sessionToken) headers.authorization = `Bearer ${this.sessionToken}`
-            continue
-          }
           if (shouldRetry(response.status) && attempt < this.retry.maxAttempts) {
             await wait(retryDelay(attempt, response.headers.get('retry-after'), this.retry), options.signal)
             continue

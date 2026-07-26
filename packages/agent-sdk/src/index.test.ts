@@ -38,15 +38,13 @@ describe('WorkMeshClient', () => {
     expect(fetch).toHaveBeenCalledTimes(2)
   })
 
-  it('refreshes an expired session token exactly once with the installation token', async () => {
+  it('never refreshes or retries an authorization denial', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: { code: 'UNAUTHENTICATED', message: 'expired', correlationId: 'cor-1' } }), { status: 401 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'refreshed-session-token', expiresAt: '2026-07-23T00:00:00.000Z' }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'x', revision: 2 }), { status: 200 }))
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'expired-session-token', installationToken: 'installation-token', fetch })
-    await expect(client.heartbeat('session-1', { usage: { runtimeSeconds: 1 } })).resolves.toEqual({ id: 'x', revision: 2 })
-    expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-token')
-    expect(fetch.mock.calls[2]?.[1].headers.authorization).toBe('Bearer refreshed-session-token')
+    await expect(client.heartbeat('session-1', { usage: { runtimeSeconds: 1 } }))
+      .rejects.toMatchObject({ code: 'UNAUTHENTICATED', status: 401, correlationId: 'cor-1' })
+    expect(fetch).toHaveBeenCalledOnce()
   })
 
   it('uses installation authority only for pending handoff inspection and idle-target rejection', async () => {

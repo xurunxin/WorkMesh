@@ -5,21 +5,13 @@ import {
   assertResponsibleHumanForStarted,
   assertRevision,
 } from "@workmesh/domain";
+import type { ApiActor } from "./agent/types.js";
 
 type TeamRole = "admin" | "maintainer" | "member";
-type WorkspaceRole = "admin" | "member";
 type StatusCategory =
   "backlog" | "planned" | "started" | "completed" | "canceled";
 
-export type Actor = {
-  id: string;
-  workspaceId: string;
-  displayName: string;
-  csrfToken: string;
-  workspaceRole: WorkspaceRole;
-  kind: "human" | "agent";
-  agentSessionId?: string;
-};
+export type Actor = ApiActor;
 export type CommandContext = {
   actor: Actor;
   idempotencyKey: string;

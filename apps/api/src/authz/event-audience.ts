@@ -1,0 +1,195 @@
+import type { Pool } from 'pg'
+import { DomainError } from '@workmesh/domain'
+import type { ApiActor } from '../agent/types.js'
+
+const columns =
+  `cursor,id,event_type,event_version,workspace_id,team_id,audience_actor_id,
+   aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
+   idempotency_key,payload,session_id,session_sequence AS sequence,
+   session_id AS "sessionId",session_sequence AS "sessionSequence",occurred_at`
+
+export type EventAudienceQuery = Readonly<{
+  sql: string
+  values: readonly unknown[]
+}>
+
+/**
+ * One SQL audience policy is shared by REST pagination and SSE. In particular,
+ * Agent visibility never falls back to Workspace or same-Team membership:
+ * every returned row is an explicit recipient, is tied to the current/allowed
+ * child Session, or proves aggregate intersection with the live Delegation.
+ */
+export function eventAudienceQuery(
+  actor: ApiActor,
+  cursor: number,
+): EventAudienceQuery {
+  if (actor.kind === 'human') {
+    let sql =
+      `SELECT ${columns} FROM domain_events e
+       WHERE e.workspace_id=$1 AND e.cursor>$2
+         AND (e.audience_actor_id IS NULL OR e.audience_actor_id=$3)`
+    if (actor.workspaceRole !== 'admin') {
+      sql +=
+        ` AND (e.team_id IS NULL OR EXISTS (
+            SELECT 1 FROM memberships m
+            JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id
+            WHERE m.workspace_id=e.workspace_id AND m.team_id=e.team_id
+              AND m.actor_id=$3 AND t.deleted_at IS NULL
+          ))`
+    }
+    return { sql, values: [actor.workspaceId, cursor, actor.id] }
+  }
+
+  if (!actor.agentSessionId) {
+    throw new DomainError('SESSION_SCOPE_DENIED', 'An Agent Session credential is required for events')
+  }
+  const sql =
+    `WITH RECURSIVE authorized_sessions(
+       id,team_id,work_item_id,project_id
+     ) AS (
+       SELECT root.id,root.team_id,root.work_item_id,root.project_id
+       FROM agent_sessions root
+       JOIN delegations root_delegation
+         ON root_delegation.id=root.delegation_id
+        AND root_delegation.status='active'
+       JOIN agent_definitions root_agent
+         ON root_agent.id=root.agent_id AND root_agent.is_active
+       JOIN agent_team_access root_access
+         ON root_access.workspace_id=root.workspace_id
+        AND root_access.agent_id=root.agent_id
+        AND root_access.team_id=root.team_id
+        AND root_access.revoked_at IS NULL
+       WHERE root.id=$4 AND root.workspace_id=$1 AND root.agent_actor_id=$3
+         AND root.state IN (
+           'acknowledged','planning','executing','awaiting_input',
+           'awaiting_approval','blocked'
+         )
+         AND 'work:read'=ANY(root_delegation.permissions_snapshot)
+         AND 'work:read'=ANY(root_agent.approved_capabilities)
+         AND 'work:read'=ANY(root_access.approved_capabilities)
+         AND COALESCE(root_delegation.capability_scope->'teamIds','[]'::jsonb)
+             ? root.team_id::text
+         AND (
+           root.work_item_id IS NULL OR
+           COALESCE(root_delegation.capability_scope->'workItemIds','[]'::jsonb)
+             ? root.work_item_id::text
+         )
+         AND (
+           root.project_id IS NULL OR
+           COALESCE(root_delegation.capability_scope->'projectIds','[]'::jsonb)
+             ? root.project_id::text
+         )
+       UNION ALL
+       SELECT child.id,child.team_id,child.work_item_id,child.project_id
+       FROM agent_sessions child
+       JOIN authorized_sessions parent ON child.parent_session_id=parent.id
+       JOIN delegations child_delegation
+         ON child_delegation.id=child.delegation_id
+        AND child_delegation.status='active'
+       JOIN agent_definitions child_agent
+         ON child_agent.id=child.agent_id AND child_agent.is_active
+       JOIN agent_team_access child_access
+         ON child_access.workspace_id=child.workspace_id
+        AND child_access.agent_id=child.agent_id
+        AND child_access.team_id=child.team_id
+        AND child_access.revoked_at IS NULL
+       WHERE child.workspace_id=$1
+         AND child.team_id=parent.team_id
+         AND (parent.work_item_id IS NULL OR child.work_item_id=parent.work_item_id)
+         AND (parent.project_id IS NULL OR child.project_id=parent.project_id)
+         AND 'work:read'=ANY(child_delegation.permissions_snapshot)
+         AND 'work:read'=ANY(child_agent.approved_capabilities)
+         AND 'work:read'=ANY(child_access.approved_capabilities)
+     )
+     SELECT ${columns} FROM domain_events e
+     WHERE e.workspace_id=$1 AND e.cursor>$2
+       AND EXISTS (SELECT 1 FROM authorized_sessions WHERE id=$4)
+       AND (
+         e.audience_actor_id=$3
+         OR e.session_id IN (SELECT id FROM authorized_sessions)
+         OR (
+           e.audience_actor_id IS NULL
+           AND EXISTS (
+             SELECT 1 FROM authorized_sessions visible
+             WHERE e.team_id=visible.team_id
+               AND (
+                 (e.aggregate_type='work_item' AND e.aggregate_id=visible.work_item_id)
+                 OR (e.aggregate_type='project' AND e.aggregate_id=visible.project_id)
+                 OR (
+                   e.aggregate_type='agent_session'
+                   AND e.aggregate_id=visible.id
+                 )
+               )
+           )
+         )
+       )`
+  return {
+    sql,
+    values: [actor.workspaceId, cursor, actor.id, actor.agentSessionId],
+  }
+}
+export async function assertEventAudienceActive(
+  db: Pool,
+  actor: ApiActor,
+): Promise<void> {
+  if (!actor.credentialHash) {
+    throw new DomainError('UNAUTHENTICATED', 'The event credential is no longer available')
+  }
+  if (actor.kind === 'human') {
+    const active = await db.query(
+      `SELECT 1 FROM sessions credential
+       JOIN actors principal ON principal.id=credential.actor_id
+       WHERE credential.token_hash=$1 AND credential.expires_at>now()
+         AND principal.id=$2 AND principal.workspace_id=$3
+         AND principal.kind='human' AND principal.is_active
+         AND (
+           principal.workspace_role='admin'
+           OR EXISTS (
+             SELECT 1 FROM memberships member
+             JOIN teams team
+               ON team.id=member.team_id
+              AND team.workspace_id=member.workspace_id
+             WHERE member.workspace_id=principal.workspace_id
+               AND member.actor_id=principal.id
+               AND team.deleted_at IS NULL
+           )
+         )`,
+      [actor.credentialHash, actor.id, actor.workspaceId],
+    )
+    if (!active.rowCount) {
+      throw new DomainError('UNAUTHENTICATED', 'The human Session was revoked or expired')
+    }
+    return
+  }
+
+  const active = await db.query(
+    `SELECT 1 FROM agent_session_tokens credential
+     JOIN agent_sessions session ON session.id=credential.session_id
+     JOIN delegations delegation
+       ON delegation.id=session.delegation_id AND delegation.status='active'
+     JOIN agent_definitions agent
+       ON agent.id=session.agent_id AND agent.is_active
+     JOIN agent_team_access access
+       ON access.workspace_id=session.workspace_id
+      AND access.agent_id=session.agent_id
+      AND access.team_id=session.team_id
+      AND access.revoked_at IS NULL
+     WHERE credential.token_hash=$1
+       AND credential.expires_at>now()
+       AND credential.exchanged_at IS NOT NULL
+       AND credential.revoked_at IS NULL
+       AND session.id=$2 AND session.workspace_id=$3
+       AND session.agent_actor_id=$4
+       AND session.state IN (
+         'acknowledged','planning','executing','awaiting_input',
+         'awaiting_approval','blocked'
+       )
+       AND 'work:read'=ANY(delegation.permissions_snapshot)
+       AND 'work:read'=ANY(agent.approved_capabilities)
+       AND 'work:read'=ANY(access.approved_capabilities)`,
+    [actor.credentialHash, actor.agentSessionId, actor.workspaceId, actor.id],
+  )
+  if (!active.rowCount) {
+    throw new DomainError('SESSION_NOT_ACTIVE', 'The Agent Session authority was revoked, stopped, or expired')
+  }
+}

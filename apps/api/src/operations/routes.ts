@@ -185,6 +185,27 @@ async function requireTeamWrite(tx: PoolClient, current: ApiActor, teamId?: stri
   )
   if (!found.rowCount) throw new DomainError('FORBIDDEN', 'Team write membership is required')
 }
+async function requireTemplateManage(
+  tx: PoolClient,
+  current: ApiActor,
+  input: { teamId: string | null; ownerActorId?: string },
+): Promise<void> {
+  requireHuman(current)
+  if (current.workspaceRole === 'admin') return
+  if (!input.teamId) {
+    throw new DomainError('FORBIDDEN', 'Workspace Templates require a Workspace administrator')
+  }
+  const member = await tx.query<{ role: 'admin' | 'maintainer' | 'member' }>(
+    `SELECT role FROM memberships
+     WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3`,
+    [current.workspaceId, input.teamId, current.id],
+  )
+  const role = member.rows[0]?.role
+  const ownerInScope = input.ownerActorId === current.id && role !== undefined
+  if (!ownerInScope && role !== 'admin' && role !== 'maintainer') {
+    throw new DomainError('FORBIDDEN', 'Template management requires Team Admin or Maintainer role')
+  }
+}
 const emit = (
   tx: PoolClient,
   meta: RequestMeta,
@@ -1252,7 +1273,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
   })
 
   app.get('/api/v1/templates/export', async request => {
-    requireHuman(actor(request))
+    requireAdmin(actor(request))
     const rows = (await db.query<{
       id: string
       kind: string
@@ -1270,23 +1291,59 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     return { formatVersion: 1, templates: rows.map(({ id: _id, ...template }) => template) }
   })
 
-  app.get('/api/v1/templates', async request =>
-    (await db.query(
+  app.get('/api/v1/templates', async request => {
+    const current = actor(request)
+    if (current.kind === 'agent') {
+      if (!current.agentSessionId) {
+        throw new DomainError('SESSION_SCOPE_DENIED', 'Agent Template access requires a current Session')
+      }
+      return (await db.query(
+        `SELECT template.*,version.version,version.body,version.change_summary
+         FROM automation_runs run
+         JOIN loops loop ON loop.id=run.loop_id
+         JOIN template_versions version ON version.id=loop.run_template_version_id
+         JOIN templates template ON template.id=version.template_id
+         WHERE run.workspace_id=$1 AND run.session_id=$2
+           AND template.status='active'
+         ORDER BY template.kind,template.name`,
+        [current.workspaceId, current.agentSessionId],
+      )).rows
+    }
+    if (current.workspaceRole === 'admin') {
+      return (await db.query(
+        `SELECT template.*,version.version,version.body,version.change_summary
+         FROM templates template
+         JOIN template_versions version ON version.id=template.current_version_id
+         WHERE template.workspace_id=$1
+         ORDER BY template.kind,template.name`,
+        [current.workspaceId],
+      )).rows
+    }
+    return (await db.query(
       `SELECT template.*,version.version,version.body,version.change_summary
-       FROM templates template JOIN template_versions version ON version.id=template.current_version_id
-       WHERE template.workspace_id=$1 ORDER BY template.kind,template.name`,
-      [actor(request).workspaceId],
-    )).rows)
+       FROM templates template
+       JOIN template_versions version ON version.id=template.current_version_id
+       JOIN memberships member
+         ON member.workspace_id=template.workspace_id
+        AND member.team_id=template.team_id
+       WHERE template.workspace_id=$1 AND member.actor_id=$2
+         AND template.status='active' AND template.team_id IS NOT NULL
+       ORDER BY template.kind,template.name`,
+      [current.workspaceId, current.id],
+    )).rows
+  })
 
   app.post('/api/v1/templates', async request => {
     const body = templateInputSchema.parse(request.body)
     const meta = helpers.meta(request, body)
     return command(db, meta, async tx => {
-      requireHuman(actor(request))
+      await requireTemplateManage(tx, actor(request), {
+        teamId: body.teamId ?? null,
+      })
       const template = one((await tx.query<{ id: string; revision: number }>(
-        `INSERT INTO templates(workspace_id,kind,name,description,owner_actor_id,status)
-         VALUES($1,$2,$3,$4,$5,'draft') RETURNING id,revision`,
-        [meta.actor.workspaceId, body.kind, body.name, body.description, meta.actor.id],
+        `INSERT INTO templates(workspace_id,team_id,kind,name,description,owner_actor_id,status)
+         VALUES($1,$2,$3,$4,$5,$6,'draft') RETURNING id,revision`,
+        [meta.actor.workspaceId, body.teamId ?? null, body.kind, body.name, body.description, meta.actor.id],
       )).rows)
       const version = one((await tx.query<{ id: string }>(
         `INSERT INTO template_versions(template_id,version,body,change_summary,created_by_actor_id)
@@ -1294,7 +1351,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
         [template.id, body.body, meta.actor.id],
       )).rows)
       await tx.query('UPDATE templates SET current_version_id=$1 WHERE id=$2', [version.id, template.id])
-      await emit(tx, meta, 'template.created', 'template', template.id, { kind: body.kind, versionId: version.id }, null, 1)
+      await emit(tx, meta, 'template.created', 'template', template.id, { kind: body.kind, versionId: version.id }, body.teamId, 1)
       return { ...template, versionId: version.id }
     })
   })
@@ -1306,12 +1363,22 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     const expected = parseRevision(helpers.header(request, 'if-match'))
     return command(db, meta, async tx => {
       requireHuman(actor(request))
-      const template = one((await tx.query<{ revision: number; version: number }>(
-        `SELECT template.revision,version.version FROM templates template
+      const template = one((await tx.query<{
+        revision: number
+        version: number
+        team_id: string | null
+        owner_actor_id: string
+      }>(
+        `SELECT template.revision,template.team_id,template.owner_actor_id,version.version
+         FROM templates template
          JOIN template_versions version ON version.id=template.current_version_id
          WHERE template.id=$1 AND template.workspace_id=$2 FOR UPDATE OF template`,
         [templateId, meta.actor.workspaceId],
       )).rows)
+      await requireTemplateManage(tx, actor(request), {
+        teamId: template.team_id,
+        ownerActorId: template.owner_actor_id,
+      })
       if (template.revision !== expected) throw new DomainError('REVISION_CONFLICT', 'Template revision is stale')
       const version = one((await tx.query<{ id: string }>(
         `INSERT INTO template_versions(template_id,version,body,change_summary,created_by_actor_id)
@@ -1321,7 +1388,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       await tx.query('UPDATE templates SET current_version_id=$1,revision=revision+1,updated_at=now() WHERE id=$2', [version.id, templateId])
       await emit(tx, meta, 'template.version_created', 'template', templateId, {
         versionId: version.id, version: template.version + 1,
-      }, null, template.revision + 1)
+      }, template.team_id, template.revision + 1)
       return { id: templateId, revision: template.revision + 1, versionId: version.id }
     })
   })
@@ -1336,14 +1403,17 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       const template = one((await tx.query<{
         revision: number
         owner_actor_id: string
+        team_id: string | null
         current_version_id: string | null
       }>(
-        `SELECT revision,owner_actor_id,current_version_id FROM templates
+        `SELECT revision,owner_actor_id,team_id,current_version_id FROM templates
           WHERE id=$1 AND workspace_id=$2 FOR UPDATE`,
         [templateId, meta.actor.workspaceId],
       )).rows)
-      if (actor(request).workspaceRole !== 'admin' && template.owner_actor_id !== meta.actor.id)
-        throw new DomainError('FORBIDDEN', 'Only the Template owner or an administrator may change its state')
+      await requireTemplateManage(tx, actor(request), {
+        teamId: template.team_id,
+        ownerActorId: template.owner_actor_id,
+      })
       if (template.revision !== expected) throw new DomainError('REVISION_CONFLICT', 'Template revision is stale')
       if (body.status === 'active' && !template.current_version_id)
         throw new DomainError('TEMPLATE_VERSION_REQUIRED', 'An active Template must pin a current version')
@@ -1353,7 +1423,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       )
       await emit(tx, meta, `template.${body.status}`, 'template', templateId, {
         currentVersionId: template.current_version_id,
-      }, null, template.revision + 1)
+      }, template.team_id, template.revision + 1)
       return { id: templateId, status: body.status, revision: template.revision + 1 }
     })
   })

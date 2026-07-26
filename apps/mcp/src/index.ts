@@ -1,8 +1,10 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { WorkMeshClient, WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk'
 import { z } from 'zod'
+import { mcpPolicyBindings } from '@workmesh/contracts'
 
 export type McpMode = 'read-only' | 'read-write'
+export { mcpPolicyBindings }
 export interface WorkMeshMcpOptions { client: WorkMeshClient; mode?: McpMode }
 
 const sessionId = z.string().uuid()

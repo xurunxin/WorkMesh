@@ -1,4 +1,10 @@
 import { z } from 'zod'
+import {
+  createRoutePolicyManifest,
+  type RoutePolicyFeatureTier,
+} from './route-policy.js'
+
+export * from './route-policy.js'
 
 export const releaseMetadata = Object.freeze({
   serverVersion: '1.0.0',
@@ -449,6 +455,8 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agents/register', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/agents/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/agents/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret', authenticated: true, mutation: true, revisioned: true },
   { method: 'PUT', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'DELETE', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/delegations', authenticated: true, mutation: true, revisioned: true },
@@ -462,6 +470,7 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/token/refresh', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/ack', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/heartbeat', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/state', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/prompt', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/activities', authenticated: true, mutation: true },
   { method: 'PUT', path: '/api/v1/agent-sessions/{id}/plan', authenticated: true, mutation: true, revisioned: true },
@@ -964,6 +973,7 @@ export const budgetPolicyInputSchema = z.object({
 
 export const templateKindSchema = z.enum(['work_item', 'project', 'agent_run', 'handoff', 'automation'])
 export const templateInputSchema = z.object({
+  teamId: idSchema.optional(),
   kind: templateKindSchema,
   name: z.string().min(1).max(240),
   description: z.string().max(5_000).default(''),
@@ -1035,6 +1045,14 @@ export const agentRouteManifest = [
   ...stage3RouteManifest,
   ...stage4RouteManifest,
 ] as const
+
+export const routePolicyManifest = createRoutePolicyManifest((path) => {
+  const key = featureForApiRoute(path)
+  if (!key) return undefined
+  const definition = featureDefinitions.find(candidate => candidate.key === key)
+  if (!definition) return undefined
+  return { key, tier: definition.tier as RoutePolicyFeatureTier }
+})
 
 export type AutomationRuleInput = z.infer<typeof automationRuleInputSchema>
 export type AutomationCondition = z.infer<typeof automationConditionSchema>

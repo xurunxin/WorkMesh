@@ -6,6 +6,8 @@ export type ApiActor = {
   csrfToken: string;
   kind: "human" | "agent";
   agentSessionId?: string;
+  authentication?: "human_session" | "agent_session" | "installation_target";
+  credentialHash?: string;
 };
 
 export type RequestMeta = {
