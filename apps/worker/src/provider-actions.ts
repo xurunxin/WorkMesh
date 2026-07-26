@@ -1073,7 +1073,11 @@ export function createProviderActionWorker(input: {
       const provider = await input.resolveProvider(action.provider, action.connection_id)
       result = await provider.retryCheck({ ...common, checkRunId: payload.checkRunId })
     } else if (action.kind === 'merge_pull_request') {
-      if (!await authorizeProviderSideEffect(action)) return
+      // A provider may have committed the merge before this worker could
+      // checkpoint the result. Inspecting that exact action is recovery, not
+      // authority for another merge; live authority is still revalidated
+      // immediately before any not-yet-performed provider mutation.
+      if (!await revalidateClaimedProvider(action)) return
       const payload = action.payload as { pullRequestId: string; headSha: string; method: 'merge' | 'squash' | 'rebase' }
       const provider = await input.resolveProvider(action.provider, action.connection_id)
       const live = await provider.getPullRequest({ ...common, pullRequestId: payload.pullRequestId })
@@ -1087,6 +1091,7 @@ export function createProviderActionWorker(input: {
         result = { merged: true, mergeSha: live.mergeSha }
       } else {
         if (live.state !== 'open') throw new Error('PROVIDER_PULL_REQUEST_NOT_OPEN')
+        if (!await authorizeProviderSideEffect(action)) return
         const expiresAt = await revalidateMergeExecution(action, payload)
         if (!expiresAt) return
         if (expiresAt.getTime() <= Date.now()) {

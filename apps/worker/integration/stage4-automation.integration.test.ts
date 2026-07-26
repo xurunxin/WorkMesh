@@ -438,6 +438,10 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
   })
 
   it('gates loop soft and failure notification admission by Planning and External Webhooks', async () => {
+    await db.query(
+      'DELETE FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2',
+      [fixture.workspaceId, fixture.humanId],
+    )
     const admit = async (
       name: string,
       channels: ReadonlyArray<'in_app' | 'browser' | 'webhook'>,
