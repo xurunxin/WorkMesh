@@ -1,4 +1,4 @@
-import { bigint, boolean, customType, date, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { bigint, boolean, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 const binary = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' })
 
@@ -28,6 +28,27 @@ export const handoffStatus = pgEnum('handoff_status', ['draft', 'requested', 'ac
 export const budgetReservationStatus = pgEnum('budget_reservation_status', ['reserved', 'released', 'consumed'])
 export const decisionRelationKind = pgEnum('decision_relation_kind', ['supersedes', 'reverses'])
 export const routingOutcome = pgEnum('routing_outcome', ['candidate', 'rejected', 'selected'])
+export const initiativeStatus = pgEnum('initiative_status', ['planned', 'active', 'paused', 'completed', 'canceled'])
+export const initiativePriority = pgEnum('initiative_priority', ['none', 'low', 'medium', 'high', 'urgent'])
+export const planningHealth = pgEnum('planning_health', ['on_track', 'at_risk', 'off_track', 'unknown'])
+export const advancedViewEntity = pgEnum('advanced_view_entity', ['issue', 'project', 'session', 'initiative'])
+export const advancedViewLayout = pgEnum('advanced_view_layout', ['list', 'board', 'timeline'])
+export const advancedViewScope = pgEnum('advanced_view_scope', ['private', 'team', 'workspace'])
+export const templateKind = pgEnum('template_kind', ['work_item', 'project', 'agent_run', 'handoff', 'automation'])
+export const templateStatus = pgEnum('template_status', ['draft', 'active', 'archived'])
+export const costSource = pgEnum('cost_source', ['provider_reported', 'rate_card', 'manual', 'unknown'])
+export const budgetScope = pgEnum('budget_scope', ['workspace', 'team', 'project', 'agent', 'session', 'loop'])
+export const notificationPriority = pgEnum('notification_priority', ['input', 'approval', 'agent_failure', 'mention', 'handoff', 'update'])
+export const notificationChannel = pgEnum('notification_channel', ['in_app', 'browser', 'webhook'])
+export const notificationDeliveryStatus = pgEnum('notification_delivery_status', ['pending', 'claimed', 'delivered', 'failed', 'dead', 'suppressed'])
+export const automationRuleState = pgEnum('automation_rule_state', ['active', 'paused', 'disabled'])
+export const automationRunStatus = pgEnum('automation_run_status', ['pending', 'claimed', 'running', 'succeeded', 'failed', 'dead', 'canceled', 'dry_run'])
+export const automationEffectStatus = pgEnum('automation_effect_status', ['pending', 'claimed', 'completed', 'failed', 'dead', 'reconciled'])
+export const loopState = pgEnum('loop_state', ['active', 'paused', 'disabled'])
+export const healthUpdateSource = pgEnum('health_update_source', ['human', 'agent'])
+export const healthUpdateStatus = pgEnum('health_update_status', ['draft', 'published'])
+export const a2aDeliveryStatus = pgEnum('a2a_delivery_status', ['received', 'processed', 'dead'])
+export const automationExternalIntentState = pgEnum('automation_external_intent_state', ['prepared', 'acknowledged', 'uncertain'])
 
 export const workspaces = pgTable('workspaces', {
   id: uuid('id').primaryKey(), name: text('name').notNull(), slug: text('slug').notNull(), revision: integer('revision').notNull(),
@@ -64,7 +85,7 @@ export const projects = pgTable('projects', {
 export const workItems = pgTable('work_items', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id').notNull(), number: integer('number').notNull(),
   title: text('title').notNull(), description: text('description'), statusId: uuid('status_id').notNull(), priority: text('priority').notNull(), dueDate: date('due_date'),
-  responsibleHumanActorId: uuid('responsible_human_actor_id'), labels: text('labels').array().notNull(), projectId: uuid('project_id'), revision: integer('revision').notNull(),
+  responsibleHumanActorId: uuid('responsible_human_actor_id'), labels: text('labels').array().notNull(), projectId: uuid('project_id'), cycleId: uuid('cycle_id'), revision: integer('revision').notNull(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
 export const channels = pgTable('channels', {
@@ -81,6 +102,44 @@ export const commentMentions = pgTable('comment_mentions', {
 export const savedViews = pgTable('saved_views', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), teamId: uuid('team_id'), name: text('name').notNull(),
   filters: jsonb('filters').notNull(), layout: text('layout').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const cycles = pgTable('cycles', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), name: text('name').notNull(),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(), endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  durationWeeks: integer('duration_weeks').notNull(), revision: integer('revision').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const workItemCycleFacts = pgTable('work_item_cycle_facts', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), workItemId: uuid('work_item_id').notNull(),
+  fromCycleId: uuid('from_cycle_id'), toCycleId: uuid('to_cycle_id'), actorId: uuid('actor_id').notNull(), reason: text('reason').notNull(),
+  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+})
+export const initiatives = pgTable('initiatives', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), parentInitiativeId: uuid('parent_initiative_id'),
+  name: text('name').notNull(), summary: text('summary'), ownerActorId: uuid('owner_actor_id').notNull(),
+  status: initiativeStatus('status').notNull(), priority: initiativePriority('priority').notNull(), health: planningHealth('health').notNull(),
+  revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const initiativeProjects = pgTable('initiative_projects', {
+  workspaceId: uuid('workspace_id').notNull(), initiativeId: uuid('initiative_id').notNull(), projectId: uuid('project_id').notNull(),
+  sortOrder: integer('sort_order').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const advancedSavedViews = pgTable('advanced_saved_views', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), teamId: uuid('team_id'),
+  name: text('name').notNull(), entityType: advancedViewEntity('entity_type').notNull(), filters: jsonb('filters').notNull(), grouping: text('grouping'),
+  ordering: jsonb('ordering').notNull(), visibleFields: text('visible_fields').array().notNull(), layout: advancedViewLayout('layout').notNull(),
+  scope: advancedViewScope('scope').notNull(), favorite: boolean('favorite').notNull(), isDefault: boolean('is_default').notNull(),
+  revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const templates = pgTable('templates', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), kind: templateKind('kind').notNull(), name: text('name').notNull(),
+  description: text('description').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), status: templateStatus('status').notNull(),
+  currentVersionId: uuid('current_version_id'), revision: integer('revision').notNull(), importedAt: timestamp('imported_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const templateVersions = pgTable('template_versions', {
+  id: uuid('id').primaryKey(), templateId: uuid('template_id').notNull(), version: integer('version').notNull(), body: jsonb('body').notNull(),
+  changeSummary: text('change_summary').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
@@ -143,7 +202,7 @@ export const agentSessions = pgTable('agent_sessions', {
   budget: jsonb('budget').notNull(), externalUrls: jsonb('external_urls').notNull(), acknowledgedAt: timestamp('acknowledged_at', { withTimezone: true }), lastHeartbeatAt: timestamp('last_heartbeat_at', { withTimezone: true }),
   stopRequestedAt: timestamp('stop_requested_at', { withTimezone: true }), stopAcknowledgedAt: timestamp('stop_acknowledged_at', { withTimezone: true }), resultSummary: text('result_summary'), resultEvidence: jsonb('result_evidence').notNull(),
   noArtifactReason: text('no_artifact_reason'), errorCode: text('error_code'), errorSummary: text('error_summary'), endedAt: timestamp('ended_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
-  maxChildSessions: integer('max_child_sessions').notNull(), inheritedBudget: jsonb('inherited_budget').notNull(), requiredForParent: boolean('required_for_parent').notNull(), planStepVersionId: uuid('plan_step_version_id'),
+  maxChildSessions: integer('max_child_sessions').notNull(), inheritedBudget: jsonb('inherited_budget').notNull(), requiredForParent: boolean('required_for_parent').notNull(), planStepVersionId: uuid('plan_step_version_id'), automationRunId: uuid('automation_run_id'),
 })
 export const agentPlanVersions = pgTable('agent_plan_versions', {
   id: uuid('id').primaryKey(), sessionId: uuid('session_id').notNull(), revision: integer('revision').notNull(), parentVersionId: uuid('parent_version_id'), changeSummary: text('change_summary').notNull(), authorActorId: uuid('author_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
@@ -162,7 +221,7 @@ export const agentActivities = pgTable('agent_activities', {
   detailsMarkdown: text('details_markdown'), toolInvocation: jsonb('tool_invocation'), artifactIds: uuid('artifact_ids').array().notNull(), referencesJson: jsonb('references_json').notNull(), visibility: activityVisibility('visibility').notNull(), ephemeral: boolean('ephemeral').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const agentSessionPrompts = pgTable('agent_session_prompts', {
-  id: uuid('id').primaryKey(), sessionId: uuid('session_id').notNull(), authorActorId: uuid('author_actor_id').notNull(), bodyMarkdown: text('body_markdown').notNull(), planRevision: integer('plan_revision'), workItemRevision: integer('work_item_revision'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), sessionId: uuid('session_id').notNull(), authorActorId: uuid('author_actor_id').notNull(), bodyMarkdown: text('body_markdown').notNull(), planRevision: integer('plan_revision'), workItemRevision: integer('work_item_revision'), a2aExternalMessageId: text('a2a_external_message_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const workRoomChannels = pgTable('work_room_channels', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), subjectKind: roomSubjectKind('subject_kind').notNull(), subjectId: uuid('subject_id').notNull(), teamId: uuid('team_id'), workItemId: uuid('work_item_id'), projectId: uuid('project_id'), sessionId: uuid('session_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
@@ -190,7 +249,7 @@ export const contextDeltas = pgTable('context_deltas', {
   id: uuid('id').primaryKey(), sessionId: uuid('session_id').notNull(), baseSnapshotId: uuid('base_snapshot_id').notNull(), sourceSnapshotId: uuid('source_snapshot_id'), additions: jsonb('additions').notNull(), contentHash: text('content_hash').notNull(), rationale: text('rationale').notNull(), historyLink: jsonb('history_link').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 
-export const providerKind = pgEnum('provider_kind', ['fake', 'github'])
+export const providerKind = pgEnum('provider_kind', ['fake', 'github', 'gitea'])
 export const providerDeliveryStatus = pgEnum('provider_delivery_status', ['received', 'claimed', 'processed', 'dead'])
 export const providerActionStatus = pgEnum('provider_action_status', ['pending', 'claimed', 'completed', 'failed', 'dead'])
 export const normalizedCheckStatus = pgEnum('normalized_check_status', ['queued', 'running', 'passed', 'failed', 'skipped'])
@@ -276,4 +335,124 @@ export const agentWebhookDeliveries = pgTable('agent_webhook_deliveries', {
 })
 export const inboxItems = pgTable('inbox_items', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientHumanActorId: uuid('recipient_human_actor_id').notNull(), sessionId: uuid('session_id'), kind: inboxItemKind('kind').notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), status: inboxItemStatus('status').notNull(), payload: jsonb('payload').notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), resolvedByActorId: uuid('resolved_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+
+export const usageRecords = pgTable('usage_records', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), dedupeKey: text('dedupe_key').notNull(),
+  agentId: uuid('agent_id').notNull(), sessionId: uuid('session_id').notNull(), projectId: uuid('project_id'),
+  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(), inputTokens: bigint('input_tokens', { mode: 'number' }),
+  outputTokens: bigint('output_tokens', { mode: 'number' }), runtimeMs: bigint('runtime_ms', { mode: 'number' }),
+  toolCalls: integer('tool_calls'),
+  costMinor: bigint('cost_minor', { mode: 'bigint' }),
+  currency: text('currency').notNull(),
+  costSource: costSource('cost_source').notNull(), metadata: jsonb('metadata').notNull(), recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull(),
+})
+export const budgetPolicies = pgTable('budget_policies', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), scopeType: budgetScope('scope_type').notNull(),
+  scopeId: uuid('scope_id').notNull(), currency: text('currency').notNull(),
+  softCostMinor: bigint('soft_cost_minor', { mode: 'bigint' }),
+  hardCostMinor: bigint('hard_cost_minor', { mode: 'bigint' }),
+  softTokens: bigint('soft_tokens', { mode: 'number' }),
+  hardTokens: bigint('hard_tokens', { mode: 'number' }), revision: integer('revision').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const notificationPreferences = pgTable('notification_preferences', {
+  workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), channels: notificationChannel('channels').array().notNull(),
+  digest: text('digest').notNull(), minimumPriority: notificationPriority('minimum_priority').notNull(), mutedKinds: text('muted_kinds').array().notNull(),
+  webhookUrl: text('webhook_url'), revision: integer('revision').notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const notifications = pgTable('notifications', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientActorId: uuid('recipient_actor_id').notNull(),
+  priority: notificationPriority('priority').notNull(), kind: text('kind').notNull(), title: text('title').notNull(), body: text('body').notNull(),
+  sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), dedupeKey: text('dedupe_key').notNull(),
+  readAt: timestamp('read_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const notificationDeliveries = pgTable('notification_deliveries', {
+  id: uuid('id').primaryKey(), notificationId: uuid('notification_id').notNull(), channel: notificationChannel('channel').notNull(),
+  status: notificationDeliveryStatus('status').notNull(), attemptCount: integer('attempt_count').notNull(),
+  availableAt: timestamp('available_at', { withTimezone: true }).notNull(), claimedAt: timestamp('claimed_at', { withTimezone: true }),
+  claimedBy: text('claimed_by'), claimFence: integer('claim_fence').notNull(), effectKey: text('effect_key').notNull(),
+  effectCompletedAt: timestamp('effect_completed_at', { withTimezone: true }), deliveredAt: timestamp('delivered_at', { withTimezone: true }),
+  lastError: text('last_error'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const automationRules = pgTable('automation_rules', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), name: text('name').notNull(),
+  state: automationRuleState('state').notNull(), currentVersionId: uuid('current_version_id'), revision: integer('revision').notNull(),
+  createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const automationRuleVersions = pgTable('automation_rule_versions', {
+  id: uuid('id').primaryKey(), ruleId: uuid('rule_id').notNull(), version: integer('version').notNull(), trigger: jsonb('trigger').notNull(),
+  condition: jsonb('condition'), actions: jsonb('actions').notNull(), maxAttempts: integer('max_attempts').notNull(),
+  createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const automationOccurrences = pgTable('automation_occurrences', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), ruleId: uuid('rule_id').notNull(),
+  ruleVersionId: uuid('rule_version_id').notNull(), occurrenceKey: text('occurrence_key').notNull(), eventId: uuid('event_id'),
+  scheduledFor: timestamp('scheduled_for', { withTimezone: true }), payload: jsonb('payload').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const automationRuns = pgTable('automation_runs', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), ruleId: uuid('rule_id'),
+  ruleVersionId: uuid('rule_version_id'), occurrenceId: uuid('occurrence_id'), loopId: uuid('loop_id'), sessionId: uuid('session_id'),
+  dryRun: boolean('dry_run').notNull(), status: automationRunStatus('status').notNull(), trace: jsonb('trace').notNull(),
+  attemptCount: integer('attempt_count').notNull(), maxAttempts: integer('max_attempts').notNull(),
+  availableAt: timestamp('available_at', { withTimezone: true }).notNull(), claimedAt: timestamp('claimed_at', { withTimezone: true }),
+  claimedBy: text('claimed_by'), claimFence: integer('claim_fence').notNull(), startedAt: timestamp('started_at', { withTimezone: true }),
+  finishedAt: timestamp('finished_at', { withTimezone: true }), lastError: text('last_error'),
+  enforceNoOverlap: boolean('enforce_no_overlap').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const automationEffects = pgTable('automation_effects', {
+  id: uuid('id').primaryKey(), runId: uuid('run_id').notNull(), actionOrdinal: integer('action_ordinal').notNull(),
+  effectKey: text('effect_key').notNull(), action: jsonb('action').notNull(), status: automationEffectStatus('status').notNull(),
+  attemptCount: integer('attempt_count').notNull(), availableAt: timestamp('available_at', { withTimezone: true }).notNull(),
+  claimedAt: timestamp('claimed_at', { withTimezone: true }), claimedBy: text('claimed_by'), claimFence: integer('claim_fence').notNull(),
+  externalCheckpoint: jsonb('external_checkpoint'), externalCompletedAt: timestamp('external_completed_at', { withTimezone: true }),
+  completedAt: timestamp('completed_at', { withTimezone: true }), lastError: text('last_error'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const automationExternalEffectIntents = pgTable('automation_external_effect_intents', {
+  effectId: uuid('effect_id').primaryKey(), effectKey: text('effect_key').notNull(), requestHash: text('request_hash').notNull(),
+  state: automationExternalIntentState('state').notNull(), responseStatus: integer('response_status'), responseReceipt: text('response_receipt'),
+  preparedAt: timestamp('prepared_at', { withTimezone: true }).notNull(), acknowledgedAt: timestamp('acknowledged_at', { withTimezone: true }),
+  reconciledAt: timestamp('reconciled_at', { withTimezone: true }),
+})
+export const loops = pgTable('loops', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), projectId: uuid('project_id'),
+  name: text('name').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), agentId: uuid('agent_id').notNull(),
+  runTemplateVersionId: uuid('run_template_version_id').notNull(), trigger: jsonb('trigger').notNull(), budget: jsonb('budget').notNull(),
+  noOverlap: boolean('no_overlap').notNull(), visibility: text('visibility').notNull(), failureNotification: text('failure_notification').notNull(),
+  state: loopState('state').notNull(), nextRunAt: timestamp('next_run_at', { withTimezone: true }), revision: integer('revision').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const loopBudgetReservations = pgTable('loop_budget_reservations', {
+  id: uuid('id').primaryKey(), loopId: uuid('loop_id').notNull(), automationRunId: uuid('automation_run_id').notNull(),
+  amount: jsonb('amount').notNull(), status: budgetReservationStatus('status').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), releasedAt: timestamp('released_at', { withTimezone: true }),
+})
+export const projectHealthUpdates = pgTable('project_health_updates', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), projectId: uuid('project_id').notNull(),
+  authorActorId: uuid('author_actor_id').notNull(), source: healthUpdateSource('source').notNull(), health: planningHealth('health').notNull(),
+  summary: text('summary').notNull(), forecastAt: timestamp('forecast_at', { withTimezone: true }), confidence: numeric('confidence').notNull(),
+  uncertainty: text('uncertainty').notNull(), status: healthUpdateStatus('status').notNull(), approvalId: uuid('approval_id'),
+  publishedAt: timestamp('published_at', { withTimezone: true }), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const projectHealthSources = pgTable('project_health_sources', {
+  updateId: uuid('update_id').notNull(), ordinal: integer('ordinal').notNull(), sourceKind: text('source_kind').notNull(),
+  sourceId: uuid('source_id').notNull(), observedAt: timestamp('observed_at', { withTimezone: true }).notNull(), value: jsonb('value').notNull(),
+})
+export const a2aAgentBindings = pgTable('a2a_agent_bindings', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), agentId: uuid('agent_id').notNull(),
+  protocolVersion: text('protocol_version').notNull(), externalAgentUrl: text('external_agent_url').notNull(), cardHash: text('card_hash').notNull(),
+  active: boolean('active').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const a2aTaskBindings = pgTable('a2a_task_bindings', {
+  id: uuid('id').primaryKey(), bindingId: uuid('binding_id').notNull(), externalTaskId: text('external_task_id').notNull(),
+  sessionId: uuid('session_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const a2aDeliveries = pgTable('a2a_deliveries', {
+  id: uuid('id').primaryKey(), bindingId: uuid('binding_id').notNull(), deliveryId: text('delivery_id').notNull(),
+  externalTaskId: text('external_task_id'), direction: text('direction').notNull(), sequence: bigint('sequence', { mode: 'number' }), sessionId: uuid('session_id'),
+  domainEventId: uuid('domain_event_id'), payload: jsonb('payload').notNull(), status: a2aDeliveryStatus('status').notNull(),
+  attemptCount: integer('attempt_count').notNull(), lastError: text('last_error'),
+  receivedAt: timestamp('received_at', { withTimezone: true }).notNull(), processedAt: timestamp('processed_at', { withTimezone: true }),
 })

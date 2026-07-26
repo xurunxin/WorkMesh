@@ -1,6 +1,6 @@
 import { createHash, createHmac, createSign, timingSafeEqual } from "node:crypto";
 
-export type ProviderKind = "fake" | "github";
+export type ProviderKind = "fake" | "github" | "gitea";
 export type ProviderCheckConclusion =
   | "success"
   | "failure"
@@ -628,4 +628,235 @@ export function normalizeGitHubWebhook(eventName: string, payload: unknown): Nor
     };
   }
   return null;
+}
+
+export type GitProviderCapability =
+  | "create_branch"
+  | "create_commit"
+  | "multi_file_commit"
+  | "open_pull_request"
+  | "read_pull_request"
+  | "merge_pull_request"
+  | "repository_guidance"
+  | "retry_check";
+
+export class UnsupportedProviderCapability extends Error {
+  readonly code = "PROVIDER_CAPABILITY_UNSUPPORTED";
+  constructor(
+    readonly provider: ProviderKind,
+    readonly capability: GitProviderCapability,
+  ) {
+    super(`${provider} does not support ${capability}`);
+  }
+}
+
+export const giteaCapabilityMatrix: Readonly<Record<GitProviderCapability, boolean>> = {
+  create_branch: true,
+  create_commit: true,
+  multi_file_commit: false,
+  open_pull_request: true,
+  read_pull_request: true,
+  merge_pull_request: true,
+  repository_guidance: true,
+  retry_check: false,
+};
+
+type GiteaProviderOptions = {
+  baseUrl: string;
+  accessToken: string;
+  fetch?: Fetch;
+};
+
+/**
+ * Gitea is an adapter behind the existing GitProvider port. Domain commands,
+ * approvals, repository contexts, claims, and projections remain provider
+ * independent.
+ */
+export class GiteaProvider implements GitProvider {
+  readonly #baseUrl: string;
+  readonly #accessToken: string;
+  readonly #fetch: Fetch;
+
+  constructor(options: GiteaProviderOptions) {
+    const base = new URL(options.baseUrl);
+    if (base.protocol !== "https:" || base.username || base.password)
+      throw new Error("GITEA_BASE_URL_INVALID");
+    this.#baseUrl = base.toString().replace(/\/$/, "");
+    this.#accessToken = options.accessToken;
+    this.#fetch = options.fetch ?? globalThis.fetch;
+  }
+
+  #repo(input: RepositoryIdentity): string {
+    if (!input.repositoryFullName || !/^[^/]+\/[^/]+$/.test(input.repositoryFullName))
+      throw new Error("GITEA_REPOSITORY_FULL_NAME_REQUIRED");
+    return input.repositoryFullName.split("/").map(encodeURIComponent).join("/");
+  }
+
+  async #request<T>(method: string, path: string, body?: unknown): Promise<T> {
+    const response = await this.#fetch(`${this.#baseUrl}/api/v1${path}`, {
+      method,
+      headers: {
+        accept: "application/json",
+        authorization: `token ${this.#accessToken}`,
+        "content-type": "application/json",
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    if (!response.ok) throw new Error(`GITEA_API_ERROR:${method}:${path}:${response.status}`);
+    if (response.status === 204) return undefined as T;
+    const text = await response.text();
+    return text.length === 0 ? undefined as T : JSON.parse(text) as T;
+  }
+
+  async createBranch(input: BranchRequest): Promise<ProviderBranch> {
+    const branch = await this.#request<{ name: string; commit: { id: string } }>(
+      "POST",
+      `/repos/${this.#repo(input)}/branches`,
+      { new_branch_name: input.name, old_ref_name: input.baseSha },
+    );
+    return { name: branch.name, headSha: branch.commit.id };
+  }
+
+  async createCommit(input: CommitRequest): Promise<ProviderCommit> {
+    if (input.files.length !== 1)
+      throw new UnsupportedProviderCapability("gitea", "multi_file_commit");
+    const file = input.files[0]!;
+    const repo = this.#repo(input);
+    let sha: string | undefined;
+    try {
+      const existing = await this.#request<{ sha?: string }>(
+        "GET",
+        `/repos/${repo}/contents/${file.path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(input.branch)}`,
+      );
+      sha = existing.sha;
+    } catch (error) {
+      if (!String(error).endsWith(":404")) throw error;
+    }
+    const response = await this.#request<{
+      commit: { sha: string; html_url?: string };
+      content?: { html_url?: string };
+    }>(
+      sha ? "PUT" : "POST",
+      `/repos/${repo}/contents/${file.path.split("/").map(encodeURIComponent).join("/")}`,
+      {
+        branch: input.branch,
+        message: input.message,
+        content: Buffer.from(file.content).toString("base64"),
+        sha,
+        author: undefined,
+      },
+    );
+    return {
+      id: response.commit.sha,
+      sha: response.commit.sha,
+      branch: input.branch,
+      uri: response.commit.html_url ?? response.content?.html_url ?? `${this.#baseUrl}/${input.repositoryFullName}/commit/${response.commit.sha}`,
+    };
+  }
+
+  async openPullRequest(input: PullRequestRequest): Promise<ProviderPullRequest> {
+    const pull = await this.#request<{
+      id: number;
+      number: number;
+      html_url: string;
+      base: { ref: string; sha: string };
+      head: { ref: string; sha: string };
+      state: string;
+      merged: boolean;
+      merge_commit_sha?: string;
+    }>(
+      "POST",
+      `/repos/${this.#repo(input)}/pulls`,
+      {
+        base: input.baseBranch,
+        head: input.headBranch,
+        title: input.title,
+        body: input.body,
+        draft: input.draft,
+      },
+    );
+    return this.#pull(pull);
+  }
+
+  async getPullRequest(input: RepositoryIdentity & { pullRequestId: string }): Promise<ProviderPullRequest> {
+    const pull = await this.#request<{
+      id: number;
+      number: number;
+      html_url: string;
+      base: { ref: string; sha: string };
+      head: { ref: string; sha: string };
+      state: string;
+      merged: boolean;
+      merge_commit_sha?: string;
+    }>("GET", `/repos/${this.#repo(input)}/pulls/${encodeURIComponent(input.pullRequestId)}`);
+    return this.#pull(pull);
+  }
+
+  #pull(pull: {
+    id: number;
+    number: number;
+    html_url: string;
+    base: { ref: string; sha: string };
+    head: { ref: string; sha: string };
+    state: string;
+    merged: boolean;
+    merge_commit_sha?: string;
+  }): ProviderPullRequest {
+    return {
+      id: String(pull.number ?? pull.id),
+      number: pull.number,
+      uri: pull.html_url,
+      baseBranch: pull.base.ref,
+      headBranch: pull.head.ref,
+      baseSha: pull.base.sha,
+      headSha: pull.head.sha,
+      state: pull.merged ? "merged" : pull.state === "closed" ? "closed" : "open",
+      draft: false,
+      mergeSha: pull.merge_commit_sha,
+    };
+  }
+
+  async mergePullRequest(input: MergeRequest): Promise<{ merged: true; mergeSha: string }> {
+    const current = await this.getPullRequest(input);
+    if (current.headSha !== input.expectedHeadSha) throw new Error("GITEA_PULL_REQUEST_HEAD_CHANGED");
+    await this.#request(
+      "POST",
+      `/repos/${this.#repo(input)}/pulls/${encodeURIComponent(input.pullRequestId)}/merge`,
+      {
+        Do: input.method === "squash" ? "squash" : input.method === "rebase" ? "rebase" : "merge",
+        merge_when_checks_succeed: false,
+      },
+    );
+    const merged = await this.getPullRequest(input);
+    if (merged.state !== "merged" || !merged.mergeSha) throw new Error("GITEA_MERGE_NOT_CONFIRMED");
+    return { merged: true, mergeSha: merged.mergeSha };
+  }
+
+  async resolveRepositoryGuidance(input: RepositoryGuidanceRequest): Promise<RepositoryGuidanceEntry[]> {
+    const repo = this.#repo(input);
+    const entries: RepositoryGuidanceEntry[] = [];
+    for (const path of guidanceCandidatePaths(input.scopedPaths)) {
+      try {
+        const file = await this.#request<{ sha: string; content: string; encoding: string }>(
+          "GET",
+          `/repos/${repo}/contents/${path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(input.commitSha)}`,
+        );
+        if (file.encoding !== "base64") throw new Error("GITEA_GUIDANCE_ENCODING_UNSUPPORTED");
+        const content = Buffer.from(file.content.replace(/\s/g, ""), "base64").toString("utf8");
+        entries.push({
+          path,
+          blobSha: file.sha,
+          contentHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+          content,
+        });
+      } catch (error) {
+        if (!String(error).endsWith(":404")) throw error;
+      }
+    }
+    return entries;
+  }
+
+  async retryCheck(_input: RetryCheckRequest): Promise<{ requested: true; checkRunId: string }> {
+    throw new UnsupportedProviderCapability("gitea", "retry_check");
+  }
 }

@@ -52,7 +52,7 @@ type RepositoryRow = {
   full_name: string
   default_branch: string
   required_checks: string[]
-  provider: 'fake' | 'github'
+  provider: 'fake' | 'github' | 'gitea'
 }
 type RepositoryContextRow = RepositoryRow & {
   context_id: string
@@ -336,7 +336,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   app.post('/api/v1/provider-connections', async (request) => {
     const body = providerConnectionInputSchema.parse(request.body)
     requireHuman(actor(request), true)
-    return command(h.db, h.meta(request, { ...body, webhookSecret: '[REDACTED]', privateKey: body.privateKey ? '[REDACTED]' : undefined }), async tx => {
+    return command(h.db, h.meta(request, { ...body, webhookSecret: '[REDACTED]', privateKey: body.privateKey ? '[REDACTED]' : undefined, accessToken: body.accessToken ? '[REDACTED]' : undefined }), async tx => {
       const service = one((await tx.query<{ id: string }>(
         "INSERT INTO actors(workspace_id,kind,display_name,is_active) VALUES($1,'service',$2,true) RETURNING id",
         [actor(request).workspaceId, `${body.displayName} provider`],
@@ -348,8 +348,12 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
          RETURNING id,workspace_id,provider,external_account_id,display_name,installation_id,service_actor_id,active,revision,created_at,updated_at`,
         [
           actor(request).workspaceId, body.provider, body.externalAccountId, body.displayName,
-          body.installationId ?? null, service.id, body.webhookSecret,
-          body.provider === 'github' ? JSON.stringify({ appId: body.appId, privateKey: body.privateKey }) : null,
+          body.provider === 'gitea' ? body.baseUrl : body.installationId ?? null, service.id, body.webhookSecret,
+          body.provider === 'github'
+            ? JSON.stringify({ appId: body.appId, privateKey: body.privateKey })
+            : body.provider === 'gitea'
+              ? JSON.stringify({ accessToken: body.accessToken })
+              : null,
           masterKey(),
         ],
       )).rows)

@@ -432,7 +432,7 @@ export const stage2RouteManifest = [
 ] as const
 
 // Stage 3: provider-neutral delivery control-plane contracts.
-export const providerKindSchema = z.enum(['fake', 'github'])
+export const providerKindSchema = z.enum(['fake', 'github', 'gitea'])
 export const strictExternalUrlSchema = z.string().max(2_048).superRefine((value, context) => {
   let parsed: URL
   try {
@@ -460,9 +460,13 @@ export const providerConnectionInputSchema = z.object({
   installationId: z.string().min(1).max(500).optional(),
   appId: z.string().min(1).max(100).optional(),
   privateKey: z.string().min(64).max(100_000).optional(),
+  baseUrl: strictExternalUrlSchema.optional(),
+  accessToken: z.string().min(16).max(10_000).optional(),
 }).superRefine((value, context) => {
   if (value.provider === 'github' && (!value.installationId || !value.appId || !value.privateKey))
     context.addIssue({ code: z.ZodIssueCode.custom, message: 'GitHub connections require installationId, appId, and privateKey' })
+  if (value.provider === 'gitea' && (!value.baseUrl || !value.accessToken))
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Gitea connections require baseUrl and accessToken' })
 })
 export const repositoryInputSchema = z.object({
   connectionId: idSchema,
@@ -617,10 +621,337 @@ export type RepositoryContextInput = z.infer<typeof repositoryContextInputSchema
 export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
 export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
-export const agentRouteManifest = [...stage0RouteManifest, ...stage1RouteManifest, ...stage2RouteManifest, ...stage3RouteManifest] as const
-
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>
 export type CompleteAgentSessionInput = z.infer<typeof completeAgentSessionInputSchema>
 export type ApprovalEventEnvelope = z.infer<typeof approvalEventEnvelopeSchema>
+
+// Stage 4: planning, operational automation, usage, notifications, templates,
+// and the version-isolated A2A transport boundary.
+export const cycleInputSchema = z.object({
+  teamId: idSchema.optional(),
+  name: z.string().min(1).max(180),
+  startsAt: z.coerce.date(),
+  durationWeeks: z.number().int().min(1).max(8),
+})
+export const cycleGenerationInputSchema = z.object({
+  teamId: idSchema.optional(),
+  firstStartsAt: z.coerce.date(),
+  durationWeeks: z.number().int().min(1).max(8),
+  count: z.number().int().min(1).max(52),
+  namePrefix: z.string().min(1).max(120).default('Cycle'),
+})
+export const cycleCarryOverInputSchema = z.object({
+  targetCycleId: idSchema,
+  workItemIds: z.array(idSchema).min(1).max(500).optional(),
+})
+export const cycleMembershipInputSchema = z.object({ cycleId: idSchema.nullable() })
+
+export const initiativeStatusSchema = z.enum(['planned', 'active', 'paused', 'completed', 'canceled'])
+export const initiativePrioritySchema = z.enum(['none', 'low', 'medium', 'high', 'urgent'])
+export const healthSchema = z.enum(['on_track', 'at_risk', 'off_track', 'unknown'])
+export const initiativeInputSchema = z.object({
+  name: z.string().min(1).max(240),
+  summary: z.string().max(2_000).optional(),
+  ownerActorId: idSchema,
+  parentInitiativeId: idSchema.optional(),
+  status: initiativeStatusSchema.default('planned'),
+  priority: initiativePrioritySchema.default('none'),
+  health: healthSchema.default('unknown'),
+  projectIds: z.array(idSchema).max(200).default([]),
+})
+
+export const advancedViewEntitySchema = z.enum(['issue', 'project', 'session', 'initiative'])
+export const advancedViewLayoutSchema = z.enum(['list', 'board', 'timeline'])
+export const advancedViewScopeSchema = z.enum(['private', 'team', 'workspace'])
+const POSTGRES_BIGINT_MAX = 9_223_372_036_854_775_807n
+export const MINOR_UNIT_DECIMAL_PATTERN = /^(?:0|[1-9][0-9]{0,17}|(?:[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$/
+export const minorUnitDecimalSchema = z.string()
+  .regex(MINOR_UNIT_DECIMAL_PATTERN, 'Minor-unit amount must be a canonical non-negative PostgreSQL bigint decimal string')
+  .refine(value => BigInt(value) <= POSTGRES_BIGINT_MAX, 'Minor-unit amount exceeds PostgreSQL bigint range')
+export const positiveMinorUnitDecimalSchema = minorUnitDecimalSchema
+  .refine(value => BigInt(value) > 0n, 'Minor-unit amount must be positive')
+export const advancedViewFiltersSchema = z.object({
+  assigneeActorIds: z.array(idSchema).max(100).optional(),
+  agentIds: z.array(idSchema).max(100).optional(),
+  priorities: z.array(prioritySchema).max(5).optional(),
+  projectIds: z.array(idSchema).max(100).optional(),
+  cycleIds: z.array(idSchema).max(100).optional(),
+  sessionStates: z.array(agentSessionStateSchema).max(20).optional(),
+  approvalStatuses: z.array(approvalStatusSchema).max(10).optional(),
+  health: z.array(healthSchema).max(4).optional(),
+  cost: z.object({
+    minMinor: minorUnitDecimalSchema.optional(),
+    maxMinor: minorUnitDecimalSchema.optional(),
+    currency: z.string().length(3).transform(value => value.toUpperCase()).optional(),
+  }).strict().refine(
+    value => value.minMinor === undefined || value.maxMinor === undefined
+      || BigInt(value.minMinor) <= BigInt(value.maxMinor),
+    'Minimum cost must not exceed maximum cost',
+  ).optional(),
+}).strict()
+export const advancedViewInputSchema = z.object({
+  name: z.string().min(1).max(120),
+  entityType: advancedViewEntitySchema,
+  teamId: idSchema.optional(),
+  filters: advancedViewFiltersSchema.default({}),
+  grouping: z.string().max(120).optional(),
+  ordering: z.array(z.object({ field: z.string().min(1).max(120), direction: z.enum(['asc', 'desc']) })).max(10).default([]),
+  visibleFields: z.array(z.string().min(1).max(120)).max(80).default([]),
+  layout: advancedViewLayoutSchema,
+  scope: advancedViewScopeSchema,
+  favorite: z.boolean().default(false),
+  isDefault: z.boolean().default(false),
+})
+
+export const forecastSourceSchema = z.object({
+  kind: z.enum(['work_item', 'session', 'milestone', 'dependency', 'project_update', 'usage']),
+  id: idSchema,
+  observedAt: timestampSchema,
+  value: z.record(z.unknown()).default({}),
+})
+export const projectHealthInputSchema = z.object({
+  health: healthSchema.exclude(['unknown']),
+  summary: z.string().min(1).max(20_000),
+  forecastAt: z.coerce.date().optional(),
+  confidence: z.number().min(0).max(1),
+  uncertainty: z.string().min(1).max(5_000),
+  sources: z.array(forecastSourceSchema).min(1).max(200),
+  source: z.enum(['human', 'agent']),
+  approvalId: idSchema.optional(),
+  publish: z.boolean().default(false),
+}).superRefine((value, context) => {
+  if (value.source === 'agent' && value.publish && !value.approvalId)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Publishing an agent health update requires exact approval' })
+})
+
+const boundedCronField = (raw: string, minimum: number, maximum: number): boolean =>
+  raw.split(',').every(part => {
+    if (part === '*') return true
+    const step = /^\*\/(\d+)$/.exec(part)
+    if (step) {
+      const value = Number(step[1])
+      return Number.isInteger(value) && value > 0 && value <= maximum - minimum + 1
+    }
+    const range = /^(\d+)-(\d+)$/.exec(part)
+    if (range) {
+      const start = Number(range[1])
+      const end = Number(range[2])
+      return start >= minimum && end <= maximum && start <= end
+    }
+    const value = Number(part)
+    return Number.isInteger(value) && value >= minimum && value <= maximum
+  })
+
+export const boundedUtcCronSchema = z.string().min(1).max(200).refine(raw => {
+  const fields = raw.trim().split(/\s+/)
+  return fields.length === 5
+    && boundedCronField(fields[0]!, 0, 59)
+    && boundedCronField(fields[1]!, 0, 23)
+    && boundedCronField(fields[2]!, 1, 31)
+    && boundedCronField(fields[3]!, 1, 12)
+    && boundedCronField(fields[4]!, 0, 6)
+}, { message: 'CRON_UNSUPPORTED: expected the bounded five-field UTC cron grammar' })
+
+export const automationTriggerSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('schedule'), cron: boundedUtcCronSchema, timezone: z.literal('UTC').default('UTC') }),
+  z.object({ type: z.literal('event'), eventTypes: z.array(z.string().min(1).max(200)).min(1).max(100) }),
+])
+export const automationConditionSchema: z.ZodType<{
+  all?: unknown[]
+  any?: unknown[]
+  not?: unknown
+  field?: string
+  op?: 'eq' | 'neq' | 'in' | 'contains' | 'gt' | 'gte' | 'lt' | 'lte' | 'exists'
+  value?: unknown
+}> = z.lazy(() => z.object({
+  all: z.array(automationConditionSchema).min(1).max(50).optional(),
+  any: z.array(automationConditionSchema).min(1).max(50).optional(),
+  not: automationConditionSchema.optional(),
+  field: z.string().min(1).max(200).optional(),
+  op: z.enum(['eq', 'neq', 'in', 'contains', 'gt', 'gte', 'lt', 'lte', 'exists']).optional(),
+  value: z.unknown().optional(),
+}).superRefine((value, context) => {
+  const forms = Number(Boolean(value.all)) + Number(Boolean(value.any)) + Number(Boolean(value.not)) + Number(Boolean(value.field))
+  if (forms !== 1) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Condition must have exactly one form' })
+  if (value.field && !value.op) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Leaf condition requires op' })
+}))
+export const automationActionSchema = z.object({
+  type: z.enum(['update_work_item', 'add_label', 'create_work_item', 'delegate_agent', 'start_session', 'send_message', 'request_approval', 'create_project_update', 'call_webhook', 'notify']),
+  parameters: z.record(z.unknown()).default({}),
+})
+export const automationRuleInputSchema = z.object({
+  name: z.string().min(1).max(240),
+  teamId: idSchema.optional(),
+  trigger: automationTriggerSchema,
+  condition: automationConditionSchema.optional(),
+  actions: z.array(automationActionSchema).min(1).max(50),
+  maxAttempts: z.number().int().min(1).max(12).default(5),
+})
+export const automationRuleVersionInputSchema = automationRuleInputSchema.omit({ name: true, teamId: true })
+export const automationDryRunInputSchema = z.object({
+  occurrenceKey: z.string().min(1).max(500),
+  payload: z.record(z.unknown()).default({}),
+})
+export const automationTriggerInputSchema = automationDryRunInputSchema.extend({
+  eventId: idSchema.optional(),
+  scheduledFor: z.coerce.date().optional(),
+})
+
+export const loopInputSchema = z.object({
+  name: z.string().min(1).max(240),
+  ownerActorId: idSchema,
+  teamId: idSchema.optional(),
+  projectId: idSchema.optional(),
+  agentId: idSchema,
+  runTemplateVersionId: idSchema,
+  trigger: automationTriggerSchema,
+  budget: z.object({
+    maxRuntimeSeconds: z.number().int().positive().optional(),
+    maxTokens: z.number().int().positive().optional(),
+    maxCostMinor: positiveMinorUnitDecimalSchema.optional(),
+    maxToolCalls: z.number().int().positive().optional(),
+    currency: z.string().length(3).default('USD'),
+  }),
+  noOverlap: z.boolean().default(true),
+  visibility: z.enum(['team', 'workspace']).default('team'),
+  failureNotification: z.enum(['owner', 'team', 'none']).default('owner'),
+})
+
+export const notificationPrioritySchema = z.enum(['input', 'approval', 'agent_failure', 'mention', 'handoff', 'update'])
+export const notificationChannelSchema = z.enum(['in_app', 'browser', 'webhook'])
+export const notificationPreferenceInputSchema = z.object({
+  channels: z.array(notificationChannelSchema).min(1).max(3),
+  digest: z.enum(['immediate', 'hourly', 'daily']),
+  minimumPriority: notificationPrioritySchema,
+  mutedKinds: z.array(z.string().min(1).max(120)).max(100).default([]),
+  webhookUrl: strictExternalUrlSchema.optional(),
+})
+export const notificationInputSchema = z.object({
+  recipientActorId: idSchema,
+  priority: notificationPrioritySchema,
+  kind: z.string().min(1).max(120),
+  title: z.string().min(1).max(500),
+  body: z.string().max(10_000).default(''),
+  sourceType: z.string().min(1).max(120),
+  sourceId: idSchema,
+  channels: z.array(notificationChannelSchema).min(1).max(3),
+  dedupeKey: z.string().min(1).max(500),
+})
+
+export const usageInputSchema = z.object({
+  dedupeKey: z.string().min(1).max(500),
+  agentId: idSchema,
+  sessionId: idSchema,
+  projectId: idSchema.optional(),
+  occurredAt: z.coerce.date(),
+  inputTokens: z.number().int().nonnegative().optional(),
+  outputTokens: z.number().int().nonnegative().optional(),
+  runtimeMs: z.number().int().nonnegative().optional(),
+  toolCalls: z.number().int().nonnegative().optional(),
+  costMinor: minorUnitDecimalSchema.optional(),
+  currency: z.string().length(3),
+  costSource: z.enum(['provider_reported', 'rate_card', 'manual', 'unknown']),
+  metadata: z.record(z.unknown()).default({}),
+}).superRefine((value, context) => {
+  if (value.costSource === 'unknown' && value.costMinor !== undefined)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Unknown cost must remain null, not zero' })
+  if (value.costSource !== 'unknown' && value.costMinor === undefined)
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'Known cost requires costMinor' })
+})
+export const budgetPolicyInputSchema = z.object({
+  scopeType: z.enum(['workspace', 'team', 'project', 'agent', 'session', 'loop']),
+  scopeId: idSchema,
+  currency: z.string().length(3),
+  softCostMinor: minorUnitDecimalSchema.optional(),
+  hardCostMinor: positiveMinorUnitDecimalSchema.optional(),
+  softTokens: z.number().int().nonnegative().optional(),
+  hardTokens: z.number().int().positive().optional(),
+}).refine(
+  value => value.softCostMinor === undefined || value.hardCostMinor === undefined
+    || BigInt(value.softCostMinor) <= BigInt(value.hardCostMinor),
+  'Soft cost must not exceed hard cost',
+)
+
+export const templateKindSchema = z.enum(['work_item', 'project', 'agent_run', 'handoff', 'automation'])
+export const templateInputSchema = z.object({
+  kind: templateKindSchema,
+  name: z.string().min(1).max(240),
+  description: z.string().max(5_000).default(''),
+  body: z.record(z.unknown()),
+})
+export const templateVersionInputSchema = z.object({
+  body: z.record(z.unknown()),
+  changeSummary: z.string().min(1).max(2_000),
+})
+export const templateStateInputSchema = z.object({
+  status: z.enum(['draft', 'active', 'archived']),
+})
+export const templateImportInputSchema = z.object({
+  formatVersion: z.literal(1),
+  templates: z.array(z.object({
+    kind: templateKindSchema,
+    name: z.string().min(1).max(240),
+    description: z.string().max(5_000).default(''),
+    versions: z.array(z.object({ body: z.record(z.unknown()), changeSummary: z.string().max(2_000).default('Imported') })).min(1).max(100),
+  })).min(1).max(100),
+})
+
+export const stage4RouteManifest = [
+  { method: 'GET', path: '/api/v1/cycles', authenticated: true },
+  { method: 'POST', path: '/api/v1/cycles', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/cycles/generate', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/cycles/{id}/carry-over', authenticated: true, mutation: true },
+  { method: 'PATCH', path: '/api/v1/work-items/{id}/cycle', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/initiatives', authenticated: true },
+  { method: 'POST', path: '/api/v1/initiatives', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/initiatives/{id}/rollup', authenticated: true },
+  { method: 'GET', path: '/api/v1/advanced-views', authenticated: true },
+  { method: 'POST', path: '/api/v1/advanced-views', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/advanced-views/{id}/results', authenticated: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/health', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/health', authenticated: true },
+  { method: 'GET', path: '/api/v1/automation-rules', authenticated: true },
+  { method: 'POST', path: '/api/v1/automation-rules', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/automation-rules/{id}/versions', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/automation-rules/{id}/dry-run', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/automation-rules/{id}/trigger', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/automation-rules/{id}/state', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/automation-runs', authenticated: true },
+  { method: 'GET', path: '/api/v1/automation-runs/{runId}', authenticated: true },
+  { method: 'GET', path: '/api/v1/loops', authenticated: true },
+  { method: 'POST', path: '/api/v1/loops', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/loops/{id}/run', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/loops/{id}/state', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/usage-records', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/usage-summary', authenticated: true },
+  { method: 'POST', path: '/api/v1/budget-policies', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/notifications', authenticated: true, mutation: true },
+  { method: 'PUT', path: '/api/v1/notification-preferences', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/templates', authenticated: true },
+  { method: 'POST', path: '/api/v1/templates', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/templates/{id}/versions', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/templates/{id}/state', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/templates/export', authenticated: true },
+  { method: 'POST', path: '/api/v1/templates/import', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/a2a-bindings', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/a2a-bindings/{id}/tasks', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/a2a-bindings/{id}/tasks/{taskId}/events', authenticated: true },
+] as const
+
+export const agentRouteManifest = [
+  ...stage0RouteManifest,
+  ...stage1RouteManifest,
+  ...stage2RouteManifest,
+  ...stage3RouteManifest,
+  ...stage4RouteManifest,
+] as const
+
+export type AutomationRuleInput = z.infer<typeof automationRuleInputSchema>
+export type AutomationCondition = z.infer<typeof automationConditionSchema>
+export type AutomationAction = z.infer<typeof automationActionSchema>
+export type LoopInput = z.infer<typeof loopInputSchema>
+export type UsageInput = z.infer<typeof usageInputSchema>
+export type NotificationPriority = z.infer<typeof notificationPrioritySchema>
+export type A2AProtocolVersion = '0.3'

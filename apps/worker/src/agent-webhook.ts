@@ -132,7 +132,7 @@ export const isUnsafeWebhookAddress = (address: string): boolean => {
   return true
 }
 
-const systemDnsLookup: WebhookDnsLookup = async hostname => {
+export const systemWebhookDnsLookup: WebhookDnsLookup = async hostname => {
   const results = await lookup(hostname, { all: true, verbatim: true })
   return results.flatMap(result => result.family === 4 || result.family === 6
     ? [{ address: result.address, family: result.family }]
@@ -140,7 +140,7 @@ const systemDnsLookup: WebhookDnsLookup = async hostname => {
 }
 
 export const resolveWebhookTarget = async (rawUrl: string, {
-  dnsLookup = systemDnsLookup,
+  dnsLookup = systemWebhookDnsLookup,
   allowPrivateAgentWebhooks = process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS === 'true',
 }: {
   dnsLookup?: WebhookDnsLookup
@@ -184,7 +184,7 @@ export const resolveWebhookTarget = async (rawUrl: string, {
  * The connection uses an address from the just-validated DNS answer rather
  * than resolving the hostname again, closing the validation/request race.
  */
-const fetchWebhook: WebhookFetch = async (url, init) => new Promise((resolve, reject) => {
+export const fetchResolvedWebhook: WebhookFetch = async (url, init) => new Promise((resolve, reject) => {
   const target = new URL(url)
   const selected = init.resolvedAddresses[0]
   if (!selected) {
@@ -203,9 +203,14 @@ const fetchWebhook: WebhookFetch = async (url, init) => new Promise((resolve, re
     headers: init.headers,
     signal: init.signal,
     lookup: pinnedLookup,
+    ...(target.protocol === 'https:' ? { servername: target.hostname } : {}),
   }, response => {
-    response.resume()
-    resolve({ status: response.statusCode ?? 0 })
+    let bytes = 0
+    response.on('data', (chunk: Buffer) => {
+      bytes += chunk.length
+      if (bytes > 64 * 1024) request.destroy(new WebhookDeliveryError('WEBHOOK_RESPONSE_TOO_LARGE', false))
+    })
+    response.once('end', () => resolve({ status: response.statusCode ?? 0 }))
   })
   request.once('error', reject)
   request.end(init.body)
@@ -215,10 +220,10 @@ export function createAgentWebhookWorker({
   db,
   workerId = `agent-webhook-${randomUUID()}`,
   masterKey = masterKeyFromEnvironment(),
-  fetcher = fetchWebhook,
+  fetcher = fetchResolvedWebhook,
   maxAttempts = WEBHOOK_MAX_ATTEMPTS,
   random = Math.random,
-  dnsLookup = systemDnsLookup,
+  dnsLookup = systemWebhookDnsLookup,
   allowPrivateAgentWebhooks = process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS === 'true',
 }: {
   db: Db

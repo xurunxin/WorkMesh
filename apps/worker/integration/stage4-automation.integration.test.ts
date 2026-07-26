@@ -1,0 +1,635 @@
+import { randomUUID } from 'node:crypto'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import {
+  admitAutomationOccurrence,
+  admitLoopRun,
+  appendEvent,
+  applyMigrations,
+  createDb,
+  installWorkspace,
+  withTx,
+} from '@workmesh/db'
+import { createAutomationWorker } from '../src/automation.js'
+
+const databaseUrl = process.env.DATABASE_URL
+if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 4 Worker integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
+if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 4 Worker integration requires a dedicated *test* database.')
+const db = createDb(databaseUrl)
+
+type Fixture = {
+  workspaceId: string
+  teamId: string
+  humanId: string
+  workItemId: string
+  agentId: string
+  agentActorId: string
+  templateVersionId: string
+}
+let fixture: Fixture
+
+const meta = (suffix: string) => ({
+  workspaceId: fixture.workspaceId,
+  actorId: fixture.humanId,
+  correlationId: `stage4:${suffix}:${randomUUID()}`,
+})
+
+async function createRule(
+  name: string,
+  action: { type: string; parameters: Record<string, unknown> }
+    | Array<{ type: string; parameters: Record<string, unknown> }>,
+  maxAttempts = 3,
+  trigger: Record<string, unknown> = { type: 'event', eventTypes: ['work_item.created'] },
+): Promise<string> {
+  const rule = (await db.query<{ id: string }>(
+    `INSERT INTO automation_rules(workspace_id,team_id,name,created_by_actor_id)
+     VALUES($1,$2,$3,$4) RETURNING id`,
+    [fixture.workspaceId, fixture.teamId, `${name}-${randomUUID()}`, fixture.humanId],
+  )).rows[0]!
+  const version = (await db.query<{ id: string }>(
+    `INSERT INTO automation_rule_versions(
+      rule_id,version,trigger,actions,max_attempts,created_by_actor_id
+    ) VALUES($1,1,$2,$3,$4,$5) RETURNING id`,
+    [rule.id, trigger, JSON.stringify(Array.isArray(action) ? action : [action]), maxAttempts, fixture.humanId],
+  )).rows[0]!
+  await db.query('UPDATE automation_rules SET current_version_id=$1 WHERE id=$2', [version.id, rule.id])
+  return rule.id
+}
+
+async function createLoop(name: string, input: {
+  ownerActorId?: string
+  noOverlap?: boolean
+  maxCostMinor?: number | string
+  maxTokens?: number
+  agentId?: string
+} = {}): Promise<string> {
+  return (await db.query<{ id: string }>(
+    `INSERT INTO loops(
+      workspace_id,team_id,name,owner_actor_id,agent_id,run_template_version_id,trigger,budget,
+      no_overlap,visibility,failure_notification
+    ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,'team','owner') RETURNING id`,
+    [fixture.workspaceId, fixture.teamId, `${name}-${randomUUID()}`, input.ownerActorId ?? fixture.humanId,
+      input.agentId ?? fixture.agentId, fixture.templateVersionId, { type: 'schedule', cron: '* * * * *', timezone: 'UTC' },
+      {
+        maxCostMinor: input.maxCostMinor ?? 100,
+        maxTokens: input.maxTokens ?? 1_000,
+        currency: 'USD',
+        maxRetries: 3,
+      },
+      input.noOverlap ?? true],
+  )).rows[0]!.id
+}
+
+describe('Stage 4 durable Automation and Loop runtime', () => {
+  beforeAll(async () => {
+    await applyMigrations(db)
+    await db.query('TRUNCATE TABLE workspaces CASCADE')
+    const installed = await installWorkspace(db, {
+      workspaceName: 'Stage 4 Automation',
+      workspaceSlug: `stage4-${randomUUID()}`,
+      adminName: 'Stage 4 Admin',
+      email: `stage4-${randomUUID()}@example.test`,
+      password: 'stage-four-integration-password',
+    })
+    const state = (await db.query<{ id: string }>(
+      "SELECT id FROM workflow_states WHERE team_id=$1 AND category='backlog' ORDER BY position LIMIT 1",
+      [installed.teamId],
+    )).rows[0]!
+    const item = (await db.query<{ id: string }>(
+      `INSERT INTO work_items(
+        workspace_id,team_id,number,title,status_id,responsible_human_actor_id,labels
+      ) VALUES($1,$2,1,'Scheduled triage',$3,$4,'{}') RETURNING id`,
+      [installed.workspaceId, installed.teamId, state.id, installed.actorId],
+    )).rows[0]!
+    await db.query(
+      'UPDATE teams SET next_work_item_number=2 WHERE id=$1',
+      [installed.teamId],
+    )
+    const agentActor = (await db.query<{ id: string }>(
+      "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Stage 4 Agent') RETURNING id",
+      [installed.workspaceId],
+    )).rows[0]!
+    const capabilities = ['work:read', 'work:write']
+    const agent = (await db.query<{ id: string }>(
+      `INSERT INTO agent_definitions(
+        workspace_id,actor_id,slug,display_name,supported_protocols,requested_capabilities,approved_capabilities
+      ) VALUES($1,$2,$3,'Stage 4 Agent',ARRAY['native_http']::agent_protocol[],$4,$4) RETURNING id`,
+      [installed.workspaceId, agentActor.id, `stage4-${randomUUID()}`, capabilities],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities)
+       VALUES($1,$2,$3,$4,$5)`,
+      [installed.workspaceId, agent.id, installed.teamId, installed.actorId, capabilities],
+    )
+    const template = (await db.query<{ id: string }>(
+      `INSERT INTO templates(workspace_id,kind,name,owner_actor_id,status)
+       VALUES($1,'agent_run',$2,$3,'active') RETURNING id`,
+      [installed.workspaceId, `triage-${randomUUID()}`, installed.actorId],
+    )).rows[0]!
+    const templateVersion = (await db.query<{ id: string }>(
+      `INSERT INTO template_versions(template_id,version,body,change_summary,created_by_actor_id)
+       VALUES($1,1,$2,'Initial',$3) RETURNING id`,
+      [template.id, { requiredCapabilities: capabilities }, installed.actorId],
+    )).rows[0]!
+    await db.query('UPDATE templates SET current_version_id=$1 WHERE id=$2', [templateVersion.id, template.id])
+    fixture = {
+      workspaceId: installed.workspaceId,
+      teamId: installed.teamId,
+      humanId: installed.actorId,
+      workItemId: item.id,
+      agentId: agent.id,
+      agentActorId: agentActor.id,
+      templateVersionId: templateVersion.id,
+    }
+  }, 120_000)
+  afterAll(async () => { await db.end() })
+
+  it('deduplicates an event occurrence and produces exactly one action', async () => {
+    const revision = (await db.query<{ revision: number }>('SELECT revision FROM work_items WHERE id=$1', [fixture.workItemId])).rows[0]!.revision
+    const ruleId = await createRule('dedupe', {
+      type: 'add_label',
+      parameters: { workItemId: fixture.workItemId, expectedRevision: revision, label: 'triaged' },
+    })
+    const occurrenceKey = `event:${randomUUID()}`
+    const first = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('dedupe-1'), ruleId, occurrenceKey, eventId: randomUUID(),
+      payload: { work: { id: fixture.workItemId } }, dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const replay = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('dedupe-2'), ruleId, occurrenceKey, eventId: randomUUID(),
+      payload: { work: { id: fixture.workItemId } }, dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    expect(replay).toMatchObject({ id: first.id, duplicate: true })
+    const worker = createAutomationWorker({ db, workerId: `dedupe-${randomUUID()}` })
+    await worker.tick()
+    expect((await db.query<{ labels: string[] }>('SELECT labels FROM work_items WHERE id=$1', [fixture.workItemId])).rows[0]!.labels)
+      .toContain('triaged')
+    expect((await db.query('SELECT 1 FROM automation_effects WHERE run_id=$1', [first.id])).rowCount).toBe(1)
+  })
+
+  it('dead-letters an exhausted predecessor and permanently blocks later ordinals', async () => {
+    const blockedTitle = `Blocked after DLQ ${randomUUID()}`
+    const ruleId = await createRule('dlq', [
+      { type: 'request_approval', parameters: {} },
+      { type: 'create_work_item', parameters: { teamId: fixture.teamId, title: blockedTitle } },
+    ], 2)
+    const admitted = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('dlq'), ruleId, occurrenceKey: `event:${randomUUID()}`,
+      payload: {}, dryRun: false, authorization: { kind: 'trusted_worker' },
+    }))
+    const firstWorker = createAutomationWorker({ db, workerId: `dlq-first-${randomUUID()}` })
+    const secondWorker = createAutomationWorker({ db, workerId: `dlq-second-${randomUUID()}` })
+    const firstClaims = await Promise.all([firstWorker.claimEffects(), secondWorker.claimEffects()])
+    const firstRunClaims = firstClaims.flat().filter(effect => effect.runId === admitted.id)
+    expect(firstRunClaims).toHaveLength(1)
+    expect(firstRunClaims[0]!.actionOrdinal).toBe(0)
+    const firstOwner = firstClaims[0].includes(firstRunClaims[0]!) ? firstWorker : secondWorker
+    await firstOwner.executeEffect(firstRunClaims[0]!)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM automation_effects WHERE run_id=$1 AND action_ordinal=1',
+      [admitted.id],
+    )).rows[0]!.status).toBe('pending')
+    await db.query("UPDATE automation_effects SET available_at=now() WHERE run_id=$1 AND status='pending'", [admitted.id])
+    const retryClaims = await Promise.all([firstWorker.claimEffects(), secondWorker.claimEffects()])
+    const retryRunClaims = retryClaims.flat().filter(effect => effect.runId === admitted.id)
+    expect(retryRunClaims).toHaveLength(1)
+    expect(retryRunClaims[0]!.actionOrdinal).toBe(0)
+    const retryOwner = retryClaims[0].includes(retryRunClaims[0]!) ? firstWorker : secondWorker
+    await retryOwner.executeEffect(retryRunClaims[0]!)
+    expect((await db.query<{ status: string }>('SELECT status FROM automation_runs WHERE id=$1', [admitted.id])).rows[0]!.status)
+      .toBe('dead')
+    expect((await db.query<{ action_ordinal: number; status: string; attempt_count: number }>(
+      'SELECT action_ordinal,status,attempt_count FROM automation_effects WHERE run_id=$1 ORDER BY action_ordinal',
+      [admitted.id],
+    )).rows).toEqual([
+      expect.objectContaining({ action_ordinal: 0, status: 'dead', attempt_count: 2 }),
+      expect.objectContaining({ action_ordinal: 1, status: 'pending', attempt_count: 0 }),
+    ])
+    const afterDlq = await firstWorker.claimEffects()
+    expect(afterDlq.some(effect => effect.runId === admitted.id)).toBe(false)
+    expect((await db.query(
+      'SELECT 1 FROM work_items WHERE workspace_id=$1 AND title=$2',
+      [fixture.workspaceId, blockedTitle],
+    )).rowCount).toBe(0)
+    await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
+  })
+
+  it('serializes action ordinals across concurrent workers', async () => {
+    const firstTitle = `Ordered first ${randomUUID()}`
+    const secondTitle = `Ordered second ${randomUUID()}`
+    const ruleId = await createRule('ordinal-order', [
+      { type: 'notify', parameters: { recipientActorId: fixture.humanId, title: firstTitle } },
+      { type: 'notify', parameters: { recipientActorId: fixture.humanId, title: secondTitle } },
+    ])
+    const admitted = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('ordinal-order'),
+      ruleId,
+      occurrenceKey: `event:${randomUUID()}`,
+      payload: {},
+      dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const workerA = createAutomationWorker({ db, workerId: `ordinal-a-${randomUUID()}` })
+    const workerB = createAutomationWorker({ db, workerId: `ordinal-b-${randomUUID()}` })
+    const initialClaims = await Promise.all([workerA.claimEffects(), workerB.claimEffects()])
+    const runClaims = initialClaims.flat().filter(effect => effect.runId === admitted.id)
+    expect(runClaims).toHaveLength(1)
+    expect(runClaims[0]!.actionOrdinal).toBe(0)
+    const initialOwner = initialClaims[0].includes(runClaims[0]!) ? workerA : workerB
+    await initialOwner.executeEffect(runClaims[0]!)
+    expect((await db.query(
+      'SELECT 1 FROM notifications WHERE workspace_id=$1 AND title=$2',
+      [fixture.workspaceId, secondTitle],
+    )).rowCount).toBe(0)
+
+    const laterClaims = await Promise.all([workerA.claimEffects(), workerB.claimEffects()])
+    const laterRunClaims = laterClaims.flat().filter(effect => effect.runId === admitted.id)
+    expect(laterRunClaims).toHaveLength(1)
+    expect(laterRunClaims[0]!.actionOrdinal).toBe(1)
+    const owner = laterClaims[0].includes(laterRunClaims[0]!) ? workerA : workerB
+    await owner.executeEffect(laterRunClaims[0]!)
+    expect((await db.query<{ title: string }>(
+      'SELECT title FROM notifications WHERE workspace_id=$1 AND title=ANY($2::text[]) ORDER BY title',
+      [fixture.workspaceId, [firstTitle, secondTitle]],
+    )).rows.map(row => row.title).sort()).toEqual([firstTitle, secondTitle].sort())
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM automation_runs WHERE id=$1',
+      [admitted.id],
+    )).rows[0]!.status).toBe('succeeded')
+    await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
+  })
+
+  it('atomically enforces Loop overlap, budget cutoff, rollback, and revocation', async () => {
+    const loopId = await createLoop('overlap')
+    await withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-first'), loopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-overlap'), loopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow('Loop already has an active run')
+
+    const parallelLoopId = await createLoop('parallel', { noOverlap: false })
+    const parallelFirst = await withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-parallel-first'),
+      loopId: parallelLoopId,
+      occurrenceKey: `schedule:${randomUUID()}`,
+      scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const parallelSecond = await withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-parallel-second'),
+      loopId: parallelLoopId,
+      occurrenceKey: `schedule:${randomUUID()}`,
+      scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))
+    expect(parallelSecond.runId).not.toBe(parallelFirst.runId)
+
+    const budgetLoopId = await createLoop('budget', { noOverlap: false, maxCostMinor: 101 })
+    await db.query(
+      `INSERT INTO budget_policies(
+        workspace_id,scope_type,scope_id,currency,hard_cost_minor,created_by_actor_id
+      ) VALUES($1,'loop',$2,'USD',100,$3)`,
+      [fixture.workspaceId, budgetLoopId, fixture.humanId],
+    )
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-budget'), loopId: budgetLoopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow('hard budget')
+
+    const preciseBudgetLoopId = await createLoop('precise-budget', {
+      noOverlap: false,
+      maxCostMinor: '9007199254740993',
+    })
+    await db.query(
+      `INSERT INTO budget_policies(
+        workspace_id,scope_type,scope_id,currency,hard_cost_minor,created_by_actor_id
+      ) VALUES($1,'loop',$2,'USD',$3,$4)`,
+      [fixture.workspaceId, preciseBudgetLoopId, '9007199254740992', fixture.humanId],
+    )
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-precise-budget'),
+      loopId: preciseBudgetLoopId,
+      occurrenceKey: `schedule:${randomUUID()}`,
+      scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow('hard budget')
+
+    const tokenBudgetLoopId = await createLoop('token-budget', {
+      noOverlap: false,
+      maxCostMinor: 1,
+      maxTokens: 101,
+    })
+    await db.query(
+      `INSERT INTO budget_policies(
+        workspace_id,scope_type,scope_id,currency,hard_tokens,created_by_actor_id
+      ) VALUES($1,'loop',$2,'USD',100,$3)`,
+      [fixture.workspaceId, tokenBudgetLoopId, fixture.humanId],
+    )
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-token-budget'),
+      loopId: tokenBudgetLoopId,
+      occurrenceKey: `schedule:${randomUUID()}`,
+      scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow('hard token budget')
+
+    const rollbackLoopId = await createLoop('rollback', { ownerActorId: fixture.agentActorId })
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-rollback'), loopId: rollbackLoopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow()
+    expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1', [rollbackLoopId])).rowCount).toBe(0)
+
+    const revokedLoopId = await createLoop('revoked')
+    await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2', [fixture.agentId, fixture.teamId])
+    await expect(withTx(db, tx => admitLoopRun(tx, {
+      meta: meta('loop-revoked'), loopId: revokedLoopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+      authorization: { kind: 'trusted_worker' },
+    }))).rejects.toThrow('LOOP_AGENT_TEAM_ACCESS_REVOKED')
+    expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1', [revokedLoopId])).rowCount).toBe(0)
+    await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2', [fixture.agentId, fixture.teamId])
+  })
+
+  it('executes every declared internal action through the same authority boundary', async () => {
+    const projectId = (await db.query<{ id: string }>(
+      `INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,$3) RETURNING id`,
+      [fixture.workspaceId, fixture.teamId, `Automation project ${randomUUID()}`],
+    )).rows[0]!.id
+    const delegationId = (await db.query<{ id: string }>(
+      `INSERT INTO delegations(
+         workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,
+         role,scope_type,scope_id,permissions_snapshot,capability_scope
+       ) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8) RETURNING id`,
+      [fixture.workspaceId, fixture.teamId, fixture.agentId, fixture.agentActorId, fixture.humanId,
+        fixture.workItemId, ['work:read', 'work:write'], {
+          teamIds: [fixture.teamId], workItemIds: [fixture.workItemId], projectIds: [projectId],
+        }],
+    )).rows[0]!.id
+    const sessionId = (await db.query<{ id: string }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state
+       ) VALUES($1,$2,$3,$4,$5,$6,'executing') RETURNING id`,
+      [fixture.workspaceId, fixture.teamId, fixture.agentId, fixture.agentActorId,
+        delegationId, fixture.workItemId],
+    )).rows[0]!.id
+    const actions = [
+      {
+        name: 'create-item',
+        action: {
+          type: 'create_work_item',
+          parameters: { teamId: fixture.teamId, projectId, title: 'Created by automation' },
+        },
+      },
+      {
+        name: 'send-message',
+        action: { type: 'send_message', parameters: { sessionId, bodyMarkdown: 'Automation checkpoint.' } },
+      },
+      {
+        name: 'request-approval',
+        action: {
+          type: 'request_approval',
+          parameters: {
+            sessionId,
+            actionName: 'automation.review',
+            actionPayloadHash: `sha256:${'a'.repeat(64)}`,
+            actionPayloadSanitized: { action: 'review' },
+            riskLevel: 'medium',
+            rationaleSummary: 'Automation requires human review.',
+            expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
+          },
+        },
+      },
+      {
+        name: 'project-update',
+        action: {
+          type: 'create_project_update',
+          parameters: { projectId, health: 'at_risk', body: 'Automation drafted this update.' },
+        },
+      },
+    ]
+    for (const entry of actions) {
+      const ruleId = await createRule(entry.name, entry.action)
+      await withTx(db, tx => admitAutomationOccurrence(tx, {
+        meta: meta(entry.name),
+        ruleId,
+        occurrenceKey: `event:${randomUUID()}`,
+        payload: {},
+        dryRun: false,
+        authorization: { kind: 'trusted_worker' },
+      }))
+    }
+    await createAutomationWorker({ db, workerId: `actions-${randomUUID()}` }).tick()
+    expect((await db.query(
+      `SELECT 1 FROM work_items WHERE project_id=$1 AND title='Created by automation'`,
+      [projectId],
+    )).rowCount).toBe(1)
+    expect((await db.query(
+      `SELECT 1 FROM agent_activities WHERE session_id=$1 AND details_markdown='Automation checkpoint.'`,
+      [sessionId],
+    )).rowCount).toBe(1)
+    expect((await db.query(
+      `SELECT 1 FROM approvals WHERE session_id=$1 AND action_name='automation.review'`,
+      [sessionId],
+    )).rowCount).toBe(1)
+    expect((await db.query(
+      `SELECT 1 FROM project_updates WHERE project_id=$1 AND status='draft'
+        AND body='Automation drafted this update.'`,
+      [projectId],
+    )).rowCount).toBe(1)
+  })
+
+  it('revalidates authority after claim and does not repeat a webhook after a post-success crash', async () => {
+    const pausedRuleId = await createRule('pause-after-claim', {
+      type: 'create_work_item',
+      parameters: { teamId: fixture.teamId, title: 'Must not be created' },
+    })
+    const pausedRun = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('pause-after-claim'),
+      ruleId: pausedRuleId,
+      occurrenceKey: `event:${randomUUID()}`,
+      payload: {},
+      dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const pauseWorker = createAutomationWorker({ db, workerId: `pause-${randomUUID()}` })
+    const [claimed] = await pauseWorker.claimEffects()
+    expect(claimed?.runId).toBe(pausedRun.id)
+    await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [pausedRuleId])
+    await pauseWorker.executeEffect(claimed!)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM automation_effects WHERE run_id=$1',
+      [pausedRun.id],
+    )).rows[0]).toMatchObject({ status: 'pending', last_error: 'AUTOMATION_AUTHORITY_REVOKED' })
+    expect((await db.query(
+      `SELECT 1 FROM work_items WHERE workspace_id=$1 AND title='Must not be created'`,
+      [fixture.workspaceId],
+    )).rowCount).toBe(0)
+
+    const revokedRuleId = await createRule('owner-revoked-after-claim', {
+      type: 'create_work_item',
+      parameters: { teamId: fixture.teamId, title: 'Revoked owner item' },
+    })
+    const revokedRun = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('owner-revoked-after-claim'),
+      ruleId: revokedRuleId,
+      occurrenceKey: `event:${randomUUID()}`,
+      payload: {},
+      dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const revokeWorker = createAutomationWorker({ db, workerId: `revoke-${randomUUID()}` })
+    const revokedEffect = (await revokeWorker.claimEffects()).find(effect => effect.runId === revokedRun.id)
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [fixture.humanId])
+    await revokeWorker.executeEffect(revokedEffect!)
+    await db.query('UPDATE actors SET is_active=true WHERE id=$1', [fixture.humanId])
+    expect((await db.query<{ last_error: string }>(
+      'SELECT last_error FROM automation_effects WHERE run_id=$1',
+      [revokedRun.id],
+    )).rows[0]!.last_error).toBe('AUTOMATION_AUTHORITY_REVOKED')
+
+    const webhookRuleId = await createRule('webhook-crash', {
+      type: 'call_webhook',
+      parameters: { url: 'https://webhook.example.test/events', payload: { safe: true } },
+    })
+    const webhookRun = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('webhook-crash'),
+      ruleId: webhookRuleId,
+      occurrenceKey: `event:${randomUUID()}`,
+      payload: {},
+      dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    let sends = 0
+    let crash = true
+    const webhookWorker = createAutomationWorker({
+      db,
+      workerId: `webhook-${randomUUID()}`,
+      sink: {
+        async callWebhook() {
+          sends += 1
+          return { status: 204, receipt: `receipt-${sends}` }
+        },
+        async deliverBrowser() { return {} },
+      },
+      async afterExternalDelivery() {
+        if (crash) {
+          crash = false
+          throw new Error('SIMULATED_CRASH_AFTER_EXTERNAL_SUCCESS')
+        }
+      },
+    })
+    const webhookEffect = (await webhookWorker.claimEffects()).find(effect => effect.runId === webhookRun.id)
+    await webhookWorker.executeEffect(webhookEffect!)
+    await db.query(
+      "UPDATE automation_effects SET available_at=now() WHERE run_id=$1 AND status='pending'",
+      [webhookRun.id],
+    )
+    const replayEffect = (await webhookWorker.claimEffects()).find(effect => effect.runId === webhookRun.id)
+    await webhookWorker.executeEffect(replayEffect!)
+    expect(sends).toBe(1)
+    expect((await db.query<{ state: string }>(
+      `SELECT intent.state FROM automation_external_effect_intents intent
+       JOIN automation_effects effect ON effect.id=intent.effect_id WHERE effect.run_id=$1`,
+      [webhookRun.id],
+    )).rows[0]!.state).toBe('uncertain')
+
+    const rebindRuleId = await createRule('webhook-rebind', {
+      type: 'call_webhook',
+      parameters: { url: 'https://webhook.example.test/events', payload: {} },
+    })
+    const rebindRun = await withTx(db, tx => admitAutomationOccurrence(tx, {
+      meta: meta('webhook-rebind'),
+      ruleId: rebindRuleId,
+      occurrenceKey: `event:${randomUUID()}`,
+      payload: {},
+      dryRun: false,
+      authorization: { kind: 'trusted_worker' },
+    }))
+    const rebindWorker = createAutomationWorker({
+      db,
+      workerId: `rebind-${randomUUID()}`,
+      dnsLookup: async () => [{ address: '::ffff:127.0.0.1', family: 6 }],
+    })
+    const rebindEffect = (await rebindWorker.claimEffects()).find(effect => effect.runId === rebindRun.id)
+    await rebindWorker.executeEffect(rebindEffect!)
+    expect((await db.query<{ last_error: string }>(
+      'SELECT last_error FROM automation_effects WHERE run_id=$1',
+      [rebindRun.id],
+    )).rows[0]!.last_error).toContain('UNSAFE_WEBHOOK_TARGET')
+  })
+
+  it('runs the scheduled triage demo end to end and creates an auditable Session', async () => {
+    const clock = new Date('2026-07-26T12:00:30Z')
+    const ruleId = await createRule('scheduled-triage', {
+      type: 'delegate_agent',
+      parameters: {
+        workItemId: fixture.workItemId,
+        agentId: fixture.agentId,
+        principalHumanActorId: fixture.humanId,
+        capabilities: ['work:read', 'work:write'],
+        budget: { maxCostMinor: 100, currency: 'USD' },
+      },
+    }, 3, { type: 'schedule', cron: '* * * * *', timezone: 'UTC' })
+    const worker = createAutomationWorker({ db, workerId: `triage-${randomUUID()}`, now: () => clock })
+    await worker.tick()
+    const run = (await db.query<{ id: string; status: string }>(
+      'SELECT id,status FROM automation_runs WHERE rule_id=$1 ORDER BY created_at DESC LIMIT 1',
+      [ruleId],
+    )).rows[0]!
+    expect(run.status).toBe('succeeded')
+    const session = (await db.query<{ id: string; state: string }>(
+      `SELECT session.id,session.state FROM agent_sessions session
+       JOIN domain_events event ON event.aggregate_id=session.id AND event.event_type='agent.session.created'
+       WHERE event.payload->>'automationRunId'=$1`,
+      [run.id],
+    )).rows[0]
+    expect(session).toEqual(expect.objectContaining({ state: 'queued' }))
+    expect((await db.query(
+      `SELECT 1 FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id
+       WHERE event.aggregate_id=$1 AND event.event_type='agent.session.created'`,
+      [session!.id],
+    )).rowCount).toBe(1)
+  })
+
+  it('admits a durable domain-event trigger exactly once across replay', async () => {
+    const eventType = `stage4.acceptance.${randomUUID()}`
+    const revision = (await db.query<{ revision: number }>(
+      'SELECT revision FROM work_items WHERE id=$1',
+      [fixture.workItemId],
+    )).rows[0]!.revision
+    const ruleId = await createRule('event-replay', {
+      type: 'add_label',
+      parameters: {
+        workItemId: fixture.workItemId,
+        expectedRevision: revision,
+        label: 'event-triggered',
+      },
+    }, 3, { type: 'event', eventTypes: [eventType] })
+    await withTx(db, tx => appendEvent(tx, {
+      workspaceId: fixture.workspaceId,
+      teamId: fixture.teamId,
+      actorId: fixture.humanId,
+      correlationId: `event-trigger:${randomUUID()}`,
+      type: eventType,
+      aggregateType: 'work_item',
+      aggregateId: fixture.workItemId,
+      payload: { work: { id: fixture.workItemId } },
+    }))
+    const worker = createAutomationWorker({ db, workerId: `event-${randomUUID()}` })
+    await worker.admitEventRules()
+    await worker.admitEventRules()
+    expect((await db.query(
+      `SELECT 1 FROM automation_occurrences WHERE rule_id=$1`,
+      [ruleId],
+    )).rowCount).toBe(1)
+    await worker.tick()
+    expect((await db.query<{ labels: string[] }>(
+      'SELECT labels FROM work_items WHERE id=$1',
+      [fixture.workItemId],
+    )).rows[0]!.labels).toContain('event-triggered')
+  })
+})

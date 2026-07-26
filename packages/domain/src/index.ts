@@ -347,3 +347,5 @@ export function milestoneProgress(items: readonly { statusCategory: string }[]):
   const completed = items.filter((item) => item.statusCategory === 'completed').length
   return { completed, total, percent: total === 0 ? 0 : Math.round((completed / total) * 100) }
 }
+
+export * from './stage4.js'

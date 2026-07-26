@@ -139,3 +139,5 @@ export async function appendEvent(tx: PoolClient, input: { workspaceId: string; 
   return event.rows[0]!.id
 }
 export const rows = <T extends QueryResultRow>(result: { rows: T[] }) => result.rows
+
+export * from './stage4.js'

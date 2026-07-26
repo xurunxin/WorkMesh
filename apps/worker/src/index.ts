@@ -6,12 +6,14 @@ import { createSessionLifecycleWorker } from './session-lifecycle.js'
 import { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
-import { FakeGitProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
+import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
+import { createAutomationWorker } from './automation.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
 export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 export { createArtifactUploadWorker } from './artifact-uploads.js'
+export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
@@ -170,10 +172,32 @@ const startWorkerProcess = (): void => {
   const sessionLifecycleWorker = createSessionLifecycleWorker({ db })
   const fakeProvider = new FakeGitProvider()
   const githubProviders = new Map<string, GitProvider>()
+  const giteaProviders = new Map<string, GitProvider>()
   const providerActionWorker = createProviderActionWorker({
     db,
     resolveProvider: async (provider, connectionId) => {
       if (provider === 'fake') return fakeProvider
+      if (provider === 'gitea') {
+        const cached = giteaProviders.get(connectionId)
+        if (cached) return cached
+        const masterKey = process.env.WORKMESH_MASTER_KEY
+        if (!masterKey) throw new Error('WORKMESH_MASTER_KEY is required for Gitea credentials')
+        const row = (await db.query<{ installation_id: string; credentials: string }>(
+          `SELECT installation_id,pgp_sym_decrypt(credentials_ciphertext,$2) AS credentials
+             FROM provider_connections
+            WHERE id=$1 AND provider='gitea' AND active`,
+          [connectionId, masterKey],
+        )).rows[0]
+        if (!row?.installation_id) throw new Error('GITEA_CONNECTION_NOT_FOUND')
+        const credentials = JSON.parse(row.credentials) as { accessToken?: unknown }
+        if (typeof credentials.accessToken !== 'string') throw new Error('GITEA_CREDENTIALS_INVALID')
+        const gitea = new GiteaProvider({
+          baseUrl: row.installation_id,
+          accessToken: credentials.accessToken,
+        })
+        giteaProviders.set(connectionId, gitea)
+        return gitea
+      }
       const cached = githubProviders.get(connectionId)
       if (cached) return cached
       const masterKey = process.env.WORKMESH_MASTER_KEY
@@ -199,6 +223,7 @@ const startWorkerProcess = (): void => {
     },
   })
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
+  const automationWorker = createAutomationWorker({ db })
   let stopping = false
   let timer: NodeJS.Timeout | undefined
 
@@ -209,6 +234,7 @@ const startWorkerProcess = (): void => {
       await sessionLifecycleWorker.tick()
       await providerActionWorker.tick()
       await artifactUploadWorker.tick()
+      await automationWorker.tick()
     } catch (error) {
       console.error('outbox worker tick failed', error)
     }

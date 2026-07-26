@@ -37,6 +37,7 @@ import {
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
+import { registerOperationsRoutes } from "./operations/routes.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -299,6 +300,7 @@ export const buildApp = () => {
             : error.code === "NOT_FOUND"
               ? 404
               : error.code.includes("CONFLICT") ||
+                  error.code.endsWith("OUT_OF_ORDER") ||
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
                   ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED"].includes(error.code)
@@ -664,6 +666,7 @@ export const buildApp = () => {
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
+  registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   return app;
 };
 
