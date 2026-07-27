@@ -26,4 +26,20 @@ const token = createHash('sha256')
   .update(commit)
   .digest('base64url')
 
-appendFileSync(environmentFile, `WORKMESH_BOOTSTRAP_TOKEN=${token}\n`, 'utf8')
+const paginationKey = createHash('sha256')
+  .update('workmesh:ci-pagination-test-only:v1\0')
+  .update(scope)
+  .update('\0')
+  .update(commit)
+  .digest('base64url')
+
+appendFileSync(
+  environmentFile,
+  [
+    `WORKMESH_BOOTSTRAP_TOKEN=${token}`,
+    `PAGINATION_CURSOR_KEYS=ci:${paginationKey}`,
+    'PAGINATION_CURSOR_ACTIVE_KID=ci',
+    '',
+  ].join('\n'),
+  'utf8',
+)

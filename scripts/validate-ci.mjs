@@ -7,6 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
 const packageJson = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
 const turboJson = JSON.parse(readFileSync(resolve(root, 'turbo.json'), 'utf8'))
+const bootstrapHelperSource = readFileSync(resolve(root, 'scripts/set-ci-bootstrap-token.mjs'), 'utf8')
 const nodeVersion = readFileSync(resolve(root, '.node-version'), 'utf8').trim()
 const failures = []
 
@@ -342,6 +343,16 @@ requireCondition(
   Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes('WORKMESH_BOOTSTRAP_TOKEN'),
   'Turbo globalEnv must forward the runtime-generated bootstrap credential',
 )
+for (const name of ['PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID']) {
+  requireCondition(
+    bootstrapHelperSource.includes(`${name}=`),
+    `CI credential helper must derive ${name} without logging it`,
+  )
+  requireCondition(
+    Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes(name),
+    `Turbo globalEnv must forward ${name}`,
+  )
+}
 requireCondition(
   source.includes('docker compose config --quiet'),
   'source-gates must validate Compose without rendering expanded environment values',
