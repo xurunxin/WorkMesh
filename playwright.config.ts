@@ -56,6 +56,10 @@ export default defineConfig({
         WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
         WEB_ORIGIN: webUrl,
         API_PORT: apiPort,
+        // Acceptance starts API + Web without the outbox worker that normally
+        // publishes Redis wake hints, so keep the durable PostgreSQL reconcile
+        // inside Playwright's cross-page assertion window.
+        REALTIME_HEALTHY_RECONCILE_MS: "1000",
         WORKMESH_BETA_PLANNING: "true",
         WORKMESH_BETA_TEMPLATES: "true",
         WORKMESH_BETA_COSTS: "true",

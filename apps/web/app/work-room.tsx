@@ -3,14 +3,16 @@
 import { type FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { apiRequest, json } from './lib/api'
 import { type AgentSession, agentStateClass, agentStateLabel, canStopAgentSession, formatTime } from './lib/agents'
-import { type Room, type RoomRecord, arrayValue, createRoomMessage, findWorkItemRoom, normalizeRoomTimelineItem, numberValue, optionalRoomRequest, roomMutation, stringValue, value } from './lib/room'
+import { type Room, type RoomRecord, arrayValue, createRoomMessage, findWorkItemRoom, mergeRoomTimelines, normalizeRoomTimelineItem, numberValue, optionalRoomRequest, roomMutation, stringValue, value } from './lib/room'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { useRealtimeSubscription } from './lib/realtime'
+import { workRoomRefreshTargets } from './lib/realtime-refresh'
 
 type Tab = 'conversation' | 'plan' | 'activity' | 'artifacts' | 'decisions' | 'sessions'
 type LegacyComment = { id: string; body: string; revision: number; parent_comment_id: string | null; reply_to_comment_id: string | null; author_name: string; is_resolved: boolean; created_at: string; mentions: string[] }
 type LegacyHuman = { id: string; display_name: string }
 type IdentifiedRoomRecord = RoomRecord & { id: string }
-type Props = { workItemId: string; legacyComments: LegacyComment[]; legacyHumans: LegacyHuman[]; onLegacyComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onLegacyUpdate: (comment: LegacyComment, patch: Record<string, string | boolean>) => Promise<void> }
+type Props = { workItemId: string; legacyComments: LegacyComment[]; legacyHumans: LegacyHuman[]; onLegacyComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onLegacyUpdate: (comment: LegacyComment, patch: Record<string, string | boolean>) => Promise<void>; onLegacyRefresh: () => Promise<unknown> }
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'conversation', label: 'Conversation' }, { id: 'plan', label: 'Plan' }, { id: 'activity', label: 'Activity' },
@@ -100,7 +102,7 @@ function DecisionCard({ decision, onAction }: { decision: RoomRecord; onAction: 
   return <article className="room-card decision-card" data-testid={`decision-${stringValue(decision, 'id')}`}><header><strong>Decision</strong><span className={final ? 'decision-final' : 'decision-proposal'}>{final ? 'Human final' : 'Agent proposal'}</span></header><p>{stringValue(decision, 'question', 'title', 'summary') || 'No question recorded.'}</p><p>Decision: {stringValue(decision, 'selectedOption', 'selected_option') || 'not selected'} · Rationale: {stringValue(decision, 'rationale') || 'not reported'}</p><p>Proposed by: {stringValue(decision, 'proposedByActorId', 'proposed_by_actor_id', 'actorId', 'actor_id') || 'agent not reported'} · Finalized by: {stringValue(decision, 'finalizedByActorId', 'finalized_by_actor_id') || 'not finalized'}</p>{options.length > 0 && <ul>{options.map((option, index) => <li key={index}>{option}</li>)}</ul>}{affected.length > 0 && <p>Affected resources: {affected.map(resource => `${stringValue(resource, 'resourceType', 'resource_type')}:${stringValue(resource, 'resourceId', 'resource_id')} (${stringValue(resource, 'impact')})`).join(', ')}</p>}{relations.length > 0 && <p>Decision lineage: {relations.map(relation => `${stringValue(relation, 'kind')} ${stringValue(relation, 'relatedDecisionId', 'related_decision_id')}`).join(', ')}</p>}<div className="session-actions">{!final && <button onClick={() => onAction(decision, 'finalize')}>Finalize as human</button>}{final && <><button onClick={() => onAction(decision, 'supersede')}>Supersede</button><button className="danger" onClick={() => onAction(decision, 'reverse')}>Reverse</button></>}</div></article>
 }
 
-export function WorkRoom({ workItemId, legacyComments, legacyHumans, onLegacyComment, onLegacyUpdate }: Props) {
+export function WorkRoom({ workItemId, legacyComments, legacyHumans, onLegacyComment, onLegacyUpdate, onLegacyRefresh }: Props) {
   const [tab, setTab] = useState<Tab>('conversation'); const [room, setRoom] = useState<Room | null>(null)
   const [decisions, setDecisions] = useState<RoomRecord[]>([])
   const [error, setError] = useState(''); const [busy, setBusy] = useState(false); const [activitySessionId, setActivitySessionId] = useState(''); const [showHeartbeats, setShowHeartbeats] = useState(false)
@@ -125,6 +127,17 @@ export function WorkRoom({ workItemId, legacyComments, legacyHumans, onLegacyCom
     return !leaseSessionId || sessionIds.has(leaseSessionId)
   }), [leasesPage.items, sessionIds])
   const collectionError = timelinePage.error ?? sessionsPage.error ?? handoffsPage.error ?? leasesPage.error
+  const realtimeResources = useMemo(
+    () => [{ type: 'work_item' as const, id: workItemId }],
+    [workItemId],
+  )
+  useRealtimeSubscription(realtimeResources, invalidation => {
+    const targets = workRoomRefreshTargets(invalidation, workItemId)
+    const refreshes: Array<Promise<unknown>> = []
+    if (targets.has('timeline')) refreshes.push(timelinePage.refresh())
+    if (targets.has('comments')) refreshes.push(onLegacyRefresh())
+    return Promise.all(refreshes).then(() => undefined)
+  })
   const load = useCallback(async () => {
     try {
       setError('')
@@ -156,7 +169,7 @@ export function WorkRoom({ workItemId, legacyComments, legacyHumans, onLegacyCom
     return () => { current = false }
   }, [timeline])
   const legacyTimeline = legacyComments.map(comment => ({ id: `comment-${comment.id}`, type: 'comment', intent: 'comment', body: comment.body, author_name: comment.author_name, created_at: comment.created_at, status: comment.is_resolved ? 'resolved' : 'open' }))
-  const visibleTimeline = timeline.length ? timeline : legacyTimeline
+  const visibleTimeline = mergeRoomTimelines(timeline, legacyTimeline)
   const participants = room?.participants.length ? room.participants : sessions.map(session => ({ id: session.agent_actor_id, name: session.agent_id, sessionId: session.id, state: session.state }))
   const send = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); const form = new FormData(event.currentTarget); const intent = String(form.get('intent') ?? 'comment'); const body = String(form.get('body') ?? '').trim(); if (!body) return

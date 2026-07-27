@@ -171,7 +171,6 @@ export default function HomePage() {
         void apiRequest<WorkItem>(
           `/api/v1/work-items/${selectedItem.id}`,
         ).then(setSelectedItem)
-        void commentsPage.refresh()
       }
     }
   })
@@ -349,7 +348,7 @@ function WorkBoard({ states, items, onOpen, onMove }: { states: WorkflowState[];
 function MentionPicker({ humans }: { humans: Human[] }) { return <label className="mentions">Mention people<select name="mentions" multiple aria-label="Mention people">{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label> }
 function WorkItemDrawer({ item, workspaceId, humanActorId, states, humans, projects, comments, commentsPage, onClose, onSave, onComment, onUpdateComment }: { item: WorkItem; workspaceId: string; humanActorId: string; states: WorkflowState[]; humans: Human[]; projects: Project[]; comments: Comment[]; commentsPage: ReturnType<typeof usePagedApiList<Comment>>; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => Promise<void>; onComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onUpdateComment: (comment: Comment, patch: Record<string, string | boolean>) => Promise<void> }) {
   return <aside className="drawer" aria-label="Work item details" data-testid="work-item-drawer"><header><h2>{item.team_key}-{item.number}</h2><button onClick={onClose}>Close</button></header><form onSubmit={event => void onSave(event)}><label>Title<input name="title" defaultValue={item.title} required /></label><label>Description<textarea name="description" defaultValue={item.description ?? ''} /></label><div className="drawer-grid"><label>Status<select name="statusId" defaultValue={item.status_id}>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label><label>Priority<select name="priority" defaultValue={item.priority}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{priority}</option>)}</select></label><label>Due date<input name="dueDate" type="date" defaultValue={dateValue(item.due_date)} /></label><label>Owner<select name="ownerId" defaultValue={item.responsible_human_actor_id ?? ''}><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label><label>Project<select name="projectId" defaultValue={item.project_id ?? ''}><option value="">No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label><label>Labels<input name="labels" defaultValue={item.labels.join(', ')} /></label></div><button data-testid="save-work-item">Save changes</button></form>
-    <WorkRoom workItemId={item.id} legacyComments={comments} legacyHumans={humans} onLegacyComment={onComment} onLegacyUpdate={onUpdateComment} />
+    <WorkRoom workItemId={item.id} legacyComments={comments} legacyHumans={humans} onLegacyComment={onComment} onLegacyUpdate={onUpdateComment} onLegacyRefresh={commentsPage.refresh} />
     <LoadMoreButton collection={commentsPage} label="comments" />
     <AgentWorkPanel workspaceId={workspaceId} workItemId={item.id} workItemTeamId={item.team_id} workItemRevision={item.revision} humanActorId={humanActorId} /></aside>
 }

@@ -4,6 +4,7 @@ import {
   agentRegistryRefreshTargets,
   agentWorkRefreshTargets,
   homeRefreshTargets,
+  workRoomRefreshTargets,
 } from './lib/realtime-refresh.js'
 
 const workspaceId = '00000000-0000-4000-8000-000000000001'
@@ -120,5 +121,36 @@ describe('workspace realtime refresh policies', () => {
     )]).toEqual(['sessions'])
     expect([...agentRegistryRefreshTargets(selectedSession)])
       .toEqual(['sessions', 'approvals'])
+  })
+
+  it('refreshes selected comments without widening unrelated Work Rooms', () => {
+    const selectedComment = realtimeEvent({
+      aggregateType: 'comment',
+      scopes: [
+        { type: 'workspace', id: workspaceId },
+        { type: 'team', id: teamId },
+        { type: 'work_item', id: workItemId },
+      ],
+      invalidates: [{ type: 'work_item', id: workItemId }],
+    })
+    expect([...homeRefreshTargets(selectedComment, homeResources)])
+      .toEqual(['items'])
+    expect([...workRoomRefreshTargets(selectedComment, workItemId)])
+      .toEqual(['timeline', 'comments'])
+
+    const otherWorkItemId = '00000000-0000-4000-8000-000000000009'
+    const unrelatedComment = realtimeEvent({
+      aggregateType: 'comment',
+      scopes: [
+        { type: 'workspace', id: workspaceId },
+        { type: 'team', id: teamId },
+        { type: 'work_item', id: otherWorkItemId },
+      ],
+      invalidates: [{ type: 'work_item', id: otherWorkItemId }],
+    })
+    expect([...homeRefreshTargets(unrelatedComment, homeResources)])
+      .toEqual(['items'])
+    expect([...workRoomRefreshTargets(unrelatedComment, workItemId)])
+      .toEqual([])
   })
 })

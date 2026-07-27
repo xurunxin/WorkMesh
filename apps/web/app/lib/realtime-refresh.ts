@@ -9,6 +9,7 @@ export type AgentRegistryRefreshTarget =
   | 'sessions'
   | 'approvals'
 export type AgentWorkRefreshTarget = 'agents' | 'sessions'
+export type WorkRoomRefreshTarget = 'timeline' | 'comments'
 export type HomeRefreshTarget =
   | 'teams'
   | 'states'
@@ -75,6 +76,18 @@ export const agentWorkRefreshTargets = (
   return targets
 }
 
+export const workRoomRefreshTargets = (
+  invalidation: RealtimeInvalidation,
+  workItemId: string,
+): ReadonlySet<WorkRoomRefreshTarget> => {
+  if (invalidation.reason === 'resync')
+    return new Set(['timeline', 'comments'])
+  if (invalidation.event.invalidates.some(resource =>
+    resource.type === 'work_item' && resource.id === workItemId))
+    return new Set(['timeline', 'comments'])
+  return new Set()
+}
+
 export const homeRefreshTargets = (
   invalidation: RealtimeInvalidation,
   resources: Readonly<{
@@ -110,14 +123,15 @@ export const homeRefreshTargets = (
     )
       targets.add('items')
   }
-  if (
+  const invalidatesSelectedWorkItem =
     invalidates.has('work_item')
     && (
       references('team', resources.teamId)
       || references('work_item', resources.workItemId)
     )
-  )
+  if (invalidatesSelectedWorkItem) {
     targets.add('items')
+  }
   if (invalidates.has('workspace')) {
     if (invalidation.event.aggregate_type === 'actor') targets.add('humans')
     if (invalidation.event.aggregate_type === 'saved_view') targets.add('views')
