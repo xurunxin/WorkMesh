@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
 const packageJson = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
+const turboJson = JSON.parse(readFileSync(resolve(root, 'turbo.json'), 'utf8'))
 const nodeVersion = readFileSync(resolve(root, '.node-version'), 'utf8').trim()
 const failures = []
 
@@ -250,6 +251,23 @@ requireCondition(!(jobSections.get('worker-integration') ?? '').includes('redis:
 requireCondition((jobSections.get('e2e') ?? '').includes('playwright install --with-deps chromium'), 'E2E must install Chromium only')
 requireCondition((jobSections.get('e2e') ?? '').includes('playwright-report'), 'E2E must upload playwright-report')
 requireCondition((jobSections.get('e2e') ?? '').includes('test-results'), 'E2E must upload test-results')
+const requiredE2eEnvironment = [
+  'RUN_INTEGRATION',
+  'DATABASE_URL',
+  'SESSION_SECRET',
+  'WORKMESH_MASTER_KEY',
+]
+const e2e = jobSections.get('e2e') ?? ''
+for (const name of requiredE2eEnvironment) {
+  requireCondition(
+    new RegExp(`^\\s{6}${name}:`, 'm').test(e2e),
+    `E2E must declare ${name}`,
+  )
+  requireCondition(
+    Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes(name),
+    `Turbo globalEnv must forward E2E environment ${name}`,
+  )
+}
 requireCondition((jobSections.get('agent-smoke') ?? '').includes('pnpm smoke:agents'), 'agent smoke command is missing')
 requireCondition(
   (jobSections.get('agent-smoke') ?? '').includes('Construction and protocol smoke'),

@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["RUN_INTEGRATION", "DATABASE_URL", "SESSION_SECRET"],
+  "globalEnv": ["RUN_INTEGRATION", "DATABASE_URL", "SESSION_SECRET", "WORKMESH_MASTER_KEY"],
   "tasks": {
     "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".next/**"] },
     "dev": { "cache": false, "persistent": true },
