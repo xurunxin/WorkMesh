@@ -6,6 +6,7 @@ const csrfStorageKey = 'workmesh.csrf-token'
 const logicalAttempts = new Map<string, { key: string; requestIdentity: string }>()
 
 type ApiErrorBody = { error?: { code?: string; message?: string } }
+export type ListResponse<T> = { items: T[]; nextCursor: string | null }
 
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string, public readonly code?: string, public readonly retryAfterSeconds?: number) {
@@ -106,6 +107,27 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: 'include' })
   if (!response.ok) throw await responseError(response)
   return response.json() as Promise<T>
+}
+
+export async function apiListRequest<T>(path: string, init: RequestInit = {}): Promise<ListResponse<T>> {
+  return apiRequest<ListResponse<T>>(path, init)
+}
+
+export function pagedPath(path: string, cursor: string | null, limit = 100): string {
+  const parsed = new URL(path, 'http://workmesh.local')
+  parsed.searchParams.set('limit', String(Math.min(200, Math.max(1, limit))))
+  if (cursor) parsed.searchParams.set('cursor', cursor)
+  else parsed.searchParams.delete('cursor')
+  return `${parsed.pathname}${parsed.search}`
+}
+
+export function appendUniquePage<T extends { id: string }>(
+  current: readonly T[],
+  incoming: readonly T[],
+): T[] {
+  const merged = new Map(current.map(item => [item.id, item]))
+  for (const item of incoming) merged.set(item.id, item)
+  return [...merged.values()]
 }
 
 export function apiMutation<T>(operation: string, path: string, init: RequestInit): Promise<T> {

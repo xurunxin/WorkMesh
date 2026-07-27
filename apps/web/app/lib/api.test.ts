@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, publicMutation } from './api'
+import {
+  ApiError,
+  apiListRequest,
+  appendUniquePage,
+  pagedPath,
+  publicMutation,
+} from './api'
 
 describe('auth mutation idempotency', () => {
   let values: Map<string, string>
@@ -136,5 +142,43 @@ describe('auth mutation idempotency', () => {
     await expect(publicMutation('login-rate-metadata', '/api/v1/auth/login', { method: 'POST', body: JSON.stringify({ email: 'alice@example.test', password: 'wrong-password' }) })).rejects.toMatchObject({
       status: 429, code: 'AUTH_RATE_LIMITED', retryAfterSeconds: 3, message: 'Authentication request is temporarily rate limited',
     })
+  })
+})
+
+describe('paged list requests', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it('preserves the typed page envelope and opaque continuation cursor', async () => {
+    const response = {
+      items: [{ id: 'first' }],
+      nextCursor: 'opaque.signed-cursor',
+    }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(response), { status: 200 }),
+    ))
+
+    await expect(apiListRequest<{ id: string }>('/api/v1/work-items?limit=100'))
+      .resolves.toEqual(response)
+  })
+
+  it('adds or replaces bounded page parameters without changing effective filters', () => {
+    const first = pagedPath('/api/v1/work-items?teamId=team-1&mine=true', null, 100)
+    expect(first).toBe('/api/v1/work-items?teamId=team-1&mine=true&limit=100')
+    expect(pagedPath(first, 'opaque.cursor', 500)).toBe(
+      '/api/v1/work-items?teamId=team-1&mine=true&limit=200&cursor=opaque.cursor',
+    )
+  })
+
+  it('de-duplicates appended pages by stable id while accepting refreshed records', () => {
+    expect(appendUniquePage(
+      [{ id: 'first', title: 'old' }],
+      [{ id: 'first', title: 'new' }, { id: 'second', title: 'later' }],
+    )).toEqual([
+      { id: 'first', title: 'new' },
+      { id: 'second', title: 'later' },
+    ])
   })
 })

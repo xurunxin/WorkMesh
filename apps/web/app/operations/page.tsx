@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { apiRequest, json } from '../lib/api'
+import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
 
 type Rule = {
   id: string
@@ -66,15 +67,6 @@ type Template = {
   status: string
   version: number
 }
-type Snapshot = {
-  cycles: Cycle[]
-  initiatives: Initiative[]
-  rules: Rule[]
-  loops: Loop[]
-  runs: Run[]
-  usage: Usage
-  templates: Template[]
-}
 type FeatureRegistry = {
   features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }>
 }
@@ -83,9 +75,41 @@ const when = (value: string | null) => value ? new Date(value).toLocaleString() 
 const message = (reason: unknown) => reason instanceof Error ? reason.message : 'Request failed'
 
 export default function OperationsPage() {
-  const [data, setData] = useState<Snapshot | null>(null)
+  const [usage, setUsage] = useState<Usage | null>(null)
   const [error, setError] = useState('')
   const [features, setFeatures] = useState<Set<string> | null>(null)
+  const operationsEnabled = features?.has('WORKMESH_BETA_OPERATIONS_UI') ?? false
+  const cyclesPage = usePagedApiList<Cycle>(
+    operationsEnabled && features?.has('WORKMESH_BETA_PLANNING') ? '/api/v1/cycles' : null,
+  )
+  const initiativesPage = usePagedApiList<Initiative>(
+    operationsEnabled && features?.has('WORKMESH_BETA_PLANNING') ? '/api/v1/initiatives' : null,
+  )
+  const rulesPage = usePagedApiList<Rule>(
+    operationsEnabled && features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? '/api/v1/automation-rules' : null,
+  )
+  const loopsPage = usePagedApiList<Loop>(
+    operationsEnabled && features?.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') ? '/api/v1/loops' : null,
+  )
+  const runsPage = usePagedApiList<Run>(
+    operationsEnabled && features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? '/api/v1/automation-runs' : null,
+  )
+  const templatesPage = usePagedApiList<Template>(
+    operationsEnabled && features?.has('WORKMESH_BETA_TEMPLATES') ? '/api/v1/templates' : null,
+  )
+  const collectionError = [
+    cyclesPage.error, initiativesPage.error, rulesPage.error,
+    loopsPage.error, runsPage.error, templatesPage.error,
+  ].find(Boolean)
+  const data = operationsEnabled && usage ? {
+    cycles: cyclesPage.items,
+    initiatives: initiativesPage.items,
+    rules: rulesPage.items,
+    loops: loopsPage.items,
+    runs: runsPage.items,
+    usage,
+    templates: templatesPage.items,
+  } : null
   const load = useCallback(async () => {
     try {
       setError('')
@@ -93,26 +117,17 @@ export default function OperationsPage() {
       const enabled = new Set(registry.features.filter(feature => feature.enabled).map(feature => feature.key))
       setFeatures(enabled)
       if (!enabled.has('WORKMESH_BETA_OPERATIONS_UI')) {
-        setData(null)
+        setUsage(null)
         return
       }
-      const [cycles, initiatives, rules, loops, runs, usage, templates] = await Promise.all([
-        enabled.has('WORKMESH_BETA_PLANNING') ? apiRequest<Cycle[]>('/api/v1/cycles') : Promise.resolve([]),
-        enabled.has('WORKMESH_BETA_PLANNING') ? apiRequest<Initiative[]>('/api/v1/initiatives') : Promise.resolve([]),
-        enabled.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? apiRequest<Rule[]>('/api/v1/automation-rules') : Promise.resolve([]),
-        enabled.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') ? apiRequest<Loop[]>('/api/v1/loops') : Promise.resolve([]),
-        enabled.has('WORKMESH_EXPERIMENTAL_AUTOMATION') ? apiRequest<Run[]>('/api/v1/automation-runs?limit=100') : Promise.resolve([]),
-        enabled.has('WORKMESH_BETA_COSTS') ? apiRequest<Usage>('/api/v1/usage-summary') : Promise.resolve({
+      setUsage(enabled.has('WORKMESH_BETA_COSTS') ? await apiRequest<Usage>('/api/v1/usage-summary') : {
           input_tokens: '0',
           output_tokens: '0',
           runtime_ms: '0',
           tool_calls: '0',
           unknown_cost_records: 0,
           currency_buckets: [],
-        }),
-        enabled.has('WORKMESH_BETA_TEMPLATES') ? apiRequest<Template[]>('/api/v1/templates') : Promise.resolve([]),
-      ])
-      setData({ cycles, initiatives, rules, loops, runs, usage, templates })
+        })
     } catch (reason) {
       setError(message(reason))
     }
@@ -128,7 +143,7 @@ export default function OperationsPage() {
         headers: { ...json({}), 'If-Match': `"revision-${rule.revision}"` },
         body: JSON.stringify({ state: rule.state === 'active' ? 'paused' : 'active' }),
       })
-      await load()
+      await rulesPage.refresh()
     } catch (reason) {
       setError(message(reason))
     }
@@ -140,7 +155,7 @@ export default function OperationsPage() {
         headers: { ...json({}), 'If-Match': `"revision-${loop.revision}"` },
         body: JSON.stringify({ state: loop.state === 'active' ? 'paused' : 'active' }),
       })
-      await load()
+      await loopsPage.refresh()
     } catch (reason) {
       setError(message(reason))
     }
@@ -155,7 +170,7 @@ export default function OperationsPage() {
           payload: { source: 'operations-ui' },
         }),
       })
-      await load()
+      await runsPage.refresh()
     } catch (reason) {
       setError(message(reason))
     }
@@ -172,9 +187,9 @@ export default function OperationsPage() {
           <h1>Planning &amp; Operations</h1>
           <p>Durable planning, automation, health, and cost observability.</p>
         </div>
-        <button onClick={() => void load()}>Refresh</button>
+        <button onClick={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }}>Refresh</button>
       </header>
-      {error && <p className="error" role="alert">{error}</p>}
+      {(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
       {data && (
         <>
           {features?.has('WORKMESH_BETA_COSTS') && <section className="operations-metrics" aria-label="Usage and cost">
@@ -201,6 +216,7 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.cycles.length === 0 && <p className="empty">No Cycles configured.</p>}
+              <LoadMoreButton collection={cyclesPage} label="cycles" />
             </section>}
             {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="initiatives-panel">
               <h2>Initiatives</h2>
@@ -211,6 +227,7 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.initiatives.length === 0 && <p className="empty">No Initiatives configured.</p>}
+              <LoadMoreButton collection={initiativesPage} label="initiatives" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="automation-panel">
               <h2>Automation rules</h2>
@@ -223,6 +240,7 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.rules.length === 0 && <p className="empty">No Rules configured.</p>}
+              <LoadMoreButton collection={rulesPage} label="automation rules" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') && <section className="operations-panel wide" data-testid="loops-panel">
               <h2>Loops</h2>
@@ -234,6 +252,7 @@ export default function OperationsPage() {
                 </article>
               ))}
               {data.loops.length === 0 && <p className="empty">No Loops configured.</p>}
+              <LoadMoreButton collection={loopsPage} label="loops" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="runs-panel">
               <h2>Recent runs</h2>
@@ -252,6 +271,7 @@ export default function OperationsPage() {
                 ))}
               </div>
               {data.runs.length === 0 && <p className="empty">No run history yet.</p>}
+              <LoadMoreButton collection={runsPage} label="automation runs" />
             </section>}
             {features?.has('WORKMESH_BETA_TEMPLATES') && <section className="operations-panel wide" data-testid="templates-panel">
               <h2>Templates &amp; playbooks</h2>
@@ -264,6 +284,7 @@ export default function OperationsPage() {
                 ))}
               </div>
               {data.templates.length === 0 && <p className="empty">No Templates configured.</p>}
+              <LoadMoreButton collection={templatesPage} label="templates" />
             </section>}
           </div>
         </>

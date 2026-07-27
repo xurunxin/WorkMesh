@@ -1,0 +1,171 @@
+import { expect, test } from '@playwright/test'
+
+const apiUrl = 'http://127.0.0.1:3101'
+const headers = {
+  'Access-Control-Allow-Origin': 'http://127.0.0.1:3100',
+  'Access-Control-Allow-Credentials': 'true',
+  'Content-Type': 'application/json',
+}
+
+const team = { id: 'team-page', name: 'Pagination team', key: 'PAGE', revision: 1 }
+const state = { id: 'state-page', name: 'Ready', category: 'planned', color: '#64748b', revision: 1 }
+const workItem = (id: string, title: string, number: number) => ({
+  id,
+  title,
+  description: null,
+  number,
+  revision: 1,
+  status_id: state.id,
+  status_name: state.name,
+  status_category: state.category,
+  team_id: team.id,
+  team_key: team.key,
+  priority: 'medium',
+  due_date: null,
+  responsible_human_actor_id: 'human-page',
+  labels: [],
+  project_id: null,
+})
+
+test('loads an opaque second page, de-duplicates it, and resets on filter change', async ({ page }) => {
+  const workRequests: URL[] = []
+  await page.route(`${apiUrl}/api/v1/**`, async route => {
+    const url = new URL(route.request().url())
+    const path = url.pathname
+    const body = (payload: unknown, status = 200) =>
+      route.fulfill({ status, headers, body: JSON.stringify(payload) })
+    if (route.request().method() === 'OPTIONS')
+      return route.fulfill({ status: 204, headers })
+    if (path === '/api/v1/install-status') return body({ installed: true })
+    if (path === '/api/v1/auth/me') return body({
+      actor: { id: 'human-page', displayName: 'Pagination human' },
+      csrfToken: 'pagination-csrf',
+    })
+    if (path === '/api/v1/features') return body({ features: [] })
+    if (path === '/api/v1/info') return body({
+      serverVersion: '1.0.0',
+      buildSha: 'pagination-e2e',
+      schemaBaseline: 24,
+    })
+    if (path === '/api/v1/teams') return body({ items: [team], nextCursor: null })
+    if (path === `/api/v1/teams/${team.id}/states`)
+      return body({ items: [state], nextCursor: null })
+    if (path === '/api/v1/actors/humans') return body({
+      items: [{ id: 'human-page', display_name: 'Pagination human', email: 'human@example.test' }],
+      nextCursor: null,
+    })
+    if (path === '/api/v1/projects' || path === '/api/v1/views')
+      return body({ items: [], nextCursor: null })
+    if (path === '/api/v1/work-items') {
+      workRequests.push(url)
+      if (url.searchParams.get('search') === 'Slow') {
+        await new Promise(resolve => setTimeout(resolve, 350))
+        return body({
+          items: [workItem('work-stale', 'Stale slow response', 4)],
+          nextCursor: null,
+        }).catch(() => undefined)
+      }
+      if (url.searchParams.get('search'))
+        return body({ items: [workItem('work-filtered', 'Filtered result', 3)], nextCursor: null })
+      if (url.searchParams.get('cursor') === 'opaque-work-page-2')
+        return body({
+          items: [
+            workItem('work-first', 'First page refreshed', 1),
+            workItem('work-later', 'Only on the second page', 2),
+          ],
+          nextCursor: null,
+        })
+      return body({
+        items: [workItem('work-first', 'First page record', 1)],
+        nextCursor: 'opaque-work-page-2',
+      })
+    }
+    if (path === '/api/v1/events/stream')
+      return route.fulfill({ status: 204, headers })
+    return body({ error: { message: `Unexpected ${route.request().method()} ${path}` } }, 404)
+  })
+
+  await page.goto('/')
+  await expect(page.getByTestId('work-work-first')).toBeVisible()
+  await expect(page.getByTestId('work-work-later')).toHaveCount(0)
+
+  await page.getByTestId('load-more-work-items').click()
+  await expect(page.getByTestId('work-work-later')).toContainText('Only on the second page')
+  await expect(page.getByTestId('work-work-first')).toHaveCount(1)
+
+  const continuation = workRequests.find(request =>
+    request.searchParams.get('cursor') === 'opaque-work-page-2')
+  expect(continuation?.searchParams.get('limit')).toBe('100')
+  expect(continuation?.searchParams.get('teamId')).toBe(team.id)
+  expect(continuation?.searchParams.get('mine')).toBe('true')
+
+  const search = page.getByLabel('Search work')
+  await search.fill('Slow')
+  await expect.poll(() => workRequests.some(request =>
+    request.searchParams.get('search') === 'Slow')).toBe(true)
+  await search.fill('Filtered')
+  await expect(page.getByTestId('work-work-filtered')).toBeVisible()
+  await expect(page.getByTestId('work-work-later')).toHaveCount(0)
+  await page.waitForTimeout(450)
+  await expect(page.getByTestId('work-work-stale')).toHaveCount(0)
+  const filtered = workRequests.find(request => request.searchParams.get('search') === 'Filtered')
+  expect(filtered?.searchParams.has('cursor')).toBe(false)
+})
+
+test('makes a later Agent registry record reachable through explicit continuation', async ({ page }) => {
+  const agentRequests: URL[] = []
+  const agent = (id: string, name: string) => ({
+    id,
+    workspace_id: 'workspace-page',
+    actor_id: `${id}-actor`,
+    display_name: name,
+    slug: id,
+    description: `${name} description`,
+    supported_protocols: ['native_http'],
+    skills: [],
+    requested_capabilities: [],
+    approved_capabilities: [],
+    max_concurrency: 1,
+    is_active: true,
+    revision: 1,
+    team_access: [],
+  })
+  await page.route(`${apiUrl}/api/v1/**`, async route => {
+    const url = new URL(route.request().url())
+    const path = url.pathname
+    const body = (payload: unknown, status = 200) =>
+      route.fulfill({ status, headers, body: JSON.stringify(payload) })
+    if (route.request().method() === 'OPTIONS')
+      return route.fulfill({ status: 204, headers })
+    if (path === '/api/v1/auth/me') return body({
+      actor: {
+        id: 'human-agent-page',
+        display_name: 'Agent operator',
+        workspace_role: 'admin',
+      },
+      csrfToken: 'agent-page-csrf',
+    })
+    if (path === '/api/v1/agents') {
+      agentRequests.push(url)
+      return url.searchParams.get('cursor') === 'opaque-agent-page-2'
+        ? body({ items: [agent('agent-later', 'Later Agent')], nextCursor: null })
+        : body({ items: [agent('agent-first', 'First Agent')], nextCursor: 'opaque-agent-page-2' })
+    }
+    if (path === '/api/v1/teams'
+      || path === '/api/v1/agent-sessions'
+      || path === '/api/v1/approvals')
+      return body({ items: [], nextCursor: null })
+    if (path === '/api/v1/events/stream')
+      return route.fulfill({ status: 204, headers })
+    return body({ error: { message: `Unexpected ${route.request().method()} ${path}` } }, 404)
+  })
+
+  await page.goto('/agents')
+  await expect(page.getByTestId('agent-registry-agent-first')).toBeVisible()
+  await expect(page.getByTestId('agent-registry-agent-later')).toHaveCount(0)
+  await page.getByTestId('load-more-agents').click()
+  await expect(page.getByTestId('agent-registry-agent-later')).toContainText('Later Agent')
+  expect(agentRequests.some(request =>
+    request.searchParams.get('cursor') === 'opaque-agent-page-2'
+      && request.searchParams.get('limit') === '100')).toBe(true)
+})
