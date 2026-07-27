@@ -397,6 +397,7 @@ const mcpOperationIds = {
   'resource:project-guidance': 'getProjectGuidance',
   'resource:repository-context': 'getRepositoryContext',
   'tool:list_work_items': 'listWorkItems',
+  'tool:list_events': 'listEvents',
   'tool:list_session_activities': 'listAgentActivities',
   'tool:get_work_item': 'getWorkItem',
   'tool:get_work_room': 'getWorkRoom',
