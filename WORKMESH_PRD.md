@@ -2064,13 +2064,46 @@ Docker Compose 服务：
 
 首版使用 SSE：
 
-- 断线重连；
-- `Last-Event-ID`；
-- Cursor 补发；
-- Workspace/Team/Session Channel；
-- 心跳；
-- Token 重新校验；
-- 服务器不保存连接内关键状态。
+- PostgreSQL `domain_events.cursor` 是唯一 durable cursor，按 canonical
+  decimal string 传输和比较，不能经由 JavaScript `number`；集合分页、
+  Session sequence 和 A2A cursor 是彼此独立的游标域；
+- 每个 API 实例只有一个 realtime coordinator。Redis Stream 只发送允许
+  丢失/重复的 wake hint，不使用 consumer group，也不承担 durable replay。
+  hint 仅包含 `workspaceId` 与 decimal `cursor`，不得包含 topic、payload 或
+  audience/resource metadata，并以有界 `WORKMESH_REALTIME_REDIS_MAXLEN`
+  approximate `MAXLEN` 裁剪；
+- coordinator 在启动、Redis wake 和低频健康对账时按活跃 Workspace 批量
+  查询 PostgreSQL；Redis 不可用时切换到一个共享且有界的降级对账循环，
+  禁止每个浏览器连接单独轮询；
+- 断线后以 `Last-Event-ID` 或 query cursor 从 PostgreSQL 补发；每一批投递
+  都重新验证 Human membership 或 Agent token、active Session、Delegation、
+  Capability 与 Resource Scope，Lease 不能授予读取权限，撤权立即停止后续投递；
+- Human 的 multi-Team Event 在最终 SQL 中按 normalized Team resource 求并集：
+  非 Admin 必须仍属于至少一个精确 Team，Initiative Owner 通过持久化 Owner
+  关系单独验证；显式 recipient 只对目标 Actor 可见。只有不含任何非 Workspace
+  resource 的 Event 才能 Workspace-wide，`team_id IS NULL` 不代表 Workspace
+  audience，无法证明资源的历史 Event 对普通成员 fail closed；
+- Human Session、个人 saved view（即使带可选 `teamId`）、private advanced
+  view、notification 和 notification preference 必须由 producer 写入精确
+  recipient，并由 durable owner/recipient 关系复核；无法证明的当前或历史
+  private form 对普通成员和 Workspace Admin 都 fail closed；
+- v2 envelope 保留兼容字段，并增加 typed `audience`、`scopes` 和
+  `invalidates`。资源词汇固定为 workspace/team/project/work_item/session/
+  room/artifact/delivery，写事件的同一数据库事务维护标准化资源关系；
+  `team_id` 为空但含非 Workspace scopes 的 multi-resource/multi-Team Event
+  使用 `audience.visibility=resource`，不得错误标记为 Workspace；
+- 事件页、连接数和 socket backpressure wait 都有硬上限；慢客户端关闭，
+  心跳不触发数据库读取；
+- `event_retention_state.pruned_through_cursor` 是显式保留水位。本阶段不执行
+  prune；低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
+  `cursor.expired` control event 后关闭；
+- Web 每个 actor/workspace（Agent 额外包含 Session）只有一个 authenticated
+  fetch-SSE client 和独立 checkpoint，使用 BigInt 去重比较并按精确资源
+  invalidation 刷新；过期时先重取 durable snapshot 再从 `resyncCursor` 重连。
+  clean EOF、post-header error、429/5xx 与 `REALTIME_CAPACITY_EXCEEDED` 503
+  使用可取消、有界指数退避和 jitter；503 返回 `Retry-After`；
+- SDK 暴露 typed `listEvents` 与 `streamEvents` AsyncIterable，checkpoint 归
+  调用方；MCP `list_events` 是无服务器状态的 durable page adapter。
 
 Presence 和多人光标后续使用 WebSocket。
 
