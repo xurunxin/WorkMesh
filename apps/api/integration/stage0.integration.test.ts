@@ -122,7 +122,10 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
         email: "alice@example.test",
         password: "password-acceptance",
       },
-      headers: { "idempotency-key": "install-acceptance" },
+      headers: {
+        "idempotency-key": "install-acceptance",
+        "x-workmesh-bootstrap-token": process.env.WORKMESH_BOOTSTRAP_TOKEN!,
+      },
     });
     expect(install.statusCode).toBe(200);
     const setCookie = install.headers["set-cookie"];

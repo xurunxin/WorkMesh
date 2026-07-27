@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import Fastify from 'fastify'
 import { describe, expect, it, vi } from 'vitest'
 import type { RoutePolicyManifestEntry } from '@workmesh/contracts'
@@ -47,6 +48,7 @@ describe('Fastify route policy inventory', () => {
     vi.stubEnv('DATABASE_URL', 'postgresql://workmesh:workmesh@localhost:5432/workmesh')
     vi.stubEnv('REDIS_URL', 'redis://localhost:6379')
     vi.stubEnv('SESSION_SECRET', 'route-policy-test-session-secret-32')
+    vi.stubEnv('WORKMESH_BOOTSTRAP_TOKEN', randomBytes(32).toString('base64url'))
     const { buildApp } = await import('../server.js')
     const app = buildApp()
     await app.ready()

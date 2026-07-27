@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import Fastify from "fastify";
 import { loadConfig } from "@workmesh/config";
@@ -18,6 +19,7 @@ const config = loadConfig({
   DATABASE_URL: process.env.DATABASE_URL!,
   REDIS_URL: process.env.REDIS_URL,
   SESSION_SECRET: `auth-rate-limit-integration-${unique}-secret-padding`,
+  WORKMESH_BOOTSTRAP_TOKEN: process.env.WORKMESH_BOOTSTRAP_TOKEN ?? randomBytes(32).toString("base64url"),
   AUTH_RATE_LIMIT_HMAC_KEY: `auth-rate-limit-integration-${unique}-hmac-padding`,
   AUTH_RATE_LIMIT_REDIS_PREFIX: `authrl:test:auth-rate-limit:${unique}`,
   AUTH_RATE_LIMIT_ENDPOINT_BURST: "5",

@@ -108,7 +108,7 @@ async function fixture(): Promise<Fixture> {
   const install = await app.inject({
     method: 'POST', url: '/api/v1/auth/install',
     payload: { name: 'Stage Three', slug: `stage-three-${randomUUID().slice(0, 8)}`, adminName: 'Admin', email: `${randomUUID()}@example.test`, password: 'stage-three-password' },
-    headers: { 'idempotency-key': randomUUID() },
+    headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! },
   }) as unknown as Response
   const setCookie = Array.isArray(install.headers['set-cookie']) ? install.headers['set-cookie'][0] : install.headers['set-cookie']
   const human = { cookie: typeof setCookie === 'string' ? setCookie.split(';')[0] ?? '' : '', csrf: install.json<{ csrfToken: string }>().csrfToken, actorId: '' }

@@ -1,9 +1,12 @@
+import { randomBytes } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import Fastify from "fastify";
 import type { FastifyInstance } from "fastify";
 import { loadConfig } from "@workmesh/config";
 import { installAuthRateLimit } from "./plugin.js";
 import type { AuthRateLimitStore } from "./redis-store.js";
+
+const bootstrapToken = randomBytes(32).toString("base64url");
 
 class OfflineStore implements AuthRateLimitStore {
   calls = 0;
@@ -46,6 +49,7 @@ describe("credential-route selective fail-closed behavior", () => {
     );
     vi.stubEnv("REDIS_URL", "redis://127.0.0.1:6379");
     vi.stubEnv("SESSION_SECRET", "rate-limit-server-test-secret-000001");
+    vi.stubEnv("WORKMESH_BOOTSTRAP_TOKEN", bootstrapToken);
     const { buildApp } = await import("../server.js");
     app = buildApp({ logger: false, authRateLimitStore: store });
     await app.ready();
@@ -76,6 +80,29 @@ describe("credential-route selective fail-closed behavior", () => {
       error: { code: "AUTH_RATE_LIMIT_UNAVAILABLE" },
     });
     expect(store.calls).toBe(1);
+  });
+
+  it("rejects bootstrap installation before authentication or database work when Redis is unavailable", async () => {
+    store.offline = true;
+    const install = await app.inject({
+      method: "POST",
+      url: "/api/v1/auth/install",
+      headers: {
+        "idempotency-key": "redis-outage-install",
+        "x-workmesh-bootstrap-token": bootstrapToken,
+      },
+      payload: {
+        name: "Must not install",
+        slug: "redis-outage-install",
+        adminName: "Must Not Install",
+        email: "redis-outage@example.test",
+        password: "redis-outage-password",
+      },
+    });
+    expect(install.statusCode).toBe(503);
+    expect(install.json()).toMatchObject({
+      error: { code: "AUTH_RATE_LIMIT_UNAVAILABLE" },
+    });
   });
 
   it("returns uniform 429 metadata before any database credential lookup", async () => {
@@ -117,6 +144,7 @@ describe("credential-route selective fail-closed behavior", () => {
       DATABASE_URL: "postgres://workmesh:workmesh@localhost/workmesh",
       REDIS_URL: "redis://localhost:6379",
       SESSION_SECRET: "cleanup-hook-test-session-secret-0001",
+      WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
     });
     const { metrics } = installAuthRateLimit(
       hookApp,

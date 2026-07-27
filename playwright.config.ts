@@ -18,6 +18,12 @@ const apiPort = "3101";
 const webPort = "3100";
 const webUrl = `http://127.0.0.1:${webPort}`;
 const apiUrl = `http://127.0.0.1:${apiPort}`;
+const bootstrapToken = process.env.WORKMESH_BOOTSTRAP_TOKEN;
+if (!bootstrapToken) {
+  throw new Error(
+    "Playwright acceptance tests require an explicit WORKMESH_BOOTSTRAP_TOKEN test fixture.",
+  );
+}
 
 export default defineConfig({
   testDir: "./apps/web/e2e",
@@ -47,6 +53,7 @@ export default defineConfig({
         SESSION_SECRET:
           process.env.SESSION_SECRET ??
           "acceptance-test-session-secret-0123456789",
+        WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
         WEB_ORIGIN: webUrl,
         API_PORT: apiPort,
         WORKMESH_BETA_PLANNING: "true",

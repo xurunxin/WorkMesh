@@ -97,16 +97,17 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         x-workmesh-auth-rate-limit: shared_redis,
-        security: [],
+        security: [{ BootstrapToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: installWorkspace,
-        description: "Authentication mutation idempotency: exact retries replay the same encrypted session response for 15 minutes; conflicts remain protected for 24 hours. Reuse with a different request or client context returns IDEMPOTENCY_KEY_REUSED. Exact retry after 15 minutes returns IDEMPOTENCY_REPLAY_EXPIRED.",
+        description: "Authenticated single-use installation. Send the deployment bootstrap credential only in X-WorkMesh-Bootstrap-Token. Exact retries with the same verified credential, idempotency key, request, and client context replay the same encrypted session response for 15 minutes; conflicts remain protected for 24 hours. Reuse with a different request or client context returns IDEMPOTENCY_KEY_REUSED. Exact retry after 15 minutes returns IDEMPOTENCY_REPLAY_EXPIRED. The permanent platform_installation singleton closes all new installation attempts after success.",
         parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
         requestBody: { $ref: "#/components/requestBodies/InstallInput" },
         responses:
           {
             "200": { $ref: "#/components/responses/Session" },
             "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/BootstrapAuthFailed" },
             "409": { $ref: "#/components/responses/Conflict" },
             "429": { $ref: "#/components/responses/AuthRateLimited" },
             "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" },
@@ -1774,6 +1775,13 @@ paths:
     get: { x-workmesh-policy-id: route.streamA2ATaskEvents, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: streamA2ATaskEvents, parameters: [{ $ref: "#/components/parameters/Id" }, { name: taskId, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 500 } }, { name: after, in: query, description: Decimal PostgreSQL bigint cursor returned as a string to preserve precision., schema: { type: string, pattern: "^[0-9]{1,19}$", default: "0" } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
 components:
   securitySchemes:
+    BootstrapToken:
+      {
+        type: apiKey,
+        in: header,
+        name: X-WorkMesh-Bootstrap-Token,
+        description: "One-time deployment bootstrap credential. It is required for Workspace installation and is not a human or Agent session.",
+      }
     SessionCookie:
       {
         type: apiKey,
@@ -2521,6 +2529,22 @@ components:
               { schema: { $ref: "#/components/schemas/Error" } },
           },
       }
+    BootstrapAuthFailed:
+      description: The deployment bootstrap credential is missing, malformed, duplicated, or does not match. The response never echoes credential material.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error]
+            properties:
+              error:
+                type: object
+                required: [code, message, correlationId]
+                properties:
+                  code: { type: string, enum: [BOOTSTRAP_AUTH_FAILED] }
+                  message: { type: string }
+                  details: {}
+                  correlationId: { type: string, minLength: 1 }
     AuthRateLimited:
       description: Authentication admission or progressive credential backoff rejected the request without executing authentication or business side effects.
       headers:
@@ -3528,6 +3552,7 @@ components:
                           [
                             VALIDATION_ERROR,
                             UNAUTHENTICATED,
+                            BOOTSTRAP_AUTH_FAILED,
                             FORBIDDEN,
                             FEATURE_DISABLED,
                             NOT_FOUND,

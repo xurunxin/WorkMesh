@@ -24,7 +24,7 @@ const payloadHash = (value: unknown) => `sha256:${createHash("sha256").update(JS
 describe("reviewer API fixes", () => {
   beforeAll(async () => {
     await applyMigrations(db); await db.query("TRUNCATE workspaces CASCADE");
-    const install = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Review", slug: "review", adminName: "Admin", email: "admin@review.test", password: "review-password" }, headers: { "idempotency-key": "review-install" } });
+    const install = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Review", slug: "review", adminName: "Admin", email: "admin@review.test", password: "review-password" }, headers: { "idempotency-key": "review-install", "x-workmesh-bootstrap-token": process.env.WORKMESH_BOOTSTRAP_TOKEN! } });
     cookie = String(Array.isArray(install.headers["set-cookie"]) ? install.headers["set-cookie"][0] : install.headers["set-cookie"]).split(";")[0] ?? "";
     csrf = install.json<{ csrfToken: string }>().csrfToken;
     actorId = (await human("GET", "/api/v1/auth/me")).json<{ actor: { id: string } }>().actor.id;

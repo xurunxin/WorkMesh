@@ -385,7 +385,10 @@ beforeAll(async () => {
       email: `route-policy-${randomUUID()}@example.test`,
       password: 'route-policy-password',
     },
-    headers: { 'idempotency-key': randomUUID() },
+    headers: {
+      'idempotency-key': randomUUID(),
+      'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN!,
+    },
   }) as unknown as Response
   expect(installed.statusCode, installed.body).toBe(200)
   const setCookie = installed.headers['set-cookie']
@@ -495,25 +498,28 @@ describe('declarative route policy live authorization', () => {
     expect(errorCode(authenticatedMutationWithoutIdempotency))
       .toBe('IDEMPOTENCY_KEY_REQUIRED')
 
-    for (const publicMutation of [
-      {
-        url: '/api/v1/auth/install',
-        payload: {
-          name: 'Must not reinstall',
-          slug: 'must-not-reinstall',
-          adminName: 'Must Not Reinstall',
-          email: 'must-not-reinstall@example.test',
-          password: 'must-not-reinstall-password',
-        },
+    const bootstrapBeforeIdempotency = await app.inject({
+      method: 'POST',
+      url: '/api/v1/auth/install',
+      payload: {
+        name: 'Must not reinstall',
+        slug: 'must-not-reinstall',
+        adminName: 'Must Not Reinstall',
+        email: 'must-not-reinstall@example.test',
+        password: 'must-not-reinstall-password',
       },
-      {
-        url: '/api/v1/auth/login',
-        payload: {
-          email: 'route-policy@example.test',
-          password: 'not-reached',
-        },
+    }) as unknown as Response
+    expect(bootstrapBeforeIdempotency.statusCode, bootstrapBeforeIdempotency.body)
+      .toBe(401)
+    expect(errorCode(bootstrapBeforeIdempotency)).toBe('UNAUTHENTICATED')
+
+    for (const publicMutation of [{
+      url: '/api/v1/auth/login',
+      payload: {
+        email: 'route-policy@example.test',
+        password: 'not-reached',
       },
-    ]) {
+    }]) {
       const response = await app.inject({
         method: 'POST',
         url: publicMutation.url,

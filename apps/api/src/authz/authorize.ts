@@ -308,6 +308,15 @@ export async function authorizeRequest(
     policy.authentication === 'public'
     || policy.authentication === 'provider_signature'
   ) return
+  if (policy.authentication === 'bootstrap') {
+    if (request.bootstrapAuthorization) return
+    throw new DomainError('UNAUTHENTICATED', 'Bootstrap authentication failed', {
+      authorizationStage: 'identity',
+      policyId: policy.policyId,
+      suppressAuthorizationDenial: true,
+      bootstrapAuthenticationFailure: true,
+    })
+  }
   const actor = request.actor
   if (!actor) throw new DomainError('UNAUTHENTICATED', 'An authenticated principal is required')
   if (!policy.actorKinds.includes(actor.kind)) {
@@ -415,7 +424,9 @@ export async function recordAuthorizationDenial(input: {
   const details = input.error.details as {
     authorizationStage?: AuthorizationStage
     dedupeAuthorizationDenial?: boolean
+    suppressAuthorizationDenial?: boolean
   } | undefined
+  if (details?.suppressAuthorizationDenial) return
   const concealedAuthorizationNotFound = input.error.code === 'NOT_FOUND'
     && details?.authorizationStage === 'resource_scope'
   if (!authorizationCodes.has(input.error.code) && !concealedAuthorizationNotFound) return

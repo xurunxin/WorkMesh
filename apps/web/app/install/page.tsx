@@ -22,9 +22,13 @@ export default function InstallPage() {
     setSubmitting(true)
     setError('')
     try {
+      const bootstrapToken = form.get('bootstrapToken')
+      const headers = new Headers({ 'Content-Type': 'application/json' })
+      if (typeof bootstrapToken === 'string' && bootstrapToken.length > 0)
+        headers.set('X-WorkMesh-Bootstrap-Token', bootstrapToken)
       const result = await publicMutation<InstallResponse>('install-workspace', '/api/v1/auth/install', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           name: form.get('workspace'),
           slug: form.get('slug'),
@@ -44,6 +48,8 @@ export default function InstallPage() {
 
   return <main className="auth"><form onSubmit={submit} data-testid="install-form">
     <h1>Install WorkMesh</h1>
+    <label>Bootstrap token<input name="bootstrapToken" type="password" autoComplete="off" placeholder="Deployment bootstrap token" /></label>
+    <p className="muted">Required unless the API is in explicit loopback-only development bootstrap mode. The token is sent once and is not stored by this page.</p>
     <label>Workspace<input name="workspace" placeholder="Workspace" required /></label>
     <label>Workspace slug<input name="slug" placeholder="workspace-slug" pattern="[a-z0-9-]+" required /></label>
     <label>Your name<input name="name" placeholder="Your name" required /></label>

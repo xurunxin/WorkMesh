@@ -67,6 +67,10 @@ import {
   type AuthReplayEnvelope,
 } from "./auth-idempotency.js";
 import {
+  installBootstrapAuthentication,
+  verifyBootstrapRequest,
+} from "./bootstrap-auth.js";
+import {
   assertEventAudienceActive,
   eventAudienceQuery,
 } from "./authz/event-audience.js";
@@ -86,7 +90,6 @@ const sessionCookie = "workmesh_session";
 const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
 const mutationMethods = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const publicPaths = new Set([
-  "/api/v1/auth/install",
   "/api/v1/auth/login",
   "/api/v1/install-status",
   "/api/v1/info",
@@ -216,6 +219,7 @@ export const buildApp = (options: {
   });
   installRoutePolicyInventory(app);
   const { limiter: authRateLimiter } = installAuthRateLimit(app, config, options.authRateLimitStore);
+  installBootstrapAuthentication(app, config);
   void app.register(cookie);
   void app.register(cors, {
     origin: config.WEB_ORIGIN,
@@ -224,6 +228,7 @@ export const buildApp = (options: {
     allowedHeaders: [
       "Content-Type",
       "Idempotency-Key",
+      "X-WorkMesh-Bootstrap-Token",
       "X-CSRF-Token",
       "If-Match",
       "X-Correlation-Id",
@@ -252,6 +257,11 @@ export const buildApp = (options: {
     return payload;
   });
   app.addHook("preHandler", async (request) => {
+    if (
+      request.routeOptions.url === "/api/v1/auth/install"
+      && request.bootstrapAuthorization
+    )
+      return;
     if (
       publicPaths.has(request.routeOptions.url ?? "") ||
       request.routeOptions.url === "/health" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/exchange" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/refresh" || request.routeOptions.url === "/api/v1/provider-webhooks/:connectionId/github"
@@ -388,7 +398,7 @@ export const buildApp = (options: {
           ),
         );
     if (error instanceof DomainError) {
-      if (request.authRateLimitAdmission && (error.code === "INVALID_CREDENTIALS" || error.code === "UNAUTHENTICATED")) {
+      if (request.authRateLimitAdmission && (error.code === "INVALID_CREDENTIALS" || error.code === "UNAUTHENTICATED" || error.code === "BOOTSTRAP_AUTH_FAILED")) {
         try {
           const retryAfterMs = await authRateLimiter.credentialFailure(request.authRateLimitAdmission);
           reply.header("Retry-After", String(Math.max(1, Math.ceil(retryAfterMs / 1_000))));
@@ -409,7 +419,7 @@ export const buildApp = (options: {
         request.log.error(auditError, "Authorization denial audit failed");
       }
       const status =
-        error.code === "UNAUTHENTICATED" || error.code === "INVALID_CREDENTIALS"
+        error.code === "UNAUTHENTICATED" || error.code === "INVALID_CREDENTIALS" || error.code === "BOOTSTRAP_AUTH_FAILED"
           ? 401
           : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "SESSION_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "APPROVAL_REQUIRED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
@@ -478,9 +488,11 @@ export const buildApp = (options: {
     const normalizedEmail = body.email.trim().toLowerCase();
     assertPasswordPolicy(body);
     const passwordHash = await hashPassword(body.password);
+    const bootstrap = verifyBootstrapRequest(request, config);
+    request.bootstrapAuthorization = bootstrap;
     const result = await authIdempotentTransaction(db, {
       idempotencyKey: request.idempotencyKey!,
-      subject: "install:singleton",
+      subject: `install:${bootstrap.credentialBinding}`,
       operation: "installWorkspace",
       request: { ...body, email: normalizedEmail },
       clientContext: authClientContext(request),
@@ -496,6 +508,7 @@ export const buildApp = (options: {
       });
       return createHumanSessionEnvelope(tx, installed.actorId, installed.workspaceId, request.correlationId, request.idempotencyKey);
     });
+    app.auditBootstrapSuccess(request, bootstrap.mode);
     return applyAuthEnvelope(reply, result);
   });
   app.post("/api/v1/auth/login", async (request, reply) => {
@@ -1063,7 +1076,7 @@ async function sse(request: FastifyRequest, reply: FastifyReply) {
 
 if (process.env.NODE_ENV !== "test") {
   const app = buildApp();
-  app.listen({ port: config.API_PORT, host: "0.0.0.0" }).catch((error) => {
+  app.listen({ port: config.API_PORT, host: config.API_HOST }).catch((error) => {
     app.log.error(error);
     process.exit(1);
   });

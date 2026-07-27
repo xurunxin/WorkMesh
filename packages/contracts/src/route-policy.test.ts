@@ -20,6 +20,8 @@ const securityFor = (
   switch (authentication) {
     case 'public':
       return []
+    case 'bootstrap':
+      return [{ BootstrapToken: [] }]
     case 'human_session':
       return [{ SessionCookie: [] }]
     case 'agent_session':
@@ -97,6 +99,12 @@ describe('routePolicyManifest', () => {
       components: { securitySchemes: Record<string, unknown> }
     }
     expect(parsed.components.securitySchemes).toEqual({
+      BootstrapToken: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-WorkMesh-Bootstrap-Token',
+        description: 'One-time deployment bootstrap credential. It is required for Workspace installation and is not a human or Agent session.',
+      },
       SessionCookie: {
         type: 'apiKey',
         in: 'cookie',
@@ -197,6 +205,41 @@ describe('routePolicyManifest', () => {
     expect(capabilitiesFor('commentOnPlanStep')).toEqual(['work:write'])
   })
 
+  it('documents bootstrap authentication failures as a structured 401 response', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    const document = parseDocument(openapi, { prettyErrors: true })
+    expect(document.errors).toEqual([])
+    const parsed = document.toJS() as {
+      paths: Record<string, Record<string, {
+        responses?: Record<string, unknown>
+      }>>
+      components: {
+        responses: Record<string, {
+          content?: {
+            'application/json'?: {
+              schema?: {
+                properties?: {
+                  error?: {
+                    properties?: {
+                      code?: { enum?: string[] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }>
+      }
+    }
+    expect(parsed.paths['/api/v1/auth/install']?.post?.responses?.['401'])
+      .toEqual({ $ref: '#/components/responses/BootstrapAuthFailed' })
+    expect(
+      parsed.components.responses.BootstrapAuthFailed
+        ?.content?.['application/json']?.schema
+        ?.properties?.error?.properties?.code?.enum,
+    ).toEqual(['BOOTSTRAP_AUTH_FAILED'])
+  })
+
   it('requires If-Match only where the handler revalidates a revision', () => {
     const revisionFor = (operationId: string) =>
       routePolicyManifest.find(route => route.operationId === operationId)?.revision
@@ -287,5 +330,8 @@ describe('routePolicyManifest', () => {
         `| \`${route.method}\` | \`${route.path}\` | \`${route.operationId}\` | \`${route.policyId}\` |`,
       )
     }
+    expect(matrix).toContain(
+      '| `POST` | `/api/v1/auth/install` | `installWorkspace` | `route.installWorkspace` | bootstrap | `bootstrap` |',
+    )
   })
 })

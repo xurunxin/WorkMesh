@@ -62,13 +62,17 @@ services:
   api:
     build: { context: ., dockerfile: infra/docker/api.Dockerfile }
     environment:
+      NODE_ENV: production
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      WORKMESH_BOOTSTRAP_TOKEN: ${WORKMESH_BOOTSTRAP_TOKEN:?Set WORKMESH_BOOTSTRAP_TOKEN to the output of pnpm bootstrap:token}
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"
       AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      API_HOST: 0.0.0.0
       API_PORT: 3001
       S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:9000}
       S3_REGION: ${S3_REGION:-us-east-1}

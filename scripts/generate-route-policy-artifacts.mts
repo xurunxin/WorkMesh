@@ -40,6 +40,8 @@ const securityFor = (
   switch (authentication) {
     case 'public':
       return '[]'
+    case 'bootstrap':
+      return '[{ BootstrapToken: [] }]'
     case 'human_session':
       return '[{ SessionCookie: [] }]'
     case 'agent_session':
@@ -143,7 +145,11 @@ for (const policy of routePolicyManifest) {
 }
 
 const rows = routePolicyManifest.map(policy => {
-  const actors = policy.actorKinds.length ? policy.actorKinds.join(', ') : 'public'
+  const actors = policy.actorKinds.length
+    ? policy.actorKinds.join(', ')
+    : policy.authentication === 'bootstrap'
+      ? 'bootstrap'
+      : 'public'
   const capabilities = policy.agent.capabilities.length
     ? policy.agent.capabilities.join(', ')
     : '-'

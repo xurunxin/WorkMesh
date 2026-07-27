@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { loadConfig } from "@workmesh/config";
 import { normalizeIp } from "./client-ip.js";
@@ -13,10 +14,12 @@ import {
 } from "./limiter.js";
 import type { AuthRateLimitStore } from "./redis-store.js";
 
+const bootstrapToken = randomBytes(32).toString("base64url");
 const config = loadConfig({
   DATABASE_URL: "postgres://workmesh:workmesh@localhost/workmesh",
   REDIS_URL: "redis://localhost:6379",
   SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+  WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
 });
 
 class FakeStore implements AuthRateLimitStore {
@@ -79,6 +82,7 @@ describe("authentication rate-limit inventory and privacy", () => {
       DATABASE_URL: "postgres://workmesh:workmesh@localhost/workmesh",
       REDIS_URL: "redis://localhost:6379",
       SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+      WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
       AUTH_RATE_LIMIT_REDIS_PREFIX: "authrl:test:auth-idempotency",
     });
     await new AuthRateLimiter(isolatedStore, isolatedConfig).admit(admission);

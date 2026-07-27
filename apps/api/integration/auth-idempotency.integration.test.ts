@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { randomBytes, randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   applyMigrations,
@@ -14,6 +14,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
   throw new Error('API integration tests require DATABASE_URL to name a dedicated test database.')
 
 const authRateLimitTestEnvironment = {
+  WORKMESH_BOOTSTRAP_TOKEN: randomBytes(32).toString('base64url'),
   AUTH_RATE_LIMIT_REDIS_PREFIX: `authrl:test:auth-idempotency:${process.pid}:${randomUUID()}`,
   AUTH_RATE_LIMIT_ENDPOINT_BURST: '10000',
   AUTH_RATE_LIMIT_SOCKET_BURST: '10000',
@@ -95,12 +96,12 @@ describe('secret-aware authentication idempotency', () => {
       password,
     }
     const [first, second] = await Promise.all([
-      app.inject({ method: 'POST', url: '/api/v1/auth/install', payload, headers: idempotencyHeaders('install-once') }),
+      app.inject({ method: 'POST', url: '/api/v1/auth/install', payload, headers: idempotencyHeaders('install-once', { 'x-workmesh-bootstrap-token': authRateLimitTestEnvironment.WORKMESH_BOOTSTRAP_TOKEN }) }),
       app.inject({
         method: 'POST',
         url: '/api/v1/auth/install',
         payload: { ...payload, email: payload.email.toLowerCase() },
-        headers: idempotencyHeaders('install-once'),
+        headers: idempotencyHeaders('install-once', { 'x-workmesh-bootstrap-token': authRateLimitTestEnvironment.WORKMESH_BOOTSTRAP_TOKEN }),
       }),
     ])
 

@@ -61,7 +61,7 @@ async function exchangeAndExecute(session: Session, agent: Agent): Promise<strin
 
 async function makeFixture(): Promise<Fixture> {
   await db.query('TRUNCATE workspaces CASCADE')
-  const installed = await app.inject({ method: 'POST', url: '/api/v1/auth/install', payload: { name: 'Stage Two', slug: `stage-two-${randomUUID().slice(0, 8)}`, adminName: 'Admin', email: `${randomUUID()}@example.test`, password: 'stage-two-password' }, headers: { 'idempotency-key': randomUUID() } }) as unknown as Response
+  const installed = await app.inject({ method: 'POST', url: '/api/v1/auth/install', payload: { name: 'Stage Two', slug: `stage-two-${randomUUID().slice(0, 8)}`, adminName: 'Admin', email: `${randomUUID()}@example.test`, password: 'stage-two-password' }, headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! } }) as unknown as Response
   const setCookie = Array.isArray(installed.headers['set-cookie']) ? installed.headers['set-cookie'][0] : installed.headers['set-cookie']
   const cookie = typeof setCookie === 'string' ? setCookie.split(';')[0] ?? '' : ''
   const human = { cookie, csrf: installed.json<{ csrfToken: string }>().csrfToken, actorId: '' }

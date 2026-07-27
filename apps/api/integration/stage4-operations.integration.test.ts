@@ -164,7 +164,7 @@ describe('Stage 4 planning and operations API', () => {
         email: `${randomUUID()}@example.test`,
         password: 'stage-four-api-password',
       },
-      headers: { 'idempotency-key': randomUUID() },
+      headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! },
     }) as unknown as Response
     expect(install.statusCode).toBe(200)
     const setCookie = Array.isArray(install.headers['set-cookie']) ? install.headers['set-cookie'][0] : install.headers['set-cookie']

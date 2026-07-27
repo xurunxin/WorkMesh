@@ -112,6 +112,25 @@ describe('auth mutation idempotency', () => {
     const second = new Headers(fetch.mock.calls[1]![1]?.headers).get('Idempotency-Key')
     expect(second).toBe(first)
   })
+
+  it('preserves an explicit bootstrap header without persisting it in browser storage', async () => {
+    const bootstrapToken = 'test-bootstrap-token-sentinel'
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ csrfToken: 'csrf' }), { status: 200 }),
+    )
+    vi.stubGlobal('fetch', fetch)
+
+    await publicMutation('install-bootstrap-header', '/api/v1/auth/install', {
+      method: 'POST',
+      headers: { 'X-WorkMesh-Bootstrap-Token': bootstrapToken },
+      body: JSON.stringify({ name: 'Workspace' }),
+    })
+
+    const headers = new Headers(fetch.mock.calls[0]![1]?.headers)
+    expect(headers.get('X-WorkMesh-Bootstrap-Token')).toBe(bootstrapToken)
+    expect([...values.values()].join('')).not.toContain(bootstrapToken)
+  })
+
   it('exposes uniform rate-limit code and Retry-After metadata to the auth UI', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'AUTH_RATE_LIMITED', message: 'Authentication request is temporarily rate limited' } }), { status: 429, headers: { 'Retry-After': '3' } })))
     await expect(publicMutation('login-rate-metadata', '/api/v1/auth/login', { method: 'POST', body: JSON.stringify({ email: 'alice@example.test', password: 'wrong-password' }) })).rejects.toMatchObject({

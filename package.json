@@ -19,6 +19,7 @@
     "db:create-admin": "pnpm --filter @workmesh/db create-admin",
     "db:backup": "pnpm --filter @workmesh/db backup",
     "db:restore": "pnpm --filter @workmesh/db restore",
+    "bootstrap:token": "node scripts/generate-bootstrap-token.mjs",
     "mcp:inspector": "pnpm --filter @workmesh/mcp inspector",
     "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke",
     "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",

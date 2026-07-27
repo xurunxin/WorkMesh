@@ -7,7 +7,7 @@ source of truth is `secretReplayOperationIds` in
 
 | Operation | Subject before HMAC | Secret response | Adapter |
 | --- | --- | --- | --- |
-| `installWorkspace` | install singleton bootstrap context | session cookie and CSRF token | encrypted auth replay |
+| `installWorkspace` | irreversible binding of the verified bootstrap credential | session cookie and CSRF token | encrypted auth replay |
 | `login` | normalized lowercase login email | session cookie and CSRF token | encrypted auth replay |
 | `logout` | authenticated human session ID | clear-cookie directive | encrypted auth replay |
 | `registerAgent` | authenticated human session ID | Agent installation token | encrypted auth replay |
