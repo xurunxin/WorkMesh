@@ -486,8 +486,7 @@ describe('Stage 4 planning and operations API', () => {
       `/api/v1/advanced-views/${view.json<{ id: string }>().id}/results`,
     )
     expect(evaluated.statusCode, JSON.stringify(evaluated.json())).toBe(200)
-    expect(evaluated.json<{ entityType: string; layout: string; rows: unknown[] }>())
-      .toMatchObject({ entityType: 'session', layout: 'timeline', rows: [] })
+    expect(evaluated.json<Page<unknown>>()).toEqual({ items: [], nextCursor: null })
     const unsupportedView = await call(human, 'POST', '/api/v1/advanced-views', {
       name: 'Unsupported filter',
       entityType: 'issue',
@@ -1083,7 +1082,7 @@ describe('Stage 4 planning and operations API', () => {
         `/api/v1/advanced-views/${costView.json<{ id: string }>().id}/results`,
       )
       expect(result.statusCode, JSON.stringify(result.json())).toBe(200)
-      const rows = result.json<{ rows: Array<{ id: string; cost_minor: string; currency: string }> }>().rows
+      const rows = result.json<Page<{ id: string; cost_minor: string; currency: string }>>().items
       expect(rows).toEqual(expect.arrayContaining([
         expect.objectContaining({ cost_minor: '125', currency: 'USD' }),
       ]))
@@ -1135,9 +1134,10 @@ describe('Stage 4 planning and operations API', () => {
       'GET',
       `/api/v1/advanced-views/${preciseView.json<{ id: string }>().id}/results`,
     )
-    expect(preciseViewResult.json<{
-      rows: Array<{ cost_minor: string; currency: string }>
-    }>().rows).toEqual(expect.arrayContaining([
+    expect(preciseViewResult.json<Page<{
+      cost_minor: string
+      currency: string
+    }>>().items).toEqual(expect.arrayContaining([
       expect.objectContaining({ cost_minor: preciseCost, currency: 'JPY' }),
     ]))
 

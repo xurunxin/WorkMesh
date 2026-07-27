@@ -112,6 +112,125 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
   expect(filtered?.searchParams.has('cursor')).toBe(false)
 })
 
+test('isolates changed scopes immediately while retaining same-scope refresh content', async ({ page }) => {
+  let stableScopeRequests = 0
+  let oldCursorRequests = 0
+  let newCursorRequests = 0
+  let sameScopeRefreshPending = false
+  let changedScopePending = false
+  let releaseSameScopeRefresh = () => {}
+  let releaseChangedScope = () => {}
+  const sameScopeRefreshGate = new Promise<void>(resolve => { releaseSameScopeRefresh = resolve })
+  const changedScopeGate = new Promise<void>(resolve => { releaseChangedScope = resolve })
+
+  await page.route(`${apiUrl}/api/v1/**`, async route => {
+    const url = new URL(route.request().url())
+    const path = url.pathname
+    const body = (payload: unknown, status = 200) =>
+      route.fulfill({ status, headers, body: JSON.stringify(payload) })
+    if (route.request().method() === 'OPTIONS')
+      return route.fulfill({ status: 204, headers })
+    if (path === '/api/v1/install-status') return body({ installed: true })
+    if (path === '/api/v1/auth/me') return body({
+      actor: { id: 'human-page', displayName: 'Pagination human' },
+      csrfToken: 'pagination-csrf',
+    })
+    if (path === '/api/v1/features') return body({ features: [] })
+    if (path === '/api/v1/info') return body({
+      serverVersion: '1.0.0',
+      buildSha: 'pagination-scope-e2e',
+      schemaBaseline: 24,
+    })
+    if (path === '/api/v1/teams') return body({ items: [team], nextCursor: null })
+    if (path === `/api/v1/teams/${team.id}/states`)
+      return body({ items: [state], nextCursor: null })
+    if (path === '/api/v1/actors/humans') return body({
+      items: [{ id: 'human-page', display_name: 'Pagination human', email: 'human@example.test' }],
+      nextCursor: null,
+    })
+    if (path === '/api/v1/projects' || path === '/api/v1/views')
+      return body({ items: [], nextCursor: null })
+    if (path === '/api/v1/work-items') {
+      if (route.request().method() === 'POST')
+        return body(workItem('work-created', 'Refresh trigger', 2))
+      if (url.searchParams.get('cursor') === 'scope-a-old-cursor') {
+        oldCursorRequests += 1
+        return body({
+          items: [workItem('work-stale-cursor', 'Loaded from stale cursor', 3)],
+          nextCursor: null,
+        })
+      }
+      if (url.searchParams.get('cursor') === 'scope-a-new-cursor') {
+        newCursorRequests += 1
+        return body({
+          items: [workItem('work-new-cursor', 'Loaded from refreshed cursor', 4)],
+          nextCursor: 'scope-a-after-load-more',
+        })
+      }
+      if (url.searchParams.get('search') === 'Scope B') {
+        changedScopePending = true
+        await changedScopeGate
+        return body({
+          items: [workItem('work-scope-b', 'Scope B result', 2)],
+          nextCursor: null,
+        })
+      }
+      if (url.searchParams.get('teamId') === team.id) {
+        stableScopeRequests += 1
+        if (stableScopeRequests > 1) {
+          sameScopeRefreshPending = true
+          await sameScopeRefreshGate
+          return body({
+            items: [workItem('work-scope-a', 'Scope A refreshed', 1)],
+            nextCursor: 'scope-a-new-cursor',
+          })
+        }
+      }
+      return body({
+        items: [workItem('work-scope-a', 'Scope A result', 1)],
+        nextCursor: 'scope-a-old-cursor',
+      })
+    }
+    if (path === '/api/v1/events/stream')
+      return route.fulfill({ status: 204, headers })
+    return body({ error: { message: `Unexpected ${route.request().method()} ${path}` } }, 404)
+  })
+
+  await page.goto('/')
+  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')
+
+  const form = page.getByTestId('create-work-item')
+  await form.getByPlaceholder('Title').fill('Refresh trigger')
+  await form.getByTestId('create-work-item-submit').click()
+  await expect.poll(() => sameScopeRefreshPending).toBe(true)
+  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')
+  const loadMore = page.getByTestId('load-more-work-items')
+  await expect(loadMore).toBeVisible()
+  await expect(loadMore).toBeDisabled()
+  await loadMore.evaluate(element => {
+    const button = element as HTMLButtonElement
+    button.disabled = false
+    button.click()
+  })
+  await page.waitForTimeout(100)
+  expect(oldCursorRequests).toBe(0)
+  releaseSameScopeRefresh()
+  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A refreshed')
+  await expect(loadMore).toBeEnabled()
+  await loadMore.click()
+  await expect(page.getByTestId('work-work-new-cursor')).toContainText('Loaded from refreshed cursor')
+  expect(oldCursorRequests).toBe(0)
+  expect(newCursorRequests).toBe(1)
+
+  await page.getByLabel('Search work').fill('Scope B')
+  await expect.poll(() => changedScopePending).toBe(true)
+  await expect(page.getByTestId('work-work-scope-a')).toHaveCount(0)
+  await expect(page.getByTestId('load-more-work-items')).toHaveCount(0)
+  await expect(page.getByTestId('work-items-empty')).toBeVisible()
+  releaseChangedScope()
+  await expect(page.getByTestId('work-work-scope-b')).toContainText('Scope B result')
+})
+
 test('makes a later Agent registry record reachable through explicit continuation', async ({ page }) => {
   const agentRequests: URL[] = []
   const agent = (id: string, name: string) => ({
