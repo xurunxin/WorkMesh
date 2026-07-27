@@ -114,6 +114,20 @@ export const savedViewFiltersSchema = z.record(z.unknown())
 export const savedViewInputSchema = z.object({ name: z.string().min(1).max(80), teamId: idSchema.optional(), filters: savedViewFiltersSchema.default({}), layout: savedViewLayoutSchema.default('list') })
 export const installInputSchema = workspaceInputSchema.extend({ adminName: z.string().min(1).max(120), email: z.string().email(), password: z.string().min(12) })
 export const loginInputSchema = z.object({ email: z.string().email(), password: z.string().min(1) })
+export const authIdempotencyErrorCodeSchema = z.enum([
+  'IDEMPOTENCY_KEY_REQUIRED',
+  'IDEMPOTENCY_KEY_REUSED',
+  'IDEMPOTENCY_REPLAY_EXPIRED',
+  'IDEMPOTENCY_REPLAY_UNAVAILABLE',
+])
+export const authIdempotencyPolicySchema = z.object({
+  replayWindowSeconds: z.literal(900),
+  conflictRetentionSeconds: z.literal(86_400),
+})
+export const authIdempotencyPolicy = authIdempotencyPolicySchema.parse({
+  replayWindowSeconds: 900,
+  conflictRetentionSeconds: 86_400,
+})
 
 // Response DTOs use the PostgreSQL/API wire representation: snake_case keys.
 export const workspaceResponseSchema = z.object({ id: idSchema, name: z.string(), slug: z.string(), revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema })
@@ -147,6 +161,7 @@ export const apiErrorCodeSchema = z.enum([
   'IF_MATCH_REQUIRED',
   'IDEMPOTENCY_KEY_REQUIRED',
   'IDEMPOTENCY_KEY_REUSED',
+  'IDEMPOTENCY_REPLAY_EXPIRED',
   'IDEMPOTENCY_REPLAY_UNAVAILABLE',
   'CSRF_FAILED',
   'INVALID_CREDENTIALS',

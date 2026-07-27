@@ -32,6 +32,7 @@ export type SessionLifecycleWorker = {
   expireStopGrace: (limit?: number) => Promise<number>
   expireApprovals: (limit?: number) => Promise<number>
   expireLeases: (limit?: number) => Promise<number>
+  cleanupAuthIdempotency: (limit?: number) => Promise<{ wiped: number; deleted: number }>
   tick: () => Promise<void>
 }
 
@@ -237,13 +238,51 @@ export function createSessionLifecycleWorker({
     return changed
   })
 
+  const cleanupAuthIdempotency = async (limit = 100): Promise<{ wiped: number; deleted: number }> => withTx(db, async tx => {
+    const wiped = await tx.query(`
+      WITH expired AS (
+        SELECT id
+          FROM auth_idempotency_records
+         WHERE state='completed'
+           AND replay_wiped_at IS NULL
+           AND replay_expires_at <= now()
+         ORDER BY replay_expires_at,id
+         FOR UPDATE SKIP LOCKED
+         LIMIT $1
+      )
+      UPDATE auth_idempotency_records record
+         SET response_status=NULL,replay_key_id=NULL,replay_key_fingerprint=NULL,
+             replay_iv=NULL,replay_tag=NULL,replay_ciphertext=NULL,
+             replay_wiped_at=now()
+        FROM expired
+       WHERE record.id=expired.id
+       RETURNING record.id
+    `, [limit])
+    const removed = await tx.query(`
+      WITH expired AS (
+        SELECT id
+          FROM auth_idempotency_records
+         WHERE conflict_expires_at <= now()
+         ORDER BY conflict_expires_at,id
+         FOR UPDATE SKIP LOCKED
+         LIMIT $1
+      )
+      DELETE FROM auth_idempotency_records record
+       USING expired
+       WHERE record.id=expired.id
+       RETURNING record.id
+    `, [limit])
+    return { wiped: wiped.rowCount ?? 0, deleted: removed.rowCount ?? 0 }
+  })
+
   const tick = async (): Promise<void> => {
     await expireAckDeadlines()
     await reconcileHeartbeatLiveness()
     await expireStopGrace()
     await expireApprovals()
     await expireLeases()
+    await cleanupAuthIdempotency()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, cleanupAuthIdempotency, tick }
 }

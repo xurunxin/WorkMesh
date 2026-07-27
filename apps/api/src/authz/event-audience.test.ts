@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { eventAudienceQuery } from './event-audience.js'
+import { describe, expect, it, vi } from 'vitest'
+import type { Pool } from 'pg'
+import { assertEventAudienceActive, eventAudienceQuery } from './event-audience.js'
 
 const human = {
   id: 'human',
@@ -24,6 +25,25 @@ describe('EventAudiencePolicy SQL', () => {
     const query = eventAudienceQuery(human, 12)
     expect(query.values).toEqual(['workspace', 12, 'human'])
     expect(query.sql).toContain('memberships')
+  })
+
+  it('rechecks an unrevoked human credential without weakening principal or membership checks', async () => {
+    const query = vi.fn().mockResolvedValue({ rowCount: 1 })
+    await assertEventAudienceActive(
+      { query } as unknown as Pool,
+      { ...human, credentialHash: 'credential-hash' },
+    )
+    const sql = query.mock.calls[0]![0] as string
+    expect(sql).toContain('credential.token_hash=$1')
+    expect(sql).toContain('credential.expires_at>now()')
+    expect(sql).toContain('credential.revoked_at IS NULL')
+    expect(sql).toContain("principal.kind='human' AND principal.is_active")
+    expect(sql).toContain('memberships member')
+    expect(query.mock.calls[0]![1]).toEqual([
+      'credential-hash',
+      human.id,
+      human.workspaceId,
+    ])
   })
 
   it('never grants Agents blanket Workspace or same-Team visibility', () => {

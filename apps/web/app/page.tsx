@@ -1,7 +1,7 @@
 'use client'
 
 import { type DragEvent, type FormEvent, type PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ApiError, apiBase, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
+import { ApiError, apiBase, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
 import { AgentWorkPanel } from './agent-work-panel'
 import { type AgentSession, optionalAgentRequest } from './lib/agents'
 import { InboxPanel, WorkRoom } from './work-room'
@@ -278,7 +278,7 @@ export default function HomePage() {
     if (view.team_id) setTeamId(view.team_id)
     setFilters(view.filters ?? emptyFilters); setLayout(view.layout); setSelectedProject(null); setSelectedItem(null); setComments([])
   }
-  const signOut = async () => { try { await apiRequest('/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; clearCsrfToken(); window.location.assign('/login') }
+  const signOut = async () => { try { await apiMutation('logout', '/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; clearCsrfToken(); window.location.assign('/login') }
 
   if (loading) return <main className="center" data-testid="loading">Loading WorkMesh...</main>
   if (!actor) return <main className="center" data-testid="load-error"><p className="error">{error || 'Unable to load WorkMesh.'}</p><button onClick={() => void load()}>Retry</button></main>

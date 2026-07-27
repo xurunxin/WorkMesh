@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useState } from 'react'
-import { ApiError, publicRequest, saveCsrfToken } from '../lib/api'
+import { ApiError, publicMutation, publicRequest, saveCsrfToken } from '../lib/api'
 
 type InstallResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
@@ -22,7 +22,7 @@ export default function InstallPage() {
     setSubmitting(true)
     setError('')
     try {
-      const result = await publicRequest<InstallResponse>('/api/v1/auth/install', {
+      const result = await publicMutation<InstallResponse>('install-workspace', '/api/v1/auth/install', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

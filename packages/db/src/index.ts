@@ -79,33 +79,44 @@ export const applyMigrations = async (db: Db): Promise<void> => {
 export async function installWorkspace(db: Db, input: { workspaceName: string; workspaceSlug: string; adminName: string; email: string; password: string }): Promise<{ workspaceId: string; actorId: string; teamId: string }> {
   assertPasswordPolicy(input)
   const passwordHash = await hashPassword(input.password)
-  return withTx(db, async tx => {
-    await tx.query('SELECT pg_advisory_xact_lock(70472654)')
-    const existing = await tx.query('SELECT singleton FROM platform_installation LIMIT 1 FOR UPDATE')
-    if (existing.rowCount) throw new Error('INSTALLATION_ALREADY_COMPLETED')
-    const workspace = await tx.query<{ id: string }>('INSERT INTO workspaces(name,slug) VALUES($1,$2) RETURNING id', [input.workspaceName, input.workspaceSlug])
-    const workspaceId = workspace.rows[0]!.id
-    const systemActor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','WorkMesh System') RETURNING id", [workspaceId])
-    const actor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin',$2,$3,$4) RETURNING id", [workspaceId, input.email, input.adminName, passwordHash])
-    const team = await tx.query<{ id: string }>("INSERT INTO teams(workspace_id,name,key) VALUES($1,'General','GEN') RETURNING id", [workspaceId])
-    await tx.query('INSERT INTO platform_installation(singleton,workspace_id,system_actor_id) VALUES(true,$1,$2)', [workspaceId, systemActor.rows[0]!.id])
-    await tx.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')", [workspaceId, team.rows[0]!.id, actor.rows[0]!.id])
-    for (const state of defaultStates) {
-      await tx.query('INSERT INTO workflow_states(workspace_id,team_id,name,category,color,position) VALUES($1,$2,$3,$4,$5,$6)', [workspaceId, team.rows[0]!.id, state.name, state.category, state.color, state.position])
-    }
-    await appendEvent(tx, {
-      workspaceId,
-      teamId: team.rows[0]!.id,
-      actorId: systemActor.rows[0]!.id,
-      correlationId: 'bootstrap',
-      type: 'workspace.installed',
-      aggregateType: 'workspace',
-      aggregateId: workspaceId,
-      revision: 1,
-      payload: { teamId: team.rows[0]!.id, adminActorId: actor.rows[0]!.id },
-    })
-    return { workspaceId, actorId: actor.rows[0]!.id, teamId: team.rows[0]!.id }
+  return withTx(db, tx => installWorkspaceInTx(tx, { ...input, passwordHash }))
+}
+
+export async function installWorkspaceInTx(tx: PoolClient, input: {
+  workspaceName: string
+  workspaceSlug: string
+  adminName: string
+  email: string
+  passwordHash: string
+  correlationId?: string
+  idempotencyKey?: string
+}): Promise<{ workspaceId: string; actorId: string; teamId: string }> {
+  await tx.query('SELECT pg_advisory_xact_lock(70472654)')
+  const existing = await tx.query('SELECT singleton FROM platform_installation LIMIT 1 FOR UPDATE')
+  if (existing.rowCount) throw new Error('INSTALLATION_ALREADY_COMPLETED')
+  const workspace = await tx.query<{ id: string }>('INSERT INTO workspaces(name,slug) VALUES($1,$2) RETURNING id', [input.workspaceName, input.workspaceSlug])
+  const workspaceId = workspace.rows[0]!.id
+  const systemActor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','WorkMesh System') RETURNING id", [workspaceId])
+  const actor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin',$2,$3,$4) RETURNING id", [workspaceId, input.email, input.adminName, input.passwordHash])
+  const team = await tx.query<{ id: string }>("INSERT INTO teams(workspace_id,name,key) VALUES($1,'General','GEN') RETURNING id", [workspaceId])
+  await tx.query('INSERT INTO platform_installation(singleton,workspace_id,system_actor_id) VALUES(true,$1,$2)', [workspaceId, systemActor.rows[0]!.id])
+  await tx.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')", [workspaceId, team.rows[0]!.id, actor.rows[0]!.id])
+  for (const state of defaultStates) {
+    await tx.query('INSERT INTO workflow_states(workspace_id,team_id,name,category,color,position) VALUES($1,$2,$3,$4,$5,$6)', [workspaceId, team.rows[0]!.id, state.name, state.category, state.color, state.position])
+  }
+  await appendEvent(tx, {
+    workspaceId,
+    teamId: team.rows[0]!.id,
+    actorId: systemActor.rows[0]!.id,
+    correlationId: input.correlationId ?? 'bootstrap',
+    idempotencyKey: input.idempotencyKey,
+    type: 'workspace.installed',
+    aggregateType: 'workspace',
+    aggregateId: workspaceId,
+    revision: 1,
+    payload: { teamId: team.rows[0]!.id, adminActorId: actor.rows[0]!.id },
   })
+  return { workspaceId, actorId: actor.rows[0]!.id, teamId: team.rows[0]!.id }
 }
 
 export async function createAdmin(db: Db, input: { email: string; password: string; displayName: string }): Promise<{ actorId: string; workspaceId: string }> {

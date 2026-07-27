@@ -8,6 +8,7 @@ import {
 import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
 } from "@workmesh/contracts";
+import { authIdempotentTransaction } from "../auth-idempotency.js";
 import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 
@@ -84,6 +85,24 @@ export async function agentMutate<T>(db: Pool, meta: RequestMeta, handler: (tx: 
   });
 }
 
+async function secretAgentMutate<T>(
+  db: Pool,
+  meta: RequestMeta,
+  request: unknown,
+  handler: (tx: PoolClient) => Promise<T>,
+): Promise<T> {
+  if (!meta.actor.humanSessionId)
+    throw new DomainError("UNAUTHENTICATED", "Human session identity is required");
+  const replay = await authIdempotentTransaction(db, {
+    idempotencyKey: meta.idempotencyKey,
+    subject: `human-session:${meta.actor.humanSessionId}`,
+    operation: meta.operation,
+    request,
+    clientContext: meta.clientContext ?? {},
+  }, async tx => ({ status: 200, body: await handler(tx) }));
+  return replay.body;
+}
+
 const requireAdmin = (actor: ApiActor) => { if (actor.kind !== "human" || actor.workspaceRole !== "admin") throw new DomainError("FORBIDDEN", "Workspace administrator role is required"); };
 export async function assertHumanTeam(tx: PoolClient, actor: ApiActor, teamId: string, manage = false): Promise<void> {
   const found = await tx.query<{ role: "admin" | "maintainer" | "member" }>("SELECT m.role FROM memberships m JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id WHERE m.workspace_id=$1 AND m.team_id=$2 AND m.actor_id=$3 AND t.deleted_at IS NULL", [actor.workspaceId, teamId, actor.id]);
@@ -94,7 +113,7 @@ export async function assertHumanTeam(tx: PoolClient, actor: ApiActor, teamId: s
 
 export async function registerAgent(db: Pool, meta: RequestMeta, input: Record<string, unknown>) {
   requireAdmin(meta.actor);
-  return agentMutate(db, meta, async tx => {
+  return secretAgentMutate(db, meta, input, async tx => {
     assertSafeText(input.name as string | undefined, "agent name"); assertSafeText(input.slug as string | undefined, "agent slug"); assertSafeText(input.description as string | undefined, "agent description"); assertSanitized(input.metadata ?? {});
     const requestedCapabilities = (input.requestedCapabilities ?? []) as Capability[];
     const approvedCapabilities = (input.approvedCapabilities ?? []) as Capability[];
@@ -132,7 +151,7 @@ export async function updateAgent(db: Pool, meta: RequestMeta, id: string, revis
 
 export async function rotateWebhookSecret(db: Pool, meta: RequestMeta, agentId: string, endpointId: string, revision: number) {
   requireAdmin(meta.actor);
-  return agentMutate(db, meta, async tx => {
+  return secretAgentMutate(db, meta, { agentId, endpointId, revision }, async tx => {
     const agent = one((await tx.query<{ revision: number }>("SELECT revision FROM agent_definitions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [agentId, meta.actor.workspaceId])).rows); assertRevision(revision, agent.revision);
     one((await tx.query("SELECT e.id FROM agent_webhook_endpoints e JOIN agent_definitions a ON a.id=e.agent_id WHERE e.id=$1 AND e.agent_id=$2 AND a.workspace_id=$3 FOR UPDATE", [endpointId, agentId, meta.actor.workspaceId])).rows);
     await tx.query("UPDATE agent_webhook_secrets SET status='retiring',valid_until=now()+interval '10 minutes' WHERE endpoint_id=$1 AND status='active'", [endpointId]);
@@ -258,7 +277,7 @@ export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: 
 
 export async function createAgentSession(db: Pool, meta: RequestMeta, input: { delegationId: string; workItemId?: string; projectId?: string; planStepId?: string; initialPrompt: string; contextSnapshotId?: string; budget: unknown }) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can start an agent session");
-  return agentMutate(db, meta, async tx => {
+  return secretAgentMutate(db, meta, input, async tx => {
     assertSafeText(input.initialPrompt, "initial prompt");
     const delegation = one((await tx.query<{ id: string; team_id: string; agent_id: string; agent_actor_id: string; work_item_id: string | null; principal_human_actor_id: string; status: string }>("SELECT * FROM delegations WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [input.delegationId, meta.actor.workspaceId])).rows);
     if (delegation.status !== "active") throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation is not active"); await assertHumanTeam(tx, meta.actor, delegation.team_id);
@@ -297,7 +316,7 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
 
 export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, workItemId: string, expectedRevision: number, input: { agentId:string; principalHumanActorId:string; role:string; requestedCapabilities:Capability[]; initialPrompt:string; contextSnapshotId?:string; budget:unknown }) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can start an agent session");
-  return agentMutate(db, meta, async tx => {
+  return secretAgentMutate(db, meta, { workItemId, expectedRevision, ...input }, async tx => {
     assertSafeText(input.initialPrompt, "initial prompt");
     const work=one((await tx.query<{team_id:string;revision:number;responsible_human_actor_id:string|null;title:string;description:string|null}>("SELECT team_id,revision,responsible_human_actor_id,title,description FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE",[workItemId,meta.actor.workspaceId])).rows);
     await assertHumanTeam(tx,meta.actor,work.team_id); assertRevision(expectedRevision,work.revision);
@@ -333,28 +352,108 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
   });
 }
 
-export async function exchangeAgentToken(db: Pool, sessionId: string, nonce: string, installationBearer: string) {
-  return withTx(db, async tx => {
-    const token = one((await tx.query<{ id: string; installation_token_id: string; expires_at: Date }>("SELECT t.id,t.installation_token_id,t.expires_at FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id WHERE t.session_id=$1 AND t.exchange_nonce_hash=$2 AND t.expires_at>now() AND t.exchanged_at IS NULL AND t.revoked_at IS NULL AND s.state NOT IN ('completed','failed','canceled') FOR UPDATE", [sessionId, tokenHash(nonce)])).rows);
-    const installation = await tx.query("SELECT 1 FROM agent_installation_tokens WHERE id=$1 AND token_hash=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) FOR UPDATE", [token.installation_token_id, tokenHash(installationBearer)]);
+export async function resolveInstallationSessionSubject(
+  db: Pool,
+  sessionId: string,
+  installationBearer: string,
+  exchangeNonce?: string,
+): Promise<string> {
+  const values: unknown[] = [sessionId, tokenHash(installationBearer)];
+  const exchangePredicate = exchangeNonce
+    ? `AND EXISTS(
+         SELECT 1 FROM agent_session_tokens st
+          WHERE st.session_id=s.id AND st.installation_token_id=t.id
+            AND st.exchange_nonce_hash=$3
+       )`
+    : "";
+  if (exchangeNonce) values.push(tokenHash(exchangeNonce));
+  const resolved = (
+    await db.query<{ actor_id: string }>(
+      `SELECT d.actor_id
+         FROM agent_sessions s
+         JOIN agent_definitions d ON d.id=s.agent_id
+         JOIN agent_installation_tokens t ON t.agent_id=d.id
+        WHERE s.id=$1 AND t.token_hash=$2 AND t.revoked_at IS NULL
+          AND (t.expires_at IS NULL OR t.expires_at>now())
+          AND d.is_active
+          ${exchangePredicate}
+        LIMIT 1`,
+      values,
+    )
+  ).rows[0];
+  if (!resolved)
+    throw new DomainError(
+      "UNAUTHENTICATED",
+      "Active installation credential is required",
+    );
+  return `installation:${resolved.actor_id}:session:${sessionId}`;
+}
+
+export async function exchangeAgentToken(
+  db: Pool,
+  input: {
+    sessionId: string;
+    nonce: string;
+    installationBearer: string;
+    idempotencyKey: string;
+    clientContext: Record<string, string | null>;
+  },
+) {
+  const subject = await resolveInstallationSessionSubject(
+    db,
+    input.sessionId,
+    input.installationBearer,
+    input.nonce,
+  );
+  const replay = await authIdempotentTransaction(db, {
+    idempotencyKey: input.idempotencyKey,
+    subject,
+    operation: "exchangeAgentSessionToken",
+    request: { sessionId: input.sessionId, exchangeToken: input.nonce },
+    clientContext: input.clientContext,
+  }, async tx => {
+    const token = one((await tx.query<{ id: string; installation_token_id: string; expires_at: Date }>("SELECT t.id,t.installation_token_id,t.expires_at FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id WHERE t.session_id=$1 AND t.exchange_nonce_hash=$2 AND t.expires_at>now() AND t.exchanged_at IS NULL AND t.revoked_at IS NULL AND s.state NOT IN ('completed','failed','canceled') FOR UPDATE", [input.sessionId, tokenHash(input.nonce)])).rows);
+    const installation = await tx.query("SELECT 1 FROM agent_installation_tokens WHERE id=$1 AND token_hash=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) FOR UPDATE", [token.installation_token_id, tokenHash(input.installationBearer)]);
     if (!installation.rowCount) throw new DomainError("UNAUTHENTICATED", "Active installation credential is required");
     const bearer = opaqueToken();
     await tx.query("UPDATE agent_session_tokens SET token_hash=$2,exchanged_at=now() WHERE id=$1", [token.id, tokenHash(bearer)]);
     await tx.query("UPDATE agent_installation_tokens SET last_used_at=now() WHERE id=$1", [token.installation_token_id]);
-    return { sessionToken: bearer, expiresAt: token.expires_at.toISOString() };
+    return { status: 200, body: { sessionToken: bearer, expiresAt: token.expires_at.toISOString() } };
   });
+  return replay.body;
 }
 
-export async function refreshAgentToken(db: Pool, sessionId: string, installationBearer: string) {
-  return withTx(db, async tx => {
-    const session = one((await tx.query<{ id: string; agent_id: string; delegation_id: string; state: string; delegation_status:string; agent_active:boolean; team_active:boolean }>("SELECT s.id,s.agent_id,s.delegation_id,s.state,d.status AS delegation_status,a.is_active AS agent_active,EXISTS(SELECT 1 FROM agent_team_access ata WHERE ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL) AS team_active FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN agent_definitions a ON a.id=s.agent_id WHERE s.id=$1 FOR UPDATE", [sessionId])).rows);
+export async function refreshAgentToken(
+  db: Pool,
+  input: {
+    sessionId: string;
+    tokenId?: string;
+    installationBearer: string;
+    idempotencyKey: string;
+    clientContext: Record<string, string | null>;
+  },
+) {
+  const subject = await resolveInstallationSessionSubject(
+    db,
+    input.sessionId,
+    input.installationBearer,
+  );
+  const replay = await authIdempotentTransaction(db, {
+    idempotencyKey: input.idempotencyKey,
+    subject,
+    operation: "refreshAgentSessionToken",
+    request: { sessionId: input.sessionId, tokenId: input.tokenId ?? null },
+    clientContext: input.clientContext,
+  }, async tx => {
+    const session = one((await tx.query<{ id: string; agent_id: string; delegation_id: string; state: string; delegation_status:string; agent_active:boolean; team_active:boolean }>("SELECT s.id,s.agent_id,s.delegation_id,s.state,d.status AS delegation_status,a.is_active AS agent_active,EXISTS(SELECT 1 FROM agent_team_access ata WHERE ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL) AS team_active FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN agent_definitions a ON a.id=s.agent_id WHERE s.id=$1 FOR UPDATE", [input.sessionId])).rows);
     if (["stopping", "completed", "failed", "canceled"].includes(session.state)) throw new DomainError("SESSION_STOPPED", "Stopped session cannot refresh its token");
     if (!session.agent_active || session.delegation_status !== "active" || !session.team_active) throw new DomainError("DELEGATION_NOT_ACTIVE", "Agent delegation or team access is no longer active");
-    const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND token_hash=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) FOR UPDATE", [session.agent_id, tokenHash(installationBearer)])).rows);
-    await tx.query("UPDATE agent_session_tokens SET revoked_at=now() WHERE session_id=$1 AND revoked_at IS NULL", [sessionId]);
-    const raw = opaqueToken(); await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,exchanged_at) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',now())", [sessionId, session.agent_id, installation.id, tokenHash(raw), tokenHash(opaqueToken())]);
-    return { sessionToken: raw, expiresAt: new Date(Date.now() + 900_000).toISOString() };
+    const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 AND token_hash=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now()) FOR UPDATE", [session.agent_id, tokenHash(input.installationBearer)])).rows);
+    await tx.query("UPDATE agent_session_tokens SET revoked_at=now() WHERE session_id=$1 AND revoked_at IS NULL", [input.sessionId]);
+    const raw = opaqueToken(); await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,exchanged_at) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',now())", [input.sessionId, session.agent_id, installation.id, tokenHash(raw), tokenHash(opaqueToken())]);
+    return { status: 200, body: { sessionToken: raw, expiresAt: new Date(Date.now() + 900_000).toISOString() } };
   });
+  return replay.body;
 }
 
 export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string, revision: number, input: { reason: string; initialPrompt?: string; reuseContext: boolean }) {

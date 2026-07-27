@@ -47,6 +47,29 @@ describe('WorkMeshClient', () => {
     expect(fetch).toHaveBeenCalledOnce()
   })
 
+  it('reuses the token-exchange key across a retry without logging credentials', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const warn = vi.fn()
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      logger: { warn, debug: vi.fn() },
+      retry: { baseDelayMs: 0, maxAttempts: 2 },
+    })
+
+    await expect(client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret'))
+      .resolves.toMatchObject({ sessionToken: 'issued-once' })
+
+    const keys = fetch.mock.calls.map(call => call[1].headers['idempotency-key'])
+    expect(keys[0]).toBeTruthy()
+    expect(keys[1]).toBe(keys[0])
+    expect(fetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer installation-secret')
+    expect(JSON.stringify(warn.mock.calls)).not.toContain('installation-secret')
+    expect(JSON.stringify(warn.mock.calls)).not.toContain('exchange-secret')
+  })
+
   it('uses installation authority only for pending handoff inspection and idle-target rejection', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ handoff: { id: 'handoff-1' }, contextSnapshot: { id: 'snapshot-1' } }), { status: 200 }))

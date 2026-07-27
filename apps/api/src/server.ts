@@ -1,7 +1,11 @@
 import crypto from "node:crypto";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
-import Fastify, { type FastifyReply, type FastifyRequest } from "fastify";
+import Fastify, {
+  type FastifyReply,
+  type FastifyRequest,
+  type FastifyServerOptions,
+} from "fastify";
 import { ZodError, z } from "zod";
 import {
   loadConfig,
@@ -27,8 +31,10 @@ import {
 } from "@workmesh/contracts";
 import {
   appendEvent,
+  assertPasswordPolicy,
   createDb,
-  installWorkspace,
+  hashPassword,
+  installWorkspaceInTx,
   opaqueToken,
   tokenHash,
   verifyPassword,
@@ -52,6 +58,11 @@ import {
   recordAuthorizationDenial,
 } from "./authz/authorize.js";
 import { validateExternalCorrelationId } from "./authz/request-metadata.js";
+import {
+  authClientContext,
+  authIdempotentTransaction,
+  type AuthReplayEnvelope,
+} from "./auth-idempotency.js";
 import {
   assertEventAudienceActive,
   eventAudienceQuery,
@@ -123,6 +134,7 @@ function commandContext(
       body,
       ifMatch: header(request, "if-match") ?? null,
     }),
+    clientContext: authClientContext(request),
   };
 }
 
@@ -188,10 +200,14 @@ function parseCursor(raw: unknown): number {
 export const buildApp = (options: {
   features?: FeatureConfig;
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
+  logger?: FastifyServerOptions["logger"];
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
-  const app = Fastify({ logger: true, genReqId: () => crypto.randomUUID() });
+  const app = Fastify({
+    logger: options.logger ?? true,
+    genReqId: () => crypto.randomUUID(),
+  });
   installRoutePolicyInventory(app);
   void app.register(cookie);
   void app.register(cors, {
@@ -251,16 +267,33 @@ export const buildApp = (options: {
     if (!token) throw new DomainError("UNAUTHENTICATED", "Sign in is required");
     const result = await db.query<{
       id: string;
+      session_id: string;
       workspace_id: string;
       display_name: string;
       csrf_token: string;
       workspace_role: "admin" | "member";
       has_membership: boolean;
     }>(
-      "SELECT a.id,a.workspace_id,a.display_name,s.csrf_token,a.workspace_role,EXISTS(SELECT 1 FROM memberships m JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id WHERE m.workspace_id=a.workspace_id AND m.actor_id=a.id AND t.deleted_at IS NULL) AS has_membership FROM sessions s JOIN actors a ON a.id=s.actor_id WHERE s.token_hash=$1 AND s.expires_at>now() AND a.kind='human' AND a.is_active=true",
+      "SELECT a.id,s.id AS session_id,a.workspace_id,a.display_name,s.csrf_token,a.workspace_role,EXISTS(SELECT 1 FROM memberships m JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id WHERE m.workspace_id=a.workspace_id AND m.actor_id=a.id AND t.deleted_at IS NULL) AS has_membership FROM sessions s JOIN actors a ON a.id=s.actor_id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND a.kind='human' AND a.is_active=true",
       [tokenHash(token)],
     );
-    const actor = result.rows[0];
+    let actor = result.rows[0];
+    if (!actor && request.routeOptions.url === "/api/v1/auth/logout") {
+      actor = (
+        await db.query<{
+          id: string;
+          session_id: string;
+          workspace_id: string;
+          display_name: string;
+          csrf_token: string;
+          workspace_role: "admin" | "member";
+          has_membership: boolean;
+        }>(
+          "SELECT a.id,s.id AS session_id,a.workspace_id,a.display_name,s.csrf_token,a.workspace_role,EXISTS(SELECT 1 FROM memberships m JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id WHERE m.workspace_id=a.workspace_id AND m.actor_id=a.id AND t.deleted_at IS NULL) AS has_membership FROM sessions s JOIN actors a ON a.id=s.actor_id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NOT NULL AND a.kind='human' AND a.is_active=true",
+          [tokenHash(token)],
+        )
+      ).rows[0];
+    }
     if (!actor) throw new DomainError("UNAUTHENTICATED", "Session has expired");
     if (actor.workspace_role !== "admin" && !actor.has_membership)
       throw new DomainError(
@@ -274,6 +307,7 @@ export const buildApp = (options: {
       csrfToken: actor.csrf_token,
       workspaceRole: actor.workspace_role,
       kind: "human",
+      humanSessionId: actor.session_id,
       authentication: "human_session",
       credentialHash: tokenHash(token),
     };
@@ -418,23 +452,32 @@ export const buildApp = (options: {
   }));
   app.post("/api/v1/auth/install", async (request, reply) => {
     const body = installInputSchema.parse(request.body);
-    const installed = await installWorkspace(db, {
-      workspaceName: body.name,
-      workspaceSlug: body.slug,
-      adminName: body.adminName,
-      email: body.email,
-      password: body.password,
+    const normalizedEmail = body.email.trim().toLowerCase();
+    assertPasswordPolicy(body);
+    const passwordHash = await hashPassword(body.password);
+    const result = await authIdempotentTransaction(db, {
+      idempotencyKey: request.idempotencyKey!,
+      subject: "install:singleton",
+      operation: "installWorkspace",
+      request: { ...body, email: normalizedEmail },
+      clientContext: authClientContext(request),
+    }, async tx => {
+      const installed = await installWorkspaceInTx(tx, {
+        workspaceName: body.name,
+        workspaceSlug: body.slug,
+        adminName: body.adminName,
+        email: normalizedEmail,
+        passwordHash,
+        correlationId: request.correlationId,
+        idempotencyKey: request.idempotencyKey,
+      });
+      return createHumanSessionEnvelope(tx, installed.actorId, installed.workspaceId, request.correlationId, request.idempotencyKey);
     });
-    return createSession(
-      reply,
-      installed.actorId,
-      installed.workspaceId,
-      request.correlationId,
-      request.idempotencyKey,
-    );
+    return applyAuthEnvelope(reply, result);
   });
   app.post("/api/v1/auth/login", async (request, reply) => {
     const body = loginInputSchema.parse(request.body);
+    const normalizedEmail = body.email.trim().toLowerCase();
     const actor = (
       await db.query<{
         id: string;
@@ -442,24 +485,34 @@ export const buildApp = (options: {
         password_hash: string;
       }>(
         "SELECT id,workspace_id,password_hash FROM actors WHERE email=$1 AND kind='human' AND is_active=true",
-        [body.email],
+        [normalizedEmail],
       )
     ).rows[0];
     if (!actor || !(await verifyPassword(actor.password_hash, body.password)))
       throw new DomainError("INVALID_CREDENTIALS", "Invalid email or password");
-    return createSession(
-      reply,
-      actor.id,
-      actor.workspace_id,
-      request.correlationId,
-      request.idempotencyKey,
-    );
+    const result = await authIdempotentTransaction(db, {
+      idempotencyKey: request.idempotencyKey!,
+      subject: `login:${normalizedEmail}`,
+      operation: "login",
+      request: { email: normalizedEmail, password: body.password },
+      clientContext: authClientContext(request),
+    }, tx => createHumanSessionEnvelope(tx, actor.id, actor.workspace_id, request.correlationId, request.idempotencyKey));
+    return applyAuthEnvelope(reply, result);
   });
   app.post("/api/v1/auth/logout", async (request, reply) => {
-    await withTx(db, async (tx) => {
-      await tx.query("DELETE FROM sessions WHERE token_hash=$1", [
-        tokenHash(request.cookies[sessionCookie] ?? ""),
-      ]);
+    const result = await authIdempotentTransaction(db, {
+      idempotencyKey: request.idempotencyKey!,
+      subject: `human-session:${request.actor!.humanSessionId!}`,
+      operation: "logout",
+      request: {},
+      clientContext: authClientContext(request),
+    }, async tx => {
+      const revoked = await tx.query(
+        "UPDATE sessions SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL RETURNING id",
+        [request.actor!.humanSessionId],
+      );
+      if (!revoked.rowCount)
+        throw new DomainError("UNAUTHENTICATED", "Session has expired");
       await appendEvent(tx, {
         workspaceId: request.actor!.workspaceId,
         actorId: request.actor!.id,
@@ -467,12 +520,12 @@ export const buildApp = (options: {
         idempotencyKey: request.idempotencyKey,
         type: "auth.session.deleted",
         aggregateType: "session",
-        aggregateId: crypto.randomUUID(),
+        aggregateId: request.actor!.humanSessionId!,
         payload: {},
       });
+      return { status: 200, body: { ok: true }, cookie: { action: "clear" } };
     });
-    reply.clearCookie(sessionCookie, { path: "/" });
-    return { ok: true };
+    return applyAuthEnvelope(reply, result);
   });
   app.get("/api/v1/auth/me", async (request) => ({
     actor: {
@@ -737,39 +790,52 @@ export const buildApp = (options: {
   return app;
 };
 
-const createSession = async (
-  reply: FastifyReply,
+const createHumanSessionEnvelope = async (
+  tx: import("pg").PoolClient,
   actorId: string,
   workspaceId: string,
   correlationId: string,
   idempotencyKey?: string,
-) => {
+): Promise<AuthReplayEnvelope<{ csrf_token: string; csrfToken: string }>> => {
   const token = opaqueToken();
   const csrfToken = opaqueToken();
-  await withTx(db, async (tx) => {
-    await tx.query(
-      "INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '7 days')",
-      [actorId, tokenHash(token), csrfToken],
-    );
-    await appendEvent(tx, {
-      workspaceId,
-      actorId,
-      correlationId,
-      idempotencyKey,
-      type: "auth.session.created",
-      aggregateType: "session",
-      aggregateId: crypto.randomUUID(),
-      payload: {},
-    });
+  const session = await tx.query<{ id: string }>(
+    "INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '7 days') RETURNING id",
+    [actorId, tokenHash(token), csrfToken],
+  );
+  await appendEvent(tx, {
+    workspaceId,
+    actorId,
+    correlationId,
+    idempotencyKey,
+    type: "auth.session.created",
+    aggregateType: "session",
+    aggregateId: session.rows[0]!.id,
+    payload: {},
   });
-  reply.setCookie(sessionCookie, token, {
+  return {
+    status: 200,
+    body: { csrf_token: csrfToken, csrfToken },
+    cookie: { action: "set", value: token, csrfToken },
+  };
+};
+
+const applyAuthEnvelope = <T>(
+  reply: FastifyReply,
+  envelope: AuthReplayEnvelope<T>,
+): T => {
+  if (envelope.cookie?.action === "set")
+    reply.setCookie(sessionCookie, envelope.cookie.value, {
     httpOnly: true,
     sameSite: "lax",
     secure: config.sessionCookieSecure,
     path: "/",
     maxAge: 604800,
   });
-  return { csrf_token: csrfToken, csrfToken };
+  else if (envelope.cookie?.action === "clear")
+    reply.clearCookie(sessionCookie, { path: "/" });
+  reply.code(envelope.status);
+  return envelope.body;
 };
 
 async function createView(

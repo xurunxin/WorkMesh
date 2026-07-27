@@ -18,6 +18,7 @@ export type CommandContext = {
   correlationId: string;
   operation: string;
   requestHash: string;
+  clientContext?: Record<string, string | null>;
 };
 type Team = { id: string; deleted_at: Date | null };
 const one = <T>(rows: T[]): T => {
