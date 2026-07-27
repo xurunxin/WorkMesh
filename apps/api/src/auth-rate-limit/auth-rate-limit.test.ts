@@ -73,6 +73,18 @@ describe("authentication rate-limit inventory and privacy", () => {
     expect(keys.join(" ")).not.toContain(admission.subject);
     expect(keys.join(" ")).not.toContain(admission.clientIp);
     expect(keys.every((key) => /[a-f0-9]{64}$/.test(key))).toBe(true);
+
+    const isolatedStore = new FakeStore();
+    const isolatedConfig = loadConfig({
+      DATABASE_URL: "postgres://workmesh:workmesh@localhost/workmesh",
+      REDIS_URL: "redis://localhost:6379",
+      SESSION_SECRET: "0123456789abcdef0123456789abcdef",
+      AUTH_RATE_LIMIT_REDIS_PREFIX: "authrl:test:auth-idempotency",
+    });
+    await new AuthRateLimiter(isolatedStore, isolatedConfig).admit(admission);
+    expect(isolatedStore.calls[0]!.keys.every((key) =>
+      key.startsWith("{authrl:test:auth-idempotency}:")
+    )).toBe(true);
   });
 
   it("returns deterministic typed limited and unavailable results", async () => {

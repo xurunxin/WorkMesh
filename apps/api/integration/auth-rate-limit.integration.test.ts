@@ -19,6 +19,7 @@ const config = loadConfig({
   REDIS_URL: process.env.REDIS_URL,
   SESSION_SECRET: `auth-rate-limit-integration-${unique}-secret-padding`,
   AUTH_RATE_LIMIT_HMAC_KEY: `auth-rate-limit-integration-${unique}-hmac-padding`,
+  AUTH_RATE_LIMIT_REDIS_PREFIX: `authrl:test:auth-rate-limit:${unique}`,
   AUTH_RATE_LIMIT_ENDPOINT_BURST: "5",
   AUTH_RATE_LIMIT_SOCKET_BURST: "5",
   AUTH_RATE_LIMIT_CLIENT_IP_BURST: "5",

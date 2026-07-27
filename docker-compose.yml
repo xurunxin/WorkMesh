@@ -65,6 +65,7 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}

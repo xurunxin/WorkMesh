@@ -116,7 +116,7 @@ export class AuthRateLimiter {
   }
 
   #key(kind: string, value: string): string {
-    return `{authrl}:v1:${kind}:${this.#fingerprint(kind, value)}`;
+    return `{${this.#config.AUTH_RATE_LIMIT_REDIS_PREFIX}}:v1:${kind}:${this.#fingerprint(kind, value)}`;
   }
 
   #failureKey(input: Admission): string {

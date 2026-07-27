@@ -8,6 +8,7 @@ import {
 
 const boundedInt = (minimum: number, maximum: number, fallback: number) =>
   z.coerce.number().int().min(minimum).max(maximum).default(fallback)
+const redisKeyPrefix = z.string().trim().min(1).max(96).regex(/^[A-Za-z0-9:_-]+$/).default('authrl')
 const proxyCidrs = z.string().default('').transform((value, context) => {
   const entries = value.split(',').map(entry => entry.trim()).filter(Boolean)
   if (entries.length > 32) {
@@ -27,6 +28,7 @@ const proxyCidrs = z.string().default('').transform((value, context) => {
 const envSchema = z.object({
   DATABASE_URL: z.string().url(), REDIS_URL: z.string().url(), SESSION_SECRET: z.string().min(32),
   AUTH_RATE_LIMIT_HMAC_KEY: z.preprocess(value => value === '' ? undefined : value, z.string().min(32).optional()),
+  AUTH_RATE_LIMIT_REDIS_PREFIX: redisKeyPrefix,
   AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: proxyCidrs,
   AUTH_RATE_LIMIT_ENDPOINT_BURST: boundedInt(1, 10_000, 30), AUTH_RATE_LIMIT_SOCKET_BURST: boundedInt(1, 10_000, 60),
   AUTH_RATE_LIMIT_CLIENT_IP_BURST: boundedInt(1, 10_000, 40), AUTH_RATE_LIMIT_SUBJECT_BURST: boundedInt(1, 1_000, 8),
