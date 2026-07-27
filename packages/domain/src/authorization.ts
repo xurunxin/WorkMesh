@@ -50,8 +50,11 @@ export function evaluateRouteAuthorization(
   facts: RouteAuthorizationFacts,
 ): RouteAuthorizationDecision {
   if (policy.authentication === 'public') return { allowed: true }
-  if (!facts.principalKind || !policy.actorKinds.includes(facts.principalKind)) {
-    return deny('UNAUTHENTICATED', 'identity', 'The route requires a matching authenticated principal')
+  if (!facts.principalKind) {
+    return deny('UNAUTHENTICATED', 'identity', 'The route requires an authenticated principal')
+  }
+  if (!policy.actorKinds.includes(facts.principalKind)) {
+    return deny('FORBIDDEN', 'identity', 'The authenticated principal kind is not allowed for this route')
   }
 
   if (facts.principalKind === 'human') {

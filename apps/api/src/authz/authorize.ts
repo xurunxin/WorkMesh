@@ -59,38 +59,145 @@ export function policyForRequest(request: FastifyRequest): RoutePolicyManifestEn
   return policy
 }
 
-async function resolveTeamId(
+type TeamResolution =
+  | { kind: 'none' }
+  | { kind: 'resolved'; teamId: string | null }
+  | { kind: 'unresolved' }
+
+type ExplicitResourceKind =
+  | 'workspace'
+  | 'team'
+  | 'project'
+  | 'work_item'
+  | 'comment'
+  | 'agent_definition'
+  | 'delegation'
+  | 'agent_session'
+  | 'artifact'
+  | 'artifact_upload_intent'
+  | 'approval'
+  | 'work_room'
+  | 'room_message'
+  | 'lease'
+  | 'handoff'
+  | 'decision'
+  | 'repository'
+  | 'provider_connection'
+  | 'provider_action'
+  | 'pull_request'
+  | 'automation_rule'
+  | 'automation_run'
+  | 'loop'
+  | 'template'
+  | 'a2a_binding'
+
+const resourceSegments: Readonly<Record<string, {
+  kind: ExplicitResourceKind
+  resolver: ResourceResolverId
+}>> = {
+  workspaces: { kind: 'workspace', resolver: 'workspace' },
+  teams: { kind: 'team', resolver: 'team' },
+  projects: { kind: 'project', resolver: 'project' },
+  'work-items': { kind: 'work_item', resolver: 'work_item' },
+  comments: { kind: 'comment', resolver: 'comment' },
+  agents: { kind: 'agent_definition', resolver: 'agent_definition' },
+  delegations: { kind: 'delegation', resolver: 'delegation' },
+  'agent-sessions': { kind: 'agent_session', resolver: 'agent_session' },
+  artifacts: { kind: 'artifact', resolver: 'artifact' },
+  'artifact-upload-intents': { kind: 'artifact_upload_intent', resolver: 'artifact' },
+  approvals: { kind: 'approval', resolver: 'approval' },
+  rooms: { kind: 'work_room', resolver: 'work_room' },
+  messages: { kind: 'room_message', resolver: 'work_room' },
+  leases: { kind: 'lease', resolver: 'lease' },
+  handoffs: { kind: 'handoff', resolver: 'handoff' },
+  decisions: { kind: 'decision', resolver: 'decision' },
+  repositories: { kind: 'repository', resolver: 'repository' },
+  'provider-connections': { kind: 'provider_connection', resolver: 'provider_connection' },
+  'provider-webhooks': { kind: 'provider_connection', resolver: 'provider_connection' },
+  'provider-actions': { kind: 'provider_action', resolver: 'provider_action' },
+  'pull-requests': { kind: 'pull_request', resolver: 'pull_request' },
+  'automation-rules': { kind: 'automation_rule', resolver: 'automation' },
+  'automation-runs': { kind: 'automation_run', resolver: 'automation' },
+  loops: { kind: 'loop', resolver: 'automation' },
+  templates: { kind: 'template', resolver: 'template' },
+  'a2a-bindings': { kind: 'a2a_binding', resolver: 'a2a_binding' },
+}
+
+function explicitResourceTarget(
+  request: FastifyRequest,
+  resolver: ResourceResolverId,
+): { kind: ExplicitResourceKind; id: string } | null {
+  const params = pathParams(request)
+  const segments = (request.routeOptions.url ?? '').split('/').filter(Boolean)
+  const candidates: Array<{
+    kind: ExplicitResourceKind
+    resolver: ResourceResolverId
+    id: string
+  }> = []
+  for (let index = 1; index < segments.length; index += 1) {
+    const parameter = segments[index]
+    const resource = resourceSegments[segments[index - 1]!]
+    if (!parameter?.startsWith(':') || !resource) continue
+    const value = params[parameter.slice(1)]
+    if (typeof value === 'string') candidates.push({ ...resource, id: value })
+  }
+  const target = candidates.filter(candidate => candidate.resolver === resolver).at(-1)
+    ?? candidates[0]
+  return target ? { kind: target.kind, id: target.id } : null
+}
+
+function resourceTeamSql(kind: ExplicitResourceKind): string {
+  switch (kind) {
+    case 'workspace': return 'SELECT NULL::uuid AS team_id FROM workspaces WHERE id=$1 AND id=$2'
+    case 'team': return 'SELECT id AS team_id FROM teams WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
+    case 'project': return 'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
+    case 'work_item': return 'SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
+    case 'comment': return 'SELECT w.team_id FROM comments c JOIN channels ch ON ch.id=c.channel_id JOIN work_items w ON w.id=ch.work_item_id AND w.workspace_id=ch.workspace_id WHERE c.id=$1 AND ch.workspace_id=$2 AND c.deleted_at IS NULL AND w.deleted_at IS NULL'
+    case 'agent_definition': return 'SELECT NULL::uuid AS team_id FROM agent_definitions WHERE id=$1 AND workspace_id=$2'
+    case 'delegation': return 'SELECT team_id FROM delegations WHERE id=$1 AND workspace_id=$2'
+    case 'agent_session': return 'SELECT team_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2'
+    case 'artifact': return 'SELECT s.team_id FROM artifacts a JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
+    case 'artifact_upload_intent': return 'SELECT w.team_id FROM artifact_upload_intents i JOIN work_items w ON w.id=i.work_item_id AND w.workspace_id=i.workspace_id WHERE i.id=$1 AND i.workspace_id=$2 AND w.deleted_at IS NULL'
+    case 'approval': return 'SELECT s.team_id FROM approvals a JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
+    case 'work_room': return 'SELECT team_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2'
+    case 'room_message': return 'SELECT c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id AND c.workspace_id=m.workspace_id WHERE m.id=$1 AND m.workspace_id=$2'
+    case 'lease': return 'SELECT s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id AND s.workspace_id=l.workspace_id WHERE l.id=$1 AND l.workspace_id=$2'
+    case 'handoff': return 'SELECT s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id AND s.workspace_id=h.workspace_id WHERE h.id=$1 AND h.workspace_id=$2'
+    case 'decision': return 'SELECT COALESCE(w.team_id,p.team_id,s.team_id) AS team_id FROM decisions d LEFT JOIN work_items w ON w.id=d.work_item_id AND w.workspace_id=d.workspace_id LEFT JOIN projects p ON p.id=d.project_id AND p.workspace_id=d.workspace_id LEFT JOIN agent_sessions s ON s.id=d.session_id AND s.workspace_id=d.workspace_id WHERE d.id=$1 AND d.workspace_id=$2'
+    case 'repository': return 'SELECT team_id FROM repositories WHERE id=$1 AND workspace_id=$2'
+    case 'provider_connection': return 'SELECT NULL::uuid AS team_id FROM provider_connections WHERE id=$1 AND workspace_id=$2'
+    case 'provider_action': return 'SELECT r.team_id FROM provider_actions a JOIN repositories r ON r.id=a.repository_id AND r.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
+    case 'pull_request': return 'SELECT r.team_id FROM pull_request_projections p JOIN repositories r ON r.id=p.repository_id AND r.workspace_id=p.workspace_id WHERE p.id=$1 AND p.workspace_id=$2'
+    case 'automation_rule': return 'SELECT team_id FROM automation_rules WHERE id=$1 AND workspace_id=$2'
+    case 'automation_run': return 'SELECT team_id FROM automation_runs WHERE id=$1 AND workspace_id=$2'
+    case 'loop': return 'SELECT team_id FROM loops WHERE id=$1 AND workspace_id=$2'
+    case 'template': return 'SELECT team_id FROM templates WHERE id=$1 AND workspace_id=$2'
+    case 'a2a_binding': return 'SELECT NULL::uuid AS team_id FROM a2a_agent_bindings WHERE id=$1 AND workspace_id=$2'
+  }
+}
+
+async function resolveTeam(
   db: Pool,
   request: FastifyRequest,
   resolver: ResourceResolverId,
-): Promise<string | null> {
+): Promise<TeamResolution> {
   const params = pathParams(request)
   const query = queryParams(request)
   const directTeamId = params.teamId ?? query.teamId
-  if (typeof directTeamId === 'string') return directTeamId
-  const id = params.id
-  if (typeof id !== 'string') return null
-  if (resolver === 'team') return id
-
-  const tables: Partial<Record<ResourceResolverId, readonly [string, string, string]>> = {
-    project: ['projects', 'id', 'team_id'],
-    work_item: ['work_items', 'id', 'team_id'],
-    agent_session: ['agent_sessions', 'id', 'team_id'],
-    work_room: ['work_rooms', 'id', 'team_id'],
-    repository: ['repositories', 'id', 'team_id'],
-    automation: request.routeOptions.url?.includes('/loops')
-      ? ['loops', 'id', 'team_id']
-      : ['automation_rules', 'id', 'team_id'],
-    template: ['templates', 'id', 'team_id'],
-  }
-  const table = tables[resolver]
-  if (!table) return null
+  const target = explicitResourceTarget(request, resolver)
+    ?? (typeof directTeamId === 'string'
+      ? { kind: 'team' as const, id: directTeamId }
+      : null)
+  if (!target) return { kind: 'none' }
   const result = await db.query<{ team_id: string | null }>(
-    `SELECT ${table[2]} AS team_id FROM ${table[0]}
-     WHERE ${table[1]}=$1 AND workspace_id=$2`,
-    [id, request.actor!.workspaceId],
+    resourceTeamSql(target.kind),
+    [target.id, request.actor!.workspaceId],
   )
-  return result.rows[0]?.team_id ?? null
+  if (!result.rows[0]) return { kind: 'unresolved' }
+  return {
+    kind: 'resolved',
+    teamId: result.rows[0].team_id,
+  }
 }
 
 async function humanTeamRole(
@@ -203,7 +310,21 @@ export async function authorizeRequest(
   ) return
   const actor = request.actor
   if (!actor) throw new DomainError('UNAUTHENTICATED', 'An authenticated principal is required')
-  const teamId = await resolveTeamId(db, request, policy.resourceResolverId)
+  if (!policy.actorKinds.includes(actor.kind)) {
+    throw new DomainError('FORBIDDEN', 'The authenticated principal kind is not allowed for this route', {
+      authorizationStage: 'identity',
+      policyId: policy.policyId,
+    })
+  }
+  const teamResolution = await resolveTeam(db, request, policy.resourceResolverId)
+  if (teamResolution.kind === 'unresolved') {
+    throw new DomainError('NOT_FOUND', 'Resource not found', {
+      authorizationStage: 'resource_scope',
+      dedupeAuthorizationDenial: true,
+      policyId: policy.policyId,
+    })
+  }
+  const teamId = teamResolution.kind === 'resolved' ? teamResolution.teamId : null
   const agentFacts = actor.kind === 'agent' ? await loadAgentFacts(db, actor) : undefined
   const liveCapabilities = agentFacts
     ? agentFacts.permissions_snapshot.filter(capability =>
@@ -291,7 +412,13 @@ export async function recordAuthorizationDenial(input: {
   error: DomainError
   auditSecret: string
 }): Promise<void> {
-  if (!authorizationCodes.has(input.error.code)) return
+  const details = input.error.details as {
+    authorizationStage?: AuthorizationStage
+    dedupeAuthorizationDenial?: boolean
+  } | undefined
+  const concealedAuthorizationNotFound = input.error.code === 'NOT_FOUND'
+    && details?.authorizationStage === 'resource_scope'
+  if (!authorizationCodes.has(input.error.code) && !concealedAuthorizationNotFound) return
   let policy: RoutePolicyManifestEntry
   try {
     policy = policyForRequest(input.request)
@@ -299,7 +426,13 @@ export async function recordAuthorizationDenial(input: {
     return
   }
   const params = pathParams(input.request)
-  const resourceParts = Object.entries(params)
+  const query = queryParams(input.request)
+  const resourceParts = [
+    ...Object.entries(params),
+    ...(typeof query.teamId === 'string' && typeof params.teamId !== 'string'
+      ? [['teamId', query.teamId] as const]
+      : []),
+  ]
     .filter(([, value]) => typeof value === 'string')
     .sort(([left], [right]) => left.localeCompare(right))
   const resourceFingerprint = resourceParts.length
@@ -310,6 +443,7 @@ export async function recordAuthorizationDenial(input: {
     || policy.operationId === 'heartbeatLease'
     || input.error.code === 'PROVIDER_SIGNATURE_INVALID'
     || input.error.code === 'FEATURE_DISABLED'
+    || details?.dedupeAuthorizationDenial === true
     ? keyedFingerprint(input.auditSecret, [
       input.request.actor?.id ?? null,
       input.request.actor?.agentSessionId ?? null,
@@ -319,10 +453,6 @@ export async function recordAuthorizationDenial(input: {
       minute,
     ])
     : null
-  const details = input.error.details as {
-    authorizationStage?: AuthorizationStage
-  } | undefined
-
   await input.db.query(
     `INSERT INTO authorization_denials(
       correlation_id,policy_id,operation_id,transport,principal_kind,

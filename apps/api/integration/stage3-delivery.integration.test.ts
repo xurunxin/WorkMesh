@@ -364,10 +364,10 @@ describe('Stage 3 delivery API', () => {
     )).rows[0]!
     const expectNoDisclosure = async () => {
       const list = await agentCall(f.agent.token, 'GET', '/api/v1/repositories')
-      expect([200, 401, 403]).toContain(list.statusCode)
+      expect([200, 401, 403, 409]).toContain(list.statusCode)
       if (list.statusCode === 200) expect(list.json()).toEqual([])
       const context = await agentCall(f.agent.token, 'GET', `/api/v1/repositories/${f.repositoryId}/context`)
-      expect([401, 403]).toContain(context.statusCode)
+      expect([401, 403, 409]).toContain(context.statusCode)
       expect(JSON.stringify(context.json())).not.toMatch(/base-sha|foreign-secret|AGENTS\.md|acme\/workmesh/)
     }
     await db.query('UPDATE agent_definitions SET is_active=false WHERE id=$1', [session.agent_id])

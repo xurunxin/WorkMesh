@@ -627,8 +627,8 @@ describe('declarative route policy live authorization', () => {
       '/api/v1/cycles',
       {},
     )
-    expect(wrongKindBeforeFeatureGate.statusCode).toBe(401)
-    expect(errorCode(wrongKindBeforeFeatureGate)).toBe('UNAUTHENTICATED')
+    expect(wrongKindBeforeFeatureGate.statusCode).toBe(403)
+    expect(errorCode(wrongKindBeforeFeatureGate)).toBe('FORBIDDEN')
 
     const lease = await agentCall(primary.token, 'POST', '/api/v1/leases', {
       sessionId: primary.sessionId,
@@ -825,6 +825,95 @@ describe('declarative route policy live authorization', () => {
       reason_code: 'SESSION_NOT_ACTIVE',
       transport: 'sse',
     })
+  })
+
+  it('conceals and deduplicates explicit unresolved Team targets without breaking body-owned collection writes', async () => {
+    const member = await createHuman('Explicit Target Member', teamA)
+    const scopedAgent = await createAgentFixture({
+      slug: `route-policy-explicit-target-${randomUUID()}`,
+      workItemId: itemA.id,
+      teamId: teamA,
+      capabilities: ['work:read', 'work:write'],
+    })
+    const foreignWorkspaceId = (await db.query<{ id: string }>(
+      `INSERT INTO workspaces(name,slug)
+       VALUES('Foreign explicit target',$1)
+       RETURNING id`,
+      [`foreign-explicit-${randomUUID()}`],
+    )).rows[0]!.id
+    const foreignTeamId = (await db.query<{ id: string }>(
+      `INSERT INTO teams(workspace_id,name,key)
+       VALUES($1,'Foreign explicit target','FOREIGN')
+       RETURNING id`,
+      [foreignWorkspaceId],
+    )).rows[0]!.id
+    const deletedTeamId = (await db.query<{ id: string }>(
+      `INSERT INTO teams(workspace_id,name,key,deleted_at)
+       VALUES($1,'Deleted explicit target',$2,now())
+       RETURNING id`,
+      [workspaceId, `DELETED-${randomUUID()}`],
+    )).rows[0]!.id
+    const targets = [foreignTeamId, deletedTeamId, randomUUID()]
+    const principals = [
+      {
+        actorId: member.actorId,
+        secret: member.cookie,
+        call: (teamId: string) => humanCall(member, 'GET', `/api/v1/teams/${teamId}/states?teamId=${teamA}`),
+      },
+      {
+        actorId: scopedAgent.actorId,
+        secret: scopedAgent.token,
+        call: (teamId: string) => agentCall(scopedAgent.token, 'GET', `/api/v1/teams/${teamId}/states?teamId=${teamA}`),
+      },
+    ]
+
+    for (const target of targets) {
+      for (const principal of principals) {
+        const before = Number((await db.query<{ count: string }>(
+          `SELECT count(*)::text AS count FROM authorization_denials
+           WHERE principal_actor_id=$1 AND policy_id='route.listWorkflowStates'
+             AND reason_code='NOT_FOUND'`,
+          [principal.actorId],
+        )).rows[0]!.count)
+        const first = await principal.call(target)
+        const duplicate = await principal.call(target)
+        for (const denied of [first, duplicate]) {
+          expect(denied.statusCode, denied.body).toBe(404)
+          expect(errorCode(denied)).toBe('NOT_FOUND')
+          expect(denied.body).not.toContain(target)
+          expect(denied.body).not.toContain(principal.secret)
+        }
+        const audits = await db.query<{
+          authorization_stage: string
+          resource_fingerprint: string
+          dedupe_key: string
+          serialized: string
+        }>(
+          `SELECT authorization_stage,resource_fingerprint,dedupe_key,
+                  to_jsonb(authorization_denials)::text AS serialized
+           FROM authorization_denials
+           WHERE principal_actor_id=$1 AND policy_id='route.listWorkflowStates'
+             AND reason_code='NOT_FOUND'
+           ORDER BY occurred_at`,
+          [principal.actorId],
+        )
+        expect(audits.rowCount).toBe(before + 1)
+        const audit = audits.rows.at(-1)!
+        expect(audit).toMatchObject({ authorization_stage: 'resource_scope' })
+        expect(audit.resource_fingerprint).toMatch(/^[0-9a-f]{64}$/)
+        expect(audit.dedupe_key).toMatch(/^[0-9a-f]{64}$/)
+        expect(audit.serialized).not.toContain(target)
+        expect(audit.serialized).not.toContain(principal.secret)
+      }
+    }
+
+    const collectionWrite = await humanCall(member, 'POST', '/api/v1/work-items', {
+      teamId: teamA,
+      title: 'Body-owned Team remains transactionally authorized',
+      statusId: readyA,
+      responsibleHumanActorId: member.actorId,
+    })
+    expect(collectionWrite.statusCode, collectionWrite.body).toBe(200)
   })
 
   it('serializes delegation and Team-grant revocation with mutation authority', async () => {

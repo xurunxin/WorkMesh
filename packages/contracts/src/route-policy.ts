@@ -185,7 +185,6 @@ const revisionedOperations = new Set([
   'rotateAgentWebhookSecret',
   'revokeDelegation',
   'transitionAgentSessionState',
-  'promptAgentSession',
   'publishAgentPlan',
   'signalAgentSession',
   'acknowledgeAgentSessionStop',
@@ -198,10 +197,6 @@ const revisionedOperations = new Set([
   'renewLease',
   'releaseLease',
   'forceReleaseLease',
-  'acceptHandoff',
-  'rejectHandoff',
-  'cancelHandoff',
-  'completeHandoff',
   'finalizeDecision',
   'supersedeDecision',
   'reverseDecision',
@@ -275,6 +270,9 @@ function capabilityFor(
   if (operationId === 'publishStructuredReview') return ['artifact:write']
   if (operationId === 'retryPullRequestCheck') return ['ci:run']
   if (operationId === 'requestPullRequestMerge') return ['repo:merge']
+  if (operationId === 'recordUsage') return ['work:read']
+  if (operationId === 'postWorkRoomMessage') return ['work:write']
+  if (operationId === 'commentOnPlanStep') return ['work:write']
   if (path.includes('/comments')) return ['comment:write']
   if (path.includes('/plan')) return ['plan:write']
   if (path.includes('/rooms') || path.includes('/messages')) return ['message:write']

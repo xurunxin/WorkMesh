@@ -52,6 +52,10 @@ describe("reviewer API fixes", () => {
     const installToken = registered.json<{ installation_token: string }>().installation_token;
     const exchanged = await app.inject({ method: "POST", url: `/api/v1/agent-sessions/${started.session.id}/token/exchange`, payload: { exchangeToken: started.session.exchangeToken }, headers: { authorization: `Bearer ${installToken}`, "idempotency-key": randomUUID() } });
     const token = exchanged.json<{ sessionToken: string }>().sessionToken;
+    const acknowledged = await agent(token, "POST", `/api/v1/agent-sessions/${started.session.id}/ack`, { summary: "ready", externalUrls: [] });
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200);
+    const executing = await agent(token, "POST", `/api/v1/agent-sessions/${started.session.id}/state`, { state: "executing", reason: "running" }, { "if-match": `"revision-${acknowledged.json<{revision:number}>().revision}"` });
+    expect(executing.statusCode, JSON.stringify(executing.json())).toBe(200);
     expect((await agent(token, "GET", `/api/v1/work-items/${workItem.id}`)).statusCode).toBe(200);
     expect((await agent(token, "GET", `/api/v1/teams/${teamId}/guidance`)).statusCode).toBe(200);
     const removedRead = await human("PATCH", `/api/v1/agents/${definition.id}`, { approvedCapabilities: ["work:write", "plan:write"] }, { "if-match": `"revision-${definition.revision}"` });
@@ -61,7 +65,8 @@ describe("reviewer API fixes", () => {
     expect(restoredRead.statusCode).toBe(200);
     const other = await human("POST", "/api/v1/work-items", { teamId, title: "Other work", statusId: readyId, priority: "none", labels: [] });
     expect((await agent(token, "GET", `/api/v1/work-items/${other.json<{ id: string }>().id}`)).statusCode).toBe(403);
-    expect((await human("DELETE", `/api/v1/agents/${definition.id}/team-access/${teamId}`)).statusCode).toBe(200);
+    const revokedAccess = await human("DELETE", `/api/v1/agents/${definition.id}/team-access/${teamId}`);
+    expect(revokedAccess.statusCode, JSON.stringify(revokedAccess.json())).toBe(200);
     expect((await agent(token, "GET", `/api/v1/work-items/${workItem.id}`)).statusCode).toBe(401);
   });
 
@@ -124,7 +129,9 @@ describe("reviewer API fixes", () => {
     expect(sequences.every((sequence,index)=>sequence>0 && (index===0 || sequence>sequences[index-1]!))).toBe(true);
     const awaiting=await agent(token,"POST",`/api/v1/agent-sessions/${started.session.id}/state`,{state:"awaiting_approval",reason:"gate"},{"if-match":`"revision-${executing.json<{revision:number}>().revision}"`});
     const plan={changeSummary:"approved",steps:[{id:randomUUID(),title:"ship",ordinal:0}]};
-    expect((await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,plan,{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`})).statusCode).toBe(400);
+    const missingApproval = await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,plan,{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`});
+    expect(missingApproval.statusCode).toBe(403);
+    expect(missingApproval.json<{error:{code:string}}>()).toMatchObject({error:{code:"APPROVAL_REQUIRED"}});
     const wrong=await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,{...plan,approvalId,approvalPayloadHash:payloadHash({plan:"changed"})},{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`}); expect(wrong.statusCode).toBe(400);
     const published=await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,{...plan,approvalId,approvalPayloadHash:hash},{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`}); expect(published.statusCode).toBe(200);
     expect((await agent(token,"POST",`/api/v1/approvals/${approvalId}/consume`,{actionPayloadHash:hash},{"if-match":"\"revision-4\""})).statusCode).toBeGreaterThanOrEqual(400);

@@ -166,6 +166,25 @@ describe('routePolicyManifest', () => {
     expect(capabilitiesFor('publishStructuredReview')).toEqual(['artifact:write'])
     expect(capabilitiesFor('retryPullRequestCheck')).toEqual(['ci:run'])
     expect(capabilitiesFor('requestPullRequestMerge')).toEqual(['repo:merge'])
+    expect(capabilitiesFor('recordUsage')).toEqual(['work:read'])
+    expect(capabilitiesFor('postWorkRoomMessage')).toEqual(['work:write'])
+    expect(capabilitiesFor('commentOnPlanStep')).toEqual(['work:write'])
+  })
+
+  it('requires If-Match only where the handler revalidates a revision', () => {
+    const revisionFor = (operationId: string) =>
+      routePolicyManifest.find(route => route.operationId === operationId)?.revision
+
+    for (const operationId of [
+      'promptAgentSession',
+      'acceptHandoff',
+      'rejectHandoff',
+      'cancelHandoff',
+      'completeHandoff',
+    ]) {
+      expect(revisionFor(operationId), operationId).toBe('none')
+    }
+    expect(revisionFor('forceReleaseLease')).toBe('if_match')
   })
 
   it('keeps deployment feature discovery authenticated for humans and agents', async () => {

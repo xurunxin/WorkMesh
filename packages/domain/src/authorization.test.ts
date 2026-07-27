@@ -70,6 +70,17 @@ describe('route authorization policy', () => {
     })).toMatchObject({ allowed: false, stage: 'human_role' })
   })
 
+  it('distinguishes missing authentication from an authenticated wrong-kind principal', () => {
+    const route = policy('createCycle')
+    expect(evaluateRouteAuthorization(route, {
+      principalKind: null,
+    })).toMatchObject({ allowed: false, code: 'UNAUTHENTICATED', stage: 'identity' })
+    expect(evaluateRouteAuthorization(route, {
+      ...agentFacts,
+      principalKind: 'agent',
+    })).toMatchObject({ allowed: false, code: 'FORBIDDEN', stage: 'identity' })
+  })
+
   it('requires revision and idempotency independently', () => {
     const route = policy('updateWorkItem')
     expect(evaluateRouteAuthorization(route, {
