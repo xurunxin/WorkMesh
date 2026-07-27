@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { withTx, type Db } from '@workmesh/db'
+import { appendEvent, withTx, type Db } from '@workmesh/db'
 
 type Transaction = Pick<Db, 'query'>
 
@@ -22,9 +22,9 @@ export const classifyHeartbeatLiveness = ({
   return ageSeconds > heartbeatIntervalSeconds * 2 ? 'degraded' : 'healthy'
 }
 
-type LockedSession = { id: string; workspaceId: string; principalHumanActorId: string; state: string }
+type LockedSession = { id: string; workspaceId: string; teamId: string; principalHumanActorId: string; state: string }
 type UpdatedSession = { id: string; workspaceId: string; revision: number; sequence: string }
-type LockedApproval = { id: string; workspaceId: string; sessionId: string }
+type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string }
 
 export type SessionLifecycleWorker = {
   expireAckDeadlines: (limit?: number) => Promise<number>
@@ -45,6 +45,7 @@ const systemActorId = async (tx: Transaction, workspaceId: string): Promise<stri
 
 const appendOutboxEvent = async (tx: Transaction, input: {
   workspaceId: string
+  teamId: string
   actorId: string
   correlationId: string
   eventType: string
@@ -55,14 +56,19 @@ const appendOutboxEvent = async (tx: Transaction, input: {
   sessionSequence?: string
   payload: Record<string, unknown>
 }): Promise<void> => {
-  const event = await tx.query<{ id: string }>(`
-    INSERT INTO domain_events(
-      workspace_id,event_type,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
-      session_id,session_sequence,payload
-    ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id
-  `, [input.workspaceId, input.eventType, input.aggregateType, input.aggregateId, input.revision, input.actorId,
-    input.correlationId, input.sessionId ?? null, input.sessionSequence ?? null, input.payload])
-  await tx.query('INSERT INTO outbox_events(domain_event_id,topic,partition_key) VALUES($1,$2,$3)', [event.rows[0]!.id, input.eventType, input.aggregateId])
+  await appendEvent(tx, {
+    workspaceId: input.workspaceId,
+    teamId: input.teamId,
+    actorId: input.actorId,
+    correlationId: input.correlationId,
+    type: input.eventType,
+    aggregateType: input.aggregateType,
+    aggregateId: input.aggregateId,
+    revision: input.revision,
+    sessionId: input.sessionId,
+    sessionSequence: input.sessionSequence,
+    payload: input.payload,
+  })
 }
 
 const insertInbox = async (tx: Transaction, input: {
@@ -113,7 +119,7 @@ export function createSessionLifecycleWorker({
 }): SessionLifecycleWorker {
   const expireAckDeadlines = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
       WHERE s.state='queued' AND s.created_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.created_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
@@ -124,7 +130,7 @@ export function createSessionLifecycleWorker({
       if (!updated) continue
       const actorId = await systemActorId(tx, updated.workspaceId)
       await appendOutboxEvent(tx, {
-        workspaceId: updated.workspaceId, actorId, correlationId: `${workerId}:ack-timeout:${session.id}`,
+        workspaceId: updated.workspaceId, teamId: session.teamId, actorId, correlationId: `${workerId}:ack-timeout:${session.id}`,
         eventType: 'agent.session.stale', aggregateType: 'agent_session', aggregateId: session.id,
         revision: updated.revision, sessionId: session.id, sessionSequence: updated.sequence,
         payload: { reason: 'ack_timeout' },
@@ -140,7 +146,7 @@ export function createSessionLifecycleWorker({
 
   const reconcileHeartbeatLiveness = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
       WHERE s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
         AND (s.last_heartbeat_at IS NULL OR s.last_heartbeat_at <= now() - ($1::text || ' seconds')::interval)
@@ -152,7 +158,7 @@ export function createSessionLifecycleWorker({
       if (!updated) continue
       const actorId = await systemActorId(tx, updated.workspaceId)
       await appendOutboxEvent(tx, {
-        workspaceId: updated.workspaceId, actorId, correlationId: `${workerId}:heartbeat-timeout:${session.id}`,
+        workspaceId: updated.workspaceId, teamId: session.teamId, actorId, correlationId: `${workerId}:heartbeat-timeout:${session.id}`,
         eventType: 'agent.session.stale', aggregateType: 'agent_session', aggregateId: session.id,
         revision: updated.revision, sessionId: session.id, sessionSequence: updated.sequence,
         payload: { reason: 'heartbeat_timeout' },
@@ -168,7 +174,7 @@ export function createSessionLifecycleWorker({
 
   const expireStopGrace = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
       WHERE s.state='stopping' AND s.stop_requested_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.stop_requested_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
@@ -179,7 +185,7 @@ export function createSessionLifecycleWorker({
       if (!updated) continue
       const actorId = await systemActorId(tx, updated.workspaceId)
       await appendOutboxEvent(tx, {
-        workspaceId: updated.workspaceId, actorId, correlationId: `${workerId}:stop-grace:${session.id}`,
+        workspaceId: updated.workspaceId, teamId: session.teamId, actorId, correlationId: `${workerId}:stop-grace:${session.id}`,
         eventType: 'agent.session.state_changed', aggregateType: 'agent_session', aggregateId: session.id,
         revision: updated.revision, sessionId: session.id, sessionSequence: updated.sequence,
         payload: { previousState: 'stopping', state: 'canceled', reason: 'stop_grace_expired' },
@@ -191,8 +197,10 @@ export function createSessionLifecycleWorker({
 
   const expireApprovals = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedApproval>(`
-      SELECT a.id, a.workspace_id AS "workspaceId", a.session_id AS "sessionId"
-      FROM approvals a WHERE a.status='pending' AND a.expires_at <= now()
+      SELECT a.id, a.workspace_id AS "workspaceId", s.team_id AS "teamId", a.session_id AS "sessionId"
+      FROM approvals a
+      JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id
+      WHERE a.status='pending' AND a.expires_at <= now()
       ORDER BY a.expires_at FOR UPDATE SKIP LOCKED LIMIT $1
     `, [limit])
     let changed = 0
@@ -205,7 +213,7 @@ export function createSessionLifecycleWorker({
       if (!revision) continue
       const actorId = await systemActorId(tx, approval.workspaceId)
       await appendOutboxEvent(tx, {
-        workspaceId: approval.workspaceId, actorId, correlationId: `${workerId}:approval-expiry:${approval.id}`,
+        workspaceId: approval.workspaceId, teamId: approval.teamId, actorId, correlationId: `${workerId}:approval-expiry:${approval.id}`,
         eventType: 'approval.expired', aggregateType: 'approval', aggregateId: approval.id, revision,
         sessionId: approval.sessionId, payload: { sessionId: approval.sessionId },
       })
@@ -221,8 +229,8 @@ export function createSessionLifecycleWorker({
   /** Lease expiry is a durable projection update.  It never changes delegation
    * authority; stale/ended sessions simply lose any remaining coordination leases. */
   const expireLeases = async (limit = 50): Promise<number> => withTx(db, async tx => {
-    const candidates = await tx.query<{ id:string; workspace_id:string; session_id:string; resource_type:string; resource_id:string }>(`
-      SELECT l.id,l.workspace_id,l.session_id,l.resource_type,l.resource_id
+    const candidates = await tx.query<{ id:string; workspace_id:string; team_id:string; session_id:string; resource_type:string; resource_id:string }>(`
+      SELECT l.id,l.workspace_id,s.team_id,l.session_id,l.resource_type,l.resource_id
       FROM leases l LEFT JOIN agent_sessions s ON s.id=l.session_id
       WHERE l.status='active' AND (l.expires_at <= now() OR s.state IN ('stale','completed','failed','canceled'))
       ORDER BY l.expires_at FOR UPDATE OF l SKIP LOCKED LIMIT $1
@@ -232,7 +240,7 @@ export function createSessionLifecycleWorker({
       const result = await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason='worker expiry' WHERE id=$1 AND status='active' RETURNING id", [lease.id])
       if (!result.rowCount) continue
       const actorId = await systemActorId(tx, lease.workspace_id)
-      await appendOutboxEvent(tx, { workspaceId: lease.workspace_id, actorId, correlationId: `${workerId}:lease-expiry:${lease.id}`, eventType: 'lease.expired', aggregateType: 'lease', aggregateId: lease.id, revision: 1, sessionId: lease.session_id, payload: { resourceType: lease.resource_type, resourceId: lease.resource_id } })
+      await appendOutboxEvent(tx, { workspaceId: lease.workspace_id, teamId: lease.team_id, actorId, correlationId: `${workerId}:lease-expiry:${lease.id}`, eventType: 'lease.expired', aggregateType: 'lease', aggregateId: lease.id, revision: 1, sessionId: lease.session_id, payload: { resourceType: lease.resource_type, resourceId: lease.resource_id } })
       changed += 1
     }
     return changed

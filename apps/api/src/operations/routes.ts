@@ -221,6 +221,7 @@ const emit = (
   payload: Record<string, unknown>,
   teamId?: string | null,
   revision?: number,
+  audienceActorId?: string,
 ) => appendEvent(tx, {
   workspaceId: meta.actor.workspaceId,
   teamId: teamId ?? undefined,
@@ -230,6 +231,7 @@ const emit = (
   type,
   aggregateType,
   aggregateId,
+  audienceActorId,
   revision,
   payload,
 })
@@ -624,7 +626,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       )).rows)
       await emit(tx, meta, 'view.created', 'advanced_saved_view', view.id, {
         entityType: body.entityType, layout: body.layout, scope: body.scope,
-      }, body.teamId, view.revision)
+      }, body.teamId, view.revision,
+      body.scope === 'private' ? meta.actor.id : undefined)
       return view
     })
   })
@@ -1561,7 +1564,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
         channels: notification.channels,
         digest: notification.digest,
         suppressed: notification.suppressed,
-      }, null)
+      }, null, undefined, body.recipientActorId)
       return { id: notification.id }
     })
   })
@@ -1590,7 +1593,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       )).rows)
       await emit(tx, meta, 'notification.preferences_updated', 'actor', meta.actor.id, {
         channels: body.channels, digest: body.digest, minimumPriority: body.minimumPriority,
-      }, null, preference.revision)
+      }, null, preference.revision, meta.actor.id)
       return { id: meta.actor.id, revision: preference.revision }
     })
   })

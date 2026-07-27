@@ -745,7 +745,8 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
   })
 
   it('admits a durable domain-event trigger exactly once across replay', async () => {
-    const eventType = `stage4.acceptance.${randomUUID()}`
+    const eventType =
+      `stage4.acceptance.event_${randomUUID().replaceAll('-', '_')}`
     const revision = (await db.query<{ revision: number }>(
       'SELECT revision FROM work_items WHERE id=$1',
       [fixture.workItemId],
@@ -783,7 +784,8 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
   })
 
   it('fails closed before scheduled or event admission when child action features are disabled', async () => {
-    const eventType = `stage4.child-disabled.${randomUUID()}`
+    const eventType =
+      `stage4.child_disabled.event_${randomUUID().replaceAll('-', '_')}`
     const scheduledRuleId = await createRule(
       'disabled-scheduled-webhook',
       { type: 'call_webhook', parameters: { url: 'https://example.test/hook' } },

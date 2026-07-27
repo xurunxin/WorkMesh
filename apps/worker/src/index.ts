@@ -1,6 +1,9 @@
 import { randomUUID } from 'node:crypto'
-import { createClient, type RedisClientType } from 'redis'
-import { loadFeatureConfig } from '@workmesh/config'
+import { createClient } from 'redis'
+import {
+  loadFeatureConfig,
+  loadRealtimeRedisHintConfig,
+} from '@workmesh/config'
 import { createDb, type Db, withTx } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
 import { createSessionLifecycleWorker } from './session-lifecycle.js'
@@ -43,19 +46,50 @@ export type OutboxWorker = {
   close: () => Promise<void>
 }
 
-type RedisClient = RedisClientType
+export type RedisStreamTrimOptions = Readonly<{
+  TRIM: Readonly<{
+    strategy: 'MAXLEN'
+    strategyModifier: '~'
+    threshold: number
+  }>
+}>
+export type RedisStreamClient = Readonly<{
+  isOpen: boolean
+  connect: () => Promise<unknown>
+  xAdd: (
+    key: string,
+    id: string,
+    message: Record<string, string>,
+    options: RedisStreamTrimOptions,
+  ) => Promise<unknown>
+  quit: () => Promise<unknown>
+}>
+
+export type RedisStreamSinkOptions = Readonly<{
+  redisUrl?: string
+  maxLen?: number
+  client?: RedisStreamClient
+}>
 
 /**
  * Redis is a delivery transport only. PostgreSQL remains the source for SSE
  * and the durable recovery point if this write succeeds before the DB confirm.
  */
 export class RedisStreamSink implements DeliverySink {
-  readonly #client: RedisClient
+  readonly #client: RedisStreamClient
+  readonly #maxLen: number
   #connecting: Promise<unknown> | undefined
 
-  constructor(redisUrl = process.env.REDIS_URL) {
-    if (!redisUrl) throw new Error('REDIS_URL is required for outbox delivery')
-    this.#client = createClient({ url: redisUrl })
+  constructor(options: RedisStreamSinkOptions = {}) {
+    const runtime = options.redisUrl && options.maxLen
+      ? { redisUrl: options.redisUrl, maxLen: options.maxLen }
+      : loadRealtimeRedisHintConfig()
+    this.#maxLen = options.maxLen ?? runtime.maxLen
+    this.#client =
+      options.client
+      ?? createClient({
+        url: options.redisUrl ?? runtime.redisUrl,
+      }) as unknown as RedisStreamClient
   }
 
   async deliver(event: ClaimedEvent): Promise<void> {
@@ -69,12 +103,14 @@ export class RedisStreamSink implements DeliverySink {
       }
     }
     await this.#client.xAdd(STREAM_KEY, '*', {
-      outboxId: event.id,
-      eventId: event.eventId,
       cursor: event.cursor,
       workspaceId: event.workspaceId,
-      topic: event.topic,
-      payload: JSON.stringify(event.payload),
+    }, {
+      TRIM: {
+        strategy: 'MAXLEN',
+        strategyModifier: '~',
+        threshold: this.#maxLen,
+      },
     })
   }
 

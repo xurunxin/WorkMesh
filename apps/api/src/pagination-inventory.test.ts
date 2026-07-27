@@ -49,9 +49,13 @@ describe('pagination surface inventory', () => {
 
   it('preserves decimal durable event and A2A cursors outside opaque pagination', () => {
     const server = read('apps/api/src/server.ts')
+    const realtimeRoutes = read('apps/api/src/realtime/routes.ts')
+    const realtimeCursor = read('apps/api/src/realtime/cursor.ts')
     const operations = read('apps/api/src/operations/routes.ts')
-    expect(server).toContain('parseCursor(')
-    expect(server).toContain('Last-Event-ID')
+    expect(server).toContain('registerRealtimeRoutes')
+    expect(realtimeRoutes).toContain("header(request, 'last-event-id')")
+    expect(realtimeRoutes).toContain('parseDurableCursor(')
+    expect(realtimeCursor).toContain('BigInt(')
     expect(operations).toContain('durableCursorSchema')
     expect(operations).toContain('ORDER BY event.cursor LIMIT 200')
   })
