@@ -1,13 +1,15 @@
 'use client'
 
 import { type DragEvent, type FormEvent, type PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ApiError, apiBase, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
+import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
 import { AgentWorkPanel } from './agent-work-panel'
 import { InboxPanel, WorkRoom } from './work-room'
 import { ProjectDelivery } from './project-delivery'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
+import { homeRefreshTargets } from './lib/realtime-refresh'
 
-type Actor = { id: string; displayName: string }
+type Actor = { id: string; displayName: string; workspace_id?: string }
 type AuthMe = { actor: Actor; csrfToken: string }
 type InstallStatus = { installed: boolean }
 type FeatureRegistry = { features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }> }
@@ -123,39 +125,56 @@ export default function HomePage() {
     if (teamsPage.loading) return
     setTeamId(current => teams.some(team => team.id === current) ? current : teams[0]?.id ?? null)
   }, [teams, teamsPage.loading])
-  const loadRef = useRef(load)
-  const selectedItemRef = useRef(selectedItem)
-  const commentsRefreshRef = useRef(commentsPage.refresh)
-  useEffect(() => { loadRef.current = load }, [load])
-  useEffect(() => { selectedItemRef.current = selectedItem }, [selectedItem])
-  useEffect(() => { commentsRefreshRef.current = commentsPage.refresh }, [commentsPage.refresh])
-
-  useEffect(() => {
-    if (!actor) return
-    let refreshTimer: number | undefined
-    const storedCursor = window.localStorage.getItem('workmesh.events.cursor')
-    const cursor = storedCursor ? `?cursor=${encodeURIComponent(storedCursor)}` : ''
-    const stream = new EventSource(`${apiBase}/api/v1/events/stream${cursor}`, { withCredentials: true })
-    stream.onmessage = event => {
-      try {
-        const payload = JSON.parse(event.data) as { cursor?: number }
-        const nextCursor = payload.cursor ?? Number(event.lastEventId)
-        if (Number.isSafeInteger(nextCursor) && nextCursor >= 0) window.localStorage.setItem('workmesh.events.cursor', String(nextCursor))
-      } catch { /* The subsequent durable refetch still establishes the current state. */ }
-      if (refreshTimer !== undefined) window.clearTimeout(refreshTimer)
-      refreshTimer = window.setTimeout(() => {
-        void loadRef.current()
-        void teamsPage.refresh(); void statesPage.refresh(); void humansPage.refresh()
-        void projectsPage.refresh(); void viewsPage.refresh(); void itemsPage.refresh()
-        const openItem = selectedItemRef.current
-        if (openItem) {
-          void apiRequest<WorkItem>(`/api/v1/work-items/${openItem.id}`).then(setSelectedItem)
-          void commentsRefreshRef.current()
-        }
-      }, 150)
+  const realtimeResources = useMemo<RealtimeResource[]>(() => [
+    ...(actor?.workspace_id
+      ? [{ type: 'workspace' as const, id: actor.workspace_id }]
+      : []),
+    ...(teamId ? [{ type: 'team' as const, id: teamId }] : []),
+    ...(selectedProject
+      ? [{ type: 'project' as const, id: selectedProject.id }]
+      : []),
+    ...(selectedItem
+      ? [{ type: 'work_item' as const, id: selectedItem.id }]
+      : []),
+  ], [actor?.workspace_id, selectedItem?.id, selectedProject?.id, teamId])
+  useRealtimeSubscription(realtimeResources, invalidation => {
+    const targets = homeRefreshTargets(invalidation, {
+      teamId: teamId ?? undefined,
+      projectId: selectedProject?.id,
+      workItemId: selectedItem?.id,
+    })
+    if (invalidation.reason === 'resync') {
+      const snapshots: Array<Promise<unknown>> = [
+        teamsPage.refresh(), statesPage.refresh(), humansPage.refresh(),
+        projectsPage.refresh(), viewsPage.refresh(), itemsPage.refresh(),
+      ]
+      if (selectedItem) {
+        snapshots.push(apiRequest<WorkItem>(
+          `/api/v1/work-items/${selectedItem.id}`,
+        ).then(setSelectedItem))
+        snapshots.push(commentsPage.refresh())
+      }
+      return Promise.all(snapshots).then(() => undefined)
     }
-    return () => { if (refreshTimer !== undefined) window.clearTimeout(refreshTimer); stream.close() }
-  }, [actor?.id, humansPage.refresh, itemsPage.refresh, projectsPage.refresh, statesPage.refresh, teamsPage.refresh, viewsPage.refresh])
+    if (targets.has('teams')) void teamsPage.refresh()
+    if (targets.has('states')) void statesPage.refresh()
+    if (targets.has('humans')) void humansPage.refresh()
+    if (targets.has('projects')) void projectsPage.refresh()
+    if (targets.has('views')) void viewsPage.refresh()
+    if (targets.has('items')) void itemsPage.refresh()
+    if (targets.has('items')) {
+      if (
+        selectedItem
+        && invalidation.event.invalidates.some(resource =>
+          resource.type === 'work_item' && resource.id === selectedItem.id)
+      ) {
+        void apiRequest<WorkItem>(
+          `/api/v1/work-items/${selectedItem.id}`,
+        ).then(setSelectedItem)
+        void commentsPage.refresh()
+      }
+    }
+  })
 
   const chooseTeam = (nextTeamId: string) => {
     setTeamId(nextTeamId)
@@ -307,7 +326,7 @@ export default function HomePage() {
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label="workflow states" /><LoadMoreButton collection={humansPage} label="people" /><LoadMoreButton collection={viewsPage} label="saved views" /></div>
         {scope === 'projects' && <><section className="project-strip" aria-label="Projects">{teamProjects.map(project => <button key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)}>{project.name}</button>)}{teamProjects.length === 0 && <span className="empty">No projects yet.</span>}</section><LoadMoreButton collection={projectsPage} label="projects" />{selectedProject && <><section className="project-overview" data-testid="project-overview"><strong>{selectedProject.status}</strong>{selectedProject.target_date && <span>Target: {dateValue(selectedProject.target_date)}</span>}{selectedProject.description && <p>{selectedProject.description}</p>}</section><ProjectDelivery projectId={selectedProject.id} /></>}<form className="project-form" onSubmit={createProject} data-testid="create-project"><input name="name" placeholder="Project name" required /><input name="summary" placeholder="Summary" /><input name="targetDate" type="date" /><select name="leadActorId"><option value="">No lead</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><textarea name="description" placeholder="Project description" /><button>Create project</button></form></>}
         <form className="work-form" onSubmit={createWorkItem} data-testid="create-work-item"><input name="title" placeholder="Title" required /><textarea name="description" placeholder="Description" /><select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select><select name="priority"><option value="none">No priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><input name="dueDate" type="date" aria-label="Due date" /><select name="ownerId"><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><select name="projectId"><option value="">No project</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select><input name="labels" placeholder="labels, comma separated" /><button disabled={!states[0]} data-testid="create-work-item-submit">Create work item</button></form>{layout === 'list' ? <WorkList items={items} onOpen={openItem} /> : <WorkBoard states={states} items={items} onOpen={openItem} onMove={moveItem} />}<LoadMoreButton collection={itemsPage} label="work items" /></> : <section className="empty">Create a team to start tracking work.</section>}</>}</section>
-    {selectedItem && <WorkItemDrawer key={`${selectedItem.id}:${selectedItem.revision}`} item={selectedItem} humanActorId={actor.id} states={states} humans={humans} projects={teamProjects} comments={comments} commentsPage={commentsPage} onClose={() => setSelectedItem(null)} onSave={saveItem} onComment={createComment} onUpdateComment={updateComment} />}
+    {selectedItem && <WorkItemDrawer key={`${selectedItem.id}:${selectedItem.revision}`} item={selectedItem} workspaceId={actor.workspace_id ?? ''} humanActorId={actor.id} states={states} humans={humans} projects={teamProjects} comments={comments} commentsPage={commentsPage} onClose={() => setSelectedItem(null)} onSave={saveItem} onComment={createComment} onUpdateComment={updateComment} />}
   </main>
 }
 
@@ -328,9 +347,9 @@ function WorkBoard({ states, items, onOpen, onMove }: { states: WorkflowState[];
 }
 
 function MentionPicker({ humans }: { humans: Human[] }) { return <label className="mentions">Mention people<select name="mentions" multiple aria-label="Mention people">{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label> }
-function WorkItemDrawer({ item, humanActorId, states, humans, projects, comments, commentsPage, onClose, onSave, onComment, onUpdateComment }: { item: WorkItem; humanActorId: string; states: WorkflowState[]; humans: Human[]; projects: Project[]; comments: Comment[]; commentsPage: ReturnType<typeof usePagedApiList<Comment>>; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => Promise<void>; onComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onUpdateComment: (comment: Comment, patch: Record<string, string | boolean>) => Promise<void> }) {
+function WorkItemDrawer({ item, workspaceId, humanActorId, states, humans, projects, comments, commentsPage, onClose, onSave, onComment, onUpdateComment }: { item: WorkItem; workspaceId: string; humanActorId: string; states: WorkflowState[]; humans: Human[]; projects: Project[]; comments: Comment[]; commentsPage: ReturnType<typeof usePagedApiList<Comment>>; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => Promise<void>; onComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onUpdateComment: (comment: Comment, patch: Record<string, string | boolean>) => Promise<void> }) {
   return <aside className="drawer" aria-label="Work item details" data-testid="work-item-drawer"><header><h2>{item.team_key}-{item.number}</h2><button onClick={onClose}>Close</button></header><form onSubmit={event => void onSave(event)}><label>Title<input name="title" defaultValue={item.title} required /></label><label>Description<textarea name="description" defaultValue={item.description ?? ''} /></label><div className="drawer-grid"><label>Status<select name="statusId" defaultValue={item.status_id}>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label><label>Priority<select name="priority" defaultValue={item.priority}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{priority}</option>)}</select></label><label>Due date<input name="dueDate" type="date" defaultValue={dateValue(item.due_date)} /></label><label>Owner<select name="ownerId" defaultValue={item.responsible_human_actor_id ?? ''}><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label><label>Project<select name="projectId" defaultValue={item.project_id ?? ''}><option value="">No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label><label>Labels<input name="labels" defaultValue={item.labels.join(', ')} /></label></div><button data-testid="save-work-item">Save changes</button></form>
     <WorkRoom workItemId={item.id} legacyComments={comments} legacyHumans={humans} onLegacyComment={onComment} onLegacyUpdate={onUpdateComment} />
     <LoadMoreButton collection={commentsPage} label="comments" />
-    <AgentWorkPanel workItemId={item.id} workItemTeamId={item.team_id} workItemRevision={item.revision} humanActorId={humanActorId} /></aside>
+    <AgentWorkPanel workspaceId={workspaceId} workItemId={item.id} workItemTeamId={item.team_id} workItemRevision={item.revision} humanActorId={humanActorId} /></aside>
 }

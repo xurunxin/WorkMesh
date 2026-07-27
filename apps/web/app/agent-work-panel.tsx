@@ -1,17 +1,19 @@
 'use client'
 
-import { type FormEvent, useEffect, useState } from 'react'
-import { apiBase, apiRequest, json } from './lib/api'
+import { type FormEvent, useMemo, useState } from 'react'
+import { apiRequest, json } from './lib/api'
 import { type Agent, type AgentSession, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, delegateAndStart, formatTime, retryAgentSession } from './lib/agents'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
+import { agentWorkRefreshTargets } from './lib/realtime-refresh'
 
-type Props = { workItemId: string; workItemTeamId: string; workItemRevision: number; humanActorId: string; onSessionCreated?: (session: AgentSession) => void }
+type Props = { workspaceId: string; workItemId: string; workItemTeamId: string; workItemRevision: number; humanActorId: string; onSessionCreated?: (session: AgentSession) => void }
 
 export function AgentBadge({ state }: { state: AgentSession['state'] }) {
   return <span className={agentStateClass(state)} aria-label={`Agent session ${agentStateLabel(state)}`}>{agentStateLabel(state)}</span>
 }
 
-export function AgentWorkPanel({ workItemId, workItemTeamId, workItemRevision, humanActorId, onSessionCreated }: Props) {
+export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workItemRevision, humanActorId, onSessionCreated }: Props) {
   const [error, setError] = useState('')
   const [showDelegate, setShowDelegate] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -23,20 +25,29 @@ export function AgentWorkPanel({ workItemId, workItemTeamId, workItemRevision, h
   const agents = agentsPage.items
   const sessions = sessionsPage.items
   const collectionError = agentsPage.error ?? sessionsPage.error
-  useEffect(() => {
-    let timer: number | undefined
-    const cursor = window.localStorage.getItem('workmesh.events.cursor')
-    const stream = new EventSource(`${apiBase}/api/v1/events/stream${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`, { withCredentials: true })
-    stream.onmessage = event => {
-      try { const payload = JSON.parse(event.data) as { cursor?: number }; const nextCursor = payload.cursor ?? Number(event.lastEventId); if (Number.isSafeInteger(nextCursor) && nextCursor >= 0) window.localStorage.setItem('workmesh.events.cursor', String(nextCursor)) } catch { /* Server refetch below remains authoritative. */ }
-      if (timer !== undefined) window.clearTimeout(timer)
-      timer = window.setTimeout(() => {
-        void agentsPage.refresh()
-        void sessionsPage.refresh()
-      }, 150)
-    }
-    return () => { if (timer !== undefined) window.clearTimeout(timer); stream.close() }
-  }, [agentsPage.refresh, sessionsPage.refresh])
+  const realtimeResources = useMemo<RealtimeResource[]>(() => [
+    { type: 'workspace', id: workspaceId },
+    { type: 'team', id: workItemTeamId },
+    { type: 'work_item', id: workItemId },
+    ...sessions.map(session => ({
+      type: 'session' as const,
+      id: session.id,
+    })),
+  ], [sessions, workItemId, workItemTeamId, workspaceId])
+  useRealtimeSubscription(realtimeResources, invalidation => {
+    const targets = agentWorkRefreshTargets(invalidation, {
+      teamId: workItemTeamId,
+      workItemId,
+      sessionIds: new Set(sessions.map(session => session.id)),
+    })
+    if (invalidation.reason === 'resync')
+      return Promise.all([
+        agentsPage.refresh(),
+        sessionsPage.refresh(),
+      ]).then(() => undefined)
+    if (targets.has('agents')) void agentsPage.refresh()
+    if (targets.has('sessions')) void sessionsPage.refresh()
+  })
 
   const signal = async (session: AgentSession, signalName: 'pause' | 'resume' | 'stop') => {
     try {
