@@ -128,6 +128,29 @@ describe('secret-aware authentication idempotency', () => {
     expect(conflict.json<{ error: { code: string } }>().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
     expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count).toBe(before)
   })
+  it('makes unknown-email and wrong-password failures indistinguishable and side-effect free', async () => {
+    const before = {
+      sessions: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count,
+      events: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM domain_events')).rows[0]!.count,
+      outbox: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM outbox_events')).rows[0]!.count,
+      authIdempotency: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM auth_idempotency_records')).rows[0]!.count,
+      denials: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM authorization_denials')).rows[0]!.count,
+    }
+    const wrong = await app.inject({ method: 'POST', url: '/api/v1/auth/login', payload: { email: 'alice@example.test', password: 'definitely-wrong-password' }, headers: idempotencyHeaders('wrong-password') })
+    const unknown = await app.inject({ method: 'POST', url: '/api/v1/auth/login', payload: { email: 'unknown@example.test', password: 'definitely-wrong-password' }, headers: idempotencyHeaders('unknown-email') })
+    expect(unknown.statusCode).toBe(401)
+    expect(unknown.statusCode).toBe(wrong.statusCode)
+    expect(unknown.json()).toMatchObject({ error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' } })
+    expect(wrong.json()).toMatchObject({ error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' } })
+    expect(unknown.headers['retry-after']).toBe(wrong.headers['retry-after'])
+    expect({
+      sessions: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count,
+      events: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM domain_events')).rows[0]!.count,
+      outbox: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM outbox_events')).rows[0]!.count,
+      authIdempotency: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM auth_idempotency_records')).rows[0]!.count,
+      denials: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM authorization_denials')).rows[0]!.count,
+    }).toEqual(before)
+  })
 
   it('rolls back a precommit claim and business writes, then permits the retry', async () => {
     const beforeRecords = (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM auth_idempotency_records')).rows[0]!.count

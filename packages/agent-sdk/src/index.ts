@@ -16,19 +16,32 @@ export type WorkMeshErrorCode =
   | 'WEBHOOK_TIMESTAMP_EXPIRED'
   | string
 
+export type AutomaticRetrySuppression =
+  | 'attempt_limit'
+  | 'retry_after_exceeds_limit'
+  | 'total_retry_delay_exceeded'
+
+export interface WorkMeshRetryMetadata {
+  retryAfterHeader?: string
+  retryAfterMs?: number
+  automaticRetrySuppressed?: AutomaticRetrySuppression
+}
+
 export class WorkMeshSdkError extends Error {
   readonly code: WorkMeshErrorCode
   readonly status?: number
   readonly correlationId?: string
   readonly details?: unknown
+  readonly retry?: WorkMeshRetryMetadata
 
-  constructor(message: string, options: { code: WorkMeshErrorCode; status?: number; correlationId?: string; details?: unknown }) {
+  constructor(message: string, options: { code: WorkMeshErrorCode; status?: number; correlationId?: string; details?: unknown; retry?: WorkMeshRetryMetadata }) {
     super(message)
     this.name = 'WorkMeshSdkError'
     this.code = options.code
     this.status = options.status
     this.correlationId = options.correlationId
     this.details = options.details
+    this.retry = options.retry
   }
 }
 
@@ -50,7 +63,13 @@ export function stableIdempotencyKey(sessionId: string, operation: string, opera
   return `wm_${digest.slice(0, 48)}`
 }
 
-export interface RetryOptions { maxAttempts?: number; baseDelayMs?: number; maxDelayMs?: number }
+export interface RetryOptions {
+  maxAttempts?: number
+  baseDelayMs?: number
+  maxDelayMs?: number
+  maxRetryAfterMs?: number
+  maxTotalRetryDelayMs?: number
+}
 export interface WorkMeshClientOptions {
   baseUrl: string
   sessionToken?: string
@@ -122,7 +141,7 @@ export class WorkMeshClient {
     this.installationToken = options.installationToken
     this.requestFetch = options.fetch ?? globalThis.fetch
     this.logger = options.logger
-    this.retry = { maxAttempts: options.retry?.maxAttempts ?? 3, baseDelayMs: options.retry?.baseDelayMs ?? 150, maxDelayMs: options.retry?.maxDelayMs ?? 2_000 }
+    this.retry = normalizeRetryOptions(options.retry)
   }
 
   setSessionToken(token: string | undefined): void { this.sessionToken = token }
@@ -237,34 +256,92 @@ export class WorkMeshClient {
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey
     if (options.correlationId) headers['x-correlation-id'] = options.correlationId
     if (options.ifMatch !== undefined) headers['if-match'] = typeof options.ifMatch === 'number' ? `"revision-${options.ifMatch}"` : options.ifMatch
+    const serializedBody = body === undefined ? undefined : JSON.stringify(body)
+    let totalRetryDelayMs = 0
     for (let attempt = 1; ; attempt += 1) {
       try {
-        const response = await this.requestFetch(url, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), signal: options.signal })
+        const response = await this.requestFetch(url, { method, headers, body: serializedBody, signal: options.signal })
         if (!response.ok) {
           const payload = await readErrorPayload(response)
-          const error = toSdkError(response.status, payload)
-          if (shouldRetry(response.status) && attempt < this.retry.maxAttempts) {
-            await wait(retryDelay(attempt, response.headers.get('retry-after'), this.retry), options.signal)
+          if (shouldRetry(response.status)) {
+            const retryAfterHeader = response.headers.get('retry-after')
+            const retryAfterMs = parseRetryAfter(retryAfterHeader)
+            const delayMs = retryAfterMs ?? exponentialRetryDelay(attempt, this.retry)
+            const automaticRetrySuppressed =
+              attempt >= this.retry.maxAttempts
+                ? 'attempt_limit'
+                : retryAfterMs !== undefined
+                    && retryAfterMs > this.retry.maxRetryAfterMs
+                  ? 'retry_after_exceeds_limit'
+                  : delayMs > this.retry.maxTotalRetryDelayMs - totalRetryDelayMs
+                    ? 'total_retry_delay_exceeded'
+                    : undefined
+            const error = toSdkError(response.status, payload, {
+              retryAfterHeader: retryAfterHeader ?? undefined,
+              retryAfterMs,
+              automaticRetrySuppressed,
+            })
+            if (automaticRetrySuppressed) throw error
+            totalRetryDelayMs += delayMs
+            await wait(delayMs, options.signal)
             continue
           }
-          throw error
+          throw toSdkError(response.status, payload)
         }
         if (response.status === 204) return undefined as T
         return await readJson(response) as T
       } catch (cause) {
         if (cause instanceof WorkMeshSdkError || options.signal?.aborted) throw cause
-        if (attempt >= this.retry.maxAttempts) throw new WorkMeshSdkError('Unable to reach WorkMesh API', { code: 'NETWORK_ERROR', details: redactForLog({ cause: cause instanceof Error ? cause.message : String(cause) }) })
+        const delayMs = exponentialRetryDelay(attempt, this.retry)
+        const automaticRetrySuppressed =
+          attempt >= this.retry.maxAttempts
+            ? 'attempt_limit'
+            : delayMs > this.retry.maxTotalRetryDelayMs - totalRetryDelayMs
+              ? 'total_retry_delay_exceeded'
+              : undefined
+        if (automaticRetrySuppressed)
+          throw new WorkMeshSdkError('Unable to reach WorkMesh API', {
+            code: 'NETWORK_ERROR',
+            details: redactForLog({ cause: cause instanceof Error ? cause.message : String(cause) }),
+            retry: { automaticRetrySuppressed },
+          })
         this.logger?.warn('WorkMesh request failed; retrying', redactForLog({ method, path, attempt, cause: cause instanceof Error ? cause.message : String(cause) }))
-        await wait(retryDelay(attempt, null, this.retry), options.signal)
+        totalRetryDelayMs += delayMs
+        await wait(delayMs, options.signal)
       }
     }
   }
 }
 
 function shouldRetry(status: number): boolean { return status === 429 || (status >= 500 && status <= 599) }
-function retryDelay(attempt: number, retryAfter: string | null, retry: Required<RetryOptions>): number {
-  const seconds = retryAfter ? Number(retryAfter) : Number.NaN
-  if (Number.isFinite(seconds) && seconds >= 0) return Math.min(seconds * 1_000, retry.maxDelayMs)
+function normalizeRetryOptions(retry: RetryOptions = {}): Required<RetryOptions> {
+  const normalized = {
+    maxAttempts: retry.maxAttempts ?? 3,
+    baseDelayMs: retry.baseDelayMs ?? 150,
+    maxDelayMs: retry.maxDelayMs ?? 2_000,
+    maxRetryAfterMs: retry.maxRetryAfterMs ?? 60_000,
+    maxTotalRetryDelayMs: retry.maxTotalRetryDelayMs ?? 120_000,
+  }
+  if (!Number.isSafeInteger(normalized.maxAttempts) || normalized.maxAttempts < 1)
+    throw new WorkMeshSdkError('retry.maxAttempts must be a positive safe integer', { code: 'INVALID_RETRY_OPTIONS' })
+  for (const [name, value] of Object.entries(normalized).filter(([name]) => name !== 'maxAttempts')) {
+    if (!Number.isSafeInteger(value) || value < 0)
+      throw new WorkMeshSdkError(`retry.${name} must be a non-negative safe integer`, { code: 'INVALID_RETRY_OPTIONS' })
+  }
+  return normalized
+}
+function parseRetryAfter(retryAfter: string | null, nowMs = Date.now()): number | undefined {
+  if (retryAfter === null) return undefined
+  const value = retryAfter.trim()
+  if (/^-?\d+(?:\.\d+)?$/.test(value)) {
+    const seconds = Number(value)
+    const milliseconds = seconds * 1_000
+    return seconds >= 0 && Number.isSafeInteger(milliseconds) ? milliseconds : undefined
+  }
+  const timestamp = Date.parse(value)
+  return Number.isFinite(timestamp) ? Math.max(0, timestamp - nowMs) : undefined
+}
+function exponentialRetryDelay(attempt: number, retry: Required<RetryOptions>): number {
   return Math.min(retry.baseDelayMs * 2 ** (attempt - 1), retry.maxDelayMs)
 }
 function wait(delayMs: number, signal?: AbortSignal): Promise<void> {
@@ -283,13 +360,13 @@ async function readErrorPayload(response: Response): Promise<unknown> {
   if (!text) return {}
   try { return JSON.parse(text) } catch { return { raw: text.slice(0, 2_000) } }
 }
-function toSdkError(status: number, payload: unknown): WorkMeshSdkError {
+function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetadata): WorkMeshSdkError {
   const candidate = payload && typeof payload === 'object' && 'error' in payload ? (payload as { error?: unknown }).error : undefined
   if (candidate && typeof candidate === 'object') {
     const error = candidate as { code?: unknown; message?: unknown; correlationId?: unknown; details?: unknown }
-    return new WorkMeshSdkError(typeof error.message === 'string' ? error.message : `WorkMesh request failed (${status})`, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId: typeof error.correlationId === 'string' ? error.correlationId : undefined, details: error.details })
+    return new WorkMeshSdkError(typeof error.message === 'string' ? error.message : `WorkMesh request failed (${status})`, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId: typeof error.correlationId === 'string' ? error.correlationId : undefined, details: error.details, retry })
   }
-  return new WorkMeshSdkError(`WorkMesh request failed (${status})`, { code: 'HTTP_ERROR', status, details: payload })
+  return new WorkMeshSdkError(`WorkMesh request failed (${status})`, { code: 'HTTP_ERROR', status, details: payload, retry })
 }
 
 export interface WebhookVerificationOptions { secrets: readonly string[]; now?: Date; toleranceSeconds?: number }

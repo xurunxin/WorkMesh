@@ -11,6 +11,7 @@ services:
     healthcheck: { test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d postgres"], interval: 5s, timeout: 3s, retries: 20 }
   redis:
     image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
     volumes: [redis-data:/data]
     healthcheck: { test: ["CMD","redis-cli","ping"], interval: 5s, timeout: 3s, retries: 20 }
   minio:
@@ -41,6 +42,19 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
       SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      AUTH_RATE_LIMIT_HMAC_KEY: ${AUTH_RATE_LIMIT_HMAC_KEY:-}
+      AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
+      AUTH_RATE_LIMIT_ENDPOINT_BURST: ${AUTH_RATE_LIMIT_ENDPOINT_BURST:-30}
+      AUTH_RATE_LIMIT_SOCKET_BURST: ${AUTH_RATE_LIMIT_SOCKET_BURST:-60}
+      AUTH_RATE_LIMIT_CLIENT_IP_BURST: ${AUTH_RATE_LIMIT_CLIENT_IP_BURST:-40}
+      AUTH_RATE_LIMIT_SUBJECT_BURST: ${AUTH_RATE_LIMIT_SUBJECT_BURST:-8}
+      AUTH_RATE_LIMIT_INSTALL_BURST: ${AUTH_RATE_LIMIT_INSTALL_BURST:-5}
+      AUTH_RATE_LIMIT_REFILL_MS: ${AUTH_RATE_LIMIT_REFILL_MS:-2000}
+      AUTH_RATE_LIMIT_BACKOFF_BASE_MS: ${AUTH_RATE_LIMIT_BACKOFF_BASE_MS:-500}
+      AUTH_RATE_LIMIT_BACKOFF_MAX_MS: ${AUTH_RATE_LIMIT_BACKOFF_MAX_MS:-60000}
+      AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS: ${AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS:-500}
+      AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS: ${AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS:-750}
+      AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: ${AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS:-60000}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
     depends_on: { postgres: { condition: service_healthy } }
     command: ["pnpm", "db:migrate"]

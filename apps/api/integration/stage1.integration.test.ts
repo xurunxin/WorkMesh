@@ -2,18 +2,37 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { applyMigrations, createDb, hashPassword, opaqueToken, tokenHash } from "@workmesh/db";
 import { buildApp } from "../src/server.js";
+import type { AuthRateLimitStore } from "../src/auth-rate-limit/redis-store.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl) throw new Error("Stage 1 integration requires RUN_INTEGRATION=1 and DATABASE_URL.");
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error("Stage 1 integration requires a dedicated *test* database.");
 
 const db = createDb(databaseUrl);
-const app = buildApp();
+class SwitchableRateLimitStore implements AuthRateLimitStore {
+  calls = 0;
+  offline = false;
+  async eval(script: string): Promise<unknown> {
+    this.calls += 1;
+    if (this.offline) throw new Error("simulated Redis outage");
+    if (script.includes("HINCRBY")) return [1, 500];
+    if (script.includes("redis.call('DEL'")) return 1;
+    return [1, 0];
+  }
+  async set(): Promise<string | null> {
+    if (this.offline) throw new Error("simulated Redis outage");
+    return "OK";
+  }
+  async close(): Promise<void> {}
+}
+const rateLimitStore = new SwitchableRateLimitStore();
+const app = buildApp({ authRateLimitStore: rateLimitStore });
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T };
 type Human = { cookie: string; csrf: string; actorId: string };
 type Agent = { id: string; installationToken: string };
 type Session = { id: string; revision: number; exchangeToken: string };
 let admin: Human; let teamId = ""; let readyId = ""; let workItemId = ""; let agent: Agent;
+let appUrl = "";
 
 const humanCall = async (human: Human, method: "GET" | "POST" | "PUT" | "PATCH", url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> => await app.inject({ method, url, payload, headers: { cookie: human.cookie, "x-csrf-token": human.csrf, "idempotency-key": randomUUID(), ...extra } }) as unknown as Response;
 const agentCall = async (token: string, method: "GET" | "POST" | "PUT", url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> => await app.inject({ method, url, payload, headers: { authorization: `Bearer ${token}`, "idempotency-key": randomUUID(), ...extra } }) as unknown as Response;
@@ -49,6 +68,7 @@ async function ackAndExecute(session: Session, token: string): Promise<{ revisio
 describe("Stage 1 agent API acceptance", () => {
   beforeAll(async () => {
     await applyMigrations(db); await db.query("TRUNCATE workspaces CASCADE");
+    appUrl = await app.listen({ port: 0, host: "127.0.0.1" });
     const installed = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Stage One", slug: "stage-one", adminName: "Admin", email: "admin@example.test", password: "stage-one-password" }, headers: { "idempotency-key": "stage1-install" } });
     const cookie = (Array.isArray(installed.headers["set-cookie"]) ? installed.headers["set-cookie"][0] : installed.headers["set-cookie"])?.split(";")[0] ?? "";
     const csrf = installed.json<{ csrfToken: string }>().csrfToken;
@@ -89,4 +109,104 @@ describe("Stage 1 agent API acceptance", () => {
     const workspaceId = (await db.query<{ workspace_id: string }>("SELECT workspace_id FROM work_items WHERE id=$1", [workItemId])).rows[0]!.workspace_id; const outsiderId = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','member',$2,'Outsider',$3) RETURNING id", [workspaceId, `outsider-${randomUUID()}@example.test`, await hashPassword("outside-password")])).rows[0]!.id; const outsiderToken = opaqueToken(); await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 day')", [outsiderId, tokenHash(outsiderToken), opaqueToken()]);
     const forbidden = await app.inject({ method: "GET", url: `/api/v1/agent-sessions/${session.id}`, headers: { cookie: `workmesh_session=${outsiderToken}`, "idempotency-key": randomUUID() } }); expect(forbidden.statusCode).toBe(403);
   });
+
+  it("keeps authenticated work, Agent writes, and an existing SSE stream available during limiter Redis outage", async () => {
+    const previousWorkItemId = workItemId;
+    const controller = new AbortController();
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+    try {
+      const work = await humanCall(admin, "POST", "/api/v1/work-items", {
+        teamId,
+        title: "Redis outage isolation",
+        statusId: readyId,
+        responsibleHumanActorId: admin.actorId,
+      });
+      workItemId = work.json<{ id: string }>().id;
+      const outageAgent = await registerAgent(`outage-agent-${randomUUID()}`);
+      const delegation = await delegate(outageAgent.id);
+      const session = await start(delegation.json<{ id: string }>().id);
+      const token = await exchange(session, outageAgent.installationToken);
+      await ackAndExecute(session, token);
+
+      const streamCursor = Number((await db.query<{ cursor: string }>(
+        "SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events",
+      )).rows[0]!.cursor);
+      const stream = await fetch(
+        `${appUrl}/api/v1/events/stream?cursor=${streamCursor}`,
+        { headers: { cookie: admin.cookie }, signal: controller.signal },
+      );
+      expect(stream.status).toBe(200);
+      reader = stream.body?.getReader();
+      if (!reader) throw new Error("SSE response did not expose a reader");
+
+      const callsBeforeOutage = rateLimitStore.calls;
+      rateLimitStore.offline = true;
+
+      const teams = await humanCall(admin, "GET", "/api/v1/teams");
+      expect(teams.statusCode).toBe(200);
+      const heartbeat = await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        { usage: { runtimeSeconds: 1 } },
+      );
+      expect(heartbeat.statusCode).toBe(200);
+      const activity = await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/activities`,
+        {
+          kind: "message",
+          summary: "continues while limiter Redis is offline",
+          artifactIds: [],
+          references: [],
+          visibility: "team",
+          ephemeral: false,
+        },
+      );
+      expect(activity.statusCode).toBe(200);
+      const activityId = activity.json<{ id: string }>().id;
+
+      const unavailableLogin = await app.inject({
+        method: "POST",
+        url: "/api/v1/auth/login",
+        headers: { "idempotency-key": randomUUID() },
+        payload: {
+          email: "admin@example.test",
+          password: "stage-one-password",
+        },
+      });
+      expect(unavailableLogin.statusCode).toBe(503);
+      expect(unavailableLogin.json()).toMatchObject({
+        error: { code: "AUTH_RATE_LIMIT_UNAVAILABLE" },
+      });
+      expect(rateLimitStore.calls).toBe(callsBeforeOutage + 1);
+
+      const decoder = new TextDecoder();
+      let streamed = "";
+      const expiresAt = Date.now() + 5_000;
+      while (!streamed.includes(activityId)) {
+        const remaining = expiresAt - Date.now();
+        if (remaining <= 0)
+          throw new Error("Timed out waiting for SSE outage evidence");
+        const chunk = await Promise.race([
+          reader.read(),
+          new Promise<never>((_resolve, reject) =>
+            setTimeout(
+              () => reject(new Error("Timed out waiting for SSE chunk")),
+              remaining,
+            )),
+        ]);
+        if (chunk.done) throw new Error("SSE stream closed during Redis outage");
+        streamed += decoder.decode(chunk.value, { stream: true });
+      }
+      expect(streamed).toContain("agent.activity.appended");
+      expect(rateLimitStore.calls).toBe(callsBeforeOutage + 1);
+    } finally {
+      rateLimitStore.offline = false;
+      workItemId = previousWorkItemId;
+      controller.abort();
+      await reader?.cancel().catch(() => undefined);
+    }
+  }, 30_000);
 });

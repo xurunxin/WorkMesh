@@ -112,4 +112,10 @@ describe('auth mutation idempotency', () => {
     const second = new Headers(fetch.mock.calls[1]![1]?.headers).get('Idempotency-Key')
     expect(second).toBe(first)
   })
+  it('exposes uniform rate-limit code and Retry-After metadata to the auth UI', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'AUTH_RATE_LIMITED', message: 'Authentication request is temporarily rate limited' } }), { status: 429, headers: { 'Retry-After': '3' } })))
+    await expect(publicMutation('login-rate-metadata', '/api/v1/auth/login', { method: 'POST', body: JSON.stringify({ email: 'alice@example.test', password: 'wrong-password' }) })).rejects.toMatchObject({
+      status: 429, code: 'AUTH_RATE_LIMITED', retryAfterSeconds: 3, message: 'Authentication request is temporarily rate limited',
+    })
+  })
 })

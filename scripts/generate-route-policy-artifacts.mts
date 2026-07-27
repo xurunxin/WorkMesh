@@ -17,10 +17,12 @@ const sourceWithoutGeneratedExtensions = original
   .replace(/^[ \t]*x-workmesh-actor-kinds:.*\r?\n/gm, '')
   .replace(/^[ \t]*x-workmesh-feature-key:.*\r?\n/gm, '')
   .replace(/^[ \t]*x-workmesh-feature-tier:.*\r?\n/gm, '')
+  .replace(/^[ \t]*x-workmesh-auth-rate-limit:.*\r?\n/gm, '')
   .replace(/x-workmesh-policy-id: [^,}]+,[ \t]*/g, '')
   .replace(/x-workmesh-actor-kinds: \[[^\]]*],[ \t]*/g, '')
   .replace(/x-workmesh-feature-key: [^,}]+,[ \t]*/g, '')
   .replace(/x-workmesh-feature-tier: [^,}]+,[ \t]*/g, '')
+  .replace(/x-workmesh-auth-rate-limit: [^,}]+,[ \t]*/g, '')
   .replace(/^[ \t]{6,}security: \[(?:[ \t]*\{[ \t]*[A-Za-z][A-Za-z0-9]*:[ \t]*\[\][ \t]*\}[ \t]*,?)*[ \t]*\],?[ \t]*\r?\n/gm, '')
   .replace(/security: \[(?:[ \t]*\{[ \t]*[A-Za-z][A-Za-z0-9]*:[ \t]*\[\][ \t]*\}[ \t]*,?)*[ \t]*\],[ \t]*/g, '')
 const openapiDocument = parseDocument(sourceWithoutGeneratedExtensions, {
@@ -92,6 +94,9 @@ for (const policy of routePolicyManifest) {
   const flow = opening !== -1 && opening < operationStart
   const featureKey = policy.feature.key ?? 'none'
   const security = securityFor(policy.authentication)
+  const credentialRateLimit = policy.credentialRateLimit === 'shared_redis'
+    ? 'x-workmesh-auth-rate-limit: shared_redis, '
+    : ''
   if (flow) {
     const operationLineStart = openapi.lastIndexOf('\n', operationStart) + 1
     const sameLine = openapi.lastIndexOf('\n', opening) === operationLineStart - 1
@@ -101,6 +106,7 @@ for (const policy of routePolicyManifest) {
         + `x-workmesh-actor-kinds: [${policy.actorKinds.join(', ')}], `
         + `x-workmesh-feature-key: ${featureKey}, `
         + `x-workmesh-feature-tier: ${policy.feature.tier}, `
+        + credentialRateLimit
         + `security: ${security}, `
       openapi = openapi.slice(0, opening) + extension + openapi.slice(opening + 1)
     } else {
@@ -110,6 +116,7 @@ for (const policy of routePolicyManifest) {
         + `\n${indentation}x-workmesh-actor-kinds: [${policy.actorKinds.join(', ')}],`
         + `\n${indentation}x-workmesh-feature-key: ${featureKey},`
         + `\n${indentation}x-workmesh-feature-tier: ${policy.feature.tier},`
+        + (credentialRateLimit ? `\n${indentation}${credentialRateLimit.trimEnd()}` : '')
         + `\n${indentation}security: ${security},`
       openapi = openapi.slice(0, opening + 1)
         + extension
@@ -127,6 +134,7 @@ for (const policy of routePolicyManifest) {
       + `${indentation}x-workmesh-actor-kinds: [${policy.actorKinds.join(', ')}]\n`
       + `${indentation}x-workmesh-feature-key: ${featureKey}\n`
       + `${indentation}x-workmesh-feature-tier: ${policy.feature.tier}\n`
+      + (credentialRateLimit ? `${indentation}${credentialRateLimit.slice(0, -2)}\n` : '')
       + `${indentation}security: ${security}\n`
     openapi = openapi.slice(0, operationLineStart)
       + extension

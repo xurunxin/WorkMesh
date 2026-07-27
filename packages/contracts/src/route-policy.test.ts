@@ -34,6 +34,21 @@ const securityFor = (
 }
 
 describe('routePolicyManifest', () => {
+  it('declares the intended six shared credential-rate-limit operations', () => {
+    expect(
+      routePolicyManifest
+        .filter(route => route.credentialRateLimit === 'shared_redis')
+        .map(route => route.operationId),
+    ).toEqual([
+      'installWorkspace',
+      'login',
+      'exchangeAgentSessionToken',
+      'refreshAgentSessionToken',
+      'inspectExactTargetHandoff',
+      'rejectHandoff',
+    ])
+  })
+
   it('is the unique serializable declaration for every runtime route', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
@@ -137,6 +152,17 @@ describe('routePolicyManifest', () => {
         effectiveSecurity,
         `${route.operationId} effective OpenAPI security must match ${route.authentication}`,
       ).toEqual(securityFor(route.authentication))
+      if (route.credentialRateLimit === 'shared_redis') {
+        expect(operation).toMatchObject({
+          'x-workmesh-auth-rate-limit': 'shared_redis',
+          responses: {
+            '429': { $ref: '#/components/responses/AuthRateLimited' },
+            '503': { $ref: '#/components/responses/AuthRateLimitUnavailable' },
+          },
+        })
+      } else {
+        expect(operation).not.toHaveProperty('x-workmesh-auth-rate-limit')
+      }
       const feature = featureForApiRoute(route.path)
       expect(route.feature.key).toBe(feature ?? null)
       if (feature) {

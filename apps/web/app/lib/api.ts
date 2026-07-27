@@ -5,10 +5,10 @@ export const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001
 const csrfStorageKey = 'workmesh.csrf-token'
 const logicalAttempts = new Map<string, { key: string; requestIdentity: string }>()
 
-type ApiErrorBody = { error?: { message?: string } }
+type ApiErrorBody = { error?: { code?: string; message?: string } }
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) {
+  constructor(public readonly status: number, message: string, public readonly code?: string, public readonly retryAfterSeconds?: number) {
     super(message)
   }
 }
@@ -25,12 +25,14 @@ function csrfToken(): string | null {
   return sessionStorage.getItem(csrfStorageKey)
 }
 
-async function errorMessage(response: Response): Promise<string> {
+async function responseError(response: Response): Promise<ApiError> {
+  const rawRetryAfter = response.headers.get('retry-after')
+  const retryAfter = rawRetryAfter ? Number(rawRetryAfter) : Number.NaN
   try {
     const body = await response.json() as ApiErrorBody
-    return body.error?.message ?? `Request failed (${response.status})`
+    return new ApiError(response.status, body.error?.message ?? `Request failed (${response.status})`, body.error?.code, Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : undefined)
   } catch {
-    return `Request failed (${response.status})`
+    return new ApiError(response.status, `Request failed (${response.status})`, undefined, Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : undefined)
   }
 }
 
@@ -39,7 +41,7 @@ export async function publicRequest<T>(path: string, init: RequestInit = {}): Pr
   headers.set('Accept', 'application/json')
   if (init.method && init.method !== 'GET' && !headers.has('Idempotency-Key')) headers.set('Idempotency-Key', crypto.randomUUID())
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: 'include' })
-  if (!response.ok) throw new ApiError(response.status, await errorMessage(response))
+  if (!response.ok) throw await responseError(response)
   return response.json() as Promise<T>
 }
 
@@ -102,7 +104,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
     headers.set('X-CSRF-Token', token)
   }
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: 'include' })
-  if (!response.ok) throw new ApiError(response.status, await errorMessage(response))
+  if (!response.ok) throw await responseError(response)
   return response.json() as Promise<T>
 }
 

@@ -1,8 +1,12 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { WorkMeshClient, WorkMeshSdkError, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
 
 describe('WorkMeshClient', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('reads release and authenticated feature contracts without claiming disabled tools', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ serverVersion: '1.0.0' }), { status: 200 }))
@@ -68,6 +72,215 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer installation-secret')
     expect(JSON.stringify(warn.mock.calls)).not.toContain('installation-secret')
     expect(JSON.stringify(warn.mock.calls)).not.toContain('exchange-secret')
+  })
+  it('waits for the full Retry-After duration without changing the logical authentication attempt', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: { code: 'AUTH_RATE_LIMITED', message: 'Try later' } }), {
+        status: 429,
+        headers: { 'Retry-After': '5' },
+      }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        baseDelayMs: 0,
+        maxDelayMs: 0,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(4_999)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ sessionToken: 'issued-once' })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch.mock.calls[1]?.[1].body).toBe(fetch.mock.calls[0]?.[1].body)
+    expect(fetch.mock.calls[1]?.[1].headers['idempotency-key']).toBe(fetch.mock.calls[0]?.[1].headers['idempotency-key'])
+    expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-secret')
+  })
+
+  it('reuses the original serialized body when caller-owned input mutates during Retry-After', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 429, headers: { 'Retry-After': '5' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'heartbeat-1', revision: 2 }), { status: 200 }))
+    const input = {
+      currentStepId: 'step-original',
+      usage: { runtimeSeconds: 1, toolCalls: 1 },
+    }
+    const originalBody = JSON.stringify(input)
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.heartbeat('session-1', input)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+
+    input.currentStepId = 'step-mutated'
+    input.usage.runtimeSeconds = 9_999
+    input.usage.toolCalls = 9_999
+
+    await vi.advanceTimersByTimeAsync(4_999)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ id: 'heartbeat-1', revision: 2 })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    const firstInit = fetch.mock.calls[0]?.[1]
+    const secondInit = fetch.mock.calls[1]?.[1]
+    expect(firstInit.body).toBe(originalBody)
+    expect(secondInit.body).toBe(originalBody)
+    expect(secondInit.body).toBe(firstInit.body)
+    expect(secondInit.headers['idempotency-key']).toBe(firstInit.headers['idempotency-key'])
+    expect(secondInit.headers.authorization).toBe(firstInit.headers.authorization)
+    expect(secondInit.headers.authorization).toBe('Bearer session-token')
+  })
+
+  it('does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({
+      error: {
+        code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+        message: 'Rate limiter unavailable',
+        correlationId: 'cor-rate-limit',
+        details: { endpointClass: 'token_exchange' },
+      },
+    }), { status: 503, headers: { 'Retry-After': '61' } }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: { maxAttempts: 3, maxRetryAfterMs: 60_000, maxTotalRetryDelayMs: 120_000 },
+    })
+
+    await expect(client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret'))
+      .rejects.toMatchObject({
+        code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+        status: 503,
+        correlationId: 'cor-rate-limit',
+        details: { endpointClass: 'token_exchange' },
+        retry: {
+          retryAfterHeader: '61',
+          retryAfterMs: 61_000,
+          automaticRetrySuppressed: 'retry_after_exceeds_limit',
+        },
+      })
+    expect(fetch).toHaveBeenCalledOnce()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it.each(['invalid', '-1'])('falls back to bounded exponential delay for invalid Retry-After %s', async retryAfter => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 429, headers: { 'Retry-After': retryAfter } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        baseDelayMs: 250,
+        maxDelayMs: 250,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(249)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ sessionToken: 'issued-once' })
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('bounds automatic retries by the total retry-delay budget', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503, headers: { 'Retry-After': '3' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: { code: 'AUTH_RATE_LIMIT_UNAVAILABLE', message: 'Still unavailable', correlationId: 'cor-total' },
+      }), { status: 503, headers: { 'Retry-After': '3' } }))
+      .mockResolvedValueOnce(new Response('{}', { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 3,
+        maxRetryAfterMs: 5_000,
+        maxTotalRetryDelayMs: 5_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    const rejection = expect(request).rejects.toMatchObject({
+      code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+      status: 503,
+      correlationId: 'cor-total',
+      retry: {
+        retryAfterHeader: '3',
+        retryAfterMs: 3_000,
+        automaticRetrySuppressed: 'total_retry_delay_exceeded',
+      },
+    })
+    await vi.advanceTimersByTimeAsync(3_000)
+
+    await rejection
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it('bounds automatic retries by the attempt limit', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503, headers: { 'Retry-After': '1' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: { code: 'AUTH_RATE_LIMIT_UNAVAILABLE', message: 'Still unavailable', correlationId: 'cor-attempt' },
+      }), { status: 503, headers: { 'Retry-After': '1' } }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        maxRetryAfterMs: 5_000,
+        maxTotalRetryDelayMs: 5_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    const rejection = expect(request).rejects.toMatchObject({
+      code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+      status: 503,
+      correlationId: 'cor-attempt',
+      retry: {
+        retryAfterHeader: '1',
+        retryAfterMs: 1_000,
+        automaticRetrySuppressed: 'attempt_limit',
+      },
+    })
+    await vi.advanceTimersByTimeAsync(1_000)
+
+    await rejection
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(vi.getTimerCount()).toBe(0)
   })
 
   it('uses installation authority only for pending handoff inspection and idle-target rejection', async () => {
