@@ -119,8 +119,8 @@ export function createSessionLifecycleWorker({
 }): SessionLifecycleWorker {
   const expireAckDeadlines = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
-      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE s.state='queued' AND s.created_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.created_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
     `, [ackTimeoutSeconds, limit])
@@ -146,8 +146,8 @@ export function createSessionLifecycleWorker({
 
   const reconcileHeartbeatLiveness = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
-      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
         AND (s.last_heartbeat_at IS NULL OR s.last_heartbeat_at <= now() - ($1::text || ' seconds')::interval)
       ORDER BY COALESCE(s.last_heartbeat_at,s.created_at) FOR UPDATE OF s SKIP LOCKED LIMIT $2
@@ -174,8 +174,8 @@ export function createSessionLifecycleWorker({
 
   const expireStopGrace = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", s.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
-      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE s.state='stopping' AND s.stop_requested_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.stop_requested_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
     `, [stopGraceSeconds, limit])
@@ -197,9 +197,10 @@ export function createSessionLifecycleWorker({
 
   const expireApprovals = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedApproval>(`
-      SELECT a.id, a.workspace_id AS "workspaceId", s.team_id AS "teamId", a.session_id AS "sessionId"
+      SELECT a.id, a.workspace_id AS "workspaceId", d.team_id AS "teamId", a.session_id AS "sessionId"
       FROM approvals a
       JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id
+      JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE a.status='pending' AND a.expires_at <= now()
       ORDER BY a.expires_at FOR UPDATE SKIP LOCKED LIMIT $1
     `, [limit])
@@ -230,8 +231,10 @@ export function createSessionLifecycleWorker({
    * authority; stale/ended sessions simply lose any remaining coordination leases. */
   const expireLeases = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<{ id:string; workspace_id:string; team_id:string; session_id:string; resource_type:string; resource_id:string }>(`
-      SELECT l.id,l.workspace_id,s.team_id,l.session_id,l.resource_type,l.resource_id
-      FROM leases l LEFT JOIN agent_sessions s ON s.id=l.session_id
+      SELECT l.id,l.workspace_id,d.team_id,l.session_id,l.resource_type,l.resource_id
+      FROM leases l
+      JOIN agent_sessions s ON s.id=l.session_id AND s.workspace_id=l.workspace_id
+      JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE l.status='active' AND (l.expires_at <= now() OR s.state IN ('stale','completed','failed','canceled'))
       ORDER BY l.expires_at FOR UPDATE OF l SKIP LOCKED LIMIT $1
     `, [limit])
