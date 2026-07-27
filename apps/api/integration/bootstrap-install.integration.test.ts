@@ -33,6 +33,10 @@ for (const [name, value] of Object.entries(testEnvironment))
 const { buildApp } = await import('../src/server.js')
 const db = createDb(databaseUrl)
 const logs: string[] = []
+const runId = randomUUID()
+const suiteSlugPrefix = `bootstrap-${runId}`
+let authIdempotencyBaseline = new Set<string>()
+let bootstrapDenialBaseline = new Set<string>()
 const app = buildApp({
   logger: {
     level: 'info',
@@ -50,9 +54,9 @@ type InstallPayload = {
 
 const basePayload = (suffix: string): InstallPayload => ({
   name: `Bootstrap ${suffix}`,
-  slug: `bootstrap-${suffix}`,
+  slug: `${suiteSlugPrefix}-${suffix}`,
   adminName: 'Bootstrap Admin',
-  email: `bootstrap-${suffix}@example.test`,
+  email: `${suiteSlugPrefix}-${suffix}@example.test`,
   password: `bootstrap-${suffix}-password`,
 })
 
@@ -66,7 +70,7 @@ const install = (
   url: '/api/v1/auth/install',
   remoteAddress,
   headers: {
-    'idempotency-key': idempotencyKey,
+    'idempotency-key': `${runId}:${idempotencyKey}`,
     origin: 'https://workmesh.example.test',
     'user-agent': 'workmesh-bootstrap-integration',
     ...(token === null
@@ -84,28 +88,59 @@ const cookieFrom = (
   return String(value ?? '').split(';')[0] ?? ''
 }
 
+const suiteWorkspacePattern = `${suiteSlugPrefix}-%`
+const authIdempotencyRecords = async () =>
+  (await db.query<Record<string, unknown> & { id: string }>(
+    `SELECT * FROM auth_idempotency_records
+     WHERE operation='installWorkspace' ORDER BY id`,
+  )).rows
+const bootstrapDenials = async () =>
+  (await db.query<Record<string, unknown> & { id: string }>(
+    `SELECT * FROM authorization_denials
+     WHERE operation_id='installWorkspace'
+        OR policy_id='route.installWorkspace'
+     ORDER BY id`,
+  )).rows
+const newAuthIdempotencyRecords = async () =>
+  (await authIdempotencyRecords())
+    .filter(row => !authIdempotencyBaseline.has(row.id))
+const newBootstrapDenials = async () =>
+  (await bootstrapDenials())
+    .filter(row => !bootstrapDenialBaseline.has(row.id))
+
 const durableCounts = async () => ({
   workspaces: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM workspaces',
+    'SELECT count(*)::int AS count FROM workspaces WHERE slug LIKE $1',
+    [suiteWorkspacePattern],
   )).rows[0]!.count,
   humans: (await db.query<{ count: number }>(
-    "SELECT count(*)::int AS count FROM actors WHERE kind='human'",
+    `SELECT count(*)::int AS count FROM actors actor
+     JOIN workspaces workspace ON workspace.id=actor.workspace_id
+     WHERE actor.kind='human' AND workspace.slug LIKE $1`,
+    [suiteWorkspacePattern],
   )).rows[0]!.count,
   sessions: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM sessions',
+    `SELECT count(*)::int AS count FROM sessions session
+     JOIN actors actor ON actor.id=session.actor_id
+     JOIN workspaces workspace ON workspace.id=actor.workspace_id
+     WHERE workspace.slug LIKE $1`,
+    [suiteWorkspacePattern],
   )).rows[0]!.count,
   events: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM domain_events',
+    `SELECT count(*)::int AS count FROM domain_events event
+     JOIN workspaces workspace ON workspace.id=event.workspace_id
+     WHERE workspace.slug LIKE $1`,
+    [suiteWorkspacePattern],
   )).rows[0]!.count,
   outbox: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM outbox_events',
+    `SELECT count(*)::int AS count FROM outbox_events outbox
+     JOIN domain_events event ON event.id=outbox.domain_event_id
+     JOIN workspaces workspace ON workspace.id=event.workspace_id
+     WHERE workspace.slug LIKE $1`,
+    [suiteWorkspacePattern],
   )).rows[0]!.count,
-  authIdempotency: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM auth_idempotency_records',
-  )).rows[0]!.count,
-  denials: (await db.query<{ count: number }>(
-    'SELECT count(*)::int AS count FROM authorization_denials',
-  )).rows[0]!.count,
+  authIdempotency: (await newAuthIdempotencyRecords()).length,
+  denials: (await newBootstrapDenials()).length,
 })
 
 describe('authenticated single-use installation bootstrap', () => {
@@ -116,14 +151,30 @@ describe('authenticated single-use installation bootstrap', () => {
 
   beforeEach(async () => {
     logs.length = 0
-    await db.query('DELETE FROM auth_idempotency_records')
-    await db.query('DELETE FROM authorization_denials')
     await db.query('DELETE FROM platform_installation')
-    await db.query('DELETE FROM workspaces')
+    await db.query('DELETE FROM workspaces WHERE slug LIKE $1', [
+      suiteWorkspacePattern,
+    ])
+    authIdempotencyBaseline = new Set(
+      (await authIdempotencyRecords()).map(row => row.id),
+    )
+    bootstrapDenialBaseline = new Set(
+      (await bootstrapDenials()).map(row => row.id),
+    )
   })
 
   afterAll(async () => {
     await app.close()
+    await db.query(
+      `DELETE FROM platform_installation
+       WHERE workspace_id IN (
+         SELECT id FROM workspaces WHERE slug LIKE $1
+       )`,
+      [suiteWorkspacePattern],
+    )
+    await db.query('DELETE FROM workspaces WHERE slug LIKE $1', [
+      suiteWorkspacePattern,
+    ])
     await db.end()
     for (const [name, value] of previousEnvironment) {
       if (value === undefined)
@@ -258,7 +309,8 @@ describe('authenticated single-use installation bootstrap', () => {
       `CREATE OR REPLACE FUNCTION bootstrap_install_test_failure()
          RETURNS trigger LANGUAGE plpgsql AS $$
        BEGIN
-         IF NEW.kind='human' AND NEW.email='bootstrap-rollback@example.test'
+         IF NEW.kind='human'
+            AND NEW.email::text LIKE 'bootstrap-%-rollback@example.test'
          THEN RAISE EXCEPTION 'forced bootstrap integration rollback';
          END IF;
          RETURN NEW;
@@ -271,7 +323,6 @@ describe('authenticated single-use installation bootstrap', () => {
     )
     const payload = {
       ...basePayload('rollback'),
-      email: 'bootstrap-rollback@example.test',
     }
 
     let failed!: Awaited<ReturnType<typeof install>>
@@ -287,14 +338,16 @@ describe('authenticated single-use installation bootstrap', () => {
     }
     expect(failed.statusCode).toBe(500)
     expect((await db.query(
-      "SELECT 1 FROM workspaces WHERE slug='bootstrap-rollback'",
+      'SELECT 1 FROM workspaces WHERE slug=$1',
+      [payload.slug],
     )).rowCount).toBe(0)
     expect((await db.query(
-      "SELECT 1 FROM actors WHERE display_name='WorkMesh System'",
+      `SELECT 1 FROM actors actor
+       JOIN workspaces workspace ON workspace.id=actor.workspace_id
+       WHERE actor.display_name='WorkMesh System' AND workspace.slug LIKE $1`,
+      [suiteWorkspacePattern],
     )).rowCount).toBe(0)
-    expect((await db.query(
-      "SELECT 1 FROM auth_idempotency_records WHERE operation='installWorkspace'",
-    )).rowCount).toBe(0)
+    expect((await durableCounts()).authIdempotency).toBe(0)
 
     const retry = await install(payload, 'rollback-install')
     expect(retry.statusCode).toBe(200)
@@ -350,10 +403,21 @@ describe('authenticated single-use installation bootstrap', () => {
     const cookie = cookieFrom(response)
 
     const durable = JSON.stringify({
-      events: (await db.query('SELECT * FROM domain_events')).rows,
-      outbox: (await db.query('SELECT * FROM outbox_events')).rows,
-      denials: (await db.query('SELECT * FROM authorization_denials')).rows,
-      replay: (await db.query('SELECT * FROM auth_idempotency_records')).rows,
+      events: (await db.query(
+        `SELECT event.* FROM domain_events event
+         JOIN workspaces workspace ON workspace.id=event.workspace_id
+         WHERE workspace.slug LIKE $1`,
+        [suiteWorkspacePattern],
+      )).rows,
+      outbox: (await db.query(
+        `SELECT outbox.* FROM outbox_events outbox
+         JOIN domain_events event ON event.id=outbox.domain_event_id
+         JOIN workspaces workspace ON workspace.id=event.workspace_id
+         WHERE workspace.slug LIKE $1`,
+        [suiteWorkspacePattern],
+      )).rows,
+      denials: await newBootstrapDenials(),
+      replay: await newAuthIdempotencyRecords(),
     })
     const serializedLogs = logs.join('')
     for (const secret of [
