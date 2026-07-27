@@ -95,6 +95,16 @@ export const idSchema = z.string().uuid()
 export const timestampSchema = z.string().datetime({ offset: true })
 export const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 export const revisionSchema = z.number().int().positive()
+export const pageQuerySchema = z.object({
+  cursor: z.string().min(1).max(8_192).optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+})
+export type PageQuery = z.infer<typeof pageQuerySchema>
+export type ListResponse<T> = { items: T[]; nextCursor: string | null }
+export const listResponseSchema = <T extends z.ZodTypeAny>(item: T) => z.object({
+  items: z.array(item),
+  nextCursor: z.string().nullable(),
+}).strict()
 export const actorKindSchema = z.enum(['human', 'agent', 'service'])
 export const membershipRoleSchema = z.enum(['admin', 'maintainer', 'member'])
 export const statusCategorySchema = z.enum(['backlog', 'planned', 'started', 'completed', 'canceled'])
@@ -168,6 +178,8 @@ export const apiErrorCodeSchema = z.enum([
   'INVALID_CREDENTIALS',
   'INSTALLATION_ALREADY_COMPLETED',
   'RESPONSIBLE_HUMAN_REQUIRED',
+  'PAGINATION_CURSOR_INVALID',
+  'PAGINATION_CURSOR_MISMATCH',
   'INTERNAL_ERROR',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
@@ -385,11 +397,12 @@ export const publishPlanInputSchema = z.object({
 }).refine(value => Boolean(value.approvalId) === Boolean(value.approvalPayloadHash), { message: 'approvalId and approvalPayloadHash must be supplied together', path: ['approvalId'] })
 export const planStepResponseSchema = planStepInputSchema.extend({ plan_version_id: idSchema, created_at: timestampSchema, updated_at: timestampSchema })
 export const planVersionResponseSchema = z.object({ id: idSchema, session_id: idSchema, revision: revisionSchema, parent_version_id: idSchema.nullable(), change_summary: z.string(), author_actor_id: idSchema, created_at: timestampSchema, steps: z.array(planStepResponseSchema) })
+export const planVersionSummaryResponseSchema = planVersionResponseSchema.omit({ steps: true })
 /** Immutable plan history ordered by ascending revision for compare views. */
-export const planVersionHistoryResponseSchema = z.array(planVersionResponseSchema).superRefine((versions, context) => {
-  for (let index = 1; index < versions.length; index += 1) {
-    const previous = versions[index - 1]
-    const current = versions[index]
+export const planVersionHistoryResponseSchema = listResponseSchema(planVersionSummaryResponseSchema).superRefine((response, context) => {
+  for (let index = 1; index < response.items.length; index += 1) {
+    const previous = response.items[index - 1]
+    const current = response.items[index]
     if (previous && current && previous.revision >= current.revision) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Plan history must be ordered by ascending revision', path: [index, 'revision'] })
   }
 })

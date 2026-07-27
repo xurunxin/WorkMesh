@@ -5,11 +5,14 @@ import { loadConfig, loadFeatureConfig, loadReleaseInfo } from './index.js'
 
 const bootstrapMaterial = randomBytes(32)
 const bootstrapToken = bootstrapMaterial.toString('base64url')
+const paginationMaterial = randomBytes(32)
 const baseEnvironment = {
   DATABASE_URL: 'postgres://workmesh:workmesh@localhost/workmesh',
   REDIS_URL: 'redis://localhost:6379',
   SESSION_SECRET: '0123456789abcdef0123456789abcdef',
   WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+  PAGINATION_CURSOR_KEYS: `test-1:${paginationMaterial.toString('base64url')}`,
+  PAGINATION_CURSOR_ACTIVE_KID: 'test-1',
 }
 
 describe('release and feature configuration', () => {
@@ -123,5 +126,37 @@ describe('release and feature configuration', () => {
       NODE_ENV: 'production',
       WORKMESH_BOOTSTRAP_TOKEN: generated,
     }).WORKMESH_BOOTSTRAP_TOKEN).toBe(generated)
+  })
+
+  it('fails closed and rejects unsafe pagination cursor key rings', () => {
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      NODE_ENV: 'production',
+      PAGINATION_CURSOR_KEYS: undefined,
+      PAGINATION_CURSOR_ACTIVE_KID: undefined,
+    })).toThrow(/required in production/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      PAGINATION_CURSOR_ACTIVE_KID: 'missing',
+    })).toThrow(/configured pagination cursor key/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      PAGINATION_CURSOR_KEYS: `test-1:${Buffer.alloc(32, 0x41).toString('base64url')}`,
+    })).toThrow(/repeated or low-diversity/)
+    const reused = randomBytes(32).toString('base64url')
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      SESSION_SECRET: reused,
+      PAGINATION_CURSOR_KEYS: `test-1:${reused}`,
+    })).toThrow(/reuse another configured secret/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_BOOTSTRAP_TOKEN: reused,
+      PAGINATION_CURSOR_KEYS: `test-1:${reused}`,
+    })).toThrow(/reuse another configured secret/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      PAGINATION_CURSOR_KEYS: `test-1:${paginationMaterial.toString('base64url')},test-2:${paginationMaterial.toString('base64url')}`,
+    })).toThrow(/distinct material/)
   })
 })

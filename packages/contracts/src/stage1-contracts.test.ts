@@ -39,9 +39,9 @@ describe('Stage 1 agent contracts', () => {
   it('includes immutable plan history for compare views', () => {
     const route = stage1RouteManifest.find(candidate => candidate.method === 'GET' && candidate.path === '/api/v1/agent-sessions/{id}/plans')
     expect(route).toBeDefined()
-    const version = { id, session_id: id, parent_version_id: null, change_summary: 'Initial', author_actor_id: id, created_at: '2026-07-23T00:00:00.000Z', steps: [] }
-    expect(planVersionHistoryResponseSchema.parse([{ ...version, revision: 1 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 2 }])).toHaveLength(2)
-    expect(() => planVersionHistoryResponseSchema.parse([{ ...version, revision: 2 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 1 }])).toThrow()
+    const version = { id, session_id: id, parent_version_id: null, change_summary: 'Initial', author_actor_id: id, created_at: '2026-07-23T00:00:00.000Z' }
+    expect(planVersionHistoryResponseSchema.parse({ items: [{ ...version, revision: 1 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 2 }], nextCursor: null }).items).toHaveLength(2)
+    expect(() => planVersionHistoryResponseSchema.parse({ items: [{ ...version, revision: 2 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 1 }], nextCursor: null })).toThrow()
   })
 
   it('separates requested capabilities from admin-approved team access', () => {

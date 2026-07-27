@@ -23,6 +23,7 @@ const enabledFeatures = loadFeatureConfig({
 })
 const app = buildApp({ features: enabledFeatures })
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
+type Page<T> = { items: T[]; nextCursor: string | null }
 type Human = { cookie: string; csrf: string; actorId: string }
 
 const call = async (
@@ -175,9 +176,9 @@ describe('Stage 4 planning and operations API', () => {
     }
     const me = await call(human, 'GET', '/api/v1/auth/me')
     human.actorId = me.json<{ actor: { id: string } }>().actor.id
-    teamId = (await call(human, 'GET', '/api/v1/teams')).json<Array<{ id: string }>>()[0]!.id
+    teamId = (await call(human, 'GET', '/api/v1/teams')).json<Page<{ id: string }>>().items[0]!.id
     const stateId = (await call(human, 'GET', `/api/v1/teams/${teamId}/states`))
-      .json<Array<{ id: string; category: string }>>().find(state => state.category === 'backlog')!.id
+      .json<Page<{ id: string; category: string }>>().items.find(state => state.category === 'backlog')!.id
     const project = await call(human, 'POST', '/api/v1/projects', { teamId, name: 'Operations project' })
     projectId = project.json<{ id: string }>().id
     const work = await call(human, 'POST', '/api/v1/work-items', {
@@ -454,7 +455,7 @@ describe('Stage 4 planning and operations API', () => {
     const carry = await call(human, 'POST', `/api/v1/cycles/${firstCycleId}/carry-over`, { targetCycleId: secondCycleId })
     expect(carry.json<{ moved: string[] }>().moved).toEqual([workItemId])
     const cycles = await call(human, 'GET', `/api/v1/cycles?teamId=${teamId}`)
-    expect(cycles.json<Array<{ id: string }>>()).toHaveLength(2)
+    expect(cycles.json<Page<{ id: string }>>().items).toHaveLength(2)
 
     const initiative = await call(human, 'POST', '/api/v1/initiatives', {
       name: 'Reliable operations',
@@ -513,7 +514,7 @@ describe('Stage 4 planning and operations API', () => {
     }, 1)
     expect(health.statusCode, JSON.stringify(health.json())).toBe(200)
     const healthHistory = await call(human, 'GET', `/api/v1/projects/${projectId}/health`)
-    expect(healthHistory.json<Array<{ uncertainty: string; sources: unknown[] }>>()[0])
+    expect(healthHistory.json<Page<{ uncertainty: string; sources: unknown[] }>>().items[0])
       .toEqual(expect.objectContaining({ uncertainty: 'The external queue can change.', sources: expect.any(Array) }))
   })
 
@@ -796,7 +797,7 @@ describe('Stage 4 planning and operations API', () => {
       projectId,
       title: 'A2A replay sibling',
       statusId: (await call(human, 'GET', `/api/v1/teams/${teamId}/states`))
-        .json<Array<{ id: string; category: string }>>().find(state => state.category === 'backlog')!.id,
+        .json<Page<{ id: string; category: string }>>().items.find(state => state.category === 'backlog')!.id,
       responsibleHumanActorId: human.actorId,
     })
     const changedWorkItem = await call(human, 'POST', `/api/v1/a2a-bindings/${bindingId}/tasks`, {

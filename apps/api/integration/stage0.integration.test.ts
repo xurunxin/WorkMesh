@@ -12,6 +12,7 @@ type Method = "GET" | "POST" | "PATCH" | "DELETE";
 type InstallResponse = { csrfToken: string };
 type AuthResponse = { actor: { id: string } };
 type Created = { id: string; revision: number };
+type Page<T> = { items: T[]; nextCursor: string | null };
 type WorkflowState = { id: string; name: string };
 type WorkItem = Created & {
   title: string;
@@ -141,10 +142,10 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     expect(me.statusCode).toBe(200);
     actorId = me.json<AuthResponse>().actor.id;
     const teams = await call("GET", "/api/v1/teams");
-    teamId = teams.json<Array<{ id: string }>>()[0]?.id ?? "";
+    teamId = teams.json<Page<{ id: string }>>().items[0]?.id ?? "";
     const states = (await call("GET", `/api/v1/teams/${teamId}/states`)).json<
-      WorkflowState[]
-    >();
+      Page<WorkflowState>
+    >().items;
     readyId = states.find((state) => state.name === "Ready")?.id ?? "";
     startedId = states.find((state) => state.name === "In Progress")?.id ?? "";
     expect([teamId, readyId, startedId]).not.toContain("");
@@ -300,10 +301,10 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
 
     const byLabel = (
       await call("GET", "/api/v1/work-items?label=filter-tag")
-    ).json<WorkItem[]>();
+    ).json<Page<WorkItem>>().items;
     const bySearch = (
       await call("GET", "/api/v1/work-items?search=needle")
-    ).json<WorkItem[]>();
+    ).json<Page<WorkItem>>().items;
     expect(byLabel.map((result) => result.id)).toContain(created.id);
     expect(bySearch.map((result) => result.id)).toContain(created.id);
 
@@ -349,7 +350,7 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     ]).toEqual([200, 200, 200]);
     const visibleComments = (
       await call("GET", `/api/v1/work-items/${created.id}/comments`)
-    ).json<Comment[]>();
+    ).json<Page<Comment>>().items;
     expect(visibleComments).toEqual([
       expect.objectContaining({ id: root.id, body: "Root comment edited" }),
     ]);
@@ -401,12 +402,12 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     ]);
     expect(
       (await call("GET", "/api/v1/projects"))
-        .json<Array<{ id: string }>>()
+        .json<Page<{ id: string }>>().items
         .map((value) => value.id),
     ).not.toContain(projectCreated.id);
     expect(
       (await call("GET", "/api/v1/work-items"))
-        .json<WorkItem[]>()
+        .json<Page<WorkItem>>().items
         .map((value) => value.id),
     ).not.toContain(created.id);
   }, 30_000);
@@ -591,7 +592,7 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     });
     expect(me.statusCode).toBe(200);
     expect(teams.statusCode).toBe(200);
-    expect(teams.json<Array<{ id: string }>>()).toEqual([]);
+    expect(teams.json<Page<{ id: string }>>()).toEqual({ items: [], nextCursor: null });
     expect(recovered.statusCode).toBe(200);
   });
 });
