@@ -1020,6 +1020,10 @@ workmesh://project/{id}/guidance
 - Tool description 明确权限和副作用；
 - High-risk tool 不应只靠自然语言提醒。
 
+集合读取使用 `list_work_items` 和 `list_session_activities`。两者返回完整
+`{items,nextCursor}`；调用方必须将 `nextCursor` 原样作为下一次调用的
+`cursor`，不得解析或跨 Session、Actor、Route 复用。
+
 示例 `append_activity`：
 
 ```json
@@ -1234,3 +1238,9 @@ SDK 要求：
 - 不伪造 Actor；
 - 不要求平台存储隐藏思维链；
 - 通过 Conformance Suite。
+
+## 集合读取与分页
+
+Agent SDK、MCP 与 Native HTTP 的集合读取统一消费 `{items,nextCursor}`。调用方只能原样回传 `nextCursor`，不得解析、改写或跨 Route、Workspace、Actor、过滤条件复用。页大小默认 50，允许 1 到 200。授权在每一页重新验证；Team Access、Delegation、Capability、Resource Scope 或 Session 撤销后，后续页必须立即缩短或拒绝，Lease 不构成授权。
+
+此不透明游标只用于 REST 资源集合。Domain Event、SSE `Last-Event-ID` 和 A2A Task Event 的十进制 durable cursor 语义保持不变。

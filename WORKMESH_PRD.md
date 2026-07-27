@@ -1889,6 +1889,7 @@ MCP Server 应提供：
 ### Tools
 
 - `list_work_items`
+- `list_session_activities`
 - `get_work_item`
 - `create_work_item`
 - `update_work_item`
@@ -2619,3 +2620,9 @@ automation:
 - Model Context Protocol: Specification and Architecture
 - Agent2Agent Protocol: Official Project and Specification
 - AGENTS.md: Open Format for Coding Agent Guidance
+
+## 附录：集合分页契约
+
+除单例 `/rooms`、原子且硬限制为 100 个模板及每模板 100 个版本的 `/templates/export` 外，所有对外顶层集合统一返回 `{items,nextCursor}`。`limit` 默认 50、最小 1、最大 200。游标是带版本和 HMAC 的不透明 token，绑定 Route、Workspace、Actor、规范化后的有效过滤条件与确定性排序；每个排序元组以唯一 ID 收尾。每一页都在 SQL 中重新执行实时授权，然后执行 Keyset 条件和 `LIMIT limit+1`，不得使用 OFFSET、全量读取或 JavaScript 授权后过滤。完整清单、排序、并发变更语义和密钥轮换见 `docs/pagination.md` 与 ADR 0032。
+
+Domain Event REST/SSE cursor、`Last-Event-ID` 与 A2A Task Event cursor 保持原十进制 durable cursor 域，不得改用集合分页 token。
