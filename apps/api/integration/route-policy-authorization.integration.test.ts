@@ -829,9 +829,16 @@ describe('declarative route policy live authorization', () => {
 
   it('conceals and deduplicates explicit unresolved Team targets without breaking body-owned collection writes', async () => {
     const member = await createHuman('Explicit Target Member', teamA)
+    const scopedWork = await humanCall(admin, 'POST', '/api/v1/work-items', {
+      teamId: teamA,
+      title: 'Isolated explicit target authorization',
+      statusId: readyA,
+      responsibleHumanActorId: admin.actorId,
+    })
+    expect(scopedWork.statusCode, scopedWork.body).toBe(200)
     const scopedAgent = await createAgentFixture({
       slug: `route-policy-explicit-target-${randomUUID()}`,
-      workItemId: itemA.id,
+      workItemId: scopedWork.json<{ id: string }>().id,
       teamId: teamA,
       capabilities: ['work:read', 'work:write'],
     })

@@ -187,6 +187,14 @@ describe('routePolicyManifest', () => {
     expect(revisionFor('forceReleaseLease')).toBe('if_match')
   })
 
+  it('allows an ordinary Team member to contribute an independent Approval vote', () => {
+    const policy = routePolicyManifest.find(route => route.operationId === 'decideApproval')
+    expect(policy?.human).toMatchObject({
+      membership: 'resolved_team',
+      teamRoles: ['admin', 'maintainer', 'member'],
+    })
+  })
+
   it('keeps deployment feature discovery authenticated for humans and agents', async () => {
     const policy = routePolicyManifest.find(
       route => route.operationId === 'getDeploymentFeatures',

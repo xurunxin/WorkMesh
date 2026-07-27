@@ -217,6 +217,10 @@ const approvalOperations = new Set([
   'consumeApproval',
 ])
 
+const memberMutationOperations = new Set([
+  'decideApproval',
+])
+
 const leaseOperations = new Set([
   'heartbeatLease',
   'renewLease',
@@ -314,7 +318,11 @@ export function createRoutePolicyManifest(
               : ['human', 'agent'],
       human: {
         workspaceRoles: workspaceAdmin ? ['admin'] : ['admin', 'member'],
-        teamRoles: workspaceAdmin ? ['admin'] : mutation ? ['admin', 'maintainer'] : ['admin', 'maintainer', 'member'],
+        teamRoles: workspaceAdmin
+          ? ['admin']
+          : mutation && !memberMutationOperations.has(binding.operationId)
+            ? ['admin', 'maintainer']
+            : ['admin', 'maintainer', 'member'],
         membership: resolver === 'none' || resolver === 'workspace' ? 'workspace' : 'resolved_team',
         ownerMayManage: resolver === 'template',
       },

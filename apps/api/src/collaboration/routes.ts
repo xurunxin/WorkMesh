@@ -295,7 +295,12 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if(q.resourceId){values.push(q.resourceId);where.push(`l.resource_id=$${values.length}`)}
     if(current.kind==='agent'){values.push(current.agentSessionId);where.push(`l.session_id=$${values.length}`)}
     else if(current.workspaceRole!=='admin'){values.push(current.id);where.push(`EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=l.workspace_id AND m.team_id=s.team_id AND m.actor_id=$${values.length})`)}
-    return (await h.db.query(`SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC`,values)).rows
+    const rows = (await h.db.query<{ version: number }>(
+      `SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id
+       WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC`,
+      values,
+    )).rows
+    return rows.map(leaseResponse)
   })
 
   app.post('/api/v1/agent-sessions/:id/plan/comments', async request => { const sessionId=id(request); const body=z.object({planVersionId:uuid,planStepId:uuid,body:z.string().min(1).max(50000),references:z.array(z.unknown()).max(100).default([])}).parse(request.body); return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{const s=await assertSessionWrite(tx,actor(request),sessionId); const valid=await tx.query('SELECT 1 FROM agent_plan_steps ps JOIN agent_plan_versions pv ON pv.id=ps.plan_version_id JOIN agent_sessions s ON s.id=$3 WHERE ps.id=$1 AND pv.id=$2 AND pv.session_id=$3 AND s.current_plan_version_id=pv.id',[body.planStepId,body.planVersionId,sessionId]); if(!valid.rowCount)throw new DomainError('STALE_PLAN_VERSION','Comments must target a step in the session current plan'); const row=(await tx.query('INSERT INTO plan_step_comments(plan_version_id,step_id,author_actor_id,body,references_json) VALUES($1,$2,$3,$4,$5::jsonb) RETURNING *',[body.planVersionId,body.planStepId,actor(request).id,body.body,JSON.stringify(body.references)])).rows[0] as {id:string}; await emit(tx,h.meta(request,body),'plan.step.commented','plan_step_comment',row.id,{sessionId,stepId:body.planStepId},s.team_id);return row}) })

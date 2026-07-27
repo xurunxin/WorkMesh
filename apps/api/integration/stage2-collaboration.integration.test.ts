@@ -283,6 +283,10 @@ describe('Stage 2 collaboration API acceptance', () => {
     const leased = lease.json<{ id: string; version: number; revision: number }>()
     expect(leased).toMatchObject({ version: 1, revision: 1 })
     expect(lease.headers.etag).toBe('"revision-1"')
+    const listed = await humanCall(f.human, 'GET', `/api/v1/leases?sessionId=${f.parent.id}`)
+    expect(listed.statusCode, JSON.stringify(listed.json())).toBe(200)
+    expect(listed.json<Array<{ id: string; version: number; revision: number }>>())
+      .toContainEqual(expect.objectContaining({ id: leased.id, version: 1, revision: 1 }))
     const forceUrl = `/api/v1/leases/${leased.id}/force-release`
     const missingRevision = await humanCall(f.human, 'POST', forceUrl, { reason: 'missing optimistic lock' })
     expect(missingRevision.statusCode).toBe(400)

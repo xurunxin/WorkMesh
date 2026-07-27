@@ -466,7 +466,17 @@ describe('Stage 3 delivery API', () => {
         sessionId: f.agent.sessionId, artifactId: randomUUID(), headSha: 'head',
         verdict: 'approved', ...review,
       })
-      expect(response.statusCode).toBe(400)
+      expect(response.statusCode).toBe(404)
+      expect(response.json<{ error: { code: string } }>()).toMatchObject({
+        error: { code: 'NOT_FOUND' },
+      })
+      const serializedError = JSON.stringify(response.json())
+      for (const sensitiveValue of [
+        'abcdefghijklmnop',
+        'abcdefgh',
+        'PRIVATE KEY',
+        'AKIAIOSFODNN7EXAMPLE',
+      ]) expect(serializedError).not.toContain(sensitiveValue)
     }
     const after = (await db.query<typeof before>(
       `SELECT (SELECT count(*) FROM artifacts)::text AS artifacts,
