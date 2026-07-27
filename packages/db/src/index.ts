@@ -5,6 +5,9 @@ import argon2 from 'argon2'
 import { Pool, type PoolClient, type QueryResultRow } from 'pg'
 import { defaultStates } from '@workmesh/domain'
 export * from './schema.js'
+export * from './events.js'
+export * from './event-resources.js'
+import { appendEvent } from './events.js'
 
 export type Db = Pool
 export type PasswordInput = { password: string }
@@ -32,7 +35,10 @@ export const opaqueToken = () => crypto.randomBytes(32).toString('base64url')
 export const tokenHash = (token: string) => crypto.createHash('sha256').update(token).digest('hex')
 
 const migrationFilePattern = /^(\d+)_.*\.sql$/
-export const applyMigrations = async (db: Db): Promise<void> => {
+export const applyMigrations = async (
+  db: Db,
+  options: Readonly<{ through?: number }> = {},
+): Promise<void> => {
   const client = await db.connect()
   let locked = false
   try {
@@ -50,6 +56,11 @@ export const applyMigrations = async (db: Db): Promise<void> => {
     const applied = await client.query<{ version: string }>('SELECT version FROM schema_migrations')
     const appliedVersions = new Set(applied.rows.map(row => row.version))
     for (const file of migrations) {
+      const migrationNumber = Number(migrationFilePattern.exec(file)?.[1])
+      if (
+        options.through !== undefined
+        && migrationNumber > options.through
+      ) continue
       const version = parse(file).name
       if (appliedVersions.has(version)) continue
       await client.query(await readFile(join(migrationsDirectory, file), 'utf8'))
@@ -144,11 +155,6 @@ export async function createAdmin(db: Db, input: { email: string; password: stri
   })
 }
 
-export async function appendEvent(tx: PoolClient, input: { workspaceId: string; teamId?: string; audienceActorId?: string; actorId: string; correlationId: string; idempotencyKey?: string; type: string; aggregateType: string; aggregateId: string; revision?: number; payload?: Record<string, unknown> }): Promise<string> {
-  const event = await tx.query<{ id: string }>('INSERT INTO domain_events(workspace_id,team_id,audience_actor_id,event_type,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,idempotency_key,payload) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id', [input.workspaceId, input.teamId ?? null, input.audienceActorId ?? null, input.type, input.aggregateType, input.aggregateId, input.revision ?? null, input.actorId, input.correlationId, input.idempotencyKey ?? null, input.payload ?? {}])
-  await tx.query('INSERT INTO outbox_events(domain_event_id,topic,partition_key) VALUES($1,$2,$3)', [event.rows[0]!.id, input.type, input.aggregateId])
-  return event.rows[0]!.id
-}
 export const rows = <T extends QueryResultRow>(result: { rows: T[] }) => result.rows
 
 export * from './stage4.js'
