@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { WorkMeshClient, WorkMeshSdkError, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
+import { WorkMeshClient, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
 
 describe('WorkMeshClient', () => {
@@ -293,6 +293,37 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/handoffs/handoff-1/inspect')
     expect(fetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer installation-token')
     expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-token')
+  })
+
+  it('passes opaque cursors unchanged and iterates page envelopes', async () => {
+    const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({
+      items: [{ id: 'work-1' }],
+      nextCursor: 'opaque.cursor',
+    }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await expect(client.listWorkItems({ teamId: 'team-1' }, { cursor: 'opaque.cursor', limit: 17 }))
+      .resolves.toEqual({ items: [{ id: 'work-1' }], nextCursor: 'opaque.cursor' })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/work-items?teamId=team-1&cursor=opaque.cursor&limit=17')
+
+    await expect(client.getActivities('session-1', {
+      cursor: 'opaque.activity.cursor',
+      limit: 19,
+    })).resolves.toEqual({
+      items: [{ id: 'work-1' }],
+      nextCursor: 'opaque.cursor',
+    })
+    expect(fetch.mock.calls[1]?.[0]).toBe(
+      'https://workmesh.test/api/v1/agent-sessions/session-1/activities?cursor=opaque.activity.cursor&limit=19',
+    )
+
+    const pages = vi.fn()
+      .mockResolvedValueOnce({ items: [1, 2], nextCursor: 'next' })
+      .mockResolvedValueOnce({ items: [3], nextCursor: null })
+    const items: number[] = []
+    for await (const item of iterateListPages<number>(async cursor =>
+      await pages(cursor) as { items: number[]; nextCursor: string | null })) items.push(item)
+    expect(items).toEqual([1, 2, 3])
+    expect(pages).toHaveBeenNthCalledWith(2, 'next')
   })
 
   it('redacts nested sensitive values before logging', () => {

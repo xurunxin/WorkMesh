@@ -24,7 +24,15 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
   server.registerResource('project-guidance', new ResourceTemplate('workmesh://project/{id}/guidance', { list: undefined }), { description: 'Project guidance available to the authenticated session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getGuidance('project', String(variables.id))))
   server.registerResource('repository-context', new ResourceTemplate('workmesh://repository/{id}/context', { list: undefined }), { description: 'Authorized repository, pinned base SHA, path scope, and root-to-leaf AGENTS.md provenance.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getRepositoryContext(String(variables.id))))
 
-  server.registerTool('list_work_items', { description: 'List only work items authorized for this session.', inputSchema: { teamId: z.string().uuid().optional(), query: z.string().max(500).optional(), statusId: z.string().uuid().optional() } }, async input => tool(() => options.client.listWorkItems(input)))
+  server.registerTool('list_work_items', { description: 'List only work items authorized for this session. Pass nextCursor back as cursor to continue.', inputSchema: { teamId: z.string().uuid().optional(), query: z.string().max(500).optional(), statusId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => {
+    const { cursor, limit, ...query } = input
+    return tool(() => options.client.listWorkItems(query, { cursor, limit }))
+  })
+  server.registerTool('list_session_activities', { description: 'List authorized immutable session activities. Pass nextCursor back as cursor to continue.', inputSchema: { sessionId, cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input =>
+    tool(() => options.client.getActivities(input.sessionId, {
+      cursor: input.cursor,
+      limit: input.limit,
+    })))
   server.registerTool('get_work_item', { description: 'Get one authorized work item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItem(input.workItemId)))
 
   server.registerTool('get_work_room', { description: 'Read the human-visible durable Work Room for one work item, project, or session.', inputSchema: { workItemId: z.string().uuid().optional(), projectId: z.string().uuid().optional(), sessionId: z.string().uuid().optional() } }, async input => tool(() => options.client.getRoom(input)))

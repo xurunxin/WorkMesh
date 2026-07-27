@@ -2,7 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
-  ReleaseInfo, RoutePolicyManifestEntry,
+  ReleaseInfo, RoutePolicyManifestEntry, ListResponse,
 } from '@workmesh/contracts'
 import { routePolicyManifest } from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
@@ -79,6 +79,7 @@ export interface WorkMeshClientOptions {
   retry?: RetryOptions
 }
 export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string }
+export interface PageRequestOptions extends RequestOptions { cursor?: string; limit?: number }
 export interface ApiCommand { id: string; revision: number }
 export interface TokenExchange { sessionToken: string; expiresAt?: string }
 export interface SessionAck { summary: string; externalUrls?: Array<{ label: string; url: string }> }
@@ -89,6 +90,34 @@ export interface ArtifactInput { sessionId: string; workItemId?: string; type: '
 export interface DelegateAndStartInput { agentId: string; principalHumanActorId: string; role?: 'executor' | 'reviewer' | 'researcher' | 'coordinator' | 'triager'; requestedCapabilities: Capability[]; initialPrompt: string; contextSnapshotId?: string; budget?: Record<string, number> }
 export type RoomMessageIntent = 'inform' | 'ask' | 'answer' | 'propose' | 'decide' | 'claim' | 'handoff' | 'blocker' | 'review_request' | 'review_result' | 'status'
 export interface RoomMessageInput { intent: RoomMessageIntent; body: string; recipientActorId?: string; recipientActorIds?: string[]; replyToMessageId?: string; threadId?: string; payload?: Record<string, unknown>; requiresResponse?: boolean; sessionId?: string }
+
+export async function *iterateListPages<T>(
+  load: (cursor?: string) => Promise<ListResponse<T>>,
+  maximumPages = 10_000,
+): AsyncGenerator<T, void, undefined> {
+  let cursor: string | undefined
+  for (let pageNumber = 0; pageNumber < maximumPages; pageNumber += 1) {
+    const page = await load(cursor)
+    for (const item of page.items) yield item
+    if (!page.nextCursor) return
+    cursor = page.nextCursor
+  }
+  throw new WorkMeshSdkError('Pagination exceeded the configured page traversal bound', {
+    code: 'PAGINATION_PAGE_LIMIT_EXCEEDED',
+  })
+}
+
+function pagedPath(
+  path: string,
+  query: Record<string, string | number | boolean | undefined>,
+  options: PageRequestOptions,
+): string {
+  const params = new URLSearchParams()
+  for (const [key, value] of Object.entries(query)) if (value !== undefined) params.set(key, String(value))
+  if (options.cursor !== undefined) params.set('cursor', options.cursor)
+  if (options.limit !== undefined) params.set('limit', String(options.limit))
+  return `${path}${params.size ? `?${params}` : ''}`
+}
 export interface LeaseInput { sessionId: string; resourceType: 'work_item' | 'plan_step'; resourceId: string; kind?: 'exclusive' | 'review_shared'; ttlSeconds?: number; reason: string }
 export interface PlanStepCommentInput { planVersionId: string; planStepId: string; body: string; references?: unknown[] }
 export interface AssignmentProposalInput { planStepId: string; agentId?: string; skill?: string; rationale: string }
@@ -170,9 +199,9 @@ export class WorkMeshClient {
   getSession<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}`, undefined, { ...options, refreshSessionId: sessionId }) }
   getSessionContext<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/context`, undefined, { ...options, refreshSessionId: sessionId }) }
   getPlan<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plan`, undefined, { ...options, refreshSessionId: sessionId }) }
-  getActivities<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/activities`, undefined, { ...options, refreshSessionId: sessionId }) }
+  getActivities<T = unknown>(sessionId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/activities`, {}, options), undefined, { ...options, refreshSessionId: sessionId }) }
   getRoom<T = unknown>(query: { workItemId?: string; projectId?: string; sessionId?: string }, options: RequestOptions = {}): Promise<T> { const params = new URLSearchParams(Object.entries(query).filter(([, value]) => value !== undefined) as [string,string][]); return this.request('GET', `/api/v1/rooms?${params}`, undefined, options) }
-  getRoomTimeline<T = unknown>(roomId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/rooms/${encodeURIComponent(roomId)}/timeline`, undefined, options) }
+  getRoomTimeline<T = unknown>(roomId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/rooms/${encodeURIComponent(roomId)}/timeline`, {}, options), undefined, options) }
   postRoomMessage<T = unknown>(roomId: string, input: RoomMessageInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId ?? roomId, 'room-message') }) }
   commentPlanStep<T = unknown>(sessionId: string, input: PlanStepCommentInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plan/comments`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `plan-step-comment:${input.planStepId}`), refreshSessionId: sessionId }) }
   proposeAssignment<T = unknown>(sessionId: string, input: AssignmentProposalInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/assignment-proposals`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `assignment-proposal:${input.planStepId}`), refreshSessionId: sessionId }) }
@@ -195,10 +224,8 @@ export class WorkMeshClient {
     return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
   }
   getWorkItem<T = unknown>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
-  listWorkItems<T = unknown>(query: Record<string, string | number | boolean | undefined> = {}, options?: RequestOptions): Promise<T> {
-    const params = new URLSearchParams()
-    for (const [key, value] of Object.entries(query)) if (value !== undefined) params.set(key, String(value))
-    return this.request('GET', `/api/v1/work-items${params.size ? `?${params}` : ''}`, undefined, options)
+  listWorkItems<T = unknown>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> {
+    return this.request('GET', pagedPath('/api/v1/work-items', query, options), undefined, options)
   }
   getGuidance<T = unknown>(scope: 'workspace' | 'team' | 'project', id: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/${scope}s/${encodeURIComponent(id)}/guidance`, undefined, options) }
   /** Delegation and session creation happen in one server transaction. */
@@ -223,7 +250,7 @@ export class WorkMeshClient {
   consumeApproval<T = unknown>(approvalId: string, input: { actionPayloadHash: string }, options: RequestOptions & { sessionId: string; ifMatch: number | string }): Promise<T> {
     return this.request('POST', `/api/v1/approvals/${encodeURIComponent(approvalId)}/consume`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `consume-approval:${approvalId}`), refreshSessionId: options.sessionId })
   }
-  listRepositories<T = unknown>(options: RequestOptions = {}): Promise<T> { return this.request('GET', '/api/v1/repositories', undefined, options) }
+  listRepositories<T = unknown>(options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/repositories', {}, options), undefined, options) }
   getRepositoryContext<T = unknown>(repositoryId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/repositories/${encodeURIComponent(repositoryId)}/context`, undefined, options) }
   requestProviderAction<T = unknown>(input: ProviderActionInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/provider-actions', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `provider:${input.kind}`), refreshSessionId: input.sessionId }) }
   publishDeliveryArtifact<T = unknown>(input: { workItemId: string; sessionId: string; projectId?: string; planStepId?: string; repositoryId?: string; pullRequestId?: string; headSha?: string; type: ArtifactInput['type'] | 'branch' | 'diff' | 'build' | 'preview'; title: string; uri?: string; checksum: string; sourceTool: string; command?: string; result?: 'passed' | 'failed' | 'skipped'; metadata?: Record<string, unknown> }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/delivery-artifacts', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `delivery-artifact:${input.type}`), refreshSessionId: input.sessionId }) }
