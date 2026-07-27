@@ -602,6 +602,17 @@ describe('Stage 4 planning and operations API', () => {
   })
 
   it('atomically applies sequenced A2A deliveries to one Session across outbound streaming', async () => {
+    const exactOutboundCursor = 9_007_199_254_740_993n
+    await db.query(
+      `SELECT setval(
+         'domain_events_cursor_seq',
+         GREATEST($1::bigint,(
+           SELECT COALESCE(max(cursor),0)+1 FROM domain_events
+         )),
+         false
+       )`,
+      [exactOutboundCursor.toString()],
+    )
     const registration = await call(human, 'POST', '/api/v1/agents/register', {
       name: 'A2A conformance',
       slug: `a2a-${randomUUID()}`,
@@ -705,7 +716,9 @@ describe('Stage 4 planning and operations API', () => {
         ORDER BY sequence LIMIT 1`,
       [bindingId, externalTask.id],
     )).rows[0]!.sequence
-    expect(Number(outboundSequence)).toBeGreaterThan(2)
+    expect(outboundSequence).toBe(BigInt(outboundSequence).toString())
+    expect(BigInt(outboundSequence)).toBeGreaterThanOrEqual(exactOutboundCursor)
+    const completionInboundSequence = 3
 
     const completed = {
       ...externalTask,
@@ -732,7 +745,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -769,7 +782,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -784,7 +797,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:write'],
       task: completed,
     })
@@ -803,7 +816,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId: siblingWork.json<{ id: string }>().id,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -838,7 +851,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId: replayTeamId,
       workItemId: replayTeamWork.json<{ id: string }>().id,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -849,7 +862,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: `delivery-${randomUUID()}`,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
