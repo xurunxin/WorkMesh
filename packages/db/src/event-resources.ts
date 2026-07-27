@@ -104,6 +104,36 @@ export const supportedEventAggregateTypes = [
 
 const supportedAggregateTypes = new Set<string>(supportedEventAggregateTypes)
 
+export type SqlParameterBinding = Readonly<{
+  sql: string
+  values: unknown[]
+}>
+
+export const remapSqlParameters = (
+  sql: string,
+  sourceValues: readonly unknown[],
+): SqlParameterBinding => {
+  const mappedIndexes = new Map<number, number>()
+  const values: unknown[] = []
+  const remappedSql = sql.replace(/\$(\d+)/g, (_placeholder, rawIndex: string) => {
+    const sourceIndex = Number(rawIndex)
+    if (
+      !Number.isSafeInteger(sourceIndex)
+      || sourceIndex < 1
+      || sourceIndex > sourceValues.length
+    )
+      throw new Error('DOMAIN_EVENT_SQL_PARAMETER_INVALID')
+    let mappedIndex = mappedIndexes.get(sourceIndex)
+    if (mappedIndex === undefined) {
+      mappedIndex = mappedIndexes.size + 1
+      mappedIndexes.set(sourceIndex, mappedIndex)
+      values.push(sourceValues[sourceIndex - 1])
+    }
+    return `$${mappedIndex}`
+  })
+  return { sql: remappedSql, values }
+}
+
 /**
  * Private event forms are deliberately inventoried here. Their audience must
  * be proven from durable ownership state and explicitly supplied by the
@@ -298,9 +328,22 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
       WHERE context.id=$1 AND context.workspace_id=$2
         AND repository.workspace_id=$2`,
   provider_action:
-    `SELECT 'session'::text AS resource_type,action.session_id AS resource_id
+    `SELECT CASE
+              WHEN action.session_id IS NOT NULL THEN 'session'
+              WHEN action.work_item_id IS NOT NULL THEN 'work_item'
+              WHEN action.project_id IS NOT NULL THEN 'project'
+              ELSE 'team'
+            END AS resource_type,
+            COALESCE(
+              action.session_id,
+              action.work_item_id,
+              action.project_id,
+              repository.team_id
+            ) AS resource_id
        FROM provider_actions action
-      WHERE action.id=$1 AND action.workspace_id=$2`,
+       JOIN repositories repository ON repository.id=action.repository_id
+      WHERE action.id=$1 AND action.workspace_id=$2
+        AND repository.workspace_id=$2`,
   artifact_upload_intent:
     `SELECT 'session'::text AS resource_type,intent.session_id AS resource_id
        FROM artifact_upload_intents intent
@@ -564,12 +607,10 @@ async function aggregateSeeds(
     input.teamId ?? null,
     payloadSessionId,
   ]
-  const parameterCount = Math.max(
-    ...[...sql.matchAll(/\$(\d+)/g)].map(match => Number(match[1])),
-  )
+  const binding = remapSqlParameters(sql, values)
   const result = await tx.query<ResourceSeedRow>(
-    sql,
-    values.slice(0, parameterCount),
+    binding.sql,
+    binding.values,
   )
   if (result.rows.length === 0)
     throw new Error('DOMAIN_EVENT_AGGREGATE_RESOURCE_NOT_FOUND')
