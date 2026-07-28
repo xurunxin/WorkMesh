@@ -88,6 +88,12 @@ declare module "fastify" {
     idempotencyKey?: string;
     rawBody?: Buffer;
   }
+
+  interface FastifyInstance {
+    workmeshRuntime: {
+      accepting: boolean;
+    };
+  }
 }
 
 const config = loadConfig();
@@ -99,6 +105,8 @@ const publicPaths = new Set([
   "/api/v1/auth/login",
   "/api/v1/install-status",
   "/api/v1/info",
+  "/livez",
+  "/readyz",
   "/health",
 ]);
 
@@ -264,6 +272,7 @@ export const buildApp = (options: {
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
   logger?: FastifyServerOptions["logger"];
   authRateLimitStore?: AuthRateLimitStore;
+  readinessProbe?: () => Promise<void>;
   beforePagedQuery?: (route: string) => Promise<void> | void;
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
@@ -274,8 +283,14 @@ export const buildApp = (options: {
     genReqId: () => crypto.randomUUID(),
     trustProxy: config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS.length ? config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS : false,
   });
+  app.decorate("workmeshRuntime", { accepting: true });
   installRoutePolicyInventory(app);
-  const { limiter: authRateLimiter } = installAuthRateLimit(app, config, options.authRateLimitStore);
+  const { limiter: authRateLimiter, store: authRateLimitStore } =
+    installAuthRateLimit(app, config, options.authRateLimitStore);
+  const readinessProbe = options.readinessProbe ?? (async () => {
+    await db.query("SELECT 1");
+    await authRateLimitStore.ping?.();
+  });
   installBootstrapAuthentication(app, config);
   void app.register(cookie);
   void app.register(cors, {
@@ -520,10 +535,19 @@ export const buildApp = (options: {
       );
   });
 
-  app.get("/health", async () => {
-    await db.query("SELECT 1");
-    return { status: "ok" };
-  });
+  const ready = async (_request: FastifyRequest, reply: FastifyReply) => {
+    if (!app.workmeshRuntime.accepting)
+      return reply.code(503).send({ status: "not_ready" });
+    try {
+      await readinessProbe();
+      return { status: "ok" };
+    } catch {
+      return reply.code(503).send({ status: "not_ready" });
+    }
+  };
+  app.get("/livez", async () => ({ status: "ok" }));
+  app.get("/readyz", ready);
+  app.get("/health", ready);
   app.get("/api/v1/info", async () => releaseInfo);
   app.get("/api/v1/features", async () => ({
     features: featureDefinitions.map(feature => ({
@@ -1291,6 +1315,32 @@ async function sse(request: FastifyRequest, reply: FastifyReply) {
 
 if (process.env.NODE_ENV !== "test") {
   const app = buildApp();
+  let stopping = false;
+  const stop = (): void => {
+    if (stopping) return;
+    stopping = true;
+    app.workmeshRuntime.accepting = false;
+    const timeoutMs = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 30_000);
+    const timeout = setTimeout(() => {
+      app.log.error("API graceful shutdown deadline exceeded");
+      app.server.closeAllConnections();
+      process.exit(1);
+    }, Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 30_000);
+    timeout.unref();
+    void app.close()
+      .then(() => db.end())
+      .then(() => {
+        clearTimeout(timeout);
+        process.exit(0);
+      })
+      .catch((error) => {
+        clearTimeout(timeout);
+        app.log.error(error, "API graceful shutdown failed");
+        process.exit(1);
+      });
+  };
+  process.once("SIGTERM", stop);
+  process.once("SIGINT", stop);
   app.listen({ port: config.API_PORT, host: config.API_HOST }).catch((error) => {
     app.log.error(error);
     process.exit(1);

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import {
   GetObjectCommand,
+  HeadBucketCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -49,6 +50,10 @@ export class S3ArtifactStorage {
       new GetObjectCommand({ Bucket: this.#bucket, Key: key, ChecksumMode: "ENABLED" }),
       { expiresIn },
     );
+  }
+
+  async probe(): Promise<void> {
+    await this.#client.send(new HeadBucketCommand({ Bucket: this.#bucket }));
   }
 
   async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {

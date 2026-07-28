@@ -188,6 +188,8 @@ export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCo
 export const errorBody = (code: string, message: string, correlationId: string, details?: unknown) => ({ error: { code, message, details, correlationId } })
 
 export const stage0RouteManifest = [
+  { method: 'GET', path: '/livez', authenticated: false },
+  { method: 'GET', path: '/readyz', authenticated: false },
   { method: 'GET', path: '/health', authenticated: false },
   { method: 'GET', path: '/api/v1/info', authenticated: false },
   { method: 'GET', path: '/api/v1/features', authenticated: true },

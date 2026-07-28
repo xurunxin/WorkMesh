@@ -9,6 +9,7 @@ import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
 import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
+import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
@@ -40,6 +41,7 @@ export type OutboxWorker = {
   deliver: (event: ClaimedEvent) => Promise<void>
   fail: (event: ClaimedEvent, error: unknown) => Promise<void>
   tick: () => Promise<void>
+  probe: () => Promise<void>
   close: () => Promise<void>
 }
 
@@ -80,6 +82,11 @@ export class RedisStreamSink implements DeliverySink {
 
   async close(): Promise<void> {
     if (this.#client.isOpen) await this.#client.quit()
+  }
+
+  async probe(): Promise<void> {
+    if (!this.#client.isOpen) await this.#client.connect()
+    await this.#client.ping()
   }
 }
 
@@ -158,12 +165,17 @@ export function createOutboxWorker({
     }
   }
 
+  const probe = async (): Promise<void> => {
+    await activeDb.query('SELECT 1')
+    if (activeSink instanceof RedisStreamSink) await activeSink.probe()
+  }
+
   const close = async (): Promise<void> => {
     await activeSink.close?.()
     if (ownsDb) await activeDb.end()
   }
 
-  return { claimOutbox, deliver, fail, tick, close }
+  return { claimOutbox, deliver, fail, tick, probe, close }
 }
 
 const startWorkerProcess = (): void => {
@@ -228,37 +240,69 @@ const startWorkerProcess = (): void => {
       return github
     },
   })
-  const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
+  const artifactStorage = artifactStorageFromEnvironment()
+  const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorage })
   const automationWorker = createAutomationWorker({ db, features })
-  let stopping = false
-  let timer: NodeJS.Timeout | undefined
-
-  const run = async (): Promise<void> => {
-    try {
-      await outboxWorker.tick()
-      await agentWebhookWorker.tick()
-      await sessionLifecycleWorker.tick()
-      await providerActionWorker.tick()
-      await artifactUploadWorker.tick()
-      await automationWorker.tick()
-    } catch (error) {
-      console.error('outbox worker tick failed', error)
+  let admissionOpen = true
+  const tick = async (): Promise<void> => {
+    const jobs = [
+      () => outboxWorker.tick(),
+      () => agentWebhookWorker.tick(),
+      () => sessionLifecycleWorker.tick(),
+      () => providerActionWorker.tick(),
+      () => artifactUploadWorker.tick(),
+      () => automationWorker.tick(),
+    ]
+    for (const job of jobs) {
+      if (!admissionOpen) return
+      await job()
     }
-    if (!stopping) timer = setTimeout(() => { void run() }, 1000)
   }
+  const runtime = new WorkerRuntime({
+    tick,
+    probe: async () => {
+      await outboxWorker.probe()
+      await artifactStorage.probe()
+    },
+    stopAdmission: () => {
+      admissionOpen = false
+    },
+    close: async () => {
+      await outboxWorker.close()
+      await db.end()
+    },
+    onError: error => console.error('worker tick failed', error),
+  })
+  const healthServer = createWorkerHealthServer(runtime)
+  const healthHost = process.env.WORKER_HEALTH_HOST ?? '0.0.0.0'
+  const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3003)
+  healthServer.listen(healthPort, healthHost, () => {
+    void runtime.start().catch(error => {
+      console.error('worker readiness failed at startup', error)
+      process.exit(1)
+    })
+  })
+  let stopping = false
   const stop = (): void => {
     if (stopping) return
     stopping = true
-    if (timer) clearTimeout(timer)
-    void outboxWorker.close().then(() => db.end()).then(() => process.exit(0)).catch(error => {
-      console.error('outbox worker shutdown failed', error)
-      process.exit(1)
-    })
+    admissionOpen = false
+    const configured = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 30_000)
+    const timeoutMs = Number.isFinite(configured) && configured > 0 ? configured : 30_000
+    void runtime.stop(timeoutMs)
+      .then(() => new Promise<void>((resolve, reject) => {
+        healthServer.close(error => error ? reject(error) : resolve())
+      }))
+      .then(() => process.exit(0))
+      .catch(error => {
+        console.error('worker shutdown failed', error)
+        healthServer.closeAllConnections()
+        process.exit(1)
+      })
   }
 
   process.once('SIGTERM', stop)
   process.once('SIGINT', stop)
-  void run()
 }
 
 if (process.env.NODE_ENV !== 'test') startWorkerProcess()
