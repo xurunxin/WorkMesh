@@ -58,6 +58,24 @@ const write = async (
     ? true
     : waitForDrain(reply.raw, timeoutMs)
 
+export const writeRealtimeStreamHeaders = (
+  response: ServerResponse,
+  webOrigin: string,
+): void => {
+  response.writeHead(200, {
+    'content-type': 'text/event-stream',
+    'cache-control': 'no-cache, no-transform',
+    connection: 'keep-alive',
+    'x-accel-buffering': 'no',
+    'access-control-allow-origin': webOrigin,
+    'access-control-allow-credentials': 'true',
+  })
+  // A caught-up stream may not write a body until the next heartbeat. Flush the
+  // admission result now so clients do not confuse an idle stream with a failed
+  // connection.
+  response.flushHeaders()
+}
+
 const cursorExpiredControl = (error: DomainError): string =>
   `event: control\ndata: ${JSON.stringify({
     type: 'cursor.expired',
@@ -216,14 +234,7 @@ export function registerRealtimeRoutes(
       if (closed) return reply
 
       unsubscribe = coordinator.subscribe(actor.workspaceId, notify)
-      reply.raw.writeHead(200, {
-        'content-type': 'text/event-stream',
-        'cache-control': 'no-cache, no-transform',
-        connection: 'keep-alive',
-        'x-accel-buffering': 'no',
-        'access-control-allow-origin': webOrigin,
-        'access-control-allow-credentials': 'true',
-      })
+      writeRealtimeStreamHeaders(reply.raw, webOrigin)
 
       const waitForWake = async (): Promise<'wake' | 'heartbeat' | 'closed'> => {
         if (closed) return 'closed'
