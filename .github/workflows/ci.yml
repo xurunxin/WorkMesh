@@ -169,6 +169,12 @@ jobs:
     env:
       RUN_INTEGRATION: '1'
       DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_api_integration_test
+      REDIS_URL: redis://127.0.0.1:6379
+      AUTH_RATE_LIMIT_ENDPOINT_BURST: '10000'
+      AUTH_RATE_LIMIT_SOCKET_BURST: '10000'
+      AUTH_RATE_LIMIT_CLIENT_IP_BURST: '10000'
+      AUTH_RATE_LIMIT_SUBJECT_BURST: '1000'
+      AUTH_RATE_LIMIT_INSTALL_BURST: '100'
       SESSION_SECRET: workmesh-ci-session-secret-api-00000001
       WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
       S3_ENDPOINT: http://127.0.0.1:9000
@@ -188,6 +194,15 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd "pg_isready -U workmesh -d workmesh_api_integration_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -346,6 +361,12 @@ jobs:
     env:
       RUN_INTEGRATION: '1'
       DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_e2e_test
+      REDIS_URL: redis://127.0.0.1:6379
+      AUTH_RATE_LIMIT_ENDPOINT_BURST: '10000'
+      AUTH_RATE_LIMIT_SOCKET_BURST: '10000'
+      AUTH_RATE_LIMIT_CLIENT_IP_BURST: '10000'
+      AUTH_RATE_LIMIT_SUBJECT_BURST: '1000'
+      AUTH_RATE_LIMIT_INSTALL_BURST: '100'
       SESSION_SECRET: workmesh-ci-session-secret-e2e-0000001
       WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
     services:
@@ -359,6 +380,15 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd "pg_isready -U workmesh -d workmesh_e2e_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12

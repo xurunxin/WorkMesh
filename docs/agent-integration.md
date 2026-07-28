@@ -2,6 +2,8 @@
 
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
 
+Retry controls have separate responsibilities. `maxAttempts` defaults to `3`; `baseDelayMs` (`150`) and `maxDelayMs` (`2000`) bound exponential fallback only. A valid `Retry-After` is instead accepted up to `maxRetryAfterMs` (`60000`) and waited in full, subject to the request-wide `maxTotalRetryDelayMs` budget (`120000`). A larger explicit delay suppresses automatic retry rather than truncating the server value. Invalid or negative `Retry-After` values use exponential fallback. When a retry is suppressed, `WorkMeshSdkError.retry` reports the header, parsed delay when valid, and the suppression reason. Retries preserve the original body, authorization header, and idempotency key; `429` and `503` never trigger token refresh.
+
 Session delivery contains a one-time `exchangeToken`. Exchange it together with the active installation token; the exchange token is not a bearer credential by itself. The SDK can optionally hold that installation token to make one `401` expiry refresh through the server's `/token/refresh` endpoint; it never retries a stop/transition conflict. Installation/session tokens, webhook secrets, signatures, and authorization headers are recursively redacted by the SDK logger.
 
 ```ts

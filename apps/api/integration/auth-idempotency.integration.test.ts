@@ -5,7 +5,6 @@ import {
   createDb,
   tokenHash,
 } from '@workmesh/db'
-import { buildApp } from '../src/server.js'
 import { authIdempotentTransaction } from '../src/auth-idempotency.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -14,6 +13,22 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl)
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
   throw new Error('API integration tests require DATABASE_URL to name a dedicated test database.')
 
+const authRateLimitTestEnvironment = {
+  AUTH_RATE_LIMIT_REDIS_PREFIX: `authrl:test:auth-idempotency:${process.pid}:${randomUUID()}`,
+  AUTH_RATE_LIMIT_ENDPOINT_BURST: '10000',
+  AUTH_RATE_LIMIT_SOCKET_BURST: '10000',
+  AUTH_RATE_LIMIT_CLIENT_IP_BURST: '10000',
+  AUTH_RATE_LIMIT_SUBJECT_BURST: '1000',
+  AUTH_RATE_LIMIT_INSTALL_BURST: '100',
+  AUTH_RATE_LIMIT_BACKOFF_BASE_MS: '60000',
+  AUTH_RATE_LIMIT_BACKOFF_MAX_MS: '60000',
+} as const
+const previousAuthRateLimitEnvironment = new Map(
+  Object.keys(authRateLimitTestEnvironment).map(name => [name, process.env[name]]),
+)
+for (const [name, value] of Object.entries(authRateLimitTestEnvironment))
+  process.env[name] = value
+const { buildApp } = await import('../src/server.js')
 const db = createDb(databaseUrl)
 const capturedLogs: string[] = []
 const app = buildApp({
@@ -63,6 +78,12 @@ describe('secret-aware authentication idempotency', () => {
   afterAll(async () => {
     await app.close()
     await db.end()
+    for (const [name, value] of previousAuthRateLimitEnvironment) {
+      if (value === undefined)
+        delete process.env[name]
+      else
+        process.env[name] = value
+    }
   })
 
   it('atomically installs once under concurrent duplicate requests and replays the same cookie', async () => {
@@ -127,6 +148,30 @@ describe('secret-aware authentication idempotency', () => {
     expect(conflict.statusCode).toBe(409)
     expect(conflict.json<{ error: { code: string } }>().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
     expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count).toBe(before)
+  })
+  it('makes unknown-email and wrong-password failures indistinguishable and side-effect free', async () => {
+    const before = {
+      sessions: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count,
+      events: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM domain_events')).rows[0]!.count,
+      outbox: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM outbox_events')).rows[0]!.count,
+      authIdempotency: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM auth_idempotency_records')).rows[0]!.count,
+      denials: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM authorization_denials')).rows[0]!.count,
+    }
+    const failedCredentialRemoteAddress = '198.51.100.253'
+    const wrong = await app.inject({ method: 'POST', url: '/api/v1/auth/login', remoteAddress: failedCredentialRemoteAddress, payload: { email: 'alice@example.test', password: 'definitely-wrong-password' }, headers: idempotencyHeaders('wrong-password') })
+    const unknown = await app.inject({ method: 'POST', url: '/api/v1/auth/login', remoteAddress: failedCredentialRemoteAddress, payload: { email: 'unknown@example.test', password: 'definitely-wrong-password' }, headers: idempotencyHeaders('unknown-email') })
+    expect(unknown.statusCode).toBe(401)
+    expect(unknown.statusCode).toBe(wrong.statusCode)
+    expect(unknown.json()).toMatchObject({ error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' } })
+    expect(wrong.json()).toMatchObject({ error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' } })
+    expect(unknown.headers['retry-after']).toBe(wrong.headers['retry-after'])
+    expect({
+      sessions: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM sessions')).rows[0]!.count,
+      events: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM domain_events')).rows[0]!.count,
+      outbox: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM outbox_events')).rows[0]!.count,
+      authIdempotency: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM auth_idempotency_records')).rows[0]!.count,
+      denials: (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM authorization_denials')).rows[0]!.count,
+    }).toEqual(before)
   })
 
   it('rolls back a precommit claim and business writes, then permits the retry', async () => {

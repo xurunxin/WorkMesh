@@ -30,6 +30,7 @@ const route = (overrides: Partial<RoutePolicyManifestEntry> = {}): RoutePolicyMa
   revision: 'none',
   idempotency: 'none',
   secretReplay: 'none',
+  credentialRateLimit: 'none',
   feature: { key: null, tier: 'stable', disabledBehavior: 'available' },
   audit: { denial: 'required', heartbeatAmplification: 'suppress_repeated' },
   bindings: {
@@ -44,6 +45,7 @@ const route = (overrides: Partial<RoutePolicyManifestEntry> = {}): RoutePolicyMa
 describe('Fastify route policy inventory', () => {
   it('registers the complete production route surface', async () => {
     vi.stubEnv('DATABASE_URL', 'postgresql://workmesh:workmesh@localhost:5432/workmesh')
+    vi.stubEnv('REDIS_URL', 'redis://localhost:6379')
     vi.stubEnv('SESSION_SECRET', 'route-policy-test-session-secret-32')
     const { buildApp } = await import('../server.js')
     const app = buildApp()

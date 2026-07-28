@@ -14,7 +14,7 @@ export default async function resetAcceptanceDatabase(): Promise<void> {
     {
       env: process.env,
       windowsHide: true,
-      timeout: 60_000,
+      timeout: 360_000,
       maxBuffer: 1024 * 1024,
     },
   );

@@ -58,6 +58,9 @@ import {
   recordAuthorizationDenial,
 } from "./authz/authorize.js";
 import { validateExternalCorrelationId } from "./authz/request-metadata.js";
+import { installAuthRateLimit } from "./auth-rate-limit/plugin.js";
+import { AuthRateLimitedError, AuthRateLimitUnavailableError } from "./auth-rate-limit/limiter.js";
+import type { AuthRateLimitStore } from "./auth-rate-limit/redis-store.js";
 import {
   authClientContext,
   authIdempotentTransaction,
@@ -80,6 +83,7 @@ declare module "fastify" {
 const config = loadConfig();
 const db = createDb();
 const sessionCookie = "workmesh_session";
+const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
 const mutationMethods = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const publicPaths = new Set([
   "/api/v1/auth/install",
@@ -201,14 +205,17 @@ export const buildApp = (options: {
   features?: FeatureConfig;
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
   logger?: FastifyServerOptions["logger"];
+  authRateLimitStore?: AuthRateLimitStore;
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
   const app = Fastify({
     logger: options.logger ?? true,
     genReqId: () => crypto.randomUUID(),
+    trustProxy: config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS.length ? config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS : false,
   });
   installRoutePolicyInventory(app);
+  const { limiter: authRateLimiter } = installAuthRateLimit(app, config, options.authRateLimitStore);
   void app.register(cookie);
   void app.register(cors, {
     origin: config.WEB_ORIGIN,
@@ -222,7 +229,7 @@ export const buildApp = (options: {
       "X-Correlation-Id",
       "Last-Event-ID",
     ],
-    exposedHeaders: ["ETag"],
+    exposedHeaders: ["ETag", "Retry-After", "RateLimit-Remaining", "RateLimit-Reset"],
   });
   app.addHook("onRequest", async (request) => {
     request.correlationId =
@@ -363,6 +370,12 @@ export const buildApp = (options: {
   });
   app.setErrorHandler(async (error, request, reply) => {
     const correlationId = request.correlationId ?? request.id;
+    if (error instanceof AuthRateLimitedError) {
+      const retryAfter = Math.max(1, Math.ceil(error.retryAfterMs / 1_000));
+      return reply.header("Retry-After", String(retryAfter)).header("RateLimit-Remaining", "0").header("RateLimit-Reset", String(retryAfter)).code(429).send(errorBody("AUTH_RATE_LIMITED", "Authentication request is temporarily rate limited", correlationId, { endpointClass: error.endpointClass, retryAfterSeconds: retryAfter }));
+    }
+    if (error instanceof AuthRateLimitUnavailableError)
+      return reply.header("Retry-After", "1").code(503).send(errorBody("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
     if (error instanceof ZodError)
       return reply
         .code(400)
@@ -375,6 +388,16 @@ export const buildApp = (options: {
           ),
         );
     if (error instanceof DomainError) {
+      if (request.authRateLimitAdmission && (error.code === "INVALID_CREDENTIALS" || error.code === "UNAUTHENTICATED")) {
+        try {
+          const retryAfterMs = await authRateLimiter.credentialFailure(request.authRateLimitAdmission);
+          reply.header("Retry-After", String(Math.max(1, Math.ceil(retryAfterMs / 1_000))));
+        } catch (rateError) {
+          if (rateError instanceof AuthRateLimitUnavailableError)
+            return reply.header("Retry-After", "1").code(503).send(errorBody("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
+          throw rateError;
+        }
+      }
       try {
         await recordAuthorizationDenial({
           db,
@@ -386,7 +409,7 @@ export const buildApp = (options: {
         request.log.error(auditError, "Authorization denial audit failed");
       }
       const status =
-        error.code === "UNAUTHENTICATED"
+        error.code === "UNAUTHENTICATED" || error.code === "INVALID_CREDENTIALS"
           ? 401
           : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "SESSION_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "APPROVAL_REQUIRED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
@@ -488,7 +511,8 @@ export const buildApp = (options: {
         [normalizedEmail],
       )
     ).rows[0];
-    if (!actor || !(await verifyPassword(actor.password_hash, body.password)))
+    const passwordValid = await verifyPassword(actor?.password_hash ?? dummyPasswordHash, body.password);
+    if (!actor || !passwordValid)
       throw new DomainError("INVALID_CREDENTIALS", "Invalid email or password");
     const result = await authIdempotentTransaction(db, {
       idempotencyKey: request.idempotencyKey!,

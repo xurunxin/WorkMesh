@@ -96,6 +96,7 @@ paths:
         x-workmesh-actor-kinds: [],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
+        x-workmesh-auth-rate-limit: shared_redis,
         security: [],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: installWorkspace,
@@ -107,6 +108,8 @@ paths:
             "200": { $ref: "#/components/responses/Session" },
             "400": { $ref: "#/components/responses/BadRequest" },
             "409": { $ref: "#/components/responses/Conflict" },
+            "429": { $ref: "#/components/responses/AuthRateLimited" },
+            "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" },
           },
       }
   /api/v1/auth/login:
@@ -116,6 +119,7 @@ paths:
         x-workmesh-actor-kinds: [],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
+        x-workmesh-auth-rate-limit: shared_redis,
         security: [],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: login,
@@ -128,6 +132,8 @@ paths:
             "400": { $ref: "#/components/responses/BadRequest" },
             "401": { $ref: "#/components/responses/Unauthorized" },
             "409": { $ref: "#/components/responses/Conflict" },
+            "429": { $ref: "#/components/responses/AuthRateLimited" },
+            "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" },
           },
       }
   /api/v1/auth/logout:
@@ -1035,6 +1041,7 @@ paths:
         x-workmesh-actor-kinds: [agent],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
+        x-workmesh-auth-rate-limit: shared_redis,
         security: [{ AgentInstallationToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: exchangeAgentSessionToken,
@@ -1051,6 +1058,8 @@ paths:
             "200": { $ref: "#/components/responses/AgentSessionToken" },
             "401": { $ref: "#/components/responses/Unauthorized" },
             "409": { $ref: "#/components/responses/Conflict" },
+            "429": { $ref: "#/components/responses/AuthRateLimited" },
+            "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" },
           },
       }
   /api/v1/agent-sessions/{id}/token/refresh:
@@ -1060,6 +1069,7 @@ paths:
         x-workmesh-actor-kinds: [agent],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
+        x-workmesh-auth-rate-limit: shared_redis,
         security: [{ AgentInstallationToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: refreshAgentSessionToken,
@@ -1077,6 +1087,8 @@ paths:
             "200": { $ref: "#/components/responses/AgentSessionToken" },
             "401": { $ref: "#/components/responses/Unauthorized" },
             "409": { $ref: "#/components/responses/Conflict" },
+            "429": { $ref: "#/components/responses/AuthRateLimited" },
+            "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" },
           },
       }
   /api/v1/agent-sessions/{id}/state:
@@ -1566,13 +1578,13 @@ paths:
     get: { x-workmesh-policy-id: route.listHandoffs, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listHandoffs, responses: { "200": { $ref: "#/components/responses/Json" } } }
     post: { x-workmesh-policy-id: route.offerHandoff, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: offerHandoff, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/handoffs/{id}/inspect:
-    get: { x-workmesh-policy-id: route.inspectExactTargetHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ AgentInstallationToken: [] }], operationId: inspectExactTargetHandoff, description: Exact target installation identity may read only its own requested handoff package and immutable context snapshot; this grants no work-resource authority., parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "404": { $ref: "#/components/responses/NotFound" } } }
+    get: { x-workmesh-policy-id: route.inspectExactTargetHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [{ AgentInstallationToken: [] }], operationId: inspectExactTargetHandoff, description: Exact target installation identity may read only its own requested handoff package and immutable context snapshot; this grants no work-resource authority., parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "404": { $ref: "#/components/responses/NotFound" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
   /api/v1/handoffs/{id}/request:
     post: { x-workmesh-policy-id: route.requestHandoff, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/handoffs/{id}/accept:
     post: { x-workmesh-policy-id: route.acceptHandoff, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: acceptHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffAcceptInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/handoffs/{id}/reject:
-    post: { x-workmesh-policy-id: route.rejectHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ AgentInstallationToken: [] }], operationId: rejectHandoff, description: A human supplies reason. The exact target agent may authenticate with its installation credential only for this operation and supplies a protocol machineReason., parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffRejectInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.rejectHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [{ AgentInstallationToken: [] }], operationId: rejectHandoff, description: A human supplies reason. The exact target agent may authenticate with its installation credential only for this operation and supplies a protocol machineReason., parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffRejectInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
   /api/v1/handoffs/{id}/cancel:
     post: { x-workmesh-policy-id: route.cancelHandoff, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: cancelHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/handoffs/{id}/complete:
@@ -2509,6 +2521,22 @@ components:
               { schema: { $ref: "#/components/schemas/Error" } },
           },
       }
+    AuthRateLimited:
+      description: Authentication admission or progressive credential backoff rejected the request without executing authentication or business side effects.
+      headers:
+        Retry-After: { schema: { type: integer, minimum: 1 }, description: Whole seconds before retrying the same logical attempt. }
+        RateLimit-Remaining: { schema: { type: integer, enum: [0] } }
+        RateLimit-Reset: { schema: { type: integer, minimum: 1 }, description: Whole seconds until this request dimension may be admitted. }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    AuthRateLimitUnavailable:
+      description: The shared Redis admission service is unavailable. Only credential-verification routes fail closed.
+      headers:
+        Retry-After: { schema: { type: integer, minimum: 1 } }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
     Forbidden:
       {
         description: CSRF or authorization failure,
