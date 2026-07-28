@@ -29,6 +29,7 @@ type AgentFixture = {
   actorId: string
   delegationId: string
   sessionId: string
+  workItemId: string
   token: string
 }
 type WorkItem = { id: string; revision: number }
@@ -119,6 +120,21 @@ async function createHuman(
     [actorId, tokenHash(rawToken), csrf],
   )
   return { actorId, cookie: `workmesh_session=${rawToken}`, csrf }
+}
+
+async function createWorkItemFixture(
+  teamId: string,
+  statusId: string,
+  title: string,
+): Promise<WorkItem> {
+  const response = await humanCall(admin, 'POST', '/api/v1/work-items', {
+    teamId,
+    title,
+    statusId,
+    responsibleHumanActorId: admin.actorId,
+  })
+  expect(response.statusCode, response.body).toBe(200)
+  return response.json<WorkItem>()
 }
 
 async function createAgentFixture(input: {
@@ -216,6 +232,7 @@ async function createAgentFixture(input: {
     actorId,
     delegationId,
     sessionId: session.id,
+    workItemId: input.workItemId,
     token,
   }
 }
@@ -310,7 +327,7 @@ async function proveRevocationSerialization(
       capability: 'work:write',
       operation: 'activity',
       idempotencyKey: randomUUID(),
-      resourceId: itemA.id,
+      resourceId: fixture.workItemId,
     })
 
     await revocationClient.query('BEGIN')
@@ -371,9 +388,7 @@ async function proveRevocationSerialization(
 
 beforeAll(async () => {
   await applyMigrations(db)
-  if ((await db.query('SELECT 1 FROM workspaces LIMIT 1')).rowCount) {
-    await db.query('TRUNCATE workspaces CASCADE')
-  }
+  await db.query('DELETE FROM platform_installation')
   appUrl = await app.listen({ port: 0, host: '127.0.0.1' })
   const installed = await app.inject({
     method: 'POST',
@@ -385,7 +400,10 @@ beforeAll(async () => {
       email: `route-policy-${randomUUID()}@example.test`,
       password: 'route-policy-password',
     },
-    headers: { 'idempotency-key': randomUUID() },
+    headers: {
+      'idempotency-key': randomUUID(),
+      'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN!,
+    },
   }) as unknown as Response
   expect(installed.statusCode, installed.body).toBe(200)
   const setCookie = installed.headers['set-cookie']
@@ -429,27 +447,19 @@ beforeAll(async () => {
   )
   expect(createdReadyB.statusCode, createdReadyB.body).toBe(200)
   readyB = createdReadyB.json<{ id: string }>().id
-  const createWorkItem = async (
-    teamId: string,
-    statusId: string,
-    title: string,
-  ): Promise<WorkItem> => {
-    const response = await humanCall(admin, 'POST', '/api/v1/work-items', {
-      teamId,
-      title,
-      statusId,
-      responsibleHumanActorId: admin.actorId,
-    })
-    expect(response.statusCode, response.body).toBe(200)
-    return response.json<WorkItem>()
-  }
-  itemA = await createWorkItem(teamA, readyA, 'Authorized route policy item')
-  itemSameTeam = await createWorkItem(teamA, readyA, 'PRIVATE SAME TEAM TITLE')
-  itemCrossTeam = await createWorkItem(teamB, readyB, 'PRIVATE CROSS TEAM TITLE')
+  itemA = await createWorkItemFixture(teamA, readyA, 'Authorized route policy item')
+  itemSameTeam = await createWorkItemFixture(teamA, readyA, 'PRIVATE SAME TEAM TITLE')
+  itemCrossTeam = await createWorkItemFixture(teamB, readyB, 'PRIVATE CROSS TEAM TITLE')
 }, 300_000)
 
 afterAll(async () => {
   await app.close()
+  if (workspaceId) {
+    await db.query(
+      'DELETE FROM platform_installation WHERE workspace_id=$1',
+      [workspaceId],
+    )
+  }
   await db.end()
 }, 300_000)
 
@@ -495,25 +505,28 @@ describe('declarative route policy live authorization', () => {
     expect(errorCode(authenticatedMutationWithoutIdempotency))
       .toBe('IDEMPOTENCY_KEY_REQUIRED')
 
-    for (const publicMutation of [
-      {
-        url: '/api/v1/auth/install',
-        payload: {
-          name: 'Must not reinstall',
-          slug: 'must-not-reinstall',
-          adminName: 'Must Not Reinstall',
-          email: 'must-not-reinstall@example.test',
-          password: 'must-not-reinstall-password',
-        },
+    const bootstrapBeforeIdempotency = await app.inject({
+      method: 'POST',
+      url: '/api/v1/auth/install',
+      payload: {
+        name: 'Must not reinstall',
+        slug: 'must-not-reinstall',
+        adminName: 'Must Not Reinstall',
+        email: 'must-not-reinstall@example.test',
+        password: 'must-not-reinstall-password',
       },
-      {
-        url: '/api/v1/auth/login',
-        payload: {
-          email: 'route-policy@example.test',
-          password: 'not-reached',
-        },
+    }) as unknown as Response
+    expect(bootstrapBeforeIdempotency.statusCode, bootstrapBeforeIdempotency.body)
+      .toBe(401)
+    expect(errorCode(bootstrapBeforeIdempotency)).toBe('BOOTSTRAP_AUTH_FAILED')
+
+    for (const publicMutation of [{
+      url: '/api/v1/auth/login',
+      payload: {
+        email: 'route-policy@example.test',
+        password: 'not-reached',
       },
-    ]) {
+    }]) {
       const response = await app.inject({
         method: 'POST',
         url: publicMutation.url,
@@ -924,17 +937,27 @@ describe('declarative route policy live authorization', () => {
   })
 
   it('serializes delegation and Team-grant revocation with mutation authority', async () => {
+    const delegationWorkItem = await createWorkItemFixture(
+      teamA,
+      readyA,
+      `Delegation revocation lock ${randomUUID()}`,
+    )
     const delegationFixture = await createAgentFixture({
       slug: `route-policy-delegation-lock-${randomUUID()}`,
-      workItemId: itemA.id,
+      workItemId: delegationWorkItem.id,
       teamId: teamA,
       capabilities: ['work:read', 'work:write'],
     })
     await proveRevocationSerialization(delegationFixture, 'delegation')
 
+    const teamGrantWorkItem = await createWorkItemFixture(
+      teamA,
+      readyA,
+      `Team grant revocation lock ${randomUUID()}`,
+    )
     const teamGrantFixture = await createAgentFixture({
       slug: `route-policy-team-lock-${randomUUID()}`,
-      workItemId: itemA.id,
+      workItemId: teamGrantWorkItem.id,
       teamId: teamA,
       capabilities: ['work:read', 'work:write'],
     })

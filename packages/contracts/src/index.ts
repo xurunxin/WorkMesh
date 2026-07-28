@@ -152,6 +152,7 @@ export const eventEnvelopeSchema = z.object({ cursor: z.number().int().nonnegati
 export const apiErrorCodeSchema = z.enum([
   'VALIDATION_ERROR',
   'UNAUTHENTICATED',
+  'BOOTSTRAP_AUTH_FAILED',
   'FORBIDDEN',
   'FEATURE_DISABLED',
   'NOT_FOUND',
@@ -179,7 +180,7 @@ export const stage0RouteManifest = [
   { method: 'GET', path: '/api/v1/info', authenticated: false },
   { method: 'GET', path: '/api/v1/features', authenticated: true },
   { method: 'GET', path: '/api/v1/install-status', authenticated: false },
-  { method: 'POST', path: '/api/v1/auth/install', authenticated: false, mutation: true },
+  { method: 'POST', path: '/api/v1/auth/install', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/auth/login', authenticated: false, mutation: true },
   { method: 'POST', path: '/api/v1/auth/logout', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/auth/me', authenticated: true },

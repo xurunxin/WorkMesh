@@ -1,6 +1,16 @@
+import { randomBytes } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { featureDefinitions } from '@workmesh/contracts'
 import { loadConfig, loadFeatureConfig, loadReleaseInfo } from './index.js'
+
+const bootstrapMaterial = randomBytes(32)
+const bootstrapToken = bootstrapMaterial.toString('base64url')
+const baseEnvironment = {
+  DATABASE_URL: 'postgres://workmesh:workmesh@localhost/workmesh',
+  REDIS_URL: 'redis://localhost:6379',
+  SESSION_SECRET: '0123456789abcdef0123456789abcdef',
+  WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+}
 
 describe('release and feature configuration', () => {
   it('defaults every non-stable feature to disabled', () => {
@@ -25,12 +35,93 @@ describe('release and feature configuration', () => {
     expect(loadReleaseInfo({ WORKMESH_BUILD_SHA: 'secret value' }).buildSha).toBe('unknown')
   })
   it('strictly parses authentication rate-limit and trusted proxy settings', () => {
-    const config = loadConfig({ DATABASE_URL: 'postgres://workmesh:workmesh@localhost/workmesh', REDIS_URL: 'redis://localhost:6379', SESSION_SECRET: '0123456789abcdef0123456789abcdef', AUTH_RATE_LIMIT_REDIS_PREFIX: 'authrl:test:config', AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: '127.0.0.1/32, 2001:db8::/32', AUTH_RATE_LIMIT_SUBJECT_BURST: '12', AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: '5000' })
+    const config = loadConfig({ ...baseEnvironment, AUTH_RATE_LIMIT_REDIS_PREFIX: 'authrl:test:config', AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: '127.0.0.1/32, 2001:db8::/32', AUTH_RATE_LIMIT_SUBJECT_BURST: '12', AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: '5000' })
     expect(config.AUTH_RATE_LIMIT_REDIS_PREFIX).toBe('authrl:test:config')
     expect(config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS).toEqual(['127.0.0.1/32', '2001:db8::/32'])
     expect(config.AUTH_RATE_LIMIT_SUBJECT_BURST).toBe(12)
     expect(config.AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS).toBe(5000)
-    expect(() => loadConfig({ DATABASE_URL: 'postgres://workmesh:workmesh@localhost/workmesh', REDIS_URL: 'redis://localhost:6379', SESSION_SECRET: '0123456789abcdef0123456789abcdef', AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: 'not-a-network' })).toThrow()
-    expect(() => loadConfig({ DATABASE_URL: 'postgres://workmesh:workmesh@localhost/workmesh', REDIS_URL: 'redis://localhost:6379', SESSION_SECRET: '0123456789abcdef0123456789abcdef', AUTH_RATE_LIMIT_REDIS_PREFIX: 'authrl:{unsafe}' })).toThrow()
+    expect(() => loadConfig({ ...baseEnvironment, AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: 'not-a-network' })).toThrow()
+    expect(() => loadConfig({ ...baseEnvironment, AUTH_RATE_LIMIT_REDIS_PREFIX: 'authrl:{unsafe}' })).toThrow()
+  })
+
+  it('fails closed for production bootstrap configuration', () => {
+    expect(() => loadConfig({ ...baseEnvironment, NODE_ENV: 'production', WORKMESH_BOOTSTRAP_TOKEN: undefined })).toThrow(/required in production/)
+    expect(() => loadConfig({ ...baseEnvironment, NODE_ENV: 'production', WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: 'true' })).toThrow(/forbidden in production/)
+    expect(loadConfig({ ...baseEnvironment, NODE_ENV: 'production' }).WORKMESH_BOOTSTRAP_TOKEN).toBe(bootstrapToken)
+  })
+
+  it('allows tokenless bootstrap only for an explicit isolated non-production loopback bind', () => {
+    const loopback = loadConfig({
+      ...baseEnvironment,
+      NODE_ENV: 'development',
+      API_HOST: '127.0.0.1',
+      WORKMESH_BOOTSTRAP_TOKEN: undefined,
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: 'true',
+    })
+    expect(loopback.bootstrapAllowLoopback).toBe(true)
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: undefined })).toThrow(/required unless/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      API_HOST: '0.0.0.0',
+      WORKMESH_BOOTSTRAP_TOKEN: undefined,
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: 'true',
+    })).toThrow(/API_HOST/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      API_HOST: '::1',
+      WORKMESH_BOOTSTRAP_TOKEN: undefined,
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: 'true',
+      AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: '127.0.0.1/32',
+    })).toThrow(/trusted proxy/)
+  })
+
+  it('rejects malformed, noncanonical, placeholder, and low-diversity bootstrap credentials without echoing them', () => {
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: 'not-base64url' })).toThrow(/canonical unpadded base64url/)
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: `${bootstrapToken}=` })).toThrow(/canonical unpadded base64url/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_BOOTSTRAP_TOKEN: randomBytes(31).toString('base64url'),
+    })).toThrow(/32 to 256/)
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: 'Q0hBTkdFX01FX3BsYWNlaG9sZGVyX2Jvb3RzdHJhcF90b2tlbg' })).toThrow(/placeholder/)
+    const lowDiversity = Buffer.alloc(32, 0x2a).toString('base64url')
+    expect(() => loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: lowDiversity })).toThrow(/low-diversity/)
+    try {
+      loadConfig({ ...baseEnvironment, WORKMESH_BOOTSTRAP_TOKEN: lowDiversity })
+      throw new Error('expected low-diversity bootstrap token rejection')
+    } catch (error) {
+      expect(String(error)).not.toContain(lowDiversity)
+    }
+  })
+
+  it('checks periodic patterns and configured secret reuse against decoded key material', () => {
+    const repeatedPhrase = Buffer.from('repeated-key-123'.repeat(2)).toString('base64url')
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_BOOTSTRAP_TOKEN: repeatedPhrase,
+    })).toThrow(/repeated/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      SESSION_SECRET: bootstrapToken,
+      WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+    })).toThrow(/reuse another configured secret/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      AUTH_RATE_LIMIT_HMAC_KEY: bootstrapToken,
+      WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+    })).toThrow(/reuse another configured secret/)
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_MASTER_KEY: bootstrapMaterial.toString('hex'),
+      WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+    })).toThrow(/reuse another configured secret/)
+  })
+
+  it('accepts a runtime-generated production bootstrap token without claiming entropy validation', () => {
+    const generated = randomBytes(32).toString('base64url')
+    expect(loadConfig({
+      ...baseEnvironment,
+      NODE_ENV: 'production',
+      WORKMESH_BOOTSTRAP_TOKEN: generated,
+    }).WORKMESH_BOOTSTRAP_TOKEN).toBe(generated)
   })
 })

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parseDocument } from 'yaml'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -13,6 +14,9 @@ const requireCondition = (condition, message) => {
   if (!condition) failures.push(message)
 }
 const occurrences = (pattern, value = workflow) => [...value.matchAll(pattern)].length
+const workflowDocument = parseDocument(workflow, { prettyErrors: true })
+requireCondition(workflowDocument.errors.length === 0, 'workflow must be valid YAML')
+const parsedWorkflow = workflowDocument.toJS()
 
 requireCondition(!workflow.includes('\t'), 'workflow must use spaces, not tabs')
 requireCondition(
@@ -268,6 +272,89 @@ for (const name of requiredE2eEnvironment) {
     `Turbo globalEnv must forward E2E environment ${name}`,
   )
 }
+const expectedBootstrapInvocations = [
+  ['source-gates', 'source-gates'],
+  ['db-integration', 'db-integration'],
+  ['api-integration', 'api-integration'],
+  ['worker-integration', 'worker-integration'],
+  ['e2e', 'e2e'],
+]
+const bootstrapHelper = 'scripts/set-ci-bootstrap-token.mjs'
+const bootstrapInvocations = []
+for (const [jobId, job] of Object.entries(parsedWorkflow?.jobs ?? {})) {
+  for (const step of job?.steps ?? []) {
+    if (typeof step?.run !== 'string') continue
+    for (const rawLine of step.run.split(/\r?\n/)) {
+      const line = rawLine.trim()
+      if (!line.includes(bootstrapHelper)) continue
+      const match = /^node scripts\/set-ci-bootstrap-token\.mjs ([a-z0-9-]+)$/.exec(line)
+      requireCondition(
+        Boolean(match),
+        `${jobId} must invoke the bootstrap helper directly with exactly one literal scope`,
+      )
+      bootstrapInvocations.push({ jobId, scope: match?.[1] ?? null })
+    }
+  }
+}
+const actualBootstrapScopes = bootstrapInvocations
+  .map(invocation => invocation.scope)
+  .filter(scope => scope !== null)
+  .sort()
+const expectedBootstrapScopes = expectedBootstrapInvocations
+  .map(([, scope]) => scope)
+  .sort()
+requireCondition(
+  bootstrapInvocations.length === expectedBootstrapInvocations.length
+    && JSON.stringify(actualBootstrapScopes) === JSON.stringify(expectedBootstrapScopes),
+  'CI must invoke the bootstrap helper exactly once for each approved scope',
+)
+requireCondition(
+  occurrences(new RegExp(bootstrapHelper.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'))
+    === bootstrapInvocations.length,
+  'CI must not reference the bootstrap helper outside a direct run command',
+)
+requireCondition(
+  !Object.values(packageJson.scripts ?? {}).some(command =>
+    typeof command === 'string' && command.includes(bootstrapHelper)),
+  'CI bootstrap helper invocations must not be hidden behind package script aliases',
+)
+for (const [jobId, scope] of expectedBootstrapInvocations) {
+  requireCondition(
+    (jobSections.get(jobId) ?? '').includes(`node scripts/set-ci-bootstrap-token.mjs ${scope}`),
+    `${jobId} must derive its test-only bootstrap credential without logging it`,
+  )
+  requireCondition(
+    bootstrapInvocations.some(invocation =>
+      invocation.jobId === jobId && invocation.scope === scope),
+    `${jobId} must own bootstrap scope ${scope}`,
+  )
+}
+requireCondition(
+  !/^\s+WORKMESH_BOOTSTRAP_TOKEN:/m.test(workflow),
+  'CI must not publish a fixed bootstrap credential',
+)
+requireCondition(
+  !/\b(?:echo|printf|cat|tee)\b[^\r\n]*WORKMESH_BOOTSTRAP_TOKEN/.test(workflow)
+    && !workflow.includes('$GITHUB_ENV'),
+  'CI steps must not print or inspect the runtime-generated bootstrap credential',
+)
+requireCondition(
+  Array.isArray(turboJson.globalEnv) && turboJson.globalEnv.includes('WORKMESH_BOOTSTRAP_TOKEN'),
+  'Turbo globalEnv must forward the runtime-generated bootstrap credential',
+)
+requireCondition(
+  source.includes('docker compose config --quiet'),
+  'source-gates must validate Compose without rendering expanded environment values',
+)
+requireCondition(
+  !/docker compose config(?! --quiet)[^\r\n]*(?:tee|>)/.test(source)
+    && !source.includes('docker compose config 2>&1 | tee'),
+  'source-gates must not upload raw rendered Compose configuration',
+)
+requireCondition(
+  source.includes("printf '%s\\n' 'Compose configuration is valid.' | tee ci-logs/compose-config.log"),
+  'source-gates must record only a constant Compose validation success line',
+)
 requireCondition((jobSections.get('agent-smoke') ?? '').includes('pnpm smoke:agents'), 'agent smoke command is missing')
 requireCondition(
   (jobSections.get('agent-smoke') ?? '').includes('Construction and protocol smoke'),

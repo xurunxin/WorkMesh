@@ -31,6 +31,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Derive test-only bootstrap credential
+        run: node scripts/set-ci-bootstrap-token.mjs source-gates
       - name: Activate exact pnpm
         run: |
           corepack enable
@@ -71,10 +73,11 @@ jobs:
         run: |
           set -o pipefail
           pnpm test 2>&1 | tee ci-logs/test.log
-      - name: Render Compose
+      - name: Validate Compose
         run: |
           set -o pipefail
-          docker compose config 2>&1 | tee ci-logs/compose-config.log
+          docker compose config --quiet
+          printf '%s\n' 'Compose configuration is valid.' | tee ci-logs/compose-config.log
       - name: Verify clean tracked tree
         run: |
           set -o pipefail
@@ -124,6 +127,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Derive test-only bootstrap credential
+        run: node scripts/set-ci-bootstrap-token.mjs db-integration
       - name: Activate exact pnpm
         run: |
           corepack enable
@@ -215,6 +220,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Derive test-only bootstrap credential
+        run: node scripts/set-ci-bootstrap-token.mjs api-integration
       - name: Activate exact pnpm
         run: |
           corepack enable
@@ -316,6 +323,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Derive test-only bootstrap credential
+        run: node scripts/set-ci-bootstrap-token.mjs worker-integration
       - name: Activate exact pnpm
         run: |
           corepack enable
@@ -401,6 +410,8 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Derive test-only bootstrap credential
+        run: node scripts/set-ci-bootstrap-token.mjs e2e
       - name: Activate exact pnpm
         run: |
           corepack enable

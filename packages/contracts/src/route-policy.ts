@@ -4,6 +4,7 @@ export type RoutePolicyMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type RoutePolicyActorKind = 'human' | 'agent' | 'service'
 export type RoutePolicyAuthentication =
   | 'public'
+  | 'bootstrap'
   | 'human_session'
   | 'agent_session'
   | 'human_or_agent_session'
@@ -94,7 +95,6 @@ const publicOperations = new Set([
   'health',
   'getServerInfo',
   'getInstallStatus',
-  'installWorkspace',
   'login',
 ])
 
@@ -245,6 +245,7 @@ const leaseOperations = new Set([
 ])
 
 function authenticationFor(operationId: string): RoutePolicyAuthentication {
+  if (operationId === 'installWorkspace') return 'bootstrap'
   if (publicOperations.has(operationId)) return 'public'
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
   if (installationTargetOperations.has(operationId)) return 'installation_target'
@@ -323,7 +324,7 @@ export function createRoutePolicyManifest(
       operationId: binding.operationId,
       policyId,
       authentication,
-      actorKinds: authentication === 'public'
+      actorKinds: authentication === 'public' || authentication === 'bootstrap'
         ? []
         : authentication === 'provider_signature'
           ? ['service']

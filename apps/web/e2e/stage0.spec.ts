@@ -128,6 +128,9 @@ test.describe("Stage 0 browser acceptance", () => {
     await page.goto("/install");
     const install = page.getByTestId("install-form");
     await install
+      .getByPlaceholder("Deployment bootstrap token")
+      .fill(process.env.WORKMESH_BOOTSTRAP_TOKEN!);
+    await install
       .getByPlaceholder("Workspace", { exact: true })
       .fill("Acceptance workspace");
     await install
