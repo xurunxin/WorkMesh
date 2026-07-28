@@ -33,3 +33,4 @@
 \ir packages/db/migrations/0023_auth_idempotency_records.sql
 \ir packages/db/migrations/0024_cursor_pagination_indexes.sql
 \ir packages/db/migrations/0025_realtime_event_envelope.sql
+\ir packages/db/migrations/0026_retention_archive_and_heartbeat_health.sql

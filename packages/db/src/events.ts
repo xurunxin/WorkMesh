@@ -96,6 +96,19 @@ export async function appendEvent(
   input: AppendEventInput,
 ): Promise<string> {
   validateInput(input)
+  await tx.query(
+    `INSERT INTO event_retention_state(workspace_id)
+     VALUES($1)
+     ON CONFLICT (workspace_id) DO NOTHING`,
+    [input.workspaceId],
+  )
+  await tx.query(
+    `SELECT pruned_through_cursor
+       FROM event_retention_state
+      WHERE workspace_id=$1
+      FOR SHARE`,
+    [input.workspaceId],
+  )
   const resolved = await resolveEventResources(tx, input)
   const resources = resolved.resources
   const event = await tx.query<InsertedEvent>(
@@ -140,12 +153,6 @@ export async function appendEvent(
           resource.id,
         ],
       )
-  await tx.query(
-    `INSERT INTO event_retention_state(workspace_id)
-     VALUES($1)
-     ON CONFLICT (workspace_id) DO NOTHING`,
-    [input.workspaceId],
-  )
   await tx.query(
     `INSERT INTO outbox_events(domain_event_id,topic,partition_key)
      VALUES($1,$2,$3)`,
