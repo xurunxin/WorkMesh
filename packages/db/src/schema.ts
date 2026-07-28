@@ -133,7 +133,7 @@ export const advancedSavedViews = pgTable('advanced_saved_views', {
 })
 export const templates = pgTable('templates', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), kind: templateKind('kind').notNull(), name: text('name').notNull(),
-  description: text('description').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), status: templateStatus('status').notNull(),
+  description: text('description').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), teamId: uuid('team_id'), status: templateStatus('status').notNull(),
   currentVersionId: uuid('current_version_id'), revision: integer('revision').notNull(), importedAt: timestamp('imported_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
@@ -152,6 +152,14 @@ export const domainEvents = pgTable('domain_events', {
   cursor: bigint('cursor', { mode: 'number' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
   eventType: text('event_type').notNull(), eventVersion: integer('event_version').notNull(), aggregateType: text('aggregate_type').notNull(), aggregateId: uuid('aggregate_id').notNull(), aggregateRevision: integer('aggregate_revision'),
   actorId: uuid('actor_id').notNull(), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key'), sessionId: uuid('session_id'), sessionSequence: bigint('session_sequence', { mode: 'number' }), causationId: uuid('causation_id'), payload: jsonb('payload').notNull(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+})
+export const authorizationDenials = pgTable('authorization_denials', {
+  id: uuid('id').primaryKey(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+  correlationId: text('correlation_id').notNull(), policyId: text('policy_id').notNull(), operationId: text('operation_id').notNull(),
+  transport: text('transport').notNull(), principalKind: actorKind('principal_kind'), principalActorId: uuid('principal_actor_id'),
+  principalSessionId: uuid('principal_session_id'), workspaceId: uuid('workspace_id'), routeTemplate: text('route_template').notNull(),
+  reasonCode: text('reason_code').notNull(), authorizationStage: text('authorization_stage').notNull(),
+  resourceFingerprint: text('resource_fingerprint'), dedupeKey: text('dedupe_key'),
 })
 export const outboxEvents = pgTable('outbox_events', {
   id: uuid('id').primaryKey(), domainEventId: uuid('domain_event_id').notNull(), topic: text('topic').notNull(), partitionKey: text('partition_key').notNull(), status: outboxStatus('status').notNull(),

@@ -1015,6 +1015,9 @@ describe('Stage 4 planning and operations API', () => {
       costSource: 'manual',
     })
     expect(unauthorizedService.statusCode).toBe(401)
+    expect(unauthorizedService.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'UNAUTHENTICATED' },
+    })
     expect((await db.query<{ count: string }>(
       'SELECT count(*)::text AS count FROM usage_records WHERE workspace_id=$1 AND dedupe_key=ANY($2::text[])',
       [workspaceId, deniedDedupeKeys],

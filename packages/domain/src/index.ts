@@ -1,5 +1,7 @@
 import type { AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput, StatusCategory } from '@workmesh/contracts'
 
+export * from './authorization.js'
+
 export class DomainError extends Error { constructor(readonly code: string, message: string, readonly details?: unknown) { super(message) } }
 export const defaultStates: ReadonlyArray<{ name: string; category: StatusCategory; color: string; position: number }> = [
   { name: 'Backlog', category: 'backlog', color: '#6b7280', position: 0 }, { name: 'Ready', category: 'planned', color: '#64748b', position: 1 }, { name: 'In Progress', category: 'started', color: '#3b82f6', position: 2 }, { name: 'In Review', category: 'started', color: '#8b5cf6', position: 3 }, { name: 'Done', category: 'completed', color: '#22c55e', position: 4 }, { name: 'Canceled', category: 'canceled', color: '#ef4444', position: 5 }

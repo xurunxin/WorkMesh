@@ -9,16 +9,133 @@ type SessionFacts = {
   delegation_status: string; team_id: string; work_item_id: string | null; project_id: string | null; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
 };
 
+type SessionLocator = {
+  agent_id: string
+  delegation_id: string
+  team_id: string
+}
+
+const inactiveAuthority = (): never => {
+  throw new DomainError(
+    "DELEGATION_NOT_ACTIVE",
+    "Agent delegation or team grant is no longer active",
+  )
+}
+
+export async function authorizeCommandInTx(
+  tx: PoolClient,
+  input: {
+    actor: ApiActor
+    sessionId: string
+    capability: Capability
+    operation: Parameters<typeof authorizeAgentMutation>[0]['operation']
+    idempotencyKey: string
+    expectedRevision?: number
+    resourceId?: string | null
+  },
+): Promise<SessionFacts> {
+  const session = await loadAgentSessionForMutation(tx, input.actor, input.sessionId)
+  assertAgentWrite({ ...input, session })
+  return session
+}
+
 export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
-  const result = await tx.query<SessionFacts>(
-    `SELECT s.id,s.agent_actor_id AS actor_id,s.delegation_id,s.state,s.revision,s.stop_acknowledged_at,
-      d.permissions_snapshot,d.capability_scope,d.status AS delegation_status,s.team_id,s.work_item_id,s.project_id,s.current_plan_version_id,s.agent_id,a.is_active AS agent_active,a.approved_capabilities AS definition_capabilities,ata.approved_capabilities AS team_capabilities
-     FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN agent_definitions a ON a.id=s.agent_id
-     LEFT JOIN agent_team_access ata ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
-     WHERE s.id=$1 AND s.workspace_id=$2 FOR UPDATE OF s`, [sessionId, actor.workspaceId]);
-  const session = result.rows[0];
-  if (!session) throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found");
-  return session;
+  // Locate immutable authority keys without taking a lock, then acquire every
+  // authority lock in the same order used by Team-grant revocation:
+  // definition -> exact durable Team grant -> delegation -> session.
+  const locator = (await tx.query<SessionLocator>(
+    `SELECT agent_id,delegation_id,team_id
+     FROM agent_sessions
+     WHERE id=$1 AND workspace_id=$2`,
+    [sessionId, actor.workspaceId],
+  )).rows[0]
+  if (!locator) {
+    throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
+  }
+
+  const definition = (await tx.query<{
+    is_active: boolean
+    approved_capabilities: Capability[]
+  }>(
+    `SELECT is_active,approved_capabilities
+     FROM agent_definitions
+     WHERE id=$1 AND workspace_id=$2
+     FOR UPDATE`,
+    [locator.agent_id, actor.workspaceId],
+  )).rows[0]
+  if (!definition) return inactiveAuthority()
+
+  // Lock the durable row even after revocation. Filtering revoked_at in this
+  // SELECT would turn a concurrent revoke into an unlocked nullable join.
+  const teamGrant = (await tx.query<{
+    approved_capabilities: Capability[]
+    revoked_at: Date | null
+  }>(
+    `SELECT approved_capabilities,revoked_at
+     FROM agent_team_access
+     WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
+     FOR UPDATE`,
+    [actor.workspaceId, locator.agent_id, locator.team_id],
+  )).rows[0]
+  if (!teamGrant) return inactiveAuthority()
+
+  const delegation = (await tx.query<{
+    permissions_snapshot: Capability[]
+    capability_scope: SessionFacts["capability_scope"]
+    status: string
+  }>(
+    `SELECT permissions_snapshot,capability_scope,status
+     FROM delegations
+     WHERE id=$1 AND workspace_id=$2 AND agent_id=$3 AND team_id=$4
+     FOR UPDATE`,
+    [
+      locator.delegation_id,
+      actor.workspaceId,
+      locator.agent_id,
+      locator.team_id,
+    ],
+  )).rows[0]
+  if (!delegation) return inactiveAuthority()
+
+  const session = (await tx.query<Omit<
+    SessionFacts,
+    | "permissions_snapshot"
+    | "capability_scope"
+    | "delegation_status"
+    | "agent_active"
+    | "definition_capabilities"
+    | "team_capabilities"
+  >>(
+    `SELECT id,agent_actor_id AS actor_id,delegation_id,state,revision,
+            stop_acknowledged_at,team_id,work_item_id,project_id,
+            current_plan_version_id,agent_id
+     FROM agent_sessions
+     WHERE id=$1 AND workspace_id=$2 AND agent_id=$3
+       AND delegation_id=$4 AND team_id=$5
+     FOR UPDATE`,
+    [
+      sessionId,
+      actor.workspaceId,
+      locator.agent_id,
+      locator.delegation_id,
+      locator.team_id,
+    ],
+  )).rows[0]
+  if (!session) {
+    throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
+  }
+
+  return {
+    ...session,
+    permissions_snapshot: delegation.permissions_snapshot,
+    capability_scope: delegation.capability_scope,
+    delegation_status: delegation.status,
+    agent_active: definition.is_active,
+    definition_capabilities: definition.approved_capabilities,
+    team_capabilities: teamGrant.revoked_at === null
+      ? teamGrant.approved_capabilities
+      : null,
+  }
 }
 
 export function assertAgentWrite(input: {

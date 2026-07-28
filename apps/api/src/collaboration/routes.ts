@@ -15,6 +15,10 @@ const uuid = z.string().uuid()
 const actor = (request: FastifyRequest) => request.actor as unknown as ApiActor
 const id = (request: FastifyRequest) => uuid.parse((request.params as { id?: unknown }).id)
 const command = <T>(db: Pool, meta: RequestMeta, fn: (tx: PoolClient) => Promise<T>) => mutate(db, meta as unknown as CommandContext, fn)
+const leaseResponse = <T extends { version: number }>(lease: T): T & { revision: number } => ({
+  ...lease,
+  revision: lease.version,
+})
 
 async function session(tx: PoolClient, workspaceId: string, id: string) {
   const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; project_id:string|null; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>('SELECT id,workspace_id,team_id,work_item_id,project_id,plan_step_id,plan_step_version_id,current_plan_version_id,parent_session_id,delegation_id,agent_id,agent_actor_id,budget,max_child_sessions,state,revision FROM agent_sessions WHERE id=$1 AND workspace_id=$2', [id, workspaceId])).rows[0]
@@ -291,7 +295,12 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if(q.resourceId){values.push(q.resourceId);where.push(`l.resource_id=$${values.length}`)}
     if(current.kind==='agent'){values.push(current.agentSessionId);where.push(`l.session_id=$${values.length}`)}
     else if(current.workspaceRole!=='admin'){values.push(current.id);where.push(`EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=l.workspace_id AND m.team_id=s.team_id AND m.actor_id=$${values.length})`)}
-    return (await h.db.query(`SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC`,values)).rows
+    const rows = (await h.db.query<{ version: number }>(
+      `SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id
+       WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC`,
+      values,
+    )).rows
+    return rows.map(leaseResponse)
   })
 
   app.post('/api/v1/agent-sessions/:id/plan/comments', async request => { const sessionId=id(request); const body=z.object({planVersionId:uuid,planStepId:uuid,body:z.string().min(1).max(50000),references:z.array(z.unknown()).max(100).default([])}).parse(request.body); return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{const s=await assertSessionWrite(tx,actor(request),sessionId); const valid=await tx.query('SELECT 1 FROM agent_plan_steps ps JOIN agent_plan_versions pv ON pv.id=ps.plan_version_id JOIN agent_sessions s ON s.id=$3 WHERE ps.id=$1 AND pv.id=$2 AND pv.session_id=$3 AND s.current_plan_version_id=pv.id',[body.planStepId,body.planVersionId,sessionId]); if(!valid.rowCount)throw new DomainError('STALE_PLAN_VERSION','Comments must target a step in the session current plan'); const row=(await tx.query('INSERT INTO plan_step_comments(plan_version_id,step_id,author_actor_id,body,references_json) VALUES($1,$2,$3,$4,$5::jsonb) RETURNING *',[body.planVersionId,body.planStepId,actor(request).id,body.body,JSON.stringify(body.references)])).rows[0] as {id:string}; await emit(tx,h.meta(request,body),'plan.step.commented','plan_step_comment',row.id,{sessionId,stepId:body.planStepId},s.team_id);return row}) })
@@ -402,9 +411,9 @@ async function acquireLease(h:Helpers,request:FastifyRequest) {
     await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason=COALESCE(audit_reason,'expired before acquisition') WHERE workspace_id=$1 AND resource_type=$2 AND resource_id=$3 AND status='active' AND expires_at<=now()",[actor(request).workspaceId,body.resourceType,body.resourceId])
     const conflicts=(await tx.query<{id:string;session_id:string;holder_actor_id:string;expires_at:Date;kind:string}>("SELECT id,session_id,holder_actor_id,expires_at,kind FROM leases WHERE workspace_id=$1 AND resource_type=$2 AND resource_id=$3 AND status='active' AND (kind='exclusive' OR $4::lease_kind='exclusive') FOR UPDATE",[actor(request).workspaceId,body.resourceType,body.resourceId,body.kind])).rows
     if(conflicts.length) throw new DomainError('LEASE_CONFLICT','Resource already leased',{holderSessionId:conflicts[0]!.session_id,holderActorId:conflicts[0]!.holder_actor_id,leaseId:conflicts[0]!.id,expiresAt:conflicts[0]!.expires_at,resourceType:body.resourceType,resourceId:body.resourceId})
-    const row=(await tx.query("INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,$3,$4,$5,$6,now()+($7::text || ' seconds')::interval) RETURNING *",[actor(request).workspaceId,body.sessionId,body.resourceType,body.resourceId,body.kind,body.reason,body.ttlSeconds])).rows[0] as {id:string}
+    const row=(await tx.query("INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,$3,$4,$5,$6,now()+($7::text || ' seconds')::interval) RETURNING *",[actor(request).workspaceId,body.sessionId,body.resourceType,body.resourceId,body.kind,body.reason,body.ttlSeconds])).rows[0] as {id:string;version:number}
     await emit(tx,h.meta(request,body),'lease.acquired','lease',row.id,{sessionId:body.sessionId,resourceType:body.resourceType,resourceId:body.resourceId,kind:body.kind},s.team_id)
-    return row
+    return leaseResponse(row)
   })
 }
 async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'renew'|'release'|'force-release') {
@@ -415,6 +424,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     if(action==='force-release') {
       if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Only humans can force release a lease')
       await assertHumanTeam(tx,actor(request),row.team_id)
+      assertRevision(parseRevision(h.header(request,'if-match')),row.version)
       if(!body.reason) throw new DomainError('VALIDATION_ERROR','Force release requires an audit reason')
     } else {
       await assertSessionWrite(tx,actor(request),row.session_id)
@@ -422,21 +432,21 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     }
     if(action==='heartbeat') {
       if(row.status!=='active') throw new DomainError('CONFLICT','Lease is not active')
-      const changed=(await tx.query('UPDATE leases SET heartbeat_at=now(),updated_at=now() WHERE id=$1 RETURNING *',[leaseId])).rows[0]
+      const changed=(await tx.query<{version:number}>('UPDATE leases SET heartbeat_at=now(),updated_at=now() WHERE id=$1 RETURNING *',[leaseId])).rows[0]!
       await emit(tx,h.meta(request,body),'lease.heartbeat','lease',leaseId,{})
-      return changed
+      return leaseResponse(changed)
     }
     if(action==='renew') {
-      const changed=(await tx.query("UPDATE leases SET expires_at=now()+($2::text || ' seconds')::interval,heartbeat_at=now(),renew_count=renew_count+1,version=version+1,updated_at=now() WHERE id=$1 AND status='active' AND expires_at>now() RETURNING *",[leaseId,body.ttlSeconds??300])).rows[0]
+      const changed=(await tx.query<{version:number}>("UPDATE leases SET expires_at=now()+($2::text || ' seconds')::interval,heartbeat_at=now(),renew_count=renew_count+1,version=version+1,updated_at=now() WHERE id=$1 AND status='active' AND expires_at>now() RETURNING *",[leaseId,body.ttlSeconds??300])).rows[0]
       if(!changed) throw new DomainError('LEASE_EXPIRED','Lease is not active or has expired')
       await emit(tx,h.meta(request,body),'lease.renewed','lease',leaseId,{ttlSeconds:body.ttlSeconds??300})
-      return changed
+      return leaseResponse(changed)
     }
     const status=action==='force-release'?'revoked':'released'
-    const changed=(await tx.query('UPDATE leases SET status=$2,released_at=now(),released_by_actor_id=$3,audit_reason=$4,version=version+1,updated_at=now() WHERE id=$1 AND status=$5 RETURNING *',[leaseId,status,actor(request).id,body.reason??null,'active'])).rows[0]
+    const changed=(await tx.query<{version:number}>('UPDATE leases SET status=$2,released_at=now(),released_by_actor_id=$3,audit_reason=$4,version=version+1,updated_at=now() WHERE id=$1 AND status=$5 RETURNING *',[leaseId,status,actor(request).id,body.reason??null,'active'])).rows[0]
     if(!changed) throw new DomainError('CONFLICT','Lease is no longer active')
     await emit(tx,h.meta(request,body),`lease.${status}`,'lease',leaseId,{reason:body.reason??null})
-    return changed
+    return leaseResponse(changed)
   })
 }
 

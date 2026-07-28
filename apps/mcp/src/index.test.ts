@@ -1,8 +1,9 @@
+import { readFile } from 'node:fs/promises'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { describe, expect, it, vi } from 'vitest'
-import { createWorkMeshMcpServer } from './index.js'
-import type { WorkMeshClient } from '@workmesh/agent-sdk'
+import { createWorkMeshMcpServer, mcpPolicyBindings } from './index.js'
+import { WorkMeshSdkError, type WorkMeshClient } from '@workmesh/agent-sdk'
 
 const sessionId = '00000000-0000-4000-8000-000000000001'
 const workItemId = '00000000-0000-4000-8000-000000000002'
@@ -21,6 +22,17 @@ async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClien
 }
 
 describe('WorkMesh MCP adapter', () => {
+  it('binds every MCP resource and tool to a REST operation policy', async () => {
+    const source = await readFile(new URL('./index.ts', import.meta.url), 'utf8')
+    const registrations = [...source.matchAll(/register(Resource|Tool)\('([^']+)'/g)]
+      .map(match => `${match[1]?.toLowerCase()}:${match[2]}`)
+      .sort()
+    expect(Object.keys(mcpPolicyBindings).sort()).toEqual(registrations)
+    for (const binding of Object.values(mcpPolicyBindings)) {
+      expect(binding.policyId).toBe(`route.${binding.operationId}`)
+    }
+  })
+
   it('omits mutation tools in read-only mode', async () => {
     const api = { listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
     const { server, protocol } = await connected('read-only', api)
@@ -41,6 +53,34 @@ describe('WorkMesh MCP adapter', () => {
       const result = await protocol.callTool({ name: 'send_message', arguments: { sessionId, bodyMarkdown: 'Please verify the test evidence.' } })
       expect(result.isError).not.toBe(true)
       expect(sendMessage).toHaveBeenCalledWith(sessionId, 'Please verify the test evidence.', { idempotencyKey: undefined })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('preserves upstream authorization denial code and correlation ID', async () => {
+    const listWorkItems = vi.fn().mockRejectedValue(new WorkMeshSdkError(
+      'scope denied',
+      {
+        code: 'RESOURCE_SCOPE_DENIED',
+        status: 403,
+        correlationId: 'correlation-denial',
+      },
+    ))
+    const api = { listWorkItems, getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const result = await protocol.callTool({
+        name: 'list_work_items',
+        arguments: {},
+      })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent).toEqual({
+        error: {
+          code: 'RESOURCE_SCOPE_DENIED',
+          message: 'scope denied',
+          correlationId: 'correlation-denial',
+          details: undefined,
+        },
+      })
     } finally { await protocol.close(); await server.close() }
   })
 
