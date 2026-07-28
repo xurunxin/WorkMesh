@@ -8,8 +8,13 @@ import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInp
 import { mutate, type CommandContext } from '../commands.js'
 import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
+import type { Paginator } from '../pagination.js'
+import {
+  liveHumanTeamReadPredicate,
+  liveSessionReadPredicate,
+} from '../live-read-authorization.js'
 
-type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void> }
+type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator }
 type Subject = 'work_item' | 'project' | 'session'
 const uuid = z.string().uuid()
 const actor = (request: FastifyRequest) => request.actor as unknown as ApiActor
@@ -114,13 +119,31 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     return { ...result, subject_kind: kind, subject_id: value }
   })
   app.get('/api/v1/rooms/:id/timeline', async request => {
-    const channelId = id(request); const q = z.object({ cursor: z.string().optional(), limit: z.coerce.number().int().min(1).max(200).default(100) }).parse(request.query)
+    const channelId = id(request)
     const channel = (await h.db.query<{ team_id:string }>('SELECT team_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2', [channelId, actor(request).workspaceId])).rows[0]
     if (!channel) throw new DomainError('NOT_FOUND', 'Room not found'); if (actor(request).kind !== 'human') throw new DomainError('FORBIDDEN', 'Room timeline is human-visible collaboration context'); await h.readableTeam(request, channel.team_id)
     // Projection deliberately unions durable facts only; a resolution is a separate immutable fact.
-    const cursor = q.cursor ? Buffer.from(q.cursor, 'base64url').toString('utf8').split('|', 2) : undefined
+    const values: unknown[] = [channelId, actor(request).workspaceId]
+    const liveAuthorization = liveHumanTeamReadPredicate(
+      actor(request),
+      'authorized_room.workspace_id',
+      'authorized_room.team_id',
+      values,
+    )
+    const page = h.paginator.prepare(request, request.query, {
+      route: '/api/v1/rooms/:id/timeline',
+      filters: { roomId: channelId },
+      sort: [{ key: 'created_at', sql: 'timeline.created_at', direction: 'ASC' }, { key: 'id', sql: 'timeline.id', direction: 'ASC' }],
+    }, values)
+    page.values.push(page.limit + 1)
+    await page.beforeQuery()
     const rows = (await h.db.query(`
-      WITH RECURSIVE room AS (SELECT subject_kind,subject_id FROM work_room_channels WHERE id=$1),
+      WITH RECURSIVE room AS (
+        SELECT authorized_room.id,authorized_room.subject_kind,authorized_room.subject_id
+          FROM work_room_channels authorized_room
+         WHERE authorized_room.id=$1 AND authorized_room.workspace_id=$2
+           AND ${liveAuthorization}
+      ),
       session_scope(id) AS (
         SELECT s.id FROM agent_sessions s JOIN room r ON
           (r.subject_kind='session' AND s.id=r.subject_id) OR
@@ -139,7 +162,8 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         FROM room_messages m
         JOIN actors a ON a.id=m.author_actor_id
         LEFT JOIN room_message_response_resolutions rr ON rr.message_id=m.id
-        WHERE m.channel_id=$1 OR m.channel_id IN (SELECT c.id FROM work_room_channels c WHERE c.subject_kind='session' AND c.subject_id IN (SELECT id FROM session_scope))
+        WHERE m.channel_id IN (SELECT id FROM room)
+           OR m.channel_id IN (SELECT c.id FROM work_room_channels c WHERE c.subject_kind='session' AND c.subject_id IN (SELECT id FROM session_scope))
         UNION ALL
         SELECT d.id,d.created_at,'decision',d.status,
           jsonb_build_object('title',d.title,'rationale',d.rationale,'selectedOption',d.selected_option,'evidence',d.evidence,'sessionId',d.session_id)
@@ -183,9 +207,9 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
           (e.aggregate_type='agent_session' AND e.aggregate_id IN (SELECT id FROM session_scope)) OR
           (c.subject_kind='work_item' AND c.subject_id=e.aggregate_id AND e.aggregate_type='work_item')
       ) timeline
-      WHERE ($3::timestamptz IS NULL OR (created_at, id) > ($3::timestamptz, $4::uuid))
-      ORDER BY created_at,id LIMIT $2`, [channelId, q.limit, cursor?.[0] ?? null, cursor?.[1] ?? null])).rows
-    return { items: rows, nextCursor: rows.length === q.limit ? Buffer.from(`${rows[rows.length - 1]!.created_at.toISOString()}|${rows[rows.length - 1]!.id}`).toString('base64url') : undefined }
+      WHERE true${page.predicate ? ` AND ${page.predicate}` : ''}
+      ORDER BY ${page.orderBy} LIMIT $${page.values.length}`, page.values)).rows
+    return page.finish(rows as Record<string, unknown>[])
   })
   app.post('/api/v1/rooms/:id/messages', async request => {
     const channelId = id(request); const body = roomMessageInputSchema.parse(request.body)
@@ -243,7 +267,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]; if(!row) throw new DomainError('NOT_FOUND','Message not found'); await assertHumanTeam(tx,actor(request),row.team_id); await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved']); await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id]); await emit(tx,h.meta(request,{}),'room.message.resolved','room_message',row.id,{},row.team_id); return {id:row.id,resolved:true}
   }))
 
-  app.get('/api/v1/inbox', async request => { if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Human inbox only'); const q=z.object({status:z.enum(['open','resolved']).default('open')}).parse(request.query); return (await h.db.query('SELECT * FROM inbox_items WHERE workspace_id=$1 AND recipient_human_actor_id=$2 AND status=$3 ORDER BY created_at DESC',[actor(request).workspaceId,actor(request).id,q.status])).rows })
+  app.get('/api/v1/inbox', async request => { if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Human inbox only'); const q=z.object({status:z.enum(['open','resolved']).default('open')}).parse(request.query); return h.paginator.query(h.db,request,request.query,{route:'/api/v1/inbox',filters:{status:q.status},sort:[{key:'created_at',sql:'created_at',direction:'DESC'},{key:'id',sql:'id',direction:'DESC'}]},'SELECT * FROM inbox_items WHERE workspace_id=$1 AND recipient_human_actor_id=$2 AND status=$3',[actor(request).workspaceId,actor(request).id,q.status]) })
 
   app.post('/api/v1/work-items/:id/decisions', async request => createDecision(h, request, 'work_item', id(request)))
   app.post('/api/v1/projects/:id/decisions', async request => createDecision(h, request, 'project', id(request)))
@@ -293,14 +317,28 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     const current=actor(request); const values:unknown[]=[current.workspaceId]; const where=['l.workspace_id=$1']
     if(q.sessionId){values.push(q.sessionId);where.push(`l.session_id=$${values.length}`)}
     if(q.resourceId){values.push(q.resourceId);where.push(`l.resource_id=$${values.length}`)}
-    if(current.kind==='agent'){values.push(current.agentSessionId);where.push(`l.session_id=$${values.length}`)}
+    if(current.kind==='agent'){
+      values.push(current.agentSessionId)
+      where.push(`l.session_id=$${values.length}`)
+      where.push(liveSessionReadPredicate(
+        current,
+        's.id',
+        's.workspace_id',
+        values,
+      ))
+    }
     else if(current.workspaceRole!=='admin'){values.push(current.id);where.push(`EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=l.workspace_id AND m.team_id=s.team_id AND m.actor_id=$${values.length})`)}
-    const rows = (await h.db.query<{ version: number }>(
+    const page = await h.paginator.query<{ version: number } & Record<string, unknown>>(
+      h.db, request, request.query, {
+        route: '/api/v1/leases',
+        filters: { sessionId: q.sessionId ?? null, resourceId: q.resourceId ?? null },
+        sort: [{ key: 'created_at', sql: 'l.created_at', direction: 'DESC' }, { key: 'id', sql: 'l.id', direction: 'DESC' }],
+      },
       `SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id
-       WHERE ${where.join(' AND ')} ORDER BY l.created_at DESC`,
+       WHERE ${where.join(' AND ')}`,
       values,
-    )).rows
-    return rows.map(leaseResponse)
+    )
+    return { items: page.items.map(leaseResponse), nextCursor: page.nextCursor }
   })
 
   app.post('/api/v1/agent-sessions/:id/plan/comments', async request => { const sessionId=id(request); const body=z.object({planVersionId:uuid,planStepId:uuid,body:z.string().min(1).max(50000),references:z.array(z.unknown()).max(100).default([])}).parse(request.body); return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{const s=await assertSessionWrite(tx,actor(request),sessionId); const valid=await tx.query('SELECT 1 FROM agent_plan_steps ps JOIN agent_plan_versions pv ON pv.id=ps.plan_version_id JOIN agent_sessions s ON s.id=$3 WHERE ps.id=$1 AND pv.id=$2 AND pv.session_id=$3 AND s.current_plan_version_id=pv.id',[body.planStepId,body.planVersionId,sessionId]); if(!valid.rowCount)throw new DomainError('STALE_PLAN_VERSION','Comments must target a step in the session current plan'); const row=(await tx.query('INSERT INTO plan_step_comments(plan_version_id,step_id,author_actor_id,body,references_json) VALUES($1,$2,$3,$4,$5::jsonb) RETURNING *',[body.planVersionId,body.planStepId,actor(request).id,body.body,JSON.stringify(body.references)])).rows[0] as {id:string}; await emit(tx,h.meta(request,body),'plan.step.commented','plan_step_comment',row.id,{sessionId,stepId:body.planStepId},s.team_id);return row}) })
@@ -311,9 +349,39 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
   app.post('/api/v1/handoffs', async request => offerHandoff(h,request))
   app.get('/api/v1/handoffs', async request => {
     const current=actor(request)
-    if(current.kind==='agent') return (await h.db.query("SELECT h.*,s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id WHERE h.workspace_id=$1 AND (h.from_session_id=$2 OR h.target_agent_id=(SELECT agent_id FROM agent_sessions WHERE id=$2)) ORDER BY h.created_at DESC",[current.workspaceId,current.agentSessionId])).rows
-    if(current.workspaceRole==='admin') return (await h.db.query('SELECT h.*,s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id WHERE h.workspace_id=$1 ORDER BY h.created_at DESC',[current.workspaceId])).rows
-    return (await h.db.query('SELECT h.*,s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id WHERE h.workspace_id=$1 AND EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=h.workspace_id AND m.team_id=s.team_id AND m.actor_id=$2) ORDER BY h.created_at DESC',[current.workspaceId,current.id])).rows
+    const values:unknown[]=[current.workspaceId]
+    let authorization=''
+    if(current.kind==='agent'){
+      values.push(current.agentSessionId)
+      const currentSessionSql=`$${values.length}`
+      const liveAuthorization=liveSessionReadPredicate(
+        current,
+        currentSessionSql,
+        'h.workspace_id',
+        values,
+      )
+      authorization=` AND EXISTS(
+        SELECT 1
+          FROM agent_sessions current_scope
+         WHERE current_scope.id=${currentSessionSql}
+           AND current_scope.workspace_id=h.workspace_id
+           AND current_scope.team_id=s.team_id
+           AND (
+             current_scope.work_item_id IS NULL
+             OR current_scope.work_item_id=s.work_item_id
+           )
+           AND (
+             current_scope.project_id IS NULL
+             OR current_scope.project_id=s.project_id
+           )
+           AND (
+             h.from_session_id=current_scope.id
+             OR h.target_agent_id=current_scope.agent_id
+           )
+      ) AND ${liveAuthorization}`
+    }
+    else if(current.workspaceRole!=='admin'){values.push(current.id);authorization=' AND EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=h.workspace_id AND m.team_id=s.team_id AND m.actor_id=$2)'}
+    return h.paginator.query(h.db,request,request.query,{route:'/api/v1/handoffs',filters:{},sort:[{key:'created_at',sql:'h.created_at',direction:'DESC'},{key:'id',sql:'h.id',direction:'DESC'}]},`SELECT h.*,s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id WHERE h.workspace_id=$1${authorization}`,values)
   })
   app.get('/api/v1/handoffs/:id/inspect', async request => {
     const handoffId=id(request); const current=actor(request)

@@ -9,6 +9,7 @@ if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl) throw new Error("Stage 
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error("Stage 1 integration requires a dedicated *test* database.");
 
 const db = createDb(databaseUrl);
+type Page<T> = { items: T[]; nextCursor: string | null };
 class SwitchableRateLimitStore implements AuthRateLimitStore {
   calls = 0;
   offline = false;
@@ -74,8 +75,8 @@ describe("Stage 1 agent API acceptance", () => {
     const csrf = installed.json<{ csrfToken: string }>().csrfToken;
     const me = await app.inject({ method: "GET", url: "/api/v1/auth/me", headers: { cookie, "x-csrf-token": csrf, "idempotency-key": randomUUID() } });
     admin = { cookie, csrf, actorId: me.json<{ actor: { id: string } }>().actor.id };
-    const teams = await humanCall(admin, "GET", "/api/v1/teams"); teamId = teams.json<Array<{ id: string }>>()[0]!.id;
-    const states = await humanCall(admin, "GET", `/api/v1/teams/${teamId}/states`); readyId = states.json<Array<{ id: string; name: string }>>().find(state => state.name === "Ready")!.id;
+    const teams = await humanCall(admin, "GET", "/api/v1/teams"); teamId = teams.json<Page<{ id: string }>>().items[0]!.id;
+    const states = await humanCall(admin, "GET", `/api/v1/teams/${teamId}/states`); readyId = states.json<Page<{ id: string; name: string }>>().items.find(state => state.name === "Ready")!.id;
     const work = await humanCall(admin, "POST", "/api/v1/work-items", { teamId, title: "Stage 1 acceptance", statusId: readyId, responsibleHumanActorId: admin.actorId }); workItemId = work.json<{ id: string }>().id;
     agent = await registerAgent("acceptance-agent");
   });

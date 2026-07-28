@@ -47,32 +47,33 @@ export async function findWorkItemRoom(workItemId: string): Promise<Room | null>
   return { id: stringValue(record, 'id'), participants: arrayValue(record, 'participants', 'activeParticipants', 'active_participants') }
 }
 
+export function normalizeRoomTimelineItem(item: RoomRecord): RoomRecord {
+  const payload = value(item, 'payload', 'structuredPayload', 'structured_payload')
+  const details = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload as RoomRecord : {}
+  const structured = value(details, 'payload', 'structuredPayload', 'structured_payload')
+  const structuredDetails = structured && typeof structured === 'object' && !Array.isArray(structured) ? structured as RoomRecord : {}
+  const kind = stringValue(item, 'kind', 'type')
+  return {
+    ...item,
+    // Current Stage 2 projection keeps typed-message facts in payload/subtype.
+    intent: kind === 'message' ? stringValue(item, 'subtype') : stringValue(item, 'intent', 'kind', 'type', 'subtype'),
+    body: stringValue(item, 'body', 'summary') || stringValue(details, 'body', 'summary', 'title', 'rationale'),
+    title: stringValue(item, 'title') || stringValue(details, 'title'),
+    actorId: stringValue(item, 'actorId', 'actor_id') || stringValue(details, 'authorActorId', 'author_actor_id', 'actorId', 'actor_id'),
+    actorName: stringValue(item, 'actorName', 'actor_name') || stringValue(details, 'authorDisplayName', 'author_display_name'),
+    sessionId: stringValue(item, 'sessionId', 'session_id') || stringValue(details, 'sessionId', 'session_id', 'fromSessionId', 'from_session_id'),
+    createdAt: stringValue(item, 'createdAt', 'created_at', 'occurredAt', 'occurred_at'),
+    payload: { ...details, ...structuredDetails },
+    status: kind === 'message' ? ((value(details, 'resolvedAt', 'resolved_at') || value(details, 'resolution')) ? 'resolved' : 'open') : stringValue(item, 'status', 'subtype'),
+  }
+}
+
 export async function roomTimeline(roomId: string): Promise<RoomTimeline | null> {
   const response = await optionalRoomRequest<unknown>(`/api/v1/rooms/${encodeURIComponent(roomId)}/timeline?limit=100`)
   if (response === null) return null
-  const normalize = (item: RoomRecord): RoomRecord => {
-    const payload = value(item, 'payload', 'structuredPayload', 'structured_payload')
-    const details = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload as RoomRecord : {}
-    const structured = value(details, 'payload', 'structuredPayload', 'structured_payload')
-    const structuredDetails = structured && typeof structured === 'object' && !Array.isArray(structured) ? structured as RoomRecord : {}
-    const kind = stringValue(item, 'kind', 'type')
-    return {
-      ...item,
-      // Current Stage 2 projection keeps typed-message facts in payload/subtype.
-      intent: kind === 'message' ? stringValue(item, 'subtype') : stringValue(item, 'intent', 'kind', 'type', 'subtype'),
-      body: stringValue(item, 'body', 'summary') || stringValue(details, 'body', 'summary', 'title', 'rationale'),
-      title: stringValue(item, 'title') || stringValue(details, 'title'),
-      actorId: stringValue(item, 'actorId', 'actor_id') || stringValue(details, 'authorActorId', 'author_actor_id', 'actorId', 'actor_id'),
-      actorName: stringValue(item, 'actorName', 'actor_name') || stringValue(details, 'authorDisplayName', 'author_display_name'),
-      sessionId: stringValue(item, 'sessionId', 'session_id') || stringValue(details, 'sessionId', 'session_id', 'fromSessionId', 'from_session_id'),
-      createdAt: stringValue(item, 'createdAt', 'created_at', 'occurredAt', 'occurred_at'),
-      payload: { ...details, ...structuredDetails },
-      status: kind === 'message' ? ((value(details, 'resolvedAt', 'resolved_at') || value(details, 'resolution')) ? 'resolved' : 'open') : stringValue(item, 'status', 'subtype'),
-    }
-  }
-  if (Array.isArray(response)) return { items: response.filter((item): item is RoomRecord => Boolean(item) && typeof item === 'object').map(normalize), nextCursor: null }
+  if (Array.isArray(response)) return { items: response.filter((item): item is RoomRecord => Boolean(item) && typeof item === 'object').map(normalizeRoomTimelineItem), nextCursor: null }
   const record = response as RoomRecord
-  return { items: arrayValue(record, 'items', 'timeline', 'data').map(normalize), nextCursor: stringValue(record, 'nextCursor', 'next_cursor') || null }
+  return { items: arrayValue(record, 'items', 'timeline', 'data').map(normalizeRoomTimelineItem), nextCursor: stringValue(record, 'nextCursor', 'next_cursor') || null }
 }
 
 export async function createRoomMessage(roomId: string, payload: RoomRecord): Promise<RoomRecord> {

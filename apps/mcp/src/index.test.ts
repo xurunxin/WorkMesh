@@ -39,6 +39,7 @@ describe('WorkMesh MCP adapter', () => {
     try {
       const names = (await protocol.listTools()).tools.map(tool => tool.name)
       expect(names).toContain('list_work_items')
+      expect(names).toContain('list_session_activities')
       expect(names).toContain('get_work_item')
       expect(names).not.toContain('send_message')
       expect(names).not.toContain('ack_agent_session')
@@ -80,6 +81,78 @@ describe('WorkMesh MCP adapter', () => {
           correlationId: 'correlation-denial',
           details: undefined,
         },
+      })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('forwards MCP cursor and limit through the SDK page helper', async () => {
+    const listWorkItems = vi.fn().mockResolvedValue({ items: [{ id: 'work-1' }], nextCursor: 'next' })
+    const api = { listWorkItems, getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const result = await protocol.callTool({
+        name: 'list_work_items',
+        arguments: { teamId: '00000000-0000-4000-8000-000000000001', cursor: 'opaque', limit: 17 },
+      })
+      expect(result.isError).not.toBe(true)
+      expect(listWorkItems).toHaveBeenCalledWith(
+        { teamId: '00000000-0000-4000-8000-000000000001' },
+        { cursor: 'opaque', limit: 17 },
+      )
+      expect(result.structuredContent).toEqual({ data: { items: [{ id: 'work-1' }], nextCursor: 'next' } })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('continues session activities with the opaque cursor returned by page one', async () => {
+    const getActivities = vi.fn()
+      .mockResolvedValueOnce({
+        items: [{ id: 'activity-1' }],
+        nextCursor: 'opaque.activity.cursor',
+      })
+      .mockResolvedValueOnce({
+        items: [{ id: 'activity-2' }],
+        nextCursor: null,
+      })
+    const api = {
+      getActivities,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const first = await protocol.callTool({
+        name: 'list_session_activities',
+        arguments: { sessionId, limit: 1 },
+      })
+      expect(first.isError).not.toBe(true)
+      expect(first.structuredContent).toEqual({
+        data: {
+          items: [{ id: 'activity-1' }],
+          nextCursor: 'opaque.activity.cursor',
+        },
+      })
+
+      const cursor = (first.structuredContent as {
+        data: { nextCursor: string }
+      }).data.nextCursor
+      const second = await protocol.callTool({
+        name: 'list_session_activities',
+        arguments: { sessionId, cursor, limit: 1 },
+      })
+      expect(second.isError).not.toBe(true)
+      expect(second.structuredContent).toEqual({
+        data: {
+          items: [{ id: 'activity-2' }],
+          nextCursor: null,
+        },
+      })
+      expect(getActivities).toHaveBeenNthCalledWith(1, sessionId, {
+        cursor: undefined,
+        limit: 1,
+      })
+      expect(getActivities).toHaveBeenNthCalledWith(2, sessionId, {
+        cursor: 'opaque.activity.cursor',
+        limit: 1,
       })
     } finally { await protocol.close(); await server.close() }
   })

@@ -51,6 +51,7 @@ import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
+import type { ApiActor } from "./agent/types.js";
 import { installRoutePolicyInventory } from "./authz/route-policy.js";
 import {
   authorizeRequest,
@@ -74,6 +75,11 @@ import {
   assertEventAudienceActive,
   eventAudienceQuery,
 } from "./authz/event-audience.js";
+import { createPaginator, type Paginator } from "./pagination.js";
+import {
+  liveHumanTeamReadPredicate,
+  liveSessionReadPredicate,
+} from "./live-read-authorization.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -149,15 +155,64 @@ async function assertReadableTeam(
   request: FastifyRequest,
   teamId: string,
 ): Promise<void> {
+  const current = request.actor! as unknown as ApiActor;
   const team = await db.query<{ id: string }>(
     "SELECT id FROM teams WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",
-    [teamId, request.actor!.workspaceId],
+    [teamId, current.workspaceId],
   );
   if (!team.rowCount) throw new DomainError("NOT_FOUND", "Team not found");
-  if (request.actor!.workspaceRole === "admin") return;
+  if (current.kind === "agent") {
+    const authorized = await db.query(
+      `SELECT 1
+         FROM agent_sessions session
+         JOIN delegations delegation
+           ON delegation.id=session.delegation_id
+          AND delegation.status='active'
+         JOIN agent_definitions definition
+           ON definition.id=session.agent_id
+          AND definition.is_active
+         JOIN agent_team_access team_access
+           ON team_access.workspace_id=session.workspace_id
+          AND team_access.agent_id=session.agent_id
+          AND team_access.team_id=session.team_id
+          AND team_access.revoked_at IS NULL
+        WHERE session.id=$1
+          AND session.workspace_id=$2
+          AND session.team_id=$3
+          AND 'work:read'=ANY(delegation.permissions_snapshot)
+          AND 'work:read'=ANY(definition.approved_capabilities)
+          AND 'work:read'=ANY(team_access.approved_capabilities)
+          AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
+                ? session.team_id::text
+          AND (
+            (
+              session.work_item_id IS NOT NULL
+              AND COALESCE(
+                delegation.capability_scope->'workItemIds',
+                '[]'::jsonb
+              ) ? session.work_item_id::text
+            )
+            OR (
+              session.project_id IS NOT NULL
+              AND COALESCE(
+                delegation.capability_scope->'projectIds',
+                '[]'::jsonb
+              ) ? session.project_id::text
+            )
+          )`,
+      [current.agentSessionId, current.workspaceId, teamId],
+    );
+    if (!authorized.rowCount)
+      throw new DomainError(
+        "RESOURCE_SCOPE_DENIED",
+        "Agent token cannot read this Team",
+      );
+    return;
+  }
+  if (current.workspaceRole === "admin") return;
   const membership = await db.query(
     "SELECT 1 FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3",
-    [request.actor!.workspaceId, teamId, request.actor!.id],
+    [current.workspaceId, teamId, current.id],
   );
   if (!membership.rowCount)
     throw new DomainError("FORBIDDEN", "Team membership is required");
@@ -209,9 +264,11 @@ export const buildApp = (options: {
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
   logger?: FastifyServerOptions["logger"];
   authRateLimitStore?: AuthRateLimitStore;
+  beforePagedQuery?: (route: string) => Promise<void> | void;
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
+  const paginator = createPaginator(config, undefined, options.beforePagedQuery);
   const app = Fastify({
     logger: options.logger ?? true,
     genReqId: () => crypto.randomUUID(),
@@ -593,14 +650,30 @@ export const buildApp = (options: {
   });
 
   app.get("/api/v1/teams", async (request) => {
-    const values: unknown[] = [request.actor!.workspaceId];
-    const scope = scopedTeamPredicate(request, "t.id", values);
-    return (
-      await db.query(
-        `SELECT t.* FROM teams t WHERE t.workspace_id=$1 AND t.deleted_at IS NULL${scope} ORDER BY t.name`,
+    const current = request.actor! as unknown as ApiActor;
+    const values: unknown[] = [current.workspaceId];
+    let scope: string;
+    if (current.kind === "agent") {
+      values.push(current.agentSessionId);
+      const sessionParameter = `$${values.length}`;
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        "t.workspace_id",
         values,
-      )
-    ).rows;
+      );
+      scope = ` AND t.id=(
+        SELECT scoped.team_id FROM agent_sessions scoped
+        WHERE scoped.id=${sessionParameter} AND scoped.workspace_id=t.workspace_id
+      ) AND ${liveAuthorization}`;
+    } else {
+      scope = scopedTeamPredicate(request, "t.id", values);
+    }
+    return paginator.query(db, request, request.query, {
+      route: "/api/v1/teams",
+      filters: {},
+      sort: [{ key: "name", sql: "t.name", direction: "ASC" }, { key: "id", sql: "t.id", direction: "ASC" }],
+    }, `SELECT t.* FROM teams t WHERE t.workspace_id=$1 AND t.deleted_at IS NULL${scope}`, values);
   });
   app.post("/api/v1/teams", async (request) => {
     const body = teamInputSchema.parse(request.body);
@@ -629,12 +702,37 @@ export const buildApp = (options: {
   app.get("/api/v1/teams/:id/states", async (request) => {
     const id = idParam(request);
     await assertReadableTeam(request, id);
-    return (
-      await db.query(
-        "SELECT * FROM workflow_states WHERE workspace_id=$1 AND team_id=$2 AND is_archived=false ORDER BY position",
-        [request.actor!.workspaceId, id],
-      )
-    ).rows;
+    const current = request.actor! as unknown as ApiActor;
+    const values: unknown[] = [current.workspaceId, id];
+    let liveAuthorization: string;
+    if (current.kind === "agent") {
+      values.push(current.agentSessionId);
+      const sessionParameter = `$${values.length}`;
+      liveAuthorization = `${liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        "state.workspace_id",
+        values,
+      )} AND state.team_id=(
+        SELECT scoped.team_id FROM agent_sessions scoped
+        WHERE scoped.id=${sessionParameter}
+          AND scoped.workspace_id=state.workspace_id
+      )`;
+    } else {
+      liveAuthorization = liveHumanTeamReadPredicate(
+        current,
+        "state.workspace_id",
+        "state.team_id",
+        values,
+      );
+    }
+    return paginator.query(db, request, request.query, {
+      route: "/api/v1/teams/:id/states",
+      filters: { teamId: id },
+      sort: [{ key: "position", sql: "state.position", direction: "ASC" }, { key: "id", sql: "state.id", direction: "ASC" }],
+    }, `SELECT state.* FROM workflow_states state
+      WHERE state.workspace_id=$1 AND state.team_id=$2
+        AND state.is_archived=false AND ${liveAuthorization}`, values);
   });
   app.post("/api/v1/teams/:id/states", async (request) => {
     const body = stateInputSchema.parse(request.body);
@@ -648,14 +746,37 @@ export const buildApp = (options: {
   });
 
   app.get("/api/v1/projects", async (request) => {
-    const values: unknown[] = [request.actor!.workspaceId];
-    const scope = scopedTeamPredicate(request, "p.team_id", values);
-    return (
-      await db.query(
-        `SELECT p.* FROM projects p WHERE p.workspace_id=$1 AND p.deleted_at IS NULL${scope} ORDER BY p.updated_at DESC`,
+    const current = request.actor! as unknown as ApiActor;
+    const values: unknown[] = [current.workspaceId];
+    let scope: string;
+    if (current.kind === "agent") {
+      values.push(current.agentSessionId);
+      const sessionParameter = `$${values.length}`;
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        "p.workspace_id",
         values,
-      )
-    ).rows;
+      );
+      scope = ` AND EXISTS (
+        SELECT 1
+          FROM agent_sessions scoped
+          LEFT JOIN work_items scoped_item
+            ON scoped_item.id=scoped.work_item_id
+           AND scoped_item.workspace_id=scoped.workspace_id
+         WHERE scoped.id=${sessionParameter}
+           AND scoped.workspace_id=p.workspace_id
+           AND scoped.team_id=p.team_id
+           AND (scoped.project_id=p.id OR scoped_item.project_id=p.id)
+      ) AND ${liveAuthorization}`;
+    } else {
+      scope = scopedTeamPredicate(request, "p.team_id", values);
+    }
+    return paginator.query(db, request, request.query, {
+      route: "/api/v1/projects",
+      filters: {},
+      sort: [{ key: "updated_at", sql: "p.updated_at", direction: "DESC" }, { key: "id", sql: "p.id", direction: "DESC" }],
+    }, `SELECT p.* FROM projects p WHERE p.workspace_id=$1 AND p.deleted_at IS NULL${scope}`, values);
   });
   app.get("/api/v1/projects/:id", async (request) => {
     const project = oneRow(
@@ -695,8 +816,8 @@ export const buildApp = (options: {
     );
   });
 
-  app.get("/api/v1/actors/humans", async (request) => listHumans(request));
-  app.get("/api/v1/work-items", async (request) => listWorkItems(request));
+  app.get("/api/v1/actors/humans", async (request) => listHumans(request, paginator));
+  app.get("/api/v1/work-items", async (request) => listWorkItems(request, paginator));
   app.get("/api/v1/work-items/:id", async (request) => {
     const workItem = oneRow(
       await db.query<{ team_id: string } & Record<string, unknown>>(
@@ -737,19 +858,59 @@ export const buildApp = (options: {
   });
   app.get("/api/v1/work-items/:id/comments", async (request) => {
     const id = idParam(request);
+    const current = request.actor! as unknown as ApiActor;
+    await agentReadableWorkItem(request, id);
     const workItem = oneRow(
       await db.query<{ team_id: string }>(
         "SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",
-        [id, request.actor!.workspaceId],
+        [id, current.workspaceId],
       ),
     );
     await assertReadableTeam(request, workItem.team_id);
-    return (
-      await db.query(
-        "SELECT c.*,a.display_name AS author_name,COALESCE(array_agg(cm.actor_id) FILTER (WHERE cm.actor_id IS NOT NULL),'{}'::uuid[]) AS mentions FROM comments c JOIN channels ch ON ch.id=c.channel_id JOIN actors a ON a.id=c.author_actor_id LEFT JOIN comment_mentions cm ON cm.comment_id=c.id WHERE ch.work_item_id=$1 AND c.workspace_id=$2 AND c.deleted_at IS NULL GROUP BY c.id,a.display_name ORDER BY min(c.created_at)",
-        [id, request.actor!.workspaceId],
-      )
-    ).rows;
+    const values: unknown[] = [id, current.workspaceId];
+    let liveAuthorization: string;
+    if (current.kind === "agent") {
+      values.push(current.agentSessionId);
+      const sessionParameter = `$${values.length}`;
+      liveAuthorization = `${liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        "w.workspace_id",
+        values,
+      )} AND w.id=(
+        SELECT scoped.work_item_id FROM agent_sessions scoped
+        WHERE scoped.id=${sessionParameter}
+          AND scoped.workspace_id=w.workspace_id
+      )`;
+    } else {
+      liveAuthorization = liveHumanTeamReadPredicate(
+        current,
+        "w.workspace_id",
+        "w.team_id",
+        values,
+      );
+    }
+    return paginator.query(db, request, request.query, {
+      route: "/api/v1/work-items/:id/comments",
+      filters: { workItemId: id },
+      sort: [{ key: "created_at", sql: "c.created_at", direction: "ASC" }, { key: "id", sql: "c.id", direction: "ASC" }],
+    }, `SELECT c.*,a.display_name AS author_name,
+          COALESCE(
+            array_agg(cm.actor_id) FILTER (WHERE cm.actor_id IS NOT NULL),
+            '{}'::uuid[]
+          ) AS mentions
+        FROM comments c
+        JOIN channels ch ON ch.id=c.channel_id
+        JOIN work_items w
+          ON w.id=ch.work_item_id
+         AND w.workspace_id=c.workspace_id
+         AND w.deleted_at IS NULL
+        JOIN actors a ON a.id=c.author_actor_id
+        LEFT JOIN comment_mentions cm ON cm.comment_id=c.id
+        WHERE ch.work_item_id=$1 AND c.workspace_id=$2
+          AND c.deleted_at IS NULL AND ${liveAuthorization}`,
+      values,
+      " GROUP BY c.id,a.display_name");
   });
   app.post("/api/v1/work-items/:id/comments", async (request) => {
     const body = commentInputSchema.parse(request.body);
@@ -774,42 +935,46 @@ export const buildApp = (options: {
   });
 
   app.get("/api/v1/views", async (request) => {
-    const values: unknown[] = [request.actor!.workspaceId, request.actor!.id];
+    const current = request.actor! as unknown as ApiActor;
+    const values: unknown[] = [current.workspaceId, current.id];
     let scope = "";
-    if (request.actor!.workspaceRole !== "admin") {
-      values.push(request.actor!.id);
+    let liveAuthorization = "";
+    if (current.kind === "agent") {
+      values.push(current.agentSessionId);
+      const sessionParameter = `$${values.length}`;
+      liveAuthorization = ` AND ${liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        "$1",
+        values,
+      )}`;
+      scope = ` AND (
+        v.team_id IS NULL OR v.team_id=(
+          SELECT scoped.team_id FROM agent_sessions scoped
+          WHERE scoped.id=${sessionParameter} AND scoped.workspace_id=v.workspace_id
+        )
+      )`;
+    } else if (current.workspaceRole !== "admin") {
+      values.push(current.id);
       scope = ` AND (v.team_id IS NULL OR EXISTS (SELECT 1 FROM memberships m JOIN teams mt ON mt.id=m.team_id AND mt.workspace_id=m.workspace_id WHERE m.workspace_id=$1 AND m.team_id=v.team_id AND m.actor_id=$${values.length} AND mt.deleted_at IS NULL))`;
     }
-    const stored = (
-      await db.query(
-        `SELECT * FROM saved_views v WHERE v.workspace_id=$1 AND v.owner_actor_id=$2${scope} ORDER BY v.name`,
-        values,
-      )
-    ).rows;
-    return [
-      {
-        id: "builtin:my-work",
-        name: "My Work",
-        filters: { responsible_human_actor_id: request.actor!.id },
-        layout: "list",
-        built_in: true,
-      },
-      {
-        id: "builtin:active",
-        name: "Active",
-        filters: { status_category: "started" },
-        layout: "board",
-        built_in: true,
-      },
-      {
-        id: "builtin:backlog",
-        name: "Backlog",
-        filters: { status_category: "backlog" },
-        layout: "list",
-        built_in: true,
-      },
-      ...stored,
-    ];
+    const page = await paginator.query<{ item: Record<string, unknown>; id: string; name: string }>(db, request, request.query, {
+      route: "/api/v1/views",
+      filters: {},
+      sort: [{ key: "name", sql: "visible.name", direction: "ASC" }, { key: "id", sql: "visible.id", direction: "ASC" }],
+    }, `WITH visible AS (
+      SELECT builtin.item,builtin.item->>'id' AS id,builtin.item->>'name' AS name
+      FROM jsonb_array_elements($${values.length + 1}::jsonb) AS builtin(item)
+      UNION ALL
+      SELECT to_jsonb(v),v.id::text,v.name FROM saved_views v
+      WHERE v.workspace_id=$1 AND v.owner_actor_id=$2${scope}
+    ) SELECT visible.item,visible.id,visible.name FROM visible
+      WHERE true${liveAuthorization}`, [...values, JSON.stringify([
+      { id: "builtin:my-work", name: "My Work", filters: { responsible_human_actor_id: request.actor!.id }, layout: "list", built_in: true },
+      { id: "builtin:active", name: "Active", filters: { status_category: "started" }, layout: "board", built_in: true },
+      { id: "builtin:backlog", name: "Backlog", filters: { status_category: "backlog" }, layout: "list", built_in: true },
+    ])]);
+    return { items: page.items.map(row => row.item), nextCursor: page.nextCursor };
   });
   app.post("/api/v1/views", async (request) => {
     const body = savedViewInputSchema.parse(request.body);
@@ -820,10 +985,10 @@ export const buildApp = (options: {
   app.get("/api/v1/events/stream", async (request, reply) =>
     sse(request, reply),
   );
-  registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
-  registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
-  registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features });
-  registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features });
+  registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
+  registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
+  registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
+  registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   return app;
 };
 
@@ -910,7 +1075,7 @@ async function createView(
   });
 }
 
-async function listHumans(request: FastifyRequest) {
+async function listHumans(request: FastifyRequest, paginator: Paginator) {
   const query = request.query as { teamId?: string };
   if (request.actor!.kind === "agent") throw new DomainError("FORBIDDEN", "Human directory requires a human session");
   if (query.teamId) await assertReadableTeam(request, query.teamId);
@@ -920,14 +1085,21 @@ async function listHumans(request: FastifyRequest) {
   if (query.teamId) {
     values.push(query.teamId);
     sql += ` AND target.team_id=$${values.length}`;
-  } else if (request.actor!.workspaceRole !== "admin") {
-    values.push(request.actor!.id);
-    sql += ` AND EXISTS (SELECT 1 FROM memberships accessible JOIN teams at ON at.id=accessible.team_id AND at.workspace_id=accessible.workspace_id WHERE accessible.workspace_id=a.workspace_id AND accessible.actor_id=$${values.length} AND accessible.team_id=target.team_id AND at.deleted_at IS NULL)`;
   }
-  return (await db.query(sql + " ORDER BY a.display_name", values)).rows;
+  sql += ` AND ${liveHumanTeamReadPredicate(
+    request.actor! as unknown as ApiActor,
+    "a.workspace_id",
+    "target.team_id",
+    values,
+  )}`;
+  return paginator.query(db, request, request.query, {
+    route: "/api/v1/actors/humans",
+    filters: { teamId: query.teamId ?? null },
+    sort: [{ key: "display_name", sql: "a.display_name", direction: "ASC" }, { key: "id", sql: "a.id", direction: "ASC" }],
+  }, sql, values);
 }
 
-async function listWorkItems(request: FastifyRequest) {
+async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
   const query = request.query as {
     teamId?: string;
     statusId?: string;
@@ -941,10 +1113,40 @@ async function listWorkItems(request: FastifyRequest) {
     statusCategory?: string;
   };
   if (request.actor!.kind === "agent") {
-    const session = oneRow(await db.query<{ work_item_id: string | null }>("SELECT work_item_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2", [request.actor!.agentSessionId, request.actor!.workspaceId]));
+    const current = request.actor! as unknown as ApiActor;
+    const session = oneRow(await db.query<{ work_item_id: string | null }>("SELECT work_item_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2", [current.agentSessionId, current.workspaceId]));
     if (!session.work_item_id) throw new DomainError("RESOURCE_SCOPE_DENIED", "Agent session has no work-item read scope");
     await agentReadableWorkItem(request, session.work_item_id);
-    return (await db.query("SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.workspace_id=$1 AND w.id=$2 AND w.deleted_at IS NULL AND t.deleted_at IS NULL", [request.actor!.workspaceId, session.work_item_id])).rows;
+    const values: unknown[] = [
+      current.workspaceId,
+      session.work_item_id,
+      current.agentSessionId,
+    ];
+    const liveAuthorization = liveSessionReadPredicate(
+      current,
+      "$3",
+      "w.workspace_id",
+      values,
+    );
+    return paginator.query(db, request, request.query, {
+      route: "/api/v1/work-items",
+      filters: { agentSessionId: current.agentSessionId },
+      sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
+    }, `SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category
+          FROM work_items w
+          JOIN teams t ON t.id=w.team_id
+          JOIN workflow_states s ON s.id=w.status_id
+         WHERE w.workspace_id=$1
+           AND w.id=$2
+           AND w.id=(
+             SELECT live_target.work_item_id
+               FROM agent_sessions live_target
+              WHERE live_target.id=$3
+                AND live_target.workspace_id=w.workspace_id
+           )
+           AND w.deleted_at IS NULL
+           AND t.deleted_at IS NULL
+           AND ${liveAuthorization}`, values);
   }
   if (query.teamId) await assertReadableTeam(request, query.teamId);
   const values: unknown[] = [request.actor!.workspaceId];
@@ -980,7 +1182,20 @@ async function listWorkItems(request: FastifyRequest) {
     values.push(query.search);
     sql += ` AND (t.key || '-' || w.number::text = $${values.length} OR w.title % $${values.length} OR to_tsvector('simple',coalesce(w.title,'') || ' ' || coalesce(w.description,'')) @@ plainto_tsquery('simple',$${values.length}))`;
   }
-  return (await db.query(sql + " ORDER BY w.updated_at DESC", values)).rows;
+  return paginator.query(db, request, request.query, {
+    route: "/api/v1/work-items",
+    filters: {
+      teamId: query.teamId ?? null,
+      statusId: query.statusId ?? null,
+      projectId: query.projectId ?? null,
+      priority: query.priority ?? null,
+      statusCategory: query.statusCategory ?? null,
+      responsibleHumanActorId: owner ?? null,
+      label: query.label ?? null,
+      search: query.search ?? null,
+    },
+    sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
+  }, sql, values);
 }
 
 function eventSql(

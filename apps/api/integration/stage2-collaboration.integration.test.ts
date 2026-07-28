@@ -8,6 +8,7 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 2 API integration requires a dedicated *test* database.')
 
 const db = createDb(databaseUrl)
+type Page<T> = { items: T[]; nextCursor: string | null }
 const app = buildApp()
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
 type Human = { cookie: string; csrf: string; actorId: string }
@@ -67,8 +68,8 @@ async function makeFixture(): Promise<Fixture> {
   const human = { cookie, csrf: installed.json<{ csrfToken: string }>().csrfToken, actorId: '' }
   const me = await humanCall(human, 'GET', '/api/v1/auth/me')
   human.actorId = me.json<{ actor: { id: string } }>().actor.id
-  const teamId = (await humanCall(human, 'GET', '/api/v1/teams')).json<Array<{ id: string }>>()[0]!.id
-  const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Array<{ id: string; name: string }>>().find(state => state.name === 'Ready')!.id
+  const teamId = (await humanCall(human, 'GET', '/api/v1/teams')).json<Page<{ id: string }>>().items[0]!.id
+  const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
   const work = await humanCall(human, 'POST', '/api/v1/work-items', { teamId, title: 'Stage 2 collaboration', statusId: readyId, responsibleHumanActorId: human.actorId })
   const workItemId = work.json<{ id: string }>().id
   const workspaceId = (await db.query<{ workspace_id: string }>('SELECT workspace_id FROM work_items WHERE id=$1', [workItemId])).rows[0]!.workspace_id
@@ -211,7 +212,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     const askId = ask.json<{ id: string }>().id
     const answer = await agentCall(childToken, 'POST', `/api/v1/rooms/${channelId}/messages`, { sessionId: childId, intent: 'answer', body: 'Yes, proceed.', recipientActorId: f.runner.actorId, replyToMessageId: askId })
     expect(answer.statusCode).toBe(200)
-    expect((await humanCall(f.human, 'GET', '/api/v1/inbox?status=resolved')).json<Array<{ source_id: string; kind: string }>>()).toEqual(expect.arrayContaining([expect.objectContaining({ source_id: askId, kind: 'ask' })]))
+    expect((await humanCall(f.human, 'GET', '/api/v1/inbox?status=resolved')).json<Page<{ source_id: string; kind: string }>>().items).toEqual(expect.arrayContaining([expect.objectContaining({ source_id: askId, kind: 'ask' })]))
     const timeline = await humanCall(f.human, 'GET', `/api/v1/rooms/${channelId}/timeline`)
     expect(timeline.statusCode).toBe(200)
     expect(timeline.json<{ items: Array<{ kind: string; subtype: string }> }>().items).toEqual(expect.arrayContaining([
@@ -285,7 +286,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(lease.headers.etag).toBe('"revision-1"')
     const listed = await humanCall(f.human, 'GET', `/api/v1/leases?sessionId=${f.parent.id}`)
     expect(listed.statusCode, JSON.stringify(listed.json())).toBe(200)
-    expect(listed.json<Array<{ id: string; version: number; revision: number }>>())
+    expect(listed.json<Page<{ id: string; version: number; revision: number }>>().items)
       .toContainEqual(expect.objectContaining({ id: leased.id, version: 1, revision: 1 }))
     const forceUrl = `/api/v1/leases/${leased.id}/force-release`
     const missingRevision = await humanCall(f.human, 'POST', forceUrl, { reason: 'missing optimistic lock' })

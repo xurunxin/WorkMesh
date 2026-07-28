@@ -10,6 +10,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) thr
 
 const db = createDb(databaseUrl);
 const app = buildApp();
+type Page<T> = { items: T[]; nextCursor: string | null };
 let cookie = "";
 let csrf = "";
 let actorId = "";
@@ -28,8 +29,8 @@ describe("reviewer API fixes", () => {
     cookie = String(Array.isArray(install.headers["set-cookie"]) ? install.headers["set-cookie"][0] : install.headers["set-cookie"]).split(";")[0] ?? "";
     csrf = install.json<{ csrfToken: string }>().csrfToken;
     actorId = (await human("GET", "/api/v1/auth/me")).json<{ actor: { id: string } }>().actor.id;
-    teamId = (await human("GET", "/api/v1/teams")).json<Array<{ id: string }>>()[0]!.id;
-    readyId = (await human("GET", `/api/v1/teams/${teamId}/states`)).json<Array<{ id: string; name: string }>>().find((state: {name:string}) => state.name === "Ready")!.id;
+    teamId = (await human("GET", "/api/v1/teams")).json<Page<{ id: string }>>().items[0]!.id;
+    readyId = (await human("GET", `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find((state: {name:string}) => state.name === "Ready")!.id;
   });
   afterAll(async () => { await app.close(); await db.end(); });
 
@@ -75,7 +76,7 @@ describe("reviewer API fixes", () => {
     expect(registered.statusCode).toBe(200);
     let definition = registered.json<{ id:string; revision:number; approved_capabilities:string[] }>();
     expect(definition.approved_capabilities).toEqual(["work:read"]);
-    const listed = (await human("GET", "/api/v1/agents")).json<Array<{id:string;approved_capabilities:string[]}>>();
+    const listed = (await human("GET", "/api/v1/agents")).json<Page<{id:string;approved_capabilities:string[]}>>().items;
     expect(listed.find(agent => agent.id === definition.id)?.approved_capabilities).toEqual(["work:read"]);
     const approved = await human("PATCH", `/api/v1/agents/${definition.id}`, { approvedCapabilities: ["work:read", "work:write"] }, { "if-match": `"revision-${definition.revision}"` });
     expect(approved.statusCode).toBe(200);

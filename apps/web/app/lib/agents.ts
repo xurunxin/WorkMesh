@@ -1,6 +1,6 @@
 'use client'
 
-import { ApiError, apiRequest, json } from './api'
+import { ApiError, apiListRequest, apiRequest, json, type ListResponse } from './api'
 
 export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
 
@@ -94,6 +94,10 @@ export const normalizeApproval = (value: Record<string, unknown>): Approval => (
 /** Stage 1 read routes are optional while an installation is being upgraded from Stage 0. */
 export async function optionalAgentRequest<T>(path: string): Promise<T | null> {
   try { return await apiRequest<T>(path) } catch (reason) { if (reason instanceof ApiError && reason.status === 404) return null; throw reason }
+}
+
+export async function optionalAgentListRequest<T>(path: string, init?: RequestInit): Promise<ListResponse<T> | null> {
+  try { return await apiListRequest<T>(path, init) } catch (reason) { if (reason instanceof ApiError && reason.status === 404) return null; throw reason }
 }
 
 export async function grantAgentTeamAccess(agentId: string, teamId: string, approvedCapabilities: string[]): Promise<AgentTeamAccess> {

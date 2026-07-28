@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import net from 'node:net'
+import { randomBytes } from 'node:crypto'
 import {
   featureDefinitions,
   releaseMetadata,
@@ -10,7 +11,9 @@ const loopbackHosts = new Set(['127.0.0.1', '::1'])
 const secretEnvironmentNames = [
   'SESSION_SECRET',
   'WORKMESH_MASTER_KEY',
+  'WORKMESH_BOOTSTRAP_TOKEN',
   'AUTH_RATE_LIMIT_HMAC_KEY',
+  'PAGINATION_CURSOR_KEYS',
   'POSTGRES_PASSWORD',
   'S3_SECRET_ACCESS_KEY',
   'WORKMESH_MCP_ACCESS_TOKEN',
@@ -55,7 +58,7 @@ function decodeCanonicalBase64Url(value: string): Buffer | undefined {
   }
 }
 
-function isRepeatedBootstrapMaterial(value: Buffer): boolean {
+function isRepeatedSecretMaterial(value: Buffer): boolean {
   if (new Set(value).size < 8) return true
   for (let width = 1; width <= value.length / 2; width += 1) {
     if (value.length % width !== 0) continue
@@ -76,7 +79,8 @@ function secretReusesBootstrapMaterial(
   bootstrapMaterial: Buffer,
   env: NodeJS.ProcessEnv,
 ): boolean {
-  if (secretEnvironmentNames.some(name => env[name] === bootstrapToken))
+  if (secretEnvironmentNames.some(name =>
+    name !== 'WORKMESH_BOOTSTRAP_TOKEN' && env[name] === bootstrapToken))
     return true
 
   const masterKey = env.WORKMESH_MASTER_KEY
@@ -100,7 +104,7 @@ function bootstrapTokenIssue(
   if (/change[_-]?me|replace[_-]?me|placeholder|example|workmesh[_-]?bootstrap/i.test(value)
     || /change[_-]?me|replace[_-]?me|placeholder|example|workmesh[_-]?bootstrap/i.test(decodedText))
     return 'WORKMESH_BOOTSTRAP_TOKEN must not be a placeholder'
-  if (isRepeatedBootstrapMaterial(decoded))
+  if (isRepeatedSecretMaterial(decoded))
     return 'WORKMESH_BOOTSTRAP_TOKEN must not be a repeated or low-diversity value'
   if (secretReusesBootstrapMaterial(value, decoded, env))
     return 'WORKMESH_BOOTSTRAP_TOKEN must not reuse another configured secret'
@@ -122,6 +126,9 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_BACKOFF_BASE_MS: boundedInt(10, 60_000, 500), AUTH_RATE_LIMIT_BACKOFF_MAX_MS: boundedInt(100, 3_600_000, 60_000),
   AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS: boundedInt(50, 30_000, 500), AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS: boundedInt(50, 30_000, 750),
   AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: boundedInt(1_000, 3_600_000, 60_000),
+  PAGINATION_CURSOR_KEYS: optionalString,
+  PAGINATION_CURSOR_ACTIVE_KID: optionalString,
+  PAGINATION_CURSOR_TTL_SECONDS: boundedInt(60, 86_400, 900),
   SESSION_COOKIE_SECURE: z.enum(['true', 'false']).default('false'), WEB_ORIGIN: z.string().url().default('http://localhost:3000'), API_PORT: z.coerce.number().int().positive().default(3001),
 }).superRefine((value, context) => {
   if (value.AUTH_RATE_LIMIT_BACKOFF_BASE_MS > value.AUTH_RATE_LIMIT_BACKOFF_MAX_MS)
@@ -130,7 +137,71 @@ const envSchema = z.object({
 export type Config = z.infer<typeof envSchema> & {
   sessionCookieSecure: boolean
   bootstrapAllowLoopback: boolean
+  paginationCursorKeys: ReadonlyMap<string, Buffer>
+  paginationCursorActiveKid: string
 }
+
+function secretMaterialCandidates(value: string | undefined): Buffer[] {
+  if (!value) return []
+  const candidates: Buffer[] = [Buffer.from(value, 'utf8')]
+  if (/^[0-9a-fA-F]{64,512}$/.test(value) && value.length % 2 === 0)
+    candidates.push(Buffer.from(value, 'hex'))
+  const decoded = decodeCanonicalBase64Url(value)
+  if (decoded) candidates.push(decoded)
+  return candidates
+}
+
+function parsePaginationCursorKeys(
+  raw: string | undefined,
+  activeKid: string | undefined,
+  env: NodeJS.ProcessEnv,
+  production: boolean,
+): { keys: ReadonlyMap<string, Buffer>; activeKid: string } {
+  if (!raw) {
+    if (production)
+      throw new Error('PAGINATION_CURSOR_KEYS and PAGINATION_CURSOR_ACTIVE_KID are required in production')
+    if (activeKid)
+      throw new Error('PAGINATION_CURSOR_ACTIVE_KID requires PAGINATION_CURSOR_KEYS')
+    return { keys: new Map([['dev-ephemeral', randomBytes(32)]]), activeKid: 'dev-ephemeral' }
+  }
+  if (!activeKid)
+    throw new Error('PAGINATION_CURSOR_ACTIVE_KID is required when PAGINATION_CURSOR_KEYS is configured')
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(activeKid))
+    throw new Error('PAGINATION_CURSOR_ACTIVE_KID must be a safe key identifier')
+
+  const keys = new Map<string, Buffer>()
+  for (const entry of raw.split(',')) {
+    const separator = entry.indexOf(':')
+    if (separator <= 0 || separator === entry.length - 1)
+      throw new Error('PAGINATION_CURSOR_KEYS must use kid:canonical-base64url entries')
+    const kid = entry.slice(0, separator)
+    const encoded = entry.slice(separator + 1)
+    if (!/^[A-Za-z0-9_-]{1,64}$/.test(kid) || keys.has(kid))
+      throw new Error('PAGINATION_CURSOR_KEYS contains an invalid or duplicate key identifier')
+    const material = decodeCanonicalBase64Url(encoded)
+    if (!material)
+      throw new Error('Each pagination cursor key must be canonical base64url encoding of 32 to 256 random bytes')
+    const decodedText = material.toString('utf8')
+    if (/change[_-]?me|replace[_-]?me|placeholder|example|pagination[_-]?cursor/i.test(encoded)
+      || /change[_-]?me|replace[_-]?me|placeholder|example|pagination[_-]?cursor/i.test(decodedText))
+      throw new Error('Pagination cursor keys must not use placeholder material')
+    if (isRepeatedSecretMaterial(material))
+      throw new Error('Pagination cursor keys must not use repeated or low-diversity material')
+    if ([...keys.values()].some(existing => existing.equals(material)))
+      throw new Error('Pagination cursor keys must use distinct material')
+    const reused = secretEnvironmentNames
+      .filter(name => name !== 'PAGINATION_CURSOR_KEYS')
+      .flatMap(name => secretMaterialCandidates(env[name]))
+      .some(candidate => candidate.equals(material))
+    if (reused)
+      throw new Error('Pagination cursor keys must not reuse another configured secret')
+    keys.set(kid, material)
+  }
+  if (!keys.has(activeKid))
+    throw new Error('PAGINATION_CURSOR_ACTIVE_KID must identify a configured pagination cursor key')
+  return { keys, activeKid }
+}
+
 export const loadConfig = (env: NodeJS.ProcessEnv = process.env): Config => {
   const value = envSchema.parse(env)
   const bootstrapMaterial = value.WORKMESH_BOOTSTRAP_TOKEN
@@ -154,11 +225,19 @@ export const loadConfig = (env: NodeJS.ProcessEnv = process.env): Config => {
     if (value.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS.length)
       throw new Error('Tokenless bootstrap forbids trusted proxy CIDRs')
   }
+  const pagination = parsePaginationCursorKeys(
+    value.PAGINATION_CURSOR_KEYS,
+    value.PAGINATION_CURSOR_ACTIVE_KID,
+    env,
+    value.NODE_ENV === 'production',
+  )
 
   return {
     ...value,
     sessionCookieSecure: value.SESSION_COOKIE_SECURE === 'true',
     bootstrapAllowLoopback: allowLoopback,
+    paginationCursorKeys: pagination.keys,
+    paginationCursorActiveKid: pagination.activeKid,
   }
 }
 

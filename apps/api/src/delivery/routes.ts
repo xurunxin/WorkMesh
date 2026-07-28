@@ -37,6 +37,8 @@ import { mutate, type CommandContext } from '../commands.js'
 import { assertSanitized } from '../agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
+import { liveSessionReadPredicate } from '../live-read-authorization.js'
+import type { Paginator, PreparedPage } from '../pagination.js'
 
 type Helpers = {
   db: Pool
@@ -44,6 +46,7 @@ type Helpers = {
   header: (request: FastifyRequest, name: string) => string | undefined
   readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>
   features: FeatureConfig
+  paginator: Paginator
 }
 type RepositoryRow = {
   id: string
@@ -165,9 +168,20 @@ function applicableAgentRepositoryContexts(
   tx: PoolClient,
   current: ApiActor,
   repositoryId?: string,
+  page?: PreparedPage,
 ) {
   if (current.kind !== 'agent' || !current.agentSessionId)
     throw new DomainError('AGENT_IDENTITY_REQUIRED', 'An agent session token is required')
+  const values = page?.values
+    ?? [current.agentSessionId, current.workspaceId, repositoryId ?? null]
+  const liveAuthorization = liveSessionReadPredicate(
+    current,
+    's.id',
+    's.workspace_id',
+    values,
+    'repo:read',
+  )
+  if (page) values.push(page.limit + 1)
   return tx.query<RepositoryContextRow>(
     `WITH applicable AS (
        SELECT r.id,r.workspace_id,r.connection_id,r.team_id,r.external_id,r.full_name,r.default_branch,
@@ -198,13 +212,15 @@ function applicableAgentRepositoryContexts(
           AND 'repo:read'=ANY(a.approved_capabilities)
           AND 'repo:read'=ANY(ata.approved_capabilities)
           AND coalesce(d.capability_scope->'repositoryIds','[]'::jsonb) ? r.id::text
+          AND ${liveAuthorization}
      )
      SELECT id,workspace_id,connection_id,team_id,external_id,full_name,default_branch,
             required_checks,provider,context_id,project_id,work_item_id,session_id,
             base_branch,base_sha,branch_pattern,allowed_paths,permissions,
             guidance_manifest_hash,context_created_at
-       FROM applicable WHERE context_rank=1 ORDER BY full_name`,
-    [current.agentSessionId, current.workspaceId, repositoryId ?? null],
+       FROM applicable WHERE context_rank=1${page?.predicate ? ` AND ${page.predicate}` : ''}
+       ORDER BY ${page?.orderBy ?? 'full_name,id'}${page ? ` LIMIT $${page.values.length}` : ''}`,
+    values,
   )
 }
 
@@ -427,24 +443,26 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   app.get('/api/v1/repositories', async request => withTx(h.db, async tx => {
     const current = actor(request)
     if (current.kind === 'agent') {
-      const contexts = (await applicableAgentRepositoryContexts(tx, current)).rows
-      for (const context of contexts) requireProviderFeature(h.features, context.provider)
-      return [...new Map(contexts.map(context => [context.id, {
+      const page = h.paginator.prepare(request,request.query,{route:'/api/v1/repositories',filters:{},sort:[{key:'full_name',sql:'full_name',direction:'ASC'},{key:'id',sql:'id',direction:'ASC'}]},[current.agentSessionId,current.workspaceId,null])
+      await page.beforeQuery()
+      const contexts = (await applicableAgentRepositoryContexts(tx, current, undefined, page)).rows
+      const response=page.finish(contexts)
+      for (const context of response.items) requireProviderFeature(h.features, context.provider)
+      return {items:response.items.map(context => ({
         id: context.id, workspace_id: context.workspace_id, connection_id: context.connection_id,
         team_id: context.team_id, external_id: context.external_id, full_name: context.full_name,
         default_branch: context.default_branch, required_checks: context.required_checks,
-      }])).values()]
+      })),nextCursor:response.nextCursor}
     }
-    const repositories = (await tx.query<Omit<RepositoryRow, 'provider'> & { feature_provider: RepositoryRow['provider'] }>(
+    const response=await h.paginator.query<Omit<RepositoryRow, 'provider'> & { feature_provider: RepositoryRow['provider'] }>(tx,request,request.query,{route:'/api/v1/repositories',filters:{},sort:[{key:'full_name',sql:'r.full_name',direction:'ASC'},{key:'id',sql:'r.id',direction:'ASC'}]},
       `SELECT r.*,c.provider AS feature_provider FROM repositories r
        JOIN provider_connections c ON c.id=r.connection_id AND c.active
        WHERE r.workspace_id=$1 AND
-       ($2='admin' OR EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=r.workspace_id AND m.team_id=r.team_id AND m.actor_id=$3))
-       ORDER BY r.full_name`,
+       ($2='admin' OR EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=r.workspace_id AND m.team_id=r.team_id AND m.actor_id=$3))`,
       [current.workspaceId, current.workspaceRole, current.id],
-    )).rows
-    for (const repo of repositories) requireProviderFeature(h.features, repo.feature_provider)
-    return repositories.map(({ feature_provider: _featureProvider, ...repo }) => repo)
+    )
+    for (const repo of response.items) requireProviderFeature(h.features, repo.feature_provider)
+    return {items:response.items.map(({ feature_provider: _featureProvider, ...repo }) => repo),nextCursor:response.nextCursor}
   }))
 
   app.post('/api/v1/repositories', async request => {
@@ -955,19 +973,19 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     ] = await Promise.all([
       tx.query(`SELECT m.*,count(w.id)::int AS total,count(w.id) FILTER(WHERE s.category='completed')::int AS completed
         FROM project_milestones m LEFT JOIN work_items w ON w.milestone_id=m.id AND w.deleted_at IS NULL
-        LEFT JOIN workflow_states s ON s.id=w.status_id WHERE m.project_id=$1 GROUP BY m.id ORDER BY m.created_at`, [id(request)]),
-      tx.query('SELECT * FROM project_updates WHERE project_id=$1 ORDER BY created_at DESC', [id(request)]),
-      tx.query('SELECT a.*,l.plan_step_id,l.repository_id,l.pull_request_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id WHERE l.project_id=$1 ORDER BY a.created_at DESC', [id(request)]),
+        LEFT JOIN workflow_states s ON s.id=w.status_id WHERE m.project_id=$1 GROUP BY m.id ORDER BY m.created_at LIMIT 200`, [id(request)]),
+      tx.query('SELECT * FROM project_updates WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)]),
+      tx.query('SELECT a.*,l.plan_step_id,l.repository_id,l.pull_request_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id WHERE l.project_id=$1 ORDER BY a.created_at DESC LIMIT 200', [id(request)]),
       tx.query(
         `SELECT d.depends_on_project_id,p.name AS depends_on_project_name,
                 p.status AS depends_on_project_status
            FROM project_dependencies d
            JOIN projects p ON p.id=d.depends_on_project_id AND p.workspace_id=$2
           WHERE d.project_id=$1
-          ORDER BY p.name,p.id`,
+          ORDER BY p.name,p.id LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
-      tx.query('SELECT * FROM completion_suggestions WHERE project_id=$1 ORDER BY created_at DESC', [id(request)]),
+      tx.query('SELECT * FROM completion_suggestions WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)]),
       tx.query<{
         id: string
         provider: string
@@ -987,7 +1005,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN work_items w ON w.id=pr.work_item_id
            LEFT JOIN artifact_links l ON l.artifact_id=pr.artifact_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
-          ORDER BY pr.updated_at DESC`,
+          ORDER BY pr.updated_at DESC LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
       tx.query<{
@@ -999,7 +1017,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN pull_request_projections pr ON pr.id=rv.pull_request_id
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND rv.workspace_id=$2
-          ORDER BY rv.updated_at DESC`,
+          ORDER BY rv.updated_at DESC LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
       tx.query<{
@@ -1011,7 +1029,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN pull_request_projections pr ON pr.id=sr.pull_request_id
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
-          ORDER BY sr.created_at DESC`,
+          ORDER BY sr.created_at DESC LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
       tx.query<{
@@ -1024,7 +1042,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN pull_request_projections pr ON pr.id=sr.pull_request_id
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
-          ORDER BY f.created_at,f.id`,
+          ORDER BY f.created_at,f.id LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
       tx.query<{
@@ -1044,7 +1062,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
           WHERE w.project_id=$1 AND pr.workspace_id=$2 AND ci.head_sha=pr.head_sha
           ORDER BY ci.pull_request_id,ci.name,
                    ci.provider_observed_at DESC NULLS LAST,
-                   ci.provider_observation_rank DESC,ci.updated_at DESC,ci.external_id DESC`,
+                   ci.provider_observation_rank DESC,ci.updated_at DESC,ci.external_id DESC LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
       tx.query<{
@@ -1063,7 +1081,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN pull_request_projections pr ON pr.id=b.pull_request_id
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
-          ORDER BY b.created_at DESC`,
+          ORDER BY b.created_at DESC LIMIT 200`,
         [id(request), actor(request).workspaceId],
       ),
     ])

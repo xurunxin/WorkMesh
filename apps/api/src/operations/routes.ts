@@ -57,6 +57,11 @@ import {
   mapStreamEvent,
   type WorkMeshStreamEvent,
 } from '@workmesh/a2a-adapter'
+import type { Paginator, PageSortField } from '../pagination.js'
+import {
+  liveHumanTeamReadPredicate,
+  liveSessionReadPredicate,
+} from '../live-read-authorization.js'
 
 type Helpers = {
   db: Pool
@@ -64,6 +69,7 @@ type Helpers = {
   header: (request: FastifyRequest, name: string) => string | undefined
   readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>
   features: FeatureConfig
+  paginator: Paginator
 }
 
 const uuid = z.string().uuid()
@@ -244,7 +250,24 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       LEFT JOIN work_items item ON item.cycle_id=cycle.id AND item.deleted_at IS NULL
       LEFT JOIN workflow_states workflow ON workflow.id=item.status_id
       WHERE cycle.workspace_id=$1 AND ($2::uuid IS NULL OR cycle.team_id=$2)`
-    if (current.workspaceRole !== 'admin') {
+    if (current.kind === 'agent') {
+      values.push(current.agentSessionId)
+      const sessionParameter = `$${values.length}`
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        'cycle.workspace_id',
+        values,
+      )
+      sql += ` AND ${liveAuthorization}
+        AND (
+          cycle.team_id IS NULL OR cycle.team_id=(
+            SELECT scoped.team_id FROM agent_sessions scoped
+            WHERE scoped.id=${sessionParameter}
+              AND scoped.workspace_id=cycle.workspace_id
+          )
+        )`
+    } else if (current.workspaceRole !== 'admin') {
       values.push(current.id)
       sql += ` AND (cycle.team_id IS NULL OR EXISTS (
         SELECT 1 FROM memberships member
@@ -255,8 +278,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       values.push(query.state)
       sql += ` AND CASE WHEN now()<cycle.starts_at THEN 'upcoming' WHEN now()>=cycle.ends_at THEN 'history' ELSE 'current' END=$${values.length}`
     }
-    sql += ' GROUP BY cycle.id ORDER BY cycle.starts_at'
-    return (await db.query(sql, values)).rows
+    return helpers.paginator.query(db,request,request.query,{route:'/api/v1/cycles',filters:{teamId:query.teamId??null,state:query.state??null},sort:[{key:'starts_at',sql:'cycle.starts_at',direction:'ASC'},{key:'id',sql:'cycle.id',direction:'ASC'}]},sql,values,' GROUP BY cycle.id')
   })
 
   app.post('/api/v1/cycles', async request => {
@@ -375,7 +397,43 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/initiatives', async request => {
     const current = actor(request)
-    return (await db.query(
+    const binding={route:'/api/v1/initiatives',filters:{},sort:[{key:'priority',sql:'initiative.priority',direction:'DESC' as const},{key:'updated_at',sql:'initiative.updated_at',direction:'DESC' as const},{key:'id',sql:'initiative.id',direction:'DESC' as const}]}
+    if (current.kind === 'agent') {
+      const values: unknown[] = [current.workspaceId, current.agentSessionId]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        '$2',
+        'initiative.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT initiative.* FROM initiatives initiative
+          WHERE initiative.workspace_id=$1
+            AND ${liveAuthorization}
+            AND EXISTS (
+              SELECT 1
+                FROM initiative_projects link
+                JOIN projects project
+                  ON project.id=link.project_id
+                 AND project.workspace_id=initiative.workspace_id
+                 AND project.deleted_at IS NULL
+                JOIN agent_sessions scoped
+                  ON scoped.id=$2
+                 AND scoped.workspace_id=project.workspace_id
+                 AND scoped.team_id=project.team_id
+                LEFT JOIN work_items scoped_item
+                  ON scoped_item.id=scoped.work_item_id
+                 AND scoped_item.workspace_id=scoped.workspace_id
+               WHERE link.initiative_id=initiative.id
+                 AND (
+                   scoped.project_id=project.id
+                   OR scoped_item.project_id=project.id
+                 )
+            )`,
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,binding,
       `SELECT initiative.* FROM initiatives initiative
         WHERE workspace_id=$1 AND (
           $2::boolean OR owner_actor_id=$3 OR EXISTS (
@@ -384,9 +442,9 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             JOIN memberships member ON member.workspace_id=project.workspace_id AND member.team_id=project.team_id
             WHERE link.initiative_id=initiative.id AND member.actor_id=$3
           )
-        ) ORDER BY priority DESC,updated_at DESC`,
+        )`,
       [current.workspaceId, current.workspaceRole === 'admin', current.id],
-    )).rows
+    )
   })
 
   app.post('/api/v1/initiatives', async request => {
@@ -472,7 +530,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             SELECT 1 FROM memberships member
             WHERE member.workspace_id=project.workspace_id AND member.team_id=project.team_id AND member.actor_id=$4
           ))
-        `,
+        ORDER BY link.sort_order,project.id LIMIT 201`,
       [
         initiativeId,
         current.workspaceId,
@@ -481,6 +539,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
         helpers.features.WORKMESH_BETA_COSTS,
       ],
     )).rows
+    if (projects.length > 200)
+      throw new DomainError('INITIATIVE_ROLLUP_LIMIT_EXCEEDED', 'Initiative rollup is limited to 200 visible projects')
     return rollupInitiative(projects.map(project => ({
       id: project.id,
       status: project.status,
@@ -497,17 +557,44 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/advanced-views', async request => {
     const current = actor(request)
-    return (await db.query(
-      `SELECT view.* FROM advanced_saved_views view
+    const binding={route:'/api/v1/advanced-views',filters:{},sort:[{key:'is_owner_favorite',sql:'(view.owner_actor_id=$2 AND view.favorite)',direction:'DESC' as const},{key:'updated_at',sql:'view.updated_at',direction:'DESC' as const},{key:'id',sql:'view.id',direction:'DESC' as const}]}
+    if (current.kind === 'agent') {
+      const values: unknown[] = [current.workspaceId, current.id, current.agentSessionId]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        '$3',
+        'view.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT view.*,(view.owner_actor_id=$2 AND view.favorite) AS is_owner_favorite
+           FROM advanced_saved_views view
+          WHERE view.workspace_id=$1
+            AND ${liveAuthorization}
+            AND (
+              view.owner_actor_id=$2 OR view.scope='workspace'
+              OR (
+                view.scope='team'
+                AND view.team_id=(
+                  SELECT scoped.team_id FROM agent_sessions scoped
+                  WHERE scoped.id=$3 AND scoped.workspace_id=view.workspace_id
+                )
+              )
+            )`,
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,binding,
+      `SELECT view.*,(view.owner_actor_id=$2 AND view.favorite) AS is_owner_favorite FROM advanced_saved_views view
         WHERE view.workspace_id=$1 AND (
           view.owner_actor_id=$2 OR view.scope='workspace'
           OR (view.scope='team' AND EXISTS (
             SELECT 1 FROM memberships member
             WHERE member.workspace_id=view.workspace_id AND member.team_id=view.team_id AND member.actor_id=$2
           ))
-        ) ORDER BY (view.owner_actor_id=$2 AND view.favorite) DESC,view.updated_at DESC`,
+        )`,
       [current.workspaceId, current.id],
-    )).rows
+    )
   })
 
   app.post('/api/v1/advanced-views', async request => {
@@ -545,38 +632,80 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
   app.get('/api/v1/advanced-views/:id/results', async request => {
     const viewId = id(request)
     const current = actor(request)
+    const viewValues: unknown[] = [viewId, current.workspaceId, current.id]
+    let viewVisibility: string
+    if (current.kind === 'agent') {
+      viewValues.push(current.agentSessionId)
+      viewVisibility = `(view.owner_actor_id=$3 OR view.scope='workspace'
+        OR (view.scope='team' AND view.team_id=(
+          SELECT scoped.team_id FROM agent_sessions scoped
+          WHERE scoped.id=$4 AND scoped.workspace_id=view.workspace_id
+        )))`
+    } else {
+      viewVisibility = `(view.owner_actor_id=$3 OR view.scope='workspace'
+        OR (view.scope='team' AND EXISTS (
+          SELECT 1 FROM memberships member
+           WHERE member.workspace_id=view.workspace_id AND member.team_id=view.team_id
+             AND member.actor_id=$3
+        )))`
+    }
     const view = one((await db.query<{
       entity_type: 'issue' | 'project' | 'session' | 'initiative'
       filters: unknown
       ordering: Array<{ field: string; direction: 'asc' | 'desc' }>
       visible_fields: string[]
       layout: 'list' | 'board' | 'timeline'
+      revision: number
     }>(
-       `SELECT view.entity_type,view.filters,view.ordering,view.visible_fields,view.layout
+       `SELECT view.entity_type,view.filters,view.ordering,view.visible_fields,view.layout,view.revision
          FROM advanced_saved_views view
-        WHERE view.id=$1 AND view.workspace_id=$2 AND (
-          view.owner_actor_id=$3 OR view.scope='workspace'
-          OR (view.scope='team' AND EXISTS (
-            SELECT 1 FROM memberships member
-             WHERE member.workspace_id=view.workspace_id AND member.team_id=view.team_id
-               AND member.actor_id=$3
-          ))
-        )`,
-      [viewId, current.workspaceId, current.id],
+        WHERE view.id=$1 AND view.workspace_id=$2 AND ${viewVisibility}`,
+      viewValues,
     )).rows)
     if (!viewLayoutAllowed(view.entity_type, view.layout))
       throw new DomainError('VIEW_LAYOUT_UNSUPPORTED', 'The selected layout is not supported for this entity type')
     const filters = parseAdvancedViewFilters(view.filters)
     const costRequested = assertViewCostCurrency(filters, view.ordering, view.visible_fields)
     requireCosts(helpers.features, costRequested)
-    const values: unknown[] = [current.workspaceId, current.workspaceRole === 'admin', current.id]
+    const values: unknown[] = current.kind === 'agent'
+      ? [current.workspaceId]
+      : [current.workspaceId, current.workspaceRole === 'admin', current.id]
     const add = (value: unknown): string => {
       values.push(value)
       return `$${values.length}`
     }
+    const agentSessionParameter = current.kind === 'agent'
+      ? add(current.agentSessionId)
+      : undefined
+    const resultScope = (
+      workspaceSql: string,
+      teamSql: string,
+      resourceSql: string,
+    ): string => {
+      if (!agentSessionParameter) {
+        return `($2::boolean OR EXISTS (
+          SELECT 1 FROM memberships member WHERE member.workspace_id=${workspaceSql}
+            AND member.team_id=${teamSql} AND member.actor_id=$3
+        ))`
+      }
+      return `EXISTS (
+        SELECT 1
+          FROM agent_sessions scoped
+          LEFT JOIN work_items scoped_item
+            ON scoped_item.id=scoped.work_item_id
+           AND scoped_item.workspace_id=scoped.workspace_id
+         WHERE scoped.id=${agentSessionParameter}
+           AND scoped.workspace_id=${workspaceSql}
+           AND scoped.team_id=${teamSql}
+           AND (${resourceSql})
+      )`
+    }
+    const resultColumn = (qualified: string, column: string): string =>
+      agentSessionParameter ? `result.${column}` : qualified
     let sql: string
-    const orderFields: Record<string, string> = {}
+    const orderFields: Record<string, { sql: string; rowKey: string }> = {}
     if (view.entity_type === 'issue') {
+      const currencyParameter = add(costRequested ? filters.cost!.currency : null)
       sql = `SELECT item.*,state.category AS status_category,
           coalesce(usage.cost_minor,0)::text AS cost_minor,usage.currency
         FROM work_items item
@@ -586,14 +715,10 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             FROM usage_records record
             JOIN agent_sessions session ON session.id=record.session_id
            WHERE session.work_item_id=item.id
-             AND record.currency=$4
+             AND record.currency=${currencyParameter}
         ) usage ON true
        WHERE item.workspace_id=$1 AND item.deleted_at IS NULL
-         AND ($2::boolean OR EXISTS (
-           SELECT 1 FROM memberships member WHERE member.workspace_id=item.workspace_id
-             AND member.team_id=item.team_id AND member.actor_id=$3
-         ))`
-      values.push(costRequested ? filters.cost!.currency : null)
+         AND ${resultScope('item.workspace_id', 'item.team_id', 'scoped.work_item_id=item.id')}`
       if (filters.assigneeActorIds?.length) sql += ` AND item.responsible_human_actor_id=ANY(${add(filters.assigneeActorIds)}::uuid[])`
       if (filters.priorities?.length) sql += ` AND item.priority=ANY(${add(filters.priorities)}::text[])`
       if (filters.projectIds?.length) sql += ` AND item.project_id=ANY(${add(filters.projectIds)}::uuid[])`
@@ -603,10 +728,11 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       if (filters.approvalStatuses?.length) sql += ` AND EXISTS (SELECT 1 FROM agent_sessions session JOIN approvals approval ON approval.session_id=session.id WHERE session.work_item_id=item.id AND approval.status=ANY(${add(filters.approvalStatuses)}::approval_status[]))`
       if (filters.cost?.minMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)>=${add(filters.cost.minMinor)}`
       if (filters.cost?.maxMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)<=${add(filters.cost.maxMinor)}`
-      orderFields.priority = 'item.priority'
-      orderFields.createdAt = 'item.created_at'
-      orderFields.dueDate = 'item.due_date'
+      orderFields.priority = { sql: resultColumn('item.priority', 'priority'), rowKey: 'priority' }
+      orderFields.createdAt = { sql: resultColumn('item.created_at', 'created_at'), rowKey: 'created_at' }
+      orderFields.dueDate = { sql: resultColumn('item.due_date', 'due_date'), rowKey: 'due_date' }
     } else if (view.entity_type === 'project') {
+      const currencyParameter = add(costRequested ? filters.cost!.currency : null)
       sql = `SELECT project.*,health.health,
           coalesce(usage.cost_minor,0)::text AS cost_minor,usage.currency
         FROM projects project
@@ -618,66 +744,127 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
         LEFT JOIN LATERAL (
           SELECT sum(record.cost_minor) AS cost_minor,min(record.currency) AS currency
             FROM usage_records record WHERE record.project_id=project.id
-             AND record.currency=$4
+             AND record.currency=${currencyParameter}
         ) usage ON true
        WHERE project.workspace_id=$1 AND project.deleted_at IS NULL
-         AND ($2::boolean OR EXISTS (
-           SELECT 1 FROM memberships member WHERE member.workspace_id=project.workspace_id
-             AND member.team_id=project.team_id AND member.actor_id=$3
-         ))`
-      values.push(costRequested ? filters.cost!.currency : null)
+         AND ${resultScope(
+           'project.workspace_id',
+           'project.team_id',
+           'scoped.project_id=project.id OR scoped_item.project_id=project.id',
+         )}`
       if (filters.projectIds?.length) sql += ` AND project.id=ANY(${add(filters.projectIds)}::uuid[])`
       if (filters.health?.length) sql += ` AND coalesce(health.health::text,'unknown')=ANY(${add(filters.health)}::text[])`
       if (filters.cost?.minMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)>=${add(filters.cost.minMinor)}`
       if (filters.cost?.maxMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)<=${add(filters.cost.maxMinor)}`
-      orderFields.createdAt = 'project.created_at'
-      orderFields.targetDate = 'project.target_date'
-      orderFields.health = 'health.health'
+      orderFields.createdAt = { sql: resultColumn('project.created_at', 'created_at'), rowKey: 'created_at' }
+      orderFields.targetDate = { sql: resultColumn('project.target_date', 'target_date'), rowKey: 'target_date' }
+      orderFields.health = { sql: resultColumn('health.health', 'health'), rowKey: 'health' }
     } else if (view.entity_type === 'session') {
+      const currencyParameter = add(costRequested ? filters.cost!.currency : null)
       sql = `SELECT session.*,coalesce(usage.cost_minor,0)::text AS cost_minor,usage.currency
          FROM agent_sessions session
          LEFT JOIN work_items item ON item.id=session.work_item_id
          LEFT JOIN LATERAL (
           SELECT sum(record.cost_minor) AS cost_minor,min(record.currency) AS currency
             FROM usage_records record WHERE record.session_id=session.id
-             AND record.currency=$4
+             AND record.currency=${currencyParameter}
         ) usage ON true
-       WHERE session.workspace_id=$1 AND ($2::boolean OR EXISTS (
-         SELECT 1 FROM memberships member WHERE member.workspace_id=session.workspace_id
-           AND member.team_id=session.team_id AND member.actor_id=$3
-       ))`
-      values.push(costRequested ? filters.cost!.currency : null)
+       WHERE session.workspace_id=$1 AND ${resultScope(
+         'session.workspace_id',
+         'session.team_id',
+         `session.id=${agentSessionParameter ?? 'session.id'}`,
+       )}`
       if (filters.agentIds?.length) sql += ` AND session.agent_id=ANY(${add(filters.agentIds)}::uuid[])`
       if (filters.sessionStates?.length) sql += ` AND session.state=ANY(${add(filters.sessionStates)}::agent_session_state[])`
       if (filters.projectIds?.length) sql += ` AND coalesce(session.project_id,item.project_id)=ANY(${add(filters.projectIds)}::uuid[])`
       if (filters.approvalStatuses?.length) sql += ` AND EXISTS (SELECT 1 FROM approvals approval WHERE approval.session_id=session.id AND approval.status=ANY(${add(filters.approvalStatuses)}::approval_status[]))`
       if (filters.cost?.minMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)>=${add(filters.cost.minMinor)}`
       if (filters.cost?.maxMinor !== undefined) sql += ` AND coalesce(usage.cost_minor,0)<=${add(filters.cost.maxMinor)}`
-      orderFields.createdAt = 'session.created_at'
-      orderFields.state = 'session.state'
+      orderFields.createdAt = { sql: resultColumn('session.created_at', 'created_at'), rowKey: 'created_at' }
+      orderFields.state = { sql: resultColumn('session.state', 'state'), rowKey: 'state' }
     } else {
       sql = `SELECT initiative.* FROM initiatives initiative
-       WHERE initiative.workspace_id=$1 AND (
-         $2::boolean OR initiative.owner_actor_id=$3 OR EXISTS (
-           SELECT 1 FROM initiative_projects link
-           JOIN projects project ON project.id=link.project_id
-           WHERE link.initiative_id=initiative.id AND EXISTS (
-             SELECT 1 FROM memberships member WHERE member.workspace_id=project.workspace_id
-               AND member.team_id=project.team_id AND member.actor_id=$3
+       WHERE initiative.workspace_id=$1 AND ${agentSessionParameter
+         ? `EXISTS (
+           SELECT 1
+             FROM initiative_projects link
+             JOIN projects project
+               ON project.id=link.project_id
+              AND project.workspace_id=initiative.workspace_id
+              AND project.deleted_at IS NULL
+             JOIN agent_sessions scoped
+               ON scoped.id=${agentSessionParameter}
+              AND scoped.workspace_id=project.workspace_id
+              AND scoped.team_id=project.team_id
+             LEFT JOIN work_items scoped_item
+               ON scoped_item.id=scoped.work_item_id
+              AND scoped_item.workspace_id=scoped.workspace_id
+            WHERE link.initiative_id=initiative.id
+              AND (scoped.project_id=project.id OR scoped_item.project_id=project.id)
+         )`
+         : `(
+           $2::boolean OR initiative.owner_actor_id=$3 OR EXISTS (
+             SELECT 1 FROM initiative_projects link
+             JOIN projects project ON project.id=link.project_id
+             WHERE link.initiative_id=initiative.id AND EXISTS (
+               SELECT 1 FROM memberships member WHERE member.workspace_id=project.workspace_id
+                 AND member.team_id=project.team_id AND member.actor_id=$3
+             )
            )
-         )
-       )`
+         )`}`
       if (filters.health?.length) sql += ` AND initiative.health=ANY(${add(filters.health)}::planning_health[])`
-      orderFields.createdAt = 'initiative.created_at'
-      orderFields.priority = 'initiative.priority'
-      orderFields.health = 'initiative.health'
+      orderFields.createdAt = { sql: resultColumn('initiative.created_at', 'created_at'), rowKey: 'created_at' }
+      orderFields.priority = { sql: resultColumn('initiative.priority', 'priority'), rowKey: 'priority' }
+      orderFields.health = { sql: resultColumn('initiative.health', 'health'), rowKey: 'health' }
     }
-    const ordering = view.ordering.flatMap(order => {
+    if (agentSessionParameter) {
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        agentSessionParameter,
+        'result.workspace_id',
+        values,
+      )
+      sql = `SELECT result.* FROM (${sql}) result WHERE ${liveAuthorization}`
+    }
+    const requested = view.ordering.flatMap(order => {
       const field = orderFields[order.field]
-      return field ? [`${field} ${order.direction === 'desc' ? 'DESC' : 'ASC'} NULLS LAST`] : []
+      return field ? [{ field, direction: order.direction === 'desc' ? 'DESC' as const : 'ASC' as const }] : []
     })
-    sql += ` ORDER BY ${ordering.length ? ordering.join(',') : `${orderFields.createdAt ?? '1'} DESC`} LIMIT 500`
-    return { viewId, entityType: view.entity_type, layout: view.layout, rows: (await db.query(sql, values)).rows }
+    const effective = requested.length
+      ? requested
+      : [{ field: orderFields.createdAt ?? { sql: `${view.entity_type}.id`, rowKey: 'id' }, direction: 'DESC' as const }]
+    const sort: PageSortField[] = effective.flatMap(({ field, direction }, index) => [
+      {
+        key: `null_${index}`,
+        sql: `(${field.sql} IS NULL)`,
+        direction: 'ASC' as const,
+        value: row => row[field.rowKey] === null,
+      },
+      {
+        key: field.rowKey,
+        sql: field.sql,
+        direction,
+        value: row => {
+          const value = row[field.rowKey]
+          return value instanceof Date ? value.toISOString() : value as string | number | boolean | null
+        },
+      },
+    ])
+    const idSql = agentSessionParameter ? 'result.id'
+      : view.entity_type === 'issue' ? 'item.id'
+      : view.entity_type === 'project' ? 'project.id'
+        : view.entity_type === 'session' ? 'session.id' : 'initiative.id'
+    sort.push({ key: 'id', sql: idSql, direction: effective.at(-1)?.direction ?? 'DESC' })
+    const page = helpers.paginator.prepare(request,request.query,{
+      route:'/api/v1/advanced-views/:id/results',
+      filters:{viewId,revision:view.revision,entityType:view.entity_type,filters,ordering:view.ordering},
+      sort,
+    },values)
+    if(page.predicate) sql+=` AND ${page.predicate}`
+    page.values.push(page.limit+1)
+    await page.beforeQuery()
+    const rows=(await db.query(`${sql} ORDER BY ${page.orderBy} LIMIT $${page.values.length}`,page.values)).rows as Record<string,unknown>[]
+    return page.finish(rows)
   })
 
   app.post('/api/v1/projects/:id/health', async request => {
@@ -830,26 +1017,110 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/projects/:id/health', async request => {
     const projectId = id(request)
+    const current = actor(request)
     const project = one((await db.query<{ team_id: string }>(
       'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2',
-      [projectId, actor(request).workspaceId],
+      [projectId, current.workspaceId],
     )).rows)
     await helpers.readableTeam(request, project.team_id)
-    const updates = (await db.query(
+    if (current.kind === 'agent') {
+      const authorizedProject = await db.query(
+        `SELECT 1
+           FROM agent_sessions scoped
+           LEFT JOIN work_items scoped_item
+             ON scoped_item.id=scoped.work_item_id
+            AND scoped_item.workspace_id=scoped.workspace_id
+          WHERE scoped.id=$1
+            AND scoped.workspace_id=$2
+            AND scoped.team_id=$3
+            AND (scoped.project_id=$4 OR scoped_item.project_id=$4)`,
+        [
+          current.agentSessionId,
+          current.workspaceId,
+          project.team_id,
+          projectId,
+        ],
+      )
+      if (!authorizedProject.rowCount)
+        throw new DomainError(
+          'RESOURCE_SCOPE_DENIED',
+          'Agent token cannot read this project',
+        )
+    }
+    const values: unknown[] = [projectId, current.workspaceId]
+    let liveAuthorization: string
+    if (current.kind === 'agent') {
+      values.push(current.agentSessionId)
+      const sessionParameter = `$${values.length}`
+      liveAuthorization = `${liveSessionReadPredicate(
+        current,
+        sessionParameter,
+        'project.workspace_id',
+        values,
+      )} AND EXISTS (
+        SELECT 1
+          FROM agent_sessions scoped
+          LEFT JOIN work_items scoped_item
+            ON scoped_item.id=scoped.work_item_id
+           AND scoped_item.workspace_id=scoped.workspace_id
+         WHERE scoped.id=${sessionParameter}
+           AND scoped.workspace_id=project.workspace_id
+           AND scoped.team_id=project.team_id
+           AND (scoped.project_id=project.id OR scoped_item.project_id=project.id)
+      )`
+    } else {
+      liveAuthorization = liveHumanTeamReadPredicate(
+        current,
+        'project.workspace_id',
+        'project.team_id',
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,{
+      route:'/api/v1/projects/:id/health',filters:{projectId},
+      sort:[{key:'created_at',sql:'update.created_at',direction:'DESC'},{key:'id',sql:'update.id',direction:'DESC'}],
+    },
       `SELECT update.*,coalesce(jsonb_agg(jsonb_build_object(
           'kind',source.source_kind,'id',source.source_id,'observedAt',source.observed_at,'value',source.value
         ) ORDER BY source.ordinal) FILTER (WHERE source.update_id IS NOT NULL),'[]') AS sources
        FROM project_health_updates update
+       JOIN projects project
+         ON project.id=update.project_id
+        AND project.workspace_id=$2
+        AND project.deleted_at IS NULL
        LEFT JOIN project_health_sources source ON source.update_id=update.id
-       WHERE update.project_id=$1 GROUP BY update.id ORDER BY update.created_at DESC`,
-      [projectId],
-    )).rows
-    return updates
+       WHERE update.project_id=$1 AND ${liveAuthorization}`,
+      values,
+      ' GROUP BY update.id')
   })
 
   app.get('/api/v1/automation-rules', async request => {
     const current = actor(request)
-    return (await db.query(
+    const binding={route:'/api/v1/automation-rules',filters:{},sort:[{key:'updated_at',sql:'rule.updated_at',direction:'DESC' as const},{key:'id',sql:'rule.id',direction:'DESC' as const}]}
+    if (current.kind === 'agent') {
+      const values: unknown[] = [current.workspaceId, current.agentSessionId]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        '$2',
+        'rule.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT rule.*,version.version,version.trigger,version.condition,version.actions,version.max_attempts
+           FROM automation_rules rule
+           JOIN automation_rule_versions version ON version.id=rule.current_version_id
+          WHERE rule.workspace_id=$1
+            AND ${liveAuthorization}
+            AND (
+              rule.team_id IS NULL OR rule.team_id=(
+                SELECT scoped.team_id FROM agent_sessions scoped
+                WHERE scoped.id=$2 AND scoped.workspace_id=rule.workspace_id
+              )
+            )`,
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,binding,
       `SELECT rule.*,version.version,version.trigger,version.condition,version.actions,version.max_attempts
        FROM automation_rules rule JOIN automation_rule_versions version ON version.id=rule.current_version_id
        WHERE rule.workspace_id=$1 AND (
@@ -857,9 +1128,9 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
            SELECT 1 FROM memberships member
            WHERE member.workspace_id=rule.workspace_id AND member.team_id=rule.team_id AND member.actor_id=$3
          )
-       ) ORDER BY rule.updated_at DESC`,
+       )`,
       [current.workspaceId, current.workspaceRole === 'admin', current.id],
-    )).rows
+    )
   })
 
   app.post('/api/v1/automation-rules', async request => {
@@ -977,23 +1248,75 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/automation-runs', async request => {
     const current = actor(request)
-    const query = z.object({ ruleId: uuid.optional(), loopId: uuid.optional(), limit: z.coerce.number().int().min(1).max(200).default(50) }).parse(request.query)
-    return (await db.query(
+    const query = z.object({ ruleId: uuid.optional(), loopId: uuid.optional() }).parse(request.query)
+    const binding={route:'/api/v1/automation-runs',filters:{ruleId:query.ruleId??null,loopId:query.loopId??null},sort:[{key:'created_at',sql:'run.created_at',direction:'DESC' as const},{key:'id',sql:'run.id',direction:'DESC' as const}]}
+    if (current.kind === 'agent') {
+      const values: unknown[] = [
+        current.workspaceId,
+        query.ruleId ?? null,
+        query.loopId ?? null,
+        current.agentSessionId,
+      ]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        'run.session_id',
+        'run.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT run.* FROM automation_runs run
+          WHERE run.workspace_id=$1
+            AND ($2::uuid IS NULL OR run.rule_id=$2)
+            AND ($3::uuid IS NULL OR run.loop_id=$3)
+            AND run.session_id=$4
+            AND ${liveAuthorization}`,
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,binding,
       `SELECT run.* FROM automation_runs run
        WHERE run.workspace_id=$1 AND ($2::uuid IS NULL OR run.rule_id=$2)
          AND ($3::uuid IS NULL OR run.loop_id=$3)
          AND ($4::boolean OR run.team_id IS NULL OR EXISTS (
            SELECT 1 FROM memberships member
            WHERE member.workspace_id=run.workspace_id AND member.team_id=run.team_id AND member.actor_id=$5
-         ))
-       ORDER BY run.created_at DESC LIMIT $6`,
-      [current.workspaceId, query.ruleId ?? null, query.loopId ?? null, current.workspaceRole === 'admin', current.id, query.limit],
-    )).rows
+         ))`,
+      [current.workspaceId, query.ruleId ?? null, query.loopId ?? null, current.workspaceRole === 'admin', current.id],
+    )
   })
 
   app.get('/api/v1/loops', async request => {
     const current = actor(request)
-    return (await db.query(
+    const binding={route:'/api/v1/loops',filters:{},sort:[{key:'updated_at',sql:'loop.updated_at',direction:'DESC' as const},{key:'id',sql:'loop.id',direction:'DESC' as const}]}
+    if (current.kind === 'agent') {
+      const values: unknown[] = [current.workspaceId, current.id, current.agentSessionId]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        '$3',
+        'loop.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT loop.*,
+          (SELECT jsonb_agg(recent ORDER BY recent.created_at DESC)
+             FROM (SELECT run.id,run.status,run.session_id,run.created_at,run.finished_at
+               FROM automation_runs run WHERE run.loop_id=loop.id ORDER BY run.created_at DESC LIMIT 10) recent
+          ) AS recent_runs
+         FROM loops loop
+         WHERE loop.workspace_id=$1
+           AND ${liveAuthorization}
+           AND (
+             loop.visibility='workspace'
+             OR loop.owner_actor_id=$2
+             OR loop.team_id=(
+               SELECT scoped.team_id FROM agent_sessions scoped
+               WHERE scoped.id=$3 AND scoped.workspace_id=loop.workspace_id
+             )
+           )`,
+        values,
+      )
+    }
+    return helpers.paginator.query(db,request,request.query,binding,
       `SELECT loop.*,
         (SELECT jsonb_agg(recent ORDER BY recent.created_at DESC)
            FROM (SELECT run.id,run.status,run.session_id,run.created_at,run.finished_at
@@ -1004,9 +1327,9 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
            SELECT 1 FROM memberships member
            WHERE member.workspace_id=loop.workspace_id AND member.team_id=loop.team_id AND member.actor_id=$3
          )
-       ) ORDER BY loop.updated_at DESC`,
+       )`,
       [current.workspaceId, current.workspaceRole === 'admin', current.id],
-    )).rows
+    )
   })
 
   app.post('/api/v1/loops', async request => {
@@ -1274,6 +1597,14 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/templates/export', async request => {
     requireAdmin(actor(request))
+    const bounds = one((await db.query<{ template_count: number; maximum_versions: number }>(
+      `SELECT count(*)::int AS template_count,
+        coalesce(max((SELECT count(*) FROM template_versions version WHERE version.template_id=template.id)),0)::int AS maximum_versions
+       FROM templates template WHERE template.workspace_id=$1`,
+      [actor(request).workspaceId],
+    )).rows)
+    if (bounds.template_count > 100 || bounds.maximum_versions > 100)
+      throw new DomainError('TEMPLATE_EXPORT_LIMIT_EXCEEDED', 'Template export is limited to 100 templates and 100 versions per template')
     const rows = (await db.query<{
       id: string
       kind: string
@@ -1293,33 +1624,40 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   app.get('/api/v1/templates', async request => {
     const current = actor(request)
+    const binding={route:'/api/v1/templates',filters:{},sort:[{key:'kind',sql:'template.kind',direction:'ASC' as const},{key:'name',sql:'template.name',direction:'ASC' as const},{key:'id',sql:'template.id',direction:'ASC' as const}]}
     if (current.kind === 'agent') {
       if (!current.agentSessionId) {
         throw new DomainError('SESSION_SCOPE_DENIED', 'Agent Template access requires a current Session')
       }
-      return (await db.query(
-        `SELECT template.*,version.version,version.body,version.change_summary
+      const values: unknown[] = [current.workspaceId, current.agentSessionId]
+      const liveAuthorization = liveSessionReadPredicate(
+        current,
+        'run.session_id',
+        'run.workspace_id',
+        values,
+      )
+      return helpers.paginator.query(db,request,request.query,binding,
+        `SELECT DISTINCT template.*,version.version,version.body,version.change_summary
          FROM automation_runs run
          JOIN loops loop ON loop.id=run.loop_id
          JOIN template_versions version ON version.id=loop.run_template_version_id
          JOIN templates template ON template.id=version.template_id
          WHERE run.workspace_id=$1 AND run.session_id=$2
            AND template.status='active'
-         ORDER BY template.kind,template.name`,
-        [current.workspaceId, current.agentSessionId],
-      )).rows
+           AND ${liveAuthorization}`,
+        values,
+      )
     }
     if (current.workspaceRole === 'admin') {
-      return (await db.query(
+      return helpers.paginator.query(db,request,request.query,binding,
         `SELECT template.*,version.version,version.body,version.change_summary
          FROM templates template
          JOIN template_versions version ON version.id=template.current_version_id
-         WHERE template.workspace_id=$1
-         ORDER BY template.kind,template.name`,
+         WHERE template.workspace_id=$1`,
         [current.workspaceId],
-      )).rows
+      )
     }
-    return (await db.query(
+    return helpers.paginator.query(db,request,request.query,binding,
       `SELECT template.*,version.version,version.body,version.change_summary
        FROM templates template
        JOIN template_versions version ON version.id=template.current_version_id
@@ -1327,10 +1665,9 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
          ON member.workspace_id=template.workspace_id
         AND member.team_id=template.team_id
        WHERE template.workspace_id=$1 AND member.actor_id=$2
-         AND template.status='active' AND template.team_id IS NOT NULL
-       ORDER BY template.kind,template.name`,
+         AND template.status='active' AND template.team_id IS NOT NULL`,
       [current.workspaceId, current.id],
-    )).rows
+    )
   })
 
   app.post('/api/v1/templates', async request => {

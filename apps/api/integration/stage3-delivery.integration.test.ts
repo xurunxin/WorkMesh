@@ -14,6 +14,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) thr
 const db = createDb(databaseUrl)
 const app = buildApp()
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
+type Page<T> = { items: T[]; nextCursor: string | null }
 type Human = { cookie: string; csrf: string; actorId: string }
 type Agent = { id: string; token: string; sessionId: string }
 type Fixture = { human: Human; workspaceId: string; teamId: string; projectId: string; workItemId: string; agent: Agent; connectionId: string; repositoryId: string }
@@ -113,8 +114,8 @@ async function fixture(): Promise<Fixture> {
   const setCookie = Array.isArray(install.headers['set-cookie']) ? install.headers['set-cookie'][0] : install.headers['set-cookie']
   const human = { cookie: typeof setCookie === 'string' ? setCookie.split(';')[0] ?? '' : '', csrf: install.json<{ csrfToken: string }>().csrfToken, actorId: '' }
   human.actorId = (await humanCall(human, 'GET', '/api/v1/auth/me')).json<{ actor: { id: string } }>().actor.id
-  const teamId = (await humanCall(human, 'GET', '/api/v1/teams')).json<Array<{ id: string }>>()[0]!.id
-  const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Array<{ id: string; name: string }>>().find(state => state.name === 'Ready')!.id
+  const teamId = (await humanCall(human, 'GET', '/api/v1/teams')).json<Page<{ id: string }>>().items[0]!.id
+  const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
   const project = await humanCall(human, 'POST', '/api/v1/projects', { teamId, name: 'Stage 3 project' })
   const projectId = project.json<{ id: string }>().id
   const milestone = await humanCall(human, 'POST', `/api/v1/projects/${projectId}/milestones`, { name: 'First delivery' })
@@ -225,7 +226,7 @@ describe('Stage 3 delivery API', () => {
     ).toBe(1)
     const otherWork = await humanCall(f.human, 'POST', '/api/v1/work-items', {
       teamId: f.teamId, title: 'No repository context',
-      statusId: (await humanCall(f.human, 'GET', `/api/v1/teams/${f.teamId}/states`)).json<Array<{ id: string; name: string }>>().find(state => state.name === 'Ready')!.id,
+      statusId: (await humanCall(f.human, 'GET', `/api/v1/teams/${f.teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id,
       responsibleHumanActorId: f.human.actorId,
     })
     const other = await createAgent(f.human, f.workspaceId, f.teamId, otherWork.json<{ id: string }>().id, randomUUID().slice(0, 8))
@@ -328,7 +329,7 @@ describe('Stage 3 delivery API', () => {
   it('uses one live exact-context predicate and revokes repository disclosure immediately', async () => {
     const f = await fixture()
     const stateId = (await humanCall(f.human, 'GET', `/api/v1/teams/${f.teamId}/states`))
-      .json<Array<{ id: string; name: string }>>().find(state => state.name === 'Ready')!.id
+      .json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
     const otherWork = await humanCall(f.human, 'POST', '/api/v1/work-items', {
       teamId: f.teamId, projectId: f.projectId, title: 'Foreign context', statusId: stateId,
       responsibleHumanActorId: f.human.actorId,
@@ -341,7 +342,7 @@ describe('Stage 3 delivery API', () => {
     expect(exact.statusCode).toBe(200)
     expect(exact.json<Array<{ base_sha: string }>>()).toHaveLength(1)
     expect(JSON.stringify(exact.json())).not.toContain('foreign-secret')
-    expect((await agentCall(f.agent.token, 'GET', '/api/v1/repositories')).json<Array<{ id: string }>>().map(row => row.id)).toEqual([f.repositoryId])
+    expect((await agentCall(f.agent.token, 'GET', '/api/v1/repositories')).json<Page<{ id: string }>>().items.map(row => row.id)).toEqual([f.repositoryId])
     for (const context of [
       { projectId: f.projectId, baseSha: 'project-pin' },
       { workItemId: f.workItemId, baseSha: 'work-pin-newest' },
@@ -720,7 +721,7 @@ describe('Stage 3 delivery API', () => {
   it('requires project and completion evidence to be linked to the exact delivery target', async () => {
     const f = await fixture()
     const stateId = (await humanCall(f.human, 'GET', `/api/v1/teams/${f.teamId}/states`))
-      .json<Array<{ id: string; name: string }>>().find(state => state.name === 'Ready')!.id
+      .json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
     const sameProjectWork = await humanCall(f.human, 'POST', '/api/v1/work-items', {
       teamId: f.teamId, projectId: f.projectId, title: 'Sibling work item', statusId: stateId,
       responsibleHumanActorId: f.human.actorId,

@@ -227,6 +227,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listTeams,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/Teams" },
@@ -317,6 +318,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listWorkflowStates,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/WorkflowStates" },
@@ -357,6 +359,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listProjects,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/Projects" },
@@ -462,6 +465,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
         operationId: listHumanActors,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: teamId, in: query, schema: { type: string, format: uuid } }],
         responses:
           {
             "200": { $ref: "#/components/responses/HumanActors" },
@@ -479,6 +483,8 @@ paths:
         operationId: listWorkItems,
         parameters:
           [
+            { $ref: "#/components/parameters/Cursor" },
+            { $ref: "#/components/parameters/Limit" },
             { $ref: "#/components/parameters/TeamIdQuery" },
             { $ref: "#/components/parameters/StatusIdQuery" },
             { $ref: "#/components/parameters/ProjectIdQuery" },
@@ -597,6 +603,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listWorkItemComments,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/Comments" },
@@ -664,6 +671,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listSavedViews,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/SavedViews" },
@@ -740,6 +748,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
         operationId: listAgents,
+        parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/Agents" },
@@ -971,6 +980,8 @@ paths:
         operationId: listAgentSessions,
         parameters:
           [
+            { $ref: "#/components/parameters/Cursor" },
+            { $ref: "#/components/parameters/Limit" },
             { name: teamId, in: query, schema: { type: string, format: uuid } },
             {
               name: workItemId,
@@ -1171,7 +1182,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listAgentActivities,
-        parameters: [{ $ref: "#/components/parameters/Id" }],
+        parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           { "200": { $ref: "#/components/responses/AgentActivities" } },
       }
@@ -1243,7 +1254,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         operationId: listAgentPlanVersions,
-        parameters: [{ $ref: "#/components/parameters/Id" }],
+        parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }],
         responses:
           {
             "200": { $ref: "#/components/responses/PlanVersions" },
@@ -1400,6 +1411,8 @@ paths:
         operationId: listArtifacts,
         parameters:
           [
+            { $ref: "#/components/parameters/Cursor" },
+            { $ref: "#/components/parameters/Limit" },
             {
               name: sessionId,
               in: query,
@@ -1444,6 +1457,8 @@ paths:
         operationId: listApprovals,
         parameters:
           [
+            { $ref: "#/components/parameters/Cursor" },
+            { $ref: "#/components/parameters/Limit" },
             {
               name: status,
               in: query,
@@ -1554,7 +1569,7 @@ paths:
       { x-workmesh-policy-id: route.getWorkRoom, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getWorkRoom, parameters: [{ name: workItemId, in: query, schema: { type: string, format: uuid } }, { name: projectId, in: query, schema: { type: string, format: uuid } }, { name: sessionId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/rooms/{id}/timeline:
     get:
-      { x-workmesh-policy-id: route.getWorkRoomTimeline, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: getWorkRoomTimeline, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { x-workmesh-policy-id: route.getWorkRoomTimeline, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: getWorkRoomTimeline, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" } } }
   /api/v1/rooms/{id}/messages:
     post:
       { x-workmesh-policy-id: route.postWorkRoomMessage, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: postWorkRoomMessage, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/CorrelationId" }], requestBody: { $ref: "#/components/requestBodies/RoomMessageInput" }, responses: { "201": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -1563,9 +1578,9 @@ paths:
       { x-workmesh-policy-id: route.resolveWorkRoomMessage, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: resolveWorkRoomMessage, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/inbox:
     get:
-      { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: listInbox, responses: { "200": { $ref: "#/components/responses/Json" } } }
+      { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }], responses: { "200": { $ref: "#/components/responses/PagedJson" } } }
   /api/v1/leases:
-    get: { x-workmesh-policy-id: route.listLeases, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listLeases, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { x-workmesh-policy-id: route.listLeases, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listLeases, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" } } }
     post: { x-workmesh-policy-id: route.acquireLease, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: acquireLease, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/AcquireLeaseInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/leases/{id}/heartbeat:
     post: { x-workmesh-policy-id: route.heartbeatLease, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: heartbeatLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
@@ -1576,7 +1591,7 @@ paths:
   /api/v1/leases/{id}/force-release:
     post: { x-workmesh-policy-id: route.forceReleaseLease, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: forceReleaseLease, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/handoffs:
-    get: { x-workmesh-policy-id: route.listHandoffs, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listHandoffs, responses: { "200": { $ref: "#/components/responses/Json" } } }
+    get: { x-workmesh-policy-id: route.listHandoffs, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listHandoffs, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" } } }
     post: { x-workmesh-policy-id: route.offerHandoff, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: offerHandoff, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffInput" }, responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/handoffs/{id}/inspect:
     get: { x-workmesh-policy-id: route.inspectExactTargetHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [{ AgentInstallationToken: [] }], operationId: inspectExactTargetHandoff, description: Exact target installation identity may read only its own requested handoff package and immutable context snapshot; this grants no work-resource authority., parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "404": { $ref: "#/components/responses/NotFound" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
@@ -1657,7 +1672,7 @@ paths:
     post:
       { x-workmesh-policy-id: route.receiveGitHubWebhook, x-workmesh-actor-kinds: [service], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ GitHubWebhookSignature: [] }], operationId: receiveGitHubWebhook, parameters: [{ name: connectionId, in: path, required: true, schema: { type: string, format: uuid } }, { name: X-GitHub-Delivery, in: header, required: true, schema: { type: string, maxLength: 200 } }, { name: X-GitHub-Event, in: header, required: true, schema: { type: string, maxLength: 100 } }, { name: X-Hub-Signature-256, in: header, required: true, schema: { type: string, pattern: "^sha256=[a-f0-9]{64}$" } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "202": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ProviderSignatureInvalid" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/repositories:
-    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listRepositories, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listRepositories, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
     post:
       { x-workmesh-policy-id: route.connectRepository, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: connectRepository, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RepositoryInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
   /api/v1/repositories/{id}/context:
@@ -1703,7 +1718,7 @@ paths:
   /api/v1/completion-suggestions/{id}/decision:
     post: { x-workmesh-policy-id: route.decideCompletionSuggestion, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: decideCompletionSuggestion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CompletionSuggestionDecisionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/cycles:
-    get: { x-workmesh-policy-id: route.listCycles, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listCycles, parameters: [{ name: teamId, in: query, schema: { type: string, format: uuid } }, { name: state, in: query, schema: { type: string, enum: [current, upcoming, history] } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listCycles, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listCycles, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: teamId, in: query, schema: { type: string, format: uuid } }, { name: state, in: query, schema: { type: string, enum: [current, upcoming, history] } }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createCycle, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createCycle, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/cycles/generate:
     post: { x-workmesh-policy-id: route.generateCycles, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: generateCycles, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CycleGenerationInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
@@ -1712,20 +1727,20 @@ paths:
   /api/v1/work-items/{id}/cycle:
     patch: { x-workmesh-policy-id: route.setWorkItemCycle, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: setWorkItemCycle, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [cycleId], properties: { cycleId: { type: [string, "null"], format: uuid } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/initiatives:
-    get: { x-workmesh-policy-id: route.listInitiatives, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInitiatives, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listInitiatives, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInitiatives, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createInitiative, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createInitiative, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/initiatives/{id}/rollup:
     get: { x-workmesh-policy-id: route.getInitiativeRollup, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getInitiativeRollup, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { description: Currency-safe Initiative rollup, content: { application/json: { schema: { $ref: "#/components/schemas/InitiativeRollup" } } } }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/advanced-views:
-    get: { x-workmesh-policy-id: route.listAdvancedViews, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAdvancedViews, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listAdvancedViews, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAdvancedViews, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createAdvancedView, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createAdvancedView, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AdvancedViewInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/advanced-views/{id}/results:
-    get: { x-workmesh-policy-id: route.evaluateAdvancedView, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: evaluateAdvancedView, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.evaluateAdvancedView, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: evaluateAdvancedView, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/projects/{id}/health:
-    get: { x-workmesh-policy-id: route.getProjectHealthHistory, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectHealthHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.getProjectHealthHistory, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectHealthHistory, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createProjectHealthUpdate, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createProjectHealthUpdate, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProjectHealthInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/automation-rules:
-    get: { x-workmesh-policy-id: route.listAutomationRules, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAutomationRules, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listAutomationRules, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAutomationRules, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createAutomationRule, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: createAutomationRule, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-rules/{id}/versions:
     post: { x-workmesh-policy-id: route.createAutomationRuleVersion, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: createAutomationRuleVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AutomationRuleVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -1736,11 +1751,11 @@ paths:
   /api/v1/automation-rules/{id}/state:
     post: { x-workmesh-policy-id: route.setAutomationRuleState, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: setAutomationRuleState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/automation-runs:
-    get: { x-workmesh-policy-id: route.listAutomationRuns, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAutomationRuns, parameters: [{ name: ruleId, in: query, schema: { type: string, format: uuid } }, { name: loopId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listAutomationRuns, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listAutomationRuns, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: ruleId, in: query, schema: { type: string, format: uuid } }, { name: loopId, in: query, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/automation-runs/{runId}:
     get: { x-workmesh-policy-id: route.getAutomationRun, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AUTOMATION, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getAutomationRun, parameters: [{ name: runId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/loops:
-    get: { x-workmesh-policy-id: route.listLoops, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listLoops, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listLoops, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listLoops, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createLoop, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: createLoop, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/LoopInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/loops/{id}/run:
     post: { x-workmesh-policy-id: route.runLoopNow, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: runLoopNow, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [occurrenceKey], properties: { occurrenceKey: { type: string }, scheduledFor: { $ref: "#/components/schemas/Timestamp" } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -1757,7 +1772,7 @@ paths:
   /api/v1/notification-preferences:
     put: { x-workmesh-policy-id: route.updateNotificationPreferences, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_PLANNING, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: updateNotificationPreferences, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/NotificationPreferencesInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/templates:
-    get: { x-workmesh-policy-id: route.listTemplates, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_TEMPLATES, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listTemplates, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    get: { x-workmesh-policy-id: route.listTemplates, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_BETA_TEMPLATES, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listTemplates, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createTemplate, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_TEMPLATES, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createTemplate, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/templates/{id}/versions:
     post: { x-workmesh-policy-id: route.createTemplateVersion, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_TEMPLATES, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createTemplateVersion, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/TemplateVersionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -1811,6 +1826,18 @@ components:
         description: "GitHub HMAC-SHA256 over the raw request body. X-GitHub-Delivery and X-GitHub-Event are also required and the server enforces its replay and delivery rules.",
       }
   parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Versioned, signed, opaque continuation cursor. It is bound to the route, workspace, actor, effective filters, and sort tuple; clients must not decode or modify it.
+      schema: { type: string, minLength: 1, maxLength: 8192 }
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of authorized items returned in this page.
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
     Id:
       {
         name: id,
@@ -2284,6 +2311,8 @@ components:
   responses:
     Json:
       { description: WorkMesh 1.0 resource, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+    PagedJson:
+      { description: Authorized cursor page, content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { type: object, additionalProperties: true } }, nextCursor: { type: [string, "null"] } } } } } }
     Health:
       {
         description: Database is reachable,
@@ -2345,7 +2374,7 @@ components:
             application/json:
               {
                 schema:
-                  { type: array, items: { $ref: "#/components/schemas/Team" } },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Team" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2357,10 +2386,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/WorkflowState" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/WorkflowState" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2372,10 +2398,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/Project" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Project" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2397,10 +2420,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/HumanActor" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanActor" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2412,10 +2432,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/WorkItem" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/WorkItem" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2437,10 +2454,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/Comment" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Comment" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2452,10 +2466,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/SavedView" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/SavedView" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2623,10 +2634,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/Agent" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Agent" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2677,10 +2685,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/AgentSession" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/AgentSession" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2710,10 +2715,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/AgentActivity" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/AgentActivity" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2743,10 +2745,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/PlanVersion" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/PlanVersion" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2758,10 +2757,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/Artifact" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Artifact" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -2782,10 +2778,7 @@ components:
             application/json:
               {
                 schema:
-                  {
-                    type: array,
-                    items: { $ref: "#/components/schemas/Approval" },
-                  },
+                  { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Approval" } }, nextCursor: { type: [string, "null"] } } },
               },
           },
       }
@@ -3564,6 +3557,8 @@ components:
                             IDEMPOTENCY_KEY_REUSED,
                             IDEMPOTENCY_REPLAY_EXPIRED,
                             IDEMPOTENCY_REPLAY_UNAVAILABLE,
+                            PAGINATION_CURSOR_INVALID,
+                            PAGINATION_CURSOR_MISMATCH,
                             CSRF_FAILED,
                             INVALID_CREDENTIALS,
                             INSTALLATION_ALREADY_COMPLETED,
@@ -4380,7 +4375,6 @@ components:
             change_summary,
             author_actor_id,
             created_at,
-            steps,
           ],
         properties:
           {
@@ -4394,6 +4388,8 @@ components:
             steps:
               {
                 type: array,
+                maxItems: 500,
+                description: Present on the current-plan singleton response and omitted from paged plan-version history items.,
                 items: { $ref: "#/components/schemas/PlanStepInput" },
               },
           },
