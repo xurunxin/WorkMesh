@@ -12,12 +12,14 @@ import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
 import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
+import { createRetentionWorker } from './retention.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
 export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 export { createArtifactUploadWorker } from './artifact-uploads.js'
 export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
+export { createRetentionWorker, ordinaryPrunableEventTypes } from './retention.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
@@ -266,6 +268,7 @@ const startWorkerProcess = (): void => {
   })
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
   const automationWorker = createAutomationWorker({ db, features })
+  const retentionWorker = createRetentionWorker({ db })
   let stopping = false
   let timer: NodeJS.Timeout | undefined
 
@@ -277,6 +280,7 @@ const startWorkerProcess = (): void => {
       await providerActionWorker.tick()
       await artifactUploadWorker.tick()
       await automationWorker.tick()
+      await retentionWorker.tick()
     } catch (error) {
       console.error('outbox worker tick failed', error)
     }
@@ -286,7 +290,7 @@ const startWorkerProcess = (): void => {
     if (stopping) return
     stopping = true
     if (timer) clearTimeout(timer)
-    void outboxWorker.close().then(() => db.end()).then(() => process.exit(0)).catch(error => {
+    void Promise.all([outboxWorker.close(),retentionWorker.close()]).then(() => db.end()).then(() => process.exit(0)).catch(error => {
       console.error('outbox worker shutdown failed', error)
       process.exit(1)
     })

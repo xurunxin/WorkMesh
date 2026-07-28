@@ -120,6 +120,7 @@ const secretReplayOperations = new Set<string>(secretReplayOperationIds)
 const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff'])
 
 const workspaceAdminOperations = new Set([
+  'getRetentionStatus',
   'updateWorkspace',
   'createTeam',
   'updateTeam',

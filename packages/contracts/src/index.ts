@@ -235,6 +235,49 @@ export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCo
 // Kept as a permissive helper so existing API error handling remains source-compatible.
 export const errorBody = (code: string, message: string, correlationId: string, details?: unknown) => ({ error: { code, message, details, correlationId } })
 
+export const retentionStatusResponseSchema = z.object({
+  mode: z.enum(['unknown', 'disabled', 'archive_only', 'archive_and_prune']),
+  workerSeenAt: timestampSchema.nullable(),
+  policies: z.array(z.object({
+    recordClass: z.string(),
+    onlineDays: z.number().int().positive(),
+    conflictDays: z.number().int().positive().nullable(),
+    archiveDays: z.number().int().positive().nullable(),
+    deleteAllowed: z.boolean(),
+    protectedReason: z.string().nullable(),
+  })),
+  floor: z.object({ prunedThroughCursor: durableEventCursorSchema, updatedAt: timestampSchema }),
+  archive: z.object({
+    planned: z.number().int().nonnegative(),
+    uploaded: z.number().int().nonnegative(),
+    verified: z.number().int().nonnegative(),
+    pruned: z.number().int().nonnegative(),
+    failed: z.number().int().nonnegative(),
+    lastVerifiedEndCursor: durableEventCursorSchema.nullable(),
+    retainUntil: timestampSchema.nullable(),
+  }),
+  jobs: z.array(z.object({
+    name: z.string(),
+    leased: z.boolean(),
+    fence: durableEventCursorSchema,
+    fixedCutoffAt: timestampSchema.nullable(),
+    watermarkCursor: durableEventCursorSchema,
+    lastErrorCode: z.string().nullable(),
+    counters: z.record(z.number()),
+    lastCompletedAt: timestampSchema.nullable(),
+  })),
+  blockers: z.object({
+    undeliveredOutbox: z.number().int().nonnegative(),
+    protectedA2AEvents: z.number().int().nonnegative(),
+    unverifiedSegments: z.number().int().nonnegative(),
+  }),
+  redis: z.object({
+    status: z.enum(['ok', 'unavailable']),
+    streamLength: z.number().int().nonnegative().nullable(),
+    exactLimit: z.number().int().positive(),
+  }),
+})
+
 export const stage0RouteManifest = [
   { method: 'GET', path: '/health', authenticated: false },
   { method: 'GET', path: '/api/v1/info', authenticated: false },
@@ -270,6 +313,7 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/admin/retention/status', authenticated: true },
 ] as const
 
 export type StatusCategory = z.infer<typeof statusCategorySchema>
@@ -419,6 +463,8 @@ export const agentSessionResponseSchema = z.object({
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
   state_reason: z.string().nullable(), sequence: z.number().int().nonnegative(), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
   context_snapshot_id: idSchema.nullable(), budget: budgetSchema, external_urls: z.array(externalUrlSchema), last_heartbeat_at: timestampSchema.nullable(),
+  heartbeat_health: z.enum(['healthy', 'degraded', 'stale']), heartbeat_health_changed_at: timestampSchema,
+  heartbeat_checked_at: timestampSchema.nullable(), heartbeat_current_step_id: idSchema.nullable(), heartbeat_usage: z.record(z.unknown()),
   retry_of_session_id: idSchema.nullable(), stop_requested_at: timestampSchema.nullable(), ended_at: timestampSchema.nullable(), error_code: z.string().nullable(), error_summary: z.string().nullable(),
   created_at: timestampSchema, updated_at: timestampSchema,
 })
@@ -480,7 +526,7 @@ export const approvalDecisionResponseSchema = z.object({ approval: approvalRespo
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 
-export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
 export const approvalRequestedEventPayloadSchema = z.object({
   approvalId: idSchema, sessionId: idSchema, status: z.literal('pending'), actionName: z.string().min(1), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   requiredApprovals: z.number().int().positive(), expiresAt: timestampSchema,

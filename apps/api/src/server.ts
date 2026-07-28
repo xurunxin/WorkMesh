@@ -53,6 +53,7 @@ import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
+import { registerAdminRetentionRoutes } from "./admin-retention.js";
 import type { ApiActor } from "./agent/types.js";
 import { installRoutePolicyInventory } from "./authz/route-policy.js";
 import {
@@ -1047,6 +1048,7 @@ export const buildApp = (options: {
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
+  registerAdminRetentionRoutes(app, db);
   return app;
 };
 

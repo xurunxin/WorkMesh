@@ -834,5 +834,10 @@ export const routeOperationBindings = [
     "method": "GET",
     "path": "/api/v1/a2a-bindings/{id}/tasks/{taskId}/events",
     "operationId": "streamA2ATaskEvents"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/retention/status",
+    "operationId": "getRetentionStatus"
   }
 ] as const

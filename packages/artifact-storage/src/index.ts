@@ -51,6 +51,33 @@ export class S3ArtifactStorage {
     );
   }
 
+  /** Worker-only object write used by retention archival. This does not create
+   * an HTTP download surface; the caller must still read back and verify. */
+  async putVerifiedObject(
+    expectation: ArtifactObjectExpectation,
+    body: Uint8Array,
+  ): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
+    await this.putObject(expectation, body);
+    return this.verify(expectation);
+  }
+
+  async putObject(
+    expectation: ArtifactObjectExpectation,
+    body: Uint8Array,
+  ): Promise<void> {
+    if (body.byteLength !== expectation.sizeBytes)
+      throw new Error("ARTIFACT_SIZE_MISMATCH");
+    await this.#client.send(new PutObjectCommand({
+      Bucket: this.#bucket,
+      Key: expectation.key,
+      Body: body,
+      ContentType: expectation.mimeType,
+      ContentLength: expectation.sizeBytes,
+      ChecksumSHA256: Buffer.from(expectation.checksum.replace(/^sha256:/, ""), "hex").toString("base64"),
+      Metadata: { workmeshchecksum: expectation.checksum },
+    }));
+  }
+
   async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
     const head = await this.#client.send(new HeadObjectCommand({
       Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",

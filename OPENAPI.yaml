@@ -1795,6 +1795,22 @@ paths:
     post: { x-workmesh-policy-id: route.acceptA2ATask, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: acceptA2ATask, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ATaskInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/a2a-bindings/{id}/tasks/{taskId}/events:
     get: { x-workmesh-policy-id: route.streamA2ATaskEvents, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: streamA2ATaskEvents, parameters: [{ $ref: "#/components/parameters/Id" }, { name: taskId, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 500 } }, { name: after, in: query, description: Decimal PostgreSQL bigint cursor returned as a string to preserve precision., schema: { type: string, pattern: "^[0-9]{1,19}$", default: "0" } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+  /api/v1/admin/retention/status:
+    get:
+      x-workmesh-policy-id: route.getRetentionStatus
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getRetentionStatus
+      description: Workspace-administrator retention status. This endpoint exposes no archive object key or download URL.
+      responses:
+        "200":
+          description: Sanitized retention policy, floor, archive, job, blocker, and Redis status.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RetentionStatus" }
+        "403": { $ref: "#/components/responses/Forbidden" }
 components:
   securitySchemes:
     BootstrapToken:
@@ -2899,6 +2915,71 @@ components:
           },
       }
   schemas:
+    RetentionStatus:
+      type: object
+      additionalProperties: false
+      required: [mode, workerSeenAt, policies, floor, archive, jobs, blockers, redis]
+      properties:
+        mode: { type: string, enum: [unknown, disabled, archive_only, archive_and_prune] }
+        workerSeenAt: { type: [string, "null"], format: date-time }
+        policies:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [recordClass, onlineDays, conflictDays, archiveDays, deleteAllowed, protectedReason]
+            properties:
+              recordClass: { type: string }
+              onlineDays: { type: integer, minimum: 1 }
+              conflictDays: { type: [integer, "null"], minimum: 1 }
+              archiveDays: { type: [integer, "null"], minimum: 365 }
+              deleteAllowed: { type: boolean }
+              protectedReason: { type: [string, "null"] }
+        floor:
+          type: object
+          required: [prunedThroughCursor, updatedAt]
+          properties:
+            prunedThroughCursor: { type: string, pattern: "^(0|[1-9][0-9]*)$" }
+            updatedAt: { type: string, format: date-time }
+        archive:
+          type: object
+          required: [planned, uploaded, verified, pruned, failed, lastVerifiedEndCursor, retainUntil]
+          properties:
+            planned: { type: integer, minimum: 0 }
+            uploaded: { type: integer, minimum: 0 }
+            verified: { type: integer, minimum: 0 }
+            pruned: { type: integer, minimum: 0 }
+            failed: { type: integer, minimum: 0 }
+            lastVerifiedEndCursor: { type: [string, "null"], pattern: "^(0|[1-9][0-9]*)$" }
+            retainUntil: { type: [string, "null"], format: date-time }
+        jobs:
+          type: array
+          items:
+            type: object
+            required: [name, leased, fence, fixedCutoffAt, watermarkCursor, lastErrorCode, counters, lastCompletedAt]
+            properties:
+              name: { type: string }
+              leased: { type: boolean }
+              fence: { type: string, pattern: "^(0|[1-9][0-9]*)$" }
+              fixedCutoffAt: { type: [string, "null"], format: date-time }
+              watermarkCursor: { type: string, pattern: "^(0|[1-9][0-9]*)$" }
+              lastErrorCode: { type: [string, "null"] }
+              counters: { type: object, additionalProperties: { type: number } }
+              lastCompletedAt: { type: [string, "null"], format: date-time }
+        blockers:
+          type: object
+          required: [undeliveredOutbox, protectedA2AEvents, unverifiedSegments]
+          properties:
+            undeliveredOutbox: { type: integer, minimum: 0 }
+            protectedA2AEvents: { type: integer, minimum: 0 }
+            unverifiedSegments: { type: integer, minimum: 0 }
+        redis:
+          type: object
+          required: [status, streamLength, exactLimit]
+          properties:
+            status: { type: string, enum: [ok, unavailable] }
+            streamLength: { type: [integer, "null"], minimum: 0 }
+            exactLimit: { type: integer, minimum: 1 }
     CycleInput:
       { type: object, additionalProperties: false, required: [name, startsAt, durationWeeks], properties: { teamId: { type: string, format: uuid }, name: { type: string, minLength: 1, maxLength: 180 }, startsAt: { $ref: "#/components/schemas/Timestamp" }, durationWeeks: { type: integer, minimum: 1, maximum: 8 } } }
     CycleGenerationInput:

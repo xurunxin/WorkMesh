@@ -156,6 +156,57 @@ export type RealtimeRedisHintConfig = Readonly<{
   maxLen: number
 }>
 
+export type RetentionConfig = Readonly<{
+  genericReplayHours: number
+  genericConflictDays: number
+  eventOnlineDays: number
+  archiveRetainDays: number
+  cleanupRetainDays: number
+  batchSize: number
+  leaseSeconds: number
+  intervalSeconds: number
+  cleanupEnabled: boolean
+  archiveEnabled: boolean
+  eventPruneEnabled: boolean
+  archivePrefix: string
+}>
+
+const retentionEnvironmentSchema = z.object({
+  WORKMESH_IDEMPOTENCY_REPLAY_HOURS: boundedInt(24, 24 * 30, 24),
+  WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: boundedInt(30, 3650, 30),
+  WORKMESH_EVENT_ONLINE_DAYS: boundedInt(90, 3650, 90),
+  WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: boundedInt(365, 36500, 365),
+  WORKMESH_RETENTION_CLEANUP_DAYS: boundedInt(30, 3650, 30),
+  WORKMESH_RETENTION_BATCH_SIZE: boundedInt(1, 1000, 100),
+  WORKMESH_RETENTION_LEASE_SECONDS: boundedInt(15, 3600, 120),
+  WORKMESH_RETENTION_INTERVAL_SECONDS: boundedInt(60, 86_400, 3600),
+  WORKMESH_RETENTION_CLEANUP_ENABLED: z.enum(['true', 'false']).default('false'),
+  WORKMESH_RETENTION_ARCHIVE_ENABLED: z.enum(['true', 'false']).default('true'),
+  WORKMESH_EVENT_PRUNE_ENABLED: z.enum(['true', 'false']).default('false'),
+  WORKMESH_RETENTION_ARCHIVE_PREFIX: z.string().trim().min(1).max(200)
+    .regex(/^[A-Za-z0-9/_-]+$/).default('retention/events'),
+})
+
+export const loadRetentionConfig = (
+  env: NodeJS.ProcessEnv = process.env,
+): RetentionConfig => {
+  const value = retentionEnvironmentSchema.parse(env)
+  return Object.freeze({
+    genericReplayHours: value.WORKMESH_IDEMPOTENCY_REPLAY_HOURS,
+    genericConflictDays: value.WORKMESH_IDEMPOTENCY_CONFLICT_DAYS,
+    eventOnlineDays: value.WORKMESH_EVENT_ONLINE_DAYS,
+    archiveRetainDays: value.WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS,
+    cleanupRetainDays: value.WORKMESH_RETENTION_CLEANUP_DAYS,
+    batchSize: value.WORKMESH_RETENTION_BATCH_SIZE,
+    leaseSeconds: value.WORKMESH_RETENTION_LEASE_SECONDS,
+    intervalSeconds: value.WORKMESH_RETENTION_INTERVAL_SECONDS,
+    cleanupEnabled: value.WORKMESH_RETENTION_CLEANUP_ENABLED === 'true',
+    archiveEnabled: value.WORKMESH_RETENTION_ARCHIVE_ENABLED === 'true',
+    eventPruneEnabled: value.WORKMESH_EVENT_PRUNE_ENABLED === 'true',
+    archivePrefix: value.WORKMESH_RETENTION_ARCHIVE_PREFIX,
+  })
+}
+
 export const loadRealtimeRedisHintConfig = (
   env: NodeJS.ProcessEnv = process.env,
 ): RealtimeRedisHintConfig => ({

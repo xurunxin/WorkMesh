@@ -111,6 +111,276 @@ describe("Stage 1 agent API acceptance", () => {
     const forbidden = await app.inject({ method: "GET", url: `/api/v1/agent-sessions/${session.id}`, headers: { cookie: `workmesh_session=${outsiderToken}`, "idempotency-key": randomUUID() } }); expect(forbidden.statusCode).toBe(403);
   });
 
+  it(
+    "keeps steady heartbeats bounded and emits a concurrent health recovery once",
+    async () => {
+      const pulseCount = process.env.RUN_HEARTBEAT_LOAD === "1" ? 10_000 : 250;
+      const previousWorkItemId = workItemId;
+      const work = await humanCall(admin, "POST", "/api/v1/work-items", {
+        teamId,
+        title: "Bounded heartbeat projection",
+        statusId: readyId,
+        responsibleHumanActorId: admin.actorId,
+      });
+      workItemId = work.json<{ id: string }>().id;
+      const heartbeatAgent = await registerAgent(
+        `heartbeat-agent-${randomUUID()}`,
+      );
+      const delegation = await delegate(heartbeatAgent.id);
+      const session = await start(delegation.json<{ id: string }>().id);
+      const token = await exchange(session, heartbeatAgent.installationToken);
+      await ackAndExecute(session, token);
+      const before = (
+        await db.query<{
+          revision: number;
+          sequence: string;
+          activities: string;
+          events: string;
+          outbox: string;
+          idempotency: string;
+        }>(
+          `
+      SELECT s.revision,s.sequence::text,
+             (SELECT count(*) FROM agent_activities WHERE session_id=s.id)::text AS activities,
+             (SELECT count(*) FROM domain_events WHERE session_id=s.id)::text AS events,
+             (SELECT count(*) FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.session_id=s.id)::text AS outbox,
+             (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency
+        FROM agent_sessions s WHERE s.id=$1
+    `,
+          [session.id],
+        )
+      ).rows[0]!;
+      for (let offset = 0; offset < pulseCount; offset += 25) {
+        const responses = await Promise.all(
+          Array.from({ length: 25 }, (_, index) =>
+            agentCall(
+              token,
+              "POST",
+              `/api/v1/agent-sessions/${session.id}/heartbeat`,
+              {
+                currentStepId: undefined,
+                usage: { runtimeSeconds: offset + index },
+              },
+            ),
+          ),
+        );
+        expect(responses.every((response) => response.statusCode === 200)).toBe(
+          true,
+        );
+      }
+      const steady = (
+        await db.query<{
+          revision: number;
+          sequence: string;
+          heartbeat_health: string;
+          activities: string;
+          events: string;
+          outbox: string;
+          idempotency: string;
+        }>(
+          `
+      SELECT s.revision,s.sequence::text,s.heartbeat_health,
+             (SELECT count(*) FROM agent_activities WHERE session_id=s.id)::text AS activities,
+             (SELECT count(*) FROM domain_events WHERE session_id=s.id)::text AS events,
+             (SELECT count(*) FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.session_id=s.id)::text AS outbox,
+             (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency
+        FROM agent_sessions s WHERE s.id=$1
+    `,
+          [session.id],
+        )
+      ).rows[0]!;
+      expect(steady).toMatchObject({
+        revision: before.revision,
+        sequence: before.sequence,
+        heartbeat_health: "healthy",
+        activities: before.activities,
+        events: before.events,
+        outbox: before.outbox,
+        idempotency: before.idempotency,
+      });
+
+      await db.query(
+        "UPDATE agent_sessions SET heartbeat_health='degraded',heartbeat_health_changed_at=now() WHERE id=$1",
+        [session.id],
+      );
+      const concurrent = await Promise.all(
+        Array.from({ length: 25 }, (_, index) =>
+          agentCall(
+            token,
+            "POST",
+            `/api/v1/agent-sessions/${session.id}/heartbeat`,
+            {
+              usage: { runtimeSeconds: 20_000 + index },
+            },
+          ),
+        ),
+      );
+      expect(concurrent.every((response) => response.statusCode === 200)).toBe(
+        true,
+      );
+      expect(
+        (
+          await db.query(
+            "SELECT 1 FROM domain_events WHERE session_id=$1 AND event_type='agent.session.health_changed'",
+            [session.id],
+          )
+        ).rowCount,
+      ).toBe(1);
+      const afterRecovery = (
+        await db.query<{ revision: number; sequence: string }>(
+          "SELECT revision,sequence::text FROM agent_sessions WHERE id=$1",
+          [session.id],
+        )
+      ).rows[0]!;
+      expect(afterRecovery).toEqual({
+        revision: before.revision,
+        sequence: before.sequence,
+      });
+
+      const stop = await humanCall(
+        admin,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/signals`,
+        {
+          signal: "stop",
+          reason: "verify diagnostic heartbeat",
+        },
+        { "if-match": `"revision-${afterRecovery.revision}"` },
+      );
+      expect(stop.statusCode).toBe(200);
+      await db.query(
+        "UPDATE agent_sessions SET heartbeat_health='degraded' WHERE id=$1",
+        [session.id],
+      );
+      const diagnostic = await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        {
+          usage: { runtimeSeconds: 30_000 },
+        },
+      );
+      expect(diagnostic.statusCode).toBe(200);
+      expect(
+        (
+          await db.query<{ state: string; heartbeat_health: string }>(
+            "SELECT state,heartbeat_health FROM agent_sessions WHERE id=$1",
+            [session.id],
+          )
+        ).rows[0],
+      ).toEqual({ state: "stopping", heartbeat_health: "degraded" });
+      workItemId = previousWorkItemId;
+    },
+    process.env.RUN_HEARTBEAT_LOAD === "1" ? 900_000 : 120_000,
+  );
+
+  it("restricts sanitized retention status to a Workspace administrator", async () => {
+    await db.query(
+      `INSERT INTO retention_job_state(
+         job_name,workspace_id,worker_mode,worker_seen_at
+       )
+       SELECT 'worker_runtime',workspace_id,'archive_only',now()
+         FROM actors WHERE id=$1
+       ON CONFLICT(job_name,workspace_id) DO UPDATE
+         SET worker_mode=EXCLUDED.worker_mode,
+             worker_seen_at=EXCLUDED.worker_seen_at`,
+      [admin.actorId],
+    );
+    const status = await humanCall(
+      admin,
+      "GET",
+      "/api/v1/admin/retention/status",
+    );
+    expect(status.statusCode).toBe(200);
+    const body = status.json<{
+      mode: string;
+      workerSeenAt: string | null;
+      policies: unknown[];
+      floor: { prunedThroughCursor: string };
+      redis: {
+        status: string;
+        streamLength: number | null;
+        exactLimit: number;
+      };
+    }>();
+    expect(body).toMatchObject({
+      mode: "archive_only",
+      workerSeenAt: expect.any(String),
+      floor: { prunedThroughCursor: "0" },
+      redis: { exactLimit: 100_000 },
+    });
+    expect(["ok", "unavailable"]).toContain(body.redis.status);
+    expect(body.redis.streamLength === null).toBe(
+      body.redis.status === "unavailable",
+    );
+    expect(body.policies.length).toBeGreaterThan(0);
+    const serialized = JSON.stringify(body);
+    expect(serialized).not.toContain("objectKey");
+    expect(serialized).not.toContain("archivePrefix");
+    expect(serialized).not.toContain("redisUrl");
+
+    const workspaceId = (
+      await db.query<{ workspace_id: string }>(
+        "SELECT workspace_id FROM actors WHERE id=$1",
+        [admin.actorId],
+      )
+    ).rows[0]!.workspace_id;
+    const memberId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO actors(
+           workspace_id,kind,workspace_role,email,display_name,password_hash
+         ) VALUES($1,'human','member',$2,'Retention member',$3) RETURNING id`,
+        [
+          workspaceId,
+          `retention-member-${randomUUID()}@example.test`,
+          await hashPassword("retention-member-password"),
+        ],
+      )
+    ).rows[0]!.id;
+    const memberToken = opaqueToken();
+    const memberCsrf = opaqueToken();
+    await db.query(
+      `INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at)
+       VALUES($1,$2,$3,now()+interval '1 day')`,
+      [memberId, tokenHash(memberToken), memberCsrf],
+    );
+    const member = await app.inject({
+      method: "GET",
+      url: "/api/v1/admin/retention/status",
+      headers: {
+        cookie: `workmesh_session=${memberToken}`,
+        "x-csrf-token": memberCsrf,
+        "idempotency-key": randomUUID(),
+      },
+    });
+    expect(member.statusCode).toBe(403);
+
+    const previousWorkItemId = workItemId;
+    try {
+      const work = await humanCall(admin, "POST", "/api/v1/work-items", {
+        teamId,
+        title: "Retention status agent denial",
+        statusId: readyId,
+        responsibleHumanActorId: admin.actorId,
+      });
+      workItemId = work.json<{ id: string }>().id;
+      const statusAgent = await registerAgent(
+        `retention-status-agent-${randomUUID()}`,
+      );
+      const delegation = await delegate(statusAgent.id);
+      const session = await start(delegation.json<{ id: string }>().id);
+      const token = await exchange(session, statusAgent.installationToken);
+      const agentResponse = await agentCall(
+        token,
+        "GET",
+        "/api/v1/admin/retention/status",
+      );
+      expect(agentResponse.statusCode).toBe(403);
+    } finally {
+      workItemId = previousWorkItemId;
+    }
+  }, 120_000);
+
   it("keeps authenticated work, Agent writes, and an existing SSE stream available during limiter Redis outage", async () => {
     const previousWorkItemId = workItemId;
     const controller = new AbortController();
