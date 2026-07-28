@@ -2,6 +2,29 @@ import { expect, test } from '@playwright/test'
 
 const apiUrl = 'http://127.0.0.1:3101'
 const headers = { 'Access-Control-Allow-Origin': 'http://127.0.0.1:3100', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json' }
+const releaseInfo = {
+  serverVersion: '1.0.0',
+  restApiVersion: '1.0',
+  agentProtocolVersion: '1.0',
+  mcpVersion: '1.0.0',
+  a2aUpstreamVersion: '0.3',
+  schemaBaseline: 1,
+  buildSha: 'stage3-e2e',
+}
+const featureRegistry = {
+  features: [
+    { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_COSTS', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_GITEA', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', enabled: false },
+  ],
+}
 
 test('renders the Stage 3 fake-provider delivery shelf without auto-closing work', async ({ page }) => {
   const actor = { id: 'human-1', displayName: 'Alex' }
@@ -14,6 +37,8 @@ test('renders the Stage 3 fake-provider delivery shelf without auto-closing work
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
     if (path === '/api/v1/install-status') return body({ installed: true })
     if (path === '/api/v1/auth/me') return body({ actor, csrfToken: 'stage3-csrf' })
+    if (path === '/api/v1/features') return body(featureRegistry)
+    if (path === '/api/v1/info') return body(releaseInfo)
     if (path === '/api/v1/teams') return body([{ id: 'team-1', name: 'Engineering', key: 'ENG', revision: 1 }])
     if (path === '/api/v1/actors/humans') return body([{ id: actor.id, display_name: 'Alex', email: 'alex@example.test' }])
     if (path === '/api/v1/projects') return body([project])

@@ -3,11 +3,18 @@ import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import Fastify, { type FastifyReply, type FastifyRequest } from "fastify";
 import { ZodError, z } from "zod";
-import { loadConfig } from "@workmesh/config";
+import {
+  loadConfig,
+  loadFeatureConfig,
+  loadReleaseInfo,
+  type FeatureConfig,
+} from "@workmesh/config";
 import {
   commentInputSchema,
   commentPatchSchema,
   errorBody,
+  featureDefinitions,
+  featureForApiRoute,
   installInputSchema,
   loginInputSchema,
   projectInputSchema,
@@ -56,6 +63,7 @@ const publicPaths = new Set([
   "/api/v1/auth/install",
   "/api/v1/auth/login",
   "/api/v1/install-status",
+  "/api/v1/info",
   "/health",
 ]);
 
@@ -166,7 +174,12 @@ function parseCursor(raw: unknown): number {
   return cursor;
 }
 
-export const buildApp = () => {
+export const buildApp = (options: {
+  features?: FeatureConfig;
+  releaseInfo?: ReturnType<typeof loadReleaseInfo>;
+} = {}) => {
+  const features = options.features ?? loadFeatureConfig();
+  const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
   const app = Fastify({ logger: true, genReqId: () => crypto.randomUUID() });
   void app.register(cookie);
   void app.register(cors, {
@@ -260,6 +273,16 @@ export const buildApp = () => {
     )
       throw new DomainError("CSRF_FAILED", "Missing or invalid CSRF token");
   });
+  app.addHook("preHandler", async (request) => {
+    const feature = featureForApiRoute(request.routeOptions.url ?? "");
+    if (!feature || features[feature]) return;
+    const definition = featureDefinitions.find(candidate => candidate.key === feature)!;
+    throw new DomainError(
+      "FEATURE_DISABLED",
+      `${feature} is disabled for this deployment`,
+      { feature, tier: definition.tier },
+    );
+  });
   app.addHook("onSend", async (_request, reply, payload) => {
     try {
       const value =
@@ -295,7 +318,7 @@ export const buildApp = () => {
       const status =
         error.code === "UNAUTHENTICATED"
           ? 401
-          : error.code === "FORBIDDEN" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
+          : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
             : error.code === "NOT_FOUND"
               ? 404
@@ -341,6 +364,14 @@ export const buildApp = () => {
     await db.query("SELECT 1");
     return { status: "ok" };
   });
+  app.get("/api/v1/info", async () => releaseInfo);
+  app.get("/api/v1/features", async () => ({
+    features: featureDefinitions.map(feature => ({
+      key: feature.key,
+      tier: feature.tier,
+      enabled: features[feature.key],
+    })),
+  }));
   app.get("/api/v1/install-status", async () => ({
     installed:
       (
@@ -665,8 +696,8 @@ export const buildApp = () => {
   );
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
-  registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
-  registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
+  registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features });
+  registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features });
   return app;
 };
 

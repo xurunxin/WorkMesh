@@ -20,6 +20,29 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
     const body = (payload: unknown, status = 200) =>
       route.fulfill({ status, headers, body: JSON.stringify(payload) })
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers })
+    if (path === '/api/v1/features') return body({
+      features: [
+        { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_COSTS', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_GITEA', tier: 'beta', enabled: false },
+        { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', enabled: false },
+        { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', enabled: false },
+        { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', enabled: false },
+      ],
+    })
+    if (path === '/api/v1/info') return body({
+      serverVersion: '1.0.0',
+      restApiVersion: '1.0',
+      agentProtocolVersion: '1.0',
+      mcpVersion: '1.0.0',
+      a2aUpstreamVersion: '0.3',
+      schemaBaseline: 1,
+      buildSha: 'stage4-e2e',
+    })
     if (path === '/api/v1/cycles') return body([{
       id: 'cycle-1',
       name: 'Cycle 12',

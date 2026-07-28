@@ -140,6 +140,8 @@ test.describe("Stage 0 browser acceptance", () => {
       .fill("password-acceptance");
     await install.getByTestId("install-submit").click();
     await expect(page.getByRole("heading", { name: "WorkMesh" })).toBeVisible();
+    await expect(page.getByTestId("release-info")).toContainText("v1.0.0");
+    await expect(page.getByTestId("release-info")).toContainText("schema 1");
 
     const settings = page.locator("details.team-admin");
     await settings.locator("summary").click();

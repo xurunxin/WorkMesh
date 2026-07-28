@@ -1,7 +1,16 @@
-# WorkMesh Agent Protocol v0.1
+# WorkMesh Agent Protocol 1.0
 
 > 本文定义 WorkMesh 平台与外部 Agent、Agent Runner、MCP Client 以及后续 A2A Adapter 的交互契约。  
 > 日期：2026-07-22
+
+WorkMesh server `1.0.0` implements Agent Protocol `1.0` and MCP server `1.0.0`.
+The version-isolated upstream A2A adapter remains pinned to A2A `0.3`; that
+upstream version is not the WorkMesh Agent Protocol version. Deployments expose
+safe release metadata at public `GET /api/v1/info` and disclose feature support
+tiers and enabled state only after authentication at `GET /api/v1/features`.
+Beta and Experimental capabilities default disabled and never replace normal
+identity, delegation, capability, scope, approval, lease, revision, or
+idempotency checks when enabled.
 
 ---
 
@@ -1065,7 +1074,7 @@ Prompt Template 只是建议，不应含 Secret 或不可见平台策略。
 - A2A 版本升级不改变内部 Domain Event；
 - 外部 Agent Card 的能力必须映射到平台 Capability 并由 Admin 批准。
 
-## 17.3 Stage 4 适配边界
+## 17.3 WorkMesh 1.0 A2A 实验性适配边界
 
 - 首个适配包固定处理 A2A `0.3`；Binding 持久化精确协议版本，后续版本通过新的映射层接入；
 - Adapter 在任何 Task 映射、Session 创建或 Context 构造前调用授权回调；

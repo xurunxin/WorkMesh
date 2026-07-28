@@ -1,5 +1,5 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
+import { WorkMeshClient, WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk'
 import { z } from 'zod'
 
 export type McpMode = 'read-only' | 'read-write'
@@ -10,7 +10,9 @@ const idempotencyKey = z.string().min(1).max(255).optional()
 const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write', 'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging', 'deploy:production', 'secrets:use', 'automation:manage', 'admin:*'])
 
 export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer {
-  const server = new McpServer({ name: 'workmesh-mcp', version: '0.1.0' })
+  const server = new McpServer({ name: 'workmesh-mcp', version: releaseMetadata.mcpVersion })
+  server.registerResource('server-info', 'workmesh://server/info', { description: 'Safe WorkMesh release and build metadata.', mimeType: 'application/json' }, async uri => resource(uri, await options.client.getServerInfo()))
+  server.registerResource('server-features', 'workmesh://server/features', { description: 'Authenticated deployment feature support tiers and enabled state.', mimeType: 'application/json' }, async uri => resource(uri, await options.client.getFeatures()))
   server.registerResource('work-item', new ResourceTemplate('workmesh://work-item/{id}', { list: undefined }), { description: 'Current WorkMesh work item and its revision.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getWorkItem(String(variables.id))))
   server.registerResource('session-context', new ResourceTemplate('workmesh://session/{id}/context', { list: undefined }), { description: 'Bounded context manifest for an agent session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getSessionContext(String(variables.id))))
   server.registerResource('session-plan', new ResourceTemplate('workmesh://session/{id}/plan', { list: undefined }), { description: 'Current versioned session plan.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getPlan(String(variables.id))))

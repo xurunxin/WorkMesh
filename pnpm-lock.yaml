@@ -162,6 +162,9 @@ importers:
       '@workmesh/artifact-storage':
         specifier: workspace:*
         version: link:../../packages/artifact-storage
+      '@workmesh/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@workmesh/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -238,6 +241,9 @@ importers:
 
   packages/config:
     dependencies:
+      '@workmesh/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       zod:
         specifier: ^3.24.3
         version: 3.25.76

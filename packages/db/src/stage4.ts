@@ -289,6 +289,7 @@ export async function admitLoopRun(
     occurrenceKey: string
     scheduledFor: Date
     authorization: Stage4AdmissionAuthorization
+    notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<{ runId: string; sessionId: string; duplicate: boolean }> {
   const loop = (await tx.query<LoopRow>(
@@ -427,7 +428,8 @@ export async function admitLoopRun(
   const projectedCostMinor = (BigInt(consumedCostMinor) + BigInt(requestedCostMinor)).toString()
   const softCostReached = softCostMinor !== undefined && BigInt(projectedCostMinor) > BigInt(softCostMinor)
   const softTokensReached = softTokens !== undefined && consumedTokens + requestedTokens > softTokens
-  if (softCostReached || softTokensReached) {
+  const notificationChannels = input.notificationChannels ?? ['in_app', 'browser', 'webhook']
+  if ((softCostReached || softTokensReached) && notificationChannels.length > 0) {
     await admitNotification(tx, {
       workspaceId: loop.workspace_id,
       recipientActorId: loop.owner_actor_id,
@@ -440,7 +442,7 @@ export async function admitLoopRun(
       sourceType: 'automation_run',
       sourceId: run.id,
       dedupeKey: `loop-soft-budget:${run.id}`,
-      requestedChannels: ['in_app', 'browser', 'webhook'],
+      requestedChannels: [...notificationChannels],
     })
     await appendEvent(tx, {
       workspaceId: loop.workspace_id,
@@ -500,6 +502,7 @@ export async function executeAutomationAction(
     runId: string
     actionOrdinal: number
     action: AutomationAction
+    notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<Record<string, unknown>> {
   const authority = (await tx.query<{
@@ -822,7 +825,7 @@ export async function executeAutomationAction(
       sourceType: 'automation_run',
       sourceId: input.runId,
       dedupeKey: `${input.runId}:${input.actionOrdinal}`,
-      requestedChannels: ['in_app', 'browser', 'webhook'],
+      requestedChannels: [...(input.notificationChannels ?? ['in_app', 'browser', 'webhook'])],
     })
     result = { notificationId: notification.id, channels: notification.channels, suppressed: notification.suppressed }
     await appendEvent(tx, {

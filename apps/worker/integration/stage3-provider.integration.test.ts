@@ -276,6 +276,223 @@ describe('Stage 3 provider webhook worker', () => {
     )).rowCount).toBe(1)
   })
 
+  it('does not claim or effect webhook deliveries from a disabled provider', async () => {
+    const f = await fixture()
+    const deliveryId = (await db.query<{ id: string }>(
+      `INSERT INTO provider_webhook_deliveries(
+         connection_id,repository_id,delivery_id,event_name,body_hash,payload
+       ) VALUES($1,$2,$3,'push',$4,$5) RETURNING id`,
+      [
+        f.connectionId,
+        f.repositoryId,
+        `disabled-${randomUUID()}`,
+        `sha256:${'d'.repeat(64)}`,
+        { ref: 'refs/heads/main', before: 'before', after: 'after-disabled' },
+      ],
+    )).rows[0]!.id
+    await db.query("UPDATE provider_connections SET provider='gitea' WHERE id=$1", [f.connectionId])
+    const disabled = createProviderActionWorker({
+      db,
+      resolveProvider: () => fake,
+      workerId: 'disabled-gitea-webhook',
+      allowedProviders: ['fake', 'github'],
+    })
+    await expect(disabled.claimWebhook()).resolves.toBeUndefined()
+    expect((await db.query<{ status: string; attempt_count: number }>(
+      'SELECT status,attempt_count FROM provider_webhook_deliveries WHERE id=$1',
+      [deliveryId],
+    )).rows[0]).toEqual({ status: 'received', attempt_count: 0 })
+
+    await db.query("UPDATE provider_connections SET provider='github' WHERE id=$1", [f.connectionId])
+    const claimed = await disabled.claimWebhook()
+    expect(claimed?.id).toBe(deliveryId)
+    await db.query("UPDATE provider_connections SET provider='gitea' WHERE id=$1", [f.connectionId])
+    await disabled.finishWebhook(claimed!)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM provider_webhook_deliveries WHERE id=$1',
+      [deliveryId],
+    )).rows[0]).toEqual({ status: 'claimed' })
+    expect((await db.query(
+      "SELECT 1 FROM commit_projections WHERE repository_id=$1 AND sha='after-disabled'",
+      [f.repositoryId],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      "SELECT 1 FROM domain_events WHERE aggregate_id=$1 AND event_type='provider.webhook.processed'",
+      [deliveryId],
+    )).rowCount).toBe(0)
+  })
+
+  it('revalidates the provider allowlist before every provider access and recovers released actions', async () => {
+    const f = await openPullRequestFixture(await fixture())
+    await db.query("UPDATE provider_actions SET status='completed' WHERE id=$1", [f.actionId])
+    const providerState = new FakeGitProvider()
+    providerState.seedRepositoryFiles(f.connectionId, '9001', 'base', {})
+    let resolverCalls = 0
+    const worker = createProviderActionWorker({
+      db,
+      resolveProvider: () => {
+        resolverCalls += 1
+        return providerState
+      },
+      workerId: 'effect-time-provider-gate',
+      allowedProviders: ['fake', 'github'],
+    })
+    const expectReleased = async (actionId: string): Promise<void> => {
+      expect((await db.query<{
+        status: string
+        attempt_count: number
+        claimed_by: string | null
+        last_error: string | null
+      }>(
+        'SELECT status,attempt_count,claimed_by,last_error FROM provider_actions WHERE id=$1',
+        [actionId],
+      )).rows[0]).toEqual({
+        status: 'pending',
+        attempt_count: 0,
+        claimed_by: null,
+        last_error: 'PROVIDER_DISABLED:gitea',
+      })
+    }
+    const branchName = 'workmesh/DEL-1-provider-toggle'
+    const branchActionId = (await db.query<{ id: string }>(
+      `INSERT INTO provider_actions(
+         workspace_id,connection_id,repository_id,requested_by_actor_id,session_id,work_item_id,
+         project_id,plan_step_id,kind,intent_key,payload)
+       VALUES($1,$2,$3,$4,$5,$6,$7,$8,'create_branch',$9,$10) RETURNING id`,
+      [
+        f.workspaceId,
+        f.connectionId,
+        f.repositoryId,
+        f.agentActorId,
+        f.sessionId,
+        f.workItemId,
+        f.projectId,
+        f.planStepId,
+        randomUUID(),
+        { name: branchName, baseSha: 'base' },
+      ],
+    )).rows[0]!.id
+
+    const claimedBranch = (await worker.claimAction())!
+    expect(claimedBranch.id).toBe(branchActionId)
+    await db.query("UPDATE provider_connections SET provider='gitea' WHERE id=$1", [f.connectionId])
+    await worker.executeAction(claimedBranch)
+
+    expect(resolverCalls).toBe(0)
+    expect(providerState.branches.has(`${f.connectionId}:9001:${branchName}`)).toBe(false)
+    await expectReleased(branchActionId)
+    expect((await db.query(
+      "SELECT 1 FROM artifacts WHERE metadata->>'providerActionId'=$1",
+      [branchActionId],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      'SELECT 1 FROM domain_events WHERE aggregate_id=$1',
+      [branchActionId],
+    )).rowCount).toBe(0)
+
+    await db.query("UPDATE provider_connections SET provider='github' WHERE id=$1", [f.connectionId])
+    const recoveredBranch = (await worker.claimAction())!
+    expect(recoveredBranch.id).toBe(branchActionId)
+    await worker.executeAction(recoveredBranch)
+    expect(resolverCalls).toBe(1)
+    expect(providerState.branches.has(`${f.connectionId}:9001:${branchName}`)).toBe(true)
+    expect((await db.query(
+      'SELECT status,attempt_count,claimed_by FROM provider_actions WHERE id=$1',
+      [branchActionId],
+    )).rows[0]).toEqual({ status: 'completed', attempt_count: 1, claimed_by: null })
+    expect((await db.query(
+      "SELECT 1 FROM artifacts WHERE metadata->>'providerActionId'=$1",
+      [branchActionId],
+    )).rowCount).toBe(1)
+    expect((await db.query(
+      "SELECT 1 FROM domain_events WHERE aggregate_id=$1 AND event_type='provider.action.completed'",
+      [branchActionId],
+    )).rowCount).toBe(1)
+
+    const contextsBefore = (await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM repository_contexts WHERE repository_id=$1',
+      [f.repositoryId],
+    )).rows[0]!.count
+    const contextActionId = (await db.query<{ id: string }>(
+      `INSERT INTO provider_actions(
+         workspace_id,connection_id,repository_id,requested_by_actor_id,project_id,
+         kind,intent_key,payload,expected_head_sha)
+       VALUES($1,$2,$3,$4,$5,'resolve_repository_context',$6,$7,'base') RETURNING id`,
+      [
+        f.workspaceId,
+        f.connectionId,
+        f.repositoryId,
+        f.humanId,
+        f.projectId,
+        randomUUID(),
+        {
+          projectId: f.projectId,
+          baseBranch: 'main',
+          baseSha: 'base',
+          branchPattern: 'workmesh/{workItemKey}-{slug}',
+          allowedPaths: ['apps/**'],
+          permissions: ['read'],
+        },
+      ],
+    )).rows[0]!.id
+    const claimedContext = (await worker.claimAction())!
+    expect(claimedContext.id).toBe(contextActionId)
+    await db.query("UPDATE provider_connections SET provider='gitea' WHERE id=$1", [f.connectionId])
+    await worker.executeAction(claimedContext)
+
+    expect(resolverCalls).toBe(1)
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM repository_contexts WHERE repository_id=$1',
+      [f.repositoryId],
+    )).rows[0]!.count).toBe(contextsBefore)
+    await expectReleased(contextActionId)
+    await db.query(
+      "UPDATE provider_actions SET available_at=now()+interval '1 hour' WHERE id=$1",
+      [contextActionId],
+    )
+
+    await db.query("UPDATE provider_connections SET provider='github' WHERE id=$1", [f.connectionId])
+    const projectionsBefore = (await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM pull_request_projections WHERE repository_id=$1',
+      [f.repositoryId],
+    )).rows[0]!.count
+    const mergeActionId = (await db.query<{ id: string }>(
+      `INSERT INTO provider_actions(
+         workspace_id,connection_id,repository_id,requested_by_actor_id,session_id,work_item_id,
+         project_id,plan_step_id,kind,intent_key,payload,expected_head_sha)
+       VALUES($1,$2,$3,$4,$5,$6,$7,$8,'merge_pull_request',$9,$10,'approved-head')
+       RETURNING id`,
+      [
+        f.workspaceId,
+        f.connectionId,
+        f.repositoryId,
+        f.agentActorId,
+        f.sessionId,
+        f.workItemId,
+        f.projectId,
+        f.planStepId,
+        randomUUID(),
+        { pullRequestId: 'fake-pr-disabled', headSha: 'approved-head', method: 'squash' },
+      ],
+    )).rows[0]!.id
+    const claimedMerge = (await worker.claimAction())!
+    expect(claimedMerge.id).toBe(mergeActionId)
+    await db.query("UPDATE provider_connections SET provider='gitea' WHERE id=$1", [f.connectionId])
+    await worker.executeAction(claimedMerge)
+
+    expect(resolverCalls).toBe(1)
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM pull_request_projections WHERE repository_id=$1',
+      [f.repositoryId],
+    )).rows[0]!.count).toBe(projectionsBefore)
+    await expectReleased(mergeActionId)
+    expect((await db.query(
+      'SELECT 1 FROM domain_events WHERE aggregate_id=ANY($1::uuid[])',
+      [[contextActionId, mergeActionId]],
+    )).rowCount).toBe(0)
+    await db.query("UPDATE provider_connections SET provider='github' WHERE id=$1", [f.connectionId])
+  })
+
   it('reconciles a webhook-first provider PR, retries prerequisite deliveries, and preserves exact provenance through merge', async () => {
     const f = await openPullRequestFixture(await fixture())
     const providerState = new FakeGitProvider()

@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
+import { loadFeatureConfig, type FeatureConfig } from '@workmesh/config'
 import type { AutomationAction, NotificationPriority } from '@workmesh/contracts'
 import {
   admitAutomationOccurrence,
@@ -175,6 +176,7 @@ export function createAutomationWorker({
   dnsLookup = systemWebhookDnsLookup,
   afterExternalDelivery,
   now = () => new Date(),
+  features = loadFeatureConfig(),
 }: {
   db: Db
   workerId?: string
@@ -182,15 +184,30 @@ export function createAutomationWorker({
   dnsLookup?: WebhookDnsLookup
   afterExternalDelivery?: (effectKey: string) => Promise<void>
   now?: () => Date
+  features?: FeatureConfig
 }) {
   const externalSink = sink ?? createDefaultSink(dnsLookup)
-  const claimEffects = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedEffect[]> =>
-    withTx(db, async tx => (await tx.query<ClaimedEffect>(
+  const notificationChannels: ReadonlyArray<'in_app' | 'browser' | 'webhook'> =
+    !features.WORKMESH_BETA_PLANNING
+      ? []
+      : features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS
+        ? ['in_app', 'browser', 'webhook']
+        : ['in_app', 'browser']
+  // Existing mixed-action rule versions fail closed as one occurrence.
+  const actionsEnabled = (actions: Array<{ type?: string }>): boolean =>
+    !actions.some(action =>
+      (action.type === 'call_webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS)
+      || (action.type === 'notify' && !features.WORKMESH_BETA_PLANNING))
+  const claimEffects = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedEffect[]> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AUTOMATION) return []
+    return withTx(db, async tx => (await tx.query<ClaimedEffect>(
       `WITH candidates AS (
         SELECT effect.id FROM automation_effects effect
         JOIN automation_runs run ON run.id=effect.run_id
         WHERE run.status IN ('pending','claimed','running')
           AND NOT run.dry_run
+          AND ($4::boolean OR effect.action->>'type'<>'call_webhook')
+          AND ($5::boolean OR effect.action->>'type'<>'notify')
           AND effect.attempt_count<8 AND (
           (effect.status IN ('pending','failed') AND effect.available_at<=now())
           OR (effect.status='claimed' AND effect.claimed_at<now()-($2::text || ' seconds')::interval)
@@ -212,8 +229,15 @@ export function createAutomationWorker({
         effect.effect_key AS "effectKey",effect.action,effect.attempt_count AS "attemptCount",
         effect.claim_fence AS "claimFence",run.workspace_id AS "workspaceId",
         run.team_id AS "teamId",run.max_attempts AS "maxAttempts"`,
-      [limit, lockTimeoutSeconds, workerId],
+      [
+        limit,
+        lockTimeoutSeconds,
+        workerId,
+        features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS,
+        features.WORKMESH_BETA_PLANNING,
+      ],
     )).rows)
+  }
 
   const completeEffect = async (effect: ClaimedEffect, result: Record<string, unknown>): Promise<void> => {
     await withTx(db, async tx => {
@@ -303,6 +327,7 @@ export function createAutomationWorker({
       runId: effect.runId,
       actionOrdinal: effect.actionOrdinal,
       action: effect.action,
+      notificationChannels,
     })
     const requestHash = `sha256:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`
     const inserted = await tx.query(
@@ -344,6 +369,9 @@ export function createAutomationWorker({
   }
 
   const executeEffect = async (effect: ClaimedEffect): Promise<void> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AUTOMATION) return
+    if (effect.action.type === 'call_webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return
+    if (effect.action.type === 'notify' && !features.WORKMESH_BETA_PLANNING) return
     try {
       let result: Record<string, unknown>
       if (effect.action.type === 'call_webhook') {
@@ -375,6 +403,7 @@ export function createAutomationWorker({
           runId: effect.runId,
           actionOrdinal: effect.actionOrdinal,
           action: effect.action,
+          notificationChannels,
         }))
       }
       await completeEffect(effect, result)
@@ -384,6 +413,7 @@ export function createAutomationWorker({
   }
 
   const scheduleDueLoops = async (limit = 25): Promise<void> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AGENT_LOOPS) return
     const due = (await db.query<{
       id: string
       workspace_id: string
@@ -420,6 +450,7 @@ export function createAutomationWorker({
             occurrenceKey: `schedule:${scheduledFor.toISOString()}`,
             scheduledFor,
             authorization: { kind: 'trusted_worker' },
+            notificationChannels,
           })
           await tx.query('UPDATE loops SET next_run_at=$1,updated_at=now() WHERE id=$2', [next, locked.id])
         })
@@ -435,26 +466,29 @@ export function createAutomationWorker({
   }
 
   const scheduleDueRules = async (limit = 25): Promise<void> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AUTOMATION) return
     const rules = (await db.query<{
       id: string
       workspace_id: string
       created_by_actor_id: string
       trigger: { type: string; cron?: string; timezone?: string }
+      actions: Array<{ type?: string }>
       last_scheduled: Date | null
     }>(
-      `SELECT rule.id,rule.workspace_id,rule.created_by_actor_id,version.trigger,
+      `SELECT rule.id,rule.workspace_id,rule.created_by_actor_id,version.trigger,version.actions,
         max(occurrence.scheduled_for) AS last_scheduled
        FROM automation_rules rule
        JOIN automation_rule_versions version ON version.id=rule.current_version_id
        LEFT JOIN automation_occurrences occurrence ON occurrence.rule_id=rule.id
        WHERE rule.state='active' AND version.trigger->>'type'='schedule'
-       GROUP BY rule.id,version.trigger
+       GROUP BY rule.id,version.trigger,version.actions
        ORDER BY rule.created_at LIMIT $1`,
       [limit],
     )).rows
     const clock = now()
     for (const rule of rules) {
       try {
+        if (!actionsEnabled(rule.actions)) continue
         if (rule.trigger.timezone && rule.trigger.timezone !== 'UTC') throw new Error('CRON_TIMEZONE_UNSUPPORTED')
         const baseline = rule.last_scheduled ?? new Date(clock.getTime() - 60_000)
         const scheduledFor = nextCronOccurrence(rule.trigger.cron ?? '', baseline)
@@ -484,6 +518,7 @@ export function createAutomationWorker({
   }
 
   const admitEventRules = async (limit = 100): Promise<void> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AUTOMATION) return
     const matches = (await db.query<{
       rule_id: string
       workspace_id: string
@@ -494,10 +529,11 @@ export function createAutomationWorker({
       event_actor_id: string
       occurred_at: Date
       payload: Record<string, unknown>
+      actions: Array<{ type?: string }>
     }>(
       `SELECT rule.id AS rule_id,rule.workspace_id,event.id AS event_id,
               event.event_type,event.event_version,event.cursor::text AS event_cursor,
-              event.actor_id AS event_actor_id,event.occurred_at,event.payload
+               event.actor_id AS event_actor_id,event.occurred_at,event.payload,version.actions
          FROM automation_rules rule
          JOIN automation_rule_versions version ON version.id=rule.current_version_id
          JOIN domain_events event ON event.workspace_id=rule.workspace_id
@@ -513,6 +549,7 @@ export function createAutomationWorker({
       [limit],
     )).rows
     for (const match of matches) {
+      if (!actionsEnabled(match.actions)) continue
       await withTx(db, tx => admitAutomationOccurrence(tx, {
         meta: {
           workspaceId: match.workspace_id,
@@ -539,6 +576,7 @@ export function createAutomationWorker({
   }
 
   const reconcileLoopRuns = async (): Promise<void> => {
+    if (!features.WORKMESH_EXPERIMENTAL_AGENT_LOOPS) return
     const candidates = (await db.query<{ run_id: string; session_id: string }>(
       `SELECT run.id AS run_id,run.session_id FROM automation_runs run
        JOIN agent_sessions session ON session.id=run.session_id
@@ -567,8 +605,8 @@ export function createAutomationWorker({
         if (!row || !TERMINAL_SESSION_STATES.has(row.state)) return
         const status = row.state === 'completed' ? 'succeeded' : 'failed'
         await tx.query(
-          `UPDATE automation_runs SET status=$1,finished_at=now(),
-            last_error=CASE WHEN $1='failed' THEN $2 ELSE NULL END WHERE id=$3`,
+          `UPDATE automation_runs SET status=$1::automation_run_status,finished_at=now(),
+            last_error=CASE WHEN $1::text='failed' THEN $2 ELSE NULL END WHERE id=$3`,
           [status, `SESSION_${row.state.toUpperCase()}`, candidate.run_id],
         )
         await tx.query(
@@ -586,7 +624,7 @@ export function createAutomationWorker({
           aggregateId: candidate.run_id,
           payload: { loopId: row.loop_id, sessionId: candidate.session_id, sessionState: row.state },
         })
-        if (status === 'failed' && row.failure_notification !== 'none') {
+        if (notificationChannels.length > 0 && status === 'failed' && row.failure_notification !== 'none') {
           const recipients = row.failure_notification === 'team' && row.team_id
             ? (await tx.query<{ actor_id: string }>(
               `SELECT member.actor_id FROM memberships member
@@ -606,7 +644,7 @@ export function createAutomationWorker({
               sourceType: 'automation_run',
               sourceId: candidate.run_id,
               dedupeKey: `loop-failed:${candidate.run_id}`,
-              requestedChannels: ['in_app', 'browser', 'webhook'],
+              requestedChannels: [...notificationChannels],
             })
           }
         }
@@ -615,13 +653,14 @@ export function createAutomationWorker({
   }
 
   const claimNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> =>
-    withTx(db, async tx => (await tx.query<ClaimedNotification>(
+    !features.WORKMESH_BETA_PLANNING ? [] : withTx(db, async tx => (await tx.query<ClaimedNotification>(
       `WITH candidates AS (
         SELECT delivery.id FROM notification_deliveries delivery
         WHERE delivery.attempt_count<8 AND (
           (delivery.status IN ('pending','failed') AND delivery.available_at<=now())
           OR (delivery.status='claimed' AND delivery.claimed_at<now()-($2::text || ' seconds')::interval)
         )
+          AND ($4::boolean OR delivery.channel<>'webhook')
         ORDER BY delivery.available_at,delivery.created_at
         FOR UPDATE SKIP LOCKED LIMIT $1
       )
@@ -638,10 +677,12 @@ export function createAutomationWorker({
         notification.kind,notification.title,notification.body,notification.source_type AS "sourceType",
         notification.source_id AS "sourceId",coalesce(preference.minimum_priority,'update') AS "minimumPriority",
         coalesce(preference.muted_kinds,'{}') AS "mutedKinds",preference.webhook_url AS "webhookUrl"`,
-      [limit, lockTimeoutSeconds, workerId],
+      [limit, lockTimeoutSeconds, workerId, features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS],
     )).rows)
 
   const deliverNotification = async (delivery: ClaimedNotification): Promise<void> => {
+    if (!features.WORKMESH_BETA_PLANNING) return
+    if (delivery.channel === 'webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return
     try {
       if (!shouldDeliverNotification(delivery)) {
         await db.query(
@@ -705,12 +746,17 @@ export function createAutomationWorker({
   }
 
   const tick = async (): Promise<void> => {
-    await admitEventRules()
-    await scheduleDueRules()
-    await scheduleDueLoops()
-    for (const effect of await claimEffects()) await executeEffect(effect)
-    await reconcileLoopRuns()
-    for (const notification of await claimNotifications()) await deliverNotification(notification)
+    if (features.WORKMESH_EXPERIMENTAL_AUTOMATION) {
+      await admitEventRules()
+      await scheduleDueRules()
+      for (const effect of await claimEffects()) await executeEffect(effect)
+    }
+    if (features.WORKMESH_BETA_PLANNING)
+      for (const notification of await claimNotifications()) await deliverNotification(notification)
+    if (features.WORKMESH_EXPERIMENTAL_AGENT_LOOPS) {
+      await scheduleDueLoops()
+      await reconcileLoopRuns()
+    }
   }
 
   return {

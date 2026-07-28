@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { createClient, type RedisClientType } from 'redis'
+import { loadFeatureConfig } from '@workmesh/config'
 import { createDb, type Db, withTx } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
 import { createSessionLifecycleWorker } from './session-lifecycle.js'
@@ -167,6 +168,7 @@ export function createOutboxWorker({
 
 const startWorkerProcess = (): void => {
   const db = createDb()
+  const features = loadFeatureConfig()
   const outboxWorker = createOutboxWorker({ db })
   const agentWebhookWorker = createAgentWebhookWorker({ db })
   const sessionLifecycleWorker = createSessionLifecycleWorker({ db })
@@ -175,9 +177,13 @@ const startWorkerProcess = (): void => {
   const giteaProviders = new Map<string, GitProvider>()
   const providerActionWorker = createProviderActionWorker({
     db,
+    allowedProviders: features.WORKMESH_BETA_GITEA
+      ? ['fake', 'github', 'gitea']
+      : ['fake', 'github'],
     resolveProvider: async (provider, connectionId) => {
       if (provider === 'fake') return fakeProvider
       if (provider === 'gitea') {
+        if (!features.WORKMESH_BETA_GITEA) throw new Error('FEATURE_DISABLED:WORKMESH_BETA_GITEA')
         const cached = giteaProviders.get(connectionId)
         if (cached) return cached
         const masterKey = process.env.WORKMESH_MASTER_KEY
@@ -223,7 +229,7 @@ const startWorkerProcess = (): void => {
     },
   })
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
-  const automationWorker = createAutomationWorker({ db })
+  const automationWorker = createAutomationWorker({ db, features })
   let stopping = false
   let timer: NodeJS.Timeout | undefined
 

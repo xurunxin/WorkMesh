@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
+import type { FeatureConfig } from '@workmesh/config'
 import {
   artifactUploadIntentInputSchema,
   ciRetryInputSchema,
@@ -42,6 +43,7 @@ type Helpers = {
   meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta
   header: (request: FastifyRequest, name: string) => string | undefined
   readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>
+  features: FeatureConfig
 }
 type RepositoryRow = {
   id: string
@@ -90,6 +92,16 @@ const masterKey = (): string => {
   const value = process.env.WORKMESH_MASTER_KEY
   if (!value) throw new DomainError('INTERNAL_ERROR', 'WORKMESH_MASTER_KEY is required for provider secrets')
   return value
+}
+const requireProviderFeature = (
+  features: FeatureConfig,
+  provider: string,
+): void => {
+  if (provider !== 'gitea' || features.WORKMESH_BETA_GITEA) return
+  throw new DomainError('FEATURE_DISABLED', 'WORKMESH_BETA_GITEA is disabled for this deployment', {
+    feature: 'WORKMESH_BETA_GITEA',
+    tier: 'beta',
+  })
 }
 const emit = (
   tx: PoolClient,
@@ -336,6 +348,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   app.post('/api/v1/provider-connections', async (request) => {
     const body = providerConnectionInputSchema.parse(request.body)
     requireHuman(actor(request), true)
+    requireProviderFeature(h.features, body.provider)
     return command(h.db, h.meta(request, { ...body, webhookSecret: '[REDACTED]', privateKey: body.privateKey ? '[REDACTED]' : undefined, accessToken: body.accessToken ? '[REDACTED]' : undefined }), async tx => {
       const service = one((await tx.query<{ id: string }>(
         "INSERT INTO actors(workspace_id,kind,display_name,is_active) VALUES($1,'service',$2,true) RETURNING id",
@@ -415,18 +428,23 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     const current = actor(request)
     if (current.kind === 'agent') {
       const contexts = (await applicableAgentRepositoryContexts(tx, current)).rows
+      for (const context of contexts) requireProviderFeature(h.features, context.provider)
       return [...new Map(contexts.map(context => [context.id, {
         id: context.id, workspace_id: context.workspace_id, connection_id: context.connection_id,
         team_id: context.team_id, external_id: context.external_id, full_name: context.full_name,
         default_branch: context.default_branch, required_checks: context.required_checks,
       }])).values()]
     }
-    return (await tx.query(
-      `SELECT r.* FROM repositories r WHERE r.workspace_id=$1 AND
+    const repositories = (await tx.query<Omit<RepositoryRow, 'provider'> & { feature_provider: RepositoryRow['provider'] }>(
+      `SELECT r.*,c.provider AS feature_provider FROM repositories r
+       JOIN provider_connections c ON c.id=r.connection_id AND c.active
+       WHERE r.workspace_id=$1 AND
        ($2='admin' OR EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=r.workspace_id AND m.team_id=r.team_id AND m.actor_id=$3))
        ORDER BY r.full_name`,
       [current.workspaceId, current.workspaceRole, current.id],
     )).rows
+    for (const repo of repositories) requireProviderFeature(h.features, repo.feature_provider)
+    return repositories.map(({ feature_provider: _featureProvider, ...repo }) => repo)
   }))
 
   app.post('/api/v1/repositories', async request => {
@@ -434,8 +452,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     requireHuman(actor(request), true)
     await h.readableTeam(request, body.teamId)
     return command(h.db, h.meta(request, body), async tx => {
-      const connection = await tx.query('SELECT 1 FROM provider_connections WHERE id=$1 AND workspace_id=$2 AND active', [body.connectionId, actor(request).workspaceId])
+      const connection = await tx.query<{ provider: string }>('SELECT provider FROM provider_connections WHERE id=$1 AND workspace_id=$2 AND active', [body.connectionId, actor(request).workspaceId])
       if (!connection.rowCount) throw new DomainError('PROVIDER_CONNECTION_NOT_FOUND', 'Provider connection not found')
+      requireProviderFeature(h.features, connection.rows[0]!.provider)
       const row = one((await tx.query(
         `INSERT INTO repositories(workspace_id,connection_id,team_id,external_id,full_name,default_branch,clone_url,required_checks)
          VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
@@ -450,9 +469,14 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     const current = actor(request)
     let contextIds: string[] | undefined
     if (current.kind === 'agent') {
-      contextIds = (await applicableAgentRepositoryContexts(tx, current, id(request))).rows.map(context => context.context_id)
+      const contexts = (await applicableAgentRepositoryContexts(tx, current, id(request))).rows
+      contextIds = contexts.map(context => context.context_id)
       if (contextIds.length === 0) throw new DomainError('REPOSITORY_ACCESS_DENIED', 'Repository not found')
-    } else await assertRepositoryRead(tx, current, id(request))
+      requireProviderFeature(h.features, contexts[0]!.provider)
+    } else {
+      const repo = await assertRepositoryRead(tx, current, id(request))
+      requireProviderFeature(h.features, repo.provider)
+    }
     return (await tx.query(
       `SELECT rc.*,coalesce(jsonb_agg(jsonb_build_object(
          'path',g.path,'blobSha',g.blob_sha,'contentHash',g.content_hash,'content',g.content) ORDER BY g.ordinal)
@@ -474,6 +498,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
         [actor(request).workspaceId, repo.team_id, actor(request).id],
       )).rowCount
       if (!member) throw new DomainError('FORBIDDEN', 'Team maintainer role is required')
+      requireProviderFeature(h.features, repo.provider)
       const linkedResource = body.projectId
         ? await tx.query('SELECT 1 FROM projects WHERE id=$1 AND workspace_id=$2 AND team_id=$3 AND deleted_at IS NULL', [body.projectId, actor(request).workspaceId, repo.team_id])
         : body.workItemId
@@ -504,6 +529,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       const capability = body.kind === 'open_pull_request' ? 'repo:open_pr' : 'repo:write_branch'
       const contextPermission = body.kind === 'open_pull_request' ? 'open_pr' : 'write_branch'
       const { repo, context } = await assertAgentRepositoryWrite(tx, actor(request), body, capability, contextPermission)
+      requireProviderFeature(h.features, repo.provider)
       const workItem = one((await tx.query<{ team_key: string; number: number }>(
         `SELECT t.key AS team_key,w.number FROM work_items w JOIN teams t ON t.id=w.team_id
           WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL`,
@@ -710,13 +736,16 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     return command(h.db, h.meta(request, body, { id: id(request) }), async tx => {
       assertSanitized(body, 'structured review')
       const access = await prepareAgentPullRequestAccess(tx, actor(request), body.sessionId, 'artifact:write', 'review')
-      const pr = one((await tx.query<{ repository_id: string; work_item_id: string; head_sha: string; producer_actor_id: string; team_id: string }>(
-        `SELECT pr.repository_id,pr.work_item_id,pr.head_sha,pr.producer_actor_id,r.team_id
-           FROM pull_request_projections pr JOIN repositories r ON r.id=pr.repository_id
+      const pr = one((await tx.query<{ repository_id: string; work_item_id: string; head_sha: string; producer_actor_id: string; team_id: string; provider: string }>(
+        `SELECT pr.repository_id,pr.work_item_id,pr.head_sha,pr.producer_actor_id,r.team_id,c.provider
+           FROM pull_request_projections pr
+           JOIN repositories r ON r.id=pr.repository_id
+           JOIN provider_connections c ON c.id=r.connection_id
           WHERE pr.id=$1 AND pr.workspace_id=$2 AND pr.repository_id=ANY($3::uuid[])
-            AND pr.work_item_id=$4 FOR UPDATE OF pr`,
+             AND pr.work_item_id=$4 FOR UPDATE OF pr`,
         [id(request), actor(request).workspaceId, access.repositoryIds, access.session.work_item_id],
       )).rows)
+      requireProviderFeature(h.features, pr.provider)
       const delegation = one((await tx.query<{ role: string }>('SELECT role FROM delegations WHERE id=$1', [access.session.delegation_id])).rows)
       if (delegation.role !== 'reviewer' || actor(request).id === pr.producer_actor_id)
         throw new DomainError('REVIEWER_CONFLICT', 'Review requires an independent reviewer delegation')
@@ -772,6 +801,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            AND pr.repository_id=ANY($3::uuid[]) AND pr.work_item_id=$4 FOR UPDATE OF pr`,
         [id(request), actor(request).workspaceId, access.repositoryIds, access.session.work_item_id],
       )).rows)
+      requireProviderFeature(h.features, pr.provider)
       if (body.headSha !== pr.head_sha) throw new DomainError('MERGE_HEAD_CHANGED', 'Merge intent head is stale')
       const approval = one((await tx.query<{
         session_id: string; status: string; action_name: string; action_payload_hash: string;
@@ -863,6 +893,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
         [id(request), actor(request).workspaceId, access.repositoryIds,
           access.session.work_item_id, checkId(request)],
       )).rows)
+      requireProviderFeature(h.features, check.provider)
       if (body.headSha !== check.head_sha)
         throw new DomainError('MERGE_HEAD_CHANGED', 'CI retry must bind the current pull-request head')
       if (!['failed', 'skipped'].includes(check.status))
@@ -908,6 +939,16 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   app.get('/api/v1/projects/:id/delivery', async request => withTx(h.db, async tx => {
     const project = one((await tx.query<{ team_id: string }>('SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [id(request), actor(request).workspaceId])).rows)
     await h.readableTeam(request, project.team_id)
+    const providers = (await tx.query<{ provider: string }>(
+      `SELECT DISTINCT connection.provider
+         FROM pull_request_projections pull_request
+         JOIN repositories repository ON repository.id=pull_request.repository_id
+         JOIN provider_connections connection ON connection.id=repository.connection_id
+         JOIN work_items work_item ON work_item.id=pull_request.work_item_id
+        WHERE work_item.project_id=$1 AND pull_request.workspace_id=$2`,
+      [id(request), actor(request).workspaceId],
+    )).rows
+    for (const provider of providers) requireProviderFeature(h.features, provider.provider)
     const [
       milestones, updates, artifacts, dependencies, suggestions, pullRequests,
       providerReviews, structuredReviews, structuredFindings, checks, mergeApprovals,

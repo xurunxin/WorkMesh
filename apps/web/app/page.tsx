@@ -10,6 +10,8 @@ import { ProjectDelivery } from './project-delivery'
 type Actor = { id: string; displayName: string }
 type AuthMe = { actor: Actor; csrfToken: string }
 type InstallStatus = { installed: boolean }
+type FeatureRegistry = { features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }> }
+type ReleaseInfo = { serverVersion: string; buildSha: string; schemaBaseline: number }
 type Team = { id: string; name: string; key: string; revision: number }
 type StatusCategory = 'backlog' | 'planned' | 'started' | 'completed' | 'canceled'
 type WorkflowState = { id: string; name: string; category: StatusCategory; color: string; revision: number }
@@ -60,6 +62,8 @@ export default function HomePage() {
   const [filters, setFilters] = useState<Filters>({ mine: true })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [operationsEnabled, setOperationsEnabled] = useState(false)
+  const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
 
   const selectedTeam = teams.find(team => team.id === teamId) ?? null
   const teamProjects = useMemo(() => projects.filter(project => project.team_id === selectedTeam?.id), [projects, selectedTeam?.id])
@@ -85,18 +89,23 @@ export default function HomePage() {
       const nextTeamId = nextTeams.some(team => team.id === teamId) ? teamId : nextTeams[0]?.id ?? null
       if (nextTeamId !== teamId) setTeamId(nextTeamId)
       const currentQuery = toQuery(nextTeamId ?? undefined, filters)
-      const [nextHumans, nextProjects, nextItems, nextViews, nextStates] = await Promise.all([
+      const [nextHumans, nextProjects, nextItems, nextViews, nextStates, featureRegistry, info] = await Promise.all([
         apiRequest<Human[]>(`/api/v1/actors/humans${nextTeamId ? `?teamId=${encodeURIComponent(nextTeamId)}` : ''}`),
         apiRequest<Project[]>('/api/v1/projects'),
         apiRequest<WorkItem[]>(`/api/v1/work-items${currentQuery}`),
         apiRequest<SavedView[]>(`/api/v1/views${nextTeamId ? `?teamId=${encodeURIComponent(nextTeamId)}` : ''}`),
         nextTeamId ? apiRequest<WorkflowState[]>(`/api/v1/teams/${nextTeamId}/states`) : Promise.resolve([]),
+        apiRequest<FeatureRegistry>('/api/v1/features'),
+        publicRequest<ReleaseInfo>('/api/v1/info'),
       ])
       setHumans(nextHumans)
       setProjects(nextProjects)
       setItems(nextItems)
       setViews(nextViews)
       setStates(nextStates)
+      setOperationsEnabled(featureRegistry.features.some(feature =>
+        feature.key === 'WORKMESH_BETA_OPERATIONS_UI' && feature.enabled))
+      setReleaseInfo(info)
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) {
         clearCsrfToken()
@@ -275,8 +284,18 @@ export default function HomePage() {
   if (!actor) return <main className="center" data-testid="load-error"><p className="error">{error || 'Unable to load WorkMesh.'}</p><button onClick={() => void load()}>Retry</button></main>
   const pageTitle = scope === 'inbox' ? 'Inbox' : selectedProject ? selectedProject.name : scope === 'projects' ? 'Projects' : scope === 'my-work' ? 'My Work' : scope === 'active' ? 'Active work' : 'Backlog'
   return <main className="shell">
-    <a className="operations-shortcut" data-testid="view-operations" href="/operations">Planning &amp; Operations</a>
-    <aside aria-label="Main navigation"><h1>WorkMesh</h1><small>{actor.displayName}</small><label className="team-switcher">Team<select aria-label="Current team" value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>No team</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label><nav><button data-testid="view-inbox" className={scope === 'inbox' ? 'selected' : ''} onClick={() => chooseScope('inbox')}>Inbox <span className="placeholder">Soon</span></button><button data-testid="view-my-work" className={scope === 'my-work' ? 'selected' : ''} onClick={() => chooseScope('my-work')}>My Work</button><button data-testid="view-active" className={scope === 'active' ? 'selected' : ''} onClick={() => chooseScope('active')}>Active</button><button data-testid="view-backlog" className={scope === 'backlog' ? 'selected' : ''} onClick={() => chooseScope('backlog')}>Backlog</button><button data-testid="view-projects" className={scope === 'projects' ? 'selected' : ''} onClick={() => chooseScope('projects')}>Projects</button><a data-testid="view-agents" href="/agents">Agents</a></nav><details className="team-admin"><summary>Team settings</summary><form onSubmit={createTeam}><input name="name" placeholder="New team name" required /><input name="key" placeholder="Key (e.g. ENG)" pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Create team</button></form>{selectedTeam && <><form onSubmit={updateTeam}><input name="name" defaultValue={selectedTeam.name} required /><input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Save team</button></form><button className="danger" onClick={() => void deleteTeam()}>Delete team</button><form onSubmit={createState}><input name="name" placeholder="New workflow status" required /><select name="category" defaultValue="planned"><option value="backlog">Backlog</option><option value="planned">Planned</option><option value="started">Started</option><option value="completed">Completed</option><option value="canceled">Canceled</option></select><input name="color" type="color" defaultValue="#64748b" /><button>Create status</button></form></>}</details><footer><button data-testid="logout" onClick={() => void signOut()}>Sign out</button></footer></aside>
+    <aside aria-label="Main navigation">
+      <h1>WorkMesh</h1>
+      <small>{actor.displayName}</small>
+      <label className="team-switcher">Team<select aria-label="Current team" value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>No team</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label>
+      <nav><button data-testid="view-inbox" className={scope === 'inbox' ? 'selected' : ''} onClick={() => chooseScope('inbox')}>Inbox <span className="placeholder">Soon</span></button><button data-testid="view-my-work" className={scope === 'my-work' ? 'selected' : ''} onClick={() => chooseScope('my-work')}>My Work</button><button data-testid="view-active" className={scope === 'active' ? 'selected' : ''} onClick={() => chooseScope('active')}>Active</button><button data-testid="view-backlog" className={scope === 'backlog' ? 'selected' : ''} onClick={() => chooseScope('backlog')}>Backlog</button><button data-testid="view-projects" className={scope === 'projects' ? 'selected' : ''} onClick={() => chooseScope('projects')}>Projects</button><a data-testid="view-agents" href="/agents">Agents</a></nav>
+      <div className="sidebar-release">
+        {operationsEnabled && <a className="operations-shortcut" data-testid="view-operations" href="/operations">Planning &amp; Operations</a>}
+        {releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · build {releaseInfo.buildSha} · schema {releaseInfo.schemaBaseline}</small>}
+      </div>
+      <details className="team-admin"><summary>Team settings</summary><form onSubmit={createTeam}><input name="name" placeholder="New team name" required /><input name="key" placeholder="Key (e.g. ENG)" pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Create team</button></form>{selectedTeam && <><form onSubmit={updateTeam}><input name="name" defaultValue={selectedTeam.name} required /><input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Save team</button></form><button className="danger" onClick={() => void deleteTeam()}>Delete team</button><form onSubmit={createState}><input name="name" placeholder="New workflow status" required /><select name="category" defaultValue="planned"><option value="backlog">Backlog</option><option value="planned">Planned</option><option value="started">Started</option><option value="completed">Completed</option><option value="canceled">Canceled</option></select><input name="color" type="color" defaultValue="#64748b" /><button>Create status</button></form></>}</details>
+      <footer><button data-testid="logout" onClick={() => void signOut()}>Sign out</button></footer>
+    </aside>
     <section className="content"><header><div><h2>{pageTitle}</h2>{selectedProject && <p>{selectedProject.summary || 'Project overview'}</p>}</div><div className="layout-toggle" aria-label="Layout"><button className={layout === 'list' ? 'selected' : ''} data-testid="layout-list" onClick={() => setLayout('list')}>List</button><button className={layout === 'board' ? 'selected' : ''} data-testid="layout-board" onClick={() => setLayout('board')}>Board</button></div></header>{error && <p className="error" role="alert">{error}</p>}
       {scope === 'inbox' ? <InboxPanel /> : <>{selectedTeam ? <><FilterBar filters={filters} states={states} humans={humans} projects={teamProjects} views={views.filter(view => !view.team_id || view.team_id === selectedTeam.id)} onChange={setFilters} onClear={() => { setFilters(emptyFilters); setSelectedProject(null) }} onApplyView={applyView} onCreateView={createSavedView} />
         {scope === 'projects' && <><section className="project-strip" aria-label="Projects">{teamProjects.map(project => <button key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)}>{project.name}</button>)}{teamProjects.length === 0 && <span className="empty">No projects yet.</span>}</section>{selectedProject && <><section className="project-overview" data-testid="project-overview"><strong>{selectedProject.status}</strong>{selectedProject.target_date && <span>Target: {dateValue(selectedProject.target_date)}</span>}{selectedProject.description && <p>{selectedProject.description}</p>}</section><ProjectDelivery projectId={selectedProject.id} /></>}<form className="project-form" onSubmit={createProject} data-testid="create-project"><input name="name" placeholder="Project name" required /><input name="summary" placeholder="Summary" /><input name="targetDate" type="date" /><select name="leadActorId"><option value="">No lead</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><textarea name="description" placeholder="Project description" /><button>Create project</button></form></>}

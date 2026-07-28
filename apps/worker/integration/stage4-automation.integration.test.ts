@@ -3,13 +3,31 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   admitAutomationOccurrence,
   admitLoopRun,
+  admitNotification,
   appendEvent,
   applyMigrations,
   createDb,
   installWorkspace,
   withTx,
 } from '@workmesh/db'
-import { createAutomationWorker } from '../src/automation.js'
+import { loadFeatureConfig } from '@workmesh/config'
+import { createAutomationWorker as createBaseAutomationWorker } from '../src/automation.js'
+
+const enabledFeatures = loadFeatureConfig({
+  WORKMESH_BETA_PLANNING: 'true',
+  WORKMESH_BETA_TEMPLATES: 'true',
+  WORKMESH_BETA_COSTS: 'true',
+  WORKMESH_BETA_GITEA: 'true',
+  WORKMESH_BETA_OPERATIONS_UI: 'true',
+  WORKMESH_EXPERIMENTAL_AUTOMATION: 'true',
+  WORKMESH_EXPERIMENTAL_AGENT_LOOPS: 'true',
+  WORKMESH_EXPERIMENTAL_A2A: 'true',
+  WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: 'true',
+  WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: 'true',
+})
+const createAutomationWorker = (
+  options: Parameters<typeof createBaseAutomationWorker>[0],
+) => createBaseAutomationWorker({ ...options, features: enabledFeatures })
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 4 Worker integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
@@ -260,6 +278,71 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
   })
 
+  it('gates notifications on Beta Planning and skips a disabled webhook at the queue head', async () => {
+    await db.query(
+      `INSERT INTO notification_preferences(
+         workspace_id,actor_id,channels,digest,minimum_priority,muted_kinds,webhook_url
+       ) VALUES($1,$2,$3,'immediate','update','{}',$4)
+       ON CONFLICT(workspace_id,actor_id) DO UPDATE
+       SET channels=EXCLUDED.channels,webhook_url=EXCLUDED.webhook_url`,
+      [
+        fixture.workspaceId,
+        fixture.humanId,
+        ['in_app', 'webhook'],
+        'https://notifications.example.test/workmesh',
+      ],
+    )
+    await withTx(db, tx => admitNotification(tx, {
+      workspaceId: fixture.workspaceId,
+      recipientActorId: fixture.humanId,
+      priority: 'update',
+      kind: 'queue.head.webhook',
+      title: 'Disabled webhook at queue head',
+      body: 'Must not block allowed notification channels.',
+      sourceType: 'work_item',
+      sourceId: fixture.workItemId,
+      dedupeKey: `queue-head-webhook:${randomUUID()}`,
+      requestedChannels: ['webhook'],
+    }))
+    await withTx(db, tx => admitNotification(tx, {
+      workspaceId: fixture.workspaceId,
+      recipientActorId: fixture.humanId,
+      priority: 'update',
+      kind: 'queue.allowed.in_app',
+      title: 'Allowed in-app notification',
+      body: 'This delivery remains claimable.',
+      sourceType: 'work_item',
+      sourceId: fixture.workItemId,
+      dedupeKey: `queue-allowed-in-app:${randomUUID()}`,
+      requestedChannels: ['in_app'],
+    }))
+    const planningOnly = createBaseAutomationWorker({
+      db,
+      workerId: `planning-notifications-${randomUUID()}`,
+      features: loadFeatureConfig({ WORKMESH_BETA_PLANNING: 'true' }),
+    })
+    const claims = await planningOnly.claimNotifications(1)
+    expect(claims).toHaveLength(1)
+    expect(claims[0]!.channel).toBe('in_app')
+
+    let browserDeliveries = 0
+    const disabledPlanning = createBaseAutomationWorker({
+      db,
+      workerId: `disabled-planning-${randomUUID()}`,
+      features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AUTOMATION: 'true' }),
+      sink: {
+        callWebhook: async () => ({ status: 202 }),
+        deliverBrowser: async () => {
+          browserDeliveries += 1
+          return {}
+        },
+      },
+    })
+    await disabledPlanning.deliverNotification(claims[0]!)
+    expect(browserDeliveries).toBe(0)
+    await expect(disabledPlanning.claimNotifications()).resolves.toEqual([])
+  })
+
   it('atomically enforces Loop overlap, budget cutoff, rollback, and revocation', async () => {
     const loopId = await createLoop('overlap')
     await withTx(db, tx => admitLoopRun(tx, {
@@ -352,6 +435,72 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     }))).rejects.toThrow('LOOP_AGENT_TEAM_ACCESS_REVOKED')
     expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1', [revokedLoopId])).rowCount).toBe(0)
     await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2', [fixture.agentId, fixture.teamId])
+  })
+
+  it('gates loop soft and failure notification admission by Planning and External Webhooks', async () => {
+    await db.query(
+      'DELETE FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2',
+      [fixture.workspaceId, fixture.humanId],
+    )
+    const admit = async (
+      name: string,
+      channels: ReadonlyArray<'in_app' | 'browser' | 'webhook'>,
+    ) => {
+      const loopId = await createLoop(name, { noOverlap: false })
+      await db.query(
+        `INSERT INTO budget_policies(
+           workspace_id,scope_type,scope_id,currency,soft_cost_minor,created_by_actor_id)
+         VALUES($1,'loop',$2,'USD',0,$3)`,
+        [fixture.workspaceId, loopId, fixture.humanId],
+      )
+      return withTx(db, tx => admitLoopRun(tx, {
+        meta: meta(name), loopId, occurrenceKey: `schedule:${randomUUID()}`, scheduledFor: new Date(),
+        authorization: { kind: 'trusted_worker' }, notificationChannels: channels,
+      }))
+    }
+
+    const disabled = await admit('planning-disabled', [])
+    await db.query("UPDATE agent_sessions SET state='failed',ended_at=now() WHERE id=$1", [disabled.sessionId])
+    const disabledWorker = createBaseAutomationWorker({
+      db,
+      workerId: `planning-disabled-${randomUUID()}`,
+      features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AGENT_LOOPS: 'true' }),
+    })
+    await disabledWorker.reconcileLoopRuns()
+    expect((await db.query(
+      'SELECT 1 FROM notifications WHERE source_id=$1',
+      [disabled.runId],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      `SELECT 1 FROM notification_deliveries delivery
+       JOIN notifications notification ON notification.id=delivery.notification_id
+       WHERE notification.source_id=$1`,
+      [disabled.runId],
+    )).rowCount).toBe(0)
+
+    const internalOnly = await admit('external-disabled', ['in_app', 'browser'])
+    await db.query("UPDATE agent_sessions SET state='failed',ended_at=now() WHERE id=$1", [internalOnly.sessionId])
+    const internalWorker = createBaseAutomationWorker({
+      db,
+      workerId: `external-disabled-${randomUUID()}`,
+      features: loadFeatureConfig({
+        WORKMESH_BETA_PLANNING: 'true',
+        WORKMESH_EXPERIMENTAL_AGENT_LOOPS: 'true',
+      }),
+    })
+    await internalWorker.reconcileLoopRuns()
+    expect((await db.query<{ channel: string }>(
+      `SELECT delivery.channel FROM notification_deliveries delivery
+       JOIN notifications notification ON notification.id=delivery.notification_id
+       WHERE notification.source_id=$1 ORDER BY delivery.channel`,
+      [internalOnly.runId],
+    )).rows.map(row => row.channel)).toEqual(['in_app', 'in_app', 'browser', 'browser'])
+    expect((await db.query(
+      `SELECT 1 FROM notification_deliveries delivery
+       JOIN notifications notification ON notification.id=delivery.notification_id
+       WHERE notification.source_id=$1 AND delivery.channel='webhook'`,
+      [internalOnly.runId],
+    )).rowCount).toBe(0)
   })
 
   it('executes every declared internal action through the same authority boundary', async () => {
@@ -631,5 +780,56 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
       'SELECT labels FROM work_items WHERE id=$1',
       [fixture.workItemId],
     )).rows[0]!.labels).toContain('event-triggered')
+  })
+
+  it('fails closed before scheduled or event admission when child action features are disabled', async () => {
+    const eventType = `stage4.child-disabled.${randomUUID()}`
+    const scheduledRuleId = await createRule(
+      'disabled-scheduled-webhook',
+      { type: 'call_webhook', parameters: { url: 'https://example.test/hook' } },
+      3,
+      { type: 'schedule', cron: '* * * * *', timezone: 'UTC' },
+    )
+    const eventRuleId = await createRule(
+      'disabled-event-notify',
+      [
+        { type: 'add_label', parameters: { workItemId: fixture.workItemId, expectedRevision: 1, label: 'must-not-run' } },
+        { type: 'notify', parameters: { recipientActorId: fixture.humanId, title: 'Must not notify' } },
+      ],
+      3,
+      { type: 'event', eventTypes: [eventType] },
+    )
+    await withTx(db, tx => appendEvent(tx, {
+      workspaceId: fixture.workspaceId,
+      teamId: fixture.teamId,
+      actorId: fixture.humanId,
+      correlationId: `child-disabled:${randomUUID()}`,
+      type: eventType,
+      aggregateType: 'work_item',
+      aggregateId: fixture.workItemId,
+      payload: {},
+    }))
+    const worker = createBaseAutomationWorker({
+      db,
+      workerId: `child-disabled-${randomUUID()}`,
+      features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AUTOMATION: 'true' }),
+    })
+    await worker.scheduleDueRules()
+    await worker.admitEventRules()
+    const ruleIds = [scheduledRuleId, eventRuleId]
+    expect((await db.query(
+      'SELECT 1 FROM automation_occurrences WHERE rule_id=ANY($1::uuid[])',
+      [ruleIds],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      'SELECT 1 FROM automation_runs WHERE rule_id=ANY($1::uuid[])',
+      [ruleIds],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      `SELECT 1 FROM automation_effects effect
+       JOIN automation_runs run ON run.id=effect.run_id
+       WHERE run.rule_id=ANY($1::uuid[])`,
+      [ruleIds],
+    )).rowCount).toBe(0)
   })
 })

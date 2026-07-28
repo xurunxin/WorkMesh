@@ -3,6 +3,25 @@ import { WorkMeshClient, WorkMeshSdkError, redactForLog, stableIdempotencyKey, v
 import { createHmac } from 'node:crypto'
 
 describe('WorkMeshClient', () => {
+  it('reads release and authenticated feature contracts without claiming disabled tools', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ serverVersion: '1.0.0' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false }],
+      }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.example.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+    await expect(client.getServerInfo()).resolves.toMatchObject({ serverVersion: '1.0.0' })
+    await expect(client.getFeatures()).resolves.toMatchObject({
+      features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', enabled: false }],
+    })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.example.test/api/v1/info')
+    expect(fetch.mock.calls[1]?.[0]).toBe('https://workmesh.example.test/api/v1/features')
+  })
+
   it('uses stable idempotency and does not retry conflicts', async () => {
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'PLAN_REVISION_CONFLICT', message: 'changed', correlationId: 'cor-1' } }), { status: 409 }))
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'secret', fetch, retry: { baseDelayMs: 0 } })

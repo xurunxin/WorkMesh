@@ -2,6 +2,29 @@ import { expect, test, type Page } from '@playwright/test'
 
 const apiUrl = 'http://127.0.0.1:3101'
 const headers = { 'Access-Control-Allow-Origin': 'http://127.0.0.1:3100', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json' }
+const releaseInfo = {
+  serverVersion: '1.0.0',
+  restApiVersion: '1.0',
+  agentProtocolVersion: '1.0',
+  mcpVersion: '1.0.0',
+  a2aUpstreamVersion: '0.3',
+  schemaBaseline: 1,
+  buildSha: 'stage2-e2e',
+}
+const featureRegistry = {
+  features: [
+    { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_COSTS', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_GITEA', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', enabled: false },
+    { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', enabled: false },
+  ],
+}
 
 async function humanApi<T>(page: Page, path: string, method = 'GET', body?: unknown, revision?: number): Promise<{ status: number; body: T }> {
   return page.evaluate(async ({ apiUrl, path, method, body, revision }) => {
@@ -37,6 +60,8 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers })
     if (path === '/api/v1/install-status') return body({ installed: true })
     if (path === '/api/v1/auth/me') return body({ actor, csrfToken: 'stage2-csrf' })
+    if (path === '/api/v1/features') return body(featureRegistry)
+    if (path === '/api/v1/info') return body(releaseInfo)
     if (path === '/api/v1/teams') return body([{ id: 'team-1', name: 'Engineering', key: 'ENG', revision: 1 }])
     if (path === '/api/v1/actors/humans') return body([{ id: actor.id, display_name: 'Alex', email: 'alex@example.test' }])
     if (path === '/api/v1/projects' || path === '/api/v1/views') return body([])
@@ -87,11 +112,13 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
 
 test('renders a real API-backed multi-agent Work Room and controls durable collaboration state', async ({ page }) => {
   test.setTimeout(120_000)
-  await page.goto('/install')
-  const installForm = page.getByTestId('install-form')
-  const loginForm = page.getByTestId('login-form')
-  await expect(installForm.or(loginForm)).toBeVisible()
-  if (await installForm.isVisible()) {
+  const installStatusResponse = await page.request.get(`${apiUrl}/api/v1/install-status`)
+  expect(installStatusResponse.status()).toBe(200)
+  const installStatus = await installStatusResponse.json() as { installed: boolean }
+  if (!installStatus.installed) {
+    await page.goto('/install')
+    const installForm = page.getByTestId('install-form')
+    await expect(installForm).toBeVisible()
     await installForm.getByPlaceholder('Workspace', { exact: true }).fill('Stage 2 collaboration workspace')
     await installForm.getByPlaceholder('workspace-slug').fill('stage2-collaboration')
     await installForm.getByPlaceholder('Your name').fill('Stage 2 human')
@@ -100,19 +127,12 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
     await installForm.getByTestId('install-submit').click()
   } else {
     // The complete acceptance suite installs the workspace in Stage 0.
-    const login = await page.evaluate(async ({ apiUrl }) => {
-      const response = await fetch(`${apiUrl}/api/v1/auth/login`, {
-        method: 'POST',
-        headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
-        credentials: 'include',
-        body: JSON.stringify({ email: 'alice@example.test', password: 'password-acceptance' }),
-      })
-      const body = await response.json() as { csrfToken?: string }
-      if (body.csrfToken) sessionStorage.setItem('workmesh.csrf-token', body.csrfToken)
-      return response.status
-    }, { apiUrl })
-    expect(login).toBeLessThan(300)
-    await page.goto('/')
+    await page.goto('/login')
+    const loginForm = page.getByTestId('login-form')
+    await expect(loginForm).toBeVisible()
+    await loginForm.getByPlaceholder('Email').fill('alice@example.test')
+    await loginForm.getByPlaceholder('Password').fill('password-acceptance')
+    await loginForm.getByTestId('login-submit').click()
   }
   await page.waitForURL(url => url.pathname === '/')
   await expect(page.getByRole('heading', { name: 'WorkMesh', exact: true })).toBeVisible()
