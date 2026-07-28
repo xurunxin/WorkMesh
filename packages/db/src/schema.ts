@@ -142,11 +142,31 @@ export const templateVersions = pgTable('template_versions', {
   changeSummary: text('change_summary').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const sessions = pgTable('sessions', {
-  id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const apiIdempotencyKeys = pgTable('api_idempotency_keys', {
   workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), idempotencyKey: text('idempotency_key').notNull(), operation: text('operation').notNull(), requestHash: text('request_hash').notNull(),
   responseStatus: integer('response_status'), responseBody: jsonb('response_body'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const authIdempotencyRecords = pgTable('auth_idempotency_records', {
+  id: uuid('id').primaryKey(),
+  keyFingerprint: text('key_fingerprint').notNull(),
+  subjectFingerprint: text('subject_fingerprint').notNull(),
+  operation: text('operation').notNull(),
+  requestFingerprint: text('request_fingerprint').notNull(),
+  clientContextFingerprint: text('client_context_fingerprint').notNull(),
+  state: text('state').notNull(),
+  responseStatus: integer('response_status'),
+  replayKeyId: text('replay_key_id'),
+  replayKeyFingerprint: text('replay_key_fingerprint'),
+  replayIv: binary('replay_iv'),
+  replayTag: binary('replay_tag'),
+  replayCiphertext: binary('replay_ciphertext'),
+  replayExpiresAt: timestamp('replay_expires_at', { withTimezone: true }).notNull(),
+  conflictExpiresAt: timestamp('conflict_expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  replayWipedAt: timestamp('replay_wiped_at', { withTimezone: true }),
 })
 export const domainEvents = pgTable('domain_events', {
   cursor: bigint('cursor', { mode: 'number' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),

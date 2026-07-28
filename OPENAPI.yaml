@@ -97,7 +97,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: installWorkspace,
+        description: "Authentication mutation idempotency: exact retries replay the same encrypted session response for 15 minutes; conflicts remain protected for 24 hours. Reuse with a different request or client context returns IDEMPOTENCY_KEY_REUSED. Exact retry after 15 minutes returns IDEMPOTENCY_REPLAY_EXPIRED.",
         parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
         requestBody: { $ref: "#/components/requestBodies/InstallInput" },
         responses:
@@ -115,7 +117,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: login,
+        description: "Credentials are validated before the keyed idempotency claim. Exact successful retries replay the same encrypted cookie/session response for 15 minutes; conflicts remain protected for 24 hours.",
         parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
         requestBody: { $ref: "#/components/requestBodies/LoginInput" },
         responses:
@@ -123,6 +127,7 @@ paths:
             "200": { $ref: "#/components/responses/Session" },
             "400": { $ref: "#/components/responses/BadRequest" },
             "401": { $ref: "#/components/responses/Unauthorized" },
+            "409": { $ref: "#/components/responses/Conflict" },
           },
       }
   /api/v1/auth/logout:
@@ -133,7 +138,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: logout,
+        description: "The first request revokes the human session. An exact retry with the same cookie and key replays the logged-out result without another event; the encrypted replay window is 15 minutes and conflict retention is 24 hours.",
         parameters:
           [
             { $ref: "#/components/parameters/IdempotencyKey" },
@@ -740,6 +747,8 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
+        description: "Register an Agent and return its installation token. The token is replayed only from the encrypted authentication-idempotency envelope.",
         operationId: registerAgent,
         parameters:
           [
@@ -849,7 +858,7 @@ paths:
   /api/v1/agents/{id}/webhook-endpoints:
     post: { x-workmesh-policy-id: route.createAgentWebhookEndpoint, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: createAgentWebhookEndpoint, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/CorrelationId" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [url], properties: { url: { type: string, format: uri } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret:
-    post: { x-workmesh-policy-id: route.rotateAgentWebhookSecret, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: rotateAgentWebhookSecret, parameters: [{ $ref: "#/components/parameters/Id" }, { name: endpointId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/CorrelationId" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.rotateAgentWebhookSecret, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], x-workmesh-secret-replay: encrypted_auth, description: "Rotate and return a webhook signing secret. Exact retries replay only the encrypted authentication-idempotency envelope.", operationId: rotateAgentWebhookSecret, parameters: [{ $ref: "#/components/parameters/Id" }, { name: endpointId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/CorrelationId" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/work-items/{id}/delegations:
     post:
       {
@@ -882,8 +891,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: delegateAndStartAgentSession,
-        description: Atomically create an executor delegation and its initial queued session for this work item.,
+        description: "Atomically create an executor delegation and its initial queued session for this work item. The exchange token is replayed only from the encrypted auth-idempotency envelope and is never stored in the generic idempotency response.",
         parameters:
           [
             { $ref: "#/components/parameters/Id" },
@@ -985,7 +995,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: createAgentSession,
+        description: "Create one Agent session. The exchange token is replayed only from the encrypted auth-idempotency envelope and is never stored in the generic idempotency response.",
         parameters:
           [
             { $ref: "#/components/parameters/IdempotencyKey" },
@@ -1024,7 +1036,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ AgentInstallationToken: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: exchangeAgentSessionToken,
+        description: "The active installation credential and exact session/nonce are resolved before the claim. Exact retries replay the same issued token for 15 minutes and never exchange twice.",
         parameters:
           [
             { $ref: "#/components/parameters/IdempotencyKey" },
@@ -1047,8 +1061,9 @@ paths:
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
         security: [{ AgentInstallationToken: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
         operationId: refreshAgentSessionToken,
-        description: Issue a new short-lived session token after validating the installation credential and current session authority.,
+        description: "Issue a new short-lived session token after validating the installation credential and current session authority. Exact retries replay the same issued token for 15 minutes and never rotate twice.",
         parameters:
           [
             { $ref: "#/components/parameters/Id" },
@@ -1795,6 +1810,7 @@ components:
         name: Idempotency-Key,
         in: header,
         required: true,
+        description: "Identifies one logical mutation attempt. Authentication and secret-bearing session mutations retain an encrypted replay for 15 minutes and protect key conflicts for 24 hours. A different operation, canonical request, or client context returns IDEMPOTENCY_KEY_REUSED; an exact retry after the replay window returns IDEMPOTENCY_REPLAY_EXPIRED and must use a new key.",
         schema: { type: string, minLength: 1 },
       }
     CsrfToken:
@@ -2540,7 +2556,7 @@ components:
       }
     Conflict:
       {
-        description: Revision or idempotency conflict,
+        description: "Revision or idempotency conflict. Authentication mutations may return IDEMPOTENCY_KEY_REUSED, IDEMPOTENCY_REPLAY_EXPIRED, or IDEMPOTENCY_REPLAY_UNAVAILABLE.",
         content:
           {
             application/json:
@@ -3493,6 +3509,7 @@ components:
                             IF_MATCH_REQUIRED,
                             IDEMPOTENCY_KEY_REQUIRED,
                             IDEMPOTENCY_KEY_REUSED,
+                            IDEMPOTENCY_REPLAY_EXPIRED,
                             IDEMPOTENCY_REPLAY_UNAVAILABLE,
                             CSRF_FAILED,
                             INVALID_CREDENTIALS,

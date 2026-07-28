@@ -67,6 +67,7 @@ export type RoutePolicyManifestEntry = Readonly<{
   }>
   revision: 'none' | 'if_match'
   idempotency: 'none' | 'required'
+  secretReplay: 'none' | 'encrypted_auth'
   feature: Readonly<{
     key: string | null
     tier: RoutePolicyFeatureTier
@@ -102,6 +103,19 @@ const installationTargetOperations = new Set([
   'inspectExactTargetHandoff',
   'rejectHandoff',
 ])
+
+export const secretReplayOperationIds = [
+  'installWorkspace',
+  'login',
+  'logout',
+  'registerAgent',
+  'rotateAgentWebhookSecret',
+  'createAgentSession',
+  'delegateAndStartAgentSession',
+  'exchangeAgentSessionToken',
+  'refreshAgentSessionToken',
+] as const
+const secretReplayOperations = new Set<string>(secretReplayOperationIds)
 
 const workspaceAdminOperations = new Set([
   'updateWorkspace',
@@ -347,6 +361,7 @@ export function createRoutePolicyManifest(
       },
       revision: revisionedOperations.has(binding.operationId) ? 'if_match' : 'none',
       idempotency: mutation && authentication !== 'provider_signature' ? 'required' : 'none',
+      secretReplay: secretReplayOperations.has(binding.operationId) ? 'encrypted_auth' : 'none',
       feature: {
         key: feature?.key ?? null,
         tier: feature?.tier ?? 'stable',

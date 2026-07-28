@@ -140,6 +140,7 @@ export async function assertEventAudienceActive(
       `SELECT 1 FROM sessions credential
        JOIN actors principal ON principal.id=credential.actor_id
        WHERE credential.token_hash=$1 AND credential.expires_at>now()
+         AND credential.revoked_at IS NULL
          AND principal.id=$2 AND principal.workspace_id=$3
          AND principal.kind='human' AND principal.is_active
          AND (

@@ -30,3 +30,4 @@
 \ir packages/db/migrations/0020_stage4_review_hardening.sql
 \ir packages/db/migrations/0021_stage4_a2a_direction_and_prompt_identity.sql
 \ir packages/db/migrations/0022_route_policy_authorization_denials.sql
+\ir packages/db/migrations/0023_auth_idempotency_records.sql

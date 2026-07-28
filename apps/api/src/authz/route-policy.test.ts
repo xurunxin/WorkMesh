@@ -29,6 +29,7 @@ const route = (overrides: Partial<RoutePolicyManifestEntry> = {}): RoutePolicyMa
   lease: { required: false, grantsAuthorization: false },
   revision: 'none',
   idempotency: 'none',
+  secretReplay: 'none',
   feature: { key: null, tier: 'stable', disabledBehavior: 'available' },
   audit: { denial: 'required', heartbeatAmplification: 'suppress_repeated' },
   bindings: {
