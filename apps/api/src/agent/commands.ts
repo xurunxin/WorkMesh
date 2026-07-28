@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { appendEvent, opaqueToken, tokenHash, withTx } from "@workmesh/db";
+import { loadRetentionConfig } from "@workmesh/config";
 import {
   assertAgentSessionTransition, assertCompletionEvidence, assertRevision,
   DomainError, validatePlanSteps,
@@ -83,10 +84,25 @@ export async function provisionNewSessionDelivery(tx: PoolClient, meta: RequestM
 /** Same idempotency record as Stage 0, deliberately scoped to the authenticated actor. */
 export async function agentMutate<T>(db: Pool, meta: RequestMeta, handler: (tx: PoolClient) => Promise<T>): Promise<T> {
   return withTx(db, async tx => {
-    const reserved = await tx.query("INSERT INTO api_idempotency_keys(workspace_id,actor_id,idempotency_key,operation,request_hash) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING idempotency_key", [meta.actor.workspaceId, meta.actor.id, meta.idempotencyKey, meta.operation, meta.requestHash]);
+    const retention = loadRetentionConfig();
+    const reserved = await tx.query(
+      `INSERT INTO api_idempotency_keys(
+         workspace_id,actor_id,idempotency_key,operation,request_hash,
+         replay_expires_at,conflict_expires_at
+       ) VALUES($1,$2,$3,$4,$5,now()+($6::text||' hours')::interval,now()+($7::text||' days')::interval)
+       ON CONFLICT(workspace_id,actor_id,idempotency_key) DO UPDATE
+         SET operation=EXCLUDED.operation,request_hash=EXCLUDED.request_hash,
+             response_status=NULL,response_body=NULL,created_at=now(),
+             replay_expires_at=EXCLUDED.replay_expires_at,
+             conflict_expires_at=EXCLUDED.conflict_expires_at
+       WHERE api_idempotency_keys.conflict_expires_at<=now()
+       RETURNING idempotency_key`,
+      [meta.actor.workspaceId, meta.actor.id, meta.idempotencyKey, meta.operation, meta.requestHash, retention.genericReplayHours, retention.genericConflictDays],
+    );
     if (!reserved.rowCount) {
-      const previous = one((await tx.query<{ operation: string; request_hash: string; response_body: T | null }>("SELECT operation,request_hash,response_body FROM api_idempotency_keys WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3 FOR UPDATE", [meta.actor.workspaceId, meta.actor.id, meta.idempotencyKey])).rows);
+      const previous = one((await tx.query<{ operation: string; request_hash: string; response_body: T | null; replay_expires_at: Date }>("SELECT operation,request_hash,response_body,replay_expires_at FROM api_idempotency_keys WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3 FOR UPDATE", [meta.actor.workspaceId, meta.actor.id, meta.idempotencyKey])).rows);
       if (previous.operation !== meta.operation || previous.request_hash !== meta.requestHash) throw new DomainError("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used for a different request");
+      if (previous.replay_expires_at.getTime() <= Date.now()) throw new DomainError("IDEMPOTENCY_REPLAY_EXPIRED", "Idempotency replay material expired; use a new key");
       if (previous.response_body === null) throw new DomainError("IDEMPOTENCY_REPLAY_UNAVAILABLE", "The original response is unavailable");
       return previous.response_body;
     }
@@ -518,11 +534,42 @@ export async function acknowledge(db: Pool, meta: RequestMeta, sessionId: string
 }
 
 export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, input: { currentStepId?: string; usage: unknown }) {
-  return agentMutate(db, meta, async tx => {
+  return withTx(db, async tx => {
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: "heartbeat", idempotencyKey: meta.idempotencyKey });
-    const row = one((await tx.query("UPDATE agent_sessions SET last_heartbeat_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId])).rows);
-    await tx.query("INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,details_markdown,ephemeral) VALUES($1,$2,$3,'heartbeat','Heartbeat',$4,true)", [sessionId, meta.actor.id, (row as { sequence: number }).sequence, JSON.stringify(input)]);
-    await event(tx, meta, "agent.activity.appended", "agent_session", sessionId, Number((row as { revision: number }).revision), { kind: "heartbeat" }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
+    const projection = one((await tx.query<{
+      heartbeat_health: "healthy" | "degraded" | "stale";
+      heartbeat_idempotency_key: string | null;
+      heartbeat_request_hash: string | null;
+      state: AgentSessionState;
+      revision: number;
+      sequence: number;
+    }>("SELECT heartbeat_health,heartbeat_idempotency_key,heartbeat_request_hash,state,revision,sequence FROM agent_sessions WHERE id=$1 FOR UPDATE", [sessionId])).rows);
+    if (projection.heartbeat_idempotency_key === meta.idempotencyKey) {
+      if (projection.heartbeat_request_hash !== meta.requestHash) throw new DomainError("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used for a different heartbeat");
+      return one((await tx.query("SELECT * FROM agent_sessions WHERE id=$1", [sessionId])).rows);
+    }
+    const restorable = !["stopping","stale","completed","failed","canceled"].includes(projection.state);
+    const nextHealth = restorable ? "healthy" : projection.heartbeat_health;
+    const row = one((await tx.query(
+      `UPDATE agent_sessions
+          SET last_heartbeat_at=now(),heartbeat_checked_at=now(),
+              heartbeat_current_step_id=$2,heartbeat_usage=$3,
+              heartbeat_health=$4,
+              heartbeat_health_changed_at=CASE WHEN heartbeat_health<>$4 THEN now() ELSE heartbeat_health_changed_at END,
+              heartbeat_idempotency_key=$5,heartbeat_request_hash=$6,
+              updated_at=now()
+        WHERE id=$1
+        RETURNING *`,
+      [sessionId, input.currentStepId ?? null, input.usage, nextHealth, meta.idempotencyKey, meta.requestHash],
+    )).rows);
+    if (nextHealth !== projection.heartbeat_health) {
+      await event(tx, meta, "agent.session.health_changed", "agent_session", sessionId, projection.revision, {
+        from: projection.heartbeat_health,
+        to: nextHealth,
+        reason: "heartbeat_received",
+      }, session.team_id, sessionId, projection.sequence);
+    }
+    return row;
   });
 }
 

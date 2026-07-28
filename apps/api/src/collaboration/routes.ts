@@ -486,6 +486,30 @@ async function acquireLease(h:Helpers,request:FastifyRequest) {
 }
 async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'renew'|'release'|'force-release') {
   const leaseId=id(request); const body=z.object({ttlSeconds:z.number().int().min(10).max(3600).optional(),reason:z.string().min(1).max(2000).optional()}).parse(request.body)
+  if (action === 'heartbeat') {
+    const meta = h.meta(request,body,{id:leaseId})
+    return withTx(h.db, async tx => {
+      const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string;heartbeat_idempotency_key:string|null;heartbeat_request_hash:string|null}>(
+        'SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',
+        [leaseId,actor(request).workspaceId],
+      )).rows[0]
+      if(!row) throw new DomainError('NOT_FOUND','Lease not found')
+      await assertSessionWrite(tx,actor(request),row.session_id)
+      if(row.status!=='active') throw new DomainError('CONFLICT','Lease is not active')
+      if (row.heartbeat_idempotency_key === meta.idempotencyKey) {
+        if (row.heartbeat_request_hash !== meta.requestHash) throw new DomainError('IDEMPOTENCY_KEY_REUSED','Idempotency-Key was already used for a different lease heartbeat')
+        return leaseResponse(row)
+      }
+      const changed=(await tx.query<{version:number}>(
+        `UPDATE leases
+            SET heartbeat_at=now(),updated_at=now(),
+                heartbeat_idempotency_key=$2,heartbeat_request_hash=$3
+          WHERE id=$1 RETURNING *`,
+        [leaseId,meta.idempotencyKey,meta.requestHash],
+      )).rows[0]!
+      return leaseResponse(changed)
+    })
+  }
   return command(h.db,h.meta(request,body,{id:leaseId}),async tx=>{
     const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string}>('SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',[leaseId,actor(request).workspaceId])).rows[0]
     if(!row) throw new DomainError('NOT_FOUND','Lease not found')
@@ -496,13 +520,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
       if(!body.reason) throw new DomainError('VALIDATION_ERROR','Force release requires an audit reason')
     } else {
       await assertSessionWrite(tx,actor(request),row.session_id)
-      if(action !== 'heartbeat') assertRevision(parseRevision(h.header(request,'if-match')),row.version)
-    }
-    if(action==='heartbeat') {
-      if(row.status!=='active') throw new DomainError('CONFLICT','Lease is not active')
-      const changed=(await tx.query<{version:number}>('UPDATE leases SET heartbeat_at=now(),updated_at=now() WHERE id=$1 RETURNING *',[leaseId])).rows[0]!
-      await emit(tx,h.meta(request,body),'lease.heartbeat','lease',leaseId,{})
-      return leaseResponse(changed)
+      assertRevision(parseRevision(h.header(request,'if-match')),row.version)
     }
     if(action==='renew') {
       const changed=(await tx.query<{version:number}>("UPDATE leases SET expires_at=now()+($2::text || ' seconds')::interval,heartbeat_at=now(),renew_count=renew_count+1,version=version+1,updated_at=now() WHERE id=$1 AND status='active' AND expires_at>now() RETURNING *",[leaseId,body.ttlSeconds??300])).rows[0]

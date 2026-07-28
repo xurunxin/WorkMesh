@@ -226,6 +226,10 @@ export const authorizeAgentMutation = (gate: AgentMutationGate): void => {
     if (!gate.approval.approved) throw new DomainError('APPROVAL_REQUIRED', 'This mutation requires an approved request')
     if (gate.approval.payloadMatches === false) throw new DomainError('APPROVAL_PAYLOAD_MISMATCH', 'Approval payload does not match this mutation')
   }
+  // A heartbeat is diagnostic after Stop/stale/terminal. It still requires the
+  // exact live identity, delegation, capability, and scope above, but it never
+  // restores workflow state or ordinary mutation authority.
+  if (gate.operation === 'heartbeat') return
   if (gate.session.state === 'stopping') {
     if (gate.operation !== 'stop_ack') throw new DomainError('SESSION_STOPPED', 'Stopped sessions cannot perform ordinary writes')
     if (gate.session.stopCleanupAcknowledged) throw new DomainError('STOP_ACK_ALREADY_RECORDED', 'A stop cleanup acknowledgement was already recorded')
@@ -234,7 +238,7 @@ export const authorizeAgentMutation = (gate: AgentMutationGate): void => {
   if (isTerminalAgentSessionState(gate.session.state)) throw new DomainError('SESSION_STOPPED', 'Terminal sessions cannot perform ordinary writes', { state: gate.session.state })
   if (gate.operation === 'stop_ack') throw new DomainError('SESSION_NOT_ACTIVE', 'A stop cleanup acknowledgement is allowed only while stopping')
   if (gate.operation === 'ack' && gate.session.state !== 'queued' && gate.session.state !== 'stale') throw new DomainError('SESSION_NOT_ACTIVE', 'Only queued or stale sessions can be acknowledged', { state: gate.session.state })
-  if (gate.operation !== 'ack' && gate.operation !== 'heartbeat' && !activeAgentSessionStates.includes(gate.session.state as typeof activeAgentSessionStates[number])) {
+  if (gate.operation !== 'ack' && !activeAgentSessionStates.includes(gate.session.state as typeof activeAgentSessionStates[number])) {
     throw new DomainError('SESSION_NOT_ACTIVE', 'Session state does not allow this ordinary write', { state: gate.session.state, operation: gate.operation })
   }
 }

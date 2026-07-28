@@ -141,35 +141,125 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [allowedId])).rows[0]?.status).toBe('delivered')
   })
 
-  it('handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions', async () => {
-    const data = await fixture()
-    const queued = await createSession(data)
-    const lifecycle = createSessionLifecycleWorker({ db, ackTimeoutSeconds: 1, heartbeatStaleAfterSeconds: 1, stopGraceSeconds: 1 })
-    expect((await db.query<{ teamId: string | null }>('SELECT team_id AS "teamId" FROM agent_sessions WHERE id=$1', [queued])).rows[0]?.teamId).toBeNull()
-    await db.query("UPDATE agent_sessions SET created_at=now()-interval '10 minutes' WHERE id=$1", [queued])
-    expect(await lifecycle.expireAckDeadlines()).toBe(1)
-    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [queued])).rows[0]?.state).toBe('stale')
-    await expectEventTeamAuthority(queued, 'agent.session.stale', data.teamId)
-    await db.query("UPDATE agent_sessions SET state='acknowledged', acknowledged_at=now(), last_heartbeat_at=now(), revision=revision+1 WHERE id=$1 AND state='stale'", [queued])
-    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [queued])).rows[0]?.state).toBe('acknowledged')
+  it("handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions", async () => {
+    const data = await fixture();
+    const queued = await createSession(data);
+    const lifecycle = createSessionLifecycleWorker({
+      db,
+      ackTimeoutSeconds: 1,
+      heartbeatStaleAfterSeconds: 1,
+      stopGraceSeconds: 1,
+    });
+    expect(
+      (
+        await db.query<{ teamId: string | null }>(
+          'SELECT team_id AS "teamId" FROM agent_sessions WHERE id=$1',
+          [queued],
+        )
+      ).rows[0]?.teamId,
+    ).toBeNull();
+    await db.query(
+      "UPDATE agent_sessions SET created_at=now()-interval '10 minutes' WHERE id=$1",
+      [queued],
+    );
+    expect(await lifecycle.expireAckDeadlines()).toBe(1);
+    expect(
+      (
+        await db.query<{ state: string }>(
+          "SELECT state FROM agent_sessions WHERE id=$1",
+          [queued],
+        )
+      ).rows[0]?.state,
+    ).toBe("stale");
+    await expectEventTeamAuthority(queued, "agent.session.stale", data.teamId);
+    await db.query(
+      "UPDATE agent_sessions SET state='acknowledged', acknowledged_at=now(), last_heartbeat_at=now(), revision=revision+1 WHERE id=$1 AND state='stale'",
+      [queued],
+    );
+    expect(
+      (
+        await db.query<{ state: string }>(
+          "SELECT state FROM agent_sessions WHERE id=$1",
+          [queued],
+        )
+      ).rows[0]?.state,
+    ).toBe("acknowledged");
 
-    const active = await createSession(data, 'executing')
-    await db.query("UPDATE agent_sessions SET last_heartbeat_at=now()-interval '10 minutes' WHERE id=$1", [active])
-    expect(await lifecycle.reconcileHeartbeatLiveness()).toBe(1)
-    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [active])).rows[0]?.state).toBe('stale')
-    expect((await db.query<{ count: string }>('SELECT count(*) FROM agent_activities WHERE session_id=$1', [active])).rows[0]?.count).toBe('0')
-    await expectEventTeamAuthority(active, 'agent.session.stale', data.teamId)
+    const active = await createSession(data, "executing");
+    await db.query(
+      "UPDATE agent_sessions SET last_heartbeat_at=now()-interval '10 minutes' WHERE id=$1",
+      [active],
+    );
+    expect(await lifecycle.reconcileHeartbeatLiveness()).toBe(2);
+    expect(
+      (
+        await db.query<{ heartbeatHealth: string }>(
+          'SELECT heartbeat_health AS "heartbeatHealth" FROM agent_sessions WHERE id=$1',
+          [queued],
+        )
+      ).rows[0]?.heartbeatHealth,
+    ).toBe("healthy");
+    await expectEventTeamAuthority(
+      queued,
+      "agent.session.health_changed",
+      data.teamId,
+    );
+    expect(
+      (
+        await db.query<{ state: string }>(
+          "SELECT state FROM agent_sessions WHERE id=$1",
+          [active],
+        )
+      ).rows[0]?.state,
+    ).toBe("stale");
+    expect(
+      (
+        await db.query<{ count: string }>(
+          "SELECT count(*) FROM agent_activities WHERE session_id=$1",
+          [active],
+        )
+      ).rows[0]?.count,
+    ).toBe("0");
+    await expectEventTeamAuthority(active, "agent.session.stale", data.teamId);
 
-    const stopping = await createSession(data, 'stopping')
-    await db.query("UPDATE agent_sessions SET stop_requested_at=now()-interval '10 minutes' WHERE id=$1", [stopping])
-    expect(await lifecycle.expireStopGrace()).toBe(1)
-    expect((await db.query<{ state: string; ended_at: Date | null }>('SELECT state,ended_at FROM agent_sessions WHERE id=$1', [stopping])).rows[0]).toMatchObject({ state: 'canceled', ended_at: expect.any(Date) })
-    await expectEventTeamAuthority(stopping, 'agent.session.state_changed', data.teamId)
+    const stopping = await createSession(data, "stopping");
+    await db.query(
+      "UPDATE agent_sessions SET stop_requested_at=now()-interval '10 minutes' WHERE id=$1",
+      [stopping],
+    );
+    expect(await lifecycle.expireStopGrace()).toBe(1);
+    expect(
+      (
+        await db.query<{ state: string; ended_at: Date | null }>(
+          "SELECT state,ended_at FROM agent_sessions WHERE id=$1",
+          [stopping],
+        )
+      ).rows[0],
+    ).toMatchObject({ state: "canceled", ended_at: expect.any(Date) });
+    await expectEventTeamAuthority(
+      stopping,
+      "agent.session.state_changed",
+      data.teamId,
+    );
 
-    const approval = await db.query<{ id: string }>("INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,created_at,expires_at) VALUES($1,$2,$3,'merge','git.merge','{}','sha256:abc','high','Needs approval',now()-interval '2 minutes',now()-interval '1 minute') RETURNING id", [data.workspaceId, queued, data.humanActorId])
-    expect(await lifecycle.expireApprovals()).toBe(1)
-    expect((await db.query<{ status: string }>('SELECT status FROM approvals WHERE id=$1', [approval.rows[0]!.id])).rows[0]?.status).toBe('expired')
-    await expectEventTeamAuthority(approval.rows[0]!.id, 'approval.expired', data.teamId)
+    const approval = await db.query<{ id: string }>(
+      "INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,created_at,expires_at) VALUES($1,$2,$3,'merge','git.merge','{}','sha256:abc','high','Needs approval',now()-interval '2 minutes',now()-interval '1 minute') RETURNING id",
+      [data.workspaceId, queued, data.humanActorId],
+    );
+    expect(await lifecycle.expireApprovals()).toBe(1);
+    expect(
+      (
+        await db.query<{ status: string }>(
+          "SELECT status FROM approvals WHERE id=$1",
+          [approval.rows[0]!.id],
+        )
+      ).rows[0]?.status,
+    ).toBe("expired");
+    await expectEventTeamAuthority(
+      approval.rows[0]!.id,
+      "approval.expired",
+      data.teamId,
+    );
 
     const lease = await db.query<{ id: string }>(
       `INSERT INTO leases(
@@ -179,9 +269,20 @@ describe('stage 1 worker durability', () => {
          now()-interval '2 minutes',now()-interval '1 minute'
        ) RETURNING id`,
       [data.workspaceId, queued, data.workItemId],
-    )
-    expect(await lifecycle.expireLeases()).toBe(1)
-    expect((await db.query<{ status: string }>('SELECT status FROM leases WHERE id=$1', [lease.rows[0]!.id])).rows[0]?.status).toBe('expired')
-    await expectEventTeamAuthority(lease.rows[0]!.id, 'lease.expired', data.teamId)
-  })
+    );
+    expect(await lifecycle.expireLeases()).toBe(1);
+    expect(
+      (
+        await db.query<{ status: string }>(
+          "SELECT status FROM leases WHERE id=$1",
+          [lease.rows[0]!.id],
+        )
+      ).rows[0]?.status,
+    ).toBe("expired");
+    await expectEventTeamAuthority(
+      lease.rows[0]!.id,
+      "lease.expired",
+      data.teamId,
+    );
+  });
 })
