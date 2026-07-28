@@ -2095,8 +2095,17 @@ Docker Compose 服务：
 - 事件页、连接数和 socket backpressure wait 都有硬上限；慢客户端关闭，
   心跳不触发数据库读取；
 - `event_retention_state.pruned_through_cursor` 是显式保留水位。本阶段不执行
-  prune；低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
+  prune；Issue #9 增加 archive-only 默认的保留作业，只有显式 kill switch
+  才允许按 Workspace prune。低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
   `cursor.expired` control event 后关闭；
+- 普通事件在线保留至少 90 天、归档至少 365 天。归档采用 cursor 排序的
+  canonical NDJSON gzip，并在 upload 后 readback 校验 object SHA-256 与 DB
+  snapshot digest。未知、受保护、A2A 引用、未投递 outbox、审计和恢复事实
+  保留在 PostgreSQL；
+- 稳态 Session/Lease Heartbeat 只更新当前 projection，不增加 workflow
+  revision、Session sequence、Activity、Domain Event 或 Outbox。只有
+  healthy/degraded/stale health transition 在行锁下发出一次事件；Heartbeat
+  不恢复 stale、stopping 或 terminal Session 的权限或状态；
 - Web 每个 actor/workspace（Agent 额外包含 Session）只有一个 authenticated
   fetch-SSE client 和独立 checkpoint，使用 BigInt 去重比较并按精确资源
   invalidation 刷新；过期时先重取 durable snapshot 再从 `resyncCursor` 重连。

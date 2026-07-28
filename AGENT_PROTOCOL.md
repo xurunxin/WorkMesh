@@ -390,8 +390,14 @@ ACK 只表示接收，不表示完成计划。
 
 - 更新 `lastHeartbeatAt`；
 - 不把每个 Heartbeat 都显示为普通 Activity；
+- 稳态 Heartbeat 不增加 Session revision/sequence，也不创建 Activity、
+  Domain Event 或 Outbox；平台只维护一个有界的 current heartbeat
+  projection；
+- `healthy` / `degraded` / `stale` 转换在 Session 行锁下只发布一次；
 - 超过 stale 阈值产生 `agent.session.stale`；
 - stale 不自动终止外部进程，但撤销或暂停权限可由策略决定。
+- stale、stopping 或 terminal Session 的 Heartbeat 只作诊断，不能恢复
+  workflow state、Delegation、Capability、Scope、Lease 或普通写权限。
 
 ## 6.4 Prompt
 
