@@ -130,6 +130,84 @@ describe("Stage 1 agent API acceptance", () => {
       const session = await start(delegation.json<{ id: string }>().id);
       const token = await exchange(session, heartbeatAgent.installationToken);
       await ackAndExecute(session, token);
+      const sessionK1 = randomUUID();
+      const sessionK2 = randomUUID();
+      expect((await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        { usage: { runtimeSeconds: 10 } },
+        { "idempotency-key": sessionK1 },
+      )).statusCode).toBe(200);
+      expect((await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        { usage: { runtimeSeconds: 20 } },
+        { "idempotency-key": sessionK2 },
+      )).statusCode).toBe(200);
+      const sessionRetry = await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        { usage: { runtimeSeconds: 10 } },
+        { "idempotency-key": sessionK1 },
+      );
+      expect(sessionRetry.statusCode).toBe(200);
+      expect(
+        (await db.query<{ runtime_seconds: string }>(
+          "SELECT heartbeat_usage->>'runtimeSeconds' AS runtime_seconds FROM agent_sessions WHERE id=$1",
+          [session.id],
+        )).rows[0]?.runtime_seconds,
+      ).toBe("20");
+      const sessionMismatch = await agentCall(
+        token,
+        "POST",
+        `/api/v1/agent-sessions/${session.id}/heartbeat`,
+        { usage: { runtimeSeconds: 11 } },
+        { "idempotency-key": sessionK1 },
+      );
+      expect(sessionMismatch.statusCode).toBe(409);
+      expect(sessionMismatch.json<{ error: { code: string } }>().error.code)
+        .toBe("IDEMPOTENCY_KEY_REUSED");
+
+      const acquired = await agentCall(
+        token,
+        "POST",
+        "/api/v1/leases",
+        {
+          sessionId: session.id,
+          resourceType: "work_item",
+          resourceId: workItemId,
+          kind: "exclusive",
+          reason: "Heartbeat ordering coverage",
+          ttlSeconds: 300,
+        },
+      );
+      expect(acquired.statusCode).toBe(200);
+      const leaseId = acquired.json<{ id: string }>().id;
+      const leaseK1 = randomUUID();
+      const leaseK2 = randomUUID();
+      for (const key of [leaseK1, leaseK2, leaseK1]) {
+        const response = await agentCall(
+          token,
+          "POST",
+          `/api/v1/leases/${leaseId}/heartbeat`,
+          {},
+          { "idempotency-key": key },
+        );
+        expect(response.statusCode).toBe(200);
+      }
+      const leaseMismatch = await agentCall(
+        token,
+        "POST",
+        `/api/v1/leases/${leaseId}/heartbeat`,
+        { ttlSeconds: 60 },
+        { "idempotency-key": leaseK1 },
+      );
+      expect(leaseMismatch.statusCode).toBe(409);
+      expect(leaseMismatch.json<{ error: { code: string } }>().error.code)
+        .toBe("IDEMPOTENCY_KEY_REUSED");
       const before = (
         await db.query<{
           revision: number;
@@ -138,13 +216,16 @@ describe("Stage 1 agent API acceptance", () => {
           events: string;
           outbox: string;
           idempotency: string;
+          heartbeat_dedupe: string;
         }>(
           `
       SELECT s.revision,s.sequence::text,
              (SELECT count(*) FROM agent_activities WHERE session_id=s.id)::text AS activities,
              (SELECT count(*) FROM domain_events WHERE session_id=s.id)::text AS events,
              (SELECT count(*) FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.session_id=s.id)::text AS outbox,
-             (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency
+              (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency
+             ,(SELECT count(*) FROM heartbeat_idempotency_keys
+                WHERE resource_kind='session' AND resource_id=s.id)::text AS heartbeat_dedupe
         FROM agent_sessions s WHERE s.id=$1
     `,
           [session.id],
@@ -177,13 +258,16 @@ describe("Stage 1 agent API acceptance", () => {
           events: string;
           outbox: string;
           idempotency: string;
+          heartbeat_dedupe: string;
         }>(
           `
       SELECT s.revision,s.sequence::text,s.heartbeat_health,
              (SELECT count(*) FROM agent_activities WHERE session_id=s.id)::text AS activities,
              (SELECT count(*) FROM domain_events WHERE session_id=s.id)::text AS events,
              (SELECT count(*) FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.session_id=s.id)::text AS outbox,
-             (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency
+             (SELECT count(*) FROM api_idempotency_keys WHERE actor_id=s.agent_actor_id)::text AS idempotency,
+             (SELECT count(*) FROM heartbeat_idempotency_keys
+               WHERE resource_kind='session' AND resource_id=s.id)::text AS heartbeat_dedupe
         FROM agent_sessions s WHERE s.id=$1
     `,
           [session.id],
@@ -198,6 +282,7 @@ describe("Stage 1 agent API acceptance", () => {
         outbox: before.outbox,
         idempotency: before.idempotency,
       });
+      expect(Number(steady.heartbeat_dedupe)).toBeLessThanOrEqual(128);
 
       await db.query(
         "UPDATE agent_sessions SET heartbeat_health='degraded',heartbeat_health_changed_at=now() WHERE id=$1",

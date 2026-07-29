@@ -10,6 +10,7 @@ import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
 } from "@workmesh/contracts";
 import { authIdempotentTransaction } from "../auth-idempotency.js";
+import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.js";
 import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 
@@ -544,8 +545,12 @@ export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, 
       revision: number;
       sequence: number;
     }>("SELECT heartbeat_health,heartbeat_idempotency_key,heartbeat_request_hash,state,revision,sequence FROM agent_sessions WHERE id=$1 FOR UPDATE", [sessionId])).rows);
-    if (projection.heartbeat_idempotency_key === meta.idempotencyKey) {
-      if (projection.heartbeat_request_hash !== meta.requestHash) throw new DomainError("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used for a different heartbeat");
+    if (await isHeartbeatReplay(tx, {
+      resourceKind: "session",
+      resourceId: sessionId,
+      idempotencyKey: meta.idempotencyKey,
+      requestHash: meta.requestHash,
+    })) {
       return one((await tx.query("SELECT * FROM agent_sessions WHERE id=$1", [sessionId])).rows);
     }
     const restorable = !["stopping","stale","completed","failed","canceled"].includes(projection.state);
@@ -553,7 +558,39 @@ export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, 
     const row = one((await tx.query(
       `UPDATE agent_sessions
           SET last_heartbeat_at=now(),heartbeat_checked_at=now(),
-              heartbeat_current_step_id=$2,heartbeat_usage=$3,
+              heartbeat_current_step_id=$2,
+              heartbeat_usage=heartbeat_usage
+                || jsonb_build_object(
+                     'runtimeSeconds',
+                     GREATEST(
+                       COALESCE((heartbeat_usage->>'runtimeSeconds')::bigint,0),
+                       ($3::jsonb->>'runtimeSeconds')::bigint
+                     )
+                   )
+                || CASE WHEN $3::jsonb ? 'inputTokens'
+                        THEN jsonb_build_object(
+                          'inputTokens',
+                          GREATEST(
+                            COALESCE((heartbeat_usage->>'inputTokens')::bigint,0),
+                            ($3::jsonb->>'inputTokens')::bigint
+                          )
+                        ) ELSE '{}'::jsonb END
+                || CASE WHEN $3::jsonb ? 'outputTokens'
+                        THEN jsonb_build_object(
+                          'outputTokens',
+                          GREATEST(
+                            COALESCE((heartbeat_usage->>'outputTokens')::bigint,0),
+                            ($3::jsonb->>'outputTokens')::bigint
+                          )
+                        ) ELSE '{}'::jsonb END
+                || CASE WHEN $3::jsonb ? 'toolCalls'
+                        THEN jsonb_build_object(
+                          'toolCalls',
+                          GREATEST(
+                            COALESCE((heartbeat_usage->>'toolCalls')::bigint,0),
+                            ($3::jsonb->>'toolCalls')::bigint
+                          )
+                        ) ELSE '{}'::jsonb END,
               heartbeat_health=$4,
               heartbeat_health_changed_at=CASE WHEN heartbeat_health<>$4 THEN now() ELSE heartbeat_health_changed_at END,
               heartbeat_idempotency_key=$5,heartbeat_request_hash=$6,
@@ -562,6 +599,12 @@ export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, 
         RETURNING *`,
       [sessionId, input.currentStepId ?? null, input.usage, nextHealth, meta.idempotencyKey, meta.requestHash],
     )).rows);
+    await recordHeartbeatKey(tx, {
+      resourceKind: "session",
+      resourceId: sessionId,
+      idempotencyKey: meta.idempotencyKey,
+      requestHash: meta.requestHash,
+    });
     if (nextHealth !== projection.heartbeat_health) {
       await event(tx, meta, "agent.session.health_changed", "agent_session", sessionId, projection.revision, {
         from: projection.heartbeat_health,

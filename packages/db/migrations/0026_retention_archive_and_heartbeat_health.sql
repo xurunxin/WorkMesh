@@ -22,6 +22,22 @@ ALTER TABLE leases
     (heartbeat_idempotency_key IS NULL) = (heartbeat_request_hash IS NULL)
   );
 
+-- Heartbeat routes deliberately bypass the generic idempotency response store.
+-- Keep a fixed recent-key window per projection so K1/K2/retry-K1 cannot
+-- overwrite newer progress, while high-frequency pulses remain bounded.
+CREATE TABLE heartbeat_idempotency_keys (
+  resource_kind text NOT NULL CHECK(resource_kind IN ('session','lease')),
+  resource_id uuid NOT NULL,
+  idempotency_key text NOT NULL,
+  request_hash text NOT NULL CHECK(request_hash ~ '^(sha256:)?[a-f0-9]{64}$'),
+  observed_at timestamptz NOT NULL DEFAULT now(),
+  expires_at timestamptz NOT NULL,
+  PRIMARY KEY(resource_kind,resource_id,idempotency_key),
+  CHECK(expires_at >= observed_at)
+);
+CREATE INDEX heartbeat_idempotency_expiry
+  ON heartbeat_idempotency_keys(expires_at,resource_kind,resource_id);
+
 -- Ordinary command replay material is available for 24 hours. The key remains
 -- a conflict tombstone for 30 days. Existing rows receive a full deployment
 -- grace window so a rolling deploy cannot invalidate an in-flight retry.
@@ -146,6 +162,7 @@ INSERT INTO retention_policy_inventory(
   ('auth_idempotency.secret',1,1,NULL,true,NULL),
   ('human_session.expired_or_revoked',30,NULL,NULL,true,NULL),
   ('agent_token.expired_or_revoked',30,NULL,NULL,true,NULL),
+  ('heartbeat_idempotency.recent_window',1,NULL,NULL,true,NULL),
   ('webhook.delivered_or_processed',30,NULL,NULL,true,NULL),
   ('audit_or_recovery_fact',3650,NULL,NULL,false,'audit and uncertain recovery facts are protected');
 

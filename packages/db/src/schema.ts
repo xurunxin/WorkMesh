@@ -150,6 +150,12 @@ export const apiIdempotencyKeys = pgTable('api_idempotency_keys', {
   responseStatus: integer('response_status'), responseBody: jsonb('response_body'), replayExpiresAt: timestamp('replay_expires_at', { withTimezone: true }).notNull(),
   conflictExpiresAt: timestamp('conflict_expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
+export const heartbeatIdempotencyKeys = pgTable('heartbeat_idempotency_keys', {
+  resourceKind: text('resource_kind').notNull(), resourceId: uuid('resource_id').notNull(),
+  idempotencyKey: text('idempotency_key').notNull(), requestHash: text('request_hash').notNull(),
+  observedAt: timestamp('observed_at', { withTimezone: true }).notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+})
 export const authIdempotencyRecords = pgTable('auth_idempotency_records', {
   id: uuid('id').primaryKey(),
   keyFingerprint: text('key_fingerprint').notNull(),

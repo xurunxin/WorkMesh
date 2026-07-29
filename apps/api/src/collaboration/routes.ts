@@ -6,6 +6,7 @@ import { appendEvent, withTx } from '@workmesh/db'
 import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '@workmesh/domain'
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
+import { isHeartbeatReplay, recordHeartbeatKey } from '../heartbeat-idempotency.js'
 import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import type { Paginator } from '../pagination.js'
@@ -496,8 +497,12 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
       if(!row) throw new DomainError('NOT_FOUND','Lease not found')
       await assertSessionWrite(tx,actor(request),row.session_id)
       if(row.status!=='active') throw new DomainError('CONFLICT','Lease is not active')
-      if (row.heartbeat_idempotency_key === meta.idempotencyKey) {
-        if (row.heartbeat_request_hash !== meta.requestHash) throw new DomainError('IDEMPOTENCY_KEY_REUSED','Idempotency-Key was already used for a different lease heartbeat')
+      if (await isHeartbeatReplay(tx, {
+        resourceKind: 'lease',
+        resourceId: leaseId,
+        idempotencyKey: meta.idempotencyKey,
+        requestHash: meta.requestHash,
+      })) {
         return leaseResponse(row)
       }
       const changed=(await tx.query<{version:number}>(
@@ -507,6 +512,12 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
           WHERE id=$1 RETURNING *`,
         [leaseId,meta.idempotencyKey,meta.requestHash],
       )).rows[0]!
+      await recordHeartbeatKey(tx, {
+        resourceKind: 'lease',
+        resourceId: leaseId,
+        idempotencyKey: meta.idempotencyKey,
+        requestHash: meta.requestHash,
+      })
       return leaseResponse(changed)
     })
   }
