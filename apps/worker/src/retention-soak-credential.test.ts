@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   callRetentionSoakAgent,
+  callRetentionSoakHeartbeat,
   RetentionSoakCredentialManager,
 } from "./retention-soak-credential.js";
 
@@ -399,5 +400,143 @@ describe("retention soak credential manager", () => {
       maximumRefreshLatencyMs: 20_000,
       expiredBeforeRefreshCount: 0,
     });
+  });
+
+  it("serializes a 10s activity ahead of following refresh and heartbeat", async () => {
+    const start = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = start;
+    let refreshCalls = 0;
+    let releaseActivity = (): void => undefined;
+    const activityBlocked = new Promise<void>((resolve) => {
+      releaseActivity = resolve;
+    });
+    const order: string[] = [];
+    const authorizations: string[] = [];
+    const request = vi.fn<typeof fetch>().mockImplementation(async (input, init) => {
+      const path = new URL(String(input)).pathname;
+      if (path.endsWith("/token/refresh")) {
+        refreshCalls += 1;
+        order.push(`refresh-${refreshCalls}`);
+        return jsonResponse({
+          sessionToken: `session-${refreshCalls}`,
+          expiresAt: new Date(now + 900_000).toISOString(),
+        });
+      }
+      authorizations.push(
+        new Headers(init?.headers).get("authorization") ?? "",
+      );
+      if (path.endsWith("/activities")) {
+        order.push("activity-start");
+        await activityBlocked;
+        order.push("activity-end");
+      } else {
+        order.push("heartbeat");
+      }
+      return jsonResponse({});
+    });
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: request,
+      now: () => now,
+    });
+
+    await manager.token();
+    now = start + 710_000;
+    const activity = callRetentionSoakAgent(
+      manager,
+      "http://127.0.0.1:3001",
+      "/api/v1/agent-sessions/session-id/activities",
+      { kind: "status" },
+      { fetch: request },
+    );
+    await vi.waitFor(() => expect(order).toContain("activity-start"));
+    now += 10_000;
+    const heartbeat = callRetentionSoakAgent(
+      manager,
+      "http://127.0.0.1:3001",
+      "/api/v1/agent-sessions/session-id/heartbeat",
+      { usage: { runtimeSeconds: 720 } },
+      { fetch: request },
+    );
+    expect(refreshCalls).toBe(1);
+    releaseActivity();
+    await Promise.all([activity, heartbeat]);
+
+    expect(order).toEqual([
+      "refresh-1",
+      "activity-start",
+      "activity-end",
+      "refresh-2",
+      "heartbeat",
+    ]);
+    expect(authorizations).toEqual([
+      "Bearer session-1",
+      "Bearer session-2",
+    ]);
+  });
+
+  it("records the server-authoritative accepted heartbeat timestamp", async () => {
+    const now = Date.parse("2026-07-29T00:00:00.000Z");
+    const acceptedAt = "2026-07-29T00:00:01.000Z";
+    const ids = {
+      id: "00000000-0000-4000-8000-000000000001",
+      workspace_id: "00000000-0000-4000-8000-000000000002",
+      agent_id: "00000000-0000-4000-8000-000000000003",
+      agent_actor_id: "00000000-0000-4000-8000-000000000004",
+      delegation_id: "00000000-0000-4000-8000-000000000005",
+      work_item_id: "00000000-0000-4000-8000-000000000006",
+    };
+    const request = vi.fn<typeof fetch>().mockImplementation(async (input) => {
+      if (String(input).endsWith("/token/refresh"))
+        return jsonResponse({
+          sessionToken: "session-token",
+          expiresAt: new Date(now + 900_000).toISOString(),
+        });
+      return jsonResponse({
+        ...ids,
+        project_id: null,
+        plan_step_id: null,
+        state: "executing",
+        state_reason: null,
+        sequence: 1,
+        revision: 1,
+        current_plan_version_id: null,
+        context_snapshot_id: null,
+        budget: {},
+        external_urls: [],
+        last_heartbeat_at: acceptedAt,
+        heartbeat_health: "healthy",
+        heartbeat_health_changed_at: acceptedAt,
+        heartbeat_checked_at: acceptedAt,
+        heartbeat_current_step_id: null,
+        heartbeat_usage: { runtimeSeconds: 1 },
+        retry_of_session_id: null,
+        stop_requested_at: null,
+        ended_at: null,
+        error_code: null,
+        error_summary: null,
+        created_at: acceptedAt,
+        updated_at: acceptedAt,
+      });
+    });
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: ids.id,
+      installationToken: "installation-secret",
+      fetch: request,
+      now: () => now,
+    });
+
+    await expect(
+      callRetentionSoakHeartbeat(
+        manager,
+        "http://127.0.0.1:3001",
+        ids.id,
+        1,
+        { fetch: request },
+      ),
+    ).resolves.toMatchObject({ acceptedAt });
   });
 });

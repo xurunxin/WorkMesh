@@ -60,20 +60,25 @@ or human-session invalidation, completely reset the disposable stack before
 removing the checkpoint. Never reuse a Session concurrently: one dedicated
 Session has exactly one soak runner, and a runner restart creates a new report
 directory and baseline rather than appending old samples.
-Guard that one-to-one Session/state path with nonblocking `flock`. The standalone
+The combined entrypoint guards that one-to-one Session/state path with
+nonblocking `flock --no-fork`, while the runner independently verifies the held
+lock before dry-run or live evidence. The standalone
 `pnpm provision:soak:retention` command exists only for checkpoint recovery and
 diagnosis; completing it is not a safe pause point. The contiguous runner
 rejects a schema-v2 Session that is stale, non-executing, non-healthy, or more
 than 45 seconds past its last heartbeat before it attempts any refresh or
 heartbeat. Reset the disposable state/session and provision a new one.
 
-Formal evidence must identify the exact source SHA, immutable application image
-references/revisions, and the API, Worker, PostgreSQL, Redis, and MinIO
-container IDs/images. Exactly five unique stats targets are required. Threshold
+Formal evidence executable gates require a clean checkout at the exact expected
+40-character SHA; explicit API, Worker, PostgreSQL, Redis, and MinIO role
+mappings; running containers backed by immutable image digests; matching API
+and Worker OCI revisions; and matching `/api/v1/info.buildSha`. Threshold
 overrides may keep the defaults or lower maximums; looser formal thresholds are
-rejected. The 30-second maximum sample cadence plus the complete 45-second token
-refresh budget bounds the planned heartbeat-arrival gap at 75 seconds, leaving
-45 seconds below the server's hard 120-second stale age.
+rejected. An independent 15-second heartbeat pump shares a serialized
+credential/request queue with activities. The maximum initial/steady
+server-accepted gaps are 100/80 seconds, leaving at least 20 seconds below the
+hard 120-second stale age. The report must pass observed-gap, pump, lock, and
+provenance gates.
 
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):

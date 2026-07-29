@@ -6,9 +6,11 @@ import {
   RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
   RETENTION_SOAK_REFRESH_BUDGET_MS,
   retentionSoakActivityPayload,
+  retentionSoakDryRunPlan,
   retentionSoakLivenessBudget,
   retentionSoakPreflight,
   retentionSoakReport,
+  type RetentionSoakFormalEvidence,
   type RetentionSoakSample,
   type RetentionSoakThresholds,
 } from "./retention-soak.js";
@@ -26,8 +28,13 @@ const safe = {
   WORKMESH_RETENTION_SOAK_API_URL: "http://127.0.0.1:3001",
   WORKMESH_RETENTION_SOAK_SESSION_ID: "00000000-0000-4000-8000-000000000001",
   WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN: "test-installation-token",
-  WORKMESH_RETENTION_SOAK_CONTAINERS:
-    "workmesh-api,workmesh-worker,workmesh-postgres,workmesh-redis,workmesh-minio",
+  WORKMESH_RETENTION_SOAK_STATE_PATH: "/private/session.json",
+  WORKMESH_RETENTION_SOAK_EXPECTED_SHA: "a".repeat(40),
+  WORKMESH_RETENTION_SOAK_API_CONTAINER: "workmesh-api",
+  WORKMESH_RETENTION_SOAK_WORKER_CONTAINER: "workmesh-worker",
+  WORKMESH_RETENTION_SOAK_POSTGRES_CONTAINER: "workmesh-postgres",
+  WORKMESH_RETENTION_SOAK_REDIS_CONTAINER: "workmesh-redis",
+  WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "workmesh-minio",
 };
 
 const thresholds: RetentionSoakThresholds = {
@@ -47,6 +54,48 @@ const thresholds: RetentionSoakThresholds = {
   maximumDeadTuplesSlopePerHour: 100,
   maximumRedisLengthSlopePerHour: 24,
   maximumContainerMemorySlopeBytesPerHour: 16_777_216,
+};
+
+const formalEvidence: RetentionSoakFormalEvidence = {
+  heartbeat: {
+    healthy: true,
+    successfulHeartbeats: 2,
+    initialServerAcceptedAt: "2026-07-28T00:00:00.000Z",
+    firstPumpAcceptedAt: "2026-07-28T00:00:01.000Z",
+    lastPumpAcceptedAt: "2026-07-29T00:00:00.000Z",
+    maximumObservedGapMs: 15_000,
+    maximumLatencyMs: 100,
+    lastLatencyMs: 50,
+    failureCode: null,
+  },
+  lock: {
+    verified: true,
+    mechanism: "flock",
+    sessionScopeSha256: `sha256:${"b".repeat(64)}`,
+  },
+  provenance: {
+    verified: true,
+    expectedBuildSha: "a".repeat(40),
+    sourceHeadSha: "a".repeat(40),
+    apiBuildSha: "a".repeat(40),
+    roles: Object.fromEntries(
+      ["api", "worker", "postgres", "redis", "minio"].map((role) => [
+        role,
+        {
+          containerName: `workmesh-${role}`,
+          containerId: `sha256:${role.padEnd(64, "1").slice(0, 64)}`,
+          imageId: `sha256:${role.padEnd(64, "2").slice(0, 64)}`,
+          imageDigest: `example/${role}@sha256:${role
+            .padEnd(64, "3")
+            .slice(0, 64)}`,
+          revision:
+            role === "api" || role === "worker"
+              ? "a".repeat(40)
+              : `infra-${role}`,
+        },
+      ]),
+    ) as RetentionSoakFormalEvidence["provenance"]["roles"],
+  },
 };
 
 const sample = (
@@ -110,9 +159,13 @@ describe("retention soak harness", () => {
       liveness: {
         hardStaleMs: 120_000,
         sampleIntervalMs: 30_000,
+        heartbeatIntervalMs: 15_000,
         refreshOperationBudgetMs: 45_000,
-        maximumExpectedHeartbeatGapMs: 75_000,
-        safetyMarginMs: 45_000,
+        workloadRequestBudgetMs: 10_000,
+        maximumInitialHeartbeatGapMs: 100_000,
+        maximumSteadyHeartbeatGapMs: 80_000,
+        maximumExpectedHeartbeatGapMs: 100_000,
+        safetyMarginMs: 20_000,
         maximumInitialHeartbeatAgeMs: 45_000,
       },
     });
@@ -143,9 +196,21 @@ describe("retention soak harness", () => {
     expect(() =>
       retentionSoakPreflight({
         ...safe,
-        WORKMESH_RETENTION_SOAK_CONTAINERS: "api,worker,postgres,redis",
+        WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "",
       }),
-    ).toThrow("RETENTION_SOAK_REQUIRES_CONTAINER_STATS_TARGETS");
+    ).toThrow("RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "workmesh-redis",
+      }),
+    ).toThrow("RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_EXPECTED_SHA: "dirty-sha",
+      }),
+    ).toThrow("RETENTION_SOAK_EXPECTED_SHA_INVALID");
     expect(() =>
       retentionSoakPreflight({
         ...safe,
@@ -174,9 +239,13 @@ describe("retention soak harness", () => {
     expect(budget).toEqual({
       hardStaleMs: RETENTION_SOAK_HARD_STALE_MS,
       sampleIntervalMs: 30_000,
+      heartbeatIntervalMs: 15_000,
       refreshOperationBudgetMs: RETENTION_SOAK_REFRESH_BUDGET_MS,
-      maximumExpectedHeartbeatGapMs: 75_000,
-      safetyMarginMs: 45_000,
+      workloadRequestBudgetMs: 10_000,
+      maximumInitialHeartbeatGapMs: 100_000,
+      maximumSteadyHeartbeatGapMs: 80_000,
+      maximumExpectedHeartbeatGapMs: 100_000,
+      safetyMarginMs: 20_000,
       maximumInitialHeartbeatAgeMs: 45_000,
     });
     const now = new Date("2026-07-29T00:00:45.000Z");
@@ -213,6 +282,33 @@ describe("retention soak harness", () => {
         budget,
       ),
     ).toThrow("RETENTION_SOAK_SESSION_STALE_REPROVISION_REQUIRED");
+  });
+
+  it("persists verified lock and provenance in the sanitized dry-run plan", () => {
+    const options = retentionSoakPreflight(safe);
+    const plan = retentionSoakDryRunPlan(
+      options,
+      formalEvidence.lock,
+      formalEvidence.provenance,
+    );
+    expect(plan).toMatchObject({
+      status: "dry_run",
+      containerStatsTargets: 5,
+      checks: {
+        heartbeatLivenessBudget: true,
+        formalLockVerified: true,
+        provenanceVerified: true,
+      },
+      lock: formalEvidence.lock,
+      provenance: {
+        expectedBuildSha: "a".repeat(40),
+        sourceHeadSha: "a".repeat(40),
+        apiBuildSha: "a".repeat(40),
+      },
+    });
+    expect(JSON.stringify(plan)).not.toContain(
+      safe.WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN,
+    );
   });
 
   it("passes only when events generated by this run are archived and queues converge", () => {
@@ -269,6 +365,8 @@ describe("retention soak harness", () => {
           maximumRefreshLatencyMs: 120,
           expiredBeforeRefreshCount: 0,
         },
+        retentionSoakLivenessBudget(30_000),
+        formalEvidence,
       ),
     ).toMatchObject({
       schemaVersion: 3,
@@ -284,6 +382,10 @@ describe("retention soak harness", () => {
         tokenNeverExpiredBeforeRefresh: true,
         heartbeatLivenessBudget: true,
         tokenRefreshLatencyWithinBudget: true,
+        heartbeatPumpSucceeded: true,
+        observedHeartbeatGapBounded: true,
+        formalLockVerified: true,
+        provenanceVerified: true,
       },
       actual: {
         credentials: {
@@ -299,6 +401,39 @@ describe("retention soak harness", () => {
           currentRunGenerated: 1,
           currentRunArchived: 1,
         },
+      },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        {
+          ...formalEvidence,
+          heartbeat: {
+            ...formalEvidence.heartbeat,
+            healthy: false,
+            maximumObservedGapMs: 100_001,
+            failureCode: "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
+          },
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: {
+        heartbeatPumpSucceeded: false,
+        observedHeartbeatGapBounded: false,
       },
     });
   });

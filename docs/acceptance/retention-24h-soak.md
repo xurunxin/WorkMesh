@@ -71,30 +71,36 @@ DATABASE_URL=postgres://.../workmesh_test_retention
 REDIS_URL=redis://...
 WORKMESH_RETENTION_SOAK_API_URL=http://127.0.0.1:3001
 WORKMESH_RETENTION_SOAK_SAMPLE_SECONDS=30
-WORKMESH_RETENTION_SOAK_CONTAINERS=<api-container>,<worker-container>,<postgres-container>,<redis-container>,<minio-container>
+WORKMESH_RETENTION_SOAK_EXPECTED_SHA=<clean lowercase 40-character Git SHA>
+WORKMESH_RETENTION_SOAK_API_CONTAINER=<api-container>
+WORKMESH_RETENTION_SOAK_WORKER_CONTAINER=<worker-container>
+WORKMESH_RETENTION_SOAK_POSTGRES_CONTAINER=<postgres-container>
+WORKMESH_RETENTION_SOAK_REDIS_CONTAINER=<redis-container>
+WORKMESH_RETENTION_SOAK_MINIO_CONTAINER=<minio-container>
 ```
 
-Exactly five unique container names are required. Before the run, record
-`git rev-parse HEAD`, the immutable image reference/digest and
-`org.opencontainers.image.revision` for every application container, and the
-IDs/images for the API, Worker, PostgreSQL, Redis, and MinIO containers. The
-source SHA and application image revisions must be the exact candidate under
-test; do not infer them from a branch name or mutable tag.
+Exactly those five roles and five unique container names are required. The
+harness rejects a dirty checkout or `HEAD` different from the expected SHA,
+non-running/missing containers, images without immutable repo digests or OCI
+revisions, API or Worker revisions that differ from that SHA, and
+`/api/v1/info.buildSha` that differs from both. It records the safe role to
+container ID/image ID/digest/revision mapping. Do not infer provenance from a
+branch name or mutable tag.
 
-Run exactly one harness process per dedicated Session, guarded by a nonblocking
-`flock` on the private state path dedicated one-to-one to that Session:
+Run exactly one harness process per dedicated Session:
 
 ```text
-install -d -m 700 "$(dirname "$WORKMESH_RETENTION_SOAK_STATE_PATH")"
-exec 9>"${WORKMESH_RETENTION_SOAK_STATE_PATH}.lock"
-flock -n 9
 pnpm test:soak:retention:formal
 ```
 
-If `flock -n` fails, do not start another process. A new formal run requires a
-new disposable Session/state path, timestamped report directory, and baseline.
-The harness creates `samples.jsonl` exclusively and refuses to append to an
-earlier run.
+The combined entrypoint creates a mode-`0600` Session-specific lock file and
+launches the harness under nonblocking `flock --no-fork`. The runner independently
+probes the same derived lock and refuses direct/unlocked invocation. Lock scope
+is recorded as a one-way Session fingerprint, never a Session ID. If lock
+acquisition fails, do not start another process. A new formal run requires a new
+disposable Session/state path, timestamped report directory, and baseline. The
+harness creates `samples.jsonl` exclusively and refuses to append to an earlier
+run.
 
 The harness has fail-closed defaults for every release threshold. A formal run
 may use these defaults or lower maxima for stricter limits; preflight rejects
@@ -124,14 +130,23 @@ The duration is deliberately fixed at exactly 24 hours. A shorter run cannot
 produce a passing formal report. Formal sample cadence defaults to and is
 capped at 30 seconds. A complete proactive refresh operation—including response
 body reads, all attempts, and retry sleeps—has an absolute 45-second budget.
-The maximum planned heartbeat-arrival gap is therefore 75 seconds against the
-server's hard 120-second stale age, preserving a 45-second safety margin
-independently of token expiry.
+An independent heartbeat pump runs every 15 seconds. Session-token refresh and
+all authorized workload requests share one serial queue, so refresh cannot
+revoke a token used by an in-flight request. With a 10-second workload-request
+budget, the bounded initial gap is 45 seconds of admitted Session age plus
+45 seconds of refresh plus 10 seconds for heartbeat, or 100 seconds. The
+steady-state bound is 15 + 10 + 45 + 10, or 80 seconds. The larger 100-second
+bound remains 20 seconds below the server's hard 120-second stale age.
 
 ## What the gate exercises
 
-Each sample sends a real HTTP heartbeat. Every configured number of samples it
-also appends a real Agent activity, waits until the real Worker delivers its
+The independent pump sends a real HTTP heartbeat immediately after initial
+refresh and before the baseline, then every 15 seconds regardless of sampling,
+activity, or outbox polling. It parses the server-returned
+`last_heartbeat_at`, records the authoritative first/last acceptance timestamps
+and maximum observed gap, and fails closed on a request failure, invalid
+timestamp, or gap above 100 seconds. Every configured number of samples the main
+path appends a real Agent activity, waits until the real Worker delivers its
 outbox row, and backdates only that newly generated event in the isolated
 acceptance database so the running retention Worker must archive it.
 
@@ -146,6 +161,10 @@ capped at 60 seconds and total retry delay at 120 seconds, but the absolute
 consume the remaining liveness budget fails before another attempt. A workload
 HTTP 401 is terminal and never triggers a reactive refresh. Rotated Session
 tokens stay in memory and never enter state, samples, reports, or logs.
+Refresh, heartbeat, and activity calls are serialized around both token
+selection and the complete request. The 10-second activity request can delay a
+due heartbeat, but 30-second asynchronous outbox polling and sampling do not
+hold that queue.
 
 Refresh and workload requests have bounded request timeouts. A delayed event
 loop that is not scheduled before expiry is fail-closed: the manager increments
@@ -161,6 +180,8 @@ and records archive states and latency, backlog, retention floor, outbox
 pending count and lag, exact Redis stream length, PostgreSQL rows/database
 size/domain-event table size/dead tuples/connections, Redis connections,
 heartbeat/activity latency, and Docker CPU/RSS for every configured container.
+`docker stats` runs asynchronously with a five-second process timeout; it cannot
+block the Node.js event loop or the heartbeat pump.
 It fails on:
 
 - missing samples or a stale/non-`archive_only` Worker;
@@ -178,6 +199,10 @@ It fails on:
 - any token discovered expired before refresh;
 - a configured liveness budget at or above the hard stale age, or successful
   refresh latency above the 45-second operation budget;
+- heartbeat-pump failure or an authoritative observed heartbeat gap above
+  100 seconds;
+- no held Session-scoped lock, dirty/wrong source SHA, missing immutable image
+  digest, wrong API/Worker OCI revision, or mismatched API build SHA;
 - Redis stream growth above the exact configured cap;
 - CPU, RSS, PostgreSQL/Redis connections, heartbeat/activity/archive latency,
   or outbox lag above the recorded threshold;
@@ -187,7 +212,7 @@ It fails on:
   later recovers cannot be hidden by a low first-to-last slope.
 
 The schema-version-3 final report contains the effective thresholds and the
-120/30/45/75/45-second stale/sample/refresh/gap/margin liveness proof, baseline
+120/15/45/10/100/20-second stale/pump/refresh/request/gap/margin proof, baseline
 counters, deltas,
 the sorted numeric cursors generated by this invocation, maxima, end-to-end
 slopes, maximum baseline-to-sample growth rates, end-state backlog, and each
@@ -197,16 +222,24 @@ latency plus the expired-before-refresh count.
 `checks.tokenNeverExpiredBeforeRefresh` requires a zero expiry count,
 `checks.heartbeatLivenessBudget` proves the planned gap is below stale, and
 `checks.tokenRefreshLatencyWithinBudget` bounds observed successful refreshes.
+`checks.heartbeatPumpSucceeded`, `checks.observedHeartbeatGapBounded`,
+`checks.formalLockVerified`, and `checks.provenanceVerified` require the live
+runtime evidence. The report includes safe lock/provenance proof and
+authoritative heartbeat timestamps/gap.
 Reports do not contain credentials, object keys, Workspace IDs,
 Session IDs, or payloads. A historical verified segment or an earlier report
 cannot satisfy the current invocation.
 
 ## Dry run
 
-`pnpm test:soak:retention -- --dry-run` validates the complete harness
-preflight (without provisioning) and
-writes a `status: "dry_run"` plan without connecting to the services. It never
-claims or substitutes for a 24-hour result.
+`pnpm test:soak:retention:formal -- --dry-run` uses a disposable Session/state
+path, acquires and independently verifies the real lock, and performs read-only
+Git, container/image, and `/api/v1/info` provenance checks before writing a
+sanitized `status: "dry_run"` plan. It does not connect to PostgreSQL/Redis or
+collect samples, but provisioning still mutates the disposable stack. Do not
+reuse its Session for a live run. Direct `pnpm test:soak:retention` invocation
+fails without the already-held formal lock. A dry run never substitutes for a
+24-hour result.
 
 The soak is one release-gate component. Run the separate restore rehearsal and
 restart/contention acceptance harness for Object Lock readback, early-delete

@@ -1,5 +1,12 @@
 import { appendActivityInputSchema } from "@workmesh/contracts";
 import type { RetentionSoakCredentialMetrics } from "./retention-soak-credential.js";
+import type { RetentionSoakHeartbeatMetrics } from "./retention-soak-heartbeat.js";
+import type { RetentionSoakLockProof } from "./retention-soak-lock.js";
+import type {
+  RetentionSoakContainerRole,
+  RetentionSoakContainerRoles,
+  RetentionSoakProvenance,
+} from "./retention-soak-provenance.js";
 
 export const retentionSoakActivityPayload = appendActivityInputSchema.parse({
   kind: "status",
@@ -32,12 +39,19 @@ export type RetentionSoakThresholds = Readonly<{
 export const RETENTION_SOAK_HARD_STALE_MS = 120_000;
 export const RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS = 30_000;
 export const RETENTION_SOAK_REFRESH_BUDGET_MS = 45_000;
+export const RETENTION_SOAK_WORKLOAD_REQUEST_BUDGET_MS = 10_000;
+export const RETENTION_SOAK_HEARTBEAT_INTERVAL_MS = 15_000;
+export const RETENTION_SOAK_MAX_INITIAL_HEARTBEAT_AGE_MS = 45_000;
 export const RETENTION_SOAK_DEFAULT_REDIS_LIMIT = 100_000;
 
 export type RetentionSoakLivenessBudget = Readonly<{
   hardStaleMs: number;
   sampleIntervalMs: number;
+  heartbeatIntervalMs: number;
   refreshOperationBudgetMs: number;
+  workloadRequestBudgetMs: number;
+  maximumInitialHeartbeatGapMs: number;
+  maximumSteadyHeartbeatGapMs: number;
   maximumExpectedHeartbeatGapMs: number;
   safetyMarginMs: number;
   maximumInitialHeartbeatAgeMs: number;
@@ -46,8 +60,19 @@ export type RetentionSoakLivenessBudget = Readonly<{
 export const retentionSoakLivenessBudget = (
   sampleIntervalMs: number,
 ): RetentionSoakLivenessBudget => {
-  const maximumExpectedHeartbeatGapMs =
-    sampleIntervalMs + RETENTION_SOAK_REFRESH_BUDGET_MS;
+  const maximumInitialHeartbeatGapMs =
+    RETENTION_SOAK_MAX_INITIAL_HEARTBEAT_AGE_MS +
+    RETENTION_SOAK_REFRESH_BUDGET_MS +
+    RETENTION_SOAK_WORKLOAD_REQUEST_BUDGET_MS;
+  const maximumSteadyHeartbeatGapMs =
+    RETENTION_SOAK_HEARTBEAT_INTERVAL_MS +
+    RETENTION_SOAK_WORKLOAD_REQUEST_BUDGET_MS +
+    RETENTION_SOAK_REFRESH_BUDGET_MS +
+    RETENTION_SOAK_WORKLOAD_REQUEST_BUDGET_MS;
+  const maximumExpectedHeartbeatGapMs = Math.max(
+    maximumInitialHeartbeatGapMs,
+    maximumSteadyHeartbeatGapMs,
+  );
   const safetyMarginMs =
     RETENTION_SOAK_HARD_STALE_MS - maximumExpectedHeartbeatGapMs;
   if (safetyMarginMs <= 0)
@@ -55,10 +80,15 @@ export const retentionSoakLivenessBudget = (
   return {
     hardStaleMs: RETENTION_SOAK_HARD_STALE_MS,
     sampleIntervalMs,
+    heartbeatIntervalMs: RETENTION_SOAK_HEARTBEAT_INTERVAL_MS,
     refreshOperationBudgetMs: RETENTION_SOAK_REFRESH_BUDGET_MS,
+    workloadRequestBudgetMs: RETENTION_SOAK_WORKLOAD_REQUEST_BUDGET_MS,
+    maximumInitialHeartbeatGapMs,
+    maximumSteadyHeartbeatGapMs,
     maximumExpectedHeartbeatGapMs,
     safetyMarginMs,
-    maximumInitialHeartbeatAgeMs: safetyMarginMs,
+    maximumInitialHeartbeatAgeMs:
+      RETENTION_SOAK_MAX_INITIAL_HEARTBEAT_AGE_MS,
   };
 };
 
@@ -87,11 +117,14 @@ export type RetentionSoakOptions = Readonly<{
   apiUrl: string;
   sessionId: string;
   installationToken: string;
+  statePath: string;
+  expectedBuildSha: string;
   durationMs: number;
   sampleIntervalMs: number;
   redisLimit: number;
   activityEverySamples: number;
   containers: readonly string[];
+  containerRoles: RetentionSoakContainerRoles;
   thresholds: RetentionSoakThresholds;
   liveness: RetentionSoakLivenessBudget;
   dryRun: boolean;
@@ -163,15 +196,33 @@ export const retentionSoakPreflight = (
     throw new Error("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
   if (!Number.isInteger(activityEverySamples) || activityEverySamples < 1)
     throw new Error("RETENTION_SOAK_ACTIVITY_INTERVAL_INVALID");
-  const containers = required(
-    env.WORKMESH_RETENTION_SOAK_CONTAINERS,
-    "RETENTION_SOAK_REQUIRES_CONTAINER_STATS_TARGETS",
-  )
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  if (containers.length !== 5 || new Set(containers).size !== containers.length)
-    throw new Error("RETENTION_SOAK_REQUIRES_CONTAINER_STATS_TARGETS");
+  const roleVariables: Readonly<
+    Record<RetentionSoakContainerRole, string>
+  > = {
+    api: "WORKMESH_RETENTION_SOAK_API_CONTAINER",
+    worker: "WORKMESH_RETENTION_SOAK_WORKER_CONTAINER",
+    postgres: "WORKMESH_RETENTION_SOAK_POSTGRES_CONTAINER",
+    redis: "WORKMESH_RETENTION_SOAK_REDIS_CONTAINER",
+    minio: "WORKMESH_RETENTION_SOAK_MINIO_CONTAINER",
+  };
+  const containerRoles = Object.fromEntries(
+    Object.entries(roleVariables).map(([role, variable]) => [
+      role,
+      required(
+        env[variable],
+        "RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID",
+      ),
+    ]),
+  ) as RetentionSoakContainerRoles;
+  const containers = Object.values(containerRoles);
+  if (new Set(containers).size !== 5)
+    throw new Error("RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID");
+  const expectedBuildSha = required(
+    env.WORKMESH_RETENTION_SOAK_EXPECTED_SHA,
+    "RETENTION_SOAK_EXPECTED_SHA_INVALID",
+  );
+  if (!/^[0-9a-f]{40}$/.test(expectedBuildSha))
+    throw new Error("RETENTION_SOAK_EXPECTED_SHA_INVALID");
   const thresholds: RetentionSoakThresholds = {
     maximumArchiveBacklog: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_ARCHIVE_BACKLOG,
@@ -285,21 +336,70 @@ export const retentionSoakPreflight = (
       env.WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN,
       "RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD",
     ),
+    statePath: required(
+      env.WORKMESH_RETENTION_SOAK_STATE_PATH,
+      "RETENTION_SOAK_REQUIRES_STATE_PATH",
+    ),
+    expectedBuildSha,
     durationMs: hours * 3_600_000,
     sampleIntervalMs,
     redisLimit,
     activityEverySamples,
     containers,
+    containerRoles,
     thresholds,
     liveness: retentionSoakLivenessBudget(sampleIntervalMs),
     dryRun,
   };
 };
 
+export const retentionSoakDryRunPlan = (
+  options: RetentionSoakOptions,
+  lock: RetentionSoakLockProof,
+  provenance: RetentionSoakProvenance,
+) => ({
+  schemaVersion: 3,
+  status: "dry_run" as const,
+  formalDurationHours: 24,
+  sampleIntervalSeconds: options.sampleIntervalMs / 1_000,
+  maximumFormalSampleIntervalSeconds:
+    RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS / 1_000,
+  liveness: options.liveness,
+  activeWorkload: true,
+  proactiveTokenRotation: true,
+  minimumTokenRefreshes: 2,
+  maximumExpiredBeforeRefresh: 0,
+  checks: {
+    heartbeatLivenessBudget:
+      options.liveness.maximumExpectedHeartbeatGapMs <
+        options.liveness.hardStaleMs && options.liveness.safetyMarginMs > 0,
+    formalLockVerified: lock.verified,
+    provenanceVerified: provenance.verified,
+  },
+  archiveOnly: true,
+  cleanupEnabled: false,
+  pruneEnabled: false,
+  isolatedDatabase: true,
+  containerStatsTargets: options.containers.length,
+  lock,
+  provenance,
+  thresholds: {
+    ...options.thresholds,
+    redisLengthLimit: options.redisLimit,
+  },
+  artifacts: ["samples.jsonl", "report.json"],
+});
+
 export type RetentionSoakSessionLiveness = Readonly<{
   state: string;
   heartbeatHealth: string;
   lastHeartbeatAt: Date | null;
+}>;
+
+export type RetentionSoakFormalEvidence = Readonly<{
+  heartbeat: RetentionSoakHeartbeatMetrics;
+  lock: RetentionSoakLockProof;
+  provenance: RetentionSoakProvenance;
 }>;
 
 export const assertRetentionSoakSessionLiveness = (
@@ -412,6 +512,7 @@ export const retentionSoakReport = (
   liveness: RetentionSoakLivenessBudget = retentionSoakLivenessBudget(
     RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
   ),
+  formalEvidence?: RetentionSoakFormalEvidence,
 ) => {
   const series = [baseline, ...samples];
   const last = samples.at(-1);
@@ -553,6 +654,21 @@ export const retentionSoakReport = (
     tokenRefreshLatencyWithinBudget:
       credentialMetrics.maximumRefreshLatencyMs <=
       liveness.refreshOperationBudgetMs,
+    heartbeatPumpSucceeded:
+      formalEvidence?.heartbeat.healthy === true &&
+      formalEvidence.heartbeat.failureCode === null &&
+      formalEvidence.heartbeat.successfulHeartbeats > 0,
+    observedHeartbeatGapBounded:
+      formalEvidence !== undefined &&
+      formalEvidence.heartbeat.maximumObservedGapMs <=
+        liveness.maximumExpectedHeartbeatGapMs,
+    formalLockVerified: formalEvidence?.lock.verified === true,
+    provenanceVerified:
+      formalEvidence?.provenance.verified === true &&
+      formalEvidence.provenance.expectedBuildSha ===
+        formalEvidence.provenance.apiBuildSha &&
+      formalEvidence.provenance.sourceHeadSha ===
+        formalEvidence.provenance.expectedBuildSha,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&
@@ -601,6 +717,7 @@ export const retentionSoakReport = (
       redisLengthLimit: redisLimit,
     },
     liveness,
+    formalEvidence: formalEvidence ?? null,
     actual: {
       baseline: {
         verifiedSegments: baseline.archive.verified,
