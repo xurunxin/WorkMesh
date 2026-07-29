@@ -374,7 +374,10 @@ export const retentionSoakDryRunPlan = (
     heartbeatLivenessBudget:
       options.liveness.maximumExpectedHeartbeatGapMs <
         options.liveness.hardStaleMs && options.liveness.safetyMarginMs > 0,
-    formalLockVerified: lock.verified,
+    formalLockVerified:
+      lock.verified &&
+      lock.fdinfoLockMatched &&
+      lock.independentContentionObserved,
     provenanceVerified: provenance.verified,
   },
   archiveOnly: true,
@@ -674,7 +677,10 @@ export const retentionSoakReport = (
         liveness.maximumExpectedHeartbeatGapMs &&
       formalEvidence.heartbeat.maximumObservedGapMs <=
         liveness.maximumExpectedHeartbeatGapMs,
-    formalLockVerified: formalEvidence?.lock.verified === true,
+    formalLockVerified:
+      formalEvidence?.lock.verified === true &&
+      formalEvidence.lock.fdinfoLockMatched === true &&
+      formalEvidence.lock.independentContentionObserved === true,
     provenanceVerified:
       formalEvidence?.provenance.verified === true &&
       formalEvidence.endingProvenance.verified === true &&

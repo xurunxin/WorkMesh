@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { chmod, open, stat } from "node:fs/promises";
+import { constants } from "node:fs";
+import { lstat, open } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import {
   retentionSoakSessionLockPath,
@@ -19,10 +20,29 @@ const lockPath = retentionSoakSessionLockPath(
   result.statePath,
   result.state.sessionId,
 );
-const lockFile = await open(lockPath, "a", 0o600);
-await chmod(lockPath, 0o600);
-const lockMode = (await stat(lockPath)).mode & 0o777;
-if (lockMode !== 0o600)
+const lockFile = await open(
+  lockPath,
+  constants.O_CREAT |
+    constants.O_RDWR |
+    constants.O_APPEND |
+    constants.O_NOFOLLOW,
+  0o600,
+);
+await lockFile.chmod(0o600);
+const [lockPathStat, lockFdStat] = await Promise.all([
+  lstat(lockPath),
+  lockFile.stat(),
+]);
+const currentUid = process.getuid?.();
+if (
+  currentUid === undefined ||
+  !lockPathStat.isFile() ||
+  lockPathStat.isSymbolicLink() ||
+  String(lockPathStat.dev) !== String(lockFdStat.dev) ||
+  String(lockPathStat.ino) !== String(lockFdStat.ino) ||
+  (lockPathStat.mode & 0o777) !== 0o600 ||
+  lockPathStat.uid !== currentUid
+)
   throw new Error("RETENTION_SOAK_SESSION_LOCK_PERMISSIONS_UNSAFE");
 
 const childEnv: NodeJS.ProcessEnv = {

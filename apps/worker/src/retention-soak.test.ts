@@ -138,6 +138,8 @@ const formalEvidence: RetentionSoakFormalEvidence = {
     mechanism: "flock",
     inheritedFd: 3,
     sessionScopeSha256: `sha256:${"b".repeat(64)}`,
+    fdinfoLockMatched: true,
+    independentContentionObserved: true,
   },
   provenance: provenanceEvidence,
   endingProvenance: provenanceEvidence,
