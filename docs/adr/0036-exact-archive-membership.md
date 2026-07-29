@@ -27,13 +27,33 @@ time at which that member passed below the realtime floor. Unique Workspace
 event-ID and Workspace cursor constraints fail closed if two objects claim the
 same event.
 
-A new segment starts as `pending_exact`. Upload, an `uploaded` or `failed`
-database row, and object existence do not establish coverage. The Worker reads
-the pinned `VersionId`, verifies Object Lock, size, MIME, metadata checksum,
-object SHA-256, NDJSON manifest, snapshot digest, record order, and per-record
-digest. Only then does one short fenced transaction insert every member and
-atomically flip the segment to `verified` plus `exact`. A rollback leaves no
-authoritative members.
+A new segment starts as a PostgreSQL-first durable `planned`/`pending_exact`
+intent. The fenced planning transaction freezes `fixed_cutoff_at`, the segment
+UUID and object key, canonical manifest, object and snapshot checksums, retain
+horizon, and one provisional member reservation per exact event. It commits
+before any object-store request. Provisional members are not coverage because
+their parent is not `exact` and `verified`/`pruned`.
+
+The Worker always recovers the oldest pending intent before planning another.
+It reconstructs the identical body from the reservations and writes the stable
+key with `If-None-Match: *`, SHA-256, segment/snapshot/cutoff metadata, and
+`COMPLIANCE` retention. A 200, 412, timeout, 5xx, or lost response reconciles
+the current HEAD of that same key. A 404 retries the same key; an identity,
+checksum, lock, size, MIME, cutoff, or retain-horizon mismatch becomes a fenced
+deterministic `failed` conflict. The Worker never compensates with DELETE and
+never creates a replacement key or version. A lease lost after PUT leaves the
+intent for its successor; only the successor can persist the reconciled
+`VersionId`.
+
+Upload, an `uploaded` or deterministic `failed` database row, provisional
+members, and object existence do not establish coverage. All readback is pinned
+to the persisted `VersionId`. The Worker verifies Object Lock, size, MIME,
+checksum headers and metadata, segment/snapshot/cutoff identity, object
+SHA-256, NDJSON manifest, snapshot digest, record order, and per-record digest.
+Only then does one short fenced transaction recheck the current claim, exact
+segment cutoff, pinned version, and every provisional reservation and atomically
+flip the segment to `verified` plus `exact` while advancing the monotonic
+watermark. A rollback leaves the intent and reservations non-authoritative.
 
 Archive selection uses the fixed cutoff, delivered outbox proof, and absence of
 trusted exact membership. It does not use the job watermark as an exclusion
@@ -103,7 +123,12 @@ Migration
 `0029_exact_archive_membership.sql` adds the membership state and table, marks
 existing segments `legacy_unindexed`, removes range uniqueness, documents
 cursor bounds as envelopes, and installs exact uniqueness and floor indexes.
-New objects include a generated segment UUID in the object key.
+`0030_durable_archive_upload_intents.sql` makes `object_version_id` nullable
+only for `planned`/deterministic `failed` intents, adds upload-attempt and fence
+evidence, enforces metadata/fixed-cutoff equality, preserves older rows on the
+`legacy_unindexed` compatibility path, and installs single-intent and pending
+recovery indexes. New objects include a generated segment UUID in the stable
+object key.
 
 Spec changes
 

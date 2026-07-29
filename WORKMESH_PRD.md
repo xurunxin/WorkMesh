@@ -2102,9 +2102,20 @@ Docker Compose 服务：
   canonical NDJSON gzip，并在 upload 后 readback 校验 object SHA-256 与 DB
   snapshot digest。归档 bucket 必须在创建时启用 Object Lock；每个归档对象
   使用 `COMPLIANCE` 模式和至少 365 天 retain-until，Worker 在计划归档前和
-  readback 时 fail closed 校验保护。segment 的 start/end cursor 仅是 envelope；
+  readback 时 fail closed 校验保护。Worker 必须先在有当前 claim/fence 的
+  PostgreSQL 事务中冻结 fixed cutoff、segment UUID/稳定 object key、manifest、
+  checksums、retain horizon，并写入 `planned/pending_exact` segment 与 provisional
+  exact-member reservations，提交后才调用对象存储。恢复总是先处理最旧 pending
+  intent，使用 `If-None-Match: *` 向同一 key 写入；200、412、timeout、5xx 或
+  response loss 都以 current HEAD 的 segment/snapshot/cutoff/checksum/size/MIME/
+  Object Lock identity 收敛，404 只重试同一 key，冲突 fenced failed，绝不补偿
+  DELETE 或创建第二 key/version。PUT 后失去 lease 时只允许 successor reconcile
+  并持久化 `VersionId`；后续 readback 全部 pin 该 version。
+  segment 的 start/end cursor 仅是 envelope；
   只有 pinned-object readback 后与 verified 状态原子写入的 per-event exact
-  membership 才表示归档覆盖，job watermark 只是最高已归档 cursor 的单调
+  membership 才表示归档覆盖；provisional reservations 不表示覆盖；final
+  transaction 必须再次绑定 claim、segment fixed cutoff 与全部 member，并与
+  job watermark 原子发布。job watermark 只是最高已归档 cursor 的单调
   telemetry。prune 按 Workspace 在线 cursor 前缀推进，遇到未归档或未到
   cutoff 的首个事件即停止；cleanup 同样只信已 floored 的 exact member。
   对历史错误遗留在当前 floor 以下、后来已建立 exact membership 但

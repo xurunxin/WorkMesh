@@ -28,12 +28,24 @@ webhook delivery references.
 for the highest exact archived event cursor. Neither value proves continuous
 coverage below it.
 
-The archive bucket must be created with Object Lock enabled. Retention writes
-use `COMPLIANCE` mode and a retain-until date at least 365 days in the future.
-Every segment persists the non-empty `VersionId` returned by its upload. HEAD,
-GET, checksum verification, prune preflight, restore, and early-delete probes
-must address that pinned version explicitly; resolving the latest object by key
-is never acceptable.
+The archive bucket must be created with Object Lock and versioning enabled.
+Retention first commits one PostgreSQL `planned` intent with a stable segment
+UUID/key, fixed cutoff, canonical checksums/manifest, retain horizon, and
+provisional exact-member reservations. It always recovers the oldest pending
+intent before planning another. Provisional reservations do not count as
+coverage.
+
+Retention writes use `If-None-Match: *`, `COMPLIANCE` mode, a retain-until date
+at least 365 days in the future, and checksum plus segment/snapshot/fixed-cutoff
+metadata. Success, precondition failure, timeout, 5xx, and response loss all
+reconcile current HEAD on the same key. HEAD 404 retries that same key; an
+identity or protection mismatch becomes a fenced deterministic conflict. Never
+delete an uncertain object, generate a replacement key, or accept a second
+version. A lease lost after PUT leaves the planned intent for its successor.
+Only a current fenced owner may persist the reconciled non-empty `VersionId`.
+HEAD, GET, checksum verification, prune preflight, restore, and early-delete
+probes after that point must address the pinned version explicitly; resolving
+latest by key is permitted only during pending-intent reconciliation.
 Segment `start_cursor` and `end_cursor` are only the minimum/maximum object
 envelope. Coverage exists only in `event_archive_segment_events` after pinned
 readback and atomic `uploaded` to `verified`/`exact` finalization. An
@@ -70,9 +82,15 @@ removing the checkpoint. Never reuse a Session concurrently: one dedicated
 Session has exactly one soak runner, and a runner restart creates a new report
 directory and baseline rather than appending old samples.
 The combined entrypoint guards that one-to-one Session/state path with
-nonblocking `flock` on inherited FD 3, while the runner independently re-locks
-that exact numeric FD/open-file-description before dry-run or live evidence.
-An unrelated FD opened on the same path cannot pass. The standalone
+nonblocking `flock` on inherited FD 3. The verifier never calls `flock` on that
+FD. It checks the expected path twice with `lstat` (regular, non-symlink,
+current UID, mode `0600`), matches inherited-FD `fstat` device/inode, requires
+that FD's `/proc/self/fdinfo` to report a whole-file advisory write `FLOCK`, and
+runs an independent non-inheriting path probe that must observe contention with
+exit code 73. Both `fdinfoLockMatched` and
+`independentContentionObserved` must be true for `formalLockVerified`.
+An unlocked expected FD, an unrelated FD on the same path, another holder,
+wrong inode/owner/mode, a symlink, or unavailable fdinfo fails closed. The standalone
 `pnpm provision:soak:retention` command exists only for checkpoint recovery and
 diagnosis; completing it is not a safe pause point. The contiguous runner
 rejects a schema-v2 Session that is stale, non-executing, non-healthy, or more
@@ -135,7 +153,12 @@ and proves restore still reads the originally pinned version. Its timestamped
 report contains no object key,
 Workspace ID, Session ID, or credentials.
 
-The restart/contention gate defaults to a non-mutating dry run:
+The restart/contention gate defaults to a non-mutating dry run. Its executable
+archive matrix must prove recovery after plan commit, successful PUT with lost
+response, before and after the fenced uploaded-state transaction, before and
+inside finalization, and after final commit. Every recovery keeps one segment,
+one stable key, one immutable version, non-authoritative provisional coverage,
+and atomic exact-membership/watermark publication:
 
 ```text
 RUN_INTEGRATION=1

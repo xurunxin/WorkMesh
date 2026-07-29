@@ -98,9 +98,14 @@ pnpm test:soak:retention:formal
 
 The combined entrypoint creates a mode-`0600` Session-specific lock file, passes
 it as inherited FD 3, acquires nonblocking `flock` on that FD, and preserves the
-same open-file-description across `exec`. The runner independently re-locks that
-specific inherited numeric FD. Merely finding the same path locked by another
-process cannot pass. Lock scope is recorded as a one-way Session fingerprint,
+same open-file-description across `exec`. The runner never locks the inherited
+FD itself. It proves the inherited FD already carries a whole-file advisory
+write `FLOCK` in `/proc/self/fdinfo`, matches its `fstat` device/inode to two
+owner/mode-`0600` non-symlink `lstat` checks of the expected path, and runs a
+separate non-inheriting `flock -n -x -E 73 <path> -c :` probe that must exit 73.
+Both `fdinfoLockMatched` and `independentContentionObserved` are recorded.
+An unlocked or unrelated FD cannot pass merely because another process holds
+the path lock. Lock scope is recorded as a one-way Session fingerprint,
 never a Session ID. If lock
 acquisition fails, do not start another process. A new formal run requires a new
 disposable Session/state path, timestamped report directory, and baseline. The
@@ -278,6 +283,12 @@ rejection, isolated restore, reconnect/`CURSOR_EXPIRED`, and restart recovery
 evidence. The restart gate proves recovery with the recovered event's exact
 Workspace, event ID, and cursor membership in a trusted exact segment; a sparse
 segment envelope such as cursors 10 and 30 never proves cursor 20.
+The archive crash matrix also injects failure after durable planning, successful
+PUT response loss, before/after uploaded-state commit, before/mid/after final
+commit, and post-PUT lease reclaim. It must show one segment/key/version, no
+untracked immutable object, no stale-fence publication, provisional members
+providing zero coverage, and exact membership plus watermark committing
+atomically.
 
 Before enabling destructive pruning, the Worker retention integration gate must
 also pass the historical below-floor repair matrix: no exact member means no
