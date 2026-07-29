@@ -1097,7 +1097,84 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can decide approval");
   const result = await agentMutate(db, meta, async tx => {
     assertSafeText(input.reason, "approval decision reason");
-    const approval = one((await tx.query<{ revision: number; session_id: string; status: string; team_id: string; agent_id:string; required_approvals:number; expires_at:Date }>("SELECT a.revision,a.session_id,a.status,a.required_approvals,a.expires_at,s.team_id,s.agent_id FROM approvals a JOIN agent_sessions s ON s.id=a.session_id WHERE a.id=$1 AND a.workspace_id=$2 FOR UPDATE", [approvalId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, approval.team_id); assertRevision(expectedRevision, approval.revision);
+    const locator=one((await tx.query<{
+      session_id:string;agent_id:string;delegation_id:string;team_id:string;
+      work_item_id:string|null;project_id:string|null;work_item_project_id:string|null;
+    }>(`SELECT approval.session_id,session.agent_id,session.delegation_id,session.team_id,
+               session.work_item_id,session.project_id,item.project_id AS work_item_project_id
+          FROM approvals approval
+          JOIN agent_sessions session ON session.id=approval.session_id
+          LEFT JOIN work_items item ON item.id=session.work_item_id
+         WHERE approval.id=$1 AND approval.workspace_id=$2`,
+    [approvalId,meta.actor.workspaceId])).rows);
+    const credentials=await tx.query<{session_token_id:string;installation_token_id:string}>(
+      `SELECT token.id AS session_token_id,token.installation_token_id
+         FROM agent_session_tokens token
+        WHERE token.session_id=$1
+        ORDER BY token.id`,
+      [locator.session_id],
+    );
+    await lockAgentAuthorityPlan(tx,{
+      definitionIds:[locator.agent_id],
+      teamGrants:[{workspaceId:meta.actor.workspaceId,agentId:locator.agent_id,teamId:locator.team_id}],
+      delegationIds:[locator.delegation_id],
+      sessionIds:[locator.session_id],
+      sessionTokenIds:credentials.rows.map(row=>row.session_token_id),
+      installationTokenIds:credentials.rows.map(row=>row.installation_token_id),
+      workItemIds:locator.work_item_id?[locator.work_item_id]:[],
+      projectIds:[
+        ...(locator.project_id?[locator.project_id]:[]),
+        ...(locator.work_item_project_id?[locator.work_item_project_id]:[]),
+      ],
+    });
+    const live=one((await tx.query<{
+      agent_id:string;delegation_id:string;team_id:string;work_item_id:string|null;
+      project_id:string|null;work_item_project_id:string|null;state:string;
+      definition_active:boolean;grant_revoked_at:Date|null;delegation_status:string;
+      work_item_exists:boolean;project_exists:boolean;
+    }>(`SELECT session.agent_id,session.delegation_id,session.team_id,
+               session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+               session.state,definition.is_active AS definition_active,
+               access.revoked_at AS grant_revoked_at,delegation.status AS delegation_status,
+               (session.work_item_id IS NULL OR item.id IS NOT NULL) AS work_item_exists,
+               (coalesce(item.project_id,session.project_id) IS NULL OR project.id IS NOT NULL)
+                 AS project_exists
+          FROM agent_sessions session
+          JOIN agent_definitions definition ON definition.id=session.agent_id
+          JOIN agent_team_access access
+            ON access.workspace_id=session.workspace_id
+           AND access.agent_id=session.agent_id AND access.team_id=session.team_id
+          JOIN delegations delegation ON delegation.id=session.delegation_id
+          LEFT JOIN work_items item
+            ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id
+           AND item.deleted_at IS NULL
+          LEFT JOIN projects project
+            ON project.id=coalesce(item.project_id,session.project_id)
+           AND project.workspace_id=session.workspace_id AND project.deleted_at IS NULL
+         WHERE session.id=$1 AND session.workspace_id=$2`,
+    [locator.session_id,meta.actor.workspaceId])).rows);
+    if(
+      live.agent_id!==locator.agent_id||live.delegation_id!==locator.delegation_id
+      ||live.team_id!==locator.team_id||live.work_item_id!==locator.work_item_id
+      ||live.project_id!==locator.project_id
+      ||live.work_item_project_id!==locator.work_item_project_id
+      ||!live.definition_active||live.grant_revoked_at!==null
+      ||live.delegation_status!=='active'
+      ||!live.work_item_exists||!live.project_exists
+      ||!['queued','acknowledged','executing','awaiting_input','awaiting_approval'].includes(live.state)
+    ) throw new DomainError('DELEGATION_NOT_ACTIVE','Approval Session authority is no longer active');
+    const approval=one((await tx.query<{
+      revision:number;session_id:string;status:string;required_approvals:number;expires_at:Date;
+      team_id:string;agent_id:string;
+    }>(`SELECT approval.revision,approval.session_id,approval.status,
+               approval.required_approvals,approval.expires_at,$3::uuid AS team_id,$4::uuid AS agent_id
+          FROM approvals approval
+         WHERE approval.id=$1 AND approval.workspace_id=$2
+         FOR UPDATE OF approval`,
+    [approvalId,meta.actor.workspaceId,live.team_id,live.agent_id])).rows);
+    if(approval.session_id!==locator.session_id)
+      throw new DomainError('CONFLICT','Approval Session binding changed');
+    await assertHumanTeam(tx, meta.actor, approval.team_id); assertRevision(expectedRevision, approval.revision);
     if (approval.status !== "pending") throw new DomainError("CONFLICT", "Approval is no longer pending");
     if (approval.expires_at.getTime() <= Date.now()) { const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[approvalId])).rows); const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,approval.session_id); await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",approval.session_id,{...payload,sessionId:approval.session_id}); return {expired:true}; }
     const inserted=await tx.query("INSERT INTO approval_decisions(approval_id,actor_id,decision,reason) VALUES($1,$2,$3,$4) ON CONFLICT(approval_id,actor_id) DO NOTHING RETURNING actor_id,decision,reason,decided_at", [approvalId, meta.actor.id, input.decision, input.reason]); if(!inserted.rowCount) throw new DomainError("CONFLICT","Actor already decided this approval");

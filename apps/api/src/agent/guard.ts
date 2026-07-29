@@ -10,7 +10,7 @@ type SessionFacts = {
   delegation_status: string; team_id: string; work_item_id: string | null; work_item_exists: boolean; work_item_project_id: string | null; project_id: string | null; project_exists: boolean; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
 };
 
-type SessionLocator = {
+export type AgentSessionAuthorityLocator = {
   agent_id: string
   delegation_id: string
   team_id: string
@@ -73,7 +73,11 @@ export async function assertCurrentAgentCredentialInTx(
   }
 }
 
-export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
+export async function locateAgentSessionAuthority(
+  tx: PoolClient,
+  actor: ApiActor,
+  sessionId: string,
+): Promise<AgentSessionAuthorityLocator> {
   if (
     actor.kind !== 'agent'
     || actor.agentSessionId !== sessionId
@@ -84,7 +88,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   // This locator may discover only identifiers and immutable routing keys.
   // No authority, capability, state, or protected resource payload is consumed
   // until the complete plan has been locked and every binding is re-read.
-  const locator = (await tx.query<SessionLocator>(
+  const locator = (await tx.query<AgentSessionAuthorityLocator>(
     `SELECT session.agent_id,session.delegation_id,session.team_id,
             session.work_item_id,session.project_id,
             item.project_id AS work_item_project_id,
@@ -103,7 +107,11 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   if (!locator) {
     throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
   }
+  return locator
+}
 
+export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
+  const locator=await locateAgentSessionAuthority(tx,actor,sessionId)
   await lockAgentAuthorityPlan(tx, {
     definitionIds: [locator.agent_id],
     teamGrants: [{
@@ -123,7 +131,28 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
       ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
     ],
   })
+  return revalidateLockedAgentSessionForMutation(tx, actor, sessionId, locator)
+}
 
+/**
+ * Re-read a Session authority graph after its complete D/G/L/S/ST/IT/W/P plan
+ * has already been locked by a wider transaction-level planner. This explicit
+ * post-lock API never acquires a ranked lock; ordinary callers must use
+ * loadAgentSessionForMutation instead.
+ */
+export async function revalidateLockedAgentSessionForMutation(
+  tx: PoolClient,
+  actor: ApiActor,
+  sessionId: string,
+  locator: AgentSessionAuthorityLocator,
+): Promise<SessionFacts> {
+  if (
+    actor.kind !== 'agent'
+    || actor.agentSessionId !== sessionId
+    || !actor.credentialHash
+  ) {
+    throw new DomainError('UNAUTHENTICATED', 'An active Agent Session credential is required')
+  }
   const definition = (await tx.query<{
     is_active: boolean
     approved_capabilities: Capability[]
@@ -255,6 +284,9 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
       [session.work_item_id, actor.workspaceId],
     )).rows[0]
     workItemExists = Boolean(workItem)
+    if ((workItem?.project_id ?? null) !== locator.work_item_project_id) {
+      return inactiveAuthority()
+    }
     if (workItem?.project_id) {
       const project = (await tx.query<{ id: string }>(
         `SELECT id
@@ -263,9 +295,6 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
         [workItem.project_id, actor.workspaceId],
       )).rows[0]
       workItemProjectId = project?.id ?? null
-      if (workItem.project_id !== locator.work_item_project_id) {
-        return inactiveAuthority()
-      }
     }
   } else if (session.project_id) {
     projectExists = Boolean((await tx.query(
@@ -316,4 +345,23 @@ export function assertAgentWrite(input: {
     capability: input.capability, grantedCapabilities: liveCapabilities, resourceInScope,
     expectedRevision: input.expectedRevision, idempotencyKey: input.idempotencyKey, operation: input.operation,
   });
+}
+
+export function assertExactAgentProjectBinding(
+  session: SessionFacts,
+  projectId: string,
+): void {
+  const scope = session.capability_scope ?? {}
+  const exactBinding = session.work_item_id
+    ? session.work_item_exists
+      && session.work_item_project_id === projectId
+      && Boolean(scope.workItemIds?.includes(session.work_item_id))
+    : session.project_id === projectId
+      && session.project_exists
+      && Boolean(scope.projectIds?.includes(projectId))
+  if (!exactBinding)
+    throw new DomainError(
+      'RESOURCE_SCOPE_DENIED',
+      'The Agent Session is no longer exactly bound to the target Project',
+    )
 }

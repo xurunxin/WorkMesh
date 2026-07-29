@@ -49,7 +49,13 @@ import {
 import { mutate, type CommandContext } from '../commands.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import { assertWebhookUrl } from '../agent/routes.js'
-import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js'
+import {
+  assertExactAgentProjectBinding,
+  assertAgentWrite,
+  loadAgentSessionForMutation,
+  locateAgentSessionAuthority,
+  revalidateLockedAgentSessionForMutation,
+} from '../agent/guard.js'
 import {
   A2AAdapter,
   A2A_TASK_ID_MAX_LENGTH,
@@ -878,11 +884,43 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     const expected = parseRevision(helpers.header(request, 'if-match'))
     return command(db, meta, async tx => {
       const current = actor(request)
-      let agentHealthSession: Awaited<ReturnType<typeof loadAgentSessionForMutation>> | undefined
+      let agentHealthSession: Awaited<
+        ReturnType<typeof revalidateLockedAgentSessionForMutation>
+      > | undefined
       if (body.source === 'agent') {
         if (current.kind !== 'agent' || !current.agentSessionId)
           throw new DomainError('AGENT_IDENTITY_REQUIRED', 'An agent Session token is required')
-        agentHealthSession = await loadAgentSessionForMutation(tx, current, current.agentSessionId)
+        const locator = await locateAgentSessionAuthority(
+          tx,
+          current,
+          current.agentSessionId,
+        )
+        await lockAgentAuthorityPlan(tx, {
+          definitionIds: [locator.agent_id],
+          teamGrants: [{
+            workspaceId: current.workspaceId,
+            agentId: locator.agent_id,
+            teamId: locator.team_id,
+          }],
+          delegationIds: [locator.delegation_id],
+          sessionIds: [current.agentSessionId],
+          sessionTokenIds: locator.session_token_id ? [locator.session_token_id] : [],
+          installationTokenIds: locator.installation_token_id
+            ? [locator.installation_token_id]
+            : [],
+          workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
+          projectIds: [
+            ...(locator.project_id ? [locator.project_id] : []),
+            ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
+            projectId,
+          ],
+        })
+        agentHealthSession = await revalidateLockedAgentSessionForMutation(
+          tx,
+          current,
+          current.agentSessionId,
+          locator,
+        )
         assertAgentWrite({
           actor: current,
           session: agentHealthSession,
@@ -892,11 +930,24 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
           idempotencyKey: meta.idempotencyKey,
           resourceId: projectId,
         })
+        assertExactAgentProjectBinding(agentHealthSession, projectId)
       }
       const project = one((await tx.query<{ revision: number; team_id: string }>(
-        'SELECT revision,team_id FROM projects WHERE id=$1 AND workspace_id=$2 FOR UPDATE',
+        body.source === 'agent'
+          ? `SELECT revision,team_id
+               FROM projects
+              WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`
+          : `SELECT revision,team_id
+               FROM projects
+              WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+              FOR UPDATE`,
         [projectId, meta.actor.workspaceId],
       )).rows)
+      if (agentHealthSession && project.team_id !== agentHealthSession.team_id)
+        throw new DomainError(
+          'RESOURCE_SCOPE_DENIED',
+          'The target Project is outside the Session Team',
+        )
       if (project.revision !== expected) throw new DomainError('REVISION_CONFLICT', 'Project revision is stale')
       if (current.kind === 'human') await requireTeamWrite(tx, current, project.team_id)
       if (body.source === 'human' && current.kind !== 'human')
@@ -980,7 +1031,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
            JOIN delegations delegation ON delegation.id=session.delegation_id AND delegation.status='active'
            WHERE approval.id=$1 AND approval.workspace_id=$2 AND approval.session_id=$3
              AND approval.action_name='project.health.publish'
-           FOR UPDATE`,
+           FOR UPDATE OF approval`,
           [body.approvalId, meta.actor.workspaceId, current.agentSessionId],
         )).rows) : null
         if (approval) {

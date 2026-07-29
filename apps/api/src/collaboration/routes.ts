@@ -7,7 +7,13 @@ import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
 import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
-import { assertAgentWrite, authorizeCommandInTx, loadAgentSessionForMutation } from '../agent/guard.js'
+import {
+  assertAgentWrite,
+  authorizeCommandInTx,
+  loadAgentSessionForMutation,
+  revalidateLockedAgentSessionForMutation,
+  type AgentSessionAuthorityLocator,
+} from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import type { Paginator } from '../pagination.js'
 import {
@@ -165,19 +171,42 @@ function assertDecisionSubjectInSessionScope(
         : currentSession.project_id === subjectId && currentSession.project_exists
   if (!inScope) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Decision subject is outside the current live Session scope')
 }
-async function assertSessionMessageWrite(tx: PoolClient, current: ApiActor, sessionId: string, intent: string, idempotencyKey: string) {
+async function assertSessionMessageWrite(
+  tx: PoolClient,
+  current: ApiActor,
+  sessionId: string,
+  intent: string,
+  idempotencyKey: string,
+  authorityLocator?: AgentSessionAuthorityLocator,
+) {
   const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind !== 'agent') return row
   const reviewResult = intent === 'review_result'
-  await authorizeCommandInTx(tx, {
+  if (!authorityLocator) {
+    throw new DomainError(
+      'AGENT_SESSION_NOT_FOUND',
+      'The merged Room authority plan did not include the source Session',
+    )
+  }
+  const authority = await revalidateLockedAgentSessionForMutation(
+    tx,
+    current,
+    sessionId,
+    authorityLocator,
+  )
+  assertAgentWrite({
     actor: current,
+    session: authority,
     sessionId,
     capability: reviewResult ? 'artifact:write' : 'work:write',
     operation: 'room_message',
     idempotencyKey,
   })
   if (reviewResult) {
-    const delegation = (await tx.query<{ role:string }>('SELECT role FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
+    const delegation = (await tx.query<{ role:string }>(
+      'SELECT role FROM delegations WHERE id=$1',
+      [row.delegation_id],
+    )).rows[0]
     if (delegation?.role !== 'reviewer') throw new DomainError('CAPABILITY_DENIED', 'Review results require a reviewer delegation with artifact:write')
   }
   return row
@@ -198,6 +227,172 @@ async function assertHumanTeam(tx: PoolClient, current: ApiActor, teamId: string
   const found = await tx.query('SELECT 1 FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3', [current.workspaceId, teamId, current.id])
   if (!found.rowCount) throw new DomainError('FORBIDDEN', 'Team membership is required')
 }
+
+type RoomMessageAuthorityLocator = {
+  channel: {
+    id: string
+    team_id: string
+    subject_kind: Subject
+    subject_id: string
+  }
+  actorDefinitionIds: Map<string,string>
+  sourceSession?: AgentSessionAuthorityLocator
+}
+
+async function lockRoomMessageAuthorityPlan(
+  tx: PoolClient,
+  current: ApiActor,
+  channelId: string,
+  sourceSessionId: string | undefined,
+  recipientActorIds: readonly string[],
+  recipientSessionIds: readonly string[],
+): Promise<RoomMessageAuthorityLocator> {
+  const channel = (await tx.query<RoomMessageAuthorityLocator['channel']>(
+    `SELECT id,team_id,subject_kind,subject_id
+       FROM work_room_channels
+      WHERE id=$1 AND workspace_id=$2`,
+    [channelId,current.workspaceId],
+  )).rows[0]
+  if (!channel) throw new DomainError('NOT_FOUND','Room not found')
+
+  const recipientActors = recipientActorIds.length
+    ? (await tx.query<{actor_id:string;kind:'human'|'agent';definition_id:string|null}>(
+        `SELECT recipient.id AS actor_id,recipient.kind,definition.id AS definition_id
+           FROM actors recipient
+           LEFT JOIN agent_definitions definition
+             ON definition.actor_id=recipient.id
+            AND definition.workspace_id=recipient.workspace_id
+          WHERE recipient.workspace_id=$1
+            AND recipient.id=ANY($2::uuid[])
+          ORDER BY recipient.id`,
+        [current.workspaceId,[...recipientActorIds]],
+      )).rows
+    : []
+  const actorDefinitionIds = new Map<string,string>()
+  for (const recipient of recipientActors) {
+    if (recipient.kind==='agent'&&recipient.definition_id)
+      actorDefinitionIds.set(recipient.actor_id,recipient.definition_id)
+  }
+
+  const sessionIds=new Set<string>(recipientSessionIds)
+  if(sourceSessionId) sessionIds.add(sourceSessionId)
+  if(channel.subject_kind==='session') sessionIds.add(channel.subject_id)
+  const recipientAgentIds=[...actorDefinitionIds.values()]
+  if(recipientAgentIds.length) {
+    const candidateSessions=(await tx.query<{id:string}>(
+      `SELECT id FROM agent_sessions
+        WHERE workspace_id=$1 AND agent_id=ANY($2::uuid[])
+        ORDER BY id`,
+      [current.workspaceId,recipientAgentIds],
+    )).rows
+    for(const candidate of candidateSessions) sessionIds.add(candidate.id)
+  }
+
+  const sessions=sessionIds.size
+    ? (await tx.query<{
+        id:string
+        agent_id:string
+        delegation_id:string
+        team_id:string
+        work_item_id:string|null
+        project_id:string|null
+        work_item_project_id:string|null
+        session_token_id:string|null
+        installation_token_id:string|null
+      }>(
+        `SELECT session.id,session.agent_id,session.delegation_id,session.team_id,
+                session.work_item_id,session.project_id,
+                item.project_id AS work_item_project_id,
+                credential.id AS session_token_id,
+                credential.installation_token_id
+           FROM agent_sessions session
+           LEFT JOIN work_items item
+             ON item.id=session.work_item_id
+            AND item.workspace_id=session.workspace_id
+           LEFT JOIN agent_session_tokens credential
+             ON credential.session_id=session.id
+            AND session.id=$3
+            AND credential.token_hash=$4
+          WHERE session.workspace_id=$1
+            AND session.id=ANY($2::uuid[])
+          ORDER BY session.id`,
+        [
+          current.workspaceId,
+          [...sessionIds],
+          sourceSessionId??null,
+          current.kind==='agent'?(current.credentialHash??null):null,
+        ],
+      )).rows
+    : []
+  const sessionById=new Map(sessions.map(row=>[row.id,row]))
+  if(sourceSessionId&&!sessionById.has(sourceSessionId))
+    throw new DomainError('NOT_FOUND','Source Agent Session not found')
+  for(const exactSessionId of recipientSessionIds) {
+    if(!sessionById.has(exactSessionId))
+      throw new DomainError(
+        'MESSAGE_RECIPIENT_OUT_OF_SCOPE',
+        'Exact Session recipient is unavailable or outside this Work Room',
+      )
+  }
+
+  let subjectWorkItemId:string|null=null
+  let subjectProjectId:string|null=null
+  if(channel.subject_kind==='work_item') {
+    const item=(await tx.query<{project_id:string|null}>(
+      'SELECT project_id FROM work_items WHERE id=$1 AND workspace_id=$2',
+      [channel.subject_id,current.workspaceId],
+    )).rows[0]
+    subjectWorkItemId=channel.subject_id
+    subjectProjectId=item?.project_id??null
+  } else if(channel.subject_kind==='project') {
+    subjectProjectId=channel.subject_id
+  }
+
+  const definitions=new Set(recipientAgentIds)
+  const delegations=new Set<string>()
+  const grants=new Map<string,{workspaceId:string;agentId:string;teamId:string}>()
+  const workItems=new Set<string>()
+  const projects=new Set<string>()
+  const sessionTokens=new Set<string>()
+  const installationTokens=new Set<string>()
+  for(const target of sessions) {
+    definitions.add(target.agent_id)
+    delegations.add(target.delegation_id)
+    grants.set(
+      `${current.workspaceId}:${target.agent_id}:${target.team_id}`,
+      {workspaceId:current.workspaceId,agentId:target.agent_id,teamId:target.team_id},
+    )
+    if(target.work_item_id) workItems.add(target.work_item_id)
+    if(target.project_id) projects.add(target.project_id)
+    if(target.work_item_project_id) projects.add(target.work_item_project_id)
+    if(target.session_token_id) sessionTokens.add(target.session_token_id)
+    if(target.installation_token_id) installationTokens.add(target.installation_token_id)
+  }
+  for(const agentId of recipientAgentIds) {
+    grants.set(
+      `${current.workspaceId}:${agentId}:${channel.team_id}`,
+      {workspaceId:current.workspaceId,agentId,teamId:channel.team_id},
+    )
+  }
+  if(subjectWorkItemId) workItems.add(subjectWorkItemId)
+  if(subjectProjectId) projects.add(subjectProjectId)
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[...definitions],
+    teamGrants:[...grants.values()],
+    delegationIds:[...delegations],
+    sessionIds:[...sessionIds],
+    sessionTokenIds:[...sessionTokens],
+    installationTokenIds:[...installationTokens],
+    workItemIds:[...workItems],
+    projectIds:[...projects],
+  })
+  return {
+    channel,
+    actorDefinitionIds,
+    sourceSession:sourceSessionId?sessionById.get(sourceSessionId):undefined,
+  }
+}
+
 async function authorizeActorRecipient(
   tx: PoolClient,
   current: ApiActor,
@@ -205,11 +400,11 @@ async function authorizeActorRecipient(
   subjectKind: Subject,
   subjectId: string,
   recipientId: string,
+  locatorDefinitionId?: string,
 ): Promise<string | undefined> {
   const recipient = (await tx.query<{ kind:'human'|'agent'; is_active:boolean }>(
     `SELECT kind,is_active FROM actors
-      WHERE id=$1 AND workspace_id=$2
-      FOR UPDATE`,
+      WHERE id=$1 AND workspace_id=$2`,
     [recipientId, current.workspaceId],
   )).rows[0]
   if (!recipient?.is_active) {
@@ -238,19 +433,17 @@ async function authorizeActorRecipient(
   const definition = (await tx.query<{ id:string }>(
     `SELECT id FROM agent_definitions
       WHERE actor_id=$1 AND workspace_id=$2 AND is_active
-        AND 'work:read'=ANY(approved_capabilities)
-      FOR UPDATE`,
+        AND 'work:read'=ANY(approved_capabilities)`,
     [recipientId, current.workspaceId],
   )).rows[0]
-  if (!definition) {
+  if (!definition || definition.id!==locatorDefinitionId) {
     throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Agent recipient is unavailable')
   }
   const teamAccess = await tx.query(
     `SELECT 1 FROM agent_team_access
       WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
         AND revoked_at IS NULL
-        AND 'work:read'=ANY(approved_capabilities)
-      FOR UPDATE`,
+        AND 'work:read'=ANY(approved_capabilities)`,
     [current.workspaceId, definition.id, teamId],
   )
   if (!teamAccess.rowCount) {
@@ -320,10 +513,9 @@ async function authorizeActorRecipient(
               )
             )
           )
-        )
+      )
       ORDER BY target_session.id
-      LIMIT 1
-      FOR UPDATE OF delegation,target_session`,
+      LIMIT 1`,
     [current.workspaceId, definition.id, recipientId, teamId, subjectKind, subjectId],
   )
   if (!eligible.rowCount) {
@@ -534,7 +726,17 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
   })
   app.post('/api/v1/rooms/:id/messages', async request => {
     const channelId = id(request); const body = roomMessageInputSchema.parse(request.body)
+    const actorRecipients = [...new Set(body.recipientActorIds ?? (body.recipientActorId ? [body.recipientActorId] : []))]
+    const recipientSessionIds = [...new Set(body.recipientSessionIds ?? (body.recipientSessionId ? [body.recipientSessionId] : []))]
     return command(h.db, h.meta(request, body, { id: channelId }), async tx => {
+      const authorityLocator=await lockRoomMessageAuthorityPlan(
+        tx,
+        actor(request),
+        channelId,
+        body.sessionId,
+        actorRecipients,
+        recipientSessionIds,
+      )
       const channel = (await tx.query<{ team_id:string;subject_kind:Subject;subject_id:string }>(
         `SELECT channel.team_id,channel.subject_kind,channel.subject_id
            FROM work_room_channels channel
@@ -552,7 +754,15 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
           FOR UPDATE OF channel`,
         [channelId, actor(request).workspaceId],
       )).rows[0]; if (!channel) throw new DomainError('NOT_FOUND','Room not found')
-      if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!)
+      if(
+        channel.team_id!==authorityLocator.channel.team_id
+        || channel.subject_kind!==authorityLocator.channel.subject_kind
+        || channel.subject_id!==authorityLocator.channel.subject_id
+      ) throw new DomainError(
+        'MESSAGE_RECIPIENT_OUT_OF_SCOPE',
+        'Room authority binding changed while the message was being authorized',
+      )
+      if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!, authorityLocator.sourceSession)
       if (actor(request).kind === 'agent' && !body.sessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent messages require their session id')
       if (body.sessionId) {
         const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null;project_exists:boolean}>(
@@ -607,8 +817,6 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         const related = await tx.query('SELECT 1 FROM room_messages WHERE id=$1 AND channel_id=$2', [relatedId, channelId])
         if (!related.rowCount) throw new DomainError('VALIDATION_ERROR', 'Reply and thread references must remain in the same Work Room')
       }
-      const actorRecipients = [...new Set(body.recipientActorIds ?? (body.recipientActorId ? [body.recipientActorId] : []))]
-      const recipientSessionIds = [...new Set(body.recipientSessionIds ?? (body.recipientSessionId ? [body.recipientSessionId] : []))]
       if (channel.subject_kind === 'session' && actorRecipients.length > 0) throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Session Work Rooms require exact Session recipients')
       const exactSessionRecipients: Array<{ id:string; actor_id:string; agent_id:string }> = []
       for (const recipientSessionId of recipientSessionIds) {
@@ -720,7 +928,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                    )
                  )
                )
-             FOR UPDATE OF target_actor,target_definition,target_team_access,target_delegation,target_session`,
+             `,
           [recipientSessionId, actor(request).workspaceId, channel.team_id, channel.subject_kind, channel.subject_id],
         )).rows[0]
         if (!exact) throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Exact Session recipient is unavailable or outside this Work Room')
@@ -736,6 +944,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
           channel.subject_kind,
           channel.subject_id,
           recipientId,
+          authorityLocator.actorDefinitionIds.get(recipientId),
         )
         if (agentId) actorWebhookAgentIds.set(recipientId, agentId)
       }
@@ -766,6 +975,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
             channel.subject_kind,
             channel.subject_id,
             responsibleHuman,
+            authorityLocator.actorDefinitionIds.get(responsibleHuman),
           )
           inboxActorRecipients=[...new Set([...inboxActorRecipients,responsibleHuman])]
         }
@@ -1069,7 +1279,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     const meta = h.meta(request,body,{id:leaseId})
     return withTx(h.db, async tx => {
       const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string;heartbeat_idempotency_key:string|null;heartbeat_request_hash:string|null}>(
-        'SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',
+        'SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE OF l',
         [leaseId,actor(request).workspaceId],
       )).rows[0]
       if(!row) throw new DomainError('NOT_FOUND','Lease not found')
@@ -1090,7 +1300,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     })
   }
   return command(h.db,h.meta(request,body,{id:leaseId}),async tx=>{
-    const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string}>('SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',[leaseId,actor(request).workspaceId])).rows[0]
+    const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string}>('SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE OF l',[leaseId,actor(request).workspaceId])).rows[0]
     if(!row) throw new DomainError('NOT_FOUND','Lease not found')
     if(action==='force-release') {
       if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Only humans can force release a lease')

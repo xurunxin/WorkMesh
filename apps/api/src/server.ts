@@ -270,7 +270,7 @@ export const buildApp = (options: {
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
   logger?: FastifyServerOptions["logger"];
   authRateLimitStore?: AuthRateLimitStore;
-  beforePagedQuery?: (route: string) => Promise<void> | void;
+  beforePagedQuery?: (route: string) => Promise<void> | void; afterAuthorizeRequest?: (request: FastifyRequest) => Promise<void> | void;
   realtimeWakeSource?: RealtimeWakeSource;
   realtimeDb?: Db;
   realtimeHealthyReconcileMs?: number;
@@ -430,7 +430,7 @@ export const buildApp = (options: {
     // Installation-token exchange/refresh authenticate their one-time token in
     // the handler. Other installation-target routes already resolved an actor.
     if (policy.authentication !== "installation_target" || request.actor)
-      await authorizeRequest(db, request, policy);
+      { await authorizeRequest(db, request, policy); await options.afterAuthorizeRequest?.(request); }
     if (policy.idempotency === "required" && !request.idempotencyKey)
       throw new DomainError(
         "IDEMPOTENCY_KEY_REQUIRED",
