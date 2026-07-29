@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
+import { performance } from "node:perf_hooks";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { applyMigrations, createDb, hashPassword, opaqueToken, tokenHash } from "@workmesh/db";
 import { buildApp } from "../src/server.js";
@@ -37,6 +40,31 @@ let appUrl = "";
 
 const humanCall = async (human: Human, method: "GET" | "POST" | "PUT" | "PATCH", url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> => await app.inject({ method, url, payload, headers: { cookie: human.cookie, "x-csrf-token": human.csrf, "idempotency-key": randomUUID(), ...extra } }) as unknown as Response;
 const agentCall = async (token: string, method: "GET" | "POST" | "PUT", url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> => await app.inject({ method, url, payload, headers: { authorization: `Bearer ${token}`, "idempotency-key": randomUUID(), ...extra } }) as unknown as Response;
+const percentile = (sorted: readonly number[], ratio: number): number =>
+  sorted[Math.max(0, Math.ceil(sorted.length * ratio) - 1)] ?? 0;
+const openHttpConnections = async (): Promise<number> =>
+  await new Promise((resolve, reject) =>
+    app.server.getConnections((error, count) =>
+      error ? reject(error) : resolve(count),
+    ),
+  );
+const heartbeatStorageMetrics = async (sessionId: string) => (
+  await db.query<{
+    dedupeRows: string;
+    databaseBytes: string;
+    heartbeatTableBytes: string;
+    databaseConnections: string;
+  }>(
+    `SELECT
+       (SELECT count(*) FROM heartbeat_idempotency_keys
+         WHERE resource_kind='session' AND resource_id=$1)::text AS "dedupeRows",
+       pg_database_size(current_database())::text AS "databaseBytes",
+       pg_total_relation_size('heartbeat_idempotency_keys')::text AS "heartbeatTableBytes",
+       (SELECT count(*) FROM pg_stat_activity
+         WHERE datname=current_database())::text AS "databaseConnections"`,
+    [sessionId],
+  )
+).rows[0]!;
 
 async function registerAgent(slug: string): Promise<Agent> {
   const response = await humanCall(admin, "POST", "/api/v1/agents/register", { name: slug, slug, provider: "fake", version: "1", supportedProtocols: ["native_http"], requestedCapabilities: ["work:read", "work:write", "plan:write", "artifact:write"], approvedCapabilities: ["work:read", "work:write", "plan:write", "artifact:write"] });
@@ -231,23 +259,57 @@ describe("Stage 1 agent API acceptance", () => {
           [session.id],
         )
       ).rows[0]!;
+      const loadEnabled = process.env.RUN_HEARTBEAT_LOAD === "1";
+      const storageBefore = loadEnabled
+        ? await heartbeatStorageMetrics(session.id)
+        : undefined;
+      const loadStartedAt = new Date();
+      const loadStarted = performance.now();
+      const cpuStarted = process.cpuUsage();
+      const rssStarted = process.memoryUsage().rss;
+      let peakRssBytes = rssStarted;
+      let peakHttpConnections = await openHttpConnections();
+      const heartbeatLatenciesMs: number[] = [];
       for (let offset = 0; offset < pulseCount; offset += 25) {
         const responses = await Promise.all(
-          Array.from({ length: 25 }, (_, index) =>
-            agentCall(
-              token,
-              "POST",
-              `/api/v1/agent-sessions/${session.id}/heartbeat`,
+          Array.from({ length: Math.min(25, pulseCount - offset) }, async (_, index) => {
+            if (!loadEnabled)
+              return await agentCall(
+                token,
+                "POST",
+                `/api/v1/agent-sessions/${session.id}/heartbeat`,
+                { usage: { runtimeSeconds: offset + index } },
+              );
+            const requestStarted = performance.now();
+            const response = await fetch(
+              `${appUrl}/api/v1/agent-sessions/${session.id}/heartbeat`,
               {
-                currentStepId: undefined,
-                usage: { runtimeSeconds: offset + index },
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                  "idempotency-key": randomUUID(),
+                },
+                body: JSON.stringify({
+                  usage: { runtimeSeconds: offset + index },
+                }),
               },
-            ),
-          ),
+            );
+            await response.arrayBuffer();
+            heartbeatLatenciesMs.push(performance.now() - requestStarted);
+            return { statusCode: response.status } as Response;
+          }),
         );
         expect(responses.every((response) => response.statusCode === 200)).toBe(
           true,
         );
+        if (loadEnabled) {
+          peakRssBytes = Math.max(peakRssBytes, process.memoryUsage().rss);
+          peakHttpConnections = Math.max(
+            peakHttpConnections,
+            await openHttpConnections(),
+          );
+        }
       }
       const steady = (
         await db.query<{
@@ -283,6 +345,80 @@ describe("Stage 1 agent API acceptance", () => {
         idempotency: before.idempotency,
       });
       expect(Number(steady.heartbeat_dedupe)).toBeLessThanOrEqual(128);
+      if (loadEnabled) {
+        const reportPath = process.env.HEARTBEAT_LOAD_REPORT_PATH;
+        if (!reportPath)
+          throw new Error("HEARTBEAT_LOAD_REPORT_PATH is required in load mode");
+        const durationMs = performance.now() - loadStarted;
+        const cpu = process.cpuUsage(cpuStarted);
+        const rssEnded = process.memoryUsage().rss;
+        const storageAfter = await heartbeatStorageMetrics(session.id);
+        const sortedLatencies = heartbeatLatenciesMs.slice().sort((a, b) => a - b);
+        const p99LimitMs = Number(
+          process.env.HEARTBEAT_LOAD_P99_MAX_MS ?? "2000",
+        );
+        const rssGrowthLimitBytes =
+          Number(process.env.HEARTBEAT_LOAD_RSS_GROWTH_MAX_MB ?? "256")
+          * 1024 * 1024;
+        const checks = {
+          allRequestsSucceeded: heartbeatLatenciesMs.length === pulseCount,
+          boundedDedupe: Number(storageAfter.dedupeRows) <= 128,
+          p99WithinLimit:
+            percentile(sortedLatencies, 0.99) <= p99LimitMs,
+          rssGrowthWithinLimit:
+            Math.max(0, peakRssBytes - rssStarted) <= rssGrowthLimitBytes,
+        };
+        const report = {
+          schemaVersion: 1,
+          status: Object.values(checks).every(Boolean) ? "passed" : "failed",
+          transport: "http",
+          startedAt: loadStartedAt.toISOString(),
+          endedAt: new Date().toISOString(),
+          requestCount: pulseCount,
+          concurrency: 25,
+          durationMs,
+          throughputPerSecond: pulseCount / (durationMs / 1_000),
+          latencyMs: {
+            p50: percentile(sortedLatencies, 0.5),
+            p95: percentile(sortedLatencies, 0.95),
+            p99: percentile(sortedLatencies, 0.99),
+            max: sortedLatencies.at(-1) ?? 0,
+            p99Limit: p99LimitMs,
+          },
+          process: {
+            cpuUserMicros: cpu.user,
+            cpuSystemMicros: cpu.system,
+            rssStartedBytes: rssStarted,
+            peakRssBytes,
+            rssEndedBytes: rssEnded,
+            rssGrowthLimitBytes,
+          },
+          http: {
+            peakOpenConnections: peakHttpConnections,
+            finalOpenConnections: await openHttpConnections(),
+          },
+          database: {
+            bytesBefore: Number(storageBefore!.databaseBytes),
+            bytesAfter: Number(storageAfter.databaseBytes),
+            heartbeatTableBytesBefore: Number(
+              storageBefore!.heartbeatTableBytes,
+            ),
+            heartbeatTableBytesAfter: Number(
+              storageAfter.heartbeatTableBytes,
+            ),
+            connectionsBefore: Number(storageBefore!.databaseConnections),
+            connectionsAfter: Number(storageAfter.databaseConnections),
+            dedupeRows: Number(storageAfter.dedupeRows),
+          },
+          checks,
+        };
+        await mkdir(dirname(reportPath), { recursive: true });
+        await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {
+          encoding: "utf8",
+          flag: "wx",
+        });
+        expect(report.status).toBe("passed");
+      }
 
       await db.query(
         "UPDATE agent_sessions SET heartbeat_health='degraded',heartbeat_health_changed_at=now() WHERE id=$1",
