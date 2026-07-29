@@ -117,8 +117,13 @@ ledger, and freshness commands. The source YAML and environment file are never
 reread. The executor stores the snapshot in an owner-only POSIX directory
 (`0700`) and file (`0600`), removes it in a `finally` path, and on the next run
 removes only dead-PID residual directories owned by the current user with the
-expected private mode. Native Windows fails closed because that owner check is
-not available.
+expected private mode. Every dollar sign in every rendered JSON string is
+encoded as a Compose literal before persistence. An immediate second Compose
+render must be deeply equal to the first render after, at most, the proven
+reversible `$$` to `$` normalization used for Compose v5.3.1 `config` output.
+This covers secrets, URLs, commands, labels, paths, and healthchecks, including
+existing `$$` and consecutive dollar signs. Native Windows fails closed because
+that owner check is not available.
 
 The formal soak must use the tracked contiguous
 `pnpm test:soak:retention:formal` entrypoint, not an untracked operator script

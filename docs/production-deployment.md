@@ -114,7 +114,14 @@ and binds each included service to its verified target digest before the
 maintenance stop. It writes that complete render into a private POSIX temporary
 directory (`0700`) and file (`0600`). Every later Compose operation uses only
 the frozen project name and snapshot file; it never rereads the source YAML or
-environment file. The snapshot is removed in a `finally` path, and a later
+environment file. Before writing, every dollar sign in every rendered JSON
+string is encoded as a Compose literal (`$$`), including commands, labels,
+paths, healthchecks, URLs, and secrets. The executor immediately renders the
+snapshot again. Compose v5.3.1 preserves those protective pairs in `config`
+output, so the executor accepts only exact equality or the single reversible
+normalization `$$` to `$`, then requires deep equality with the first render
+before any update, stop, or migration. The snapshot is removed in a `finally`
+path, and a later
 invocation removes only dead-PID residual directories that have the current
 owner and the expected private mode. Native Windows execution fails closed
 because it cannot verify the required POSIX owner.

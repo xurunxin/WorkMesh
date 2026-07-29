@@ -69,6 +69,18 @@ const renderedCompose = ({
     },
     api: {
       image: image("api"),
+      command: [
+        "node",
+        "dist/server.js",
+        "$WM_COMMAND",
+        "${WM_COMMAND}",
+        "$$",
+        "$$$",
+      ],
+      labels: {
+        "io.workmesh.literal-dollar":
+          "$WM_LABEL:${WM_LABEL}:$$:$$$",
+      },
       environment: {
         NODE_ENV: "production",
         WORKMESH_SERVICE: "api",
@@ -144,6 +156,8 @@ const successfulRunner = ({
   postgresEnvironmentOverride,
   failRuntimePreflightService,
   failSnapshotConfig = false,
+  mismatchSnapshotConfig = false,
+  preserveSnapshotDollarEscapes = false,
 }: {
   stoppedExitCode?: number;
   failStop?: boolean;
@@ -156,6 +170,8 @@ const successfulRunner = ({
   postgresEnvironmentOverride?: Record<string, string>;
   failRuntimePreflightService?: string;
   failSnapshotConfig?: boolean;
+  mismatchSnapshotConfig?: boolean;
+  preserveSnapshotDollarEscapes?: boolean;
 } = {}): {
   runner: RetentionUpgradeCommandRunner;
   commands: Command[];
@@ -173,23 +189,47 @@ const successfulRunner = ({
   const runner: RetentionUpgradeCommandRunner = (command, arguments_) => {
     commands.push({ command, arguments_: [...arguments_] });
     const joined = arguments_.join(" ");
-    if (joined.includes("config --format json"))
-      return result(
-        JSON.stringify(
-          renderedCompose({
-            includeMcp: joined.includes("--profile agent"),
-            mcpEnvironmentOverride,
-            apiEnvironmentOverride,
-            postgresEnvironmentOverride,
-          }),
-        ),
-      );
     if (
       failSnapshotConfig &&
       joined.includes("compose.snapshot.json") &&
-      joined.includes("config --quiet")
+      joined.includes("config --format json")
     )
       return result("", 1);
+    if (joined.includes("config --format json")) {
+      const rendered = renderedCompose({
+        includeMcp: joined.includes("--profile agent"),
+        mcpEnvironmentOverride,
+        apiEnvironmentOverride,
+        postgresEnvironmentOverride,
+      });
+      if (
+        mismatchSnapshotConfig &&
+        joined.includes("compose.snapshot.json")
+      )
+        rendered.services.api.environment.SESSION_SECRET =
+          "round-trip-mismatch";
+      const encodeDollars = (value: unknown): unknown => {
+        if (typeof value === "string")
+          return value.split("$").join("$$");
+        if (Array.isArray(value)) return value.map(encodeDollars);
+        if (value && typeof value === "object")
+          return Object.fromEntries(
+            Object.entries(value).map(([name, nested]) => [
+              name,
+              encodeDollars(nested),
+            ]),
+          );
+        return value;
+      };
+      return result(
+        JSON.stringify(
+          preserveSnapshotDollarEscapes &&
+            joined.includes("compose.snapshot.json")
+            ? encodeDollars(rendered)
+            : rendered,
+        ),
+      );
+    }
     if (joined.includes("/app/runtime-guard.mjs")) {
       const service = arguments_[arguments_.length - 2];
       return result("", service === failRuntimePreflightService ? 1 : 0);
@@ -466,8 +506,26 @@ describe("production retention upgrade executor", () => {
   });
 
   it("binds every post-freeze Compose command to an owner-only digest snapshot", async () => {
-    const { runner, commands } = successfulRunner();
-    const mutableEnvironment: NodeJS.ProcessEnv = { ...environment };
+    const dollarSessionSecret = `session-$WM_SESSION-\${WM_SESSION}-$$-$$$-${"s".repeat(32)}`;
+    const dollarS3Secret = `s3-$WM_S3-\${WM_S3}-$$-$$$-${"t".repeat(32)}`;
+    const dollarDatabasePassword = `db-$WM_DB-\${WM_DB}-$$-$$$-${"p".repeat(32)}`;
+    const apiEnvironmentOverride = {
+      SESSION_SECRET: dollarSessionSecret,
+      S3_SECRET_ACCESS_KEY: dollarS3Secret,
+      DATABASE_URL: `postgres://workmesh:${dollarDatabasePassword}@postgres:5432/workmesh`,
+    };
+    const { runner, commands } = successfulRunner({
+      apiEnvironmentOverride,
+      preserveSnapshotDollarEscapes: true,
+    });
+    const mutableEnvironment: NodeJS.ProcessEnv = {
+      ...environment,
+      WM_SESSION: "host-session",
+      WM_S3: "host-s3",
+      WM_DB: "host-db",
+      WM_COMMAND: "host-command",
+      WM_LABEL: "host-label",
+    };
     let snapshotContent = "";
     let cleanupCalls = 0;
     const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
@@ -479,6 +537,11 @@ describe("production retention upgrade executor", () => {
         });
         mutableEnvironment.WORKMESH_API_IMAGE = "ghcr.io/workmesh/workmesh-api:latest";
         mutableEnvironment.WORKMESH_SESSION_TOKEN = "tampered-after-freeze";
+        delete mutableEnvironment.WM_SESSION;
+        delete mutableEnvironment.WM_S3;
+        delete mutableEnvironment.WM_DB;
+        delete mutableEnvironment.WM_COMMAND;
+        delete mutableEnvironment.WM_LABEL;
         return {
           path: "G:\\secure\\compose.snapshot.json",
           cleanup: async () => {
@@ -489,13 +552,51 @@ describe("production retention upgrade executor", () => {
     };
     const result = await run(runner, true, mutableEnvironment, snapshotStore);
     const frozen = JSON.parse(snapshotContent) as {
-      services: Record<string, { image?: string }>;
+      services: Record<
+        string,
+        {
+          image?: string;
+          command?: string[];
+          environment?: Record<string, string>;
+          labels?: Record<string, string>;
+        }
+      >;
+    };
+    const firstRender = renderedCompose({
+      includeMcp: true,
+      apiEnvironmentOverride,
+    });
+    const decodeDollars = (value: unknown): unknown => {
+      if (typeof value === "string") return value.replaceAll("$$", "$");
+      if (Array.isArray(value)) return value.map(decodeDollars);
+      if (value && typeof value === "object")
+        return Object.fromEntries(
+          Object.entries(value).map(([name, nested]) => [
+            name,
+            decodeDollars(nested),
+          ]),
+        );
+      return value;
     };
     expect(frozen.services.api?.image).toBe(image("api"));
     expect(frozen.services.worker?.image).toBe(image("worker"));
     expect(frozen.services.web?.image).toBe(image("web"));
     expect(frozen.services.mcp?.image).toBe(image("mcp"));
-    expect(snapshotContent).not.toContain("${");
+    expect(frozen.services.api?.environment?.SESSION_SECRET).toBe(
+      dollarSessionSecret.split("$").join("$$"),
+    );
+    expect(frozen.services.api?.environment?.S3_SECRET_ACCESS_KEY).toBe(
+      dollarS3Secret.split("$").join("$$"),
+    );
+    expect(frozen.services.api?.environment?.DATABASE_URL).toBe(
+      apiEnvironmentOverride.DATABASE_URL.split("$").join("$$"),
+    );
+    expect(frozen.services.api?.command).toContain("$${WM_COMMAND}");
+    expect(frozen.services.api?.command).toContain("$$$$$$");
+    expect(frozen.services.api?.labels?.["io.workmesh.literal-dollar"]).toBe(
+      "$$WM_LABEL:$${WM_LABEL}:$$$$:$$$$$$",
+    );
+    expect(decodeDollars(frozen)).toEqual(firstRender);
     const text = commandText(commands);
     const finalRender = text.findIndex((command) =>
       command.includes("--profile agent config --format json"),
@@ -553,6 +654,36 @@ describe("production retention upgrade executor", () => {
     };
     await expect(run(runner, true, environment, snapshotStore)).rejects.toMatchObject({
       code: "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_INVALID",
+    });
+    const text = commandText(commands);
+    expect(
+      text.some(
+        (command) =>
+          command.includes("update --restart=no") ||
+          command.includes("stop -t 35 worker") ||
+          command.includes("run --rm --no-deps migrate"),
+      ),
+    ).toBe(false);
+    expect(cleanupCalls).toBe(1);
+  });
+
+  it("fails before mutation and cleans up when snapshot Compose round-trip drifts", async () => {
+    const { runner, commands } = successfulRunner({
+      mismatchSnapshotConfig: true,
+    });
+    let cleanupCalls = 0;
+    const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+      create: async () => ({
+        path: "G:\\secure\\compose.snapshot.json",
+        cleanup: async () => {
+          cleanupCalls += 1;
+        },
+      }),
+    };
+    await expect(
+      run(runner, true, environment, snapshotStore),
+    ).rejects.toMatchObject({
+      code: "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_MISMATCH",
     });
     const text = commandText(commands);
     expect(

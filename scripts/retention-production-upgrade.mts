@@ -4,6 +4,7 @@ import { chmod, lstat, mkdtemp, readdir, rm, writeFile } from "node:fs/promises"
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { pathToFileURL } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import {
   loadConfig,
   loadFeatureConfig,
@@ -354,6 +355,48 @@ const freezeRenderedDeploymentEnvironment = (
   return Object.freeze(environment);
 };
 
+const encodeComposeDollarLiterals = (value: unknown): unknown => {
+  if (typeof value === "string") return value.split("$").join("$$");
+  if (Array.isArray(value)) return value.map(encodeComposeDollarLiterals);
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value).map(([name, nested]) => [
+        name,
+        encodeComposeDollarLiterals(nested),
+      ]),
+    );
+  return value;
+};
+
+const decodeComposeDollarLiterals = (value: unknown): unknown => {
+  if (typeof value === "string") {
+    let decoded = "";
+    for (let index = 0; index < value.length; index += 1) {
+      const character = value[index]!;
+      if (character !== "$") {
+        decoded += character;
+        continue;
+      }
+      if (value[index + 1] !== "$")
+        throw new RetentionProductionUpgradeError(
+          "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_MISMATCH",
+        );
+      decoded += "$";
+      index += 1;
+    }
+    return decoded;
+  }
+  if (Array.isArray(value)) return value.map(decodeComposeDollarLiterals);
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value).map(([name, nested]) => [
+        name,
+        decodeComposeDollarLiterals(nested),
+      ]),
+    );
+  return value;
+};
+
 const safeSqlValue = (value: string, code: string): string => {
   if (!/^[A-Za-z0-9_.-]{1,128}$/.test(value)) throw new RetentionProductionUpgradeError(code);
   return value;
@@ -563,10 +606,13 @@ export async function runProductionRetentionUpgrade({
 
   let snapshot: RetentionUpgradeComposeSnapshot;
   try {
-    snapshot = await snapshotStore.create(JSON.stringify(renderedCompose), {
-      directoryMode: 0o700,
-      fileMode: 0o600,
-    });
+    snapshot = await snapshotStore.create(
+      JSON.stringify(encodeComposeDollarLiterals(renderedCompose)),
+      {
+        directoryMode: 0o700,
+        fileMode: 0o600,
+      },
+    );
   } catch {
     throw new RetentionProductionUpgradeError("RETENTION_UPGRADE_SNAPSHOT_CREATE_FAILED");
   }
@@ -576,11 +622,22 @@ export async function runProductionRetentionUpgrade({
   );
 
   try {
-    checked(
-      runner,
-      [...composeBase, "config", "--quiet"],
+    const roundTripCompose = parseJson<unknown>(
+      checked(
+        runner,
+        [...composeBase, "config", "--format", "json"],
+        "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_INVALID",
+      ),
       "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_INVALID",
     );
+    let normalizedRoundTripCompose = roundTripCompose;
+    if (!isDeepStrictEqual(roundTripCompose, renderedCompose))
+      normalizedRoundTripCompose =
+        decodeComposeDollarLiterals(roundTripCompose);
+    if (!isDeepStrictEqual(normalizedRoundTripCompose, renderedCompose))
+      throw new RetentionProductionUpgradeError(
+        "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_MISMATCH",
+      );
     if (!execute)
       return {
         execute: false,

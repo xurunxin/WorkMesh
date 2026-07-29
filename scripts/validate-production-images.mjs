@@ -1,7 +1,9 @@
-import { readFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import { spawnSync } from 'node:child_process'
+import { isDeepStrictEqual } from 'node:util'
 import { parse } from 'yaml'
 
 const root = path.resolve(import.meta.dirname, '..')
@@ -369,5 +371,236 @@ assert(
   }).status !== 0,
   'MCP runtime preflight must reject rendered empty profile credentials',
 )
+
+const dollarRoundTripDirectory = await mkdtemp(
+  path.join(tmpdir(), 'workmesh-compose-dollar-roundtrip-'),
+)
+try {
+  const dollarRoundTripPath = path.join(
+    dollarRoundTripDirectory,
+    'compose.snapshot.json',
+  )
+  const encodedDollarService = {
+    image: 'busybox:1.36.1',
+    command: [
+      'sh',
+      '-c',
+      'printf "$$WM_COMMAND $${WM_COMMAND} $$$$ $$$$$$"',
+    ],
+    environment: {
+      SESSION_SECRET: 'session-$$WM_SESSION-$${WM_SESSION}-$$$$-$$$$$$',
+      S3_SECRET_ACCESS_KEY: 's3-$$WM_S3-$${WM_S3}-$$$$-$$$$$$',
+      DATABASE_URL:
+        'postgres://workmesh:db-$$WM_DB-$${WM_DB}-$$$$-$$$$$$@postgres/workmesh',
+    },
+    labels: {
+      'io.workmesh.literal-dollar':
+        '$$WM_LABEL:$${WM_LABEL}:$$$$:$$$$$$',
+    },
+    working_dir: '/tmp/$$WM_PATH/$${WM_PATH}/$$$$/$$$$$$',
+    healthcheck: {
+      test: [
+        'CMD-SHELL',
+        'printf "$$WM_HEALTH $${WM_HEALTH} $$$$ $$$$$$"',
+      ],
+    },
+  }
+  const expectedDollarStrings = {
+    command: ['sh', '-c', 'printf "$WM_COMMAND ${WM_COMMAND} $$ $$$"'],
+    environment: {
+      SESSION_SECRET: 'session-$WM_SESSION-${WM_SESSION}-$$-$$$',
+      S3_SECRET_ACCESS_KEY: 's3-$WM_S3-${WM_S3}-$$-$$$',
+      DATABASE_URL:
+        'postgres://workmesh:db-$WM_DB-${WM_DB}-$$-$$$@postgres/workmesh',
+    },
+    labels: {
+      'io.workmesh.literal-dollar': '$WM_LABEL:${WM_LABEL}:$$:$$$',
+    },
+    working_dir: '/tmp/$WM_PATH/${WM_PATH}/$$/$$$',
+    healthcheck: {
+      test: ['CMD-SHELL', 'printf "$WM_HEALTH ${WM_HEALTH} $$ $$$"'],
+    },
+  }
+  const expectedEncodedDollarStrings = {
+    command: encodedDollarService.command,
+    environment: encodedDollarService.environment,
+    labels: encodedDollarService.labels,
+    working_dir: encodedDollarService.working_dir,
+    healthcheck: encodedDollarService.healthcheck,
+  }
+  const decodeDollarPairs = (value) => {
+    if (typeof value === 'string') {
+      let decoded = ''
+      for (let index = 0; index < value.length; index += 1) {
+        if (value[index] !== '$') {
+          decoded += value[index]
+          continue
+        }
+        assert(
+          value[index + 1] === '$',
+          'Docker Compose must preserve encoded dollars as complete pairs',
+        )
+        decoded += '$'
+        index += 1
+      }
+      return decoded
+    }
+    if (Array.isArray(value)) return value.map(decodeDollarPairs)
+    if (value && typeof value === 'object')
+      return Object.fromEntries(
+        Object.entries(value).map(([name, nested]) => [
+          name,
+          decodeDollarPairs(nested),
+        ]),
+      )
+    return value
+  }
+  await writeFile(
+    dollarRoundTripPath,
+    JSON.stringify({
+      name: 'workmesh-dollar-roundtrip',
+      services: { probe: encodedDollarService },
+    }),
+    'utf8',
+  )
+  for (const hostValue of [undefined, 'host-must-not-expand']) {
+    const roundTripEnvironment = { ...process.env }
+    for (const name of [
+      'WM_COMMAND',
+      'WM_SESSION',
+      'WM_S3',
+      'WM_DB',
+      'WM_LABEL',
+      'WM_PATH',
+      'WM_HEALTH',
+    ]) {
+      if (hostValue === undefined) delete roundTripEnvironment[name]
+      else roundTripEnvironment[name] = hostValue
+    }
+    const roundTrip = spawnSync(
+      'docker',
+      [
+        'compose',
+        '--project-name',
+        'workmesh-dollar-roundtrip',
+        '-f',
+        dollarRoundTripPath,
+        'config',
+        '--format',
+        'json',
+      ],
+      {
+        cwd: root,
+        env: roundTripEnvironment,
+        encoding: 'utf8',
+      },
+    )
+    assert(
+      roundTrip.status === 0,
+      'Docker Compose must render the encoded dollar-literal fixture',
+    )
+    const renderedProbe = JSON.parse(roundTrip.stdout).services.probe
+    const actualDollarStrings = {
+      command: renderedProbe.command,
+      environment: renderedProbe.environment,
+      labels: renderedProbe.labels,
+      working_dir: renderedProbe.working_dir,
+      healthcheck: renderedProbe.healthcheck,
+    }
+    assert(
+      isDeepStrictEqual(actualDollarStrings, expectedEncodedDollarStrings),
+      'Docker Compose config must preserve the encoded dollar pairs deterministically',
+    )
+    assert(
+      isDeepStrictEqual(
+        decodeDollarPairs(actualDollarStrings),
+        expectedDollarStrings,
+      ),
+      'Docker Compose must restore every encoded dollar literal exactly',
+    )
+  }
+  const disposableContainer = `workmesh-dollar-roundtrip-${process.pid}`
+  const runtimeEnvironment = { ...process.env }
+  for (const name of [
+    'WM_COMMAND',
+    'WM_SESSION',
+    'WM_S3',
+    'WM_DB',
+    'WM_LABEL',
+    'WM_PATH',
+    'WM_HEALTH',
+  ])
+    runtimeEnvironment[name] = 'host-must-not-expand'
+  try {
+    const runResult = spawnSync(
+      'docker',
+      [
+        'compose',
+        '--project-name',
+        'workmesh-dollar-roundtrip',
+        '-f',
+        dollarRoundTripPath,
+        'run',
+        '-d',
+        '--no-deps',
+        '--name',
+        disposableContainer,
+        '--workdir',
+        '/',
+        'probe',
+      ],
+      {
+        cwd: root,
+        env: runtimeEnvironment,
+        encoding: 'utf8',
+      },
+    )
+    assert(
+      runResult.status === 0,
+      'Docker Compose must create the disposable dollar-literal container',
+    )
+    const inspection = spawnSync(
+      'docker',
+      ['inspect', disposableContainer],
+      { cwd: root, encoding: 'utf8' },
+    )
+    assert(
+      inspection.status === 0,
+      'Docker must inspect the disposable dollar-literal container',
+    )
+    const container = JSON.parse(inspection.stdout)[0]
+    const containerEnvironment = new Set(container.Config.Env)
+    for (const [name, value] of Object.entries(
+      expectedDollarStrings.environment,
+    ))
+      assert(
+        containerEnvironment.has(`${name}=${value}`),
+        `disposable container must preserve ${name} dollar literals`,
+      )
+    assert(
+      isDeepStrictEqual(container.Config.Cmd, expectedDollarStrings.command),
+      'disposable container must preserve command dollar literals',
+    )
+    assert(
+      container.Config.Labels['io.workmesh.literal-dollar'] ===
+        expectedDollarStrings.labels['io.workmesh.literal-dollar'],
+      'disposable container must preserve label dollar literals',
+    )
+    assert(
+      isDeepStrictEqual(
+        container.Config.Healthcheck.Test,
+        expectedDollarStrings.healthcheck.test,
+      ),
+      'disposable container must preserve healthcheck dollar literals',
+    )
+  } finally {
+    spawnSync('docker', ['rm', '-f', disposableContainer], {
+      cwd: root,
+      encoding: 'utf8',
+    })
+  }
+} finally {
+  await rm(dollarRoundTripDirectory, { recursive: true, force: true })
+}
 
 console.log('Production image and Compose contract validation passed')
