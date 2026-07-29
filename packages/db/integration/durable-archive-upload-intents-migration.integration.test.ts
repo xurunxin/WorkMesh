@@ -19,6 +19,7 @@ const admin = createDb(databaseUrl);
 let upgrade: Db;
 let clean: Db;
 let legacySegmentId = "";
+let failedLegacySegmentId = "";
 
 const databaseUrlFor = (database: string): string => {
   const url = new URL(databaseUrl);
@@ -57,6 +58,22 @@ describe("0030 durable archive upload intents migration", () => {
            now()+interval '366 days','uploaded',now(),'pending_exact'
          ) RETURNING id`,
         [workspaceId, digest("b"), digest("a")],
+      )
+    ).rows[0]!.id;
+    failedLegacySegmentId = (
+      await upgrade.query<{ id: string }>(
+        `INSERT INTO event_archive_segments(
+           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+           object_key,object_version_id,object_size_bytes,object_sha256,
+           snapshot_digest,metadata,retain_until,state,last_error_code,
+           membership_state
+         ) VALUES(
+           $1,2,2,now()-interval '91 days',1,
+           'pre-intent-failed','pre-intent-failed-version',1,$2,$3,'{}',
+           now()+interval '366 days','failed','ARTIFACT_CHECKSUM_MISMATCH',
+           'pending_exact'
+         ) RETURNING id`,
+        [workspaceId, digest("d"), digest("c")],
       )
     ).rows[0]!.id;
     await applyMigrations(upgrade);
@@ -104,6 +121,29 @@ describe("0030 durable archive upload intents migration", () => {
       )
     ).rows[0];
     expect(row?.equal).toBe(true);
+    expect(
+      (
+        await upgrade.query<{
+          state: string;
+          membershipState: string;
+          objectVersionId: string;
+          uploadedAtPresent: boolean;
+        }>(
+          `SELECT state,membership_state AS "membershipState",
+                  object_version_id AS "objectVersionId",
+                  uploaded_at IS NOT NULL AS "uploadedAtPresent"
+             FROM event_archive_segments WHERE id=$1`,
+          [failedLegacySegmentId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        state: "failed",
+        membershipState: "legacy_unindexed",
+        objectVersionId: "pre-intent-failed-version",
+        uploadedAtPresent: true,
+      },
+    ]);
     for (const database of [upgrade, clean]) {
       expect(
         (

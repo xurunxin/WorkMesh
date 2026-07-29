@@ -54,6 +54,18 @@ BEGIN
 END;
 $$;
 
+-- The pre-intent worker represented a failed readback by clearing uploaded_at
+-- even though the immutable VersionId was already durable. After removing the
+-- old state/timestamp checks, preserve that recoverable object on the legacy
+-- path while satisfying the explicit pairing installed below.
+UPDATE event_archive_segments
+   SET uploaded_at=COALESCE(uploaded_at,created_at),
+       updated_at=now()
+ WHERE membership_state='legacy_unindexed'
+   AND state='failed'
+   AND object_version_id IS NOT NULL
+   AND uploaded_at IS NULL;
+
 ALTER TABLE event_archive_segments
   ADD CONSTRAINT event_archive_segments_object_version_state_check CHECK (
     (
