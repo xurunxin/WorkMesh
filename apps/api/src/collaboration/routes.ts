@@ -257,9 +257,26 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if (!result) throw new DomainError('NOT_FOUND', 'Work Room not found')
     if (actor(request).kind === 'agent') {
       if (!actor(request).agentSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to a session')
-      const own = (await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>('SELECT id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 AND agent_actor_id=$3', [actor(request).agentSessionId, actor(request).workspaceId, actor(request).id])).rows[0]
+      const values: unknown[] = [
+        actor(request).agentSessionId,
+        actor(request).workspaceId,
+      ]
+      const liveAuthorization = liveSessionReadPredicate(
+        actor(request),
+        'own.id',
+        'own.workspace_id',
+        values,
+      )
+      const own = (await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>(
+        `SELECT own.id,own.work_item_id,own.project_id
+           FROM agent_sessions own
+          WHERE own.id=$1
+            AND own.workspace_id=$2
+            AND ${liveAuthorization}`,
+        values,
+      )).rows[0]
       if (!own) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to an active session')
-      const allowed = kind === 'session' ? own.id === value : kind === 'work_item' ? own.work_item_id === value : own.project_id === value || Boolean(own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2', [own.work_item_id, value])).rowCount)
+      const allowed = kind === 'session' ? own.id === value : kind === 'work_item' ? own.work_item_id === value : own.project_id === value || Boolean(own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND workspace_id=$2 AND project_id=$3 AND deleted_at IS NULL', [own.work_item_id, actor(request).workspaceId, value])).rowCount)
       if (!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Agent token cannot resolve this Work Room')
     } else await h.readableTeam(request, result.team_id)
     return { ...result, subject_kind: kind, subject_id: value }

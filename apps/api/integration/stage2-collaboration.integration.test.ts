@@ -60,6 +60,12 @@ async function exchangeAndExecute(session: Session, agent: Agent): Promise<strin
   return token
 }
 
+async function exchangeOnly(session: Session, agent: Agent): Promise<string> {
+  const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${session.id}/token/exchange`, payload: { exchangeToken: session.exchangeToken }, headers: { authorization: `Bearer ${agent.installationToken}`, 'idempotency-key': randomUUID() } }) as unknown as Response
+  expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
+  return exchange.json<{ sessionToken: string }>().sessionToken
+}
+
 async function makeFixture(): Promise<Fixture> {
   await db.query('TRUNCATE workspaces CASCADE')
   const installed = await app.inject({ method: 'POST', url: '/api/v1/auth/install', payload: { name: 'Stage Two', slug: `stage-two-${randomUUID().slice(0, 8)}`, adminName: 'Admin', email: `${randomUUID()}@example.test`, password: 'stage-two-password' }, headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! } }) as unknown as Response
@@ -340,6 +346,15 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(work.statusCode, JSON.stringify(work.json())).toBe(200)
     const projectWork = work.json<{ id: string; revision: number }>()
+    const siblingWork = await humanCall(f.human, 'POST', '/api/v1/work-items', {
+      teamId: f.teamId,
+      projectId,
+      title: 'Sibling Project Work Item',
+      statusId: f.readyId,
+      responsibleHumanActorId: f.human.actorId,
+    })
+    expect(siblingWork.statusCode, JSON.stringify(siblingWork.json())).toBe(200)
+    const siblingWorkId = siblingWork.json<{ id: string }>().id
     const startStandard = async (agent: Agent, role: 'executor' | 'reviewer') => {
       const response = await humanCall(
         f.human,
@@ -393,9 +408,23 @@ describe('Stage 2 collaboration API acceptance', () => {
       new Set([source.session.id, exactTarget.session.id, actorTarget.session.id]),
     )
 
-    const room = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${projectWork.id}`)
-    expect(room.statusCode, JSON.stringify(room.json())).toBe(200)
-    const channelId = room.json<{ id: string }>().id
+    const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
+    expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)
+    const channelId = projectRoom.json<{ id: string }>().id
+    const resolvedProjectRoom = await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)
+    expect(resolvedProjectRoom.statusCode, JSON.stringify(resolvedProjectRoom.json())).toBe(200)
+    const siblingRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${siblingWorkId}`)
+    expect(siblingRoom.statusCode, JSON.stringify(siblingRoom.json())).toBe(200)
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?workItemId=${siblingWorkId}`)).statusCode).toBe(403)
+    const siblingWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${siblingRoom.json<{ id: string }>().id}/messages`, {
+      sessionId: source.session.id,
+      intent: 'inform',
+      body: 'A Project relationship must not authorize its sibling Work Item.',
+    })
+    expect(siblingWrite.statusCode).toBe(403)
+    expect(siblingWrite.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
     const exactAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
       sessionId: source.session.id,
       intent: 'ask',
@@ -450,6 +479,124 @@ describe('Stage 2 collaboration API acceptance', () => {
       payload: {},
     }, { 'if-match': `"revision-${claimed.json<{ revision: number }>().revision}"` })
     expect(actorReply.statusCode, JSON.stringify(actorReply.json())).toBe(200)
+
+    const projectOnlyDelegationId = (await db.query<{ id: string }>(
+      `INSERT INTO delegations(
+         workspace_id,team_id,agent_id,agent_actor_id,
+         principal_human_actor_id,role,scope_type,scope_id,
+         permissions_snapshot,capability_scope,status
+       ) VALUES($1,$2,$3,$4,$5,'executor','project',$6,$7,$8,'active')
+       RETURNING id`,
+      [
+        f.workspaceId,
+        f.teamId,
+        f.overflow.id,
+        f.overflow.actorId,
+        f.human.actorId,
+        projectId,
+        ['work:read', 'work:write'],
+        {
+          workspaceId: f.workspaceId,
+          teamIds: [f.teamId],
+          workItemIds: [],
+          projectIds: [],
+          repositoryIds: [],
+          capabilities: ['work:read', 'work:write'],
+        },
+      ],
+    )).rows[0]!.id
+    const projectOnlyCreated = await humanCall(f.human, 'POST', '/api/v1/agent-sessions', {
+      delegationId: projectOnlyDelegationId,
+      projectId,
+      initialPrompt: 'Exercise explicit Project scope.',
+      budget: {},
+    })
+    expect(projectOnlyCreated.statusCode, JSON.stringify(projectOnlyCreated.json())).toBe(200)
+    const projectOnlySession = projectOnlyCreated.json<Session>()
+    const projectOnlyToken = await exchangeOnly(projectOnlySession, f.overflow)
+    await db.query("UPDATE agent_sessions SET state='executing' WHERE id=$1", [projectOnlySession.id])
+
+    const deniedProjectWrite = await agentCall(projectOnlyToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: projectOnlySession.id,
+      intent: 'inform',
+      body: 'Missing projectIds must deny a project-only Session.',
+    })
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(403)
+    expect(deniedProjectWrite.statusCode).toBe(403)
+    expect(deniedProjectWrite.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
+    const deniedExactTarget = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'An unscoped project-only exact target must be denied.',
+      recipientSessionId: projectOnlySession.id,
+    })
+    expect(deniedExactTarget.statusCode).toBe(400)
+    expect(deniedExactTarget.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
+    })
+    const deniedActorTarget = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'An unscoped project-only actor target must be denied.',
+      recipientActorId: f.overflow.actorId,
+    })
+    expect(deniedActorTarget.statusCode).toBe(400)
+    expect(deniedActorTarget.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
+    })
+
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(
+            capability_scope,'{projectIds}',jsonb_build_array($2::text)
+          )
+        WHERE id=$1`,
+      [projectOnlyDelegationId, projectId],
+    )
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(200)
+    const allowedProjectWrite = await agentCall(projectOnlyToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: projectOnlySession.id,
+      intent: 'inform',
+      body: 'Matching projectIds authorizes a project-only Session.',
+    })
+    expect(allowedProjectWrite.statusCode, JSON.stringify(allowedProjectWrite.json())).toBe(200)
+    const allowedExactTarget = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'A matching project-only exact target is authorized.',
+      recipientSessionId: projectOnlySession.id,
+      requiresResponse: true,
+    })
+    expect(allowedExactTarget.statusCode, JSON.stringify(allowedExactTarget.json())).toBe(200)
+    const projectOnlyExactItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_session_id=$2`,
+      [allowedExactTarget.json<{ id: string }>().id, projectOnlySession.id],
+    )).rows[0]!.id
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${projectOnlyExactItemId}`)).statusCode).toBe(200)
+    const allowedActorTarget = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'A matching project-only actor target is authorized.',
+      recipientActorId: f.overflow.actorId,
+      requiresResponse: true,
+    })
+    expect(allowedActorTarget.statusCode, JSON.stringify(allowedActorTarget.json())).toBe(200)
+    const projectOnlyActorItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_actor_id=$2
+          AND recipient_session_id IS NULL`,
+      [allowedActorTarget.json<{ id: string }>().id, f.overflow.actorId],
+    )).rows[0]!.id
+    const projectOnlyClaim = await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${projectOnlyActorItemId}/claim`, {})
+    expect(projectOnlyClaim.statusCode, JSON.stringify(projectOnlyClaim.json())).toBe(200)
+    const projectOnlyReply = await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${projectOnlyActorItemId}/reply`, {
+      body: 'The explicitly scoped Project Session handled the blocker.',
+      payload: {},
+    }, { 'if-match': `"revision-${projectOnlyClaim.json<{ revision: number }>().revision}"` })
+    expect(projectOnlyReply.statusCode, JSON.stringify(projectOnlyReply.json())).toBe(200)
   })
 
   it('derives legacy Human Inbox scope for current non-admin list and detail reads', async () => {

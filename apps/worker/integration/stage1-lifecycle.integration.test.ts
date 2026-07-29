@@ -141,7 +141,7 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [allowedId])).rows[0]?.status).toBe('delivered')
   })
 
-  it('delivers a project-linked Work Item target and suppresses it after revocation or stop', async () => {
+  it('normalizes Work Item and project-only room targets before delivery or suppression', async () => {
     const data = await fixture()
     const projectId = (await db.query<{ id: string }>(
       "INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,'Worker project scope') RETURNING id",
@@ -192,17 +192,35 @@ describe('stage 1 worker durability', () => {
     const channelId = (await db.query<{ id: string }>(
       `INSERT INTO work_room_channels(
          workspace_id,subject_kind,subject_id,team_id
+       ) VALUES($1,'project',$2,$3)
+       RETURNING id`,
+      [data.workspaceId, projectId, data.teamId],
+    )).rows[0]!.id
+    const siblingWorkItemId = (await db.query<{ id: string }>(
+      `INSERT INTO work_items(
+         workspace_id,team_id,number,title,status_id,
+         responsible_human_actor_id,project_id
+       )
+       SELECT workspace_id,team_id,number+1,'Sibling worker scope',status_id,
+              responsible_human_actor_id,project_id
+         FROM work_items WHERE id=$1
+       RETURNING id`,
+      [data.workItemId],
+    )).rows[0]!.id
+    const siblingChannelId = (await db.query<{ id: string }>(
+      `INSERT INTO work_room_channels(
+         workspace_id,subject_kind,subject_id,team_id
        ) VALUES($1,'work_item',$2,$3)
        RETURNING id`,
-      [data.workspaceId, data.workItemId, data.teamId],
+      [data.workspaceId, siblingWorkItemId, data.teamId],
     )).rows[0]!.id
-    const enqueue = async (marker: string): Promise<string> => {
+    const enqueue = async (marker: string, targetChannelId = channelId): Promise<string> => {
       const messageId = (await db.query<{ id: string }>(
         `INSERT INTO room_messages(
            channel_id,workspace_id,author_actor_id,intent,recipient_actor_id,body
          ) VALUES($1,$2,$3,'inform',$4,'Targeted worker delivery')
          RETURNING id`,
-        [channelId, data.workspaceId, data.humanActorId, data.agentActorId],
+        [targetChannelId, data.workspaceId, data.humanActorId, data.agentActorId],
       )).rows[0]!.id
       const eventId = (await db.query<{ id: string }>(
         `INSERT INTO domain_events(
@@ -254,6 +272,61 @@ describe('stage 1 worker durability', () => {
       [authorizedDeliveryId],
     )).rows[0]).toEqual({ status: 'delivered' })
 
+    const siblingDeliveryId = await enqueue(
+      'must-not-enter-sibling-work-item',
+      siblingChannelId,
+    )
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [siblingDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+
+    await db.query(
+      'UPDATE agent_sessions SET work_item_id=NULL,project_id=$2 WHERE id=$1',
+      [sessionId, projectId],
+    )
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_build_object(
+            'teamIds',jsonb_build_array($2::text),
+            'workItemIds','[]'::jsonb,
+            'projectIds','[]'::jsonb
+          )
+        WHERE id=$1`,
+      [data.delegationId, data.teamId],
+    )
+    const missingProjectScopeId = await enqueue('missing-projectIds')
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [missingProjectScopeId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(
+            capability_scope,'{projectIds}',jsonb_build_array($2::text)
+          )
+        WHERE id=$1`,
+      [data.delegationId, projectId],
+    )
+    const matchingProjectScopeId = await enqueue('matching-projectIds')
+    await worker.tick()
+    expect(requests).toBe(2)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
+      [matchingProjectScopeId],
+    )).rows[0]).toEqual({ status: 'delivered' })
+
     const revokedMarker = 'must-not-leave-after-revocation'
     const revokedDeliveryId = await enqueue(revokedMarker)
     await db.query(
@@ -261,7 +334,7 @@ describe('stage 1 worker durability', () => {
       [data.delegationId],
     )
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     const revokedAudit = (await db.query<{
       status: string
       last_error: string
@@ -285,7 +358,7 @@ describe('stage 1 worker durability', () => {
     const stoppedDeliveryId = await enqueue(stoppedMarker)
     await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     const stoppedAudit = (await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [stoppedDeliveryId],

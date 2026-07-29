@@ -29,6 +29,7 @@ type AgentFacts = {
   parent_session_id: string | null
   team_id: string
   work_item_id: string | null
+  work_item_project_id: string | null
   project_id: string | null
   delegation_status: string
   capability_scope: {
@@ -271,13 +272,18 @@ async function loadAgentFacts(
 ): Promise<AgentFacts | undefined> {
   if (!actor.agentSessionId) return undefined
   return (await db.query<AgentFacts>(
-    `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,s.project_id,
+    `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,
+      scope_item.project_id AS work_item_project_id,s.project_id,
       d.status AS delegation_status,d.capability_scope,d.permissions_snapshot,
       a.approved_capabilities AS definition_capabilities,a.is_active AS agent_active,
       ata.approved_capabilities AS team_capabilities
      FROM agent_sessions s
      JOIN delegations d ON d.id=s.delegation_id
      JOIN agent_definitions a ON a.id=s.agent_id
+     LEFT JOIN work_items scope_item
+       ON scope_item.id=s.work_item_id
+      AND scope_item.workspace_id=s.workspace_id
+      AND scope_item.deleted_at IS NULL
      LEFT JOIN agent_team_access ata
        ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id
       AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
@@ -332,6 +338,11 @@ function resourceInScope(
   if (
     typeof projectId === 'string'
     && !scope.projectIds?.includes(projectId)
+    && !(
+      facts.work_item_id
+      && scope.workItemIds?.includes(facts.work_item_id)
+      && facts.work_item_project_id === projectId
+    )
   ) return false
   return true
 }
