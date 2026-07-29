@@ -1,4 +1,5 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
@@ -380,7 +381,7 @@ try {
     dollarRoundTripDirectory,
     'compose.snapshot.json',
   )
-  const dollarRoundTripProject = `workmesh-dollar-roundtrip-${process.pid}`
+  const dollarRoundTripProject = `workmesh-dollar-roundtrip-${randomUUID()}`
   const encodedDollarService = {
     image: 'busybox:1.36.1',
     network_mode: 'none',
@@ -529,7 +530,7 @@ try {
     networks: ['network', 'ls', '-q'],
     volumes: ['volume', 'ls', '-q'],
   }
-  const inspectProjectResources = () =>
+  const inspectProjectResources = (projectName) =>
     Object.fromEntries(
       Object.entries(projectResourceCommands).map(([kind, command]) => {
         const result = spawnSync(
@@ -537,7 +538,7 @@ try {
           [
             ...command,
             '--filter',
-            `label=com.docker.compose.project=${dollarRoundTripProject}`,
+            `label=com.docker.compose.project=${projectName}`,
           ],
           { cwd: root, encoding: 'utf8' },
         )
@@ -554,6 +555,37 @@ try {
         ]
       }),
     )
+  const inspectContainersByExactName = (containerName) => {
+    const result = spawnSync(
+      'docker',
+      [
+        'ps',
+        '-a',
+        '--no-trunc',
+        '--filter',
+        `name=${containerName}`,
+        '--format',
+        '{{.ID}}|{{.Names}}',
+      ],
+      { cwd: root, encoding: 'utf8' },
+    )
+    assert(
+      result.status === 0,
+      'Docker must check the exact dollar-literal container name',
+    )
+    return result.stdout
+      .trim()
+      .split(/\r?\n/u)
+      .filter((value) => value.length > 0)
+      .map((value) => {
+        const separator = value.indexOf('|')
+        return {
+          id: value.slice(0, separator),
+          name: value.slice(separator + 1),
+        }
+      })
+      .filter(({ name }) => name === containerName)
+  }
   const assertNoProjectResources = (resources, phase) => {
     for (const [kind, identifiers] of Object.entries(resources))
       assert(
@@ -561,8 +593,98 @@ try {
         `dollar-literal project must have no ${kind} ${phase}`,
       )
   }
-  assertNoProjectResources(inspectProjectResources(), 'before validation')
   const disposableContainer = dollarRoundTripProject
+  const preflightDollarRoundTripProject = (projectName, containerName) => {
+    assertNoProjectResources(
+      inspectProjectResources(projectName),
+      'before validation',
+    )
+    assert(
+      inspectContainersByExactName(containerName).length === 0,
+      'dollar-literal container name must be unused before validation',
+    )
+  }
+  const collisionProject = `workmesh-dollar-collision-${randomUUID()}`
+  preflightDollarRoundTripProject(collisionProject, collisionProject)
+  let collisionContainerId
+  try {
+    const collisionCreate = spawnSync(
+      'docker',
+      [
+        'create',
+        '--name',
+        collisionProject,
+        '--network',
+        'none',
+        'busybox:1.36.1',
+        'true',
+      ],
+      { cwd: root, encoding: 'utf8' },
+    )
+    assert(
+      collisionCreate.status === 0,
+      'Docker must create the unrelated name-collision container',
+    )
+    collisionContainerId = collisionCreate.stdout.trim()
+    assert(
+      /^[a-f0-9]{64}$/u.test(collisionContainerId),
+      'Docker must return the full unrelated collision container ID',
+    )
+    const collisionInspection = spawnSync(
+      'docker',
+      ['inspect', collisionContainerId],
+      { cwd: root, encoding: 'utf8' },
+    )
+    assert(
+      collisionInspection.status === 0,
+      'Docker must inspect the unrelated name-collision container',
+    )
+    const collisionContainer = JSON.parse(collisionInspection.stdout)[0]
+    assert(
+      collisionContainer.Config.Labels['com.docker.compose.project'] ===
+        undefined,
+      'name-collision fixture must remain unrelated to Docker Compose',
+    )
+    let collisionRejection
+    try {
+      preflightDollarRoundTripProject(collisionProject, collisionProject)
+    } catch (error) {
+      collisionRejection = error
+    }
+    assert(
+      collisionRejection instanceof Error &&
+        collisionRejection.message ===
+          'dollar-literal container name must be unused before validation',
+      'validator preflight must reject an unrelated exact-name collision',
+    )
+    const collisionAfterRejection =
+      inspectContainersByExactName(collisionProject)
+    assert(
+      collisionAfterRejection.length === 1 &&
+        collisionAfterRejection[0].id === collisionContainerId,
+      'validator rejection must preserve the unrelated collision container',
+    )
+  } finally {
+    if (collisionContainerId !== undefined) {
+      const collisionCleanup = spawnSync(
+        'docker',
+        ['rm', '-f', collisionContainerId],
+        { cwd: root, encoding: 'utf8' },
+      )
+      assert(
+        collisionCleanup.status === 0,
+        'Docker must remove only the verified collision fixture ID',
+      )
+    }
+  }
+  assert(
+    inspectContainersByExactName(collisionProject).length === 0,
+    'collision fixture must leave no container after its owned cleanup',
+  )
+  preflightDollarRoundTripProject(
+    dollarRoundTripProject,
+    disposableContainer,
+  )
   const runtimeEnvironment = { ...process.env }
   for (const name of [
     'WM_COMMAND',
@@ -574,6 +696,7 @@ try {
     'WM_HEALTH',
   ])
     runtimeEnvironment[name] = 'host-must-not-expand'
+  let ownedContainerId
   try {
     const runResult = spawnSync(
       'docker',
@@ -602,11 +725,16 @@ try {
       runResult.status === 0,
       'Docker Compose must create the disposable dollar-literal container',
     )
-    const inspection = spawnSync(
-      'docker',
-      ['inspect', disposableContainer],
-      { cwd: root, encoding: 'utf8' },
+    const exactNameMatches =
+      inspectContainersByExactName(disposableContainer)
+    assert(
+      exactNameMatches.length === 1,
+      'Docker Compose must create exactly one exact-name probe container',
     )
+    const inspection = spawnSync('docker', ['inspect', exactNameMatches[0].id], {
+      cwd: root,
+      encoding: 'utf8',
+    })
     assert(
       inspection.status === 0,
       'Docker must inspect the disposable dollar-literal container',
@@ -618,10 +746,25 @@ try {
       'disposable container must belong to the unique validator project',
     )
     assert(
+      container.Config.Labels['com.docker.compose.service'] === 'probe',
+      'disposable container must belong to the probe service',
+    )
+    assert(
+      container.Config.Labels['com.docker.compose.oneoff'] === 'True',
+      'disposable container must be a Compose one-off container',
+    )
+    assert(
+      container.Id === exactNameMatches[0].id,
+      'Docker must inspect the exact full probe container ID',
+    )
+    ownedContainerId = container.Id
+    assert(
       container.HostConfig.NetworkMode === 'none',
       'disposable container must not use a Docker network',
     )
-    const resourcesDuringRun = inspectProjectResources()
+    const resourcesDuringRun = inspectProjectResources(
+      dollarRoundTripProject,
+    )
     assert(
       resourcesDuringRun.containers.length === 1,
       'dollar-literal project must own exactly one disposable container',
@@ -659,10 +802,11 @@ try {
       'disposable container must preserve healthcheck dollar literals',
     )
   } finally {
-    spawnSync('docker', ['rm', '-f', disposableContainer], {
-      cwd: root,
-      encoding: 'utf8',
-    })
+    if (ownedContainerId !== undefined)
+      spawnSync('docker', ['rm', '-f', ownedContainerId], {
+        cwd: root,
+        encoding: 'utf8',
+      })
     const cleanup = spawnSync(
       'docker',
       [
@@ -684,7 +828,14 @@ try {
       cleanup.status === 0,
       'Docker Compose must clean the unique dollar-literal project',
     )
-    assertNoProjectResources(inspectProjectResources(), 'after cleanup')
+    assertNoProjectResources(
+      inspectProjectResources(dollarRoundTripProject),
+      'after cleanup',
+    )
+    assert(
+      inspectContainersByExactName(disposableContainer).length === 0,
+      'dollar-literal container name must be unused after cleanup',
+    )
   }
 } finally {
   await rm(dollarRoundTripDirectory, { recursive: true, force: true })
