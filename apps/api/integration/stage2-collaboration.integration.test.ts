@@ -437,6 +437,9 @@ describe('Stage 2 collaboration API acceptance', () => {
     const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)
     const channelId = projectRoom.json<{ id: string }>().id
+    const workItemRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${projectWork.id}`)
+    expect(workItemRoom.statusCode, JSON.stringify(workItemRoom.json())).toBe(200)
+    const workItemChannelId = workItemRoom.json<{ id: string }>().id
     const resolvedProjectRoom = await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(resolvedProjectRoom.statusCode, JSON.stringify(resolvedProjectRoom.json())).toBe(200)
     const siblingRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${siblingWorkId}`)
@@ -668,6 +671,14 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(staleHybridWrite.statusCode).toBe(403)
     expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(200)
+    const staleHybridProjects = await agentCall(sourceToken, 'GET', '/api/v1/projects')
+    expect(staleHybridProjects.statusCode, JSON.stringify(staleHybridProjects.json())).toBe(200)
+    expect(
+      staleHybridProjects.json<Page<{ id: string }>>().items.map(project => project.id),
+    ).toEqual(expect.arrayContaining([projectId]))
+    expect(
+      staleHybridProjects.json<Page<{ id: string }>>().items.map(project => project.id),
+    ).not.toContain(movedProjectId)
 
     const preReparentAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
       sessionId: source.session.id,
@@ -703,6 +714,14 @@ describe('Stage 2 collaboration API acceptance', () => {
     )
     expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(403)
     expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(200)
+    const reparentedProjects = await agentCall(sourceToken, 'GET', '/api/v1/projects')
+    expect(reparentedProjects.statusCode, JSON.stringify(reparentedProjects.json())).toBe(200)
+    expect(
+      reparentedProjects.json<Page<{ id: string }>>().items.map(project => project.id),
+    ).toEqual(expect.arrayContaining([movedProjectId]))
+    expect(
+      reparentedProjects.json<Page<{ id: string }>>().items.map(project => project.id),
+    ).not.toContain(projectId)
     const staleOldProjectWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
       sessionId: source.session.id,
       intent: 'inform',
@@ -785,6 +804,11 @@ describe('Stage 2 collaboration API acceptance', () => {
       deletedScopeEvents.json<Array<{ event_type: string }>>()
         .map(event => event.event_type),
     ).not.toContain('test.project.deleted_scope')
+    const deletedScopeProjects = await agentCall(sourceToken, 'GET', '/api/v1/projects')
+    expect(deletedScopeProjects.statusCode, JSON.stringify(deletedScopeProjects.json())).toBe(200)
+    expect(
+      deletedScopeProjects.json<Page<{ id: string }>>().items.map(project => project.id),
+    ).not.toContain(movedProjectId)
     expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(403)
     const deletedWorkItemWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
       sessionId: source.session.id,
@@ -792,6 +816,15 @@ describe('Stage 2 collaboration API acceptance', () => {
       body: 'A deleted scoped Work Item must revoke Project access.',
     })
     expect(deletedWorkItemWrite.statusCode).toBe(403)
+    const deletedOwnWorkItemWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${workItemChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'inform',
+      body: 'A deleted scoped Work Item must revoke its own room immediately.',
+    })
+    expect(deletedOwnWorkItemWrite.statusCode).toBe(403)
+    expect(deletedOwnWorkItemWrite.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
     const deletedExactTarget = await humanCall(f.human, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
       intent: 'ask',
       body: 'A deleted Work Item exact target must be unavailable.',
@@ -808,6 +841,15 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(deletedActorTarget.statusCode).toBe(400)
     expect(deletedActorTarget.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
+    })
+    const deletedOwnRoomActorTarget = await humanCall(f.human, 'POST', `/api/v1/rooms/${workItemChannelId}/messages`, {
+      intent: 'blocker',
+      body: 'A deleted Work Item actor target must be unavailable in its own room.',
+      recipientActorId: f.reviewer.actorId,
+    })
+    expect(deletedOwnRoomActorTarget.statusCode).toBe(400)
+    expect(deletedOwnRoomActorTarget.json<{ error: { code: string } }>()).toMatchObject({
       error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
     })
   })

@@ -799,10 +799,21 @@ export const buildApp = (options: {
           LEFT JOIN work_items scoped_item
             ON scoped_item.id=scoped.work_item_id
            AND scoped_item.workspace_id=scoped.workspace_id
+           AND scoped_item.deleted_at IS NULL
          WHERE scoped.id=${sessionParameter}
            AND scoped.workspace_id=p.workspace_id
            AND scoped.team_id=p.team_id
-           AND (scoped.project_id=p.id OR scoped_item.project_id=p.id)
+           AND (
+             (
+               scoped.work_item_id IS NOT NULL
+               AND scoped_item.id IS NOT NULL
+               AND scoped_item.project_id=p.id
+             )
+             OR (
+               scoped.work_item_id IS NULL
+               AND scoped.project_id=p.id
+             )
+           )
       ) AND ${liveAuthorization}`;
     } else {
       scope = scopedTeamPredicate(request, "p.team_id", values);

@@ -27,7 +27,26 @@ const leaseResponse = <T extends { version: number }>(lease: T): T & { revision:
 })
 
 async function session(tx: PoolClient, workspaceId: string, id: string) {
-  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; project_id:string|null; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>('SELECT id,workspace_id,team_id,work_item_id,project_id,plan_step_id,plan_step_version_id,current_plan_version_id,parent_session_id,delegation_id,agent_id,agent_actor_id,budget,max_child_sessions,state,revision FROM agent_sessions WHERE id=$1 AND workspace_id=$2', [id, workspaceId])).rows[0]
+  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
+    `SELECT current_session.id,current_session.workspace_id,current_session.team_id,
+            current_session.work_item_id,
+            live_work_item.id IS NOT NULL AS work_item_exists,
+            live_work_item.project_id AS work_item_project_id,
+            current_session.project_id,current_session.plan_step_id,
+            current_session.plan_step_version_id,
+            current_session.current_plan_version_id,
+            current_session.parent_session_id,current_session.delegation_id,
+            current_session.agent_id,current_session.agent_actor_id,
+            current_session.budget,current_session.max_child_sessions,
+            current_session.state,current_session.revision
+       FROM agent_sessions current_session
+       LEFT JOIN work_items live_work_item
+         ON live_work_item.id=current_session.work_item_id
+        AND live_work_item.workspace_id=current_session.workspace_id
+        AND live_work_item.deleted_at IS NULL
+      WHERE current_session.id=$1 AND current_session.workspace_id=$2`,
+    [id, workspaceId],
+  )).rows[0]
   if (!row) throw new DomainError('NOT_FOUND', 'Agent session not found')
   return row
 }
@@ -155,6 +174,12 @@ async function authorizeActorRecipient(
           (
             $5='work_item'
             AND target_session.work_item_id=$6
+            AND EXISTS (
+              SELECT 1 FROM work_items target_work_item
+               WHERE target_work_item.id=target_session.work_item_id
+                 AND target_work_item.workspace_id=$1
+                 AND target_work_item.deleted_at IS NULL
+            )
             AND COALESCE(delegation.capability_scope->'workItemIds','[]'::jsonb)
                 ? target_session.work_item_id::text
           )
@@ -388,8 +413,9 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
       if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!)
       if (actor(request).kind === 'agent' && !body.sessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent messages require their session id')
       if (body.sessionId) {
-        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_project_id:string|null;project_id:string|null}>(
+        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null}>(
           `SELECT message_session.team_id,message_session.work_item_id,
+                  message_scope_item.id IS NOT NULL AS work_item_exists,
                   message_scope_item.project_id AS work_item_project_id,
                   message_session.project_id
              FROM agent_sessions message_session
@@ -409,7 +435,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
             FROM agent_sessions parent JOIN lineage child ON child.parent_session_id=parent.id
           )
           SELECT 1 FROM lineage WHERE id=$3`,[body.sessionId,actor(request).workspaceId,channel.subject_id])).rowCount)
-        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_id===channel.subject_id)
+        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_exists && messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_id===channel.subject_id)
         if (!inRoom) throw new DomainError('RESOURCE_SCOPE_DENIED','Message session is outside this Work Room')
       }
       if (body.intent === 'review_result') {
@@ -619,8 +645,37 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if(!row) throw new DomainError('NOT_FOUND','Decision not found')
     if(actor(request).kind==='human') await h.readableTeam(request,row.team_id)
     else {
-      const own=(await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>('SELECT id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 AND agent_actor_id=$3',[actor(request).agentSessionId,actor(request).workspaceId,actor(request).id])).rows[0]
-      const allowed=own && (row.session_id===own.id || Boolean(row.work_item_id && row.work_item_id===own.work_item_id) || Boolean(row.project_id && (row.project_id===own.project_id || own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[own.work_item_id,row.project_id])).rowCount)))
+      const own=(await h.db.query<{id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null}>(
+        `SELECT own_session.id,own_session.work_item_id,
+                own_scope_item.id IS NOT NULL AS work_item_exists,
+                own_scope_item.project_id AS work_item_project_id,
+                own_session.project_id
+           FROM agent_sessions own_session
+           LEFT JOIN work_items own_scope_item
+             ON own_scope_item.id=own_session.work_item_id
+            AND own_scope_item.workspace_id=own_session.workspace_id
+            AND own_scope_item.deleted_at IS NULL
+          WHERE own_session.id=$1
+            AND own_session.workspace_id=$2
+            AND own_session.agent_actor_id=$3`,
+        [actor(request).agentSessionId,actor(request).workspaceId,actor(request).id],
+      )).rows[0]
+      const allowed=own && (
+        row.session_id===own.id
+        || Boolean(
+          row.work_item_id
+          && own.work_item_exists
+          && row.work_item_id===own.work_item_id,
+        )
+        || Boolean(
+          row.project_id
+          && (
+            own.work_item_id
+              ? own.work_item_exists && row.project_id===own.work_item_project_id
+              : row.project_id===own.project_id
+          ),
+        )
+      )
       if(!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED','Decision is outside the agent session scope')
     }
     const [affectedResources,relations]=await Promise.all([h.db.query('SELECT resource_type AS "resourceType",resource_id AS "resourceId",impact FROM decision_affected_resources WHERE decision_id=$1 ORDER BY resource_type,resource_id',[decisionId]),h.db.query('SELECT kind,related_decision_id AS "relatedDecisionId",created_at AS "createdAt" FROM decision_relations WHERE decision_id=$1 ORDER BY created_at',[decisionId])])
@@ -910,15 +965,17 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
   const sessionId=id(request); const body=contextDeltaInputSchema.parse(request.body)
   return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{
     const s=await assertSessionWrite(tx,actor(request),sessionId)
+    if(s.work_item_id && !s.work_item_exists) throw new DomainError('RESOURCE_SCOPE_DENIED','Context sources require the current live session Work Item')
+    const effectiveProjectId=s.work_item_id ? s.work_item_project_id : s.project_id
     const base=(await tx.query<{work_item_id:string|null;manifest:unknown;sources:unknown}>('SELECT work_item_id,manifest,sources FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id IS NOT DISTINCT FROM $3',[body.baseSnapshotId,actor(request).workspaceId,s.work_item_id])).rows[0]
     if(!base)throw new DomainError('RESOURCE_SCOPE_DENIED','Base context snapshot is outside this session scope')
     for(const addition of body.additions) {
       if (addition.sourceType!=='guidance' && (!addition.sourceId || addition.uri)) throw new DomainError('VALIDATION_ERROR','Internal context additions require only an authorized source id')
       if (addition.sourceType==='guidance') {
         if (addition.sourceId || !addition.uri) throw new DomainError('VALIDATION_ERROR','Guidance context additions require only an authorized WorkMesh URI')
-        const uri=new URL(addition.uri); const workspaceUri=`workmesh://workspace/${actor(request).workspaceId}/guidance`; const teamUri=`workmesh://team/${s.team_id}/guidance`; const projectUri=s.project_id?`workmesh://project/${s.project_id}/guidance`:null
+        const uri=new URL(addition.uri); const workspaceUri=`workmesh://workspace/${actor(request).workspaceId}/guidance`; const teamUri=`workmesh://team/${s.team_id}/guidance`; const projectUri=effectiveProjectId?`workmesh://project/${effectiveProjectId}/guidance`:null
         if (![workspaceUri,teamUri,projectUri].includes(uri.toString().replace(/\/$/,''))) throw new DomainError('RESOURCE_SCOPE_DENIED','Guidance URI is outside the session scope')
-        const guidance=uri.toString().replace(/\/$/,'')===projectUri ? (await tx.query<{description:string|null}>('SELECT description FROM projects WHERE id=$1 AND workspace_id=$2',[s.project_id,actor(request).workspaceId])).rows[0]?.description??'' : ''
+        const guidance=uri.toString().replace(/\/$/,'')===projectUri ? (await tx.query<{description:string|null}>('SELECT description FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',[effectiveProjectId,actor(request).workspaceId])).rows[0]?.description??'' : ''
         const guidanceHash=`sha256:${createHash('sha256').update(guidance).digest('hex')}`
         if (addition.hash!==guidanceHash) throw new DomainError('VALIDATION_ERROR','Guidance hash does not match the authorized source')
         continue
@@ -930,7 +987,7 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
       } else if(addition.sourceType==='work_item' && addition.sourceId!==s.work_item_id) throw new DomainError('RESOURCE_SCOPE_DENIED','Context work item must match the session work item')
       else if(addition.sourceType==='plan_step' && addition.sourceId) await assertLeaseResourceScope(tx,actor(request),s,'plan_step',addition.sourceId)
       else if(addition.sourceType==='message' && addition.sourceId) {
-        const found=await tx.query("SELECT 1 FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 AND (c.subject_kind='work_item' AND c.subject_id=$3 OR c.subject_kind='session' AND c.subject_id=$4 OR c.subject_kind='project' AND c.subject_id=$5)",[addition.sourceId,actor(request).workspaceId,s.work_item_id,sessionId,s.project_id])
+        const found=await tx.query("SELECT 1 FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 AND (c.subject_kind='work_item' AND c.subject_id=$3 OR c.subject_kind='session' AND c.subject_id=$4 OR c.subject_kind='project' AND c.subject_id=$5)",[addition.sourceId,actor(request).workspaceId,s.work_item_id,sessionId,effectiveProjectId])
         if(!found.rowCount)throw new DomainError('RESOURCE_SCOPE_DENIED','Context message is not readable by this session')
       }
     }
@@ -981,8 +1038,8 @@ async function offerHandoff(h:Helpers,request:FastifyRequest) {
     const scopeType=body.scopeType ?? 'work_item'; const scopeId=body.scopeId ?? s.work_item_id
     if (!scopeId) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope must resolve within the source session')
     if (scopeType === 'workspace') throw new DomainError('VALIDATION_ERROR','Workspace-scoped handoffs are not supported')
-    if (scopeType === 'work_item' && scopeId !== s.work_item_id) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff work-item scope must match the source session')
-    if (scopeType === 'project' && scopeId !== s.project_id && !Boolean(s.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[s.work_item_id,scopeId])).rowCount)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff project scope must match the source session')
+    if (scopeType === 'work_item' && (!s.work_item_exists || scopeId !== s.work_item_id)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff work-item scope must match the live source session Work Item')
+    if (scopeType === 'project' && (s.work_item_id ? !s.work_item_exists || scopeId !== s.work_item_project_id : scopeId !== s.project_id)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff project scope must match the source session')
     if (scopeType === 'plan_step') await assertLeaseResourceScope(tx,actor(request),s,'plan_step',scopeId)
     const sourceGrant=(await tx.query<{permissions_snapshot:string[]}>("SELECT permissions_snapshot FROM delegations WHERE id=$1 AND status='active'",[s.delegation_id])).rows[0]
     if(!sourceGrant) throw new DomainError('DELEGATION_NOT_ACTIVE','Handoff source delegation is unavailable')
@@ -1091,7 +1148,7 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
       if(!context) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff context snapshot is outside the source work scope')
     }
     const scopeType=handoff.scope_type ?? 'work_item'; const scopeId=handoff.scope_id ?? source.work_item_id
-    if (!scopeId || (scopeType==='work_item' && scopeId!==source.work_item_id) || (scopeType==='project' && scopeId!==source.project_id && !Boolean(source.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[source.work_item_id,scopeId])).rowCount))) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope is outside the source session')
+    if (!scopeId || (scopeType==='work_item' && (!source.work_item_exists || scopeId!==source.work_item_id)) || (scopeType==='project' && (source.work_item_id ? !source.work_item_exists || scopeId!==source.work_item_project_id : scopeId!==source.project_id))) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope is outside the source session')
     if (scopeType==='plan_step') await assertLeaseResourceScope(tx,actor(request),source,'plan_step',scopeId)
     // The active-executor uniqueness constraint is per work item.  This is safe
     // before child creation because the entire accepted-handoff transition is one transaction.
@@ -1100,7 +1157,8 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
     const planStepVersionId = scopeType==='plan_step' ? (await tx.query<{id:string}>('SELECT id FROM agent_plan_versions WHERE session_id=$1 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$1) AND EXISTS(SELECT 1 FROM agent_plan_steps WHERE plan_version_id=agent_plan_versions.id AND id=$2)',[source.id,scopeId])).rows[0]?.id : null
     if(scopeType==='plan_step' && !planStepVersionId) throw new DomainError('STALE_PLAN_VERSION','Handoff plan step is no longer in the source current plan')
     const del=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,$6,'executor',$7,$8,$9,$10,$11) RETURNING id",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,sourceDel.principal_human_actor_id,source.work_item_id,scopeType,scopeId,caps,{...sourceDel.capability_scope,capabilities:caps},source.delegation_id])).rows[0] as {id:string}
-    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,project_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,context_snapshot_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,del.id,source.id,source.work_item_id,scopeType==='project'?scopeId:source.project_id,scopeType==='plan_step'?scopeId:null,planStepVersionId,body.initialPrompt,source.budget,handoff.context_snapshot_id])).rows[0] as {id:string}
+    const childProjectId=source.work_item_id ? null : scopeType==='project' ? scopeId : source.project_id
+    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,project_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,context_snapshot_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,del.id,source.id,source.work_item_id,childProjectId,scopeType==='plan_step'?scopeId:null,planStepVersionId,body.initialPrompt,source.budget,handoff.context_snapshot_id])).rows[0] as {id:string}
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
     if (body.failureInjection === 'afterSession') throw new Error('HANDOFF_INJECTED_FAILURE_AFTER_SESSION')
     await tx.query("INSERT INTO routing_records(workspace_id,source_session_id,target_agent_id,requested_skill,required_capabilities,outcome,sort_rank,rationale) SELECT workspace_id,$2,$3,target_skill,$4,'selected',1,jsonb_build_object('reason','handoff accepted') FROM handoffs WHERE id=$1",[handoffId,source.id,target.id,caps])
