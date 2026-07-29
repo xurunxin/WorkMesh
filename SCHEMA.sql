@@ -38,3 +38,4 @@
 \ir packages/db/migrations/0028_worker_identity_conflict_count.sql
 \ir packages/db/migrations/0029_exact_archive_membership.sql
 \ir packages/db/migrations/0030_durable_archive_upload_intents.sql
+\ir packages/db/migrations/0031_agent_session_external_urls_shape.sql

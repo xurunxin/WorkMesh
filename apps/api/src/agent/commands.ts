@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { appendEvent, opaqueToken, tokenHash, withTx } from "@workmesh/db";
 import { loadRetentionConfig } from "@workmesh/config";
+import { agentSessionResponseSchema } from "@workmesh/contracts";
 import {
   assertAgentSessionTransition, assertCompletionEvidence, assertRevision,
   DomainError, validatePlanSteps,
@@ -23,6 +24,32 @@ const normalizedSensitiveKeys = new Set([
 const normalizedKey = (key: string): string => key.replace(/[^a-z0-9]/gi, "").toLowerCase();
 const canonical = (value: unknown): unknown => Array.isArray(value) ? value.map(canonical) : value && typeof value === "object" ? Object.fromEntries(Object.entries(value as Record<string,unknown>).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])) : value;
 const canonicalPayloadHash = (value: unknown) => `sha256:${crypto.createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex")}`;
+/** PostgreSQL returns bigint values as strings; Agent Session responses must be contract-shaped JSON. */
+export function normalizeAgentSessionResponse(row: unknown): Record<string, unknown> {
+  if (!row || Array.isArray(row) || typeof row !== "object") throw new DomainError("INTERNAL_ERROR", "Agent session response row is invalid");
+  let serialized: unknown;
+  try {
+    serialized = JSON.parse(JSON.stringify(row));
+  } catch {
+    throw new DomainError("INTERNAL_ERROR", "Agent session response row is not serializable");
+  }
+  if (!serialized || Array.isArray(serialized) || typeof serialized !== "object") throw new DomainError("INTERNAL_ERROR", "Agent session response row is invalid");
+  const serializedRow = serialized as Record<string, unknown>;
+  const sequence = serializedRow.sequence;
+  let normalizedSequence: number;
+  if (typeof sequence === "number") {
+    if (!Number.isSafeInteger(sequence) || sequence < 0) throw new DomainError("INTERNAL_ERROR", "Agent session sequence is invalid");
+    normalizedSequence = sequence;
+  } else if (typeof sequence === "string" && /^(?:0|[1-9]\d*)$/.test(sequence)) {
+    normalizedSequence = Number(sequence);
+    if (!Number.isSafeInteger(normalizedSequence)) throw new DomainError("INTERNAL_ERROR", "Agent session sequence exceeds the response precision limit");
+  } else {
+    throw new DomainError("INTERNAL_ERROR", "Agent session sequence is invalid");
+  }
+  const parsed = agentSessionResponseSchema.safeParse({ ...serializedRow, sequence: normalizedSequence });
+  if (!parsed.success) throw new DomainError("INTERNAL_ERROR", "Agent session row violates the response contract");
+  return { ...serializedRow, ...parsed.data };
+}
 /** Operational facts may be persisted, but credentials must never enter an event, activity, artifact, or approval payload. */
 export function assertSanitized(value: unknown, path = "payload"): void {
   if (typeof value === "string") { assertSafeText(value, path); return; }
@@ -525,13 +552,14 @@ export async function appendActivity(db: Pool, meta: RequestMeta, sessionId: str
 }
 
 export async function acknowledge(db: Pool, meta: RequestMeta, sessionId: string, input: { summary: string; externalUrls: unknown[] }) {
-  return agentMutate(db, meta, async tx => {
+  const response = await agentMutate(db, meta, async tx => {
     assertSafeText(input.summary,"acknowledgement summary");
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: "ack", idempotencyKey: meta.idempotencyKey });
     assertAgentSessionTransition(session.state, "acknowledged");
-    const row = one((await tx.query("UPDATE agent_sessions SET state='acknowledged',state_reason=$2,acknowledged_at=now(),external_urls=$3,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, input.summary, input.externalUrls])).rows);
+    const row = one((await tx.query("UPDATE agent_sessions SET state='acknowledged',state_reason=$2,acknowledged_at=now(),external_urls=$3::jsonb,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, input.summary, JSON.stringify(input.externalUrls)])).rows);
     await event(tx, meta, "agent.session.acknowledged", "agent_session", sessionId, Number((row as { revision: number }).revision), { summary: input.summary }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
   });
+  return normalizeAgentSessionResponse(response);
 }
 
 export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, input: { currentStepId?: string; usage: unknown }) {
@@ -551,7 +579,7 @@ export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, 
       idempotencyKey: meta.idempotencyKey,
       requestHash: meta.requestHash,
     })) {
-      return one((await tx.query("SELECT * FROM agent_sessions WHERE id=$1", [sessionId])).rows);
+      return normalizeAgentSessionResponse(one((await tx.query("SELECT * FROM agent_sessions WHERE id=$1", [sessionId])).rows));
     }
     const restorable = !["stopping","stale","completed","failed","canceled"].includes(projection.state);
     const nextHealth = restorable ? "healthy" : projection.heartbeat_health;
@@ -612,7 +640,7 @@ export async function heartbeat(db: Pool, meta: RequestMeta, sessionId: string, 
         reason: "heartbeat_received",
       }, session.team_id, sessionId, projection.sequence);
     }
-    return row;
+    return normalizeAgentSessionResponse(row);
   });
 }
 
