@@ -15,6 +15,7 @@ import {
 } from "../src/retention-soak-query.js";
 import { retentionSoakWorkerFreshnessProof } from "../src/retention-soak-provenance.js";
 import type { WorkerRuntimeIdentity } from "../src/worker-runtime-identity.js";
+import { exactArchiveRecoveryProofSql } from "../../../scripts/retention-restart-archive-proof.mjs";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
@@ -241,6 +242,43 @@ describe("retention soak sampling", () => {
 });
 
 describe("retention worker destructive-path fences", () => {
+  const archiveBaseEventBelowFloor = async (): Promise<{
+    segmentId: string;
+    objectKey: string;
+    objectVersionId: string;
+  }> => {
+    corruptReadback = false;
+    const archiver = createRetentionWorker({
+      db,
+      workerId: "below-floor-archive",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(archiver.archiveEvents()).resolves.toBe(1);
+    await db.query(
+      `UPDATE event_retention_state
+          SET pruned_through_cursor=$2,updated_at=now()
+        WHERE workspace_id=$1`,
+      [workspaceId, eventCursor],
+    );
+    return (
+      await db.query<{
+        segmentId: string;
+        objectKey: string;
+        objectVersionId: string;
+      }>(
+        `SELECT id AS "segmentId",object_key AS "objectKey",
+                object_version_id AS "objectVersionId"
+           FROM event_archive_segments
+          WHERE workspace_id=$1 AND membership_state='exact'`,
+        [workspaceId],
+      )
+    ).rows[0]!;
+  };
+
   it("marks corrupt uploads failed and deterministically verifies the same segment after restart", async () => {
     const first = createRetentionWorker({
       db,
@@ -1356,6 +1394,248 @@ describe("retention worker destructive-path fences", () => {
     expect((await readRuntime()).workerIdentityConflictCount).toBe("4");
   });
 
+  it("repairs an exact historical hole below the floor once without deleting an unarchived neighbor", async () => {
+    const segment = await archiveBaseEventBelowFloor();
+    const unarchivedId = await withTx(db, (tx) =>
+      appendEvent(tx, {
+        workspaceId,
+        actorId,
+        correlationId: randomUUID(),
+        type: "workspace.updated",
+        aggregateType: "workspace",
+        aggregateId: workspaceId,
+        payload: { reason: "unarchived historical neighbor" },
+      }),
+    );
+    const unarchivedCursor = (
+      await db.query<{ cursor: string }>(
+        `UPDATE domain_events
+            SET occurred_at=now()-interval '91 days'
+          WHERE id=$1 RETURNING cursor::text`,
+        [unarchivedId],
+      )
+    ).rows[0]!.cursor;
+    await db.query(
+      `UPDATE outbox_events
+          SET status='delivered',delivered_at=now()-interval '31 days'
+        WHERE domain_event_id=$1`,
+      [unarchivedId],
+    );
+    await db.query(
+      `UPDATE event_retention_state
+          SET pruned_through_cursor=$2,updated_at=now()
+        WHERE workspace_id=$1`,
+      [workspaceId, unarchivedCursor],
+    );
+    const repair = createRetentionWorker({
+      db,
+      workerId: "below-floor-repair",
+      config: { ...config, eventPruneEnabled: true },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+
+    await expect(repair.pruneEvents()).resolves.toBe(1);
+    expect(
+      (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
+        .rowCount,
+    ).toBe(0);
+    expect(
+      (
+        await db.query("SELECT 1 FROM domain_events WHERE id=$1", [unarchivedId])
+      ).rowCount,
+    ).toBe(1);
+    expect(
+      (
+        await db.query("SELECT 1 FROM outbox_events WHERE domain_event_id=$1", [
+          eventId,
+        ])
+      ).rowCount,
+    ).toBe(0);
+    expect(
+      (
+        await db.query<{ floored: boolean }>(
+          `SELECT floored_at IS NOT NULL AS floored
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, eventId],
+        )
+      ).rows,
+    ).toEqual([{ floored: true }]);
+    expect(
+      (
+        await db.query<{ state: string }>(
+          "SELECT state FROM event_archive_segments WHERE id=$1",
+          [segment.segmentId],
+        )
+      ).rows,
+    ).toEqual([{ state: "pruned" }]);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT pruned_through_cursor::text AS cursor
+             FROM event_retention_state WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.cursor,
+    ).toBe(unarchivedCursor);
+    await expect(repair.pruneEvents()).resolves.toBe(0);
+    expect(
+      (
+        await db.query("SELECT 1 FROM domain_events WHERE id=$1", [unarchivedId])
+      ).rowCount,
+    ).toBe(1);
+  });
+
+  it("fails below-floor repair closed for corrupt, missing, or digest-mismatched pinned records", async () => {
+    const segment = await archiveBaseEventBelowFloor();
+    const objectRef = `${segment.objectKey}@${segment.objectVersionId}`;
+    const pinnedBody = objects.get(objectRef)!;
+    const repair = createRetentionWorker({
+      db,
+      workerId: "below-floor-fail-closed",
+      config: { ...config, eventPruneEnabled: true },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+
+    corruptReadback = true;
+    await expect(repair.pruneEvents()).rejects.toThrow(
+      "ARTIFACT_CHECKSUM_MISMATCH",
+    );
+    corruptReadback = false;
+    objects.delete(objectRef);
+    await expect(repair.pruneEvents()).rejects.toThrow("ARCHIVE_OBJECT_MISSING");
+    objects.set(objectRef, pinnedBody);
+    await db.query(
+      "UPDATE domain_events SET event_type='approval.approved' WHERE id=$1",
+      [eventId],
+    );
+    await expect(repair.pruneEvents()).rejects.toThrow(
+      "ARCHIVE_RECORD_RECHECK_FAILED",
+    );
+    expect(
+      (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
+        .rowCount,
+    ).toBe(1);
+    expect(
+      (
+        await db.query<{ flooredAt: Date | null }>(
+          `SELECT floored_at AS "flooredAt"
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, eventId],
+        )
+      ).rows,
+    ).toEqual([{ flooredAt: null }]);
+  });
+
+  it("rolls back below-floor deletion, outbox cascade, and member state on transaction failure", async () => {
+    await archiveBaseEventBelowFloor();
+    const failing = createRetentionWorker({
+      db,
+      workerId: "below-floor-rollback",
+      config: { ...config, eventPruneEnabled: true },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      beforePruneCommit: () => {
+        throw new Error("INJECTED_BELOW_FLOOR_REPAIR_FAILURE");
+      },
+    });
+
+    await expect(failing.pruneEvents()).rejects.toThrow(
+      "INJECTED_BELOW_FLOOR_REPAIR_FAILURE",
+    );
+    expect(
+      (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
+        .rowCount,
+    ).toBe(1);
+    expect(
+      (
+        await db.query("SELECT 1 FROM outbox_events WHERE domain_event_id=$1", [
+          eventId,
+        ])
+      ).rowCount,
+    ).toBe(1);
+    expect(
+      (
+        await db.query<{ flooredAt: Date | null }>(
+          `SELECT floored_at AS "flooredAt"
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, eventId],
+        )
+      ).rows,
+    ).toEqual([{ flooredAt: null }]);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT pruned_through_cursor::text AS cursor
+             FROM event_retention_state WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.cursor,
+    ).toBe(eventCursor);
+  });
+
+  it("rejects a reclaimed fence before repairing a below-floor exact member", async () => {
+    await archiveBaseEventBelowFloor();
+    const stale = createRetentionWorker({
+      db,
+      workerId: "below-floor-stale-owner",
+      config: { ...config, eventPruneEnabled: true },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      afterPruneClaim: async (claim) => {
+        await db.query(
+          `UPDATE retention_job_state
+              SET lease_expires_at=now()-interval '1 second'
+            WHERE job_name=$1 AND workspace_id=$2
+              AND lease_owner=$3 AND fence=$4::bigint`,
+          [claim.jobName, claim.workspaceId, claim.owner, claim.fence],
+        );
+        const winner = createRetentionWorker({
+          db,
+          workerId: "below-floor-new-owner",
+          config: { ...config, eventPruneEnabled: true },
+          storage,
+          redisClient: redis,
+          redisMaxLen: 100,
+          workspaceScopeId: workspaceId,
+        });
+        const reclaimed = await winner.claim(
+          "event_prune",
+          claim.fixedCutoffAt,
+        );
+        expect(BigInt(reclaimed!.fence)).toBeGreaterThan(BigInt(claim.fence));
+      },
+    });
+
+    await expect(stale.pruneEvents()).rejects.toThrow("RETENTION_CLAIM_LOST");
+    expect(
+      (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
+        .rowCount,
+    ).toBe(1);
+    expect(
+      (
+        await db.query<{ flooredAt: Date | null }>(
+          `SELECT floored_at AS "flooredAt"
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, eventId],
+        )
+      ).rows,
+    ).toEqual([{ flooredAt: null }]);
+  });
+
   it("archives sparse old events exactly without covering intervening cursors", async () => {
     corruptReadback = false;
     const appendRetentionEvent = async (
@@ -1444,6 +1724,28 @@ describe("retention worker destructive-path fences", () => {
         )
       ).rowCount,
     ).toBe(0);
+    expect(
+      (
+        await db.query<{ count: string }>(
+          exactArchiveRecoveryProofSql({
+            workspaceId,
+            eventId: second.id,
+            eventCursor: second.cursor,
+          }),
+        )
+      ).rows[0]!.count,
+    ).toBe("0");
+    expect(
+      (
+        await db.query<{ count: string }>(
+          exactArchiveRecoveryProofSql({
+            workspaceId,
+            eventId,
+            eventCursor,
+          }),
+        )
+      ).rows[0]!.count,
+    ).toBe("1");
     expect(
       (
         await db.query<{ watermark: string }>(

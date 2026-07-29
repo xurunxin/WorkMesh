@@ -1150,6 +1150,191 @@ export function createRetentionWorker({
             recordSha256: string | null;
             flooredAt: Date | null;
           }>;
+        const belowFloor = (
+          await tx.query<PrefixCandidate>(
+            `
+          SELECT event.id AS "eventId",event.cursor::text AS "eventCursor",
+                 event.event_type AS "eventType",
+                 event.occurred_at AS "occurredAt",
+                 member.record_sha256 AS "recordSha256",
+                 member.floored_at AS "flooredAt",
+                 segment.id,segment.workspace_id AS "workspaceId",
+                 segment.start_cursor::text AS "startCursor",
+                 segment.end_cursor::text AS "endCursor",
+                 segment.row_count AS "rowCount",
+                 segment.snapshot_digest AS "snapshotDigest",
+                 segment.object_key AS "objectKey",
+                 segment.object_version_id AS "objectVersionId",
+                 segment.object_size_bytes::text AS "objectSizeBytes",
+                 segment.object_sha256 AS "objectSha256",
+                 segment.retain_until AS "retainUntil",
+                 segment.pruned_at AS "prunedAt",segment.state,
+                 segment.membership_state AS "membershipState"
+            FROM event_archive_segment_events member
+            JOIN event_archive_segments segment
+              ON segment.id=member.segment_id
+             AND segment.workspace_id=member.workspace_id
+             AND segment.membership_state='exact'
+             AND segment.state IN ('verified','pruned')
+             AND segment.retain_until>=segment.created_at+interval '365 days'
+             AND segment.retain_until>now()
+            JOIN domain_events event
+              ON event.workspace_id=member.workspace_id
+             AND event.id=member.event_id
+             AND event.cursor=member.event_cursor
+            JOIN outbox_events outbox
+              ON outbox.domain_event_id=event.id
+             AND outbox.status='delivered'
+           WHERE member.workspace_id=$1
+             AND member.event_cursor<=$2::bigint
+             AND member.floored_at IS NULL
+             AND event.occurred_at<=$3
+           ORDER BY member.event_cursor
+           FOR UPDATE OF event,member,segment,outbox SKIP LOCKED
+           LIMIT $4
+        `,
+            [
+              active.workspaceId,
+              floor.cursor,
+              active.fixedCutoffAt,
+              config.batchSize,
+            ],
+          )
+        ).rows;
+        let repairedDeleted = 0;
+        let repairedProtected = 0;
+        let repairedPrunableIds: string[] = [];
+        if (belowFloor.length) {
+          const repairRecords = await loadArchiveRecords(tx, {
+            workspaceId: active.workspaceId,
+            afterCursor: "0",
+            cutoff: active.fixedCutoffAt,
+            endCursor: floor.cursor,
+            eventIds: belowFloor.map((candidate) => candidate.eventId),
+            excludeTrustedMembership: false,
+            limit: belowFloor.length,
+          });
+          if (repairRecords.length !== belowFloor.length)
+            throw new Error("ARCHIVE_BELOW_FLOOR_RECHECK_FAILED");
+          const parsedBySegment = new Map<string, readonly ArchiveMember[]>();
+          for (const segment of new Map(
+            belowFloor.map((candidate) => [candidate.id, candidate]),
+          ).values()) {
+            const body = await objectStore.readVerifiedObject(
+              archiveExpectation(segment),
+            );
+            parsedBySegment.set(segment.id, parseArchiveMembers(body, segment));
+          }
+          const onlineById = new Map(
+            repairRecords.map((record) => [record.event.id, record]),
+          );
+          for (const candidate of belowFloor) {
+            const archived = parsedBySegment
+              .get(candidate.id)
+              ?.find((member) => member.eventId === candidate.eventId);
+            const online = onlineById.get(candidate.eventId);
+            if (
+              !archived ||
+              !online ||
+              archived.eventCursor !== candidate.eventCursor ||
+              archived.recordSha256 !== candidate.recordSha256 ||
+              sha256(canonicalLine(online)) !== candidate.recordSha256
+            )
+              throw new Error("ARCHIVE_RECORD_RECHECK_FAILED");
+          }
+          const repairIds = repairRecords.map((record) => record.event.id);
+          const repairBlocker = await tx.query<{ id: string }>(
+            `
+            SELECT event.id
+              FROM domain_events event
+             WHERE event.id=ANY($1::uuid[])
+                AND (
+                  NOT EXISTS(SELECT 1 FROM outbox_events outbox
+                              WHERE outbox.domain_event_id=event.id
+                                AND outbox.status='delivered')
+                  OR EXISTS(SELECT 1 FROM a2a_deliveries a2a
+                             WHERE a2a.domain_event_id=event.id)
+                  OR EXISTS(SELECT 1 FROM agent_webhook_deliveries delivery
+                             WHERE delivery.event_id=event.id)
+                )
+          `,
+            [repairIds],
+          );
+          const repairProtectedIds = new Set(
+            repairBlocker.rows.map((row) => row.id),
+          );
+          repairedPrunableIds = repairRecords
+            .filter(
+              (record) =>
+                ordinaryPrunableEventTypes.has(record.event.event_type) &&
+                !repairProtectedIds.has(record.event.id),
+            )
+            .map((record) => record.event.id);
+          const repaired = await tx.query(
+            `
+            DELETE FROM domain_events
+             WHERE workspace_id=$1 AND id=ANY($2::uuid[])
+               AND cursor<=$3::bigint AND occurred_at<=$4
+             RETURNING id
+          `,
+            [
+              active.workspaceId,
+              repairedPrunableIds,
+              floor.cursor,
+              active.fixedCutoffAt,
+            ],
+          );
+          if (repaired.rowCount !== repairedPrunableIds.length)
+            throw new Error("EVENT_BELOW_FLOOR_REPAIR_COUNT_MISMATCH");
+          const repairedMembers = await tx.query(
+            `
+            UPDATE event_archive_segment_events member
+               SET floored_at=COALESCE(member.floored_at,now())
+              FROM event_archive_segments segment
+             WHERE member.segment_id=segment.id
+               AND member.workspace_id=segment.workspace_id
+               AND member.workspace_id=$1
+               AND member.event_id=ANY($2::uuid[])
+               AND member.event_cursor<=$3::bigint
+               AND member.floored_at IS NULL
+               AND segment.membership_state='exact'
+               AND segment.state IN ('verified','pruned')
+          `,
+            [active.workspaceId, repairIds, floor.cursor],
+          );
+          if (repairedMembers.rowCount !== belowFloor.length)
+            throw new Error("ARCHIVE_BELOW_FLOOR_MEMBER_COUNT_MISMATCH");
+          await tx.query(
+            `
+            UPDATE event_archive_segments segment
+               SET state='pruned',pruned_at=COALESCE(pruned_at,now()),
+                   updated_at=now()
+             WHERE id=ANY($1::uuid[]) AND state='verified'
+               AND membership_state='exact'
+               AND NOT EXISTS(
+                 SELECT 1 FROM event_archive_segment_events member
+                  WHERE member.segment_id=segment.id
+                    AND member.floored_at IS NULL
+               )
+               AND EXISTS(
+                 SELECT 1 FROM retention_job_state state
+                  WHERE state.job_name=$2
+                    AND state.workspace_id=segment.workspace_id
+                    AND state.lease_owner=$3
+                    AND state.fence=$4::bigint
+                    AND state.lease_expires_at>now()
+               )
+          `,
+            [
+              [...new Set(belowFloor.map((candidate) => candidate.id))],
+              active.jobName,
+              active.owner,
+              active.fence,
+            ],
+          );
+          repairedDeleted = repaired.rowCount ?? 0;
+          repairedProtected = repairRecords.length - repairedDeleted;
+        }
         const candidates = (
           await tx.query<PrefixCandidate>(
             `
@@ -1187,10 +1372,30 @@ export function createRetentionWorker({
            FOR UPDATE OF event
            LIMIT $3
         `,
-            [active.workspaceId, floor.cursor, config.batchSize],
+            [
+              active.workspaceId,
+              floor.cursor,
+              Math.max(0, config.batchSize - belowFloor.length),
+            ],
           )
         ).rows;
         if (!candidates.length) {
+          if (belowFloor.length) {
+            await beforePruneCommit?.({
+              workspaceId: active.workspaceId,
+              segmentId: belowFloor[0]!.id,
+              eventIds: repairedPrunableIds,
+            });
+            await writeGuardedProgress(tx, active, {
+              counters: {
+                pruned: repairedDeleted,
+                protected: repairedProtected,
+                repairedBelowFloor: belowFloor.length,
+              },
+              complete: belowFloor.length < config.batchSize,
+            });
+            return repairedDeleted;
+          }
           await writeGuardedProgress(tx, active, { complete: true });
           return 0;
         }
@@ -1207,6 +1412,22 @@ export function createRetentionWorker({
           prefix.push(candidate);
         }
         if (!prefix.length) {
+          if (belowFloor.length) {
+            await beforePruneCommit?.({
+              workspaceId: active.workspaceId,
+              segmentId: belowFloor[0]!.id,
+              eventIds: repairedPrunableIds,
+            });
+            await writeGuardedProgress(tx, active, {
+              counters: {
+                pruned: repairedDeleted,
+                protected: repairedProtected,
+                repairedBelowFloor: belowFloor.length,
+              },
+              complete: true,
+            });
+            return repairedDeleted;
+          }
           await writeGuardedProgress(tx, active, { complete: true });
           return 0;
         }
@@ -1357,17 +1578,19 @@ export function createRetentionWorker({
         );
         await beforePruneCommit?.({
           workspaceId: active.workspaceId,
-          segmentId: prefix[0]!.id,
-          eventIds: prunableIds,
+          segmentId: belowFloor[0]?.id ?? prefix[0]!.id,
+          eventIds: [...repairedPrunableIds, ...prunableIds],
         });
         await writeGuardedProgress(tx, active, {
           watermarkCursor: lastPrefix.eventCursor,
           counters: {
-            pruned: removed.rowCount ?? 0,
-            protected: records.length - prunableIds.length,
+            pruned: repairedDeleted + (removed.rowCount ?? 0),
+            protected:
+              repairedProtected + records.length - prunableIds.length,
+            repairedBelowFloor: belowFloor.length,
           },
         });
-        return removed.rowCount ?? 0;
+        return repairedDeleted + (removed.rowCount ?? 0);
       });
       return deleted;
     } catch (error) {

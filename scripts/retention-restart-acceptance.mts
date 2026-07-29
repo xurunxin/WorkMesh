@@ -7,6 +7,7 @@ import {
   randomAcceptanceMasterKey,
   randomAcceptanceSecret as randomSecret,
 } from "./retention-acceptance-secrets.mjs";
+import { exactArchiveRecoveryProofSql } from "./retention-restart-archive-proof.mjs";
 import { parseComposeRows } from "./retention-compose-json.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -570,11 +571,11 @@ try {
   await waitUntil(
     "RETENTION_ACCEPTANCE_ARCHIVE_RECOVERY_TIMEOUT",
     () => psql(
-      `SELECT count(*) FROM event_archive_segments
-        WHERE workspace_id='${workspaceId}' AND state='verified'
-          AND start_cursor<=${recoveredCursor}::bigint
-          AND end_cursor>=${recoveredCursor}::bigint
-          AND object_version_id<>''`,
+      exactArchiveRecoveryProofSql({
+        workspaceId,
+        eventId: checkpointEventId,
+        eventCursor: recoveredCursor,
+      }),
     ) === "1",
   );
   const fenceRow = psql(

@@ -159,6 +159,18 @@ physically present but may fall below the realtime floor after their exact
 member is verified and floored. Delivered outbox cleanup requires that exact
 floored member and never uses a segment cursor range. Do not delete protected
 rows manually.
+
+Each prune run first repairs a bounded set of historical online holes at or
+below the existing floor. A repair requires the exact member, a verified or
+pruned segment, pinned-version readback, matching per-event digest, the fixed
+cutoff, delivered outbox proof, the ordinary-event allowlist, no protected
+reference, and the current job fence in one transaction. It marks every
+successfully rechecked member `floored_at`, deletes only eligible ordinary
+events (with their outbox proof through the existing cascade), and records
+`repairedBelowFloor` in the prune counters. It never moves the floor. Missing
+objects, checksum/digest changes, or fence loss fail closed and leave the
+online event, outbox proof, and member state unchanged.
+
 Disable the switch and investigate any archive or checksum failure.
 
 Issue #11, not this endpoint, owns any future archive download, discovery,

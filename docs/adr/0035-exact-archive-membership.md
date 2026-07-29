@@ -58,6 +58,19 @@ Protected events can remain online below the floor. Delivered outbox cleanup
 requires the event's exact member to be floored at or below the Workspace
 floor; cursor envelopes are never consulted.
 
+Before scanning the prefix above the floor, pruning also repairs a bounded set
+of historical online rows at or below the current floor whose exact member was
+not previously marked `floored_at`. The repair holds the same Workspace floor
+and job-fence locks, accepts only `exact` members in verified or pruned
+segments, rereads the pinned object version, rechecks the canonical per-event
+digest, cutoff, delivered outbox proof, event allowlist, and protected
+references, and commits event deletion plus member state together. It never
+lowers or advances the floor and never infers membership from an object
+envelope. Missing or changed object bytes, a digest mismatch, or a lost fence
+rolls back the whole repair. Ordinary event deletion removes its outbox proof
+through the existing cascade; protected event outbox proof remains subject to
+the existing exact-floored cleanup rule.
+
 Formal soak, status, restart recovery, backlog, current-run evidence, and
 restore gates join exact membership. `lastVerifiedEndCursor` is the maximum
 exact archived event cursor and remains telemetry. Restore can explicitly read
@@ -81,6 +94,9 @@ definition. Sparse segments may be partially floored while remaining
 `verified`. Legacy materialization requires pinned-object availability before
 pruning can cross the affected prefix. Membership facts intentionally have no
 foreign key to `domain_events`, so they survive ordinary event deletion.
+`retention_job_state.counters.repairedBelowFloor` reports the bounded member
+repair count for the latest prune progress write; `floored_at` remains the
+authoritative per-member completion fact.
 
 Migration
 

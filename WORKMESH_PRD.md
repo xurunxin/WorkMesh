@@ -2107,6 +2107,11 @@ Docker Compose 服务：
   membership 才表示归档覆盖，job watermark 只是最高已归档 cursor 的单调
   telemetry。prune 按 Workspace 在线 cursor 前缀推进，遇到未归档或未到
   cutoff 的首个事件即停止；cleanup 同样只信已 floored 的 exact member。
+  对历史错误遗留在当前 floor 以下、后来已建立 exact membership 但
+  `floored_at` 仍为空的在线事件，prune 在相同 floor lock 与 fence 下执行有界
+  repair：固定 cutoff、delivered outbox、pinned version、per-event digest、
+  allowlist 与引用全部重检后才原子删除并标记 member；repair 不降低或推进
+  floor，也不信任 segment cursor envelope。
   未投递事件不阻止后续合格事件归档，但会阻止 floor 越过它。未知、受保护、A2A 引用、Agent webhook
   引用、未投递 outbox、审计和恢复事实保留在 PostgreSQL；Agent webhook
   delivery reference 是持久协议事实，不进入通用 30 天 cleanup；

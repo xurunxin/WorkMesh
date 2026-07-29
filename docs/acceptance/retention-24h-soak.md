@@ -275,4 +275,14 @@ fails without the already-held formal lock. A dry run never substitutes for a
 The soak is one release-gate component. Run the separate restore rehearsal and
 restart/contention acceptance harness for Object Lock readback, early-delete
 rejection, isolated restore, reconnect/`CURSOR_EXPIRED`, and restart recovery
-evidence.
+evidence. The restart gate proves recovery with the recovered event's exact
+Workspace, event ID, and cursor membership in a trusted exact segment; a sparse
+segment envelope such as cursors 10 and 30 never proves cursor 20.
+
+Before enabling destructive pruning, the Worker retention integration gate must
+also pass the historical below-floor repair matrix: no exact member means no
+deletion; missing/corrupt object bytes, a per-record digest mismatch, or a
+changed fence fails closed; an eligible exact member is deleted and marked
+once without lowering or advancing the floor; outbox proof follows the existing
+safe cascade/cleanup rules; replay is idempotent; and an injected transaction
+failure rolls back event, outbox, and member changes.
