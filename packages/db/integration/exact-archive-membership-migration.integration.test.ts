@@ -117,19 +117,22 @@ describe("0029 exact archive membership migration", () => {
          RETURNING id`,
       )
     ).rows[0]!.id;
+    const fixedCutoffAt = new Date();
     const segmentId = (
       await clean.query<{ id: string; membershipState: string }>(
         `INSERT INTO event_archive_segments(
            workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
            object_key,object_version_id,object_size_bytes,object_sha256,
-           snapshot_digest,retain_until
-         ) VALUES($1,1,1,now(),1,'new-exact-plan','version-1',1,$2,$3,
-                  now()+interval '366 days')
+           snapshot_digest,metadata,retain_until,planned_fence
+         ) VALUES($1,1,1,$2,1,'new-exact-plan',NULL,1,$3,$4,$5,
+                  now()+interval '366 days',1)
          RETURNING id,membership_state AS "membershipState"`,
         [
           workspaceId,
+          fixedCutoffAt,
           `sha256:${"b".repeat(64)}`,
           `sha256:${"a".repeat(64)}`,
+          { fixedCutoffAt: fixedCutoffAt.toISOString() },
         ],
       )
     ).rows[0]!;
