@@ -52,8 +52,24 @@ describe("0026 retention, archive, and heartbeat health migration", () => {
           record_class: "domain_event.a2a_referenced",
           delete_allowed: false,
         }),
+        expect.objectContaining({
+          record_class: "webhook.agent_delivery_reference",
+          delete_allowed: false,
+        }),
+        expect.objectContaining({
+          record_class: "webhook.provider_processed",
+          online_days: 30,
+          delete_allowed: true,
+        }),
       ]),
     );
+    expect(
+      (
+        await db.query(
+          "SELECT 1 FROM information_schema.tables WHERE table_schema=current_schema() AND table_name='heartbeat_idempotency_keys'",
+        )
+      ).rowCount,
+    ).toBe(1);
     const indexes = await db.query<{ indexname: string }>(`
       SELECT indexname FROM pg_indexes
        WHERE schemaname=current_schema()
@@ -61,11 +77,10 @@ describe("0026 retention, archive, and heartbeat health migration", () => {
            'api_idempotency_replay_cleanup',
            'api_idempotency_conflict_cleanup',
            'outbox_delivered_retention',
-           'agent_webhook_delivered_retention',
            'provider_webhook_processed_retention'
          )
     `);
-    expect(indexes.rowCount).toBe(5);
+    expect(indexes.rowCount).toBe(4);
   });
 
   it("defaults generic replay to 24h/30d and enforces a 365d archive floor", async () => {
