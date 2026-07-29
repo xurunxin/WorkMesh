@@ -103,6 +103,44 @@ describe('WorkMesh MCP adapter', () => {
     } finally { await protocol.close(); await server.close() }
   })
 
+  it('uses the shared PostgreSQL bigint cursor boundary', async () => {
+    const listEvents = vi.fn().mockResolvedValue({
+      items: [],
+      nextCursor: '9223372036854775807',
+    })
+    const api = {
+      listEvents,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const accepted = await protocol.callTool({
+        name: 'list_events',
+        arguments: { cursor: '9223372036854775807' },
+      })
+      expect(accepted.isError).not.toBe(true)
+      expect(listEvents).toHaveBeenCalledWith({
+        cursor: '9223372036854775807',
+        limit: undefined,
+      })
+
+      const rejected = await protocol.callTool({
+        name: 'list_events',
+        arguments: { cursor: '9223372036854775808' },
+      })
+      expect(rejected.isError).toBe(true)
+      expect(rejected.content).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          text: expect.stringContaining(
+            'Cursor exceeds the PostgreSQL bigint range',
+          ),
+        }),
+      ]))
+      expect(listEvents).toHaveBeenCalledTimes(1)
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('continues session activities with the opaque cursor returned by page one', async () => {
     const getActivities = vi.fn()
       .mockResolvedValueOnce({

@@ -32,3 +32,4 @@
 \ir packages/db/migrations/0022_route_policy_authorization_denials.sql
 \ir packages/db/migrations/0023_auth_idempotency_records.sql
 \ir packages/db/migrations/0024_cursor_pagination_indexes.sql
+\ir packages/db/migrations/0025_realtime_event_envelope.sql

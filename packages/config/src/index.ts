@@ -26,6 +26,7 @@ const optionalString = z.preprocess(
   z.string().optional(),
 )
 const redisKeyPrefix = z.string().trim().min(1).max(96).regex(/^[A-Za-z0-9:_-]+$/).default('authrl')
+const realtimeRedisMaxLen = boundedInt(100, 10_000_000, 100_000)
 const proxyCidrs = z.string().default('').transform((value, context) => {
   const entries = value.split(',').map(entry => entry.trim()).filter(Boolean)
   if (entries.length > 32) {
@@ -126,6 +127,13 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_BACKOFF_BASE_MS: boundedInt(10, 60_000, 500), AUTH_RATE_LIMIT_BACKOFF_MAX_MS: boundedInt(100, 3_600_000, 60_000),
   AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS: boundedInt(50, 30_000, 500), AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS: boundedInt(50, 30_000, 750),
   AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: boundedInt(1_000, 3_600_000, 60_000),
+  REALTIME_HEALTHY_RECONCILE_MS: boundedInt(1_000, 300_000, 15_000),
+  REALTIME_FALLBACK_RECONCILE_MS: boundedInt(250, 30_000, 1_000),
+  REALTIME_BATCH_LIMIT: boundedInt(1, 500, 100),
+  REALTIME_HEARTBEAT_MS: boundedInt(1_000, 120_000, 15_000),
+  REALTIME_BACKPRESSURE_TIMEOUT_MS: boundedInt(100, 30_000, 5_000),
+  REALTIME_MAX_CLIENTS: boundedInt(1, 100_000, 1_000),
+  WORKMESH_REALTIME_REDIS_MAXLEN: realtimeRedisMaxLen,
   PAGINATION_CURSOR_KEYS: optionalString,
   PAGINATION_CURSOR_ACTIVE_KID: optionalString,
   PAGINATION_CURSOR_TTL_SECONDS: boundedInt(60, 86_400, 900),
@@ -133,6 +141,8 @@ const envSchema = z.object({
 }).superRefine((value, context) => {
   if (value.AUTH_RATE_LIMIT_BACKOFF_BASE_MS > value.AUTH_RATE_LIMIT_BACKOFF_MAX_MS)
     context.addIssue({ code: z.ZodIssueCode.custom, path: ['AUTH_RATE_LIMIT_BACKOFF_BASE_MS'], message: 'Backoff base must not exceed backoff maximum' })
+  if (value.REALTIME_FALLBACK_RECONCILE_MS > value.REALTIME_HEALTHY_RECONCILE_MS)
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['REALTIME_FALLBACK_RECONCILE_MS'], message: 'Realtime fallback reconciliation must not be slower than healthy reconciliation' })
 })
 export type Config = z.infer<typeof envSchema> & {
   sessionCookieSecure: boolean
@@ -140,6 +150,18 @@ export type Config = z.infer<typeof envSchema> & {
   paginationCursorKeys: ReadonlyMap<string, Buffer>
   paginationCursorActiveKid: string
 }
+
+export type RealtimeRedisHintConfig = Readonly<{
+  redisUrl: string
+  maxLen: number
+}>
+
+export const loadRealtimeRedisHintConfig = (
+  env: NodeJS.ProcessEnv = process.env,
+): RealtimeRedisHintConfig => ({
+  redisUrl: z.string().url().parse(env.REDIS_URL),
+  maxLen: realtimeRedisMaxLen.parse(env.WORKMESH_REALTIME_REDIS_MAXLEN),
+})
 
 function secretMaterialCandidates(value: string | undefined): Buffer[] {
   if (!value) return []

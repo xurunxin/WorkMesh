@@ -836,6 +836,7 @@ export async function executeAutomationAction(
       type: 'notification.created',
       aggregateType: 'notification',
       aggregateId: notification.id,
+      audienceActorId: recipientActorId,
       payload: { runId: input.runId },
     })
   } else if (input.action.type === 'call_webhook') {

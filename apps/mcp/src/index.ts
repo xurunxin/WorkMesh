@@ -1,7 +1,10 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { WorkMeshClient, WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk'
 import { z } from 'zod'
-import { mcpPolicyBindings } from '@workmesh/contracts'
+import {
+  durableEventCursorSchema,
+  mcpPolicyBindings,
+} from '@workmesh/contracts'
 
 export type McpMode = 'read-only' | 'read-write'
 export { mcpPolicyBindings }
@@ -28,6 +31,17 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
     const { cursor, limit, ...query } = input
     return tool(() => options.client.listWorkItems(query, { cursor, limit }))
   })
+  server.registerTool('list_events', {
+    description: 'List authorized durable domain events after the caller-supplied decimal cursor. The caller owns and persists its checkpoint; MCP keeps no global cursor.',
+    inputSchema: {
+      cursor: durableEventCursorSchema,
+      limit: z.number().int().min(1).max(500).optional(),
+    },
+  }, async input =>
+    tool(() => options.client.listEvents({
+      cursor: input.cursor,
+      limit: input.limit,
+    })))
   server.registerTool('list_session_activities', { description: 'List authorized immutable session activities. Pass nextCursor back as cursor to continue.', inputSchema: { sessionId, cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input =>
     tool(() => options.client.getActivities(input.sessionId, {
       cursor: input.cursor,

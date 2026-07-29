@@ -1,11 +1,13 @@
 'use client'
 
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import { ApiError, apiBase, apiRequest, clearCsrfToken, saveCsrfToken } from '../lib/api'
+import { ApiError, apiRequest, clearCsrfToken, saveCsrfToken } from '../lib/api'
 import { type Agent, type AgentSession, type Approval, agentHeartbeat, agentName, agentProvider, agentStateClass, agentStateLabel, agentVersion, canManageAgentTeamAccess, formatTime, grantAgentTeamAccess, normalizeApproval, revokeAgentTeamAccess } from '../lib/agents'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
+import { type RealtimeResource, useRealtimeSubscription } from '../lib/realtime'
+import { agentRegistryRefreshTargets } from '../lib/realtime-refresh'
 
-type AuthMe = { actor: { id: string; display_name: string; workspace_role: 'admin' | 'member' }; csrfToken: string }
+type AuthMe = { actor: { id: string; display_name: string; workspace_id: string; workspace_role: 'admin' | 'member' }; csrfToken: string }
 type Team = { id: string; name: string; key: string }
 type AgentFilter = 'all' | 'active' | 'inactive'
 
@@ -47,22 +49,28 @@ export default function AgentsPage() {
     } finally { setLoading(false) }
   }, [])
   useEffect(() => { void load() }, [load])
-  useEffect(() => {
-    if (!actor) return
-    let timer: number | undefined
-    const cursor = window.localStorage.getItem('workmesh.events.cursor')
-    const stream = new EventSource(`${apiBase}/api/v1/events/stream${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`, { withCredentials: true })
-    stream.onmessage = event => {
-      try { const payload = JSON.parse(event.data) as { cursor?: number }; const nextCursor = payload.cursor ?? Number(event.lastEventId); if (Number.isSafeInteger(nextCursor) && nextCursor >= 0) window.localStorage.setItem('workmesh.events.cursor', String(nextCursor)) } catch { /* Refetch remains authoritative. */ }
-      if (timer !== undefined) window.clearTimeout(timer)
-      timer = window.setTimeout(() => {
-        void load()
-        void agentsPage.refresh(); void teamsPage.refresh()
-        void sessionsPage.refresh(); void approvalsPage.refresh()
-      }, 150)
-    }
-    return () => { if (timer !== undefined) window.clearTimeout(timer); stream.close() }
-  }, [actor?.id, agentsPage.refresh, approvalsPage.refresh, load, sessionsPage.refresh, teamsPage.refresh])
+  const realtimeResources = useMemo<RealtimeResource[]>(() => [
+    ...(actor
+      ? [{ type: 'workspace' as const, id: actor.workspace_id }]
+      : []),
+    ...teams.map(team => ({ type: 'team' as const, id: team.id })),
+    ...sessions.map(session => ({
+      type: 'session' as const,
+      id: session.id,
+    })),
+  ], [actor?.workspace_id, sessions, teams])
+  useRealtimeSubscription(realtimeResources, invalidation => {
+    const targets = agentRegistryRefreshTargets(invalidation)
+    if (invalidation.reason === 'resync')
+      return Promise.all([
+        agentsPage.refresh(), teamsPage.refresh(),
+        sessionsPage.refresh(), approvalsPage.refresh(),
+      ]).then(() => undefined)
+    if (targets.has('agents')) void agentsPage.refresh()
+    if (targets.has('teams')) void teamsPage.refresh()
+    if (targets.has('sessions')) void sessionsPage.refresh()
+    if (targets.has('approvals')) void approvalsPage.refresh()
+  })
 
   const grantAccess = async (event: FormEvent<HTMLFormElement>, agent: Agent, team: Team) => {
     event.preventDefault()

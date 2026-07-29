@@ -1244,3 +1244,39 @@ SDK 要求：
 Agent SDK、MCP 与 Native HTTP 的集合读取统一消费 `{items,nextCursor}`。调用方只能原样回传 `nextCursor`，不得解析、改写或跨 Route、Workspace、Actor、过滤条件复用。页大小默认 50，允许 1 到 200。授权在每一页重新验证；Team Access、Delegation、Capability、Resource Scope 或 Session 撤销后，后续页必须立即缩短或拒绝，Lease 不构成授权。
 
 此不透明游标只用于 REST 资源集合。Domain Event、SSE `Last-Event-ID` 和 A2A Task Event 的十进制 durable cursor 语义保持不变。
+
+## Realtime Event 读取
+
+Domain Event cursor 是 PostgreSQL `domain_events.cursor` 的 canonical decimal
+string，即使超过 `2^53` 也必须逐位保真；它不能与集合分页 token、Session
+sequence 或 A2A Task Event cursor 混用。Agent SDK 的 `listEvents` 和
+`streamEvents` 要求调用方显式提供 checkpoint，只有瞬时网络/5xx/429 才自动
+重试。`CURSOR_EXPIRED` 必须作为 typed error 交给调用方重建 durable snapshot，
+不得静默跳过历史。
+
+Redis Stream 只是可丢失、可重复的 wake hint，且只允许 `workspaceId` 与
+decimal `cursor` 两个字段；不得写入 topic、payload、audience 或 resource
+metadata，并以有界 `WORKMESH_REALTIME_REDIS_MAXLEN` approximate `MAXLEN`
+裁剪。授权和 replay 始终来自
+PostgreSQL；每一批投递都重新验证 Agent token、active Session、Delegation、
+Capability 和 normalized Resource Scope。授权撤销或 Session stop 后不得继续
+投递，Lease 不构成读取授权。v2 envelope 的 `audience`、`scopes` 和
+`invalidates` 使用固定资源词汇；任何资源 metadata 与 Domain Event 必须在同一
+事务写入。Human 读取也必须在最终 SQL 中使用 normalized Team resource：
+显式 recipient 只对目标 Actor 可见；非 Admin 的 undirected multi-Team Event
+要求当前 Actor 至少属于其中一个精确 Team，Initiative Owner 通过持久化 Owner
+关系单独验证。只有不含任何非 Workspace resource 的 Event 才能按 Workspace
+范围读取；`team_id IS NULL` 本身不能扩大 audience，无法证明资源的历史
+Initiative/Project Dependency Event 对普通成员 fail closed。
+
+Human Session、个人 saved view（包括带可选 Team 关联的 form）、private
+advanced view、notification 与 notification preference 的 producer 必须提供
+精确 recipient，并由持久化 owner/recipient 关系复核。无法证明的 private
+form 不得 fallback 到 Workspace；Workspace Admin 也不能绕过 direct-recipient
+privacy。`team_id` 为空但具有非 Workspace normalized scopes 的 Event 必须使用
+`audience.visibility=resource`，不得声明为 Workspace audience。
+
+SSE 容量耗尽返回 structured `REALTIME_CAPACITY_EXCEEDED` 503 与
+`Retry-After`。SDK/Web 对 clean EOF、post-header transient error、429/5xx 和
+该 503 使用可取消、有界指数退避（含 jitter）；401/403 授权或撤权拒绝是
+terminal，`CURSOR_EXPIRED` 走显式 resync。

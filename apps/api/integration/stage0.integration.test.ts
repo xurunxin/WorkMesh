@@ -78,7 +78,7 @@ const call = async (
     },
   });
 
-async function nextSseId(cursor: number): Promise<number> {
+async function nextSseId(cursor: string): Promise<string> {
   const controller = new AbortController();
   const response = await fetch(
     `${appUrl}/api/v1/events/stream?cursor=${cursor}`,
@@ -103,7 +103,7 @@ async function nextSseId(cursor: number): Promise<number> {
     }
     await reader.cancel();
     controller.abort();
-    return Number(match[1]);
+    return match[1]!;
   }
 }
 
@@ -361,9 +361,20 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     expect(deletedComment.rows[0]).toMatchObject({ is_resolved: true });
     expect(deletedComment.rows[0]?.deleted_at).not.toBeNull();
 
-    const cursor = Number(
+    const cursor = String(
       (await call("GET", "/api/v1/events?cursor=0")).json<Event[]>().at(-1)
-        ?.cursor ?? 0,
+        ?.cursor ?? "0",
+    );
+    const exactSseCursorFloor = 9_007_199_254_740_993n;
+    await db.query(
+      `SELECT setval(
+         'domain_events_cursor_seq',
+         GREATEST($1::bigint,(
+           SELECT COALESCE(max(cursor),0)+1 FROM domain_events
+         )),
+         false
+       )`,
+      [exactSseCursorFloor.toString()],
     );
     const streamCreated = await call("POST", "/api/v1/work-items", {
       teamId,
@@ -374,7 +385,11 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     });
     const streamItem = streamCreated.json<Created>();
     const firstStreamCursor = await nextSseId(cursor);
-    expect(firstStreamCursor).toBeGreaterThan(cursor);
+    expect(firstStreamCursor).toBe(BigInt(firstStreamCursor).toString());
+    expect(BigInt(firstStreamCursor)).toBeGreaterThanOrEqual(
+      exactSseCursorFloor,
+    );
+    expect(BigInt(firstStreamCursor)).toBeGreaterThan(BigInt(cursor));
     const streamPatch = await call(
       "PATCH",
       `/api/v1/work-items/${streamItem.id}`,
@@ -383,7 +398,9 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     );
     expect(streamPatch.statusCode).toBe(200);
     const reconnectedCursor = await nextSseId(firstStreamCursor);
-    expect(reconnectedCursor).toBeGreaterThan(firstStreamCursor);
+    expect(BigInt(reconnectedCursor)).toBeGreaterThan(
+      BigInt(firstStreamCursor),
+    );
 
     const projectDeleted = await call(
       "DELETE",

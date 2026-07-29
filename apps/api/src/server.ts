@@ -33,6 +33,7 @@ import {
   appendEvent,
   assertPasswordPolicy,
   createDb,
+  type Db,
   hashPassword,
   installWorkspaceInTx,
   opaqueToken,
@@ -41,6 +42,7 @@ import {
   withTx,
 } from "@workmesh/db";
 import { DomainError, etag, parseRevision } from "@workmesh/domain";
+import { RealtimeMetrics } from "@workmesh/observability";
 import {
   commands,
   mutate,
@@ -71,15 +73,21 @@ import {
   installBootstrapAuthentication,
   verifyBootstrapRequest,
 } from "./bootstrap-auth.js";
-import {
-  assertEventAudienceActive,
-  eventAudienceQuery,
-} from "./authz/event-audience.js";
 import { createPaginator, type Paginator } from "./pagination.js";
 import {
   liveHumanTeamReadPredicate,
   liveSessionReadPredicate,
 } from "./live-read-authorization.js";
+import { createEventReader } from "./realtime/event-reader.js";
+import {
+  createRealtimeCoordinator,
+} from "./realtime/coordinator.js";
+import {
+  NoopWakeSource,
+  RedisStreamWakeSource,
+  type RealtimeWakeSource,
+} from "./realtime/wake-source.js";
+import { registerRealtimeRoutes } from "./realtime/routes.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -244,27 +252,20 @@ function scopedTeamPredicate(
   return ` AND EXISTS (SELECT 1 FROM memberships m JOIN teams mt ON mt.id=m.team_id AND mt.workspace_id=m.workspace_id WHERE m.workspace_id=$1 AND m.team_id=${column} AND m.actor_id=$${values.length} AND mt.deleted_at IS NULL)`;
 }
 
-function parseCursor(raw: unknown): number {
-  if (typeof raw !== "string" && typeof raw !== "number")
-    throw new DomainError(
-      "VALIDATION_ERROR",
-      "Cursor must be a non-negative safe integer",
-    );
-  const cursor = typeof raw === "number" ? raw : Number(raw);
-  if (!Number.isSafeInteger(cursor) || cursor < 0)
-    throw new DomainError(
-      "VALIDATION_ERROR",
-      "Cursor must be a non-negative safe integer",
-    );
-  return cursor;
-}
-
 export const buildApp = (options: {
   features?: FeatureConfig;
   releaseInfo?: ReturnType<typeof loadReleaseInfo>;
   logger?: FastifyServerOptions["logger"];
   authRateLimitStore?: AuthRateLimitStore;
   beforePagedQuery?: (route: string) => Promise<void> | void;
+  realtimeWakeSource?: RealtimeWakeSource;
+  realtimeDb?: Db;
+  realtimeHealthyReconcileMs?: number;
+  realtimeFallbackReconcileMs?: number;
+  realtimeBatchLimit?: number;
+  realtimeHeartbeatMs?: number;
+  realtimeBackpressureTimeoutMs?: number;
+  realtimeMaxClients?: number;
 } = {}) => {
   const features = options.features ?? loadFeatureConfig();
   const releaseInfo = options.releaseInfo ?? loadReleaseInfo();
@@ -274,6 +275,26 @@ export const buildApp = (options: {
     genReqId: () => crypto.randomUUID(),
     trustProxy: config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS.length ? config.AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS : false,
   });
+  const realtimeDb = options.realtimeDb ?? db;
+  const realtimeMetrics = new RealtimeMetrics();
+  const realtimeCoordinator = createRealtimeCoordinator({
+    db: realtimeDb,
+    wakeSource:
+      options.realtimeWakeSource
+      ?? (process.env.NODE_ENV === "test"
+        ? new NoopWakeSource()
+        : new RedisStreamWakeSource(config.REDIS_URL)),
+    metrics: realtimeMetrics,
+    onReconcileError: error =>
+      app.log.error({ err: error }, "Realtime reconciliation failed"),
+    healthyReconcileMs:
+      options.realtimeHealthyReconcileMs
+      ?? config.REALTIME_HEALTHY_RECONCILE_MS,
+    fallbackReconcileMs:
+      options.realtimeFallbackReconcileMs
+      ?? config.REALTIME_FALLBACK_RECONCILE_MS,
+  });
+  const eventReader = createEventReader(realtimeDb);
   installRoutePolicyInventory(app);
   const { limiter: authRateLimiter } = installAuthRateLimit(app, config, options.authRateLimitStore);
   installBootstrapAuthentication(app, config);
@@ -455,6 +476,8 @@ export const buildApp = (options: {
           ),
         );
     if (error instanceof DomainError) {
+      if (error.code === "REALTIME_CAPACITY_EXCEEDED")
+        reply.header("Retry-After", "1");
       if (request.authRateLimitAdmission && (error.code === "INVALID_CREDENTIALS" || error.code === "UNAUTHENTICATED" || error.code === "BOOTSTRAP_AUTH_FAILED")) {
         try {
           const retryAfterMs = await authRateLimiter.credentialFailure(request.authRateLimitAdmission);
@@ -476,7 +499,9 @@ export const buildApp = (options: {
         request.log.error(auditError, "Authorization denial audit failed");
       }
       const status =
-        error.code === "UNAUTHENTICATED" || error.code === "INVALID_CREDENTIALS" || error.code === "BOOTSTRAP_AUTH_FAILED"
+        error.code === "REALTIME_CAPACITY_EXCEEDED"
+          ? 503
+          : error.code === "UNAUTHENTICATED" || error.code === "INVALID_CREDENTIALS" || error.code === "BOOTSTRAP_AUTH_FAILED"
           ? 401
           : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "SESSION_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "APPROVAL_REQUIRED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
@@ -486,6 +511,7 @@ export const buildApp = (options: {
                   error.code.endsWith("OUT_OF_ORDER") ||
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
+                  error.code === "CURSOR_EXPIRED" ||
                   ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED"].includes(error.code)
                 ? 409
                 : 400;
@@ -615,6 +641,7 @@ export const buildApp = (options: {
         type: "auth.session.deleted",
         aggregateType: "session",
         aggregateId: request.actor!.humanSessionId!,
+        audienceActorId: request.actor!.id,
         payload: {},
       });
       return { status: 200, body: { ok: true }, cookie: { action: "clear" } };
@@ -981,10 +1008,41 @@ export const buildApp = (options: {
     if (body.teamId) await assertReadableTeam(request, body.teamId);
     return createView(request, body);
   });
-  app.get("/api/v1/events", async (request) => eventList(request));
-  app.get("/api/v1/events/stream", async (request, reply) =>
-    sse(request, reply),
-  );
+  registerRealtimeRoutes(app, {
+    reader: eventReader,
+    coordinator: realtimeCoordinator,
+    webOrigin: config.WEB_ORIGIN,
+    batchLimit:
+      options.realtimeBatchLimit ?? config.REALTIME_BATCH_LIMIT,
+    heartbeatMs:
+      options.realtimeHeartbeatMs ?? config.REALTIME_HEARTBEAT_MS,
+    backpressureTimeoutMs:
+      options.realtimeBackpressureTimeoutMs
+      ?? config.REALTIME_BACKPRESSURE_TIMEOUT_MS,
+    maxClients:
+      options.realtimeMaxClients ?? config.REALTIME_MAX_CLIENTS,
+    onStreamError: async (request, error) => {
+      if (error instanceof DomainError) {
+        try {
+          await recordAuthorizationDenial({
+            db,
+            request,
+            error,
+            auditSecret: config.SESSION_SECRET,
+          });
+        } catch (auditError) {
+          request.log.error(
+            auditError,
+            "SSE authorization denial audit failed",
+          );
+        }
+      }
+      request.log.error(error, "SSE stream failed");
+    },
+  });
+  app.addHook("onClose", async () => {
+    await realtimeCoordinator.close();
+  });
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
@@ -1013,6 +1071,7 @@ const createHumanSessionEnvelope = async (
     type: "auth.session.created",
     aggregateType: "session",
     aggregateId: session.rows[0]!.id,
+    audienceActorId: actorId,
     payload: {},
   });
   return {
@@ -1068,6 +1127,7 @@ async function createView(
       type: "saved_view.created",
       aggregateType: "saved_view",
       aggregateId: row.id,
+      audienceActorId: c.actor.id,
       revision: row.revision,
       payload: input,
     });
@@ -1196,97 +1256,6 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     },
     sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
   }, sql, values);
-}
-
-function eventSql(
-  request: FastifyRequest,
-  cursor: number,
-): { sql: string; values: unknown[] } {
-  const query = eventAudienceQuery(request.actor!, cursor);
-  return { sql: query.sql, values: [...query.values] };
-}
-
-const eventResponse = (row: Record<string, unknown>) => ({
-  ...row,
-  cursor: Number(row.cursor),
-  sequence: row.sequence === null || row.sequence === undefined ? row.sequence : Number(row.sequence),
-  sessionSequence: row.sessionSequence === null || row.sessionSequence === undefined ? row.sessionSequence : Number(row.sessionSequence),
-  occurred_at: row.occurred_at instanceof Date ? row.occurred_at.toISOString() : row.occurred_at,
-});
-async function eventList(request: FastifyRequest) {
-  const cursor = parseCursor(
-    (request.query as { cursor?: string }).cursor ?? 0,
-  );
-  const query = eventSql(request, cursor);
-  return (
-    await db.query(query.sql + " ORDER BY e.cursor LIMIT 500", query.values)
-  ).rows.map((row) => eventResponse(row as Record<string, unknown>));
-}
-
-async function sse(request: FastifyRequest, reply: FastifyReply) {
-  let cursor = parseCursor(
-    (request.query as { cursor?: string }).cursor ??
-      header(request, "last-event-id") ??
-      0,
-  );
-  let closed = false;
-  const stop = () => {
-    closed = true;
-  };
-  request.raw.once("close", stop);
-  reply.raw.writeHead(200, {
-    "content-type": "text/event-stream",
-    "cache-control": "no-cache",
-    connection: "keep-alive",
-    "access-control-allow-origin": config.WEB_ORIGIN,
-    "access-control-allow-credentials": "true",
-  });
-  const wait = () => new Promise<void>((resolve) => setTimeout(resolve, 750));
-  const send = async () => {
-    if (closed) return;
-    await assertEventAudienceActive(db, request.actor!);
-    const query = eventSql(request, cursor);
-    const rows = (
-      await db.query(query.sql + " ORDER BY e.cursor LIMIT 500", query.values)
-    ).rows;
-    for (const row of rows) {
-      if (closed) return;
-      const event = eventResponse(row as Record<string, unknown>);
-      reply.raw.write(
-        `id: ${event.cursor}\ndata: ${JSON.stringify(event)}\n\n`,
-      );
-      cursor = event.cursor as number;
-    }
-  };
-  void (async () => {
-    try {
-      while (!closed) {
-        await send();
-        if (closed) break;
-        reply.raw.write(": heartbeat\n\n");
-        await wait();
-      }
-    } catch (error) {
-      if (error instanceof DomainError) {
-        try {
-          await recordAuthorizationDenial({
-            db,
-            request,
-            error,
-            auditSecret: config.SESSION_SECRET,
-          });
-        } catch (auditError) {
-          request.log.error(auditError, "SSE authorization denial audit failed");
-        }
-      }
-      request.log.error(error, "SSE stream failed");
-      if (!closed) {
-        closed = true;
-        reply.raw.end();
-      }
-    }
-  })();
-  return reply;
 }
 
 if (process.env.NODE_ENV !== "test") {

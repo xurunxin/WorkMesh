@@ -74,7 +74,7 @@ describe('secret-aware authentication idempotency', () => {
     await applyMigrations(db)
     await db.query('TRUNCATE auth_idempotency_records,workspaces CASCADE')
     appUrl = await app.listen({ port: 0, host: '127.0.0.1' })
-  }, 120_000)
+  }, 300_000)
 
   afterAll(async () => {
     await app.close()
@@ -403,6 +403,152 @@ describe('secret-aware authentication idempotency', () => {
     }
   })
 
+  it('returns pre-header and live CURSOR_EXPIRED controls with exact bigint cursors', async () => {
+    const currentCursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const minimumExactCursor = 9_007_199_254_740_993n
+    const seededCursor = (
+      BigInt(currentCursor) >= minimumExactCursor
+        ? BigInt(currentCursor) + 1n
+        : minimumExactCursor
+    ).toString()
+    await db.query(
+      `SELECT setval(
+         'domain_events_cursor_seq',
+         $1::bigint,
+         false
+       )`,
+      [seededCursor],
+    )
+    await db.query(
+      `INSERT INTO domain_events(
+         workspace_id,team_id,event_type,event_version,aggregate_type,
+         aggregate_id,aggregate_revision,actor_id,correlation_id,payload
+       ) VALUES(
+         $1,$2,'realtime.cursor.seeded',2,'team',
+         $2,1,$3,$4,'{}'::jsonb
+       )`,
+      [workspaceId, teamId, actorId, randomUUID()],
+    )
+    const cursor = (await db.query<{ cursor: string }>(
+      'SELECT max(cursor)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    expect(cursor).toBe(seededCursor)
+    expect(BigInt(cursor)).toBeGreaterThan(9_007_199_254_740_992n)
+    await db.query(
+      `UPDATE event_retention_state
+       SET pruned_through_cursor=$2,updated_at=now()
+       WHERE workspace_id=$1`,
+      [workspaceId, cursor],
+    )
+
+    try {
+      const expired = await fetch(
+        `${appUrl}/api/v1/events/stream?cursor=${BigInt(cursor) - 1n}`,
+        { headers: { cookie: loginCookie } },
+      )
+      expect(expired.status).toBe(409)
+      await expect(expired.json()).resolves.toMatchObject({
+        error: {
+          code: 'CURSOR_EXPIRED',
+          details: {
+            minimumCursor: cursor,
+            resyncCursor: cursor,
+            resyncRequired: true,
+          },
+        },
+      })
+
+      const controller = new AbortController()
+      const stream = await fetch(
+        `${appUrl}/api/v1/events/stream?cursor=${cursor}`,
+        {
+          headers: {
+            cookie: loginCookie,
+            'last-event-id': cursor,
+          },
+          signal: controller.signal,
+        },
+      )
+      expect(stream.status).toBe(200)
+      const reader = stream.body?.getReader()
+      if (!reader) throw new Error('SSE response did not expose a reader')
+      const liveFloor = (BigInt(cursor) + 1n).toString()
+      await db.query(
+        `UPDATE event_retention_state
+         SET pruned_through_cursor=$2,updated_at=now()
+         WHERE workspace_id=$1`,
+        [workspaceId, liveFloor],
+      )
+
+      const decoder = new TextDecoder()
+      let body = ''
+      const expiresAt = Date.now() + 5_000
+      while (!body.includes('cursor.expired')) {
+        const remaining = expiresAt - Date.now()
+        if (remaining <= 0)
+          throw new Error('Timed out waiting for cursor.expired control')
+        const chunk = await Promise.race([
+          reader.read(),
+          new Promise<never>((_, reject) => setTimeout(
+            () => reject(
+              new Error('Timed out waiting for cursor.expired control'),
+            ),
+            remaining,
+          )),
+        ])
+        if (chunk.done) break
+        body += decoder.decode(chunk.value, { stream: true })
+      }
+      expect(body).toContain('event: control')
+      expect(body).toContain('cursor.expired')
+      expect(body).toContain(`"minimumCursor":"${liveFloor}"`)
+      await expect(reader.read()).resolves.toMatchObject({ done: true })
+      controller.abort()
+    } finally {
+      await db.query(
+        `UPDATE event_retention_state
+         SET pruned_through_cursor=0,updated_at=now()
+         WHERE workspace_id=$1`,
+        [workspaceId],
+      )
+    }
+  }, 30_000)
+
+  it('keeps retention reads read-only under concurrency and rejects partial limits', async () => {
+    const stableUpdatedAt = '2001-02-03T04:05:06.000Z'
+    await db.query(
+      `UPDATE event_retention_state
+       SET updated_at=$2::timestamptz
+       WHERE workspace_id=$1`,
+      [workspaceId, stableUpdatedAt],
+    )
+    const cursor = (await db.query<{ cursor: string }>(
+      `SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events`,
+    )).rows[0]!.cursor
+    const responses = await Promise.all(
+      Array.from({ length: 8 }, () => app.inject({
+        method: 'GET',
+        url: `/api/v1/events?cursor=${cursor}&limit=1`,
+        headers: { cookie: loginCookie },
+      })),
+    )
+    expect(responses.every(response => response.statusCode === 200)).toBe(true)
+    const retention = (await db.query<{ updated_at: Date }>(
+      `SELECT updated_at FROM event_retention_state WHERE workspace_id=$1`,
+      [workspaceId],
+    )).rows[0]!
+    expect(retention.updated_at.toISOString()).toBe(stableUpdatedAt)
+
+    for (const limit of ['1junk', '1.5'])
+      expect((await app.inject({
+        method: 'GET',
+        url: `/api/v1/events?cursor=${cursor}&limit=${limit}`,
+        headers: { cookie: loginCookie },
+      })).statusCode).toBe(400)
+  })
+
   it('reclaims only after 24 hours and replays logout after the session is revoked', async () => {
     const loginKey = 'login-reclaim'
     const payload = { email: 'alice@example.test', password }
@@ -419,9 +565,9 @@ describe('secret-aware authentication idempotency', () => {
       cookie: loginCookie,
       'x-csrf-token': loginCsrf,
     })
-    const streamCursor = Number((await db.query<{ cursor: string }>(
+    const streamCursor = (await db.query<{ cursor: string }>(
       'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
-    )).rows[0]!.cursor)
+    )).rows[0]!.cursor
     const controller = new AbortController()
     const stream = await fetch(`${appUrl}/api/v1/events/stream?cursor=${streamCursor}`, {
       headers: { cookie: loginCookie },

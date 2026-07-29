@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
-import { opaqueToken, tokenHash, withTx } from "@workmesh/db";
+import { appendEvent, opaqueToken, tokenHash, withTx } from "@workmesh/db";
 import {
   assertAgentSessionTransition, assertCompletionEvidence, assertRevision,
   DomainError, validatePlanSteps,
@@ -46,9 +46,20 @@ const encryptSecret = (secret: string) => {
 const event = async (tx: PoolClient, meta: RequestMeta, type: string, aggregateType: string, aggregateId: string, revision: number, payload: Record<string, unknown>, teamId?: string, sessionId?: string, sequence?: number): Promise<string> => {
   let sessionSequence = sequence;
   if (sessionId && sessionSequence === undefined) sessionSequence = one((await tx.query<{ sequence: number }>("UPDATE agent_sessions SET sequence=sequence+1,updated_at=now() WHERE id=$1 RETURNING sequence", [sessionId])).rows).sequence;
-  const inserted = await tx.query<{ id: string }>("INSERT INTO domain_events(workspace_id,team_id,event_type,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,idempotency_key,payload,session_id,session_sequence) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id", [meta.actor.workspaceId, teamId ?? null, type, aggregateType, aggregateId, revision, meta.actor.id, meta.correlationId, meta.idempotencyKey, payload, sessionId ?? null, sessionSequence ?? null]);
-  await tx.query("INSERT INTO outbox_events(domain_event_id,topic,partition_key) VALUES($1,$2,$3)", [inserted.rows[0]!.id, type, aggregateId]);
-  return inserted.rows[0]!.id;
+  return appendEvent(tx, {
+    workspaceId: meta.actor.workspaceId,
+    teamId,
+    actorId: meta.actor.id,
+    correlationId: meta.correlationId,
+    idempotencyKey: meta.idempotencyKey,
+    type,
+    aggregateType,
+    aggregateId,
+    revision,
+    payload,
+    sessionId,
+    sessionSequence,
+  });
 };
 
 export async function queueWebhookDeliveries(tx: PoolClient, agentId: string, eventId: string, eventType: string, sessionId: string | undefined, payload: Record<string, unknown>): Promise<void> {

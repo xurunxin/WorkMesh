@@ -2,9 +2,13 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
 import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
-  ReleaseInfo, RoutePolicyManifestEntry, ListResponse,
+  ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
 } from '@workmesh/contracts'
-import { routePolicyManifest } from '@workmesh/contracts'
+import {
+  durableEventCursorSchema,
+  eventEnvelopeSchema,
+  routePolicyManifest,
+} from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
 
 export type WorkMeshErrorCode =
@@ -45,6 +49,35 @@ export class WorkMeshSdkError extends Error {
   }
 }
 
+export class WorkMeshCursorExpiredError extends WorkMeshSdkError {
+  readonly minimumCursor: string
+  readonly resyncCursor: string
+  readonly resyncRequired = true
+
+  constructor(
+    message: string,
+    options: {
+      status: number
+      correlationId?: string
+      details: {
+        minimumCursor: string
+        resyncCursor: string
+        resyncRequired: true
+      }
+    },
+  ) {
+    super(message, {
+      code: 'CURSOR_EXPIRED',
+      status: options.status,
+      correlationId: options.correlationId,
+      details: options.details,
+    })
+    this.name = 'WorkMeshCursorExpiredError'
+    this.minimumCursor = options.details.minimumCursor
+    this.resyncCursor = options.details.resyncCursor
+  }
+}
+
 export type WorkMeshLogger = Pick<Console, 'debug' | 'warn'>
 
 const sensitiveKey = /authorization|token|secret|password|signature|cookie/i
@@ -80,6 +113,13 @@ export interface WorkMeshClientOptions {
 }
 export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string }
 export interface PageRequestOptions extends RequestOptions { cursor?: string; limit?: number }
+export interface EventListOptions extends RequestOptions {
+  cursor: string
+  limit?: number
+}
+export interface EventStreamOptions extends RequestOptions {
+  cursor: string
+}
 export interface ApiCommand { id: string; revision: number }
 export interface TokenExchange { sessionToken: string; expiresAt?: string }
 export interface SessionAck { summary: string; externalUrls?: Array<{ label: string; url: string }> }
@@ -226,6 +266,138 @@ export class WorkMeshClient {
   getWorkItem<T = unknown>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
   listWorkItems<T = unknown>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> {
     return this.request('GET', pagedPath('/api/v1/work-items', query, options), undefined, options)
+  }
+  async listEvents(options: EventListOptions): Promise<EventEnvelope[]> {
+    const cursor = durableEventCursorSchema.parse(options.cursor)
+    const params = new URLSearchParams({ cursor })
+    if (options.limit !== undefined) params.set('limit', String(options.limit))
+    const events = await this.request<unknown[]>(
+      'GET',
+      `/api/v1/events?${params}`,
+      undefined,
+      options,
+    )
+    return events.map(event => eventEnvelopeSchema.parse(event))
+  }
+  async *streamEvents(
+    options: EventStreamOptions,
+  ): AsyncGenerator<EventEnvelope, void, undefined> {
+    let cursor = durableEventCursorSchema.parse(options.cursor)
+    let attempt = 0
+    let totalRetryDelayMs = 0
+    while (!options.signal?.aborted) {
+      const url = new URL('/api/v1/events/stream', `${this.baseUrl}/`)
+      url.searchParams.set('cursor', cursor)
+      resolveSdkRoutePolicy('GET', url.pathname)
+      const headers: Record<string, string> = {
+        accept: 'text/event-stream',
+        'last-event-id': cursor,
+      }
+      if (this.sessionToken)
+        headers.authorization = `Bearer ${this.sessionToken}`
+      if (options.correlationId)
+        headers['x-correlation-id'] = options.correlationId
+      try {
+        const response = await this.requestFetch(url, {
+          method: 'GET',
+          headers,
+          signal: options.signal,
+        })
+        if (!response.ok) {
+          const payload = await readErrorPayload(response)
+          if (!shouldRetry(response.status))
+            throw toSdkError(response.status, payload)
+          const retryAfterHeader = response.headers.get('retry-after')
+          const retryAfterMs = parseRetryAfter(retryAfterHeader)
+          const delayMs =
+            retryAfterMs ?? exponentialRetryDelay(attempt + 1, this.retry)
+          const suppressed =
+            attempt + 1 >= this.retry.maxAttempts
+              ? 'attempt_limit'
+              : retryAfterMs !== undefined
+                  && retryAfterMs > this.retry.maxRetryAfterMs
+                ? 'retry_after_exceeds_limit'
+                : delayMs > this.retry.maxTotalRetryDelayMs - totalRetryDelayMs
+                  ? 'total_retry_delay_exceeded'
+                  : undefined
+          if (suppressed)
+            throw toSdkError(response.status, payload, {
+              retryAfterHeader: retryAfterHeader ?? undefined,
+              retryAfterMs,
+              automaticRetrySuppressed: suppressed,
+            })
+          attempt += 1
+          totalRetryDelayMs += delayMs
+          await wait(delayMs, options.signal)
+          continue
+        }
+        if (!response.body)
+          throw new WorkMeshSdkError('WorkMesh returned an empty SSE body', {
+            code: 'MALFORMED_RESPONSE',
+            status: response.status,
+          })
+        let received = false
+        for await (const frame of decodeSse(response.body)) {
+          if (!frame.data) continue
+          let payload: unknown
+          try {
+            payload = JSON.parse(frame.data)
+          } catch {
+            throw new WorkMeshSdkError('WorkMesh returned invalid SSE JSON', {
+              code: 'MALFORMED_RESPONSE',
+              status: response.status,
+            })
+          }
+          if (
+            frame.event === 'control'
+            && payload
+            && typeof payload === 'object'
+            && (payload as { type?: unknown }).type === 'cursor.expired'
+          ) {
+            const error = (payload as { error?: unknown }).error
+            throw toSdkError(409, { error })
+          }
+          const event = eventEnvelopeSchema.parse(payload)
+          if (frame.id && frame.id !== event.cursor)
+            throw new WorkMeshSdkError(
+              'SSE id and durable event cursor do not match',
+              { code: 'MALFORMED_RESPONSE', status: response.status },
+            )
+          received = true
+          yield event
+          cursor = event.cursor
+          attempt = 0
+          totalRetryDelayMs = 0
+        }
+        if (options.signal?.aborted) return
+        if (received) attempt = 0
+        throw new TypeError('WorkMesh SSE connection ended')
+      } catch (cause) {
+        if (
+          cause instanceof WorkMeshSdkError
+          || options.signal?.aborted
+        )
+          throw cause
+        attempt += 1
+        const delayMs = exponentialRetryDelay(attempt, this.retry)
+        if (
+          attempt >= this.retry.maxAttempts
+          || delayMs > this.retry.maxTotalRetryDelayMs - totalRetryDelayMs
+        )
+          throw new WorkMeshSdkError(
+            'Unable to maintain the WorkMesh event stream',
+            {
+              code: 'NETWORK_ERROR',
+              details: redactForLog({
+                cause: cause instanceof Error ? cause.message : String(cause),
+              }),
+              retry: { automaticRetrySuppressed: 'attempt_limit' },
+            },
+          )
+        totalRetryDelayMs += delayMs
+        await wait(delayMs, options.signal)
+      }
+    }
   }
   getGuidance<T = unknown>(scope: 'workspace' | 'team' | 'project', id: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/${scope}s/${encodeURIComponent(id)}/guidance`, undefined, options) }
   /** Delegation and session creation happen in one server transaction. */
@@ -391,9 +563,69 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
   const candidate = payload && typeof payload === 'object' && 'error' in payload ? (payload as { error?: unknown }).error : undefined
   if (candidate && typeof candidate === 'object') {
     const error = candidate as { code?: unknown; message?: unknown; correlationId?: unknown; details?: unknown }
-    return new WorkMeshSdkError(typeof error.message === 'string' ? error.message : `WorkMesh request failed (${status})`, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId: typeof error.correlationId === 'string' ? error.correlationId : undefined, details: error.details, retry })
+    const message = typeof error.message === 'string' ? error.message : `WorkMesh request failed (${status})`
+    const correlationId = typeof error.correlationId === 'string' ? error.correlationId : undefined
+    if (
+      error.code === 'CURSOR_EXPIRED'
+      && error.details
+      && typeof error.details === 'object'
+    ) {
+      const details = error.details as Record<string, unknown>
+      const parsed = durableEventCursorSchema.safeParse(details.minimumCursor)
+      const resync = durableEventCursorSchema.safeParse(details.resyncCursor)
+      if (parsed.success && resync.success && details.resyncRequired === true)
+        return new WorkMeshCursorExpiredError(message, {
+          status,
+          correlationId,
+          details: {
+            minimumCursor: parsed.data,
+            resyncCursor: resync.data,
+            resyncRequired: true,
+          },
+        })
+    }
+    return new WorkMeshSdkError(message, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId, details: error.details, retry })
   }
   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, { code: 'HTTP_ERROR', status, details: payload, retry })
+}
+
+type SseFrame = Readonly<{ event?: string; id?: string; data?: string }>
+
+async function *decodeSse(
+  body: ReadableStream<Uint8Array>,
+): AsyncGenerator<SseFrame, void, undefined> {
+  const reader = body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      buffer += decoder.decode(value, { stream: !done }).replaceAll('\r\n', '\n')
+      let boundary = buffer.indexOf('\n\n')
+      while (boundary >= 0) {
+        const block = buffer.slice(0, boundary)
+        buffer = buffer.slice(boundary + 2)
+        const frame: { event?: string; id?: string; data?: string } = {}
+        const data: string[] = []
+        for (const line of block.split('\n')) {
+          if (!line || line.startsWith(':')) continue
+          const separator = line.indexOf(':')
+          const field = separator < 0 ? line : line.slice(0, separator)
+          const raw = separator < 0 ? '' : line.slice(separator + 1)
+          const valueText = raw.startsWith(' ') ? raw.slice(1) : raw
+          if (field === 'event') frame.event = valueText
+          else if (field === 'id') frame.id = valueText
+          else if (field === 'data') data.push(valueText)
+        }
+        if (data.length) frame.data = data.join('\n')
+        yield frame
+        boundary = buffer.indexOf('\n\n')
+      }
+      if (done) return
+    }
+  } finally {
+    reader.releaseLock()
+  }
 }
 
 export interface WebhookVerificationOptions { secrets: readonly string[]; now?: Date; toleranceSeconds?: number }

@@ -2,9 +2,11 @@ import { randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   applyMigrations,
+  appendEvent,
   createDb,
   opaqueToken,
   tokenHash,
+  withTx,
 } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
 import { authorizeCommandInTx } from '../src/agent/guard.js'
@@ -252,32 +254,29 @@ async function createAgentFixture(input: {
 
 async function insertEvent(input: {
   eventType: string
-  teamId: string
+  teamId?: string
   aggregateType: string
   aggregateId: string
   sessionId?: string
   audienceActorId?: string
   payload?: Record<string, unknown>
-}): Promise<number> {
-  return Number((await db.query<{ cursor: string }>(
-    `INSERT INTO domain_events(
-       workspace_id,team_id,audience_actor_id,event_type,aggregate_type,
-       aggregate_id,actor_id,correlation_id,payload,session_id
-     ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10)
-     RETURNING cursor::text`,
-    [
-      workspaceId,
-      input.teamId,
-      input.audienceActorId ?? null,
-      input.eventType,
-      input.aggregateType,
-      input.aggregateId,
-      admin.actorId,
-      `route-policy:${input.eventType}`,
-      JSON.stringify(input.payload ?? {}),
-      input.sessionId ?? null,
-    ],
-  )).rows[0]!.cursor)
+}): Promise<string> {
+  const eventId = await withTx(db, tx => appendEvent(tx, {
+    workspaceId,
+    teamId: input.teamId,
+    audienceActorId: input.audienceActorId,
+    actorId: admin.actorId,
+    correlationId: `route-policy:${input.eventType}`,
+    type: input.eventType,
+    aggregateType: input.aggregateType,
+    aggregateId: input.aggregateId,
+    payload: input.payload ?? {},
+    sessionId: input.sessionId,
+  }))
+  return (await db.query<{ cursor: string }>(
+    `SELECT cursor::text FROM domain_events WHERE id=$1`,
+    [eventId],
+  )).rows[0]!.cursor
 }
 
 async function authorityCounts(sessionId: string): Promise<AuthorityCounts> {
@@ -721,31 +720,31 @@ describe('declarative route policy live authorization', () => {
     expect(revokedGrant.statusCode).toBe(409)
     expect(errorCode(revokedGrant)).toBe('DELEGATION_NOT_ACTIVE')
 
-    const cursor = Number((await db.query<{ cursor: string }>(
+    const cursor = (await db.query<{ cursor: string }>(
       'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
-    )).rows[0]!.cursor)
+    )).rows[0]!.cursor
     await insertEvent({
-      eventType: 'policy.current-session',
+      eventType: 'policy.current_session',
       teamId: teamA,
       aggregateType: 'agent_session',
       aggregateId: primary.sessionId,
       sessionId: primary.sessionId,
     })
     await insertEvent({
-      eventType: 'policy.explicit-recipient',
+      eventType: 'policy.explicit_recipient',
       teamId: teamA,
       aggregateType: 'work_item',
       aggregateId: itemSameTeam.id,
       audienceActorId: primary.actorId,
     })
     await insertEvent({
-      eventType: 'policy.scoped-work-item',
+      eventType: 'policy.scoped_work_item',
       teamId: teamA,
       aggregateType: 'work_item',
       aggregateId: itemA.id,
     })
     await insertEvent({
-      eventType: 'policy.hidden-unrelated-session',
+      eventType: 'policy.hidden_unrelated_session',
       teamId: teamA,
       aggregateType: 'agent_session',
       aggregateId: unrelated.sessionId,
@@ -753,14 +752,14 @@ describe('declarative route policy live authorization', () => {
       payload: { title: 'PRIVATE UNRELATED SESSION EVENT' },
     })
     await insertEvent({
-      eventType: 'policy.hidden-same-team-item',
+      eventType: 'policy.hidden_same_team_item',
       teamId: teamA,
       aggregateType: 'work_item',
       aggregateId: itemSameTeam.id,
       payload: { title: 'PRIVATE SAME TEAM EVENT' },
     })
     await insertEvent({
-      eventType: 'policy.hidden-cross-team-item',
+      eventType: 'policy.hidden_cross_team_item',
       teamId: teamB,
       aggregateType: 'work_item',
       aggregateId: itemCrossTeam.id,
@@ -771,22 +770,22 @@ describe('declarative route policy live authorization', () => {
     const eventTypes = listed.json<Array<{ event_type: string }>>()
       .map(event => event.event_type)
     expect(eventTypes).toEqual(expect.arrayContaining([
-      'policy.current-session',
-      'policy.explicit-recipient',
-      'policy.scoped-work-item',
+      'policy.current_session',
+      'policy.explicit_recipient',
+      'policy.scoped_work_item',
     ]))
     expect(eventTypes).not.toEqual(expect.arrayContaining([
-      'policy.hidden-unrelated-session',
-      'policy.hidden-same-team-item',
-      'policy.hidden-cross-team-item',
+      'policy.hidden_unrelated_session',
+      'policy.hidden_same_team_item',
+      'policy.hidden_cross_team_item',
     ]))
     expect(listed.body).not.toContain('PRIVATE UNRELATED SESSION EVENT')
     expect(listed.body).not.toContain('PRIVATE SAME TEAM EVENT')
     expect(listed.body).not.toContain('PRIVATE CROSS TEAM EVENT')
 
-    const streamCursor = Number((await db.query<{ cursor: string }>(
+    const streamCursor = (await db.query<{ cursor: string }>(
       'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
-    )).rows[0]!.cursor)
+    )).rows[0]!.cursor
     const controller = new AbortController()
     const stream = await fetch(`${appUrl}/api/v1/events/stream?cursor=${streamCursor}`, {
       headers: { authorization: `Bearer ${primary.token}` },
@@ -816,13 +815,13 @@ describe('declarative route policy live authorization', () => {
       return 'matched'
     }
     await insertEvent({
-      eventType: 'policy.sse-visible',
+      eventType: 'policy.sse_visible',
       teamId: teamA,
       aggregateType: 'agent_session',
       aggregateId: primary.sessionId,
       sessionId: primary.sessionId,
     })
-    expect(await readUntil(() => streamed.includes('policy.sse-visible'), 5_000))
+    expect(await readUntil(() => streamed.includes('policy.sse_visible'), 5_000))
       .toBe('matched')
     await db.query(
       `UPDATE delegations
@@ -831,7 +830,7 @@ describe('declarative route policy live authorization', () => {
       [primary.delegationId, admin.actorId],
     )
     await insertEvent({
-      eventType: 'policy.sse-after-revoke',
+      eventType: 'policy.sse_after_revoke',
       teamId: teamA,
       aggregateType: 'agent_session',
       aggregateId: primary.sessionId,
@@ -839,7 +838,7 @@ describe('declarative route policy live authorization', () => {
       payload: { title: 'PRIVATE POST REVOCATION EVENT' },
     })
     expect(await readUntil(() => false, 5_000)).toBe('closed')
-    expect(streamed).not.toContain('policy.sse-after-revoke')
+    expect(streamed).not.toContain('policy.sse_after_revoke')
     expect(streamed).not.toContain('PRIVATE POST REVOCATION EVENT')
     controller.abort()
     await reader.cancel().catch(() => undefined)
@@ -851,6 +850,409 @@ describe('declarative route policy live authorization', () => {
       reason_code: 'SESSION_NOT_ACTIVE',
       transport: 'sse',
     })
+  })
+
+  it('does not widen multi-Team initiative or dependency events to unrelated humans', async () => {
+    const createdTeam = await humanCall(admin, 'POST', '/api/v1/teams', {
+      name: `Realtime Unrelated ${randomUUID()}`,
+      key: `RU${randomUUID().slice(0, 6)}`.toUpperCase(),
+    })
+    expect(createdTeam.statusCode, createdTeam.body).toBe(200)
+    const unrelatedTeamId = createdTeam.json<{ id: string }>().id
+    const linkedMember = await createHuman('Multi-Team linked member', teamA)
+    const initiativeOwner = await createHuman(
+      'Multi-Team initiative owner',
+      unrelatedTeamId,
+    )
+    const unrelated = await createHuman(
+      'Multi-Team unrelated member',
+      unrelatedTeamId,
+    )
+    const sourceProject = (await db.query<{ id: string }>(
+      `INSERT INTO projects(workspace_id,team_id,name)
+       VALUES($1,$2,$3) RETURNING id`,
+      [workspaceId, teamA, `Multi-Team source ${randomUUID()}`],
+    )).rows[0]!
+    const targetProject = (await db.query<{ id: string }>(
+      `INSERT INTO projects(workspace_id,team_id,name)
+       VALUES($1,$2,$3) RETURNING id`,
+      [workspaceId, teamB, `Multi-Team target ${randomUUID()}`],
+    )).rows[0]!
+    const initiative = (await db.query<{ id: string }>(
+      `INSERT INTO initiatives(workspace_id,name,owner_actor_id)
+       VALUES($1,$2,$3) RETURNING id`,
+      [
+        workspaceId,
+        `Multi-Team initiative ${randomUUID()}`,
+        initiativeOwner.actorId,
+      ],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO initiative_projects(
+         workspace_id,initiative_id,project_id,sort_order
+       ) VALUES($1,$2,$3,0),($1,$2,$4,1)`,
+      [workspaceId, initiative.id, sourceProject.id, targetProject.id],
+    )
+    await db.query(
+      `INSERT INTO project_dependencies(
+         project_id,depends_on_project_id,created_by_actor_id
+       ) VALUES($1,$2,$3)`,
+      [sourceProject.id, targetProject.id, admin.actorId],
+    )
+
+    const cursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const controller = new AbortController()
+    const stream = await fetch(
+      `${appUrl}/api/v1/events/stream?cursor=${cursor}`,
+      {
+        headers: { cookie: unrelated.cookie },
+        signal: controller.signal,
+      },
+    )
+    expect(stream.status).toBe(200)
+    const reader = stream.body?.getReader()
+    if (!reader) throw new Error('Human SSE response did not expose a reader')
+
+    const initiativeSecret = `PRIVATE MULTI TEAM INITIATIVE ${randomUUID()}`
+    const dependencySecret = `PRIVATE MULTI TEAM DEPENDENCY ${randomUUID()}`
+    const legacyInitiativeSecret =
+      `PRIVATE LEGACY MULTI TEAM INITIATIVE ${randomUUID()}`
+    const legacyDependencySecret =
+      `PRIVATE LEGACY MULTI TEAM DEPENDENCY ${randomUUID()}`
+    await withTx(db, tx => appendEvent(tx, {
+      workspaceId,
+      actorId: admin.actorId,
+      correlationId: `route-policy:initiative:${randomUUID()}`,
+      type: 'initiative.created',
+      aggregateType: 'initiative',
+      aggregateId: initiative.id,
+      payload: {
+        projectIds: [sourceProject.id, targetProject.id],
+        title: initiativeSecret,
+      },
+    }))
+    await withTx(db, tx => appendEvent(tx, {
+      workspaceId,
+      actorId: admin.actorId,
+      correlationId: `route-policy:dependency:${randomUUID()}`,
+      type: 'project.dependency.created',
+      aggregateType: 'project',
+      aggregateId: sourceProject.id,
+      payload: {
+        dependsOnProjectId: targetProject.id,
+        title: dependencySecret,
+      },
+    }))
+    // These rows model pre-0025 events whose exact resource metadata could not
+    // be reconstructed. The final audience policy must fail closed rather than
+    // treating team_id NULL as Workspace visibility.
+    await db.query(
+      `INSERT INTO domain_events(
+         workspace_id,event_type,aggregate_type,aggregate_id,actor_id,
+         correlation_id,payload
+       ) VALUES
+         ($1,'initiative.updated','initiative',$2,$3,$4,$5),
+         ($1,'project.dependency.deleted','project',$6,$3,$7,$8)`,
+      [
+        workspaceId,
+        initiative.id,
+        admin.actorId,
+        `route-policy:legacy-initiative:${randomUUID()}`,
+        { title: legacyInitiativeSecret },
+        sourceProject.id,
+        `route-policy:legacy-dependency:${randomUUID()}`,
+        {
+          dependsOnProjectId: targetProject.id,
+          title: legacyDependencySecret,
+        },
+      ],
+    )
+    await insertEvent({
+      eventType: 'policy.multi_team_direct_recipient',
+      teamId: unrelatedTeamId,
+      aggregateType: 'team',
+      aggregateId: unrelatedTeamId,
+      audienceActorId: unrelated.actorId,
+    })
+
+    const decoder = new TextDecoder()
+    let streamed = ''
+    const expiresAt = Date.now() + 8_000
+    while (!streamed.includes('policy.multi_team_direct_recipient')) {
+      const remaining = expiresAt - Date.now()
+      if (remaining <= 0)
+        throw new Error('Timed out waiting for human SSE audience evidence')
+      const chunk = await Promise.race([
+        reader.read(),
+        new Promise<never>((_resolve, reject) =>
+          setTimeout(
+            () => reject(new Error('Timed out waiting for human SSE chunk')),
+            remaining,
+          )),
+      ])
+      if (chunk.done)
+        throw new Error('Human SSE closed before audience evidence arrived')
+      streamed += decoder.decode(chunk.value, { stream: true })
+    }
+    expect(streamed).not.toContain(initiativeSecret)
+    expect(streamed).not.toContain(dependencySecret)
+    expect(streamed).not.toContain(legacyInitiativeSecret)
+    expect(streamed).not.toContain(legacyDependencySecret)
+    controller.abort()
+    await reader.cancel().catch(() => undefined)
+
+    const listEventTypes = async (human: Human): Promise<string[]> => {
+      const response = await humanCall(
+        human,
+        'GET',
+        `/api/v1/events?cursor=${cursor}`,
+      )
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<Array<{ event_type: string }>>()
+        .map(event => event.event_type)
+    }
+    const adminTypes = await listEventTypes(admin)
+    expect(adminTypes).toEqual(expect.arrayContaining([
+      'initiative.created',
+      'project.dependency.created',
+      'initiative.updated',
+      'project.dependency.deleted',
+    ]))
+    expect(adminTypes).not.toContain('policy.multi_team_direct_recipient')
+
+    const ownerTypes = await listEventTypes(initiativeOwner)
+    expect(ownerTypes).toEqual(expect.arrayContaining([
+      'initiative.created',
+      'initiative.updated',
+    ]))
+    for (const hiddenType of [
+      'project.dependency.created',
+      'project.dependency.deleted',
+      'policy.multi_team_direct_recipient',
+    ])
+      expect(ownerTypes).not.toContain(hiddenType)
+
+    const linkedTypes = await listEventTypes(linkedMember)
+    expect(linkedTypes).toEqual(expect.arrayContaining([
+      'initiative.created',
+      'project.dependency.created',
+    ]))
+    for (const hiddenType of [
+      'initiative.updated',
+      'project.dependency.deleted',
+      'policy.multi_team_direct_recipient',
+    ])
+      expect(linkedTypes).not.toContain(hiddenType)
+
+    const unrelatedResponse = await humanCall(
+      unrelated,
+      'GET',
+      `/api/v1/events?cursor=${cursor}`,
+    )
+    expect(unrelatedResponse.statusCode, unrelatedResponse.body).toBe(200)
+    const unrelatedTypes = unrelatedResponse
+      .json<Array<{ event_type: string }>>()
+      .map(event => event.event_type)
+    expect(unrelatedTypes).toContain('policy.multi_team_direct_recipient')
+    for (const hiddenType of [
+      'initiative.created',
+      'project.dependency.created',
+      'initiative.updated',
+      'project.dependency.deleted',
+    ])
+      expect(unrelatedTypes).not.toContain(hiddenType)
+    expect(unrelatedResponse.body).not.toContain(initiativeSecret)
+    expect(unrelatedResponse.body).not.toContain(dependencySecret)
+    expect(unrelatedResponse.body).not.toContain(legacyInitiativeSecret)
+    expect(unrelatedResponse.body).not.toContain(legacyDependencySecret)
+  }, 60_000)
+
+  it('keeps current personal view and notification producers private across REST and SSE', async () => {
+    const owner = await createHuman('Private realtime owner', teamA)
+    const peer = await createHuman('Private realtime peer', teamA)
+    const cursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const controller = new AbortController()
+    const stream = await fetch(
+      `${appUrl}/api/v1/events/stream?cursor=${cursor}`,
+      {
+        headers: { cookie: peer.cookie },
+        signal: controller.signal,
+      },
+    )
+    expect(stream.status).toBe(200)
+    const reader = stream.body?.getReader()
+    if (!reader) throw new Error('Private audience SSE did not expose a reader')
+
+    const personalView = await humanCall(owner, 'POST', '/api/v1/views', {
+      name: `Personal Team view ${randomUUID()}`,
+      teamId: teamA,
+      filters: {},
+      layout: 'list',
+    })
+    expect(personalView.statusCode, personalView.body).toBe(200)
+
+    const planningApp = buildApp({
+      logger: false,
+      authRateLimitStore: new AllowRateLimitStore(),
+      features: loadFeatureConfig({ WORKMESH_BETA_PLANNING: 'true' }),
+    })
+    const planningCall = async (
+      method: Method,
+      url: string,
+      payload: object,
+    ): Promise<Response> => await planningApp.inject({
+      method,
+      url,
+      payload,
+      headers: {
+        cookie: owner.cookie,
+        'x-csrf-token': owner.csrf,
+        'idempotency-key': randomUUID(),
+      },
+    }) as unknown as Response
+    try {
+      const advanced = await planningCall(
+        'POST',
+        '/api/v1/advanced-views',
+        {
+          name: `Private advanced view ${randomUUID()}`,
+          entityType: 'issue',
+          filters: {},
+          ordering: [],
+          visibleFields: [],
+          layout: 'list',
+          scope: 'private',
+        },
+      )
+      expect(advanced.statusCode, advanced.body).toBe(200)
+      const preferences = await planningCall(
+        'PUT',
+        '/api/v1/notification-preferences',
+        {
+          channels: ['in_app'],
+          digest: 'immediate',
+          minimumPriority: 'update',
+          mutedKinds: [],
+        },
+      )
+      expect(preferences.statusCode, preferences.body).toBe(200)
+      const notification = await planningCall(
+        'POST',
+        '/api/v1/notifications',
+        {
+          recipientActorId: owner.actorId,
+          priority: 'update',
+          kind: 'private.realtime.test',
+          title: 'Private realtime notification',
+          body: 'PRIVATE CURRENT NOTIFICATION',
+          sourceType: 'test',
+          sourceId: randomUUID(),
+          channels: ['in_app'],
+          dedupeKey: randomUUID(),
+        },
+      )
+      expect(notification.statusCode, notification.body).toBe(200)
+    } finally {
+      await planningApp.close()
+    }
+
+    await insertEvent({
+      eventType: 'policy.private_audience_marker',
+      teamId: teamA,
+      aggregateType: 'team',
+      aggregateId: teamA,
+      audienceActorId: peer.actorId,
+    })
+
+    const decoder = new TextDecoder()
+    let streamed = ''
+    const expiresAt = Date.now() + 8_000
+    while (!streamed.includes('policy.private_audience_marker')) {
+      const remaining = expiresAt - Date.now()
+      if (remaining <= 0)
+        throw new Error('Timed out waiting for private audience SSE evidence')
+      const chunk = await Promise.race([
+        reader.read(),
+        new Promise<never>((_resolve, reject) =>
+          setTimeout(
+            () => reject(new Error('Timed out waiting for private audience SSE chunk')),
+            remaining,
+          )),
+      ])
+      if (chunk.done)
+        throw new Error('Private audience SSE closed before marker arrived')
+      streamed += decoder.decode(chunk.value, { stream: true })
+    }
+    for (const privateType of [
+      'saved_view.created',
+      'view.created',
+      'notification.created',
+      'notification.preferences_updated',
+    ])
+      expect(streamed).not.toContain(privateType)
+    controller.abort()
+    await reader.cancel().catch(() => undefined)
+
+    const eventTypes = async (human: Human): Promise<string[]> => {
+      const response = await humanCall(
+        human,
+        'GET',
+        `/api/v1/events?cursor=${cursor}`,
+      )
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<Array<{ event_type: string }>>()
+        .map(event => event.event_type)
+    }
+    const ownerTypes = await eventTypes(owner)
+    expect(ownerTypes).toEqual(expect.arrayContaining([
+      'saved_view.created',
+      'view.created',
+      'notification.created',
+      'notification.preferences_updated',
+    ]))
+    for (const privateType of [
+      'saved_view.created',
+      'view.created',
+      'notification.created',
+      'notification.preferences_updated',
+    ]) {
+      expect(await eventTypes(peer)).not.toContain(privateType)
+      expect(await eventTypes(admin)).not.toContain(privateType)
+    }
+  }, 60_000)
+
+  it('returns a structured retryable response when realtime capacity is saturated', async () => {
+    const member = await createHuman('Realtime capacity member', teamA)
+    const capacityApp = buildApp({
+      logger: false,
+      authRateLimitStore: new AllowRateLimitStore(),
+      realtimeMaxClients: 0,
+    })
+    try {
+      const response = await capacityApp.inject({
+        method: 'GET',
+        url: '/api/v1/events/stream?cursor=0',
+        headers: { cookie: member.cookie },
+      }) as unknown as Response
+      expect(response.statusCode, response.body).toBe(503)
+      expect(response.headers['retry-after']).toBe('1')
+      expect(response.json<{ error: { code: string; details: unknown } }>())
+        .toMatchObject({
+          error: {
+            code: 'REALTIME_CAPACITY_EXCEEDED',
+            details: {
+              retryable: true,
+              retryAfterSeconds: 1,
+            },
+          },
+        })
+    } finally {
+      await capacityApp.close()
+    }
   })
 
   it('rechecks Team and session authorization between opaque cursor pages', async () => {
