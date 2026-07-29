@@ -1,8 +1,12 @@
-import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { createServer } from "node:net";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import {
+  randomAcceptanceMasterKey,
+  randomAcceptanceSecret as randomSecret,
+} from "./retention-acceptance-secrets.mjs";
 import { parseComposeRows } from "./retention-compose-json.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -84,7 +88,6 @@ if (!/^[0-9a-f]{40}$/i.test(buildSha))
   throw new Error("RETENTION_ACCEPTANCE_BUILD_SHA_INVALID");
 const docker = process.platform === "win32" ? "docker.exe" : "docker";
 const pnpm = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
-const randomSecret = (): string => randomBytes(32).toString("base64url");
 const fingerprint = (value: string): string =>
   `sha256:${createHash("sha256").update(value).digest("hex").slice(0, 16)}`;
 const reservePort = async (): Promise<number> =>
@@ -143,7 +146,7 @@ const acceptanceEnv: NodeJS.ProcessEnv = {
   WORKMESH_MCP_IMAGE: process.env.WORKMESH_MCP_IMAGE ?? apiImage,
   WORKMESH_BUILD_SHA: buildSha,
   SESSION_SECRET: randomSecret(),
-  WORKMESH_MASTER_KEY: randomSecret(),
+  WORKMESH_MASTER_KEY: randomAcceptanceMasterKey(),
   WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
   PAGINATION_CURSOR_KEYS: `retention-acceptance:${paginationKey}`,
   PAGINATION_CURSOR_ACTIVE_KID: "retention-acceptance",
