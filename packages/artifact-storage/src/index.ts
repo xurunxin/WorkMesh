@@ -367,3 +367,5 @@ export function artifactStorageFromEnvironment(): S3ArtifactStorage {
     },
   });
 }
+
+export * from "./retention-upgrade.js";

@@ -15,9 +15,11 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
 const suffix = randomUUID().replaceAll("-", "");
 const upgradeDatabase = `workmesh_test_archive_intent_upgrade_${suffix}`;
 const cleanDatabase = `workmesh_test_archive_intent_clean_${suffix}`;
+const activeDatabase = `workmesh_test_archive_intent_active_${suffix}`;
 const admin = createDb(databaseUrl);
 let upgrade: Db;
 let clean: Db;
+let active: Db;
 let legacySegmentId = "";
 let failedLegacySegmentId = "";
 
@@ -28,16 +30,18 @@ const databaseUrlFor = (database: string): string => {
   return url.toString();
 };
 
-const digest = (character: string): string =>
-  `sha256:${character.repeat(64)}`;
+const digest = (character: string): string => `sha256:${character.repeat(64)}`;
 
 describe("0030 durable archive upload intents migration", () => {
   beforeAll(async () => {
     await admin.query(`CREATE DATABASE "${upgradeDatabase}"`);
     await admin.query(`CREATE DATABASE "${cleanDatabase}"`);
+    await admin.query(`CREATE DATABASE "${activeDatabase}"`);
     upgrade = createDb(databaseUrlFor(upgradeDatabase));
     clean = createDb(databaseUrlFor(cleanDatabase));
+    active = createDb(databaseUrlFor(activeDatabase));
     await applyMigrations(upgrade, { through: 29 });
+    await applyMigrations(active, { through: 29 });
     const workspaceId = (
       await upgrade.query<{ id: string }>(
         `INSERT INTO workspaces(name,slug)
@@ -83,8 +87,10 @@ describe("0030 durable archive upload intents migration", () => {
   afterAll(async () => {
     await upgrade?.end();
     await clean?.end();
+    await active?.end();
     await admin.query(`DROP DATABASE IF EXISTS "${upgradeDatabase}"`);
     await admin.query(`DROP DATABASE IF EXISTS "${cleanDatabase}"`);
+    await admin.query(`DROP DATABASE IF EXISTS "${activeDatabase}"`);
     await admin.end();
   });
 
@@ -331,6 +337,57 @@ describe("0030 durable archive upload intents migration", () => {
         )
       ).rows,
     ).toEqual([{ state: "verified", membershipState: "exact" }]);
+  });
+
+  it("blocks 0030 while a retention lease is active and succeeds after expiry", async () => {
+    const workspaceId = (
+      await active.query<{ id: string }>(
+        `INSERT INTO workspaces(name,slug)
+         VALUES('Active migration barrier','active-migration-barrier')
+         RETURNING id`,
+      )
+    ).rows[0]!.id;
+    await active.query(
+      `INSERT INTO retention_job_state(
+         job_name,workspace_id,lease_owner,lease_expires_at,fence,
+         fixed_cutoff_at
+       ) VALUES(
+         'event_archive',$1,'old-worker',now()+interval '2 minutes',1,
+         now()-interval '90 days'
+       )`,
+      [workspaceId],
+    );
+
+    await expect(applyMigrations(active)).rejects.toMatchObject({
+      code: "55006",
+      message: expect.stringContaining(
+        "UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE",
+      ),
+    });
+    expect(
+      (
+        await active.query(
+          `SELECT 1 FROM schema_migrations
+            WHERE version='0030_durable_archive_upload_intents'`,
+        )
+      ).rowCount,
+    ).toBe(0);
+
+    await active.query(
+      `UPDATE retention_job_state
+          SET lease_expires_at=now()-interval '1 second'
+        WHERE job_name='event_archive' AND workspace_id=$1`,
+      [workspaceId],
+    );
+    await expect(applyMigrations(active)).resolves.toBeUndefined();
+    expect(
+      (
+        await active.query(
+          `SELECT 1 FROM schema_migrations
+            WHERE version='0030_durable_archive_upload_intents'`,
+        )
+      ).rowCount,
+    ).toBe(1);
   });
 
   it("prevents a second durable intent for the same Workspace", async () => {

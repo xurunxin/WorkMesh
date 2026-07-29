@@ -37,8 +37,12 @@ coverage.
 
 Retention writes use `If-None-Match: *`, `COMPLIANCE` mode, a retain-until date
 at least 365 days in the future, and checksum plus segment/snapshot/fixed-cutoff
-metadata. Success, precondition failure, timeout, 5xx, and response loss all
-reconcile current HEAD on the same key. HEAD 404 retries that same key; an
+metadata. A planned recovery always reconciles current HEAD before changing the
+retain horizon. A matching current object keeps the original PostgreSQL
+horizon and pins that VersionId. Only an explicit HEAD 404 lets the current
+fenced owner re-lock the still-planned, version-null row and refresh its fixed
+retain horizon before the conditional PUT. Success, precondition failure,
+timeout, 5xx, and response loss all reconcile current HEAD on the same key. An
 identity or protection mismatch becomes a fenced deterministic conflict. Never
 delete an uncertain object, generate a replacement key, or accept a second
 version. A lease lost after PUT leaves the planned intent for its successor.

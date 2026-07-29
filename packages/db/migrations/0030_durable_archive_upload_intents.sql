@@ -1,5 +1,26 @@
 BEGIN;
 
+-- This is a secondary database-side barrier after operators have stopped the
+-- old Worker and run the exact target-image S3 reconciliation. It closes the
+-- race with any residual retention writer for the whole migration.
+LOCK TABLE retention_job_state IN SHARE ROW EXCLUSIVE MODE;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM retention_job_state
+     WHERE job_name<>'worker_runtime'
+       AND lease_owner IS NOT NULL
+       AND lease_expires_at>now()
+  ) THEN
+    RAISE EXCEPTION USING
+      ERRCODE='55006',
+      MESSAGE='UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE';
+  END IF;
+END;
+$$;
+
 -- Before this migration pending_exact meant only "membership has not been
 -- materialized yet"; those rows predate durable upload intents and have no
 -- provisional reservations. Preserve them on the pinned-object legacy path.
