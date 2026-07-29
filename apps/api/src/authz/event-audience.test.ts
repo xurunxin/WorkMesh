@@ -9,6 +9,7 @@ const human = {
   workspaceRole: 'member' as const,
   csrfToken: '',
   kind: 'human' as const,
+  credentialHash: 'human-credential',
 }
 const agent = {
   id: 'agent',
@@ -18,13 +19,47 @@ const agent = {
   csrfToken: '',
   kind: 'agent' as const,
   agentSessionId: 'session',
+  credentialHash: 'agent-credential',
 }
 
 describe('EventAudiencePolicy SQL', () => {
-  it('keeps Team membership filtering for humans', () => {
-    const query = eventAudienceQuery(human, 12)
-    expect(query.values).toEqual(['workspace', 12, 'human'])
-    expect(query.sql).toContain('memberships')
+  it('uses exact normalized Team resources and verified initiative ownership for humans', () => {
+    const query = eventAudienceQuery(human, '12')
+    expect(query.values).toEqual([
+      'workspace',
+      '12',
+      'human',
+      'human-credential',
+    ])
+    expect(query.sql).toContain('memberships member')
+    expect(query.sql).toContain('domain_event_resources team_resource')
+    expect(query.sql).toContain("team_resource.resource_type='team'")
+    expect(query.sql).toContain('team_resource.resource_id=member.team_id')
+    expect(query.sql).toContain('initiative.owner_actor_id=$3')
+    expect(query.sql).toContain('e.audience_actor_id=$3')
+    expect(query.sql).toContain(
+      "e.aggregate_type IN ('session','saved_view','notification')",
+    )
+    expect(query.sql).toContain(
+      "e.event_type='notification.preferences_updated'",
+    )
+    expect(query.sql).toContain("private_view.scope<>'private'")
+    expect(query.sql).not.toContain('e.team_id IS NULL OR EXISTS')
+  })
+
+  it('keeps workspace admins exempt from Team membership without exposing direct events to other actors', () => {
+    const query = eventAudienceQuery(
+      { ...human, workspaceRole: 'admin' },
+      '12',
+    )
+    expect(query.sql).toContain(
+      '(e.audience_actor_id IS NULL OR e.audience_actor_id=$3)',
+    )
+    expect(query.sql).not.toContain('domain_event_resources team_resource')
+    expect(query.sql).not.toContain('initiative.owner_actor_id=$3')
+    expect(query.sql).toContain(
+      "e.aggregate_type IN ('session','saved_view','notification')",
+    )
   })
 
   it('rechecks an unrevoked human credential without weakening principal or membership checks', async () => {
@@ -47,12 +82,18 @@ describe('EventAudiencePolicy SQL', () => {
   })
 
   it('never grants Agents blanket Workspace or same-Team visibility', () => {
-    const query = eventAudienceQuery(agent, 12)
-    expect(query.values).toEqual(['workspace', 12, 'agent', 'session'])
+    const query = eventAudienceQuery(agent, '12')
+    expect(query.values).toEqual([
+      'workspace',
+      '12',
+      'agent',
+      'session',
+      'agent-credential',
+    ])
     expect(query.sql).toContain('authorized_sessions')
     expect(query.sql).toContain('e.audience_actor_id=$3')
     expect(query.sql).toContain('e.session_id IN (SELECT id FROM authorized_sessions)')
-    expect(query.sql).toContain("e.aggregate_type='work_item'")
+    expect(query.sql).toContain("resource.resource_type='work_item'")
     expect(query.sql).not.toContain(
       '(e.audience_actor_id IS NULL OR e.audience_actor_id=$3)',
     )

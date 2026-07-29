@@ -828,7 +828,11 @@ describe('live paged-read authorization', () => {
         'app.get("/api/v1/work-items/:id/comments"',
         'app.post("/api/v1/work-items/:id/comments"'),
       section(server, 'async function listHumans', 'async function listWorkItems'),
-      section(server, 'async function listWorkItems', 'async function eventList'),
+      section(
+        server,
+        'async function listWorkItems',
+        'if (process.env.NODE_ENV !== "test")',
+      ),
       section(agents,
         'app.get("/api/v1/agent-sessions/:id/activities"',
         'app.get("/api/v1/agent-sessions/:id/plan"'),

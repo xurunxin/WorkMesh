@@ -169,9 +169,17 @@ export const authIdempotencyRecords = pgTable('auth_idempotency_records', {
   replayWipedAt: timestamp('replay_wiped_at', { withTimezone: true }),
 })
 export const domainEvents = pgTable('domain_events', {
-  cursor: bigint('cursor', { mode: 'number' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
+  cursor: bigint('cursor', { mode: 'bigint' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
   eventType: text('event_type').notNull(), eventVersion: integer('event_version').notNull(), aggregateType: text('aggregate_type').notNull(), aggregateId: uuid('aggregate_id').notNull(), aggregateRevision: integer('aggregate_revision'),
   actorId: uuid('actor_id').notNull(), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key'), sessionId: uuid('session_id'), sessionSequence: bigint('session_sequence', { mode: 'number' }), causationId: uuid('causation_id'), payload: jsonb('payload').notNull(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+})
+export const domainEventResources = pgTable('domain_event_resources', {
+  domainEventId: uuid('domain_event_id').notNull(), workspaceId: uuid('workspace_id').notNull(), relation: text('relation').notNull(),
+  resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const eventRetentionState = pgTable('event_retention_state', {
+  workspaceId: uuid('workspace_id').primaryKey(), prunedThroughCursor: bigint('pruned_through_cursor', { mode: 'bigint' }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
 export const authorizationDenials = pgTable('authorization_denials', {
   id: uuid('id').primaryKey(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),

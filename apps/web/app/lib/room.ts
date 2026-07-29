@@ -68,6 +68,20 @@ export function normalizeRoomTimelineItem(item: RoomRecord): RoomRecord {
   }
 }
 
+export const mergeRoomTimelines = (
+  roomTimeline: readonly RoomRecord[],
+  legacyTimeline: readonly RoomRecord[],
+): RoomRecord[] => {
+  const seenIds = new Set<string>()
+  return [...roomTimeline, ...legacyTimeline].filter(item => {
+    const id = stringValue(item, 'id')
+    if (!id) return true
+    if (seenIds.has(id)) return false
+    seenIds.add(id)
+    return true
+  })
+}
+
 export async function roomTimeline(roomId: string): Promise<RoomTimeline | null> {
   const response = await optionalRoomRequest<unknown>(`/api/v1/rooms/${encodeURIComponent(roomId)}/timeline?limit=100`)
   if (response === null) return null

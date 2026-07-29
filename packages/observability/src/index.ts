@@ -74,3 +74,37 @@ export class AuthRateLimitMetrics {
     this.#intervalMs = 0
   }
 }
+
+export const realtimeMetricEvents = [
+  'wake_hint',
+  'reconcile_changed',
+  'reconcile_error',
+  'wake_unavailable',
+  'delivery_batch',
+  'cursor_expired',
+  'slow_client',
+] as const
+export type RealtimeMetricEvent = (typeof realtimeMetricEvents)[number]
+export type RealtimeMetricCount = Readonly<{
+  event: RealtimeMetricEvent
+  count: number
+}>
+
+/** Fixed-vocabulary realtime counters deliberately have no tenant, actor,
+ * Workspace, resource, or cursor label. */
+export class RealtimeMetrics {
+  readonly #counters = new Map<RealtimeMetricEvent, number>()
+
+  record(event: RealtimeMetricEvent): void {
+    if (!realtimeMetricEvents.includes(event))
+      throw new RangeError('Realtime metric label is outside the fixed vocabulary')
+    this.#counters.set(event, (this.#counters.get(event) ?? 0) + 1)
+  }
+
+  snapshot(): readonly RealtimeMetricCount[] {
+    return realtimeMetricEvents.flatMap(event => {
+      const count = this.#counters.get(event) ?? 0
+      return count > 0 ? [{ event, count }] : []
+    })
+  }
+}

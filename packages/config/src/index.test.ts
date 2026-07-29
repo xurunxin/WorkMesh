@@ -1,7 +1,12 @@
 import { randomBytes } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { featureDefinitions } from '@workmesh/contracts'
-import { loadConfig, loadFeatureConfig, loadReleaseInfo } from './index.js'
+import {
+  loadConfig,
+  loadFeatureConfig,
+  loadRealtimeRedisHintConfig,
+  loadReleaseInfo,
+} from './index.js'
 
 const bootstrapMaterial = randomBytes(32)
 const bootstrapToken = bootstrapMaterial.toString('base64url')
@@ -45,6 +50,42 @@ describe('release and feature configuration', () => {
     expect(config.AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS).toBe(5000)
     expect(() => loadConfig({ ...baseEnvironment, AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: 'not-a-network' })).toThrow()
     expect(() => loadConfig({ ...baseEnvironment, AUTH_RATE_LIMIT_REDIS_PREFIX: 'authrl:{unsafe}' })).toThrow()
+  })
+
+  it('bounds realtime recovery and delivery settings', () => {
+    const config = loadConfig({
+      ...baseEnvironment,
+      REALTIME_HEALTHY_RECONCILE_MS: '20000',
+      REALTIME_FALLBACK_RECONCILE_MS: '750',
+      REALTIME_BATCH_LIMIT: '125',
+      REALTIME_HEARTBEAT_MS: '10000',
+      REALTIME_BACKPRESSURE_TIMEOUT_MS: '2500',
+      REALTIME_MAX_CLIENTS: '250',
+      WORKMESH_REALTIME_REDIS_MAXLEN: '5000',
+    })
+    expect(config.REALTIME_HEALTHY_RECONCILE_MS).toBe(20_000)
+    expect(config.REALTIME_FALLBACK_RECONCILE_MS).toBe(750)
+    expect(config.REALTIME_BATCH_LIMIT).toBe(125)
+    expect(config.REALTIME_HEARTBEAT_MS).toBe(10_000)
+    expect(config.REALTIME_BACKPRESSURE_TIMEOUT_MS).toBe(2_500)
+    expect(config.REALTIME_MAX_CLIENTS).toBe(250)
+    expect(config.WORKMESH_REALTIME_REDIS_MAXLEN).toBe(5_000)
+    expect(loadRealtimeRedisHintConfig({
+      REDIS_URL: baseEnvironment.REDIS_URL,
+      WORKMESH_REALTIME_REDIS_MAXLEN: '5000',
+    })).toEqual({
+      redisUrl: baseEnvironment.REDIS_URL,
+      maxLen: 5_000,
+    })
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_REALTIME_REDIS_MAXLEN: '99',
+    })).toThrow()
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      REALTIME_HEALTHY_RECONCILE_MS: '1000',
+      REALTIME_FALLBACK_RECONCILE_MS: '2000',
+    })).toThrow(/fallback reconciliation/)
   })
 
   it('fails closed for production bootstrap configuration', () => {

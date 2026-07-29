@@ -6,7 +6,23 @@ const columns =
   `cursor,id,event_type,event_version,workspace_id,team_id,audience_actor_id,
    aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,
    idempotency_key,payload,session_id,session_sequence AS sequence,
-   session_id AS "sessionId",session_sequence AS "sessionSequence",occurred_at`
+   session_id AS "sessionId",session_sequence AS "sessionSequence",occurred_at,
+   COALESCE((
+     SELECT jsonb_agg(
+       jsonb_build_object('type',resource_type,'id',resource_id)
+       ORDER BY resource_type,resource_id
+     )
+     FROM domain_event_resources resources
+     WHERE resources.domain_event_id=e.id AND resources.relation='scope'
+   ),'[]'::jsonb) AS scopes,
+   COALESCE((
+     SELECT jsonb_agg(
+       jsonb_build_object('type',resource_type,'id',resource_id)
+       ORDER BY resource_type,resource_id
+     )
+     FROM domain_event_resources resources
+     WHERE resources.domain_event_id=e.id AND resources.relation='invalidate'
+   ),'[]'::jsonb) AS invalidates`
 
 export type EventAudienceQuery = Readonly<{
   sql: string
@@ -21,23 +37,103 @@ export type EventAudienceQuery = Readonly<{
  */
 export function eventAudienceQuery(
   actor: ApiActor,
-  cursor: number,
+  cursor: string,
 ): EventAudienceQuery {
+  if (!actor.credentialHash)
+    throw new DomainError(
+      'UNAUTHENTICATED',
+      'The event credential is no longer available',
+    )
   if (actor.kind === 'human') {
     let sql =
       `SELECT ${columns} FROM domain_events e
        WHERE e.workspace_id=$1 AND e.cursor>$2
-         AND (e.audience_actor_id IS NULL OR e.audience_actor_id=$3)`
+         AND (e.audience_actor_id IS NULL OR e.audience_actor_id=$3)
+         AND EXISTS (
+           SELECT 1
+           FROM sessions credential
+           JOIN actors principal ON principal.id=credential.actor_id
+           WHERE credential.token_hash=$4
+             AND credential.expires_at>now()
+             AND credential.revoked_at IS NULL
+             AND principal.id=$3
+             AND principal.workspace_id=$1
+             AND principal.kind='human'
+             AND principal.is_active
+         )
+         AND NOT (
+           e.audience_actor_id IS NULL
+           AND (
+             e.aggregate_type IN ('session','saved_view','notification')
+             OR e.event_type='notification.preferences_updated'
+             OR (
+               e.aggregate_type='advanced_saved_view'
+               AND NOT EXISTS (
+                 SELECT 1
+                 FROM advanced_saved_views private_view
+                 WHERE private_view.id=e.aggregate_id
+                   AND private_view.workspace_id=e.workspace_id
+                   AND private_view.scope<>'private'
+               )
+             )
+           )
+         )`
     if (actor.workspaceRole !== 'admin') {
       sql +=
-        ` AND (e.team_id IS NULL OR EXISTS (
-            SELECT 1 FROM memberships m
-            JOIN teams t ON t.id=m.team_id AND t.workspace_id=m.workspace_id
-            WHERE m.workspace_id=e.workspace_id AND m.team_id=e.team_id
-              AND m.actor_id=$3 AND t.deleted_at IS NULL
-          ))`
+        ` AND (
+            e.audience_actor_id=$3
+            OR (
+              e.audience_actor_id IS NULL
+              AND (
+                EXISTS (
+                  SELECT 1
+                  FROM initiatives initiative
+                  WHERE e.aggregate_type='initiative'
+                    AND initiative.id=e.aggregate_id
+                    AND initiative.workspace_id=e.workspace_id
+                    AND initiative.owner_actor_id=$3
+                )
+                OR EXISTS (
+                  SELECT 1
+                  FROM memberships member
+                  JOIN teams team
+                    ON team.id=member.team_id
+                   AND team.workspace_id=member.workspace_id
+                  WHERE member.workspace_id=e.workspace_id
+                    AND member.actor_id=$3
+                    AND team.deleted_at IS NULL
+                    AND (
+                      member.team_id=e.team_id
+                      OR EXISTS (
+                        SELECT 1
+                        FROM domain_event_resources team_resource
+                        WHERE team_resource.domain_event_id=e.id
+                          AND team_resource.workspace_id=e.workspace_id
+                          AND team_resource.resource_type='team'
+                          AND team_resource.resource_id=member.team_id
+                      )
+                    )
+                )
+                OR (
+                  e.team_id IS NULL
+                  AND e.aggregate_type<>'initiative'
+                  AND e.event_type NOT LIKE 'project.dependency.%'
+                  AND NOT EXISTS (
+                    SELECT 1
+                    FROM domain_event_resources scoped_resource
+                    WHERE scoped_resource.domain_event_id=e.id
+                      AND scoped_resource.workspace_id=e.workspace_id
+                      AND scoped_resource.resource_type<>'workspace'
+                  )
+                )
+              )
+            )
+          )`
     }
-    return { sql, values: [actor.workspaceId, cursor, actor.id] }
+    return {
+      sql,
+      values: [actor.workspaceId, cursor, actor.id, actor.credentialHash],
+    }
   }
 
   if (!actor.agentSessionId) {
@@ -59,6 +155,12 @@ export function eventAudienceQuery(
         AND root_access.agent_id=root.agent_id
         AND root_access.team_id=root.team_id
         AND root_access.revoked_at IS NULL
+       JOIN agent_session_tokens credential
+         ON credential.session_id=root.id
+        AND credential.token_hash=$5
+        AND credential.expires_at>now()
+        AND credential.exchanged_at IS NOT NULL
+        AND credential.revoked_at IS NULL
        WHERE root.id=$4 AND root.workspace_id=$1 AND root.agent_actor_id=$3
          AND root.state IN (
            'acknowledged','planning','executing','awaiting_input',
@@ -110,22 +212,28 @@ export function eventAudienceQuery(
          OR (
            e.audience_actor_id IS NULL
            AND EXISTS (
-             SELECT 1 FROM authorized_sessions visible
-             WHERE e.team_id=visible.team_id
-               AND (
-                 (e.aggregate_type='work_item' AND e.aggregate_id=visible.work_item_id)
-                 OR (e.aggregate_type='project' AND e.aggregate_id=visible.project_id)
-                 OR (
-                   e.aggregate_type='agent_session'
-                   AND e.aggregate_id=visible.id
-                 )
+             SELECT 1
+             FROM domain_event_resources resource
+             JOIN authorized_sessions visible
+               ON (
+                 (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
+                 OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
+                 OR (resource.resource_type='session' AND resource.resource_id=visible.id)
                )
+             WHERE resource.domain_event_id=e.id
+               AND resource.relation IN ('scope','invalidate')
            )
          )
        )`
   return {
     sql,
-    values: [actor.workspaceId, cursor, actor.id, actor.agentSessionId],
+    values: [
+      actor.workspaceId,
+      cursor,
+      actor.id,
+      actor.agentSessionId,
+      actor.credentialHash,
+    ],
   }
 }
 export async function assertEventAudienceActive(

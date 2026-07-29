@@ -156,8 +156,54 @@ export const authMeResponseSchema = z.object({ actor: humanActorResponseSchema, 
 export const installationStatusResponseSchema = z.object({ installed: z.boolean() })
 export const healthResponseSchema = z.object({ status: z.literal('ok') })
 
+export const DURABLE_EVENT_CURSOR_PATTERN = /^(?:0|[1-9][0-9]{0,17}|(?:[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$/
+export const durableEventCursorSchema = z
+  .string()
+  .regex(
+    DURABLE_EVENT_CURSOR_PATTERN,
+    'Cursor exceeds the PostgreSQL bigint range',
+  )
+export const eventResourceTypeSchema = z.enum([
+  'workspace',
+  'team',
+  'project',
+  'work_item',
+  'session',
+  'room',
+  'artifact',
+  'delivery',
+])
+export const eventResourceSchema = z.object({
+  type: eventResourceTypeSchema,
+  id: idSchema,
+})
+export const eventAudienceSchema = z.object({
+  visibility: z.enum(['workspace', 'team', 'actor', 'resource']),
+  workspaceId: idSchema,
+  teamId: idSchema.nullable(),
+  actorId: idSchema.nullable(),
+})
 // Events are intentionally passthrough so consumers remain compatible with newer event fields.
-export const eventEnvelopeSchema = z.object({ cursor: z.number().int().nonnegative(), id: idSchema, event_type: z.string().min(1), event_version: z.number().int().positive(), workspace_id: idSchema, team_id: idSchema.nullable().optional(), audience_actor_id: idSchema.nullable().optional(), aggregate_type: z.string().min(1), aggregate_id: idSchema, aggregate_revision: revisionSchema.nullable(), actor_id: idSchema, correlation_id: z.string().min(1), idempotency_key: z.string().nullable(), payload: z.unknown(), occurred_at: timestampSchema }).passthrough()
+export const eventEnvelopeSchema = z.object({
+  cursor: durableEventCursorSchema,
+  id: idSchema,
+  event_type: z.string().min(1),
+  event_version: z.number().int().positive(),
+  workspace_id: idSchema,
+  team_id: idSchema.nullable().optional(),
+  audience_actor_id: idSchema.nullable().optional(),
+  audience: eventAudienceSchema,
+  scopes: z.array(eventResourceSchema),
+  invalidates: z.array(eventResourceSchema),
+  aggregate_type: z.string().min(1),
+  aggregate_id: idSchema,
+  aggregate_revision: revisionSchema.nullable(),
+  actor_id: idSchema,
+  correlation_id: z.string().min(1),
+  idempotency_key: z.string().nullable(),
+  payload: z.unknown(),
+  occurred_at: timestampSchema,
+}).passthrough()
 
 export const apiErrorCodeSchema = z.enum([
   'VALIDATION_ERROR',
@@ -180,6 +226,8 @@ export const apiErrorCodeSchema = z.enum([
   'RESPONSIBLE_HUMAN_REQUIRED',
   'PAGINATION_CURSOR_INVALID',
   'PAGINATION_CURSOR_MISMATCH',
+  'CURSOR_EXPIRED',
+  'REALTIME_CAPACITY_EXCEEDED',
   'INTERNAL_ERROR',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
@@ -794,7 +842,7 @@ export const advancedViewEntitySchema = z.enum(['issue', 'project', 'session', '
 export const advancedViewLayoutSchema = z.enum(['list', 'board', 'timeline'])
 export const advancedViewScopeSchema = z.enum(['private', 'team', 'workspace'])
 const POSTGRES_BIGINT_MAX = 9_223_372_036_854_775_807n
-export const MINOR_UNIT_DECIMAL_PATTERN = /^(?:0|[1-9][0-9]{0,17}|(?:[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$/
+export const MINOR_UNIT_DECIMAL_PATTERN = DURABLE_EVENT_CURSOR_PATTERN
 export const minorUnitDecimalSchema = z.string()
   .regex(MINOR_UNIT_DECIMAL_PATTERN, 'Minor-unit amount must be a canonical non-negative PostgreSQL bigint decimal string')
   .refine(value => BigInt(value) <= POSTGRES_BIGINT_MAX, 'Minor-unit amount exceeds PostgreSQL bigint range')

@@ -2,10 +2,11 @@
 
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { apiBase, apiRequest, json } from './lib/api'
+import { apiRequest, json } from './lib/api'
 import { type AgentActivity, type AgentSession, type Approval, type Artifact, type PlanVersion, agentStateClass, agentStateLabel, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, formatTime, normalizeActivity, normalizeApproval, normalizeArtifact, normalizePlan, retryAgentSession } from './lib/agents'
 import { AgentBadge } from './agent-work-panel'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { useRealtimeSubscription } from './lib/realtime'
 
 type DetailTab = 'conversation' | 'plan' | 'activity' | 'artifacts'
 type Props = { sessionId: string; compact?: boolean; tab?: DetailTab }
@@ -63,21 +64,19 @@ export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
   useEffect(() => {
     setSelectedPlanId(current => current || session?.current_plan_version_id || plans.at(-1)?.id || '')
   }, [plans, session?.current_plan_version_id])
-  useEffect(() => {
-    let timer: number | undefined
-    const cursor = window.localStorage.getItem('workmesh.events.cursor')
-    const stream = new EventSource(`${apiBase}/api/v1/events/stream${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`, { withCredentials: true })
-    stream.onmessage = event => {
-      try { const payload = JSON.parse(event.data) as { cursor?: number }; const nextCursor = payload.cursor ?? Number(event.lastEventId); if (Number.isSafeInteger(nextCursor) && nextCursor >= 0) window.localStorage.setItem('workmesh.events.cursor', String(nextCursor)) } catch { /* The durable read below is the source of truth. */ }
-      if (timer !== undefined) window.clearTimeout(timer)
-      timer = window.setTimeout(() => {
-        void load()
-        void activitiesPage.refresh(); void plansPage.refresh()
-        void artifactsPage.refresh(); void approvalsPage.refresh()
-      }, 150)
-    }
-    return () => { if (timer !== undefined) window.clearTimeout(timer); stream.close() }
-  }, [activitiesPage.refresh, approvalsPage.refresh, artifactsPage.refresh, load, plansPage.refresh])
+  useRealtimeSubscription(
+    useMemo(() => [{ type: 'session' as const, id: sessionId }], [sessionId]),
+    invalidation => {
+      if (invalidation.reason === 'resync')
+        return Promise.all([
+          load(), activitiesPage.refresh(), plansPage.refresh(),
+          artifactsPage.refresh(), approvalsPage.refresh(),
+        ]).then(() => undefined)
+      void load()
+      void activitiesPage.refresh(); void plansPage.refresh()
+      void artifactsPage.refresh(); void approvalsPage.refresh()
+    },
+  )
 
   const signal = async (signalName: 'pause' | 'resume' | 'stop') => {
     if (!session) return

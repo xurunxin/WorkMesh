@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { applyMigrations, createDb, withTx } from '@workmesh/db'
-import { createOutboxWorker, type ClaimedEvent, type DeliverySink } from '../src/index.js'
+import { createOutboxWorker, RedisStreamSink, type ClaimedEvent, type DeliverySink, type RedisStreamClient } from '../src/index.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) {
@@ -94,6 +94,66 @@ describe('outbox delivery', () => {
     expect(received).toHaveLength(1)
     const delivered = await db.query<{ status: string; attempt_count: number }>('SELECT status,attempt_count FROM outbox_events WHERE id=$1', [outboxId])
     expect(delivered.rows[0]).toMatchObject({ status: 'delivered', attempt_count: 2 })
+  })
+
+  it('keeps a Redis hint pending while offline and delivers it after recovery', async () => {
+    const outboxId = await createCommittedEvent(
+      'worker.delivery.redis-recovery',
+    )
+    let isReady = false
+    const xAdd = vi.fn(async () => '1-0')
+    const redis = {
+      isOpen: true,
+      get isReady() {
+        return isReady
+      },
+      on: vi.fn(),
+      connect: vi.fn(async () => undefined),
+      xAdd,
+      quit: vi.fn(async () => 'OK'),
+    } as unknown as RedisStreamClient
+    const sink = new RedisStreamSink({
+      redisUrl: 'redis://unused.test:6379',
+      maxLen: 5_000,
+      client: redis,
+    })
+    const worker = createOutboxWorker({
+      db,
+      workerId: 'worker-redis-recovery',
+      sink,
+    })
+
+    await worker.tick()
+    const pending = await db.query<{
+      status: string
+      attempt_count: number
+      last_error: string
+    }>(
+      'SELECT status,attempt_count,last_error FROM outbox_events WHERE id=$1',
+      [outboxId],
+    )
+    expect(pending.rows[0]).toMatchObject({
+      status: 'pending',
+      attempt_count: 1,
+      last_error: 'REDIS_STREAM_NOT_READY',
+    })
+    expect(xAdd).not.toHaveBeenCalled()
+
+    await db.query('UPDATE outbox_events SET available_at=now() WHERE id=$1', [
+      outboxId,
+    ])
+    isReady = true
+    await worker.tick()
+
+    const delivered = await db.query<{
+      status: string
+      attempt_count: number
+    }>('SELECT status,attempt_count FROM outbox_events WHERE id=$1', [outboxId])
+    expect(delivered.rows[0]).toMatchObject({
+      status: 'delivered',
+      attempt_count: 2,
+    })
+    expect(xAdd).toHaveBeenCalledOnce()
   })
 
   it('marks an event dead after eight failed attempts and never claims it again', async () => {

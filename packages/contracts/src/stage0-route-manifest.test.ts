@@ -1,6 +1,13 @@
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
-import { errorResponseSchema, eventEnvelopeSchema, stage0RouteManifest } from './index.js'
+import { parse } from 'yaml'
+import {
+  DURABLE_EVENT_CURSOR_PATTERN,
+  durableEventCursorSchema,
+  errorResponseSchema,
+  eventEnvelopeSchema,
+  stage0RouteManifest,
+} from './index.js'
 
 const escaped = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
@@ -25,14 +32,52 @@ describe('Stage 0 transport contract manifest', () => {
 
   it('accepts forward-compatible event fields', () => {
     const event = eventEnvelopeSchema.parse({
-      cursor: 42,
+      cursor: '9007199254740993',
       id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
-      event_type: 'work_item.created',
-      event_version: 1,
+      event_type: 'comment.updated',
+      event_version: 2,
       workspace_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
       team_id: null,
       audience_actor_id: null,
-      aggregate_type: 'work_item',
+      audience: {
+        visibility: 'workspace',
+        workspaceId: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        teamId: null,
+        actorId: null,
+      },
+      scopes: [
+        {
+          type: 'workspace',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'team',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'project',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'work_item',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+      ],
+      invalidates: [
+        {
+          type: 'team',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'project',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'work_item',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+      ],
+      aggregate_type: 'comment',
       aggregate_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
       aggregate_revision: 1,
       actor_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
@@ -44,6 +89,97 @@ describe('Stage 0 transport contract manifest', () => {
     })
 
     expect(event.future_delivery_field).toBe('ignored by old consumers')
+    expect(event.cursor).toBe('9007199254740993')
+    expect(event.invalidates.map(resource => resource.type)).toEqual([
+      'team',
+      'project',
+      'work_item',
+    ])
+  })
+
+  it('keeps parsed OpenAPI cursor boundaries in parity with runtime', async () => {
+    const source = await readFile(
+      new URL('../../../OPENAPI.yaml', import.meta.url),
+      'utf8',
+    )
+    const document = parse(source) as {
+      components?: {
+        schemas?: {
+          DurableEventCursor?: { pattern?: unknown }
+        }
+      }
+    }
+    const documentedPattern =
+      document.components?.schemas?.DurableEventCursor?.pattern
+    expect(documentedPattern).toBe(DURABLE_EVENT_CURSOR_PATTERN.source)
+    const documentedSchema = new RegExp(String(documentedPattern))
+    const boundaries = [
+      ['0', true],
+      ['1', true],
+      ['999999999999999999', true],
+      ['9223372036854775806', true],
+      ['9223372036854775807', true],
+      ['9223372036854775808', false],
+      ['9999999999999999999', false],
+      ['10000000000000000000', false],
+      ['01', false],
+      ['+1', false],
+      ['-1', false],
+      [' 1', false],
+      ['1 ', false],
+      ['1.0', false],
+      ['', false],
+    ] as const
+    for (const [value, accepted] of boundaries) {
+      expect(documentedSchema.test(value), `OpenAPI cursor ${value}`)
+        .toBe(accepted)
+      expect(
+        durableEventCursorSchema.safeParse(value).success,
+        `runtime cursor ${value}`,
+      ).toBe(accepted)
+    }
+  })
+
+  it('represents normalized multi-resource audiences without claiming Workspace visibility', () => {
+    const parsed = eventEnvelopeSchema.parse({
+      cursor: '1',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+      event_type: 'initiative.updated',
+      event_version: 2,
+      workspace_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+      team_id: null,
+      audience_actor_id: null,
+      audience: {
+        visibility: 'resource',
+        workspaceId: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        teamId: null,
+        actorId: null,
+      },
+      scopes: [
+        {
+          type: 'workspace',
+          id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+        },
+        {
+          type: 'team',
+          id: '00000000-0000-4000-8000-000000000001',
+        },
+        {
+          type: 'team',
+          id: '00000000-0000-4000-8000-000000000002',
+        },
+      ],
+      invalidates: [],
+      aggregate_type: 'initiative',
+      aggregate_id: '00000000-0000-4000-8000-000000000003',
+      aggregate_revision: 2,
+      actor_id: '00000000-0000-4000-8000-000000000004',
+      correlation_id: 'resource-audience-test',
+      idempotency_key: null,
+      payload: {},
+      occurred_at: '2026-07-28T00:00:00.000Z',
+    })
+    expect(parsed.audience.visibility).toBe('resource')
   })
 
   it('accepts the sole-team deletion conflict error response', () => {

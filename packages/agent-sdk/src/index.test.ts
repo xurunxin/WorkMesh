@@ -1,10 +1,151 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { WorkMeshClient, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
+import { WorkMeshClient, WorkMeshCursorExpiredError, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
 
 describe('WorkMeshClient', () => {
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  const realtimeEvent = {
+    cursor: '9007199254740993',
+    id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    event_type: 'work_item.updated',
+    event_version: 2,
+    workspace_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    team_id: null,
+    audience_actor_id: null,
+    audience: {
+      visibility: 'workspace',
+      workspaceId: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+      teamId: null,
+      actorId: null,
+    },
+    scopes: [{
+      type: 'workspace',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }],
+    invalidates: [{
+      type: 'work_item',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }],
+    aggregate_type: 'work_item',
+    aggregate_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    aggregate_revision: 1,
+    actor_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    correlation_id: 'event-test',
+    idempotency_key: null,
+    payload: {},
+    occurred_at: '2026-07-28T00:00:00.000Z',
+  }
+
+  it('lists exact decimal event cursors above 2^53', async () => {
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([realtimeEvent]), { status: 200 }),
+    )
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+
+    await expect(client.listEvents({
+      cursor: '9007199254740992',
+      limit: 25,
+    })).resolves.toEqual([realtimeEvent])
+    expect(fetch.mock.calls[0]?.[0]).toBe(
+      'https://workmesh.test/api/v1/events?cursor=9007199254740992&limit=25',
+    )
+  })
+
+  it('streams typed events and preserves Last-Event-ID exactly', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(
+      `id: ${realtimeEvent.cursor}\ndata: ${JSON.stringify(realtimeEvent)}\n\n`,
+      {
+        status: 200,
+        headers: { 'content-type': 'text/event-stream' },
+      },
+    ))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+    const stream = client.streamEvents({ cursor: '9007199254740992' })
+
+    await expect(stream.next()).resolves.toEqual({
+      done: false,
+      value: realtimeEvent,
+    })
+    expect(fetch.mock.calls[0]?.[1].headers['last-event-id'])
+      .toBe('9007199254740992')
+    await stream.return()
+  })
+
+  it('surfaces CURSOR_EXPIRED without retrying or moving caller state', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      error: {
+        code: 'CURSOR_EXPIRED',
+        message: 'expired',
+        correlationId: 'cursor-expired-test',
+        details: {
+          minimumCursor: '9007199254740993',
+          resyncCursor: '9007199254740993',
+          resyncRequired: true,
+        },
+      },
+    }), { status: 409 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+
+    const error = await client.streamEvents({ cursor: '0' }).next()
+      .then(() => undefined, reason => reason)
+    expect(error).toBeInstanceOf(WorkMeshCursorExpiredError)
+    expect(error).toMatchObject({
+      code: 'CURSOR_EXPIRED',
+      minimumCursor: '9007199254740993',
+      resyncCursor: '9007199254740993',
+    })
+    expect(fetch).toHaveBeenCalledOnce()
+  })
+
+  it('retries documented realtime capacity responses with bounded policy', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: {
+          code: 'REALTIME_CAPACITY_EXCEEDED',
+          message: 'capacity',
+          correlationId: 'capacity-test',
+          details: { retryable: true, retryAfterSeconds: 1 },
+        },
+      }), {
+        status: 503,
+        headers: { 'retry-after': '0' },
+      }))
+      .mockResolvedValueOnce(new Response(
+        `id: ${realtimeEvent.cursor}\ndata: ${JSON.stringify(realtimeEvent)}\n\n`,
+        {
+          status: 200,
+          headers: { 'content-type': 'text/event-stream' },
+        },
+      ))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+      retry: { maxAttempts: 2, baseDelayMs: 0 },
+    })
+    const stream = client.streamEvents({ cursor: '0' })
+
+    await expect(stream.next()).resolves.toEqual({
+      done: false,
+      value: realtimeEvent,
+    })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    await stream.return()
   })
 
   it('reads release and authenticated feature contracts without claiming disabled tools', async () => {
