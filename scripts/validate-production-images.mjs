@@ -380,8 +380,10 @@ try {
     dollarRoundTripDirectory,
     'compose.snapshot.json',
   )
+  const dollarRoundTripProject = `workmesh-dollar-roundtrip-${process.pid}`
   const encodedDollarService = {
     image: 'busybox:1.36.1',
+    network_mode: 'none',
     command: [
       'sh',
       '-c',
@@ -406,6 +408,7 @@ try {
     },
   }
   const expectedDollarStrings = {
+    network_mode: 'none',
     command: ['sh', '-c', 'printf "$WM_COMMAND ${WM_COMMAND} $$ $$$"'],
     environment: {
       SESSION_SECRET: 'session-$WM_SESSION-${WM_SESSION}-$$-$$$',
@@ -422,6 +425,7 @@ try {
     },
   }
   const expectedEncodedDollarStrings = {
+    network_mode: encodedDollarService.network_mode,
     command: encodedDollarService.command,
     environment: encodedDollarService.environment,
     labels: encodedDollarService.labels,
@@ -458,7 +462,7 @@ try {
   await writeFile(
     dollarRoundTripPath,
     JSON.stringify({
-      name: 'workmesh-dollar-roundtrip',
+      name: dollarRoundTripProject,
       services: { probe: encodedDollarService },
     }),
     'utf8',
@@ -482,7 +486,7 @@ try {
       [
         'compose',
         '--project-name',
-        'workmesh-dollar-roundtrip',
+        dollarRoundTripProject,
         '-f',
         dollarRoundTripPath,
         'config',
@@ -501,6 +505,7 @@ try {
     )
     const renderedProbe = JSON.parse(roundTrip.stdout).services.probe
     const actualDollarStrings = {
+      network_mode: renderedProbe.network_mode,
       command: renderedProbe.command,
       environment: renderedProbe.environment,
       labels: renderedProbe.labels,
@@ -519,7 +524,45 @@ try {
       'Docker Compose must restore every encoded dollar literal exactly',
     )
   }
-  const disposableContainer = `workmesh-dollar-roundtrip-${process.pid}`
+  const projectResourceCommands = {
+    containers: ['ps', '-a', '-q'],
+    networks: ['network', 'ls', '-q'],
+    volumes: ['volume', 'ls', '-q'],
+  }
+  const inspectProjectResources = () =>
+    Object.fromEntries(
+      Object.entries(projectResourceCommands).map(([kind, command]) => {
+        const result = spawnSync(
+          'docker',
+          [
+            ...command,
+            '--filter',
+            `label=com.docker.compose.project=${dollarRoundTripProject}`,
+          ],
+          { cwd: root, encoding: 'utf8' },
+        )
+        assert(
+          result.status === 0,
+          `Docker must list dollar-literal project ${kind}`,
+        )
+        return [
+          kind,
+          result.stdout
+            .trim()
+            .split(/\r?\n/u)
+            .filter((value) => value.length > 0),
+        ]
+      }),
+    )
+  const assertNoProjectResources = (resources, phase) => {
+    for (const [kind, identifiers] of Object.entries(resources))
+      assert(
+        identifiers.length === 0,
+        `dollar-literal project must have no ${kind} ${phase}`,
+      )
+  }
+  assertNoProjectResources(inspectProjectResources(), 'before validation')
+  const disposableContainer = dollarRoundTripProject
   const runtimeEnvironment = { ...process.env }
   for (const name of [
     'WM_COMMAND',
@@ -537,7 +580,7 @@ try {
       [
         'compose',
         '--project-name',
-        'workmesh-dollar-roundtrip',
+        dollarRoundTripProject,
         '-f',
         dollarRoundTripPath,
         'run',
@@ -569,6 +612,28 @@ try {
       'Docker must inspect the disposable dollar-literal container',
     )
     const container = JSON.parse(inspection.stdout)[0]
+    assert(
+      container.Config.Labels['com.docker.compose.project'] ===
+        dollarRoundTripProject,
+      'disposable container must belong to the unique validator project',
+    )
+    assert(
+      container.HostConfig.NetworkMode === 'none',
+      'disposable container must not use a Docker network',
+    )
+    const resourcesDuringRun = inspectProjectResources()
+    assert(
+      resourcesDuringRun.containers.length === 1,
+      'dollar-literal project must own exactly one disposable container',
+    )
+    assert(
+      resourcesDuringRun.networks.length === 0,
+      'dollar-literal project must not create a Docker network',
+    )
+    assert(
+      resourcesDuringRun.volumes.length === 0,
+      'dollar-literal project must not create Docker volumes',
+    )
     const containerEnvironment = new Set(container.Config.Env)
     for (const [name, value] of Object.entries(
       expectedDollarStrings.environment,
@@ -598,6 +663,28 @@ try {
       cwd: root,
       encoding: 'utf8',
     })
+    const cleanup = spawnSync(
+      'docker',
+      [
+        'compose',
+        '--project-name',
+        dollarRoundTripProject,
+        '-f',
+        dollarRoundTripPath,
+        'down',
+        '--remove-orphans',
+      ],
+      {
+        cwd: root,
+        env: runtimeEnvironment,
+        encoding: 'utf8',
+      },
+    )
+    assert(
+      cleanup.status === 0,
+      'Docker Compose must clean the unique dollar-literal project',
+    )
+    assertNoProjectResources(inspectProjectResources(), 'after cleanup')
   }
 } finally {
   await rm(dollarRoundTripDirectory, { recursive: true, force: true })
