@@ -314,17 +314,30 @@ export function createAgentWebhookWorker({
                 ? target_session.work_item_id::text
           )
           AND (
-            COALESCE(target_session.project_id,scoped_item.project_id) IS NULL
+            target_session.work_item_id IS NOT NULL
+            OR target_session.project_id IS NULL
             OR COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-                ? COALESCE(target_session.project_id,scoped_item.project_id)::text
+                ? target_session.project_id::text
           )
           AND (
             (room.subject_kind='work_item'
               AND target_session.work_item_id=room.subject_id)
             OR (
               room.subject_kind='project'
-              AND COALESCE(target_session.project_id,scoped_item.project_id)
-                  =room.subject_id
+              AND (
+                (
+                  target_session.work_item_id IS NOT NULL
+                  AND scoped_item.project_id=room.subject_id
+                )
+                OR (
+                  target_session.work_item_id IS NULL
+                  AND target_session.project_id=room.subject_id
+                  AND COALESCE(
+                    delegation.capability_scope->'projectIds',
+                    '[]'::jsonb
+                  ) ? room.subject_id::text
+                )
+              )
             )
             OR (
               room.subject_kind='session'

@@ -141,8 +141,16 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [allowedId])).rows[0]?.status).toBe('delivered')
   })
 
-  it('suppresses an enqueued direct-recipient payload after target revocation or stop', async () => {
+  it('delivers a project-linked Work Item target and suppresses it after revocation or stop', async () => {
     const data = await fixture()
+    const projectId = (await db.query<{ id: string }>(
+      "INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,'Worker project scope') RETURNING id",
+      [data.workspaceId, data.teamId],
+    )).rows[0]!.id
+    await db.query('UPDATE work_items SET project_id=$2 WHERE id=$1', [
+      data.workItemId,
+      projectId,
+    ])
     await db.query(
       `UPDATE agent_definitions
           SET requested_capabilities=ARRAY['work:read'],
@@ -238,6 +246,14 @@ describe('stage 1 worker durability', () => {
       fetcher: async () => { requests += 1; return { status: 204 } },
     })
 
+    const authorizedDeliveryId = await enqueue('authorized-project-linked-work-item')
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
+      [authorizedDeliveryId],
+    )).rows[0]).toEqual({ status: 'delivered' })
+
     const revokedMarker = 'must-not-leave-after-revocation'
     const revokedDeliveryId = await enqueue(revokedMarker)
     await db.query(
@@ -245,7 +261,7 @@ describe('stage 1 worker durability', () => {
       [data.delegationId],
     )
     await worker.tick()
-    expect(requests).toBe(0)
+    expect(requests).toBe(1)
     const revokedAudit = (await db.query<{
       status: string
       last_error: string
@@ -269,7 +285,7 @@ describe('stage 1 worker durability', () => {
     const stoppedDeliveryId = await enqueue(stoppedMarker)
     await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
     await worker.tick()
-    expect(requests).toBe(0)
+    expect(requests).toBe(1)
     const stoppedAudit = (await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [stoppedDeliveryId],

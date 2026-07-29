@@ -349,9 +349,10 @@ async function authorizeExactReplyRecipient(
               ? source_session.work_item_id::text
         )
         AND (
-          COALESCE(source_session.project_id,source_work_item.project_id) IS NULL
+          source_session.work_item_id IS NOT NULL
+          OR source_session.project_id IS NULL
           OR COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-              ? COALESCE(source_session.project_id,source_work_item.project_id)::text
+              ? source_session.project_id::text
         )
         AND (
           (
@@ -362,15 +363,18 @@ async function authorizeExactReplyRecipient(
           )
           OR (
             $5='project'
-            AND COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-                ? $6::text
             AND (
-              source_session.project_id=$6
-              OR EXISTS (
-                SELECT 1 FROM work_items scoped_work_item
-                 WHERE scoped_work_item.id=source_session.work_item_id
-                   AND scoped_work_item.workspace_id=$1
-                   AND scoped_work_item.project_id=$6
+              (
+                source_session.work_item_id IS NOT NULL
+                AND source_work_item.project_id=$6
+              )
+              OR (
+                source_session.work_item_id IS NULL
+                AND source_session.project_id=$6
+                AND COALESCE(
+                  delegation.capability_scope->'projectIds',
+                  '[]'::jsonb
+                ) ? $6::text
               )
             )
           )

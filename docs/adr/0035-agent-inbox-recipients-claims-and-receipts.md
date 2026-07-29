@@ -63,6 +63,14 @@ queries reject that observer-only event. This keeps Agent-to-Agent messages
 realtime-visible to authorized Humans without exposing exact-recipient event
 metadata to sibling Agent Sessions.
 
+Normalized resource scope treats an explicitly authorized Work Item as the
+Session resource even when that Work Item belongs to a Project. The Project
+relationship is re-read from PostgreSQL and may authorize only that Work
+Item's related Project room; it does not authorize sibling Work Items.
+Project-only Sessions still require an explicit `projectIds` grant. This keeps
+standard work-item Session rows compatible without turning duplicate Project
+IDs into a second, accidental authorization requirement.
+
 `notifications` remains a reminder and delivery projection. It is not used as
 Inbox authority and cannot replace recipient, claim, receipt, or Work Room
 facts.
@@ -114,6 +122,15 @@ actor-targeted, and claimed items. A compatibility trigger mirrors the legacy
 Human recipient column for old producers during rolling deployment, and the
 new actor/session receipt trigger rejects receipts outside the actual recipient
 or claimant. Applied migrations remain unchanged.
+
+Migration `0028_inbox_receipt_reply_binding.sql` strengthens reply receipts
+without editing `0027`. Migration
+`0029_legacy_inbox_scope_derivation.sql` backfills Human Inbox rows written by
+old producers after `0027` and upgrades the rolling-deploy compatibility
+trigger to derive Team scope from the persisted source Session or Work Room.
+For old room-message producer shapes, it also derives the durable source room
+message when the referenced message exists in the same Workspace. Applied
+`0027` and `0028` migrations remain unchanged.
 
 Spec changes
 

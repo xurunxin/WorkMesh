@@ -22,7 +22,7 @@ async function migrateFrom0001(through?: number): Promise<void> {
 describe('Stage 2 migration chain and PostgreSQL constraints', () => {
   afterAll(async () => { await db.end() }, 300_000)
 
-  it('upgrades an applied 0027 receipt trigger to actor-, Session-, and source-bound replies', async () => {
+  it('upgrades an applied 0027 receipt trigger through 0029 with actor-, Session-, and source-bound replies', async () => {
     await migrateFrom0001(27)
     expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0027_agent_inbox_receipts')
     const installed = await installWorkspace(db, { workspaceName: 'Receipt upgrade', workspaceSlug: 'receipt-upgrade', adminName: 'Upgrade Admin', email: 'receipt-upgrade@example.test', password: 'password-acceptance' })
@@ -39,11 +39,60 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     const channel = await db.query<{ id: string }>("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'work_item',$2,$3) RETURNING id", [installed.workspaceId, item.rows[0]!.id, installed.teamId])
     const sourceMessage = await db.query<{ id: string }>("INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,intent,recipient_actor_id,body,requires_response) VALUES($1,$2,$3,'ask',$4,'Upgrade source',true) RETURNING id", [channel.rows[0]!.id, installed.workspaceId, installed.actorId, recipientActor.rows[0]!.id])
     const inboxItem = await db.query<{ id: string }>("INSERT INTO inbox_items(workspace_id,recipient_actor_id,recipient_session_id,team_id,kind,source_type,source_id,source_room_message_id,requires_response) VALUES($1,$2,$3,$4,'mention','room_message',$5,$5,true) RETURNING id", [installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, installed.teamId, sourceMessage.rows[0]!.id])
+    const legacyHuman = await db.query<{ id: string }>(
+      "INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','member','legacy-recipient@example.test','Legacy recipient','unused') RETURNING id",
+      [installed.workspaceId],
+    )
+    await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')", [installed.workspaceId, installed.teamId, legacyHuman.rows[0]!.id])
+    const legacyActivity = await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,session_id,kind,source_type,
+         source_id,payload
+       ) VALUES($1,$2,$3,'waiting_input','activity',$4,$5)
+       ON CONFLICT DO NOTHING
+       RETURNING id`,
+      [installed.workspaceId, legacyHuman.rows[0]!.id, recipientSession.rows[0]!.id, crypto.randomUUID(), { summary: 'Baseline 668cad0 activity producer' }],
+    )
+    const legacyRoomMessage = await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,session_id,kind,source_type,
+         source_id,payload
+       ) VALUES($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT(workspace_id,recipient_human_actor_id,kind,source_type,source_id)
+       DO NOTHING
+       RETURNING id`,
+      [installed.workspaceId, legacyHuman.rows[0]!.id, null, 'waiting_input', 'room_message', sourceMessage.rows[0]!.id, { summary: 'Baseline 668cad0 room producer' }],
+    )
     const acceptedBy0027 = await db.query<{ id: string }>("INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,reply_to_message_id,body) VALUES($1,$2,$3,$4,'inform',$5,'Accepted only by old 0027 scope') RETURNING id", [channel.rows[0]!.id, installed.workspaceId, foreignActor.rows[0]!.id, foreignSession.rows[0]!.id, sourceMessage.rows[0]!.id])
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'old-0027','old-0027')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, acceptedBy0027.rows[0]!.id])).resolves.toBeDefined()
 
     await applyMigrations(db)
-    expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0028_inbox_receipt_reply_binding')
+    expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0029_legacy_inbox_scope_derivation')
+    expect((await db.query<{
+      id: string
+      recipient_actor_id: string
+      team_id: string
+      source_room_message_id: string | null
+    }>(
+      `SELECT id,recipient_actor_id,team_id,source_room_message_id
+         FROM inbox_items
+        WHERE id=ANY($1::uuid[])
+        ORDER BY id`,
+      [[legacyActivity.rows[0]!.id, legacyRoomMessage.rows[0]!.id]],
+    )).rows).toEqual([
+      {
+        id: legacyActivity.rows[0]!.id,
+        recipient_actor_id: legacyHuman.rows[0]!.id,
+        team_id: installed.teamId,
+        source_room_message_id: null,
+      },
+      {
+        id: legacyRoomMessage.rows[0]!.id,
+        recipient_actor_id: legacyHuman.rows[0]!.id,
+        team_id: installed.teamId,
+        source_room_message_id: sourceMessage.rows[0]!.id,
+      },
+    ].sort((left, right) => left.id.localeCompare(right.id)))
 
     const foreignReply = await db.query<{ id: string }>("INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,reply_to_message_id,body) VALUES($1,$2,$3,$4,'inform',$5,'Rejected foreign reply after 0028') RETURNING id", [channel.rows[0]!.id, installed.workspaceId, foreignActor.rows[0]!.id, foreignSession.rows[0]!.id, sourceMessage.rows[0]!.id])
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'new-foreign','new-foreign')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, foreignReply.rows[0]!.id])).rejects.toThrow(/INBOX_REPLY_MESSAGE_SCOPE_MISMATCH/)
@@ -53,7 +102,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'new-valid','new-valid')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, validReply.rows[0]!.id])).resolves.toBeDefined()
   }, 300_000)
 
-  it('upgrades real 0026 Inbox rows through 0028, accepts legacy producers, and enforces collaboration constraints', async () => {
+  it('upgrades real 0026 Inbox rows through 0029, accepts legacy producers, and enforces collaboration constraints', async () => {
     await migrateFrom0001(26)
     const legacy = await installWorkspace(db, { workspaceName: 'Legacy Inbox', workspaceSlug: 'legacy-inbox', adminName: 'Legacy Admin', email: 'legacy-inbox@example.test', password: 'password-acceptance' })
     const legacySourceId = crypto.randomUUID()
@@ -87,7 +136,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     })
     const versions = await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version')
     expect(versions.rows.map(row => row.version)).toEqual([
-      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds', '0015_stage4_planning_views_templates', '0016_stage4_usage_notifications', '0017_stage4_automation_control_plane', '0018_stage4_loops_health_a2a', '0019_stage4_gitea', '0020_stage4_review_hardening', '0021_stage4_a2a_direction_and_prompt_identity', '0022_route_policy_authorization_denials', '0023_auth_idempotency_records', '0024_cursor_pagination_indexes', '0025_realtime_event_envelope', '0026_retention_archive_and_heartbeat_health', '0027_agent_inbox_receipts', '0028_inbox_receipt_reply_binding',
+      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds', '0015_stage4_planning_views_templates', '0016_stage4_usage_notifications', '0017_stage4_automation_control_plane', '0018_stage4_loops_health_a2a', '0019_stage4_gitea', '0020_stage4_review_hardening', '0021_stage4_a2a_direction_and_prompt_identity', '0022_route_policy_authorization_denials', '0023_auth_idempotency_records', '0024_cursor_pagination_indexes', '0025_realtime_event_envelope', '0026_retention_archive_and_heartbeat_health', '0027_agent_inbox_receipts', '0028_inbox_receipt_reply_binding', '0029_legacy_inbox_scope_derivation',
     ])
     const tables = await db.query<{ table_name: string }>("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('work_room_channels','room_messages','leases','handoffs','routing_attempts','routing_records','context_deltas','decision_transition_consumptions') ORDER BY table_name")
     expect(tables.rows.map(row => row.table_name)).toEqual(['context_deltas', 'decision_transition_consumptions', 'handoffs', 'leases', 'room_messages', 'routing_attempts', 'routing_records', 'work_room_channels'])

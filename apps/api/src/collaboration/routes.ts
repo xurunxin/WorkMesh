@@ -160,15 +160,27 @@ async function authorizeActorRecipient(
           )
           OR (
             $5='project'
-            AND COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-                ? $6::text
             AND (
-              target_session.project_id=$6
-              OR EXISTS (
-                SELECT 1 FROM work_items target_work_item
-                 WHERE target_work_item.id=target_session.work_item_id
-                   AND target_work_item.workspace_id=$1
-                   AND target_work_item.project_id=$6
+              (
+                target_session.work_item_id IS NOT NULL
+                AND COALESCE(
+                  delegation.capability_scope->'workItemIds',
+                  '[]'::jsonb
+                ) ? target_session.work_item_id::text
+                AND EXISTS (
+                  SELECT 1 FROM work_items target_work_item
+                   WHERE target_work_item.id=target_session.work_item_id
+                     AND target_work_item.workspace_id=$1
+                     AND target_work_item.project_id=$6
+                )
+              )
+              OR (
+                target_session.work_item_id IS NULL
+                AND target_session.project_id=$6
+                AND COALESCE(
+                  delegation.capability_scope->'projectIds',
+                  '[]'::jsonb
+                ) ? $6::text
               )
             )
           )
@@ -429,21 +441,27 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                     ? target_session.work_item_id::text
                )
                AND (
-                 COALESCE(target_session.project_id,target_scope_item.project_id) IS NULL
+                 target_session.work_item_id IS NOT NULL
+                 OR target_session.project_id IS NULL
                  OR COALESCE(target_delegation.capability_scope->'projectIds','[]'::jsonb)
-                    ? COALESCE(target_session.project_id,target_scope_item.project_id)::text
+                    ? target_session.project_id::text
                )
                AND (
                 ($4='work_item' AND target_session.work_item_id=$5)
                 OR (
                   $4='project'
                   AND (
-                    target_session.project_id=$5
-                    OR EXISTS(
-                      SELECT 1 FROM work_items target_work_item
-                       WHERE target_work_item.id=target_session.work_item_id
-                         AND target_work_item.project_id=$5
-                         AND target_work_item.workspace_id=$2
+                    (
+                      target_session.work_item_id IS NOT NULL
+                      AND target_scope_item.project_id=$5
+                    )
+                    OR (
+                      target_session.work_item_id IS NULL
+                      AND target_session.project_id=$5
+                      AND COALESCE(
+                        target_delegation.capability_scope->'projectIds',
+                        '[]'::jsonb
+                      ) ? $5::text
                     )
                   )
                 )

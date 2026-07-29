@@ -323,6 +323,183 @@ describe('Stage 2 collaboration API acceptance', () => {
     await durableEvent('lease.revoked', leased.id)
   })
 
+  it('supports project-linked Work Items through standard Session creation and exact or actor-targeted Inbox replies', async () => {
+    const f = await makeFixture()
+    const project = await humanCall(f.human, 'POST', '/api/v1/projects', {
+      teamId: f.teamId,
+      name: 'Project-linked Inbox compatibility',
+    })
+    expect(project.statusCode, JSON.stringify(project.json())).toBe(200)
+    const projectId = project.json<{ id: string }>().id
+    const work = await humanCall(f.human, 'POST', '/api/v1/work-items', {
+      teamId: f.teamId,
+      projectId,
+      title: 'Project-linked standard Session',
+      statusId: f.readyId,
+      responsibleHumanActorId: f.human.actorId,
+    })
+    expect(work.statusCode, JSON.stringify(work.json())).toBe(200)
+    const projectWork = work.json<{ id: string; revision: number }>()
+    const startStandard = async (agent: Agent, role: 'executor' | 'reviewer') => {
+      const response = await humanCall(
+        f.human,
+        'POST',
+        `/api/v1/work-items/${projectWork.id}/agent-session`,
+        {
+          agentId: agent.id,
+          principalHumanActorId: f.human.actorId,
+          role,
+          requestedCapabilities: ['work:read', 'work:write'],
+          initialPrompt: 'Exercise project-linked Inbox compatibility.',
+          budget: {},
+        },
+        { 'if-match': `"revision-${projectWork.revision}"` },
+      )
+      expect(response.statusCode, JSON.stringify(response.json())).toBe(200)
+      return response.json<{ delegation: { id: string }; session: Session }>()
+    }
+    const source = await startStandard(f.runner, 'executor')
+    const exactTarget = await startStandard(f.reviewer, 'reviewer')
+    const actorTarget = await startStandard(f.reviewer, 'reviewer')
+    const sourceToken = await exchangeAndExecute(source.session, f.runner)
+    const exactTargetToken = await exchangeAndExecute(exactTarget.session, f.reviewer)
+    const actorTargetToken = await exchangeAndExecute(actorTarget.session, f.reviewer)
+    const normalized = await db.query<{
+      session_id: string
+      work_item_id: string
+      project_id: string | null
+      project_ids: string[]
+      work_item_ids: string[]
+    }>(
+      `SELECT session.id AS session_id,session.work_item_id,session.project_id,
+              delegation.capability_scope->'projectIds' AS project_ids,
+              delegation.capability_scope->'workItemIds' AS work_item_ids
+         FROM agent_sessions session
+         JOIN delegations delegation ON delegation.id=session.delegation_id
+        WHERE session.id=ANY($1::uuid[])
+        ORDER BY session.id`,
+      [[source.session.id, exactTarget.session.id, actorTarget.session.id]],
+    )
+    expect(normalized.rows).toHaveLength(3)
+    for (const row of normalized.rows) {
+      expect(row).toMatchObject({
+        work_item_id: projectWork.id,
+        project_id: null,
+        project_ids: [],
+        work_item_ids: [projectWork.id],
+      })
+    }
+    expect(new Set(normalized.rows.map(row => row.session_id))).toEqual(
+      new Set([source.session.id, exactTarget.session.id, actorTarget.session.id]),
+    )
+
+    const room = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${projectWork.id}`)
+    expect(room.statusCode, JSON.stringify(room.json())).toBe(200)
+    const channelId = room.json<{ id: string }>().id
+    const exactAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'Can this exact project-linked Session reply?',
+      recipientSessionId: exactTarget.session.id,
+      requiresResponse: true,
+    })
+    expect(exactAsk.statusCode, JSON.stringify(exactAsk.json())).toBe(200)
+    const exactItem = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_session_id=$2`,
+      [exactAsk.json<{ id: string }>().id, exactTarget.session.id],
+    )).rows[0]!
+    const exactDetail = await agentCall(exactTargetToken, 'GET', `/api/v1/inbox/${exactItem.id}`)
+    expect(exactDetail.statusCode, JSON.stringify(exactDetail.json())).toBe(200)
+    const exactReply = await agentCall(exactTargetToken, 'POST', `/api/v1/inbox/${exactItem.id}/reply`, {
+      body: 'The exact project-linked Session can reply.',
+      payload: {},
+    }, { 'if-match': `"revision-${exactDetail.json<{ revision: number }>().revision}"` })
+    expect(exactReply.statusCode, JSON.stringify(exactReply.json())).toBe(200)
+
+    const actorAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'Claim this actor-targeted project-linked blocker.',
+      recipientActorId: f.reviewer.actorId,
+      requiresResponse: true,
+    })
+    expect(actorAsk.statusCode, JSON.stringify(actorAsk.json())).toBe(200)
+    const actorItem = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_actor_id=$2
+          AND recipient_session_id IS NULL`,
+      [actorAsk.json<{ id: string }>().id, f.reviewer.actorId],
+    )).rows[0]!
+    for (const token of [exactTargetToken, actorTargetToken]) {
+      const list = await agentCall(token, 'GET', '/api/v1/inbox')
+      expect(list.statusCode, JSON.stringify(list.json())).toBe(200)
+      expect(list.json<Page<{ id: string; detail_available: boolean }>>().items).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: actorItem.id, detail_available: false }),
+        ]),
+      )
+    }
+    const claimed = await agentCall(actorTargetToken, 'POST', `/api/v1/inbox/${actorItem.id}/claim`, {})
+    expect(claimed.statusCode, JSON.stringify(claimed.json())).toBe(200)
+    const actorDetail = await agentCall(actorTargetToken, 'GET', `/api/v1/inbox/${actorItem.id}`)
+    expect(actorDetail.statusCode, JSON.stringify(actorDetail.json())).toBe(200)
+    expect((await agentCall(exactTargetToken, 'GET', `/api/v1/inbox/${actorItem.id}`)).statusCode).toBe(404)
+    const actorReply = await agentCall(actorTargetToken, 'POST', `/api/v1/inbox/${actorItem.id}/reply`, {
+      body: 'The claimed project-linked blocker is handled.',
+      payload: {},
+    }, { 'if-match': `"revision-${claimed.json<{ revision: number }>().revision}"` })
+    expect(actorReply.statusCode, JSON.stringify(actorReply.json())).toBe(200)
+  })
+
+  it('derives legacy Human Inbox scope for current non-admin list and detail reads', async () => {
+    const f = await makeFixture()
+    const member = await memberForTeam(f.workspaceId, f.teamId)
+    const channelId = (await db.query<{ id: string }>(
+      "SELECT id FROM work_room_channels WHERE workspace_id=$1 AND subject_kind='work_item' AND subject_id=$2",
+      [f.workspaceId, f.workItemId],
+    )).rows[0]!.id
+    const sourceMessage = (await db.query<{ id: string }>(
+      `INSERT INTO room_messages(
+         channel_id,workspace_id,author_actor_id,session_id,intent,body
+       ) VALUES($1,$2,$3,$4,'inform','Legacy room producer visibility')
+       RETURNING id`,
+      [channelId, f.workspaceId, f.runner.actorId, f.parent.id],
+    )).rows[0]!
+    const activityItem = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,session_id,kind,source_type,
+         source_id,payload
+       ) VALUES($1,$2,$3,'waiting_input','activity',$4,'{}'::jsonb)
+       RETURNING id`,
+      [f.workspaceId, member.actorId, f.parent.id, randomUUID()],
+    )).rows[0]!
+    const roomItem = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,session_id,kind,source_type,
+         source_id,payload
+       ) VALUES($1,$2,NULL,'waiting_input','room_message',$3,'{}'::jsonb)
+       RETURNING id`,
+      [f.workspaceId, member.actorId, sourceMessage.id],
+    )).rows[0]!
+    expect((await db.query(
+      `SELECT id,team_id,source_room_message_id FROM inbox_items
+        WHERE id=ANY($1::uuid[]) ORDER BY id`,
+      [[activityItem.id, roomItem.id]],
+    )).rows).toEqual([
+      { id: activityItem.id, team_id: f.teamId, source_room_message_id: null },
+      { id: roomItem.id, team_id: f.teamId, source_room_message_id: sourceMessage.id },
+    ].sort((left, right) => left.id.localeCompare(right.id)))
+    const list = await humanCall(member, 'GET', '/api/v1/inbox')
+    expect(list.statusCode, JSON.stringify(list.json())).toBe(200)
+    expect(list.json<Page<{ id: string }>>().items).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: activityItem.id }),
+      expect.objectContaining({ id: roomItem.id }),
+    ]))
+    expect((await humanCall(member, 'GET', `/api/v1/inbox/${activityItem.id}`)).statusCode).toBe(200)
+    expect((await humanCall(member, 'GET', `/api/v1/inbox/${roomItem.id}`)).statusCode).toBe(200)
+  })
+
   it('claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated', async () => {
     const f = await makeFixture()
     const reviewerSession = await start(f.human, f.reviewer, f.workspaceId, f.teamId, f.workItemId, {}, 'reviewer')
