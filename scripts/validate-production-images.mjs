@@ -108,6 +108,11 @@ for (const service of applicationServices) {
   assert(dockerfile.includes('org.opencontainers.image.revision=$WORKMESH_BUILD_SHA'), `${service} image must carry the exact SHA label`)
   assert(!/^CMD .*tsx|^CMD .*dev|^CMD .*watch/m.test(dockerfile), `${service} runtime command must be compiled production code`)
 }
+const webDockerfile = await readFile(path.join(root, 'infra', 'docker', 'web.production.Dockerfile'), 'utf8')
+assert(
+  webDockerfile.includes('io.workmesh.web.api-url=$NEXT_PUBLIC_API_URL'),
+  'web image must expose its compiled API URL through the stable WorkMesh label',
+)
 
 const deployPreparation = await readFile(path.join(root, 'infra', 'docker', 'prepare-production-deploy.mjs'), 'utf8')
 assert(

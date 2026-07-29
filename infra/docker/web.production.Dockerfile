@@ -30,7 +30,7 @@ ENV NODE_ENV=production WORKMESH_SERVICE=web WORKMESH_BUILD_SHA=$WORKMESH_BUILD_
     NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL HOSTNAME=0.0.0.0 PORT=3000
 LABEL org.opencontainers.image.revision=$WORKMESH_BUILD_SHA \
       org.opencontainers.image.title="WorkMesh Web" \
-      org.opencontainers.image.workmesh.api-url=$NEXT_PUBLIC_API_URL
+      io.workmesh.web.api-url=$NEXT_PUBLIC_API_URL
 USER 10001:10001
 EXPOSE 3000
 STOPSIGNAL SIGTERM
