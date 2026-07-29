@@ -100,7 +100,15 @@ and working-directory identity means MCP remains enabled and its token,
 digest/revision, Compose rendering, recreation, and readiness checks are
 mandatory. Multiple containers, unreadable labels, mismatched deployment
 identity, or a stopped/restarting MCP container is ambiguous and aborts before
-the irreversible migration.
+the irreversible migration. In execute mode, before disabling the old Worker
+restart policy, the executor runs `/app/runtime-guard.mjs` from each exact
+target image with the rendered migrate, API, Worker, Web, and enabled-MCP
+service environment. The executor and image guard share the same pure
+environment validator; enabled MCP tokens are also checked against the other
+deployment runtime secrets for reuse. PostgreSQL CLI values and the
+post-migration service/image set are validated and frozen in the same preflight,
+so migration 30 is never the first point where a deterministic local
+configuration error is discovered.
 
 The formal soak must use the tracked contiguous
 `pnpm test:soak:retention:formal` entrypoint, not an untracked operator script

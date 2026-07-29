@@ -109,6 +109,17 @@ MCP tokens and a target MCP digest, validate its OCI revision, or include the
 `agent` profile in later Compose commands. The executor never enables MCP merely
 because MCP variables exist in the environment.
 
+The executor also renders Compose as JSON and binds each included service to its
+verified target digest before the maintenance stop. It validates the exact
+rendered environment with the same pure helper used by
+`/app/runtime-guard.mjs`. In execute mode it then runs that guard from the exact
+target image, with the Compose service environment, for migrate, API, Worker,
+and Web, followed by MCP only when MCP is in the frozen topology. Every guard
+must pass before `docker update --restart=no` is issued. This includes
+cross-secret reuse checks between enabled MCP tokens and the deployment's other
+runtime secrets. Dry-run mode validates the rendered environments but does not
+create the temporary guard containers.
+
 The executor is a dry run unless `--execute` is explicitly supplied:
 
 ```powershell
@@ -121,8 +132,10 @@ The executable path is intentionally ordered:
 1. Inspect API, Worker, and Web target image digests, freeze the current MCP
    membership from auditable Compose/container state, then inspect MCP only when
    that frozen topology is enabled. Require every included OCI revision label
-   to equal `WORKMESH_BUILD_SHA` and validate the full included Compose
-   configuration before any stop.
+   to equal `WORKMESH_BUILD_SHA`; validate and freeze all later local values,
+   including PostgreSQL CLI identifiers; and run the target-image runtime guard
+   against the exact rendered migrate, API, Worker, Web, and optional MCP
+   service environments before any Docker update or stop.
 2. Using that frozen topology, run
    `docker update --restart=no <old-worker-id>`, then
    `docker compose ... stop -t 35 worker`. The stopped container must report

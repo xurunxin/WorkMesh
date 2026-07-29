@@ -2,6 +2,7 @@ import process from "node:process";
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { validateRuntimeEnvironment } from "../infra/docker/runtime-guard.mjs";
 
 type CommandResult = Pick<
   SpawnSyncReturns<string>,
@@ -38,13 +39,19 @@ type ImageInspection = Readonly<{
   revision: string;
   reference: string;
 }>;
+type RuntimePreflightService = "migrate" | Role;
+type FrozenRuntimePreflight = Readonly<{
+  environment: Readonly<NodeJS.ProcessEnv>;
+  image: ImageInspection;
+  service: RuntimePreflightService;
+}>;
 type FrozenTopology = Readonly<{
   mcpEnabled: boolean;
   applicationServices: readonly Role[];
 }>;
 
 const productionUpgradePlan = [
-  "freeze the current optional-service topology and validate its target image digests, OCI revisions, and configuration",
+  "freeze the current optional-service topology and validate every included target image, rendered service environment, and image runtime guard",
   "disable the old Worker restart policy and require a clean 35-second stop",
   "prove no Worker container is running or restarting",
   "run the read-only target-Worker retention barrier against schema 29",
@@ -179,22 +186,54 @@ const requiredDeploymentLabel = (
   return value;
 };
 
-const validateMcpCredentials = (environment: NodeJS.ProcessEnv): void => {
-  const sessionToken = environment.WORKMESH_SESSION_TOKEN?.trim();
-  const accessToken = environment.WORKMESH_MCP_ACCESS_TOKEN?.trim();
-  const placeholder = /change[_-]?me|replace[_-]?me|placeholder|example/iu;
+const freezeRuntimePreflight = ({
+  comparisonEnvironment,
+  expectedImage,
+  renderedCompose,
+  service,
+}: {
+  comparisonEnvironment?: NodeJS.ProcessEnv;
+  expectedImage: ImageInspection;
+  renderedCompose: unknown;
+  service: RuntimePreflightService;
+}): FrozenRuntimePreflight => {
+  const compose = renderedCompose as {
+    services?: Record<
+      string,
+      {
+        environment?: Record<string, unknown>;
+        image?: unknown;
+      }
+    >;
+  };
+  const renderedService = compose.services?.[service];
   if (
-    !sessionToken ||
-    !accessToken ||
-    sessionToken.length < 32 ||
-    accessToken.length < 32 ||
-    placeholder.test(sessionToken) ||
-    placeholder.test(accessToken) ||
-    sessionToken === accessToken
+    renderedService?.image !== expectedImage.reference ||
+    !renderedService.environment
   )
     throw new RetentionProductionUpgradeError(
-      "RETENTION_UPGRADE_MCP_CREDENTIALS_INVALID",
+      `RETENTION_UPGRADE_${service.toUpperCase()}_RENDERED_CONFIG_INVALID`,
     );
+  const environmentEntries = Object.entries(renderedService.environment);
+  if (environmentEntries.some(([, value]) => typeof value !== "string"))
+    throw new RetentionProductionUpgradeError(
+      `RETENTION_UPGRADE_${service.toUpperCase()}_RENDERED_CONFIG_INVALID`,
+    );
+  const renderedEnvironment = Object.freeze(
+    Object.fromEntries(environmentEntries) as NodeJS.ProcessEnv,
+  );
+  try {
+    validateRuntimeEnvironment(renderedEnvironment, comparisonEnvironment);
+  } catch {
+    throw new RetentionProductionUpgradeError(
+      `RETENTION_UPGRADE_${service.toUpperCase()}_RUNTIME_CONFIG_INVALID`,
+    );
+  }
+  return Object.freeze({
+    environment: renderedEnvironment,
+    image: expectedImage,
+    service,
+  });
 };
 
 const safeSqlValue = (value: string, code: string): string => {
@@ -231,6 +270,16 @@ export async function runProductionRetentionUpgrade({
     throw new RetentionProductionUpgradeError(
       "RETENTION_UPGRADE_BUILD_SHA_INVALID",
     );
+  const postgres = Object.freeze({
+    user: safeSqlValue(
+      environment.POSTGRES_USER ?? "workmesh",
+      "RETENTION_UPGRADE_POSTGRES_USER_INVALID",
+    ),
+    database: safeSqlValue(
+      environment.POSTGRES_DB ?? "workmesh",
+      "RETENTION_UPGRADE_POSTGRES_DATABASE_INVALID",
+    ),
+  });
   const images = Object.fromEntries(
     coreApplicationRoles.map((role) => {
       const reference = exactDigest(environment[applicationImages[role]], role);
@@ -238,11 +287,36 @@ export async function runProductionRetentionUpgrade({
     }),
   ) as Record<CoreApplicationRole, ImageInspection>;
   const unprofiledComposeBase = composeArguments(root, envFile);
-  checked(
-    runner,
-    [...unprofiledComposeBase, "config", "--quiet"],
+  const unprofiledRenderedCompose = parseJson<unknown>(
+    checked(
+      runner,
+      [...unprofiledComposeBase, "config", "--format", "json"],
+      "RETENTION_UPGRADE_COMPOSE_CONFIG_INVALID",
+    ),
     "RETENTION_UPGRADE_COMPOSE_CONFIG_INVALID",
   );
+  const coreRuntimePreflights = Object.freeze([
+    freezeRuntimePreflight({
+      expectedImage: images.api,
+      renderedCompose: unprofiledRenderedCompose,
+      service: "migrate",
+    }),
+    freezeRuntimePreflight({
+      expectedImage: images.api,
+      renderedCompose: unprofiledRenderedCompose,
+      service: "api",
+    }),
+    freezeRuntimePreflight({
+      expectedImage: images.worker,
+      renderedCompose: unprofiledRenderedCompose,
+      service: "worker",
+    }),
+    freezeRuntimePreflight({
+      expectedImage: images.web,
+      renderedCompose: unprofiledRenderedCompose,
+      service: "web",
+    }),
+  ]);
   const oldWorkerId = checked(
     runner,
     [...unprofiledComposeBase, "ps", "-q", "worker"],
@@ -299,6 +373,7 @@ export async function runProductionRetentionUpgrade({
     );
 
   let mcpImage: ImageInspection | undefined;
+  let mcpRuntimePreflight: FrozenRuntimePreflight | undefined;
   const mcpEnabled = mcpContainerIds.length === 1;
   if (mcpEnabled) {
     const mcpContainer = inspectContainer(
@@ -320,7 +395,6 @@ export async function runProductionRetentionUpgrade({
       throw new RetentionProductionUpgradeError(
         "RETENTION_UPGRADE_MCP_TOPOLOGY_INCONSISTENT",
       );
-    validateMcpCredentials(environment);
     const mcpReference = exactDigest(
       environment[applicationImages.mcp],
       "mcp",
@@ -337,12 +411,43 @@ export async function runProductionRetentionUpgrade({
     unprofiledComposeBase,
     topology,
   );
-  if (topology.mcpEnabled)
-    checked(
-      runner,
-      [...composeBase, "config", "--quiet"],
+  if (topology.mcpEnabled) {
+    const renderedCompose = parseJson<unknown>(
+      checked(
+        runner,
+        [...composeBase, "config", "--format", "json"],
+        "RETENTION_UPGRADE_MCP_COMPOSE_CONFIG_INVALID",
+      ),
       "RETENTION_UPGRADE_MCP_COMPOSE_CONFIG_INVALID",
     );
+    if (!mcpImage)
+      throw new RetentionProductionUpgradeError(
+        "RETENTION_UPGRADE_FROZEN_TOPOLOGY_IMAGE_MISSING",
+      );
+    mcpRuntimePreflight = freezeRuntimePreflight({
+      comparisonEnvironment: environment,
+      expectedImage: mcpImage,
+      renderedCompose,
+      service: "mcp",
+    });
+  }
+  const runtimePreflights = Object.freeze([
+    ...coreRuntimePreflights,
+    ...(mcpRuntimePreflight ? [mcpRuntimePreflight] : []),
+  ]);
+  const remainingServiceRoles = topology.mcpEnabled
+    ? (["api", "mcp", "web"] as const)
+    : (["api", "web"] as const);
+  const remainingServices = Object.freeze(
+    remainingServiceRoles.map((role) => {
+      const image = role === "mcp" ? mcpImage : images[role];
+      if (!image)
+        throw new RetentionProductionUpgradeError(
+          "RETENTION_UPGRADE_FROZEN_TOPOLOGY_IMAGE_MISSING",
+        );
+      return Object.freeze({ image, role });
+    }),
+  );
 
   if (!execute)
     return {
@@ -362,6 +467,23 @@ export async function runProductionRetentionUpgrade({
       topology,
       steps: productionUpgradePlan,
     };
+
+  for (const { service } of runtimePreflights)
+    checked(
+      runner,
+      [
+        ...composeBase,
+        "run",
+        "--rm",
+        "--no-deps",
+        "-T",
+        "--entrypoint",
+        "node",
+        service,
+        "/app/runtime-guard.mjs",
+      ],
+      `RETENTION_UPGRADE_${service.toUpperCase()}_RUNTIME_PREFLIGHT_FAILED`,
+    );
 
   checked(
     runner,
@@ -405,9 +527,6 @@ export async function runProductionRetentionUpgrade({
       "RETENTION_UPGRADE_WORKER_STILL_RUNNING",
     );
 
-  const remainingRoles = topology.mcpEnabled
-    ? (["api", "mcp", "web"] as const)
-    : (["api", "web"] as const);
   checked(
     runner,
     [
@@ -429,14 +548,6 @@ export async function runProductionRetentionUpgrade({
     "RETENTION_UPGRADE_MIGRATION_FAILED",
   );
 
-  const postgresUser = safeSqlValue(
-    environment.POSTGRES_USER ?? "workmesh",
-    "RETENTION_UPGRADE_POSTGRES_USER_INVALID",
-  );
-  const postgresDatabase = safeSqlValue(
-    environment.POSTGRES_DB ?? "workmesh",
-    "RETENTION_UPGRADE_POSTGRES_DATABASE_INVALID",
-  );
   const ledgerCount = checked(
     runner,
     [
@@ -447,9 +558,9 @@ export async function runProductionRetentionUpgrade({
       "psql",
       "-XAt",
       "-U",
-      postgresUser,
+      postgres.user,
       "-d",
-      postgresDatabase,
+      postgres.database,
       "-c",
       "SELECT count(*) FROM schema_migrations WHERE version='0030_durable_archive_upload_intents'",
     ],
@@ -512,9 +623,9 @@ export async function runProductionRetentionUpgrade({
         "psql",
         "-XAt",
         "-U",
-        postgresUser,
+        postgres.user,
         "-d",
-        postgresDatabase,
+        postgres.database,
         "-c",
         freshnessSql,
       ],
@@ -542,11 +653,11 @@ export async function runProductionRetentionUpgrade({
       "--wait",
       "--wait-timeout",
       "240",
-      ...remainingRoles,
+      ...remainingServices.map(({ role }) => role),
     ],
     "RETENTION_UPGRADE_REMAINING_SERVICES_START_FAILED",
   );
-  for (const role of remainingRoles) {
+  for (const { image: expectedImage, role } of remainingServices) {
     const id = checked(
       runner,
       [...composeBase, "ps", "-q", role],
@@ -557,11 +668,6 @@ export async function runProductionRetentionUpgrade({
       id,
       `RETENTION_UPGRADE_${role.toUpperCase()}_INSPECT_FAILED`,
     );
-    const expectedImage = role === "mcp" ? mcpImage : images[role];
-    if (!expectedImage)
-      throw new RetentionProductionUpgradeError(
-        "RETENTION_UPGRADE_FROZEN_TOPOLOGY_IMAGE_MISSING",
-      );
     if (
       container.Image !== expectedImage.id ||
       container.Config?.Image !== expectedImage.reference

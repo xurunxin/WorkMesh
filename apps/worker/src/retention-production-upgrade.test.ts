@@ -6,6 +6,10 @@ import {
 
 const buildSha = "a".repeat(40);
 const digest = "b".repeat(64);
+const mcpSessionToken = `session-${"c".repeat(40)}`;
+const mcpAccessToken = `access-${"d".repeat(40)}`;
+const sessionSecret = `api-session-${"e".repeat(40)}`;
+const objectStoreSecret = `object-store-${"f".repeat(40)}`;
 const image = (role: string) =>
   `ghcr.io/workmesh/workmesh-${role}@sha256:${digest}`;
 const environment = {
@@ -14,13 +18,96 @@ const environment = {
   WORKMESH_WORKER_IMAGE: image("worker"),
   WORKMESH_MCP_IMAGE: image("mcp"),
   WORKMESH_WEB_IMAGE: image("web"),
-  WORKMESH_SESSION_TOKEN: `session-${"c".repeat(40)}`,
-  WORKMESH_MCP_ACCESS_TOKEN: `access-${"d".repeat(40)}`,
+  WORKMESH_SESSION_TOKEN: mcpSessionToken,
+  WORKMESH_MCP_ACCESS_TOKEN: mcpAccessToken,
+  SESSION_SECRET: sessionSecret,
+  S3_SECRET_ACCESS_KEY: objectStoreSecret,
   POSTGRES_USER: "workmesh",
   POSTGRES_DB: "workmesh",
 };
 
 type Command = Readonly<{ command: string; arguments_: readonly string[] }>;
+
+const renderedCompose = ({
+  includeMcp,
+  mcpEnvironmentOverride = {},
+}: {
+  includeMcp: boolean;
+  mcpEnvironmentOverride?: Record<string, string>;
+}) => ({
+  services: {
+    migrate: {
+      image: image("api"),
+      environment: {
+        NODE_ENV: "production",
+        WORKMESH_SERVICE: "migrate",
+        WORKMESH_BUILD_SHA: buildSha,
+        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+      },
+    },
+    api: {
+      image: image("api"),
+      environment: {
+        NODE_ENV: "production",
+        WORKMESH_SERVICE: "api",
+        WORKMESH_BUILD_SHA: buildSha,
+        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+        REDIS_URL: "redis://redis:6379",
+        SESSION_SECRET: sessionSecret,
+        WORKMESH_MASTER_KEY: "1".repeat(64),
+        WORKMESH_BOOTSTRAP_TOKEN: `bootstrap-${"2".repeat(40)}`,
+        PAGINATION_CURSOR_KEYS: `cursor:${"3".repeat(43)}`,
+        PAGINATION_CURSOR_ACTIVE_KID: "cursor",
+        AUTH_RATE_LIMIT_HMAC_KEY: `rate-${"4".repeat(40)}`,
+        S3_BUCKET: "workmesh-artifacts",
+        S3_ACCESS_KEY_ID: "workmesh",
+        S3_SECRET_ACCESS_KEY: objectStoreSecret,
+        WEB_ORIGIN: "https://workmesh.test",
+      },
+    },
+    worker: {
+      image: image("worker"),
+      environment: {
+        NODE_ENV: "production",
+        WORKMESH_SERVICE: "worker",
+        WORKMESH_BUILD_SHA: buildSha,
+        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+        REDIS_URL: "redis://redis:6379",
+        SESSION_SECRET: sessionSecret,
+        WORKMESH_MASTER_KEY: "1".repeat(64),
+        S3_ENDPOINT: "http://minio:9000",
+        S3_BUCKET: "workmesh-artifacts",
+        S3_ACCESS_KEY_ID: "workmesh",
+        S3_SECRET_ACCESS_KEY: objectStoreSecret,
+      },
+    },
+    web: {
+      image: image("web"),
+      environment: {
+        NODE_ENV: "production",
+        WORKMESH_SERVICE: "web",
+        WORKMESH_BUILD_SHA: buildSha,
+        NEXT_PUBLIC_API_URL: "https://workmesh.test/api",
+      },
+    },
+    ...(includeMcp
+      ? {
+          mcp: {
+            image: image("mcp"),
+            environment: {
+              NODE_ENV: "production",
+              WORKMESH_SERVICE: "mcp",
+              WORKMESH_BUILD_SHA: buildSha,
+              WORKMESH_API_URL: "http://api:3001",
+              WORKMESH_SESSION_TOKEN: mcpSessionToken,
+              WORKMESH_MCP_ACCESS_TOKEN: mcpAccessToken,
+              ...mcpEnvironmentOverride,
+            },
+          },
+        }
+      : {}),
+  },
+});
 
 const successfulRunner = ({
   stoppedExitCode = 0,
@@ -29,6 +116,8 @@ const successfulRunner = ({
   mcpEnabled = true,
   ambiguousMcpTopology = false,
   inconsistentMcpTopology = false,
+  mcpEnvironmentOverride,
+  failRuntimePreflightService,
 }: {
   stoppedExitCode?: number;
   failStop?: boolean;
@@ -36,6 +125,8 @@ const successfulRunner = ({
   mcpEnabled?: boolean;
   ambiguousMcpTopology?: boolean;
   inconsistentMcpTopology?: boolean;
+  mcpEnvironmentOverride?: Record<string, string>;
+  failRuntimePreflightService?: string;
 } = {}): {
   runner: RetentionUpgradeCommandRunner;
   commands: Command[];
@@ -53,6 +144,19 @@ const successfulRunner = ({
   const runner: RetentionUpgradeCommandRunner = (command, arguments_) => {
     commands.push({ command, arguments_: [...arguments_] });
     const joined = arguments_.join(" ");
+    if (joined.includes("config --format json"))
+      return result(
+        JSON.stringify(
+          renderedCompose({
+            includeMcp: joined.includes("--profile agent"),
+            mcpEnvironmentOverride,
+          }),
+        ),
+      );
+    if (joined.includes("/app/runtime-guard.mjs")) {
+      const service = arguments_[arguments_.length - 2];
+      return result("", service === failRuntimePreflightService ? 1 : 0);
+    }
     if (arguments_[0] === "image" && arguments_[1] === "inspect") {
       const reference = arguments_[2]!;
       const role = reference.match(/workmesh-(api|worker|mcp|web)@/)?.[1]!;
@@ -237,7 +341,20 @@ describe("production retention upgrade executor", () => {
     );
     const includedConfigValidated = text.findIndex(
       (command) =>
-        command.includes("--profile agent config --quiet"),
+        command.includes("--profile agent config --format json"),
+    );
+    const runtimePreflightIndexes = [
+      "migrate",
+      "api",
+      "worker",
+      "web",
+      "mcp",
+    ].map((service) =>
+      text.findIndex((command) =>
+        command.includes(
+          `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
+        ),
+      ),
     );
     const restartOff = text.findIndex((command) =>
       command.includes("update --restart=no 111111111111"),
@@ -261,6 +378,13 @@ describe("production retention upgrade executor", () => {
     );
     expect(topologyFrozen).toBeGreaterThan(-1);
     expect(includedConfigValidated).toBeGreaterThan(topologyFrozen);
+    expect(runtimePreflightIndexes.every((index) => index > -1)).toBe(true);
+    expect(runtimePreflightIndexes).toEqual(
+      [...runtimePreflightIndexes].sort((left, right) => left - right),
+    );
+    expect(
+      runtimePreflightIndexes.every((index) => index < restartOff),
+    ).toBe(true);
     expect(restartOff).toBeGreaterThan(includedConfigValidated);
     expect(restartOff).toBeGreaterThan(-1);
     expect(stop).toBeGreaterThan(restartOff);
@@ -302,7 +426,22 @@ describe("production retention upgrade executor", () => {
         "--force-recreate --wait --wait-timeout 240 api web",
       ),
     );
+    const runtimePreflightIndexes = ["migrate", "api", "worker", "web"].map(
+      (service) =>
+        text.findIndex((command) =>
+          command.includes(
+            `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
+          ),
+        ),
+    );
+    const restartOff = text.findIndex((command) =>
+      command.includes("update --restart=no"),
+    );
     expect(topologyFrozen).toBeGreaterThan(-1);
+    expect(runtimePreflightIndexes.every((index) => index > -1)).toBe(true);
+    expect(
+      runtimePreflightIndexes.every((index) => index < restartOff),
+    ).toBe(true);
     expect(migrate).toBeGreaterThan(topologyFrozen);
     expect(remaining).toBeGreaterThan(migrate);
     expect(text.some((command) => command.includes("--profile agent"))).toBe(
@@ -313,7 +452,8 @@ describe("production retention upgrade executor", () => {
         (command) =>
           command.includes("workmesh-mcp@") ||
           command.includes("ps -q mcp") ||
-          command.includes("api mcp web"),
+          command.includes("api mcp web") ||
+          command.includes("node mcp /app/runtime-guard.mjs"),
       ),
     ).toBe(false);
   });
@@ -341,15 +481,40 @@ describe("production retention upgrade executor", () => {
     ).toBe(false);
   });
 
-  it("fails closed before migration when enabled MCP credentials are invalid", async () => {
-    const { runner, commands } = successfulRunner();
+  it.each([
+    {
+      name: "short access token",
+      override: { WORKMESH_MCP_ACCESS_TOKEN: "too-short" },
+    },
+    {
+      name: "placeholder access token",
+      override: {
+        WORKMESH_MCP_ACCESS_TOKEN: `CHANGE_ME_${"g".repeat(40)}`,
+      },
+    },
+    {
+      name: "equal MCP tokens",
+      override: { WORKMESH_MCP_ACCESS_TOKEN: mcpSessionToken },
+    },
+    {
+      name: "access token reused from SESSION_SECRET",
+      override: { WORKMESH_MCP_ACCESS_TOKEN: sessionSecret },
+    },
+    {
+      name: "session token reused from another runtime secret",
+      override: { WORKMESH_SESSION_TOKEN: objectStoreSecret },
+    },
+  ])("fails closed before migration for $name", async ({ override }) => {
+    const { runner, commands } = successfulRunner({
+      mcpEnvironmentOverride: Object.fromEntries(Object.entries(override)),
+    });
     await expect(
       run(runner, true, {
         ...environment,
-        WORKMESH_MCP_ACCESS_TOKEN: "too-short",
+        ...override,
       }),
     ).rejects.toMatchObject({
-      code: "RETENTION_UPGRADE_MCP_CREDENTIALS_INVALID",
+      code: "RETENTION_UPGRADE_MCP_RUNTIME_CONFIG_INVALID",
     });
     const text = commandText(commands);
     expect(
@@ -357,6 +522,59 @@ describe("production retention upgrade executor", () => {
     ).toBe(false);
     expect(
       text.some((command) => command.includes("update --restart=no")),
+    ).toBe(false);
+  });
+
+  it.each(["migrate", "api", "worker", "web", "mcp"])(
+    "does not mutate the deployment when the %s target runtime guard fails",
+    async (service) => {
+      const { runner, commands } = successfulRunner({
+        failRuntimePreflightService: service,
+      });
+      await expect(run(runner, true)).rejects.toMatchObject({
+        code: `RETENTION_UPGRADE_${service.toUpperCase()}_RUNTIME_PREFLIGHT_FAILED`,
+      });
+      const text = commandText(commands);
+      expect(
+        text.some((command) => command.includes("update --restart=no")),
+      ).toBe(false);
+      expect(
+        text.some(
+          (command) =>
+            command.includes("stop -t 35 worker") ||
+            command.includes("run --rm --no-deps migrate"),
+        ),
+      ).toBe(false);
+    },
+  );
+
+  it.each([
+    {
+      name: "invalid PostgreSQL user",
+      override: { POSTGRES_USER: "invalid user" },
+      code: "RETENTION_UPGRADE_POSTGRES_USER_INVALID",
+    },
+    {
+      name: "invalid PostgreSQL database",
+      override: { POSTGRES_DB: "invalid/database" },
+      code: "RETENTION_UPGRADE_POSTGRES_DATABASE_INVALID",
+    },
+  ])("rejects $name before any Docker mutation", async ({ override, code }) => {
+    const { runner, commands } = successfulRunner();
+    await expect(
+      run(runner, true, { ...environment, ...override }),
+    ).rejects.toMatchObject({ code });
+    const text = commandText(commands);
+    expect(text).toHaveLength(0);
+    expect(
+      text.some((command) => command.includes("run --rm --no-deps migrate")),
+    ).toBe(false);
+    expect(
+      text.some(
+        (command) =>
+          command.includes("update --restart=no") ||
+          command.includes("stop -t 35 worker"),
+      ),
     ).toBe(false);
   });
 
