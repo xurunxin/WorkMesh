@@ -15,7 +15,10 @@ import {
 import { queueWebhookDeliveries } from "../agent/commands.js";
 import type { ApiActor, RequestMeta } from "../agent/types.js";
 import { mutate, type CommandContext } from "../commands.js";
-import { liveSessionReadPredicate } from "../live-read-authorization.js";
+import {
+  liveHumanTeamReadPredicate,
+  liveSessionReadPredicate,
+} from "../live-read-authorization.js";
 import type { Paginator } from "../pagination.js";
 
 type Helpers = {
@@ -115,15 +118,6 @@ const activeScopeSql = `
             )
           )
     )
-  )`;
-
-const humanTeamMembershipSql = `
-  EXISTS (
-    SELECT 1
-      FROM memberships recipient_membership
-     WHERE recipient_membership.workspace_id=i.workspace_id
-       AND recipient_membership.team_id=i.team_id
-       AND recipient_membership.actor_id=$2
   )`;
 
 const itemDetailSql = `
@@ -532,7 +526,14 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
         status: z.enum(["open", "resolved"]).default("open"),
       })
       .parse(request.query);
-    if (actor.kind === "human")
+    if (actor.kind === "human") {
+      const values: unknown[] = [actor.workspaceId, actor.id, query.status];
+      const liveAuthorization = liveHumanTeamReadPredicate(
+        actor,
+        "i.workspace_id",
+        "i.team_id",
+        values,
+      );
       return h.paginator.query(
         h.db,
         request,
@@ -549,9 +550,10 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
           WHERE i.workspace_id=$1
             AND i.recipient_human_actor_id=$2
             AND i.status=$3
-            AND ${humanTeamMembershipSql}`,
-        [actor.workspaceId, actor.id, query.status],
+            AND ${liveAuthorization}`,
+        values,
       );
+    }
 
     return listAgentInbox(request, h, actor, query.status);
   });
@@ -559,20 +561,25 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
   app.get("/api/v1/inbox/:id", async (request) => {
     const actor = currentActor(request);
     if (actor.kind === "human") {
+      const values: unknown[] = [
+        itemId(request),
+        actor.workspaceId,
+        actor.id,
+      ];
+      const liveAuthorization = liveHumanTeamReadPredicate(
+        actor,
+        "i.workspace_id",
+        "i.team_id",
+        values,
+      );
       const row = (
         await h.db.query(
           `SELECT i.* FROM inbox_items i
           WHERE i.id=$1
             AND i.workspace_id=$2
             AND i.recipient_human_actor_id=$3
-            AND EXISTS (
-              SELECT 1
-                FROM memberships recipient_membership
-               WHERE recipient_membership.workspace_id=i.workspace_id
-                 AND recipient_membership.team_id=i.team_id
-                 AND recipient_membership.actor_id=$3
-            )`,
-          [itemId(request), actor.workspaceId, actor.id],
+            AND ${liveAuthorization}`,
+          values,
         )
       ).rows[0];
       if (!row) throw new DomainError("NOT_FOUND", "Inbox item not found");

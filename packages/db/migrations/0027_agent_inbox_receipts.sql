@@ -229,9 +229,6 @@ BEGIN
      WHERE item.workspace_id=NEW.workspace_id
        AND item.id=NEW.inbox_item_id
        AND reply_message.channel_id=source_message.channel_id
-       AND reply_message.author_actor_id=NEW.actor_id
-       AND reply_message.session_id=NEW.session_id
-       AND reply_message.reply_to_message_id=source_message.id
   ) THEN
     RAISE EXCEPTION 'INBOX_REPLY_MESSAGE_SCOPE_MISMATCH';
   END IF;

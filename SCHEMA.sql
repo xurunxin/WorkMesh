@@ -35,3 +35,4 @@
 \ir packages/db/migrations/0025_realtime_event_envelope.sql
 \ir packages/db/migrations/0026_retention_archive_and_heartbeat_health.sql
 \ir packages/db/migrations/0027_agent_inbox_receipts.sql
+\ir packages/db/migrations/0028_inbox_receipt_reply_binding.sql

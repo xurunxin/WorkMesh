@@ -924,6 +924,26 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await agentCall(f.parentToken, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
     expect((await agentCall(f.parentToken, 'POST', `/api/v1/inbox/${concealedInbox}/claim`, {})).statusCode).toBe(404)
     expect((await humanCall(f.human, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
+    const adminInbox = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,team_id,
+         kind,source_type,source_id,payload
+      ) VALUES($1,$2,$2,$3,'mention','handoff',$4,'{}'::jsonb)
+       RETURNING id`,
+      [f.workspaceId, f.human.actorId, otherTeamId, randomUUID()],
+    )).rows[0]!.id
+    await db.query(
+      'DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+      [f.workspaceId, otherTeamId, f.human.actorId],
+    )
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+      [f.workspaceId, otherTeamId, f.human.actorId],
+    )).rows[0]!.count).toBe(0)
+    expect((await humanCall(f.human, 'GET', `/api/v1/inbox/${adminInbox}`)).statusCode).toBe(200)
+    expect((await humanCall(f.human, 'GET', '/api/v1/inbox')).json<Page<{ id: string }>>().items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: adminInbox })]),
+    )
     expect((await humanCall(scopedMember, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(200)
     expect((await humanCall(scopedMember, 'GET', '/api/v1/inbox')).json<Page<{ id: string }>>().items).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: concealedInbox })]),
@@ -942,6 +962,34 @@ describe('Stage 2 collaboration API acceptance', () => {
       expect.arrayContaining([expect.objectContaining({ id: concealedInbox })]),
     )
     expect((await humanCall(scopedMember, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(403)
+    const softDeletedTeam = await humanCall(f.human, 'POST', '/api/v1/teams', { name: 'Soft-deleted Inbox team', key: `D${randomUUID().replaceAll('-', '').slice(0, 5).toUpperCase()}` })
+    expect(softDeletedTeam.statusCode, JSON.stringify(softDeletedTeam.json())).toBe(200)
+    const softDeletedTeamId = softDeletedTeam.json<{ id: string }>().id
+    const softDeletedMember = await memberForTeam(f.workspaceId, softDeletedTeamId)
+    const softDeletedInbox = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,team_id,
+         kind,source_type,source_id,payload
+       ) VALUES($1,$2,$2,$3,'mention','handoff',$4,'{}'::jsonb)
+       RETURNING id`,
+      [f.workspaceId, softDeletedMember.actorId, softDeletedTeamId, randomUUID()],
+    )).rows[0]!.id
+    expect((await humanCall(softDeletedMember, 'GET', `/api/v1/inbox/${softDeletedInbox}`)).statusCode).toBe(200)
+    await db.query(
+      "INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')",
+      [f.workspaceId, f.teamId, softDeletedMember.actorId],
+    )
+    await db.query('UPDATE teams SET deleted_at=now() WHERE id=$1', [softDeletedTeamId])
+    const deletedTeamInbox = await humanCall(softDeletedMember, 'GET', '/api/v1/inbox')
+    expect(deletedTeamInbox.statusCode, JSON.stringify(deletedTeamInbox.json())).toBe(200)
+    expect(deletedTeamInbox.json<Page<{ id: string }>>().items).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: softDeletedInbox })]),
+    )
+    expect((await humanCall(softDeletedMember, 'GET', `/api/v1/inbox/${softDeletedInbox}`)).statusCode).toBe(403)
+    await db.query(
+      "INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')",
+      [f.workspaceId, otherTeamId, f.human.actorId],
+    )
     const otherAgent = await register(f.human, otherTeamId, `isolated-${randomUUID().slice(0, 8)}`)
     const otherWork = await humanCall(f.human, 'POST', '/api/v1/work-items', { teamId: otherTeamId, title: 'Isolated work', statusId: otherReadyId, responsibleHumanActorId: f.human.actorId })
     expect(otherWork.statusCode).toBe(200)
