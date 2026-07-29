@@ -98,7 +98,7 @@ describe("Stage 1 agent API acceptance", () => {
   beforeAll(async () => {
     await applyMigrations(db); await db.query("TRUNCATE workspaces CASCADE");
     appUrl = await app.listen({ port: 0, host: "127.0.0.1" });
-    const installed = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Stage One", slug: "stage-one", adminName: "Admin", email: "admin@example.test", password: "stage-one-password" }, headers: { "idempotency-key": "stage1-install", "x-workmesh-bootstrap-token": process.env.WORKMESH_BOOTSTRAP_TOKEN! } });
+    const installed = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Stage One", slug: "stage-one", adminName: "Admin", email: "admin@example.test", password: "stage-one-password" }, headers: { "idempotency-key": `stage1-install-${randomUUID()}`, "x-workmesh-bootstrap-token": process.env.WORKMESH_BOOTSTRAP_TOKEN! } });
     const cookie = (Array.isArray(installed.headers["set-cookie"]) ? installed.headers["set-cookie"][0] : installed.headers["set-cookie"])?.split(";")[0] ?? "";
     const csrf = installed.json<{ csrfToken: string }>().csrfToken;
     const me = await app.inject({ method: "GET", url: "/api/v1/auth/me", headers: { cookie, "x-csrf-token": csrf, "idempotency-key": randomUUID() } });
@@ -521,7 +521,7 @@ describe("Stage 1 agent API acceptance", () => {
          membership_state
        ) VALUES(
          $1,9000000000000,9000000000999,now(),1,$2,'range-version',1,$3,$4,
-         now()+interval '366 days','verified',now(),now(),'pending_exact'
+         now()+interval '366 days','uploaded',now(),NULL,'legacy_unindexed'
        )`,
       [
         workspaceId,

@@ -37,7 +37,73 @@ describe("0026 retention, archive, and heartbeat health migration", () => {
           AND table_name='event_archive_segments'
           AND column_name='object_version_id'`,
     );
-    expect(archiveVersionColumn.rows).toEqual([{ is_nullable: "NO" }]);
+    expect(archiveVersionColumn.rows).toEqual([{ is_nullable: "YES" }]);
+    const workspaceId = (
+      await db.query<{ id: string }>(
+        "INSERT INTO workspaces(name,slug) VALUES('Retention membership','retention-membership') RETURNING id",
+      )
+    ).rows[0]!.id;
+    const fixedCutoffAt = "2026-07-01T00:00:00.000Z";
+    const metadata = { fixedCutoffAt };
+    await expect(
+      db.query(
+        `INSERT INTO event_archive_segments(
+           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+           object_key,object_size_bytes,object_sha256,snapshot_digest,metadata,
+           state,retain_until,membership_state,planned_fence
+         ) VALUES(
+           $1,1001,1001,$2,1,'planned-without-version',0,$3,$4,$5,
+           'planned',now()+interval '366 days','pending_exact',0
+         )`,
+        [
+          workspaceId,
+          fixedCutoffAt,
+          `sha256:${"a".repeat(64)}`,
+          `sha256:${"b".repeat(64)}`,
+          metadata,
+        ],
+      ),
+    ).resolves.toBeDefined();
+    await expect(
+      db.query(
+        `INSERT INTO event_archive_segments(
+           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+           object_key,object_version_id,object_size_bytes,object_sha256,
+           snapshot_digest,metadata,state,retain_until,uploaded_at,
+           membership_state
+         ) VALUES(
+           $1,1002,1002,$2,1,'uploaded-cannot-be-exact','version-uploaded',0,
+           $3,$4,$5,'uploaded',now()+interval '366 days',now(),'exact'
+         )`,
+        [
+          workspaceId,
+          fixedCutoffAt,
+          `sha256:${"c".repeat(64)}`,
+          `sha256:${"d".repeat(64)}`,
+          metadata,
+        ],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      db.query(
+        `INSERT INTO event_archive_segments(
+           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+           object_key,object_version_id,object_size_bytes,object_sha256,
+           snapshot_digest,metadata,state,retain_until,uploaded_at,verified_at,
+           membership_state
+         ) VALUES(
+           $1,1003,1003,$2,1,'verified-exact','version-verified',0,$3,$4,$5,
+           'verified',now()+interval '366 days',now(),now(),'exact'
+         )`,
+        [
+          workspaceId,
+          fixedCutoffAt,
+          `sha256:${"e".repeat(64)}`,
+          `sha256:${"f".repeat(64)}`,
+          metadata,
+        ],
+      ),
+    ).resolves.toBeDefined();
     const policy = await db.query<{
       record_class: string;
       online_days: number;

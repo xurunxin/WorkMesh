@@ -12,43 +12,57 @@ const endpoint = process.env.S3_ENDPOINT;
 const bucket = process.env.S3_BUCKET;
 const accessKeyId = process.env.S3_ACCESS_KEY_ID;
 const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
+const retentionUpgradeIntegrationEnabled =
+  process.env.RUN_RETENTION_UPGRADE_INTEGRATION === "1";
 if (
-  process.env.RUN_INTEGRATION !== "1" ||
-  process.env.RUN_RETENTION_UPGRADE_INTEGRATION !== "1" ||
-  !databaseUrl ||
-  !endpoint ||
-  !bucket ||
-  !accessKeyId ||
-  !secretAccessKey
+  retentionUpgradeIntegrationEnabled &&
+  (process.env.RUN_INTEGRATION !== "1" ||
+    !databaseUrl ||
+    !endpoint ||
+    !bucket ||
+    !accessKeyId ||
+    !secretAccessKey)
 )
   throw new Error(
     "Retention upgrade barrier integration requires RUN_INTEGRATION=1, " +
       "RUN_RETENTION_UPGRADE_INTEGRATION=1, DATABASE_URL, and S3 settings.",
   );
-if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
+if (
+  retentionUpgradeIntegrationEnabled &&
+  !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl!).pathname.slice(1))
+)
   throw new Error(
     "Retention upgrade barrier integration requires a dedicated *test* database.",
   );
 
+const configuredDatabaseUrl =
+  databaseUrl ??
+  "postgres://disabled:disabled@127.0.0.1:1/workmesh_retention_upgrade_test_disabled";
 const suffix = randomUUID().replaceAll("-", "");
 const databaseName = `workmesh_test_retention_upgrade_${suffix}`;
 const archivePrefix = `retention-upgrade/${suffix}`;
 const objectKey = `${archivePrefix}/segment.ndjson.gz`;
-const admin = createDb(databaseUrl);
+const admin = createDb(configuredDatabaseUrl);
 let barrierDb: Db;
 const databaseUrlFor = (database: string): string => {
-  const url = new URL(databaseUrl);
+  const url = new URL(configuredDatabaseUrl);
   url.pathname = `/${database}`;
   return url.toString();
 };
 const config = {
   region: process.env.S3_REGION ?? "us-east-1",
-  endpoint,
+  endpoint: endpoint ?? "http://127.0.0.1:1",
   forcePathStyle: process.env.S3_FORCE_PATH_STYLE !== "false",
-  credentials: { accessKeyId, secretAccessKey },
+  credentials: {
+    accessKeyId: accessKeyId ?? "disabled",
+    secretAccessKey: secretAccessKey ?? "disabled",
+  },
 };
-const storage = new S3ArtifactStorage({ bucket, config });
-const reader = new S3RetentionUpgradeReader({ bucket, config });
+const storage = new S3ArtifactStorage({ bucket: bucket ?? "disabled", config });
+const reader = new S3RetentionUpgradeReader({
+  bucket: bucket ?? "disabled",
+  config,
+});
 
 beforeAll(async () => {
   await admin.query(`CREATE DATABASE "${databaseName}"`);
@@ -62,7 +76,9 @@ afterAll(async () => {
   await admin.end();
 });
 
-describe("retention upgrade barrier with real PostgreSQL and MinIO", () => {
+const testSuite = retentionUpgradeIntegrationEnabled ? describe : describe.skip;
+
+testSuite("retention upgrade barrier with real PostgreSQL and MinIO", () => {
   it("proves one exact version with versioned HEAD and zero delete markers", async () => {
     await expect(storage.probeRetentionProtection()).resolves.toBeUndefined();
     const body = Buffer.from("real retention upgrade barrier object");
