@@ -237,6 +237,22 @@ describe("0030 durable archive upload intents migration", () => {
     await expect(
       clean.query(
         `UPDATE event_archive_segments
+            SET object_version_id='version-before-upload'
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
+            SET uploaded_at=now()
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
             SET metadata=jsonb_set(
               metadata,
               '{fixedCutoffAt}',
@@ -275,12 +291,37 @@ describe("0030 durable archive upload intents migration", () => {
         WHERE id=$1`,
       [segmentId],
     );
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
+            SET object_version_id=NULL
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).rejects.toThrow();
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
+            SET state='verified',membership_state='exact',
+                object_version_id=NULL,verified_at=now()
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).rejects.toThrow();
     await clean.query(
       `UPDATE event_archive_segments
           SET state='verified',membership_state='exact',verified_at=now()
         WHERE id=$1`,
       [segmentId],
     );
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
+            SET state='pruned',object_version_id=NULL,pruned_at=now()
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).rejects.toThrow();
     expect(
       (
         await clean.query<{ state: string; membershipState: string }>(

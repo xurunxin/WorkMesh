@@ -25,6 +25,10 @@ export type ArtifactObjectExpectation = {
   }>;
 };
 
+export type CurrentArtifactObject =
+  | Readonly<{ status: "present"; versionId: string }>
+  | Readonly<{ status: "missing" }>;
+
 type ObjectClient = Pick<S3Client, "send">;
 
 const checksumBase64 = (checksum: string): string =>
@@ -51,8 +55,7 @@ const httpStatus = (error: unknown): number | undefined => {
 
 const isNotFound = (error: unknown): boolean =>
   httpStatus(error) === 404 ||
-  (error instanceof Error &&
-    (error.name === "NotFound" || error.name === "NoSuchKey"));
+  (error instanceof Error && error.name === "NotFound");
 
 const identityMismatchCodes = new Set([
   "RETENTION_OBJECT_VERSION_MISMATCH",
@@ -184,12 +187,11 @@ export class S3ArtifactStorage {
       } catch (error) {
         lastError = error;
       }
-      try {
-        return await this.reconcileCurrentObject(expectation);
-      } catch (error) {
-        if (!isNotFound(error)) throw error;
-        lastError ??= error;
-      }
+      const current =
+        await this.reconcileCurrentObjectIfPresent(expectation);
+      if (current.status === "present")
+        return { versionId: current.versionId };
+      lastError ??= new Error("RETENTION_OBJECT_NOT_FOUND");
     }
     throw lastError instanceof Error
       ? lastError
@@ -201,6 +203,18 @@ export class S3ArtifactStorage {
   async reconcileCurrentObject(
     expectation: ArtifactObjectExpectation,
   ): Promise<{ versionId: string }> {
+    const current = await this.reconcileCurrentObjectIfPresent(expectation);
+    if (current.status === "missing")
+      throw new Error("RETENTION_OBJECT_NOT_FOUND");
+    return { versionId: current.versionId };
+  }
+
+  /** HEAD the stable archive key before deciding whether its planned lock
+   * horizon may be refreshed. Only an explicit S3 NotFound/404 is absence;
+   * transport uncertainty and identity mismatches fail closed. */
+  async reconcileCurrentObjectIfPresent(
+    expectation: ArtifactObjectExpectation,
+  ): Promise<CurrentArtifactObject> {
     if (!expectation.archiveIdentity)
       throw new Error("RETENTION_OBJECT_IDENTITY_REQUIRED");
     try {
@@ -210,9 +224,9 @@ export class S3ArtifactStorage {
       );
       if (!head.VersionId)
         throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
-      return { versionId: head.VersionId };
+      return { status: "present", versionId: head.VersionId };
     } catch (error) {
-      if (isNotFound(error)) throw error;
+      if (isNotFound(error)) return { status: "missing" };
       if (
         error instanceof Error &&
         identityMismatchCodes.has(error.message)

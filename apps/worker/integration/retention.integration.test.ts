@@ -37,14 +37,19 @@ let writes = 0;
 let putAttempts = 0;
 let losePutResponseOnce = false;
 const attemptedObjectKeys: string[] = [];
+const storageOperations: string[] = [];
+const attemptedRetainUntils: Date[] = [];
 const versionedObjectKey = (
   expectation: ArtifactObjectExpectation,
 ): string => `${expectation.key}@${expectation.versionId ?? "unversioned"}`;
 const storage: ArchiveObjectStore = {
   async probeRetentionProtection() {},
   async putObjectIfAbsent(expectation, body) {
+    storageOperations.push("put");
     putAttempts += 1;
     attemptedObjectKeys.push(expectation.key);
+    if (expectation.retainUntil)
+      attemptedRetainUntils.push(expectation.retainUntil);
     const current = currentVersions.get(expectation.key);
     if (current) return { versionId: current };
     writes += 1;
@@ -60,10 +65,11 @@ const storage: ArchiveObjectStore = {
     }
     return { versionId };
   },
-  async reconcileCurrentObject(expectation) {
+  async reconcileCurrentObjectIfPresent(expectation) {
+    storageOperations.push("head");
     const versionId = currentVersions.get(expectation.key);
-    if (!versionId) throw new Error("ARCHIVE_OBJECT_MISSING");
-    return { versionId };
+    if (!versionId) return { status: "missing" };
+    return { status: "present", versionId };
   },
   async readVerifiedObject(expectation) {
     if (!expectation.versionId)
@@ -130,6 +136,8 @@ beforeEach(async () => {
   putAttempts = 0;
   losePutResponseOnce = false;
   attemptedObjectKeys.length = 0;
+  storageOperations.length = 0;
+  attemptedRetainUntils.length = 0;
   workspaceId = (
     await db.query<{ id: string }>(
       "INSERT INTO workspaces(name,slug) VALUES('Retention worker',$1) RETURNING id",
@@ -580,6 +588,71 @@ describe("retention worker destructive-path fences", () => {
     },
   );
 
+  it("refreshes a delayed planned intent only after HEAD confirms absence", async () => {
+    corruptReadback = false;
+    const plannedAt = new Date();
+    const uploadAt = new Date(plannedAt.getTime() + 601_000);
+    const first = createRetentionWorker({
+      db,
+      workerId: "delayed-retain-plan",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      archiveNow: () => plannedAt,
+      archiveFault: async (point) => {
+        if (point === "after_plan_commit")
+          throw new Error("INJECTED_DELAY_AFTER_PLAN");
+      },
+    });
+    await expect(first.archiveEvents()).rejects.toThrow(
+      "INJECTED_DELAY_AFTER_PLAN",
+    );
+    const before = (
+      await db.query<{ retainUntil: Date }>(
+        `SELECT retain_until AS "retainUntil"
+           FROM event_archive_segments WHERE workspace_id=$1`,
+        [workspaceId],
+      )
+    ).rows[0]!.retainUntil;
+    expect(before.getTime()).toBe(
+      plannedAt.getTime() +
+        (config.archiveRetainDays * 86_400 + 300) * 1_000,
+    );
+    expect(storageOperations).toEqual([]);
+
+    const recovered = createRetentionWorker({
+      db,
+      workerId: "delayed-retain-recovery",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      archiveNow: () => uploadAt,
+    });
+    await expect(recovered.archiveEvents()).resolves.toBe(1);
+    expect(storageOperations).toEqual(["head", "put"]);
+    expect(attemptedRetainUntils).toHaveLength(1);
+    expect(attemptedRetainUntils[0]!.getTime()).toBe(
+      uploadAt.getTime() +
+        (config.archiveRetainDays * 86_400 + 300) * 1_000,
+    );
+    expect(attemptedRetainUntils[0]!.getTime()).toBeGreaterThan(
+      uploadAt.getTime() + config.archiveRetainDays * 86_400_000,
+    );
+    expect(
+      (
+        await db.query<{ retainUntil: Date }>(
+          `SELECT retain_until AS "retainUntil"
+             FROM event_archive_segments WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.retainUntil,
+    ).toEqual(attemptedRetainUntils[0]);
+  });
+
   it("recovers a PUT response loss without a second version or segment", async () => {
     corruptReadback = false;
     losePutResponseOnce = true;
@@ -598,13 +671,22 @@ describe("retention worker destructive-path fences", () => {
     expect(writes).toBe(1);
     expect(objects.size).toBe(1);
     const planned = (
-      await db.query<{ id: string; objectKey: string; state: string }>(
-        `SELECT id,object_key AS "objectKey",state
+      await db.query<{
+        id: string;
+        objectKey: string;
+        state: string;
+        retainUntil: Date;
+      }>(
+        `SELECT id,object_key AS "objectKey",state,
+                retain_until AS "retainUntil"
            FROM event_archive_segments WHERE workspace_id=$1`,
         [workspaceId],
       )
     ).rows[0]!;
     expect(planned.state).toBe("planned");
+    expect(storageOperations).toEqual(["head", "put"]);
+    storageOperations.length = 0;
+    let recoveryClockCalls = 0;
 
     const recovered = createRetentionWorker({
       db,
@@ -614,10 +696,16 @@ describe("retention worker destructive-path fences", () => {
       redisClient: redis,
       redisMaxLen: 100,
       workspaceScopeId: workspaceId,
+      archiveNow: () => {
+        recoveryClockCalls += 1;
+        return new Date("2030-01-01T00:00:00.000Z");
+      },
     });
     await expect(recovered.archiveEvents()).resolves.toBe(1);
     expect(writes).toBe(1);
-    expect(putAttempts).toBe(2);
+    expect(putAttempts).toBe(1);
+    expect(storageOperations).toEqual(["head"]);
+    expect(recoveryClockCalls).toBe(0);
     expect(new Set(attemptedObjectKeys)).toEqual(
       new Set([planned.objectKey]),
     );
@@ -629,6 +717,17 @@ describe("retention worker destructive-path fences", () => {
         )
       ).rowCount,
     ).toBe(1);
+    expect(currentVersions.size).toBe(1);
+    expect(objects.size).toBe(1);
+    expect(
+      (
+        await db.query<{ retainUntil: Date }>(
+          `SELECT retain_until AS "retainUntil"
+             FROM event_archive_segments WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.retainUntil,
+    ).toEqual(planned.retainUntil);
   });
 
   it("lets only the successor publish after lease loss following PUT", async () => {
@@ -1046,7 +1145,8 @@ describe("retention worker destructive-path fences", () => {
     const unsafeStorage: ArchiveObjectStore = {
       probeRetentionProtection: storage.probeRetentionProtection,
       putObjectIfAbsent: storage.putObjectIfAbsent,
-      reconcileCurrentObject: storage.reconcileCurrentObject,
+      reconcileCurrentObjectIfPresent:
+        storage.reconcileCurrentObjectIfPresent,
       async readVerifiedObject() {
         throw new Error(unsafeMessage);
       },

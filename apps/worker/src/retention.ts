@@ -100,7 +100,7 @@ type QueryExecutor = Pick<Db, "query">;
 export type ArchiveObjectStore = Pick<
   S3ArtifactStorage,
   | "putObjectIfAbsent"
-  | "reconcileCurrentObject"
+  | "reconcileCurrentObjectIfPresent"
   | "readVerifiedObject"
   | "verify"
   | "probeRetentionProtection"
@@ -305,6 +305,7 @@ export function createRetentionWorker({
   afterArchiveClaim,
   afterPruneClaim,
   archiveFault,
+  archiveNow = () => new Date(),
 }: {
   db: Db;
   workerId?: string;
@@ -326,6 +327,7 @@ export function createRetentionWorker({
     point: ArchiveFaultPoint,
     input: Readonly<{ claim: RetentionClaim; segmentId: string }>,
   ) => Promise<void> | void;
+  archiveNow?: () => Date;
 }): RetentionWorker {
   const objectStore = storage ?? artifactStorageFromEnvironment();
   const realtime =
@@ -823,7 +825,8 @@ export function createRetentionWorker({
       const segmentId = randomUUID();
       const objectKey = `${config.archivePrefix}/${active.workspaceId}/${segmentId}-${first.cursor}-${last.cursor}.ndjson.gz`;
       const retainUntil = new Date(
-        Date.now() + (config.archiveRetainDays * 86_400 + 300) * 1_000,
+        archiveNow().getTime() +
+          (config.archiveRetainDays * 86_400 + 300) * 1_000,
       );
       await tx.query(
         `
@@ -994,10 +997,14 @@ export function createRetentionWorker({
           state: ArchiveSegmentObject["state"];
           membershipState: ArchiveSegmentObject["membershipState"];
           fixedCutoffAt: Date;
+          objectVersionId: string | null;
+          retainUntil: Date;
         }>(
           `
           SELECT state,membership_state AS "membershipState",
-                 fixed_cutoff_at AS "fixedCutoffAt"
+                 fixed_cutoff_at AS "fixedCutoffAt",
+                 object_version_id AS "objectVersionId",
+                 retain_until AS "retainUntil"
             FROM event_archive_segments
            WHERE id=$1 AND workspace_id=$2
            FOR UPDATE
@@ -1008,7 +1015,9 @@ export function createRetentionWorker({
       if (
         !current ||
         current.membershipState !== "pending_exact" ||
-        current.state !== "planned"
+        current.state !== "planned" ||
+        current.objectVersionId !== null ||
+        current.retainUntil.toISOString() !== segment.retainUntil.toISOString()
       )
         throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
       assertPendingCutoff(active, current);
@@ -1023,13 +1032,80 @@ export function createRetentionWorker({
                last_error_code=NULL,updated_at=now()
          WHERE id=$1 AND workspace_id=$2
            AND membership_state='pending_exact' AND state='planned'
+           AND object_version_id IS NULL AND retain_until=$4
       `,
-        [segment.id, active.workspaceId, active.fence],
+        [
+          segment.id,
+          active.workspaceId,
+          active.fence,
+          segment.retainUntil,
+        ],
       );
       if (updated.rowCount !== 1)
         throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
     });
   };
+
+  const refreshPlannedRetainUntil = async (
+    active: RetentionClaim,
+    segment: ArchiveSegmentObject,
+  ): Promise<ArchiveSegmentObject> =>
+    withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const current = (
+        await tx.query<ArchiveSegmentObject>(
+          `
+          SELECT id,workspace_id AS "workspaceId",
+                 start_cursor::text AS "startCursor",
+                 end_cursor::text AS "endCursor",row_count AS "rowCount",
+                 snapshot_digest AS "snapshotDigest",
+                 object_key AS "objectKey",
+                 object_version_id AS "objectVersionId",
+                 object_size_bytes::text AS "objectSizeBytes",
+                 object_sha256 AS "objectSha256",
+                 fixed_cutoff_at AS "fixedCutoffAt",
+                 retain_until AS "retainUntil",pruned_at AS "prunedAt",
+                 state,membership_state AS "membershipState",
+                 planned_fence::text AS "plannedFence",
+                 last_error_code AS "lastErrorCode"
+            FROM event_archive_segments
+           WHERE id=$1 AND workspace_id=$2
+           FOR UPDATE
+        `,
+          [segment.id, active.workspaceId],
+        )
+      ).rows[0];
+      if (
+        !current ||
+        current.membershipState !== "pending_exact" ||
+        current.state !== "planned" ||
+        current.objectVersionId !== null
+      )
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      assertPendingCutoff(active, current);
+      const members = await loadProvisionalMembers(tx, current.id);
+      if (members.length !== current.rowCount)
+        throw new Error("ARCHIVE_MEMBERSHIP_CONFLICT");
+      const retainUntil = new Date(
+        archiveNow().getTime() +
+          (config.archiveRetainDays * 86_400 + 300) * 1_000,
+      );
+      // RetainUntil is S3 protection state, not canonical object identity
+      // metadata. Keep the frozen manifest/cutoff bytes unchanged on recovery.
+      const updated = await tx.query(
+        `
+        UPDATE event_archive_segments
+           SET retain_until=$3,last_error_code=NULL,updated_at=now()
+         WHERE id=$1 AND workspace_id=$2
+           AND membership_state='pending_exact' AND state='planned'
+           AND object_version_id IS NULL
+      `,
+        [current.id, active.workspaceId, retainUntil],
+      );
+      if (updated.rowCount !== 1)
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      return { ...current, retainUntil };
+    });
 
   const persistUploadedVersion = async (
     active: RetentionClaim,
@@ -1064,7 +1140,9 @@ export function createRetentionWorker({
       if (
         !current ||
         current.membershipState !== "pending_exact" ||
-        current.state !== "planned"
+        current.state !== "planned" ||
+        current.objectVersionId !== null ||
+        current.retainUntil.toISOString() !== segment.retainUntil.toISOString()
       )
         throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
       assertPendingCutoff(active, current);
@@ -1078,8 +1156,9 @@ export function createRetentionWorker({
                last_error_code=NULL,updated_at=now()
          WHERE id=$1 AND workspace_id=$2
            AND membership_state='pending_exact' AND state='planned'
+           AND object_version_id IS NULL AND retain_until=$4
       `,
-        [current.id, active.workspaceId, versionId],
+        [current.id, active.workspaceId, versionId, segment.retainUntil],
       );
       if (updated.rowCount !== 1)
         throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
@@ -1507,16 +1586,27 @@ export function createRetentionWorker({
       segmentId = segment.id;
       assertPendingCutoff(active, segment);
       if (segment.state === "planned") {
-        body ??= await rebuildPlannedPayload(segment);
-        await recordUploadAttempt(active, segment);
-        const uploadedObject = await objectStore.putObjectIfAbsent(
-          archiveExpectation(segment),
-          body,
-        );
-        await archiveFault?.("after_put", {
-          claim: active,
-          segmentId,
-        });
+        const currentObject =
+          await objectStore.reconcileCurrentObjectIfPresent(
+            archiveExpectation(segment),
+          );
+        let versionId: string;
+        if (currentObject.status === "present") {
+          versionId = currentObject.versionId;
+        } else {
+          segment = await refreshPlannedRetainUntil(active, segment);
+          body ??= await rebuildPlannedPayload(segment);
+          await recordUploadAttempt(active, segment);
+          const uploadedObject = await objectStore.putObjectIfAbsent(
+            archiveExpectation(segment),
+            body,
+          );
+          versionId = uploadedObject.versionId;
+          await archiveFault?.("after_put", {
+            claim: active,
+            segmentId,
+          });
+        }
         await archiveFault?.("before_upload_commit", {
           claim: active,
           segmentId,
@@ -1524,7 +1614,7 @@ export function createRetentionWorker({
         segment = await persistUploadedVersion(
           active,
           segment,
-          uploadedObject.versionId,
+          versionId,
         );
         await archiveFault?.("after_upload_commit", {
           claim: active,

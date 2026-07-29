@@ -77,12 +77,23 @@ UPDATE event_archive_segments
 ALTER TABLE event_archive_segments
   ADD CONSTRAINT event_archive_segments_object_version_state_check CHECK (
     (
-      object_version_id IS NULL
-      AND state IN ('planned','failed')
+      state='planned'
+      AND object_version_id IS NULL
     )
     OR (
-      object_version_id IS NOT NULL
+      state IN ('uploaded','verified','pruned')
+      AND object_version_id IS NOT NULL
       AND length(btrim(object_version_id)) BETWEEN 1 AND 1024
+    )
+    OR (
+      state='failed'
+      AND (
+        object_version_id IS NULL
+        OR (
+          object_version_id IS NOT NULL
+          AND length(btrim(object_version_id)) BETWEEN 1 AND 1024
+        )
+      )
     )
   ),
   ADD CONSTRAINT event_archive_segments_timestamp_state_check CHECK (

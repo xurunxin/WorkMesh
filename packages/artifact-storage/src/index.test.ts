@@ -104,6 +104,64 @@ describe("S3 artifact verification", () => {
     expect(commands[1]!.input).not.toHaveProperty("VersionId");
   });
 
+  it("reports absence only for an explicit HeadObject NotFound or HTTP 404", async () => {
+    const content = Buffer.from("head-first archive");
+    const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
+    const expectation = {
+      key: "retention/head-first.ndjson.gz",
+      checksum,
+      sizeBytes: content.length,
+      mimeType: "application/gzip",
+      retainUntil: new Date("2027-07-01T00:00:00.000Z"),
+      archiveIdentity: {
+        segmentId: "head-first-segment",
+        snapshotDigest: `sha256:${"e".repeat(64)}`,
+        fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+      },
+    };
+    const storageFor = (error: Error) =>
+      new S3ArtifactStorage({
+        bucket: "archives",
+        config: {
+          region: "us-east-1",
+          credentials: { accessKeyId: "test", secretAccessKey: "test" },
+        },
+        client: {
+          send: async () => {
+            throw error;
+          },
+        } as never,
+      });
+
+    await expect(
+      storageFor(
+        Object.assign(new Error("missing"), {
+          $metadata: { httpStatusCode: 404 },
+        }),
+      ).reconcileCurrentObjectIfPresent(expectation),
+    ).resolves.toEqual({ status: "missing" });
+    await expect(
+      storageFor(
+        Object.assign(new Error("missing"), { name: "NotFound" }),
+      ).reconcileCurrentObjectIfPresent(expectation),
+    ).resolves.toEqual({ status: "missing" });
+    await expect(
+      storageFor(
+        Object.assign(new Error("ambiguous"), {
+          name: "NoSuchKey",
+          $metadata: { httpStatusCode: 500 },
+        }),
+      ).reconcileCurrentObjectIfPresent(expectation),
+    ).rejects.toThrow("ambiguous");
+    await expect(
+      storageFor(
+        Object.assign(new Error("unavailable"), {
+          $metadata: { httpStatusCode: 503 },
+        }),
+      ).reconcileCurrentObjectIfPresent(expectation),
+    ).rejects.toThrow("unavailable");
+  });
+
   it.each([
     ["precondition", Object.assign(new Error("PreconditionFailed"), {
       $metadata: { httpStatusCode: 412 },
