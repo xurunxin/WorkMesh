@@ -906,6 +906,38 @@ describe('Stage 2 collaboration API acceptance', () => {
       ownRoomAfterProjectDelete.statusCode,
       JSON.stringify(ownRoomAfterProjectDelete.json()),
     ).toBe(200)
+    const liveWorkItemLeaseAfterProjectDelete = await agentCall(
+      sourceToken,
+      'POST',
+      '/api/v1/leases',
+      {
+        sessionId: source.session.id,
+        resourceType: 'work_item',
+        resourceId: projectWork.id,
+        kind: 'exclusive',
+        ttlSeconds: 60,
+        reason: 'A live Work Item remains writable after its parent Project is deleted.',
+      },
+    )
+    expect(
+      liveWorkItemLeaseAfterProjectDelete.statusCode,
+      JSON.stringify(liveWorkItemLeaseAfterProjectDelete.json()),
+    ).toBe(200)
+    const liveWorkItemLease = liveWorkItemLeaseAfterProjectDelete.json<{
+      id: string
+      revision: number
+    }>()
+    const releasedLiveWorkItemLease = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/leases/${liveWorkItemLease.id}/release`,
+      { reason: 'Parent Project deletion independence verified.' },
+      { 'if-match': `"revision-${liveWorkItemLease.revision}"` },
+    )
+    expect(
+      releasedLiveWorkItemLease.statusCode,
+      JSON.stringify(releasedLiveWorkItemLease.json()),
+    ).toBe(200)
 
     const deletedProjectEventCursor = (await db.query<{ cursor: string }>(
       'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
@@ -1053,6 +1085,54 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(deletedOwnWorkItemWrite.json<{ error: { code: string } }>()).toMatchObject({
       error: { code: 'RESOURCE_SCOPE_DENIED' },
     })
+    const beforeDeletedWorkItemLeaseDenial = (await db.query<{
+      session_revision: number
+      session_sequence: number
+      lease_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM leases WHERE session_id=$1) AS lease_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [source.session.id],
+    )).rows[0]!
+    const deletedWorkItemLease = await agentCall(
+      sourceToken,
+      'POST',
+      '/api/v1/leases',
+      {
+        sessionId: source.session.id,
+        resourceType: 'work_item',
+        resourceId: projectWork.id,
+        kind: 'exclusive',
+        ttlSeconds: 60,
+        reason: 'A deleted Work Item cannot authorize collaboration writes.',
+      },
+    )
+    expect(
+      deletedWorkItemLease.statusCode,
+      JSON.stringify(deletedWorkItemLease.json()),
+    ).toBe(403)
+    expect(deletedWorkItemLease.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
+    expect((await db.query<{
+      session_revision: number
+      session_sequence: number
+      lease_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM leases WHERE session_id=$1) AS lease_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [source.session.id],
+    )).rows[0]).toEqual(beforeDeletedWorkItemLeaseDenial)
     const deletedExactTarget = await humanCall(f.human, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
       intent: 'ask',
       body: 'A deleted Work Item exact target must be unavailable.',

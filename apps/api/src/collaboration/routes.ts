@@ -64,7 +64,12 @@ async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: 
   const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind === 'agent') {
     if (current.agentSessionId !== sessionId || current.id !== row.agent_actor_id) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to this session')
-    if (!row.work_item_id && row.project_id && !row.project_exists) throw new DomainError('RESOURCE_SCOPE_DENIED', 'The session Project is unavailable')
+    const liveSessionResource = row.work_item_id
+      ? row.work_item_exists
+      : row.project_id
+        ? row.project_exists
+        : true
+    if (!liveSessionResource) throw new DomainError('RESOURCE_SCOPE_DENIED', 'The session resource is unavailable')
     const grant = (await tx.query<{ status:string; permissions_snapshot:string[] }>('SELECT status,permissions_snapshot FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
     if (!grant || grant.status !== 'active' || !grant.permissions_snapshot.includes('work:write')) throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent delegation does not grant collaboration writes')
     if (['stopping','completed','failed','canceled'].includes(row.state)) throw new DomainError('SESSION_STOPPED', 'Stopped sessions cannot perform ordinary writes')
