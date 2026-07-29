@@ -47,6 +47,14 @@ test database. Before enabling event pruning, additionally require:
    fresh `archive_and_prune` Worker heartbeat in the admin status response;
 5. retention objects protected from deletion for at least 365 days.
 
+The formal soak must use the tracked `pnpm provision:soak:retention` command,
+not an untracked operator script. Its mode-`0600`, schema-version-2 state file
+belongs outside evidence storage and retains only the installation token needed
+to restart a fresh harness run. Session tokens rotate in memory. Never reuse a
+Session concurrently: one dedicated Session has exactly one soak runner, and a
+runner restart creates a new report directory and baseline rather than
+appending old samples.
+
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):
 

@@ -1,4 +1,5 @@
 import { appendActivityInputSchema } from "@workmesh/contracts";
+import type { RetentionSoakCredentialMetrics } from "./retention-soak-credential.js";
 
 export const retentionSoakActivityPayload = appendActivityInputSchema.parse({
   kind: "status",
@@ -33,7 +34,7 @@ export type RetentionSoakOptions = Readonly<{
   redisUrl: string;
   apiUrl: string;
   sessionId: string;
-  sessionToken: string;
+  installationToken: string;
   durationMs: number;
   sampleIntervalMs: number;
   redisLimit: number;
@@ -95,9 +96,9 @@ export const retentionSoakPreflight = (
     env.WORKMESH_RETENTION_SOAK_ACTIVITY_EVERY_SAMPLES ?? "5",
   );
   if (
-    !Number.isInteger(sampleSeconds)
-    || sampleSeconds < 1
-    || sampleSeconds > 3600
+    !Number.isInteger(sampleSeconds) ||
+    sampleSeconds < 1 ||
+    sampleSeconds > 3600
   )
     throw new Error("RETENTION_SOAK_SAMPLE_INTERVAL_INVALID");
   if (!Number.isInteger(redisLimit) || redisLimit < 100)
@@ -204,13 +205,15 @@ export const retentionSoakPreflight = (
         env.WORKMESH_RETENTION_SOAK_API_URL,
         "RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD",
       ),
-    ).toString().replace(/\/$/, ""),
+    )
+      .toString()
+      .replace(/\/$/, ""),
     sessionId: required(
       env.WORKMESH_RETENTION_SOAK_SESSION_ID,
       "RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD",
     ),
-    sessionToken: required(
-      env.WORKMESH_RETENTION_SOAK_SESSION_TOKEN,
+    installationToken: required(
+      env.WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN,
       "RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD",
     ),
     durationMs: hours * 3_600_000,
@@ -255,10 +258,15 @@ export type RetentionSoakSample = Readonly<{
     heartbeatLatencyMs: number;
     activityLatencyMs: number | null;
   }>;
-  containers: Readonly<Record<string, Readonly<{
-    cpuPercent: number;
-    memoryBytes: number;
-  }>>>;
+  containers: Readonly<
+    Record<
+      string,
+      Readonly<{
+        cpuPercent: number;
+        memoryBytes: number;
+      }>
+    >
+  >;
 }>;
 
 const slopePerHour = (
@@ -269,8 +277,8 @@ const slopePerHour = (
   const last = samples.at(-1);
   if (!first || !last || first === last) return 0;
   const hours =
-    (new Date(last.sampledAt).getTime() - new Date(first.sampledAt).getTime())
-    / 3_600_000;
+    (new Date(last.sampledAt).getTime() - new Date(first.sampledAt).getTime()) /
+    3_600_000;
   return hours > 0 ? (value(last) - value(first)) / hours : 0;
 };
 
@@ -302,40 +310,26 @@ export const retentionSoakReport = (
   thresholds: RetentionSoakThresholds,
   expectedSamples = 1,
   generatedCursors: readonly string[] = [],
+  credentialMetrics: RetentionSoakCredentialMetrics = {
+    refreshCount: 0,
+    maximumRefreshLatencyMs: 0,
+  },
 ) => {
   const series = [baseline, ...samples];
   const last = samples.at(-1);
   const maximum = (value: (sample: RetentionSoakSample) => number): number =>
     Math.max(0, ...series.map(value));
   const endToEndSlopesPerHour = {
-    databaseRows: slopePerHour(
-      series,
-      (sample) => sample.database.rows,
-    ),
-    databaseBytes: slopePerHour(
-      series,
-      (sample) => sample.database.sizeBytes,
-    ),
+    databaseRows: slopePerHour(series, (sample) => sample.database.rows),
+    databaseBytes: slopePerHour(series, (sample) => sample.database.sizeBytes),
     tableBytes: slopePerHour(
       series,
       (sample) => sample.database.tableSizeBytes,
     ),
-    deadTuples: slopePerHour(
-      series,
-      (sample) => sample.database.deadTuples,
-    ),
-    redisLength: slopePerHour(
-      series,
-      (sample) => sample.redis.length,
-    ),
-    archiveBacklog: slopePerHour(
-      series,
-      (sample) => sample.archive.backlog,
-    ),
-    outboxPending: slopePerHour(
-      series,
-      (sample) => sample.outbox.pending,
-    ),
+    deadTuples: slopePerHour(series, (sample) => sample.database.deadTuples),
+    redisLength: slopePerHour(series, (sample) => sample.redis.length),
+    archiveBacklog: slopePerHour(series, (sample) => sample.archive.backlog),
+    outboxPending: slopePerHour(series, (sample) => sample.outbox.pending),
     containerMemoryBytes: Object.fromEntries(
       Object.keys(baseline.containers).map((name) => [
         name,
@@ -390,39 +384,32 @@ export const retentionSoakReport = (
     ]),
   );
   const deltas = {
-    verifiedSegments:
-      (last?.archive.verified ?? 0) - baseline.archive.verified,
+    verifiedSegments: (last?.archive.verified ?? 0) - baseline.archive.verified,
     verifiedRows:
       (last?.archive.verifiedRows ?? 0) - baseline.archive.verifiedRows,
-    databaseRows:
-      (last?.database.rows ?? 0) - baseline.database.rows,
+    databaseRows: (last?.database.rows ?? 0) - baseline.database.rows,
     currentRunGenerated: last?.archive.currentRunGenerated ?? 0,
     currentRunArchived: last?.archive.currentRunArchived ?? 0,
   };
   const normalizedCursors = generatedCursors.map((cursor) => cursor.trim());
   const cursorEvidenceValid =
-    normalizedCursors.every((cursor) => /^\d+$/.test(cursor))
-    && new Set(normalizedCursors).size === normalizedCursors.length
-    && normalizedCursors.length === deltas.currentRunGenerated;
+    normalizedCursors.every((cursor) => /^\d+$/.test(cursor)) &&
+    new Set(normalizedCursors).size === normalizedCursors.length &&
+    normalizedCursors.length === deltas.currentRunGenerated;
   if (cursorEvidenceValid)
     normalizedCursors.sort((left, right) =>
-      BigInt(left) < BigInt(right) ? -1 : BigInt(left) > BigInt(right) ? 1 : 0);
+      BigInt(left) < BigInt(right) ? -1 : BigInt(left) > BigInt(right) ? 1 : 0,
+    );
   const maxima = {
     failedArchiveSegments: maximum((sample) => sample.archive.failed),
     archiveBacklog: maximum((sample) => sample.archive.backlog),
-    archiveLatencyMs: maximum(
-      (sample) => sample.archive.maximumLatencyMs,
-    ),
+    archiveLatencyMs: maximum((sample) => sample.archive.maximumLatencyMs),
     outboxPending: maximum((sample) => sample.outbox.pending),
     outboxLagMs: maximum((sample) => sample.outbox.maximumLagMs),
     redisLength: maximum((sample) => sample.redis.length),
-    databaseConnections: maximum(
-      (sample) => sample.database.connections,
-    ),
+    databaseConnections: maximum((sample) => sample.database.connections),
     redisConnections: maximum((sample) => sample.redis.connections),
-    heartbeatLatencyMs: maximum(
-      (sample) => sample.workload.heartbeatLatencyMs,
-    ),
+    heartbeatLatencyMs: maximum((sample) => sample.workload.heartbeatLatencyMs),
     activityLatencyMs: maximum(
       (sample) => sample.workload.activityLatencyMs ?? 0,
     ),
@@ -438,40 +425,35 @@ export const retentionSoakReport = (
     ),
     archivesVerifiedThisRun: deltas.verifiedSegments > 0,
     generatedEventsArchived:
-      deltas.currentRunGenerated > 0
-      && deltas.currentRunArchived === deltas.currentRunGenerated,
+      deltas.currentRunGenerated > 0 &&
+      deltas.currentRunArchived === deltas.currentRunGenerated,
     generatedCursorEvidenceComplete: cursorEvidenceValid,
-    verifiedRowAccounting:
-      deltas.verifiedRows >= deltas.currentRunGenerated,
-    generatedRowAccounting:
-      deltas.databaseRows >= deltas.currentRunGenerated,
+    verifiedRowAccounting: deltas.verifiedRows >= deltas.currentRunGenerated,
+    generatedRowAccounting: deltas.databaseRows >= deltas.currentRunGenerated,
     noArchiveFailures: series.every((sample) => sample.archive.failed === 0),
     noPruning: series.every((sample) => sample.archive.pruned === 0),
     floorStable: series.every((sample) => sample.floor === baseline.floor),
     archiveBacklogBounded:
       maxima.archiveBacklog <= thresholds.maximumArchiveBacklog,
     archiveBacklogConverged:
-      last !== undefined
-      && last.archive.backlog <= baseline.archive.backlog,
+      last !== undefined && last.archive.backlog <= baseline.archive.backlog,
     outboxBounded:
-      maxima.outboxPending <= thresholds.maximumOutboxPending
-      && maxima.outboxLagMs <= thresholds.maximumOutboxLagMs,
+      maxima.outboxPending <= thresholds.maximumOutboxPending &&
+      maxima.outboxLagMs <= thresholds.maximumOutboxLagMs,
     outboxConverged:
-      last !== undefined
-      && last.outbox.pending <= baseline.outbox.pending,
-    redisBounded: series.every(
-      (sample) => sample.redis.length <= redisLimit,
-    ),
+      last !== undefined && last.outbox.pending <= baseline.outbox.pending,
+    redisBounded: series.every((sample) => sample.redis.length <= redisLimit),
     activeWorkload:
-      maximum((sample) => sample.workload.heartbeats) > 0
-      && maximum((sample) => sample.workload.activities) > 0,
+      maximum((sample) => sample.workload.heartbeats) > 0 &&
+      maximum((sample) => sample.workload.activities) > 0,
+    tokenRotationExercised: credentialMetrics.refreshCount >= 2,
     latencyBounded:
-      maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs
-      && maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs
-      && maxima.activityLatencyMs <= thresholds.maximumActivityLatencyMs,
+      maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
+      maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&
+      maxima.activityLatencyMs <= thresholds.maximumActivityLatencyMs,
     connectionsBounded:
-      maxima.databaseConnections <= thresholds.maximumDatabaseConnections
-      && maxima.redisConnections <= thresholds.maximumRedisConnections,
+      maxima.databaseConnections <= thresholds.maximumDatabaseConnections &&
+      maxima.redisConnections <= thresholds.maximumRedisConnections,
     cpuBounded: Object.values(maximumCpuPercent).every(
       (value) => value <= thresholds.maximumCpuPercent,
     ),
@@ -479,28 +461,28 @@ export const retentionSoakReport = (
       (value) => value <= thresholds.maximumMemoryBytes,
     ),
     databaseRowsGrowthBounded:
-      maximumGrowthSlopesPerHour.databaseRows
-        <= thresholds.maximumDatabaseRowsSlopePerHour,
+      maximumGrowthSlopesPerHour.databaseRows <=
+      thresholds.maximumDatabaseRowsSlopePerHour,
     databaseBytesGrowthBounded:
-      maximumGrowthSlopesPerHour.databaseBytes
-        <= thresholds.maximumDatabaseBytesSlopePerHour,
+      maximumGrowthSlopesPerHour.databaseBytes <=
+      thresholds.maximumDatabaseBytesSlopePerHour,
     tableBytesGrowthBounded:
-      maximumGrowthSlopesPerHour.tableBytes
-        <= thresholds.maximumTableBytesSlopePerHour,
+      maximumGrowthSlopesPerHour.tableBytes <=
+      thresholds.maximumTableBytesSlopePerHour,
     deadTuplesGrowthBounded:
-      maximumGrowthSlopesPerHour.deadTuples
-        <= thresholds.maximumDeadTuplesSlopePerHour,
+      maximumGrowthSlopesPerHour.deadTuples <=
+      thresholds.maximumDeadTuplesSlopePerHour,
     redisGrowthBounded:
-      maximumGrowthSlopesPerHour.redisLength
-        <= thresholds.maximumRedisLengthSlopePerHour,
-    containerMemoryGrowthBounded:
-      Object.values(maximumGrowthSlopesPerHour.containerMemoryBytes).every(
-        (value) =>
-          value <= thresholds.maximumContainerMemorySlopeBytesPerHour,
-      ),
+      maximumGrowthSlopesPerHour.redisLength <=
+      thresholds.maximumRedisLengthSlopePerHour,
+    containerMemoryGrowthBounded: Object.values(
+      maximumGrowthSlopesPerHour.containerMemoryBytes,
+    ).every(
+      (value) => value <= thresholds.maximumContainerMemorySlopeBytesPerHour,
+    ),
   };
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     status: Object.values(checks).every(Boolean) ? "passed" : "failed",
     startedAt: startedAt.toISOString(),
     endedAt: endedAt.toISOString(),
@@ -526,6 +508,7 @@ export const retentionSoakReport = (
       },
       deltas,
       generatedCursors: normalizedCursors,
+      credentials: credentialMetrics,
       maxima,
       endToEndSlopesPerHour,
       maximumGrowthSlopesPerHour,

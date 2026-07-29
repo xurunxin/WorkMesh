@@ -1,13 +1,12 @@
-import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import {
-  appendFile,
-  mkdir,
-  writeFile,
-} from "node:fs/promises";
+import { appendFile, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createClient } from "redis";
 import { createDb } from "@workmesh/db";
+import {
+  callRetentionSoakAgent,
+  RetentionSoakCredentialManager,
+} from "./retention-soak-credential.js";
 import {
   retentionSoakActivityPayload,
   retentionSoakPreflight,
@@ -31,8 +30,8 @@ if (process.env.WORKMESH_RETENTION_SOAK !== "1") {
 const options = retentionSoakPreflight(process.env);
 const timestamp = new Date().toISOString().replaceAll(":", "-");
 const reportDirectory = resolve(
-  process.env.WORKMESH_RETENTION_SOAK_REPORT_DIRECTORY
-    ?? `.tmp/retention-soak/${timestamp}`,
+  process.env.WORKMESH_RETENTION_SOAK_REPORT_DIRECTORY ??
+    `.tmp/retention-soak/${timestamp}`,
 );
 const samplePath = resolve(reportDirectory, "samples.jsonl");
 const reportPath = resolve(reportDirectory, "report.json");
@@ -40,11 +39,13 @@ await mkdir(reportDirectory, { recursive: true });
 
 if (options.dryRun) {
   const plan = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     status: "dry_run",
     formalDurationHours: 24,
     sampleIntervalSeconds: options.sampleIntervalMs / 1_000,
     activeWorkload: true,
+    proactiveTokenRotation: true,
+    minimumTokenRefreshes: 2,
     archiveOnly: true,
     cleanupEnabled: false,
     pruneEnabled: false,
@@ -65,6 +66,7 @@ if (options.dryRun) {
   );
   process.exit(0);
 }
+await writeFile(samplePath, "", { encoding: "utf8", flag: "wx" });
 
 const parseBytes = (value: string): number => {
   const match = /^([\d.]+)\s*([kmgt]?i?b)$/i.exec(value.trim());
@@ -87,16 +89,11 @@ const containerStats = (): RetentionSoakSample["containers"] => {
   const executable = process.platform === "win32" ? "docker.exe" : "docker";
   const output = execFileSync(
     executable,
-    [
-      "stats",
-      "--no-stream",
-      "--format",
-      "{{json .}}",
-      ...options.containers,
-    ],
+    ["stats", "--no-stream", "--format", "{{json .}}", ...options.containers],
     { encoding: "utf8", windowsHide: true },
   );
-  const result: Record<string, { cpuPercent: number; memoryBytes: number }> = {};
+  const result: Record<string, { cpuPercent: number; memoryBytes: number }> =
+    {};
   for (const line of output.trim().split(/\r?\n/)) {
     if (!line) continue;
     const row = JSON.parse(line) as {
@@ -114,29 +111,14 @@ const containerStats = (): RetentionSoakSample["containers"] => {
   return result;
 };
 
-const callAgent = async (
-  path: string,
-  payload: object,
-): Promise<number> => {
-  const started = performance.now();
-  const response = await fetch(`${options.apiUrl}${path}`, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${options.sessionToken}`,
-      "content-type": "application/json",
-      "idempotency-key": randomUUID(),
-    },
-    body: JSON.stringify(payload),
-  });
-  await response.arrayBuffer();
-  if (!response.ok)
-    throw new Error(`RETENTION_SOAK_ACTIVE_WORKLOAD_HTTP_${response.status}`);
-  return performance.now() - started;
-};
-
 const db = createDb(options.databaseUrl);
 const redis = createClient({ url: options.redisUrl });
-const startedAt = new Date();
+const credentials = new RetentionSoakCredentialManager({
+  apiUrl: options.apiUrl,
+  sessionId: options.sessionId,
+  installationToken: options.installationToken,
+});
+let reportStartedAt: Date | undefined;
 const samples: RetentionSoakSample[] = [];
 let baseline: RetentionSoakSample | undefined;
 let heartbeatCount = 0;
@@ -192,11 +174,17 @@ try {
   ).rows[0];
   if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
   if (
-    identity.workerMode !== "archive_only"
-    || !identity.workerSeenAt
-    || Date.now() - identity.workerSeenAt.getTime() > 120_000
+    identity.workerMode !== "archive_only" ||
+    !identity.workerSeenAt ||
+    Date.now() - identity.workerSeenAt.getTime() > 120_000
   )
     throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+
+  // Bootstrap from installation authority before the baseline. Rotated
+  // Session credentials remain memory-only for the life of this process.
+  await credentials.token();
+  const startedAt = new Date();
+  reportStartedAt = startedAt;
 
   const collectSample = async (
     heartbeatLatencyMs: number,
@@ -265,9 +253,17 @@ try {
   );
   const deadline = startedAt.getTime() + options.durationMs;
   for (let index = 0; Date.now() < deadline; index += 1) {
-    const heartbeatLatencyMs = await callAgent(
+    const heartbeatLatencyMs = await callRetentionSoakAgent(
+      credentials,
+      options.apiUrl,
       `/api/v1/agent-sessions/${options.sessionId}/heartbeat`,
-      { usage: { runtimeSeconds: Math.floor((Date.now() - startedAt.getTime()) / 1_000) } },
+      {
+        usage: {
+          runtimeSeconds: Math.floor(
+            (Date.now() - startedAt.getTime()) / 1_000,
+          ),
+        },
+      },
     );
     heartbeatCount += 1;
     let activityLatencyMs: number | null = null;
@@ -278,7 +274,9 @@ try {
           [options.sessionId],
         )
       ).rows[0]!.cursor;
-      activityLatencyMs = await callAgent(
+      activityLatencyMs = await callRetentionSoakAgent(
+        credentials,
+        options.apiUrl,
         `/api/v1/agent-sessions/${options.sessionId}/activities`,
         retentionSoakActivityPayload,
       );
@@ -287,22 +285,21 @@ try {
       activityCount += 1;
     }
 
-    const sample = await collectSample(
-      heartbeatLatencyMs,
-      activityLatencyMs,
-    );
+    const sample = await collectSample(heartbeatLatencyMs, activityLatencyMs);
     samples.push(sample);
-    await appendFile(samplePath, `${JSON.stringify({ kind: "sample", ...sample })}\n`, {
-      encoding: "utf8",
-      flag: "a",
-    });
+    await appendFile(
+      samplePath,
+      `${JSON.stringify({ kind: "sample", ...sample })}\n`,
+      {
+        encoding: "utf8",
+        flag: "a",
+      },
+    );
     const nextSampleAt =
       startedAt.getTime() + (index + 1) * options.sampleIntervalMs;
     const remaining = Math.min(deadline, nextSampleAt) - Date.now();
     if (remaining > 0)
-      await new Promise((resolve) =>
-        setTimeout(resolve, remaining),
-      );
+      await new Promise((resolve) => setTimeout(resolve, remaining));
   }
 } finally {
   if (redis.isOpen) await redis.quit();
@@ -310,9 +307,12 @@ try {
 }
 
 if (!baseline) throw new Error("RETENTION_SOAK_BASELINE_NOT_CAPTURED");
-const expectedSamples = Math.floor(options.durationMs / options.sampleIntervalMs);
+if (!reportStartedAt) throw new Error("RETENTION_SOAK_START_TIME_NOT_CAPTURED");
+const expectedSamples = Math.floor(
+  options.durationMs / options.sampleIntervalMs,
+);
 const report = retentionSoakReport(
-  startedAt,
+  reportStartedAt,
   new Date(),
   baseline,
   samples,
@@ -320,6 +320,7 @@ const report = retentionSoakReport(
   options.thresholds,
   expectedSamples,
   generatedEventCursors,
+  credentials.metrics(),
 );
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {
   encoding: "utf8",
