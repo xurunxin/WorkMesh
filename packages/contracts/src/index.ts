@@ -238,6 +238,7 @@ export const errorBody = (code: string, message: string, correlationId: string, 
 export const retentionStatusResponseSchema = z.object({
   mode: z.enum(['unknown', 'disabled', 'archive_only', 'archive_and_prune']),
   workerSeenAt: timestampSchema.nullable(),
+  workerFresh: z.boolean(),
   policies: z.array(z.object({
     recordClass: z.string(),
     onlineDays: z.number().int().positive(),
@@ -269,6 +270,7 @@ export const retentionStatusResponseSchema = z.object({
   blockers: z.object({
     undeliveredOutbox: z.number().int().nonnegative(),
     protectedA2AEvents: z.number().int().nonnegative(),
+    protectedWebhookEvents: z.number().int().nonnegative(),
     unverifiedSegments: z.number().int().nonnegative(),
   }),
   redis: z.object({

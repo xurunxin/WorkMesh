@@ -163,7 +163,8 @@ INSERT INTO retention_policy_inventory(
   ('human_session.expired_or_revoked',30,NULL,NULL,true,NULL),
   ('agent_token.expired_or_revoked',30,NULL,NULL,true,NULL),
   ('heartbeat_idempotency.recent_window',1,NULL,NULL,true,NULL),
-  ('webhook.delivered_or_processed',30,NULL,NULL,true,NULL),
+  ('webhook.agent_delivery_reference',3650,NULL,NULL,false,'Agent webhook references are durable delivery and event-protection facts'),
+  ('webhook.provider_processed',30,NULL,NULL,true,NULL),
   ('audit_or_recovery_fact',3650,NULL,NULL,false,'audit and uncertain recovery facts are protected');
 
 -- Cleanup predicates are deliberately partial so jobs cannot accidentally
@@ -176,8 +177,6 @@ CREATE INDEX agent_session_tokens_retention
   ON agent_session_tokens(COALESCE(revoked_at,expires_at),id);
 CREATE INDEX agent_installation_tokens_retention
   ON agent_installation_tokens(COALESCE(revoked_at,expires_at),id);
-CREATE INDEX agent_webhook_delivered_retention
-  ON agent_webhook_deliveries(delivered_at,id) WHERE status='delivered';
 CREATE INDEX provider_webhook_processed_retention
   ON provider_webhook_deliveries(processed_at,id) WHERE status='processed';
 

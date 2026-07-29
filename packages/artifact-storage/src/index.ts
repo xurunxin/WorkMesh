@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import {
   GetObjectCommand,
+  GetObjectLockConfigurationCommand,
   HeadBucketCommand,
   HeadObjectCommand,
   PutObjectCommand,
@@ -14,6 +15,7 @@ export type ArtifactObjectExpectation = {
   checksum: string;
   sizeBytes: number;
   mimeType: string;
+  retainUntil?: Date;
 };
 
 type ObjectClient = Pick<S3Client, "send">;
@@ -41,6 +43,12 @@ export class S3ArtifactStorage {
       ContentLength: expectation.sizeBytes,
       ChecksumSHA256: Buffer.from(expectation.checksum.replace(/^sha256:/, ""), "hex").toString("base64"),
       Metadata: { workmeshchecksum: expectation.checksum },
+      ...(expectation.retainUntil
+        ? {
+            ObjectLockMode: "COMPLIANCE" as const,
+            ObjectLockRetainUntilDate: expectation.retainUntil,
+          }
+        : {}),
     }), { expiresIn, signableHeaders: new Set(["content-type", "content-length", "x-amz-checksum-sha256"]) });
   }
 
@@ -76,11 +84,25 @@ export class S3ArtifactStorage {
       ContentLength: expectation.sizeBytes,
       ChecksumSHA256: Buffer.from(expectation.checksum.replace(/^sha256:/, ""), "hex").toString("base64"),
       Metadata: { workmeshchecksum: expectation.checksum },
+      ...(expectation.retainUntil
+        ? {
+            ObjectLockMode: "COMPLIANCE" as const,
+            ObjectLockRetainUntilDate: expectation.retainUntil,
+          }
+        : {}),
     }));
   }
 
   async probe(): Promise<void> {
     await this.#client.send(new HeadBucketCommand({ Bucket: this.#bucket }));
+  }
+
+  async probeRetentionProtection(): Promise<void> {
+    const configuration = await this.#client.send(
+      new GetObjectLockConfigurationCommand({ Bucket: this.#bucket }),
+    );
+    if (configuration.ObjectLockConfiguration?.ObjectLockEnabled !== "Enabled")
+      throw new Error("RETENTION_OBJECT_LOCK_REQUIRED");
   }
 
   async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
@@ -90,6 +112,13 @@ export class S3ArtifactStorage {
     if (head.ContentLength !== expectation.sizeBytes) throw new Error("ARTIFACT_SIZE_MISMATCH");
     if (head.ContentType !== expectation.mimeType) throw new Error("ARTIFACT_MIME_MISMATCH");
     if (head.Metadata?.workmeshchecksum !== expectation.checksum) throw new Error("ARTIFACT_METADATA_CHECKSUM_MISMATCH");
+    if (expectation.retainUntil) {
+      if (head.ObjectLockMode !== "COMPLIANCE")
+        throw new Error("RETENTION_OBJECT_LOCK_MODE_MISMATCH");
+      const actualRetainUntil = head.ObjectLockRetainUntilDate;
+      if (!actualRetainUntil || actualRetainUntil < expectation.retainUntil)
+        throw new Error("RETENTION_OBJECT_LOCK_TOO_SHORT");
+    }
     const object = await this.#client.send(new GetObjectCommand({
       Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",
     }));

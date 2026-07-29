@@ -43,6 +43,9 @@ const retentionFailureCodes = new Set([
   "EVENT_PRUNE_COUNT_MISMATCH",
   "EVENT_RETENTION_GAP",
   "REDIS_STREAM_EXACT_TRIM_FAILED",
+  "RETENTION_OBJECT_LOCK_MODE_MISMATCH",
+  "RETENTION_OBJECT_LOCK_REQUIRED",
+  "RETENTION_OBJECT_LOCK_TOO_SHORT",
   "RETENTION_CLAIM_LOST",
   "RETENTION_FLOOR_FENCE_LOST",
   "RETENTION_FLOOR_MISSING",
@@ -116,7 +119,7 @@ type QueryExecutor = Pick<Db, "query">;
 
 export type ArchiveObjectStore = Pick<
   S3ArtifactStorage,
-  "putObject" | "verify"
+  "putObject" | "verify" | "probeRetentionProtection"
 >;
 export type ExactRedisClient = Readonly<{
   isOpen: boolean;
@@ -546,6 +549,34 @@ export function createRetentionWorker({
         `,
           [active.workspaceId, active.fixedCutoffAt, config.batchSize],
         );
+        const heartbeatKeysDeleted = await tx.query(
+          `
+          WITH candidate AS (
+            SELECT key.resource_kind,key.resource_id,key.idempotency_key
+              FROM heartbeat_idempotency_keys key
+             WHERE key.expires_at<=$2
+               AND (
+                 (key.resource_kind='session' AND EXISTS(
+                   SELECT 1 FROM agent_sessions session
+                    WHERE session.id=key.resource_id AND session.workspace_id=$1
+                 ))
+                 OR
+                 (key.resource_kind='lease' AND EXISTS(
+                   SELECT 1 FROM leases lease
+                    WHERE lease.id=key.resource_id AND lease.workspace_id=$1
+                 ))
+               )
+             ORDER BY key.expires_at,key.resource_kind,key.resource_id
+             FOR UPDATE SKIP LOCKED LIMIT $3
+          )
+          DELETE FROM heartbeat_idempotency_keys key USING candidate
+           WHERE key.resource_kind=candidate.resource_kind
+             AND key.resource_id=candidate.resource_id
+             AND key.idempotency_key=candidate.idempotency_key
+          RETURNING key.idempotency_key
+        `,
+          [active.workspaceId, active.fixedCutoffAt, config.batchSize],
+        );
         const outboxDeleted = await tx.query(
           `
           WITH candidate AS (
@@ -615,29 +646,6 @@ export function createRetentionWorker({
           )
           DELETE FROM agent_session_tokens token USING candidate
            WHERE token.id=candidate.id RETURNING token.id
-        `,
-          [
-            active.workspaceId,
-            new Date(
-              active.fixedCutoffAt.getTime() -
-                config.cleanupRetainDays * 86_400_000,
-            ),
-            config.batchSize,
-          ],
-        );
-        const webhookDeleted = await tx.query(
-          `
-          WITH candidate AS (
-            SELECT delivery.id
-              FROM agent_webhook_deliveries delivery
-              JOIN agent_definitions agent ON agent.id=delivery.agent_id
-             WHERE agent.workspace_id=$1 AND delivery.status='delivered'
-               AND delivery.delivered_at<=$2
-             ORDER BY delivery.delivered_at,delivery.id
-             FOR UPDATE OF delivery SKIP LOCKED LIMIT $3
-          )
-          DELETE FROM agent_webhook_deliveries delivery USING candidate
-           WHERE delivery.id=candidate.id RETURNING delivery.id
         `,
           [
             active.workspaceId,
@@ -720,10 +728,10 @@ export function createRetentionWorker({
           authDeleted,
           replayWiped,
           genericDeleted,
+          heartbeatKeysDeleted,
           outboxDeleted,
           sessionsDeleted,
           agentTokensDeleted,
-          webhookDeleted,
           installationTokensDeleted,
           providerDeliveriesDeleted,
         ].reduce((sum, result) => sum + (result.rowCount ?? 0), 0);
@@ -777,11 +785,15 @@ export function createRetentionWorker({
       );
       const objectChecksum = sha256(compressed);
       const objectKey = `${config.archivePrefix}/${active.workspaceId}/${first.cursor}-${last.cursor}-${snapshotDigest.slice(7)}.ndjson.gz`;
+      const retainUntil = new Date(
+        Date.now() + (config.archiveRetainDays * 86_400 + 300) * 1_000,
+      );
       const expectation: ArtifactObjectExpectation = {
         key: objectKey,
         checksum: objectChecksum,
         sizeBytes: compressed.byteLength,
         mimeType: "application/gzip",
+        retainUntil,
       };
       const segment = await withTx(db, async (tx) => {
         await assertClaim(tx, active);
@@ -792,8 +804,7 @@ export function createRetentionWorker({
             workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
             object_key,object_size_bytes,object_sha256,snapshot_digest,metadata,
             retain_until
-          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
-                   now()+($11::text||' days')::interval)
+          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
           ON CONFLICT(workspace_id,start_cursor,end_cursor) DO UPDATE
             SET object_key=EXCLUDED.object_key,object_size_bytes=EXCLUDED.object_size_bytes,
                 object_sha256=EXCLUDED.object_sha256,snapshot_digest=EXCLUDED.snapshot_digest,
@@ -830,7 +841,7 @@ export function createRetentionWorker({
               objectChecksum,
               snapshotDigest,
               metadata,
-              config.archiveRetainDays,
+              retainUntil,
             ],
           )
         ).rows[0]!;
@@ -1091,10 +1102,9 @@ export function createRetentionWorker({
     return length;
   };
 
-  let nextTickAt = 0;
   const tick = async (): Promise<void> => {
-    if (Date.now() < nextTickAt) return;
-    nextTickAt = Date.now() + config.intervalSeconds * 1_000;
+    if (config.archiveEnabled)
+      await objectStore.probeRetentionProtection();
     await publishWorkerMode();
     await cleanup();
     await archiveEvents();

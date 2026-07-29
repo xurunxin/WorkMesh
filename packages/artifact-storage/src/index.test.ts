@@ -39,4 +39,59 @@ describe("S3 artifact verification", () => {
     await expect(storage.verify({ key: "a", checksum: expected, sizeBytes: content.length, mimeType: "text/plain" }))
       .rejects.toThrow("ARTIFACT_CHECKSUM_MISMATCH");
   });
+
+  it("fails closed unless retention objects use COMPLIANCE lock through the requested horizon", async () => {
+    const content = Buffer.from("locked archive");
+    const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
+    const retainUntil = new Date(Date.now() + 365 * 86_400_000);
+    let putInput: Record<string, unknown> | undefined;
+    const client = {
+      send: async (command: { constructor: { name: string }; input: Record<string, unknown> }) => {
+        switch (command.constructor.name) {
+          case "GetObjectLockConfigurationCommand":
+            return { ObjectLockConfiguration: { ObjectLockEnabled: "Enabled" } };
+          case "PutObjectCommand":
+            putInput = command.input;
+            return {};
+          case "HeadObjectCommand":
+            return {
+              ContentLength: content.length,
+              ContentType: "application/gzip",
+              Metadata: { workmeshchecksum: checksum },
+              ObjectLockMode: "COMPLIANCE",
+              ObjectLockRetainUntilDate: retainUntil,
+            };
+          default:
+            return { Body: Readable.from([content]) };
+        }
+      },
+    };
+    const storage = new S3ArtifactStorage({
+      bucket: "archives",
+      config: { region: "us-east-1", credentials: { accessKeyId: "test", secretAccessKey: "test" } },
+      client: client as never,
+    });
+    await expect(storage.probeRetentionProtection()).resolves.toBeUndefined();
+    await expect(storage.putVerifiedObject({
+      key: "retention/a.ndjson.gz",
+      checksum,
+      sizeBytes: content.length,
+      mimeType: "application/gzip",
+      retainUntil,
+    }, content)).resolves.toMatchObject({ checksum });
+    expect(putInput).toMatchObject({
+      ObjectLockMode: "COMPLIANCE",
+      ObjectLockRetainUntilDate: retainUntil,
+    });
+
+    const unlocked = new S3ArtifactStorage({
+      bucket: "archives",
+      config: { region: "us-east-1", credentials: { accessKeyId: "test", secretAccessKey: "test" } },
+      client: {
+        send: async () => ({ ObjectLockConfiguration: { ObjectLockEnabled: "Disabled" } }),
+      } as never,
+    });
+    await expect(unlocked.probeRetentionProtection())
+      .rejects.toThrow("RETENTION_OBJECT_LOCK_REQUIRED");
+  });
 });

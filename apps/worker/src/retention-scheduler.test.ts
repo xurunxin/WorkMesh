@@ -1,11 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { RetentionScheduler } from './retention-scheduler.js'
 
-const flushTimers = async (): Promise<void> => {
-  await vi.runOnlyPendingTimersAsync()
-  await Promise.resolve()
-}
-
 describe('RetentionScheduler', () => {
   it('runs independently without overlapping an in-flight tick', async () => {
     vi.useFakeTimers()
@@ -25,7 +20,8 @@ describe('RetentionScheduler', () => {
     expect(tick).toHaveBeenCalledOnce()
     expect(scheduler.inFlight).toBe(true)
     release?.()
-    await flushTimers()
+    await Promise.resolve()
+    await Promise.resolve()
     await scheduler.stop()
     vi.useRealTimers()
   })
@@ -50,7 +46,8 @@ describe('RetentionScheduler', () => {
     await vi.advanceTimersByTimeAsync(50)
     expect(() => scheduler.assertReady()).toThrow('RETENTION_IO_TIMEOUT')
     release?.()
-    await flushTimers()
+    await Promise.resolve()
+    await Promise.resolve()
     await scheduler.stop()
 
     const healthy = new RetentionScheduler({

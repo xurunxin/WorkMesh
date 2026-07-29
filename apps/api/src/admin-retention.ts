@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { Pool } from "pg";
 import { createClient } from "redis";
-import { loadRealtimeRedisHintConfig } from "@workmesh/config";
+import { loadRealtimeRedisHintConfig, loadRetentionConfig } from "@workmesh/config";
 import { DomainError } from "@workmesh/domain";
 import { retentionStatusResponseSchema } from "@workmesh/contracts";
 import type { ApiActor } from "./agent/types.js";
@@ -98,6 +98,7 @@ export function registerAdminRetentionRoutes(
       db.query<{
         undeliveredOutbox: string;
         protectedA2AEvents: string;
+        protectedWebhookEvents: string;
         unverifiedSegments: string;
       }>(
         `
@@ -109,6 +110,9 @@ export function registerAdminRetentionRoutes(
             (SELECT count(*) FROM a2a_deliveries delivery
               JOIN domain_events event ON event.id=delivery.domain_event_id
              WHERE event.workspace_id=$1)::text AS "protectedA2AEvents",
+            (SELECT count(*) FROM agent_webhook_deliveries delivery
+              JOIN domain_events event ON event.id=delivery.event_id
+             WHERE event.workspace_id=$1)::text AS "protectedWebhookEvents",
             (SELECT count(*) FROM event_archive_segments
              WHERE workspace_id=$1 AND state NOT IN ('verified','pruned'))::text
               AS "unverifiedSegments"
@@ -152,9 +156,16 @@ export function registerAdminRetentionRoutes(
     const archive = archiveResult.rows[0]!;
     const blockers = blockerResult.rows[0]!;
     const worker = workerResult.rows[0];
+    const retentionConfig = loadRetentionConfig();
+    const workerFresh = Boolean(
+      worker?.workerSeenAt
+      && Date.now() - worker.workerSeenAt.getTime()
+        <= retentionConfig.progressStaleSeconds * 1_000,
+    );
     return retentionStatusResponseSchema.parse({
-      mode: worker?.mode ?? "unknown",
+      mode: workerFresh ? worker?.mode ?? "unknown" : "unknown",
       workerSeenAt: worker?.workerSeenAt?.toISOString() ?? null,
+      workerFresh,
       policies: policyResult.rows,
       floor: {
         prunedThroughCursor: floor.prunedThroughCursor,
@@ -177,6 +188,7 @@ export function registerAdminRetentionRoutes(
       blockers: {
         undeliveredOutbox: Number(blockers.undeliveredOutbox),
         protectedA2AEvents: Number(blockers.protectedA2AEvents),
+        protectedWebhookEvents: Number(blockers.protectedWebhookEvents),
         unverifiedSegments: Number(blockers.unverifiedSegments),
       },
       redis: {

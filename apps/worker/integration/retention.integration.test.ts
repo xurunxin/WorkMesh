@@ -25,6 +25,7 @@ const objects = new Map<string, Uint8Array>();
 let corruptReadback = true;
 let writes = 0;
 const storage: ArchiveObjectStore = {
+  async probeRetentionProtection() {},
   async putObject(expectation, body) {
     writes += 1;
     objects.set(expectation.key, Uint8Array.from(body));
@@ -60,6 +61,8 @@ const config: RetentionConfig = {
   batchSize: 100,
   leaseSeconds: 120,
   intervalSeconds: 3600,
+  ioTimeoutSeconds: 300,
+  progressStaleSeconds: 7200,
   cleanupEnabled: false,
   archiveEnabled: true,
   eventPruneEnabled: false,
@@ -263,6 +266,7 @@ describe("retention worker destructive-path fences", () => {
     const unsafeMessage =
       "archive bucket customer-42 failed with credential=top-secret";
     const unsafeStorage: ArchiveObjectStore = {
+      probeRetentionProtection: storage.probeRetentionProtection,
       putObject: storage.putObject,
       async verify() {
         throw new Error(unsafeMessage);
@@ -700,6 +704,78 @@ describe("retention worker destructive-path fences", () => {
         ])
       ).rowCount,
     ).toBe(0);
+  });
+
+  it("keeps Agent webhook delivery references through cleanup and pruning", async () => {
+    const agentActorId = (
+      await db.query<{ id: string }>(
+        "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Retention test agent') RETURNING id",
+        [workspaceId],
+      )
+    ).rows[0]!.id;
+    const agentId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO agent_definitions(
+           workspace_id,actor_id,slug,display_name
+         ) VALUES($1,$2,$3,'Retention test agent') RETURNING id`,
+        [workspaceId, agentActorId, `retention-${randomUUID()}`],
+      )
+    ).rows[0]!.id;
+    const endpointId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO agent_webhook_endpoints(agent_id,url)
+         VALUES($1,'https://agent.example.test/webhook') RETURNING id`,
+        [agentId],
+      )
+    ).rows[0]!.id;
+    await db.query(
+      `INSERT INTO agent_webhook_secrets(
+         endpoint_id,version,secret_ciphertext,iv,auth_tag,key_version
+       ) VALUES($1,1,$2,$3,$4,'v1')`,
+      [endpointId, Buffer.from("ciphertext"), Buffer.alloc(12), Buffer.alloc(16)],
+    );
+    const deliveryId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO agent_webhook_deliveries(
+           agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,
+           status,delivered_at,created_at,updated_at
+         ) VALUES(
+           $1,$2,1,$3,$4,'workspace.updated','delivered',
+           now()-interval '31 days',now()-interval '31 days',now()-interval '31 days'
+         ) RETURNING id`,
+        [agentId, endpointId, eventId, `retention-${randomUUID()}`],
+      )
+    ).rows[0]!.id;
+
+    corruptReadback = false;
+    const worker = createRetentionWorker({
+      db,
+      workerId: "webhook-reference-retention",
+      config: {
+        ...config,
+        cleanupEnabled: true,
+        eventPruneEnabled: true,
+      },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    await expect(worker.cleanup()).resolves.toBe(0);
+    await expect(worker.pruneEvents()).resolves.toBe(0);
+    expect(
+      (
+        await db.query(
+          "SELECT 1 FROM agent_webhook_deliveries WHERE id=$1 AND event_id=$2",
+          [deliveryId, eventId],
+        )
+      ).rowCount,
+    ).toBe(1);
+    expect(
+      (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
+        .rowCount,
+    ).toBe(1);
   });
 
   it("wipes generic replay material before deleting the conflict tombstone", async () => {

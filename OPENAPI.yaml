@@ -2948,10 +2948,11 @@ components:
     RetentionStatus:
       type: object
       additionalProperties: false
-      required: [mode, workerSeenAt, policies, floor, archive, jobs, blockers, redis]
+      required: [mode, workerSeenAt, workerFresh, policies, floor, archive, jobs, blockers, redis]
       properties:
         mode: { type: string, enum: [unknown, disabled, archive_only, archive_and_prune] }
         workerSeenAt: { type: [string, "null"], format: date-time }
+        workerFresh: { type: boolean }
         policies:
           type: array
           items:
@@ -2998,10 +2999,11 @@ components:
               lastCompletedAt: { type: [string, "null"], format: date-time }
         blockers:
           type: object
-          required: [undeliveredOutbox, protectedA2AEvents, unverifiedSegments]
+          required: [undeliveredOutbox, protectedA2AEvents, protectedWebhookEvents, unverifiedSegments]
           properties:
             undeliveredOutbox: { type: integer, minimum: 0 }
             protectedA2AEvents: { type: integer, minimum: 0 }
+            protectedWebhookEvents: { type: integer, minimum: 0 }
             unverifiedSegments: { type: integer, minimum: 0 }
         redis:
           type: object
