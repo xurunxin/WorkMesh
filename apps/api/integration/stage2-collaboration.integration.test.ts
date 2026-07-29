@@ -924,6 +924,24 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await agentCall(f.parentToken, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
     expect((await agentCall(f.parentToken, 'POST', `/api/v1/inbox/${concealedInbox}/claim`, {})).statusCode).toBe(404)
     expect((await humanCall(f.human, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
+    expect((await humanCall(scopedMember, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(200)
+    expect((await humanCall(scopedMember, 'GET', '/api/v1/inbox')).json<Page<{ id: string }>>().items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: concealedInbox })]),
+    )
+    await db.query(
+      "INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')",
+      [f.workspaceId, f.teamId, scopedMember.actorId],
+    )
+    await db.query(
+      'DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+      [f.workspaceId, otherTeamId, scopedMember.actorId],
+    )
+    const revokedTeamInbox = await humanCall(scopedMember, 'GET', '/api/v1/inbox')
+    expect(revokedTeamInbox.statusCode, JSON.stringify(revokedTeamInbox.json())).toBe(200)
+    expect(revokedTeamInbox.json<Page<{ id: string }>>().items).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: concealedInbox })]),
+    )
+    expect((await humanCall(scopedMember, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(403)
     const otherAgent = await register(f.human, otherTeamId, `isolated-${randomUUID().slice(0, 8)}`)
     const otherWork = await humanCall(f.human, 'POST', '/api/v1/work-items', { teamId: otherTeamId, title: 'Isolated work', statusId: otherReadyId, responsibleHumanActorId: f.human.actorId })
     expect(otherWork.statusCode).toBe(200)

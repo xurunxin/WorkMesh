@@ -117,6 +117,15 @@ const activeScopeSql = `
     )
   )`;
 
+const humanTeamMembershipSql = `
+  EXISTS (
+    SELECT 1
+      FROM memberships recipient_membership
+     WHERE recipient_membership.workspace_id=i.workspace_id
+       AND recipient_membership.team_id=i.team_id
+       AND recipient_membership.actor_id=$2
+  )`;
+
 const itemDetailSql = `
   SELECT i.*,
          source_message.channel_id,
@@ -536,10 +545,11 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
             { key: "id", sql: "id", direction: "DESC" },
           ],
         },
-        `SELECT * FROM inbox_items
-          WHERE workspace_id=$1
-            AND recipient_human_actor_id=$2
-            AND status=$3`,
+        `SELECT i.* FROM inbox_items i
+          WHERE i.workspace_id=$1
+            AND i.recipient_human_actor_id=$2
+            AND i.status=$3
+            AND ${humanTeamMembershipSql}`,
         [actor.workspaceId, actor.id, query.status],
       );
 
@@ -551,8 +561,17 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
     if (actor.kind === "human") {
       const row = (
         await h.db.query(
-          `SELECT * FROM inbox_items
-          WHERE id=$1 AND workspace_id=$2 AND recipient_human_actor_id=$3`,
+          `SELECT i.* FROM inbox_items i
+          WHERE i.id=$1
+            AND i.workspace_id=$2
+            AND i.recipient_human_actor_id=$3
+            AND EXISTS (
+              SELECT 1
+                FROM memberships recipient_membership
+               WHERE recipient_membership.workspace_id=i.workspace_id
+                 AND recipient_membership.team_id=i.team_id
+                 AND recipient_membership.actor_id=$3
+            )`,
           [itemId(request), actor.workspaceId, actor.id],
         )
       ).rows[0];
