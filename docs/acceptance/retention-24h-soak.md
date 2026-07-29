@@ -256,6 +256,9 @@ subsequently writes its identity back.
 Reports do not contain credentials, object keys, Workspace IDs,
 Session IDs, or payloads. A historical verified segment or an earlier report
 cannot satisfy the current invocation.
+The ending Worker freshness timestamp is captured after the ending database
+read and provenance collection. Heartbeat `endedAt` remains the separate
+duration and trailing-gap observation.
 
 ## Dry run
 

@@ -19,17 +19,29 @@ export type RetentionSoakHeartbeatMetrics = Readonly<{
 
 type Sleep = (delayMs: number, signal: AbortSignal) => Promise<void>;
 
-const defaultSleep: Sleep = async (delayMs, signal) =>
+export const defaultRetentionSoakHeartbeatSleep: Sleep = async (
+  delayMs,
+  signal,
+) =>
   await new Promise<void>((resolve, reject) => {
-    const timeout = setTimeout(resolve, delayMs);
-    signal.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timeout);
-        reject(new Error("RETENTION_SOAK_HEARTBEAT_PUMP_STOPPED"));
-      },
-      { once: true },
-    );
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
+    const finish = (error?: Error): void => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
+      signal.removeEventListener("abort", onAbort);
+      if (error) reject(error);
+      else resolve();
+    };
+    const onAbort = (): void =>
+      finish(new Error("RETENTION_SOAK_HEARTBEAT_PUMP_STOPPED"));
+    if (signal.aborted) {
+      onAbort();
+      return;
+    }
+    signal.addEventListener("abort", onAbort, { once: true });
+    timeout = setTimeout(() => finish(), delayMs);
   });
 
 export class RetentionSoakHeartbeatPump {
@@ -78,7 +90,7 @@ export class RetentionSoakHeartbeatPump {
     this.#intervalMs = options.intervalMs;
     this.#maximumGapMs = options.maximumGapMs;
     this.#sendHeartbeat = options.sendHeartbeat;
-    this.#sleep = options.sleep ?? defaultSleep;
+    this.#sleep = options.sleep ?? defaultRetentionSoakHeartbeatSleep;
     this.#now = options.now ?? Date.now;
   }
 

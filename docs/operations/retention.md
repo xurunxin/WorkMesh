@@ -105,6 +105,9 @@ server-accepted gaps are 100/80 seconds, leaving at least 20 seconds below the
 hard 120-second stale age. The report must pass observed-gap, pump, lock, and
 provenance gates. Pump shutdown awaits any in-flight heartbeat and extends the
 observed-gap proof through the report `endedAt`.
+The ending Worker freshness observation is captured separately after the
+ending database and provenance reads. It may be later than heartbeat
+`endedAt`, which remains the soak duration and trailing-gap boundary.
 
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):

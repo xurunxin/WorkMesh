@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  collectRetentionSoakEndingEvidence,
   collectRetentionSoakProvenance,
   parseRetentionSoakContainerStats,
   retentionSoakProvenanceMatches,
@@ -426,5 +427,36 @@ describe("retention soak formal provenance", () => {
         "7",
       ),
     ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED");
+  });
+
+  it("observes ending Worker freshness after database and provenance reads", async () => {
+    const provenance = await collect(inspections());
+    const trace: string[] = [];
+    const runtime = {
+      workerMode: "archive_only",
+      workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+      workerInstanceId: provenance.workerRuntimeIdentity.instanceId,
+      workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
+      workerIdentityConflictCount: "0",
+    };
+    await expect(
+      collectRetentionSoakEndingEvidence({
+        readRuntime: async () => {
+          trace.push("database");
+          return runtime;
+        },
+        collectProvenance: async () => {
+          trace.push("provenance");
+          return provenance;
+        },
+        now: () => {
+          trace.push("observation");
+          return new Date("2026-07-29T00:02:00.001Z");
+        },
+        maximumAgeMs: 120_000,
+        expectedConflictCount: "0",
+      }),
+    ).rejects.toThrow("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+    expect(trace).toEqual(["database", "provenance", "observation"]);
   });
 });

@@ -74,6 +74,14 @@ export type RetentionSoakWorkerFreshnessProof = Readonly<{
   ageMs: number;
 }>;
 
+export type RetentionSoakWorkerRuntimeEvidence = Readonly<{
+  workerMode: string | null;
+  workerSeenAt: Date | null;
+  workerInstanceId: string | null;
+  workerBuildSha: string | null;
+  workerIdentityConflictCount: string | null;
+}>;
+
 export type RetentionSoakContainerUsage = Readonly<
   Record<string, Readonly<{ cpuPercent: number; memoryBytes: number }>>
 >;
@@ -363,13 +371,7 @@ export const parseRetentionSoakContainerStats = (
 
 export const retentionSoakWorkerFreshnessProof = (
   workerRuntimeIdentity: RetentionSoakWorkerRuntimeIdentity,
-  evidence: Readonly<{
-    workerMode: string | null;
-    workerSeenAt: Date | null;
-    workerInstanceId: string | null;
-    workerBuildSha: string | null;
-    workerIdentityConflictCount: string | null;
-  }>,
+  evidence: RetentionSoakWorkerRuntimeEvidence,
   observedAt: Date,
   maximumAgeMs = 120_000,
   expectedConflictCount?: string,
@@ -409,6 +411,36 @@ export const retentionSoakWorkerFreshnessProof = (
     workerSeenAt: evidence.workerSeenAt.toISOString(),
     observedAt: observedAt.toISOString(),
     ageMs,
+  };
+};
+
+export const collectRetentionSoakEndingEvidence = async (input: Readonly<{
+  readRuntime: () => Promise<RetentionSoakWorkerRuntimeEvidence>;
+  collectProvenance: () => Promise<RetentionSoakProvenance>;
+  now?: () => Date;
+  maximumAgeMs?: number;
+  expectedConflictCount: string;
+}>): Promise<Readonly<{
+  provenance: RetentionSoakProvenance;
+  observedAt: Date;
+  workerFreshness: RetentionSoakWorkerFreshnessProof;
+}>> => {
+  const runtime = await input.readRuntime();
+  const provenance = await input.collectProvenance();
+  // This timestamp must be captured after both ending observations. Using the
+  // earlier heartbeat end can falsely accept a Worker that went stale while
+  // these reads were in flight.
+  const observedAt = input.now?.() ?? new Date();
+  return {
+    provenance,
+    observedAt,
+    workerFreshness: retentionSoakWorkerFreshnessProof(
+      provenance.workerRuntimeIdentity,
+      runtime,
+      observedAt,
+      input.maximumAgeMs,
+      input.expectedConflictCount,
+    ),
   };
 };
 

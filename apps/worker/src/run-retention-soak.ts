@@ -13,6 +13,7 @@ import {
 } from "./retention-soak-heartbeat.js";
 import { verifyRetentionSoakLock } from "./retention-soak-lock.js";
 import {
+  collectRetentionSoakEndingEvidence,
   collectRetentionSoakProvenance,
   parseRetentionSoakContainerStats,
   retentionSoakExecFile,
@@ -121,6 +122,7 @@ let endingProvenance: RetentionSoakProvenance | undefined;
 let initialWorkerFreshness: RetentionSoakWorkerFreshnessProof | undefined;
 let endingWorkerFreshness: RetentionSoakWorkerFreshnessProof | undefined;
 let reportEndedAt: Date | undefined;
+let endingObservationAt: Date | undefined;
 const generatedEventCursors: string[] = [];
 
 const backdateNewActivityEvent = async (
@@ -320,41 +322,45 @@ try {
   await heartbeatPump.stop();
   heartbeatMetrics = heartbeatPump.metrics();
   reportEndedAt = new Date(heartbeatMetrics.observedThroughAt!);
-  const endingRuntime = (
-    await db.query<{
-      workerMode: string | null;
-      workerSeenAt: Date | null;
-      workerInstanceId: string | null;
-      workerBuildSha: string | null;
-      workerIdentityConflictCount: string | null;
-    }>(
-      `SELECT worker_mode AS "workerMode",
-              worker_seen_at AS "workerSeenAt",
-              worker_instance_id::text AS "workerInstanceId",
-              worker_build_sha AS "workerBuildSha",
-              worker_identity_conflict_count::text
-                AS "workerIdentityConflictCount"
-         FROM retention_job_state
-        WHERE workspace_id=$1 AND job_name='worker_runtime'`,
-      [identity.workspaceId],
-    )
-  ).rows[0];
-  if (!endingRuntime)
-    throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
-  endingProvenance = await collectRetentionSoakProvenance({
-    containerRoles: options.containerRoles,
-    expectedBuildSha: options.expectedBuildSha,
-    apiUrl: options.apiUrl,
-    databaseUrl: options.databaseUrl,
-    redisUrl: options.redisUrl,
+  const endingEvidence = await collectRetentionSoakEndingEvidence({
+    readRuntime: async () => {
+      const endingRuntime = (
+        await db.query<{
+          workerMode: string | null;
+          workerSeenAt: Date | null;
+          workerInstanceId: string | null;
+          workerBuildSha: string | null;
+          workerIdentityConflictCount: string | null;
+        }>(
+          `SELECT worker_mode AS "workerMode",
+                  worker_seen_at AS "workerSeenAt",
+                  worker_instance_id::text AS "workerInstanceId",
+                  worker_build_sha AS "workerBuildSha",
+                  worker_identity_conflict_count::text
+                    AS "workerIdentityConflictCount"
+             FROM retention_job_state
+            WHERE workspace_id=$1 AND job_name='worker_runtime'`,
+          [identity.workspaceId],
+        )
+      ).rows[0];
+      if (!endingRuntime)
+        throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+      return endingRuntime;
+    },
+    collectProvenance: async () =>
+      await collectRetentionSoakProvenance({
+        containerRoles: options.containerRoles,
+        expectedBuildSha: options.expectedBuildSha,
+        apiUrl: options.apiUrl,
+        databaseUrl: options.databaseUrl,
+        redisUrl: options.redisUrl,
+      }),
+    maximumAgeMs: 120_000,
+    expectedConflictCount: initialWorkerFreshness.workerIdentityConflictCount,
   });
-  endingWorkerFreshness = retentionSoakWorkerFreshnessProof(
-    endingProvenance.workerRuntimeIdentity,
-    endingRuntime,
-    reportEndedAt,
-    120_000,
-    initialWorkerFreshness.workerIdentityConflictCount,
-  );
+  endingProvenance = endingEvidence.provenance;
+  endingObservationAt = endingEvidence.observedAt;
+  endingWorkerFreshness = endingEvidence.workerFreshness;
 } finally {
   if (heartbeatPump && !heartbeatMetrics) {
     await heartbeatPump.stop();
@@ -371,6 +377,7 @@ if (!heartbeatMetrics)
   throw new Error("RETENTION_SOAK_HEARTBEAT_EVIDENCE_MISSING");
 if (
   !reportEndedAt ||
+  !endingObservationAt ||
   !endingProvenance ||
   !initialWorkerFreshness ||
   !endingWorkerFreshness

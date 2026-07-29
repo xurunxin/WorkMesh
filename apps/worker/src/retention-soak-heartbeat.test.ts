@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { RetentionSoakHeartbeatPump } from "./retention-soak-heartbeat.js";
+import {
+  defaultRetentionSoakHeartbeatSleep,
+  RetentionSoakHeartbeatPump,
+} from "./retention-soak-heartbeat.js";
 
 const controlledSleep = () => {
   const releases: Array<() => void> = [];
@@ -18,6 +21,49 @@ const controlledSleep = () => {
 };
 
 describe("retention soak heartbeat pump", () => {
+  it("removes the abort listener after every normally resolved sleep", async () => {
+    vi.useFakeTimers();
+    try {
+      const controller = new AbortController();
+      const added = vi.spyOn(controller.signal, "addEventListener");
+      const removed = vi.spyOn(controller.signal, "removeEventListener");
+      for (let index = 0; index < 100; index += 1) {
+        const sleeping = defaultRetentionSoakHeartbeatSleep(
+          1,
+          controller.signal,
+        );
+        await vi.advanceTimersByTimeAsync(1);
+        await sleeping;
+      }
+      expect(added).toHaveBeenCalledTimes(100);
+      expect(removed).toHaveBeenCalledTimes(100);
+      controller.abort();
+      expect(removed).toHaveBeenCalledTimes(100);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("settles an aborted sleep once and removes its listener", async () => {
+    vi.useFakeTimers();
+    try {
+      const controller = new AbortController();
+      const removed = vi.spyOn(controller.signal, "removeEventListener");
+      const sleeping = defaultRetentionSoakHeartbeatSleep(
+        60_000,
+        controller.signal,
+      );
+      controller.abort();
+      await expect(sleeping).rejects.toThrow(
+        "RETENTION_SOAK_HEARTBEAT_PUMP_STOPPED",
+      );
+      await vi.runAllTimersAsync();
+      expect(removed).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("accepts an immediate first beat within the 45s-age plus 55s operation bound", async () => {
     const initial = Date.parse("2026-07-29T00:00:00.000Z");
     let now = initial + 45_000;
