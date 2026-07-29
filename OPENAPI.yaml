@@ -2981,7 +2981,10 @@ components:
             verified: { type: integer, minimum: 0 }
             pruned: { type: integer, minimum: 0 }
             failed: { type: integer, minimum: 0 }
-            lastVerifiedEndCursor: { type: [string, "null"], pattern: "^(0|[1-9][0-9]*)$" }
+            lastVerifiedEndCursor:
+              type: [string, "null"]
+              pattern: "^(0|[1-9][0-9]*)$"
+              description: Highest exact archived event cursor; this is telemetry, not continuous range coverage.
             retainUntil: { type: [string, "null"], format: date-time }
         jobs:
           type: array

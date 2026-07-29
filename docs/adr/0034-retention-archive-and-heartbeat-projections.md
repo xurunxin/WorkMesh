@@ -53,8 +53,8 @@ admission, drains both loops, and aggregates close failures.
 
 Production defaults are archive-only: archival is enabled, generic cleanup and
 event pruning are disabled. Pruning has a second explicit kill switch. It locks
-one Workspace retention floor exclusively, rechecks the verified segment,
-cutoff, count, digest, references, and outbox status, deletes only an exact
+one Workspace retention floor exclusively, rechecks the exact archived members,
+cutoff, per-record digest, references, and outbox status, deletes only an exact
 ordinary-event allowlist, and advances the floor in the same transaction.
 Every event append takes the matching shared floor lock. Unknown, protected,
 A2A-referenced, Agent-webhook-referenced, audit, uncertain recovery, and
@@ -80,9 +80,11 @@ download API. Cleanup and prune require explicit enablement. The Worker
 publishes its effective mode and last-seen time into durable job state, so the
 API never infers destructive mode from its own environment. A stale runtime
 heartbeat forces the reported mode to `unknown`, and the response counts Agent
-webhook event pins. Undelivered outbox
-rows block archival at their cursor; permanent protected rows do not block
-later ordinary-event floor advancement.
+webhook event pins. Undelivered outbox rows block their own membership and
+prevent the pruning prefix from crossing their cursor, but do not block later
+eligible events from being archived exactly. Permanent protected rows do not
+block later ordinary-event floor advancement. ADR 0035 defines exact
+membership and makes segment cursor bounds envelope-only metadata.
 Issue #11 owns any future archive discovery/download/restore product surface,
 key-management UX, or legal-hold workflow.
 

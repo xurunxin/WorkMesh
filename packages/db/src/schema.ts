@@ -8,6 +8,7 @@ export const membershipRole = pgEnum('membership_role', ['admin', 'maintainer', 
 export const statusCategory = pgEnum('status_category', ['backlog', 'planned', 'started', 'completed', 'canceled'])
 export const outboxStatus = pgEnum('outbox_status', ['pending', 'delivering', 'delivered', 'dead'])
 export const eventArchiveSegmentState = pgEnum('event_archive_segment_state', ['planned', 'uploaded', 'verified', 'pruned', 'failed'])
+export const eventArchiveMembershipState = pgEnum('event_archive_membership_state', ['pending_exact', 'exact', 'legacy_unindexed'])
 export const agentProtocol = pgEnum('agent_protocol', ['native_http', 'mcp', 'a2a'])
 export const delegationRole = pgEnum('delegation_role', ['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
 export const delegationScopeType = pgEnum('delegation_scope_type', ['work_item', 'plan_step', 'project', 'automation'])
@@ -196,10 +197,17 @@ export const eventArchiveSegments = pgTable('event_archive_segments', {
   objectKey: text('object_key').notNull(), objectVersionId: text('object_version_id').notNull(),
   objectSizeBytes: bigint('object_size_bytes', { mode: 'bigint' }).notNull(), objectSha256: text('object_sha256').notNull(),
   snapshotDigest: text('snapshot_digest').notNull(), metadata: jsonb('metadata').notNull(), state: eventArchiveSegmentState('state').notNull(),
+  membershipState: eventArchiveMembershipState('membership_state').notNull(),
   retainUntil: timestamp('retain_until', { withTimezone: true }).notNull(), uploadedAt: timestamp('uploaded_at', { withTimezone: true }),
   verifiedAt: timestamp('verified_at', { withTimezone: true }), prunedAt: timestamp('pruned_at', { withTimezone: true }),
   lastErrorCode: text('last_error_code'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const eventArchiveSegmentEvents = pgTable('event_archive_segment_events', {
+  segmentId: uuid('segment_id').notNull(), workspaceId: uuid('workspace_id').notNull(), ordinal: integer('ordinal').notNull(),
+  eventId: uuid('event_id').notNull(), eventCursor: bigint('event_cursor', { mode: 'bigint' }).notNull(),
+  recordSha256: text('record_sha256').notNull(), flooredAt: timestamp('floored_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const retentionJobState = pgTable('retention_job_state', {
   jobName: text('job_name').notNull(), workspaceId: uuid('workspace_id').notNull(), leaseOwner: text('lease_owner'),

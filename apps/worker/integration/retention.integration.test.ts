@@ -45,13 +45,17 @@ const storage: ArchiveObjectStore = {
     );
     return { versionId };
   },
-  async verify(expectation) {
+  async readVerifiedObject(expectation) {
     if (!expectation.versionId)
       throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     verifiedVersions.push(expectation.versionId);
     const body = objects.get(versionedObjectKey(expectation));
     if (!body) throw new Error("ARCHIVE_OBJECT_MISSING");
     if (corruptReadback) throw new Error("ARTIFACT_CHECKSUM_MISMATCH");
+    return body;
+  },
+  async verify(expectation) {
+    await this.readVerifiedObject(expectation);
     return {
       checksum: expectation.checksum,
       sizeBytes: expectation.sizeBytes,
@@ -168,23 +172,58 @@ describe("retention soak sampling", () => {
       rows: "1",
     });
 
-    await db.query(
-      `INSERT INTO event_archive_segments(
+    const segmentId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO event_archive_segments(
          workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
          object_key,object_version_id,object_size_bytes,object_sha256,
-         snapshot_digest,retain_until,state,uploaded_at,verified_at
+         snapshot_digest,retain_until,state,uploaded_at,verified_at,
+         membership_state
        ) VALUES(
          $1,$2,$2,now()-interval '90 days',1,
          'retention-soak-query-test','version-1',1,$3,$4,
-         now()+interval '366 days','verified',now(),now()
-       )`,
-      [
-        workspaceId,
-        eventCursor,
-        `sha256:${"b".repeat(64)}`,
-        `sha256:${"a".repeat(64)}`,
-      ],
-    );
+         now()+interval '366 days','verified',now(),now(),'pending_exact'
+       ) RETURNING id`,
+        [
+          workspaceId,
+          eventCursor,
+          `sha256:${"b".repeat(64)}`,
+          `sha256:${"a".repeat(64)}`,
+        ],
+      )
+    ).rows[0]!.id;
+    const rangeOnlyState = (
+      await db.query<RetentionSoakSampleDatabaseState>(
+        retentionSoakSampleQuery,
+        [workspaceId, [eventCursor], new Date()],
+      )
+    ).rows[0]!;
+    expect(rangeOnlyState).toMatchObject({
+      backlog: "1",
+      currentRunArchived: "0",
+      verified: "0",
+      verifiedRows: "0",
+    });
+    await withTx(db, async (tx) => {
+      await tx.query(
+        `INSERT INTO event_archive_segment_events(
+          segment_id,workspace_id,ordinal,event_id,event_cursor,record_sha256
+        )
+         VALUES($1,$2,0,$3,$4,$5)`,
+        [
+          segmentId,
+          workspaceId,
+          eventId,
+          eventCursor,
+          `sha256:${"a".repeat(64)}`,
+        ],
+      );
+      await tx.query(
+        `UPDATE event_archive_segments SET membership_state='exact'
+          WHERE id=$1`,
+        [segmentId],
+      );
+    });
     const archivedState = (
       await db.query<RetentionSoakSampleDatabaseState>(
         retentionSoakSampleQuery,
@@ -219,18 +258,28 @@ describe("retention worker destructive-path fences", () => {
       await db.query<{
         id: string;
         state: string;
+        membershipState: string;
         objectKey: string;
         snapshotDigest: string;
       }>(
         `
-      SELECT id,state,object_key AS "objectKey",snapshot_digest AS "snapshotDigest"
+      SELECT id,state,membership_state AS "membershipState",
+             object_key AS "objectKey",snapshot_digest AS "snapshotDigest"
         FROM event_archive_segments WHERE workspace_id=$1
     `,
         [workspaceId],
       )
     ).rows[0]!;
     expect(failed.state).toBe("failed");
-
+    expect(failed.membershipState).toBe("pending_exact");
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM event_archive_segment_events WHERE segment_id=$1`,
+          [failed.id],
+        )
+      ).rowCount,
+    ).toBe(0);
     corruptReadback = false;
     const restarted = createRetentionWorker({
       db,
@@ -246,11 +295,13 @@ describe("retention worker destructive-path fences", () => {
       await db.query<{
         id: string;
         state: string;
+        membershipState: string;
         objectKey: string;
         snapshotDigest: string;
       }>(
         `
-      SELECT id,state,object_key AS "objectKey",snapshot_digest AS "snapshotDigest"
+      SELECT id,state,membership_state AS "membershipState",
+             object_key AS "objectKey",snapshot_digest AS "snapshotDigest"
         FROM event_archive_segments WHERE workspace_id=$1
     `,
         [workspaceId],
@@ -259,11 +310,12 @@ describe("retention worker destructive-path fences", () => {
     expect(verified).toMatchObject({
       id: failed.id,
       state: "verified",
+      membershipState: "exact",
       objectKey: failed.objectKey,
       snapshotDigest: failed.snapshotDigest,
     });
-    expect(verifiedVersions).toContain("retention-version-2");
-    expect(writes).toBe(2);
+    expect(verifiedVersions).toContain("retention-version-1");
+    expect(writes).toBe(1);
     const archiveLines = gunzipSync([...objects.values()][0]!)
       .toString("utf8")
       .trim()
@@ -280,6 +332,141 @@ describe("retention worker destructive-path fences", () => {
       outbox: { status: "delivered", topic: "workspace.updated" },
     });
     expect(archiveLines[1]!.resources).toEqual(expect.any(Array));
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM event_archive_segment_events WHERE segment_id=$1`,
+          [failed.id],
+        )
+      ).rowCount,
+    ).toBe(1);
+  });
+
+  it("lazily materializes verified and pruned legacy segments from pinned objects", async () => {
+    corruptReadback = false;
+    const worker = createRetentionWorker({
+      db,
+      workerId: "legacy-materialization",
+      config: { ...config, eventPruneEnabled: true },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    const segment = (
+      await db.query<{ id: string; objectKey: string; objectVersionId: string }>(
+        `SELECT id,object_key AS "objectKey",
+                object_version_id AS "objectVersionId"
+           FROM event_archive_segments WHERE workspace_id=$1`,
+        [workspaceId],
+      )
+    ).rows[0]!;
+    await withTx(db, async (tx) => {
+      await tx.query(
+        `DELETE FROM event_archive_segment_events WHERE segment_id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE event_archive_segments
+            SET membership_state='legacy_unindexed'
+          WHERE id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE retention_job_state
+            SET lease_expires_at=now()-interval '1 second'
+          WHERE job_name='event_archive' AND workspace_id=$1`,
+        [workspaceId],
+      );
+    });
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    expect(
+      (
+        await db.query<{ state: string; membershipState: string }>(
+          `SELECT state,membership_state AS "membershipState"
+             FROM event_archive_segments WHERE id=$1`,
+          [segment.id],
+        )
+      ).rows,
+    ).toEqual([{ state: "verified", membershipState: "exact" }]);
+
+    await expect(worker.pruneEvents()).resolves.toBe(1);
+    await withTx(db, async (tx) => {
+      await tx.query(
+        `DELETE FROM event_archive_segment_events WHERE segment_id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE event_archive_segments
+            SET membership_state='legacy_unindexed'
+          WHERE id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE retention_job_state
+            SET lease_expires_at=now()-interval '1 second'
+          WHERE job_name='event_archive' AND workspace_id=$1`,
+        [workspaceId],
+      );
+    });
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    expect(
+      (
+        await db.query<{ floored: boolean }>(
+          `SELECT floored_at IS NOT NULL AS floored
+             FROM event_archive_segment_events WHERE segment_id=$1`,
+          [segment.id],
+        )
+      ).rows,
+    ).toEqual([{ floored: true }]);
+
+    await withTx(db, async (tx) => {
+      await tx.query(
+        `DELETE FROM event_archive_segment_events WHERE segment_id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE event_archive_segments
+            SET membership_state='legacy_unindexed'
+          WHERE id=$1`,
+        [segment.id],
+      );
+      await tx.query(
+        `UPDATE retention_job_state
+            SET lease_expires_at=now()-interval '1 second'
+          WHERE job_name='event_archive' AND workspace_id=$1`,
+        [workspaceId],
+      );
+    });
+    corruptReadback = true;
+    await expect(worker.archiveEvents()).rejects.toThrow(
+      "ARTIFACT_CHECKSUM_MISMATCH",
+    );
+    corruptReadback = false;
+    objects.delete(
+      `${segment.objectKey}@${segment.objectVersionId}`,
+    );
+    await expect(worker.archiveEvents()).rejects.toThrow(
+      "ARCHIVE_OBJECT_MISSING",
+    );
+    expect(
+      (
+        await db.query<{ membershipState: string }>(
+          `SELECT membership_state AS "membershipState"
+             FROM event_archive_segments WHERE id=$1`,
+          [segment.id],
+        )
+      ).rows,
+    ).toEqual([{ membershipState: "legacy_unindexed" }]);
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM event_archive_segment_events WHERE segment_id=$1`,
+          [segment.id],
+        )
+      ).rowCount,
+    ).toBe(0);
   });
 
   it("prevents an expired archive owner from regressing a reclaimed verified segment", async () => {
@@ -347,6 +534,9 @@ describe("retention worker destructive-path fences", () => {
     const unsafeStorage: ArchiveObjectStore = {
       probeRetentionProtection: storage.probeRetentionProtection,
       putObject: storage.putObject,
+      async readVerifiedObject() {
+        throw new Error(unsafeMessage);
+      },
       async verify() {
         throw new Error(unsafeMessage);
       },
@@ -533,6 +723,16 @@ describe("retention worker destructive-path fences", () => {
         )
       ).rows[0]!.state,
     ).toBe("verified");
+    expect(
+      (
+        await db.query<{ flooredAt: Date | null }>(
+          `SELECT floored_at AS "flooredAt"
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, eventId],
+        )
+      ).rows,
+    ).toEqual([{ flooredAt: null }]);
 
     const retry = createRetentionWorker({
       db,
@@ -833,7 +1033,7 @@ describe("retention worker destructive-path fences", () => {
       workspaceScopeId: workspaceId,
     });
     await expect(pruner.pruneEvents()).rejects.toThrow(
-      "ARCHIVE_SNAPSHOT_RECHECK_FAILED",
+      "ARCHIVE_RECORD_RECHECK_FAILED",
     );
     await db.query(
       "UPDATE domain_events SET event_type='workspace.updated' WHERE id=$1",
@@ -1154,5 +1354,260 @@ describe("retention worker destructive-path fences", () => {
     expect((await readRuntime()).workerIdentityConflictCount).toBe("3");
     await create(candidate).tick();
     expect((await readRuntime()).workerIdentityConflictCount).toBe("4");
+  });
+
+  it("archives sparse old events exactly without covering intervening cursors", async () => {
+    corruptReadback = false;
+    const appendRetentionEvent = async (
+      reason: string,
+      options: { old: boolean; delivered: boolean },
+    ): Promise<{ id: string; cursor: string }> => {
+      const id = await withTx(db, (tx) =>
+        appendEvent(tx, {
+          workspaceId,
+          actorId,
+          correlationId: randomUUID(),
+          type: "workspace.updated",
+          aggregateType: "workspace",
+          aggregateId: workspaceId,
+          payload: { reason },
+        }),
+      );
+      const cursor = (
+        await db.query<{ cursor: string }>(
+          `UPDATE domain_events
+              SET occurred_at=CASE WHEN $2 THEN now()-interval '91 days'
+                                   ELSE now() END
+            WHERE id=$1 RETURNING cursor::text`,
+          [id, options.old],
+        )
+      ).rows[0]!.cursor;
+      if (options.delivered)
+        await db.query(
+          `UPDATE outbox_events
+              SET status='delivered',delivered_at=now()-interval '31 days'
+            WHERE domain_event_id=$1`,
+          [id],
+        );
+      return { id, cursor };
+    };
+    const expire = async (jobName: string): Promise<void> => {
+      await db.query(
+        `UPDATE retention_job_state
+            SET lease_expires_at=now()-interval '1 second'
+          WHERE job_name=$1 AND workspace_id=$2`,
+        [jobName, workspaceId],
+      );
+    };
+    const second = await appendRetentionEvent("recent middle", {
+      old: false,
+      delivered: true,
+    });
+    const third = await appendRetentionEvent("backdated third", {
+      old: true,
+      delivered: true,
+    });
+    const worker = createRetentionWorker({
+      db,
+      workerId: "sparse-membership",
+      config: {
+        ...config,
+        cleanupEnabled: true,
+        eventPruneEnabled: true,
+      },
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+
+    await expect(worker.archiveEvents()).resolves.toBe(2);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT member.event_cursor::text AS cursor
+             FROM event_archive_segment_events member
+             JOIN event_archive_segments segment ON segment.id=member.segment_id
+            WHERE member.workspace_id=$1
+              AND segment.membership_state='exact'
+            ORDER BY member.event_cursor`,
+          [workspaceId],
+        )
+      ).rows.map(({ cursor }) => cursor),
+    ).toEqual([eventCursor, third.cursor]);
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=$2`,
+          [workspaceId, second.id],
+        )
+      ).rowCount,
+    ).toBe(0);
+    expect(
+      (
+        await db.query<{ watermark: string }>(
+          `SELECT watermark_cursor::text AS watermark
+             FROM retention_job_state
+            WHERE job_name='event_archive' AND workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.watermark,
+    ).toBe(third.cursor);
+    await expect(worker.pruneEvents()).resolves.toBe(1);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT pruned_through_cursor::text AS cursor
+             FROM event_retention_state WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.cursor,
+    ).toBe(eventCursor);
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM domain_events WHERE id=ANY($1::uuid[])`,
+          [[second.id, third.id]],
+        )
+      ).rowCount,
+    ).toBe(2);
+    expect(
+      (
+        await db.query<{ state: string }>(
+          `SELECT segment.state
+             FROM event_archive_segments segment
+             JOIN event_archive_segment_events first_member
+               ON first_member.segment_id=segment.id
+              AND first_member.event_id=$2
+             JOIN event_archive_segment_events third_member
+               ON third_member.segment_id=segment.id
+              AND third_member.event_id=$3
+            WHERE segment.workspace_id=$1`,
+          [workspaceId, eventId, third.id],
+        )
+      ).rows,
+    ).toEqual([{ state: "verified" }]);
+    await worker.cleanup();
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM outbox_events WHERE domain_event_id=$1`,
+          [second.id],
+        )
+      ).rowCount,
+    ).toBe(1);
+
+    await db.query(
+      `UPDATE domain_events SET occurred_at=now()-interval '91 days'
+        WHERE id=$1`,
+      [second.id],
+    );
+    await expire("event_archive");
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    await expire("event_archive");
+    await expect(worker.archiveEvents()).resolves.toBe(0);
+    expect(
+      (
+        await db.query<{ watermark: string }>(
+          `SELECT watermark_cursor::text AS watermark
+             FROM retention_job_state
+            WHERE job_name='event_archive' AND workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.watermark,
+    ).toBe(third.cursor);
+    expect(
+      (
+        await db.query<{ count: string }>(
+          `SELECT count(*)::text AS count
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1
+              AND event_id=ANY($2::uuid[])`,
+          [workspaceId, [eventId, second.id, third.id]],
+        )
+      ).rows[0]!.count,
+    ).toBe("3");
+    await expire("event_prune");
+    await expect(worker.pruneEvents()).resolves.toBe(2);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT pruned_through_cursor::text AS cursor
+             FROM event_retention_state WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.cursor,
+    ).toBe(third.cursor);
+    expect(
+      (
+        await db.query<{ count: string }>(
+          `SELECT count(*)::text AS count
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND floored_at IS NOT NULL`,
+          [workspaceId],
+        )
+      ).rows[0]!.count,
+    ).toBe("3");
+    expect(
+      (
+        await db.query<{ count: string }>(
+          `SELECT count(*)::text AS count
+             FROM event_archive_segments
+            WHERE workspace_id=$1 AND membership_state='exact'
+              AND state<>'pruned'`,
+          [workspaceId],
+        )
+      ).rows[0]!.count,
+    ).toBe("0");
+
+    const fourth = await appendRetentionEvent("later backdated fourth", {
+      old: true,
+      delivered: true,
+    });
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    await expire("event_prune");
+    await expect(worker.pruneEvents()).resolves.toBe(1);
+    expect(
+      (
+        await db.query<{ cursor: string }>(
+          `SELECT pruned_through_cursor::text AS cursor
+             FROM event_retention_state WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.cursor,
+    ).toBe(fourth.cursor);
+
+    const undelivered = await appendRetentionEvent("undelivered hole", {
+      old: true,
+      delivered: false,
+    });
+    const afterHole = await appendRetentionEvent("archived after hole", {
+      old: true,
+      delivered: true,
+    });
+    await expire("event_archive");
+    await expect(worker.archiveEvents()).resolves.toBe(1);
+    expect(
+      (
+        await db.query<{ eventId: string }>(
+          `SELECT event_id AS "eventId"
+             FROM event_archive_segment_events
+            WHERE workspace_id=$1 AND event_id=ANY($2::uuid[])
+            ORDER BY event_cursor`,
+          [workspaceId, [undelivered.id, afterHole.id]],
+        )
+      ).rows,
+    ).toEqual([{ eventId: afterHole.id }]);
+    await expire("event_prune");
+    await expect(worker.pruneEvents()).resolves.toBe(0);
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM domain_events WHERE id=ANY($1::uuid[])`,
+          [[undelivered.id, afterHole.id]],
+        )
+      ).rowCount,
+    ).toBe(2);
   });
 });

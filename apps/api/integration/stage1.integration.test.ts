@@ -496,6 +496,12 @@ describe("Stage 1 agent API acceptance", () => {
   );
 
   it("restricts sanitized retention status to a Workspace administrator", async () => {
+    const workspaceId = (
+      await db.query<{ workspace_id: string }>(
+        "SELECT workspace_id FROM actors WHERE id=$1",
+        [admin.actorId],
+      )
+    ).rows[0]!.workspace_id;
     await db.query(
       `INSERT INTO retention_job_state(
          job_name,workspace_id,worker_mode,worker_seen_at
@@ -506,6 +512,53 @@ describe("Stage 1 agent API acceptance", () => {
          SET worker_mode=EXCLUDED.worker_mode,
              worker_seen_at=EXCLUDED.worker_seen_at`,
       [admin.actorId],
+    );
+    await db.query(
+      `INSERT INTO event_archive_segments(
+         workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+         object_key,object_version_id,object_size_bytes,object_sha256,
+         snapshot_digest,retain_until,state,uploaded_at,verified_at,
+         membership_state
+       ) VALUES(
+         $1,9000000000000,9000000000999,now(),1,$2,'range-version',1,$3,$4,
+         now()+interval '366 days','verified',now(),now(),'pending_exact'
+       )`,
+      [
+        workspaceId,
+        `retention-range-only-${randomUUID()}`,
+        `sha256:${"a".repeat(64)}`,
+        `sha256:${"b".repeat(64)}`,
+      ],
+    );
+    const exactSegmentId = (
+      await db.query<{ id: string }>(
+        `INSERT INTO event_archive_segments(
+           workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+           object_key,object_version_id,object_size_bytes,object_sha256,
+           snapshot_digest,retain_until,state,uploaded_at,verified_at,
+           membership_state
+         ) VALUES(
+           $1,8000000000000,9000000001000,now(),1,$2,'exact-version',1,$3,$4,
+           now()+interval '366 days','verified',now(),now(),'exact'
+         ) RETURNING id`,
+        [
+          workspaceId,
+          `retention-exact-${randomUUID()}`,
+          `sha256:${"c".repeat(64)}`,
+          `sha256:${"d".repeat(64)}`,
+        ],
+      )
+    ).rows[0]!.id;
+    await db.query(
+      `INSERT INTO event_archive_segment_events(
+         segment_id,workspace_id,ordinal,event_id,event_cursor,record_sha256
+       ) VALUES($1,$2,0,$3,8000000000500,$4)`,
+      [
+        exactSegmentId,
+        workspaceId,
+        randomUUID(),
+        `sha256:${"e".repeat(64)}`,
+      ],
     );
     const status = await humanCall(
       admin,
@@ -519,7 +572,11 @@ describe("Stage 1 agent API acceptance", () => {
       workerFresh: boolean;
       policies: unknown[];
       floor: { prunedThroughCursor: string };
-      blockers: { protectedWebhookEvents: number };
+      archive: { lastVerifiedEndCursor: string | null };
+      blockers: {
+        protectedWebhookEvents: number;
+        unverifiedSegments: number;
+      };
       redis: {
         status: string;
         streamLength: number | null;
@@ -531,7 +588,11 @@ describe("Stage 1 agent API acceptance", () => {
       workerSeenAt: expect.any(String),
       workerFresh: true,
       floor: { prunedThroughCursor: "0" },
-      blockers: { protectedWebhookEvents: expect.any(Number) },
+      archive: { lastVerifiedEndCursor: "8000000000500" },
+      blockers: {
+        protectedWebhookEvents: expect.any(Number),
+        unverifiedSegments: expect.any(Number),
+      },
       redis: { exactLimit: 100_000 },
     });
     expect(["ok", "unavailable"]).toContain(body.redis.status);
@@ -561,12 +622,6 @@ describe("Stage 1 agent API acceptance", () => {
       workerFresh: false,
     });
 
-    const workspaceId = (
-      await db.query<{ workspace_id: string }>(
-        "SELECT workspace_id FROM actors WHERE id=$1",
-        [admin.actorId],
-      )
-    ).rows[0]!.workspace_id;
     const memberId = (
       await db.query<{ id: string }>(
         `INSERT INTO actors(

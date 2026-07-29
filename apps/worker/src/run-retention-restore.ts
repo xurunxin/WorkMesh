@@ -55,12 +55,18 @@ const target = createDb(restoreUrl);
 const storage = artifactStorageFromEnvironment();
 const schema = `retention_restore_${randomUUID().replaceAll("-", "")}`;
 const startedAt = new Date();
+const allowLegacy =
+  process.env.WORKMESH_RETENTION_RESTORE_ALLOW_LEGACY === "1";
 let restoredRows = 0;
 let snapshotDigest = "";
 let earlyDeleteRejected = false;
+let exactMembershipVerified = false;
+let legacyCompatibilityMode = false;
 try {
   const segment = (
     await source.query<{
+      id: string;
+      workspaceId: string;
       startCursor: string;
       endCursor: string;
       rowCount: number;
@@ -70,8 +76,10 @@ try {
       objectSha256: string;
       snapshotDigest: string;
       retainUntil: Date;
+      membershipState: "exact" | "legacy_unindexed";
     }>(
-      `SELECT start_cursor::text AS "startCursor",
+      `SELECT id,workspace_id AS "workspaceId",
+              start_cursor::text AS "startCursor",
               end_cursor::text AS "endCursor",
               row_count AS "rowCount",
               object_key AS "objectKey",
@@ -79,14 +87,29 @@ try {
               object_size_bytes::text AS "objectSizeBytes",
               object_sha256 AS "objectSha256",
               snapshot_digest AS "snapshotDigest",
-              retain_until AS "retainUntil"
+              retain_until AS "retainUntil",
+              membership_state AS "membershipState"
          FROM event_archive_segments
-        WHERE state='verified' AND retain_until>now()
-        ORDER BY verified_at DESC LIMIT 1`,
+        WHERE state IN ('verified','pruned') AND retain_until>now()
+          AND (
+            (
+              membership_state='exact'
+              AND (
+                SELECT count(*)
+                  FROM event_archive_segment_events member
+                 WHERE member.segment_id=event_archive_segments.id
+              )=row_count
+            )
+            OR ($1::boolean AND membership_state='legacy_unindexed')
+          )
+        ORDER BY (membership_state='exact') DESC,verified_at DESC
+        LIMIT 1`,
+      [allowLegacy],
     )
   ).rows[0];
   if (!segment)
     throw new Error("RETENTION_RESTORE_REQUIRES_VERIFIED_LOCKED_SEGMENT");
+  legacyCompatibilityMode = segment.membershipState !== "exact";
   const expectation: ArtifactObjectExpectation = {
     key: segment.objectKey,
     versionId: segment.objectVersionId,
@@ -132,6 +155,51 @@ try {
     || snapshotDigest !== segment.snapshotDigest
   )
     throw new Error("RETENTION_RESTORE_ARCHIVE_MANIFEST_MISMATCH");
+  if (segment.membershipState === "exact") {
+    const members = (
+      await source.query<{
+        ordinal: number;
+        eventId: string;
+        eventCursor: string;
+        recordSha256: string;
+      }>(
+        `SELECT ordinal,event_id AS "eventId",
+                event_cursor::text AS "eventCursor",
+                record_sha256 AS "recordSha256"
+           FROM event_archive_segment_events
+          WHERE segment_id=$1 AND workspace_id=$2
+          ORDER BY ordinal`,
+        [segment.id, segment.workspaceId],
+      )
+    ).rows;
+    const expectedMembers = records.map((record, ordinal) => {
+      const event =
+        record && typeof record === "object"
+          ? (record as Record<string, unknown>).event
+          : undefined;
+      const value =
+        event && typeof event === "object"
+          ? (event as Record<string, unknown>)
+          : undefined;
+      if (
+        !value ||
+        typeof value.id !== "string" ||
+        typeof value.cursor !== "string"
+      )
+        throw new Error("RETENTION_RESTORE_ARCHIVE_RECORD_INVALID");
+      return {
+        ordinal,
+        eventId: value.id,
+        eventCursor: value.cursor,
+        recordSha256: digest(canonicalLine(record)),
+      };
+    });
+    if (JSON.stringify(members) !== JSON.stringify(expectedMembers))
+      throw new Error("RETENTION_RESTORE_EXACT_MEMBERSHIP_MISMATCH");
+    exactMembershipVerified = true;
+  } else if (!allowLegacy) {
+    throw new Error("RETENTION_RESTORE_EXACT_MEMBERSHIP_REQUIRED");
+  }
 
   await withTx(target, async (tx) => {
     await tx.query(`CREATE SCHEMA "${schema}"`);
@@ -185,6 +253,8 @@ const report = {
   objectLockMode: "COMPLIANCE",
   readbackChecksumVerified: true,
   manifestVerified: true,
+  exactMembershipVerified,
+  legacyCompatibilityMode,
   restoredRows,
   snapshotDigest,
   targetDigestVerified: true,

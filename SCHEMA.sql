@@ -36,3 +36,4 @@
 \ir packages/db/migrations/0026_retention_archive_and_heartbeat_health.sql
 \ir packages/db/migrations/0027_worker_runtime_identity.sql
 \ir packages/db/migrations/0028_worker_identity_conflict_count.sql
+\ir packages/db/migrations/0029_exact_archive_membership.sql

@@ -61,16 +61,32 @@ export function registerAdminRetentionRoutes(
         retainUntil: Date | null;
       }>(
         `
-          SELECT count(*) FILTER(WHERE state='planned')::text AS planned,
-                 count(*) FILTER(WHERE state='uploaded')::text AS uploaded,
-                 count(*) FILTER(WHERE state='verified')::text AS verified,
-                 count(*) FILTER(WHERE state='pruned')::text AS pruned,
-                 count(*) FILTER(WHERE state='failed')::text AS failed,
-                 max(end_cursor) FILTER(WHERE state IN ('verified','pruned'))::text
-                   AS "lastVerifiedEndCursor",
-                 min(retain_until) FILTER(WHERE state IN ('verified','pruned'))
-                   AS "retainUntil"
-            FROM event_archive_segments WHERE workspace_id=$1
+          SELECT
+            count(*) FILTER(WHERE segment.state='planned')::text AS planned,
+            count(*) FILTER(WHERE segment.state='uploaded')::text AS uploaded,
+            count(*) FILTER(
+              WHERE segment.state='verified'
+                AND segment.membership_state='exact'
+            )::text AS verified,
+            count(*) FILTER(
+              WHERE segment.state='pruned'
+                AND segment.membership_state='exact'
+            )::text AS pruned,
+            count(*) FILTER(WHERE segment.state='failed')::text AS failed,
+            (SELECT max(member.event_cursor)::text
+               FROM event_archive_segment_events member
+               JOIN event_archive_segments trusted
+                 ON trusted.id=member.segment_id
+                AND trusted.workspace_id=member.workspace_id
+              WHERE member.workspace_id=$1
+                AND trusted.membership_state='exact'
+                AND trusted.state IN ('verified','pruned'))
+              AS "lastVerifiedEndCursor",
+            min(segment.retain_until) FILTER(
+              WHERE segment.membership_state='exact'
+                AND segment.state IN ('verified','pruned')
+            ) AS "retainUntil"
+            FROM event_archive_segments segment WHERE segment.workspace_id=$1
         `,
         [current.workspaceId],
       ),
@@ -114,7 +130,11 @@ export function registerAdminRetentionRoutes(
               JOIN domain_events event ON event.id=delivery.event_id
              WHERE event.workspace_id=$1)::text AS "protectedWebhookEvents",
             (SELECT count(*) FROM event_archive_segments
-             WHERE workspace_id=$1 AND state NOT IN ('verified','pruned'))::text
+             WHERE workspace_id=$1
+               AND (
+                 state NOT IN ('verified','pruned')
+                 OR membership_state<>'exact'
+               ))::text
               AS "unverifiedSegments"
         `,
         [current.workspaceId],

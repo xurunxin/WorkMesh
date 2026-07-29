@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { gzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { createClient } from "redis";
 import {
   loadRetentionConfig,
@@ -99,8 +99,121 @@ type QueryExecutor = Pick<Db, "query">;
 
 export type ArchiveObjectStore = Pick<
   S3ArtifactStorage,
-  "putObject" | "verify" | "probeRetentionProtection"
+  "putObject" | "readVerifiedObject" | "verify" | "probeRetentionProtection"
 >;
+
+type ArchiveSegmentObject = Readonly<{
+  id: string;
+  workspaceId: string;
+  startCursor: string;
+  endCursor: string;
+  rowCount: number;
+  snapshotDigest: string;
+  objectKey: string;
+  objectVersionId: string;
+  objectSizeBytes: string;
+  objectSha256: string;
+  retainUntil: Date;
+  prunedAt: Date | null;
+  state: "uploaded" | "verified" | "pruned" | "failed";
+  membershipState: "pending_exact" | "exact" | "legacy_unindexed";
+}>;
+
+type ArchiveMember = Readonly<{
+  ordinal: number;
+  eventId: string;
+  eventCursor: string;
+  recordSha256: string;
+  record: unknown;
+}>;
+
+const archiveExpectation = (
+  segment: ArchiveSegmentObject,
+): ArtifactObjectExpectation => ({
+  key: segment.objectKey,
+  versionId: segment.objectVersionId,
+  checksum: segment.objectSha256,
+  sizeBytes: Number(segment.objectSizeBytes),
+  mimeType: "application/gzip",
+  retainUntil: segment.retainUntil,
+});
+
+const parseArchiveMembers = (
+  body: Uint8Array,
+  segment: ArchiveSegmentObject,
+): readonly ArchiveMember[] => {
+  let lines: string[];
+  try {
+    lines = gunzipSync(body).toString("utf8").trimEnd().split("\n");
+  } catch {
+    throw new Error("ARCHIVE_OBJECT_DECODE_FAILED");
+  }
+  let metadata: unknown;
+  let records: unknown[];
+  try {
+    metadata = JSON.parse(lines.shift() ?? "{}") as unknown;
+    records = lines.map((line) => JSON.parse(line) as unknown);
+  } catch {
+    throw new Error("ARCHIVE_OBJECT_JSON_INVALID");
+  }
+  const envelope =
+    metadata && typeof metadata === "object"
+      ? (metadata as Record<string, unknown>)._meta
+      : undefined;
+  const meta =
+    envelope && typeof envelope === "object"
+      ? (envelope as Record<string, unknown>)
+      : undefined;
+  if (
+    meta?.format !== "workmesh-domain-event-records-ndjson-v1" ||
+    meta.workspaceId !== segment.workspaceId ||
+    meta.startCursor !== segment.startCursor ||
+    meta.endCursor !== segment.endCursor ||
+    meta.rowCount !== segment.rowCount ||
+    meta.snapshotDigest !== segment.snapshotDigest ||
+    records.length !== segment.rowCount ||
+    sha256(records.map(canonicalLine).join("")) !== segment.snapshotDigest
+  )
+    throw new Error("ARCHIVE_OBJECT_MANIFEST_MISMATCH");
+
+  const members = records.map((record, ordinal): ArchiveMember => {
+    const event =
+      record && typeof record === "object"
+        ? (record as Record<string, unknown>).event
+        : undefined;
+    const eventValue =
+      event && typeof event === "object"
+        ? (event as Record<string, unknown>)
+        : undefined;
+    if (
+      !eventValue ||
+      typeof eventValue.id !== "string" ||
+      typeof eventValue.cursor !== "string" ||
+      !/^[1-9][0-9]*$/.test(eventValue.cursor) ||
+      eventValue.workspace_id !== segment.workspaceId
+    )
+      throw new Error("ARCHIVE_OBJECT_RECORD_INVALID");
+    return {
+      ordinal,
+      eventId: eventValue.id,
+      eventCursor: eventValue.cursor,
+      recordSha256: sha256(canonicalLine(record)),
+      record,
+    };
+  });
+  if (
+    members[0]?.eventCursor !== segment.startCursor ||
+    members.at(-1)?.eventCursor !== segment.endCursor ||
+    members.some(
+      (member, index) =>
+        index > 0 &&
+        BigInt(member.eventCursor) <= BigInt(members[index - 1]!.eventCursor),
+    ) ||
+    new Set(members.map((member) => member.eventId)).size !== members.length
+  )
+    throw new Error("ARCHIVE_OBJECT_MEMBERSHIP_INVALID");
+  return members;
+};
 export type ExactRedisClient = Readonly<{
   isOpen: boolean;
   connect: () => Promise<unknown>;
@@ -309,8 +422,11 @@ export function createRetentionWorker({
   ): Promise<void> => {
     const result = await executor.query(
       `
-      UPDATE retention_job_state
-         SET watermark_cursor=COALESCE($4,watermark_cursor),
+       UPDATE retention_job_state
+          SET watermark_cursor=GREATEST(
+                watermark_cursor,
+                COALESCE($4,watermark_cursor)
+              ),
              counters=CASE WHEN $5::jsonb IS NULL THEN counters ELSE counters||$5::jsonb END,
              last_error_code=$6,
              last_completed_at=CASE WHEN $7 THEN now() ELSE last_completed_at END,
@@ -375,7 +491,8 @@ export function createRetentionWorker({
       afterCursor: string;
       cutoff: Date;
       endCursor?: string;
-      stopAtUndelivered: boolean;
+      eventIds?: readonly string[];
+      excludeTrustedMembership: boolean;
       limit: number;
     },
   ): Promise<readonly ArchivedRecord[]> => {
@@ -419,33 +536,39 @@ export function createRetentionWorker({
                ) AS outbox
           FROM domain_events event
          WHERE event.workspace_id=$1
-           AND event.cursor>$2::bigint
-           AND event.occurred_at<=$3
-           AND ($4::bigint IS NULL OR event.cursor<=$4::bigint)
-           AND (
-             NOT $5::boolean
-             OR event.cursor<COALESCE((
-               SELECT min(blocked.cursor)
-                 FROM domain_events blocked
-                WHERE blocked.workspace_id=$1
-                  AND blocked.cursor>$2::bigint
-                  AND blocked.occurred_at<=$3
-                  AND NOT EXISTS(
-                    SELECT 1 FROM outbox_events blocker_outbox
-                     WHERE blocker_outbox.domain_event_id=blocked.id
-                       AND blocker_outbox.status='delivered'
-                  )
-             ),'9223372036854775807'::bigint)
-           )
-         ORDER BY event.cursor
-         LIMIT $6
+            AND event.cursor>$2::bigint
+            AND event.occurred_at<=$3
+            AND ($4::bigint IS NULL OR event.cursor<=$4::bigint)
+            AND ($5::uuid[] IS NULL OR event.id=ANY($5::uuid[]))
+            AND EXISTS(
+              SELECT 1 FROM outbox_events delivered
+               WHERE delivered.domain_event_id=event.id
+                 AND delivered.status='delivered'
+            )
+            AND (
+              NOT $6::boolean
+              OR NOT EXISTS(
+                SELECT 1
+                  FROM event_archive_segment_events member
+                  JOIN event_archive_segments segment
+                    ON segment.id=member.segment_id
+                   AND segment.workspace_id=member.workspace_id
+                 WHERE member.workspace_id=event.workspace_id
+                   AND member.event_id=event.id
+                   AND segment.membership_state='exact'
+                   AND segment.state IN ('verified','pruned')
+              )
+            )
+          ORDER BY event.cursor
+          LIMIT $7
       `,
         [
           input.workspaceId,
           input.afterCursor,
           input.cutoff,
           input.endCursor ?? null,
-          input.stopAtUndelivered,
+          input.eventIds ?? null,
+          input.excludeTrustedMembership,
           input.limit,
         ],
       )
@@ -454,6 +577,110 @@ export function createRetentionWorker({
       const { resources, outbox, ...event } = row;
       if (!outbox) throw new Error("ARCHIVE_OUTBOX_PROOF_MISSING");
       return { event, resources, outbox };
+    });
+  };
+
+  const loadUnindexedSegment = async (
+    workspaceId: string,
+  ): Promise<ArchiveSegmentObject | undefined> =>
+    (
+      await db.query<ArchiveSegmentObject>(
+        `
+        SELECT id,workspace_id AS "workspaceId",
+               start_cursor::text AS "startCursor",
+               end_cursor::text AS "endCursor",row_count AS "rowCount",
+               snapshot_digest AS "snapshotDigest",object_key AS "objectKey",
+               object_version_id AS "objectVersionId",
+               object_size_bytes::text AS "objectSizeBytes",
+               object_sha256 AS "objectSha256",retain_until AS "retainUntil",
+               pruned_at AS "prunedAt",state,
+               membership_state AS "membershipState"
+          FROM event_archive_segments
+         WHERE workspace_id=$1
+           AND membership_state IN ('pending_exact','legacy_unindexed')
+           AND state IN ('uploaded','verified','pruned','failed')
+         ORDER BY
+           CASE membership_state WHEN 'pending_exact' THEN 0 ELSE 1 END,
+           created_at,id
+         LIMIT 1
+      `,
+        [workspaceId],
+      )
+    ).rows[0];
+
+  const materializeSegmentMembership = async (
+    active: RetentionClaim,
+    segment: ArchiveSegmentObject,
+  ): Promise<number> => {
+    const body = await objectStore.readVerifiedObject(
+      archiveExpectation(segment),
+    );
+    const members = parseArchiveMembers(body, segment);
+    return withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const current = (
+        await tx.query<{
+          membershipState: ArchiveSegmentObject["membershipState"];
+          state: ArchiveSegmentObject["state"];
+        }>(
+          `
+          SELECT membership_state AS "membershipState",state
+            FROM event_archive_segments
+           WHERE id=$1 AND workspace_id=$2
+           FOR UPDATE
+        `,
+          [segment.id, active.workspaceId],
+        )
+      ).rows[0];
+      if (!current) throw new Error("ARCHIVE_SEGMENT_MISSING");
+      if (current.membershipState === "exact") return 0;
+      const existing = await tx.query(
+        `SELECT 1 FROM event_archive_segment_events WHERE segment_id=$1 LIMIT 1`,
+        [segment.id],
+      );
+      if (existing.rowCount !== 0)
+        throw new Error("ARCHIVE_MEMBERSHIP_PARTIAL");
+      for (const member of members) {
+        await tx.query(
+          `
+          INSERT INTO event_archive_segment_events(
+            segment_id,workspace_id,ordinal,event_id,event_cursor,
+            record_sha256,floored_at
+          ) VALUES($1,$2,$3,$4,$5,$6,$7)
+        `,
+          [
+            segment.id,
+            active.workspaceId,
+            member.ordinal,
+            member.eventId,
+            member.eventCursor,
+            member.recordSha256,
+            segment.state === "pruned"
+              ? (segment.prunedAt ?? new Date())
+              : null,
+          ],
+        );
+      }
+      const updated = await tx.query(
+        `
+        UPDATE event_archive_segments
+           SET membership_state='exact',
+               state=CASE WHEN state='pruned' THEN state ELSE 'verified' END,
+               uploaded_at=COALESCE(uploaded_at,now()),
+               verified_at=COALESCE(verified_at,now()),
+               last_error_code=NULL,updated_at=now()
+         WHERE id=$1 AND workspace_id=$2
+           AND membership_state IN ('pending_exact','legacy_unindexed')
+      `,
+        [segment.id, active.workspaceId],
+      );
+      if (updated.rowCount !== 1)
+        throw new Error("ARCHIVE_MEMBERSHIP_FINALIZE_FAILED");
+      await writeGuardedProgress(tx, active, {
+        watermarkCursor: segment.endCursor,
+        counters: { archived: members.length },
+      });
+      return members.length;
     });
   };
 
@@ -597,16 +824,21 @@ export function createRetentionWorker({
             SELECT outbox.id
               FROM outbox_events outbox
               JOIN domain_events event ON event.id=outbox.domain_event_id
+              JOIN event_archive_segment_events member
+                ON member.workspace_id=event.workspace_id
+               AND member.event_id=event.id
+               AND member.event_cursor=event.cursor
+              JOIN event_archive_segments segment
+                ON segment.id=member.segment_id
+               AND segment.workspace_id=member.workspace_id
+              JOIN event_retention_state floor
+                ON floor.workspace_id=event.workspace_id
              WHERE event.workspace_id=$1 AND outbox.status='delivered'
-               AND outbox.delivered_at<=$2
-               AND EXISTS(
-                 SELECT 1
-                   FROM event_archive_segments segment
-                  WHERE segment.workspace_id=event.workspace_id
-                    AND segment.state='pruned'
-                    AND event.cursor BETWEEN segment.start_cursor
-                                         AND segment.end_cursor
-               )
+                AND outbox.delivered_at<=$2
+                AND member.floored_at IS NOT NULL
+                AND member.event_cursor<=floor.pruned_through_cursor
+                AND segment.membership_state='exact'
+                AND segment.state IN ('verified','pruned')
              ORDER BY outbox.delivered_at,outbox.id
              FOR UPDATE OF outbox SKIP LOCKED LIMIT $3
           )
@@ -769,11 +1001,16 @@ export function createRetentionWorker({
     await afterArchiveClaim?.(active);
     let segmentId: string | undefined;
     try {
+      const unindexed = await loadUnindexedSegment(active.workspaceId);
+      if (unindexed) {
+        segmentId = unindexed.id;
+        return await materializeSegmentMembership(active, unindexed);
+      }
       const records = await loadArchiveRecords(db, {
         workspaceId: active.workspaceId,
-        afterCursor: active.watermarkCursor,
+        afterCursor: "0",
         cutoff: active.fixedCutoffAt,
-        stopAtUndelivered: true,
+        excludeTrustedMembership: true,
         limit: config.batchSize,
       });
       if (!records.length) {
@@ -798,7 +1035,8 @@ export function createRetentionWorker({
         { level: 9 },
       );
       const objectChecksum = sha256(compressed);
-      const objectKey = `${config.archivePrefix}/${active.workspaceId}/${first.cursor}-${last.cursor}-${snapshotDigest.slice(7)}.ndjson.gz`;
+      segmentId = randomUUID();
+      const objectKey = `${config.archivePrefix}/${active.workspaceId}/${segmentId}-${first.cursor}-${last.cursor}.ndjson.gz`;
       const retainUntil = new Date(
         Date.now() + (config.archiveRetainDays * 86_400 + 300) * 1_000,
       );
@@ -813,64 +1051,30 @@ export function createRetentionWorker({
       const segment = await withTx(db, async (tx) => {
         await assertClaim(tx, active);
         return (
-          await tx.query<{
-            id: string;
-            state: string;
-            objectKey: string;
-            objectVersionId: string;
-            objectSizeBytes: string;
-            objectSha256: string;
-            retainUntil: Date;
-          }>(
+          await tx.query<ArchiveSegmentObject>(
             `
           INSERT INTO event_archive_segments(
-            workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+            id,workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
             object_key,object_version_id,object_size_bytes,object_sha256,
-            snapshot_digest,metadata,retain_until,state,uploaded_at
-          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'uploaded',now())
-          ON CONFLICT(workspace_id,start_cursor,end_cursor) DO UPDATE
-            SET object_key=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.object_key ELSE EXCLUDED.object_key END,
-                object_version_id=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.object_version_id ELSE EXCLUDED.object_version_id END,
-                object_size_bytes=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.object_size_bytes ELSE EXCLUDED.object_size_bytes END,
-                object_sha256=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.object_sha256 ELSE EXCLUDED.object_sha256 END,
-                snapshot_digest=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.snapshot_digest ELSE EXCLUDED.snapshot_digest END,
-                metadata=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.metadata ELSE EXCLUDED.metadata END,
-                state=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.state
-                  ELSE 'uploaded'
-                END,
-                uploaded_at=COALESCE(event_archive_segments.uploaded_at,now()),
-                verified_at=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.verified_at
-                  ELSE NULL
-                END,
-                pruned_at=CASE WHEN event_archive_segments.state='pruned'
-                               THEN event_archive_segments.pruned_at ELSE NULL END,
-                retain_until=CASE
-                  WHEN event_archive_segments.state IN ('verified','pruned')
-                    THEN event_archive_segments.retain_until ELSE EXCLUDED.retain_until END,
-                last_error_code=NULL,updated_at=now()
-          RETURNING id,state,object_key AS "objectKey",
+            snapshot_digest,metadata,retain_until,state,uploaded_at,
+            membership_state
+          ) VALUES(
+            $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,
+            'uploaded',now(),'pending_exact'
+          )
+          RETURNING id,workspace_id AS "workspaceId",
+                    start_cursor::text AS "startCursor",
+                    end_cursor::text AS "endCursor",row_count AS "rowCount",
+                    snapshot_digest AS "snapshotDigest",state,
+                    membership_state AS "membershipState",
+                    object_key AS "objectKey",
                     object_version_id AS "objectVersionId",
                     object_size_bytes::text AS "objectSizeBytes",
                     object_sha256 AS "objectSha256",
-                    retain_until AS "retainUntil"
+                    retain_until AS "retainUntil",pruned_at AS "prunedAt"
         `,
             [
+              segmentId,
               active.workspaceId,
               first.cursor,
               last.cursor,
@@ -887,34 +1091,7 @@ export function createRetentionWorker({
           )
         ).rows[0]!;
       });
-      segmentId = segment.id;
-      const persistedExpectation: ArtifactObjectExpectation = {
-        key: segment.objectKey,
-        versionId: segment.objectVersionId,
-        checksum: segment.objectSha256,
-        sizeBytes: Number(segment.objectSizeBytes),
-        mimeType: "application/gzip",
-        retainUntil: segment.retainUntil,
-      };
-      await objectStore.verify(persistedExpectation);
-      await withTx(db, async (tx) => {
-        await assertClaim(tx, active);
-        const verified = await tx.query(
-          `
-          UPDATE event_archive_segments
-             SET state=CASE WHEN state='pruned' THEN state ELSE 'verified' END,
-                 verified_at=COALESCE(verified_at,now()),updated_at=now()
-           WHERE id=$1 AND state IN ('uploaded','verified','pruned')
-        `,
-          [segment.id],
-        );
-        if (verified.rowCount !== 1) throw new Error("RETENTION_CLAIM_LOST");
-      });
-      await guardedProgress(active, {
-        watermarkCursor: last.cursor,
-        counters: { archived: records.length },
-      });
-      return records.length;
+      return await materializeSegmentMembership(active, segment);
     } catch (error) {
       if (segmentId) {
         await withTx(db, async (tx) => {
@@ -924,7 +1101,16 @@ export function createRetentionWorker({
             UPDATE event_archive_segments
                SET state='failed',uploaded_at=NULL,verified_at=NULL,pruned_at=NULL,
                    last_error_code=$2,updated_at=now()
-             WHERE id=$1 AND state IN ('planned','failed','uploaded')
+             WHERE id=$1 AND membership_state='pending_exact'
+               AND state IN ('planned','failed','uploaded')
+          `,
+            [segmentId, safeRetentionErrorCode(error)],
+          );
+          await tx.query(
+            `
+            UPDATE event_archive_segments
+               SET last_error_code=$2,updated_at=now()
+             WHERE id=$1 AND membership_state='legacy_unindexed'
           `,
             [segmentId, safeRetentionErrorCode(error)],
           );
@@ -955,95 +1141,113 @@ export function createRetentionWorker({
           )
         ).rows[0];
         if (!floor) throw new Error("RETENTION_FLOOR_MISSING");
-        const segment = (
-          await tx.query<{
-            id: string;
-            startCursor: string;
-            endCursor: string;
-            rowCount: number;
-            snapshotDigest: string;
-            fixedCutoffAt: Date;
-            objectKey: string;
-            objectVersionId: string;
-            objectSizeBytes: string;
-            objectSha256: string;
-            retainUntil: Date;
-          }>(
+        type PrefixCandidate = ArchiveSegmentObject &
+          Readonly<{
+            eventId: string;
+            eventCursor: string;
+            eventType: string;
+            occurredAt: Date;
+            recordSha256: string | null;
+            flooredAt: Date | null;
+          }>;
+        const candidates = (
+          await tx.query<PrefixCandidate>(
             `
-          SELECT id,start_cursor::text AS "startCursor",
-                  end_cursor::text AS "endCursor",row_count AS "rowCount",
-                  snapshot_digest AS "snapshotDigest",
-                  fixed_cutoff_at AS "fixedCutoffAt",
-                  object_key AS "objectKey",
-                  object_version_id AS "objectVersionId",
-                  object_size_bytes::text AS "objectSizeBytes",
-                  object_sha256 AS "objectSha256",
-                  retain_until AS "retainUntil"
-           FROM event_archive_segments
-           WHERE workspace_id=$1 AND state='verified'
-             AND end_cursor>$2::bigint
-             AND retain_until>=created_at+interval '365 days'
-             AND retain_until>now()
-           ORDER BY start_cursor FOR UPDATE SKIP LOCKED LIMIT 1
+          SELECT event.id AS "eventId",event.cursor::text AS "eventCursor",
+                 event.event_type AS "eventType",
+                 event.occurred_at AS "occurredAt",
+                 member.record_sha256 AS "recordSha256",
+                 member.floored_at AS "flooredAt",
+                 segment.id,segment.workspace_id AS "workspaceId",
+                 segment.start_cursor::text AS "startCursor",
+                 segment.end_cursor::text AS "endCursor",
+                 segment.row_count AS "rowCount",
+                 segment.snapshot_digest AS "snapshotDigest",
+                 segment.object_key AS "objectKey",
+                 segment.object_version_id AS "objectVersionId",
+                 segment.object_size_bytes::text AS "objectSizeBytes",
+                 segment.object_sha256 AS "objectSha256",
+                 segment.retain_until AS "retainUntil",
+                 segment.pruned_at AS "prunedAt",segment.state,
+                 segment.membership_state AS "membershipState"
+            FROM domain_events event
+            LEFT JOIN event_archive_segment_events member
+              ON member.workspace_id=event.workspace_id
+             AND member.event_id=event.id
+             AND member.event_cursor=event.cursor
+            LEFT JOIN event_archive_segments segment
+              ON segment.id=member.segment_id
+             AND segment.workspace_id=member.workspace_id
+             AND segment.membership_state='exact'
+             AND segment.state IN ('verified','pruned')
+             AND segment.retain_until>=segment.created_at+interval '365 days'
+             AND segment.retain_until>now()
+           WHERE event.workspace_id=$1 AND event.cursor>$2::bigint
+           ORDER BY event.cursor
+           FOR UPDATE OF event
+           LIMIT $3
         `,
-            [active.workspaceId, floor.cursor],
+            [active.workspaceId, floor.cursor, config.batchSize],
           )
-        ).rows[0];
-        if (!segment) {
+        ).rows;
+        if (!candidates.length) {
           await writeGuardedProgress(tx, active, { complete: true });
           return 0;
         }
-        await objectStore.verify({
-          key: segment.objectKey,
-          versionId: segment.objectVersionId,
-          checksum: segment.objectSha256,
-          sizeBytes: Number(segment.objectSizeBytes),
-          mimeType: "application/gzip",
-          retainUntil: segment.retainUntil,
-        });
-        const firstOnline = (
-          await tx.query<{ cursor: string }>(
-            `
-          SELECT cursor::text AS cursor
-            FROM domain_events
-           WHERE workspace_id=$1 AND cursor>$2::bigint
-           ORDER BY cursor LIMIT 1
-        `,
-            [active.workspaceId, floor.cursor],
+        const prefix: PrefixCandidate[] = [];
+        for (const candidate of candidates) {
+          if (
+            candidate.occurredAt > active.fixedCutoffAt ||
+            !candidate.id ||
+            !candidate.recordSha256
           )
-        ).rows[0];
-        if (!firstOnline || firstOnline.cursor !== segment.startCursor)
-          throw new Error("EVENT_RETENTION_GAP");
-        await tx.query(
-          `
-          SELECT cursor
-            FROM domain_events
-           WHERE workspace_id=$1
-             AND cursor BETWEEN $2::bigint AND $3::bigint
-           ORDER BY cursor
-           FOR UPDATE
-        `,
-          [active.workspaceId, segment.startCursor, segment.endCursor],
-        );
+            break;
+          if (candidate.flooredAt)
+            throw new Error("ARCHIVE_MEMBER_ALREADY_FLOORED_ABOVE_FLOOR");
+          prefix.push(candidate);
+        }
+        if (!prefix.length) {
+          await writeGuardedProgress(tx, active, { complete: true });
+          return 0;
+        }
+        const lastPrefix = prefix.at(-1)!;
         const records = await loadArchiveRecords(tx, {
           workspaceId: active.workspaceId,
-          afterCursor: (BigInt(segment.startCursor) - 1n).toString(),
-          cutoff: segment.fixedCutoffAt,
-          endCursor: segment.endCursor,
-          stopAtUndelivered: false,
-          limit: segment.rowCount,
+          afterCursor: floor.cursor,
+          cutoff: active.fixedCutoffAt,
+          endCursor: lastPrefix.eventCursor,
+          eventIds: prefix.map((candidate) => candidate.eventId),
+          excludeTrustedMembership: false,
+          limit: prefix.length,
         });
-        if (
-          records.length !== segment.rowCount ||
-          sha256(records.map(canonicalLine).join("")) !== segment.snapshotDigest
-        )
-          throw new Error("ARCHIVE_SNAPSHOT_RECHECK_FAILED");
-        if (
-          records.some(
-            (record) => record.event.occurred_at > active.fixedCutoffAt,
+        if (records.length !== prefix.length)
+          throw new Error("ARCHIVE_PREFIX_RECHECK_FAILED");
+        const parsedBySegment = new Map<string, readonly ArchiveMember[]>();
+        for (const segment of new Map(
+          prefix.map((candidate) => [candidate.id, candidate]),
+        ).values()) {
+          const body = await objectStore.readVerifiedObject(
+            archiveExpectation(segment),
+          );
+          parsedBySegment.set(segment.id, parseArchiveMembers(body, segment));
+        }
+        const onlineById = new Map(
+          records.map((record) => [record.event.id, record]),
+        );
+        for (const candidate of prefix) {
+          const archived = parsedBySegment
+            .get(candidate.id)
+            ?.find((member) => member.eventId === candidate.eventId);
+          const online = onlineById.get(candidate.eventId);
+          if (
+            !archived ||
+            !online ||
+            archived.eventCursor !== candidate.eventCursor ||
+            archived.recordSha256 !== candidate.recordSha256 ||
+            sha256(canonicalLine(online)) !== candidate.recordSha256
           )
-        )
-          throw new Error("ARCHIVE_CUTOFF_RECHECK_FAILED");
+            throw new Error("ARCHIVE_RECORD_RECHECK_FAILED");
+        }
         const ids = records.map((record) => record.event.id);
         const blocker = await tx.query<{ id: string }>(
           `
@@ -1081,6 +1285,23 @@ export function createRetentionWorker({
         );
         if (removed.rowCount !== prunableIds.length)
           throw new Error("EVENT_PRUNE_COUNT_MISMATCH");
+        const membersFloored = await tx.query(
+          `
+          UPDATE event_archive_segment_events member
+             SET floored_at=COALESCE(member.floored_at,now())
+            FROM event_archive_segments segment
+           WHERE member.segment_id=segment.id
+             AND member.workspace_id=segment.workspace_id
+             AND member.workspace_id=$1
+             AND member.event_id=ANY($2::uuid[])
+             AND member.floored_at IS NULL
+             AND segment.membership_state='exact'
+             AND segment.state IN ('verified','pruned')
+        `,
+          [active.workspaceId, ids],
+        );
+        if (membersFloored.rowCount !== prefix.length)
+          throw new Error("ARCHIVE_MEMBER_FLOOR_COUNT_MISMATCH");
         const floorUpdated = await tx.query(
           `
           UPDATE event_retention_state
@@ -1097,7 +1318,7 @@ export function createRetentionWorker({
         `,
           [
             active.workspaceId,
-            segment.endCursor,
+            lastPrefix.eventCursor,
             floor.cursor,
             active.jobName,
             active.owner,
@@ -1106,31 +1327,41 @@ export function createRetentionWorker({
         );
         if (floorUpdated.rowCount !== 1)
           throw new Error("RETENTION_FLOOR_FENCE_LOST");
-        const segmentUpdated = await tx.query(
+        await tx.query(
           `
-          UPDATE event_archive_segments
-             SET state='pruned',pruned_at=now(),updated_at=now()
-           WHERE id=$1 AND state='verified'
-             AND EXISTS(
-               SELECT 1 FROM retention_job_state state
-                WHERE state.job_name=$2
-                  AND state.workspace_id=event_archive_segments.workspace_id
-                  AND state.lease_owner=$3
-                  AND state.fence=$4::bigint
-                  AND state.lease_expires_at>now()
+          UPDATE event_archive_segments segment
+             SET state='pruned',pruned_at=COALESCE(pruned_at,now()),
+                 updated_at=now()
+           WHERE id=ANY($1::uuid[]) AND state='verified'
+             AND membership_state='exact'
+             AND NOT EXISTS(
+               SELECT 1 FROM event_archive_segment_events member
+                WHERE member.segment_id=segment.id
+                  AND member.floored_at IS NULL
              )
+              AND EXISTS(
+                SELECT 1 FROM retention_job_state state
+                 WHERE state.job_name=$2
+                   AND state.workspace_id=segment.workspace_id
+                   AND state.lease_owner=$3
+                   AND state.fence=$4::bigint
+                   AND state.lease_expires_at>now()
+              )
         `,
-          [segment.id, active.jobName, active.owner, active.fence],
+          [
+            [...new Set(prefix.map((candidate) => candidate.id))],
+            active.jobName,
+            active.owner,
+            active.fence,
+          ],
         );
-        if (segmentUpdated.rowCount !== 1)
-          throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
         await beforePruneCommit?.({
           workspaceId: active.workspaceId,
-          segmentId: segment.id,
+          segmentId: prefix[0]!.id,
           eventIds: prunableIds,
         });
         await writeGuardedProgress(tx, active, {
-          watermarkCursor: segment.endCursor,
+          watermarkCursor: lastPrefix.eventCursor,
           counters: {
             pruned: removed.rowCount ?? 0,
             protected: records.length - prunableIds.length,

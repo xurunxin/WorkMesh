@@ -24,6 +24,9 @@ heartbeat. A missing or stale heartbeat forces `mode` to `unknown`; it must not
 be interpreted as archive-only or as proof that pruning is disabled.
 `protectedWebhookEvents` reports the number of online events pinned by Agent
 webhook delivery references.
+`lastVerifiedEndCursor` and the archive job watermark are monotonic telemetry
+for the highest exact archived event cursor. Neither value proves continuous
+coverage below it.
 
 The archive bucket must be created with Object Lock enabled. Retention writes
 use `COMPLIANCE` mode and a retain-until date at least 365 days in the future.
@@ -31,6 +34,10 @@ Every segment persists the non-empty `VersionId` returned by its upload. HEAD,
 GET, checksum verification, prune preflight, restore, and early-delete probes
 must address that pinned version explicitly; resolving the latest object by key
 is never acceptable.
+Segment `start_cursor` and `end_cursor` are only the minimum/maximum object
+envelope. Coverage exists only in `event_archive_segment_events` after pinned
+readback and atomic `uploaded` to `verified`/`exact` finalization. An
+`uploaded`, `failed`, or `legacy_unindexed` segment is not coverage.
 The Worker probes bucket protection before every archive pass and fails closed
 before planning or uploading when protection is absent. Existing buckets
 cannot be retrofitted safely by changing only Compose configuration; create a
@@ -42,7 +49,9 @@ test database. Before enabling event pruning, additionally require:
 
 1. a successful 24-hour archive-only soak;
 2. verified object readback and restore rehearsal;
-3. no failed/unverified segments or undelivered outbox rows;
+3. no failed/unverified segments or undelivered outbox rows; verified or pruned
+   `legacy_unindexed` segments must first be lazily materialized from their
+   pinned object;
 4. explicit `WORKMESH_EVENT_PRUNE_ENABLED=true` on the Worker, followed by a
    fresh `archive_and_prune` Worker heartbeat in the admin status response;
 5. retention objects protected from deletion for at least 365 days.
@@ -111,8 +120,10 @@ S3_SECRET_ACCESS_KEY=...
 pnpm test:restore:retention
 ```
 
-The rehearsal selects a verified, still-locked segment; verifies HEAD Object
-Lock metadata; downloads and checks the gzip checksum and canonical snapshot
+The formal rehearsal selects a membership-complete exact, still-locked segment.
+An explicit `WORKMESH_RETENTION_RESTORE_ALLOW_LEGACY=1` compatibility run may
+read a `legacy_unindexed` pinned object but cannot satisfy the formal gate.
+The rehearsal verifies HEAD Object Lock metadata; downloads and checks the gzip checksum and canonical snapshot
 digest; restores records into a temporary schema in the separate target;
 re-reads and verifies the restored digest; attempts deletion of the exact
 locked object version and requires rejection; verifies readback again; and
@@ -137,10 +148,14 @@ committed-claim/outbox recovery, dual-Worker fencing, stale-owner rejection,
 protected-row, and pre-header/live `CURSOR_EXPIRED` integration gates and
 writes a sanitized final report.
 
-Undelivered or missing outbox proof blocks archival at that cursor. Unknown
-events, A2A references, Agent webhook references, and audit/recovery facts stay
-physically present but may fall below the realtime floor after their complete
-archive segment is verified. Do not delete those protected rows manually.
+Undelivered or missing outbox proof keeps that event out of the archive and
+blocks the pruning prefix at its cursor, but does not block later
+cutoff-eligible delivered events from being archived exactly. Unknown events,
+A2A references, Agent webhook references, and audit/recovery facts stay
+physically present but may fall below the realtime floor after their exact
+member is verified and floored. Delivered outbox cleanup requires that exact
+floored member and never uses a segment cursor range. Do not delete protected
+rows manually.
 Disable the switch and investigate any archive or checksum failure.
 
 Issue #11, not this endpoint, owns any future archive download, discovery,
