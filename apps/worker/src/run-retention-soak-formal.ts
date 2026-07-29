@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { createRetentionSoakFormalLaunchSpec } from "./retention-soak-formal-launch.js";
 import {
   retentionSoakSessionLockPath,
   retentionSoakSessionScopeSha256,
@@ -48,36 +49,26 @@ if (
 const childEnv: NodeJS.ProcessEnv = {
   ...process.env,
   WORKMESH_RETENTION_SOAK_SESSION_ID: result.state.sessionId,
-  WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN:
-    result.state.installationToken,
+  WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN: result.state.installationToken,
   WORKMESH_RETENTION_SOAK_LOCK_PATH: lockPath,
-  WORKMESH_RETENTION_SOAK_LOCK_FD: "3",
-  WORKMESH_RETENTION_SOAK_LOCK_SCOPE_SHA256:
-    retentionSoakSessionScopeSha256(result.state.sessionId),
+  WORKMESH_RETENTION_SOAK_LOCK_SCOPE_SHA256: retentionSoakSessionScopeSha256(
+    result.state.sessionId,
+  ),
 };
-const tsx = fileURLToPath(new URL("../node_modules/.bin/tsx", import.meta.url));
 const harness = fileURLToPath(
   new URL("../../../scripts/retention-soak.mts", import.meta.url),
 );
+const launch = createRetentionSoakFormalLaunchSpec({
+  childEnv,
+  harness,
+  harnessArguments: process.argv.slice(2),
+  lockFileFd: lockFile.fd,
+  tsxRegistration: import.meta.resolve("tsx"),
+});
 let exitCode: number;
 try {
   exitCode = await new Promise<number>((resolveExit, reject) => {
-    const child = spawn(
-      "/bin/sh",
-      [
-        "-c",
-        'flock --nonblock --exclusive "$WORKMESH_RETENTION_SOAK_LOCK_FD" || exit 75; exec "$@"',
-        "retention-soak-lock",
-        tsx,
-        harness,
-        ...process.argv.slice(2),
-      ],
-      {
-        env: childEnv,
-        stdio: ["inherit", "inherit", "inherit", lockFile.fd],
-        windowsHide: true,
-      },
-    );
+    const child = spawn(launch.executable, [...launch.args], launch.options);
     child.once("error", reject);
     child.once("exit", (code, signal) => {
       if (signal || code === null)
