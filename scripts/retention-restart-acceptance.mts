@@ -106,15 +106,24 @@ const waitHealthy = async (services: readonly string[]): Promise<void> => {
       },
     );
     if (result.status === 0) {
-      const rows = result.stdout
-        .trim()
-        .split(/\r?\n/)
-        .filter(Boolean)
-        .map((line) => JSON.parse(line) as {
-          Service?: string;
-          State?: string;
-          Health?: string;
-        });
+      type ComposeRow = {
+        Service?: string;
+        State?: string;
+        Health?: string;
+      };
+      const output = result.stdout.trim();
+      let rows: ComposeRow[] = [];
+      if (output) {
+        try {
+          const parsed = JSON.parse(output) as ComposeRow | ComposeRow[];
+          rows = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+          rows = output
+            .split(/\r?\n/)
+            .filter(Boolean)
+            .map((line) => JSON.parse(line) as ComposeRow);
+        }
+      }
       if (
         services.every((service) =>
           rows.some(
