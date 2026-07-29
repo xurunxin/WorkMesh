@@ -48,12 +48,17 @@ test database. Before enabling event pruning, additionally require:
 5. retention objects protected from deletion for at least 365 days.
 
 The formal soak must use the tracked `pnpm provision:soak:retention` command,
-not an untracked operator script. Its mode-`0600`, schema-version-2 state file
-belongs outside evidence storage and retains only the installation token needed
-to restart a fresh harness run. Session tokens rotate in memory. Never reuse a
-Session concurrently: one dedicated Session has exactly one soak runner, and a
-runner restart creates a new report directory and baseline rather than
-appending old samples.
+not an untracked operator script. Run it under WSL/Linux; native Windows is
+rejected because this workflow cannot verify an owner-only NTFS ACL.
+Provisioning first writes a private schema-v1 recovery checkpoint with stable
+idempotency keys and the human authentication subject, then atomically replaces
+it with schema-v2 final state containing only the installation token and
+resource IDs. Session tokens rotate in memory. A partial checkpoint must be
+replayed within the 15-minute encrypted-auth replay window. After replay expiry
+or human-session invalidation, completely reset the disposable stack before
+removing the checkpoint. Never reuse a Session concurrently: one dedicated
+Session has exactly one soak runner, and a runner restart creates a new report
+directory and baseline rather than appending old samples.
 
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):

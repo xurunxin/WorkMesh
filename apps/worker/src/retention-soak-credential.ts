@@ -6,12 +6,14 @@ const DEFAULT_REFRESH_MARGIN_MS = 180_000;
 const MAX_REFRESH_ATTEMPTS = 3;
 const MAX_RETRY_AFTER_MS = 60_000;
 const MAX_CUMULATIVE_RETRY_DELAY_MS = 120_000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 
 type Fetch = typeof fetch;
 
 export type RetentionSoakCredentialMetrics = Readonly<{
   refreshCount: number;
   maximumRefreshLatencyMs: number;
+  expiredBeforeRefreshCount: number;
 }>;
 
 export type RetentionSoakCredentialManagerOptions = Readonly<{
@@ -24,6 +26,7 @@ export type RetentionSoakCredentialManagerOptions = Readonly<{
   sleep?: (delayMs: number) => Promise<void>;
   idempotencyKey?: () => string;
   refreshMarginMs?: number;
+  requestTimeoutMs?: number;
 }>;
 
 const parseRetryAfterMs = (
@@ -51,10 +54,12 @@ export class RetentionSoakCredentialManager {
   readonly #sleep: (delayMs: number) => Promise<void>;
   readonly #idempotencyKey: () => string;
   readonly #refreshMarginMs: number;
+  readonly #requestTimeoutMs: number;
   #sessionToken: string | undefined;
   #expiresAtMs = 0;
   #refreshCount = 0;
   #maximumRefreshLatencyMs = 0;
+  #expiredBeforeRefreshCount = 0;
   #refreshInFlight: Promise<string> | undefined;
 
   constructor(options: RetentionSoakCredentialManagerOptions) {
@@ -71,13 +76,17 @@ export class RetentionSoakCredentialManager {
     this.#idempotencyKey = options.idempotencyKey ?? randomUUID;
     this.#refreshMarginMs =
       options.refreshMarginMs ?? DEFAULT_REFRESH_MARGIN_MS;
+    this.#requestTimeoutMs =
+      options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
   }
 
   async token(): Promise<string> {
-    if (
-      this.#sessionToken &&
-      this.#expiresAtMs - this.#now() > this.#refreshMarginMs
-    )
+    const now = this.#now();
+    if (this.#sessionToken && now >= this.#expiresAtMs) {
+      this.#expiredBeforeRefreshCount += 1;
+      this.#sessionToken = undefined;
+    }
+    if (this.#sessionToken && this.#expiresAtMs - now > this.#refreshMarginMs)
       return this.#sessionToken;
     if (this.#refreshInFlight) return this.#refreshInFlight;
     const refresh = this.#refresh();
@@ -93,6 +102,7 @@ export class RetentionSoakCredentialManager {
     return {
       refreshCount: this.#refreshCount,
       maximumRefreshLatencyMs: this.#maximumRefreshLatencyMs,
+      expiredBeforeRefreshCount: this.#expiredBeforeRefreshCount,
     };
   }
 
@@ -101,7 +111,14 @@ export class RetentionSoakCredentialManager {
     const startedAt = this.#monotonicNow();
     let cumulativeDelayMs = 0;
     for (let attempt = 1; attempt <= MAX_REFRESH_ATTEMPTS; attempt += 1) {
-      let response: Response;
+      let response: Response | undefined;
+      let body: unknown;
+      let responseBodyInvalid = false;
+      const controller = new AbortController();
+      const timeout = setTimeout(
+        () => controller.abort(),
+        this.#requestTimeoutMs,
+      );
       try {
         response = await this.#fetch(
           `${this.#apiUrl}/api/v1/agent-sessions/${encodeURIComponent(
@@ -115,9 +132,21 @@ export class RetentionSoakCredentialManager {
               "idempotency-key": idempotencyKey,
             },
             body: "{}",
+            signal: controller.signal,
           },
         );
+        if (response.ok) body = await response.json();
+        else await response.arrayBuffer();
       } catch {
+        responseBodyInvalid =
+          response?.ok === true && !controller.signal.aborted;
+        response = undefined;
+      } finally {
+        clearTimeout(timeout);
+      }
+      if (responseBodyInvalid)
+        throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RESPONSE_INVALID");
+      if (!response) {
         if (attempt === MAX_REFRESH_ATTEMPTS)
           throw new Error("RETENTION_SOAK_TOKEN_REFRESH_NETWORK_FAILED");
         const delayMs = Math.min(
@@ -132,12 +161,6 @@ export class RetentionSoakCredentialManager {
       }
 
       if (response.ok) {
-        let body: unknown;
-        try {
-          body = await response.json();
-        } catch {
-          throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RESPONSE_INVALID");
-        }
         const parsed = exchangeAgentSessionTokenResponseSchema.safeParse(body);
         if (!parsed.success)
           throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RESPONSE_INVALID");
@@ -147,6 +170,8 @@ export class RetentionSoakCredentialManager {
           expiresAtMs - this.#now() <= this.#refreshMarginMs
         )
           throw new Error("RETENTION_SOAK_TOKEN_REFRESH_EXPIRY_INVALID");
+        if (this.#sessionToken && this.#now() >= this.#expiresAtMs)
+          this.#expiredBeforeRefreshCount += 1;
         this.#sessionToken = parsed.data.sessionToken;
         this.#expiresAtMs = expiresAtMs;
         this.#refreshCount += 1;
@@ -157,7 +182,6 @@ export class RetentionSoakCredentialManager {
         return parsed.data.sessionToken;
       }
 
-      await response.arrayBuffer().catch(() => undefined);
       const retryable = response.status === 429 || response.status >= 500;
       if (!retryable)
         throw new Error(`RETENTION_SOAK_TOKEN_REFRESH_HTTP_${response.status}`);
@@ -186,6 +210,7 @@ export const callRetentionSoakAgent = async (
     fetch?: Fetch;
     idempotencyKey?: () => string;
     monotonicNow?: () => number;
+    requestTimeoutMs?: number;
   }> = {},
 ): Promise<number> => {
   const request = options.fetch ?? fetch;
@@ -194,16 +219,31 @@ export const callRetentionSoakAgent = async (
     options.monotonicNow ?? performance.now.bind(performance);
   const sessionToken = await credentials.token();
   const startedAt = monotonicNow();
-  const response = await request(`${apiUrl}${path}`, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${sessionToken}`,
-      "content-type": "application/json",
-      "idempotency-key": idempotencyKey(),
-    },
-    body: JSON.stringify(payload),
-  });
-  await response.arrayBuffer();
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+  );
+  let response: Response;
+  try {
+    response = await request(`${apiUrl}${path}`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${sessionToken}`,
+        "content-type": "application/json",
+        "idempotency-key": idempotencyKey(),
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    await response.arrayBuffer();
+  } catch {
+    if (controller.signal.aborted)
+      throw new Error("RETENTION_SOAK_ACTIVE_WORKLOAD_TIMEOUT");
+    throw new Error("RETENTION_SOAK_ACTIVE_WORKLOAD_REQUEST_FAILED");
+  } finally {
+    clearTimeout(timeout);
+  }
   if (!response.ok)
     throw new Error(`RETENTION_SOAK_ACTIVE_WORKLOAD_HTTP_${response.status}`);
   return monotonicNow() - startedAt;

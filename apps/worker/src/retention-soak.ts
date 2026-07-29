@@ -98,7 +98,7 @@ export const retentionSoakPreflight = (
   if (
     !Number.isInteger(sampleSeconds) ||
     sampleSeconds < 1 ||
-    sampleSeconds > 3600
+    sampleSeconds > 240
   )
     throw new Error("RETENTION_SOAK_SAMPLE_INTERVAL_INVALID");
   if (!Number.isInteger(redisLimit) || redisLimit < 100)
@@ -313,6 +313,7 @@ export const retentionSoakReport = (
   credentialMetrics: RetentionSoakCredentialMetrics = {
     refreshCount: 0,
     maximumRefreshLatencyMs: 0,
+    expiredBeforeRefreshCount: 0,
   },
 ) => {
   const series = [baseline, ...samples];
@@ -447,6 +448,8 @@ export const retentionSoakReport = (
       maximum((sample) => sample.workload.heartbeats) > 0 &&
       maximum((sample) => sample.workload.activities) > 0,
     tokenRotationExercised: credentialMetrics.refreshCount >= 2,
+    tokenNeverExpiredBeforeRefresh:
+      credentialMetrics.expiredBeforeRefreshCount === 0,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&

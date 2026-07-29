@@ -56,6 +56,80 @@ describe("retention soak credential manager", () => {
     expect(manager.metrics()).toEqual({
       refreshCount: 2,
       maximumRefreshLatencyMs: 10,
+      expiredBeforeRefreshCount: 0,
+    });
+  });
+
+  it("refreshes before expiry at the maximum formal four-minute cadence", async () => {
+    const start = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = start;
+    let tokenNumber = 0;
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: vi.fn<typeof fetch>().mockImplementation(async () =>
+        jsonResponse({
+          sessionToken: `session-${(tokenNumber += 1)}`,
+          expiresAt: new Date(now + 900_000).toISOString(),
+        }),
+      ),
+      now: () => now,
+    });
+
+    await manager.token();
+    for (let elapsed = 240_000; elapsed <= 86_400_000; elapsed += 240_000) {
+      now = start + elapsed;
+      await manager.token();
+    }
+    expect(manager.metrics().refreshCount).toBeGreaterThan(2);
+    expect(manager.metrics().expiredBeforeRefreshCount).toBe(0);
+  });
+
+  it("records an event-loop stall that crosses token expiry", async () => {
+    let now = Date.parse("2026-07-29T00:00:00.000Z");
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: vi.fn<typeof fetch>().mockImplementation(async () =>
+        jsonResponse({
+          sessionToken: `session-${now}`,
+          expiresAt: new Date(now + 900_000).toISOString(),
+        }),
+      ),
+      now: () => now,
+    });
+    await manager.token();
+    now += 900_001;
+    await manager.token();
+    expect(manager.metrics().expiredBeforeRefreshCount).toBe(1);
+  });
+
+  it("records a proactive refresh that completes after the old token expires", async () => {
+    const start = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = start;
+    let requestCount = 0;
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: vi.fn<typeof fetch>().mockImplementation(async () => {
+        requestCount += 1;
+        if (requestCount === 2) now = start + 900_001;
+        return jsonResponse({
+          sessionToken: `session-${requestCount}`,
+          expiresAt: new Date(now + 900_000).toISOString(),
+        });
+      }),
+      now: () => now,
+    });
+    await manager.token();
+    now = start + 720_000;
+    await manager.token();
+    expect(manager.metrics()).toMatchObject({
+      refreshCount: 2,
+      expiredBeforeRefreshCount: 1,
     });
   });
 
@@ -67,7 +141,9 @@ describe("retention soak credential manager", () => {
       .fn<typeof fetch>()
       .mockRejectedValueOnce(new Error("network down"))
       .mockResolvedValueOnce(
-        jsonResponse({ error: {} }, 429, { "retry-after": "999" }),
+        jsonResponse({ error: {} }, 429, {
+          "retry-after": new Date(now + 999_000).toUTCString(),
+        }),
       )
       .mockImplementationOnce(async (_input, init) => {
         keys.push(new Headers(init?.headers).get("idempotency-key") ?? "");
@@ -154,6 +230,30 @@ describe("retention soak credential manager", () => {
         }),
       ).token(),
     ).rejects.toThrow("RETENTION_SOAK_TOKEN_REFRESH_EXPIRY_INVALID");
+  });
+
+  it("bounds a refresh request that does not respond", async () => {
+    const request = vi.fn<typeof fetch>().mockImplementation(
+      async (_input, init) =>
+        await new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () =>
+            reject(new Error("aborted")),
+          );
+        }),
+    );
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: request,
+      requestTimeoutMs: 1,
+      sleep: async () => undefined,
+    });
+
+    await expect(manager.token()).rejects.toThrow(
+      "RETENTION_SOAK_TOKEN_REFRESH_NETWORK_FAILED",
+    );
+    expect(request).toHaveBeenCalledTimes(3);
   });
 
   it("treats workload 401 as terminal without reactive refresh or disclosure", async () => {

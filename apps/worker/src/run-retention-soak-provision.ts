@@ -6,15 +6,22 @@ const required = (value: string | undefined, code: string): string => {
   return value.trim();
 };
 
+const mode = required(
+  process.env.WORKMESH_RETENTION_SOAK_PROVISION_MODE,
+  "RETENTION_SOAK_PROVISION_REQUIRES_MODE",
+);
+if (mode !== "clean_stack" && mode !== "existing_installation")
+  throw new Error("RETENTION_SOAK_PROVISION_MODE_INVALID");
+
 const result = await provisionRetentionSoak({
   apiUrl: required(
     process.env.WORKMESH_RETENTION_SOAK_API_URL,
     "RETENTION_SOAK_PROVISION_REQUIRES_API_URL",
   ),
-  bootstrapToken: required(
-    process.env.WORKMESH_BOOTSTRAP_TOKEN,
-    "RETENTION_SOAK_PROVISION_REQUIRES_BOOTSTRAP_TOKEN",
-  ),
+  mode,
+  bootstrapToken: process.env.WORKMESH_BOOTSTRAP_TOKEN,
+  adminEmail: process.env.WORKMESH_RETENTION_SOAK_ADMIN_EMAIL,
+  adminPassword: process.env.WORKMESH_RETENTION_SOAK_ADMIN_PASSWORD,
   statePath: resolve(
     required(
       process.env.WORKMESH_RETENTION_SOAK_STATE_PATH,

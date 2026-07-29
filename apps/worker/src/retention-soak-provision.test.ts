@@ -1,8 +1,11 @@
-import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rename, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { provisionRetentionSoak } from "./retention-soak-provision.js";
+import {
+  provisionRetentionSoak,
+  type RetentionSoakProvisionOptions,
+} from "./retention-soak-provision.js";
 
 const temporaryDirectories: string[] = [];
 
@@ -14,104 +17,293 @@ afterEach(async () => {
   );
 });
 
-const json = (body: unknown, headers?: HeadersInit): Response =>
-  new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "content-type": "application/json", ...headers },
+type StoredResponse = Readonly<{
+  body: unknown;
+  headers?: Readonly<Record<string, string>>;
+}>;
+
+const response = (stored: StoredResponse, status = 200): Response =>
+  new Response(JSON.stringify(stored.body), {
+    status,
+    headers: { "content-type": "application/json", ...stored.headers },
   });
 
-describe("retention soak provisioning", () => {
-  it("writes only schema v2 restart authority to a private state file", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
-    temporaryDirectories.push(directory);
-    const statePath = join(directory, "session.json");
-    const installationToken = "installation-only-secret";
-    const sessionToken = "temporary-session-secret";
-    const request = vi.fn<typeof fetch>().mockImplementation(async (input) => {
-      const url = new URL(String(input));
-      const path = url.pathname;
-      if (path === "/api/v1/auth/install")
-        return json(
-          { csrfToken: "csrf-secret" },
-          { "set-cookie": "workmesh_session=cookie-secret; Path=/" },
-        );
-      if (path === "/api/v1/auth/me")
-        return json({
-          actor: { id: "actor-id", workspace_id: "workspace-id" },
+class ProvisionServer {
+  readonly counts = new Map<string, number>();
+  readonly replay = new Map<string, StoredResponse>();
+  readonly bodies = new Map<string, Record<string, unknown>>();
+  installed = false;
+  admin: Readonly<{ email: string; password: string }> | undefined;
+  fault: "install" | "registerAgent" | "exchangeToken" | undefined;
+  faultConsumed = false;
+
+  constructor(fault?: ProvisionServer["fault"]) {
+    this.fault = fault;
+  }
+
+  installExisting(email: string, password: string): void {
+    this.installed = true;
+    this.admin = { email, password };
+  }
+
+  readonly fetch = vi
+    .fn<typeof fetch>()
+    .mockImplementation(async (input, init) => {
+      const path = new URL(String(input)).pathname;
+      const method = init?.method ?? "GET";
+      const body = init?.body
+        ? (JSON.parse(String(init.body)) as Record<string, unknown>)
+        : {};
+      const headers = new Headers(init?.headers);
+      const key = headers.get("idempotency-key");
+      if (key && this.replay.has(key)) return response(this.replay.get(key)!);
+
+      if (path === "/api/v1/auth/login") {
+        if (
+          !this.installed ||
+          body.email !== this.admin?.email ||
+          body.password !== this.admin?.password
+        )
+          return response({ body: { error: {} } }, 401);
+        return this.complete("login", key, {
+          body: { csrfToken: "login-csrf" },
+          headers: { "set-cookie": "workmesh_session=login; Path=/" },
         });
-      if (path === "/api/v1/teams") return json({ items: [{ id: "team-id" }] });
+      }
+      if (path === "/api/v1/auth/install") {
+        this.installed = true;
+        this.admin = {
+          email: String(body.email),
+          password: String(body.password),
+        };
+        return this.complete("install", key, {
+          body: { csrfToken: "install-csrf" },
+          headers: { "set-cookie": "workmesh_session=install; Path=/" },
+        });
+      }
+      if (path === "/api/v1/auth/me")
+        return response({
+          body: {
+            actor: { id: "actor-id", workspace_id: "workspace-id" },
+          },
+        });
+      if (path === "/api/v1/teams")
+        return response({ body: { items: [{ id: "team-id" }] } });
       if (path === "/api/v1/teams/team-id/states")
-        return json({ items: [{ id: "ready-id", name: "Ready" }] });
-      if (path === "/api/v1/work-items") return json({ id: "work-item-id" });
-      if (path === "/api/v1/agents/register")
-        return json({ id: "agent-id", installation_token: installationToken });
-      if (path === "/api/v1/agents/agent-id/team-access/team-id")
-        return json({});
-      if (path === "/api/v1/work-items/work-item-id/delegations")
-        return json({ id: "delegation-id" });
-      if (path === "/api/v1/agent-sessions")
-        return json({
-          id: "session-id",
-          exchangeToken: "x".repeat(32),
+        return response({
+          body: { items: [{ id: "ready-id", name: "Ready" }] },
+        });
+      if (path === "/api/v1/work-items") {
+        this.bodies.set("createWorkItem", body);
+        return this.complete("createWorkItem", key, {
+          body: { id: "work-item-id" },
+        });
+      }
+      if (path === "/api/v1/agents/register") {
+        this.bodies.set("registerAgent", body);
+        return this.complete("registerAgent", key, {
+          body: {
+            id: "agent-id",
+            installation_token: "installation-only-secret",
+          },
+        });
+      }
+      if (path === "/api/v1/agents/agent-id/team-access/team-id") {
+        this.bodies.set("grantTeamAccess", body);
+        return this.complete("grantTeamAccess", key, { body: {} });
+      }
+      if (path === "/api/v1/work-items/work-item-id/delegations") {
+        this.bodies.set("createDelegation", body);
+        return this.complete("createDelegation", key, {
+          body: { id: "delegation-id" },
+        });
+      }
+      if (path === "/api/v1/agent-sessions" && method === "POST")
+        return this.complete("createSession", key, {
+          body: { id: "session-id", exchangeToken: "x".repeat(32) },
         });
       if (path === "/api/v1/agent-sessions/session-id/token/exchange")
-        return json({
-          sessionToken,
-          expiresAt: "2026-07-29T00:15:00.000Z",
+        return this.complete("exchangeToken", key, {
+          body: {
+            sessionToken: "temporary-session-secret",
+            expiresAt: "2026-07-29T00:15:00.000Z",
+          },
         });
       if (path === "/api/v1/agent-sessions/session-id/ack")
-        return json({ revision: 1 });
-      if (
-        path === "/api/v1/agent-sessions/session-id/heartbeat" ||
-        path === "/api/v1/agent-sessions/session-id/state"
-      )
-        return json({});
-      return new Response(undefined, { status: 404 });
+        return this.complete("acknowledge", key, { body: { revision: 1 } });
+      if (path === "/api/v1/agent-sessions/session-id/heartbeat")
+        return this.complete("initialHeartbeat", key, { body: {} });
+      if (path === "/api/v1/agent-sessions/session-id/state")
+        return this.complete("transitionExecuting", key, { body: {} });
+      return response({ body: {} }, 404);
     });
 
-    const result = await provisionRetentionSoak({
-      apiUrl: "http://127.0.0.1:3001",
-      bootstrapToken: "bootstrap-secret",
-      statePath,
-      fetch: request,
-      idempotencyKey: () => "provision-idempotency-key",
-      uniqueSuffix: () => "test-run",
-    });
-    const text = await readFile(statePath, "utf8");
-    const state = JSON.parse(text) as Record<string, unknown>;
-    const mode = (await stat(statePath)).mode & 0o777;
+  private complete(
+    operation: string,
+    key: string | null,
+    stored: StoredResponse,
+  ): Response {
+    if (!key) throw new Error(`missing idempotency key for ${operation}`);
+    this.counts.set(operation, (this.counts.get(operation) ?? 0) + 1);
+    this.replay.set(key, stored);
+    if (this.fault === operation && !this.faultConsumed) {
+      this.faultConsumed = true;
+      throw new Error("response lost after commit");
+    }
+    return response(stored);
+  }
+}
 
-    expect(result.state.schemaVersion).toBe(2);
-    expect(state).toEqual({
-      schemaVersion: 2,
-      sessionId: "session-id",
-      installationToken,
-      workspaceId: "workspace-id",
-      teamId: "team-id",
-      workItemId: "work-item-id",
+const privateTestOptions = async (
+  directory: string,
+  server: ProvisionServer,
+  overrides: Partial<RetentionSoakProvisionOptions> = {},
+): Promise<RetentionSoakProvisionOptions> => ({
+  apiUrl: "http://127.0.0.1:3001",
+  bootstrapToken: "bootstrap-secret",
+  statePath: join(directory, "session.json"),
+  mode: "clean_stack",
+  fetch: server.fetch,
+  idempotencyKey: (() => {
+    let key = 0;
+    return () => `operation-key-${(key += 1)}`;
+  })(),
+  uniqueSuffix: () => "test-run",
+  generatedAdminPassword: () => "Soak-recovery-password-Aa1!",
+  platform: "linux",
+  verifyPrivateFile: async () => undefined,
+  replaceFile: async (source, target) => {
+    await rm(target, { force: true });
+    await rename(source, target);
+  },
+  ...overrides,
+});
+
+describe("retention soak provisioning", () => {
+  for (const fault of ["install", "registerAgent", "exchangeToken"] as const) {
+    it(`resumes without duplicates after ${fault} response loss`, async () => {
+      const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
+      temporaryDirectories.push(directory);
+      const server = new ProvisionServer(fault);
+      const options = await privateTestOptions(directory, server);
+
+      await expect(provisionRetentionSoak(options)).rejects.toThrow(
+        "RETENTION_SOAK_PROVISION_REQUEST_FAILED",
+      );
+      const checkpointText = await readFile(options.statePath, "utf8");
+      const checkpoint = JSON.parse(checkpointText) as Record<string, unknown>;
+      expect(checkpoint).toMatchObject({
+        schemaVersion: 1,
+        kind: "checkpoint",
+        admin: {
+          email: "retention-soak-test-run@example.test",
+          password: "Soak-recovery-password-Aa1!",
+        },
+      });
+      expect(checkpointText).not.toContain("installation-only-secret");
+      expect(checkpointText).not.toContain("temporary-session-secret");
+      if (fault !== "install")
+        expect(checkpointText).toContain("workmesh_session=install");
+
+      const result = await provisionRetentionSoak(options);
+      const finalText = await readFile(options.statePath, "utf8");
+      expect(result.state).toEqual({
+        schemaVersion: 2,
+        sessionId: "session-id",
+        installationToken: "installation-only-secret",
+        workspaceId: "workspace-id",
+        teamId: "team-id",
+        workItemId: "work-item-id",
+      });
+      expect(JSON.parse(finalText)).toEqual(result.state);
+      expect(finalText).not.toContain("Soak-recovery-password-Aa1!");
+      expect(finalText).not.toContain("temporary-session-secret");
+      expect(finalText).not.toContain("workmesh_session");
+      for (const count of server.counts.values()) expect(count).toBe(1);
+      if (fault === "install") expect(server.counts.get("login")).toBe(1);
+      else expect(server.counts.get("login")).toBeUndefined();
     });
-    expect(state).not.toHaveProperty("sessionToken");
-    expect(text).not.toContain(sessionToken);
-    if (process.platform !== "win32") expect(mode & 0o077).toBe(0);
-    expect(request).toHaveBeenCalledTimes(13);
+  }
+
+  it("supports an already-installed isolated stack through admin login", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
+    temporaryDirectories.push(directory);
+    const server = new ProvisionServer();
+    server.installExisting("admin@example.test", "existing-password");
+    const options = await privateTestOptions(directory, server, {
+      mode: "existing_installation",
+      bootstrapToken: undefined,
+      adminEmail: "admin@example.test",
+      adminPassword: "existing-password",
+    });
+
+    await expect(provisionRetentionSoak(options)).resolves.toMatchObject({
+      state: { schemaVersion: 2, sessionId: "session-id" },
+    });
+    expect(server.counts.get("install")).toBeUndefined();
+    expect(server.counts.get("login")).toBe(1);
   });
 
-  it("reserves the state path before making provisioning mutations", async () => {
+  it("uses only work:write for the soak Agent and delegation", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
+    temporaryDirectories.push(directory);
+    const server = new ProvisionServer();
+    const options = await privateTestOptions(directory, server);
+    await provisionRetentionSoak(options);
+
+    expect(server.bodies.get("registerAgent")).toMatchObject({
+      requestedCapabilities: ["work:write"],
+      approvedCapabilities: ["work:write"],
+    });
+    expect(server.bodies.get("grantTeamAccess")).toEqual({
+      approvedCapabilities: ["work:write"],
+    });
+    expect(server.bodies.get("createDelegation")).toMatchObject({
+      permissionsSnapshot: ["work:write"],
+      capabilityScope: { capabilities: ["work:write"] },
+    });
+  });
+
+  it("refuses native Windows before persistence or remote access", async () => {
     const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
     temporaryDirectories.push(directory);
     const statePath = join(directory, "session.json");
-    await writeFile(statePath, "existing-state\n", "utf8");
     const request = vi.fn<typeof fetch>();
-
     await expect(
       provisionRetentionSoak({
         apiUrl: "http://127.0.0.1:3001",
         bootstrapToken: "bootstrap-secret",
         statePath,
+        mode: "clean_stack",
         fetch: request,
+        platform: "win32",
       }),
-    ).rejects.toMatchObject({ code: "EEXIST" });
+    ).rejects.toThrow("RETENTION_SOAK_PROVISION_NATIVE_WINDOWS_UNSUPPORTED");
     expect(request).not.toHaveBeenCalled();
-    await expect(readFile(statePath, "utf8")).resolves.toBe("existing-state\n");
+    await expect(stat(statePath)).rejects.toMatchObject({ code: "ENOENT" });
+  });
+
+  it("times out a remote request and retains the private checkpoint", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
+    temporaryDirectories.push(directory);
+    const server = new ProvisionServer();
+    const options = await privateTestOptions(directory, server, {
+      requestTimeoutMs: 1,
+      fetch: vi.fn<typeof fetch>().mockImplementation(
+        async (_input, init) =>
+          await new Promise<Response>((_resolve, reject) => {
+            init?.signal?.addEventListener("abort", () =>
+              reject(new Error("aborted")),
+            );
+          }),
+      ),
+    });
+
+    await expect(provisionRetentionSoak(options)).rejects.toThrow(
+      "RETENTION_SOAK_PROVISION_REQUEST_TIMEOUT",
+    );
+    await expect(readFile(options.statePath, "utf8")).resolves.toContain(
+      '"kind":"checkpoint"',
+    );
   });
 });

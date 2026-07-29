@@ -123,6 +123,12 @@ describe("retention soak harness", () => {
     expect(() =>
       retentionSoakPreflight({
         ...safe,
+        WORKMESH_RETENTION_SOAK_SAMPLE_SECONDS: "241",
+      }),
+    ).toThrow("RETENTION_SOAK_SAMPLE_INTERVAL_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
         WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN: "",
         WORKMESH_RETENTION_SOAK_SESSION_TOKEN: "must-not-be-used",
       }),
@@ -178,7 +184,11 @@ describe("retention soak harness", () => {
         thresholds,
         1,
         ["101"],
-        { refreshCount: 2, maximumRefreshLatencyMs: 120 },
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
       ),
     ).toMatchObject({
       schemaVersion: 3,
@@ -191,11 +201,13 @@ describe("retention soak harness", () => {
         archiveBacklogConverged: true,
         outboxConverged: true,
         tokenRotationExercised: true,
+        tokenNeverExpiredBeforeRefresh: true,
       },
       actual: {
         credentials: {
           refreshCount: 2,
           maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
         },
         generatedCursors: ["101"],
         deltas: {
@@ -241,13 +253,55 @@ describe("retention soak harness", () => {
         thresholds,
         1,
         ["101"],
-        { refreshCount: 1, maximumRefreshLatencyMs: 100 },
+        {
+          refreshCount: 1,
+          maximumRefreshLatencyMs: 100,
+          expiredBeforeRefreshCount: 0,
+        },
       ),
     ).toMatchObject({
       schemaVersion: 3,
       status: "failed",
       checks: { tokenRotationExercised: false },
       actual: { credentials: { refreshCount: 1 } },
+    });
+  });
+
+  it("fails the formal gate if a token expires before refresh", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 100,
+          expiredBeforeRefreshCount: 1,
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { tokenNeverExpiredBeforeRefresh: false },
+      actual: { credentials: { expiredBeforeRefreshCount: 1 } },
     });
   });
 
