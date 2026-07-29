@@ -468,6 +468,7 @@ describe('Stage 2 collaboration API acceptance', () => {
       autoBoundWorkItemDecision.statusCode,
       JSON.stringify(autoBoundWorkItemDecision.json()),
     ).toBe(200)
+    const autoBoundWorkItemDecisionId = autoBoundWorkItemDecision.json<{ id: string }>().id
     expect((await db.query<{
       work_item_id: string
       session_id: string
@@ -478,12 +479,17 @@ describe('Stage 2 collaboration API acceptance', () => {
                 WHERE affected.decision_id=decision.id) AS affected_resource_count
          FROM decisions decision
         WHERE decision.id=$1`,
-      [autoBoundWorkItemDecision.json<{ id: string }>().id],
+      [autoBoundWorkItemDecisionId],
     )).rows[0]).toEqual({
       work_item_id: projectWork.id,
       session_id: source.session.id,
       affected_resource_count: 1,
     })
+    expect((await agentCall(
+      sourceToken,
+      'GET',
+      `/api/v1/decisions/${autoBoundWorkItemDecisionId}`,
+    )).statusCode).toBe(200)
     const beforeForgedDecisionSession = await decisionProjection(source.session.id)
     const forgedDecisionSession = await agentCall(
       sourceToken,
@@ -898,13 +904,19 @@ describe('Stage 2 collaboration API acceptance', () => {
       autoBoundProjectDecision.statusCode,
       JSON.stringify(autoBoundProjectDecision.json()),
     ).toBe(200)
+    const autoBoundProjectDecisionId = autoBoundProjectDecision.json<{ id: string }>().id
     expect((await db.query<{ project_id: string; session_id: string }>(
       'SELECT project_id,session_id FROM decisions WHERE id=$1',
-      [autoBoundProjectDecision.json<{ id: string }>().id],
+      [autoBoundProjectDecisionId],
     )).rows[0]).toEqual({
       project_id: movedProjectId,
       session_id: projectOnlySession.id,
     })
+    expect((await agentCall(
+      projectOnlyToken,
+      'GET',
+      `/api/v1/decisions/${autoBoundProjectDecisionId}`,
+    )).statusCode).toBe(200)
     for (const [token, sessionId] of [
       [sourceToken, source.session.id],
       [projectOnlyToken, projectOnlySession.id],
@@ -983,6 +995,11 @@ describe('Stage 2 collaboration API acceptance', () => {
       { 'if-match': `"revision-${movedProjectData.revision}"` },
     )
     expect(deletedProject.statusCode, JSON.stringify(deletedProject.json())).toBe(200)
+    expect((await agentCall(
+      projectOnlyToken,
+      'GET',
+      `/api/v1/decisions/${autoBoundProjectDecisionId}`,
+    )).statusCode).toBe(404)
     const beforeDeletedProjectDecision = await decisionProjection(projectOnlySession.id)
     const deletedProjectDecision = await agentCall(
       projectOnlyToken,
@@ -1178,6 +1195,11 @@ describe('Stage 2 collaboration API acceptance', () => {
     )
 
     await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [projectWork.id])
+    expect((await agentCall(
+      sourceToken,
+      'GET',
+      `/api/v1/decisions/${autoBoundWorkItemDecisionId}`,
+    )).statusCode).toBe(404)
     const beforeDeletedWorkItemDecision = await decisionProjection(source.session.id)
     const deletedWorkItemDecision = await agentCall(
       sourceToken,

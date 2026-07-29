@@ -764,20 +764,15 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         [actor(request).agentSessionId,actor(request).workspaceId,actor(request).id],
       )).rows[0]
       const allowed=own && (
-        row.session_id===own.id
-        || Boolean(
-          row.work_item_id
-          && own.work_item_exists
-          && row.work_item_id===own.work_item_id,
-        )
-        || Boolean(
-          row.project_id
-          && (
-            own.work_item_id
-              ? own.work_item_exists && row.project_id===own.work_item_project_id
-              : own.project_exists && row.project_id===own.project_id
-          ),
-        )
+        row.work_item_id
+          ? own.work_item_exists && row.work_item_id===own.work_item_id
+          : row.project_id
+            ? (
+                own.work_item_id
+                  ? own.work_item_exists && row.project_id===own.work_item_project_id
+                  : own.project_exists && row.project_id===own.project_id
+              )
+            : row.session_id===own.id
       )
       if(!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED','Decision is outside the agent session scope')
     }
