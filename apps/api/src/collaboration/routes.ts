@@ -960,7 +960,6 @@ async function createDecision(h:Helpers, request:FastifyRequest, subject:Subject
         capability:'work:write',
         operation:'decision',
         idempotencyKey:request.idempotencyKey!,
-        resourceId:subject==='session' ? undefined : subjectId,
       })
       await assertCurrentAgentCredentialInTx(tx,current,decisionSessionId)
       if(body.sessionId && body.sessionId!==decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Decision sessionId must match the authenticated Agent Session')

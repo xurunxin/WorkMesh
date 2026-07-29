@@ -105,7 +105,7 @@ describe('shared Agent mutation resource liveness', () => {
     }
   })
 
-  it('locks current Agent authority before checking the exact Decision subject', async () => {
+  it('locks the Session scope anchor before checking the exact Decision subject', async () => {
     const source = await readFile(new URL('../collaboration/routes.ts', import.meta.url), 'utf8')
     const start = source.indexOf('async function createDecision')
     const end = source.indexOf('\nasync function acquireLease', start)
@@ -117,7 +117,7 @@ describe('shared Agent mutation resource liveness', () => {
     expect(start).toBeGreaterThanOrEqual(0)
     expect(end).toBeGreaterThan(start)
     expect(command).toContain("operation:'decision'")
-    expect(command).toContain("resourceId:subject==='session' ? undefined : subjectId")
+    expect(command).not.toContain('resourceId:')
     expect(sharedGuard).toBeGreaterThanOrEqual(0)
     expect(credentialGuard).toBeGreaterThan(sharedGuard)
     expect(exactSubjectGuard).toBeGreaterThan(credentialGuard)

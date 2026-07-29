@@ -665,6 +665,60 @@ describe('Stage 2 collaboration API acceptance', () => {
       [f.workspaceId, f.teamId, decisionAuthority.agent_id],
     )
 
+    const parentProjectDecision = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/projects/${projectId}/decisions`,
+      {
+        title: 'Record a Decision for the current live parent Project.',
+        rationale: 'A Work Item Session retains its Work Item scope anchor while targeting its exact parent Project.',
+        options: ['continue'],
+        affectedResources: [{
+          resourceType: 'work_item',
+          resourceId: projectWork.id,
+          impact: 'current parent Project',
+        }],
+      },
+    )
+    expect(
+      parentProjectDecision.statusCode,
+      JSON.stringify(parentProjectDecision.json()),
+    ).toBe(200)
+    expect((await db.query<{ project_id: string; session_id: string }>(
+      'SELECT project_id,session_id FROM decisions WHERE id=$1',
+      [parentProjectDecision.json<{ id: string }>().id],
+    )).rows[0]).toEqual({
+      project_id: projectId,
+      session_id: source.session.id,
+    })
+
+    const otherProject = await humanCall(f.human, 'POST', '/api/v1/projects', {
+      teamId: f.teamId,
+      name: 'Not the current parent Project',
+    })
+    expect(otherProject.statusCode, JSON.stringify(otherProject.json())).toBe(200)
+    const beforeOtherProjectDecision = await decisionProjection(source.session.id)
+    const otherProjectDecision = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/projects/${otherProject.json<{ id: string }>().id}/decisions`,
+      {
+        title: 'Do not authorize another Project.',
+        rationale: 'The Session Work Item scope anchor does not expand exact subject scope.',
+        options: ['reject'],
+        affectedResources: [{
+          resourceType: 'work_item',
+          resourceId: projectWork.id,
+          impact: 'must remain absent',
+        }],
+      },
+    )
+    expect(otherProjectDecision.statusCode).toBe(403)
+    expect(otherProjectDecision.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
+    expect(await decisionProjection(source.session.id)).toEqual(beforeOtherProjectDecision)
+
     const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)
     const channelId = projectRoom.json<{ id: string }>().id
@@ -1179,6 +1233,27 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(await decisionProjection(projectOnlySession.id)).toEqual(
       beforeDeletedProjectDecision,
     )
+    const beforeDeletedParentDecision = await decisionProjection(source.session.id)
+    const deletedParentDecision = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/projects/${movedProjectId}/decisions`,
+      {
+        title: 'A deleted parent Project cannot accept a Work Item Session Decision.',
+        rationale: 'The locked Session facts no longer expose a live exact parent Project.',
+        options: ['reject'],
+        affectedResources: [{
+          resourceType: 'work_item',
+          resourceId: projectWork.id,
+          impact: 'must remain absent',
+        }],
+      },
+    )
+    expect(deletedParentDecision.statusCode).toBe(404)
+    expect(deletedParentDecision.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'NOT_FOUND' },
+    })
+    expect(await decisionProjection(source.session.id)).toEqual(beforeDeletedParentDecision)
 
     for (const token of [sourceToken, projectOnlyToken]) {
       const projects = await agentCall(token, 'GET', '/api/v1/projects')
