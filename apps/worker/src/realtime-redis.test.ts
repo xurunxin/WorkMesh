@@ -78,15 +78,141 @@ describe('Redis realtime wake hints', () => {
     expect(redisReconnectDelay(100)).toBe(2_000)
   })
 
+  it('awaits and reuses the initial connection before probing Redis', async () => {
+    let isOpen = false
+    let isReady = false
+    let finishConnect: (() => void) | undefined
+    const ping = vi.fn(async () => 'PONG')
+    const connect = vi.fn(() => {
+      isOpen = true
+      return new Promise<void>((resolve) => {
+        finishConnect = () => {
+          isReady = true
+          resolve()
+        }
+      })
+    })
+    const fake = {
+      get isOpen() { return isOpen },
+      get isReady() { return isReady },
+      on: vi.fn(),
+      connect,
+      xAdd: vi.fn(async () => '1-0'),
+      ping,
+      quit: vi.fn(async () => 'OK'),
+    } as unknown as RedisStreamClient
+    const sink = new RedisStreamSink({
+      redisUrl: 'redis://unused.test:6379',
+      maxLen: 5_000,
+      client: fake,
+    })
+
+    const firstProbe = sink.probe()
+    const secondProbe = sink.probe()
+    await vi.waitFor(() => expect(connect).toHaveBeenCalledOnce())
+
+    expect(ping).not.toHaveBeenCalled()
+    finishConnect?.()
+    await Promise.all([firstProbe, secondProbe])
+
+    expect(connect).toHaveBeenCalledOnce()
+    expect(ping).toHaveBeenCalledTimes(2)
+  })
+
+  it('reports a stable failed-connect error and permits a later probe retry', async () => {
+    const connect = vi.fn(async () => {
+      throw new Error('redis://user:secret@redis.internal:6379')
+    })
+    const ping = vi.fn(async () => 'PONG')
+    const fake = {
+      isOpen: false,
+      isReady: false,
+      on: vi.fn(),
+      connect,
+      xAdd: vi.fn(async () => '1-0'),
+      ping,
+      quit: vi.fn(async () => 'OK'),
+    } as unknown as RedisStreamClient
+    const sink = new RedisStreamSink({
+      redisUrl: 'redis://unused.test:6379',
+      maxLen: 5_000,
+      client: fake,
+    })
+
+    await expect(sink.probe()).rejects.toThrow(
+      'REDIS_STREAM_CONNECT_FAILED',
+    )
+    await expect(sink.probe()).rejects.toThrow(
+      'REDIS_STREAM_CONNECT_FAILED',
+    )
+
+    expect(connect).toHaveBeenCalledTimes(2)
+    expect(ping).not.toHaveBeenCalled()
+  })
+
+  it('times out probes without duplicating a hanging connect and retries after it settles', async () => {
+    let isReady = false
+    let connectAttempt = 0
+    let finishFirstConnect: (() => void) | undefined
+    const connect = vi.fn(() => {
+      connectAttempt += 1
+      if (connectAttempt === 1) {
+        return new Promise<void>((resolve) => {
+          finishFirstConnect = resolve
+        })
+      }
+      isReady = true
+      return Promise.resolve()
+    })
+    const ping = vi.fn(async () => 'PONG')
+    const fake = {
+      isOpen: false,
+      get isReady() { return isReady },
+      on: vi.fn(),
+      connect,
+      xAdd: vi.fn(async () => '1-0'),
+      ping,
+      quit: vi.fn(async () => 'OK'),
+    } as unknown as RedisStreamClient
+    const sink = new RedisStreamSink({
+      redisUrl: 'redis://unused.test:6379',
+      maxLen: 5_000,
+      connectTimeoutMs: 10,
+      client: fake,
+    })
+
+    await expect(sink.probe()).rejects.toThrow(
+      'REDIS_STREAM_CONNECT_TIMEOUT',
+    )
+    await expect(sink.deliver(event())).rejects.toThrow(
+      'REDIS_STREAM_NOT_READY',
+    )
+    await expect(sink.probe()).rejects.toThrow(
+      'REDIS_STREAM_CONNECT_TIMEOUT',
+    )
+
+    expect(connect).toHaveBeenCalledOnce()
+    expect(ping).not.toHaveBeenCalled()
+
+    finishFirstConnect?.()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    await sink.probe()
+
+    expect(connect).toHaveBeenCalledTimes(2)
+    expect(ping).toHaveBeenCalledOnce()
+  })
+
   it('fast-fails while an open Redis client is not ready', async () => {
-    const connect = vi.fn(async () => undefined)
+    const connect = vi.fn(() => new Promise<void>(() => undefined))
     const xAdd = vi.fn(async () => '1-0')
+    const ping = vi.fn(async () => 'PONG')
     const fake = {
       isOpen: true,
       isReady: false,
       on: vi.fn(),
       connect,
       xAdd,
+      ping,
       quit: vi.fn(async () => 'OK'),
     } as unknown as RedisStreamClient
     const sink = new RedisStreamSink({
@@ -100,8 +226,12 @@ describe('Redis realtime wake hints', () => {
     await expect(sink.deliver(event())).rejects.toThrow(
       'REDIS_STREAM_NOT_READY',
     )
+    await expect(sink.probe()).rejects.toThrow(
+      'REDIS_STREAM_NOT_READY',
+    )
     expect(connect).not.toHaveBeenCalled()
     expect(xAdd).not.toHaveBeenCalled()
+    expect(ping).not.toHaveBeenCalled()
   })
 
   it('clears a failed connect attempt so a later delivery retries', async () => {

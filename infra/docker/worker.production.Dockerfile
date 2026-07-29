@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1.7
+FROM node:22.17.1-alpine3.22 AS build
+ENV COREPACK_HOME=/opt/corepack
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /workspace
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY scripts ./scripts
+COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
+RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked \
+    pnpm install --frozen-lockfile --store-dir /pnpm/store
+RUN pnpm --filter @workmesh/worker... build \
+    && pnpm --filter @workmesh/worker --prod deploy /out \
+    && node infra/docker/prepare-production-deploy.mjs /out
+
+FROM node:22.17.1-alpine3.22 AS runtime
+ARG WORKMESH_BUILD_SHA
+RUN test -n "$WORKMESH_BUILD_SHA" \
+    && echo "$WORKMESH_BUILD_SHA" | grep -Eq '^[0-9a-f]{40}$' \
+    && addgroup -S -g 10001 workmesh \
+    && adduser -S -D -H -u 10001 -G workmesh workmesh
+WORKDIR /app
+COPY --from=build --chown=10001:10001 /out ./
+COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.mjs ./
+RUN chmod 0555 /app/entrypoint.sh
+ENV NODE_ENV=production WORKMESH_SERVICE=worker WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA \
+    WORKER_HEALTH_HOST=0.0.0.0 WORKER_HEALTH_PORT=3003
+LABEL org.opencontainers.image.revision=$WORKMESH_BUILD_SHA \
+      org.opencontainers.image.title="WorkMesh Worker"
+USER 10001:10001
+EXPOSE 3003
+STOPSIGNAL SIGTERM
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["node", "dist/index.js"]
+HEALTHCHECK --interval=10s --timeout=3s --retries=6 CMD ["node", "/app/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
