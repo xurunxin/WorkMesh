@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+const root = resolve(import.meta.dirname, "..");
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
   throw new Error(
@@ -12,6 +13,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
 
 const timestamp = new Date().toISOString().replaceAll(":", "-");
 const reportDirectory = resolve(
+  root,
   process.env.HEARTBEAT_LOAD_REPORT_DIRECTORY
     ?? `.tmp/heartbeat-load/${timestamp}`,
 );
@@ -36,7 +38,7 @@ const result = spawnSync(
     "keeps steady heartbeats bounded",
   ],
   {
-    cwd: process.cwd(),
+    cwd: root,
     env: {
       ...process.env,
       RUN_HEARTBEAT_LOAD: "1",
