@@ -22,6 +22,7 @@ export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence }
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
+const REDIS_INITIAL_CONNECT_TIMEOUT_MS = 2_000
 
 export type ClaimedEvent = {
   id: string
@@ -74,6 +75,7 @@ export type RedisStreamSinkOptions = Readonly<{
   redisUrl?: string
   maxLen?: number
   client?: RedisStreamClient
+  connectTimeoutMs?: number
   logConnectionError?: (entry: RedisConnectionErrorLog) => void
   now?: () => number
 }>
@@ -167,7 +169,8 @@ export const createRedisConnectionObserver = ({
 export class RedisStreamSink implements DeliverySink {
   readonly #client: RedisStreamClient
   readonly #maxLen: number
-  #connecting: Promise<unknown> | undefined
+  readonly #connectTimeoutMs: number
+  #connecting: Promise<void> | undefined
 
   constructor(options: RedisStreamSinkOptions = {}) {
     const runtime = options.redisUrl && options.maxLen
@@ -183,6 +186,10 @@ export class RedisStreamSink implements DeliverySink {
           reconnectStrategy: redisReconnectDelay,
         },
       }) as unknown as RedisStreamClient)
+    this.#connectTimeoutMs = Math.min(
+      REDIS_INITIAL_CONNECT_TIMEOUT_MS,
+      Math.max(1, options.connectTimeoutMs ?? REDIS_INITIAL_CONNECT_TIMEOUT_MS),
+    )
     const observer = createRedisConnectionObserver({
       log: options.logConnectionError,
       now: options.now,
@@ -191,20 +198,45 @@ export class RedisStreamSink implements DeliverySink {
     this.#client.on('ready', observer.ready)
   }
 
-  #startConnecting(): void {
-    if (this.#client.isOpen || this.#connecting) return
-    const connecting = this.#client.connect()
-    this.#connecting = connecting
-    void connecting
-      .catch(() => undefined)
+  #startConnecting(): Promise<void> | undefined {
+    if (this.#connecting) return this.#connecting
+    if (this.#client.isOpen) return undefined
+
+    const connecting = Promise.resolve()
+      .then(() => this.#client.connect())
+      .then(
+        () => undefined,
+        () => {
+          throw new Error('REDIS_STREAM_CONNECT_FAILED')
+        },
+      )
       .finally(() => {
         if (this.#connecting === connecting) this.#connecting = undefined
       })
+    this.#connecting = connecting
+    void connecting.catch(() => undefined)
+    return connecting
+  }
+
+  async #waitForConnecting(connecting: Promise<void>): Promise<void> {
+    let timeout: ReturnType<typeof setTimeout> | undefined
+    try {
+      await Promise.race([
+        connecting,
+        new Promise<never>((_resolve, reject) => {
+          timeout = setTimeout(() => {
+            reject(new Error('REDIS_STREAM_CONNECT_TIMEOUT'))
+          }, this.#connectTimeoutMs)
+        }),
+      ])
+    } finally {
+      if (timeout) clearTimeout(timeout)
+    }
   }
 
   async deliver(event: ClaimedEvent): Promise<void> {
     if (!this.#client.isReady) {
-      this.#startConnecting()
+      void this.#startConnecting()
       throw new Error('REDIS_STREAM_NOT_READY')
     }
     await this.#client.xAdd(STREAM_KEY, '*', {
@@ -225,8 +257,10 @@ export class RedisStreamSink implements DeliverySink {
 
   async probe(): Promise<void> {
     if (!this.#client.isReady) {
-      this.#startConnecting()
-      throw new Error('REDIS_STREAM_NOT_READY')
+      const connecting = this.#startConnecting()
+      if (!connecting) throw new Error('REDIS_STREAM_NOT_READY')
+      await this.#waitForConnecting(connecting)
+      if (!this.#client.isReady) throw new Error('REDIS_STREAM_NOT_READY')
     }
     await this.#client.ping()
   }
