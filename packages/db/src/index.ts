@@ -7,6 +7,8 @@ import { defaultStates } from '@workmesh/domain'
 export * from './schema.js'
 export * from './events.js'
 export * from './event-resources.js'
+export * from './agent-locks.js'
+export * from './agent-lock-order-manifest.js'
 import { appendEvent } from './events.js'
 
 export type Db = Pool

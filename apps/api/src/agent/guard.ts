@@ -1,4 +1,5 @@
 import type { PoolClient } from "pg";
+import { lockAgentAuthorityPlan } from "@workmesh/db";
 import { authorizeAgentMutation, DomainError } from "@workmesh/domain";
 import type { Capability } from "@workmesh/contracts";
 import type { ApiActor } from "./types.js";
@@ -13,6 +14,11 @@ type SessionLocator = {
   agent_id: string
   delegation_id: string
   team_id: string
+  work_item_id: string | null
+  project_id: string | null
+  work_item_project_id: string | null
+  session_token_id: string | null
+  installation_token_id: string | null
 }
 
 const inactiveAuthority = (): never => {
@@ -59,7 +65,7 @@ export async function assertCurrentAgentCredentialInTx(
         AND expires_at>now()
         AND exchanged_at IS NOT NULL
         AND revoked_at IS NULL
-      FOR UPDATE`,
+      `,
     [sessionId, actor.credentialHash],
   )
   if (!credential.rowCount) {
@@ -68,18 +74,55 @@ export async function assertCurrentAgentCredentialInTx(
 }
 
 export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
-  // Locate immutable authority keys without taking a lock, then acquire every
-  // authority lock in the same order used by Team-grant revocation:
-  // definition -> exact durable Team grant -> delegation -> session.
+  if (
+    actor.kind !== 'agent'
+    || actor.agentSessionId !== sessionId
+    || !actor.credentialHash
+  ) {
+    throw new DomainError('UNAUTHENTICATED', 'An active Agent Session credential is required')
+  }
+  // This locator may discover only identifiers and immutable routing keys.
+  // No authority, capability, state, or protected resource payload is consumed
+  // until the complete plan has been locked and every binding is re-read.
   const locator = (await tx.query<SessionLocator>(
-    `SELECT agent_id,delegation_id,team_id
-     FROM agent_sessions
-     WHERE id=$1 AND workspace_id=$2`,
-    [sessionId, actor.workspaceId],
+    `SELECT session.agent_id,session.delegation_id,session.team_id,
+            session.work_item_id,session.project_id,
+            item.project_id AS work_item_project_id,
+            credential.id AS session_token_id,
+            credential.installation_token_id
+       FROM agent_sessions session
+       LEFT JOIN work_items item
+         ON item.id=session.work_item_id
+        AND item.workspace_id=session.workspace_id
+       LEFT JOIN agent_session_tokens credential
+         ON credential.session_id=session.id
+        AND credential.token_hash=$3
+      WHERE session.id=$1 AND session.workspace_id=$2`,
+    [sessionId, actor.workspaceId, actor.credentialHash],
   )).rows[0]
   if (!locator) {
     throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
   }
+
+  await lockAgentAuthorityPlan(tx, {
+    definitionIds: [locator.agent_id],
+    teamGrants: [{
+      workspaceId: actor.workspaceId,
+      agentId: locator.agent_id,
+      teamId: locator.team_id,
+    }],
+    delegationIds: [locator.delegation_id],
+    sessionIds: [sessionId],
+    sessionTokenIds: locator.session_token_id ? [locator.session_token_id] : [],
+    installationTokenIds: locator.installation_token_id
+      ? [locator.installation_token_id]
+      : [],
+    workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
+    projectIds: [
+      ...(locator.project_id ? [locator.project_id] : []),
+      ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
+    ],
+  })
 
   const definition = (await tx.query<{
     is_active: boolean
@@ -87,8 +130,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   }>(
     `SELECT is_active,approved_capabilities
      FROM agent_definitions
-     WHERE id=$1 AND workspace_id=$2
-     FOR UPDATE`,
+     WHERE id=$1 AND workspace_id=$2`,
     [locator.agent_id, actor.workspaceId],
   )).rows[0]
   if (!definition) return inactiveAuthority()
@@ -101,8 +143,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   }>(
     `SELECT approved_capabilities,revoked_at
      FROM agent_team_access
-     WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
-     FOR UPDATE`,
+     WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
     [actor.workspaceId, locator.agent_id, locator.team_id],
   )).rows[0]
   if (!teamGrant) return inactiveAuthority()
@@ -114,8 +155,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   }>(
     `SELECT permissions_snapshot,capability_scope,status
      FROM delegations
-     WHERE id=$1 AND workspace_id=$2 AND agent_id=$3 AND team_id=$4
-     FOR UPDATE`,
+     WHERE id=$1 AND workspace_id=$2 AND agent_id=$3 AND team_id=$4`,
     [
       locator.delegation_id,
       actor.workspaceId,
@@ -143,7 +183,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
       FROM agent_sessions
       WHERE id=$1 AND workspace_id=$2 AND agent_id=$3
         AND delegation_id=$4 AND team_id=$5
-      FOR UPDATE`,
+      `,
     [
       sessionId,
       actor.workspaceId,
@@ -161,7 +201,49 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
   // a concurrent Work Item reparent or Project deletion can commit after an
   // unlocked scalar subquery and leave this transaction writing with stale
   // scope.
-  await assertCurrentAgentCredentialInTx(tx, actor, sessionId)
+  if (
+    session.agent_id !== locator.agent_id
+    || session.delegation_id !== locator.delegation_id
+    || session.team_id !== locator.team_id
+    || session.work_item_id !== locator.work_item_id
+    || session.project_id !== locator.project_id
+  ) {
+    return inactiveAuthority()
+  }
+  const credential = locator.session_token_id
+    ? (await tx.query<{
+        installation_token_id: string
+        expires_at: Date
+        exchanged_at: Date | null
+        revoked_at: Date | null
+      }>(
+        `SELECT installation_token_id,expires_at,exchanged_at,revoked_at
+           FROM agent_session_tokens
+          WHERE id=$1 AND session_id=$2 AND token_hash=$3`,
+        [locator.session_token_id, sessionId, actor.credentialHash],
+      )).rows[0]
+    : undefined
+  const installation = locator.installation_token_id
+    ? (await tx.query<{ agent_id: string; expires_at: Date | null; revoked_at: Date | null }>(
+        `SELECT agent_id,expires_at,revoked_at
+           FROM agent_installation_tokens
+          WHERE id=$1`,
+        [locator.installation_token_id],
+      )).rows[0]
+    : undefined
+  if (
+    !credential
+    || credential.installation_token_id !== locator.installation_token_id
+    || credential.revoked_at
+    || !credential.exchanged_at
+    || credential.expires_at <= new Date()
+    || !installation
+    || installation.agent_id !== locator.agent_id
+    || installation.revoked_at
+    || (installation.expires_at && installation.expires_at <= new Date())
+  ) {
+    throw new DomainError('UNAUTHENTICATED', 'The Agent Session credential was revoked or expired')
+  }
   let workItemExists = false
   let workItemProjectId: string | null = null
   let projectExists = false
@@ -169,8 +251,7 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
     const workItem = (await tx.query<{ project_id: string | null }>(
       `SELECT project_id
        FROM work_items
-       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
-       FOR UPDATE`,
+       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
       [session.work_item_id, actor.workspaceId],
     )).rows[0]
     workItemExists = Boolean(workItem)
@@ -178,18 +259,19 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
       const project = (await tx.query<{ id: string }>(
         `SELECT id
          FROM projects
-         WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
-         FOR UPDATE`,
+         WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
         [workItem.project_id, actor.workspaceId],
       )).rows[0]
       workItemProjectId = project?.id ?? null
+      if (workItem.project_id !== locator.work_item_project_id) {
+        return inactiveAuthority()
+      }
     }
   } else if (session.project_id) {
     projectExists = Boolean((await tx.query(
       `SELECT id
        FROM projects
-       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
-       FOR UPDATE`,
+       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
       [session.project_id, actor.workspaceId],
     )).rows[0])
   }

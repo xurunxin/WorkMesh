@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { PoolClient } from 'pg'
 import { DomainError, assertLoopAdmission, dryRunAutomation, evaluateAutomationCondition } from '@workmesh/domain'
 import { appendEvent } from './index.js'
+import { lockAgentAuthorityPlan } from './agent-locks.js'
 
 type AutomationCondition = Parameters<typeof evaluateAutomationCondition>[0]
 type AutomationAction = Parameters<typeof dryRunAutomation>[1][number]
@@ -292,6 +293,43 @@ export async function admitLoopRun(
     notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<{ runId: string; sessionId: string; duplicate: boolean }> {
+  const loopLocator = (await tx.query<{
+    agent_id: string
+    workspace_id: string
+    team_id: string | null
+    project_id: string | null
+  }>(
+    `SELECT agent_id,workspace_id,team_id,project_id
+       FROM loops
+      WHERE id=$1 AND workspace_id=$2`,
+    [input.loopId,input.meta.workspaceId],
+  )).rows[0]
+  if (!loopLocator) throw new Error('LOOP_NOT_FOUND')
+  let locatorTeamId=loopLocator.team_id
+  if (!locatorTeamId && loopLocator.project_id) {
+    locatorTeamId=(await tx.query<{team_id:string}>(
+      'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2',
+      [loopLocator.project_id,loopLocator.workspace_id],
+    )).rows[0]?.team_id??null
+  }
+  if (!locatorTeamId) {
+    locatorTeamId=(await tx.query<{team_id:string}>(
+      `SELECT team_id FROM agent_team_access
+        WHERE workspace_id=$1 AND agent_id=$2
+        ORDER BY created_at,team_id LIMIT 1`,
+      [loopLocator.workspace_id,loopLocator.agent_id],
+    )).rows[0]?.team_id??null
+  }
+  if (!locatorTeamId) throw new Error('LOOP_TEAM_SCOPE_REQUIRED')
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[loopLocator.agent_id],
+    teamGrants:[{
+      workspaceId:loopLocator.workspace_id,
+      agentId:loopLocator.agent_id,
+      teamId:locatorTeamId,
+    }],
+    projectIds:loopLocator.project_id?[loopLocator.project_id]:[],
+  })
   const loop = (await tx.query<LoopRow>(
     `SELECT loop.*,agent.actor_id AS agent_actor_id,agent.approved_capabilities,
             template.body AS template_body
@@ -302,6 +340,12 @@ export async function admitLoopRun(
     [input.loopId, input.meta.workspaceId],
   )).rows[0]
   if (!loop) throw new Error('LOOP_NOT_FOUND')
+  if (
+    loop.agent_id!==loopLocator.agent_id
+    || loop.workspace_id!==loopLocator.workspace_id
+    || loop.team_id!==loopLocator.team_id
+    || loop.project_id!==loopLocator.project_id
+  ) throw new Error('LOOP_AUTHORITY_BINDING_CHANGED')
   if (loop.state !== 'active') throw new Error('LOOP_NOT_ACTIVE')
   let teamId = loop.team_id
   if (!teamId && loop.project_id) {
@@ -372,7 +416,7 @@ export async function admitLoopRun(
 
   const teamGrant = (await tx.query<{ approved_capabilities: string[] }>(
     `SELECT approved_capabilities FROM agent_team_access
-      WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL FOR UPDATE`,
+      WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL`,
     [loop.workspace_id, loop.agent_id, teamId],
   )).rows[0]
   if (!teamGrant) throw new Error('LOOP_AGENT_TEAM_ACCESS_REVOKED')
@@ -744,6 +788,28 @@ export async function executeAutomationAction(
       ? parameters.principalHumanActorId
       : authority.actor_id
     const requestedCapabilities = stringArray(parameters.capabilities)
+    const targetLocator=(await tx.query<{team_id:string;project_id:string|null}>(
+      `SELECT team_id,project_id FROM work_items
+        WHERE id=$1 AND workspace_id=$2`,
+      [workItemId,authority.workspace_id],
+    )).rows[0]
+    if(!targetLocator) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const activeTargetSessionIds=(await tx.query<{id:string}>(
+      `SELECT id FROM agent_sessions
+        WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')`,
+      [agentId],
+    )).rows.map(row=>row.id)
+    await lockAgentAuthorityPlan(tx,{
+      definitionIds:[agentId],
+      teamGrants:[{
+        workspaceId:authority.workspace_id,
+        agentId,
+        teamId:targetLocator.team_id,
+      }],
+      sessionIds:activeTargetSessionIds,
+      workItemIds:[workItemId],
+      projectIds:targetLocator.project_id?[targetLocator.project_id]:[],
+    })
     const target = (await tx.query<{
       team_id: string
       project_id: string | null
@@ -761,11 +827,12 @@ export async function executeAutomationAction(
            AND access.agent_id=agent.id AND access.team_id=item.team_id AND access.revoked_at IS NULL
          JOIN actors principal ON principal.id=$4 AND principal.workspace_id=item.workspace_id
            AND principal.kind='human' AND principal.is_active
-        WHERE item.id=$1 AND item.workspace_id=$2 AND item.deleted_at IS NULL
-        FOR UPDATE OF item`,
+        WHERE item.id=$1 AND item.workspace_id=$2 AND item.deleted_at IS NULL`,
       [workItemId, authority.workspace_id, agentId, principalHumanActorId],
     )).rows[0]
     if (!target || (authority.team_id && target.team_id !== authority.team_id))
+      throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    if(target.team_id!==targetLocator.team_id||target.project_id!==targetLocator.project_id)
       throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     if (!target.responsible_human_actor_id) throw new Error('RESPONSIBLE_HUMAN_REQUIRED')
     if (!requestedCapabilities.every(capability =>
