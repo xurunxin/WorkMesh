@@ -20,6 +20,7 @@ import {
   withDeadline,
   type SseConnection,
 } from "./sse.js";
+import { waitForHostApiReadiness } from "./readiness.js";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(
@@ -1119,6 +1120,26 @@ try {
     "api_a",
     "api_b",
   );
+  const readinessStarted = performance.now();
+  const apiReadiness = [];
+  for (const [name, endpoint] of [
+    ["api-a", apiA],
+    ["api-b", apiB],
+  ] as const) {
+    const remainingMs = Math.max(
+      1,
+      parameters.composeTimeoutMs - (performance.now() - readinessStarted),
+    );
+    apiReadiness.push(
+      await waitForHostApiReadiness({
+        endpoint,
+        context: `${activePhase}:${name}-host`,
+        timeoutMs: remainingMs,
+        attemptTimeoutMs: Math.min(parameters.requestTimeoutMs, 2_000),
+      }),
+    );
+  }
+  report.platform.apiReadiness = apiReadiness;
   await compose(
     "exec",
     "-T",
