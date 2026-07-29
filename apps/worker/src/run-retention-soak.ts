@@ -9,6 +9,7 @@ import { resolve } from "node:path";
 import { createClient } from "redis";
 import { createDb } from "@workmesh/db";
 import {
+  retentionSoakActivityPayload,
   retentionSoakPreflight,
   retentionSoakReport,
   type RetentionSoakSample,
@@ -279,14 +280,7 @@ try {
       ).rows[0]!.cursor;
       activityLatencyMs = await callAgent(
         `/api/v1/agent-sessions/${options.sessionId}/activities`,
-        {
-          kind: "progress",
-          summary: "Retention soak workload pulse",
-          artifactIds: [],
-          references: [],
-          visibility: "team",
-          ephemeral: false,
-        },
+        retentionSoakActivityPayload,
       );
       const generatedCursor = await backdateNewActivityEvent(cursorBefore);
       generatedEventCursors.push(generatedCursor);

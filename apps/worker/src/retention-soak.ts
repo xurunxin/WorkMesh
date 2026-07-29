@@ -1,3 +1,14 @@
+import { appendActivityInputSchema } from "@workmesh/contracts";
+
+export const retentionSoakActivityPayload = appendActivityInputSchema.parse({
+  kind: "status",
+  summary: "Retention soak workload pulse",
+  artifactIds: [],
+  references: [],
+  visibility: "team",
+  ephemeral: false,
+});
+
 export type RetentionSoakThresholds = Readonly<{
   maximumArchiveBacklog: number;
   maximumArchiveLatencyMs: number;

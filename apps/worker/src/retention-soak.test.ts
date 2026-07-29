@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { appendActivityInputSchema } from "@workmesh/contracts";
 import {
+  retentionSoakActivityPayload,
   retentionSoakPreflight,
   retentionSoakReport,
   type RetentionSoakSample,
@@ -82,6 +84,17 @@ const sample = (
 });
 
 describe("retention soak harness", () => {
+  it("uses a contract-valid durable activity pulse", () => {
+    expect(appendActivityInputSchema.safeParse(
+      retentionSoakActivityPayload,
+    ).success).toBe(true);
+    expect(retentionSoakActivityPayload).toMatchObject({
+      kind: "status",
+      visibility: "team",
+      ephemeral: false,
+    });
+  });
+
   it("requires a formal 24-hour archive-only isolated workload", () => {
     expect(retentionSoakPreflight(safe)).toMatchObject({
       durationMs: 86_400_000,
