@@ -65,6 +65,22 @@ locked object version and requires rejection; verifies readback again; and
 removes the temporary schema. Its timestamped report contains no object key,
 Workspace ID, Session ID, or credentials.
 
+The restart/contention gate defaults to a non-mutating dry run:
+
+```text
+RUN_INTEGRATION=1
+DATABASE_URL=postgres://.../workmesh_test_retention_acceptance
+pnpm test:acceptance:retention
+```
+
+After reviewing the timestamped plan, run it against the isolated production
+Compose acceptance stack with `-- --execute`. The executable gate never builds
+or pushes images. It first runs the real restore/Object Lock rehearsal, then
+restarts Redis, API, and Worker and waits for healthy state. It runs the
+committed-claim/outbox recovery, dual-Worker fencing, stale-owner rejection,
+protected-row, and pre-header/live `CURSOR_EXPIRED` integration gates and
+writes a sanitized final report.
+
 Undelivered or missing outbox proof blocks archival at that cursor. Unknown
 events, A2A references, Agent webhook references, and audit/recovery facts stay
 physically present but may fall below the realtime floor after their complete

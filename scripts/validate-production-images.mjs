@@ -81,6 +81,30 @@ assert(
   compose.services.postgres.healthcheck?.test?.some(value => value.includes('pg_isready -h 127.0.0.1')),
   'PostgreSQL readiness must use TCP so the temporary init server cannot satisfy it',
 )
+assert(
+  source.includes('mc mb --with-lock --ignore-existing'),
+  'production MinIO bucket creation must enable Object Lock at creation time',
+)
+const retentionEnvironment = compose.services.worker.environment
+assert(
+  retentionEnvironment.WORKMESH_RETENTION_ARCHIVE_ENABLED === 'true',
+  'production Worker must always enable retention archival',
+)
+assert(
+  retentionEnvironment.WORKMESH_RETENTION_CLEANUP_ENABLED === 'false',
+  'production Worker must keep cleanup disabled for the initial GA soak',
+)
+assert(
+  retentionEnvironment.WORKMESH_EVENT_PRUNE_ENABLED === 'false',
+  'production Worker must keep event pruning disabled for the initial GA soak',
+)
+for (const name of [
+  'WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS',
+  'WORKMESH_RETENTION_IO_TIMEOUT_SECONDS',
+  'WORKMESH_RETENTION_PROGRESS_STALE_SECONDS',
+]) {
+  assert(retentionEnvironment[name], `production Worker must configure ${name}`)
+}
 
 for (const name of hardenedServices) {
   const service = compose.services[name]
@@ -210,6 +234,13 @@ const agentProfile = spawnSync('docker', [
 })
 assert(agentProfile.status === 0, 'production Compose must render the agent profile with empty optional credentials')
 const renderedAgent = JSON.parse(agentProfile.stdout)
+const renderedRetention = renderedAgent.services.worker.environment
+assert(
+  renderedRetention.WORKMESH_RETENTION_ARCHIVE_ENABLED === 'true'
+    && renderedRetention.WORKMESH_RETENTION_CLEANUP_ENABLED === 'false'
+    && renderedRetention.WORKMESH_EVENT_PRUNE_ENABLED === 'false',
+  'rendered production Worker must remain archive-only',
+)
 assert(renderedAgent.services.mcp.environment.WORKMESH_SESSION_TOKEN === '', 'missing MCP Session Token must render as empty')
 assert(renderedAgent.services.mcp.environment.WORKMESH_MCP_ACCESS_TOKEN === '', 'missing MCP access token must render as empty')
 assert(spawnSync(process.execPath, [guard], {
