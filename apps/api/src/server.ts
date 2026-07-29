@@ -190,6 +190,10 @@ async function assertReadableTeam(
           AND team_access.agent_id=session.agent_id
           AND team_access.team_id=session.team_id
           AND team_access.revoked_at IS NULL
+          LEFT JOIN projects session_project
+            ON session_project.id=session.project_id
+           AND session_project.workspace_id=session.workspace_id
+           AND session_project.deleted_at IS NULL
         WHERE session.id=$1
           AND session.workspace_id=$2
           AND session.team_id=$3
@@ -210,6 +214,7 @@ async function assertReadableTeam(
               session.work_item_id IS NULL
               AND
               session.project_id IS NOT NULL
+              AND session_project.id IS NOT NULL
               AND COALESCE(
                 delegation.capability_scope->'projectIds',
                 '[]'::jsonb

@@ -92,6 +92,12 @@ const activeScopeSql = `
            )
            OR (
              source_channel.subject_kind='project'
+             AND EXISTS (
+               SELECT 1 FROM projects source_project
+                WHERE source_project.id=source_channel.subject_id
+                  AND source_project.workspace_id=i.workspace_id
+                  AND source_project.deleted_at IS NULL
+             )
              AND (
                (
                  current_scope.work_item_id IS NOT NULL
@@ -332,6 +338,14 @@ async function authorizeExactReplyRecipient(
          ON source_work_item.id=source_session.work_item_id
         AND source_work_item.workspace_id=source_session.workspace_id
         AND source_work_item.deleted_at IS NULL
+       LEFT JOIN projects source_work_item_project
+         ON source_work_item_project.id=source_work_item.project_id
+        AND source_work_item_project.workspace_id=source_session.workspace_id
+        AND source_work_item_project.deleted_at IS NULL
+       LEFT JOIN projects source_session_project
+         ON source_session_project.id=source_session.project_id
+        AND source_session_project.workspace_id=source_session.workspace_id
+        AND source_session_project.deleted_at IS NULL
        JOIN delegations delegation
          ON delegation.id=source_session.delegation_id
         AND delegation.workspace_id=source_session.workspace_id
@@ -364,10 +378,13 @@ async function authorizeExactReplyRecipient(
             source_session.work_item_id IS NULL
             AND (
               source_session.project_id IS NULL
-              OR COALESCE(
-                delegation.capability_scope->'projectIds',
-                '[]'::jsonb
-              ) ? source_session.project_id::text
+              OR (
+                source_session_project.id IS NOT NULL
+                AND COALESCE(
+                  delegation.capability_scope->'projectIds',
+                  '[]'::jsonb
+                ) ? source_session.project_id::text
+              )
             )
           )
         )
@@ -380,14 +397,20 @@ async function authorizeExactReplyRecipient(
           )
           OR (
             $5='project'
+            AND EXISTS (
+              SELECT 1 FROM projects source_room_project
+               WHERE source_room_project.id=$6
+                 AND source_room_project.workspace_id=$1
+                 AND source_room_project.deleted_at IS NULL
+            )
             AND (
               (
                 source_session.work_item_id IS NOT NULL
-                AND source_work_item.project_id=$6
+                AND source_work_item_project.id=$6
               )
               OR (
                 source_session.work_item_id IS NULL
-                AND source_session.project_id=$6
+                AND source_session_project.id=$6
                 AND COALESCE(
                   delegation.capability_scope->'projectIds',
                   '[]'::jsonb

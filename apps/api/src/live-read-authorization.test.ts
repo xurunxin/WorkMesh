@@ -801,9 +801,13 @@ describe('live paged-read authorization', () => {
     expect(session).toContain("live_delegation.capability_scope->'projectIds'")
     expect(session).toContain('LEFT JOIN work_items live_scope_item')
     expect(session).toContain('live_scope_item.deleted_at IS NULL')
+    expect(session).toContain('LEFT JOIN projects live_session_project')
+    expect(session).toContain('live_session_project.workspace_id=live_session.workspace_id')
+    expect(session).toContain('live_session_project.deleted_at IS NULL')
     expect(session).toContain('live_session.work_item_id IS NOT NULL')
     expect(session).toContain('live_session.work_item_id IS NULL')
     expect(session).toContain('live_scope_item.id IS NOT NULL')
+    expect(session).toContain('live_session_project.id IS NOT NULL')
 
     const repository = liveSessionReadPredicate(
       { ...actor, kind: 'agent', humanSessionId: undefined, agentSessionId: actor.humanSessionId },

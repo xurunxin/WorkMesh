@@ -31,6 +31,7 @@ type AgentFacts = {
   work_item_id: string | null
   work_item_project_id: string | null
   project_id: string | null
+  project_exists: boolean
   delegation_status: string
   capability_scope: {
     teamIds?: string[]
@@ -273,7 +274,8 @@ async function loadAgentFacts(
   if (!actor.agentSessionId) return undefined
   return (await db.query<AgentFacts>(
     `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,
-      scope_item.project_id AS work_item_project_id,s.project_id,
+      scope_project.id AS work_item_project_id,s.project_id,
+      session_project.id IS NOT NULL AS project_exists,
       d.status AS delegation_status,d.capability_scope,d.permissions_snapshot,
       a.approved_capabilities AS definition_capabilities,a.is_active AS agent_active,
       ata.approved_capabilities AS team_capabilities
@@ -284,6 +286,14 @@ async function loadAgentFacts(
        ON scope_item.id=s.work_item_id
       AND scope_item.workspace_id=s.workspace_id
       AND scope_item.deleted_at IS NULL
+     LEFT JOIN projects scope_project
+       ON scope_project.id=scope_item.project_id
+      AND scope_project.workspace_id=s.workspace_id
+      AND scope_project.deleted_at IS NULL
+     LEFT JOIN projects session_project
+       ON session_project.id=s.project_id
+      AND session_project.workspace_id=s.workspace_id
+      AND session_project.deleted_at IS NULL
      LEFT JOIN agent_team_access ata
        ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id
       AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
@@ -343,6 +353,7 @@ function resourceInScope(
       ) return false
     } else if (
       facts.project_id !== projectId
+      || !facts.project_exists
       || !scope.projectIds?.includes(projectId)
     ) return false
   }

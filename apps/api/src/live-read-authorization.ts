@@ -126,6 +126,10 @@ export function liveSessionReadPredicate(
                  ON live_scope_item.id=live_session.work_item_id
                 AND live_scope_item.workspace_id=live_session.workspace_id
                 AND live_scope_item.deleted_at IS NULL
+               LEFT JOIN projects live_session_project
+                 ON live_session_project.id=live_session.project_id
+                AND live_session_project.workspace_id=live_session.workspace_id
+                AND live_session_project.deleted_at IS NULL
                JOIN agent_definitions live_definition
                  ON live_definition.id=live_session.agent_id
                 AND live_definition.workspace_id=live_session.workspace_id
@@ -158,10 +162,13 @@ export function liveSessionReadPredicate(
                     live_session.work_item_id IS NULL
                     AND (
                       live_session.project_id IS NULL
-                      OR COALESCE(
-                        live_delegation.capability_scope->'projectIds',
-                        '[]'::jsonb
-                      ) ? live_session.project_id::text
+                      OR (
+                        live_session_project.id IS NOT NULL
+                        AND COALESCE(
+                          live_delegation.capability_scope->'projectIds',
+                          '[]'::jsonb
+                        ) ? live_session.project_id::text
+                      )
                     )
                   )
                 )

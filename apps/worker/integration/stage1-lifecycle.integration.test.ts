@@ -230,6 +230,13 @@ describe('stage 1 worker durability', () => {
        RETURNING id`,
       [data.workspaceId, projectId, data.teamId],
     )).rows[0]!.id
+    const workItemChannelId = (await db.query<{ id: string }>(
+      `INSERT INTO work_room_channels(
+         workspace_id,subject_kind,subject_id,team_id
+       ) VALUES($1,'work_item',$2,$3)
+       RETURNING id`,
+      [data.workspaceId, data.workItemId, data.teamId],
+    )).rows[0]!.id
     const reparentedChannelId = (await db.query<{ id: string }>(
       `INSERT INTO work_room_channels(
          workspace_id,subject_kind,subject_id,team_id
@@ -337,12 +344,35 @@ describe('stage 1 worker durability', () => {
       [authorizedDeliveryId],
     )).rows[0]).toEqual({ status: 'delivered' })
 
+    await db.query('UPDATE projects SET deleted_at=now() WHERE id=$1', [projectId])
+    const deletedProjectDeliveryId = await enqueue('must-revoke-deleted-project')
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [deletedProjectDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+    const liveWorkItemDeliveryId = await enqueue(
+      'live-work-item-survives-parent-project-delete',
+      workItemChannelId,
+    )
+    await worker.tick()
+    expect(requests).toBe(2)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
+      [liveWorkItemDeliveryId],
+    )).rows[0]).toEqual({ status: 'delivered' })
+    await db.query('UPDATE projects SET deleted_at=NULL WHERE id=$1', [projectId])
+
     const staleHybridDeliveryId = await enqueue(
       'must-ignore-stale-hybrid-project',
       staleChannelId,
     )
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [staleHybridDeliveryId],
@@ -356,7 +386,7 @@ describe('stage 1 worker durability', () => {
       siblingChannelId,
     )
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [siblingDeliveryId],
@@ -371,7 +401,7 @@ describe('stage 1 worker durability', () => {
     ])
     const previousProjectDeliveryId = await enqueue('must-revoke-previous-project')
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [previousProjectDeliveryId],
@@ -384,7 +414,7 @@ describe('stage 1 worker durability', () => {
       reparentedChannelId,
     )
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     expect((await db.query<{ status: string }>(
       'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
       [reparentedDeliveryId],
@@ -398,7 +428,7 @@ describe('stage 1 worker durability', () => {
       reparentedChannelId,
     )
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [deletedWorkItemDeliveryId],
@@ -423,7 +453,7 @@ describe('stage 1 worker durability', () => {
     )
     const missingProjectScopeId = await enqueue('missing-projectIds')
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [missingProjectScopeId],
@@ -442,11 +472,25 @@ describe('stage 1 worker durability', () => {
     )
     const matchingProjectScopeId = await enqueue('matching-projectIds')
     await worker.tick()
-    expect(requests).toBe(3)
+    expect(requests).toBe(4)
     expect((await db.query<{ status: string }>(
       'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
       [matchingProjectScopeId],
     )).rows[0]).toEqual({ status: 'delivered' })
+
+    await db.query('UPDATE projects SET deleted_at=now() WHERE id=$1', [projectId])
+    const deletedProjectOnlyDeliveryId = await enqueue(
+      'must-revoke-deleted-project-only-scope',
+    )
+    await worker.tick()
+    expect(requests).toBe(4)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [deletedProjectOnlyDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
 
     const revokedMarker = 'must-not-leave-after-revocation'
     const revokedDeliveryId = await enqueue(revokedMarker)
@@ -455,7 +499,7 @@ describe('stage 1 worker durability', () => {
       [data.delegationId],
     )
     await worker.tick()
-    expect(requests).toBe(3)
+    expect(requests).toBe(4)
     const revokedAudit = (await db.query<{
       status: string
       last_error: string
@@ -479,7 +523,7 @@ describe('stage 1 worker durability', () => {
     const stoppedDeliveryId = await enqueue(stoppedMarker)
     await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
     await worker.tick()
-    expect(requests).toBe(3)
+    expect(requests).toBe(4)
     const stoppedAudit = (await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [stoppedDeliveryId],

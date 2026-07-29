@@ -27,12 +27,14 @@ const leaseResponse = <T extends { version: number }>(lease: T): T & { revision:
 })
 
 async function session(tx: PoolClient, workspaceId: string, id: string) {
-  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
+  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; project_exists:boolean; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
     `SELECT current_session.id,current_session.workspace_id,current_session.team_id,
             current_session.work_item_id,
             live_work_item.id IS NOT NULL AS work_item_exists,
-            live_work_item.project_id AS work_item_project_id,
-            current_session.project_id,current_session.plan_step_id,
+            live_work_item_project.id AS work_item_project_id,
+            current_session.project_id,
+            live_session_project.id IS NOT NULL AS project_exists,
+            current_session.plan_step_id,
             current_session.plan_step_version_id,
             current_session.current_plan_version_id,
             current_session.parent_session_id,current_session.delegation_id,
@@ -44,6 +46,14 @@ async function session(tx: PoolClient, workspaceId: string, id: string) {
          ON live_work_item.id=current_session.work_item_id
         AND live_work_item.workspace_id=current_session.workspace_id
         AND live_work_item.deleted_at IS NULL
+       LEFT JOIN projects live_work_item_project
+         ON live_work_item_project.id=live_work_item.project_id
+        AND live_work_item_project.workspace_id=current_session.workspace_id
+        AND live_work_item_project.deleted_at IS NULL
+       LEFT JOIN projects live_session_project
+         ON live_session_project.id=current_session.project_id
+        AND live_session_project.workspace_id=current_session.workspace_id
+        AND live_session_project.deleted_at IS NULL
       WHERE current_session.id=$1 AND current_session.workspace_id=$2`,
     [id, workspaceId],
   )).rows[0]
@@ -54,6 +64,7 @@ async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: 
   const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind === 'agent') {
     if (current.agentSessionId !== sessionId || current.id !== row.agent_actor_id) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to this session')
+    if (!row.work_item_id && row.project_id && !row.project_exists) throw new DomainError('RESOURCE_SCOPE_DENIED', 'The session Project is unavailable')
     const grant = (await tx.query<{ status:string; permissions_snapshot:string[] }>('SELECT status,permissions_snapshot FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
     if (!grant || grant.status !== 'active' || !grant.permissions_snapshot.includes('work:write')) throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent delegation does not grant collaboration writes')
     if (['stopping','completed','failed','canceled'].includes(row.state)) throw new DomainError('SESSION_STOPPED', 'Stopped sessions cannot perform ordinary writes')
@@ -185,6 +196,12 @@ async function authorizeActorRecipient(
           )
           OR (
             $5='project'
+            AND EXISTS (
+              SELECT 1 FROM projects target_project
+               WHERE target_project.id=$6
+                 AND target_project.workspace_id=$1
+                 AND target_project.deleted_at IS NULL
+            )
             AND (
               (
                 target_session.work_item_id IS NOT NULL
@@ -279,7 +296,23 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     const supplied = Object.entries(q).filter(([, value]) => value)
     if (supplied.length !== 1) throw new DomainError('VALIDATION_ERROR', 'Exactly one room subject is required')
     const [key, value] = supplied[0]!; const kind: Subject = key === 'workItemId' ? 'work_item' : key === 'projectId' ? 'project' : 'session'
-    const result = (await h.db.query<{id:string;team_id:string}>('SELECT id,team_id FROM work_room_channels WHERE workspace_id=$1 AND subject_kind=$2 AND subject_id=$3', [actor(request).workspaceId, kind, value])).rows[0]
+    const result = (await h.db.query<{id:string;team_id:string}>(
+      `SELECT channel.id,channel.team_id
+         FROM work_room_channels channel
+        WHERE channel.workspace_id=$1
+          AND channel.subject_kind=$2
+          AND channel.subject_id=$3
+          AND (
+            channel.subject_kind<>'project'
+            OR EXISTS (
+              SELECT 1 FROM projects room_project
+               WHERE room_project.id=channel.subject_id
+                 AND room_project.workspace_id=channel.workspace_id
+                 AND room_project.deleted_at IS NULL
+            )
+          )`,
+      [actor(request).workspaceId, kind, value],
+    )).rows[0]
     if (!result) throw new DomainError('NOT_FOUND', 'Work Room not found')
     if (actor(request).kind === 'agent') {
       if (!actor(request).agentSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to a session')
@@ -409,20 +442,45 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
   app.post('/api/v1/rooms/:id/messages', async request => {
     const channelId = id(request); const body = roomMessageInputSchema.parse(request.body)
     return command(h.db, h.meta(request, body, { id: channelId }), async tx => {
-      const channel = (await tx.query<{ team_id:string;subject_kind:Subject;subject_id:string }>('SELECT team_id,subject_kind,subject_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2 FOR UPDATE', [channelId, actor(request).workspaceId])).rows[0]; if (!channel) throw new DomainError('NOT_FOUND','Room not found')
+      const channel = (await tx.query<{ team_id:string;subject_kind:Subject;subject_id:string }>(
+        `SELECT channel.team_id,channel.subject_kind,channel.subject_id
+           FROM work_room_channels channel
+          WHERE channel.id=$1
+            AND channel.workspace_id=$2
+            AND (
+              channel.subject_kind<>'project'
+              OR EXISTS (
+                SELECT 1 FROM projects room_project
+                 WHERE room_project.id=channel.subject_id
+                   AND room_project.workspace_id=channel.workspace_id
+                   AND room_project.deleted_at IS NULL
+              )
+            )
+          FOR UPDATE OF channel`,
+        [channelId, actor(request).workspaceId],
+      )).rows[0]; if (!channel) throw new DomainError('NOT_FOUND','Room not found')
       if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!)
       if (actor(request).kind === 'agent' && !body.sessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent messages require their session id')
       if (body.sessionId) {
-        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null}>(
+        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null;project_exists:boolean}>(
           `SELECT message_session.team_id,message_session.work_item_id,
                   message_scope_item.id IS NOT NULL AS work_item_exists,
-                  message_scope_item.project_id AS work_item_project_id,
-                  message_session.project_id
+                  message_scope_project.id AS work_item_project_id,
+                  message_session.project_id,
+                  message_session_project.id IS NOT NULL AS project_exists
              FROM agent_sessions message_session
              LEFT JOIN work_items message_scope_item
-               ON message_scope_item.id=message_session.work_item_id
+              ON message_scope_item.id=message_session.work_item_id
               AND message_scope_item.workspace_id=message_session.workspace_id
               AND message_scope_item.deleted_at IS NULL
+             LEFT JOIN projects message_scope_project
+               ON message_scope_project.id=message_scope_item.project_id
+              AND message_scope_project.workspace_id=message_session.workspace_id
+              AND message_scope_project.deleted_at IS NULL
+             LEFT JOIN projects message_session_project
+               ON message_session_project.id=message_session.project_id
+              AND message_session_project.workspace_id=message_session.workspace_id
+              AND message_session_project.deleted_at IS NULL
             WHERE message_session.id=$1
               AND message_session.workspace_id=$2`,
           [body.sessionId,actor(request).workspaceId],
@@ -435,7 +493,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
             FROM agent_sessions parent JOIN lineage child ON child.parent_session_id=parent.id
           )
           SELECT 1 FROM lineage WHERE id=$3`,[body.sessionId,actor(request).workspaceId,channel.subject_id])).rowCount)
-        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_exists && messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_id===channel.subject_id)
+        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_exists && messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_exists && messageSession.project_id===channel.subject_id)
         if (!inRoom) throw new DomainError('RESOURCE_SCOPE_DENIED','Message session is outside this Work Room')
       }
       if (body.intent === 'review_result') {
@@ -477,6 +535,14 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                ON target_scope_item.id=target_session.work_item_id
               AND target_scope_item.workspace_id=target_session.workspace_id
               AND target_scope_item.deleted_at IS NULL
+             LEFT JOIN projects target_scope_project
+               ON target_scope_project.id=target_scope_item.project_id
+              AND target_scope_project.workspace_id=target_session.workspace_id
+              AND target_scope_project.deleted_at IS NULL
+             LEFT JOIN projects target_session_project
+               ON target_session_project.id=target_session.project_id
+              AND target_session_project.workspace_id=target_session.workspace_id
+              AND target_session_project.deleted_at IS NULL
              JOIN agent_definitions target_definition
                ON target_definition.id=target_session.agent_id
               AND target_definition.workspace_id=target_session.workspace_id
@@ -511,10 +577,13 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                    target_session.work_item_id IS NULL
                    AND (
                      target_session.project_id IS NULL
-                     OR COALESCE(
-                       target_delegation.capability_scope->'projectIds',
-                       '[]'::jsonb
-                     ) ? target_session.project_id::text
+                     OR (
+                       target_session_project.id IS NOT NULL
+                       AND COALESCE(
+                         target_delegation.capability_scope->'projectIds',
+                         '[]'::jsonb
+                       ) ? target_session.project_id::text
+                     )
                    )
                  )
                )
@@ -522,14 +591,20 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                 ($4='work_item' AND target_session.work_item_id=$5)
                 OR (
                   $4='project'
+                  AND EXISTS (
+                    SELECT 1 FROM projects room_project
+                     WHERE room_project.id=$5
+                       AND room_project.workspace_id=$2
+                       AND room_project.deleted_at IS NULL
+                  )
                   AND (
                     (
                       target_session.work_item_id IS NOT NULL
-                      AND target_scope_item.project_id=$5
+                      AND target_scope_project.id=$5
                     )
                     OR (
                       target_session.work_item_id IS NULL
-                      AND target_session.project_id=$5
+                      AND target_session_project.id=$5
                       AND COALESCE(
                         target_delegation.capability_scope->'projectIds',
                         '[]'::jsonb
@@ -645,16 +720,25 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if(!row) throw new DomainError('NOT_FOUND','Decision not found')
     if(actor(request).kind==='human') await h.readableTeam(request,row.team_id)
     else {
-      const own=(await h.db.query<{id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null}>(
+      const own=(await h.db.query<{id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null;project_exists:boolean}>(
         `SELECT own_session.id,own_session.work_item_id,
                 own_scope_item.id IS NOT NULL AS work_item_exists,
-                own_scope_item.project_id AS work_item_project_id,
-                own_session.project_id
+                own_scope_project.id AS work_item_project_id,
+                own_session.project_id,
+                own_session_project.id IS NOT NULL AS project_exists
            FROM agent_sessions own_session
            LEFT JOIN work_items own_scope_item
              ON own_scope_item.id=own_session.work_item_id
             AND own_scope_item.workspace_id=own_session.workspace_id
             AND own_scope_item.deleted_at IS NULL
+           LEFT JOIN projects own_scope_project
+             ON own_scope_project.id=own_scope_item.project_id
+            AND own_scope_project.workspace_id=own_session.workspace_id
+            AND own_scope_project.deleted_at IS NULL
+           LEFT JOIN projects own_session_project
+             ON own_session_project.id=own_session.project_id
+            AND own_session_project.workspace_id=own_session.workspace_id
+            AND own_session_project.deleted_at IS NULL
           WHERE own_session.id=$1
             AND own_session.workspace_id=$2
             AND own_session.agent_actor_id=$3`,
@@ -672,7 +756,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
           && (
             own.work_item_id
               ? own.work_item_exists && row.project_id===own.work_item_project_id
-              : row.project_id===own.project_id
+              : own.project_exists && row.project_id===own.project_id
           ),
         )
       )

@@ -41,7 +41,7 @@ type Agent = { id: string; actorId: string; installationToken: string }
 type Session = { id: string; revision: number; exchangeToken: string }
 type Fixture = { human: Human; workspaceId: string; teamId: string; readyId: string; workItemId: string; parent: Session; parentToken: string; runner: Agent; reviewer: Agent; overflow: Agent; planVersionId: string; stepA: string; stepB: string; stepC: string }
 
-const humanCall = async (human: Human, method: 'GET' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
+const humanCall = async (human: Human, method: 'DELETE' | 'GET' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
   await app.inject({ method, url, payload, headers: { cookie: human.cookie, 'x-csrf-token': human.csrf, 'idempotency-key': randomUUID(), ...extra } }) as unknown as Response
 const agentCall = async (token: string, method: 'GET' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
   await app.inject({ method, url, payload, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), ...extra } }) as unknown as Response
@@ -632,7 +632,8 @@ describe('Stage 2 collaboration API acceptance', () => {
       name: 'Reparented Work Item Project',
     })
     expect(movedProject.statusCode, JSON.stringify(movedProject.json())).toBe(200)
-    const movedProjectId = movedProject.json<{ id: string }>().id
+    const movedProjectData = movedProject.json<{ id: string; revision: number }>()
+    const movedProjectId = movedProjectData.id
     const movedProjectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)
     expect(movedProjectRoom.statusCode, JSON.stringify(movedProjectRoom.json())).toBe(200)
     const movedChannelId = movedProjectRoom.json<{ id: string }>().id
@@ -788,6 +789,199 @@ describe('Stage 2 collaboration API acceptance', () => {
       .map(event => event.event_type)
     expect(reparentedEventTypes).toContain('test.project.current_scope')
     expect(reparentedEventTypes).not.toContain('test.project.previous_scope')
+
+    await db.query(
+      'UPDATE agent_sessions SET project_id=$2 WHERE id=$1',
+      [projectOnlySession.id, movedProjectId],
+    )
+    await db.query(
+      `UPDATE delegations
+          SET scope_id=$2::uuid,
+              capability_scope=jsonb_set(
+                capability_scope,'{projectIds}',jsonb_build_array($2::text)
+              )
+        WHERE id=$1`,
+      [projectOnlyDelegationId, movedProjectId],
+    )
+    for (const [token, sessionId] of [
+      [sourceToken, source.session.id],
+      [projectOnlyToken, projectOnlySession.id],
+    ]) {
+      expect((await agentCall(token!, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(200)
+      const write = await agentCall(token!, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+        sessionId,
+        intent: 'inform',
+        body: 'A live Project authorizes its Work Item and Project-only Sessions.',
+      })
+      expect(write.statusCode, JSON.stringify(write.json())).toBe(200)
+    }
+
+    const deletionExactAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'This exact Inbox item must disappear with its Project.',
+      recipientSessionId: projectOnlySession.id,
+      requiresResponse: true,
+    })
+    expect(deletionExactAsk.statusCode, JSON.stringify(deletionExactAsk.json())).toBe(200)
+    const deletionExactItem = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_session_id=$2`,
+      [deletionExactAsk.json<{ id: string }>().id, projectOnlySession.id],
+    )).rows[0]!
+    const deletionExactDetail = await agentCall(
+      projectOnlyToken,
+      'GET',
+      `/api/v1/inbox/${deletionExactItem.id}`,
+    )
+    expect(deletionExactDetail.statusCode, JSON.stringify(deletionExactDetail.json())).toBe(200)
+
+    const deletionActorAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'This unclaimed actor Inbox item must disappear with its Project.',
+      recipientActorId: f.overflow.actorId,
+      requiresResponse: true,
+    })
+    expect(deletionActorAsk.statusCode, JSON.stringify(deletionActorAsk.json())).toBe(200)
+    const deletionActorItem = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_actor_id=$2
+          AND recipient_session_id IS NULL`,
+      [deletionActorAsk.json<{ id: string }>().id, f.overflow.actorId],
+    )).rows[0]!
+
+    const deletionClaimedAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'This claimed actor Inbox item must not remain replyable.',
+      recipientActorId: f.overflow.actorId,
+      requiresResponse: true,
+    })
+    expect(deletionClaimedAsk.statusCode, JSON.stringify(deletionClaimedAsk.json())).toBe(200)
+    const deletionClaimedItem = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_actor_id=$2
+          AND recipient_session_id IS NULL`,
+      [deletionClaimedAsk.json<{ id: string }>().id, f.overflow.actorId],
+    )).rows[0]!
+    const deletionClaim = await agentCall(
+      projectOnlyToken,
+      'POST',
+      `/api/v1/inbox/${deletionClaimedItem.id}/claim`,
+      {},
+    )
+    expect(deletionClaim.statusCode, JSON.stringify(deletionClaim.json())).toBe(200)
+
+    const deletedProject = await humanCall(
+      f.human,
+      'DELETE',
+      `/api/v1/projects/${movedProjectId}`,
+      undefined,
+      { 'if-match': `"revision-${movedProjectData.revision}"` },
+    )
+    expect(deletedProject.statusCode, JSON.stringify(deletedProject.json())).toBe(200)
+
+    for (const token of [sourceToken, projectOnlyToken]) {
+      const projects = await agentCall(token, 'GET', '/api/v1/projects')
+      expect(projects.statusCode, JSON.stringify(projects.json())).toBe(200)
+      expect(projects.json<Page<{ id: string }>>().items.map(project => project.id)).not.toContain(movedProjectId)
+      expect((await agentCall(token, 'GET', `/api/v1/projects/${movedProjectId}`)).statusCode).toBe(404)
+      expect([403, 404]).toContain(
+        (await agentCall(token, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode,
+      )
+    }
+
+    const ownRoomAfterProjectDelete = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/rooms/${workItemChannelId}/messages`,
+      {
+        sessionId: source.session.id,
+        intent: 'inform',
+        body: 'A live Work Item keeps its own room after its parent Project is deleted.',
+      },
+    )
+    expect(
+      ownRoomAfterProjectDelete.statusCode,
+      JSON.stringify(ownRoomAfterProjectDelete.json()),
+    ).toBe(200)
+
+    const deletedProjectEventCursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await insertProjectEvent('test.project.deleted_project', movedProjectId)
+    for (const token of [sourceToken, projectOnlyToken]) {
+      const events = await agentCall(
+        token,
+        'GET',
+        `/api/v1/events?cursor=${deletedProjectEventCursor}`,
+      )
+      expect(events.statusCode, JSON.stringify(events.json())).toBe(200)
+      expect(
+        events.json<Array<{ event_type: string }>>().map(event => event.event_type),
+      ).not.toContain('test.project.deleted_project')
+    }
+
+    const beforeDeletedProjectDenials = (await db.query<{
+      message_count: number
+      inbox_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT count(*)::int FROM room_messages) AS message_count,
+          (SELECT count(*)::int FROM inbox_items) AS inbox_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`)).rows[0]!
+
+    for (const [token, sessionId] of [
+      [sourceToken, source.session.id],
+      [projectOnlyToken, projectOnlySession.id],
+    ]) {
+      const deniedWrite = await agentCall(token!, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+        sessionId,
+        intent: 'inform',
+        body: 'A deleted Project cannot authorize room writes.',
+      })
+      expect([403, 404]).toContain(deniedWrite.statusCode)
+    }
+    const deletedProjectInbox = await agentCall(projectOnlyToken, 'GET', '/api/v1/inbox')
+    expect(deletedProjectInbox.statusCode, JSON.stringify(deletedProjectInbox.json())).toBe(200)
+    expect(
+      deletedProjectInbox.json<Page<{ id: string }>>().items.map(item => item.id),
+    ).not.toEqual(expect.arrayContaining([
+      deletionExactItem.id,
+      deletionActorItem.id,
+      deletionClaimedItem.id,
+    ]))
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionExactItem.id}`)).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionActorItem.id}`)).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionClaimedItem.id}`)).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionActorItem.id}/claim`, {})).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionExactItem.id}/reply`, {
+      body: 'A deleted Project must suppress exact replies.',
+      payload: {},
+    }, { 'if-match': `"revision-${deletionExactDetail.json<{ revision: number }>().revision}"` })).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionClaimedItem.id}/reply`, {
+      body: 'A deleted Project must suppress actor replies.',
+      payload: {},
+    }, { 'if-match': `"revision-${deletionClaim.json<{ revision: number }>().revision}"` })).statusCode).toBe(404)
+
+    expect((await db.query<{
+      message_count: number
+      inbox_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT count(*)::int FROM room_messages) AS message_count,
+          (SELECT count(*)::int FROM inbox_items) AS inbox_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`)).rows[0]).toEqual(beforeDeletedProjectDenials)
+
+    await db.query(
+      'UPDATE projects SET deleted_at=NULL WHERE id=$1',
+      [movedProjectId],
+    )
 
     await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [projectWork.id])
     const deletedEventCursor = (await db.query<{ cursor: string }>(
