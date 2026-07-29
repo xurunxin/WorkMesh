@@ -55,6 +55,8 @@ export type RedisStreamTrimOptions = Readonly<{
 }>
 export type RedisStreamClient = Readonly<{
   isOpen: boolean
+  isReady: boolean
+  on: (event: 'error' | 'ready', listener: (value?: unknown) => void) => unknown
   connect: () => Promise<unknown>
   xAdd: (
     key: string,
@@ -69,7 +71,91 @@ export type RedisStreamSinkOptions = Readonly<{
   redisUrl?: string
   maxLen?: number
   client?: RedisStreamClient
+  logConnectionError?: (entry: RedisConnectionErrorLog) => void
+  now?: () => number
 }>
+
+export type RedisConnectionErrorLog = Readonly<{
+  event: 'redis_hint_connection_error'
+  errorName: string
+  errorCode: string
+  occurrence: 'transition' | 'rate_limited_repeat'
+  suppressed: number
+}>
+
+const REDIS_ERROR_LOG_INTERVAL_MS = 10_000
+const REDIS_RECONNECT_MAX_MS = 2_000
+
+export const redisReconnectDelay = (retries: number): number =>
+  Math.min(REDIS_RECONNECT_MAX_MS, 50 * 2 ** Math.min(6, Math.max(0, retries)))
+
+const safeRedisErrorToken = (value: unknown, fallback: string): string =>
+  typeof value === 'string' && /^[A-Za-z0-9_.-]{1,64}$/.test(value)
+    ? value
+    : fallback
+
+const sanitizedRedisError = (
+  error: unknown,
+): Pick<RedisConnectionErrorLog, 'errorName' | 'errorCode'> => {
+  const record =
+    error && typeof error === 'object'
+      ? (error as Record<string, unknown>)
+      : undefined
+  return {
+    errorName: safeRedisErrorToken(record?.name, 'RedisError'),
+    errorCode: safeRedisErrorToken(record?.code, 'UNKNOWN'),
+  }
+}
+
+export const createRedisConnectionObserver = ({
+  log = (entry) => {
+    console.warn('redis realtime hint unavailable', entry)
+  },
+  now = Date.now,
+}: {
+  log?: (entry: RedisConnectionErrorLog) => void
+  now?: () => number
+} = {}): {
+  error: (error?: unknown) => void
+  ready: () => void
+} => {
+  let unavailable = false
+  let lastLoggedAt = Number.NEGATIVE_INFINITY
+  let suppressed = 0
+
+  return {
+    error: (error?: unknown): void => {
+      try {
+        const sanitized = sanitizedRedisError(error)
+        const observedAt = now()
+        const transition = !unavailable
+        if (
+          transition ||
+          observedAt - lastLoggedAt >= REDIS_ERROR_LOG_INTERVAL_MS
+        ) {
+          log({
+            event: 'redis_hint_connection_error',
+            ...sanitized,
+            occurrence: transition ? 'transition' : 'rate_limited_repeat',
+            suppressed,
+          })
+          unavailable = true
+          lastLoggedAt = observedAt
+          suppressed = 0
+        } else {
+          suppressed += 1
+        }
+      } catch {
+        // EventEmitter error listeners must never throw into the Worker process.
+      }
+    },
+    ready: (): void => {
+      unavailable = false
+      lastLoggedAt = Number.NEGATIVE_INFINITY
+      suppressed = 0
+    },
+  }
+}
 
 /**
  * Redis is a delivery transport only. PostgreSQL remains the source for SSE
@@ -86,21 +172,37 @@ export class RedisStreamSink implements DeliverySink {
       : loadRealtimeRedisHintConfig()
     this.#maxLen = options.maxLen ?? runtime.maxLen
     this.#client =
-      options.client
-      ?? createClient({
+      options.client ??
+      (createClient({
         url: options.redisUrl ?? runtime.redisUrl,
-      }) as unknown as RedisStreamClient
+        disableOfflineQueue: true,
+        socket: {
+          reconnectStrategy: redisReconnectDelay,
+        },
+      }) as unknown as RedisStreamClient)
+    const observer = createRedisConnectionObserver({
+      log: options.logConnectionError,
+      now: options.now,
+    })
+    this.#client.on('error', observer.error)
+    this.#client.on('ready', observer.ready)
+  }
+
+  #startConnecting(): void {
+    if (this.#client.isOpen || this.#connecting) return
+    const connecting = this.#client.connect()
+    this.#connecting = connecting
+    void connecting
+      .catch(() => undefined)
+      .finally(() => {
+        if (this.#connecting === connecting) this.#connecting = undefined
+      })
   }
 
   async deliver(event: ClaimedEvent): Promise<void> {
-    if (!this.#client.isOpen) {
-      this.#connecting ??= this.#client.connect()
-      try {
-        await this.#connecting
-      } catch (error) {
-        this.#connecting = undefined
-        throw error
-      }
+    if (!this.#client.isReady) {
+      this.#startConnecting()
+      throw new Error('REDIS_STREAM_NOT_READY')
     }
     await this.#client.xAdd(STREAM_KEY, '*', {
       cursor: event.cursor,
