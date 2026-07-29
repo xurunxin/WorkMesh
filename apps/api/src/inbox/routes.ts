@@ -66,7 +66,9 @@ const command = <T>(
   db: Pool,
   meta: RequestMeta,
   fn: (tx: PoolClient) => Promise<T>,
-): Promise<T> => mutate(db, meta as unknown as CommandContext, fn);
+  beforeReserve?: (tx: PoolClient) => Promise<void>,
+): Promise<T> =>
+  mutate(db, meta as unknown as CommandContext, fn, { beforeReserve });
 
 const activeScopeSql = `
   i.team_id=current_scope.team_id
@@ -160,47 +162,6 @@ async function loadAgentItemForUpdate(
       "IDEMPOTENCY_KEY_REQUIRED",
       "Idempotency-Key is required",
     );
-  if (operation === "inbox_reply") {
-    const participants = (
-      await tx.query<{ source_session_id: string | null }>(
-        `SELECT source_message.session_id AS source_session_id
-           FROM inbox_items i
-           JOIN agent_sessions current_scope
-             ON current_scope.id=$3
-            AND current_scope.workspace_id=i.workspace_id
-            AND current_scope.agent_actor_id=$4
-           LEFT JOIN room_messages source_message
-             ON source_message.id=i.source_room_message_id
-            AND source_message.workspace_id=i.workspace_id
-          WHERE i.id=$1
-            AND i.workspace_id=$2
-            AND i.recipient_human_actor_id IS NULL
-            AND (
-              i.recipient_session_id=current_scope.id
-              OR i.claimed_by_session_id=current_scope.id
-            )
-            AND ${activeScopeSql}`,
-        [itemId(request), actor.workspaceId, actor.agentSessionId, actor.id],
-      )
-    ).rows[0];
-    if (!participants)
-      throw new DomainError("NOT_FOUND", "Inbox item not found");
-    const lockKeys = [
-      actor.agentSessionId,
-      participants.source_session_id,
-    ]
-      .filter((value): value is string => Boolean(value))
-      .map(
-        (sessionId) =>
-          `${actor.workspaceId}:inbox-reply-session:${sessionId}`,
-      )
-      .sort();
-    for (const lockKey of [...new Set(lockKeys)])
-      await tx.query(
-        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
-        [lockKey],
-      );
-  }
   await authorizeCommandInTx(tx, {
     actor,
     sessionId: actor.agentSessionId,
@@ -219,6 +180,49 @@ async function loadAgentItemForUpdate(
   ).rows[0];
   if (!row) throw new DomainError("NOT_FOUND", "Inbox item not found");
   return row;
+}
+
+async function lockReplyParticipantsBeforeReservation(
+  tx: PoolClient,
+  request: FastifyRequest,
+): Promise<void> {
+  const actor = currentActor(request);
+  if (actor.kind !== "agent" || !actor.agentSessionId)
+    throw new DomainError("NOT_FOUND", "Inbox item not found");
+  const participants = (
+    await tx.query<{ source_session_id: string | null }>(
+      `SELECT source_message.session_id AS source_session_id
+           FROM inbox_items i
+           JOIN agent_sessions current_scope
+             ON current_scope.id=$3
+            AND current_scope.workspace_id=i.workspace_id
+            AND current_scope.agent_actor_id=$4
+           LEFT JOIN room_messages source_message
+             ON source_message.id=i.source_room_message_id
+            AND source_message.workspace_id=i.workspace_id
+          WHERE i.id=$1
+            AND i.workspace_id=$2
+            AND i.recipient_human_actor_id IS NULL
+            AND (
+              i.recipient_session_id=current_scope.id
+              OR i.claimed_by_session_id=current_scope.id
+            )
+            AND ${activeScopeSql}`,
+      [itemId(request), actor.workspaceId, actor.agentSessionId, actor.id],
+    )
+  ).rows[0];
+  if (!participants)
+    throw new DomainError("NOT_FOUND", "Inbox item not found");
+  const lockKeys = [actor.agentSessionId, participants.source_session_id]
+    .filter((value): value is string => Boolean(value))
+    .map(
+      (sessionId) => `${actor.workspaceId}:inbox-reply-session:${sessionId}`,
+    )
+    .sort();
+  for (const lockKey of [...new Set(lockKeys)])
+    await tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [
+      lockKey,
+    ]);
 }
 
 async function appendInboxEvent(
@@ -913,6 +917,7 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
           replyMessageId: reply.id,
         };
       },
+      (tx) => lockReplyParticipantsBeforeReservation(tx, request),
     );
   });
 }

@@ -169,7 +169,7 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   expect(child.status).toBeLessThan(300)
 
   const room = await humanApi<{ id: string }>(page, `/api/v1/rooms?workItemId=${work.body.id}`)
-  const ask = await agentApi<{ id: string }>(page, exchange.body.sessionToken, `/api/v1/rooms/${room.body.id}/messages`, 'POST', { intent: 'ask', body: 'Reviewer, can you validate the collaboration evidence?', recipientActorId: childAgent.body.actor_id, sessionId: created.body.session.id, requiresResponse: true, payload: { planStepTitle: 'Review collaboration' } })
+  const ask = await agentApi<{ id: string }>(page, exchange.body.sessionToken, `/api/v1/rooms/${room.body.id}/messages`, 'POST', { intent: 'ask', body: 'Coordinator, can you validate the collaboration evidence?', recipientSessionId: created.body.session.id, sessionId: created.body.session.id, requiresResponse: true, payload: { planStepTitle: 'Review collaboration' } })
   expect(ask.status).toBeLessThan(300)
   const answer = await humanApi<{ id: string }>(page, `/api/v1/rooms/${room.body.id}/messages`, 'POST', { intent: 'answer', body: 'Yes. I will review the evidence in the Work Room.', replyToMessageId: ask.body.id, requiresResponse: false, payload: {} })
   const context = await humanApi<{ contextSnapshotId: string }>(page, `/api/v1/agent-sessions/${created.body.session.id}/context`)
@@ -186,7 +186,7 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   await page.getByTestId(`work-${work.body.id}`).click()
   const workRoom = page.getByTestId('work-room')
   await expect(workRoom.getByRole('tab')).toHaveCount(6)
-  await expect(workRoom).toContainText('Reviewer, can you validate the collaboration evidence?')
+  await expect(workRoom).toContainText('Coordinator, can you validate the collaboration evidence?')
   await expect(workRoom).toContainText('Yes. I will review the evidence in the Work Room.')
   await workRoom.getByRole('tab', { name: 'Plan' }).click()
   await expect(workRoom.getByTestId(`session-tree-${created.body.session.id}`)).toBeVisible()

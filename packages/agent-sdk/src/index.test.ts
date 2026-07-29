@@ -536,6 +536,48 @@ describe('WorkMeshClient', () => {
     expect(String(fetch.mock.calls[1]?.[0])).not.toContain('publish')
   })
 
+  it('uses the native Inbox routes with explicit empty mutation bodies', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1', status: 'claimed' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1', status: 'acknowledged' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'reply-1' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+
+    await client.listInbox('open', { cursor: 'opaque', limit: 17 })
+    await client.getInboxItem('inbox-1')
+    await client.claimInboxItem('inbox-1', { idempotencyKey: 'claim-key' })
+    await client.acknowledgeInboxItem('inbox-1', { idempotencyKey: 'ack-key' })
+    await client.replyInboxItem(
+      'inbox-1',
+      { body: 'Handled with evidence.' },
+      { ifMatch: 4, idempotencyKey: 'reply-key' },
+    )
+
+    expect(fetch.mock.calls.map(call => call[0])).toEqual([
+      'https://workmesh.test/api/v1/inbox?status=open&cursor=opaque&limit=17',
+      'https://workmesh.test/api/v1/inbox/inbox-1',
+      'https://workmesh.test/api/v1/inbox/inbox-1/claim',
+      'https://workmesh.test/api/v1/inbox/inbox-1/acknowledge',
+      'https://workmesh.test/api/v1/inbox/inbox-1/reply',
+    ])
+    expect(fetch.mock.calls[2]?.[1]).toMatchObject({
+      body: '{}',
+      headers: expect.objectContaining({ 'idempotency-key': 'claim-key' }),
+    })
+    expect(fetch.mock.calls[3]?.[1]).toMatchObject({
+      body: '{}',
+      headers: expect.objectContaining({ 'idempotency-key': 'ack-key' }),
+    })
+    expect(fetch.mock.calls[4]?.[1]).toMatchObject({
+      headers: expect.objectContaining({
+        'idempotency-key': 'reply-key',
+        'if-match': '"revision-4"',
+      }),
+    })
+  })
+
   it('uses a new default key per public mutation while retaining it for retry and explicit callers', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'one', revision: 1 }), { status: 200 }))

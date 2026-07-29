@@ -38,9 +38,9 @@ async function registerWithoutTeamAccess(human: Human, slug: string): Promise<Ag
   return { id: created.id, actorId: row.rows[0]!.actor_id, installationToken: created.installation_token }
 }
 
-async function start(human: Human, agent: Agent, workspaceId: string, teamId: string, workItemId: string, budget: Record<string, number> = {}): Promise<Session> {
+async function start(human: Human, agent: Agent, workspaceId: string, teamId: string, workItemId: string, budget: Record<string, number> = {}, role: 'executor' | 'reviewer' = 'executor'): Promise<Session> {
   const delegation = await humanCall(human, 'POST', `/api/v1/work-items/${workItemId}/delegations`, {
-    agentId: agent.id, principalHumanActorId: human.actorId, role: 'executor', scopeType: 'work_item', scopeId: workItemId,
+    agentId: agent.id, principalHumanActorId: human.actorId, role, scopeType: 'work_item', scopeId: workItemId,
     permissionsSnapshot: ['work:read', 'work:write', 'plan:write', 'artifact:write'], capabilityScope: { workspaceId, teamIds: [teamId], projectIds: [], workItemIds: [workItemId], repositoryIds: [], capabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write'] },
   })
   expect(delegation.statusCode).toBe(200)
@@ -63,6 +63,7 @@ async function exchangeAndExecute(session: Session, agent: Agent): Promise<strin
 async function makeFixture(): Promise<Fixture> {
   await db.query('TRUNCATE workspaces CASCADE')
   const installed = await app.inject({ method: 'POST', url: '/api/v1/auth/install', payload: { name: 'Stage Two', slug: `stage-two-${randomUUID().slice(0, 8)}`, adminName: 'Admin', email: `${randomUUID()}@example.test`, password: 'stage-two-password' }, headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! } }) as unknown as Response
+  expect(installed.statusCode, JSON.stringify(installed.json())).toBe(200)
   const setCookie = Array.isArray(installed.headers['set-cookie']) ? installed.headers['set-cookie'][0] : installed.headers['set-cookie']
   const cookie = typeof setCookie === 'string' ? setCookie.split(';')[0] ?? '' : ''
   const human = { cookie, csrf: installed.json<{ csrfToken: string }>().csrfToken, actorId: '' }
@@ -113,12 +114,12 @@ async function tokenFor(sessionId: string, agent: Agent): Promise<string> {
   return raw
 }
 
-async function memberForTeam(workspaceId: string, teamId: string): Promise<Human> {
+async function memberForTeam(workspaceId: string, teamId: string, role: 'maintainer' | 'member' = 'member'): Promise<Human> {
   const actorId = randomUUID()
   const raw = opaqueToken()
   const csrf = opaqueToken()
   await db.query("INSERT INTO actors(id,workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,$2,'human','member',$3,'Scoped member','unused')", [actorId, workspaceId, `${randomUUID()}@example.test`])
-  await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')", [workspaceId, teamId, actorId])
+  await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,$4)", [workspaceId, teamId, actorId, role])
   await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')", [actorId, tokenHash(raw), csrf])
   return { cookie: `workmesh_session=${raw}`, csrf, actorId }
 }
@@ -204,13 +205,25 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(childAck.statusCode).toBe(200)
     const childExecuting = await agentCall(childToken, 'POST', `/api/v1/agent-sessions/${childId}/state`, { state: 'executing', reason: 'responding to coordinator' }, { 'if-match': `"revision-${childAck.json<{ revision: number }>().revision}"` })
     expect(childExecuting.statusCode).toBe(200)
+    const sibling = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, { agentId: f.overflow.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'Remain isolated from the reviewer Inbox', budget: { maxRuntimeSeconds: 120, maxInputTokens: 50 } })
+    expect(sibling.statusCode).toBe(200)
+    const siblingId = sibling.json<{ id: string }>().id
+    const siblingToken = await tokenFor(siblingId, f.overflow)
+    const siblingAck = await agentCall(siblingToken, 'POST', `/api/v1/agent-sessions/${siblingId}/ack`, { summary: 'ready but not the recipient', externalUrls: [] })
+    expect(siblingAck.statusCode).toBe(200)
     const room = await humanCall(f.human, 'GET', `/api/v1/rooms?sessionId=${f.parent.id}`)
     expect(room.statusCode).toBe(200)
     const channelId = room.json<{ id: string }>().id
-    const ask = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, { sessionId: f.parent.id, intent: 'ask', body: 'May I proceed?', recipientActorId: f.reviewer.actorId, requiresResponse: true })
+    const ask = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, { sessionId: f.parent.id, intent: 'ask', body: 'May I proceed?', recipientSessionId: childId, requiresResponse: true })
     expect(ask.statusCode).toBe(200)
     const askId = ask.json<{ id: string }>().id
-    const answer = await agentCall(childToken, 'POST', `/api/v1/rooms/${channelId}/messages`, { sessionId: childId, intent: 'answer', body: 'Yes, proceed.', recipientActorId: f.runner.actorId, replyToMessageId: askId })
+    const childInbox = await agentCall(childToken, 'GET', '/api/v1/inbox')
+    expect(childInbox.statusCode).toBe(200)
+    const childAskItem = childInbox.json<Page<{ id: string; source_id: string }>>().items.find(item => item.source_id === askId)
+    expect(childAskItem).toBeDefined()
+    expect((await agentCall(childToken, 'GET', `/api/v1/inbox/${childAskItem!.id}`)).statusCode).toBe(200)
+    expect((await agentCall(siblingToken, 'GET', `/api/v1/inbox/${childAskItem!.id}`)).statusCode).toBe(404)
+    const answer = await agentCall(childToken, 'POST', `/api/v1/rooms/${channelId}/messages`, { sessionId: childId, intent: 'answer', body: 'Yes, proceed.', recipientSessionId: f.parent.id, replyToMessageId: askId })
     expect(answer.statusCode).toBe(200)
     expect((await humanCall(f.human, 'GET', '/api/v1/inbox?status=resolved')).json<Page<{ source_id: string; kind: string }>>().items).toEqual(expect.arrayContaining([expect.objectContaining({ source_id: askId, kind: 'ask' })]))
     const timeline = await humanCall(f.human, 'GET', `/api/v1/rooms/${channelId}/timeline`)
@@ -310,6 +323,587 @@ describe('Stage 2 collaboration API acceptance', () => {
     await durableEvent('lease.revoked', leased.id)
   })
 
+  it('claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated', async () => {
+    const f = await makeFixture()
+    const reviewerSession = await start(f.human, f.reviewer, f.workspaceId, f.teamId, f.workItemId, {}, 'reviewer')
+    const reviewerDelegationId = (await db.query<{ delegation_id: string }>('SELECT delegation_id FROM agent_sessions WHERE id=$1', [reviewerSession.id])).rows[0]!.delegation_id
+    const siblingResponse = await humanCall(f.human, 'POST', '/api/v1/agent-sessions', {
+      delegationId: reviewerDelegationId, workItemId: f.workItemId, initialPrompt: 'Compete for actor-targeted Inbox work', budget: {},
+    })
+    expect(siblingResponse.statusCode, JSON.stringify(siblingResponse.json())).toBe(200)
+    const siblingSession = siblingResponse.json<Session>()
+    const siblingToken = await exchangeAndExecute(siblingSession, f.reviewer)
+    const reviewerToken = await exchangeAndExecute(reviewerSession, f.reviewer)
+    const room = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${f.workItemId}`)
+    expect(room.statusCode).toBe(200)
+    const channelId = room.json<{ id: string }>().id
+
+    const beforePluralExact = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const pluralExact = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'inform', body: 'Each exact Session receives its own Inbox projection.',
+      recipientSessionIds: [siblingSession.id, reviewerSession.id],
+    })
+    expect(pluralExact.statusCode, JSON.stringify(pluralExact.json())).toBe(200)
+    const pluralExactId = pluralExact.json<{ id: string }>().id
+    const pluralExactItems = (await db.query<{ id: string; recipient_session_id: string }>(`SELECT id,recipient_session_id
+      FROM inbox_items WHERE source_type='room_message' AND source_id=$1 ORDER BY recipient_session_id`,
+    [pluralExactId])).rows
+    expect(pluralExactItems.map(item => item.recipient_session_id).sort()).toEqual([siblingSession.id, reviewerSession.id].sort())
+    expect(pluralExactItems).toHaveLength(2)
+    for (const [token, session] of [[siblingToken, siblingSession], [reviewerToken, reviewerSession]] as const) {
+      const visibleEvents = (await agentCall(token, 'GET', `/api/v1/events?cursor=${beforePluralExact}`))
+        .json<Array<{ aggregate_id: string; event_type: string; session_id: string; audience_actor_id: string }>>()
+      const exactEvents = visibleEvents
+        .filter(event => event.aggregate_id === pluralExactId && event.event_type === 'room.message.posted')
+      expect(exactEvents).toEqual([
+        expect.objectContaining({
+          session_id: session.id,
+          audience_actor_id: f.reviewer.actorId,
+        }),
+      ])
+      expect(visibleEvents.find(event =>
+        event.aggregate_id === pluralExactId
+        && event.event_type === 'room.message.human_visibility_recorded',
+      )).toBeUndefined()
+    }
+    const humanObserverEvents = (await humanCall(f.human, 'GET', `/api/v1/events?cursor=${beforePluralExact}`))
+      .json<Array<{
+        aggregate_id: string
+        event_type: string
+        invalidates: Array<{ type: string; id: string }>
+      }>>()
+      .filter(event =>
+        event.aggregate_id === pluralExactId
+        && event.event_type === 'room.message.human_visibility_recorded',
+      )
+    expect(humanObserverEvents).toEqual([
+      expect.objectContaining({
+        invalidates: expect.arrayContaining([
+          { type: 'work_item', id: f.workItemId },
+        ]),
+      }),
+    ])
+    const pluralExactDurability = (await db.query<{
+      events: number; outbox: number; generic_events: number; target_sessions: string[]
+    }>(`SELECT count(DISTINCT event.id)::int AS events,
+              count(outbox.id)::int AS outbox,
+              count(*) FILTER (WHERE event.audience_actor_id IS NULL)::int AS generic_events,
+              array_agg(event.session_id::text ORDER BY event.session_id) AS target_sessions
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.aggregate_id=$1 AND event.event_type='room.message.posted'`,
+    [pluralExactId])).rows[0]!
+    expect(pluralExactDurability).toEqual({
+      events: 2,
+      outbox: 2,
+      generic_events: 0,
+      target_sessions: [siblingSession.id, reviewerSession.id].sort(),
+    })
+    expect((await db.query<{ events: number; outbox: number }>(`SELECT
+      count(DISTINCT event.id)::int AS events,count(outbox.id)::int AS outbox
+      FROM domain_events event
+      JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+      WHERE event.aggregate_id=$1
+        AND event.event_type='room.message.human_visibility_recorded'`,
+    [pluralExactId])).rows[0]).toEqual({ events: 1, outbox: 1 })
+
+    const sessionRoomId = (await db.query<{ id: string }>("SELECT id FROM work_room_channels WHERE subject_kind='session' AND subject_id=$1", [f.parent.id])).rows[0]!.id
+    const beforeSessionRoomActorTarget = (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM room_messages')).rows[0]!.count
+    const deniedSessionRoomActorTarget = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${sessionRoomId}/messages`, {
+      sessionId: f.parent.id, intent: 'ask', body: 'Actor targeting must not expand a Session room.', recipientActorId: f.reviewer.actorId, requiresResponse: true,
+    })
+    expect(deniedSessionRoomActorTarget.statusCode).toBe(400)
+    expect(deniedSessionRoomActorTarget.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' } })
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM room_messages')).rows[0]!.count).toBe(beforeSessionRoomActorTarget)
+
+    const projectionCounts = async () => (await db.query<{ messages: number; inbox: number; events: number; outbox: number }>(`SELECT
+      (SELECT count(*)::int FROM room_messages) AS messages,
+      (SELECT count(*)::int FROM inbox_items) AS inbox,
+      (SELECT count(*)::int FROM domain_events) AS events,
+      (SELECT count(*)::int FROM outbox_events) AS outbox`)).rows[0]!
+    const assertDeniedProjection = async (response: Response, code: string, before: Awaited<ReturnType<typeof projectionCounts>>) => {
+      expect(response.statusCode).not.toBe(200)
+      expect(response.json<{ error: { code: string } }>()).toMatchObject({ error: { code } })
+      expect(await projectionCounts()).toEqual(before)
+    }
+    const parentAuthority = (await db.query<{
+      agent_id: string
+      delegation_id: string
+      capability_scope: Record<string, unknown>
+      team_capabilities: string[]
+    }>(`SELECT s.agent_id,s.delegation_id,d.capability_scope,
+              ata.approved_capabilities AS team_capabilities
+         FROM agent_sessions s
+         JOIN delegations d ON d.id=s.delegation_id
+         JOIN agent_team_access ata
+           ON ata.workspace_id=s.workspace_id AND ata.team_id=s.team_id AND ata.agent_id=s.agent_id
+        WHERE s.id=$1`, [f.parent.id])).rows[0]!
+    let beforeDenied = await projectionCounts()
+    await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, parentAuthority.agent_id])
+    const revokedSender = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Revoked Team access must fail.', recipientActorId: f.reviewer.actorId,
+    })
+    await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, parentAuthority.agent_id])
+    await assertDeniedProjection(revokedSender, 'DELEGATION_NOT_ACTIVE', beforeDenied)
+
+    beforeDenied = await projectionCounts()
+    await db.query('UPDATE agent_definitions SET is_active=false WHERE id=$1', [parentAuthority.agent_id])
+    const disabledSender = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Disabled Agent must fail.', recipientActorId: f.reviewer.actorId,
+    })
+    await db.query('UPDATE agent_definitions SET is_active=true WHERE id=$1', [parentAuthority.agent_id])
+    await assertDeniedProjection(disabledSender, 'UNAUTHENTICATED', beforeDenied)
+
+    beforeDenied = await projectionCounts()
+    await db.query("UPDATE agent_team_access SET approved_capabilities=array_remove(approved_capabilities,'work:write') WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3", [f.workspaceId, f.teamId, parentAuthority.agent_id])
+    const narrowedSender = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Narrowed capability must fail.', recipientActorId: f.reviewer.actorId,
+    })
+    await db.query('UPDATE agent_team_access SET approved_capabilities=$4 WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, parentAuthority.agent_id, parentAuthority.team_capabilities])
+    await assertDeniedProjection(narrowedSender, 'CAPABILITY_DENIED', beforeDenied)
+
+    beforeDenied = await projectionCounts()
+    await db.query("UPDATE delegations SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb) WHERE id=$1", [parentAuthority.delegation_id])
+    const outOfScopeSender = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Removed resource scope must fail.', recipientActorId: f.reviewer.actorId,
+    })
+    await db.query('UPDATE delegations SET capability_scope=$2 WHERE id=$1', [parentAuthority.delegation_id, parentAuthority.capability_scope])
+    await assertDeniedProjection(outOfScopeSender, 'RESOURCE_SCOPE_DENIED', beforeDenied)
+
+    const targetTeamCapabilities = (await db.query<{ approved_capabilities: string[] }>(
+      `SELECT approved_capabilities FROM agent_team_access
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, f.reviewer.id],
+    )).rows[0]!.approved_capabilities
+    const targetDelegationScope = (await db.query<{ capability_scope: Record<string, unknown> }>(
+      'SELECT capability_scope FROM delegations WHERE id=$1',
+      [reviewerDelegationId],
+    )).rows[0]!.capability_scope
+    const targetDenied = async (body: string) => {
+      const before = await projectionCounts()
+      const response = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+        sessionId: f.parent.id, intent: 'blocker', body, recipientActorId: f.reviewer.actorId,
+      })
+      await assertDeniedProjection(response, 'MESSAGE_RECIPIENT_OUT_OF_SCOPE', before)
+    }
+    await db.query('UPDATE agent_definitions SET is_active=false WHERE id=$1', [f.reviewer.id])
+    await targetDenied('Disabled recipient definition must fail before Inbox projection.')
+    await db.query('UPDATE agent_definitions SET is_active=true WHERE id=$1', [f.reviewer.id])
+    beforeDenied = await projectionCounts()
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [f.reviewer.actorId])
+    const inactiveExactRecipient = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Inactive exact recipient Actor must fail before Inbox projection.', recipientSessionId: reviewerSession.id,
+    })
+    await db.query('UPDATE actors SET is_active=true WHERE id=$1', [f.reviewer.actorId])
+    await assertDeniedProjection(inactiveExactRecipient, 'MESSAGE_RECIPIENT_OUT_OF_SCOPE', beforeDenied)
+    await db.query("UPDATE agent_team_access SET approved_capabilities=array_remove(approved_capabilities,'work:read') WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3", [f.workspaceId, f.teamId, f.reviewer.id])
+    await targetDenied('Recipient capability narrowing must fail before Inbox projection.')
+    await db.query('UPDATE agent_team_access SET approved_capabilities=$4 WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, f.reviewer.id, targetTeamCapabilities])
+    await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1", [reviewerDelegationId])
+    await targetDenied('Revoked recipient delegation must fail before Inbox projection.')
+    await db.query("UPDATE delegations SET status='active',revoked_at=NULL WHERE id=$1", [reviewerDelegationId])
+    await db.query("UPDATE agent_sessions SET state='stale' WHERE id=ANY($1::uuid[])", [[reviewerSession.id, siblingSession.id]])
+    await targetDenied('Stale recipient Sessions must fail before Inbox projection.')
+    await db.query("UPDATE agent_sessions SET state='executing' WHERE id=ANY($1::uuid[])", [[reviewerSession.id, siblingSession.id]])
+    await db.query("UPDATE delegations SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb) WHERE id=$1", [reviewerDelegationId])
+    await targetDenied('Out-of-scope recipient delegation must fail before Inbox projection.')
+    await db.query('UPDATE delegations SET capability_scope=$2 WHERE id=$1', [reviewerDelegationId, targetDelegationScope])
+    const revokeGate = await db.connect()
+    await revokeGate.query('BEGIN')
+    await revokeGate.query('UPDATE agent_team_access SET revoked_at=now() WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, f.reviewer.id])
+    const beforeRacedRecipient = await projectionCounts()
+    const racedRecipient = agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Concurrent recipient revocation must win before projection.', recipientActorId: f.reviewer.actorId,
+    })
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await revokeGate.query('COMMIT')
+    revokeGate.release()
+    const racedRecipientResponse = await racedRecipient
+    await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3', [f.workspaceId, f.teamId, f.reviewer.id])
+    await assertDeniedProjection(racedRecipientResponse, 'MESSAGE_RECIPIENT_OUT_OF_SCOPE', beforeRacedRecipient)
+
+    const beforeActorTarget = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const blocker = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Choose one active Session to own this blocker.', recipientActorId: f.reviewer.actorId, requiresResponse: true,
+    })
+    expect(blocker.statusCode, JSON.stringify(blocker.json())).toBe(200)
+    const blockerMessageId = blocker.json<{ id: string }>().id
+    const blockerItemId = (await db.query<{ id: string }>(`SELECT id FROM inbox_items
+      WHERE source_type='room_message' AND source_id=$1 AND recipient_actor_id=$2 AND recipient_human_actor_id IS NULL`,
+    [blockerMessageId, f.reviewer.actorId])).rows[0]!.id
+    for (const token of [siblingToken, reviewerToken]) {
+      const recipientEvents = (await agentCall(token, 'GET', `/api/v1/events?cursor=${beforeActorTarget}`))
+        .json<Array<{ aggregate_id: string; event_type: string; audience_actor_id: string | null; session_id: string | null }>>()
+        .filter(event => event.aggregate_id === blockerMessageId)
+      expect(recipientEvents).toEqual([
+        expect.objectContaining({
+          event_type: 'room.message.posted',
+          audience_actor_id: f.reviewer.actorId,
+          session_id: null,
+        }),
+      ])
+    }
+    const actorTargetObserverEvents = (await humanCall(f.human, 'GET', `/api/v1/events?cursor=${beforeActorTarget}`))
+      .json<Array<{ aggregate_id: string; event_type: string }>>()
+      .filter(event => event.aggregate_id === blockerMessageId)
+    expect(actorTargetObserverEvents).toEqual(expect.arrayContaining([
+      expect.objectContaining({ event_type: 'room.message.human_visibility_recorded' }),
+    ]))
+    expect(actorTargetObserverEvents.filter(event => event.event_type === 'room.message.posted')).toEqual([])
+
+    for (const token of [siblingToken, reviewerToken]) {
+      const list = await agentCall(token, 'GET', '/api/v1/inbox')
+      expect(list.statusCode, JSON.stringify(list.json())).toBe(200)
+      expect(list.json<Page<{ id: string; detail_available: boolean; payload: Record<string, unknown> }>>().items).toEqual(expect.arrayContaining([
+        expect.objectContaining({ id: blockerItemId, detail_available: false, payload: { intent: 'blocker', channelId } }),
+      ]))
+      expect((await agentCall(token, 'GET', `/api/v1/inbox/${blockerItemId}`)).statusCode).toBe(404)
+    }
+
+    const beforeInvalidClaim = await projectionCounts()
+    const invalidClaimBody = await agentCall(
+      siblingToken,
+      'POST',
+      `/api/v1/inbox/${blockerItemId}/claim`,
+      { unexpected: true },
+    )
+    expect(invalidClaimBody.statusCode).toBe(400)
+    await expect(db.query(
+      'SELECT claimed_by_session_id FROM inbox_items WHERE id=$1',
+      [blockerItemId],
+    )).resolves.toMatchObject({ rows: [{ claimed_by_session_id: null }] })
+    expect(await projectionCounts()).toEqual(beforeInvalidClaim)
+
+    const claimKeys = [randomUUID(), randomUUID()] as const
+    const claimGate = await db.connect()
+    await claimGate.query('BEGIN')
+    await claimGate.query('SELECT 1 FROM agent_definitions WHERE id=$1 FOR UPDATE', [f.reviewer.id])
+    const claimsPending = Promise.all([
+      agentCall(siblingToken, 'POST', `/api/v1/inbox/${blockerItemId}/claim`, {}, { 'idempotency-key': claimKeys[0] }),
+      agentCall(reviewerToken, 'POST', `/api/v1/inbox/${blockerItemId}/claim`, {}, { 'idempotency-key': claimKeys[1] }),
+    ])
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await claimGate.query('COMMIT')
+    claimGate.release()
+    const claims = await claimsPending
+    expect(claims.filter(response => response.statusCode === 200)).toHaveLength(1)
+    expect([404, 409]).toContain(claims.find(response => response.statusCode !== 200)!.statusCode)
+    const winnerIndex = claims.findIndex(response => response.statusCode === 200)
+    const winnerToken = [siblingToken, reviewerToken][winnerIndex]!
+    const loserToken = [siblingToken, reviewerToken][1 - winnerIndex]!
+    const winnerSession = [siblingSession, reviewerSession][winnerIndex]!
+    const loserSession = [siblingSession, reviewerSession][1 - winnerIndex]!
+    const winnerClaimKey = claimKeys[winnerIndex]!
+    const claim = claims[winnerIndex]!.json<{ revision: number; claimed_by_session_id: string; source_message_body: string; detailAvailable: boolean }>()
+    expect(claim).toMatchObject({ claimed_by_session_id: winnerSession.id, source_message_body: 'Choose one active Session to own this blocker.', detailAvailable: true })
+    const loserClaim = claims[1 - winnerIndex]!
+    expect(loserClaim.statusCode).toBe(404)
+    expect(loserClaim.json<{ error: { code: string } }>().error.code).toBe('NOT_FOUND')
+    const expectedWinnerHash = createHash('sha256').update(JSON.stringify({
+      agentSessionId: winnerSession.id,
+      body: {},
+      ifMatch: null,
+      method: 'POST',
+      pathParams: { id: blockerItemId },
+      route: '/api/v1/inbox/:id/claim',
+    })).digest('hex')
+    expect((await db.query<{ request_hash: string }>(
+      `SELECT request_hash FROM api_idempotency_keys
+        WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3`,
+      [f.workspaceId, f.reviewer.actorId, winnerClaimKey],
+    )).rows[0]!.request_hash).toBe(expectedWinnerHash)
+    const claimReplay = await agentCall(winnerToken, 'POST', `/api/v1/inbox/${blockerItemId}/claim`, {}, { 'idempotency-key': winnerClaimKey })
+    expect(claimReplay.statusCode, JSON.stringify(claimReplay.json())).toBe(200)
+    expect(claimReplay.json()).toEqual(claim)
+    const keyConflictMessage = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'blocker', body: 'Keep idempotency conflict separate from the claim race.', recipientActorId: f.reviewer.actorId,
+    })
+    const keyConflictItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items WHERE source_id=$1 AND recipient_actor_id=$2`,
+      [keyConflictMessage.json<{ id: string }>().id, f.reviewer.actorId],
+    )).rows[0]!.id
+    const keyConflict = await agentCall(winnerToken, 'POST', `/api/v1/inbox/${keyConflictItemId}/claim`, {}, { 'idempotency-key': winnerClaimKey })
+    expect(keyConflict.statusCode).toBe(409)
+    expect(keyConflict.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'IDEMPOTENCY_KEY_REUSED' } })
+    expect((await db.query<{ claimed_by_session_id: string | null }>(
+      'SELECT claimed_by_session_id FROM inbox_items WHERE id=$1',
+      [keyConflictItemId],
+    )).rows[0]!.claimed_by_session_id).toBeNull()
+    expect((await agentCall(loserToken, 'GET', `/api/v1/inbox/${blockerItemId}`)).statusCode).toBe(404)
+
+    const acknowledged = await agentCall(winnerToken, 'POST', `/api/v1/inbox/${blockerItemId}/acknowledge`, {})
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
+    expect(acknowledged.json<{ status: string }>().status).toBe('open')
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM room_message_response_resolutions WHERE message_id=$1', [blockerMessageId])).rows[0]!.count).toBe(0)
+
+    const beforeReply = (await db.query<{ work_item_revision: number; handoffs: number; leases: number }>(`SELECT revision AS work_item_revision,
+      (SELECT count(*)::int FROM handoffs) AS handoffs,(SELECT count(*)::int FROM leases) AS leases FROM work_items WHERE id=$1`, [f.workItemId])).rows[0]!
+    const blockerReply = await agentCall(winnerToken, 'POST', `/api/v1/inbox/${blockerItemId}/reply`, {
+      body: 'I have claimed and handled the blocker.', payload: { outcome: 'handled' },
+    }, { 'if-match': `"revision-${claim.revision}"` })
+    expect(blockerReply.statusCode, JSON.stringify(blockerReply.json())).toBe(200)
+    expect(blockerReply.json<{ status: string }>().status).toBe('resolved')
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM room_message_response_resolutions WHERE message_id=$1', [blockerMessageId])).rows[0]!.count).toBe(1)
+    expect((await db.query<{ work_item_revision: number; handoffs: number; leases: number }>(`SELECT revision AS work_item_revision,
+      (SELECT count(*)::int FROM handoffs) AS handoffs,(SELECT count(*)::int FROM leases) AS leases FROM work_items WHERE id=$1`, [f.workItemId])).rows[0]).toEqual(beforeReply)
+    await durableEvent('inbox.item.replied', blockerItemId)
+
+    const resolvedBeforeClaim = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'ask', body: 'Resolve this before any Agent claim.', recipientActorId: f.reviewer.actorId, requiresResponse: true,
+    })
+    expect(resolvedBeforeClaim.statusCode).toBe(200)
+    const resolvedMessageId = resolvedBeforeClaim.json<{ id: string }>().id
+    const resolvedItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items WHERE source_type='room_message' AND source_id=$1
+        AND recipient_actor_id=$2 AND recipient_human_actor_id IS NULL`,
+      [resolvedMessageId, f.reviewer.actorId],
+    )).rows[0]!.id
+    const resolvedInitialRevision = (await db.query<{ revision: number }>(
+      'SELECT revision FROM inbox_items WHERE id=$1',
+      [resolvedItemId],
+    )).rows[0]!.revision
+    expect((await humanCall(f.human, 'POST', `/api/v1/messages/${resolvedMessageId}/resolve`, {}, { 'if-match': '"revision-1"' })).statusCode).toBe(200)
+    expect((await db.query<{ status: string; revision: number }>(
+      'SELECT status,revision FROM inbox_items WHERE id=$1',
+      [resolvedItemId],
+    )).rows[0]).toEqual({ status: 'resolved', revision: resolvedInitialRevision + 1 })
+    expect((await agentCall(siblingToken, 'POST', `/api/v1/inbox/${resolvedItemId}/claim`, {})).statusCode).toBe(404)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM inbox_item_receipts
+        WHERE inbox_item_id=$1 AND kind='claimed'`,
+      [resolvedItemId],
+    )).rows[0]!.count).toBe(0)
+
+    const beforeMentionCreation = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const mention = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'inform', body: 'This mention is for one exact Session.', recipientSessionId: loserSession.id,
+    })
+    expect(mention.statusCode, JSON.stringify(mention.json())).toBe(200)
+    const mentionMessageId = mention.json<{ id: string }>().id
+    const mentionItemId = (await db.query<{ id: string }>(`SELECT id FROM inbox_items
+      WHERE source_id=$1 AND recipient_session_id=$2 AND kind='mention'`, [mentionMessageId, loserSession.id])).rows[0]!.id
+    const loserCreationEvents = (await agentCall(loserToken, 'GET', `/api/v1/events?cursor=${beforeMentionCreation}`))
+      .json<Array<{ aggregate_id: string; event_type: string; session_id: string }>>()
+    const winnerCreationEvents = (await agentCall(winnerToken, 'GET', `/api/v1/events?cursor=${beforeMentionCreation}`))
+      .json<Array<{ aggregate_id: string; event_type: string; session_id: string }>>()
+    expect(loserCreationEvents).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        aggregate_id: mentionMessageId,
+        event_type: 'room.message.posted',
+        session_id: loserSession.id,
+      }),
+    ]))
+    expect(winnerCreationEvents.filter(event => event.aggregate_id === mentionMessageId)).toEqual([])
+    const beforeMentionRead = (await db.query<{ cursor: string; receipts: number }>(
+      `SELECT COALESCE(max(cursor),0)::text AS cursor,
+              (SELECT count(*)::int FROM inbox_item_receipts WHERE inbox_item_id=$1) AS receipts
+         FROM domain_events`,
+      [mentionItemId],
+    )).rows[0]!
+    expect((await agentCall(winnerToken, 'GET', `/api/v1/inbox/${mentionItemId}`)).statusCode).toBe(404)
+    const mentionDetail = await agentCall(loserToken, 'GET', `/api/v1/inbox/${mentionItemId}`)
+    expect(mentionDetail.statusCode, JSON.stringify(mentionDetail.json())).toBe(200)
+    expect(mentionDetail.json<{ source_message_body: string }>().source_message_body).toBe('This mention is for one exact Session.')
+    expect((await db.query<{ cursor: string; receipts: number }>(
+      `SELECT COALESCE(max(cursor),0)::text AS cursor,
+              (SELECT count(*)::int FROM inbox_item_receipts WHERE inbox_item_id=$1) AS receipts
+         FROM domain_events`,
+      [mentionItemId],
+    )).rows[0]).toEqual(beforeMentionRead)
+    const mentionAck = await agentCall(loserToken, 'POST', `/api/v1/inbox/${mentionItemId}/acknowledge`, {})
+    expect(mentionAck.statusCode).toBe(200)
+    expect(mentionAck.json<{ status: string }>().status).toBe('open')
+    const loserInboxEvents = (await agentCall(loserToken, 'GET', `/api/v1/events?cursor=${beforeMentionRead.cursor}`)).json<Array<{ aggregate_id: string; event_type: string }>>()
+    const winnerInboxEvents = (await agentCall(winnerToken, 'GET', `/api/v1/events?cursor=${beforeMentionRead.cursor}`)).json<Array<{ aggregate_id: string; event_type: string }>>()
+    expect(loserInboxEvents).toEqual(expect.arrayContaining([
+      expect.objectContaining({ aggregate_id: mentionItemId, event_type: 'inbox.item.acknowledged' }),
+    ]))
+    expect(loserInboxEvents.find(event => event.event_type === 'inbox.item.read')).toBeUndefined()
+    expect(winnerInboxEvents.filter(event => event.aggregate_id === mentionItemId)).toEqual([])
+
+    const ask = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'ask', body: 'Can your exact Session answer this question?', recipientSessionId: loserSession.id, requiresResponse: true,
+    })
+    expect(ask.statusCode, JSON.stringify(ask.json())).toBe(200)
+    const askItemId = (await db.query<{ id: string }>(`SELECT id FROM inbox_items
+      WHERE source_id=$1 AND recipient_session_id=$2 AND kind='ask'`, [ask.json<{ id: string }>().id, loserSession.id])).rows[0]!.id
+    const askDetail = await agentCall(loserToken, 'GET', `/api/v1/inbox/${askItemId}`)
+    expect(askDetail.statusCode, JSON.stringify(askDetail.json())).toBe(200)
+    const beforeInactiveSourceReply = await projectionCounts()
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [f.runner.actorId])
+    const inactiveSourceReply = await agentCall(loserToken, 'POST', `/api/v1/inbox/${askItemId}/reply`, {
+      body: 'This reply must roll back while the exact source Actor is inactive.', payload: {},
+    }, { 'if-match': `"revision-${askDetail.json<{ revision: number }>().revision}"` })
+    await db.query('UPDATE actors SET is_active=true WHERE id=$1', [f.runner.actorId])
+    await assertDeniedProjection(inactiveSourceReply, 'NOT_FOUND', beforeInactiveSourceReply)
+    const beforeOutOfScopeSourceReply = await projectionCounts()
+    await db.query(
+      "UPDATE delegations SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb) WHERE id=$1",
+      [parentAuthority.delegation_id],
+    )
+    const outOfScopeSourceReply = await agentCall(loserToken, 'POST', `/api/v1/inbox/${askItemId}/reply`, {
+      body: 'This reply must roll back while the source Session scope is revoked.', payload: {},
+    }, { 'if-match': `"revision-${askDetail.json<{ revision: number }>().revision}"` })
+    await db.query(
+      'UPDATE delegations SET capability_scope=$2 WHERE id=$1',
+      [parentAuthority.delegation_id, parentAuthority.capability_scope],
+    )
+    await assertDeniedProjection(outOfScopeSourceReply, 'NOT_FOUND', beforeOutOfScopeSourceReply)
+
+    const responsibleObserver = await memberForTeam(f.workspaceId, f.teamId)
+    await db.query(
+      'UPDATE work_items SET responsible_human_actor_id=$2 WHERE id=$1',
+      [f.workItemId, responsibleObserver.actorId],
+    )
+    const responsibleAsk = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id,
+      intent: 'ask',
+      body: 'The Work Item responsible Human must observe this request.',
+      recipientSessionId: reviewerSession.id,
+      requiresResponse: true,
+    })
+    expect(responsibleAsk.statusCode, JSON.stringify(responsibleAsk.json())).toBe(200)
+    const responsibleRecipients = (await db.query<{ recipient_human_actor_id: string | null }>(
+      `SELECT recipient_human_actor_id
+         FROM inbox_items
+        WHERE source_type='room_message' AND source_id=$1
+        ORDER BY recipient_human_actor_id NULLS LAST`,
+      [responsibleAsk.json<{ id: string }>().id],
+    )).rows
+    expect(responsibleRecipients).toEqual(expect.arrayContaining([
+      { recipient_human_actor_id: responsibleObserver.actorId },
+      { recipient_human_actor_id: null },
+    ]))
+    expect(responsibleRecipients).not.toContainEqual({ recipient_human_actor_id: f.human.actorId })
+    await db.query(
+      'UPDATE work_items SET responsible_human_actor_id=$2 WHERE id=$1',
+      [f.workItemId, f.human.actorId],
+    )
+
+    const humanAsk = await humanCall(f.human, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      intent: 'ask', body: 'Can you reply to the responsible Human?', recipientSessionId: loserSession.id, requiresResponse: true,
+    })
+    expect(humanAsk.statusCode, JSON.stringify(humanAsk.json())).toBe(200)
+    const humanAskItemId = (await db.query<{ id: string }>(`SELECT id FROM inbox_items
+      WHERE source_id=$1 AND recipient_session_id=$2 AND kind='ask'`, [humanAsk.json<{ id: string }>().id, loserSession.id])).rows[0]!.id
+    const humanAskDetail = await agentCall(loserToken, 'GET', `/api/v1/inbox/${humanAskItemId}`)
+    expect(humanAskDetail.statusCode, JSON.stringify(humanAskDetail.json())).toBe(200)
+    const beforeInactiveHumanSourceReply = await projectionCounts()
+    await db.query('UPDATE actors SET is_active=false WHERE id=$1', [f.human.actorId])
+    const inactiveHumanSourceReply = await agentCall(loserToken, 'POST', `/api/v1/inbox/${humanAskItemId}/reply`, {
+      body: 'This reply must roll back while the Human source Actor is inactive.', payload: {},
+    }, { 'if-match': `"revision-${humanAskDetail.json<{ revision: number }>().revision}"` })
+    await db.query('UPDATE actors SET is_active=true WHERE id=$1', [f.human.actorId])
+    await assertDeniedProjection(inactiveHumanSourceReply, 'NOT_FOUND', beforeInactiveHumanSourceReply)
+
+    const memberSource = await memberForTeam(f.workspaceId, f.teamId, 'maintainer')
+    const memberAsk = await humanCall(memberSource, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      intent: 'ask',
+      body: 'Membership must remain live until the reply commits.',
+      recipientSessionId: loserSession.id,
+      requiresResponse: true,
+    })
+    expect(memberAsk.statusCode, JSON.stringify(memberAsk.json())).toBe(200)
+    const memberAskItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items WHERE source_id=$1 AND recipient_session_id=$2`,
+      [memberAsk.json<{ id: string }>().id, loserSession.id],
+    )).rows[0]!.id
+    const memberAskDetail = await agentCall(loserToken, 'GET', `/api/v1/inbox/${memberAskItemId}`)
+    const beforeRevokedMemberReply = await projectionCounts()
+    await db.query(
+      'DELETE FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3',
+      [f.workspaceId, f.teamId, memberSource.actorId],
+    )
+    const revokedMemberReply = await agentCall(loserToken, 'POST', `/api/v1/inbox/${memberAskItemId}/reply`, {
+      body: 'This must roll back after the Human loses Team membership.', payload: {},
+    }, { 'if-match': `"revision-${memberAskDetail.json<{ revision: number }>().revision}"` })
+    await db.query(
+      "INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')",
+      [f.workspaceId, f.teamId, memberSource.actorId],
+    )
+    await assertDeniedProjection(revokedMemberReply, 'NOT_FOUND', beforeRevokedMemberReply)
+
+    const reverseAsk = await agentCall(loserToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: loserSession.id,
+      intent: 'ask',
+      body: 'Reply concurrently in the opposite Session direction.',
+      recipientSessionId: f.parent.id,
+      requiresResponse: true,
+    })
+    expect(reverseAsk.statusCode, JSON.stringify(reverseAsk.json())).toBe(200)
+    const reverseAskItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items WHERE source_id=$1 AND recipient_session_id=$2`,
+      [reverseAsk.json<{ id: string }>().id, f.parent.id],
+    )).rows[0]!.id
+    const reverseAskDetail = await agentCall(f.parentToken, 'GET', `/api/v1/inbox/${reverseAskItemId}`)
+    const reciprocalReplies = await Promise.all([
+      agentCall(loserToken, 'POST', `/api/v1/inbox/${askItemId}/reply`, {
+        body: 'Yes. Only this exact Session can reply.', payload: {},
+      }, { 'if-match': `"revision-${askDetail.json<{ revision: number }>().revision}"` }),
+      agentCall(f.parentToken, 'POST', `/api/v1/inbox/${reverseAskItemId}/reply`, {
+        body: 'The deterministic Session lock order avoids reciprocal deadlock.', payload: {},
+      }, { 'if-match': `"revision-${reverseAskDetail.json<{ revision: number }>().revision}"` }),
+    ])
+    expect(reciprocalReplies.map(response => response.statusCode)).toEqual([200, 200])
+    const askReply = reciprocalReplies[0]!
+    expect(askReply.statusCode, JSON.stringify(askReply.json())).toBe(200)
+    expect(askReply.json<{ status: string }>().status).toBe('resolved')
+    const askReplyMessageId = askReply.json<{ replyMessageId: string }>().replyMessageId
+    const sourceReplyInbox = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_type='room_message' AND source_id=$1
+          AND recipient_session_id=$2 AND kind='mention'`,
+      [askReplyMessageId, f.parent.id],
+    )).rows[0]
+    expect(sourceReplyInbox).toBeDefined()
+    const sourceReplyDetail = await agentCall(f.parentToken, 'GET', `/api/v1/inbox/${sourceReplyInbox!.id}`)
+    expect(sourceReplyDetail.statusCode, JSON.stringify(sourceReplyDetail.json())).toBe(200)
+    expect(sourceReplyDetail.json<{ source_message_body: string }>().source_message_body).toBe('Yes. Only this exact Session can reply.')
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM inbox_items
+        WHERE source_type='room_message' AND source_id=$1 AND status='open'`,
+      [ask.json<{ id: string }>().id],
+    )).rows[0]!.count).toBe(0)
+    await durableEvent('room.message.posted', askReplyMessageId)
+    await durableEvent('inbox.item.replied', askItemId)
+
+    const reviewRequest = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id, intent: 'review_request', body: 'Review the evidence with your reviewer authority.', recipientSessionId: reviewerSession.id, requiresResponse: true,
+    })
+    expect(reviewRequest.statusCode, JSON.stringify(reviewRequest.json())).toBe(200)
+    const reviewItemId = (await db.query<{ id: string }>(`SELECT id FROM inbox_items
+      WHERE source_id=$1 AND recipient_session_id=$2 AND kind='review_request'`, [reviewRequest.json<{ id: string }>().id, reviewerSession.id])).rows[0]!.id
+    const reviewDetail = await agentCall(reviewerToken, 'GET', `/api/v1/inbox/${reviewItemId}`)
+    expect(reviewDetail.statusCode, JSON.stringify(reviewDetail.json())).toBe(200)
+    await db.query(`UPDATE agent_team_access SET approved_capabilities=array_remove(approved_capabilities,'artifact:write')
+      WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`, [f.workspaceId, f.teamId, f.reviewer.id])
+    const deniedReview = await agentCall(reviewerToken, 'POST', `/api/v1/inbox/${reviewItemId}/reply`, {
+      body: 'This must fail while live artifact authority is revoked.', payload: {},
+    }, { 'if-match': `"revision-${reviewDetail.json<{ revision: number }>().revision}"` })
+    expect(deniedReview.statusCode).toBe(403)
+    expect((await db.query<{ status: string }>('SELECT status FROM inbox_items WHERE id=$1', [reviewItemId])).rows[0]!.status).toBe('open')
+    await db.query(`UPDATE agent_team_access SET approved_capabilities=array_append(approved_capabilities,'artifact:write')
+      WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`, [f.workspaceId, f.teamId, f.reviewer.id])
+    const reviewReply = await agentCall(reviewerToken, 'POST', `/api/v1/inbox/${reviewItemId}/reply`, {
+      body: 'Review complete with auditable evidence.', payload: { verdict: 'approved' },
+    }, { 'if-match': `"revision-${reviewDetail.json<{ revision: number }>().revision}"` })
+    expect(reviewReply.statusCode, JSON.stringify(reviewReply.json())).toBe(200)
+    expect((await db.query<{ intent: string }>('SELECT intent::text AS intent FROM room_messages WHERE id=$1',
+      [reviewReply.json<{ replyMessageId: string }>().replyMessageId])).rows[0]).toEqual({ intent: 'review_result' })
+    await durableEvent('inbox.item.replied', reviewItemId)
+
+    await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1", [reviewerDelegationId])
+    const revokedInboxRead = await agentCall(reviewerToken, 'GET', `/api/v1/inbox/${reviewItemId}`)
+    expect(revokedInboxRead.statusCode).toBe(409)
+    expect(revokedInboxRead.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'DELEGATION_NOT_ACTIVE' } })
+  })
+
   it('enforces cross-team collaboration boundaries and trusted context sources', async () => {
     const f = await makeFixture()
     const otherTeam = await humanCall(f.human, 'POST', '/api/v1/teams', { name: 'Isolated team', key: `I${randomUUID().replaceAll('-', '').slice(0, 5).toUpperCase()}` })
@@ -319,6 +913,17 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(otherReady.statusCode, JSON.stringify(otherReady.json())).toBe(200)
     const otherReadyId = otherReady.json<{ id: string }>().id
     const scopedMember = await memberForTeam(f.workspaceId, otherTeamId)
+    const concealedInbox = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,team_id,
+         kind,source_type,source_id,payload
+       ) VALUES($1,$2,$2,$3,'mention','handoff',$4,'{}'::jsonb)
+       RETURNING id`,
+      [f.workspaceId, scopedMember.actorId, otherTeamId, randomUUID()],
+    )).rows[0]!.id
+    expect((await agentCall(f.parentToken, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
+    expect((await agentCall(f.parentToken, 'POST', `/api/v1/inbox/${concealedInbox}/claim`, {})).statusCode).toBe(404)
+    expect((await humanCall(f.human, 'GET', `/api/v1/inbox/${concealedInbox}`)).statusCode).toBe(404)
     const otherAgent = await register(f.human, otherTeamId, `isolated-${randomUUID().slice(0, 8)}`)
     const otherWork = await humanCall(f.human, 'POST', '/api/v1/work-items', { teamId: otherTeamId, title: 'Isolated work', statusId: otherReadyId, responsibleHumanActorId: f.human.actorId })
     expect(otherWork.statusCode).toBe(200)
@@ -416,6 +1021,8 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(offered.statusCode).toBe(200)
     const handoffId = offered.json<{ id: string }>().id
+    expect((await db.query<{ count: number }>(`SELECT count(*)::int AS count FROM inbox_items
+      WHERE source_type='handoff' AND source_id=$1 AND recipient_human_actor_id IS NULL`, [handoffId])).rows[0]!.count).toBe(0)
     expect((await db.query<{
       completed_work: string[]
       remaining_work: string[]
@@ -442,6 +1049,17 @@ describe('Stage 2 collaboration API acceptance', () => {
     const acceptedToken = await tokenFor(acceptedSessionId, f.reviewer)
     const acceptedAck = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/ack`, { summary: 'accepted handoff ready', externalUrls: [] })
     const acceptedExecuting = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/state`, { state: 'executing', reason: 'finishing handoff' }, { 'if-match': `"revision-${acceptedAck.json<{ revision: number }>().revision}"` })
+    expect(acceptedExecuting.statusCode, JSON.stringify(acceptedExecuting.json())).toBe(200)
+    const acceptedInbox = await agentCall(acceptedToken, 'GET', '/api/v1/inbox')
+    expect(acceptedInbox.statusCode, JSON.stringify(acceptedInbox.json())).toBe(200)
+    const handoffInboxItem = acceptedInbox.json<Page<{ id: string; source_id: string; kind: string; recipient_session_id: string; detail_available: boolean }>>()
+      .items.find(item => item.source_id === handoffId)
+    expect(handoffInboxItem).toMatchObject({
+      source_id: handoffId, kind: 'handoff', recipient_session_id: acceptedSessionId, detail_available: true,
+    })
+    const handoffAcknowledged = await agentCall(acceptedToken, 'POST', `/api/v1/inbox/${handoffInboxItem!.id}/acknowledge`, {})
+    expect(handoffAcknowledged.statusCode, JSON.stringify(handoffAcknowledged.json())).toBe(200)
+    expect((await db.query<{ status: string }>('SELECT status FROM handoffs WHERE id=$1', [handoffId])).rows[0]!.status).toBe('accepted')
     const acceptedComplete = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/complete`, { summary: 'handoff work completed', artifactIds: [], checks: [{ name: 'handoff acceptance', status: 'passed', summary: 'all criteria met' }], limitations: [] }, { 'if-match': `"revision-${acceptedExecuting.json<{ revision: number }>().revision}"` })
     expect(acceptedComplete.statusCode, JSON.stringify(acceptedComplete.json())).toBe(200)
     const completedHandoff = await humanCall(f.human, 'POST', `/api/v1/handoffs/${handoffId}/complete`, { reason: 'target completed with evidence' })

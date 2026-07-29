@@ -12,7 +12,7 @@ const db = createDb(databaseUrl)
 const key = Buffer.alloc(32, 9)
 const publicDns = async () => [{ address: '8.8.8.8', family: 4 as const }]
 
-type Fixture = { workspaceId: string; teamId: string; serviceActorId: string; humanActorId: string; agentId: string; endpointId: string; workItemId: string; delegationId: string }
+type Fixture = { workspaceId: string; teamId: string; serviceActorId: string; humanActorId: string; agentActorId: string; agentId: string; endpointId: string; workItemId: string; delegationId: string }
 
 const fixture = async (): Promise<Fixture> => {
   const workspace = await db.query<{ id: string }>("INSERT INTO workspaces(name,slug) VALUES('Worker Stage 1','worker-stage-1') RETURNING id")
@@ -29,7 +29,7 @@ const fixture = async (): Promise<Fixture> => {
   const encrypted = encryptWebhookSecretForTest(Buffer.from('integration-secret'), key)
   await db.query('INSERT INTO agent_webhook_secrets(endpoint_id,version,secret_ciphertext,iv,auth_tag,key_version,status,created_by_actor_id) VALUES($1,1,$2,$3,$4,$5,$6,$7)', [endpoint.rows[0]!.id, Buffer.from(encrypted.ciphertext, 'base64'), Buffer.from(encrypted.iv, 'base64'), Buffer.from(encrypted.authTag, 'base64'), '1', 'active', service.rows[0]!.id])
   const delegation = await db.query<{ id: string }>("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read']) RETURNING id", [workspaceId, team.rows[0]!.id, agent.rows[0]!.id, agentActor.rows[0]!.id, human.rows[0]!.id, workItem.rows[0]!.id])
-  return { workspaceId, teamId: team.rows[0]!.id, serviceActorId: service.rows[0]!.id, humanActorId: human.rows[0]!.id, agentId: agent.rows[0]!.id, endpointId: endpoint.rows[0]!.id, workItemId: workItem.rows[0]!.id, delegationId: delegation.rows[0]!.id }
+  return { workspaceId, teamId: team.rows[0]!.id, serviceActorId: service.rows[0]!.id, humanActorId: human.rows[0]!.id, agentActorId: agentActor.rows[0]!.id, agentId: agent.rows[0]!.id, endpointId: endpoint.rows[0]!.id, workItemId: workItem.rows[0]!.id, delegationId: delegation.rows[0]!.id }
 }
 
 const createSession = async (data: Fixture, state = 'queued'): Promise<string> => {
@@ -141,6 +141,146 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ status: string }>('SELECT status FROM agent_webhook_deliveries WHERE id=$1', [allowedId])).rows[0]?.status).toBe('delivered')
   })
 
+  it('suppresses an enqueued direct-recipient payload after target revocation or stop', async () => {
+    const data = await fixture()
+    await db.query(
+      `UPDATE agent_definitions
+          SET requested_capabilities=ARRAY['work:read'],
+              approved_capabilities=ARRAY['work:read']
+        WHERE id=$1`,
+      [data.agentId],
+    )
+    await db.query(
+      `INSERT INTO agent_team_access(
+         workspace_id,team_id,agent_id,approved_capabilities,granted_by_actor_id
+       ) VALUES($1,$2,$3,ARRAY['work:read'],$4)`,
+      [data.workspaceId, data.teamId, data.agentId, data.humanActorId],
+    )
+    await db.query(
+      `UPDATE delegations
+          SET permissions_snapshot=ARRAY['work:read'],
+              capability_scope=jsonb_build_object(
+                'teamIds',jsonb_build_array($2::text),
+                'workItemIds',jsonb_build_array($3::text),
+                'projectIds','[]'::jsonb
+              )
+        WHERE id=$1`,
+      [data.delegationId, data.teamId, data.workItemId],
+    )
+    const sessionId = (await db.query<{ id: string }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state
+       ) VALUES($1,$2,$3,$4,$5,$6,'executing')
+       RETURNING id`,
+      [
+        data.workspaceId,
+        data.teamId,
+        data.agentId,
+        data.agentActorId,
+        data.delegationId,
+        data.workItemId,
+      ],
+    )).rows[0]!.id
+    const channelId = (await db.query<{ id: string }>(
+      `INSERT INTO work_room_channels(
+         workspace_id,subject_kind,subject_id,team_id
+       ) VALUES($1,'work_item',$2,$3)
+       RETURNING id`,
+      [data.workspaceId, data.workItemId, data.teamId],
+    )).rows[0]!.id
+    const enqueue = async (marker: string): Promise<string> => {
+      const messageId = (await db.query<{ id: string }>(
+        `INSERT INTO room_messages(
+           channel_id,workspace_id,author_actor_id,intent,recipient_actor_id,body
+         ) VALUES($1,$2,$3,'inform',$4,'Targeted worker delivery')
+         RETURNING id`,
+        [channelId, data.workspaceId, data.humanActorId, data.agentActorId],
+      )).rows[0]!.id
+      const eventId = (await db.query<{ id: string }>(
+        `INSERT INTO domain_events(
+           workspace_id,team_id,audience_actor_id,event_type,aggregate_type,
+           aggregate_id,actor_id,correlation_id,session_id,payload
+         ) VALUES(
+           $1,$2,$3,'room.message.posted','room_message',$4,$5,$6,$7,$8
+         ) RETURNING id`,
+        [
+          data.workspaceId,
+          data.teamId,
+          data.agentActorId,
+          messageId,
+          data.humanActorId,
+          randomUUID(),
+          sessionId,
+          { marker },
+        ],
+      )).rows[0]!.id
+      return (await db.query<{ id: string }>(
+        `INSERT INTO agent_webhook_deliveries(
+           agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,
+           session_id,payload
+         ) VALUES($1,$2,1,$3,$4,'room.message.posted',$5,$6)
+         RETURNING id`,
+        [
+          data.agentId,
+          data.endpointId,
+          eventId,
+          `direct-${randomUUID()}`,
+          sessionId,
+          { marker },
+        ],
+      )).rows[0]!.id
+    }
+    let requests = 0
+    const worker = createAgentWebhookWorker({
+      db,
+      masterKey: key,
+      dnsLookup: publicDns,
+      fetcher: async () => { requests += 1; return { status: 204 } },
+    })
+
+    const revokedMarker = 'must-not-leave-after-revocation'
+    const revokedDeliveryId = await enqueue(revokedMarker)
+    await db.query(
+      "UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1",
+      [data.delegationId],
+    )
+    await worker.tick()
+    expect(requests).toBe(0)
+    const revokedAudit = (await db.query<{
+      status: string
+      last_error: string
+      payload_text: string
+    }>(
+      `SELECT status,last_error,payload::text AS payload_text
+         FROM agent_webhook_deliveries WHERE id=$1`,
+      [revokedDeliveryId],
+    )).rows[0]!
+    expect(revokedAudit).toMatchObject({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+    expect(revokedAudit.last_error).not.toContain(revokedMarker)
+
+    await db.query(
+      "UPDATE delegations SET status='active',revoked_at=NULL WHERE id=$1",
+      [data.delegationId],
+    )
+    const stoppedMarker = 'must-not-leave-after-stop'
+    const stoppedDeliveryId = await enqueue(stoppedMarker)
+    await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
+    await worker.tick()
+    expect(requests).toBe(0)
+    const stoppedAudit = (await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [stoppedDeliveryId],
+    )).rows[0]!
+    expect(stoppedAudit).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+    expect(stoppedAudit.last_error).not.toContain(stoppedMarker)
+  })
+
   it("handles ACK timeout/late ACK, heartbeat stale, stop grace, and approval expiry in durable transactions", async () => {
     const data = await fixture();
     const queued = await createSession(data);
@@ -172,6 +312,22 @@ describe('stage 1 worker durability', () => {
       ).rows[0]?.state,
     ).toBe("stale");
     await expectEventTeamAuthority(queued, "agent.session.stale", data.teamId);
+    expect((await db.query<{
+      recipientActorId: string
+      recipientHumanActorId: string
+      teamId: string
+    }>(
+      `SELECT recipient_actor_id AS "recipientActorId",
+              recipient_human_actor_id AS "recipientHumanActorId",
+              team_id AS "teamId"
+         FROM inbox_items
+        WHERE source_type='agent_session' AND source_id=$1 AND kind='session_stale'`,
+      [queued],
+    )).rows[0]).toEqual({
+      recipientActorId: data.humanActorId,
+      recipientHumanActorId: data.humanActorId,
+      teamId: data.teamId,
+    })
     await db.query(
       "UPDATE agent_sessions SET state='acknowledged', acknowledged_at=now(), last_heartbeat_at=now(), revision=revision+1 WHERE id=$1 AND state='stale'",
       [queued],
@@ -221,6 +377,15 @@ describe('stage 1 worker durability', () => {
       ).rows[0]?.count,
     ).toBe("0");
     await expectEventTeamAuthority(active, "agent.session.stale", data.teamId);
+    expect((await db.query<{ recipientActorId: string; teamId: string }>(
+      `SELECT recipient_actor_id AS "recipientActorId",team_id AS "teamId"
+         FROM inbox_items
+        WHERE source_type='agent_session' AND source_id=$1 AND kind='session_stale'`,
+      [active],
+    )).rows[0]).toEqual({
+      recipientActorId: data.humanActorId,
+      teamId: data.teamId,
+    })
 
     const stopping = await createSession(data, "stopping");
     await db.query(
