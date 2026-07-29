@@ -9,6 +9,10 @@ import {
   type ArchiveObjectStore,
   type ExactRedisClient,
 } from "../src/retention.js";
+import {
+  retentionSoakSampleQuery,
+  type RetentionSoakSampleDatabaseState,
+} from "../src/retention-soak-query.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
@@ -134,6 +138,34 @@ beforeEach(async () => {
 
 afterAll(async () => {
   await db.end();
+});
+
+describe("retention soak sampling", () => {
+  it("executes the formal sampling query against PostgreSQL", async () => {
+    await db.query(
+      `INSERT INTO retention_job_state(
+         job_name,workspace_id,worker_mode,worker_seen_at
+       ) VALUES('worker_runtime',$1,'archive_only',now())
+       ON CONFLICT(job_name,workspace_id) DO UPDATE
+         SET worker_mode=EXCLUDED.worker_mode,
+             worker_seen_at=EXCLUDED.worker_seen_at`,
+      [workspaceId],
+    );
+    const state = (
+      await db.query<RetentionSoakSampleDatabaseState>(
+        retentionSoakSampleQuery,
+        [workspaceId, [], new Date()],
+      )
+    ).rows[0]!;
+    expect(state).toMatchObject({
+      floor: "0",
+      workerMode: "archive_only",
+      backlog: "1",
+      currentRunArchived: "0",
+      outboxPending: "0",
+      rows: "1",
+    });
+  });
 });
 
 describe("retention worker destructive-path fences", () => {
