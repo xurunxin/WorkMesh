@@ -1,11 +1,15 @@
+import { EventEmitter } from 'node:events'
 import http, { createServer } from 'node:http'
+import type { ServerResponse } from 'node:http'
 import { describe, expect, it, vi } from 'vitest'
 import { DomainError } from '@workmesh/domain'
 import {
   admitRealtimeClient,
   createRealtimeCapacity,
+  finishRealtimeStream,
   markRealtimeCapacityExceeded,
   parseEventBatchLimit,
+  writeRealtimeChunk,
   writeRealtimeStreamHeaders,
 } from './routes.js'
 
@@ -72,6 +76,35 @@ describe('realtime stream response', () => {
         server.close((error) => (error ? reject(error) : resolve())),
       )
     }
+  })
+
+  const responseStub = (writeResult: boolean): ServerResponse =>
+    Object.assign(new EventEmitter(), {
+      write: vi.fn(() => writeResult),
+      end: vi.fn(),
+      destroy: vi.fn(),
+      destroyed: false,
+      writableEnded: false,
+    }) as unknown as ServerResponse
+
+  it('destroys the connection after a backpressure drain timeout', async () => {
+    const response = responseStub(false)
+    const sent = await writeRealtimeChunk(response, 'event data', 1)
+
+    expect(sent).toBe(false)
+    finishRealtimeStream(response, sent ? 'graceful' : 'backpressure')
+    expect(response.destroy).toHaveBeenCalledOnce()
+    expect(response.end).not.toHaveBeenCalled()
+  })
+
+  it('ends ordinarily without destroying when the write is accepted', async () => {
+    const response = responseStub(true)
+    const sent = await writeRealtimeChunk(response, 'event data', 1)
+
+    expect(sent).toBe(true)
+    finishRealtimeStream(response, sent ? 'graceful' : 'backpressure')
+    expect(response.end).toHaveBeenCalledOnce()
+    expect(response.destroy).not.toHaveBeenCalled()
   })
 })
 
