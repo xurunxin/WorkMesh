@@ -12,6 +12,8 @@ export type RetentionSoakHeartbeatMetrics = Readonly<{
   maximumObservedGapMs: number;
   maximumLatencyMs: number;
   lastLatencyMs: number;
+  observedThroughAt: string | null;
+  trailingGapMs: number | null;
   failureCode: string | null;
 }>;
 
@@ -44,6 +46,8 @@ export class RetentionSoakHeartbeatPump {
   #maximumObservedGapMs = 0;
   #maximumLatencyMs = 0;
   #lastLatencyMs = 0;
+  #observedThroughAt: string | null = null;
+  #trailingGapMs: number | null = null;
   #successfulHeartbeats = 0;
   #failureCode: string | null = null;
   #loop: Promise<void> | undefined;
@@ -92,9 +96,28 @@ export class RetentionSoakHeartbeatPump {
   }
 
   async stop(): Promise<void> {
+    if (!this.#started)
+      throw new Error("RETENTION_SOAK_HEARTBEAT_PUMP_NOT_STARTED");
+    if (this.#observedThroughAt)
+      throw new Error("RETENTION_SOAK_HEARTBEAT_PUMP_ALREADY_STOPPED");
     this.#stopping = true;
     this.#controller.abort();
     await this.#loop;
+    const endedAtMs = this.#now();
+    const trailingGapMs = endedAtMs - this.#lastAcceptedAtMs;
+    this.#observedThroughAt = new Date(endedAtMs).toISOString();
+    this.#trailingGapMs = trailingGapMs;
+    if (
+      !Number.isFinite(endedAtMs) ||
+      trailingGapMs < 0 ||
+      trailingGapMs > this.#maximumGapMs
+    )
+      this.#recordFailure();
+    else
+      this.#maximumObservedGapMs = Math.max(
+        this.#maximumObservedGapMs,
+        trailingGapMs,
+      );
   }
 
   assertHealthy(): void {
@@ -114,20 +137,34 @@ export class RetentionSoakHeartbeatPump {
       maximumObservedGapMs: this.#maximumObservedGapMs,
       maximumLatencyMs: this.#maximumLatencyMs,
       lastLatencyMs: this.#lastLatencyMs,
+      observedThroughAt: this.#observedThroughAt,
+      trailingGapMs: this.#trailingGapMs,
       failureCode: this.#failureCode,
     };
   }
 
   async #run(): Promise<void> {
-    try {
-      while (!this.#stopping) {
+    while (!this.#stopping) {
+      try {
         await this.#sleep(this.#intervalMs, this.#controller.signal);
-        if (!this.#stopping) await this.#beat();
+      } catch {
+        if (!this.#stopping) this.#recordFailure();
+        return;
       }
-    } catch {
-      if (!this.#stopping)
-        this.#failureCode = "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED";
+      if (this.#stopping) return;
+      try {
+        await this.#beat();
+      } catch {
+        // Once a beat starts, stop() must await it and retain every failure or
+        // invalid observation. Stopping only makes the pending sleep abort benign.
+        this.#recordFailure();
+        return;
+      }
     }
+  }
+
+  #recordFailure(): void {
+    this.#failureCode ??= "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED";
   }
 
   async #beat(): Promise<void> {

@@ -6,6 +6,7 @@ import type {
   RetentionSoakContainerRole,
   RetentionSoakContainerRoles,
   RetentionSoakProvenance,
+  RetentionSoakWorkerFreshnessProof,
 } from "./retention-soak-provenance.js";
 
 export const retentionSoakActivityPayload = appendActivityInputSchema.parse({
@@ -400,6 +401,12 @@ export type RetentionSoakFormalEvidence = Readonly<{
   heartbeat: RetentionSoakHeartbeatMetrics;
   lock: RetentionSoakLockProof;
   provenance: RetentionSoakProvenance;
+  endingProvenance: RetentionSoakProvenance;
+  provenanceUnchanged: boolean;
+  workerFreshness: Readonly<{
+    initial: RetentionSoakWorkerFreshnessProof;
+    ending: RetentionSoakWorkerFreshnessProof;
+  }>;
 }>;
 
 export const assertRetentionSoakSessionLiveness = (
@@ -657,18 +664,31 @@ export const retentionSoakReport = (
     heartbeatPumpSucceeded:
       formalEvidence?.heartbeat.healthy === true &&
       formalEvidence.heartbeat.failureCode === null &&
-      formalEvidence.heartbeat.successfulHeartbeats > 0,
+      formalEvidence.heartbeat.successfulHeartbeats > 0 &&
+      formalEvidence.heartbeat.observedThroughAt === endedAt.toISOString(),
     observedHeartbeatGapBounded:
       formalEvidence !== undefined &&
+      formalEvidence.heartbeat.trailingGapMs !== null &&
+      formalEvidence.heartbeat.trailingGapMs >= 0 &&
+      formalEvidence.heartbeat.trailingGapMs <=
+        liveness.maximumExpectedHeartbeatGapMs &&
       formalEvidence.heartbeat.maximumObservedGapMs <=
         liveness.maximumExpectedHeartbeatGapMs,
     formalLockVerified: formalEvidence?.lock.verified === true,
     provenanceVerified:
       formalEvidence?.provenance.verified === true &&
+      formalEvidence.endingProvenance.verified === true &&
+      formalEvidence.provenanceUnchanged &&
       formalEvidence.provenance.expectedBuildSha ===
         formalEvidence.provenance.apiBuildSha &&
       formalEvidence.provenance.sourceHeadSha ===
-        formalEvidence.provenance.expectedBuildSha,
+        formalEvidence.provenance.expectedBuildSha &&
+      formalEvidence.workerFreshness.initial.verified &&
+      formalEvidence.workerFreshness.ending.verified &&
+      formalEvidence.workerFreshness.initial.workerContainerId ===
+        formalEvidence.provenance.roles.worker.containerId &&
+      formalEvidence.workerFreshness.ending.workerContainerId ===
+        formalEvidence.endingProvenance.roles.worker.containerId,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&

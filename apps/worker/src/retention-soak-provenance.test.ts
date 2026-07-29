@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   collectRetentionSoakProvenance,
+  parseRetentionSoakContainerStats,
+  retentionSoakProvenanceMatches,
+  retentionSoakWorkerFreshnessProof,
   type RetentionSoakContainerRoles,
 } from "./retention-soak-provenance.js";
 
@@ -19,13 +22,41 @@ const inspections = (
     missingDigestRole?: keyof typeof roles;
     missingRevisionRole?: keyof typeof roles;
     workerRevision?: string;
+    serviceRole?: keyof typeof roles;
+    serviceName?: string;
+    projectRole?: keyof typeof roles;
+    projectName?: string;
+    containerIdSuffix?: string;
   }> = {},
 ) => {
   const containers = roleNames.map((role, index) => ({
-    Id: `container-${index}`,
+    Id: `container-${index}${overrides.containerIdSuffix ?? ""}`,
     Name: `/${roles[role]}`,
     Image: `sha256:${String(index + 1).repeat(64)}`,
     State: { Running: true },
+    Config: {
+      Labels: {
+        "com.docker.compose.project":
+          overrides.projectRole === role
+            ? overrides.projectName
+            : "workmesh-proof",
+        "com.docker.compose.service":
+          overrides.serviceRole === role ? overrides.serviceName : role,
+      },
+    },
+    NetworkSettings: {
+      Ports: {
+        ...(role === "api"
+          ? { "3001/tcp": [{ HostIp: "127.0.0.1", HostPort: "3001" }] }
+          : {}),
+        ...(role === "postgres"
+          ? { "5432/tcp": [{ HostIp: "127.0.0.1", HostPort: "5432" }] }
+          : {}),
+        ...(role === "redis"
+          ? { "6379/tcp": [{ HostIp: "127.0.0.1", HostPort: "6379" }] }
+          : {}),
+      },
+    },
   }));
   const images = roleNames.map((role, index) => ({
     Id: containers[index]!.Image,
@@ -63,6 +94,36 @@ const releaseInfo = (buildSha = expectedBuildSha): Response =>
     { headers: { "content-type": "application/json" } },
   );
 
+const collect = (
+  data: ReturnType<typeof inspections>,
+  options: Readonly<{
+    response?: Response;
+    apiUrl?: string;
+    databaseUrl?: string;
+    redisUrl?: string;
+  }> = {},
+) =>
+  collectRetentionSoakProvenance({
+    containerRoles: roles,
+    expectedBuildSha,
+    apiUrl: options.apiUrl ?? "http://127.0.0.1:3001",
+    databaseUrl:
+      options.databaseUrl ??
+      "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+    redisUrl: options.redisUrl ?? "redis://127.0.0.1:6379",
+    platform: "linux",
+    execFile: async (executable, args) => {
+      if (executable === "git")
+        return args[0] === "rev-parse" ? `${expectedBuildSha}\n` : "";
+      return JSON.stringify(
+        args[0] === "inspect" ? data.containers : data.images,
+      );
+    },
+    fetch: vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(options.response ?? releaseInfo()),
+  });
+
 describe("retention soak formal provenance", () => {
   it("maps exactly five roles and verifies immutable images plus API/Worker SHA", async () => {
     const data = inspections();
@@ -79,6 +140,9 @@ describe("retention soak formal provenance", () => {
         containerRoles: roles,
         expectedBuildSha,
         apiUrl: "http://127.0.0.1:3001",
+        databaseUrl:
+          "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+        redisUrl: "redis://127.0.0.1:6379",
         platform: "linux",
         execFile,
         fetch: vi.fn<typeof fetch>().mockResolvedValue(releaseInfo()),
@@ -88,10 +152,21 @@ describe("retention soak formal provenance", () => {
       expectedBuildSha,
       sourceHeadSha: expectedBuildSha,
       apiBuildSha: expectedBuildSha,
+      composeProject: "workmesh-proof",
+      endpoints: {
+        api: { role: "api", hostPort: 3001, containerPort: 3001 },
+        postgres: {
+          role: "postgres",
+          hostPort: 5432,
+          containerPort: 5432,
+        },
+        redis: { role: "redis", hostPort: 6379, containerPort: 6379 },
+      },
       roles: {
         api: {
           containerName: "workmesh-api",
           revision: expectedBuildSha,
+          composeService: "api",
         },
         worker: {
           containerName: "workmesh-worker",
@@ -106,36 +181,17 @@ describe("retention soak formal provenance", () => {
   });
 
   it("rejects missing digests, wrong image revisions, and wrong API build SHA", async () => {
-    const create = (
-      data: ReturnType<typeof inspections>,
-      response = releaseInfo(),
-    ) =>
-      collectRetentionSoakProvenance({
-        containerRoles: roles,
-        expectedBuildSha,
-        apiUrl: "http://127.0.0.1:3001",
-        platform: "linux",
-        execFile: async (executable, args) => {
-          if (executable === "git")
-            return args[0] === "rev-parse" ? `${expectedBuildSha}\n` : "";
-          return JSON.stringify(
-            args[0] === "inspect" ? data.containers : data.images,
-          );
-        },
-        fetch: vi.fn<typeof fetch>().mockResolvedValue(response),
-      });
-
     await expect(
-      create(inspections({ missingDigestRole: "minio" })),
+      collect(inspections({ missingDigestRole: "minio" })),
     ).rejects.toThrow("RETENTION_SOAK_IMMUTABLE_IMAGE_DIGEST_REQUIRED");
     await expect(
-      create(inspections({ missingRevisionRole: "postgres" })),
+      collect(inspections({ missingRevisionRole: "postgres" })),
     ).rejects.toThrow("RETENTION_SOAK_IMAGE_REVISION_REQUIRED");
     await expect(
-      create(inspections({ workerRevision: "b".repeat(40) })),
+      collect(inspections({ workerRevision: "b".repeat(40) })),
     ).rejects.toThrow("RETENTION_SOAK_IMAGE_REVISION_MISMATCH");
     await expect(
-      create(inspections(), releaseInfo("b".repeat(40))),
+      collect(inspections(), { response: releaseInfo("b".repeat(40)) }),
     ).rejects.toThrow("RETENTION_SOAK_API_BUILD_SHA_MISMATCH");
   });
 
@@ -146,6 +202,9 @@ describe("retention soak formal provenance", () => {
         containerRoles: roles,
         expectedBuildSha,
         apiUrl: "http://127.0.0.1:3001",
+        databaseUrl:
+          "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+        redisUrl: "redis://127.0.0.1:6379",
         platform: "win32",
         execFile,
       }),
@@ -155,6 +214,9 @@ describe("retention soak formal provenance", () => {
         containerRoles: roles,
         expectedBuildSha: "dirty",
         apiUrl: "http://127.0.0.1:3001",
+        databaseUrl:
+          "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+        redisUrl: "redis://127.0.0.1:6379",
         platform: "linux",
         execFile,
       }),
@@ -175,6 +237,9 @@ describe("retention soak formal provenance", () => {
           containerRoles: containerRoles as RetentionSoakContainerRoles,
           expectedBuildSha,
           apiUrl: "http://127.0.0.1:3001",
+          databaseUrl:
+            "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+          redisUrl: "redis://127.0.0.1:6379",
           platform: "linux",
           execFile,
         }),
@@ -189,6 +254,9 @@ describe("retention soak formal provenance", () => {
         containerRoles: roles,
         expectedBuildSha,
         apiUrl: "http://127.0.0.1:3001",
+        databaseUrl:
+          "postgres://workmesh:secret@127.0.0.1:5432/workmesh",
+        redisUrl: "redis://127.0.0.1:6379",
         platform: "linux",
         execFile: async (executable, args) => {
           if (executable !== "git") throw new Error("unexpected inspection");
@@ -201,5 +269,85 @@ describe("retention soak formal provenance", () => {
     await expect(create("b".repeat(40), "")).rejects.toThrow(
       "RETENTION_SOAK_SOURCE_PROVENANCE_MISMATCH",
     );
+  });
+
+  it("rejects swapped Compose roles, unrelated projects, and endpoint mismatches", async () => {
+    await expect(
+      collect(inspections({ serviceRole: "api", serviceName: "worker" })),
+    ).rejects.toThrow("RETENTION_SOAK_COMPOSE_SERVICE_MISMATCH");
+    await expect(
+      collect(
+        inspections({
+          projectRole: "redis",
+          projectName: "unrelated-project",
+        }),
+      ),
+    ).rejects.toThrow("RETENTION_SOAK_COMPOSE_PROJECT_MISMATCH");
+    await expect(
+      collect(inspections(), {
+        databaseUrl:
+          "postgres://workmesh:secret@127.0.0.1:55432/workmesh",
+      }),
+    ).rejects.toThrow("RETENTION_SOAK_ENDPOINT_BINDING_MISMATCH");
+  });
+
+  it("detects container ID drift in every stats sample and at end of run", async () => {
+    const initial = await collect(inspections());
+    const stats = roleNames
+      .map((role) =>
+        JSON.stringify({
+          ID: initial.roles[role].containerId,
+          Name: initial.roles[role].containerName,
+          CPUPerc: "1.5%",
+          MemUsage: "16MiB / 1GiB",
+        }),
+      )
+      .join("\n");
+    expect(parseRetentionSoakContainerStats(stats, initial)).toHaveProperty(
+      "workmesh-worker.memoryBytes",
+      16 * 1_048_576,
+    );
+    const driftedStats = stats.replace(
+      initial.roles.worker.containerId,
+      "recreated-worker",
+    );
+    expect(() =>
+      parseRetentionSoakContainerStats(driftedStats, initial),
+    ).toThrow("RETENTION_SOAK_CONTAINER_ID_DRIFT");
+
+    const ending = await collect(
+      inspections({ containerIdSuffix: "-recreated" }),
+    );
+    expect(retentionSoakProvenanceMatches(initial, ending)).toBe(false);
+  });
+
+  it("binds durable Worker freshness evidence to the inspected Worker container", async () => {
+    const provenance = await collect(inspections());
+    const observedAt = new Date("2026-07-29T00:01:00.000Z");
+    expect(
+      retentionSoakWorkerFreshnessProof(
+        provenance,
+        {
+          workerMode: "archive_only",
+          workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+        },
+        observedAt,
+      ),
+    ).toMatchObject({
+      verified: true,
+      workerContainerId: provenance.roles.worker.containerId,
+      workerMode: "archive_only",
+      ageMs: 60_000,
+    });
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        provenance,
+        {
+          workerMode: "archive_only",
+          workerSeenAt: new Date("2026-07-28T23:58:59.999Z"),
+        },
+        observedAt,
+      ),
+    ).toThrow("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
   });
 });

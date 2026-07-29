@@ -21,6 +21,12 @@ export type RetentionSoakProvenance = Readonly<{
   expectedBuildSha: string;
   sourceHeadSha: string;
   apiBuildSha: string;
+  composeProject: string;
+  endpoints: Readonly<{
+    api: RetentionSoakEndpointProof;
+    postgres: RetentionSoakEndpointProof;
+    redis: RetentionSoakEndpointProof;
+  }>;
   roles: Readonly<
     Record<
       RetentionSoakContainerRole,
@@ -30,10 +36,34 @@ export type RetentionSoakProvenance = Readonly<{
         imageId: string;
         imageDigest: string;
         revision: string;
+        composeProject: string;
+        composeService: RetentionSoakContainerRole;
       }>
     >
   >;
 }>;
+
+export type RetentionSoakEndpointProof = Readonly<{
+  role: "api" | "postgres" | "redis";
+  scheme: string;
+  hostname: string;
+  hostPort: number;
+  containerPort: number;
+  containerId: string;
+}>;
+
+export type RetentionSoakWorkerFreshnessProof = Readonly<{
+  verified: true;
+  workerContainerId: string;
+  workerMode: "archive_only";
+  workerSeenAt: string;
+  observedAt: string;
+  ageMs: number;
+}>;
+
+export type RetentionSoakContainerUsage = Readonly<
+  Record<string, Readonly<{ cpuPercent: number; memoryBytes: number }>>
+>;
 
 export type RetentionSoakExecFile = (
   executable: string,
@@ -68,6 +98,8 @@ type ContainerInspection = Readonly<{
   Name?: unknown;
   Image?: unknown;
   State?: Readonly<{ Running?: unknown }>;
+  Config?: Readonly<{ Labels?: unknown }>;
+  NetworkSettings?: Readonly<{ Ports?: unknown }>;
 }>;
 
 type ImageInspection = Readonly<{
@@ -102,11 +134,217 @@ const revisionFrom = (image: ImageInspection): string | null => {
     : null;
 };
 
+const labelsFrom = (
+  container: ContainerInspection,
+): Record<string, unknown> => {
+  const labels = container.Config?.Labels;
+  if (!labels || typeof labels !== "object" || Array.isArray(labels))
+    throw new Error("RETENTION_SOAK_COMPOSE_IDENTITY_INVALID");
+  return labels as Record<string, unknown>;
+};
+
+const composeIdentityFrom = (
+  container: ContainerInspection,
+  expectedService: RetentionSoakContainerRole,
+): Readonly<{
+  project: string;
+  service: RetentionSoakContainerRole;
+}> => {
+  const labels = labelsFrom(container);
+  const project = requiredString(
+    labels["com.docker.compose.project"],
+    "RETENTION_SOAK_COMPOSE_IDENTITY_INVALID",
+  );
+  const service = requiredString(
+    labels["com.docker.compose.service"],
+    "RETENTION_SOAK_COMPOSE_IDENTITY_INVALID",
+  );
+  if (service !== expectedService)
+    throw new Error("RETENTION_SOAK_COMPOSE_SERVICE_MISMATCH");
+  return { project, service: expectedService };
+};
+
+type PortBinding = Readonly<{ HostIp?: unknown; HostPort?: unknown }>;
+
+const endpointHostMatches = (hostname: string, hostIp: string): boolean => {
+  const endpoint = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  const binding = hostIp.toLowerCase().replace(/^\[|\]$/g, "");
+  const loopback = new Set(["localhost", "127.0.0.1", "::1"]);
+  if (binding === "0.0.0.0" || binding === "::")
+    return loopback.has(endpoint);
+  if (loopback.has(endpoint) && loopback.has(binding)) return true;
+  return endpoint === binding;
+};
+
+const endpointProof = (
+  urlText: string,
+  role: "api" | "postgres" | "redis",
+  container: ContainerInspection,
+  containerId: string,
+  containerPort: number,
+  allowedSchemes: readonly string[],
+): RetentionSoakEndpointProof => {
+  let url: URL;
+  try {
+    url = new URL(urlText);
+  } catch {
+    throw new Error("RETENTION_SOAK_ENDPOINT_BINDING_INVALID");
+  }
+  const scheme = url.protocol.replace(/:$/, "");
+  const defaultPort =
+    role === "api" ? (scheme === "https" ? 443 : 80) : containerPort;
+  const hostPort = Number(url.port || defaultPort);
+  const ports = container.NetworkSettings?.Ports;
+  const rawBindings =
+    ports && typeof ports === "object" && !Array.isArray(ports)
+      ? (ports as Record<string, unknown>)[`${containerPort}/tcp`]
+      : undefined;
+  const bindings = Array.isArray(rawBindings)
+    ? (rawBindings as PortBinding[])
+    : [];
+  if (
+    !allowedSchemes.includes(scheme) ||
+    !url.hostname ||
+    !Number.isSafeInteger(hostPort) ||
+    hostPort <= 0 ||
+    !bindings.some(
+      (binding) =>
+        Number(binding.HostPort) === hostPort &&
+        typeof binding.HostIp === "string" &&
+        endpointHostMatches(url.hostname, binding.HostIp),
+    )
+  )
+    throw new Error("RETENTION_SOAK_ENDPOINT_BINDING_MISMATCH");
+  return {
+    role,
+    scheme,
+    hostname: url.hostname,
+    hostPort,
+    containerPort,
+    containerId,
+  };
+};
+
+const parseBytes = (value: string): number => {
+  const match = /^([\d.]+)\s*([kmgt]?i?b)$/i.exec(value.trim());
+  if (!match) throw new Error("RETENTION_SOAK_DOCKER_MEMORY_PARSE_FAILED");
+  const scale: Record<string, number> = {
+    b: 1,
+    kb: 1_000,
+    kib: 1_024,
+    mb: 1_000_000,
+    mib: 1_048_576,
+    gb: 1_000_000_000,
+    gib: 1_073_741_824,
+    tb: 1_000_000_000_000,
+    tib: 1_099_511_627_776,
+  };
+  return Number(match[1]) * scale[match[2]!.toLowerCase()]!;
+};
+
+export const parseRetentionSoakContainerStats = (
+  output: string,
+  provenance: RetentionSoakProvenance,
+): RetentionSoakContainerUsage => {
+  const rows = output
+    .trim()
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line) as {
+          ID?: unknown;
+          Name?: unknown;
+          CPUPerc?: unknown;
+          MemUsage?: unknown;
+        };
+      } catch {
+        throw new Error("RETENTION_SOAK_CONTAINER_STATS_INVALID");
+      }
+    });
+  if (rows.length !== retentionSoakContainerRoles.length)
+    throw new Error("RETENTION_SOAK_CONTAINER_STATS_INCOMPLETE");
+  const byName = new Map(
+    rows.map((row) => [
+      requiredString(row.Name, "RETENTION_SOAK_CONTAINER_STATS_INVALID"),
+      row,
+    ]),
+  );
+  const result: Record<
+    string,
+    Readonly<{ cpuPercent: number; memoryBytes: number }>
+  > = {};
+  for (const role of retentionSoakContainerRoles) {
+    const expected = provenance.roles[role];
+    const row = byName.get(expected.containerName);
+    if (
+      !row ||
+      requiredString(row.ID, "RETENTION_SOAK_CONTAINER_STATS_INVALID") !==
+        expected.containerId
+    )
+      throw new Error("RETENTION_SOAK_CONTAINER_ID_DRIFT");
+    const cpuPercent = Number(
+      requiredString(
+        row.CPUPerc,
+        "RETENTION_SOAK_CONTAINER_STATS_INVALID",
+      ).replace("%", ""),
+    );
+    const memoryBytes = parseBytes(
+      requiredString(
+        row.MemUsage,
+        "RETENTION_SOAK_CONTAINER_STATS_INVALID",
+      ).split("/")[0]!,
+    );
+    if (!Number.isFinite(cpuPercent) || !Number.isFinite(memoryBytes))
+      throw new Error("RETENTION_SOAK_CONTAINER_STATS_INVALID");
+    result[expected.containerName] = { cpuPercent, memoryBytes };
+  }
+  if (byName.size !== retentionSoakContainerRoles.length)
+    throw new Error("RETENTION_SOAK_CONTAINER_STATS_INCOMPLETE");
+  return result;
+};
+
+export const retentionSoakWorkerFreshnessProof = (
+  provenance: RetentionSoakProvenance,
+  evidence: Readonly<{
+    workerMode: string | null;
+    workerSeenAt: Date | null;
+  }>,
+  observedAt: Date,
+  maximumAgeMs = 120_000,
+): RetentionSoakWorkerFreshnessProof => {
+  const ageMs = evidence.workerSeenAt
+    ? observedAt.getTime() - evidence.workerSeenAt.getTime()
+    : Number.POSITIVE_INFINITY;
+  if (
+    evidence.workerMode !== "archive_only" ||
+    !evidence.workerSeenAt ||
+    ageMs < 0 ||
+    ageMs > maximumAgeMs
+  )
+    throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+  return {
+    verified: true,
+    workerContainerId: provenance.roles.worker.containerId,
+    workerMode: "archive_only",
+    workerSeenAt: evidence.workerSeenAt.toISOString(),
+    observedAt: observedAt.toISOString(),
+    ageMs,
+  };
+};
+
+export const retentionSoakProvenanceMatches = (
+  initial: RetentionSoakProvenance,
+  ending: RetentionSoakProvenance,
+): boolean => JSON.stringify(initial) === JSON.stringify(ending);
+
 export const collectRetentionSoakProvenance = async (
   options: Readonly<{
     containerRoles: RetentionSoakContainerRoles;
     expectedBuildSha: string;
     apiUrl: string;
+    databaseUrl: string;
+    redisUrl: string;
     platform?: NodeJS.Platform;
     execFile?: RetentionSoakExecFile;
     fetch?: typeof fetch;
@@ -220,6 +458,7 @@ export const collectRetentionSoakProvenance = async (
         revision !== options.expectedBuildSha
       )
         throw new Error("RETENTION_SOAK_IMAGE_REVISION_MISMATCH");
+      const compose = composeIdentityFrom(container, role);
       return [
         role,
         {
@@ -228,10 +467,44 @@ export const collectRetentionSoakProvenance = async (
           imageId,
           imageDigest: [...digests].sort()[0]!,
           revision,
+          composeProject: compose.project,
+          composeService: compose.service,
         },
       ];
     }),
   ) as RetentionSoakProvenance["roles"];
+  const composeProjects = new Set(
+    retentionSoakContainerRoles.map((role) => roles[role].composeProject),
+  );
+  if (composeProjects.size !== 1)
+    throw new Error("RETENTION_SOAK_COMPOSE_PROJECT_MISMATCH");
+  const composeProject = roles.api.composeProject;
+  const endpoints = {
+    api: endpointProof(
+      options.apiUrl,
+      "api",
+      containersByName.get(options.containerRoles.api)!,
+      roles.api.containerId,
+      3001,
+      ["http", "https"],
+    ),
+    postgres: endpointProof(
+      options.databaseUrl,
+      "postgres",
+      containersByName.get(options.containerRoles.postgres)!,
+      roles.postgres.containerId,
+      5432,
+      ["postgres", "postgresql"],
+    ),
+    redis: endpointProof(
+      options.redisUrl,
+      "redis",
+      containersByName.get(options.containerRoles.redis)!,
+      roles.redis.containerId,
+      6379,
+      ["redis", "rediss"],
+    ),
+  };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -261,6 +534,8 @@ export const collectRetentionSoakProvenance = async (
     expectedBuildSha: options.expectedBuildSha,
     sourceHeadSha,
     apiBuildSha: parsed.data.buildSha,
+    composeProject,
+    endpoints,
     roles,
   };
 };

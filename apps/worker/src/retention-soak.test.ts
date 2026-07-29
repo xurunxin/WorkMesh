@@ -56,6 +56,58 @@ const thresholds: RetentionSoakThresholds = {
   maximumContainerMemorySlopeBytesPerHour: 16_777_216,
 };
 
+const provenanceEvidence: RetentionSoakFormalEvidence["provenance"] = {
+  verified: true,
+  expectedBuildSha: "a".repeat(40),
+  sourceHeadSha: "a".repeat(40),
+  apiBuildSha: "a".repeat(40),
+  composeProject: "workmesh-proof",
+  endpoints: {
+    api: {
+      role: "api",
+      scheme: "http",
+      hostname: "127.0.0.1",
+      hostPort: 3001,
+      containerPort: 3001,
+      containerId: "sha256:api",
+    },
+    postgres: {
+      role: "postgres",
+      scheme: "postgres",
+      hostname: "localhost",
+      hostPort: 5432,
+      containerPort: 5432,
+      containerId: "sha256:postgres",
+    },
+    redis: {
+      role: "redis",
+      scheme: "redis",
+      hostname: "localhost",
+      hostPort: 6379,
+      containerPort: 6379,
+      containerId: "sha256:redis",
+    },
+  },
+  roles: Object.fromEntries(
+    ["api", "worker", "postgres", "redis", "minio"].map((role) => [
+      role,
+      {
+        containerName: `workmesh-${role}`,
+        containerId: `sha256:${role.padEnd(64, "1").slice(0, 64)}`,
+        imageId: `sha256:${role.padEnd(64, "2").slice(0, 64)}`,
+        imageDigest: `example/${role}@sha256:${role
+          .padEnd(64, "3")
+          .slice(0, 64)}`,
+        revision:
+          role === "api" || role === "worker"
+            ? "a".repeat(40)
+            : `infra-${role}`,
+        composeProject: "workmesh-proof",
+        composeService: role,
+      },
+    ]),
+  ) as RetentionSoakFormalEvidence["provenance"]["roles"],
+};
 const formalEvidence: RetentionSoakFormalEvidence = {
   heartbeat: {
     healthy: true,
@@ -66,35 +118,36 @@ const formalEvidence: RetentionSoakFormalEvidence = {
     maximumObservedGapMs: 15_000,
     maximumLatencyMs: 100,
     lastLatencyMs: 50,
+    observedThroughAt: "2026-07-29T00:00:00.000Z",
+    trailingGapMs: 0,
     failureCode: null,
   },
   lock: {
     verified: true,
     mechanism: "flock",
+    inheritedFd: 3,
     sessionScopeSha256: `sha256:${"b".repeat(64)}`,
   },
-  provenance: {
-    verified: true,
-    expectedBuildSha: "a".repeat(40),
-    sourceHeadSha: "a".repeat(40),
-    apiBuildSha: "a".repeat(40),
-    roles: Object.fromEntries(
-      ["api", "worker", "postgres", "redis", "minio"].map((role) => [
-        role,
-        {
-          containerName: `workmesh-${role}`,
-          containerId: `sha256:${role.padEnd(64, "1").slice(0, 64)}`,
-          imageId: `sha256:${role.padEnd(64, "2").slice(0, 64)}`,
-          imageDigest: `example/${role}@sha256:${role
-            .padEnd(64, "3")
-            .slice(0, 64)}`,
-          revision:
-            role === "api" || role === "worker"
-              ? "a".repeat(40)
-              : `infra-${role}`,
-        },
-      ]),
-    ) as RetentionSoakFormalEvidence["provenance"]["roles"],
+  provenance: provenanceEvidence,
+  endingProvenance: provenanceEvidence,
+  provenanceUnchanged: true,
+  workerFreshness: {
+    initial: {
+      verified: true,
+      workerContainerId: provenanceEvidence.roles.worker.containerId,
+      workerMode: "archive_only",
+      workerSeenAt: "2026-07-27T23:59:59.000Z",
+      observedAt: "2026-07-28T00:00:00.000Z",
+      ageMs: 1_000,
+    },
+    ending: {
+      verified: true,
+      workerContainerId: provenanceEvidence.roles.worker.containerId,
+      workerMode: "archive_only",
+      workerSeenAt: "2026-07-28T23:59:59.000Z",
+      observedAt: "2026-07-29T00:00:00.000Z",
+      ageMs: 1_000,
+    },
   },
 };
 
@@ -435,6 +488,28 @@ describe("retention soak harness", () => {
         heartbeatPumpSucceeded: false,
         observedHeartbeatGapBounded: false,
       },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        { ...formalEvidence, provenanceUnchanged: false },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { provenanceVerified: false },
     });
   });
 

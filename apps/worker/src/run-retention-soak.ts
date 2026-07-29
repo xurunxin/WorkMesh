@@ -14,7 +14,12 @@ import {
 import { verifyRetentionSoakLock } from "./retention-soak-lock.js";
 import {
   collectRetentionSoakProvenance,
+  parseRetentionSoakContainerStats,
   retentionSoakExecFile,
+  retentionSoakProvenanceMatches,
+  retentionSoakWorkerFreshnessProof,
+  type RetentionSoakProvenance,
+  type RetentionSoakWorkerFreshnessProof,
 } from "./retention-soak-provenance.js";
 import {
   assertRetentionSoakSessionLiveness,
@@ -43,6 +48,7 @@ const lockProof = await verifyRetentionSoakLock({
   statePath: options.statePath,
   sessionId: options.sessionId,
   lockPath: process.env.WORKMESH_RETENTION_SOAK_LOCK_PATH,
+  lockFd: process.env.WORKMESH_RETENTION_SOAK_LOCK_FD,
   sessionScopeSha256:
     process.env.WORKMESH_RETENTION_SOAK_LOCK_SCOPE_SHA256,
 });
@@ -50,6 +56,8 @@ const provenance = await collectRetentionSoakProvenance({
   containerRoles: options.containerRoles,
   expectedBuildSha: options.expectedBuildSha,
   apiUrl: options.apiUrl,
+  databaseUrl: options.databaseUrl,
+  redisUrl: options.redisUrl,
 });
 const timestamp = new Date().toISOString().replaceAll(":", "-");
 const reportDirectory = resolve(
@@ -73,23 +81,6 @@ if (options.dryRun) {
 }
 await writeFile(samplePath, "", { encoding: "utf8", flag: "wx" });
 
-const parseBytes = (value: string): number => {
-  const match = /^([\d.]+)\s*([kmgt]?i?b)$/i.exec(value.trim());
-  if (!match) throw new Error("RETENTION_SOAK_DOCKER_MEMORY_PARSE_FAILED");
-  const scale: Record<string, number> = {
-    b: 1,
-    kb: 1_000,
-    kib: 1_024,
-    mb: 1_000_000,
-    mib: 1_048_576,
-    gb: 1_000_000_000,
-    gib: 1_073_741_824,
-    tb: 1_000_000_000_000,
-    tib: 1_099_511_627_776,
-  };
-  return Number(match[1]) * scale[match[2]!.toLowerCase()]!;
-};
-
 const containerStats = async (): Promise<
   RetentionSoakSample["containers"]
 > => {
@@ -97,29 +88,20 @@ const containerStats = async (): Promise<
   try {
     output = await retentionSoakExecFile(
       "docker",
-      ["stats", "--no-stream", "--format", "{{json .}}", ...options.containers],
+      [
+        "stats",
+        "--no-stream",
+        "--no-trunc",
+        "--format",
+        "{{json .}}",
+        ...options.containers,
+      ],
       5_000,
     );
   } catch {
     throw new Error("RETENTION_SOAK_DOCKER_STATS_FAILED");
   }
-  const result: Record<string, { cpuPercent: number; memoryBytes: number }> =
-    {};
-  for (const line of output.trim().split(/\r?\n/)) {
-    if (!line) continue;
-    const row = JSON.parse(line) as {
-      Name: string;
-      CPUPerc: string;
-      MemUsage: string;
-    };
-    result[row.Name] = {
-      cpuPercent: Number(row.CPUPerc.replace("%", "")),
-      memoryBytes: parseBytes(row.MemUsage.split("/")[0]!),
-    };
-  }
-  if (Object.keys(result).length !== options.containers.length)
-    throw new Error("RETENTION_SOAK_CONTAINER_STATS_INCOMPLETE");
-  return result;
+  return parseRetentionSoakContainerStats(output, provenance);
 };
 
 const db = createDb(options.databaseUrl);
@@ -135,6 +117,10 @@ let baseline: RetentionSoakSample | undefined;
 let activityCount = 0;
 let heartbeatPump: RetentionSoakHeartbeatPump | undefined;
 let heartbeatMetrics: RetentionSoakHeartbeatMetrics | undefined;
+let endingProvenance: RetentionSoakProvenance | undefined;
+let initialWorkerFreshness: RetentionSoakWorkerFreshnessProof | undefined;
+let endingWorkerFreshness: RetentionSoakWorkerFreshnessProof | undefined;
+let reportEndedAt: Date | undefined;
 const generatedEventCursors: string[] = [];
 
 const backdateNewActivityEvent = async (
@@ -192,12 +178,11 @@ try {
   ).rows[0];
   if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
   assertRetentionSoakSessionLiveness(identity, new Date(), options.liveness);
-  if (
-    identity.workerMode !== "archive_only" ||
-    !identity.workerSeenAt ||
-    Date.now() - identity.workerSeenAt.getTime() > 120_000
-  )
-    throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+  initialWorkerFreshness = retentionSoakWorkerFreshnessProof(
+    provenance,
+    identity,
+    new Date(),
+  );
 
   const runtimeStartedAtMs = Date.now();
   heartbeatPump = new RetentionSoakHeartbeatPump({
@@ -325,10 +310,36 @@ try {
       await new Promise((resolve) => setTimeout(resolve, remaining));
   }
   heartbeatPump.assertHealthy();
+  await heartbeatPump.stop();
+  heartbeatMetrics = heartbeatPump.metrics();
+  reportEndedAt = new Date(heartbeatMetrics.observedThroughAt!);
+  const endingRuntime = (
+    await db.query<{ workerMode: string | null; workerSeenAt: Date | null }>(
+      `SELECT worker_mode AS "workerMode",worker_seen_at AS "workerSeenAt"
+         FROM retention_job_state
+        WHERE workspace_id=$1 AND job_name='worker_runtime'`,
+      [identity.workspaceId],
+    )
+  ).rows[0];
+  if (!endingRuntime)
+    throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+  endingProvenance = await collectRetentionSoakProvenance({
+    containerRoles: options.containerRoles,
+    expectedBuildSha: options.expectedBuildSha,
+    apiUrl: options.apiUrl,
+    databaseUrl: options.databaseUrl,
+    redisUrl: options.redisUrl,
+  });
+  endingWorkerFreshness = retentionSoakWorkerFreshnessProof(
+    endingProvenance,
+    endingRuntime,
+    reportEndedAt,
+  );
 } finally {
-  if (heartbeatPump) {
+  if (heartbeatPump && !heartbeatMetrics) {
     await heartbeatPump.stop();
     heartbeatMetrics = heartbeatPump.metrics();
+    reportEndedAt = new Date(heartbeatMetrics.observedThroughAt!);
   }
   if (redis.isOpen) await redis.quit();
   await db.end();
@@ -338,12 +349,19 @@ if (!baseline) throw new Error("RETENTION_SOAK_BASELINE_NOT_CAPTURED");
 if (!reportStartedAt) throw new Error("RETENTION_SOAK_START_TIME_NOT_CAPTURED");
 if (!heartbeatMetrics)
   throw new Error("RETENTION_SOAK_HEARTBEAT_EVIDENCE_MISSING");
+if (
+  !reportEndedAt ||
+  !endingProvenance ||
+  !initialWorkerFreshness ||
+  !endingWorkerFreshness
+)
+  throw new Error("RETENTION_SOAK_FORMAL_END_EVIDENCE_MISSING");
 const expectedSamples = Math.floor(
   options.durationMs / options.sampleIntervalMs,
 );
 const report = retentionSoakReport(
   reportStartedAt,
-  new Date(),
+  reportEndedAt,
   baseline,
   samples,
   options.redisLimit,
@@ -356,6 +374,15 @@ const report = retentionSoakReport(
     heartbeat: heartbeatMetrics,
     lock: lockProof,
     provenance,
+    endingProvenance,
+    provenanceUnchanged: retentionSoakProvenanceMatches(
+      provenance,
+      endingProvenance,
+    ),
+    workerFreshness: {
+      initial: initialWorkerFreshness,
+      ending: endingWorkerFreshness,
+    },
   },
 );
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {

@@ -61,8 +61,9 @@ removing the checkpoint. Never reuse a Session concurrently: one dedicated
 Session has exactly one soak runner, and a runner restart creates a new report
 directory and baseline rather than appending old samples.
 The combined entrypoint guards that one-to-one Session/state path with
-nonblocking `flock --no-fork`, while the runner independently verifies the held
-lock before dry-run or live evidence. The standalone
+nonblocking `flock` on inherited FD 3, while the runner independently re-locks
+that exact numeric FD/open-file-description before dry-run or live evidence.
+An unrelated FD opened on the same path cannot pass. The standalone
 `pnpm provision:soak:retention` command exists only for checkpoint recovery and
 diagnosis; completing it is not a safe pause point. The contiguous runner
 rejects a schema-v2 Session that is stale, non-executing, non-healthy, or more
@@ -72,13 +73,19 @@ heartbeat. Reset the disposable state/session and provision a new one.
 Formal evidence executable gates require a clean checkout at the exact expected
 40-character SHA; explicit API, Worker, PostgreSQL, Redis, and MinIO role
 mappings; running containers backed by immutable image digests; matching API
-and Worker OCI revisions; and matching `/api/v1/info.buildSha`. Threshold
+and Worker Compose service labels in one Compose project; API/PostgreSQL/Redis
+published ports matching their configured URLs; matching API and Worker OCI
+revisions; and matching `/api/v1/info.buildSha`. Each stats sample checks the
+full container IDs, and the ending container/image/API proof must deep-match the
+initial proof. Durable initial/ending `archive_only` Worker freshness is bound
+to the inspected Worker container ID. Threshold
 overrides may keep the defaults or lower maximums; looser formal thresholds are
 rejected. An independent 15-second heartbeat pump shares a serialized
 credential/request queue with activities. The maximum initial/steady
 server-accepted gaps are 100/80 seconds, leaving at least 20 seconds below the
 hard 120-second stale age. The report must pass observed-gap, pump, lock, and
-provenance gates.
+provenance gates. Pump shutdown awaits any in-flight heartbeat and extends the
+observed-gap proof through the report `endedAt`.
 
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):

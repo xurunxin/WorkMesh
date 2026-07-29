@@ -41,7 +41,12 @@ describe("retention soak heartbeat pump", () => {
       maximumLatencyMs: 10_000,
       failureCode: null,
     });
+    now = initial + 100_000;
     await pump.stop();
+    expect(pump.metrics()).toMatchObject({
+      observedThroughAt: new Date(now).toISOString(),
+      trailingGapMs: 0,
+    });
   });
 
   it("keeps pumping while activity, outbox polling, and sampling progress independently", async () => {
@@ -75,6 +80,7 @@ describe("retention soak heartbeat pump", () => {
       maximumObservedGapMs: 55_000,
       failureCode: null,
     });
+    now = initial + 65_000;
     await pump.stop();
   });
 
@@ -107,5 +113,79 @@ describe("retention soak heartbeat pump", () => {
       failureCode: "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
     });
     await pump.stop();
+  });
+
+  it("retains a failing in-flight beat when stop begins", async () => {
+    const initial = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = initial + 10_000;
+    const sleeper = controlledSleep();
+    let rejectBeat = (_error: Error): void => undefined;
+    let beatStarted = (): void => undefined;
+    const started = new Promise<void>((resolve) => {
+      beatStarted = resolve;
+    });
+    const pump = new RetentionSoakHeartbeatPump({
+      initialServerAcceptedAt: new Date(initial).toISOString(),
+      intervalMs: 15_000,
+      maximumGapMs: 100_000,
+      sendHeartbeat: vi
+        .fn()
+        .mockResolvedValueOnce({
+          acceptedAt: new Date(initial + 10_000).toISOString(),
+          latencyMs: 10,
+        })
+        .mockImplementationOnce(
+          async () =>
+            await new Promise((_resolve, reject) => {
+              rejectBeat = reject;
+              beatStarted();
+            }),
+        ),
+      sleep: sleeper.sleep,
+      now: () => now,
+    });
+
+    await pump.start();
+    sleeper.releases.shift()!();
+    await started;
+    now = initial + 20_000;
+    const stopping = pump.stop();
+    rejectBeat(new Error("request failed"));
+    await stopping;
+
+    expect(pump.metrics()).toMatchObject({
+      healthy: false,
+      successfulHeartbeats: 1,
+      observedThroughAt: new Date(now).toISOString(),
+      trailingGapMs: 10_000,
+      failureCode: "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
+    });
+    expect(() => pump.assertHealthy()).toThrow(
+      "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
+    );
+  });
+
+  it("fails the final gate when endedAt exceeds the last accepted heartbeat", async () => {
+    const initial = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = initial + 10_000;
+    const pump = new RetentionSoakHeartbeatPump({
+      initialServerAcceptedAt: new Date(initial).toISOString(),
+      intervalMs: 15_000,
+      maximumGapMs: 100_000,
+      sendHeartbeat: async () => ({
+        acceptedAt: new Date(initial + 10_000).toISOString(),
+        latencyMs: 10,
+      }),
+      now: () => now,
+    });
+
+    await pump.start();
+    now = initial + 110_001;
+    await pump.stop();
+    expect(pump.metrics()).toMatchObject({
+      healthy: false,
+      trailingGapMs: 100_001,
+      failureCode: "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
+    });
   });
 });

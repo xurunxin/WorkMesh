@@ -84,8 +84,11 @@ harness rejects a dirty checkout or `HEAD` different from the expected SHA,
 non-running/missing containers, images without immutable repo digests or OCI
 revisions, API or Worker revisions that differ from that SHA, and
 `/api/v1/info.buildSha` that differs from both. It records the safe role to
-container ID/image ID/digest/revision mapping. Do not infer provenance from a
-branch name or mutable tag.
+container ID/image ID/digest/revision mapping. Each container must carry the
+matching `com.docker.compose.service` label, all five must share one
+`com.docker.compose.project`, and the API, PostgreSQL, and Redis published host
+ports must match the configured URLs. Do not infer provenance from a branch
+name, container name, or mutable tag.
 
 Run exactly one harness process per dedicated Session:
 
@@ -93,10 +96,12 @@ Run exactly one harness process per dedicated Session:
 pnpm test:soak:retention:formal
 ```
 
-The combined entrypoint creates a mode-`0600` Session-specific lock file and
-launches the harness under nonblocking `flock --no-fork`. The runner independently
-probes the same derived lock and refuses direct/unlocked invocation. Lock scope
-is recorded as a one-way Session fingerprint, never a Session ID. If lock
+The combined entrypoint creates a mode-`0600` Session-specific lock file, passes
+it as inherited FD 3, acquires nonblocking `flock` on that FD, and preserves the
+same open-file-description across `exec`. The runner independently re-locks that
+specific inherited numeric FD. Merely finding the same path locked by another
+process cannot pass. Lock scope is recorded as a one-way Session fingerprint,
+never a Session ID. If lock
 acquisition fails, do not start another process. A new formal run requires a new
 disposable Session/state path, timestamped report directory, and baseline. The
 harness creates `samples.jsonl` exclusively and refuses to append to an earlier
@@ -145,7 +150,10 @@ refresh and before the baseline, then every 15 seconds regardless of sampling,
 activity, or outbox polling. It parses the server-returned
 `last_heartbeat_at`, records the authoritative first/last acceptance timestamps
 and maximum observed gap, and fails closed on a request failure, invalid
-timestamp, or gap above 100 seconds. Every configured number of samples the main
+timestamp, or gap above 100 seconds. Stopping aborts only a pending interval
+sleep: it awaits any already-started heartbeat and retains its success or
+failure. The final interval from the last server acceptance through the recorded
+`endedAt` is also included in the gate. Every configured number of samples the main
 path appends a real Agent activity, waits until the real Worker delivers its
 outbox row, and backdates only that newly generated event in the isolated
 acceptance database so the running retention Worker must archive it.
@@ -181,7 +189,9 @@ pending count and lag, exact Redis stream length, PostgreSQL rows/database
 size/domain-event table size/dead tuples/connections, Redis connections,
 heartbeat/activity latency, and Docker CPU/RSS for every configured container.
 `docker stats` runs asynchronously with a five-second process timeout; it cannot
-block the Node.js event loop or the heartbeat pump.
+block the Node.js event loop or the heartbeat pump. Every invocation uses
+`--no-trunc` and verifies each returned container ID against the initial role
+proof before accepting the sample.
 It fails on:
 
 - missing samples or a stale/non-`archive_only` Worker;
@@ -202,7 +212,10 @@ It fails on:
 - heartbeat-pump failure or an authoritative observed heartbeat gap above
   100 seconds;
 - no held Session-scoped lock, dirty/wrong source SHA, missing immutable image
-  digest, wrong API/Worker OCI revision, or mismatched API build SHA;
+  digest, wrong Compose project/service role, URL-to-published-port mismatch,
+  wrong API/Worker OCI revision, or mismatched API build SHA;
+- stale/non-`archive_only` durable Worker evidence, any per-sample container ID
+  replacement, or any initial-to-end container/image/API provenance drift;
 - Redis stream growth above the exact configured cap;
 - CPU, RSS, PostgreSQL/Redis connections, heartbeat/activity/archive latency,
   or outbox lag above the recorded threshold;
@@ -225,7 +238,10 @@ latency plus the expired-before-refresh count.
 `checks.heartbeatPumpSucceeded`, `checks.observedHeartbeatGapBounded`,
 `checks.formalLockVerified`, and `checks.provenanceVerified` require the live
 runtime evidence. The report includes safe lock/provenance proof and
-authoritative heartbeat timestamps/gap.
+authoritative heartbeat timestamps/gap through `endedAt`. Live reports contain
+initial and ending provenance snapshots, their deep-match result, and initial
+and ending durable Worker freshness evidence bound to the inspected Worker
+container ID.
 Reports do not contain credentials, object keys, Workspace IDs,
 Session IDs, or payloads. A historical verified segment or an earlier report
 cannot satisfy the current invocation.
@@ -235,7 +251,8 @@ cannot satisfy the current invocation.
 `pnpm test:soak:retention:formal -- --dry-run` uses a disposable Session/state
 path, acquires and independently verifies the real lock, and performs read-only
 Git, container/image, and `/api/v1/info` provenance checks before writing a
-sanitized `status: "dry_run"` plan. It does not connect to PostgreSQL/Redis or
+sanitized `status: "dry_run"` plan, including Compose identities and URL host
+port bindings. It does not connect to PostgreSQL/Redis or
 collect samples, but provisioning still mutates the disposable stack. Do not
 reuse its Session for a live run. Direct `pnpm test:soak:retention` invocation
 fails without the already-held formal lock. A dry run never substitutes for a
