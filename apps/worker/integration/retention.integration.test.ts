@@ -1031,11 +1031,14 @@ describe("retention worker destructive-path fences", () => {
           workerSeenAt: Date;
           workerInstanceId: string;
           workerBuildSha: string;
+          workerIdentityConflictCount: string;
         }>(
           `SELECT worker_mode AS "workerMode",
                   worker_seen_at AS "workerSeenAt",
                   worker_instance_id::text AS "workerInstanceId",
-                  worker_build_sha AS "workerBuildSha"
+                  worker_build_sha AS "workerBuildSha",
+                  worker_identity_conflict_count::text
+                    AS "workerIdentityConflictCount"
              FROM retention_job_state
             WHERE job_name='worker_runtime' AND workspace_id=$1`,
           [workspaceId],
@@ -1046,10 +1049,11 @@ describe("retention worker destructive-path fences", () => {
       workerSeenAt: expect.any(Date),
       workerInstanceId: runtimeIdentity.instanceId,
       workerBuildSha: runtimeIdentity.buildSha,
+      workerIdentityConflictCount: "0",
     });
   });
 
-  it("rejects an external Worker that refreshes the same authoritative row", async () => {
+  it("retains conflict evidence after an external Worker is overwritten", async () => {
     const candidate: WorkerRuntimeIdentity = {
       schemaVersion: 1,
       instanceId: "00000000-0000-4000-8000-000000000011",
@@ -1059,6 +1063,11 @@ describe("retention worker destructive-path fences", () => {
     const external: WorkerRuntimeIdentity = {
       ...candidate,
       instanceId: "00000000-0000-4000-8000-000000000012",
+    };
+    const differentBuild: WorkerRuntimeIdentity = {
+      ...external,
+      instanceId: "00000000-0000-4000-8000-000000000013",
+      buildSha: "c".repeat(40),
     };
     const create = (runtimeIdentity: WorkerRuntimeIdentity) =>
       createRetentionWorker({
@@ -1083,11 +1092,14 @@ describe("retention worker destructive-path fences", () => {
           workerSeenAt: Date | null;
           workerInstanceId: string | null;
           workerBuildSha: string | null;
+          workerIdentityConflictCount: string | null;
         }>(
           `SELECT worker_mode AS "workerMode",
                   worker_seen_at AS "workerSeenAt",
                   worker_instance_id::text AS "workerInstanceId",
-                  worker_build_sha AS "workerBuildSha"
+                  worker_build_sha AS "workerBuildSha",
+                  worker_identity_conflict_count::text
+                    AS "workerIdentityConflictCount"
              FROM retention_job_state
             WHERE job_name='worker_runtime' AND workspace_id=$1`,
           [workspaceId],
@@ -1100,16 +1112,19 @@ describe("retention worker destructive-path fences", () => {
 
     await create(candidate).tick();
     const candidateRuntime = await readRuntime();
-    expect(() =>
-      retentionSoakWorkerFreshnessProof(
-        candidateContainerIdentity,
-        candidateRuntime,
-        new Date(),
-      ),
-    ).not.toThrow();
+    const initialProof = retentionSoakWorkerFreshnessProof(
+      candidateContainerIdentity,
+      candidateRuntime,
+      new Date(),
+    );
+    expect(initialProof.workerIdentityConflictCount).toBe("0");
+
+    await Promise.all([create(candidate).tick(), create(candidate).tick()]);
+    expect((await readRuntime()).workerIdentityConflictCount).toBe("0");
 
     await create(external).tick();
     const externalRuntime = await readRuntime();
+    expect(externalRuntime.workerIdentityConflictCount).toBe("1");
     expect(() =>
       retentionSoakWorkerFreshnessProof(
         candidateContainerIdentity,
@@ -1117,5 +1132,27 @@ describe("retention worker destructive-path fences", () => {
         new Date(),
       ),
     ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
+
+    await create(candidate).tick();
+    const overwrittenExternalRuntime = await readRuntime();
+    expect(overwrittenExternalRuntime).toMatchObject({
+      workerInstanceId: candidate.instanceId,
+      workerBuildSha: candidate.buildSha,
+      workerIdentityConflictCount: "2",
+    });
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        candidateContainerIdentity,
+        overwrittenExternalRuntime,
+        new Date(),
+        120_000,
+        initialProof.workerIdentityConflictCount,
+      ),
+    ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED");
+
+    await create(differentBuild).tick();
+    expect((await readRuntime()).workerIdentityConflictCount).toBe("3");
+    await create(candidate).tick();
+    expect((await readRuntime()).workerIdentityConflictCount).toBe("4");
   });
 });

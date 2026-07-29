@@ -208,7 +208,8 @@ export const retentionJobState = pgTable('retention_job_state', {
   lastErrorCode: text('last_error_code'), counters: jsonb('counters').notNull(), lastStartedAt: timestamp('last_started_at', { withTimezone: true }),
   lastCompletedAt: timestamp('last_completed_at', { withTimezone: true }), workerMode: text('worker_mode'),
   workerSeenAt: timestamp('worker_seen_at', { withTimezone: true }), workerInstanceId: uuid('worker_instance_id'),
-  workerBuildSha: text('worker_build_sha'), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+  workerBuildSha: text('worker_build_sha'), workerIdentityConflictCount: bigint('worker_identity_conflict_count', { mode: 'bigint' }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
 export const retentionPolicyInventory = pgTable('retention_policy_inventory', {
   recordClass: text('record_class').primaryKey(), onlineDays: integer('online_days').notNull(), conflictDays: integer('conflict_days'),

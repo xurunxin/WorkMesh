@@ -148,6 +148,7 @@ const formalEvidence: RetentionSoakFormalEvidence = {
       workerContainerId,
       workerInstanceId,
       workerBuildSha: "a".repeat(40),
+      workerIdentityConflictCount: "0",
       workerMode: "archive_only",
       workerSeenAt: "2026-07-27T23:59:59.000Z",
       observedAt: "2026-07-28T00:00:00.000Z",
@@ -158,6 +159,7 @@ const formalEvidence: RetentionSoakFormalEvidence = {
       workerContainerId,
       workerInstanceId,
       workerBuildSha: "a".repeat(40),
+      workerIdentityConflictCount: "0",
       workerMode: "archive_only",
       workerSeenAt: "2026-07-28T23:59:59.000Z",
       observedAt: "2026-07-29T00:00:00.000Z",
@@ -521,6 +523,37 @@ describe("retention soak harness", () => {
         },
         retentionSoakLivenessBudget(30_000),
         { ...formalEvidence, provenanceUnchanged: false },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { provenanceVerified: false },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        {
+          ...formalEvidence,
+          workerFreshness: {
+            ...formalEvidence.workerFreshness,
+            ending: {
+              ...formalEvidence.workerFreshness.ending,
+              workerIdentityConflictCount: "1",
+            },
+          },
+        },
       ),
     ).toMatchObject({
       status: "failed",

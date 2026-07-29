@@ -81,10 +81,14 @@ initial proof. On startup the Worker generates an instance UUID bound to
 `WORKMESH_BUILD_SHA`, atomically writes it to the owner-only
 `/tmp/workmesh-worker-runtime-identity.json`, and publishes the same UUID/build
 to `retention_job_state.worker_instance_id`/`worker_build_sha` with its
-freshness heartbeat. Formal collection reads the file by exact inspected
-container ID and requires both initial and ending database identity/build to
-match it. An external Worker refreshing the same database, a process/container
-restart, or build/identity drift fails the gate. Threshold
+freshness heartbeat. An atomic identity/build replacement increments the
+nonnegative, monotonic `worker_identity_conflict_count`; a later candidate write
+does not reset that evidence. Formal collection reads the file by exact
+inspected container ID and requires both initial and ending database
+identity/build to match it and the ending conflict count to equal the initial
+baseline. An external Worker refreshing the same database, a process/container
+restart, or build/identity drift fails the gate even if the candidate identity
+is later restored. Threshold
 overrides may keep the defaults or lower maximums; looser formal thresholds are
 rejected. An independent 15-second heartbeat pump shares a serialized
 credential/request queue with activities. The maximum initial/steady

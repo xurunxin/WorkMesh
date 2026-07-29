@@ -1,5 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, open, rename, rm } from "node:fs/promises";
+import {
+  mkdir,
+  open,
+  rename,
+  rm,
+  type FileHandle,
+} from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 export const WORKER_RUNTIME_IDENTITY_CONTAINER_PATH =
@@ -11,6 +17,35 @@ export type WorkerRuntimeIdentity = Readonly<{
   buildSha: string;
   startedAt: string;
 }>;
+
+type WorkerRuntimeIdentityFile = Pick<
+  FileHandle,
+  "writeFile" | "sync" | "close"
+>;
+
+type WorkerRuntimeIdentityFileSystem = Readonly<{
+  mkdir: (
+    path: string,
+    options: Readonly<{ recursive: true; mode: number }>,
+  ) => Promise<unknown>;
+  open: (
+    path: string,
+    flags: "wx",
+    mode: number,
+  ) => Promise<WorkerRuntimeIdentityFile>;
+  rename: (oldPath: string, newPath: string) => Promise<void>;
+  rm: (
+    path: string,
+    options: Readonly<{ force: true }>,
+  ) => Promise<void>;
+}>;
+
+const defaultFileSystem: WorkerRuntimeIdentityFileSystem = {
+  mkdir,
+  open,
+  rename,
+  rm,
+};
 
 const safeBuildSha = (value: string | undefined): string => {
   const buildSha = value?.trim() || "unknown";
@@ -53,26 +88,37 @@ export const materializeWorkerRuntimeIdentity = async (
     env?: NodeJS.ProcessEnv;
     path?: string;
     identity?: WorkerRuntimeIdentity;
+    fileSystem?: Partial<WorkerRuntimeIdentityFileSystem>;
   }> = {},
 ): Promise<WorkerRuntimeIdentity> => {
   const identity =
     options.identity ?? createWorkerRuntimeIdentity(options.env ?? process.env);
   const path = resolve(options.path ?? workerRuntimeIdentityPath());
-  await mkdir(dirname(path), { recursive: true, mode: 0o700 });
   const temporaryPath = `${path}.${process.pid}.${randomUUID()}.tmp`;
-  const file = await open(temporaryPath, "wx", 0o600);
+  const fileSystem = { ...defaultFileSystem, ...options.fileSystem };
+  let file: WorkerRuntimeIdentityFile | undefined;
   try {
+    await fileSystem.mkdir(dirname(path), { recursive: true, mode: 0o700 });
+    file = await fileSystem.open(temporaryPath, "wx", 0o600);
     await file.writeFile(`${JSON.stringify(identity)}\n`, {
       encoding: "utf8",
     });
     await file.sync();
-  } finally {
     await file.close();
-  }
-  try {
-    await rename(temporaryPath, path);
+    file = undefined;
+    await fileSystem.rename(temporaryPath, path);
   } catch (error) {
-    await rm(temporaryPath, { force: true });
+    if (file)
+      try {
+        await file.close();
+      } catch {
+        // Cleanup is best effort and must not replace the lifecycle failure.
+      }
+    try {
+      await fileSystem.rm(temporaryPath, { force: true });
+    } catch {
+      // Cleanup is best effort and must not replace the lifecycle failure.
+    }
     throw error;
   }
   return identity;

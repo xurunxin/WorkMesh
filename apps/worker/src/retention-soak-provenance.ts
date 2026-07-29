@@ -67,6 +67,7 @@ export type RetentionSoakWorkerFreshnessProof = Readonly<{
   workerContainerId: string;
   workerInstanceId: string;
   workerBuildSha: string;
+  workerIdentityConflictCount: string;
   workerMode: "archive_only";
   workerSeenAt: string;
   observedAt: string;
@@ -367,9 +368,11 @@ export const retentionSoakWorkerFreshnessProof = (
     workerSeenAt: Date | null;
     workerInstanceId: string | null;
     workerBuildSha: string | null;
+    workerIdentityConflictCount: string | null;
   }>,
   observedAt: Date,
   maximumAgeMs = 120_000,
+  expectedConflictCount?: string,
 ): RetentionSoakWorkerFreshnessProof => {
   const ageMs = evidence.workerSeenAt
     ? observedAt.getTime() - evidence.workerSeenAt.getTime()
@@ -379,6 +382,16 @@ export const retentionSoakWorkerFreshnessProof = (
     evidence.workerBuildSha !== workerRuntimeIdentity.buildSha
   )
     throw new Error("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
+  if (
+    !evidence.workerIdentityConflictCount ||
+    !/^(0|[1-9][0-9]*)$/.test(evidence.workerIdentityConflictCount)
+  )
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_COUNT_INVALID");
+  if (
+    expectedConflictCount !== undefined &&
+    evidence.workerIdentityConflictCount !== expectedConflictCount
+  )
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED");
   if (
     evidence.workerMode !== "archive_only" ||
     !evidence.workerSeenAt ||
@@ -391,6 +404,7 @@ export const retentionSoakWorkerFreshnessProof = (
     workerContainerId: workerRuntimeIdentity.containerId,
     workerInstanceId: workerRuntimeIdentity.instanceId,
     workerBuildSha: workerRuntimeIdentity.buildSha,
+    workerIdentityConflictCount: evidence.workerIdentityConflictCount,
     workerMode: "archive_only",
     workerSeenAt: evidence.workerSeenAt.toISOString(),
     observedAt: observedAt.toISOString(),

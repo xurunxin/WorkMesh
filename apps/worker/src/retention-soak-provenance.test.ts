@@ -370,6 +370,7 @@ describe("retention soak formal provenance", () => {
           workerInstanceId:
             provenance.workerRuntimeIdentity.instanceId,
           workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
+          workerIdentityConflictCount: "7",
         },
         observedAt,
       ),
@@ -378,6 +379,7 @@ describe("retention soak formal provenance", () => {
       workerContainerId: provenance.roles.worker.containerId,
       workerInstanceId: provenance.workerRuntimeIdentity.instanceId,
       workerBuildSha: expectedBuildSha,
+      workerIdentityConflictCount: "7",
       workerMode: "archive_only",
       ageMs: 60_000,
     });
@@ -390,6 +392,7 @@ describe("retention soak formal provenance", () => {
           workerInstanceId:
             provenance.workerRuntimeIdentity.instanceId,
           workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
+          workerIdentityConflictCount: "7",
         },
         observedAt,
       ),
@@ -402,9 +405,26 @@ describe("retention soak formal provenance", () => {
           workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
           workerInstanceId: "00000000-0000-4000-8000-000000000099",
           workerBuildSha: expectedBuildSha,
+          workerIdentityConflictCount: "7",
         },
         observedAt,
       ),
     ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        provenance.workerRuntimeIdentity,
+        {
+          workerMode: "archive_only",
+          workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+          workerInstanceId:
+            provenance.workerRuntimeIdentity.instanceId,
+          workerBuildSha: expectedBuildSha,
+          workerIdentityConflictCount: "8",
+        },
+        observedAt,
+        120_000,
+        "7",
+      ),
+    ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED");
   });
 });

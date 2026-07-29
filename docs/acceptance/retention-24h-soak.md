@@ -244,11 +244,15 @@ and ending durable Worker freshness evidence. The Worker generates one startup
 UUID bound to `WORKMESH_BUILD_SHA`, atomically writes the same identity to the
 owner-only `/tmp/workmesh-worker-runtime-identity.json` file, and publishes its
 UUID/build into authoritative `retention_job_state.worker_instance_id` and
-`worker_build_sha` alongside every `worker_seen_at`. The harness reads that file
-with `docker exec` against the exact inspected container ID, never the mutable
-name, and requires the initial and ending database UUID/build to match the
-corresponding exact-container identity. A different Worker refreshing the same
-database therefore fails rather than impersonating the candidate container.
+`worker_build_sha` alongside every `worker_seen_at`. If a non-null identity/build
+replaces a different non-null identity/build, the same atomic upsert increments
+the monotonic `worker_identity_conflict_count`; later writes cannot reset it.
+The harness reads the file with `docker exec` against the exact inspected
+container ID, never the mutable name, and requires the initial and ending
+database UUID/build to match the corresponding exact-container identity and the
+ending conflict count to equal its initial baseline. A different Worker
+refreshing the same database therefore remains detectable even if the candidate
+subsequently writes its identity back.
 Reports do not contain credentials, object keys, Workspace IDs,
 Session IDs, or payloads. A historical verified segment or an earlier report
 cannot satisfy the current invocation.

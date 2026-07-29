@@ -160,6 +160,7 @@ try {
       workerSeenAt: Date | null;
       workerInstanceId: string | null;
       workerBuildSha: string | null;
+      workerIdentityConflictCount: string | null;
       state: string;
       heartbeatHealth: string;
       lastHeartbeatAt: Date | null;
@@ -171,7 +172,9 @@ try {
               runtime.worker_mode AS "workerMode",
               runtime.worker_seen_at AS "workerSeenAt",
               runtime.worker_instance_id::text AS "workerInstanceId",
-              runtime.worker_build_sha AS "workerBuildSha"
+              runtime.worker_build_sha AS "workerBuildSha",
+              runtime.worker_identity_conflict_count::text
+                AS "workerIdentityConflictCount"
          FROM agent_sessions session
          LEFT JOIN retention_job_state runtime
            ON runtime.workspace_id=session.workspace_id
@@ -323,11 +326,14 @@ try {
       workerSeenAt: Date | null;
       workerInstanceId: string | null;
       workerBuildSha: string | null;
+      workerIdentityConflictCount: string | null;
     }>(
       `SELECT worker_mode AS "workerMode",
               worker_seen_at AS "workerSeenAt",
               worker_instance_id::text AS "workerInstanceId",
-              worker_build_sha AS "workerBuildSha"
+              worker_build_sha AS "workerBuildSha",
+              worker_identity_conflict_count::text
+                AS "workerIdentityConflictCount"
          FROM retention_job_state
         WHERE workspace_id=$1 AND job_name='worker_runtime'`,
       [identity.workspaceId],
@@ -346,6 +352,8 @@ try {
     endingProvenance.workerRuntimeIdentity,
     endingRuntime,
     reportEndedAt,
+    120_000,
+    initialWorkerFreshness.workerIdentityConflictCount,
   );
 } finally {
   if (heartbeatPump && !heartbeatMetrics) {

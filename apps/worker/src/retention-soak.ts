@@ -696,7 +696,9 @@ export const retentionSoakReport = (
       formalEvidence.workerFreshness.ending.workerInstanceId ===
         formalEvidence.endingProvenance.workerRuntimeIdentity.instanceId &&
       formalEvidence.workerFreshness.ending.workerBuildSha ===
-        formalEvidence.endingProvenance.workerRuntimeIdentity.buildSha,
+        formalEvidence.endingProvenance.workerRuntimeIdentity.buildSha &&
+      formalEvidence.workerFreshness.ending.workerIdentityConflictCount ===
+        formalEvidence.workerFreshness.initial.workerIdentityConflictCount,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&

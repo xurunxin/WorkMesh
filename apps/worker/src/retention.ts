@@ -209,6 +209,23 @@ export function createRetentionWorker({
       ON CONFLICT(job_name,workspace_id) DO UPDATE
         SET worker_mode=EXCLUDED.worker_mode,
             worker_seen_at=EXCLUDED.worker_seen_at,
+            worker_identity_conflict_count=
+              retention_job_state.worker_identity_conflict_count
+              + CASE
+                  WHEN retention_job_state.worker_instance_id IS NOT NULL
+                   AND retention_job_state.worker_build_sha IS NOT NULL
+                   AND EXCLUDED.worker_instance_id IS NOT NULL
+                   AND EXCLUDED.worker_build_sha IS NOT NULL
+                   AND (
+                     retention_job_state.worker_instance_id,
+                     retention_job_state.worker_build_sha
+                   ) IS DISTINCT FROM (
+                     EXCLUDED.worker_instance_id,
+                     EXCLUDED.worker_build_sha
+                   )
+                  THEN 1
+                  ELSE 0
+                END,
             worker_instance_id=EXCLUDED.worker_instance_id,
             worker_build_sha=EXCLUDED.worker_build_sha,
             updated_at=now()

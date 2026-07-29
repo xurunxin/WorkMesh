@@ -19,6 +19,7 @@ const admin = createDb(databaseUrl);
 let upgrade: Db;
 let clean: Db;
 let previousStageIdentityColumns = -1;
+let previousStageConflictColumns = -1;
 
 const databaseUrlFor = (database: string): string => {
   const url = new URL(databaseUrl);
@@ -27,7 +28,7 @@ const databaseUrlFor = (database: string): string => {
   return url.toString();
 };
 
-describe("0027 Worker runtime identity migration", () => {
+describe("0027/0028 Worker runtime identity migrations", () => {
   beforeAll(async () => {
     await admin.query(`CREATE DATABASE "${upgradeDatabase}"`);
     await admin.query(`CREATE DATABASE "${cleanDatabase}"`);
@@ -46,6 +47,18 @@ describe("0027 Worker runtime identity migration", () => {
         )
       ).rows[0]!.count,
     );
+    await applyMigrations(upgrade, { through: 27 });
+    previousStageConflictColumns = Number(
+      (
+        await upgrade.query<{ count: string }>(
+          `SELECT count(*)::text AS count
+             FROM information_schema.columns
+            WHERE table_schema=current_schema()
+              AND table_name='retention_job_state'
+              AND column_name='worker_identity_conflict_count'`,
+        )
+      ).rows[0]!.count,
+    );
     await applyMigrations(upgrade);
     await applyMigrations(clean);
   }, 120_000);
@@ -58,8 +71,9 @@ describe("0027 Worker runtime identity migration", () => {
     await admin.end();
   });
 
-  it("upgrades a 0026 schema and applies cleanly from zero", async () => {
+  it("upgrades 0026 through 0027/0028 and applies cleanly from zero", async () => {
     expect(previousStageIdentityColumns).toBe(0);
+    expect(previousStageConflictColumns).toBe(0);
     for (const db of [upgrade, clean]) {
       expect(
         (
@@ -70,24 +84,36 @@ describe("0027 Worker runtime identity migration", () => {
       ).toBe(1);
       expect(
         (
+          await db.query(
+            "SELECT 1 FROM schema_migrations WHERE version='0028_worker_identity_conflict_count'",
+          )
+        ).rowCount,
+      ).toBe(1);
+      expect(
+        (
           await db.query<{ column_name: string }>(
             `SELECT column_name
                FROM information_schema.columns
               WHERE table_schema=$1
                 AND table_name='retention_job_state'
-                AND column_name IN ('worker_instance_id','worker_build_sha')
+                AND column_name IN (
+                  'worker_instance_id',
+                  'worker_build_sha',
+                  'worker_identity_conflict_count'
+                )
               ORDER BY column_name`,
             ["public"],
           )
         ).rows,
       ).toEqual([
         { column_name: "worker_build_sha" },
+        { column_name: "worker_identity_conflict_count" },
         { column_name: "worker_instance_id" },
       ]);
     }
   });
 
-  it("preserves old rows but rejects partial runtime identities", async () => {
+  it("preserves old rows with a nonnegative zero conflict baseline", async () => {
     const workspaceId = (
       await upgrade.query<{ id: string }>(
         `INSERT INTO workspaces(name,slug)
@@ -102,6 +128,16 @@ describe("0027 Worker runtime identity migration", () => {
         [workspaceId],
       ),
     ).resolves.toMatchObject({ rowCount: 1 });
+    expect(
+      (
+        await upgrade.query<{ count: string }>(
+          `SELECT worker_identity_conflict_count::text AS count
+             FROM retention_job_state
+            WHERE job_name='worker_runtime' AND workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!.count,
+    ).toBe("0");
     await expect(
       upgrade.query(
         `UPDATE retention_job_state
@@ -122,5 +158,13 @@ describe("0027 Worker runtime identity migration", () => {
         ],
       ),
     ).resolves.toMatchObject({ rowCount: 1 });
+    await expect(
+      upgrade.query(
+        `UPDATE retention_job_state
+            SET worker_identity_conflict_count=-1
+          WHERE job_name='worker_runtime' AND workspace_id=$1`,
+        [workspaceId],
+      ),
+    ).rejects.toThrow();
   });
 });
