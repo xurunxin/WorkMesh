@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { gunzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { appendEvent, applyMigrations, createDb, withTx } from "@workmesh/db";
 import type { RetentionConfig } from "@workmesh/config";
@@ -7,6 +7,7 @@ import type { ArtifactObjectExpectation } from "@workmesh/artifact-storage";
 import {
   createRetentionWorker,
   type ArchiveObjectStore,
+  type ArchiveFaultPoint,
   type ExactRedisClient,
 } from "../src/retention.js";
 import {
@@ -29,21 +30,39 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
 
 const db = createDb(databaseUrl);
 const objects = new Map<string, Uint8Array>();
+const currentVersions = new Map<string, string>();
 const verifiedVersions: string[] = [];
 let corruptReadback = true;
 let writes = 0;
+let putAttempts = 0;
+let losePutResponseOnce = false;
+const attemptedObjectKeys: string[] = [];
 const versionedObjectKey = (
   expectation: ArtifactObjectExpectation,
 ): string => `${expectation.key}@${expectation.versionId ?? "unversioned"}`;
 const storage: ArchiveObjectStore = {
   async probeRetentionProtection() {},
-  async putObject(expectation, body) {
+  async putObjectIfAbsent(expectation, body) {
+    putAttempts += 1;
+    attemptedObjectKeys.push(expectation.key);
+    const current = currentVersions.get(expectation.key);
+    if (current) return { versionId: current };
     writes += 1;
     const versionId = `retention-version-${writes}`;
+    currentVersions.set(expectation.key, versionId);
     objects.set(
       versionedObjectKey({ ...expectation, versionId }),
       Uint8Array.from(body),
     );
+    if (losePutResponseOnce) {
+      losePutResponseOnce = false;
+      throw new Error("INJECTED_PUT_RESPONSE_LOSS");
+    }
+    return { versionId };
+  },
+  async reconcileCurrentObject(expectation) {
+    const versionId = currentVersions.get(expectation.key);
+    if (!versionId) throw new Error("ARCHIVE_OBJECT_MISSING");
     return { versionId };
   },
   async readVerifiedObject(expectation) {
@@ -104,9 +123,13 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   objects.clear();
+  currentVersions.clear();
   verifiedVersions.length = 0;
   corruptReadback = true;
   writes = 0;
+  putAttempts = 0;
+  losePutResponseOnce = false;
+  attemptedObjectKeys.length = 0;
   workspaceId = (
     await db.query<{ id: string }>(
       "INSERT INTO workspaces(name,slug) VALUES('Retention worker',$1) RETURNING id",
@@ -173,23 +196,26 @@ describe("retention soak sampling", () => {
       rows: "1",
     });
 
+    const sampleCutoff = new Date(Date.now() - 90 * 86_400_000);
     const segmentId = (
       await db.query<{ id: string }>(
         `INSERT INTO event_archive_segments(
          workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
          object_key,object_version_id,object_size_bytes,object_sha256,
          snapshot_digest,retain_until,state,uploaded_at,verified_at,
-         membership_state
+         membership_state,metadata
        ) VALUES(
-         $1,$2,$2,now()-interval '90 days',1,
+         $1,$2,$2,$5,1,
          'retention-soak-query-test','version-1',1,$3,$4,
-         now()+interval '366 days','verified',now(),now(),'pending_exact'
+         now()+interval '366 days','verified',now(),now(),'legacy_unindexed',$6
        ) RETURNING id`,
         [
           workspaceId,
           eventCursor,
           `sha256:${"b".repeat(64)}`,
           `sha256:${"a".repeat(64)}`,
+          sampleCutoff,
+          { fixedCutoffAt: sampleCutoff.toISOString() },
         ],
       )
     ).rows[0]!.id;
@@ -279,7 +305,7 @@ describe("retention worker destructive-path fences", () => {
     ).rows[0]!;
   };
 
-  it("marks corrupt uploads failed and deterministically verifies the same segment after restart", async () => {
+  it("keeps a corrupt readback recoverable on the same uploaded segment after restart", async () => {
     const first = createRetentionWorker({
       db,
       workerId: "archive-first",
@@ -308,7 +334,7 @@ describe("retention worker destructive-path fences", () => {
         [workspaceId],
       )
     ).rows[0]!;
-    expect(failed.state).toBe("failed");
+    expect(failed.state).toBe("uploaded");
     expect(failed.membershipState).toBe("pending_exact");
     expect(
       (
@@ -317,7 +343,7 @@ describe("retention worker destructive-path fences", () => {
           [failed.id],
         )
       ).rowCount,
-    ).toBe(0);
+    ).toBe(1);
     corruptReadback = false;
     const restarted = createRetentionWorker({
       db,
@@ -378,6 +404,454 @@ describe("retention worker destructive-path fences", () => {
         )
       ).rowCount,
     ).toBe(1);
+  });
+
+  it.each<{
+    point: ArchiveFaultPoint;
+    expectedBeforeRecovery: "planned" | "uploaded" | "verified";
+    expectedObjectsBeforeRecovery: number;
+  }>([
+    {
+      point: "after_plan_commit",
+      expectedBeforeRecovery: "planned",
+      expectedObjectsBeforeRecovery: 0,
+    },
+    {
+      point: "after_put",
+      expectedBeforeRecovery: "planned",
+      expectedObjectsBeforeRecovery: 1,
+    },
+    {
+      point: "before_upload_commit",
+      expectedBeforeRecovery: "planned",
+      expectedObjectsBeforeRecovery: 1,
+    },
+    {
+      point: "after_upload_commit",
+      expectedBeforeRecovery: "uploaded",
+      expectedObjectsBeforeRecovery: 1,
+    },
+    {
+      point: "before_finalize_commit",
+      expectedBeforeRecovery: "uploaded",
+      expectedObjectsBeforeRecovery: 1,
+    },
+    {
+      point: "mid_finalize",
+      expectedBeforeRecovery: "uploaded",
+      expectedObjectsBeforeRecovery: 1,
+    },
+    {
+      point: "after_finalize_commit",
+      expectedBeforeRecovery: "verified",
+      expectedObjectsBeforeRecovery: 1,
+    },
+  ])(
+    "recovers the same durable intent after $point",
+    async ({
+      point,
+      expectedBeforeRecovery,
+      expectedObjectsBeforeRecovery,
+    }) => {
+      corruptReadback = false;
+      const first = createRetentionWorker({
+        db,
+        workerId: `fault-${point}`,
+        config,
+        storage,
+        redisClient: redis,
+        redisMaxLen: 100,
+        workspaceScopeId: workspaceId,
+        archiveFault: async (observedPoint) => {
+          if (observedPoint === point)
+            throw new Error(`INJECTED_${point.toUpperCase()}`);
+        },
+      });
+      await expect(first.archiveEvents()).rejects.toThrow(
+        `INJECTED_${point.toUpperCase()}`,
+      );
+      const before = (
+        await db.query<{
+          id: string;
+          state: string;
+          membershipState: string;
+          objectKey: string;
+          objectVersionId: string | null;
+          watermark: string;
+          coverage: string;
+        }>(
+          `
+          SELECT segment.id,segment.state,
+                 segment.membership_state AS "membershipState",
+                 segment.object_key AS "objectKey",
+                 segment.object_version_id AS "objectVersionId",
+                 job.watermark_cursor::text AS watermark,
+                 (
+                   SELECT count(*)::text
+                     FROM event_archive_segment_events member
+                     JOIN event_archive_segments authoritative
+                       ON authoritative.id=member.segment_id
+                      AND authoritative.membership_state='exact'
+                      AND authoritative.state IN ('verified','pruned')
+                    WHERE member.segment_id=segment.id
+                 ) AS coverage
+            FROM event_archive_segments segment
+            JOIN retention_job_state job
+              ON job.job_name='event_archive'
+             AND job.workspace_id=segment.workspace_id
+           WHERE segment.workspace_id=$1
+        `,
+          [workspaceId],
+        )
+      ).rows;
+      expect(before).toHaveLength(1);
+      expect(before[0]).toMatchObject({
+        state: expectedBeforeRecovery,
+        membershipState:
+          expectedBeforeRecovery === "verified" ? "exact" : "pending_exact",
+        watermark:
+          expectedBeforeRecovery === "verified" ? eventCursor : "0",
+        coverage: expectedBeforeRecovery === "verified" ? "1" : "0",
+      });
+      expect(objects.size).toBe(expectedObjectsBeforeRecovery);
+
+      const recovered = createRetentionWorker({
+        db,
+        workerId: `recover-${point}`,
+        config,
+        storage,
+        redisClient: redis,
+        redisMaxLen: 100,
+        workspaceScopeId: workspaceId,
+      });
+      await expect(recovered.archiveEvents()).resolves.toBe(
+        expectedBeforeRecovery === "verified" ? 0 : 1,
+      );
+      const after = (
+        await db.query<{
+          id: string;
+          state: string;
+          membershipState: string;
+          objectKey: string;
+          objectVersionId: string;
+          watermark: string;
+          reservations: string;
+        }>(
+          `
+          SELECT segment.id,segment.state,
+                 segment.membership_state AS "membershipState",
+                 segment.object_key AS "objectKey",
+                 segment.object_version_id AS "objectVersionId",
+                 job.watermark_cursor::text AS watermark,
+                 count(member.*)::text AS reservations
+            FROM event_archive_segments segment
+            JOIN retention_job_state job
+              ON job.job_name='event_archive'
+             AND job.workspace_id=segment.workspace_id
+            LEFT JOIN event_archive_segment_events member
+              ON member.segment_id=segment.id
+           WHERE segment.workspace_id=$1
+           GROUP BY segment.id,job.watermark_cursor
+        `,
+          [workspaceId],
+        )
+      ).rows;
+      expect(after).toEqual([
+        expect.objectContaining({
+          id: before[0]!.id,
+          state: "verified",
+          membershipState: "exact",
+          objectKey: before[0]!.objectKey,
+          watermark: eventCursor,
+          reservations: "1",
+        }),
+      ]);
+      expect(writes).toBe(1);
+      expect(objects.size).toBe(1);
+      expect(currentVersions.size).toBe(1);
+      expect(new Set(attemptedObjectKeys)).toEqual(
+        new Set([before[0]!.objectKey]),
+      );
+      expect(
+        objects.has(
+          `${before[0]!.objectKey}@${after[0]!.objectVersionId}`,
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it("recovers a PUT response loss without a second version or segment", async () => {
+    corruptReadback = false;
+    losePutResponseOnce = true;
+    const first = createRetentionWorker({
+      db,
+      workerId: "put-response-loss",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(first.archiveEvents()).rejects.toThrow(
+      "INJECTED_PUT_RESPONSE_LOSS",
+    );
+    expect(writes).toBe(1);
+    expect(objects.size).toBe(1);
+    const planned = (
+      await db.query<{ id: string; objectKey: string; state: string }>(
+        `SELECT id,object_key AS "objectKey",state
+           FROM event_archive_segments WHERE workspace_id=$1`,
+        [workspaceId],
+      )
+    ).rows[0]!;
+    expect(planned.state).toBe("planned");
+
+    const recovered = createRetentionWorker({
+      db,
+      workerId: "put-response-loss-recovery",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(recovered.archiveEvents()).resolves.toBe(1);
+    expect(writes).toBe(1);
+    expect(putAttempts).toBe(2);
+    expect(new Set(attemptedObjectKeys)).toEqual(
+      new Set([planned.objectKey]),
+    );
+    expect(
+      (
+        await db.query(
+          `SELECT 1 FROM event_archive_segments WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rowCount,
+    ).toBe(1);
+  });
+
+  it("lets only the successor publish after lease loss following PUT", async () => {
+    corruptReadback = false;
+    const stale = createRetentionWorker({
+      db,
+      workerId: "stale-after-put",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      archiveFault: async (point, { claim }) => {
+        if (point !== "after_put") return;
+        await db.query(
+          `UPDATE retention_job_state
+              SET lease_expires_at=now()-interval '1 second'
+            WHERE job_name=$1 AND workspace_id=$2
+              AND lease_owner=$3 AND fence=$4::bigint`,
+          [claim.jobName, claim.workspaceId, claim.owner, claim.fence],
+        );
+        const successor = createRetentionWorker({
+          db,
+          workerId: "successor-after-put",
+          config,
+          storage,
+          redisClient: redis,
+          redisMaxLen: 100,
+          workspaceScopeId: workspaceId,
+        });
+        await expect(successor.archiveEvents()).resolves.toBe(1);
+      },
+    });
+    await expect(stale.archiveEvents()).rejects.toThrow(
+      "RETENTION_CLAIM_LOST",
+    );
+    expect(writes).toBe(1);
+    expect(currentVersions.size).toBe(1);
+    expect(
+      (
+        await db.query<{
+          state: string;
+          membershipState: string;
+          watermark: string;
+          leaseOwner: string;
+        }>(
+          `SELECT segment.state,
+                  segment.membership_state AS "membershipState",
+                  job.watermark_cursor::text AS watermark,
+                  job.lease_owner AS "leaseOwner"
+             FROM event_archive_segments segment
+             JOIN retention_job_state job
+               ON job.job_name='event_archive'
+              AND job.workspace_id=segment.workspace_id
+            WHERE segment.workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        state: "verified",
+        membershipState: "exact",
+        watermark: eventCursor,
+        leaseOwner: "successor-after-put",
+      },
+    ]);
+  });
+
+  it("fails closed on claim/segment and manifest fixed-cutoff mismatches", async () => {
+    corruptReadback = false;
+    const first = createRetentionWorker({
+      db,
+      workerId: "cutoff-plan",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      archiveFault: async (point) => {
+        if (point === "after_plan_commit")
+          throw new Error("INJECTED_AFTER_PLAN");
+      },
+    });
+    await expect(first.archiveEvents()).rejects.toThrow("INJECTED_AFTER_PLAN");
+    await db.query(
+      `UPDATE event_archive_segments
+          SET fixed_cutoff_at=fixed_cutoff_at-interval '1 millisecond',
+              metadata=jsonb_set(
+                metadata,
+                '{fixedCutoffAt}',
+                to_jsonb(
+                  to_char(
+                    fixed_cutoff_at-interval '1 millisecond',
+                    'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+                  )
+                )
+              )
+        WHERE workspace_id=$1`,
+      [workspaceId],
+    );
+    const cutoffMismatch = createRetentionWorker({
+      db,
+      workerId: "cutoff-segment-mismatch",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(cutoffMismatch.archiveEvents()).rejects.toThrow(
+      "ARCHIVE_FIXED_CUTOFF_MISMATCH",
+    );
+    expect(
+      (
+        await db.query<{ state: string; lastErrorCode: string }>(
+          `SELECT state,last_error_code AS "lastErrorCode"
+             FROM event_archive_segments WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        state: "failed",
+        lastErrorCode: "ARCHIVE_FIXED_CUTOFF_MISMATCH",
+      },
+    ]);
+
+    await db.query("TRUNCATE workspaces CASCADE");
+    workspaceId = (
+      await db.query<{ id: string }>(
+        "INSERT INTO workspaces(name,slug) VALUES('Manifest cutoff',$1) RETURNING id",
+        [`manifest-cutoff-${randomUUID()}`],
+      )
+    ).rows[0]!.id;
+    actorId = (
+      await db.query<{ id: string }>(
+        "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','Retention worker') RETURNING id",
+        [workspaceId],
+      )
+    ).rows[0]!.id;
+    eventId = await withTx(db, (tx) =>
+      appendEvent(tx, {
+        workspaceId,
+        actorId,
+        correlationId: randomUUID(),
+        type: "workspace.updated",
+        aggregateType: "workspace",
+        aggregateId: workspaceId,
+        payload: { reason: "manifest cutoff" },
+      }),
+    );
+    eventCursor = (
+      await db.query<{ cursor: string }>(
+        "UPDATE domain_events SET occurred_at=now()-interval '91 days' WHERE id=$1 RETURNING cursor::text",
+        [eventId],
+      )
+    ).rows[0]!.cursor;
+    await db.query(
+      "UPDATE outbox_events SET status='delivered',delivered_at=now()-interval '31 days' WHERE domain_event_id=$1",
+      [eventId],
+    );
+    objects.clear();
+    currentVersions.clear();
+    const uploadThenStop = createRetentionWorker({
+      db,
+      workerId: "manifest-upload",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      archiveFault: async (point) => {
+        if (point === "after_upload_commit")
+          throw new Error("INJECTED_AFTER_UPLOAD");
+      },
+    });
+    await expect(uploadThenStop.archiveEvents()).rejects.toThrow(
+      "INJECTED_AFTER_UPLOAD",
+    );
+    const entry = [...objects.entries()][0]!;
+    const lines = gunzipSync(entry[1]).toString("utf8").trimEnd().split("\n");
+    const envelope = JSON.parse(lines[0]!) as {
+      _meta: { fixedCutoffAt: string };
+    };
+    envelope._meta.fixedCutoffAt = envelope._meta.fixedCutoffAt.replace(
+      "Z",
+      "+00:00",
+    );
+    objects.set(
+      entry[0],
+      gzipSync(
+        Buffer.from(
+          `${JSON.stringify(envelope)}\n${lines.slice(1).join("\n")}\n`,
+        ),
+        { level: 9 },
+      ),
+    );
+    const manifestMismatch = createRetentionWorker({
+      db,
+      workerId: "manifest-cutoff-mismatch",
+      config,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+    });
+    await expect(manifestMismatch.archiveEvents()).rejects.toThrow(
+      "ARCHIVE_OBJECT_MANIFEST_MISMATCH",
+    );
+    expect(
+      (
+        await db.query<{ state: string; lastErrorCode: string }>(
+          `SELECT state,last_error_code AS "lastErrorCode"
+             FROM event_archive_segments WHERE workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows,
+    ).toEqual([
+      {
+        state: "failed",
+        lastErrorCode: "ARCHIVE_OBJECT_MANIFEST_MISMATCH",
+      },
+    ]);
   });
 
   it("lazily materializes verified and pruned legacy segments from pinned objects", async () => {
@@ -571,7 +1045,8 @@ describe("retention worker destructive-path fences", () => {
       "archive bucket customer-42 failed with credential=top-secret";
     const unsafeStorage: ArchiveObjectStore = {
       probeRetentionProtection: storage.probeRetentionProtection,
-      putObject: storage.putObject,
+      putObjectIfAbsent: storage.putObjectIfAbsent,
+      reconcileCurrentObject: storage.reconcileCurrentObject,
       async readVerifiedObject() {
         throw new Error(unsafeMessage);
       },
@@ -590,22 +1065,23 @@ describe("retention worker destructive-path fences", () => {
     });
 
     await expect(worker.archiveEvents()).rejects.toThrow(unsafeMessage);
-    const persisted = await db.query<{ lastErrorCode: string }>(
-      `SELECT last_error_code AS "lastErrorCode"
+    const persisted = await db.query<{
+      source: string;
+      lastErrorCode: string | null;
+    }>(
+      `SELECT 'segment' AS source,last_error_code AS "lastErrorCode"
          FROM event_archive_segments
         WHERE workspace_id=$1
        UNION ALL
-       SELECT last_error_code AS "lastErrorCode"
+       SELECT 'job' AS source,last_error_code AS "lastErrorCode"
          FROM retention_job_state
         WHERE workspace_id=$1 AND job_name='event_archive'`,
       [workspaceId],
     );
-    expect(persisted.rows).toHaveLength(2);
-    expect(
-      persisted.rows.every(
-        ({ lastErrorCode }) => lastErrorCode === "RETENTION_JOB_FAILED",
-      ),
-    ).toBe(true);
+    expect(persisted.rows).toEqual([
+      { source: "segment", lastErrorCode: null },
+      { source: "job", lastErrorCode: "RETENTION_JOB_FAILED" },
+    ]);
   });
 
   it("rejects progress from an expired owner after a fenced reclaim", async () => {

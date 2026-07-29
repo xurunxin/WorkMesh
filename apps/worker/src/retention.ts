@@ -99,7 +99,11 @@ type QueryExecutor = Pick<Db, "query">;
 
 export type ArchiveObjectStore = Pick<
   S3ArtifactStorage,
-  "putObject" | "readVerifiedObject" | "verify" | "probeRetentionProtection"
+  | "putObjectIfAbsent"
+  | "reconcileCurrentObject"
+  | "readVerifiedObject"
+  | "verify"
+  | "probeRetentionProtection"
 >;
 
 type ArchiveSegmentObject = Readonly<{
@@ -110,13 +114,16 @@ type ArchiveSegmentObject = Readonly<{
   rowCount: number;
   snapshotDigest: string;
   objectKey: string;
-  objectVersionId: string;
+  objectVersionId: string | null;
   objectSizeBytes: string;
   objectSha256: string;
+  fixedCutoffAt: Date;
   retainUntil: Date;
   prunedAt: Date | null;
-  state: "uploaded" | "verified" | "pruned" | "failed";
+  state: "planned" | "uploaded" | "verified" | "pruned" | "failed";
   membershipState: "pending_exact" | "exact" | "legacy_unindexed";
+  plannedFence: string | null;
+  lastErrorCode: string | null;
 }>;
 
 type ArchiveMember = Readonly<{
@@ -127,15 +134,35 @@ type ArchiveMember = Readonly<{
   record: unknown;
 }>;
 
+export type ArchiveFaultPoint =
+  | "after_plan_commit"
+  | "after_put"
+  | "before_upload_commit"
+  | "after_upload_commit"
+  | "before_finalize_commit"
+  | "mid_finalize"
+  | "after_finalize_commit";
+
 const archiveExpectation = (
   segment: ArchiveSegmentObject,
 ): ArtifactObjectExpectation => ({
   key: segment.objectKey,
-  versionId: segment.objectVersionId,
+  ...(segment.objectVersionId
+    ? { versionId: segment.objectVersionId }
+    : {}),
   checksum: segment.objectSha256,
   sizeBytes: Number(segment.objectSizeBytes),
   mimeType: "application/gzip",
   retainUntil: segment.retainUntil,
+  ...(segment.plannedFence !== null
+    ? {
+        archiveIdentity: {
+          segmentId: segment.id,
+          snapshotDigest: segment.snapshotDigest,
+          fixedCutoffAt: segment.fixedCutoffAt.toISOString(),
+        },
+      }
+    : {}),
 });
 
 const parseArchiveMembers = (
@@ -169,6 +196,7 @@ const parseArchiveMembers = (
     meta.workspaceId !== segment.workspaceId ||
     meta.startCursor !== segment.startCursor ||
     meta.endCursor !== segment.endCursor ||
+    meta.fixedCutoffAt !== segment.fixedCutoffAt.toISOString() ||
     meta.rowCount !== segment.rowCount ||
     meta.snapshotDigest !== segment.snapshotDigest ||
     records.length !== segment.rowCount ||
@@ -276,6 +304,7 @@ export function createRetentionWorker({
   afterCleanupClaim,
   afterArchiveClaim,
   afterPruneClaim,
+  archiveFault,
 }: {
   db: Db;
   workerId?: string;
@@ -293,6 +322,10 @@ export function createRetentionWorker({
   afterCleanupClaim?: (claim: RetentionClaim) => Promise<void> | void;
   afterArchiveClaim?: (claim: RetentionClaim) => Promise<void> | void;
   afterPruneClaim?: (claim: RetentionClaim) => Promise<void> | void;
+  archiveFault?: (
+    point: ArchiveFaultPoint,
+    input: Readonly<{ claim: RetentionClaim; segmentId: string }>,
+  ) => Promise<void> | void;
 }): RetentionWorker {
   const objectStore = storage ?? artifactStorageFromEnvironment();
   const realtime =
@@ -580,7 +613,7 @@ export function createRetentionWorker({
     });
   };
 
-  const loadUnindexedSegment = async (
+  const loadPendingSegment = async (
     workspaceId: string,
   ): Promise<ArchiveSegmentObject | undefined> =>
     (
@@ -592,26 +625,281 @@ export function createRetentionWorker({
                snapshot_digest AS "snapshotDigest",object_key AS "objectKey",
                object_version_id AS "objectVersionId",
                object_size_bytes::text AS "objectSizeBytes",
-               object_sha256 AS "objectSha256",retain_until AS "retainUntil",
+               object_sha256 AS "objectSha256",
+               fixed_cutoff_at AS "fixedCutoffAt",
+               retain_until AS "retainUntil",
                pruned_at AS "prunedAt",state,
-               membership_state AS "membershipState"
+               membership_state AS "membershipState",
+               planned_fence::text AS "plannedFence",
+               last_error_code AS "lastErrorCode"
           FROM event_archive_segments
          WHERE workspace_id=$1
-           AND membership_state IN ('pending_exact','legacy_unindexed')
-           AND state IN ('uploaded','verified','pruned','failed')
-         ORDER BY
-           CASE membership_state WHEN 'pending_exact' THEN 0 ELSE 1 END,
-           created_at,id
+           AND membership_state='pending_exact'
+           AND state IN ('planned','uploaded','failed')
+         ORDER BY created_at,id
          LIMIT 1
       `,
         [workspaceId],
       )
     ).rows[0];
 
+  const loadLegacySegment = async (
+    workspaceId: string,
+  ): Promise<ArchiveSegmentObject | undefined> =>
+    (
+      await db.query<ArchiveSegmentObject>(
+        `
+        SELECT id,workspace_id AS "workspaceId",
+               start_cursor::text AS "startCursor",
+               end_cursor::text AS "endCursor",row_count AS "rowCount",
+               snapshot_digest AS "snapshotDigest",object_key AS "objectKey",
+               object_version_id AS "objectVersionId",
+               object_size_bytes::text AS "objectSizeBytes",
+               object_sha256 AS "objectSha256",
+               fixed_cutoff_at AS "fixedCutoffAt",
+               retain_until AS "retainUntil",
+               pruned_at AS "prunedAt",state,
+               membership_state AS "membershipState",
+               planned_fence::text AS "plannedFence",
+               last_error_code AS "lastErrorCode"
+          FROM event_archive_segments
+         WHERE workspace_id=$1
+           AND membership_state='legacy_unindexed'
+           AND state IN ('uploaded','verified','pruned','failed')
+         ORDER BY created_at,id
+         LIMIT 1
+      `,
+        [workspaceId],
+      )
+    ).rows[0];
+
+  const buildArchivePayload = (
+    records: readonly ArchivedRecord[],
+    metadata: Readonly<{
+      format: "workmesh-domain-event-records-ndjson-v1";
+      workspaceId: string;
+      startCursor: string;
+      endCursor: string;
+      fixedCutoffAt: string;
+      rowCount: number;
+      snapshotDigest: string;
+    }>,
+  ): Readonly<{
+    body: Uint8Array;
+    objectChecksum: string;
+    members: readonly ArchiveMember[];
+  }> => {
+    const eventLines = records.map(canonicalLine).join("");
+    if (sha256(eventLines) !== metadata.snapshotDigest)
+      throw new Error("ARCHIVE_SNAPSHOT_RECHECK_FAILED");
+    const body = gzipSync(
+      Buffer.from(canonicalLine({ _meta: metadata }) + eventLines),
+      { level: 9 },
+    );
+    return {
+      body,
+      objectChecksum: sha256(body),
+      members: records.map((record, ordinal) => ({
+        ordinal,
+        eventId: record.event.id,
+        eventCursor: record.event.cursor,
+        recordSha256: sha256(canonicalLine(record)),
+        record,
+      })),
+    };
+  };
+
+  const loadProvisionalMembers = async (
+    executor: QueryExecutor,
+    segmentId: string,
+  ): Promise<
+    readonly Omit<ArchiveMember, "record">[]
+  > =>
+    (
+      await executor.query<Omit<ArchiveMember, "record">>(
+        `
+        SELECT ordinal,event_id AS "eventId",
+               event_cursor::text AS "eventCursor",
+               record_sha256 AS "recordSha256"
+          FROM event_archive_segment_events
+         WHERE segment_id=$1
+         ORDER BY ordinal
+      `,
+        [segmentId],
+      )
+    ).rows;
+
+  const assertProvisionalMembers = (
+    expected: readonly Omit<ArchiveMember, "record">[],
+    actual: readonly ArchiveMember[],
+  ): void => {
+    if (
+      expected.length !== actual.length ||
+      expected.some(
+        (member, index) =>
+          member.ordinal !== actual[index]?.ordinal ||
+          member.eventId !== actual[index]?.eventId ||
+          member.eventCursor !== actual[index]?.eventCursor ||
+          member.recordSha256 !== actual[index]?.recordSha256,
+      )
+    )
+      throw new Error("ARCHIVE_MEMBERSHIP_CONFLICT");
+  };
+
+  const rebuildPlannedPayload = async (
+    segment: ArchiveSegmentObject,
+  ): Promise<Uint8Array> => {
+    const reservations = await loadProvisionalMembers(db, segment.id);
+    if (reservations.length !== segment.rowCount)
+      throw new Error("ARCHIVE_MEMBERSHIP_CONFLICT");
+    const records = await loadArchiveRecords(db, {
+      workspaceId: segment.workspaceId,
+      afterCursor: "0",
+      cutoff: segment.fixedCutoffAt,
+      endCursor: segment.endCursor,
+      eventIds: reservations.map((member) => member.eventId),
+      excludeTrustedMembership: false,
+      limit: segment.rowCount,
+    });
+    const metadata = {
+      format: "workmesh-domain-event-records-ndjson-v1" as const,
+      workspaceId: segment.workspaceId,
+      startCursor: segment.startCursor,
+      endCursor: segment.endCursor,
+      fixedCutoffAt: segment.fixedCutoffAt.toISOString(),
+      rowCount: segment.rowCount,
+      snapshotDigest: segment.snapshotDigest,
+    };
+    const payload = buildArchivePayload(records, metadata);
+    assertProvisionalMembers(reservations, payload.members);
+    if (
+      payload.body.byteLength !== Number(segment.objectSizeBytes) ||
+      payload.objectChecksum !== segment.objectSha256
+    )
+      throw new Error("ARCHIVE_SNAPSHOT_RECHECK_FAILED");
+    return payload.body;
+  };
+
+  const createArchivePlan = async (
+    active: RetentionClaim,
+  ): Promise<
+    | Readonly<{ segment: ArchiveSegmentObject; body: Uint8Array }>
+    | undefined
+  > =>
+    withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const existing = await tx.query(
+        `SELECT 1 FROM event_archive_segments
+          WHERE workspace_id=$1 AND membership_state='pending_exact'
+          FOR UPDATE`,
+        [active.workspaceId],
+      );
+      if (existing.rowCount !== 0)
+        throw new Error("ARCHIVE_PLAN_CONFLICT");
+      const records = await loadArchiveRecords(tx, {
+        workspaceId: active.workspaceId,
+        afterCursor: "0",
+        cutoff: active.fixedCutoffAt,
+        excludeTrustedMembership: true,
+        limit: config.batchSize,
+      });
+      if (!records.length) {
+        await writeGuardedProgress(tx, active, { complete: true });
+        return undefined;
+      }
+      const first = records[0]!.event;
+      const last = records.at(-1)!.event;
+      const snapshotDigest = sha256(records.map(canonicalLine).join(""));
+      const metadata = {
+        format: "workmesh-domain-event-records-ndjson-v1" as const,
+        workspaceId: active.workspaceId,
+        startCursor: first.cursor,
+        endCursor: last.cursor,
+        fixedCutoffAt: active.fixedCutoffAt.toISOString(),
+        rowCount: records.length,
+        snapshotDigest,
+      };
+      const payload = buildArchivePayload(records, metadata);
+      const segmentId = randomUUID();
+      const objectKey = `${config.archivePrefix}/${active.workspaceId}/${segmentId}-${first.cursor}-${last.cursor}.ndjson.gz`;
+      const retainUntil = new Date(
+        Date.now() + (config.archiveRetainDays * 86_400 + 300) * 1_000,
+      );
+      await tx.query(
+        `
+        INSERT INTO event_archive_segments(
+          id,workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+          object_key,object_version_id,object_size_bytes,object_sha256,
+          snapshot_digest,metadata,retain_until,state,membership_state,
+          planned_fence
+        ) VALUES(
+          $1,$2,$3,$4,$5,$6,$7,NULL,$8,$9,$10,$11,$12,
+          'planned','pending_exact',$13
+        )
+      `,
+        [
+          segmentId,
+          active.workspaceId,
+          first.cursor,
+          last.cursor,
+          active.fixedCutoffAt,
+          records.length,
+          objectKey,
+          payload.body.byteLength,
+          payload.objectChecksum,
+          snapshotDigest,
+          metadata,
+          retainUntil,
+          active.fence,
+        ],
+      );
+      for (const member of payload.members) {
+        await tx.query(
+          `
+          INSERT INTO event_archive_segment_events(
+            segment_id,workspace_id,ordinal,event_id,event_cursor,record_sha256
+          ) VALUES($1,$2,$3,$4,$5,$6)
+        `,
+          [
+            segmentId,
+            active.workspaceId,
+            member.ordinal,
+            member.eventId,
+            member.eventCursor,
+            member.recordSha256,
+          ],
+        );
+      }
+      return {
+        segment: {
+          id: segmentId,
+          workspaceId: active.workspaceId,
+          startCursor: first.cursor,
+          endCursor: last.cursor,
+          rowCount: records.length,
+          snapshotDigest,
+          objectKey,
+          objectVersionId: null,
+          objectSizeBytes: String(payload.body.byteLength),
+          objectSha256: payload.objectChecksum,
+          fixedCutoffAt: active.fixedCutoffAt,
+          retainUntil,
+          prunedAt: null,
+          state: "planned",
+          membershipState: "pending_exact",
+          plannedFence: active.fence,
+          lastErrorCode: null,
+        },
+        body: payload.body,
+      };
+    });
+
   const materializeSegmentMembership = async (
     active: RetentionClaim,
     segment: ArchiveSegmentObject,
   ): Promise<number> => {
+    if (!segment.objectVersionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     const body = await objectStore.readVerifiedObject(
       archiveExpectation(segment),
     );
@@ -670,7 +958,7 @@ export function createRetentionWorker({
                verified_at=COALESCE(verified_at,now()),
                last_error_code=NULL,updated_at=now()
          WHERE id=$1 AND workspace_id=$2
-           AND membership_state IN ('pending_exact','legacy_unindexed')
+           AND membership_state='legacy_unindexed'
       `,
         [segment.id, active.workspaceId],
       );
@@ -682,6 +970,198 @@ export function createRetentionWorker({
       });
       return members.length;
     });
+  };
+
+  const assertPendingCutoff = (
+    active: RetentionClaim,
+    segment: Pick<ArchiveSegmentObject, "fixedCutoffAt">,
+  ): void => {
+    if (
+      segment.fixedCutoffAt.toISOString() !==
+      active.fixedCutoffAt.toISOString()
+    )
+      throw new Error("ARCHIVE_FIXED_CUTOFF_MISMATCH");
+  };
+
+  const recordUploadAttempt = async (
+    active: RetentionClaim,
+    segment: ArchiveSegmentObject,
+  ): Promise<void> => {
+    await withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const current = (
+        await tx.query<{
+          state: ArchiveSegmentObject["state"];
+          membershipState: ArchiveSegmentObject["membershipState"];
+          fixedCutoffAt: Date;
+        }>(
+          `
+          SELECT state,membership_state AS "membershipState",
+                 fixed_cutoff_at AS "fixedCutoffAt"
+            FROM event_archive_segments
+           WHERE id=$1 AND workspace_id=$2
+           FOR UPDATE
+        `,
+          [segment.id, active.workspaceId],
+        )
+      ).rows[0];
+      if (
+        !current ||
+        current.membershipState !== "pending_exact" ||
+        current.state !== "planned"
+      )
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      assertPendingCutoff(active, current);
+      const members = await loadProvisionalMembers(tx, segment.id);
+      if (members.length !== segment.rowCount)
+        throw new Error("ARCHIVE_MEMBERSHIP_CONFLICT");
+      const updated = await tx.query(
+        `
+        UPDATE event_archive_segments
+           SET upload_attempt_count=upload_attempt_count+1,
+               last_upload_attempt_at=now(),last_upload_fence=$3,
+               last_error_code=NULL,updated_at=now()
+         WHERE id=$1 AND workspace_id=$2
+           AND membership_state='pending_exact' AND state='planned'
+      `,
+        [segment.id, active.workspaceId, active.fence],
+      );
+      if (updated.rowCount !== 1)
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+    });
+  };
+
+  const persistUploadedVersion = async (
+    active: RetentionClaim,
+    segment: ArchiveSegmentObject,
+    versionId: string,
+  ): Promise<ArchiveSegmentObject> =>
+    withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const current = (
+        await tx.query<ArchiveSegmentObject>(
+          `
+          SELECT id,workspace_id AS "workspaceId",
+                 start_cursor::text AS "startCursor",
+                 end_cursor::text AS "endCursor",row_count AS "rowCount",
+                 snapshot_digest AS "snapshotDigest",
+                 object_key AS "objectKey",
+                 object_version_id AS "objectVersionId",
+                 object_size_bytes::text AS "objectSizeBytes",
+                 object_sha256 AS "objectSha256",
+                 fixed_cutoff_at AS "fixedCutoffAt",
+                 retain_until AS "retainUntil",pruned_at AS "prunedAt",
+                 state,membership_state AS "membershipState",
+                 planned_fence::text AS "plannedFence",
+                 last_error_code AS "lastErrorCode"
+            FROM event_archive_segments
+           WHERE id=$1 AND workspace_id=$2
+           FOR UPDATE
+        `,
+          [segment.id, active.workspaceId],
+        )
+      ).rows[0];
+      if (
+        !current ||
+        current.membershipState !== "pending_exact" ||
+        current.state !== "planned"
+      )
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      assertPendingCutoff(active, current);
+      const members = await loadProvisionalMembers(tx, current.id);
+      if (members.length !== current.rowCount)
+        throw new Error("ARCHIVE_MEMBERSHIP_CONFLICT");
+      const updated = await tx.query(
+        `
+        UPDATE event_archive_segments
+           SET object_version_id=$3,state='uploaded',uploaded_at=now(),
+               last_error_code=NULL,updated_at=now()
+         WHERE id=$1 AND workspace_id=$2
+           AND membership_state='pending_exact' AND state='planned'
+      `,
+        [current.id, active.workspaceId, versionId],
+      );
+      if (updated.rowCount !== 1)
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      return {
+        ...current,
+        objectVersionId: versionId,
+        state: "uploaded",
+      };
+    });
+
+  const finalizePendingSegment = async (
+    active: RetentionClaim,
+    segment: ArchiveSegmentObject,
+  ): Promise<number> => {
+    if (!segment.objectVersionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    assertPendingCutoff(active, segment);
+    const body = await objectStore.readVerifiedObject(
+      archiveExpectation(segment),
+    );
+    const members = parseArchiveMembers(body, segment);
+    await archiveFault?.("before_finalize_commit", {
+      claim: active,
+      segmentId: segment.id,
+    });
+    const finalized = await withTx(db, async (tx) => {
+      await assertClaim(tx, active);
+      const current = (
+        await tx.query<{
+          state: ArchiveSegmentObject["state"];
+          membershipState: ArchiveSegmentObject["membershipState"];
+          fixedCutoffAt: Date;
+          objectVersionId: string | null;
+        }>(
+          `
+          SELECT state,membership_state AS "membershipState",
+                 fixed_cutoff_at AS "fixedCutoffAt",
+                 object_version_id AS "objectVersionId"
+            FROM event_archive_segments
+           WHERE id=$1 AND workspace_id=$2
+           FOR UPDATE
+        `,
+          [segment.id, active.workspaceId],
+        )
+      ).rows[0];
+      if (!current) throw new Error("ARCHIVE_SEGMENT_MISSING");
+      if (
+        current.membershipState !== "pending_exact" ||
+        current.state !== "uploaded" ||
+        current.objectVersionId !== segment.objectVersionId
+      )
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      assertPendingCutoff(active, current);
+      const reservations = await loadProvisionalMembers(tx, segment.id);
+      assertProvisionalMembers(reservations, members);
+      const updated = await tx.query(
+        `
+        UPDATE event_archive_segments
+           SET membership_state='exact',state='verified',verified_at=now(),
+               last_error_code=NULL,updated_at=now()
+         WHERE id=$1 AND workspace_id=$2
+           AND membership_state='pending_exact' AND state='uploaded'
+      `,
+        [segment.id, active.workspaceId],
+      );
+      if (updated.rowCount !== 1)
+        throw new Error("ARCHIVE_MEMBERSHIP_FINALIZE_FAILED");
+      await archiveFault?.("mid_finalize", {
+        claim: active,
+        segmentId: segment.id,
+      });
+      await writeGuardedProgress(tx, active, {
+        watermarkCursor: segment.endCursor,
+        counters: { archived: members.length },
+      });
+      return members.length;
+    });
+    await archiveFault?.("after_finalize_commit", {
+      claim: active,
+      segmentId: segment.id,
+    });
+    return finalized;
   };
 
   const failClaim = async (
@@ -1001,111 +1481,83 @@ export function createRetentionWorker({
     await afterArchiveClaim?.(active);
     let segmentId: string | undefined;
     try {
-      const unindexed = await loadUnindexedSegment(active.workspaceId);
-      if (unindexed) {
-        segmentId = unindexed.id;
-        return await materializeSegmentMembership(active, unindexed);
+      let segment = await loadPendingSegment(active.workspaceId);
+      segmentId = segment?.id;
+      if (segment?.state === "failed")
+        throw new Error(segment.lastErrorCode ?? "ARCHIVE_PLAN_CONFLICT");
+      if (!segment) {
+        const legacy = await loadLegacySegment(active.workspaceId);
+        if (legacy) {
+          segmentId = legacy.id;
+          return await materializeSegmentMembership(active, legacy);
+        }
       }
-      const records = await loadArchiveRecords(db, {
-        workspaceId: active.workspaceId,
-        afterCursor: "0",
-        cutoff: active.fixedCutoffAt,
-        excludeTrustedMembership: true,
-        limit: config.batchSize,
-      });
-      if (!records.length) {
-        await guardedProgress(active, { complete: true });
-        return 0;
+      let body: Uint8Array | undefined;
+      if (!segment) {
+        const plan = await createArchivePlan(active);
+        if (!plan) return 0;
+        segment = plan.segment;
+        body = plan.body;
+        segmentId = segment.id;
+        await archiveFault?.("after_plan_commit", {
+          claim: active,
+          segmentId,
+        });
       }
-      const eventLines = records.map(canonicalLine).join("");
-      const snapshotDigest = sha256(eventLines);
-      const first = records[0]!.event;
-      const last = records.at(-1)!.event;
-      const metadata = {
-        format: "workmesh-domain-event-records-ndjson-v1",
-        workspaceId: active.workspaceId,
-        startCursor: first.cursor,
-        endCursor: last.cursor,
-        fixedCutoffAt: active.fixedCutoffAt.toISOString(),
-        rowCount: records.length,
-        snapshotDigest,
-      };
-      const compressed = gzipSync(
-        Buffer.from(canonicalLine({ _meta: metadata }) + eventLines),
-        { level: 9 },
-      );
-      const objectChecksum = sha256(compressed);
-      segmentId = randomUUID();
-      const objectKey = `${config.archivePrefix}/${active.workspaceId}/${segmentId}-${first.cursor}-${last.cursor}.ndjson.gz`;
-      const retainUntil = new Date(
-        Date.now() + (config.archiveRetainDays * 86_400 + 300) * 1_000,
-      );
-      const expectation: ArtifactObjectExpectation = {
-        key: objectKey,
-        checksum: objectChecksum,
-        sizeBytes: compressed.byteLength,
-        mimeType: "application/gzip",
-        retainUntil,
-      };
-      const uploadedObject = await objectStore.putObject(expectation, compressed);
-      const segment = await withTx(db, async (tx) => {
-        await assertClaim(tx, active);
-        return (
-          await tx.query<ArchiveSegmentObject>(
-            `
-          INSERT INTO event_archive_segments(
-            id,workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
-            object_key,object_version_id,object_size_bytes,object_sha256,
-            snapshot_digest,metadata,retain_until,state,uploaded_at,
-            membership_state
-          ) VALUES(
-            $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,
-            'uploaded',now(),'pending_exact'
-          )
-          RETURNING id,workspace_id AS "workspaceId",
-                    start_cursor::text AS "startCursor",
-                    end_cursor::text AS "endCursor",row_count AS "rowCount",
-                    snapshot_digest AS "snapshotDigest",state,
-                    membership_state AS "membershipState",
-                    object_key AS "objectKey",
-                    object_version_id AS "objectVersionId",
-                    object_size_bytes::text AS "objectSizeBytes",
-                    object_sha256 AS "objectSha256",
-                    retain_until AS "retainUntil",pruned_at AS "prunedAt"
-        `,
-            [
-              segmentId,
-              active.workspaceId,
-              first.cursor,
-              last.cursor,
-              active.fixedCutoffAt,
-              records.length,
-              objectKey,
-              uploadedObject.versionId,
-              compressed.byteLength,
-              objectChecksum,
-              snapshotDigest,
-              metadata,
-              retainUntil,
-            ],
-          )
-        ).rows[0]!;
-      });
-      return await materializeSegmentMembership(active, segment);
+      segmentId = segment.id;
+      assertPendingCutoff(active, segment);
+      if (segment.state === "planned") {
+        body ??= await rebuildPlannedPayload(segment);
+        await recordUploadAttempt(active, segment);
+        const uploadedObject = await objectStore.putObjectIfAbsent(
+          archiveExpectation(segment),
+          body,
+        );
+        await archiveFault?.("after_put", {
+          claim: active,
+          segmentId,
+        });
+        await archiveFault?.("before_upload_commit", {
+          claim: active,
+          segmentId,
+        });
+        segment = await persistUploadedVersion(
+          active,
+          segment,
+          uploadedObject.versionId,
+        );
+        await archiveFault?.("after_upload_commit", {
+          claim: active,
+          segmentId,
+        });
+      }
+      if (segment.state !== "uploaded")
+        throw new Error("ARCHIVE_SEGMENT_FENCE_LOST");
+      return await finalizePendingSegment(active, segment);
     } catch (error) {
       if (segmentId) {
         await withTx(db, async (tx) => {
           await assertClaim(tx, active);
-          await tx.query(
-            `
-            UPDATE event_archive_segments
-               SET state='failed',uploaded_at=NULL,verified_at=NULL,pruned_at=NULL,
-                   last_error_code=$2,updated_at=now()
-             WHERE id=$1 AND membership_state='pending_exact'
-               AND state IN ('planned','failed','uploaded')
-          `,
-            [segmentId, safeRetentionErrorCode(error)],
-          );
+          const errorCode = safeRetentionErrorCode(error);
+          if (
+            new Set([
+              "RETENTION_OBJECT_IDENTITY_MISMATCH",
+              "ARCHIVE_FIXED_CUTOFF_MISMATCH",
+              "ARCHIVE_PLAN_CONFLICT",
+              "ARCHIVE_MEMBERSHIP_CONFLICT",
+              "ARCHIVE_OBJECT_MANIFEST_MISMATCH",
+              "ARCHIVE_SNAPSHOT_RECHECK_FAILED",
+            ]).has(errorCode)
+          )
+            await tx.query(
+              `
+              UPDATE event_archive_segments
+                 SET state='failed',last_error_code=$2,updated_at=now()
+               WHERE id=$1 AND membership_state='pending_exact'
+                 AND state IN ('planned','uploaded')
+            `,
+              [segmentId, errorCode],
+            );
           await tx.query(
             `
             UPDATE event_archive_segments
@@ -1167,9 +1619,12 @@ export function createRetentionWorker({
                  segment.object_version_id AS "objectVersionId",
                  segment.object_size_bytes::text AS "objectSizeBytes",
                  segment.object_sha256 AS "objectSha256",
+                 segment.fixed_cutoff_at AS "fixedCutoffAt",
                  segment.retain_until AS "retainUntil",
                  segment.pruned_at AS "prunedAt",segment.state,
-                 segment.membership_state AS "membershipState"
+                 segment.membership_state AS "membershipState",
+                 segment.planned_fence::text AS "plannedFence",
+                 segment.last_error_code AS "lastErrorCode"
             FROM event_archive_segment_events member
             JOIN event_archive_segments segment
               ON segment.id=member.segment_id
@@ -1352,9 +1807,12 @@ export function createRetentionWorker({
                  segment.object_version_id AS "objectVersionId",
                  segment.object_size_bytes::text AS "objectSizeBytes",
                  segment.object_sha256 AS "objectSha256",
+                 segment.fixed_cutoff_at AS "fixedCutoffAt",
                  segment.retain_until AS "retainUntil",
                  segment.pruned_at AS "prunedAt",segment.state,
-                 segment.membership_state AS "membershipState"
+                 segment.membership_state AS "membershipState",
+                 segment.planned_fence::text AS "plannedFence",
+                 segment.last_error_code AS "lastErrorCode"
             FROM domain_events event
             LEFT JOIN event_archive_segment_events member
               ON member.workspace_id=event.workspace_id
