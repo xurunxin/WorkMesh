@@ -1,7 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 import type { ApiActor } from './types.js'
-import { assertAgentWrite } from './guard.js'
+import {
+  assertAgentWrite,
+  assertExactAgentProjectBinding,
+} from './guard.js'
 
 type MutationSession = Parameters<typeof assertAgentWrite>[0]['session']
 
@@ -78,6 +81,43 @@ describe('shared Agent mutation resource liveness', () => {
     })).toThrow(expect.objectContaining({ code: 'RESOURCE_SCOPE_DENIED' }))
   })
 
+  it('requires a live exact Project anchor for project-only Sessions', () => {
+    expect(() => assertExactAgentProjectBinding(session, 'project')).not.toThrow()
+    expect(() => assertExactAgentProjectBinding(
+      {
+        ...session,
+        capability_scope: {
+          ...session.capability_scope,
+          projectIds: ['project', 'other-project'],
+        },
+      },
+      'other-project',
+    )).toThrow(expect.objectContaining({ code: 'RESOURCE_SCOPE_DENIED' }))
+  })
+
+  it('does not let broad Project scope replace a Work Item Project binding', () => {
+    const workItemSession: MutationSession = {
+      ...session,
+      capability_scope: {
+        ...session.capability_scope,
+        projectIds: ['project', 'other-project'],
+      },
+      work_item_id: 'work-item',
+      work_item_exists: true,
+      work_item_project_id: 'project',
+      project_id: null,
+      project_exists: false,
+    }
+    expect(() => assertExactAgentProjectBinding(
+      workItemSession,
+      'project',
+    )).not.toThrow()
+    expect(() => assertExactAgentProjectBinding(
+      workItemSession,
+      'other-project',
+    )).toThrow(expect.objectContaining({ code: 'RESOURCE_SCOPE_DENIED' }))
+  })
+
   it('routes ordinary Agent commands through the shared liveness guard', async () => {
     const source = await readFile(new URL('./commands.ts', import.meta.url), 'utf8')
     for (const name of [
@@ -123,7 +163,7 @@ describe('shared Agent mutation resource liveness', () => {
 
   it('locks the credential and live Session resources in the shared order', async () => {
     const source = await readFile(new URL('./guard.ts', import.meta.url), 'utf8')
-    const start = source.indexOf('export async function loadAgentSessionForMutation')
+    const start = source.indexOf('export async function locateAgentSessionAuthority')
     const command = source.slice(start)
     const sessionLocator = command.indexOf('FROM agent_sessions')
     const authorityPlan = command.indexOf('await lockAgentAuthorityPlan')

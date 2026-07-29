@@ -1,7 +1,13 @@
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import type { PoolClient } from 'pg'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { applyMigrations, createDb } from '@workmesh/db'
+import {
+  admitLoopRun,
+  applyMigrations,
+  createDb,
+  executeAutomationAction,
+} from '@workmesh/db'
+import { canonicalJson } from '../src/auth-idempotency.js'
 import { buildApp } from '../src/server.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -11,7 +17,13 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
   throw new Error('Agent lock-order integration requires a dedicated *test* database.')
 
 const db = createDb(databaseUrl)
-const app = buildApp()
+let afterAuthorizationTestAction: (() => Promise<void>) | undefined
+const app = buildApp({
+  afterAuthorizeRequest: async request => {
+    if (request.routeOptions.url === '/api/v1/projects/:id/health')
+      await afterAuthorizationTestAction?.()
+  },
+})
 type Method = 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'
 type Response = {
   statusCode: number
@@ -264,6 +276,23 @@ async function makeFixture(): Promise<Fixture> {
   }
 }
 
+async function allowProjects(
+  delegationIds: readonly string[],
+  projectIds: readonly string[],
+): Promise<void> {
+  await db.query(
+    `UPDATE delegations
+        SET capability_scope=jsonb_set(
+          capability_scope,
+          '{projectIds}',
+          to_jsonb($2::text[]),
+          true
+        )
+      WHERE id=ANY($1::uuid[])`,
+    [delegationIds, projectIds],
+  )
+}
+
 async function beginGate(): Promise<{ client: PoolClient; pid: number }> {
   const client = await db.connect()
   await client.query('BEGIN')
@@ -332,12 +361,136 @@ async function projectionCounts() {
     (SELECT count(*)::int FROM outbox_events) AS outbox`)).rows[0]!
 }
 
+async function createAutomationRun(fixture:Fixture):Promise<string> {
+  const rule=(await db.query<{id:string}>(
+    `INSERT INTO automation_rules(
+       workspace_id,team_id,name,created_by_actor_id
+     ) VALUES($1,$2,$3,$4) RETURNING id`,
+    [
+      fixture.workspaceId,
+      fixture.teamId,
+      `lock-order-rule-${randomUUID()}`,
+      fixture.human.actorId,
+    ],
+  )).rows[0]!
+  return (await db.query<{id:string}>(
+    `INSERT INTO automation_runs(
+       workspace_id,team_id,rule_id,status,max_attempts,started_at
+     ) VALUES($1,$2,$3,'running',3,now()) RETURNING id`,
+    [fixture.workspaceId,fixture.teamId,rule.id],
+  )).rows[0]!.id
+}
+
+async function startAutomationAction(
+  fixture:Fixture,
+  runId:string,
+  actionOrdinal:number,
+  action:Parameters<typeof executeAutomationAction>[1]['action'],
+) {
+  const client=await db.connect()
+  await client.query('BEGIN')
+  await client.query("SET LOCAL lock_timeout='8s'")
+  await client.query("SET LOCAL statement_timeout='12s'")
+  const pid=(await client.query<{pid:number}>(
+    'SELECT pg_backend_pid() AS pid',
+  )).rows[0]!.pid
+  const completion=executeAutomationAction(client,{
+    meta:{
+      workspaceId:fixture.workspaceId,
+      actorId:fixture.human.actorId,
+      correlationId:`automation-lock-order:${actionOrdinal}`,
+    },
+    runId,
+    actionOrdinal,
+    action,
+  }).then(async result=>{
+    await client.query('COMMIT')
+    return {result,error:undefined}
+  }).catch(async(error:unknown)=>{
+    await client.query('ROLLBACK')
+    return {result:undefined,error}
+  }).finally(()=>client.release())
+  return {pid,completion}
+}
+
+async function createLoopFixture(fixture:Fixture,projectId:string):Promise<string> {
+  const template=(await db.query<{id:string}>(
+    `INSERT INTO templates(
+       workspace_id,kind,name,owner_actor_id,status
+     ) VALUES($1,'agent_run',$2,$3,'active') RETURNING id`,
+    [fixture.workspaceId,`lock-order-loop-template-${randomUUID()}`,fixture.human.actorId],
+  )).rows[0]!
+  const version=(await db.query<{id:string}>(
+    `INSERT INTO template_versions(
+       template_id,version,body,change_summary,created_by_actor_id
+     ) VALUES($1,1,$2,'lock order fixture',$3) RETURNING id`,
+    [
+      template.id,
+      {requiredCapabilities:['work:read']},
+      fixture.human.actorId,
+    ],
+  )).rows[0]!
+  await db.query(
+    'UPDATE templates SET current_version_id=$2 WHERE id=$1',
+    [template.id,version.id],
+  )
+  return (await db.query<{id:string}>(
+    `INSERT INTO loops(
+       workspace_id,team_id,project_id,name,owner_actor_id,agent_id,
+       run_template_version_id,trigger,budget,no_overlap,visibility,
+       failure_notification,state
+     ) VALUES(
+       $1,$2,$3,$4,$5,$6,$7,'{}',$8,true,'team','none','active'
+     ) RETURNING id`,
+    [
+      fixture.workspaceId,
+      fixture.teamId,
+      projectId,
+      `lock-order-loop-${randomUUID()}`,
+      fixture.human.actorId,
+      fixture.runner.id,
+      version.id,
+      {maxRetries:3,maxCostMinor:'0',maxTokens:0,currency:'USD'},
+    ],
+  )).rows[0]!.id
+}
+
+async function startLoopAdmission(fixture:Fixture,loopId:string,ordinal:number) {
+  const client=await db.connect()
+  await client.query('BEGIN')
+  await client.query("SET LOCAL lock_timeout='8s'")
+  await client.query("SET LOCAL statement_timeout='12s'")
+  const pid=(await client.query<{pid:number}>(
+    'SELECT pg_backend_pid() AS pid',
+  )).rows[0]!.pid
+  const completion=admitLoopRun(client,{
+    meta:{
+      workspaceId:fixture.workspaceId,
+      actorId:fixture.human.actorId,
+      correlationId:`loop-lock-order:${ordinal}`,
+    },
+    loopId,
+    occurrenceKey:`loop-lock-order:${ordinal}:${randomUUID()}`,
+    scheduledFor:new Date(),
+    authorization:{kind:'human'},
+    notificationChannels:[],
+  }).then(async result=>{
+    await client.query('COMMIT')
+    return {result,error:undefined}
+  }).catch(async(error:unknown)=>{
+    await client.query('ROLLBACK')
+    return {result:undefined,error}
+  }).finally(()=>client.release())
+  return {pid,completion}
+}
+
 describe('Agent authority total lock order', () => {
   beforeAll(async () => {
     await applyMigrations(db)
   }, 300_000)
 
   beforeEach(async () => {
+    afterAuthorizationTestAction = undefined
     await db.query('TRUNCATE workspaces CASCADE')
   })
 
@@ -479,6 +632,278 @@ describe('Agent authority total lock order', () => {
     } finally {
       if (gateOpen) await closeGate(gate)
     }
+  })
+
+  it('publishes approved Agent project health while locking only the post-core Approval row', async () => {
+    const fixture = await makeFixture()
+    await allowProjects([fixture.delegationId], [fixture.projectId])
+    const observedAt = new Date().toISOString()
+    const actionPayload = {
+      projectId: fixture.projectId,
+      health: 'on_track',
+      summary: 'Approved Agent project health.',
+      forecastAt: null,
+      confidence: 0.9,
+      uncertainty: 'Approval lock scope regression.',
+      sources: [{
+        kind: 'work_item',
+        id: fixture.workItemId,
+        observedAt,
+        value: { state: 'executing' },
+      }],
+    }
+    const actionPayloadHash = `sha256:${createHash('sha256')
+      .update(canonicalJson(actionPayload))
+      .digest('hex')}`
+    const requested = await agentCall(
+      fixture.sessionToken,
+      'POST',
+      '/api/v1/approvals',
+      {
+        sessionId: fixture.session.id,
+        approvalType: 'project_health',
+        actionName: 'project.health.publish',
+        actionPayloadSanitized: actionPayload,
+        actionPayloadHash,
+        riskLevel: 'high',
+        rationaleSummary: 'Publish approved project health.',
+        requiredApprovals: 1,
+        expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      },
+    )
+    expect(requested.statusCode, JSON.stringify(requested.json())).toBe(200)
+    const approval = requested.json<{ id: string; revision: number }>()
+    const decided = await humanCall(
+      fixture.human,
+      'POST',
+      `/api/v1/approvals/${approval.id}/decide`,
+      { decision: 'approved', reason: 'Approved for publication.' },
+      { 'if-match': `"revision-${approval.revision}"` },
+    )
+    expect(decided.statusCode, JSON.stringify(decided.json())).toBe(200)
+    const published = await agentCall(
+      fixture.sessionToken,
+      'POST',
+      `/api/v1/projects/${fixture.projectId}/health`,
+      {
+        source: 'agent',
+        health: actionPayload.health,
+        summary: actionPayload.summary,
+        confidence: actionPayload.confidence,
+        uncertainty: actionPayload.uncertainty,
+        sources: actionPayload.sources,
+        publish: true,
+        approvalId: approval.id,
+      },
+      { 'if-match': `"revision-${fixture.projectRevision}"` },
+    )
+    expect(published.statusCode, JSON.stringify(published.json())).toBe(200)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM approvals WHERE id=$1',
+      [approval.id],
+    )).rows[0]?.status).toBe('consumed')
+    expect((await db.query(
+      `SELECT 1 FROM project_health_updates
+        WHERE project_id=$1 AND approval_id=$2 AND status='published'`,
+      [fixture.projectId, approval.id],
+    )).rowCount).toBe(1)
+  })
+
+  it('rejects reciprocal cross-project health drafts before the merged planner', async () => {
+    const fixture = await makeFixture()
+    const secondProjectResponse = await humanCall(
+      fixture.human,
+      'POST',
+      '/api/v1/projects',
+      {
+        teamId: fixture.teamId,
+        name: 'Reciprocal Health Project',
+      },
+    )
+    expect(
+      secondProjectResponse.statusCode,
+      JSON.stringify(secondProjectResponse.json()),
+    ).toBe(200)
+    const secondProject = secondProjectResponse.json<{
+      id:string
+      revision:number
+    }>()
+    const secondWork = await createWork({
+      human: fixture.human,
+      teamId: fixture.teamId,
+      readyId: fixture.readyId,
+      projectId: secondProject.id,
+    }, 'Reciprocal project health work')
+    const secondStarted = await startAtomic(
+      {
+        human: fixture.human,
+        workspaceId: fixture.workspaceId,
+        teamId: fixture.teamId,
+      },
+      fixture.reviewer,
+      secondWork,
+    )
+    const secondToken = await exchangeAndExecute(
+      secondStarted.session,
+      fixture.reviewer,
+    )
+    await allowProjects(
+      [fixture.delegationId,secondStarted.delegation.id],
+      [fixture.projectId,secondProject.id],
+    )
+    const reciprocalScopes=(await db.query<{
+      id:string
+      capability_scope:{teamIds?:string[];projectIds?:string[]}
+    }>(
+      `SELECT id,capability_scope
+         FROM delegations
+        WHERE id=ANY($1::uuid[])
+        ORDER BY id`,
+      [[fixture.delegationId,secondStarted.delegation.id]],
+    )).rows
+    expect(reciprocalScopes).toHaveLength(2)
+    for(const delegation of reciprocalScopes){
+      expect(delegation.capability_scope.teamIds).toContain(fixture.teamId)
+      expect(delegation.capability_scope.projectIds).toEqual(
+        expect.arrayContaining([fixture.projectId,secondProject.id]),
+      )
+    }
+    let passedAuthorization=0
+    afterAuthorizationTestAction=async()=>{
+      passedAuthorization+=1
+    }
+    const before=await projectionCounts()
+    const [first,second]=await (async()=>{
+      try {
+        return await Promise.all([
+          agentCall(
+            fixture.sessionToken,
+            'POST',
+            `/api/v1/projects/${secondProject.id}/health`,
+            {
+              source:'agent',
+              health:'on_track',
+              summary:'Session one cannot target Project two.',
+              confidence:0.8,
+              uncertainty:'Exact Project binding.',
+              sources:[{
+                kind:'work_item',
+                id:secondWork.id,
+                observedAt:new Date().toISOString(),
+                value:{session:fixture.session.id},
+              }],
+              publish:false,
+            },
+            {'if-match':`"revision-${secondProject.revision}"`},
+          ),
+          agentCall(
+            secondToken,
+            'POST',
+            `/api/v1/projects/${fixture.projectId}/health`,
+            {
+              source:'agent',
+              health:'on_track',
+              summary:'Session two cannot target Project one.',
+              confidence:0.8,
+              uncertainty:'Exact Project binding.',
+              sources:[{
+                kind:'work_item',
+                id:fixture.workItemId,
+                observedAt:new Date().toISOString(),
+                value:{session:secondStarted.session.id},
+              }],
+              publish:false,
+            },
+            {'if-match':`"revision-${fixture.projectRevision}"`},
+          ),
+        ])
+      } finally {
+        afterAuthorizationTestAction=undefined
+      }
+    })()
+    for(const response of [first,second]){
+      expect(response.statusCode,JSON.stringify(response.json())).toBe(403)
+      expect(response.json<{error:{code:string;details?:Record<string,unknown>}}>())
+        .toMatchObject({
+          error:{
+            code:'RESOURCE_SCOPE_DENIED',
+            details:{
+              authorizationStage:'resource_scope',
+              policyId:'route.createProjectHealthUpdate',
+            },
+          },
+        })
+    }
+    expect(passedAuthorization).toBe(0)
+    expect(await projectionCounts()).toEqual(before)
+  })
+
+  it('denies project health when the bound Work Item moves after pre-authorization', async () => {
+    const fixture=await makeFixture()
+    const destinationResponse=await humanCall(
+      fixture.human,
+      'POST',
+      '/api/v1/projects',
+      {teamId:fixture.teamId,name:'Health TOCTOU destination'},
+    )
+    expect(
+      destinationResponse.statusCode,
+      JSON.stringify(destinationResponse.json()),
+    ).toBe(200)
+    const destination=destinationResponse.json<{id:string}>()
+    const evidence=await createWork(fixture,'Health evidence remaining in Project one')
+    await allowProjects([fixture.delegationId],[fixture.projectId])
+    const before=await projectionCounts()
+    let reparented=false
+    afterAuthorizationTestAction=async()=>{
+      if(reparented) return
+      reparented=true
+      await db.query(
+        `UPDATE work_items
+            SET project_id=$2,revision=revision+1,updated_at=now()
+          WHERE id=$1`,
+        [fixture.workItemId,destination.id],
+      )
+    }
+    let response:Response
+    try {
+      response=await agentCall(
+        fixture.sessionToken,
+        'POST',
+        `/api/v1/projects/${fixture.projectId}/health`,
+        {
+          source:'agent',
+          health:'at_risk',
+          summary:'A stale pre-authorization must not publish.',
+          confidence:0.7,
+          uncertainty:'The bound Work Item moves before command locking.',
+          sources:[{
+            kind:'work_item',
+            id:evidence.id,
+            observedAt:new Date().toISOString(),
+            value:{state:'ready'},
+          }],
+          publish:false,
+        },
+        {'if-match':`"revision-${fixture.projectRevision}"`},
+      )
+    } finally {
+      afterAuthorizationTestAction=undefined
+    }
+    expect(reparented).toBe(true)
+    expect(response.statusCode,JSON.stringify(response.json())).toBe(403)
+    expect(response.json<{error:{code:string;message:string}}>())
+      .toMatchObject({
+        error:{
+          code:'RESOURCE_SCOPE_DENIED',
+          message:'The Agent Session is no longer exactly bound to the target Project',
+        },
+      })
+    expect((await db.query<{project_id:string}>(
+      'SELECT project_id FROM work_items WHERE id=$1',
+      [fixture.workItemId],
+    )).rows[0]?.project_id).toBe(destination.id)
+    expect(await projectionCounts()).toEqual(before)
   })
 
   it('waits at Definition before Session and WorkItem and denies Usage after reparent', async () => {
@@ -1065,5 +1490,398 @@ describe('Agent authority total lock order', () => {
         { initialPrompt: 'accept right to left' },
       ),
     )
+  })
+
+  it('revalidates automation resource, message, and approval authority after exact native lock waits', async () => {
+    const fixture=await makeFixture()
+    const runId=await createAutomationRun(fixture)
+    const otherProject=await humanCall(fixture.human,'POST','/api/v1/projects',{
+      teamId:fixture.teamId,
+      name:`Automation reparent ${randomUUID()}`,
+    })
+    expect(otherProject.statusCode,JSON.stringify(otherProject.json())).toBe(200)
+
+    const resourceGate=await beginGate()
+    let resourceGateOpen=true
+    let resourceCompletion:Promise<unknown>|undefined
+    try {
+      await resourceGate.client.query(
+        'UPDATE work_items SET project_id=$2 WHERE id=$1',
+        [fixture.workItemId,otherProject.json<{id:string}>().id],
+      )
+      const resourceAction=await startAutomationAction(fixture,runId,0,{
+        type:'add_label',
+        parameters:{
+          workItemId:fixture.workItemId,
+          expectedRevision:fixture.workItemRevision,
+          label:'must-not-persist',
+        },
+      })
+      resourceCompletion=resourceAction.completion
+      const resourceWaiter=await waitForDirectWaiter(resourceGate.pid)
+      expect(resourceWaiter).toBe(resourceAction.pid)
+      await expectExactBlockers(resourceAction.pid,[resourceGate.pid])
+      await closeGate(resourceGate,true)
+      resourceGateOpen=false
+      const resourceOutcome=await resourceAction.completion
+      expect(String(resourceOutcome.error)).toContain('AUTOMATION_TARGET_SCOPE_DENIED')
+      const labels=(await db.query<{labels:string[]}>(
+        'SELECT labels FROM work_items WHERE id=$1',
+        [fixture.workItemId],
+      )).rows[0]!.labels
+      expect(labels).not.toContain('must-not-persist')
+    } finally {
+      if(resourceGateOpen) await closeGate(resourceGate)
+      await resourceCompletion
+    }
+
+    const activityBefore=(await db.query<{count:number}>(
+      'SELECT count(*)::int AS count FROM agent_activities WHERE session_id=$1',
+      [fixture.session.id],
+    )).rows[0]!.count
+    const messageGate=await beginGate()
+    let messageGateOpen=true
+    let messageCompletion:Promise<unknown>|undefined
+    try {
+      await messageGate.client.query(
+        'UPDATE agent_definitions SET is_active=false WHERE id=$1',
+        [fixture.runner.id],
+      )
+      const messageAction=await startAutomationAction(fixture,runId,1,{
+        type:'send_message',
+        parameters:{
+          sessionId:fixture.session.id,
+          bodyMarkdown:'must not be emitted',
+        },
+      })
+      messageCompletion=messageAction.completion
+      const messageWaiter=await waitForDirectWaiter(messageGate.pid)
+      expect(messageWaiter).toBe(messageAction.pid)
+      await expectExactBlockers(messageAction.pid,[messageGate.pid])
+      await closeGate(messageGate,true)
+      messageGateOpen=false
+      const messageOutcome=await messageAction.completion
+      expect(String(messageOutcome.error)).toContain('AUTOMATION_TARGET_SCOPE_DENIED')
+      expect((await db.query<{count:number}>(
+        'SELECT count(*)::int AS count FROM agent_activities WHERE session_id=$1',
+        [fixture.session.id],
+      )).rows[0]!.count).toBe(activityBefore)
+    } finally {
+      if(messageGateOpen) await closeGate(messageGate)
+      await messageCompletion
+    }
+    await db.query(
+      'UPDATE agent_definitions SET is_active=true WHERE id=$1',
+      [fixture.runner.id],
+    )
+
+    const approvalsBefore=(await db.query<{count:number}>(
+      'SELECT count(*)::int AS count FROM approvals WHERE session_id=$1',
+      [fixture.session.id],
+    )).rows[0]!.count
+    const grantGate=await beginGate()
+    let grantGateOpen=true
+    let approvalCompletion:Promise<unknown>|undefined
+    try {
+      await grantGate.client.query(
+        `UPDATE agent_team_access SET revoked_at=now()
+          WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
+        [fixture.workspaceId,fixture.runner.id,fixture.teamId],
+      )
+      const approvalAction=await startAutomationAction(fixture,runId,2,{
+        type:'request_approval',
+        parameters:{
+          sessionId:fixture.session.id,
+          actionName:'native-lock-order',
+          actionPayloadHash:`sha256:${'0'.repeat(64)}`,
+          expiresAt:new Date(Date.now()+60_000).toISOString(),
+        },
+      })
+      approvalCompletion=approvalAction.completion
+      const approvalWaiter=await waitForDirectWaiter(grantGate.pid)
+      expect(approvalWaiter).toBe(approvalAction.pid)
+      await expectExactBlockers(approvalAction.pid,[grantGate.pid])
+      await closeGate(grantGate,true)
+      grantGateOpen=false
+      const approvalOutcome=await approvalAction.completion
+      expect(String(approvalOutcome.error)).toContain('AUTOMATION_TARGET_SCOPE_DENIED')
+      expect((await db.query<{count:number}>(
+        'SELECT count(*)::int AS count FROM approvals WHERE session_id=$1',
+        [fixture.session.id],
+      )).rows[0]!.count).toBe(approvalsBefore)
+    } finally {
+      if(grantGateOpen) await closeGate(grantGate)
+      await approvalCompletion
+    }
+  })
+
+  it('orders Stage4 approval consumption before a human Approval decision through Session',async()=>{
+    const fixture=await makeFixture()
+    const runId=await createAutomationRun(fixture)
+    const approval=(await db.query<{id:string}>(
+      `INSERT INTO approvals(
+         workspace_id,session_id,requested_by_actor_id,approval_type,action_name,
+         action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,
+         required_approvals,status,expires_at
+       ) VALUES($1,$2,$3,'automation','lock-order-action','{}'::jsonb,$4,
+         'low','native ordering',1,'approved',now()+interval '1 hour')
+       RETURNING id`,
+      [
+        fixture.workspaceId,
+        fixture.session.id,
+        fixture.human.actorId,
+        `sha256:${'0'.repeat(64)}`,
+      ],
+    )).rows[0]!
+    const approvalGate=await beginGate()
+    let gateOpen=true
+    try {
+      await approvalGate.client.query(
+        'SELECT id FROM approvals WHERE id=$1 FOR UPDATE OF approvals',
+        [approval.id],
+      )
+      const action=await startAutomationAction(fixture,runId,8,{
+        type:'add_label',
+        parameters:{
+          workItemId:fixture.workItemId,
+          expectedRevision:fixture.workItemRevision,
+          label:'approval-serialized',
+          requiresApproval:true,
+          approvalId:approval.id,
+        },
+      })
+      expect(await waitForDirectWaiter(approvalGate.pid)).toBe(action.pid)
+      await expectExactBlockers(action.pid,[approvalGate.pid])
+      const decision=humanCall(
+        fixture.human,
+        'POST',
+        `/api/v1/approvals/${approval.id}/decide`,
+        {decision:'rejected',reason:'must serialize after automation'},
+        {'if-match':'"revision-1"'},
+      )
+      const decisionPid=await waitForDirectWaiter(action.pid)
+      await expectExactBlockers(decisionPid,[action.pid])
+      await closeGate(approvalGate)
+      gateOpen=false
+      const [actionOutcome,decisionResponse]=await Promise.all([action.completion,decision])
+      expect(actionOutcome.error).toBeUndefined()
+      expect(decisionResponse.statusCode).toBe(409)
+      expect(JSON.stringify(decisionResponse.json())).not.toContain('40P01')
+      const final=(await db.query<{status:string;decisions:number;labels:string[]}>(
+        `SELECT approval.status,
+                (SELECT count(*)::int FROM approval_decisions WHERE approval_id=approval.id) AS decisions,
+                item.labels
+           FROM approvals approval
+           JOIN work_items item ON item.id=$2
+          WHERE approval.id=$1`,
+        [approval.id,fixture.workItemId],
+      )).rows[0]!
+      expect(final).toMatchObject({status:'consumed',decisions:0})
+      expect(final.labels).toContain('approval-serialized')
+    } finally {
+      if(gateOpen) await closeGate(approvalGate)
+    }
+  })
+
+  it('denies Loop admission after project routing or exact Team grant changes behind native locks', async () => {
+    const fixture=await makeFixture()
+    const loopProject=await humanCall(fixture.human,'POST','/api/v1/projects',{
+      teamId:fixture.teamId,
+      name:`Loop-only project ${randomUUID()}`,
+    })
+    expect(loopProject.statusCode,JSON.stringify(loopProject.json())).toBe(200)
+    const loopProjectId=loopProject.json<{id:string}>().id
+    const loopId=await createLoopFixture(fixture,loopProjectId)
+    const otherTeam=await humanCall(fixture.human,'POST','/api/v1/teams',{
+      name:`Loop routing ${randomUUID()}`,
+      key:`L${randomUUID().replaceAll('-','').slice(0,5)}`.toUpperCase(),
+    })
+    expect(otherTeam.statusCode,JSON.stringify(otherTeam.json())).toBe(200)
+
+    const projectGate=await beginGate()
+    let projectGateOpen=true
+    try {
+      await projectGate.client.query(
+        'UPDATE projects SET team_id=$2 WHERE id=$1',
+        [loopProjectId,otherTeam.json<{id:string}>().id],
+      )
+      const projectAdmission=await startLoopAdmission(fixture,loopId,0)
+      const projectWaiter=await waitForDirectWaiter(projectGate.pid)
+      expect(projectWaiter).toBe(projectAdmission.pid)
+      await expectExactBlockers(projectAdmission.pid,[projectGate.pid])
+      await closeGate(projectGate,true)
+      projectGateOpen=false
+      const projectOutcome=await projectAdmission.completion
+      expect(String(projectOutcome.error)).toContain('LOOP_AUTHORITY_ROUTING_CHANGED')
+    } finally {
+      if(projectGateOpen) await closeGate(projectGate)
+    }
+    expect((await db.query<{count:number}>(
+      'SELECT count(*)::int AS count FROM automation_runs WHERE loop_id=$1',
+      [loopId],
+    )).rows[0]!.count).toBe(0)
+
+    await db.query(
+      'UPDATE projects SET team_id=$2 WHERE id=$1',
+      [loopProjectId,fixture.teamId],
+    )
+    const grantGate=await beginGate()
+    let grantGateOpen=true
+    try {
+      await grantGate.client.query(
+        `UPDATE agent_team_access SET revoked_at=now()
+          WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
+        [fixture.workspaceId,fixture.runner.id,fixture.teamId],
+      )
+      const grantAdmission=await startLoopAdmission(fixture,loopId,1)
+      const grantWaiter=await waitForDirectWaiter(grantGate.pid)
+      expect(grantWaiter).toBe(grantAdmission.pid)
+      await expectExactBlockers(grantAdmission.pid,[grantGate.pid])
+      await closeGate(grantGate,true)
+      grantGateOpen=false
+      const grantOutcome=await grantAdmission.completion
+      expect(String(grantOutcome.error)).toContain('LOOP_AGENT_TEAM_ACCESS_REVOKED')
+    } finally {
+      if(grantGateOpen) await closeGate(grantGate)
+    }
+    expect((await db.query<{count:number}>(
+      'SELECT count(*)::int AS count FROM automation_runs WHERE loop_id=$1',
+      [loopId],
+    )).rows[0]!.count).toBe(0)
+  })
+
+  it('serializes reordered multi-recipient reciprocal room messages at the first Definition', async () => {
+    const fixture = await makeFixture()
+    const peerWork = await createWork(fixture, 'Room recipient peer')
+    const peerStarted = await startAtomic(fixture, fixture.reviewer, peerWork)
+    const peerToken = await exchangeAndExecute(peerStarted.session, fixture.reviewer)
+    const thirdWork = await createWork(fixture, 'Room recipient third')
+    const thirdStarted = await startAtomic(fixture, fixture.runner, thirdWork)
+    await exchangeAndExecute(thirdStarted.session, fixture.runner)
+    const roomResponse = await humanCall(
+      fixture.human,
+      'GET',
+      `/api/v1/rooms?projectId=${fixture.projectId}`,
+    )
+    expect(roomResponse.statusCode, JSON.stringify(roomResponse.json())).toBe(200)
+    const roomId=roomResponse.json<{id:string}>().id
+    const definitions=[fixture.runner.id,fixture.reviewer.id].sort()
+    const gate=await beginGate()
+    let gateOpen=true
+    try {
+      await gate.client.query(
+        'SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE',
+        [definitions[0]],
+      )
+      const left=agentCall(
+        fixture.sessionToken,
+        'POST',
+        `/api/v1/rooms/${roomId}/messages`,
+        {
+          sessionId:fixture.session.id,
+          intent:'ask',
+          body:'left to right multi-recipient',
+          recipientActorIds:[fixture.reviewer.actorId,fixture.human.actorId],
+          requiresResponse:true,
+        },
+      )
+      const right=agentCall(
+        peerToken,
+        'POST',
+        `/api/v1/rooms/${roomId}/messages`,
+        {
+          sessionId:peerStarted.session.id,
+          intent:'ask',
+          body:'right to left reordered multi-recipient',
+          recipientActorIds:[fixture.human.actorId,fixture.runner.actorId],
+          requiresResponse:true,
+        },
+      )
+      const firstWaiter=await waitForDirectWaiter(gate.pid)
+      const secondWaiter=await waitForDirectWaiter(firstWaiter)
+      await expectExactBlockers(firstWaiter,[gate.pid])
+      await expectExactBlockers(secondWaiter,[firstWaiter])
+      const higherProbe=await beginGate()
+      try {
+        const higher=await higherProbe.client.query(
+          'SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE NOWAIT',
+          [definitions[1]],
+        )
+        expect(higher.rowCount).toBe(1)
+      } finally {
+        await closeGate(higherProbe)
+      }
+      await closeGate(gate)
+      gateOpen=false
+      const responses=await Promise.race([
+        Promise.all([left,right]),
+        new Promise<never>((_,reject)=>{
+          setTimeout(()=>reject(new Error('Reciprocal room messages timed out')),8_000)
+        }),
+      ])
+      for(const response of responses) {
+        expect(response.statusCode,JSON.stringify(response.json())).toBe(200)
+        expect(JSON.stringify(response.json())).not.toContain('40P01')
+      }
+      const messages=(await db.query<{count:number}>(
+        `SELECT count(*)::int AS count FROM room_messages
+          WHERE channel_id=$1 AND body=ANY($2::text[])`,
+        [roomId,['left to right multi-recipient','right to left reordered multi-recipient']],
+      )).rows[0]!.count
+      expect(messages).toBe(2)
+
+      const exactGate=await beginGate()
+      let exactGateOpen=true
+      try {
+        await exactGate.client.query(
+          'SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE',
+          [definitions[0]],
+        )
+        const exactLeft=agentCall(
+          fixture.sessionToken,
+          'POST',
+          `/api/v1/rooms/${roomId}/messages`,
+          {
+            sessionId:fixture.session.id,
+            intent:'ask',
+            body:'left to right exact-session recipients',
+            recipientSessionIds:[thirdStarted.session.id,peerStarted.session.id],
+            requiresResponse:true,
+          },
+        )
+        const exactRight=agentCall(
+          peerToken,
+          'POST',
+          `/api/v1/rooms/${roomId}/messages`,
+          {
+            sessionId:peerStarted.session.id,
+            intent:'ask',
+            body:'right to left reordered exact-session recipients',
+            recipientSessionIds:[fixture.session.id,thirdStarted.session.id],
+            requiresResponse:true,
+          },
+        )
+        const exactFirstWaiter=await waitForDirectWaiter(exactGate.pid)
+        const exactSecondWaiter=await waitForDirectWaiter(exactFirstWaiter)
+        await expectExactBlockers(exactFirstWaiter,[exactGate.pid])
+        await expectExactBlockers(exactSecondWaiter,[exactFirstWaiter])
+        await closeGate(exactGate)
+        exactGateOpen=false
+        const exactResponses=await Promise.race([
+          Promise.all([exactLeft,exactRight]),
+          new Promise<never>((_,reject)=>{
+            setTimeout(()=>reject(new Error('Reciprocal exact-session room messages timed out')),8_000)
+          }),
+        ])
+        for(const response of exactResponses) {
+          expect(response.statusCode,JSON.stringify(response.json())).toBe(200)
+          expect(JSON.stringify(response.json())).not.toContain('40P01')
+        }
+      } finally {
+        if(exactGateOpen) await closeGate(exactGate)
+      }
+    } finally {
+      if(gateOpen) await closeGate(gate)
+    }
   })
 })
