@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   GetObjectLockConfigurationCommand,
   HeadBucketCommand,
@@ -105,7 +106,7 @@ export class S3ArtifactStorage {
       throw new Error("RETENTION_OBJECT_LOCK_REQUIRED");
   }
 
-  async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
+  async #verifiedHead(expectation: ArtifactObjectExpectation) {
     const head = await this.#client.send(new HeadObjectCommand({
       Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",
     }));
@@ -119,19 +120,54 @@ export class S3ArtifactStorage {
       if (!actualRetainUntil || actualRetainUntil < expectation.retainUntil)
         throw new Error("RETENTION_OBJECT_LOCK_TOO_SHORT");
     }
+    return head;
+  }
+
+  async readVerifiedObject(
+    expectation: ArtifactObjectExpectation,
+  ): Promise<Uint8Array> {
+    await this.#verifiedHead(expectation);
     const object = await this.#client.send(new GetObjectCommand({
       Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",
     }));
     if (!object.Body) throw new Error("ARTIFACT_OBJECT_BODY_MISSING");
     const digest = createHash("sha256");
     let sizeBytes = 0;
+    const chunks: Uint8Array[] = [];
     for await (const chunk of object.Body as AsyncIterable<Uint8Array>) {
       digest.update(chunk);
       sizeBytes += chunk.byteLength;
+      chunks.push(chunk);
     }
     const checksum = `sha256:${digest.digest("hex")}`;
     if (sizeBytes !== expectation.sizeBytes) throw new Error("ARTIFACT_SIZE_MISMATCH");
     if (checksum !== expectation.checksum) throw new Error("ARTIFACT_CHECKSUM_MISMATCH");
+    return Buffer.concat(chunks);
+  }
+
+  async assertEarlyDeleteRejected(
+    expectation: ArtifactObjectExpectation,
+  ): Promise<void> {
+    const head = await this.#verifiedHead(expectation);
+    if (!head.VersionId) throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    let rejected = false;
+    try {
+      await this.#client.send(new DeleteObjectCommand({
+        Bucket: this.#bucket,
+        Key: expectation.key,
+        VersionId: head.VersionId,
+      }));
+    } catch {
+      rejected = true;
+    }
+    if (!rejected) throw new Error("RETENTION_OBJECT_LOCK_DELETE_ALLOWED");
+    await this.readVerifiedObject(expectation);
+  }
+
+  async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
+    await this.readVerifiedObject(expectation);
+    const checksum = expectation.checksum;
+    const sizeBytes = expectation.sizeBytes;
     return { checksum, sizeBytes, mimeType: expectation.mimeType };
   }
 }

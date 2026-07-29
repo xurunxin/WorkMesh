@@ -60,7 +60,10 @@ describe("S3 artifact verification", () => {
               Metadata: { workmeshchecksum: checksum },
               ObjectLockMode: "COMPLIANCE",
               ObjectLockRetainUntilDate: retainUntil,
+              VersionId: "locked-version",
             };
+          case "DeleteObjectCommand":
+            throw new Error("AccessDenied");
           default:
             return { Body: Readable.from([content]) };
         }
@@ -83,6 +86,13 @@ describe("S3 artifact verification", () => {
       ObjectLockMode: "COMPLIANCE",
       ObjectLockRetainUntilDate: retainUntil,
     });
+    await expect(storage.assertEarlyDeleteRejected({
+      key: "retention/a.ndjson.gz",
+      checksum,
+      sizeBytes: content.length,
+      mimeType: "application/gzip",
+      retainUntil,
+    })).resolves.toBeUndefined();
 
     const unlocked = new S3ArtifactStorage({
       bucket: "archives",
