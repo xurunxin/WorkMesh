@@ -22,16 +22,28 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
 
 const db = createDb(databaseUrl);
 const objects = new Map<string, Uint8Array>();
+const verifiedVersions: string[] = [];
 let corruptReadback = true;
 let writes = 0;
+const versionedObjectKey = (
+  expectation: ArtifactObjectExpectation,
+): string => `${expectation.key}@${expectation.versionId ?? "unversioned"}`;
 const storage: ArchiveObjectStore = {
   async probeRetentionProtection() {},
   async putObject(expectation, body) {
     writes += 1;
-    objects.set(expectation.key, Uint8Array.from(body));
+    const versionId = `retention-version-${writes}`;
+    objects.set(
+      versionedObjectKey({ ...expectation, versionId }),
+      Uint8Array.from(body),
+    );
+    return { versionId };
   },
   async verify(expectation) {
-    const body = objects.get(expectation.key);
+    if (!expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    verifiedVersions.push(expectation.versionId);
+    const body = objects.get(versionedObjectKey(expectation));
     if (!body) throw new Error("ARCHIVE_OBJECT_MISSING");
     if (corruptReadback) throw new Error("ARTIFACT_CHECKSUM_MISMATCH");
     return {
@@ -81,6 +93,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   objects.clear();
+  verifiedVersions.length = 0;
   corruptReadback = true;
   writes = 0;
   workspaceId = (
@@ -184,6 +197,7 @@ describe("retention worker destructive-path fences", () => {
       objectKey: failed.objectKey,
       snapshotDigest: failed.snapshotDigest,
     });
+    expect(verifiedVersions).toContain("retention-version-2");
     expect(writes).toBe(2);
     const archiveLines = gunzipSync([...objects.values()][0]!)
       .toString("utf8")
@@ -465,6 +479,7 @@ describe("retention worker destructive-path fences", () => {
       workspaceScopeId: workspaceId,
     });
     await expect(retry.pruneEvents()).resolves.toBe(1);
+    expect(verifiedVersions.at(-1)).toBe("retention-version-1");
     expect(
       (await db.query("SELECT 1 FROM domain_events WHERE id=$1", [eventId]))
         .rowCount,

@@ -46,6 +46,8 @@ const retentionFailureCodes = new Set([
   "RETENTION_OBJECT_LOCK_MODE_MISMATCH",
   "RETENTION_OBJECT_LOCK_REQUIRED",
   "RETENTION_OBJECT_LOCK_TOO_SHORT",
+  "RETENTION_OBJECT_VERSION_MISMATCH",
+  "RETENTION_OBJECT_VERSION_REQUIRED",
   "RETENTION_CLAIM_LOST",
   "RETENTION_FLOOR_FENCE_LOST",
   "RETENTION_FLOOR_MISSING",
@@ -802,30 +804,50 @@ export function createRetentionWorker({
         mimeType: "application/gzip",
         retainUntil,
       };
+      const uploadedObject = await objectStore.putObject(expectation, compressed);
       const segment = await withTx(db, async (tx) => {
         await assertClaim(tx, active);
         return (
-          await tx.query<{ id: string; state: string }>(
+          await tx.query<{
+            id: string;
+            state: string;
+            objectKey: string;
+            objectVersionId: string;
+            objectSizeBytes: string;
+            objectSha256: string;
+            retainUntil: Date;
+          }>(
             `
           INSERT INTO event_archive_segments(
             workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
-            object_key,object_size_bytes,object_sha256,snapshot_digest,metadata,
-            retain_until
-          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+            object_key,object_version_id,object_size_bytes,object_sha256,
+            snapshot_digest,metadata,retain_until,state,uploaded_at
+          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'uploaded',now())
           ON CONFLICT(workspace_id,start_cursor,end_cursor) DO UPDATE
-            SET object_key=EXCLUDED.object_key,object_size_bytes=EXCLUDED.object_size_bytes,
-                object_sha256=EXCLUDED.object_sha256,snapshot_digest=EXCLUDED.snapshot_digest,
-                metadata=EXCLUDED.metadata,
+            SET object_key=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.object_key ELSE EXCLUDED.object_key END,
+                object_version_id=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.object_version_id ELSE EXCLUDED.object_version_id END,
+                object_size_bytes=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.object_size_bytes ELSE EXCLUDED.object_size_bytes END,
+                object_sha256=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.object_sha256 ELSE EXCLUDED.object_sha256 END,
+                snapshot_digest=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.snapshot_digest ELSE EXCLUDED.snapshot_digest END,
+                metadata=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.metadata ELSE EXCLUDED.metadata END,
                 state=CASE
-                  WHEN event_archive_segments.state IN ('uploaded','verified','pruned')
+                  WHEN event_archive_segments.state IN ('verified','pruned')
                     THEN event_archive_segments.state
-                  ELSE 'planned'
+                  ELSE 'uploaded'
                 END,
-                uploaded_at=CASE
-                  WHEN event_archive_segments.state IN ('uploaded','verified','pruned')
-                    THEN event_archive_segments.uploaded_at
-                  ELSE NULL
-                END,
+                uploaded_at=COALESCE(event_archive_segments.uploaded_at,now()),
                 verified_at=CASE
                   WHEN event_archive_segments.state IN ('verified','pruned')
                     THEN event_archive_segments.verified_at
@@ -833,9 +855,15 @@ export function createRetentionWorker({
                 END,
                 pruned_at=CASE WHEN event_archive_segments.state='pruned'
                                THEN event_archive_segments.pruned_at ELSE NULL END,
-                retain_until=GREATEST(event_archive_segments.retain_until,EXCLUDED.retain_until),
+                retain_until=CASE
+                  WHEN event_archive_segments.state IN ('verified','pruned')
+                    THEN event_archive_segments.retain_until ELSE EXCLUDED.retain_until END,
                 last_error_code=NULL,updated_at=now()
-          RETURNING id,state
+          RETURNING id,state,object_key AS "objectKey",
+                    object_version_id AS "objectVersionId",
+                    object_size_bytes::text AS "objectSizeBytes",
+                    object_sha256 AS "objectSha256",
+                    retain_until AS "retainUntil"
         `,
             [
               active.workspaceId,
@@ -844,6 +872,7 @@ export function createRetentionWorker({
               active.fixedCutoffAt,
               records.length,
               objectKey,
+              uploadedObject.versionId,
               compressed.byteLength,
               objectChecksum,
               snapshotDigest,
@@ -854,22 +883,15 @@ export function createRetentionWorker({
         ).rows[0]!;
       });
       segmentId = segment.id;
-      await objectStore.putObject(expectation, compressed);
-      await withTx(db, async (tx) => {
-        await assertClaim(tx, active);
-        const uploaded = await tx.query(
-          `
-          UPDATE event_archive_segments
-             SET state=CASE WHEN state IN ('verified','pruned')
-                            THEN state ELSE 'uploaded' END,
-                 uploaded_at=COALESCE(uploaded_at,now()),updated_at=now()
-           WHERE id=$1
-        `,
-          [segment.id],
-        );
-        if (uploaded.rowCount !== 1) throw new Error("RETENTION_CLAIM_LOST");
-      });
-      await objectStore.verify(expectation);
+      const persistedExpectation: ArtifactObjectExpectation = {
+        key: segment.objectKey,
+        versionId: segment.objectVersionId,
+        checksum: segment.objectSha256,
+        sizeBytes: Number(segment.objectSizeBytes),
+        mimeType: "application/gzip",
+        retainUntil: segment.retainUntil,
+      };
+      await objectStore.verify(persistedExpectation);
       await withTx(db, async (tx) => {
         await assertClaim(tx, active);
         const verified = await tx.query(
@@ -936,12 +958,22 @@ export function createRetentionWorker({
             rowCount: number;
             snapshotDigest: string;
             fixedCutoffAt: Date;
+            objectKey: string;
+            objectVersionId: string;
+            objectSizeBytes: string;
+            objectSha256: string;
+            retainUntil: Date;
           }>(
             `
           SELECT id,start_cursor::text AS "startCursor",
-                 end_cursor::text AS "endCursor",row_count AS "rowCount",
-                 snapshot_digest AS "snapshotDigest",
-                 fixed_cutoff_at AS "fixedCutoffAt"
+                  end_cursor::text AS "endCursor",row_count AS "rowCount",
+                  snapshot_digest AS "snapshotDigest",
+                  fixed_cutoff_at AS "fixedCutoffAt",
+                  object_key AS "objectKey",
+                  object_version_id AS "objectVersionId",
+                  object_size_bytes::text AS "objectSizeBytes",
+                  object_sha256 AS "objectSha256",
+                  retain_until AS "retainUntil"
            FROM event_archive_segments
            WHERE workspace_id=$1 AND state='verified'
              AND end_cursor>$2::bigint
@@ -956,6 +988,14 @@ export function createRetentionWorker({
           await writeGuardedProgress(tx, active, { complete: true });
           return 0;
         }
+        await objectStore.verify({
+          key: segment.objectKey,
+          versionId: segment.objectVersionId,
+          checksum: segment.objectSha256,
+          sizeBytes: Number(segment.objectSizeBytes),
+          mimeType: "application/gzip",
+          retainUntil: segment.retainUntil,
+        });
         const firstOnline = (
           await tx.query<{ cursor: string }>(
             `

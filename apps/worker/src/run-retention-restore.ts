@@ -65,6 +65,7 @@ try {
       endCursor: string;
       rowCount: number;
       objectKey: string;
+      objectVersionId: string;
       objectSizeBytes: string;
       objectSha256: string;
       snapshotDigest: string;
@@ -74,6 +75,7 @@ try {
               end_cursor::text AS "endCursor",
               row_count AS "rowCount",
               object_key AS "objectKey",
+              object_version_id AS "objectVersionId",
               object_size_bytes::text AS "objectSizeBytes",
               object_sha256 AS "objectSha256",
               snapshot_digest AS "snapshotDigest",
@@ -87,12 +89,26 @@ try {
     throw new Error("RETENTION_RESTORE_REQUIRES_VERIFIED_LOCKED_SEGMENT");
   const expectation: ArtifactObjectExpectation = {
     key: segment.objectKey,
+    versionId: segment.objectVersionId,
     checksum: segment.objectSha256,
     sizeBytes: Number(segment.objectSizeBytes),
     mimeType: "application/gzip",
     retainUntil: segment.retainUntil,
   };
   await storage.probeRetentionProtection();
+  const originalReadback = await storage.readVerifiedObject(expectation);
+  const superseding = await storage.putObject(
+    {
+      ...expectation,
+      versionId: undefined,
+      retainUntil: new Date(Date.now() + (365 * 86_400 + 300) * 1_000),
+    },
+    originalReadback,
+  );
+  if (superseding.versionId === expectation.versionId)
+    throw new Error("RETENTION_RESTORE_SAME_KEY_VERSION_NOT_DISTINCT");
+  // A latest-version write must never redirect restore away from the durable
+  // version pinned in event_archive_segments.
   const compressed = await storage.readVerifiedObject(expectation);
   const lines = gunzipSync(compressed).toString("utf8").trim().split("\n");
   const metadata = JSON.parse(lines.shift() ?? "{}") as {
@@ -173,6 +189,8 @@ const report = {
   snapshotDigest,
   targetDigestVerified: true,
   earlyDeleteRejected,
+  pinnedVersionVerifiedAfterSameKeyWrite: true,
+  supersedingVersionDifferent: true,
   temporarySchemaRemoved: true,
 };
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {

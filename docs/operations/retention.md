@@ -27,6 +27,10 @@ webhook delivery references.
 
 The archive bucket must be created with Object Lock enabled. Retention writes
 use `COMPLIANCE` mode and a retain-until date at least 365 days in the future.
+Every segment persists the non-empty `VersionId` returned by its upload. HEAD,
+GET, checksum verification, prune preflight, restore, and early-delete probes
+must address that pinned version explicitly; resolving the latest object by key
+is never acceptable.
 The Worker probes bucket protection before every archive pass and fails closed
 before planning or uploading when protection is absent. Existing buckets
 cannot be retrofitted safely by changing only Compose configuration; create a
@@ -62,7 +66,9 @@ Lock metadata; downloads and checks the gzip checksum and canonical snapshot
 digest; restores records into a temporary schema in the separate target;
 re-reads and verifies the restored digest; attempts deletion of the exact
 locked object version and requires rejection; verifies readback again; and
-removes the temporary schema. Its timestamped report contains no object key,
+removes the temporary schema. It also writes a second version under the same key
+and proves restore still reads the originally pinned version. Its timestamped
+report contains no object key,
 Workspace ID, Session ID, or credentials.
 
 The restart/contention gate defaults to a non-mutating dry run:

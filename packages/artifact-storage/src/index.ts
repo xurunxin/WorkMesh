@@ -13,6 +13,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export type ArtifactObjectExpectation = {
   key: string;
+  versionId?: string;
   checksum: string;
   sizeBytes: number;
   mimeType: string;
@@ -66,18 +67,22 @@ export class S3ArtifactStorage {
   async putVerifiedObject(
     expectation: ArtifactObjectExpectation,
     body: Uint8Array,
-  ): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
-    await this.putObject(expectation, body);
-    return this.verify(expectation);
+  ): Promise<{ versionId: string; checksum: string; sizeBytes: number; mimeType: string }> {
+    const uploaded = await this.putObject(expectation, body);
+    const verified = await this.verify({
+      ...expectation,
+      versionId: uploaded.versionId,
+    });
+    return { versionId: uploaded.versionId, ...verified };
   }
 
   async putObject(
     expectation: ArtifactObjectExpectation,
     body: Uint8Array,
-  ): Promise<void> {
+  ): Promise<{ versionId: string }> {
     if (body.byteLength !== expectation.sizeBytes)
       throw new Error("ARTIFACT_SIZE_MISMATCH");
-    await this.#client.send(new PutObjectCommand({
+    const uploaded = await this.#client.send(new PutObjectCommand({
       Bucket: this.#bucket,
       Key: expectation.key,
       Body: body,
@@ -92,6 +97,8 @@ export class S3ArtifactStorage {
           }
         : {}),
     }));
+    if (!uploaded.VersionId) throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    return { versionId: uploaded.VersionId };
   }
 
   async probe(): Promise<void> {
@@ -107,9 +114,16 @@ export class S3ArtifactStorage {
   }
 
   async #verifiedHead(expectation: ArtifactObjectExpectation) {
+    if (expectation.retainUntil && !expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     const head = await this.#client.send(new HeadObjectCommand({
-      Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",
+      Bucket: this.#bucket,
+      Key: expectation.key,
+      VersionId: expectation.versionId,
+      ChecksumMode: "ENABLED",
     }));
+    if (expectation.versionId && head.VersionId !== expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_MISMATCH");
     if (head.ContentLength !== expectation.sizeBytes) throw new Error("ARTIFACT_SIZE_MISMATCH");
     if (head.ContentType !== expectation.mimeType) throw new Error("ARTIFACT_MIME_MISMATCH");
     if (head.Metadata?.workmeshchecksum !== expectation.checksum) throw new Error("ARTIFACT_METADATA_CHECKSUM_MISMATCH");
@@ -128,7 +142,10 @@ export class S3ArtifactStorage {
   ): Promise<Uint8Array> {
     await this.#verifiedHead(expectation);
     const object = await this.#client.send(new GetObjectCommand({
-      Bucket: this.#bucket, Key: expectation.key, ChecksumMode: "ENABLED",
+      Bucket: this.#bucket,
+      Key: expectation.key,
+      VersionId: expectation.versionId,
+      ChecksumMode: "ENABLED",
     }));
     if (!object.Body) throw new Error("ARTIFACT_OBJECT_BODY_MISSING");
     const digest = createHash("sha256");
@@ -148,14 +165,15 @@ export class S3ArtifactStorage {
   async assertEarlyDeleteRejected(
     expectation: ArtifactObjectExpectation,
   ): Promise<void> {
-    const head = await this.#verifiedHead(expectation);
-    if (!head.VersionId) throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    await this.#verifiedHead(expectation);
+    if (!expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     let rejected = false;
     try {
       await this.#client.send(new DeleteObjectCommand({
         Bucket: this.#bucket,
         Key: expectation.key,
-        VersionId: head.VersionId,
+        VersionId: expectation.versionId,
       }));
     } catch {
       rejected = true;

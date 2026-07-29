@@ -45,6 +45,7 @@ describe("S3 artifact verification", () => {
     const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
     const retainUntil = new Date(Date.now() + 365 * 86_400_000);
     let putInput: Record<string, unknown> | undefined;
+    const versionedReads: Record<string, unknown>[] = [];
     const client = {
       send: async (command: { constructor: { name: string }; input: Record<string, unknown> }) => {
         switch (command.constructor.name) {
@@ -52,8 +53,9 @@ describe("S3 artifact verification", () => {
             return { ObjectLockConfiguration: { ObjectLockEnabled: "Enabled" } };
           case "PutObjectCommand":
             putInput = command.input;
-            return {};
+            return { VersionId: "locked-version" };
           case "HeadObjectCommand":
+            versionedReads.push(command.input);
             return {
               ContentLength: content.length,
               ContentType: "application/gzip",
@@ -63,8 +65,10 @@ describe("S3 artifact verification", () => {
               VersionId: "locked-version",
             };
           case "DeleteObjectCommand":
+            versionedReads.push(command.input);
             throw new Error("AccessDenied");
           default:
+            versionedReads.push(command.input);
             return { Body: Readable.from([content]) };
         }
       },
@@ -81,18 +85,27 @@ describe("S3 artifact verification", () => {
       sizeBytes: content.length,
       mimeType: "application/gzip",
       retainUntil,
-    }, content)).resolves.toMatchObject({ checksum });
+    }, content)).resolves.toMatchObject({
+      checksum,
+      versionId: "locked-version",
+    });
     expect(putInput).toMatchObject({
       ObjectLockMode: "COMPLIANCE",
       ObjectLockRetainUntilDate: retainUntil,
     });
     await expect(storage.assertEarlyDeleteRejected({
       key: "retention/a.ndjson.gz",
+      versionId: "locked-version",
       checksum,
       sizeBytes: content.length,
       mimeType: "application/gzip",
       retainUntil,
     })).resolves.toBeUndefined();
+    expect(putInput).not.toHaveProperty("VersionId");
+    expect(versionedReads).not.toHaveLength(0);
+    expect(
+      versionedReads.every((input) => input.VersionId === "locked-version"),
+    ).toBe(true);
 
     const unlocked = new S3ArtifactStorage({
       bucket: "archives",

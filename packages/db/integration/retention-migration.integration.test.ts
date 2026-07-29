@@ -28,6 +28,16 @@ describe("0026 retention, archive, and heartbeat health migration", () => {
         )
       ).rowCount,
     ).toBe(1);
+    const archiveVersionColumn = await db.query<{
+      is_nullable: string;
+    }>(
+      `SELECT is_nullable
+         FROM information_schema.columns
+        WHERE table_schema=current_schema()
+          AND table_name='event_archive_segments'
+          AND column_name='object_version_id'`,
+    );
+    expect(archiveVersionColumn.rows).toEqual([{ is_nullable: "NO" }]);
     const policy = await db.query<{
       record_class: string;
       online_days: number;
@@ -117,8 +127,13 @@ describe("0026 retention, archive, and heartbeat health migration", () => {
         `
       INSERT INTO event_archive_segments(
         workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
-        object_key,snapshot_digest,retain_until
-      ) VALUES($1,1,1,now(),1,'too-short','sha256:${"a".repeat(64)}',now()+interval '364 days')
+        object_key,object_version_id,object_size_bytes,object_sha256,
+        snapshot_digest,retain_until
+      ) VALUES(
+        $1,1,1,now(),1,'too-short','version-1',1,
+        'sha256:${"b".repeat(64)}','sha256:${"a".repeat(64)}',
+        now()+interval '364 days'
+      )
     `,
         [workspace.id],
       ),

@@ -74,8 +74,10 @@ CREATE TABLE event_archive_segments (
   fixed_cutoff_at timestamptz NOT NULL,
   row_count integer NOT NULL CHECK(row_count > 0),
   object_key text NOT NULL,
-  object_size_bytes bigint CHECK(object_size_bytes >= 0),
-  object_sha256 text CHECK(object_sha256 IS NULL OR object_sha256 ~ '^sha256:[a-f0-9]{64}$'),
+  object_version_id text NOT NULL
+    CHECK(length(btrim(object_version_id)) BETWEEN 1 AND 1024),
+  object_size_bytes bigint NOT NULL CHECK(object_size_bytes >= 0),
+  object_sha256 text NOT NULL CHECK(object_sha256 ~ '^sha256:[a-f0-9]{64}$'),
   snapshot_digest text NOT NULL CHECK(snapshot_digest ~ '^sha256:[a-f0-9]{64}$'),
   metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
   state event_archive_segment_state NOT NULL DEFAULT 'planned',
