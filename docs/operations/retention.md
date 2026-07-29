@@ -36,17 +36,24 @@ intent before planning another. Provisional reservations do not count as
 coverage.
 
 Retention writes use `If-None-Match: *`, `COMPLIANCE` mode, a retain-until date
-at least 365 days in the future, and checksum plus segment/snapshot/fixed-cutoff
-metadata. A planned recovery always reconciles current HEAD before changing the
-retain horizon. A matching current object keeps the original PostgreSQL
-horizon and pins that VersionId. Only an explicit HEAD 404 lets the current
-fenced owner re-lock the still-planned, version-null row and refresh its fixed
-retain horizon before the conditional PUT. Success, precondition failure,
-timeout, 5xx, and response loss all reconcile current HEAD on the same key. An
-identity or protection mismatch becomes a fenced deterministic conflict. Never
-delete an uncertain object, generate a replacement key, or accept a second
-version. A lease lost after PUT leaves the planned intent for its successor.
-Only a current fenced owner may persist the reconciled non-empty `VersionId`.
+at least 365 days plus a five-minute safety margin in the future, and checksum
+plus segment/snapshot/fixed-cutoff metadata. A planned recovery always
+reconciles current HEAD before changing the retain horizon. A matching current
+object pins its VersionId and LastModified. If its lock is shorter than
+`max(LastModified + configured days + 300 seconds, current time + configured
+days + 300 seconds, PostgreSQL retain_until)`, the current fenced owner first
+locks and revalidates the still-planned, version-null segment and persists that
+target in PostgreSQL. It then extends COMPLIANCE retention on that exact
+VersionId with `PutObjectRetention`, never shortening retention or creating a
+new version. A pinned HEAD reconciles response loss and its final S3 horizon is
+persisted exactly with the VersionId. Only an explicit current HEAD 404 permits
+refreshing the planned horizon before the conditional PUT. Success,
+precondition failure, timeout, 5xx, and response loss all reconcile current
+HEAD on the same key. An identity or protection mismatch becomes a fenced
+deterministic conflict. Never delete an uncertain object, generate a
+replacement key, or accept a second version. A lease lost after PUT leaves the
+planned intent for its successor. Only a current fenced owner may persist the
+reconciled non-empty `VersionId`.
 HEAD, GET, checksum verification, prune preflight, restore, and early-delete
 probes after that point must address the pinned version explicitly; resolving
 latest by key is permitted only during pending-intent reconciliation.
@@ -58,6 +65,13 @@ The Worker probes bucket protection before every archive pass and fails closed
 before planning or uploading when protection is absent. Existing buckets
 cannot be retrofitted safely by changing only Compose configuration; create a
 new Object-Lock-enabled bucket and migrate under an explicit procedure.
+
+The production Worker identity must use the least-privilege policy template at
+`infra/s3/worker-retention-policy.template.json`, rendered with the deployment
+bucket and archive prefix. In particular, archival requires
+`s3:PutObjectRetention` in addition to version-pinned read, conditional put,
+Object Lock inspection, and version-list permissions. Do not grant
+`s3:DeleteObject` or `s3:DeleteObjectVersion` to the Worker.
 
 Before enabling cleanup, verify a current database backup and keep
 `WORKMESH_RETENTION_CLEANUP_ENABLED=false` during tests except in an isolated

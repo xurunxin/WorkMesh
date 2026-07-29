@@ -64,9 +64,18 @@ afterAll(async () => {
 
 describe("retention upgrade barrier with real PostgreSQL and MinIO", () => {
   it("proves one exact version with versioned HEAD and zero delete markers", async () => {
+    await expect(storage.probeRetentionProtection()).resolves.toBeUndefined();
     const body = Buffer.from("real retention upgrade barrier object");
     const checksum = `sha256:${createHash("sha256").update(body).digest("hex")}`;
+    const segmentId = randomUUID();
+    const snapshotDigest = `sha256:${"a".repeat(64)}`;
+    const fixedCutoffAt = new Date(Date.now() - 90 * 86_400_000);
     const retainUntil = new Date(Date.now() + 366 * 86_400_000);
+    const archiveIdentity = {
+      segmentId,
+      snapshotDigest,
+      fixedCutoffAt: fixedCutoffAt.toISOString(),
+    };
     const uploaded = await storage.putObject(
       {
         key: objectKey,
@@ -74,8 +83,44 @@ describe("retention upgrade barrier with real PostgreSQL and MinIO", () => {
         sizeBytes: body.length,
         mimeType: "application/gzip",
         retainUntil,
+        archiveIdentity,
       },
       body,
+    );
+    const current = await storage.reconcilePinnedObject({
+      key: objectKey,
+      versionId: uploaded.versionId,
+      checksum,
+      sizeBytes: body.length,
+      mimeType: "application/gzip",
+      retainUntil,
+      archiveIdentity,
+    });
+    expect(current.lastModified).toBeInstanceOf(Date);
+    const targetRetainUntil = new Date(
+      current.lastModified.getTime() + (367 * 86_400 + 3_600) * 1_000,
+    );
+    const extended = await storage.extendRetention(
+      {
+        key: objectKey,
+        versionId: uploaded.versionId,
+        checksum,
+        sizeBytes: body.length,
+        mimeType: "application/gzip",
+        retainUntil: targetRetainUntil,
+        archiveIdentity,
+      },
+      targetRetainUntil,
+    );
+    expect(extended).toMatchObject({
+      versionId: uploaded.versionId,
+      lastModified: current.lastModified,
+    });
+    expect(extended.retainUntil.getTime()).toBeGreaterThanOrEqual(
+      targetRetainUntil.getTime(),
+    );
+    expect(extended.retainUntil.getTime()).toBeGreaterThan(
+      retainUntil.getTime(),
     );
     const workspaceId = (
       await barrierDb.query<{ id: string }>(
@@ -87,33 +132,35 @@ describe("retention upgrade barrier with real PostgreSQL and MinIO", () => {
     ).rows[0]!.id;
     await barrierDb.query(
       `INSERT INTO event_archive_segments(
-         workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+         id,workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
          object_key,object_version_id,object_size_bytes,object_sha256,
          snapshot_digest,metadata,state,retain_until,uploaded_at,
          membership_state
        ) VALUES(
-         $1,1,1,now()-interval '90 days',1,$2,$3,$4,$5,$5,'{}',
-         'uploaded',$6,now(),'pending_exact'
+         $1,$2,1,1,$3,1,$4,$5,$6,$7,$8,'{}',
+         'uploaded',$9,now(),'pending_exact'
        )`,
       [
+        segmentId,
         workspaceId,
+        fixedCutoffAt,
         objectKey,
         uploaded.versionId,
         body.length,
         checksum,
-        retainUntil,
+        snapshotDigest,
+        extended.retainUntil,
       ],
     );
 
-    await expect(
-      runRetentionUpgradeBarrier({
-        db: barrierDb,
-        storage: reader,
-        archivePrefix,
-        expectThrough: 29,
-        stabilityDelayMs: 10,
-      }),
-    ).resolves.toMatchObject({
+    const barrier = await runRetentionUpgradeBarrier({
+      db: barrierDb,
+      storage: reader,
+      archivePrefix,
+      expectThrough: 29,
+      stabilityDelayMs: 10,
+    });
+    expect(barrier).toMatchObject({
       expectedThrough: 29,
       objectCount: 1,
       snapshots: 2,
@@ -136,7 +183,19 @@ describe("retention upgrade barrier with real PostgreSQL and MinIO", () => {
       mimeType: "application/gzip",
       checksum,
       objectLockMode: "COMPLIANCE",
-      retainUntil,
+      retainUntil: extended.retainUntil,
     });
+    console.info(
+      "RETENTION_EXTENSION_REAL_PROOF",
+      JSON.stringify({
+        versionId: uploaded.versionId,
+        lastModified: current.lastModified.toISOString(),
+        initialRetainUntil: retainUntil.toISOString(),
+        finalRetainUntil: extended.retainUntil.toISOString(),
+        versionCount: inventory.versions.length,
+        deleteMarkerCount: inventory.deleteMarkers.length,
+        barrier,
+      }),
+    );
   }, 120_000);
 });

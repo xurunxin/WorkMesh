@@ -49,6 +49,13 @@ Required production credentials have no usable defaults. Compose can render whil
 pnpm --silent bootstrap:token
 ```
 
+Render `infra/s3/worker-retention-policy.template.json` with the exact
+`S3_BUCKET` and `WORKMESH_RETENTION_ARCHIVE_PREFIX`, and attach it only to the
+Worker object-store identity. The required archive mutation permissions are
+conditional `s3:PutObject` and exact-version `s3:PutObjectRetention`; the latter
+is required to repair a lock horizon after a delayed losing upload. The
+template intentionally excludes object deletion permissions.
+
 Keep the environment file outside source control and readable only by the deployment operator. Put a TLS reverse proxy in front of Web and API. Do not publish PostgreSQL, Redis, or MinIO directly to the internet.
 
 Validate both the repository contract and the fully rendered configuration before changing a running deployment:

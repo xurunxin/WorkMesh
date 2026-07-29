@@ -6,7 +6,9 @@ import {
   HeadBucketCommand,
   HeadObjectCommand,
   PutObjectCommand,
+  PutObjectRetentionCommand,
   S3Client,
+  type HeadObjectCommandOutput,
   type S3ClientConfig,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -26,8 +28,18 @@ export type ArtifactObjectExpectation = {
 };
 
 export type CurrentArtifactObject =
-  | Readonly<{ status: "present"; versionId: string }>
+  | Readonly<{
+      status: "present";
+      versionId: string;
+      lastModified: Date;
+      retainUntil: Date;
+    }>
   | Readonly<{ status: "missing" }>;
+
+export type PinnedArtifactObject = Extract<
+  CurrentArtifactObject,
+  Readonly<{ status: "present" }>
+>;
 
 type ObjectClient = Pick<S3Client, "send">;
 
@@ -68,6 +80,7 @@ const identityMismatchCodes = new Set([
   "RETENTION_OBJECT_CUTOFF_MISMATCH",
   "RETENTION_OBJECT_LOCK_MODE_MISMATCH",
   "RETENTION_OBJECT_LOCK_TOO_SHORT",
+  "RETENTION_OBJECT_LAST_MODIFIED_REQUIRED",
   "RETENTION_OBJECT_VERSION_REQUIRED",
 ]);
 
@@ -156,7 +169,7 @@ export class S3ArtifactStorage {
   async putObjectIfAbsent(
     expectation: ArtifactObjectExpectation,
     body: Uint8Array,
-  ): Promise<{ versionId: string }> {
+  ): Promise<PinnedArtifactObject> {
     if (!expectation.archiveIdentity)
       throw new Error("RETENTION_OBJECT_IDENTITY_REQUIRED");
     if (expectation.versionId)
@@ -190,7 +203,7 @@ export class S3ArtifactStorage {
       const current =
         await this.reconcileCurrentObjectIfPresent(expectation);
       if (current.status === "present")
-        return { versionId: current.versionId };
+        return current;
       lastError ??= new Error("RETENTION_OBJECT_NOT_FOUND");
     }
     throw lastError instanceof Error
@@ -202,11 +215,11 @@ export class S3ArtifactStorage {
    * returned VersionId is then persisted and all later reads are pinned. */
   async reconcileCurrentObject(
     expectation: ArtifactObjectExpectation,
-  ): Promise<{ versionId: string }> {
+  ): Promise<PinnedArtifactObject> {
     const current = await this.reconcileCurrentObjectIfPresent(expectation);
     if (current.status === "missing")
       throw new Error("RETENTION_OBJECT_NOT_FOUND");
-    return { versionId: current.versionId };
+    return current;
   }
 
   /** HEAD the stable archive key before deciding whether its planned lock
@@ -221,10 +234,9 @@ export class S3ArtifactStorage {
       const head = await this.#verifiedHead(
         { ...expectation, versionId: undefined },
         false,
+        true,
       );
-      if (!head.VersionId)
-        throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
-      return { status: "present", versionId: head.VersionId };
+      return this.#summarizeArchiveHead(head);
     } catch (error) {
       if (isNotFound(error)) return { status: "missing" };
       if (
@@ -234,6 +246,62 @@ export class S3ArtifactStorage {
         throw new Error("RETENTION_OBJECT_IDENTITY_MISMATCH");
       throw error;
     }
+  }
+
+  /** Verify one immutable archive version while treating a short COMPLIANCE
+   * horizon as repairable state rather than an identity failure. */
+  async reconcilePinnedObject(
+    expectation: ArtifactObjectExpectation,
+  ): Promise<PinnedArtifactObject> {
+    if (!expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    return this.#summarizeArchiveHead(
+      await this.#verifiedHead(expectation, true, true),
+    );
+  }
+
+  /** Extend one exact immutable version. The preflight prevents shortening;
+   * a pinned HEAD after the request also reconciles response loss. */
+  async extendRetention(
+    expectation: ArtifactObjectExpectation,
+    targetRetainUntil: Date,
+  ): Promise<PinnedArtifactObject> {
+    if (!expectation.archiveIdentity)
+      throw new Error("RETENTION_OBJECT_IDENTITY_REQUIRED");
+    if (!expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    if (
+      !Number.isFinite(targetRetainUntil.getTime()) ||
+      !expectation.retainUntil
+    )
+      throw new Error("RETENTION_OBJECT_LOCK_TARGET_REQUIRED");
+    const current = await this.reconcilePinnedObject(expectation);
+    if (current.retainUntil >= targetRetainUntil) return current;
+
+    let putError: unknown;
+    try {
+      await this.#client.send(
+        new PutObjectRetentionCommand({
+          Bucket: this.#bucket,
+          Key: expectation.key,
+          VersionId: expectation.versionId,
+          Retention: {
+            Mode: "COMPLIANCE",
+            RetainUntilDate: targetRetainUntil,
+          },
+        }),
+      );
+    } catch (error) {
+      putError = error;
+    }
+
+    const reconciled = await this.reconcilePinnedObject({
+      ...expectation,
+      retainUntil: targetRetainUntil,
+    });
+    if (reconciled.retainUntil >= targetRetainUntil) return reconciled;
+    if (putError) throw putError;
+    throw new Error("RETENTION_OBJECT_LOCK_TOO_SHORT");
   }
 
   async probe(): Promise<void> {
@@ -251,6 +319,7 @@ export class S3ArtifactStorage {
   async #verifiedHead(
     expectation: ArtifactObjectExpectation,
     requirePinned = true,
+    allowShortRetention = false,
   ) {
     if (requirePinned && expectation.retainUntil && !expectation.versionId)
       throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
@@ -291,10 +360,31 @@ export class S3ArtifactStorage {
       if (head.ObjectLockMode !== "COMPLIANCE")
         throw new Error("RETENTION_OBJECT_LOCK_MODE_MISMATCH");
       const actualRetainUntil = head.ObjectLockRetainUntilDate;
-      if (!actualRetainUntil || actualRetainUntil < expectation.retainUntil)
+      if (
+        !actualRetainUntil ||
+        (!allowShortRetention && actualRetainUntil < expectation.retainUntil)
+      )
         throw new Error("RETENTION_OBJECT_LOCK_TOO_SHORT");
     }
     return head;
+  }
+
+  #summarizeArchiveHead(head: HeadObjectCommandOutput): PinnedArtifactObject {
+    if (!head.VersionId)
+      throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+    if (!head.LastModified)
+      throw new Error("RETENTION_OBJECT_LAST_MODIFIED_REQUIRED");
+    if (
+      head.ObjectLockMode !== "COMPLIANCE" ||
+      !head.ObjectLockRetainUntilDate
+    )
+      throw new Error("RETENTION_OBJECT_LOCK_MODE_MISMATCH");
+    return {
+      status: "present",
+      versionId: head.VersionId,
+      lastModified: head.LastModified,
+      retainUntil: head.ObjectLockRetainUntilDate,
+    };
   }
 
   async readVerifiedObject(

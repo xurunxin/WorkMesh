@@ -36,6 +36,12 @@ if (arguments_.length === 1) {
 const composePath = path.join(root, 'docker-compose.production.yml')
 const source = await readFile(composePath, 'utf8')
 const compose = parse(source, { merge: true })
+const retentionPolicy = JSON.parse(
+  await readFile(
+    path.join(root, 'infra', 's3', 'worker-retention-policy.template.json'),
+    'utf8',
+  ),
+)
 const applicationServices = ['api', 'worker', 'mcp', 'web']
 const hardenedServices = ['migrate', ...applicationServices]
 
@@ -84,6 +90,30 @@ assert(
 assert(
   source.includes('mc mb --with-lock --ignore-existing'),
   'production MinIO bucket creation must enable Object Lock at creation time',
+)
+const retentionPolicyActions = new Set(
+  retentionPolicy.Statement.flatMap(statement => statement.Action),
+)
+for (const action of [
+  's3:GetBucketObjectLockConfiguration',
+  's3:ListBucketVersions',
+  's3:GetObjectVersion',
+  's3:PutObject',
+  's3:PutObjectRetention',
+]) {
+  assert(
+    retentionPolicyActions.has(action),
+    `production retention IAM policy must allow ${action}`,
+  )
+}
+assert(
+  retentionPolicy.Statement.every(statement => statement.Effect === 'Allow'),
+  'production retention IAM policy must contain only explicit allow statements',
+)
+assert(
+  !retentionPolicyActions.has('s3:DeleteObject') &&
+    !retentionPolicyActions.has('s3:DeleteObjectVersion'),
+  'production retention IAM policy must not grant archive deletion',
 )
 const retentionEnvironment = compose.services.worker.environment
 assert(

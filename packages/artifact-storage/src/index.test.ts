@@ -29,6 +29,7 @@ describe("S3 artifact verification", () => {
       "base64",
     );
     const retainUntil = new Date(Date.now() + 365 * 86_400_000);
+    const lastModified = new Date("2026-07-01T00:00:00.000Z");
     const commands: Array<{
       name: string;
       input: Record<string, unknown>;
@@ -52,6 +53,7 @@ describe("S3 artifact verification", () => {
             workmeshsnapshotdigest: `sha256:${"a".repeat(64)}`,
             workmeshfixedcutoffat: "2026-07-01T00:00:00.000Z",
           },
+          LastModified: lastModified,
           ObjectLockMode: "COMPLIANCE",
           ObjectLockRetainUntilDate: retainUntil,
         };
@@ -81,7 +83,12 @@ describe("S3 artifact verification", () => {
         },
         content,
       ),
-    ).resolves.toEqual({ versionId: "current-version" });
+    ).resolves.toEqual({
+      status: "present",
+      versionId: "current-version",
+      lastModified,
+      retainUntil,
+    });
     expect(commands[0]).toMatchObject({
       name: "PutObjectCommand",
       input: {
@@ -178,6 +185,8 @@ describe("S3 artifact verification", () => {
       const checksumBase64 = Buffer.from(checksum.slice(7), "hex").toString(
         "base64",
       );
+      const lastModified = new Date("2026-07-02T00:00:00.000Z");
+      const actualRetainUntil = new Date("2027-08-01T00:00:00.000Z");
       let puts = 0;
       const storage = new S3ArtifactStorage({
         bucket: "archives",
@@ -202,8 +211,9 @@ describe("S3 artifact verification", () => {
                 workmeshsnapshotdigest: `sha256:${"b".repeat(64)}`,
                 workmeshfixedcutoffat: "2026-07-02T00:00:00.000Z",
               },
+              LastModified: lastModified,
               ObjectLockMode: "COMPLIANCE",
-              ObjectLockRetainUntilDate: new Date("2027-08-01T00:00:00.000Z"),
+              ObjectLockRetainUntilDate: actualRetainUntil,
             };
           },
         } as never,
@@ -224,7 +234,12 @@ describe("S3 artifact verification", () => {
           },
           content,
         ),
-      ).resolves.toEqual({ versionId: "stable-version" });
+      ).resolves.toEqual({
+        status: "present",
+        versionId: "stable-version",
+        lastModified,
+        retainUntil: actualRetainUntil,
+      });
       expect(puts).toBe(1);
     },
   );
@@ -235,6 +250,8 @@ describe("S3 artifact verification", () => {
     const checksumBase64 = Buffer.from(checksum.slice(7), "hex").toString(
       "base64",
     );
+    const lastModified = new Date("2026-07-03T00:00:00.000Z");
+    const actualRetainUntil = new Date("2027-08-01T00:00:00.000Z");
     let puts = 0;
     let heads = 0;
     const putKeys: unknown[] = [];
@@ -272,8 +289,9 @@ describe("S3 artifact verification", () => {
               workmeshsnapshotdigest: `sha256:${"c".repeat(64)}`,
               workmeshfixedcutoffat: "2026-07-03T00:00:00.000Z",
             },
+            LastModified: lastModified,
             ObjectLockMode: "COMPLIANCE",
-            ObjectLockRetainUntilDate: new Date("2027-08-01T00:00:00.000Z"),
+            ObjectLockRetainUntilDate: actualRetainUntil,
           };
         },
       } as never,
@@ -290,9 +308,14 @@ describe("S3 artifact verification", () => {
         fixedCutoffAt: "2026-07-03T00:00:00.000Z",
       },
     };
-    await expect(storage.putObjectIfAbsent(expectation, content)).resolves.toEqual(
-      { versionId: "retry-version" },
-    );
+    await expect(
+      storage.putObjectIfAbsent(expectation, content),
+    ).resolves.toEqual({
+      status: "present",
+      versionId: "retry-version",
+      lastModified,
+      retainUntil: actualRetainUntil,
+    });
     expect(puts).toBe(2);
     expect(new Set(putKeys)).toEqual(new Set([expectation.key]));
 
@@ -472,5 +495,278 @@ describe("S3 artifact verification", () => {
     });
     await expect(unlocked.probeRetentionProtection())
       .rejects.toThrow("RETENTION_OBJECT_LOCK_REQUIRED");
+  });
+
+  it("extends only one exact COMPLIANCE version and reconciles response loss with a pinned HEAD", async () => {
+    const content = Buffer.from("retention extension");
+    const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
+    const checksumHeader = Buffer.from(checksum.slice(7), "hex").toString(
+      "base64",
+    );
+    const lastModified = new Date("2026-07-10T00:00:00.000Z");
+    const shortRetainUntil = new Date("2027-07-10T00:04:00.000Z");
+    const targetRetainUntil = new Date("2027-07-10T00:05:00.000Z");
+    let actualRetainUntil = shortRetainUntil;
+    let retentionPuts = 0;
+    const commands: Array<{
+      name: string;
+      input: Record<string, unknown>;
+    }> = [];
+    const expectation = {
+      key: "retention/extend.ndjson.gz",
+      versionId: "exact-version",
+      checksum,
+      sizeBytes: content.length,
+      mimeType: "application/gzip",
+      retainUntil: targetRetainUntil,
+      archiveIdentity: {
+        segmentId: "extend-segment",
+        snapshotDigest: `sha256:${"d".repeat(64)}`,
+        fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+      },
+    };
+    const storage = new S3ArtifactStorage({
+      bucket: "archives",
+      config: {
+        region: "us-east-1",
+        credentials: { accessKeyId: "test", secretAccessKey: "test" },
+      },
+      client: {
+        send: async (command: {
+          constructor: { name: string };
+          input: Record<string, unknown>;
+        }) => {
+          commands.push({ name: command.constructor.name, input: command.input });
+          if (command.constructor.name === "PutObjectRetentionCommand") {
+            retentionPuts += 1;
+            actualRetainUntil = targetRetainUntil;
+            throw new Error("response lost after retention was extended");
+          }
+          return {
+            VersionId: "exact-version",
+            LastModified: lastModified,
+            ContentLength: content.length,
+            ContentType: "application/gzip",
+            ChecksumSHA256: checksumHeader,
+            Metadata: {
+              workmeshchecksum: checksum,
+              workmeshsegmentid: "extend-segment",
+              workmeshsnapshotdigest: `sha256:${"d".repeat(64)}`,
+              workmeshfixedcutoffat: "2026-07-01T00:00:00.000Z",
+            },
+            ObjectLockMode: "COMPLIANCE",
+            ObjectLockRetainUntilDate: actualRetainUntil,
+          };
+        },
+      } as never,
+    });
+
+    await expect(
+      storage.extendRetention(expectation, targetRetainUntil),
+    ).resolves.toEqual({
+      status: "present",
+      versionId: "exact-version",
+      lastModified,
+      retainUntil: targetRetainUntil,
+    });
+    expect(commands).toHaveLength(3);
+    expect(commands[1]).toEqual({
+      name: "PutObjectRetentionCommand",
+      input: {
+        Bucket: "archives",
+        Key: expectation.key,
+        VersionId: "exact-version",
+        Retention: {
+          Mode: "COMPLIANCE",
+          RetainUntilDate: targetRetainUntil,
+        },
+      },
+    });
+    expect(
+      commands
+        .filter(({ name }) => name === "HeadObjectCommand")
+        .every(({ input }) => input.VersionId === "exact-version"),
+    ).toBe(true);
+
+    await expect(
+      storage.extendRetention(expectation, targetRetainUntil),
+    ).resolves.toMatchObject({ retainUntil: targetRetainUntil });
+    expect(retentionPuts).toBe(1);
+  });
+
+  it("never shortens an already longer exact-version retention horizon", async () => {
+    const content = Buffer.from("long retention");
+    const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
+    const longerRetainUntil = new Date("2028-07-10T00:00:00.000Z");
+    let retentionPuts = 0;
+    const storage = new S3ArtifactStorage({
+      bucket: "archives",
+      config: {
+        region: "us-east-1",
+        credentials: { accessKeyId: "test", secretAccessKey: "test" },
+      },
+      client: {
+        send: async (command: { constructor: { name: string } }) => {
+          if (command.constructor.name === "PutObjectRetentionCommand")
+            retentionPuts += 1;
+          return {
+            VersionId: "long-version",
+            LastModified: new Date("2026-07-10T00:00:00.000Z"),
+            ContentLength: content.length,
+            ContentType: "application/gzip",
+            ChecksumSHA256: Buffer.from(checksum.slice(7), "hex").toString(
+              "base64",
+            ),
+            Metadata: {
+              workmeshchecksum: checksum,
+              workmeshsegmentid: "long-segment",
+              workmeshsnapshotdigest: `sha256:${"e".repeat(64)}`,
+              workmeshfixedcutoffat: "2026-07-01T00:00:00.000Z",
+            },
+            ObjectLockMode: "COMPLIANCE",
+            ObjectLockRetainUntilDate: longerRetainUntil,
+          };
+        },
+      } as never,
+    });
+    await expect(
+      storage.extendRetention(
+        {
+          key: "retention/long.ndjson.gz",
+          versionId: "long-version",
+          checksum,
+          sizeBytes: content.length,
+          mimeType: "application/gzip",
+          retainUntil: new Date("2027-07-10T00:00:00.000Z"),
+          archiveIdentity: {
+            segmentId: "long-segment",
+            snapshotDigest: `sha256:${"e".repeat(64)}`,
+            fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+          },
+        },
+        new Date("2027-07-10T00:00:00.000Z"),
+      ),
+    ).resolves.toMatchObject({ retainUntil: longerRetainUntil });
+    expect(retentionPuts).toBe(0);
+  });
+
+  it.each([
+    [
+      "403",
+      Object.assign(new Error("AccessDenied"), {
+        $metadata: { httpStatusCode: 403 },
+      }),
+    ],
+    [
+      "404",
+      Object.assign(new Error("NoSuchVersion"), {
+        $metadata: { httpStatusCode: 404 },
+      }),
+    ],
+    [
+      "5xx",
+      Object.assign(new Error("InternalError"), {
+        $metadata: { httpStatusCode: 503 },
+      }),
+    ],
+    ["network", new Error("connection reset")],
+  ])(
+    "fails closed when exact-version retention extension returns %s",
+    async (_scenario, putError) => {
+      const content = Buffer.from("failed extension");
+      const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;
+      const targetRetainUntil = new Date("2027-07-10T00:05:00.000Z");
+      const storage = new S3ArtifactStorage({
+        bucket: "archives",
+        config: {
+          region: "us-east-1",
+          credentials: { accessKeyId: "test", secretAccessKey: "test" },
+        },
+        client: {
+          send: async (command: { constructor: { name: string } }) => {
+            if (command.constructor.name === "PutObjectRetentionCommand")
+              throw putError;
+            return {
+              VersionId: "failed-version",
+              LastModified: new Date("2026-07-10T00:00:00.000Z"),
+              ContentLength: content.length,
+              ContentType: "application/gzip",
+              ChecksumSHA256: Buffer.from(
+                checksum.slice(7),
+                "hex",
+              ).toString("base64"),
+              Metadata: {
+                workmeshchecksum: checksum,
+                workmeshsegmentid: "failed-segment",
+                workmeshsnapshotdigest: `sha256:${"f".repeat(64)}`,
+                workmeshfixedcutoffat: "2026-07-01T00:00:00.000Z",
+              },
+              ObjectLockMode: "COMPLIANCE",
+              ObjectLockRetainUntilDate: new Date(
+                "2027-07-10T00:04:00.000Z",
+              ),
+            };
+          },
+        } as never,
+      });
+      await expect(
+        storage.extendRetention(
+          {
+            key: "retention/failed.ndjson.gz",
+            versionId: "failed-version",
+            checksum,
+            sizeBytes: content.length,
+            mimeType: "application/gzip",
+            retainUntil: targetRetainUntil,
+            archiveIdentity: {
+              segmentId: "failed-segment",
+              snapshotDigest: `sha256:${"f".repeat(64)}`,
+              fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+            },
+          },
+          targetRetainUntil,
+        ),
+      ).rejects.toBe(putError);
+    },
+  );
+
+  it("fails closed before retention mutation when the exact version is missing", async () => {
+    let retentionPuts = 0;
+    const missing = Object.assign(new Error("NoSuchVersion"), {
+      $metadata: { httpStatusCode: 404 },
+    });
+    const storage = new S3ArtifactStorage({
+      bucket: "archives",
+      config: {
+        region: "us-east-1",
+        credentials: { accessKeyId: "test", secretAccessKey: "test" },
+      },
+      client: {
+        send: async (command: { constructor: { name: string } }) => {
+          if (command.constructor.name === "PutObjectRetentionCommand")
+            retentionPuts += 1;
+          throw missing;
+        },
+      } as never,
+    });
+    await expect(
+      storage.extendRetention(
+        {
+          key: "retention/missing.ndjson.gz",
+          versionId: "missing-version",
+          checksum: `sha256:${"0".repeat(64)}`,
+          sizeBytes: 1,
+          mimeType: "application/gzip",
+          retainUntil: new Date("2027-07-10T00:05:00.000Z"),
+          archiveIdentity: {
+            segmentId: "missing-segment",
+            snapshotDigest: `sha256:${"1".repeat(64)}`,
+            fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+          },
+        },
+        new Date("2027-07-10T00:05:00.000Z"),
+      ),
+    ).rejects.toBe(missing);
+    expect(retentionPuts).toBe(0);
   });
 });
