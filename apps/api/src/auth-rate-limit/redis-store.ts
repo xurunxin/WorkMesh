@@ -10,6 +10,7 @@ export interface AuthRateLimitStore {
     value: string,
     options: { NX: true; EX: number },
   ): Promise<string | null>;
+  ping?(): Promise<string>;
   close(): Promise<void>;
 }
 
@@ -73,6 +74,11 @@ export class RedisAuthRateLimitStore implements AuthRateLimitStore {
   ): Promise<string | null> {
     await this.#ready();
     return this.#within(this.#client.set(key, value, options));
+  }
+
+  async ping(): Promise<string> {
+    await this.#ready();
+    return this.#within(this.#client.ping());
   }
 
   async close(): Promise<void> {

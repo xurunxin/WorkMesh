@@ -8,6 +8,36 @@ servers:
 security:
   - SessionCookie: []
 paths:
+  /livez:
+    get:
+      x-workmesh-policy-id: route.live
+      x-workmesh-actor-kinds: []
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: []
+      operationId: live
+      responses:
+        "200":
+          description: API process is alive.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+  /readyz:
+    get:
+      x-workmesh-policy-id: route.ready
+      x-workmesh-actor-kinds: []
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: []
+      operationId: ready
+      responses:
+        "200":
+          description: API is accepting traffic and its required PostgreSQL and Redis dependencies are reachable.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+        "503":
+          description: API is draining or a required dependency is unavailable.
   /health:
     get:
       {

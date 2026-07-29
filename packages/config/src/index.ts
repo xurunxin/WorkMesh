@@ -165,6 +165,8 @@ export type RetentionConfig = Readonly<{
   batchSize: number
   leaseSeconds: number
   intervalSeconds: number
+  ioTimeoutSeconds: number
+  progressStaleSeconds: number
   cleanupEnabled: boolean
   archiveEnabled: boolean
   eventPruneEnabled: boolean
@@ -180,6 +182,8 @@ const retentionEnvironmentSchema = z.object({
   WORKMESH_RETENTION_BATCH_SIZE: boundedInt(1, 1000, 100),
   WORKMESH_RETENTION_LEASE_SECONDS: boundedInt(15, 3600, 120),
   WORKMESH_RETENTION_INTERVAL_SECONDS: boundedInt(60, 86_400, 3600),
+  WORKMESH_RETENTION_IO_TIMEOUT_SECONDS: boundedInt(5, 3600, 300),
+  WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: boundedInt(60, 604_800, 7200),
   WORKMESH_RETENTION_CLEANUP_ENABLED: z.enum(['true', 'false']).default('false'),
   WORKMESH_RETENTION_ARCHIVE_ENABLED: z.enum(['true', 'false']).default('true'),
   WORKMESH_EVENT_PRUNE_ENABLED: z.enum(['true', 'false']).default('false'),
@@ -200,6 +204,8 @@ export const loadRetentionConfig = (
     batchSize: value.WORKMESH_RETENTION_BATCH_SIZE,
     leaseSeconds: value.WORKMESH_RETENTION_LEASE_SECONDS,
     intervalSeconds: value.WORKMESH_RETENTION_INTERVAL_SECONDS,
+    ioTimeoutSeconds: value.WORKMESH_RETENTION_IO_TIMEOUT_SECONDS,
+    progressStaleSeconds: value.WORKMESH_RETENTION_PROGRESS_STALE_SECONDS,
     cleanupEnabled: value.WORKMESH_RETENTION_CLEANUP_ENABLED === 'true',
     archiveEnabled: value.WORKMESH_RETENTION_ARCHIVE_ENABLED === 'true',
     eventPruneEnabled: value.WORKMESH_EVENT_PRUNE_ENABLED === 'true',

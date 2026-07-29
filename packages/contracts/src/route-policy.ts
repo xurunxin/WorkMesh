@@ -92,6 +92,8 @@ export type RoutePolicyFeatureResolver = (
 ) => Readonly<{ key: string; tier: RoutePolicyFeatureTier }> | undefined
 
 const publicOperations = new Set([
+  'live',
+  'ready',
   'health',
   'getServerInfo',
   'getInstallStatus',

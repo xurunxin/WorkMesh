@@ -2,6 +2,16 @@
 export const routeOperationBindings = [
   {
     "method": "GET",
+    "path": "/livez",
+    "operationId": "live"
+  },
+  {
+    "method": "GET",
+    "path": "/readyz",
+    "operationId": "ready"
+  },
+  {
+    "method": "GET",
     "path": "/health",
     "operationId": "health"
   },

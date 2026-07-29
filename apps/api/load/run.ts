@@ -20,6 +20,23 @@ import {
   withDeadline,
   type SseConnection,
 } from "./sse.js";
+import { waitForHostApiReadiness } from "./readiness.js";
+import {
+  buildFailedPhaseCEvidence,
+  cleanupAfterPhaseCFailure,
+  evaluateHarnessOutcome,
+  isFormalAcceptanceEligible,
+  parsePhaseCEvidenceWaiver,
+  PHASE_C_EVIDENCE_WAIVER_FLAG,
+  type EvidenceContinuationCleanup,
+} from "./evidence-continuation.js";
+import {
+  collectWorkerEventEvidence,
+  evaluateWorkerContinuity,
+  sanitizeWorkerLogs,
+  type WorkerContainerEventEvidence,
+  type WorkerContainerState,
+} from "./worker-evidence.js";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(
@@ -56,7 +73,21 @@ type HarnessReport = {
   phases: Record<string, PhaseReport>;
   postgres: Record<string, unknown>;
   dockerStats: Record<string, unknown>;
+  workerEvidence: Record<string, unknown>;
   nonCapacity5xx: number;
+  evidenceContinuation: {
+    flag: string;
+    requested: boolean;
+    used: boolean;
+    acceptanceEligible: boolean;
+    status:
+      | "not_requested"
+      | "armed_evidence_only"
+      | "continued_after_phase_c_failure";
+    phase?: "C-backpressure";
+    originalError?: string;
+    cleanup?: EvidenceContinuationCleanup;
+  };
   passed: boolean;
   failure?: string;
 };
@@ -135,6 +166,10 @@ const positiveInteger = (name: string, fallback: number): number => {
 };
 
 const diagnostic = process.argv.includes("--diagnostic");
+const phaseCEvidenceWaiverRequested = parsePhaseCEvidenceWaiver(
+  process.argv.slice(2),
+  diagnostic,
+);
 const parameters: Parameters = diagnostic
   ? {
       clients: positiveInteger("clients", 20),
@@ -325,11 +360,13 @@ const formalPlatform =
   os.cpus().length >= 4 &&
   totalMemoryGiB >= 8 &&
   (nofile ?? 0) >= 8_192;
+const reportMode = diagnostic ? "diagnostic" : "formal";
+const reportFormal = !diagnostic && formalPlatform;
 
 const report: HarnessReport = {
   version: 1,
-  mode: diagnostic ? "diagnostic" : "formal",
-  formal: !diagnostic && formalPlatform,
+  mode: reportMode,
+  formal: reportFormal,
   startedAt: new Date().toISOString(),
   gitSha,
   seed,
@@ -351,7 +388,21 @@ const report: HarnessReport = {
   phases: {},
   postgres: {},
   dockerStats: {},
+  workerEvidence: {},
   nonCapacity5xx: 0,
+  evidenceContinuation: {
+    flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+    requested: phaseCEvidenceWaiverRequested,
+    used: false,
+    acceptanceEligible: isFormalAcceptanceEligible({
+      mode: reportMode,
+      formal: reportFormal,
+      evidenceWaiverRequested: phaseCEvidenceWaiverRequested,
+    }),
+    status: phaseCEvidenceWaiverRequested
+      ? "armed_evidence_only"
+      : "not_requested",
+  },
   passed: false,
 };
 
@@ -639,6 +690,129 @@ const dockerStats = async (): Promise<unknown> => {
         return { raw: line };
       }
     });
+};
+
+const workerInspectFormat =
+  '{"id":{{json .Id}},"name":{{json .Name}},"status":{{json .State.Status}},' +
+  '"running":{{json .State.Running}},"restartCount":{{json .RestartCount}},' +
+  '"oomKilled":{{json .State.OOMKilled}},"exitCode":{{json .State.ExitCode}},' +
+  '"startedAt":{{json .State.StartedAt}},"finishedAt":{{json .State.FinishedAt}}}';
+
+const inspectWorkerContainer = async (
+  containerId: string,
+): Promise<WorkerContainerState> => {
+  const result = await execFileAsync(
+    "docker",
+    ["inspect", "--format", workerInspectFormat, containerId],
+    {
+      cwd: root,
+      maxBuffer: 64 * 1024,
+      windowsHide: true,
+      timeout: parameters.composeTimeoutMs,
+    },
+  );
+  const state = JSON.parse(result.stdout.trim()) as Omit<
+    WorkerContainerState,
+    "capturedAt"
+  >;
+  return { capturedAt: new Date().toISOString(), ...state };
+};
+
+const workerContainerEvents = async (
+  containerId: string,
+  since: string,
+  until: string,
+): Promise<WorkerContainerEventEvidence> => {
+  const result = await execFileAsync(
+    "docker",
+    [
+      "events",
+      "--since",
+      since,
+      "--until",
+      until,
+      "--filter",
+      "type=container",
+      "--filter",
+      `container=${containerId}`,
+      "--format",
+      "{{json .}}",
+    ],
+    {
+      cwd: root,
+      maxBuffer: 1024 * 1024,
+      windowsHide: true,
+      timeout: parameters.composeTimeoutMs,
+    },
+  );
+  return collectWorkerEventEvidence(result.stdout, 100);
+};
+
+const workerLogEvidence = async (
+  containerId: string,
+): Promise<ReturnType<typeof sanitizeWorkerLogs>> => {
+  const result = await execFileAsync(
+    "docker",
+    ["logs", "--timestamps", "--tail", "200", containerId],
+    {
+      cwd: root,
+      maxBuffer: 512 * 1024,
+      windowsHide: true,
+      timeout: parameters.composeTimeoutMs,
+    },
+  );
+  return sanitizeWorkerLogs(`${result.stdout}\n${result.stderr}`, 100);
+};
+
+const outboxStatusSummary = async (): Promise<unknown[]> => {
+  const result = await pool.query<{
+    status: string;
+    count: string;
+    minimum_attempts: string;
+    maximum_attempts: string;
+  }>(
+    `SELECT status::text,
+            count(*)::text AS count,
+            min(attempt_count)::text AS minimum_attempts,
+            max(attempt_count)::text AS maximum_attempts
+     FROM outbox_events
+     GROUP BY status
+     ORDER BY status`,
+  );
+  return result.rows;
+};
+
+type WorkerSampler = {
+  samples: WorkerContainerState[];
+  samplingErrors: () => number;
+  stop: () => Promise<void>;
+};
+
+const startWorkerSampler = (
+  containerId: string,
+  intervalMs = 1_000,
+): WorkerSampler => {
+  const samples: WorkerContainerState[] = [];
+  let errors = 0;
+  let stopped = false;
+  const done = (async () => {
+    while (!stopped) {
+      try {
+        samples.push(await inspectWorkerContainer(containerId));
+      } catch {
+        errors += 1;
+      }
+      if (!stopped) await sleep(intervalMs);
+    }
+  })();
+  return {
+    samples,
+    samplingErrors: () => errors,
+    stop: async () => {
+      stopped = true;
+      await done;
+    },
+  };
 };
 
 const composeImages = async (): Promise<unknown> => {
@@ -1017,6 +1191,12 @@ const reportMarkdown = (value: HarnessReport): string => {
     "",
     `- Result: **${value.passed ? "PASS" : "FAIL"}**`,
     `- Mode: **${value.mode}${value.formal ? " (formal)" : " (nonformal)"}**`,
+    `- Evidence-only Phase C waiver: **${
+      value.evidenceContinuation.requested ? "REQUESTED" : "not requested"
+    }**`,
+    `- Acceptance eligible: **${
+      value.evidenceContinuation.acceptanceEligible ? "yes" : "NO"
+    }**`,
     `- Git SHA: \`${value.gitSha}\``,
     `- Seed: \`${value.seed}\``,
     `- Started: ${value.startedAt}`,
@@ -1055,6 +1235,7 @@ const reportMarkdown = (value: HarnessReport): string => {
     JSON.stringify(
       {
         parameters: value.parameters,
+        evidenceContinuation: value.evidenceContinuation,
         platform: value.platform,
         phases: Object.fromEntries(
           Object.entries(value.phases).map(([name, result]) => [
@@ -1064,6 +1245,7 @@ const reportMarkdown = (value: HarnessReport): string => {
         ),
         postgres: value.postgres,
         dockerStats: value.dockerStats,
+        workerEvidence: value.workerEvidence,
         nonCapacity5xx: value.nonCapacity5xx,
         failure: value.failure,
       },
@@ -1099,6 +1281,62 @@ let poolCreated = false;
 let composeAttempted = false;
 let clients: Client[] = [];
 let rawSocket: net.Socket | undefined;
+let workerContainerId: string | undefined;
+let activeWorkerSampler: WorkerSampler | undefined;
+let workerContinuityBaseline: WorkerContainerState | undefined;
+let workerContinuitySamples: WorkerContainerState[] = [];
+let workerContinuitySamplingErrors = 0;
+let workerLifecycleEvidenceSince: string | undefined;
+
+const captureFinalWorkerEvidence = async (): Promise<
+  Record<string, unknown>
+> => {
+  const evidence: Record<string, unknown> = {
+    capturedAt: new Date().toISOString(),
+  };
+  let containerId = workerContainerId;
+  if (!containerId) {
+    try {
+      containerId = (await compose("ps", "-a", "-q", "worker"))
+        .split(/\r?\n/)
+        .find(Boolean);
+    } catch {
+      evidence.containerLookupFailed = true;
+    }
+  }
+  if (containerId) {
+    evidence.containerId = containerId;
+    try {
+      evidence.inspect = await inspectWorkerContainer(containerId);
+    } catch {
+      evidence.inspectCaptureFailed = true;
+    }
+    try {
+      evidence.logs = await workerLogEvidence(containerId);
+    } catch {
+      evidence.logCaptureFailed = true;
+    }
+    try {
+      evidence.events = await workerContainerEvents(
+        containerId,
+        workerLifecycleEvidenceSince ?? report.startedAt,
+        new Date().toISOString(),
+      );
+    } catch {
+      evidence.eventCaptureFailed = true;
+    }
+  } else {
+    evidence.containerMissing = true;
+  }
+  if (poolCreated) {
+    try {
+      evidence.outbox = await outboxStatusSummary();
+    } catch {
+      evidence.outboxCaptureFailed = true;
+    }
+  }
+  return evidence;
+};
 
 try {
   if (!diagnostic && !formalPlatform)
@@ -1119,6 +1357,30 @@ try {
     "api_a",
     "api_b",
   );
+  workerContainerId = (await compose("ps", "-q", "worker"))
+    .split(/\r?\n/)
+    .find(Boolean);
+  if (!workerContainerId) throw new Error("WORKER_CONTAINER_MISSING");
+  const readinessStarted = performance.now();
+  const apiReadiness = [];
+  for (const [name, endpoint] of [
+    ["api-a", apiA],
+    ["api-b", apiB],
+  ] as const) {
+    const remainingMs = Math.max(
+      1,
+      parameters.composeTimeoutMs - (performance.now() - readinessStarted),
+    );
+    apiReadiness.push(
+      await waitForHostApiReadiness({
+        endpoint,
+        context: `${activePhase}:${name}-host`,
+        timeoutMs: remainingMs,
+        attemptTimeoutMs: Math.min(parameters.requestTimeoutMs, 2_000),
+      }),
+    );
+  }
+  report.platform.apiReadiness = apiReadiness;
   await compose(
     "exec",
     "-T",
@@ -1289,7 +1551,7 @@ try {
     };
   });
 
-  await phase("C-backpressure", async (assert, metrics) => {
+  const phaseCResult = phase("C-backpressure", async (assert, metrics) => {
     await Promise.all(clients.slice(1).map((client) => client.close()));
     const cursor = await highWater();
     const rssBefore = await containerRssBytes("api_a");
@@ -1420,6 +1682,46 @@ try {
       slotReuseMs: reuseMs,
     };
   });
+  try {
+    await phaseCResult;
+  } catch (error) {
+    if (!phaseCEvidenceWaiverRequested) throw error;
+    const originalError = errorText(error);
+    const cleanup = await cleanupAfterPhaseCFailure({ rawSocket, clients });
+    rawSocket = undefined;
+    const phaseC = report.phases["C-backpressure"];
+    if (!phaseC) throw new Error("PHASE_C_REPORT_MISSING_AFTER_FAILURE");
+    phaseC.metrics.evidenceContinuation = buildFailedPhaseCEvidence({
+      originalError,
+      cleanup,
+    });
+    phaseC.assertions.push({
+      name: "Phase C completed for acceptance",
+      passed: false,
+      expected: "Phase C must pass without an evidence-only waiver",
+      actual: {
+        status: "failed_incomplete_evidence_only",
+        flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+        originalError,
+      },
+    });
+    report.evidenceContinuation = {
+      flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+      requested: true,
+      used: true,
+      acceptanceEligible: false,
+      status: "continued_after_phase_c_failure",
+      phase: "C-backpressure",
+      originalError,
+      cleanup,
+    };
+    if (cleanup.failures.length > 0)
+      throw new Error(
+        `PHASE_C_EVIDENCE_CONTINUATION_CLEANUP_FAILED:${JSON.stringify(
+          cleanup.failures,
+        )}`,
+      );
+  }
 
   await clients[0]!.close();
   const phaseDCursor = await highWater();
@@ -1436,6 +1738,17 @@ try {
   await openClients(clients, parameters.rampPerSecond * 2);
 
   await phase("D-redis-and-instance-recovery", async (assert, metrics) => {
+    const workerBaseline = await inspectWorkerContainer(workerContainerId!);
+    const workerEvidenceSince = workerBaseline.capturedAt;
+    workerContinuityBaseline = workerBaseline;
+    workerLifecycleEvidenceSince = workerEvidenceSince;
+    const workerSampler = startWorkerSampler(workerContainerId!);
+    activeWorkerSampler = workerSampler;
+    metrics.workerContinuity = {
+      status: "sampling",
+      baseline: workerBaseline,
+      samples: workerSampler.samples,
+    };
     await compose("stop", "redis");
     await resetPgStats();
     const outageItems = await createItems(
@@ -1486,6 +1799,11 @@ try {
       ">= 2 API clients with cmd=xread",
       redisWakeClients,
     );
+    const outageOutbox = await waitForOutboxDelivery(
+      outageEvents.eventIds,
+      parameters.redisOutageSeconds * 1_000 + 180_000,
+    );
+    metrics.outageOutbox = outageOutbox;
     await resetPgStats();
     const recoveryStarted = performance.now();
     const recoveryItems = await createItems(
@@ -1498,6 +1816,10 @@ try {
       recoveryItems.map((item) => item.id),
     );
     await waitForCursor(clients, recoveryEvents.target, 15_000);
+    const recoveryOutbox = await waitForOutboxDelivery(
+      recoveryEvents.eventIds,
+      60_000,
+    );
     const recoveryLatencyMs = performance.now() - recoveryStarted;
     const recoveryCoordinatorQueries = await coordinatorQueries();
     metrics.redisRecovery = {
@@ -1505,6 +1827,7 @@ try {
       events: recoveryEvents.cursors.length,
       target: recoveryEvents.target,
       coordinatorQueries: recoveryCoordinatorQueries,
+      outbox: recoveryOutbox,
     };
     const duplicatesBeforeFailover = sum(
       clients,
@@ -1567,6 +1890,29 @@ try {
       (client) => client.tracker.duplicates,
     );
     const excessDuplicates = duplicatesAfterFailover - duplicatesBeforeFailover;
+    const workerAfter = await inspectWorkerContainer(workerContainerId!);
+    await workerSampler.stop();
+    activeWorkerSampler = undefined;
+    workerContinuitySamples = [...workerSampler.samples, workerAfter];
+    workerContinuitySamplingErrors = workerSampler.samplingErrors();
+    const workerEventEvidence = await workerContainerEvents(
+      workerContainerId!,
+      workerEvidenceSince,
+      new Date().toISOString(),
+    );
+    const workerContinuity = evaluateWorkerContinuity({
+      baseline: workerBaseline,
+      samples: workerContinuitySamples,
+      events: workerEventEvidence.events,
+      samplingErrors: workerContinuitySamplingErrors,
+    });
+    metrics.workerContinuity = {
+      baseline: workerBaseline,
+      samples: workerSampler.samples,
+      after: workerAfter,
+      eventEvidence: workerEventEvidence,
+      summary: workerContinuity,
+    };
     assert(
       "Redis fallback missing events",
       outageMissing === 0,
@@ -1584,6 +1930,63 @@ try {
       pgCalls <= pgCallLimit,
       `<= ${pgCallLimit}`,
       { pgCalls, pgCallLimit, pg },
+    );
+    assert(
+      "outage events naturally drain from durable outbox",
+      outageOutbox.delivered === outageEvents.eventIds.length &&
+        outageOutbox.total === outageEvents.eventIds.length &&
+        outageOutbox.statuses.every(
+          (status) =>
+            typeof status === "object" &&
+            status !== null &&
+            (status as { status?: unknown }).status === "delivered",
+        ),
+      "all outage rows delivered; no pending/delivering/dead rows",
+      outageOutbox,
+    );
+    assert(
+      "post-recovery event delivered through Redis",
+      recoveryOutbox.delivered === recoveryEvents.eventIds.length &&
+        recoveryOutbox.total === recoveryEvents.eventIds.length &&
+        recoveryOutbox.statuses.every(
+          (status) =>
+            typeof status === "object" &&
+            status !== null &&
+            (status as { status?: unknown }).status === "delivered",
+        ),
+      "all post-recovery rows delivered",
+      recoveryOutbox,
+    );
+    assert(
+      "Worker container identity stable",
+      workerContinuity.sameContainer,
+      `container ${workerBaseline.id} throughout`,
+      workerContinuity,
+    );
+    assert(
+      "Worker running throughout Redis outage",
+      workerContinuity.runningThroughout &&
+        workerContinuity.samplingErrors === 0,
+      "all samples running with zero sampling errors",
+      workerContinuity,
+    );
+    assert(
+      "Worker restart count remains zero",
+      workerContinuity.restartCountZero,
+      "restartCount=0 in every sample",
+      workerContinuity,
+    );
+    assert(
+      "Worker has no OOM or lifecycle restart event",
+      workerContinuity.noOom && workerContinuity.noForbiddenEvents,
+      "OOMKilled=false and no forbidden lifecycle event",
+      workerContinuity,
+    );
+    assert(
+      "Worker lifecycle evidence parses completely",
+      workerEventEvidence.invalidEventCount === 0,
+      "zero invalid non-empty Docker event lines",
+      workerEventEvidence,
     );
     assert(
       "same-endpoint Redis recovery",
@@ -1612,8 +2015,11 @@ try {
       coordinatorQueries: pg,
       redisHealth,
       redisWakeClients,
+      outageOutbox,
       redisRecoveryLatencyMs: recoveryLatencyMs,
       redisRecoveryCoordinatorQueries: recoveryCoordinatorQueries,
+      recoveryOutbox,
+      workerContinuity,
       reconnectToBLatencyMs: quantiles(failoverLatency),
       finalMissing,
       excessDuplicates,
@@ -1625,14 +2031,23 @@ try {
 
   report.postgres = await databaseStats();
   report.dockerStats.final = await dockerStats();
-  report.passed =
-    Object.values(report.phases).every(
+  const outcome = evaluateHarnessOutcome({
+    allPhasesPassed: Object.values(report.phases).every(
       (result) =>
         !result.error &&
         result.assertions.every((assertion) => assertion.passed),
-    ) && nonCapacity5xx === 0;
+    ),
+    nonCapacity5xx,
+    evidenceWaiverRequested: phaseCEvidenceWaiverRequested,
+    evidenceFailure: report.evidenceContinuation.originalError,
+  });
+  report.passed = outcome.passed;
+  report.failure = outcome.failure;
+  if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
 } catch (error) {
-  report.failure = errorText(error);
+  report.failure = [report.failure, errorText(error)]
+    .filter(Boolean)
+    .join("; ");
   report.passed = false;
   process.exitCode = 1;
   if (composeAttempted) {
@@ -1647,7 +2062,6 @@ try {
         "api_a",
         "api_b",
         "redis",
-        "worker",
       );
     } catch (evidenceError) {
       report.postgres.evidenceError = errorText(evidenceError);
@@ -1658,6 +2072,91 @@ try {
   await Promise.all(
     clients.map((client) => client.close().catch(() => undefined)),
   );
+  if (activeWorkerSampler) {
+    const interruptedSampler = activeWorkerSampler;
+    await interruptedSampler.stop().catch(() => undefined);
+    workerContinuitySamples = interruptedSampler.samples;
+    workerContinuitySamplingErrors = interruptedSampler.samplingErrors();
+    report.workerEvidence.interruptedPhaseDSampling = {
+      samples: workerContinuitySamples,
+      samplingErrors: workerContinuitySamplingErrors,
+    };
+    activeWorkerSampler = undefined;
+  }
+  if (composeAttempted) {
+    try {
+      const finalEvidence = await captureFinalWorkerEvidence();
+      report.workerEvidence.final = finalEvidence;
+      const finalState = finalEvidence.inspect as
+        WorkerContainerState | undefined;
+      const finalEventEvidence = finalEvidence.events as
+        WorkerContainerEventEvidence | undefined;
+      const finalEvents = Array.isArray(finalEventEvidence?.events)
+        ? finalEventEvidence.events
+        : undefined;
+      const finalInvalidEventCandidate = finalEventEvidence?.invalidEventCount;
+      const finalInvalidEventCount =
+        typeof finalInvalidEventCandidate === "number" &&
+        Number.isInteger(finalInvalidEventCandidate) &&
+        finalInvalidEventCandidate >= 0
+          ? finalInvalidEventCandidate
+          : undefined;
+      let finalEvidenceIncomplete = [
+        "containerLookupFailed",
+        "containerMissing",
+        "inspectCaptureFailed",
+        "logCaptureFailed",
+        "eventCaptureFailed",
+        "outboxCaptureFailed",
+      ].some((field) => finalEvidence[field] === true);
+      finalEvidenceIncomplete =
+        finalEvidenceIncomplete ||
+        finalInvalidEventCount === undefined ||
+        finalInvalidEventCount > 0;
+      if (workerContinuityBaseline && finalState && finalEvents) {
+        const finalContinuity = evaluateWorkerContinuity({
+          baseline: workerContinuityBaseline,
+          samples: [...workerContinuitySamples, finalState],
+          events: finalEvents,
+          samplingErrors: workerContinuitySamplingErrors,
+        });
+        finalEvidence.continuity = finalContinuity;
+        if (
+          !finalContinuity.sameContainer ||
+          !finalContinuity.runningThroughout ||
+          !finalContinuity.restartCountZero ||
+          !finalContinuity.noOom ||
+          !finalContinuity.noForbiddenEvents ||
+          finalContinuity.samplingErrors !== 0
+        ) {
+          report.failure = [
+            report.failure,
+            "WORKER_CONTINUITY_FAILED_BEFORE_TEARDOWN",
+          ]
+            .filter(Boolean)
+            .join("; ");
+          report.passed = false;
+          process.exitCode = 1;
+        }
+      } else if (workerContinuityBaseline) {
+        finalEvidenceIncomplete = true;
+      }
+      if (finalEvidenceIncomplete) {
+        report.failure = [report.failure, "WORKER_FINAL_EVIDENCE_INCOMPLETE"]
+          .filter(Boolean)
+          .join("; ");
+        report.passed = false;
+        process.exitCode = 1;
+      }
+    } catch {
+      report.workerEvidence.finalCaptureFailed = true;
+      report.failure = [report.failure, "WORKER_FINAL_EVIDENCE_CAPTURE_FAILED"]
+        .filter(Boolean)
+        .join("; ");
+      report.passed = false;
+      process.exitCode = 1;
+    }
+  }
   if (poolCreated) await pool.end().catch(() => undefined);
   try {
     if (process.env.REALTIME_LOAD_KEEP === "1") {

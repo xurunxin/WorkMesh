@@ -129,6 +129,7 @@ services:
       S3_FORCE_PATH_STYLE: "true"
     command:
       ["pnpm", "--filter", "@workmesh/worker", "exec", "tsx", "src/index.ts"]
+    restart: "no"
     depends_on:
       postgres:
         condition: service_healthy

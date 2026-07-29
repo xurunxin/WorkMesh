@@ -31,6 +31,32 @@ pnpm test:load:realtime -- --diagnostic \
   --redis-outage-seconds=6
 ```
 
+### Evidence-only continuation after a failed Phase C
+
+When a diagnostic run needs to collect Phase D evidence after Phase C has
+already failed, use the explicit evidence-only waiver:
+
+```bash
+pnpm test:load:realtime -- --diagnostic \
+  --diagnostic-waive-phase-c-failure-for-evidence-only \
+  --clients=1000 \
+  --ramp-per-second=50 \
+  --hold-seconds=2 \
+  --backpressure-mib=32 \
+  --redis-outage-seconds=60 \
+  --redis-outage-events=100
+```
+
+This flag does not waive acceptance. Phase C still runs and retains its
+original error and partial metrics. After failure, the harness destroys the raw
+socket, attempts to close every existing SSE client, marks Phase C as
+`failed_incomplete_evidence_only`, and only then builds the Phase D client set.
+The JSON and Markdown reports remain failed and the process exits nonzero even
+when Phase D passes. The flag is rejected unless `--diagnostic` is also present
+and must never be used for a formal acceptance result. It is a one-time
+WorkMesh v1 GA evidence-continuation mechanism, not a reusable success path for
+future acceptance runs.
+
 The harness creates a unique Compose project, uses dynamically allocated
 loopback ports, creates a fresh PostgreSQL database, and always runs
 `docker compose down -v --remove-orphans` in `finally`. Set
@@ -41,7 +67,11 @@ manually.
 Reports are written below `.tmp/realtime-load/<timestamp>/` as both JSON and
 Markdown. Use `--output=<path>` to select another output directory. Every
 threshold failure makes the process exit nonzero, while still writing a
-partial report and the last 200 API, worker, and Redis log lines.
+partial report and the last 200 API and Redis log lines. Worker evidence is
+captured separately before teardown: an allowlisted inspect snapshot, bounded
+log category counts and timestamps without raw log text, allowlisted lifecycle
+events capped at 100 entries, and an outbox status/attempt summary. Full container inspection,
+environment variables, event payloads, and raw Worker logs are never retained.
 Formal platform preflight failures and exceptions inside a phase also produce
 both reports. Each failed phase retains its elapsed time, completed assertions,
 partial metrics, and contextual error.
@@ -111,10 +141,20 @@ cursor lag, and the result of every threshold.
 - Re-establish 500 clients on each API instance.
 - Stop the Redis container, pace 100 real events over 60 seconds, and require
   zero missing deliveries and zero cursor lag through PostgreSQL fallback.
+- Record the Worker container ID, running state, restart count, and OOM state
+  before the outage and sample those allowlisted fields throughout outage and
+  recovery. The Worker service has `restart: "no"` so continuity cannot be
+  hidden by a Compose restart policy. Require the same container to remain
+  running with restart count zero, no OOM, no sampling gaps, and no
+  `die`/`restart`/`oom`/`kill`/`stop`/`destroy` lifecycle event.
 - Use `pg_stat_statements` to require fallback reconciliation calls to remain
   bounded by two subscribed API instances.
 - Restart the same Redis container and endpoint, wait for that exact Compose
   service to be healthy, and require `redis-cli PING` to return `PONG`.
+- Without changing outbox rows or retry timestamps, wait for every outage event
+  to drain naturally to `delivered` with no remaining
+  `pending`/`delivering`/`dead` row, then publish a post-recovery event and
+  require its outbox row to be delivered as well.
 - Poll `CLIENT LIST TYPE normal` until at least two clients are actively
   blocked in `cmd=xread`. These are the two API Redis-stream wake sources; the
   report retains their non-secret client fields. Only then reset PostgreSQL

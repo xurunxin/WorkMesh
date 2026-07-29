@@ -1,10 +1,16 @@
+import { EventEmitter } from 'node:events'
+import http, { createServer } from 'node:http'
+import type { ServerResponse } from 'node:http'
 import { describe, expect, it, vi } from 'vitest'
 import { DomainError } from '@workmesh/domain'
 import {
   admitRealtimeClient,
   createRealtimeCapacity,
+  finishRealtimeStream,
   markRealtimeCapacityExceeded,
   parseEventBatchLimit,
+  writeRealtimeChunk,
+  writeRealtimeStreamHeaders,
 } from './routes.js'
 
 const deferred = <T = void>() => {
@@ -26,6 +32,79 @@ describe('realtime event list limit', () => {
       expect(() => parseEventBatchLimit(value, 100)).toThrowError(
         expect.objectContaining({ code: 'VALIDATION_ERROR' }),
       )
+  })
+})
+
+describe('realtime stream response', () => {
+  it('flushes successful admission headers before an idle heartbeat', async () => {
+    const server = createServer((_request, response) => {
+      writeRealtimeStreamHeaders(response, 'http://web.test')
+    })
+    await new Promise<void>((resolve, reject) => {
+      server.once('error', reject)
+      server.listen(0, '127.0.0.1', resolve)
+    })
+    try {
+      const address = server.address()
+      if (!address || typeof address === 'string')
+        throw new Error('TEST_SERVER_ADDRESS_MISSING')
+      const response = await new Promise<http.IncomingMessage>(
+        (resolve, reject) => {
+          const request = http.get(
+            `http://127.0.0.1:${address.port}/api/v1/events/stream`,
+          )
+          const timer = setTimeout(() => {
+            request.destroy()
+            reject(new Error('SSE_HEADERS_NOT_FLUSHED'))
+          }, 1_000)
+          request.once('response', incoming => {
+            clearTimeout(timer)
+            resolve(incoming)
+          })
+          request.once('error', reject)
+        },
+      )
+      expect(response.statusCode).toBe(200)
+      expect(response.headers['content-type']).toBe('text/event-stream')
+      expect(response.headers['access-control-allow-origin']).toBe(
+        'http://web.test',
+      )
+      response.destroy()
+    } finally {
+      server.closeAllConnections()
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      )
+    }
+  })
+
+  const responseStub = (writeResult: boolean): ServerResponse =>
+    Object.assign(new EventEmitter(), {
+      write: vi.fn(() => writeResult),
+      end: vi.fn(),
+      destroy: vi.fn(),
+      destroyed: false,
+      writableEnded: false,
+    }) as unknown as ServerResponse
+
+  it('destroys the connection after a backpressure drain timeout', async () => {
+    const response = responseStub(false)
+    const sent = await writeRealtimeChunk(response, 'event data', 1)
+
+    expect(sent).toBe(false)
+    finishRealtimeStream(response, sent ? 'graceful' : 'backpressure')
+    expect(response.destroy).toHaveBeenCalledOnce()
+    expect(response.end).not.toHaveBeenCalled()
+  })
+
+  it('ends ordinarily without destroying when the write is accepted', async () => {
+    const response = responseStub(true)
+    const sent = await writeRealtimeChunk(response, 'event data', 1)
+
+    expect(sent).toBe(true)
+    finishRealtimeStream(response, sent ? 'graceful' : 'backpressure')
+    expect(response.end).toHaveBeenCalledOnce()
+    expect(response.destroy).not.toHaveBeenCalled()
   })
 })
 

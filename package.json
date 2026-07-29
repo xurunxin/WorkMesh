@@ -24,6 +24,7 @@
     "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke",
     "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",
     "check:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts --check",
+    "validate:production-images": "node -- scripts/validate-production-images.mjs",
     "test:load:realtime": "pnpm --filter @workmesh/api test:load:realtime",
     "test:load:heartbeat": "pnpm -C apps/api exec tsx ../../scripts/heartbeat-load.mts",
     "test:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak.mts"

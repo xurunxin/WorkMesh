@@ -49,14 +49,45 @@ const waitForDrain = async (
     response.once('close', closed)
   })
 
-const write = async (
-  reply: FastifyReply,
+export const writeRealtimeChunk = async (
+  response: ServerResponse,
   chunk: string,
   timeoutMs: number,
 ): Promise<boolean> =>
-  reply.raw.write(chunk)
+  response.write(chunk)
     ? true
-    : waitForDrain(reply.raw, timeoutMs)
+    : waitForDrain(response, timeoutMs)
+
+export type RealtimeStreamTermination = 'graceful' | 'backpressure'
+
+export const finishRealtimeStream = (
+  response: ServerResponse,
+  termination: RealtimeStreamTermination,
+): void => {
+  if (termination === 'backpressure') {
+    if (!response.destroyed) response.destroy()
+    return
+  }
+  if (!response.writableEnded) response.end()
+}
+
+export const writeRealtimeStreamHeaders = (
+  response: ServerResponse,
+  webOrigin: string,
+): void => {
+  response.writeHead(200, {
+    'content-type': 'text/event-stream',
+    'cache-control': 'no-cache, no-transform',
+    connection: 'keep-alive',
+    'x-accel-buffering': 'no',
+    'access-control-allow-origin': webOrigin,
+    'access-control-allow-credentials': 'true',
+  })
+  // A caught-up stream may not write a body until the next heartbeat. Flush the
+  // admission result now so clients do not confuse an idle stream with a failed
+  // connection.
+  response.flushHeaders()
+}
 
 const cursorExpiredControl = (error: DomainError): string =>
   `event: control\ndata: ${JSON.stringify({
@@ -161,6 +192,7 @@ export function registerRealtimeRoutes(
     let unsubscribe: () => void = () => undefined
     let releaseCapacity: () => void = () => undefined
     let closeListenerRegistered = false
+    let termination: RealtimeStreamTermination = 'graceful'
     const notify = (): void => {
       pendingWake = true
       wake?.()
@@ -216,14 +248,7 @@ export function registerRealtimeRoutes(
       if (closed) return reply
 
       unsubscribe = coordinator.subscribe(actor.workspaceId, notify)
-      reply.raw.writeHead(200, {
-        'content-type': 'text/event-stream',
-        'cache-control': 'no-cache, no-transform',
-        connection: 'keep-alive',
-        'x-accel-buffering': 'no',
-        'access-control-allow-origin': webOrigin,
-        'access-control-allow-credentials': 'true',
-      })
+      writeRealtimeStreamHeaders(reply.raw, webOrigin)
 
       const waitForWake = async (): Promise<'wake' | 'heartbeat' | 'closed'> => {
         if (closed) return 'closed'
@@ -250,8 +275,15 @@ export function registerRealtimeRoutes(
             const signal = await waitForWake()
             if (signal === 'closed') break
             if (signal === 'heartbeat') {
-              if (!await write(reply, ': heartbeat\n\n', backpressureTimeoutMs)) {
+              if (
+                !await writeRealtimeChunk(
+                  reply.raw,
+                  ': heartbeat\n\n',
+                  backpressureTimeoutMs,
+                )
+              ) {
                 coordinator.record('slow_client')
+                termination = 'backpressure'
                 break
               }
               continue
@@ -267,11 +299,15 @@ export function registerRealtimeRoutes(
                   && error.code === 'CURSOR_EXPIRED'
                 ) {
                   coordinator.record('cursor_expired')
-                  await write(
-                    reply,
+                  const sent = await writeRealtimeChunk(
+                    reply.raw,
                     cursorExpiredControl(error),
                     backpressureTimeoutMs,
                   )
+                  if (!sent) {
+                    coordinator.record('slow_client')
+                    termination = 'backpressure'
+                  }
                   closed = true
                   break
                 }
@@ -281,13 +317,14 @@ export function registerRealtimeRoutes(
               coordinator.record('delivery_batch')
               for (const event of events) {
                 if (closed) break
-                const sent = await write(
-                  reply,
+                const sent = await writeRealtimeChunk(
+                  reply.raw,
                   `id: ${event.cursor}\ndata: ${JSON.stringify(event)}\n\n`,
                   backpressureTimeoutMs,
                 )
                 if (!sent) {
                   coordinator.record('slow_client')
+                  termination = 'backpressure'
                   closed = true
                   break
                 }
@@ -301,7 +338,7 @@ export function registerRealtimeRoutes(
         } finally {
           closed = true
           cleanup()
-          if (!reply.raw.writableEnded) reply.raw.end()
+          finishRealtimeStream(reply.raw, termination)
         }
       })()
       return reply

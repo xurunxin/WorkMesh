@@ -279,6 +279,8 @@ export const retentionStatusResponseSchema = z.object({
 })
 
 export const stage0RouteManifest = [
+  { method: 'GET', path: '/livez', authenticated: false },
+  { method: 'GET', path: '/readyz', authenticated: false },
   { method: 'GET', path: '/health', authenticated: false },
   { method: 'GET', path: '/api/v1/info', authenticated: false },
   { method: 'GET', path: '/api/v1/features', authenticated: true },
