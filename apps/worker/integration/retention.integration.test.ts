@@ -343,6 +343,69 @@ describe("retention worker destructive-path fences", () => {
     ).resolves.toBeUndefined();
   });
 
+  it("rejects a stale cleanup owner before any replay wipe or delete", async () => {
+    await db.query(
+      `INSERT INTO api_idempotency_keys(
+         workspace_id,actor_id,idempotency_key,operation,request_hash,
+         response_status,response_body,created_at,replay_expires_at,
+         conflict_expires_at
+       ) VALUES(
+         $1,$2,'stale-cleanup-owner','test','sha256:stale-cleanup',
+         200,'{"retained":true}',now()-interval '40 days',
+         now()-interval '31 days',now()-interval '1 day'
+       )`,
+      [workspaceId, actorId],
+    );
+    const cleanupConfig = { ...config, cleanupEnabled: true };
+    const stale = createRetentionWorker({
+      db,
+      workerId: "stale-cleanup-owner",
+      config: cleanupConfig,
+      storage,
+      redisClient: redis,
+      redisMaxLen: 100,
+      workspaceScopeId: workspaceId,
+      afterCleanupClaim: async (claim) => {
+        await db.query(
+          `UPDATE retention_job_state
+              SET lease_expires_at=now()-interval '1 second'
+            WHERE job_name=$1 AND workspace_id=$2
+              AND lease_owner=$3 AND fence=$4::bigint`,
+          [claim.jobName, claim.workspaceId, claim.owner, claim.fence],
+        );
+        const winner = createRetentionWorker({
+          db,
+          workerId: "new-cleanup-owner",
+          config: cleanupConfig,
+          storage,
+          redisClient: redis,
+          redisMaxLen: 100,
+          workspaceScopeId: workspaceId,
+        });
+        const reclaimed = await winner.claim("cleanup", claim.fixedCutoffAt);
+        expect(reclaimed?.owner).toBe("new-cleanup-owner");
+        expect(BigInt(reclaimed!.fence)).toBeGreaterThan(BigInt(claim.fence));
+      },
+    });
+
+    await expect(stale.cleanup()).rejects.toThrow("RETENTION_CLAIM_LOST");
+    expect(
+      (
+        await db.query<{
+          responseStatus: number | null;
+          responseBody: unknown | null;
+        }>(
+          `SELECT response_status AS "responseStatus",
+                  response_body AS "responseBody"
+             FROM api_idempotency_keys
+            WHERE workspace_id=$1 AND actor_id=$2
+              AND idempotency_key='stale-cleanup-owner'`,
+          [workspaceId, actorId],
+        )
+      ).rows,
+    ).toEqual([{ responseStatus: 200, responseBody: { retained: true } }]);
+  });
+
   it("rolls back event deletion, floor advance, and segment state on an injected failure", async () => {
     const pruningConfig = { ...config, eventPruneEnabled: true };
     corruptReadback = false;

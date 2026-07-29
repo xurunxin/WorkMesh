@@ -179,6 +179,7 @@ export function createRetentionWorker({
   redisMaxLen,
   workspaceScopeId,
   beforePruneCommit,
+  afterCleanupClaim,
   afterArchiveClaim,
   afterPruneClaim,
 }: {
@@ -194,6 +195,7 @@ export function createRetentionWorker({
     segmentId: string;
     eventIds: readonly string[];
   }) => Promise<void> | void;
+  afterCleanupClaim?: (claim: RetentionClaim) => Promise<void> | void;
   afterArchiveClaim?: (claim: RetentionClaim) => Promise<void> | void;
   afterPruneClaim?: (claim: RetentionClaim) => Promise<void> | void;
 }): RetentionWorker {
@@ -476,8 +478,13 @@ export function createRetentionWorker({
     const cutoff = new Date();
     const active = await claim("cleanup", cutoff);
     if (!active) return 0;
+    await afterCleanupClaim?.(active);
     try {
       const count = await withTx(db, async (tx) => {
+        // This row lock is the destructive-path gate: a reclaim cannot race
+        // any replay wipe or DELETE in the transaction, and a stale owner
+        // fails before touching retained data.
+        await assertClaim(tx, active);
         const authReplayWiped = await tx.query(
           `
           WITH candidate AS (
