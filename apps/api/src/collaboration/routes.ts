@@ -77,7 +77,14 @@ async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: 
   return row
 }
 function assertDecisionSubjectInSessionScope(
-  currentSession: Awaited<ReturnType<typeof session>>,
+  currentSession: {
+    id: string
+    work_item_id: string | null
+    work_item_exists: boolean
+    work_item_project_id: string | null
+    project_id: string | null
+    project_exists: boolean
+  },
   subject: Subject,
   subjectId: string,
 ): void {
@@ -947,7 +954,15 @@ async function createDecision(h:Helpers, request:FastifyRequest, subject:Subject
       : body.sessionId ?? (subject==='session' ? subjectId : null)
     if(current.kind==='agent') {
       if(!decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent Decisions require a Session credential')
-      const currentSession=await assertSessionWrite(tx,current,decisionSessionId)
+      const currentSession=await authorizeCommandInTx(tx,{
+        actor:current,
+        sessionId:decisionSessionId,
+        capability:'work:write',
+        operation:'decision',
+        idempotencyKey:request.idempotencyKey!,
+        resourceId:subject==='session' ? undefined : subjectId,
+      })
+      await assertCurrentAgentCredentialInTx(tx,current,decisionSessionId)
       if(body.sessionId && body.sessionId!==decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Decision sessionId must match the authenticated Agent Session')
       assertDecisionSubjectInSessionScope(currentSession,subject,subjectId)
     }

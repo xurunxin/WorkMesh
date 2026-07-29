@@ -516,6 +516,155 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(await decisionProjection(source.session.id)).toEqual(beforeForgedDecisionSession)
 
+    const decisionAuthority = (await db.query<{
+      agent_id: string
+      delegation_id: string
+      capability_scope: Record<string, unknown>
+      team_capabilities: string[]
+    }>(`SELECT session.agent_id,session.delegation_id,
+               delegation.capability_scope,
+               team_access.approved_capabilities AS team_capabilities
+          FROM agent_sessions session
+          JOIN delegations delegation ON delegation.id=session.delegation_id
+          JOIN agent_team_access team_access
+            ON team_access.workspace_id=session.workspace_id
+           AND team_access.team_id=session.team_id
+           AND team_access.agent_id=session.agent_id
+         WHERE session.id=$1`,
+      [source.session.id],
+    )).rows[0]!
+    const deniedDecision = async (
+      rationale: string,
+      expectedCode: string,
+      before: Awaited<ReturnType<typeof decisionProjection>>,
+    ) => {
+      const response = await agentCall(
+        sourceToken,
+        'POST',
+        `/api/v1/work-items/${projectWork.id}/decisions`,
+        {
+          title: 'Current authority is required for every Agent Decision.',
+          rationale,
+          options: ['reject'],
+          affectedResources: [{
+            resourceType: 'work_item',
+            resourceId: projectWork.id,
+            impact: 'must remain absent',
+          }],
+        },
+      )
+      expect(response.statusCode, JSON.stringify(response.json())).not.toBe(200)
+      expect(response.json<{ error: { code: string } }>()).toMatchObject({
+        error: { code: expectedCode },
+      })
+      expect(await decisionProjection(source.session.id)).toEqual(before)
+    }
+
+    let beforeAuthorityDenial = await decisionProjection(source.session.id)
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb)
+        WHERE id=$1`,
+      [decisionAuthority.delegation_id],
+    )
+    await deniedDecision(
+      'A revoked Work Item scope cannot authorize a Decision.',
+      'RESOURCE_SCOPE_DENIED',
+      beforeAuthorityDenial,
+    )
+    await db.query(
+      'UPDATE delegations SET capability_scope=$2 WHERE id=$1',
+      [decisionAuthority.delegation_id, decisionAuthority.capability_scope],
+    )
+
+    beforeAuthorityDenial = await decisionProjection(source.session.id)
+    await db.query(
+      'UPDATE agent_session_tokens SET revoked_at=now() WHERE session_id=$1 AND token_hash=$2',
+      [source.session.id, tokenHash(sourceToken)],
+    )
+    await deniedDecision(
+      'A revoked Session credential cannot authorize a Decision.',
+      'UNAUTHENTICATED',
+      beforeAuthorityDenial,
+    )
+    await db.query(
+      'UPDATE agent_session_tokens SET revoked_at=NULL WHERE session_id=$1 AND token_hash=$2',
+      [source.session.id, tokenHash(sourceToken)],
+    )
+
+    beforeAuthorityDenial = await decisionProjection(source.session.id)
+    await db.query(
+      `UPDATE agent_team_access
+          SET approved_capabilities=array_remove(approved_capabilities,'work:write')
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id],
+    )
+    await deniedDecision(
+      'A narrowed Team grant cannot authorize a Decision.',
+      'CAPABILITY_DENIED',
+      beforeAuthorityDenial,
+    )
+    await db.query(
+      `UPDATE agent_team_access SET approved_capabilities=$4
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id, decisionAuthority.team_capabilities],
+    )
+
+    beforeAuthorityDenial = await decisionProjection(source.session.id)
+    await db.query(
+      `UPDATE agent_team_access SET revoked_at=now()
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id],
+    )
+    await deniedDecision(
+      'A revoked Team grant cannot authorize a Decision.',
+      'DELEGATION_NOT_ACTIVE',
+      beforeAuthorityDenial,
+    )
+    await db.query(
+      `UPDATE agent_team_access SET revoked_at=NULL
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id],
+    )
+
+    beforeAuthorityDenial = await decisionProjection(source.session.id)
+    await db.query(
+      'UPDATE agent_definitions SET is_active=false WHERE id=$1',
+      [decisionAuthority.agent_id],
+    )
+    await deniedDecision(
+      'A disabled Agent definition cannot authorize a Decision.',
+      'UNAUTHENTICATED',
+      beforeAuthorityDenial,
+    )
+    await db.query(
+      'UPDATE agent_definitions SET is_active=true WHERE id=$1',
+      [decisionAuthority.agent_id],
+    )
+
+    const revokeDecisionGate = await db.connect()
+    await revokeDecisionGate.query('BEGIN')
+    await revokeDecisionGate.query(
+      `UPDATE agent_team_access SET revoked_at=now()
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id],
+    )
+    const beforeConcurrentDecisionRevoke = await decisionProjection(source.session.id)
+    const racedDecision = deniedDecision(
+      'A concurrent Team grant revocation must win before Decision projection.',
+      'DELEGATION_NOT_ACTIVE',
+      beforeConcurrentDecisionRevoke,
+    )
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await revokeDecisionGate.query('COMMIT')
+    revokeDecisionGate.release()
+    await racedDecision
+    await db.query(
+      `UPDATE agent_team_access SET revoked_at=NULL
+        WHERE workspace_id=$1 AND team_id=$2 AND agent_id=$3`,
+      [f.workspaceId, f.teamId, decisionAuthority.agent_id],
+    )
+
     const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)
     const channelId = projectRoom.json<{ id: string }>().id
@@ -995,11 +1144,15 @@ describe('Stage 2 collaboration API acceptance', () => {
       { 'if-match': `"revision-${movedProjectData.revision}"` },
     )
     expect(deletedProject.statusCode, JSON.stringify(deletedProject.json())).toBe(200)
-    expect((await agentCall(
+    const deletedProjectDecisionRead = await agentCall(
       projectOnlyToken,
       'GET',
       `/api/v1/decisions/${autoBoundProjectDecisionId}`,
-    )).statusCode).toBe(404)
+    )
+    expect(deletedProjectDecisionRead.statusCode).toBe(403)
+    expect(deletedProjectDecisionRead.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
     const beforeDeletedProjectDecision = await decisionProjection(projectOnlySession.id)
     const deletedProjectDecision = await agentCall(
       projectOnlyToken,
@@ -1195,11 +1348,15 @@ describe('Stage 2 collaboration API acceptance', () => {
     )
 
     await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [projectWork.id])
-    expect((await agentCall(
+    const deletedWorkItemDecisionRead = await agentCall(
       sourceToken,
       'GET',
       `/api/v1/decisions/${autoBoundWorkItemDecisionId}`,
-    )).statusCode).toBe(404)
+    )
+    expect(deletedWorkItemDecisionRead.statusCode).toBe(403)
+    expect(deletedWorkItemDecisionRead.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
     const beforeDeletedWorkItemDecision = await decisionProjection(source.session.id)
     const deletedWorkItemDecision = await agentCall(
       sourceToken,

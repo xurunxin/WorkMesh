@@ -6,7 +6,7 @@ import type { ApiActor } from "./types.js";
 type SessionFacts = {
   id: string; actor_id: string; delegation_id: string; state: Parameters<typeof authorizeAgentMutation>[0]["session"]["state"];
   revision: number; stop_acknowledged_at: Date | null; permissions_snapshot: Capability[]; capability_scope: { teamIds?: string[]; workItemIds?: string[]; projectIds?: string[] };
-  delegation_status: string; team_id: string; work_item_id: string | null; work_item_exists: boolean; project_id: string | null; project_exists: boolean; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
+  delegation_status: string; team_id: string; work_item_id: string | null; work_item_exists: boolean; work_item_project_id: string | null; project_id: string | null; project_exists: boolean; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
 };
 
 type SessionLocator = {
@@ -146,6 +146,17 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
                     AND live_work_item.deleted_at IS NULL
                )
              END AS work_item_exists,
+             (
+               SELECT live_project.id
+                 FROM work_items live_work_item
+                 JOIN projects live_project
+                   ON live_project.id=live_work_item.project_id
+                  AND live_project.workspace_id=live_work_item.workspace_id
+                  AND live_project.deleted_at IS NULL
+                WHERE live_work_item.id=agent_sessions.work_item_id
+                  AND live_work_item.workspace_id=agent_sessions.workspace_id
+                  AND live_work_item.deleted_at IS NULL
+             ) AS work_item_project_id,
              CASE
                WHEN work_item_id IS NOT NULL OR project_id IS NULL THEN false
                ELSE EXISTS (

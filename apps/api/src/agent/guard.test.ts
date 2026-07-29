@@ -32,6 +32,7 @@ const session: MutationSession = {
   team_id: 'team',
   work_item_id: null,
   work_item_exists: false,
+  work_item_project_id: null,
   project_id: 'project',
   project_exists: true,
   current_plan_version_id: null,
@@ -102,5 +103,23 @@ describe('shared Agent mutation resource liveness', () => {
         'assertAgentWrite',
       )
     }
+  })
+
+  it('locks current Agent authority before checking the exact Decision subject', async () => {
+    const source = await readFile(new URL('../collaboration/routes.ts', import.meta.url), 'utf8')
+    const start = source.indexOf('async function createDecision')
+    const end = source.indexOf('\nasync function acquireLease', start)
+    const command = source.slice(start, end)
+    const sharedGuard = command.indexOf('authorizeCommandInTx')
+    const credentialGuard = command.indexOf('assertCurrentAgentCredentialInTx')
+    const exactSubjectGuard = command.indexOf('assertDecisionSubjectInSessionScope')
+
+    expect(start).toBeGreaterThanOrEqual(0)
+    expect(end).toBeGreaterThan(start)
+    expect(command).toContain("operation:'decision'")
+    expect(command).toContain("resourceId:subject==='session' ? undefined : subjectId")
+    expect(sharedGuard).toBeGreaterThanOrEqual(0)
+    expect(credentialGuard).toBeGreaterThan(sharedGuard)
+    expect(exactSubjectGuard).toBeGreaterThan(credentialGuard)
   })
 })
