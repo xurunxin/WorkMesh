@@ -86,6 +86,22 @@ test database. Before enabling event pruning, additionally require:
    fresh `archive_and_prune` Worker heartbeat in the admin status response;
 5. retention objects protected from deletion for at least 365 days.
 
+Migration 29 to 30 must use the tracked
+`pnpm upgrade:retention:production` executor and the maintenance barrier in
+`docs/production-deployment.md`; do not invoke the standalone migrator. Before
+stopping the old Worker, the executor freezes MCP membership from the current
+Compose project's container labels and validates all configuration and exact
+images needed by that frozen topology. No MCP container means MCP remains
+disabled: the upgrade requires no MCP token, never activates the `agent`
+profile, and does not inspect the configured MCP image or start, wait for, or
+inspect an MCP container after migration.
+Exactly one running MCP container with the same Compose project, config-file,
+and working-directory identity means MCP remains enabled and its token,
+digest/revision, Compose rendering, recreation, and readiness checks are
+mandatory. Multiple containers, unreadable labels, mismatched deployment
+identity, or a stopped/restarting MCP container is ambiguous and aborts before
+the irreversible migration.
+
 The formal soak must use the tracked contiguous
 `pnpm test:soak:retention:formal` entrypoint, not an untracked operator script
 or a separately paused provision/run sequence. Run it under WSL/Linux; native

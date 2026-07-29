@@ -88,11 +88,26 @@ maintenance barrier.
 
 ## Migration 29 to 30 maintenance barrier
 
-Publish all four application images from one clean exact SHA, resolve their
-immutable digests, and update all four `WORKMESH_*_IMAGE` references plus
-`WORKMESH_BUILD_SHA` in `.env.production`. Digest references are mandatory for
-this upgrade. The tracked executor verifies every target image digest and its
-`org.opencontainers.image.revision` label before it changes a container.
+Publish API, Worker, and Web from one clean exact SHA, resolve their immutable
+digests, and update those three `WORKMESH_*_IMAGE` references plus
+`WORKMESH_BUILD_SHA` in `.env.production`. If MCP is already enabled in the
+running Compose project, publish and update MCP from that same SHA as well.
+Digest references are mandatory for every service in the current topology. An
+MCP-disabled deployment keeps an immutable MCP image reference so Compose can
+render the tracked file, but the executor does not inspect or deploy that image
+and does not require MCP tokens.
+
+Before it changes a container, the tracked executor freezes the current
+optional-service topology. It resolves the old Worker and uses its Compose
+project, config-file, and working-directory labels as the deployment identity.
+A label-filtered Docker query must find either no MCP container (disabled) or
+exactly one running, non-restarting MCP container with the same deployment
+identity (enabled). Multiple, malformed, stopped, restarting, or mismatched MCP
+state is ambiguous and fails closed before the Worker is stopped or migration
+30 can run. Only an already-enabled MCP topology causes the executor to require
+MCP tokens and a target MCP digest, validate its OCI revision, or include the
+`agent` profile in later Compose commands. The executor never enables MCP merely
+because MCP variables exist in the environment.
 
 The executor is a dry run unless `--execute` is explicitly supplied:
 
@@ -103,9 +118,12 @@ pnpm upgrade:retention:production -- --env-file=.env.production --execute
 
 The executable path is intentionally ordered:
 
-1. Inspect all four target image digests and require their OCI revision labels
-   to equal `WORKMESH_BUILD_SHA`.
-2. Resolve the old Worker by its Compose labels, run
+1. Inspect API, Worker, and Web target image digests, freeze the current MCP
+   membership from auditable Compose/container state, then inspect MCP only when
+   that frozen topology is enabled. Require every included OCI revision label
+   to equal `WORKMESH_BUILD_SHA` and validate the full included Compose
+   configuration before any stop.
+2. Using that frozen topology, run
    `docker update --restart=no <old-worker-id>`, then
    `docker compose ... stop -t 35 worker`. The stopped container must report
    exit code 0, `Running=false`, and `Restarting=false`. A daemon interruption,
@@ -126,7 +144,9 @@ The executable path is intentionally ordered:
    `UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE` if a residual claim is active.
 5. Force-recreate only the target Worker. Verify its actual image ID/digest,
    then require fresh `worker_runtime` rows whose build SHA is the target SHA.
-   Only then force-recreate API, MCP, and Web from that same SHA.
+   Only then force-recreate API and Web plus MCP if and only if MCP was in the
+   frozen pre-migration topology. An MCP-disabled upgrade never starts, waits
+   for, or verifies MCP and never passes `--profile agent`.
 
 The barrier is strictly read-only. An IAM list denial, incomplete pagination,
 orphan, missing version, multiple versions under one stable key, delete marker,

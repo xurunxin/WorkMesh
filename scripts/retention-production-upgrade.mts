@@ -31,20 +31,26 @@ const applicationImages = {
 } as const;
 
 type Role = keyof typeof applicationImages;
+const coreApplicationRoles = ["api", "worker", "web"] as const;
+type CoreApplicationRole = (typeof coreApplicationRoles)[number];
 type ImageInspection = Readonly<{
   id: string;
   revision: string;
   reference: string;
 }>;
+type FrozenTopology = Readonly<{
+  mcpEnabled: boolean;
+  applicationServices: readonly Role[];
+}>;
 
 const productionUpgradePlan = [
-  "validate four target image digests and OCI revisions",
+  "freeze the current optional-service topology and validate its target image digests, OCI revisions, and configuration",
   "disable the old Worker restart policy and require a clean 35-second stop",
   "prove no Worker container is running or restarting",
   "run the read-only target-Worker retention barrier against schema 29",
   "run migration 0030 from the target API image and verify one ledger row",
   "force-recreate only the target Worker and verify its runtime build heartbeat",
-  "force-recreate the remaining same-SHA application services",
+  "force-recreate only the remaining same-SHA services in the frozen topology",
 ] as const;
 
 const checked = (
@@ -151,9 +157,45 @@ const composeArguments = (root: string, envFile: string): readonly string[] => [
   envFile,
   "-f",
   path.join(root, "docker-compose.production.yml"),
-  "--profile",
-  "agent",
 ];
+
+const composeArgumentsForTopology = (
+  composeBase: readonly string[],
+  topology: FrozenTopology,
+): readonly string[] =>
+  topology.mcpEnabled
+    ? [...composeBase, "--profile", "agent"]
+    : composeBase;
+
+const requiredDeploymentLabel = (
+  labels: Record<string, string> | undefined,
+  label: string,
+): string => {
+  const value = labels?.[label]?.trim();
+  if (!value)
+    throw new RetentionProductionUpgradeError(
+      "RETENTION_UPGRADE_TOPOLOGY_IDENTITY_UNREADABLE",
+    );
+  return value;
+};
+
+const validateMcpCredentials = (environment: NodeJS.ProcessEnv): void => {
+  const sessionToken = environment.WORKMESH_SESSION_TOKEN?.trim();
+  const accessToken = environment.WORKMESH_MCP_ACCESS_TOKEN?.trim();
+  const placeholder = /change[_-]?me|replace[_-]?me|placeholder|example/iu;
+  if (
+    !sessionToken ||
+    !accessToken ||
+    sessionToken.length < 32 ||
+    accessToken.length < 32 ||
+    placeholder.test(sessionToken) ||
+    placeholder.test(accessToken) ||
+    sessionToken === accessToken
+  )
+    throw new RetentionProductionUpgradeError(
+      "RETENTION_UPGRADE_MCP_CREDENTIALS_INVALID",
+    );
+};
 
 const safeSqlValue = (value: string, code: string): string => {
   if (!/^[A-Za-z0-9_.-]{1,128}$/.test(value))
@@ -190,20 +232,20 @@ export async function runProductionRetentionUpgrade({
       "RETENTION_UPGRADE_BUILD_SHA_INVALID",
     );
   const images = Object.fromEntries(
-    (Object.keys(applicationImages) as Role[]).map((role) => {
+    coreApplicationRoles.map((role) => {
       const reference = exactDigest(environment[applicationImages[role]], role);
       return [role, inspectImage(runner, role, reference, buildSha)];
     }),
-  ) as Record<Role, ImageInspection>;
-  const composeBase = composeArguments(root, envFile);
+  ) as Record<CoreApplicationRole, ImageInspection>;
+  const unprofiledComposeBase = composeArguments(root, envFile);
   checked(
     runner,
-    [...composeBase, "config", "--quiet"],
+    [...unprofiledComposeBase, "config", "--quiet"],
     "RETENTION_UPGRADE_COMPOSE_CONFIG_INVALID",
   );
   const oldWorkerId = checked(
     runner,
-    [...composeBase, "ps", "-q", "worker"],
+    [...unprofiledComposeBase, "ps", "-q", "worker"],
     "RETENTION_UPGRADE_OLD_WORKER_LOOKUP_FAILED",
   );
   if (!/^[a-f0-9]{12,64}$/.test(oldWorkerId))
@@ -215,25 +257,109 @@ export async function runProductionRetentionUpgrade({
     oldWorkerId,
     "RETENTION_UPGRADE_OLD_WORKER_INSPECT_FAILED",
   );
-  const project =
-    oldWorker.Config?.Labels?.["com.docker.compose.project"]?.trim();
+  const oldWorkerLabels = oldWorker.Config?.Labels;
+  const project = oldWorkerLabels?.["com.docker.compose.project"]?.trim();
   if (
     !project ||
-    oldWorker.Config?.Labels?.["com.docker.compose.service"] !== "worker"
+    oldWorkerLabels?.["com.docker.compose.service"] !== "worker"
   )
     throw new RetentionProductionUpgradeError(
       "RETENTION_UPGRADE_OLD_WORKER_LABEL_MISMATCH",
+    );
+  const deploymentConfigFiles = requiredDeploymentLabel(
+    oldWorkerLabels,
+    "com.docker.compose.project.config_files",
+  );
+  const deploymentWorkingDirectory = requiredDeploymentLabel(
+    oldWorkerLabels,
+    "com.docker.compose.project.working_dir",
+  );
+  const mcpTopologyOutput = checked(
+    runner,
+    [
+      "ps",
+      "-a",
+      "-q",
+      "--filter",
+      `label=com.docker.compose.project=${project}`,
+      "--filter",
+      "label=com.docker.compose.service=mcp",
+    ],
+    "RETENTION_UPGRADE_MCP_TOPOLOGY_LOOKUP_FAILED",
+  );
+  const mcpContainerIds = mcpTopologyOutput
+    .split(/\s+/u)
+    .filter((candidate) => candidate.length > 0);
+  if (
+    mcpContainerIds.length > 1 ||
+    mcpContainerIds.some((candidate) => !/^[a-f0-9]{12,64}$/.test(candidate))
+  )
+    throw new RetentionProductionUpgradeError(
+      "RETENTION_UPGRADE_MCP_TOPOLOGY_AMBIGUOUS",
+    );
+
+  let mcpImage: ImageInspection | undefined;
+  const mcpEnabled = mcpContainerIds.length === 1;
+  if (mcpEnabled) {
+    const mcpContainer = inspectContainer(
+      runner,
+      mcpContainerIds[0]!,
+      "RETENTION_UPGRADE_MCP_TOPOLOGY_INSPECT_FAILED",
+    );
+    const mcpLabels = mcpContainer.Config?.Labels;
+    if (
+      mcpLabels?.["com.docker.compose.project"] !== project ||
+      mcpLabels?.["com.docker.compose.service"] !== "mcp" ||
+      mcpLabels?.["com.docker.compose.project.config_files"]?.trim() !==
+        deploymentConfigFiles ||
+      mcpLabels?.["com.docker.compose.project.working_dir"]?.trim() !==
+        deploymentWorkingDirectory ||
+      !mcpContainer.State?.Running ||
+      mcpContainer.State?.Restarting
+    )
+      throw new RetentionProductionUpgradeError(
+        "RETENTION_UPGRADE_MCP_TOPOLOGY_INCONSISTENT",
+      );
+    validateMcpCredentials(environment);
+    const mcpReference = exactDigest(
+      environment[applicationImages.mcp],
+      "mcp",
+    );
+    mcpImage = inspectImage(runner, "mcp", mcpReference, buildSha);
+  }
+  const topology = Object.freeze<FrozenTopology>({
+    mcpEnabled,
+    applicationServices: Object.freeze<readonly Role[]>(
+      mcpEnabled ? ["api", "worker", "mcp", "web"] : ["api", "worker", "web"],
+    ),
+  });
+  const composeBase = composeArgumentsForTopology(
+    unprofiledComposeBase,
+    topology,
+  );
+  if (topology.mcpEnabled)
+    checked(
+      runner,
+      [...composeBase, "config", "--quiet"],
+      "RETENTION_UPGRADE_MCP_COMPOSE_CONFIG_INVALID",
     );
 
   if (!execute)
     return {
       execute: false,
       buildSha,
-      targetDigests: Object.fromEntries(
-        Object.entries(images).map(([role, image]) => [role, image.reference]),
-      ),
+      targetDigests: {
+        ...Object.fromEntries(
+          Object.entries(images).map(([role, image]) => [
+            role,
+            image.reference,
+          ]),
+        ),
+        ...(mcpImage ? { mcp: mcpImage.reference } : {}),
+      },
       oldWorkerId,
       project,
+      topology,
       steps: productionUpgradePlan,
     };
 
@@ -279,6 +405,9 @@ export async function runProductionRetentionUpgrade({
       "RETENTION_UPGRADE_WORKER_STILL_RUNNING",
     );
 
+  const remainingRoles = topology.mcpEnabled
+    ? (["api", "mcp", "web"] as const)
+    : (["api", "web"] as const);
   checked(
     runner,
     [
@@ -413,13 +542,11 @@ export async function runProductionRetentionUpgrade({
       "--wait",
       "--wait-timeout",
       "240",
-      "api",
-      "mcp",
-      "web",
+      ...remainingRoles,
     ],
     "RETENTION_UPGRADE_REMAINING_SERVICES_START_FAILED",
   );
-  for (const role of ["api", "mcp", "web"] as const) {
+  for (const role of remainingRoles) {
     const id = checked(
       runner,
       [...composeBase, "ps", "-q", role],
@@ -430,9 +557,14 @@ export async function runProductionRetentionUpgrade({
       id,
       `RETENTION_UPGRADE_${role.toUpperCase()}_INSPECT_FAILED`,
     );
+    const expectedImage = role === "mcp" ? mcpImage : images[role];
+    if (!expectedImage)
+      throw new RetentionProductionUpgradeError(
+        "RETENTION_UPGRADE_FROZEN_TOPOLOGY_IMAGE_MISSING",
+      );
     if (
-      container.Image !== images[role].id ||
-      container.Config?.Image !== images[role].reference
+      container.Image !== expectedImage.id ||
+      container.Config?.Image !== expectedImage.reference
     )
       throw new RetentionProductionUpgradeError(
         `RETENTION_UPGRADE_${role.toUpperCase()}_DIGEST_MISMATCH`,
@@ -443,6 +575,7 @@ export async function runProductionRetentionUpgrade({
     execute: true,
     buildSha,
     project,
+    topology,
     migrated: "0030_durable_archive_upload_intents",
     workerContainerId: targetWorkerId,
     completedAt: now().toISOString(),
