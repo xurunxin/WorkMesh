@@ -21,6 +21,15 @@ import {
   type SseConnection,
 } from "./sse.js";
 import { waitForHostApiReadiness } from "./readiness.js";
+import {
+  buildFailedPhaseCEvidence,
+  cleanupAfterPhaseCFailure,
+  evaluateHarnessOutcome,
+  isFormalAcceptanceEligible,
+  parsePhaseCEvidenceWaiver,
+  PHASE_C_EVIDENCE_WAIVER_FLAG,
+  type EvidenceContinuationCleanup,
+} from "./evidence-continuation.js";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(
@@ -58,6 +67,19 @@ type HarnessReport = {
   postgres: Record<string, unknown>;
   dockerStats: Record<string, unknown>;
   nonCapacity5xx: number;
+  evidenceContinuation: {
+    flag: string;
+    requested: boolean;
+    used: boolean;
+    acceptanceEligible: boolean;
+    status:
+      | "not_requested"
+      | "armed_evidence_only"
+      | "continued_after_phase_c_failure";
+    phase?: "C-backpressure";
+    originalError?: string;
+    cleanup?: EvidenceContinuationCleanup;
+  };
   passed: boolean;
   failure?: string;
 };
@@ -136,6 +158,10 @@ const positiveInteger = (name: string, fallback: number): number => {
 };
 
 const diagnostic = process.argv.includes("--diagnostic");
+const phaseCEvidenceWaiverRequested = parsePhaseCEvidenceWaiver(
+  process.argv.slice(2),
+  diagnostic,
+);
 const parameters: Parameters = diagnostic
   ? {
       clients: positiveInteger("clients", 20),
@@ -326,11 +352,13 @@ const formalPlatform =
   os.cpus().length >= 4 &&
   totalMemoryGiB >= 8 &&
   (nofile ?? 0) >= 8_192;
+const reportMode = diagnostic ? "diagnostic" : "formal";
+const reportFormal = !diagnostic && formalPlatform;
 
 const report: HarnessReport = {
   version: 1,
-  mode: diagnostic ? "diagnostic" : "formal",
-  formal: !diagnostic && formalPlatform,
+  mode: reportMode,
+  formal: reportFormal,
   startedAt: new Date().toISOString(),
   gitSha,
   seed,
@@ -353,6 +381,19 @@ const report: HarnessReport = {
   postgres: {},
   dockerStats: {},
   nonCapacity5xx: 0,
+  evidenceContinuation: {
+    flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+    requested: phaseCEvidenceWaiverRequested,
+    used: false,
+    acceptanceEligible: isFormalAcceptanceEligible({
+      mode: reportMode,
+      formal: reportFormal,
+      evidenceWaiverRequested: phaseCEvidenceWaiverRequested,
+    }),
+    status: phaseCEvidenceWaiverRequested
+      ? "armed_evidence_only"
+      : "not_requested",
+  },
   passed: false,
 };
 
@@ -1018,6 +1059,12 @@ const reportMarkdown = (value: HarnessReport): string => {
     "",
     `- Result: **${value.passed ? "PASS" : "FAIL"}**`,
     `- Mode: **${value.mode}${value.formal ? " (formal)" : " (nonformal)"}**`,
+    `- Evidence-only Phase C waiver: **${
+      value.evidenceContinuation.requested ? "REQUESTED" : "not requested"
+    }**`,
+    `- Acceptance eligible: **${
+      value.evidenceContinuation.acceptanceEligible ? "yes" : "NO"
+    }**`,
     `- Git SHA: \`${value.gitSha}\``,
     `- Seed: \`${value.seed}\``,
     `- Started: ${value.startedAt}`,
@@ -1056,6 +1103,7 @@ const reportMarkdown = (value: HarnessReport): string => {
     JSON.stringify(
       {
         parameters: value.parameters,
+        evidenceContinuation: value.evidenceContinuation,
         platform: value.platform,
         phases: Object.fromEntries(
           Object.entries(value.phases).map(([name, result]) => [
@@ -1310,7 +1358,7 @@ try {
     };
   });
 
-  await phase("C-backpressure", async (assert, metrics) => {
+  const phaseCResult = phase("C-backpressure", async (assert, metrics) => {
     await Promise.all(clients.slice(1).map((client) => client.close()));
     const cursor = await highWater();
     const rssBefore = await containerRssBytes("api_a");
@@ -1441,6 +1489,46 @@ try {
       slotReuseMs: reuseMs,
     };
   });
+  try {
+    await phaseCResult;
+  } catch (error) {
+    if (!phaseCEvidenceWaiverRequested) throw error;
+    const originalError = errorText(error);
+    const cleanup = await cleanupAfterPhaseCFailure({ rawSocket, clients });
+    rawSocket = undefined;
+    const phaseC = report.phases["C-backpressure"];
+    if (!phaseC) throw new Error("PHASE_C_REPORT_MISSING_AFTER_FAILURE");
+    phaseC.metrics.evidenceContinuation = buildFailedPhaseCEvidence({
+      originalError,
+      cleanup,
+    });
+    phaseC.assertions.push({
+      name: "Phase C completed for acceptance",
+      passed: false,
+      expected: "Phase C must pass without an evidence-only waiver",
+      actual: {
+        status: "failed_incomplete_evidence_only",
+        flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+        originalError,
+      },
+    });
+    report.evidenceContinuation = {
+      flag: PHASE_C_EVIDENCE_WAIVER_FLAG,
+      requested: true,
+      used: true,
+      acceptanceEligible: false,
+      status: "continued_after_phase_c_failure",
+      phase: "C-backpressure",
+      originalError,
+      cleanup,
+    };
+    if (cleanup.failures.length > 0)
+      throw new Error(
+        `PHASE_C_EVIDENCE_CONTINUATION_CLEANUP_FAILED:${JSON.stringify(
+          cleanup.failures,
+        )}`,
+      );
+  }
 
   await clients[0]!.close();
   const phaseDCursor = await highWater();
@@ -1646,14 +1734,23 @@ try {
 
   report.postgres = await databaseStats();
   report.dockerStats.final = await dockerStats();
-  report.passed =
-    Object.values(report.phases).every(
+  const outcome = evaluateHarnessOutcome({
+    allPhasesPassed: Object.values(report.phases).every(
       (result) =>
         !result.error &&
         result.assertions.every((assertion) => assertion.passed),
-    ) && nonCapacity5xx === 0;
+    ),
+    nonCapacity5xx,
+    evidenceWaiverRequested: phaseCEvidenceWaiverRequested,
+    evidenceFailure: report.evidenceContinuation.originalError,
+  });
+  report.passed = outcome.passed;
+  report.failure = outcome.failure;
+  if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
 } catch (error) {
-  report.failure = errorText(error);
+  report.failure = [report.failure, errorText(error)]
+    .filter(Boolean)
+    .join("; ");
   report.passed = false;
   process.exitCode = 1;
   if (composeAttempted) {

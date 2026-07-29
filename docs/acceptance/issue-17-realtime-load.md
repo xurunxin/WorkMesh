@@ -31,6 +31,32 @@ pnpm test:load:realtime -- --diagnostic \
   --redis-outage-seconds=6
 ```
 
+### Evidence-only continuation after a failed Phase C
+
+When a diagnostic run needs to collect Phase D evidence after Phase C has
+already failed, use the explicit evidence-only waiver:
+
+```bash
+pnpm test:load:realtime -- --diagnostic \
+  --diagnostic-waive-phase-c-failure-for-evidence-only \
+  --clients=1000 \
+  --ramp-per-second=50 \
+  --hold-seconds=2 \
+  --backpressure-mib=32 \
+  --redis-outage-seconds=60 \
+  --redis-outage-events=100
+```
+
+This flag does not waive acceptance. Phase C still runs and retains its
+original error and partial metrics. After failure, the harness destroys the raw
+socket, attempts to close every existing SSE client, marks Phase C as
+`failed_incomplete_evidence_only`, and only then builds the Phase D client set.
+The JSON and Markdown reports remain failed and the process exits nonzero even
+when Phase D passes. The flag is rejected unless `--diagnostic` is also present
+and must never be used for a formal acceptance result. It is a one-time
+WorkMesh v1 GA evidence-continuation mechanism, not a reusable success path for
+future acceptance runs.
+
 The harness creates a unique Compose project, uses dynamically allocated
 loopback ports, creates a fresh PostgreSQL database, and always runs
 `docker compose down -v --remove-orphans` in `finally`. Set
