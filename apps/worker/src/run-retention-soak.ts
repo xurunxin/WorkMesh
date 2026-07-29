@@ -8,6 +8,8 @@ import {
   RetentionSoakCredentialManager,
 } from "./retention-soak-credential.js";
 import {
+  assertRetentionSoakSessionLiveness,
+  RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
   retentionSoakActivityPayload,
   retentionSoakPreflight,
   retentionSoakReport,
@@ -43,11 +45,18 @@ if (options.dryRun) {
     status: "dry_run",
     formalDurationHours: 24,
     sampleIntervalSeconds: options.sampleIntervalMs / 1_000,
-    maximumFormalSampleIntervalSeconds: 240,
+    maximumFormalSampleIntervalSeconds:
+      RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS / 1_000,
+    liveness: options.liveness,
     activeWorkload: true,
     proactiveTokenRotation: true,
     minimumTokenRefreshes: 2,
     maximumExpiredBeforeRefresh: 0,
+    checks: {
+      heartbeatLivenessBudget:
+        options.liveness.maximumExpectedHeartbeatGapMs <
+          options.liveness.hardStaleMs && options.liveness.safetyMarginMs > 0,
+    },
     archiveOnly: true,
     cleanupEnabled: false,
     pruneEnabled: false,
@@ -162,8 +171,14 @@ try {
       workspaceId: string;
       workerMode: string | null;
       workerSeenAt: Date | null;
+      state: string;
+      heartbeatHealth: string;
+      lastHeartbeatAt: Date | null;
     }>(
       `SELECT session.workspace_id AS "workspaceId",
+              session.state,
+              session.heartbeat_health AS "heartbeatHealth",
+              session.last_heartbeat_at AS "lastHeartbeatAt",
               runtime.worker_mode AS "workerMode",
               runtime.worker_seen_at AS "workerSeenAt"
          FROM agent_sessions session
@@ -175,6 +190,7 @@ try {
     )
   ).rows[0];
   if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
+  assertRetentionSoakSessionLiveness(identity, new Date(), options.liveness);
   if (
     identity.workerMode !== "archive_only" ||
     !identity.workerSeenAt ||
@@ -323,6 +339,7 @@ const report = retentionSoakReport(
   expectedSamples,
   generatedEventCursors,
   credentials.metrics(),
+  options.liveness,
 );
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {
   encoding: "utf8",

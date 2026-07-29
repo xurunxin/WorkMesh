@@ -28,6 +28,7 @@
     "test:load:realtime": "pnpm --filter @workmesh/api test:load:realtime",
     "test:load:heartbeat": "pnpm -C apps/api exec tsx ../../scripts/heartbeat-load.mts",
     "provision:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak-provision.mts",
+    "test:soak:retention:formal": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak-formal.mts",
     "test:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak.mts",
     "test:restore:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restore-rehearsal.mts",
     "test:acceptance:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restart-acceptance.mts"

@@ -47,9 +47,10 @@ test database. Before enabling event pruning, additionally require:
    fresh `archive_and_prune` Worker heartbeat in the admin status response;
 5. retention objects protected from deletion for at least 365 days.
 
-The formal soak must use the tracked `pnpm provision:soak:retention` command,
-not an untracked operator script. Run it under WSL/Linux; native Windows is
-rejected because this workflow cannot verify an owner-only NTFS ACL.
+The formal soak must use the tracked contiguous
+`pnpm test:soak:retention:formal` entrypoint, not an untracked operator script
+or a separately paused provision/run sequence. Run it under WSL/Linux; native
+Windows is rejected because this workflow cannot verify an owner-only NTFS ACL.
 Provisioning first writes a private schema-v1 recovery checkpoint with stable
 idempotency keys and the human authentication subject, then atomically replaces
 it with schema-v2 final state containing only the installation token and
@@ -59,6 +60,20 @@ or human-session invalidation, completely reset the disposable stack before
 removing the checkpoint. Never reuse a Session concurrently: one dedicated
 Session has exactly one soak runner, and a runner restart creates a new report
 directory and baseline rather than appending old samples.
+Guard that one-to-one Session/state path with nonblocking `flock`. The standalone
+`pnpm provision:soak:retention` command exists only for checkpoint recovery and
+diagnosis; completing it is not a safe pause point. The contiguous runner
+rejects a schema-v2 Session that is stale, non-executing, non-healthy, or more
+than 45 seconds past its last heartbeat before it attempts any refresh or
+heartbeat. Reset the disposable state/session and provision a new one.
+
+Formal evidence must identify the exact source SHA, immutable application image
+references/revisions, and the API, Worker, PostgreSQL, Redis, and MinIO
+container IDs/images. Exactly five unique stats targets are required. Threshold
+overrides may keep the defaults or lower maximums; looser formal thresholds are
+rejected. The 30-second maximum sample cadence plus the complete 45-second token
+refresh budget bounds the planned heartbeat-arrival gap at 75 seconds, leaving
+45 seconds below the server's hard 120-second stale age.
 
 Run the isolated restore rehearsal with separate disposable source and target
 databases (both names must contain `test`):

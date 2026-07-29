@@ -29,6 +29,58 @@ export type RetentionSoakThresholds = Readonly<{
   maximumContainerMemorySlopeBytesPerHour: number;
 }>;
 
+export const RETENTION_SOAK_HARD_STALE_MS = 120_000;
+export const RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS = 30_000;
+export const RETENTION_SOAK_REFRESH_BUDGET_MS = 45_000;
+export const RETENTION_SOAK_DEFAULT_REDIS_LIMIT = 100_000;
+
+export type RetentionSoakLivenessBudget = Readonly<{
+  hardStaleMs: number;
+  sampleIntervalMs: number;
+  refreshOperationBudgetMs: number;
+  maximumExpectedHeartbeatGapMs: number;
+  safetyMarginMs: number;
+  maximumInitialHeartbeatAgeMs: number;
+}>;
+
+export const retentionSoakLivenessBudget = (
+  sampleIntervalMs: number,
+): RetentionSoakLivenessBudget => {
+  const maximumExpectedHeartbeatGapMs =
+    sampleIntervalMs + RETENTION_SOAK_REFRESH_BUDGET_MS;
+  const safetyMarginMs =
+    RETENTION_SOAK_HARD_STALE_MS - maximumExpectedHeartbeatGapMs;
+  if (safetyMarginMs <= 0)
+    throw new Error("RETENTION_SOAK_HEARTBEAT_LIVENESS_BUDGET_INVALID");
+  return {
+    hardStaleMs: RETENTION_SOAK_HARD_STALE_MS,
+    sampleIntervalMs,
+    refreshOperationBudgetMs: RETENTION_SOAK_REFRESH_BUDGET_MS,
+    maximumExpectedHeartbeatGapMs,
+    safetyMarginMs,
+    maximumInitialHeartbeatAgeMs: safetyMarginMs,
+  };
+};
+
+export const retentionSoakDefaultThresholds: RetentionSoakThresholds = {
+  maximumArchiveBacklog: 5,
+  maximumArchiveLatencyMs: 300_000,
+  maximumOutboxPending: 5,
+  maximumOutboxLagMs: 60_000,
+  maximumCpuPercent: 85,
+  maximumMemoryBytes: 1_073_741_824,
+  maximumDatabaseConnections: 50,
+  maximumRedisConnections: 50,
+  maximumHeartbeatLatencyMs: 1_000,
+  maximumActivityLatencyMs: 2_000,
+  maximumDatabaseRowsSlopePerHour: 24,
+  maximumDatabaseBytesSlopePerHour: 16_777_216,
+  maximumTableBytesSlopePerHour: 8_388_608,
+  maximumDeadTuplesSlopePerHour: 100,
+  maximumRedisLengthSlopePerHour: 24,
+  maximumContainerMemorySlopeBytesPerHour: 16_777_216,
+};
+
 export type RetentionSoakOptions = Readonly<{
   databaseUrl: string;
   redisUrl: string;
@@ -41,6 +93,7 @@ export type RetentionSoakOptions = Readonly<{
   activityEverySamples: number;
   containers: readonly string[];
   thresholds: RetentionSoakThresholds;
+  liveness: RetentionSoakLivenessBudget;
   dryRun: boolean;
 }>;
 
@@ -89,20 +142,25 @@ export const retentionSoakPreflight = (
   if (hours !== 24)
     throw new Error("RETENTION_SOAK_FORMAL_DURATION_MUST_BE_24_HOURS");
   const sampleSeconds = Number(
-    env.WORKMESH_RETENTION_SOAK_SAMPLE_SECONDS ?? "60",
+    env.WORKMESH_RETENTION_SOAK_SAMPLE_SECONDS ?? "30",
   );
-  const redisLimit = Number(env.WORKMESH_REALTIME_REDIS_MAXLEN ?? "100000");
+  const redisLimit = Number(
+    env.WORKMESH_REALTIME_REDIS_MAXLEN ??
+      String(RETENTION_SOAK_DEFAULT_REDIS_LIMIT),
+  );
   const activityEverySamples = Number(
     env.WORKMESH_RETENTION_SOAK_ACTIVITY_EVERY_SAMPLES ?? "5",
   );
   if (
     !Number.isInteger(sampleSeconds) ||
     sampleSeconds < 1 ||
-    sampleSeconds > 240
+    sampleSeconds * 1_000 > RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS
   )
     throw new Error("RETENTION_SOAK_SAMPLE_INTERVAL_INVALID");
   if (!Number.isInteger(redisLimit) || redisLimit < 100)
     throw new Error("RETENTION_SOAK_REDIS_LIMIT_INVALID");
+  if (redisLimit > RETENTION_SOAK_DEFAULT_REDIS_LIMIT)
+    throw new Error("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
   if (!Number.isInteger(activityEverySamples) || activityEverySamples < 1)
     throw new Error("RETENTION_SOAK_ACTIVITY_INTERVAL_INVALID");
   const containers = required(
@@ -112,90 +170,101 @@ export const retentionSoakPreflight = (
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  if (containers.length < 2)
+  if (containers.length !== 5 || new Set(containers).size !== containers.length)
     throw new Error("RETENTION_SOAK_REQUIRES_CONTAINER_STATS_TARGETS");
   const thresholds: RetentionSoakThresholds = {
     maximumArchiveBacklog: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_ARCHIVE_BACKLOG,
-      5,
+      retentionSoakDefaultThresholds.maximumArchiveBacklog,
       "RETENTION_SOAK_ARCHIVE_BACKLOG_THRESHOLD_INVALID",
     ),
     maximumArchiveLatencyMs: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_ARCHIVE_LATENCY_MS,
-      300_000,
+      retentionSoakDefaultThresholds.maximumArchiveLatencyMs,
       "RETENTION_SOAK_ARCHIVE_LATENCY_THRESHOLD_INVALID",
     ),
     maximumOutboxPending: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_OUTBOX_PENDING,
-      5,
+      retentionSoakDefaultThresholds.maximumOutboxPending,
       "RETENTION_SOAK_OUTBOX_PENDING_THRESHOLD_INVALID",
     ),
     maximumOutboxLagMs: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_OUTBOX_LAG_MS,
-      60_000,
+      retentionSoakDefaultThresholds.maximumOutboxLagMs,
       "RETENTION_SOAK_OUTBOX_LAG_THRESHOLD_INVALID",
     ),
     maximumCpuPercent: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_CPU_PERCENT,
-      85,
+      retentionSoakDefaultThresholds.maximumCpuPercent,
       "RETENTION_SOAK_CPU_THRESHOLD_INVALID",
     ),
     maximumMemoryBytes: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_MEMORY_BYTES,
-      1_073_741_824,
+      retentionSoakDefaultThresholds.maximumMemoryBytes,
       "RETENTION_SOAK_MEMORY_THRESHOLD_INVALID",
     ),
     maximumDatabaseConnections: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_DATABASE_CONNECTIONS,
-      50,
+      retentionSoakDefaultThresholds.maximumDatabaseConnections,
       "RETENTION_SOAK_DATABASE_CONNECTION_THRESHOLD_INVALID",
     ),
     maximumRedisConnections: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_REDIS_CONNECTIONS,
-      50,
+      retentionSoakDefaultThresholds.maximumRedisConnections,
       "RETENTION_SOAK_REDIS_CONNECTION_THRESHOLD_INVALID",
     ),
     maximumHeartbeatLatencyMs: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_HEARTBEAT_LATENCY_MS,
-      1_000,
+      retentionSoakDefaultThresholds.maximumHeartbeatLatencyMs,
       "RETENTION_SOAK_HEARTBEAT_LATENCY_THRESHOLD_INVALID",
     ),
     maximumActivityLatencyMs: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_ACTIVITY_LATENCY_MS,
-      2_000,
+      retentionSoakDefaultThresholds.maximumActivityLatencyMs,
       "RETENTION_SOAK_ACTIVITY_LATENCY_THRESHOLD_INVALID",
     ),
     maximumDatabaseRowsSlopePerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_DATABASE_ROWS_SLOPE_PER_HOUR,
-      24,
+      retentionSoakDefaultThresholds.maximumDatabaseRowsSlopePerHour,
       "RETENTION_SOAK_DATABASE_ROWS_SLOPE_THRESHOLD_INVALID",
     ),
     maximumDatabaseBytesSlopePerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_DATABASE_BYTES_SLOPE_PER_HOUR,
-      16_777_216,
+      retentionSoakDefaultThresholds.maximumDatabaseBytesSlopePerHour,
       "RETENTION_SOAK_DATABASE_BYTES_SLOPE_THRESHOLD_INVALID",
     ),
     maximumTableBytesSlopePerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_TABLE_BYTES_SLOPE_PER_HOUR,
-      8_388_608,
+      retentionSoakDefaultThresholds.maximumTableBytesSlopePerHour,
       "RETENTION_SOAK_TABLE_BYTES_SLOPE_THRESHOLD_INVALID",
     ),
     maximumDeadTuplesSlopePerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_DEAD_TUPLES_SLOPE_PER_HOUR,
-      100,
+      retentionSoakDefaultThresholds.maximumDeadTuplesSlopePerHour,
       "RETENTION_SOAK_DEAD_TUPLES_SLOPE_THRESHOLD_INVALID",
     ),
     maximumRedisLengthSlopePerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_REDIS_LENGTH_SLOPE_PER_HOUR,
-      24,
+      retentionSoakDefaultThresholds.maximumRedisLengthSlopePerHour,
       "RETENTION_SOAK_REDIS_LENGTH_SLOPE_THRESHOLD_INVALID",
     ),
     maximumContainerMemorySlopeBytesPerHour: nonNegativeNumber(
       env.WORKMESH_RETENTION_SOAK_MAX_CONTAINER_MEMORY_SLOPE_BYTES_PER_HOUR,
-      16_777_216,
+      retentionSoakDefaultThresholds.maximumContainerMemorySlopeBytesPerHour,
       "RETENTION_SOAK_CONTAINER_MEMORY_SLOPE_THRESHOLD_INVALID",
     ),
   };
+  if (
+    Object.entries(thresholds).some(
+      ([name, value]) =>
+        value >
+        retentionSoakDefaultThresholds[
+          name as keyof RetentionSoakThresholds
+        ],
+    )
+  )
+    throw new Error("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
+  const sampleIntervalMs = sampleSeconds * 1_000;
 
   return {
     databaseUrl,
@@ -217,13 +286,38 @@ export const retentionSoakPreflight = (
       "RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD",
     ),
     durationMs: hours * 3_600_000,
-    sampleIntervalMs: sampleSeconds * 1_000,
+    sampleIntervalMs,
     redisLimit,
     activityEverySamples,
     containers,
     thresholds,
+    liveness: retentionSoakLivenessBudget(sampleIntervalMs),
     dryRun,
   };
+};
+
+export type RetentionSoakSessionLiveness = Readonly<{
+  state: string;
+  heartbeatHealth: string;
+  lastHeartbeatAt: Date | null;
+}>;
+
+export const assertRetentionSoakSessionLiveness = (
+  session: RetentionSoakSessionLiveness,
+  now: Date,
+  budget: RetentionSoakLivenessBudget,
+): void => {
+  const heartbeatAgeMs = session.lastHeartbeatAt
+    ? now.getTime() - session.lastHeartbeatAt.getTime()
+    : Number.POSITIVE_INFINITY;
+  if (
+    session.state !== "executing" ||
+    session.heartbeatHealth !== "healthy" ||
+    !Number.isFinite(heartbeatAgeMs) ||
+    heartbeatAgeMs < 0 ||
+    heartbeatAgeMs > budget.maximumInitialHeartbeatAgeMs
+  )
+    throw new Error("RETENTION_SOAK_SESSION_STALE_REPROVISION_REQUIRED");
 };
 
 export type RetentionSoakSample = Readonly<{
@@ -315,6 +409,9 @@ export const retentionSoakReport = (
     maximumRefreshLatencyMs: 0,
     expiredBeforeRefreshCount: 0,
   },
+  liveness: RetentionSoakLivenessBudget = retentionSoakLivenessBudget(
+    RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
+  ),
 ) => {
   const series = [baseline, ...samples];
   const last = samples.at(-1);
@@ -450,6 +547,12 @@ export const retentionSoakReport = (
     tokenRotationExercised: credentialMetrics.refreshCount >= 2,
     tokenNeverExpiredBeforeRefresh:
       credentialMetrics.expiredBeforeRefreshCount === 0,
+    heartbeatLivenessBudget:
+      liveness.maximumExpectedHeartbeatGapMs < liveness.hardStaleMs &&
+      liveness.safetyMarginMs > 0,
+    tokenRefreshLatencyWithinBudget:
+      credentialMetrics.maximumRefreshLatencyMs <=
+      liveness.refreshOperationBudgetMs,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&
@@ -497,6 +600,7 @@ export const retentionSoakReport = (
       ...thresholds,
       redisLengthLimit: redisLimit,
     },
+    liveness,
     actual: {
       baseline: {
         verifiedSegments: baseline.archive.verified,

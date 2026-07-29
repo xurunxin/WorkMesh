@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { exchangeAgentSessionTokenResponseSchema } from "@workmesh/contracts";
+import { RETENTION_SOAK_REFRESH_BUDGET_MS } from "./retention-soak.js";
 
 const DEFAULT_REFRESH_MARGIN_MS = 180_000;
 const MAX_REFRESH_ATTEMPTS = 3;
 const MAX_RETRY_AFTER_MS = 60_000;
 const MAX_CUMULATIVE_RETRY_DELAY_MS = 120_000;
-const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 
 type Fetch = typeof fetch;
 
@@ -27,6 +28,7 @@ export type RetentionSoakCredentialManagerOptions = Readonly<{
   idempotencyKey?: () => string;
   refreshMarginMs?: number;
   requestTimeoutMs?: number;
+  refreshBudgetMs?: number;
 }>;
 
 const parseRetryAfterMs = (
@@ -55,6 +57,7 @@ export class RetentionSoakCredentialManager {
   readonly #idempotencyKey: () => string;
   readonly #refreshMarginMs: number;
   readonly #requestTimeoutMs: number;
+  readonly #refreshBudgetMs: number;
   #sessionToken: string | undefined;
   #expiresAtMs = 0;
   #refreshCount = 0;
@@ -78,6 +81,16 @@ export class RetentionSoakCredentialManager {
       options.refreshMarginMs ?? DEFAULT_REFRESH_MARGIN_MS;
     this.#requestTimeoutMs =
       options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+    this.#refreshBudgetMs =
+      options.refreshBudgetMs ?? RETENTION_SOAK_REFRESH_BUDGET_MS;
+    if (
+      !Number.isFinite(this.#requestTimeoutMs) ||
+      this.#requestTimeoutMs <= 0 ||
+      !Number.isFinite(this.#refreshBudgetMs) ||
+      this.#refreshBudgetMs <= 0 ||
+      this.#refreshBudgetMs > RETENTION_SOAK_REFRESH_BUDGET_MS
+    )
+      throw new Error("RETENTION_SOAK_TOKEN_REFRESH_BUDGET_INVALID");
   }
 
   async token(): Promise<string> {
@@ -109,15 +122,28 @@ export class RetentionSoakCredentialManager {
   async #refresh(): Promise<string> {
     const idempotencyKey = this.#idempotencyKey();
     const startedAt = this.#monotonicNow();
+    const remainingBudgetMs = (): number =>
+      this.#refreshBudgetMs - (this.#monotonicNow() - startedAt);
+    const assertBudgetRemaining = (): void => {
+      if (remainingBudgetMs() <= 0)
+        throw new Error("RETENTION_SOAK_TOKEN_REFRESH_BUDGET_EXCEEDED");
+    };
+    const sleepWithinBudget = async (delayMs: number): Promise<void> => {
+      if (delayMs >= remainingBudgetMs())
+        throw new Error("RETENTION_SOAK_TOKEN_REFRESH_BUDGET_EXCEEDED");
+      await this.#sleep(delayMs);
+      assertBudgetRemaining();
+    };
     let cumulativeDelayMs = 0;
     for (let attempt = 1; attempt <= MAX_REFRESH_ATTEMPTS; attempt += 1) {
+      assertBudgetRemaining();
       let response: Response | undefined;
       let body: unknown;
       let responseBodyInvalid = false;
       const controller = new AbortController();
       const timeout = setTimeout(
         () => controller.abort(),
-        this.#requestTimeoutMs,
+        Math.min(this.#requestTimeoutMs, remainingBudgetMs()),
       );
       try {
         response = await this.#fetch(
@@ -144,6 +170,7 @@ export class RetentionSoakCredentialManager {
       } finally {
         clearTimeout(timeout);
       }
+      assertBudgetRemaining();
       if (responseBodyInvalid)
         throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RESPONSE_INVALID");
       if (!response) {
@@ -156,7 +183,7 @@ export class RetentionSoakCredentialManager {
         cumulativeDelayMs += delayMs;
         if (cumulativeDelayMs > MAX_CUMULATIVE_RETRY_DELAY_MS)
           throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RETRY_DELAY_EXCEEDED");
-        await this.#sleep(delayMs);
+        await sleepWithinBudget(delayMs);
         continue;
       }
 
@@ -195,7 +222,7 @@ export class RetentionSoakCredentialManager {
       cumulativeDelayMs += delayMs;
       if (cumulativeDelayMs > MAX_CUMULATIVE_RETRY_DELAY_MS)
         throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RETRY_DELAY_EXCEEDED");
-      await this.#sleep(delayMs);
+      await sleepWithinBudget(delayMs);
     }
     throw new Error("RETENTION_SOAK_TOKEN_REFRESH_RETRIES_EXHAUSTED");
   }

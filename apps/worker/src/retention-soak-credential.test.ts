@@ -27,6 +27,7 @@ describe("retention soak credential manager", () => {
           new Headers(init?.headers).get("idempotency-key") ?? "",
         );
         const tokenNumber = request.mock.calls.length;
+        monotonic += 10;
         return jsonResponse({
           sessionToken: `session-${tokenNumber}`,
           expiresAt: new Date(now + 900_000).toISOString(),
@@ -38,7 +39,7 @@ describe("retention soak credential manager", () => {
       installationToken: "installation-secret",
       fetch: request,
       now: () => now,
-      monotonicNow: () => (monotonic += 10),
+      monotonicNow: () => monotonic,
       idempotencyKey: () => `refresh-key-${(keyNumber += 1)}`,
     });
 
@@ -60,7 +61,7 @@ describe("retention soak credential manager", () => {
     });
   });
 
-  it("refreshes before expiry at the maximum formal four-minute cadence", async () => {
+  it("refreshes before expiry at the maximum formal 30-second cadence", async () => {
     const start = Date.parse("2026-07-29T00:00:00.000Z");
     let now = start;
     let tokenNumber = 0;
@@ -78,7 +79,7 @@ describe("retention soak credential manager", () => {
     });
 
     await manager.token();
-    for (let elapsed = 240_000; elapsed <= 86_400_000; elapsed += 240_000) {
+    for (let elapsed = 30_000; elapsed <= 86_400_000; elapsed += 30_000) {
       now = start + elapsed;
       await manager.token();
     }
@@ -142,7 +143,7 @@ describe("retention soak credential manager", () => {
       .mockRejectedValueOnce(new Error("network down"))
       .mockResolvedValueOnce(
         jsonResponse({ error: {} }, 429, {
-          "retry-after": new Date(now + 999_000).toUTCString(),
+          "retry-after": "10",
         }),
       )
       .mockImplementationOnce(async (_input, init) => {
@@ -170,17 +171,19 @@ describe("retention soak credential manager", () => {
     await expect(manager.token()).resolves.toBe("rotated-session");
     expect(request).toHaveBeenCalledTimes(3);
     expect(new Set(keys)).toEqual(new Set(["one-logical-refresh"]));
-    expect(sleeps).toEqual([1_000, 60_000]);
+    expect(sleeps).toEqual([1_000, 10_000]);
   });
 
-  it("stops after three 5xx attempts and 120 seconds of capped delay", async () => {
+  it("caps the complete request, body, and retry sequence at 45 seconds", async () => {
+    let monotonic = 0;
     const sleeps: number[] = [];
     const keys: string[] = [];
     const request = vi
       .fn<typeof fetch>()
       .mockImplementation(async (_input, init) => {
         keys.push(new Headers(init?.headers).get("idempotency-key") ?? "");
-        return jsonResponse({ error: {} }, 503, { "retry-after": "999" });
+        monotonic += request.mock.calls.length === 3 ? 5_000 : 10_000;
+        return jsonResponse({ error: {} }, 503, { "retry-after": "10" });
       });
     const manager = new RetentionSoakCredentialManager({
       apiUrl: "http://127.0.0.1:3001",
@@ -189,12 +192,14 @@ describe("retention soak credential manager", () => {
       fetch: request,
       sleep: async (delayMs) => {
         sleeps.push(delayMs);
+        monotonic += delayMs;
       },
+      monotonicNow: () => monotonic,
       idempotencyKey: () => "bounded-refresh",
     });
 
     await expect(manager.token()).rejects.toThrow(
-      "RETENTION_SOAK_TOKEN_REFRESH_RETRIES_EXHAUSTED",
+      "RETENTION_SOAK_TOKEN_REFRESH_BUDGET_EXCEEDED",
     );
     expect(request).toHaveBeenCalledTimes(3);
     expect(keys).toEqual([
@@ -202,7 +207,20 @@ describe("retention soak credential manager", () => {
       "bounded-refresh",
       "bounded-refresh",
     ]);
-    expect(sleeps).toEqual([60_000, 60_000]);
+    expect(sleeps).toEqual([10_000, 10_000]);
+    expect(monotonic).toBe(45_000);
+  });
+
+  it("rejects a configured refresh budget above the formal cap", () => {
+    expect(
+      () =>
+        new RetentionSoakCredentialManager({
+          apiUrl: "http://127.0.0.1:3001",
+          sessionId: "session-id",
+          installationToken: "installation-secret",
+          refreshBudgetMs: 45_001,
+        }),
+    ).toThrow("RETENTION_SOAK_TOKEN_REFRESH_BUDGET_INVALID");
   });
 
   it("rejects terminal 4xx, malformed responses, and unsafe expiry", async () => {
@@ -300,5 +318,86 @@ describe("retention soak credential manager", () => {
     expect(`${message}${JSON.stringify(manager.metrics())}`).not.toContain(
       sessionToken,
     );
+  });
+
+  it("keeps delayed 429 proactive refresh and subsequent activity below stale", async () => {
+    const start = Date.parse("2026-07-29T00:00:00.000Z");
+    let now = start;
+    let monotonic = 0;
+    let refreshCalls = 0;
+    const heartbeatTimes: number[] = [];
+    const activityAuthorizations: string[] = [];
+    const request = vi.fn<typeof fetch>().mockImplementation(async (input, init) => {
+      const path = new URL(String(input)).pathname;
+      if (path.endsWith("/token/refresh")) {
+        refreshCalls += 1;
+        if (refreshCalls === 2) {
+          now += 5_000;
+          monotonic += 5_000;
+          return jsonResponse({ error: {} }, 429, { "retry-after": "10" });
+        }
+        if (refreshCalls === 3) {
+          now += 5_000;
+          monotonic += 5_000;
+        }
+        return jsonResponse({
+          sessionToken: `session-${refreshCalls}`,
+          expiresAt: new Date(now + 900_000).toISOString(),
+        });
+      }
+      if (path.endsWith("/heartbeat")) heartbeatTimes.push(now);
+      if (path.endsWith("/activities"))
+        activityAuthorizations.push(
+          new Headers(init?.headers).get("authorization") ?? "",
+        );
+      return jsonResponse({});
+    });
+    const manager = new RetentionSoakCredentialManager({
+      apiUrl: "http://127.0.0.1:3001",
+      sessionId: "session-id",
+      installationToken: "installation-secret",
+      fetch: request,
+      now: () => now,
+      monotonicNow: () => monotonic,
+      sleep: async (delayMs) => {
+        now += delayMs;
+        monotonic += delayMs;
+      },
+    });
+
+    await manager.token();
+    now = start + 690_000;
+    await callRetentionSoakAgent(
+      manager,
+      "http://127.0.0.1:3001",
+      "/api/v1/agent-sessions/session-id/heartbeat",
+      { usage: { runtimeSeconds: 690 } },
+      { fetch: request, monotonicNow: () => monotonic },
+    );
+    now = start + 720_000;
+    await callRetentionSoakAgent(
+      manager,
+      "http://127.0.0.1:3001",
+      "/api/v1/agent-sessions/session-id/heartbeat",
+      { usage: { runtimeSeconds: 720 } },
+      { fetch: request, monotonicNow: () => monotonic },
+    );
+    await callRetentionSoakAgent(
+      manager,
+      "http://127.0.0.1:3001",
+      "/api/v1/agent-sessions/session-id/activities",
+      { kind: "status" },
+      { fetch: request, monotonicNow: () => monotonic },
+    );
+
+    expect(heartbeatTimes).toHaveLength(2);
+    expect(heartbeatTimes[1]! - heartbeatTimes[0]!).toBe(50_000);
+    expect(heartbeatTimes[1]! - heartbeatTimes[0]!).toBeLessThan(120_000);
+    expect(activityAuthorizations).toEqual(["Bearer session-3"]);
+    expect(manager.metrics()).toEqual({
+      refreshCount: 2,
+      maximumRefreshLatencyMs: 20_000,
+      expiredBeforeRefreshCount: 0,
+    });
   });
 });
