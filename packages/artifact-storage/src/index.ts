@@ -18,9 +18,55 @@ export type ArtifactObjectExpectation = {
   sizeBytes: number;
   mimeType: string;
   retainUntil?: Date;
+  archiveIdentity?: Readonly<{
+    segmentId: string;
+    snapshotDigest: string;
+    fixedCutoffAt: string;
+  }>;
 };
 
 type ObjectClient = Pick<S3Client, "send">;
+
+const checksumBase64 = (checksum: string): string =>
+  Buffer.from(checksum.replace(/^sha256:/, ""), "hex").toString("base64");
+
+const objectMetadata = (
+  expectation: ArtifactObjectExpectation,
+): Record<string, string> => ({
+  workmeshchecksum: expectation.checksum,
+  ...(expectation.archiveIdentity
+    ? {
+        workmeshsegmentid: expectation.archiveIdentity.segmentId,
+        workmeshsnapshotdigest: expectation.archiveIdentity.snapshotDigest,
+        workmeshfixedcutoffat: expectation.archiveIdentity.fixedCutoffAt,
+      }
+    : {}),
+});
+
+const httpStatus = (error: unknown): number | undefined => {
+  if (!error || typeof error !== "object") return undefined;
+  const metadata = (error as { $metadata?: { httpStatusCode?: number } }).$metadata;
+  return metadata?.httpStatusCode;
+};
+
+const isNotFound = (error: unknown): boolean =>
+  httpStatus(error) === 404 ||
+  (error instanceof Error &&
+    (error.name === "NotFound" || error.name === "NoSuchKey"));
+
+const identityMismatchCodes = new Set([
+  "RETENTION_OBJECT_VERSION_MISMATCH",
+  "ARTIFACT_SIZE_MISMATCH",
+  "ARTIFACT_MIME_MISMATCH",
+  "ARTIFACT_METADATA_CHECKSUM_MISMATCH",
+  "ARTIFACT_CHECKSUM_HEADER_MISMATCH",
+  "RETENTION_OBJECT_SEGMENT_MISMATCH",
+  "RETENTION_OBJECT_SNAPSHOT_MISMATCH",
+  "RETENTION_OBJECT_CUTOFF_MISMATCH",
+  "RETENTION_OBJECT_LOCK_MODE_MISMATCH",
+  "RETENTION_OBJECT_LOCK_TOO_SHORT",
+  "RETENTION_OBJECT_VERSION_REQUIRED",
+]);
 
 export class S3ArtifactStorage {
   readonly #client: ObjectClient;
@@ -43,8 +89,8 @@ export class S3ArtifactStorage {
       Key: expectation.key,
       ContentType: expectation.mimeType,
       ContentLength: expectation.sizeBytes,
-      ChecksumSHA256: Buffer.from(expectation.checksum.replace(/^sha256:/, ""), "hex").toString("base64"),
-      Metadata: { workmeshchecksum: expectation.checksum },
+      ChecksumSHA256: checksumBase64(expectation.checksum),
+      Metadata: objectMetadata(expectation),
       ...(expectation.retainUntil
         ? {
             ObjectLockMode: "COMPLIANCE" as const,
@@ -88,8 +134,8 @@ export class S3ArtifactStorage {
       Body: body,
       ContentType: expectation.mimeType,
       ContentLength: expectation.sizeBytes,
-      ChecksumSHA256: Buffer.from(expectation.checksum.replace(/^sha256:/, ""), "hex").toString("base64"),
-      Metadata: { workmeshchecksum: expectation.checksum },
+      ChecksumSHA256: checksumBase64(expectation.checksum),
+      Metadata: objectMetadata(expectation),
       ...(expectation.retainUntil
         ? {
             ObjectLockMode: "COMPLIANCE" as const,
@@ -99,6 +145,81 @@ export class S3ArtifactStorage {
     }));
     if (!uploaded.VersionId) throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     return { versionId: uploaded.VersionId };
+  }
+
+  /** Retention-only stable-key write. A retry never creates a replacement
+   * version: it either wins If-None-Match or reconciles the current immutable
+   * object identity after a 412, timeout, 5xx, or response loss. */
+  async putObjectIfAbsent(
+    expectation: ArtifactObjectExpectation,
+    body: Uint8Array,
+  ): Promise<{ versionId: string }> {
+    if (!expectation.archiveIdentity)
+      throw new Error("RETENTION_OBJECT_IDENTITY_REQUIRED");
+    if (expectation.versionId)
+      throw new Error("RETENTION_OBJECT_VERSION_UNEXPECTED");
+    if (body.byteLength !== expectation.sizeBytes)
+      throw new Error("ARTIFACT_SIZE_MISMATCH");
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        await this.#client.send(
+          new PutObjectCommand({
+            Bucket: this.#bucket,
+            Key: expectation.key,
+            Body: body,
+            ContentType: expectation.mimeType,
+            ContentLength: expectation.sizeBytes,
+            ChecksumSHA256: checksumBase64(expectation.checksum),
+            Metadata: objectMetadata(expectation),
+            IfNoneMatch: "*",
+            ...(expectation.retainUntil
+              ? {
+                  ObjectLockMode: "COMPLIANCE" as const,
+                  ObjectLockRetainUntilDate: expectation.retainUntil,
+                }
+              : {}),
+          }),
+        );
+      } catch (error) {
+        lastError = error;
+      }
+      try {
+        return await this.reconcileCurrentObject(expectation);
+      } catch (error) {
+        if (!isNotFound(error)) throw error;
+        lastError ??= error;
+      }
+    }
+    throw lastError instanceof Error
+      ? lastError
+      : new Error("RETENTION_OBJECT_UPLOAD_UNCERTAIN");
+  }
+
+  /** Reconcile the current key after an uncertain conditional PUT. The
+   * returned VersionId is then persisted and all later reads are pinned. */
+  async reconcileCurrentObject(
+    expectation: ArtifactObjectExpectation,
+  ): Promise<{ versionId: string }> {
+    if (!expectation.archiveIdentity)
+      throw new Error("RETENTION_OBJECT_IDENTITY_REQUIRED");
+    try {
+      const head = await this.#verifiedHead(
+        { ...expectation, versionId: undefined },
+        false,
+      );
+      if (!head.VersionId)
+        throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
+      return { versionId: head.VersionId };
+    } catch (error) {
+      if (isNotFound(error)) throw error;
+      if (
+        error instanceof Error &&
+        identityMismatchCodes.has(error.message)
+      )
+        throw new Error("RETENTION_OBJECT_IDENTITY_MISMATCH");
+      throw error;
+    }
   }
 
   async probe(): Promise<void> {
@@ -113,13 +234,16 @@ export class S3ArtifactStorage {
       throw new Error("RETENTION_OBJECT_LOCK_REQUIRED");
   }
 
-  async #verifiedHead(expectation: ArtifactObjectExpectation) {
-    if (expectation.retainUntil && !expectation.versionId)
+  async #verifiedHead(
+    expectation: ArtifactObjectExpectation,
+    requirePinned = true,
+  ) {
+    if (requirePinned && expectation.retainUntil && !expectation.versionId)
       throw new Error("RETENTION_OBJECT_VERSION_REQUIRED");
     const head = await this.#client.send(new HeadObjectCommand({
       Bucket: this.#bucket,
       Key: expectation.key,
-      VersionId: expectation.versionId,
+      ...(expectation.versionId ? { VersionId: expectation.versionId } : {}),
       ChecksumMode: "ENABLED",
     }));
     if (expectation.versionId && head.VersionId !== expectation.versionId)
@@ -127,6 +251,28 @@ export class S3ArtifactStorage {
     if (head.ContentLength !== expectation.sizeBytes) throw new Error("ARTIFACT_SIZE_MISMATCH");
     if (head.ContentType !== expectation.mimeType) throw new Error("ARTIFACT_MIME_MISMATCH");
     if (head.Metadata?.workmeshchecksum !== expectation.checksum) throw new Error("ARTIFACT_METADATA_CHECKSUM_MISMATCH");
+    if (
+      expectation.archiveIdentity &&
+      head.ChecksumSHA256 !== checksumBase64(expectation.checksum)
+    )
+      throw new Error("ARTIFACT_CHECKSUM_HEADER_MISMATCH");
+    if (
+      expectation.archiveIdentity &&
+      head.Metadata?.workmeshsegmentid !== expectation.archiveIdentity.segmentId
+    )
+      throw new Error("RETENTION_OBJECT_SEGMENT_MISMATCH");
+    if (
+      expectation.archiveIdentity &&
+      head.Metadata?.workmeshsnapshotdigest !==
+        expectation.archiveIdentity.snapshotDigest
+    )
+      throw new Error("RETENTION_OBJECT_SNAPSHOT_MISMATCH");
+    if (
+      expectation.archiveIdentity &&
+      head.Metadata?.workmeshfixedcutoffat !==
+        expectation.archiveIdentity.fixedCutoffAt
+    )
+      throw new Error("RETENTION_OBJECT_CUTOFF_MISMATCH");
     if (expectation.retainUntil) {
       if (head.ObjectLockMode !== "COMPLIANCE")
         throw new Error("RETENTION_OBJECT_LOCK_MODE_MISMATCH");
