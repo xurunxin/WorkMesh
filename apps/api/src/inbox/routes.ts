@@ -8,10 +8,7 @@ import {
 } from "@workmesh/contracts";
 import { appendEvent, withTx } from "@workmesh/db";
 import { DomainError, assertRevision, parseRevision } from "@workmesh/domain";
-import {
-  assertCurrentAgentCredentialInTx,
-  authorizeCommandInTx,
-} from "../agent/guard.js";
+import { authorizeCommandInTx } from "../agent/guard.js";
 import { queueWebhookDeliveries } from "../agent/commands.js";
 import type { ApiActor, RequestMeta } from "../agent/types.js";
 import {
@@ -189,7 +186,6 @@ async function loadAgentItemForUpdate(
     operation,
     idempotencyKey,
   });
-  await assertCurrentAgentCredentialInTx(tx, actor, actor.agentSessionId);
   const row = (
     await tx.query<InboxItem>(`${itemDetailSql} FOR UPDATE OF i`, [
       itemId(request),
@@ -735,11 +731,6 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
           operation: "inbox_claim",
           idempotencyKey,
         });
-        await assertCurrentAgentCredentialInTx(
-          tx,
-          actor,
-          actor.agentSessionId!,
-        );
         const values: unknown[] = [
           itemId(request),
           actor.workspaceId,

@@ -421,6 +421,24 @@ describe('Stage 2 collaboration API acceptance', () => {
           (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
       [sessionId],
     )).rows[0]!
+    const waitForBlockedBy = async (blockerPid: number): Promise<void> => {
+      const deadline = Date.now() + 5_000
+      while (Date.now() < deadline) {
+        const blocked = (await db.query<{ blocked: boolean }>(
+          `SELECT EXISTS(
+             SELECT 1
+               FROM pg_stat_activity
+              WHERE datname=current_database()
+                AND wait_event_type='Lock'
+                AND $1::int=ANY(pg_blocking_pids(pid))
+           ) AS blocked`,
+          [blockerPid],
+        )).rows[0]?.blocked
+        if (blocked) return
+        await new Promise(resolve => setTimeout(resolve, 20))
+      }
+      throw new Error(`No Decision request blocked behind connection ${blockerPid}`)
+    }
     const normalized = await db.query<{
       session_id: string
       work_item_id: string
@@ -718,6 +736,110 @@ describe('Stage 2 collaboration API acceptance', () => {
       error: { code: 'RESOURCE_SCOPE_DENIED' },
     })
     expect(await decisionProjection(source.session.id)).toEqual(beforeOtherProjectDecision)
+
+    const otherProjectId = otherProject.json<{ id: string }>().id
+    const reparentGate = await db.connect()
+    let reparentGateOpen = false
+    try {
+      await reparentGate.query('BEGIN')
+      reparentGateOpen = true
+      const reparentGatePid = (await reparentGate.query<{ pid: number }>(
+        'SELECT pg_backend_pid() AS pid',
+      )).rows[0]!.pid
+      await reparentGate.query(
+        'UPDATE work_items SET project_id=$2 WHERE id=$1',
+        [projectWork.id, otherProjectId],
+      )
+      const beforeConcurrentReparentDecision = await decisionProjection(source.session.id)
+      const concurrentReparentDecision = agentCall(
+        sourceToken,
+        'POST',
+        `/api/v1/projects/${projectId}/decisions`,
+        {
+          title: 'Do not decide for a former parent Project.',
+          rationale: 'The Decision must wait for a concurrent Work Item reparent and use the committed parent.',
+          options: ['reject'],
+          affectedResources: [{
+            resourceType: 'work_item',
+            resourceId: projectWork.id,
+            impact: 'must remain absent',
+          }],
+        },
+      )
+      await waitForBlockedBy(reparentGatePid)
+      await reparentGate.query('COMMIT')
+      reparentGateOpen = false
+      const response = await concurrentReparentDecision
+      expect(response.statusCode, JSON.stringify(response.json())).toBe(403)
+      expect(response.json<{ error: { code: string } }>()).toMatchObject({
+        error: { code: 'RESOURCE_SCOPE_DENIED' },
+      })
+      expect(await decisionProjection(source.session.id)).toEqual(
+        beforeConcurrentReparentDecision,
+      )
+      expect((await db.query<{ project_id: string }>(
+        'SELECT project_id FROM work_items WHERE id=$1',
+        [projectWork.id],
+      )).rows[0]?.project_id).toBe(otherProjectId)
+    } finally {
+      if (reparentGateOpen) await reparentGate.query('ROLLBACK')
+      reparentGate.release()
+    }
+    await db.query(
+      'UPDATE work_items SET project_id=$2 WHERE id=$1',
+      [projectWork.id, projectId],
+    )
+
+    const projectDeleteGate = await db.connect()
+    let projectDeleteGateOpen = false
+    try {
+      await projectDeleteGate.query('BEGIN')
+      projectDeleteGateOpen = true
+      const projectDeleteGatePid = (await projectDeleteGate.query<{ pid: number }>(
+        'SELECT pg_backend_pid() AS pid',
+      )).rows[0]!.pid
+      await projectDeleteGate.query(
+        'UPDATE projects SET deleted_at=now() WHERE id=$1',
+        [projectId],
+      )
+      const beforeConcurrentProjectDeleteDecision = await decisionProjection(
+        source.session.id,
+      )
+      const concurrentProjectDeleteDecision = agentCall(
+        sourceToken,
+        'POST',
+        `/api/v1/projects/${projectId}/decisions`,
+        {
+          title: 'Do not decide for a concurrently deleted parent Project.',
+          rationale: 'The Decision must wait for the Project soft-delete and use its committed liveness.',
+          options: ['reject'],
+          affectedResources: [{
+            resourceType: 'work_item',
+            resourceId: projectWork.id,
+            impact: 'must remain absent',
+          }],
+        },
+      )
+      await waitForBlockedBy(projectDeleteGatePid)
+      await projectDeleteGate.query('COMMIT')
+      projectDeleteGateOpen = false
+      const response = await concurrentProjectDeleteDecision
+      expect(response.statusCode, JSON.stringify(response.json())).toBe(403)
+      expect(response.json<{ error: { code: string } }>()).toMatchObject({
+        error: { code: 'RESOURCE_SCOPE_DENIED' },
+      })
+      expect(await decisionProjection(source.session.id)).toEqual(
+        beforeConcurrentProjectDeleteDecision,
+      )
+      expect((await db.query<{ deleted_at: Date | null }>(
+        'SELECT deleted_at FROM projects WHERE id=$1',
+        [projectId],
+      )).rows[0]?.deleted_at).toBeInstanceOf(Date)
+    } finally {
+      if (projectDeleteGateOpen) await projectDeleteGate.query('ROLLBACK')
+      projectDeleteGate.release()
+    }
+    await db.query('UPDATE projects SET deleted_at=NULL WHERE id=$1', [projectId])
 
     const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)

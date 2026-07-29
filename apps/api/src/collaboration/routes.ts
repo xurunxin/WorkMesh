@@ -7,7 +7,7 @@ import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
 import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
-import { assertCurrentAgentCredentialInTx, authorizeCommandInTx } from '../agent/guard.js'
+import { authorizeCommandInTx } from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import type { Paginator } from '../pagination.js'
 import {
@@ -108,7 +108,6 @@ async function assertSessionMessageWrite(tx: PoolClient, current: ApiActor, sess
     operation: 'room_message',
     idempotencyKey,
   })
-  await assertCurrentAgentCredentialInTx(tx, current, sessionId)
   if (reviewResult) {
     const delegation = (await tx.query<{ role:string }>('SELECT role FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
     if (delegation?.role !== 'reviewer') throw new DomainError('CAPABILITY_DENIED', 'Review results require a reviewer delegation with artifact:write')
@@ -961,7 +960,6 @@ async function createDecision(h:Helpers, request:FastifyRequest, subject:Subject
         operation:'decision',
         idempotencyKey:request.idempotencyKey!,
       })
-      await assertCurrentAgentCredentialInTx(tx,current,decisionSessionId)
       if(body.sessionId && body.sessionId!==decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Decision sessionId must match the authenticated Agent Session')
       assertDecisionSubjectInSessionScope(currentSession,subject,subjectId)
     }

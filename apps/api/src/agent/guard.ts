@@ -137,35 +137,9 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
     `SELECT id,agent_actor_id AS actor_id,delegation_id,state,revision,
              stop_acknowledged_at,team_id,work_item_id,project_id,
              current_plan_version_id,agent_id,
-             CASE
-               WHEN work_item_id IS NULL THEN false
-               ELSE EXISTS (
-                 SELECT 1 FROM work_items live_work_item
-                  WHERE live_work_item.id=agent_sessions.work_item_id
-                    AND live_work_item.workspace_id=agent_sessions.workspace_id
-                    AND live_work_item.deleted_at IS NULL
-               )
-             END AS work_item_exists,
-             (
-               SELECT live_project.id
-                 FROM work_items live_work_item
-                 JOIN projects live_project
-                   ON live_project.id=live_work_item.project_id
-                  AND live_project.workspace_id=live_work_item.workspace_id
-                  AND live_project.deleted_at IS NULL
-                WHERE live_work_item.id=agent_sessions.work_item_id
-                  AND live_work_item.workspace_id=agent_sessions.workspace_id
-                  AND live_work_item.deleted_at IS NULL
-             ) AS work_item_project_id,
-             CASE
-               WHEN work_item_id IS NOT NULL OR project_id IS NULL THEN false
-               ELSE EXISTS (
-                 SELECT 1 FROM projects live_project
-                  WHERE live_project.id=agent_sessions.project_id
-                    AND live_project.workspace_id=agent_sessions.workspace_id
-                    AND live_project.deleted_at IS NULL
-               )
-             END AS project_exists
+             false AS work_item_exists,
+             NULL::uuid AS work_item_project_id,
+             false AS project_exists
       FROM agent_sessions
       WHERE id=$1 AND workspace_id=$2 AND agent_id=$3
         AND delegation_id=$4 AND team_id=$5
@@ -182,8 +156,49 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
     throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
   }
 
+  // Keep every Agent mutation on one authority/resource lock order. Resource
+  // facts must be derived only after their durable rows are locked; otherwise
+  // a concurrent Work Item reparent or Project deletion can commit after an
+  // unlocked scalar subquery and leave this transaction writing with stale
+  // scope.
+  await assertCurrentAgentCredentialInTx(tx, actor, sessionId)
+  let workItemExists = false
+  let workItemProjectId: string | null = null
+  let projectExists = false
+  if (session.work_item_id) {
+    const workItem = (await tx.query<{ project_id: string | null }>(
+      `SELECT project_id
+       FROM work_items
+       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+       FOR UPDATE`,
+      [session.work_item_id, actor.workspaceId],
+    )).rows[0]
+    workItemExists = Boolean(workItem)
+    if (workItem?.project_id) {
+      const project = (await tx.query<{ id: string }>(
+        `SELECT id
+         FROM projects
+         WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+         FOR UPDATE`,
+        [workItem.project_id, actor.workspaceId],
+      )).rows[0]
+      workItemProjectId = project?.id ?? null
+    }
+  } else if (session.project_id) {
+    projectExists = Boolean((await tx.query(
+      `SELECT id
+       FROM projects
+       WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+       FOR UPDATE`,
+      [session.project_id, actor.workspaceId],
+    )).rows[0])
+  }
+
   return {
     ...session,
+    work_item_exists: workItemExists,
+    work_item_project_id: workItemProjectId,
+    project_exists: projectExists,
     permissions_snapshot: delegation.permissions_snapshot,
     capability_scope: delegation.capability_scope,
     delegation_status: delegation.status,
