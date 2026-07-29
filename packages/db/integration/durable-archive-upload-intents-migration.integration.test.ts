@@ -53,7 +53,7 @@ describe("0030 durable archive upload intents migration", () => {
            snapshot_digest,metadata,retain_until,state,uploaded_at,
            membership_state
          ) VALUES(
-           $1,1,1,now()-interval '91 days',1,
+           $1,1,1,TIMESTAMPTZ '2026-04-01 02:03:04.567891+00',1,
            'pre-intent-upload','pre-intent-version',1,$2,$3,'{}',
            now()+interval '366 days','uploaded',now(),'pending_exact'
          ) RETURNING id`,
@@ -95,13 +95,24 @@ describe("0030 durable archive upload intents migration", () => {
           membershipState: string;
           plannedFence: string | null;
           metadataCutoff: string;
-          fixedCutoff: string;
+          canonicalCutoff: string;
+          semanticEqual: boolean;
+          millisecondAligned: boolean;
         }>(
           `SELECT membership_state AS "membershipState",
                   planned_fence::text AS "plannedFence",
-                  (metadata->>'fixedCutoffAt')::timestamptz::text
+                  metadata->>'fixedCutoffAt'
                     AS "metadataCutoff",
-                  fixed_cutoff_at::text AS "fixedCutoff"
+                  to_char(
+                    fixed_cutoff_at AT TIME ZONE 'UTC',
+                    'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+                  ) AS "canonicalCutoff",
+                  (metadata->>'fixedCutoffAt')::timestamptz=fixed_cutoff_at
+                    AS "semanticEqual",
+                  fixed_cutoff_at=date_trunc(
+                    'milliseconds',
+                    fixed_cutoff_at
+                  ) AS "millisecondAligned"
              FROM event_archive_segments
             WHERE id=$1`,
           [legacySegmentId],
@@ -111,16 +122,29 @@ describe("0030 durable archive upload intents migration", () => {
       expect.objectContaining({
         membershipState: "legacy_unindexed",
         plannedFence: null,
+        semanticEqual: true,
+        millisecondAligned: true,
       }),
     ]);
-    const row = (
-      await upgrade.query<{ equal: boolean }>(
-        `SELECT (metadata->>'fixedCutoffAt')::timestamptz=fixed_cutoff_at AS equal
+    const upgraded = (
+      await upgrade.query<{
+        metadataCutoff: string;
+        canonicalCutoff: string;
+      }>(
+        `SELECT metadata->>'fixedCutoffAt' AS "metadataCutoff",
+                to_char(
+                  fixed_cutoff_at AT TIME ZONE 'UTC',
+                  'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+                ) AS "canonicalCutoff"
            FROM event_archive_segments WHERE id=$1`,
         [legacySegmentId],
       )
-    ).rows[0];
-    expect(row?.equal).toBe(true);
+    ).rows[0]!;
+    expect(upgraded.metadataCutoff).toBe("2026-04-01T02:03:04.567Z");
+    expect(upgraded.metadataCutoff).toBe(upgraded.canonicalCutoff);
+    expect(upgraded.metadataCutoff).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+    );
     expect(
       (
         await upgrade.query<{
@@ -216,12 +240,24 @@ describe("0030 durable archive upload intents migration", () => {
             SET metadata=jsonb_set(
               metadata,
               '{fixedCutoffAt}',
-              to_jsonb('2026-07-01T02:03:04.568Z'::text)
+              to_jsonb('2026-07-01T02:03:04.567+00:00'::text)
             )
           WHERE id=$1`,
         [segmentId],
       ),
     ).rejects.toThrow();
+    await expect(
+      clean.query(
+        `UPDATE event_archive_segments
+            SET metadata=jsonb_set(
+              metadata,
+              '{fixedCutoffAt}',
+              to_jsonb('2026-07-01T02:03:04.567Z'::text)
+            )
+          WHERE id=$1`,
+        [segmentId],
+      ),
+    ).resolves.toMatchObject({ rowCount: 1 });
     await expect(
       clean.query(
         `UPDATE event_archive_segments

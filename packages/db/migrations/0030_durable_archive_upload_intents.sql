@@ -15,13 +15,21 @@ ALTER TABLE event_archive_segments
   ADD COLUMN last_upload_fence bigint,
   ADD COLUMN planned_fence bigint;
 
--- Canonical metadata did not originally require the frozen cutoff. Backfill
--- every historical row before installing the equality constraint.
+-- Canonical metadata did not originally require the frozen cutoff. PostgreSQL
+-- timestamps may retain microseconds while the Node.js Date boundary is
+-- millisecond-precise, so normalize historical values to that shared precision
+-- and write the exact UTC ISO spelling produced by Date#toISOString().
 UPDATE event_archive_segments
-   SET metadata=jsonb_set(
+   SET fixed_cutoff_at=date_trunc('milliseconds',fixed_cutoff_at),
+       metadata=jsonb_set(
          metadata,
          '{fixedCutoffAt}',
-         to_jsonb(fixed_cutoff_at),
+         to_jsonb(
+           to_char(
+             date_trunc('milliseconds',fixed_cutoff_at) AT TIME ZONE 'UTC',
+             'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+           )
+         ),
          true
        );
 
@@ -146,6 +154,10 @@ ALTER TABLE event_archive_segments
   ),
   ADD CONSTRAINT event_archive_segments_fixed_cutoff_metadata_check CHECK (
     jsonb_typeof(metadata->'fixedCutoffAt')='string'
+    AND metadata->>'fixedCutoffAt'=to_char(
+      fixed_cutoff_at AT TIME ZONE 'UTC',
+      'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+    )
     AND (metadata->>'fixedCutoffAt')::timestamptz=fixed_cutoff_at
   );
 
