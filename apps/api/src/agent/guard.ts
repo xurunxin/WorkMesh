@@ -6,7 +6,7 @@ import type { ApiActor } from "./types.js";
 type SessionFacts = {
   id: string; actor_id: string; delegation_id: string; state: Parameters<typeof authorizeAgentMutation>[0]["session"]["state"];
   revision: number; stop_acknowledged_at: Date | null; permissions_snapshot: Capability[]; capability_scope: { teamIds?: string[]; workItemIds?: string[]; projectIds?: string[] };
-  delegation_status: string; team_id: string; work_item_id: string | null; project_id: string | null; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
+  delegation_status: string; team_id: string; work_item_id: string | null; work_item_exists: boolean; project_id: string | null; project_exists: boolean; current_plan_version_id: string | null; agent_id: string; agent_active:boolean; definition_capabilities:Capability[]; team_capabilities:Capability[]|null;
 };
 
 type SessionLocator = {
@@ -135,12 +135,30 @@ export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActo
     | "team_capabilities"
   >>(
     `SELECT id,agent_actor_id AS actor_id,delegation_id,state,revision,
-            stop_acknowledged_at,team_id,work_item_id,project_id,
-            current_plan_version_id,agent_id
-     FROM agent_sessions
-     WHERE id=$1 AND workspace_id=$2 AND agent_id=$3
-       AND delegation_id=$4 AND team_id=$5
-     FOR UPDATE`,
+             stop_acknowledged_at,team_id,work_item_id,project_id,
+             current_plan_version_id,agent_id,
+             CASE
+               WHEN work_item_id IS NULL THEN false
+               ELSE EXISTS (
+                 SELECT 1 FROM work_items live_work_item
+                  WHERE live_work_item.id=agent_sessions.work_item_id
+                    AND live_work_item.workspace_id=agent_sessions.workspace_id
+                    AND live_work_item.deleted_at IS NULL
+               )
+             END AS work_item_exists,
+             CASE
+               WHEN work_item_id IS NOT NULL OR project_id IS NULL THEN false
+               ELSE EXISTS (
+                 SELECT 1 FROM projects live_project
+                  WHERE live_project.id=agent_sessions.project_id
+                    AND live_project.workspace_id=agent_sessions.workspace_id
+                    AND live_project.deleted_at IS NULL
+               )
+             END AS project_exists
+      FROM agent_sessions
+      WHERE id=$1 AND workspace_id=$2 AND agent_id=$3
+        AND delegation_id=$4 AND team_id=$5
+      FOR UPDATE`,
     [
       sessionId,
       actor.workspaceId,
@@ -174,7 +192,13 @@ export function assertAgentWrite(input: {
   const resourceId = input.resourceId ?? input.session.work_item_id ?? input.session.project_id;
   const liveCapabilities = (input.session.permissions_snapshot ?? []).filter(capability => input.session.definition_capabilities.includes(capability) && input.session.team_capabilities?.includes(capability));
   if (!input.session.agent_active || input.session.delegation_status !== "active" || !input.session.team_capabilities) throw new DomainError("DELEGATION_NOT_ACTIVE", "Agent delegation or team grant is no longer active");
-  const resourceInScope = Boolean(scope.teamIds?.includes(input.session.team_id)) &&
+  const liveSessionResource = input.session.work_item_id
+    ? input.session.work_item_exists
+    : input.session.project_id
+      ? input.session.project_exists
+      : true;
+  const resourceInScope = liveSessionResource &&
+    Boolean(scope.teamIds?.includes(input.session.team_id)) &&
     (!resourceId || Boolean(scope.workItemIds?.includes(resourceId) || scope.projectIds?.includes(resourceId)));
   authorizeAgentMutation({
     actorId: input.actor.id, actorKind: input.actor.kind === "agent" ? "agent" : "human",

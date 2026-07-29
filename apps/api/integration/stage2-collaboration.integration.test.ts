@@ -924,15 +924,41 @@ describe('Stage 2 collaboration API acceptance', () => {
     }
 
     const beforeDeletedProjectDenials = (await db.query<{
+      session_revision: number
+      session_sequence: number
+      activity_count: number
       message_count: number
       inbox_count: number
       event_count: number
       outbox_count: number
     }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM agent_activities WHERE session_id=$1) AS activity_count,
           (SELECT count(*)::int FROM room_messages) AS message_count,
           (SELECT count(*)::int FROM inbox_items) AS inbox_count,
           (SELECT count(*)::int FROM domain_events) AS event_count,
-          (SELECT count(*)::int FROM outbox_events) AS outbox_count`)).rows[0]!
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [projectOnlySession.id],
+    )).rows[0]!
+
+    const deniedActivity = await agentCall(
+      projectOnlyToken,
+      'POST',
+      `/api/v1/agent-sessions/${projectOnlySession.id}/activities`,
+      {
+        kind: 'status',
+        summary: 'A deleted Project cannot authorize an Agent activity.',
+        artifactIds: [],
+        references: [],
+        visibility: 'team',
+        ephemeral: false,
+      },
+    )
+    expect(deniedActivity.statusCode, JSON.stringify(deniedActivity.json())).toBe(403)
+    expect(deniedActivity.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'RESOURCE_SCOPE_DENIED' },
+    })
 
     for (const [token, sessionId] of [
       [sourceToken, source.session.id],
@@ -957,7 +983,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionExactItem.id}`)).statusCode).toBe(404)
     expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionActorItem.id}`)).statusCode).toBe(404)
     expect((await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${deletionClaimedItem.id}`)).statusCode).toBe(404)
-    expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionActorItem.id}/claim`, {})).statusCode).toBe(404)
+    expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionActorItem.id}/claim`, {})).statusCode).toBe(403)
     expect((await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${deletionExactItem.id}/reply`, {
       body: 'A deleted Project must suppress exact replies.',
       payload: {},
@@ -968,15 +994,23 @@ describe('Stage 2 collaboration API acceptance', () => {
     }, { 'if-match': `"revision-${deletionClaim.json<{ revision: number }>().revision}"` })).statusCode).toBe(404)
 
     expect((await db.query<{
+      session_revision: number
+      session_sequence: number
+      activity_count: number
       message_count: number
       inbox_count: number
       event_count: number
       outbox_count: number
     }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM agent_activities WHERE session_id=$1) AS activity_count,
           (SELECT count(*)::int FROM room_messages) AS message_count,
           (SELECT count(*)::int FROM inbox_items) AS inbox_count,
           (SELECT count(*)::int FROM domain_events) AS event_count,
-          (SELECT count(*)::int FROM outbox_events) AS outbox_count`)).rows[0]).toEqual(beforeDeletedProjectDenials)
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [projectOnlySession.id],
+    )).rows[0]).toEqual(beforeDeletedProjectDenials)
 
     await db.query(
       'UPDATE projects SET deleted_at=NULL WHERE id=$1',
