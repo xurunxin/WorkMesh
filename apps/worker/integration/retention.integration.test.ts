@@ -165,6 +165,37 @@ describe("retention soak sampling", () => {
       outboxPending: "0",
       rows: "1",
     });
+
+    await db.query(
+      `INSERT INTO event_archive_segments(
+         workspace_id,start_cursor,end_cursor,fixed_cutoff_at,row_count,
+         object_key,object_version_id,object_size_bytes,object_sha256,
+         snapshot_digest,retain_until,state,uploaded_at,verified_at
+       ) VALUES(
+         $1,$2,$2,now()-interval '90 days',1,
+         'retention-soak-query-test','version-1',1,$3,$4,
+         now()+interval '366 days','verified',now(),now()
+       )`,
+      [
+        workspaceId,
+        eventCursor,
+        `sha256:${"b".repeat(64)}`,
+        `sha256:${"a".repeat(64)}`,
+      ],
+    );
+    const archivedState = (
+      await db.query<RetentionSoakSampleDatabaseState>(
+        retentionSoakSampleQuery,
+        [workspaceId, [eventCursor], new Date()],
+      )
+    ).rows[0]!;
+    expect(archivedState).toMatchObject({
+      backlog: "0",
+      currentRunArchived: "1",
+      verified: "1",
+      verifiedRows: "1",
+      rows: "1",
+    });
   });
 });
 

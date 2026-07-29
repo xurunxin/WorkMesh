@@ -33,7 +33,16 @@ export const retentionSoakSampleQuery = `
          count(segment.id) FILTER (WHERE segment.state='pruned')::text AS pruned,
          (SELECT count(*) FROM domain_events old_event
            WHERE old_event.workspace_id=$1
-             AND old_event.occurred_at<=now()-interval '90 days')::text
+             AND old_event.occurred_at<=now()-interval '90 days'
+             AND NOT EXISTS (
+               SELECT 1
+                 FROM event_archive_segments archived_segment
+                WHERE archived_segment.workspace_id=old_event.workspace_id
+                  AND archived_segment.state='verified'
+                  AND old_event.cursor BETWEEN
+                    archived_segment.start_cursor
+                    AND archived_segment.end_cursor
+             ))::text
            AS backlog,
          COALESCE(max(EXTRACT(EPOCH FROM
            (segment.verified_at-segment.created_at))*1000)
