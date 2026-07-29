@@ -93,12 +93,19 @@ const activeScopeSql = `
            OR (
              source_channel.subject_kind='project'
              AND (
-               source_channel.subject_id=current_scope.project_id
-               OR EXISTS (
-                 SELECT 1 FROM work_items scoped_work_item
-                  WHERE scoped_work_item.id=current_scope.work_item_id
-                    AND scoped_work_item.project_id=source_channel.subject_id
-                    AND scoped_work_item.workspace_id=i.workspace_id
+               (
+                 current_scope.work_item_id IS NOT NULL
+                 AND EXISTS (
+                   SELECT 1 FROM work_items scoped_work_item
+                    WHERE scoped_work_item.id=current_scope.work_item_id
+                      AND scoped_work_item.project_id=source_channel.subject_id
+                      AND scoped_work_item.workspace_id=i.workspace_id
+                      AND scoped_work_item.deleted_at IS NULL
+                 )
+               )
+               OR (
+                 current_scope.work_item_id IS NULL
+                 AND source_channel.subject_id=current_scope.project_id
                )
              )
             )
@@ -324,6 +331,7 @@ async function authorizeExactReplyRecipient(
        LEFT JOIN work_items source_work_item
          ON source_work_item.id=source_session.work_item_id
         AND source_work_item.workspace_id=source_session.workspace_id
+        AND source_work_item.deleted_at IS NULL
        JOIN delegations delegation
          ON delegation.id=source_session.delegation_id
         AND delegation.workspace_id=source_session.workspace_id
@@ -344,15 +352,24 @@ async function authorizeExactReplyRecipient(
         AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
             ? source_session.team_id::text
         AND (
-          source_session.work_item_id IS NULL
-          OR COALESCE(delegation.capability_scope->'workItemIds','[]'::jsonb)
-              ? source_session.work_item_id::text
-        )
-        AND (
-          source_session.work_item_id IS NOT NULL
-          OR source_session.project_id IS NULL
-          OR COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-              ? source_session.project_id::text
+          (
+            source_session.work_item_id IS NOT NULL
+            AND source_work_item.id IS NOT NULL
+            AND COALESCE(
+              delegation.capability_scope->'workItemIds',
+              '[]'::jsonb
+            ) ? source_session.work_item_id::text
+          )
+          OR (
+            source_session.work_item_id IS NULL
+            AND (
+              source_session.project_id IS NULL
+              OR COALESCE(
+                delegation.capability_scope->'projectIds',
+                '[]'::jsonb
+              ) ? source_session.project_id::text
+            )
+          )
         )
         AND (
           (

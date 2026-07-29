@@ -94,6 +94,14 @@ describe('EventAudiencePolicy SQL', () => {
     expect(query.sql).toContain('e.audience_actor_id=$3')
     expect(query.sql).toContain('e.session_id IN (SELECT id FROM authorized_sessions)')
     expect(query.sql).toContain("resource.resource_type='work_item'")
+    expect(query.sql).toContain('LEFT JOIN work_items root_scope_item')
+    expect(query.sql).toContain('root_scope_item.deleted_at IS NULL')
+    expect(query.sql).toContain('LEFT JOIN work_items child_scope_item')
+    expect(query.sql).toContain('child_scope_item.deleted_at IS NULL')
+    expect(query.sql).toContain('WHEN root.work_item_id IS NOT NULL')
+    expect(query.sql).toContain('THEN root_scope_item.project_id')
+    expect(query.sql).toContain('root_scope_item.id IS NOT NULL')
+    expect(query.sql).toContain('child_scope_item.id IS NOT NULL')
     expect(query.sql).not.toContain(
       '(e.audience_actor_id IS NULL OR e.audience_actor_id=$3)',
     )

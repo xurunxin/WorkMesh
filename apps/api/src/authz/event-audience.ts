@@ -143,7 +143,12 @@ export function eventAudienceQuery(
     `WITH RECURSIVE authorized_sessions(
        id,team_id,work_item_id,project_id
      ) AS (
-       SELECT root.id,root.team_id,root.work_item_id,root.project_id
+       SELECT root.id,root.team_id,root.work_item_id,
+              CASE
+                WHEN root.work_item_id IS NOT NULL
+                  THEN root_scope_item.project_id
+                ELSE root.project_id
+              END AS project_id
        FROM agent_sessions root
        JOIN delegations root_delegation
          ON root_delegation.id=root.delegation_id
@@ -161,6 +166,10 @@ export function eventAudienceQuery(
         AND credential.expires_at>now()
         AND credential.exchanged_at IS NOT NULL
         AND credential.revoked_at IS NULL
+       LEFT JOIN work_items root_scope_item
+         ON root_scope_item.id=root.work_item_id
+        AND root_scope_item.workspace_id=root.workspace_id
+        AND root_scope_item.deleted_at IS NULL
        WHERE root.id=$4 AND root.workspace_id=$1 AND root.agent_actor_id=$3
          AND root.state IN (
            'acknowledged','planning','executing','awaiting_input',
@@ -172,17 +181,32 @@ export function eventAudienceQuery(
          AND COALESCE(root_delegation.capability_scope->'teamIds','[]'::jsonb)
              ? root.team_id::text
          AND (
-           root.work_item_id IS NULL OR
-           COALESCE(root_delegation.capability_scope->'workItemIds','[]'::jsonb)
-             ? root.work_item_id::text
-         )
-         AND (
-           root.project_id IS NULL OR
-           COALESCE(root_delegation.capability_scope->'projectIds','[]'::jsonb)
-             ? root.project_id::text
+           (
+             root.work_item_id IS NOT NULL
+             AND root_scope_item.id IS NOT NULL
+             AND COALESCE(
+               root_delegation.capability_scope->'workItemIds',
+               '[]'::jsonb
+             ) ? root.work_item_id::text
+           )
+           OR (
+             root.work_item_id IS NULL
+             AND (
+               root.project_id IS NULL
+               OR COALESCE(
+                 root_delegation.capability_scope->'projectIds',
+                 '[]'::jsonb
+               ) ? root.project_id::text
+             )
+           )
          )
        UNION ALL
-       SELECT child.id,child.team_id,child.work_item_id,child.project_id
+       SELECT child.id,child.team_id,child.work_item_id,
+              CASE
+                WHEN child.work_item_id IS NOT NULL
+                  THEN child_scope_item.project_id
+                ELSE child.project_id
+              END AS project_id
        FROM agent_sessions child
        JOIN authorized_sessions parent ON child.parent_session_id=parent.id
        JOIN delegations child_delegation
@@ -195,13 +219,48 @@ export function eventAudienceQuery(
         AND child_access.agent_id=child.agent_id
         AND child_access.team_id=child.team_id
         AND child_access.revoked_at IS NULL
+       LEFT JOIN work_items child_scope_item
+         ON child_scope_item.id=child.work_item_id
+        AND child_scope_item.workspace_id=child.workspace_id
+        AND child_scope_item.deleted_at IS NULL
        WHERE child.workspace_id=$1
          AND child.team_id=parent.team_id
          AND (parent.work_item_id IS NULL OR child.work_item_id=parent.work_item_id)
-         AND (parent.project_id IS NULL OR child.project_id=parent.project_id)
+         AND (
+           parent.project_id IS NULL
+           OR CASE
+                WHEN child.work_item_id IS NOT NULL
+                  THEN child_scope_item.project_id
+                ELSE child.project_id
+              END=parent.project_id
+         )
          AND 'work:read'=ANY(child_delegation.permissions_snapshot)
          AND 'work:read'=ANY(child_agent.approved_capabilities)
          AND 'work:read'=ANY(child_access.approved_capabilities)
+         AND COALESCE(
+           child_delegation.capability_scope->'teamIds',
+           '[]'::jsonb
+         ) ? child.team_id::text
+         AND (
+           (
+             child.work_item_id IS NOT NULL
+             AND child_scope_item.id IS NOT NULL
+             AND COALESCE(
+               child_delegation.capability_scope->'workItemIds',
+               '[]'::jsonb
+             ) ? child.work_item_id::text
+           )
+           OR (
+             child.work_item_id IS NULL
+             AND (
+               child.project_id IS NULL
+               OR COALESCE(
+                 child_delegation.capability_scope->'projectIds',
+                 '[]'::jsonb
+               ) ? child.project_id::text
+             )
+           )
+         )
      )
      SELECT ${columns} FROM domain_events e
      WHERE e.workspace_id=$1 AND e.cursor>$2

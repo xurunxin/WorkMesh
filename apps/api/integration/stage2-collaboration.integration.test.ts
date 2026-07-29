@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { buildApp } from '../src/server.js'
 
@@ -8,6 +8,31 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 2 API integration requires a dedicated *test* database.')
 
 const db = createDb(databaseUrl)
+const restoreSessionSubjectConstraint = async (): Promise<void> => {
+  const exists = await db.query(
+    `SELECT 1 FROM pg_constraint
+      WHERE conname='agent_sessions_subject_container_check'
+        AND conrelid='agent_sessions'::regclass`,
+  )
+  if (exists.rowCount) return
+  await db.query(
+    'UPDATE agent_sessions SET project_id=NULL WHERE work_item_id IS NOT NULL',
+  )
+  await db.query(`
+    ALTER TABLE agent_sessions
+      ADD CONSTRAINT agent_sessions_subject_container_check CHECK (
+        (automation_run_id IS NOT NULL AND parent_session_id IS NULL
+          AND num_nonnulls(work_item_id,project_id,plan_step_id)=0)
+        OR
+        (automation_run_id IS NULL AND (
+          (parent_session_id IS NULL
+            AND num_nonnulls(work_item_id,project_id,plan_step_id)=1)
+          OR
+          (parent_session_id IS NOT NULL
+            AND num_nonnulls(work_item_id,project_id)=1)
+        ))
+      )`)
+}
 type Page<T> = { items: T[]; nextCursor: string | null }
 const app = buildApp()
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
@@ -138,6 +163,7 @@ async function durableEvent(type: string, aggregateId: string): Promise<void> {
 describe('Stage 2 collaboration API acceptance', () => {
   beforeAll(async () => { await applyMigrations(db) }, 300_000)
   beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
+  afterEach(restoreSessionSubjectConstraint)
   afterAll(async () => { await app.close(); await db.end() })
 
   it('coordinates exclusive and shared leases, child budgets, and durable parent blocking', async () => {
@@ -597,6 +623,193 @@ describe('Stage 2 collaboration API acceptance', () => {
       payload: {},
     }, { 'if-match': `"revision-${projectOnlyClaim.json<{ revision: number }>().revision}"` })
     expect(projectOnlyReply.statusCode, JSON.stringify(projectOnlyReply.json())).toBe(200)
+
+    const movedProject = await humanCall(f.human, 'POST', '/api/v1/projects', {
+      teamId: f.teamId,
+      name: 'Reparented Work Item Project',
+    })
+    expect(movedProject.statusCode, JSON.stringify(movedProject.json())).toBe(200)
+    const movedProjectId = movedProject.json<{ id: string }>().id
+    const movedProjectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)
+    expect(movedProjectRoom.statusCode, JSON.stringify(movedProjectRoom.json())).toBe(200)
+    const movedChannelId = movedProjectRoom.json<{ id: string }>().id
+    const workItemSessionIds = [
+      source.session.id,
+      exactTarget.session.id,
+      actorTarget.session.id,
+    ]
+    const workItemDelegationIds = [
+      source.delegation.id,
+      exactTarget.delegation.id,
+      actorTarget.delegation.id,
+    ]
+    // Fault-inject a legacy/corrupt hybrid row to prove reads fail safe even
+    // though the current schema prevents new hybrid Sessions.
+    await db.query(
+      'ALTER TABLE agent_sessions DROP CONSTRAINT agent_sessions_subject_container_check',
+    )
+    await db.query(
+      'UPDATE agent_sessions SET project_id=$2 WHERE id=ANY($1::uuid[])',
+      [workItemSessionIds, movedProjectId],
+    )
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(
+            capability_scope,'{projectIds}',jsonb_build_array($2::text)
+          )
+        WHERE id=ANY($1::uuid[])`,
+      [workItemDelegationIds, movedProjectId],
+    )
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(403)
+    const staleHybridWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'inform',
+      body: 'A stale hybrid project_id must not override the scoped Work Item.',
+    })
+    expect(staleHybridWrite.statusCode).toBe(403)
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(200)
+
+    const preReparentAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'This reply source must be invalidated when its Work Item moves.',
+      recipientSessionId: projectOnlySession.id,
+      requiresResponse: true,
+    })
+    expect(preReparentAsk.statusCode, JSON.stringify(preReparentAsk.json())).toBe(200)
+    const preReparentInboxId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_session_id=$2`,
+      [preReparentAsk.json<{ id: string }>().id, projectOnlySession.id],
+    )).rows[0]!.id
+    const preReparentDetail = await agentCall(projectOnlyToken, 'GET', `/api/v1/inbox/${preReparentInboxId}`)
+    expect(preReparentDetail.statusCode, JSON.stringify(preReparentDetail.json())).toBe(200)
+
+    await db.query('UPDATE work_items SET project_id=$2 WHERE id=$1', [
+      projectWork.id,
+      movedProjectId,
+    ])
+    await db.query(
+      'UPDATE agent_sessions SET project_id=$2 WHERE id=ANY($1::uuid[])',
+      [workItemSessionIds, projectId],
+    )
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(
+            capability_scope,'{projectIds}',jsonb_build_array($2::text)
+          )
+        WHERE id=ANY($1::uuid[])`,
+      [workItemDelegationIds, projectId],
+    )
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${projectId}`)).statusCode).toBe(403)
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(200)
+    const staleOldProjectWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'inform',
+      body: 'Reparenting must revoke the previous Project immediately.',
+    })
+    expect(staleOldProjectWrite.statusCode).toBe(403)
+    const staleReply = await agentCall(projectOnlyToken, 'POST', `/api/v1/inbox/${preReparentInboxId}/reply`, {
+      body: 'The old Project source must no longer be replyable.',
+      payload: {},
+    }, { 'if-match': `"revision-${preReparentDetail.json<{ revision: number }>().revision}"` })
+    expect(staleReply.statusCode).toBe(404)
+
+    const movedExactAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'ask',
+      body: 'The exact target follows the Work Item current Project.',
+      recipientSessionId: exactTarget.session.id,
+    })
+    expect(movedExactAsk.statusCode, JSON.stringify(movedExactAsk.json())).toBe(200)
+    const movedActorAsk = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'blocker',
+      body: 'The actor target follows the Work Item current Project.',
+      recipientActorId: f.reviewer.actorId,
+    })
+    expect(movedActorAsk.statusCode, JSON.stringify(movedActorAsk.json())).toBe(200)
+
+    const projectEventCursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const insertProjectEvent = async (eventType: string, eventProjectId: string) => {
+      const event = (await db.query<{ id: string }>(
+        `INSERT INTO domain_events(
+           workspace_id,team_id,event_type,aggregate_type,aggregate_id,
+           actor_id,correlation_id,payload
+         ) VALUES($1,$2,$3,'project',$4,$5,$6,'{}'::jsonb)
+         RETURNING id`,
+        [
+          f.workspaceId,
+          f.teamId,
+          eventType,
+          eventProjectId,
+          f.human.actorId,
+          randomUUID(),
+        ],
+      )).rows[0]!
+      await db.query(
+        `INSERT INTO domain_event_resources(
+           domain_event_id,workspace_id,resource_type,resource_id,relation
+         ) VALUES($1,$2,'project',$3,'scope')`,
+        [event.id, f.workspaceId, eventProjectId],
+      )
+    }
+    await insertProjectEvent('test.project.previous_scope', projectId)
+    await insertProjectEvent('test.project.current_scope', movedProjectId)
+    const reparentedEvents = await agentCall(
+      sourceToken,
+      'GET',
+      `/api/v1/events?cursor=${projectEventCursor}`,
+    )
+    expect(reparentedEvents.statusCode, JSON.stringify(reparentedEvents.json())).toBe(200)
+    const reparentedEventTypes = reparentedEvents
+      .json<Array<{ event_type: string }>>()
+      .map(event => event.event_type)
+    expect(reparentedEventTypes).toContain('test.project.current_scope')
+    expect(reparentedEventTypes).not.toContain('test.project.previous_scope')
+
+    await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [projectWork.id])
+    const deletedEventCursor = (await db.query<{ cursor: string }>(
+      'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await insertProjectEvent('test.project.deleted_scope', movedProjectId)
+    const deletedScopeEvents = await agentCall(
+      sourceToken,
+      'GET',
+      `/api/v1/events?cursor=${deletedEventCursor}`,
+    )
+    expect(deletedScopeEvents.statusCode, JSON.stringify(deletedScopeEvents.json())).toBe(200)
+    expect(
+      deletedScopeEvents.json<Array<{ event_type: string }>>()
+        .map(event => event.event_type),
+    ).not.toContain('test.project.deleted_scope')
+    expect((await agentCall(sourceToken, 'GET', `/api/v1/rooms?projectId=${movedProjectId}`)).statusCode).toBe(403)
+    const deletedWorkItemWrite = await agentCall(sourceToken, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      sessionId: source.session.id,
+      intent: 'inform',
+      body: 'A deleted scoped Work Item must revoke Project access.',
+    })
+    expect(deletedWorkItemWrite.statusCode).toBe(403)
+    const deletedExactTarget = await humanCall(f.human, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      intent: 'ask',
+      body: 'A deleted Work Item exact target must be unavailable.',
+      recipientSessionId: exactTarget.session.id,
+    })
+    expect(deletedExactTarget.statusCode).toBe(400)
+    expect(deletedExactTarget.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
+    })
+    const deletedActorTarget = await humanCall(f.human, 'POST', `/api/v1/rooms/${movedChannelId}/messages`, {
+      intent: 'blocker',
+      body: 'A deleted Work Item actor target must be unavailable.',
+      recipientActorId: f.reviewer.actorId,
+    })
+    expect(deletedActorTarget.statusCode).toBe(400)
+    expect(deletedActorTarget.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'MESSAGE_RECIPIENT_OUT_OF_SCOPE' },
+    })
   })
 
   it('derives legacy Human Inbox scope for current non-admin list and detail reads', async () => {

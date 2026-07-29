@@ -335,15 +335,17 @@ function resourceInScope(
   const projectId = request.routeOptions.url?.includes('/projects/')
     ? params.id
     : query.projectId
-  if (
-    typeof projectId === 'string'
-    && !scope.projectIds?.includes(projectId)
-    && !(
-      facts.work_item_id
-      && scope.workItemIds?.includes(facts.work_item_id)
-      && facts.work_item_project_id === projectId
-    )
-  ) return false
+  if (typeof projectId === 'string') {
+    if (facts.work_item_id) {
+      if (
+        !scope.workItemIds?.includes(facts.work_item_id)
+        || facts.work_item_project_id !== projectId
+      ) return false
+    } else if (
+      facts.project_id !== projectId
+      || !scope.projectIds?.includes(projectId)
+    ) return false
+  }
   return true
 }
 

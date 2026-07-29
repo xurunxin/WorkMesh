@@ -289,6 +289,7 @@ export function createAgentWebhookWorker({
          LEFT JOIN work_items scoped_item
            ON scoped_item.id=target_session.work_item_id
           AND scoped_item.workspace_id=target_session.workspace_id
+          AND scoped_item.deleted_at IS NULL
         WHERE delivery.id=$1
           AND delivery.agent_id=$2
           AND delivery.event_id=$3
@@ -309,15 +310,24 @@ export function createAgentWebhookWorker({
           AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
               ? target_session.team_id::text
           AND (
-            target_session.work_item_id IS NULL
-            OR COALESCE(delegation.capability_scope->'workItemIds','[]'::jsonb)
-                ? target_session.work_item_id::text
-          )
-          AND (
-            target_session.work_item_id IS NOT NULL
-            OR target_session.project_id IS NULL
-            OR COALESCE(delegation.capability_scope->'projectIds','[]'::jsonb)
-                ? target_session.project_id::text
+            (
+              target_session.work_item_id IS NOT NULL
+              AND scoped_item.id IS NOT NULL
+              AND COALESCE(
+                delegation.capability_scope->'workItemIds',
+                '[]'::jsonb
+              ) ? target_session.work_item_id::text
+            )
+            OR (
+              target_session.work_item_id IS NULL
+              AND (
+                target_session.project_id IS NULL
+                OR COALESCE(
+                  delegation.capability_scope->'projectIds',
+                  '[]'::jsonb
+                ) ? target_session.project_id::text
+              )
+            )
           )
           AND (
             (room.subject_kind='work_item'

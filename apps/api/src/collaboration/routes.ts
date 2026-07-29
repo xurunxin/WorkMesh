@@ -172,6 +172,7 @@ async function authorizeActorRecipient(
                    WHERE target_work_item.id=target_session.work_item_id
                      AND target_work_item.workspace_id=$1
                      AND target_work_item.project_id=$6
+                     AND target_work_item.deleted_at IS NULL
                 )
               )
               OR (
@@ -276,7 +277,13 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         values,
       )).rows[0]
       if (!own) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to an active session')
-      const allowed = kind === 'session' ? own.id === value : kind === 'work_item' ? own.work_item_id === value : own.project_id === value || Boolean(own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND workspace_id=$2 AND project_id=$3 AND deleted_at IS NULL', [own.work_item_id, actor(request).workspaceId, value])).rowCount)
+      const allowed = kind === 'session'
+        ? own.id === value
+        : kind === 'work_item'
+          ? own.work_item_id === value
+          : own.work_item_id
+            ? Boolean((await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND workspace_id=$2 AND project_id=$3 AND deleted_at IS NULL', [own.work_item_id, actor(request).workspaceId, value])).rowCount)
+            : own.project_id === value
       if (!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Agent token cannot resolve this Work Room')
     } else await h.readableTeam(request, result.team_id)
     return { ...result, subject_kind: kind, subject_id: value }
@@ -381,7 +388,19 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
       if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!)
       if (actor(request).kind === 'agent' && !body.sessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent messages require their session id')
       if (body.sessionId) {
-        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;project_id:string|null}>('SELECT team_id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2',[body.sessionId,actor(request).workspaceId])).rows[0]
+        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_project_id:string|null;project_id:string|null}>(
+          `SELECT message_session.team_id,message_session.work_item_id,
+                  message_scope_item.project_id AS work_item_project_id,
+                  message_session.project_id
+             FROM agent_sessions message_session
+             LEFT JOIN work_items message_scope_item
+               ON message_scope_item.id=message_session.work_item_id
+              AND message_scope_item.workspace_id=message_session.workspace_id
+              AND message_scope_item.deleted_at IS NULL
+            WHERE message_session.id=$1
+              AND message_session.workspace_id=$2`,
+          [body.sessionId,actor(request).workspaceId],
+        )).rows[0]
         const inSessionTree = channel.subject_kind === 'session' && Boolean((await tx.query(`
           WITH RECURSIVE lineage(id,parent_session_id) AS (
             SELECT id,parent_session_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2
@@ -390,7 +409,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
             FROM agent_sessions parent JOIN lineage child ON child.parent_session_id=parent.id
           )
           SELECT 1 FROM lineage WHERE id=$3`,[body.sessionId,actor(request).workspaceId,channel.subject_id])).rowCount)
-        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_id===channel.subject_id : messageSession.project_id===channel.subject_id || Boolean(messageSession.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[messageSession.work_item_id,channel.subject_id])).rowCount))
+        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_id===channel.subject_id)
         if (!inRoom) throw new DomainError('RESOURCE_SCOPE_DENIED','Message session is outside this Work Room')
       }
       if (body.intent === 'review_result') {
@@ -431,6 +450,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
              LEFT JOIN work_items target_scope_item
                ON target_scope_item.id=target_session.work_item_id
               AND target_scope_item.workspace_id=target_session.workspace_id
+              AND target_scope_item.deleted_at IS NULL
              JOIN agent_definitions target_definition
                ON target_definition.id=target_session.agent_id
               AND target_definition.workspace_id=target_session.workspace_id
@@ -453,15 +473,24 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
                AND COALESCE(target_delegation.capability_scope->'teamIds','[]'::jsonb)
                    ? target_session.team_id::text
                AND (
-                 target_session.work_item_id IS NULL
-                 OR COALESCE(target_delegation.capability_scope->'workItemIds','[]'::jsonb)
-                    ? target_session.work_item_id::text
-               )
-               AND (
-                 target_session.work_item_id IS NOT NULL
-                 OR target_session.project_id IS NULL
-                 OR COALESCE(target_delegation.capability_scope->'projectIds','[]'::jsonb)
-                    ? target_session.project_id::text
+                 (
+                   target_session.work_item_id IS NOT NULL
+                   AND target_scope_item.id IS NOT NULL
+                   AND COALESCE(
+                     target_delegation.capability_scope->'workItemIds',
+                     '[]'::jsonb
+                   ) ? target_session.work_item_id::text
+                 )
+                 OR (
+                   target_session.work_item_id IS NULL
+                   AND (
+                     target_session.project_id IS NULL
+                     OR COALESCE(
+                       target_delegation.capability_scope->'projectIds',
+                       '[]'::jsonb
+                     ) ? target_session.project_id::text
+                   )
+                 )
                )
                AND (
                 ($4='work_item' AND target_session.work_item_id=$5)

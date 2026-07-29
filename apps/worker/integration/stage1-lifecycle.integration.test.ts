@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, type Db } from '@workmesh/db'
 import { createAgentWebhookWorker, encryptWebhookSecretForTest } from '../src/agent-webhook.js'
 import { createSessionLifecycleWorker } from '../src/session-lifecycle.js'
@@ -9,6 +9,31 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Worker
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Worker integration tests require DATABASE_URL to name a dedicated test database.')
 
 const db = createDb(databaseUrl)
+const restoreSessionSubjectConstraint = async (): Promise<void> => {
+  const exists = await db.query(
+    `SELECT 1 FROM pg_constraint
+      WHERE conname='agent_sessions_subject_container_check'
+        AND conrelid='agent_sessions'::regclass`,
+  )
+  if (exists.rowCount) return
+  await db.query(
+    'UPDATE agent_sessions SET project_id=NULL WHERE work_item_id IS NOT NULL',
+  )
+  await db.query(`
+    ALTER TABLE agent_sessions
+      ADD CONSTRAINT agent_sessions_subject_container_check CHECK (
+        (automation_run_id IS NOT NULL AND parent_session_id IS NULL
+          AND num_nonnulls(work_item_id,project_id,plan_step_id)=0)
+        OR
+        (automation_run_id IS NULL AND (
+          (parent_session_id IS NULL
+            AND num_nonnulls(work_item_id,project_id,plan_step_id)=1)
+          OR
+          (parent_session_id IS NOT NULL
+            AND num_nonnulls(work_item_id,project_id)=1)
+        ))
+      )`)
+}
 const key = Buffer.alloc(32, 9)
 const publicDns = async () => [{ address: '8.8.8.8', family: 4 as const }]
 
@@ -73,6 +98,7 @@ const expectEventTeamAuthority = async (
 describe('stage 1 worker durability', () => {
   beforeAll(async () => { await applyMigrations(db) }, 120_000)
   beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
+  afterEach(restoreSessionSubjectConstraint)
   afterAll(async () => { await db.end() })
 
   it('treats receiver 409 as delivered and the durable ledger rejects duplicate delivery ids', async () => {
@@ -147,6 +173,14 @@ describe('stage 1 worker durability', () => {
       "INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,'Worker project scope') RETURNING id",
       [data.workspaceId, data.teamId],
     )).rows[0]!.id
+    const reparentedProjectId = (await db.query<{ id: string }>(
+      "INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,'Worker reparented scope') RETURNING id",
+      [data.workspaceId, data.teamId],
+    )).rows[0]!.id
+    const staleProjectId = (await db.query<{ id: string }>(
+      "INSERT INTO projects(workspace_id,team_id,name) VALUES($1,$2,'Worker stale hybrid scope') RETURNING id",
+      [data.workspaceId, data.teamId],
+    )).rows[0]!.id
     await db.query('UPDATE work_items SET project_id=$2 WHERE id=$1', [
       data.workItemId,
       projectId,
@@ -196,6 +230,37 @@ describe('stage 1 worker durability', () => {
        RETURNING id`,
       [data.workspaceId, projectId, data.teamId],
     )).rows[0]!.id
+    const reparentedChannelId = (await db.query<{ id: string }>(
+      `INSERT INTO work_room_channels(
+         workspace_id,subject_kind,subject_id,team_id
+       ) VALUES($1,'project',$2,$3)
+       RETURNING id`,
+      [data.workspaceId, reparentedProjectId, data.teamId],
+    )).rows[0]!.id
+    const staleChannelId = (await db.query<{ id: string }>(
+      `INSERT INTO work_room_channels(
+         workspace_id,subject_kind,subject_id,team_id
+       ) VALUES($1,'project',$2,$3)
+       RETURNING id`,
+      [data.workspaceId, staleProjectId, data.teamId],
+    )).rows[0]!.id
+    // Fault-inject a legacy/corrupt hybrid row; production constraints still
+    // prevent creating this state through normal writes.
+    await db.query(
+      'ALTER TABLE agent_sessions DROP CONSTRAINT agent_sessions_subject_container_check',
+    )
+    await db.query('UPDATE agent_sessions SET project_id=$2 WHERE id=$1', [
+      sessionId,
+      staleProjectId,
+    ])
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(
+            capability_scope,'{projectIds}',jsonb_build_array($2::text)
+          )
+        WHERE id=$1`,
+      [data.delegationId, staleProjectId],
+    )
     const siblingWorkItemId = (await db.query<{ id: string }>(
       `INSERT INTO work_items(
          workspace_id,team_id,number,title,status_id,
@@ -272,6 +337,20 @@ describe('stage 1 worker durability', () => {
       [authorizedDeliveryId],
     )).rows[0]).toEqual({ status: 'delivered' })
 
+    const staleHybridDeliveryId = await enqueue(
+      'must-ignore-stale-hybrid-project',
+      staleChannelId,
+    )
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [staleHybridDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+
     const siblingDeliveryId = await enqueue(
       'must-not-enter-sibling-work-item',
       siblingChannelId,
@@ -281,6 +360,48 @@ describe('stage 1 worker durability', () => {
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [siblingDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+
+    await db.query('UPDATE work_items SET project_id=$2 WHERE id=$1', [
+      data.workItemId,
+      reparentedProjectId,
+    ])
+    const previousProjectDeliveryId = await enqueue('must-revoke-previous-project')
+    await worker.tick()
+    expect(requests).toBe(1)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [previousProjectDeliveryId],
+    )).rows[0]).toEqual({
+      status: 'dead',
+      last_error: 'WEBHOOK_TARGET_REVOKED',
+    })
+    const reparentedDeliveryId = await enqueue(
+      'must-follow-current-work-item-project',
+      reparentedChannelId,
+    )
+    await worker.tick()
+    expect(requests).toBe(2)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
+      [reparentedDeliveryId],
+    )).rows[0]).toEqual({ status: 'delivered' })
+
+    await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [
+      data.workItemId,
+    ])
+    const deletedWorkItemDeliveryId = await enqueue(
+      'must-revoke-deleted-work-item-project',
+      reparentedChannelId,
+    )
+    await worker.tick()
+    expect(requests).toBe(2)
+    expect((await db.query<{ status: string; last_error: string }>(
+      'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
+      [deletedWorkItemDeliveryId],
     )).rows[0]).toEqual({
       status: 'dead',
       last_error: 'WEBHOOK_TARGET_REVOKED',
@@ -302,7 +423,7 @@ describe('stage 1 worker durability', () => {
     )
     const missingProjectScopeId = await enqueue('missing-projectIds')
     await worker.tick()
-    expect(requests).toBe(1)
+    expect(requests).toBe(2)
     expect((await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [missingProjectScopeId],
@@ -321,7 +442,7 @@ describe('stage 1 worker durability', () => {
     )
     const matchingProjectScopeId = await enqueue('matching-projectIds')
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     expect((await db.query<{ status: string }>(
       'SELECT status FROM agent_webhook_deliveries WHERE id=$1',
       [matchingProjectScopeId],
@@ -334,7 +455,7 @@ describe('stage 1 worker durability', () => {
       [data.delegationId],
     )
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     const revokedAudit = (await db.query<{
       status: string
       last_error: string
@@ -358,7 +479,7 @@ describe('stage 1 worker durability', () => {
     const stoppedDeliveryId = await enqueue(stoppedMarker)
     await db.query("UPDATE agent_sessions SET state='stopping' WHERE id=$1", [sessionId])
     await worker.tick()
-    expect(requests).toBe(2)
+    expect(requests).toBe(3)
     const stoppedAudit = (await db.query<{ status: string; last_error: string }>(
       'SELECT status,last_error FROM agent_webhook_deliveries WHERE id=$1',
       [stoppedDeliveryId],

@@ -207,6 +207,8 @@ async function assertReadableTeam(
               ) ? session.work_item_id::text
             )
             OR (
+              session.work_item_id IS NULL
+              AND
               session.project_id IS NOT NULL
               AND COALESCE(
                 delegation.capability_scope->'projectIds',
