@@ -11,6 +11,7 @@ describe('pagination surface inventory', () => {
       read('apps/api/src/server.ts'),
       read('apps/api/src/agent/routes.ts'),
       read('apps/api/src/collaboration/routes.ts'),
+      read('apps/api/src/inbox/routes.ts'),
       read('apps/api/src/delivery/routes.ts'),
       read('apps/api/src/operations/routes.ts'),
     ].join('\n')

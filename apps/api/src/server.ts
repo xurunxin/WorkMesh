@@ -51,6 +51,7 @@ import {
 } from "./commands.js";
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
+import { registerInboxRoutes } from "./inbox/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
 import { registerAdminRetentionRoutes } from "./admin-retention.js";
@@ -155,6 +156,10 @@ function commandContext(
       pathParams: params,
       body,
       ifMatch: header(request, "if-match") ?? null,
+      agentSessionId:
+        request.actor?.kind === "agent"
+          ? request.actor.agentSessionId ?? null
+          : null,
     }),
     clientContext: authClientContext(request),
   };
@@ -1046,6 +1051,7 @@ export const buildApp = (options: {
   });
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
+  registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);

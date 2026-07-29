@@ -813,10 +813,11 @@ describe('live paged-read authorization', () => {
   })
 
   it('keeps every flagged final paged SQL statement bound to a live predicate', async () => {
-    const [server, agents, collaboration, delivery, operations] = await Promise.all([
+    const [server, agents, collaboration, inbox, delivery, operations] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
     ])
@@ -848,6 +849,9 @@ describe('live paged-read authorization', () => {
       section(collaboration,
         "app.get('/api/v1/rooms/:id/timeline'",
         "app.post('/api/v1/rooms/:id/messages'"),
+      section(inbox,
+        'function listAgentInbox',
+        'export function registerInboxRoutes'),
       section(delivery,
         'function applicableAgentRepositoryContexts',
         'async function assertAgentRepositoryWrite'),
@@ -871,11 +875,12 @@ describe('live paged-read authorization', () => {
     expect(repositoryList).toContain('applicableAgentRepositoryContexts')
   })
 
-  it('audits all 23 Agent-readable routes derived from the 27-route pagination inventory', async () => {
-    const [server, agents, collaboration, delivery, operations, inventory] = await Promise.all([
+  it('audits all 24 Agent-readable routes derived from the 27-route pagination inventory', async () => {
+    const [server, agents, collaboration, inbox, delivery, operations, inventory] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./pagination-inventory.test.ts', import.meta.url), 'utf8'),
@@ -893,7 +898,7 @@ describe('live paged-read authorization', () => {
       )
       .map(policy => canonicalRoutePath(policy.path))
       .sort()
-    expect(agentRoutes).toHaveLength(23)
+    expect(agentRoutes).toHaveLength(24)
 
     const evidence = new Map<string, FinalSqlAudit>([
       ['/api/v1/teams', {
@@ -959,6 +964,12 @@ describe('live paged-read authorization', () => {
       ['/api/v1/approvals', {
         fileName: 'agent/routes.ts',
         source: agents,
+        authorization: { calls: ['liveSessionReadPredicate'] },
+        query: 'paginator',
+      }],
+      ['/api/v1/inbox', {
+        fileName: 'inbox/routes.ts',
+        source: inbox,
         authorization: { calls: ['liveSessionReadPredicate'] },
         query: 'paginator',
       }],
@@ -1036,7 +1047,7 @@ describe('live paged-read authorization', () => {
       }],
     ])
 
-    expect(evidence.size).toBe(23)
+    expect(evidence.size).toBe(24)
     const canonicalEvidence = new Map(
       [...evidence.entries()].map(([sourcePath, audit]) => [
         canonicalRoutePath(sourcePath),

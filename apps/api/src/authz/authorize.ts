@@ -78,6 +78,7 @@ type ExplicitResourceKind =
   | 'approval'
   | 'work_room'
   | 'room_message'
+  | 'inbox_item'
   | 'lease'
   | 'handoff'
   | 'decision'
@@ -108,6 +109,7 @@ const resourceSegments: Readonly<Record<string, {
   approvals: { kind: 'approval', resolver: 'approval' },
   rooms: { kind: 'work_room', resolver: 'work_room' },
   messages: { kind: 'room_message', resolver: 'work_room' },
+  inbox: { kind: 'inbox_item', resolver: 'inbox_item' },
   leases: { kind: 'lease', resolver: 'lease' },
   handoffs: { kind: 'handoff', resolver: 'handoff' },
   decisions: { kind: 'decision', resolver: 'decision' },
@@ -161,6 +163,7 @@ function resourceTeamSql(kind: ExplicitResourceKind): string {
     case 'approval': return 'SELECT s.team_id FROM approvals a JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
     case 'work_room': return 'SELECT team_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2'
     case 'room_message': return 'SELECT c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id AND c.workspace_id=m.workspace_id WHERE m.id=$1 AND m.workspace_id=$2'
+    case 'inbox_item': return 'SELECT team_id FROM inbox_items WHERE id=$1 AND workspace_id=$2'
     case 'lease': return 'SELECT s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id AND s.workspace_id=l.workspace_id WHERE l.id=$1 AND l.workspace_id=$2'
     case 'handoff': return 'SELECT s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id AND s.workspace_id=h.workspace_id WHERE h.id=$1 AND h.workspace_id=$2'
     case 'decision': return 'SELECT COALESCE(w.team_id,p.team_id,s.team_id) AS team_id FROM decisions d LEFT JOIN work_items w ON w.id=d.work_item_id AND w.workspace_id=d.workspace_id LEFT JOIN projects p ON p.id=d.project_id AND p.workspace_id=d.workspace_id LEFT JOIN agent_sessions s ON s.id=d.session_id AND s.workspace_id=d.workspace_id WHERE d.id=$1 AND d.workspace_id=$2'
@@ -180,6 +183,7 @@ async function resolveTeam(
   db: Pool,
   request: FastifyRequest,
   resolver: ResourceResolverId,
+  operationId: string,
 ): Promise<TeamResolution> {
   const params = pathParams(request)
   const query = queryParams(request)
@@ -189,6 +193,45 @@ async function resolveTeam(
       ? { kind: 'team' as const, id: directTeamId }
       : null)
   if (!target) return { kind: 'none' }
+  if (target.kind === 'inbox_item') {
+    const actor = request.actor!
+    const agentSessionId = actor.kind === 'agent' ? actor.agentSessionId : undefined
+    const claim = operationId === 'claimInboxItem'
+    const result = await db.query<{ team_id: string | null }>(
+      `SELECT team_id
+         FROM inbox_items
+        WHERE id=$1 AND workspace_id=$2
+          AND (
+            ($3='human' AND recipient_human_actor_id=$4)
+            OR (
+              $3='agent'
+              AND $5::uuid IS NOT NULL
+              AND (
+                recipient_session_id=$5
+                OR claimed_by_session_id=$5
+                OR (
+                  $6::boolean
+                  AND recipient_human_actor_id IS NULL
+                  AND recipient_actor_id=$4
+                  AND recipient_session_id IS NULL
+                  AND claimed_by_session_id IS NULL
+                  AND status='open'
+                )
+              )
+            )
+          )`,
+      [
+        target.id,
+        actor.workspaceId,
+        actor.kind,
+        actor.id,
+        agentSessionId ?? null,
+        claim,
+      ],
+    )
+    if (!result.rows[0]) return { kind: 'unresolved' }
+    return { kind: 'resolved', teamId: result.rows[0].team_id }
+  }
   const result = await db.query<{ team_id: string | null }>(
     resourceTeamSql(target.kind),
     [target.id, request.actor!.workspaceId],
@@ -328,7 +371,12 @@ export async function authorizeRequest(
       policyId: policy.policyId,
     })
   }
-  const teamResolution = await resolveTeam(db, request, policy.resourceResolverId)
+  const teamResolution = await resolveTeam(
+    db,
+    request,
+    policy.resourceResolverId,
+    policy.operationId,
+  )
   if (teamResolution.kind === 'unresolved') {
     throw new DomainError('NOT_FOUND', 'Resource not found', {
       authorizationStage: 'resource_scope',

@@ -205,26 +205,49 @@ export function eventAudienceQuery(
      )
      SELECT ${columns} FROM domain_events e
      WHERE e.workspace_id=$1 AND e.cursor>$2
-       AND EXISTS (SELECT 1 FROM authorized_sessions WHERE id=$4)
-       AND (
-         e.audience_actor_id=$3
-         OR e.session_id IN (SELECT id FROM authorized_sessions)
-         OR (
-           e.audience_actor_id IS NULL
-           AND EXISTS (
-             SELECT 1
-             FROM domain_event_resources resource
-             JOIN authorized_sessions visible
-               ON (
-                 (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
-                 OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
-                 OR (resource.resource_type='session' AND resource.resource_id=visible.id)
-               )
-             WHERE resource.domain_event_id=e.id
-               AND resource.relation IN ('scope','invalidate')
-           )
-         )
-       )`
+        AND e.event_type<>'room.message.human_visibility_recorded'
+        AND EXISTS (SELECT 1 FROM authorized_sessions WHERE id=$4)
+        AND (
+          (
+            e.aggregate_type='inbox_item'
+            AND e.audience_actor_id=$3
+            AND e.session_id=$4
+          )
+          OR (
+            e.aggregate_type='room_message'
+            AND e.audience_actor_id IS NOT NULL
+            AND e.session_id IS NOT NULL
+            AND e.audience_actor_id=$3
+            AND e.session_id=$4
+          )
+          OR (
+            e.aggregate_type<>'inbox_item'
+            AND NOT (
+              e.aggregate_type='room_message'
+              AND e.audience_actor_id IS NOT NULL
+              AND e.session_id IS NOT NULL
+            )
+            AND (
+              e.audience_actor_id=$3
+              OR e.session_id IN (SELECT id FROM authorized_sessions)
+              OR (
+                e.audience_actor_id IS NULL
+                AND EXISTS (
+                  SELECT 1
+                  FROM domain_event_resources resource
+                  JOIN authorized_sessions visible
+                    ON (
+                      (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
+                      OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
+                      OR (resource.resource_type='session' AND resource.resource_id=visible.id)
+                    )
+                  WHERE resource.domain_event_id=e.id
+                    AND resource.relation IN ('scope','invalidate')
+                )
+              )
+            )
+          )
+        )`
   return {
     sql,
     values: [

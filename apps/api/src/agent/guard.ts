@@ -39,6 +39,34 @@ export async function authorizeCommandInTx(
   return session
 }
 
+export async function assertCurrentAgentCredentialInTx(
+  tx: PoolClient,
+  actor: ApiActor,
+  sessionId: string,
+): Promise<void> {
+  if (
+    actor.kind !== 'agent'
+    || actor.agentSessionId !== sessionId
+    || !actor.credentialHash
+  ) {
+    throw new DomainError('UNAUTHENTICATED', 'An active Agent Session credential is required')
+  }
+  const credential = await tx.query(
+    `SELECT id
+       FROM agent_session_tokens
+      WHERE session_id=$1
+        AND token_hash=$2
+        AND expires_at>now()
+        AND exchanged_at IS NOT NULL
+        AND revoked_at IS NULL
+      FOR UPDATE`,
+    [sessionId, actor.credentialHash],
+  )
+  if (!credential.rowCount) {
+    throw new DomainError('UNAUTHENTICATED', 'The Agent Session credential was revoked or expired')
+  }
+}
+
 export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
   // Locate immutable authority keys without taking a lock, then acquire every
   // authority lock in the same order used by Team-grant revocation:
