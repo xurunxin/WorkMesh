@@ -16,6 +16,7 @@ import { createAutomationWorker } from './automation.js'
 import { createRetentionWorker } from './retention.js'
 import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
 import { RetentionScheduler } from './retention-scheduler.js'
+import { materializeWorkerRuntimeIdentity } from './worker-runtime-identity.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
@@ -358,7 +359,8 @@ export function createOutboxWorker({
   return { claimOutbox, deliver, fail, tick, probe, close }
 }
 
-const startWorkerProcess = (): void => {
+const startWorkerProcess = async (): Promise<void> => {
+  const runtimeIdentity = await materializeWorkerRuntimeIdentity()
   const db = createDb()
   const features = loadFeatureConfig()
   const outboxWorker = createOutboxWorker({ db })
@@ -428,6 +430,7 @@ const startWorkerProcess = (): void => {
     db,
     config: retentionConfig,
     storage: artifactStorage,
+    runtimeIdentity,
   })
   const retentionScheduler = new RetentionScheduler({
     tick: retentionWorker.tick,
@@ -528,4 +531,11 @@ const startWorkerProcess = (): void => {
   process.once('SIGINT', stop)
 }
 
-if (process.env.NODE_ENV !== 'test') startWorkerProcess()
+if (process.env.NODE_ENV !== 'test')
+  void startWorkerProcess().catch(() => {
+    console.error('worker identity initialization failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_IDENTITY_INITIALIZATION_FAILED',
+    })
+    process.exit(1)
+  })

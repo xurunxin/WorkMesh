@@ -158,6 +158,8 @@ try {
       workspaceId: string;
       workerMode: string | null;
       workerSeenAt: Date | null;
+      workerInstanceId: string | null;
+      workerBuildSha: string | null;
       state: string;
       heartbeatHealth: string;
       lastHeartbeatAt: Date | null;
@@ -167,7 +169,9 @@ try {
               session.heartbeat_health AS "heartbeatHealth",
               session.last_heartbeat_at AS "lastHeartbeatAt",
               runtime.worker_mode AS "workerMode",
-              runtime.worker_seen_at AS "workerSeenAt"
+              runtime.worker_seen_at AS "workerSeenAt",
+              runtime.worker_instance_id::text AS "workerInstanceId",
+              runtime.worker_build_sha AS "workerBuildSha"
          FROM agent_sessions session
          LEFT JOIN retention_job_state runtime
            ON runtime.workspace_id=session.workspace_id
@@ -179,7 +183,7 @@ try {
   if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
   assertRetentionSoakSessionLiveness(identity, new Date(), options.liveness);
   initialWorkerFreshness = retentionSoakWorkerFreshnessProof(
-    provenance,
+    provenance.workerRuntimeIdentity,
     identity,
     new Date(),
   );
@@ -314,8 +318,16 @@ try {
   heartbeatMetrics = heartbeatPump.metrics();
   reportEndedAt = new Date(heartbeatMetrics.observedThroughAt!);
   const endingRuntime = (
-    await db.query<{ workerMode: string | null; workerSeenAt: Date | null }>(
-      `SELECT worker_mode AS "workerMode",worker_seen_at AS "workerSeenAt"
+    await db.query<{
+      workerMode: string | null;
+      workerSeenAt: Date | null;
+      workerInstanceId: string | null;
+      workerBuildSha: string | null;
+    }>(
+      `SELECT worker_mode AS "workerMode",
+              worker_seen_at AS "workerSeenAt",
+              worker_instance_id::text AS "workerInstanceId",
+              worker_build_sha AS "workerBuildSha"
          FROM retention_job_state
         WHERE workspace_id=$1 AND job_name='worker_runtime'`,
       [identity.workspaceId],
@@ -331,7 +343,7 @@ try {
     redisUrl: options.redisUrl,
   });
   endingWorkerFreshness = retentionSoakWorkerFreshnessProof(
-    endingProvenance,
+    endingProvenance.workerRuntimeIdentity,
     endingRuntime,
     reportEndedAt,
   );

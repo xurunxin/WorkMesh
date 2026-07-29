@@ -56,12 +56,23 @@ const thresholds: RetentionSoakThresholds = {
   maximumContainerMemorySlopeBytesPerHour: 16_777_216,
 };
 
+const workerContainerId = `sha256:${"worker"
+  .padEnd(64, "1")
+  .slice(0, 64)}`;
+const workerInstanceId = "00000000-0000-4000-8000-000000000001";
 const provenanceEvidence: RetentionSoakFormalEvidence["provenance"] = {
   verified: true,
   expectedBuildSha: "a".repeat(40),
   sourceHeadSha: "a".repeat(40),
   apiBuildSha: "a".repeat(40),
   composeProject: "workmesh-proof",
+  workerRuntimeIdentity: {
+    schemaVersion: 1,
+    instanceId: workerInstanceId,
+    buildSha: "a".repeat(40),
+    startedAt: "2026-07-28T00:00:00.000Z",
+    containerId: workerContainerId,
+  },
   endpoints: {
     api: {
       role: "api",
@@ -134,7 +145,9 @@ const formalEvidence: RetentionSoakFormalEvidence = {
   workerFreshness: {
     initial: {
       verified: true,
-      workerContainerId: provenanceEvidence.roles.worker.containerId,
+      workerContainerId,
+      workerInstanceId,
+      workerBuildSha: "a".repeat(40),
       workerMode: "archive_only",
       workerSeenAt: "2026-07-27T23:59:59.000Z",
       observedAt: "2026-07-28T00:00:00.000Z",
@@ -142,7 +155,9 @@ const formalEvidence: RetentionSoakFormalEvidence = {
     },
     ending: {
       verified: true,
-      workerContainerId: provenanceEvidence.roles.worker.containerId,
+      workerContainerId,
+      workerInstanceId,
+      workerBuildSha: "a".repeat(40),
       workerMode: "archive_only",
       workerSeenAt: "2026-07-28T23:59:59.000Z",
       observedAt: "2026-07-29T00:00:00.000Z",

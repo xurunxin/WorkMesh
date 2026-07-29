@@ -77,8 +77,14 @@ and Worker Compose service labels in one Compose project; API/PostgreSQL/Redis
 published ports matching their configured URLs; matching API and Worker OCI
 revisions; and matching `/api/v1/info.buildSha`. Each stats sample checks the
 full container IDs, and the ending container/image/API proof must deep-match the
-initial proof. Durable initial/ending `archive_only` Worker freshness is bound
-to the inspected Worker container ID. Threshold
+initial proof. On startup the Worker generates an instance UUID bound to
+`WORKMESH_BUILD_SHA`, atomically writes it to the owner-only
+`/tmp/workmesh-worker-runtime-identity.json`, and publishes the same UUID/build
+to `retention_job_state.worker_instance_id`/`worker_build_sha` with its
+freshness heartbeat. Formal collection reads the file by exact inspected
+container ID and requires both initial and ending database identity/build to
+match it. An external Worker refreshing the same database, a process/container
+restart, or build/identity drift fails the gate. Threshold
 overrides may keep the defaults or lower maximums; looser formal thresholds are
 rejected. An independent 15-second heartbeat pump shares a serialized
 credential/request queue with activities. The maximum initial/steady

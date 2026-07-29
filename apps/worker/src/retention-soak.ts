@@ -687,8 +687,16 @@ export const retentionSoakReport = (
       formalEvidence.workerFreshness.ending.verified &&
       formalEvidence.workerFreshness.initial.workerContainerId ===
         formalEvidence.provenance.roles.worker.containerId &&
+      formalEvidence.workerFreshness.initial.workerInstanceId ===
+        formalEvidence.provenance.workerRuntimeIdentity.instanceId &&
+      formalEvidence.workerFreshness.initial.workerBuildSha ===
+        formalEvidence.provenance.workerRuntimeIdentity.buildSha &&
       formalEvidence.workerFreshness.ending.workerContainerId ===
-        formalEvidence.endingProvenance.roles.worker.containerId,
+        formalEvidence.endingProvenance.roles.worker.containerId &&
+      formalEvidence.workerFreshness.ending.workerInstanceId ===
+        formalEvidence.endingProvenance.workerRuntimeIdentity.instanceId &&
+      formalEvidence.workerFreshness.ending.workerBuildSha ===
+        formalEvidence.endingProvenance.workerRuntimeIdentity.buildSha,
     latencyBounded:
       maxima.archiveLatencyMs <= thresholds.maximumArchiveLatencyMs &&
       maxima.heartbeatLatencyMs <= thresholds.maximumHeartbeatLatencyMs &&

@@ -13,6 +13,8 @@ import {
   retentionSoakSampleQuery,
   type RetentionSoakSampleDatabaseState,
 } from "../src/retention-soak-query.js";
+import { retentionSoakWorkerFreshnessProof } from "../src/retention-soak-provenance.js";
+import type { WorkerRuntimeIdentity } from "../src/worker-runtime-identity.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
@@ -1005,6 +1007,12 @@ describe("retention worker destructive-path fences", () => {
   });
 
   it("publishes the effective Worker mode into durable status state", async () => {
+    const runtimeIdentity: WorkerRuntimeIdentity = {
+      schemaVersion: 1,
+      instanceId: "00000000-0000-4000-8000-000000000010",
+      buildSha: "a".repeat(40),
+      startedAt: "2026-07-29T00:00:00.000Z",
+    };
     const worker = createRetentionWorker({
       db,
       workerId: "worker-mode",
@@ -1013,12 +1021,21 @@ describe("retention worker destructive-path fences", () => {
       redisClient: redis,
       redisMaxLen: 100,
       workspaceScopeId: workspaceId,
+      runtimeIdentity,
     });
     await worker.tick();
     expect(
       (
-        await db.query<{ workerMode: string; workerSeenAt: Date }>(
-          `SELECT worker_mode AS "workerMode",worker_seen_at AS "workerSeenAt"
+        await db.query<{
+          workerMode: string;
+          workerSeenAt: Date;
+          workerInstanceId: string;
+          workerBuildSha: string;
+        }>(
+          `SELECT worker_mode AS "workerMode",
+                  worker_seen_at AS "workerSeenAt",
+                  worker_instance_id::text AS "workerInstanceId",
+                  worker_build_sha AS "workerBuildSha"
              FROM retention_job_state
             WHERE job_name='worker_runtime' AND workspace_id=$1`,
           [workspaceId],
@@ -1027,6 +1044,78 @@ describe("retention worker destructive-path fences", () => {
     ).toMatchObject({
       workerMode: "disabled",
       workerSeenAt: expect.any(Date),
+      workerInstanceId: runtimeIdentity.instanceId,
+      workerBuildSha: runtimeIdentity.buildSha,
     });
+  });
+
+  it("rejects an external Worker that refreshes the same authoritative row", async () => {
+    const candidate: WorkerRuntimeIdentity = {
+      schemaVersion: 1,
+      instanceId: "00000000-0000-4000-8000-000000000011",
+      buildSha: "b".repeat(40),
+      startedAt: "2026-07-29T00:00:00.000Z",
+    };
+    const external: WorkerRuntimeIdentity = {
+      ...candidate,
+      instanceId: "00000000-0000-4000-8000-000000000012",
+    };
+    const create = (runtimeIdentity: WorkerRuntimeIdentity) =>
+      createRetentionWorker({
+        db,
+        workerId: `identity-${runtimeIdentity.instanceId}`,
+        config: {
+          ...config,
+          archiveEnabled: true,
+          eventPruneEnabled: false,
+          eventOnlineDays: 365,
+        },
+        storage,
+        redisClient: redis,
+        redisMaxLen: 100,
+        workspaceScopeId: workspaceId,
+        runtimeIdentity,
+      });
+    const readRuntime = async () =>
+      (
+        await db.query<{
+          workerMode: string | null;
+          workerSeenAt: Date | null;
+          workerInstanceId: string | null;
+          workerBuildSha: string | null;
+        }>(
+          `SELECT worker_mode AS "workerMode",
+                  worker_seen_at AS "workerSeenAt",
+                  worker_instance_id::text AS "workerInstanceId",
+                  worker_build_sha AS "workerBuildSha"
+             FROM retention_job_state
+            WHERE job_name='worker_runtime' AND workspace_id=$1`,
+          [workspaceId],
+        )
+      ).rows[0]!;
+    const candidateContainerIdentity = {
+      ...candidate,
+      containerId: "candidate-container-id",
+    };
+
+    await create(candidate).tick();
+    const candidateRuntime = await readRuntime();
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        candidateContainerIdentity,
+        candidateRuntime,
+        new Date(),
+      ),
+    ).not.toThrow();
+
+    await create(external).tick();
+    const externalRuntime = await readRuntime();
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        candidateContainerIdentity,
+        externalRuntime,
+        new Date(),
+      ),
+    ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
   });
 });

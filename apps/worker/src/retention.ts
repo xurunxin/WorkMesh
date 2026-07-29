@@ -13,6 +13,10 @@ import {
 } from "@workmesh/artifact-storage";
 import { withTx, type Db } from "@workmesh/db";
 import { safeRetentionErrorCode } from "./retention-error.js";
+import {
+  createWorkerRuntimeIdentity,
+  type WorkerRuntimeIdentity,
+} from "./worker-runtime-identity.js";
 
 const STREAM_KEY = "workmesh:domain-events";
 const sha256 = (value: Uint8Array | string): string =>
@@ -149,6 +153,7 @@ export type RetentionWorker = Readonly<{
 export function createRetentionWorker({
   db,
   workerId = `retention-${randomUUID()}`,
+  runtimeIdentity = createWorkerRuntimeIdentity(),
   config = loadRetentionConfig(),
   storage,
   redisClient,
@@ -161,6 +166,7 @@ export function createRetentionWorker({
 }: {
   db: Db;
   workerId?: string;
+  runtimeIdentity?: WorkerRuntimeIdentity;
   config?: RetentionConfig;
   storage?: ArchiveObjectStore;
   redisClient?: ExactRedisClient;
@@ -194,17 +200,25 @@ export function createRetentionWorker({
     await db.query(
       `
       INSERT INTO retention_job_state(
-        job_name,workspace_id,worker_mode,worker_seen_at
+        job_name,workspace_id,worker_mode,worker_seen_at,
+        worker_instance_id,worker_build_sha
       )
-      SELECT 'worker_runtime',id,$1,now()
+      SELECT 'worker_runtime',id,$1,now(),$3::uuid,$4
         FROM workspaces
        WHERE $2::uuid IS NULL OR id=$2
       ON CONFLICT(job_name,workspace_id) DO UPDATE
         SET worker_mode=EXCLUDED.worker_mode,
             worker_seen_at=EXCLUDED.worker_seen_at,
+            worker_instance_id=EXCLUDED.worker_instance_id,
+            worker_build_sha=EXCLUDED.worker_build_sha,
             updated_at=now()
     `,
-      [workerMode, workspaceScopeId ?? null],
+      [
+        workerMode,
+        workspaceScopeId ?? null,
+        runtimeIdentity.instanceId,
+        runtimeIdentity.buildSha,
+      ],
     );
   };
 

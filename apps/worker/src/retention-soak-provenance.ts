@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { releaseInfoResponseSchema } from "@workmesh/contracts";
+import { WORKER_RUNTIME_IDENTITY_CONTAINER_PATH } from "./worker-runtime-identity.js";
 
 export const retentionSoakContainerRoles = [
   "api",
@@ -22,6 +23,7 @@ export type RetentionSoakProvenance = Readonly<{
   sourceHeadSha: string;
   apiBuildSha: string;
   composeProject: string;
+  workerRuntimeIdentity: RetentionSoakWorkerRuntimeIdentity;
   endpoints: Readonly<{
     api: RetentionSoakEndpointProof;
     postgres: RetentionSoakEndpointProof;
@@ -43,6 +45,14 @@ export type RetentionSoakProvenance = Readonly<{
   >;
 }>;
 
+export type RetentionSoakWorkerRuntimeIdentity = Readonly<{
+  schemaVersion: 1;
+  instanceId: string;
+  buildSha: string;
+  startedAt: string;
+  containerId: string;
+}>;
+
 export type RetentionSoakEndpointProof = Readonly<{
   role: "api" | "postgres" | "redis";
   scheme: string;
@@ -55,6 +65,8 @@ export type RetentionSoakEndpointProof = Readonly<{
 export type RetentionSoakWorkerFreshnessProof = Readonly<{
   verified: true;
   workerContainerId: string;
+  workerInstanceId: string;
+  workerBuildSha: string;
   workerMode: "archive_only";
   workerSeenAt: string;
   observedAt: string;
@@ -121,6 +133,50 @@ const parseArray = <T>(text: string, code: string): T[] => {
 const requiredString = (value: unknown, code: string): string => {
   if (typeof value !== "string" || !value.trim()) throw new Error(code);
   return value.trim();
+};
+
+const parseWorkerRuntimeIdentity = (
+  text: string,
+  containerId: string,
+  expectedBuildSha: string,
+): RetentionSoakWorkerRuntimeIdentity => {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_INVALID");
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_INVALID");
+  const record = value as Record<string, unknown>;
+  const instanceId = requiredString(
+    record.instanceId,
+    "RETENTION_SOAK_WORKER_IDENTITY_INVALID",
+  );
+  const buildSha = requiredString(
+    record.buildSha,
+    "RETENTION_SOAK_WORKER_IDENTITY_INVALID",
+  );
+  const startedAt = requiredString(
+    record.startedAt,
+    "RETENTION_SOAK_WORKER_IDENTITY_INVALID",
+  );
+  if (
+    record.schemaVersion !== 1 ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      instanceId,
+    ) ||
+    !Number.isFinite(Date.parse(startedAt)) ||
+    buildSha !== expectedBuildSha
+  )
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
+  return {
+    schemaVersion: 1,
+    instanceId,
+    buildSha,
+    startedAt: new Date(Date.parse(startedAt)).toISOString(),
+    containerId,
+  };
 };
 
 const revisionFrom = (image: ImageInspection): string | null => {
@@ -305,10 +361,12 @@ export const parseRetentionSoakContainerStats = (
 };
 
 export const retentionSoakWorkerFreshnessProof = (
-  provenance: RetentionSoakProvenance,
+  workerRuntimeIdentity: RetentionSoakWorkerRuntimeIdentity,
   evidence: Readonly<{
     workerMode: string | null;
     workerSeenAt: Date | null;
+    workerInstanceId: string | null;
+    workerBuildSha: string | null;
   }>,
   observedAt: Date,
   maximumAgeMs = 120_000,
@@ -316,6 +374,11 @@ export const retentionSoakWorkerFreshnessProof = (
   const ageMs = evidence.workerSeenAt
     ? observedAt.getTime() - evidence.workerSeenAt.getTime()
     : Number.POSITIVE_INFINITY;
+  if (
+    evidence.workerInstanceId !== workerRuntimeIdentity.instanceId ||
+    evidence.workerBuildSha !== workerRuntimeIdentity.buildSha
+  )
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
   if (
     evidence.workerMode !== "archive_only" ||
     !evidence.workerSeenAt ||
@@ -325,7 +388,9 @@ export const retentionSoakWorkerFreshnessProof = (
     throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
   return {
     verified: true,
-    workerContainerId: provenance.roles.worker.containerId,
+    workerContainerId: workerRuntimeIdentity.containerId,
+    workerInstanceId: workerRuntimeIdentity.instanceId,
+    workerBuildSha: workerRuntimeIdentity.buildSha,
     workerMode: "archive_only",
     workerSeenAt: evidence.workerSeenAt.toISOString(),
     observedAt: observedAt.toISOString(),
@@ -505,6 +570,27 @@ export const collectRetentionSoakProvenance = async (
       ["redis", "rediss"],
     ),
   };
+  let workerRuntimeIdentity: RetentionSoakWorkerRuntimeIdentity;
+  try {
+    workerRuntimeIdentity = parseWorkerRuntimeIdentity(
+      await run(
+        "docker",
+        [
+          "exec",
+          roles.worker.containerId,
+          "cat",
+          WORKER_RUNTIME_IDENTITY_CONTAINER_PATH,
+        ],
+        timeoutMs,
+      ),
+      roles.worker.containerId,
+      options.expectedBuildSha,
+    );
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("RETENTION_SOAK_"))
+      throw error;
+    throw new Error("RETENTION_SOAK_WORKER_IDENTITY_READ_FAILED");
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -535,6 +621,7 @@ export const collectRetentionSoakProvenance = async (
     sourceHeadSha,
     apiBuildSha: parsed.data.buildSha,
     composeProject,
+    workerRuntimeIdentity,
     endpoints,
     roles,
   };

@@ -27,6 +27,8 @@ const inspections = (
     projectRole?: keyof typeof roles;
     projectName?: string;
     containerIdSuffix?: string;
+    workerInstanceId?: string;
+    workerBuildSha?: string;
   }> = {},
 ) => {
   const containers = roleNames.map((role, index) => ({
@@ -77,7 +79,15 @@ const inspections = (
       },
     },
   }));
-  return { containers, images };
+  const workerIdentity = {
+    schemaVersion: 1,
+    instanceId:
+      overrides.workerInstanceId ??
+      "00000000-0000-4000-8000-000000000001",
+    buildSha: overrides.workerBuildSha ?? expectedBuildSha,
+    startedAt: "2026-07-29T00:00:00.000Z",
+  };
+  return { containers, images, workerIdentity };
 };
 
 const releaseInfo = (buildSha = expectedBuildSha): Response =>
@@ -115,9 +125,10 @@ const collect = (
     execFile: async (executable, args) => {
       if (executable === "git")
         return args[0] === "rev-parse" ? `${expectedBuildSha}\n` : "";
-      return JSON.stringify(
-        args[0] === "inspect" ? data.containers : data.images,
-      );
+      if (args[0] === "inspect") return JSON.stringify(data.containers);
+      if (args[0] === "image") return JSON.stringify(data.images);
+      if (args[0] === "exec") return JSON.stringify(data.workerIdentity);
+      throw new Error("unexpected command");
     },
     fetch: vi
       .fn<typeof fetch>()
@@ -130,9 +141,10 @@ describe("retention soak formal provenance", () => {
     const execFile = vi.fn(async (executable: string, args: readonly string[]) => {
       if (executable === "git")
         return args[0] === "rev-parse" ? `${expectedBuildSha}\n` : "";
-      return JSON.stringify(
-        args[0] === "inspect" ? data.containers : data.images,
-      );
+      if (args[0] === "inspect") return JSON.stringify(data.containers);
+      if (args[0] === "image") return JSON.stringify(data.images);
+      if (args[0] === "exec") return JSON.stringify(data.workerIdentity);
+      throw new Error("unexpected command");
     });
 
     await expect(
@@ -153,6 +165,12 @@ describe("retention soak formal provenance", () => {
       sourceHeadSha: expectedBuildSha,
       apiBuildSha: expectedBuildSha,
       composeProject: "workmesh-proof",
+      workerRuntimeIdentity: {
+        schemaVersion: 1,
+        instanceId: "00000000-0000-4000-8000-000000000001",
+        buildSha: expectedBuildSha,
+        containerId: "container-1",
+      },
       endpoints: {
         api: { role: "api", hostPort: 3001, containerPort: 3001 },
         postgres: {
@@ -177,7 +195,17 @@ describe("retention soak formal provenance", () => {
         minio: { containerName: "workmesh-minio" },
       },
     });
-    expect(execFile).toHaveBeenCalledTimes(4);
+    expect(execFile).toHaveBeenCalledTimes(5);
+    expect(execFile).toHaveBeenCalledWith(
+      "docker",
+      [
+        "exec",
+        "container-1",
+        "cat",
+        "/tmp/workmesh-worker-runtime-identity.json",
+      ],
+      10_000,
+    );
   });
 
   it("rejects missing digests, wrong image revisions, and wrong API build SHA", async () => {
@@ -193,6 +221,9 @@ describe("retention soak formal provenance", () => {
     await expect(
       collect(inspections(), { response: releaseInfo("b".repeat(40)) }),
     ).rejects.toThrow("RETENTION_SOAK_API_BUILD_SHA_MISMATCH");
+    await expect(
+      collect(inspections({ workerBuildSha: "b".repeat(40) })),
+    ).rejects.toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
   });
 
   it("rejects native Windows and an invalid expected SHA before inspection", async () => {
@@ -316,7 +347,13 @@ describe("retention soak formal provenance", () => {
     ).toThrow("RETENTION_SOAK_CONTAINER_ID_DRIFT");
 
     const ending = await collect(
-      inspections({ containerIdSuffix: "-recreated" }),
+      inspections({
+        containerIdSuffix: "-recreated",
+        workerInstanceId: "00000000-0000-4000-8000-000000000002",
+      }),
+    );
+    expect(retentionSoakProvenanceMatches(initial, await collect(inspections()))).toBe(
+      true,
     );
     expect(retentionSoakProvenanceMatches(initial, ending)).toBe(false);
   });
@@ -326,28 +363,48 @@ describe("retention soak formal provenance", () => {
     const observedAt = new Date("2026-07-29T00:01:00.000Z");
     expect(
       retentionSoakWorkerFreshnessProof(
-        provenance,
+        provenance.workerRuntimeIdentity,
         {
           workerMode: "archive_only",
           workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+          workerInstanceId:
+            provenance.workerRuntimeIdentity.instanceId,
+          workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
         },
         observedAt,
       ),
     ).toMatchObject({
       verified: true,
       workerContainerId: provenance.roles.worker.containerId,
+      workerInstanceId: provenance.workerRuntimeIdentity.instanceId,
+      workerBuildSha: expectedBuildSha,
       workerMode: "archive_only",
       ageMs: 60_000,
     });
     expect(() =>
       retentionSoakWorkerFreshnessProof(
-        provenance,
+        provenance.workerRuntimeIdentity,
         {
           workerMode: "archive_only",
           workerSeenAt: new Date("2026-07-28T23:58:59.999Z"),
+          workerInstanceId:
+            provenance.workerRuntimeIdentity.instanceId,
+          workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
         },
         observedAt,
       ),
     ).toThrow("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
+    expect(() =>
+      retentionSoakWorkerFreshnessProof(
+        provenance.workerRuntimeIdentity,
+        {
+          workerMode: "archive_only",
+          workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+          workerInstanceId: "00000000-0000-4000-8000-000000000099",
+          workerBuildSha: expectedBuildSha,
+        },
+        observedAt,
+      ),
+    ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
   });
 });
