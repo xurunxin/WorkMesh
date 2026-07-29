@@ -1543,6 +1543,178 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await humanCall(member, 'GET', `/api/v1/inbox/${roomItem.id}`)).statusCode).toBe(200)
   })
 
+  it('revalidates claim, acknowledge, and reply idempotency replays against live scope', async () => {
+    const f = await makeFixture()
+    const targetSession = await start(
+      f.human,
+      f.reviewer,
+      f.workspaceId,
+      f.teamId,
+      f.workItemId,
+      {},
+      'reviewer',
+    )
+    const targetToken = await exchangeAndExecute(targetSession, f.reviewer)
+    const targetDelegation = (await db.query<{
+      delegation_id: string
+      capability_scope: Record<string, unknown>
+    }>(`SELECT session.delegation_id,delegation.capability_scope
+          FROM agent_sessions session
+          JOIN delegations delegation ON delegation.id=session.delegation_id
+         WHERE session.id=$1`,
+      [targetSession.id],
+    )).rows[0]!
+    const room = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${f.workItemId}`)
+    expect(room.statusCode, JSON.stringify(room.json())).toBe(200)
+    const channelId = room.json<{ id: string }>().id
+
+    const claimSource = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id,
+      intent: 'blocker',
+      body: 'Claim replay authority must remain live.',
+      recipientActorId: f.reviewer.actorId,
+      requiresResponse: true,
+    })
+    expect(claimSource.statusCode, JSON.stringify(claimSource.json())).toBe(200)
+    const claimItemId = (await db.query<{ id: string }>(
+      `SELECT id FROM inbox_items
+        WHERE source_id=$1 AND recipient_actor_id=$2
+          AND recipient_session_id IS NULL`,
+      [claimSource.json<{ id: string }>().id, f.reviewer.actorId],
+    )).rows[0]!.id
+    const claimKey = randomUUID()
+    const claimed = await agentCall(
+      targetToken,
+      'POST',
+      `/api/v1/inbox/${claimItemId}/claim`,
+      {},
+      { 'idempotency-key': claimKey },
+    )
+    expect(claimed.statusCode, JSON.stringify(claimed.json())).toBe(200)
+
+    const acknowledgeSource = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id,
+      intent: 'inform',
+      body: 'Acknowledge replay authority must remain live.',
+      recipientSessionId: targetSession.id,
+    })
+    expect(acknowledgeSource.statusCode, JSON.stringify(acknowledgeSource.json())).toBe(200)
+    const acknowledgeItemId = (await db.query<{ id: string }>(
+      'SELECT id FROM inbox_items WHERE source_id=$1 AND recipient_session_id=$2',
+      [acknowledgeSource.json<{ id: string }>().id, targetSession.id],
+    )).rows[0]!.id
+    const acknowledgeKey = randomUUID()
+    const acknowledged = await agentCall(
+      targetToken,
+      'POST',
+      `/api/v1/inbox/${acknowledgeItemId}/acknowledge`,
+      {},
+      { 'idempotency-key': acknowledgeKey },
+    )
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
+
+    const replySource = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id,
+      intent: 'ask',
+      body: 'Reply replay authority must remain live.',
+      recipientSessionId: targetSession.id,
+      requiresResponse: true,
+    })
+    expect(replySource.statusCode, JSON.stringify(replySource.json())).toBe(200)
+    const replyItem = (await db.query<{ id: string; revision: number }>(
+      `SELECT id,revision FROM inbox_items
+        WHERE source_id=$1 AND recipient_session_id=$2`,
+      [replySource.json<{ id: string }>().id, targetSession.id],
+    )).rows[0]!
+    const replyKey = randomUUID()
+    const replyBody = {
+      body: 'This cached reply must not bypass revoked authority.',
+      payload: { replay: true },
+    }
+    const replyHeaders = {
+      'idempotency-key': replyKey,
+      'if-match': `"revision-${replyItem.revision}"`,
+    }
+    const replied = await agentCall(
+      targetToken,
+      'POST',
+      `/api/v1/inbox/${replyItem.id}/reply`,
+      replyBody,
+      replyHeaders,
+    )
+    expect(replied.statusCode, JSON.stringify(replied.json())).toBe(200)
+
+    const replayProjection = async () => (await db.query<{
+      session_revision: number
+      session_sequence: number
+      inbox_count: number
+      inbox_revision_sum: number
+      receipt_count: number
+      message_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM inbox_items) AS inbox_count,
+          (SELECT coalesce(sum(revision),0)::int FROM inbox_items) AS inbox_revision_sum,
+          (SELECT count(*)::int FROM inbox_item_receipts) AS receipt_count,
+          (SELECT count(*)::int FROM room_messages) AS message_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [targetSession.id],
+    )).rows[0]!
+    const replays = [
+      () => agentCall(
+        targetToken,
+        'POST',
+        `/api/v1/inbox/${claimItemId}/claim`,
+        {},
+        { 'idempotency-key': claimKey },
+      ),
+      () => agentCall(
+        targetToken,
+        'POST',
+        `/api/v1/inbox/${acknowledgeItemId}/acknowledge`,
+        {},
+        { 'idempotency-key': acknowledgeKey },
+      ),
+      () => agentCall(
+        targetToken,
+        'POST',
+        `/api/v1/inbox/${replyItem.id}/reply`,
+        replyBody,
+        replyHeaders,
+      ),
+    ]
+    const assertReplayDenied = async (allowedCodes: string[]) => {
+      for (const replay of replays) {
+        const before = await replayProjection()
+        const response = await replay()
+        expect(response.statusCode, JSON.stringify(response.json())).not.toBe(200)
+        expect(allowedCodes).toContain(
+          response.json<{ error: { code: string } }>().error.code,
+        )
+        expect(await replayProjection()).toEqual(before)
+      }
+    }
+
+    await db.query(
+      `UPDATE delegations
+          SET capability_scope=jsonb_set(capability_scope,'{workItemIds}','[]'::jsonb)
+        WHERE id=$1`,
+      [targetDelegation.delegation_id],
+    )
+    await assertReplayDenied(['RESOURCE_SCOPE_DENIED'])
+    await db.query(
+      'UPDATE delegations SET capability_scope=$2 WHERE id=$1',
+      [targetDelegation.delegation_id, targetDelegation.capability_scope],
+    )
+
+    await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [f.workItemId])
+    await assertReplayDenied(['NOT_FOUND', 'RESOURCE_SCOPE_DENIED'])
+  })
+
   it('claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated', async () => {
     const f = await makeFixture()
     const reviewerSession = await start(f.human, f.reviewer, f.workspaceId, f.teamId, f.workItemId, {}, 'reviewer')

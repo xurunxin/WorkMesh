@@ -23,6 +23,7 @@ export type CommandContext = {
 };
 export type MutationOptions = {
   beforeReserve?: (tx: PoolClient) => Promise<void>;
+  authorizeReplay?: (tx: PoolClient) => Promise<void>;
 };
 type Team = { id: string; deleted_at: Date | null };
 const one = <T>(rows: T[]): T => {
@@ -219,6 +220,7 @@ export async function mutate<T>(
           "IDEMPOTENCY_REPLAY_UNAVAILABLE",
           "Idempotency response is unavailable",
         );
+      await options.authorizeReplay?.(tx);
       return previous.response_body;
     }
     const response = await handler(tx);

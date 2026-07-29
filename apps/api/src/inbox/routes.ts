@@ -14,7 +14,11 @@ import {
 } from "../agent/guard.js";
 import { queueWebhookDeliveries } from "../agent/commands.js";
 import type { ApiActor, RequestMeta } from "../agent/types.js";
-import { mutate, type CommandContext } from "../commands.js";
+import {
+  mutate,
+  type CommandContext,
+  type MutationOptions,
+} from "../commands.js";
 import {
   liveHumanTeamReadPredicate,
   liveSessionReadPredicate,
@@ -69,9 +73,9 @@ const command = <T>(
   db: Pool,
   meta: RequestMeta,
   fn: (tx: PoolClient) => Promise<T>,
-  beforeReserve?: (tx: PoolClient) => Promise<void>,
+  options: MutationOptions = {},
 ): Promise<T> =>
-  mutate(db, meta as unknown as CommandContext, fn, { beforeReserve });
+  mutate(db, meta as unknown as CommandContext, fn, options);
 
 const activeScopeSql = `
   i.team_id=current_scope.team_id
@@ -196,6 +200,62 @@ async function loadAgentItemForUpdate(
   ).rows[0];
   if (!row) throw new DomainError("NOT_FOUND", "Inbox item not found");
   return row;
+}
+
+async function assertReviewReplyAuthority(
+  tx: PoolClient,
+  request: FastifyRequest,
+  item: InboxItem,
+): Promise<void> {
+  if (item.kind !== "review_request") return;
+  const actor = currentActor(request);
+  await authorizeCommandInTx(tx, {
+    actor,
+    sessionId: actor.agentSessionId!,
+    capability: "artifact:write",
+    operation: "inbox_reply",
+    idempotencyKey: request.idempotencyKey!,
+  });
+  const reviewer = (
+    await tx.query<{ role: string }>(
+      `SELECT d.role
+         FROM agent_sessions s
+         JOIN delegations d ON d.id=s.delegation_id
+        WHERE s.id=$1 AND s.workspace_id=$2
+        FOR UPDATE OF d`,
+      [actor.agentSessionId, actor.workspaceId],
+    )
+  ).rows[0];
+  if (reviewer?.role !== "reviewer")
+    throw new DomainError(
+      "CAPABILITY_DENIED",
+      "Review replies require a reviewer delegation with artifact:write",
+    );
+}
+
+async function authorizeInboxReplay(
+  tx: PoolClient,
+  request: FastifyRequest,
+  capability: "work:read" | "work:write",
+  operation: "inbox_claim" | "inbox_ack" | "inbox_reply",
+): Promise<void> {
+  const item = await loadAgentItemForUpdate(
+    tx,
+    request,
+    capability,
+    operation,
+  );
+  if (operation === "inbox_claim") {
+    const actor = currentActor(request);
+    if (
+      item.recipient_actor_id !== actor.id
+      || item.recipient_session_id !== null
+      || item.claimed_by_session_id !== actor.agentSessionId
+    )
+      throw new DomainError("NOT_FOUND", "Inbox item not found");
+  }
+  if (operation === "inbox_reply")
+    await assertReviewReplyAuthority(tx, request, item);
 }
 
 async function lockReplyParticipantsBeforeReservation(
@@ -733,6 +793,14 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
         await appendInboxEvent(tx, meta, result, "inbox.item.claimed", {});
         return detailWithReceipts(tx, result);
       },
+      {
+        authorizeReplay: (tx) => authorizeInboxReplay(
+          tx,
+          request,
+          "work:read",
+          "inbox_claim",
+        ),
+      },
     );
   });
 
@@ -753,6 +821,14 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
         if (inserted)
           await appendInboxEvent(tx, meta, item, "inbox.item.acknowledged", {});
         return detailWithReceipts(tx, item);
+      },
+      {
+        authorizeReplay: (tx) => authorizeInboxReplay(
+          tx,
+          request,
+          "work:read",
+          "inbox_ack",
+        ),
       },
     );
   });
@@ -780,33 +856,7 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
             "INBOX_REPLY_CONFLICT",
             "Inbox item cannot be replied to",
           );
-        if (item.kind === "review_request") {
-          await authorizeCommandInTx(tx, {
-            actor: currentActor(request),
-            sessionId: currentActor(request).agentSessionId!,
-            capability: "artifact:write",
-            operation: "inbox_reply",
-            idempotencyKey: request.idempotencyKey!,
-          });
-          const reviewer = (
-            await tx.query<{ role: string }>(
-              `SELECT d.role
-             FROM agent_sessions s
-             JOIN delegations d ON d.id=s.delegation_id
-            WHERE s.id=$1 AND s.workspace_id=$2
-            FOR UPDATE OF d`,
-              [
-                currentActor(request).agentSessionId,
-                currentActor(request).workspaceId,
-              ],
-            )
-          ).rows[0];
-          if (reviewer?.role !== "reviewer")
-            throw new DomainError(
-              "CAPABILITY_DENIED",
-              "Review replies require a reviewer delegation with artifact:write",
-            );
-        }
+        await assertReviewReplyAuthority(tx, request, item);
         const reply = (
           await tx.query<{ id: string }>(
             `INSERT INTO room_messages(
@@ -987,7 +1037,15 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
           replyMessageId: reply.id,
         };
       },
-      (tx) => lockReplyParticipantsBeforeReservation(tx, request),
+      {
+        beforeReserve: (tx) => lockReplyParticipantsBeforeReservation(tx, request),
+        authorizeReplay: (tx) => authorizeInboxReplay(
+          tx,
+          request,
+          "work:write",
+          "inbox_reply",
+        ),
+      },
     );
   });
 }
