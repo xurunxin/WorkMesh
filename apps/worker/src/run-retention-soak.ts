@@ -35,7 +35,7 @@ await mkdir(reportDirectory, { recursive: true });
 
 if (options.dryRun) {
   const plan = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     status: "dry_run",
     formalDurationHours: 24,
     sampleIntervalSeconds: options.sampleIntervalMs / 1_000,
@@ -45,6 +45,10 @@ if (options.dryRun) {
     pruneEnabled: false,
     isolatedDatabase: true,
     containerStatsTargets: options.containers.length,
+    thresholds: {
+      ...options.thresholds,
+      redisLengthLimit: options.redisLimit,
+    },
     artifacts: ["samples.jsonl", "report.json"],
   };
   await writeFile(reportPath, `${JSON.stringify(plan, null, 2)}\n`, {
@@ -129,15 +133,19 @@ const db = createDb(options.databaseUrl);
 const redis = createClient({ url: options.redisUrl });
 const startedAt = new Date();
 const samples: RetentionSoakSample[] = [];
+let baseline: RetentionSoakSample | undefined;
 let heartbeatCount = 0;
 let activityCount = 0;
+const generatedEventCursors: string[] = [];
 
-const backdateNewActivityEvent = async (cursorBefore: string): Promise<void> => {
+const backdateNewActivityEvent = async (
+  cursorBefore: string,
+): Promise<string> => {
   const deadline = Date.now() + 30_000;
   while (Date.now() < deadline) {
     const event = (
-      await db.query<{ id: string }>(
-        `SELECT event.id
+      await db.query<{ id: string; cursor: string }>(
+        `SELECT event.id,event.cursor::text AS cursor
            FROM domain_events event
            JOIN outbox_events outbox ON outbox.domain_event_id=event.id
           WHERE event.session_id=$1 AND event.cursor>$2::bigint
@@ -151,7 +159,7 @@ const backdateNewActivityEvent = async (cursorBefore: string): Promise<void> => 
         "UPDATE domain_events SET occurred_at=now()-interval '91 days' WHERE id=$1",
         [event.id],
       );
-      return;
+      return event.cursor;
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
@@ -185,36 +193,10 @@ try {
   )
     throw new Error("RETENTION_SOAK_REQUIRES_FRESH_ARCHIVE_ONLY_WORKER");
 
-  const deadline = startedAt.getTime() + options.durationMs;
-  for (let index = 0; Date.now() < deadline; index += 1) {
-    const heartbeatLatencyMs = await callAgent(
-      `/api/v1/agent-sessions/${options.sessionId}/heartbeat`,
-      { usage: { runtimeSeconds: Math.floor((Date.now() - startedAt.getTime()) / 1_000) } },
-    );
-    heartbeatCount += 1;
-    let activityLatencyMs: number | null = null;
-    if (index % options.activityEverySamples === 0) {
-      const cursorBefore = (
-        await db.query<{ cursor: string }>(
-          "SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events WHERE session_id=$1",
-          [options.sessionId],
-        )
-      ).rows[0]!.cursor;
-      activityLatencyMs = await callAgent(
-        `/api/v1/agent-sessions/${options.sessionId}/activities`,
-        {
-          kind: "progress",
-          summary: "Retention soak workload pulse",
-          artifactIds: [],
-          references: [],
-          visibility: "team",
-          ephemeral: false,
-        },
-      );
-      activityCount += 1;
-      await backdateNewActivityEvent(cursorBefore);
-    }
-
+  const collectSample = async (
+    heartbeatLatencyMs: number,
+    activityLatencyMs: number | null,
+  ): Promise<RetentionSoakSample> => {
     const state = (
       await db.query<{
         floor: string;
@@ -223,12 +205,18 @@ try {
         planned: string;
         uploaded: string;
         verified: string;
+        verifiedRows: string;
         failed: string;
         pruned: string;
         backlog: string;
         maximumLatencyMs: string;
+        currentRunArchived: string;
+        outboxPending: string;
+        outboxLagMs: string;
         rows: string;
         sizeBytes: string;
+        tableSizeBytes: string;
+        deadTuples: string;
         connections: string;
       }>(
         `SELECT floor.pruned_through_cursor::text AS floor,
@@ -237,17 +225,45 @@ try {
                 count(segment.id) FILTER (WHERE segment.state='planned')::text AS planned,
                 count(segment.id) FILTER (WHERE segment.state='uploaded')::text AS uploaded,
                 count(segment.id) FILTER (WHERE segment.state='verified')::text AS verified,
+                COALESCE(sum(segment.row_count)
+                  FILTER (WHERE segment.state='verified'),0)::text AS "verifiedRows",
                 count(segment.id) FILTER (WHERE segment.state='failed')::text AS failed,
                 count(segment.id) FILTER (WHERE segment.state='pruned')::text AS pruned,
                 (SELECT count(*) FROM domain_events event
                   WHERE event.workspace_id=$1
                     AND event.occurred_at<=now()-interval '90 days')::text AS backlog,
                 COALESCE(max(EXTRACT(EPOCH FROM
-                  (segment.verified_at-segment.created_at))*1000),0)::text
+                  (segment.verified_at-segment.created_at))*1000)
+                  FILTER (WHERE segment.created_at >= $3),0)::text
                   AS "maximumLatencyMs",
+                (SELECT count(*)
+                   FROM unnest($2::bigint[]) AS generated(cursor)
+                  WHERE EXISTS (
+                    SELECT 1
+                      FROM event_archive_segments current_segment
+                     WHERE current_segment.workspace_id=$1
+                       AND current_segment.state='verified'
+                       AND generated.cursor BETWEEN
+                         current_segment.start_cursor AND current_segment.end_cursor
+                  ))::text AS "currentRunArchived",
+                (SELECT count(*) FROM outbox_events
+                  WHERE workspace_id=$1 AND status<>'delivered')::text
+                  AS "outboxPending",
+                COALESCE((SELECT EXTRACT(EPOCH FROM
+                    (now()-min(created_at)))*1000
+                  FROM outbox_events
+                  WHERE workspace_id=$1 AND status<>'delivered'),0)::text
+                  AS "outboxLagMs",
                 (SELECT count(*) FROM domain_events
                   WHERE workspace_id=$1)::text AS rows,
                 pg_database_size(current_database())::text AS "sizeBytes",
+                pg_total_relation_size('domain_events'::regclass)::text
+                  AS "tableSizeBytes",
+                COALESCE((SELECT sum(n_dead_tup) FROM pg_stat_user_tables
+                  WHERE relname IN(
+                    'domain_events','outbox_events','event_archive_segments',
+                    'heartbeat_idempotency_keys','api_idempotency_keys'
+                  )),0)::text AS "deadTuples",
                 (SELECT count(*) FROM pg_stat_activity
                   WHERE datname=current_database())::text AS connections
            FROM event_retention_state floor
@@ -257,9 +273,9 @@ try {
            LEFT JOIN event_archive_segments segment
              ON segment.workspace_id=floor.workspace_id
           WHERE floor.workspace_id=$1
-          GROUP BY floor.pruned_through_cursor,runtime.worker_mode,
+           GROUP BY floor.pruned_through_cursor,runtime.worker_mode,
                    runtime.worker_seen_at`,
-        [identity.workspaceId],
+        [identity.workspaceId, generatedEventCursors, startedAt],
       )
     ).rows[0]!;
     const redisInfo = await redis.info("clients");
@@ -277,10 +293,17 @@ try {
         planned: Number(state.planned),
         uploaded: Number(state.uploaded),
         verified: Number(state.verified),
+        verifiedRows: Number(state.verifiedRows),
         failed: Number(state.failed),
         pruned: Number(state.pruned),
         backlog: Number(state.backlog),
         maximumLatencyMs: Number(state.maximumLatencyMs),
+        currentRunGenerated: generatedEventCursors.length,
+        currentRunArchived: Number(state.currentRunArchived),
+      },
+      outbox: {
+        pending: Number(state.outboxPending),
+        maximumLagMs: Number(state.outboxLagMs),
       },
       redis: {
         length: await redis.xLen("workmesh:domain-events"),
@@ -289,6 +312,8 @@ try {
       database: {
         rows: Number(state.rows),
         sizeBytes: Number(state.sizeBytes),
+        tableSizeBytes: Number(state.tableSizeBytes),
+        deadTuples: Number(state.deadTuples),
         connections: Number(state.connections),
       },
       workload: {
@@ -299,8 +324,52 @@ try {
       },
       containers: containerStats(),
     };
+    return sample;
+  };
+
+  baseline = await collectSample(0, null);
+  await appendFile(
+    samplePath,
+    `${JSON.stringify({ kind: "baseline", ...baseline })}\n`,
+    { encoding: "utf8", flag: "a" },
+  );
+  const deadline = startedAt.getTime() + options.durationMs;
+  for (let index = 0; Date.now() < deadline; index += 1) {
+    const heartbeatLatencyMs = await callAgent(
+      `/api/v1/agent-sessions/${options.sessionId}/heartbeat`,
+      { usage: { runtimeSeconds: Math.floor((Date.now() - startedAt.getTime()) / 1_000) } },
+    );
+    heartbeatCount += 1;
+    let activityLatencyMs: number | null = null;
+    if ((index + 1) % options.activityEverySamples === 0) {
+      const cursorBefore = (
+        await db.query<{ cursor: string }>(
+          "SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events WHERE session_id=$1",
+          [options.sessionId],
+        )
+      ).rows[0]!.cursor;
+      activityLatencyMs = await callAgent(
+        `/api/v1/agent-sessions/${options.sessionId}/activities`,
+        {
+          kind: "progress",
+          summary: "Retention soak workload pulse",
+          artifactIds: [],
+          references: [],
+          visibility: "team",
+          ephemeral: false,
+        },
+      );
+      const generatedCursor = await backdateNewActivityEvent(cursorBefore);
+      generatedEventCursors.push(generatedCursor);
+      activityCount += 1;
+    }
+
+    const sample = await collectSample(
+      heartbeatLatencyMs,
+      activityLatencyMs,
+    );
     samples.push(sample);
-    await appendFile(samplePath, `${JSON.stringify(sample)}\n`, {
+    await appendFile(samplePath, `${JSON.stringify({ kind: "sample", ...sample })}\n`, {
       encoding: "utf8",
       flag: "a",
     });
@@ -317,13 +386,17 @@ try {
   await db.end();
 }
 
+if (!baseline) throw new Error("RETENTION_SOAK_BASELINE_NOT_CAPTURED");
 const expectedSamples = Math.floor(options.durationMs / options.sampleIntervalMs);
 const report = retentionSoakReport(
   startedAt,
   new Date(),
+  baseline,
   samples,
   options.redisLimit,
+  options.thresholds,
   expectedSamples,
+  generatedEventCursors,
 );
 await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, {
   encoding: "utf8",
