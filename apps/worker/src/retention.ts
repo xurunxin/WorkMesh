@@ -12,6 +12,7 @@ import {
   type S3ArtifactStorage,
 } from "@workmesh/artifact-storage";
 import { withTx, type Db } from "@workmesh/db";
+import { safeRetentionErrorCode } from "./retention-error.js";
 
 const STREAM_KEY = "workmesh:domain-events";
 const sha256 = (value: Uint8Array | string): string =>
@@ -30,33 +31,6 @@ const canonical = (value: unknown): unknown => {
 };
 const canonicalLine = (value: unknown): string =>
   `${JSON.stringify(canonical(value))}\n`;
-const retentionFailureCodes = new Set([
-  "ARCHIVE_CUTOFF_RECHECK_FAILED",
-  "ARCHIVE_OUTBOX_PROOF_MISSING",
-  "ARCHIVE_SEGMENT_FENCE_LOST",
-  "ARCHIVE_SNAPSHOT_RECHECK_FAILED",
-  "ARTIFACT_CHECKSUM_MISMATCH",
-  "ARTIFACT_METADATA_CHECKSUM_MISMATCH",
-  "ARTIFACT_MIME_MISMATCH",
-  "ARTIFACT_OBJECT_BODY_MISSING",
-  "ARTIFACT_SIZE_MISMATCH",
-  "EVENT_PRUNE_COUNT_MISMATCH",
-  "EVENT_RETENTION_GAP",
-  "REDIS_STREAM_EXACT_TRIM_FAILED",
-  "RETENTION_OBJECT_LOCK_MODE_MISMATCH",
-  "RETENTION_OBJECT_LOCK_REQUIRED",
-  "RETENTION_OBJECT_LOCK_TOO_SHORT",
-  "RETENTION_OBJECT_VERSION_MISMATCH",
-  "RETENTION_OBJECT_VERSION_REQUIRED",
-  "RETENTION_CLAIM_LOST",
-  "RETENTION_FLOOR_FENCE_LOST",
-  "RETENTION_FLOOR_MISSING",
-]);
-const safeErrorCode = (error: unknown): string => {
-  const code = error instanceof Error ? error.message : "";
-  return retentionFailureCodes.has(code) ? code : "RETENTION_JOB_FAILED";
-};
-
 export type RetentionClaim = Readonly<{
   jobName: string;
   workspaceId: string;
@@ -466,7 +440,7 @@ export function createRetentionWorker({
         claimValue.jobName,
         claimValue.workspaceId,
         claimValue.owner,
-        safeErrorCode(error),
+        safeRetentionErrorCode(error),
         claimValue.fence,
       ],
     );
@@ -921,7 +895,7 @@ export function createRetentionWorker({
                    last_error_code=$2,updated_at=now()
              WHERE id=$1 AND state IN ('planned','failed','uploaded')
           `,
-            [segmentId, safeErrorCode(error)],
+            [segmentId, safeRetentionErrorCode(error)],
           );
         });
       }

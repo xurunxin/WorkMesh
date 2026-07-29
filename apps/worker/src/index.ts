@@ -435,7 +435,10 @@ const startWorkerProcess = (): void => {
     intervalMs: retentionConfig.intervalSeconds * 1_000,
     ioTimeoutMs: retentionConfig.ioTimeoutSeconds * 1_000,
     progressStaleMs: retentionConfig.progressStaleSeconds * 1_000,
-    onError: error => console.error('retention worker tick failed', error),
+    onError: entry => console.error('retention worker tick failed', {
+      component: 'retention_scheduler',
+      safeErrorCode: entry.safeErrorCode,
+    }),
   })
   let admissionOpen = true
   const tick = async (): Promise<void> => {
@@ -480,15 +483,21 @@ const startWorkerProcess = (): void => {
       retentionScheduler.stopAdmission()
     },
     close: closeWorkerDependencies,
-    onError: error => console.error('worker tick failed', error),
+    onError: () => console.error('worker tick failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_JOB_FAILED',
+    }),
   })
   const healthServer = createWorkerHealthServer(runtime)
   const healthHost = process.env.WORKER_HEALTH_HOST ?? '0.0.0.0'
   const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3003)
   healthServer.listen(healthPort, healthHost, () => {
     retentionScheduler.start()
-    void runtime.start().catch(error => {
-      console.error('worker readiness failed at startup', error)
+    void runtime.start().catch(() => {
+      console.error('worker readiness failed at startup', {
+        component: 'worker_runtime',
+        safeErrorCode: 'WORKER_STARTUP_FAILED',
+      })
       process.exit(1)
     })
   })
@@ -505,8 +514,11 @@ const startWorkerProcess = (): void => {
         healthServer.close(error => error ? reject(error) : resolve())
       }))
       .then(() => process.exit(0))
-      .catch(error => {
-        console.error('worker shutdown failed', error)
+      .catch(() => {
+        console.error('worker shutdown failed', {
+          component: 'worker_runtime',
+          safeErrorCode: 'WORKER_SHUTDOWN_FAILED',
+        })
         healthServer.closeAllConnections()
         process.exit(1)
       })

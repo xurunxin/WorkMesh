@@ -1,3 +1,8 @@
+import {
+  safeRetentionErrorCode,
+  type SafeRetentionErrorLog,
+} from "./retention-error.js";
+
 export type RetentionSchedulerDependencies = Readonly<{
   tick: () => Promise<void>
   close: () => Promise<void>
@@ -5,7 +10,7 @@ export type RetentionSchedulerDependencies = Readonly<{
   ioTimeoutMs: number
   progressStaleMs: number
   now?: () => number
-  onError?: (error: unknown) => void
+  onError?: (entry: SafeRetentionErrorLog) => void
 }>
 
 export class RetentionScheduler {
@@ -92,7 +97,9 @@ export class RetentionScheduler {
     this.#timeout = setTimeout(() => {
       timedOut = true
       this.#lastError = new Error('RETENTION_IO_TIMEOUT')
-      this.#dependencies.onError?.(this.#lastError)
+      this.#dependencies.onError?.({
+        safeErrorCode: safeRetentionErrorCode(this.#lastError),
+      })
     }, this.#dependencies.ioTimeoutMs)
     this.#inFlight = this.#dependencies.tick()
       .then(() => {
@@ -102,7 +109,9 @@ export class RetentionScheduler {
       })
       .catch(error => {
         this.#lastError = error
-        this.#dependencies.onError?.(error)
+        this.#dependencies.onError?.({
+          safeErrorCode: safeRetentionErrorCode(error),
+        })
       })
       .finally(() => {
         if (this.#timeout) clearTimeout(this.#timeout)

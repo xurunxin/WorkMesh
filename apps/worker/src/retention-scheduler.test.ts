@@ -91,4 +91,29 @@ describe('RetentionScheduler', () => {
     })
     vi.useRealTimers()
   })
+
+  it('reports only an allow-listed code when an error contains credentials', async () => {
+    vi.useFakeTimers()
+    const onError = vi.fn()
+    const scheduler = new RetentionScheduler({
+      tick: async () => {
+        throw new Error('credential=top-secret stack=/sensitive/path')
+      },
+      close: async () => {},
+      intervalMs: 1_000,
+      ioTimeoutMs: 100,
+      progressStaleMs: 1_000,
+      onError,
+    })
+    scheduler.start()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(onError).toHaveBeenCalledWith({
+      safeErrorCode: 'RETENTION_JOB_FAILED',
+    })
+    const serialized = JSON.stringify(onError.mock.calls)
+    expect(serialized).not.toContain('top-secret')
+    expect(serialized).not.toContain('/sensitive/path')
+    await scheduler.stop()
+    vi.useRealTimers()
+  })
 })
