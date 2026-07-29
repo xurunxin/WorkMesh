@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   runProductionRetentionUpgrade,
+  type RetentionUpgradeComposeSnapshotStore,
   type RetentionUpgradeCommandRunner,
 } from "../../../scripts/retention-production-upgrade.mjs";
 
@@ -10,8 +11,14 @@ const mcpSessionToken = `session-${"c".repeat(40)}`;
 const mcpAccessToken = `access-${"d".repeat(40)}`;
 const sessionSecret = `api-session-${"e".repeat(40)}`;
 const objectStoreSecret = `object-store-${"f".repeat(40)}`;
-const image = (role: string) =>
-  `ghcr.io/workmesh/workmesh-${role}@sha256:${digest}`;
+const postgresPassword = `postgres-${"g".repeat(40)}`;
+const bootstrapToken = Buffer.from(Array.from({ length: 32 }, (_, index) => index + 1)).toString(
+  "base64url",
+);
+const paginationKey = Buffer.from(Array.from({ length: 32 }, (_, index) => 255 - index)).toString(
+  "base64url",
+);
+const image = (role: string) => `ghcr.io/workmesh/workmesh-${role}@sha256:${digest}`;
 const environment = {
   WORKMESH_BUILD_SHA: buildSha,
   WORKMESH_API_IMAGE: image("api"),
@@ -22,6 +29,7 @@ const environment = {
   WORKMESH_MCP_ACCESS_TOKEN: mcpAccessToken,
   SESSION_SECRET: sessionSecret,
   S3_SECRET_ACCESS_KEY: objectStoreSecret,
+  POSTGRES_PASSWORD: postgresPassword,
   POSTGRES_USER: "workmesh",
   POSTGRES_DB: "workmesh",
 };
@@ -31,18 +39,32 @@ type Command = Readonly<{ command: string; arguments_: readonly string[] }>;
 const renderedCompose = ({
   includeMcp,
   mcpEnvironmentOverride = {},
+  apiEnvironmentOverride = {},
+  postgresEnvironmentOverride = {},
 }: {
   includeMcp: boolean;
   mcpEnvironmentOverride?: Record<string, string>;
+  apiEnvironmentOverride?: Record<string, string>;
+  postgresEnvironmentOverride?: Record<string, string>;
 }) => ({
+  name: "workmesh-production",
   services: {
+    postgres: {
+      image: "postgres:17.5-alpine3.22",
+      environment: {
+        POSTGRES_USER: "workmesh",
+        POSTGRES_PASSWORD: postgresPassword,
+        POSTGRES_DB: "workmesh",
+        ...postgresEnvironmentOverride,
+      },
+    },
     migrate: {
       image: image("api"),
       environment: {
         NODE_ENV: "production",
         WORKMESH_SERVICE: "migrate",
         WORKMESH_BUILD_SHA: buildSha,
-        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+        DATABASE_URL: `postgres://workmesh:${postgresPassword}@postgres:5432/workmesh`,
       },
     },
     api: {
@@ -51,18 +73,19 @@ const renderedCompose = ({
         NODE_ENV: "production",
         WORKMESH_SERVICE: "api",
         WORKMESH_BUILD_SHA: buildSha,
-        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+        DATABASE_URL: `postgres://workmesh:${postgresPassword}@postgres:5432/workmesh`,
         REDIS_URL: "redis://redis:6379",
         SESSION_SECRET: sessionSecret,
         WORKMESH_MASTER_KEY: "1".repeat(64),
-        WORKMESH_BOOTSTRAP_TOKEN: `bootstrap-${"2".repeat(40)}`,
-        PAGINATION_CURSOR_KEYS: `cursor:${"3".repeat(43)}`,
+        WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
+        PAGINATION_CURSOR_KEYS: `cursor:${paginationKey}`,
         PAGINATION_CURSOR_ACTIVE_KID: "cursor",
         AUTH_RATE_LIMIT_HMAC_KEY: `rate-${"4".repeat(40)}`,
         S3_BUCKET: "workmesh-artifacts",
         S3_ACCESS_KEY_ID: "workmesh",
         S3_SECRET_ACCESS_KEY: objectStoreSecret,
         WEB_ORIGIN: "https://workmesh.test",
+        ...apiEnvironmentOverride,
       },
     },
     worker: {
@@ -71,7 +94,7 @@ const renderedCompose = ({
         NODE_ENV: "production",
         WORKMESH_SERVICE: "worker",
         WORKMESH_BUILD_SHA: buildSha,
-        DATABASE_URL: "postgres://workmesh:password@postgres:5432/workmesh",
+        DATABASE_URL: `postgres://workmesh:${postgresPassword}@postgres:5432/workmesh`,
         REDIS_URL: "redis://redis:6379",
         SESSION_SECRET: sessionSecret,
         WORKMESH_MASTER_KEY: "1".repeat(64),
@@ -117,7 +140,10 @@ const successfulRunner = ({
   ambiguousMcpTopology = false,
   inconsistentMcpTopology = false,
   mcpEnvironmentOverride,
+  apiEnvironmentOverride,
+  postgresEnvironmentOverride,
   failRuntimePreflightService,
+  failSnapshotConfig = false,
 }: {
   stoppedExitCode?: number;
   failStop?: boolean;
@@ -126,7 +152,10 @@ const successfulRunner = ({
   ambiguousMcpTopology?: boolean;
   inconsistentMcpTopology?: boolean;
   mcpEnvironmentOverride?: Record<string, string>;
+  apiEnvironmentOverride?: Record<string, string>;
+  postgresEnvironmentOverride?: Record<string, string>;
   failRuntimePreflightService?: string;
+  failSnapshotConfig?: boolean;
 } = {}): {
   runner: RetentionUpgradeCommandRunner;
   commands: Command[];
@@ -150,9 +179,17 @@ const successfulRunner = ({
           renderedCompose({
             includeMcp: joined.includes("--profile agent"),
             mcpEnvironmentOverride,
+            apiEnvironmentOverride,
+            postgresEnvironmentOverride,
           }),
         ),
       );
+    if (
+      failSnapshotConfig &&
+      joined.includes("compose.snapshot.json") &&
+      joined.includes("config --quiet")
+    )
+      return result("", 1);
     if (joined.includes("/app/runtime-guard.mjs")) {
       const service = arguments_[arguments_.length - 2];
       return result("", service === failRuntimePreflightService ? 1 : 0);
@@ -254,22 +291,15 @@ const successfulRunner = ({
       joined.includes("com.docker.compose.service=mcp")
     )
       return result(
-        ambiguousMcpTopology
-          ? "666666666666\n777777777777"
-          : mcpEnabled
-            ? "666666666666"
-            : "",
+        ambiguousMcpTopology ? "666666666666\n777777777777" : mcpEnabled ? "666666666666" : "",
       );
     if (joined.includes("compose") && joined.includes("ps -q worker")) {
       workerLookups += 1;
       return result(workerLookups === 1 ? "111111111111" : "222222222222");
     }
-    if (joined.includes("compose") && joined.includes("ps -q api"))
-      return result("333333333333");
-    if (joined.includes("compose") && joined.includes("ps -q mcp"))
-      return result("444444444444");
-    if (joined.includes("compose") && joined.includes("ps -q web"))
-      return result("555555555555");
+    if (joined.includes("compose") && joined.includes("ps -q api")) return result("333333333333");
+    if (joined.includes("compose") && joined.includes("ps -q mcp")) return result("444444444444");
+    if (joined.includes("compose") && joined.includes("ps -q web")) return result("555555555555");
     if (joined.includes("stop -t 35 worker") && failStop) return result("", 1);
     if (joined.includes("dist/run-retention-upgrade-barrier.js") && failBarrier)
       return result("", 1);
@@ -284,21 +314,26 @@ const run = (
   runner: RetentionUpgradeCommandRunner,
   execute: boolean,
   environmentOverride: NodeJS.ProcessEnv = environment,
+  snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+    create: async () => ({
+      path: "G:\\secure\\compose.snapshot.json",
+      cleanup: async () => {},
+    }),
+  },
 ) =>
   runProductionRetentionUpgrade({
     execute,
     environment: environmentOverride,
     root: "G:\\repo",
     envFile: "G:\\repo\\.env.production",
+    snapshotStore,
     runner,
     now: () => new Date("2026-07-30T00:00:00.000Z"),
     delay: async () => {},
   });
 
 const commandText = (commands: readonly Command[]): string[] =>
-  commands.map(
-    ({ command, arguments_ }) => `${command} ${arguments_.join(" ")}`,
-  );
+  commands.map(({ command, arguments_ }) => `${command} ${arguments_.join(" ")}`);
 
 describe("production retention upgrade executor", () => {
   it("is dry-run by default and performs no mutating command", async () => {
@@ -314,7 +349,7 @@ describe("production retention upgrade executor", () => {
       },
     });
     const text = commandText(commands);
-    expect(text).toHaveLength(10);
+    expect(text).toHaveLength(11);
     expect(text.some((command) => command.includes(" update "))).toBe(false);
     expect(text.some((command) => command.includes(" stop "))).toBe(false);
     expect(text.some((command) => command.includes(" run "))).toBe(false);
@@ -336,20 +371,12 @@ describe("production retention upgrade executor", () => {
     const text = commandText(commands);
     const topologyFrozen = text.findIndex(
       (command) =>
-        command.includes("docker ps -a -q") &&
-        command.includes("com.docker.compose.service=mcp"),
+        command.includes("docker ps -a -q") && command.includes("com.docker.compose.service=mcp"),
     );
-    const includedConfigValidated = text.findIndex(
-      (command) =>
-        command.includes("--profile agent config --format json"),
+    const includedConfigValidated = text.findIndex((command) =>
+      command.includes("--profile agent config --format json"),
     );
-    const runtimePreflightIndexes = [
-      "migrate",
-      "api",
-      "worker",
-      "web",
-      "mcp",
-    ].map((service) =>
+    const runtimePreflightIndexes = ["migrate", "api", "worker", "web", "mcp"].map((service) =>
       text.findIndex((command) =>
         command.includes(
           `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
@@ -359,22 +386,16 @@ describe("production retention upgrade executor", () => {
     const restartOff = text.findIndex((command) =>
       command.includes("update --restart=no 111111111111"),
     );
-    const stop = text.findIndex((command) =>
-      command.includes("stop -t 35 worker"),
-    );
+    const stop = text.findIndex((command) => command.includes("stop -t 35 worker"));
     const barrier = text.findIndex((command) =>
       command.includes("dist/run-retention-upgrade-barrier.js"),
     );
-    const migrate = text.findIndex((command) =>
-      command.includes("run --rm --no-deps migrate"),
-    );
+    const migrate = text.findIndex((command) => command.includes("run --rm --no-deps migrate"));
     const worker = text.findIndex((command) =>
       command.includes("--force-recreate --wait --wait-timeout 120 worker"),
     );
     const remaining = text.findIndex((command) =>
-      command.includes(
-        "--force-recreate --wait --wait-timeout 240 api mcp web",
-      ),
+      command.includes("--force-recreate --wait --wait-timeout 240 api mcp web"),
     );
     expect(topologyFrozen).toBeGreaterThan(-1);
     expect(includedConfigValidated).toBeGreaterThan(topologyFrozen);
@@ -382,9 +403,7 @@ describe("production retention upgrade executor", () => {
     expect(runtimePreflightIndexes).toEqual(
       [...runtimePreflightIndexes].sort((left, right) => left - right),
     );
-    expect(
-      runtimePreflightIndexes.every((index) => index < restartOff),
-    ).toBe(true);
+    expect(runtimePreflightIndexes.every((index) => index < restartOff)).toBe(true);
     expect(restartOff).toBeGreaterThan(includedConfigValidated);
     expect(restartOff).toBeGreaterThan(-1);
     expect(stop).toBeGreaterThan(restartOff);
@@ -415,38 +434,26 @@ describe("production retention upgrade executor", () => {
     const text = commandText(commands);
     const topologyFrozen = text.findIndex(
       (command) =>
-        command.includes("docker ps -a -q") &&
-        command.includes("com.docker.compose.service=mcp"),
+        command.includes("docker ps -a -q") && command.includes("com.docker.compose.service=mcp"),
     );
-    const migrate = text.findIndex((command) =>
-      command.includes("run --rm --no-deps migrate"),
-    );
+    const migrate = text.findIndex((command) => command.includes("run --rm --no-deps migrate"));
     const remaining = text.findIndex((command) =>
-      command.includes(
-        "--force-recreate --wait --wait-timeout 240 api web",
+      command.includes("--force-recreate --wait --wait-timeout 240 api web"),
+    );
+    const runtimePreflightIndexes = ["migrate", "api", "worker", "web"].map((service) =>
+      text.findIndex((command) =>
+        command.includes(
+          `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
+        ),
       ),
     );
-    const runtimePreflightIndexes = ["migrate", "api", "worker", "web"].map(
-      (service) =>
-        text.findIndex((command) =>
-          command.includes(
-            `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
-          ),
-        ),
-    );
-    const restartOff = text.findIndex((command) =>
-      command.includes("update --restart=no"),
-    );
+    const restartOff = text.findIndex((command) => command.includes("update --restart=no"));
     expect(topologyFrozen).toBeGreaterThan(-1);
     expect(runtimePreflightIndexes.every((index) => index > -1)).toBe(true);
-    expect(
-      runtimePreflightIndexes.every((index) => index < restartOff),
-    ).toBe(true);
+    expect(runtimePreflightIndexes.every((index) => index < restartOff)).toBe(true);
     expect(migrate).toBeGreaterThan(topologyFrozen);
     expect(remaining).toBeGreaterThan(migrate);
-    expect(text.some((command) => command.includes("--profile agent"))).toBe(
-      false,
-    );
+    expect(text.some((command) => command.includes("--profile agent"))).toBe(false);
     expect(
       text.some(
         (command) =>
@@ -454,6 +461,137 @@ describe("production retention upgrade executor", () => {
           command.includes("ps -q mcp") ||
           command.includes("api mcp web") ||
           command.includes("node mcp /app/runtime-guard.mjs"),
+      ),
+    ).toBe(false);
+  });
+
+  it("binds every post-freeze Compose command to an owner-only digest snapshot", async () => {
+    const { runner, commands } = successfulRunner();
+    const mutableEnvironment: NodeJS.ProcessEnv = { ...environment };
+    let snapshotContent = "";
+    let cleanupCalls = 0;
+    const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+      create: async (content, protection) => {
+        snapshotContent = content;
+        expect(protection).toEqual({
+          directoryMode: 0o700,
+          fileMode: 0o600,
+        });
+        mutableEnvironment.WORKMESH_API_IMAGE = "ghcr.io/workmesh/workmesh-api:latest";
+        mutableEnvironment.WORKMESH_SESSION_TOKEN = "tampered-after-freeze";
+        return {
+          path: "G:\\secure\\compose.snapshot.json",
+          cleanup: async () => {
+            cleanupCalls += 1;
+          },
+        };
+      },
+    };
+    const result = await run(runner, true, mutableEnvironment, snapshotStore);
+    const frozen = JSON.parse(snapshotContent) as {
+      services: Record<string, { image?: string }>;
+    };
+    expect(frozen.services.api?.image).toBe(image("api"));
+    expect(frozen.services.worker?.image).toBe(image("worker"));
+    expect(frozen.services.web?.image).toBe(image("web"));
+    expect(frozen.services.mcp?.image).toBe(image("mcp"));
+    expect(snapshotContent).not.toContain("${");
+    const text = commandText(commands);
+    const finalRender = text.findIndex((command) =>
+      command.includes("--profile agent config --format json"),
+    );
+    expect(text[finalRender]).toContain("compose --project-name workmesh-production --env-file");
+    const postFreezeCompose = text
+      .slice(finalRender + 1)
+      .filter((command) => command.startsWith("docker compose "));
+    expect(postFreezeCompose.length).toBeGreaterThan(0);
+    expect(
+      postFreezeCompose.every(
+        (command) =>
+          command.includes("--project-name workmesh-production") &&
+          command.includes("-f G:\\secure\\compose.snapshot.json") &&
+          !command.includes("--env-file") &&
+          !command.includes("docker-compose.production.yml"),
+      ),
+    ).toBe(true);
+    expect(JSON.stringify(result)).not.toContain("compose.snapshot.json");
+    expect(JSON.stringify(result)).not.toContain(mcpSessionToken);
+    expect(cleanupCalls).toBe(1);
+  });
+
+  it("cleans the frozen snapshot when a target runtime guard fails", async () => {
+    const { runner } = successfulRunner({
+      failRuntimePreflightService: "api",
+    });
+    let cleanupCalls = 0;
+    const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+      create: async () => ({
+        path: "G:\\secure\\compose.snapshot.json",
+        cleanup: async () => {
+          cleanupCalls += 1;
+        },
+      }),
+    };
+    await expect(run(runner, true, environment, snapshotStore)).rejects.toMatchObject({
+      code: "RETENTION_UPGRADE_API_RUNTIME_PREFLIGHT_FAILED",
+    });
+    expect(cleanupCalls).toBe(1);
+  });
+
+  it("fails before mutation and cleans up when snapshot Compose validation fails", async () => {
+    const { runner, commands } = successfulRunner({
+      failSnapshotConfig: true,
+    });
+    let cleanupCalls = 0;
+    const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+      create: async () => ({
+        path: "G:\\secure\\compose.snapshot.json",
+        cleanup: async () => {
+          cleanupCalls += 1;
+        },
+      }),
+    };
+    await expect(run(runner, true, environment, snapshotStore)).rejects.toMatchObject({
+      code: "RETENTION_UPGRADE_SNAPSHOT_COMPOSE_INVALID",
+    });
+    const text = commandText(commands);
+    expect(
+      text.some(
+        (command) =>
+          command.includes("update --restart=no") ||
+          command.includes("stop -t 35 worker") ||
+          command.includes("run --rm --no-deps migrate"),
+      ),
+    ).toBe(false);
+    expect(cleanupCalls).toBe(1);
+  });
+
+  it("redacts snapshot creation failures and fails before mutation", async () => {
+    const { runner, commands } = successfulRunner();
+    const leakedPath = "G:\\secure\\compose.snapshot.json";
+    const snapshotStore: RetentionUpgradeComposeSnapshotStore = {
+      create: async () => {
+        throw new Error(`${leakedPath}:${mcpSessionToken}`);
+      },
+    };
+    let failure: unknown;
+    try {
+      await run(runner, true, environment, snapshotStore);
+    } catch (error) {
+      failure = error;
+    }
+    expect(failure).toMatchObject({
+      code: "RETENTION_UPGRADE_SNAPSHOT_CREATE_FAILED",
+    });
+    expect(String(failure)).not.toContain(leakedPath);
+    expect(String(failure)).not.toContain(mcpSessionToken);
+    const text = commandText(commands);
+    expect(
+      text.some(
+        (command) =>
+          command.includes("update --restart=no") ||
+          command.includes("stop -t 35 worker") ||
+          command.includes("run --rm --no-deps migrate"),
       ),
     ).toBe(false);
   });
@@ -473,12 +611,8 @@ describe("production retention upgrade executor", () => {
     const { runner, commands } = successfulRunner(options);
     await expect(run(runner, true)).rejects.toMatchObject({ code });
     const text = commandText(commands);
-    expect(
-      text.some((command) => command.includes("run --rm --no-deps migrate")),
-    ).toBe(false);
-    expect(
-      text.some((command) => command.includes("update --restart=no")),
-    ).toBe(false);
+    expect(text.some((command) => command.includes("run --rm --no-deps migrate"))).toBe(false);
+    expect(text.some((command) => command.includes("update --restart=no"))).toBe(false);
   });
 
   it.each([
@@ -517,12 +651,8 @@ describe("production retention upgrade executor", () => {
       code: "RETENTION_UPGRADE_MCP_RUNTIME_CONFIG_INVALID",
     });
     const text = commandText(commands);
-    expect(
-      text.some((command) => command.includes("run --rm --no-deps migrate")),
-    ).toBe(false);
-    expect(
-      text.some((command) => command.includes("update --restart=no")),
-    ).toBe(false);
+    expect(text.some((command) => command.includes("run --rm --no-deps migrate"))).toBe(false);
+    expect(text.some((command) => command.includes("update --restart=no"))).toBe(false);
   });
 
   it.each(["migrate", "api", "worker", "web", "mcp"])(
@@ -535,14 +665,11 @@ describe("production retention upgrade executor", () => {
         code: `RETENTION_UPGRADE_${service.toUpperCase()}_RUNTIME_PREFLIGHT_FAILED`,
       });
       const text = commandText(commands);
-      expect(
-        text.some((command) => command.includes("update --restart=no")),
-      ).toBe(false);
+      expect(text.some((command) => command.includes("update --restart=no"))).toBe(false);
       expect(
         text.some(
           (command) =>
-            command.includes("stop -t 35 worker") ||
-            command.includes("run --rm --no-deps migrate"),
+            command.includes("stop -t 35 worker") || command.includes("run --rm --no-deps migrate"),
         ),
       ).toBe(false);
     },
@@ -561,22 +688,92 @@ describe("production retention upgrade executor", () => {
     },
   ])("rejects $name before any Docker mutation", async ({ override, code }) => {
     const { runner, commands } = successfulRunner();
-    await expect(
-      run(runner, true, { ...environment, ...override }),
-    ).rejects.toMatchObject({ code });
+    await expect(run(runner, true, { ...environment, ...override })).rejects.toMatchObject({
+      code,
+    });
     const text = commandText(commands);
     expect(text).toHaveLength(0);
-    expect(
-      text.some((command) => command.includes("run --rm --no-deps migrate")),
-    ).toBe(false);
+    expect(text.some((command) => command.includes("run --rm --no-deps migrate"))).toBe(false);
     expect(
       text.some(
         (command) =>
-          command.includes("update --restart=no") ||
-          command.includes("stop -t 35 worker"),
+          command.includes("update --restart=no") || command.includes("stop -t 35 worker"),
       ),
     ).toBe(false);
   });
+
+  it.each([
+    {
+      name: "short PostgreSQL password",
+      apiEnvironmentOverride: {},
+      postgresEnvironmentOverride: { POSTGRES_PASSWORD: "too-short" },
+    },
+    {
+      name: "placeholder PostgreSQL password",
+      apiEnvironmentOverride: {},
+      postgresEnvironmentOverride: {
+        POSTGRES_PASSWORD: `CHANGE_ME_${"h".repeat(40)}`,
+      },
+    },
+    {
+      name: "malformed pagination key set",
+      apiEnvironmentOverride: { PAGINATION_CURSOR_KEYS: "not-an-entry" },
+      postgresEnvironmentOverride: {},
+    },
+    {
+      name: "low-diversity pagination material",
+      apiEnvironmentOverride: {
+        PAGINATION_CURSOR_KEYS: `cursor:${Buffer.alloc(32, 0x41).toString("base64url")}`,
+      },
+      postgresEnvironmentOverride: {},
+    },
+    {
+      name: "missing pagination active kid",
+      apiEnvironmentOverride: { PAGINATION_CURSOR_ACTIVE_KID: "" },
+      postgresEnvironmentOverride: {},
+    },
+    {
+      name: "duplicate pagination kid",
+      apiEnvironmentOverride: {
+        PAGINATION_CURSOR_KEYS: `cursor:${paginationKey},cursor:${bootstrapToken}`,
+      },
+      postgresEnvironmentOverride: {},
+    },
+    {
+      name: "duplicate pagination material",
+      apiEnvironmentOverride: {
+        PAGINATION_CURSOR_KEYS: `cursor:${paginationKey},next:${paginationKey}`,
+      },
+      postgresEnvironmentOverride: {},
+    },
+    {
+      name: "pagination material reused as PostgreSQL password",
+      apiEnvironmentOverride: {},
+      postgresEnvironmentOverride: { POSTGRES_PASSWORD: paginationKey },
+    },
+  ])(
+    "rejects $name before update, stop, or migration",
+    async ({ apiEnvironmentOverride, postgresEnvironmentOverride }) => {
+      const { runner, commands } = successfulRunner({
+        apiEnvironmentOverride: Object.fromEntries(Object.entries(apiEnvironmentOverride)),
+        postgresEnvironmentOverride: Object.fromEntries(
+          Object.entries(postgresEnvironmentOverride),
+        ),
+      });
+      await expect(run(runner, true)).rejects.toMatchObject({
+        code: "RETENTION_UPGRADE_API_RUNTIME_CONFIG_INVALID",
+      });
+      const text = commandText(commands);
+      expect(
+        text.some(
+          (command) =>
+            command.includes("update --restart=no") ||
+            command.includes("stop -t 35 worker") ||
+            command.includes("run --rm --no-deps migrate"),
+        ),
+      ).toBe(false);
+    },
+  );
 
   it.each([
     {
@@ -603,8 +800,6 @@ describe("production retention upgrade executor", () => {
     const { runner, commands } = successfulRunner(options);
     await expect(run(runner, true)).rejects.toMatchObject({ code });
     const text = commandText(commands);
-    expect(
-      text.some((command) => command.includes("run --rm --no-deps migrate")),
-    ).toBe(false);
+    expect(text.some((command) => command.includes("run --rm --no-deps migrate"))).toBe(false);
   });
 });

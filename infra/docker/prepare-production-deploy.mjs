@@ -6,6 +6,7 @@ if (!process.argv[2]) throw new Error('Production deploy directory is required')
 
 const exists = async value => access(value).then(() => true, () => false)
 const workspaceRoot = path.join(deployRoot, 'node_modules', '@workmesh')
+const sourceRoot = path.resolve(import.meta.dirname, '..', '..')
 
 if (await exists(workspaceRoot)) {
   for (const name of await import('node:fs/promises').then(fs => fs.readdir(workspaceRoot))) {
@@ -17,6 +18,12 @@ if (await exists(workspaceRoot)) {
     if (await exists(rootEntry)) manifest.exports = './dist/index.js'
     else if (await exists(nestedEntry)) manifest.exports = './dist/src/index.js'
     else throw new Error(`Compiled workspace entry point is missing: ${manifest.name}`)
+    if (manifest.name === '@workmesh/config') {
+      await cp(
+        path.join(sourceRoot, 'packages', 'config', 'src', 'runtime-secrets.mjs'),
+        path.join(packageRoot, 'dist', 'runtime-secrets.mjs'),
+      )
+    }
     if (manifest.name === '@workmesh/db') {
       await cp(
         path.join(packageRoot, 'migrations'),

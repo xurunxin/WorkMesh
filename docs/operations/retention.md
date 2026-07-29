@@ -102,13 +102,23 @@ mandatory. Multiple containers, unreadable labels, mismatched deployment
 identity, or a stopped/restarting MCP container is ambiguous and aborts before
 the irreversible migration. In execute mode, before disabling the old Worker
 restart policy, the executor runs `/app/runtime-guard.mjs` from each exact
-target image with the rendered migrate, API, Worker, Web, and enabled-MCP
-service environment. The executor and image guard share the same pure
-environment validator; enabled MCP tokens are also checked against the other
-deployment runtime secrets for reuse. PostgreSQL CLI values and the
-post-migration service/image set are validated and frozen in the same preflight,
-so migration 30 is never the first point where a deterministic local
-configuration error is discovered.
+target image with the frozen migrate, API, Worker, Web, and enabled-MCP service
+environment. The executor and image guard share one pure environment validator;
+API and Worker additionally invoke their authoritative startup configuration
+parsers, and enabled MCP tokens are checked against every other deployment
+runtime secret for reuse. PostgreSQL CLI values and the post-migration
+service/image set are validated and frozen in the same preflight, so migration
+30 is never the first point where a deterministic local configuration error is
+discovered.
+
+After topology discovery, one complete rendered Compose JSON document becomes
+the only Compose input for guard, barrier, migration, recreation, readiness,
+ledger, and freshness commands. The source YAML and environment file are never
+reread. The executor stores the snapshot in an owner-only POSIX directory
+(`0700`) and file (`0600`), removes it in a `finally` path, and on the next run
+removes only dead-PID residual directories owned by the current user with the
+expected private mode. Native Windows fails closed because that owner check is
+not available.
 
 The formal soak must use the tracked contiguous
 `pnpm test:soak:retention:formal` entrypoint, not an untracked operator script

@@ -10,7 +10,8 @@ COPY scripts ./scripts
 COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
 RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --store-dir /pnpm/store
-RUN pnpm --filter @workmesh/mcp... build \
+RUN pnpm --filter @workmesh/config build \
+    && pnpm --filter @workmesh/mcp... build \
     && pnpm --filter @workmesh/mcp --prod deploy /out \
     && node infra/docker/prepare-production-deploy.mjs /out
 
@@ -22,6 +23,7 @@ RUN test -n "$WORKMESH_BUILD_SHA" \
     && adduser -S -D -H -u 10001 -G workmesh workmesh
 WORKDIR /app
 COPY --from=build --chown=10001:10001 /out ./
+COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
 COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.mjs ./
 RUN chmod 0555 /app/entrypoint.sh
 ENV NODE_ENV=production WORKMESH_SERVICE=mcp WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA HOST=0.0.0.0 PORT=3002

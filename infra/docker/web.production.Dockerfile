@@ -12,7 +12,8 @@ COPY apps ./apps
 COPY packages ./packages
 RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --store-dir /pnpm/store
-RUN pnpm --filter @workmesh/web... build \
+RUN pnpm --filter @workmesh/config build \
+    && pnpm --filter @workmesh/web... build \
     && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
 
 FROM node:22.17.1-alpine3.22 AS runtime
@@ -24,6 +25,7 @@ RUN test -n "$WORKMESH_BUILD_SHA" \
     && adduser -S -D -H -u 10001 -G workmesh workmesh
 WORKDIR /app
 COPY --from=build --chown=10001:10001 /workspace/apps/web/.next/standalone ./
+COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
 COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.mjs ./
 RUN chmod 0555 /app/entrypoint.sh
 ENV NODE_ENV=production WORKMESH_SERVICE=web WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA \

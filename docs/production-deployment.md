@@ -109,16 +109,26 @@ MCP tokens and a target MCP digest, validate its OCI revision, or include the
 `agent` profile in later Compose commands. The executor never enables MCP merely
 because MCP variables exist in the environment.
 
-The executor also renders Compose as JSON and binds each included service to its
-verified target digest before the maintenance stop. It validates the exact
-rendered environment with the same pure helper used by
-`/app/runtime-guard.mjs`. In execute mode it then runs that guard from the exact
-target image, with the Compose service environment, for migrate, API, Worker,
-and Web, followed by MCP only when MCP is in the frozen topology. Every guard
-must pass before `docker update --restart=no` is issued. This includes
-cross-secret reuse checks between enabled MCP tokens and the deployment's other
-runtime secrets. Dry-run mode validates the rendered environments but does not
-create the temporary guard containers.
+The executor renders Compose as JSON exactly once after discovering the topology
+and binds each included service to its verified target digest before the
+maintenance stop. It writes that complete render into a private POSIX temporary
+directory (`0700`) and file (`0600`). Every later Compose operation uses only
+the frozen project name and snapshot file; it never rereads the source YAML or
+environment file. The snapshot is removed in a `finally` path, and a later
+invocation removes only dead-PID residual directories that have the current
+owner and the expected private mode. Native Windows execution fails closed
+because it cannot verify the required POSIX owner.
+
+The executor validates each exact rendered environment with the same pure
+helper used by `/app/runtime-guard.mjs`. API and Worker preflight additionally
+invoke the same authoritative configuration parsers as application startup. In
+execute mode the executor then runs that guard from the exact target image, with
+the frozen Compose service environment, for migrate, API, Worker, and Web,
+followed by MCP only when MCP is in the frozen topology. Every guard must pass
+before `docker update --restart=no` is issued. This includes cross-secret reuse
+checks between enabled MCP tokens and all other deployment runtime secrets.
+Dry-run mode validates the frozen environments but does not create temporary
+guard containers.
 
 The executor is a dry run unless `--execute` is explicitly supplied:
 
@@ -186,12 +196,12 @@ resolve all four digests, update the four image references and
 
 Each runtime owns independent endpoints:
 
-| Service | Liveness | Readiness |
-| --- | --- | --- |
-| API | `/livez` on port 3001 | PostgreSQL, Redis, and request admission |
-| Worker | `/livez` on internal port 3003 | PostgreSQL, Redis/queue transport, object storage, and claim admission |
-| MCP | `/livez` on port 3002 | API readiness and request admission |
-| Web | `/livez` on port 3000 | Web process readiness |
+| Service | Liveness                       | Readiness                                                              |
+| ------- | ------------------------------ | ---------------------------------------------------------------------- |
+| API     | `/livez` on port 3001          | PostgreSQL, Redis, and request admission                               |
+| Worker  | `/livez` on internal port 3003 | PostgreSQL, Redis/queue transport, object storage, and claim admission |
+| MCP     | `/livez` on port 3002          | API readiness and request admission                                    |
+| Web     | `/livez` on port 3000          | Web process readiness                                                  |
 
 The Compose healthchecks use `/readyz`. A healthy liveness response does not mean a service is ready to accept work.
 
