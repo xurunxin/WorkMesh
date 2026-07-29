@@ -393,6 +393,10 @@ ACK 只表示接收，不表示完成计划。
 - 稳态 Heartbeat 不增加 Session revision/sequence，也不创建 Activity、
   Domain Event 或 Outbox；平台只维护一个有界的 current heartbeat
   projection；
+- Session 和 Lease Heartbeat 各自保留固定大小的最近 idempotency key
+  窗口。K1、K2、重试 K1 必须返回当前 projection，不能用 K1 回退 K2；
+  同 key 不同 body 返回 `IDEMPOTENCY_KEY_REUSED`。usage counter 只允许
+  单调增加；
 - `healthy` / `degraded` / `stale` 转换在 Session 行锁下只发布一次；
 - 超过 stale 阈值产生 `agent.session.stale`；
 - stale 不自动终止外部进程，但撤销或暂停权限可由策略决定。

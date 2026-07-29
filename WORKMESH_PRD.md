@@ -2100,12 +2100,21 @@ Docker Compose 服务：
   `cursor.expired` control event 后关闭；
 - 普通事件在线保留至少 90 天、归档至少 365 天。归档采用 cursor 排序的
   canonical NDJSON gzip，并在 upload 后 readback 校验 object SHA-256 与 DB
-  snapshot digest。未知、受保护、A2A 引用、未投递 outbox、审计和恢复事实
-  保留在 PostgreSQL；
+  snapshot digest。归档 bucket 必须在创建时启用 Object Lock；每个归档对象
+  使用 `COMPLIANCE` 模式和至少 365 天 retain-until，Worker 在计划归档前和
+  readback 时 fail closed 校验保护。未知、受保护、A2A 引用、Agent webhook
+  引用、未投递 outbox、审计和恢复事实保留在 PostgreSQL；Agent webhook
+  delivery reference 是持久协议事实，不进入通用 30 天 cleanup；
 - 稳态 Session/Lease Heartbeat 只更新当前 projection，不增加 workflow
   revision、Session sequence、Activity、Domain Event 或 Outbox。只有
   healthy/degraded/stale health transition 在行锁下发出一次事件；Heartbeat
-  不恢复 stale、stopping 或 terminal Session 的权限或状态；
+  不恢复 stale、stopping 或 terminal Session 的权限或状态。每个
+  Session/Lease 使用固定大小的最近 idempotency key 窗口；K1、K2、重试 K1
+  返回当前 projection 而不回退 K2，同 key 不同 body 冲突，usage counter
+  只单调增加；
+- 保留调度与 outbox 调度独立；归档卡住或失败可使 Worker readiness 在进度
+  deadline 后失败，但不能停止 outbox admission/delivery。关闭时两个 loop
+  都停止接单、drain，并聚合关闭错误；
 - Web 每个 actor/workspace（Agent 额外包含 Session）只有一个 authenticated
   fetch-SSE client 和独立 checkpoint，使用 BigInt 去重比较并按精确资源
   invalidation 刷新；过期时先重取 durable snapshot 再从 `resyncCursor` 重连。

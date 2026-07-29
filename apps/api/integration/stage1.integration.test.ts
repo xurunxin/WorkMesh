@@ -516,8 +516,10 @@ describe("Stage 1 agent API acceptance", () => {
     const body = status.json<{
       mode: string;
       workerSeenAt: string | null;
+      workerFresh: boolean;
       policies: unknown[];
       floor: { prunedThroughCursor: string };
+      blockers: { protectedWebhookEvents: number };
       redis: {
         status: string;
         streamLength: number | null;
@@ -527,7 +529,9 @@ describe("Stage 1 agent API acceptance", () => {
     expect(body).toMatchObject({
       mode: "archive_only",
       workerSeenAt: expect.any(String),
+      workerFresh: true,
       floor: { prunedThroughCursor: "0" },
+      blockers: { protectedWebhookEvents: expect.any(Number) },
       redis: { exactLimit: 100_000 },
     });
     expect(["ok", "unavailable"]).toContain(body.redis.status);
@@ -539,6 +543,23 @@ describe("Stage 1 agent API acceptance", () => {
     expect(serialized).not.toContain("objectKey");
     expect(serialized).not.toContain("archivePrefix");
     expect(serialized).not.toContain("redisUrl");
+    await db.query(
+      `UPDATE retention_job_state
+          SET worker_seen_at=now()-interval '3 hours'
+        WHERE job_name='worker_runtime'
+          AND workspace_id=(SELECT workspace_id FROM actors WHERE id=$1)`,
+      [admin.actorId],
+    );
+    const staleStatus = await humanCall(
+      admin,
+      "GET",
+      "/api/v1/admin/retention/status",
+    );
+    expect(staleStatus.statusCode).toBe(200);
+    expect(staleStatus.json<{ mode: string; workerFresh: boolean }>()).toMatchObject({
+      mode: "unknown",
+      workerFresh: false,
+    });
 
     const workspaceId = (
       await db.query<{ workspace_id: string }>(
