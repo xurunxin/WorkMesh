@@ -405,6 +405,22 @@ describe('Stage 2 collaboration API acceptance', () => {
     const sourceToken = await exchangeAndExecute(source.session, f.runner)
     const exactTargetToken = await exchangeAndExecute(exactTarget.session, f.reviewer)
     const actorTargetToken = await exchangeAndExecute(actorTarget.session, f.reviewer)
+    const decisionProjection = async (sessionId: string) => (await db.query<{
+      session_revision: number
+      session_sequence: number
+      decision_count: number
+      affected_resource_count: number
+      event_count: number
+      outbox_count: number
+    }>(`SELECT
+          (SELECT revision FROM agent_sessions WHERE id=$1) AS session_revision,
+          (SELECT sequence FROM agent_sessions WHERE id=$1) AS session_sequence,
+          (SELECT count(*)::int FROM decisions) AS decision_count,
+          (SELECT count(*)::int FROM decision_affected_resources) AS affected_resource_count,
+          (SELECT count(*)::int FROM domain_events) AS event_count,
+          (SELECT count(*)::int FROM outbox_events) AS outbox_count`,
+      [sessionId],
+    )).rows[0]!
     const normalized = await db.query<{
       session_id: string
       work_item_id: string
@@ -433,6 +449,66 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(new Set(normalized.rows.map(row => row.session_id))).toEqual(
       new Set([source.session.id, exactTarget.session.id, actorTarget.session.id]),
     )
+    const autoBoundWorkItemDecision = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/work-items/${projectWork.id}/decisions`,
+      {
+        title: 'Bind this Work Item Decision to the authenticated Session.',
+        rationale: 'Agent-authored Decisions must retain their exact Session provenance.',
+        options: ['continue'],
+        affectedResources: [{
+          resourceType: 'work_item',
+          resourceId: projectWork.id,
+          impact: 'current scope',
+        }],
+      },
+    )
+    expect(
+      autoBoundWorkItemDecision.statusCode,
+      JSON.stringify(autoBoundWorkItemDecision.json()),
+    ).toBe(200)
+    expect((await db.query<{
+      work_item_id: string
+      session_id: string
+      affected_resource_count: number
+    }>(`SELECT decision.work_item_id,decision.session_id,
+              (SELECT count(*)::int
+                 FROM decision_affected_resources affected
+                WHERE affected.decision_id=decision.id) AS affected_resource_count
+         FROM decisions decision
+        WHERE decision.id=$1`,
+      [autoBoundWorkItemDecision.json<{ id: string }>().id],
+    )).rows[0]).toEqual({
+      work_item_id: projectWork.id,
+      session_id: source.session.id,
+      affected_resource_count: 1,
+    })
+    const beforeForgedDecisionSession = await decisionProjection(source.session.id)
+    const forgedDecisionSession = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/work-items/${projectWork.id}/decisions`,
+      {
+        title: 'Do not bind this Decision to another Session.',
+        rationale: 'Request payload cannot replace authenticated Session authority.',
+        options: ['reject'],
+        sessionId: exactTarget.session.id,
+        affectedResources: [{
+          resourceType: 'session',
+          resourceId: exactTarget.session.id,
+          impact: 'forged provenance',
+        }],
+      },
+    )
+    expect(
+      forgedDecisionSession.statusCode,
+      JSON.stringify(forgedDecisionSession.json()),
+    ).toBe(400)
+    expect(forgedDecisionSession.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'AGENT_SESSION_TOKEN_MISMATCH' },
+    })
+    expect(await decisionProjection(source.session.id)).toEqual(beforeForgedDecisionSession)
 
     const projectRoom = await humanCall(f.human, 'GET', `/api/v1/rooms?projectId=${projectId}`)
     expect(projectRoom.statusCode, JSON.stringify(projectRoom.json())).toBe(200)
@@ -803,6 +879,32 @@ describe('Stage 2 collaboration API acceptance', () => {
         WHERE id=$1`,
       [projectOnlyDelegationId, movedProjectId],
     )
+    const autoBoundProjectDecision = await agentCall(
+      projectOnlyToken,
+      'POST',
+      `/api/v1/projects/${movedProjectId}/decisions`,
+      {
+        title: 'Bind this Project Decision to the authenticated Session.',
+        rationale: 'Project-only Agent Decisions must preserve Session provenance.',
+        options: ['continue'],
+        affectedResources: [{
+          resourceType: 'session',
+          resourceId: projectOnlySession.id,
+          impact: 'project execution',
+        }],
+      },
+    )
+    expect(
+      autoBoundProjectDecision.statusCode,
+      JSON.stringify(autoBoundProjectDecision.json()),
+    ).toBe(200)
+    expect((await db.query<{ project_id: string; session_id: string }>(
+      'SELECT project_id,session_id FROM decisions WHERE id=$1',
+      [autoBoundProjectDecision.json<{ id: string }>().id],
+    )).rows[0]).toEqual({
+      project_id: movedProjectId,
+      session_id: projectOnlySession.id,
+    })
     for (const [token, sessionId] of [
       [sourceToken, source.session.id],
       [projectOnlyToken, projectOnlySession.id],
@@ -881,6 +983,32 @@ describe('Stage 2 collaboration API acceptance', () => {
       { 'if-match': `"revision-${movedProjectData.revision}"` },
     )
     expect(deletedProject.statusCode, JSON.stringify(deletedProject.json())).toBe(200)
+    const beforeDeletedProjectDecision = await decisionProjection(projectOnlySession.id)
+    const deletedProjectDecision = await agentCall(
+      projectOnlyToken,
+      'POST',
+      `/api/v1/projects/${movedProjectId}/decisions`,
+      {
+        title: 'A deleted Project cannot accept an Agent Decision.',
+        rationale: 'The authenticated Project Session no longer has a live subject.',
+        options: ['reject'],
+        affectedResources: [{
+          resourceType: 'session',
+          resourceId: projectOnlySession.id,
+          impact: 'must remain absent',
+        }],
+      },
+    )
+    expect(
+      deletedProjectDecision.statusCode,
+      JSON.stringify(deletedProjectDecision.json()),
+    ).toBe(404)
+    expect(deletedProjectDecision.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'NOT_FOUND' },
+    })
+    expect(await decisionProjection(projectOnlySession.id)).toEqual(
+      beforeDeletedProjectDecision,
+    )
 
     for (const token of [sourceToken, projectOnlyToken]) {
       const projects = await agentCall(token, 'GET', '/api/v1/projects')
@@ -1050,6 +1178,32 @@ describe('Stage 2 collaboration API acceptance', () => {
     )
 
     await db.query('UPDATE work_items SET deleted_at=now() WHERE id=$1', [projectWork.id])
+    const beforeDeletedWorkItemDecision = await decisionProjection(source.session.id)
+    const deletedWorkItemDecision = await agentCall(
+      sourceToken,
+      'POST',
+      `/api/v1/work-items/${projectWork.id}/decisions`,
+      {
+        title: 'A deleted Work Item cannot accept an Agent Decision.',
+        rationale: 'The authenticated Work Item Session no longer has a live subject.',
+        options: ['reject'],
+        affectedResources: [{
+          resourceType: 'work_item',
+          resourceId: projectWork.id,
+          impact: 'must remain absent',
+        }],
+      },
+    )
+    expect(
+      deletedWorkItemDecision.statusCode,
+      JSON.stringify(deletedWorkItemDecision.json()),
+    ).toBe(404)
+    expect(deletedWorkItemDecision.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'NOT_FOUND' },
+    })
+    expect(await decisionProjection(source.session.id)).toEqual(
+      beforeDeletedWorkItemDecision,
+    )
     const deletedEventCursor = (await db.query<{ cursor: string }>(
       'SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events',
     )).rows[0]!.cursor

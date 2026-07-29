@@ -1,4 +1,5 @@
-import { bigint, boolean, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { bigint, boolean, check, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 const binary = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' })
 
@@ -300,7 +301,13 @@ export const roomMessageSessionRecipients = pgTable('room_message_session_recipi
 export const roomMessageResponseResolutions = pgTable('room_message_response_resolutions', { id: uuid('id').primaryKey(), messageId: uuid('message_id').notNull(), resolvedByActorId: uuid('resolved_by_actor_id').notNull(), resolution: text('resolution'), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisions = pgTable('decisions', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), workItemId: uuid('work_item_id'), projectId: uuid('project_id'), sessionId: uuid('session_id'), proposedByActorId: uuid('proposed_by_actor_id').notNull(), finalizedByActorId: uuid('finalized_by_actor_id'), title: text('title').notNull(), rationale: text('rationale').notNull(), options: jsonb('options').notNull(), selectedOption: text('selected_option'), evidence: jsonb('evidence').notNull(), status: text('status').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), finalizedAt: timestamp('finalized_at', { withTimezone: true }),
-})
+}, table => [
+  check(
+    'decisions_subject_check',
+    sql`num_nonnulls(${table.workItemId},${table.projectId}) <= 1
+      AND num_nonnulls(${table.workItemId},${table.projectId},${table.sessionId}) >= 1`,
+  ),
+])
 export const decisionAffectedResources = pgTable('decision_affected_resources', { decisionId: uuid('decision_id').notNull(), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), impact: text('impact').notNull() })
 export const decisionRelations = pgTable('decision_relations', { id: uuid('id').primaryKey(), decisionId: uuid('decision_id').notNull(), relatedDecisionId: uuid('related_decision_id').notNull(), kind: decisionRelationKind('kind').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisionTransitionConsumptions = pgTable('decision_transition_consumptions', { id: uuid('id').primaryKey(), targetDecisionId: uuid('target_decision_id').notNull(), transitionType: text('transition_type').notNull(), derivedDecisionId: uuid('derived_decision_id'), consumedByActorId: uuid('consumed_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })

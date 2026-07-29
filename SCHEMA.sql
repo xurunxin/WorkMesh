@@ -37,3 +37,4 @@
 \ir packages/db/migrations/0027_agent_inbox_receipts.sql
 \ir packages/db/migrations/0028_inbox_receipt_reply_binding.sql
 \ir packages/db/migrations/0029_legacy_inbox_scope_derivation.sql
+\ir packages/db/migrations/0030_decision_session_provenance.sql

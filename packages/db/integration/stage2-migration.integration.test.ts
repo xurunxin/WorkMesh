@@ -22,7 +22,7 @@ async function migrateFrom0001(through?: number): Promise<void> {
 describe('Stage 2 migration chain and PostgreSQL constraints', () => {
   afterAll(async () => { await db.end() }, 300_000)
 
-  it('upgrades an applied 0027 receipt trigger through 0029 with actor-, Session-, and source-bound replies', async () => {
+  it('upgrades an applied 0027 receipt trigger through 0030 with actor-, Session-, and source-bound replies', async () => {
     await migrateFrom0001(27)
     expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0027_agent_inbox_receipts')
     const installed = await installWorkspace(db, { workspaceName: 'Receipt upgrade', workspaceSlug: 'receipt-upgrade', adminName: 'Upgrade Admin', email: 'receipt-upgrade@example.test', password: 'password-acceptance' })
@@ -67,7 +67,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'old-0027','old-0027')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, acceptedBy0027.rows[0]!.id])).resolves.toBeDefined()
 
     await applyMigrations(db)
-    expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0029_legacy_inbox_scope_derivation')
+    expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0030_decision_session_provenance')
     expect((await db.query<{
       id: string
       recipient_actor_id: string
@@ -102,7 +102,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'new-valid','new-valid')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, validReply.rows[0]!.id])).resolves.toBeDefined()
   }, 300_000)
 
-  it('upgrades real 0026 Inbox rows through 0029, accepts legacy producers, and enforces collaboration constraints', async () => {
+  it('upgrades real 0026 Inbox rows through 0030, accepts legacy producers, and enforces collaboration constraints', async () => {
     await migrateFrom0001(26)
     const legacy = await installWorkspace(db, { workspaceName: 'Legacy Inbox', workspaceSlug: 'legacy-inbox', adminName: 'Legacy Admin', email: 'legacy-inbox@example.test', password: 'password-acceptance' })
     const legacySourceId = crypto.randomUUID()
@@ -136,7 +136,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     })
     const versions = await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version')
     expect(versions.rows.map(row => row.version)).toEqual([
-      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds', '0015_stage4_planning_views_templates', '0016_stage4_usage_notifications', '0017_stage4_automation_control_plane', '0018_stage4_loops_health_a2a', '0019_stage4_gitea', '0020_stage4_review_hardening', '0021_stage4_a2a_direction_and_prompt_identity', '0022_route_policy_authorization_denials', '0023_auth_idempotency_records', '0024_cursor_pagination_indexes', '0025_realtime_event_envelope', '0026_retention_archive_and_heartbeat_health', '0027_agent_inbox_receipts', '0028_inbox_receipt_reply_binding', '0029_legacy_inbox_scope_derivation',
+      '0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds', '0015_stage4_planning_views_templates', '0016_stage4_usage_notifications', '0017_stage4_automation_control_plane', '0018_stage4_loops_health_a2a', '0019_stage4_gitea', '0020_stage4_review_hardening', '0021_stage4_a2a_direction_and_prompt_identity', '0022_route_policy_authorization_denials', '0023_auth_idempotency_records', '0024_cursor_pagination_indexes', '0025_realtime_event_envelope', '0026_retention_archive_and_heartbeat_health', '0027_agent_inbox_receipts', '0028_inbox_receipt_reply_binding', '0029_legacy_inbox_scope_derivation', '0030_decision_session_provenance',
     ])
     const tables = await db.query<{ table_name: string }>("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('work_room_channels','room_messages','leases','handoffs','routing_attempts','routing_records','context_deltas','decision_transition_consumptions') ORDER BY table_name")
     expect(tables.rows.map(row => row.table_name)).toEqual(['context_deltas', 'decision_transition_consumptions', 'handoffs', 'leases', 'room_messages', 'routing_attempts', 'routing_records', 'work_room_channels'])

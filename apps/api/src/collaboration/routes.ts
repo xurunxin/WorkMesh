@@ -76,6 +76,20 @@ async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: 
   } else await assertHumanTeam(tx,current,row.team_id)
   return row
 }
+function assertDecisionSubjectInSessionScope(
+  currentSession: Awaited<ReturnType<typeof session>>,
+  subject: Subject,
+  subjectId: string,
+): void {
+  const inScope = subject === 'session'
+    ? currentSession.id === subjectId
+    : subject === 'work_item'
+      ? currentSession.work_item_id === subjectId && currentSession.work_item_exists
+      : currentSession.work_item_id
+        ? currentSession.work_item_project_id === subjectId
+        : currentSession.project_id === subjectId && currentSession.project_exists
+  if (!inScope) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Decision subject is outside the current live Session scope')
+}
 async function assertSessionMessageWrite(tx: PoolClient, current: ApiActor, sessionId: string, intent: string, idempotencyKey: string) {
   const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind !== 'agent') return row
@@ -931,20 +945,31 @@ async function transitionHandoff(h: Helpers, request: FastifyRequest, status: 'r
 
 async function createDecision(h:Helpers, request:FastifyRequest, subject:Subject, subjectId:string) {
   const body=decisionInputSchema.parse(request.body)
+  const current=actor(request)
   return command(h.db,h.meta(request,body,{id:subjectId}),async tx=>{
-    const teamId=await subjectTeam(tx,actor(request).workspaceId,subject,subjectId)
-    if(actor(request).kind==='human') await assertHumanTeam(tx,actor(request),teamId)
-    const decisionSessionId=body.sessionId ?? (subject==='session' ? subjectId : null)
-    if (decisionSessionId) await assertSessionWrite(tx,actor(request),decisionSessionId)
+    const decisionSessionId=current.kind==='agent'
+      ? current.agentSessionId
+      : body.sessionId ?? (subject==='session' ? subjectId : null)
+    if(current.kind==='agent') {
+      if(!decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent Decisions require a Session credential')
+      const currentSession=await assertSessionWrite(tx,current,decisionSessionId)
+      if(body.sessionId && body.sessionId!==decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Decision sessionId must match the authenticated Agent Session')
+      assertDecisionSubjectInSessionScope(currentSession,subject,subjectId)
+    }
+    const teamId=await subjectTeam(tx,current.workspaceId,subject,subjectId)
+    if(current.kind==='human') {
+      await assertHumanTeam(tx,current,teamId)
+      if(decisionSessionId) await assertSessionWrite(tx,current,decisionSessionId)
+    }
     const columns = subject === 'session'
       ? 'workspace_id,session_id,proposed_by_actor_id,title,rationale,options,selected_option,evidence,status,finalized_by_actor_id,finalized_at'
       : `workspace_id,${subject}_id,session_id,proposed_by_actor_id,title,rationale,options,selected_option,evidence,status,finalized_by_actor_id,finalized_at`
     const values = subject === 'session'
-      ? [actor(request).workspaceId,subjectId,actor(request).id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),actor(request).kind==='human'?'final':'proposed',actor(request).kind==='human'?actor(request).id:null,actor(request).kind==='human'?new Date():null]
-      : [actor(request).workspaceId,subjectId,decisionSessionId,actor(request).id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),actor(request).kind==='human'?'final':'proposed',actor(request).kind==='human'?actor(request).id:null,actor(request).kind==='human'?new Date():null]
+      ? [current.workspaceId,subjectId,current.id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),current.kind==='human'?'final':'proposed',current.kind==='human'?current.id:null,current.kind==='human'?new Date():null]
+      : [current.workspaceId,subjectId,decisionSessionId,current.id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),current.kind==='human'?'final':'proposed',current.kind==='human'?current.id:null,current.kind==='human'?new Date():null]
     const row=(await tx.query(`INSERT INTO decisions(${columns}) VALUES(${values.map((_, index)=>`$${index+1}`).join(',')}) RETURNING *`,values)).rows[0] as {id:string}
     for (const resource of body.affectedResources) await tx.query('INSERT INTO decision_affected_resources(decision_id,resource_type,resource_id,impact) VALUES($1,$2,$3,$4)',[row.id,resource.resourceType,resource.resourceId,resource.impact])
-    await emit(tx,h.meta(request,body), actor(request).kind==='human'?'decision.finalized':'decision.proposed','decision',row.id,{subject,subjectId},teamId)
+    await emit(tx,h.meta(request,body), current.kind==='human'?'decision.finalized':'decision.proposed','decision',row.id,{subject,subjectId},teamId)
     return row
   })
 }
