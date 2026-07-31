@@ -148,6 +148,13 @@ budget, the bounded initial gap is 45 seconds of admitted Session age plus
 steady-state bound is 15 + 10 + 45 + 10, or 80 seconds. The larger 100-second
 bound remains 20 seconds below the server's hard 120-second stale age.
 
+The heartbeat pump also starts before the initial Workspace-specific Worker
+runtime proof. A clean installation can create its acceptance Workspace after
+the Worker process starts, so the harness waits up to 90 seconds for the first
+complete `worker_runtime` row while heartbeats continue. Only a wholly absent
+runtime identity is retryable. A partial row, wrong Worker instance/build,
+identity conflict, non-archive mode, or stale completed row fails immediately.
+
 ## What the gate exercises
 
 The independent pump sends a real HTTP heartbeat immediately after initial

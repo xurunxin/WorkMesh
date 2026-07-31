@@ -5,6 +5,7 @@ import {
   parseRetentionSoakContainerStats,
   retentionSoakProvenanceMatches,
   retentionSoakWorkerFreshnessProof,
+  waitForRetentionSoakInitialWorkerFreshness,
   type RetentionSoakContainerRoles,
 } from "./retention-soak-provenance.js";
 
@@ -427,6 +428,89 @@ describe("retention soak formal provenance", () => {
         "7",
       ),
     ).toThrow("RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED");
+  });
+
+  it("keeps heartbeats active while a new Workspace awaits its first Worker runtime row", async () => {
+    const provenance = await collect(inspections());
+    const assertHeartbeatHealthy = vi.fn();
+    const wait = vi.fn(async () => {});
+    const ready = {
+      workerMode: "archive_only" as const,
+      workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+      workerInstanceId: provenance.workerRuntimeIdentity.instanceId,
+      workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
+      workerIdentityConflictCount: "0",
+    };
+    const readRuntime = vi
+      .fn()
+      .mockResolvedValueOnce({
+        workerMode: null,
+        workerSeenAt: null,
+        workerInstanceId: null,
+        workerBuildSha: null,
+        workerIdentityConflictCount: "0",
+      })
+      .mockResolvedValueOnce(ready);
+
+    await expect(
+      waitForRetentionSoakInitialWorkerFreshness({
+        workerRuntimeIdentity: provenance.workerRuntimeIdentity,
+        readRuntime,
+        assertHeartbeatHealthy,
+        wait,
+        now: () => new Date("2026-07-29T00:00:01.000Z"),
+      }),
+    ).resolves.toMatchObject({
+      verified: true,
+      workerInstanceId: provenance.workerRuntimeIdentity.instanceId,
+      workerMode: "archive_only",
+    });
+    expect(readRuntime).toHaveBeenCalledTimes(2);
+    expect(wait).toHaveBeenCalledTimes(1);
+    expect(assertHeartbeatHealthy).toHaveBeenCalledTimes(3);
+  });
+
+  it("times out an absent initial Worker row and fails conflicting provenance immediately", async () => {
+    const provenance = await collect(inspections());
+    let elapsedMs = 0;
+    const missing = {
+      workerMode: null,
+      workerSeenAt: null,
+      workerInstanceId: null,
+      workerBuildSha: null,
+      workerIdentityConflictCount: "0",
+    };
+    await expect(
+      waitForRetentionSoakInitialWorkerFreshness({
+        workerRuntimeIdentity: provenance.workerRuntimeIdentity,
+        readRuntime: async () => missing,
+        assertHeartbeatHealthy: () => {},
+        timeoutMs: 1_000,
+        intervalMs: 250,
+        now: () => new Date(elapsedMs),
+        wait: async (milliseconds) => {
+          elapsedMs += milliseconds;
+        },
+      }),
+    ).rejects.toThrow("RETENTION_SOAK_WORKER_READINESS_TIMEOUT");
+
+    const wait = vi.fn(async () => {});
+    await expect(
+      waitForRetentionSoakInitialWorkerFreshness({
+        workerRuntimeIdentity: provenance.workerRuntimeIdentity,
+        readRuntime: async () => ({
+          workerMode: "archive_only",
+          workerSeenAt: new Date("2026-07-29T00:00:00.000Z"),
+          workerInstanceId: "00000000-0000-4000-8000-000000000099",
+          workerBuildSha: provenance.workerRuntimeIdentity.buildSha,
+          workerIdentityConflictCount: "1",
+        }),
+        assertHeartbeatHealthy: () => {},
+        wait,
+        now: () => new Date("2026-07-29T00:00:01.000Z"),
+      }),
+    ).rejects.toThrow("RETENTION_SOAK_WORKER_IDENTITY_MISMATCH");
+    expect(wait).not.toHaveBeenCalled();
   });
 
   it("observes ending Worker freshness after database and provenance reads", async () => {

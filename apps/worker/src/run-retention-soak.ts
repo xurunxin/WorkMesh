@@ -18,7 +18,7 @@ import {
   parseRetentionSoakContainerStats,
   retentionSoakExecFile,
   retentionSoakProvenanceMatches,
-  retentionSoakWorkerFreshnessProof,
+  waitForRetentionSoakInitialWorkerFreshness,
   type RetentionSoakProvenance,
   type RetentionSoakWorkerFreshnessProof,
 } from "./retention-soak-provenance.js";
@@ -155,19 +155,21 @@ const backdateNewActivityEvent = async (
 
 try {
   await redis.connect();
-  const identity = (
-    await db.query<{
-      workspaceId: string;
-      workerMode: string | null;
-      workerSeenAt: Date | null;
-      workerInstanceId: string | null;
-      workerBuildSha: string | null;
-      workerIdentityConflictCount: string | null;
-      state: string;
-      heartbeatHealth: string;
-      lastHeartbeatAt: Date | null;
-    }>(
-      `SELECT session.workspace_id AS "workspaceId",
+  type SoakIdentity = {
+    workspaceId: string;
+    workerMode: string | null;
+    workerSeenAt: Date | null;
+    workerInstanceId: string | null;
+    workerBuildSha: string | null;
+    workerIdentityConflictCount: string | null;
+    state: string;
+    heartbeatHealth: string;
+    lastHeartbeatAt: Date | null;
+  };
+  const readIdentity = async (): Promise<SoakIdentity> => {
+    const identity = (
+      await db.query<SoakIdentity>(
+        `SELECT session.workspace_id AS "workspaceId",
               session.state,
               session.heartbeat_health AS "heartbeatHealth",
               session.last_heartbeat_at AS "lastHeartbeatAt",
@@ -182,16 +184,14 @@ try {
            ON runtime.workspace_id=session.workspace_id
           AND runtime.job_name='worker_runtime'
         WHERE session.id=$1`,
-      [options.sessionId],
-    )
-  ).rows[0];
-  if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
+        [options.sessionId],
+      )
+    ).rows[0];
+    if (!identity) throw new Error("RETENTION_SOAK_SESSION_NOT_FOUND");
+    return identity;
+  };
+  let identity = await readIdentity();
   assertRetentionSoakSessionLiveness(identity, new Date(), options.liveness);
-  initialWorkerFreshness = retentionSoakWorkerFreshnessProof(
-    provenance.workerRuntimeIdentity,
-    identity,
-    new Date(),
-  );
 
   const runtimeStartedAtMs = Date.now();
   heartbeatPump = new RetentionSoakHeartbeatPump({
@@ -209,6 +209,20 @@ try {
   // The first authoritative heartbeat includes initial token refresh and must
   // complete before the baseline. Later beats run independently of sampling.
   await heartbeatPump.start();
+  heartbeatPump.assertHealthy();
+  initialWorkerFreshness = await waitForRetentionSoakInitialWorkerFreshness({
+    workerRuntimeIdentity: provenance.workerRuntimeIdentity,
+    assertHeartbeatHealthy: () => heartbeatPump!.assertHealthy(),
+    readRuntime: async () => {
+      identity = await readIdentity();
+      assertRetentionSoakSessionLiveness(
+        identity,
+        new Date(),
+        options.liveness,
+      );
+      return identity;
+    },
+  });
   heartbeatPump.assertHealthy();
   const startedAt = new Date();
   reportStartedAt = startedAt;

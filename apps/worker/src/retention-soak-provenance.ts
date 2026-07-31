@@ -414,6 +414,70 @@ export const retentionSoakWorkerFreshnessProof = (
   };
 };
 
+const initialWorkerRuntimeMissing = (
+  evidence: RetentionSoakWorkerRuntimeEvidence,
+): boolean =>
+  evidence.workerMode === null &&
+  evidence.workerSeenAt === null &&
+  evidence.workerInstanceId === null &&
+  evidence.workerBuildSha === null &&
+  (evidence.workerIdentityConflictCount === null ||
+    evidence.workerIdentityConflictCount === "0");
+
+export const waitForRetentionSoakInitialWorkerFreshness = async (
+  input: Readonly<{
+    workerRuntimeIdentity: RetentionSoakWorkerRuntimeIdentity;
+    readRuntime: () => Promise<RetentionSoakWorkerRuntimeEvidence>;
+    assertHeartbeatHealthy: () => void;
+    now?: () => Date;
+    wait?: (milliseconds: number) => Promise<void>;
+    timeoutMs?: number;
+    intervalMs?: number;
+    maximumAgeMs?: number;
+  }>,
+): Promise<RetentionSoakWorkerFreshnessProof> => {
+  const now = input.now ?? (() => new Date());
+  const wait =
+    input.wait ??
+    (async (milliseconds: number) =>
+      await new Promise<void>((resolve) => setTimeout(resolve, milliseconds)));
+  const timeoutMs = input.timeoutMs ?? 90_000;
+  const intervalMs = input.intervalMs ?? 500;
+  if (
+    !Number.isFinite(timeoutMs) ||
+    timeoutMs <= 0 ||
+    !Number.isFinite(intervalMs) ||
+    intervalMs <= 0
+  )
+    throw new Error("RETENTION_SOAK_WORKER_READINESS_CONFIG_INVALID");
+
+  const startedAtMs = now().getTime();
+  while (true) {
+    input.assertHeartbeatHealthy();
+    const runtime = await input.readRuntime();
+    const observedAt = now();
+    try {
+      return retentionSoakWorkerFreshnessProof(
+        input.workerRuntimeIdentity,
+        runtime,
+        observedAt,
+        input.maximumAgeMs,
+      );
+    } catch (error) {
+      // A freshly installed Workspace does not exist when the Worker starts,
+      // so its first worker_runtime row can legitimately lag provisioning.
+      // Any partial or conflicting identity remains a terminal provenance
+      // failure rather than being hidden behind this bounded wait.
+      if (!initialWorkerRuntimeMissing(runtime)) throw error;
+    }
+    input.assertHeartbeatHealthy();
+    const remainingMs = timeoutMs - (observedAt.getTime() - startedAtMs);
+    if (remainingMs <= 0)
+      throw new Error("RETENTION_SOAK_WORKER_READINESS_TIMEOUT");
+    await wait(Math.min(intervalMs, remainingMs));
+  }
+};
+
 export const collectRetentionSoakEndingEvidence = async (input: Readonly<{
   readRuntime: () => Promise<RetentionSoakWorkerRuntimeEvidence>;
   collectProvenance: () => Promise<RetentionSoakProvenance>;
