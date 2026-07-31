@@ -731,8 +731,8 @@ describe("retention worker destructive-path fences", () => {
 
   it("extends the exact delayed version when an old conditional PUT lands after the successor HEAD 404", async () => {
     corruptReadback = false;
-    const oldClock = new Date("2026-07-30T00:00:00.000Z");
-    const successorClock = new Date("2026-07-30T00:10:01.000Z");
+    const oldClock = new Date(Date.now() + 60_000);
+    const successorClock = new Date(oldClock.getTime() + 601_000);
     let releaseOldPut!: () => void;
     const oldPutGate = new Promise<void>((resolve) => {
       releaseOldPut = resolve;
@@ -767,9 +767,7 @@ describe("retention worker destructive-path fences", () => {
       workspaceScopeId: workspaceId,
       archiveNow: () => oldClock,
     });
-    const oldRun = expect(oldOwner.archiveEvents()).rejects.toThrow(
-      "RETENTION_CLAIM_LOST",
-    );
+    const oldRun = Promise.allSettled([oldOwner.archiveEvents()]);
     await oldPutBlocked;
     await db.query(
       `UPDATE retention_job_state
@@ -794,7 +792,11 @@ describe("retention worker destructive-path fences", () => {
       },
     });
     await expect(successor.archiveEvents()).resolves.toBe(1);
-    await oldRun;
+    const [oldResult] = await oldRun;
+    expect(oldResult).toMatchObject({
+      status: "rejected",
+      reason: expect.objectContaining({ message: "RETENTION_CLAIM_LOST" }),
+    });
 
     expect(writes).toBe(1);
     expect(putAttempts).toBe(2);
@@ -842,8 +844,8 @@ describe("retention worker destructive-path fences", () => {
 
   it("retries after crashing between the DB retention target and exact-version S3 extension", async () => {
     corruptReadback = false;
-    const oldClock = new Date("2026-07-30T01:00:00.000Z");
-    const recoveryClock = new Date("2026-07-30T01:10:01.000Z");
+    const oldClock = new Date(Date.now() + 60_000);
+    const recoveryClock = new Date(oldClock.getTime() + 601_000);
     const oldUpload = createRetentionWorker({
       db,
       workerId: "target-crash-old-upload",
@@ -921,8 +923,8 @@ describe("retention worker destructive-path fences", () => {
 
   it("retries idempotently when retention was extended before the S3 response was lost", async () => {
     corruptReadback = false;
-    const oldClock = new Date("2026-07-30T02:00:00.000Z");
-    const recoveryClock = new Date("2026-07-30T02:10:01.000Z");
+    const oldClock = new Date(Date.now() + 60_000);
+    const recoveryClock = new Date(oldClock.getTime() + 601_000);
     const oldUpload = createRetentionWorker({
       db,
       workerId: "retention-response-old-upload",
