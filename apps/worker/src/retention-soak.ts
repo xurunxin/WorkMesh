@@ -88,8 +88,7 @@ export const retentionSoakLivenessBudget = (
     maximumSteadyHeartbeatGapMs,
     maximumExpectedHeartbeatGapMs,
     safetyMarginMs,
-    maximumInitialHeartbeatAgeMs:
-      RETENTION_SOAK_MAX_INITIAL_HEARTBEAT_AGE_MS,
+    maximumInitialHeartbeatAgeMs: RETENTION_SOAK_MAX_INITIAL_HEARTBEAT_AGE_MS,
   };
 };
 
@@ -197,9 +196,7 @@ export const retentionSoakPreflight = (
     throw new Error("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
   if (!Number.isInteger(activityEverySamples) || activityEverySamples < 1)
     throw new Error("RETENTION_SOAK_ACTIVITY_INTERVAL_INVALID");
-  const roleVariables: Readonly<
-    Record<RetentionSoakContainerRole, string>
-  > = {
+  const roleVariables: Readonly<Record<RetentionSoakContainerRole, string>> = {
     api: "WORKMESH_RETENTION_SOAK_API_CONTAINER",
     worker: "WORKMESH_RETENTION_SOAK_WORKER_CONTAINER",
     postgres: "WORKMESH_RETENTION_SOAK_POSTGRES_CONTAINER",
@@ -209,10 +206,7 @@ export const retentionSoakPreflight = (
   const containerRoles = Object.fromEntries(
     Object.entries(roleVariables).map(([role, variable]) => [
       role,
-      required(
-        env[variable],
-        "RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID",
-      ),
+      required(env[variable], "RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID"),
     ]),
   ) as RetentionSoakContainerRoles;
   const containers = Object.values(containerRoles);
@@ -310,9 +304,7 @@ export const retentionSoakPreflight = (
     Object.entries(thresholds).some(
       ([name, value]) =>
         value >
-        retentionSoakDefaultThresholds[
-          name as keyof RetentionSoakThresholds
-        ],
+        retentionSoakDefaultThresholds[name as keyof RetentionSoakThresholds],
     )
   )
     throw new Error("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
@@ -359,7 +351,7 @@ export const retentionSoakDryRunPlan = (
   lock: RetentionSoakLockProof,
   provenance: RetentionSoakProvenance,
 ) => ({
-  schemaVersion: 3,
+  schemaVersion: 4,
   status: "dry_run" as const,
   formalDurationHours: 24,
   sampleIntervalSeconds: options.sampleIntervalMs / 1_000,
@@ -432,6 +424,7 @@ export const assertRetentionSoakSessionLiveness = (
 
 export type RetentionSoakSample = Readonly<{
   sampledAt: string;
+  phase?: "active" | "drain";
   floor: string;
   workerMode: string;
   workerFresh: boolean;
@@ -505,6 +498,41 @@ const maximumGrowthSlopePerHour = (
   );
 };
 
+const trendGrowthSlopePerHour = (
+  samples: readonly RetentionSoakSample[],
+  value: (sample: RetentionSoakSample) => number,
+): number => {
+  const first = samples[0];
+  if (!first || samples.length < 2) return 0;
+  const origin = new Date(first.sampledAt).getTime();
+  const points = samples.map((sample) => ({
+    hours: (new Date(sample.sampledAt).getTime() - origin) / 3_600_000,
+    value: value(sample),
+  }));
+  const meanHours =
+    points.reduce((sum, point) => sum + point.hours, 0) / points.length;
+  const meanValue =
+    points.reduce((sum, point) => sum + point.value, 0) / points.length;
+  const denominator = points.reduce(
+    (sum, point) => sum + (point.hours - meanHours) ** 2,
+    0,
+  );
+  if (denominator === 0) return 0;
+  const numerator = points.reduce(
+    (sum, point) => sum + (point.hours - meanHours) * (point.value - meanValue),
+    0,
+  );
+  return Math.max(0, numerator / denominator);
+};
+
+const growthSlopeWithinThreshold = (
+  value: number,
+  threshold: number,
+): boolean => {
+  const epsilon = Math.max(1e-9, Math.abs(threshold) * 1e-6);
+  return value <= threshold + epsilon;
+};
+
 export const retentionSoakReport = (
   startedAt: Date,
   endedAt: Date,
@@ -525,6 +553,10 @@ export const retentionSoakReport = (
   formalEvidence?: RetentionSoakFormalEvidence,
 ) => {
   const series = [baseline, ...samples];
+  const activeSampleCount = samples.filter(
+    (sample) => sample.phase !== "drain",
+  ).length;
+  const drainSampleCount = samples.length - activeSampleCount;
   const last = samples.at(-1);
   const maximum = (value: (sample: RetentionSoakSample) => number): number =>
     Math.max(0, ...series.map(value));
@@ -580,6 +612,37 @@ export const retentionSoakReport = (
       ]),
     ),
   };
+  const trendGrowthSlopesPerHour = {
+    databaseRows: trendGrowthSlopePerHour(
+      series,
+      (sample) => sample.database.rows,
+    ),
+    databaseBytes: trendGrowthSlopePerHour(
+      series,
+      (sample) => sample.database.sizeBytes,
+    ),
+    tableBytes: trendGrowthSlopePerHour(
+      series,
+      (sample) => sample.database.tableSizeBytes,
+    ),
+    deadTuples: trendGrowthSlopePerHour(
+      series,
+      (sample) => sample.database.deadTuples,
+    ),
+    redisLength: trendGrowthSlopePerHour(
+      series,
+      (sample) => sample.redis.length,
+    ),
+    containerMemoryBytes: Object.fromEntries(
+      Object.keys(baseline.containers).map((name) => [
+        name,
+        trendGrowthSlopePerHour(
+          series,
+          (sample) => sample.containers[name]?.memoryBytes ?? 0,
+        ),
+      ]),
+    ),
+  };
   const maximumCpuPercent = Object.fromEntries(
     Object.keys(baseline.containers).map((name) => [
       name,
@@ -626,7 +689,7 @@ export const retentionSoakReport = (
     memoryBytes: maximumMemoryBytes,
   };
   const checks = {
-    samplesComplete: samples.length >= expectedSamples,
+    samplesComplete: activeSampleCount >= expectedSamples,
     formalDurationComplete:
       endedAt.getTime() - startedAt.getTime() >= 86_400_000,
     workerStayedFresh: series.every(
@@ -638,7 +701,7 @@ export const retentionSoakReport = (
       deltas.currentRunArchived === deltas.currentRunGenerated,
     generatedCursorEvidenceComplete: cursorEvidenceValid,
     verifiedRowAccounting: deltas.verifiedRows >= deltas.currentRunGenerated,
-    generatedRowAccounting: deltas.databaseRows >= deltas.currentRunGenerated,
+    generatedRowAccounting: deltas.databaseRows === deltas.currentRunGenerated,
     noArchiveFailures: series.every((sample) => sample.archive.failed === 0),
     noPruning: series.every((sample) => sample.archive.pruned === 0),
     floorStable: series.every((sample) => sample.floor === baseline.floor),
@@ -718,34 +781,44 @@ export const retentionSoakReport = (
     memoryBounded: Object.values(maximumMemoryBytes).every(
       (value) => value <= thresholds.maximumMemoryBytes,
     ),
-    databaseRowsGrowthBounded:
-      maximumGrowthSlopesPerHour.databaseRows <=
+    databaseRowsGrowthBounded: growthSlopeWithinThreshold(
+      trendGrowthSlopesPerHour.databaseRows,
       thresholds.maximumDatabaseRowsSlopePerHour,
-    databaseBytesGrowthBounded:
-      maximumGrowthSlopesPerHour.databaseBytes <=
+    ),
+    databaseBytesGrowthBounded: growthSlopeWithinThreshold(
+      trendGrowthSlopesPerHour.databaseBytes,
       thresholds.maximumDatabaseBytesSlopePerHour,
-    tableBytesGrowthBounded:
-      maximumGrowthSlopesPerHour.tableBytes <=
+    ),
+    tableBytesGrowthBounded: growthSlopeWithinThreshold(
+      trendGrowthSlopesPerHour.tableBytes,
       thresholds.maximumTableBytesSlopePerHour,
-    deadTuplesGrowthBounded:
-      maximumGrowthSlopesPerHour.deadTuples <=
+    ),
+    deadTuplesGrowthBounded: growthSlopeWithinThreshold(
+      trendGrowthSlopesPerHour.deadTuples,
       thresholds.maximumDeadTuplesSlopePerHour,
-    redisGrowthBounded:
-      maximumGrowthSlopesPerHour.redisLength <=
+    ),
+    redisGrowthBounded: growthSlopeWithinThreshold(
+      trendGrowthSlopesPerHour.redisLength,
       thresholds.maximumRedisLengthSlopePerHour,
+    ),
     containerMemoryGrowthBounded: Object.values(
-      maximumGrowthSlopesPerHour.containerMemoryBytes,
-    ).every(
-      (value) => value <= thresholds.maximumContainerMemorySlopeBytesPerHour,
+      trendGrowthSlopesPerHour.containerMemoryBytes,
+    ).every((value) =>
+      growthSlopeWithinThreshold(
+        value,
+        thresholds.maximumContainerMemorySlopeBytesPerHour,
+      ),
     ),
   };
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     status: Object.values(checks).every(Boolean) ? "passed" : "failed",
     startedAt: startedAt.toISOString(),
     endedAt: endedAt.toISOString(),
     baselineSampledAt: baseline.sampledAt,
     sampleCount: samples.length,
+    activeSampleCount,
+    drainSampleCount,
     expectedSamples,
     checks,
     thresholds: {
@@ -772,6 +845,7 @@ export const retentionSoakReport = (
       maxima,
       endToEndSlopesPerHour,
       maximumGrowthSlopesPerHour,
+      trendGrowthSlopesPerHour,
       endState: last
         ? {
             archiveBacklog: last.archive.backlog,

@@ -14,6 +14,7 @@ import {
   type RetentionSoakSample,
   type RetentionSoakThresholds,
 } from "./retention-soak.js";
+import { retentionSoakDrainConverged } from "./retention-soak-convergence.js";
 
 const safe = {
   WORKMESH_RETENTION_SOAK: "1",
@@ -56,9 +57,7 @@ const thresholds: RetentionSoakThresholds = {
   maximumContainerMemorySlopeBytesPerHour: 16_777_216,
 };
 
-const workerContainerId = `sha256:${"worker"
-  .padEnd(64, "1")
-  .slice(0, 64)}`;
+const workerContainerId = `sha256:${"worker".padEnd(64, "1").slice(0, 64)}`;
 const workerInstanceId = "00000000-0000-4000-8000-000000000001";
 const provenanceEvidence: RetentionSoakFormalEvidence["provenance"] = {
   verified: true,
@@ -441,7 +440,7 @@ describe("retention soak harness", () => {
         formalEvidence,
       ),
     ).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       status: "passed",
       retentionFloorAdvanced: false,
       checks: {
@@ -602,7 +601,7 @@ describe("retention soak harness", () => {
         },
       ),
     ).toMatchObject({
-      schemaVersion: 3,
+      schemaVersion: 4,
       status: "failed",
       checks: { tokenRotationExercised: false },
       actual: { credentials: { refreshCount: 1 } },
@@ -821,7 +820,7 @@ describe("retention soak harness", () => {
     });
   });
 
-  it("rejects a minute-scale growth spike even when the final sample recovers", () => {
+  it("keeps recovered short spikes as diagnostics rather than leak failures", () => {
     const start = new Date("2026-07-28T00:00:00Z");
     const middle = new Date("2026-07-28T00:01:00Z");
     const end = new Date("2026-07-29T00:00:00Z");
@@ -883,15 +882,16 @@ describe("retention soak harness", () => {
     ).toMatchObject({
       status: "failed",
       checks: {
-        databaseRowsGrowthBounded: false,
-        databaseBytesGrowthBounded: false,
-        tableBytesGrowthBounded: false,
-        deadTuplesGrowthBounded: false,
-        redisGrowthBounded: false,
-        containerMemoryGrowthBounded: false,
+        databaseRowsGrowthBounded: true,
+        databaseBytesGrowthBounded: true,
+        tableBytesGrowthBounded: true,
+        deadTuplesGrowthBounded: true,
+        redisGrowthBounded: true,
+        containerMemoryGrowthBounded: true,
       },
       actual: {
-        endToEndSlopesPerHour: {
+        trendGrowthSlopesPerHour: {
+          databaseRows: 0,
           databaseBytes: 0,
           tableBytes: 0,
           deadTuples: 0,
@@ -900,6 +900,115 @@ describe("retention soak harness", () => {
         },
       },
     });
+  });
+
+  it("waits for archive, row, backlog, and outbox drain convergence", () => {
+    const baseline = sample();
+    const converged = sample({
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+
+    expect(retentionSoakDrainConverged(baseline, converged)).toBe(true);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        archive: { ...converged.archive, currentRunArchived: 0 },
+      }),
+    ).toBe(false);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        archive: { ...converged.archive, backlog: 1 },
+      }),
+    ).toBe(false);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        outbox: { ...converged.outbox, pending: 1 },
+      }),
+    ).toBe(false);
+  });
+
+  it("tolerates millisecond sampling skew at an exact 24-per-hour workload", () => {
+    const start = new Date("2026-07-28T00:00:00.000Z");
+    const end = new Date("2026-07-29T00:00:00.000Z");
+    const baseline = sample({ sampledAt: start.toISOString() });
+    const generated = 576;
+    const finalSample = sample({
+      sampledAt: "2026-07-28T23:59:59.983Z",
+      archive: {
+        ...baseline.archive,
+        verified: baseline.archive.verified + 1,
+        verifiedRows: baseline.archive.verifiedRows + generated,
+        currentRunGenerated: generated,
+        currentRunArchived: generated,
+      },
+      redis: {
+        ...baseline.redis,
+        length: baseline.redis.length + generated,
+      },
+      database: {
+        ...baseline.database,
+        rows: baseline.database.rows + generated,
+      },
+    });
+    const report = retentionSoakReport(
+      start,
+      end,
+      baseline,
+      [finalSample],
+      100,
+      thresholds,
+      1,
+      Array.from({ length: generated }, (_, index) => String(index + 101)),
+    );
+
+    expect(report.actual.endToEndSlopesPerHour.databaseRows).toBeGreaterThan(
+      24,
+    );
+    expect(report.actual.endToEndSlopesPerHour.redisLength).toBeGreaterThan(24);
+    expect(report.checks.databaseRowsGrowthBounded).toBe(true);
+    expect(report.checks.redisGrowthBounded).toBe(true);
+  });
+
+  it("rejects database facts not accounted for by generated activities", () => {
+    const start = new Date("2026-07-28T00:00:00.000Z");
+    const end = new Date("2026-07-29T00:00:00.000Z");
+    const baseline = sample({ sampledAt: start.toISOString() });
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: baseline.archive.verified + 1,
+        verifiedRows: baseline.archive.verifiedRows + 1,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: {
+        ...baseline.database,
+        rows: baseline.database.rows + 2,
+      },
+    });
+
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+      ).checks.generatedRowAccounting,
+    ).toBe(false);
   });
 
   it("fails on missing samples, stale Worker, floor movement, or Redis overflow", () => {
@@ -913,6 +1022,7 @@ describe("retention soak harness", () => {
         baseline,
         [
           sample({
+            phase: "drain",
             sampledAt: end.toISOString(),
             floor: "1",
             workerFresh: false,
@@ -921,11 +1031,13 @@ describe("retention soak harness", () => {
         ],
         100,
         thresholds,
-        2,
+        1,
       ),
     ).toMatchObject({
       status: "failed",
       retentionFloorAdvanced: true,
+      activeSampleCount: 0,
+      drainSampleCount: 1,
       checks: {
         samplesComplete: false,
         workerStayedFresh: false,

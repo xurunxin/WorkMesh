@@ -11,6 +11,7 @@ import {
   RetentionSoakHeartbeatPump,
   type RetentionSoakHeartbeatMetrics,
 } from "./retention-soak-heartbeat.js";
+import { retentionSoakDrainConverged } from "./retention-soak-convergence.js";
 import { verifyRetentionSoakLock } from "./retention-soak-lock.js";
 import {
   collectRetentionSoakEndingEvidence,
@@ -50,8 +51,7 @@ const lockProof = await verifyRetentionSoakLock({
   sessionId: options.sessionId,
   lockPath: process.env.WORKMESH_RETENTION_SOAK_LOCK_PATH,
   lockFd: process.env.WORKMESH_RETENTION_SOAK_LOCK_FD,
-  sessionScopeSha256:
-    process.env.WORKMESH_RETENTION_SOAK_LOCK_SCOPE_SHA256,
+  sessionScopeSha256: process.env.WORKMESH_RETENTION_SOAK_LOCK_SCOPE_SHA256,
 });
 const provenance = await collectRetentionSoakProvenance({
   containerRoles: options.containerRoles,
@@ -82,9 +82,7 @@ if (options.dryRun) {
 }
 await writeFile(samplePath, "", { encoding: "utf8", flag: "wx" });
 
-const containerStats = async (): Promise<
-  RetentionSoakSample["containers"]
-> => {
+const containerStats = async (): Promise<RetentionSoakSample["containers"]> => {
   let output: string;
   try {
     output = await retentionSoakExecFile(
@@ -287,6 +285,24 @@ try {
     heartbeatPump!.assertHealthy();
     return sample;
   };
+  const recordSample = async (
+    kind: "sample" | "drain",
+    sample: RetentionSoakSample,
+  ): Promise<void> => {
+    const taggedSample: RetentionSoakSample = {
+      ...sample,
+      phase: kind === "sample" ? "active" : "drain",
+    };
+    samples.push(taggedSample);
+    await appendFile(
+      samplePath,
+      `${JSON.stringify({ kind, ...taggedSample })}\n`,
+      {
+        encoding: "utf8",
+        flag: "a",
+      },
+    );
+  };
 
   baseline = await collectSample(null);
   await appendFile(
@@ -316,21 +332,24 @@ try {
       activityCount += 1;
     }
 
-    const sample = await collectSample(activityLatencyMs);
-    samples.push(sample);
-    await appendFile(
-      samplePath,
-      `${JSON.stringify({ kind: "sample", ...sample })}\n`,
-      {
-        encoding: "utf8",
-        flag: "a",
-      },
-    );
+    await recordSample("sample", await collectSample(activityLatencyMs));
     const nextSampleAt =
       startedAt.getTime() + (index + 1) * options.sampleIntervalMs;
     const remaining = Math.min(deadline, nextSampleAt) - Date.now();
     if (remaining > 0)
       await new Promise((resolve) => setTimeout(resolve, remaining));
+  }
+  const drainDeadline = Date.now() + options.thresholds.maximumArchiveLatencyMs;
+  while (true) {
+    heartbeatPump.assertHealthy();
+    const drainSample = await collectSample(null);
+    await recordSample("drain", drainSample);
+    if (retentionSoakDrainConverged(baseline, drainSample)) break;
+    const remaining = drainDeadline - Date.now();
+    if (remaining <= 0) break;
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.min(options.sampleIntervalMs, remaining)),
+    );
   }
   heartbeatPump.assertHealthy();
   await heartbeatPump.stop();
