@@ -494,6 +494,7 @@ jobs:
       S3_SECRET_ACCESS_KEY: workmesh-ci-recovery-minio
       S3_FORCE_PATH_STYLE: 'true'
       NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+      WEB_ORIGIN: http://127.0.0.1:3000
       WORKER_HEALTH_HOST: 127.0.0.1
       WORKER_HEALTH_PORT: '3003'
       RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
@@ -556,10 +557,21 @@ jobs:
             docker exec workmesh-ci-recovery-postgres \
               createdb -U workmesh workmesh_recovery_target_test
           } 2>&1 | tee ci-logs/infrastructure.log
-      - name: Build restored services
+      - name: Build restored production images
         run: |
           set -o pipefail
-          pnpm build 2>&1 | tee ci-logs/build.log
+          {
+            docker build --build-arg WORKMESH_BUILD_SHA="${{ github.sha }}" \
+              --file infra/docker/api.production.Dockerfile \
+              --tag "workmesh-ci-recovery-api:${{ github.sha }}" .
+            docker build --build-arg WORKMESH_BUILD_SHA="${{ github.sha }}" \
+              --file infra/docker/worker.production.Dockerfile \
+              --tag "workmesh-ci-recovery-worker:${{ github.sha }}" .
+            docker build --build-arg WORKMESH_BUILD_SHA="${{ github.sha }}" \
+              --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
+              --file infra/docker/web.production.Dockerfile \
+              --tag "workmesh-ci-recovery-web:${{ github.sha }}" .
+          } 2>&1 | tee ci-logs/build.log
       - name: Run destructive recovery matrix
         run: |
           set -o pipefail
@@ -567,10 +579,19 @@ jobs:
       - name: Start restored services and run Agent workflow smoke
         run: |
           set -o pipefail
-          export NODE_ENV=production
-          pnpm --filter @workmesh/api start > ci-logs/restored-api.log 2>&1 &
-          pnpm --filter @workmesh/worker start > ci-logs/restored-worker.log 2>&1 &
-          pnpm --filter @workmesh/web start > ci-logs/restored-web.log 2>&1 &
+          docker run --detach --name workmesh-ci-recovery-api --network host \
+            --env DATABASE_URL --env REDIS_URL --env SESSION_SECRET --env WORKMESH_MASTER_KEY \
+            --env WORKMESH_BOOTSTRAP_TOKEN --env PAGINATION_CURSOR_KEYS --env PAGINATION_CURSOR_ACTIVE_KID \
+            --env AUTH_RATE_LIMIT_HMAC_KEY --env WEB_ORIGIN --env S3_ENDPOINT --env S3_REGION \
+            --env S3_BUCKET --env S3_ACCESS_KEY_ID --env S3_SECRET_ACCESS_KEY --env S3_FORCE_PATH_STYLE \
+            "workmesh-ci-recovery-api:${{ github.sha }}"
+          docker run --detach --name workmesh-ci-recovery-worker --network host \
+            --env DATABASE_URL --env REDIS_URL --env SESSION_SECRET --env WORKMESH_MASTER_KEY \
+            --env S3_ENDPOINT --env S3_REGION --env S3_BUCKET --env S3_ACCESS_KEY_ID \
+            --env S3_SECRET_ACCESS_KEY --env S3_FORCE_PATH_STYLE \
+            "workmesh-ci-recovery-worker:${{ github.sha }}"
+          docker run --detach --name workmesh-ci-recovery-web --network host \
+            "workmesh-ci-recovery-web:${{ github.sha }}"
           for attempt in $(seq 1 45); do
             if curl --fail --silent http://127.0.0.1:3001/readyz > /dev/null \
               && curl --fail --silent http://127.0.0.1:3003/readyz > /dev/null \

@@ -256,7 +256,12 @@ requireCondition((jobSections.get('api-integration') ?? '').includes('pnpm test:
 requireCondition((jobSections.get('worker-integration') ?? '').includes('pnpm test:integration:worker'), 'worker integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery test:integration'), 'recovery integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery smoke:restored'), 'restored service and Agent smoke command is missing')
-requireCondition((jobSections.get('recovery-integration') ?? '').includes('export NODE_ENV=production'), 'restored services must start in production mode')
+for (const dockerfile of ['api.production.Dockerfile', 'worker.production.Dockerfile', 'web.production.Dockerfile']) {
+  requireCondition((jobSections.get('recovery-integration') ?? '').includes(dockerfile), `recovery integration must build ${dockerfile}`)
+}
+for (const service of ['api', 'worker', 'web']) {
+  requireCondition((jobSections.get('recovery-integration') ?? '').includes(`--name workmesh-ci-recovery-${service}`), `recovery integration must start the production ${service} image`)
+}
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_TEST_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-report.json'), 'recovery report evidence path is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_SMOKE_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-service-smoke.json'), 'recovery smoke evidence path is missing')
 requireCondition(!(jobSections.get('worker-integration') ?? '').includes('redis:'), 'worker integration must not provision Redis')
