@@ -502,13 +502,40 @@ jobs:
           set -euo pipefail
           compose=(docker compose --project-name "$COMPOSE_PROJECT_NAME" --env-file "$RELEASE_ENV_FILE" --file docker-compose.production.yml)
           "${compose[@]}" restart --timeout 35 api worker mcp
+          containers_healthy() {
+            for service in api worker mcp; do
+              container_id="$("${compose[@]}" ps --quiet "$service")"
+              [[ -n "$container_id" ]] || return 1
+              [[ "$(docker inspect "$container_id" --format '{{.State.Health.Status}}' 2>/dev/null)" == healthy ]] || return 1
+            done
+          }
+          dump_restart_state() {
+            "${compose[@]}" ps
+            for service in api worker mcp; do
+              container_id="$("${compose[@]}" ps --quiet "$service")"
+              if [[ -n "$container_id" ]]; then
+                docker inspect "$container_id" --format '{{json .State}}' || true
+              fi
+            done
+          }
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:3001/readyz >/dev/null \
               && curl --fail --silent http://127.0.0.1:3002/readyz >/dev/null \
               && "${compose[@]}" exec --no-TTY worker node /app/healthcheck.mjs http://127.0.0.1:3003/readyz; then
               break
             fi
-            if [[ "$attempt" == 60 ]]; then exit 1; fi
+            if [[ "$attempt" == 60 ]]; then
+              dump_restart_state
+              exit 1
+            fi
+            sleep 2
+          done
+          for health_attempt in $(seq 1 15); do
+            if containers_healthy; then break; fi
+            if [[ "$health_attempt" == 15 ]]; then
+              dump_restart_state
+              exit 1
+            fi
             sleep 2
           done
           for service in api worker mcp; do
@@ -527,7 +554,7 @@ jobs:
             status: 'passed',
             sourceSha: process.env.SOURCE_SHA,
             composeProject: process.env.PROJECT,
-            checks: ['production-config', 'readiness', 'sigterm-35s', 'restart', 'readiness-recovery', 'restart-count-zero'],
+            checks: ['production-config', 'readiness', 'sigterm-35s', 'restart', 'readiness-recovery', 'docker-health-ready', 'restart-count-zero'],
           }, null, 2)}\n`)
           NODE
       - name: Capture production logs on failure

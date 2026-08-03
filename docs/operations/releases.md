@@ -32,6 +32,10 @@ immutable tags exist.
 The bundled MinIO service and API/Worker S3 clients use the same generated
 access key pair; introducing an unprovisioned second S3 credential is rejected
 by the production Compose contract.
+After a controlled restart, the production smoke first waits for application
+readiness and then gives Docker health state an independent convergence window
+before asserting the final lifecycle report; the two signals can converge at
+different times because healthchecks are interval-based.
 
 GHCR login uses the `stable-release` environment secret
 `GHCR_PUBLISH_TOKEN` when configured and otherwise falls back to the job-scoped

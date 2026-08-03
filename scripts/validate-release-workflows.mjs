@@ -89,6 +89,9 @@ for (const value of [
   'MINIO_ROOT_PASSWORD=$minio_password',
   'S3_SECRET_ACCESS_KEY=$minio_password',
   'restart --timeout 35 api worker mcp',
+  'containers_healthy() {',
+  'for health_attempt in $(seq 1 15); do',
+  'docker-health-ready',
   'restart-count-zero',
   ghcrCredentialExpression,
 ]) requireCondition(candidate.includes(value), `release-candidate must contain ${value}`)
