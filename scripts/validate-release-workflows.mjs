@@ -82,6 +82,10 @@ for (const value of [
   'Validate protected release configuration',
   'RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}',
   'WEB_ORIGIN=$RELEASE_WEB_ORIGIN',
+  "base64url_secret() { openssl rand -base64 32 | tr '+/' '-_' | tr -d '=\\n'; }",
+  'WORKMESH_BOOTSTRAP_TOKEN=$bootstrap_token',
+  'MINIO_ROOT_PASSWORD=$minio_password',
+  'S3_SECRET_ACCESS_KEY=$minio_password',
   'restart --timeout 35 api worker mcp',
   'restart-count-zero',
   ghcrCredentialExpression,
@@ -90,6 +94,14 @@ for (const value of [
 requireCondition(
   !candidate.includes('WEB_ORIGIN=https://workmesh.example'),
   'release-candidate must not use a placeholder Web origin for production smoke',
+)
+requireCondition(
+  !candidate.includes('WORKMESH_BOOTSTRAP_TOKEN=bootstrap-$(hex_secret)'),
+  'release-candidate must generate the bootstrap token as canonical base64url',
+)
+requireCondition(
+  !candidate.includes('S3_SECRET_ACCESS_KEY=s3-$(hex_secret)'),
+  'release-candidate must not invent an S3 credential that the bundled MinIO does not provision',
 )
 
 requireCondition(

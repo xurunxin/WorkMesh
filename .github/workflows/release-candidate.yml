@@ -421,22 +421,25 @@ jobs:
           umask 077
           mkdir -p release-runtime
           hex_secret() { openssl rand -hex 32; }
-          cursor_key="$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=\n')"
+          base64url_secret() { openssl rand -base64 32 | tr '+/' '-_' | tr -d '=\n'; }
+          bootstrap_token="$(base64url_secret)"
+          cursor_key="$(base64url_secret)"
+          minio_password="minio-$(hex_secret)"
           cat > "$RELEASE_ENV_FILE" <<EOF
           WORKMESH_BUILD_SHA=$SOURCE_SHA
           POSTGRES_PASSWORD=pg-$(hex_secret)
           MINIO_ROOT_USER=workmesh
-          MINIO_ROOT_PASSWORD=minio-$(hex_secret)
+          MINIO_ROOT_PASSWORD=$minio_password
           SESSION_SECRET=session-$(hex_secret)
           WORKMESH_MASTER_KEY=$(hex_secret)
-          WORKMESH_BOOTSTRAP_TOKEN=bootstrap-$(hex_secret)
+          WORKMESH_BOOTSTRAP_TOKEN=$bootstrap_token
           PAGINATION_CURSOR_KEYS=release-key:$cursor_key
           PAGINATION_CURSOR_ACTIVE_KID=release-key
           AUTH_RATE_LIMIT_HMAC_KEY=rate-$(hex_secret)
           WEB_ORIGIN=$RELEASE_WEB_ORIGIN
           S3_PUBLIC_ENDPOINT=http://127.0.0.1:9000
           S3_ACCESS_KEY_ID=workmesh
-          S3_SECRET_ACCESS_KEY=s3-$(hex_secret)
+          S3_SECRET_ACCESS_KEY=$minio_password
           NEXT_PUBLIC_API_URL=$RELEASE_WEB_API_URL
           WORKMESH_SESSION_TOKEN=session-token-$(hex_secret)
           WORKMESH_MCP_ACCESS_TOKEN=mcp-access-$(hex_secret)

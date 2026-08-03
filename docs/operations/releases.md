@@ -24,6 +24,14 @@ the API origin check. A protected preflight freezes both release origins after
 CI and security checks; an empty value, a path, or a non-HTTPS URL blocks the
 candidate before any immutable image is published.
 
+The release smoke creates its bootstrap credential as 32 random bytes encoded
+with canonical unpadded base64url. `ci:validate` runs the production Compose
+contract and the authoritative API/Worker startup parsers before publication,
+so generated runtime credentials cannot first fail after immutable tags exist.
+The bundled MinIO service and API/Worker S3 clients use the same generated
+access key pair; introducing an unprovisioned second S3 credential is rejected
+by the production Compose contract.
+
 GHCR login uses the `stable-release` environment secret
 `GHCR_PUBLISH_TOKEN` when configured and otherwise falls back to the job-scoped
 `GITHUB_TOKEN`. Registry login and registry-backed build/SBOM attestations use

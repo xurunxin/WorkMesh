@@ -266,6 +266,17 @@ assert(
 )
 const runGuard = (environment) =>
   spawnSync(process.execPath, [guard], { cwd: root, env: environment })
+const runAuthoritativeGuard = (environment) =>
+  spawnSync(
+    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+    ['-C', 'apps/api', 'exec', 'tsx', '../../infra/docker/runtime-guard.mjs'],
+    {
+      cwd: root,
+      env: environment,
+      encoding: 'utf8',
+      shell: process.platform === 'win32',
+    },
+  )
 const mcpEnvironment = {
   ...process.env,
   NODE_ENV: 'production',
@@ -294,6 +305,10 @@ assert(
 const paginationKey = Buffer.from(Array.from({ length: 32 }, (_, index) => index + 1)).toString(
   'base64url',
 )
+const bootstrapToken = Buffer.from(
+  Array.from({ length: 32 }, (_, index) => index + 33),
+).toString('base64url')
+const objectStorePassword = 'minio-' + 'l'.repeat(40)
 const apiEnvironment = {
   ...process.env,
   NODE_ENV: 'production',
@@ -303,13 +318,13 @@ const apiEnvironment = {
   REDIS_URL: 'redis://redis:6379',
   SESSION_SECRET: 'session-' + 'd'.repeat(40),
   WORKMESH_MASTER_KEY: 'e'.repeat(64),
-  WORKMESH_BOOTSTRAP_TOKEN: 'bootstrap-' + 'f'.repeat(40),
+  WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
   PAGINATION_CURSOR_KEYS: `validation-key:${paginationKey}`,
   PAGINATION_CURSOR_ACTIVE_KID: 'validation-key',
   AUTH_RATE_LIMIT_HMAC_KEY: 'rate-limit-' + 'h'.repeat(40),
   S3_BUCKET: 'workmesh-artifacts',
   S3_ACCESS_KEY_ID: 'workmesh',
-  S3_SECRET_ACCESS_KEY: 'object-store-' + 'i'.repeat(40),
+  S3_SECRET_ACCESS_KEY: objectStorePassword,
   WEB_ORIGIN: 'https://workmesh.test',
 }
 const composeEnvironment = {
@@ -321,7 +336,7 @@ const composeEnvironment = {
   WORKMESH_BUILD_SHA: 'a'.repeat(40),
   POSTGRES_PASSWORD: 'postgres-' + 'k'.repeat(32),
   MINIO_ROOT_USER: 'workmesh',
-  MINIO_ROOT_PASSWORD: 'minio-' + 'l'.repeat(40),
+  MINIO_ROOT_PASSWORD: objectStorePassword,
   SESSION_SECRET: apiEnvironment.SESSION_SECRET,
   WORKMESH_MASTER_KEY: apiEnvironment.WORKMESH_MASTER_KEY,
   WORKMESH_BOOTSTRAP_TOKEN: apiEnvironment.WORKMESH_BOOTSTRAP_TOKEN,
@@ -329,10 +344,10 @@ const composeEnvironment = {
   PAGINATION_CURSOR_ACTIVE_KID: apiEnvironment.PAGINATION_CURSOR_ACTIVE_KID,
   AUTH_RATE_LIMIT_HMAC_KEY: apiEnvironment.AUTH_RATE_LIMIT_HMAC_KEY,
   WEB_ORIGIN: apiEnvironment.WEB_ORIGIN,
-  S3_PUBLIC_ENDPOINT: 'https://objects.example',
+  S3_PUBLIC_ENDPOINT: 'https://objects.workmesh.test',
   S3_ACCESS_KEY_ID: apiEnvironment.S3_ACCESS_KEY_ID,
   S3_SECRET_ACCESS_KEY: apiEnvironment.S3_SECRET_ACCESS_KEY,
-  NEXT_PUBLIC_API_URL: 'https://workmesh.example/api',
+  NEXT_PUBLIC_API_URL: 'https://api.workmesh.test',
   WORKMESH_SESSION_TOKEN: '',
   WORKMESH_MCP_ACCESS_TOKEN: '',
 }
@@ -361,6 +376,36 @@ assert(
 )
 const renderedAgent = JSON.parse(agentProfile.stdout)
 const renderedRetention = renderedAgent.services.worker.environment
+assert(
+  renderedAgent.services.minio.environment.MINIO_ROOT_USER ===
+    renderedAgent.services.api.environment.S3_ACCESS_KEY_ID &&
+    renderedAgent.services.minio.environment.MINIO_ROOT_USER ===
+      renderedAgent.services.worker.environment.S3_ACCESS_KEY_ID,
+  'bundled MinIO access key must match the API and Worker S3 access key',
+)
+assert(
+  renderedAgent.services.minio.environment.MINIO_ROOT_PASSWORD ===
+    renderedAgent.services.api.environment.S3_SECRET_ACCESS_KEY &&
+    renderedAgent.services.minio.environment.MINIO_ROOT_PASSWORD ===
+      renderedAgent.services.worker.environment.S3_SECRET_ACCESS_KEY,
+  'bundled MinIO secret must match the API and Worker S3 secret',
+)
+const apiGuard = runAuthoritativeGuard({
+  ...process.env,
+  ...renderedAgent.services.api.environment,
+})
+assert(
+  apiGuard.status === 0,
+  `rendered production API must pass the authoritative startup parser: ${apiGuard.stderr}`,
+)
+const workerGuard = runAuthoritativeGuard({
+  ...process.env,
+  ...renderedAgent.services.worker.environment,
+})
+assert(
+  workerGuard.status === 0,
+  `rendered production Worker must pass the authoritative startup parsers: ${workerGuard.stderr}`,
+)
 assert(
   renderedRetention.WORKMESH_RETENTION_ARCHIVE_ENABLED === 'true' &&
     renderedRetention.WORKMESH_RETENTION_CLEANUP_ENABLED === 'false' &&
