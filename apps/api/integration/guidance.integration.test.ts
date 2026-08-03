@@ -1,0 +1,138 @@
+import { createHash, randomUUID } from 'node:crypto'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { applyMigrations, createDb } from '@workmesh/db'
+import { guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
+import { buildApp } from '../src/server.js'
+
+const databaseUrl = process.env.DATABASE_URL
+if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Guidance integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
+if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Guidance integration requires a dedicated *test* database.')
+
+const db = createDb(databaseUrl)
+const app = buildApp()
+type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
+type Human = { cookie: string; csrf: string }
+type Page<T> = { items: T[]; nextCursor: string | null }
+
+const humanCall = async (human: Human, method: 'GET' | 'POST' | 'PUT', url: string, payload?: object, headers: Record<string, string> = {}): Promise<Response> =>
+  await app.inject({ method, url, payload, headers: { cookie: human.cookie, 'x-csrf-token': human.csrf, 'idempotency-key': randomUUID(), ...headers } }) as unknown as Response
+const agentCall = async (token: string, url: string): Promise<Response> =>
+  await app.inject({ method: 'GET', url, headers: { authorization: `Bearer ${token}` } }) as unknown as Response
+
+describe('versioned Guidance acceptance', () => {
+  beforeAll(async () => {
+    await applyMigrations(db)
+    await db.query('TRUNCATE workspaces CASCADE')
+  }, 300_000)
+  afterAll(async () => { await app.close(); await db.end() })
+
+  it('publishes immutable scoped revisions, pins Session context, and audits pointer-only rollback', async () => {
+    const install = await app.inject({
+      method: 'POST', url: '/api/v1/auth/install',
+      payload: { name: 'Guidance Workspace', slug: `guidance-${randomUUID().slice(0, 8)}`, adminName: 'Guidance Admin', email: `${randomUUID()}@guidance.test`, password: 'guidance-test-password' },
+      headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! },
+    }) as unknown as Response
+    expect(install.statusCode, JSON.stringify(install.json())).toBe(200)
+    const rawCookie = Array.isArray(install.headers['set-cookie']) ? install.headers['set-cookie'][0] : install.headers['set-cookie']
+    const human = { cookie: String(rawCookie).split(';')[0] ?? '', csrf: install.json<{ csrfToken: string }>().csrfToken }
+    const me = await humanCall(human, 'GET', '/api/v1/auth/me')
+    const actor = me.json<{ actor: { id: string; workspace_id: string } }>().actor
+    const teamId = (await humanCall(human, 'GET', '/api/v1/teams')).json<Page<{ id: string }>>().items[0]!.id
+    const projectResponse = await humanCall(human, 'POST', '/api/v1/projects', { teamId, name: 'Guided Project', description: 'Product intent remains a Project description.' })
+    expect(projectResponse.statusCode, JSON.stringify(projectResponse.json())).toBe(200)
+    const projectId = projectResponse.json<{ id: string }>().id
+
+    for (const [scope, id] of [['workspaces', actor.workspace_id], ['teams', teamId], ['projects', projectId]] as const) {
+      const unpublished = guidanceResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/${scope}/${id}/guidance`)).json())
+      expect(unpublished).toMatchObject({ status: 'unpublished', revision: 0, markdown: '', currentRevision: null })
+    }
+    expect((await db.query<{ description: string }>('SELECT description FROM projects WHERE id=$1', [projectId])).rows[0]!.description).toBe('Product intent remains a Project description.')
+
+    const publish = async (scope: 'workspaces' | 'teams' | 'projects', id: string, markdown: string, changeSummary: string, revision = 0, key = randomUUID()): Promise<Response> =>
+      humanCall(human, 'PUT', `/api/v1/${scope}/${id}/guidance`, { markdown, changeSummary }, { 'if-match': `"revision-${revision}"`, 'idempotency-key': key })
+    const workspaceMarkdown = '# Workspace\n\nFollow platform policy.'
+    const teamV1Markdown = '# Team\n\nPrefer small reversible changes.'
+    const projectMarkdown = '# Project\n\nPreserve the release evidence.'
+    expect((await publish('workspaces', actor.workspace_id, workspaceMarkdown, 'Workspace baseline')).statusCode).toBe(200)
+    const teamKey = randomUUID()
+    const teamV1Response = await publish('teams', teamId, teamV1Markdown, 'Team baseline', 0, teamKey)
+    const teamV1Replay = await publish('teams', teamId, teamV1Markdown, 'Team baseline', 0, teamKey)
+    expect([teamV1Response.statusCode, teamV1Replay.statusCode]).toEqual([200, 200])
+    expect(teamV1Replay.json()).toEqual(teamV1Response.json())
+    const teamV1 = guidanceResponseSchema.parse(teamV1Response.json())
+    expect(teamV1.currentRevision).toMatchObject({ revisionNumber: 1, authorActorId: actor.id, authorDisplayName: 'Guidance Admin', contentHash: `sha256:${createHash('sha256').update(teamV1Markdown).digest('hex')}` })
+    expect((await publish('projects', projectId, projectMarkdown, 'Project baseline')).statusCode).toBe(200)
+
+    const rejectedSecret = await publish('projects', projectId, 'token: super-secret-value', 'must be rejected', 1)
+    expect(rejectedSecret.statusCode).toBe(400)
+    expect(rejectedSecret.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'VALIDATION_ERROR' } })
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM guidance_revisions WHERE document_id=$1', [guidanceResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/projects/${projectId}/guidance`)).json()).documentId])).rows[0]!.count).toBe(1)
+
+    const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
+    const work = await humanCall(human, 'POST', '/api/v1/work-items', { teamId, projectId, title: 'Pinned Guidance work', statusId: readyId, responsibleHumanActorId: actor.id })
+    const workItem = work.json<{ id: string; revision: number }>()
+    const registration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `guidance-agent-${randomUUID().slice(0, 8)}`, name: 'Guidance Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read', 'work:write'], approvedCapabilities: ['work:read', 'work:write'], maxConcurrency: 1 })
+    expect(registration.statusCode, JSON.stringify(registration.json())).toBe(200)
+    const registered = registration.json<{ id: string; installation_token: string }>()
+    expect((await humanCall(human, 'PUT', `/api/v1/agents/${registered.id}/team-access/${teamId}`, { approvedCapabilities: ['work:read', 'work:write'] })).statusCode).toBe(200)
+    const startedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${workItem.id}/agent-session`, { agentId: registered.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: ['work:read', 'work:write'], initialPrompt: 'Use pinned Guidance.', budget: {} }, { 'if-match': `"revision-${workItem.revision}"` })
+    expect(startedResponse.statusCode, JSON.stringify(startedResponse.json())).toBe(200)
+    const started = startedResponse.json<{ session: { id: string; exchangeToken: string } }>().session
+    const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/token/exchange`, payload: { exchangeToken: started.exchangeToken }, headers: { authorization: `Bearer ${registered.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
+    expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
+    const token = exchange.json<{ sessionToken: string }>().sessionToken
+    const acknowledged = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/ack`, payload: { summary: 'Guidance loaded', externalUrls: [] }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
+    const executing = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/state`, payload: { state: 'executing', reason: 'Validate pinned Guidance' }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), 'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"` } }) as unknown as Response
+    expect(executing.statusCode, JSON.stringify(executing.json())).toBe(200)
+    const contextBefore = await agentCall(token, `/api/v1/agent-sessions/${started.id}/context`)
+    expect(contextBefore.statusCode, JSON.stringify(contextBefore.json())).toBe(200)
+    const pinnedBefore = sessionContextResponseSchema.parse(contextBefore.json())
+    expect(pinnedBefore.guidancePins.map(pin => pin.scope)).toEqual(['workspace', 'team', 'project'])
+    const pinnedTeam = pinnedBefore.guidancePins.find(pin => pin.scope === 'team')!
+    expect(pinnedTeam).toMatchObject({ revisionId: teamV1.currentRevision!.id, contentHash: teamV1.currentRevision!.contentHash })
+    const snapshotManifest = (await db.query<{ manifest: { scope: unknown } }>('SELECT manifest FROM context_snapshots WHERE id=$1', [pinnedBefore.contextSnapshotId])).rows[0]!.manifest
+    expect(snapshotManifest.scope).toEqual({ workspaceId: actor.workspace_id, teamId, projectId })
+
+    const otherTeam = await humanCall(human, 'POST', '/api/v1/teams', { name: 'Other Team', key: `O${randomUUID().replaceAll('-', '').slice(0, 5).toUpperCase()}` })
+    expect(otherTeam.statusCode, JSON.stringify(otherTeam.json())).toBe(200)
+    expect((await agentCall(token, `/api/v1/teams/${otherTeam.json<{ id: string }>().id}/guidance`)).statusCode).toBe(403)
+
+    const teamV2Markdown = '# Team\n\nPrefer small reversible changes.\n\nRecord evidence.'
+    const concurrent = await Promise.all([
+      publish('teams', teamId, teamV2Markdown, 'Add evidence rule', 1),
+      publish('teams', teamId, `${teamV2Markdown}\n\nConflicting edit.`, 'Concurrent edit', 1),
+    ])
+    expect(concurrent.map(response => response.statusCode).sort()).toEqual([200, 409])
+    const teamV2 = guidanceResponseSchema.parse(concurrent.find(response => response.statusCode === 200)!.json())
+    const stale = await publish('teams', teamId, '# Stale', 'Stale edit', 1)
+    expect(stale.statusCode).toBe(409)
+    const contextAfter = await agentCall(token, `/api/v1/agent-sessions/${started.id}/context`)
+    expect(contextAfter.statusCode, JSON.stringify(contextAfter.json())).toBe(200)
+    const pinnedAfter = sessionContextResponseSchema.parse(contextAfter.json())
+    expect(pinnedAfter.guidancePins.find(pin => pin.scope === 'team')).toEqual(pinnedTeam)
+
+    const historyResponse = await humanCall(human, 'GET', `/api/v1/teams/${teamId}/guidance/history`)
+    expect(historyResponse.statusCode).toBe(200)
+    const history = guidanceHistoryResponseSchema.parse(historyResponse.json())
+    expect(history.revisions.map(revision => revision.revisionNumber)).toEqual([2, 1])
+    const diffResponse = await humanCall(human, 'GET', `/api/v1/teams/${teamId}/guidance/diff?fromRevisionId=${teamV1.currentRevision!.id}&toRevisionId=${teamV2.currentRevision!.id}`)
+    expect(diffResponse.statusCode, JSON.stringify(diffResponse.json())).toBe(200)
+    expect(guidanceDiffResponseSchema.parse(diffResponse.json()).changes.some(change => change.kind === 'added' && change.text === 'Record evidence.')).toBe(true)
+
+    const rolledBackResponse = await humanCall(human, 'POST', `/api/v1/teams/${teamId}/guidance/rollback`, { revisionId: teamV1.currentRevision!.id, reason: 'Restore reviewed guidance' }, { 'if-match': `"revision-${teamV2.revision}"` })
+    expect(rolledBackResponse.statusCode, JSON.stringify(rolledBackResponse.json())).toBe(200)
+    const rolledBack = guidanceResponseSchema.parse(rolledBackResponse.json())
+    expect(rolledBack).toMatchObject({ status: 'active', markdown: teamV1Markdown, currentRevision: { id: teamV1.currentRevision!.id } })
+    const archivedResponse = await humanCall(human, 'POST', `/api/v1/teams/${teamId}/guidance/archive`, { reason: 'Superseded by a future policy' }, { 'if-match': `"revision-${rolledBack.revision}"` })
+    expect(archivedResponse.statusCode, JSON.stringify(archivedResponse.json())).toBe(200)
+    expect(guidanceResponseSchema.parse(archivedResponse.json())).toMatchObject({ status: 'archived', markdown: '', currentRevision: { id: teamV1.currentRevision!.id } })
+    const finalHistory = guidanceHistoryResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/teams/${teamId}/guidance/history`)).json())
+    expect(finalHistory.revisions).toHaveLength(2)
+    expect(finalHistory.audit.map(fact => fact.action)).toEqual(expect.arrayContaining(['published', 'rolled_back', 'archived']))
+
+    const events = await db.query<{ payload: Record<string, unknown> }>("SELECT payload FROM domain_events WHERE aggregate_id=$1 AND event_type LIKE 'guidance.%'", [teamId])
+    expect(events.rows.length).toBeGreaterThanOrEqual(4)
+    expect(JSON.stringify(events.rows)).not.toContain(teamV1Markdown)
+  })
+})

@@ -1205,10 +1205,17 @@ Agent 可以提出决策，不得伪装成人类做最终决策。策略允许�
 
 合并规则：
 
-- 后层可以覆盖明确标记为 override 的配置；
-- 普通 Markdown 默认追加；
-- 系统生成最终 Context Manifest，显示来源；
-- 任何 Guidance 修改都产生版本。
+- 顺序固定为 Workspace → Team → Project → Repository → Work Item → Session/Human Prompt；
+- 普通 Markdown 按上述顺序追加，后层只可覆盖明确声明为可覆盖的工作偏好；
+- 平台 identity、delegation、capability、resource scope、approval、Lease、revision、
+  idempotency 和安全策略永远不可被 Guidance 覆盖；
+- Workspace、Team、Project 是三个独立文档，Project description 保留原义且不自动迁移；
+- 发布生成带作者、时间和 SHA-256 的不可变 revision；rollback 只移动 current pointer
+  并追加审计事实，历史正文不可修改；
+- 编辑、发布、归档、历史、diff 与 rollback 仅对授权 Human 开放，Agent/MCP 只读；
+- 系统生成最终 Context Manifest，显示来源，并在 Session 创建时固定实际使用的
+  revision ID、revision number、URI 与 SHA-256；
+- 后续发布不得悄然改变已有 Session 的 Context。
 
 ## 10.2 AGENTS.md
 
@@ -1230,7 +1237,7 @@ Session 创建时生成不可变 Snapshot：
 - Parent/Sub-issue 与 Blocker；
 - Project/Milestone 目标；
 - 当前 Plan；
-- Guidance 合并结果；
+- Guidance 合并结果及各作用域实际使用的不可变 revision ID、URI 和 SHA-256；
 - Repository、base branch、commit；
 - 选定文件/文档；
 - 权限和预算；

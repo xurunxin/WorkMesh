@@ -8,6 +8,7 @@ import {
   artifactInputSchema, completeAgentSessionInputSchema, createAgentSessionInputSchema, decideApprovalInputSchema,
   delegationInputSchema, failAgentSessionInputSchema, heartbeatInputSchema, promptAgentSessionInputSchema,
   publishPlanInputSchema, requestApprovalInputSchema, signalAgentSessionInputSchema, stopAcknowledgementInputSchema, agentSessionStateSchema, retryAgentSessionInputSchema, refreshAgentSessionTokenInputSchema, delegateAndStartAgentSessionInputSchema, consumeApprovalInputSchema,
+  sessionContextResponseSchema,
 } from "@workmesh/contracts";
 import { DomainError, parseRevision } from "@workmesh/domain";
 import * as commands from "./commands.js";
@@ -16,6 +17,7 @@ import { authClientContext } from "../auth-idempotency.js";
 import type { Paginator } from "../pagination.js";
 import { liveSessionReadPredicate } from "../live-read-authorization.js";
 import { attachWorkItemExecutors } from "../work-item-executors.js";
+import { guidancePinsFromSnapshot } from "../guidance.js";
 
 type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator };
 const id = (request: FastifyRequest) => z.object({ id: z.string().uuid() }).parse(request.params).id;
@@ -191,16 +193,20 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
   app.get("/api/v1/agent-sessions/:id/context", async request => {
     const sessionId = id(request);
     await readableSession(request,h,sessionId);
-    const session=(await h.db.query("SELECT session.*,CASE WHEN session.work_item_id IS NOT NULL THEN scope_project.id ELSE session_project.id END AS effective_project_id FROM agent_sessions session LEFT JOIN work_items scope_item ON scope_item.id=session.work_item_id AND scope_item.workspace_id=session.workspace_id AND scope_item.deleted_at IS NULL LEFT JOIN projects scope_project ON scope_project.id=scope_item.project_id AND scope_project.workspace_id=session.workspace_id AND scope_project.deleted_at IS NULL LEFT JOIN projects session_project ON session_project.id=session.project_id AND session_project.workspace_id=session.workspace_id AND session_project.deleted_at IS NULL WHERE session.id=$1 AND session.workspace_id=$2",[sessionId,actor(request).workspaceId])).rows[0] as {team_id:string;work_item_id:string|null;project_id:string|null;effective_project_id:string|null;current_plan_version_id:string|null;context_snapshot_id:string|null}|undefined;
-    if(!session) throw new DomainError("NOT_FOUND","Agent session not found");
-    const rawWorkItem=session.work_item_id
-      ? (await h.db.query<Record<string,unknown> & {id:string;workspace_id:string;responsible_human_actor_id:string|null}>("SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL",[session.work_item_id,actor(request).workspaceId])).rows[0] ?? null
+    const rawSession=(await h.db.query<Record<string,unknown> & {team_id:string;work_item_id:string|null;project_id:string|null;current_plan_version_id:string|null;context_snapshot_id:string|null}>("SELECT session.* FROM agent_sessions session WHERE session.id=$1 AND session.workspace_id=$2",[sessionId,actor(request).workspaceId])).rows[0];
+    if(!rawSession) throw new DomainError("NOT_FOUND","Agent session not found");
+    const session=commands.normalizeAgentSessionResponse(rawSession);
+    const rawWorkItem=rawSession.work_item_id
+      ? (await h.db.query<Record<string,unknown> & {id:string;workspace_id:string;responsible_human_actor_id:string|null}>("SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL",[rawSession.work_item_id,actor(request).workspaceId])).rows[0] ?? null
       : null;
-    const workItem=rawWorkItem ? (await attachWorkItemExecutors(h.db,[rawWorkItem]))[0]! : null;
-    const plan=session.current_plan_version_id ? (await h.db.query("SELECT * FROM agent_plan_versions WHERE id=$1",[session.current_plan_version_id])).rows[0] ?? null:null;
-    const planWithSteps=plan?{...plan as object,steps:(await h.db.query("SELECT * FROM agent_plan_steps WHERE plan_version_id=$1 ORDER BY ordinal",[session.current_plan_version_id])).rows}:null;
-    const guidanceUris=[`workmesh://workspace/${actor(request).workspaceId}/guidance`,`workmesh://team/${session.team_id}/guidance`,...(session.effective_project_id?[`workmesh://project/${session.effective_project_id}/guidance`]:[])];
-    return {session,workItem,plan:planWithSteps,contextSnapshotId:session.context_snapshot_id,guidanceUris};
+    const projectedWorkItem=rawWorkItem ? (await attachWorkItemExecutors(h.db,[rawWorkItem]))[0]! : null;
+    const workItem=projectedWorkItem ? Object.fromEntries(Object.entries(projectedWorkItem).filter(([key])=>key!=="cycle_id")) : null;
+    const plan=rawSession.current_plan_version_id ? (await h.db.query("SELECT * FROM agent_plan_versions WHERE id=$1",[rawSession.current_plan_version_id])).rows[0] ?? null:null;
+    const planWithSteps=plan?{...plan as object,steps:(await h.db.query("SELECT * FROM agent_plan_steps WHERE plan_version_id=$1 ORDER BY ordinal",[rawSession.current_plan_version_id])).rows}:null;
+    const guidancePins=await guidancePinsFromSnapshot(h.db,actor(request).workspaceId,rawSession.context_snapshot_id);
+    const guidanceUris=guidancePins.map(pin=>pin.uri);
+    const response={session,workItem,plan:planWithSteps,contextSnapshotId:rawSession.context_snapshot_id,guidanceUris,guidancePins};
+    return sessionContextResponseSchema.parse(JSON.parse(JSON.stringify(response)) as unknown);
   });
   app.put("/api/v1/agent-sessions/:id/plan", async request => { const body = publishPlanInputSchema.parse(request.body); return commands.publishPlan(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });
   app.post("/api/v1/agent-sessions/:id/signals", async request => { const body = signalAgentSessionInputSchema.parse(request.body); return commands.signal(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });
@@ -286,13 +292,4 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
   app.post("/api/v1/approvals/:id/decide", async request => { const body = decideApprovalInputSchema.parse(request.body); return commands.decideApproval(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });
   app.post("/api/v1/approvals/:id/consume", async request => { const body=consumeApprovalInputSchema.parse(request.body); return commands.consumeApproval(h.db,h.meta(request,body,{id:id(request)}),id(request),parseRevision(h.header(request,"if-match")),body); });
 
-  const guidance = async (request:FastifyRequest, scope:"workspace"|"team"|"project") => {
-    const scopeId=id(request); const current=actor(request);
-    if(scope==="workspace") { if(scopeId!==current.workspaceId) throw new DomainError("RESOURCE_SCOPE_DENIED","Workspace guidance is outside the actor scope"); if(current.kind==="agent") await readableSession(request,h,current.agentSessionId!); const row=(await h.db.query<{id:string;revision:number;updated_at:Date}>("SELECT id,revision,updated_at FROM workspaces WHERE id=$1",[scopeId])).rows[0]; if(!row) throw new DomainError("NOT_FOUND","Workspace not found"); return {scope,scopeId:row.id,revision:row.revision,markdown:"",updatedAt:row.updated_at}; }
-    if(scope==="team") { if(current.kind==="agent") { const session=await readableSession(request,h,current.agentSessionId!); if(session.team_id!==scopeId) throw new DomainError("RESOURCE_SCOPE_DENIED","Agent token cannot read this team guidance"); } else await h.readableTeam(request,scopeId); const row=(await h.db.query<{id:string;revision:number;updated_at:Date}>("SELECT id,revision,updated_at FROM teams WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",[scopeId,current.workspaceId])).rows[0]; if(!row) throw new DomainError("NOT_FOUND","Team not found"); return {scope,scopeId:row.id,revision:row.revision,markdown:"",updatedAt:row.updated_at}; }
-    const row=(await h.db.query<{id:string;team_id:string;revision:number;updated_at:Date;description:string|null}>("SELECT id,team_id,revision,updated_at,description FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",[scopeId,current.workspaceId])).rows[0]; if(!row) throw new DomainError("NOT_FOUND","Project not found"); if(current.kind==="agent") { const session=await readableSession(request,h,current.agentSessionId!); const ownsProject=session.work_item_id ? Boolean((await h.db.query("SELECT 1 FROM work_items WHERE id=$1 AND workspace_id=$2 AND project_id=$3 AND deleted_at IS NULL",[session.work_item_id,current.workspaceId,scopeId])).rowCount) : session.project_id===scopeId; if(session.team_id!==row.team_id || !ownsProject) throw new DomainError("RESOURCE_SCOPE_DENIED","Agent token cannot read this project guidance"); } else await h.readableTeam(request,row.team_id); return {scope,scopeId:row.id,revision:row.revision,markdown:row.description??"",updatedAt:row.updated_at};
-  };
-  app.get("/api/v1/workspaces/:id/guidance",async request=>guidance(request,"workspace"));
-  app.get("/api/v1/teams/:id/guidance",async request=>guidance(request,"team"));
-  app.get("/api/v1/projects/:id/guidance",async request=>guidance(request,"project"));
 }

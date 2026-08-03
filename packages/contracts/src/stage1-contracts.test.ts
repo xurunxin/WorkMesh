@@ -90,7 +90,7 @@ describe('Stage 1 agent contracts', () => {
       const pathBlock = openapi.slice(pathStart, nextPath === -1 ? undefined : pathStart + 1 + nextPath)
       expect(pathBlock).toMatch(new RegExp(`operationId:|${route.method.toLowerCase()}:`))
       if ('mutation' in route && route.mutation) expect(pathBlock).toContain('#/components/parameters/IdempotencyKey')
-      if ('revisioned' in route && route.revisioned) expect(pathBlock).toContain('#/components/parameters/IfMatch')
+      if ('revisioned' in route && route.revisioned) expect(pathBlock).toMatch(/#\/components\/parameters\/(?:IfMatch|GuidanceIfMatch)/)
     }
   })
 

@@ -21,6 +21,7 @@ import {
   liveHumanTeamReadPredicate,
   liveSessionReadPredicate,
 } from '../live-read-authorization.js'
+import { readGuidance } from '../guidance.js'
 
 type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator }
 type Subject = 'work_item' | 'project' | 'session'
@@ -34,7 +35,7 @@ const leaseResponse = <T extends { version: number }>(lease: T): T & { revision:
 })
 
 async function session(tx: PoolClient, workspaceId: string, id: string) {
-  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; project_exists:boolean; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
+  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; project_exists:boolean; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; context_snapshot_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
     `SELECT current_session.id,current_session.workspace_id,current_session.team_id,
             current_session.work_item_id,
             live_work_item.id IS NOT NULL AS work_item_exists,
@@ -44,6 +45,7 @@ async function session(tx: PoolClient, workspaceId: string, id: string) {
             current_session.plan_step_id,
             current_session.plan_step_version_id,
             current_session.current_plan_version_id,
+            current_session.context_snapshot_id,
             current_session.parent_session_id,current_session.delegation_id,
             current_session.agent_id,current_session.agent_actor_id,
             current_session.budget,current_session.max_child_sessions,
@@ -1365,7 +1367,7 @@ async function createChild(h:Helpers,request:FastifyRequest){
     const reservations=(await tx.query<{reserved:Record<string,number>}>('SELECT reserved FROM session_budget_reservations WHERE parent_session_id=$1 AND status=$2 FOR UPDATE',[parentId,'reserved'])).rows
     for(const [key,value] of Object.entries(budget)){const used=reservations.reduce((sum,row)=>sum+Number(row.reserved[key]??0),0);const cap=Number((parent.budget as Record<string,number>)[key]??Infinity);if(used+Number(value)>cap)throw new DomainError('CHILD_BUDGET_EXCEEDED','Child budget exceeds parent reservation',{key,used,requested:value,cap})}
     const delegation=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) SELECT $1::uuid,$2::uuid,$3::uuid,$4::uuid,d.principal_human_actor_id,NULL,$5::delegation_role,'plan_step',$6::uuid,$7::text[],jsonb_build_object('workspaceId',$1::uuid,'teamIds',jsonb_build_array($2::uuid),'workItemIds',jsonb_build_array(s.work_item_id),'projectIds','[]'::jsonb,'repositoryIds','[]'::jsonb,'capabilities',$7::text[]),s.delegation_id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id WHERE s.id=$8::uuid RETURNING id",[actor(request).workspaceId,parent.team_id,agent.id,agent.actor_id,body.role,body.planStepId,caps,parentId])).rows[0] as {id:string}
-    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,'queued',$10,$11,$11,$12) RETURNING *",[actor(request).workspaceId,parent.team_id,agent.id,agent.actor_id,delegation.id,parentId,parent.work_item_id,body.planStepId,body.planVersionId,body.initialPrompt,budget,body.required])).rows[0]as{id:string}
+    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,parent.team_id,agent.id,agent.actor_id,delegation.id,parentId,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,budget,body.required])).rows[0]as{id:string}
     await tx.query('INSERT INTO session_budget_reservations(parent_session_id,child_session_id,allocation,reserved) VALUES($1,$2,$3,$3)',[parentId,child.id,budget])
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT DO NOTHING",[actor(request).workspaceId,child.id,parent.team_id])
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
@@ -1383,15 +1385,23 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
     const effectiveProjectId=s.work_item_id ? s.work_item_project_id : s.project_id
     const base=(await tx.query<{work_item_id:string|null;manifest:unknown;sources:unknown}>('SELECT work_item_id,manifest,sources FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id IS NOT DISTINCT FROM $3',[body.baseSnapshotId,actor(request).workspaceId,s.work_item_id])).rows[0]
     if(!base)throw new DomainError('RESOURCE_SCOPE_DENIED','Base context snapshot is outside this session scope')
+    const resolvedAdditions:Array<Record<string,unknown>>=[]
     for(const addition of body.additions) {
       if (addition.sourceType!=='guidance' && (!addition.sourceId || addition.uri)) throw new DomainError('VALIDATION_ERROR','Internal context additions require only an authorized source id')
       if (addition.sourceType==='guidance') {
         if (addition.sourceId || !addition.uri) throw new DomainError('VALIDATION_ERROR','Guidance context additions require only an authorized WorkMesh URI')
         const uri=new URL(addition.uri); const workspaceUri=`workmesh://workspace/${actor(request).workspaceId}/guidance`; const teamUri=`workmesh://team/${s.team_id}/guidance`; const projectUri=effectiveProjectId?`workmesh://project/${effectiveProjectId}/guidance`:null
         if (![workspaceUri,teamUri,projectUri].includes(uri.toString().replace(/\/$/,''))) throw new DomainError('RESOURCE_SCOPE_DENIED','Guidance URI is outside the session scope')
-        const guidance=uri.toString().replace(/\/$/,'')===projectUri ? (await tx.query<{description:string|null}>('SELECT description FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',[effectiveProjectId,actor(request).workspaceId])).rows[0]?.description??'' : ''
-        const guidanceHash=`sha256:${createHash('sha256').update(guidance).digest('hex')}`
-        if (addition.hash!==guidanceHash) throw new DomainError('VALIDATION_ERROR','Guidance hash does not match the authorized source')
+        const normalized=uri.toString().replace(/\/$/,'')
+        const target=normalized===workspaceUri
+          ? {scope:'workspace' as const,id:actor(request).workspaceId}
+          : normalized===teamUri
+            ? {scope:'team' as const,id:s.team_id}
+            : {scope:'project' as const,id:effectiveProjectId!}
+        const guidance=await readGuidance(tx,actor(request).workspaceId,target.scope,target.id)
+        if(guidance.status!=='active'||!guidance.currentRevision) throw new DomainError('NOT_FOUND','Guidance is not currently published')
+        if (addition.hash!==guidance.currentRevision.contentHash) throw new DomainError('VALIDATION_ERROR','Guidance hash does not match the authorized source')
+        resolvedAdditions.push({...addition,scope:target.scope,scopeId:target.id,revisionId:guidance.currentRevision.id,revisionNumber:guidance.currentRevision.revisionNumber})
         continue
       }
       if(addition.sourceType==='artifact' && addition.sourceId) {
@@ -1404,9 +1414,10 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
         const found=await tx.query("SELECT 1 FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 AND (c.subject_kind='work_item' AND c.subject_id=$3 OR c.subject_kind='session' AND c.subject_id=$4 OR c.subject_kind='project' AND c.subject_id=$5)",[addition.sourceId,actor(request).workspaceId,s.work_item_id,sessionId,effectiveProjectId])
         if(!found.rowCount)throw new DomainError('RESOURCE_SCOPE_DENIED','Context message is not readable by this session')
       }
+      resolvedAdditions.push(addition)
     }
-    const hash='sha256:'+createHash('sha256').update(JSON.stringify({base:body.baseSnapshotId,additions:body.additions})).digest('hex');const history={kind:'delta',baseSnapshotId:body.baseSnapshotId,sessionId};const additionsJson=JSON.stringify(body.additions)
-    const snap=(await tx.query("INSERT INTO context_snapshots(workspace_id,work_item_id,manifest,sources,content_hash,token_estimate,truncation,created_by_actor_id,parent_snapshot_id,snapshot_kind,history_link) VALUES($1,$2,$3,$4::jsonb,$5,0,$6,$7,$8,'delta',$9) RETURNING *",[actor(request).workspaceId,s.work_item_id,{baseSnapshotId:body.baseSnapshotId,additions:body.additions},additionsJson,hash,{reason:'stage2_delta'},actor(request).id,body.baseSnapshotId,history])).rows[0]as{id:string}
+    const hash='sha256:'+createHash('sha256').update(JSON.stringify({base:body.baseSnapshotId,additions:resolvedAdditions})).digest('hex');const history={kind:'delta',baseSnapshotId:body.baseSnapshotId,sessionId};const additionsJson=JSON.stringify(resolvedAdditions)
+    const snap=(await tx.query("INSERT INTO context_snapshots(workspace_id,work_item_id,manifest,sources,content_hash,token_estimate,truncation,created_by_actor_id,parent_snapshot_id,snapshot_kind,history_link) VALUES($1,$2,$3,$4::jsonb,$5,0,$6,$7,$8,'delta',$9) RETURNING *",[actor(request).workspaceId,s.work_item_id,{baseSnapshotId:body.baseSnapshotId,additions:resolvedAdditions},additionsJson,hash,{reason:'stage2_delta'},actor(request).id,body.baseSnapshotId,history])).rows[0]as{id:string}
     const delta=(await tx.query('INSERT INTO context_deltas(session_id,base_snapshot_id,source_snapshot_id,additions,content_hash,rationale,history_link,created_by_actor_id) VALUES($1,$2,$3,$4::jsonb,$5,$6,$7,$8) RETURNING *',[sessionId,body.baseSnapshotId,snap.id,additionsJson,hash,body.rationale,history,actor(request).id])).rows[0]
     await tx.query('UPDATE agent_sessions SET context_snapshot_id=$2,revision=revision+1,updated_at=now() WHERE id=$1',[sessionId,snap.id]);await emit(tx,h.meta(request,body),'context.delta.appended','context_delta',(delta as {id:string}).id,{sessionId,snapshotId:snap.id},s.team_id);return {snapshot:snap,delta}
   })
@@ -1432,7 +1443,7 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     const active=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[target.id])).rows[0]!.count
     if(active>=target.max_concurrency) throw new DomainError('AGENT_CONCURRENCY_LIMIT','Reviewer agent is at concurrency limit')
     const delegation=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,NULL,'reviewer','plan_step',$6,$7,$8,$9) RETURNING id",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,source.principal_human_actor_id,body.planStepId,reviewCaps,{...source.capability_scope,capabilities:reviewCaps},parent.delegation_id])).rows[0] as {id:string}
-    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,'queued',$10,$11,$11,true) RETURNING *",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,delegation.id,parent.id,parent.work_item_id,body.planStepId,body.planVersionId,body.initialPrompt,parent.budget])).rows[0] as {id:string}
+    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,delegation.id,parent.id,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,parent.budget])).rows[0] as {id:string}
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT DO NOTHING",[actor(request).workspaceId,child.id,parent.team_id])
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
     await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`${actor(request).workspaceId}:plan_step:${body.planStepId}`])

@@ -11,6 +11,7 @@ const projectId = '00000000-0000-4000-8000-000000000003'
 const repositoryId = '00000000-0000-4000-8000-000000000004'
 const pullRequestId = '00000000-0000-4000-8000-000000000005'
 const artifactId = '00000000-0000-4000-8000-000000000006'
+const workspaceId = '00000000-0000-4000-8000-000000000007'
 
 async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient) {
   const server = createWorkMeshMcpServer({ client, mode })
@@ -72,6 +73,32 @@ describe('WorkMesh MCP adapter', () => {
       expect(result.isError).not.toBe(true)
       expect(result.structuredContent).toEqual({ data: projected })
       expect(getWorkItem).toHaveBeenCalledWith(workItemId)
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('exposes versioned Guidance as a read-only MCP resource', async () => {
+    const guidance = {
+      scope: 'workspace', scopeId: workspaceId, documentId: '00000000-0000-4000-8000-000000000008',
+      status: 'active', revision: 3, markdown: '# Workspace guidance', updatedAt: '2026-08-03T00:00:00.000Z',
+      currentRevision: {
+        id: '00000000-0000-4000-8000-000000000009', revisionNumber: 2,
+        contentHash: `sha256:${'a'.repeat(64)}`, changeSummary: 'Clarify evidence',
+        authorActorId: '00000000-0000-4000-8000-000000000010', authorDisplayName: 'Admin',
+        publishedAt: '2026-08-03T00:00:00.000Z',
+      },
+    }
+    const getGuidance = vi.fn().mockResolvedValue(guidance)
+    const api = { getGuidance, listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const result = await protocol.readResource({ uri: `workmesh://workspace/${workspaceId}/guidance` })
+      expect(getGuidance).toHaveBeenCalledWith('workspace', workspaceId)
+      expect(result.contents[0]).toEqual(expect.objectContaining({
+        uri: `workmesh://workspace/${workspaceId}/guidance`,
+        mimeType: 'application/json',
+        text: JSON.stringify(guidance),
+      }))
+      expect((await protocol.listTools()).tools.map(tool => tool.name).filter(name => name.includes('guidance'))).toEqual([])
     } finally { await protocol.close(); await server.close() }
   })
 

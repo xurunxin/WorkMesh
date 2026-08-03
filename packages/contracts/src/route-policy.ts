@@ -138,6 +138,11 @@ const workspaceAdminOperations = new Set([
   'setBudgetPolicy',
   'exportTemplates',
   'importTemplatesAsDrafts',
+  'publishWorkspaceGuidance',
+  'archiveWorkspaceGuidance',
+  'rollbackWorkspaceGuidance',
+  'listWorkspaceGuidanceHistory',
+  'diffWorkspaceGuidance',
 ])
 
 const humanOnlyOperations = new Set([
@@ -189,6 +194,16 @@ const humanOnlyOperations = new Set([
   'setTemplateState',
   'configureA2ABinding',
   'acceptA2ATask',
+  'publishTeamGuidance',
+  'archiveTeamGuidance',
+  'rollbackTeamGuidance',
+  'listTeamGuidanceHistory',
+  'diffTeamGuidance',
+  'publishProjectGuidance',
+  'archiveProjectGuidance',
+  'rollbackProjectGuidance',
+  'listProjectGuidanceHistory',
+  'diffProjectGuidance',
 ])
 
 const agentOnlyOperations = new Set([

@@ -556,14 +556,89 @@ export const routeOperationBindings = [
     "operationId": "getWorkspaceGuidance"
   },
   {
+    "method": "PUT",
+    "path": "/api/v1/workspaces/{id}/guidance",
+    "operationId": "publishWorkspaceGuidance"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/workspaces/{id}/guidance/history",
+    "operationId": "listWorkspaceGuidanceHistory"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/workspaces/{id}/guidance/diff",
+    "operationId": "diffWorkspaceGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/workspaces/{id}/guidance/archive",
+    "operationId": "archiveWorkspaceGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/workspaces/{id}/guidance/rollback",
+    "operationId": "rollbackWorkspaceGuidance"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/teams/{id}/guidance",
     "operationId": "getTeamGuidance"
   },
   {
+    "method": "PUT",
+    "path": "/api/v1/teams/{id}/guidance",
+    "operationId": "publishTeamGuidance"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/teams/{id}/guidance/history",
+    "operationId": "listTeamGuidanceHistory"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/teams/{id}/guidance/diff",
+    "operationId": "diffTeamGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/teams/{id}/guidance/archive",
+    "operationId": "archiveTeamGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/teams/{id}/guidance/rollback",
+    "operationId": "rollbackTeamGuidance"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/projects/{id}/guidance",
     "operationId": "getProjectGuidance"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/projects/{id}/guidance",
+    "operationId": "publishProjectGuidance"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{id}/guidance/history",
+    "operationId": "listProjectGuidanceHistory"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{id}/guidance/diff",
+    "operationId": "diffProjectGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{id}/guidance/archive",
+    "operationId": "archiveProjectGuidance"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{id}/guidance/rollback",
+    "operationId": "rollbackProjectGuidance"
   },
   {
     "method": "POST",
