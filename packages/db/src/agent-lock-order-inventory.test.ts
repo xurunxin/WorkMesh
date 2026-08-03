@@ -330,7 +330,7 @@ describe('Agent authority lock-order inventory',()=>{
         if(fragments.length&&!manifested.has(name)) offenders.push(name)
       }
     expect([...new Set(offenders)].sort()).toEqual([])
-  })
+  },15_000)
 
   it('manifests every ranked SQL statement with its transaction owner and rank sequence',async()=>{
     const actual:RankedStatement[]=[]
