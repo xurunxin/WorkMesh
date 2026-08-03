@@ -4,6 +4,7 @@ import type {
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
   InboxListItem, InboxItemDetail, InboxReplyResponse,
+  WorkItemResponse,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -269,8 +270,8 @@ export class WorkMeshClient {
     if (!this.installationToken) throw new WorkMeshSdkError('A session or installation token is required to reject a handoff', { code: 'AUTHORIZATION_TOKEN_REQUIRED' })
     return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/reject`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, 'handoff-reject'), authorizationToken: this.installationToken, skipTokenRefresh: true })
   }
-  getWorkItem<T = unknown>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
-  listWorkItems<T = unknown>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> {
+  getWorkItem<T = WorkItemResponse>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
+  listWorkItems<T = WorkItemResponse>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> {
     return this.request('GET', pagedPath('/api/v1/work-items', query, options), undefined, options)
   }
   async listEvents(options: EventListOptions): Promise<EventEnvelope[]> {

@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '../src/index.js'
-import { legacyMigrationManifest, supportedLegacyUpgradeEndpoints } from '../src/migration-manifest.js'
+import { legacyMigrationManifest, supportedLegacyUpgradeEndpoints, v1MigrationManifest } from '../src/migration-manifest.js'
 import { migrationTestSupport } from '../src/migrations.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -100,8 +100,9 @@ const expectAdoptedLedger = async (): Promise<void> => {
     checksum_sha256: string
     execution_mode: string
   }>('SELECT version,checksum_sha256,execution_mode FROM schema_migrations ORDER BY version')
-  expect(ledger.rows).toHaveLength(legacyMigrationManifest.length + 1)
+  expect(ledger.rows).toHaveLength(legacyMigrationManifest.length + v1MigrationManifest.length)
   expect(ledger.rows.find(row => row.version === '0001_v1_baseline')).toMatchObject({ execution_mode: 'adopted' })
+  expect(ledger.rows.find(row => row.version === '0002_active_executor_projection')).toMatchObject({ execution_mode: 'applied' })
   expect(ledger.rows.filter(row => row.execution_mode === 'legacy')).toHaveLength(legacyMigrationManifest.length)
   expect(ledger.rows.every(row => row.checksum_sha256.length === 64)).toBe(true)
 }
@@ -113,7 +114,7 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
     await db.end()
   })
 
-  it('installs only the v1 baseline and is restart-idempotent', async () => {
+  it('installs the v1 baseline and ordered subsequent migrations restart-idempotently', async () => {
     await applyMigrations(db)
     await applyMigrations(db)
     const ledger = await db.query<{
@@ -121,9 +122,10 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
       checksum_sha256: string
       execution_mode: string
     }>('SELECT version,checksum_sha256,execution_mode FROM schema_migrations')
-    expect(ledger.rows).toHaveLength(1)
-    expect(ledger.rows[0]).toMatchObject({ version: '0001_v1_baseline', execution_mode: 'applied' })
-    expect(ledger.rows[0]!.checksum_sha256).toMatch(/^[0-9a-f]{64}$/)
+    expect(ledger.rows).toHaveLength(v1MigrationManifest.length)
+    expect(ledger.rows.map(row => row.version).sort()).toEqual(v1MigrationManifest.map(entry => entry.version))
+    expect(ledger.rows.find(row => row.version === '0001_v1_baseline')).toMatchObject({ execution_mode: 'applied' })
+    expect(ledger.rows.every(row => /^[0-9a-f]{64}$/.test(row.checksum_sha256))).toBe(true)
     expect((await db.query("SELECT to_regclass('public.agent_sessions') AS relation")).rows[0]!.relation)
       .toBe('agent_sessions')
     cleanSchemaInventory = await readSchemaInventory()
@@ -166,7 +168,7 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
     try {
       await Promise.all([applyMigrations(first), applyMigrations(second)])
       const ledger = await db.query('SELECT version FROM schema_migrations')
-      expect(ledger.rows).toEqual([{ version: '0001_v1_baseline' }])
+      expect(ledger.rows).toEqual(v1MigrationManifest.map(entry => ({ version: entry.version })))
     } finally {
       await first.end()
       await second.end()
@@ -239,7 +241,7 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
       })).rejects.toThrow(`SIMULATED_${phase}`)
       expect((await db.query("SELECT to_regclass('public.workspaces') AS relation")).rows[0]!.relation).toBeNull()
       await applyMigrations(db)
-      expect((await db.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0]!.count).toBe(1)
+      expect((await db.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0]!.count).toBe(v1MigrationManifest.length)
     }, 120_000)
   }
 
@@ -250,6 +252,6 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
       },
     })).rejects.toThrow('SIMULATED_AFTER_COMMIT')
     await applyMigrations(db)
-    expect((await db.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0]!.count).toBe(1)
+    expect((await db.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0]!.count).toBe(v1MigrationManifest.length)
   }, 120_000)
 })

@@ -45,7 +45,9 @@ async function agentApi<T>(page: Page, bearerToken: string, path: string, method
 
 test('renders auditable multi-agent Work Room cards and confirms force release', async ({ page }) => {
   const actor = { id: 'human-1', displayName: 'Alex' }
-  const workItem = { id: 'work-1', title: 'Coordinate multi-agent release', description: null, number: 42, revision: 3, status_id: 'state-1', status_name: 'In progress', status_category: 'started', team_id: 'team-1', team_key: 'ENG', priority: 'high', due_date: null, responsible_human_actor_id: actor.id, labels: [], project_id: null }
+  const executor = { agent_id: 'agent-definition-coordinator', agent_actor_id: 'agent-coordinator', agent_slug: 'coordinator', agent_display_name: 'Coordinator', session_id: 'session-parent', lease_id: 'lease-executor', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: 'work-1', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_expires_at: '2026-07-23T01:30:00.000Z' }
+  const reviewer = { agent_id: 'agent-definition-reviewer', agent_actor_id: 'agent-reviewer', agent_slug: 'reviewer', agent_display_name: 'Reviewer', session_id: 'session-child', lease_id: 'lease-reviewer', lease_kind: 'review_shared', resource_type: 'plan_step', resource_id: 'step-review', execution_state: 'awaiting_input', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_expires_at: '2026-07-23T01:31:00.000Z' }
+  const workItem = { id: 'work-1', title: 'Coordinate multi-agent release', description: null, number: 42, revision: 3, status_id: 'state-1', status_name: 'In progress', status_category: 'started', team_id: 'team-1', team_key: 'ENG', priority: 'high', due_date: null, responsible_human_actor_id: actor.id, responsible_human: { actor_id: actor.id, display_name: actor.displayName }, active_executor: executor, shared_reviewers: [reviewer], labels: [], project_id: null }
   const sessions = [{ id: 'session-parent', agent_id: 'agent-coordinator', agent_actor_id: 'agent-coordinator', delegation_id: 'delegation-1', work_item_id: workItem.id, state: 'executing', state_reason: null, revision: 2, current_plan_version_id: 'plan-1', budget: { maxRuntimeSeconds: 300 }, last_heartbeat_at: '2026-07-23T01:00:00.000Z', stop_requested_at: null, error_code: null, error_summary: null, created_at: '2026-07-23T00:00:00.000Z', updated_at: '2026-07-23T01:00:00.000Z' }, { id: 'session-child', agent_id: 'agent-reviewer', agent_actor_id: 'agent-reviewer', delegation_id: 'delegation-2', work_item_id: workItem.id, state: 'awaiting_input', state_reason: null, revision: 1, current_plan_version_id: 'plan-2', budget: {}, last_heartbeat_at: '2026-07-23T01:01:00.000Z', stop_requested_at: null, error_code: null, error_summary: null, created_at: '2026-07-23T00:05:00.000Z', updated_at: '2026-07-23T01:01:00.000Z', parent_session_id: 'session-parent' }]
   const timeline = [
     { id: 'msg-ask', kind: 'ask', sourceId: 'message-1', channelId: 'room-1', actorId: 'agent-coordinator', actorName: 'Coordinator', sessionId: 'session-parent', occurredAt: '2026-07-23T01:02:00.000Z', summary: 'Can a human approve the release checklist?', status: 'open', payload: { planStepTitle: 'Release checklist' } },
@@ -84,6 +86,9 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
 
   await page.goto('/')
   await page.getByTestId('work-work-1').click()
+  await expect(page.getByTestId('responsible-human')).toContainText('Alex')
+  await expect(page.getByTestId('active-executor')).toContainText('Coordinator (coordinator)')
+  await expect(page.getByTestId('shared-reviewers')).toContainText('Reviewer (reviewer)')
   const room = page.getByTestId('work-room')
   await expect(room).toContainText('Active participants')
   await expect(room.getByRole('tab')).toHaveCount(6)
@@ -181,9 +186,19 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   const decision = await agentApi<{ id: string }>(page, exchange.body.sessionToken, `/api/v1/agent-sessions/${created.body.session.id}/decisions`, 'POST', { title: 'Ship Stage 2 collaboration UI?', rationale: 'The durable room shows human-visible messages and controls.', options: ['ship', 'hold'], evidence: [], affectedResources: [] })
   expect(answer.status).toBeLessThan(300); expect(context.status).toBeLessThan(300); expect(contextArtifact.status).toBeLessThan(300); expect(delta.status).toBeLessThan(300); expect(lease.status).toBeLessThan(300); expect(handoff.status).toBeLessThan(300); expect(decision.status).toBeLessThan(300)
 
+  const projectedWork = await humanApi<{ responsible_human: { actor_id: string; display_name: string } | null; active_executor: { session_id: string; lease_id: string; execution_state: string } | null; shared_reviewers: unknown[] }>(page, `/api/v1/work-items/${work.body.id}`)
+  expect(projectedWork.status).toBe(200)
+  expect(projectedWork.body.responsible_human?.actor_id).toBe(me.body.actor.id)
+  expect(projectedWork.body.responsible_human?.display_name).toBeTruthy()
+  expect(projectedWork.body.active_executor).toMatchObject({ session_id: created.body.session.id, lease_id: lease.body.id, execution_state: 'executing' })
+  expect(projectedWork.body.shared_reviewers).toEqual([])
+
   await page.goto('/')
   await page.getByLabel('Current team').selectOption(team.body.id)
   await page.getByTestId(`work-${work.body.id}`).click()
+  await expect(page.getByTestId('responsible-human')).toContainText(projectedWork.body.responsible_human!.display_name)
+  await expect(page.getByTestId('active-executor')).toContainText('Stage 2 coordinator')
+  await expect(page.getByTestId('shared-reviewers')).toContainText('None')
   const workRoom = page.getByTestId('work-room')
   await expect(workRoom.getByRole('tab')).toHaveCount(6)
   await expect(workRoom).toContainText('Coordinator, can you validate the collaboration evidence?')

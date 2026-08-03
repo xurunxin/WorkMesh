@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createAdmin, createDb, installWorkspace, type Db } from '../src/index.js'
+import { v1MigrationManifest } from '../src/migration-manifest.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Database integration tests require RUN_INTEGRATION=1 and DATABASE_URL.')
@@ -37,11 +38,11 @@ describe('Stage 0 PostgreSQL integrity and delivery acceptance', () => {
     await db.end()
   }, 120_000)
 
-  it('applies only the checksummed v1 baseline to a clean database', async () => {
+  it('applies the checksummed v1 baseline and ordered subsequent migrations to a clean database', async () => {
     const versions = await db.query<{ version: string; execution_mode: string }>(
       'SELECT version,execution_mode FROM schema_migrations ORDER BY version',
     )
-    expect(versions.rows).toEqual([{ version: '0001_v1_baseline', execution_mode: 'applied' }])
+    expect(versions.rows).toEqual(v1MigrationManifest.map(entry => ({ version: entry.version, execution_mode: 'applied' })))
     const tables = await db.query<{ table_name: string }>("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('agent_definitions','agent_sessions','agent_webhook_deliveries','approvals','context_snapshots','inbox_items') ORDER BY table_name")
     expect(tables.rows.map(table => table.table_name)).toEqual(['agent_definitions', 'agent_sessions', 'agent_webhook_deliveries', 'approvals', 'context_snapshots', 'inbox_items'])
   }, 120_000)

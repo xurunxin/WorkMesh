@@ -19,7 +19,7 @@ import { RetentionScheduler } from './retention-scheduler.js'
 import { materializeWorkerRuntimeIdentity } from './worker-runtime-identity.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
-export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
+export { classifyHeartbeatLiveness, createSessionLifecycleWorker, rebuildWorkItemExecutorProjections } from './session-lifecycle.js'
 export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 export { createArtifactUploadWorker } from './artifact-uploads.js'
 export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'

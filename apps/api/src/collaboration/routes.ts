@@ -1266,6 +1266,9 @@ async function acquireLease(h:Helpers,request:FastifyRequest) {
     const s=await assertSessionWrite(tx,actor(request),body.sessionId)
     await assertLeaseResourceScope(tx, actor(request), s, body.resourceType, body.resourceId)
     await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`${actor(request).workspaceId}:${body.resourceType}:${body.resourceId}`])
+    if (s.work_item_id) {
+      await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`${actor(request).workspaceId}:work-item-executor:${s.work_item_id}`])
+    }
     await tx.query("UPDATE leases SET status='expired',updated_at=now(),audit_reason=COALESCE(audit_reason,'expired before acquisition') WHERE workspace_id=$1 AND resource_type=$2 AND resource_id=$3 AND status='active' AND expires_at<=now()",[actor(request).workspaceId,body.resourceType,body.resourceId])
     const conflicts=(await tx.query<{id:string;session_id:string;holder_actor_id:string;expires_at:Date;kind:string}>("SELECT id,session_id,holder_actor_id,expires_at,kind FROM leases WHERE workspace_id=$1 AND resource_type=$2 AND resource_id=$3 AND status='active' AND (kind='exclusive' OR $4::lease_kind='exclusive') FOR UPDATE",[actor(request).workspaceId,body.resourceType,body.resourceId,body.kind])).rows
     if(conflicts.length) throw new DomainError('LEASE_CONFLICT','Resource already leased',{holderSessionId:conflicts[0]!.session_id,holderActorId:conflicts[0]!.holder_actor_id,leaseId:conflicts[0]!.id,expiresAt:conflicts[0]!.expires_at,resourceType:body.resourceType,resourceId:body.resourceId})

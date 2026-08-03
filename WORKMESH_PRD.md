@@ -476,6 +476,15 @@ flowchart TB
 - Duplicate 指向规范工作项；
 - 支持从评论、Webhook、Agent、Git Provider 创建；
 - Agent 创建的 Work Item 必须显示来源 Actor 和 Session。
+- Work Item 读取分别返回 `responsible_human`、一个 `active_executor` 与
+  `shared_reviewers`；Agent 执行投影不会覆盖 Human 责任字段；
+- Active Executor 由当前未过期的 Lease、非终止/非 stale Session 与 active
+  Delegation 在 PostgreSQL 事务内派生，普通 Work Item PATCH 不接受这些投影字段；
+- Work Item 级 exclusive Lease 只允许一个有效持有 Session；不同 Plan Step
+  可由不同 Session 并行持有 exclusive Lease。primary 按 Work Item Lease
+  优先、再按最早有效 Plan Step Lease 稳定选择代表项；
+- `review_shared` Lease 作为 reviewer 集合返回。release、expiry、Stop、failure、
+  stale 与 handoff 在同一事务更新投影，Worker 可从权威表全量重建。
 
 ## 7.3 Workflow
 

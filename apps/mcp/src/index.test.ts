@@ -49,6 +49,32 @@ describe('WorkMesh MCP adapter', () => {
     } finally { await protocol.close(); await server.close() }
   })
 
+  it('preserves the shared Work Item executor projection through MCP', async () => {
+    const projected = {
+      id: workItemId,
+      responsible_human: { actor_id: 'human-1', display_name: 'Alex' },
+      active_executor: {
+        agent_id: 'agent-1',
+        session_id: sessionId,
+        lease_id: 'lease-1',
+        execution_state: 'executing',
+      },
+      shared_reviewers: [{ agent_id: 'agent-2', session_id: 'session-2', lease_id: 'lease-2' }],
+    }
+    const getWorkItem = vi.fn().mockResolvedValue(projected)
+    const api = { listWorkItems: vi.fn(), getWorkItem } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const result = await protocol.callTool({
+        name: 'get_work_item',
+        arguments: { workItemId },
+      })
+      expect(result.isError).not.toBe(true)
+      expect(result.structuredContent).toEqual({ data: projected })
+      expect(getWorkItem).toHaveBeenCalledWith(workItemId)
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('exposes Inbox mutations only in read-write mode and routes them through the SDK', async () => {
     const claimInboxItem = vi.fn().mockResolvedValue({ id: artifactId, status: 'claimed' })
     const acknowledgeInboxItem = vi.fn().mockResolvedValue({ id: artifactId, status: 'acknowledged' })

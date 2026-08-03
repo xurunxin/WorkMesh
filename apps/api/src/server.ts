@@ -76,6 +76,7 @@ import {
   verifyBootstrapRequest,
 } from "./bootstrap-auth.js";
 import { createPaginator, type Paginator } from "./pagination.js";
+import { attachWorkItemExecutors } from "./work-item-executors.js";
 import {
   liveHumanTeamReadPredicate,
   liveSessionReadPredicate,
@@ -896,14 +897,19 @@ export const buildApp = (options: {
   app.get("/api/v1/work-items", async (request) => listWorkItems(request, paginator));
   app.get("/api/v1/work-items/:id", async (request) => {
     const workItem = oneRow(
-      await db.query<{ team_id: string } & Record<string, unknown>>(
+      await db.query<{
+        id: string;
+        workspace_id: string;
+        team_id: string;
+        responsible_human_actor_id: string | null;
+      } & Record<string, unknown>>(
         "SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL",
         [idParam(request), request.actor!.workspaceId],
       ),
     );
     await agentReadableWorkItem(request, idParam(request));
     if (request.actor!.kind === "human") await assertReadableTeam(request, workItem.team_id);
-    return workItem;
+    return (await attachWorkItemExecutors(db, [workItem]))[0]!;
   });
   app.post("/api/v1/work-items", async (request) => {
     const body = workItemInputSchema.parse(request.body);
@@ -1239,7 +1245,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       "w.workspace_id",
       values,
     );
-    return paginator.query(db, request, request.query, {
+    const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(db, request, request.query, {
       route: "/api/v1/work-items",
       filters: { agentSessionId: current.agentSessionId },
       sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
@@ -1258,6 +1264,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
            AND w.deleted_at IS NULL
            AND t.deleted_at IS NULL
            AND ${liveAuthorization}`, values);
+    return { ...page, items: await attachWorkItemExecutors(db,page.items) };
   }
   if (query.teamId) await assertReadableTeam(request, query.teamId);
   const values: unknown[] = [request.actor!.workspaceId];
@@ -1293,7 +1300,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     values.push(query.search);
     sql += ` AND (t.key || '-' || w.number::text = $${values.length} OR w.title % $${values.length} OR to_tsvector('simple',coalesce(w.title,'') || ' ' || coalesce(w.description,'')) @@ plainto_tsquery('simple',$${values.length}))`;
   }
-  return paginator.query(db, request, request.query, {
+  const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(db, request, request.query, {
     route: "/api/v1/work-items",
     filters: {
       teamId: query.teamId ?? null,
@@ -1307,6 +1314,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     },
     sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
   }, sql, values);
+  return { ...page, items: await attachWorkItemExecutors(db,page.items) };
 }
 
 if (process.env.NODE_ENV !== "test") {

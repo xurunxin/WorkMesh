@@ -6,8 +6,9 @@ execute numbered SQL files or `SCHEMA.sql` directly.
 
 ## Schema sources
 
-- `packages/db/migrations/v1/0001_v1_baseline.sql` is the only clean-install
-  baseline.
+- `packages/db/migrations/v1/0001_v1_baseline.sql` is the immutable
+  clean-install baseline. Ordered `v1/0002+` files are then applied normally;
+  clean installs and adopted legacy installs converge on the same manifest.
 - Root-level `0001_*.sql` through `0035_*.sql` are immutable pre-v1 inventory.
 - `packages/db/migrations/upgrades/` contains the five generated, transactional
   pre-v1 upgrade bundles.

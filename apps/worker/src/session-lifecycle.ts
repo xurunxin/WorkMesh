@@ -32,8 +32,21 @@ export type SessionLifecycleWorker = {
   expireStopGrace: (limit?: number) => Promise<number>
   expireApprovals: (limit?: number) => Promise<number>
   expireLeases: (limit?: number) => Promise<number>
+  rebuildExecutorProjections: (workspaceId?: string, workItemId?: string) => Promise<number>
   cleanupAuthIdempotency: (limit?: number) => Promise<{ wiped: number; deleted: number }>
   tick: () => Promise<void>
+}
+
+export const rebuildWorkItemExecutorProjections = async (
+  db: Transaction,
+  workspaceId?: string,
+  workItemId?: string,
+): Promise<number> => {
+  const result = await db.query<{ rebuilt: number }>(
+    'SELECT rebuild_work_item_executor_projections($1::uuid,$2::uuid) AS rebuilt',
+    [workspaceId ?? null,workItemId ?? null],
+  )
+  return result.rows[0]?.rebuilt ?? 0
 }
 
 const systemActorId = async (tx: Transaction, workspaceId: string): Promise<string> => {
@@ -338,6 +351,14 @@ export function createSessionLifecycleWorker({
     return changed
   })
 
+  const rebuildExecutorProjections = async (
+    workspaceId?: string,
+    workItemId?: string,
+  ): Promise<number> => withTx(
+    db,
+    tx => rebuildWorkItemExecutorProjections(tx,workspaceId,workItemId),
+  )
+
   const cleanupAuthIdempotency = async (limit = 100): Promise<{ wiped: number; deleted: number }> => withTx(db, async tx => {
     const wiped = await tx.query(`
       WITH expired AS (
@@ -384,5 +405,5 @@ export function createSessionLifecycleWorker({
     await cleanupAuthIdempotency()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, cleanupAuthIdempotency, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
 }
