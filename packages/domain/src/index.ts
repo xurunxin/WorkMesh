@@ -204,7 +204,7 @@ export interface AgentMutationGate {
   lease?: { required: boolean; held: boolean }
   expectedRevision?: number
   idempotencyKey?: string
-  operation: 'ack' | 'heartbeat' | 'prompt' | 'activity' | 'plan' | 'artifact' | 'complete' | 'fail' | 'stop_ack'
+  operation: 'ack' | 'heartbeat' | 'prompt' | 'activity' | 'plan' | 'artifact' | 'complete' | 'fail' | 'stop_ack' | 'room_message' | 'decision' | 'inbox_claim' | 'inbox_ack' | 'inbox_reply'
 }
 
 /**

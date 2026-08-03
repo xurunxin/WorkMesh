@@ -70,6 +70,7 @@ export const supportedEventAggregateTypes = [
   'agent_activity',
   'agent_plan_version',
   'approval',
+  'inbox_item',
   'lease',
   'room_message',
   'decision',
@@ -256,6 +257,18 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
     `SELECT 'session'::text AS resource_type,approval.session_id AS resource_id
        FROM approvals approval
       WHERE approval.id=$1 AND approval.workspace_id=$2`,
+  inbox_item:
+    `SELECT CASE
+              WHEN inbox.source_room_message_id IS NOT NULL THEN 'room'
+              WHEN inbox.session_id IS NOT NULL THEN 'session'
+              ELSE 'team'
+            END AS resource_type,
+            COALESCE(message.channel_id,inbox.session_id,inbox.team_id) AS resource_id
+       FROM inbox_items inbox
+       LEFT JOIN room_messages message
+         ON message.id=inbox.source_room_message_id
+        AND message.workspace_id=inbox.workspace_id
+      WHERE inbox.id=$1 AND inbox.workspace_id=$2`,
   lease:
     `SELECT 'session'::text AS resource_type,lease.session_id AS resource_id
        FROM leases lease

@@ -29,7 +29,9 @@ type AgentFacts = {
   parent_session_id: string | null
   team_id: string
   work_item_id: string | null
+  work_item_project_id: string | null
   project_id: string | null
+  project_exists: boolean
   delegation_status: string
   capability_scope: {
     teamIds?: string[]
@@ -78,6 +80,7 @@ type ExplicitResourceKind =
   | 'approval'
   | 'work_room'
   | 'room_message'
+  | 'inbox_item'
   | 'lease'
   | 'handoff'
   | 'decision'
@@ -108,6 +111,7 @@ const resourceSegments: Readonly<Record<string, {
   approvals: { kind: 'approval', resolver: 'approval' },
   rooms: { kind: 'work_room', resolver: 'work_room' },
   messages: { kind: 'room_message', resolver: 'work_room' },
+  inbox: { kind: 'inbox_item', resolver: 'inbox_item' },
   leases: { kind: 'lease', resolver: 'lease' },
   handoffs: { kind: 'handoff', resolver: 'handoff' },
   decisions: { kind: 'decision', resolver: 'decision' },
@@ -161,6 +165,7 @@ function resourceTeamSql(kind: ExplicitResourceKind): string {
     case 'approval': return 'SELECT s.team_id FROM approvals a JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
     case 'work_room': return 'SELECT team_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2'
     case 'room_message': return 'SELECT c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id AND c.workspace_id=m.workspace_id WHERE m.id=$1 AND m.workspace_id=$2'
+    case 'inbox_item': return 'SELECT team_id FROM inbox_items WHERE id=$1 AND workspace_id=$2'
     case 'lease': return 'SELECT s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id AND s.workspace_id=l.workspace_id WHERE l.id=$1 AND l.workspace_id=$2'
     case 'handoff': return 'SELECT s.team_id FROM handoffs h JOIN agent_sessions s ON s.id=h.from_session_id AND s.workspace_id=h.workspace_id WHERE h.id=$1 AND h.workspace_id=$2'
     case 'decision': return 'SELECT COALESCE(w.team_id,p.team_id,s.team_id) AS team_id FROM decisions d LEFT JOIN work_items w ON w.id=d.work_item_id AND w.workspace_id=d.workspace_id LEFT JOIN projects p ON p.id=d.project_id AND p.workspace_id=d.workspace_id LEFT JOIN agent_sessions s ON s.id=d.session_id AND s.workspace_id=d.workspace_id WHERE d.id=$1 AND d.workspace_id=$2'
@@ -180,6 +185,7 @@ async function resolveTeam(
   db: Pool,
   request: FastifyRequest,
   resolver: ResourceResolverId,
+  operationId: string,
 ): Promise<TeamResolution> {
   const params = pathParams(request)
   const query = queryParams(request)
@@ -189,6 +195,45 @@ async function resolveTeam(
       ? { kind: 'team' as const, id: directTeamId }
       : null)
   if (!target) return { kind: 'none' }
+  if (target.kind === 'inbox_item') {
+    const actor = request.actor!
+    const agentSessionId = actor.kind === 'agent' ? actor.agentSessionId : undefined
+    const claim = operationId === 'claimInboxItem'
+    const result = await db.query<{ team_id: string | null }>(
+      `SELECT team_id
+         FROM inbox_items
+        WHERE id=$1 AND workspace_id=$2
+          AND (
+            ($3='human' AND recipient_human_actor_id=$4)
+            OR (
+              $3='agent'
+              AND $5::uuid IS NOT NULL
+              AND (
+                recipient_session_id=$5
+                OR claimed_by_session_id=$5
+                OR (
+                  $6::boolean
+                  AND recipient_human_actor_id IS NULL
+                  AND recipient_actor_id=$4
+                  AND recipient_session_id IS NULL
+                  AND claimed_by_session_id IS NULL
+                  AND status='open'
+                )
+              )
+            )
+          )`,
+      [
+        target.id,
+        actor.workspaceId,
+        actor.kind,
+        actor.id,
+        agentSessionId ?? null,
+        claim,
+      ],
+    )
+    if (!result.rows[0]) return { kind: 'unresolved' }
+    return { kind: 'resolved', teamId: result.rows[0].team_id }
+  }
   const result = await db.query<{ team_id: string | null }>(
     resourceTeamSql(target.kind),
     [target.id, request.actor!.workspaceId],
@@ -228,13 +273,27 @@ async function loadAgentFacts(
 ): Promise<AgentFacts | undefined> {
   if (!actor.agentSessionId) return undefined
   return (await db.query<AgentFacts>(
-    `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,s.project_id,
+    `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,
+      scope_project.id AS work_item_project_id,s.project_id,
+      session_project.id IS NOT NULL AS project_exists,
       d.status AS delegation_status,d.capability_scope,d.permissions_snapshot,
       a.approved_capabilities AS definition_capabilities,a.is_active AS agent_active,
       ata.approved_capabilities AS team_capabilities
      FROM agent_sessions s
      JOIN delegations d ON d.id=s.delegation_id
      JOIN agent_definitions a ON a.id=s.agent_id
+     LEFT JOIN work_items scope_item
+       ON scope_item.id=s.work_item_id
+      AND scope_item.workspace_id=s.workspace_id
+      AND scope_item.deleted_at IS NULL
+     LEFT JOIN projects scope_project
+       ON scope_project.id=scope_item.project_id
+      AND scope_project.workspace_id=s.workspace_id
+      AND scope_project.deleted_at IS NULL
+     LEFT JOIN projects session_project
+       ON session_project.id=s.project_id
+      AND session_project.workspace_id=s.workspace_id
+      AND session_project.deleted_at IS NULL
      LEFT JOIN agent_team_access ata
        ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id
       AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
@@ -286,10 +345,18 @@ function resourceInScope(
   const projectId = request.routeOptions.url?.includes('/projects/')
     ? params.id
     : query.projectId
-  if (
-    typeof projectId === 'string'
-    && !scope.projectIds?.includes(projectId)
-  ) return false
+  if (typeof projectId === 'string') {
+    if (facts.work_item_id) {
+      if (
+        !scope.workItemIds?.includes(facts.work_item_id)
+        || facts.work_item_project_id !== projectId
+      ) return false
+    } else if (
+      facts.project_id !== projectId
+      || !facts.project_exists
+      || !scope.projectIds?.includes(projectId)
+    ) return false
+  }
   return true
 }
 
@@ -328,7 +395,12 @@ export async function authorizeRequest(
       policyId: policy.policyId,
     })
   }
-  const teamResolution = await resolveTeam(db, request, policy.resourceResolverId)
+  const teamResolution = await resolveTeam(
+    db,
+    request,
+    policy.resourceResolverId,
+    policy.operationId,
+  )
   if (teamResolution.kind === 'unresolved') {
     throw new DomainError('NOT_FOUND', 'Resource not found', {
       authorizationStage: 'resource_scope',

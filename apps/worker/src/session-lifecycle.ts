@@ -22,7 +22,7 @@ export const classifyHeartbeatLiveness = ({
   return ageSeconds > heartbeatIntervalSeconds * 2 ? 'degraded' : 'healthy'
 }
 
-type LockedSession = { id: string; workspaceId: string; teamId: string; principalHumanActorId: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
+type LockedSession = { id: string; workspaceId: string; teamId: string; responsibleHumanActorId?: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
 type UpdatedSession = { id: string; workspaceId: string; revision: number; sequence: string }
 type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string }
 
@@ -75,16 +75,20 @@ const insertInbox = async (tx: Transaction, input: {
   workspaceId: string
   recipientHumanActorId: string
   sessionId?: string
+  teamId: string
   kind: 'session_stale'
   sourceType: string
   sourceId: string
   payload: Record<string, unknown>
 }): Promise<void> => {
   await tx.query(`
-    INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,session_id,kind,source_type,source_id,payload)
-    VALUES($1,$2,$3,$4,$5,$6,$7)
+    INSERT INTO inbox_items(
+      workspace_id,recipient_human_actor_id,recipient_actor_id,
+      session_id,team_id,kind,source_type,source_id,payload
+    )
+    VALUES($1,$2,$2,$3,$4,$5,$6,$7,$8)
     ON CONFLICT(workspace_id,recipient_human_actor_id,kind,source_type,source_id) DO NOTHING
-  `, [input.workspaceId, input.recipientHumanActorId, input.sessionId ?? null, input.kind, input.sourceType, input.sourceId, input.payload])
+  `, [input.workspaceId, input.recipientHumanActorId, input.sessionId ?? null, input.teamId, input.kind, input.sourceType, input.sourceId, input.payload])
 }
 
 const updateSessionState = async (tx: Transaction, input: {
@@ -122,8 +126,10 @@ export function createSessionLifecycleWorker({
 }): SessionLifecycleWorker {
   const expireAckDeadlines = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId",
+             item.responsible_human_actor_id AS "responsibleHumanActorId", s.state
       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
+      JOIN work_items item ON item.id=s.work_item_id AND item.workspace_id=s.workspace_id
       WHERE s.state='queued' AND s.created_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.created_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
     `, [ackTimeoutSeconds, limit])
@@ -139,8 +145,8 @@ export function createSessionLifecycleWorker({
         payload: { reason: 'ack_timeout' },
       })
       await insertInbox(tx, {
-        workspaceId: updated.workspaceId, recipientHumanActorId: session.principalHumanActorId, sessionId: session.id,
-        kind: 'session_stale', sourceType: 'agent_session', sourceId: session.id, payload: { reason: 'ack_timeout' },
+        workspaceId: updated.workspaceId, recipientHumanActorId: session.responsibleHumanActorId!, sessionId: session.id,
+        teamId: session.teamId, kind: 'session_stale', sourceType: 'agent_session', sourceId: session.id, payload: { reason: 'ack_timeout' },
       })
       changed += 1
     }
@@ -152,7 +158,7 @@ export function createSessionLifecycleWorker({
       const candidates = await tx.query<LockedSession>(
         `
       SELECT s.id,s.workspace_id AS "workspaceId",d.team_id AS "teamId",
-             d.principal_human_actor_id AS "principalHumanActorId",s.state,
+             item.responsible_human_actor_id AS "responsibleHumanActorId",s.state,
              s.revision,s.sequence::text AS sequence,
              s.heartbeat_health AS "heartbeatHealth",
              s.last_heartbeat_at AS "lastHeartbeatAt",
@@ -160,6 +166,7 @@ export function createSessionLifecycleWorker({
                AS "heartbeatIntervalSeconds"
       FROM agent_sessions s
       JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
+      JOIN work_items item ON item.id=s.work_item_id AND item.workspace_id=s.workspace_id
       JOIN agent_definitions definition ON definition.id=s.agent_id
       WHERE s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
       ORDER BY COALESCE(s.last_heartbeat_at,s.created_at)
@@ -211,8 +218,9 @@ export function createSessionLifecycleWorker({
           });
           await insertInbox(tx, {
             workspaceId: updated.workspaceId,
-            recipientHumanActorId: session.principalHumanActorId,
+            recipientHumanActorId: session.responsibleHumanActorId!,
             sessionId: session.id,
+            teamId: session.teamId,
             kind: "session_stale",
             sourceType: "agent_session",
             sourceId: session.id,
@@ -255,7 +263,7 @@ export function createSessionLifecycleWorker({
 
   const expireStopGrace = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
+      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", s.state
       FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE s.state='stopping' AND s.stop_requested_at <= now() - ($1::text || ' seconds')::interval
       ORDER BY s.stop_requested_at FOR UPDATE OF s SKIP LOCKED LIMIT $2
@@ -300,7 +308,7 @@ export function createSessionLifecycleWorker({
         sessionId: approval.sessionId, payload: { sessionId: approval.sessionId },
       })
       await tx.query(`
-        UPDATE inbox_items SET status='resolved', resolved_at=now(), resolved_by_actor_id=$1, updated_at=now()
+        UPDATE inbox_items SET status='resolved', resolved_at=now(), resolved_by_actor_id=$1, revision=revision+1, updated_at=now()
         WHERE session_id=$2 AND kind='approval' AND source_type='approval' AND source_id=$3 AND status='open'
       `, [actorId, approval.sessionId, approval.id])
       changed += 1

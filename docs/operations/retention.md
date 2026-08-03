@@ -253,5 +253,13 @@ online event, outbox proof, and member state unchanged.
 
 Disable the switch and investigate any archive or checksum failure.
 
+Agent Inbox audit facts are protected from generic cleanup and ordinary event
+pruning. This includes `room_messages`, actor and exact-Session recipient rows,
+response-resolution rows, `inbox_items`, and `inbox_item_receipts`, plus the
+`room.message.*` and `inbox.item.*` events that describe them. A future policy
+that deletes or redacts any of these facts requires an explicit retention
+decision and migration; enabling the existing cleanup/prune switches does not
+authorize it.
+
 Issue #11, not this endpoint, owns any future archive download, discovery,
 restore, legal-hold, or archive-key rotation API.

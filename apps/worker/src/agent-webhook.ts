@@ -235,6 +235,167 @@ export function createAgentWebhookWorker({
   dnsLookup?: WebhookDnsLookup
   allowPrivateAgentWebhooks?: boolean
 }): AgentWebhookWorker {
+  const assertRoomMessageTargetAuthorized = async (
+    delivery: AgentWebhookDelivery,
+  ): Promise<void> => {
+    if (delivery.eventType !== 'room.message.posted') return
+    const authorized = await db.query(
+      `SELECT 1
+         FROM agent_webhook_deliveries delivery
+         JOIN domain_events event
+           ON event.id=delivery.event_id
+          AND event.event_type=delivery.event_type
+         JOIN agent_definitions definition
+           ON definition.id=delivery.agent_id
+          AND definition.is_active
+         JOIN actors recipient_actor
+           ON recipient_actor.id=definition.actor_id
+          AND recipient_actor.workspace_id=definition.workspace_id
+          AND recipient_actor.kind='agent'
+          AND recipient_actor.is_active
+         JOIN agent_webhook_endpoints endpoint
+           ON endpoint.id=delivery.endpoint_id
+          AND endpoint.agent_id=delivery.agent_id
+          AND endpoint.is_active
+         JOIN agent_webhook_secrets secret
+           ON secret.endpoint_id=delivery.endpoint_id
+          AND secret.version=delivery.secret_version
+          AND secret.status IN('active','retiring')
+          AND (secret.valid_until IS NULL OR secret.valid_until>now())
+         JOIN room_messages message
+           ON event.aggregate_type='room_message'
+          AND message.id=event.aggregate_id
+          AND message.workspace_id=event.workspace_id
+         JOIN work_room_channels room
+           ON room.id=message.channel_id
+          AND room.workspace_id=message.workspace_id
+         LEFT JOIN projects room_project
+           ON room_project.id=room.subject_id
+          AND room.subject_kind='project'
+          AND room_project.workspace_id=room.workspace_id
+          AND room_project.deleted_at IS NULL
+         JOIN agent_team_access team_access
+           ON team_access.workspace_id=definition.workspace_id
+          AND team_access.agent_id=definition.id
+          AND team_access.team_id=room.team_id
+          AND team_access.revoked_at IS NULL
+         JOIN agent_sessions target_session
+           ON target_session.workspace_id=definition.workspace_id
+          AND target_session.agent_id=definition.id
+          AND target_session.agent_actor_id=definition.actor_id
+          AND target_session.team_id=room.team_id
+          AND (delivery.session_id IS NULL OR target_session.id=delivery.session_id)
+         JOIN delegations delegation
+           ON delegation.id=target_session.delegation_id
+          AND delegation.workspace_id=target_session.workspace_id
+          AND delegation.agent_id=target_session.agent_id
+          AND delegation.agent_actor_id=target_session.agent_actor_id
+          AND delegation.status='active'
+         LEFT JOIN work_items scoped_item
+           ON scoped_item.id=target_session.work_item_id
+          AND scoped_item.workspace_id=target_session.workspace_id
+          AND scoped_item.deleted_at IS NULL
+         LEFT JOIN projects scoped_project
+           ON scoped_project.id=scoped_item.project_id
+          AND scoped_project.workspace_id=target_session.workspace_id
+          AND scoped_project.deleted_at IS NULL
+         LEFT JOIN projects session_project
+           ON session_project.id=target_session.project_id
+          AND session_project.workspace_id=target_session.workspace_id
+          AND session_project.deleted_at IS NULL
+        WHERE delivery.id=$1
+          AND delivery.agent_id=$2
+          AND delivery.event_id=$3
+          AND delivery.endpoint_id=$4
+          AND delivery.secret_version=$5
+          AND delivery.status='delivering'
+          AND delivery.locked_by=$6
+          AND event.audience_actor_id=recipient_actor.id
+          AND event.session_id IS NOT DISTINCT FROM delivery.session_id
+          AND event.team_id=room.team_id
+          AND target_session.state IN(
+            'acknowledged','planning','executing',
+            'awaiting_input','awaiting_approval','blocked'
+          )
+          AND 'work:read'=ANY(definition.approved_capabilities)
+          AND 'work:read'=ANY(team_access.approved_capabilities)
+          AND 'work:read'=ANY(delegation.permissions_snapshot)
+          AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
+              ? target_session.team_id::text
+          AND (
+            (
+              target_session.work_item_id IS NOT NULL
+              AND scoped_item.id IS NOT NULL
+              AND COALESCE(
+                delegation.capability_scope->'workItemIds',
+                '[]'::jsonb
+              ) ? target_session.work_item_id::text
+            )
+            OR (
+              target_session.work_item_id IS NULL
+              AND (
+                target_session.project_id IS NULL
+                OR (
+                  session_project.id IS NOT NULL
+                  AND COALESCE(
+                    delegation.capability_scope->'projectIds',
+                    '[]'::jsonb
+                  ) ? target_session.project_id::text
+                )
+              )
+            )
+          )
+          AND (
+            (room.subject_kind='work_item'
+              AND target_session.work_item_id=room.subject_id)
+            OR (
+              room.subject_kind='project'
+              AND room_project.id IS NOT NULL
+              AND (
+                (
+                  target_session.work_item_id IS NOT NULL
+                  AND scoped_project.id=room.subject_id
+                )
+                OR (
+                  target_session.work_item_id IS NULL
+                  AND session_project.id=room.subject_id
+                  AND COALESCE(
+                    delegation.capability_scope->'projectIds',
+                    '[]'::jsonb
+                  ) ? room.subject_id::text
+                )
+              )
+            )
+            OR (
+              room.subject_kind='session'
+              AND EXISTS(
+                WITH RECURSIVE lineage(id) AS (
+                  SELECT room.subject_id
+                  UNION ALL
+                  SELECT child.id
+                    FROM agent_sessions child
+                    JOIN lineage parent ON child.parent_session_id=parent.id
+                   WHERE child.workspace_id=room.workspace_id
+                )
+                SELECT 1 FROM lineage WHERE id=target_session.id
+              )
+            )
+          )
+        LIMIT 1`,
+      [
+        delivery.id,
+        delivery.agentId,
+        delivery.eventId,
+        delivery.endpointId,
+        delivery.secretVersion,
+        workerId,
+      ],
+    )
+    if (!authorized.rowCount) {
+      throw new WebhookDeliveryError('WEBHOOK_TARGET_REVOKED', false)
+    }
+  }
+
   const claimDeliveries = async (limit = 25, lockTimeoutSeconds = WEBHOOK_LOCK_TIMEOUT_SECONDS): Promise<AgentWebhookDelivery[]> => withTx(db, async tx => {
     const result = await tx.query<DeliveryRow>(`
       WITH candidates AS (
@@ -273,6 +434,7 @@ export function createAgentWebhookWorker({
 
   const deliver = async (delivery: AgentWebhookDelivery): Promise<void> => {
     if (!delivery.eventId) throw new WebhookDeliveryError('MISSING_EVENT_ID', false)
+    await assertRoomMessageTargetAuthorized(delivery)
     const resolvedTarget = await resolveWebhookTarget(delivery.endpointUrl, { dnsLookup, allowPrivateAgentWebhooks })
     const rawBody = JSON.stringify({ events: [{ id: delivery.eventId, type: delivery.eventType, version: 1, payload: delivery.payload }] })
     const timestamp = Math.floor(Date.now() / 1_000)

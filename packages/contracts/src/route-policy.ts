@@ -24,6 +24,7 @@ export type ResourceResolverId =
   | 'artifact'
   | 'approval'
   | 'work_room'
+  | 'inbox_item'
   | 'lease'
   | 'handoff'
   | 'decision'
@@ -157,7 +158,6 @@ const humanOnlyOperations = new Set([
   'decideApproval',
   'getWorkRoomTimeline',
   'resolveWorkRoomMessage',
-  'listInbox',
   'forceReleaseLease',
   'acceptHandoff',
   'finalizeDecision',
@@ -189,6 +189,12 @@ const humanOnlyOperations = new Set([
   'setTemplateState',
   'configureA2ABinding',
   'acceptA2ATask',
+])
+
+const agentOnlyOperations = new Set([
+  'claimInboxItem',
+  'acknowledgeInboxItem',
+  'replyInboxItem',
 ])
 
 const revisionedOperations = new Set([
@@ -228,6 +234,7 @@ const revisionedOperations = new Set([
   'setLoopState',
   'createTemplateVersion',
   'setTemplateState',
+  'replyInboxItem',
 ])
 
 const approvalOperations = new Set([
@@ -253,6 +260,7 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
   if (installationTargetOperations.has(operationId)) return 'installation_target'
   if (humanOnlyOperations.has(operationId)) return 'human_session'
+  if (agentOnlyOperations.has(operationId)) return 'agent_session'
   return 'human_or_agent_session'
 }
 
@@ -268,6 +276,7 @@ function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (path.includes('/decisions')) return 'decision'
   if (path.includes('/handoffs')) return 'handoff'
   if (path.includes('/leases')) return 'lease'
+  if (path.includes('/inbox/')) return 'inbox_item'
   if (path.includes('/rooms') || path.includes('/messages')) return 'work_room'
   if (path.includes('/approvals')) return 'approval'
   if (path.includes('/artifacts') || path.includes('/artifact-upload')) return 'artifact'
@@ -296,6 +305,8 @@ function capabilityFor(
   if (operationId === 'requestPullRequestMerge') return ['repo:merge']
   if (operationId === 'recordUsage') return ['work:read']
   if (operationId === 'postWorkRoomMessage') return ['work:write']
+  if (operationId === 'replyInboxItem') return ['work:write']
+  if (path.includes('/inbox')) return ['work:read']
   if (operationId === 'commentOnPlanStep') return ['work:write']
   if (path.includes('/comments')) return ['comment:write']
   if (path.includes('/plan')) return ['plan:write']
@@ -312,6 +323,7 @@ export function createRoutePolicyManifest(
   return Object.freeze(routeOperationBindings.map(binding => {
     const authentication = authenticationFor(binding.operationId)
     const humanOnly = authentication === 'human_session'
+    const agentOnly = authentication === 'agent_session'
     const agentAuthentication = authentication === 'agent_session'
       || authentication === 'human_or_agent_session'
       || authentication === 'installation_target'
@@ -335,7 +347,9 @@ export function createRoutePolicyManifest(
             ? ['agent']
             : humanOnly
               ? ['human']
-              : ['human', 'agent'],
+              : agentOnly
+                ? ['agent']
+                : ['human', 'agent'],
       human: {
         workspaceRoles: workspaceAdmin ? ['admin'] : ['admin', 'member'],
         teamRoles: workspaceAdmin
@@ -417,6 +431,11 @@ const mcpOperationIds = {
   'tool:publish_project_update': 'publishProjectUpdate',
   'tool:decide_completion_suggestion': 'decideCompletionSuggestion',
   'tool:post_work_room_message': 'postWorkRoomMessage',
+  'tool:list_inbox_items': 'listInbox',
+  'tool:get_inbox_item': 'getInboxItem',
+  'tool:claim_inbox_item': 'claimInboxItem',
+  'tool:acknowledge_inbox_item': 'acknowledgeInboxItem',
+  'tool:reply_inbox_item': 'replyInboxItem',
   'tool:comment_plan_step': 'commentOnPlanStep',
   'tool:propose_plan_step_assignment': 'proposePlanAssignment',
   'tool:create_child_session': 'createChildAgentSession',

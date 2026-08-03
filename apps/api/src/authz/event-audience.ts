@@ -143,7 +143,12 @@ export function eventAudienceQuery(
     `WITH RECURSIVE authorized_sessions(
        id,team_id,work_item_id,project_id
      ) AS (
-       SELECT root.id,root.team_id,root.work_item_id,root.project_id
+       SELECT root.id,root.team_id,root.work_item_id,
+              CASE
+                WHEN root.work_item_id IS NOT NULL
+                  THEN root_scope_project.id
+                ELSE root_session_project.id
+              END AS project_id
        FROM agent_sessions root
        JOIN delegations root_delegation
          ON root_delegation.id=root.delegation_id
@@ -161,6 +166,18 @@ export function eventAudienceQuery(
         AND credential.expires_at>now()
         AND credential.exchanged_at IS NOT NULL
         AND credential.revoked_at IS NULL
+       LEFT JOIN work_items root_scope_item
+         ON root_scope_item.id=root.work_item_id
+        AND root_scope_item.workspace_id=root.workspace_id
+        AND root_scope_item.deleted_at IS NULL
+       LEFT JOIN projects root_scope_project
+         ON root_scope_project.id=root_scope_item.project_id
+        AND root_scope_project.workspace_id=root.workspace_id
+        AND root_scope_project.deleted_at IS NULL
+       LEFT JOIN projects root_session_project
+         ON root_session_project.id=root.project_id
+        AND root_session_project.workspace_id=root.workspace_id
+        AND root_session_project.deleted_at IS NULL
        WHERE root.id=$4 AND root.workspace_id=$1 AND root.agent_actor_id=$3
          AND root.state IN (
            'acknowledged','planning','executing','awaiting_input',
@@ -172,17 +189,35 @@ export function eventAudienceQuery(
          AND COALESCE(root_delegation.capability_scope->'teamIds','[]'::jsonb)
              ? root.team_id::text
          AND (
-           root.work_item_id IS NULL OR
-           COALESCE(root_delegation.capability_scope->'workItemIds','[]'::jsonb)
-             ? root.work_item_id::text
-         )
-         AND (
-           root.project_id IS NULL OR
-           COALESCE(root_delegation.capability_scope->'projectIds','[]'::jsonb)
-             ? root.project_id::text
+           (
+             root.work_item_id IS NOT NULL
+             AND root_scope_item.id IS NOT NULL
+             AND COALESCE(
+               root_delegation.capability_scope->'workItemIds',
+               '[]'::jsonb
+             ) ? root.work_item_id::text
+           )
+           OR (
+             root.work_item_id IS NULL
+             AND (
+               root.project_id IS NULL
+               OR (
+                 root_session_project.id IS NOT NULL
+                 AND COALESCE(
+                   root_delegation.capability_scope->'projectIds',
+                   '[]'::jsonb
+                 ) ? root.project_id::text
+               )
+             )
+           )
          )
        UNION ALL
-       SELECT child.id,child.team_id,child.work_item_id,child.project_id
+       SELECT child.id,child.team_id,child.work_item_id,
+              CASE
+                WHEN child.work_item_id IS NOT NULL
+                  THEN child_scope_project.id
+                ELSE child_session_project.id
+              END AS project_id
        FROM agent_sessions child
        JOIN authorized_sessions parent ON child.parent_session_id=parent.id
        JOIN delegations child_delegation
@@ -195,36 +230,105 @@ export function eventAudienceQuery(
         AND child_access.agent_id=child.agent_id
         AND child_access.team_id=child.team_id
         AND child_access.revoked_at IS NULL
+       LEFT JOIN work_items child_scope_item
+         ON child_scope_item.id=child.work_item_id
+        AND child_scope_item.workspace_id=child.workspace_id
+        AND child_scope_item.deleted_at IS NULL
+       LEFT JOIN projects child_scope_project
+         ON child_scope_project.id=child_scope_item.project_id
+        AND child_scope_project.workspace_id=child.workspace_id
+        AND child_scope_project.deleted_at IS NULL
+       LEFT JOIN projects child_session_project
+         ON child_session_project.id=child.project_id
+        AND child_session_project.workspace_id=child.workspace_id
+        AND child_session_project.deleted_at IS NULL
        WHERE child.workspace_id=$1
          AND child.team_id=parent.team_id
          AND (parent.work_item_id IS NULL OR child.work_item_id=parent.work_item_id)
-         AND (parent.project_id IS NULL OR child.project_id=parent.project_id)
+         AND (
+           parent.project_id IS NULL
+           OR CASE
+                WHEN child.work_item_id IS NOT NULL
+                  THEN child_scope_project.id
+                ELSE child_session_project.id
+              END=parent.project_id
+         )
          AND 'work:read'=ANY(child_delegation.permissions_snapshot)
          AND 'work:read'=ANY(child_agent.approved_capabilities)
          AND 'work:read'=ANY(child_access.approved_capabilities)
+         AND COALESCE(
+           child_delegation.capability_scope->'teamIds',
+           '[]'::jsonb
+         ) ? child.team_id::text
+         AND (
+           (
+             child.work_item_id IS NOT NULL
+             AND child_scope_item.id IS NOT NULL
+             AND COALESCE(
+               child_delegation.capability_scope->'workItemIds',
+               '[]'::jsonb
+             ) ? child.work_item_id::text
+           )
+           OR (
+             child.work_item_id IS NULL
+             AND (
+               child.project_id IS NULL
+               OR (
+                 child_session_project.id IS NOT NULL
+                 AND COALESCE(
+                   child_delegation.capability_scope->'projectIds',
+                   '[]'::jsonb
+                 ) ? child.project_id::text
+               )
+             )
+           )
+         )
      )
      SELECT ${columns} FROM domain_events e
      WHERE e.workspace_id=$1 AND e.cursor>$2
-       AND EXISTS (SELECT 1 FROM authorized_sessions WHERE id=$4)
-       AND (
-         e.audience_actor_id=$3
-         OR e.session_id IN (SELECT id FROM authorized_sessions)
-         OR (
-           e.audience_actor_id IS NULL
-           AND EXISTS (
-             SELECT 1
-             FROM domain_event_resources resource
-             JOIN authorized_sessions visible
-               ON (
-                 (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
-                 OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
-                 OR (resource.resource_type='session' AND resource.resource_id=visible.id)
-               )
-             WHERE resource.domain_event_id=e.id
-               AND resource.relation IN ('scope','invalidate')
-           )
-         )
-       )`
+        AND e.event_type<>'room.message.human_visibility_recorded'
+        AND EXISTS (SELECT 1 FROM authorized_sessions WHERE id=$4)
+        AND (
+          (
+            e.aggregate_type='inbox_item'
+            AND e.audience_actor_id=$3
+            AND e.session_id=$4
+          )
+          OR (
+            e.aggregate_type='room_message'
+            AND e.audience_actor_id IS NOT NULL
+            AND e.session_id IS NOT NULL
+            AND e.audience_actor_id=$3
+            AND e.session_id=$4
+          )
+          OR (
+            e.aggregate_type<>'inbox_item'
+            AND NOT (
+              e.aggregate_type='room_message'
+              AND e.audience_actor_id IS NOT NULL
+              AND e.session_id IS NOT NULL
+            )
+            AND (
+              e.audience_actor_id=$3
+              OR e.session_id IN (SELECT id FROM authorized_sessions)
+              OR (
+                e.audience_actor_id IS NULL
+                AND EXISTS (
+                  SELECT 1
+                  FROM domain_event_resources resource
+                  JOIN authorized_sessions visible
+                    ON (
+                      (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
+                      OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
+                      OR (resource.resource_type='session' AND resource.resource_id=visible.id)
+                    )
+                  WHERE resource.domain_event_id=e.id
+                    AND resource.relation IN ('scope','invalidate')
+                )
+              )
+            )
+          )
+        )`
   return {
     sql,
     values: [

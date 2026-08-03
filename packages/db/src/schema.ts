@@ -1,4 +1,5 @@
-import { bigint, boolean, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { bigint, boolean, check, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 const binary = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' })
 
@@ -20,8 +21,9 @@ export const activityVisibility = pgEnum('activity_visibility', ['team', 'worksp
 export const approvalStatus = pgEnum('approval_status', ['pending', 'approved', 'rejected', 'expired', 'consumed', 'canceled'])
 export const approvalRiskLevel = pgEnum('approval_risk_level', ['low', 'medium', 'high', 'critical'])
 export const webhookDeliveryStatus = pgEnum('webhook_delivery_status', ['pending', 'delivering', 'delivered', 'dead'])
-export const inboxItemKind = pgEnum('inbox_item_kind', ['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff'])
+export const inboxItemKind = pgEnum('inbox_item_kind', ['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff', 'mention'])
 export const inboxItemStatus = pgEnum('inbox_item_status', ['open', 'resolved'])
+export const inboxReceiptKind = pgEnum('inbox_receipt_kind', ['claimed', 'read', 'acknowledged', 'replied'])
 export const roomSubjectKind = pgEnum('room_subject_kind', ['work_item', 'project', 'session'])
 export const roomMessageIntent = pgEnum('room_message_intent', ['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
 export const leaseKind = pgEnum('lease_kind', ['exclusive', 'review_shared'])
@@ -314,10 +316,17 @@ export const roomMessages = pgTable('room_messages', {
   id: uuid('id').primaryKey(), channelId: uuid('channel_id').notNull(), workspaceId: uuid('workspace_id').notNull(), authorActorId: uuid('author_actor_id').notNull(), sessionId: uuid('session_id'), intent: roomMessageIntent('intent').notNull(), recipientActorId: uuid('recipient_actor_id'), replyToMessageId: uuid('reply_to_message_id'), threadId: uuid('thread_id'), body: text('body').notNull(), structuredPayload: jsonb('structured_payload').notNull(), requiresResponse: boolean('requires_response').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const roomMessageRecipients = pgTable('room_message_recipients', { messageId: uuid('message_id').notNull(), actorId: uuid('actor_id').notNull() })
+export const roomMessageSessionRecipients = pgTable('room_message_session_recipients', { messageId: uuid('message_id').notNull(), workspaceId: uuid('workspace_id').notNull(), sessionId: uuid('session_id').notNull(), actorId: uuid('actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const roomMessageResponseResolutions = pgTable('room_message_response_resolutions', { id: uuid('id').primaryKey(), messageId: uuid('message_id').notNull(), resolvedByActorId: uuid('resolved_by_actor_id').notNull(), resolution: text('resolution'), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisions = pgTable('decisions', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), workItemId: uuid('work_item_id'), projectId: uuid('project_id'), sessionId: uuid('session_id'), proposedByActorId: uuid('proposed_by_actor_id').notNull(), finalizedByActorId: uuid('finalized_by_actor_id'), title: text('title').notNull(), rationale: text('rationale').notNull(), options: jsonb('options').notNull(), selectedOption: text('selected_option'), evidence: jsonb('evidence').notNull(), status: text('status').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), finalizedAt: timestamp('finalized_at', { withTimezone: true }),
-})
+}, table => [
+  check(
+    'decisions_subject_check',
+    sql`num_nonnulls(${table.workItemId},${table.projectId}) <= 1
+      AND num_nonnulls(${table.workItemId},${table.projectId},${table.sessionId}) >= 1`,
+  ),
+])
 export const decisionAffectedResources = pgTable('decision_affected_resources', { decisionId: uuid('decision_id').notNull(), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), impact: text('impact').notNull() })
 export const decisionRelations = pgTable('decision_relations', { id: uuid('id').primaryKey(), decisionId: uuid('decision_id').notNull(), relatedDecisionId: uuid('related_decision_id').notNull(), kind: decisionRelationKind('kind').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisionTransitionConsumptions = pgTable('decision_transition_consumptions', { id: uuid('id').primaryKey(), targetDecisionId: uuid('target_decision_id').notNull(), transitionType: text('transition_type').notNull(), derivedDecisionId: uuid('derived_decision_id'), consumedByActorId: uuid('consumed_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
@@ -418,8 +427,9 @@ export const agentWebhookDeliveries = pgTable('agent_webhook_deliveries', {
   id: uuid('id').primaryKey(), agentId: uuid('agent_id').notNull(), endpointId: uuid('endpoint_id').notNull(), secretVersion: integer('secret_version').notNull(), eventId: uuid('event_id'), deliveryId: text('delivery_id').notNull(), eventType: text('event_type').notNull(), sessionId: uuid('session_id'), payload: jsonb('payload').notNull(), status: webhookDeliveryStatus('status').notNull(), attemptCount: integer('attempt_count').notNull(), availableAt: timestamp('available_at', { withTimezone: true }).notNull(), lockedAt: timestamp('locked_at', { withTimezone: true }), lockedBy: text('locked_by'), deliveredAt: timestamp('delivered_at', { withTimezone: true }), lastError: text('last_error'), deadLetteredAt: timestamp('dead_lettered_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
 export const inboxItems = pgTable('inbox_items', {
-  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientHumanActorId: uuid('recipient_human_actor_id').notNull(), sessionId: uuid('session_id'), kind: inboxItemKind('kind').notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), status: inboxItemStatus('status').notNull(), payload: jsonb('payload').notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), resolvedByActorId: uuid('resolved_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientHumanActorId: uuid('recipient_human_actor_id'), recipientActorId: uuid('recipient_actor_id').notNull(), recipientSessionId: uuid('recipient_session_id'), claimedBySessionId: uuid('claimed_by_session_id'), claimedAt: timestamp('claimed_at', { withTimezone: true }), teamId: uuid('team_id'), sessionId: uuid('session_id'), kind: inboxItemKind('kind').notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), sourceRoomMessageId: uuid('source_room_message_id'), requiresResponse: boolean('requires_response').notNull(), status: inboxItemStatus('status').notNull(), revision: integer('revision').notNull(), payload: jsonb('payload').notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), resolvedByActorId: uuid('resolved_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
+export const inboxItemReceipts = pgTable('inbox_item_receipts', { id: uuid('id').primaryKey(), inboxItemId: uuid('inbox_item_id').notNull(), workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), sessionId: uuid('session_id').notNull(), kind: inboxReceiptKind('kind').notNull(), replyMessageId: uuid('reply_message_id'), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 
 export const usageRecords = pgTable('usage_records', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), dedupeKey: text('dedupe_key').notNull(),

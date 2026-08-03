@@ -39,3 +39,7 @@
 \ir packages/db/migrations/0029_exact_archive_membership.sql
 \ir packages/db/migrations/0030_durable_archive_upload_intents.sql
 \ir packages/db/migrations/0031_agent_session_external_urls_shape.sql
+\ir packages/db/migrations/0032_agent_inbox_receipts.sql
+\ir packages/db/migrations/0033_inbox_receipt_reply_binding.sql
+\ir packages/db/migrations/0034_legacy_inbox_scope_derivation.sql
+\ir packages/db/migrations/0035_decision_session_provenance.sql

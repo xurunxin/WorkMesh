@@ -2,12 +2,19 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
-import { appendEvent, withTx } from '@workmesh/db'
+import { appendEvent, lockAgentAuthorityPlan, withTx } from '@workmesh/db'
 import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '@workmesh/domain'
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
 import { isHeartbeatReplay, recordHeartbeatKey } from '../heartbeat-idempotency.js'
 import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
+import {
+  assertAgentWrite,
+  authorizeCommandInTx,
+  loadAgentSessionForMutation,
+  revalidateLockedAgentSessionForMutation,
+  type AgentSessionAuthorityLocator,
+} from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import type { Paginator } from '../pagination.js'
 import {
@@ -27,29 +34,183 @@ const leaseResponse = <T extends { version: number }>(lease: T): T & { revision:
 })
 
 async function session(tx: PoolClient, workspaceId: string, id: string) {
-  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; project_id:string|null; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>('SELECT id,workspace_id,team_id,work_item_id,project_id,plan_step_id,plan_step_version_id,current_plan_version_id,parent_session_id,delegation_id,agent_id,agent_actor_id,budget,max_child_sessions,state,revision FROM agent_sessions WHERE id=$1 AND workspace_id=$2', [id, workspaceId])).rows[0]
+  const row = (await tx.query<{ id:string; workspace_id:string; team_id:string; work_item_id:string|null; work_item_exists:boolean; work_item_project_id:string|null; project_id:string|null; project_exists:boolean; plan_step_id:string|null; plan_step_version_id:string|null; current_plan_version_id:string|null; parent_session_id:string|null; delegation_id:string; agent_id:string; agent_actor_id:string; budget:Record<string, unknown>; max_child_sessions:number; state:string; revision:number }>(
+    `SELECT current_session.id,current_session.workspace_id,current_session.team_id,
+            current_session.work_item_id,
+            live_work_item.id IS NOT NULL AS work_item_exists,
+            live_work_item_project.id AS work_item_project_id,
+            current_session.project_id,
+            live_session_project.id IS NOT NULL AS project_exists,
+            current_session.plan_step_id,
+            current_session.plan_step_version_id,
+            current_session.current_plan_version_id,
+            current_session.parent_session_id,current_session.delegation_id,
+            current_session.agent_id,current_session.agent_actor_id,
+            current_session.budget,current_session.max_child_sessions,
+            current_session.state,current_session.revision
+       FROM agent_sessions current_session
+       LEFT JOIN work_items live_work_item
+         ON live_work_item.id=current_session.work_item_id
+        AND live_work_item.workspace_id=current_session.workspace_id
+        AND live_work_item.deleted_at IS NULL
+       LEFT JOIN projects live_work_item_project
+         ON live_work_item_project.id=live_work_item.project_id
+        AND live_work_item_project.workspace_id=current_session.workspace_id
+        AND live_work_item_project.deleted_at IS NULL
+       LEFT JOIN projects live_session_project
+         ON live_session_project.id=current_session.project_id
+        AND live_session_project.workspace_id=current_session.workspace_id
+        AND live_session_project.deleted_at IS NULL
+      WHERE current_session.id=$1 AND current_session.workspace_id=$2`,
+    [id, workspaceId],
+  )).rows[0]
   if (!row) throw new DomainError('NOT_FOUND', 'Agent session not found')
   return row
 }
 async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: string) {
-  const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind === 'agent') {
-    if (current.agentSessionId !== sessionId || current.id !== row.agent_actor_id) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to this session')
-    const grant = (await tx.query<{ status:string; permissions_snapshot:string[] }>('SELECT status,permissions_snapshot FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
-    if (!grant || grant.status !== 'active' || !grant.permissions_snapshot.includes('work:write')) throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent delegation does not grant collaboration writes')
-    if (['stopping','completed','failed','canceled'].includes(row.state)) throw new DomainError('SESSION_STOPPED', 'Stopped sessions cannot perform ordinary writes')
-  } else await assertHumanTeam(tx,current,row.team_id)
+    const authority = await loadAgentSessionForMutation(tx, current, sessionId)
+    assertAgentWrite({
+      actor: current,
+      session: authority,
+      sessionId,
+      capability: 'work:write',
+      operation: 'activity',
+      idempotencyKey: 'collaboration-live-authority',
+    })
+  }
+  const row = await session(tx, current.workspaceId, sessionId)
+  if (current.kind !== 'agent') await assertHumanTeam(tx,current,row.team_id)
   return row
 }
-async function assertSessionMessageWrite(tx: PoolClient, current: ApiActor, sessionId: string, intent: string) {
+
+async function lockCollaborationSessionTargets(
+  tx: PoolClient,
+  current: ApiActor,
+  sourceSessionId: string,
+  targetAgentIds: readonly string[],
+): Promise<void> {
+  const source = (await tx.query<{
+    agent_id: string
+    delegation_id: string
+    team_id: string
+    work_item_id: string | null
+    project_id: string | null
+    work_item_project_id: string | null
+    session_token_id: string | null
+    installation_token_id: string | null
+  }>(
+    `SELECT session.agent_id,session.delegation_id,session.team_id,
+            session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+            credential.id AS session_token_id,credential.installation_token_id
+       FROM agent_sessions session
+       LEFT JOIN work_items item ON item.id=session.work_item_id
+       LEFT JOIN agent_session_tokens credential
+         ON credential.session_id=session.id
+        AND credential.token_hash=$3
+      WHERE session.id=$1 AND session.workspace_id=$2`,
+    [sourceSessionId,current.workspaceId,current.credentialHash ?? null],
+  )).rows[0]
+  if (!source) throw new DomainError('NOT_FOUND','Source Agent Session not found')
+  const targets=[...new Set(targetAgentIds)]
+  const targetSessionIds=targets.length
+    ? (await tx.query<{id:string}>(
+        `SELECT id FROM agent_sessions
+          WHERE agent_id=ANY($1::uuid[])
+            AND state NOT IN ('completed','failed','canceled')`,
+        [targets],
+      )).rows.map(row=>row.id)
+    : []
+  const installationTokenIds=targets.length
+    ? (await tx.query<{id:string}>(
+        `SELECT DISTINCT ON (agent_id) id
+           FROM agent_installation_tokens
+          WHERE agent_id=ANY($1::uuid[])
+          ORDER BY agent_id,created_at DESC,id`,
+        [targets],
+      )).rows.map(row=>row.id)
+    : []
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[source.agent_id,...targets],
+    teamGrants:[source.agent_id,...targets].map(agentId=>({
+      workspaceId:current.workspaceId,
+      agentId,
+      teamId:source.team_id,
+    })),
+    delegationIds:[source.delegation_id],
+    sessionIds:[sourceSessionId,...targetSessionIds],
+    sessionTokenIds:source.session_token_id?[source.session_token_id]:[],
+    installationTokenIds:[
+      ...(source.installation_token_id?[source.installation_token_id]:[]),
+      ...installationTokenIds,
+    ],
+    workItemIds:source.work_item_id?[source.work_item_id]:[],
+    projectIds:[
+      ...(source.project_id?[source.project_id]:[]),
+      ...(source.work_item_project_id?[source.work_item_project_id]:[]),
+    ],
+  })
+}
+function assertDecisionSubjectInSessionScope(
+  currentSession: {
+    id: string
+    work_item_id: string | null
+    work_item_exists: boolean
+    work_item_project_id: string | null
+    project_id: string | null
+    project_exists: boolean
+  },
+  subject: Subject,
+  subjectId: string,
+): void {
+  const inScope = subject === 'session'
+    ? currentSession.id === subjectId
+    : subject === 'work_item'
+      ? currentSession.work_item_id === subjectId && currentSession.work_item_exists
+      : currentSession.work_item_id
+        ? currentSession.work_item_project_id === subjectId
+        : currentSession.project_id === subjectId && currentSession.project_exists
+  if (!inScope) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Decision subject is outside the current live Session scope')
+}
+async function assertSessionMessageWrite(
+  tx: PoolClient,
+  current: ApiActor,
+  sessionId: string,
+  intent: string,
+  idempotencyKey: string,
+  authorityLocator?: AgentSessionAuthorityLocator,
+) {
   const row = await session(tx, current.workspaceId, sessionId)
   if (current.kind !== 'agent') return row
-  if (current.agentSessionId !== sessionId || current.id !== row.agent_actor_id) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to this session')
-  const grant = (await tx.query<{ status:string; permissions_snapshot:string[]; role:string }>('SELECT status,permissions_snapshot,role FROM delegations WHERE id=$1 FOR UPDATE', [row.delegation_id])).rows[0]
-  if (!grant || grant.status !== 'active' || ['stopping','completed','failed','canceled'].includes(row.state)) throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent session cannot post collaboration messages')
-  if (grant.permissions_snapshot.includes('work:write')) return row
-  if (intent === 'review_result' && grant.role === 'reviewer' && grant.permissions_snapshot.includes('artifact:write')) return row
-  throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent delegation does not grant collaboration writes')
+  const reviewResult = intent === 'review_result'
+  if (!authorityLocator) {
+    throw new DomainError(
+      'AGENT_SESSION_NOT_FOUND',
+      'The merged Room authority plan did not include the source Session',
+    )
+  }
+  const authority = await revalidateLockedAgentSessionForMutation(
+    tx,
+    current,
+    sessionId,
+    authorityLocator,
+  )
+  assertAgentWrite({
+    actor: current,
+    session: authority,
+    sessionId,
+    capability: reviewResult ? 'artifact:write' : 'work:write',
+    operation: 'room_message',
+    idempotencyKey,
+  })
+  if (reviewResult) {
+    const delegation = (await tx.query<{ role:string }>(
+      'SELECT role FROM delegations WHERE id=$1',
+      [row.delegation_id],
+    )).rows[0]
+    if (delegation?.role !== 'reviewer') throw new DomainError('CAPABILITY_DENIED', 'Review results require a reviewer delegation with artifact:write')
+  }
+  return row
 }
 async function assertLeaseResourceScope(tx: PoolClient, current: ApiActor, s: Awaited<ReturnType<typeof session>>, resourceType: 'work_item' | 'plan_step', resourceId: string) {
   if (resourceType === 'work_item') {
@@ -66,6 +227,302 @@ async function assertHumanTeam(tx: PoolClient, current: ApiActor, teamId: string
   if (current.workspaceRole === 'admin') return
   const found = await tx.query('SELECT 1 FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3', [current.workspaceId, teamId, current.id])
   if (!found.rowCount) throw new DomainError('FORBIDDEN', 'Team membership is required')
+}
+
+type RoomMessageAuthorityLocator = {
+  channel: {
+    id: string
+    team_id: string
+    subject_kind: Subject
+    subject_id: string
+  }
+  actorDefinitionIds: Map<string,string>
+  sourceSession?: AgentSessionAuthorityLocator
+}
+
+async function lockRoomMessageAuthorityPlan(
+  tx: PoolClient,
+  current: ApiActor,
+  channelId: string,
+  sourceSessionId: string | undefined,
+  recipientActorIds: readonly string[],
+  recipientSessionIds: readonly string[],
+): Promise<RoomMessageAuthorityLocator> {
+  const channel = (await tx.query<RoomMessageAuthorityLocator['channel']>(
+    `SELECT id,team_id,subject_kind,subject_id
+       FROM work_room_channels
+      WHERE id=$1 AND workspace_id=$2`,
+    [channelId,current.workspaceId],
+  )).rows[0]
+  if (!channel) throw new DomainError('NOT_FOUND','Room not found')
+
+  const recipientActors = recipientActorIds.length
+    ? (await tx.query<{actor_id:string;kind:'human'|'agent';definition_id:string|null}>(
+        `SELECT recipient.id AS actor_id,recipient.kind,definition.id AS definition_id
+           FROM actors recipient
+           LEFT JOIN agent_definitions definition
+             ON definition.actor_id=recipient.id
+            AND definition.workspace_id=recipient.workspace_id
+          WHERE recipient.workspace_id=$1
+            AND recipient.id=ANY($2::uuid[])
+          ORDER BY recipient.id`,
+        [current.workspaceId,[...recipientActorIds]],
+      )).rows
+    : []
+  const actorDefinitionIds = new Map<string,string>()
+  for (const recipient of recipientActors) {
+    if (recipient.kind==='agent'&&recipient.definition_id)
+      actorDefinitionIds.set(recipient.actor_id,recipient.definition_id)
+  }
+
+  const sessionIds=new Set<string>(recipientSessionIds)
+  if(sourceSessionId) sessionIds.add(sourceSessionId)
+  if(channel.subject_kind==='session') sessionIds.add(channel.subject_id)
+  const recipientAgentIds=[...actorDefinitionIds.values()]
+  if(recipientAgentIds.length) {
+    const candidateSessions=(await tx.query<{id:string}>(
+      `SELECT id FROM agent_sessions
+        WHERE workspace_id=$1 AND agent_id=ANY($2::uuid[])
+        ORDER BY id`,
+      [current.workspaceId,recipientAgentIds],
+    )).rows
+    for(const candidate of candidateSessions) sessionIds.add(candidate.id)
+  }
+
+  const sessions=sessionIds.size
+    ? (await tx.query<{
+        id:string
+        agent_id:string
+        delegation_id:string
+        team_id:string
+        work_item_id:string|null
+        project_id:string|null
+        work_item_project_id:string|null
+        session_token_id:string|null
+        installation_token_id:string|null
+      }>(
+        `SELECT session.id,session.agent_id,session.delegation_id,session.team_id,
+                session.work_item_id,session.project_id,
+                item.project_id AS work_item_project_id,
+                credential.id AS session_token_id,
+                credential.installation_token_id
+           FROM agent_sessions session
+           LEFT JOIN work_items item
+             ON item.id=session.work_item_id
+            AND item.workspace_id=session.workspace_id
+           LEFT JOIN agent_session_tokens credential
+             ON credential.session_id=session.id
+            AND session.id=$3
+            AND credential.token_hash=$4
+          WHERE session.workspace_id=$1
+            AND session.id=ANY($2::uuid[])
+          ORDER BY session.id`,
+        [
+          current.workspaceId,
+          [...sessionIds],
+          sourceSessionId??null,
+          current.kind==='agent'?(current.credentialHash??null):null,
+        ],
+      )).rows
+    : []
+  const sessionById=new Map(sessions.map(row=>[row.id,row]))
+  if(sourceSessionId&&!sessionById.has(sourceSessionId))
+    throw new DomainError('NOT_FOUND','Source Agent Session not found')
+  for(const exactSessionId of recipientSessionIds) {
+    if(!sessionById.has(exactSessionId))
+      throw new DomainError(
+        'MESSAGE_RECIPIENT_OUT_OF_SCOPE',
+        'Exact Session recipient is unavailable or outside this Work Room',
+      )
+  }
+
+  let subjectWorkItemId:string|null=null
+  let subjectProjectId:string|null=null
+  if(channel.subject_kind==='work_item') {
+    const item=(await tx.query<{project_id:string|null}>(
+      'SELECT project_id FROM work_items WHERE id=$1 AND workspace_id=$2',
+      [channel.subject_id,current.workspaceId],
+    )).rows[0]
+    subjectWorkItemId=channel.subject_id
+    subjectProjectId=item?.project_id??null
+  } else if(channel.subject_kind==='project') {
+    subjectProjectId=channel.subject_id
+  }
+
+  const definitions=new Set(recipientAgentIds)
+  const delegations=new Set<string>()
+  const grants=new Map<string,{workspaceId:string;agentId:string;teamId:string}>()
+  const workItems=new Set<string>()
+  const projects=new Set<string>()
+  const sessionTokens=new Set<string>()
+  const installationTokens=new Set<string>()
+  for(const target of sessions) {
+    definitions.add(target.agent_id)
+    delegations.add(target.delegation_id)
+    grants.set(
+      `${current.workspaceId}:${target.agent_id}:${target.team_id}`,
+      {workspaceId:current.workspaceId,agentId:target.agent_id,teamId:target.team_id},
+    )
+    if(target.work_item_id) workItems.add(target.work_item_id)
+    if(target.project_id) projects.add(target.project_id)
+    if(target.work_item_project_id) projects.add(target.work_item_project_id)
+    if(target.session_token_id) sessionTokens.add(target.session_token_id)
+    if(target.installation_token_id) installationTokens.add(target.installation_token_id)
+  }
+  for(const agentId of recipientAgentIds) {
+    grants.set(
+      `${current.workspaceId}:${agentId}:${channel.team_id}`,
+      {workspaceId:current.workspaceId,agentId,teamId:channel.team_id},
+    )
+  }
+  if(subjectWorkItemId) workItems.add(subjectWorkItemId)
+  if(subjectProjectId) projects.add(subjectProjectId)
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[...definitions],
+    teamGrants:[...grants.values()],
+    delegationIds:[...delegations],
+    sessionIds:[...sessionIds],
+    sessionTokenIds:[...sessionTokens],
+    installationTokenIds:[...installationTokens],
+    workItemIds:[...workItems],
+    projectIds:[...projects],
+  })
+  return {
+    channel,
+    actorDefinitionIds,
+    sourceSession:sourceSessionId?sessionById.get(sourceSessionId):undefined,
+  }
+}
+
+async function authorizeActorRecipient(
+  tx: PoolClient,
+  current: ApiActor,
+  teamId: string,
+  subjectKind: Subject,
+  subjectId: string,
+  recipientId: string,
+  locatorDefinitionId?: string,
+): Promise<string | undefined> {
+  const recipient = (await tx.query<{ kind:'human'|'agent'; is_active:boolean }>(
+    `SELECT kind,is_active FROM actors
+      WHERE id=$1 AND workspace_id=$2`,
+    [recipientId, current.workspaceId],
+  )).rows[0]
+  if (!recipient?.is_active) {
+    throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Message recipient is unavailable')
+  }
+  if (recipient.kind === 'human') {
+    const allowed = await tx.query(
+      `SELECT 1 FROM actors recipient
+        WHERE recipient.id=$1 AND recipient.workspace_id=$2
+          AND (
+            recipient.workspace_role='admin'
+            OR EXISTS (
+              SELECT 1 FROM memberships membership
+               WHERE membership.workspace_id=recipient.workspace_id
+                 AND membership.team_id=$3
+                 AND membership.actor_id=recipient.id
+            )
+          )`,
+      [recipientId, current.workspaceId, teamId],
+    )
+    if (!allowed.rowCount) {
+      throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Message recipient lacks active Team access')
+    }
+    return undefined
+  }
+  const definition = (await tx.query<{ id:string }>(
+    `SELECT id FROM agent_definitions
+      WHERE actor_id=$1 AND workspace_id=$2 AND is_active
+        AND 'work:read'=ANY(approved_capabilities)`,
+    [recipientId, current.workspaceId],
+  )).rows[0]
+  if (!definition || definition.id!==locatorDefinitionId) {
+    throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Agent recipient is unavailable')
+  }
+  const teamAccess = await tx.query(
+    `SELECT 1 FROM agent_team_access
+      WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
+        AND revoked_at IS NULL
+        AND 'work:read'=ANY(approved_capabilities)`,
+    [current.workspaceId, definition.id, teamId],
+  )
+  if (!teamAccess.rowCount) {
+    throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Agent recipient lacks active Team access')
+  }
+  const eligible = await tx.query(
+    `SELECT 1
+       FROM delegations delegation
+       JOIN agent_sessions target_session
+         ON target_session.delegation_id=delegation.id
+        AND target_session.workspace_id=delegation.workspace_id
+      WHERE delegation.workspace_id=$1
+        AND delegation.agent_id=$2
+        AND delegation.status='active'
+        AND target_session.agent_actor_id=$3
+        AND target_session.team_id=$4
+        AND target_session.state IN(
+          'acknowledged','planning','executing',
+          'awaiting_input','awaiting_approval','blocked'
+        )
+        AND 'work:read'=ANY(delegation.permissions_snapshot)
+        AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
+            ? target_session.team_id::text
+        AND (
+          (
+            $5='work_item'
+            AND target_session.work_item_id=$6
+            AND EXISTS (
+              SELECT 1 FROM work_items target_work_item
+               WHERE target_work_item.id=target_session.work_item_id
+                 AND target_work_item.workspace_id=$1
+                 AND target_work_item.deleted_at IS NULL
+            )
+            AND COALESCE(delegation.capability_scope->'workItemIds','[]'::jsonb)
+                ? target_session.work_item_id::text
+          )
+          OR (
+            $5='project'
+            AND EXISTS (
+              SELECT 1 FROM projects target_project
+               WHERE target_project.id=$6
+                 AND target_project.workspace_id=$1
+                 AND target_project.deleted_at IS NULL
+            )
+            AND (
+              (
+                target_session.work_item_id IS NOT NULL
+                AND COALESCE(
+                  delegation.capability_scope->'workItemIds',
+                  '[]'::jsonb
+                ) ? target_session.work_item_id::text
+                AND EXISTS (
+                  SELECT 1 FROM work_items target_work_item
+                   WHERE target_work_item.id=target_session.work_item_id
+                     AND target_work_item.workspace_id=$1
+                     AND target_work_item.project_id=$6
+                     AND target_work_item.deleted_at IS NULL
+                )
+              )
+              OR (
+                target_session.work_item_id IS NULL
+                AND target_session.project_id=$6
+                AND COALESCE(
+                  delegation.capability_scope->'projectIds',
+                  '[]'::jsonb
+                ) ? $6::text
+              )
+            )
+          )
+      )
+      ORDER BY target_session.id
+      LIMIT 1`,
+    [current.workspaceId, definition.id, recipientId, teamId, subjectKind, subjectId],
+  )
+  if (!eligible.rowCount) {
+    throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Agent recipient has no active in-scope Session')
+  }
+  return definition.id
 }
 async function assertExactHandoffTargetAccess(tx: PoolClient, workspaceId: string, teamId: string, targetAgentId: string, requiredCapabilities: string[]) {
   const found = await tx.query(
@@ -92,14 +549,31 @@ async function room(tx: PoolClient, workspaceId: string, kind: Subject, subjectI
   const teamId = await subjectTeam(tx, workspaceId, kind, subjectId)
   return (await tx.query<{ id:string; team_id:string }>('INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,$2,$3,$4) ON CONFLICT(workspace_id,subject_kind,subject_id) DO UPDATE SET team_id=EXCLUDED.team_id RETURNING id,team_id', [workspaceId, kind, subjectId, teamId])).rows[0]!
 }
-async function emit(tx: PoolClient, meta: RequestMeta, type: string, aggregateType: string, aggregateId: string, payload: Record<string, unknown>, teamId?: string) {
-  return appendEvent(tx, { workspaceId: meta.actor.workspaceId, teamId, actorId: meta.actor.id, correlationId: meta.correlationId, idempotencyKey: meta.idempotencyKey, type, aggregateType, aggregateId, payload })
+async function emit(tx: PoolClient, meta: RequestMeta, type: string, aggregateType: string, aggregateId: string, payload: Record<string, unknown>, teamId?: string, target?: { audienceActorId?: string; sessionId?: string }) {
+  return appendEvent(tx, { workspaceId: meta.actor.workspaceId, teamId, audienceActorId: target?.audienceActorId, actorId: meta.actor.id, correlationId: meta.correlationId, idempotencyKey: meta.idempotencyKey, type, aggregateType, aggregateId, payload, sessionId: target?.sessionId })
 }
-async function inbox(tx: PoolClient, meta: RequestMeta, recipient: string | undefined, sessionId: string | undefined, kind: 'ask' | 'review_request' | 'blocker' | 'handoff', sourceId: string, payload: Record<string, unknown>) {
+async function inbox(tx: PoolClient, meta: RequestMeta, input: {
+  recipient: string | undefined; recipientSessionId?: string; sourceSessionId?: string; teamId: string;
+  kind: 'ask' | 'review_request' | 'blocker' | 'handoff' | 'mention'; sourceId: string;
+  sourceType?: 'room_message' | 'handoff'; payload: Record<string, unknown>; requiresResponse?: boolean;
+}) {
+  const { recipient, recipientSessionId, sourceSessionId, teamId, kind, sourceId, payload } = input
+  const sourceType = input.sourceType ?? 'room_message'
   if (!recipient) return
   const target = (await tx.query<{ kind:string }>('SELECT kind FROM actors WHERE id=$1 AND workspace_id=$2', [recipient, meta.actor.workspaceId])).rows[0]
-  if (target?.kind !== 'human') return
-  await tx.query("INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,session_id,kind,source_type,source_id,payload) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(workspace_id,recipient_human_actor_id,kind,source_type,source_id) DO NOTHING", [meta.actor.workspaceId, recipient, sessionId ?? null, kind, kind === 'handoff' ? 'handoff' : 'room_message', sourceId, payload])
+  if (!target) return
+  if (target.kind === 'agent' && kind === 'handoff' && !recipientSessionId) return
+  await tx.query(
+    `INSERT INTO inbox_items(
+       workspace_id,recipient_human_actor_id,recipient_actor_id,
+       recipient_session_id,session_id,team_id,kind,source_type,source_id,
+       source_room_message_id,requires_response,payload
+     ) VALUES(
+       $1,CASE WHEN $2='human' THEN $3::uuid END,$3,$4,$5,$6,$7,
+       $8,$9,CASE WHEN $8='room_message' THEN $9::uuid END,$10,$11
+     ) ON CONFLICT DO NOTHING`,
+    [meta.actor.workspaceId, target.kind, recipient, recipientSessionId ?? null, sourceSessionId ?? null, teamId, kind, sourceType, sourceId, input.requiresResponse ?? false, payload],
+  )
 }
 
 export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): void {
@@ -108,13 +582,52 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     const supplied = Object.entries(q).filter(([, value]) => value)
     if (supplied.length !== 1) throw new DomainError('VALIDATION_ERROR', 'Exactly one room subject is required')
     const [key, value] = supplied[0]!; const kind: Subject = key === 'workItemId' ? 'work_item' : key === 'projectId' ? 'project' : 'session'
-    const result = (await h.db.query<{id:string;team_id:string}>('SELECT id,team_id FROM work_room_channels WHERE workspace_id=$1 AND subject_kind=$2 AND subject_id=$3', [actor(request).workspaceId, kind, value])).rows[0]
+    const result = (await h.db.query<{id:string;team_id:string}>(
+      `SELECT channel.id,channel.team_id
+         FROM work_room_channels channel
+        WHERE channel.workspace_id=$1
+          AND channel.subject_kind=$2
+          AND channel.subject_id=$3
+          AND (
+            channel.subject_kind<>'project'
+            OR EXISTS (
+              SELECT 1 FROM projects room_project
+               WHERE room_project.id=channel.subject_id
+                 AND room_project.workspace_id=channel.workspace_id
+                 AND room_project.deleted_at IS NULL
+            )
+          )`,
+      [actor(request).workspaceId, kind, value],
+    )).rows[0]
     if (!result) throw new DomainError('NOT_FOUND', 'Work Room not found')
     if (actor(request).kind === 'agent') {
       if (!actor(request).agentSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to a session')
-      const own = (await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>('SELECT id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 AND agent_actor_id=$3', [actor(request).agentSessionId, actor(request).workspaceId, actor(request).id])).rows[0]
+      const values: unknown[] = [
+        actor(request).agentSessionId,
+        actor(request).workspaceId,
+      ]
+      const liveAuthorization = liveSessionReadPredicate(
+        actor(request),
+        'own.id',
+        'own.workspace_id',
+        values,
+      )
+      const own = (await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>(
+        `SELECT own.id,own.work_item_id,own.project_id
+           FROM agent_sessions own
+          WHERE own.id=$1
+            AND own.workspace_id=$2
+            AND ${liveAuthorization}`,
+        values,
+      )).rows[0]
       if (!own) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH', 'Agent token is not scoped to an active session')
-      const allowed = kind === 'session' ? own.id === value : kind === 'work_item' ? own.work_item_id === value : own.project_id === value || Boolean(own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2', [own.work_item_id, value])).rowCount)
+      const allowed = kind === 'session'
+        ? own.id === value
+        : kind === 'work_item'
+          ? own.work_item_id === value
+          : own.work_item_id
+            ? Boolean((await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND workspace_id=$2 AND project_id=$3 AND deleted_at IS NULL', [own.work_item_id, actor(request).workspaceId, value])).rowCount)
+            : own.project_id === value
       if (!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Agent token cannot resolve this Work Room')
     } else await h.readableTeam(request, result.team_id)
     return { ...result, subject_kind: kind, subject_id: value }
@@ -214,12 +727,68 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
   })
   app.post('/api/v1/rooms/:id/messages', async request => {
     const channelId = id(request); const body = roomMessageInputSchema.parse(request.body)
+    const actorRecipients = [...new Set(body.recipientActorIds ?? (body.recipientActorId ? [body.recipientActorId] : []))]
+    const recipientSessionIds = [...new Set(body.recipientSessionIds ?? (body.recipientSessionId ? [body.recipientSessionId] : []))]
     return command(h.db, h.meta(request, body, { id: channelId }), async tx => {
-      const channel = (await tx.query<{ team_id:string;subject_kind:Subject;subject_id:string }>('SELECT team_id,subject_kind,subject_id FROM work_room_channels WHERE id=$1 AND workspace_id=$2 FOR UPDATE', [channelId, actor(request).workspaceId])).rows[0]; if (!channel) throw new DomainError('NOT_FOUND','Room not found')
-      if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent)
+      const authorityLocator=await lockRoomMessageAuthorityPlan(
+        tx,
+        actor(request),
+        channelId,
+        body.sessionId,
+        actorRecipients,
+        recipientSessionIds,
+      )
+      const channel = (await tx.query<{ team_id:string;subject_kind:Subject;subject_id:string }>(
+        `SELECT channel.team_id,channel.subject_kind,channel.subject_id
+           FROM work_room_channels channel
+          WHERE channel.id=$1
+            AND channel.workspace_id=$2
+            AND (
+              channel.subject_kind<>'project'
+              OR EXISTS (
+                SELECT 1 FROM projects room_project
+                 WHERE room_project.id=channel.subject_id
+                   AND room_project.workspace_id=channel.workspace_id
+                   AND room_project.deleted_at IS NULL
+              )
+            )
+          FOR UPDATE OF channel`,
+        [channelId, actor(request).workspaceId],
+      )).rows[0]; if (!channel) throw new DomainError('NOT_FOUND','Room not found')
+      if(
+        channel.team_id!==authorityLocator.channel.team_id
+        || channel.subject_kind!==authorityLocator.channel.subject_kind
+        || channel.subject_id!==authorityLocator.channel.subject_id
+      ) throw new DomainError(
+        'MESSAGE_RECIPIENT_OUT_OF_SCOPE',
+        'Room authority binding changed while the message was being authorized',
+      )
+      if (actor(request).kind === 'human') await assertHumanTeam(tx, actor(request), channel.team_id); if (body.sessionId) await assertSessionMessageWrite(tx, actor(request), body.sessionId, body.intent, request.idempotencyKey!, authorityLocator.sourceSession)
       if (actor(request).kind === 'agent' && !body.sessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent messages require their session id')
       if (body.sessionId) {
-        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;project_id:string|null}>('SELECT team_id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2',[body.sessionId,actor(request).workspaceId])).rows[0]
+        const messageSession=(await tx.query<{team_id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null;project_exists:boolean}>(
+          `SELECT message_session.team_id,message_session.work_item_id,
+                  message_scope_item.id IS NOT NULL AS work_item_exists,
+                  message_scope_project.id AS work_item_project_id,
+                  message_session.project_id,
+                  message_session_project.id IS NOT NULL AS project_exists
+             FROM agent_sessions message_session
+             LEFT JOIN work_items message_scope_item
+              ON message_scope_item.id=message_session.work_item_id
+              AND message_scope_item.workspace_id=message_session.workspace_id
+              AND message_scope_item.deleted_at IS NULL
+             LEFT JOIN projects message_scope_project
+               ON message_scope_project.id=message_scope_item.project_id
+              AND message_scope_project.workspace_id=message_session.workspace_id
+              AND message_scope_project.deleted_at IS NULL
+             LEFT JOIN projects message_session_project
+               ON message_session_project.id=message_session.project_id
+              AND message_session_project.workspace_id=message_session.workspace_id
+              AND message_session_project.deleted_at IS NULL
+            WHERE message_session.id=$1
+              AND message_session.workspace_id=$2`,
+          [body.sessionId,actor(request).workspaceId],
+        )).rows[0]
         const inSessionTree = channel.subject_kind === 'session' && Boolean((await tx.query(`
           WITH RECURSIVE lineage(id,parent_session_id) AS (
             SELECT id,parent_session_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2
@@ -228,7 +797,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
             FROM agent_sessions parent JOIN lineage child ON child.parent_session_id=parent.id
           )
           SELECT 1 FROM lineage WHERE id=$3`,[body.sessionId,actor(request).workspaceId,channel.subject_id])).rowCount)
-        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_id===channel.subject_id : messageSession.project_id===channel.subject_id || Boolean(messageSession.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[messageSession.work_item_id,channel.subject_id])).rowCount))
+        const inRoom = messageSession && messageSession.team_id===channel.team_id && (channel.subject_kind==='session' ? inSessionTree : channel.subject_kind==='work_item' ? messageSession.work_item_exists && messageSession.work_item_id===channel.subject_id : messageSession.work_item_id ? messageSession.work_item_project_id===channel.subject_id : messageSession.project_exists && messageSession.project_id===channel.subject_id)
         if (!inRoom) throw new DomainError('RESOURCE_SCOPE_DENIED','Message session is outside this Work Room')
       }
       if (body.intent === 'review_result') {
@@ -249,26 +818,196 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         const related = await tx.query('SELECT 1 FROM room_messages WHERE id=$1 AND channel_id=$2', [relatedId, channelId])
         if (!related.rowCount) throw new DomainError('VALIDATION_ERROR', 'Reply and thread references must remain in the same Work Room')
       }
-      const recipients = [...new Set(body.recipientActorIds ?? (body.recipientActorId ? [body.recipientActorId] : []))]
-      for (const recipientId of recipients) {
-        const scoped = await tx.query("SELECT 1 FROM actors a WHERE a.id=$1 AND a.workspace_id=$2 AND ((a.kind='human' AND (a.workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships m WHERE m.workspace_id=a.workspace_id AND m.team_id=$3 AND m.actor_id=a.id))) OR (a.kind='agent' AND EXISTS(WITH RECURSIVE lineage(id) AS (SELECT $5::uuid UNION ALL SELECT child.id FROM agent_sessions child JOIN lineage parent ON child.parent_session_id=parent.id) SELECT 1 FROM agent_definitions d JOIN agent_team_access ata ON ata.agent_id=d.id AND ata.workspace_id=d.workspace_id JOIN delegations dg ON dg.agent_id=d.id AND dg.status='active' JOIN agent_sessions s ON s.delegation_id=dg.id WHERE d.actor_id=a.id AND ata.team_id=$3 AND ata.revoked_at IS NULL AND s.state NOT IN ('completed','failed','canceled') AND (($4='work_item' AND s.work_item_id=$5) OR ($4='project' AND (s.project_id=$5 OR EXISTS(SELECT 1 FROM work_items wi WHERE wi.id=s.work_item_id AND wi.project_id=$5))) OR ($4='session' AND s.id IN (SELECT id FROM lineage))))))", [recipientId, actor(request).workspaceId, channel.team_id, channel.subject_kind, channel.subject_id])
-        if (!scoped.rowCount) throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Message recipient lacks access to this team')
+      if (channel.subject_kind === 'session' && actorRecipients.length > 0) throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Session Work Rooms require exact Session recipients')
+      const exactSessionRecipients: Array<{ id:string; actor_id:string; agent_id:string }> = []
+      for (const recipientSessionId of recipientSessionIds) {
+        const exact = (await tx.query<{ id:string;actor_id:string;agent_id:string }>(
+          `SELECT target_session.id,target_session.agent_actor_id AS actor_id,
+                  target_session.agent_id
+             FROM agent_sessions target_session
+             JOIN actors target_actor
+               ON target_actor.id=target_session.agent_actor_id
+              AND target_actor.workspace_id=target_session.workspace_id
+              AND target_actor.kind='agent'
+              AND target_actor.is_active
+             JOIN delegations target_delegation
+               ON target_delegation.id=target_session.delegation_id
+              AND target_delegation.status='active'
+             LEFT JOIN work_items target_scope_item
+               ON target_scope_item.id=target_session.work_item_id
+              AND target_scope_item.workspace_id=target_session.workspace_id
+              AND target_scope_item.deleted_at IS NULL
+             LEFT JOIN projects target_scope_project
+               ON target_scope_project.id=target_scope_item.project_id
+              AND target_scope_project.workspace_id=target_session.workspace_id
+              AND target_scope_project.deleted_at IS NULL
+             LEFT JOIN projects target_session_project
+               ON target_session_project.id=target_session.project_id
+              AND target_session_project.workspace_id=target_session.workspace_id
+              AND target_session_project.deleted_at IS NULL
+             JOIN agent_definitions target_definition
+               ON target_definition.id=target_session.agent_id
+              AND target_definition.workspace_id=target_session.workspace_id
+              AND target_definition.is_active
+             JOIN agent_team_access target_team_access
+               ON target_team_access.workspace_id=target_session.workspace_id
+              AND target_team_access.agent_id=target_session.agent_id
+              AND target_team_access.team_id=target_session.team_id
+              AND target_team_access.revoked_at IS NULL
+            WHERE target_session.id=$1
+              AND target_session.workspace_id=$2
+              AND target_session.team_id=$3
+              AND target_session.state IN(
+                'acknowledged','planning','executing',
+                'awaiting_input','awaiting_approval','blocked'
+              )
+               AND 'work:read'=ANY(target_delegation.permissions_snapshot)
+               AND 'work:read'=ANY(target_definition.approved_capabilities)
+               AND 'work:read'=ANY(target_team_access.approved_capabilities)
+               AND COALESCE(target_delegation.capability_scope->'teamIds','[]'::jsonb)
+                   ? target_session.team_id::text
+               AND (
+                 (
+                   target_session.work_item_id IS NOT NULL
+                   AND target_scope_item.id IS NOT NULL
+                   AND COALESCE(
+                     target_delegation.capability_scope->'workItemIds',
+                     '[]'::jsonb
+                   ) ? target_session.work_item_id::text
+                 )
+                 OR (
+                   target_session.work_item_id IS NULL
+                   AND (
+                     target_session.project_id IS NULL
+                     OR (
+                       target_session_project.id IS NOT NULL
+                       AND COALESCE(
+                         target_delegation.capability_scope->'projectIds',
+                         '[]'::jsonb
+                       ) ? target_session.project_id::text
+                     )
+                   )
+                 )
+               )
+               AND (
+                ($4='work_item' AND target_session.work_item_id=$5)
+                OR (
+                  $4='project'
+                  AND EXISTS (
+                    SELECT 1 FROM projects room_project
+                     WHERE room_project.id=$5
+                       AND room_project.workspace_id=$2
+                       AND room_project.deleted_at IS NULL
+                  )
+                  AND (
+                    (
+                      target_session.work_item_id IS NOT NULL
+                      AND target_scope_project.id=$5
+                    )
+                    OR (
+                      target_session.work_item_id IS NULL
+                      AND target_session_project.id=$5
+                      AND COALESCE(
+                        target_delegation.capability_scope->'projectIds',
+                        '[]'::jsonb
+                      ) ? $5::text
+                    )
+                  )
+                )
+                 OR (
+                   $4='session'
+                   AND EXISTS(
+                     WITH RECURSIVE lineage(id) AS (
+                       SELECT $5::uuid
+                       UNION ALL
+                       SELECT child.id
+                         FROM agent_sessions child
+                         JOIN lineage parent ON child.parent_session_id=parent.id
+                        WHERE child.workspace_id=$2
+                     )
+                     SELECT 1 FROM lineage WHERE id=target_session.id
+                   )
+                 )
+               )
+             `,
+          [recipientSessionId, actor(request).workspaceId, channel.team_id, channel.subject_kind, channel.subject_id],
+        )).rows[0]
+        if (!exact) throw new DomainError('MESSAGE_RECIPIENT_OUT_OF_SCOPE', 'Exact Session recipient is unavailable or outside this Work Room')
+        exactSessionRecipients.push(exact)
       }
-      const row = (await tx.query('INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,recipient_actor_id,reply_to_message_id,thread_id,body,structured_payload,requires_response) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *', [channelId, actor(request).workspaceId, actor(request).id, body.sessionId ?? null, body.intent, recipients[0] ?? null, body.replyToMessageId ?? null, body.threadId ?? null, body.body, body.payload, body.requiresResponse])).rows[0] as { id:string }
-      for (const recipientId of recipients) await tx.query('INSERT INTO room_message_recipients(message_id,actor_id) VALUES($1,$2)', [row.id, recipientId])
+      const uniqueRecipients = [...new Set([...actorRecipients, ...exactSessionRecipients.map(exact => exact.actor_id)])]
+      const actorWebhookAgentIds = new Map<string,string>()
+      for (const recipientId of actorRecipients) {
+        const agentId = await authorizeActorRecipient(
+          tx,
+          actor(request),
+          channel.team_id,
+          channel.subject_kind,
+          channel.subject_id,
+          recipientId,
+          authorityLocator.actorDefinitionIds.get(recipientId),
+        )
+        if (agentId) actorWebhookAgentIds.set(recipientId, agentId)
+      }
+      const row = (await tx.query('INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,recipient_actor_id,reply_to_message_id,thread_id,body,structured_payload,requires_response) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *', [channelId, actor(request).workspaceId, actor(request).id, body.sessionId ?? null, body.intent, uniqueRecipients[0] ?? null, body.replyToMessageId ?? null, body.threadId ?? null, body.body, body.payload, body.requiresResponse])).rows[0] as { id:string }
+      for (const recipientId of uniqueRecipients) await tx.query('INSERT INTO room_message_recipients(message_id,actor_id) VALUES($1,$2)', [row.id, recipientId])
+      for (const exact of exactSessionRecipients) await tx.query('INSERT INTO room_message_session_recipients(message_id,workspace_id,session_id,actor_id) VALUES($1,$2,$3,$4)', [row.id, actor(request).workspaceId, exact.id, exact.actor_id])
       if (body.intent === 'answer' && body.replyToMessageId) {
         await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) SELECT id,$2,$3 FROM room_messages WHERE id=$1 AND requires_response=true', [body.replyToMessageId, actor(request).id, `answer:${row.id}`])
-        await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'", [actor(request).workspaceId, actor(request).id, body.replyToMessageId])
+        await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'", [actor(request).workspaceId, actor(request).id, body.replyToMessageId])
       }
-      let inboxRecipients = recipients; if (['ask','review_request','blocker','handoff'].includes(body.intent) && body.sessionId) { const principal=(await tx.query<{ principal_human_actor_id:string }>('SELECT d.principal_human_actor_id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id WHERE s.id=$1',[body.sessionId])).rows[0]?.principal_human_actor_id; if(principal) inboxRecipients=[...new Set([...inboxRecipients,principal])] }
-       if (body.intent === 'ask' || body.intent === 'review_request' || body.intent === 'blocker' || body.intent === 'handoff') for (const recipient of inboxRecipients) await inbox(tx, h.meta(request, body), recipient, body.sessionId, body.intent, row.id, { intent: body.intent, channelId }); const eventId=await emit(tx,h.meta(request,body),'room.message.posted','room_message',row.id,{intent:body.intent,channelId},channel.team_id); for (const recipient of recipients) { const target=(await tx.query<{id:string}>('SELECT id FROM agent_definitions WHERE actor_id=$1 AND workspace_id=$2 AND is_active=true',[recipient,actor(request).workspaceId])).rows[0]; if(target) await queueWebhookDeliveries(tx,target.id,eventId,'room.message.posted',body.sessionId,{messageId:row.id,channelId,intent:body.intent,sessionId:body.sessionId??null}); } return row
+      let inboxActorRecipients = actorRecipients
+      if (['ask','review_request','blocker','handoff'].includes(body.intent) && body.sessionId) {
+        const responsibleHuman=(await tx.query<{ responsible_human_actor_id:string|null }>(
+          `SELECT item.responsible_human_actor_id
+             FROM agent_sessions source_session
+             JOIN work_items item
+               ON item.id=source_session.work_item_id
+              AND item.workspace_id=source_session.workspace_id
+            WHERE source_session.id=$1
+              AND source_session.workspace_id=$2`,
+          [body.sessionId,actor(request).workspaceId],
+        )).rows[0]?.responsible_human_actor_id
+        if(responsibleHuman) {
+          await authorizeActorRecipient(
+            tx,
+            actor(request),
+            channel.team_id,
+            channel.subject_kind,
+            channel.subject_id,
+            responsibleHuman,
+            authorityLocator.actorDefinitionIds.get(responsibleHuman),
+          )
+          inboxActorRecipients=[...new Set([...inboxActorRecipients,responsibleHuman])]
+        }
+      }
+      const inboxKind = body.intent === 'inform' ? 'mention' : ['ask','review_request','blocker','handoff'].includes(body.intent) ? body.intent as 'ask' | 'review_request' | 'blocker' | 'handoff' : undefined
+      if (inboxKind) {
+        for (const recipient of inboxActorRecipients) await inbox(tx, h.meta(request, body), { recipient, sourceSessionId: body.sessionId, teamId: channel.team_id, kind: inboxKind, sourceId: row.id, payload: { intent: body.intent, channelId }, requiresResponse: body.requiresResponse })
+        for (const exact of exactSessionRecipients) await inbox(tx, h.meta(request, body), { recipient: exact.actor_id, recipientSessionId: exact.id, sourceSessionId: body.sessionId, teamId: channel.team_id, kind: inboxKind, sourceId: row.id, payload: { intent: body.intent, channelId }, requiresResponse: body.requiresResponse })
+      }
+      const eventPayload={intent:body.intent,channelId}
+      if (actorRecipients.length === 0 && exactSessionRecipients.length === 0) {
+        await emit(tx,h.meta(request,body),'room.message.posted','room_message',row.id,eventPayload,channel.team_id)
+      }
+      for (const recipient of actorRecipients) {
+        const eventId=await emit(tx,h.meta(request,body),'room.message.posted','room_message',row.id,eventPayload,channel.team_id,{audienceActorId:recipient})
+        const targetAgentId=actorWebhookAgentIds.get(recipient)
+        if(targetAgentId) await queueWebhookDeliveries(tx,targetAgentId,eventId,'room.message.posted',undefined,{messageId:row.id,channelId,intent:body.intent})
+      }
+      for (const exact of exactSessionRecipients) {
+        const eventId=await emit(tx,h.meta(request,body),'room.message.posted','room_message',row.id,eventPayload,channel.team_id,{audienceActorId:exact.actor_id,sessionId:exact.id})
+        await queueWebhookDeliveries(tx,exact.agent_id,eventId,'room.message.posted',exact.id,{messageId:row.id,channelId,intent:body.intent,sessionId:exact.id})
+      }
+      if (actorRecipients.length > 0 || exactSessionRecipients.length > 0) {
+        await emit(tx,h.meta(request,body),'room.message.human_visibility_recorded','room_message',row.id,eventPayload,channel.team_id)
+      }
+      return row
     })
   })
   app.post('/api/v1/messages/:id/resolve', async request => command(h.db, h.meta(request, {}, { id: id(request) }), async tx => {
-    const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]; if(!row) throw new DomainError('NOT_FOUND','Message not found'); await assertHumanTeam(tx,actor(request),row.team_id); await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved']); await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id]); await emit(tx,h.meta(request,{}),'room.message.resolved','room_message',row.id,{},row.team_id); return {id:row.id,resolved:true}
+    const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]; if(!row) throw new DomainError('NOT_FOUND','Message not found'); await assertHumanTeam(tx,actor(request),row.team_id); await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved']); await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id]); await emit(tx,h.meta(request,{}),'room.message.resolved','room_message',row.id,{},row.team_id); return {id:row.id,resolved:true}
   }))
-
-  app.get('/api/v1/inbox', async request => { if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Human inbox only'); const q=z.object({status:z.enum(['open','resolved']).default('open')}).parse(request.query); return h.paginator.query(h.db,request,request.query,{route:'/api/v1/inbox',filters:{status:q.status},sort:[{key:'created_at',sql:'created_at',direction:'DESC'},{key:'id',sql:'id',direction:'DESC'}]},'SELECT * FROM inbox_items WHERE workspace_id=$1 AND recipient_human_actor_id=$2 AND status=$3',[actor(request).workspaceId,actor(request).id,q.status]) })
 
   app.post('/api/v1/work-items/:id/decisions', async request => createDecision(h, request, 'work_item', id(request)))
   app.post('/api/v1/projects/:id/decisions', async request => createDecision(h, request, 'project', id(request)))
@@ -285,8 +1024,41 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     if(!row) throw new DomainError('NOT_FOUND','Decision not found')
     if(actor(request).kind==='human') await h.readableTeam(request,row.team_id)
     else {
-      const own=(await h.db.query<{id:string;work_item_id:string|null;project_id:string|null}>('SELECT id,work_item_id,project_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 AND agent_actor_id=$3',[actor(request).agentSessionId,actor(request).workspaceId,actor(request).id])).rows[0]
-      const allowed=own && (row.session_id===own.id || Boolean(row.work_item_id && row.work_item_id===own.work_item_id) || Boolean(row.project_id && (row.project_id===own.project_id || own.work_item_id && (await h.db.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[own.work_item_id,row.project_id])).rowCount)))
+      const own=(await h.db.query<{id:string;work_item_id:string|null;work_item_exists:boolean;work_item_project_id:string|null;project_id:string|null;project_exists:boolean}>(
+        `SELECT own_session.id,own_session.work_item_id,
+                own_scope_item.id IS NOT NULL AS work_item_exists,
+                own_scope_project.id AS work_item_project_id,
+                own_session.project_id,
+                own_session_project.id IS NOT NULL AS project_exists
+           FROM agent_sessions own_session
+           LEFT JOIN work_items own_scope_item
+             ON own_scope_item.id=own_session.work_item_id
+            AND own_scope_item.workspace_id=own_session.workspace_id
+            AND own_scope_item.deleted_at IS NULL
+           LEFT JOIN projects own_scope_project
+             ON own_scope_project.id=own_scope_item.project_id
+            AND own_scope_project.workspace_id=own_session.workspace_id
+            AND own_scope_project.deleted_at IS NULL
+           LEFT JOIN projects own_session_project
+             ON own_session_project.id=own_session.project_id
+            AND own_session_project.workspace_id=own_session.workspace_id
+            AND own_session_project.deleted_at IS NULL
+          WHERE own_session.id=$1
+            AND own_session.workspace_id=$2
+            AND own_session.agent_actor_id=$3`,
+        [actor(request).agentSessionId,actor(request).workspaceId,actor(request).id],
+      )).rows[0]
+      const allowed=own && (
+        row.work_item_id
+          ? own.work_item_exists && row.work_item_id===own.work_item_id
+          : row.project_id
+            ? (
+                own.work_item_id
+                  ? own.work_item_exists && row.project_id===own.work_item_project_id
+                  : own.project_exists && row.project_id===own.project_id
+              )
+            : row.session_id===own.id
+      )
       if(!allowed) throw new DomainError('RESOURCE_SCOPE_DENIED','Decision is outside the agent session scope')
     }
     const [affectedResources,relations]=await Promise.all([h.db.query('SELECT resource_type AS "resourceType",resource_id AS "resourceId",impact FROM decision_affected_resources WHERE decision_id=$1 ORDER BY resource_type,resource_id',[decisionId]),h.db.query('SELECT kind,related_decision_id AS "relatedDecisionId",created_at AS "createdAt" FROM decision_relations WHERE decision_id=$1 ORDER BY created_at',[decisionId])])
@@ -444,7 +1216,7 @@ async function transitionHandoff(h: Helpers, request: FastifyRequest, status: 'r
     const allowed = status === 'requested' ? ['draft'] : status === 'completed' ? ['accepted'] : ['draft','requested']
     const row = (await tx.query(`UPDATE handoffs SET status=$2,${timestampColumn}=now(),revision=revision+1 WHERE id=$1 AND status=ANY($3::handoff_status[]) RETURNING *`, [handoffId, status, allowed])).rows[0] as { id:string } | undefined
     if (!row) throw new DomainError('CONFLICT', 'Handoff is not in a transitionable state')
-    if (status === 'requested') { const principal=(await tx.query<{principal_human_actor_id:string}>('SELECT principal_human_actor_id FROM delegations WHERE id=$1',[source.delegation_id])).rows[0]?.principal_human_actor_id; await inbox(tx,h.meta(request,body),principal,source.id,'handoff',row.id,{fromSessionId:source.id}) }
+    if (status === 'requested') { const responsible=(await tx.query<{responsible_human_actor_id:string}>('SELECT responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2',[source.work_item_id,actor(request).workspaceId])).rows[0]?.responsible_human_actor_id; await inbox(tx,h.meta(request,body),{recipient:responsible,sourceSessionId:source.id,teamId:source.team_id,kind:'handoff',sourceType:'handoff',sourceId:row.id,payload:{fromSessionId:source.id}}) }
     const eventId=await emit(tx, h.meta(request, body), `handoff.${status}`, 'handoff', row.id, { reason: body.reason ?? null }, source.team_id)
     if (status==='requested' && handoff.target_agent_id) await queueWebhookDeliveries(tx,handoff.target_agent_id,eventId,'handoff.requested',undefined,{handoffId,rowId:row.id,fromSessionId:source.id,targetAgentId:handoff.target_agent_id})
     return row
@@ -453,20 +1225,37 @@ async function transitionHandoff(h: Helpers, request: FastifyRequest, status: 'r
 
 async function createDecision(h:Helpers, request:FastifyRequest, subject:Subject, subjectId:string) {
   const body=decisionInputSchema.parse(request.body)
+  const current=actor(request)
   return command(h.db,h.meta(request,body,{id:subjectId}),async tx=>{
-    const teamId=await subjectTeam(tx,actor(request).workspaceId,subject,subjectId)
-    if(actor(request).kind==='human') await assertHumanTeam(tx,actor(request),teamId)
-    const decisionSessionId=body.sessionId ?? (subject==='session' ? subjectId : null)
-    if (decisionSessionId) await assertSessionWrite(tx,actor(request),decisionSessionId)
+    const decisionSessionId=current.kind==='agent'
+      ? current.agentSessionId
+      : body.sessionId ?? (subject==='session' ? subjectId : null)
+    if(current.kind==='agent') {
+      if(!decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Agent Decisions require a Session credential')
+      const currentSession=await authorizeCommandInTx(tx,{
+        actor:current,
+        sessionId:decisionSessionId,
+        capability:'work:write',
+        operation:'decision',
+        idempotencyKey:request.idempotencyKey!,
+      })
+      if(body.sessionId && body.sessionId!==decisionSessionId) throw new DomainError('AGENT_SESSION_TOKEN_MISMATCH','Decision sessionId must match the authenticated Agent Session')
+      assertDecisionSubjectInSessionScope(currentSession,subject,subjectId)
+    }
+    const teamId=await subjectTeam(tx,current.workspaceId,subject,subjectId)
+    if(current.kind==='human') {
+      await assertHumanTeam(tx,current,teamId)
+      if(decisionSessionId) await assertSessionWrite(tx,current,decisionSessionId)
+    }
     const columns = subject === 'session'
       ? 'workspace_id,session_id,proposed_by_actor_id,title,rationale,options,selected_option,evidence,status,finalized_by_actor_id,finalized_at'
       : `workspace_id,${subject}_id,session_id,proposed_by_actor_id,title,rationale,options,selected_option,evidence,status,finalized_by_actor_id,finalized_at`
     const values = subject === 'session'
-      ? [actor(request).workspaceId,subjectId,actor(request).id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),actor(request).kind==='human'?'final':'proposed',actor(request).kind==='human'?actor(request).id:null,actor(request).kind==='human'?new Date():null]
-      : [actor(request).workspaceId,subjectId,decisionSessionId,actor(request).id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),actor(request).kind==='human'?'final':'proposed',actor(request).kind==='human'?actor(request).id:null,actor(request).kind==='human'?new Date():null]
+      ? [current.workspaceId,subjectId,current.id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),current.kind==='human'?'final':'proposed',current.kind==='human'?current.id:null,current.kind==='human'?new Date():null]
+      : [current.workspaceId,subjectId,decisionSessionId,current.id,body.title,body.rationale,JSON.stringify(body.options),body.selectedOption??null,JSON.stringify(body.evidence),current.kind==='human'?'final':'proposed',current.kind==='human'?current.id:null,current.kind==='human'?new Date():null]
     const row=(await tx.query(`INSERT INTO decisions(${columns}) VALUES(${values.map((_, index)=>`$${index+1}`).join(',')}) RETURNING *`,values)).rows[0] as {id:string}
     for (const resource of body.affectedResources) await tx.query('INSERT INTO decision_affected_resources(decision_id,resource_type,resource_id,impact) VALUES($1,$2,$3,$4)',[row.id,resource.resourceType,resource.resourceId,resource.impact])
-    await emit(tx,h.meta(request,body), actor(request).kind==='human'?'decision.finalized':'decision.proposed','decision',row.id,{subject,subjectId},teamId)
+    await emit(tx,h.meta(request,body), current.kind==='human'?'decision.finalized':'decision.proposed','decision',row.id,{subject,subjectId},teamId)
     return row
   })
 }
@@ -491,7 +1280,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     const meta = h.meta(request,body,{id:leaseId})
     return withTx(h.db, async tx => {
       const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string;heartbeat_idempotency_key:string|null;heartbeat_request_hash:string|null}>(
-        'SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',
+        'SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE OF l',
         [leaseId,actor(request).workspaceId],
       )).rows[0]
       if(!row) throw new DomainError('NOT_FOUND','Lease not found')
@@ -522,7 +1311,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
     })
   }
   return command(h.db,h.meta(request,body,{id:leaseId}),async tx=>{
-    const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string}>('SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE',[leaseId,actor(request).workspaceId])).rows[0]
+    const row=(await tx.query<{id:string;session_id:string;status:string;version:number;team_id:string}>('SELECT l.*,s.team_id FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1 AND l.workspace_id=$2 FOR UPDATE OF l',[leaseId,actor(request).workspaceId])).rows[0]
     if(!row) throw new DomainError('NOT_FOUND','Lease not found')
     if(action==='force-release') {
       if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Only humans can force release a lease')
@@ -550,6 +1339,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
 async function createChild(h:Helpers,request:FastifyRequest){
   const parentId=id(request); const body=z.object({agentId:uuid,planStepId:uuid,planVersionId:uuid,role:z.enum(['executor','reviewer','researcher']).default('executor'),initialPrompt:z.string().min(1).max(50000),required:z.boolean().default(true),budget:z.record(z.number()).optional()}).parse(request.body)
   return command(h.db,h.meta(request,body,{id:parentId}),async tx=>{
+    await lockCollaborationSessionTargets(tx,actor(request),parentId,[body.agentId])
     const parent=await assertSessionWrite(tx,actor(request),parentId)
     const currentPlan=(await tx.query<{id:string}>('SELECT id FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,parentId])).rows[0]
     if(!currentPlan) throw new DomainError('STALE_PLAN_VERSION','Child sessions must use the parent current plan version')
@@ -561,7 +1351,7 @@ async function createChild(h:Helpers,request:FastifyRequest){
     if(count>=parent.max_child_sessions)throw new DomainError('CHILD_SESSION_LIMIT','Parent child-session limit reached',{maxChildren:parent.max_child_sessions,activeChildren:count})
     const stepCount=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE parent_session_id=$1 AND plan_step_id=$2 AND plan_step_version_id=$3 AND state NOT IN ('completed','failed','canceled')",[parentId,body.planStepId,body.planVersionId])).rows[0]!.count
     if(stepCount>=step.max_child_sessions)throw new DomainError('PLAN_STEP_CHILD_SESSION_LIMIT','Plan step child-session limit reached',{maxChildren:step.max_child_sessions,activeChildren:stepCount})
-    const agent=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>("SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true FOR UPDATE",[body.agentId,actor(request).workspaceId])).rows[0]
+    const agent=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>("SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true",[body.agentId,actor(request).workspaceId])).rows[0]
     if(!agent)throw new DomainError('NOT_FOUND','Target agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,agent.id,parent.team_id])).rows[0]
     const parentGrant=(await tx.query<{permissions_snapshot:string[]}>('SELECT permissions_snapshot FROM delegations WHERE id=$1 AND status=$2',[parent.delegation_id,'active'])).rows[0]
@@ -586,15 +1376,17 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
   const sessionId=id(request); const body=contextDeltaInputSchema.parse(request.body)
   return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{
     const s=await assertSessionWrite(tx,actor(request),sessionId)
+    if(s.work_item_id && !s.work_item_exists) throw new DomainError('RESOURCE_SCOPE_DENIED','Context sources require the current live session Work Item')
+    const effectiveProjectId=s.work_item_id ? s.work_item_project_id : s.project_id
     const base=(await tx.query<{work_item_id:string|null;manifest:unknown;sources:unknown}>('SELECT work_item_id,manifest,sources FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id IS NOT DISTINCT FROM $3',[body.baseSnapshotId,actor(request).workspaceId,s.work_item_id])).rows[0]
     if(!base)throw new DomainError('RESOURCE_SCOPE_DENIED','Base context snapshot is outside this session scope')
     for(const addition of body.additions) {
       if (addition.sourceType!=='guidance' && (!addition.sourceId || addition.uri)) throw new DomainError('VALIDATION_ERROR','Internal context additions require only an authorized source id')
       if (addition.sourceType==='guidance') {
         if (addition.sourceId || !addition.uri) throw new DomainError('VALIDATION_ERROR','Guidance context additions require only an authorized WorkMesh URI')
-        const uri=new URL(addition.uri); const workspaceUri=`workmesh://workspace/${actor(request).workspaceId}/guidance`; const teamUri=`workmesh://team/${s.team_id}/guidance`; const projectUri=s.project_id?`workmesh://project/${s.project_id}/guidance`:null
+        const uri=new URL(addition.uri); const workspaceUri=`workmesh://workspace/${actor(request).workspaceId}/guidance`; const teamUri=`workmesh://team/${s.team_id}/guidance`; const projectUri=effectiveProjectId?`workmesh://project/${effectiveProjectId}/guidance`:null
         if (![workspaceUri,teamUri,projectUri].includes(uri.toString().replace(/\/$/,''))) throw new DomainError('RESOURCE_SCOPE_DENIED','Guidance URI is outside the session scope')
-        const guidance=uri.toString().replace(/\/$/,'')===projectUri ? (await tx.query<{description:string|null}>('SELECT description FROM projects WHERE id=$1 AND workspace_id=$2',[s.project_id,actor(request).workspaceId])).rows[0]?.description??'' : ''
+        const guidance=uri.toString().replace(/\/$/,'')===projectUri ? (await tx.query<{description:string|null}>('SELECT description FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',[effectiveProjectId,actor(request).workspaceId])).rows[0]?.description??'' : ''
         const guidanceHash=`sha256:${createHash('sha256').update(guidance).digest('hex')}`
         if (addition.hash!==guidanceHash) throw new DomainError('VALIDATION_ERROR','Guidance hash does not match the authorized source')
         continue
@@ -606,7 +1398,7 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
       } else if(addition.sourceType==='work_item' && addition.sourceId!==s.work_item_id) throw new DomainError('RESOURCE_SCOPE_DENIED','Context work item must match the session work item')
       else if(addition.sourceType==='plan_step' && addition.sourceId) await assertLeaseResourceScope(tx,actor(request),s,'plan_step',addition.sourceId)
       else if(addition.sourceType==='message' && addition.sourceId) {
-        const found=await tx.query("SELECT 1 FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 AND (c.subject_kind='work_item' AND c.subject_id=$3 OR c.subject_kind='session' AND c.subject_id=$4 OR c.subject_kind='project' AND c.subject_id=$5)",[addition.sourceId,actor(request).workspaceId,s.work_item_id,sessionId,s.project_id])
+        const found=await tx.query("SELECT 1 FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 AND (c.subject_kind='work_item' AND c.subject_id=$3 OR c.subject_kind='session' AND c.subject_id=$4 OR c.subject_kind='project' AND c.subject_id=$5)",[addition.sourceId,actor(request).workspaceId,s.work_item_id,sessionId,effectiveProjectId])
         if(!found.rowCount)throw new DomainError('RESOURCE_SCOPE_DENIED','Context message is not readable by this session')
       }
     }
@@ -620,12 +1412,13 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
 async function createReview(h:Helpers,request:FastifyRequest) {
   const sessionId=id(request); const body=z.object({reviewerAgentId:uuid,planStepId:uuid,planVersionId:uuid,initialPrompt:z.string().min(1).max(50000),ttlSeconds:z.number().int().min(10).max(3600).default(300)}).parse(request.body)
   return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{
+    await lockCollaborationSessionTargets(tx,actor(request),sessionId,[body.reviewerAgentId])
     const parent=await assertSessionWrite(tx,actor(request),sessionId)
     const plan=(await tx.query('SELECT 1 FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,sessionId])).rowCount
     const step=(await tx.query('SELECT 1 FROM agent_plan_steps WHERE plan_version_id=$1 AND id=$2',[body.planVersionId,body.planStepId])).rowCount
     const stable=(await tx.query('SELECT 1 FROM agent_plan_step_identities WHERE session_id=$1 AND stable_step_id=$2',[sessionId,body.planStepId])).rowCount
     if(!plan || !step || !stable) throw new DomainError('STALE_PLAN_VERSION','Review must target a stable step in the current plan')
-    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>('SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true FOR UPDATE',[body.reviewerAgentId,actor(request).workspaceId])).rows[0]
+    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>('SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[body.reviewerAgentId,actor(request).workspaceId])).rows[0]
     if(!target) throw new DomainError('NOT_FOUND','Reviewer agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,target.id,parent.team_id])).rows[0]
     const source=(await tx.query<{principal_human_actor_id:string;capability_scope:Record<string,unknown>;permissions_snapshot:string[]}>('SELECT principal_human_actor_id,capability_scope,permissions_snapshot FROM delegations WHERE id=$1 AND status=$2',[parent.delegation_id,'active'])).rows[0]
@@ -653,12 +1446,18 @@ async function createReview(h:Helpers,request:FastifyRequest) {
 async function offerHandoff(h:Helpers,request:FastifyRequest) {
   const body=handoffInputSchema.parse(request.body)
   return command(h.db,h.meta(request,body),async tx=>{
+    await lockCollaborationSessionTargets(
+      tx,
+      actor(request),
+      body.fromSessionId,
+      body.targetAgentId ? [body.targetAgentId] : [],
+    )
     const s=await assertSessionWrite(tx,actor(request),body.fromSessionId)
     const scopeType=body.scopeType ?? 'work_item'; const scopeId=body.scopeId ?? s.work_item_id
     if (!scopeId) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope must resolve within the source session')
     if (scopeType === 'workspace') throw new DomainError('VALIDATION_ERROR','Workspace-scoped handoffs are not supported')
-    if (scopeType === 'work_item' && scopeId !== s.work_item_id) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff work-item scope must match the source session')
-    if (scopeType === 'project' && scopeId !== s.project_id && !Boolean(s.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[s.work_item_id,scopeId])).rowCount)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff project scope must match the source session')
+    if (scopeType === 'work_item' && (!s.work_item_exists || scopeId !== s.work_item_id)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff work-item scope must match the live source session Work Item')
+    if (scopeType === 'project' && (s.work_item_id ? !s.work_item_exists || scopeId !== s.work_item_project_id : scopeId !== s.project_id)) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff project scope must match the source session')
     if (scopeType === 'plan_step') await assertLeaseResourceScope(tx,actor(request),s,'plan_step',scopeId)
     const sourceGrant=(await tx.query<{permissions_snapshot:string[]}>("SELECT permissions_snapshot FROM delegations WHERE id=$1 AND status='active'",[s.delegation_id])).rows[0]
     if(!sourceGrant) throw new DomainError('DELEGATION_NOT_ACTIVE','Handoff source delegation is unavailable')
@@ -685,8 +1484,8 @@ async function offerHandoff(h:Helpers,request:FastifyRequest) {
       VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18::handoff_status,CASE WHEN $18::handoff_status='requested'::handoff_status THEN now() ELSE NULL END) RETURNING *`,[
       actor(request).workspaceId,body.fromSessionId,body.targetAgentId??null,body.targetSkill??null,scopeType,scopeId,body.summary,JSON.stringify(body.completedWork),JSON.stringify(body.remainingWork),JSON.stringify(body.openQuestions),JSON.stringify(body.risks),JSON.stringify(body.acceptanceCriteria),body.requestedAction??null,body.leaseTransferPolicy,body.artifactIds,snapshot.id,body.requestedCapabilities,body.status
     ])).rows[0] as {id:string}
-    const principal=(await tx.query<{principal_human_actor_id:string}>('SELECT principal_human_actor_id FROM delegations WHERE id=$1',[s.delegation_id])).rows[0]?.principal_human_actor_id
-    if (body.status==='requested') await inbox(tx,h.meta(request,body),principal,body.fromSessionId,'handoff',row.id,{fromSessionId:body.fromSessionId,targetAgentId:body.targetAgentId,targetSkill:body.targetSkill})
+    const responsible=(await tx.query<{responsible_human_actor_id:string}>('SELECT responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2',[s.work_item_id,actor(request).workspaceId])).rows[0]?.responsible_human_actor_id
+    if (body.status==='requested') await inbox(tx,h.meta(request,body),{recipient:responsible,sourceSessionId:body.fromSessionId,teamId:s.team_id,kind:'handoff',sourceType:'handoff',sourceId:row.id,payload:{fromSessionId:body.fromSessionId,targetAgentId:body.targetAgentId,targetSkill:body.targetSkill}})
     const eventId=await emit(tx,h.meta(request,body),`handoff.${body.status}`,'handoff',row.id,{fromSessionId:body.fromSessionId,leaseTransferPolicy:body.leaseTransferPolicy},s.team_id)
     if (body.status==='requested' && body.targetAgentId) await queueWebhookDeliveries(tx,body.targetAgentId,eventId,'handoff.requested',undefined,{handoffId:row.id,fromSessionId:body.fromSessionId,targetAgentId:body.targetAgentId})
     return row
@@ -719,8 +1518,30 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
   return command(h.db,h.meta(request,body,{id:handoffId}),async tx=>{
     if(actor(request).kind!=='human') throw new DomainError('FORBIDDEN','Human acceptance is required')
     if (body.failureInjection && process.env.RUN_INTEGRATION !== '1') throw new DomainError('FORBIDDEN','Failure injection is available only in integration tests')
+    const handoffLocator=(await tx.query<{
+      from_session_id:string
+      target_agent_id:string|null
+      target_skill:string|null
+    }>('SELECT from_session_id,target_agent_id,target_skill FROM handoffs WHERE id=$1 AND workspace_id=$2',[handoffId,actor(request).workspaceId])).rows[0]
+    if(!handoffLocator) throw new DomainError('NOT_FOUND','Handoff not found')
+    const targetAgentIds=handoffLocator.target_agent_id||body.agentId
+      ? [handoffLocator.target_agent_id??body.agentId!]
+      : handoffLocator.target_skill
+        ? (await tx.query<{id:string}>(
+            'SELECT id FROM agent_definitions WHERE workspace_id=$1',
+            [actor(request).workspaceId],
+          )).rows.map(row=>row.id)
+        : []
+    await lockCollaborationSessionTargets(
+      tx,
+      actor(request),
+      handoffLocator.from_session_id,
+      targetAgentIds,
+    )
     const handoff=(await tx.query<{from_session_id:string;target_agent_id:string|null;target_skill:string|null;status:string;scope_type:'project'|'work_item'|'plan_step'|null;scope_id:string|null;requested_capabilities:string[];lease_transfer_policy:'retain'|'transfer'|'release';context_snapshot_id:string|null}>('SELECT * FROM handoffs WHERE id=$1 AND workspace_id=$2 FOR UPDATE',[handoffId,actor(request).workspaceId])).rows[0]
     if(!handoff) throw new DomainError('NOT_FOUND','Handoff not found')
+    if(handoff.from_session_id!==handoffLocator.from_session_id||handoff.target_agent_id!==handoffLocator.target_agent_id||handoff.target_skill!==handoffLocator.target_skill)
+      throw new DomainError('CONFLICT','Handoff routing changed while authority was acquired')
     if(handoff.status!=='requested') throw new DomainError('CONFLICT','Handoff is no longer pending')
     const source=await session(tx,actor(request).workspaceId,handoff.from_session_id); await assertHumanTeam(tx,actor(request),source.team_id)
     if(['stopping','completed','failed','canceled'].includes(source.state)) throw new DomainError('SESSION_NOT_ACTIVE','Handoff source session is not active')
@@ -744,14 +1565,14 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
           AND (SELECT count(*) FROM agent_sessions active
                WHERE active.agent_id=a.id AND active.state NOT IN ('completed','failed','canceled')) < a.max_concurrency
         ORDER BY active_sessions,a.slug,a.id
-        FOR UPDATE OF a,ata`,[actor(request).workspaceId,source.team_id,handoff.target_skill,requested])).rows
+        `,[actor(request).workspaceId,source.team_id,handoff.target_skill,requested])).rows
       for (let index=0; index<candidates.length; index++) await tx.query("INSERT INTO routing_records(workspace_id,source_session_id,target_agent_id,requested_skill,required_capabilities,outcome,sort_rank,rationale) VALUES($1,$2,$3,$4,$5,'candidate',$6,$7)",[actor(request).workspaceId,source.id,candidates[index]!.id,handoff.target_skill,requested,index+1,{rule:'skill+capability+team+status+concurrency',activeSessions:candidates[index]!.active_sessions,maxConcurrency:candidates[index]!.max_concurrency,slug:candidates[index]!.slug}])
       targetId=candidates[0]?.id
       if(!targetId) throw new DomainError('ROUTING_TARGET_REQUIRED','No active, team-authorized agent matches the requested skill')
       await tx.query('UPDATE handoffs SET routing_snapshot=$2 WHERE id=$1',[handoffId,{requestedSkill:handoff.target_skill,requiredCapabilities:requested,candidateIds:candidates.map(candidate=>candidate.id),selectedAgentId:targetId,ordering:['active_sessions','slug','id'],filters:['skill','capability','team_access','active_status','concurrency']}])
     }
     if(!targetId) throw new DomainError('ROUTING_TARGET_REQUIRED','A handoff target must be selected')
-    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number;skills:string[];slug:string}>('SELECT id,actor_id,approved_capabilities,max_concurrency,skills,slug FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true FOR UPDATE',[targetId,actor(request).workspaceId])).rows[0]
+    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number;skills:string[];slug:string}>('SELECT id,actor_id,approved_capabilities,max_concurrency,skills,slug FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[targetId,actor(request).workspaceId])).rows[0]
     if(!target) throw new DomainError('NOT_FOUND','Target agent not found')
     if(handoff.target_skill && !target.skills.includes(handoff.target_skill)) throw new DomainError('CAPABILITY_DENIED','Selected handoff target does not advertise the requested skill')
     const teamAccess=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,target.id,source.team_id])).rows[0]
@@ -767,7 +1588,7 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
       if(!context) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff context snapshot is outside the source work scope')
     }
     const scopeType=handoff.scope_type ?? 'work_item'; const scopeId=handoff.scope_id ?? source.work_item_id
-    if (!scopeId || (scopeType==='work_item' && scopeId!==source.work_item_id) || (scopeType==='project' && scopeId!==source.project_id && !Boolean(source.work_item_id && (await tx.query('SELECT 1 FROM work_items WHERE id=$1 AND project_id=$2',[source.work_item_id,scopeId])).rowCount))) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope is outside the source session')
+    if (!scopeId || (scopeType==='work_item' && (!source.work_item_exists || scopeId!==source.work_item_id)) || (scopeType==='project' && (source.work_item_id ? !source.work_item_exists || scopeId!==source.work_item_project_id : scopeId!==source.project_id))) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff scope is outside the source session')
     if (scopeType==='plan_step') await assertLeaseResourceScope(tx,actor(request),source,'plan_step',scopeId)
     // The active-executor uniqueness constraint is per work item.  This is safe
     // before child creation because the entire accepted-handoff transition is one transaction.
@@ -776,7 +1597,8 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
     const planStepVersionId = scopeType==='plan_step' ? (await tx.query<{id:string}>('SELECT id FROM agent_plan_versions WHERE session_id=$1 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$1) AND EXISTS(SELECT 1 FROM agent_plan_steps WHERE plan_version_id=agent_plan_versions.id AND id=$2)',[source.id,scopeId])).rows[0]?.id : null
     if(scopeType==='plan_step' && !planStepVersionId) throw new DomainError('STALE_PLAN_VERSION','Handoff plan step is no longer in the source current plan')
     const del=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,$6,'executor',$7,$8,$9,$10,$11) RETURNING id",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,sourceDel.principal_human_actor_id,source.work_item_id,scopeType,scopeId,caps,{...sourceDel.capability_scope,capabilities:caps},source.delegation_id])).rows[0] as {id:string}
-    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,project_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,context_snapshot_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,del.id,source.id,source.work_item_id,scopeType==='project'?scopeId:source.project_id,scopeType==='plan_step'?scopeId:null,planStepVersionId,body.initialPrompt,source.budget,handoff.context_snapshot_id])).rows[0] as {id:string}
+    const childProjectId=source.work_item_id ? null : scopeType==='project' ? scopeId : source.project_id
+    const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,project_id,plan_step_id,plan_step_version_id,state,state_reason,budget,inherited_budget,context_snapshot_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,$13) RETURNING *",[actor(request).workspaceId,source.team_id,target.id,target.actor_id,del.id,source.id,source.work_item_id,childProjectId,scopeType==='plan_step'?scopeId:null,planStepVersionId,body.initialPrompt,source.budget,handoff.context_snapshot_id])).rows[0] as {id:string}
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
     if (body.failureInjection === 'afterSession') throw new Error('HANDOFF_INJECTED_FAILURE_AFTER_SESSION')
     await tx.query("INSERT INTO routing_records(workspace_id,source_session_id,target_agent_id,requested_skill,required_capabilities,outcome,sort_rank,rationale) SELECT workspace_id,$2,$3,target_skill,$4,'selected',1,jsonb_build_object('reason','handoff accepted') FROM handoffs WHERE id=$1",[handoffId,source.id,target.id,caps])
@@ -789,6 +1611,14 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
     }
     await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:del.id,teamId:source.team_id,workItemId:source.work_item_id,initialPrompt:body.initialPrompt})
     await tx.query("UPDATE handoffs SET status='accepted',accepted_session_id=$2,resolved_agent_id=$3,resolved_delegation_id=$4,decided_at=now(),revision=revision+1 WHERE id=$1",[handoffId,child.id,target.id,del.id])
+    await tx.query(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_actor_id,recipient_session_id,session_id,team_id,
+         kind,source_type,source_id,payload
+       ) VALUES($1,$2,$3,$3,$4,'handoff','handoff',$5,$6)
+       ON CONFLICT DO NOTHING`,
+      [actor(request).workspaceId,target.actor_id,child.id,source.team_id,handoffId,{fromSessionId:source.id,acceptedSessionId:child.id}],
+    )
     await emit(tx,h.meta(request,body),'handoff.accepted','handoff',handoffId,{acceptedSessionId:child.id,resolvedAgentId:target.id},source.team_id)
     return {handoffId,session:child}
   })

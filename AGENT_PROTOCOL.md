@@ -222,6 +222,10 @@ If-Match: "revision-4"
 
 - `message.created`
 - `message.response_required`
+- `inbox.item.created`
+- `inbox.item.claimed`
+- `inbox.item.acknowledged`
+- `inbox.item.replied`
 - `decision.recorded`
 - `lease.acquired`
 - `lease.renewed`
@@ -716,6 +720,75 @@ Agent 必须重新读取、合并并发布，不能盲重试覆盖。
 - Agent 不得用外部不可审计渠道作为唯一工作沟通；
 - 外部渠道沟通若影响计划，应回写 Decision/Message；
 - Secret 不能放消息正文。
+
+## 10.4 Agent Inbox recipient 模型
+
+Agent Inbox 是 Work Room 的授权投影，不是私有聊天或新的授权来源。服务端支持两种
+recipient：
+
+- exact Session recipient：消息创建时固定 `recipient_session_id`，只有该 Session
+  可以读取正文、ack 或 reply；同一 Agent 的其他 Session 也不得读取；
+- Agent actor recipient：创建时只固定 `recipient_actor_id`。任一仍然有效且具备同一
+  Team/Project/Work Item scope 的 Session 可以在列表中看到有界摘要，但必须先原子
+  claim；claim 成功后只有 `claimed_by_session_id` 对应的 Session 可以读取正文和后续
+  mutation。
+
+`claim` 只用于并发协调，不能授予 Delegation、Capability、Resource Scope 或 Lease。
+Human recipient 继续使用 Human Inbox；Agent 不得 claim Human 项。
+
+## 10.5 REST 与分页
+
+- `GET /api/v1/inbox?status=open&limit=...&cursor=...`：返回
+  `{items,nextCursor}`。actor-targeted 且未 claim 的项只含摘要并返回
+  `detail_available=false`；
+- `GET /api/v1/inbox/{id}`：只向 Human recipient 或 exact Agent Session
+  recipient/claimant返回完整正文、来源 Work Room、thread 和 append-only receipts；
+- `POST /api/v1/inbox/{id}/claim`：原子绑定当前 exact Session；
+- `POST /api/v1/inbox/{id}/acknowledge`：追加 acknowledgement receipt；
+- `POST /api/v1/inbox/{id}/reply`：要求 `If-Match`，由服务端固定 source message、thread
+  和 reply recipient，并返回新 `replyMessageId`。
+
+cursor 使用签名 keyset token，绑定 route、Workspace、Actor、当前 Session、status
+filter 与排序。每一页重新验证 Session token、Session 状态、Delegation、Agent/Team
+grant、Capability 和 live Team/Project/Work Item scope；cursor 不能恢复已经撤销的读取权。
+
+## 10.6 claim、ack 与 reply 语义
+
+所有 mutation 都要求 `Idempotency-Key`。相同 key 和相同请求重放原响应；相同 key
+配不同请求返回 `IDEMPOTENCY_KEY_REUSED`。并发 claim 只有一个 Session 成功，失败者
+得到不泄露正文的 `NOT_FOUND`。
+
+ack 是 append-only、幂等且可审计的 receipt；它不 resolve Inbox，不改变 Handoff、
+Approval、Lease、Work Item 或 Session 状态。reply 要求 open Inbox 和当前 revision，
+在一个 PostgreSQL transaction 中创建 Work Room message、resolution、receipt、Domain
+Event 与 outbox。并发 reciprocal reply 按参与 Session 的稳定全序加锁，避免反向锁序。
+`review_request` reply 还要求 reviewer Delegation 和 `artifact:write`。
+
+## 10.7 重连、撤权与停止
+
+Webhook 只携带 Inbox/message ID、intent、channel 和目标 Session 等有界元数据；Agent
+必须通过 Inbox REST、SDK 或 MCP 重新读取授权内容。断线后使用最近保存的 Inbox
+`nextCursor` 继续分页；cursor 失效或 scope 改变时从新的首屏重新同步，不缓存正文作为
+授权证据。
+
+expired token 返回 `401`。stopped、stopping、terminal 或 stale Session，以及已撤销
+Delegation、Agent/Team grant、Team membership、已删除 Project/Work Item 或不再匹配的
+resource scope，都必须在 list/get/claim/ack/reply 时 fail closed。停止或撤权后不得继续
+普通读取或写入，Lease 不能绕过这些检查。
+
+## 10.8 MCP 与 Native SDK 一致性
+
+MCP 工具 `list_inbox_items`、`get_inbox_item`、`claim_inbox_item`、
+`acknowledge_inbox_item`、`reply_inbox_item` 和 Native Agent SDK 的同名语义必须调用同一
+REST contract，使用同一 route-policy、authorization 和 idempotency gate。Adapter 不得
+在客户端复制或放宽授权规则。
+
+## 10.9 retention 与日志
+
+Inbox current rows 和 receipts 是 PostgreSQL durable facts。事件归档或 realtime cursor
+裁剪不能删除仍需处理的 Inbox 或 receipt；清理必须遵守 retention policy 和未解决项保护。
+消息正文、payload 和 receipt 不写入运行日志；已知 secret、token、cookie 或签名材料
+不得写入 Work Room/Inbox 正文。
 
 ---
 
