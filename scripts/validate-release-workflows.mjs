@@ -1,0 +1,112 @@
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parseDocument } from 'yaml'
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const read = path => readFileSync(resolve(root, path), 'utf8')
+const candidate = read('.github/workflows/release-candidate.yml')
+const promotion = read('.github/workflows/promote-ga.yml')
+const releasePolicy = read('docs/V1_RELEASE_POLICY.md')
+const releaseNotes = read('docs/releases/v1.0.0.md')
+const failures = []
+
+const requireCondition = (condition, message) => {
+  if (!condition) failures.push(message)
+}
+
+const parseWorkflow = (name, source) => {
+  const document = parseDocument(source, { prettyErrors: true })
+  requireCondition(document.errors.length === 0, `${name} must be valid YAML`)
+  requireCondition(!source.includes('\t'), `${name} must use spaces, not tabs`)
+  requireCondition(!/[ \t]+$/m.test(source), `${name} must not contain trailing whitespace`)
+  const uses = [...source.matchAll(/^\s*uses:\s*([^@\s]+)@([^\s]+)\s*$/gm)]
+  const localUses = [...source.matchAll(/^\s*uses:\s*\.\/[^\s]+\s*$/gm)]
+  requireCondition(uses.length > 0, `${name} must use pinned actions`)
+  requireCondition(
+    uses.length + localUses.length === [...source.matchAll(/^\s*uses:\s*/gm)].length,
+    `${name} must pin every action reference`,
+  )
+  for (const [, action, revision] of uses)
+    requireCondition(/^[0-9a-f]{40}$/.test(revision), `${name}: ${action} must use a full SHA`)
+}
+
+parseWorkflow('release-candidate', candidate)
+parseWorkflow('promote-ga', promotion)
+
+for (const value of [
+  "tags: ['v1.0.0-rc.*']",
+  'uses: ./.github/workflows/ci.yml',
+  'packages: write',
+  'id-token: write',
+  'attestations: write',
+  'environment: stable-release',
+  'pnpm audit --audit-level high',
+  "scanners: 'vuln,misconfig'",
+  "scanners: 'secret'",
+  "severity: 'HIGH,CRITICAL'",
+  "exit-code: '1'",
+  'infra/docker/${{ matrix.service }}.production.Dockerfile',
+  'cosign sign --yes',
+  'cosign sign-blob --yes',
+  'actions/attest-build-provenance@',
+  'actions/attest-sbom@',
+  'release-manifest.json',
+  'failure-probe',
+  'production-runtime-smoke:',
+  'Production readiness and graceful restart',
+  'restart --timeout 35 api worker mcp',
+  'restart-count-zero',
+]) requireCondition(candidate.includes(value), `release-candidate must contain ${value}`)
+
+const validationIndex = candidate.indexOf('validate-candidate:')
+const reusableCiIndex = candidate.indexOf('required-ci:')
+const imageIndex = candidate.indexOf('build-scan-publish-images:')
+requireCondition(validationIndex >= 0 && validationIndex < reusableCiIndex, 'candidate validation must precede CI')
+requireCondition(reusableCiIndex >= 0 && reusableCiIndex < imageIndex, 'required CI must precede image publication')
+const runtimeSmokeIndex = candidate.indexOf('production-runtime-smoke:')
+const candidateRecordIndex = candidate.indexOf('publish-candidate-record:')
+requireCondition(
+  imageIndex >= 0 && imageIndex < runtimeSmokeIndex && runtimeSmokeIndex < candidateRecordIndex,
+  'production runtime smoke must run after image publication and before the candidate record',
+)
+requireCondition(
+  /build-scan-publish-images:[\s\S]+needs:\s*\[validate-candidate, required-ci, source-security\]/m.test(candidate),
+  'image publication must require both CI and source security',
+)
+requireCondition(
+  candidate.includes("$EVENT_NAME\" == 'workflow_dispatch' && \"$FAILURE_PROBE\" == 'true'"),
+  'failure probe must be explicit and dispatch-only',
+)
+
+for (const forbidden of [
+  /docker\s+(?:build\b|buildx\s+build\b)/i,
+  /pnpm\s+(?:install|build)/i,
+  /npm\s+(?:install|ci|run\s+build)/i,
+]) requireCondition(!forbidden.test(promotion), `GA promotion must not rebuild: ${forbidden}`)
+
+for (const value of [
+  'environment: stable-release',
+  'candidate_tag',
+  'v1.0.0',
+  'release-manifest.json',
+  'cosign verify',
+  'cosign verify-blob',
+  'docker pull',
+  'docker push',
+  'PROMOTION_DIGEST_MISMATCH',
+  'same immutable image digests',
+]) requireCondition(promotion.includes(value), `promote-ga must contain ${value}`)
+
+requireCondition(releasePolicy.includes('High finding prevents promotion'), 'release policy must block High findings')
+requireCondition(releasePolicy.includes('does not rebuild'), 'release policy must forbid GA rebuilds')
+requireCondition(releaseNotes.includes('Known limitations'), 'release notes must name known limitations')
+requireCondition(releaseNotes.includes('Unsupported upgrade paths'), 'release notes must name unsupported upgrades')
+
+if (failures.length > 0) {
+  console.error('Release workflow validation failed:')
+  for (const failure of failures) console.error(`- ${failure}`)
+  process.exit(1)
+}
+
+console.log('Release workflow validation passed.')

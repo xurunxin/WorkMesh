@@ -82,7 +82,7 @@ Put a TLS-terminating reverse proxy in front of the loopback-bound web/API ports
 - Workspace, Team, and Project Guidance is independently versioned; Human administrators manage it in the Web Guidance view while Agent SDK/MCP clients have read-only access. See [Versioned Guidance operations](docs/operations/guidance.md).
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, and `pnpm test:e2e` are the project gates.
 - `pnpm test:conformance -- --output <directory>` runs the adapter-neutral Native/MCP client profile suite and writes JSON, JUnit, and a full transcript.
-- [Continuous integration](docs/CI.md) documents the GitHub Actions job graph, exact toolchain pins, retained evidence, and capabilities intentionally deferred beyond foundational CI.
+- [Continuous integration](docs/CI.md) documents the required GitHub Actions job graph, exact toolchain pins, retained evidence, security thresholds, and release enforcement. [Release operations](docs/operations/releases.md) covers the failure probe, signed RC evidence, final soak handoff, and digest-preserving GA promotion.
 
 ## Acceptance commands
 

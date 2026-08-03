@@ -16,7 +16,7 @@ The release record must contain:
 - Git commit SHA and immutable digest for every shipped image;
 - CycloneDX or SPDX SBOMs for every image and distributable package;
 - build provenance linking source, builder identity, inputs, and output digests;
-- verifiable signatures for Git tags, images, SBOMs, and provenance;
+- verifiable signatures for tag-to-commit records, images, SBOMs, and provenance;
 - OpenAPI, Agent Protocol, MCP, A2A-adapter, and schema-baseline versions;
 - the exact default-disabled flag registry and validation evidence;
 - migration, backup, restore, rollback, and smoke-test evidence.
@@ -64,3 +64,9 @@ For every RC and GA, record:
 4. enabled flags used for full-capability testing and the all-disabled result;
 5. known limitations and unresolved Medium-or-lower findings;
 6. the approver and UTC promotion timestamp.
+
+GitHub tag references are additionally protected by immutable release records.
+For each RC and GA, the workflow signs a canonical tag-provenance document with
+keyless Sigstore and publishes its verification bundle beside the Release. This
+detached signature binds the tag name, exact commit, and candidate or promotion
+manifest digest without storing a private signing key in the repository.
