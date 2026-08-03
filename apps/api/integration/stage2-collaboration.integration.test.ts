@@ -2680,7 +2680,10 @@ describe('Stage 2 collaboration API acceptance', () => {
       expect(uriBypass.statusCode).toBe(400)
       expect(uriBypass.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'VALIDATION_ERROR' } })
     }
-    const guidanceHash = `sha256:${createHash('sha256').update('').digest('hex')}`
+    const guidanceMarkdown = '# Team Guidance\n\nUse the server-owned revision.'
+    const publishedGuidance = await humanCall(f.human, 'PUT', `/api/v1/teams/${f.teamId}/guidance`, { markdown: guidanceMarkdown, changeSummary: 'Context delta fixture' }, { 'if-match': '"revision-0"' })
+    expect(publishedGuidance.statusCode, JSON.stringify(publishedGuidance.json())).toBe(200)
+    const guidanceHash = `sha256:${createHash('sha256').update(guidanceMarkdown).digest('hex')}`
     const unauthorizedGuidance = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/context-deltas`, { baseSnapshotId, additions: [{ sourceType: 'guidance', uri: `workmesh://team/${otherTeamId}/guidance`, hash: guidanceHash }], rationale: 'reject guidance outside the session Team' })
     expect(unauthorizedGuidance.statusCode).toBe(403)
     expect(unauthorizedGuidance.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'RESOURCE_SCOPE_DENIED' } })

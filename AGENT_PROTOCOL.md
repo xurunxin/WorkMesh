@@ -1110,6 +1110,22 @@ workmesh://team/{id}/guidance
 workmesh://project/{id}/guidance
 ```
 
+每个 URI 返回独立的版本化文档，而不是 Project `description` 的别名。响应包含
+document revision、当前不可变 Guidance revision、作者、发布时间、SHA-256 和状态；
+未发布或已归档的文档不向 Agent 返回正文。Agent SDK 和 MCP 仅提供已授权的当前
+Guidance 读取，发布、归档、历史、diff 与 rollback 均属于 Human control plane。
+
+Session 创建时按以下顺序解析当时有效的正文，并把每个实际使用的 revision ID、
+revision number、URI 和 SHA-256 固定到不可变 Context Snapshot：
+
+```text
+Workspace -> Team -> Project -> Repository -> Work Item -> Session/Human prompt
+```
+
+后续 Guidance 发布不会改变已有 Session 的 pin；新 Context Delta 也必须由服务端按
+URI 和 hash 验证。任何 Guidance 都不能扩展 identity、delegation、capability、resource
+scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平台安全规则。
+
 ## 16.3 Tools
 
 每个 Tool：

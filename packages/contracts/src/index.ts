@@ -606,8 +606,64 @@ export const completeAgentSessionInputSchema = z.object({ summary: z.string().mi
 export const failAgentSessionInputSchema = z.object({ code: z.string().min(1).max(120), summary: z.string().min(1).max(20_000), retryable: z.boolean().default(false), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]) })
 export const artifactInputSchema = z.object({ sessionId: idSchema, workItemId: idSchema.optional(), type: artifactTypeSchema, title: z.string().min(1).max(500), uri: z.string().url().optional(), checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), sourceTool: z.string().min(1).max(160).optional(), metadata: z.record(z.unknown()).default({}) })
 export const artifactResponseSchema = artifactInputSchema.extend({ id: idSchema, producer_actor_id: idSchema, created_at: timestampSchema })
-export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()) })
-export const guidanceResponseSchema = z.object({ scope: z.enum(['workspace', 'team', 'project']), scopeId: idSchema, revision: revisionSchema, markdown: z.string().max(100_000), updatedAt: timestampSchema })
+export const guidanceScopeSchema = z.enum(['workspace', 'team', 'project'])
+export const guidancePinSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  uri: z.string().url(),
+  revisionId: idSchema,
+  revisionNumber: z.number().int().positive(),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+}).strict()
+export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()), guidancePins: z.array(guidancePinSchema) })
+export const guidanceRevisionMetadataSchema = z.object({
+  id: idSchema,
+  revisionNumber: z.number().int().positive(),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  changeSummary: z.string().min(1).max(500),
+  authorActorId: idSchema,
+  authorDisplayName: z.string().min(1),
+  publishedAt: timestampSchema,
+}).strict()
+export const guidanceResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  documentId: idSchema.nullable(),
+  status: z.enum(['unpublished', 'active', 'archived']),
+  revision: z.number().int().nonnegative(),
+  currentRevision: guidanceRevisionMetadataSchema.nullable(),
+  markdown: z.string().max(100_000),
+  updatedAt: timestampSchema,
+}).strict()
+export const publishGuidanceInputSchema = z.object({ markdown: z.string().max(100_000), changeSummary: z.string().min(1).max(500) }).strict()
+export const archiveGuidanceInputSchema = z.object({ reason: z.string().min(1).max(2_000) }).strict()
+export const rollbackGuidanceInputSchema = z.object({ revisionId: idSchema, reason: z.string().min(1).max(2_000) }).strict()
+export const guidanceHistoryResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  documentId: idSchema.nullable(),
+  revision: z.number().int().nonnegative(),
+  status: z.enum(['unpublished', 'active', 'archived']),
+  currentRevisionId: idSchema.nullable(),
+  revisions: z.array(guidanceRevisionMetadataSchema),
+  audit: z.array(z.object({
+    id: idSchema,
+    action: z.enum(['published', 'archived', 'rolled_back']),
+    fromRevisionId: idSchema.nullable(),
+    toRevisionId: idSchema.nullable(),
+    actorId: idSchema,
+    actorDisplayName: z.string().min(1),
+    reason: z.string(),
+    createdAt: timestampSchema,
+  }).strict()),
+}).strict()
+export const guidanceDiffResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  from: guidanceRevisionMetadataSchema,
+  to: guidanceRevisionMetadataSchema,
+  changes: z.array(z.object({ kind: z.enum(['context', 'removed', 'added']), oldLine: z.number().int().positive().nullable(), newLine: z.number().int().positive().nullable(), text: z.string() }).strict()),
+}).strict()
 
 export const requestApprovalInputSchema = z.object({ sessionId: idSchema, approvalType: z.string().min(1).max(160), actionName: z.string().min(1).max(300), actionPayloadSanitized: z.record(z.unknown()), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), riskLevel: approvalRiskLevelSchema, rationaleSummary: z.string().min(1).max(10_000), requiredApprovals: z.number().int().positive().max(20).default(1), expiresAt: timestampSchema })
 export const decideApprovalInputSchema = z.object({ decision: z.enum(['approved', 'rejected']), reason: z.string().min(1).max(10_000) })
@@ -699,8 +755,23 @@ export const stage1RouteManifest = [
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/plans', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/context', authenticated: true },
   { method: 'GET', path: '/api/v1/workspaces/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/workspaces/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/workspaces/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/workspaces/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/workspaces/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/workspaces/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/teams/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/teams/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/teams/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/teams/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/teams/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/teams/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/projects/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/projects/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/artifacts', authenticated: true },
   { method: 'POST', path: '/api/v1/artifacts', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/approvals', authenticated: true },
@@ -939,6 +1010,13 @@ export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
 export type WorkItemResponse = z.infer<typeof workItemResponseSchema>
 export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
+export type GuidanceScope = z.infer<typeof guidanceScopeSchema>
+export type GuidanceResponse = z.infer<typeof guidanceResponseSchema>
+export type GuidanceRevisionMetadata = z.infer<typeof guidanceRevisionMetadataSchema>
+export type GuidancePin = z.infer<typeof guidancePinSchema>
+export type PublishGuidanceInput = z.infer<typeof publishGuidanceInputSchema>
+export type ArchiveGuidanceInput = z.infer<typeof archiveGuidanceInputSchema>
+export type RollbackGuidanceInput = z.infer<typeof rollbackGuidanceInputSchema>
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>

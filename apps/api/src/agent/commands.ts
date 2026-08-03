@@ -14,6 +14,7 @@ import { authIdempotentTransaction } from "../auth-idempotency.js";
 import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.js";
 import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
+import { materializeSessionContextSnapshot } from "../guidance.js";
 
 const one = <T>(rows: T[]): T => { const value = rows[0]; if (!value) throw new DomainError("NOT_FOUND", "Resource not found"); return value; };
 const normalizedSensitiveKeys = new Set([
@@ -579,10 +580,14 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
       contextSnapshotId=context.id;
     }
     if (!contextSnapshotId) {
-      const manifest = { workItem: work ? { id: work.id, title: work.title, description: work.description, revision: work.revision } : null };
-      const contentHash = crypto.createHash("sha256").update(JSON.stringify(manifest)).digest("hex");
-      const created = await tx.query<{ id: string }>("INSERT INTO context_snapshots(workspace_id,work_item_id,manifest,content_hash,created_by_actor_id) VALUES($1,$2,$3,$4,$5) ON CONFLICT(workspace_id,content_hash) DO NOTHING RETURNING id", [meta.actor.workspaceId, workItemId ?? null, manifest, contentHash, meta.actor.id]);
-      contextSnapshotId = created.rows[0]?.id ?? one((await tx.query<{ id: string }>("SELECT id FROM context_snapshots WHERE workspace_id=$1 AND content_hash=$2", [meta.actor.workspaceId,contentHash])).rows).id;
+      contextSnapshotId = (await materializeSessionContextSnapshot(tx, {
+        workspaceId: meta.actor.workspaceId,
+        teamId: delegation.team_id,
+        projectId: work?.project_id ?? input.projectId ?? null,
+        workItemId: workItemId ?? null,
+        workItem: work ? { id: work.id, title: work.title, description: work.description, revision: work.revision } : null,
+        actorId: meta.actor.id,
+      })).id;
     }
     const session = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *", [meta.actor.workspaceId, delegation.team_id, delegation.agent_id, delegation.agent_actor_id, delegation.id, workItemId ?? null, input.projectId ?? null, input.planStepId ?? null, contextSnapshotId, input.budget])).rows);
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, (session as { id: string }).id, delegation.team_id]);
@@ -639,7 +644,10 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
     if ((active.rowCount ?? 0)>=agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
     let contextId=input.contextSnapshotId;
     if (contextId) one((await tx.query("SELECT id FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3",[contextId,meta.actor.workspaceId,workItemId])).rows);
-    if (!contextId) { const manifest={workItem:{id:workItemId,title:work.title,description:work.description,revision:work.revision}}; const hash=crypto.createHash("sha256").update(JSON.stringify(manifest)).digest("hex"); const created=await tx.query<{id:string}>("INSERT INTO context_snapshots(workspace_id,work_item_id,manifest,content_hash,created_by_actor_id) VALUES($1,$2,$3,$4,$5) ON CONFLICT(workspace_id,content_hash) DO NOTHING RETURNING id",[meta.actor.workspaceId,workItemId,manifest,hash,meta.actor.id]); contextId=created.rows[0]?.id??one((await tx.query<{id:string}>("SELECT id FROM context_snapshots WHERE workspace_id=$1 AND content_hash=$2",[meta.actor.workspaceId,hash])).rows).id; }
+    if (!contextId) contextId=(await materializeSessionContextSnapshot(tx,{
+      workspaceId:meta.actor.workspaceId,teamId:work.team_id,projectId:work.project_id,
+      workItemId,workItem:{id:workItemId,title:work.title,description:work.description,revision:work.revision},actorId:meta.actor.id,
+    })).id;
     const session=one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",[meta.actor.workspaceId,work.team_id,input.agentId,agent.actor_id,delegation.id,workItemId,contextId,input.budget])).rows) as Record<string,unknown>;
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, session.id as string, work.team_id]);
     if(!installationTokenId) throw new DomainError("NOT_FOUND","Active installation token not found");
@@ -921,7 +929,15 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     }
     const activeCount=await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[source.agent_id]); if((activeCount.rows[0]?.count??0)>=Number(source.max_concurrency)) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
     const prompt = input.initialPrompt ?? `Retry: ${input.reason}`;
-    const row = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget,retry_of_session_id,retry_reason,retry_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *", [source.workspace_id,source.team_id,source.agent_id,source.agent_actor_id,source.delegation_id,source.work_item_id,source.project_id,source.plan_step_id,input.reuseContext ? source.context_snapshot_id : null,source.budget,sourceId,input.reason,(source.retry_count as number)+1])).rows);
+    let retryContextId=source.context_snapshot_id as string|null;
+    if(!input.reuseContext) {
+      const retryWork=source.work_item_id ? one((await tx.query<{id:string;title:string;description:string|null;revision:number;project_id:string|null}>("SELECT id,title,description,revision,project_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",[source.work_item_id,source.workspace_id])).rows) : null;
+      retryContextId=(await materializeSessionContextSnapshot(tx,{
+        workspaceId:source.workspace_id as string,teamId:source.team_id as string,projectId:retryWork?.project_id??source.project_id as string|null,
+        workItemId:source.work_item_id as string|null,workItem:retryWork,actorId:meta.actor.id,
+      })).id;
+    }
+    const row = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget,retry_of_session_id,retry_reason,retry_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *", [source.workspace_id,source.team_id,source.agent_id,source.agent_actor_id,source.delegation_id,source.work_item_id,source.project_id,source.plan_step_id,retryContextId,source.budget,sourceId,input.reason,(source.retry_count as number)+1])).rows);
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [source.workspace_id as string, (row as { id: string }).id, source.team_id as string]);
     if(!installationTokenId) throw new DomainError("NOT_FOUND","Active installation token not found");
     const install = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())", [installationTokenId,source.agent_id])).rows); const exchange = opaqueToken();

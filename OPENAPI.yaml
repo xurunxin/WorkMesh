@@ -1686,6 +1686,15 @@ paths:
         parameters: [{ $ref: "#/components/parameters/Id" }],
         responses: { "200": { $ref: "#/components/responses/Guidance" } },
       }
+    put: { x-workmesh-policy-id: route.publishWorkspaceGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: publishWorkspaceGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/GuidanceIfMatch" }], requestBody: { $ref: "#/components/requestBodies/PublishGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/workspaces/{id}/guidance/history:
+    get: { x-workmesh-policy-id: route.listWorkspaceGuidanceHistory, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: listWorkspaceGuidanceHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/GuidanceHistory" } } }
+  /api/v1/workspaces/{id}/guidance/diff:
+    get: { x-workmesh-policy-id: route.diffWorkspaceGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: diffWorkspaceGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/FromGuidanceRevisionId" }, { $ref: "#/components/parameters/ToGuidanceRevisionId" }], responses: { "200": { $ref: "#/components/responses/GuidanceDiff" } } }
+  /api/v1/workspaces/{id}/guidance/archive:
+    post: { x-workmesh-policy-id: route.archiveWorkspaceGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: archiveWorkspaceGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/ArchiveGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/workspaces/{id}/guidance/rollback:
+    post: { x-workmesh-policy-id: route.rollbackWorkspaceGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: rollbackWorkspaceGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/RollbackGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
   /api/v1/teams/{id}/guidance:
     get:
       {
@@ -1698,6 +1707,15 @@ paths:
         parameters: [{ $ref: "#/components/parameters/Id" }],
         responses: { "200": { $ref: "#/components/responses/Guidance" } },
       }
+    put: { x-workmesh-policy-id: route.publishTeamGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: publishTeamGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/GuidanceIfMatch" }], requestBody: { $ref: "#/components/requestBodies/PublishGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/teams/{id}/guidance/history:
+    get: { x-workmesh-policy-id: route.listTeamGuidanceHistory, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: listTeamGuidanceHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/GuidanceHistory" } } }
+  /api/v1/teams/{id}/guidance/diff:
+    get: { x-workmesh-policy-id: route.diffTeamGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: diffTeamGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/FromGuidanceRevisionId" }, { $ref: "#/components/parameters/ToGuidanceRevisionId" }], responses: { "200": { $ref: "#/components/responses/GuidanceDiff" } } }
+  /api/v1/teams/{id}/guidance/archive:
+    post: { x-workmesh-policy-id: route.archiveTeamGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: archiveTeamGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/ArchiveGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/teams/{id}/guidance/rollback:
+    post: { x-workmesh-policy-id: route.rollbackTeamGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: rollbackTeamGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/RollbackGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
   /api/v1/projects/{id}/guidance:
     get:
       {
@@ -1710,6 +1728,15 @@ paths:
         parameters: [{ $ref: "#/components/parameters/Id" }],
         responses: { "200": { $ref: "#/components/responses/Guidance" } },
       }
+    put: { x-workmesh-policy-id: route.publishProjectGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: publishProjectGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/GuidanceIfMatch" }], requestBody: { $ref: "#/components/requestBodies/PublishGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/projects/{id}/guidance/history:
+    get: { x-workmesh-policy-id: route.listProjectGuidanceHistory, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: listProjectGuidanceHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/GuidanceHistory" } } }
+  /api/v1/projects/{id}/guidance/diff:
+    get: { x-workmesh-policy-id: route.diffProjectGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: diffProjectGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/FromGuidanceRevisionId" }, { $ref: "#/components/parameters/ToGuidanceRevisionId" }], responses: { "200": { $ref: "#/components/responses/GuidanceDiff" } } }
+  /api/v1/projects/{id}/guidance/archive:
+    post: { x-workmesh-policy-id: route.archiveProjectGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: archiveProjectGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/ArchiveGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
+  /api/v1/projects/{id}/guidance/rollback:
+    post: { x-workmesh-policy-id: route.rollbackProjectGuidance, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: rollbackProjectGuidance, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { $ref: "#/components/requestBodies/RollbackGuidanceInput" }, responses: { "200": { $ref: "#/components/responses/Guidance" } } }
   /api/v1/provider-connections:
     post:
       { x-workmesh-policy-id: route.createProviderConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: createProviderConnection, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProviderConnectionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/ForbiddenOrFeatureDisabled" } } }
@@ -1935,6 +1962,18 @@ components:
         required: true,
         schema: { type: string, pattern: '^"?revision-[1-9][0-9]*"?$' },
       }
+    GuidanceIfMatch:
+      {
+        name: If-Match,
+        in: header,
+        required: true,
+        description: Guidance uses revision-0 as the explicit unpublished resource version.,
+        schema: { type: string, pattern: '^"?revision-(?:0|[1-9][0-9]*)"?$' },
+      }
+    FromGuidanceRevisionId:
+      { name: fromRevisionId, in: query, required: true, schema: { type: string, format: uuid } }
+    ToGuidanceRevisionId:
+      { name: toRevisionId, in: query, required: true, schema: { type: string, format: uuid } }
     CorrelationId:
       {
         name: X-Correlation-Id,
@@ -2003,6 +2042,12 @@ components:
     SearchQuery:
       { name: search, in: query, schema: { type: string, minLength: 1 } }
   requestBodies:
+    PublishGuidanceInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/PublishGuidanceInput" } } } }
+    ArchiveGuidanceInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ArchiveGuidanceInput" } } } }
+    RollbackGuidanceInput:
+      { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RollbackGuidanceInput" } } } }
     RoomMessageInput:
       { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RoomMessageInput" } } } }
     AcquireLeaseInput:
@@ -2958,6 +3003,10 @@ components:
               { schema: { $ref: "#/components/schemas/Guidance" } },
           },
       }
+    GuidanceHistory:
+      { description: Immutable Guidance revision and pointer audit history., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceHistory" } } } }
+    GuidanceDiff:
+      { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
     RetentionStatus:
       type: object
@@ -5081,7 +5130,7 @@ components:
     SessionContext:
       {
         type: object,
-        required: [session, workItem, plan, contextSnapshotId, guidanceUris],
+        required: [session, workItem, plan, contextSnapshotId, guidanceUris, guidancePins],
         properties:
           {
             session: { $ref: "#/components/schemas/AgentSession" },
@@ -5100,18 +5149,129 @@ components:
               },
             contextSnapshotId: { type: [string, "null"], format: uuid },
             guidanceUris: { type: array, items: { type: string, format: uri } },
+            guidancePins: { type: array, items: { $ref: "#/components/schemas/GuidancePin" } },
+          },
+      }
+    GuidanceRevisionMetadata:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [id, revisionNumber, contentHash, changeSummary, authorActorId, authorDisplayName, publishedAt],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            revisionNumber: { type: integer, minimum: 1 },
+            contentHash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+            changeSummary: { type: string, minLength: 1, maxLength: 500 },
+            authorActorId: { $ref: "#/components/schemas/Id" },
+            authorDisplayName: { type: string },
+            publishedAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    GuidancePin:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [scope, scopeId, uri, revisionId, revisionNumber, contentHash],
+        properties:
+          {
+            scope: { type: string, enum: [workspace, team, project] },
+            scopeId: { $ref: "#/components/schemas/Id" },
+            uri: { type: string, format: uri },
+            revisionId: { $ref: "#/components/schemas/Id" },
+            revisionNumber: { type: integer, minimum: 1 },
+            contentHash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
           },
       }
     Guidance:
       {
         type: object,
-        required: [scope, scopeId, revision, markdown, updatedAt],
+        additionalProperties: false,
+        required: [scope, scopeId, documentId, status, revision, currentRevision, markdown, updatedAt],
         properties:
           {
             scope: { type: string, enum: [workspace, team, project] },
             scopeId: { $ref: "#/components/schemas/Id" },
-            revision: { $ref: "#/components/schemas/Revision" },
-            markdown: { type: string },
+            documentId: { type: [string, "null"], format: uuid },
+            status: { type: string, enum: [unpublished, active, archived] },
+            revision: { type: integer, minimum: 0 },
+            currentRevision:
+              { oneOf: [{ $ref: "#/components/schemas/GuidanceRevisionMetadata" }, { type: "null" }] },
+            markdown: { type: string, maxLength: 100000 },
             updatedAt: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
+    PublishGuidanceInput:
+      { type: object, additionalProperties: false, required: [markdown, changeSummary], properties: { markdown: { type: string, maxLength: 100000 }, changeSummary: { type: string, minLength: 1, maxLength: 500 } } }
+    ArchiveGuidanceInput:
+      { type: object, additionalProperties: false, required: [reason], properties: { reason: { type: string, minLength: 1, maxLength: 2000 } } }
+    RollbackGuidanceInput:
+      { type: object, additionalProperties: false, required: [revisionId, reason], properties: { revisionId: { $ref: "#/components/schemas/Id" }, reason: { type: string, minLength: 1, maxLength: 2000 } } }
+    GuidanceHistory:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [scope, scopeId, documentId, revision, status, currentRevisionId, revisions, audit],
+        properties:
+          {
+            scope: { type: string, enum: [workspace, team, project] },
+            scopeId: { $ref: "#/components/schemas/Id" },
+            documentId: { type: [string, "null"], format: uuid },
+            revision: { type: integer, minimum: 0 },
+            status: { type: string, enum: [unpublished, active, archived] },
+            currentRevisionId: { type: [string, "null"], format: uuid },
+            revisions: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/GuidanceRevisionMetadata" } },
+            audit:
+              {
+                type: array,
+                maxItems: 500,
+                items:
+                  {
+                    type: object,
+                    additionalProperties: false,
+                    required: [id, action, fromRevisionId, toRevisionId, actorId, actorDisplayName, reason, createdAt],
+                    properties:
+                      {
+                        id: { $ref: "#/components/schemas/Id" },
+                        action: { type: string, enum: [published, archived, rolled_back] },
+                        fromRevisionId: { type: [string, "null"], format: uuid },
+                        toRevisionId: { type: [string, "null"], format: uuid },
+                        actorId: { $ref: "#/components/schemas/Id" },
+                        actorDisplayName: { type: string },
+                        reason: { type: string },
+                        createdAt: { $ref: "#/components/schemas/Timestamp" },
+                      },
+                  },
+              },
+          },
+      }
+    GuidanceDiff:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [scope, scopeId, from, to, changes],
+        properties:
+          {
+            scope: { type: string, enum: [workspace, team, project] },
+            scopeId: { $ref: "#/components/schemas/Id" },
+            from: { $ref: "#/components/schemas/GuidanceRevisionMetadata" },
+            to: { $ref: "#/components/schemas/GuidanceRevisionMetadata" },
+            changes:
+              {
+                type: array,
+                items:
+                  {
+                    type: object,
+                    additionalProperties: false,
+                    required: [kind, oldLine, newLine, text],
+                    properties:
+                      {
+                        kind: { type: string, enum: [context, removed, added] },
+                        oldLine: { type: [integer, "null"], minimum: 1 },
+                        newLine: { type: [integer, "null"], minimum: 1 },
+                        text: { type: string },
+                      },
+                  },
+              },
           },
       }

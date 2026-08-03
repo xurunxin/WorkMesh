@@ -28,6 +28,9 @@ export const roomSubjectKind = pgEnum('room_subject_kind', ['work_item', 'projec
 export const roomMessageIntent = pgEnum('room_message_intent', ['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
 export const leaseKind = pgEnum('lease_kind', ['exclusive', 'review_shared'])
 export const leaseStatus = pgEnum('lease_status', ['active', 'released', 'expired', 'revoked'])
+export const guidanceScopeType = pgEnum('guidance_scope_type', ['workspace', 'team', 'project'])
+export const guidanceDocumentStatus = pgEnum('guidance_document_status', ['active', 'archived'])
+export const guidanceAuditAction = pgEnum('guidance_audit_action', ['published', 'archived', 'rolled_back'])
 export const handoffStatus = pgEnum('handoff_status', ['draft', 'requested', 'accepted', 'rejected', 'canceled', 'completed'])
 export const budgetReservationStatus = pgEnum('budget_reservation_status', ['reserved', 'released', 'consumed'])
 export const decisionRelationKind = pgEnum('decision_relation_kind', ['supersedes', 'reverses'])
@@ -340,6 +343,19 @@ export const workItemExecutorProjections = pgTable('work_item_executor_projectio
   leaseKind: leaseKind('lease_kind').notNull(), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), executionState: agentSessionState('execution_state').notNull(),
   heartbeatHealth: text('heartbeat_health').notNull(), lastHeartbeatAt: timestamp('last_heartbeat_at', { withTimezone: true }), leaseHeartbeatAt: timestamp('lease_heartbeat_at', { withTimezone: true }).notNull(),
   leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }).notNull(), projectedAt: timestamp('projected_at', { withTimezone: true }).notNull(),
+})
+export const guidanceDocuments = pgTable('guidance_documents', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), scopeType: guidanceScopeType('scope_type').notNull(), scopeId: uuid('scope_id').notNull(),
+  currentRevisionId: uuid('current_revision_id'), status: guidanceDocumentStatus('status').notNull(), revision: integer('revision').notNull(), archivedAt: timestamp('archived_at', { withTimezone: true }), archivedByActorId: uuid('archived_by_actor_id'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const guidanceRevisions = pgTable('guidance_revisions', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), documentId: uuid('document_id').notNull(), revisionNumber: integer('revision_number').notNull(),
+  markdown: text('markdown').notNull(), contentHash: text('content_hash').notNull(), changeSummary: text('change_summary').notNull(), authorActorId: uuid('author_actor_id').notNull(), publishedAt: timestamp('published_at', { withTimezone: true }).notNull(),
+})
+export const guidanceAuditFacts = pgTable('guidance_audit_facts', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), documentId: uuid('document_id').notNull(), action: guidanceAuditAction('action').notNull(),
+  fromRevisionId: uuid('from_revision_id'), toRevisionId: uuid('to_revision_id'), actorId: uuid('actor_id').notNull(), reason: text('reason').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const handoffs = pgTable('handoffs', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), fromSessionId: uuid('from_session_id').notNull(), targetAgentId: uuid('target_agent_id'), targetSkill: text('target_skill'), scopeType: text('scope_type'), scopeId: uuid('scope_id'), summary: text('summary').notNull(), completedWork: jsonb('completed_work').notNull(), remainingWork: jsonb('remaining_work').notNull(), openQuestions: jsonb('open_questions').notNull(), risks: jsonb('risks').notNull(), acceptanceCriteria: jsonb('acceptance_criteria').notNull(), requestedAction: text('requested_action'), leaseTransferPolicy: text('lease_transfer_policy').notNull(), artifactIds: uuid('artifact_ids').array().notNull(), contextSnapshotId: uuid('context_snapshot_id'), requestedCapabilities: text('requested_capabilities').array().notNull(), status: handoffStatus('status').notNull(), acceptedSessionId: uuid('accepted_session_id'), resolvedAgentId: uuid('resolved_agent_id'), resolvedDelegationId: uuid('resolved_delegation_id'), rejectedByActorId: uuid('rejected_by_actor_id'), machineRejectReason: text('machine_reject_reason'), routingSnapshot: jsonb('routing_snapshot').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), requestedAt: timestamp('requested_at', { withTimezone: true }), decidedAt: timestamp('decided_at', { withTimezone: true }), completedAt: timestamp('completed_at', { withTimezone: true }),

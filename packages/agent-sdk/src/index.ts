@@ -5,6 +5,7 @@ import type {
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
   InboxListItem, InboxItemDetail, InboxReplyResponse,
   WorkItemResponse,
+  GuidanceResponse, GuidanceScope,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -406,7 +407,7 @@ export class WorkMeshClient {
       }
     }
   }
-  getGuidance<T = unknown>(scope: 'workspace' | 'team' | 'project', id: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/${scope}s/${encodeURIComponent(id)}/guidance`, undefined, options) }
+  getGuidance<T = GuidanceResponse>(scope: GuidanceScope, id: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/${scope}s/${encodeURIComponent(id)}/guidance`, undefined, options) }
   /** Delegation and session creation happen in one server transaction. */
   delegateAndStart<T = unknown>(workItemId: string, input: DelegateAndStartInput, options: RequestOptions & { ifMatch: number | string }): Promise<T> {
     return this.request('POST', `/api/v1/work-items/${encodeURIComponent(workItemId)}/agent-session`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(workItemId, 'delegate-and-start'), ifMatch: options.ifMatch })
