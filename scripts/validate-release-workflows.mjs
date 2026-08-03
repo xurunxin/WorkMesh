@@ -80,6 +80,8 @@ for (const value of [
   'Production readiness and graceful restart',
   'release-config-preflight:',
   'Validate protected release configuration',
+  'Validate production runtime contract',
+  'pnpm validate:production-images',
   'RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}',
   'WEB_ORIGIN=$RELEASE_WEB_ORIGIN',
   "base64url_secret() { openssl rand -base64 32 | tr '+/' '-_' | tr -d '=\\n'; }",

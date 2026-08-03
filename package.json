@@ -14,7 +14,7 @@
     "test:integration:worker": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
     "test:integration:recovery": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration",
     "test:e2e": "turbo run test:e2e",
-    "ci:validate": "node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-production-images.mjs",
+    "ci:validate": "node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs",
     "release:manifest": "tsx scripts/create-release-manifest.mts",
     "db:migrate": "pnpm --filter @workmesh/db migrate",
     "db:seed": "pnpm --filter @workmesh/db seed",

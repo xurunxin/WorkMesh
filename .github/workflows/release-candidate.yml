@@ -138,7 +138,7 @@ jobs:
     name: Validate protected release configuration
     needs: [validate-candidate, required-ci, source-security]
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     environment: stable-release
     permissions:
       contents: read
@@ -158,6 +158,21 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate production runtime contract
+        run: pnpm validate:production-images
       - name: Validate and freeze release URLs
         id: config
         run: |
