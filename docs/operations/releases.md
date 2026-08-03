@@ -18,6 +18,14 @@ visible HTTPS API origin before creating an RC. It is a non-secret Web build
 input and is recorded in both the OCI label and release manifest. Changing it
 requires a new candidate.
 
+GHCR login uses the `stable-release` environment secret
+`GHCR_PUBLISH_TOKEN` when configured and otherwise falls back to the job-scoped
+`GITHUB_TOKEN`. The environment secret is only needed for an existing
+granular-permission package that cannot grant the repository Actions access.
+Scope it to package publication, keep it only in `stable-release`, and remove or
+rotate it after repository Actions access is restored. GitHub Release and
+repository metadata operations continue to use the job-scoped `GITHUB_TOKEN`.
+
 ## Enforcement probe
 
 Manually dispatch `Release Candidate` with `failure_probe=true`. The first job

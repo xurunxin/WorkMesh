@@ -78,6 +78,7 @@ for (const value of [
   'Production readiness and graceful restart',
   'restart --timeout 35 api worker mcp',
   'restart-count-zero',
+  'secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN',
 ]) requireCondition(candidate.includes(value), `release-candidate must contain ${value}`)
 
 const validationIndex = candidate.indexOf('validate-candidate:')
@@ -117,6 +118,7 @@ for (const value of [
   'docker push',
   'PROMOTION_DIGEST_MISMATCH',
   'same immutable image digests',
+  'secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN',
 ]) requireCondition(promotion.includes(value), `promote-ga must contain ${value}`)
 
 requireCondition(releasePolicy.includes('High finding prevents promotion'), 'release policy must block High findings')
