@@ -325,6 +325,7 @@ jobs:
     env:
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
       RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
+      RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}
       COMPOSE_PROJECT_NAME: workmesh-rc-smoke-${{ github.run_id }}-${{ github.run_attempt }}
       RELEASE_ENV_FILE: ${{ github.workspace }}/.release-smoke.env
     steps:
@@ -364,6 +365,14 @@ jobs:
       - name: Create ephemeral production configuration
         run: |
           set -euo pipefail
+          test -n "$RELEASE_WEB_ORIGIN"
+          node --input-type=module <<'NODE'
+          const value = process.env.RELEASE_WEB_ORIGIN
+          const origin = new URL(value)
+          if (origin.protocol !== 'https:' || origin.origin !== value) {
+            throw new Error('WORKMESH_RELEASE_WEB_ORIGIN must be an HTTPS origin without a path')
+          }
+          NODE
           umask 077
           mkdir -p release-runtime
           hex_secret() { openssl rand -hex 32; }
@@ -379,7 +388,7 @@ jobs:
           PAGINATION_CURSOR_KEYS=release-key:$cursor_key
           PAGINATION_CURSOR_ACTIVE_KID=release-key
           AUTH_RATE_LIMIT_HMAC_KEY=rate-$(hex_secret)
-          WEB_ORIGIN=https://workmesh.example
+          WEB_ORIGIN=$RELEASE_WEB_ORIGIN
           S3_PUBLIC_ENDPOINT=http://127.0.0.1:9000
           S3_ACCESS_KEY_ID=workmesh
           S3_SECRET_ACCESS_KEY=s3-$(hex_secret)

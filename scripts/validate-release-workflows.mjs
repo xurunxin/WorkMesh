@@ -78,10 +78,17 @@ for (const value of [
   'failure-probe',
   'production-runtime-smoke:',
   'Production readiness and graceful restart',
+  'RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}',
+  'WEB_ORIGIN=$RELEASE_WEB_ORIGIN',
   'restart --timeout 35 api worker mcp',
   'restart-count-zero',
   ghcrCredentialExpression,
 ]) requireCondition(candidate.includes(value), `release-candidate must contain ${value}`)
+
+requireCondition(
+  !candidate.includes('WEB_ORIGIN=https://workmesh.example'),
+  'release-candidate must not use a placeholder Web origin for production smoke',
+)
 
 requireCondition(
   candidate.split(ghcrCredentialExpression).length - 1 === 4,
