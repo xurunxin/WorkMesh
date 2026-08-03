@@ -35,6 +35,8 @@ const parseWorkflow = (name, source) => {
 const candidateWorkflow = parseWorkflow('release-candidate', candidate)
 parseWorkflow('promote-ga', promotion)
 
+const ghcrCredentialExpression = 'secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN'
+
 for (const jobName of ['source-security', 'production-runtime-smoke', 'publish-candidate-record']) {
   const steps = candidateWorkflow?.jobs?.[jobName]?.steps ?? []
   const activationIndex = steps.findIndex(
@@ -78,7 +80,13 @@ for (const value of [
   'Production readiness and graceful restart',
   'restart --timeout 35 api worker mcp',
   'restart-count-zero',
+  ghcrCredentialExpression,
 ]) requireCondition(candidate.includes(value), `release-candidate must contain ${value}`)
+
+requireCondition(
+  candidate.split(ghcrCredentialExpression).length - 1 === 4,
+  'release-candidate must use the GHCR credential for two logins and two registry attestations',
+)
 
 const validationIndex = candidate.indexOf('validate-candidate:')
 const reusableCiIndex = candidate.indexOf('required-ci:')
@@ -117,7 +125,13 @@ for (const value of [
   'docker push',
   'PROMOTION_DIGEST_MISMATCH',
   'same immutable image digests',
+  ghcrCredentialExpression,
 ]) requireCondition(promotion.includes(value), `promote-ga must contain ${value}`)
+
+requireCondition(
+  promotion.split(ghcrCredentialExpression).length - 1 === 1,
+  'promote-ga must use the GHCR credential for its registry login',
+)
 
 requireCondition(releasePolicy.includes('High finding prevents promotion'), 'release policy must block High findings')
 requireCondition(releasePolicy.includes('does not rebuild'), 'release policy must forbid GA rebuilds')
