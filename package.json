@@ -41,6 +41,9 @@
   "pnpm": {
     "overrides": {
       "brace-expansion@1": "1.1.18",
+      "fast-uri@>=3.0.0 <3.1.5": "3.1.5",
+      "fast-uri@>=4.0.0 <4.1.2": "4.1.2",
+      "ip-address@<=10.3.0": "10.3.1",
       "postcss": "8.5.25",
       "sharp": "0.35.3"
     }
