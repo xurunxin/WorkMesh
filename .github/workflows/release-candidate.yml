@@ -84,12 +84,19 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
       - name: Install locked dependencies
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
           pnpm install --frozen-lockfile
           mkdir -p release-security
       - name: Block High dependency advisories
@@ -327,12 +334,19 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
       - name: Install production validator dependencies
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
           pnpm install --frozen-lockfile
       - name: Download image metadata
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
@@ -493,7 +507,16 @@ jobs:
         with:
           pattern: release-image-*-${{ github.run_id }}-${{ github.run_attempt }}
           path: release-evidence/images
-      - name: Set up exact Node and pnpm
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version-file: .node-version
@@ -501,8 +524,6 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Assemble candidate manifest
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
           pnpm install --frozen-lockfile
           pnpm release:manifest -- \
             --tag "$CANDIDATE_TAG" \
