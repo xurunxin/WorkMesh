@@ -20,11 +20,14 @@ requires a new candidate.
 
 GHCR login uses the `stable-release` environment secret
 `GHCR_PUBLISH_TOKEN` when configured and otherwise falls back to the job-scoped
-`GITHUB_TOKEN`. The environment secret is only needed for an existing
-granular-permission package that cannot grant the repository Actions access.
-Scope it to package publication, keep it only in `stable-release`, and remove or
-rotate it after repository Actions access is restored. GitHub Release and
-repository metadata operations continue to use the job-scoped `GITHUB_TOKEN`.
+`GITHUB_TOKEN`. Registry login and registry-backed build/SBOM attestations use
+the same selected credential so publication cannot succeed and then fail only
+while attaching attestations. The environment secret is only needed for an
+existing granular-permission package that cannot grant the repository Actions
+access. Scope it to package publication and repository attestations, keep it
+only in `stable-release`, and remove or rotate it after repository Actions
+access is restored. GitHub Release and repository metadata operations continue
+to use the job-scoped `GITHUB_TOKEN`.
 
 ## Enforcement probe
 

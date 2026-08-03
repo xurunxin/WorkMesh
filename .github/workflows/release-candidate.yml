@@ -272,6 +272,7 @@ jobs:
           subject-name: ${{ env.IMAGE }}
           subject-digest: ${{ steps.publish.outputs.digest }}
           push-to-registry: true
+          github-token: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Attest SBOM
         id: sbom-attestation
         uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e
@@ -280,6 +281,7 @@ jobs:
           subject-digest: ${{ steps.publish.outputs.digest }}
           sbom-path: release-evidence/${{ matrix.service }}/sbom.spdx.json
           push-to-registry: true
+          github-token: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Record immutable image metadata
         env:
           DIGEST: ${{ steps.publish.outputs.digest }}
