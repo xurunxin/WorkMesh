@@ -509,21 +509,31 @@ jobs:
               [[ "$(docker inspect "$container_id" --format '{{.State.Health.Status}}' 2>/dev/null)" == healthy ]] || return 1
             done
           }
+          dump_restart_state() {
+            "${compose[@]}" ps
+            for service in api worker mcp; do
+              container_id="$("${compose[@]}" ps --quiet "$service")"
+              if [[ -n "$container_id" ]]; then
+                docker inspect "$container_id" --format '{{json .State}}' || true
+              fi
+            done
+          }
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:3001/readyz >/dev/null \
               && curl --fail --silent http://127.0.0.1:3002/readyz >/dev/null \
-              && "${compose[@]}" exec --no-TTY worker node /app/healthcheck.mjs http://127.0.0.1:3003/readyz \
-              && containers_healthy; then
+              && "${compose[@]}" exec --no-TTY worker node /app/healthcheck.mjs http://127.0.0.1:3003/readyz; then
               break
             fi
             if [[ "$attempt" == 60 ]]; then
-              "${compose[@]}" ps
-              for service in api worker mcp; do
-                container_id="$("${compose[@]}" ps --quiet "$service")"
-                if [[ -n "$container_id" ]]; then
-                  docker inspect "$container_id" --format '{{json .State}}' || true
-                fi
-              done
+              dump_restart_state
+              exit 1
+            fi
+            sleep 2
+          done
+          for health_attempt in $(seq 1 15); do
+            if containers_healthy; then break; fi
+            if [[ "$health_attempt" == 15 ]]; then
+              dump_restart_state
               exit 1
             fi
             sleep 2

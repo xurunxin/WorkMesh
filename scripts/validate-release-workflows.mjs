@@ -90,7 +90,7 @@ for (const value of [
   'S3_SECRET_ACCESS_KEY=$minio_password',
   'restart --timeout 35 api worker mcp',
   'containers_healthy() {',
-  '&& containers_healthy; then',
+  'for health_attempt in $(seq 1 15); do',
   'docker-health-ready',
   'restart-count-zero',
   ghcrCredentialExpression,
