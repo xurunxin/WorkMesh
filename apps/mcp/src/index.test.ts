@@ -47,6 +47,27 @@ describe('WorkMesh MCP adapter', () => {
       expect(names).not.toContain('send_message')
       expect(names).not.toContain('ack_agent_session')
       expect(names).not.toContain('claim_inbox_item')
+      const resources = (await protocol.listResources()).resources.map(item => item.name)
+      expect(resources).toContain('agent-capabilities')
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('reads the exact Session revision and transitions to executing through MCP', async () => {
+    const session = { id: sessionId, state: 'acknowledged', revision: 8 }
+    const getSession = vi.fn().mockResolvedValue(session)
+    const transitionState = vi.fn().mockResolvedValue({ ...session, state: 'executing', revision: 9 })
+    const api = { getSession, transitionState, listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api)
+    try {
+      const resourceResult = await protocol.readResource({ uri: `workmesh://session/${sessionId}` })
+      expect(resourceResult.contents[0]).toMatchObject({ text: JSON.stringify(session) })
+      expect(getSession).toHaveBeenCalledWith(sessionId)
+      const toolResult = await protocol.callTool({
+        name: 'transition_agent_session_state',
+        arguments: { sessionId, state: 'executing', reason: 'Run conformance.', revision: 8, idempotencyKey: 'state-key' },
+      })
+      expect(toolResult.isError).not.toBe(true)
+      expect(transitionState).toHaveBeenCalledWith(sessionId, 'executing', 'Run conformance.', { ifMatch: 8, idempotencyKey: 'state-key' })
     } finally { await protocol.close(); await server.close() }
   })
 

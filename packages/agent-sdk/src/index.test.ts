@@ -148,12 +148,13 @@ describe('WorkMeshClient', () => {
     await stream.return()
   })
 
-  it('reads release and authenticated feature contracts without claiming disabled tools', async () => {
+  it('reads release, features, and the negotiated Agent capability manifest', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ serverVersion: '1.0.0' }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({
         features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false }],
       }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ profileVersion: '1.0', operations: [] }), { status: 200 }))
     const client = new WorkMeshClient({
       baseUrl: 'https://workmesh.example.test',
       sessionToken: 'session-token',
@@ -163,8 +164,11 @@ describe('WorkMeshClient', () => {
     await expect(client.getFeatures()).resolves.toMatchObject({
       features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', enabled: false }],
     })
+    await expect(client.getAgentCapabilities({ profileVersion: '1.0' })).resolves.toMatchObject({ profileVersion: '1.0' })
     expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.example.test/api/v1/info')
     expect(fetch.mock.calls[1]?.[0]).toBe('https://workmesh.example.test/api/v1/features')
+    expect(fetch.mock.calls[2]?.[0]).toBe('https://workmesh.example.test/api/v1/agent-capabilities')
+    expect((fetch.mock.calls[2]?.[1] as RequestInit | undefined)?.headers).toMatchObject({ 'workmesh-client-profile': '1.0' })
   })
 
   it('uses stable idempotency and does not retry conflicts', async () => {
@@ -477,6 +481,19 @@ describe('WorkMeshClient', () => {
     await client.delegateAndStart('00000000-0000-4000-8000-000000000003', { agentId: '00000000-0000-4000-8000-000000000004', principalHumanActorId: '00000000-0000-4000-8000-000000000005', requestedCapabilities: ['work:read'], initialPrompt: 'Investigate.' }, { ifMatch: 7 })
     expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/work-items/00000000-0000-4000-8000-000000000003/agent-session')
     expect(fetch.mock.calls[0]?.[1].headers['if-match']).toBe('"revision-7"')
+  })
+
+  it('transitions an Agent Session with its exact current revision', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'session-1', revision: 9 }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await expect(client.transitionState('session-1', 'executing', 'Begin conformance.', { ifMatch: 8, idempotencyKey: 'state-key' }))
+      .resolves.toMatchObject({ id: 'session-1', revision: 9 })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/agent-sessions/session-1/state')
+    expect(fetch.mock.calls[0]?.[1]).toMatchObject({
+      method: 'POST',
+      body: JSON.stringify({ state: 'executing', reason: 'Begin conformance.' }),
+      headers: expect.objectContaining({ 'if-match': '"revision-8"', 'idempotency-key': 'state-key' }),
+    })
   })
 
   it('preserves exact pull-request head provenance for delivery artifacts', async () => {

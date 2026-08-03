@@ -16,6 +16,8 @@ describe('1.0 release contract documentation', () => {
 
     expect(openapi).toContain(`version: "${releaseMetadata.restApiVersion}"`)
     expect(openapi).toContain(`serverVersion: { const: "${releaseMetadata.serverVersion}" }`)
+    expect(openapi).toContain(`preferredClientProfileVersion: { const: "${releaseMetadata.preferredClientProfileVersion}" }`)
+    expect(openapi).toContain(`conformanceSuiteVersion: { const: "${releaseMetadata.conformanceSuiteVersion}" }`)
     expect(protocol).toContain(`Agent Protocol ${releaseMetadata.agentProtocolVersion}`)
     expect(readme).toMatch(
       new RegExp(`MCP server\\s+\`${releaseMetadata.mcpVersion.replaceAll('.', '\\.')}\``),

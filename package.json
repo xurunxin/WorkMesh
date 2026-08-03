@@ -23,6 +23,7 @@
     "bootstrap:token": "node scripts/generate-bootstrap-token.mjs",
     "mcp:inspector": "pnpm --filter @workmesh/mcp inspector",
     "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke",
+    "test:conformance": "pnpm --filter @workmesh/conformance conformance",
     "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",
     "check:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts --check",
     "validate:production-images": "node -- scripts/validate-production-images.mjs",

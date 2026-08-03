@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
-import { guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
+import { agentCapabilityManifestResponseSchema, guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
 import { buildApp } from '../src/server.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -82,6 +82,44 @@ describe('versioned Guidance acceptance', () => {
     const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/token/exchange`, payload: { exchangeToken: started.exchangeToken }, headers: { authorization: `Bearer ${registered.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
     expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
     const token = exchange.json<{ sessionToken: string }>().sessionToken
+    const humanManifest = await humanCall(human, 'GET', '/api/v1/agent-capabilities')
+    expect(humanManifest.statusCode).toBe(403)
+    const manifestResponse = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${token}`, 'workmesh-client-profile': '1.0' } }) as unknown as Response
+    expect(manifestResponse.statusCode, JSON.stringify(manifestResponse.json())).toBe(200)
+    const manifest = agentCapabilityManifestResponseSchema.parse(manifestResponse.json())
+    expect(manifest.agent).toMatchObject({ sessionId: started.id, supportedProtocols: ['native_http'] })
+    expect(manifest.agent.effectiveCapabilities).toEqual(expect.arrayContaining(capabilities))
+    expect(manifest.operations.find(operation => operation.operationId === 'getAgentCapabilityManifest')).toMatchObject({ supported: true, eligibleByCapability: true, transports: { mcpBindings: ['resource:agent-capabilities'] } })
+    expect(manifest.extensions.find(extension => extension.id === 'workmesh.engineering-graph')).toMatchObject({ enabled: false, negotiationRequired: true })
+
+    const limitedWorkResponse = await humanCall(human, 'POST', '/api/v1/work-items', { teamId, projectId, title: 'Capability discovery without read grant', statusId: readyId, responsibleHumanActorId: actor.id })
+    expect(limitedWorkResponse.statusCode, JSON.stringify(limitedWorkResponse.json())).toBe(200)
+    const limitedWork = limitedWorkResponse.json<{ id: string; revision: number }>()
+    const limitedCapabilities = ['work:write']
+    const limitedRegistration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `limited-agent-${randomUUID().slice(0, 8)}`, name: 'Limited Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: limitedCapabilities, approvedCapabilities: limitedCapabilities, maxConcurrency: 1 })
+    expect(limitedRegistration.statusCode, JSON.stringify(limitedRegistration.json())).toBe(200)
+    const limitedAgent = limitedRegistration.json<{ id: string; installation_token: string }>()
+    expect((await humanCall(human, 'PUT', `/api/v1/agents/${limitedAgent.id}/team-access/${teamId}`, { approvedCapabilities: limitedCapabilities })).statusCode).toBe(200)
+    const limitedStartedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${limitedWork.id}/agent-session`, { agentId: limitedAgent.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: limitedCapabilities, initialPrompt: 'Discover supported operations.', budget: {} }, { 'if-match': `"revision-${limitedWork.revision}"` })
+    expect(limitedStartedResponse.statusCode, JSON.stringify(limitedStartedResponse.json())).toBe(200)
+    const limitedStarted = limitedStartedResponse.json<{ session: { id: string; exchangeToken: string } }>().session
+    const limitedExchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${limitedStarted.id}/token/exchange`, payload: { exchangeToken: limitedStarted.exchangeToken }, headers: { authorization: `Bearer ${limitedAgent.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
+    expect(limitedExchange.statusCode, JSON.stringify(limitedExchange.json())).toBe(200)
+    const limitedToken = limitedExchange.json<{ sessionToken: string }>().sessionToken
+    const limitedManifestResponse = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${limitedToken}`, 'workmesh-client-profile': '1.0' } }) as unknown as Response
+    expect(limitedManifestResponse.statusCode, JSON.stringify(limitedManifestResponse.json())).toBe(200)
+    const limitedManifest = agentCapabilityManifestResponseSchema.parse(limitedManifestResponse.json())
+    expect(limitedManifest.agent.effectiveCapabilities).toEqual(limitedCapabilities)
+    expect(limitedManifest.operations.find(operation => operation.operationId === 'getAgentCapabilityManifest')).toMatchObject({ eligibleByCapability: true, requirements: { capabilities: [] } })
+    const limitedAcknowledged = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${limitedStarted.id}/ack`, payload: { summary: 'Capability discovery complete', externalUrls: [] }, headers: { authorization: `Bearer ${limitedToken}`, 'idempotency-key': randomUUID() } }) as unknown as Response
+    expect(limitedAcknowledged.statusCode, JSON.stringify(limitedAcknowledged.json())).toBe(200)
+    const limitedContext = await agentCall(limitedToken, `/api/v1/agent-sessions/${limitedStarted.id}/context`)
+    expect(limitedContext.statusCode).toBe(403)
+    expect(limitedContext.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'CAPABILITY_DENIED' } })
+
+    const unsupportedProfile = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${token}`, 'workmesh-client-profile': '2.0' } }) as unknown as Response
+    expect(unsupportedProfile.statusCode).toBe(400)
+    expect(unsupportedProfile.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'PROFILE_VERSION_UNSUPPORTED' } })
     const acknowledged = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/ack`, payload: { summary: 'Guidance loaded', externalUrls: [] }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
     expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
     const executing = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/state`, payload: { state: 'executing', reason: 'Validate pinned Guidance' }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), 'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"` } }) as unknown as Response

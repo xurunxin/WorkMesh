@@ -653,6 +653,7 @@ jobs:
         run: |
           set -o pipefail
           pnpm smoke:agents 2>&1 | tee ci-logs/agent-smoke.log
+          pnpm test:conformance -- --output ../../ci-logs/client-profile-conformance 2>&1 | tee ci-logs/client-profile-conformance.log
       - name: Upload raw agent smoke logs
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

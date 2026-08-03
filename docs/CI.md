@@ -34,8 +34,11 @@ cached.
 - `recovery-integration` uses isolated source and empty target PostgreSQL 16
   databases plus versioned MinIO buckets, restores a complete authenticated
   bundle, and starts the restored API, Worker, and Web for an Agent heartbeat.
-- `agent-smoke` exercises SDK construction and protocol/adaptor smoke paths. It
-  does not prove a live provider-backed workflow execution.
+- `agent-smoke` exercises SDK construction and protocol/adaptor smoke paths,
+  then runs the Agent Collaboration Client Profile suite through Native HTTP
+  and MCP reference drivers for Codex-, OpenCode-, and pi-style behaviors. It
+  retains JSON, JUnit, and full transcript evidence. It does not prove a live
+  provider-backed workflow execution.
 
 `required-ci` runs with `always()` after `source-gates` and all six constituent
 jobs. It succeeds only when every dependency result is `success`, giving branch
