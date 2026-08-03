@@ -123,6 +123,7 @@ const requiredJobs = [
   'api-integration',
   'worker-integration',
   'e2e',
+  'recovery-integration',
   'agent-smoke',
   'required-ci',
 ]
@@ -137,6 +138,7 @@ const rawArtifacts = new Map([
   ['api-integration', 'api-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['worker-integration', 'worker-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['e2e', 'e2e-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
@@ -244,7 +246,7 @@ for (const command of [
   requireCondition(source.includes(command), `source-gates must run ${command}`)
 requireCondition(!source.includes('format:check'), 'format:check is deferred beyond Issue #10A')
 
-for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e', 'agent-smoke'])
+for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke'])
   requireCondition(
     (jobSections.get(jobId) ?? '').includes('needs: source-gates'),
     `${jobId} must depend on source-gates`,
@@ -252,6 +254,11 @@ for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 
 requireCondition((jobSections.get('db-integration') ?? '').includes('pnpm test:integration:db'), 'db integration command is missing')
 requireCondition((jobSections.get('api-integration') ?? '').includes('pnpm test:integration:api'), 'API integration command is missing')
 requireCondition((jobSections.get('worker-integration') ?? '').includes('pnpm test:integration:worker'), 'worker integration command is missing')
+requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery test:integration'), 'recovery integration command is missing')
+requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery smoke:restored'), 'restored service and Agent smoke command is missing')
+requireCondition((jobSections.get('recovery-integration') ?? '').includes('export NODE_ENV=production'), 'restored services must start in production mode')
+requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_TEST_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-report.json'), 'recovery report evidence path is missing')
+requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_SMOKE_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-service-smoke.json'), 'recovery smoke evidence path is missing')
 requireCondition(!(jobSections.get('worker-integration') ?? '').includes('redis:'), 'worker integration must not provision Redis')
 requireCondition((jobSections.get('e2e') ?? '').includes('playwright install --with-deps chromium'), 'E2E must install Chromium only')
 requireCondition((jobSections.get('e2e') ?? '').includes('playwright-report'), 'E2E must upload playwright-report')
@@ -279,6 +286,7 @@ const expectedBootstrapInvocations = [
   ['api-integration', 'api-integration'],
   ['worker-integration', 'worker-integration'],
   ['e2e', 'e2e'],
+  ['recovery-integration', 'recovery-integration'],
 ]
 const bootstrapHelper = 'scripts/set-ci-bootstrap-token.mjs'
 const bootstrapInvocations = []
@@ -375,10 +383,13 @@ requireCondition(
 const postgresImage = 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777'
 const minioImage = 'minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e'
 const mcImage = 'minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3'
-requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 4, 'four isolated jobs must use the reviewed PostgreSQL image')
+requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 5, 'five isolated jobs must use the reviewed PostgreSQL image')
 const api = jobSections.get('api-integration') ?? ''
 requireCondition(api.includes(minioImage), 'API integration must use the reviewed MinIO image')
 requireCondition(api.includes(mcImage), 'API integration must initialize MinIO with the reviewed mc image')
+const recovery = jobSections.get('recovery-integration') ?? ''
+requireCondition(recovery.includes(minioImage), 'recovery integration must use the reviewed MinIO image')
+requireCondition(recovery.includes('http://127.0.0.1:9000/minio/health/ready'), 'recovery integration must wait for MinIO readiness')
 requireCondition(
   api.includes('http://127.0.0.1:9000/minio/health/ready'),
   'API integration must wait for MinIO readiness before bucket initialization',
@@ -392,9 +403,11 @@ for (const database of [
   'workmesh_api_integration_test',
   'workmesh_worker_integration_test',
   'workmesh_e2e_test',
+  'workmesh_recovery_source_test',
+  'workmesh_recovery_target_test',
 ])
   requireCondition(workflow.includes(database), `missing isolated database ${database}`)
-for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e']) {
+for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration']) {
   const section = jobSections.get(jobId) ?? ''
   requireCondition(section.includes("${{ failure() }}"), `${jobId} must capture service logs on failure`)
   requireCondition(section.includes('docker logs'), `${jobId} must capture raw service logs`)
@@ -421,10 +434,11 @@ requireCondition(
   'every executable job must activate pnpm@9.15.4 with Corepack',
 )
 const expectedIntegrationScripts = {
-  'test:integration': 'pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker',
+  'test:integration': 'pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery',
   'test:integration:db': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration',
   'test:integration:api': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration',
   'test:integration:worker': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration',
+  'test:integration:recovery': 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration',
 }
 for (const [name, command] of Object.entries(expectedIntegrationScripts))
   requireCondition(packageJson.scripts?.[name] === command, `${name} must preserve the reviewed reset and execution order`)

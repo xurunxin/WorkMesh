@@ -60,8 +60,9 @@ commit, rerunning observes the registered checksum and does not replay SQL.
 ## Operator procedure
 
 1. Drain API and Worker admission using the release-specific maintenance guide.
-2. Take and verify a PostgreSQL backup. Issue #11 owns the complete database and
-   object-storage backup bundle; a database dump alone is not full DR evidence.
+2. Take and verify the complete database and object-storage bundle in
+   [Complete backup and disaster recovery](disaster-recovery.md). A database
+   dump alone is not DR evidence.
 3. Inspect the exact ledger:
 
    ```sql
@@ -82,9 +83,8 @@ WorkMesh has no down migrations. After a v1 migration commits, do not start an
 older binary against that database and do not delete or rewrite ledger rows.
 Rollback means restoring the verified pre-upgrade backup into an empty database,
 then starting the exact application version that created that backup. Database
-and object-storage state must be restored from the same maintenance-window
-capture; until the complete Issue #11 backup bundle is available, the existing
-`pg_dump` helper alone is not sufficient disaster-recovery evidence.
+and object-storage state must be restored from the same authenticated
+maintenance-window bundle.
 
 Test a restore before every production upgrade. If migration startup fails,
 leave the failed database untouched for diagnosis and restore into a separate

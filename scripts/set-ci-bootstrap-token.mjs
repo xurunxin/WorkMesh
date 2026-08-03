@@ -7,6 +7,7 @@ const allowedScopes = new Set([
   'api-integration',
   'worker-integration',
   'e2e',
+  'recovery-integration',
 ])
 const scope = process.argv[2]
 const commit = process.env.GITHUB_SHA

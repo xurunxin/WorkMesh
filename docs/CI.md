@@ -22,7 +22,7 @@ cached.
 
 ## Required job graph
 
-`source-gates` must pass before the five constituent jobs start:
+`source-gates` must pass before the six constituent jobs start:
 
 - `db-integration` uses its own PostgreSQL 16 test database.
 - `api-integration` uses its own PostgreSQL 16 test database plus isolated
@@ -31,10 +31,13 @@ cached.
   worker integration suites do not require Redis.
 - `e2e` uses its own PostgreSQL 16 test database, installs only Playwright
   Chromium, and runs the existing acceptance suite.
+- `recovery-integration` uses isolated source and empty target PostgreSQL 16
+  databases plus versioned MinIO buckets, restores a complete authenticated
+  bundle, and starts the restored API, Worker, and Web for an Agent heartbeat.
 - `agent-smoke` exercises SDK construction and protocol/adaptor smoke paths. It
   does not prove a live provider-backed workflow execution.
 
-`required-ci` runs with `always()` after `source-gates` and all five constituent
+`required-ci` runs with `always()` after `source-gates` and all six constituent
 jobs. It succeeds only when every dependency result is `success`, giving branch
 protection one stable aggregate check name when an administrator configures it.
 This repository change does not itself modify branch-protection settings.
@@ -79,18 +82,21 @@ Each destructive integration command still fails closed unless
 pnpm test:integration:db
 pnpm test:integration:api
 pnpm test:integration:worker
+pnpm test:integration:recovery
 ```
 
 The aggregate `pnpm test:integration` preserves the established order: database,
-API, then worker. Each constituent command resets only its dedicated test
-database before running.
+API, worker, then recovery. Recovery uses separate source and empty target test
+databases plus a versioned object-store test bucket. The hosted
+`recovery-integration` job also builds and starts the restored API, Worker, and
+Web and performs a durable Agent Session heartbeat.
 
 ## Deferred beyond Issue #10A
 
 Issue #10A does not implement release or RC automation, tag creation, image
 build or publication, package publication, provenance/signing/SBOM generation,
 deployment, required-check or branch-protection administration, clean or
-five-stage upgrade validation, database plus object-storage backup/restore
-validation, recovery or rollback evidence, or the formatting-baseline migration.
-Those operational acceptance surfaces remain assigned to Issues #8, #11, #10B,
-or later work and must not be inferred from a green `required-ci` result.
+five-stage upgrade validation, RC publication, or the formatting-baseline
+migration. Atomic migration and complete destructive
+recovery are now constituent `required-ci` evidence; release publication remains
+assigned to Issue #10B and must not be inferred from a green foundational run.

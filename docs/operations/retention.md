@@ -261,5 +261,6 @@ that deletes or redacts any of these facts requires an explicit retention
 decision and migration; enabling the existing cleanup/prune switches does not
 authorize it.
 
-Issue #11, not this endpoint, owns any future archive download, discovery,
-restore, legal-hold, or archive-key rotation API.
+The complete recovery bundle restores archive objects and exact database
+references. This status endpoint still does not provide archive download,
+discovery, legal-hold, or archive-key rotation APIs.

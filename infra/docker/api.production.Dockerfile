@@ -17,7 +17,8 @@ RUN pnpm --filter @workmesh/config build \
 
 FROM node:22.17.1-alpine3.22 AS runtime
 ARG WORKMESH_BUILD_SHA
-RUN test -n "$WORKMESH_BUILD_SHA" \
+RUN apk add --no-cache postgresql16-client \
+    && test -n "$WORKMESH_BUILD_SHA" \
     && echo "$WORKMESH_BUILD_SHA" | grep -Eq '^[0-9a-f]{40}$' \
     && addgroup -S -g 10001 workmesh \
     && adduser -S -D -H -u 10001 -G workmesh workmesh

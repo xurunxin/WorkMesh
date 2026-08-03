@@ -49,9 +49,10 @@ image scanning. A known Blocking or High finding prevents promotion.
 - Only the exact pre-v1 migration baselines in `VERSION_POLICY.md` are supported.
   Unknown or partial ledgers require operator recovery before traffic starts.
 
-The v1.0 release does not claim future Issues #7, #8, #10, or #11 are complete.
-Their acceptance criteria must be evaluated independently before any later
-release changes this statement.
+Atomic migration and complete disaster-recovery acceptance are constituent
+release evidence. GA remains blocked until Issue #10's publication controls and
+every other Stable Gate issue pass independently; this policy document alone is
+not completion evidence.
 
 ## Promotion record
 
