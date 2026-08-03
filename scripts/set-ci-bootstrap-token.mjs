@@ -7,6 +7,7 @@ const allowedScopes = new Set([
   'api-integration',
   'worker-integration',
   'e2e',
+  'recovery-integration',
 ])
 const scope = process.argv[2]
 const commit = process.env.GITHUB_SHA
@@ -33,12 +34,20 @@ const paginationKey = createHash('sha256')
   .update(commit)
   .digest('base64url')
 
+const authRateLimitKey = createHash('sha256')
+  .update('workmesh:ci-auth-rate-limit-test-only:v1\0')
+  .update(scope)
+  .update('\0')
+  .update(commit)
+  .digest('base64url')
+
 appendFileSync(
   environmentFile,
   [
     `WORKMESH_BOOTSTRAP_TOKEN=${token}`,
     `PAGINATION_CURSOR_KEYS=ci:${paginationKey}`,
     'PAGINATION_CURSOR_ACTIVE_KID=ci',
+    `AUTH_RATE_LIMIT_HMAC_KEY=${authRateLimitKey}`,
     '',
   ].join('\n'),
   'utf8',

@@ -7,6 +7,7 @@ const root = resolve(import.meta.dirname, '..')
 const openapiPath = resolve(root, 'OPENAPI.yaml')
 const matrixPath = resolve(root, 'docs/route-policy-matrix.md')
 const check = process.argv.includes('--check')
+const normalizeLineEndings = (value: string): string => value.replaceAll('\r\n', '\n')
 
 const original = await readFile(openapiPath, 'utf8')
 // Strip previously generated fields before parsing so the generator can repair
@@ -166,8 +167,18 @@ ${rows.join('\n')}
 
 if (check) {
   const existingMatrix = await readFile(matrixPath, 'utf8')
-  if (openapi !== original) throw new Error('OPENAPI.yaml route policy extensions are stale')
-  if (existingMatrix !== matrix) throw new Error('docs/route-policy-matrix.md is stale')
+  const normalizedOpenapi = normalizeLineEndings(openapi)
+  const normalizedOriginal = normalizeLineEndings(original)
+  if (normalizedOpenapi !== normalizedOriginal) {
+    const mismatch = [...normalizedOpenapi].findIndex((character, index) => character !== normalizedOriginal[index])
+    const line = normalizedOriginal.slice(0, Math.max(0, mismatch)).split('\n').length
+    const expected = JSON.stringify(normalizedOpenapi.slice(Math.max(0, mismatch - 24), mismatch + 48))
+    const actual = JSON.stringify(normalizedOriginal.slice(Math.max(0, mismatch - 24), mismatch + 48))
+    throw new Error(`OPENAPI.yaml route policy extensions are stale near line ${line}: expected ${expected}, found ${actual}`)
+  }
+  if (normalizeLineEndings(existingMatrix) !== normalizeLineEndings(matrix)) {
+    throw new Error('docs/route-policy-matrix.md is stale')
+  }
 } else {
   await writeFile(openapiPath, openapi, 'utf8')
   await writeFile(matrixPath, matrix, 'utf8')

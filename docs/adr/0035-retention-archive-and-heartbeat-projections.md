@@ -85,8 +85,9 @@ prevent the pruning prefix from crossing their cursor, but do not block later
 eligible events from being archived exactly. Permanent protected rows do not
 block later ordinary-event floor advancement. ADR 0036 defines exact
 membership and makes segment cursor bounds envelope-only metadata.
-Issue #11 owns any future archive discovery/download/restore product surface,
-key-management UX, or legal-hold workflow.
+ADR 0039 defines whole-installation archive restoration. Archive discovery or
+download product surfaces, key-management UX, and legal-hold workflows remain
+outside this endpoint.
 
 Migration
 

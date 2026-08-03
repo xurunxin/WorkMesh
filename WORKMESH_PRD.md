@@ -2045,7 +2045,7 @@ Docker Compose 服务：
 - 初始化迁移命令；迁移由显式 manifest 排序，在 PostgreSQL advisory lock 下将 SQL 与 SHA-256 ledger 登记置于同一事务；
 - Seed 命令；
 - Admin 创建命令；
-- Backup / Restore 脚本；
+- 维护窗口内生成经认证、加密的 PostgreSQL 与对象版本完整 Recovery Bundle，并仅向空环境 Restore；
 - Volume 明确；
 - 版本升级文档；
 - 所有服务无外部 SaaS 也可运行，外部 Agent/Git 集成除外。
@@ -2253,7 +2253,7 @@ RBAC + ABAC：
 - SSE；
 - Search；
 - Seed；
-- Backup/Restore 基础；
+- PostgreSQL + 对象存储 Backup/Restore 基础；
 - 自动化测试。
 
 ### 不做
@@ -2479,7 +2479,7 @@ RBAC + ABAC：
 - [ ] 迁移可重复执行；
 - [ ] 空库只执行 v1 baseline；支持的 pre-v1 起点升级后保留 legacy checksum ledger，并以 `adopted` 登记 v1 baseline；
 - [ ] Seed 可创建 Demo；
-- [ ] Backup 后可 Restore；
+- [ ] 完整 Recovery Bundle 可恢复到空数据库与空 Bucket，并验证 Artifact、归档对象、密钥和服务启动；
 - [ ] 升级失败可回滚；
 - [ ] 无第三方 SaaS 依赖时基础功能可用。
 

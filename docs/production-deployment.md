@@ -239,4 +239,6 @@ docker run --rm --entrypoint node $env:WORKMESH_API_IMAGE -e "const fs=require('
 
 Repeat the content check for worker and MCP. For Web, inspect the standalone runtime and confirm the baked API URL label. Inspect running application containers to confirm UID/GID `10001:10001`, read-only root filesystem, `CapDrop: ALL`, `no-new-privileges:true`, and the `/tmp` tmpfs.
 
-Back up PostgreSQL before an upgrade that includes schema migrations. See the repository Operations section for backup and restore commands.
+Before an upgrade that includes schema migrations, capture and rehearse the
+authenticated PostgreSQL plus object-storage bundle described in
+[Complete backup and disaster recovery](operations/disaster-recovery.md).

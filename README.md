@@ -68,7 +68,7 @@ Put a TLS-terminating reverse proxy in front of the loopback-bound web/API ports
 ## Operations
 
 - `pnpm db:create-admin <email> <password> [name]` creates another human admin after installation.
-- `pnpm db:backup [file.sql]` runs `pg_dump`; `pnpm db:restore <file.sql>` runs `psql`. Backups contain application data and may contain sensitive information: store and transfer them encrypted, restrict filesystem access, verify the target `DATABASE_URL`, and take a fresh backup before restore. Restore only during a maintenance window into the intended database; it is not a point-in-time recovery mechanism.
+- `pnpm db:backup <new-bundle-directory>` captures an authenticated, AES-256-GCM encrypted PostgreSQL plus object-version recovery bundle; `pnpm db:restore <bundle-directory>` restores only to an empty database and bucket. Both keys and a confirmed maintenance window are required. See [Complete backup and disaster recovery](docs/operations/disaster-recovery.md).
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, and `pnpm test:e2e` are the project gates.
 - [Continuous integration](docs/CI.md) documents the GitHub Actions job graph, exact toolchain pins, retained evidence, and capabilities intentionally deferred beyond foundational CI.
 
