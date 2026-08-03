@@ -59,8 +59,8 @@ describe("0029 exact archive membership migration", () => {
         ],
       )
     ).rows[0]!.id;
-    await applyMigrations(upgrade);
-    await applyMigrations(clean);
+    await applyMigrations(upgrade, { through: 29 });
+    await applyMigrations(clean, { through: 30 });
   }, 120_000);
 
   afterAll(async () => {

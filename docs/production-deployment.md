@@ -76,15 +76,18 @@ docker compose --env-file .env.production -f docker-compose.production.yml --pro
 docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
 ```
 
-The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. Web and MCP wait for API readiness. The migrator is safe to rerun for a new installation:
+The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. Web and MCP wait for API readiness. The migrator is safe to rerun for a new installation or an already-completed supported upgrade. It verifies the explicit manifest, SHA-256 ledger, and accepted pre-v1 endpoint before applying SQL; see [Database migrations](operations/migrations.md).
 
 ```powershell
 docker compose --env-file .env.production -f docker-compose.production.yml run --rm migrate
 ```
 
-Do not use that standalone command for an upgrade from migration 29 to 30.
-Migration 30 changes the durable retention upload state machine and requires a
-maintenance barrier.
+Do not use the v1 standalone command directly on an intermediate pre-v1 ledger
+ending at migration 29. Such a deployment must first use its compatible pre-v1
+release and the maintenance barrier below to reach the final pre-v1 ledger;
+the v1 migrator then adopts that final ledger. Migration 30 changes the durable
+retention upload state machine and requires the barrier when retention is
+already active.
 
 ## Migration 29 to 30 maintenance barrier
 

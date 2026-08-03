@@ -2042,7 +2042,7 @@ Docker Compose 服务：
 
 - 一个 `.env`；
 - Health Check；
-- 初始化迁移命令；
+- 初始化迁移命令；迁移由显式 manifest 排序，在 PostgreSQL advisory lock 下将 SQL 与 SHA-256 ledger 登记置于同一事务；
 - Seed 命令；
 - Admin 创建命令；
 - Backup / Restore 脚本；
@@ -2477,6 +2477,7 @@ RBAC + ABAC：
 - [ ] 空机器按文档启动；
 - [ ] Health Check 正常；
 - [ ] 迁移可重复执行；
+- [ ] 空库只执行 v1 baseline；支持的 pre-v1 起点升级后保留 legacy checksum ledger，并以 `adopted` 登记 v1 baseline；
 - [ ] Seed 可创建 Demo；
 - [ ] Backup 后可 Restore；
 - [ ] 升级失败可回滚；

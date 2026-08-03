@@ -10,7 +10,11 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
 const db = createDb(databaseUrl)
 
 describe('cursor pagination indexes', () => {
-  beforeAll(async () => { await applyMigrations(db) })
+  beforeAll(async () => {
+    await db.query('DROP SCHEMA public CASCADE')
+    await db.query('CREATE SCHEMA public')
+    await applyMigrations(db)
+  })
   afterAll(async () => { await db.end() })
 
   it('installs every planned keyset access path', async () => {

@@ -13,8 +13,13 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(databaseName)) {
 
 const db = createDb(databaseUrl)
 try {
+  // Integration suites intentionally exercise arbitrary legacy endpoints. A
+  // reset must therefore rebuild the dedicated test schema from the v1
+  // baseline instead of asking the production upgrader to accept whichever
+  // fixture endpoint the previous suite left behind.
+  await db.query('DROP SCHEMA public CASCADE')
+  await db.query('CREATE SCHEMA public')
   await applyMigrations(db)
-  await db.query('TRUNCATE platform_installation, workspaces CASCADE')
 } finally {
   await db.end()
 }

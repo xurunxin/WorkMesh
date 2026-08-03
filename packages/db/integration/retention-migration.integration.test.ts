@@ -14,7 +14,9 @@ const db = createDb(databaseUrl);
 
 describe("0026 retention, archive, and heartbeat health migration", () => {
   beforeAll(async () => {
-    await applyMigrations(db);
+    await db.query('DROP SCHEMA public CASCADE');
+    await db.query('CREATE SCHEMA public');
+    await applyMigrations(db, { through: 30 });
   });
   afterAll(async () => {
     await db.end();

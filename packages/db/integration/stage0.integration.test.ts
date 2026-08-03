@@ -37,9 +37,11 @@ describe('Stage 0 PostgreSQL integrity and delivery acceptance', () => {
     await db.end()
   }, 120_000)
 
-  it('applies the numbered migration chain to a clean database', async () => {
-    const versions = await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version')
-    expect(versions.rows.map(row => row.version)).toEqual(['0001_stage0', '0002_stage0_integrity_delivery', '0003_stage1_agent_identity_delegation', '0004_stage1_session_execution', '0005_stage1_tokens_webhooks_events', '0006_stage1_review_fixes', '0007_stage2_work_rooms_leases_handoffs', '0008_stage3_delivery_control_plane', '0009_stage3_production_adapters', '0010_stage3_provider_projection_provenance', '0011_stage3_provider_review_projection', '0012_stage3_regate_fencing_and_decisions', '0013_stage3_audit_closure', '0014_provider_action_kinds', '0015_stage4_planning_views_templates', '0016_stage4_usage_notifications', '0017_stage4_automation_control_plane', '0018_stage4_loops_health_a2a', '0019_stage4_gitea', '0020_stage4_review_hardening', '0021_stage4_a2a_direction_and_prompt_identity', '0022_route_policy_authorization_denials', '0023_auth_idempotency_records', '0024_cursor_pagination_indexes', '0025_realtime_event_envelope', '0026_retention_archive_and_heartbeat_health', '0027_worker_runtime_identity', '0028_worker_identity_conflict_count', '0029_exact_archive_membership', '0030_durable_archive_upload_intents', '0031_agent_session_external_urls_shape', '0032_agent_inbox_receipts', '0033_inbox_receipt_reply_binding', '0034_legacy_inbox_scope_derivation', '0035_decision_session_provenance'])
+  it('applies only the checksummed v1 baseline to a clean database', async () => {
+    const versions = await db.query<{ version: string; execution_mode: string }>(
+      'SELECT version,execution_mode FROM schema_migrations ORDER BY version',
+    )
+    expect(versions.rows).toEqual([{ version: '0001_v1_baseline', execution_mode: 'applied' }])
     const tables = await db.query<{ table_name: string }>("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('agent_definitions','agent_sessions','agent_webhook_deliveries','approvals','context_snapshots','inbox_items') ORDER BY table_name")
     expect(tables.rows.map(table => table.table_name)).toEqual(['agent_definitions', 'agent_sessions', 'agent_webhook_deliveries', 'approvals', 'context_snapshots', 'inbox_items'])
   }, 120_000)
@@ -62,7 +64,7 @@ describe('Stage 0 PostgreSQL integrity and delivery acceptance', () => {
     const secondWorkspace = await db.query<{ id: string }>("INSERT INTO workspaces(name,slug) VALUES('Hash Two','hash-two') RETURNING id")
     await db.query("INSERT INTO context_snapshots(workspace_id,manifest,content_hash) VALUES($1,'{}','sha256:shared')", [firstWorkspace.rows[0]!.id])
 
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 35 })
 
     await expect(db.query("INSERT INTO context_snapshots(workspace_id,manifest,content_hash) VALUES($1,'{}','sha256:shared')", [secondWorkspace.rows[0]!.id])).resolves.toBeDefined()
     await expect(db.query("INSERT INTO context_snapshots(workspace_id,manifest,content_hash) VALUES($1,'{}','sha256:shared')", [firstWorkspace.rows[0]!.id])).rejects.toThrow()
@@ -94,7 +96,7 @@ describe('Stage 0 PostgreSQL integrity and delivery acceptance', () => {
     const item = await db.query<{ id: string }>("INSERT INTO work_items(workspace_id,team_id,number,title,status_id) VALUES($1,$2,1,'Legacy item',$3) RETURNING id", [workspaceId, team.rows[0]!.id, state.rows[0]!.id])
     const channel = await db.query<{ id: string }>('INSERT INTO channels(workspace_id,work_item_id) VALUES($1,$2) RETURNING id', [workspaceId, item.rows[0]!.id])
     const comment = await db.query<{ id: string }>('INSERT INTO comments(channel_id,author_actor_id,body,mentions) VALUES($1,$2,$3,$4) RETURNING id', [channel.rows[0]!.id, actor.rows[0]!.id, 'Legacy comment', [actor.rows[0]!.id]])
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 2 })
     const upgraded = await db.query<{ workspace_role: string; comment_workspace_id: string; mention_count: number; system_kind: string }>(`SELECT a.workspace_role,c.workspace_id AS comment_workspace_id,(SELECT count(*)::int FROM comment_mentions cm WHERE cm.comment_id=c.id) AS mention_count,s.kind AS system_kind FROM actors a JOIN comments c ON c.author_actor_id=a.id JOIN platform_installation p ON p.workspace_id=a.workspace_id JOIN actors s ON s.id=p.system_actor_id WHERE c.id=$1`, [comment.rows[0]!.id])
     expect(upgraded.rows[0]).toMatchObject({ workspace_role: 'admin', comment_workspace_id: workspaceId, mention_count: 1, system_kind: 'service' })
   }, 300_000)

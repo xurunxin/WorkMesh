@@ -14,7 +14,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) {
 const db = createDb(databaseUrl)
 const migrationPath = (file: string) => join(import.meta.dirname, '../migrations', file)
 
-async function migrateFrom0001(through?: number): Promise<void> {
+async function migrateFrom0001(through = 35): Promise<void> {
   await db.query('DROP SCHEMA public CASCADE')
   await db.query('CREATE SCHEMA public')
   await db.query(await readFile(migrationPath('0001_stage0.sql'), 'utf8'))
@@ -177,7 +177,7 @@ describe('Decision Session provenance migration', () => {
       [fixture.workspaceId, fixture.workItemId, fixture.sessionId, fixture.actorId],
     )).rejects.toThrow(/decisions_check/)
 
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 35 })
 
     expect((await db.query<{ version: string }>(
       'SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1',

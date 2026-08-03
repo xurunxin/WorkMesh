@@ -17,7 +17,7 @@ describe('0023 auth idempotency migration', () => {
   it('upgrades through 0023 with fingerprint, envelope, expiry, and session revocation columns', async () => {
     await db.query('DROP SCHEMA public CASCADE')
     await db.query('CREATE SCHEMA public')
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 23 })
 
     const migration = await db.query("SELECT 1 FROM schema_migrations WHERE version='0023_auth_idempotency_records'")
     expect(migration.rowCount).toBe(1)

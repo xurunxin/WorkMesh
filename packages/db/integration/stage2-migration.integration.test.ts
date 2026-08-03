@@ -66,7 +66,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
     const acceptedBy0032 = await db.query<{ id: string }>("INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,reply_to_message_id,body) VALUES($1,$2,$3,$4,'inform',$5,'Accepted only by old 0032 scope') RETURNING id", [channel.rows[0]!.id, installed.workspaceId, foreignActor.rows[0]!.id, foreignSession.rows[0]!.id, sourceMessage.rows[0]!.id])
     await expect(db.query("INSERT INTO inbox_item_receipts(inbox_item_id,workspace_id,actor_id,session_id,kind,reply_message_id,correlation_id,idempotency_key) VALUES($1,$2,$3,$4,'replied',$5,'old-0032','old-0032')", [inboxItem.rows[0]!.id, installed.workspaceId, recipientActor.rows[0]!.id, recipientSession.rows[0]!.id, acceptedBy0032.rows[0]!.id])).resolves.toBeDefined()
 
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 35 })
     expect((await db.query<{ version: string }>('SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 1')).rows[0]!.version).toBe('0035_decision_session_provenance')
     expect((await db.query<{
       id: string
@@ -114,7 +114,7 @@ describe('Stage 2 migration chain and PostgreSQL constraints', () => {
       [legacy.workspaceId, legacy.actorId, legacySourceId],
     )
 
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 35 })
 
     expect((await db.query<{ recipient_actor_id: string }>(
       'SELECT recipient_actor_id FROM inbox_items WHERE id=$1',
