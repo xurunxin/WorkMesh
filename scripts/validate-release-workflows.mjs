@@ -9,6 +9,7 @@ const candidate = read('.github/workflows/release-candidate.yml')
 const promotion = read('.github/workflows/promote-ga.yml')
 const releasePolicy = read('docs/V1_RELEASE_POLICY.md')
 const releaseNotes = read('docs/releases/v1.0.0.md')
+const packageManifest = JSON.parse(read('package.json'))
 const failures = []
 
 const requireCondition = (condition, message) => {
@@ -36,6 +37,17 @@ const candidateWorkflow = parseWorkflow('release-candidate', candidate)
 parseWorkflow('promote-ga', promotion)
 
 const ghcrCredentialExpression = 'secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN'
+
+requireCondition(
+  packageManifest.scripts?.['release:manifest'] === 'tsx scripts/create-release-manifest.mts' &&
+    packageManifest.devDependencies?.tsx === '^4.19.3',
+  'release:manifest must declare and execute its root tsx dependency',
+)
+requireCondition(
+  candidate.includes('pnpm release:manifest \\') &&
+    !candidate.includes('pnpm release:manifest --'),
+  'release manifest arguments must not include a bare pnpm separator',
+)
 
 for (const jobName of ['source-security', 'production-runtime-smoke', 'publish-candidate-record']) {
   const steps = candidateWorkflow?.jobs?.[jobName]?.steps ?? []
