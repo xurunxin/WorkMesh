@@ -21,6 +21,10 @@ export type CommandContext = {
   requestHash: string;
   clientContext?: Record<string, string | null>;
 };
+export type MutationOptions = {
+  beforeReserve?: (tx: PoolClient) => Promise<void>;
+  authorizeReplay?: (tx: PoolClient) => Promise<void>;
+};
 type Team = { id: string; deleted_at: Date | null };
 const one = <T>(rows: T[]): T => {
   const value = rows[0];
@@ -149,8 +153,14 @@ export async function mutate<T>(
   db: Pool,
   context: CommandContext,
   handler: (tx: PoolClient) => Promise<T>,
+  options: MutationOptions = {},
 ): Promise<T> {
   return withTx(db, async (tx) => {
+    // Cross-resource commands may need one deterministic coordination lock
+    // before the idempotency insert takes actor/workspace foreign-key locks.
+    // Otherwise reciprocal commands can each hold one FK lock before either
+    // reaches its normal domain lock order.
+    await options.beforeReserve?.(tx);
     const retention = loadRetentionConfig();
     const reserved = await tx.query(
       `INSERT INTO api_idempotency_keys(
@@ -210,6 +220,7 @@ export async function mutate<T>(
           "IDEMPOTENCY_REPLAY_UNAVAILABLE",
           "Idempotency response is unavailable",
         );
+      await options.authorizeReplay?.(tx);
       return previous.response_body;
     }
     const response = await handler(tx);

@@ -41,8 +41,57 @@ describe('WorkMesh MCP adapter', () => {
       expect(names).toContain('list_work_items')
       expect(names).toContain('list_session_activities')
       expect(names).toContain('get_work_item')
+      expect(names).toContain('list_inbox_items')
+      expect(names).toContain('get_inbox_item')
       expect(names).not.toContain('send_message')
       expect(names).not.toContain('ack_agent_session')
+      expect(names).not.toContain('claim_inbox_item')
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('exposes Inbox mutations only in read-write mode and routes them through the SDK', async () => {
+    const claimInboxItem = vi.fn().mockResolvedValue({ id: artifactId, status: 'claimed' })
+    const acknowledgeInboxItem = vi.fn().mockResolvedValue({ id: artifactId, status: 'acknowledged' })
+    const replyInboxItem = vi.fn().mockResolvedValue({ id: 'reply-1' })
+    const api = {
+      claimInboxItem,
+      acknowledgeInboxItem,
+      replyInboxItem,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api)
+    try {
+      const names = (await protocol.listTools()).tools.map(tool => tool.name)
+      expect(names).toEqual(expect.arrayContaining([
+        'claim_inbox_item',
+        'acknowledge_inbox_item',
+        'reply_inbox_item',
+      ]))
+      await protocol.callTool({
+        name: 'claim_inbox_item',
+        arguments: { inboxItemId: artifactId, idempotencyKey: 'claim-key' },
+      })
+      await protocol.callTool({
+        name: 'acknowledge_inbox_item',
+        arguments: { inboxItemId: artifactId, idempotencyKey: 'ack-key' },
+      })
+      await protocol.callTool({
+        name: 'reply_inbox_item',
+        arguments: {
+          inboxItemId: artifactId,
+          body: 'Handled with evidence.',
+          revision: 4,
+          idempotencyKey: 'reply-key',
+        },
+      })
+      expect(claimInboxItem).toHaveBeenCalledWith(artifactId, { idempotencyKey: 'claim-key' })
+      expect(acknowledgeInboxItem).toHaveBeenCalledWith(artifactId, { idempotencyKey: 'ack-key' })
+      expect(replyInboxItem).toHaveBeenCalledWith(
+        artifactId,
+        { body: 'Handled with evidence.', payload: undefined },
+        { ifMatch: 4, idempotencyKey: 'reply-key' },
+      )
     } finally { await protocol.close(); await server.close() }
   })
 

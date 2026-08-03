@@ -51,6 +51,7 @@ import {
 } from "./commands.js";
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
+import { registerInboxRoutes } from "./inbox/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
 import { registerAdminRetentionRoutes } from "./admin-retention.js";
@@ -163,6 +164,10 @@ function commandContext(
       pathParams: params,
       body,
       ifMatch: header(request, "if-match") ?? null,
+      agentSessionId:
+        request.actor?.kind === "agent"
+          ? request.actor.agentSessionId ?? null
+          : null,
     }),
     clientContext: authClientContext(request),
   };
@@ -193,6 +198,10 @@ async function assertReadableTeam(
           AND team_access.agent_id=session.agent_id
           AND team_access.team_id=session.team_id
           AND team_access.revoked_at IS NULL
+          LEFT JOIN projects session_project
+            ON session_project.id=session.project_id
+           AND session_project.workspace_id=session.workspace_id
+           AND session_project.deleted_at IS NULL
         WHERE session.id=$1
           AND session.workspace_id=$2
           AND session.team_id=$3
@@ -210,7 +219,10 @@ async function assertReadableTeam(
               ) ? session.work_item_id::text
             )
             OR (
+              session.work_item_id IS NULL
+              AND
               session.project_id IS NOT NULL
+              AND session_project.id IS NOT NULL
               AND COALESCE(
                 delegation.capability_scope->'projectIds',
                 '[]'::jsonb
@@ -268,6 +280,7 @@ export const buildApp = (options: {
   authRateLimitStore?: AuthRateLimitStore;
   readinessProbe?: () => Promise<void>;
   beforePagedQuery?: (route: string) => Promise<void> | void;
+  afterAuthorizeRequest?: (request: FastifyRequest) => Promise<void> | void;
   realtimeWakeSource?: RealtimeWakeSource;
   realtimeDb?: Db;
   realtimeHealthyReconcileMs?: number;
@@ -433,7 +446,7 @@ export const buildApp = (options: {
     // Installation-token exchange/refresh authenticate their one-time token in
     // the handler. Other installation-target routes already resolved an actor.
     if (policy.authentication !== "installation_target" || request.actor)
-      await authorizeRequest(db, request, policy);
+      { await authorizeRequest(db, request, policy); await options.afterAuthorizeRequest?.(request); }
     if (policy.idempotency === "required" && !request.idempotencyKey)
       throw new DomainError(
         "IDEMPOTENCY_KEY_REQUIRED",
@@ -816,10 +829,21 @@ export const buildApp = (options: {
           LEFT JOIN work_items scoped_item
             ON scoped_item.id=scoped.work_item_id
            AND scoped_item.workspace_id=scoped.workspace_id
+           AND scoped_item.deleted_at IS NULL
          WHERE scoped.id=${sessionParameter}
            AND scoped.workspace_id=p.workspace_id
            AND scoped.team_id=p.team_id
-           AND (scoped.project_id=p.id OR scoped_item.project_id=p.id)
+           AND (
+             (
+               scoped.work_item_id IS NOT NULL
+               AND scoped_item.id IS NOT NULL
+               AND scoped_item.project_id=p.id
+             )
+             OR (
+               scoped.work_item_id IS NULL
+               AND scoped.project_id=p.id
+             )
+           )
       ) AND ${liveAuthorization}`;
     } else {
       scope = scopedTeamPredicate(request, "p.team_id", values);
@@ -1070,6 +1094,7 @@ export const buildApp = (options: {
   });
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
+  registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);

@@ -402,6 +402,26 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/inbox/{id}",
+    "operationId": "getInboxItem"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/claim",
+    "operationId": "claimInboxItem"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/acknowledge",
+    "operationId": "acknowledgeInboxItem"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/inbox/{id}/reply",
+    "operationId": "replyInboxItem"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/leases",
     "operationId": "listLeases"
   },

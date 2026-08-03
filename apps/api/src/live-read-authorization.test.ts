@@ -799,6 +799,15 @@ describe('live paged-read authorization', () => {
     expect(session).toContain("live_delegation.capability_scope->'teamIds'")
     expect(session).toContain("live_delegation.capability_scope->'workItemIds'")
     expect(session).toContain("live_delegation.capability_scope->'projectIds'")
+    expect(session).toContain('LEFT JOIN work_items live_scope_item')
+    expect(session).toContain('live_scope_item.deleted_at IS NULL')
+    expect(session).toContain('LEFT JOIN projects live_session_project')
+    expect(session).toContain('live_session_project.workspace_id=live_session.workspace_id')
+    expect(session).toContain('live_session_project.deleted_at IS NULL')
+    expect(session).toContain('live_session.work_item_id IS NOT NULL')
+    expect(session).toContain('live_session.work_item_id IS NULL')
+    expect(session).toContain('live_scope_item.id IS NOT NULL')
+    expect(session).toContain('live_session_project.id IS NOT NULL')
 
     const repository = liveSessionReadPredicate(
       { ...actor, kind: 'agent', humanSessionId: undefined, agentSessionId: actor.humanSessionId },
@@ -812,11 +821,25 @@ describe('live paged-read authorization', () => {
     expect(repository).toContain("'repo:read'=ANY(live_team_access.approved_capabilities)")
   })
 
+  it('uses the standard live Human predicate in both final Inbox reads', async () => {
+    const inbox = await readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8')
+    const humanInboxReads = section(
+      inbox,
+      'app.get("/api/v1/inbox"',
+      'app.post("/api/v1/inbox/:id/claim"',
+    )
+    expect(humanInboxReads.match(/liveHumanTeamReadPredicate\(/g)).toHaveLength(2)
+    expect(humanInboxReads).toContain('"i.workspace_id"')
+    expect(humanInboxReads).toContain('"i.team_id"')
+    expect(humanInboxReads).not.toContain('FROM memberships recipient_membership')
+  })
+
   it('keeps every flagged final paged SQL statement bound to a live predicate', async () => {
-    const [server, agents, collaboration, delivery, operations] = await Promise.all([
+    const [server, agents, collaboration, inbox, delivery, operations] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
     ])
@@ -848,6 +871,9 @@ describe('live paged-read authorization', () => {
       section(collaboration,
         "app.get('/api/v1/rooms/:id/timeline'",
         "app.post('/api/v1/rooms/:id/messages'"),
+      section(inbox,
+        'function listAgentInbox',
+        'export function registerInboxRoutes'),
       section(delivery,
         'function applicableAgentRepositoryContexts',
         'async function assertAgentRepositoryWrite'),
@@ -871,11 +897,12 @@ describe('live paged-read authorization', () => {
     expect(repositoryList).toContain('applicableAgentRepositoryContexts')
   })
 
-  it('audits all 23 Agent-readable routes derived from the 27-route pagination inventory', async () => {
-    const [server, agents, collaboration, delivery, operations, inventory] = await Promise.all([
+  it('audits all 24 Agent-readable routes derived from the 27-route pagination inventory', async () => {
+    const [server, agents, collaboration, inbox, delivery, operations, inventory] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./pagination-inventory.test.ts', import.meta.url), 'utf8'),
@@ -893,7 +920,7 @@ describe('live paged-read authorization', () => {
       )
       .map(policy => canonicalRoutePath(policy.path))
       .sort()
-    expect(agentRoutes).toHaveLength(23)
+    expect(agentRoutes).toHaveLength(24)
 
     const evidence = new Map<string, FinalSqlAudit>([
       ['/api/v1/teams', {
@@ -959,6 +986,12 @@ describe('live paged-read authorization', () => {
       ['/api/v1/approvals', {
         fileName: 'agent/routes.ts',
         source: agents,
+        authorization: { calls: ['liveSessionReadPredicate'] },
+        query: 'paginator',
+      }],
+      ['/api/v1/inbox', {
+        fileName: 'inbox/routes.ts',
+        source: inbox,
         authorization: { calls: ['liveSessionReadPredicate'] },
         query: 'paginator',
       }],
@@ -1036,7 +1069,7 @@ describe('live paged-read authorization', () => {
       }],
     ])
 
-    expect(evidence.size).toBe(23)
+    expect(evidence.size).toBe(24)
     const canonicalEvidence = new Map(
       [...evidence.entries()].map(([sourcePath, audit]) => [
         canonicalRoutePath(sourcePath),

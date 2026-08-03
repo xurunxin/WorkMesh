@@ -356,12 +356,83 @@ export const roomSubjectKindSchema = z.enum(['work_item', 'project', 'session'])
 export const roomMessageIntentSchema = z.enum(['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
 export const roomMessageInputSchema = z.object({
   intent: roomMessageIntentSchema, body: z.string().min(1).max(50_000), recipientActorId: idSchema.optional(), recipientActorIds: z.array(idSchema).min(1).max(50).optional(), replyToMessageId: idSchema.optional(), threadId: idSchema.optional(),
+  recipientSessionId: idSchema.optional(), recipientSessionIds: z.array(idSchema).min(1).max(50).optional(),
   payload: z.record(z.unknown()).default({}), requiresResponse: z.boolean().default(false), sessionId: idSchema.optional(),
 }).strict().superRefine((value, context) => {
   const visibility = value.payload.visibility
   if (visibility === 'private' || visibility === 'hidden') context.addIssue({ code: z.ZodIssueCode.custom, path: ['payload', 'visibility'], message: 'Work Room messages cannot be private or hidden from authorized humans' })
   if (value.recipientActorId && value.recipientActorIds) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientActorIds'], message: 'Use recipientActorId or recipientActorIds, not both' })
+  if (value.recipientSessionId && value.recipientSessionIds) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientSessionIds'], message: 'Use recipientSessionId or recipientSessionIds, not both' })
+  if ((value.recipientSessionId || value.recipientSessionIds) && (value.recipientActorId || value.recipientActorIds)) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientSessionIds'], message: 'Use actor recipients or exact Session recipients, not both' })
 })
+export const inboxClaimInputSchema = z.object({}).strict()
+export const inboxAcknowledgeInputSchema = z.object({}).strict()
+export const inboxReplyInputSchema = z.object({ body: z.string().min(1).max(50_000), payload: z.record(z.unknown()).default({}) }).strict()
+export const inboxItemKindSchema = z.enum(['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff', 'mention'])
+export const inboxItemStatusSchema = z.enum(['open', 'resolved'])
+export const inboxReceiptKindSchema = z.enum(['claimed', 'read', 'acknowledged', 'replied'])
+export const inboxListItemResponseSchema = z.object({
+  id: idSchema,
+  kind: inboxItemKindSchema,
+  source_type: z.string().min(1),
+  source_id: idSchema,
+  status: inboxItemStatusSchema,
+  requires_response: z.boolean(),
+  recipient_session_id: idSchema.nullable(),
+  claimed_by_session_id: idSchema.nullable(),
+  claimed_at: timestampSchema.nullable(),
+  revision: revisionSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  payload: z.record(z.unknown()),
+  detail_available: z.boolean(),
+}).strict()
+export const inboxReceiptResponseSchema = z.object({
+  id: idSchema,
+  actor_id: idSchema,
+  session_id: idSchema,
+  kind: inboxReceiptKindSchema,
+  reply_message_id: idSchema.nullable(),
+  created_at: timestampSchema,
+}).strict()
+export const inboxItemDetailResponseSchema = z.object({
+  id: idSchema,
+  workspace_id: idSchema,
+  recipient_actor_id: idSchema,
+  recipient_human_actor_id: idSchema.nullable(),
+  recipient_session_id: idSchema.nullable(),
+  claimed_by_session_id: idSchema.nullable(),
+  claimed_at: timestampSchema.nullable(),
+  team_id: idSchema.nullable(),
+  session_id: idSchema.nullable(),
+  kind: inboxItemKindSchema,
+  source_type: z.string().min(1),
+  source_id: idSchema,
+  source_room_message_id: idSchema.nullable(),
+  requires_response: z.boolean(),
+  status: inboxItemStatusSchema,
+  revision: revisionSchema,
+  payload: z.record(z.unknown()),
+  resolved_at: timestampSchema.nullable(),
+  resolved_by_actor_id: idSchema.nullable(),
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  channel_id: idSchema.nullable(),
+  source_message_body: z.string().nullable(),
+  source_message_intent: roomMessageIntentSchema.nullable(),
+  source_author_actor_id: idSchema.nullable(),
+  source_author_session_id: idSchema.nullable(),
+  source_thread_id: idSchema.nullable(),
+  source_subject_kind: roomSubjectKindSchema.nullable(),
+  source_subject_id: idSchema.nullable(),
+  receipts: z.array(inboxReceiptResponseSchema),
+  detailAvailable: z.literal(true),
+}).strict()
+export const inboxReplyResponseSchema = inboxItemDetailResponseSchema.extend({ replyMessageId: idSchema }).strict()
+export type InboxListItem = z.infer<typeof inboxListItemResponseSchema>
+export type InboxReceipt = z.infer<typeof inboxReceiptResponseSchema>
+export type InboxItemDetail = z.infer<typeof inboxItemDetailResponseSchema>
+export type InboxReplyResponse = z.infer<typeof inboxReplyResponseSchema>
 export const decisionInputSchema = z.object({ title: z.string().min(1).max(500), rationale: z.string().min(1).max(20_000), options: z.array(z.string().min(1).max(2_000)).max(50).default([]), selectedOption: z.string().max(2_000).optional(), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]), affectedResources: z.array(z.object({ resourceType: z.enum(['work_item', 'plan_step', 'artifact', 'session']), resourceId: idSchema, impact: z.string().min(1).max(2_000).default('affected') })).max(100).default([]), sessionId: idSchema.optional() })
 export const leaseKindSchema = z.enum(['exclusive', 'review_shared'])
 export const leaseResourceTypeSchema = z.enum(['work_item', 'plan_step'])
@@ -627,6 +698,10 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/rooms/{id}/messages', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/messages/{id}/resolve', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/inbox', authenticated: true },
+  { method: 'GET', path: '/api/v1/inbox/{id}', authenticated: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/claim', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/acknowledge', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/reply', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/decisions', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/projects/{id}/decisions', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/decisions', authenticated: true, mutation: true },

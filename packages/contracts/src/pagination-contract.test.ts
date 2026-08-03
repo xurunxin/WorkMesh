@@ -83,7 +83,7 @@ describe('pagination OpenAPI contract', () => {
         { $ref: '#/components/parameters/Limit' },
       ]))
       expect(operation?.responses?.['200']?.$ref, path).toMatch(
-        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals)$/,
+        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|InboxItems)$/,
       )
     }
     const opaqueCursorPaths = Object.entries(openapi.paths)

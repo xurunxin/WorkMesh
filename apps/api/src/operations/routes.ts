@@ -32,6 +32,7 @@ import {
   admitLoopRun,
   admitNotification,
   appendEvent,
+  lockAgentAuthorityPlan,
   type Stage4CommandMeta,
   type Stage4AdmissionAuthorization,
 } from '@workmesh/db'
@@ -48,7 +49,13 @@ import {
 import { mutate, type CommandContext } from '../commands.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
 import { assertWebhookUrl } from '../agent/routes.js'
-import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js'
+import {
+  assertExactAgentProjectBinding,
+  assertAgentWrite,
+  loadAgentSessionForMutation,
+  locateAgentSessionAuthority,
+  revalidateLockedAgentSessionForMutation,
+} from '../agent/guard.js'
 import {
   A2AAdapter,
   A2A_TASK_ID_MAX_LENGTH,
@@ -877,10 +884,70 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     const expected = parseRevision(helpers.header(request, 'if-match'))
     return command(db, meta, async tx => {
       const current = actor(request)
+      let agentHealthSession: Awaited<
+        ReturnType<typeof revalidateLockedAgentSessionForMutation>
+      > | undefined
+      if (body.source === 'agent') {
+        if (current.kind !== 'agent' || !current.agentSessionId)
+          throw new DomainError('AGENT_IDENTITY_REQUIRED', 'An agent Session token is required')
+        const locator = await locateAgentSessionAuthority(
+          tx,
+          current,
+          current.agentSessionId,
+        )
+        await lockAgentAuthorityPlan(tx, {
+          definitionIds: [locator.agent_id],
+          teamGrants: [{
+            workspaceId: current.workspaceId,
+            agentId: locator.agent_id,
+            teamId: locator.team_id,
+          }],
+          delegationIds: [locator.delegation_id],
+          sessionIds: [current.agentSessionId],
+          sessionTokenIds: locator.session_token_id ? [locator.session_token_id] : [],
+          installationTokenIds: locator.installation_token_id
+            ? [locator.installation_token_id]
+            : [],
+          workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
+          projectIds: [
+            ...(locator.project_id ? [locator.project_id] : []),
+            ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
+            projectId,
+          ],
+        })
+        agentHealthSession = await revalidateLockedAgentSessionForMutation(
+          tx,
+          current,
+          current.agentSessionId,
+          locator,
+        )
+        assertAgentWrite({
+          actor: current,
+          session: agentHealthSession,
+          sessionId: current.agentSessionId,
+          capability: 'work:write',
+          operation: 'activity',
+          idempotencyKey: meta.idempotencyKey,
+          resourceId: projectId,
+        })
+        assertExactAgentProjectBinding(agentHealthSession, projectId)
+      }
       const project = one((await tx.query<{ revision: number; team_id: string }>(
-        'SELECT revision,team_id FROM projects WHERE id=$1 AND workspace_id=$2 FOR UPDATE',
+        body.source === 'agent'
+          ? `SELECT revision,team_id
+               FROM projects
+              WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`
+          : `SELECT revision,team_id
+               FROM projects
+              WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+              FOR UPDATE`,
         [projectId, meta.actor.workspaceId],
       )).rows)
+      if (agentHealthSession && project.team_id !== agentHealthSession.team_id)
+        throw new DomainError(
+          'RESOURCE_SCOPE_DENIED',
+          'The target Project is outside the Session Team',
+        )
       if (project.revision !== expected) throw new DomainError('REVISION_CONFLICT', 'Project revision is stale')
       if (current.kind === 'human') await requireTeamWrite(tx, current, project.team_id)
       if (body.source === 'human' && current.kind !== 'human')
@@ -932,18 +999,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
           })
       }
       if (body.source === 'agent') {
-        if (current.kind !== 'agent' || !current.agentSessionId)
+        if (!current.agentSessionId || !agentHealthSession)
           throw new DomainError('AGENT_IDENTITY_REQUIRED', 'An agent Session token is required')
-        const session = await loadAgentSessionForMutation(tx, current, current.agentSessionId)
-        assertAgentWrite({
-          actor: current,
-          session,
-          sessionId: current.agentSessionId,
-          capability: 'work:write',
-          operation: 'activity',
-          idempotencyKey: meta.idempotencyKey,
-          resourceId: projectId,
-        })
         const exactPayload = {
           projectId,
           health: body.health,
@@ -974,7 +1031,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
            JOIN delegations delegation ON delegation.id=session.delegation_id AND delegation.status='active'
            WHERE approval.id=$1 AND approval.workspace_id=$2 AND approval.session_id=$3
              AND approval.action_name='project.health.publish'
-           FOR UPDATE`,
+           FOR UPDATE OF approval`,
           [body.approvalId, meta.actor.workspaceId, current.agentSessionId],
         )).rows) : null
         if (approval) {
@@ -1402,7 +1459,10 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     const meta = helpers.meta(request, body)
     return command(db, meta, async tx => {
       const current = actor(request)
-      const session = one((await tx.query<{
+      const writableSession = current.kind === 'agent'
+        ? await loadAgentSessionForMutation(tx, current, body.sessionId)
+        : undefined
+      const session = writableSession ?? one((await tx.query<{
         id: string
         team_id: string
         agent_id: string
@@ -1433,7 +1493,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       } else if (current.kind === 'agent') {
         if (!current.agentSessionId || current.agentSessionId !== body.sessionId)
           throw new DomainError('RESOURCE_SCOPE_DENIED', 'Usage may only be recorded for the current Agent Session')
-        const writableSession = await loadAgentSessionForMutation(tx, current, current.agentSessionId)
+        if (!writableSession)
+          throw new DomainError('AGENT_IDENTITY_REQUIRED', 'Agent Session token is required')
         assertAgentWrite({
           actor: current,
           session: writableSession,
@@ -1886,6 +1947,39 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       let deliveryWasReplay = false
       const adapter = new A2AAdapter(
         async authorization => {
+          const locator = (await tx.query<{
+            agent_id:string
+            team_id:string
+            project_id:string|null
+          }>(
+            `SELECT binding.agent_id,item.team_id,item.project_id
+               FROM a2a_agent_bindings binding
+               JOIN work_items item
+                 ON item.id=$3 AND item.workspace_id=binding.workspace_id
+              WHERE binding.id=$1 AND binding.workspace_id=$2`,
+            [authorization.bindingId,authorization.workspaceId,body.workItemId],
+          )).rows[0]
+          if(!locator||locator.team_id!==body.teamId)
+            throw new DomainError('A2A_AUTHORIZATION_REVOKED','A2A binding or resource authorization is not active')
+          const sessionLocators=(await tx.query<{id:string;delegation_id:string}>(
+            `SELECT session.id,session.delegation_id
+               FROM agent_sessions session
+              WHERE session.agent_id=$1
+                AND session.state NOT IN ('completed','failed','canceled')`,
+            [locator.agent_id],
+          )).rows
+          await lockAgentAuthorityPlan(tx,{
+            definitionIds:[locator.agent_id],
+            teamGrants:[{
+              workspaceId:authorization.workspaceId,
+              agentId:locator.agent_id,
+              teamId:locator.team_id,
+            }],
+            delegationIds:sessionLocators.map(session=>session.delegation_id),
+            sessionIds:sessionLocators.map(session=>session.id),
+            workItemIds:[body.workItemId],
+            projectIds:locator.project_id?[locator.project_id]:[],
+          })
           target = (await tx.query<typeof target & object>(
             `SELECT binding.workspace_id,binding.agent_id,agent.actor_id AS agent_actor_id,
                     agent.approved_capabilities AS agent_capabilities,
@@ -1903,6 +1997,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             [authorization.bindingId, authorization.workspaceId, body.teamId, body.workItemId, meta.actor.id],
           )).rows[0]
           if (!target) throw new DomainError('A2A_AUTHORIZATION_REVOKED', 'A2A binding or resource authorization is not active')
+          if(target.agent_id!==locator.agent_id||target.project_id!==locator.project_id)
+            throw new DomainError('A2A_AUTHORIZATION_REVOKED','A2A binding or resource authorization changed')
           if (!authorization.requestedCapabilities.every(capability =>
             target!.agent_capabilities.includes(capability) && target!.team_capabilities.includes(capability)))
             throw new DomainError('A2A_CAPABILITY_DENIED', 'A2A requested capability is not authorized')

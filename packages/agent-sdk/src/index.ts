@@ -3,6 +3,7 @@ import type {
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
+  InboxListItem, InboxItemDetail, InboxReplyResponse,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -129,7 +130,7 @@ export interface ApprovalInput { sessionId: string; approvalType: string; action
 export interface ArtifactInput { sessionId: string; workItemId?: string; type: 'commit' | 'pull_request' | 'test_report' | 'code_review' | 'document' | 'link' | 'file' | 'other'; title: string; uri?: string; checksum?: string; sourceTool?: string; metadata?: Record<string, unknown> }
 export interface DelegateAndStartInput { agentId: string; principalHumanActorId: string; role?: 'executor' | 'reviewer' | 'researcher' | 'coordinator' | 'triager'; requestedCapabilities: Capability[]; initialPrompt: string; contextSnapshotId?: string; budget?: Record<string, number> }
 export type RoomMessageIntent = 'inform' | 'ask' | 'answer' | 'propose' | 'decide' | 'claim' | 'handoff' | 'blocker' | 'review_request' | 'review_result' | 'status'
-export interface RoomMessageInput { intent: RoomMessageIntent; body: string; recipientActorId?: string; recipientActorIds?: string[]; replyToMessageId?: string; threadId?: string; payload?: Record<string, unknown>; requiresResponse?: boolean; sessionId?: string }
+export interface RoomMessageInput { intent: RoomMessageIntent; body: string; recipientActorId?: string; recipientActorIds?: string[]; recipientSessionId?: string; recipientSessionIds?: string[]; replyToMessageId?: string; threadId?: string; payload?: Record<string, unknown>; requiresResponse?: boolean; sessionId?: string }
 
 export async function *iterateListPages<T>(
   load: (cursor?: string) => Promise<ListResponse<T>>,
@@ -243,6 +244,11 @@ export class WorkMeshClient {
   getRoom<T = unknown>(query: { workItemId?: string; projectId?: string; sessionId?: string }, options: RequestOptions = {}): Promise<T> { const params = new URLSearchParams(Object.entries(query).filter(([, value]) => value !== undefined) as [string,string][]); return this.request('GET', `/api/v1/rooms?${params}`, undefined, options) }
   getRoomTimeline<T = unknown>(roomId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/rooms/${encodeURIComponent(roomId)}/timeline`, {}, options), undefined, options) }
   postRoomMessage<T = unknown>(roomId: string, input: RoomMessageInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId ?? roomId, 'room-message') }) }
+  listInbox<T = InboxListItem>(status: 'open' | 'resolved' = 'open', options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/inbox', { status }, options), undefined, options) }
+  getInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}`, undefined, options) }
+  claimInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/claim`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-claim') }) }
+  acknowledgeInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/acknowledge`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-acknowledge') }) }
+  replyInboxItem<T = InboxReplyResponse>(inboxItemId: string, input: { body: string; payload?: Record<string, unknown> }, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/reply`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-reply') }) }
   commentPlanStep<T = unknown>(sessionId: string, input: PlanStepCommentInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plan/comments`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `plan-step-comment:${input.planStepId}`), refreshSessionId: sessionId }) }
   proposeAssignment<T = unknown>(sessionId: string, input: AssignmentProposalInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/assignment-proposals`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `assignment-proposal:${input.planStepId}`), refreshSessionId: sessionId }) }
   createChildSession<T = unknown>(parentSessionId: string, input: ChildSessionInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(parentSessionId)}/children`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(parentSessionId, `child-session:${input.planStepId}`), refreshSessionId: parentSessionId }) }

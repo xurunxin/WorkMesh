@@ -685,18 +685,25 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       status: 'expired' | 'uploaded' | 'verified'
     }>(h.db, h.meta(request, {}, { id: uploadId }), async tx => {
       if (actor(request).kind !== 'agent') throw new DomainError('AGENT_IDENTITY_REQUIRED', 'Agent session token required')
+      const locator = one((await tx.query<{
+        session_id: string; work_item_id: string
+      }>('SELECT session_id,work_item_id FROM artifact_upload_intents WHERE id=$1 AND workspace_id=$2', [
+        uploadId, actor(request).workspaceId,
+      ])).rows)
+      if (locator.session_id !== actor(request).agentSessionId)
+        throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another session')
+      const session = await loadAgentSessionForMutation(tx, actor(request), locator.session_id)
+      assertAgentWrite({
+        actor: actor(request), session, sessionId: locator.session_id, capability: 'artifact:write',
+        operation: 'artifact', idempotencyKey: h.meta(request, {}).idempotencyKey, resourceId: locator.work_item_id,
+      })
       const upload = one((await tx.query<{
         session_id: string; work_item_id: string; status: string; expires_at: Date
       }>('SELECT session_id,work_item_id,status,expires_at FROM artifact_upload_intents WHERE id=$1 AND workspace_id=$2 FOR UPDATE', [
         uploadId, actor(request).workspaceId,
       ])).rows)
-      if (upload.session_id !== actor(request).agentSessionId)
-        throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another session')
-      const session = await loadAgentSessionForMutation(tx, actor(request), upload.session_id)
-      assertAgentWrite({
-        actor: actor(request), session, sessionId: upload.session_id, capability: 'artifact:write',
-        operation: 'artifact', idempotencyKey: h.meta(request, {}).idempotencyKey, resourceId: upload.work_item_id,
-      })
+      if (upload.session_id !== locator.session_id || upload.work_item_id !== locator.work_item_id)
+        throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent binding changed while authority was acquired')
       if (upload.status === 'expired') return { id: uploadId, status: 'expired' }
       if (upload.status === 'verified') return { id: uploadId, status: 'verified' }
       if (upload.expires_at.getTime() <= Date.now()) {

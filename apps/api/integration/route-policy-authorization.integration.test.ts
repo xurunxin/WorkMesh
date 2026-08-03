@@ -332,6 +332,7 @@ async function proveRevocationSerialization(
       kind: 'agent',
       agentSessionId: fixture.sessionId,
       authentication: 'agent_session',
+      credentialHash: tokenHash(fixture.token),
     }
     await authorizeCommandInTx(authorityClient, {
       actor,

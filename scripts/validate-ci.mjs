@@ -43,7 +43,7 @@ requireCondition(
   'write permissions are forbidden',
 )
 requireCondition(
-  /^concurrency:\s*\n  group: .+github\.event_name.+github\.event\.pull_request\.number.+github\.run_id.+\n  cancel-in-progress: .+github\.event_name == 'pull_request'/m.test(workflow),
+  /^concurrency:\s*\r?\n  group: .+github\.event_name.+github\.event\.pull_request\.number.+github\.run_id.+\r?\n  cancel-in-progress: .+github\.event_name == 'pull_request'/m.test(workflow),
   'concurrency must be pull-request scoped and cancel only pull-request runs',
 )
 
