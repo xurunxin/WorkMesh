@@ -18,6 +18,12 @@ visible HTTPS API origin before creating an RC. It is a non-secret Web build
 input and is recorded in both the OCI label and release manifest. Changing it
 requires a new candidate.
 
+Set `WORKMESH_RELEASE_WEB_ORIGIN` to the externally visible HTTPS Web origin,
+without a path or trailing slash. The protected production smoke uses it for
+the API origin check. A protected preflight freezes both release origins after
+CI and security checks; an empty value, a path, or a non-HTTPS URL blocks the
+candidate before any immutable image is published.
+
 GHCR login uses the `stable-release` environment secret
 `GHCR_PUBLISH_TOKEN` when configured and otherwise falls back to the job-scoped
 `GITHUB_TOKEN`. Registry login and registry-backed build/SBOM attestations use
