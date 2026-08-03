@@ -79,6 +79,14 @@ The workflow policy and static structure can be checked without services:
 pnpm ci:validate
 ```
 
+The production Compose and runtime-startup contract requires a working Docker
+daemon and installed dependencies. It runs in the protected release preflight
+before any immutable image publication and can be checked locally with:
+
+```text
+pnpm validate:production-images
+```
+
 Each destructive integration command still fails closed unless
 `RUN_INTEGRATION=1` and `DATABASE_URL` names a dedicated database containing
 `test`:
