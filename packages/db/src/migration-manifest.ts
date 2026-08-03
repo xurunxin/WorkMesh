@@ -46,6 +46,7 @@ export const legacyMigrationManifest = [
 
 export const v1MigrationManifest = [
   { version: '0001_v1_baseline', file: 'v1/0001_v1_baseline.sql', checksumSha256: '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83' },
+  { version: '0002_active_executor_projection', file: 'v1/0002_active_executor_projection.sql', checksumSha256: '0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const legacyUpgradeBundleManifest = [

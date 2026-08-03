@@ -41,7 +41,7 @@ type Agent = { id: string; actorId: string; installationToken: string }
 type Session = { id: string; revision: number; exchangeToken: string }
 type Fixture = { human: Human; workspaceId: string; teamId: string; readyId: string; workItemId: string; parent: Session; parentToken: string; runner: Agent; reviewer: Agent; overflow: Agent; planVersionId: string; stepA: string; stepB: string; stepC: string }
 
-const humanCall = async (human: Human, method: 'DELETE' | 'GET' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
+const humanCall = async (human: Human, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
   await app.inject({ method, url, payload, headers: { cookie: human.cookie, 'x-csrf-token': human.csrf, 'idempotency-key': randomUUID(), ...extra } }) as unknown as Response
 const agentCall = async (token: string, method: 'GET' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
   await app.inject({ method, url, payload, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), ...extra } }) as unknown as Response
@@ -168,6 +168,11 @@ describe('Stage 2 collaboration API acceptance', () => {
 
   it('coordinates exclusive and shared leases, child budgets, and durable parent blocking', async () => {
     const f = await makeFixture()
+    const workRevision = (await db.query<{revision:number}>('SELECT revision FROM work_items WHERE id=$1',[f.workItemId])).rows[0]!.revision
+    const rejectedProjectionWrite = await humanCall(f.human,'PATCH',`/api/v1/work-items/${f.workItemId}`,{active_executor:null},{'if-match':`"revision-${workRevision}"`})
+    expect(rejectedProjectionWrite.statusCode).toBe(400)
+    expect(rejectedProjectionWrite.json<{error:{code:string}}>()).toMatchObject({error:{code:'VALIDATION_ERROR'}})
+    expect((await db.query<{revision:number}>('SELECT revision FROM work_items WHERE id=$1',[f.workItemId])).rows[0]!.revision).toBe(workRevision)
     const excessive = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, { agentId: f.reviewer.id, planStepId: f.stepC, planVersionId: f.planVersionId, initialPrompt: 'too expensive', budget: { maxRuntimeSeconds: 601 } })
     expect(excessive.statusCode).toBe(409)
     expect(excessive.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'CHILD_BUDGET_EXCEEDED' } })
@@ -183,6 +188,13 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(first.statusCode).toBe(200)
     const second = await agentCall(childToken, 'POST', '/api/v1/leases', { sessionId: childId, resourceType: 'plan_step', resourceId: f.stepB, kind: 'exclusive', ttlSeconds: 60, reason: 'reviewer owns B' })
     expect(second.statusCode).toBe(200)
+    const parallelProjection = await humanCall(f.human,'GET',`/api/v1/work-items/${f.workItemId}`)
+    expect(parallelProjection.statusCode,JSON.stringify(parallelProjection.json())).toBe(200)
+    expect(parallelProjection.json<{responsible_human:{actor_id:string};active_executor:{session_id:string;lease_id:string};shared_reviewers:unknown[]}>()).toMatchObject({
+      responsible_human:{actor_id:f.human.actorId},
+      active_executor:{session_id:f.parent.id,lease_id:first.json<{id:string}>().id},
+      shared_reviewers:[],
+    })
     const conflict = await agentCall(childToken, 'POST', '/api/v1/leases', { sessionId: childId, resourceType: 'plan_step', resourceId: f.stepA, kind: 'exclusive', ttlSeconds: 60, reason: 'must conflict' })
     expect(conflict.statusCode).toBe(409)
     expect(conflict.json<{ error: { code: string; details: { holderSessionId: string } } }>()).toMatchObject({ error: { code: 'LEASE_CONFLICT', details: { holderSessionId: f.parent.id } } })
@@ -193,6 +205,10 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(review.statusCode, JSON.stringify(review.json())).toBe(200)
     const reviewLease = review.json<{ lease: { id: string; kind: string }; session: { id: string; required_for_parent: boolean } }>()
     expect(reviewLease.lease.kind).toBe('review_shared')
+    const reviewedProjection = await humanCall(f.human,'GET',`/api/v1/work-items/${f.workItemId}`)
+    expect(reviewedProjection.json<{shared_reviewers:Array<{session_id:string;lease_id:string}>}>().shared_reviewers).toEqual([
+      expect.objectContaining({session_id:reviewLease.session.id,lease_id:reviewLease.lease.id}),
+    ])
     expect((await db.query<{ kind: string; status: string; required_for_parent: boolean }>('SELECT l.kind,l.status,s.required_for_parent FROM leases l JOIN agent_sessions s ON s.id=l.session_id WHERE l.id=$1', [reviewLease.lease.id])).rows[0]).toEqual({ kind: 'review_shared', status: 'active', required_for_parent: true })
     await durableEvent('review.delegation.created', reviewLease.lease.id)
     const reviewerToken = await tokenFor(reviewLease.session.id, f.reviewer)
@@ -2678,6 +2694,13 @@ describe('Stage 2 collaboration API acceptance', () => {
     const sourceToken = await tokenFor(source.id, f.runner)
     const lease = await agentCall(sourceToken, 'POST', '/api/v1/leases', { sessionId: source.id, resourceType: 'work_item', resourceId: source.workItemId, kind: 'exclusive', ttlSeconds: 60, reason: 'transfer me' })
     expect(lease.statusCode).toBe(200)
+    const sourceContext = await agentCall(sourceToken, 'GET', `/api/v1/agent-sessions/${source.id}/context`)
+    expect(sourceContext.statusCode, JSON.stringify(sourceContext.json())).toBe(200)
+    expect(sourceContext.json<{ workItem: { responsible_human: { actor_id: string }; active_executor: { session_id: string; lease_id: string }; shared_reviewers: unknown[] } }>().workItem).toMatchObject({
+      responsible_human: { actor_id: f.human.actorId },
+      active_executor: { session_id: source.id, lease_id: lease.json<{ id: string }>().id },
+      shared_reviewers: [],
+    })
     const offered = await agentCall(sourceToken, 'POST', '/api/v1/handoffs', {
       fromSessionId: source.id,
       targetAgentId: f.reviewer.id,
@@ -2714,6 +2737,12 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await db.query<{ status: string; accepted_session_id: string }>('SELECT status,accepted_session_id FROM handoffs WHERE id=$1', [handoffId])).rows[0]).toEqual({ status: 'accepted', accepted_session_id: acceptedSessionId })
     expect((await db.query<{ status: string }>('SELECT status FROM delegations WHERE id=$1', [source.delegationId])).rows[0]!.status).toBe('completed')
     expect((await db.query<{ old_status: string; new_status: string }>('SELECT (SELECT status FROM leases WHERE id=$1) AS old_status,(SELECT status FROM leases WHERE session_id=$2 AND status=\'active\') AS new_status', [lease.json<{ id: string }>().id, acceptedSessionId])).rows[0]).toEqual({ old_status: 'released', new_status: 'active' })
+    const acceptedProjection = await humanCall(f.human, 'GET', `/api/v1/work-items/${source.workItemId}`)
+    expect(acceptedProjection.statusCode, JSON.stringify(acceptedProjection.json())).toBe(200)
+    expect(acceptedProjection.json<{ active_executor: { session_id: string; execution_state: string } | null }>().active_executor).toMatchObject({
+      session_id: acceptedSessionId,
+      execution_state: 'queued',
+    })
     await durableEvent('handoff.accepted', handoffId)
     const prematureComplete = await humanCall(f.human, 'POST', `/api/v1/handoffs/${handoffId}/complete`, { reason: 'must wait for target evidence' })
     expect(prematureComplete.statusCode).toBe(409)
@@ -2722,6 +2751,12 @@ describe('Stage 2 collaboration API acceptance', () => {
     const acceptedAck = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/ack`, { summary: 'accepted handoff ready', externalUrls: [] })
     const acceptedExecuting = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/state`, { state: 'executing', reason: 'finishing handoff' }, { 'if-match': `"revision-${acceptedAck.json<{ revision: number }>().revision}"` })
     expect(acceptedExecuting.statusCode, JSON.stringify(acceptedExecuting.json())).toBe(200)
+    const acceptedContext = await agentCall(acceptedToken, 'GET', `/api/v1/agent-sessions/${acceptedSessionId}/context`)
+    expect(acceptedContext.statusCode, JSON.stringify(acceptedContext.json())).toBe(200)
+    expect(acceptedContext.json<{ workItem: { active_executor: { session_id: string; execution_state: string } | null } }>().workItem.active_executor).toMatchObject({
+      session_id: acceptedSessionId,
+      execution_state: 'executing',
+    })
     const acceptedInbox = await agentCall(acceptedToken, 'GET', '/api/v1/inbox')
     expect(acceptedInbox.statusCode, JSON.stringify(acceptedInbox.json())).toBe(200)
     const handoffInboxItem = acceptedInbox.json<Page<{ id: string; source_id: string; kind: string; recipient_session_id: string; detail_available: boolean }>>()
@@ -2734,6 +2769,8 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect((await db.query<{ status: string }>('SELECT status FROM handoffs WHERE id=$1', [handoffId])).rows[0]!.status).toBe('accepted')
     const acceptedComplete = await agentCall(acceptedToken, 'POST', `/api/v1/agent-sessions/${acceptedSessionId}/complete`, { summary: 'handoff work completed', artifactIds: [], checks: [{ name: 'handoff acceptance', status: 'passed', summary: 'all criteria met' }], limitations: [] }, { 'if-match': `"revision-${acceptedExecuting.json<{ revision: number }>().revision}"` })
     expect(acceptedComplete.statusCode, JSON.stringify(acceptedComplete.json())).toBe(200)
+    const completedProjection = await humanCall(f.human, 'GET', `/api/v1/work-items/${source.workItemId}`)
+    expect(completedProjection.json<{ active_executor: unknown }>().active_executor).toBeNull()
     const completedHandoff = await humanCall(f.human, 'POST', `/api/v1/handoffs/${handoffId}/complete`, { reason: 'target completed with evidence' })
     expect(completedHandoff.statusCode, JSON.stringify(completedHandoff.json())).toBe(200)
     expect((await db.query<{ status: string }>('SELECT status FROM handoffs WHERE id=$1', [handoffId])).rows[0]!.status).toBe('completed')

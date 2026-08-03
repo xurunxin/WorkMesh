@@ -3322,6 +3322,7 @@ components:
     WorkItemInput:
       {
         type: object,
+        additionalProperties: false,
         required: [teamId, title, statusId],
         properties:
           {
@@ -3345,6 +3346,7 @@ components:
     WorkItemPatch:
       {
         type: object,
+        additionalProperties: false,
         minProperties: 1,
         properties:
           {
@@ -3569,6 +3571,40 @@ components:
             updated_at: { $ref: "#/components/schemas/Timestamp" },
           },
       }
+    ResponsibleHumanProjection:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [actor_id, display_name],
+        properties:
+          {
+            actor_id: { $ref: "#/components/schemas/Id" },
+            display_name: { type: string },
+          },
+      }
+    WorkItemExecutorProjection:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [agent_id, agent_actor_id, agent_slug, agent_display_name, session_id, lease_id, lease_kind, resource_type, resource_id, execution_state, heartbeat_health, last_heartbeat_at, lease_heartbeat_at, lease_expires_at],
+        properties:
+          {
+            agent_id: { $ref: "#/components/schemas/Id" },
+            agent_actor_id: { $ref: "#/components/schemas/Id" },
+            agent_slug: { type: string },
+            agent_display_name: { type: string },
+            session_id: { $ref: "#/components/schemas/Id" },
+            lease_id: { $ref: "#/components/schemas/Id" },
+            lease_kind: { type: string, enum: [exclusive, review_shared] },
+            resource_type: { type: string, enum: [work_item, plan_step] },
+            resource_id: { $ref: "#/components/schemas/Id" },
+            execution_state: { type: string, enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled] },
+            heartbeat_health: { type: string, enum: [healthy, degraded, stale] },
+            last_heartbeat_at: { type: [string, "null"], format: date-time },
+            lease_heartbeat_at: { $ref: "#/components/schemas/Timestamp" },
+            lease_expires_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
     WorkItem:
       {
         type: object,
@@ -3584,6 +3620,9 @@ components:
             priority,
             due_date,
             responsible_human_actor_id,
+            responsible_human,
+            active_executor,
+            shared_reviewers,
             labels,
             project_id,
             milestone_id,
@@ -3608,6 +3647,30 @@ components:
             due_date: { type: [string, "null"], format: date },
             responsible_human_actor_id:
               { type: [string, "null"], format: uuid },
+            responsible_human:
+              {
+                readOnly: true,
+                oneOf:
+                  [
+                    { $ref: "#/components/schemas/ResponsibleHumanProjection" },
+                    { type: "null" },
+                  ],
+              },
+            active_executor:
+              {
+                readOnly: true,
+                oneOf:
+                  [
+                    { $ref: "#/components/schemas/WorkItemExecutorProjection" },
+                    { type: "null" },
+                  ],
+              },
+            shared_reviewers:
+              {
+                type: array,
+                readOnly: true,
+                items: { $ref: "#/components/schemas/WorkItemExecutorProjection" },
+              },
             labels: { type: array, items: { type: string } },
             project_id: { type: [string, "null"], format: uuid },
             milestone_id: { type: [string, "null"], format: uuid },

@@ -110,14 +110,18 @@ export const membershipRoleSchema = z.enum(['admin', 'maintainer', 'member'])
 export const statusCategorySchema = z.enum(['backlog', 'planned', 'started', 'completed', 'canceled'])
 export const prioritySchema = z.enum(['none', 'urgent', 'high', 'medium', 'low'])
 export const savedViewLayoutSchema = z.enum(['list', 'board'])
+export const agentSessionStateSchema = z.enum([
+  'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval',
+  'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled',
+])
 
 // Request DTOs deliberately retain the existing camelCase API field names.
 export const workspaceInputSchema = z.object({ name: z.string().min(1).max(120), slug: z.string().regex(/^[a-z0-9-]+$/).max(80) })
 export const teamInputSchema = z.object({ name: z.string().min(1).max(120), key: z.string().regex(/^[A-Z][A-Z0-9]{1,9}$/) })
 export const stateInputSchema = z.object({ name: z.string().min(1).max(80), category: statusCategorySchema, color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), position: z.number().int().nonnegative().optional() })
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
-export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() })
-export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() })
+export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() }).strict()
+export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() }).strict()
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
@@ -146,7 +150,24 @@ export const membershipResponseSchema = z.object({ workspace_id: idSchema, team_
 export const workflowStateResponseSchema = z.object({ id: idSchema, team_id: idSchema, name: z.string(), category: statusCategorySchema, color: z.string(), position: z.number().int().nonnegative(), is_archived: z.boolean(), revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema })
 export const humanActorResponseSchema = z.object({ id: idSchema, email: z.string().email(), display_name: z.string(), kind: z.literal('human').optional(), is_active: z.boolean().optional(), workspace_id: idSchema.optional(), created_at: timestampSchema.optional() })
 export const projectResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, name: z.string(), summary: z.string().nullable(), description: z.string().nullable(), status: z.string(), lead_actor_id: idSchema.nullable(), target_date: dateSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema })
+export const responsibleHumanProjectionSchema = z.object({ actor_id: idSchema, display_name: z.string() }).strict()
+export const workItemExecutorProjectionSchema = z.object({
+  agent_id: idSchema,
+  agent_actor_id: idSchema,
+  agent_slug: z.string(),
+  agent_display_name: z.string(),
+  session_id: idSchema,
+  lease_id: idSchema,
+  lease_kind: z.enum(['exclusive', 'review_shared']),
+  resource_type: z.enum(['work_item', 'plan_step']),
+  resource_id: idSchema,
+  execution_state: agentSessionStateSchema,
+  heartbeat_health: z.enum(['healthy', 'degraded', 'stale']),
+  last_heartbeat_at: timestampSchema.nullable(),
+  lease_heartbeat_at: timestampSchema,
+  lease_expires_at: timestampSchema,
+}).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const savedViewResponseSchema = z.object({ id: z.string(), workspace_id: idSchema.optional(), owner_actor_id: idSchema.optional(), team_id: idSchema.nullable().optional(), name: z.string(), filters: savedViewFiltersSchema, layout: savedViewLayoutSchema, built_in: z.boolean().optional(), revision: revisionSchema.optional(), created_at: timestampSchema.optional(), updated_at: timestampSchema.optional() })
@@ -335,10 +356,6 @@ export const capabilitySchema = z.enum([
 export const delegationRoleSchema = z.enum(['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
 export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation'])
 export const delegationStatusSchema = z.enum(['active', 'revoked', 'expired', 'completed'])
-export const agentSessionStateSchema = z.enum([
-  'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval',
-  'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled',
-])
 export const planStepStatusSchema = z.enum(['pending', 'in_progress', 'blocked', 'completed', 'canceled'])
 export const activityKindSchema = z.enum([
   'ack', 'status', 'plan_published', 'plan_changed', 'action_started', 'action_completed', 'evidence',
@@ -920,6 +937,8 @@ export type RepositoryContextInput = z.infer<typeof repositoryContextInputSchema
 export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
 export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
+export type WorkItemResponse = z.infer<typeof workItemResponseSchema>
+export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>

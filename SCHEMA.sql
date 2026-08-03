@@ -11,3 +11,4 @@
 \set ON_ERROR_STOP on
 
 \ir packages/db/migrations/v1/0001_v1_baseline.sql
+\ir packages/db/migrations/v1/0002_active_executor_projection.sql

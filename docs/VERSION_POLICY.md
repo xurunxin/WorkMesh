@@ -103,7 +103,8 @@ complete, exact baselines ending at:
 - `0014_provider_action_kinds`;
 - `0021_stage4_a2a_direction_and_prompt_identity`.
 
-An empty database is supported through `v1/0001_v1_baseline.sql`. A database
+An empty database starts through `v1/0001_v1_baseline.sql` and then applies the
+remaining ordered `v1/0002+` manifest entries. A database
 already at the final immutable pre-v1 migration may be adopted without replaying
 schema SQL. Every accepted upgrade records the complete immutable legacy
 checksum inventory and registers the v1 baseline with execution mode `adopted`.
