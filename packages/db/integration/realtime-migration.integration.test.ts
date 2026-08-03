@@ -109,7 +109,7 @@ describe('realtime event migration and persistence', () => {
       )).rows[0]!
       legacyEventIds.set(eventType, inserted.id)
     }
-    await applyMigrations(db)
+    await applyMigrations(db, { through: 25 })
   }, 300_000)
 
   afterAll(async () => {

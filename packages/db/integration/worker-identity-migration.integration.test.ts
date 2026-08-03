@@ -59,8 +59,8 @@ describe("0027/0028 Worker runtime identity migrations", () => {
         )
       ).rows[0]!.count,
     );
-    await applyMigrations(upgrade);
-    await applyMigrations(clean);
+    await applyMigrations(upgrade, { through: 28 });
+    await applyMigrations(clean, { through: 28 });
   }, 120_000);
 
   afterAll(async () => {

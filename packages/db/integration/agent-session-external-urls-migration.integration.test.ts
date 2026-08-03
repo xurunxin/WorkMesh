@@ -236,7 +236,7 @@ describe("0031 Agent Session external URL shape migration", () => {
     await applyMigrations(upgrade, { through: 30 });
     await applyMigrations(malformedObject, { through: 30 });
     await applyMigrations(malformedScalar, { through: 30 });
-    await applyMigrations(clean);
+    await applyMigrations(clean, { through: 31 });
   }, 240_000);
 
   afterAll(async () => {
@@ -282,7 +282,7 @@ describe("0031 Agent Session external URL shape migration", () => {
     );
     await insertIdempotencyResponse(upgrade, fixture, "ack-in-progress", null);
 
-    await applyMigrations(upgrade);
+    await applyMigrations(upgrade, { through: 31 });
 
     const rows = (
       await upgrade.query<{ externalUrls: unknown; id: string }>(
@@ -369,7 +369,7 @@ describe("0031 Agent Session external URL shape migration", () => {
       );
       const sessionId = await insertSession(db, fixture, value);
 
-      await expect(applyMigrations(db)).rejects.toThrow(
+      await expect(applyMigrations(db, { through: 31 })).rejects.toThrow(
         /agent_sessions_external_urls_array_check/,
       );
 
@@ -408,7 +408,7 @@ describe("0031 Agent Session external URL shape migration", () => {
         { external_urls: value, marker: "unchanged" },
       );
 
-      await expect(applyMigrations(db)).rejects.toThrow(
+      await expect(applyMigrations(db, { through: 31 })).rejects.toThrow(
         /api_idempotency_ack_session_external_urls_array_check/,
       );
 

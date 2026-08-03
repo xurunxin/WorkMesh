@@ -1,6 +1,4 @@
 import crypto from 'node:crypto'
-import { readdir, readFile } from 'node:fs/promises'
-import { join, parse } from 'node:path'
 import argon2 from 'argon2'
 import { Pool, type PoolClient, type QueryResultRow } from 'pg'
 import { defaultStates } from '@workmesh/domain'
@@ -10,6 +8,7 @@ export * from './event-resources.js'
 export * from './agent-locks.js'
 export * from './agent-lock-order-manifest.js'
 import { appendEvent } from './events.js'
+export { applyMigrations } from './migrations.js'
 
 export type Db = Pool
 export type PasswordInput = { password: string }
@@ -35,59 +34,6 @@ export const hashPassword = (password: string) => argon2.hash(password, { type: 
 export const verifyPassword = (hash: string, password: string) => argon2.verify(hash, password)
 export const opaqueToken = () => crypto.randomBytes(32).toString('base64url')
 export const tokenHash = (token: string) => crypto.createHash('sha256').update(token).digest('hex')
-
-const migrationFilePattern = /^(\d+)_.*\.sql$/
-export const applyMigrations = async (
-  db: Db,
-  options: Readonly<{ through?: number }> = {},
-): Promise<void> => {
-  const client = await db.connect()
-  let locked = false
-  try {
-    await client.query('SELECT pg_advisory_lock(70472653)')
-    locked = true
-    await client.query('CREATE TABLE IF NOT EXISTS schema_migrations(version text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())')
-    const migrationsDirectory = join(import.meta.dirname, '../migrations')
-    const migrations = (await readdir(migrationsDirectory))
-      .filter(file => migrationFilePattern.test(file))
-      .sort((left, right) => {
-        const leftNumber = Number(migrationFilePattern.exec(left)?.[1])
-        const rightNumber = Number(migrationFilePattern.exec(right)?.[1])
-        return leftNumber - rightNumber || left.localeCompare(right)
-      })
-    const applied = await client.query<{ version: string }>('SELECT version FROM schema_migrations')
-    const appliedVersions = new Set(applied.rows.map(row => row.version))
-    for (const file of migrations) {
-      const migrationNumber = Number(migrationFilePattern.exec(file)?.[1])
-      if (
-        options.through !== undefined
-        && migrationNumber > options.through
-      ) continue
-      const version = parse(file).name
-      if (appliedVersions.has(version)) continue
-      await client.query(await readFile(join(migrationsDirectory, file), 'utf8'))
-      await client.query('INSERT INTO schema_migrations(version) VALUES($1)', [version])
-    }
-  } catch (error) {
-    // A migration file owns its transaction. Roll it back before releasing the
-    // session advisory lock so a cleanup error cannot hide the SQL failure.
-    try {
-      await client.query('ROLLBACK')
-    } catch {
-      // There may be no open transaction; preserve the migration error.
-    }
-    throw error
-  } finally {
-    if (locked) {
-      try {
-        await client.query('SELECT pg_advisory_unlock(70472653)')
-      } catch {
-        // The original migration failure, if any, is the actionable error.
-      }
-    }
-    client.release()
-  }
-}
 
 export async function installWorkspace(db: Db, input: { workspaceName: string; workspaceSlug: string; adminName: string; email: string; password: string }): Promise<{ workspaceId: string; actorId: string; teamId: string }> {
   assertPasswordPolicy(input)

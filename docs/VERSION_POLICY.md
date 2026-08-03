@@ -103,13 +103,16 @@ complete, exact baselines ending at:
 - `0014_provider_action_kinds`;
 - `0021_stage4_a2a_direction_and_prompt_identity`.
 
-An empty database is also supported through the normal clean migration path.
-Unknown migration names, missing migrations below a reported baseline, or a
-partially applied migration are unsupported and must fail closed before serving
-traffic. Operators must back up PostgreSQL and verify the exact migration
-ledger before upgrade. Automatic unknown/partial-ledger diagnosis and expanded
-upgrade orchestration are future work tracked by Issues #8 and #11; this release
-does not claim those issues are implemented.
+An empty database is supported through `v1/0001_v1_baseline.sql`. A database
+already at the final immutable pre-v1 migration may be adopted without replaying
+schema SQL. Every accepted upgrade records the complete immutable legacy
+checksum inventory and registers the v1 baseline with execution mode `adopted`.
+
+Unknown migration names, a non-contiguous ledger, checksum drift, and any other
+intermediate pre-v1 endpoint fail closed before serving traffic. Each migration
+runs its SQL and ledger registration in one runner-owned PostgreSQL transaction
+under a session advisory lock. Operators must back up PostgreSQL and inspect the
+ledger before upgrade; see [Database migrations](operations/migrations.md).
 
 Disabling or re-enabling Beta/Experimental flags never deletes data or rewrites
 history. On re-enable, workers reclaim only eligible durable rows and re-run

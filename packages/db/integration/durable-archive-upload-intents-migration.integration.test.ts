@@ -80,8 +80,8 @@ describe("0030 durable archive upload intents migration", () => {
         [workspaceId, digest("d"), digest("c")],
       )
     ).rows[0]!.id;
-    await applyMigrations(upgrade);
-    await applyMigrations(clean);
+    await applyMigrations(upgrade, { through: 30 });
+    await applyMigrations(clean, { through: 30 });
   }, 120_000);
 
   afterAll(async () => {
@@ -358,7 +358,7 @@ describe("0030 durable archive upload intents migration", () => {
       [workspaceId],
     );
 
-    await expect(applyMigrations(active)).rejects.toMatchObject({
+    await expect(applyMigrations(active, { through: 30 })).rejects.toMatchObject({
       code: "55006",
       message: expect.stringContaining(
         "UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE",
@@ -379,7 +379,7 @@ describe("0030 durable archive upload intents migration", () => {
         WHERE job_name='event_archive' AND workspace_id=$1`,
       [workspaceId],
     );
-    await expect(applyMigrations(active)).resolves.toBeUndefined();
+    await expect(applyMigrations(active, { through: 30 })).resolves.toBeUndefined();
     expect(
       (
         await active.query(

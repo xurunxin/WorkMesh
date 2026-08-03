@@ -41,7 +41,7 @@ evidence, limitations, and GA criteria.
 1. Copy `.env.example` to `.env`, replace every `CHANGE_ME` value, and generate a unique first-install credential with `pnpm bootstrap:token` for `WORKMESH_BOOTSTRAP_TOKEN`.
 2. Run `pnpm install`.
 3. Start dependencies: `docker compose up -d postgres redis minio`.
-4. Run `pnpm db:migrate`, then either open the web app and complete first install using the bootstrap token or run `pnpm db:seed` after setting both `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` to unique values of at least 12 characters. Seeding fails closed when either variable is missing or invalid; it never uses a default password.
+4. Run `pnpm db:migrate`, then either open the web app and complete first install using the bootstrap token or run `pnpm db:seed` after setting both `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` to unique values of at least 12 characters. Seeding fails closed when either variable is missing or invalid; it never uses a default password. Clean installs and supported pre-v1 upgrades use the atomic, checksummed runner described in [Database migrations](docs/operations/migrations.md).
 5. Run `pnpm dev`, then visit `http://localhost:3000`.
 
 For a source-built local container stack, copy `.env.example` to `.env`, replace every `CHANGE_ME` value (including a generated `WORKMESH_BOOTSTRAP_TOKEN`, the 32-byte webhook-encryption key, and both seed admin variables if you intend to seed), then run `docker compose up --build`. The local Compose file runs the one-shot `migrate` service before API/worker and does not seed data automatically. Complete first install in the web app, or run the explicit `pnpm db:seed` command when seed data is desired. API readiness is available at `http://localhost:3001/readyz`.
