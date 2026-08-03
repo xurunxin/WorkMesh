@@ -199,6 +199,16 @@ for (const service of applicationServices) {
     `${service} image must carry the exact SHA label`,
   )
   assert(
+    dockerfile.includes('apk upgrade --no-cache'),
+    `${service} runtime image must apply current Alpine security upgrades`,
+  )
+  assert(
+    dockerfile.includes('rm -rf /usr/local/lib/node_modules/npm') &&
+      dockerfile.includes('/usr/local/lib/node_modules/corepack') &&
+      dockerfile.includes('/opt/yarn-v1.22.22'),
+    `${service} runtime image must remove unused bundled package managers`,
+  )
+  assert(
     dockerfile.includes('pnpm --filter @workmesh/config build') &&
       dockerfile.includes('packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs'),
     `${service} image must build and copy the canonical runtime secret validator`,

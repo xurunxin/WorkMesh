@@ -17,7 +17,11 @@ RUN pnpm --filter @workmesh/config build \
 
 FROM node:22.17.1-alpine3.22 AS runtime
 ARG WORKMESH_BUILD_SHA
-RUN test -n "$WORKMESH_BUILD_SHA" \
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22 \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+      /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+    && test -n "$WORKMESH_BUILD_SHA" \
     && echo "$WORKMESH_BUILD_SHA" | grep -Eq '^[0-9a-f]{40}$' \
     && addgroup -S -g 10001 workmesh \
     && adduser -S -D -H -u 10001 -G workmesh workmesh
