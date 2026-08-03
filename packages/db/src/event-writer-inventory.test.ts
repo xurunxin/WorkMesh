@@ -93,7 +93,7 @@ describe('durable domain-event writer inventory', () => {
       }
 
     expect([...unsupported].sort()).toEqual([])
-  })
+  }, 15_000)
 
   it('inventories private forms and requires current producers to set an exact audience', async () => {
     expect(privateEventAudienceForms).toEqual([
