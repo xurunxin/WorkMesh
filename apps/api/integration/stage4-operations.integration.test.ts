@@ -202,16 +202,22 @@ describe('Stage 4 planning and operations API', () => {
       agentProtocolVersion: '1.0',
       mcpVersion: '1.0.0',
       a2aUpstreamVersion: '0.3',
+      preferredClientProfileVersion: '1.0',
+      supportedClientProfileVersions: ['1.0'],
+      conformanceSuiteVersion: '1.0',
       schemaBaseline: 1,
     })
     expect(Object.keys(info.json<Record<string, unknown>>()).sort()).toEqual([
       'a2aUpstreamVersion',
       'agentProtocolVersion',
       'buildSha',
+      'conformanceSuiteVersion',
       'mcpVersion',
+      'preferredClientProfileVersion',
       'restApiVersion',
       'schemaBaseline',
       'serverVersion',
+      'supportedClientProfileVersions',
     ])
 
     const unauthenticated = await app.inject({ method: 'GET', url: '/api/v1/features' }) as unknown as Response
