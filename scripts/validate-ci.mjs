@@ -32,6 +32,7 @@ requireCondition(/^  pull_request:\s*$/m.test(workflow), 'workflow must run for 
 requireCondition(!/pull_request:\s*\n\s+branches:/m.test(workflow), 'pull requests must support every base branch')
 requireCondition(/^  push:\s*\n    branches: \[main\]$/m.test(workflow), 'workflow must run for pushes to main')
 requireCondition(/^  workflow_dispatch:\s*$/m.test(workflow), 'workflow must support manual dispatch')
+requireCondition(/^  workflow_call:\s*$/m.test(workflow), 'workflow must support release-candidate reuse')
 requireCondition(!workflow.includes('pull_request_target'), 'pull_request_target is forbidden')
 
 requireCondition(

@@ -1,12 +1,14 @@
 # Continuous integration
 
-Issue #10A adds one foundational GitHub Actions workflow. It is intentionally a
-test and verification boundary, not a release pipeline.
+The foundational workflow is both the pull-request verification boundary and a
+reusable release gate. Release publication is implemented separately so that
+ordinary CI retains read-only repository permissions.
 
 ## Triggers and permissions
 
 CI runs for every `pull_request` base branch, including stacked pull requests,
-for pushes to `main`, and by manual `workflow_dispatch`. Only pull-request runs
+for pushes to `main`, by manual `workflow_dispatch`, and through
+`workflow_call` from an exact candidate tag. Only pull-request runs
 share a concurrency group and cancel an older run for the same pull request.
 Push and manual runs keep independent run IDs and are never auto-cancelled.
 
@@ -94,12 +96,21 @@ databases plus a versioned object-store test bucket. The hosted
 `recovery-integration` job also builds and starts the restored API, Worker, and
 Web and performs a durable Agent Session heartbeat.
 
-## Deferred beyond Issue #10A
+## Release enforcement
 
-Issue #10A does not implement release or RC automation, tag creation, image
-build or publication, package publication, provenance/signing/SBOM generation,
-deployment, required-check or branch-protection administration, clean or
-five-stage upgrade validation, RC publication, or the formatting-baseline
-migration. Atomic migration and complete destructive
-recovery are now constituent `required-ci` evidence; release publication remains
-assigned to Issue #10B and must not be inferred from a green foundational run.
+`.github/workflows/release-candidate.yml` accepts only a tag matching
+`v1.0.0-rc.N`. It calls this workflow first, then runs dependency, source,
+configuration, and secret scanning. Only after those gates pass may the four
+production images enter the protected `stable-release` environment. Every
+image is scanned before publication; High or Critical findings fail the run.
+
+The candidate record contains the exact commit, lockfile and migration-manifest
+hashes, feature registry, image digests, SPDX SBOMs, Sigstore bundles, and GitHub
+build/SBOM attestations. A manual `failure_probe=true` dispatch fails in the
+read-only validation job before CI, environment admission, package write, tag,
+or Release creation. No job uses automatic retry or `continue-on-error`.
+
+`.github/workflows/promote-ga.yml` downloads and verifies the candidate record,
+signatures, SBOMs, and registry digests. It retags those exact manifests as
+`v1.0.0`, compares every observed digest, and contains no build or dependency
+installation command. See [Release operations](operations/releases.md).

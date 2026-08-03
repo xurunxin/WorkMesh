@@ -242,3 +242,10 @@ Repeat the content check for worker and MCP. For Web, inspect the standalone run
 Before an upgrade that includes schema migrations, capture and rehearse the
 authenticated PostgreSQL plus object-storage bundle described in
 [Complete backup and disaster recovery](operations/disaster-recovery.md).
+
+For an official candidate or GA deployment, do not rebuild these Dockerfiles.
+Download `release-manifest.json` from the GitHub Release, verify its Sigstore
+bundle, and set every `WORKMESH_*_IMAGE` value to the recorded `name@digest`.
+The GA promotion workflow retags the same manifests; the RC and GA digest values
+must remain equal. Operational commands and verification identities are in
+[Release operations](operations/releases.md).
