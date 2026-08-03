@@ -626,7 +626,7 @@ jobs:
       - name: Assemble candidate manifest
         run: |
           pnpm install --frozen-lockfile
-          pnpm release:manifest -- \
+          pnpm release:manifest \
             --tag "$CANDIDATE_TAG" \
             --sha "$SOURCE_SHA" \
             --images release-evidence/images \
