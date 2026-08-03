@@ -29,10 +29,31 @@ const parseWorkflow = (name, source) => {
   )
   for (const [, action, revision] of uses)
     requireCondition(/^[0-9a-f]{40}$/.test(revision), `${name}: ${action} must use a full SHA`)
+  return document.toJS()
 }
 
-parseWorkflow('release-candidate', candidate)
+const candidateWorkflow = parseWorkflow('release-candidate', candidate)
 parseWorkflow('promote-ga', promotion)
+
+for (const jobName of ['source-security', 'production-runtime-smoke', 'publish-candidate-record']) {
+  const steps = candidateWorkflow?.jobs?.[jobName]?.steps ?? []
+  const activationIndex = steps.findIndex(
+    step =>
+      step?.name === 'Activate exact pnpm' &&
+      typeof step.run === 'string' &&
+      step.run.includes('corepack prepare pnpm@9.15.4 --activate'),
+  )
+  const cacheIndex = steps.findIndex(
+    step =>
+      typeof step?.uses === 'string' &&
+      step.uses.startsWith('actions/setup-node@') &&
+      step.with?.cache === 'pnpm',
+  )
+  requireCondition(
+    activationIndex >= 0 && cacheIndex > activationIndex,
+    `${jobName} must activate exact pnpm before restoring the pnpm cache`,
+  )
+}
 
 for (const value of [
   "tags: ['v1.0.0-rc.*']",
