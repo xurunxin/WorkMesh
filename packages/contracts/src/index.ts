@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import {
   createRoutePolicyManifest,
+  mcpPolicyBindings,
   type RoutePolicyFeatureTier,
 } from './route-policy.js'
 
@@ -12,6 +13,9 @@ export const releaseMetadata = Object.freeze({
   agentProtocolVersion: '1.0',
   mcpVersion: '1.0.0',
   a2aUpstreamVersion: '0.3',
+  preferredClientProfileVersion: '1.0',
+  supportedClientProfileVersions: ['1.0'] as const,
+  conformanceSuiteVersion: '1.0',
   schemaBaseline: 1,
 })
 
@@ -59,6 +63,9 @@ export const releaseInfoResponseSchema = z.object({
   agentProtocolVersion: z.literal(releaseMetadata.agentProtocolVersion),
   mcpVersion: z.literal(releaseMetadata.mcpVersion),
   a2aUpstreamVersion: z.literal(releaseMetadata.a2aUpstreamVersion),
+  preferredClientProfileVersion: z.literal(releaseMetadata.preferredClientProfileVersion),
+  supportedClientProfileVersions: z.tuple([z.literal('1.0')]),
+  conformanceSuiteVersion: z.literal(releaseMetadata.conformanceSuiteVersion),
   schemaBaseline: z.literal(releaseMetadata.schemaBaseline),
   buildSha: z.string().min(1).max(128),
 }).strict()
@@ -248,6 +255,7 @@ export const apiErrorCodeSchema = z.enum([
   'PAGINATION_CURSOR_INVALID',
   'PAGINATION_CURSOR_MISMATCH',
   'CURSOR_EXPIRED',
+  'PROFILE_VERSION_UNSUPPORTED',
   'REALTIME_CAPACITY_EXCEEDED',
   'INTERNAL_ERROR',
 ])
@@ -307,6 +315,7 @@ export const stage0RouteManifest = [
   { method: 'GET', path: '/health', authenticated: false },
   { method: 'GET', path: '/api/v1/info', authenticated: false },
   { method: 'GET', path: '/api/v1/features', authenticated: true },
+  { method: 'GET', path: '/api/v1/agent-capabilities', authenticated: true },
   { method: 'GET', path: '/api/v1/install-status', authenticated: false },
   { method: 'POST', path: '/api/v1/auth/install', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/auth/login', authenticated: false, mutation: true },
@@ -1352,6 +1361,177 @@ export const routePolicyManifest = createRoutePolicyManifest((path) => {
   if (!definition) return undefined
   return { key, tier: definition.tier as RoutePolicyFeatureTier }
 })
+
+export const clientProfileVersionSchema = z.literal(releaseMetadata.preferredClientProfileVersion)
+export const clientReactionSchema = z.enum([
+  'discard_session_credentials',
+  'refresh_credentials_or_stop',
+  'stop_and_acknowledge',
+  'do_not_retry_out_of_scope',
+  'refetch_and_rebase',
+  'stop_protected_action',
+  'request_or_wait_for_approval',
+  'disable_optional_capability',
+  'resync_from_server_cursor',
+])
+export const clientProfileErrorReactionSchema = z.object({
+  errorCode: z.string().min(1),
+  reaction: clientReactionSchema,
+  retryableAfterStateChange: z.boolean(),
+}).strict()
+export const clientProfileErrorReactions = Object.freeze([
+  { errorCode: 'DELEGATION_NOT_ACTIVE', reaction: 'discard_session_credentials', retryableAfterStateChange: false },
+  { errorCode: 'UNAUTHENTICATED', reaction: 'refresh_credentials_or_stop', retryableAfterStateChange: true },
+  { errorCode: 'SESSION_STOPPED', reaction: 'stop_and_acknowledge', retryableAfterStateChange: false },
+  { errorCode: 'RESOURCE_SCOPE_DENIED', reaction: 'do_not_retry_out_of_scope', retryableAfterStateChange: false },
+  { errorCode: 'REVISION_CONFLICT', reaction: 'refetch_and_rebase', retryableAfterStateChange: true },
+  { errorCode: 'LEASE_EXPIRED', reaction: 'stop_protected_action', retryableAfterStateChange: true },
+  { errorCode: 'APPROVAL_REQUIRED', reaction: 'request_or_wait_for_approval', retryableAfterStateChange: true },
+  { errorCode: 'FEATURE_DISABLED', reaction: 'disable_optional_capability', retryableAfterStateChange: false },
+  { errorCode: 'CURSOR_EXPIRED', reaction: 'resync_from_server_cursor', retryableAfterStateChange: true },
+] as const satisfies readonly z.infer<typeof clientProfileErrorReactionSchema>[])
+
+const clientProfileFeatureSchema = z.object({
+  key: featureKeySchema.nullable(),
+  tier: z.enum(['stable', 'beta', 'experimental']),
+  enabled: z.boolean(),
+}).strict()
+const clientProfileOperationSchema = z.object({
+  operationId: z.string().min(1),
+  policyId: z.string().min(1),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'installation_target']),
+  transports: z.object({
+    rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
+    sse: z.boolean(),
+    mcpBindings: z.array(z.string().min(1)),
+  }).strict(),
+  requirements: z.object({
+    capabilities: z.array(capabilitySchema),
+    activeSession: z.boolean(),
+    activeDelegation: z.boolean(),
+    liveGrantIntersection: z.boolean(),
+    resourceScope: z.enum(['none', 'resolved_resource']),
+    approval: z.boolean(),
+    lease: z.boolean(),
+    revision: z.enum(['none', 'if_match']),
+    idempotency: z.enum(['none', 'required']),
+  }).strict(),
+  feature: clientProfileFeatureSchema,
+  supported: z.boolean(),
+  eligibleByCapability: z.boolean(),
+}).strict()
+export const agentCapabilityManifestResponseSchema = z.object({
+  profileVersion: clientProfileVersionSchema,
+  generatedFrom: z.literal('route_policy_manifest'),
+  authorizationEvaluatedPerRequest: z.literal(true),
+  agent: z.object({
+    actorId: idSchema,
+    sessionId: idSchema,
+    sessionState: agentSessionStateSchema,
+    sessionRevision: revisionSchema,
+    effectiveCapabilities: z.array(capabilitySchema),
+    capabilityScope: capabilityScopeSchema,
+    supportedProtocols: z.array(agentProtocolSchema),
+  }).strict(),
+  delivery: z.object({
+    push: z.object({ supported: z.literal(true), configured: z.boolean() }).strict(),
+    pull: z.object({ supported: z.literal(true), inbox: z.literal(true) }).strict(),
+    realtime: z.object({ supported: z.literal(true), durableCursor: z.literal(true) }).strict(),
+  }).strict(),
+  operations: z.array(clientProfileOperationSchema),
+  extensions: z.array(z.object({
+    id: z.string().min(1),
+    tier: z.enum(['beta', 'experimental']),
+    enabled: z.boolean(),
+    negotiationRequired: z.literal(true),
+  }).strict()),
+  errorReactions: z.array(clientProfileErrorReactionSchema),
+}).strict()
+export type AgentCapabilityManifest = z.infer<typeof agentCapabilityManifestResponseSchema>
+export type ClientProfileErrorReaction = z.infer<typeof clientProfileErrorReactionSchema>
+
+type AgentCapabilityManifestInput = Readonly<{
+  actorId: string
+  sessionId: string
+  sessionState: z.infer<typeof agentSessionStateSchema>
+  sessionRevision: number
+  effectiveCapabilities: readonly z.infer<typeof capabilitySchema>[]
+  capabilityScope: z.infer<typeof capabilityScopeSchema>
+  supportedProtocols: readonly z.infer<typeof agentProtocolSchema>[]
+  pushConfigured: boolean
+  features: Readonly<Record<FeatureKey, boolean>>
+}>
+
+export function createAgentCapabilityManifest(input: AgentCapabilityManifestInput): AgentCapabilityManifest {
+  const effective = new Set<string>(input.effectiveCapabilities)
+  const mcpByOperation = new Map<string, string[]>()
+  for (const [binding, policy] of Object.entries(mcpPolicyBindings)) {
+    const entries = mcpByOperation.get(policy.operationId) ?? []
+    entries.push(binding)
+    mcpByOperation.set(policy.operationId, entries)
+  }
+  const operations = routePolicyManifest
+    .filter(policy => policy.actorKinds.includes('agent'))
+    .map(policy => {
+      const featureKey = policy.feature.key as FeatureKey | null
+      const enabled = featureKey === null || input.features[featureKey]
+      const requiredCapabilities = policy.agent.capabilities
+        .map(capability => capabilitySchema.safeParse(capability))
+        .filter((result): result is { success: true; data: z.infer<typeof capabilitySchema> } => result.success)
+        .map(result => result.data)
+      return {
+        operationId: policy.operationId,
+        policyId: policy.policyId,
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'installation_target',
+        transports: {
+          rest: policy.bindings.rest,
+          sse: policy.bindings.sse,
+          mcpBindings: [...(mcpByOperation.get(policy.operationId) ?? [])].sort(),
+        },
+        requirements: {
+          capabilities: requiredCapabilities,
+          activeSession: policy.agent.requireActiveSession,
+          activeDelegation: policy.agent.requireActiveDelegation,
+          liveGrantIntersection: policy.agent.requireLiveGrantIntersection,
+          resourceScope: policy.agent.resourceScope,
+          approval: policy.approval.required,
+          lease: policy.lease.required,
+          revision: policy.revision,
+          idempotency: policy.idempotency,
+        },
+        feature: { key: featureKey, tier: policy.feature.tier, enabled },
+        supported: enabled,
+        eligibleByCapability: !policy.agent.requireLiveGrantIntersection
+          || requiredCapabilities.every(capability => effective.has(capability)),
+      }
+    })
+    .sort((left, right) => left.operationId.localeCompare(right.operationId))
+  return agentCapabilityManifestResponseSchema.parse({
+    profileVersion: releaseMetadata.preferredClientProfileVersion,
+    generatedFrom: 'route_policy_manifest',
+    authorizationEvaluatedPerRequest: true,
+    agent: {
+      actorId: input.actorId,
+      sessionId: input.sessionId,
+      sessionState: input.sessionState,
+      sessionRevision: input.sessionRevision,
+      effectiveCapabilities: [...input.effectiveCapabilities].sort(),
+      capabilityScope: input.capabilityScope,
+      supportedProtocols: [...input.supportedProtocols].sort(),
+    },
+    delivery: {
+      push: { supported: true, configured: input.pushConfigured },
+      pull: { supported: true, inbox: true },
+      realtime: { supported: true, durableCursor: true },
+    },
+    operations,
+    extensions: [
+      { id: 'workmesh.a2a', tier: 'experimental', enabled: input.features.WORKMESH_EXPERIMENTAL_A2A, negotiationRequired: true },
+      { id: 'workmesh.engineering-graph', tier: 'experimental', enabled: false, negotiationRequired: true },
+    ],
+    errorReactions: clientProfileErrorReactions,
+  })
+}
 
 export type AutomationRuleInput = z.infer<typeof automationRuleInputSchema>
 export type AutomationCondition = z.infer<typeof automationConditionSchema>

@@ -1397,3 +1397,35 @@ SSE 容量耗尽返回 structured `REALTIME_CAPACITY_EXCEEDED` 503 与
 `Retry-After`。SDK/Web 对 clean EOF、post-header transient error、429/5xx 和
 该 503 使用可取消、有界指数退避（含 jitter）；401/403 授权或撤权拒绝是
 terminal，`CURSOR_EXPIRED` 走显式 resync。
+
+---
+
+# 22. Agent Collaboration Client Profile 1.0
+
+外部编码 Agent 必须先读取公开 `/api/v1/info` 的
+`supportedClientProfileVersions`，再用精确 Agent Session Token 读取
+`/api/v1/agent-capabilities` 或 MCP `workmesh://agent/capabilities`。请求头
+`WorkMesh-Client-Profile: 1.0` 进行显式协商；未知版本返回
+`PROFILE_VERSION_UNSUPPORTED`，不得静默降级。
+
+Capability Manifest 只能由 route-policy manifest、feature registry、MCP
+policy binding 与当前 Session 的 live capability intersection 生成。
+`supported` 表示部署支持，`eligibleByCapability` 只是当前能力提示；
+`authorizationEvaluatedPerRequest` 永远为 true。客户端不得把发现结果、Lease
+或 feature enabled 当作授权，服务端仍在每次读取和 mutation 上复核 identity、
+Session、Delegation、Team grant、resource scope、approval、Lease、revision 与
+idempotency。
+
+Push、pull 与 hybrid 客户端共享同一恢复规则：push 只是 at-least-once wakeup；
+断线后必须从最后提交的 decimal Domain Event cursor replay，再重新读取 Session、
+Context/Guidance revision、Inbox、Approval、Handoff 与 Lease。Delivery 重复必须
+durable dedupe，mutation 重试必须复用同一逻辑 intent 的 Idempotency-Key。
+`CURSOR_EXPIRED` 必须 snapshot resync；撤权、expired、stopped、out-of-scope、
+stale revision、lost Lease、approval required 与 feature disabled 按
+`docs/AGENT_COLLABORATION_CLIENT_PROFILE.md` 的 canonical fail-closed reaction
+处理。
+
+`@workmesh/conformance` 使用同一 adapter-neutral driver 验证 Native HTTP 与 MCP，
+并执行 Codex-style push、OpenCode-style pull、pi-style hybrid 三类公开行为 fixture。
+这些 fixture 不依赖供应商私有实现。`pnpm test:conformance` 必须生成 JSON、JUnit
+与完整 transcript；Stable GA 只接受所有六个 adapter/fixture run 通过的证据。

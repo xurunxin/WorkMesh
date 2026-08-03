@@ -27,6 +27,11 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/agent-capabilities",
+    "operationId": "getAgentCapabilityManifest"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/install-status",
     "operationId": "getInstallStatus"
   },

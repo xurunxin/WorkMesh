@@ -148,12 +148,13 @@ describe('WorkMeshClient', () => {
     await stream.return()
   })
 
-  it('reads release and authenticated feature contracts without claiming disabled tools', async () => {
+  it('reads release, features, and the negotiated Agent capability manifest', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ serverVersion: '1.0.0' }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({
         features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false }],
       }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ profileVersion: '1.0', operations: [] }), { status: 200 }))
     const client = new WorkMeshClient({
       baseUrl: 'https://workmesh.example.test',
       sessionToken: 'session-token',
@@ -163,8 +164,11 @@ describe('WorkMeshClient', () => {
     await expect(client.getFeatures()).resolves.toMatchObject({
       features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', enabled: false }],
     })
+    await expect(client.getAgentCapabilities({ profileVersion: '1.0' })).resolves.toMatchObject({ profileVersion: '1.0' })
     expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.example.test/api/v1/info')
     expect(fetch.mock.calls[1]?.[0]).toBe('https://workmesh.example.test/api/v1/features')
+    expect(fetch.mock.calls[2]?.[0]).toBe('https://workmesh.example.test/api/v1/agent-capabilities')
+    expect((fetch.mock.calls[2]?.[1] as RequestInit | undefined)?.headers).toMatchObject({ 'workmesh-client-profile': '1.0' })
   })
 
   it('uses stable idempotency and does not retry conflicts', async () => {

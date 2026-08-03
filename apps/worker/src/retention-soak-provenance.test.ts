@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { releaseMetadata } from "@workmesh/contracts";
 import {
   collectRetentionSoakEndingEvidence,
   collectRetentionSoakProvenance,
@@ -95,12 +96,7 @@ const inspections = (
 const releaseInfo = (buildSha = expectedBuildSha): Response =>
   new Response(
     JSON.stringify({
-      serverVersion: "1.0.0",
-      restApiVersion: "1.0",
-      agentProtocolVersion: "1.0",
-      mcpVersion: "1.0.0",
-      a2aUpstreamVersion: "0.3",
-      schemaBaseline: 1,
+      ...releaseMetadata,
       buildSha,
     }),
     { headers: { "content-type": "application/json" } },

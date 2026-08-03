@@ -65,13 +65,20 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
-                required: [serverVersion, restApiVersion, agentProtocolVersion, mcpVersion, a2aUpstreamVersion, schemaBaseline, buildSha]
+                required: [serverVersion, restApiVersion, agentProtocolVersion, mcpVersion, a2aUpstreamVersion, preferredClientProfileVersion, supportedClientProfileVersions, conformanceSuiteVersion, schemaBaseline, buildSha]
                 properties:
                   serverVersion: { const: "1.0.0" }
                   restApiVersion: { const: "1.0" }
                   agentProtocolVersion: { const: "1.0" }
                   mcpVersion: { const: "1.0.0" }
                   a2aUpstreamVersion: { const: "0.3" }
+                  preferredClientProfileVersion: { const: "1.0" }
+                  supportedClientProfileVersions:
+                    type: array
+                    minItems: 1
+                    maxItems: 1
+                    items: { const: "1.0" }
+                  conformanceSuiteVersion: { const: "1.0" }
                   schemaBaseline: { const: 1 }
                   buildSha: { type: string, minLength: 1, maxLength: 128 }
   /api/v1/features:
@@ -107,6 +114,31 @@ paths:
                         tier: { type: string, enum: [beta, experimental] }
                         enabled: { type: boolean }
         "401": { $ref: "#/components/responses/Unauthorized" }
+  /api/v1/agent-capabilities:
+    get:
+      x-workmesh-policy-id: route.getAgentCapabilityManifest
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: getAgentCapabilityManifest
+      description: Returns protocol support derived from the route-policy, feature, and MCP binding registries for the exact authenticated Agent Session. This response describes support and capability eligibility; every request still performs live authorization.
+      parameters:
+        - name: WorkMesh-Client-Profile
+          in: header
+          required: false
+          description: Requested Agent Collaboration Client Profile version. Omit to select the preferred version.
+          schema: { type: string, enum: ["1.0"] }
+      responses:
+        "200":
+          description: Negotiated capability manifest for the exact Agent Session.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgentCapabilityManifest" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/Conflict" }
   /api/v1/install-status:
     get:
       {
@@ -3078,6 +3110,97 @@ components:
             status: { type: string, enum: [ok, unavailable] }
             streamLength: { type: [integer, "null"], minimum: 0 }
             exactLimit: { type: integer, minimum: 1 }
+    AgentCapabilityManifest:
+      type: object
+      additionalProperties: false
+      required: [profileVersion, generatedFrom, authorizationEvaluatedPerRequest, agent, delivery, operations, extensions, errorReactions]
+      properties:
+        profileVersion: { const: "1.0" }
+        generatedFrom: { const: route_policy_manifest }
+        authorizationEvaluatedPerRequest: { const: true }
+        agent:
+          type: object
+          additionalProperties: false
+          required: [actorId, sessionId, sessionState, sessionRevision, effectiveCapabilities, capabilityScope, supportedProtocols]
+          properties:
+            actorId: { type: string, format: uuid }
+            sessionId: { type: string, format: uuid }
+            sessionState: { type: string, enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale, completed, failed, canceled] }
+            sessionRevision: { type: integer, minimum: 1 }
+            effectiveCapabilities: { type: array, items: { $ref: "#/components/schemas/Capability" } }
+            capabilityScope: { type: object, additionalProperties: true }
+            supportedProtocols: { type: array, items: { $ref: "#/components/schemas/AgentProtocol" } }
+        delivery:
+          type: object
+          additionalProperties: false
+          required: [push, pull, realtime]
+          properties:
+            push: { type: object, additionalProperties: false, required: [supported, configured], properties: { supported: { const: true }, configured: { type: boolean } } }
+            pull: { type: object, additionalProperties: false, required: [supported, inbox], properties: { supported: { const: true }, inbox: { const: true } } }
+            realtime: { type: object, additionalProperties: false, required: [supported, durableCursor], properties: { supported: { const: true }, durableCursor: { const: true } } }
+        operations:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [operationId, policyId, authentication, transports, requirements, feature, supported, eligibleByCapability]
+            properties:
+              operationId: { type: string }
+              policyId: { type: string }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, installation_target] }
+              transports:
+                type: object
+                additionalProperties: false
+                required: [rest, sse, mcpBindings]
+                properties:
+                  rest: { type: object, additionalProperties: false, required: [method, path], properties: { method: { type: string }, path: { type: string } } }
+                  sse: { type: boolean }
+                  mcpBindings: { type: array, items: { type: string } }
+              requirements:
+                type: object
+                additionalProperties: false
+                required: [capabilities, activeSession, activeDelegation, liveGrantIntersection, resourceScope, approval, lease, revision, idempotency]
+                properties:
+                  capabilities: { type: array, items: { $ref: "#/components/schemas/Capability" } }
+                  activeSession: { type: boolean }
+                  activeDelegation: { type: boolean }
+                  liveGrantIntersection: { type: boolean }
+                  resourceScope: { type: string, enum: [none, resolved_resource] }
+                  approval: { type: boolean }
+                  lease: { type: boolean }
+                  revision: { type: string, enum: [none, if_match] }
+                  idempotency: { type: string, enum: [none, required] }
+              feature:
+                type: object
+                additionalProperties: false
+                required: [key, tier, enabled]
+                properties:
+                  key: { type: [string, "null"] }
+                  tier: { type: string, enum: [stable, beta, experimental] }
+                  enabled: { type: boolean }
+              supported: { type: boolean }
+              eligibleByCapability: { type: boolean }
+        extensions:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, tier, enabled, negotiationRequired]
+            properties:
+              id: { type: string }
+              tier: { type: string, enum: [beta, experimental] }
+              enabled: { type: boolean }
+              negotiationRequired: { const: true }
+        errorReactions:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [errorCode, reaction, retryableAfterStateChange]
+            properties:
+              errorCode: { type: string }
+              reaction: { type: string, enum: [discard_session_credentials, refresh_credentials_or_stop, stop_and_acknowledge, do_not_retry_out_of_scope, refetch_and_rebase, stop_protected_action, request_or_wait_for_approval, disable_optional_capability, resync_from_server_cursor] }
+              retryableAfterStateChange: { type: boolean }
     CycleInput:
       { type: object, additionalProperties: false, required: [name, startsAt, durationWeeks], properties: { teamId: { type: string, format: uuid }, name: { type: string, minLength: 1, maxLength: 180 }, startsAt: { $ref: "#/components/schemas/Timestamp" }, durationWeeks: { type: integer, minimum: 1, maximum: 8 } } }
     CycleGenerationInput:
@@ -3933,6 +4056,7 @@ components:
                             PAGINATION_CURSOR_INVALID,
                             PAGINATION_CURSOR_MISMATCH,
                             CURSOR_EXPIRED,
+                            PROFILE_VERSION_UNSUPPORTED,
                             REALTIME_CAPACITY_EXCEEDED,
                             CSRF_FAILED,
                             INVALID_CREDENTIALS,

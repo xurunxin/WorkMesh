@@ -2642,6 +2642,16 @@ WorkMesh v0.1 只有在以下全部满足时才可称为首版完成：
 - 文档、Schema、OpenAPI 与代码一致；
 - 没有要求或持久化 Agent 隐藏思维链。
 
+## 26.1 Agent Collaboration Client Profile
+
+Stable Core 发布 adapter-neutral Client Profile 1.0。客户端先从 `/api/v1/info`
+协商版本，再通过精确 Agent Session 身份读取 capability manifest；该 manifest 必须
+由 route-policy、feature registry 与 MCP binding 生成，且不能作为授权。Native
+HTTP 与 MCP 必须通过同一套 receive/ACK/Context/Inbox/Room/Activity/Artifact/
+Handoff/complete、disconnect recovery、duplicate idempotency 与 hostile-state
+conformance。Codex-style、OpenCode-style 与 pi-style fixture 只描述公开 push/pull/
+hybrid 行为，不依赖供应商私有实现。Engineering Graph 保持 Experimental 且默认关闭。
+
 ---
 
 # 附录 A：推荐默认值

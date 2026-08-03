@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
-import { guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
+import { agentCapabilityManifestResponseSchema, guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
 import { buildApp } from '../src/server.js'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -82,6 +82,18 @@ describe('versioned Guidance acceptance', () => {
     const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/token/exchange`, payload: { exchangeToken: started.exchangeToken }, headers: { authorization: `Bearer ${registered.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
     expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
     const token = exchange.json<{ sessionToken: string }>().sessionToken
+    const humanManifest = await humanCall(human, 'GET', '/api/v1/agent-capabilities')
+    expect(humanManifest.statusCode).toBe(403)
+    const manifestResponse = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${token}`, 'workmesh-client-profile': '1.0' } }) as unknown as Response
+    expect(manifestResponse.statusCode, JSON.stringify(manifestResponse.json())).toBe(200)
+    const manifest = agentCapabilityManifestResponseSchema.parse(manifestResponse.json())
+    expect(manifest.agent).toMatchObject({ sessionId: started.id, supportedProtocols: ['native_http'] })
+    expect(manifest.agent.effectiveCapabilities).toEqual(expect.arrayContaining(capabilities))
+    expect(manifest.operations.find(operation => operation.operationId === 'getAgentCapabilityManifest')).toMatchObject({ supported: true, eligibleByCapability: true, transports: { mcpBindings: ['resource:agent-capabilities'] } })
+    expect(manifest.extensions.find(extension => extension.id === 'workmesh.engineering-graph')).toMatchObject({ enabled: false, negotiationRequired: true })
+    const unsupportedProfile = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${token}`, 'workmesh-client-profile': '2.0' } }) as unknown as Response
+    expect(unsupportedProfile.statusCode).toBe(400)
+    expect(unsupportedProfile.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'PROFILE_VERSION_UNSUPPORTED' } })
     const acknowledged = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/ack`, payload: { summary: 'Guidance loaded', externalUrls: [] }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
     expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
     const executing = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/state`, payload: { state: 'executing', reason: 'Validate pinned Guidance' }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), 'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"` } }) as unknown as Response

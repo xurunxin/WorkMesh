@@ -207,6 +207,7 @@ const humanOnlyOperations = new Set([
 ])
 
 const agentOnlyOperations = new Set([
+  'getAgentCapabilityManifest',
   'claimInboxItem',
   'acknowledgeInboxItem',
   'replyInboxItem',
@@ -420,6 +421,7 @@ export function createRoutePolicyManifest(
 const mcpOperationIds = {
   'resource:server-info': 'getServerInfo',
   'resource:server-features': 'getDeploymentFeatures',
+  'resource:agent-capabilities': 'getAgentCapabilityManifest',
   'resource:work-item': 'getWorkItem',
   'resource:session-context': 'getAgentSessionContext',
   'resource:session-plan': 'getAgentPlan',

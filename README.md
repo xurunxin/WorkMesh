@@ -11,11 +11,20 @@ lease, revision, or idempotency authority.
 
 WorkMesh server `1.0.0` exposes REST API `1.0`, Agent Protocol `1.0`, MCP server
 `1.0.0`, the version-isolated upstream A2A `0.3` adapter, and database schema
-baseline `1`. `GET /api/v1/info` is public and returns only those versions, the
+baseline `1`, Agent Collaboration Client Profile `1.0`, and conformance suite
+`1.0`. `GET /api/v1/info` is public and returns only those versions, the
 schema baseline, and `WORKMESH_BUILD_SHA` (or `unknown`); it never returns
 deployment secrets. Authenticated `GET /api/v1/features` returns only the
 deployment flag, support tier, and enabled state of non-stable capabilities. It
 is not an inventory of every shipped Stable capability.
+
+An exact Agent Session can negotiate `GET /api/v1/agent-capabilities` (or MCP
+`workmesh://agent/capabilities`). Its operations are generated from the same
+route-policy, feature, and MCP binding registries used by runtime enforcement;
+the manifest never grants authority. See the
+[Agent Collaboration Client Profile](docs/AGENT_COLLABORATION_CLIENT_PROFILE.md)
+and run `pnpm test:conformance` for Native/MCP JSON, JUnit, and transcript
+evidence across Codex-, OpenCode-, and pi-style public behavior fixtures.
 
 All Beta and Experimental flags default to `false`. Enabling a flag exposes a
 deployment capability but grants no authorization. Disabled API routes return a
@@ -72,6 +81,7 @@ Put a TLS-terminating reverse proxy in front of the loopback-bound web/API ports
 - `pnpm --filter @workmesh/worker repair:executor-projections` transactionally rebuilds the Work Item active-executor read model from authoritative Lease, Session, and delegation rows. See [Active Executor projection repair](docs/operations/active-executor-projections.md).
 - Workspace, Team, and Project Guidance is independently versioned; Human administrators manage it in the Web Guidance view while Agent SDK/MCP clients have read-only access. See [Versioned Guidance operations](docs/operations/guidance.md).
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration`, and `pnpm test:e2e` are the project gates.
+- `pnpm test:conformance -- --output <directory>` runs the adapter-neutral Native/MCP client profile suite and writes JSON, JUnit, and a full transcript.
 - [Continuous integration](docs/CI.md) documents the GitHub Actions job graph, exact toolchain pins, retained evidence, and capabilities intentionally deferred beyond foundational CI.
 
 ## Acceptance commands

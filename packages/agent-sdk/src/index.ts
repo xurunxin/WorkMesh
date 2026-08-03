@@ -6,6 +6,7 @@ import type {
   InboxListItem, InboxItemDetail, InboxReplyResponse,
   WorkItemResponse,
   GuidanceResponse, GuidanceScope,
+  AgentCapabilityManifest,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -114,7 +115,7 @@ export interface WorkMeshClientOptions {
   logger?: WorkMeshLogger
   retry?: RetryOptions
 }
-export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string }
+export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string; profileVersion?: string }
 export interface PageRequestOptions extends RequestOptions { cursor?: string; limit?: number }
 export interface EventListOptions extends RequestOptions {
   cursor: string
@@ -224,6 +225,10 @@ export class WorkMeshClient {
 
   getFeatures(options?: RequestOptions): Promise<FeatureRegistry> {
     return this.request('GET', '/api/v1/features', undefined, options)
+  }
+
+  getAgentCapabilities(options: RequestOptions = {}): Promise<AgentCapabilityManifest> {
+    return this.request('GET', '/api/v1/agent-capabilities', undefined, options)
   }
 
   async exchangeSessionToken(sessionId: string, exchangeToken: string, installationToken: string, options: RequestOptions = {}): Promise<TokenExchange> {
@@ -462,6 +467,7 @@ export class WorkMeshClient {
     if (options.authorizationToken ?? this.sessionToken) headers.authorization = `Bearer ${options.authorizationToken ?? this.sessionToken}`
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey
     if (options.correlationId) headers['x-correlation-id'] = options.correlationId
+    if (options.profileVersion) headers['workmesh-client-profile'] = options.profileVersion
     if (options.ifMatch !== undefined) headers['if-match'] = typeof options.ifMatch === 'number' ? `"revision-${options.ifMatch}"` : options.ifMatch
     const serializedBody = body === undefined ? undefined : JSON.stringify(body)
     let totalRetryDelayMs = 0

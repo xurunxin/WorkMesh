@@ -362,6 +362,11 @@ function resourceInScope(
 
 function sessionActiveForOperation(state: string, operationId: string): boolean {
   if (operationId === 'acknowledgeAgentSession') return state === 'queued'
+  // Capability negotiation is part of exact Session attachment and therefore
+  // must be available before ACK. Delegation, live grant, actor binding, and
+  // capability checks still run through the ordinary route-policy decision.
+  if (operationId === 'getAgentCapabilityManifest')
+    return state === 'queued' || activeSessionStates.has(state)
   if (operationId === 'acknowledgeAgentSessionStop') return state === 'stopping'
   // Heartbeats remain an authenticated diagnostic projection after stop, stale, or terminal state.
   // The command gate revalidates exact Session authority under lock and cannot restore execution.

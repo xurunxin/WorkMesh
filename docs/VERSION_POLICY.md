@@ -81,6 +81,7 @@ into synthetic flags.
 | REST API 1.0 | Existing fields and operations remain compatible in 1.x. New response fields may be added; consumers must ignore unknown fields. Breaking removals require a major version. |
 | Domain events | Event versions are independent of REST. Existing fields retain meaning; consumers must ignore unknown fields. A semantic break uses a new event version. |
 | Agent Protocol 1.0 | Identity, delegation, authorization, state, idempotency, stop, and evidence semantics remain compatible in 1.x. |
+| Agent Collaboration Client Profile 1.0 | Profile discovery, capability-manifest meaning, reconnect, Inbox, duplicate delivery, canonical failure reactions, and required lifecycle behavior remain compatible in 1.x. Unknown Profile versions fail closed; supported versions are negotiated through `/api/v1/info`. |
 | MCP 1.0.0 | Stable resources/tools retain their URI/name and input meaning in 1.x. Additions use minor versions; removals require a major version. |
 | A2A adapter 0.3 | Upstream A2A 0.3 is isolated behind the Experimental adapter. Its version is not the WorkMesh Agent Protocol version. Unknown protocol versions fail closed. |
 | Database schema baseline 1 | PostgreSQL is authoritative. Schema changes use forward-only numbered migrations and are never conditional on flags. |
