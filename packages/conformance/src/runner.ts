@@ -11,6 +11,10 @@ import type {
 } from './types.js'
 
 const valueId = (value: DriverValue): string | undefined => typeof value.id === 'string' ? value.id : undefined
+const valueRevision = (value: DriverValue): number | undefined =>
+  typeof value.revision === 'number' && Number.isSafeInteger(value.revision) && value.revision > 0
+    ? value.revision
+    : undefined
 
 export async function runClientConformance(input: {
   driver: CollaborationConformanceDriver
@@ -33,6 +37,7 @@ export async function runClientConformance(input: {
     }
   }
   let artifactId = ''
+  let currentRevision = input.seed.sessionRevision
   await check('profile.negotiation', async () => {
     const discovery = await input.driver.discover(releaseMetadata.preferredClientProfileVersion)
     if (discovery.manifest.profileVersion !== '1.0') throw new Error(`Expected profile 1.0; received ${discovery.manifest.profileVersion}`)
@@ -46,7 +51,15 @@ export async function runClientConformance(input: {
   await check('lifecycle.assignment-ack', async () => {
     const value = await input.driver.acknowledgeSession(input.seed, `${input.fixture.id}-ack`)
     if (!valueId(value)) throw new Error('Assignment acknowledgement did not return an effect id')
-    return `Acknowledged Session ${input.seed.sessionId}.`
+    currentRevision = valueRevision(value) ?? 0
+    if (!currentRevision) throw new Error('Assignment acknowledgement did not return the current Session revision')
+    return `Acknowledged Session ${input.seed.sessionId} at revision ${currentRevision}.`
+  })
+  await check('lifecycle.transition-executing', async () => {
+    const value = await input.driver.transitionSession(input.seed, currentRevision, `${input.fixture.id}-executing`)
+    currentRevision = valueRevision(value) ?? 0
+    if (!currentRevision) throw new Error('Executing transition did not return the current Session revision')
+    return `Transitioned Session to executing at revision ${currentRevision}.`
   })
   await check('lifecycle.context-inbox', async () => {
     const context = await input.driver.getContext(input.seed)
@@ -86,7 +99,7 @@ export async function runClientConformance(input: {
   await check('hostile.fail-closed-matrix', async () => {
     for (const scenario of hostileScenarios) {
       const { errorCode } = scenario
-      const observed = await input.driver.probeFailure(errorCode)
+      const observed = await input.driver.probeFailure(scenario, input.seed)
       if (observed.code !== errorCode) throw new Error(`Expected ${errorCode}; received ${observed.code}`)
       const reaction = clientProfileErrorReactions.find(item => item.errorCode === errorCode)
       if (!reaction) throw new Error(`No required client reaction is registered for ${errorCode}`)
@@ -96,9 +109,12 @@ export async function runClientConformance(input: {
   })
   await check('lifecycle.complete', async () => {
     if (!artifactId) throw new Error('Completion is blocked without evidence')
-    const value = await input.driver.completeSession(input.seed, artifactId, `${input.fixture.id}-complete`)
+    const session = await input.driver.getSession(input.seed)
+    currentRevision = valueRevision(session) ?? 0
+    if (!currentRevision) throw new Error('Session refresh did not return the current revision')
+    const value = await input.driver.completeSession(input.seed, artifactId, currentRevision, `${input.fixture.id}-complete`)
     if (!valueId(value)) throw new Error('Completion did not return an effect id')
-    return `Completed Session with Artifact ${artifactId}.`
+    return `Refreshed revision ${currentRevision} and completed Session with Artifact ${artifactId}.`
   })
   const failed = checks.filter(item => item.status === 'failed').length
   return {

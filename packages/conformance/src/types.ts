@@ -24,11 +24,26 @@ export type ConformanceSeed = Readonly<{
 
 export type DriverValue = Readonly<Record<string, unknown>>
 export type FailureProbe = Readonly<{ code: string; details?: unknown }>
+export type HostileProbeOperation =
+  | 'get-session'
+  | 'get-context'
+  | 'append-activity'
+  | 'transition-session'
+  | 'provider-action'
+  | 'request-merge'
+  | 'list-events'
+export type HostileScenario = Readonly<{
+  id: string
+  errorCode: string
+  operation: HostileProbeOperation
+}>
 
 export interface CollaborationConformanceDriver {
   readonly adapter: 'native-http' | 'mcp'
   discover(profileVersion: string): Promise<{ info: DriverValue; manifest: AgentCapabilityManifest }>
   acknowledgeSession(seed: ConformanceSeed, idempotencyKey: string): Promise<DriverValue>
+  transitionSession(seed: ConformanceSeed, revision: number, idempotencyKey: string): Promise<DriverValue>
+  getSession(seed: ConformanceSeed): Promise<DriverValue>
   getContext(seed: ConformanceSeed): Promise<DriverValue>
   listInbox(seed: ConformanceSeed): Promise<DriverValue>
   acknowledgeInbox(seed: ConformanceSeed, idempotencyKey: string): Promise<DriverValue>
@@ -36,11 +51,11 @@ export interface CollaborationConformanceDriver {
   appendActivity(seed: ConformanceSeed, idempotencyKey: string): Promise<DriverValue>
   publishArtifact(seed: ConformanceSeed, idempotencyKey: string): Promise<DriverValue>
   offerHandoff(seed: ConformanceSeed, idempotencyKey: string): Promise<DriverValue>
-  completeSession(seed: ConformanceSeed, artifactId: string, idempotencyKey: string): Promise<DriverValue>
+  completeSession(seed: ConformanceSeed, artifactId: string, revision: number, idempotencyKey: string): Promise<DriverValue>
   disconnect(): Promise<void>
   reconnect(cursor: string): Promise<void>
   listEvents(seed: ConformanceSeed, cursor: string): Promise<readonly DriverValue[]>
-  probeFailure(errorCode: string): Promise<FailureProbe>
+  probeFailure(scenario: HostileScenario, seed: ConformanceSeed): Promise<FailureProbe>
 }
 
 export type TranscriptEntry = Readonly<{

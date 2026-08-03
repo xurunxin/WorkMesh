@@ -483,6 +483,19 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[0]?.[1].headers['if-match']).toBe('"revision-7"')
   })
 
+  it('transitions an Agent Session with its exact current revision', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'session-1', revision: 9 }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await expect(client.transitionState('session-1', 'executing', 'Begin conformance.', { ifMatch: 8, idempotencyKey: 'state-key' }))
+      .resolves.toMatchObject({ id: 'session-1', revision: 9 })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/agent-sessions/session-1/state')
+    expect(fetch.mock.calls[0]?.[1]).toMatchObject({
+      method: 'POST',
+      body: JSON.stringify({ state: 'executing', reason: 'Begin conformance.' }),
+      headers: expect.objectContaining({ 'if-match': '"revision-8"', 'idempotency-key': 'state-key' }),
+    })
+  })
+
   it('preserves exact pull-request head provenance for delivery artifacts', async () => {
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'artifact-1' }), { status: 200 }))
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })

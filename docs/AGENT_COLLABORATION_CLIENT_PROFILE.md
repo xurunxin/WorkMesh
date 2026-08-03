@@ -54,8 +54,12 @@ A conforming client performs the following ordered behavior:
    logs, Activity, messages, snapshots, or Artifacts.
 2. Receive an assignment by signed push, Inbox pull, or both. Push is a wakeup;
    the durable Session, Context, Inbox, and event log remain authoritative.
-3. ACK promptly, retrieve the exact Session Context and pinned Guidance, and
-   refetch current revisions before a revisioned mutation.
+3. ACK promptly, transition the acknowledged Session to `executing` with the
+   returned revision, retrieve the exact Session Context and pinned Guidance,
+   and refetch the current Session revision before completion or any other
+   later revisioned mutation. Native clients use the Session/state routes; MCP
+   clients use `workmesh://session/{id}` and
+   `transition_agent_session_state`.
 4. Reconcile Inbox items. Claiming coordinates an Agent-targeted item but does
    not grant authority. ACK appends a receipt; reply uses the server-derived
    Work Room thread and recipients.
@@ -122,7 +126,9 @@ may use a different UI or process model and still conform.
 
 `@workmesh/conformance` exposes an adapter-neutral driver interface, Native HTTP
 and MCP reference drivers, the three fixtures, hostile-state matrix, and JSON,
-JUnit, and Markdown transcript reporters.
+JUnit, and Markdown transcript reporters. Each hostile scenario prepares a
+specific server-side failure state and then issues the corresponding Native or
+MCP operation; a driver that merely echoes the expected error is non-conforming.
 
 ```powershell
 pnpm test:conformance -- --output D:\workmesh-conformance

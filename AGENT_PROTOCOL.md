@@ -1427,5 +1427,8 @@ stale revision、lost Lease、approval required 与 feature disabled 按
 
 `@workmesh/conformance` 使用同一 adapter-neutral driver 验证 Native HTTP 与 MCP，
 并执行 Codex-style push、OpenCode-style pull、pi-style hybrid 三类公开行为 fixture。
-这些 fixture 不依赖供应商私有实现。`pnpm test:conformance` 必须生成 JSON、JUnit
-与完整 transcript；Stable GA 只接受所有六个 adapter/fixture run 通过的证据。
+这些 fixture 不依赖供应商私有实现。生命周期必须在 ACK 后使用返回的 revision
+转入 `executing`，并在 completion 前重新读取当前 Session revision；hostile matrix
+必须先准备失败状态，再通过对应 Native/MCP 操作观察真实机器错误，禁止直接回显
+期望 error code。`pnpm test:conformance` 必须生成 JSON、JUnit 与完整 transcript；
+Stable GA 只接受所有六个 adapter/fixture run 通过的证据。

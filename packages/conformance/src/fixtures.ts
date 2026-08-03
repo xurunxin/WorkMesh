@@ -1,4 +1,4 @@
-import type { ClientBehaviorFixture } from './types.js'
+import type { ClientBehaviorFixture, HostileScenario } from './types.js'
 
 export const clientBehaviorFixtures = Object.freeze([
   {
@@ -22,13 +22,13 @@ export const clientBehaviorFixtures = Object.freeze([
 ] as const satisfies readonly ClientBehaviorFixture[])
 
 export const hostileScenarios = Object.freeze([
-  { id: 'revoked-delegation', errorCode: 'DELEGATION_NOT_ACTIVE' },
-  { id: 'expired-session-token', errorCode: 'UNAUTHENTICATED' },
-  { id: 'stopped-session', errorCode: 'SESSION_STOPPED' },
-  { id: 'out-of-scope-resource', errorCode: 'RESOURCE_SCOPE_DENIED' },
-  { id: 'stale-revision', errorCode: 'REVISION_CONFLICT' },
-  { id: 'lost-lease', errorCode: 'LEASE_EXPIRED' },
-  { id: 'approval-required', errorCode: 'APPROVAL_REQUIRED' },
-  { id: 'feature-disabled', errorCode: 'FEATURE_DISABLED' },
-  { id: 'cursor-gap', errorCode: 'CURSOR_EXPIRED' },
-] as const)
+  { id: 'revoked-delegation', errorCode: 'DELEGATION_NOT_ACTIVE', operation: 'get-session' },
+  { id: 'expired-session-token', errorCode: 'UNAUTHENTICATED', operation: 'get-session' },
+  { id: 'stopped-session', errorCode: 'SESSION_STOPPED', operation: 'append-activity' },
+  { id: 'out-of-scope-resource', errorCode: 'RESOURCE_SCOPE_DENIED', operation: 'get-context' },
+  { id: 'stale-revision', errorCode: 'REVISION_CONFLICT', operation: 'transition-session' },
+  { id: 'lost-lease', errorCode: 'LEASE_EXPIRED', operation: 'provider-action' },
+  { id: 'approval-required', errorCode: 'APPROVAL_REQUIRED', operation: 'request-merge' },
+  { id: 'feature-disabled', errorCode: 'FEATURE_DISABLED', operation: 'provider-action' },
+  { id: 'cursor-gap', errorCode: 'CURSOR_EXPIRED', operation: 'list-events' },
+] as const satisfies readonly HostileScenario[])

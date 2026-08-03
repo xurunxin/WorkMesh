@@ -419,6 +419,7 @@ export class WorkMeshClient {
   }
 
   acknowledge(sessionId: string, input: SessionAck, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'ack', input, options) }
+  transitionState(sessionId: string, state: AgentSessionState, reason: string, options: RequestOptions & { ifMatch: number | string }): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'state', { state, reason }, options, true) }
   heartbeat(sessionId: string, input: Heartbeat, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'heartbeat', input, options) }
   sendPrompt(sessionId: string, input: { bodyMarkdown: string; planRevision?: number; workItemRevision?: number }, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'prompt', input, options) }
   appendActivity(sessionId: string, input: ActivityInput, options: RequestOptions = {}): Promise<ApiCommand> { return this.mutate('POST', sessionId, 'activities', input, options) }

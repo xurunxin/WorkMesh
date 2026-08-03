@@ -312,6 +312,7 @@ function capabilityFor(
   path: string,
   operationId: string,
 ): readonly string[] {
+  if (operationId === 'getAgentCapabilityManifest') return []
   if (method === 'GET') {
     if (path.includes('/repositories')) return ['repo:read']
     return ['work:read']
@@ -422,6 +423,7 @@ const mcpOperationIds = {
   'resource:server-info': 'getServerInfo',
   'resource:server-features': 'getDeploymentFeatures',
   'resource:agent-capabilities': 'getAgentCapabilityManifest',
+  'resource:agent-session': 'getAgentSession',
   'resource:work-item': 'getWorkItem',
   'resource:session-context': 'getAgentSessionContext',
   'resource:session-plan': 'getAgentPlan',
@@ -464,6 +466,7 @@ const mcpOperationIds = {
   'tool:request_handoff': 'requestHandoff',
   'tool:reject_handoff': 'rejectHandoff',
   'tool:ack_agent_session': 'acknowledgeAgentSession',
+  'tool:transition_agent_session_state': 'transitionAgentSessionState',
   'tool:heartbeat': 'heartbeatAgentSession',
   'tool:append_activity': 'appendAgentActivity',
   'tool:publish_plan': 'publishAgentPlan',
