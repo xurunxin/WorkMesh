@@ -202,7 +202,28 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
     const projectedWorkItem=rawWorkItem ? (await attachWorkItemExecutors(h.db,[rawWorkItem]))[0]! : null;
     const workItem=projectedWorkItem ? Object.fromEntries(Object.entries(projectedWorkItem).filter(([key])=>key!=="cycle_id")) : null;
     const plan=rawSession.current_plan_version_id ? (await h.db.query("SELECT * FROM agent_plan_versions WHERE id=$1",[rawSession.current_plan_version_id])).rows[0] ?? null:null;
-    const planWithSteps=plan?{...plan as object,steps:(await h.db.query("SELECT * FROM agent_plan_steps WHERE plan_version_id=$1 ORDER BY ordinal",[rawSession.current_plan_version_id])).rows}:null;
+    const rawSteps=plan ? (await h.db.query<Record<string,unknown> & {
+      description:string|null;ownerActorId:string|null;cancellationReason:string|null;
+    }>(`SELECT step.id,step.title,step.description,step.status,step.ordinal,
+               step.owner_actor_id AS "ownerActorId",
+               coalesce((SELECT array_agg(dependency.depends_on_step_id ORDER BY dependency.depends_on_step_id)
+                           FROM agent_plan_step_dependencies dependency
+                          WHERE dependency.plan_version_id=step.plan_version_id
+                            AND dependency.step_id=step.id),'{}'::uuid[]) AS "dependsOn",
+               coalesce(step.acceptance_criteria,'[]'::jsonb) AS "acceptanceCriteria",
+               step.expected_artifacts AS "expectedArtifacts",
+               step.cancellation_reason AS "cancellationReason",
+               step.plan_version_id,step.created_at,step.updated_at
+          FROM agent_plan_steps step
+         WHERE step.plan_version_id=$1
+         ORDER BY step.ordinal`,[rawSession.current_plan_version_id])).rows : [];
+    const steps=rawSteps.map(({description,ownerActorId,cancellationReason,...step})=>({
+      ...step,
+      ...(description===null?{}:{description}),
+      ...(ownerActorId===null?{}:{ownerActorId}),
+      ...(cancellationReason===null?{}:{cancellationReason}),
+    }));
+    const planWithSteps=plan?{...plan as object,steps}:null;
     const guidancePins=await guidancePinsFromSnapshot(h.db,actor(request).workspaceId,rawSession.context_snapshot_id);
     const guidanceUris=guidancePins.map(pin=>pin.uri);
     const response={session,workItem,plan:planWithSteps,contextSnapshotId:rawSession.context_snapshot_id,guidanceUris,guidancePins};

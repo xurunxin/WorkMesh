@@ -71,11 +71,12 @@ describe('versioned Guidance acceptance', () => {
     const readyId = (await humanCall(human, 'GET', `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find(state => state.name === 'Ready')!.id
     const work = await humanCall(human, 'POST', '/api/v1/work-items', { teamId, projectId, title: 'Pinned Guidance work', statusId: readyId, responsibleHumanActorId: actor.id })
     const workItem = work.json<{ id: string; revision: number }>()
-    const registration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `guidance-agent-${randomUUID().slice(0, 8)}`, name: 'Guidance Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read', 'work:write'], approvedCapabilities: ['work:read', 'work:write'], maxConcurrency: 1 })
+    const capabilities = ['work:read', 'work:write', 'plan:write']
+    const registration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `guidance-agent-${randomUUID().slice(0, 8)}`, name: 'Guidance Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: capabilities, approvedCapabilities: capabilities, maxConcurrency: 1 })
     expect(registration.statusCode, JSON.stringify(registration.json())).toBe(200)
     const registered = registration.json<{ id: string; installation_token: string }>()
-    expect((await humanCall(human, 'PUT', `/api/v1/agents/${registered.id}/team-access/${teamId}`, { approvedCapabilities: ['work:read', 'work:write'] })).statusCode).toBe(200)
-    const startedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${workItem.id}/agent-session`, { agentId: registered.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: ['work:read', 'work:write'], initialPrompt: 'Use pinned Guidance.', budget: {} }, { 'if-match': `"revision-${workItem.revision}"` })
+    expect((await humanCall(human, 'PUT', `/api/v1/agents/${registered.id}/team-access/${teamId}`, { approvedCapabilities: capabilities })).statusCode).toBe(200)
+    const startedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${workItem.id}/agent-session`, { agentId: registered.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: capabilities, initialPrompt: 'Use pinned Guidance.', budget: {} }, { 'if-match': `"revision-${workItem.revision}"` })
     expect(startedResponse.statusCode, JSON.stringify(startedResponse.json())).toBe(200)
     const started = startedResponse.json<{ session: { id: string; exchangeToken: string } }>().session
     const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/token/exchange`, payload: { exchangeToken: started.exchangeToken }, headers: { authorization: `Bearer ${registered.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
@@ -85,9 +86,19 @@ describe('versioned Guidance acceptance', () => {
     expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
     const executing = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/state`, payload: { state: 'executing', reason: 'Validate pinned Guidance' }, headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), 'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"` } }) as unknown as Response
     expect(executing.statusCode, JSON.stringify(executing.json())).toBe(200)
+    const planStepId = randomUUID()
+    const publishedPlan = await app.inject({
+      method: 'PUT', url: `/api/v1/agent-sessions/${started.id}/plan`,
+      payload: { changeSummary: 'Exercise the pinned Context plan projection.', steps: [{ id: planStepId, title: 'Read Guidance', description: 'Use the pinned revisions.', status: 'in_progress', ordinal: 0, dependsOn: [], acceptanceCriteria: ['Context remains parseable'], expectedArtifacts: [] }] },
+      headers: { authorization: `Bearer ${token}`, 'idempotency-key': randomUUID(), 'if-match': `"revision-${executing.json<{ revision: number }>().revision}"` },
+    }) as unknown as Response
+    expect(publishedPlan.statusCode, JSON.stringify(publishedPlan.json())).toBe(200)
     const contextBefore = await agentCall(token, `/api/v1/agent-sessions/${started.id}/context`)
     expect(contextBefore.statusCode, JSON.stringify(contextBefore.json())).toBe(200)
     const pinnedBefore = sessionContextResponseSchema.parse(contextBefore.json())
+    expect(pinnedBefore.plan?.steps).toMatchObject([{ id: planStepId, description: 'Use the pinned revisions.' }])
+    expect(pinnedBefore.plan?.steps[0]).not.toHaveProperty('ownerActorId')
+    expect(pinnedBefore.plan?.steps[0]).not.toHaveProperty('cancellationReason')
     expect(pinnedBefore.guidancePins.map(pin => pin.scope)).toEqual(['workspace', 'team', 'project'])
     const pinnedTeam = pinnedBefore.guidancePins.find(pin => pin.scope === 'team')!
     expect(pinnedTeam).toMatchObject({ revisionId: teamV1.currentRevision!.id, contentHash: teamV1.currentRevision!.contentHash })
