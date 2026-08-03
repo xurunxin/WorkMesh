@@ -78,6 +78,8 @@ for (const value of [
   'failure-probe',
   'production-runtime-smoke:',
   'Production readiness and graceful restart',
+  'release-config-preflight:',
+  'Validate protected release configuration',
   'RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}',
   'WEB_ORIGIN=$RELEASE_WEB_ORIGIN',
   'restart --timeout 35 api worker mcp',
@@ -97,9 +99,13 @@ requireCondition(
 
 const validationIndex = candidate.indexOf('validate-candidate:')
 const reusableCiIndex = candidate.indexOf('required-ci:')
+const releaseConfigIndex = candidate.indexOf('release-config-preflight:')
 const imageIndex = candidate.indexOf('build-scan-publish-images:')
 requireCondition(validationIndex >= 0 && validationIndex < reusableCiIndex, 'candidate validation must precede CI')
-requireCondition(reusableCiIndex >= 0 && reusableCiIndex < imageIndex, 'required CI must precede image publication')
+requireCondition(
+  reusableCiIndex >= 0 && reusableCiIndex < releaseConfigIndex && releaseConfigIndex < imageIndex,
+  'required CI and protected release configuration must precede image publication',
+)
 const runtimeSmokeIndex = candidate.indexOf('production-runtime-smoke:')
 const candidateRecordIndex = candidate.indexOf('publish-candidate-record:')
 requireCondition(
@@ -107,8 +113,12 @@ requireCondition(
   'production runtime smoke must run after image publication and before the candidate record',
 )
 requireCondition(
-  /build-scan-publish-images:[\s\S]+needs:\s*\[validate-candidate, required-ci, source-security\]/m.test(candidate),
-  'image publication must require both CI and source security',
+  /release-config-preflight:[\s\S]+needs:\s*\[validate-candidate, required-ci, source-security\]/m.test(candidate),
+  'protected release configuration must require both CI and source security',
+)
+requireCondition(
+  /build-scan-publish-images:[\s\S]+needs:\s*\[validate-candidate, release-config-preflight\]/m.test(candidate),
+  'image publication must require protected release configuration',
 )
 requireCondition(
   candidate.includes("$EVENT_NAME\" == 'workflow_dispatch' && \"$FAILURE_PROBE\" == 'true'"),

@@ -134,9 +134,54 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  release-config-preflight:
+    name: Validate protected release configuration
+    needs: [validate-candidate, required-ci, source-security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: stable-release
+    permissions:
+      contents: read
+    outputs:
+      web-api-url: ${{ steps.config.outputs.web_api_url }}
+      web-origin: ${{ steps.config.outputs.web_origin }}
+    env:
+      SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
+      RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
+      RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Validate and freeze release URLs
+        id: config
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -n "$RELEASE_WEB_API_URL"
+          test -n "$RELEASE_WEB_ORIGIN"
+          node --input-type=module <<'NODE'
+          for (const [name, value] of [
+            ['WORKMESH_RELEASE_WEB_API_URL', process.env.RELEASE_WEB_API_URL],
+            ['WORKMESH_RELEASE_WEB_ORIGIN', process.env.RELEASE_WEB_ORIGIN],
+          ]) {
+            const url = new URL(value)
+            if (url.protocol !== 'https:' || url.origin !== value) {
+              throw new Error(`${name} must be an HTTPS origin without a path`)
+            }
+          }
+          NODE
+          echo "web_api_url=$RELEASE_WEB_API_URL" >> "$GITHUB_OUTPUT"
+          echo "web_origin=$RELEASE_WEB_ORIGIN" >> "$GITHUB_OUTPUT"
+
   build-scan-publish-images:
     name: Build, scan, and publish ${{ matrix.service }}
-    needs: [validate-candidate, required-ci, source-security]
+    needs: [validate-candidate, release-config-preflight]
     runs-on: ubuntu-latest
     timeout-minutes: 60
     environment: stable-release
@@ -154,7 +199,7 @@ jobs:
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
       IMAGE: ghcr.io/${{ github.repository_owner }}/workmesh-${{ matrix.service }}
       LOCAL_IMAGE: workmesh-release-${{ matrix.service }}:${{ needs.validate-candidate.outputs.source-sha }}
-      RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
+      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
     steps:
       - name: Check out exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -315,7 +360,7 @@ jobs:
 
   production-runtime-smoke:
     name: Production readiness and graceful restart
-    needs: [validate-candidate, build-scan-publish-images]
+    needs: [validate-candidate, release-config-preflight, build-scan-publish-images]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: stable-release
@@ -324,8 +369,8 @@ jobs:
       packages: read
     env:
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
-      RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
-      RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}
+      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
+      RELEASE_WEB_ORIGIN: ${{ needs.release-config-preflight.outputs.web-origin }}
       COMPOSE_PROJECT_NAME: workmesh-rc-smoke-${{ github.run_id }}-${{ github.run_attempt }}
       RELEASE_ENV_FILE: ${{ github.workspace }}/.release-smoke.env
     steps:
