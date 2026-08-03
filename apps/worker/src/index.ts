@@ -3,6 +3,7 @@ import { createClient } from 'redis'
 import {
   loadFeatureConfig,
   loadRealtimeRedisHintConfig,
+  loadRetentionConfig,
 } from '@workmesh/config'
 import { createDb, type Db, withTx } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
@@ -12,13 +13,17 @@ import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
 import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
+import { createRetentionWorker } from './retention.js'
 import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
+import { RetentionScheduler } from './retention-scheduler.js'
+import { materializeWorkerRuntimeIdentity } from './worker-runtime-identity.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
 export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 export { createArtifactUploadWorker } from './artifact-uploads.js'
 export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
+export { createRetentionWorker, ordinaryPrunableEventTypes } from './retention.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
@@ -354,7 +359,8 @@ export function createOutboxWorker({
   return { claimOutbox, deliver, fail, tick, probe, close }
 }
 
-const startWorkerProcess = (): void => {
+const startWorkerProcess = async (): Promise<void> => {
+  const runtimeIdentity = await materializeWorkerRuntimeIdentity()
   const db = createDb()
   const features = loadFeatureConfig()
   const outboxWorker = createOutboxWorker({ db })
@@ -419,6 +425,24 @@ const startWorkerProcess = (): void => {
   const artifactStorage = artifactStorageFromEnvironment()
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorage })
   const automationWorker = createAutomationWorker({ db, features })
+  const retentionConfig = loadRetentionConfig()
+  const retentionWorker = createRetentionWorker({
+    db,
+    config: retentionConfig,
+    storage: artifactStorage,
+    runtimeIdentity,
+  })
+  const retentionScheduler = new RetentionScheduler({
+    tick: retentionWorker.tick,
+    close: retentionWorker.close,
+    intervalMs: retentionConfig.intervalSeconds * 1_000,
+    ioTimeoutMs: retentionConfig.ioTimeoutSeconds * 1_000,
+    progressStaleMs: retentionConfig.progressStaleSeconds * 1_000,
+    onError: entry => console.error('retention worker tick failed', {
+      component: 'retention_scheduler',
+      safeErrorCode: entry.safeErrorCode,
+    }),
+  })
   let admissionOpen = true
   const tick = async (): Promise<void> => {
     const jobs = [
@@ -434,27 +458,49 @@ const startWorkerProcess = (): void => {
       await job()
     }
   }
+  const closeWorkerDependencies = async (): Promise<void> => {
+    const results = await Promise.allSettled([
+      outboxWorker.close(),
+      retentionScheduler.stop(),
+    ])
+    const errors = results.flatMap(result =>
+      result.status === 'rejected' ? [result.reason] : [],
+    )
+    try {
+      await db.end()
+    } catch (error) {
+      errors.push(error)
+    }
+    if (errors.length > 0)
+      throw new AggregateError(errors, 'WORKER_DEPENDENCY_CLOSE_FAILED')
+  }
   const runtime = new WorkerRuntime({
     tick,
     probe: async () => {
       await outboxWorker.probe()
       await artifactStorage.probe()
     },
+    readiness: () => retentionScheduler.assertReady(),
     stopAdmission: () => {
       admissionOpen = false
+      retentionScheduler.stopAdmission()
     },
-    close: async () => {
-      await outboxWorker.close()
-      await db.end()
-    },
-    onError: error => console.error('worker tick failed', error),
+    close: closeWorkerDependencies,
+    onError: () => console.error('worker tick failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_JOB_FAILED',
+    }),
   })
   const healthServer = createWorkerHealthServer(runtime)
   const healthHost = process.env.WORKER_HEALTH_HOST ?? '0.0.0.0'
   const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3003)
   healthServer.listen(healthPort, healthHost, () => {
-    void runtime.start().catch(error => {
-      console.error('worker readiness failed at startup', error)
+    retentionScheduler.start()
+    void runtime.start().catch(() => {
+      console.error('worker readiness failed at startup', {
+        component: 'worker_runtime',
+        safeErrorCode: 'WORKER_STARTUP_FAILED',
+      })
       process.exit(1)
     })
   })
@@ -463,6 +509,7 @@ const startWorkerProcess = (): void => {
     if (stopping) return
     stopping = true
     admissionOpen = false
+    retentionScheduler.stopAdmission()
     const configured = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 30_000)
     const timeoutMs = Number.isFinite(configured) && configured > 0 ? configured : 30_000
     void runtime.stop(timeoutMs)
@@ -470,8 +517,11 @@ const startWorkerProcess = (): void => {
         healthServer.close(error => error ? reject(error) : resolve())
       }))
       .then(() => process.exit(0))
-      .catch(error => {
-        console.error('worker shutdown failed', error)
+      .catch(() => {
+        console.error('worker shutdown failed', {
+          component: 'worker_runtime',
+          safeErrorCode: 'WORKER_SHUTDOWN_FAILED',
+        })
         healthServer.closeAllConnections()
         process.exit(1)
       })
@@ -481,4 +531,11 @@ const startWorkerProcess = (): void => {
   process.once('SIGINT', stop)
 }
 
-if (process.env.NODE_ENV !== 'test') startWorkerProcess()
+if (process.env.NODE_ENV !== 'test')
+  void startWorkerProcess().catch(() => {
+    console.error('worker identity initialization failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_IDENTITY_INITIALIZATION_FAILED',
+    })
+    process.exit(1)
+  })

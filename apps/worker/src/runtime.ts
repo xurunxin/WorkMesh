@@ -3,6 +3,7 @@ import { createServer, type Server } from 'node:http'
 export type WorkerRuntimeDependencies = {
   tick: () => Promise<void>
   probe: () => Promise<void>
+  readiness?: () => Promise<void> | void
   stopAdmission: () => void
   close: () => Promise<void>
   onError?: (error: unknown) => void
@@ -28,6 +29,7 @@ export class WorkerRuntime {
     if (!this.#accepting) return false
     try {
       await this.#dependencies.probe()
+      await this.#dependencies.readiness?.()
       return true
     } catch {
       return false

@@ -296,6 +296,9 @@ function resourceInScope(
 function sessionActiveForOperation(state: string, operationId: string): boolean {
   if (operationId === 'acknowledgeAgentSession') return state === 'queued'
   if (operationId === 'acknowledgeAgentSessionStop') return state === 'stopping'
+  // Heartbeats remain an authenticated diagnostic projection after stop, stale, or terminal state.
+  // The command gate revalidates exact Session authority under lock and cannot restore execution.
+  if (operationId === 'heartbeatAgentSession') return true
   return activeSessionStates.has(state)
 }
 

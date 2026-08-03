@@ -2095,8 +2095,47 @@ Docker Compose 服务：
 - 事件页、连接数和 socket backpressure wait 都有硬上限；慢客户端关闭，
   心跳不触发数据库读取；
 - `event_retention_state.pruned_through_cursor` 是显式保留水位。本阶段不执行
-  prune；低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
+  prune；Issue #9 增加 archive-only 默认的保留作业，只有显式 kill switch
+  才允许按 Workspace prune。低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
   `cursor.expired` control event 后关闭；
+- 普通事件在线保留至少 90 天、归档至少 365 天。归档采用 cursor 排序的
+  canonical NDJSON gzip，并在 upload 后 readback 校验 object SHA-256 与 DB
+  snapshot digest。归档 bucket 必须在创建时启用 Object Lock；每个归档对象
+  使用 `COMPLIANCE` 模式和至少 365 天 retain-until，Worker 在计划归档前和
+  readback 时 fail closed 校验保护。Worker 必须先在有当前 claim/fence 的
+  PostgreSQL 事务中冻结 fixed cutoff、segment UUID/稳定 object key、manifest、
+  checksums、retain horizon，并写入 `planned/pending_exact` segment 与 provisional
+  exact-member reservations，提交后才调用对象存储。恢复总是先处理最旧 pending
+  intent，使用 `If-None-Match: *` 向同一 key 写入；200、412、timeout、5xx 或
+  response loss 都以 current HEAD 的 segment/snapshot/cutoff/checksum/size/MIME/
+  Object Lock identity 收敛，404 只重试同一 key，冲突 fenced failed，绝不补偿
+  DELETE 或创建第二 key/version。PUT 后失去 lease 时只允许 successor reconcile
+  并持久化 `VersionId`；后续 readback 全部 pin 该 version。
+  segment 的 start/end cursor 仅是 envelope；
+  只有 pinned-object readback 后与 verified 状态原子写入的 per-event exact
+  membership 才表示归档覆盖；provisional reservations 不表示覆盖；final
+  transaction 必须再次绑定 claim、segment fixed cutoff 与全部 member，并与
+  job watermark 原子发布。job watermark 只是最高已归档 cursor 的单调
+  telemetry。prune 按 Workspace 在线 cursor 前缀推进，遇到未归档或未到
+  cutoff 的首个事件即停止；cleanup 同样只信已 floored 的 exact member。
+  对历史错误遗留在当前 floor 以下、后来已建立 exact membership 但
+  `floored_at` 仍为空的在线事件，prune 在相同 floor lock 与 fence 下执行有界
+  repair：固定 cutoff、delivered outbox、pinned version、per-event digest、
+  allowlist 与引用全部重检后才原子删除并标记 member；repair 不降低或推进
+  floor，也不信任 segment cursor envelope。
+  未投递事件不阻止后续合格事件归档，但会阻止 floor 越过它。未知、受保护、A2A 引用、Agent webhook
+  引用、未投递 outbox、审计和恢复事实保留在 PostgreSQL；Agent webhook
+  delivery reference 是持久协议事实，不进入通用 30 天 cleanup；
+- 稳态 Session/Lease Heartbeat 只更新当前 projection，不增加 workflow
+  revision、Session sequence、Activity、Domain Event 或 Outbox。只有
+  healthy/degraded/stale health transition 在行锁下发出一次事件；Heartbeat
+  不恢复 stale、stopping 或 terminal Session 的权限或状态。每个
+  Session/Lease 使用固定大小的最近 idempotency key 窗口；K1、K2、重试 K1
+  返回当前 projection 而不回退 K2，同 key 不同 body 冲突，usage counter
+  只单调增加；
+- 保留调度与 outbox 调度独立；归档卡住或失败可使 Worker readiness 在进度
+  deadline 后失败，但不能停止 outbox admission/delivery。关闭时两个 loop
+  都停止接单、drain，并聚合关闭错误；
 - Web 每个 actor/workspace（Agent 额外包含 Session）只有一个 authenticated
   fetch-SSE client 和独立 checkpoint，使用 BigInt 去重比较并按精确资源
   invalidation 刷新；过期时先重取 durable snapshot 再从 `resyncCursor` 重连。

@@ -116,12 +116,14 @@ describe('realtime event migration and persistence', () => {
     await db.end()
   })
 
-  it('applies 0025 after the previous migration stage', async () => {
+  it('applies 0025 immediately after the previous migration stage', async () => {
     const versions = await db.query<{ version: string }>(
       'SELECT version FROM schema_migrations ORDER BY version',
     )
-    expect(versions.rows.at(-1)?.version)
-      .toBe('0025_realtime_event_envelope')
+    const appliedVersions = versions.rows.map(row => row.version)
+    expect(appliedVersions.indexOf('0025_realtime_event_envelope')).toBe(
+      appliedVersions.indexOf('0024_cursor_pagination_indexes') + 1,
+    )
     const tables = await db.query<{ table_name: string }>(
       `SELECT table_name
        FROM information_schema.tables

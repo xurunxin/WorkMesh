@@ -22,7 +22,7 @@ export const classifyHeartbeatLiveness = ({
   return ageSeconds > heartbeatIntervalSeconds * 2 ? 'degraded' : 'healthy'
 }
 
-type LockedSession = { id: string; workspaceId: string; teamId: string; principalHumanActorId: string; state: string }
+type LockedSession = { id: string; workspaceId: string; teamId: string; principalHumanActorId: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
 type UpdatedSession = { id: string; workspaceId: string; revision: number; sequence: string }
 type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string }
 
@@ -96,7 +96,10 @@ const updateSessionState = async (tx: Transaction, input: {
 }): Promise<UpdatedSession | undefined> => {
   const result = await tx.query<UpdatedSession>(`
     UPDATE agent_sessions
-    SET state=$2, state_reason=$3, revision=revision+1, sequence=sequence+1,
+    SET state=$2::agent_session_state, state_reason=$3, revision=revision+1, sequence=sequence+1,
+        heartbeat_health=CASE WHEN $2::agent_session_state='stale' THEN 'stale' ELSE heartbeat_health END,
+        heartbeat_health_changed_at=CASE WHEN $2::agent_session_state='stale' AND heartbeat_health<>'stale' THEN now() ELSE heartbeat_health_changed_at END,
+        heartbeat_checked_at=CASE WHEN $2::agent_session_state='stale' THEN now() ELSE heartbeat_checked_at END,
         ended_at=CASE WHEN $4 THEN now() ELSE ended_at END, updated_at=now()
     WHERE id=$1 AND state=$5
     RETURNING id, workspace_id AS "workspaceId", revision, sequence::text
@@ -144,33 +147,111 @@ export function createSessionLifecycleWorker({
     return changed
   })
 
-  const reconcileHeartbeatLiveness = async (limit = 50): Promise<number> => withTx(db, async tx => {
-    const candidates = await tx.query<LockedSession>(`
-      SELECT s.id, s.workspace_id AS "workspaceId", d.team_id AS "teamId", d.principal_human_actor_id AS "principalHumanActorId", s.state
-      FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
+  const reconcileHeartbeatLiveness = async (limit = 50): Promise<number> =>
+    withTx(db, async (tx) => {
+      const candidates = await tx.query<LockedSession>(
+        `
+      SELECT s.id,s.workspace_id AS "workspaceId",d.team_id AS "teamId",
+             d.principal_human_actor_id AS "principalHumanActorId",s.state,
+             s.revision,s.sequence::text AS sequence,
+             s.heartbeat_health AS "heartbeatHealth",
+             s.last_heartbeat_at AS "lastHeartbeatAt",
+             COALESCE((definition.manifest->>'heartbeatIntervalSeconds')::int,30)
+               AS "heartbeatIntervalSeconds"
+      FROM agent_sessions s
+      JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
+      JOIN agent_definitions definition ON definition.id=s.agent_id
       WHERE s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
-        AND (s.last_heartbeat_at IS NULL OR s.last_heartbeat_at <= now() - ($1::text || ' seconds')::interval)
-      ORDER BY COALESCE(s.last_heartbeat_at,s.created_at) FOR UPDATE OF s SKIP LOCKED LIMIT $2
-    `, [heartbeatStaleAfterSeconds, limit])
-    let changed = 0
-    for (const session of candidates.rows) {
-      const updated = await updateSessionState(tx, { id: session.id, from: session.state, to: 'stale', reason: 'heartbeat_timeout' })
-      if (!updated) continue
-      const actorId = await systemActorId(tx, updated.workspaceId)
-      await appendOutboxEvent(tx, {
-        workspaceId: updated.workspaceId, teamId: session.teamId, actorId, correlationId: `${workerId}:heartbeat-timeout:${session.id}`,
-        eventType: 'agent.session.stale', aggregateType: 'agent_session', aggregateId: session.id,
-        revision: updated.revision, sessionId: session.id, sessionSequence: updated.sequence,
-        payload: { reason: 'heartbeat_timeout' },
-      })
-      await insertInbox(tx, {
-        workspaceId: updated.workspaceId, recipientHumanActorId: session.principalHumanActorId, sessionId: session.id,
-        kind: 'session_stale', sourceType: 'agent_session', sourceId: session.id, payload: { reason: 'heartbeat_timeout' },
-      })
-      changed += 1
-    }
-    return changed
-  })
+      ORDER BY COALESCE(s.last_heartbeat_at,s.created_at)
+      FOR UPDATE OF s SKIP LOCKED LIMIT $1
+    `,
+        [limit],
+      );
+      let changed = 0;
+      for (const session of candidates.rows) {
+        const next = classifyHeartbeatLiveness({
+          lastHeartbeatAt: session.lastHeartbeatAt ?? null,
+          heartbeatIntervalSeconds: session.heartbeatIntervalSeconds ?? 30,
+          staleAfterSeconds: heartbeatStaleAfterSeconds,
+        });
+        if (next === session.heartbeatHealth) continue;
+        const actorId = await systemActorId(tx, session.workspaceId);
+        if (next === "stale") {
+          const updated = (
+            await tx.query<UpdatedSession>(
+              `
+          UPDATE agent_sessions
+             SET state='stale',state_reason='heartbeat_timeout',
+                 heartbeat_health='stale',heartbeat_health_changed_at=now(),
+                 heartbeat_checked_at=now(),revision=revision+1,
+                 sequence=sequence+1,updated_at=now()
+           WHERE id=$1 AND state=$2 AND heartbeat_health=$3
+           RETURNING id,workspace_id AS "workspaceId",revision,sequence::text
+        `,
+              [session.id, session.state, session.heartbeatHealth],
+            )
+          ).rows[0];
+          if (!updated) continue;
+          await appendOutboxEvent(tx, {
+            workspaceId: updated.workspaceId,
+            teamId: session.teamId,
+            actorId,
+            correlationId: `${workerId}:heartbeat-stale:${session.id}`,
+            eventType: "agent.session.stale",
+            aggregateType: "agent_session",
+            aggregateId: session.id,
+            revision: updated.revision,
+            sessionId: session.id,
+            sessionSequence: updated.sequence,
+            payload: {
+              reason: "heartbeat_timeout",
+              fromHealth: session.heartbeatHealth,
+              toHealth: "stale",
+            },
+          });
+          await insertInbox(tx, {
+            workspaceId: updated.workspaceId,
+            recipientHumanActorId: session.principalHumanActorId,
+            sessionId: session.id,
+            kind: "session_stale",
+            sourceType: "agent_session",
+            sourceId: session.id,
+            payload: { reason: "heartbeat_timeout" },
+          });
+        } else {
+          const projected = await tx.query(
+            `
+          UPDATE agent_sessions
+             SET heartbeat_health=$2,heartbeat_health_changed_at=now(),
+                 heartbeat_checked_at=now(),updated_at=now()
+           WHERE id=$1 AND heartbeat_health=$3
+           RETURNING id
+        `,
+            [session.id, next, session.heartbeatHealth],
+          );
+          if (!projected.rowCount) continue;
+          await appendOutboxEvent(tx, {
+            workspaceId: session.workspaceId,
+            teamId: session.teamId,
+            actorId,
+            correlationId: `${workerId}:heartbeat-health:${session.id}:${next}`,
+            eventType: "agent.session.health_changed",
+            aggregateType: "agent_session",
+            aggregateId: session.id,
+            revision: session.revision ?? 1,
+            sessionId: session.id,
+            sessionSequence: session.sequence,
+            payload: {
+              from: session.heartbeatHealth,
+              to: next,
+              reason: "heartbeat_age",
+            },
+          });
+        }
+        changed += 1;
+      }
+      return changed;
+    });
 
   const expireStopGrace = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedSession>(`

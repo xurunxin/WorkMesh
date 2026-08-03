@@ -49,6 +49,13 @@ Required production credentials have no usable defaults. Compose can render whil
 pnpm --silent bootstrap:token
 ```
 
+Render `infra/s3/worker-retention-policy.template.json` with the exact
+`S3_BUCKET` and `WORKMESH_RETENTION_ARCHIVE_PREFIX`, and attach it only to the
+Worker object-store identity. The required archive mutation permissions are
+conditional `s3:PutObject` and exact-version `s3:PutObjectRetention`; the latter
+is required to repair a lock horizon after a delayed losing upload. The
+template intentionally excludes object deletion permissions.
+
 Keep the environment file outside source control and readable only by the deployment operator. Put a TLS reverse proxy in front of Web and API. Do not publish PostgreSQL, Redis, or MinIO directly to the internet.
 
 Validate both the repository contract and the fully rendered configuration before changing a running deployment:
@@ -69,24 +76,139 @@ docker compose --env-file .env.production -f docker-compose.production.yml --pro
 docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
 ```
 
-The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. Web and MCP wait for API readiness. The migrator is safe to rerun:
+The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. Web and MCP wait for API readiness. The migrator is safe to rerun for a new installation:
 
 ```powershell
 docker compose --env-file .env.production -f docker-compose.production.yml run --rm migrate
 ```
 
-For an upgrade, publish all application images under one new exact SHA, resolve the four new digests, update all four `WORKMESH_*_IMAGE` references and `WORKMESH_BUILD_SHA`, pull, and run the same `up -d --wait` command. Do not mix application revisions.
+Do not use that standalone command for an upgrade from migration 29 to 30.
+Migration 30 changes the durable retention upload state machine and requires a
+maintenance barrier.
+
+## Migration 29 to 30 maintenance barrier
+
+Publish API, Worker, and Web from one clean exact SHA, resolve their immutable
+digests, and update those three `WORKMESH_*_IMAGE` references plus
+`WORKMESH_BUILD_SHA` in `.env.production`. If MCP is already enabled in the
+running Compose project, publish and update MCP from that same SHA as well.
+Digest references are mandatory for every service in the current topology. An
+MCP-disabled deployment keeps an immutable MCP image reference so Compose can
+render the tracked file, but the executor does not inspect or deploy that image
+and does not require MCP tokens.
+
+Before it changes a container, the tracked executor freezes the current
+optional-service topology. It resolves the old Worker and uses its Compose
+project, config-file, and working-directory labels as the deployment identity.
+A label-filtered Docker query must find either no MCP container (disabled) or
+exactly one running, non-restarting MCP container with the same deployment
+identity (enabled). Multiple, malformed, stopped, restarting, or mismatched MCP
+state is ambiguous and fails closed before the Worker is stopped or migration
+30 can run. Only an already-enabled MCP topology causes the executor to require
+MCP tokens and a target MCP digest, validate its OCI revision, or include the
+`agent` profile in later Compose commands. The executor never enables MCP merely
+because MCP variables exist in the environment.
+
+The executor renders Compose as JSON exactly once after discovering the topology
+and binds each included service to its verified target digest before the
+maintenance stop. It writes that complete render into a private POSIX temporary
+directory (`0700`) and file (`0600`). Every later Compose operation uses only
+the frozen project name and snapshot file; it never rereads the source YAML or
+environment file. Before writing, every dollar sign in every rendered JSON
+string is encoded as a Compose literal (`$$`), including commands, labels,
+paths, healthchecks, URLs, and secrets. The executor immediately renders the
+snapshot again. Compose v5.3.1 preserves those protective pairs in `config`
+output, so the executor accepts only exact equality or the single reversible
+normalization `$$` to `$`, then requires deep equality with the first render
+before any update, stop, or migration. The snapshot is removed in a `finally`
+path, and a later
+invocation removes only dead-PID residual directories that have the current
+owner and the expected private mode. Native Windows execution fails closed
+because it cannot verify the required POSIX owner.
+
+The executor validates each exact rendered environment with the same pure
+helper used by `/app/runtime-guard.mjs`. API and Worker preflight additionally
+invoke the same authoritative configuration parsers as application startup. In
+execute mode the executor then runs that guard from the exact target image, with
+the frozen Compose service environment, for migrate, API, Worker, and Web,
+followed by MCP only when MCP is in the frozen topology. Every guard must pass
+before `docker update --restart=no` is issued. This includes cross-secret reuse
+checks between enabled MCP tokens and all other deployment runtime secrets.
+Dry-run mode validates the frozen environments but does not create temporary
+guard containers.
+
+The executor is a dry run unless `--execute` is explicitly supplied:
+
+```powershell
+pnpm upgrade:retention:production -- --env-file=.env.production
+pnpm upgrade:retention:production -- --env-file=.env.production --execute
+```
+
+The executable path is intentionally ordered:
+
+1. Inspect API, Worker, and Web target image digests, freeze the current MCP
+   membership from auditable Compose/container state, then inspect MCP only when
+   that frozen topology is enabled. Require every included OCI revision label
+   to equal `WORKMESH_BUILD_SHA`; validate and freeze all later local values,
+   including PostgreSQL CLI identifiers; and run the target-image runtime guard
+   against the exact rendered migrate, API, Worker, Web, and optional MCP
+   service environments before any Docker update or stop.
+2. Using that frozen topology, run
+   `docker update --restart=no <old-worker-id>`, then
+   `docker compose ... stop -t 35 worker`. The stopped container must report
+   exit code 0, `Running=false`, and `Restarting=false`. A daemon interruption,
+   timeout, nonzero exit, or exit 137 aborts before the barrier or migration.
+   A label-filtered Docker query must also find zero running Worker containers.
+3. From the exact target Worker digest, run the read-only command
+   `node dist/run-retention-upgrade-barrier.js --expect-through=29`. It requires
+   the schema ledger to be exactly through 29 with 30 absent and no active
+   retention lease. It fully paginates `ListObjectVersions`, requires zero
+   delete markers and a two-way one-to-one match between every retention S3
+   `(key, VersionId)` and PostgreSQL, then uses version-pinned HEAD requests to
+   verify size, SHA-256, MIME, COMPLIANCE mode, and retain-until. Two complete
+   snapshots separated by a delay must have the same digest.
+4. Only after the barrier succeeds, run migration 30 from the exact target API
+   digest and require exactly one `0030_durable_archive_upload_intents` ledger
+   row. Migration 30 also takes a `SHARE ROW EXCLUSIVE` lock on
+   `retention_job_state` and raises SQLSTATE `55006` with
+   `UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE` if a residual claim is active.
+5. Force-recreate only the target Worker. Verify its actual image ID/digest,
+   then require fresh `worker_runtime` rows whose build SHA is the target SHA.
+   Only then force-recreate API and Web plus MCP if and only if MCP was in the
+   frozen pre-migration topology. An MCP-disabled upgrade never starts, waits
+   for, or verifies MCP and never passes `--profile agent`.
+
+The barrier is strictly read-only. An IAM list denial, incomplete pagination,
+orphan, missing version, multiple versions under one stable key, delete marker,
+HEAD mismatch, or changing snapshot aborts. It never deletes an object and
+never automatically adopts an object into PostgreSQL. Barrier and executor
+errors contain only stable codes plus, where necessary, an object key,
+VersionId, digest, or count; credentials and provider error text are not
+printed.
+
+Before migration 30 is committed, an abort leaves the old Worker stopped with
+restart disabled. Preserve that state while auditing any unresolved S3
+reconciliation. Do not delete the object, generate a replacement key,
+automatically adopt a version, or restart the old Worker. After migration 30
+is committed, the rollback boundary has been crossed: the old Worker is not
+schema-compatible and must not be restarted. Correct the target deployment and
+continue forward with the exact target SHA. The executor performs no automatic
+rollback and never removes an orphan.
+
+Other upgrades still require one exact application SHA: publish all images,
+resolve all four digests, update the four image references and
+`WORKMESH_BUILD_SHA`, and do not mix application revisions.
 
 ## Health and lifecycle
 
 Each runtime owns independent endpoints:
 
-| Service | Liveness | Readiness |
-| --- | --- | --- |
-| API | `/livez` on port 3001 | PostgreSQL, Redis, and request admission |
-| Worker | `/livez` on internal port 3003 | PostgreSQL, Redis/queue transport, object storage, and claim admission |
-| MCP | `/livez` on port 3002 | API readiness and request admission |
-| Web | `/livez` on port 3000 | Web process readiness |
+| Service | Liveness                       | Readiness                                                              |
+| ------- | ------------------------------ | ---------------------------------------------------------------------- |
+| API     | `/livez` on port 3001          | PostgreSQL, Redis, and request admission                               |
+| Worker  | `/livez` on internal port 3003 | PostgreSQL, Redis/queue transport, object storage, and claim admission |
+| MCP     | `/livez` on port 3002          | API readiness and request admission                                    |
+| Web     | `/livez` on port 3000          | Web process readiness                                                  |
 
 The Compose healthchecks use `/readyz`. A healthy liveness response does not mean a service is ready to accept work.
 
