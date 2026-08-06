@@ -34,7 +34,7 @@ const parseWorkflow = (name, source) => {
 }
 
 const candidateWorkflow = parseWorkflow('release-candidate', candidate)
-parseWorkflow('promote-ga', promotion)
+const promotionWorkflow = parseWorkflow('promote-ga', promotion)
 
 const ghcrCredentialExpression = 'secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN'
 
@@ -177,6 +177,29 @@ for (const value of [
 requireCondition(
   promotion.split(ghcrCredentialExpression).length - 1 === 1,
   'promote-ga must use the GHCR credential for its registry login',
+)
+
+const promotionSteps = promotionWorkflow?.jobs?.promote?.steps ?? []
+const manifestContractIndex = promotionSteps.findIndex(
+  step => step?.name === 'Validate candidate manifest contract',
+)
+const checkoutVerificationIndex = promotionSteps.findIndex(
+  step => step?.name === 'Verify exact candidate checkout',
+)
+requireCondition(
+  manifestContractIndex >= 0 &&
+    typeof promotionSteps[manifestContractIndex]?.run === 'string' &&
+    promotionSteps[manifestContractIndex].run.includes('appendFileSync(process.env.GITHUB_ENV') &&
+    !promotionSteps[manifestContractIndex].run.includes('git rev-parse HEAD'),
+  'promote-ga must export the manifest source SHA without consuming it in the same step',
+)
+requireCondition(
+  checkoutVerificationIndex > manifestContractIndex &&
+    typeof promotionSteps[checkoutVerificationIndex]?.run === 'string' &&
+    promotionSteps[checkoutVerificationIndex].run.includes(
+      'test "$(git rev-parse HEAD)" = "$SOURCE_SHA"',
+    ),
+  'promote-ga must verify the candidate checkout in a later step after GITHUB_ENV is applied',
 )
 
 requireCondition(releasePolicy.includes('High finding prevents promotion'), 'release policy must block High findings')
