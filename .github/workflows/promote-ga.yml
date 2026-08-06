@@ -100,8 +100,10 @@ jobs:
             throw new Error('Exactly four release images are required')
           appendFileSync(process.env.GITHUB_ENV, `SOURCE_SHA=${manifest.release.sourceSha}\n`)
           NODE
-          tag_commit="$(git rev-parse HEAD)"
-          test "$tag_commit" = "$SOURCE_SHA"
+      - name: Verify exact candidate checkout
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
       - name: Log in to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
