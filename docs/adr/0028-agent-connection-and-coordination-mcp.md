@@ -65,7 +65,7 @@ termination.
 A Connection is a long-lived, single-Team binding between one named
 Agent and one Human principal. The plan's endpoint list is the
 authoritative surface; this ADR does not add a list endpoint, a Human
-landing page, or any other path beyond the six resource operations
+landing page, or any other path beyond the seven resource operations
 declared in plan §"一次性配对":
 
 - `POST /api/v1/agent-connections` — create a pre-authorized envelope
@@ -86,14 +86,22 @@ declared in plan §"一次性配对":
   Requires `If-Match: "<revision>"`.
 - `POST /api/v1/agent-connections/{id}/rotate` — issue a new pairing
   code and pending credential. Old and new credentials stay valid
-  for 15 minutes (real `overlap_until` deadline; the old fingerprint
-  is auto-invalidated by the worker at that time, not on the new
-  redeem's success). After 15 minutes the old fingerprint is marked
-  `rotated`; the Connection returns to `active` with the new
-  fingerprint. The outbox event is `agent.connection.rotated`. The
-  Admin sees the result through the Connection state. Early
-  revocation goes through `DELETE /api/v1/agent-connections/{id}`
-  with `If-Match`.
+  for 15 minutes (real `overlap_until` deadline). During the overlap
+  window the Admin may call `/rotate-confirm` to revoke the old
+  fingerprint early; if the Admin does not, the worker auto-invalidates
+  the old fingerprint at `overlap_until`. Either path revokes only
+  the old fingerprint — the new fingerprint, the Connection, and any
+  live Coordination Session are not affected. The outbox event is
+  `agent.connection.rotated`. `DELETE` is still the hard path that
+  revokes the entire Connection.
+- `POST /api/v1/agent-connections/{id}/rotate-confirm` — revoke
+  the old fingerprint introduced by the current Rotation. The new
+  fingerprint remains valid; the Connection returns to `active`;
+  any live Coordination Session keeps running. Requires `If-Match:
+  "<revision>"`. This is the explicit implementation of the plan's
+  "确认成功后撤销旧凭据" requirement. The same end state is reached
+  passively when the worker expires the old fingerprint at
+  `overlap_until`, so the Admin can choose to wait.
 
 `POST /api/v1/agent-connections` (Workspace Admin) creates a
 pre-authorized envelope. The body fixes:
@@ -449,9 +457,13 @@ This ADR **does not** add:
 - A Human-facing landing page (the plan declares the Admin
   wizard produces a sentence that the Human pastes to the
   Agent; no server-rendered page is in scope).
-- A `/rotate-confirm` endpoint (the plan's "确认成功后撤销旧凭据"
-  is implemented via the 15-minute `overlap_until` window plus
-  explicit `DELETE`; see "Alternatives" above).
+- A `/rotate-confirm` endpoint (the plan v0.4 explicitly lists
+  `/rotate-confirm`; the v0.4 amendment restored the original
+  "确认成功后撤销旧凭据" requirement as a real Admin operation).
+  Without this endpoint the only "revoke old" path was the worker's
+  15-minute auto-expiry, which the v3 review found not faithful to
+  the plan. The v0.4 fix re-introduces `/rotate-confirm` and lets
+  the worker expiry remain as a safety net.
 - A migration file or DDL body (the plan puts migrations under
   §B).
 - A domain command, route handler, MCP server entrypoint, or

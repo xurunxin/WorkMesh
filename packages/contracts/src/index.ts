@@ -969,10 +969,31 @@ export const stage4RouteManifest = [
 // the MCP server reads the same shared contract schemas below. The Beta flag
 // `WORKMESH_BETA_COORDINATION_MCP` is enforced at the API layer.
 //
-// The endpoint set is exactly the plan §"一次性配对" resource surface plus the
-// well-known discovery route. No list endpoint, no Human landing page, no
-// /rotate-confirm: the plan's "确认成功后撤销旧凭据" is implemented as auto-
-// revoke on the new redeem's success (plan v0.2 amendment).
+// The endpoint set is exactly the plan §"一次性配对" resource surface
+// (plan v0.4) plus the well-known discovery route. No list endpoint, no
+// Human landing page.
+//
+// Plan v0.4 (current) — Rotation is a real lifecycle with an explicit
+// confirmation step, NOT worker auto-expiry:
+//   1. POST /rotate issues a new pairing code. Old + new credentials
+//      overlap for 15 minutes (overlap_until is a real deadline).
+//   2. During overlap, Admin may call POST /rotate-confirm to revoke
+//      only the old fingerprint. Connection state returns to 'active';
+//      new Token is preserved; live Coordination Sessions are NOT
+//      invalidated. This is the explicit implementation of the
+//      original plan "确认成功后撤销旧凭据".
+//   3. If Admin does NOT call /rotate-confirm, the worker auto-expires
+//      the old fingerprint at overlap_until. The new Token, the
+//      Connection, and the live Sessions are unaffected. Worker
+//      expiry is a safety net, not the primary mechanism.
+//   4. DELETE remains the hard path that revokes the entire
+//      Connection AND invalidates every live Coordination Session
+//      AND removes the new Token. The two operations are NOT
+//      interchangeable.
+// Earlier plan versions that conflated /rotate with /rotate-confirm
+// (v0.2: "new redeem auto-revokes old" — withdrawn; v0.3: "worker
+// auto-invalidates at overlap_until" — withdrawn in favor of v0.4)
+// are recorded in the revision history at the top of the plan file.
 export const stage5RouteManifest = [
   { method: 'GET', path: '/.well-known/workmesh-agent', authenticated: false },
   { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
@@ -981,6 +1002,7 @@ export const stage5RouteManifest = [
   { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate-confirm', authenticated: true, mutation: true, revisioned: true },
 ] as const
 
 export const agentRouteManifest = [
@@ -1107,9 +1129,14 @@ export const agentConnectionRedeemInputSchema = z
 // (clients may already have the bundle pinned). The well-known variant
 // keeps download_url optional at the base; the redeem variant extends
 // with download_url required. No `allOf` mixing: one base, one extension.
+// `version` is locked to SemVer (MAJOR.MINOR.PATCH with optional
+// pre-release) so the AGENT_SKILL_VERSION_MISMATCH error is actually
+// decidable on a pinned regex; a free-form 1-80 char string would let
+// "not-a-version" slip through and weaken the contract.
+const semverPattern = /^\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$/
 const agentConnectionSkillBundleBaseSchema = z.object({
   name: z.literal('workmesh'),
-  version: z.string().min(1).max(80),
+  version: z.string().regex(semverPattern, 'skill bundle version must be SemVer (MAJOR.MINOR.PATCH with optional pre-release)'),
   sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   signature: z.string().min(16).max(2000),
 })
@@ -1180,7 +1207,7 @@ export const agentConnectionResponseSchema = z
     requested_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'requested_capabilities must not contain duplicates' }),
     granted_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
     grant_agent_delegate: z.boolean(),
-    skill_version: z.string().nullable(),
+    skill_version: z.string().regex(semverPattern, 'skill_version must be SemVer or null').nullable(),
     skill_sha256: z.string().nullable().refine(value => value === null || /^sha256:[a-f0-9]{64}$/.test(value), { message: 'skill_sha256 must be null or match sha256:<64 hex chars>' }),
     credential_fingerprint_prefix: z.string().nullable(),
     pairing_code_expires_at: timestampSchema.nullable(),
@@ -1263,7 +1290,9 @@ export const coordinationSessionResponseSchema = z
     session_kind: z.literal('coordination'),
     role: z.literal('coordinator'),
     delegation_scope: z.literal('team'),
-    granted_capabilities: z.array(capabilitySchema),
+    granted_capabilities: z
+      .array(capabilitySchema)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
     expires_at: timestampSchema,
     refreshed_at: timestampSchema.nullable(),
     team_id: idSchema,
@@ -1271,6 +1300,22 @@ export const coordinationSessionResponseSchema = z
   })
   .strict()
 
+// Cross-field invariants for AgentConnectionIdentity (the per-request
+// identity a Coordination MCP request resolves to):
+//   (a) coordination_session.granted_capabilities ⊆
+//       connection.granted_capabilities
+//       — a live Session cannot be granted a capability the
+//         parent Connection does not have, otherwise the public
+//         contract would let a Connection grant "work:read" and a
+//         forged Session claim "admin:*".
+//   (b) identity.granted_capabilities = coordination_session.granted_capabilities
+//       — the per-request view must mirror the Session; otherwise
+//         individual MCP responses could drift from the Session
+//         that supposedly issued them.
+//   (c) granted_capabilities has no duplicates.
+// OpenAPI enforces (a) and (b) per-capability via if/then/else blocks
+// (JSON Schema 2020-12 has no subset operator); Zod enforces all
+// three so non-OpenAPI clients also get the contract.
 export const agentConnectionIdentitySchema = z
   .object({
     connection: agentConnectionResponseSchema,
@@ -1278,9 +1323,32 @@ export const agentConnectionIdentitySchema = z
     agent_actor_id: idSchema,
     principal_human_actor_id: idSchema,
     team_id: idSchema,
-    granted_capabilities: z.array(capabilitySchema),
+    granted_capabilities: z
+      .array(capabilitySchema)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
   })
   .strict()
+  .superRefine((value, ctx) => {
+    const connectionGranted = new Set(value.connection.granted_capabilities)
+    const unrequested = value.coordination_session.granted_capabilities.filter(c => !connectionGranted.has(c))
+    if (unrequested.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `coordination_session.granted_capabilities must be a subset of connection.granted_capabilities; not in connection: ${unrequested.join(', ')}`,
+        path: ['coordination_session', 'granted_capabilities'],
+      })
+    }
+    const sessionSet = new Set(value.coordination_session.granted_capabilities)
+    const identityExtra = value.granted_capabilities.filter(c => !sessionSet.has(c))
+    const sessionExtra = value.coordination_session.granted_capabilities.filter(c => !value.granted_capabilities.includes(c))
+    if (identityExtra.length > 0 || sessionExtra.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `identity.granted_capabilities must equal coordination_session.granted_capabilities; identity has extras [${identityExtra.join(', ')}], session has extras [${sessionExtra.join(', ')}]`,
+        path: ['granted_capabilities'],
+      })
+    }
+  })
 
 export type AgentConnectionClientType = z.infer<typeof agentConnectionClientTypeSchema>
 export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>

@@ -1,7 +1,9 @@
 # WorkMesh Agent-first Coordination MCP 实施计划
 
 > 修订记录
-> - 2026-08-07 v0.3 — 撤回 v0.2 的"新 redeem 立即撤销旧凭据"语义；恢复 v0.1 的 15 分钟重叠语义：旧凭据在 `overlap_until` 之前一直可用，Admin 通过 DELETE 显式撤销、或者在 15 分钟到期后服务端自动停用。"确认成功后撤销旧凭据"解读为：新 redeem 成功 = Admin 获得"新凭据可用"的事实验证，旧的 15 分钟倒计时从这一刻开始；与 `overlap_until` 字段一致。v0.2 的"同事务内标记 rotated"会让 15 分钟重叠失效，因此撤回。
+> - 2026-08-07 v0.4 — Plan §"一次性配对" 加回 `/rotate-confirm`。v0.3 用 worker 到期替代"确认成功后撤销"被 v3 审查指出不是对原话的忠实澄清。原计划"确认成功后撤销旧凭据"是显式确认步骤，不能用自动过期替代。v0.4：Rotate 颁发新配对码；新旧凭据重叠 15 分钟（`overlap_until` 是真实截止时间）；Admin 在重叠期内任何时间调用 `/rotate-confirm` 仅撤销旧 fingerprint（**Connection 不删、Session 不废、新凭据不撤销**）；如果 Admin 不主动 confirm，worker 在 `overlap_until` 把旧 fingerprint 停用（**仅旧 fingerprint**，新凭据不受影响）。DELETE 仍然是撤销整个 Connection + 全部活跃 Session 的硬路径。`/rotate-confirm` 在 v0.2/v0.3 的讨论里被列为"未批准"，是当时对原计划"确认"二字的解读偏窄；v0.4 把它显式放回计划，作为 v0.2/v0.3 的"撤销旧凭据"操作的真实实现。
+> - 2026-08-07 v0.3 — 撤回 v0.2 的"新 redeem 立即撤销旧凭据"语义；恢复 v0.1 的 15 分钟重叠语义：旧凭据在 `overlap_until` 之前一直可用，Admin 通过 DELETE 显式撤销、或者在 15 分钟到期后服务端自动停用。**v0.3 后被 v0.4 取代**：v0.3 把"确认成功后"读作"新 redeem 成功"不够准确；原话是显式确认步骤。
+> - 2026-08-07 v0.2 — 把 §"一次性配对" 中的 `/rotate` 一行展开："确认成功后撤销旧凭据" 显式化为"新 redeem 在同事务里把旧凭据标记 `rotated`、新凭据变 `active`"，不另设 `/rotate-confirm` 端点。**v0.2 后被 v0.3 取代**：会让 15 分钟重叠失效。
 
 ## 摘要
 
@@ -25,7 +27,8 @@
 - `POST /api/v1/agent-connections`：Workspace Admin 创建预授权信封，固定 Agent 名称、Team、principal Human、能力和客户端类型。
 - `POST /api/v1/agent-connections/redeem`：Agent 使用十分钟单用配对码兑换 Installation Token、MCP 配置和固定版本 Skill。**必须带 `Idempotency-Key` 头**；成功响应以 `Idempotency-Key` 为键保存整段配对码生命周期，Agent 因网络丢包重放同一 key 拿回完全相同响应。
 - `GET/PATCH/DELETE /api/v1/agent-connections/{id}`：查看、修改非扩权元数据、撤销连接。**PATCH 和 DELETE 必须带 `If-Match`，响应必带 `ETag` 头**。
-- `POST /api/v1/agent-connections/{id}/rotate`：生成轮换配对指令；新旧凭据重叠 15 分钟。响应中 `overlap_until` 是真实的截止时间——在此之前旧凭据与新凭据同时可用，过期后服务端自动停用旧 fingerprint。Admin 显式撤销走 `DELETE /api/v1/agent-connections/{id}`。
+- `POST /api/v1/agent-connections/{id}/rotate`：生成轮换配对指令；新旧凭据重叠 15 分钟。响应中 `overlap_until` 是真实的截止时间——在此之前旧凭据与新凭据同时可用。Admin 在重叠期内可以调用 `/rotate-confirm` 提前仅撤销旧 fingerprint；如果 Admin 不主动 confirm，worker 在 `overlap_until` 把旧 fingerprint 停用（新凭据不受影响、Connection 不被删、活跃 Session 不废）。`DELETE /api/v1/agent-connections/{id}` 仍然是撤销整个 Connection + 全部活跃 Session 的硬路径。
+- `POST /api/v1/agent-connections/{id}/rotate-confirm`：**仅撤销当前 Rotation 引入的旧 fingerprint**，Connection 状态回到 `active`、新凭据保留、活跃 Session 不废。必须带 `If-Match`（Connection 当前 revision）。这是"确认成功后撤销旧凭据"的显式实现；如果 Admin 不调用，15 分钟到期后 worker 走相同结果。
 
 配对码只接受 fragment 携带（路径或 query string 一律拒绝）；URL schema 用正则强制。配对码仅保存 hash，限制尝试次数并使用共享 Redis 限流。
 

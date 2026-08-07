@@ -56,7 +56,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     }
   })
 
-  it('exposes only the plan endpoint set, no list / no /agents/connect / no /rotate-confirm', () => {
+  it('exposes only the plan endpoint set, no list / no /agents/connect, but /rotate-confirm IS the explicit "确认成功后撤销旧凭据" operation (plan v0.4)', () => {
     const operations = stage5RouteManifest.map(r => `${r.method} ${r.path}`)
     expect(operations).toEqual([
       'GET /.well-known/workmesh-agent',
@@ -66,23 +66,35 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       'PATCH /api/v1/agent-connections/{id}',
       'DELETE /api/v1/agent-connections/{id}',
       'POST /api/v1/agent-connections/{id}/rotate',
+      'POST /api/v1/agent-connections/{id}/rotate-confirm',
     ])
     expect(operations.some(op => op === 'GET /api/v1/agent-connections')).toBe(false)
     expect(operations.some(op => op === 'GET /agents/connect')).toBe(false)
-    expect(operations.some(op => op === 'POST /api/v1/agent-connections/{id}/rotate-confirm')).toBe(false)
+    // /rotate-confirm must be revisioned: true (If-Match) and not
+    // conflated with /rotate. Plan v0.2/v0.3 dropped it or replaced
+    // it with worker auto-expiry; v0.4 brings it back.
+    const rotateConfirm = stage5RouteManifest.find(r => r.path === '/api/v1/agent-connections/{id}/rotate-confirm')
+    expect(rotateConfirm?.method).toBe('POST')
+    expect(rotateConfirm?.mutation).toBe(true)
+    expect(rotateConfirm?.revisioned).toBe(true)
   })
 
-  it('marks every state-changing route as mutation and PATCH / DELETE / rotate as revisioned', () => {
+  it('marks every state-changing route as mutation and PATCH / DELETE / rotate / rotate-confirm as revisioned', () => {
     for (const route of stage5RouteManifest) {
       const isStateChanging = route.method !== 'GET'
       if (isStateChanging) {
         expect(route.mutation, `${route.method} ${route.path} must be mutation: true`).toBe(true)
       }
       if (route.method === 'PATCH' || route.method === 'DELETE' || route.method === 'POST') {
-        // The high-conflict rotate mutation also needs If-Match per the
-        // review; the route manifest's `revisioned: true` is the contract
-        // surface for that.
-        if (route.path === '/api/v1/agent-connections/{id}/rotate') {
+        // The high-conflict rotate / rotate-confirm mutations also need
+        // If-Match per the review; the route manifest's `revisioned: true`
+        // is the contract surface for that. Plan v0.4 makes the two
+        // operations distinct: rotate issues a new pairing code;
+        // rotate-confirm revokes only the old fingerprint on confirm.
+        if (
+          route.path === '/api/v1/agent-connections/{id}/rotate' ||
+          route.path === '/api/v1/agent-connections/{id}/rotate-confirm'
+        ) {
           expect(route.revisioned, `${route.method} ${route.path} must be revisioned: true`).toBe(true)
         }
         if (route.method === 'PATCH' || route.method === 'DELETE') {
@@ -482,20 +494,162 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
   it('enforces granted_capabilities ⊆ requested_capabilities in OPENAPI', async () => {
     const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
     // The reviewer flagged that admin:* could be granted when only
-    // work:read was requested. The contract must include an allOf
-    // block describing the subset invariant.
+    // work:read was requested. The contract must (a) declare the
+    // subset relationship as a top-level description, and (b) include
+    // one if/then/else block per capability (17 in total) inside the
+    // allOf array so a spec validator can decide the subset property.
     expect(openapi).toMatch(/granted_capabilities must be a subset of requested_capabilities/)
+    // 17 per-capability subset blocks (one per Capability enum value).
+    // The description text is the YAML-escaped form `granted \u2286 requested:`
+    // (backslash + u2286) so a non-Unicode-aware tool like ripgrep can grep it;
+    // the regex below uses a doubled backslash to match the literal sequence
+    // in the file (a single \u in JS regex would be parsed as Unicode ⊆).
+    const subsetMarkers = openapi.match(/granted \\u2286 requested:/g) || []
+    expect(subsetMarkers.length, 'AgentConnectionResponse must have 17 per-capability subset blocks').toBe(17)
   })
 
-  it('documents the rotate 15-minute overlap without auto-revoke semantics in OPENAPI', async () => {
+  it('binds AgentConnectionIdentity to the parent Connection + Coordination Session in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // (a) CoordinationSession.granted_capabilities must be uniqueItems.
+    const coordBlock = openapi.match(/CoordinationSession:[\s\S]*?uniqueItems:\s*true/)
+    expect(coordBlock, 'CoordinationSession.granted_capabilities must be uniqueItems:true').toBeTruthy()
+    // (b) AgentConnectionIdentity must declare subset + equality invariants.
+    expect(openapi).toMatch(/coordination_session\.granted_capabilities is a subset of connection\.granted_capabilities/)
+    expect(openapi).toMatch(/identity\.granted_capabilities equals coordination_session\.granted_capabilities/)
+    // (c) 17 + 17 + 17 = 51 allOf blocks; count the per-capability "If
+    //     the Connection did not grant", "If the Session did not
+    //     grant", and "If the identity does not grant" markers.
+    const a = openapi.match(/If the Connection did not grant/g) || []
+    const b = openapi.match(/If the Session did not grant/g) || []
+    const c = openapi.match(/If the identity does not grant/g) || []
+    expect(a.length, 'subset blocks (connection → session)').toBe(17)
+    expect(b.length, 'subset blocks (session → identity)').toBe(17)
+    expect(c.length, 'equality blocks (identity → session)').toBe(17)
+  })
+
+  it('locks skill_version to SemVer in both Zod and OPENAPI', () => {
+    // The plan-stage5 schema's skill_version accepts any string today;
+    // AGENT_SKILL_VERSION_MISMATCH is not decidable on a free-form
+    // string. Pin to MAJOR.MINOR.PATCH(-pre-release)?.
+    // makeResponse() returns the base object; the actual Zod parse
+    // happens in agentConnectionResponseSchema.parse(...).
+    const parse = (overrides: Parameters<typeof makeResponse>[0]) => {
+      const result = agentConnectionResponseSchema.safeParse(makeResponse(overrides))
+      if (!result.success) throw new Error(JSON.stringify(result.error.issues, null, 2))
+      return result.data
+    }
+    expect(() => parse({ skill_version: 'not-semver' })).toThrow(/SemVer/)
+    expect(() => parse({ skill_version: '1.0' })).toThrow(/SemVer/)
+    expect(() => parse({ skill_version: '1.0.0' })).not.toThrow()
+    expect(() => parse({ skill_version: '1.0.0-rc.1' })).not.toThrow()
+  })
+
+  it('rejects duplicate granted_capabilities on the Coordination Session', () => {
+    expect(() => coordinationSessionResponseSchema.parse({
+      id,
+      connection_id: id,
+      session_kind: 'coordination',
+      role: 'coordinator',
+      delegation_scope: 'team',
+      granted_capabilities: ['work:read', 'work:read'],
+      expires_at: '2026-08-07T11:00:00Z',
+      refreshed_at: null,
+      team_id: id,
+      principal_human_actor_id: id,
+    })).toThrow()
+  })
+
+  it('rejects Coordination Session claims that exceed the parent Connection grants', () => {
+    const tight = makeResponse({ granted_capabilities: ['work:read', 'work:write'] })
+    const overreaching = {
+      connection: tight,
+      coordination_session: {
+        id,
+        connection_id: id,
+        session_kind: 'coordination' as const,
+        role: 'coordinator' as const,
+        delegation_scope: 'team' as const,
+        granted_capabilities: ['work:read', 'admin:*'], // admin:* not granted by the parent
+        expires_at: '2026-08-07T11:00:00Z',
+        refreshed_at: null,
+        team_id: id,
+        principal_human_actor_id: id,
+      },
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'admin:*'],
+    }
+    expect(() => agentConnectionIdentitySchema.parse(overreaching)).toThrow(/subset/)
+  })
+
+  it('rejects identity.granted_capabilities that drift from coordination_session.granted_capabilities', () => {
+    const tight = makeResponse({ granted_capabilities: ['work:read', 'work:write'] })
+    const drifted = {
+      connection: tight,
+      coordination_session: {
+        id,
+        connection_id: id,
+        session_kind: 'coordination' as const,
+        role: 'coordinator' as const,
+        delegation_scope: 'team' as const,
+        granted_capabilities: ['work:read', 'work:write'],
+        expires_at: '2026-08-07T11:00:00Z',
+        refreshed_at: null,
+        team_id: id,
+        principal_human_actor_id: id,
+      },
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read'], // missing work:write; drift from session
+    }
+    expect(() => agentConnectionIdentitySchema.parse(drifted)).toThrow(/equal/)
+  })
+
+  it('rejects duplicate granted_capabilities on the per-request Identity', () => {
+    const tight = makeResponse({ granted_capabilities: ['work:read', 'work:write'] })
+    const duplicates = {
+      connection: tight,
+      coordination_session: {
+        id,
+        connection_id: id,
+        session_kind: 'coordination' as const,
+        role: 'coordinator' as const,
+        delegation_scope: 'team' as const,
+        granted_capabilities: ['work:read', 'work:read'],
+        expires_at: '2026-08-07T11:00:00Z',
+        refreshed_at: null,
+        team_id: id,
+        principal_human_actor_id: id,
+      },
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:read'],
+    }
+    expect(() => agentConnectionIdentitySchema.parse(duplicates)).toThrow()
+  })
+
+  it('declares /rotate-confirm with If-Match and confirmAgentConnectionRotation operationId in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    expect(openapi).toMatch(/\/api\/v1\/agent-connections\/\{id\}\/rotate-confirm:/)
+    const block = openapi.match(/\/api\/v1\/agent-connections\/\{id\}\/rotate-confirm:[\s\S]*?(?=\n  \/[^\n]+:|\ncomponents:)/)
+    expect(block, 'rotate-confirm path block must exist in OPENAPI').toBeTruthy()
+    expect(block![0]).toMatch(/operationId:\s*confirmAgentConnectionRotation/)
+    expect(block![0]).toMatch(/\$ref:\s*["']#\/components\/parameters\/IfMatch["']/)
+    expect(block![0]).toMatch(/\$ref:\s*["']#\/components\/parameters\/IdempotencyKey["']/)
+  })
+
+  it('documents the rotate 15-minute overlap and the explicit /rotate-confirm path, without the v0.2 auto-revoke claim, in OPENAPI', async () => {
     const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
     // The v0.2 'auto-revoke on new redeem' must NOT appear in the
     // rotate description. The 15-minute overlap_until must be a real
-    // deadline.
+    // deadline. The v0.4 explicit confirmation path is /rotate-confirm.
     const rotateDescription = openapi.match(/rotateAgentConnection, description: "([^"]+)"/)
     expect(rotateDescription).toBeTruthy()
     expect(rotateDescription![1]).toMatch(/overlap_until is a real deadline/)
-    expect(rotateDescription![1]).toMatch(/worker auto-invalidates the old fingerprint/)
+    expect(rotateDescription![1]).toMatch(/\/rotate-confirm/)
     expect(rotateDescription![1]).not.toMatch(/transaction marks the old credential fingerprint `rotated`, the new fingerprint `active`/)
   })
 
