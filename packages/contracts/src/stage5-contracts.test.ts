@@ -180,7 +180,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
   })
 
   it('allows grant_agent_delegate=true to include agent:delegate in granted_capabilities', () => {
-    const ok = makeResponse({ grant_agent_delegate: true, granted_capabilities: ['work:read', 'agent:delegate'] })
+    const ok = makeResponse({ grant_agent_delegate: true, requested_capabilities: ['work:read', 'agent:delegate'], granted_capabilities: ['work:read', 'agent:delegate'] })
     expect(() => agentConnectionResponseSchema.parse(ok)).not.toThrow()
   })
 
@@ -245,6 +245,79 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       skill: { name: 'workmesh', version: '1.1.0', sha256: hash, signature: 'ed25519:' + 'a'.repeat(48) },
     })
     expect(JSON.stringify(parsed)).not.toMatch(/installation_token|connect_url|pairing_code|secret|token/i)
+  })
+
+  it('locks CoordinationSession delegation_scope to team (no other scope accepted)', () => {
+    expect(() => coordinationSessionResponseSchema.parse({
+      id,
+      connection_id: id,
+      session_kind: 'coordination',
+      role: 'coordinator',
+      delegation_scope: 'work_item',
+      granted_capabilities: ['work:read'],
+      expires_at: '2026-08-07T11:00:00Z',
+      refreshed_at: null,
+      team_id: id,
+      principal_human_actor_id: id,
+    })).toThrow()
+  })
+
+  it('rejects duplicate requestedCapabilities on the create input', () => {
+    expect(() => agentConnectionCreateInputSchema.parse({
+      name: 'Backend Coder',
+      agentSlug: 'backend-coder-1',
+      teamId: id,
+      clientType: 'codex',
+      requestedCapabilities: ['work:read', 'work:write', 'work:read'],
+      grantAgentDelegate: false,
+    })).toThrow()
+  })
+
+  it('rejects unrequested granted_capabilities (admin:* sneaking through)', () => {
+    const unrequested = makeResponse({
+      requested_capabilities: ['work:read'],
+      granted_capabilities: ['admin:*'],
+      grant_agent_delegate: true,
+    })
+    expect(() => agentConnectionResponseSchema.parse(unrequested)).toThrow(/subset/)
+  })
+
+  it('rejects duplicate granted_capabilities', () => {
+    const duplicates = makeResponse({
+      grant_agent_delegate: false,
+      granted_capabilities: ['work:read', 'work:read'],
+    })
+    expect(() => agentConnectionResponseSchema.parse(duplicates)).toThrow()
+  })
+
+  it('constrains agent_slug to the documented slug pattern', () => {
+    const bad = makeResponse({ agent_slug: 'Has Spaces' })
+    expect(() => agentConnectionResponseSchema.parse(bad)).toThrow(/slug/i)
+  })
+
+  it('constrains skill_sha256 to the documented sha256:hex pattern (or null)', () => {
+    const bad = makeResponse({ skill_sha256: 'not-a-sha256' })
+    expect(() => agentConnectionResponseSchema.parse(bad)).toThrow(/sha256/)
+  })
+
+  it('rejects userinfo in connect_url (https://code@host.test/connect/x#abc)', () => {
+    const response = {
+      connection: makeResponse(),
+      connect_url: 'https://code@host.test/connect/backend-coder-1#abcdefgh-1234',
+      pairing_code_expires_at: '2026-08-07T10:10:00Z',
+      overlap_until: '2026-08-07T10:15:00Z',
+    }
+    expect(() => agentConnectionRotateResponseSchema.parse(response)).toThrow(/userinfo/)
+  })
+
+  it('rejects userinfo in connect_url (https://user:pass@host/connect/x#abc)', () => {
+    const response = {
+      connection: makeResponse(),
+      connect_url: 'https://user:pass@host.test/connect/backend-coder-1#abcdefgh-1234',
+      pairing_code_expires_at: '2026-08-07T10:10:00Z',
+      overlap_until: '2026-08-07T10:15:00Z',
+    }
+    expect(() => agentConnectionRotateResponseSchema.parse(response)).toThrow(/userinfo/)
   })
 
   it('pins Coordination Session identity to the team-scope coordinator role', () => {
@@ -362,6 +435,70 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     expect(openapi).not.toMatch(/^    AgentCapability:/m)
   })
 
+  it('locks CoordinationSession delegation_scope to const: team in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // The CoordinationSession schema must use const: team, not the
+    // DelegationScopeType ref. Otherwise a generated client could
+    // send work_item or plan_step and weaken Team isolation.
+    expect(openapi).toMatch(/CoordinationSession:[\s\S]*?delegation_scope:\s*\{\s*const:\s*team\s*\}/)
+  })
+
+  it('does not mark the redeem installation_token as writeOnly', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // The Redeem response must NOT have writeOnly: true on
+    // installation_token. writeOnly is for input fields; strict client
+    // generators strip the field on responses, breaking first redeem
+    // and Idempotency-Key replay. Note: the description text is
+    // allowed to mention "writeOnly" as a concept explanation; we
+    // only assert the JSON Schema keyword writeOnly: true is not set.
+    const idx = openapi.indexOf('AgentConnectionRedeemResponse:')
+    expect(idx, 'redeem response schema must exist').toBeGreaterThanOrEqual(0)
+    const sub = openapi.slice(idx)
+    const fieldStart = sub.indexOf('installation_token:')
+    expect(fieldStart, 'installation_token field must exist').toBeGreaterThanOrEqual(0)
+    const fieldEnd = sub.indexOf('}, mcp:', fieldStart)
+    expect(fieldEnd, 'installation_token field must end before mcp').toBeGreaterThanOrEqual(0)
+    const field = sub.slice(fieldStart, fieldEnd)
+    expect(field).not.toMatch(/writeOnly:\s*true/)
+  })
+
+  it('declares connect_url without userinfo in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // The connect_url pattern must exclude @ so userinfo
+    // (https://user:pass@host/...) is rejected at the contract layer.
+    // Pull the pattern value from each connect_url field and assert
+    // it does not contain @ in the host char class.
+    const patterns = [...openapi.matchAll(/connect_url:\s*\{[^}]*pattern:\s*"([^"]+)"/g)]
+    expect(patterns.length).toBeGreaterThanOrEqual(2)
+    for (const m of patterns) {
+      // The host char class appears right after `^https://`. The host
+      // class must be limited to host-safe chars; @ is the userinfo marker.
+      expect(m[1]).toMatch(/\^https:\/\//)
+      // The pattern as a whole must not allow @ (which is what userinfo uses).
+      expect(m[1]).not.toMatch(/@/)
+    }
+  })
+
+  it('enforces granted_capabilities ⊆ requested_capabilities in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // The reviewer flagged that admin:* could be granted when only
+    // work:read was requested. The contract must include an allOf
+    // block describing the subset invariant.
+    expect(openapi).toMatch(/granted_capabilities must be a subset of requested_capabilities/)
+  })
+
+  it('documents the rotate 15-minute overlap without auto-revoke semantics in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // The v0.2 'auto-revoke on new redeem' must NOT appear in the
+    // rotate description. The 15-minute overlap_until must be a real
+    // deadline.
+    const rotateDescription = openapi.match(/rotateAgentConnection, description: "([^"]+)"/)
+    expect(rotateDescription).toBeTruthy()
+    expect(rotateDescription![1]).toMatch(/overlap_until is a real deadline/)
+    expect(rotateDescription![1]).toMatch(/worker auto-invalidates the old fingerprint/)
+    expect(rotateDescription![1]).not.toMatch(/transaction marks the old credential fingerprint `rotated`, the new fingerprint `active`/)
+  })
+
   it('uses one base Skill bundle plus an extension, not allOf on additionalProperties:false', async () => {
     const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
     // The Skill manifest schema must not have an allOf that adds
@@ -428,7 +565,7 @@ function baseResponse(): Response {
     agent_slug: 'backend-coder-1',
     client_type: 'codex',
     status: 'active',
-    requested_capabilities: ['work:read'],
+    requested_capabilities: ['work:read', 'work:write'],
     granted_capabilities: ['work:read', 'work:write'],
     grant_agent_delegate: false,
     skill_version: '1.1.0',

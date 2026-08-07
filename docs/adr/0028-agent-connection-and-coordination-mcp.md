@@ -85,14 +85,15 @@ declared in plan §"一次性配对":
 - `DELETE /api/v1/agent-connections/{id}` — revoke the Connection.
   Requires `If-Match: "<revision>"`.
 - `POST /api/v1/agent-connections/{id}/rotate` — issue a new pairing
-  code and pending credential; old and new credentials stay valid
-  for 15 minutes. The plan's "确认成功后撤销旧凭据" requirement is
-  implemented as: when the new redeem succeeds, the same PostgreSQL
-  transaction marks the old credential fingerprint `rotated`, the
-  new fingerprint `active`, and transitions the Connection from
-  `rotating` to `active`. No separate `/rotate-confirm` endpoint
-  exists; the Admin sees the result through the Connection state and
-  the `agent.connection.rotated` event.
+  code and pending credential. Old and new credentials stay valid
+  for 15 minutes (real `overlap_until` deadline; the old fingerprint
+  is auto-invalidated by the worker at that time, not on the new
+  redeem's success). After 15 minutes the old fingerprint is marked
+  `rotated`; the Connection returns to `active` with the new
+  fingerprint. The outbox event is `agent.connection.rotated`. The
+  Admin sees the result through the Connection state. Early
+  revocation goes through `DELETE /api/v1/agent-connections/{id}`
+  with `If-Match`.
 
 `POST /api/v1/agent-connections` (Workspace Admin) creates a
 pre-authorized envelope. The body fixes:
@@ -387,10 +388,15 @@ HTTPS path.
 - **Manual `/rotate-confirm` endpoint.** Rejected after a
   contract review. The plan §"一次性配对" lists exactly six
   resource operations; adding a seventh would expand the public
-  surface without plan approval. The "确认成功后撤销旧凭据"
-  rule is implemented as auto-revoke on the new redeem's
-  success, with the Connection state and
-  `agent.connection.rotated` event as the audit trail.
+  surface without plan approval. The 15-minute `overlap_until`
+  window is the auto-revocation path; the Admin can also call
+  `DELETE` for immediate revocation.
+- **Auto-revoke on new redeem (v0.2).** Withdrawn. The 15-minute
+  overlap and "auto-revoke on the new redeem's success" are
+  mutually exclusive: if the old credential is invalidated as
+  soon as the new redeem succeeds, `overlap_until` is a lie. The
+  v0.3 plan restores the original 15-minute overlap semantics;
+  the worker enforces `overlap_until` on the old fingerprint.
 
 ## Consequences
 
@@ -444,8 +450,8 @@ This ADR **does not** add:
   wizard produces a sentence that the Human pastes to the
   Agent; no server-rendered page is in scope).
 - A `/rotate-confirm` endpoint (the plan's "确认成功后撤销旧凭据"
-  is implemented as auto-revoke on the new redeem's success;
-  see "Alternatives" above).
+  is implemented via the 15-minute `overlap_until` window plus
+  explicit `DELETE`; see "Alternatives" above).
 - A migration file or DDL body (the plan puts migrations under
   §B).
 - A domain command, route handler, MCP server entrypoint, or

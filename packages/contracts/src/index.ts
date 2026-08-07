@@ -1018,12 +1018,11 @@ export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeV
 
 export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])
 
-// A connect URL must carry the pairing code ONLY in the fragment, on a path
-// matching the well-known connect pattern, with no credential-like query or
-// path segments. The reviewer-flagged bypass
-// `https://example.test/connect?pairing_code=LEAK#placeholder` is rejected
-// here. The OpenAPI pattern enforces the same shape at the contract layer.
-const connectUrlPattern = /^https:\/\/[^/?#]+\/connect\/[a-z0-9][a-z0-9-]{0,79}#[A-Za-z0-9_-]{8,512}$/
+// URL pattern + URL parser defense: the regex pins the shape, the URL
+// parser rejects userinfo (https://user:pass@host/...) so an attacker
+// cannot carry a secret in the userinfo segment. The reviewer-flagged
+// bypass `https://code@host.test/connect/x#abcdefgh` is rejected here.
+const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/connect\/[a-z0-9][a-z0-9-]{0,79}#[A-Za-z0-9_-]{8,512}$/
 const connectUrlSchema = z
   .string()
   .superRefine((value, ctx) => {
@@ -1031,7 +1030,7 @@ const connectUrlSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          'connect_url must be https://<host>/connect/<agent-slug>#<pairing-code>; query/path credentials and missing/short fragments are rejected',
+          'connect_url must be https://<host>/connect/<agent-slug>#<pairing-code>; userinfo, query/path credentials, and missing/short fragments are rejected',
       })
       return
     }
@@ -1040,6 +1039,21 @@ const connectUrlSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'connect_url must not embed credentials in the query or path; fragment-only is the rule',
+      })
+      return
+    }
+    try {
+      const parsed = new URL(value)
+      if (parsed.username || parsed.password) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'connect_url must not carry a userinfo segment (https://user:pass@host/...); the URL parser rejected it',
+        })
+      }
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'connect_url is not a valid URL',
       })
     }
   })
@@ -1051,7 +1065,11 @@ export const agentConnectionCreateInputSchema = z
     teamId: idSchema,
     principalHumanActorId: idSchema.optional(),
     clientType: agentConnectionClientTypeSchema,
-    requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
+    requestedCapabilities: z
+      .array(capabilitySchema)
+      .min(1)
+      .max(50)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'requestedCapabilities must not contain duplicates' }),
     grantAgentDelegate: z.boolean().default(false),
     notes: z.string().max(2000).optional(),
   })
@@ -1104,13 +1122,18 @@ export const agentConnectionSkillBundleSchema = agentConnectionSkillBundleBaseSc
   .strict()
 export const agentConnectionWellKnownSkillSchema = agentConnectionSkillBundleBaseSchema.strict()
 
-// Cross-field invariant: when grant_agent_delegate is false, the granted
-// capabilities MUST NOT include agent:delegate. Enforced here at the
-// schema layer; the OpenAPI schema also enforces it via if/then/else on
-// generated_capabilities.
+// Cross-field invariants for AgentConnectionResponse:
+//   (a) granted_capabilities ⊆ requested_capabilities (no Agent can ever
+//       get a capability the Admin did not pre-authorize).
+//   (b) granted_capabilities may not include agent:delegate unless
+//       grant_agent_delegate is true.
+//   (c) granted_capabilities must not contain duplicates.
+// OpenAPI enforces (a) and (b) via if/then/else; this Zod schema enforces
+// all three so non-OpenAPI clients also get the contract.
 const crossFieldGrantDelegateSchema = z
   .object({
     grant_agent_delegate: z.boolean(),
+    requested_capabilities: z.array(capabilitySchema),
     granted_capabilities: z.array(capabilitySchema),
   })
   .superRefine((value, ctx) => {
@@ -1118,6 +1141,22 @@ const crossFieldGrantDelegateSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'granted_capabilities may not include agent:delegate when grant_agent_delegate is false',
+        path: ['granted_capabilities'],
+      })
+    }
+    const requested = new Set(value.requested_capabilities)
+    const unrequested = value.granted_capabilities.filter(c => !requested.has(c))
+    if (unrequested.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `granted_capabilities must be a subset of requested_capabilities; unrequested: ${unrequested.join(', ')}`,
+        path: ['granted_capabilities'],
+      })
+    }
+    if (new Set(value.granted_capabilities).size !== value.granted_capabilities.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'granted_capabilities must not contain duplicates',
         path: ['granted_capabilities'],
       })
     }
@@ -1135,14 +1174,14 @@ export const agentConnectionResponseSchema = z
     agent_actor_id: idSchema,
     principal_human_actor_id: idSchema,
     name: z.string(),
-    agent_slug: z.string(),
+    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
     client_type: agentConnectionClientTypeSchema,
     status: agentConnectionStatusSchema,
-    requested_capabilities: z.array(capabilitySchema),
-    granted_capabilities: z.array(capabilitySchema),
+    requested_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'requested_capabilities must not contain duplicates' }),
+    granted_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
     grant_agent_delegate: z.boolean(),
     skill_version: z.string().nullable(),
-    skill_sha256: z.string().nullable(),
+    skill_sha256: z.string().nullable().refine(value => value === null || /^sha256:[a-f0-9]{64}$/.test(value), { message: 'skill_sha256 must be null or match sha256:<64 hex chars>' }),
     credential_fingerprint_prefix: z.string().nullable(),
     pairing_code_expires_at: timestampSchema.nullable(),
     last_used_at: timestampSchema.nullable(),

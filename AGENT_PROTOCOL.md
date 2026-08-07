@@ -147,12 +147,12 @@ GET /.well-known/workmesh-agent HTTP/1.1
 
 Connection 生命周期：
 
-1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: false`。配对码只存 hash。
+1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: true`（连接响应永远不返明文 Token）。配对码只存 hash。
 2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
-3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。
-4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。扩权只能走 Rotate。`PATCH` 必须带 `If-Match`。
-5. `DELETE /api/v1/agent-connections/{id}` 撤销：标记 credential fingerprint revoked、关闭该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。
-6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据；旧/新凭据重叠 15 分钟。Agent redeem 成功后，**服务端在同事务里把旧 credential fingerprint 标记 `rotated`、新凭据变 `active`，Connection 从 `rotating` 回到 `active`**。这是计划"确认成功后撤销旧凭据"的实现：以"新 redeem 成功"作为撤销旧凭据的触发点，不另设 `/rotate-confirm` 端点。整轮在一个事务里完成，outbox 事件为 `agent.connection.rotated`。
+3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。响应带 `ETag` 头，值等于 `revision`；客户端在 `If-Match` 里回传。
+4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。**扩权必须创建新 Connection**（包含新的 `grantAgentDelegate` 与 `requestedCapabilities`），同时 DELETE 旧 Connection。Rotate 不承载扩权——它的 request body 为空。`PATCH` 必须带 `If-Match`。
+5. `DELETE /api/v1/agent-connections/{id}` 撤销：标记 credential fingerprint revoked、关闭该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。这是 Rotate 重叠期内显式提前撤销旧凭据的路径。
+6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据。**响应中 `overlap_until` 是真实的截止时间——旧凭据在该时间之前一直可用**，15 分钟后 worker 自动把旧 fingerprint 标记 `rotated`、新凭据变 `active`、Connection 从 `rotating` 回到 `active`。请求 body 为空；Rotate 不改变 `teamId` / `clientType` / `requestedCapabilities` / `grantAgentDelegate`，也不充当 `/rotate-confirm` 端点。整轮的状态变迁通过 `agent.connection.rotated` 事件记录。
 
 UI 生成给 Human 复制给 Agent 的一句话统一为：
 
