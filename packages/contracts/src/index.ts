@@ -1129,14 +1129,20 @@ export const agentConnectionRedeemInputSchema = z
 // (clients may already have the bundle pinned). The well-known variant
 // keeps download_url optional at the base; the redeem variant extends
 // with download_url required. No `allOf` mixing: one base, one extension.
-// `version` is locked to SemVer (MAJOR.MINOR.PATCH with optional
-// pre-release) so the AGENT_SKILL_VERSION_MISMATCH error is actually
-// decidable on a pinned regex; a free-form 1-80 char string would let
-// "not-a-version" slip through and weaken the contract.
-const semverPattern = /^\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$/
+// `version` is locked to the official SemVer 2.0.0 grammar
+// (https://semver.org/#is-there-a-suggested-regular-expression-regexp-to-check-a-semver-string)
+// so AGENT_SKILL_VERSION_MISMATCH is actually decidable on a pinned
+// regex. The reviewer's previous `\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$`
+// accepted `01.0.0` (leading zeros are forbidden by SemVer 2.0.0 §2),
+// accepted `1.0.0-alpha..1` (consecutive dots forbidden by §9), and
+// rejected `1.0.0+build.1` (build metadata is part of SemVer 2.0.0 §10).
+// The official regex below covers all three. The Zod and OpenAPI patterns
+// MUST stay byte-identical; the generator in
+// scripts/generate-stage5-subset-blocks.mjs keeps them in sync.
+const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 const agentConnectionSkillBundleBaseSchema = z.object({
   name: z.literal('workmesh'),
-  version: z.string().regex(semverPattern, 'skill bundle version must be SemVer (MAJOR.MINOR.PATCH with optional pre-release)'),
+  version: z.string().regex(semverPattern, 'skill bundle version must be SemVer 2.0.0 (https://semver.org) — leading zeros, consecutive dots, and missing build-metadata are not allowed'),
   sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   signature: z.string().min(16).max(2000),
 })
@@ -1313,9 +1319,26 @@ export const coordinationSessionResponseSchema = z
 //         individual MCP responses could drift from the Session
 //         that supposedly issued them.
 //   (c) granted_capabilities has no duplicates.
+//   (d) cross-Identity id binding — eight equalities across the
+//       three nested objects. JSON Schema 2020-12 has no way to
+//       compare two dynamic values, so (d) is enforced in Zod only;
+//       the OpenAPI schema documents each binding pair in its
+//       description so generated clients and spec validators still
+//       know the constraint.
+//         (d.1) coordination_session.connection_id === connection.id
+//         (d.2) coordination_session.team_id === connection.team_id
+//         (d.3) coordination_session.team_id === identity.team_id
+//         (d.4) coordination_session.principal_human_actor_id
+//                 === connection.principal_human_actor_id
+//         (d.5) coordination_session.principal_human_actor_id
+//                 === identity.principal_human_actor_id
+//         (d.6) identity.agent_actor_id === connection.agent_actor_id
+//         (d.7) identity.team_id === connection.team_id
+//         (d.8) identity.principal_human_actor_id
+//                 === connection.principal_human_actor_id
 // OpenAPI enforces (a) and (b) per-capability via if/then/else blocks
 // (JSON Schema 2020-12 has no subset operator); Zod enforces all
-// three so non-OpenAPI clients also get the contract.
+// four so non-OpenAPI clients also get the contract.
 export const agentConnectionIdentitySchema = z
   .object({
     connection: agentConnectionResponseSchema,
@@ -1329,6 +1352,7 @@ export const agentConnectionIdentitySchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
+    // (a) Subset: coordination_session.granted_capabilities ⊆ connection.granted_capabilities
     const connectionGranted = new Set(value.connection.granted_capabilities)
     const unrequested = value.coordination_session.granted_capabilities.filter(c => !connectionGranted.has(c))
     if (unrequested.length > 0) {
@@ -1338,6 +1362,7 @@ export const agentConnectionIdentitySchema = z
         path: ['coordination_session', 'granted_capabilities'],
       })
     }
+    // (b) Equality: identity.granted_capabilities = coordination_session.granted_capabilities
     const sessionSet = new Set(value.coordination_session.granted_capabilities)
     const identityExtra = value.granted_capabilities.filter(c => !sessionSet.has(c))
     const sessionExtra = value.coordination_session.granted_capabilities.filter(c => !value.granted_capabilities.includes(c))
@@ -1347,6 +1372,29 @@ export const agentConnectionIdentitySchema = z
         message: `identity.granted_capabilities must equal coordination_session.granted_capabilities; identity has extras [${identityExtra.join(', ')}], session has extras [${sessionExtra.join(', ')}]`,
         path: ['granted_capabilities'],
       })
+    }
+    // (d) Cross-Identity id binding. The plan restricts one Connection
+    // to one Team and one principal Human; a forged Session claiming
+    // a different Team or a different principal must be rejected
+    // before the request touches any downstream capability check.
+    const idBindings: Array<{ lhs: () => string; rhs: () => string; label: string; path: string[] }> = [
+      { lhs: () => value.coordination_session.connection_id, rhs: () => value.connection.id, label: 'coordination_session.connection_id === connection.id', path: ['coordination_session', 'connection_id'] },
+      { lhs: () => value.coordination_session.team_id, rhs: () => value.connection.team_id, label: 'coordination_session.team_id === connection.team_id', path: ['coordination_session', 'team_id'] },
+      { lhs: () => value.coordination_session.team_id, rhs: () => value.team_id, label: 'coordination_session.team_id === identity.team_id', path: ['team_id'] },
+      { lhs: () => value.coordination_session.principal_human_actor_id, rhs: () => value.connection.principal_human_actor_id, label: 'coordination_session.principal_human_actor_id === connection.principal_human_actor_id', path: ['coordination_session', 'principal_human_actor_id'] },
+      { lhs: () => value.coordination_session.principal_human_actor_id, rhs: () => value.principal_human_actor_id, label: 'coordination_session.principal_human_actor_id === identity.principal_human_actor_id', path: ['principal_human_actor_id'] },
+      { lhs: () => value.agent_actor_id, rhs: () => value.connection.agent_actor_id, label: 'identity.agent_actor_id === connection.agent_actor_id', path: ['agent_actor_id'] },
+      { lhs: () => value.team_id, rhs: () => value.connection.team_id, label: 'identity.team_id === connection.team_id', path: ['team_id'] },
+      { lhs: () => value.principal_human_actor_id, rhs: () => value.connection.principal_human_actor_id, label: 'identity.principal_human_actor_id === connection.principal_human_actor_id', path: ['principal_human_actor_id'] },
+    ]
+    for (const { lhs, rhs, label, path } of idBindings) {
+      if (lhs() !== rhs()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${label} (got ${lhs()} vs ${rhs()})`,
+          path,
+        })
+      }
     }
   })
 

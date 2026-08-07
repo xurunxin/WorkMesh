@@ -5,6 +5,18 @@
 > - 2026-08-07 v0.3 — 撤回 v0.2 的"新 redeem 立即撤销旧凭据"语义；恢复 v0.1 的 15 分钟重叠语义：旧凭据在 `overlap_until` 之前一直可用，Admin 通过 DELETE 显式撤销、或者在 15 分钟到期后服务端自动停用。**v0.3 后被 v0.4 取代**：v0.3 把"确认成功后"读作"新 redeem 成功"不够准确；原话是显式确认步骤。
 > - 2026-08-07 v0.2 — 把 §"一次性配对" 中的 `/rotate` 一行展开："确认成功后撤销旧凭据" 显式化为"新 redeem 在同事务里把旧凭据标记 `rotated`、新凭据变 `active`"，不另设 `/rotate-confirm` 端点。**v0.2 后被 v0.3 取代**：会让 15 分钟重叠失效。
 
+## 计划批准（Plan Approval）
+
+> **权威版本**：v0.4（本文件最新修订记录第一行）。
+> **生效日期**：2026-08-07。
+> **批准范围**：
+> 1. **公共接口扩展 `/rotate-confirm`** — 原 `D:\下载\PLAN (1).md` v0.1 的 §"一次性配对"只列了 `/rotate`；v0.4 把"确认成功后撤销旧凭据"读作显式 Admin 操作，引入 `/rotate-confirm` 端点（`POST /api/v1/agent-connections/{id}/rotate-confirm`，`If-Match` + `Idempotency-Key`，200/404/409/412/422）。这是 plan v0.4 §"一次性配对" 第 4 条的明确扩展，不是 OpenAPI 的临时变动。
+> 2. **Worker 兜底撤销** — `overlap_until` 到期后 worker 自动停用旧 fingerprint 是 plan v0.4 批准的兜底防线（与显式 confirm 走相同结果）。原计划"确认成功后撤销旧凭据"中的"确认"被 v0.4 明确扩展为"显式 Admin 调用或 worker 到期兜底"两种路径。这与"必须由 Admin 显式确认才撤销"是 plan v0.4 做出的明确选择，理由是单点失败（Admin 错过 confirm 窗口）不应让一个处于 rotating 状态的 Connection 永久保留两个有效凭据。
+> 3. **单 Connection 单 Team / 单 principal Human 绑定** — Connection 锁定 `teamId` 和 `principalHumanActorId`，不允许通过 PATCH 改 Team，扩权必须新 Connection + DELETE 旧 Connection。Coordination Session/Identity 与 Connection 的 `connection_id` / `team_id` / `agent_actor_id` / `principal_human_actor_id` 必须完全一致（Identity schema 的 8 条 cross-binding 约束）。
+> 4. **能力闭合** — Coordination MCP 不引入并行能力枚举；新能力 `agent:delegate` 走 `capabilitySchema`、新 scope `team` 走 `delegationScopeTypeSchema`、新 session kind `coordination` 走 `agentSessionKindSchema`，错误码合并入 `apiErrorCodeSchema`。
+>
+> **未变更**：原始计划的 endpoint 清单（`/.well-known/workmesh-agent`、`POST /api/v1/agent-connections`、`POST /api/v1/agent-connections/redeem`、`GET/PATCH/DELETE /api/v1/agent-connections/{id}`）在 v0.4 全部保留；`/rotate` 也在 v0.4 保留；`/rotate-confirm` 是 v0.4 唯一新增的端点。
+
 ## 摘要
 
 目标是把 WorkMesh 从"Human 创建任务、Session MCP 执行任务"升级为真正的 Agent-first 协作系统：

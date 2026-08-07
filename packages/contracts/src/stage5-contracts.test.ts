@@ -530,7 +530,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
   it('locks skill_version to SemVer in both Zod and OPENAPI', () => {
     // The plan-stage5 schema's skill_version accepts any string today;
     // AGENT_SKILL_VERSION_MISMATCH is not decidable on a free-form
-    // string. Pin to MAJOR.MINOR.PATCH(-pre-release)?.
+    // string. Pin to SemVer 2.0.0 (https://semver.org).
     // makeResponse() returns the base object; the actual Zod parse
     // happens in agentConnectionResponseSchema.parse(...).
     const parse = (overrides: Parameters<typeof makeResponse>[0]) => {
@@ -540,8 +540,18 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     }
     expect(() => parse({ skill_version: 'not-semver' })).toThrow(/SemVer/)
     expect(() => parse({ skill_version: '1.0' })).toThrow(/SemVer/)
+    // v5 review: the previous `\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$`
+    // accepted `01.0.0` (leading zeros forbidden by SemVer 2.0.0 §2)
+    // and `1.0.0-alpha..1` (consecutive dots forbidden by §9), and
+    // rejected `1.0.0+build.1` (build metadata is part of SemVer
+    // 2.0.0 §10). The official SemVer regex from semver.org covers
+    // all three correctly.
+    expect(() => parse({ skill_version: '01.0.0' })).toThrow(/SemVer/)
+    expect(() => parse({ skill_version: '1.0.0-alpha..1' })).toThrow(/SemVer/)
     expect(() => parse({ skill_version: '1.0.0' })).not.toThrow()
     expect(() => parse({ skill_version: '1.0.0-rc.1' })).not.toThrow()
+    expect(() => parse({ skill_version: '1.0.0+build.1' })).not.toThrow()
+    expect(() => parse({ skill_version: '1.0.0-rc.1+build.5' })).not.toThrow()
   })
 
   it('rejects duplicate granted_capabilities on the Coordination Session', () => {
@@ -629,6 +639,206 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       granted_capabilities: ['work:read', 'work:read'],
     }
     expect(() => agentConnectionIdentitySchema.parse(duplicates)).toThrow()
+  })
+
+  // The 8 cross-Identity id bindings enforced by the v5 fix. JSON
+  // Schema 2020-12 has no value-comparison operator so OpenAPI cannot
+  // enforce these equalities; the Zod superRefine does. Each test
+  // flips exactly one field on the Session or Identity to a fresh
+  // UUID and asserts the parse fails.
+  const crossBindingFixtures = () => {
+    const otherId = '11111111-1111-4111-8111-111111111111'
+    return {
+      tight: makeResponse({ granted_capabilities: ['work:read', 'work:write'] }),
+      makeSession: (overrides: Partial<{
+        id: string; connection_id: string; team_id: string; principal_human_actor_id: string
+      }> = {}) => ({
+        id,
+        connection_id: id,
+        session_kind: 'coordination' as const,
+        role: 'coordinator' as const,
+        delegation_scope: 'team' as const,
+        granted_capabilities: ['work:read', 'work:write'],
+        expires_at: '2026-08-07T11:00:00Z',
+        refreshed_at: null,
+        team_id: id,
+        principal_human_actor_id: id,
+        ...overrides,
+      }),
+      otherId,
+    }
+  }
+
+  it('binds coordination_session.connection_id === connection.id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession({ connection_id: f.otherId }),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/connection_id === connection\.id/)
+  })
+
+  it('binds coordination_session.team_id === connection.team_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession({ team_id: f.otherId }),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/team_id === connection\.team_id/)
+  })
+
+  it('binds coordination_session.principal_human_actor_id === connection.principal_human_actor_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession({ principal_human_actor_id: f.otherId }),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/principal_human_actor_id === connection\.principal_human_actor_id/)
+  })
+
+  it('binds identity.team_id === connection.team_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession(),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: f.otherId,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/team_id === connection\.team_id/)
+  })
+
+  it('binds identity.principal_human_actor_id === connection.principal_human_actor_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession(),
+      agent_actor_id: id,
+      principal_human_actor_id: f.otherId,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/principal_human_actor_id === connection\.principal_human_actor_id/)
+  })
+
+  it('binds identity.agent_actor_id === connection.agent_actor_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession(),
+      agent_actor_id: f.otherId,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/agent_actor_id === connection\.agent_actor_id/)
+  })
+
+  it('binds coordination_session.team_id === identity.team_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession({ team_id: f.otherId }),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/team_id === identity\.team_id/)
+  })
+
+  it('binds coordination_session.principal_human_actor_id === identity.principal_human_actor_id', () => {
+    const f = crossBindingFixtures()
+    expect(() => agentConnectionIdentitySchema.parse({
+      connection: f.tight,
+      coordination_session: f.makeSession({ principal_human_actor_id: f.otherId }),
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+    })).toThrow(/principal_human_actor_id === identity\.principal_human_actor_id/)
+  })
+
+  it('documents the 8 cross-Identity id bindings in OPENAPI', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    // (a) The d.1..d.8 markers must be in the AgentConnectionIdentity
+    //     description. JSON Schema 2020-12 cannot compare two
+    //     dynamic values, so OpenAPI documents the constraint; the
+    //     Zod superRefine is the actual enforcer.
+    for (const tag of ['d.1)', 'd.2)', 'd.3)', 'd.4)', 'd.5)', 'd.6)', 'd.7)', 'd.8)']) {
+      expect(openapi, `AgentConnectionIdentity description must contain ${tag}`).toContain(tag)
+    }
+  })
+
+  it('lists the 7 nullable AgentConnectionResponse fields in OPENAPI required', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    for (const f of ['skill_version', 'skill_sha256', 'credential_fingerprint_prefix', 'pairing_code_expires_at', 'last_used_at', 'rotated_at', 'revoked_at']) {
+      const required = openapi.match(/AgentConnectionResponse: \{ type: object, additionalProperties: false, required: \[[^\]]+\]/)
+      expect(required, 'AgentConnectionResponse must have an explicit required array').toBeTruthy()
+      expect(required![0], `${f} must be in required`).toContain(` ${f}, `)
+    }
+  })
+
+  it('lists refreshed_at in CoordinationSession OPENAPI required', async () => {
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    const required = openapi.match(/CoordinationSession: \{ type: object, additionalProperties: false, required: \[[^\]]+\]/)
+    expect(required, 'CoordinationSession must have an explicit required array').toBeTruthy()
+    expect(required![0], 'refreshed_at must be in required').toContain(' refreshed_at, ')
+  })
+
+  it('keeps the subset-block generator in sync with the canonical capability list', async () => {
+    // The v5 review flagged the 69 hand-written if/then/else blocks
+    // as Duplicated Code. The single source of truth is the
+    // CAPABILITIES array in scripts/generate-stage5-subset-blocks.mjs.
+    // This test imports the generator, runs it, and checks the
+    // output count matches the formula: 18 = 1 + 17, 51 = 17 * 3,
+    // 69 = 18 + 51. If a new capability is added, the canonical
+    // list grows; this test would fail with the new expected counts,
+    // forcing the OPENAPI author to regenerate.
+    const { execFileSync } = await import('node:child_process')
+    const { fileURLToPath } = await import('node:url')
+    const scriptPath = fileURLToPath(new URL('../../../scripts/generate-stage5-subset-blocks.mjs', import.meta.url))
+    const out = execFileSync(process.execPath, [scriptPath], { encoding: 'utf8' })
+    expect(out, 'generator must report 18 + 51 = 69 blocks').toMatch(/17 capabilities, 18 \+ 51 = 69 blocks total\./)
+    // The OPENAPI must contain the same counts. This is a soft
+    // check (the OPENAPI is hand-edited and may use slightly
+    // different comments); the hard check is the generator.
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    const responseCount = (openapi.match(/granted \\u2286 requested:/g) || []).length
+    expect(responseCount, 'OPENAPI AgentConnectionResponse must have 17 per-capability subset markers').toBe(17)
+  })
+
+  it('AGENT_PROTOCOL.md does not call DELETE the "only-revoke-old-credential" path', async () => {
+    // v5 review: the previous wording "DELETE is the path to revoke old
+    // credentials early during the rotate overlap" was misleading;
+    // DELETE actually revokes the entire Connection + all live Sessions
+    // + the new Token. /rotate-confirm is the old-fingerprint-only path.
+    const protocol = await readFile(new URL('../../../AGENT_PROTOCOL.md', import.meta.url), 'utf8')
+    // The DELETE step (line 154, "5. `DELETE /api/v1/agent-connections/{id}` ...")
+    // must not call DELETE the path to revoke old credentials early.
+    // The previous wording was "这是 Rotate 重叠期内显式提前撤销旧凭据的路径" — that
+    // exact sentence must be gone.
+    expect(protocol, 'AGENT_PROTOCOL.md must drop the "DELETE = revoke old credentials early" framing').not.toMatch(/这是\s*Rotate\s*重叠期内显式提前撤销旧凭据的路径/)
+    // The DELETE step must mark DELETE as the hard path and link it
+    // to /rotate-confirm as the old-fingerprint-only path.
+    expect(protocol, 'AGENT_PROTOCOL.md must mark DELETE as the hard path').toMatch(/DELETE.*硬撤销/)
+    expect(protocol, 'AGENT_PROTOCOL.md must distinguish DELETE from /rotate-confirm').toMatch(/与\s*`\/rotate-confirm`\s*不同/)
+  })
+
+  it('plan v0.4 is the approved authoritative version with explicit /rotate-confirm and worker fallback', async () => {
+    const plan = await readFile(new URL('../../../docs/plans/agent-first-coordination-mcp.md', import.meta.url), 'utf8')
+    // The plan must declare v0.4 as authoritative.
+    expect(plan, 'plan must explicitly mark v0.4 as authoritative').toMatch(/权威版本.{0,30}v0\.4/)
+    // The plan must list /rotate-confirm as an approved extension.
+    expect(plan, 'plan must approve /rotate-confirm as a v0.4 extension').toMatch(/\/rotate-confirm.*批准|批准.*\/rotate-confirm/)
+    // The plan must declare the worker fallback as an approved safety net.
+    expect(plan, 'plan must approve worker expiry as a fallback').toMatch(/worker.*兜底|worker.*fallback|worker.*批准/)
   })
 
   it('declares /rotate-confirm with If-Match and confirmAgentConnectionRotation operationId in OPENAPI', async () => {
