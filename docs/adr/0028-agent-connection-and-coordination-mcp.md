@@ -436,20 +436,42 @@ spec changes it locks are:
 - `OPENAPI.yaml` gains:
   - `GET /.well-known/workmesh-agent` (public).
   - `POST /api/v1/agent-connections`, `GET`, `PATCH`, `DELETE`
-    on the resource, and `POST .../redeem` and
-    `POST .../{id}/rotate`.
+    on the resource, `POST .../redeem`,
+    `POST .../{id}/rotate`, and `POST .../{id}/rotate-confirm`.
+    The two `rotate` operations are distinct: `rotate` issues
+    a new pairing code; `rotate-confirm` revokes only the old
+    fingerprint on Admin confirmation (plan v0.4 §"一次性配对"
+    step 7 + 8). The well-known and the redeem endpoint are
+    `authenticated: false`; every admin route is
+    `authenticated: true`; PATCH/DELETE/rotate/rotate-confirm
+    all require `If-Match`; all mutations require
+    `Idempotency-Key`; GET responses declare `ETag`.
   - New schema components matching the snake_case wire format of
     existing endpoints, the unified `Error.code` enum extended
     with Stage 5 codes, and `Capability` /
     `DelegationScopeType` extended with `agent:delegate` and
-    `team`.
+    `team`. The 17 per-capability subset `if/then/else` blocks
+    in `AgentConnectionResponse.allOf` and the 51 subset /
+    equality blocks in `AgentConnectionIdentity.allOf` come
+    from `scripts/generate-stage5-subset-blocks.mjs` (the
+    canonical capability list, 17 entries). The 8 cross-Identity
+    id bindings (d.1–d.8) are in
+    `agentConnectionIdentitySchema.superRefine` and documented
+    in the `AgentConnectionIdentity` schema description
+    (JSON Schema 2020-12 cannot compare two dynamic values
+    so OpenAPI documents them; Zod enforces them).
+  - `skill_version` uses the official SemVer 2.0.0 regex from
+    semver.org (the previous regex accepted `01.0.0` and
+    `1.0.0-alpha..1`, rejected `1.0.0+build.1`).
 - `packages/contracts/src/route-policy.ts` (the `stage5RouteManifest`
   export) lists the same six resource operations plus the
-  well-known endpoint, with `mutation: true` on every state-
-  changing route and `revisioned: true` on `PATCH` and `DELETE`.
-  The route manifest also enforces `authenticated: true` on every
-  admin-side route and `authenticated: false` on the public
-  well-known and redeem endpoints.
+  well-known endpoint, the two `rotate` operations, and the
+  new `rotate-confirm` (8 entries total), with `mutation: true`
+  on every state-changing route and `revisioned: true` on
+  PATCH/DELETE/rotate/rotate-confirm. The route manifest also
+  enforces `authenticated: true` on every admin-side route and
+  `authenticated: false` on the public well-known and redeem
+  endpoints.
 
 This ADR **does not** add:
 
@@ -457,14 +479,19 @@ This ADR **does not** add:
 - A Human-facing landing page (the plan declares the Admin
   wizard produces a sentence that the Human pastes to the
   Agent; no server-rendered page is in scope).
-- A `/rotate-confirm` endpoint (the plan v0.4 explicitly lists
-  `/rotate-confirm`; the v0.4 amendment restored the original
-  "确认成功后撤销旧凭据" requirement as a real Admin operation).
-  Without this endpoint the only "revoke old" path was the worker's
-  15-minute auto-expiry, which the v3 review found not faithful to
-  the plan. The v0.4 fix re-introduces `/rotate-confirm` and lets
-  the worker expiry remain as a safety net.
 - A migration file or DDL body (the plan puts migrations under
-  §B).
+  §B; this contract slice is the freeze step, runtime is
+  Phase B).
 - A domain command, route handler, MCP server entrypoint, or
   UI (the plan places these under §B–F).
+
+## Migration
+
+This ADR is the contract-freeze step (Phase A). Database
+migrations, route handlers, the Coordination MCP server, and
+the runtime path through `apps/api` + `apps/mcp` are
+intentionally deferred to plan §B. The schema-level invariants
+in `packages/contracts/src/index.ts` are the durable artifact
+for this slice and are the source of truth that runtime code
+will import. No DDL, no `packages/db/migrations/0022_*.sql`,
+and no runtime code in `apps/` is added by this ADR.

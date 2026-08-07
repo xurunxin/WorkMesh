@@ -16,6 +16,7 @@ import {
   capabilitySchema,
   coordinationSessionResponseSchema,
   delegationScopeTypeSchema,
+  semverPattern,
   stage5RouteManifest,
 } from './index.js'
 
@@ -839,6 +840,86 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     expect(plan, 'plan must approve /rotate-confirm as a v0.4 extension').toMatch(/\/rotate-confirm.*批准|批准.*\/rotate-confirm/)
     // The plan must declare the worker fallback as an approved safety net.
     expect(plan, 'plan must approve worker expiry as a fallback').toMatch(/worker.*兜底|worker.*fallback|worker.*批准/)
+  })
+
+  it('ADR-0028 has every required section (AGENTS.md ADR format)', async () => {
+    // AGENTS.md mandates 8 sections in every ADR:
+    //   # Title, Status, Context, Decision, Alternatives,
+    //   Consequences, Migration, Spec changes
+    // The v5 review caught ADR-0028 missing ## Migration. This
+    // test ensures no ADR regresses by dropping a section.
+    const adr = await readFile(new URL('../../../docs/adr/0028-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
+    for (const section of ['# Agent Connection', 'Status', '## Context', '## Decision', '## Alternatives', '## Consequences', '## Migration', '## Spec changes']) {
+      expect(adr, `ADR-0028 must contain "${section}" (AGENTS.md ADR format)`).toContain(section)
+    }
+  })
+
+  it('ADR-0028 Spec changes section lists /rotate-confirm and the does-not-add list does not contradict it', async () => {
+    // Two coupled checks: the OPENAPI bullet in Spec changes must
+    // include /rotate-confirm, AND the "does not add" list must NOT
+    // claim /rotate-confirm is out of scope (v0.4 explicitly adds
+    // it). A future edit that re-introduces either omission will
+    // fail here.
+    const adr = await readFile(new URL('../../../docs/adr/0028-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
+    // 1. The OPENAPI bullet in Spec changes must list rotate-confirm.
+    const specChanges = adr.slice(adr.indexOf('## Spec changes'))
+    expect(specChanges, 'Spec changes must list /rotate-confirm in the OPENAPI bullet').toMatch(/rotate-confirm/)
+    // 2. The "does not add" LIST (the bulleted list under the
+    //    "This ADR **does not** add:" heading) must NOT include
+    //    /rotate-confirm. Slice from that exact heading to the
+    //    "## Migration" section; the earlier occurrence of "does
+    //    not add" in the Decision section must not be confused
+    //    with this one.
+    const doesNotAddStart = adr.indexOf('This ADR **does not** add:')
+    const doesNotAddEnd = adr.indexOf('## Migration')
+    expect(doesNotAddStart, 'ADR must contain the "This ADR does not add:" heading').toBeGreaterThan(0)
+    expect(doesNotAddEnd, 'ADR must contain the ## Migration section').toBeGreaterThan(doesNotAddStart)
+    const doesNotAdd = adr.slice(doesNotAddStart, doesNotAddEnd)
+    expect(doesNotAdd, '"This ADR does not add" list must not list /rotate-confirm as out of scope').not.toMatch(/rotate-confirm/)
+  })
+
+  it('SemVer 2.0.0 regex is byte-identical in Zod, the generator, and the OpenAPI (closes the v5 S3 Duplicated Code smell)', async () => {
+    // The v5 fix landed the official SemVer 2.0.0 regex in three
+    // places. The Standards sub-agent's Duplicated Code smell
+    // flagged that the three sites can drift independently; this
+    // test makes drift fail the suite. The previous v5 bug
+    // (accepted 01.0.0, rejected 1.0.0+build.1) took a round to
+    // catch; this test makes the next instance a one-line failure.
+    const { execFileSync } = await import('node:child_process')
+    const { fileURLToPath } = await import('node:url')
+    // (a) Zod: the regex source (now exported so this test can see it).
+    const zodCore = semverPattern.source.slice(1, -1) // strip ^ and $
+    // (b) Generator: the YAML-encoded pattern from scripts/generate-stage5-subset-blocks.mjs.
+    //     Strip ^ and $, then unescape \\ to \ to match Zod.
+    const scriptPath = fileURLToPath(new URL('../../../scripts/generate-stage5-subset-blocks.mjs', import.meta.url))
+    const genOut = execFileSync(process.execPath, [scriptPath], { encoding: 'utf8' })
+    // The generator prints the SemVer pattern on its own line. We
+    // grab the line after the "=== SemVer 2.0.0 pattern" header.
+    const genMarker = '=== SemVer 2.0.0 pattern'
+    const genStart = genOut.indexOf(genMarker)
+    expect(genStart, 'generator must print a SemVer 2.0.0 pattern section').toBeGreaterThanOrEqual(0)
+    const after = genOut.slice(genStart)
+    // Find the next line that starts with `^` (the pattern itself).
+    const lines = after.split('\n')
+    const patternLine = lines.find((l) => l.startsWith('^(') && l.trim().endsWith('$'))
+    expect(patternLine, 'generator must print a SemVer line starting with ^(').toBeTruthy()
+    const genCore = patternLine!.slice(1, -1).replace(/\\\\/g, '\\') // strip ^ and $, unescape \\
+    expect(genCore, 'generator SemVer pattern must match Zod pattern').toBe(zodCore)
+    // (c) OpenAPI: the three pattern fields must match (after YAML un-escaping).
+    //     Filter to the SemVer 2.0.0 patterns specifically (they
+    //     contain the 3-part MAJOR.MINOR.PATCH core). The project's
+    //     MinorUnitDecimal pattern (a currency amount) also matches
+    //     the loose '0|[1-9]' filter, so we exclude it.
+    const openapi = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
+    const yamlUnescape = (s: string) => s.replace(/\\\\/g, '\\')
+    const openapiPatterns = [...openapi.matchAll(/pattern:\s*"((?:[^"\\]|\\.)*)"/g)]
+      .map(m => yamlUnescape(m[1]!))
+      .filter(p => p.includes('0|[1-9]') && /\.\(0\|\[1-9\]/.test(p))
+    expect(openapiPatterns.length, 'OPENAPI must have 3 SemVer patterns (skill_version, manifest.version, bundle.version)').toBe(3)
+    for (const p of openapiPatterns) {
+      const pCore = p.slice(1, -1) // strip ^ and $
+      expect(pCore, `OpenAPI SemVer pattern (${pCore.slice(0, 40)}...) must match Zod pattern (${zodCore.slice(0, 40)}...)`).toBe(zodCore)
+    }
   })
 
   it('declares /rotate-confirm with If-Match and confirmAgentConnectionRotation operationId in OPENAPI', async () => {

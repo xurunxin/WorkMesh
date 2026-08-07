@@ -1139,7 +1139,11 @@ export const agentConnectionRedeemInputSchema = z
 // The official regex below covers all three. The Zod and OpenAPI patterns
 // MUST stay byte-identical; the generator in
 // scripts/generate-stage5-subset-blocks.mjs keeps them in sync.
-const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+// Exported so the stage5 test can assert that the OpenAPI pattern
+// is byte-identical to this Zod regex (closing the v5 Standards
+// sub-agent's Duplicated Code smell). Update OPENAPI.yaml when
+// this changes; the test will fail if you forget.
+export const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 const agentConnectionSkillBundleBaseSchema = z.object({
   name: z.literal('workmesh'),
   version: z.string().regex(semverPattern, 'skill bundle version must be SemVer 2.0.0 (https://semver.org) — leading zeros, consecutive dots, and missing build-metadata are not allowed'),
