@@ -971,7 +971,8 @@ export const stage4RouteManifest = [
 //
 // The endpoint set is exactly the plan §"一次性配对" resource surface plus the
 // well-known discovery route. No list endpoint, no Human landing page, no
-// other auxiliary paths.
+// /rotate-confirm: the plan's "确认成功后撤销旧凭据" is implemented as auto-
+// revoke on the new redeem's success (plan v0.2 amendment).
 export const stage5RouteManifest = [
   { method: 'GET', path: '/.well-known/workmesh-agent', authenticated: false },
   { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
@@ -979,8 +980,7 @@ export const stage5RouteManifest = [
   { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
-  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate', authenticated: true, mutation: true },
-  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate-confirm', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate', authenticated: true, mutation: true, revisioned: true },
 ] as const
 
 export const agentRouteManifest = [
@@ -1002,32 +1002,44 @@ export type A2AProtocolVersion = '0.3'
 
 // Stage 5 (v1.1): Agent Connection resource shapes.
 //
-// Wire format follows the existing snake_case convention used by
-// workspaceResponseSchema / projectResponseSchema / workItemResponseSchema so
-// the OpenAPI components and these Zod schemas describe the same JSON.
+// Convention matches the rest of the contract layer:
+//   - Request DTOs use camelCase API field names (projectInputSchema,
+//     workItemInputSchema, commentInputSchema all do the same).
+//   - Response DTOs use snake_case wire format (projectResponseSchema,
+//     workItemResponseSchema do the same).
+//   - The well-known manifest is camelCase because clients read it before
+//     any WorkMesh session exists.
+//   - Schemas are .strict() by default: extra fields are rejected, not
+//     preserved. .passthrough() is never used, so undeclared secrets
+//     cannot leak through a Connection response.
 
 const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi'] as const
 export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeValues)
 
 export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])
 
-// A connect URL must carry the pairing code in the fragment so the plaintext
-// never reaches proxy access logs. URL parsers accept many edge cases, so this
-// validator explicitly rejects empty fragments and query-string-embedded codes.
-const hasFragment = (value: string): boolean => {
-  const hashIndex = value.indexOf('#')
-  if (hashIndex < 0) return false
-  return value.slice(hashIndex + 1).length > 0
-}
-
+// A connect URL must carry the pairing code ONLY in the fragment, on a path
+// matching the well-known connect pattern, with no credential-like query or
+// path segments. The reviewer-flagged bypass
+// `https://example.test/connect?pairing_code=LEAK#placeholder` is rejected
+// here. The OpenAPI pattern enforces the same shape at the contract layer.
+const connectUrlPattern = /^https:\/\/[^/?#]+\/connect\/[a-z0-9][a-z0-9-]{0,79}#[A-Za-z0-9_-]{8,512}$/
 const connectUrlSchema = z
   .string()
-  .url()
   .superRefine((value, ctx) => {
-    if (!hasFragment(value)) {
+    if (!connectUrlPattern.test(value)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'connect_url must carry the pairing code in the URL fragment; query/path placement is rejected',
+        message:
+          'connect_url must be https://<host>/connect/<agent-slug>#<pairing-code>; query/path credentials and missing/short fragments are rejected',
+      })
+      return
+    }
+    const beforeFragment = value.split('#')[0] ?? value
+    if (/[?&=](pairing[_-]?code|code|secret|token|access[_-]?token)=/i.test(beforeFragment)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'connect_url must not embed credentials in the query or path; fragment-only is the rule',
       })
     }
   })
@@ -1035,40 +1047,67 @@ const connectUrlSchema = z
 export const agentConnectionCreateInputSchema = z
   .object({
     name: z.string().min(1).max(120),
-    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
-    team_id: idSchema,
-    principal_human_actor_id: idSchema.optional(),
-    client_type: agentConnectionClientTypeSchema,
-    requested_capabilities: z.array(capabilitySchema).min(1).max(50),
-    grant_agent_delegate: z.boolean().default(false),
+    agentSlug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    teamId: idSchema,
+    principalHumanActorId: idSchema.optional(),
+    clientType: agentConnectionClientTypeSchema,
+    requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
+    grantAgentDelegate: z.boolean().default(false),
     notes: z.string().max(2000).optional(),
   })
   .strict()
 
-// PATCH can only change non-privilege-escalating fields. team_id, client_type,
-// requested_capabilities, grant_agent_delegate are deliberately omitted; the
+// PATCH can only change non-privilege-escalating fields. teamId, clientType,
+// requestedCapabilities, grantAgentDelegate are deliberately omitted; the
 // .strict() above makes any attempt to send them a validation error.
 export const agentConnectionPatchInputSchema = z
   .object({
     name: z.string().min(1).max(120).optional(),
-    principal_human_actor_id: idSchema.optional(),
+    principalHumanActorId: idSchema.optional(),
     notes: z.string().max(2000).nullable().optional(),
   })
   .strict()
   .refine(value => Object.keys(value).length > 0, { message: 'PATCH body must include at least one field' })
 
-const agentConnectionSkillManifestSchema = z.object({
+export const agentConnectionRedeemInputSchema = z
+  .object({
+    pairingCode: z.string().min(1).max(500),
+    agentSlug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    client: z
+      .object({
+        type: agentConnectionClientTypeSchema,
+        version: z.string().min(1).max(80),
+        runtime: z.string().min(1).max(160).optional(),
+      })
+      .strict(),
+  })
+  .strict()
+
+// Skill bundle: a base schema shared by the well-known manifest and the
+// redeem response. The redeem response requires the download_url (the Agent
+// must actually fetch the bundle); the well-known manifest does not
+// (clients may already have the bundle pinned). The well-known variant
+// keeps download_url optional at the base; the redeem variant extends
+// with download_url required. No `allOf` mixing: one base, one extension.
+const agentConnectionSkillBundleBaseSchema = z.object({
   name: z.literal('workmesh'),
   version: z.string().min(1).max(80),
   sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   signature: z.string().min(16).max(2000),
 })
+// .strict() so the well-known manifest's bundle (no download_url) rejects
+// any field outside the base, including a stray download_url. The redeem
+// response uses agentConnectionSkillBundleSchema which extends the base
+// with download_url required.
+export const agentConnectionSkillBundleSchema = agentConnectionSkillBundleBaseSchema
+  .extend({ download_url: z.string().url() })
+  .strict()
+export const agentConnectionWellKnownSkillSchema = agentConnectionSkillBundleBaseSchema.strict()
 
 // Cross-field invariant: when grant_agent_delegate is false, the granted
-// capabilities MUST NOT include agent:delegate. The reverse is also a contract
-// invariant (granted capabilities with agent:delegate require grant flag true),
-// enforced by the server. We enforce the stricter direction here at the
-// schema layer so the response is honest at the wire.
+// capabilities MUST NOT include agent:delegate. Enforced here at the
+// schema layer; the OpenAPI schema also enforces it via if/then/else on
+// generated_capabilities.
 const crossFieldGrantDelegateSchema = z
   .object({
     grant_agent_delegate: z.boolean(),
@@ -1084,6 +1123,10 @@ const crossFieldGrantDelegateSchema = z
     }
   })
 
+// Response schemas are .strict() (not .passthrough()) so undeclared fields
+// like `installation_token` cannot ride along inside a `connection` payload.
+// The combination of .strict() on the outer wrapper and the inner response
+// schema being non-passthrough is what makes the connection leak impossible.
 export const agentConnectionResponseSchema = z
   .object({
     id: idSchema,
@@ -1110,35 +1153,22 @@ export const agentConnectionResponseSchema = z
     created_at: timestampSchema,
     updated_at: timestampSchema,
   })
-  .passthrough()
+  .strict()
   .and(crossFieldGrantDelegateSchema)
 
 export const agentConnectionCreateResponseSchema = z
   .object({
     connection: agentConnectionResponseSchema,
     connect_url: connectUrlSchema,
-    skill: agentConnectionSkillManifestSchema,
-  })
-  .strict()
-
-export const agentConnectionRedeemInputSchema = z
-  .object({
-    pairing_code: z.string().min(1).max(500),
-    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
-    client: z
-      .object({
-        type: agentConnectionClientTypeSchema,
-        version: z.string().min(1).max(80),
-        runtime: z.string().min(1).max(160).optional(),
-      })
-      .strict(),
+    skill: agentConnectionWellKnownSkillSchema,
   })
   .strict()
 
 // The redeem response is keyed by Idempotency-Key for the lifetime of the
-// pairing code. A replay returns the exact same bytes; the contract pins that
-// promise here so the plan's "成功响应使用现有加密认证幂等机制安全重放"
-// requirement is enforceable at the schema layer.
+// pairing code. A replay returns the exact same bytes; the contract pins
+// that promise here so the plan's "成功响应使用现有加密认证幂等机制安全
+// 重放" requirement is enforceable at the schema layer. The bundle in the
+// redeem response carries the required download_url.
 export const agentConnectionRedeemResponseSchema = z
   .object({
     connection: agentConnectionResponseSchema,
@@ -1155,7 +1185,7 @@ export const agentConnectionRedeemResponseSchema = z
           .strict(),
       })
       .strict(),
-    skill: agentConnectionSkillManifestSchema.extend({ download_url: z.string().url() }),
+    skill: agentConnectionSkillBundleSchema,
     principal_human_actor_id: idSchema,
     team_id: idSchema,
     idempotency_replay: z
@@ -1183,7 +1213,7 @@ export const agentWellKnownResponseSchema = z
     wellKnownUrl: z.string().url(),
     apiVersion: z.string().min(1).max(20),
     supportedClients: z.array(agentConnectionClientTypeSchema).min(1),
-    skill: agentConnectionSkillManifestSchema,
+    skill: agentConnectionWellKnownSkillSchema,
   })
   .strict()
 

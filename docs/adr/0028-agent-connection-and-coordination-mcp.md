@@ -74,26 +74,25 @@ declared in plan §"一次性配对":
   single-use pairing code for an Installation Token.
 - `GET /api/v1/agent-connections/{id}` — view the current Connection
   state, fingerprint prefix, MCP/Skill versions, last-use timestamp.
-  The plaintext Token is never returned.
+  The plaintext Token is never returned. The response carries an
+  `ETag` header whose value is the Connection `revision` so PATCH
+  and DELETE can apply optimistic concurrency.
 - `PATCH /api/v1/agent-connections/{id}` — change non-privilege-
   escalating metadata: `name`, `principalHumanActorId` (within the
   bound Team), display notes. Cannot change `teamId`, `clientType`,
   `requestedCapabilities`, or `grantAgentDelegate`. Privilege changes
-  go through Rotate.
+  go through Rotate. Requires `If-Match: "<revision>"`.
 - `DELETE /api/v1/agent-connections/{id}` — revoke the Connection.
+  Requires `If-Match: "<revision>"`.
 - `POST /api/v1/agent-connections/{id}/rotate` — issue a new pairing
   code and pending credential; old and new credentials stay valid
-  for 15 minutes; the new redeem succeeds automatically, but the
-  plan requires an explicit Admin confirmation before the old
-  credential is revoked.
-- `POST /api/v1/agent-connections/{id}/rotate-confirm` — Admin
-  confirms the rotation. The old credential fingerprint is revoked
-  in the same transaction; the Connection returns to `active` with
-  the new fingerprint. This endpoint implements the plan's
-  "确认成功后撤销旧凭据" requirement; without it, the old Token
-  would either time out at 15 minutes with no audit trail, or
-  auto-revoke on first new redeem, neither of which the plan
-  accepts.
+  for 15 minutes. The plan's "确认成功后撤销旧凭据" requirement is
+  implemented as: when the new redeem succeeds, the same PostgreSQL
+  transaction marks the old credential fingerprint `rotated`, the
+  new fingerprint `active`, and transitions the Connection from
+  `rotating` to `active`. No separate `/rotate-confirm` endpoint
+  exists; the Admin sees the result through the Connection state and
+  the `agent.connection.rotated` event.
 
 `POST /api/v1/agent-connections` (Workspace Admin) creates a
 pre-authorized envelope. The body fixes:
@@ -159,8 +158,7 @@ The Installation Token:
 - Is **never** a session token and **never** carries a capability
   set sufficient for ordinary mutations.
 - Can only call `verify_connection`, `get_current_identity`, the
-  Coordination Session bootstrap, the well-known manifest, and the
-  rotate-confirm endpoint.
+  Coordination Session bootstrap, and the well-known manifest.
 - Lives until the Connection is revoked or rotated.
 
 A Coordination Session is a short-lived (default 1 hour, max 2
@@ -386,11 +384,13 @@ HTTPS path.
   Rejected. Executor Sessions are already short-lived and gated
   by a single Delegation. Coordinator Sessions need Team scope
   and an identity that survives across many work items.
-- **Auto-revoke old credential on first new redeem (no
-  `/rotate-confirm`).** Rejected. The plan explicitly requires
-  Admin confirmation before the old credential is revoked, both
-  for audit clarity and to avoid a network-induced false positive
-  revoking the only working credential.
+- **Manual `/rotate-confirm` endpoint.** Rejected after a
+  contract review. The plan §"一次性配对" lists exactly six
+  resource operations; adding a seventh would expand the public
+  surface without plan approval. The "确认成功后撤销旧凭据"
+  rule is implemented as auto-revoke on the new redeem's
+  success, with the Connection state and
+  `agent.connection.rotated` event as the audit trail.
 
 ## Consequences
 
@@ -422,8 +422,8 @@ spec changes it locks are:
 - `OPENAPI.yaml` gains:
   - `GET /.well-known/workmesh-agent` (public).
   - `POST /api/v1/agent-connections`, `GET`, `PATCH`, `DELETE`
-    on the resource, and `POST .../redeem`,
-    `POST .../{id}/rotate`, and `POST .../{id}/rotate-confirm`.
+    on the resource, and `POST .../redeem` and
+    `POST .../{id}/rotate`.
   - New schema components matching the snake_case wire format of
     existing endpoints, the unified `Error.code` enum extended
     with Stage 5 codes, and `Capability` /
@@ -433,6 +433,9 @@ spec changes it locks are:
   export) lists the same six resource operations plus the
   well-known endpoint, with `mutation: true` on every state-
   changing route and `revisioned: true` on `PATCH` and `DELETE`.
+  The route manifest also enforces `authenticated: true` on every
+  admin-side route and `authenticated: false` on the public
+  well-known and redeem endpoints.
 
 This ADR **does not** add:
 
@@ -440,6 +443,9 @@ This ADR **does not** add:
 - A Human-facing landing page (the plan declares the Admin
   wizard produces a sentence that the Human pastes to the
   Agent; no server-rendered page is in scope).
+- A `/rotate-confirm` endpoint (the plan's "确认成功后撤销旧凭据"
+  is implemented as auto-revoke on the new redeem's success;
+  see "Alternatives" above).
 - A migration file or DDL body (the plan puts migrations under
   §B).
 - A domain command, route handler, MCP server entrypoint, or

@@ -152,7 +152,7 @@ Connection 生命周期：
 3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。
 4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。扩权只能走 Rotate。`PATCH` 必须带 `If-Match`。
 5. `DELETE /api/v1/agent-connections/{id}` 撤销：标记 credential fingerprint revoked、关闭该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。
-6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据；旧/新凭据重叠 15 分钟。Agent redeem 成功后，**`POST /api/v1/agent-connections/{id}/rotate-confirm`** 由 Human 跑一次才会彻底关掉旧凭据。整轮在一个事务里完成，outbox 事件为 `agent.connection.rotated`。
+6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据；旧/新凭据重叠 15 分钟。Agent redeem 成功后，**服务端在同事务里把旧 credential fingerprint 标记 `rotated`、新凭据变 `active`，Connection 从 `rotating` 回到 `active`**。这是计划"确认成功后撤销旧凭据"的实现：以"新 redeem 成功"作为撤销旧凭据的触发点，不另设 `/rotate-confirm` 端点。整轮在一个事务里完成，outbox 事件为 `agent.connection.rotated`。
 
 UI 生成给 Human 复制给 Agent 的一句话统一为：
 
