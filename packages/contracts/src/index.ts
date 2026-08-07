@@ -61,6 +61,29 @@ export const apiErrorCodeSchema = z.enum([
   'INSTALLATION_ALREADY_COMPLETED',
   'RESPONSIBLE_HUMAN_REQUIRED',
   'INTERNAL_ERROR',
+  // Stage 5 (v1.1) Agent Connection & Coordination MCP — folded into the
+  // unified error contract. Plan §"测试与验收" requires that every error
+  // response follows the {error:{code,message,details,correlationId}} shape,
+  // so these codes live in apiErrorCodeSchema (not a parallel union).
+  'AGENT_CONNECTION_PAIRING_INVALID',
+  'AGENT_CONNECTION_PAIRING_EXPIRED',
+  'AGENT_CONNECTION_PAIRING_CONSUMED',
+  'AGENT_CONNECTION_PAIRING_LOCKED',
+  'AGENT_CONNECTION_REVOKED',
+  'AGENT_CONNECTION_PRIVILEGE_ESCALATION',
+  'AGENT_CONNECTION_NOT_FOUND',
+  'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH',
+  'AGENT_CONNECTION_TEAM_MISMATCH',
+  'AGENT_CONNECTION_INSTALLATION_MISMATCH',
+  'COORDINATION_SESSION_CONNECTION_REVOKED',
+  'COORDINATION_SESSION_REFRESH_FAILED',
+  'COORDINATION_SESSION_TEAM_SCOPE_DENIED',
+  'AGENT_DELEGATE_NOT_GRANTED',
+  'COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN',
+  'COORDINATOR_AGENT_DELEGATE_NOT_TRANSITIVE',
+  'COORDINATOR_PRINCIPAL_HUMAN_INVALID',
+  'AGENT_SKILL_VERSION_MISMATCH',
+  'AGENT_SKILL_SIGNATURE_INVALID',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
 
@@ -112,15 +135,16 @@ export const agentProtocolSchema = z.enum(['native_http', 'mcp', 'a2a'])
 export const capabilitySchema = z.enum([
   'work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write',
   'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging',
-  'deploy:production', 'secrets:use', 'automation:manage', 'admin:*',
+  'deploy:production', 'secrets:use', 'automation:manage', 'admin:*', 'agent:delegate',
 ])
 export const delegationRoleSchema = z.enum(['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
-export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation'])
+export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation', 'team'])
 export const delegationStatusSchema = z.enum(['active', 'revoked', 'expired', 'completed'])
 export const agentSessionStateSchema = z.enum([
   'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval',
   'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled',
 ])
+export const agentSessionKindSchema = z.enum(['execution', 'coordination'])
 export const planStepStatusSchema = z.enum(['pending', 'in_progress', 'blocked', 'completed', 'canceled'])
 export const activityKindSchema = z.enum([
   'ack', 'status', 'plan_published', 'plan_changed', 'action_started', 'action_completed', 'evidence',
@@ -940,12 +964,32 @@ export const stage4RouteManifest = [
   { method: 'GET', path: '/api/v1/a2a-bindings/{id}/tasks/{taskId}/events', authenticated: true },
 ] as const
 
+// Stage 5 (v1.1): Agent Connection & Coordination MCP. The Coordination MCP
+// HTTP transport is intentionally not represented in the REST route manifest;
+// the MCP server reads the same shared contract schemas below. The Beta flag
+// `WORKMESH_BETA_COORDINATION_MCP` is enforced at the API layer.
+//
+// The endpoint set is exactly the plan §"一次性配对" resource surface plus the
+// well-known discovery route. No list endpoint, no Human landing page, no
+// other auxiliary paths.
+export const stage5RouteManifest = [
+  { method: 'GET', path: '/.well-known/workmesh-agent', authenticated: false },
+  { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-connections/redeem', authenticated: false, mutation: true },
+  { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate-confirm', authenticated: true, mutation: true, revisioned: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
   ...stage2RouteManifest,
   ...stage3RouteManifest,
   ...stage4RouteManifest,
+  ...stage5RouteManifest,
 ] as const
 
 export type AutomationRuleInput = z.infer<typeof automationRuleInputSchema>
@@ -955,3 +999,229 @@ export type LoopInput = z.infer<typeof loopInputSchema>
 export type UsageInput = z.infer<typeof usageInputSchema>
 export type NotificationPriority = z.infer<typeof notificationPrioritySchema>
 export type A2AProtocolVersion = '0.3'
+
+// Stage 5 (v1.1): Agent Connection resource shapes.
+//
+// Wire format follows the existing snake_case convention used by
+// workspaceResponseSchema / projectResponseSchema / workItemResponseSchema so
+// the OpenAPI components and these Zod schemas describe the same JSON.
+
+const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi'] as const
+export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeValues)
+
+export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])
+
+// A connect URL must carry the pairing code in the fragment so the plaintext
+// never reaches proxy access logs. URL parsers accept many edge cases, so this
+// validator explicitly rejects empty fragments and query-string-embedded codes.
+const hasFragment = (value: string): boolean => {
+  const hashIndex = value.indexOf('#')
+  if (hashIndex < 0) return false
+  return value.slice(hashIndex + 1).length > 0
+}
+
+const connectUrlSchema = z
+  .string()
+  .url()
+  .superRefine((value, ctx) => {
+    if (!hasFragment(value)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'connect_url must carry the pairing code in the URL fragment; query/path placement is rejected',
+      })
+    }
+  })
+
+export const agentConnectionCreateInputSchema = z
+  .object({
+    name: z.string().min(1).max(120),
+    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    team_id: idSchema,
+    principal_human_actor_id: idSchema.optional(),
+    client_type: agentConnectionClientTypeSchema,
+    requested_capabilities: z.array(capabilitySchema).min(1).max(50),
+    grant_agent_delegate: z.boolean().default(false),
+    notes: z.string().max(2000).optional(),
+  })
+  .strict()
+
+// PATCH can only change non-privilege-escalating fields. team_id, client_type,
+// requested_capabilities, grant_agent_delegate are deliberately omitted; the
+// .strict() above makes any attempt to send them a validation error.
+export const agentConnectionPatchInputSchema = z
+  .object({
+    name: z.string().min(1).max(120).optional(),
+    principal_human_actor_id: idSchema.optional(),
+    notes: z.string().max(2000).nullable().optional(),
+  })
+  .strict()
+  .refine(value => Object.keys(value).length > 0, { message: 'PATCH body must include at least one field' })
+
+const agentConnectionSkillManifestSchema = z.object({
+  name: z.literal('workmesh'),
+  version: z.string().min(1).max(80),
+  sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  signature: z.string().min(16).max(2000),
+})
+
+// Cross-field invariant: when grant_agent_delegate is false, the granted
+// capabilities MUST NOT include agent:delegate. The reverse is also a contract
+// invariant (granted capabilities with agent:delegate require grant flag true),
+// enforced by the server. We enforce the stricter direction here at the
+// schema layer so the response is honest at the wire.
+const crossFieldGrantDelegateSchema = z
+  .object({
+    grant_agent_delegate: z.boolean(),
+    granted_capabilities: z.array(capabilitySchema),
+  })
+  .superRefine((value, ctx) => {
+    if (!value.grant_agent_delegate && value.granted_capabilities.includes('agent:delegate')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'granted_capabilities may not include agent:delegate when grant_agent_delegate is false',
+        path: ['granted_capabilities'],
+      })
+    }
+  })
+
+export const agentConnectionResponseSchema = z
+  .object({
+    id: idSchema,
+    workspace_id: idSchema,
+    team_id: idSchema,
+    agent_actor_id: idSchema,
+    principal_human_actor_id: idSchema,
+    name: z.string(),
+    agent_slug: z.string(),
+    client_type: agentConnectionClientTypeSchema,
+    status: agentConnectionStatusSchema,
+    requested_capabilities: z.array(capabilitySchema),
+    granted_capabilities: z.array(capabilitySchema),
+    grant_agent_delegate: z.boolean(),
+    skill_version: z.string().nullable(),
+    skill_sha256: z.string().nullable(),
+    credential_fingerprint_prefix: z.string().nullable(),
+    pairing_code_expires_at: timestampSchema.nullable(),
+    last_used_at: timestampSchema.nullable(),
+    rotated_at: timestampSchema.nullable(),
+    revoked_at: timestampSchema.nullable(),
+    revision: revisionSchema,
+    redacted_token: z.literal(true),
+    created_at: timestampSchema,
+    updated_at: timestampSchema,
+  })
+  .passthrough()
+  .and(crossFieldGrantDelegateSchema)
+
+export const agentConnectionCreateResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    connect_url: connectUrlSchema,
+    skill: agentConnectionSkillManifestSchema,
+  })
+  .strict()
+
+export const agentConnectionRedeemInputSchema = z
+  .object({
+    pairing_code: z.string().min(1).max(500),
+    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    client: z
+      .object({
+        type: agentConnectionClientTypeSchema,
+        version: z.string().min(1).max(80),
+        runtime: z.string().min(1).max(160).optional(),
+      })
+      .strict(),
+  })
+  .strict()
+
+// The redeem response is keyed by Idempotency-Key for the lifetime of the
+// pairing code. A replay returns the exact same bytes; the contract pins that
+// promise here so the plan's "成功响应使用现有加密认证幂等机制安全重放"
+// requirement is enforceable at the schema layer.
+export const agentConnectionRedeemResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    installation_token: z.string().min(32).max(4096),
+    mcp: z
+      .object({
+        transport: z.literal('streamable_http'),
+        url: z.string().url(),
+        auth: z
+          .object({
+            type: z.literal('installation_token'),
+            header: z.literal('X-WorkMesh-Installation-Token'),
+          })
+          .strict(),
+      })
+      .strict(),
+    skill: agentConnectionSkillManifestSchema.extend({ download_url: z.string().url() }),
+    principal_human_actor_id: idSchema,
+    team_id: idSchema,
+    idempotency_replay: z
+      .object({
+        replayable_until: timestampSchema,
+        replay_returns_identical_body: z.literal(true),
+      })
+      .strict(),
+  })
+  .strict()
+
+export const agentConnectionRotateResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    connect_url: connectUrlSchema,
+    pairing_code_expires_at: timestampSchema,
+    overlap_until: timestampSchema,
+  })
+  .strict()
+
+export const agentWellKnownResponseSchema = z
+  .object({
+    protocolVersion: z.literal('v1'),
+    mcpUrl: z.string().url(),
+    wellKnownUrl: z.string().url(),
+    apiVersion: z.string().min(1).max(20),
+    supportedClients: z.array(agentConnectionClientTypeSchema).min(1),
+    skill: agentConnectionSkillManifestSchema,
+  })
+  .strict()
+
+export const coordinationSessionResponseSchema = z
+  .object({
+    id: idSchema,
+    connection_id: idSchema,
+    session_kind: z.literal('coordination'),
+    role: z.literal('coordinator'),
+    delegation_scope: z.literal('team'),
+    granted_capabilities: z.array(capabilitySchema),
+    expires_at: timestampSchema,
+    refreshed_at: timestampSchema.nullable(),
+    team_id: idSchema,
+    principal_human_actor_id: idSchema,
+  })
+  .strict()
+
+export const agentConnectionIdentitySchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    coordination_session: coordinationSessionResponseSchema,
+    agent_actor_id: idSchema,
+    principal_human_actor_id: idSchema,
+    team_id: idSchema,
+    granted_capabilities: z.array(capabilitySchema),
+  })
+  .strict()
+
+export type AgentConnectionClientType = z.infer<typeof agentConnectionClientTypeSchema>
+export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>
+export type AgentConnectionCreateInput = z.infer<typeof agentConnectionCreateInputSchema>
+export type AgentConnectionPatchInput = z.infer<typeof agentConnectionPatchInputSchema>
+export type AgentConnectionResponse = z.infer<typeof agentConnectionResponseSchema>
+export type AgentConnectionCreateResponse = z.infer<typeof agentConnectionCreateResponseSchema>
+export type AgentConnectionRedeemInput = z.infer<typeof agentConnectionRedeemInputSchema>
+export type AgentConnectionRedeemResponse = z.infer<typeof agentConnectionRedeemResponseSchema>
+export type AgentConnectionRotateResponse = z.infer<typeof agentConnectionRotateResponseSchema>
+export type AgentWellKnownResponse = z.infer<typeof agentWellKnownResponseSchema>
+export type CoordinationSessionResponse = z.infer<typeof coordinationSessionResponseSchema>
+export type AgentConnectionIdentity = z.infer<typeof agentConnectionIdentitySchema>
