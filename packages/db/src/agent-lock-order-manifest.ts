@@ -265,7 +265,7 @@ export const agentLockStatementManifest: readonly AgentLockStatementManifestEntr
   write("223:22:e96fc22329787c245913890c96e241d0e080c1e4c6d60e5490966800b6772825#1","223:22","apps/api/src/agent-connections.ts","DELETE /api/v1/agent-connections/:id",["agent_sessions"]),
   write("224:22:2292abeccafd719abd1629d15e0f16e17d1d48c667cc44d63bc0a12b63a739f7#1","224:22","apps/api/src/agent-connections.ts","DELETE /api/v1/agent-connections/:id",["delegations"]),
   write("244:13:8fdcaa5da23004d4e20d596b0533388fcb3c67d1c43ceb49c82aef4b8a189478#1","244:13","apps/worker/src/session-lifecycle.ts","reconcileHeartbeatLiveness",["agent_sessions"]),
-  write("275:22:f3612e26f8b8cf64b31a158ffd60e8b5f466d6ccb6a705b97f3ac7836df84164#1","275:22","apps/api/src/agent-connections.ts","resolveCoordinationIdentity",["agent_sessions"]),
+  write("275:80:85670f26d44d2f9665d308a98c4802c39abf29bbc589887fe06bbcd744c31055#1","275:80","apps/api/src/agent-connections.ts","resolveCoordinationIdentity",["agent_sessions"]),
   lock("278:54:4ebb5026435b8d3456a6e10d00a0aa472cccdbb2ea2a710ad55743ab13ddaa84#1","278:54","apps/worker/src/session-lifecycle.ts","expireStopGrace",["agent_sessions"]),
   lock("301:55:be0abdf279a1ecd6ac926c246b1df83208d40e0d8918b6290344df3bd22ec481#1","301:55","apps/worker/src/session-lifecycle.ts","expireApprovals",["agent_sessions","delegations"],"SKIP_LOCKED_TERMINAL_MULTI_RANK"),
   write("331:37:16311c7693d72bf8a0c21e076f63f0345502580622f001943a9d2959a0c83329#1","331:37","apps/api/src/agent/commands.ts","updateAgent",["agent_definitions"]),
