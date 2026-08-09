@@ -126,9 +126,16 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       }
       await tx.query(
         `INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities,revoked_at)
-         VALUES($1,$2,$3,$4,$5,NULL) ON CONFLICT(agent_id,team_id) DO UPDATE SET granted_by_actor_id=EXCLUDED.granted_by_actor_id,approved_capabilities=EXCLUDED.approved_capabilities,revoked_at=NULL`,
+         VALUES($1,$2,$3,$4,$5,NULL) ON CONFLICT(agent_id,team_id) DO NOTHING`,
         [context.actor.workspaceId, agent.id, body.teamId, context.actor.id, body.requestedCapabilities],
       )
+      const teamAccess = one((await tx.query<{ approved_capabilities: string[]; revoked_at: Date | null }>(
+        `SELECT approved_capabilities,revoked_at FROM agent_team_access
+          WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
+        [context.actor.workspaceId, agent.id, body.teamId],
+      )).rows, 'CAPABILITY_DENIED')
+      if (teamAccess.revoked_at || body.requestedCapabilities.some(capability => !teamAccess.approved_capabilities.includes(capability)))
+        throw new DomainError('CAPABILITY_DENIED', 'Connection capabilities require an active matching Agent Team grant')
       const delegation = one((await tx.query<{ id: string }>(
         `INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,status)
          VALUES($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::uuid,'coordinator','team',$2::uuid,$6,
@@ -209,7 +216,14 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       let row = await getLocked(tx, context.actor.workspaceId, id(request)); assertRevision(parseRevision(header(request, 'if-match')), row.revision)
       if (body.principalHumanActorId) one((await tx.query("SELECT id FROM actors WHERE id=$1 AND workspace_id=$2 AND kind='human' AND is_active AND (workspace_role='admin' OR EXISTS(SELECT 1 FROM memberships WHERE workspace_id=$2 AND team_id=$3 AND actor_id=$1))", [body.principalHumanActorId, row.workspace_id, row.team_id])).rows, 'FORBIDDEN')
       row = one((await tx.query<ConnectionRow>(`UPDATE agent_connections SET name=COALESCE($2,name),principal_human_actor_id=COALESCE($3,principal_human_actor_id),notes=CASE WHEN $4 THEN $5 ELSE notes END,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *`, [row.id, body.name ?? null, body.principalHumanActorId ?? null, body.notes !== undefined, body.notes ?? null])).rows)
-      if (body.principalHumanActorId) await tx.query('UPDATE delegations SET principal_human_actor_id=$2,revision=revision+1,updated_at=now() WHERE id=$1', [row.delegation_id, body.principalHumanActorId])
+      if (body.principalHumanActorId) {
+        await tx.query('UPDATE delegations SET principal_human_actor_id=$2,revision=revision+1,updated_at=now() WHERE id=$1', [row.delegation_id, body.principalHumanActorId])
+        await tx.query(
+          `UPDATE agent_coordination_sessions SET principal_human_actor_id=$2,updated_at=now()
+            WHERE connection_id=$1 AND status='active'`,
+          [row.id, body.principalHumanActorId],
+        )
+      }
       await connectionEvent(tx, context, row, 'agent.connection.updated', { fields: Object.keys(body) }); return response(row)
     })
   })
@@ -247,6 +261,17 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
     return mutate(db, context as unknown as CommandContext, async tx => {
       let row = await getLocked(tx, context.actor.workspaceId, id(request)); assertRevision(parseRevision(header(request, 'if-match')), row.revision)
       if (row.status !== 'rotating') throw new DomainError('INVALID_STATE_TRANSITION', 'Connection is not rotating')
+      const rotation = one((await tx.query<{ consumed_at: Date | null; has_active: boolean; has_overlap: boolean }>(
+        `SELECT pairing.consumed_at,
+                EXISTS(SELECT 1 FROM agent_connection_credentials WHERE connection_id=pairing.connection_id AND status='active') AS has_active,
+                EXISTS(SELECT 1 FROM agent_connection_credentials WHERE connection_id=pairing.connection_id AND status='overlap') AS has_overlap
+           FROM agent_connection_pairings pairing
+          WHERE pairing.connection_id=$1 AND pairing.purpose='rotation'
+          ORDER BY pairing.created_at DESC,pairing.id DESC LIMIT 1 FOR UPDATE`,
+        [row.id],
+      )).rows, 'INVALID_STATE_TRANSITION')
+      if (!rotation.consumed_at || !rotation.has_active || !rotation.has_overlap)
+        throw new DomainError('INVALID_STATE_TRANSITION', 'Rotation pairing must be redeemed before confirmation')
       await tx.query("UPDATE agent_connection_credentials SET status='rotated',revoked_at=now() WHERE connection_id=$1 AND status='overlap'", [row.id])
       row = one((await tx.query<ConnectionRow>("UPDATE agent_connections SET status='active',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [row.id])).rows)
       await connectionEvent(tx, context, row, 'agent.connection.rotation_confirmed', {}); return response(row)

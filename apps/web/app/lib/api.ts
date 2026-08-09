@@ -106,6 +106,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
   }
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: 'include' })
   if (!response.ok) throw await responseError(response)
+  if (response.status === 204) return undefined as T
   return response.json() as Promise<T>
 }
 

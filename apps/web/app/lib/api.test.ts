@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ApiError,
+  apiRequest,
   apiListRequest,
   appendUniquePage,
   pagedPath,
@@ -142,6 +143,16 @@ describe('auth mutation idempotency', () => {
     await expect(publicMutation('login-rate-metadata', '/api/v1/auth/login', { method: 'POST', body: JSON.stringify({ email: 'alice@example.test', password: 'wrong-password' }) })).rejects.toMatchObject({
       status: 429, code: 'AUTH_RATE_LIMITED', retryAfterSeconds: 3, message: 'Authentication request is temporarily rate limited',
     })
+  })
+
+  it('accepts a successful mutation with an empty 204 response', async () => {
+    values.set('workmesh.csrf-token', 'csrf')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })))
+
+    await expect(apiRequest<void>('/api/v1/agent-connections/connection-id', {
+      method: 'DELETE',
+      headers: { 'If-Match': '"revision-1"' },
+    })).resolves.toBeUndefined()
   })
 })
 
