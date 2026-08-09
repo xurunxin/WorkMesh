@@ -13,3 +13,4 @@
 \ir packages/db/migrations/v1/0001_v1_baseline.sql
 \ir packages/db/migrations/v1/0002_active_executor_projection.sql
 \ir packages/db/migrations/v1/0003_versioned_guidance.sql
+\ir packages/db/migrations/v1/0004_agent_connections.sql

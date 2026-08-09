@@ -19,6 +19,7 @@ export type ResourceResolverId =
   | 'work_item'
   | 'comment'
   | 'agent_definition'
+  | 'agent_connection'
   | 'delegation'
   | 'agent_session'
   | 'artifact'
@@ -99,6 +100,8 @@ const publicOperations = new Set([
   'getServerInfo',
   'getInstallStatus',
   'login',
+  'getWorkMeshAgentWellKnown',
+  'redeemAgentConnection',
 ])
 
 const installationTargetOperations = new Set([
@@ -118,9 +121,10 @@ export const secretReplayOperationIds = [
   'delegateAndStartAgentSession',
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
+  'redeemAgentConnection',
 ] as const
 const secretReplayOperations = new Set<string>(secretReplayOperationIds)
-const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff'])
+const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff', 'redeemAgentConnection'])
 
 const workspaceAdminOperations = new Set([
   'getRetentionStatus',
@@ -143,6 +147,12 @@ const workspaceAdminOperations = new Set([
   'rollbackWorkspaceGuidance',
   'listWorkspaceGuidanceHistory',
   'diffWorkspaceGuidance',
+  'createAgentConnection',
+  'getAgentConnection',
+  'patchAgentConnection',
+  'revokeAgentConnection',
+  'rotateAgentConnection',
+  'confirmAgentConnectionRotation',
 ])
 
 const humanOnlyOperations = new Set([
@@ -153,13 +163,16 @@ const humanOnlyOperations = new Set([
   'getAgent',
   'createWorkflowState',
   'createDelegation',
-  'delegateAndStartAgentSession',
   'getDelegation',
   'revokeDelegation',
   'createAgentSession',
   'promptAgentSession',
   'signalAgentSession',
   'retryAgentSession',
+  'patchAgentConnection',
+  'revokeAgentConnection',
+  'rotateAgentConnection',
+  'confirmAgentConnectionRotation',
   'decideApproval',
   'getWorkRoomTimeline',
   'resolveWorkRoomMessage',
@@ -299,6 +312,7 @@ function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (path.includes('/agent-sessions')) return 'agent_session'
   if (path.includes('/delegations')) return 'delegation'
   if (path.includes('/agents')) return 'agent_definition'
+  if (path.includes('/agent-connections')) return 'agent_connection'
   if (path.includes('/comments')) return 'comment'
   if (path.includes('/work-items')) return 'work_item'
   if (path.includes('/projects')) return 'project'
@@ -313,6 +327,7 @@ function capabilityFor(
   operationId: string,
 ): readonly string[] {
   if (operationId === 'getAgentCapabilityManifest') return []
+  if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
   if (method === 'GET') {
     if (path.includes('/repositories')) return ['repo:read']
     return ['work:read']
@@ -420,6 +435,18 @@ export function createRoutePolicyManifest(
 }
 
 const mcpOperationIds = {
+  'tool:verify_connection': 'getAgentCapabilityManifest',
+  'tool:get_current_identity': 'getAgentCapabilityManifest',
+  'tool:list_teams': 'listTeams',
+  'tool:list_workflow_states': 'listWorkflowStates',
+  'tool:list_projects': 'listProjects',
+  'tool:get_project': 'getProject',
+  'tool:create_project': 'createProject',
+  'tool:update_project': 'updateProject',
+  'tool:create_work_item': 'createWorkItem',
+  'tool:update_work_item': 'updateWorkItem',
+  'tool:delegate_work_item': 'delegateAndStartAgentSession',
+  'tool:start_agent_session': 'delegateAndStartAgentSession',
   'resource:server-info': 'getServerInfo',
   'resource:server-features': 'getDeploymentFeatures',
   'resource:agent-capabilities': 'getAgentCapabilityManifest',

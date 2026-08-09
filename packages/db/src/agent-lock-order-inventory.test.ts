@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
@@ -342,6 +342,23 @@ describe('Agent authority lock-order inventory',()=>{
       }
     const manifested=[...agentLockStatementManifest].sort((left,right)=>
       JSON.stringify(left).localeCompare(JSON.stringify(right)))
+    if(process.env.UPDATE_AGENT_LOCK_MANIFEST==='1') {
+      const entries=manifestStatements(actual,agentLockStatementManifest)
+        .sort((left,right)=>JSON.stringify(left).localeCompare(JSON.stringify(right)))
+      const manifestPath=join(root,'packages/db/src/agent-lock-order-manifest.ts')
+      const current=await readFile(manifestPath,'utf8')
+      const start=current.indexOf('export const agentLockStatementManifest:')
+      const arrayStart=current.indexOf('= [',start)+2
+      const arrayEnd=current.indexOf('\n]',arrayStart)
+      const rendered=entries.map(entry=>{
+        const factory=entry.class==='ranked-lock'?'lock':'write'
+        const args=[entry.statementId,entry.siteKey,entry.file,entry.owner,entry.rankSequence]
+          .map(value=>JSON.stringify(value)).join(',')
+        return `  ${factory}(${args}${entry.exemption?`,${JSON.stringify(entry.exemption)}`:''}),`
+      }).join('\n')
+      await writeFile(manifestPath,`${current.slice(0,arrayStart+1)}\n${rendered}${current.slice(arrayEnd)}`)
+      return
+    }
     expect(new Set(manifested.map(entry=>`${entry.file}:${entry.statementId}`)).size)
       .toBe(manifested.length)
     expect(manifestStatements(actual,agentLockStatementManifest)).toEqual(manifested)

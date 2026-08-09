@@ -46,6 +46,40 @@ pnpm mcp:inspector
 
 The official split `@modelcontextprotocol/server` / `@modelcontextprotocol/node` packages are currently published only as `2.0.0-beta.5`. WorkMesh therefore pins the current stable official `@modelcontextprotocol/sdk@1.29.0`, using only its Streamable HTTP and stdio transports; it does not use the deprecated HTTP+SSE transport.
 
+## Agent Connection quick start
+
+A Workspace Admin creates an Agent Connection from **Agents → Agent
+Connections**. Choose the Team, principal Human, client type, and the smallest
+capability preset. Grant `agent:delegate` only to a coordinator that must start
+other Agents. Give the generated one-line instruction to the Agent; the
+10-minute pairing code is kept in the URL fragment and is never sent in an HTTP
+request while the landing page opens.
+
+The Agent installs the pinned `workmesh` Skill, redeems the code once, stores
+the returned installation token in its secret store, and calls
+`verify_connection`. The public discovery document is
+`/.well-known/workmesh-agent`; the signed Skill is
+`/skills/workmesh-1.1.0.md`. Never paste an installation token into a repository,
+prompt transcript, command-line argument, or MCP configuration committed to
+source control.
+
+For remote Streamable HTTP MCP, send the installation token on every `POST
+/mcp` request as `X-WorkMesh-Installation-Token`. For local stdio fallback:
+
+```powershell
+$env:WORKMESH_API_URL = 'https://workmesh.example'
+$env:WORKMESH_INSTALLATION_TOKEN = '<installation-token-from-secret-store>'
+pnpm --filter @workmesh/mcp start:stdio
+```
+
+The coordination tool set verifies identity, lists Teams and workflow states,
+creates and updates Projects and Issues, and may delegate/start a Session only
+when the Connection was explicitly granted `agent:delegate`. Project/Issue
+deletion, permission expansion, credential rotation, and Connection revocation
+remain Human controls. Rotation uses a 15-minute old/new overlap after the new
+credential is redeemed; an unredeemed rotation expires without disabling the
+old credential.
+
 ## Fake Agent and smoke checks
 
 The fake Agent listens at `POST /workmesh/events`, ACKs each delivery before it starts work, validates raw-body HMAC, and de-duplicates `WorkMesh-Delivery-Id`. Exchanged session tokens are held only in its running process (never logged or persisted), allowing later prompted/pause/resume/stop deliveries to use the same scoped client. Its environment toggles delayed ACK/stale, plan/activity/question/approval/fail/complete, stop confirmation, and an intentionally rejected post-stop write:

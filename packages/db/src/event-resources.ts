@@ -66,6 +66,7 @@ export const supportedEventAggregateTypes = [
   'comment',
   'agent',
   'agent_team_access',
+  'agent_connection',
   'delegation',
   'agent_activity',
   'agent_plan_version',
@@ -215,6 +216,9 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
   workflow_state:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM workflow_states WHERE id=$1 AND workspace_id=$2`,
+  agent_connection:
+    `SELECT 'team'::text AS resource_type,team_id AS resource_id
+       FROM agent_connections WHERE id=$1 AND workspace_id=$2`,
   comment:
     `SELECT 'work_item'::text AS resource_type,channel.work_item_id AS resource_id
        FROM comments comment

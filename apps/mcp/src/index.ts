@@ -1,18 +1,20 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { createHash } from 'node:crypto'
 import { WorkMeshClient, WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk'
 import { z } from 'zod'
 import {
   durableEventCursorSchema,
   mcpPolicyBindings,
+  workmeshSkillManifest,
 } from '@workmesh/contracts'
 
 export type McpMode = 'read-only' | 'read-write'
 export { mcpPolicyBindings }
-export interface WorkMeshMcpOptions { client: WorkMeshClient; mode?: McpMode }
+export interface WorkMeshMcpOptions { client: WorkMeshClient; mode?: McpMode; coordination?: boolean }
 
 const sessionId = z.string().uuid()
 const idempotencyKey = z.string().min(1).max(255).optional()
-const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write', 'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging', 'deploy:production', 'secrets:use', 'automation:manage', 'admin:*'])
+const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write', 'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging', 'deploy:production', 'secrets:use', 'automation:manage', 'admin:*', 'agent:delegate'])
 
 export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer {
   const server = new McpServer({ name: 'workmesh-mcp', version: releaseMetadata.mcpVersion })
@@ -51,12 +53,38 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
     })))
   server.registerTool('get_work_item', { description: 'Get one authorized work item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItem(input.workItemId)))
 
+  if (options.coordination) registerCoordinationTools(server, options.client, options.mode)
+
   server.registerTool('get_work_room', { description: 'Read the human-visible durable Work Room for one work item, project, or session.', inputSchema: { workItemId: z.string().uuid().optional(), projectId: z.string().uuid().optional(), sessionId: z.string().uuid().optional() } }, async input => tool(() => options.client.getRoom(input)))
   server.registerTool('list_inbox_items', { description: 'List Inbox items authorized for the configured exact Agent Session. Unclaimed actor-targeted items expose bounded metadata only.', inputSchema: { status: z.enum(['open', 'resolved']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => options.client.listInbox(input.status ?? 'open', { cursor: input.cursor, limit: input.limit })))
   server.registerTool('get_inbox_item', { description: 'Read full Inbox detail only when the configured exact Session is the recipient or claimant.', inputSchema: { inboxItemId: z.string().uuid() } }, async input => tool(() => options.client.getInboxItem(input.inboxItemId)))
 
   if (options.mode !== 'read-only') registerMutations(server, options.client)
   return server
+}
+
+const coordinationKey = (toolName: string, payload: unknown): string =>
+  `coordination:${toolName}:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`
+
+function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mode: McpMode | undefined): void {
+  server.registerTool('verify_connection', { description: 'Verify the live Connection, derived Coordination Session, capabilities, and pinned WorkMesh Skill.', inputSchema: {} }, async () => tool(async () => ({ manifest: await client.getAgentCapabilities(), skill: workmeshSkillManifest })))
+  server.registerTool('get_current_identity', { description: 'Return the live Agent actor, Coordination Session, Team scope, and effective capabilities.', inputSchema: {} }, async () => tool(async () => (await client.getAgentCapabilities()).agent))
+  server.registerTool('list_teams', { description: 'List Teams visible to this Connection.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listTeams({ cursor: input.cursor, limit: input.limit })))
+  server.registerTool('list_workflow_states', { description: 'List workflow states for the Connection Team.', inputSchema: { teamId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listWorkflowStates(input.teamId, { cursor: input.cursor, limit: input.limit })))
+  server.registerTool('list_projects', { description: 'List authorized Projects.', inputSchema: { teamId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listProjects({ teamId: input.teamId }, { cursor: input.cursor, limit: input.limit })))
+  server.registerTool('get_project', { description: 'Get one authorized Project.', inputSchema: { projectId: z.string().uuid() } }, async input => tool(() => client.getProject(input.projectId)))
+  if (mode === 'read-only') return
+  server.registerTool('create_project', { description: 'Create a Project in the Connection Team. This cannot archive or delete Projects.', inputSchema: { teamId: z.string().uuid(), name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20_000).optional(), status: z.string().max(80).optional(), idempotencyKey } }, async input => tool(() => client.createProject(input, { idempotencyKey: input.idempotencyKey ?? coordinationKey('create_project', input) })))
+  server.registerTool('update_project', { description: 'Update ordinary Project fields at the current revision. Archive and delete remain Human-only.', inputSchema: { projectId: z.string().uuid(), revision: z.number().int().positive(), name: z.string().min(1).max(180).optional(), summary: z.string().max(500).optional(), description: z.string().max(20_000).nullable().optional(), status: z.string().max(80).optional(), idempotencyKey } }, async input => { const { projectId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateProject(projectId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_project', input) })) })
+  server.registerTool('create_work_item', { description: 'Create an Issue in the Connection Team. If responsibleHumanActorId is omitted, the server pins the Connection principal Human.', inputSchema: { teamId: z.string().uuid(), projectId: z.string().uuid().optional(), title: z.string().min(1).max(500), description: z.string().max(50_000).optional(), statusId: z.string().uuid(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async input => tool(() => client.createWorkItem(input, { idempotencyKey: input.idempotencyKey ?? coordinationKey('create_work_item', input) })))
+  server.registerTool('update_work_item', { description: 'Update ordinary Issue fields at the current revision. Delete and bulk mutation remain Human-only.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).nullable().optional(), statusId: z.string().uuid().optional(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().nullable().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async input => { const { workItemId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateWorkItem(workItemId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_work_item', input) })) })
+  const delegateInput = { workItemId: z.string().uuid(), revision: z.number().int().positive(), agentId: z.string().uuid(), principalHumanActorId: z.string().uuid(), role: z.enum(['executor','reviewer','researcher']).optional(), requestedCapabilities: z.array(capability).min(1).max(50), initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: z.string().uuid().optional(), budget: z.record(z.number()).optional(), idempotencyKey }
+  const delegate = (toolName: string, input: z.infer<z.ZodObject<typeof delegateInput>>) => {
+    const { workItemId, revision, idempotencyKey: key, ...body } = input
+    return tool(() => client.delegateAndStart(workItemId, { ...body, role: body.role ?? 'executor', budget: body.budget ?? {} }, { ifMatch: revision, idempotencyKey: key ?? coordinationKey(toolName, input) }))
+  }
+  server.registerTool('delegate_work_item', { description: 'Atomically delegate a Work Item and start its Agent Session. Requires the Connection agent:delegate capability and the Work Item responsible Human to match the Connection principal.', inputSchema: delegateInput }, async input => delegate('delegate_work_item', input))
+  server.registerTool('start_agent_session', { description: 'Start an Agent Session using the same atomic delegation gate. Requires agent:delegate; it cannot expand Team, Human, or capability scope.', inputSchema: delegateInput }, async input => delegate('start_agent_session', input))
 }
 
 function registerMutations(server: McpServer, client: WorkMeshClient): void {

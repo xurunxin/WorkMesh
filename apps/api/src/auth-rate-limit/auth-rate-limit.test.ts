@@ -49,7 +49,7 @@ const admission: AuthRateLimitAdmission = {
 };
 
 describe("authentication rate-limit inventory and privacy", () => {
-  it("keeps exact parity with the six credential-verification routes", () => {
+  it("keeps exact parity with credential-verification routes", () => {
     expect(() => assertAuthRateLimitInventory()).not.toThrow();
     expect(authRateLimitInventory.map((route) => route.operationId)).toEqual([
       "installWorkspace",
@@ -58,6 +58,7 @@ describe("authentication rate-limit inventory and privacy", () => {
       "refreshAgentSessionToken",
       "inspectExactTargetHandoff",
       "rejectHandoff",
+      "redeemAgentConnection",
     ]);
   });
 

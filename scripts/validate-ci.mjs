@@ -238,6 +238,8 @@ for (const command of [
   'pnpm lint',
   'pnpm typecheck',
   'pnpm --filter @workmesh/contracts test',
+  'pnpm check:route-policy',
+  'pnpm check:workmesh-skill',
   'pnpm build',
   'pnpm test',
   'docker compose config',

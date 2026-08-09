@@ -7,6 +7,10 @@ import type {
   WorkItemResponse,
   GuidanceResponse, GuidanceScope,
   AgentCapabilityManifest,
+  AgentConnectionCreateInput, AgentConnectionCreateResponse,
+  AgentConnectionPatchInput, AgentConnectionResponse,
+  AgentConnectionRedeemInput, AgentConnectionRedeemResponse,
+  AgentConnectionRotateResponse, AgentWellKnownResponse,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -111,6 +115,7 @@ export interface WorkMeshClientOptions {
   baseUrl: string
   sessionToken?: string
   installationToken?: string
+  coordinationToken?: string
   fetch?: typeof globalThis.fetch
   logger?: WorkMeshLogger
   retry?: RetryOptions
@@ -204,6 +209,7 @@ export class WorkMeshClient {
   private readonly baseUrl: string
   private sessionToken?: string
   private readonly installationToken?: string
+  private readonly coordinationToken?: string
   private readonly requestFetch: typeof globalThis.fetch
   private readonly logger?: WorkMeshLogger
   private readonly retry: Required<RetryOptions>
@@ -212,6 +218,7 @@ export class WorkMeshClient {
     this.baseUrl = options.baseUrl.replace(/\/$/, '')
     this.sessionToken = options.sessionToken
     this.installationToken = options.installationToken
+    this.coordinationToken = options.coordinationToken
     this.requestFetch = options.fetch ?? globalThis.fetch
     this.logger = options.logger
     this.retry = normalizeRetryOptions(options.retry)
@@ -230,6 +237,24 @@ export class WorkMeshClient {
   getAgentCapabilities(options: RequestOptions = {}): Promise<AgentCapabilityManifest> {
     return this.request('GET', '/api/v1/agent-capabilities', undefined, options)
   }
+
+  getWellKnown(options?: RequestOptions): Promise<AgentWellKnownResponse> { return this.request('GET', '/.well-known/workmesh-agent', undefined, options) }
+  createAgentConnection(input: AgentConnectionCreateInput, options: RequestOptions = {}): Promise<AgentConnectionCreateResponse> { return this.request('POST', '/api/v1/agent-connections', input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  redeemAgentConnection(input: AgentConnectionRedeemInput, options: RequestOptions = {}): Promise<AgentConnectionRedeemResponse> { return this.request('POST', '/api/v1/agent-connections/redeem', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.pairingCode, 'agent-connection-redeem') }) }
+  getAgentConnection(id: string, options?: RequestOptions): Promise<AgentConnectionResponse> { return this.request('GET', `/api/v1/agent-connections/${encodeURIComponent(id)}`, undefined, options) }
+  patchAgentConnection(id: string, input: AgentConnectionPatchInput, options: RequestOptions & { ifMatch: number | string }): Promise<AgentConnectionResponse> { return this.request('PATCH', `/api/v1/agent-connections/${encodeURIComponent(id)}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-patch') }) }
+  revokeAgentConnection(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<void> { return this.request('DELETE', `/api/v1/agent-connections/${encodeURIComponent(id)}`, undefined, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-revoke') }) }
+  rotateAgentConnection(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<AgentConnectionRotateResponse> { return this.request('POST', `/api/v1/agent-connections/${encodeURIComponent(id)}/rotate`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-rotate') }) }
+  confirmAgentConnectionRotation(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<AgentConnectionResponse> { return this.request('POST', `/api/v1/agent-connections/${encodeURIComponent(id)}/rotate-confirm`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-rotate-confirm') }) }
+
+  listTeams<T = unknown>(options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/teams', {}, options), undefined, options) }
+  listWorkflowStates<T = unknown>(teamId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/teams/${encodeURIComponent(teamId)}/states`, {}, options), undefined, options) }
+  listProjects<T = unknown>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/projects', query, options), undefined, options) }
+  getProject<T = unknown>(projectId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/projects/${encodeURIComponent(projectId)}`, undefined, options) }
+  createProject<T = unknown>(input: { teamId: string; name: string; summary?: string; description?: string | null; status?: string; leadActorId?: string | null; targetDate?: string | null }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/projects', input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  updateProject<T = unknown>(projectId: string, input: Record<string, unknown>, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('PATCH', `/api/v1/projects/${encodeURIComponent(projectId)}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  createWorkItem<T = WorkItemResponse>(input: { teamId: string; title: string; description?: string; statusId: string; priority?: 'none'|'low'|'medium'|'high'|'urgent'; dueDate?: string; responsibleHumanActorId?: string; labels?: string[]; projectId?: string }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/work-items', { priority: 'none', labels: [], ...input }, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  updateWorkItem<T = WorkItemResponse>(workItemId: string, input: Record<string, unknown>, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('PATCH', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
 
   async exchangeSessionToken(sessionId: string, exchangeToken: string, installationToken: string, options: RequestOptions = {}): Promise<TokenExchange> {
     // The one-time code is not a bearer credential: the active installation token proves the Agent identity.
@@ -466,6 +491,7 @@ export class WorkMeshClient {
     const headers: Record<string, string> = { accept: 'application/json' }
     if (body !== undefined) headers['content-type'] = 'application/json'
     if (options.authorizationToken ?? this.sessionToken) headers.authorization = `Bearer ${options.authorizationToken ?? this.sessionToken}`
+    if (this.coordinationToken) headers['x-workmesh-installation-token'] = this.coordinationToken
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey
     if (options.correlationId) headers['x-correlation-id'] = options.correlationId
     if (options.profileVersion) headers['workmesh-client-profile'] = options.profileVersion

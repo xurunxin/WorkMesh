@@ -16,6 +16,7 @@ x-feature-flags: &feature-flags
   WORKMESH_BETA_COSTS: ${WORKMESH_BETA_COSTS:-false}
   WORKMESH_BETA_GITEA: ${WORKMESH_BETA_GITEA:-false}
   WORKMESH_BETA_OPERATIONS_UI: ${WORKMESH_BETA_OPERATIONS_UI:-false}
+  WORKMESH_BETA_COORDINATION_MCP: ${WORKMESH_BETA_COORDINATION_MCP:-false}
   WORKMESH_EXPERIMENTAL_AUTOMATION: ${WORKMESH_EXPERIMENTAL_AUTOMATION:-false}
   WORKMESH_EXPERIMENTAL_AGENT_LOOPS: ${WORKMESH_EXPERIMENTAL_AGENT_LOOPS:-false}
   WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
@@ -199,12 +200,13 @@ services:
     profiles: ["agent"]
     image: ${WORKMESH_MCP_IMAGE:?WORKMESH_MCP_IMAGE is required}
     environment:
+      <<: *feature-flags
       NODE_ENV: production
       WORKMESH_SERVICE: mcp
       WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
       WORKMESH_API_URL: http://api:3001
-      # Empty defaults let Compose render when the optional profile is disabled.
-      # The MCP image preflight fails closed before listening if either is empty.
+      # Static Session mode needs both values. Coordination mode authenticates
+      # each request with X-WorkMesh-Installation-Token and may leave them empty.
       WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
       WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
       WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}

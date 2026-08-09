@@ -83,6 +83,21 @@ WorkMesh 的核心解法是：
 11. **自部署和数据可导出**；
 12. **不保存隐藏思维链，只保存可审计的操作性说明、证据和结果**。
 
+## 1.5 Agent-first 协作（v1.1 终态）
+
+v1.1 把 WorkMesh 从"Human 创建任务、Session MCP 执行任务"升级为真正的 **Agent-first 协作系统**。这不是把 Linear 改造成聊天机器人，而是承认 Agent 是 Team 里的稳定成员：
+
+- **Human 负责一次性授权、风险审批、撤销和监督**。一个 Workspace Admin 在 UI 上填写"客户端 / 名称 / Team / 责任人 / 能力 / 可选 `agent:delegate`"，系统生成一句接入指令；其余全部自动化。
+- **Agent 通过一句接入指令完成 MCP、凭据和 Skill 配置**。配对码 10 分钟单用、URL 用 fragment 携带、Token 一次性返回；客户端（Codex/OpenCode/pi）写入各自的 secret 存储和 MCP 配置，并调用 `verify_connection` 闭环。
+- **Agent 在获批 Team 内长期存在**。一个 Connection 是一个 Agent × Team × principal Human 的长期绑定；Connection 持有 Installation Token，自动派生 1 小时 Coordination Session，并在到期前刷新。
+- **Agent 负责日常协作**。Coordinator 角色 + Team scope delegation 让 Agent 可以创建 / 编辑 / 推进 Project、Issue、Work Room、Inbox、Handoff；状态推进默认无需 Human 批准。
+- **精确代码执行仍走 Delegation / Session / Lease / 证据闭环**。Coordinator 创建 Work Item 后，可以调用 `start_agent_session` 派生真正干活的子 Session；父子关系、预算、并发、Team access 全部沿用 v1.0 的不变量。
+- **Human 永远掌握三个旋钮**：扩权（含 `agent:delegate`）、破坏性操作（删除 / 归档 / 批量）、撤权（Stop / Revoke）。其它默认放给 Agent。
+
+终态验收：Human 在 UI 生成一句接入指令，将其发送给 Codex/OpenCode/pi；Agent 自动完成配对和配置，随后**仅通过 MCP**创建 Project、拆分 Issues、启动获准 Agent、协作推进并交付证据；Human UI 实时监督，可随时 Stop / Revoke。
+
+不变量与详细规则见 `docs/adr/0043-agent-connection-and-coordination-mcp.md`；执行步骤见 `docs/plans/agent-first-coordination-mcp.md`。
+
 ---
 
 # 2. Linear 核心管理能力调研与取舍

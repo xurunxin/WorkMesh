@@ -11,8 +11,11 @@ const db = createDb(databaseUrl)
 const restoreSessionSubjectConstraint = async (): Promise<void> => {
   const exists = await db.query(
     `SELECT 1 FROM pg_constraint
-      WHERE conname='agent_sessions_subject_container_check'
+      WHERE conname='agent_sessions_scope_kind_check'
         AND conrelid='agent_sessions'::regclass`,
+  )
+  await db.query(
+    'ALTER TABLE agent_sessions DROP CONSTRAINT IF EXISTS agent_sessions_subject_container_check',
   )
   if (exists.rowCount) return
   await db.query(
@@ -20,16 +23,16 @@ const restoreSessionSubjectConstraint = async (): Promise<void> => {
   )
   await db.query(`
     ALTER TABLE agent_sessions
-      ADD CONSTRAINT agent_sessions_subject_container_check CHECK (
-        (automation_run_id IS NOT NULL AND parent_session_id IS NULL
+      ADD CONSTRAINT agent_sessions_scope_kind_check CHECK (
+        (session_kind='coordination' AND automation_run_id IS NULL AND parent_session_id IS NULL
           AND num_nonnulls(work_item_id,project_id,plan_step_id)=0)
-        OR
-        (automation_run_id IS NULL AND (
-          (parent_session_id IS NULL
-            AND num_nonnulls(work_item_id,project_id,plan_step_id)=1)
-          OR
-          (parent_session_id IS NOT NULL
-            AND num_nonnulls(work_item_id,project_id)=1)
+        OR (session_kind='execution' AND (
+          (automation_run_id IS NOT NULL AND parent_session_id IS NULL
+            AND num_nonnulls(work_item_id,project_id,plan_step_id)=0)
+          OR (automation_run_id IS NULL AND (
+            (parent_session_id IS NULL AND num_nonnulls(work_item_id,project_id,plan_step_id)=1)
+            OR (parent_session_id IS NOT NULL AND num_nonnulls(work_item_id,project_id)=1)
+          ))
         ))
       )`)
 }
@@ -1072,9 +1075,8 @@ describe('Stage 2 collaboration API acceptance', () => {
     ]
     // Fault-inject a legacy/corrupt hybrid row to prove reads fail safe even
     // though the current schema prevents new hybrid Sessions.
-    await db.query(
-      'ALTER TABLE agent_sessions DROP CONSTRAINT agent_sessions_subject_container_check',
-    )
+    await db.query('ALTER TABLE agent_sessions DROP CONSTRAINT IF EXISTS agent_sessions_subject_container_check')
+    await db.query('ALTER TABLE agent_sessions DROP CONSTRAINT IF EXISTS agent_sessions_scope_kind_check')
     await db.query(
       'UPDATE agent_sessions SET project_id=$2 WHERE id=ANY($1::uuid[])',
       [workItemSessionIds, movedProjectId],

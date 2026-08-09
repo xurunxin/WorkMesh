@@ -24,12 +24,16 @@ declare module "fastify" {
 
 function subjectFor(
   request: FastifyRequest,
-  kind: "none" | "email" | "session" | "handoff",
+  kind: "none" | "email" | "session" | "handoff" | "pairing",
 ): string | undefined {
   if (kind === "none") return undefined;
   if (kind === "email") {
     const email = (request.body as { email?: unknown } | undefined)?.email;
     return typeof email === "string" ? email.trim().toLowerCase() : undefined;
+  }
+  if (kind === "pairing") {
+    const pairingCode = (request.body as { pairingCode?: unknown } | undefined)?.pairingCode;
+    return typeof pairingCode === "string" ? pairingCode : undefined;
   }
   const id = (request.params as { id?: unknown } | undefined)?.id;
   return typeof id === "string" ? id.toLowerCase() : undefined;

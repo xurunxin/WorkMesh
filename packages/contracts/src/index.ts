@@ -6,6 +6,7 @@ import {
 } from './route-policy.js'
 
 export * from './route-policy.js'
+export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 
 export const releaseMetadata = Object.freeze({
   serverVersion: '1.0.0',
@@ -25,6 +26,7 @@ export const featureKeySchema = z.enum([
   'WORKMESH_BETA_COSTS',
   'WORKMESH_BETA_GITEA',
   'WORKMESH_BETA_OPERATIONS_UI',
+  'WORKMESH_BETA_COORDINATION_MCP',
   'WORKMESH_EXPERIMENTAL_AUTOMATION',
   'WORKMESH_EXPERIMENTAL_AGENT_LOOPS',
   'WORKMESH_EXPERIMENTAL_A2A',
@@ -45,6 +47,7 @@ export const featureDefinitions = Object.freeze([
   { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_GITEA', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
   { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['web'] },
+  { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker', 'sdk-mcp'] },
   { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
   { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
@@ -91,6 +94,8 @@ const featureRoutePrefixes = [
   ['/api/v1/automation-runs', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
   ['/api/v1/notifications', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/notification-preferences', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/agent-connections', 'WORKMESH_BETA_COORDINATION_MCP'],
+  ['/.well-known/workmesh-agent', 'WORKMESH_BETA_COORDINATION_MCP'],
   ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
   ['/api/v1/a2a-bindings', 'WORKMESH_EXPERIMENTAL_A2A'],
 ] as const satisfies readonly (readonly [string, FeatureKey])[]
@@ -258,6 +263,29 @@ export const apiErrorCodeSchema = z.enum([
   'PROFILE_VERSION_UNSUPPORTED',
   'REALTIME_CAPACITY_EXCEEDED',
   'INTERNAL_ERROR',
+  // Stage 5 (v1.1) Agent Connection & Coordination MCP — folded into the
+  // unified error contract. Plan §"测试与验收" requires that every error
+  // response follows the {error:{code,message,details,correlationId}} shape,
+  // so these codes live in apiErrorCodeSchema (not a parallel union).
+  'AGENT_CONNECTION_PAIRING_INVALID',
+  'AGENT_CONNECTION_PAIRING_EXPIRED',
+  'AGENT_CONNECTION_PAIRING_CONSUMED',
+  'AGENT_CONNECTION_PAIRING_LOCKED',
+  'AGENT_CONNECTION_REVOKED',
+  'AGENT_CONNECTION_PRIVILEGE_ESCALATION',
+  'AGENT_CONNECTION_NOT_FOUND',
+  'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH',
+  'AGENT_CONNECTION_TEAM_MISMATCH',
+  'AGENT_CONNECTION_INSTALLATION_MISMATCH',
+  'COORDINATION_SESSION_CONNECTION_REVOKED',
+  'COORDINATION_SESSION_REFRESH_FAILED',
+  'COORDINATION_SESSION_TEAM_SCOPE_DENIED',
+  'AGENT_DELEGATE_NOT_GRANTED',
+  'COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN',
+  'COORDINATOR_AGENT_DELEGATE_NOT_TRANSITIVE',
+  'COORDINATOR_PRINCIPAL_HUMAN_INVALID',
+  'AGENT_SKILL_VERSION_MISMATCH',
+  'AGENT_SKILL_SIGNATURE_INVALID',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
 
@@ -360,11 +388,12 @@ export const agentProtocolSchema = z.enum(['native_http', 'mcp', 'a2a'])
 export const capabilitySchema = z.enum([
   'work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write',
   'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging',
-  'deploy:production', 'secrets:use', 'automation:manage', 'admin:*',
+  'deploy:production', 'secrets:use', 'automation:manage', 'admin:*', 'agent:delegate',
 ])
 export const delegationRoleSchema = z.enum(['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
-export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation'])
+export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation', 'team'])
 export const delegationStatusSchema = z.enum(['active', 'revoked', 'expired', 'completed'])
+export const agentSessionKindSchema = z.enum(['execution', 'coordination'])
 export const planStepStatusSchema = z.enum(['pending', 'in_progress', 'blocked', 'completed', 'canceled'])
 export const activityKindSchema = z.enum([
   'ack', 'status', 'plan_published', 'plan_changed', 'action_started', 'action_completed', 'evidence',
@@ -1346,12 +1375,54 @@ export const stage4RouteManifest = [
   { method: 'GET', path: '/api/v1/a2a-bindings/{id}/tasks/{taskId}/events', authenticated: true },
 ] as const
 
+// Stage 5 (v1.1): Agent Connection & Coordination MCP. The Coordination MCP
+// HTTP transport is intentionally not represented in the REST route manifest;
+// the MCP server reads the same shared contract schemas below. The Beta flag
+// `WORKMESH_BETA_COORDINATION_MCP` is enforced at the API layer.
+//
+// The endpoint set is exactly the plan §"一次性配对" resource surface
+// (plan v0.4) plus the well-known discovery route. No list endpoint, no
+// Human landing page.
+//
+// Plan v0.4 (current) — Rotation is a real lifecycle with an explicit
+// confirmation step, NOT worker auto-expiry:
+//   1. POST /rotate issues a new pairing code. Old + new credentials
+//      overlap for 15 minutes (overlap_until is a real deadline).
+//   2. During overlap, Admin may call POST /rotate-confirm to revoke
+//      only the old fingerprint. Connection state returns to 'active';
+//      new Token is preserved; live Coordination Sessions are NOT
+//      invalidated. This is the explicit implementation of the
+//      original plan "确认成功后撤销旧凭据".
+//   3. If Admin does NOT call /rotate-confirm, the worker auto-expires
+//      the old fingerprint at overlap_until. The new Token, the
+//      Connection, and the live Sessions are unaffected. Worker
+//      expiry is a safety net, not the primary mechanism.
+//   4. DELETE remains the hard path that revokes the entire
+//      Connection AND invalidates every live Coordination Session
+//      AND removes the new Token. The two operations are NOT
+//      interchangeable.
+// Earlier plan versions that conflated /rotate with /rotate-confirm
+// (v0.2: "new redeem auto-revokes old" — withdrawn; v0.3: "worker
+// auto-invalidates at overlap_until" — withdrawn in favor of v0.4)
+// are recorded in the revision history at the top of the plan file.
+export const stage5RouteManifest = [
+  { method: 'GET', path: '/.well-known/workmesh-agent', authenticated: false },
+  { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-connections/redeem', authenticated: false, mutation: true },
+  { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate-confirm', authenticated: true, mutation: true, revisioned: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
   ...stage2RouteManifest,
   ...stage3RouteManifest,
   ...stage4RouteManifest,
+  ...stage5RouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {
@@ -1540,3 +1611,396 @@ export type LoopInput = z.infer<typeof loopInputSchema>
 export type UsageInput = z.infer<typeof usageInputSchema>
 export type NotificationPriority = z.infer<typeof notificationPrioritySchema>
 export type A2AProtocolVersion = '0.3'
+
+// Stage 5 (v1.1): Agent Connection resource shapes.
+//
+// Convention matches the rest of the contract layer:
+//   - Request DTOs use camelCase API field names (projectInputSchema,
+//     workItemInputSchema, commentInputSchema all do the same).
+//   - Response DTOs use snake_case wire format (projectResponseSchema,
+//     workItemResponseSchema do the same).
+//   - The well-known manifest is camelCase because clients read it before
+//     any WorkMesh session exists.
+//   - Schemas are .strict() by default: extra fields are rejected, not
+//     preserved. .passthrough() is never used, so undeclared secrets
+//     cannot leak through a Connection response.
+
+const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi', 'generic_mcp'] as const
+export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeValues)
+
+export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])
+
+// URL pattern + URL parser defense: the regex pins the shape, the URL
+// parser rejects userinfo (https://user:pass@host/...) so an attacker
+// cannot carry a secret in the userinfo segment. The reviewer-flagged
+// bypass `https://code@host.test/connect/x#abcdefgh` is rejected here.
+const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/connect\/[a-z0-9][a-z0-9-]{0,79}#[A-Za-z0-9_-]{8,512}$/
+const connectUrlSchema = z
+  .string()
+  .superRefine((value, ctx) => {
+    if (!connectUrlPattern.test(value)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'connect_url must be https://<host>/connect/<agent-slug>#<pairing-code>; userinfo, query/path credentials, and missing/short fragments are rejected',
+      })
+      return
+    }
+    const beforeFragment = value.split('#')[0] ?? value
+    if (/[?&=](pairing[_-]?code|code|secret|token|access[_-]?token)=/i.test(beforeFragment)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'connect_url must not embed credentials in the query or path; fragment-only is the rule',
+      })
+      return
+    }
+    try {
+      const parsed = new URL(value)
+      if (parsed.username || parsed.password) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'connect_url must not carry a userinfo segment (https://user:pass@host/...); the URL parser rejected it',
+        })
+      }
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'connect_url is not a valid URL',
+      })
+    }
+  })
+
+export const agentConnectionCreateInputSchema = z
+  .object({
+    name: z.string().min(1).max(120),
+    agentSlug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    teamId: idSchema,
+    principalHumanActorId: idSchema.optional(),
+    clientType: agentConnectionClientTypeSchema,
+    requestedCapabilities: z
+      .array(capabilitySchema)
+      .min(1)
+      .max(50)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'requestedCapabilities must not contain duplicates' }),
+    grantAgentDelegate: z.boolean().default(false),
+    notes: z.string().max(2000).optional(),
+  })
+  .strict()
+
+// PATCH can only change non-privilege-escalating fields. teamId, clientType,
+// requestedCapabilities, grantAgentDelegate are deliberately omitted; the
+// .strict() above makes any attempt to send them a validation error.
+export const agentConnectionPatchInputSchema = z
+  .object({
+    name: z.string().min(1).max(120).optional(),
+    principalHumanActorId: idSchema.optional(),
+    notes: z.string().max(2000).nullable().optional(),
+  })
+  .strict()
+  .refine(value => Object.keys(value).length > 0, { message: 'PATCH body must include at least one field' })
+
+export const agentConnectionRedeemInputSchema = z
+  .object({
+    pairingCode: z.string().min(1).max(500),
+    agentSlug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    client: z
+      .object({
+        type: agentConnectionClientTypeSchema,
+        version: z.string().min(1).max(80),
+        runtime: z.string().min(1).max(160).optional(),
+      })
+      .strict(),
+  })
+  .strict()
+
+// Skill bundle: a base schema shared by the well-known manifest and the
+// redeem response. The redeem response requires the download_url (the Agent
+// must actually fetch the bundle); the well-known manifest does not
+// (clients may already have the bundle pinned). The well-known variant
+// keeps download_url optional at the base; the redeem variant extends
+// with download_url required. No `allOf` mixing: one base, one extension.
+// `version` is locked to the official SemVer 2.0.0 grammar
+// (https://semver.org/#is-there-a-suggested-regular-expression-regexp-to-check-a-semver-string)
+// so AGENT_SKILL_VERSION_MISMATCH is actually decidable on a pinned
+// regex. The reviewer's previous `\d+\.\d+\.\d+(-[A-Za-z0-9.-]+)?$`
+// accepted `01.0.0` (leading zeros are forbidden by SemVer 2.0.0 §2),
+// accepted `1.0.0-alpha..1` (consecutive dots forbidden by §9), and
+// rejected `1.0.0+build.1` (build metadata is part of SemVer 2.0.0 §10).
+// The official regex below covers all three. The Zod and OpenAPI patterns
+// MUST stay byte-identical; the generator in
+// scripts/generate-stage5-subset-blocks.mjs keeps them in sync.
+// Exported so the stage5 test can assert that the OpenAPI pattern
+// is byte-identical to this Zod regex (closing the v5 Standards
+// sub-agent's Duplicated Code smell). Update OPENAPI.yaml when
+// this changes; the test will fail if you forget.
+export const semverPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+const agentConnectionSkillBundleBaseSchema = z.object({
+  name: z.literal('workmesh'),
+  version: z.string().regex(semverPattern, 'skill bundle version must be SemVer 2.0.0 (https://semver.org) — leading zeros, consecutive dots, and missing build-metadata are not allowed'),
+  sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  signature: z.string().min(16).max(2000),
+})
+// .strict() so the well-known manifest's bundle (no download_url) rejects
+// any field outside the base, including a stray download_url. The redeem
+// response uses agentConnectionSkillBundleSchema which extends the base
+// with download_url required.
+export const agentConnectionSkillBundleSchema = agentConnectionSkillBundleBaseSchema
+  .extend({ download_url: z.string().url() })
+  .strict()
+export const agentConnectionWellKnownSkillSchema = agentConnectionSkillBundleBaseSchema.strict()
+
+// Cross-field invariants for AgentConnectionResponse:
+//   (a) granted_capabilities ⊆ requested_capabilities (no Agent can ever
+//       get a capability the Admin did not pre-authorize).
+//   (b) granted_capabilities may not include agent:delegate unless
+//       grant_agent_delegate is true.
+//   (c) granted_capabilities must not contain duplicates.
+// OpenAPI enforces (a) and (b) via if/then/else; this Zod schema enforces
+// all three so non-OpenAPI clients also get the contract.
+const crossFieldGrantDelegateSchema = z
+  .object({
+    grant_agent_delegate: z.boolean(),
+    requested_capabilities: z.array(capabilitySchema),
+    granted_capabilities: z.array(capabilitySchema),
+  })
+  .superRefine((value, ctx) => {
+    if (!value.grant_agent_delegate && value.granted_capabilities.includes('agent:delegate')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'granted_capabilities may not include agent:delegate when grant_agent_delegate is false',
+        path: ['granted_capabilities'],
+      })
+    }
+    const requested = new Set(value.requested_capabilities)
+    const unrequested = value.granted_capabilities.filter(c => !requested.has(c))
+    if (unrequested.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `granted_capabilities must be a subset of requested_capabilities; unrequested: ${unrequested.join(', ')}`,
+        path: ['granted_capabilities'],
+      })
+    }
+    if (new Set(value.granted_capabilities).size !== value.granted_capabilities.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'granted_capabilities must not contain duplicates',
+        path: ['granted_capabilities'],
+      })
+    }
+  })
+
+// Response schemas are .strict() (not .passthrough()) so undeclared fields
+// like `installation_token` cannot ride along inside a `connection` payload.
+// The combination of .strict() on the outer wrapper and the inner response
+// schema being non-passthrough is what makes the connection leak impossible.
+export const agentConnectionResponseSchema = z
+  .object({
+    id: idSchema,
+    workspace_id: idSchema,
+    team_id: idSchema,
+    agent_actor_id: idSchema,
+    principal_human_actor_id: idSchema,
+    name: z.string(),
+    agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+    client_type: agentConnectionClientTypeSchema,
+    status: agentConnectionStatusSchema,
+    requested_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'requested_capabilities must not contain duplicates' }),
+    granted_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
+    grant_agent_delegate: z.boolean(),
+    skill_version: z.string().regex(semverPattern, 'skill_version must be SemVer or null').nullable(),
+    skill_sha256: z.string().nullable().refine(value => value === null || /^sha256:[a-f0-9]{64}$/.test(value), { message: 'skill_sha256 must be null or match sha256:<64 hex chars>' }),
+    credential_fingerprint_prefix: z.string().nullable(),
+    pairing_code_expires_at: timestampSchema.nullable(),
+    last_used_at: timestampSchema.nullable(),
+    rotated_at: timestampSchema.nullable(),
+    revoked_at: timestampSchema.nullable(),
+    revision: revisionSchema,
+    redacted_token: z.literal(true),
+    created_at: timestampSchema,
+    updated_at: timestampSchema,
+  })
+  .strict()
+  .and(crossFieldGrantDelegateSchema)
+
+export const agentConnectionCreateResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    connect_url: connectUrlSchema,
+    skill: agentConnectionWellKnownSkillSchema,
+  })
+  .strict()
+
+// The redeem response is keyed by Idempotency-Key for the lifetime of the
+// pairing code. A replay returns the exact same bytes; the contract pins
+// that promise here so the plan's "成功响应使用现有加密认证幂等机制安全
+// 重放" requirement is enforceable at the schema layer. The bundle in the
+// redeem response carries the required download_url.
+export const agentConnectionRedeemResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    installation_token: z.string().min(32).max(4096),
+    mcp: z
+      .object({
+        transport: z.literal('streamable_http'),
+        url: z.string().url(),
+        auth: z
+          .object({
+            type: z.literal('installation_token'),
+            header: z.literal('X-WorkMesh-Installation-Token'),
+          })
+          .strict(),
+      })
+      .strict(),
+    skill: agentConnectionSkillBundleSchema,
+    principal_human_actor_id: idSchema,
+    team_id: idSchema,
+    idempotency_replay: z
+      .object({
+        replayable_until: timestampSchema,
+        replay_returns_identical_body: z.literal(true),
+      })
+      .strict(),
+  })
+  .strict()
+
+export const agentConnectionRotateResponseSchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    connect_url: connectUrlSchema,
+    pairing_code_expires_at: timestampSchema,
+    overlap_until: timestampSchema,
+  })
+  .strict()
+
+export const agentWellKnownResponseSchema = z
+  .object({
+    protocolVersion: z.literal('v1'),
+    mcpUrl: z.string().url(),
+    wellKnownUrl: z.string().url(),
+    apiVersion: z.string().min(1).max(20),
+    supportedClients: z.array(agentConnectionClientTypeSchema).min(1),
+    skill: agentConnectionWellKnownSkillSchema,
+  })
+  .strict()
+
+export const coordinationSessionResponseSchema = z
+  .object({
+    id: idSchema,
+    connection_id: idSchema,
+    session_kind: z.literal('coordination'),
+    role: z.literal('coordinator'),
+    delegation_scope: z.literal('team'),
+    granted_capabilities: z
+      .array(capabilitySchema)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
+    expires_at: timestampSchema,
+    refreshed_at: timestampSchema.nullable(),
+    team_id: idSchema,
+    principal_human_actor_id: idSchema,
+  })
+  .strict()
+
+// Cross-field invariants for AgentConnectionIdentity (the per-request
+// identity a Coordination MCP request resolves to):
+//   (a) coordination_session.granted_capabilities ⊆
+//       connection.granted_capabilities
+//       — a live Session cannot be granted a capability the
+//         parent Connection does not have, otherwise the public
+//         contract would let a Connection grant "work:read" and a
+//         forged Session claim "admin:*".
+//   (b) identity.granted_capabilities = coordination_session.granted_capabilities
+//       — the per-request view must mirror the Session; otherwise
+//         individual MCP responses could drift from the Session
+//         that supposedly issued them.
+//   (c) granted_capabilities has no duplicates.
+//   (d) cross-Identity id binding — eight equalities across the
+//       three nested objects. JSON Schema 2020-12 has no way to
+//       compare two dynamic values, so (d) is enforced in Zod only;
+//       the OpenAPI schema documents each binding pair in its
+//       description so generated clients and spec validators still
+//       know the constraint.
+//         (d.1) coordination_session.connection_id === connection.id
+//         (d.2) coordination_session.team_id === connection.team_id
+//         (d.3) coordination_session.team_id === identity.team_id
+//         (d.4) coordination_session.principal_human_actor_id
+//                 === connection.principal_human_actor_id
+//         (d.5) coordination_session.principal_human_actor_id
+//                 === identity.principal_human_actor_id
+//         (d.6) identity.agent_actor_id === connection.agent_actor_id
+//         (d.7) identity.team_id === connection.team_id
+//         (d.8) identity.principal_human_actor_id
+//                 === connection.principal_human_actor_id
+// OpenAPI enforces (a) and (b) per-capability via if/then/else blocks
+// (JSON Schema 2020-12 has no subset operator); Zod enforces all
+// four so non-OpenAPI clients also get the contract.
+export const agentConnectionIdentitySchema = z
+  .object({
+    connection: agentConnectionResponseSchema,
+    coordination_session: coordinationSessionResponseSchema,
+    agent_actor_id: idSchema,
+    principal_human_actor_id: idSchema,
+    team_id: idSchema,
+    granted_capabilities: z
+      .array(capabilitySchema)
+      .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    // (a) Subset: coordination_session.granted_capabilities ⊆ connection.granted_capabilities
+    const connectionGranted = new Set(value.connection.granted_capabilities)
+    const unrequested = value.coordination_session.granted_capabilities.filter(c => !connectionGranted.has(c))
+    if (unrequested.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `coordination_session.granted_capabilities must be a subset of connection.granted_capabilities; not in connection: ${unrequested.join(', ')}`,
+        path: ['coordination_session', 'granted_capabilities'],
+      })
+    }
+    // (b) Equality: identity.granted_capabilities = coordination_session.granted_capabilities
+    const sessionSet = new Set(value.coordination_session.granted_capabilities)
+    const identityExtra = value.granted_capabilities.filter(c => !sessionSet.has(c))
+    const sessionExtra = value.coordination_session.granted_capabilities.filter(c => !value.granted_capabilities.includes(c))
+    if (identityExtra.length > 0 || sessionExtra.length > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `identity.granted_capabilities must equal coordination_session.granted_capabilities; identity has extras [${identityExtra.join(', ')}], session has extras [${sessionExtra.join(', ')}]`,
+        path: ['granted_capabilities'],
+      })
+    }
+    // (d) Cross-Identity id binding. The plan restricts one Connection
+    // to one Team and one principal Human; a forged Session claiming
+    // a different Team or a different principal must be rejected
+    // before the request touches any downstream capability check.
+    const idBindings: Array<{ lhs: () => string; rhs: () => string; label: string; path: string[] }> = [
+      { lhs: () => value.coordination_session.connection_id, rhs: () => value.connection.id, label: 'coordination_session.connection_id === connection.id', path: ['coordination_session', 'connection_id'] },
+      { lhs: () => value.coordination_session.team_id, rhs: () => value.connection.team_id, label: 'coordination_session.team_id === connection.team_id', path: ['coordination_session', 'team_id'] },
+      { lhs: () => value.coordination_session.team_id, rhs: () => value.team_id, label: 'coordination_session.team_id === identity.team_id', path: ['team_id'] },
+      { lhs: () => value.coordination_session.principal_human_actor_id, rhs: () => value.connection.principal_human_actor_id, label: 'coordination_session.principal_human_actor_id === connection.principal_human_actor_id', path: ['coordination_session', 'principal_human_actor_id'] },
+      { lhs: () => value.coordination_session.principal_human_actor_id, rhs: () => value.principal_human_actor_id, label: 'coordination_session.principal_human_actor_id === identity.principal_human_actor_id', path: ['principal_human_actor_id'] },
+      { lhs: () => value.agent_actor_id, rhs: () => value.connection.agent_actor_id, label: 'identity.agent_actor_id === connection.agent_actor_id', path: ['agent_actor_id'] },
+      { lhs: () => value.team_id, rhs: () => value.connection.team_id, label: 'identity.team_id === connection.team_id', path: ['team_id'] },
+      { lhs: () => value.principal_human_actor_id, rhs: () => value.connection.principal_human_actor_id, label: 'identity.principal_human_actor_id === connection.principal_human_actor_id', path: ['principal_human_actor_id'] },
+    ]
+    for (const { lhs, rhs, label, path } of idBindings) {
+      if (lhs() !== rhs()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${label} (got ${lhs()} vs ${rhs()})`,
+          path,
+        })
+      }
+    }
+  })
+
+export type AgentConnectionClientType = z.infer<typeof agentConnectionClientTypeSchema>
+export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>
+export type AgentConnectionCreateInput = z.infer<typeof agentConnectionCreateInputSchema>
+export type AgentConnectionPatchInput = z.infer<typeof agentConnectionPatchInputSchema>
+export type AgentConnectionResponse = z.infer<typeof agentConnectionResponseSchema>
+export type AgentConnectionCreateResponse = z.infer<typeof agentConnectionCreateResponseSchema>
+export type AgentConnectionRedeemInput = z.infer<typeof agentConnectionRedeemInputSchema>
+export type AgentConnectionRedeemResponse = z.infer<typeof agentConnectionRedeemResponseSchema>
+export type AgentConnectionRotateResponse = z.infer<typeof agentConnectionRotateResponseSchema>
+export type AgentWellKnownResponse = z.infer<typeof agentWellKnownResponseSchema>
+export type CoordinationSessionResponse = z.infer<typeof coordinationSessionResponseSchema>
+export type AgentConnectionIdentity = z.infer<typeof agentConnectionIdentitySchema>

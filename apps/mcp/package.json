@@ -6,6 +6,7 @@
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsx watch src/http.ts",
     "start": "node dist/http.js",
+    "start:stdio": "node dist/stdio.js",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

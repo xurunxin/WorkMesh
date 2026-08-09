@@ -6,9 +6,11 @@ import { type Agent, type AgentSession, type Approval, agentHeartbeat, agentName
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from '../lib/realtime'
 import { agentRegistryRefreshTargets } from '../lib/realtime-refresh'
+import { AgentConnectionsPanel } from '../agent-connections-panel'
 
 type AuthMe = { actor: { id: string; display_name: string; workspace_id: string; workspace_role: 'admin' | 'member' }; csrfToken: string }
 type Team = { id: string; name: string; key: string }
+type Human = { id: string; display_name: string; email?: string }
 type AgentFilter = 'all' | 'active' | 'inactive'
 
 export default function AgentsPage() {
@@ -19,6 +21,7 @@ export default function AgentsPage() {
   const [busyAccess, setBusyAccess] = useState('')
   const agentsPage = usePagedApiList<Agent>(actor ? '/api/v1/agents' : null)
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
+  const humansPage = usePagedApiList<Human>(actor ? '/api/v1/actors/humans' : null)
   const sessionsPage = usePagedApiList<AgentSession>(
     actor ? '/api/v1/agent-sessions' : null,
     { optional: true },
@@ -32,10 +35,11 @@ export default function AgentsPage() {
   )
   const agents = agentsPage.items
   const teams = teamsPage.items
+  const humans = humansPage.items
   const sessions = sessionsPage.items
   const approvals = approvalsPage.items
   const collectionError = [
-    agentsPage.error, teamsPage.error, sessionsPage.error, approvalsPage.error,
+    agentsPage.error, teamsPage.error, humansPage.error, sessionsPage.error, approvalsPage.error,
   ].find(Boolean)
 
   const load = useCallback(async () => {
@@ -63,7 +67,7 @@ export default function AgentsPage() {
     const targets = agentRegistryRefreshTargets(invalidation)
     if (invalidation.reason === 'resync')
       return Promise.all([
-        agentsPage.refresh(), teamsPage.refresh(),
+        agentsPage.refresh(), teamsPage.refresh(), humansPage.refresh(),
         sessionsPage.refresh(), approvalsPage.refresh(),
       ]).then(() => undefined)
     if (targets.has('agents')) void agentsPage.refresh()
@@ -96,7 +100,8 @@ export default function AgentsPage() {
   const shownAgents = useMemo(() => agents.filter(agent => filter === 'all' || (filter === 'active' ? agent.is_active : !agent.is_active)), [agents, filter])
   const canManageAccess = canManageAgentTeamAccess(actor?.workspace_role)
   if (loading) return <main className="center">Loading Agent Control Center…</main>
-  return <main className="agent-center"><header><div><a href="/">← WorkMesh</a><h1>Agent Control Center</h1><p>{actor?.display_name ?? 'Human operator'} · registry, live sessions, approvals and diagnostics</p></div><button onClick={() => { void load(); void agentsPage.refresh(); void teamsPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }}>Refresh durable state</button></header>{(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
+  return <main className="agent-center"><header><div><a href="/">← WorkMesh</a><h1>Agent Control Center</h1><p>{actor?.display_name ?? 'Human operator'} · registry, live sessions, approvals and diagnostics</p></div><button onClick={() => { void load(); void agentsPage.refresh(); void teamsPage.refresh(); void humansPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }}>Refresh durable state</button></header>{(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
+    <AgentConnectionsPanel admin={actor?.workspace_role === 'admin'} teams={teams} humans={humans.length ? humans : actor ? [{ id: actor.id, display_name: actor.display_name }] : []} currentHumanId={actor?.id ?? ''} onError={setError} />
     <section className="agent-center-grid"><section aria-label="Agent registry"><header><h2>Agents</h2><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{value}</button>)}</div></header>{shownAgents.length === 0 ? <p className="empty">No registered agents match this filter.</p> : <div className="registry-list">{shownAgents.map(agent => <article key={agent.id} data-testid={`agent-registry-${agent.id}`}><header><div><h3>{agentName(agent)}</h3><small>{agent.slug} · {agentProvider(agent)} {agentVersion(agent)}</small></div><span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? 'active' : 'inactive'}</span></header><p>{agent.description || 'No registry description.'}</p><dl><div><dt>Requested capabilities</dt><dd>{agent.requested_capabilities.length ? agent.requested_capabilities.join(', ') : 'None requested'}</dd></div><div><dt>Definition approved</dt><dd>{agent.approved_capabilities.length ? agent.approved_capabilities.join(', ') : 'None approved'}</dd></div><div><dt>Maximum concurrency</dt><dd>{agent.max_concurrency} concurrent session{agent.max_concurrency === 1 ? '' : 's'}</dd></div><div><dt>Heartbeat</dt><dd>Every {agentHeartbeat(agent)}s</dd></div></dl><section className="team-access-list" aria-label={`${agentName(agent)} team access`}><h4>Team access</h4>{teams.length === 0 ? <p className="empty">No teams are available.</p> : teams.map(team => { const access = agent.team_access?.find(candidate => candidate.team_id === team.id); const status = access?.status ?? (access?.revoked_at ? 'revoked' : 'not granted'); const operation = `${agent.id}:${team.id}`; return <article key={team.id} data-testid={`team-access-${agent.id}-${team.id}`}><header><strong>{team.name} ({team.key})</strong><span className={status === 'active' ? 'registry-active' : 'registry-inactive'}>{status}</span></header><p>Approved: {access?.approved_capabilities.length ? access.approved_capabilities.join(', ') : 'None'}</p>{access?.revoked_at && <small>Revoked {formatTime(access.revoked_at)}</small>}{canManageAccess && <form key={`${operation}:${access?.revision ?? 0}:${status}`} onSubmit={event => void grantAccess(event, agent, team)}><fieldset disabled={busyAccess === operation || agent.requested_capabilities.length === 0}><legend>Approved capability subset</legend>{agent.requested_capabilities.map(capability => <label key={capability}><input type="checkbox" name="capabilities" value={capability} defaultChecked={access?.status === 'active' && access.approved_capabilities.includes(capability)} /> {capability}</label>)}</fieldset><div className="session-actions"><button data-testid={`team-access-grant-${agent.id}-${team.id}`} disabled={busyAccess === operation || agent.requested_capabilities.length === 0}>{access?.status === 'active' ? 'Update grant' : 'Grant access'}</button>{access?.status === 'active' && <button data-testid={`team-access-revoke-${agent.id}-${team.id}`} className="danger" type="button" disabled={busyAccess === operation} onClick={() => void revokeAccess(agent, team)}>Revoke</button>}</div></form>}</article> })}</section></article>)}</div>}</section>
       <LoadMoreButton collection={agentsPage} label="agents" /><LoadMoreButton collection={teamsPage} label="teams" />
       <section aria-label="Agent sessions"><h2>Sessions</h2>{sessions.length === 0 ? <p className="empty">No agent session is visible to you.</p> : <div className="session-table">{sessions.map(session => <a key={session.id} href={`/agent-sessions/${session.id}`}><div><span className={agentStateClass(session.state)}>{agentStateLabel(session.state)}</span><strong>{agentName(agents.find(agent => agent.id === session.agent_id))}</strong></div><span>Issue: {session.work_item_id ? session.work_item_id.slice(0, 8) : 'No issue'}</span><span>Current step: {session.current_plan_version_id ? 'Plan active' : 'Not published'}</span><span>Heartbeat: {formatTime(session.last_heartbeat_at)}</span><span>Budget: {session.budget.maxRuntimeSeconds ? `${session.budget.maxRuntimeSeconds}s` : 'Default'}</span></a>)}</div>}<LoadMoreButton collection={sessionsPage} label="sessions" /></section>

@@ -70,9 +70,10 @@ describe('Stage 4 planning and operations migrations', () => {
     expect(columns.rowCount).toBe(1)
     const definition = await db.query<{ definition: string }>(
       `SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint
-       WHERE conrelid='agent_sessions'::regclass AND conname='agent_sessions_subject_container_check'`,
+       WHERE conrelid='agent_sessions'::regclass AND contype='c'
+         AND pg_get_constraintdef(oid) LIKE '%automation_run_id%'`,
     )
-    expect(definition.rows[0]?.definition).toContain('automation_run_id')
+    expect(definition.rows.some(row => row.definition.includes('automation_run_id'))).toBe(true)
   })
 
   it('keeps unknown cost distinct and exposes Gitea through the existing provider enum', async () => {

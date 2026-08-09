@@ -17,6 +17,7 @@ import { createRetentionWorker } from './retention.js'
 import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
 import { RetentionScheduler } from './retention-scheduler.js'
 import { materializeWorkerRuntimeIdentity } from './worker-runtime-identity.js'
+import { createAgentConnectionLifecycleWorker } from './agent-connections.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
 export { classifyHeartbeatLiveness, createSessionLifecycleWorker, rebuildWorkItemExecutorProjections } from './session-lifecycle.js'
@@ -24,6 +25,7 @@ export { createProviderActionWorker, validateUploadedChecksum } from './provider
 export { createArtifactUploadWorker } from './artifact-uploads.js'
 export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
 export { createRetentionWorker, ordinaryPrunableEventTypes } from './retention.js'
+export { createAgentConnectionLifecycleWorker } from './agent-connections.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
@@ -425,6 +427,7 @@ const startWorkerProcess = async (): Promise<void> => {
   const artifactStorage = artifactStorageFromEnvironment()
   const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorage })
   const automationWorker = createAutomationWorker({ db, features })
+  const agentConnectionWorker = createAgentConnectionLifecycleWorker({ db })
   const retentionConfig = loadRetentionConfig()
   const retentionWorker = createRetentionWorker({
     db,
@@ -452,6 +455,7 @@ const startWorkerProcess = async (): Promise<void> => {
       () => providerActionWorker.tick(),
       () => artifactUploadWorker.tick(),
       () => automationWorker.tick(),
+      ...(features.WORKMESH_BETA_COORDINATION_MCP ? [() => agentConnectionWorker.tick()] : []),
     ]
     for (const job of jobs) {
       if (!admissionOpen) return

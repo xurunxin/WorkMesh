@@ -209,11 +209,11 @@ async function secretAgentMutate<T>(
   request: unknown,
   handler: (tx: PoolClient) => Promise<T>,
 ): Promise<T> {
-  if (!meta.actor.humanSessionId)
-    throw new DomainError("UNAUTHENTICATED", "Human session identity is required");
+  const secretReplaySubject = meta.actor.humanSessionId ? `human-session:${meta.actor.humanSessionId}` : meta.actor.agentSessionId ? `agent-session:${meta.actor.agentSessionId}` : undefined;
+  if (!secretReplaySubject) throw new DomainError("UNAUTHENTICATED", "Session identity is required");
   const replay = await authIdempotentTransaction(db, {
     idempotencyKey: meta.idempotencyKey,
-    subject: `human-session:${meta.actor.humanSessionId}`,
+    subject: secretReplaySubject,
     operation: meta.operation,
     request,
     clientContext: meta.clientContext ?? {},
@@ -604,7 +604,7 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
 }
 
 export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, workItemId: string, expectedRevision: number, input: { agentId:string; principalHumanActorId:string; role:string; requestedCapabilities:Capability[]; initialPrompt:string; contextSnapshotId?:string; budget:unknown }) {
-  if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can start an agent session");
+  if (meta.actor.kind !== "human" && !meta.actor.agentSessionId) throw new DomainError("FORBIDDEN", "A Human or authorized Coordination Session is required");
   return secretAgentMutate(db, meta, { workItemId, expectedRevision, ...input }, async tx => {
     assertSafeText(input.initialPrompt, "initial prompt");
     const locator=one((await tx.query<{team_id:string;project_id:string|null}>("SELECT team_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2",[workItemId,meta.actor.workspaceId])).rows);
@@ -622,7 +622,41 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
     });
     const work=one((await tx.query<{team_id:string;project_id:string|null;revision:number;responsible_human_actor_id:string|null;title:string;description:string|null}>("SELECT team_id,project_id,revision,responsible_human_actor_id,title,description FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",[workItemId,meta.actor.workspaceId])).rows);
     if(work.team_id!==locator.team_id||work.project_id!==locator.project_id) throw new DomainError("RESOURCE_SCOPE_DENIED","Work item routing changed while session authority was acquired");
-    await assertHumanTeam(tx,meta.actor,work.team_id); assertRevision(expectedRevision,work.revision);
+    if (meta.actor.kind === "human") {
+      await assertHumanTeam(tx,meta.actor,work.team_id);
+    } else {
+      one((await tx.query(
+        `SELECT c.id
+           FROM agent_sessions caller
+           JOIN agent_coordination_sessions coordination
+             ON coordination.agent_session_id=caller.id
+            AND coordination.status='active' AND coordination.expires_at>now()
+           JOIN agent_connections c
+             ON c.id=coordination.connection_id
+            AND c.id=caller.coordination_connection_id
+            AND c.workspace_id=caller.workspace_id
+            AND c.team_id=caller.team_id
+            AND c.agent_id=caller.agent_id
+            AND c.agent_actor_id=caller.agent_actor_id
+            AND c.delegation_id=caller.delegation_id
+            AND c.principal_human_actor_id=coordination.principal_human_actor_id
+           JOIN delegations authority ON authority.id=c.delegation_id AND authority.status='active'
+           JOIN agent_team_access team_grant
+             ON team_grant.workspace_id=c.workspace_id AND team_grant.agent_id=c.agent_id
+            AND team_grant.team_id=c.team_id AND team_grant.revoked_at IS NULL
+          WHERE caller.id=$1 AND caller.workspace_id=$2 AND caller.agent_actor_id=$3
+            AND caller.session_kind='coordination'
+            AND caller.state IN ('acknowledged','planning','executing')
+            AND c.status IN ('active','rotating') AND c.team_id=$4
+            AND c.principal_human_actor_id=$5
+            AND c.grant_agent_delegate
+            AND 'agent:delegate'=ANY(c.granted_capabilities)
+            AND 'agent:delegate'=ANY(authority.permissions_snapshot)
+            AND 'agent:delegate'=ANY(team_grant.approved_capabilities)`,
+        [meta.actor.agentSessionId,meta.actor.workspaceId,meta.actor.id,work.team_id,input.principalHumanActorId],
+      )).rows);
+    }
+    assertRevision(expectedRevision,work.revision);
     if (!work.responsible_human_actor_id || work.responsible_human_actor_id!==input.principalHumanActorId) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED","Delegation principal must remain the work item's responsible human");
     one((await tx.query("SELECT 1 FROM actors a JOIN memberships m ON m.actor_id=a.id AND m.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.kind='human' AND a.is_active AND m.team_id=$3",[input.principalHumanActorId,meta.actor.workspaceId,work.team_id])).rows);
     const agent=one((await tx.query<{actor_id:string;approved_capabilities:Capability[];max_concurrency:number}>("SELECT actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active",[input.agentId,meta.actor.workspaceId])).rows);

@@ -128,6 +128,65 @@ Content-Type: application/json
 If-Match: "revision-4"
 ```
 
+## 3.4 Agent Connection（v1.1）
+
+Agent 接入走 **Connection 生命周期**，与单 Work Item 的 executor Session 解耦。
+
+发现：
+
+```http
+GET /.well-known/workmesh-agent HTTP/1.1
+```
+
+公开、不可缓存于代理私有缓存之外，返回：
+
+```json
+{
+  "protocolVersion": "v1",
+  "mcpUrl": "https://workmesh.example.com/mcp/coordination",
+  "wellKnownUrl": "https://workmesh.example.com/.well-known/workmesh-agent",
+  "apiVersion": "v1",
+  "supportedClients": ["codex", "opencode", "pi"],
+  "skill": {
+    "name": "workmesh",
+    "version": "1.1.0",
+    "sha256": "sha256:<hex>",
+    "signature": "ed25519:<base64>"
+  }
+}
+```
+
+发现端点**永远不返回任何 secret、配对码或安装凭据**。
+
+Connection 生命周期：
+
+1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: true`（连接响应永远不返明文 Token）。配对码只存 hash。
+2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
+3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。响应带 `ETag` 头，值等于 `revision`；客户端在 `If-Match` 里回传。
+4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。**扩权必须创建新 Connection**（包含新的 `grantAgentDelegate` 与 `requestedCapabilities`），同时 DELETE 旧 Connection。Rotate 不承载扩权——它的 request body 为空。`PATCH` 必须带 `If-Match`。
+5. `DELETE /api/v1/agent-connections/{id}` **硬撤销**：标记 Connection 为 `revoked`、清空**所有**该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。**与 `/rotate-confirm` 不同**：`DELETE` 撤销的是整个 Connection + 全部活跃 Session + 当前 Installation Token；`/rotate-confirm` 只撤销当前 Rotation 引入的旧 fingerprint、保留新凭据、保留活跃 Session。重叠期内想只撤销旧凭据 → 调 `/rotate-confirm`；想完整下线整个 Connection → 调 `DELETE`。
+6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据。**响应中 `overlap_until` 是真实的截止时间——旧凭据在该时间之前一直可用**。请求 body 为空；Rotate 不改变 `teamId` / `clientType` / `requestedCapabilities` / `grantAgentDelegate`，也不充当 `/rotate-confirm` 端点。Admin 在 15 分钟内可以显式 confirm。
+7. `POST /api/v1/agent-connections/{id}/rotate-confirm` **仅撤销当前 Rotation 引入的旧 fingerprint**——Connection 状态回到 `active`、新凭据保留、活跃 Session 不废。必须带 `If-Match`（Connection 当前 revision）。这是"确认成功后撤销旧凭据"的显式实现；如果 Admin 不调用，15 分钟到期后 worker 走相同结果（worker fallback 是 plan v0.4 明确批准的兜底防线，不是隐式行为）。`agent.connection.rotated` 事件记录。
+
+UI 生成给 Human 复制给 Agent 的一句话统一为：
+
+> 连接此 WorkMesh：打开 `<connectUrl>#<pairingCode>`，按返回指令安装 MCP 与 WorkMesh Skill，并调用 `verify_connection`。
+
+fragment 携带配对码，绝不进入代理访问日志；`connectUrl` 的 schema 强制要求 fragment 存在。
+
+## 3.5 Coordination Session（v1.1）
+
+Installation Token 长期有效至撤销，但**不能**直接执行普通 mutation；它的全部工作流是**派生 Coordination Session**。
+
+每次 Coordination MCP 请求：
+
+1. 解析 Installation Token（原始字节，非 `Bearer` 头），定位到唯一 Connection。
+2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态；通过则开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
+3. 该 Session 复用既有 `agent_sessions` 表，新增枚举值 `session_kind = 'coordination'`、`connection_id` 外键、`role = 'coordinator'`、`delegation_scope = 'team'`。
+4. Session 到期前自动续期；Connection 撤销后下一次请求即失败关闭，错误码 `COORDINATION_SESSION_CONNECTION_REVOKED`。
+
+Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegation 约束；它走的是 Connection × Team 的整组授权。
+
 ---
 
 # 4. 事件信封
@@ -721,7 +780,19 @@ Agent 必须重新读取、合并并发布，不能盲重试覆盖。
 - 外部渠道沟通若影响计划，应回写 Decision/Message；
 - Secret 不能放消息正文。
 
-## 10.4 Agent Inbox recipient 模型
+## 10.4 Connection-anchored identity（v1.1）
+
+Coordinator 发出的所有事实（事件、Work Room 消息、Activity、Artifact、Lease、Handoff）都额外带两个**强约束字段**：
+
+- `connectionId`：发起的 Connection。
+- `principalHumanActorId`：该 Connection 的责任人 Human。
+
+- `actor.kind` 仍是 `agent`，`actor.id` 仍是 Agent actor；`actor` 不可被 Agent 改写。
+- `on_behalf_of_human_actor_id` 字段记录 principal Human。UI 列表、Work Room、SSE 投影、Inbox 全部按"Agent 操作 on behalf of Human"展示。
+- Stop / Revoke 永远以 Connection 为单位触发；Coordination Session 不暴露独立的 Stop 入口。
+- Agent 不得假装 principal Human，server 在写入前校验；事件 envelope 与 MCP 工具调用均拒绝覆盖这两个字段。
+
+## 10.5 Agent Inbox recipient 模型
 
 Agent Inbox 是 Work Room 的授权投影，不是私有聊天或新的授权来源。服务端支持两种
 recipient：
@@ -736,7 +807,7 @@ recipient：
 `claim` 只用于并发协调，不能授予 Delegation、Capability、Resource Scope 或 Lease。
 Human recipient 继续使用 Human Inbox；Agent 不得 claim Human 项。
 
-## 10.5 REST 与分页
+## 10.6 REST 与分页
 
 - `GET /api/v1/inbox?status=open&limit=...&cursor=...`：返回
   `{items,nextCursor}`。actor-targeted 且未 claim 的项只含摘要并返回
@@ -752,7 +823,7 @@ cursor 使用签名 keyset token，绑定 route、Workspace、Actor、当前 Ses
 filter 与排序。每一页重新验证 Session token、Session 状态、Delegation、Agent/Team
 grant、Capability 和 live Team/Project/Work Item scope；cursor 不能恢复已经撤销的读取权。
 
-## 10.6 claim、ack 与 reply 语义
+## 10.7 claim、ack 与 reply 语义
 
 所有 mutation 都要求 `Idempotency-Key`。相同 key 和相同请求重放原响应；相同 key
 配不同请求返回 `IDEMPOTENCY_KEY_REUSED`。并发 claim 只有一个 Session 成功，失败者
@@ -764,7 +835,7 @@ Approval、Lease、Work Item 或 Session 状态。reply 要求 open Inbox 和当
 Event 与 outbox。并发 reciprocal reply 按参与 Session 的稳定全序加锁，避免反向锁序。
 `review_request` reply 还要求 reviewer Delegation 和 `artifact:write`。
 
-## 10.7 重连、撤权与停止
+## 10.8 重连、撤权与停止
 
 Webhook 只携带 Inbox/message ID、intent、channel 和目标 Session 等有界元数据；Agent
 必须通过 Inbox REST、SDK 或 MCP 重新读取授权内容。断线后使用最近保存的 Inbox
@@ -776,14 +847,14 @@ Delegation、Agent/Team grant、Team membership、已删除 Project/Work Item �
 resource scope，都必须在 list/get/claim/ack/reply 时 fail closed。停止或撤权后不得继续
 普通读取或写入，Lease 不能绕过这些检查。
 
-## 10.8 MCP 与 Native SDK 一致性
+## 10.9 MCP 与 Native SDK 一致性
 
 MCP 工具 `list_inbox_items`、`get_inbox_item`、`claim_inbox_item`、
 `acknowledge_inbox_item`、`reply_inbox_item` 和 Native Agent SDK 的同名语义必须调用同一
 REST contract，使用同一 route-policy、authorization 和 idempotency gate。Adapter 不得
 在客户端复制或放宽授权规则。
 
-## 10.9 retention 与日志
+## 10.10 retention 与日志
 
 Inbox current rows 和 receipts 是 PostgreSQL durable facts。事件归档或 realtime cursor
 裁剪不能删除仍需处理的 Inbox 或 receipt；清理必须遵守 retention policy 和未解决项保护。
@@ -1309,7 +1380,15 @@ SDK 要求：
 - Artifact；
 - Completion；
 - Token 过期；
-- Capability denial。
+- Capability denial；
+- Connection 配对（单用 / 过期 / 限流 / 同一 Idempotency-Key 重放拿回原响应）；
+- Connection 撤销后 Coordination Session 立即失败关闭；
+- Team scope delegation 跨 Team 拒绝；
+- `agent:delegate` 缺失时拒绝 `start_agent_session` / `delegate_work_item`；**不**作用于 `create_child_session`；
+- Coordinator 阻断破坏性操作（删除 / 归档 / 批量 / 健康发布）；
+- Coordination MCP 多 Connection 并发隔离；
+- Work Item 创建时 `responsible_human_actor_id` 默认填充 principal Human；
+- `If-Match` 缺失或 revision 失配时 PATCH / DELETE 拒绝。
 
 ## 19.2 Fake Agent
 
@@ -1432,3 +1511,61 @@ stale revision、lost Lease、approval required 与 feature disabled 按
 必须先准备失败状态，再通过对应 Native/MCP 操作观察真实机器错误，禁止直接回显
 期望 error code。`pnpm test:conformance` 必须生成 JSON、JUnit 与完整 transcript；
 Stable GA 只接受所有六个 adapter/fixture run 通过的证据。
+
+---
+
+# 23. Coordination MCP（v1.1）
+
+Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，按请求派生 Coordination Session。它是 v1.0 既有 session-scoped MCP（`apps/mcp/src/http.ts`、`stdio.ts`）的**并列入口**，不替换它们；v1.0 的 Native HTTP、Webhook、A2A 适配器也都不动。
+
+## 23.1 鉴权与生命周期
+
+- 客户端把 Installation Token 放在 `X-WorkMesh-Installation-Token` 头中调用 `POST {mcpUrl}`，不得使用通用 `Authorization: Bearer`；
+- 服务端解析 → 校验 Connection、Agent、Team grant、Delegation、能力、撤销状态；
+- 通过则开/续一条 1 小时（最长 2 小时）的 Coordination Session；
+- Connection 撤销后下一次请求立即失败关闭（`COORDINATION_SESSION_CONNECTION_REVOKED`）。
+
+## 23.2 基础工具（永远允许）
+
+只要 Coordination Session 对应的 Connection 是 `active` 且未撤销，基础工具可调用：
+
+- `verify_connection` — 回传 Connection 身份与当前 pinned Skill 版本。
+- `get_current_identity` — 返回 Agent actor、Connection、principal Human、Team、授予的能力集。
+- `list_teams`、`list_workflow_states` — Team 与状态只读发现。
+- `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
+- `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
+- `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
+- `draft_project_update`（发布仍为 Human-only transition）。
+
+## 23.3 显式授权工具（需要匹配能力）
+
+- `delegate_work_item` — 需要 `agent:delegate` 和现有 child session 创建的所有前置条件。
+- `start_agent_session` — 需要 `agent:delegate`；派生的是真 executor Session，仍受父→子预算、并发、Team access 约束。
+- `create_child_session` — 需要现有 `work:write`、父 Session/Plan Step scope 与 Team access；**不**需要 `agent:delegate`。父 Coordinator 是否携带 `agent:delegate` 与能否 `create_child_session` 无关；后者是 plan-step 子 Session，与跨 Work Item 启动其他 Agent 是两件不同的事。
+- `offer_handoff` — 需要 Team 写权限。
+- `request_approval` — 记录与 Work Item 或 Plan Step 绑定的结构化审批请求；审批由 Human actor 决定。
+
+## 23.4 MCP 层便利（不是授权）
+
+- 工具调用若未传 `Idempotency-Key`，MCP 层用 `sha256(connection_id, tool_name, payload)` 派生稳定 key；显式传入则尊重显式值。
+- MCP 层把活跃 Coordination Session 注入每个工具调用，Agent 无需传 `sessionId`。
+- Name → UUID 解析：Team slug、project slug、Work Item identifier 在 Session 生命周期内解析一次并缓存；下游 domain 永远只收到 UUID。
+- 安全字段 `update_*`：MCP 层在请求事务内做一次 read/merge/write，让 Agent 不必先 GET revision 就能改 `description` 这种不冲突字段；返回最新 revision，Agent 想串联时仍可用 `If-Match`。
+
+## 23.5 与 v1.0 MCP 的边界
+
+- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。
+- v1.1 Coordination MCP：每请求动态派生 Session；范围绑定 Team 与 Connection；涵盖基础 CRUD + 显式授权工具。
+- 两者都**不**是授权层：revision、授权、状态、事务全部由 domain 裁决；MCP 工具描述描述策略，server 强制执行。
+
+## 23.6 协议可观测性
+
+- `agent.connection.created` / `pairing_redeemed` / `rotated` / `revoked`。
+- `agent.coordination_session.opened` / `refreshed` / `closed`。
+- 错误码（加入 `apiErrorCodeSchema`）：
+  - `AGENT_CONNECTION_PAIRING_INVALID | PAIRING_EXPIRED | PAIRING_CONSUMED | PAIRING_LOCKED`
+  - `AGENT_CONNECTION_REVOKED | AGENT_CONNECTION_PRIVILEGE_ESCALATION`
+  - `AGENT_CONNECTION_NOT_FOUND | AGENT_CONNECTION_CLIENT_TYPE_MISMATCH | AGENT_CONNECTION_TEAM_MISMATCH | AGENT_CONNECTION_INSTALLATION_MISMATCH`
+  - `COORDINATION_SESSION_CONNECTION_REVOKED | COORDINATION_SESSION_REFRESH_FAILED | COORDINATION_SESSION_TEAM_SCOPE_DENIED`
+  - `AGENT_DELEGATE_NOT_GRANTED | COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN | COORDINATOR_AGENT_DELEGATE_NOT_TRANSITIVE | COORDINATOR_PRINCIPAL_HUMAN_INVALID`
+  - `AGENT_SKILL_VERSION_MISMATCH | AGENT_SKILL_SIGNATURE_INVALID`

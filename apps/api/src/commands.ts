@@ -50,6 +50,20 @@ async function teamAccess(
   );
   if (team.deleted_at) throw new DomainError("NOT_FOUND", "Team not found");
   if (c.actor.workspaceRole === "admin") return team;
+  if (c.actor.kind === "agent" && c.actor.agentSessionId) {
+    const coordination = await tx.query(
+      `SELECT 1 FROM agent_sessions s
+       JOIN delegations d ON d.id=s.delegation_id AND d.status='active'
+       JOIN agent_team_access ata ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
+       WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3 AND s.team_id=$4
+         AND s.session_kind='coordination' AND s.state IN ('acknowledged','planning','executing')
+         AND d.role='coordinator' AND d.scope_type='team' AND d.scope_id=$4
+         AND 'work:write'=ANY(d.permissions_snapshot)
+         AND 'work:write'=ANY(ata.approved_capabilities)`,
+      [c.actor.agentSessionId, c.actor.workspaceId, c.actor.id, teamId],
+    );
+    if (coordination.rowCount) return team;
+  }
   const membership = await tx.query<{ role: TeamRole }>(
     "SELECT role FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3",
     [c.actor.workspaceId, teamId, c.actor.id],
@@ -580,6 +594,16 @@ export const commands = {
   ) =>
     mutate(db, c, async (tx) => {
       await teamAccess(tx, c, input.teamId, "write");
+      let responsibleHumanActorId = input.responsibleHumanActorId;
+      if (!responsibleHumanActorId && c.actor.kind === "agent" && c.actor.agentSessionId) {
+        responsibleHumanActorId = (await tx.query<{ principal_human_actor_id: string }>(
+          `SELECT d.principal_human_actor_id FROM agent_sessions s
+           JOIN delegations d ON d.id=s.delegation_id AND d.status='active'
+           WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3
+             AND s.session_kind='coordination' AND s.team_id=$4`,
+          [c.actor.agentSessionId, c.actor.workspaceId, c.actor.id, input.teamId],
+        )).rows[0]?.principal_human_actor_id;
+      }
       const state = one(
         (
           await tx.query<{ category: StatusCategory }>(
@@ -588,12 +612,12 @@ export const commands = {
           )
         ).rows,
       );
-      if (input.responsibleHumanActorId)
+      if (responsibleHumanActorId)
         await activeHumanInTeam(
           tx,
           c,
           input.teamId,
-          input.responsibleHumanActorId,
+          responsibleHumanActorId,
         );
       if (input.projectId)
         await activeProject(tx, c, input.teamId, input.projectId);
@@ -604,7 +628,7 @@ export const commands = {
         );
       assertResponsibleHumanForStarted(
         state.category,
-        input.responsibleHumanActorId,
+        responsibleHumanActorId,
       );
       const sequence = one(
         (
@@ -627,7 +651,7 @@ export const commands = {
               input.statusId,
               input.priority,
               input.dueDate ?? null,
-              input.responsibleHumanActorId ?? null,
+              responsibleHumanActorId ?? null,
               input.labels,
               input.projectId ?? null,
               input.milestoneId ?? null,
@@ -647,7 +671,7 @@ export const commands = {
         "work_item",
         item.id,
         item.revision,
-        { ...input, number: item.number },
+        { ...input, responsibleHumanActorId, number: item.number },
         input.teamId,
       );
       return item;
