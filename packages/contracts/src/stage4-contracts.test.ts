@@ -160,6 +160,11 @@ describe('Stage 4 contracts', () => {
       const nextPath = openapi.slice(pathStart + 1).search(/^  \/[^\n]+:$/m)
       const block = openapi.slice(pathStart, nextPath === -1 ? undefined : pathStart + 1 + nextPath)
       expect(block).toMatch(new RegExp(`^    ${route.method.toLowerCase()}:`, 'm'))
+      const operation = block.split(/\r?\n/)
+        .find(line => line.startsWith(`    ${route.method.toLowerCase()}:`))
+      expect(operation, `${route.method} ${route.path}`).toContain(
+        '"403": { $ref: "#/components/responses/FeatureDisabled" }',
+      )
       if ('mutation' in route && route.mutation)
         expect(block).toMatch(/\$ref:\s*["']#\/components\/parameters\/IdempotencyKey["']/)
       if ('revisioned' in route && route.revisioned)

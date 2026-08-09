@@ -1,0 +1,249 @@
+name: workmesh-production
+
+x-app-hardening: &app-hardening
+  init: true
+  read_only: true
+  user: "10001:10001"
+  cap_drop: ["ALL"]
+  security_opt: ["no-new-privileges:true"]
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,nodev,size=64m
+  stop_grace_period: 35s
+
+x-feature-flags: &feature-flags
+  WORKMESH_BETA_PLANNING: ${WORKMESH_BETA_PLANNING:-false}
+  WORKMESH_BETA_TEMPLATES: ${WORKMESH_BETA_TEMPLATES:-false}
+  WORKMESH_BETA_COSTS: ${WORKMESH_BETA_COSTS:-false}
+  WORKMESH_BETA_GITEA: ${WORKMESH_BETA_GITEA:-false}
+  WORKMESH_BETA_OPERATIONS_UI: ${WORKMESH_BETA_OPERATIONS_UI:-false}
+  WORKMESH_EXPERIMENTAL_AUTOMATION: ${WORKMESH_EXPERIMENTAL_AUTOMATION:-false}
+  WORKMESH_EXPERIMENTAL_AGENT_LOOPS: ${WORKMESH_EXPERIMENTAL_AGENT_LOOPS:-false}
+  WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
+  WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
+  WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+
+services:
+  postgres:
+    image: postgres:16.9-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-workmesh}
+      POSTGRES_USER: ${POSTGRES_USER:-workmesh}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres-production-data:/var/lib/postgresql/data
+    healthcheck:
+      # The image's temporary init server accepts only Unix-socket connections.
+      # Requiring TCP prevents dependants from starting during its shutdown gap.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.5-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-production-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+    volumes:
+      - minio-production-data:/data
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-127.0.0.1}:${S3_HOST_PORT:-9000}:9000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/ready >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    depends_on:
+      minio: { condition: service_healthy }
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - >-
+        mc alias set workmesh http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}";
+        mc mb --with-lock --ignore-existing workmesh/"$${S3_BUCKET}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+    restart: "no"
+
+  migrate:
+    <<: *app-hardening
+    image: ${WORKMESH_API_IMAGE:?WORKMESH_API_IMAGE is required}
+    environment:
+      NODE_ENV: production
+      WORKMESH_SERVICE: migrate
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+    depends_on:
+      postgres: { condition: service_healthy }
+    command: ["node", "node_modules/@workmesh/db/dist/scripts/migrate.js"]
+    healthcheck: { disable: true }
+    restart: "no"
+
+  api:
+    <<: *app-hardening
+    image: ${WORKMESH_API_IMAGE:?WORKMESH_API_IMAGE is required}
+    environment:
+      <<: *feature-flags
+      NODE_ENV: production
+      WORKMESH_SERVICE: api
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: redis://redis:6379
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
+      WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: ${WORKMESH_RETENTION_PROGRESS_STALE_SECONDS:-7200}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:?WORKMESH_MASTER_KEY is required}
+      WORKMESH_BOOTSTRAP_TOKEN: ${WORKMESH_BOOTSTRAP_TOKEN:?WORKMESH_BOOTSTRAP_TOKEN is required}
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"
+      PAGINATION_CURSOR_KEYS: ${PAGINATION_CURSOR_KEYS:?PAGINATION_CURSOR_KEYS is required}
+      PAGINATION_CURSOR_ACTIVE_KID: ${PAGINATION_CURSOR_ACTIVE_KID:?PAGINATION_CURSOR_ACTIVE_KID is required}
+      PAGINATION_CURSOR_TTL_SECONDS: ${PAGINATION_CURSOR_TTL_SECONDS:-900}
+      AUTH_RATE_LIMIT_HMAC_KEY: ${AUTH_RATE_LIMIT_HMAC_KEY:?AUTH_RATE_LIMIT_HMAC_KEY is required}
+      AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
+      AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
+      SESSION_COOKIE_SECURE: "true"
+      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:?S3_PUBLIC_ENDPOINT is required}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?S3_ACCESS_KEY_ID is required}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?S3_SECRET_ACCESS_KEY is required}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      SHUTDOWN_TIMEOUT_MS: 30000
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-127.0.0.1}:${API_HOST_PORT:-3001}:3001"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  worker:
+    <<: *app-hardening
+    image: ${WORKMESH_WORKER_IMAGE:?WORKMESH_WORKER_IMAGE is required}
+    environment:
+      <<: *feature-flags
+      NODE_ENV: production
+      WORKMESH_SERVICE: worker
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: redis://redis:6379
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
+      WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
+      WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
+      WORKMESH_EVENT_ONLINE_DAYS: ${WORKMESH_EVENT_ONLINE_DAYS:-90}
+      WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: ${WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS:-365}
+      WORKMESH_RETENTION_CLEANUP_DAYS: ${WORKMESH_RETENTION_CLEANUP_DAYS:-30}
+      WORKMESH_RETENTION_BATCH_SIZE: ${WORKMESH_RETENTION_BATCH_SIZE:-100}
+      WORKMESH_RETENTION_LEASE_SECONDS: ${WORKMESH_RETENTION_LEASE_SECONDS:-120}
+      WORKMESH_RETENTION_INTERVAL_SECONDS: ${WORKMESH_RETENTION_INTERVAL_SECONDS:-3600}
+      WORKMESH_RETENTION_IO_TIMEOUT_SECONDS: ${WORKMESH_RETENTION_IO_TIMEOUT_SECONDS:-300}
+      WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: ${WORKMESH_RETENTION_PROGRESS_STALE_SECONDS:-7200}
+      WORKMESH_RETENTION_ARCHIVE_PREFIX: ${WORKMESH_RETENTION_ARCHIVE_PREFIX:-retention/events}
+      WORKMESH_RETENTION_ARCHIVE_ENABLED: "true"
+      WORKMESH_RETENTION_CLEANUP_ENABLED: "false"
+      WORKMESH_EVENT_PRUNE_ENABLED: "false"
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:?WORKMESH_MASTER_KEY is required}
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?S3_ACCESS_KEY_ID is required}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?S3_SECRET_ACCESS_KEY is required}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
+      WORKER_HEALTH_HOST: 0.0.0.0
+      WORKER_HEALTH_PORT: 3003
+      SHUTDOWN_TIMEOUT_MS: 30000
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  mcp:
+    <<: *app-hardening
+    profiles: ["agent"]
+    image: ${WORKMESH_MCP_IMAGE:?WORKMESH_MCP_IMAGE is required}
+    environment:
+      NODE_ENV: production
+      WORKMESH_SERVICE: mcp
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      WORKMESH_API_URL: http://api:3001
+      # Empty defaults let Compose render when the optional profile is disabled.
+      # The MCP image preflight fails closed before listening if either is empty.
+      WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
+      WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
+      WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}
+      HOST: 0.0.0.0
+      PORT: 3002
+      SHUTDOWN_TIMEOUT_MS: 30000
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-127.0.0.1}:${MCP_HOST_PORT:-3002}:3002"
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3002/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    <<: *app-hardening
+    image: ${WORKMESH_WEB_IMAGE:?WORKMESH_WEB_IMAGE is required}
+    environment:
+      NODE_ENV: production
+      WORKMESH_SERVICE: web
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must match the URL baked into the web image}
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-127.0.0.1}:${WEB_HOST_PORT:-3000}:3000"
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3000/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  postgres-production-data: {}
+  redis-production-data: {}
+  minio-production-data: {}

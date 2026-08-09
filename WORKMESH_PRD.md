@@ -96,7 +96,7 @@ v1.1 把 WorkMesh 从"Human 创建任务、Session MCP 执行任务"升级为真
 
 终态验收：Human 在 UI 生成一句接入指令，将其发送给 Codex/OpenCode/pi；Agent 自动完成配对和配置，随后**仅通过 MCP**创建 Project、拆分 Issues、启动获准 Agent、协作推进并交付证据；Human UI 实时监督，可随时 Stop / Revoke。
 
-不变量与详细规则见 `docs/adr/0028-agent-connection-and-coordination-mcp.md`；执行步骤见 `docs/plans/agent-first-coordination-mcp.md`。
+不变量与详细规则见 `docs/adr/0043-agent-connection-and-coordination-mcp.md`；执行步骤见 `docs/plans/agent-first-coordination-mcp.md`。
 
 ---
 
@@ -491,6 +491,15 @@ flowchart TB
 - Duplicate 指向规范工作项；
 - 支持从评论、Webhook、Agent、Git Provider 创建；
 - Agent 创建的 Work Item 必须显示来源 Actor 和 Session。
+- Work Item 读取分别返回 `responsible_human`、一个 `active_executor` 与
+  `shared_reviewers`；Agent 执行投影不会覆盖 Human 责任字段；
+- Active Executor 由当前未过期的 Lease、非终止/非 stale Session 与 active
+  Delegation 在 PostgreSQL 事务内派生，普通 Work Item PATCH 不接受这些投影字段；
+- Work Item 级 exclusive Lease 只允许一个有效持有 Session；不同 Plan Step
+  可由不同 Session 并行持有 exclusive Lease。primary 按 Work Item Lease
+  优先、再按最早有效 Plan Step Lease 稳定选择代表项；
+- `review_shared` Lease 作为 reviewer 集合返回。release、expiry、Stop、failure、
+  stale 与 handoff 在同一事务更新投影，Worker 可从权威表全量重建。
 
 ## 7.3 Workflow
 
@@ -1211,10 +1220,17 @@ Agent 可以提出决策，不得伪装成人类做最终决策。策略允许�
 
 合并规则：
 
-- 后层可以覆盖明确标记为 override 的配置；
-- 普通 Markdown 默认追加；
-- 系统生成最终 Context Manifest，显示来源；
-- 任何 Guidance 修改都产生版本。
+- 顺序固定为 Workspace → Team → Project → Repository → Work Item → Session/Human Prompt；
+- 普通 Markdown 按上述顺序追加，后层只可覆盖明确声明为可覆盖的工作偏好；
+- 平台 identity、delegation、capability、resource scope、approval、Lease、revision、
+  idempotency 和安全策略永远不可被 Guidance 覆盖；
+- Workspace、Team、Project 是三个独立文档，Project description 保留原义且不自动迁移；
+- 发布生成带作者、时间和 SHA-256 的不可变 revision；rollback 只移动 current pointer
+  并追加审计事实，历史正文不可修改；
+- 编辑、发布、归档、历史、diff 与 rollback 仅对授权 Human 开放，Agent/MCP 只读；
+- 系统生成最终 Context Manifest，显示来源，并在 Session 创建时固定实际使用的
+  revision ID、revision number、URI 与 SHA-256；
+- 后续发布不得悄然改变已有 Session 的 Context。
 
 ## 10.2 AGENTS.md
 
@@ -1236,7 +1252,7 @@ Session 创建时生成不可变 Snapshot：
 - Parent/Sub-issue 与 Blocker；
 - Project/Milestone 目标；
 - 当前 Plan；
-- Guidance 合并结果；
+- Guidance 合并结果及各作用域实际使用的不可变 revision ID、URI 和 SHA-256；
 - Repository、base branch、commit；
 - 选定文件/文档；
 - 权限和预算；
@@ -1904,6 +1920,7 @@ MCP Server 应提供：
 ### Tools
 
 - `list_work_items`
+- `list_session_activities`
 - `get_work_item`
 - `create_work_item`
 - `update_work_item`
@@ -2056,10 +2073,10 @@ Docker Compose 服务：
 
 - 一个 `.env`；
 - Health Check；
-- 初始化迁移命令；
+- 初始化迁移命令；迁移由显式 manifest 排序，在 PostgreSQL advisory lock 下将 SQL 与 SHA-256 ledger 登记置于同一事务；
 - Seed 命令；
 - Admin 创建命令；
-- Backup / Restore 脚本；
+- 维护窗口内生成经认证、加密的 PostgreSQL 与对象版本完整 Recovery Bundle，并仅向空环境 Restore；
 - Volume 明确；
 - 版本升级文档；
 - 所有服务无外部 SaaS 也可运行，外部 Agent/Git 集成除外。
@@ -2078,13 +2095,85 @@ Docker Compose 服务：
 
 首版使用 SSE：
 
-- 断线重连；
-- `Last-Event-ID`；
-- Cursor 补发；
-- Workspace/Team/Session Channel；
-- 心跳；
-- Token 重新校验；
-- 服务器不保存连接内关键状态。
+- PostgreSQL `domain_events.cursor` 是唯一 durable cursor，按 canonical
+  decimal string 传输和比较，不能经由 JavaScript `number`；集合分页、
+  Session sequence 和 A2A cursor 是彼此独立的游标域；
+- 每个 API 实例只有一个 realtime coordinator。Redis Stream 只发送允许
+  丢失/重复的 wake hint，不使用 consumer group，也不承担 durable replay。
+  hint 仅包含 `workspaceId` 与 decimal `cursor`，不得包含 topic、payload 或
+  audience/resource metadata，并以有界 `WORKMESH_REALTIME_REDIS_MAXLEN`
+  approximate `MAXLEN` 裁剪；
+- coordinator 在启动、Redis wake 和低频健康对账时按活跃 Workspace 批量
+  查询 PostgreSQL；Redis 不可用时切换到一个共享且有界的降级对账循环，
+  禁止每个浏览器连接单独轮询；
+- 断线后以 `Last-Event-ID` 或 query cursor 从 PostgreSQL 补发；每一批投递
+  都重新验证 Human membership 或 Agent token、active Session、Delegation、
+  Capability 与 Resource Scope，Lease 不能授予读取权限，撤权立即停止后续投递；
+- Human 的 multi-Team Event 在最终 SQL 中按 normalized Team resource 求并集：
+  非 Admin 必须仍属于至少一个精确 Team，Initiative Owner 通过持久化 Owner
+  关系单独验证；显式 recipient 只对目标 Actor 可见。只有不含任何非 Workspace
+  resource 的 Event 才能 Workspace-wide，`team_id IS NULL` 不代表 Workspace
+  audience，无法证明资源的历史 Event 对普通成员 fail closed；
+- Human Session、个人 saved view（即使带可选 `teamId`）、private advanced
+  view、notification 和 notification preference 必须由 producer 写入精确
+  recipient，并由 durable owner/recipient 关系复核；无法证明的当前或历史
+  private form 对普通成员和 Workspace Admin 都 fail closed；
+- v2 envelope 保留兼容字段，并增加 typed `audience`、`scopes` 和
+  `invalidates`。资源词汇固定为 workspace/team/project/work_item/session/
+  room/artifact/delivery，写事件的同一数据库事务维护标准化资源关系；
+  `team_id` 为空但含非 Workspace scopes 的 multi-resource/multi-Team Event
+  使用 `audience.visibility=resource`，不得错误标记为 Workspace；
+- 事件页、连接数和 socket backpressure wait 都有硬上限；慢客户端关闭，
+  心跳不触发数据库读取；
+- `event_retention_state.pruned_through_cursor` 是显式保留水位。本阶段不执行
+  prune；Issue #9 增加 archive-only 默认的保留作业，只有显式 kill switch
+  才允许按 Workspace prune。低于水位的 REST 请求返回 `CURSOR_EXPIRED` 409，已连接流发送
+  `cursor.expired` control event 后关闭；
+- 普通事件在线保留至少 90 天、归档至少 365 天。归档采用 cursor 排序的
+  canonical NDJSON gzip，并在 upload 后 readback 校验 object SHA-256 与 DB
+  snapshot digest。归档 bucket 必须在创建时启用 Object Lock；每个归档对象
+  使用 `COMPLIANCE` 模式和至少 365 天 retain-until，Worker 在计划归档前和
+  readback 时 fail closed 校验保护。Worker 必须先在有当前 claim/fence 的
+  PostgreSQL 事务中冻结 fixed cutoff、segment UUID/稳定 object key、manifest、
+  checksums、retain horizon，并写入 `planned/pending_exact` segment 与 provisional
+  exact-member reservations，提交后才调用对象存储。恢复总是先处理最旧 pending
+  intent，使用 `If-None-Match: *` 向同一 key 写入；200、412、timeout、5xx 或
+  response loss 都以 current HEAD 的 segment/snapshot/cutoff/checksum/size/MIME/
+  Object Lock identity 收敛，404 只重试同一 key，冲突 fenced failed，绝不补偿
+  DELETE 或创建第二 key/version。PUT 后失去 lease 时只允许 successor reconcile
+  并持久化 `VersionId`；后续 readback 全部 pin 该 version。
+  segment 的 start/end cursor 仅是 envelope；
+  只有 pinned-object readback 后与 verified 状态原子写入的 per-event exact
+  membership 才表示归档覆盖；provisional reservations 不表示覆盖；final
+  transaction 必须再次绑定 claim、segment fixed cutoff 与全部 member，并与
+  job watermark 原子发布。job watermark 只是最高已归档 cursor 的单调
+  telemetry。prune 按 Workspace 在线 cursor 前缀推进，遇到未归档或未到
+  cutoff 的首个事件即停止；cleanup 同样只信已 floored 的 exact member。
+  对历史错误遗留在当前 floor 以下、后来已建立 exact membership 但
+  `floored_at` 仍为空的在线事件，prune 在相同 floor lock 与 fence 下执行有界
+  repair：固定 cutoff、delivered outbox、pinned version、per-event digest、
+  allowlist 与引用全部重检后才原子删除并标记 member；repair 不降低或推进
+  floor，也不信任 segment cursor envelope。
+  未投递事件不阻止后续合格事件归档，但会阻止 floor 越过它。未知、受保护、A2A 引用、Agent webhook
+  引用、未投递 outbox、审计和恢复事实保留在 PostgreSQL；Agent webhook
+  delivery reference 是持久协议事实，不进入通用 30 天 cleanup；
+- 稳态 Session/Lease Heartbeat 只更新当前 projection，不增加 workflow
+  revision、Session sequence、Activity、Domain Event 或 Outbox。只有
+  healthy/degraded/stale health transition 在行锁下发出一次事件；Heartbeat
+  不恢复 stale、stopping 或 terminal Session 的权限或状态。每个
+  Session/Lease 使用固定大小的最近 idempotency key 窗口；K1、K2、重试 K1
+  返回当前 projection 而不回退 K2，同 key 不同 body 冲突，usage counter
+  只单调增加；
+- 保留调度与 outbox 调度独立；归档卡住或失败可使 Worker readiness 在进度
+  deadline 后失败，但不能停止 outbox admission/delivery。关闭时两个 loop
+  都停止接单、drain，并聚合关闭错误；
+- Web 每个 actor/workspace（Agent 额外包含 Session）只有一个 authenticated
+  fetch-SSE client 和独立 checkpoint，使用 BigInt 去重比较并按精确资源
+  invalidation 刷新；过期时先重取 durable snapshot 再从 `resyncCursor` 重连。
+  clean EOF、post-header error、429/5xx 与 `REALTIME_CAPACITY_EXCEEDED` 503
+  使用可取消、有界指数退避和 jitter；503 返回 `Retry-After`；
+- SDK 暴露 typed `listEvents` 与 `streamEvents` AsyncIterable，checkpoint 归
+  调用方；MCP `list_events` 是无服务器状态的 durable page adapter。
 
 Presence 和多人光标后续使用 WebSocket。
 
@@ -2195,7 +2284,7 @@ RBAC + ABAC：
 - SSE；
 - Search；
 - Seed；
-- Backup/Restore 基础；
+- PostgreSQL + 对象存储 Backup/Restore 基础；
 - 自动化测试。
 
 ### 不做
@@ -2419,8 +2508,9 @@ RBAC + ABAC：
 - [ ] 空机器按文档启动；
 - [ ] Health Check 正常；
 - [ ] 迁移可重复执行；
+- [ ] 空库只执行 v1 baseline；支持的 pre-v1 起点升级后保留 legacy checksum ledger，并以 `adopted` 登记 v1 baseline；
 - [ ] Seed 可创建 Demo；
-- [ ] Backup 后可 Restore；
+- [ ] 完整 Recovery Bundle 可恢复到空数据库与空 Bucket，并验证 Artifact、归档对象、密钥和服务启动；
 - [ ] 升级失败可回滚；
 - [ ] 无第三方 SaaS 依赖时基础功能可用。
 
@@ -2567,6 +2657,16 @@ WorkMesh v0.1 只有在以下全部满足时才可称为首版完成：
 - 文档、Schema、OpenAPI 与代码一致；
 - 没有要求或持久化 Agent 隐藏思维链。
 
+## 26.1 Agent Collaboration Client Profile
+
+Stable Core 发布 adapter-neutral Client Profile 1.0。客户端先从 `/api/v1/info`
+协商版本，再通过精确 Agent Session 身份读取 capability manifest；该 manifest 必须
+由 route-policy、feature registry 与 MCP binding 生成，且不能作为授权。Native
+HTTP 与 MCP 必须通过同一套 receive/ACK/Context/Inbox/Room/Activity/Artifact/
+Handoff/complete、disconnect recovery、duplicate idempotency 与 hostile-state
+conformance。Codex-style、OpenCode-style 与 pi-style fixture 只描述公开 push/pull/
+hybrid 行为，不依赖供应商私有实现。Engineering Graph 保持 Experimental 且默认关闭。
+
 ---
 
 # 附录 A：推荐默认值
@@ -2634,3 +2734,9 @@ automation:
 - Model Context Protocol: Specification and Architecture
 - Agent2Agent Protocol: Official Project and Specification
 - AGENTS.md: Open Format for Coding Agent Guidance
+
+## 附录：集合分页契约
+
+除单例 `/rooms`、原子且硬限制为 100 个模板及每模板 100 个版本的 `/templates/export` 外，所有对外顶层集合统一返回 `{items,nextCursor}`。`limit` 默认 50、最小 1、最大 200。游标是带版本和 HMAC 的不透明 token，绑定 Route、Workspace、Actor、规范化后的有效过滤条件与确定性排序；每个排序元组以唯一 ID 收尾。每一页都在 SQL 中重新执行实时授权，然后执行 Keyset 条件和 `LIMIT limit+1`，不得使用 OFFSET、全量读取或 JavaScript 授权后过滤。完整清单、排序、并发变更语义和密钥轮换见 `docs/pagination.md` 与 ADR 0032。
+
+Domain Event REST/SSE cursor、`Last-Event-ID` 与 A2A Task Event cursor 保持原十进制 durable cursor 域，不得改用集合分页 token。

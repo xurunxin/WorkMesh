@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useState } from 'react'
-import { ApiError, publicRequest, saveCsrfToken } from '../lib/api'
+import { ApiError, publicMutation, publicRequest, saveCsrfToken } from '../lib/api'
 
 type LoginResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
@@ -22,7 +22,7 @@ export default function LoginPage() {
     setSubmitting(true)
     setError('')
     try {
-      const result = await publicRequest<LoginResponse>('/api/v1/auth/login', {
+      const result = await publicMutation<LoginResponse>('login', '/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.get('email'), password: form.get('password') }),

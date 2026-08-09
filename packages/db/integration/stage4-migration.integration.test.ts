@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
+  appendEvent,
   applyMigrations,
   budgetPolicies,
   createDb,
@@ -15,7 +16,11 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) thr
 const db = createDb(databaseUrl)
 
 describe('Stage 4 planning and operations migrations', () => {
-  beforeAll(async () => { await applyMigrations(db) })
+  beforeAll(async () => {
+    await db.query('DROP SCHEMA public CASCADE')
+    await db.query('CREATE SCHEMA public')
+    await applyMigrations(db)
+  })
   afterAll(async () => { await db.end() })
 
   it('installs every authoritative Stage 4 projection', async () => {
@@ -107,6 +112,121 @@ describe('Stage 4 planning and operations migrations', () => {
     expect(columns.rows).toHaveLength(6)
   })
 
+  it('resolves human repository-context provider actions to their durable Work Item or Team scope', async () => {
+    const suffix = randomUUID().replaceAll('-', '')
+    const workspace = (await db.query<{ id: string }>(
+      'INSERT INTO workspaces(name,slug) VALUES($1,$2) RETURNING id',
+      [`Provider action ${suffix}`, `provider-action-${suffix}`],
+    )).rows[0]!
+    const human = (await db.query<{ id: string }>(
+      `INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash)
+       VALUES($1,'human','admin',$2,'Provider action owner','hash') RETURNING id`,
+      [workspace.id, `${suffix}@example.test`],
+    )).rows[0]!
+    const service = (await db.query<{ id: string }>(
+      "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','Fake Git provider') RETURNING id",
+      [workspace.id],
+    )).rows[0]!
+    const team = (await db.query<{ id: string }>(
+      'INSERT INTO teams(workspace_id,name,key) VALUES($1,$2,$3) RETURNING id',
+      [workspace.id, `Provider action ${suffix}`, `R${suffix.slice(0, 7)}`],
+    )).rows[0]!
+    const state = (await db.query<{ id: string }>(
+      `INSERT INTO workflow_states(workspace_id,team_id,name,category,color,position)
+       VALUES($1,$2,'Backlog','backlog','#000000',0) RETURNING id`,
+      [workspace.id, team.id],
+    )).rows[0]!
+    const item = (await db.query<{ id: string }>(
+      `INSERT INTO work_items(
+         workspace_id,team_id,number,title,status_id,responsible_human_actor_id
+       ) VALUES($1,$2,1,'Resolve repository context',$3,$4) RETURNING id`,
+      [workspace.id, team.id, state.id, human.id],
+    )).rows[0]!
+    const connection = (await db.query<{ id: string }>(
+      `INSERT INTO provider_connections(
+         workspace_id,provider,external_account_id,display_name,
+         service_actor_id,webhook_secret_ciphertext
+       ) VALUES($1,'fake',$2,'Fake Git',$3,decode(repeat('00',32),'hex'))
+       RETURNING id`,
+      [workspace.id, `fake-${suffix}`, service.id],
+    )).rows[0]!
+    const repository = (await db.query<{ id: string }>(
+      `INSERT INTO repositories(
+         workspace_id,connection_id,team_id,external_id,full_name,default_branch
+       ) VALUES($1,$2,$3,$4,$5,'main') RETURNING id`,
+      [workspace.id, connection.id, team.id, `repo-${suffix}`, `workmesh/${suffix}`],
+    )).rows[0]!
+    const workItemAction = (await db.query<{ id: string }>(
+      `INSERT INTO provider_actions(
+         workspace_id,connection_id,repository_id,requested_by_actor_id,
+         session_id,work_item_id,project_id,kind,intent_key,payload
+       ) VALUES(
+         $1,$2,$3,$4,NULL,$5,NULL,'resolve_repository_context',$6,'{}'::jsonb
+       ) RETURNING id`,
+      [workspace.id, connection.id, repository.id, human.id, item.id, `work-item-${suffix}`],
+    )).rows[0]!
+    const teamAction = (await db.query<{ id: string }>(
+      `INSERT INTO provider_actions(
+         workspace_id,connection_id,repository_id,requested_by_actor_id,
+         session_id,work_item_id,project_id,kind,intent_key,payload
+       ) VALUES(
+         $1,$2,$3,$4,NULL,NULL,NULL,'resolve_repository_context',$5,'{}'::jsonb
+       ) RETURNING id`,
+      [workspace.id, connection.id, repository.id, human.id, `team-${suffix}`],
+    )).rows[0]!
+
+    const appendProviderActionEvent = async (actionId: string): Promise<string> =>
+      await appendEvent(db, {
+        workspaceId: workspace.id,
+        actorId: human.id,
+        correlationId: `provider-action-resource:${actionId}`,
+        type: 'repository.context.resolution_requested',
+        aggregateType: 'provider_action',
+        aggregateId: actionId,
+        payload: { repositoryId: repository.id },
+      })
+    const workItemEventId = await appendProviderActionEvent(workItemAction.id)
+    const teamEventId = await appendProviderActionEvent(teamAction.id)
+
+    const events = await db.query<{
+      id: string
+      workspace_id: string
+      team_id: string
+    }>(
+      'SELECT id,workspace_id,team_id FROM domain_events WHERE id=ANY($1::uuid[]) ORDER BY id',
+      [[workItemEventId, teamEventId]],
+    )
+    expect(events.rows).toHaveLength(2)
+    expect(events.rows.every(event =>
+      event.workspace_id === workspace.id && event.team_id === team.id,
+    )).toBe(true)
+
+    const resources = async (eventId: string) =>
+      (await db.query<{
+        relation: string
+        resource_type: string
+        resource_id: string
+      }>(
+        `SELECT relation,resource_type,resource_id
+           FROM domain_event_resources
+          WHERE domain_event_id=$1
+          ORDER BY relation,resource_type,resource_id`,
+        [eventId],
+      )).rows
+    await expect(resources(workItemEventId)).resolves.toEqual([
+      { relation: 'invalidate', resource_type: 'team', resource_id: team.id },
+      { relation: 'invalidate', resource_type: 'work_item', resource_id: item.id },
+      { relation: 'scope', resource_type: 'team', resource_id: team.id },
+      { relation: 'scope', resource_type: 'work_item', resource_id: item.id },
+      { relation: 'scope', resource_type: 'workspace', resource_id: workspace.id },
+    ])
+    await expect(resources(teamEventId)).resolves.toEqual([
+      { relation: 'invalidate', resource_type: 'team', resource_id: team.id },
+      { relation: 'scope', resource_type: 'team', resource_id: team.id },
+      { relation: 'scope', resource_type: 'workspace', resource_id: workspace.id },
+    ])
+  })
+
   it('round-trips monetary bigint columns through Drizzle without number coercion', async () => {
     const suffix = randomUUID().replaceAll('-', '')
     const workspace = (await db.query<{ id: string }>(
@@ -156,6 +276,34 @@ describe('Stage 4 planning and operations migrations', () => {
        ) VALUES($1,$2,$3,$4,$5,$6) RETURNING id`,
       [workspace.id, team.id, agent.id, agentActor.id, delegation.id, item.id],
     )).rows[0]!
+    const a2aEventId = await appendEvent(db, {
+      workspaceId: workspace.id,
+      teamId: team.id,
+      actorId: human.id,
+      correlationId: `sparse-a2a-parameters:${suffix}`,
+      type: 'a2a.task.accepted',
+      aggregateType: 'a2a_task',
+      aggregateId: randomUUID(),
+      sessionId: session.id,
+      payload: { sessionId: session.id },
+    })
+    const a2aEvent = (await db.query<{ team_id: string }>(
+      'SELECT team_id FROM domain_events WHERE id=$1',
+      [a2aEventId],
+    )).rows[0]
+    expect(a2aEvent?.team_id).toBe(team.id)
+    const a2aResources = await db.query<{ resource_type: string; resource_id: string }>(
+      `SELECT resource_type,resource_id
+         FROM domain_event_resources
+        WHERE domain_event_id=$1 AND relation='scope'
+          AND resource_type IN ('team','session')
+        ORDER BY resource_type`,
+      [a2aEventId],
+    )
+    expect(a2aResources.rows).toEqual([
+      { resource_type: 'session', resource_id: session.id },
+      { resource_type: 'team', resource_id: team.id },
+    ])
 
     const orm = drizzle({ client: db })
     const precise = 9_007_199_254_740_993n

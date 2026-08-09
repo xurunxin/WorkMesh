@@ -1,4 +1,5 @@
-import { bigint, boolean, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { bigint, boolean, check, customType, date, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 const binary = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' })
 
@@ -7,6 +8,8 @@ export const workspaceRole = pgEnum('workspace_role', ['admin', 'member'])
 export const membershipRole = pgEnum('membership_role', ['admin', 'maintainer', 'member'])
 export const statusCategory = pgEnum('status_category', ['backlog', 'planned', 'started', 'completed', 'canceled'])
 export const outboxStatus = pgEnum('outbox_status', ['pending', 'delivering', 'delivered', 'dead'])
+export const eventArchiveSegmentState = pgEnum('event_archive_segment_state', ['planned', 'uploaded', 'verified', 'pruned', 'failed'])
+export const eventArchiveMembershipState = pgEnum('event_archive_membership_state', ['pending_exact', 'exact', 'legacy_unindexed'])
 export const agentProtocol = pgEnum('agent_protocol', ['native_http', 'mcp', 'a2a'])
 export const delegationRole = pgEnum('delegation_role', ['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
 export const delegationScopeType = pgEnum('delegation_scope_type', ['work_item', 'plan_step', 'project', 'automation'])
@@ -18,12 +21,16 @@ export const activityVisibility = pgEnum('activity_visibility', ['team', 'worksp
 export const approvalStatus = pgEnum('approval_status', ['pending', 'approved', 'rejected', 'expired', 'consumed', 'canceled'])
 export const approvalRiskLevel = pgEnum('approval_risk_level', ['low', 'medium', 'high', 'critical'])
 export const webhookDeliveryStatus = pgEnum('webhook_delivery_status', ['pending', 'delivering', 'delivered', 'dead'])
-export const inboxItemKind = pgEnum('inbox_item_kind', ['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff'])
+export const inboxItemKind = pgEnum('inbox_item_kind', ['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff', 'mention'])
 export const inboxItemStatus = pgEnum('inbox_item_status', ['open', 'resolved'])
+export const inboxReceiptKind = pgEnum('inbox_receipt_kind', ['claimed', 'read', 'acknowledged', 'replied'])
 export const roomSubjectKind = pgEnum('room_subject_kind', ['work_item', 'project', 'session'])
 export const roomMessageIntent = pgEnum('room_message_intent', ['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
 export const leaseKind = pgEnum('lease_kind', ['exclusive', 'review_shared'])
 export const leaseStatus = pgEnum('lease_status', ['active', 'released', 'expired', 'revoked'])
+export const guidanceScopeType = pgEnum('guidance_scope_type', ['workspace', 'team', 'project'])
+export const guidanceDocumentStatus = pgEnum('guidance_document_status', ['active', 'archived'])
+export const guidanceAuditAction = pgEnum('guidance_audit_action', ['published', 'archived', 'rolled_back'])
 export const handoffStatus = pgEnum('handoff_status', ['draft', 'requested', 'accepted', 'rejected', 'canceled', 'completed'])
 export const budgetReservationStatus = pgEnum('budget_reservation_status', ['reserved', 'released', 'consumed'])
 export const decisionRelationKind = pgEnum('decision_relation_kind', ['supersedes', 'reverses'])
@@ -133,7 +140,7 @@ export const advancedSavedViews = pgTable('advanced_saved_views', {
 })
 export const templates = pgTable('templates', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), kind: templateKind('kind').notNull(), name: text('name').notNull(),
-  description: text('description').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), status: templateStatus('status').notNull(),
+  description: text('description').notNull(), ownerActorId: uuid('owner_actor_id').notNull(), teamId: uuid('team_id'), status: templateStatus('status').notNull(),
   currentVersionId: uuid('current_version_id'), revision: integer('revision').notNull(), importedAt: timestamp('imported_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
@@ -142,16 +149,95 @@ export const templateVersions = pgTable('template_versions', {
   changeSummary: text('change_summary').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const sessions = pgTable('sessions', {
-  id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), actorId: uuid('actor_id').notNull(), tokenHash: text('token_hash').notNull(), csrfToken: text('csrf_token').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const apiIdempotencyKeys = pgTable('api_idempotency_keys', {
   workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), idempotencyKey: text('idempotency_key').notNull(), operation: text('operation').notNull(), requestHash: text('request_hash').notNull(),
-  responseStatus: integer('response_status'), responseBody: jsonb('response_body'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  responseStatus: integer('response_status'), responseBody: jsonb('response_body'), replayExpiresAt: timestamp('replay_expires_at', { withTimezone: true }).notNull(),
+  conflictExpiresAt: timestamp('conflict_expires_at', { withTimezone: true }).notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const heartbeatIdempotencyKeys = pgTable('heartbeat_idempotency_keys', {
+  resourceKind: text('resource_kind').notNull(), resourceId: uuid('resource_id').notNull(),
+  idempotencyKey: text('idempotency_key').notNull(), requestHash: text('request_hash').notNull(),
+  observedAt: timestamp('observed_at', { withTimezone: true }).notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+})
+export const authIdempotencyRecords = pgTable('auth_idempotency_records', {
+  id: uuid('id').primaryKey(),
+  keyFingerprint: text('key_fingerprint').notNull(),
+  subjectFingerprint: text('subject_fingerprint').notNull(),
+  operation: text('operation').notNull(),
+  requestFingerprint: text('request_fingerprint').notNull(),
+  clientContextFingerprint: text('client_context_fingerprint').notNull(),
+  state: text('state').notNull(),
+  responseStatus: integer('response_status'),
+  replayKeyId: text('replay_key_id'),
+  replayKeyFingerprint: text('replay_key_fingerprint'),
+  replayIv: binary('replay_iv'),
+  replayTag: binary('replay_tag'),
+  replayCiphertext: binary('replay_ciphertext'),
+  replayExpiresAt: timestamp('replay_expires_at', { withTimezone: true }).notNull(),
+  conflictExpiresAt: timestamp('conflict_expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  replayWipedAt: timestamp('replay_wiped_at', { withTimezone: true }),
 })
 export const domainEvents = pgTable('domain_events', {
-  cursor: bigint('cursor', { mode: 'number' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
+  cursor: bigint('cursor', { mode: 'bigint' }).primaryKey(), id: uuid('id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id'), audienceActorId: uuid('audience_actor_id'),
   eventType: text('event_type').notNull(), eventVersion: integer('event_version').notNull(), aggregateType: text('aggregate_type').notNull(), aggregateId: uuid('aggregate_id').notNull(), aggregateRevision: integer('aggregate_revision'),
   actorId: uuid('actor_id').notNull(), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key'), sessionId: uuid('session_id'), sessionSequence: bigint('session_sequence', { mode: 'number' }), causationId: uuid('causation_id'), payload: jsonb('payload').notNull(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+})
+export const domainEventResources = pgTable('domain_event_resources', {
+  domainEventId: uuid('domain_event_id').notNull(), workspaceId: uuid('workspace_id').notNull(), relation: text('relation').notNull(),
+  resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const eventRetentionState = pgTable('event_retention_state', {
+  workspaceId: uuid('workspace_id').primaryKey(), prunedThroughCursor: bigint('pruned_through_cursor', { mode: 'bigint' }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const eventArchiveSegments = pgTable('event_archive_segments', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(),
+  startCursor: bigint('start_cursor', { mode: 'bigint' }).notNull(), endCursor: bigint('end_cursor', { mode: 'bigint' }).notNull(),
+  fixedCutoffAt: timestamp('fixed_cutoff_at', { withTimezone: true }).notNull(), rowCount: integer('row_count').notNull(),
+  objectKey: text('object_key').notNull(), objectVersionId: text('object_version_id'),
+  objectSizeBytes: bigint('object_size_bytes', { mode: 'bigint' }).notNull(), objectSha256: text('object_sha256').notNull(),
+  snapshotDigest: text('snapshot_digest').notNull(), metadata: jsonb('metadata').notNull(), state: eventArchiveSegmentState('state').notNull(),
+  membershipState: eventArchiveMembershipState('membership_state').notNull(),
+  retainUntil: timestamp('retain_until', { withTimezone: true }).notNull(), uploadedAt: timestamp('uploaded_at', { withTimezone: true }),
+  verifiedAt: timestamp('verified_at', { withTimezone: true }), prunedAt: timestamp('pruned_at', { withTimezone: true }),
+  uploadAttemptCount: integer('upload_attempt_count').notNull(), lastUploadAttemptAt: timestamp('last_upload_attempt_at', { withTimezone: true }),
+  lastUploadFence: bigint('last_upload_fence', { mode: 'bigint' }), plannedFence: bigint('planned_fence', { mode: 'bigint' }),
+  lastErrorCode: text('last_error_code'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const eventArchiveSegmentEvents = pgTable('event_archive_segment_events', {
+  segmentId: uuid('segment_id').notNull(), workspaceId: uuid('workspace_id').notNull(), ordinal: integer('ordinal').notNull(),
+  eventId: uuid('event_id').notNull(), eventCursor: bigint('event_cursor', { mode: 'bigint' }).notNull(),
+  recordSha256: text('record_sha256').notNull(), flooredAt: timestamp('floored_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const retentionJobState = pgTable('retention_job_state', {
+  jobName: text('job_name').notNull(), workspaceId: uuid('workspace_id').notNull(), leaseOwner: text('lease_owner'),
+  leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }), fence: bigint('fence', { mode: 'bigint' }).notNull(),
+  fixedCutoffAt: timestamp('fixed_cutoff_at', { withTimezone: true }), watermarkCursor: bigint('watermark_cursor', { mode: 'bigint' }).notNull(),
+  lastErrorCode: text('last_error_code'), counters: jsonb('counters').notNull(), lastStartedAt: timestamp('last_started_at', { withTimezone: true }),
+  lastCompletedAt: timestamp('last_completed_at', { withTimezone: true }), workerMode: text('worker_mode'),
+  workerSeenAt: timestamp('worker_seen_at', { withTimezone: true }), workerInstanceId: uuid('worker_instance_id'),
+  workerBuildSha: text('worker_build_sha'), workerIdentityConflictCount: bigint('worker_identity_conflict_count', { mode: 'bigint' }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const retentionPolicyInventory = pgTable('retention_policy_inventory', {
+  recordClass: text('record_class').primaryKey(), onlineDays: integer('online_days').notNull(), conflictDays: integer('conflict_days'),
+  archiveDays: integer('archive_days'), deleteAllowed: boolean('delete_allowed').notNull(), protectedReason: text('protected_reason'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const authorizationDenials = pgTable('authorization_denials', {
+  id: uuid('id').primaryKey(), occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+  correlationId: text('correlation_id').notNull(), policyId: text('policy_id').notNull(), operationId: text('operation_id').notNull(),
+  transport: text('transport').notNull(), principalKind: actorKind('principal_kind'), principalActorId: uuid('principal_actor_id'),
+  principalSessionId: uuid('principal_session_id'), workspaceId: uuid('workspace_id'), routeTemplate: text('route_template').notNull(),
+  reasonCode: text('reason_code').notNull(), authorizationStage: text('authorization_stage').notNull(),
+  resourceFingerprint: text('resource_fingerprint'), dedupeKey: text('dedupe_key'),
 })
 export const outboxEvents = pgTable('outbox_events', {
   id: uuid('id').primaryKey(), domainEventId: uuid('domain_event_id').notNull(), topic: text('topic').notNull(), partitionKey: text('partition_key').notNull(), status: outboxStatus('status').notNull(),
@@ -200,6 +286,9 @@ export const agentSessions = pgTable('agent_sessions', {
   workItemId: uuid('work_item_id'), projectId: uuid('project_id'), planStepId: uuid('plan_step_id'), state: agentSessionState('state').notNull(), stateReason: text('state_reason'),
   sequence: bigint('sequence', { mode: 'number' }).notNull(), revision: integer('revision').notNull(), currentPlanVersionId: uuid('current_plan_version_id'), contextSnapshotId: uuid('context_snapshot_id'),
   budget: jsonb('budget').notNull(), externalUrls: jsonb('external_urls').notNull(), acknowledgedAt: timestamp('acknowledged_at', { withTimezone: true }), lastHeartbeatAt: timestamp('last_heartbeat_at', { withTimezone: true }),
+  heartbeatHealth: text('heartbeat_health').notNull(), heartbeatHealthChangedAt: timestamp('heartbeat_health_changed_at', { withTimezone: true }).notNull(),
+  heartbeatCheckedAt: timestamp('heartbeat_checked_at', { withTimezone: true }), heartbeatCurrentStepId: uuid('heartbeat_current_step_id'),
+  heartbeatUsage: jsonb('heartbeat_usage').notNull(), heartbeatIdempotencyKey: text('heartbeat_idempotency_key'), heartbeatRequestHash: text('heartbeat_request_hash'),
   stopRequestedAt: timestamp('stop_requested_at', { withTimezone: true }), stopAcknowledgedAt: timestamp('stop_acknowledged_at', { withTimezone: true }), resultSummary: text('result_summary'), resultEvidence: jsonb('result_evidence').notNull(),
   noArtifactReason: text('no_artifact_reason'), errorCode: text('error_code'), errorSummary: text('error_summary'), endedAt: timestamp('ended_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
   maxChildSessions: integer('max_child_sessions').notNull(), inheritedBudget: jsonb('inherited_budget').notNull(), requiredForParent: boolean('required_for_parent').notNull(), planStepVersionId: uuid('plan_step_version_id'), automationRunId: uuid('automation_run_id'),
@@ -230,15 +319,43 @@ export const roomMessages = pgTable('room_messages', {
   id: uuid('id').primaryKey(), channelId: uuid('channel_id').notNull(), workspaceId: uuid('workspace_id').notNull(), authorActorId: uuid('author_actor_id').notNull(), sessionId: uuid('session_id'), intent: roomMessageIntent('intent').notNull(), recipientActorId: uuid('recipient_actor_id'), replyToMessageId: uuid('reply_to_message_id'), threadId: uuid('thread_id'), body: text('body').notNull(), structuredPayload: jsonb('structured_payload').notNull(), requiresResponse: boolean('requires_response').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const roomMessageRecipients = pgTable('room_message_recipients', { messageId: uuid('message_id').notNull(), actorId: uuid('actor_id').notNull() })
+export const roomMessageSessionRecipients = pgTable('room_message_session_recipients', { messageId: uuid('message_id').notNull(), workspaceId: uuid('workspace_id').notNull(), sessionId: uuid('session_id').notNull(), actorId: uuid('actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const roomMessageResponseResolutions = pgTable('room_message_response_resolutions', { id: uuid('id').primaryKey(), messageId: uuid('message_id').notNull(), resolvedByActorId: uuid('resolved_by_actor_id').notNull(), resolution: text('resolution'), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisions = pgTable('decisions', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), workItemId: uuid('work_item_id'), projectId: uuid('project_id'), sessionId: uuid('session_id'), proposedByActorId: uuid('proposed_by_actor_id').notNull(), finalizedByActorId: uuid('finalized_by_actor_id'), title: text('title').notNull(), rationale: text('rationale').notNull(), options: jsonb('options').notNull(), selectedOption: text('selected_option'), evidence: jsonb('evidence').notNull(), status: text('status').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), finalizedAt: timestamp('finalized_at', { withTimezone: true }),
-})
+}, table => [
+  check(
+    'decisions_subject_check',
+    sql`num_nonnulls(${table.workItemId},${table.projectId}) <= 1
+      AND num_nonnulls(${table.workItemId},${table.projectId},${table.sessionId}) >= 1`,
+  ),
+])
 export const decisionAffectedResources = pgTable('decision_affected_resources', { decisionId: uuid('decision_id').notNull(), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), impact: text('impact').notNull() })
 export const decisionRelations = pgTable('decision_relations', { id: uuid('id').primaryKey(), decisionId: uuid('decision_id').notNull(), relatedDecisionId: uuid('related_decision_id').notNull(), kind: decisionRelationKind('kind').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const decisionTransitionConsumptions = pgTable('decision_transition_consumptions', { id: uuid('id').primaryKey(), targetDecisionId: uuid('target_decision_id').notNull(), transitionType: text('transition_type').notNull(), derivedDecisionId: uuid('derived_decision_id'), consumedByActorId: uuid('consumed_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 export const leases = pgTable('leases', {
-  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), sessionId: uuid('session_id').notNull(), holderActorId: uuid('holder_actor_id'), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), kind: leaseKind('kind').notNull(), status: leaseStatus('status').notNull(), reason: text('reason').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), heartbeatAt: timestamp('heartbeat_at', { withTimezone: true }).notNull(), renewCount: integer('renew_count').notNull(), version: integer('version').notNull(), releasedAt: timestamp('released_at', { withTimezone: true }), releasedByActorId: uuid('released_by_actor_id'), auditReason: text('audit_reason'), revokedAt: timestamp('revoked_at', { withTimezone: true }), revokedByActorId: uuid('revoked_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), sessionId: uuid('session_id').notNull(), holderActorId: uuid('holder_actor_id'), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), kind: leaseKind('kind').notNull(), status: leaseStatus('status').notNull(), reason: text('reason').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), heartbeatAt: timestamp('heartbeat_at', { withTimezone: true }).notNull(), renewCount: integer('renew_count').notNull(), version: integer('version').notNull(), releasedAt: timestamp('released_at', { withTimezone: true }), releasedByActorId: uuid('released_by_actor_id'), auditReason: text('audit_reason'), revokedAt: timestamp('revoked_at', { withTimezone: true }), revokedByActorId: uuid('revoked_by_actor_id'), heartbeatIdempotencyKey: text('heartbeat_idempotency_key'), heartbeatRequestHash: text('heartbeat_request_hash'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const workItemExecutorRole = pgEnum('work_item_executor_role', ['primary', 'reviewer'])
+export const workItemExecutorProjections = pgTable('work_item_executor_projections', {
+  workspaceId: uuid('workspace_id').notNull(), workItemId: uuid('work_item_id').notNull(), projectionRole: workItemExecutorRole('projection_role').notNull(),
+  agentId: uuid('agent_id').notNull(), agentActorId: uuid('agent_actor_id').notNull(), sessionId: uuid('session_id').notNull(), leaseId: uuid('lease_id').notNull(),
+  leaseKind: leaseKind('lease_kind').notNull(), resourceType: text('resource_type').notNull(), resourceId: uuid('resource_id').notNull(), executionState: agentSessionState('execution_state').notNull(),
+  heartbeatHealth: text('heartbeat_health').notNull(), lastHeartbeatAt: timestamp('last_heartbeat_at', { withTimezone: true }), leaseHeartbeatAt: timestamp('lease_heartbeat_at', { withTimezone: true }).notNull(),
+  leaseExpiresAt: timestamp('lease_expires_at', { withTimezone: true }).notNull(), projectedAt: timestamp('projected_at', { withTimezone: true }).notNull(),
+})
+export const guidanceDocuments = pgTable('guidance_documents', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), scopeType: guidanceScopeType('scope_type').notNull(), scopeId: uuid('scope_id').notNull(),
+  currentRevisionId: uuid('current_revision_id'), status: guidanceDocumentStatus('status').notNull(), revision: integer('revision').notNull(), archivedAt: timestamp('archived_at', { withTimezone: true }), archivedByActorId: uuid('archived_by_actor_id'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const guidanceRevisions = pgTable('guidance_revisions', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), documentId: uuid('document_id').notNull(), revisionNumber: integer('revision_number').notNull(),
+  markdown: text('markdown').notNull(), contentHash: text('content_hash').notNull(), changeSummary: text('change_summary').notNull(), authorActorId: uuid('author_actor_id').notNull(), publishedAt: timestamp('published_at', { withTimezone: true }).notNull(),
+})
+export const guidanceAuditFacts = pgTable('guidance_audit_facts', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), documentId: uuid('document_id').notNull(), action: guidanceAuditAction('action').notNull(),
+  fromRevisionId: uuid('from_revision_id'), toRevisionId: uuid('to_revision_id'), actorId: uuid('actor_id').notNull(), reason: text('reason').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
 export const handoffs = pgTable('handoffs', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), fromSessionId: uuid('from_session_id').notNull(), targetAgentId: uuid('target_agent_id'), targetSkill: text('target_skill'), scopeType: text('scope_type'), scopeId: uuid('scope_id'), summary: text('summary').notNull(), completedWork: jsonb('completed_work').notNull(), remainingWork: jsonb('remaining_work').notNull(), openQuestions: jsonb('open_questions').notNull(), risks: jsonb('risks').notNull(), acceptanceCriteria: jsonb('acceptance_criteria').notNull(), requestedAction: text('requested_action'), leaseTransferPolicy: text('lease_transfer_policy').notNull(), artifactIds: uuid('artifact_ids').array().notNull(), contextSnapshotId: uuid('context_snapshot_id'), requestedCapabilities: text('requested_capabilities').array().notNull(), status: handoffStatus('status').notNull(), acceptedSessionId: uuid('accepted_session_id'), resolvedAgentId: uuid('resolved_agent_id'), resolvedDelegationId: uuid('resolved_delegation_id'), rejectedByActorId: uuid('rejected_by_actor_id'), machineRejectReason: text('machine_reject_reason'), routingSnapshot: jsonb('routing_snapshot').notNull(), revision: integer('revision').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), requestedAt: timestamp('requested_at', { withTimezone: true }), decidedAt: timestamp('decided_at', { withTimezone: true }), completedAt: timestamp('completed_at', { withTimezone: true }),
@@ -334,8 +451,9 @@ export const agentWebhookDeliveries = pgTable('agent_webhook_deliveries', {
   id: uuid('id').primaryKey(), agentId: uuid('agent_id').notNull(), endpointId: uuid('endpoint_id').notNull(), secretVersion: integer('secret_version').notNull(), eventId: uuid('event_id'), deliveryId: text('delivery_id').notNull(), eventType: text('event_type').notNull(), sessionId: uuid('session_id'), payload: jsonb('payload').notNull(), status: webhookDeliveryStatus('status').notNull(), attemptCount: integer('attempt_count').notNull(), availableAt: timestamp('available_at', { withTimezone: true }).notNull(), lockedAt: timestamp('locked_at', { withTimezone: true }), lockedBy: text('locked_by'), deliveredAt: timestamp('delivered_at', { withTimezone: true }), lastError: text('last_error'), deadLetteredAt: timestamp('dead_lettered_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
 export const inboxItems = pgTable('inbox_items', {
-  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientHumanActorId: uuid('recipient_human_actor_id').notNull(), sessionId: uuid('session_id'), kind: inboxItemKind('kind').notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), status: inboxItemStatus('status').notNull(), payload: jsonb('payload').notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), resolvedByActorId: uuid('resolved_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), recipientHumanActorId: uuid('recipient_human_actor_id'), recipientActorId: uuid('recipient_actor_id').notNull(), recipientSessionId: uuid('recipient_session_id'), claimedBySessionId: uuid('claimed_by_session_id'), claimedAt: timestamp('claimed_at', { withTimezone: true }), teamId: uuid('team_id'), sessionId: uuid('session_id'), kind: inboxItemKind('kind').notNull(), sourceType: text('source_type').notNull(), sourceId: uuid('source_id').notNull(), sourceRoomMessageId: uuid('source_room_message_id'), requiresResponse: boolean('requires_response').notNull(), status: inboxItemStatus('status').notNull(), revision: integer('revision').notNull(), payload: jsonb('payload').notNull(), resolvedAt: timestamp('resolved_at', { withTimezone: true }), resolvedByActorId: uuid('resolved_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
+export const inboxItemReceipts = pgTable('inbox_item_receipts', { id: uuid('id').primaryKey(), inboxItemId: uuid('inbox_item_id').notNull(), workspaceId: uuid('workspace_id').notNull(), actorId: uuid('actor_id').notNull(), sessionId: uuid('session_id').notNull(), kind: inboxReceiptKind('kind').notNull(), replyMessageId: uuid('reply_message_id'), correlationId: text('correlation_id').notNull(), idempotencyKey: text('idempotency_key').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull() })
 
 export const usageRecords = pgTable('usage_records', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), dedupeKey: text('dedupe_key').notNull(),

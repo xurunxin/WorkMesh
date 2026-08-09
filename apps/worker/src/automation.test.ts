@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { assertPublicWebhookTarget, nextCronOccurrence } from './automation.js'
+import { loadFeatureConfig } from '@workmesh/config'
+import type { Db } from '@workmesh/db'
+import { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
 
 describe('Stage 4 automation scheduling', () => {
   it('calculates deterministic UTC cron occurrences', () => {
@@ -15,5 +17,37 @@ describe('Stage 4 automation scheduling', () => {
       'https://webhook.example.test/events',
       async () => [{ address: '::ffff:127.0.0.1', family: 6 }],
     )).rejects.toMatchObject({ code: 'UNSAFE_WEBHOOK_TARGET', retryable: false })
+  })
+
+  it('does not query, claim, or effect disabled automation work', async () => {
+    const db = {
+      query: async () => {
+        throw new Error('disabled worker must not touch automation state')
+      },
+    } as unknown as Db
+    const sink = {
+      callWebhook: async () => {
+        throw new Error('disabled worker must not call external webhooks')
+      },
+      deliverBrowser: async () => {
+        throw new Error('disabled worker must not deliver notifications')
+      },
+    }
+    const worker = createAutomationWorker({ db, sink, features: loadFeatureConfig({}) })
+    await expect(worker.claimEffects()).resolves.toEqual([])
+    await expect(worker.tick()).resolves.toBeUndefined()
+  })
+
+  it('does not query notification state when Beta Planning is disabled', async () => {
+    const db = {
+      query: async () => {
+        throw new Error('disabled planning must not touch notification state')
+      },
+    } as unknown as Db
+    const worker = createAutomationWorker({
+      db,
+      features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AUTOMATION: 'true' }),
+    })
+    await expect(worker.claimNotifications()).resolves.toEqual([])
   })
 })

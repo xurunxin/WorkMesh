@@ -1,6 +1,15 @@
-# Stage 1 Agent SDK, MCP, and Fake Agent
+# Agent SDK, MCP, and Fake Agent
 
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
+
+Before work begins, read `getServerInfo()` and negotiate one advertised Client
+Profile version, then call `getAgentCapabilities({ profileVersion: '1.0' })`.
+The response is an operation-support manifest derived from server registries;
+it is not an authorization grant. MCP exposes the same result as
+`workmesh://agent/capabilities`. The normative lifecycle, recovery, and failure
+reactions are in [Agent Collaboration Client Profile 1.0](AGENT_COLLABORATION_CLIENT_PROFILE.md).
+
+Retry controls have separate responsibilities. `maxAttempts` defaults to `3`; `baseDelayMs` (`150`) and `maxDelayMs` (`2000`) bound exponential fallback only. A valid `Retry-After` is instead accepted up to `maxRetryAfterMs` (`60000`) and waited in full, subject to the request-wide `maxTotalRetryDelayMs` budget (`120000`). A larger explicit delay suppresses automatic retry rather than truncating the server value. Invalid or negative `Retry-After` values use exponential fallback. When a retry is suppressed, `WorkMeshSdkError.retry` reports the header, parsed delay when valid, and the suppression reason. Retries preserve the original body, authorization header, and idempotency key; `429` and `503` never trigger token refresh.
 
 Session delivery contains a one-time `exchangeToken`. Exchange it together with the active installation token; the exchange token is not a bearer credential by itself. The SDK can optionally hold that installation token to make one `401` expiry refresh through the server's `/token/refresh` endpoint; it never retries a stop/transition conflict. Installation/session tokens, webhook secrets, signatures, and authorization headers are recursively redacted by the SDK logger.
 
@@ -16,7 +25,7 @@ Webhook receivers must verify raw bytes. `verifyWebhook(rawBody, headers, { secr
 
 ## MCP
 
-The MCP server exposes session-scoped WorkMesh data as resources and delegates every tool to the WorkMesh REST API; it does not reproduce domain authorization or state transitions. `WORKMESH_MCP_MODE=read-only` omits every mutation tool. Read/write mode offers ACK, heartbeat, activity, plan publication, auditable Agent messages/questions, approval requests, artifact publication, complete, and fail. It deliberately does not expose a tool that impersonates a human prompt. Both modes provide work-item, context, plan, activity, and guidance resources plus `list_work_items` and `get_work_item`.
+The MCP server exposes session-scoped WorkMesh data as resources and delegates every tool to the WorkMesh REST API; it does not reproduce domain authorization or state transitions. `WORKMESH_MCP_MODE=read-only` omits every mutation tool. Read/write mode offers ACK, heartbeat, activity, plan publication, auditable Agent messages/questions, approval requests, artifact publication, complete, and fail. It deliberately does not expose a tool that impersonates a human prompt. Both modes provide work-item, context, plan, activity, and guidance resources plus `list_work_items`, `list_session_activities`, and `get_work_item`. The list tools return the full `{items,nextCursor}` envelope; pass `nextCursor` back unchanged as `cursor` for explicit continuation.
 
 The HTTP entry point is `POST /mcp` and uses the official stable SDK's Streamable HTTP transport. It accepts `Authorization: Bearer $WORKMESH_MCP_ACCESS_TOKEN` at the MCP boundary and uses the configured `$WORKMESH_SESSION_TOKEN` to call WorkMesh. Keep both values session scoped and do not expose them to an untrusted client.
 
@@ -50,4 +59,9 @@ $env:FAKE_AGENT_REQUEST_APPROVAL = 'true'
 pnpm --filter @workmesh/fake-agent dev
 ```
 
-Run `pnpm smoke:agents` for SDK retry/HMAC coverage plus MCP construction and fake-agent signed-delivery/deduplication smoke checks. The full fake-agent workflow requires a running Stage 1 API and a real created session.
+Run `pnpm smoke:agents` for SDK retry/HMAC coverage plus MCP construction and fake-agent signed-delivery/deduplication smoke checks. The full fake-agent workflow requires a running WorkMesh REST v1 API with the applicable support-tier features enabled and a real created session.
+
+Run `pnpm test:conformance -- --output <directory>` for the adapter-neutral
+Native/MCP lifecycle, reconnect, duplicate-idempotency, hostile-state matrix,
+and Codex/OpenCode/pi-style public CLI fixtures. The output directory contains
+`report.json`, `junit.xml`, and `transcript.md`.

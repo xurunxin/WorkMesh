@@ -10,6 +10,7 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) thr
 
 const db = createDb(databaseUrl);
 const app = buildApp();
+type Page<T> = { items: T[]; nextCursor: string | null };
 let cookie = "";
 let csrf = "";
 let actorId = "";
@@ -24,12 +25,12 @@ const payloadHash = (value: unknown) => `sha256:${createHash("sha256").update(JS
 describe("reviewer API fixes", () => {
   beforeAll(async () => {
     await applyMigrations(db); await db.query("TRUNCATE workspaces CASCADE");
-    const install = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Review", slug: "review", adminName: "Admin", email: "admin@review.test", password: "review-password" }, headers: { "idempotency-key": "review-install" } });
+    const install = await app.inject({ method: "POST", url: "/api/v1/auth/install", payload: { name: "Review", slug: "review", adminName: "Admin", email: "admin@review.test", password: "review-password" }, headers: { "idempotency-key": "review-install", "x-workmesh-bootstrap-token": process.env.WORKMESH_BOOTSTRAP_TOKEN! } });
     cookie = String(Array.isArray(install.headers["set-cookie"]) ? install.headers["set-cookie"][0] : install.headers["set-cookie"]).split(";")[0] ?? "";
     csrf = install.json<{ csrfToken: string }>().csrfToken;
     actorId = (await human("GET", "/api/v1/auth/me")).json<{ actor: { id: string } }>().actor.id;
-    teamId = (await human("GET", "/api/v1/teams")).json<Array<{ id: string }>>()[0]!.id;
-    readyId = (await human("GET", `/api/v1/teams/${teamId}/states`)).json<Array<{ id: string; name: string }>>().find((state: {name:string}) => state.name === "Ready")!.id;
+    teamId = (await human("GET", "/api/v1/teams")).json<Page<{ id: string }>>().items[0]!.id;
+    readyId = (await human("GET", `/api/v1/teams/${teamId}/states`)).json<Page<{ id: string; name: string }>>().items.find((state: {name:string}) => state.name === "Ready")!.id;
   });
   afterAll(async () => { await app.close(); await db.end(); });
 
@@ -52,6 +53,10 @@ describe("reviewer API fixes", () => {
     const installToken = registered.json<{ installation_token: string }>().installation_token;
     const exchanged = await app.inject({ method: "POST", url: `/api/v1/agent-sessions/${started.session.id}/token/exchange`, payload: { exchangeToken: started.session.exchangeToken }, headers: { authorization: `Bearer ${installToken}`, "idempotency-key": randomUUID() } });
     const token = exchanged.json<{ sessionToken: string }>().sessionToken;
+    const acknowledged = await agent(token, "POST", `/api/v1/agent-sessions/${started.session.id}/ack`, { summary: "ready", externalUrls: [] });
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200);
+    const executing = await agent(token, "POST", `/api/v1/agent-sessions/${started.session.id}/state`, { state: "executing", reason: "running" }, { "if-match": `"revision-${acknowledged.json<{revision:number}>().revision}"` });
+    expect(executing.statusCode, JSON.stringify(executing.json())).toBe(200);
     expect((await agent(token, "GET", `/api/v1/work-items/${workItem.id}`)).statusCode).toBe(200);
     expect((await agent(token, "GET", `/api/v1/teams/${teamId}/guidance`)).statusCode).toBe(200);
     const removedRead = await human("PATCH", `/api/v1/agents/${definition.id}`, { approvedCapabilities: ["work:write", "plan:write"] }, { "if-match": `"revision-${definition.revision}"` });
@@ -61,7 +66,8 @@ describe("reviewer API fixes", () => {
     expect(restoredRead.statusCode).toBe(200);
     const other = await human("POST", "/api/v1/work-items", { teamId, title: "Other work", statusId: readyId, priority: "none", labels: [] });
     expect((await agent(token, "GET", `/api/v1/work-items/${other.json<{ id: string }>().id}`)).statusCode).toBe(403);
-    expect((await human("DELETE", `/api/v1/agents/${definition.id}/team-access/${teamId}`)).statusCode).toBe(200);
+    const revokedAccess = await human("DELETE", `/api/v1/agents/${definition.id}/team-access/${teamId}`);
+    expect(revokedAccess.statusCode, JSON.stringify(revokedAccess.json())).toBe(200);
     expect((await agent(token, "GET", `/api/v1/work-items/${workItem.id}`)).statusCode).toBe(401);
   });
 
@@ -70,7 +76,7 @@ describe("reviewer API fixes", () => {
     expect(registered.statusCode).toBe(200);
     let definition = registered.json<{ id:string; revision:number; approved_capabilities:string[] }>();
     expect(definition.approved_capabilities).toEqual(["work:read"]);
-    const listed = (await human("GET", "/api/v1/agents")).json<Array<{id:string;approved_capabilities:string[]}>>();
+    const listed = (await human("GET", "/api/v1/agents")).json<Page<{id:string;approved_capabilities:string[]}>>().items;
     expect(listed.find(agent => agent.id === definition.id)?.approved_capabilities).toEqual(["work:read"]);
     const approved = await human("PATCH", `/api/v1/agents/${definition.id}`, { approvedCapabilities: ["work:read", "work:write"] }, { "if-match": `"revision-${definition.revision}"` });
     expect(approved.statusCode).toBe(200);
@@ -113,7 +119,7 @@ describe("reviewer API fixes", () => {
     const approvalId=approval.json<{id:string;revision:number}>().id;
     const first=await human("POST",`/api/v1/approvals/${approvalId}/decide`,{decision:"approved",reason:"one"},{"if-match":"\"revision-1\""}); expect(first.json<{status:string}>().status).toBe("pending");
     const secondActor=randomUUID(), secondToken=opaqueToken(), secondCsrf=opaqueToken(); await db.query("INSERT INTO actors(id,workspace_id,kind,workspace_role,email,display_name,password_hash) SELECT $1,workspace_id,'human','member',$2,'Second','unused' FROM actors WHERE id=$3",[secondActor,"second@review.test",actorId]); await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) SELECT workspace_id,$1,$2,'member' FROM actors WHERE id=$3",[teamId,secondActor,actorId]); await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')",[secondActor,tokenHash(secondToken),secondCsrf]);
-    const second=await app.inject({method:"POST",url:`/api/v1/approvals/${approvalId}/decide`,payload:{decision:"approved",reason:"two"},headers:{cookie:`workmesh_session=${secondToken}`,"x-csrf-token":secondCsrf,"idempotency-key":randomUUID(),"if-match":"\"revision-2\""}}); expect(second.json<{status:string}>().status).toBe("approved");
+    const second=await app.inject({method:"POST",url:`/api/v1/approvals/${approvalId}/decide`,payload:{decision:"approved",reason:"two"},headers:{cookie:`workmesh_session=${secondToken}`,"x-csrf-token":secondCsrf,"idempotency-key":randomUUID(),"if-match":"\"revision-2\""}}); expect(second.statusCode,JSON.stringify(second.json())).toBe(200); expect(second.json<{status:string}>().status).toBe("approved");
     const delivery=(await db.query<{payload:unknown}>("SELECT payload FROM agent_webhook_deliveries WHERE session_id=$1 AND event_type='approval.approved'",[started.session.id])).rows[0];
     expect(delivery?.payload).toMatchObject({sessionId:started.session.id,status:"approved"});
     const events=(await human("GET","/api/v1/events")).json<Array<Record<string,unknown>>>().filter(event=>event.aggregate_id===approvalId);
@@ -124,7 +130,9 @@ describe("reviewer API fixes", () => {
     expect(sequences.every((sequence,index)=>sequence>0 && (index===0 || sequence>sequences[index-1]!))).toBe(true);
     const awaiting=await agent(token,"POST",`/api/v1/agent-sessions/${started.session.id}/state`,{state:"awaiting_approval",reason:"gate"},{"if-match":`"revision-${executing.json<{revision:number}>().revision}"`});
     const plan={changeSummary:"approved",steps:[{id:randomUUID(),title:"ship",ordinal:0}]};
-    expect((await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,plan,{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`})).statusCode).toBe(400);
+    const missingApproval = await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,plan,{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`});
+    expect(missingApproval.statusCode).toBe(403);
+    expect(missingApproval.json<{error:{code:string}}>()).toMatchObject({error:{code:"APPROVAL_REQUIRED"}});
     const wrong=await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,{...plan,approvalId,approvalPayloadHash:payloadHash({plan:"changed"})},{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`}); expect(wrong.statusCode).toBe(400);
     const published=await agent(token,"PUT",`/api/v1/agent-sessions/${started.session.id}/plan`,{...plan,approvalId,approvalPayloadHash:hash},{"if-match":`"revision-${awaiting.json<{revision:number}>().revision}"`}); expect(published.statusCode).toBe(200);
     expect((await agent(token,"POST",`/api/v1/approvals/${approvalId}/consume`,{actionPayloadHash:hash},{"if-match":"\"revision-4\""})).statusCode).toBeGreaterThanOrEqual(400);

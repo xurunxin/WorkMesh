@@ -1,28 +1,154 @@
 import { z } from 'zod'
+import {
+  createRoutePolicyManifest,
+  mcpPolicyBindings,
+  type RoutePolicyFeatureTier,
+} from './route-policy.js'
+
+export * from './route-policy.js'
+
+export const releaseMetadata = Object.freeze({
+  serverVersion: '1.0.0',
+  restApiVersion: '1.0',
+  agentProtocolVersion: '1.0',
+  mcpVersion: '1.0.0',
+  a2aUpstreamVersion: '0.3',
+  preferredClientProfileVersion: '1.0',
+  supportedClientProfileVersions: ['1.0'] as const,
+  conformanceSuiteVersion: '1.0',
+  schemaBaseline: 1,
+})
+
+export const featureKeySchema = z.enum([
+  'WORKMESH_BETA_PLANNING',
+  'WORKMESH_BETA_TEMPLATES',
+  'WORKMESH_BETA_COSTS',
+  'WORKMESH_BETA_GITEA',
+  'WORKMESH_BETA_OPERATIONS_UI',
+  'WORKMESH_EXPERIMENTAL_AUTOMATION',
+  'WORKMESH_EXPERIMENTAL_AGENT_LOOPS',
+  'WORKMESH_EXPERIMENTAL_A2A',
+  'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS',
+  'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME',
+])
+export const supportTierSchema = z.enum(['beta', 'experimental'])
+export type FeatureKey = z.infer<typeof featureKeySchema>
+export type SupportTier = z.infer<typeof supportTierSchema>
+export type ReleaseInfo = z.infer<typeof releaseInfoResponseSchema>
+export type FeatureState = z.infer<typeof featureStateSchema>
+export type FeatureRegistry = z.infer<typeof featureRegistryResponseSchema>
+export type FeatureRuntime = 'api' | 'web' | 'worker' | 'sdk-mcp' | 'reserved'
+
+export const featureDefinitions = Object.freeze([
+  { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
+  { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
+  { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
+  { key: 'WORKMESH_BETA_GITEA', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
+  { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
+  { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
+  { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
+  { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['reserved'] },
+] as const satisfies readonly {
+  key: FeatureKey
+  tier: SupportTier
+  defaultEnabled: false
+  runtimeDependencies: readonly FeatureRuntime[]
+}[])
+
+export const releaseInfoResponseSchema = z.object({
+  serverVersion: z.literal(releaseMetadata.serverVersion),
+  restApiVersion: z.literal(releaseMetadata.restApiVersion),
+  agentProtocolVersion: z.literal(releaseMetadata.agentProtocolVersion),
+  mcpVersion: z.literal(releaseMetadata.mcpVersion),
+  a2aUpstreamVersion: z.literal(releaseMetadata.a2aUpstreamVersion),
+  preferredClientProfileVersion: z.literal(releaseMetadata.preferredClientProfileVersion),
+  supportedClientProfileVersions: z.tuple([z.literal('1.0')]),
+  conformanceSuiteVersion: z.literal(releaseMetadata.conformanceSuiteVersion),
+  schemaBaseline: z.literal(releaseMetadata.schemaBaseline),
+  buildSha: z.string().min(1).max(128),
+}).strict()
+export const featureStateSchema = z.object({
+  key: featureKeySchema,
+  tier: supportTierSchema,
+  enabled: z.boolean(),
+}).strict()
+export const featureRegistryResponseSchema = z.object({
+  features: z.array(featureStateSchema).length(featureDefinitions.length),
+}).strict()
+
+const featureRoutePrefixes = [
+  ['/api/v1/cycles', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/initiatives', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/advanced-views', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/projects/:id/health', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/work-items/:id/cycle', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/templates', 'WORKMESH_BETA_TEMPLATES'],
+  ['/api/v1/usage-', 'WORKMESH_BETA_COSTS'],
+  ['/api/v1/budget-policies', 'WORKMESH_BETA_COSTS'],
+  ['/api/v1/automation-rules', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
+  ['/api/v1/automation-runs', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
+  ['/api/v1/notifications', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/notification-preferences', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
+  ['/api/v1/a2a-bindings', 'WORKMESH_EXPERIMENTAL_A2A'],
+] as const satisfies readonly (readonly [string, FeatureKey])[]
+
+export const featureForApiRoute = (route: string): FeatureKey | undefined =>
+  featureRoutePrefixes.find(([prefix]) => route.startsWith(prefix))?.[1]
 
 export const idSchema = z.string().uuid()
 export const timestampSchema = z.string().datetime({ offset: true })
 export const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 export const revisionSchema = z.number().int().positive()
+export const pageQuerySchema = z.object({
+  cursor: z.string().min(1).max(8_192).optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+})
+export type PageQuery = z.infer<typeof pageQuerySchema>
+export type ListResponse<T> = { items: T[]; nextCursor: string | null }
+export const listResponseSchema = <T extends z.ZodTypeAny>(item: T) => z.object({
+  items: z.array(item),
+  nextCursor: z.string().nullable(),
+}).strict()
 export const actorKindSchema = z.enum(['human', 'agent', 'service'])
 export const membershipRoleSchema = z.enum(['admin', 'maintainer', 'member'])
 export const statusCategorySchema = z.enum(['backlog', 'planned', 'started', 'completed', 'canceled'])
 export const prioritySchema = z.enum(['none', 'urgent', 'high', 'medium', 'low'])
 export const savedViewLayoutSchema = z.enum(['list', 'board'])
+export const agentSessionStateSchema = z.enum([
+  'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval',
+  'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled',
+])
 
 // Request DTOs deliberately retain the existing camelCase API field names.
 export const workspaceInputSchema = z.object({ name: z.string().min(1).max(120), slug: z.string().regex(/^[a-z0-9-]+$/).max(80) })
 export const teamInputSchema = z.object({ name: z.string().min(1).max(120), key: z.string().regex(/^[A-Z][A-Z0-9]{1,9}$/) })
 export const stateInputSchema = z.object({ name: z.string().min(1).max(80), category: statusCategorySchema, color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), position: z.number().int().nonnegative().optional() })
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
-export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() })
-export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() })
+export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() }).strict()
+export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() }).strict()
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
 export const savedViewInputSchema = z.object({ name: z.string().min(1).max(80), teamId: idSchema.optional(), filters: savedViewFiltersSchema.default({}), layout: savedViewLayoutSchema.default('list') })
 export const installInputSchema = workspaceInputSchema.extend({ adminName: z.string().min(1).max(120), email: z.string().email(), password: z.string().min(12) })
 export const loginInputSchema = z.object({ email: z.string().email(), password: z.string().min(1) })
+export const authIdempotencyErrorCodeSchema = z.enum([
+  'IDEMPOTENCY_KEY_REQUIRED',
+  'IDEMPOTENCY_KEY_REUSED',
+  'IDEMPOTENCY_REPLAY_EXPIRED',
+  'IDEMPOTENCY_REPLAY_UNAVAILABLE',
+])
+export const authIdempotencyPolicySchema = z.object({
+  replayWindowSeconds: z.literal(900),
+  conflictRetentionSeconds: z.literal(86_400),
+})
+export const authIdempotencyPolicy = authIdempotencyPolicySchema.parse({
+  replayWindowSeconds: 900,
+  conflictRetentionSeconds: 86_400,
+})
 
 // Response DTOs use the PostgreSQL/API wire representation: snake_case keys.
 export const workspaceResponseSchema = z.object({ id: idSchema, name: z.string(), slug: z.string(), revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema })
@@ -31,7 +157,24 @@ export const membershipResponseSchema = z.object({ workspace_id: idSchema, team_
 export const workflowStateResponseSchema = z.object({ id: idSchema, team_id: idSchema, name: z.string(), category: statusCategorySchema, color: z.string(), position: z.number().int().nonnegative(), is_archived: z.boolean(), revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema })
 export const humanActorResponseSchema = z.object({ id: idSchema, email: z.string().email(), display_name: z.string(), kind: z.literal('human').optional(), is_active: z.boolean().optional(), workspace_id: idSchema.optional(), created_at: timestampSchema.optional() })
 export const projectResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, name: z.string(), summary: z.string().nullable(), description: z.string().nullable(), status: z.string(), lead_actor_id: idSchema.nullable(), target_date: dateSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema })
+export const responsibleHumanProjectionSchema = z.object({ actor_id: idSchema, display_name: z.string() }).strict()
+export const workItemExecutorProjectionSchema = z.object({
+  agent_id: idSchema,
+  agent_actor_id: idSchema,
+  agent_slug: z.string(),
+  agent_display_name: z.string(),
+  session_id: idSchema,
+  lease_id: idSchema,
+  lease_kind: z.enum(['exclusive', 'review_shared']),
+  resource_type: z.enum(['work_item', 'plan_step']),
+  resource_id: idSchema,
+  execution_state: agentSessionStateSchema,
+  heartbeat_health: z.enum(['healthy', 'degraded', 'stale']),
+  last_heartbeat_at: timestampSchema.nullable(),
+  lease_heartbeat_at: timestampSchema,
+  lease_expires_at: timestampSchema,
+}).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const savedViewResponseSchema = z.object({ id: z.string(), workspace_id: idSchema.optional(), owner_actor_id: idSchema.optional(), team_id: idSchema.nullable().optional(), name: z.string(), filters: savedViewFiltersSchema, layout: savedViewLayoutSchema, built_in: z.boolean().optional(), revision: revisionSchema.optional(), created_at: timestampSchema.optional(), updated_at: timestampSchema.optional() })
@@ -41,13 +184,61 @@ export const authMeResponseSchema = z.object({ actor: humanActorResponseSchema, 
 export const installationStatusResponseSchema = z.object({ installed: z.boolean() })
 export const healthResponseSchema = z.object({ status: z.literal('ok') })
 
+export const DURABLE_EVENT_CURSOR_PATTERN = /^(?:0|[1-9][0-9]{0,17}|(?:[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$/
+export const durableEventCursorSchema = z
+  .string()
+  .regex(
+    DURABLE_EVENT_CURSOR_PATTERN,
+    'Cursor exceeds the PostgreSQL bigint range',
+  )
+export const eventResourceTypeSchema = z.enum([
+  'workspace',
+  'team',
+  'project',
+  'work_item',
+  'session',
+  'room',
+  'artifact',
+  'delivery',
+])
+export const eventResourceSchema = z.object({
+  type: eventResourceTypeSchema,
+  id: idSchema,
+})
+export const eventAudienceSchema = z.object({
+  visibility: z.enum(['workspace', 'team', 'actor', 'resource']),
+  workspaceId: idSchema,
+  teamId: idSchema.nullable(),
+  actorId: idSchema.nullable(),
+})
 // Events are intentionally passthrough so consumers remain compatible with newer event fields.
-export const eventEnvelopeSchema = z.object({ cursor: z.number().int().nonnegative(), id: idSchema, event_type: z.string().min(1), event_version: z.number().int().positive(), workspace_id: idSchema, team_id: idSchema.nullable().optional(), audience_actor_id: idSchema.nullable().optional(), aggregate_type: z.string().min(1), aggregate_id: idSchema, aggregate_revision: revisionSchema.nullable(), actor_id: idSchema, correlation_id: z.string().min(1), idempotency_key: z.string().nullable(), payload: z.unknown(), occurred_at: timestampSchema }).passthrough()
+export const eventEnvelopeSchema = z.object({
+  cursor: durableEventCursorSchema,
+  id: idSchema,
+  event_type: z.string().min(1),
+  event_version: z.number().int().positive(),
+  workspace_id: idSchema,
+  team_id: idSchema.nullable().optional(),
+  audience_actor_id: idSchema.nullable().optional(),
+  audience: eventAudienceSchema,
+  scopes: z.array(eventResourceSchema),
+  invalidates: z.array(eventResourceSchema),
+  aggregate_type: z.string().min(1),
+  aggregate_id: idSchema,
+  aggregate_revision: revisionSchema.nullable(),
+  actor_id: idSchema,
+  correlation_id: z.string().min(1),
+  idempotency_key: z.string().nullable(),
+  payload: z.unknown(),
+  occurred_at: timestampSchema,
+}).passthrough()
 
 export const apiErrorCodeSchema = z.enum([
   'VALIDATION_ERROR',
   'UNAUTHENTICATED',
+  'BOOTSTRAP_AUTH_FAILED',
   'FORBIDDEN',
+  'FEATURE_DISABLED',
   'NOT_FOUND',
   'CONFLICT',
   'LAST_ACTIVE_TEAM_CONFLICT',
@@ -55,11 +246,17 @@ export const apiErrorCodeSchema = z.enum([
   'IF_MATCH_REQUIRED',
   'IDEMPOTENCY_KEY_REQUIRED',
   'IDEMPOTENCY_KEY_REUSED',
+  'IDEMPOTENCY_REPLAY_EXPIRED',
   'IDEMPOTENCY_REPLAY_UNAVAILABLE',
   'CSRF_FAILED',
   'INVALID_CREDENTIALS',
   'INSTALLATION_ALREADY_COMPLETED',
   'RESPONSIBLE_HUMAN_REQUIRED',
+  'PAGINATION_CURSOR_INVALID',
+  'PAGINATION_CURSOR_MISMATCH',
+  'CURSOR_EXPIRED',
+  'PROFILE_VERSION_UNSUPPORTED',
+  'REALTIME_CAPACITY_EXCEEDED',
   'INTERNAL_ERROR',
   // Stage 5 (v1.1) Agent Connection & Coordination MCP — folded into the
   // unified error contract. Plan §"测试与验收" requires that every error
@@ -90,10 +287,60 @@ export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCo
 // Kept as a permissive helper so existing API error handling remains source-compatible.
 export const errorBody = (code: string, message: string, correlationId: string, details?: unknown) => ({ error: { code, message, details, correlationId } })
 
+export const retentionStatusResponseSchema = z.object({
+  mode: z.enum(['unknown', 'disabled', 'archive_only', 'archive_and_prune']),
+  workerSeenAt: timestampSchema.nullable(),
+  workerFresh: z.boolean(),
+  policies: z.array(z.object({
+    recordClass: z.string(),
+    onlineDays: z.number().int().positive(),
+    conflictDays: z.number().int().positive().nullable(),
+    archiveDays: z.number().int().positive().nullable(),
+    deleteAllowed: z.boolean(),
+    protectedReason: z.string().nullable(),
+  })),
+  floor: z.object({ prunedThroughCursor: durableEventCursorSchema, updatedAt: timestampSchema }),
+  archive: z.object({
+    planned: z.number().int().nonnegative(),
+    uploaded: z.number().int().nonnegative(),
+    verified: z.number().int().nonnegative(),
+    pruned: z.number().int().nonnegative(),
+    failed: z.number().int().nonnegative(),
+    lastVerifiedEndCursor: durableEventCursorSchema.nullable(),
+    retainUntil: timestampSchema.nullable(),
+  }),
+  jobs: z.array(z.object({
+    name: z.string(),
+    leased: z.boolean(),
+    fence: durableEventCursorSchema,
+    fixedCutoffAt: timestampSchema.nullable(),
+    watermarkCursor: durableEventCursorSchema,
+    lastErrorCode: z.string().nullable(),
+    counters: z.record(z.number()),
+    lastCompletedAt: timestampSchema.nullable(),
+  })),
+  blockers: z.object({
+    undeliveredOutbox: z.number().int().nonnegative(),
+    protectedA2AEvents: z.number().int().nonnegative(),
+    protectedWebhookEvents: z.number().int().nonnegative(),
+    unverifiedSegments: z.number().int().nonnegative(),
+  }),
+  redis: z.object({
+    status: z.enum(['ok', 'unavailable']),
+    streamLength: z.number().int().nonnegative().nullable(),
+    exactLimit: z.number().int().positive(),
+  }),
+})
+
 export const stage0RouteManifest = [
+  { method: 'GET', path: '/livez', authenticated: false },
+  { method: 'GET', path: '/readyz', authenticated: false },
   { method: 'GET', path: '/health', authenticated: false },
+  { method: 'GET', path: '/api/v1/info', authenticated: false },
+  { method: 'GET', path: '/api/v1/features', authenticated: true },
+  { method: 'GET', path: '/api/v1/agent-capabilities', authenticated: true },
   { method: 'GET', path: '/api/v1/install-status', authenticated: false },
-  { method: 'POST', path: '/api/v1/auth/install', authenticated: false, mutation: true },
+  { method: 'POST', path: '/api/v1/auth/install', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/auth/login', authenticated: false, mutation: true },
   { method: 'POST', path: '/api/v1/auth/logout', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/auth/me', authenticated: true },
@@ -123,6 +370,7 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/admin/retention/status', authenticated: true },
 ] as const
 
 export type StatusCategory = z.infer<typeof statusCategorySchema>
@@ -140,10 +388,6 @@ export const capabilitySchema = z.enum([
 export const delegationRoleSchema = z.enum(['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
 export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation', 'team'])
 export const delegationStatusSchema = z.enum(['active', 'revoked', 'expired', 'completed'])
-export const agentSessionStateSchema = z.enum([
-  'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval',
-  'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled',
-])
 export const agentSessionKindSchema = z.enum(['execution', 'coordination'])
 export const planStepStatusSchema = z.enum(['pending', 'in_progress', 'blocked', 'completed', 'canceled'])
 export const activityKindSchema = z.enum([
@@ -162,12 +406,83 @@ export const roomSubjectKindSchema = z.enum(['work_item', 'project', 'session'])
 export const roomMessageIntentSchema = z.enum(['inform', 'ask', 'answer', 'propose', 'decide', 'claim', 'handoff', 'blocker', 'review_request', 'review_result', 'status'])
 export const roomMessageInputSchema = z.object({
   intent: roomMessageIntentSchema, body: z.string().min(1).max(50_000), recipientActorId: idSchema.optional(), recipientActorIds: z.array(idSchema).min(1).max(50).optional(), replyToMessageId: idSchema.optional(), threadId: idSchema.optional(),
+  recipientSessionId: idSchema.optional(), recipientSessionIds: z.array(idSchema).min(1).max(50).optional(),
   payload: z.record(z.unknown()).default({}), requiresResponse: z.boolean().default(false), sessionId: idSchema.optional(),
 }).strict().superRefine((value, context) => {
   const visibility = value.payload.visibility
   if (visibility === 'private' || visibility === 'hidden') context.addIssue({ code: z.ZodIssueCode.custom, path: ['payload', 'visibility'], message: 'Work Room messages cannot be private or hidden from authorized humans' })
   if (value.recipientActorId && value.recipientActorIds) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientActorIds'], message: 'Use recipientActorId or recipientActorIds, not both' })
+  if (value.recipientSessionId && value.recipientSessionIds) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientSessionIds'], message: 'Use recipientSessionId or recipientSessionIds, not both' })
+  if ((value.recipientSessionId || value.recipientSessionIds) && (value.recipientActorId || value.recipientActorIds)) context.addIssue({ code: z.ZodIssueCode.custom, path: ['recipientSessionIds'], message: 'Use actor recipients or exact Session recipients, not both' })
 })
+export const inboxClaimInputSchema = z.object({}).strict()
+export const inboxAcknowledgeInputSchema = z.object({}).strict()
+export const inboxReplyInputSchema = z.object({ body: z.string().min(1).max(50_000), payload: z.record(z.unknown()).default({}) }).strict()
+export const inboxItemKindSchema = z.enum(['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff', 'mention'])
+export const inboxItemStatusSchema = z.enum(['open', 'resolved'])
+export const inboxReceiptKindSchema = z.enum(['claimed', 'read', 'acknowledged', 'replied'])
+export const inboxListItemResponseSchema = z.object({
+  id: idSchema,
+  kind: inboxItemKindSchema,
+  source_type: z.string().min(1),
+  source_id: idSchema,
+  status: inboxItemStatusSchema,
+  requires_response: z.boolean(),
+  recipient_session_id: idSchema.nullable(),
+  claimed_by_session_id: idSchema.nullable(),
+  claimed_at: timestampSchema.nullable(),
+  revision: revisionSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  payload: z.record(z.unknown()),
+  detail_available: z.boolean(),
+}).strict()
+export const inboxReceiptResponseSchema = z.object({
+  id: idSchema,
+  actor_id: idSchema,
+  session_id: idSchema,
+  kind: inboxReceiptKindSchema,
+  reply_message_id: idSchema.nullable(),
+  created_at: timestampSchema,
+}).strict()
+export const inboxItemDetailResponseSchema = z.object({
+  id: idSchema,
+  workspace_id: idSchema,
+  recipient_actor_id: idSchema,
+  recipient_human_actor_id: idSchema.nullable(),
+  recipient_session_id: idSchema.nullable(),
+  claimed_by_session_id: idSchema.nullable(),
+  claimed_at: timestampSchema.nullable(),
+  team_id: idSchema.nullable(),
+  session_id: idSchema.nullable(),
+  kind: inboxItemKindSchema,
+  source_type: z.string().min(1),
+  source_id: idSchema,
+  source_room_message_id: idSchema.nullable(),
+  requires_response: z.boolean(),
+  status: inboxItemStatusSchema,
+  revision: revisionSchema,
+  payload: z.record(z.unknown()),
+  resolved_at: timestampSchema.nullable(),
+  resolved_by_actor_id: idSchema.nullable(),
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  channel_id: idSchema.nullable(),
+  source_message_body: z.string().nullable(),
+  source_message_intent: roomMessageIntentSchema.nullable(),
+  source_author_actor_id: idSchema.nullable(),
+  source_author_session_id: idSchema.nullable(),
+  source_thread_id: idSchema.nullable(),
+  source_subject_kind: roomSubjectKindSchema.nullable(),
+  source_subject_id: idSchema.nullable(),
+  receipts: z.array(inboxReceiptResponseSchema),
+  detailAvailable: z.literal(true),
+}).strict()
+export const inboxReplyResponseSchema = inboxItemDetailResponseSchema.extend({ replyMessageId: idSchema }).strict()
+export type InboxListItem = z.infer<typeof inboxListItemResponseSchema>
+export type InboxReceipt = z.infer<typeof inboxReceiptResponseSchema>
+export type InboxItemDetail = z.infer<typeof inboxItemDetailResponseSchema>
+export type InboxReplyResponse = z.infer<typeof inboxReplyResponseSchema>
 export const decisionInputSchema = z.object({ title: z.string().min(1).max(500), rationale: z.string().min(1).max(20_000), options: z.array(z.string().min(1).max(2_000)).max(50).default([]), selectedOption: z.string().max(2_000).optional(), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]), affectedResources: z.array(z.object({ resourceType: z.enum(['work_item', 'plan_step', 'artifact', 'session']), resourceId: idSchema, impact: z.string().min(1).max(2_000).default('affected') })).max(100).default([]), sessionId: idSchema.optional() })
 export const leaseKindSchema = z.enum(['exclusive', 'review_shared'])
 export const leaseResourceTypeSchema = z.enum(['work_item', 'plan_step'])
@@ -273,6 +588,8 @@ export const agentSessionResponseSchema = z.object({
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
   state_reason: z.string().nullable(), sequence: z.number().int().nonnegative(), revision: revisionSchema, current_plan_version_id: idSchema.nullable(),
   context_snapshot_id: idSchema.nullable(), budget: budgetSchema, external_urls: z.array(externalUrlSchema), last_heartbeat_at: timestampSchema.nullable(),
+  heartbeat_health: z.enum(['healthy', 'degraded', 'stale']), heartbeat_health_changed_at: timestampSchema,
+  heartbeat_checked_at: timestampSchema.nullable(), heartbeat_current_step_id: idSchema.nullable(), heartbeat_usage: z.record(z.unknown()),
   retry_of_session_id: idSchema.nullable(), stop_requested_at: timestampSchema.nullable(), ended_at: timestampSchema.nullable(), error_code: z.string().nullable(), error_summary: z.string().nullable(),
   created_at: timestampSchema, updated_at: timestampSchema,
 })
@@ -299,11 +616,12 @@ export const publishPlanInputSchema = z.object({
 }).refine(value => Boolean(value.approvalId) === Boolean(value.approvalPayloadHash), { message: 'approvalId and approvalPayloadHash must be supplied together', path: ['approvalId'] })
 export const planStepResponseSchema = planStepInputSchema.extend({ plan_version_id: idSchema, created_at: timestampSchema, updated_at: timestampSchema })
 export const planVersionResponseSchema = z.object({ id: idSchema, session_id: idSchema, revision: revisionSchema, parent_version_id: idSchema.nullable(), change_summary: z.string(), author_actor_id: idSchema, created_at: timestampSchema, steps: z.array(planStepResponseSchema) })
+export const planVersionSummaryResponseSchema = planVersionResponseSchema.omit({ steps: true })
 /** Immutable plan history ordered by ascending revision for compare views. */
-export const planVersionHistoryResponseSchema = z.array(planVersionResponseSchema).superRefine((versions, context) => {
-  for (let index = 1; index < versions.length; index += 1) {
-    const previous = versions[index - 1]
-    const current = versions[index]
+export const planVersionHistoryResponseSchema = listResponseSchema(planVersionSummaryResponseSchema).superRefine((response, context) => {
+  for (let index = 1; index < response.items.length; index += 1) {
+    const previous = response.items[index - 1]
+    const current = response.items[index]
     if (previous && current && previous.revision >= current.revision) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Plan history must be ordered by ascending revision', path: [index, 'revision'] })
   }
 })
@@ -321,8 +639,64 @@ export const completeAgentSessionInputSchema = z.object({ summary: z.string().mi
 export const failAgentSessionInputSchema = z.object({ code: z.string().min(1).max(120), summary: z.string().min(1).max(20_000), retryable: z.boolean().default(false), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]) })
 export const artifactInputSchema = z.object({ sessionId: idSchema, workItemId: idSchema.optional(), type: artifactTypeSchema, title: z.string().min(1).max(500), uri: z.string().url().optional(), checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/).optional(), sourceTool: z.string().min(1).max(160).optional(), metadata: z.record(z.unknown()).default({}) })
 export const artifactResponseSchema = artifactInputSchema.extend({ id: idSchema, producer_actor_id: idSchema, created_at: timestampSchema })
-export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()) })
-export const guidanceResponseSchema = z.object({ scope: z.enum(['workspace', 'team', 'project']), scopeId: idSchema, revision: revisionSchema, markdown: z.string().max(100_000), updatedAt: timestampSchema })
+export const guidanceScopeSchema = z.enum(['workspace', 'team', 'project'])
+export const guidancePinSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  uri: z.string().url(),
+  revisionId: idSchema,
+  revisionNumber: z.number().int().positive(),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+}).strict()
+export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()), guidancePins: z.array(guidancePinSchema) })
+export const guidanceRevisionMetadataSchema = z.object({
+  id: idSchema,
+  revisionNumber: z.number().int().positive(),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  changeSummary: z.string().min(1).max(500),
+  authorActorId: idSchema,
+  authorDisplayName: z.string().min(1),
+  publishedAt: timestampSchema,
+}).strict()
+export const guidanceResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  documentId: idSchema.nullable(),
+  status: z.enum(['unpublished', 'active', 'archived']),
+  revision: z.number().int().nonnegative(),
+  currentRevision: guidanceRevisionMetadataSchema.nullable(),
+  markdown: z.string().max(100_000),
+  updatedAt: timestampSchema,
+}).strict()
+export const publishGuidanceInputSchema = z.object({ markdown: z.string().max(100_000), changeSummary: z.string().min(1).max(500) }).strict()
+export const archiveGuidanceInputSchema = z.object({ reason: z.string().min(1).max(2_000) }).strict()
+export const rollbackGuidanceInputSchema = z.object({ revisionId: idSchema, reason: z.string().min(1).max(2_000) }).strict()
+export const guidanceHistoryResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  documentId: idSchema.nullable(),
+  revision: z.number().int().nonnegative(),
+  status: z.enum(['unpublished', 'active', 'archived']),
+  currentRevisionId: idSchema.nullable(),
+  revisions: z.array(guidanceRevisionMetadataSchema),
+  audit: z.array(z.object({
+    id: idSchema,
+    action: z.enum(['published', 'archived', 'rolled_back']),
+    fromRevisionId: idSchema.nullable(),
+    toRevisionId: idSchema.nullable(),
+    actorId: idSchema,
+    actorDisplayName: z.string().min(1),
+    reason: z.string(),
+    createdAt: timestampSchema,
+  }).strict()),
+}).strict()
+export const guidanceDiffResponseSchema = z.object({
+  scope: guidanceScopeSchema,
+  scopeId: idSchema,
+  from: guidanceRevisionMetadataSchema,
+  to: guidanceRevisionMetadataSchema,
+  changes: z.array(z.object({ kind: z.enum(['context', 'removed', 'added']), oldLine: z.number().int().positive().nullable(), newLine: z.number().int().positive().nullable(), text: z.string() }).strict()),
+}).strict()
 
 export const requestApprovalInputSchema = z.object({ sessionId: idSchema, approvalType: z.string().min(1).max(160), actionName: z.string().min(1).max(300), actionPayloadSanitized: z.record(z.unknown()), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), riskLevel: approvalRiskLevelSchema, rationaleSummary: z.string().min(1).max(10_000), requiredApprovals: z.number().int().positive().max(20).default(1), expiresAt: timestampSchema })
 export const decideApprovalInputSchema = z.object({ decision: z.enum(['approved', 'rejected']), reason: z.string().min(1).max(10_000) })
@@ -333,7 +707,7 @@ export const approvalDecisionResponseSchema = z.object({ approval: approvalRespo
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 
-export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
 export const approvalRequestedEventPayloadSchema = z.object({
   approvalId: idSchema, sessionId: idSchema, status: z.literal('pending'), actionName: z.string().min(1), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   requiredApprovals: z.number().int().positive(), expiresAt: timestampSchema,
@@ -385,6 +759,8 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agents/register', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/agents/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/agents/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret', authenticated: true, mutation: true, revisioned: true },
   { method: 'PUT', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'DELETE', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/delegations', authenticated: true, mutation: true, revisioned: true },
@@ -398,6 +774,7 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/token/refresh', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/ack', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/heartbeat', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{id}/state', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/prompt', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/activities', authenticated: true, mutation: true },
   { method: 'PUT', path: '/api/v1/agent-sessions/{id}/plan', authenticated: true, mutation: true, revisioned: true },
@@ -411,8 +788,23 @@ export const stage1RouteManifest = [
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/plans', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/context', authenticated: true },
   { method: 'GET', path: '/api/v1/workspaces/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/workspaces/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/workspaces/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/workspaces/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/workspaces/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/workspaces/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/teams/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/teams/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/teams/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/teams/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/teams/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/teams/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/projects/{id}/guidance', authenticated: true },
+  { method: 'PUT', path: '/api/v1/projects/{id}/guidance', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/guidance/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/guidance/diff', authenticated: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/guidance/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/projects/{id}/guidance/rollback', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/artifacts', authenticated: true },
   { method: 'POST', path: '/api/v1/artifacts', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/approvals', authenticated: true },
@@ -427,6 +819,10 @@ export const stage2RouteManifest = [
   { method: 'POST', path: '/api/v1/rooms/{id}/messages', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/messages/{id}/resolve', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/inbox', authenticated: true },
+  { method: 'GET', path: '/api/v1/inbox/{id}', authenticated: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/claim', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/acknowledge', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/inbox/{id}/reply', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/decisions', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/projects/{id}/decisions', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/decisions', authenticated: true, mutation: true },
@@ -645,6 +1041,15 @@ export type RepositoryContextInput = z.infer<typeof repositoryContextInputSchema
 export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
 export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
+export type WorkItemResponse = z.infer<typeof workItemResponseSchema>
+export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
+export type GuidanceScope = z.infer<typeof guidanceScopeSchema>
+export type GuidanceResponse = z.infer<typeof guidanceResponseSchema>
+export type GuidanceRevisionMetadata = z.infer<typeof guidanceRevisionMetadataSchema>
+export type GuidancePin = z.infer<typeof guidancePinSchema>
+export type PublishGuidanceInput = z.infer<typeof publishGuidanceInputSchema>
+export type ArchiveGuidanceInput = z.infer<typeof archiveGuidanceInputSchema>
+export type RollbackGuidanceInput = z.infer<typeof rollbackGuidanceInputSchema>
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>
@@ -690,7 +1095,7 @@ export const advancedViewEntitySchema = z.enum(['issue', 'project', 'session', '
 export const advancedViewLayoutSchema = z.enum(['list', 'board', 'timeline'])
 export const advancedViewScopeSchema = z.enum(['private', 'team', 'workspace'])
 const POSTGRES_BIGINT_MAX = 9_223_372_036_854_775_807n
-export const MINOR_UNIT_DECIMAL_PATTERN = /^(?:0|[1-9][0-9]{0,17}|(?:[1-8][0-9]{18}|9[0-1][0-9]{17}|92[0-1][0-9]{16}|922[0-2][0-9]{15}|9223[0-2][0-9]{14}|92233[0-6][0-9]{13}|922337[0-1][0-9]{12}|92233720[0-2][0-9]{10}|922337203[0-5][0-9]{9}|9223372036[0-7][0-9]{8}|92233720368[0-4][0-9]{7}|922337203685[0-3][0-9]{6}|9223372036854[0-6][0-9]{5}|92233720368547[0-6][0-9]{4}|922337203685477[0-4][0-9]{3}|9223372036854775[0-7][0-9]{2}|922337203685477580[0-6]|9223372036854775807))$/
+export const MINOR_UNIT_DECIMAL_PATTERN = DURABLE_EVENT_CURSOR_PATTERN
 export const minorUnitDecimalSchema = z.string()
   .regex(MINOR_UNIT_DECIMAL_PATTERN, 'Minor-unit amount must be a canonical non-negative PostgreSQL bigint decimal string')
   .refine(value => BigInt(value) <= POSTGRES_BIGINT_MAX, 'Minor-unit amount exceeds PostgreSQL bigint range')
@@ -900,6 +1305,7 @@ export const budgetPolicyInputSchema = z.object({
 
 export const templateKindSchema = z.enum(['work_item', 'project', 'agent_run', 'handoff', 'automation'])
 export const templateInputSchema = z.object({
+  teamId: idSchema.optional(),
   kind: templateKindSchema,
   name: z.string().min(1).max(240),
   description: z.string().max(5_000).default(''),
@@ -1011,8 +1417,186 @@ export const agentRouteManifest = [
   ...stage2RouteManifest,
   ...stage3RouteManifest,
   ...stage4RouteManifest,
-  ...stage5RouteManifest,
 ] as const
+
+export const routePolicyManifest = createRoutePolicyManifest((path) => {
+  const key = featureForApiRoute(path)
+  if (!key) return undefined
+  const definition = featureDefinitions.find(candidate => candidate.key === key)
+  if (!definition) return undefined
+  return { key, tier: definition.tier as RoutePolicyFeatureTier }
+})
+
+export const clientProfileVersionSchema = z.literal(releaseMetadata.preferredClientProfileVersion)
+export const clientReactionSchema = z.enum([
+  'discard_session_credentials',
+  'refresh_credentials_or_stop',
+  'stop_and_acknowledge',
+  'do_not_retry_out_of_scope',
+  'refetch_and_rebase',
+  'stop_protected_action',
+  'request_or_wait_for_approval',
+  'disable_optional_capability',
+  'resync_from_server_cursor',
+])
+export const clientProfileErrorReactionSchema = z.object({
+  errorCode: z.string().min(1),
+  reaction: clientReactionSchema,
+  retryableAfterStateChange: z.boolean(),
+}).strict()
+export const clientProfileErrorReactions = Object.freeze([
+  { errorCode: 'DELEGATION_NOT_ACTIVE', reaction: 'discard_session_credentials', retryableAfterStateChange: false },
+  { errorCode: 'UNAUTHENTICATED', reaction: 'refresh_credentials_or_stop', retryableAfterStateChange: true },
+  { errorCode: 'SESSION_STOPPED', reaction: 'stop_and_acknowledge', retryableAfterStateChange: false },
+  { errorCode: 'RESOURCE_SCOPE_DENIED', reaction: 'do_not_retry_out_of_scope', retryableAfterStateChange: false },
+  { errorCode: 'REVISION_CONFLICT', reaction: 'refetch_and_rebase', retryableAfterStateChange: true },
+  { errorCode: 'LEASE_EXPIRED', reaction: 'stop_protected_action', retryableAfterStateChange: true },
+  { errorCode: 'APPROVAL_REQUIRED', reaction: 'request_or_wait_for_approval', retryableAfterStateChange: true },
+  { errorCode: 'FEATURE_DISABLED', reaction: 'disable_optional_capability', retryableAfterStateChange: false },
+  { errorCode: 'CURSOR_EXPIRED', reaction: 'resync_from_server_cursor', retryableAfterStateChange: true },
+] as const satisfies readonly z.infer<typeof clientProfileErrorReactionSchema>[])
+
+const clientProfileFeatureSchema = z.object({
+  key: featureKeySchema.nullable(),
+  tier: z.enum(['stable', 'beta', 'experimental']),
+  enabled: z.boolean(),
+}).strict()
+const clientProfileOperationSchema = z.object({
+  operationId: z.string().min(1),
+  policyId: z.string().min(1),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'installation_target']),
+  transports: z.object({
+    rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
+    sse: z.boolean(),
+    mcpBindings: z.array(z.string().min(1)),
+  }).strict(),
+  requirements: z.object({
+    capabilities: z.array(capabilitySchema),
+    activeSession: z.boolean(),
+    activeDelegation: z.boolean(),
+    liveGrantIntersection: z.boolean(),
+    resourceScope: z.enum(['none', 'resolved_resource']),
+    approval: z.boolean(),
+    lease: z.boolean(),
+    revision: z.enum(['none', 'if_match']),
+    idempotency: z.enum(['none', 'required']),
+  }).strict(),
+  feature: clientProfileFeatureSchema,
+  supported: z.boolean(),
+  eligibleByCapability: z.boolean(),
+}).strict()
+export const agentCapabilityManifestResponseSchema = z.object({
+  profileVersion: clientProfileVersionSchema,
+  generatedFrom: z.literal('route_policy_manifest'),
+  authorizationEvaluatedPerRequest: z.literal(true),
+  agent: z.object({
+    actorId: idSchema,
+    sessionId: idSchema,
+    sessionState: agentSessionStateSchema,
+    sessionRevision: revisionSchema,
+    effectiveCapabilities: z.array(capabilitySchema),
+    capabilityScope: capabilityScopeSchema,
+    supportedProtocols: z.array(agentProtocolSchema),
+  }).strict(),
+  delivery: z.object({
+    push: z.object({ supported: z.literal(true), configured: z.boolean() }).strict(),
+    pull: z.object({ supported: z.literal(true), inbox: z.literal(true) }).strict(),
+    realtime: z.object({ supported: z.literal(true), durableCursor: z.literal(true) }).strict(),
+  }).strict(),
+  operations: z.array(clientProfileOperationSchema),
+  extensions: z.array(z.object({
+    id: z.string().min(1),
+    tier: z.enum(['beta', 'experimental']),
+    enabled: z.boolean(),
+    negotiationRequired: z.literal(true),
+  }).strict()),
+  errorReactions: z.array(clientProfileErrorReactionSchema),
+}).strict()
+export type AgentCapabilityManifest = z.infer<typeof agentCapabilityManifestResponseSchema>
+export type ClientProfileErrorReaction = z.infer<typeof clientProfileErrorReactionSchema>
+
+type AgentCapabilityManifestInput = Readonly<{
+  actorId: string
+  sessionId: string
+  sessionState: z.infer<typeof agentSessionStateSchema>
+  sessionRevision: number
+  effectiveCapabilities: readonly z.infer<typeof capabilitySchema>[]
+  capabilityScope: z.infer<typeof capabilityScopeSchema>
+  supportedProtocols: readonly z.infer<typeof agentProtocolSchema>[]
+  pushConfigured: boolean
+  features: Readonly<Record<FeatureKey, boolean>>
+}>
+
+export function createAgentCapabilityManifest(input: AgentCapabilityManifestInput): AgentCapabilityManifest {
+  const effective = new Set<string>(input.effectiveCapabilities)
+  const mcpByOperation = new Map<string, string[]>()
+  for (const [binding, policy] of Object.entries(mcpPolicyBindings)) {
+    const entries = mcpByOperation.get(policy.operationId) ?? []
+    entries.push(binding)
+    mcpByOperation.set(policy.operationId, entries)
+  }
+  const operations = routePolicyManifest
+    .filter(policy => policy.actorKinds.includes('agent'))
+    .map(policy => {
+      const featureKey = policy.feature.key as FeatureKey | null
+      const enabled = featureKey === null || input.features[featureKey]
+      const requiredCapabilities = policy.agent.capabilities
+        .map(capability => capabilitySchema.safeParse(capability))
+        .filter((result): result is { success: true; data: z.infer<typeof capabilitySchema> } => result.success)
+        .map(result => result.data)
+      return {
+        operationId: policy.operationId,
+        policyId: policy.policyId,
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'installation_target',
+        transports: {
+          rest: policy.bindings.rest,
+          sse: policy.bindings.sse,
+          mcpBindings: [...(mcpByOperation.get(policy.operationId) ?? [])].sort(),
+        },
+        requirements: {
+          capabilities: requiredCapabilities,
+          activeSession: policy.agent.requireActiveSession,
+          activeDelegation: policy.agent.requireActiveDelegation,
+          liveGrantIntersection: policy.agent.requireLiveGrantIntersection,
+          resourceScope: policy.agent.resourceScope,
+          approval: policy.approval.required,
+          lease: policy.lease.required,
+          revision: policy.revision,
+          idempotency: policy.idempotency,
+        },
+        feature: { key: featureKey, tier: policy.feature.tier, enabled },
+        supported: enabled,
+        eligibleByCapability: !policy.agent.requireLiveGrantIntersection
+          || requiredCapabilities.every(capability => effective.has(capability)),
+      }
+    })
+    .sort((left, right) => left.operationId.localeCompare(right.operationId))
+  return agentCapabilityManifestResponseSchema.parse({
+    profileVersion: releaseMetadata.preferredClientProfileVersion,
+    generatedFrom: 'route_policy_manifest',
+    authorizationEvaluatedPerRequest: true,
+    agent: {
+      actorId: input.actorId,
+      sessionId: input.sessionId,
+      sessionState: input.sessionState,
+      sessionRevision: input.sessionRevision,
+      effectiveCapabilities: [...input.effectiveCapabilities].sort(),
+      capabilityScope: input.capabilityScope,
+      supportedProtocols: [...input.supportedProtocols].sort(),
+    },
+    delivery: {
+      push: { supported: true, configured: input.pushConfigured },
+      pull: { supported: true, inbox: true },
+      realtime: { supported: true, durableCursor: true },
+    },
+    operations,
+    extensions: [
+      { id: 'workmesh.a2a', tier: 'experimental', enabled: input.features.WORKMESH_EXPERIMENTAL_A2A, negotiationRequired: true },
+      { id: 'workmesh.engineering-graph', tier: 'experimental', enabled: false, negotiationRequired: true },
+    ],
+    errorReactions: clientProfileErrorReactions,
+  })
+}
 
 export type AutomationRuleInput = z.infer<typeof automationRuleInputSchema>
 export type AutomationCondition = z.infer<typeof automationConditionSchema>

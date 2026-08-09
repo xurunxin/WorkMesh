@@ -1,0 +1,29 @@
+{
+  "name": "@workmesh/recovery",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:integration": "vitest run --config ../../vitest.integration.config.ts",
+    "backup": "tsx scripts/backup.ts",
+    "restore": "tsx scripts/restore.ts",
+    "smoke:restored": "tsx scripts/post-restore-smoke.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
+    "@workmesh/config": "workspace:*",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "@types/pg": "^8.11.13",
+    "@workmesh/db": "workspace:*",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}

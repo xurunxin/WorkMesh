@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto'
-import { createClient, type RedisClientType } from 'redis'
+import { createClient } from 'redis'
+import {
+  loadFeatureConfig,
+  loadRealtimeRedisHintConfig,
+  loadRetentionConfig,
+} from '@workmesh/config'
 import { createDb, type Db, withTx } from '@workmesh/db'
 import { createAgentWebhookWorker } from './agent-webhook.js'
 import { createSessionLifecycleWorker } from './session-lifecycle.js'
@@ -8,15 +13,21 @@ import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
 import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
+import { createRetentionWorker } from './retention.js'
+import { createWorkerHealthServer, WorkerRuntime } from './runtime.js'
+import { RetentionScheduler } from './retention-scheduler.js'
+import { materializeWorkerRuntimeIdentity } from './worker-runtime-identity.js'
 
 export { createAgentWebhookWorker, decryptWebhookSecret, masterKeyFromEnvironment, retryDelaySeconds, signWebhook } from './agent-webhook.js'
-export { classifyHeartbeatLiveness, createSessionLifecycleWorker } from './session-lifecycle.js'
+export { classifyHeartbeatLiveness, createSessionLifecycleWorker, rebuildWorkItemExecutorProjections } from './session-lifecycle.js'
 export { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 export { createArtifactUploadWorker } from './artifact-uploads.js'
 export { assertPublicWebhookTarget, createAutomationWorker, nextCronOccurrence } from './automation.js'
+export { createRetentionWorker, ordinaryPrunableEventTypes } from './retention.js'
 
 const STREAM_KEY = 'workmesh:domain-events'
 const MAX_ATTEMPTS = 8
+const REDIS_INITIAL_CONNECT_TIMEOUT_MS = 2_000
 
 export type ClaimedEvent = {
   id: string
@@ -39,46 +50,224 @@ export type OutboxWorker = {
   deliver: (event: ClaimedEvent) => Promise<void>
   fail: (event: ClaimedEvent, error: unknown) => Promise<void>
   tick: () => Promise<void>
+  probe: () => Promise<void>
   close: () => Promise<void>
 }
 
-type RedisClient = RedisClientType
+export type RedisStreamTrimOptions = Readonly<{
+  TRIM: Readonly<{
+    strategy: 'MAXLEN'
+    strategyModifier: '~'
+    threshold: number
+  }>
+}>
+export type RedisStreamClient = Readonly<{
+  isOpen: boolean
+  isReady: boolean
+  on: (event: 'error' | 'ready', listener: (value?: unknown) => void) => unknown
+  connect: () => Promise<unknown>
+  xAdd: (
+    key: string,
+    id: string,
+    message: Record<string, string>,
+    options: RedisStreamTrimOptions,
+  ) => Promise<unknown>
+  ping: () => Promise<unknown>
+  quit: () => Promise<unknown>
+}>
+
+export type RedisStreamSinkOptions = Readonly<{
+  redisUrl?: string
+  maxLen?: number
+  client?: RedisStreamClient
+  connectTimeoutMs?: number
+  logConnectionError?: (entry: RedisConnectionErrorLog) => void
+  now?: () => number
+}>
+
+export type RedisConnectionErrorLog = Readonly<{
+  event: 'redis_hint_connection_error'
+  errorName: string
+  errorCode: string
+  occurrence: 'transition' | 'rate_limited_repeat'
+  suppressed: number
+}>
+
+const REDIS_ERROR_LOG_INTERVAL_MS = 10_000
+const REDIS_RECONNECT_MAX_MS = 2_000
+
+export const redisReconnectDelay = (retries: number): number =>
+  Math.min(REDIS_RECONNECT_MAX_MS, 50 * 2 ** Math.min(6, Math.max(0, retries)))
+
+const safeRedisErrorToken = (value: unknown, fallback: string): string =>
+  typeof value === 'string' && /^[A-Za-z0-9_.-]{1,64}$/.test(value)
+    ? value
+    : fallback
+
+const sanitizedRedisError = (
+  error: unknown,
+): Pick<RedisConnectionErrorLog, 'errorName' | 'errorCode'> => {
+  const record =
+    error && typeof error === 'object'
+      ? (error as Record<string, unknown>)
+      : undefined
+  return {
+    errorName: safeRedisErrorToken(record?.name, 'RedisError'),
+    errorCode: safeRedisErrorToken(record?.code, 'UNKNOWN'),
+  }
+}
+
+export const createRedisConnectionObserver = ({
+  log = (entry) => {
+    console.warn('redis realtime hint unavailable', entry)
+  },
+  now = Date.now,
+}: {
+  log?: (entry: RedisConnectionErrorLog) => void
+  now?: () => number
+} = {}): {
+  error: (error?: unknown) => void
+  ready: () => void
+} => {
+  let unavailable = false
+  let lastLoggedAt = Number.NEGATIVE_INFINITY
+  let suppressed = 0
+
+  return {
+    error: (error?: unknown): void => {
+      try {
+        const sanitized = sanitizedRedisError(error)
+        const observedAt = now()
+        const transition = !unavailable
+        if (
+          transition ||
+          observedAt - lastLoggedAt >= REDIS_ERROR_LOG_INTERVAL_MS
+        ) {
+          log({
+            event: 'redis_hint_connection_error',
+            ...sanitized,
+            occurrence: transition ? 'transition' : 'rate_limited_repeat',
+            suppressed,
+          })
+          unavailable = true
+          lastLoggedAt = observedAt
+          suppressed = 0
+        } else {
+          suppressed += 1
+        }
+      } catch {
+        // EventEmitter error listeners must never throw into the Worker process.
+      }
+    },
+    ready: (): void => {
+      unavailable = false
+      lastLoggedAt = Number.NEGATIVE_INFINITY
+      suppressed = 0
+    },
+  }
+}
 
 /**
  * Redis is a delivery transport only. PostgreSQL remains the source for SSE
  * and the durable recovery point if this write succeeds before the DB confirm.
  */
 export class RedisStreamSink implements DeliverySink {
-  readonly #client: RedisClient
-  #connecting: Promise<unknown> | undefined
+  readonly #client: RedisStreamClient
+  readonly #maxLen: number
+  readonly #connectTimeoutMs: number
+  #connecting: Promise<void> | undefined
 
-  constructor(redisUrl = process.env.REDIS_URL) {
-    if (!redisUrl) throw new Error('REDIS_URL is required for outbox delivery')
-    this.#client = createClient({ url: redisUrl })
+  constructor(options: RedisStreamSinkOptions = {}) {
+    const runtime = options.redisUrl && options.maxLen
+      ? { redisUrl: options.redisUrl, maxLen: options.maxLen }
+      : loadRealtimeRedisHintConfig()
+    this.#maxLen = options.maxLen ?? runtime.maxLen
+    this.#client =
+      options.client ??
+      (createClient({
+        url: options.redisUrl ?? runtime.redisUrl,
+        disableOfflineQueue: true,
+        socket: {
+          reconnectStrategy: redisReconnectDelay,
+        },
+      }) as unknown as RedisStreamClient)
+    this.#connectTimeoutMs = Math.min(
+      REDIS_INITIAL_CONNECT_TIMEOUT_MS,
+      Math.max(1, options.connectTimeoutMs ?? REDIS_INITIAL_CONNECT_TIMEOUT_MS),
+    )
+    const observer = createRedisConnectionObserver({
+      log: options.logConnectionError,
+      now: options.now,
+    })
+    this.#client.on('error', observer.error)
+    this.#client.on('ready', observer.ready)
+  }
+
+  #startConnecting(): Promise<void> | undefined {
+    if (this.#connecting) return this.#connecting
+    if (this.#client.isOpen) return undefined
+
+    const connecting = Promise.resolve()
+      .then(() => this.#client.connect())
+      .then(
+        () => undefined,
+        () => {
+          throw new Error('REDIS_STREAM_CONNECT_FAILED')
+        },
+      )
+      .finally(() => {
+        if (this.#connecting === connecting) this.#connecting = undefined
+      })
+    this.#connecting = connecting
+    void connecting.catch(() => undefined)
+    return connecting
+  }
+
+  async #waitForConnecting(connecting: Promise<void>): Promise<void> {
+    let timeout: ReturnType<typeof setTimeout> | undefined
+    try {
+      await Promise.race([
+        connecting,
+        new Promise<never>((_resolve, reject) => {
+          timeout = setTimeout(() => {
+            reject(new Error('REDIS_STREAM_CONNECT_TIMEOUT'))
+          }, this.#connectTimeoutMs)
+        }),
+      ])
+    } finally {
+      if (timeout) clearTimeout(timeout)
+    }
   }
 
   async deliver(event: ClaimedEvent): Promise<void> {
-    if (!this.#client.isOpen) {
-      this.#connecting ??= this.#client.connect()
-      try {
-        await this.#connecting
-      } catch (error) {
-        this.#connecting = undefined
-        throw error
-      }
+    if (!this.#client.isReady) {
+      void this.#startConnecting()
+      throw new Error('REDIS_STREAM_NOT_READY')
     }
     await this.#client.xAdd(STREAM_KEY, '*', {
-      outboxId: event.id,
-      eventId: event.eventId,
       cursor: event.cursor,
       workspaceId: event.workspaceId,
-      topic: event.topic,
-      payload: JSON.stringify(event.payload),
+    }, {
+      TRIM: {
+        strategy: 'MAXLEN',
+        strategyModifier: '~',
+        threshold: this.#maxLen,
+      },
     })
   }
 
   async close(): Promise<void> {
     if (this.#client.isOpen) await this.#client.quit()
+  }
+
+  async probe(): Promise<void> {
+    if (!this.#client.isReady) {
+      const connecting = this.#startConnecting()
+      if (!connecting) throw new Error('REDIS_STREAM_NOT_READY')
+      await this.#waitForConnecting(connecting)
+      if (!this.#client.isReady) throw new Error('REDIS_STREAM_NOT_READY')
+    }
+    await this.#client.ping()
   }
 }
 
@@ -157,16 +346,23 @@ export function createOutboxWorker({
     }
   }
 
+  const probe = async (): Promise<void> => {
+    await activeDb.query('SELECT 1')
+    if (activeSink instanceof RedisStreamSink) await activeSink.probe()
+  }
+
   const close = async (): Promise<void> => {
     await activeSink.close?.()
     if (ownsDb) await activeDb.end()
   }
 
-  return { claimOutbox, deliver, fail, tick, close }
+  return { claimOutbox, deliver, fail, tick, probe, close }
 }
 
-const startWorkerProcess = (): void => {
+const startWorkerProcess = async (): Promise<void> => {
+  const runtimeIdentity = await materializeWorkerRuntimeIdentity()
   const db = createDb()
+  const features = loadFeatureConfig()
   const outboxWorker = createOutboxWorker({ db })
   const agentWebhookWorker = createAgentWebhookWorker({ db })
   const sessionLifecycleWorker = createSessionLifecycleWorker({ db })
@@ -175,9 +371,13 @@ const startWorkerProcess = (): void => {
   const giteaProviders = new Map<string, GitProvider>()
   const providerActionWorker = createProviderActionWorker({
     db,
+    allowedProviders: features.WORKMESH_BETA_GITEA
+      ? ['fake', 'github', 'gitea']
+      : ['fake', 'github'],
     resolveProvider: async (provider, connectionId) => {
       if (provider === 'fake') return fakeProvider
       if (provider === 'gitea') {
+        if (!features.WORKMESH_BETA_GITEA) throw new Error('FEATURE_DISABLED:WORKMESH_BETA_GITEA')
         const cached = giteaProviders.get(connectionId)
         if (cached) return cached
         const masterKey = process.env.WORKMESH_MASTER_KEY
@@ -222,37 +422,120 @@ const startWorkerProcess = (): void => {
       return github
     },
   })
-  const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorageFromEnvironment() })
-  const automationWorker = createAutomationWorker({ db })
-  let stopping = false
-  let timer: NodeJS.Timeout | undefined
-
-  const run = async (): Promise<void> => {
-    try {
-      await outboxWorker.tick()
-      await agentWebhookWorker.tick()
-      await sessionLifecycleWorker.tick()
-      await providerActionWorker.tick()
-      await artifactUploadWorker.tick()
-      await automationWorker.tick()
-    } catch (error) {
-      console.error('outbox worker tick failed', error)
+  const artifactStorage = artifactStorageFromEnvironment()
+  const artifactUploadWorker = createArtifactUploadWorker({ db, storage: artifactStorage })
+  const automationWorker = createAutomationWorker({ db, features })
+  const retentionConfig = loadRetentionConfig()
+  const retentionWorker = createRetentionWorker({
+    db,
+    config: retentionConfig,
+    storage: artifactStorage,
+    runtimeIdentity,
+  })
+  const retentionScheduler = new RetentionScheduler({
+    tick: retentionWorker.tick,
+    close: retentionWorker.close,
+    intervalMs: retentionConfig.intervalSeconds * 1_000,
+    ioTimeoutMs: retentionConfig.ioTimeoutSeconds * 1_000,
+    progressStaleMs: retentionConfig.progressStaleSeconds * 1_000,
+    onError: entry => console.error('retention worker tick failed', {
+      component: 'retention_scheduler',
+      safeErrorCode: entry.safeErrorCode,
+    }),
+  })
+  let admissionOpen = true
+  const tick = async (): Promise<void> => {
+    const jobs = [
+      () => outboxWorker.tick(),
+      () => agentWebhookWorker.tick(),
+      () => sessionLifecycleWorker.tick(),
+      () => providerActionWorker.tick(),
+      () => artifactUploadWorker.tick(),
+      () => automationWorker.tick(),
+    ]
+    for (const job of jobs) {
+      if (!admissionOpen) return
+      await job()
     }
-    if (!stopping) timer = setTimeout(() => { void run() }, 1000)
   }
+  const closeWorkerDependencies = async (): Promise<void> => {
+    const results = await Promise.allSettled([
+      outboxWorker.close(),
+      retentionScheduler.stop(),
+    ])
+    const errors = results.flatMap(result =>
+      result.status === 'rejected' ? [result.reason] : [],
+    )
+    try {
+      await db.end()
+    } catch (error) {
+      errors.push(error)
+    }
+    if (errors.length > 0)
+      throw new AggregateError(errors, 'WORKER_DEPENDENCY_CLOSE_FAILED')
+  }
+  const runtime = new WorkerRuntime({
+    tick,
+    probe: async () => {
+      await outboxWorker.probe()
+      await artifactStorage.probe()
+    },
+    readiness: () => retentionScheduler.assertReady(),
+    stopAdmission: () => {
+      admissionOpen = false
+      retentionScheduler.stopAdmission()
+    },
+    close: closeWorkerDependencies,
+    onError: () => console.error('worker tick failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_JOB_FAILED',
+    }),
+  })
+  const healthServer = createWorkerHealthServer(runtime)
+  const healthHost = process.env.WORKER_HEALTH_HOST ?? '0.0.0.0'
+  const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3003)
+  healthServer.listen(healthPort, healthHost, () => {
+    retentionScheduler.start()
+    void runtime.start().catch(() => {
+      console.error('worker readiness failed at startup', {
+        component: 'worker_runtime',
+        safeErrorCode: 'WORKER_STARTUP_FAILED',
+      })
+      process.exit(1)
+    })
+  })
+  let stopping = false
   const stop = (): void => {
     if (stopping) return
     stopping = true
-    if (timer) clearTimeout(timer)
-    void outboxWorker.close().then(() => db.end()).then(() => process.exit(0)).catch(error => {
-      console.error('outbox worker shutdown failed', error)
-      process.exit(1)
-    })
+    admissionOpen = false
+    retentionScheduler.stopAdmission()
+    const configured = Number(process.env.SHUTDOWN_TIMEOUT_MS ?? 30_000)
+    const timeoutMs = Number.isFinite(configured) && configured > 0 ? configured : 30_000
+    void runtime.stop(timeoutMs)
+      .then(() => new Promise<void>((resolve, reject) => {
+        healthServer.close(error => error ? reject(error) : resolve())
+      }))
+      .then(() => process.exit(0))
+      .catch(() => {
+        console.error('worker shutdown failed', {
+          component: 'worker_runtime',
+          safeErrorCode: 'WORKER_SHUTDOWN_FAILED',
+        })
+        healthServer.closeAllConnections()
+        process.exit(1)
+      })
   }
 
   process.once('SIGTERM', stop)
   process.once('SIGINT', stop)
-  void run()
 }
 
-if (process.env.NODE_ENV !== 'test') startWorkerProcess()
+if (process.env.NODE_ENV !== 'test')
+  void startWorkerProcess().catch(() => {
+    console.error('worker identity initialization failed', {
+      component: 'worker_runtime',
+      safeErrorCode: 'WORKER_IDENTITY_INITIALIZATION_FAILED',
+    })
+    process.exit(1)
+  })

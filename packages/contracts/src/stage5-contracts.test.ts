@@ -842,25 +842,25 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     expect(plan, 'plan must approve worker expiry as a fallback').toMatch(/worker.*兜底|worker.*fallback|worker.*批准/)
   })
 
-  it('ADR-0028 has every required section (AGENTS.md ADR format)', async () => {
+  it('ADR-0043 has every required section (AGENTS.md ADR format)', async () => {
     // AGENTS.md mandates 8 sections in every ADR:
     //   # Title, Status, Context, Decision, Alternatives,
     //   Consequences, Migration, Spec changes
-    // The v5 review caught ADR-0028 missing ## Migration. This
+    // The v5 review caught the Agent Connection ADR missing ## Migration. This
     // test ensures no ADR regresses by dropping a section.
-    const adr = await readFile(new URL('../../../docs/adr/0028-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
+    const adr = await readFile(new URL('../../../docs/adr/0043-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
     for (const section of ['# Agent Connection', 'Status', '## Context', '## Decision', '## Alternatives', '## Consequences', '## Migration', '## Spec changes']) {
-      expect(adr, `ADR-0028 must contain "${section}" (AGENTS.md ADR format)`).toContain(section)
+      expect(adr, `ADR-0043 must contain "${section}" (AGENTS.md ADR format)`).toContain(section)
     }
   })
 
-  it('ADR-0028 Spec changes section lists /rotate-confirm and the does-not-add list does not contradict it', async () => {
+  it('ADR-0043 Spec changes section lists /rotate-confirm and the does-not-add list does not contradict it', async () => {
     // Two coupled checks: the OPENAPI bullet in Spec changes must
     // include /rotate-confirm, AND the "does not add" list must NOT
     // claim /rotate-confirm is out of scope (v0.4 explicitly adds
     // it). A future edit that re-introduces either omission will
     // fail here.
-    const adr = await readFile(new URL('../../../docs/adr/0028-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
+    const adr = await readFile(new URL('../../../docs/adr/0043-agent-connection-and-coordination-mcp.md', import.meta.url), 'utf8')
     // 1. The OPENAPI bullet in Spec changes must list rotate-confirm.
     const specChanges = adr.slice(adr.indexOf('## Spec changes'))
     expect(specChanges, 'Spec changes must list /rotate-confirm in the OPENAPI bullet').toMatch(/rotate-confirm/)

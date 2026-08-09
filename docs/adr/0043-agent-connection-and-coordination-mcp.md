@@ -228,8 +228,9 @@ Other tools, including `create_child_session` (which creates a
 bounded sub-Session for a single plan step under the current
 Coordinator's existing work item) and `offer_handoff`, do **not**
 require `agent:delegate`. They continue to require the existing
-per-tool preconditions (`agent:execute` for child sessions, Team
-write access for handoffs). The Coordinator cannot transitively
+per-tool preconditions (`work:write`, parent Session/Plan Step scope,
+and Team access for child sessions; Team write access for handoffs).
+The Coordinator cannot transitively
 pass `agent:delegate`; only Humans grant it.
 
 ### 6. Mutation policy for Coordinators
@@ -274,8 +275,9 @@ may still override it.
 The new `apps/mcp` entrypoint `coordination-http.ts` (feature-
 flagged behind `WORKMESH_BETA_COORDINATION_MCP`) runs a per-
 Connection Streamable HTTP MCP server. Auth is the Installation
-Token (raw bytes, not a Bearer header, to keep proxy access logs
-quiet). Per request the server resolves the Connection, mints or
+Token carried in `X-WorkMesh-Installation-Token`, not a generic
+Bearer credential, so common Authorization logs do not capture it.
+Per request the server resolves the Connection, mints or
 refreshes the Coordination Session, and proxies the tool call
 through the existing domain gate.
 
@@ -304,8 +306,8 @@ Explicit authorization tools (require the matching capability):
 - `delegate_work_item` (requires `agent:delegate` and the same
   preconditions as the existing `create_child_session` gate).
 - `start_agent_session` (requires `agent:delegate`).
-- `create_child_session` (requires `agent:execute` and Team
-  access; the parent Coordinator may or may not carry
+- `create_child_session` (requires existing `work:write`, parent
+  Session/Plan Step scope, and Team access; the parent Coordinator may or may not carry
   `agent:delegate`).
 - `offer_handoff` (requires Team write access).
 - `request_approval` (records a structured approval request bound
@@ -393,12 +395,12 @@ HTTPS path.
   Rejected. Executor Sessions are already short-lived and gated
   by a single Delegation. Coordinator Sessions need Team scope
   and an identity that survives across many work items.
-- **Manual `/rotate-confirm` endpoint.** Rejected after a
-  contract review. The plan §"一次性配对" lists exactly six
-  resource operations; adding a seventh would expand the public
-  surface without plan approval. The 15-minute `overlap_until`
-  window is the auto-revocation path; the Admin can also call
-  `DELETE` for immediate revocation.
+- **No explicit rotation confirmation.** Rejected by plan v0.4.
+  Relying only on the 15-minute `overlap_until` fallback does not
+  represent the approved "确认成功后撤销旧凭据" action. The accepted
+  `/rotate-confirm` endpoint revokes only the old fingerprint while
+  preserving the Connection, new credential, and live Coordination
+  Sessions; `DELETE` remains the whole-Connection revoke path.
 - **Auto-revoke on new redeem (v0.2).** Withdrawn. The 15-minute
   overlap and "auto-revoke on the new redeem's success" are
   mutually exclusive: if the old credential is invalidated as

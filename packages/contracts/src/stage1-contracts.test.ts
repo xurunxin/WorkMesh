@@ -14,6 +14,16 @@ import {
 } from './index.js'
 
 const id = 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438'
+const realtimeMetadata = {
+  audience: {
+    visibility: 'workspace' as const,
+    workspaceId: id,
+    teamId: null,
+    actorId: null,
+  },
+  scopes: [{ type: 'workspace' as const, id }],
+  invalidates: [{ type: 'session' as const, id }],
+}
 
 describe('Stage 1 agent contracts', () => {
   it('requires a completion evidence source or explicit no-artifact rationale', () => {
@@ -39,9 +49,9 @@ describe('Stage 1 agent contracts', () => {
   it('includes immutable plan history for compare views', () => {
     const route = stage1RouteManifest.find(candidate => candidate.method === 'GET' && candidate.path === '/api/v1/agent-sessions/{id}/plans')
     expect(route).toBeDefined()
-    const version = { id, session_id: id, parent_version_id: null, change_summary: 'Initial', author_actor_id: id, created_at: '2026-07-23T00:00:00.000Z', steps: [] }
-    expect(planVersionHistoryResponseSchema.parse([{ ...version, revision: 1 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 2 }])).toHaveLength(2)
-    expect(() => planVersionHistoryResponseSchema.parse([{ ...version, revision: 2 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 1 }])).toThrow()
+    const version = { id, session_id: id, parent_version_id: null, change_summary: 'Initial', author_actor_id: id, created_at: '2026-07-23T00:00:00.000Z' }
+    expect(planVersionHistoryResponseSchema.parse({ items: [{ ...version, revision: 1 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 2 }], nextCursor: null }).items).toHaveLength(2)
+    expect(() => planVersionHistoryResponseSchema.parse({ items: [{ ...version, revision: 2 }, { ...version, id: 'b7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438', revision: 1 }], nextCursor: null })).toThrow()
   })
 
   it('separates requested capabilities from admin-approved team access', () => {
@@ -80,22 +90,27 @@ describe('Stage 1 agent contracts', () => {
       const pathBlock = openapi.slice(pathStart, nextPath === -1 ? undefined : pathStart + 1 + nextPath)
       expect(pathBlock).toMatch(new RegExp(`operationId:|${route.method.toLowerCase()}:`))
       if ('mutation' in route && route.mutation) expect(pathBlock).toContain('#/components/parameters/IdempotencyKey')
-      if ('revisioned' in route && route.revisioned) expect(pathBlock).toContain('#/components/parameters/IfMatch')
+      if ('revisioned' in route && route.revisioned) expect(pathBlock).toMatch(/#\/components\/parameters\/(?:IfMatch|GuidanceIfMatch)/)
     }
   })
 
   it('keeps agent event envelopes forward compatible and exposes machine error codes', () => {
     const event = agentEventEnvelopeSchema.parse({
-      cursor: 1, id, event_type: 'agent.session.created', event_version: 1, workspace_id: id,
+      cursor: '9007199254740993', id, event_type: 'agent.session.created', event_version: 2, workspace_id: id,
       aggregate_type: 'agent_session', aggregate_id: id, aggregate_revision: 1, actor_id: id,
-      correlation_id: 'correlation-1', idempotency_key: null, payload: {}, occurred_at: '2026-07-23T00:00:00.000Z', futureField: true,
+      correlation_id: 'correlation-1', idempotency_key: null, payload: {}, occurred_at: '2026-07-23T00:00:00.000Z', futureField: true, ...realtimeMetadata,
     })
     expect(event.futureField).toBe(true)
+    expect(event.cursor).toBe('9007199254740993')
+    expect(() => agentEventEnvelopeSchema.parse({
+      ...event,
+      cursor: '01',
+    })).toThrow()
     expect(agentApiErrorCodeSchema.parse('INVALID_SESSION_TRANSITION')).toBe('INVALID_SESSION_TRANSITION')
   })
 
   it('separates approval request, vote, terminal, and expiry event semantics', async () => {
-    const envelope = { cursor: 1, id, event_version: 1, workspace_id: id, aggregate_type: 'approval', aggregate_id: id, aggregate_revision: 1, actor_id: id, correlation_id: 'approval-1', idempotency_key: null, session_id: id, sequence: 1, occurred_at: '2026-07-23T00:00:00.000Z' }
+    const envelope = { cursor: '9007199254740993', id, event_version: 2, workspace_id: id, aggregate_type: 'approval', aggregate_id: id, aggregate_revision: 1, actor_id: id, correlation_id: 'approval-1', idempotency_key: null, session_id: id, sequence: 1, occurred_at: '2026-07-23T00:00:00.000Z', ...realtimeMetadata }
     const quorum = { required: 2, approved: 1, rejected: 0, reached: false }
     expect(approvalEventEnvelopeSchema.parse({ ...envelope, event_type: 'approval.decision.recorded', payload: { approvalId: id, decision: { actor_id: id, decision: 'approved', reason: 'Looks safe', decided_at: '2026-07-23T00:00:00.000Z' }, quorum, status: 'pending' } }).event_type).toBe('approval.decision.recorded')
     expect(() => approvalEventEnvelopeSchema.parse({ ...envelope, event_type: 'approval.requested', payload: { approvalId: id, sessionId: id, status: 'approved', actionName: 'deploy', actionPayloadHash: `sha256:${'a'.repeat(64)}`, requiredApprovals: 2, expiresAt: '2026-07-24T00:00:00.000Z' } })).toThrow()

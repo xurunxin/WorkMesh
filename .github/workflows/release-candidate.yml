@@ -1,0 +1,683 @@
+name: Release Candidate
+
+on:
+  push:
+    tags: ['v1.0.0-rc.*']
+  workflow_dispatch:
+    inputs:
+      failure_probe:
+        description: Fail before CI and all publication steps to prove enforcement
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-candidate-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate-candidate:
+    name: Validate immutable candidate ref
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      candidate-tag: ${{ steps.identity.outputs.candidate_tag }}
+      source-sha: ${{ steps.identity.outputs.source_sha }}
+    steps:
+      - name: Check out candidate with tags
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Enforce tag-only release and failure-probe boundary
+        id: identity
+        env:
+          FAILURE_PROBE: ${{ inputs.failure_probe || false }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == 'workflow_dispatch' && "$FAILURE_PROBE" == 'true' ]]; then
+            echo 'Intentional failure-probe: publication is unreachable.'
+            exit 86
+          fi
+          if [[ "$EVENT_NAME" != 'push' || "$REF_TYPE" != 'tag' ]]; then
+            echo 'Real candidates are accepted only from an existing tag push.' >&2
+            exit 1
+          fi
+          if [[ ! "$REF_NAME" =~ ^v1\.0\.0-rc\.[1-9][0-9]*$ ]]; then
+            echo "Invalid candidate tag: $REF_NAME" >&2
+            exit 1
+          fi
+          source_sha="$(git rev-parse HEAD)"
+          test "$(git rev-list -n 1 "$REF_NAME")" = "$source_sha"
+          test "$(git tag --points-at "$source_sha" | grep -Fx "$REF_NAME")" = "$REF_NAME"
+          echo "candidate_tag=$REF_NAME" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+  required-ci:
+    name: Reproduce Stable Gate required CI
+    needs: validate-candidate
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  source-security:
+    name: Source, dependency, secret, and configuration security
+    needs: [validate-candidate, required-ci]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          mkdir -p release-security
+      - name: Block High dependency advisories
+        run: |
+          set -o pipefail
+          pnpm audit --audit-level high 2>&1 | tee release-security/pnpm-audit.log
+      - name: Block High source and configuration findings
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: 'vuln,misconfig'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: 'false'
+          format: json
+          output: release-security/trivy-source.json
+          cache: 'false'
+      - name: Block committed secrets without retaining matched values
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: 'secret'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          format: table
+          cache: 'false'
+      - name: Upload security evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-source-security-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-security
+          if-no-files-found: error
+          retention-days: 90
+
+  release-config-preflight:
+    name: Validate protected release configuration
+    needs: [validate-candidate, required-ci, source-security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: stable-release
+    permissions:
+      contents: read
+    outputs:
+      web-api-url: ${{ steps.config.outputs.web_api_url }}
+      web-origin: ${{ steps.config.outputs.web_origin }}
+    env:
+      SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
+      RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
+      RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate production runtime contract
+        run: pnpm validate:production-images
+      - name: Validate and freeze release URLs
+        id: config
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -n "$RELEASE_WEB_API_URL"
+          test -n "$RELEASE_WEB_ORIGIN"
+          node --input-type=module <<'NODE'
+          for (const [name, value] of [
+            ['WORKMESH_RELEASE_WEB_API_URL', process.env.RELEASE_WEB_API_URL],
+            ['WORKMESH_RELEASE_WEB_ORIGIN', process.env.RELEASE_WEB_ORIGIN],
+          ]) {
+            const url = new URL(value)
+            if (url.protocol !== 'https:' || url.origin !== value) {
+              throw new Error(`${name} must be an HTTPS origin without a path`)
+            }
+          }
+          NODE
+          echo "web_api_url=$RELEASE_WEB_API_URL" >> "$GITHUB_OUTPUT"
+          echo "web_origin=$RELEASE_WEB_ORIGIN" >> "$GITHUB_OUTPUT"
+
+  build-scan-publish-images:
+    name: Build, scan, and publish ${{ matrix.service }}
+    needs: [validate-candidate, release-config-preflight]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: stable-release
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: true
+      matrix:
+        service: [api, worker, mcp, web]
+    env:
+      CANDIDATE_TAG: ${{ needs.validate-candidate.outputs.candidate-tag }}
+      SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
+      IMAGE: ghcr.io/${{ github.repository_owner }}/workmesh-${{ matrix.service }}
+      LOCAL_IMAGE: workmesh-release-${{ matrix.service }}:${{ needs.validate-candidate.outputs.source-sha }}
+      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate release-specific build inputs
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          if [[ "${{ matrix.service }}" == 'web' ]]; then
+            test -n "$RELEASE_WEB_API_URL"
+            node -e "new URL(process.env.RELEASE_WEB_API_URL)"
+          fi
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - name: Log in to GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Reject mutable tag replacement
+        run: |
+          set -euo pipefail
+          if docker buildx imagetools inspect "$IMAGE:$CANDIDATE_TAG" >/dev/null 2>&1; then
+            echo "Candidate image already exists: $IMAGE:$CANDIDATE_TAG" >&2
+            exit 1
+          fi
+          if docker buildx imagetools inspect "$IMAGE:$SOURCE_SHA" >/dev/null 2>&1; then
+            echo "Source image already exists: $IMAGE:$SOURCE_SHA" >&2
+            exit 1
+          fi
+      - name: Build exact production image locally
+        run: |
+          set -euo pipefail
+          arguments=(
+            --load
+            --file "infra/docker/${{ matrix.service }}.production.Dockerfile"
+            --build-arg "WORKMESH_BUILD_SHA=$SOURCE_SHA"
+            --tag "$LOCAL_IMAGE"
+          )
+          if [[ "${{ matrix.service }}" == 'web' ]]; then
+            arguments+=(--build-arg "NEXT_PUBLIC_API_URL=$RELEASE_WEB_API_URL")
+          fi
+          docker buildx build "${arguments[@]}" .
+          test "$(docker image inspect "$LOCAL_IMAGE" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$SOURCE_SHA"
+      - name: Block High image findings
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: image
+          image-ref: ${{ env.LOCAL_IMAGE }}
+          scanners: 'vuln'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: 'false'
+          format: json
+          output: release-image-scan.json
+          cache: 'false'
+      - name: Block image secrets without retaining matched values
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: image
+          image-ref: ${{ env.LOCAL_IMAGE }}
+          scanners: 'secret'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          format: table
+          cache: 'false'
+      - name: Retain failed image scan evidence
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-image-scan-failed-${{ matrix.service }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-image-scan.json
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Generate SPDX image SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          image: ${{ env.LOCAL_IMAGE }}
+          format: spdx-json
+          output-file: release-image.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+      - name: Publish immutable SHA and candidate tags
+        id: publish
+        run: |
+          set -euo pipefail
+          docker tag "$LOCAL_IMAGE" "$IMAGE:$SOURCE_SHA"
+          docker tag "$LOCAL_IMAGE" "$IMAGE:$CANDIDATE_TAG"
+          docker push "$IMAGE:$SOURCE_SHA"
+          docker push "$IMAGE:$CANDIDATE_TAG"
+          digest="sha256:$(docker buildx imagetools inspect "$IMAGE:$CANDIDATE_TAG" --raw | sha256sum | cut -d' ' -f1)"
+          sha_digest="sha256:$(docker buildx imagetools inspect "$IMAGE:$SOURCE_SHA" --raw | sha256sum | cut -d' ' -f1)"
+          test "$digest" = "$sha_digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        with:
+          cosign-release: v3.0.6
+      - name: Sign image and SBOM
+        env:
+          DIGEST: ${{ steps.publish.outputs.digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p "release-evidence/${{ matrix.service }}"
+          cosign sign --yes --bundle "release-evidence/${{ matrix.service }}/image.sigstore.json" "$IMAGE@$DIGEST"
+          cosign sign-blob --yes --bundle "release-evidence/${{ matrix.service }}/sbom.sigstore.json" release-image.spdx.json
+          mv release-image.spdx.json "release-evidence/${{ matrix.service }}/sbom.spdx.json"
+          mv release-image-scan.json "release-evidence/${{ matrix.service }}/trivy-image.json"
+      - name: Attest build provenance
+        id: provenance
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.publish.outputs.digest }}
+          push-to-registry: true
+          github-token: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Attest SBOM
+        id: sbom-attestation
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.publish.outputs.digest }}
+          sbom-path: release-evidence/${{ matrix.service }}/sbom.spdx.json
+          push-to-registry: true
+          github-token: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Record immutable image metadata
+        env:
+          DIGEST: ${{ steps.publish.outputs.digest }}
+          PROVENANCE_URL: ${{ steps.provenance.outputs.attestation-url }}
+          SBOM_ATTESTATION_URL: ${{ steps.sbom-attestation.outputs.attestation-url }}
+        run: |
+          set -euo pipefail
+          cp "${{ steps.provenance.outputs.bundle-path }}" "release-evidence/${{ matrix.service }}/provenance.jsonl"
+          cp "${{ steps.sbom-attestation.outputs.bundle-path }}" "release-evidence/${{ matrix.service }}/sbom-attestation.jsonl"
+          SERVICE="${{ matrix.service }}" node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs'
+          const value = {
+            service: process.env.SERVICE,
+            sourceSha: process.env.SOURCE_SHA,
+            candidateTag: process.env.CANDIDATE_TAG,
+            image: process.env.IMAGE,
+            digest: process.env.DIGEST,
+            webApiUrl: process.env.SERVICE === 'web' ? process.env.RELEASE_WEB_API_URL : null,
+            provenanceUrl: process.env.PROVENANCE_URL,
+            sbomAttestationUrl: process.env.SBOM_ATTESTATION_URL,
+          }
+          writeFileSync(`release-evidence/${process.env.SERVICE}/image.json`, `${JSON.stringify(value, null, 2)}\n`)
+          NODE
+      - name: Upload signed image evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-image-${{ matrix.service }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence/${{ matrix.service }}
+          if-no-files-found: error
+          retention-days: 90
+
+  production-runtime-smoke:
+    name: Production readiness and graceful restart
+    needs: [validate-candidate, release-config-preflight, build-scan-publish-images]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: stable-release
+    permissions:
+      contents: read
+      packages: read
+    env:
+      SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
+      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
+      RELEASE_WEB_ORIGIN: ${{ needs.release-config-preflight.outputs.web-origin }}
+      COMPOSE_PROJECT_NAME: workmesh-rc-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+      RELEASE_ENV_FILE: ${{ github.workspace }}/.release-smoke.env
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install production validator dependencies
+        run: |
+          pnpm install --frozen-lockfile
+      - name: Download image metadata
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: release-image-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-image-metadata
+      - name: Log in to GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_PUBLISH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Create ephemeral production configuration
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_WEB_ORIGIN"
+          node --input-type=module <<'NODE'
+          const value = process.env.RELEASE_WEB_ORIGIN
+          const origin = new URL(value)
+          if (origin.protocol !== 'https:' || origin.origin !== value) {
+            throw new Error('WORKMESH_RELEASE_WEB_ORIGIN must be an HTTPS origin without a path')
+          }
+          NODE
+          umask 077
+          mkdir -p release-runtime
+          hex_secret() { openssl rand -hex 32; }
+          base64url_secret() { openssl rand -base64 32 | tr '+/' '-_' | tr -d '=\n'; }
+          bootstrap_token="$(base64url_secret)"
+          cursor_key="$(base64url_secret)"
+          minio_password="minio-$(hex_secret)"
+          cat > "$RELEASE_ENV_FILE" <<EOF
+          WORKMESH_BUILD_SHA=$SOURCE_SHA
+          POSTGRES_PASSWORD=pg-$(hex_secret)
+          MINIO_ROOT_USER=workmesh
+          MINIO_ROOT_PASSWORD=$minio_password
+          SESSION_SECRET=session-$(hex_secret)
+          WORKMESH_MASTER_KEY=$(hex_secret)
+          WORKMESH_BOOTSTRAP_TOKEN=$bootstrap_token
+          PAGINATION_CURSOR_KEYS=release-key:$cursor_key
+          PAGINATION_CURSOR_ACTIVE_KID=release-key
+          AUTH_RATE_LIMIT_HMAC_KEY=rate-$(hex_secret)
+          WEB_ORIGIN=$RELEASE_WEB_ORIGIN
+          S3_PUBLIC_ENDPOINT=http://127.0.0.1:9000
+          S3_ACCESS_KEY_ID=workmesh
+          S3_SECRET_ACCESS_KEY=$minio_password
+          NEXT_PUBLIC_API_URL=$RELEASE_WEB_API_URL
+          WORKMESH_SESSION_TOKEN=session-token-$(hex_secret)
+          WORKMESH_MCP_ACCESS_TOKEN=mcp-access-$(hex_secret)
+          EOF
+          IMAGES_ROOT=release-image-metadata node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync, readdirSync } from 'node:fs'
+          import path from 'node:path'
+          const entries = readdirSync(process.env.IMAGES_ROOT, { recursive: true, withFileTypes: true })
+          const records = entries
+            .filter(entry => entry.isFile() && entry.name === 'image.json')
+            .map(entry => JSON.parse(readFileSync(path.join(entry.parentPath, entry.name), 'utf8')))
+          for (const service of ['api', 'mcp', 'web', 'worker']) {
+            const matches = records.filter(record => record.service === service)
+            if (matches.length !== 1) throw new Error(`Expected one ${service} image record`)
+            const record = matches[0]
+            const variable = `WORKMESH_${service.toUpperCase()}_IMAGE`
+            appendFileSync(process.env.RELEASE_ENV_FILE, `${variable}=${record.image}@${record.digest}\n`)
+          }
+          NODE
+          chmod 0600 "$RELEASE_ENV_FILE"
+      - name: Validate and start exact production stack
+        run: |
+          set -euo pipefail
+          pnpm validate:production-images --env-file="$RELEASE_ENV_FILE"
+          docker compose \
+            --project-name "$COMPOSE_PROJECT_NAME" \
+            --env-file "$RELEASE_ENV_FILE" \
+            --file docker-compose.production.yml \
+            --profile agent config --quiet
+          docker compose \
+            --project-name "$COMPOSE_PROJECT_NAME" \
+            --env-file "$RELEASE_ENV_FILE" \
+            --file docker-compose.production.yml \
+            --profile agent up --detach --wait --wait-timeout 180
+          curl --fail --silent http://127.0.0.1:3001/readyz > release-runtime/api-ready.json
+          curl --fail --silent http://127.0.0.1:3002/readyz > release-runtime/mcp-ready.json
+          curl --fail --silent http://127.0.0.1:3000/readyz > release-runtime/web-ready.json
+          docker compose \
+            --project-name "$COMPOSE_PROJECT_NAME" \
+            --env-file "$RELEASE_ENV_FILE" \
+            --file docker-compose.production.yml \
+            exec --no-TTY worker node /app/healthcheck.mjs http://127.0.0.1:3003/readyz
+      - name: Prove graceful restart and readiness recovery
+        run: |
+          set -euo pipefail
+          compose=(docker compose --project-name "$COMPOSE_PROJECT_NAME" --env-file "$RELEASE_ENV_FILE" --file docker-compose.production.yml)
+          "${compose[@]}" restart --timeout 35 api worker mcp
+          containers_healthy() {
+            for service in api worker mcp; do
+              container_id="$("${compose[@]}" ps --quiet "$service")"
+              [[ -n "$container_id" ]] || return 1
+              [[ "$(docker inspect "$container_id" --format '{{.State.Health.Status}}' 2>/dev/null)" == healthy ]] || return 1
+            done
+          }
+          dump_restart_state() {
+            "${compose[@]}" ps
+            for service in api worker mcp; do
+              container_id="$("${compose[@]}" ps --quiet "$service")"
+              if [[ -n "$container_id" ]]; then
+                docker inspect "$container_id" --format '{{json .State}}' || true
+              fi
+            done
+          }
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3001/readyz >/dev/null \
+              && curl --fail --silent http://127.0.0.1:3002/readyz >/dev/null \
+              && "${compose[@]}" exec --no-TTY worker node /app/healthcheck.mjs http://127.0.0.1:3003/readyz; then
+              break
+            fi
+            if [[ "$attempt" == 60 ]]; then
+              dump_restart_state
+              exit 1
+            fi
+            sleep 2
+          done
+          for health_attempt in $(seq 1 15); do
+            if containers_healthy; then break; fi
+            if [[ "$health_attempt" == 15 ]]; then
+              dump_restart_state
+              exit 1
+            fi
+            sleep 2
+          done
+          for service in api worker mcp; do
+            container_id="$("${compose[@]}" ps --quiet "$service")"
+            test -n "$container_id"
+            test "$(docker inspect "$container_id" --format '{{.State.Health.Status}}')" = healthy
+            test "$(docker inspect "$container_id" --format '{{.RestartCount}}')" = 0
+            if docker logs "$container_id" 2>&1 | grep -Eqi 'graceful shutdown failed|shutdown deadline exceeded'; then
+              echo "$service reported an invalid graceful shutdown" >&2
+              exit 1
+            fi
+          done
+          SOURCE_SHA="$SOURCE_SHA" PROJECT="$COMPOSE_PROJECT_NAME" node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs'
+          writeFileSync('release-runtime/report.json', `${JSON.stringify({
+            status: 'passed',
+            sourceSha: process.env.SOURCE_SHA,
+            composeProject: process.env.PROJECT,
+            checks: ['production-config', 'readiness', 'sigterm-35s', 'restart', 'readiness-recovery', 'docker-health-ready', 'restart-count-zero'],
+          }, null, 2)}\n`)
+          NODE
+      - name: Capture production logs on failure
+        if: ${{ failure() }}
+        run: |
+          mkdir -p release-runtime/logs
+          docker compose \
+            --project-name "$COMPOSE_PROJECT_NAME" \
+            --env-file "$RELEASE_ENV_FILE" \
+            --file docker-compose.production.yml \
+            logs --no-color > release-runtime/logs/compose.log 2>&1 || true
+      - name: Upload production runtime evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-production-runtime-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-runtime
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove only the isolated release stack
+        if: ${{ always() }}
+        run: |
+          docker compose \
+            --project-name "$COMPOSE_PROJECT_NAME" \
+            --env-file "$RELEASE_ENV_FILE" \
+            --file docker-compose.production.yml \
+            --profile agent down --volumes --remove-orphans || true
+          rm -f -- "$RELEASE_ENV_FILE"
+
+  publish-candidate-record:
+    name: Publish immutable candidate record
+    needs: [validate-candidate, build-scan-publish-images, production-runtime-smoke]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: stable-release
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    env:
+      CANDIDATE_TAG: ${{ needs.validate-candidate.outputs.candidate-tag }}
+      SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Download all image evidence
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: release-image-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence/images
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Assemble candidate manifest
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm release:manifest \
+            --tag "$CANDIDATE_TAG" \
+            --sha "$SOURCE_SHA" \
+            --images release-evidence/images \
+            --output release-evidence/release-manifest.json \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          mkdir -p release-evidence/release-assets
+          while IFS= read -r metadata; do
+            service="$(node -p "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')).service" "$metadata")"
+            directory="$(dirname "$metadata")"
+            for artifact in "$directory"/*; do
+              cp "$artifact" "release-evidence/release-assets/${service}-$(basename "$artifact")"
+            done
+          done < <(find release-evidence/images -name image.json -type f | sort)
+          printf '{"tag":"%s","commit":"%s","manifestSha256":"%s"}\n' \
+            "$CANDIDATE_TAG" "$SOURCE_SHA" \
+            "$(sha256sum release-evidence/release-manifest.json | cut -d' ' -f1)" \
+            > release-evidence/tag-provenance.json
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        with:
+          cosign-release: v3.0.6
+      - name: Sign candidate manifest and tag provenance
+        run: |
+          cosign sign-blob --yes --bundle release-evidence/release-manifest.sigstore.json release-evidence/release-manifest.json
+          cosign sign-blob --yes --bundle release-evidence/tag-provenance.sigstore.json release-evidence/tag-provenance.json
+      - name: Attest candidate manifest
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
+        with:
+          subject-path: release-evidence/release-manifest.json
+      - name: Refuse release mutation and publish prerelease
+        run: |
+          set -euo pipefail
+          if gh release view "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists and is immutable: $CANDIDATE_TAG" >&2
+            exit 1
+          fi
+          gh release create "$CANDIDATE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --prerelease \
+            --title "WorkMesh $CANDIDATE_TAG" \
+            --notes-file docs/releases/v1.0.0.md \
+            release-evidence/release-manifest.json \
+            release-evidence/release-manifest.sigstore.json \
+            release-evidence/tag-provenance.json \
+            release-evidence/tag-provenance.sigstore.json \
+            release-evidence/release-assets/*
+      - name: Upload complete candidate record
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-candidate-${{ env.CANDIDATE_TAG }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-evidence
+          if-no-files-found: error
+          retention-days: 90

@@ -1,8 +1,176 @@
-import { describe, expect, it, vi } from 'vitest'
-import { WorkMeshClient, WorkMeshSdkError, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { WorkMeshClient, WorkMeshCursorExpiredError, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
 
 describe('WorkMeshClient', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const realtimeEvent = {
+    cursor: '9007199254740993',
+    id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    event_type: 'work_item.updated',
+    event_version: 2,
+    workspace_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    team_id: null,
+    audience_actor_id: null,
+    audience: {
+      visibility: 'workspace',
+      workspaceId: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+      teamId: null,
+      actorId: null,
+    },
+    scopes: [{
+      type: 'workspace',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }],
+    invalidates: [{
+      type: 'work_item',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }],
+    aggregate_type: 'work_item',
+    aggregate_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    aggregate_revision: 1,
+    actor_id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    correlation_id: 'event-test',
+    idempotency_key: null,
+    payload: {},
+    occurred_at: '2026-07-28T00:00:00.000Z',
+  }
+
+  it('lists exact decimal event cursors above 2^53', async () => {
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify([realtimeEvent]), { status: 200 }),
+    )
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+
+    await expect(client.listEvents({
+      cursor: '9007199254740992',
+      limit: 25,
+    })).resolves.toEqual([realtimeEvent])
+    expect(fetch.mock.calls[0]?.[0]).toBe(
+      'https://workmesh.test/api/v1/events?cursor=9007199254740992&limit=25',
+    )
+  })
+
+  it('streams typed events and preserves Last-Event-ID exactly', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(
+      `id: ${realtimeEvent.cursor}\ndata: ${JSON.stringify(realtimeEvent)}\n\n`,
+      {
+        status: 200,
+        headers: { 'content-type': 'text/event-stream' },
+      },
+    ))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+    const stream = client.streamEvents({ cursor: '9007199254740992' })
+
+    await expect(stream.next()).resolves.toEqual({
+      done: false,
+      value: realtimeEvent,
+    })
+    expect(fetch.mock.calls[0]?.[1].headers['last-event-id'])
+      .toBe('9007199254740992')
+    await stream.return()
+  })
+
+  it('surfaces CURSOR_EXPIRED without retrying or moving caller state', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      error: {
+        code: 'CURSOR_EXPIRED',
+        message: 'expired',
+        correlationId: 'cursor-expired-test',
+        details: {
+          minimumCursor: '9007199254740993',
+          resyncCursor: '9007199254740993',
+          resyncRequired: true,
+        },
+      },
+    }), { status: 409 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+
+    const error = await client.streamEvents({ cursor: '0' }).next()
+      .then(() => undefined, reason => reason)
+    expect(error).toBeInstanceOf(WorkMeshCursorExpiredError)
+    expect(error).toMatchObject({
+      code: 'CURSOR_EXPIRED',
+      minimumCursor: '9007199254740993',
+      resyncCursor: '9007199254740993',
+    })
+    expect(fetch).toHaveBeenCalledOnce()
+  })
+
+  it('retries documented realtime capacity responses with bounded policy', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: {
+          code: 'REALTIME_CAPACITY_EXCEEDED',
+          message: 'capacity',
+          correlationId: 'capacity-test',
+          details: { retryable: true, retryAfterSeconds: 1 },
+        },
+      }), {
+        status: 503,
+        headers: { 'retry-after': '0' },
+      }))
+      .mockResolvedValueOnce(new Response(
+        `id: ${realtimeEvent.cursor}\ndata: ${JSON.stringify(realtimeEvent)}\n\n`,
+        {
+          status: 200,
+          headers: { 'content-type': 'text/event-stream' },
+        },
+      ))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+      retry: { maxAttempts: 2, baseDelayMs: 0 },
+    })
+    const stream = client.streamEvents({ cursor: '0' })
+
+    await expect(stream.next()).resolves.toEqual({
+      done: false,
+      value: realtimeEvent,
+    })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    await stream.return()
+  })
+
+  it('reads release, features, and the negotiated Agent capability manifest', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ serverVersion: '1.0.0' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: false }],
+      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ profileVersion: '1.0', operations: [] }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.example.test',
+      sessionToken: 'session-token',
+      fetch,
+    })
+    await expect(client.getServerInfo()).resolves.toMatchObject({ serverVersion: '1.0.0' })
+    await expect(client.getFeatures()).resolves.toMatchObject({
+      features: [{ key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', enabled: false }],
+    })
+    await expect(client.getAgentCapabilities({ profileVersion: '1.0' })).resolves.toMatchObject({ profileVersion: '1.0' })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.example.test/api/v1/info')
+    expect(fetch.mock.calls[1]?.[0]).toBe('https://workmesh.example.test/api/v1/features')
+    expect(fetch.mock.calls[2]?.[0]).toBe('https://workmesh.example.test/api/v1/agent-capabilities')
+    expect((fetch.mock.calls[2]?.[1] as RequestInit | undefined)?.headers).toMatchObject({ 'workmesh-client-profile': '1.0' })
+  })
+
   it('uses stable idempotency and does not retry conflicts', async () => {
     const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'PLAN_REVISION_CONFLICT', message: 'changed', correlationId: 'cor-1' } }), { status: 409 }))
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'secret', fetch, retry: { baseDelayMs: 0 } })
@@ -19,15 +187,245 @@ describe('WorkMeshClient', () => {
     expect(fetch).toHaveBeenCalledTimes(2)
   })
 
-  it('refreshes an expired session token exactly once with the installation token', async () => {
+  it('never refreshes or retries an authorization denial', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: { code: 'UNAUTHENTICATED', message: 'expired', correlationId: 'cor-1' } }), { status: 401 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'refreshed-session-token', expiresAt: '2026-07-23T00:00:00.000Z' }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'x', revision: 2 }), { status: 200 }))
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'expired-session-token', installationToken: 'installation-token', fetch })
-    await expect(client.heartbeat('session-1', { usage: { runtimeSeconds: 1 } })).resolves.toEqual({ id: 'x', revision: 2 })
-    expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-token')
-    expect(fetch.mock.calls[2]?.[1].headers.authorization).toBe('Bearer refreshed-session-token')
+    await expect(client.heartbeat('session-1', { usage: { runtimeSeconds: 1 } }))
+      .rejects.toMatchObject({ code: 'UNAUTHENTICATED', status: 401, correlationId: 'cor-1' })
+    expect(fetch).toHaveBeenCalledOnce()
+  })
+
+  it('reuses the token-exchange key across a retry without logging credentials', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const warn = vi.fn()
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      logger: { warn, debug: vi.fn() },
+      retry: { baseDelayMs: 0, maxAttempts: 2 },
+    })
+
+    await expect(client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret'))
+      .resolves.toMatchObject({ sessionToken: 'issued-once' })
+
+    const keys = fetch.mock.calls.map(call => call[1].headers['idempotency-key'])
+    expect(keys[0]).toBeTruthy()
+    expect(keys[1]).toBe(keys[0])
+    expect(fetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer installation-secret')
+    expect(JSON.stringify(warn.mock.calls)).not.toContain('installation-secret')
+    expect(JSON.stringify(warn.mock.calls)).not.toContain('exchange-secret')
+  })
+  it('waits for the full Retry-After duration without changing the logical authentication attempt', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: { code: 'AUTH_RATE_LIMITED', message: 'Try later' } }), {
+        status: 429,
+        headers: { 'Retry-After': '5' },
+      }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        baseDelayMs: 0,
+        maxDelayMs: 0,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(4_999)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ sessionToken: 'issued-once' })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch.mock.calls[1]?.[1].body).toBe(fetch.mock.calls[0]?.[1].body)
+    expect(fetch.mock.calls[1]?.[1].headers['idempotency-key']).toBe(fetch.mock.calls[0]?.[1].headers['idempotency-key'])
+    expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-secret')
+  })
+
+  it('reuses the original serialized body when caller-owned input mutates during Retry-After', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 429, headers: { 'Retry-After': '5' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'heartbeat-1', revision: 2 }), { status: 200 }))
+    const input = {
+      currentStepId: 'step-original',
+      usage: { runtimeSeconds: 1, toolCalls: 1 },
+    }
+    const originalBody = JSON.stringify(input)
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      sessionToken: 'session-token',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.heartbeat('session-1', input)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+
+    input.currentStepId = 'step-mutated'
+    input.usage.runtimeSeconds = 9_999
+    input.usage.toolCalls = 9_999
+
+    await vi.advanceTimersByTimeAsync(4_999)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ id: 'heartbeat-1', revision: 2 })
+    expect(fetch).toHaveBeenCalledTimes(2)
+    const firstInit = fetch.mock.calls[0]?.[1]
+    const secondInit = fetch.mock.calls[1]?.[1]
+    expect(firstInit.body).toBe(originalBody)
+    expect(secondInit.body).toBe(originalBody)
+    expect(secondInit.body).toBe(firstInit.body)
+    expect(secondInit.headers['idempotency-key']).toBe(firstInit.headers['idempotency-key'])
+    expect(secondInit.headers.authorization).toBe(firstInit.headers.authorization)
+    expect(secondInit.headers.authorization).toBe('Bearer session-token')
+  })
+
+  it('does not retry or sleep when Retry-After exceeds the explicit limit and preserves error metadata', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({
+      error: {
+        code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+        message: 'Rate limiter unavailable',
+        correlationId: 'cor-rate-limit',
+        details: { endpointClass: 'token_exchange' },
+      },
+    }), { status: 503, headers: { 'Retry-After': '61' } }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: { maxAttempts: 3, maxRetryAfterMs: 60_000, maxTotalRetryDelayMs: 120_000 },
+    })
+
+    await expect(client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret'))
+      .rejects.toMatchObject({
+        code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+        status: 503,
+        correlationId: 'cor-rate-limit',
+        details: { endpointClass: 'token_exchange' },
+        retry: {
+          retryAfterHeader: '61',
+          retryAfterMs: 61_000,
+          automaticRetrySuppressed: 'retry_after_exceeds_limit',
+        },
+      })
+    expect(fetch).toHaveBeenCalledOnce()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it.each(['invalid', '-1'])('falls back to bounded exponential delay for invalid Retry-After %s', async retryAfter => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 429, headers: { 'Retry-After': retryAfter } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ sessionToken: 'issued-once' }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        baseDelayMs: 250,
+        maxDelayMs: 250,
+        maxRetryAfterMs: 10_000,
+        maxTotalRetryDelayMs: 10_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(249)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+
+    await expect(request).resolves.toMatchObject({ sessionToken: 'issued-once' })
+    expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('bounds automatic retries by the total retry-delay budget', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503, headers: { 'Retry-After': '3' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: { code: 'AUTH_RATE_LIMIT_UNAVAILABLE', message: 'Still unavailable', correlationId: 'cor-total' },
+      }), { status: 503, headers: { 'Retry-After': '3' } }))
+      .mockResolvedValueOnce(new Response('{}', { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 3,
+        maxRetryAfterMs: 5_000,
+        maxTotalRetryDelayMs: 5_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    const rejection = expect(request).rejects.toMatchObject({
+      code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+      status: 503,
+      correlationId: 'cor-total',
+      retry: {
+        retryAfterHeader: '3',
+        retryAfterMs: 3_000,
+        automaticRetrySuppressed: 'total_retry_delay_exceeded',
+      },
+    })
+    await vi.advanceTimersByTimeAsync(3_000)
+
+    await rejection
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it('bounds automatic retries by the attempt limit', async () => {
+    vi.useFakeTimers()
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}', { status: 503, headers: { 'Retry-After': '1' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        error: { code: 'AUTH_RATE_LIMIT_UNAVAILABLE', message: 'Still unavailable', correlationId: 'cor-attempt' },
+      }), { status: 503, headers: { 'Retry-After': '1' } }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      fetch,
+      retry: {
+        maxAttempts: 2,
+        maxRetryAfterMs: 5_000,
+        maxTotalRetryDelayMs: 5_000,
+      },
+    })
+
+    const request = client.exchangeSessionToken('session-1', 'exchange-secret', 'installation-secret')
+    const rejection = expect(request).rejects.toMatchObject({
+      code: 'AUTH_RATE_LIMIT_UNAVAILABLE',
+      status: 503,
+      correlationId: 'cor-attempt',
+      retry: {
+        retryAfterHeader: '1',
+        retryAfterMs: 1_000,
+        automaticRetrySuppressed: 'attempt_limit',
+      },
+    })
+    await vi.advanceTimersByTimeAsync(1_000)
+
+    await rejection
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(vi.getTimerCount()).toBe(0)
   })
 
   it('uses installation authority only for pending handoff inspection and idle-target rejection', async () => {
@@ -42,6 +440,37 @@ describe('WorkMeshClient', () => {
     expect(fetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer installation-token')
   })
 
+  it('passes opaque cursors unchanged and iterates page envelopes', async () => {
+    const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({
+      items: [{ id: 'work-1' }],
+      nextCursor: 'opaque.cursor',
+    }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await expect(client.listWorkItems({ teamId: 'team-1' }, { cursor: 'opaque.cursor', limit: 17 }))
+      .resolves.toEqual({ items: [{ id: 'work-1' }], nextCursor: 'opaque.cursor' })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/work-items?teamId=team-1&cursor=opaque.cursor&limit=17')
+
+    await expect(client.getActivities('session-1', {
+      cursor: 'opaque.activity.cursor',
+      limit: 19,
+    })).resolves.toEqual({
+      items: [{ id: 'work-1' }],
+      nextCursor: 'opaque.cursor',
+    })
+    expect(fetch.mock.calls[1]?.[0]).toBe(
+      'https://workmesh.test/api/v1/agent-sessions/session-1/activities?cursor=opaque.activity.cursor&limit=19',
+    )
+
+    const pages = vi.fn()
+      .mockResolvedValueOnce({ items: [1, 2], nextCursor: 'next' })
+      .mockResolvedValueOnce({ items: [3], nextCursor: null })
+    const items: number[] = []
+    for await (const item of iterateListPages<number>(async cursor =>
+      await pages(cursor) as { items: number[]; nextCursor: string | null })) items.push(item)
+    expect(items).toEqual([1, 2, 3])
+    expect(pages).toHaveBeenNthCalledWith(2, 'next')
+  })
+
   it('redacts nested sensitive values before logging', () => {
     expect(redactForLog({ outer: [{ nested: { token: 'never-log', safe: 'ok' } }], authorization: 'Bearer never-log' })).toEqual({ outer: [{ nested: { token: '[REDACTED]', safe: 'ok' } }], authorization: '[REDACTED]' })
   })
@@ -52,6 +481,19 @@ describe('WorkMeshClient', () => {
     await client.delegateAndStart('00000000-0000-4000-8000-000000000003', { agentId: '00000000-0000-4000-8000-000000000004', principalHumanActorId: '00000000-0000-4000-8000-000000000005', requestedCapabilities: ['work:read'], initialPrompt: 'Investigate.' }, { ifMatch: 7 })
     expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/work-items/00000000-0000-4000-8000-000000000003/agent-session')
     expect(fetch.mock.calls[0]?.[1].headers['if-match']).toBe('"revision-7"')
+  })
+
+  it('transitions an Agent Session with its exact current revision', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ id: 'session-1', revision: 9 }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await expect(client.transitionState('session-1', 'executing', 'Begin conformance.', { ifMatch: 8, idempotencyKey: 'state-key' }))
+      .resolves.toMatchObject({ id: 'session-1', revision: 9 })
+    expect(fetch.mock.calls[0]?.[0]).toBe('https://workmesh.test/api/v1/agent-sessions/session-1/state')
+    expect(fetch.mock.calls[0]?.[1]).toMatchObject({
+      method: 'POST',
+      body: JSON.stringify({ state: 'executing', reason: 'Begin conformance.' }),
+      headers: expect.objectContaining({ 'if-match': '"revision-8"', 'idempotency-key': 'state-key' }),
+    })
   })
 
   it('preserves exact pull-request head provenance for delivery artifacts', async () => {
@@ -109,6 +551,48 @@ describe('WorkMeshClient', () => {
       status: 'draft',
     })
     expect(String(fetch.mock.calls[1]?.[0])).not.toContain('publish')
+  })
+
+  it('uses the native Inbox routes with explicit empty mutation bodies', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1', status: 'claimed' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'inbox-1', status: 'acknowledged' }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'reply-1' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+
+    await client.listInbox('open', { cursor: 'opaque', limit: 17 })
+    await client.getInboxItem('inbox-1')
+    await client.claimInboxItem('inbox-1', { idempotencyKey: 'claim-key' })
+    await client.acknowledgeInboxItem('inbox-1', { idempotencyKey: 'ack-key' })
+    await client.replyInboxItem(
+      'inbox-1',
+      { body: 'Handled with evidence.' },
+      { ifMatch: 4, idempotencyKey: 'reply-key' },
+    )
+
+    expect(fetch.mock.calls.map(call => call[0])).toEqual([
+      'https://workmesh.test/api/v1/inbox?status=open&cursor=opaque&limit=17',
+      'https://workmesh.test/api/v1/inbox/inbox-1',
+      'https://workmesh.test/api/v1/inbox/inbox-1/claim',
+      'https://workmesh.test/api/v1/inbox/inbox-1/acknowledge',
+      'https://workmesh.test/api/v1/inbox/inbox-1/reply',
+    ])
+    expect(fetch.mock.calls[2]?.[1]).toMatchObject({
+      body: '{}',
+      headers: expect.objectContaining({ 'idempotency-key': 'claim-key' }),
+    })
+    expect(fetch.mock.calls[3]?.[1]).toMatchObject({
+      body: '{}',
+      headers: expect.objectContaining({ 'idempotency-key': 'ack-key' }),
+    })
+    expect(fetch.mock.calls[4]?.[1]).toMatchObject({
+      headers: expect.objectContaining({
+        'idempotency-key': 'reply-key',
+        'if-match': '"revision-4"',
+      }),
+    })
   })
 
   it('uses a new default key per public mutation while retaining it for retry and explicit callers', async () => {

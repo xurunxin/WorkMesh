@@ -1,0 +1,140 @@
+name: workmesh-realtime-load
+
+x-api-environment: &api-environment
+  NODE_ENV: production
+  DATABASE_URL: postgres://workmesh:workmesh-load-postgres@postgres:5432/workmesh
+  REDIS_URL: redis://redis:6379
+  REALTIME_HEALTHY_RECONCILE_MS: "15000"
+  REALTIME_FALLBACK_RECONCILE_MS: "1000"
+  REALTIME_BATCH_LIMIT: "500"
+  REALTIME_HEARTBEAT_MS: "15000"
+  REALTIME_BACKPRESSURE_TIMEOUT_MS: "5000"
+  REALTIME_MAX_CLIENTS: ${REALTIME_LOAD_MAX_CLIENTS:?Set REALTIME_LOAD_MAX_CLIENTS}
+  SESSION_SECRET: ${REALTIME_LOAD_SESSION_SECRET:?Set REALTIME_LOAD_SESSION_SECRET}
+  PAGINATION_CURSOR_KEYS: load:${REALTIME_LOAD_PAGINATION_KEY:?Set REALTIME_LOAD_PAGINATION_KEY}
+  PAGINATION_CURSOR_ACTIVE_KID: load
+  WORKMESH_BOOTSTRAP_TOKEN: ${REALTIME_LOAD_BOOTSTRAP_TOKEN:?Set REALTIME_LOAD_BOOTSTRAP_TOKEN}
+  WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"
+  WORKMESH_MASTER_KEY: ${REALTIME_LOAD_MASTER_KEY:?Set REALTIME_LOAD_MASTER_KEY}
+  AUTH_RATE_LIMIT_ENDPOINT_BURST: "10000"
+  AUTH_RATE_LIMIT_SOCKET_BURST: "10000"
+  AUTH_RATE_LIMIT_CLIENT_IP_BURST: "10000"
+  AUTH_RATE_LIMIT_SUBJECT_BURST: "1000"
+  SESSION_COOKIE_SECURE: "false"
+  WEB_ORIGIN: http://127.0.0.1
+  API_HOST: 0.0.0.0
+  API_PORT: "3001"
+  S3_ENDPOINT: http://127.0.0.1:9
+  S3_REGION: us-east-1
+  S3_BUCKET: unused-load-harness
+  S3_ACCESS_KEY_ID: unused
+  S3_SECRET_ACCESS_KEY: unused-load-harness-secret
+  S3_FORCE_PATH_STYLE: "true"
+  WORKMESH_BUILD_SHA: ${REALTIME_LOAD_BUILD_SHA:-unknown}
+
+x-api: &api
+  build:
+    context: ../..
+    dockerfile: infra/docker/api.Dockerfile
+  environment: *api-environment
+  command: ["pnpm", "--filter", "@workmesh/api", "exec", "tsx", "src/server.ts"]
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    migrate:
+      condition: service_completed_successfully
+  healthcheck:
+    test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health >/dev/null"]
+    interval: 2s
+    timeout: 2s
+    retries: 60
+  init: true
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: workmesh
+      POSTGRES_USER: workmesh
+      POSTGRES_PASSWORD: workmesh-load-postgres
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - max_connections=300
+    ports:
+      - "127.0.0.1:${REALTIME_LOAD_POSTGRES_PORT:?Set REALTIME_LOAD_POSTGRES_PORT}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workmesh -d workmesh"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      DATABASE_URL: postgres://workmesh:workmesh-load-postgres@postgres:5432/workmesh
+      SESSION_SECRET: ${REALTIME_LOAD_SESSION_SECRET:?Set REALTIME_LOAD_SESSION_SECRET}
+    command: ["pnpm", "db:migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api_a:
+    <<: *api
+    ports:
+      - "127.0.0.1:${REALTIME_LOAD_API_A_PORT:?Set REALTIME_LOAD_API_A_PORT}:3001"
+
+  api_b:
+    <<: *api
+    ports:
+      - "127.0.0.1:${REALTIME_LOAD_API_B_PORT:?Set REALTIME_LOAD_API_B_PORT}:3001"
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: infra/docker/worker.Dockerfile
+    environment:
+      DATABASE_URL: postgres://workmesh:workmesh-load-postgres@postgres:5432/workmesh
+      REDIS_URL: redis://redis:6379
+      WORKMESH_REALTIME_REDIS_MAXLEN: "100000"
+      SESSION_SECRET: ${REALTIME_LOAD_SESSION_SECRET:?Set REALTIME_LOAD_SESSION_SECRET}
+      WORKMESH_MASTER_KEY: ${REALTIME_LOAD_MASTER_KEY:?Set REALTIME_LOAD_MASTER_KEY}
+      S3_ENDPOINT: http://127.0.0.1:9
+      S3_REGION: us-east-1
+      S3_BUCKET: unused-load-harness
+      S3_ACCESS_KEY_ID: unused
+      S3_SECRET_ACCESS_KEY: unused-load-harness-secret
+      S3_FORCE_PATH_STYLE: "true"
+    command:
+      ["pnpm", "--filter", "@workmesh/worker", "exec", "tsx", "src/index.ts"]
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    init: true

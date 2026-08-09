@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { PoolClient } from 'pg'
 import { DomainError, assertLoopAdmission, dryRunAutomation, evaluateAutomationCondition } from '@workmesh/domain'
 import { appendEvent } from './index.js'
+import { lockAgentAuthorityPlan } from './agent-locks.js'
 
 type AutomationCondition = Parameters<typeof evaluateAutomationCondition>[0]
 type AutomationAction = Parameters<typeof dryRunAutomation>[1][number]
@@ -289,8 +290,48 @@ export async function admitLoopRun(
     occurrenceKey: string
     scheduledFor: Date
     authorization: Stage4AdmissionAuthorization
+    notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<{ runId: string; sessionId: string; duplicate: boolean }> {
+  const loopLocator = (await tx.query<{
+    agent_id: string
+    workspace_id: string
+    team_id: string | null
+    project_id: string | null
+  }>(
+    `SELECT agent_id,workspace_id,team_id,project_id
+       FROM loops
+      WHERE id=$1 AND workspace_id=$2`,
+    [input.loopId,input.meta.workspaceId],
+  )).rows[0]
+  if (!loopLocator) throw new Error('LOOP_NOT_FOUND')
+  let locatorTeamId=loopLocator.team_id
+  let locatorProjectTeamId:string|null=null
+  if (loopLocator.project_id) {
+    locatorProjectTeamId=(await tx.query<{team_id:string}>(
+      'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2',
+      [loopLocator.project_id,loopLocator.workspace_id],
+    )).rows[0]?.team_id??null
+    locatorTeamId??=locatorProjectTeamId
+  }
+  if (!locatorTeamId) {
+    locatorTeamId=(await tx.query<{team_id:string}>(
+      `SELECT team_id FROM agent_team_access
+        WHERE workspace_id=$1 AND agent_id=$2
+        ORDER BY created_at,team_id LIMIT 1`,
+      [loopLocator.workspace_id,loopLocator.agent_id],
+    )).rows[0]?.team_id??null
+  }
+  if (!locatorTeamId) throw new Error('LOOP_TEAM_SCOPE_REQUIRED')
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[loopLocator.agent_id],
+    teamGrants:[{
+      workspaceId:loopLocator.workspace_id,
+      agentId:loopLocator.agent_id,
+      teamId:locatorTeamId,
+    }],
+    projectIds:loopLocator.project_id?[loopLocator.project_id]:[],
+  })
   const loop = (await tx.query<LoopRow>(
     `SELECT loop.*,agent.actor_id AS agent_actor_id,agent.approved_capabilities,
             template.body AS template_body
@@ -301,23 +342,30 @@ export async function admitLoopRun(
     [input.loopId, input.meta.workspaceId],
   )).rows[0]
   if (!loop) throw new Error('LOOP_NOT_FOUND')
+  if (
+    loop.agent_id!==loopLocator.agent_id
+    || loop.workspace_id!==loopLocator.workspace_id
+    || loop.team_id!==loopLocator.team_id
+    || loop.project_id!==loopLocator.project_id
+  ) throw new Error('LOOP_AUTHORITY_BINDING_CHANGED')
   if (loop.state !== 'active') throw new Error('LOOP_NOT_ACTIVE')
-  let teamId = loop.team_id
-  if (!teamId && loop.project_id) {
-    teamId = (await tx.query<{ team_id: string }>(
-      'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2',
+  let lockedProjectTeamId:string|null=null
+  if (loop.project_id) {
+    lockedProjectTeamId = (await tx.query<{ team_id: string }>(
+      `SELECT team_id FROM projects
+        WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
       [loop.project_id, loop.workspace_id],
     )).rows[0]?.team_id ?? null
+    if (
+      !lockedProjectTeamId
+      || (locatorProjectTeamId !== null && lockedProjectTeamId !== locatorProjectTeamId)
+    ) throw new Error('LOOP_AUTHORITY_ROUTING_CHANGED')
   }
-  if (!teamId) {
-    teamId = (await tx.query<{ team_id: string }>(
-      `SELECT team_id FROM agent_team_access
-        WHERE workspace_id=$1 AND agent_id=$2 AND revoked_at IS NULL
-        ORDER BY created_at LIMIT 1`,
-      [loop.workspace_id, loop.agent_id],
-    )).rows[0]?.team_id ?? null
-  }
-  if (!teamId) throw new Error('LOOP_TEAM_SCOPE_REQUIRED')
+  const teamId = loop.team_id ?? lockedProjectTeamId ?? locatorTeamId
+  if (
+    teamId !== locatorTeamId
+    || (lockedProjectTeamId !== null && lockedProjectTeamId !== locatorTeamId)
+  ) throw new Error('LOOP_AUTHORITY_ROUTING_CHANGED')
   await assertAdmissionAuthorization(tx, input.meta, teamId, input.authorization)
 
   const existing = (await tx.query<{ run_id: string; session_id: string }>(
@@ -369,12 +417,15 @@ export async function admitLoopRun(
     hardTokens: policy?.hard_tokens ? Number(policy.hard_tokens) : undefined,
   })
 
-  const teamGrant = (await tx.query<{ approved_capabilities: string[] }>(
-    `SELECT approved_capabilities FROM agent_team_access
-      WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL FOR UPDATE`,
+  const teamGrant = (await tx.query<{
+    approved_capabilities: string[]
+    revoked_at: Date | null
+  }>(
+    `SELECT approved_capabilities,revoked_at FROM agent_team_access
+      WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
     [loop.workspace_id, loop.agent_id, teamId],
   )).rows[0]
-  if (!teamGrant) throw new Error('LOOP_AGENT_TEAM_ACCESS_REVOKED')
+  if (!teamGrant || teamGrant.revoked_at) throw new Error('LOOP_AGENT_TEAM_ACCESS_REVOKED')
   const requestedCapabilities = stringArray(loop.template_body.requiredCapabilities)
   const allowed = requestedCapabilities.filter(capability =>
     loop.approved_capabilities.includes(capability) && teamGrant.approved_capabilities.includes(capability))
@@ -427,7 +478,8 @@ export async function admitLoopRun(
   const projectedCostMinor = (BigInt(consumedCostMinor) + BigInt(requestedCostMinor)).toString()
   const softCostReached = softCostMinor !== undefined && BigInt(projectedCostMinor) > BigInt(softCostMinor)
   const softTokensReached = softTokens !== undefined && consumedTokens + requestedTokens > softTokens
-  if (softCostReached || softTokensReached) {
+  const notificationChannels = input.notificationChannels ?? ['in_app', 'browser', 'webhook']
+  if ((softCostReached || softTokensReached) && notificationChannels.length > 0) {
     await admitNotification(tx, {
       workspaceId: loop.workspace_id,
       recipientActorId: loop.owner_actor_id,
@@ -440,7 +492,7 @@ export async function admitLoopRun(
       sourceType: 'automation_run',
       sourceId: run.id,
       dedupeKey: `loop-soft-budget:${run.id}`,
-      requestedChannels: ['in_app', 'browser', 'webhook'],
+      requestedChannels: [...notificationChannels],
     })
     await appendEvent(tx, {
       workspaceId: loop.workspace_id,
@@ -493,6 +545,458 @@ export async function admitLoopRun(
   return { runId: run.id, sessionId: session.id, duplicate: false }
 }
 
+type AutomationSessionLocator = {
+  id: string
+  agent_id: string
+  delegation_id: string
+  team_id: string
+  work_item_id: string | null
+  project_id: string | null
+  work_item_project_id: string | null
+}
+
+type AutomationActionLocator = {
+  run: {
+    id: string
+    workspace_id: string
+    team_id: string | null
+    rule_id: string | null
+    loop_id: string | null
+    session_id: string | null
+    actor_id: string
+  }
+  sessions: Map<string,AutomationSessionLocator>
+  actionWorkItemId: string | null
+  actionWorkItemTeamId: string | null
+  actionWorkItemProjectId: string | null
+  actionProjectId: string | null
+  actionProjectTeamId: string | null
+  targetAgentId: string | null
+}
+
+const activeAutomationSessionStates = [
+  'queued',
+  'acknowledged',
+  'executing',
+  'awaiting_input',
+  'awaiting_approval',
+] as const
+
+async function locateAutomationActionAuthority(
+  tx: PoolClient,
+  input: {
+    meta: Stage4CommandMeta
+    runId: string
+    action: AutomationAction
+  },
+): Promise<AutomationActionLocator> {
+  const run = (await tx.query<AutomationActionLocator['run']>(
+    `SELECT run.id,run.workspace_id,run.team_id,run.rule_id,run.loop_id,run.session_id,
+            coalesce(rule.created_by_actor_id,loop.owner_actor_id) AS actor_id
+       FROM automation_runs run
+       LEFT JOIN automation_rules rule ON rule.id=run.rule_id
+       LEFT JOIN loops loop ON loop.id=run.loop_id
+      WHERE run.id=$1`,
+    [input.runId],
+  )).rows[0]
+  if (!run || run.workspace_id !== input.meta.workspaceId) throw new Error('AUTOMATION_RUN_NOT_FOUND')
+
+  const parameters=input.action.parameters
+  const actionSessionId=(
+    input.action.type==='send_message'
+    || input.action.type==='request_approval'
+  ) && typeof parameters.sessionId==='string'
+    ? parameters.sessionId
+    : null
+  const actionWorkItemId=(
+    input.action.type==='update_work_item'
+    || input.action.type==='add_label'
+    || input.action.type==='delegate_agent'
+    || input.action.type==='start_session'
+  ) && typeof parameters.workItemId==='string'
+    ? parameters.workItemId
+    : null
+  const actionProjectId=(
+    input.action.type==='create_project_update'
+    || input.action.type==='create_work_item'
+  ) && typeof parameters.projectId==='string'
+    ? parameters.projectId
+    : null
+  const targetAgentId=(
+    input.action.type==='delegate_agent'
+    || input.action.type==='start_session'
+  ) && typeof parameters.agentId==='string'
+    ? parameters.agentId
+    : null
+
+  const sessionIds=new Set<string>()
+  if(run.session_id) sessionIds.add(run.session_id)
+  if(actionSessionId) sessionIds.add(actionSessionId)
+  if(targetAgentId) {
+    const targetSessions=await tx.query<{id:string}>(
+      'SELECT id FROM agent_sessions WHERE agent_id=$1',
+      [targetAgentId],
+    )
+    for(const row of targetSessions.rows) sessionIds.add(row.id)
+  }
+  const sessionRows=sessionIds.size
+    ? (await tx.query<AutomationSessionLocator>(
+        `SELECT session.id,session.agent_id,session.delegation_id,session.team_id,
+                session.work_item_id,session.project_id,
+                item.project_id AS work_item_project_id
+           FROM agent_sessions session
+           LEFT JOIN work_items item
+             ON item.id=session.work_item_id
+            AND item.workspace_id=session.workspace_id
+          WHERE session.id=ANY($1::uuid[])`,
+        [[...sessionIds]],
+      )).rows
+    : []
+  const sessions=new Map(sessionRows.map(row=>[row.id,row]))
+
+  const workItemIds=new Set<string>()
+  if(actionWorkItemId) workItemIds.add(actionWorkItemId)
+  for(const row of sessionRows) if(row.work_item_id) workItemIds.add(row.work_item_id)
+  const workItems=workItemIds.size
+    ? (await tx.query<{id:string;team_id:string;project_id:string|null}>(
+        `SELECT id,team_id,project_id FROM work_items
+          WHERE id=ANY($1::uuid[])`,
+        [[...workItemIds]],
+      )).rows
+    : []
+  const workItemById=new Map(workItems.map(row=>[row.id,row]))
+  const actionWorkItem=actionWorkItemId?workItemById.get(actionWorkItemId):undefined
+
+  const projectIds=new Set<string>()
+  if(actionProjectId) projectIds.add(actionProjectId)
+  for(const row of sessionRows) {
+    if(row.project_id) projectIds.add(row.project_id)
+    if(row.work_item_project_id) projectIds.add(row.work_item_project_id)
+  }
+  for(const row of workItems) if(row.project_id) projectIds.add(row.project_id)
+  const actionProject=actionProjectId
+    ? (await tx.query<{id:string;team_id:string}>(
+        'SELECT id,team_id FROM projects WHERE id=$1 AND workspace_id=$2',
+        [actionProjectId,run.workspace_id],
+      )).rows[0]
+    : undefined
+
+  const definitionIds=new Set<string>()
+  const delegationIds=new Set<string>()
+  const teamGrants=new Map<string,{workspaceId:string;agentId:string;teamId:string}>()
+  for(const row of sessionRows) {
+    definitionIds.add(row.agent_id)
+    delegationIds.add(row.delegation_id)
+    teamGrants.set(`${row.agent_id}:${row.team_id}`,{
+      workspaceId:run.workspace_id,
+      agentId:row.agent_id,
+      teamId:row.team_id,
+    })
+  }
+  if(targetAgentId) {
+    definitionIds.add(targetAgentId)
+    if(actionWorkItem) {
+      teamGrants.set(`${targetAgentId}:${actionWorkItem.team_id}`,{
+        workspaceId:run.workspace_id,
+        agentId:targetAgentId,
+        teamId:actionWorkItem.team_id,
+      })
+    }
+  }
+  await lockAgentAuthorityPlan(tx,{
+    definitionIds:[...definitionIds],
+    teamGrants:[...teamGrants.values()],
+    delegationIds:[...delegationIds],
+    sessionIds:[...sessionIds],
+    workItemIds:[...workItemIds],
+    projectIds:[...projectIds],
+  })
+  return {
+    run,
+    sessions,
+    actionWorkItemId,
+    actionWorkItemTeamId:actionWorkItem?.team_id??null,
+    actionWorkItemProjectId:actionWorkItem?.project_id??null,
+    actionProjectId,
+    actionProjectTeamId:actionProject?.team_id??null,
+    targetAgentId,
+  }
+}
+
+async function revalidateAutomationSession(
+  tx:PoolClient,
+  locator:AutomationSessionLocator,
+  requiredCapability?:string,
+  failureCode='AUTOMATION_AUTHORITY_REVOKED',
+):Promise<{
+  id:string
+  team_id:string
+  sequence:number
+  agent_actor_id:string
+  automation_run_id:string|null
+}> {
+  const row=(await tx.query<{
+    id:string
+    agent_id:string
+    delegation_id:string
+    team_id:string
+    work_item_id:string|null
+    project_id:string|null
+    work_item_project_id:string|null
+    sequence:number
+    agent_actor_id:string
+    automation_run_id:string|null
+    state:string
+    delegation_status:string
+    delegation_capabilities:string[]
+    definition_active:boolean
+    definition_capabilities:string[]
+    grant_revoked_at:Date|null
+    grant_capabilities:string[]
+    work_item_exists:boolean
+    project_exists:boolean
+  }>(
+    `SELECT session.id,session.agent_id,session.delegation_id,session.team_id,
+            session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+            session.sequence,session.agent_actor_id,session.automation_run_id,session.state,
+            delegation.status AS delegation_status,
+            delegation.permissions_snapshot AS delegation_capabilities,
+            definition.is_active AS definition_active,
+            definition.approved_capabilities AS definition_capabilities,
+            access.revoked_at AS grant_revoked_at,
+            access.approved_capabilities AS grant_capabilities,
+            (session.work_item_id IS NULL OR item.id IS NOT NULL) AS work_item_exists,
+            (
+              coalesce(item.project_id,session.project_id) IS NULL
+              OR project.id IS NOT NULL
+            ) AS project_exists
+       FROM agent_sessions session
+       JOIN delegations delegation ON delegation.id=session.delegation_id
+       JOIN agent_definitions definition ON definition.id=session.agent_id
+       JOIN agent_team_access access
+         ON access.workspace_id=session.workspace_id
+        AND access.agent_id=session.agent_id
+        AND access.team_id=session.team_id
+       LEFT JOIN work_items item
+         ON item.id=session.work_item_id
+        AND item.workspace_id=session.workspace_id
+        AND item.deleted_at IS NULL
+       LEFT JOIN projects project
+         ON project.id=coalesce(item.project_id,session.project_id)
+        AND project.workspace_id=session.workspace_id
+        AND project.deleted_at IS NULL
+      WHERE session.id=$1`,
+    [locator.id],
+  )).rows[0]
+  const bindingChanged=!row
+    || row.agent_id!==locator.agent_id
+    || row.delegation_id!==locator.delegation_id
+    || row.team_id!==locator.team_id
+    || row.work_item_id!==locator.work_item_id
+    || row.project_id!==locator.project_id
+    || row.work_item_project_id!==locator.work_item_project_id
+  const capabilityDenied=requiredCapability!==undefined && row!==undefined && (
+    !row.delegation_capabilities.includes(requiredCapability)
+    || !row.definition_capabilities.includes(requiredCapability)
+    || !row.grant_capabilities.includes(requiredCapability)
+  )
+  if(
+    bindingChanged
+    || !row
+    || !activeAutomationSessionStates.includes(row.state as typeof activeAutomationSessionStates[number])
+    || row.delegation_status!=='active'
+    || !row.definition_active
+    || row.grant_revoked_at!==null
+    || !row.work_item_exists
+    || !row.project_exists
+    || capabilityDenied
+  ) throw new Error(failureCode)
+  return row
+}
+
+async function revalidateAutomationRun(
+  tx:PoolClient,
+  locator:AutomationActionLocator,
+):Promise<{workspace_id:string;team_id:string|null;actor_id:string}> {
+  const authority=(await tx.query<{
+    id:string
+    workspace_id:string
+    team_id:string|null
+    rule_id:string|null
+    loop_id:string|null
+    session_id:string|null
+    state:string
+    actor_id:string
+    actor_active:boolean
+    team_authorized:boolean
+  }>(
+    `SELECT run.id,run.workspace_id,run.team_id,run.rule_id,run.loop_id,run.session_id,
+            coalesce(rule.state::text,loop.state::text) AS state,
+            coalesce(rule.created_by_actor_id,loop.owner_actor_id) AS actor_id,
+            actor.is_active AS actor_active,
+            (
+              actor.workspace_role='admin'
+              OR run.team_id IS NULL
+              OR EXISTS (
+                SELECT 1 FROM memberships member
+                 WHERE member.workspace_id=run.workspace_id
+                   AND member.team_id=run.team_id
+                   AND member.actor_id=actor.id
+              )
+            ) AS team_authorized
+       FROM automation_runs run
+       LEFT JOIN automation_rules rule ON rule.id=run.rule_id
+       LEFT JOIN loops loop ON loop.id=run.loop_id
+       JOIN actors actor ON actor.id=coalesce(rule.created_by_actor_id,loop.owner_actor_id)
+      WHERE run.id=$1
+      FOR UPDATE OF run`,
+    [locator.run.id],
+  )).rows[0]
+  if(
+    !authority
+    || authority.workspace_id!==locator.run.workspace_id
+    || authority.team_id!==locator.run.team_id
+    || authority.rule_id!==locator.run.rule_id
+    || authority.loop_id!==locator.run.loop_id
+    || authority.session_id!==locator.run.session_id
+    || authority.actor_id!==locator.run.actor_id
+  ) throw new Error('AUTOMATION_AUTHORITY_BINDING_CHANGED')
+  if(!authority.actor_active||!authority.team_authorized||authority.state!=='active')
+    throw new Error('AUTOMATION_AUTHORITY_REVOKED')
+  if(authority.loop_id) {
+    const sourceLocator=authority.session_id?locator.sessions.get(authority.session_id):undefined
+    if(!sourceLocator) throw new Error('AUTOMATION_AUTHORITY_REVOKED')
+    const source=await revalidateAutomationSession(tx,sourceLocator)
+    if(source.automation_run_id!==authority.id||source.team_id!==authority.team_id)
+      throw new Error('AUTOMATION_AUTHORITY_BINDING_CHANGED')
+  }
+  return authority
+}
+
+type AutomationValidatedTarget = {
+  session?: Awaited<ReturnType<typeof revalidateAutomationSession>>
+  workItem?: {
+    revision:number
+    labels:string[]
+    team_id:string
+    project_id:string|null
+    responsible_human_actor_id:string|null
+  }
+  project?: {team_id:string}
+  targetAgent?: {
+    agent_actor_id:string
+    agent_capabilities:string[]
+    team_capabilities:string[]
+  }
+}
+
+async function revalidateAutomationActionTarget(
+  tx:PoolClient,
+  locator:AutomationActionLocator,
+  authority:{workspace_id:string;team_id:string|null;actor_id:string},
+  action:AutomationAction,
+):Promise<AutomationValidatedTarget> {
+  const parameters=action.parameters
+  const target:AutomationValidatedTarget={}
+  if(action.type==='send_message'||action.type==='request_approval') {
+    const sessionId=typeof parameters.sessionId==='string'?parameters.sessionId:''
+    const sessionLocator=locator.sessions.get(sessionId)
+    if(!sessionLocator) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    target.session=await revalidateAutomationSession(
+      tx,
+      sessionLocator,
+      'work:write',
+      'AUTOMATION_TARGET_SCOPE_DENIED',
+    )
+    if(authority.team_id&&target.session.team_id!==authority.team_id)
+      throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+  }
+  if(
+    action.type==='update_work_item'
+    || action.type==='add_label'
+    || action.type==='delegate_agent'
+    || action.type==='start_session'
+  ) {
+    if(!locator.actionWorkItemId) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const item=(await tx.query<NonNullable<AutomationValidatedTarget['workItem']>>(
+      `SELECT revision,labels,team_id,project_id,responsible_human_actor_id
+         FROM work_items
+        WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
+      [locator.actionWorkItemId,authority.workspace_id],
+    )).rows[0]
+    if(
+      !item
+      || item.team_id!==locator.actionWorkItemTeamId
+      || item.project_id!==locator.actionWorkItemProjectId
+      || (authority.team_id!==null&&item.team_id!==authority.team_id)
+    ) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    target.workItem=item
+  }
+  if(
+    action.type==='create_project_update'
+    || (action.type==='create_work_item'&&locator.actionProjectId!==null)
+  ) {
+    if(!locator.actionProjectId) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const project=(await tx.query<{team_id:string}>(
+      `SELECT team_id FROM projects
+        WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
+      [locator.actionProjectId,authority.workspace_id],
+    )).rows[0]
+    if(
+      !project
+      || project.team_id!==locator.actionProjectTeamId
+      || (authority.team_id!==null&&project.team_id!==authority.team_id)
+    ) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    target.project=project
+  }
+  if(action.type==='delegate_agent'||action.type==='start_session') {
+    const agentId=typeof parameters.agentId==='string'?parameters.agentId:''
+    const principalHumanActorId=typeof parameters.principalHumanActorId==='string'
+      ? parameters.principalHumanActorId
+      : authority.actor_id
+    if(
+      !target.workItem
+      || !locator.targetAgentId
+      || locator.targetAgentId!==agentId
+    ) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const agent=(await tx.query<{
+      agent_actor_id:string
+      agent_capabilities:string[]
+      team_capabilities:string[]
+      grant_revoked_at:Date|null
+    }>(
+      `SELECT definition.actor_id AS agent_actor_id,
+              definition.approved_capabilities AS agent_capabilities,
+              access.approved_capabilities AS team_capabilities,
+              access.revoked_at AS grant_revoked_at
+         FROM agent_definitions definition
+         JOIN agent_team_access access
+           ON access.workspace_id=definition.workspace_id
+          AND access.agent_id=definition.id
+          AND access.team_id=$3
+         JOIN actors principal
+           ON principal.id=$4
+          AND principal.workspace_id=definition.workspace_id
+          AND principal.kind='human'
+          AND principal.is_active
+        WHERE definition.id=$1
+          AND definition.workspace_id=$2
+          AND definition.is_active`,
+      [agentId,authority.workspace_id,target.workItem.team_id,principalHumanActorId],
+    )).rows[0]
+    const requestedCapabilities=stringArray(parameters.capabilities)
+    if(
+      !agent
+      || agent.grant_revoked_at!==null
+      || !requestedCapabilities.every(capability=>
+        agent.agent_capabilities.includes(capability)
+        && agent.team_capabilities.includes(capability))
+    ) throw new Error('AUTOMATION_AGENT_CAPABILITY_DENIED')
+    target.targetAgent=agent
+  }
+  return target
+}
+
 export async function executeAutomationAction(
   tx: PoolClient,
   input: {
@@ -500,47 +1004,17 @@ export async function executeAutomationAction(
     runId: string
     actionOrdinal: number
     action: AutomationAction
+    notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
 ): Promise<Record<string, unknown>> {
-  const authority = (await tx.query<{
-    workspace_id: string
-    team_id: string | null
-    state: string
-    actor_id: string
-    actor_active: boolean
-    team_authorized: boolean
-    loop_authorized: boolean
-  }>(
-    `SELECT run.workspace_id,run.team_id,coalesce(rule.state::text,loop.state::text) AS state,
-            coalesce(rule.created_by_actor_id,loop.owner_actor_id) AS actor_id,
-            actor.is_active AS actor_active,
-            (actor.workspace_role='admin' OR run.team_id IS NULL OR EXISTS (
-              SELECT 1 FROM memberships member
-               WHERE member.workspace_id=run.workspace_id AND member.team_id=run.team_id
-                 AND member.actor_id=actor.id
-            )) AS team_authorized,
-            (loop.id IS NULL OR EXISTS (
-              SELECT 1 FROM agent_sessions session
-              JOIN delegations delegation ON delegation.id=session.delegation_id
-                AND delegation.status='active'
-              JOIN agent_definitions agent ON agent.id=session.agent_id AND agent.is_active
-              JOIN agent_team_access access ON access.workspace_id=session.workspace_id
-                AND access.agent_id=session.agent_id AND access.team_id=session.team_id
-                AND access.revoked_at IS NULL
-             WHERE session.id=run.session_id AND session.automation_run_id=run.id
-               AND session.state IN ('queued','acknowledged','executing','awaiting_input','awaiting_approval')
-            )) AS loop_authorized
-       FROM automation_runs run
-       LEFT JOIN automation_rules rule ON rule.id=run.rule_id
-       LEFT JOIN loops loop ON loop.id=run.loop_id
-       JOIN actors actor ON actor.id=coalesce(rule.created_by_actor_id,loop.owner_actor_id)
-      WHERE run.id=$1 FOR UPDATE OF run`,
-    [input.runId],
-  )).rows[0]
-  if (!authority || authority.workspace_id !== input.meta.workspaceId) throw new Error('AUTOMATION_RUN_NOT_FOUND')
-  if (!authority.actor_active || !authority.team_authorized || !authority.loop_authorized || authority.state !== 'active')
-    throw new Error('AUTOMATION_AUTHORITY_REVOKED')
-
+  const locator=await locateAutomationActionAuthority(tx,input)
+  const authority=await revalidateAutomationRun(tx,locator)
+  const validatedTarget=await revalidateAutomationActionTarget(
+    tx,
+    locator,
+    authority,
+    input.action,
+  )
   const parameters = input.action.parameters
   if (parameters.requiresApproval === true) {
     const approvalId = typeof parameters.approvalId === 'string' ? parameters.approvalId : ''
@@ -564,6 +1038,10 @@ export async function executeAutomationAction(
     const title = typeof parameters.title === 'string' ? parameters.title.trim() : ''
     if (!teamId || !title || (authority.team_id && teamId !== authority.team_id))
       throw new Error('AUTOMATION_ACTION_INVALID')
+    if (
+      typeof parameters.projectId === 'string'
+      && (!validatedTarget.project || validatedTarget.project.team_id !== teamId)
+    ) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     const state = (await tx.query<{ id: string }>(
       `SELECT state.id FROM workflow_states state
         WHERE state.workspace_id=$1 AND state.team_id=$2
@@ -605,15 +1083,15 @@ export async function executeAutomationAction(
     const sessionId = typeof parameters.sessionId === 'string' ? parameters.sessionId : ''
     const bodyMarkdown = typeof parameters.bodyMarkdown === 'string' ? parameters.bodyMarkdown.trim() : ''
     if (!sessionId || !bodyMarkdown) throw new Error('AUTOMATION_ACTION_INVALID')
-    const session = (await tx.query<{ team_id: string; sequence: number; agent_actor_id: string }>(
+    const targetSession = validatedTarget.session
+    if (!targetSession || targetSession.id !== sessionId)
+      throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const session = (await tx.query<{ sequence: number }>(
       `UPDATE agent_sessions SET sequence=sequence+1,revision=revision+1,updated_at=now()
-        WHERE id=$1 AND workspace_id=$2
-          AND ($3::uuid IS NULL OR team_id=$3)
-          AND state IN ('queued','acknowledged','executing','awaiting_input','awaiting_approval')
-        RETURNING team_id,sequence,agent_actor_id`,
-      [sessionId, authority.workspace_id, authority.team_id],
+        WHERE id=$1 RETURNING sequence`,
+      [sessionId],
     )).rows[0]
-    if (!session) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    if (!session) throw new Error('AUTOMATION_AUTHORITY_BINDING_CHANGED')
     const activity = (await tx.query<{ id: string }>(
       `INSERT INTO agent_activities(
          session_id,actor_id,sequence,kind,summary,details_markdown
@@ -622,7 +1100,7 @@ export async function executeAutomationAction(
     )).rows[0]!
     result = { sessionId, activityId: activity.id, sequence: session.sequence }
     await appendEvent(tx, {
-      workspaceId: authority.workspace_id, teamId: session.team_id, actorId: authority.actor_id,
+      workspaceId: authority.workspace_id, teamId: targetSession.team_id, actorId: authority.actor_id,
       correlationId: input.meta.correlationId, type: 'agent.activity.created',
       aggregateType: 'agent_session', aggregateId: sessionId,
       payload: { runId: input.runId, activityId: activity.id, kind: 'message' },
@@ -635,14 +1113,8 @@ export async function executeAutomationAction(
     if (!sessionId || !actionName || !/^sha256:[a-f0-9]{64}$/.test(payloadHash)
       || !expiresAt || Number.isNaN(expiresAt.getTime()) || expiresAt <= new Date())
       throw new Error('AUTOMATION_ACTION_INVALID')
-    const session = (await tx.query<{ team_id: string }>(
-      `SELECT team_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2
-        AND ($3::uuid IS NULL OR team_id=$3)
-        AND state IN ('queued','acknowledged','executing','awaiting_input','awaiting_approval')
-        FOR UPDATE`,
-      [sessionId, authority.workspace_id, authority.team_id],
-    )).rows[0]
-    if (!session) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const session = validatedTarget.session
+    if (!session || session.id !== sessionId) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     const approval = (await tx.query<{ id: string }>(
       `INSERT INTO approvals(
          workspace_id,session_id,requested_by_actor_id,approval_type,action_name,
@@ -674,11 +1146,7 @@ export async function executeAutomationAction(
     const body = typeof parameters.body === 'string' ? parameters.body.trim() : ''
     const health = typeof parameters.health === 'string' ? parameters.health : 'unknown'
     if (!projectId || !body) throw new Error('AUTOMATION_ACTION_INVALID')
-    const project = (await tx.query<{ team_id: string }>(
-      `SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
-        AND ($3::uuid IS NULL OR team_id=$3) FOR UPDATE`,
-      [projectId, authority.workspace_id, authority.team_id],
-    )).rows[0]
+    const project = validatedTarget.project
     if (!project) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     const update = (await tx.query<{ id: string; revision: number }>(
       `INSERT INTO project_updates(
@@ -697,12 +1165,8 @@ export async function executeAutomationAction(
   } else if (input.action.type === 'update_work_item' || input.action.type === 'add_label') {
     const workItemId = typeof parameters.workItemId === 'string' ? parameters.workItemId : ''
     const expectedRevision = typeof parameters.expectedRevision === 'number' ? parameters.expectedRevision : -1
-    const row = (await tx.query<{ revision: number; labels: string[]; team_id: string }>(
-      `SELECT revision,labels,team_id FROM work_items
-        WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE`,
-      [workItemId, authority.workspace_id],
-    )).rows[0]
-    if (!row || (authority.team_id && row.team_id !== authority.team_id)) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
+    const row = validatedTarget.workItem
+    if (!row) throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     if (row.revision !== expectedRevision) throw new Error('REVISION_CONFLICT')
     if (input.action.type === 'add_label') {
       const label = typeof parameters.label === 'string' ? parameters.label : ''
@@ -741,33 +1205,11 @@ export async function executeAutomationAction(
       ? parameters.principalHumanActorId
       : authority.actor_id
     const requestedCapabilities = stringArray(parameters.capabilities)
-    const target = (await tx.query<{
-      team_id: string
-      project_id: string | null
-      responsible_human_actor_id: string | null
-      agent_actor_id: string
-      agent_capabilities: string[]
-      team_capabilities: string[]
-    }>(
-      `SELECT item.team_id,item.project_id,item.responsible_human_actor_id,
-              agent.actor_id AS agent_actor_id,agent.approved_capabilities AS agent_capabilities,
-              access.approved_capabilities AS team_capabilities
-         FROM work_items item
-         JOIN agent_definitions agent ON agent.id=$3 AND agent.workspace_id=item.workspace_id AND agent.is_active
-         JOIN agent_team_access access ON access.workspace_id=item.workspace_id
-           AND access.agent_id=agent.id AND access.team_id=item.team_id AND access.revoked_at IS NULL
-         JOIN actors principal ON principal.id=$4 AND principal.workspace_id=item.workspace_id
-           AND principal.kind='human' AND principal.is_active
-        WHERE item.id=$1 AND item.workspace_id=$2 AND item.deleted_at IS NULL
-        FOR UPDATE OF item`,
-      [workItemId, authority.workspace_id, agentId, principalHumanActorId],
-    )).rows[0]
-    if (!target || (authority.team_id && target.team_id !== authority.team_id))
+    const target = validatedTarget.workItem
+    const targetAgent = validatedTarget.targetAgent
+    if (!target || !targetAgent)
       throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     if (!target.responsible_human_actor_id) throw new Error('RESPONSIBLE_HUMAN_REQUIRED')
-    if (!requestedCapabilities.every(capability =>
-      target.agent_capabilities.includes(capability) && target.team_capabilities.includes(capability)))
-      throw new Error('AUTOMATION_AGENT_CAPABILITY_DENIED')
     const delegation = (await tx.query<{ id: string }>(
       `INSERT INTO delegations(
          workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,
@@ -777,7 +1219,7 @@ export async function executeAutomationAction(
         authority.workspace_id,
         target.team_id,
         agentId,
-        target.agent_actor_id,
+        targetAgent.agent_actor_id,
         principalHumanActorId,
         workItemId,
         requestedCapabilities,
@@ -792,7 +1234,7 @@ export async function executeAutomationAction(
         authority.workspace_id,
         target.team_id,
         agentId,
-        target.agent_actor_id,
+        targetAgent.agent_actor_id,
         delegation.id,
         workItemId,
         parameters.budget ?? {},
@@ -822,7 +1264,7 @@ export async function executeAutomationAction(
       sourceType: 'automation_run',
       sourceId: input.runId,
       dedupeKey: `${input.runId}:${input.actionOrdinal}`,
-      requestedChannels: ['in_app', 'browser', 'webhook'],
+      requestedChannels: [...(input.notificationChannels ?? ['in_app', 'browser', 'webhook'])],
     })
     result = { notificationId: notification.id, channels: notification.channels, suppressed: notification.suppressed }
     await appendEvent(tx, {
@@ -833,6 +1275,7 @@ export async function executeAutomationAction(
       type: 'notification.created',
       aggregateType: 'notification',
       aggregateId: notification.id,
+      audienceActorId: recipientActorId,
       payload: { runId: input.runId },
     })
   } else if (input.action.type === 'call_webhook') {

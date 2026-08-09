@@ -51,7 +51,7 @@
 - Installation Token 默认长期有效至撤销，只能建立或刷新协调 Session，不能直接执行普通 mutation。
 - Coordination MCP 在后台创建一小时短期协调 Session，并在到期前刷新；API 始终实时检查 Agent、Team grant、Delegation、能力和撤销状态。
 - principal Human 默认是创建连接的 Human，也可选择该 Team 的其他有效 Human。
-- 新增 `agent:delegate` 能力。默认 Coordinator 不具备；Human 显式授予后，Agent 才能为 Work Item 启动其他 Agent（`start_agent_session`、`delegate_work_item`），且继续受预算、并发、Team access 和负责 Human 约束。`agent:delegate` **不**作用于 `create_child_session`——后者是 plan-step 子 Session，只需 `agent:execute` 与 Team access。
+- 新增 `agent:delegate` 能力。默认 Coordinator 不具备；Human 显式授予后，Agent 才能为 Work Item 启动其他 Agent（`start_agent_session`、`delegate_work_item`），且继续受预算、并发、Team access 和负责 Human 约束。`agent:delegate` **不**作用于 `create_child_session`——后者是 plan-step 子 Session，继续使用现有 `work:write`、父 Session/Plan Step scope 与 Team access gate。
 - Agent 默认可创建、编辑、评论、改变普通工作状态；Project/Issue 删除、归档、批量 mutation、健康更新发布仍由 Human 执行或批准。
 - Agent 创建 Issue 时若未指定 responsible Human，由服务端填充 connection 的 principal Human。
 

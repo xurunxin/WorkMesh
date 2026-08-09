@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts", "scripts/backup.ts", "scripts/restore.ts"],
+  "exclude": ["src/**/*.test.ts", "integration", "scripts/post-restore-smoke.ts"]
+}
