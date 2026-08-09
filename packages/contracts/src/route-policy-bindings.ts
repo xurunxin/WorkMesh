@@ -947,6 +947,46 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/.well-known/workmesh-agent",
+    "operationId": "getWorkMeshAgentWellKnown"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-connections",
+    "operationId": "createAgentConnection"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-connections/redeem",
+    "operationId": "redeemAgentConnection"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/agent-connections/{id}",
+    "operationId": "getAgentConnection"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/agent-connections/{id}",
+    "operationId": "patchAgentConnection"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/agent-connections/{id}",
+    "operationId": "revokeAgentConnection"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-connections/{id}/rotate",
+    "operationId": "rotateAgentConnection"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-connections/{id}/rotate-confirm",
+    "operationId": "confirmAgentConnectionRotation"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/admin/retention/status",
     "operationId": "getRetentionStatus"
   }

@@ -41,6 +41,7 @@ contract refinements during the 1.x line. Each defaults disabled:
 | Usage, cost summaries, budgets | `WORKMESH_BETA_COSTS` | API, web | Append-only facts and policies remain; no gated aggregation is performed while disabled. |
 | Gitea provider | `WORKMESH_BETA_GITEA` | API, provider worker, SDK/MCP through REST | Connections, repositories, contexts, actions, and webhook deliveries remain. They are not disclosed, claimed, or effected until re-enabled. |
 | Operations UI | `WORKMESH_BETA_OPERATIONS_UI` | web only | Hides the optional UI entry point. It never enables any API or worker capability. |
+| Agent Connections and Coordination MCP | `WORKMESH_BETA_COORDINATION_MCP` | API, worker, web, SDK/MCP | Connections, pairing ledgers, credentials, and coordination sessions remain durable; discovery, redeem, request admission, refresh, and UI entry points stop until re-enabled. |
 
 Notifications belong to Beta Planning. A notification webhook additionally
 requires `WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS`; disabling that second flag

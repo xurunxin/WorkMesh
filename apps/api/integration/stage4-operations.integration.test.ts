@@ -227,7 +227,7 @@ describe('Stage 4 planning and operations API', () => {
     const deploymentFlags = registry.json<{
       features: Array<{ key: string; tier: string; enabled: boolean }>
     }>().features
-    expect(deploymentFlags).toHaveLength(10)
+    expect(deploymentFlags).toHaveLength(11)
     for (const feature of deploymentFlags)
       expect(Object.keys(feature).sort()).toEqual(['enabled', 'key', 'tier'])
   })

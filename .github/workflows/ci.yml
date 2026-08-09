@@ -66,6 +66,11 @@ jobs:
         run: |
           set -o pipefail
           pnpm --filter @workmesh/contracts test 2>&1 | tee ci-logs/contracts.log
+      - name: Verify generated route policy and signed WorkMesh Skill
+        run: |
+          set -o pipefail
+          pnpm check:route-policy 2>&1 | tee ci-logs/route-policy.log
+          pnpm check:workmesh-skill 2>&1 | tee ci-logs/workmesh-skill.log
       - name: Build
         run: |
           set -o pipefail

@@ -4,6 +4,16 @@ This runbook covers the Stable Core RC and no-rebuild GA workflows. It does not
 replace the final 24-hour multi-Agent soak or the evidence comment required by
 Gate #1.
 
+For the Agent-first Coordination MCP 1.1 candidate, `pnpm
+check:workmesh-skill` and `pnpm check:route-policy` are mandatory source gates.
+The signed Skill manifest hash, public artifact, OpenAPI operation bindings,
+and MCP tool bindings must all be from the candidate SHA. Deploy the exact four
+image digests to the OpenWrt/Tailscale test environment, enable
+`WORKMESH_BETA_COORDINATION_MCP`, and retain the three-client transcript and
+24-hour report. Promotion to `v1.1.0` is blocked until the report proves no
+credential leakage, cross-Team access, stale Session authority, or digest/SHA
+drift; promotion reuses the accepted image manifests without rebuilding.
+
 ## Repository controls
 
 Protect `main` with the aggregate `Required CI` status check, require the branch

@@ -67,6 +67,27 @@ docker compose --env-file .env.production -f docker-compose.production.yml --pro
 
 The validator uses Node's built-in environment-file loader and checks the four image references from `.env.production` before rendering Compose. Omit `--profile agent` when MCP is not deployed.
 
+### Coordination MCP pre-release deployment
+
+Agent Connections remain behind `WORKMESH_BETA_COORDINATION_MCP` during the
+development candidate. Set it to `true` on API, Worker, Web, and MCP through the
+shared production Compose feature environment, then start the `agent` profile.
+In Coordination mode the MCP container does not need a static Session token or
+MCP boundary token: each request authenticates directly with its own
+`X-WorkMesh-Installation-Token`. Keep the two legacy MCP variables only when
+testing the older exact-Session mode.
+
+Route the public HTTPS origin so `/.well-known/workmesh-agent`, `/mcp`,
+`/connect`, and `/skills/` reach the corresponding API/MCP/Web services. With
+Tailscale Serve, expose only those HTTPS routes plus the normal Web/API paths;
+do not expose PostgreSQL, Redis, MinIO, or MCP port 3002 directly. Validate
+discovery and call `verify_connection` before beginning a soak.
+
+The final `v1.1.0-rc.N` must use four digest-pinned images from one exact SHA.
+Run the three-client, multi-Agent 24-hour soak on those unchanged images. The
+Stable/default-on promotion is a release gate after that evidence passes and
+must not rebuild or substitute any image digest.
+
 ## Clean installation and upgrade
 
 Authenticate to GHCR on the host, then pull and start the exact revision:

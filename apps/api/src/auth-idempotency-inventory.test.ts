@@ -372,6 +372,7 @@ describe('secret-aware auth mutation inventory analyzer', () => {
 describe('secret-aware auth mutation inventory', () => {
   it('discovers every known secret-producing response and binds it to encrypted replay', async () => {
     const server = await readFile(new URL('./server.ts', import.meta.url), 'utf8')
+    const agentConnections = await readFile(new URL('./agent-connections.ts', import.meta.url), 'utf8')
     const commands = await readFile(new URL('./agent/commands.ts', import.meta.url), 'utf8')
     const commandOperation = new Map([
       ['registerAgent', 'registerAgent'],
@@ -413,6 +414,9 @@ describe('secret-aware auth mutation inventory', () => {
     const discovered = [
       ...discoveredAuthRoutes.map(route => route.operation),
       ...discoveredCommands.map(name => commandOperation.get(name)),
+      ...(agentConnections.includes("operation: 'redeemAgentConnection'")
+        && agentConnections.includes('authIdempotentTransaction')
+        ? ['redeemAgentConnection'] : []),
     ].filter((operation): operation is string => Boolean(operation)).sort()
     expect(marked).toEqual(discovered)
     expect([...secretReplayOperationIds].sort()).toEqual(discovered)

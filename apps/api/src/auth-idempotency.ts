@@ -291,7 +291,9 @@ export async function authIdempotentTransaction<T>(
       subject_fingerprint: subjectFingerprint,
       request_fingerprint: requestFingerprint,
     };
-    const response = await handler(tx);
+    // Return the same canonical object shape used for encrypted storage so a
+    // lost-response replay is byte-identical after Fastify serialization.
+    const response = JSON.parse(canonicalJson(await handler(tx))) as AuthReplayEnvelope<T>;
     const encrypted = encryptReplay(identity, response);
     await tx.query(
       `UPDATE auth_idempotency_records

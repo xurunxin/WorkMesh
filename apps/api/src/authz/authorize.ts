@@ -33,6 +33,7 @@ type AgentFacts = {
   project_id: string | null
   project_exists: boolean
   delegation_status: string
+  delegation_scope_type: string
   capability_scope: {
     teamIds?: string[]
     workItemIds?: string[]
@@ -73,6 +74,7 @@ type ExplicitResourceKind =
   | 'work_item'
   | 'comment'
   | 'agent_definition'
+  | 'agent_connection'
   | 'delegation'
   | 'agent_session'
   | 'artifact'
@@ -104,6 +106,7 @@ const resourceSegments: Readonly<Record<string, {
   'work-items': { kind: 'work_item', resolver: 'work_item' },
   comments: { kind: 'comment', resolver: 'comment' },
   agents: { kind: 'agent_definition', resolver: 'agent_definition' },
+  'agent-connections': { kind: 'agent_connection', resolver: 'agent_connection' },
   delegations: { kind: 'delegation', resolver: 'delegation' },
   'agent-sessions': { kind: 'agent_session', resolver: 'agent_session' },
   artifacts: { kind: 'artifact', resolver: 'artifact' },
@@ -158,6 +161,7 @@ function resourceTeamSql(kind: ExplicitResourceKind): string {
     case 'work_item': return 'SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
     case 'comment': return 'SELECT w.team_id FROM comments c JOIN channels ch ON ch.id=c.channel_id JOIN work_items w ON w.id=ch.work_item_id AND w.workspace_id=ch.workspace_id WHERE c.id=$1 AND ch.workspace_id=$2 AND c.deleted_at IS NULL AND w.deleted_at IS NULL'
     case 'agent_definition': return 'SELECT NULL::uuid AS team_id FROM agent_definitions WHERE id=$1 AND workspace_id=$2'
+    case 'agent_connection': return 'SELECT team_id FROM agent_connections WHERE id=$1 AND workspace_id=$2'
     case 'delegation': return 'SELECT team_id FROM delegations WHERE id=$1 AND workspace_id=$2'
     case 'agent_session': return 'SELECT team_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2'
     case 'artifact': return 'SELECT s.team_id FROM artifacts a JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2'
@@ -276,7 +280,7 @@ async function loadAgentFacts(
     `SELECT s.id,s.state,s.parent_session_id,s.team_id,s.work_item_id,
       scope_project.id AS work_item_project_id,s.project_id,
       session_project.id IS NOT NULL AS project_exists,
-      d.status AS delegation_status,d.capability_scope,d.permissions_snapshot,
+      d.status AS delegation_status,d.scope_type AS delegation_scope_type,d.capability_scope,d.permissions_snapshot,
       a.approved_capabilities AS definition_capabilities,a.is_active AS agent_active,
       ata.approved_capabilities AS team_capabilities
      FROM agent_sessions s
@@ -335,6 +339,7 @@ function resourceInScope(
   const query = queryParams(request)
   const scope = facts.capability_scope ?? {}
   if (!scope.teamIds?.includes(teamId ?? facts.team_id)) return false
+  if (facts.delegation_scope_type === 'team') return true
   const workItemId = request.routeOptions.url?.includes('/work-items/')
     ? params.id
     : query.workItemId

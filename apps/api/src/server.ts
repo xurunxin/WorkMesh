@@ -93,6 +93,7 @@ import {
   type RealtimeWakeSource,
 } from "./realtime/wake-source.js";
 import { registerRealtimeRoutes } from "./realtime/routes.js";
+import { registerAgentConnectionRoutes, resolveCoordinationIdentity } from "./agent-connections.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -121,6 +122,8 @@ const publicPaths = new Set([
   "/livez",
   "/readyz",
   "/health",
+  "/.well-known/workmesh-agent",
+  "/api/v1/agent-connections/redeem",
 ]);
 
 const stable = (value: unknown): unknown => {
@@ -343,6 +346,7 @@ export const buildApp = (options: {
       "If-Match",
       "X-Correlation-Id",
       "Last-Event-ID",
+      "X-WorkMesh-Installation-Token",
     ],
     exposedHeaders: ["ETag", "Retry-After", "RateLimit-Remaining", "RateLimit-Reset"],
   });
@@ -377,6 +381,22 @@ export const buildApp = (options: {
       request.routeOptions.url === "/health" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/exchange" || request.routeOptions.url === "/api/v1/agent-sessions/:id/token/refresh" || request.routeOptions.url === "/api/v1/provider-webhooks/:connectionId/github"
     )
       return;
+    const coordinationToken = header(request, "x-workmesh-installation-token");
+    if (coordinationToken) {
+      const identity = await resolveCoordinationIdentity(db, coordinationToken);
+      request.actor = {
+        id: identity.agent_actor_id,
+        workspaceId: identity.connection.workspace_id,
+        displayName: identity.connection.name,
+        csrfToken: "",
+        workspaceRole: "member",
+        kind: "agent",
+        agentSessionId: identity.coordination_session.id,
+        authentication: "agent_session",
+        credentialHash: tokenHash(coordinationToken),
+      };
+      return;
+    }
     const bearer = header(request, "authorization")?.replace(/^Bearer\s+/i, "");
     if (bearer) {
       const agent = (await db.query<{
@@ -537,13 +557,19 @@ export const buildApp = (options: {
           ? 401
           : error.code === "FORBIDDEN" || error.code === "FEATURE_DISABLED" || error.code === "RESOURCE_SCOPE_DENIED" || error.code === "SESSION_SCOPE_DENIED" || error.code === "CAPABILITY_DENIED" || error.code === "APPROVAL_REQUIRED" || error.code === "REPOSITORY_ACCESS_DENIED" || error.code === "REPOSITORY_PATH_DENIED" || error.code === "PROVIDER_SIGNATURE_INVALID"
             ? 403
-            : error.code === "NOT_FOUND"
+            : error.code === "NOT_FOUND" || error.code === "AGENT_CONNECTION_PAIRING_INVALID"
               ? 404
+              : error.code === "AGENT_CONNECTION_PAIRING_EXPIRED"
+                ? 410
+                : error.code === "AGENT_CONNECTION_PAIRING_LOCKED"
+                  ? 423
+                  : error.code === "AGENT_CONNECTION_PRIVILEGE_ESCALATION" || error.code === "COORDINATOR_PRINCIPAL_HUMAN_INVALID"
+                    ? 422
               : error.code.includes("CONFLICT") ||
                   error.code.endsWith("OUT_OF_ORDER") ||
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
-                  error.code === "CURSOR_EXPIRED" ||
+                  error.code === "CURSOR_EXPIRED" || error.code === "AGENT_CONNECTION_REVOKED" || error.code === "AGENT_CONNECTION_PAIRING_CONSUMED" ||
                   ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED"].includes(error.code)
                 ? 409
                 : 400;
@@ -1108,6 +1134,7 @@ export const buildApp = (options: {
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);
+  registerAgentConnectionRoutes(app, { db, webOrigin: config.WEB_ORIGIN, meta: commandContext, header });
   return app;
 };
 

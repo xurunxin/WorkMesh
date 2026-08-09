@@ -45,8 +45,8 @@ describe('authentication rate-limit metric summaries', () => {
     expect(records).toHaveLength(1)
   })
 
-  it('bounds labels to the four endpoint classes and five outcomes', () => {
-    expect(authRateLimitEndpoints).toHaveLength(4)
+  it('bounds labels to the five endpoint classes and five outcomes', () => {
+    expect(authRateLimitEndpoints).toHaveLength(5)
     expect(authRateLimitOutcomes).toHaveLength(5)
     const metrics = new AuthRateLimitMetrics()
     expect(() =>

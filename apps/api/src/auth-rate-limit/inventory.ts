@@ -1,8 +1,8 @@
 import { routePolicyManifest } from "@workmesh/contracts";
 
 export type AuthRateLimitEndpointClass =
-  "install" | "login" | "agent_token" | "handoff_target";
-export type AuthRateLimitSubject = "none" | "email" | "session" | "handoff";
+  "install" | "login" | "agent_token" | "handoff_target" | "pairing";
+export type AuthRateLimitSubject = "none" | "email" | "session" | "handoff" | "pairing";
 
 export type AuthRateLimitRoute = Readonly<{
   method: "GET" | "POST";
@@ -33,6 +33,7 @@ const runtimeBindings: Readonly<Record<string, RuntimeBinding>> = Object.freeze(
     subject: "handoff",
   },
   rejectHandoff: { endpointClass: "handoff_target", subject: "handoff" },
+  redeemAgentConnection: { endpointClass: "pairing", subject: "pairing" },
 });
 
 const declaredCredentialRoutes = routePolicyManifest.filter(
@@ -51,6 +52,8 @@ function classForPath(path: string): RuntimeBinding {
     return { endpointClass: "agent_token", subject: "session" };
   if (/^\/api\/v1\/handoffs\/\{[^}]+\}\/(?:inspect|reject)$/.test(path))
     return { endpointClass: "handoff_target", subject: "handoff" };
+  if (path === "/api/v1/agent-connections/redeem")
+    return { endpointClass: "pairing", subject: "pairing" };
   throw new Error(
     `Authentication rate-limit route has no endpoint-class rule: ${path}`,
   );

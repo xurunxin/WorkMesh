@@ -27,6 +27,8 @@
     "test:conformance": "pnpm --filter @workmesh/conformance conformance",
     "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",
     "check:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts --check",
+    "generate:workmesh-skill": "node scripts/generate-workmesh-skill-artifact.mjs",
+    "check:workmesh-skill": "node scripts/generate-workmesh-skill-artifact.mjs --check",
     "validate:production-images": "node -- scripts/validate-production-images.mjs",
     "test:load:realtime": "pnpm --filter @workmesh/api test:load:realtime",
     "test:load:heartbeat": "pnpm -C apps/api exec tsx ../../scripts/heartbeat-load.mts",

@@ -39,7 +39,7 @@ describe('Agent Collaboration Client Profile contract', () => {
         activeDelegation: true,
         liveGrantIntersection: true,
       },
-      transports: { mcpBindings: ['resource:agent-capabilities'] },
+      transports: { mcpBindings: ['resource:agent-capabilities', 'tool:get_current_identity', 'tool:verify_connection'] },
     })
     expect(mcpPolicyBindings['resource:agent-capabilities'].operationId).toBe('getAgentCapabilityManifest')
     expect(manifest.operations.filter(operation => operation.feature.key).every(operation => !operation.supported)).toBe(true)

@@ -12,7 +12,7 @@ export const eventArchiveSegmentState = pgEnum('event_archive_segment_state', ['
 export const eventArchiveMembershipState = pgEnum('event_archive_membership_state', ['pending_exact', 'exact', 'legacy_unindexed'])
 export const agentProtocol = pgEnum('agent_protocol', ['native_http', 'mcp', 'a2a'])
 export const delegationRole = pgEnum('delegation_role', ['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
-export const delegationScopeType = pgEnum('delegation_scope_type', ['work_item', 'plan_step', 'project', 'automation'])
+export const delegationScopeType = pgEnum('delegation_scope_type', ['work_item', 'plan_step', 'project', 'automation', 'team'])
 export const delegationStatus = pgEnum('delegation_status', ['active', 'revoked', 'expired', 'completed'])
 export const webhookSecretStatus = pgEnum('webhook_secret_status', ['active', 'retiring', 'revoked'])
 export const agentSessionState = pgEnum('agent_session_state', ['queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled'])
@@ -269,6 +269,19 @@ export const agentWebhookSecrets = pgTable('agent_webhook_secrets', {
 export const agentInstallationTokens = pgTable('agent_installation_tokens', {
   id: uuid('id').primaryKey(), agentId: uuid('agent_id').notNull(), tokenHash: text('token_hash').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }), lastUsedAt: timestamp('last_used_at', { withTimezone: true }), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdByActorId: uuid('created_by_actor_id'), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
 })
+export const agentConnections = pgTable('agent_connections', {
+  id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id').notNull(), agentId: uuid('agent_id').notNull(), agentActorId: uuid('agent_actor_id').notNull(), principalHumanActorId: uuid('principal_human_actor_id').notNull(), delegationId: uuid('delegation_id').notNull(),
+  name: text('name').notNull(), agentSlug: text('agent_slug').notNull(), clientType: text('client_type').notNull(), status: text('status').notNull(), requestedCapabilities: text('requested_capabilities').array().notNull(), grantedCapabilities: text('granted_capabilities').array().notNull(), grantAgentDelegate: boolean('grant_agent_delegate').notNull(), notes: text('notes'), skillVersion: text('skill_version'), skillSha256: text('skill_sha256'), activeCredentialFingerprintPrefix: text('active_credential_fingerprint_prefix'), pairingCodeExpiresAt: timestamp('pairing_code_expires_at', { withTimezone: true }), lastUsedAt: timestamp('last_used_at', { withTimezone: true }), rotatedAt: timestamp('rotated_at', { withTimezone: true }), revokedAt: timestamp('revoked_at', { withTimezone: true }), revision: integer('revision').notNull(), createdByActorId: uuid('created_by_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
+export const agentConnectionPairings = pgTable('agent_connection_pairings', {
+  id: uuid('id').primaryKey(), connectionId: uuid('connection_id').notNull(), codeHash: text('code_hash').notNull(), purpose: text('purpose').notNull(), expectedAgentSlug: text('expected_agent_slug').notNull(), expectedClientType: text('expected_client_type').notNull(), attempts: integer('attempts').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), overlapUntil: timestamp('overlap_until', { withTimezone: true }), consumedAt: timestamp('consumed_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const agentConnectionCredentials = pgTable('agent_connection_credentials', {
+  id: uuid('id').primaryKey(), connectionId: uuid('connection_id').notNull(), tokenHash: text('token_hash').notNull(), fingerprintPrefix: text('fingerprint_prefix').notNull(), status: text('status').notNull(), validFrom: timestamp('valid_from', { withTimezone: true }).notNull(), overlapUntil: timestamp('overlap_until', { withTimezone: true }), lastUsedAt: timestamp('last_used_at', { withTimezone: true }), revokedAt: timestamp('revoked_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+})
+export const agentCoordinationSessions = pgTable('agent_coordination_sessions', {
+  id: uuid('id').primaryKey(), agentSessionId: uuid('agent_session_id').notNull(), connectionId: uuid('connection_id').notNull(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id').notNull(), agentId: uuid('agent_id').notNull(), agentActorId: uuid('agent_actor_id').notNull(), principalHumanActorId: uuid('principal_human_actor_id').notNull(), delegationId: uuid('delegation_id').notNull(), grantedCapabilities: text('granted_capabilities').array().notNull(), status: text('status').notNull(), expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(), refreshedAt: timestamp('refreshed_at', { withTimezone: true }), closedAt: timestamp('closed_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
+})
 export const delegations = pgTable('delegations', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id').notNull(), agentId: uuid('agent_id').notNull(), agentActorId: uuid('agent_actor_id').notNull(),
   principalHumanActorId: uuid('principal_human_actor_id').notNull(), workItemId: uuid('work_item_id'), role: delegationRole('role').notNull(), scopeType: delegationScopeType('scope_type').notNull(),
@@ -292,6 +305,7 @@ export const agentSessions = pgTable('agent_sessions', {
   stopRequestedAt: timestamp('stop_requested_at', { withTimezone: true }), stopAcknowledgedAt: timestamp('stop_acknowledged_at', { withTimezone: true }), resultSummary: text('result_summary'), resultEvidence: jsonb('result_evidence').notNull(),
   noArtifactReason: text('no_artifact_reason'), errorCode: text('error_code'), errorSummary: text('error_summary'), endedAt: timestamp('ended_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
   maxChildSessions: integer('max_child_sessions').notNull(), inheritedBudget: jsonb('inherited_budget').notNull(), requiredForParent: boolean('required_for_parent').notNull(), planStepVersionId: uuid('plan_step_version_id'), automationRunId: uuid('automation_run_id'),
+  sessionKind: text('session_kind').notNull(), coordinationConnectionId: uuid('coordination_connection_id'),
 })
 export const agentPlanVersions = pgTable('agent_plan_versions', {
   id: uuid('id').primaryKey(), sessionId: uuid('session_id').notNull(), revision: integer('revision').notNull(), parentVersionId: uuid('parent_version_id'), changeSummary: text('change_summary').notNull(), authorActorId: uuid('author_actor_id').notNull(), createdAt: timestamp('created_at', { withTimezone: true }).notNull(),

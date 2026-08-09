@@ -6,6 +6,7 @@ import {
 } from './route-policy.js'
 
 export * from './route-policy.js'
+export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 
 export const releaseMetadata = Object.freeze({
   serverVersion: '1.0.0',
@@ -25,6 +26,7 @@ export const featureKeySchema = z.enum([
   'WORKMESH_BETA_COSTS',
   'WORKMESH_BETA_GITEA',
   'WORKMESH_BETA_OPERATIONS_UI',
+  'WORKMESH_BETA_COORDINATION_MCP',
   'WORKMESH_EXPERIMENTAL_AUTOMATION',
   'WORKMESH_EXPERIMENTAL_AGENT_LOOPS',
   'WORKMESH_EXPERIMENTAL_A2A',
@@ -45,6 +47,7 @@ export const featureDefinitions = Object.freeze([
   { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
   { key: 'WORKMESH_BETA_GITEA', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
   { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['web'] },
+  { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker', 'sdk-mcp'] },
   { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
   { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
@@ -91,6 +94,8 @@ const featureRoutePrefixes = [
   ['/api/v1/automation-runs', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
   ['/api/v1/notifications', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/notification-preferences', 'WORKMESH_BETA_PLANNING'],
+  ['/api/v1/agent-connections', 'WORKMESH_BETA_COORDINATION_MCP'],
+  ['/.well-known/workmesh-agent', 'WORKMESH_BETA_COORDINATION_MCP'],
   ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
   ['/api/v1/a2a-bindings', 'WORKMESH_EXPERIMENTAL_A2A'],
 ] as const satisfies readonly (readonly [string, FeatureKey])[]
@@ -1417,6 +1422,7 @@ export const agentRouteManifest = [
   ...stage2RouteManifest,
   ...stage3RouteManifest,
   ...stage4RouteManifest,
+  ...stage5RouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {
@@ -1619,7 +1625,7 @@ export type A2AProtocolVersion = '0.3'
 //     preserved. .passthrough() is never used, so undeclared secrets
 //     cannot leak through a Connection response.
 
-const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi'] as const
+const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi', 'generic_mcp'] as const
 export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeValues)
 
 export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])

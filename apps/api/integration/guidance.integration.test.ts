@@ -89,7 +89,7 @@ describe('versioned Guidance acceptance', () => {
     const manifest = agentCapabilityManifestResponseSchema.parse(manifestResponse.json())
     expect(manifest.agent).toMatchObject({ sessionId: started.id, supportedProtocols: ['native_http'] })
     expect(manifest.agent.effectiveCapabilities).toEqual(expect.arrayContaining(capabilities))
-    expect(manifest.operations.find(operation => operation.operationId === 'getAgentCapabilityManifest')).toMatchObject({ supported: true, eligibleByCapability: true, transports: { mcpBindings: ['resource:agent-capabilities'] } })
+    expect(manifest.operations.find(operation => operation.operationId === 'getAgentCapabilityManifest')).toMatchObject({ supported: true, eligibleByCapability: true, transports: { mcpBindings: expect.arrayContaining(['resource:agent-capabilities']) } })
     expect(manifest.extensions.find(extension => extension.id === 'workmesh.engineering-graph')).toMatchObject({ enabled: false, negotiationRequired: true })
 
     const limitedWorkResponse = await humanCall(human, 'POST', '/api/v1/work-items', { teamId, projectId, title: 'Capability discovery without read grant', statusId: readyId, responsibleHumanActorId: actor.id })
