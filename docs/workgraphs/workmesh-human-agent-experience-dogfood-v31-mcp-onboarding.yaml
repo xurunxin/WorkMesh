@@ -1,6 +1,6 @@
 TaskGraph:
   graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
-  version: 7
+  version: 8
   goal:
     objective: "Deliver GEN-11 as an authority-safe Human MCP onboarding and diagnostics experience, and dogfood the exact Human-to-Agent connection journey without weakening WorkMesh identity, Session, Delegation, capability, revision, idempotency, event, or service boundaries."
     deliverables:
@@ -33,6 +33,15 @@ TaskGraph:
       - artifacts/approvals/dogfood-v31-coordination-feature-activation-human-approval.json
       - artifacts/runtime/dogfood-v31-coordination-feature-activation.json
       - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json
+      - artifacts/plans/dogfood-v31-public-mcp-origin-routing-graph-amendment-proposal.json
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-routing-graph-amendment-approval.json
+      - artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json
+      - artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json
+      - artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-routing-request.json
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json
+      - artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json
+      - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json
       - artifacts/workmesh/dogfood-v31-gen11-completion.json
     acceptance:
       - id: V31-G1
@@ -85,7 +94,7 @@ TaskGraph:
     permissions:
       read: [active_v30_source, active_runtime, WorkMesh_MCP, WorkMesh_API, repository_specs]
       write: [v31_candidate_source, versioned_artifacts, v31_execution_state, exact_GEN11_WorkMesh_fields]
-      external_mutation: [exact_GEN11_start_and_completion, Human_approved_v31_activation, Human_approved_bounded_connection_fixture]
+      external_mutation: [exact_GEN11_start_and_completion, Human_approved_v31_activation, Human_approved_API_public_origin_binding, Human_approved_bounded_connection_fixture]
       prohibited: [Git_mutation, GitHub_CI, broad_security_scan, hidden_chain_of_thought, unrelated_WorkMesh_mutation]
     budgets:
       max_write_parallel: 1
@@ -106,7 +115,10 @@ TaskGraph:
       coordination_production_compensation_repair_rounds: 1
       coordination_production_compensation_gate_attempts: 1
       coordination_feature_activation_attempts: 1
-      active_browser_attempts: 2
+      public_origin_routing_repair_rounds: 1
+      public_origin_routing_gate_attempts: 1
+      public_origin_routing_activation_attempts: 1
+      active_browser_attempts: 3
       mcp_fixture_mutations: 4
       mcp_completion_mutations: 1
       external_spend_usd: 0
@@ -934,11 +946,140 @@ TaskGraph:
       iteration: {max_rounds: 1}
       approval: {required: true, before: approve-v31-active-coordination-feature-activation}
       status: pending
+    - id: repair-v31-active-public-mcp-origin-routing
+      title: "Repair the active public MCP origin binding"
+      objective: "Bind the active API public origin to the existing same-origin router at http://127.0.0.1:3301, where discovery and MCP already converge, and prepare an API-only versioned activation/rollback contract without changing product source or any active service."
+      type: work
+      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json, artifacts/runtime/dogfood-v31-coordination-feature-activation.json, artifacts/approvals/dogfood-v31-public-mcp-origin-routing-graph-amendment-approval.json]
+      output_contract:
+        artifact_type: repair_bundle
+        path_or_ref: artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json
+        schema: DogfoodV31PublicMcpOriginRoutingRepair/v1
+      acceptance:
+        - id: V31-N13C-A1
+          assertion: "The repaired API runtime binds WEB_ORIGIN to http://127.0.0.1:3301; that exact origin serves discovery 200 and MCP unauthenticated readiness 401, while Web 3300 remains the renderer only."
+        - id: V31-N13C-A2
+          assertion: "The repair changes no product source and leaves Web, MCP, Worker, router, compatibility, MinIO, database, object storage, WorkMesh, packages, lockfiles, and schemas unchanged."
+        - id: V31-N13C-A3
+          assertion: "A versioned API-only activation and rollback contract binds exact old/new API selectors, protected roles, authorization, pre-cutover retained-owner compensation, terminal receipts, DryRun, runtime invariance, and future-artifact absence."
+      evidence_required: [endpoint counterexample, ADR and runtime source audit, versioned contract and scripts, executable compensation matrix, exact DryRuns, runtime invariance]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G6, V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: public-mcp-origin-routing-repair-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/runtime/dogfood-v31-public-mcp-origin-routing
+      priority: 10
+      risk: critical
+      budget: {public_origin_routing_repair_rounds: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: dogfood-v31-public-mcp-origin-routing-graph-amendment-approval}
+      status: pending
+    - id: verify-v31-active-public-mcp-origin-routing
+      title: "Independently Gate the public MCP origin repair"
+      objective: "Freshly verify the exact v8 graph, repair bundle, API-only activation contract, discovery/MCP same-origin behavior, production compensation seam, authorization, DryRuns, runtime invariance, and zero residue before any request is created."
+      type: verify
+      inputs: [artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json, artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json, artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json]
+      output_contract:
+        artifact_type: gate_report
+        path_or_ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml
+        schema: GateReport/v1
+      acceptance:
+        - id: V31-N13V3-A1
+          assertion: "All fixed-input, route-origin, authorization, compensation, DryRun, runtime, future-absence, and cleanup checks PASS with no unresolved major or critical finding; scope is request_creation_only and service replacement remains unauthorized."
+      evidence_required: [fresh fixed-input audit, same-origin endpoint probe, executable production compensation matrix, exact DryRuns, runtime before and after, future absence]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G6, V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: fresh-independent-public-origin-verifier
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification
+      priority: 10
+      risk: critical
+      budget: {public_origin_routing_gate_attempts: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: false, before: null}
+      status: pending
+    - id: approve-v31-active-public-mcp-origin-routing
+      title: "Human Gate the API public MCP origin activation"
+      objective: "Create one fresh exact expiring request after the independent PASS Gate, then wait for a distinct Human approval bound to Graph v8, the API-only contract, old/new API selectors, protected runtime, and mandatory compensation."
+      type: approval
+      inputs: [artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml, artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json]
+      output_contract:
+        artifact_type: human_approval
+        path_or_ref: artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json
+        schema: HumanApproval/v1
+      acceptance:
+        - id: V31-N13H2-A1
+          assertion: "Approval is explicit, unexpired, exact-hash-bound, single-use, and authorizes only one API WEB_ORIGIN binding activation with mandatory compensation."
+      evidence_required: [exact request, explicit Human decision, expiry, selector binding, prior approval non-reuse]
+      covers_goal_acceptance: [V31-G9]
+      capabilities: [filesystem_read, filesystem_write, human_approval]
+      owner: human-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/approvals
+      priority: 10
+      risk: critical
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: verify-v31-active-public-mcp-origin-routing}
+      status: pending
+    - id: activate-v31-active-public-mcp-origin-routing
+      title: "Activate the API public MCP origin binding only"
+      objective: "Consume the exact new Human approval once, replace only the API supervisor with WEB_ORIGIN=http://127.0.0.1:3301, prove discovery/MCP convergence and health7/7, and restore the exact old API supervisor with a durable terminal receipt on any failure."
+      type: work
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json, artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json]
+      output_contract:
+        artifact_type: activation_receipt
+        path_or_ref: artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json
+        schema: DogfoodV31PublicMcpOriginRoutingActivation/v1
+      acceptance:
+        - id: V31-N13A2-A1
+          assertion: "Only the API supervisor changes; discovery at 3301 self-references 3301 and its MCP URL returns 401, while all seven runtime health checks, v31 build exclusivity, protected selectors, database, object storage, and WorkMesh remain exact."
+        - id: V31-N13A2-A2
+          assertion: "Any failure produces a durable terminal compensation receipt and restores or retains the exact old API owner without duplicate or unknown listeners."
+      evidence_required: [activation receipt, API supervisor state, discovery and MCP probes, health/build/data readback, terminal compensation evidence]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G6, V31-G8, V31-G9]
+      capabilities: [service_control, filesystem_write]
+      owner: public-origin-activation-owner
+      workspace: G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation
+      priority: 10
+      risk: critical
+      budget: {public_origin_routing_activation_attempts: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: approve-v31-active-public-mcp-origin-routing}
+      status: pending
+    - id: capture-v31-active-evidence-attempt-3
+      title: "Capture replacement active Human plus Agent acceptance"
+      objective: "Use exactly one versioned replacement Browser attempt after the API-only public-origin activation to complete the active Connections lifecycle, real verify_connection, request audit, secret absence, responsive/accessibility, fixture cleanup, runtime, database, and WorkMesh evidence."
+      type: work
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json, artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json]
+      output_contract:
+        artifact_type: human_agent_acceptance
+        path_or_ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json
+        schema: DogfoodV31ActiveAcceptance/v1
+      acceptance:
+        - id: V31-N13D-A1
+          assertion: "Fresh active Browser and Agent evidence directly proves V31-G2 through V31-G7 on the served v31 build with discovery and MCP on the exact 3301 public origin."
+        - id: V31-N13D-A2
+          assertion: "The bounded fixture create/redeem/verify/revoke sequence is exact, idempotent, redacted, auditable, and fully cleaned."
+        - id: V31-N13D-A3
+          assertion: "Viewport reset, exactly-once Browser finalize, raw request window, runtime/database post-readback, and fixture/process cleanup all pass."
+      evidence_required: [active screenshots and DOM, MCP transcript without secrets, raw methods, durable events, fixture cleanup, runtime and database readback]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G4, V31-G5, V31-G6, V31-G7, V31-G8, V31-G9]
+      capabilities: [browser, workmesh_read, bounded_workmesh_write, local_process]
+      owner: active-evidence-owner-attempt-3
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/design/human-journey-attempt-31
+      priority: 10
+      risk: critical
+      budget: {active_browser_attempts: 1, mcp_fixture_mutations: 4}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: approve-v31-active-public-mcp-origin-routing}
+      status: pending
     - id: verify-v31-final
       title: "Independently Gate active v31 acceptance"
       objective: "Independently verify all fixed implementation, activation, Human, Agent, request, event, redaction, cleanup, runtime, database, and WorkMesh evidence before GEN-11 completion."
       type: verify
-      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json, artifacts/runtime/dogfood-v31-coordination-feature-activation.json]
+      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json, artifacts/runtime/dogfood-v31-coordination-feature-activation.json]
       output_contract:
         artifact_type: gate_report
         path_or_ref: artifacts/gates/dogfood-v31-gen11-final-gate.yaml
@@ -1122,19 +1263,39 @@ TaskGraph:
       type: requires
       transfers: [{ref: artifacts/runtime/dogfood-v31-coordination-feature-activation.json, consumed_as: exact repaired active API and Worker selectors}]
     - from: capture-v31-active-evidence-attempt-2
+      to: repair-v31-active-public-mcp-origin-routing
+      type: informs
+      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json, consumed_as: immutable V31-ACTIVE-002 public-origin endpoint counterexample}]
+    - from: repair-v31-active-public-mcp-origin-routing
+      to: verify-v31-active-public-mcp-origin-routing
+      type: validates
+      transfers: [{ref: artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json, consumed_as: exact API-only origin-binding repair and versioned activation contract}]
+    - from: verify-v31-active-public-mcp-origin-routing
+      to: approve-v31-active-public-mcp-origin-routing
+      type: approves
+      transfers: [{ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml, consumed_as: one fresh exact API-only activation request authority}]
+    - from: approve-v31-active-public-mcp-origin-routing
+      to: activate-v31-active-public-mcp-origin-routing
+      type: approves
+      transfers: [{ref: artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json, consumed_as: exact single-use API public-origin activation authority}]
+    - from: activate-v31-active-public-mcp-origin-routing
+      to: capture-v31-active-evidence-attempt-3
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json, consumed_as: exact repaired active API and protected runtime selectors}]
+    - from: capture-v31-active-evidence-attempt-3
       to: verify-v31-final
       type: validates
-      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json, consumed_as: exact repaired active Human Agent request event and cleanup evidence}]
+      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, consumed_as: exact replacement active Human Agent request event and cleanup evidence}]
     - from: verify-v31-final
       to: complete-v31-gen11
       type: approves
       transfers: [{ref: artifacts/gates/dogfood-v31-gen11-final-gate.yaml, consumed_as: exact GEN-11 completion authority}]
   terminal_nodes: [complete-v31-gen11]
-  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation]
+  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation, approve-v31-active-public-mcp-origin-routing]
   stop_policy:
     success_when:
       - all terminal nodes passed
-    max_rounds: 44
+    max_rounds: 52
     max_consecutive_no_progress: 2
     stop_on:
       - any unauthorized write, secret exposure, Git mutation, security-scan claim, or active replacement without exact Human approval

@@ -1,0 +1,31 @@
+{
+  "artifactVersion": 1,
+  "kind": "HumanApproval",
+  "decisionId": "dogfood-v31-public-mcp-origin-routing-graph-amendment-approval",
+  "decision": "approved",
+  "actorKind": "Human",
+  "actor": "user",
+  "recordedAt": "2026-08-14T14:18:37.5581151Z",
+  "scope": "v31_public_mcp_origin_routing_graph_v8_repair_contract_and_replacement_browser_preparation",
+  "proposal": "artifacts/plans/dogfood-v31-public-mcp-origin-routing-graph-amendment-proposal.json",
+  "proposalSha256": "65587a2d63c0f63216f8ed0bea6f7217d2a2cf2925b19260e2807bc8b0a5f88a",
+  "boundGraph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+  "boundState": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:45953add79f61767ec53b95253c4a0e8e9cf33d56dfecb9654ed4965f0750454",
+  "boundEvents": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@sha256:2ad6d6e61735cda2fcb1ea2f41b3556175ba1157a1ab7f5229defae8a5e0dd2b",
+  "userApprovalText": "批准",
+  "allows": [
+    "version TaskGraph from v7 to v8 with the bounded repair subgraph",
+    "increase active_browser_attempts from 2 to 3 for one replacement attempt",
+    "prepare and independently verify an API-only WEB_ORIGIN runtime repair contract",
+    "commit and push the approved control-plane checkpoint"
+  ],
+  "doesNotAllow": [
+    "service replacement or process control",
+    "reuse of any prior activation approval",
+    "database or object-storage mutation",
+    "WorkMesh fixture or GEN-11 completion mutation",
+    "Browser execution before the repaired service is separately approved and activated",
+    "security approval"
+  ],
+  "singleUse": true
+}
