@@ -22,6 +22,7 @@ type OpenPullRequestFixture = Fixture & {
   planStepId: string
   actionId: string
 }
+type ReviewerFixture = { actorId: string; sessionId: string }
 
 async function fixture(): Promise<Fixture> {
   const workspaceId = (await db.query<{ id: string }>("INSERT INTO workspaces(name,slug) VALUES('Worker Stage 3',$1) RETURNING id", [`worker-${randomUUID()}`])).rows[0]!.id
@@ -148,6 +149,47 @@ async function openPullRequestFixture(f: Fixture): Promise<OpenPullRequestFixtur
     planStepId,
     actionId,
   }
+}
+
+async function createReviewerFixture(f: OpenPullRequestFixture): Promise<ReviewerFixture> {
+  const actorId = (await db.query<{ id: string }>(
+    "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Independent reviewer') RETURNING id",
+    [f.workspaceId],
+  )).rows[0]!.id
+  const capabilities = ['artifact:write', 'repo:read']
+  const agentId = (await db.query<{ id: string }>(
+    `INSERT INTO agent_definitions(
+       workspace_id,actor_id,slug,display_name,requested_capabilities,approved_capabilities)
+     VALUES($1,$2,$3,'Independent reviewer',$4,$4) RETURNING id`,
+    [f.workspaceId, actorId, `reviewer-${randomUUID()}`, capabilities],
+  )).rows[0]!.id
+  const delegationId = (await db.query<{ id: string }>(
+    `INSERT INTO delegations(
+       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,
+       role,scope_type,scope_id,permissions_snapshot,capability_scope)
+     VALUES($1,$2,$3,$4,$5,$6,'reviewer','work_item',$6,$7,$8) RETURNING id`,
+    [f.workspaceId, f.teamId, agentId, actorId, f.humanId, f.workItemId, capabilities,
+      {
+        workspaceId: f.workspaceId,
+        teamIds: [f.teamId],
+        projectIds: [f.projectId],
+        workItemIds: [f.workItemId],
+        repositoryIds: [f.repositoryId],
+      }],
+  )).rows[0]!.id
+  await db.query(
+    `INSERT INTO agent_team_access(
+       workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities)
+     VALUES($1,$2,$3,$4,$5)`,
+    [f.workspaceId, agentId, f.teamId, f.humanId, capabilities],
+  )
+  const sessionId = (await db.query<{ id: string }>(
+    `INSERT INTO agent_sessions(
+       workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state)
+     VALUES($1,$2,$3,$4,$5,$6,'executing') RETURNING id`,
+    [f.workspaceId, f.teamId, agentId, actorId, delegationId, f.workItemId],
+  )).rows[0]!.id
+  return { actorId, sessionId }
 }
 
 function numericPullRequestProvider(provider: FakeGitProvider): GitProvider {
@@ -666,20 +708,21 @@ describe('Stage 3 provider webhook worker', () => {
       [[checkDeliveryId, reviewDeliveryId]],
     )).rows[0]).toEqual({ count: 2 })
 
+    const reviewer = await createReviewerFixture(f)
     const reviewArtifactId = (await db.query<{ id: string }>(
       `INSERT INTO artifacts(
          workspace_id,session_id,work_item_id,producer_actor_id,type,title,checksum,source_tool,metadata)
        VALUES($1,$2,$3,$4,'code_review','Independent recovered-head review',$5,
          'integration-reviewer','{"source":"worker-integration"}'::jsonb)
        RETURNING id`,
-      [f.workspaceId, f.sessionId, f.workItemId, f.humanId, `sha256:${'d'.repeat(64)}`],
+      [f.workspaceId, reviewer.sessionId, f.workItemId, reviewer.actorId, `sha256:${'d'.repeat(64)}`],
     )).rows[0]!.id
     await db.query(
       `INSERT INTO structured_reviews(
          pull_request_id,reviewer_session_id,reviewer_actor_id,artifact_id,head_sha,
          verdict,summary,evidence,metadata)
        VALUES($1,$2,$3,$4,$5,'approved','Independent recovered-head approval','[]'::jsonb,'{}'::jsonb)`,
-      [reconciled.id, f.sessionId, f.humanId, reviewArtifactId, opened.headSha],
+      [reconciled.id, reviewer.sessionId, reviewer.actorId, reviewArtifactId, opened.headSha],
     )
 
     const approvalId = (await db.query<{ id: string }>(
@@ -1340,20 +1383,21 @@ describe('Stage 3 provider webhook worker', () => {
        RETURNING id`,
       [f.workspaceId, f.repositoryId, f.workItemId, f.sessionId, f.agentActorId],
     )).rows[0]!.id
+    const reviewer = await createReviewerFixture(f)
     const reviewArtifactId = (await db.query<{ id: string }>(
       `INSERT INTO artifacts(
          workspace_id,session_id,work_item_id,producer_actor_id,type,title,checksum,source_tool,metadata)
        VALUES($1,$2,$3,$4,'code_review','Independent current-head review',$5,
          'integration-reviewer','{"source":"worker-integration"}'::jsonb)
        RETURNING id`,
-      [f.workspaceId, f.sessionId, f.workItemId, f.humanId, `sha256:${'f'.repeat(64)}`],
+      [f.workspaceId, reviewer.sessionId, f.workItemId, reviewer.actorId, `sha256:${'f'.repeat(64)}`],
     )).rows[0]!.id
     await db.query(
       `INSERT INTO structured_reviews(
          pull_request_id,reviewer_session_id,reviewer_actor_id,artifact_id,head_sha,
          verdict,summary,evidence,metadata)
        VALUES($1,$2,$3,$4,'race-head','approved','Independent approval','[]'::jsonb,'{}'::jsonb)`,
-      [pullRequestId, f.sessionId, f.humanId, reviewArtifactId],
+      [pullRequestId, reviewer.sessionId, reviewer.actorId, reviewArtifactId],
     )
     const canonicalHash = `sha256:${'e'.repeat(64)}`
     const approvalId = (await db.query<{ id: string }>(
