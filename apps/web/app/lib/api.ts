@@ -5,11 +5,19 @@ export const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001
 const csrfStorageKey = 'workmesh.csrf-token'
 const logicalAttempts = new Map<string, { key: string; requestIdentity: string }>()
 
-type ApiErrorBody = { error?: { code?: string; message?: string } }
+type ApiErrorBody = { error?: { code?: string; message?: string; details?: unknown; correlationId?: string; safeNextAction?: string } }
 export type ListResponse<T> = { items: T[]; nextCursor: string | null }
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string, public readonly code?: string, public readonly retryAfterSeconds?: number) {
+  constructor(
+    public readonly status: number,
+    message: string,
+    public readonly code?: string,
+    public readonly retryAfterSeconds?: number,
+    public readonly details?: unknown,
+    public readonly correlationId?: string,
+    public readonly safeNextAction?: string,
+  ) {
     super(message)
   }
 }
@@ -31,7 +39,15 @@ async function responseError(response: Response): Promise<ApiError> {
   const retryAfter = rawRetryAfter ? Number(rawRetryAfter) : Number.NaN
   try {
     const body = await response.json() as ApiErrorBody
-    return new ApiError(response.status, body.error?.message ?? `Request failed (${response.status})`, body.error?.code, Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : undefined)
+    return new ApiError(
+      response.status,
+      body.error?.message ?? `Request failed (${response.status})`,
+      body.error?.code,
+      Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : undefined,
+      body.error?.details,
+      body.error?.correlationId,
+      body.error?.safeNextAction,
+    )
   } catch {
     return new ApiError(response.status, `Request failed (${response.status})`, undefined, Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : undefined)
   }

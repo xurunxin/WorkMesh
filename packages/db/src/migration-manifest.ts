@@ -49,6 +49,8 @@ export const v1MigrationManifest = [
   { version: '0002_active_executor_projection', file: 'v1/0002_active_executor_projection.sql', checksumSha256: '0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2' },
   { version: '0003_versioned_guidance', file: 'v1/0003_versioned_guidance.sql', checksumSha256: '199adac75057ed0a2b285453440359d68aea1ae62cba33b2274ac8e6364fa2e7' },
   { version: '0004_agent_connections', file: 'v1/0004_agent_connections.sql', checksumSha256: 'c31fde289828e87e7919cf114cccd24fb67ace2ee8007539a66273cfb6b90548' },
+  { version: '0005_planning_domain_parity', file: 'v1/0005_planning_domain_parity.sql', checksumSha256: '1810ceb56156b7d0305b03b6b69b65453fb85d8b949afbfc78eed2ebf2295be4' },
+  { version: '0006_human_attachments', file: 'v1/0006_human_attachments.sql', checksumSha256: '076f92a3257f9ad15c6c9770f31c12755d10a74e7f87b15b0363c391ec050ce5' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const legacyUpgradeBundleManifest = [

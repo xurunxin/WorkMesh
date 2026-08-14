@@ -1081,4 +1081,59 @@ describe('Stage 3 delivery API', () => {
     const downloaded = await fetch(download.json<{ downloadUrl: string }>().downloadUrl)
     expect(Buffer.from(await downloaded.arrayBuffer())).toEqual(evidence)
   })
+
+  it('supports a Human-owned upload lifecycle with attribution, listing, download, and cancellation', async () => {
+    const f = await fixture()
+    const worker = createArtifactUploadWorker({
+      db, storage: artifactStorageFromEnvironment(), workerId: 'human-upload-worker',
+    })
+    const content = Buffer.from('# Human evidence\n\nVerified by the Human upload path.\n')
+    const checksum = `sha256:${createHash('sha256').update(content).digest('hex')}`
+    const requested = await humanCall(f.human, 'POST', '/api/v1/artifact-upload-intents', {
+      workItemId: f.workItemId, filename: 'human-evidence.md', mimeType: 'text/markdown',
+      sizeBytes: content.length, checksum,
+    })
+    expect(requested.statusCode, JSON.stringify(requested.json())).toBe(200)
+    const intent = requested.json<{ id: string; uploadUrl: string; requiredHeaders: Record<string, string> }>()
+    expect((await fetch(intent.uploadUrl, { method: 'PUT', headers: intent.requiredHeaders, body: content })).status).toBe(200)
+    expect((await humanCall(f.human, 'POST', `/api/v1/artifact-upload-intents/${intent.id}/finalize`, {})).statusCode).toBe(200)
+    const claimed = await worker.claim()
+    expect(claimed?.id).toBe(intent.id)
+    await worker.verify(claimed!)
+    const persistedUpload = (await db.query<{ status: string; last_error: string | null }>(
+      'SELECT status,last_error FROM artifact_upload_intents WHERE id=$1', [intent.id],
+    )).rows[0]!
+
+    const status = await humanCall(f.human, 'GET', `/api/v1/artifact-upload-intents/${intent.id}`)
+    expect(status.statusCode).toBe(200)
+    expect(status.json<{ status: string; actualChecksum: string; artifactId: string }>(), JSON.stringify(persistedUpload)).toMatchObject({
+      status: 'verified', actualChecksum: checksum,
+    })
+    const list = await humanCall(f.human, 'GET', `/api/v1/work-items/${f.workItemId}/artifacts`)
+    expect(list.statusCode).toBe(200)
+    expect(list.json<Array<{ upload_intent_id: string; producer_actor_id: string; producer_kind: string; session_id: string | null }>>())
+      .toEqual(expect.arrayContaining([expect.objectContaining({
+        upload_intent_id: intent.id, producer_actor_id: f.human.actorId,
+        producer_kind: 'human', session_id: null,
+      })]))
+    const download = await humanCall(f.human, 'GET', `/api/v1/artifact-upload-intents/${intent.id}/download`)
+    expect(download.statusCode).toBe(200)
+    const downloaded = await fetch(download.json<{ downloadUrl: string }>().downloadUrl)
+    expect(Buffer.from(await downloaded.arrayBuffer())).toEqual(content)
+
+    const canceledContent = Buffer.from('cancel me')
+    const canceledChecksum = `sha256:${createHash('sha256').update(canceledContent).digest('hex')}`
+    const pending = await humanCall(f.human, 'POST', '/api/v1/artifact-upload-intents', {
+      workItemId: f.workItemId, filename: 'cancel.txt', mimeType: 'text/plain',
+      sizeBytes: canceledContent.length, checksum: canceledChecksum,
+    })
+    expect(pending.statusCode).toBe(200)
+    const pendingIntent = pending.json<{ id: string; uploadUrl: string; requiredHeaders: Record<string, string> }>()
+    expect((await fetch(pendingIntent.uploadUrl, { method: 'PUT', headers: pendingIntent.requiredHeaders, body: canceledContent })).status).toBe(200)
+    const canceled = await humanCall(f.human, 'POST', `/api/v1/artifact-upload-intents/${pendingIntent.id}/cancel`, {})
+    expect(canceled.statusCode).toBe(200)
+    expect(canceled.json()).toEqual({ id: pendingIntent.id, status: 'canceled' })
+    const canceledStatus = await humanCall(f.human, 'GET', `/api/v1/artifact-upload-intents/${pendingIntent.id}`)
+    expect(canceledStatus.json<{ status: string }>().status).toBe('canceled')
+  })
 })

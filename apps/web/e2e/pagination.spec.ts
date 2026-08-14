@@ -199,8 +199,9 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
   await page.goto('/')
   await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')
 
+  await page.getByRole('button', { name: 'New work item', exact: true }).click()
   const form = page.getByTestId('create-work-item')
-  await form.getByPlaceholder('Title').fill('Refresh trigger')
+  await form.getByLabel('Title', { exact: true }).fill('Refresh trigger')
   await form.getByTestId('create-work-item-submit').click()
   await expect.poll(() => sameScopeRefreshPending).toBe(true)
   await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')

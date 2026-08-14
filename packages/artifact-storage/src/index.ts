@@ -432,6 +432,10 @@ export class S3ArtifactStorage {
     await this.readVerifiedObject(expectation);
   }
 
+  async delete(key: string): Promise<void> {
+    await this.#client.send(new DeleteObjectCommand({ Bucket: this.#bucket, Key: key }));
+  }
+
   async verify(expectation: ArtifactObjectExpectation): Promise<{ checksum: string; sizeBytes: number; mimeType: string }> {
     await this.readVerifiedObject(expectation);
     const checksum = expectation.checksum;

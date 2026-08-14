@@ -2343,4 +2343,57 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       cursor: events.at(-1)?.cursor ?? query.after,
     }
   })
+
+  app.get('/api/v1/notifications', async request => {
+    const current = actor(request)
+    requireHuman(current)
+    const binding = {
+      route: '/api/v1/notifications',
+      filters: {},
+      sort: [
+        { key: 'created_at', sql: 'notification.created_at', direction: 'DESC' as const },
+        { key: 'id', sql: 'notification.id', direction: 'DESC' as const },
+      ],
+    }
+    return helpers.paginator.query(db, request, request.query, binding,
+      `SELECT notification.id,notification.priority,notification.kind,notification.title,
+        notification.body,notification.source_type,notification.source_id,
+        notification.read_at,notification.created_at,
+        coalesce(delivery.items,'[]'::jsonb) AS deliveries
+       FROM notifications notification
+       LEFT JOIN LATERAL (
+         SELECT jsonb_agg(jsonb_build_object(
+           'channel',item.channel,'status',item.status,'attempt_count',item.attempt_count,
+           'available_at',item.available_at,'claimed_at',item.claimed_at,
+           'effect_completed_at',item.effect_completed_at,'delivered_at',item.delivered_at,
+           'created_at',item.created_at,'last_error_present',item.last_error IS NOT NULL
+         ) ORDER BY item.channel) AS items
+         FROM notification_deliveries item WHERE item.notification_id=notification.id
+       ) delivery ON true
+       WHERE notification.workspace_id=$1 AND notification.recipient_actor_id=$2`,
+      [current.workspaceId, current.id])
+  })
+
+  app.get('/api/v1/notification-preferences', async request => {
+    const current = actor(request)
+    requireHuman(current)
+    const rows = (await db.query<{
+      channels: string[]
+      digest: string
+      minimum_priority: string
+      muted_kinds: string[]
+      webhook_configured: boolean
+      revision: number
+      updated_at: Date
+    }>(
+      `SELECT to_json(channels) AS channels,digest,minimum_priority,muted_kinds,
+        webhook_url IS NOT NULL AS webhook_configured,revision,updated_at
+       FROM notification_preferences WHERE workspace_id=$1 AND actor_id=$2`,
+      [current.workspaceId, current.id],
+    )).rows
+    return rows[0] ?? {
+      channels: ['in_app'], digest: 'immediate', minimum_priority: 'update',
+      muted_kinds: [], webhook_configured: false, revision: 0, updated_at: null,
+    }
+  })
 }

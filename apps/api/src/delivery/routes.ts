@@ -5,12 +5,14 @@ import { z } from 'zod'
 import type { FeatureConfig } from '@workmesh/config'
 import {
   artifactUploadIntentInputSchema,
+  humanArtifactUploadIntentInputSchema,
   ciRetryInputSchema,
   completionSuggestionDecisionInputSchema,
   completionSuggestionInputSchema,
   deliveryArtifactInputSchema,
   mergeIntentInputSchema,
   milestoneInputSchema,
+  milestonePatchSchema,
   projectDependencyInputSchema,
   projectUpdatePublishInputSchema,
   projectUpdateInputSchema,
@@ -19,6 +21,7 @@ import {
   repositoryContextInputSchema,
   repositoryInputSchema,
   structuredReviewInputSchema,
+  workItemRelationInputSchema,
   type ProviderActionInput,
 } from '@workmesh/contracts'
 import { appendEvent, withTx } from '@workmesh/db'
@@ -26,6 +29,7 @@ import {
   assertAcyclicProjectDependencies,
   assertMergeReady,
   assertRevision,
+  canonicalWorkItemRelation,
   canonicalActionApprovalPayload,
   canonicalMergeApprovalPayload,
   DomainError,
@@ -33,7 +37,7 @@ import {
 } from '@workmesh/domain'
 import { verifyGitHubWebhookSignature } from '@workmesh/git-provider'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
-import { mutate, type CommandContext } from '../commands.js'
+import { authorizeTeamMutation, mutate, type CommandContext } from '../commands.js'
 import { assertSanitized } from '../agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
@@ -87,10 +91,16 @@ const connectionId = (request: FastifyRequest): string =>
   uuid.parse((request.params as { connectionId?: unknown }).connectionId)
 const updateId = (request: FastifyRequest): string =>
   uuid.parse((request.params as { updateId?: unknown }).updateId)
+const relationId = (request: FastifyRequest): string =>
+  uuid.parse((request.params as { relationId?: unknown }).relationId)
 const checkId = (request: FastifyRequest): string =>
   z.string().min(1).max(500).parse((request.params as { checkId?: unknown }).checkId)
 const hash = (value: Buffer | string): string =>
   `sha256:${createHash('sha256').update(value).digest('hex')}`
+const allowedUploadMimeTypes = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'application/pdf', 'text/plain', 'text/markdown', 'application/json', 'text/csv', 'application/zip'])
+const assertAllowedUploadMimeType = (mimeType: string): void => {
+  if (!allowedUploadMimeTypes.has(mimeType)) throw new DomainError('VALIDATION_ERROR', 'Artifact MIME type is not allowed')
+}
 const masterKey = (): string => {
   const value = process.env.WORKMESH_MASTER_KEY
   if (!value) throw new DomainError('INTERNAL_ERROR', 'WORKMESH_MASTER_KEY is required for provider secrets')
@@ -119,6 +129,34 @@ const emit = (
   correlationId: meta.correlationId, idempotencyKey: meta.idempotencyKey,
   type, aggregateType, aggregateId, payload,
 })
+
+const planningConstraintCodes = [
+  'WORK_ITEM_PARENT_SELF',
+  'WORK_ITEM_PARENT_DELETED',
+  'WORK_ITEM_PARENT_PROJECT_MISMATCH',
+  'WORK_ITEM_PARENT_CYCLE',
+  'WORK_ITEM_MILESTONE_DELETED',
+  'WORK_ITEM_RELATION_SELF',
+  'WORK_ITEM_RELATED_ORDER',
+  'WORK_ITEM_RELATION_ENDPOINT_DELETED',
+  'WORK_ITEM_BLOCK_CYCLE',
+] as const
+
+async function planningWrite<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ''
+    const code = planningConstraintCodes.find(candidate => message.includes(candidate))
+    if (code) throw new DomainError(code, 'Planning relationship violates a WorkMesh invariant')
+    const pgCode = (error as { code?: unknown }).code
+    if (pgCode === '23503')
+      throw new DomainError('WORK_ITEM_RELATION_SCOPE_MISMATCH', 'Related work items must be active items in the same Team')
+    if (pgCode === '23505')
+      throw new DomainError('PLANNING_RELATION_ALREADY_EXISTS', 'The milestone or work-item relation already exists')
+    throw error
+  }
+}
 
 function requireHuman(current: ApiActor, admin = false): void {
   if (current.kind !== 'human' || (admin && current.workspaceRole !== 'admin'))
@@ -626,30 +664,39 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   })
 
   app.post('/api/v1/artifact-upload-intents', async request => {
-    const body = artifactUploadIntentInputSchema.parse(request.body)
+    const current = actor(request)
+    const body = current.kind === 'human' ? humanArtifactUploadIntentInputSchema.parse(request.body) : artifactUploadIntentInputSchema.parse(request.body)
+    assertAllowedUploadMimeType(body.mimeType)
     return command(h.db, h.meta(request, body), async tx => {
       assertSanitized(body, 'artifact upload')
-      await assertAgentRepositoryWrite(tx, actor(request), body, 'artifact:write')
-      const workItem = one((await tx.query<{ project_id: string | null }>(
-        'SELECT project_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',
-        [body.workItemId, actor(request).workspaceId],
+      const workItem = one((await tx.query<{ project_id: string | null; team_id: string }>(
+        'SELECT project_id,team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE',
+        [body.workItemId, current.workspaceId],
       )).rows)
-      if (body.projectId && body.projectId !== workItem.project_id)
-        throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload project must be derived from its work item')
+      if (current.kind === 'human') await requireCurrentTeamWriter(tx, current, workItem.team_id)
+      else {
+        if (!('sessionId' in body)) throw new DomainError('VALIDATION_ERROR', 'Agent upload requires session provenance')
+        await assertAgentRepositoryWrite(tx, current, body, 'artifact:write')
+        if (body.projectId && body.projectId !== workItem.project_id) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload project must be derived from its work item')
+      }
       let pullRequestId: string | null = null
       let headSha: string | null = null
-      if (body.pullRequestId) {
+      if ('pullRequestId' in body && body.pullRequestId) {
         const pullRequest = (await tx.query<{ id: string; head_sha: string }>(
           `SELECT id,head_sha FROM pull_request_projections
             WHERE id=$1 AND workspace_id=$2 AND repository_id=$3 AND work_item_id=$4`,
-          [body.pullRequestId, actor(request).workspaceId, body.repositoryId, body.workItemId],
+          [body.pullRequestId, current.workspaceId, body.repositoryId, body.workItemId],
         )).rows[0]
         if (!pullRequest || pullRequest.head_sha !== body.headSha)
           throw new DomainError('MERGE_HEAD_CHANGED', 'Upload pull request must match the current scoped head')
         pullRequestId = pullRequest.id
         headSha = pullRequest.head_sha
       }
-      const storageKey = `${actor(request).workspaceId}/${randomUUID()}/${body.filename}`
+      const storageKey = `${current.workspaceId}/${randomUUID()}/${body.filename.replace(/[^A-Za-z0-9._-]/g, '_')}`
+      const sessionId = 'sessionId' in body ? body.sessionId : null
+      const planStepId = 'planStepId' in body ? body.planStepId ?? null : null
+      const repositoryId = 'repositoryId' in body ? body.repositoryId : null
+      const sourceTool = 'sourceTool' in body ? body.sourceTool : 'workmesh-web'
       const row = one((await tx.query<{ id: string; expires_at: Date }>(
         `INSERT INTO artifact_upload_intents(
            workspace_id,work_item_id,session_id,project_id,plan_step_id,repository_id,pull_request_id,
@@ -657,15 +704,15 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            expected_checksum,expires_at)
          VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,now()+interval '15 minutes')
          RETURNING id,expires_at`,
-        [actor(request).workspaceId, body.workItemId, body.sessionId, workItem.project_id,
-          body.planStepId ?? null, body.repositoryId, pullRequestId, headSha, body.sourceTool,
-          actor(request).id, storageKey, body.filename, body.mimeType, body.sizeBytes, body.checksum],
+        [current.workspaceId, body.workItemId, sessionId, workItem.project_id,
+          planStepId, repositoryId, pullRequestId, headSha, sourceTool,
+          current.id, storageKey, body.filename, body.mimeType, body.sizeBytes, body.checksum],
       )).rows)
       const expires = row.expires_at.toISOString()
       const uploadUrl = await artifactStorageFromEnvironment().createUploadUrl({
         key: storageKey, checksum: body.checksum, sizeBytes: body.sizeBytes, mimeType: body.mimeType,
       }, 900)
-      await emit(tx, h.meta(request, body), 'artifact.upload.requested', 'artifact_upload_intent', row.id, { checksum: body.checksum, sizeBytes: body.sizeBytes })
+      await emit(tx, h.meta(request, body), 'artifact.upload.requested', 'artifact_upload_intent', row.id, { checksum: body.checksum, sizeBytes: body.sizeBytes, requesterKind: current.kind }, workItem.team_id)
       return {
         id: row.id, uploadUrl, expiresAt: expires, requiredChecksum: body.checksum,
         requiredHeaders: {
@@ -684,21 +731,21 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       id: string
       status: 'expired' | 'uploaded' | 'verified'
     }>(h.db, h.meta(request, {}, { id: uploadId }), async tx => {
-      if (actor(request).kind !== 'agent') throw new DomainError('AGENT_IDENTITY_REQUIRED', 'Agent session token required')
       const locator = one((await tx.query<{
-        session_id: string; work_item_id: string
-      }>('SELECT session_id,work_item_id FROM artifact_upload_intents WHERE id=$1 AND workspace_id=$2', [
+        session_id: string | null; requested_by_actor_id: string; work_item_id: string; team_id: string
+      }>(`SELECT u.session_id,u.requested_by_actor_id,u.work_item_id,w.team_id FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id WHERE u.id=$1 AND u.workspace_id=$2`, [
         uploadId, actor(request).workspaceId,
       ])).rows)
-      if (locator.session_id !== actor(request).agentSessionId)
-        throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another session')
-      const session = await loadAgentSessionForMutation(tx, actor(request), locator.session_id)
-      assertAgentWrite({
-        actor: actor(request), session, sessionId: locator.session_id, capability: 'artifact:write',
-        operation: 'artifact', idempotencyKey: h.meta(request, {}).idempotencyKey, resourceId: locator.work_item_id,
-      })
+      if (actor(request).kind === 'agent') {
+        if (!locator.session_id || locator.session_id !== actor(request).agentSessionId) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another session')
+        const session = await loadAgentSessionForMutation(tx, actor(request), locator.session_id)
+        assertAgentWrite({ actor: actor(request), session, sessionId: locator.session_id, capability: 'artifact:write', operation: 'artifact', idempotencyKey: h.meta(request, {}).idempotencyKey, resourceId: locator.work_item_id })
+      } else {
+        if (locator.requested_by_actor_id !== actor(request).id) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another actor')
+        await requireCurrentTeamWriter(tx, actor(request), locator.team_id)
+      }
       const upload = one((await tx.query<{
-        session_id: string; work_item_id: string; status: string; expires_at: Date
+        session_id: string | null; work_item_id: string; status: string; expires_at: Date
       }>('SELECT session_id,work_item_id,status,expires_at FROM artifact_upload_intents WHERE id=$1 AND workspace_id=$2 FOR UPDATE', [
         uploadId, actor(request).workspaceId,
       ])).rows)
@@ -739,9 +786,74 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     return result
   })
 
+  const projectUploadStatus = (row: {id:string;status:string;filename:string;mime_type:string;size_bytes:number;expected_checksum:string;actual_checksum:string|null;expires_at:Date;verified_at:Date|null;artifact_id:string|null;last_error:string|null}) => ({
+    id: row.id, status: row.status, filename: row.filename, mimeType: row.mime_type, sizeBytes: Number(row.size_bytes), expectedChecksum: row.expected_checksum,
+    actualChecksum: row.actual_checksum, expiresAt: row.expires_at.toISOString(), verifiedAt: row.verified_at?.toISOString() ?? null,
+    artifactId: row.artifact_id, lastErrorCode: row.last_error?.split(':', 1)[0] ?? null,
+  })
+
+  app.get('/api/v1/artifact-upload-intents/:id', async request => {
+    const row = one((await h.db.query<{id:string;status:string;filename:string;mime_type:string;size_bytes:number;expected_checksum:string;actual_checksum:string|null;expires_at:Date;verified_at:Date|null;artifact_id:string|null;last_error:string|null;session_id:string|null;requested_by_actor_id:string;team_id:string}>(
+      `SELECT u.id,u.status,u.filename,u.mime_type,u.size_bytes,u.expected_checksum,u.actual_checksum,u.expires_at,u.verified_at,u.artifact_id,u.last_error,u.session_id,u.requested_by_actor_id,w.team_id FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id WHERE u.id=$1 AND u.workspace_id=$2`,
+      [id(request), actor(request).workspaceId],
+    )).rows)
+    if (actor(request).kind === 'agent') {
+      if (!row.session_id || row.session_id !== actor(request).agentSessionId) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload status is outside the session scope')
+      const values: unknown[] = [row.session_id, actor(request).workspaceId]
+      const liveRead = liveSessionReadPredicate(actor(request), '$1', '$2', values)
+      if (!(await h.db.query(`SELECT 1 WHERE ${liveRead}`, values)).rowCount) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload status is outside the live session scope')
+    }
+    else { if (row.requested_by_actor_id !== actor(request).id) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another actor'); await h.readableTeam(request, row.team_id) }
+    return projectUploadStatus(row)
+  })
+
+  app.post('/api/v1/artifact-upload-intents/:id/cancel', async request => {
+    z.object({}).parse(request.body ?? {})
+    const uploadId = id(request)
+    const canceled = await command(h.db, h.meta(request, {}, { id: uploadId }), async tx => {
+      const row = one((await tx.query<{session_id:string|null;requested_by_actor_id:string;work_item_id:string;storage_key:string;status:string;team_id:string}>(
+        `SELECT u.session_id,u.requested_by_actor_id,u.work_item_id,u.storage_key,u.status,w.team_id FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id WHERE u.id=$1 AND u.workspace_id=$2 FOR UPDATE`, [uploadId, actor(request).workspaceId],
+      )).rows)
+      if (actor(request).kind === 'agent') {
+        if (!row.session_id || row.session_id !== actor(request).agentSessionId) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another session')
+        const session = await loadAgentSessionForMutation(tx, actor(request), row.session_id)
+        assertAgentWrite({ actor: actor(request), session, sessionId: row.session_id, capability: 'artifact:write', operation: 'artifact', idempotencyKey: h.meta(request, {}).idempotencyKey, resourceId: row.work_item_id })
+      } else { if (row.requested_by_actor_id !== actor(request).id) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload intent belongs to another actor'); await requireCurrentTeamWriter(tx, actor(request), row.team_id) }
+      if (row.status === 'canceled') return { id: uploadId, status: 'canceled' as const, storageKey: row.storage_key }
+      if (!['pending','uploaded'].includes(row.status)) throw new DomainError('CONFLICT', 'Upload intent can no longer be canceled')
+      await tx.query("UPDATE artifact_upload_intents SET status='canceled',claimed_at=NULL,claimed_by=NULL WHERE id=$1", [uploadId])
+      await emit(tx, h.meta(request, {}), 'artifact.upload.canceled', 'artifact_upload_intent', uploadId, { previousStatus: row.status }, row.team_id)
+      return { id: uploadId, status: 'canceled' as const, storageKey: row.storage_key }
+    })
+    try { await artifactStorageFromEnvironment().delete(canceled.storageKey) }
+    catch (cleanupError) {
+      request.log.warn({ uploadIntentId: canceled.id, errorCode: 'ARTIFACT_CANCEL_CLEANUP_FAILED' }, 'Canceled artifact object cleanup failed')
+      await withTx(h.db, async tx => {
+        await emit(tx, h.meta(request, {}), 'artifact.upload.cleanup_failed', 'artifact_upload_intent', canceled.id, {
+          errorCode: 'ARTIFACT_CANCEL_CLEANUP_FAILED',
+          errorKind: cleanupError instanceof Error ? cleanupError.name : 'UnknownError',
+        })
+      })
+    }
+    return { id: canceled.id, status: canceled.status }
+  })
+
+  app.get('/api/v1/work-items/:id/artifacts', async request => {
+    const workItemId = id(request)
+    const workItem = one((await h.db.query<{team_id:string}>('SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [workItemId, actor(request).workspaceId])).rows)
+    if (actor(request).kind === 'human') await h.readableTeam(request, workItem.team_id)
+    else {
+      if (!actor(request).agentSessionId) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Artifact list is outside the session scope')
+      const values: unknown[] = [actor(request).agentSessionId, actor(request).workspaceId, workItemId]
+      const liveRead = liveSessionReadPredicate(actor(request), '$1', '$2', values)
+      if (!(await h.db.query(`SELECT 1 FROM agent_sessions s WHERE s.id=$1 AND s.workspace_id=$2 AND s.work_item_id=$3 AND ${liveRead}`, values)).rowCount) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Artifact list is outside the live session scope')
+    }
+    return (await h.db.query(`SELECT a.id,a.type,a.title,a.mime_type,COALESCE(a.size_bytes,u.size_bytes) AS size_bytes,a.checksum,a.source_tool,a.created_at,a.producer_actor_id,p.display_name AS producer_display_name,p.kind AS producer_kind,l.project_id,l.work_item_id,l.session_id,l.plan_step_id,l.repository_id,l.pull_request_id,u.id AS upload_intent_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id JOIN actors p ON p.id=a.producer_actor_id LEFT JOIN artifact_upload_intents u ON u.artifact_id=a.id AND u.workspace_id=a.workspace_id WHERE a.workspace_id=$1 AND l.work_item_id=$2 ORDER BY a.created_at DESC,a.id DESC`, [actor(request).workspaceId, workItemId])).rows
+  })
+
   app.get('/api/v1/artifact-upload-intents/:id/download', async request => {
     const upload = one((await h.db.query<{
-      storage_key: string; session_id: string; team_id: string; status: string
+      storage_key: string; session_id: string | null; team_id: string; status: string
     }>(
       `SELECT u.storage_key,u.session_id,w.team_id,u.status
          FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id
@@ -751,6 +863,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     if (actor(request).kind === 'agent') {
       if (actor(request).agentSessionId !== upload.session_id)
         throw new DomainError('RESOURCE_SCOPE_DENIED', 'Artifact download is outside the session scope')
+      const values: unknown[] = [upload.session_id, actor(request).workspaceId]
+      const liveRead = liveSessionReadPredicate(actor(request), '$1', '$2', values)
+      if (!(await h.db.query(`SELECT 1 WHERE ${liveRead}`, values)).rowCount) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Artifact download is outside the live session scope')
     } else await h.readableTeam(request, upload.team_id)
     if (upload.status !== 'verified') throw new DomainError('CONFLICT', 'Artifact upload has not been verified')
     return { downloadUrl: await artifactStorageFromEnvironment().createDownloadUrl(upload.storage_key, 300) }
@@ -1152,17 +1267,164 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     }
   }))
 
+  app.get('/api/v1/projects/:id/milestones', async request => {
+    const projectId = id(request)
+    const project = one((await h.db.query<{ team_id: string }>(
+      'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',
+      [projectId, actor(request).workspaceId],
+    )).rows)
+    await h.readableTeam(request, project.team_id)
+    return h.paginator.query(h.db, request, request.query, {
+      route: '/api/v1/projects/:id/milestones',
+      filters: { projectId },
+      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC' }, { key: 'id', sql: 'id', direction: 'ASC' }],
+    }, 'SELECT * FROM project_milestones WHERE project_id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [projectId, actor(request).workspaceId])
+  })
+
   app.post('/api/v1/projects/:id/milestones', async request => {
     const body = milestoneInputSchema.parse(request.body)
-    requireHuman(actor(request))
-    return command(h.db, h.meta(request, body, { id: id(request) }), async tx => {
-      const project = one((await tx.query<{ team_id: string }>('SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2', [id(request), actor(request).workspaceId])).rows)
-      await h.readableTeam(request, project.team_id)
-      const row = one((await tx.query(
-        'INSERT INTO project_milestones(workspace_id,project_id,name,description,target_date) VALUES($1,$2,$3,$4,$5) RETURNING *',
-        [actor(request).workspaceId, id(request), body.name, body.description ?? null, body.targetDate ?? null],
+    const projectId = id(request)
+    const meta = h.meta(request, body, { id: projectId })
+    return command(h.db, meta, async tx => {
+      const project = one((await tx.query<{ team_id: string }>(
+        'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE',
+        [projectId, actor(request).workspaceId],
       )).rows)
-      await emit(tx, h.meta(request, body), 'project.milestone.created', 'project_milestone', String((row as { id: string }).id), { projectId: id(request) }, project.team_id)
+      await authorizeTeamMutation(tx, meta as unknown as CommandContext, project.team_id)
+      const row = one((await planningWrite(() => tx.query(
+        'INSERT INTO project_milestones(workspace_id,project_id,name,description,target_date) VALUES($1,$2,$3,$4,$5) RETURNING *',
+        [actor(request).workspaceId, projectId, body.name, body.description ?? null, body.targetDate ?? null],
+      ))).rows)
+      await emit(tx, meta, 'project.milestone.created', 'project_milestone', String((row as { id: string }).id), { projectId }, project.team_id)
+      return row
+    })
+  })
+
+  app.get('/api/v1/milestones/:id', async request => {
+    const row = one((await h.db.query<Record<string, unknown> & { team_id: string }>(
+      `SELECT milestone.*,project.team_id
+       FROM project_milestones milestone JOIN projects project ON project.id=milestone.project_id
+       WHERE milestone.id=$1 AND milestone.workspace_id=$2 AND milestone.deleted_at IS NULL AND project.deleted_at IS NULL`,
+      [id(request), actor(request).workspaceId],
+    )).rows)
+    await h.readableTeam(request, row.team_id)
+    const { team_id: _teamId, ...milestone } = row
+    return milestone
+  })
+
+  app.patch('/api/v1/milestones/:id', async request => {
+    const body = milestonePatchSchema.parse(request.body)
+    const milestoneId = id(request)
+    const meta = h.meta(request, body, { id: milestoneId })
+    return command(h.db, meta, async tx => {
+      const current = one((await tx.query<{ revision: number; team_id: string; project_id: string }>(
+        `SELECT milestone.revision,milestone.project_id,project.team_id
+         FROM project_milestones milestone JOIN projects project ON project.id=milestone.project_id
+         WHERE milestone.id=$1 AND milestone.workspace_id=$2 AND milestone.deleted_at IS NULL FOR UPDATE OF milestone`,
+        [milestoneId, actor(request).workspaceId],
+      )).rows)
+      await authorizeTeamMutation(tx, meta as unknown as CommandContext, current.team_id)
+      assertRevision(parseRevision(h.header(request, 'if-match')), current.revision)
+      const has = (key: string) => Object.prototype.hasOwnProperty.call(body, key)
+      const row = one((await planningWrite(() => tx.query(
+        `UPDATE project_milestones SET
+           name=CASE WHEN $1 THEN $2 ELSE name END,
+           description=CASE WHEN $3 THEN $4 ELSE description END,
+           target_date=CASE WHEN $5 THEN $6 ELSE target_date END,
+           revision=revision+1,updated_at=now()
+         WHERE id=$7 RETURNING *`,
+        [has('name'), body.name ?? null, has('description'), body.description ?? null, has('targetDate'), body.targetDate ?? null, milestoneId],
+      ))).rows)
+      await emit(tx, meta, 'project.milestone.updated', 'project_milestone', milestoneId, { projectId: current.project_id, revision: (row as { revision: number }).revision }, current.team_id)
+      return row
+    })
+  })
+
+  app.delete('/api/v1/milestones/:id', async request => {
+    const milestoneId = id(request)
+    const meta = h.meta(request, null, { id: milestoneId })
+    return command(h.db, meta, async tx => {
+      const current = one((await tx.query<{ revision: number; team_id: string; project_id: string }>(
+        `SELECT milestone.revision,milestone.project_id,project.team_id
+         FROM project_milestones milestone JOIN projects project ON project.id=milestone.project_id
+         WHERE milestone.id=$1 AND milestone.workspace_id=$2 AND milestone.deleted_at IS NULL FOR UPDATE OF milestone`,
+        [milestoneId, actor(request).workspaceId],
+      )).rows)
+      await authorizeTeamMutation(tx, meta as unknown as CommandContext, current.team_id)
+      assertRevision(parseRevision(h.header(request, 'if-match')), current.revision)
+      if ((await tx.query('SELECT 1 FROM work_items WHERE milestone_id=$1 AND deleted_at IS NULL LIMIT 1', [milestoneId])).rowCount)
+        throw new DomainError('MILESTONE_HAS_ACTIVE_WORK_ITEMS', 'Move active work items before deleting this milestone')
+      const row = one((await tx.query<{ id: string; revision: number }>(
+        'UPDATE project_milestones SET deleted_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 RETURNING id,revision',
+        [milestoneId],
+      )).rows)
+      await emit(tx, meta, 'project.milestone.deleted', 'project_milestone', milestoneId, { projectId: current.project_id }, current.team_id)
+      return row
+    })
+  })
+
+  app.get('/api/v1/work-items/:id/relations', async request => {
+    const workItemId = id(request)
+    const item = one((await h.db.query<{ team_id: string }>(
+      'SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL',
+      [workItemId, actor(request).workspaceId],
+    )).rows)
+    await h.readableTeam(request, item.team_id)
+    return h.paginator.query(h.db, request, request.query, {
+      route: '/api/v1/work-items/:id/relations',
+      filters: { workItemId },
+      sort: [{ key: 'created_at', sql: 'created_at', direction: 'ASC' }, { key: 'id', sql: 'id', direction: 'ASC' }],
+    }, `SELECT * FROM work_item_relations
+        WHERE workspace_id=$1 AND deleted_at IS NULL
+          AND (source_work_item_id=$2 OR target_work_item_id=$2)`, [actor(request).workspaceId, workItemId])
+  })
+
+  app.post('/api/v1/work-items/:id/relations', async request => {
+    const body = workItemRelationInputSchema.parse(request.body)
+    const workItemId = id(request)
+    const meta = h.meta(request, body, { id: workItemId })
+    return command(h.db, meta, async tx => {
+      const rows = (await tx.query<{ id: string; team_id: string }>(
+        `SELECT id,team_id FROM work_items
+         WHERE workspace_id=$1 AND id=ANY($2::uuid[]) AND deleted_at IS NULL ORDER BY id FOR UPDATE`,
+        [actor(request).workspaceId, [workItemId, body.targetWorkItemId]],
+      )).rows
+      const source = rows.find(row => row.id === workItemId)
+      const target = rows.find(row => row.id === body.targetWorkItemId)
+      if (!source || !target) throw new DomainError('NOT_FOUND', 'Related work item not found')
+      await authorizeTeamMutation(tx, meta as unknown as CommandContext, source.team_id)
+      if (source.team_id !== target.team_id)
+        throw new DomainError('WORK_ITEM_RELATION_SCOPE_MISMATCH', 'Related work items must belong to the same Team')
+      const canonical = canonicalWorkItemRelation(workItemId, body.targetWorkItemId, body.kind)
+      const { sourceWorkItemId: sourceId, targetWorkItemId: targetId } = canonical
+      const row = one((await planningWrite(() => tx.query(
+        `INSERT INTO work_item_relations(workspace_id,team_id,source_work_item_id,target_work_item_id,kind,created_by_actor_id)
+         VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
+        [actor(request).workspaceId, source.team_id, sourceId, targetId, body.kind, actor(request).id],
+      ))).rows)
+      await emit(tx, meta, 'work_item.relation_added', 'work_item_relation', String((row as { id: string }).id), { sourceWorkItemId: sourceId, targetWorkItemId: targetId, kind: body.kind }, source.team_id)
+      return row
+    })
+  })
+
+  app.delete('/api/v1/work-items/:id/relations/:relationId', async request => {
+    const workItemId = id(request)
+    const relation = relationId(request)
+    const meta = h.meta(request, null, { id: workItemId, relationId: relation })
+    return command(h.db, meta, async tx => {
+      const current = one((await tx.query<{ revision: number; team_id: string; source_work_item_id: string; target_work_item_id: string; kind: string }>(
+        `SELECT revision,team_id,source_work_item_id,target_work_item_id,kind FROM work_item_relations
+         WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+           AND (source_work_item_id=$3 OR target_work_item_id=$3) FOR UPDATE`,
+        [relation, actor(request).workspaceId, workItemId],
+      )).rows)
+      await authorizeTeamMutation(tx, meta as unknown as CommandContext, current.team_id)
+      assertRevision(parseRevision(h.header(request, 'if-match')), current.revision)
+      const row = one((await tx.query<{ id: string; revision: number }>(
+        'UPDATE work_item_relations SET deleted_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 RETURNING id,revision',
+        [relation],
+      )).rows)
+      await emit(tx, meta, 'work_item.relation_removed', 'work_item_relation', relation, { sourceWorkItemId: current.source_work_item_id, targetWorkItemId: current.target_work_item_id, kind: current.kind }, current.team_id)
       return row
     })
   })

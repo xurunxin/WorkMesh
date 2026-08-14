@@ -80,6 +80,14 @@ remain Human controls. Rotation uses a 15-minute old/new overlap after the new
 credential is redeemed; an unredeemed rotation expires without disabling the
 old credential.
 
+### Server-derived MCP client setup
+
+Humans should use `/connect#<one-time-fragment>` or **Agents → Agent Connections** instead of hand-authoring an endpoint. Both surfaces read `/.well-known/workmesh-agent`, `/api/v1/info`, and the authenticated feature registry, then produce a secret-safe configuration for Codex, OpenCode, Pi, or a generic Streamable HTTP MCP client. The rendered template contains only `WORKMESH_INSTALLATION_TOKEN` (or the client's equivalent environment-secret reference), never the redeemed value.
+
+The client must fail closed when discovery is unavailable, its client type is not advertised, the preferred Client Profile or pinned Skill selector is unknown, or the Coordination MCP feature is disabled. After pairing, call `verify_connection` and require the live Team probe plus the returned bootstrap receipt. Then call `get_workmesh_context` before selecting work. These checks establish identity and current server facts only: tool discovery does not create a Session, Delegation, approval, lease, revision, or idempotency authority.
+
+Store the installation credential in the client's secret store and send it only as `X-WorkMesh-Installation-Token` to the exact discovered MCP URL. Never place it in a repository, copied configuration, screenshot, browser storage, prompt transcript, log, or command line.
+
 ## Fake Agent and smoke checks
 
 The fake Agent listens at `POST /workmesh/events`, ACKs each delivery before it starts work, validates raw-body HMAC, and de-duplicates `WorkMesh-Delivery-Id`. Exchanged session tokens are held only in its running process (never logged or persisted), allowing later prompted/pause/resume/stop deliveries to use the same scoped client. Its environment toggles delayed ACK/stale, plan/activity/question/approval/fail/complete, stop confirmation, and an intentionally rejected post-stop write:

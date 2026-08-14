@@ -191,4 +191,20 @@ describe('shared Agent mutation resource liveness', () => {
     expect(projectRead).toBeGreaterThan(workItemRead)
     expect(command).not.toContain('SELECT live_project.id')
   })
+
+  it('locks the Connection credential before the shared coordination authority plan', async () => {
+    const source = await readFile(new URL('./guard.ts', import.meta.url), 'utf8')
+    const start = source.indexOf('async function lockCoordinationAuthority')
+    const command = source.slice(start)
+    const connectionRead = command.indexOf('FROM agent_connections')
+    const credentialRead = command.indexOf('FROM agent_connection_credentials', connectionRead)
+    const coordinationRead = command.indexOf('FROM agent_coordination_sessions', credentialRead)
+    const authorityPlan = command.indexOf('await lockAgentAuthorityPlan', coordinationRead)
+
+    expect(start).toBeGreaterThanOrEqual(0)
+    expect(connectionRead).toBeGreaterThanOrEqual(0)
+    expect(credentialRead).toBeGreaterThan(connectionRead)
+    expect(coordinationRead).toBeGreaterThan(credentialRead)
+    expect(authorityPlan).toBeGreaterThan(coordinationRead)
+  })
 })

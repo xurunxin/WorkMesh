@@ -16,6 +16,7 @@ import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
 import { authClientContext, authIdempotentTransaction } from './auth-idempotency.js'
 import type { ApiActor, RequestMeta } from './agent/types.js'
 import { mutate, type CommandContext } from './commands.js'
+import type { Paginator } from './pagination.js'
 
 const skill = workmeshSkillManifest
 
@@ -86,14 +87,44 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
   webOrigin: string
   meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta
   header: (request: FastifyRequest, name: string) => string | undefined
+  paginator: Paginator
 }): void {
-  const { db, webOrigin, meta, header } = input
+  const { db, webOrigin, meta, header, paginator } = input
   const id = (request: FastifyRequest) => (request.params as { id: string }).id
 
   app.get('/.well-known/workmesh-agent', async () => agentWellKnownResponseSchema.parse({
     protocolVersion: 'v1', mcpUrl: mcpUrl(webOrigin), wellKnownUrl: `${webOrigin.replace(/\/$/, '')}/.well-known/workmesh-agent`,
     apiVersion: 'v1', supportedClients: ['codex', 'opencode', 'pi', 'generic_mcp'], skill,
   }))
+
+  app.get('/api/v1/agent-connections', async request => {
+    const actor = request.actor as ApiActor
+    requireAdmin(actor)
+    const page = await paginator.query<ConnectionRow & { status_rank: number }>(
+      db,
+      request,
+      request.query,
+      {
+        route: '/api/v1/agent-connections',
+        filters: {},
+        sort: [
+          {
+            key: 'status_rank',
+            sql: "CASE connection.status WHEN 'active' THEN 0 WHEN 'rotating' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END",
+            direction: 'ASC',
+          },
+          { key: 'updated_at', sql: 'connection.updated_at', direction: 'DESC' },
+          { key: 'id', sql: 'connection.id', direction: 'DESC' },
+        ],
+      },
+      `SELECT connection.*,
+              CASE connection.status WHEN 'active' THEN 0 WHEN 'rotating' THEN 1 WHEN 'pending' THEN 2 ELSE 3 END AS status_rank
+         FROM agent_connections connection
+        WHERE connection.workspace_id=$1`,
+      [actor.workspaceId],
+    )
+    return { items: page.items.map(response), nextCursor: page.nextCursor }
+  })
 
   app.post('/api/v1/agent-connections', async (request, reply) => {
     const body = agentConnectionCreateInputSchema.parse(request.body)

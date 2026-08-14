@@ -8,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 import { apiBase } from './api'
 
@@ -37,6 +38,11 @@ export type RealtimeEvent = Readonly<{
 export type RealtimeInvalidation =
   | Readonly<{ reason: 'event'; event: RealtimeEvent }>
   | Readonly<{ reason: 'resync' }>
+export type RealtimeConnectionState =
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting'
+  | 'offline'
 
 type Subscriber = Readonly<{
   resources: ReadonlySet<string>
@@ -49,6 +55,7 @@ export type RealtimeSubscriptionRegistry = Readonly<{
   dispatch: (invalidation: RealtimeInvalidation) => Promise<void>
 }>
 type RealtimeContextValue = Readonly<{
+  connectionState: RealtimeConnectionState
   subscribe: (
     resources: readonly RealtimeResource[],
     listener: (
@@ -247,6 +254,8 @@ export type RealtimeLoopOptions = Readonly<{
   dispatch: (invalidation: RealtimeInvalidation) => Promise<void>
   sleep?: (milliseconds: number, signal: AbortSignal) => Promise<void>
   random?: () => number
+  isOnline?: () => boolean
+  onStateChange?: (state: RealtimeConnectionState) => void
 }>
 
 /**
@@ -261,9 +270,12 @@ export async function runRealtimeLoop(
   const seenOrder: string[] = []
   const sleep = options.sleep ?? delayWithAbort
   const random = options.random ?? Math.random
+  const isOnline = options.isOnline ?? (() => true)
+  const reportState = options.onStateChange ?? (() => undefined)
   let retryAttempt = 0
 
   const pause = async (minimumMs = 0): Promise<void> => {
+    reportState(isOnline() ? 'reconnecting' : 'offline')
     retryAttempt += 1
     const exponential = Math.min(10_000, 250 * 2 ** (retryAttempt - 1))
     const jittered = Math.round(exponential * (0.75 + random() * 0.5))
@@ -272,6 +284,7 @@ export async function runRealtimeLoop(
 
   while (!options.signal.aborted) {
     try {
+      reportState(retryAttempt === 0 ? 'connecting' : 'reconnecting')
       const currentIdentity = await options.identity()
       if (!currentIdentity || options.signal.aborted) return
       const key = realtimeCheckpointKey(currentIdentity)
@@ -304,6 +317,7 @@ export async function runRealtimeLoop(
         continue
       }
 
+      reportState('connected')
       let resyncRequested = false
       for await (const frame of sseFrames(response.body)) {
         if (options.signal.aborted) return
@@ -358,6 +372,8 @@ export async function runRealtimeLoop(
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   const registry = useRef<RealtimeSubscriptionRegistry | null>(null)
   registry.current ??= createRealtimeSubscriptionRegistry()
+  const [connectionState, setConnectionState] =
+    useState<RealtimeConnectionState>('connecting')
 
   const subscribe = useCallback((
     resources: readonly RealtimeResource[],
@@ -409,16 +425,25 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
       ),
       storage: localStorage,
       dispatch,
+      isOnline: () => navigator.onLine,
+      onStateChange: setConnectionState,
     })
     return () => abort.abort()
   }, [])
 
-  const value = useMemo(() => ({ subscribe }), [subscribe])
+  const value = useMemo(
+    () => ({ connectionState, subscribe }),
+    [connectionState, subscribe],
+  )
   return (
     <RealtimeContext.Provider value={value}>
       {children}
     </RealtimeContext.Provider>
   )
+}
+
+export function useRealtimeConnectionState(): RealtimeConnectionState {
+  return useContext(RealtimeContext)?.connectionState ?? 'offline'
 }
 
 export function useRealtimeSubscription(

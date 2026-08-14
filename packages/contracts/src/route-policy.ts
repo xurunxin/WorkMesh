@@ -16,6 +16,7 @@ export type ResourceResolverId =
   | 'workspace'
   | 'team'
   | 'project'
+  | 'milestone'
   | 'work_item'
   | 'comment'
   | 'agent_definition'
@@ -147,6 +148,7 @@ const workspaceAdminOperations = new Set([
   'rollbackWorkspaceGuidance',
   'listWorkspaceGuidanceHistory',
   'diffWorkspaceGuidance',
+  'listAgentConnections',
   'createAgentConnection',
   'getAgentConnection',
   'patchAgentConnection',
@@ -183,7 +185,6 @@ const humanOnlyOperations = new Set([
   'reverseDecision',
   'connectRepository',
   'pinRepositoryContext',
-  'createProjectMilestone',
   'publishProjectUpdate',
   'createProjectDependency',
   'decideCompletionSuggestion',
@@ -201,6 +202,8 @@ const humanOnlyOperations = new Set([
   'createLoop',
   'setLoopState',
   'createNotification',
+  'listNotifications',
+  'getNotificationPreferences',
   'updateNotificationPreferences',
   'createTemplate',
   'createTemplateVersion',
@@ -234,6 +237,9 @@ const revisionedOperations = new Set([
   'deleteProject',
   'updateWorkItem',
   'deleteWorkItem',
+  'updateMilestone',
+  'deleteMilestone',
+  'deleteWorkItemRelation',
   'updateComment',
   'updateAgent',
   'rotateAgentWebhookSecret',
@@ -295,6 +301,7 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'
+  if (operationId === 'listWorkItemArtifacts') return 'work_item'
   if (path.includes('/templates')) return 'template'
   if (path.includes('/a2a-bindings')) return 'a2a_binding'
   if (path.includes('/automation') || path.includes('/loops')) return 'automation'
@@ -315,6 +322,7 @@ function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (path.includes('/agent-connections')) return 'agent_connection'
   if (path.includes('/comments')) return 'comment'
   if (path.includes('/work-items')) return 'work_item'
+  if (path.includes('/milestones')) return 'milestone'
   if (path.includes('/projects')) return 'project'
   if (path.includes('/teams')) return 'team'
   if (path === '/api/v1/workspace' || path.includes('/workspaces/')) return 'workspace'
@@ -437,6 +445,10 @@ export function createRoutePolicyManifest(
 const mcpOperationIds = {
   'tool:verify_connection': 'getAgentCapabilityManifest',
   'tool:get_current_identity': 'getAgentCapabilityManifest',
+  'tool:get_workmesh_context': 'getAgentCapabilityManifest',
+  'tool:resolve_identifier': 'listProjects',
+  'tool:prepare_project_import': 'listProjects',
+  'tool:apply_project_import': 'createProject',
   'tool:list_teams': 'listTeams',
   'tool:list_workflow_states': 'listWorkflowStates',
   'tool:list_projects': 'listProjects',
@@ -445,6 +457,11 @@ const mcpOperationIds = {
   'tool:update_project': 'updateProject',
   'tool:create_work_item': 'createWorkItem',
   'tool:update_work_item': 'updateWorkItem',
+  'tool:create_milestone': 'createProjectMilestone',
+  'tool:update_milestone': 'updateMilestone',
+  'tool:delete_milestone': 'deleteMilestone',
+  'tool:add_work_item_relation': 'createWorkItemRelation',
+  'tool:remove_work_item_relation': 'deleteWorkItemRelation',
   'tool:delegate_work_item': 'delegateAndStartAgentSession',
   'tool:start_agent_session': 'delegateAndStartAgentSession',
   'resource:server-info': 'getServerInfo',
@@ -463,6 +480,9 @@ const mcpOperationIds = {
   'tool:list_events': 'listEvents',
   'tool:list_session_activities': 'listAgentActivities',
   'tool:get_work_item': 'getWorkItem',
+  'tool:list_project_milestones': 'listProjectMilestones',
+  'tool:get_milestone': 'getMilestone',
+  'tool:list_work_item_relations': 'listWorkItemRelations',
   'tool:get_work_room': 'getWorkRoom',
   'tool:create_repository_branch': 'requestProviderAction',
   'tool:create_repository_commit': 'requestProviderAction',

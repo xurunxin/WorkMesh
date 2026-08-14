@@ -12,9 +12,10 @@ const repositoryId = '00000000-0000-4000-8000-000000000004'
 const pullRequestId = '00000000-0000-4000-8000-000000000005'
 const artifactId = '00000000-0000-4000-8000-000000000006'
 const workspaceId = '00000000-0000-4000-8000-000000000007'
+const teamId = '00000000-0000-4000-8000-000000000008'
 
-async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient) {
-  const server = createWorkMeshMcpServer({ client, mode })
+async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient, coordination = false) {
+  const server = createWorkMeshMcpServer({ client, mode, coordination })
   const [serverTransport, clientTransport] = InMemoryTransport.createLinkedPair()
   await server.connect(serverTransport)
   const protocol = new Client({ name: 'mcp-test-client', version: '1.0.0' })
@@ -23,6 +24,411 @@ async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClien
 }
 
 describe('WorkMesh MCP adapter', () => {
+  it('bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls', async () => {
+    const manifest = {
+      profileVersion: '1.0.0',
+      agent: {
+        actorId: artifactId,
+        sessionId,
+        sessionState: 'executing',
+        sessionRevision: 4,
+        effectiveCapabilities: ['work:read', 'work:write'],
+        capabilityScope: { workspaceId, teamIds: [teamId], projectIds: [], workItemIds: [], repositoryIds: [], capabilities: ['work:read', 'work:write'] },
+        supportedProtocols: ['mcp'],
+      },
+      operations: [
+        { operationId: 'createProject', supported: true, eligibleByCapability: true },
+        { operationId: 'deleteProject', supported: false, eligibleByCapability: false },
+      ],
+      delivery: { realtime: { durableCursor: true } },
+      extensions: [],
+    }
+    const team = { id: teamId, key: 'WM', name: 'WorkMesh', revision: 2 }
+    const project = { id: projectId, team_id: teamId, name: 'Kaneo UI Adoption', revision: 3 }
+    const listTeams = vi.fn().mockResolvedValue({ items: [team], nextCursor: null })
+    const listWorkflowStates = vi.fn().mockResolvedValue({
+      items: [
+        { id: repositoryId, team_id: teamId, name: 'Backlog', category: 'backlog', position: 0 },
+        { id: pullRequestId, team_id: teamId, name: 'Ready', category: 'planned', position: 1 },
+      ],
+      nextCursor: null,
+    })
+    const listProjects = vi.fn().mockResolvedValue({ items: [project], nextCursor: null })
+    const api = {
+      getAgentCapabilities: vi.fn().mockResolvedValue(manifest),
+      listTeams,
+      listWorkflowStates,
+      listProjects,
+      getServerInfo: vi.fn().mockResolvedValue({ release: '1.0.0' }),
+      getFeatures: vi.fn().mockResolvedValue({ features: { coordinationMcp: true } }),
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const context = await protocol.callTool({ name: 'get_workmesh_context', arguments: {} })
+      expect(context.isError, JSON.stringify(context.structuredContent)).not.toBe(true)
+      expect(context.structuredContent).toMatchObject({
+        data: {
+          identity: { actorId: artifactId, sessionId, sessionRevision: 4 },
+          team: { id: teamId, key: 'WM', ref: 'WM' },
+          defaultWorkflowState: { id: pullRequestId, name: 'Ready', ref: 'WM/state/ready' },
+          eventCursor: { cursor: '0', semantics: 'replay_from_origin' },
+          allowedOperations: ['createProject'],
+        },
+      })
+      const resolved = await protocol.callTool({
+        name: 'resolve_identifier',
+        arguments: { kind: 'project', ref: 'WM/kaneo-ui-adoption~000000000003' },
+      })
+      expect(resolved.isError).not.toBe(true)
+      expect(resolved.structuredContent).toEqual({
+        data: {
+          kind: 'project',
+          id: projectId,
+          ref: 'WM/kaneo-ui-adoption~000000000003',
+          displayName: 'Kaneo UI Adoption',
+          revision: 3,
+          teamRef: 'WM',
+        },
+      })
+      expect(listTeams).toHaveBeenCalledTimes(2)
+      expect(listWorkflowStates).toHaveBeenCalledWith(teamId, { limit: 200 })
+      expect(listProjects).toHaveBeenCalledWith({ teamId }, { cursor: undefined, limit: 200 })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('gives a stable UUID suffix precedence over duplicate Project and Milestone names', async () => {
+    const team = { id: teamId, key: 'WM', name: 'WorkMesh', revision: 2 }
+    const projects = [
+      { id: projectId, team_id: teamId, name: 'Duplicate name', revision: 3 },
+      { id: repositoryId, team_id: teamId, name: 'Duplicate name', revision: 4 },
+    ]
+    const milestones = [
+      { id: artifactId, project_id: projectId, name: 'Duplicate phase', revision: 2 },
+      { id: workspaceId, project_id: projectId, name: 'Duplicate phase', revision: 5 },
+    ]
+    const api = {
+      listTeams: vi.fn().mockResolvedValue({ items: [team], nextCursor: null }),
+      listProjects: vi.fn().mockResolvedValue({ items: projects, nextCursor: null }),
+      listProjectMilestones: vi.fn().mockResolvedValue({ items: milestones, nextCursor: null }),
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api, true)
+    try {
+      const project = await protocol.callTool({
+        name: 'resolve_identifier',
+        arguments: { kind: 'project', ref: 'WM/duplicate-name~000000000003' },
+      })
+      expect(project.isError, JSON.stringify(project.structuredContent)).not.toBe(true)
+      expect(project.structuredContent).toMatchObject({ data: { id: projectId, ref: 'WM/duplicate-name~000000000003' } })
+
+      const milestone = await protocol.callTool({
+        name: 'resolve_identifier',
+        arguments: {
+          kind: 'milestone',
+          projectRef: 'WM/old-project-name~000000000003',
+          ref: 'WM/old-project-name~000000000003#old-phase~000000000006',
+        },
+      })
+      expect(milestone.isError, JSON.stringify(milestone.structuredContent)).not.toBe(true)
+      expect(milestone.structuredContent).toMatchObject({ data: { id: artifactId, ref: 'WM/duplicate-name~000000000003#duplicate-phase~000000000006' } })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('prepares a deterministic Project import without calling any WorkMesh API', async () => {
+    const apiCalls = {
+      getAgentCapabilities: vi.fn(),
+      listTeams: vi.fn(),
+      listProjects: vi.fn(),
+      createProject: vi.fn(),
+      createMilestone: vi.fn(),
+      createWorkItem: vi.fn(),
+      createWorkItemRelation: vi.fn(),
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    }
+    const api = apiCalls as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api, true)
+    const base = {
+      teamRef: 'WM',
+      defaultStatus: 'Ready',
+      project: {
+        sourceId: 'kaneo-project',
+        name: 'WorkMesh Human Experience — Kaneo UI Adoption',
+        summary: 'Selective Kaneo UI adoption.',
+        provenance: { provider: 'github', sourceUrl: 'https://github.com/usekaneo/kaneo', sourceIdentifier: 'usekaneo/kaneo' },
+      },
+      milestones: [
+        { sourceId: 'm2', name: 'M2 Agent ergonomics' },
+        { sourceId: 'm1', name: 'M1 Human foundation' },
+      ],
+      workItems: [
+        { sourceId: 'issue-2', title: 'Child delivery', status: 'Ready', parentSourceId: 'issue-1', milestoneSourceId: 'm2', priority: 'high' },
+        { sourceId: 'issue-1', title: 'Parent delivery', status: 'Backlog', milestoneSourceId: 'm1', labels: ['roadmap:post-ga'] },
+      ],
+      relations: [
+        { sourceId: 'relation-1', sourceWorkItemId: 'issue-1', targetWorkItemId: 'issue-2', kind: 'blocks' },
+      ],
+    }
+    try {
+      const first = await protocol.callTool({ name: 'prepare_project_import', arguments: base })
+      const reordered = await protocol.callTool({
+        name: 'prepare_project_import',
+        arguments: { ...base, milestones: [...base.milestones].reverse(), workItems: [...base.workItems].reverse() },
+      })
+      expect(first.isError, JSON.stringify(first.structuredContent)).not.toBe(true)
+      expect(reordered.isError, JSON.stringify(reordered.structuredContent)).not.toBe(true)
+      const prepared = (first.structuredContent as { data: { contentHash: string; plan: { milestones: { sourceId: string }[]; workItems: { sourceId: string }[] }; counts: Record<string, number> } }).data
+      expect(prepared.contentHash).toMatch(/^sha256:[a-f0-9]{64}$/)
+      expect((reordered.structuredContent as { data: { contentHash: string } }).data.contentHash).toBe(prepared.contentHash)
+      expect(prepared.plan.milestones.map(item => item.sourceId)).toEqual(['m1', 'm2'])
+      expect(prepared.plan.workItems.map(item => item.sourceId)).toEqual(['issue-1', 'issue-2'])
+      expect(prepared.counts).toEqual({ projects: 1, milestones: 2, workItems: 2, relations: 1 })
+      for (const call of Object.values(apiCalls)) expect(call).not.toHaveBeenCalled()
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('resumes apply_project_import after response loss and replays the complete source mapping', async () => {
+    const team = { id: teamId, key: 'WM', name: 'WorkMesh', revision: 2 }
+    const states = [
+      { id: repositoryId, team_id: teamId, name: 'Backlog', category: 'backlog', position: 0 },
+      { id: pullRequestId, team_id: teamId, name: 'Ready', category: 'planned', position: 1 },
+    ]
+    const stored = new Map<string, unknown>()
+    const keys: string[] = []
+    let loseSecondWorkItemResponse = true
+    const replay = async <T>(key: string, value: T, loseResponse = false): Promise<T> => {
+      keys.push(key)
+      if (stored.has(key)) return stored.get(key) as T
+      stored.set(key, value)
+      if (loseResponse) throw new WorkMeshSdkError('response lost after commit', { code: 'NETWORK_ERROR' })
+      return value
+    }
+    const createProject = vi.fn(async (_input: { name: string }, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, { id: projectId, revision: 1 }))
+    const createMilestone = vi.fn(async (_projectId: string, input: { name: string }, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, { id: repositoryId, project_id: projectId, name: input.name, revision: 1 }))
+    let workItemNumber = 0
+    const createWorkItem = vi.fn(async (input: { title: string }, options: { idempotencyKey: string }) => {
+      const existing = stored.get(options.idempotencyKey)
+      const number = existing ? (existing as { number: number }).number : ++workItemNumber
+      const result = { id: number === 1 ? workItemId : artifactId, number, revision: 1 }
+      const lose = input.title === 'Child delivery' && loseSecondWorkItemResponse
+      loseSecondWorkItemResponse = lose ? false : loseSecondWorkItemResponse
+      return replay(options.idempotencyKey, result, lose)
+    })
+    const createWorkItemRelation = vi.fn(async (_workItemId: string, input: { targetWorkItemId: string; kind: string }, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, { id: sessionId, source_work_item_id: workItemId, target_work_item_id: input.targetWorkItemId, kind: input.kind, revision: 1 }))
+    const api = {
+      listTeams: vi.fn().mockResolvedValue({ items: [team], nextCursor: null }),
+      listWorkflowStates: vi.fn().mockResolvedValue({ items: states, nextCursor: null }),
+      createProject,
+      createMilestone,
+      createWorkItem,
+      createWorkItemRelation,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    const source = {
+      teamRef: 'WM',
+      defaultStatus: 'Ready',
+      project: { sourceId: 'project', name: 'Kaneo UI Adoption' },
+      milestones: [{ sourceId: 'm1', name: 'Foundation' }],
+      workItems: [
+        { sourceId: 'issue-1', title: 'Parent delivery', status: 'Backlog', milestoneSourceId: 'm1' },
+        { sourceId: 'issue-2', title: 'Child delivery', parentSourceId: 'issue-1', milestoneSourceId: 'm1', labels: ['roadmap:post-ga'] },
+      ],
+      relations: [{ sourceId: 'r1', sourceWorkItemId: 'issue-1', targetWorkItemId: 'issue-2', kind: 'blocks' }],
+    }
+    try {
+      const prepared = await protocol.callTool({ name: 'prepare_project_import', arguments: source })
+      expect(prepared.isError).not.toBe(true)
+      const preparation = (prepared.structuredContent as { data: { contentHash: string; plan: object } }).data
+      const first = await protocol.callTool({ name: 'apply_project_import', arguments: preparation })
+      expect(first.isError).toBe(true)
+      expect(first.structuredContent).toMatchObject({ error: { code: 'NETWORK_ERROR' } })
+
+      const resumed = await protocol.callTool({ name: 'apply_project_import', arguments: preparation })
+      const replayed = await protocol.callTool({ name: 'apply_project_import', arguments: preparation })
+      expect(resumed.isError, JSON.stringify(resumed.structuredContent)).not.toBe(true)
+      expect(replayed.isError, JSON.stringify(replayed.structuredContent)).not.toBe(true)
+      expect(replayed.structuredContent).toEqual(resumed.structuredContent)
+      expect(resumed.structuredContent).toMatchObject({
+        data: {
+          contentHash: preparation.contentHash,
+          complete: true,
+          persistedBy: 'api_idempotency_keys',
+          mapping: {
+            project: { sourceId: 'project', targetId: projectId },
+            milestones: [{ sourceId: 'm1', targetId: repositoryId }],
+            workItems: [
+              { sourceId: 'issue-1', targetId: workItemId, targetRef: 'WM-1' },
+              { sourceId: 'issue-2', targetId: artifactId, targetRef: 'WM-2' },
+            ],
+            relations: [{ sourceId: 'r1', targetId: sessionId }],
+          },
+        },
+      })
+      expect(new Set(keys).size).toBe(5)
+      expect(createProject).toHaveBeenCalledTimes(3)
+      expect(createMilestone).toHaveBeenCalledTimes(3)
+      expect(createWorkItem).toHaveBeenCalledTimes(6)
+      expect(createWorkItemRelation).toHaveBeenCalledTimes(2)
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('returns actionable revision conflicts with correlation and current revision', async () => {
+    const updateProject = vi.fn().mockRejectedValue(new WorkMeshSdkError(
+      'Resource has changed',
+      {
+        code: 'REVISION_CONFLICT',
+        status: 409,
+        correlationId: 'correlation-revision',
+        details: { expectedRevision: 2, currentRevision: 5 },
+      },
+    ))
+    const api = {
+      updateProject,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const result = await protocol.callTool({
+        name: 'update_project',
+        arguments: { projectId, revision: 2, name: 'Rebased name' },
+      })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent).toEqual({
+        error: {
+          code: 'REVISION_CONFLICT',
+          message: 'Resource has changed',
+          correlationId: 'correlation-revision',
+          details: { expectedRevision: 2, currentRevision: 5 },
+          currentRevision: 5,
+          safeNextAction: 'Refetch the resource, reapply the intended change to revision 5, and retry once with that revision.',
+        },
+      })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('publishes stable schemas for bootstrap, resolution, prepare, and apply', async () => {
+    const api = { listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const tools = Object.fromEntries((await protocol.listTools()).tools.map(entry => [entry.name, entry]))
+      expect(Object.keys(tools).filter(name => ['get_workmesh_context', 'resolve_identifier', 'prepare_project_import', 'apply_project_import'].includes(name)).sort()).toEqual([
+        'apply_project_import',
+        'get_workmesh_context',
+        'prepare_project_import',
+        'resolve_identifier',
+      ])
+      expect(tools.get_workmesh_context?.inputSchema).toMatchObject({ type: 'object', properties: {} })
+      expect(tools.resolve_identifier?.inputSchema).toMatchObject({
+        type: 'object',
+        required: ['kind', 'ref'],
+        properties: { kind: { type: 'string' }, ref: { type: 'string' }, teamRef: { type: 'string' }, projectRef: { type: 'string' } },
+      })
+      expect(tools.prepare_project_import?.inputSchema).toMatchObject({
+        type: 'object',
+        required: ['teamRef', 'defaultStatus', 'project'],
+        properties: { milestones: { type: 'array' }, workItems: { type: 'array' }, relations: { type: 'array' } },
+      })
+      expect(tools.apply_project_import?.inputSchema).toMatchObject({
+        type: 'object',
+        required: ['contentHash', 'plan'],
+        properties: { contentHash: { type: 'string' }, plan: { type: 'object' } },
+      })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('returns a generated correlation ID and safe repair action for local import validation errors', async () => {
+    const api = { listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api, true)
+    try {
+      const result = await protocol.callTool({
+        name: 'prepare_project_import',
+        arguments: {
+          teamRef: 'WM',
+          defaultStatus: 'Ready',
+          project: { sourceId: 'project', name: 'Broken import' },
+          workItems: [{ sourceId: 'issue-1', title: 'Orphan', milestoneSourceId: 'missing' }],
+        },
+      })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent, JSON.stringify(result)).toMatchObject({
+        error: {
+          code: 'IMPORT_REFERENCE_INVALID',
+          details: { sourceId: 'issue-1', milestoneSourceId: 'missing' },
+          safeNextAction: 'Correct the source plan, run prepare_project_import again, and apply only the newly returned hash and plan.',
+        },
+      })
+      expect((result.structuredContent as { error: { correlationId: string } }).error.correlationId).toMatch(/^mcp:[0-9a-f-]{36}$/)
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('normalizes pre-handler schema failures into the structured WorkMesh error envelope', async () => {
+    const api = { listWorkItems: vi.fn(), getWorkItem: vi.fn() } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api, true)
+    try {
+      const result = await protocol.callTool({
+        name: 'prepare_project_import',
+        arguments: {
+          defaultStatus: 'Ready',
+          project: { sourceId: 'project', name: 42 },
+        },
+      })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent, JSON.stringify(result)).toMatchObject({
+        error: {
+          code: 'MCP_INPUT_INVALID',
+          message: 'MCP tool input failed validation',
+          safeNextAction: 'Correct the arguments against the published MCP tool schema, then retry the call.',
+        },
+      })
+      expect((result.structuredContent as { error: { correlationId: string; details: { issues: unknown[] } } }).error.correlationId).toMatch(/^mcp:[0-9a-f-]{36}$/)
+      expect((result.structuredContent as { error: { details: { issues: unknown[] } } }).error.details.issues.length).toBeGreaterThan(0)
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('fails verify_connection when the Team live authorization probe is unavailable', async () => {
+    const manifest = { agent: { capabilityScope: { teamIds: [teamId] } } }
+    const getAgentCapabilities = vi.fn().mockResolvedValue(manifest)
+    const listTeams = vi.fn().mockRejectedValue(new WorkMeshSdkError(
+      'Team discovery is unavailable',
+      {
+        code: 'LIVE_PROBE_UNAVAILABLE',
+        status: 503,
+        correlationId: 'correlation-live-probe',
+      },
+    ))
+    const api = {
+      getAgentCapabilities,
+      listTeams,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const result = await protocol.callTool({ name: 'verify_connection', arguments: {} })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent).toEqual({
+        error: {
+          code: 'LIVE_PROBE_UNAVAILABLE',
+          message: 'Team discovery is unavailable',
+          correlationId: 'correlation-live-probe',
+          details: undefined,
+          safeNextAction: 'Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.',
+        },
+      })
+      expect(getAgentCapabilities).toHaveBeenCalledOnce()
+      expect(listTeams).toHaveBeenCalledWith({ limit: 1 })
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('binds every MCP resource and tool to a REST operation policy', async () => {
     const source = await readFile(new URL('./index.ts', import.meta.url), 'utf8')
     const registrations = [...source.matchAll(/register(Resource|Tool)\('([^']+)'/g)]
@@ -203,6 +609,7 @@ describe('WorkMesh MCP adapter', () => {
           message: 'scope denied',
           correlationId: 'correlation-denial',
           details: undefined,
+          safeNextAction: 'Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team.',
         },
       })
     } finally { await protocol.close(); await server.close() }
@@ -215,11 +622,11 @@ describe('WorkMesh MCP adapter', () => {
     try {
       const result = await protocol.callTool({
         name: 'list_work_items',
-        arguments: { teamId: '00000000-0000-4000-8000-000000000001', cursor: 'opaque', limit: 17 },
+        arguments: { teamId: '00000000-0000-4000-8000-000000000001', search: 'human experience', cursor: 'opaque', limit: 17 },
       })
       expect(result.isError).not.toBe(true)
       expect(listWorkItems).toHaveBeenCalledWith(
-        { teamId: '00000000-0000-4000-8000-000000000001' },
+        { teamId: '00000000-0000-4000-8000-000000000001', search: 'human experience' },
         { cursor: 'opaque', limit: 17 },
       )
       expect(result.structuredContent).toEqual({ data: { items: [{ id: 'work-1' }], nextCursor: 'next' } })
@@ -463,6 +870,81 @@ describe('WorkMesh MCP adapter', () => {
         body: 'CI is still failing.',
         evidenceArtifactIds: undefined,
       }, { sessionId, idempotencyKey: undefined })
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('returns a bounded secret-safe bootstrap receipt after live Connection verification', async () => {
+    const manifest = {
+      profileVersion: '1.0',
+      agent: { capabilityScope: { teamIds: [teamId] } },
+      credential: 'installation-secret-must-not-escape',
+    }
+    const api = {
+      getAgentCapabilities: vi.fn().mockResolvedValue(manifest),
+      listTeams: vi.fn().mockResolvedValue({ items: [{ id: teamId }], nextCursor: null }),
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const result = await protocol.callTool({ name: 'verify_connection', arguments: {} })
+      expect(result.isError).not.toBe(true)
+      expect(result.structuredContent).toMatchObject({
+        data: {
+          liveProbe: { teamId, teamDiscovery: 'ok' },
+          bootstrap: {
+            verified: true,
+            transport: 'streamable_http',
+            profileVersion: '1.0',
+            identityBoundary: 'Installation identity is not an Agent Session or Delegation.',
+            requiredNextTools: ['get_workmesh_context'],
+            authorityEvaluatedPerRequest: true,
+          },
+        },
+      })
+      const bootstrap = (result.structuredContent as { data: { bootstrap: unknown } }).data.bootstrap
+      expect(JSON.stringify(bootstrap)).not.toContain('installation-secret-must-not-escape')
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('exposes structured Milestone, hierarchy, and relation operations to coordination clients', async () => {
+    const milestoneId = '00000000-0000-4000-8000-000000000008'
+    const relationId = '00000000-0000-4000-8000-000000000009'
+    const listProjectMilestones = vi.fn().mockResolvedValue({ items: [], nextCursor: null })
+    const createMilestone = vi.fn().mockResolvedValue({ id: milestoneId, revision: 1 })
+    const updateMilestone = vi.fn().mockResolvedValue({ id: milestoneId, revision: 2 })
+    const createWorkItemRelation = vi.fn().mockResolvedValue({ id: relationId, revision: 1 })
+    const deleteWorkItemRelation = vi.fn().mockResolvedValue({ id: relationId, revision: 2 })
+    const api = {
+      listProjectMilestones,
+      createMilestone,
+      updateMilestone,
+      createWorkItemRelation,
+      deleteWorkItemRelation,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const names = (await protocol.listTools()).tools.map(tool => tool.name)
+      expect(names).toEqual(expect.arrayContaining([
+        'list_project_milestones',
+        'create_milestone',
+        'update_milestone',
+        'add_work_item_relation',
+        'remove_work_item_relation',
+      ]))
+      await protocol.callTool({ name: 'list_project_milestones', arguments: { projectId, limit: 25 } })
+      await protocol.callTool({ name: 'create_milestone', arguments: { projectId, name: 'MCP parity', idempotencyKey: 'milestone-create' } })
+      await protocol.callTool({ name: 'update_milestone', arguments: { milestoneId, revision: 1, targetDate: '2026-09-01', idempotencyKey: 'milestone-update' } })
+      await protocol.callTool({ name: 'add_work_item_relation', arguments: { workItemId, targetWorkItemId: artifactId, kind: 'blocks', idempotencyKey: 'relation-add' } })
+      await protocol.callTool({ name: 'remove_work_item_relation', arguments: { workItemId, relationId, revision: 1, idempotencyKey: 'relation-remove' } })
+
+      expect(listProjectMilestones).toHaveBeenCalledWith(projectId, { cursor: undefined, limit: 25 })
+      expect(createMilestone).toHaveBeenCalledWith(projectId, { name: 'MCP parity', description: undefined, targetDate: undefined }, { idempotencyKey: 'milestone-create' })
+      expect(updateMilestone).toHaveBeenCalledWith(milestoneId, { name: undefined, description: undefined, targetDate: '2026-09-01' }, { ifMatch: 1, idempotencyKey: 'milestone-update' })
+      expect(createWorkItemRelation).toHaveBeenCalledWith(workItemId, { targetWorkItemId: artifactId, kind: 'blocks' }, { idempotencyKey: 'relation-add' })
+      expect(deleteWorkItemRelation).toHaveBeenCalledWith(workItemId, relationId, { ifMatch: 1, idempotencyKey: 'relation-remove' })
     } finally { await protocol.close(); await server.close() }
   })
 })

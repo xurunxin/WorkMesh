@@ -71,6 +71,7 @@ type ExplicitResourceKind =
   | 'workspace'
   | 'team'
   | 'project'
+  | 'milestone'
   | 'work_item'
   | 'comment'
   | 'agent_definition'
@@ -103,6 +104,7 @@ const resourceSegments: Readonly<Record<string, {
   workspaces: { kind: 'workspace', resolver: 'workspace' },
   teams: { kind: 'team', resolver: 'team' },
   projects: { kind: 'project', resolver: 'project' },
+  milestones: { kind: 'milestone', resolver: 'milestone' },
   'work-items': { kind: 'work_item', resolver: 'work_item' },
   comments: { kind: 'comment', resolver: 'comment' },
   agents: { kind: 'agent_definition', resolver: 'agent_definition' },
@@ -158,6 +160,7 @@ function resourceTeamSql(kind: ExplicitResourceKind): string {
     case 'workspace': return 'SELECT NULL::uuid AS team_id FROM workspaces WHERE id=$1 AND id=$2'
     case 'team': return 'SELECT id AS team_id FROM teams WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
     case 'project': return 'SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
+    case 'milestone': return 'SELECT p.team_id FROM project_milestones m JOIN projects p ON p.id=m.project_id AND p.workspace_id=m.workspace_id WHERE m.id=$1 AND m.workspace_id=$2 AND m.deleted_at IS NULL AND p.deleted_at IS NULL'
     case 'work_item': return 'SELECT team_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL'
     case 'comment': return 'SELECT w.team_id FROM comments c JOIN channels ch ON ch.id=c.channel_id JOIN work_items w ON w.id=ch.work_item_id AND w.workspace_id=ch.workspace_id WHERE c.id=$1 AND ch.workspace_id=$2 AND c.deleted_at IS NULL AND w.deleted_at IS NULL'
     case 'agent_definition': return 'SELECT NULL::uuid AS team_id FROM agent_definitions WHERE id=$1 AND workspace_id=$2'

@@ -4,6 +4,18 @@ import { describe, expect, it } from "vitest";
 import { S3ArtifactStorage } from "./index.js";
 
 describe("S3 artifact verification", () => {
+  it("deletes only the exact requested object key", async () => {
+    const commands: Array<{ name: string; input: Record<string, unknown> }> = [];
+    const client = { send: async (command: { constructor: { name: string }; input: Record<string, unknown> }) => { commands.push({ name: command.constructor.name, input: command.input }); return {}; } };
+    const storage = new S3ArtifactStorage({
+      bucket: "artifacts",
+      config: { region: "us-east-1", credentials: { accessKeyId: "test", secretAccessKey: "test" } },
+      client: client as never,
+    });
+    await storage.delete("workspace/upload/file.txt");
+    expect(commands).toEqual([{ name: "DeleteObjectCommand", input: { Bucket: "artifacts", Key: "workspace/upload/file.txt" } }]);
+  });
+
   it("streams the object and verifies size, MIME, metadata, and SHA-256", async () => {
     const content = Buffer.from("verified artifact");
     const checksum = `sha256:${createHash("sha256").update(content).digest("hex")}`;

@@ -39,6 +39,42 @@ describe('WorkMeshClient', () => {
     occurred_at: '2026-07-28T00:00:00.000Z',
   }
 
+  it('binds structured planning methods to the versioned REST routes and headers', async () => {
+    const fetch = vi.fn().mockImplementation(async () =>
+      new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'coordination-token',
+      fetch,
+    })
+
+    await client.listProjectMilestones('project/id', { cursor: 'next', limit: 25 })
+    await client.createMilestone('project/id', { name: 'M1' }, { idempotencyKey: 'create-milestone' })
+    await client.updateMilestone('milestone/id', { targetDate: null }, { ifMatch: 3, idempotencyKey: 'update-milestone' })
+    await client.createWorkItemRelation('work/item', { targetWorkItemId: '11111111-1111-4111-8111-111111111111', kind: 'blocks' }, { idempotencyKey: 'add-relation' })
+    await client.deleteWorkItemRelation('work/item', 'relation/id', { ifMatch: 4, idempotencyKey: 'remove-relation' })
+
+    expect(fetch.mock.calls.map(call => call[0])).toEqual([
+      'https://workmesh.test/api/v1/projects/project%2Fid/milestones?cursor=next&limit=25',
+      'https://workmesh.test/api/v1/projects/project%2Fid/milestones',
+      'https://workmesh.test/api/v1/milestones/milestone%2Fid',
+      'https://workmesh.test/api/v1/work-items/work%2Fitem/relations',
+      'https://workmesh.test/api/v1/work-items/work%2Fitem/relations/relation%2Fid',
+    ])
+    expect(fetch.mock.calls[2]?.[1]).toMatchObject({
+      method: 'PATCH',
+      headers: expect.objectContaining({
+        'x-workmesh-installation-token': 'coordination-token',
+        'idempotency-key': 'update-milestone',
+        'if-match': '"revision-3"',
+      }),
+    })
+    expect(fetch.mock.calls[4]?.[1]).toMatchObject({
+      method: 'DELETE',
+      headers: expect.objectContaining({ 'if-match': '"revision-4"' }),
+    })
+  })
+
   it('lists exact decimal event cursors above 2^53', async () => {
     const fetch = vi.fn().mockResolvedValue(
       new Response(JSON.stringify([realtimeEvent]), { status: 200 }),

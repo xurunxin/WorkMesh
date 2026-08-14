@@ -132,8 +132,10 @@ export const workspaceInputSchema = z.object({ name: z.string().min(1).max(120),
 export const teamInputSchema = z.object({ name: z.string().min(1).max(120), key: z.string().regex(/^[A-Z][A-Z0-9]{1,9}$/) })
 export const stateInputSchema = z.object({ name: z.string().min(1).max(80), category: statusCategorySchema, color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), position: z.number().int().nonnegative().optional() })
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
-export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional() }).strict()
-export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional() }).strict()
+export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional(), parentId: idSchema.optional() }).strict()
+export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional(), parentId: idSchema.nullable().optional() }).strict()
+export const workItemRelationKindSchema = z.enum(['blocks', 'related'])
+export const workItemRelationInputSchema = z.object({ targetWorkItemId: idSchema, kind: workItemRelationKindSchema }).strict()
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
@@ -179,9 +181,10 @@ export const workItemExecutorProjectionSchema = z.object({
   lease_heartbeat_at: timestampSchema,
   lease_expires_at: timestampSchema,
 }).strict()
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
-export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
+export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), author_kind: z.literal('human'), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const savedViewResponseSchema = z.object({ id: z.string(), workspace_id: idSchema.optional(), owner_actor_id: idSchema.optional(), team_id: idSchema.nullable().optional(), name: z.string(), filters: savedViewFiltersSchema, layout: savedViewLayoutSchema, built_in: z.boolean().optional(), revision: revisionSchema.optional(), created_at: timestampSchema.optional(), updated_at: timestampSchema.optional() })
 export const commandResponseSchema = z.object({ id: idSchema, revision: revisionSchema })
 export const sessionResponseSchema = z.object({ csrf_token: z.string().min(1) })
@@ -257,6 +260,23 @@ export const apiErrorCodeSchema = z.enum([
   'INVALID_CREDENTIALS',
   'INSTALLATION_ALREADY_COMPLETED',
   'RESPONSIBLE_HUMAN_REQUIRED',
+  'WORK_ITEM_PARENT_SELF',
+  'WORK_ITEM_PARENT_DELETED',
+  'WORK_ITEM_PARENT_PROJECT_MISMATCH',
+  'WORK_ITEM_PARENT_SCOPE_MISMATCH',
+  'WORK_ITEM_PARENT_CYCLE',
+  'WORK_ITEM_MILESTONE_PROJECT_MISMATCH',
+  'WORK_ITEM_MILESTONE_DELETED',
+  'WORK_ITEM_RELATION_SELF',
+  'WORK_ITEM_RELATED_ORDER',
+  'WORK_ITEM_RELATION_SCOPE_MISMATCH',
+  'WORK_ITEM_RELATION_ENDPOINT_DELETED',
+  'WORK_ITEM_BLOCK_CYCLE',
+  'WORK_ITEM_HAS_ACTIVE_PARENT',
+  'WORK_ITEM_HAS_ACTIVE_CHILDREN',
+  'WORK_ITEM_HAS_ACTIVE_RELATIONS',
+  'MILESTONE_HAS_ACTIVE_WORK_ITEMS',
+  'PLANNING_RELATION_ALREADY_EXISTS',
   'PAGINATION_CURSOR_INVALID',
   'PAGINATION_CURSOR_MISMATCH',
   'CURSOR_EXPIRED',
@@ -963,6 +983,19 @@ export const artifactUploadIntentInputSchema = z.object({
   if ((value.pullRequestId === undefined) !== (value.headSha === undefined))
     context.addIssue({ code: z.ZodIssueCode.custom, message: 'Upload pullRequestId and headSha must be supplied together' })
 })
+export const humanArtifactUploadIntentInputSchema = z.object({
+  workItemId: idSchema,
+  filename: z.string().min(1).max(500),
+  mimeType: z.enum(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'application/pdf', 'text/plain', 'text/markdown', 'application/json', 'text/csv', 'application/zip']),
+  sizeBytes: z.number().int().positive().max(52_428_800),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+})
+export const artifactUploadStatusSchema = z.enum(['pending', 'uploaded', 'verified', 'rejected', 'expired', 'canceled'])
+export const artifactUploadIntentStatusResponseSchema = z.object({
+  id: idSchema, status: artifactUploadStatusSchema, filename: z.string(), mimeType: z.string(),
+  sizeBytes: z.number().int().positive(), expectedChecksum: z.string(), actualChecksum: z.string().nullable(),
+  expiresAt: timestampSchema, verifiedAt: timestampSchema.nullable(), artifactId: idSchema.nullable(), lastErrorCode: z.string().nullable(),
+})
 export const structuredFindingInputSchema = z.object({
   severity: z.enum(['blocking', 'high', 'medium', 'low']),
   file: z.string().min(1).max(2_000),
@@ -998,7 +1031,26 @@ export const milestoneInputSchema = z.object({
   name: z.string().min(1).max(180),
   description: z.string().max(10_000).optional(),
   targetDate: z.coerce.date().optional(),
-})
+}).strict()
+export const milestonePatchSchema = milestoneInputSchema.partial().extend({
+  description: z.string().max(10_000).nullable().optional(),
+  targetDate: z.coerce.date().nullable().optional(),
+}).strict().refine(
+  value => Object.values(value).some(field => field !== undefined),
+  { message: 'At least one Milestone field must be provided' },
+)
+export const milestoneResponseSchema = z.object({
+  id: idSchema,
+  workspace_id: idSchema,
+  project_id: idSchema,
+  name: z.string(),
+  description: z.string().nullable(),
+  target_date: dateSchema.nullable(),
+  revision: revisionSchema,
+  deleted_at: timestampSchema.nullable(),
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+}).strict()
 export const projectUpdateInputSchema = z.object({
   health: z.enum(['on_track', 'at_risk', 'off_track']),
   body: z.string().min(1).max(20_000),
@@ -1027,13 +1079,23 @@ export const stage3RouteManifest = [
   { method: 'POST', path: '/api/v1/provider-actions', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/delivery-artifacts', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/artifact-upload-intents', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/artifact-upload-intents/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/artifact-upload-intents/{id}/finalize', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/artifact-upload-intents/{id}/cancel', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/work-items/{id}/artifacts', authenticated: true },
   { method: 'GET', path: '/api/v1/artifact-upload-intents/{id}/download', authenticated: true },
   { method: 'POST', path: '/api/v1/pull-requests/{id}/reviews', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/pull-requests/{id}/merge', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/pull-requests/{id}/checks/{checkId}/retry', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/projects/{id}/delivery', authenticated: true },
+  { method: 'GET', path: '/api/v1/projects/{id}/milestones', authenticated: true },
   { method: 'POST', path: '/api/v1/projects/{id}/milestones', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/milestones/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/milestones/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/milestones/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/work-items/{id}/relations', authenticated: true },
+  { method: 'POST', path: '/api/v1/work-items/{id}/relations', authenticated: true, mutation: true },
+  { method: 'DELETE', path: '/api/v1/work-items/{id}/relations/{relationId}', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/projects/{id}/updates', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/projects/{id}/updates/{updateId}/publish', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/projects/{id}/dependencies', authenticated: true, mutation: true },
@@ -1047,6 +1109,9 @@ export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
 export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
 export type WorkItemResponse = z.infer<typeof workItemResponseSchema>
+export type WorkItemRelationInput = z.infer<typeof workItemRelationInputSchema>
+export type WorkItemRelationResponse = z.infer<typeof workItemRelationResponseSchema>
+export type MilestoneResponse = z.infer<typeof milestoneResponseSchema>
 export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
 export type GuidanceScope = z.infer<typeof guidanceScopeSchema>
 export type GuidanceResponse = z.infer<typeof guidanceResponseSchema>
@@ -1273,6 +1338,39 @@ export const notificationInputSchema = z.object({
   channels: z.array(notificationChannelSchema).min(1).max(3),
   dedupeKey: z.string().min(1).max(500),
 })
+export const notificationPreferenceResponseSchema = z.object({
+  channels: z.array(notificationChannelSchema).min(1).max(3),
+  digest: z.enum(['immediate', 'hourly', 'daily']),
+  minimum_priority: notificationPrioritySchema,
+  muted_kinds: z.array(z.string()),
+  webhook_configured: z.boolean(),
+  revision: z.number().int().nonnegative(),
+  updated_at: timestampSchema.nullable(),
+}).strict()
+export const notificationDeliveryResponseSchema = z.object({
+  channel: notificationChannelSchema,
+  status: z.enum(['pending', 'claimed', 'delivered', 'failed', 'dead']),
+  attempt_count: z.number().int().nonnegative(),
+  available_at: timestampSchema,
+  claimed_at: timestampSchema.nullable(),
+  effect_completed_at: timestampSchema.nullable(),
+  delivered_at: timestampSchema.nullable(),
+  created_at: timestampSchema,
+  last_error_present: z.boolean(),
+}).strict()
+export const notificationResponseSchema = z.object({
+  id: idSchema,
+  priority: notificationPrioritySchema,
+  kind: z.string(),
+  title: z.string(),
+  body: z.string(),
+  source_type: z.string(),
+  source_id: idSchema,
+  read_at: timestampSchema.nullable(),
+  created_at: timestampSchema,
+  deliveries: z.array(notificationDeliveryResponseSchema),
+}).strict()
+export const notificationListResponseSchema = listResponseSchema(notificationResponseSchema)
 
 export const usageInputSchema = z.object({
   dedupeKey: z.string().min(1).max(500),
@@ -1362,7 +1460,9 @@ export const stage4RouteManifest = [
   { method: 'POST', path: '/api/v1/usage-records', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/usage-summary', authenticated: true },
   { method: 'POST', path: '/api/v1/budget-policies', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/notifications', authenticated: true },
   { method: 'POST', path: '/api/v1/notifications', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/notification-preferences', authenticated: true },
   { method: 'PUT', path: '/api/v1/notification-preferences', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/templates', authenticated: true },
   { method: 'POST', path: '/api/v1/templates', authenticated: true, mutation: true },
@@ -1407,6 +1507,7 @@ export const stage4RouteManifest = [
 // are recorded in the revision history at the top of the plan file.
 export const stage5RouteManifest = [
   { method: 'GET', path: '/.well-known/workmesh-agent', authenticated: false },
+  { method: 'GET', path: '/api/v1/agent-connections', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-connections/redeem', authenticated: false, mutation: true },
   { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
@@ -1822,6 +1923,8 @@ export const agentConnectionResponseSchema = z
   .strict()
   .and(crossFieldGrantDelegateSchema)
 
+export const agentConnectionListResponseSchema = listResponseSchema(agentConnectionResponseSchema)
+
 export const agentConnectionCreateResponseSchema = z
   .object({
     connection: agentConnectionResponseSchema,
@@ -1997,6 +2100,7 @@ export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>
 export type AgentConnectionCreateInput = z.infer<typeof agentConnectionCreateInputSchema>
 export type AgentConnectionPatchInput = z.infer<typeof agentConnectionPatchInputSchema>
 export type AgentConnectionResponse = z.infer<typeof agentConnectionResponseSchema>
+export type AgentConnectionListResponse = z.infer<typeof agentConnectionListResponseSchema>
 export type AgentConnectionCreateResponse = z.infer<typeof agentConnectionCreateResponseSchema>
 export type AgentConnectionRedeemInput = z.infer<typeof agentConnectionRedeemInputSchema>
 export type AgentConnectionRedeemResponse = z.infer<typeof agentConnectionRedeemResponseSchema>

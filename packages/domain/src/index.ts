@@ -354,4 +354,30 @@ export function milestoneProgress(items: readonly { statusCategory: string }[]):
   return { completed, total, percent: total === 0 ? 0 : Math.round((completed / total) * 100) }
 }
 
+export type WorkItemRelationKind = 'blocks' | 'related'
+
+export function canonicalWorkItemRelation(
+  sourceWorkItemId: string,
+  targetWorkItemId: string,
+  kind: WorkItemRelationKind,
+): Readonly<{ sourceWorkItemId: string; targetWorkItemId: string; kind: WorkItemRelationKind }> {
+  if (sourceWorkItemId === targetWorkItemId)
+    throw new DomainError('WORK_ITEM_RELATION_SELF', 'A Work Item cannot relate to itself')
+  if (kind === 'related' && sourceWorkItemId > targetWorkItemId)
+    return { sourceWorkItemId: targetWorkItemId, targetWorkItemId: sourceWorkItemId, kind }
+  return { sourceWorkItemId, targetWorkItemId, kind }
+}
+
+export function assertWorkItemParent(
+  item: Readonly<{ id: string; projectId: string | null }>,
+  parent: Readonly<{ id: string; projectId: string | null; ancestorIds: readonly string[] }>,
+): void {
+  if (item.id === parent.id)
+    throw new DomainError('WORK_ITEM_PARENT_SELF', 'A Work Item cannot be its own parent')
+  if (item.projectId !== parent.projectId)
+    throw new DomainError('WORK_ITEM_PARENT_PROJECT_MISMATCH', 'Parent and child must belong to the same Project')
+  if (parent.ancestorIds.includes(item.id))
+    throw new DomainError('WORK_ITEM_PARENT_CYCLE', 'Work Item hierarchy must be acyclic')
+}
+
 export * from './stage4.js'

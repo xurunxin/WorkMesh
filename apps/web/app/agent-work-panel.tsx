@@ -2,7 +2,7 @@
 
 import { type FormEvent, useMemo, useState } from 'react'
 import { apiRequest, json } from './lib/api'
-import { type Agent, type AgentSession, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, delegateAndStart, formatTime, retryAgentSession } from './lib/agents'
+import { type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, delegateAndStart, formatTime, normalizeApproval, normalizePlan, retryAgentSession } from './lib/agents'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { agentWorkRefreshTargets } from './lib/realtime-refresh'
@@ -11,6 +11,25 @@ type Props = { workspaceId: string; workItemId: string; workItemTeamId: string; 
 
 export function AgentBadge({ state }: { state: AgentSession['state'] }) {
   return <span className={agentStateClass(state)} aria-label={`Agent session ${agentStateLabel(state)}`}>{agentStateLabel(state)}</span>
+}
+
+function AgentExecutionProjection({ session }: { session: AgentSession }) {
+  const plansPage = usePagedApiList<PlanVersion, PlanVersion>(
+    `/api/v1/agent-sessions/${session.id}/plans`,
+    { optional: true, map: value => normalizePlan(value as unknown as Record<string, unknown>) },
+  )
+  const approvalsPage = usePagedApiList<Approval, Approval>(
+    `/api/v1/approvals?sessionId=${encodeURIComponent(session.id)}`,
+    { optional: true, map: value => normalizeApproval(value as unknown as Record<string, unknown>) },
+  )
+  const plan = plansPage.items.find(candidate => candidate.id === session.current_plan_version_id) ?? plansPage.items.at(-1)
+  const currentStep = plan?.steps.find(step => step.status === 'in_progress')
+  const pendingApprovals = approvalsPage.items.filter(approval => approval.status === 'pending')
+  return <dl className="agent-execution-facts" data-testid={`agent-execution-projection-${session.id}`}>
+    <div><dt>Current plan step</dt><dd>{currentStep?.title ?? 'Not reported'}</dd></div>
+    <div><dt>Pending approvals</dt><dd>{pendingApprovals.length}</dd></div>
+    {(plansPage.error || approvalsPage.error) && <div><dt>Projection status</dt><dd>Plan or approval projection unavailable. Open Details to retry.</dd></div>}
+  </dl>
 }
 
 export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workItemRevision, humanActorId, onSessionCreated }: Props) {
@@ -100,7 +119,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
       <label>Initial prompt<textarea name="prompt" placeholder="What should this agent do?" required /></label>
       <button disabled={busy}>Start session</button>
     </form>}
-    {sessions.length === 0 ? <p className="empty">No delegated agent session yet.</p> : <div className="session-mini-list">{sessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || 'No blocking reason reported.'}</p><small>Heartbeat: {formatTime(session.last_heartbeat_at)}</small><div className="session-actions">{session.state === 'paused' && <button type="button" disabled={busy} onClick={() => void signal(session, 'resume')}>Resume</button>}{canPauseAgentSession(session.state) && <button type="button" disabled={busy} onClick={() => void signal(session, 'pause')}>Pause</button>}{canRetryAgentSession(session.state) && <button type="button" disabled={busy} onClick={() => void retry(session)}>Retry</button>}<button className="danger" type="button" disabled={busy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')}>Stop</button><a href={`/agent-sessions/${session.id}`}>Details</a></div></article>)}</div>}
+    {sessions.length === 0 ? <p className="empty">No delegated agent session yet.</p> : <div className="session-mini-list">{sessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || 'No blocking reason reported.'}</p><small>Heartbeat: {formatTime(session.last_heartbeat_at)}</small><AgentExecutionProjection session={session} /><div className="session-actions">{session.state === 'paused' && <button type="button" disabled={busy} onClick={() => void signal(session, 'resume')}>Resume</button>}{canPauseAgentSession(session.state) && <button type="button" disabled={busy} onClick={() => void signal(session, 'pause')}>Pause</button>}{canRetryAgentSession(session.state) && <button type="button" disabled={busy} onClick={() => void retry(session)}>Retry</button>}<button className="danger" type="button" disabled={busy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')}>Stop</button><a href={`/agent-sessions/${session.id}`}>Details</a></div></article>)}</div>}
     <LoadMoreButton collection={agentsPage} label="available agents" />
     <LoadMoreButton collection={sessionsPage} label="work item sessions" />
   </section>

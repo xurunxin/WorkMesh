@@ -54,11 +54,9 @@ async function createState(
   name: string,
   category: string,
 ): Promise<void> {
-  const settings = page.locator("details.team-admin");
-  const form = settings.locator(
-    'form:has(input[placeholder="New workflow status"])',
-  );
-  await form.getByPlaceholder("New workflow status").fill(name);
+  const workflow = page.getByRole("region", { name: "Workflow states" });
+  const form = workflow.locator("form");
+  await form.getByLabel("Status name").fill(name);
   await form.locator('select[name="category"]').selectOption(category);
   const responsePromise = page.waitForResponse((response) => {
     const request = response.request();
@@ -73,9 +71,7 @@ async function createState(
   const response = await responsePromise;
   expect(response.status()).toBeGreaterThanOrEqual(200);
   expect(response.status()).toBeLessThan(300);
-  await expect(
-    page.getByTestId("create-work-item").locator('select[name="statusId"]'),
-  ).toContainText(name);
+  await expect(workflow).toContainText(name);
 }
 
 async function createWorkItem(
@@ -89,8 +85,9 @@ async function createWorkItem(
     labels?: string;
   },
 ): Promise<void> {
+  await page.getByRole("button", { name: "New work item", exact: true }).click();
   const form = page.getByTestId("create-work-item");
-  await form.getByPlaceholder("Title").fill(input.title);
+  await form.getByLabel("Title", { exact: true }).fill(input.title);
   await form
     .locator('select[name="statusId"]')
     .selectOption({ label: input.status });
@@ -104,7 +101,7 @@ async function createWorkItem(
       .locator('select[name="projectId"]')
       .selectOption({ label: input.project });
   if (input.labels)
-    await form.getByPlaceholder("labels, comma separated").fill(input.labels);
+    await form.getByLabel("Labels").fill(input.labels);
   await form.getByTestId("create-work-item-submit").click();
   await expect(page.getByTestId("work-list")).toContainText(input.title);
 }
@@ -147,39 +144,34 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(page.getByTestId("release-info")).toContainText("v1.0.0");
     await expect(page.getByTestId("release-info")).toContainText("schema 1");
 
-    const settings = page.locator("details.team-admin");
-    await settings.locator("summary").click();
-    const createTeamForm = settings.locator(
-      'form:has(input[placeholder="New team name"])',
-    );
-    await createTeamForm.getByPlaceholder("New team name").fill(teamName);
-    await createTeamForm.getByPlaceholder("Key (e.g. ENG)").fill("E2E");
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
+    const teamsRegion = page.getByRole("region", { name: "Teams" });
+    const createTeamForm = teamsRegion.locator("form");
+    await createTeamForm.getByLabel("Team name").fill(teamName);
+    await createTeamForm.getByLabel("Team key").fill("E2E");
     await createTeamForm.getByRole("button", { name: "Create team" }).click();
     const teamSwitcher = page.getByLabel("Current team");
     await expect(teamSwitcher).toContainText(teamName);
     await teamSwitcher.selectOption({ label: `${teamName} (E2E)` });
 
-    const updateTeamForm = settings.locator(
-      'form:has(button:has-text("Save team"))',
-    );
-    await updateTeamForm.locator('input[name="name"]').fill(editedTeamName);
-    await updateTeamForm.locator('input[name="key"]').fill("ACC");
-    await updateTeamForm.getByRole("button", { name: "Save team" }).click();
+    const teamDetails = page.getByRole("region", { name: "Team details" });
+    const updateTeamForm = teamDetails.locator("form");
+    await updateTeamForm.getByLabel("Team name").fill(editedTeamName);
+    await updateTeamForm.getByLabel("Team key").fill("ACC");
+    await updateTeamForm.getByRole("button", { name: "Save changes" }).click();
     await expect(teamSwitcher).toHaveText(/Stage 0 delivery edited \(ACC\)/);
 
     // Newly created teams intentionally start without workflow states, so create the two states used by this browser flow.
     await createState(page, "Ready", "planned");
     await createState(page, "In Progress", "started");
-    await expect(
-      page.getByTestId("create-work-item").locator('select[name="statusId"]'),
-    ).toContainText("In Progress");
-
+    await page.getByRole("link", { name: "Back to daily work", exact: true }).click();
+    await page.getByLabel("Current team").selectOption({ label: `${editedTeamName} (ACC)` });
     await page.getByTestId("view-projects").click();
+    await page.getByRole("button", { name: "New project", exact: true }).click();
     const projectForm = page.getByTestId("create-project");
-    await projectForm.getByPlaceholder("Project name").fill(projectName);
-    await projectForm
-      .getByPlaceholder("Summary")
-      .fill("Created in the browser acceptance flow");
+    await projectForm.getByLabel("Project name").fill(projectName);
+    await projectForm.getByLabel("Summary").fill("Created in the browser acceptance flow");
     await projectForm.getByRole("button", { name: "Create project" }).click();
     await expect(
       page.getByRole("heading", { name: projectName }),
@@ -380,8 +372,10 @@ test.describe("Stage 0 browser acceptance", () => {
       await secondContext.close();
     }
 
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
+    await page.getByLabel("Current team").selectOption({ label: `${editedTeamName} (ACC)` });
     page.once("dialog", (dialog) => dialog.accept());
-    await settings.getByRole("button", { name: "Delete team" }).click();
+    await page.getByRole("region", { name: "Team details" }).getByRole("button", { name: "Delete team" }).click();
     await expect(teamSwitcher).not.toContainText(editedTeamName);
     const childWrite = await api<ApiError>(page, "/api/v1/projects", {
       method: "POST",

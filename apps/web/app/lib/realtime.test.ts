@@ -243,6 +243,7 @@ describe('web realtime state', () => {
         },
       ))
     const delays: number[] = []
+    const states: string[] = []
     const dispatch = vi.fn(async (invalidation: { reason: string }) => {
       if (invalidation.reason === 'event') abort.abort()
     })
@@ -254,10 +255,17 @@ describe('web realtime state', () => {
       storage: storage(),
       dispatch,
       random: () => 0.5,
+      onStateChange: state => states.push(state),
       sleep: vi.fn(async milliseconds => { delays.push(milliseconds) }),
     })
 
     expect(delays).toEqual([1_000])
+    expect(states).toEqual([
+      'connecting',
+      'reconnecting',
+      'reconnecting',
+      'connected',
+    ])
     expect(fetchStream).toHaveBeenCalledTimes(2)
     expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({
       reason: 'event',

@@ -139,16 +139,54 @@ export function eventAudienceQuery(
   if (!actor.agentSessionId) {
     throw new DomainError('SESSION_SCOPE_DENIED', 'An Agent Session credential is required for events')
   }
+  const rootCredentialJoin = actor.authentication === 'coordination_connection'
+    ? `JOIN agent_coordination_sessions root_coordination
+         ON root_coordination.agent_session_id=root.id
+        AND root_coordination.workspace_id=root.workspace_id
+        AND root_coordination.team_id=root.team_id
+        AND root_coordination.agent_id=root.agent_id
+        AND root_coordination.agent_actor_id=root.agent_actor_id
+        AND root_coordination.delegation_id=root.delegation_id
+        AND root_coordination.status='active'
+        AND root_coordination.expires_at>now()
+       JOIN agent_connections root_connection
+         ON root_connection.id=root_coordination.connection_id
+        AND root_connection.workspace_id=root_coordination.workspace_id
+        AND root_connection.team_id=root_coordination.team_id
+        AND root_connection.agent_id=root_coordination.agent_id
+        AND root_connection.agent_actor_id=root_coordination.agent_actor_id
+        AND root_connection.delegation_id=root_coordination.delegation_id
+        AND root_connection.principal_human_actor_id=root_coordination.principal_human_actor_id
+        AND root_connection.status IN ('active','rotating')
+        AND root.session_kind='coordination'
+        AND root.coordination_connection_id=root_connection.id
+       JOIN agent_connection_credentials credential
+         ON credential.connection_id=root_connection.id
+        AND credential.token_hash=$5
+        AND (
+          credential.status='active'
+          OR (credential.status='overlap' AND credential.overlap_until>now())
+        )`
+    : `JOIN agent_session_tokens credential
+         ON credential.session_id=root.id
+        AND credential.token_hash=$5
+        AND credential.expires_at>now()
+        AND credential.exchanged_at IS NOT NULL
+        AND credential.revoked_at IS NULL`
+  const rootTeamScope = actor.authentication === 'coordination_connection'
+    ? 'true'
+    : 'false'
   const sql =
     `WITH RECURSIVE authorized_sessions(
-       id,team_id,work_item_id,project_id
+       id,team_id,work_item_id,project_id,team_scope
      ) AS (
        SELECT root.id,root.team_id,root.work_item_id,
               CASE
                 WHEN root.work_item_id IS NOT NULL
                   THEN root_scope_project.id
                 ELSE root_session_project.id
-              END AS project_id
+               END AS project_id,
+               ${rootTeamScope} AS team_scope
        FROM agent_sessions root
        JOIN delegations root_delegation
          ON root_delegation.id=root.delegation_id
@@ -160,12 +198,7 @@ export function eventAudienceQuery(
         AND root_access.agent_id=root.agent_id
         AND root_access.team_id=root.team_id
         AND root_access.revoked_at IS NULL
-       JOIN agent_session_tokens credential
-         ON credential.session_id=root.id
-        AND credential.token_hash=$5
-        AND credential.expires_at>now()
-        AND credential.exchanged_at IS NOT NULL
-        AND credential.revoked_at IS NULL
+       ${rootCredentialJoin}
        LEFT JOIN work_items root_scope_item
          ON root_scope_item.id=root.work_item_id
         AND root_scope_item.workspace_id=root.workspace_id
@@ -217,7 +250,8 @@ export function eventAudienceQuery(
                 WHEN child.work_item_id IS NOT NULL
                   THEN child_scope_project.id
                 ELSE child_session_project.id
-              END AS project_id
+               END AS project_id,
+               false AS team_scope
        FROM agent_sessions child
        JOIN authorized_sessions parent ON child.parent_session_id=parent.id
        JOIN delegations child_delegation
@@ -318,10 +352,45 @@ export function eventAudienceQuery(
                   FROM domain_event_resources resource
                   JOIN authorized_sessions visible
                     ON (
-                      (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
-                      OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
-                      OR (resource.resource_type='session' AND resource.resource_id=visible.id)
-                    )
+                       (resource.resource_type='work_item' AND resource.resource_id=visible.work_item_id)
+                       OR (resource.resource_type='project' AND resource.resource_id=visible.project_id)
+                       OR (resource.resource_type='session' AND resource.resource_id=visible.id)
+                       OR (
+                         visible.team_scope
+                         AND (
+                           (resource.resource_type='team' AND resource.resource_id=visible.team_id)
+                           OR (
+                             resource.resource_type='work_item'
+                             AND EXISTS (
+                               SELECT 1 FROM work_items scoped_item
+                               WHERE scoped_item.id=resource.resource_id
+                                 AND scoped_item.workspace_id=e.workspace_id
+                                 AND scoped_item.team_id=visible.team_id
+                                 AND scoped_item.deleted_at IS NULL
+                             )
+                           )
+                           OR (
+                             resource.resource_type='project'
+                             AND EXISTS (
+                               SELECT 1 FROM projects scoped_project
+                               WHERE scoped_project.id=resource.resource_id
+                                 AND scoped_project.workspace_id=e.workspace_id
+                                 AND scoped_project.team_id=visible.team_id
+                                 AND scoped_project.deleted_at IS NULL
+                             )
+                           )
+                           OR (
+                             resource.resource_type='session'
+                             AND EXISTS (
+                               SELECT 1 FROM agent_sessions scoped_session
+                               WHERE scoped_session.id=resource.resource_id
+                                 AND scoped_session.workspace_id=e.workspace_id
+                                 AND scoped_session.team_id=visible.team_id
+                             )
+                           )
+                         )
+                       )
+                     )
                   WHERE resource.domain_event_id=e.id
                     AND resource.relation IN ('scope','invalidate')
                 )
@@ -371,6 +440,70 @@ export async function assertEventAudienceActive(
     )
     if (!active.rowCount) {
       throw new DomainError('UNAUTHENTICATED', 'The human Session was revoked or expired')
+    }
+    return
+  }
+
+  if (actor.authentication === 'coordination_connection') {
+    const active = await db.query(
+      `SELECT 1
+         FROM agent_coordination_sessions coordination
+         JOIN agent_connections connection
+           ON connection.id=coordination.connection_id
+          AND connection.workspace_id=coordination.workspace_id
+          AND connection.team_id=coordination.team_id
+          AND connection.agent_id=coordination.agent_id
+          AND connection.agent_actor_id=coordination.agent_actor_id
+          AND connection.delegation_id=coordination.delegation_id
+          AND connection.principal_human_actor_id=coordination.principal_human_actor_id
+          AND connection.status IN ('active','rotating')
+         JOIN agent_connection_credentials credential
+           ON credential.connection_id=connection.id
+          AND credential.token_hash=$1
+          AND (
+            credential.status='active'
+            OR (credential.status='overlap' AND credential.overlap_until>now())
+          )
+         JOIN agent_sessions session
+           ON session.id=coordination.agent_session_id
+          AND session.workspace_id=coordination.workspace_id
+          AND session.team_id=coordination.team_id
+          AND session.agent_id=coordination.agent_id
+          AND session.agent_actor_id=coordination.agent_actor_id
+          AND session.delegation_id=coordination.delegation_id
+          AND session.session_kind='coordination'
+          AND session.coordination_connection_id=connection.id
+         JOIN delegations delegation
+           ON delegation.id=session.delegation_id AND delegation.status='active'
+         JOIN agent_definitions agent
+           ON agent.id=session.agent_id AND agent.is_active
+         JOIN agent_team_access access
+           ON access.workspace_id=session.workspace_id
+          AND access.agent_id=session.agent_id
+          AND access.team_id=session.team_id
+          AND access.revoked_at IS NULL
+         JOIN actors principal
+           ON principal.id=coordination.principal_human_actor_id
+          AND principal.workspace_id=coordination.workspace_id
+          AND principal.kind='human' AND principal.is_active
+        WHERE coordination.agent_session_id=$2
+          AND coordination.workspace_id=$3
+          AND coordination.agent_actor_id=$4
+          AND coordination.status='active'
+          AND coordination.expires_at>now()
+          AND session.state IN (
+            'acknowledged','planning','executing','awaiting_input',
+            'awaiting_approval','blocked'
+          )
+          AND 'work:read'=ANY(delegation.permissions_snapshot)
+          AND 'work:read'=ANY(agent.approved_capabilities)
+          AND 'work:read'=ANY(access.approved_capabilities)
+          AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
+              ? session.team_id::text`,
+      [actor.credentialHash, actor.agentSessionId, actor.workspaceId, actor.id],
+    )
+    if (!active.rowCount) {
+      throw new DomainError('SESSION_NOT_ACTIVE', 'The Coordination Session authority was revoked, stopped, or expired')
     }
     return
   }

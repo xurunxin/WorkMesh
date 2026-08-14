@@ -244,9 +244,12 @@ Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegat
 - `work_item.updated`
 - `work_item.status_changed`
 - `work_item.relation_added`
+- `work_item.relation_removed`
 - `work_item.deleted`
 - `project.updated`
-- `milestone.updated`
+- `project.milestone.created`
+- `project.milestone.updated`
+- `project.milestone.deleted`
 
 ### Delegation / Session
 
