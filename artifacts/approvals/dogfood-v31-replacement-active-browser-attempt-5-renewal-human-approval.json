@@ -1,0 +1,42 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptRenewalApproval",
+  "approvalId": "f1268e1c-c610-4504-95b9-ec3aa7816680",
+  "decision": "approved",
+  "selectorBinding": "v31-replacement-active-browser-attempt-5-renewal-v1",
+  "scope": "v31_replacement_active_browser_attempt_5_once",
+  "requestPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-request.json",
+  "requestSha256": "22d1105234199baaf447d24713a6bf82de42cdd3fdc0f24c12938aa26b814e2b",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd",
+  "repairProposalPath": "artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json",
+  "repairProposalSha256": "a8608543ceec93de64e9aa40082cecaecdfe3c9fc9c7e81a2a6f04ef07cabe3e",
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json",
+  "activationSha256": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+  "decisionText": "Human explicitly approved the renewed v31 replacement active Browser attempt 5 in the Codex task after the exact renewal request was created.",
+  "approvedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "5/5",
+    "maxWorkMeshFixtureMutations": 3,
+    "rawRequestAudit": true,
+    "responsiveAndKeyboardEvidence": true,
+    "fixtureCleanupRequired": true,
+    "viewportResetRequired": true,
+    "exactlyOnceFinalizeRequired": true
+  },
+  "excluded": {
+    "serviceReplacement": true,
+    "serviceRestart": true,
+    "databaseSchemaMutation": true,
+    "arbitraryDataMutation": true,
+    "objectStorageMutationOutsideFixture": true,
+    "gen11Completion": true,
+    "gitHistoryRewrite": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T19:44:08.8441875Z",
+  "expiresAt": "2026-08-14T21:36:10.5797077Z",
+  "singleUse": true,
+  "consumed": false,
+  "securityScanRun": false
+}
