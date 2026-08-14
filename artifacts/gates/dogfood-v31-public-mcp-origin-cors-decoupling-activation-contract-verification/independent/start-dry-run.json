@@ -1,0 +1,25 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingStartDryRun",
+  "result": "PASS",
+  "targetMutationExecuted": false,
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "oldApiPid": 9120,
+  "oldContract": {
+    "browserCors": "http://127.0.0.1:3301",
+    "discoveryStatus": 200,
+    "mcpStatus": 401,
+    "connectStatus": 200,
+    "skillStatus": 200
+  },
+  "candidateCorsOrigin": "http://127.0.0.1:3300",
+  "publicMcpOrigin": "http://127.0.0.1:3301",
+  "protectedRoles": [
+    "web",
+    "mcp",
+    "worker",
+    "public-router",
+    "compatibility"
+  ],
+  "checkedAt": "2026-08-14T15:55:05.1682091+00:00"
+}

@@ -1,0 +1,101 @@
+GateReport:
+  gate_id: dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 10
+  node_id: prepare-and-verify-v31-cors-decoupling-activation-contract
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:99@sha256:bed4b26d4a05ed297d039d59eb724462d9afdfb00950706b205d61c97283db3a
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:99@sha256:bba031eb2dd3e7dc2137316e450f8f32f1c0fab1eda1ee99452858d78b17c809
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json@sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2
+    - artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml@sha256:448199717ede49daf54a0e8bd79049e79bbff10d219a891424f8c724f1404b5a
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json@sha256:6b1103c45bb56b33c3a9c02f80ebc1f3412a5aea0cb4e4f059583d43a46bed04
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json@sha256:48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4
+  worker_id: activation-contract-controller
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-cors-decoupling-contract-verifier
+    scope: [fixed_inputs, script_bindings, source_and_package_bindings, authorization, evidence_roots, ast, dry_runs, compensation, runtime_invariance, future_absence]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13G-A1
+      assertion: Contract, start, rollback, stage, authorization, root, PID/start, health, CORS, discovery, MCP, build, receipt, and evidence-root bindings fail closed and pass exact dry-runs.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/ast-audit.json@sha256:8e5794ac3b3707dfd4059621e76e3a467796d1adae21d3dd5cbee5e0dae3c9a0
+          observed: All eight contract-bound scripts matched exact hashes, parsed with PowerShell 7 without errors, used StrictMode Latest, contained zero bare-false CommandAst, and had no ConvertFrom-Json call missing DateKind String.
+          source: fresh AST and hash audit
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/boundary-probes.json@sha256:d1519dc7d192d43ce31f17ed40eee67d09fe14076360e314b58589b94648f6b2
+          observed: Direct non-DryRun stage, missing-authorization start, and unbound rollback each rejected before mutation; stage, start, and rollback each rejected a sibling evidence root without creating it.
+          source: fresh executable negative matrix
+      method: source-check and executable probes
+      gaps: []
+      repair: null
+    - claim_id: V31-N13G-A2
+      assertion: Shared production compensation covers retained, missing, unknown, cleanup-failure, and verification-failure outcomes and always writes one terminal receipt.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/compensation-probe.json@sha256:740cc251ecf15edf82f5ed8f46152d8ea699414bd35518e48405b623de8f0986
+          observed: The same module-owned compensation function called by production start and rollback executed five cases with 5/5 terminal receipts; retained performed zero restore calls, missing performed one, and all fail-closed cases emitted ROLLBACK_FAILED before throwing.
+          source: fresh executable shared-seam matrix
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N13G-A3
+      assertion: Stage, start, and rollback exact-contract DryRuns pass without staging or service mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/stage-dry-run.json@sha256:0409fdee52eaf78e94d8ead4afd54c57275f56dc1e97ffc3da07c4f16e67496b
+          observed: Eight source and four package selectors matched and no prepared source or service mutation was executed.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/start-dry-run.json@sha256:20f20b0bfafbc3e7899a2bc737ccbff7df98ebf32751e13fa2ed466388724905
+          observed: Old API and five protected role selectors, object storage, served build, active CORS 3301, discovery 200, MCP 401, connect 200, and Skill 200 passed with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/rollback-dry-run.json@sha256:5e5927ee9fd784aaf82803a4e61a9a0b035adec2f3c49b480188326f2abe82b4
+          observed: Exact rollback preconditions passed with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+      method: test
+      gaps: []
+      repair: null
+    - claim_id: V31-N13G-V1
+      assertion: Runtime remains invariant before and after verification, all future artifacts are absent, and no unresolved major or critical finding remains.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/runtime-before.json@sha256:7de1abad038f57a5fbf0618403ebfeb54c81bfc078852d12a785094ce7757033
+          observed: API plus five protected role selectors were exact, health was 7/7, active CORS was 3301, and request, approval, activation, rollback, and prepared source were absent.
+          source: fresh read-only runtime inspection
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/runtime-after.json@sha256:e77cc78ffe7701ecd9b9d60c8be08deb721247890c130a598d4d98e7ca216046
+          observed: The runtime selector projection was byte-semantically identical after every probe and all future artifacts remained absent.
+          source: fresh read-only runtime inspection
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent/verification-summary.json@sha256:4810808f9e85bcf028f60cd53c41d5914f74b8429c3d6fe6ab7fada41215f315
+          observed: Four claim checks passed with no finding and no non-DryRun activation, rollback, service, database, WorkMesh, Browser, or security-scan action.
+          source: independent verification synthesis
+      method: observation and synthesis
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json@sha256:48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json@sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was excluded and no security approval is claimed.
+    - No Browser, non-DryRun staging, activation, rollback, service control, database mutation, object-storage mutation, WorkMesh mutation, or GEN-11 completion was executed.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    active_replacement: false
+    request_creation: true
+    service_replacement: false
+    activation: false
+    reason: The exact API-only CORS decoupling contract passed; only one fresh exact expiring Human approval request may now be created.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact API-only CORS decoupling activation contract
+      - fresh Human approval request and decision
+    completion_gate: A distinct fresh Human approval is required before any API service replacement or non-DryRun activation.
+  observed_at: 2026-08-14T15:56:38.7247871Z

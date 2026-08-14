@@ -1,0 +1,204 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingActivationContract",
+  "status": "READY_FOR_INDEPENDENT_GATE",
+  "selectorBinding": "v31-public-mcp-origin-cors-decoupling-v1",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 10,
+    "sha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5"
+  },
+  "claim": {
+    "nodeId": "prepare-and-verify-v31-cors-decoupling-activation-contract",
+    "attempt": 1,
+    "stateSequence": 99,
+    "statePath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "stateSha256": "bed4b26d4a05ed297d039d59eb724462d9afdfb00950706b205d61c97283db3a",
+    "eventCursor": 99,
+    "eventsPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventsSha256": "bba031eb2dd3e7dc2137316e450f8f32f1c0fab1eda1ee99452858d78b17c809",
+    "leaseId": "1396b2d2-b011-4d28-bb04-d882b79d0cdb",
+    "idempotencyKey": "f9040d71-5deb-4b9e-a10f-acd8f7b4729e"
+  },
+  "authority": {
+    "implementationReport": {
+      "path": "artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json",
+      "sha256": "c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2"
+    },
+    "implementationGate": {
+      "path": "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml",
+      "sha256": "448199717ede49daf54a0e8bd79049e79bbff10d219a891424f8c724f1404b5a"
+    },
+    "blockedAcceptance": {
+      "path": "artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json",
+      "sha256": "6b1103c45bb56b33c3a9c02f80ebc1f3412a5aea0cb4e4f059583d43a46bed04"
+    }
+  },
+  "oldApi": {
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "port": 3303,
+    "healthUrl": "http://127.0.0.1:3303/readyz",
+    "supervisorPid": 9120,
+    "supervisorStartTimeUtc": "2026-08-14T14:53:56.6254582Z",
+    "listenerPid": 41808,
+    "listenerStartTimeUtc": "2026-08-14T14:53:58.4385278Z",
+    "scriptPath": "artifacts\\runtime\\dogfood-v31-public-mcp-origin-routing\\role-supervisor.ps1",
+    "scriptSha256": "8cc990bcdc856a36e663b68e9352c67aec33adec0da964781ed235274d84c7b5",
+    "contractPath": "artifacts\\runtime\\dogfood-v31-public-mcp-origin-routing-contract.json",
+    "contractSha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7",
+    "statePath": "artifacts\\runtime\\dogfood-v31-public-mcp-origin-routing\\runtime\\candidate-api.json",
+    "stateSha256": "692ae6011972d122903a7af822961c6faa7f7049a85dd5a387002175aa378588",
+    "stopPath": "artifacts\\runtime\\dogfood-v31-public-mcp-origin-routing\\runtime\\candidate-api.stop",
+    "webOrigin": "http://127.0.0.1:3301"
+  },
+  "candidateApi": {
+    "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "port": 3303,
+    "healthUrl": "http://127.0.0.1:3303/readyz",
+    "statePath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/runtime/candidate-api.json",
+    "stopPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/runtime/candidate-api.stop",
+    "webOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301"
+  },
+  "rollbackApi": {
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "port": 3303,
+    "healthUrl": "http://127.0.0.1:3303/readyz",
+    "statePath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/runtime/rollback-api.json",
+    "stopPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/runtime/rollback-api.stop",
+    "webOrigin": "http://127.0.0.1:3301",
+    "publicMcpOrigin": "http://127.0.0.1:3301"
+  },
+  "protectedRoles": [
+    {
+      "name": "web",
+      "pid": 57064,
+      "startTimeUtc": "2026-08-14T11:11:23.0971310Z",
+      "commandNeedle": "dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1",
+      "listenerPid": 42392,
+      "listenerStartTimeUtc": "2026-08-14T11:11:23.5706870Z",
+      "listenerCommandNeedle": "prepared-active-origin\\apps\\web\\server.js",
+      "port": 3300,
+      "healthUrl": "http://127.0.0.1:3300/readyz"
+    },
+    {
+      "name": "mcp",
+      "pid": 72740,
+      "startTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "commandNeedle": "dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1",
+      "listenerPid": 10516,
+      "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+      "listenerCommandNeedle": "mcp-entrypoint-v31.mts",
+      "port": 3302,
+      "healthUrl": "http://127.0.0.1:3302/readyz"
+    },
+    {
+      "name": "worker",
+      "pid": 37620,
+      "startTimeUtc": "2026-08-14T13:35:27.7439740Z",
+      "commandNeedle": "dogfood-v31-coordination-feature-activation-attempt-2\\role-supervisor.ps1",
+      "listenerPid": 10268,
+      "listenerStartTimeUtc": "2026-08-14T13:35:29.3399671Z",
+      "listenerCommandNeedle": "WorkMesh-human-experience-v29",
+      "port": 3304,
+      "healthUrl": "http://127.0.0.1:3304/readyz"
+    },
+    {
+      "name": "public-router",
+      "pid": 24516,
+      "startTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "commandNeedle": "dogfood-target\\loopback-entrypoint.mjs",
+      "listenerPid": 24516,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "listenerCommandNeedle": "dogfood-target\\loopback-entrypoint.mjs",
+      "port": 3301,
+      "healthUrl": "http://127.0.0.1:3301/readyz"
+    },
+    {
+      "name": "compatibility",
+      "pid": 44104,
+      "startTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "commandNeedle": "dogfood-target\\web-api-compat-proxy.mjs",
+      "listenerPid": 44104,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "listenerCommandNeedle": "dogfood-target\\web-api-compat-proxy.mjs",
+      "port": 3001,
+      "healthUrl": "http://127.0.0.1:3001/readyz"
+    }
+  ],
+  "objectStorage": {
+    "name": "workmesh-dogfood-v29-minio",
+    "containerId": "84e9879d53c2f9962c2c4a1756fa711842584004a2cf28a7d11a169fae647bef",
+    "imageDigest": "sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e",
+    "healthUrl": "http://127.0.0.1:59000/minio/health/ready"
+  },
+  "servedBuild": {
+    "requiredBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l"
+  },
+  "candidateSource": {
+    "files": [
+      {"path": ".env.example", "sha256": "a08ec66ec5ca6c5b9bd5a558b381aa3d4bde347a9231284045e7204ee53f60d2"},
+      {"path": "docker-compose.yml", "sha256": "5454a37075aa75b3e676bdc3c95326066708eea303a718ab825be1313b8f2ec3"},
+      {"path": "apps/api/src/agent-connections.ts", "sha256": "3fee3064a203aa0f0b05c37afc0c9b41867ce3b54e4d2af2e33cbe01ca0c656d"},
+      {"path": "apps/api/src/server.ts", "sha256": "fa8173bc4a55615acf266c5ee894521a0c5b2c6e16a7803c6053f1d01fe3da24"},
+      {"path": "apps/api/src/origin-routing.test.ts", "sha256": "ee7be1ce55cdb3990539f49f396281a93eea571f43010e0c97732f981c9d686c"},
+      {"path": "packages/config/src/index.ts", "sha256": "e0ce817a65da10753256e38d3c6a802e41f40da776f4054d90d5dd0b17a07d63"},
+      {"path": "packages/config/src/index.test.ts", "sha256": "1f086772d09948c6a6f7769c837fca5873125958bbf6edf965fc6ddcd46aa810"},
+      {"path": "packages/config/src/runtime-secrets.mjs", "sha256": "5f131b44c7ce1cb7be2e4df7792e028fe86c7260ea3126481f662ba41a734a87"}
+    ],
+    "packageFiles": [
+      {"path": "package.json", "sha256": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6"},
+      {"path": "pnpm-lock.yaml", "sha256": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2"},
+      {"path": "apps/api/package.json", "sha256": "a4699f8a1cb17b6e0c340ee765afe0070e5ccc104a7a09d0aec0379e13447343"},
+      {"path": "packages/config/package.json", "sha256": "bc3dabf2d08a97d2d83a35e32748e49d9dd124dc497e0250250f87d13acba8c9"}
+    ]
+  },
+  "scripts": {
+    "sharedModule": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/runtime-module.psm1", "sha256": "b1bea6b52505846e4f2a9ac461af49539fb73daac1cc146165f5386528456827"},
+    "supervisor": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/role-supervisor.ps1", "sha256": "f08b953ac1baecaa8de5997eea1f04cecf24276a7981d79587fa6f5b789de74a"},
+    "stage": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/stage-source.ps1", "sha256": "d4d834771533e32ff16d769768c70c341c3f93ea28e3e5fb7906c7af47a32422"},
+    "start": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/start-api-only.ps1", "sha256": "d5c069a76c229431048bc91b743815cbdd62c4aa8a91640082c0e7027dbe7183"},
+    "rollback": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/rollback-api-only.ps1", "sha256": "c300372a950f24c03ff3492a895d07a6461f349e4c3332ab1e744c181c7d994d"},
+    "runtime": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/verify-runtime.ps1", "sha256": "9a59fce1dcbbaf5e1b3c76c9d66db3cf388979f5671905ef4d661ef6519c19cc"},
+    "compensation": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/test-compensation.ps1", "sha256": "485a1fa784a00c066752e2c8db19ccc6115a5c499725c721d061ffe462170899"},
+    "ast": {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/audit-ast.ps1", "sha256": "8a19bb62a8641c67c3555ec88f6a77f41f29715fbd8a36805f2b3a0bf34c7fe7"}
+  },
+  "evidence": {
+    "allowedRoots": [
+      "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/evidence/worker",
+      "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-verification/independent",
+      "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/evidence/activation",
+      "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/evidence/rollback"
+    ]
+  },
+  "execution": {
+    "gatePath": "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml",
+    "requestPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-request.json",
+    "approvalPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-human-approval.json",
+    "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json",
+    "rollbackPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-rollback.json",
+    "preparedSourcePath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/prepared-source.json",
+    "requestCreationAuthorized": false,
+    "activationAuthorized": false,
+    "serviceReplacementAuthorized": false,
+    "browserAuthorized": false,
+    "databaseMutationAuthorized": false,
+    "workMeshMutationAuthorized": false
+  },
+  "budgets": {
+    "originCorsRepair": "1/1",
+    "originCorsGate": "1/1",
+    "originCorsActivation": "0/1",
+    "activeBrowser": "3/4"
+  },
+  "safety": {
+    "apiOnly": true,
+    "approvalRequiredBeforeStageOrServiceMutation": true,
+    "protectedRolesImmutable": true,
+    "automaticCompensationRequired": true,
+    "terminalReceiptRequired": true,
+    "securityScanIncluded": false,
+    "securityApprovalClaimed": false
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingAstAudit",
+  "result": "PASS",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "scripts": [
+    {
+      "name": "sharedModule",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/runtime-module.psm1",
+      "sha256": "b1bea6b52505846e4f2a9ac461af49539fb73daac1cc146165f5386528456827",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "supervisor",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/role-supervisor.ps1",
+      "sha256": "f08b953ac1baecaa8de5997eea1f04cecf24276a7981d79587fa6f5b789de74a",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "stage",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/stage-source.ps1",
+      "sha256": "d4d834771533e32ff16d769768c70c341c3f93ea28e3e5fb7906c7af47a32422",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "start",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/start-api-only.ps1",
+      "sha256": "d5c069a76c229431048bc91b743815cbdd62c4aa8a91640082c0e7027dbe7183",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "rollback",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/rollback-api-only.ps1",
+      "sha256": "c300372a950f24c03ff3492a895d07a6461f349e4c3332ab1e744c181c7d994d",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "runtime",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/verify-runtime.ps1",
+      "sha256": "9a59fce1dcbbaf5e1b3c76c9d66db3cf388979f5671905ef4d661ef6519c19cc",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "compensation",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/test-compensation.ps1",
+      "sha256": "485a1fa784a00c066752e2c8db19ccc6115a5c499725c721d061ffe462170899",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "ast",
+      "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling/audit-ast.ps1",
+      "sha256": "8a19bb62a8641c67c3555ec88f6a77f41f29715fbd8a36805f2b3a0bf34c7fe7",
+      "parseErrors": 0,
+      "strictModeLatest": true,
+      "bareFalse": 0,
+      "jsonMissingDateKind": 0,
+      "result": "PASS"
+    }
+  ],
+  "checkedAt": "2026-08-14T15:54:31.9856484+00:00"
+}
