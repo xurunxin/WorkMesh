@@ -1,0 +1,168 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsActivationContractIndependentVerification",
+  "result": "PASS",
+  "contractPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation-contract.json",
+  "contractSha256": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df",
+  "fixedInputs": 4,
+  "boundScripts": 7,
+  "dryRuns": [
+    "supervisor",
+    "start",
+    "rollback"
+  ],
+  "compensationCases": 5,
+  "ownerDecisionCases": 5,
+  "wrongRoot": [
+    {
+      "name": "start",
+      "exitCode": 1,
+      "rejected": true,
+      "residue": false,
+      "error": "\u001b[31;1mException: \u001b[31;1mDOGFOOD_V31_MCP_CORS_EVIDENCE_ROOT_REJECTED\u001b[0m"
+    },
+    {
+      "name": "rollback",
+      "exitCode": 1,
+      "rejected": true,
+      "residue": false,
+      "error": "\u001b[31;1mException: \u001b[31;1mDOGFOOD_V31_MCP_CORS_EVIDENCE_ROOT_REJECTED\u001b[0m"
+    },
+    {
+      "name": "supervisor",
+      "exitCode": 1,
+      "rejected": true,
+      "residue": false,
+      "error": "\u001b[31;1mException: \u001b[31;1mDOGFOOD_V31_MCP_CORS_EVIDENCE_ROOT_REJECTED\u001b[0m"
+    }
+  ],
+  "runtimeBefore": {
+    "protected": [
+      {
+        "name": "compatibility",
+        "port": 3001,
+        "supervisorPid": 36880,
+        "supervisorStartTimeUtc": "2026-08-13T18:03:44.3397578Z",
+        "listenerPid": 44104,
+        "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+        "health": 200
+      },
+      {
+        "name": "web",
+        "port": 3300,
+        "supervisorPid": 57064,
+        "supervisorStartTimeUtc": "2026-08-14T11:11:23.0971310Z",
+        "listenerPid": 42392,
+        "listenerStartTimeUtc": "2026-08-14T11:11:23.5706870Z",
+        "health": 200
+      },
+      {
+        "name": "router",
+        "port": 3301,
+        "supervisorPid": 5780,
+        "supervisorStartTimeUtc": "2026-08-13T18:03:40.1036914Z",
+        "listenerPid": 24516,
+        "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+        "health": 200
+      },
+      {
+        "name": "api",
+        "port": 3303,
+        "supervisorPid": 20904,
+        "supervisorStartTimeUtc": "2026-08-14T16:17:40.9437096Z",
+        "listenerPid": 11832,
+        "listenerStartTimeUtc": "2026-08-14T16:17:42.9236161Z",
+        "health": 200
+      },
+      {
+        "name": "worker",
+        "port": 3304,
+        "supervisorPid": 37620,
+        "supervisorStartTimeUtc": "2026-08-14T13:35:27.7439740Z",
+        "listenerPid": 10268,
+        "listenerStartTimeUtc": "2026-08-14T13:35:29.3399671Z",
+        "health": 200
+      }
+    ],
+    "mcp": {
+      "supervisorPid": 72740,
+      "supervisorStartTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "listenerPid": 10516,
+      "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+      "health": 200
+    },
+    "minio": 200
+  },
+  "runtimeAfter": {
+    "protected": [
+      {
+        "name": "compatibility",
+        "port": 3001,
+        "supervisorPid": 36880,
+        "supervisorStartTimeUtc": "2026-08-13T18:03:44.3397578Z",
+        "listenerPid": 44104,
+        "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+        "health": 200
+      },
+      {
+        "name": "web",
+        "port": 3300,
+        "supervisorPid": 57064,
+        "supervisorStartTimeUtc": "2026-08-14T11:11:23.0971310Z",
+        "listenerPid": 42392,
+        "listenerStartTimeUtc": "2026-08-14T11:11:23.5706870Z",
+        "health": 200
+      },
+      {
+        "name": "router",
+        "port": 3301,
+        "supervisorPid": 5780,
+        "supervisorStartTimeUtc": "2026-08-13T18:03:40.1036914Z",
+        "listenerPid": 24516,
+        "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+        "health": 200
+      },
+      {
+        "name": "api",
+        "port": 3303,
+        "supervisorPid": 20904,
+        "supervisorStartTimeUtc": "2026-08-14T16:17:40.9437096Z",
+        "listenerPid": 11832,
+        "listenerStartTimeUtc": "2026-08-14T16:17:42.9236161Z",
+        "health": 200
+      },
+      {
+        "name": "worker",
+        "port": 3304,
+        "supervisorPid": 37620,
+        "supervisorStartTimeUtc": "2026-08-14T13:35:27.7439740Z",
+        "listenerPid": 10268,
+        "listenerStartTimeUtc": "2026-08-14T13:35:29.3399671Z",
+        "health": 200
+      }
+    ],
+    "mcp": {
+      "supervisorPid": 72740,
+      "supervisorStartTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "listenerPid": 10516,
+      "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+      "health": 200
+    },
+    "minio": 200
+  },
+  "runtimeInvariant": true,
+  "futureArtifactsAbsent": 4,
+  "runtimeResidue": 0,
+  "currentPreActivationCors": {
+    "status": 401,
+    "allowOrigin": "",
+    "expectedToBeRepairedByActivation": true
+  },
+  "transitionScope": "request_creation_only",
+  "requestCreation": false,
+  "activation": false,
+  "browser": false,
+  "workmeshMutation": false,
+  "securityScan": false,
+  "checkedAt": "2026-08-14T18:06:44.2653514+00:00"
+}

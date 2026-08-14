@@ -1,0 +1,97 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsActivationContract",
+  "selectorBinding": "v31-public-mcp-browser-cors-activation-v1",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 11,
+    "sha256": "fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca"
+  },
+  "claimInputs": {
+    "stateSequence": 115,
+    "stateSha256": "d766ea5c4e0b9c6fbaaaa2ecb671198662d17cbb8e253986143a0e429b40f442",
+    "eventRows": 115,
+    "eventsSha256": "6bcdcc0b4ac6d19ad89af795b979f126a09b7b35690b159ab3ac4cbb829813ce",
+    "implementationGateSha256": "cc1ab8f91b8933d67455987d79ea441eb2058fe6b8178cc73d539b72711c96e9",
+    "implementationReportSha256": "8b325d369f727494d2cbd0e360b2d0e8f2fa83759881e2dbf49503cb5368e232"
+  },
+  "candidateSource": {
+    "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "httpPath": "apps/mcp/src/http.ts",
+    "httpSha256": "cd827082e82319f47a7f0d16f46830d93363fc6b6fa6c06fb6fb1e0d7efaa762",
+    "browserOrigin": "http://127.0.0.1:3300",
+    "apiUrl": "http://127.0.0.1:3303",
+    "port": 3302,
+    "healthUrl": "http://127.0.0.1:3302/readyz"
+  },
+  "oldMcp": {
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v31",
+    "port": 3302,
+    "healthUrl": "http://127.0.0.1:3302/readyz",
+    "supervisorPid": 72740,
+    "supervisorStartTimeUtc": "2026-08-14T11:11:25.9551555Z",
+    "supervisorScript": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1",
+    "supervisorScriptSha256": "a44d1ab0712cc84c81d6844f246e58e54a7436b0f38ac58dae4cdeca4d23a747",
+    "listenerPid": 10516,
+    "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+    "entrypointPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\mcp-entrypoint-v31.mts",
+    "entrypointSha256": "8cf70baf67882164f0b1777f6bfa783302d6f76fb3fd85bd921f34c5aa3c1889",
+    "contractPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation-contract-attempt-3.json",
+    "contractSha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a",
+    "statePath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\candidate-attempt-3-mcp.json",
+    "stopPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\candidate-attempt-3-mcp.stop",
+    "executionBindingPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\authorization\\attempt-3-start-binding.json",
+    "executionBindingSha256": "b41eef9f5584d87a8d23284a8ea015a895788dc89257413d53871c9105d8dcbf"
+  },
+  "candidateMcp": {
+    "statePath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/runtime/candidate-mcp.json",
+    "stopPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/runtime/candidate-mcp.stop"
+  },
+  "rollbackMcp": {
+    "statePath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/runtime/rollback-mcp.json",
+    "stopPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/runtime/rollback-mcp.stop"
+  },
+  "protectedRoles": [
+    {"name":"compatibility","port":3001,"healthUrl":"http://127.0.0.1:3001/readyz","supervisorPid":36880,"supervisorStartTimeUtc":"2026-08-13T18:03:44.3397578Z","supervisorNeedle":"dogfood-v30-v29-baseline-recovery-v5\\role-supervisor-v5.ps1","listenerPid":44104,"listenerStartTimeUtc":"2026-08-14T05:46:54.5308239Z","listenerNeedle":"dogfood-target\\web-api-compat-proxy.mjs"},
+    {"name":"web","port":3300,"healthUrl":"http://127.0.0.1:3300/readyz","supervisorPid":57064,"supervisorStartTimeUtc":"2026-08-14T11:11:23.0971310Z","supervisorNeedle":"dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1","listenerPid":42392,"listenerStartTimeUtc":"2026-08-14T11:11:23.5706870Z","listenerNeedle":"dogfood-v31-stack-activation\\prepared-active-origin\\apps\\web\\server.js"},
+    {"name":"router","port":3301,"healthUrl":"http://127.0.0.1:3301/readyz","supervisorPid":5780,"supervisorStartTimeUtc":"2026-08-13T18:03:40.1036914Z","supervisorNeedle":"dogfood-v30-v29-baseline-recovery-v5\\role-supervisor-v5.ps1","listenerPid":24516,"listenerStartTimeUtc":"2026-08-14T05:46:54.4997244Z","listenerNeedle":"dogfood-target\\loopback-entrypoint.mjs"},
+    {"name":"api","port":3303,"healthUrl":"http://127.0.0.1:3303/readyz","supervisorPid":20904,"supervisorStartTimeUtc":"2026-08-14T16:17:40.9437096Z","supervisorNeedle":"dogfood-v31-public-mcp-origin-cors-decoupling\\role-supervisor.ps1","listenerPid":11832,"listenerStartTimeUtc":"2026-08-14T16:17:42.9236161Z","listenerNeedle":"workmesh-human-experience-v31-checkpoint\\node_modules"},
+    {"name":"worker","port":3304,"healthUrl":"http://127.0.0.1:3304/readyz","supervisorPid":37620,"supervisorStartTimeUtc":"2026-08-14T13:35:27.7439740Z","supervisorNeedle":"dogfood-v31-coordination-feature-activation-attempt-2\\role-supervisor.ps1","listenerPid":10268,"listenerStartTimeUtc":"2026-08-14T13:35:29.3399671Z","listenerNeedle":"WorkMesh-human-experience-v29\\node_modules"}
+  ],
+  "objectStorage": {
+    "name": "workmesh-dogfood-v29-minio",
+    "id": "84e9879d53c2f9962c2c4a1756fa711842584004a2cf28a7d11a169fae647bef",
+    "image": "sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e",
+    "healthUrl": "http://127.0.0.1:59000/minio/health/ready"
+  },
+  "scripts": {
+    "module": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/runtime-module.psm1","sha256":"a4d417a0a7a4b779068fdec12be956bad6cc1dadd4f8878e5903122619eb9bc4"},
+    "entrypoint": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/mcp-entrypoint-v31-browser-cors.mts","sha256":"148525c24250e2ae16d23c24eaf777dd668a1a08f070440e55d529b6349640da"},
+    "supervisor": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/role-supervisor.ps1","sha256":"61f7ebe839371d76dcc6b53f0a0217260c46db97156b1e382b1cb321c3aa996f"},
+    "start": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/start-mcp-only.ps1","sha256":"a663580ecec85acbcd9ff24960e348e50459534efd8f97a3a5ac047099012b2b"},
+    "rollback": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/rollback-mcp-only.ps1","sha256":"acfbf048a619a14cc6662f4d4963934e8061ec705d269f99f1e60c4803f3d040"},
+    "compensationProbe": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/test-compensation.ps1","sha256":"5b74e942897235b8552453ea50e12cf56e9c6aa6f5c4723a0887dcfb0f4a5d40"},
+    "astAudit": {"path":"artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/audit-ast.ps1","sha256":"2c3c868e94ade81847837528c7628e52e26d4c7250c0153c5a175f6d1d27787c"}
+  },
+  "evidence": {
+    "allowedRoots": [
+      "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation/evidence/worker",
+      "artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent"
+    ]
+  },
+  "execution": {
+    "gatePath": "artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-gate.yaml",
+    "requestPath": "artifacts/approvals/dogfood-v31-public-mcp-browser-cors-activation-request.json",
+    "approvalPath": "artifacts/approvals/dogfood-v31-public-mcp-browser-cors-activation-human-approval.json",
+    "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json",
+    "rollbackPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-rollback.json",
+    "executionBindingPath": "authorization/execution-binding.json"
+  },
+  "authorization": {
+    "gateShape": {"GateReport.result":"PASS","GateReport.transition.allowed":true,"GateReport.transition.scope":"request_creation_only"},
+    "approvalRequiredBeforeServiceMutation": true,
+    "singleUse": true,
+    "expires": true
+  },
+  "mutationBoundary": {"mcp":true,"web":false,"api":false,"worker":false,"router":false,"compatibility":false,"database":false,"objectStorage":false,"workmesh":false,"browser":false,"git":false,"securityScan":false}
+}
