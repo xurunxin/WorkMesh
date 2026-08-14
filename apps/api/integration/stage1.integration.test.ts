@@ -30,7 +30,12 @@ class SwitchableRateLimitStore implements AuthRateLimitStore {
   async close(): Promise<void> {}
 }
 const rateLimitStore = new SwitchableRateLimitStore();
-const app = buildApp({ authRateLimitStore: rateLimitStore });
+const app = buildApp({
+  authRateLimitStore: rateLimitStore,
+  // Exercise PostgreSQL fallback deterministically without coupling the
+  // integration assertion to production polling cadence or CI scheduler load.
+  realtimeFallbackReconcileMs: 100,
+});
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T };
 type Human = { cookie: string; csrf: string; actorId: string };
 type Agent = { id: string; installationToken: string };
