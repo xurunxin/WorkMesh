@@ -1,11 +1,18 @@
 import { createHash, createHmac, generateKeyPairSync } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   FakeGitProvider,
   GitHubAppProvider,
   normalizeGitHubWebhook,
   verifyGitHubWebhookSignature,
 } from "./index.js";
+
+let githubTestPrivateKey: string;
+
+beforeAll(() => {
+  githubTestPrivateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
+    .export({ type: "pkcs8", format: "pem" }).toString();
+}, 15_000);
 
 describe("provider-neutral git boundary", () => {
   it("runs branch, commit, PR and exact-head merge through the fake provider", async () => {
@@ -131,8 +138,6 @@ describe("provider-neutral git boundary", () => {
   });
 
   it("mints an installation token in memory before GitHub REST operations", async () => {
-    const privateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
-      .export({ type: "pkcs8", format: "pem" }).toString();
     const calls: Array<{ url: string; authorization: string | null }> = [];
     const fetch: typeof globalThis.fetch = async (input, init) => {
       const url = String(input);
@@ -144,7 +149,7 @@ describe("provider-neutral git boundary", () => {
       return Response.json({ ref: "refs/heads/workmesh/test", object: { sha: "base" } }, { status: 201 });
     };
     const provider = new GitHubAppProvider({
-      appId: "123", installationId: "456", privateKey, fetch, apiBaseUrl: "https://github.test",
+      appId: "123", installationId: "456", privateKey: githubTestPrivateKey, fetch, apiBaseUrl: "https://github.test",
     });
     await provider.createBranch({
       provider: "github", connectionId: "c", repositoryId: "99", repositoryFullName: "acme/workmesh",
@@ -156,8 +161,6 @@ describe("provider-neutral git boundary", () => {
   });
 
   it("uses GitHub commit/tree/blob reads for guidance and the check re-request endpoint", async () => {
-    const privateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
-      .export({ type: "pkcs8", format: "pem" }).toString();
     const calls: string[] = [];
     const fetch: typeof globalThis.fetch = async (input, init) => {
       const url = String(input);
@@ -179,7 +182,7 @@ describe("provider-neutral git boundary", () => {
       return Response.json({});
     };
     const provider = new GitHubAppProvider({
-      appId: "123", installationId: "456", privateKey, fetch, apiBaseUrl: "https://github.test",
+      appId: "123", installationId: "456", privateKey: githubTestPrivateKey, fetch, apiBaseUrl: "https://github.test",
     });
     const identity = {
       provider: "github" as const,
@@ -201,8 +204,6 @@ describe("provider-neutral git boundary", () => {
   });
 
   it("recovers GitHub commit, pull-request, and merge results after a worker crash", async () => {
-    const privateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
-      .export({ type: "pkcs8", format: "pem" }).toString();
     const mutations: string[] = [];
     const pullRequest = {
       number: 7, html_url: "https://github.test/acme/workmesh/pull/7",
@@ -226,7 +227,7 @@ describe("provider-neutral git boundary", () => {
       return Response.json({});
     };
     const provider = new GitHubAppProvider({
-      appId: "123", installationId: "456", privateKey, fetch, apiBaseUrl: "https://github.test",
+      appId: "123", installationId: "456", privateKey: githubTestPrivateKey, fetch, apiBaseUrl: "https://github.test",
     });
     const identity = {
       provider: "github" as const, connectionId: "c", repositoryId: "99", repositoryFullName: "acme/workmesh",
@@ -246,8 +247,6 @@ describe("provider-neutral git boundary", () => {
   });
 
   it("recreates the identical GitHub commit object after a crash before the ref update", async () => {
-    const privateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
-      .export({ type: "pkcs8", format: "pem" }).toString();
     let refSha = "base";
     let failFirstPatch = true;
     const commitBodies: string[] = [];
@@ -279,7 +278,7 @@ describe("provider-neutral git boundary", () => {
       return Response.json({});
     };
     const provider = new GitHubAppProvider({
-      appId: "123", installationId: "456", privateKey, fetch, apiBaseUrl: "https://github.test",
+      appId: "123", installationId: "456", privateKey: githubTestPrivateKey, fetch, apiBaseUrl: "https://github.test",
     });
     const request = {
       provider: "github" as const,
