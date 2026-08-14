@@ -1,0 +1,54 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveCorsCounterexample",
+  "result": "BLOCK",
+  "observedAt": "2026-08-14T15:13:46.2658300Z",
+  "browserOrigin": "http://127.0.0.1:3300",
+  "apiOrigin": "http://127.0.0.1:3303",
+  "publicMcpOrigin": "http://127.0.0.1:3301",
+  "preflight": [
+    {
+      "requestOrigin": "http://127.0.0.1:3300",
+      "status": 204,
+      "accessControlAllowOrigin": "http://127.0.0.1:3301",
+      "accessControlAllowCredentials": "true",
+      "browserOriginAccepted": false
+    },
+    {
+      "requestOrigin": "http://127.0.0.1:3301",
+      "status": 204,
+      "accessControlAllowOrigin": "http://127.0.0.1:3301",
+      "accessControlAllowCredentials": "true",
+      "browserOriginAccepted": true
+    }
+  ],
+  "activeApiRuntime": {
+    "webOrigin": "http://127.0.0.1:3301",
+    "supervisorPid": 9120,
+    "childPid": 61624,
+    "listenerPid": 41808,
+    "listenerPort": 3303,
+    "runtimeState": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/runtime/candidate-api.json@sha256:692ae6011972d122903a7af822961c6faa7f7049a85dd5a387002175aa378588"
+  },
+  "sourceBinding": {
+    "apps/api/src/server.ts": {
+      "sha256": "9870f0169686d2e35ec69f095d4fac80ef564d0d3a37a6f60569aca0b8a8f5c3",
+      "cors": "line 332 uses config.WEB_ORIGIN",
+      "realtime": "line 1103 uses config.WEB_ORIGIN",
+      "publicConnectionUrls": "line 1143 passes config.WEB_ORIGIN to registerAgentConnectionRoutes"
+    },
+    "packages/config/src/index.ts": {
+      "sha256": "d4801a8d2aae2b740f3e47880dfd70d71271bdbe9df0dcd983e6768f967d608a",
+      "fact": "WEB_ORIGIN is the only configured Web/public origin"
+    },
+    "packages/config/src/runtime-secrets.mjs": {
+      "sha256": "19509112333a3120a3ac82305f38f9362a3e3fe64094544b329ad2f4bcb79503",
+      "fact": "WEB_ORIGIN is the only API origin variable in the runtime allowlist"
+    }
+  },
+  "rootCause": "The API uses one WEB_ORIGIN value for both credentialed Browser CORS and server-derived public MCP URLs. Setting it to the public router at 3301 fixed discovery and MCP routing but stopped the active Web UI at 3300 from reading API responses.",
+  "minimumRepair": "Keep Browser CORS/realtime authorization bound to the exact active Web origin 3300 and introduce a separately validated public MCP origin bound to 3301 for discovery, connect, MCP, and Skill URLs.",
+  "serviceMutationPerformed": false,
+  "productMutationPerformed": false,
+  "secretValuesSerialized": false
+}
