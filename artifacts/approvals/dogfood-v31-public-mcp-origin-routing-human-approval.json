@@ -1,0 +1,39 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRoutingApproval",
+  "approvalId": "cc6d1bd4-2bb5-4c46-8833-10989ca5a2d0",
+  "decision": "approved",
+  "selectorBinding": "v31-public-mcp-origin-routing-v1",
+  "scope": "v31_api_public_mcp_origin_activation_once",
+  "requestPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-routing-request.json",
+  "requestSha256": "04c8cc8fb0b16842622366bddeb9837898a57616663c21936ec98b329d2e1b87",
+  "contractPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json",
+  "contractSha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7",
+  "gatePath": "artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml",
+  "gateSha256": "4b991c2fa16a1dff9219f384d8ba5f3ddd42c3e05061bc614fd26726c121f87b",
+  "decisionText": "Human explicitly approved the exact v31 API-only public MCP origin activation request in the Codex task.",
+  "approvedChange": {
+    "service": "api",
+    "port": 3303,
+    "fromWebOrigin": "http://127.0.0.1:3300",
+    "toWebOrigin": "http://127.0.0.1:3301",
+    "singleUse": true,
+    "mandatoryCompensation": true
+  },
+  "excluded": {
+    "webReplacement": true,
+    "mcpReplacement": true,
+    "workerReplacement": true,
+    "routerReplacement": true,
+    "compatibilityReplacement": true,
+    "databaseMutation": true,
+    "objectStorageMutation": true,
+    "workMeshMutation": true,
+    "browserUse": true,
+    "gen11Completion": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T14:50:33.7452355Z",
+  "expiresAt": "2026-08-14T15:48:22.3308126Z",
+  "consumed": false
+}
