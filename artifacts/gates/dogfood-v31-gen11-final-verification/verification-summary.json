@@ -1,0 +1,38 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Gen11FinalVerificationSummary",
+  "result": "PASS",
+  "observedAt": "2026-08-14T20:21:47.4291039Z",
+  "claimChecks": {
+    "V31-G1": "PASS",
+    "V31-G2": "PASS",
+    "V31-G3": "PASS",
+    "V31-G4": "PASS",
+    "V31-G5": "PASS",
+    "V31-G6": "PASS",
+    "V31-G7": "PASS",
+    "V31-G8": "PASS",
+    "V31-G9": "PASS",
+    "V31-N14-A1": "PASS",
+    "V31-N14-A2": "PASS"
+  },
+  "directScreenshotInspection": {"count": 7, "result": "PASS", "responsiveWidths": [1280, 375, 320], "horizontalOverflowObserved": false, "secretObserved": false},
+  "evidenceBoundary": {
+    "directActiveStates": ["ready", "pending_pairing", "active", "revoked", "public_onboarding"],
+    "exactBuildCarryForwardStates": ["loading", "empty", "error", "forbidden", "expired", "mis_scoped", "unsupported_client"],
+    "directKeyboard": ["escape_close", "focus_restore", "client_selector_focus_320"],
+    "exactBuildComponentKeyboard": ["native_button_enter", "native_button_space", "native_select_arrow_keys"],
+    "boundaryAccepted": true
+  },
+  "browserExactlyOnce": true,
+  "requestAudit": "PASS_83_REQUESTS_3_AUTHORIZED_MUTATIONS_ZERO_SECRET_NEEDLES",
+  "fixtureCleanup": "PASS_REVOKED_ZERO_LIVE_PAIRINGS_ZERO_ACTIVE_CREDENTIALS_SESSION_CLOSED",
+  "runtime": "PASS_HEALTH_7_OF_7_EXACT_SELECTORS_V31_200_V30_404_PREVIEW_ZERO",
+  "workmesh": "PASS_GEN11_REV2_IN_PROGRESS_COORD_ACTIVE_DONE_STATUS_BOUND_EVENTS_AFTER_197_ZERO",
+  "findings": [],
+  "risksOrUnverified": [
+    "Native Enter, Space, and select-arrow behavior is exact-build carry-forward component evidence, not a direct active Browser observation.",
+    "Security scanning was explicitly excluded; this verification makes no security approval claim."
+  ],
+  "transition": {"allowed": true, "scope": "exact_gen11_revision2_to_done_revision3_only", "workmeshMutationPerformed": false, "activation": false, "serviceMutation": false}
+}

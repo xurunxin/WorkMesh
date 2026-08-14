@@ -1,0 +1,99 @@
+GateReport:
+  gate_id: dogfood-v31-gen11-final-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 12
+  node_id: verify-v31-final
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:137@sha256:58cff018427e511ccb2e8c0f5170417e4f8fc4e9c3ca680e2664a3fe0afe4114
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000137@sha256:d54ee72eb82c6c17fc57d1f76c4f4a5d9cf73635e1960f87e6c1712aa1262786
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-5.json@sha256:b55f73b5949c689ce50c786c636a873debe007f9b6baf42f7d925149403b6fe0
+    - artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json@sha256:d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json@sha256:58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation.json@sha256:a20a31bc8ce3bd024e5839392eefbefe94f3540426ee48164b19e84511bbcd72
+  worker_id: active-evidence-owner-attempt-5
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-final-verifier
+    scope: [fixed_inputs, provenance, screenshots, browser_boundary, request_methods, redaction, fixture_cleanup, runtime, database_evidence, workmesh_readback, completion_scope]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N14-A1
+      assertion: "V31-G1 through V31-G9 independently PASS with exact active evidence and no unresolved major or critical finding."
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-gen11-final-verification/verification-summary.json@sha256:071c32f35c6f08b8d1959db43f33fa8c6e942a5070ee28872b2715980b75e7ed
+          observed: >-
+            V31-G1 through V31-G9 all passed. Seven active screenshots were directly inspected; the direct versus exact-build carry-forward boundary is explicit; exactly-once Browser finalization, responsive widths, state coverage, secret absence, Agent identity separation, runtime invariance, and activation provenance are consistent.
+          source: "fresh independent final verification"
+        - ref: artifacts/gates/dogfood-v31-gen11-final-verification/hash-and-provenance.json@sha256:227019c229c3fcda8efbd9b4e7b3e06ab14217134eebe61e65309a494ff6ed73
+          observed: >-
+            All seven fixed inputs, all twelve active-acceptance references, and every contract, Gate, request, and approval hash referenced by the MCP, API, and coordination activation receipts matched current bytes.
+          source: "fresh SHA-256 audit"
+        - ref: artifacts/gates/dogfood-v31-gen11-final-verification/runtime-request-and-cleanup.json@sha256:3b38d9f3b9d1ed0597e7d48350ddbb3bdfd99a6525bc8cc6ff0f13b968a90100
+          observed: >-
+            The live API log was independently sliced at bytes 77895 through 116632. Its exact hash, 163 lines, 83 requests, method counts, three authorized fixture mutations, and zero credential needles matched the acceptance artifact. Runtime health remained 7 of 7 with exact PID and start selectors, v31 build 200, v30 build 404, and preview listeners zero.
+          source: "fresh shared-read log audit and read-only runtime inspection"
+        - ref: artifacts/design/human-journey-attempt-31/active5-runtime-db-workmesh.json@sha256:a6f72aa85d50eddbce7d1fb40a4666d8bf6fabec6d77ad9df12864acd5d0da8f
+          observed: >-
+            The bounded database readback shows the fixture revoked at revision 3, one consumed pairing with zero live pairings, one revoked credential with zero active credentials, a closed coordination session, and exact append-only connection events. No database mutation was performed by this verifier.
+          source: "fixed database and WorkMesh readback plus audit-source review"
+      method: "fixed-input rehash, activation-chain rehash, direct inspection of seven screenshots, exact log-byte replay, read-only listener/process/health/build checks, database evidence source review, and fresh WorkMesh MCP reads"
+      gaps: []
+      repair: null
+    - claim_id: V31-N14-A2
+      assertion: "PASS authorizes only exact GEN-11 revision 2 to Done revision 3 with coord:completed, identical replay, readback, and one durable event."
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-gen11-final-verification/workmesh-readback.json@sha256:8a4ed28828e101cc5d9628550f9aa3819cbf634111b8d6512c3f50dd7d683ea9
+          observed: >-
+            Fresh MCP reads confirmed work item 4feddd7d-2784-4788-a73b-c9e27cd55e4d at revision 2, In Progress, with coord:active; Done status 12c209e8-a37f-4aa1-ae53-08fefd9ec685 exists; and the durable event cursor after 197 is empty.
+          source: "fresh read-only WorkMesh MCP get, workflow-state list, and event-list calls"
+      method: "fresh MCP precondition readback and exact transition-scope comparison against Graph v12"
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-5.json@sha256:b55f73b5949c689ce50c786c636a873debe007f9b6baf42f7d925149403b6fe0
+    - artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json@sha256:d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json@sha256:58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation.json@sha256:a20a31bc8ce3bd024e5839392eefbefe94f3540426ee48164b19e84511bbcd72
+    - artifacts/gates/dogfood-v31-gen11-final-verification/verification-summary.json@sha256:071c32f35c6f08b8d1959db43f33fa8c6e942a5070ee28872b2715980b75e7ed
+  rejected_artifacts: []
+  risks_or_unverified:
+    - >-
+      Native Enter, Space, and select-arrow behavior remains exact-build carry-forward component evidence rather than a direct active Browser observation. Direct active evidence covers Escape, focus restoration, and the focused client selector at width 320.
+    - >-
+      Security scanning was explicitly excluded by Human direction; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: exact_gen11_revision2_to_done_revision3_only
+    work_item_id: 4feddd7d-2784-4788-a73b-c9e27cd55e4d
+    from_revision: 2
+    to_revision: 3
+    status_id: 12c209e8-a37f-4aa1-ae53-08fefd9ec685
+    labels:
+      remove: ["coord:active"]
+      add: ["coord:completed"]
+      preserve_all_others: true
+    identical_idempotency_and_payload_replay: required
+    fresh_readback: required
+    durable_event_count: 1
+    empty_after_cursor: required
+    unrelated_workmesh_mutation: false
+    activation: false
+    service_mutation: false
+    database_mutation: false
+    reason: >-
+      Exact fixed artifacts, active Human and Agent evidence, runtime and database cleanup evidence, and fresh WorkMesh MCP preconditions pass. The only authorized next mutation is the single exact GEN-11 completion described above, followed by identical replay, readback, one durable event, and an empty after-cursor proof.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this PASS Gate
+      - exact GEN-11 revision 2 readback
+      - Done status 12c209e8-a37f-4aa1-ae53-08fefd9ec685
+    completion_gate: >-
+      Persist the completion receipt only after the first response, identical replay, revision 3 readback, exactly one durable event, empty after-cursor proof, and unchanged unrelated project count all match.
+  observed_at: "2026-08-14T20:21:47.4291039Z"

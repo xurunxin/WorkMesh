@@ -1,0 +1,33 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31FinalRuntimeRequestCleanupVerification",
+  "result": "PASS",
+  "observedAt": "2026-08-14T20:18:42.8235340Z",
+  "health": {"3001": 200, "3300": 200, "3301": 200, "3302": 200, "3303": 200, "3304": 200, "59000": 200},
+  "listeners": {
+    "3001": {"pid": 44104, "startUtc": "2026-08-14T05:46:54.5308239Z"},
+    "3300": {"pid": 42392, "startUtc": "2026-08-14T11:11:23.5706870Z"},
+    "3301": {"pid": 24516, "startUtc": "2026-08-14T05:46:54.4997244Z"},
+    "3302": {"pid": 19556, "startUtc": "2026-08-14T18:30:11.7180180Z"},
+    "3303": {"pid": 11832, "startUtc": "2026-08-14T16:17:42.9236161Z"},
+    "3304": {"pid": 10268, "startUtc": "2026-08-14T13:35:29.3399671Z"}
+  },
+  "buildExclusivity": {"v31BuildId": "Yj0IS_0CtW-lStIuWIemm", "v31Status": 200, "v30BuildId": "PDmZRxR35OqR7EPMC3I90", "v30Status": 404},
+  "previewListeners": {"34600": 0, "34601": 0},
+  "requestWindow": {
+    "source": "active API supervisor generation-1 stdout log",
+    "startOffset": 77895,
+    "endOffsetExclusive": 116633,
+    "bytes": 38738,
+    "sha256": "c8ad1affd3250a20335f597a23a3ac92dbb17a9e27cd7d7d0706619b588e474b",
+    "lines": 163,
+    "requests": 83,
+    "methods": {"GET": 74, "OPTIONS": 6, "POST": 2, "PUT": 0, "PATCH": 0, "DELETE": 1},
+    "authorizedMutations": ["POST /api/v1/agent-connections", "POST /api/v1/agent-connections/redeem", "DELETE /api/v1/agent-connections/bd2c7e2c-8020-4a61-b837-373895056d7a"],
+    "otherMutationCount": 0,
+    "credentialNeedleCounts": {"authorization": 0, "bearer": 0, "cookie": 0, "pairingSecret": 0, "installationToken": 0}
+  },
+  "fixture": {"status": "revoked", "revision": 3, "livePairings": 0, "activeCredentials": 0, "coordinationSession": "closed"},
+  "browser": {"freshTabs": 1, "viewportReset": true, "finalizeCalls": 1, "callsAfterFinalize": 0},
+  "securityScanRun": false
+}
