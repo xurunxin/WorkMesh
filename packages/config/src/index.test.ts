@@ -79,6 +79,27 @@ describe('release and feature configuration', () => {
     expect(loadReleaseInfo({ WORKMESH_BUILD_SHA: 'abc1234' }).buildSha).toBe('abc1234')
     expect(loadReleaseInfo({ WORKMESH_BUILD_SHA: 'secret value' }).buildSha).toBe('unknown')
   })
+
+  it('validates a distinct optional public MCP origin without changing the Web origin', () => {
+    const splitOrigins = loadConfig({
+      ...baseEnvironment,
+      WEB_ORIGIN: 'http://127.0.0.1:3300',
+      PUBLIC_MCP_ORIGIN: 'http://127.0.0.1:3301',
+    })
+    expect(splitOrigins.WEB_ORIGIN).toBe('http://127.0.0.1:3300')
+    expect(splitOrigins.PUBLIC_MCP_ORIGIN).toBe('http://127.0.0.1:3301')
+
+    const compatible = loadConfig({
+      ...baseEnvironment,
+      WEB_ORIGIN: 'https://workmesh.example.test',
+    })
+    expect(compatible.PUBLIC_MCP_ORIGIN).toBeUndefined()
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      PUBLIC_MCP_ORIGIN: 'not-an-absolute-url',
+    })).toThrow()
+  })
+
   it('strictly parses authentication rate-limit and trusted proxy settings', () => {
     const config = loadConfig({
       ...baseEnvironment,

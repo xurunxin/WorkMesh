@@ -78,22 +78,34 @@ const createPairing = async (tx: PoolClient, connectionId: string, slug: string,
   return { code, expiresAt }
 }
 
-const connectUrl = (webOrigin: string, code: string) => `${webOrigin.replace(/\/$/, '')}/connect#${code}`
-const mcpUrl = (webOrigin: string) => `${webOrigin.replace(/\/$/, '')}/mcp`
-const skillDownloadUrl = (webOrigin: string) => `${webOrigin.replace(/\/$/, '')}/skills/workmesh-1.1.0.md`
+export const resolveAgentConnectionEndpointUrls = (input: {
+  webOrigin: string
+  publicMcpOrigin: string
+}) => {
+  const webOrigin = input.webOrigin.replace(/\/$/, '')
+  const publicMcpOrigin = input.publicMcpOrigin.replace(/\/$/, '')
+  return {
+    connectUrl: (code: string) => `${webOrigin}/connect#${code}`,
+    mcpUrl: `${publicMcpOrigin}/mcp`,
+    skillDownloadUrl: `${webOrigin}/skills/workmesh-1.1.0.md`,
+    wellKnownUrl: `${publicMcpOrigin}/.well-known/workmesh-agent`,
+  }
+}
 
 export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
   db: Pool
   webOrigin: string
+  publicMcpOrigin: string
   meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta
   header: (request: FastifyRequest, name: string) => string | undefined
   paginator: Paginator
 }): void {
-  const { db, webOrigin, meta, header, paginator } = input
+  const { db, meta, header, paginator } = input
+  const endpointUrls = resolveAgentConnectionEndpointUrls(input)
   const id = (request: FastifyRequest) => (request.params as { id: string }).id
 
   app.get('/.well-known/workmesh-agent', async () => agentWellKnownResponseSchema.parse({
-    protocolVersion: 'v1', mcpUrl: mcpUrl(webOrigin), wellKnownUrl: `${webOrigin.replace(/\/$/, '')}/.well-known/workmesh-agent`,
+    protocolVersion: 'v1', mcpUrl: endpointUrls.mcpUrl, wellKnownUrl: endpointUrls.wellKnownUrl,
     apiVersion: 'v1', supportedClients: ['codex', 'opencode', 'pi', 'generic_mcp'], skill,
   }))
 
@@ -182,7 +194,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       const issued = await createPairing(tx, row.id, body.agentSlug, body.clientType, 'initial')
       const updated = one((await tx.query<ConnectionRow>('UPDATE agent_connections SET pairing_code_expires_at=$2 WHERE id=$1 RETURNING *', [row.id, issued.expiresAt])).rows)
       await connectionEvent(tx, context, updated, 'agent.connection.created', { clientType: body.clientType })
-      return { connection: response(updated), connect_url: connectUrl(webOrigin, issued.code), skill }
+      return { connection: response(updated), connect_url: endpointUrls.connectUrl(issued.code), skill }
     })
     return reply.code(201).send(result)
   })
@@ -223,8 +235,8 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       await appendEvent(tx, { workspaceId: row.workspace_id, teamId: row.team_id, actorId: row.agent_actor_id, correlationId: request.correlationId, idempotencyKey: request.idempotencyKey, type: 'agent.connection.pairing_redeemed', aggregateType: 'agent_connection', aggregateId: row.id, revision: row.revision, payload: { clientType: body.client.type }, resources: { scopes: [{ type: 'team', id: row.team_id }], invalidates: [{ type: 'team', id: row.team_id }] } })
       return { status: 200, body: {
         connection: response(row), installation_token: installationToken,
-        mcp: { transport: 'streamable_http' as const, url: mcpUrl(webOrigin), auth: { type: 'installation_token' as const, header: 'X-WorkMesh-Installation-Token' as const } },
-        skill: { ...skill, download_url: skillDownloadUrl(webOrigin) }, principal_human_actor_id: row.principal_human_actor_id,
+        mcp: { transport: 'streamable_http' as const, url: endpointUrls.mcpUrl, auth: { type: 'installation_token' as const, header: 'X-WorkMesh-Installation-Token' as const } },
+        skill: { ...skill, download_url: endpointUrls.skillDownloadUrl }, principal_human_actor_id: row.principal_human_actor_id,
         team_id: row.team_id, idempotency_replay: { replayable_until: new Date(Date.now() + 15 * 60_000).toISOString(), replay_returns_identical_body: true as const },
       } }
       })
@@ -282,7 +294,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       const issued = await createPairing(tx, row.id, row.agent_slug, row.client_type, 'rotation', overlapUntil)
       row = one((await tx.query<ConnectionRow>("UPDATE agent_connections SET status='rotating',pairing_code_expires_at=$2,rotated_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [row.id, issued.expiresAt])).rows)
       await connectionEvent(tx, context, row, 'agent.connection.rotated', { overlapUntil: overlapUntil.toISOString() })
-      return { connection: response(row), connect_url: connectUrl(webOrigin, issued.code), pairing_code_expires_at: issued.expiresAt.toISOString(), overlap_until: overlapUntil.toISOString() }
+      return { connection: response(row), connect_url: endpointUrls.connectUrl(issued.code), pairing_code_expires_at: issued.expiresAt.toISOString(), overlap_until: overlapUntil.toISOString() }
     })
     return reply.code(201).send(result)
   })

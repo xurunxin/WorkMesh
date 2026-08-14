@@ -142,6 +142,10 @@ const envSchema = z
     PAGINATION_CURSOR_TTL_SECONDS: boundedInt(60, 86_400, 900),
     SESSION_COOKIE_SECURE: z.enum(['true', 'false']).default('false'),
     WEB_ORIGIN: z.string().url().default('http://localhost:3000'),
+    PUBLIC_MCP_ORIGIN: z.preprocess(
+      (value) => (value === '' ? undefined : value),
+      z.string().url().optional(),
+    ),
     API_PORT: z.coerce.number().int().positive().default(3001),
   })
   .superRefine((value, context) => {

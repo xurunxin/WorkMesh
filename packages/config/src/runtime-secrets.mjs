@@ -54,6 +54,7 @@ const urlNames = [
   'DATABASE_URL',
   'REDIS_URL',
   'WEB_ORIGIN',
+  'PUBLIC_MCP_ORIGIN',
   'WORKMESH_API_URL',
   'NEXT_PUBLIC_API_URL',
   'S3_ENDPOINT',

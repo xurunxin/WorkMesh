@@ -1,0 +1,93 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingRepair",
+  "statusProposal": "verifying",
+  "nodeId": "repair-v31-public-mcp-origin-cors-decoupling",
+  "attempt": 1,
+  "graph": {
+    "version": 10,
+    "sha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5"
+  },
+  "claim": {
+    "stateSequence": 94,
+    "stateSha256": "b34a3244233e5371b7072974e69e7ec762565d228c570f20c26d42085e784e66",
+    "eventCursor": 94,
+    "eventLogSha256": "512100d4fe05bdf9c7011a5e769bdc99b5657fca68738449b02b03143ff12588",
+    "leaseId": "4acd5c7e-99de-4a3c-8bc1-10dc4bac3c86"
+  },
+  "repair": {
+    "browserOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301",
+    "backwardCompatibleFallback": "PUBLIC_MCP_ORIGIN defaults to WEB_ORIGIN when absent",
+    "corsAndRealtimeOrigin": "WEB_ORIGIN",
+    "wellKnownAndMcpOrigin": "PUBLIC_MCP_ORIGIN",
+    "browserConnectAndSkillOrigin": "WEB_ORIGIN",
+    "packageOrLockfileChanged": false,
+    "schemaOrMigrationChanged": false,
+    "serviceOrRuntimeChanged": false
+  },
+  "reachabilityRefinement": {
+    "finding": "The live public router on 3301 serves discovery and MCP but rejects the Browser connect page and Skill document; those resources are served by the Web role on 3300.",
+    "implementationDecision": "Keep connect_url and skill.download_url on WEB_ORIGIN while moving only wellKnownUrl and mcp.url to PUBLIC_MCP_ORIGIN.",
+    "evidence": {
+      "publicDiscovery3301": 200,
+      "publicMcp3301": 401,
+      "publicConnect3301": 401,
+      "publicSkill3301": 401,
+      "webConnect3300": 200,
+      "webSkill3300": 200
+    }
+  },
+  "sourceDelta": [
+    {"path": ".env.example", "sha256": "a08ec66ec5ca6c5b9bd5a558b381aa3d4bde347a9231284045e7204ee53f60d2"},
+    {"path": "docker-compose.yml", "sha256": "5454a37075aa75b3e676bdc3c95326066708eea303a718ab825be1313b8f2ec3"},
+    {"path": "apps/api/src/agent-connections.ts", "sha256": "3fee3064a203aa0f0b05c37afc0c9b41867ce3b54e4d2af2e33cbe01ca0c656d"},
+    {"path": "apps/api/src/server.ts", "sha256": "fa8173bc4a55615acf266c5ee894521a0c5b2c6e16a7803c6053f1d01fe3da24"},
+    {"path": "apps/api/src/origin-routing.test.ts", "sha256": "ee7be1ce55cdb3990539f49f396281a93eea571f43010e0c97732f981c9d686c"},
+    {"path": "packages/config/src/index.ts", "sha256": "e0ce817a65da10753256e38d3c6a802e41f40da776f4054d90d5dd0b17a07d63"},
+    {"path": "packages/config/src/index.test.ts", "sha256": "1f086772d09948c6a6f7769c837fca5873125958bbf6edf965fc6ddcd46aa810"},
+    {"path": "packages/config/src/runtime-secrets.mjs", "sha256": "5f131b44c7ce1cb7be2e4df7792e028fe86c7260ea3126481f662ba41a734a87"}
+  ],
+  "packageInvariance": {
+    "package.json": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+    "pnpm-lock.yaml": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+    "apps/api/package.json": "a4699f8a1cb17b6e0c340ee765afe0070e5ccc104a7a09d0aec0379e13447343",
+    "packages/config/package.json": "bc3dabf2d08a97d2d83a35e32748e49d9dd124dc497e0250250f87d13acba8c9"
+  },
+  "checks": {
+    "focusedConfigTests": "14/14 PASS",
+    "focusedOriginRoutingTests": "3/3 PASS",
+    "fullApiTests": "28 files, 146/146 PASS",
+    "configTypecheck": "PASS",
+    "apiTypecheck": "PASS",
+    "configBuild": "PASS",
+    "apiBuild": "PASS",
+    "composeConfig": "PASS with non-secret interpolation placeholders",
+    "runtimeHealth": "7/7 HTTP 200",
+    "activeCorsBeforeActivation": "Access-Control-Allow-Origin remains http://127.0.0.1:3301",
+    "runtimeMutation": false
+  },
+  "runtimeReadback": [
+    {"port": 3001, "pid": 44104, "startTimeUtc": "2026-08-14T05:46:54.5308239Z", "health": 200},
+    {"port": 3300, "pid": 42392, "startTimeUtc": "2026-08-14T11:11:23.5706870Z", "health": 200},
+    {"port": 3301, "pid": 24516, "startTimeUtc": "2026-08-14T05:46:54.4997244Z", "health": 200},
+    {"port": 3302, "pid": 10516, "startTimeUtc": "2026-08-14T11:11:26.9111153Z", "health": 200},
+    {"port": 3303, "pid": 41808, "startTimeUtc": "2026-08-14T14:53:58.4385278Z", "health": 200},
+    {"port": 3304, "pid": 10268, "startTimeUtc": "2026-08-14T13:35:29.3399671Z", "health": 200},
+    {"port": 59000, "health": 200}
+  ],
+  "authorization": {
+    "activationContractPreparation": false,
+    "requestCreation": false,
+    "serviceReplacement": false,
+    "browser": false,
+    "databaseMutation": false,
+    "workMeshMutation": false,
+    "securityScan": false
+  },
+  "knownLimitations": [
+    "The active API still advertises Browser CORS for 3301 until a separately verified API-only activation is approved and executed.",
+    "The graph objective used the broad phrase connect and Skill URLs for PUBLIC_MCP_ORIGIN; live route reachability proves these Browser-delivered resources must remain on WEB_ORIGIN. The independent Gate must explicitly evaluate this refinement.",
+    "No integration database, E2E Browser, security scan, or active-runtime mutation was performed."
+  ]
+}

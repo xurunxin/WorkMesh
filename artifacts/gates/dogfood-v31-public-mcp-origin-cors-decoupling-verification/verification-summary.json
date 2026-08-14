@@ -1,0 +1,89 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingVerificationSummary",
+  "result": "PASS",
+  "transitionAllowed": true,
+  "transitionScope": "activation_contract_preparation_only",
+  "fixedInputs": {
+    "graph": "sha256:90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5",
+    "stateSequence96": "sha256:893d5d65e39daefa725b33f8b2968ca2c619b9f6a6bdbb9f506eb669a8150cd6",
+    "eventsThrough96": "sha256:a7bf316e9c33cca8c9107baca23db3adecb95dd619cadba5041a47d1df46ac66",
+    "implementationReport": "sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2",
+    "blockedActiveAcceptance": "sha256:6b1103c45bb56b33c3a9c02f80ebc1f3412a5aea0cb4e4f059583d43a46bed04"
+  },
+  "claims": [
+    {
+      "id": "V31-N13E-A1",
+      "result": "PASS",
+      "observed": "WEB_ORIGIN remains the Browser CORS and realtime authority; PUBLIC_MCP_ORIGIN is optional with WEB_ORIGIN fallback and supplies well-known plus MCP endpoint URLs. Browser-delivered connect and Skill resources remain on WEB_ORIGIN because direct active reachability proves 3300=200 and 3301=401 for those resources."
+    },
+    {
+      "id": "V31-N13E-A2",
+      "result": "PASS",
+      "observed": "Fresh static audit 18/18, config 14/14, API origin plus realtime 10/10, config/API typecheck, prior full API 146/146, config/API build, Compose parsing, and package-lock invariance passed."
+    },
+    {
+      "id": "V31-N13E-A3",
+      "result": "PASS",
+      "observed": "Runtime selectors and starts remained exact with health 7/7; no service, Browser, database, object-storage, WorkMesh, or security mutation occurred."
+    },
+    {
+      "id": "V31-N13F-A1",
+      "result": "PASS",
+      "observed": "The shared production URL resolver and Fastify injection tests bind Browser origin 3300 to CORS/connect/Skill and public MCP origin 3301 to discovery/MCP without an unresolved major or critical finding."
+    },
+    {
+      "id": "V31-N13F-A2",
+      "result": "PASS",
+      "observed": "This verification authorizes only preparation and independent verification of an API-only activation contract; request creation, activation, Browser use, and GEN-11 completion remain unauthorized."
+    }
+  ],
+  "freshEvidence": {
+    "staticAudit": {
+      "path": "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/audit-origin-routing.mjs",
+      "sha256": "358dfa7c14d9d43c58754793dbf0f7af016aff2d925b98c2ebdd4cf258cc9b27",
+      "result": "18/18 PASS"
+    },
+    "tests": [
+      "packages/config/src/index.test.ts 14/14 PASS",
+      "apps/api/src/origin-routing.test.ts plus realtime/routes.test.ts 10/10 PASS",
+      "worker-phase full apps/api suite 28 files 146/146 PASS"
+    ],
+    "typecheck": ["@workmesh/config PASS", "@workmesh/api PASS"],
+    "build": ["@workmesh/config PASS", "@workmesh/api PASS"],
+    "reachability": {
+      "webConnect3300": 200,
+      "webSkill3300": 200,
+      "publicConnect3301": 401,
+      "publicSkill3301": 401,
+      "publicDiscovery3301": 200,
+      "publicMcp3301": 401
+    },
+    "runtime": {
+      "health": "7/7 HTTP 200",
+      "listeners": "3001=44104,3300=42392,3301=24516,3302=10516,3303=41808,3304=10268",
+      "startsUnchanged": true
+    }
+  },
+  "findings": [
+    {
+      "id": "V31-CORS-INFO-001",
+      "severity": "info",
+      "status": "accepted",
+      "summary": "Graph v10 uses overly broad wording that groups connect and Skill URLs under PUBLIC_MCP_ORIGIN. Current executable route ownership proves these Browser-delivered resources belong to WEB_ORIGIN; the implementation report records the narrower, reachable split.",
+      "resolutionBasis": "Current active route reachability and production source outrank the earlier planning shorthand; no security, authority, or acceptance threshold is weakened."
+    }
+  ],
+  "prohibitedActionsObserved": {
+    "serviceMutation": false,
+    "browser": false,
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workMeshMutation": false,
+    "securityScan": false
+  },
+  "risksOrUnverified": [
+    "The repaired bytes are not active; the active API still emits Browser CORS for 3301 until a separate Human-approved activation.",
+    "Integration database tests, Browser acceptance, and security scanning were not run in this Gate."
+  ]
+}

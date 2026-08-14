@@ -111,6 +111,7 @@ declare module "fastify" {
 }
 
 const config = loadConfig();
+const publicMcpOrigin = config.PUBLIC_MCP_ORIGIN ?? config.WEB_ORIGIN;
 const db = createDb();
 const sessionCookie = "workmesh_session";
 const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
@@ -1140,7 +1141,14 @@ export const buildApp = (options: {
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);
-  registerAgentConnectionRoutes(app, { db, webOrigin: config.WEB_ORIGIN, meta: commandContext, header, paginator });
+  registerAgentConnectionRoutes(app, {
+    db,
+    webOrigin: config.WEB_ORIGIN,
+    publicMcpOrigin,
+    meta: commandContext,
+    header,
+    paginator,
+  });
   return app;
 };
 
