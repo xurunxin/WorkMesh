@@ -1,0 +1,39 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActivePublicMcpCorsCounterexample",
+  "result": "BLOCK",
+  "observedAt": "2026-08-14T17:32:31.6734448Z",
+  "browserOrigin": "http://127.0.0.1:3300",
+  "publicMcpUrl": "http://127.0.0.1:3301/mcp",
+  "activeResponses": {
+    "get": {
+      "status": 401,
+      "accessControlAllowOrigin": null,
+      "vary": null
+    },
+    "options": {
+      "status": 401,
+      "accessControlAllowOrigin": null,
+      "accessControlAllowMethods": null,
+      "vary": null
+    }
+  },
+  "browserImpact": "The active Web readiness probe cannot read the expected unauthenticated 401 across origins, so it reports MCP unavailable even though the endpoint is listening.",
+  "activeSource": {
+    "entrypoint": "artifacts/runtime/dogfood-v31-stack-activation/mcp-entrypoint-v31.mts",
+    "importedHttpSource": "G:/Projects/MetronX/WorkMesh-human-experience-v31/apps/mcp/src/http.ts",
+    "importedHttpSourceSha256": "948dc1f1b21ffd2bd590cff4f2e2426bbd7638367c0826e4bc124778c2f19e56",
+    "browserOriginConfigured": false
+  },
+  "candidateRepair": {
+    "httpSource": "apps/mcp/src/http.ts",
+    "httpSourceSha256": "cd827082e82319f47a7f0d16f46830d93363fc6b6fa6c06fb6fb1e0d7efaa762",
+    "testSource": "apps/mcp/src/http.test.ts",
+    "testSourceSha256": "c0c39669a9c80c9f3eab0da9df43d0d2af8bcd29b46474fdb90d7bbb686d729f",
+    "boundary": "Exact configured HTTP(S) Browser origin only; wrong-origin preflight fails closed; MCP authentication remains unchanged."
+  },
+  "minimumRepair": "Independently verify the MCP CORS implementation, then activate only the MCP role with the exact Browser origin before a fresh Human Browser attempt.",
+  "serviceMutationPerformed": false,
+  "productMutationPerformedDuringObservation": false,
+  "secretValuesSerialized": false
+}

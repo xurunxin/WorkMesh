@@ -1,0 +1,56 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsIndependentVerification",
+  "result": "PASS",
+  "observedAt": "2026-08-14T17:46:45.0000000Z",
+  "fixedInputs": {
+    "graphV11": "sha256:fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca",
+    "stateSequence113": "sha256:3a47873d902ea33d515350804cdf374d424de9d580dbbcaa4d6cc4f526c28eba",
+    "eventsRows113": "sha256:636788ea5c28a92a08ced4e5ca00e6066068ea9b67a262cf4146bfc5d609d983",
+    "implementationReport": "sha256:8b325d369f727494d2cbd0e360b2d0e8f2fa83759881e2dbf49503cb5368e232",
+    "blockedAcceptanceAttempt4": "sha256:23c126bee130b6126d958408cdf89e2b1f16a2ccc0a18e05bf5d740d2291d77a"
+  },
+  "freshExecutableMatrix": {
+    "script": "artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verify.mts",
+    "sha256": "8fe9d1f3a6a6e3a52a3fb25454a5e0cbb701bd2f06afa4d93aa5ac8c7520e344",
+    "result": "PASS",
+    "exactOriginUnauthenticated401": true,
+    "exactOriginPreflight204": true,
+    "credentialsNotGranted": true,
+    "wrongOriginOrdinaryNotGranted": true,
+    "wrongOriginPreflightRejected": true,
+    "originlessNotGranted": true,
+    "invalidOriginsRejected": 5
+  },
+  "sourceAndPackageHashes": {
+    "apps/mcp/src/http.ts": "sha256:cd827082e82319f47a7f0d16f46830d93363fc6b6fa6c06fb6fb1e0d7efaa762",
+    "apps/mcp/src/http.test.ts": "sha256:c0c39669a9c80c9f3eab0da9df43d0d2af8bcd29b46474fdb90d7bbb686d729f",
+    "package.json": "sha256:63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+    "pnpm-lock.yaml": "sha256:c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+    "apps/mcp/package.json": "sha256:0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6"
+  },
+  "checks": {
+    "focusedHttpTests": "9/9 PASS",
+    "fullMcpTests": "33/33 PASS",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "build": "PASS",
+    "diffCheck": "PASS",
+    "runtimeHealth": "7/7 PASS"
+  },
+  "claimChecks": [
+    {"id": "V31-N13L-A1", "result": "PASS"},
+    {"id": "V31-N13L-A2", "result": "PASS"},
+    {"id": "V31-N13L-A3", "result": "PASS"},
+    {"id": "V31-N13M-A1", "result": "PASS"}
+  ],
+  "findings": [],
+  "transitionScope": "activation_contract_preparation_only",
+  "requestCreationAuthorized": false,
+  "activationAuthorized": false,
+  "serviceMutationPerformed": false,
+  "browserUsed": false,
+  "workmeshMutationPerformed": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}

@@ -1,0 +1,87 @@
+GateReport:
+  gate_id: dogfood-v31-public-mcp-browser-cors-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 11
+  node_id: verify-v31-public-mcp-browser-cors
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:113@sha256:3a47873d902ea33d515350804cdf374d424de9d580dbbcaa4d6cc4f526c28eba
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:113@sha256:636788ea5c28a92a08ced4e5ca00e6066068ea9b67a262cf4146bfc5d609d983
+    - artifacts/implementation/dogfood-v31-public-mcp-browser-cors-repair.json@sha256:8b325d369f727494d2cbd0e360b2d0e8f2fa83759881e2dbf49503cb5368e232
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json@sha256:23c126bee130b6126d958408cdf89e2b1f16a2ccc0a18e05bf5d740d2291d77a
+  worker_id: implementation-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-executable-mcp-cors-verifier
+    scope: [fixed_inputs, exact_origin, wrong_origin, authentication_invariance, tests, package_invariance, runtime_invariance]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13L-A1
+      assertion: The MCP server validates one exact HTTP(S) Browser origin and returns exact-origin CORS on the expected unauthenticated 401 without weakening MCP authentication.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verify.mts@sha256:8fe9d1f3a6a6e3a52a3fb25454a5e0cbb701bd2f06afa4d93aa5ac8c7520e344
+          observed: Fresh ephemeral execution returned 401 with exact Access-Control-Allow-Origin and Vary Origin, omitted credential grants, and kept originless access at 401 without CORS.
+          source: fresh executable production-module matrix
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verification-summary.json@sha256:7870fc12b266f5fe3e40630ed185bf16aa3fe63e8bbfd6f45705295c9b9bf4fd
+          observed: Source and package selectors match the fixed implementation report and package authority.
+          source: fresh hash audit
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N13L-A2
+      assertion: Allowed preflight is bounded to the MCP methods and headers; wrong-origin preflight fails closed and wrong-origin ordinary responses expose no CORS grant.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verify.mts@sha256:8fe9d1f3a6a6e3a52a3fb25454a5e0cbb701bd2f06afa4d93aa5ac8c7520e344
+          observed: Exact-origin preflight returned 204 with bounded methods and headers; wrong-origin GET exposed no grant and wrong-origin OPTIONS returned 403; five malformed origins were rejected at construction.
+          source: fresh executable production-module matrix
+      method: test
+      gaps: []
+      repair: null
+    - claim_id: V31-N13L-A3
+      assertion: Focused MCP tests, typecheck, build, source audit, and active runtime invariance pass with no package or lock drift.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verification-summary.json@sha256:7870fc12b266f5fe3e40630ed185bf16aa3fe63e8bbfd6f45705295c9b9bf4fd
+          observed: Focused HTTP 9/9, full MCP 33/33, typecheck, lint, build, diff check, package hashes, and seven active health endpoints pass.
+          source: fresh local verification and read-only runtime inspection
+      method: test and runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13M-A1
+      assertion: The exact repair has no unresolved major or critical finding and authorizes only MCP-only activation-contract preparation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-verification/verification-summary.json@sha256:7870fc12b266f5fe3e40630ed185bf16aa3fe63e8bbfd6f45705295c9b9bf4fd
+          observed: Four claim checks pass with zero findings; request creation, activation, service replacement, Browser, WorkMesh completion, and security approval remain false.
+          source: Gate synthesis
+      method: schema-check and evidence arbitration
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-public-mcp-browser-cors-repair.json@sha256:8b325d369f727494d2cbd0e360b2d0e8f2fa83759881e2dbf49503cb5368e232
+  rejected_artifacts: []
+  risks_or_unverified:
+    - The repaired MCP source is not active. The current public MCP endpoint still omits Browser-origin CORS until a separately verified contract and Human-approved MCP-only activation execute.
+    - Active Browser acceptance, integration database tests, and security scanning were excluded; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: activation_contract_preparation_only
+    request_creation: false
+    active_replacement: false
+    activation: false
+    browser: false
+    workmesh_completion: false
+    reason: The exact MCP Browser-origin CORS repair passed; only preparation and independent verification of an MCP-only activation contract may proceed.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact implementation report and source hashes
+      - exact active MCP and protected runtime selectors
+    completion_gate: A separate MCP-only activation-contract Gate may authorize one exact expiring Human request; service replacement remains prohibited until that later Human decision.
+  observed_at: 2026-08-14T17:46:45.0000000Z

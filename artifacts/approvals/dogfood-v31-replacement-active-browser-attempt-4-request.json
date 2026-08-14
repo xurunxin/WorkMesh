@@ -1,0 +1,56 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptRequest",
+  "requestId": "a4a8a726-8f3d-4fb0-a871-f82bd8b9f86b",
+  "selectorBinding": "v31-replacement-active-browser-attempt-4-v1",
+  "scope": "v31_replacement_active_browser_attempt_4_once",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5",
+  "executionState": {
+    "sequence": 104,
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sha256": "ab44b0f691062b2071922547071125f9bedd39c28b39e7ae8aeac04c9ef6e242"
+  },
+  "eventLog": {
+    "cursor": "104",
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "sha256": "89bea9621d2868d3cbfd08d291a21b75a5fae38290f8ffffbdbfc4767f25c386"
+  },
+  "graphAmendmentProposalPath": "artifacts/plans/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-proposal.json",
+  "graphAmendmentProposalSha256": "36e6d699808a7a94cc0aa2f470b2b914f21a9ef1f053de35bf8be60fae234a23",
+  "graphAmendmentApprovalPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-approval.json",
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json",
+  "activationSha256": "58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f",
+  "activationStatus": "ACTIVE_PENDING_REPLACEMENT_HUMAN_ACCEPTANCE",
+  "priorConsumedApprovalPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-human-approval.json",
+  "priorConsumedApprovalSha256": "c63a057bc3c43938a60fee6b4973f56d5100d5b81d0bb998cc624cd781290821",
+  "priorApprovalReusable": false,
+  "requestedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "4/4",
+    "maxWorkMeshFixtureMutations": 4,
+    "requiredJourney": [
+      "authenticated Human onboarding and diagnostics",
+      "Browser CORS at 3300 with public discovery and MCP endpoint at 3301",
+      "real verify_connection before work",
+      "pending expired active rotating revoked mis-scoped unsupported and unavailable states",
+      "1280 375 and 320 responsive plus keyboard accessibility",
+      "raw request-method and secret-absence audit",
+      "fixture durable-event and cleanup verification",
+      "runtime database and WorkMesh post-readback",
+      "viewport reset and exactly-once Browser finalize"
+    ]
+  },
+  "prohibitedActions": [
+    "service replacement restart or rollback",
+    "database schema or arbitrary data mutation",
+    "object-storage mutation outside the accepted fixture flow",
+    "GEN-11 completion mutation",
+    "Git history rewrite",
+    "security approval or security-scan claim"
+  ],
+  "requestedAt": "2026-08-14T17:21:19.5041764Z",
+  "expiresAt": "2026-08-14T18:21:19.5041764Z",
+  "singleUse": true,
+  "consumed": false
+}
