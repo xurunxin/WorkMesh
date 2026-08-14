@@ -1,6 +1,6 @@
 TaskGraph:
   graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
-  version: 9
+  version: 10
   goal:
     objective: "Deliver GEN-11 as an authority-safe Human MCP onboarding and diagnostics experience, and dogfood the exact Human-to-Agent connection journey without weakening WorkMesh identity, Session, Delegation, capability, revision, idempotency, event, or service boundaries."
     deliverables:
@@ -46,6 +46,17 @@ TaskGraph:
       - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-request.json
       - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-human-approval.json
       - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-approval.json
+      - artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json
+      - artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml
+      - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json
+      - artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-request.json
+      - artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-human-approval.json
+      - artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json
+      - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-request.json
+      - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-human-approval.json
+      - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json
       - artifacts/workmesh/dogfood-v31-gen11-completion.json
     acceptance:
       - id: V31-G1
@@ -122,8 +133,11 @@ TaskGraph:
       public_origin_routing_repair_rounds: 1
       public_origin_routing_gate_attempts: 1
       public_origin_routing_activation_attempts: 1
-      replacement_active_browser_approval_requests: 1
-      active_browser_attempts: 3
+      origin_cors_decoupling_repair_rounds: 1
+      origin_cors_decoupling_gate_attempts: 1
+      origin_cors_decoupling_activation_attempts: 1
+      replacement_active_browser_approval_requests: 2
+      active_browser_attempts: 4
       mcp_fixture_mutations: 4
       mcp_completion_mutations: 1
       external_spend_usd: 0
@@ -1104,11 +1118,191 @@ TaskGraph:
       iteration: {max_rounds: 1}
       approval: {required: true, before: approve-v31-replacement-active-browser-attempt-3}
       status: pending
+    - id: repair-v31-public-mcp-origin-cors-decoupling
+      title: "Decouple Browser CORS from the public MCP origin"
+      objective: "Introduce one validated public MCP origin used only for discovery, connect, MCP, and Skill URLs while keeping credentialed CORS and realtime headers on the exact active Web origin; add focused regression coverage without changing identity, authorization, mutation, package, lockfile, database, or WorkMesh semantics."
+      type: work
+      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, artifacts/plans/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-proposal.json, artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-approval.json]
+      output_contract:
+        artifact_type: implementation_report
+        path_or_ref: artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json
+        schema: DogfoodV31PublicMcpOriginCorsDecouplingRepair/v1
+      acceptance:
+        - id: V31-N13E-A1
+          assertion: "WEB_ORIGIN remains the exact credentialed Browser CORS and realtime origin, while a separately validated PUBLIC_MCP_ORIGIN supplies discovery and Agent Connection URLs with a backward-compatible fallback."
+        - id: V31-N13E-A2
+          assertion: "Focused configuration, CORS, discovery, connection URL, redaction, typecheck, and local test evidence passes without package or lockfile drift."
+        - id: V31-N13E-A3
+          assertion: "No service, database, object-storage, Browser, WorkMesh, or active-runtime mutation occurs during implementation."
+      evidence_required: [exact source diff, focused tests, typecheck, package and lock hashes, runtime invariance]
+      covers_goal_acceptance: [V31-G2, V31-G5, V31-G6, V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: implementation-repair-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint
+      priority: 10
+      risk: high
+      budget: {origin_cors_decoupling_repair_rounds: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: false, before: null}
+      status: pending
+    - id: verify-v31-public-mcp-origin-cors-decoupling
+      title: "Independently Gate the origin and CORS decoupling"
+      objective: "Freshly verify the exact implementation report, source delta, configuration semantics, focused tests, package invariance, and active-runtime invariance before any activation contract is prepared."
+      type: verify
+      inputs: [artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json, artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json]
+      output_contract:
+        artifact_type: gate_report
+        path_or_ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml
+        schema: GateReport/v1
+      acceptance:
+        - id: V31-N13F-A1
+          assertion: "The exact Browser-origin 3300 and public-MCP-origin 3301 contract is executable, covered by source-bound tests, and introduces no unresolved major or critical finding."
+        - id: V31-N13F-A2
+          assertion: "PASS authorizes only activation-contract preparation; it never authorizes service replacement or Browser use."
+      evidence_required: [fresh static audit, focused tests, typecheck, package and lock hashes, runtime readback]
+      covers_goal_acceptance: [V31-G2, V31-G5, V31-G6, V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: fresh-independent-origin-cors-verifier
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification
+      priority: 10
+      risk: critical
+      budget: {origin_cors_decoupling_gate_attempts: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: false, before: null}
+      status: pending
+    - id: prepare-and-verify-v31-cors-decoupling-activation-contract
+      title: "Prepare and independently Gate the API-only CORS decoupling activation"
+      objective: "Version an API-only activation and rollback contract that binds WEB_ORIGIN to 3300 and PUBLIC_MCP_ORIGIN to 3301, preserves every protected role, validates authorization before staging or service mutation, provides bounded compensation and exact dry-run evidence, and emits a fresh independent Gate."
+      type: verify
+      inputs: [artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml, artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json]
+      output_contract:
+        artifact_type: gate_report
+        path_or_ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml
+        schema: GateReport/v1
+      acceptance:
+        - id: V31-N13G-A1
+          assertion: "Contract, start, rollback, stage, authorization, root, PID/start, health, CORS, discovery, MCP, build, compensation, receipt, and evidence-root bindings fail closed and pass exact dry-runs."
+        - id: V31-N13G-A2
+          assertion: "PASS permits creating one exact expiring Human activation request only; activation remains false."
+      evidence_required: [versioned contract and scripts, AST audit, exact dry-runs, fault probes, runtime before and after, independent Gate]
+      covers_goal_acceptance: [V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: activation-contract-controller
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling
+      priority: 10
+      risk: critical
+      budget: {activation_contract_gate_attempts: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: false, before: null}
+      status: pending
+    - id: approve-v31-cors-decoupling-activation
+      title: "Human Gate for the API-only origin and CORS activation"
+      objective: "Create one exact expiring request bound to the independently passed activation-contract Gate and wait for a Human decision authorizing only the API supervisor replacement."
+      type: approval
+      inputs: [artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml, artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json]
+      output_contract:
+        artifact_type: human_approval
+        path_or_ref: artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-human-approval.json
+        schema: HumanApproval/v1
+      acceptance:
+        - id: V31-N13H-A1
+          assertion: "Approval is explicit, unexpired, exact-hash-bound, single-use, and limited to the API-only replacement with exact rollback."
+      evidence_required: [exact request, Human decision, expiry, selector binding]
+      covers_goal_acceptance: [V31-G9]
+      capabilities: [filesystem_read, filesystem_write, human_approval]
+      owner: human-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/approvals
+      priority: 10
+      risk: critical
+      budget: {}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: prepare-and-verify-v31-cors-decoupling-activation-contract}
+      status: pending
+    - id: activate-v31-cors-decoupling
+      title: "Activate the API-only origin and CORS decoupling"
+      objective: "After exact Human approval, replace only the API supervisor with WEB_ORIGIN 3300 and PUBLIC_MCP_ORIGIN 3301, prove Browser CORS plus public discovery/MCP readiness, preserve protected selectors, and automatically roll back on any failed postcondition."
+      type: work
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json, artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml, artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-human-approval.json]
+      output_contract:
+        artifact_type: activation_receipt
+        path_or_ref: artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json
+        schema: DogfoodV31PublicMcpOriginCorsDecouplingActivation/v1
+      acceptance:
+        - id: V31-N13I-A1
+          assertion: "Only the API supervisor changes; Browser-origin CORS accepts 3300, discovery and unauthenticated MCP remain correct at 3301, health/build/protected selectors pass, and one terminal receipt is durable."
+      evidence_required: [approval validation, activation receipt, CORS and MCP postconditions, runtime selectors, rollback receipt if needed]
+      covers_goal_acceptance: [V31-G8, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, local_process]
+      owner: cors-decoupling-activation-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling
+      priority: 10
+      risk: critical
+      budget: {origin_cors_decoupling_activation_attempts: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: approve-v31-cors-decoupling-activation}
+      status: pending
+    - id: approve-v31-replacement-active-browser-attempt-4
+      title: "Human Gate for replacement active Browser attempt 4"
+      objective: "After the API-only origin/CORS activation passes, create one exact expiring request and wait for a distinct Human decision authorizing one fresh Browser tab plus the existing bounded four-mutation fixture budget."
+      type: approval
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json]
+      output_contract:
+        artifact_type: human_approval
+        path_or_ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-human-approval.json
+        schema: HumanApproval/v1
+      acceptance:
+        - id: V31-N13J-A1
+          assertion: "Approval is explicit, unexpired, exact-hash-bound, single-use, and authorizes only one fresh in-app Browser tab plus at most four accepted fixture mutations."
+      evidence_required: [exact request, Human decision, expiry, selector binding, activation receipt]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G4, V31-G5, V31-G6, V31-G7, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, human_approval]
+      owner: human-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/approvals
+      priority: 10
+      risk: critical
+      budget: {replacement_active_browser_approval_requests: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: activate-v31-cors-decoupling}
+      status: pending
+    - id: capture-v31-active-evidence-attempt-4
+      title: "Capture final replacement active Human plus Agent acceptance"
+      objective: "Use exactly one separately approved fresh in-app Browser tab after the origin/CORS activation to complete the active Connections lifecycle, verify_connection, raw request audit, responsive/accessibility, secret absence, fixture cleanup, runtime, database, durable event, and WorkMesh evidence."
+      type: work
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json, artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-human-approval.json]
+      output_contract:
+        artifact_type: human_agent_acceptance
+        path_or_ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json
+        schema: DogfoodV31ActiveAcceptance/v1
+      acceptance:
+        - id: V31-N13K-A1
+          assertion: "Fresh active Browser and Agent evidence directly proves V31-G2 through V31-G7 on the served v31 build with Browser API CORS at 3300 and discovery/MCP at 3301."
+        - id: V31-N13K-A2
+          assertion: "The bounded fixture create/redeem/verify/revoke sequence is exact, idempotent, redacted, auditable, and fully cleaned."
+        - id: V31-N13K-A3
+          assertion: "Viewport reset, exactly-once Browser finalize, raw request window, runtime/database post-readback, and fixture/process cleanup all pass."
+      evidence_required: [active screenshots and DOM, MCP transcript without secrets, raw methods, durable events, fixture cleanup, runtime and database readback]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G4, V31-G5, V31-G6, V31-G7, V31-G8, V31-G9]
+      capabilities: [browser, workmesh_read, bounded_workmesh_write, local_process]
+      owner: active-evidence-owner-attempt-4
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/design/human-journey-attempt-31
+      priority: 10
+      risk: critical
+      budget: {active_browser_attempts: 1, mcp_fixture_mutations: 4}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: approve-v31-replacement-active-browser-attempt-4}
+      status: pending
     - id: verify-v31-final
       title: "Independently Gate active v31 acceptance"
       objective: "Independently verify all fixed implementation, activation, Human, Agent, request, event, redaction, cleanup, runtime, database, and WorkMesh evidence before GEN-11 completion."
       type: verify
-      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json, artifacts/runtime/dogfood-v31-coordination-feature-activation.json]
+      inputs: [artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json, artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json, artifacts/runtime/dogfood-v31-coordination-feature-activation.json]
       output_contract:
         artifact_type: gate_report
         path_or_ref: artifacts/gates/dogfood-v31-gen11-final-gate.yaml
@@ -1320,15 +1514,51 @@ TaskGraph:
       type: requires
       transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json, consumed_as: exact repaired active API and protected runtime selectors}]
     - from: capture-v31-active-evidence-attempt-3
+      to: repair-v31-public-mcp-origin-cors-decoupling
+      type: informs
+      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, consumed_as: exact Browser CORS blocker and preserved runtime evidence}]
+    - from: repair-v31-public-mcp-origin-cors-decoupling
+      to: verify-v31-public-mcp-origin-cors-decoupling
+      type: validates
+      transfers: [{ref: artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json, consumed_as: exact configuration API and test repair}]
+    - from: verify-v31-public-mcp-origin-cors-decoupling
+      to: prepare-and-verify-v31-cors-decoupling-activation-contract
+      type: approves
+      transfers: [{ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-gate.yaml, consumed_as: exact activation-contract preparation authority}]
+    - from: prepare-and-verify-v31-cors-decoupling-activation-contract
+      to: approve-v31-cors-decoupling-activation
+      type: approves
+      transfers: [{ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml, consumed_as: exact API-only Human request authority}]
+    - from: prepare-and-verify-v31-cors-decoupling-activation-contract
+      to: activate-v31-cors-decoupling
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json, consumed_as: exact API-only start rollback and postcondition contract}]
+    - from: approve-v31-cors-decoupling-activation
+      to: activate-v31-cors-decoupling
+      type: approves
+      transfers: [{ref: artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-human-approval.json, consumed_as: exact single-use API-only activation authority}]
+    - from: activate-v31-cors-decoupling
+      to: approve-v31-replacement-active-browser-attempt-4
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json, consumed_as: exact repaired active API and protected runtime selectors before Browser approval}]
+    - from: approve-v31-replacement-active-browser-attempt-4
+      to: capture-v31-active-evidence-attempt-4
+      type: approves
+      transfers: [{ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-human-approval.json, consumed_as: exact single-use replacement active Browser attempt authority}]
+    - from: activate-v31-cors-decoupling
+      to: capture-v31-active-evidence-attempt-4
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json, consumed_as: exact Browser CORS and public MCP origin activation selectors}]
+    - from: capture-v31-active-evidence-attempt-4
       to: verify-v31-final
       type: validates
-      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json, consumed_as: exact replacement active Human Agent request event and cleanup evidence}]
+      transfers: [{ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json, consumed_as: exact final replacement active Human Agent request event and cleanup evidence}]
     - from: verify-v31-final
       to: complete-v31-gen11
       type: approves
       transfers: [{ref: artifacts/gates/dogfood-v31-gen11-final-gate.yaml, consumed_as: exact GEN-11 completion authority}]
   terminal_nodes: [complete-v31-gen11]
-  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation, approve-v31-active-public-mcp-origin-routing, approve-v31-replacement-active-browser-attempt-3]
+  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation, approve-v31-active-public-mcp-origin-routing, approve-v31-replacement-active-browser-attempt-3, approve-v31-cors-decoupling-activation, approve-v31-replacement-active-browser-attempt-4]
   stop_policy:
     success_when:
       - all terminal nodes passed
