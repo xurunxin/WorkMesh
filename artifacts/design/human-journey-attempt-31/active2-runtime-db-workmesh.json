@@ -1,0 +1,52 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRuntimeDatabaseWorkMeshReadback",
+  "result": "PASS",
+  "observedAt": "2026-08-14T14:11:36.3781677Z",
+  "health": {
+    "3001": 200,
+    "3300": 200,
+    "3301": 200,
+    "3302": 200,
+    "3303": 200,
+    "3304": 200,
+    "59000": 200
+  },
+  "listeners": {
+    "3001": 44104,
+    "3300": 42392,
+    "3301": 24516,
+    "3302": 10516,
+    "3303": 24536,
+    "3304": 10268
+  },
+  "build": {
+    "activeBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "activeAssetStatus": 200,
+    "rollbackBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "rollbackAssetStatus": 404
+  },
+  "databaseSinceClaim": {
+    "claimTime": "2026-08-14T14:04:30.4464769Z",
+    "agentConnections": 0,
+    "pairings": 0,
+    "credentials": 0,
+    "coordinationSessions": 0,
+    "agentConnectionsTotal": 5
+  },
+  "workmesh": {
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "number": 11,
+    "revision": 2,
+    "status": "In Progress",
+    "labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null,
+    "baselineCursor": "181",
+    "latestObservedCursor": "187",
+    "gen11CompletionEventsAfterBaseline": 0
+  },
+  "rollbackRequired": false,
+  "secretValuesSerialized": false,
+  "securityScanRun": false
+}

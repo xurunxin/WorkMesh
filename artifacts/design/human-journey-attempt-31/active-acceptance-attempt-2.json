@@ -1,0 +1,72 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAcceptance",
+  "attempt": 2,
+  "result": "BLOCK",
+  "statusProposal": "blocked",
+  "observedAt": "2026-08-14T14:12:30Z",
+  "fixedInputs": {
+    "graph": "sha256:76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+    "activation": "sha256:a20a31bc8ce3bd024e5839392eefbefe94f3540426ee48164b19e84511bbcd72",
+    "humanApproval": "sha256:4606dc4d9fa3189d48cf5796256fb461bf71cca65109bed835623d647559834e"
+  },
+  "claimChecks": [
+    {
+      "id": "V31-N13B-A1",
+      "result": "BLOCK",
+      "summary": "The active Human UI is authenticated and the coordination feature is enabled, but the server-derived MCP endpoint renders mcp_unavailable and returns 404 instead of the required unauthenticated 401."
+    },
+    {
+      "id": "V31-N13B-A2",
+      "result": "NOT_RUN_AFTER_CRITICAL_STOP",
+      "summary": "The create/redeem/verify/revoke fixture sequence was not started because its advertised endpoint was deterministically unreachable; fixture budget remains 0/4 used."
+    },
+    {
+      "id": "V31-N13B-A3",
+      "result": "BLOCK",
+      "summary": "Viewport reset, exactly-once finalize, runtime/database/WorkMesh readback, and zero fixture residue pass, but the active API request log sink did not advance and cannot prove raw methods."
+    }
+  ],
+  "finding": {
+    "id": "V31-ACTIVE-002",
+    "severity": "critical",
+    "title": "Server-derived public MCP endpoint is not routed on the active Web origin",
+    "evidence": "Discovery returns http://127.0.0.1:3300/mcp; that endpoint returns 404 while the healthy MCP process at http://127.0.0.1:3302/mcp returns the expected unauthenticated 401.",
+    "impact": "A Human or client following the active guidance cannot complete verify_connection before work begins, so V31-G2, V31-G4, V31-G7, and V31-G9 cannot pass."
+  },
+  "evidence": [
+    "artifacts/design/human-journey-attempt-31/active2-endpoint-counterexample.json",
+    "artifacts/design/human-journey-attempt-31/active2-dom-evidence.json",
+    "artifacts/design/human-journey-attempt-31/active2-request-window.json",
+    "artifacts/design/human-journey-attempt-31/active2-runtime-db-workmesh.json",
+    "artifacts/design/human-journey-attempt-31/active2-01-mcp-endpoint-blocker.png"
+  ],
+  "budgetUsage": {
+    "activeBrowserAttempts": "2/2",
+    "mcpFixtureMutations": "0/4",
+    "mcpCompletionMutations": "0/1"
+  },
+  "cleanup": {
+    "browserFinalized": true,
+    "browserCallsAfterFinalize": 0,
+    "fixtureResidue": 0,
+    "rollbackRequired": false,
+    "activeRuntimeHealthy": true
+  },
+  "proposedFollowup": {
+    "nodeId": "repair-v31-active-public-mcp-origin-routing",
+    "requiresGraphAmendment": true,
+    "requiresHumanGate": true,
+    "reason": "The Browser budget is exhausted and production public-origin routing is a service-boundary change.",
+    "minimumRepair": [
+      "Make the exact advertised well-known URL return the versioned discovery document from the public origin.",
+      "Make the exact advertised /mcp URL reach the active MCP process and return 401 without credentials.",
+      "Preserve Web, API, Worker, router, compatibility, database, object storage, and rollback selectors.",
+      "Authorize one replacement active Browser attempt and rerun the bounded create/redeem/verify/revoke lifecycle with raw method evidence."
+    ]
+  },
+  "completionAuthorized": false,
+  "serviceMutationAuthorized": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}
