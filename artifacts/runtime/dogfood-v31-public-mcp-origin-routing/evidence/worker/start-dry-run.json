@@ -1,0 +1,24 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginStartDryRun",
+  "result": "PASS",
+  "targetMutationExecuted": false,
+  "contractSha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7",
+  "oldApiPid": 60476,
+  "oldOrigin": {
+    "origin": "http://127.0.0.1:3300",
+    "discoveryStatus": 200,
+    "mcpStatus": 404,
+    "mcpUrl": "http://127.0.0.1:3300/mcp",
+    "wellKnownUrl": "http://127.0.0.1:3300/.well-known/workmesh-agent"
+  },
+  "candidateOrigin": "http://127.0.0.1:3301",
+  "protectedRoles": [
+    "web",
+    "mcp",
+    "worker",
+    "public-router",
+    "compatibility"
+  ],
+  "checkedAt": "2026-08-14T14:38:55.5087055+00:00"
+}

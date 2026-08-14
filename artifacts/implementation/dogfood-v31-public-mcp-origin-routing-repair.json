@@ -1,0 +1,73 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRoutingRepair",
+  "statusProposal": "verifying",
+  "nodeId": "repair-v31-active-public-mcp-origin-routing",
+  "attempt": 1,
+  "selectorBinding": "v31-public-mcp-origin-routing-v1",
+  "graph": {
+    "version": 8,
+    "sha256": "e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a"
+  },
+  "claim": {
+    "stateSequence": 80,
+    "stateSha256": "40a6ca05459ce86369e47136cdfc2fe5841822aea1746610ca12458cbd33054c",
+    "eventCursor": 80,
+    "eventLogSha256": "95c2fb0935a308142ff3cac09f35e39da29a4efd05fad7589e9d539cc60ee6b4",
+    "leaseId": "3bd5b030-5534-49eb-b6a8-654e3935628a"
+  },
+  "contract": {
+    "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json",
+    "sha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7"
+  },
+  "repair": {
+    "scope": "api-supervisor-WEB_ORIGIN-only",
+    "currentWebOrigin": "http://127.0.0.1:3300",
+    "candidateWebOrigin": "http://127.0.0.1:3301",
+    "apiRoot": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "apiPort": 3303,
+    "productSourceChanged": false,
+    "packageOrLockfileChanged": false,
+    "schemaOrMigrationChanged": false,
+    "protectedServiceChanged": false
+  },
+  "sourceAuthority": [
+    {"path": "G:/Projects/MetronX/WorkMesh-human-experience-v30/apps/api/src/agent-connections.ts", "sha256": "7099d812c759760417bea3f06b6a3ab046d3a12d26f5778ce730fc4dcaa006a9"},
+    {"path": "G:/Projects/MetronX/WorkMesh-human-experience-v30/apps/api/src/server.ts", "sha256": "9870f0169686d2e35ec69f095d4fac80ef564d0d3a37a6f60569aca0b8a8f5c3"},
+    {"path": "G:/Projects/MetronX/WorkMesh-human-experience-v30/packages/config/src/index.ts", "sha256": "d4801a8d2aae2b740f3e47880dfd70d71271bdbe9df0dcd983e6768f967d608a"},
+    {"path": "docs/adr/0043-agent-connection-and-coordination-mcp.md", "sha256": "29924e4beeddf68255ac77b2c3cbb5a18ae5fce0dc987217114fa46a2e30ad4e"},
+    {"path": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-target/loopback-entrypoint.mjs", "sha256": "1afb857ad4e5cf34ebbccfcadbcae34d4a7d7a797ef0176cd01e091ce84c0639"}
+  ],
+  "evidence": [
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/ast-audit.json", "sha256": "07adc0cc5fabda16f197369b32f549758efb591ec0f628eed429bc51df3c4a23", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/compensation-probe.json", "sha256": "6d17ceb686eec6fb36d35f00a2d1f6845050e4a183d65e6afdc70cd58996ad30", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/origin-contract.json", "sha256": "e9ebcd10050a64a157cb754a3a3292acfc3fca2f7d76fa2f8e7f29f9832d5a76", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/start-dry-run.json", "sha256": "5245fc8e7889d75635d97e06eecdc0fcb657aff8434e285894a973aa65c8d6cf", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/rollback-dry-run.json", "sha256": "9ec4c1b5d02e53250c44b3947f92a49d545cbaaee5bb7160c5ad96f3a7322b3b", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/runtime-before.json", "sha256": "679451232b41cf29e98af27f0c215a6232bb019d3a5b576d05631f78b29b80fa", "result": "PASS"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing/evidence/worker/runtime-after.json", "sha256": "236e2069db6a9cf340de9785351c094259cb8b6dcab8d380f12249e78b0c18d8", "result": "PASS"}
+  ],
+  "checks": {
+    "sameOriginContract": "PASS",
+    "currentCounterexample": "discovery-200-advertises-3300-mcp-404-while-3301-mcp-401",
+    "astAndBindings": "8/8 PASS",
+    "productionCompensationMatrix": "5/5 terminal receipts",
+    "exactDryRuns": "2/2 PASS",
+    "outsideRootRejection": "6/6 pre-write",
+    "missingAuthorizationRejection": "PASS pre-service",
+    "runtimeBeforeAfter": "health7/7 exact",
+    "futureArtifacts": "0/4",
+    "runtimeResidue": 0
+  },
+  "authorization": {
+    "requestCreation": false,
+    "activation": false,
+    "serviceReplacement": false,
+    "browser": false,
+    "workMeshMutation": false
+  },
+  "knownLimitations": [
+    "No non-DryRun service replacement was executed; activation remains behind an independent Gate and a fresh exact Human approval.",
+    "Security scanning was excluded and no security approval is claimed."
+  ]
+}

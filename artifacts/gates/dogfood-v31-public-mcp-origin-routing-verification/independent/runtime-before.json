@@ -1,0 +1,118 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRuntimeInvariance",
+  "result": "PASS",
+  "phase": "before",
+  "oldApi": {
+    "supervisorPid": 60476,
+    "supervisorStartTimeUtc": "2026-08-14T13:35:11.9324457Z",
+    "listenerPid": 24536,
+    "listenerStartTimeUtc": "2026-08-14T13:35:13.6396465Z",
+    "port": 3303
+  },
+  "protectedRoles": [
+    {
+      "name": "web",
+      "pid": 57064,
+      "startTimeUtc": "2026-08-14T11:11:23.0971310Z",
+      "commandNeedle": "dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1",
+      "listenerPid": 42392,
+      "listenerStartTimeUtc": "2026-08-14T11:11:23.5706870Z",
+      "listenerCommandNeedle": "prepared-active-origin\\apps\\web\\server.js",
+      "port": 3300,
+      "healthUrl": "http://127.0.0.1:3300/readyz"
+    },
+    {
+      "name": "mcp",
+      "pid": 72740,
+      "startTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "commandNeedle": "dogfood-v31-stack-activation\\role-supervisor-attempt-3.ps1",
+      "listenerPid": 10516,
+      "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+      "listenerCommandNeedle": "mcp-entrypoint-v31.mts",
+      "port": 3302,
+      "healthUrl": "http://127.0.0.1:3302/readyz"
+    },
+    {
+      "name": "worker",
+      "pid": 37620,
+      "startTimeUtc": "2026-08-14T13:35:27.7439740Z",
+      "commandNeedle": "dogfood-v31-coordination-feature-activation-attempt-2\\role-supervisor.ps1",
+      "listenerPid": 10268,
+      "listenerStartTimeUtc": "2026-08-14T13:35:29.3399671Z",
+      "listenerCommandNeedle": "WorkMesh-human-experience-v29",
+      "port": 3304,
+      "healthUrl": "http://127.0.0.1:3304/readyz"
+    },
+    {
+      "name": "public-router",
+      "pid": 24516,
+      "startTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "commandNeedle": "dogfood-target\\loopback-entrypoint.mjs",
+      "listenerPid": 24516,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "listenerCommandNeedle": "dogfood-target\\loopback-entrypoint.mjs",
+      "port": 3301,
+      "healthUrl": "http://127.0.0.1:3301/readyz"
+    },
+    {
+      "name": "compatibility",
+      "pid": 44104,
+      "startTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "commandNeedle": "dogfood-target\\web-api-compat-proxy.mjs",
+      "listenerPid": 44104,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "listenerCommandNeedle": "dogfood-target\\web-api-compat-proxy.mjs",
+      "port": 3001,
+      "healthUrl": "http://127.0.0.1:3001/readyz"
+    }
+  ],
+  "health": [
+    {
+      "name": "api",
+      "url": "http://127.0.0.1:3303/readyz",
+      "status": 200
+    },
+    {
+      "name": "web",
+      "url": "http://127.0.0.1:3300/readyz",
+      "status": 200
+    },
+    {
+      "name": "mcp",
+      "url": "http://127.0.0.1:3302/readyz",
+      "status": 200
+    },
+    {
+      "name": "worker",
+      "url": "http://127.0.0.1:3304/readyz",
+      "status": 200
+    },
+    {
+      "name": "public-router",
+      "url": "http://127.0.0.1:3301/readyz",
+      "status": 200
+    },
+    {
+      "name": "compatibility",
+      "url": "http://127.0.0.1:3001/readyz",
+      "status": 200
+    },
+    {
+      "name": "object-storage",
+      "url": "http://127.0.0.1:59000/minio/health/ready",
+      "status": 200
+    }
+  ],
+  "healthCount": "7/7",
+  "servedBuild": {
+    "requiredBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "requiredStatus": 200,
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "forbiddenStatus": 404
+  },
+  "futureArtifactsPresent": [],
+  "runtimeResidue": [],
+  "serviceMutationExecuted": false,
+  "checkedAt": "2026-08-14T14:42:53.2198622+00:00"
+}
