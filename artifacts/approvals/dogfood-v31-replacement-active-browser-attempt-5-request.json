@@ -1,0 +1,55 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptRequest",
+  "requestId": "3ce79b20-4e44-4613-b658-4832a6e3864f",
+  "selectorBinding": "v31-replacement-active-browser-attempt-5-v1",
+  "scope": "v31_replacement_active_browser_attempt_5_once",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca",
+  "executionState": {
+    "sequence": 124,
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sha256": "bf0bd61318290d805abeb00e4c2a2ba18a7574231384f249c30523e637001205"
+  },
+  "eventLog": {
+    "cursor": "124",
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "sha256": "8f0438eb8c1343aceb8cef4d435dbe69a696ad20909475880dfbdb15eb702448"
+  },
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json",
+  "activationSha256": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+  "activationStatus": "ACTIVE_PENDING_REPLACEMENT_HUMAN_ACCEPTANCE",
+  "priorBlockedAcceptancePath": "artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json",
+  "priorBlockedAcceptanceSha256": "23c126bee130b6126d958408cdf89e2b1f16a2ccc0a18e05bf5d740d2291d77a",
+  "priorConsumedApprovalPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-human-approval.json",
+  "priorConsumedApprovalSha256": "3fc1f23aed1fb42ff77870eba2f61f14b3b0e90df520094bb5c766e3962f0e04",
+  "priorApprovalReusable": false,
+  "requestedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "5/5",
+    "maxWorkMeshFixtureMutations": 3,
+    "requiredJourney": [
+      "authenticated Human onboarding and diagnostics",
+      "Browser CORS at 3300 with public discovery and MCP endpoint at 3301",
+      "fresh create redeem verify_connection and revoke fixture lifecycle",
+      "pending expired active rotating revoked mis-scoped unsupported and unavailable states",
+      "1280 375 and 320 responsive plus keyboard accessibility",
+      "raw request-method and secret-absence audit",
+      "fixture durable-event and cleanup verification",
+      "runtime database and WorkMesh post-readback",
+      "viewport reset and exactly-once Browser finalize"
+    ]
+  },
+  "prohibitedActions": [
+    "service replacement restart or rollback",
+    "database schema or arbitrary data mutation",
+    "object-storage mutation outside the accepted fixture flow",
+    "GEN-11 completion mutation",
+    "Git history rewrite",
+    "security approval or security-scan claim"
+  ],
+  "requestedAt": "2026-08-14T18:34:01.3145509Z",
+  "expiresAt": "2026-08-14T19:04:01.3145509Z",
+  "singleUse": true,
+  "consumed": false
+}
