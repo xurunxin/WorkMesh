@@ -1,0 +1,32 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureBoundaryAudit",
+  "result": "PASS",
+  "evidenceRoot": {
+    "exactIndependentRootAccepted": true,
+    "childRootRejectedBeforeWrite": true,
+    "parentRejectedBeforeWrite": true,
+    "workerSiblingRejectedBeforeWrite": true,
+    "prefixSiblingRejectedBeforeWrite": true,
+    "outsideRootRejectedBeforeWrite": true,
+    "unexpectedMarkersWritten": 0
+  },
+  "authorization": {
+    "missingAuthExitCode": 1,
+    "missingAuthError": "DOGFOOD_V31_COORD_AUTH_ARGUMENT_MISSING",
+    "executionBindingPresentAfterFailure": false,
+    "activationPresentAfterFailure": false,
+    "rollbackPresentAfterFailure": false,
+    "serviceMutationExecuted": false,
+    "supervisorDirectParentBindingChecked": true
+  },
+  "runtimeBeforeAfter": {
+    "health": "7/7",
+    "v31BuildStatus": 200,
+    "v30BuildStatus": 404,
+    "futureArtifactsPresent": 0,
+    "candidateRuntimeResidue": 0,
+    "pidStartListenerDrift": 0
+  },
+  "capturedAt": "2026-08-14T12:51:53.8597155Z"
+}

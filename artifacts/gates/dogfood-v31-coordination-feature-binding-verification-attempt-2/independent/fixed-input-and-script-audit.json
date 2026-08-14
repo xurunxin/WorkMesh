@@ -1,0 +1,30 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureAttempt2FixedInputAudit",
+  "result": "PASS",
+  "graphVersion": 7,
+  "stateSequence": 69,
+  "eventRows": 69,
+  "fixedInputs": {
+    "graphSha256": "76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+    "stateSha256": "78a4aec8aa2dffcdbccd155f373b33347822b2e633500bd97f10da4268c01f90",
+    "eventsSha256": "4b1b459298bfa20969af993ca4193592a9b309d0c73d26510f5c9b32f45c32ca",
+    "reportSha256": "fd02f1224468e1328d3af2e1e776c5727793f24ed36841b6240527baa913ff76",
+    "contractSha256": "06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698",
+    "priorBlockGateSha256": "8ba8d01f2ada860bec15c4ee00bf9e196859a317222df8ad4faa10e656cbf537",
+    "priorBlockSummarySha256": "9228a0d7343aa737b090719443f9458adf13b48e57016ed2d7fee9651a9710dd"
+  },
+  "scriptBindings": {
+    "count": 7,
+    "mismatches": 0,
+    "module": "2bfdf10c7c82f3803623cacee7236e38fb01d684c762676130cde94766be3bf7",
+    "supervisor": "3a622717d28b7260c0112349f942658824b382f6467fc419aaf2e25e4ac83192",
+    "start": "56624916d20801954165ad53d64757c364ee7493a9bfb462eedbc87229386f44",
+    "rollback": "19609e1b168d6b670279ac4fc1f3b8fcedac4b7a1ce9bbfc937e4fd611cfa471",
+    "compensationProbe": "7d070ff0b40a800f55fe7d73946e7159458d0ed983898cd0a2ce0787b3a00152",
+    "astAudit": "2907cbbe82ecf9249bc84c7a2b25bab7ce839dc1a26002a5d571dce0359b94ac",
+    "runtimeInvariance": "a11da900940541a33234ecc21d0f372813ff026095a44d44b59e0d6a08fd0a69"
+  },
+  "priorBlockImmutable": true,
+  "capturedAt": "2026-08-14T13:11:11.1999081Z"
+}

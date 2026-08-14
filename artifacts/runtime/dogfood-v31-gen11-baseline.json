@@ -1,0 +1,195 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Gen11Baseline",
+  "result": "PASS",
+  "observedAt": "2026-08-14T07:03:51.7942570Z",
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "state": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:1@sha256:d54e95fa571c3379d94e9265bf435d57f8f810d7bae520e7c108b1f048e3c538",
+    "events": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000001@sha256:60d610ab3afaf80b624101828a5f8cb254237433fc13ac551d06dd391871310e",
+    "v30Completion": "artifacts/workmesh/dogfood-v30-gen10-completion.json@sha256:d87c88aae733b349f87ec6f5e3666142cb9df0f97cecfbc8fb9d9ddd94fbc5c9",
+    "v30FinalGate": "artifacts/gates/dogfood-v30-gen10-final-gate-attempt-5.yaml@sha256:3601084f53335dbce1177f624f4857c9ce936d85631ea547a6a2cc29c9a662a3"
+  },
+  "source": {
+    "root": "G:/Projects/MetronX/WorkMesh-human-experience-v30",
+    "fileCount": 580,
+    "canonicalSha256": "15445387c5cff0e70a66940608b1dbbbc8ac6ae4b84a22eaf2a614fa78051f2d",
+    "exclusions": [
+      ".git",
+      "node_modules",
+      ".next",
+      "dist",
+      ".turbo",
+      "coverage",
+      "reports",
+      ".cache",
+      ".tmp",
+      "*.log"
+    ],
+    "gitMetadataIncluded": false
+  },
+  "webBuild": {
+    "fileCount": 118,
+    "canonicalSha256": "9ec68786ed724b27052a06b4107ac33489daa12f3db56ad91fa43fbea0246231",
+    "buildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "preview34601Matches": 5,
+    "active3301Matches": 0,
+    "legacyLocalhost3001Matches": 0
+  },
+  "packageHashes": {
+    "package.json": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+    "pnpm-lock.yaml": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+    "apps/web/package.json": "4451a5443267b46dcf2b675c4e23584a76cc2e50ecfea5aba873ddd2fe7a7598",
+    "apps/mcp/package.json": "0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6",
+    "packages/contracts/package.json": "1fbc71fa9a23ebbd037e9df7d4fb0d64edbf7d6d72313cad02476186f231fb98",
+    "packages/ui/package.json": "3aa6b0d695a953108a1a0beabd19968bbf0b9bf11a8dadc3fcac85ec673986a6"
+  },
+  "runtime": {
+    "listeners": [
+      {
+        "role": "compatibility",
+        "port": 3001,
+        "pid": 44104,
+        "startTimeUtc": "2026-08-14T05:46:54.5308239Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-target/web-api-compat-proxy.mjs",
+        "health": 200
+      },
+      {
+        "role": "web",
+        "port": 3300,
+        "pid": 30096,
+        "startTimeUtc": "2026-08-14T06:35:09.5793750Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-v30-fault-seam-web-activation/prepared-active-origin-v7/apps/web/server.js",
+        "health": 200
+      },
+      {
+        "role": "router",
+        "port": 3301,
+        "pid": 24516,
+        "startTimeUtc": "2026-08-14T05:46:54.4997244Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-target/loopback-entrypoint.mjs",
+        "health": 200
+      },
+      {
+        "role": "mcp",
+        "port": 3302,
+        "pid": 70676,
+        "startTimeUtc": "2026-08-14T05:46:55.1918851Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-target/mcp-entrypoint.mts",
+        "health": 200
+      },
+      {
+        "role": "api",
+        "port": 3303,
+        "pid": 72736,
+        "startTimeUtc": "2026-08-14T05:46:55.2440417Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh-human-experience-v30/apps/api/src/server.ts",
+        "health": 200
+      },
+      {
+        "role": "worker",
+        "port": 3304,
+        "pid": 71408,
+        "startTimeUtc": "2026-08-14T05:46:55.1158461Z",
+        "rootOrEntrypoint": "G:/Projects/MetronX/WorkMesh-human-experience-v29/apps/worker/src/index.ts",
+        "health": 200
+      },
+      {
+        "role": "object_storage",
+        "port": 59000,
+        "pid": null,
+        "startTimeUtc": null,
+        "rootOrEntrypoint": "Docker-bound MinIO health endpoint",
+        "health": 200
+      }
+    ],
+    "webSupervisor": {
+      "launcherPid": 49060,
+      "launcherStartTimeUtc": "2026-08-14T06:35:08.9126825Z",
+      "supervisorPid": 57352,
+      "supervisorStartTimeUtc": "2026-08-14T06:35:09.0976044Z",
+      "generation": 1,
+      "restartCount": 0
+    },
+    "protectedSupervisors": [
+      {"role": "compatibility", "supervisorPid": 36880, "generation": 2, "listenerPid": 44104},
+      {"role": "router", "supervisorPid": 5780, "generation": 2, "listenerPid": 24516},
+      {"role": "mcp", "supervisorPid": 19872, "generation": 2, "listenerPid": 70676},
+      {"role": "api", "supervisorPid": 73596, "generation": 2, "listenerPid": 72736},
+      {"role": "worker", "supervisorPid": 50476, "generation": 2, "listenerPid": 71408}
+    ],
+    "healthPass": "7/7",
+    "servedBuild": "V-SFnsKVQ5xpM6FrzLW5l",
+    "rollbackBuild": "PDmZRxR35OqR7EPMC3I90",
+    "servedCandidateBuildStatus": 200,
+    "rollbackBuildStatus": 404
+  },
+  "workmesh": {
+    "projectId": "73b8d424-84dc-4230-9bff-c2363f54e1f3",
+    "projectItemCount": 14,
+    "statusCounts": {"Done": 9, "Backlog": 5},
+    "gen10": {
+      "id": "80348a60-231d-4096-b64a-715df0ac0e10",
+      "revision": 3,
+      "status": "Done",
+      "labels": ["coord:completed", "module:admin", "owner:human", "roadmap:post-ga", "type:enhancement"]
+    },
+    "gen11": {
+      "id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+      "revision": 1,
+      "statusId": "6a1d52f6-faca-4f55-a8d7-d1729913761f",
+      "status": "Backlog",
+      "labels": ["coord:paused", "migration", "module:mcp", "owner:unassigned", "roadmap:post-ga", "security", "type:enhancement"],
+      "responsibleHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa",
+      "responsibleHumanDisplayName": "Dogfood Owner",
+      "activeExecutor": null
+    },
+    "remainingBacklog": ["GEN-11", "GEN-12", "GEN-13", "GEN-14", "GEN-2-epic"]
+  },
+  "existingSurfaceInventory": {
+    "humanWeb": [
+      "apps/web/app/connect/page.tsx",
+      "apps/web/app/agent-connections-panel.tsx",
+      "apps/web/app/lib/connection-diagnostics.ts",
+      "apps/web/app/lib/connection-diagnostics.test.ts",
+      "apps/web/e2e/connection-diagnostics.spec.ts"
+    ],
+    "agentMcp": [
+      "apps/mcp/src/index.ts",
+      "apps/mcp/src/index.test.ts",
+      "apps/mcp/src/http.ts",
+      "apps/mcp/src/http.test.ts",
+      "apps/mcp/src/coordination-product.ts"
+    ],
+    "contractsAndDocs": [
+      "packages/contracts/src/workmesh-skill-manifest.ts",
+      "packages/contracts/src/client-profile-contract.test.ts",
+      "docs/agent-integration.md",
+      "docs/AGENT_COLLABORATION_CLIENT_PROFILE.md",
+      "docs/adr/0012-mcp-domain-boundary.md"
+    ],
+    "observedCapabilities": [
+      "public discovery with supportedClients and pinned Skill",
+      "fragment-only pairing URL",
+      "Agent Connection list/create/rotate/revoke",
+      "safe fingerprint projection",
+      "pending/expired/rotating/revoked/team/principal diagnostics",
+      "verify_connection, get_current_identity, and get_workmesh_context"
+    ],
+    "gaps": [
+      "No server-derived client-specific configuration model shared by Human UI and Agent documentation.",
+      "Connection diagnostics do not expose a bounded conformance checklist for discovery, pinned Skill, client profile, Team/capability scope, and verify_connection continuity.",
+      "Unsupported-client and coordination-feature-disabled states are not first-class Human states.",
+      "The active Human-to-Agent onboarding path has not been dogfooded end to end with redacted durable evidence and cleanup."
+    ]
+  },
+  "mutations": {
+    "product": false,
+    "service": false,
+    "database": false,
+    "workmesh": false,
+    "git": false,
+    "browser": false,
+    "securityScan": false
+  }
+}

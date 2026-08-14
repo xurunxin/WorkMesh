@@ -1,0 +1,19 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationHumanApproval",
+  "decision": "approved",
+  "selectorBinding": "v31-stack-activation-v3",
+  "scope": "v31_stack_activation_once",
+  "contractSha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a",
+  "gateSha256": "3add1d809e81cc3483afd98cea85b616a886f301033cc7611511b659d91ab4ab",
+  "requestSha256": "fc8c6669ddd3538508656735338c0b6557011e77f101dd07eacf4540a84393cc",
+  "approvedAt": "2026-08-14T11:09:02.2961808Z",
+  "expiresAt": "2026-08-14T15:05:01.7896139Z",
+  "humanActor": "user",
+  "approvedAction": "Replace only the exact active Web and MCP roles with the exact v31 candidate through the versioned attempt-3 supervisor seam, preserving all protected roles and requiring a durable terminal compensation receipt on any failure.",
+  "automaticRollbackRequired": true,
+  "databaseMutationApproved": false,
+  "objectStorageMutationApproved": false,
+  "securityScanApproved": false,
+  "securityApprovalClaimed": false
+}

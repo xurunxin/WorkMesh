@@ -1,0 +1,23 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Attempt2ScriptBindingAudit",
+  "observedAt": "2026-08-14T10:00:54.6497328Z",
+  "result": "PASS",
+  "bindings": [
+    {"name": "module", "sha256": "3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474", "match": true},
+    {"name": "stage", "sha256": "2b0ee923c5293003d8fa4e285d7fa1bd4b69ae1a32dc63b3911ff425a26bb153", "match": true},
+    {"name": "supervisor", "sha256": "6d5e84eac19e4c02d327f8f882dd639341540a9dd207af9340b371c53685d784", "match": true},
+    {"name": "start", "sha256": "11f0dea6ad89c159f3e6707ba5406ef84a39e4ca344d85a3bd69ff76ea11a37c", "match": true},
+    {"name": "rollback", "sha256": "17d8d3d02c53a8d7cefa22bf0b218c98a1c60c8d88d5c7ef36d0b1390df6f596", "match": true},
+    {"name": "candidateVerifier", "sha256": "30c87f07bd8b44f8e08700b5cd1f4c08b634cf5929d3f5d763f2f9376a3f511b", "match": true},
+    {"name": "mcpEntrypoint", "sha256": "8cf70baf67882164f0b1777f6bfa783302d6f76fb3fd85bd921f34c5aa3c1889", "match": true},
+    {"name": "contractProbe", "sha256": "8dba998bd01e9dbc2e4915dd4c00ab856730d4e711410188d24df25bcaa72d5f", "match": true},
+    {"name": "preparedProbe", "sha256": "4523572c0459af9d1de88cfc79cf70a5ee6be1769335772dc6fbdad95991ef04", "match": true},
+    {"name": "astAudit", "sha256": "d03c25bb9acbccdb1b5376931f2fa1d4eeeef555169a4d3749ced18dda8e3034", "match": true},
+    {"name": "runtimeProbe", "sha256": "b4a2813b9214c766e7cf4065528456f7b600eef2242690d5bca47175bf11d14f", "match": true}
+  ],
+  "bindingCount": 11,
+  "mismatchCount": 0,
+  "powershellAstFiles": 9,
+  "securityScan": "excluded_by_human_direction"
+}

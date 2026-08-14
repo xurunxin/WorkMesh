@@ -1,0 +1,102 @@
+GateReport:
+  gate_id: dogfood-v31-versioned-supervisor-binding-repair-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 5
+  node_id: verify-v31-versioned-supervisor-binding-and-compensation
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:51@sha256:c791ddaea340922d1f7853d54d67e2bfd267c2d7fdd23663728f2351813600d9
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:51@sha256:3b46cafdfa88727ef9c358bf382d6378bf319bece2fc6a529fec87dd47e198db
+    - artifacts/implementation/dogfood-v31-versioned-supervisor-binding-repair.json@sha256:83e705776f491efbef8a2727bfc29a74a76fdfe383eba92f43ddd1075ebdf96a
+    - artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-3.json@sha256:7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a
+    - artifacts/implementation/dogfood-v31-attempt-2-supervisor-binding-failure.json@sha256:1431a75607fe5c1957e9f85c927e993092b124fd033e45b8fe8069a4c5a3ad83
+    - artifacts/runtime/dogfood-v31-stack-rollback.json@sha256:59fd050e063e00110422b0d884af6ea36fe202ef8602165dafa142df353c06df
+  worker_id: supervisor-binding-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-versioned-supervisor-binding-verifier
+    scope: [fixed_inputs, supervisor_binding, production_compensation, authorization_ordering, ast, dry_run, candidate_selectors, runtime_invariance]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N12R2-A1
+      assertion: Candidate Web and MCP startup use the exact versioned v3 supervisor binding for contract path, selector, hash, runtime state root, stop root, mode, role, listener, and health contract.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/supervisor/supervisor-probe.json@sha256:d1c9c09a2855e66a31cf54e5b04aac21991c5a2f3cf2e0370deaee8eb28635d2
+          observed: Four candidate/rollback Web/MCP positives passed and six wrong path, hash, state root, stop root, evidence root, or mode cases rejected with zero candidate child processes.
+          source: fresh executable supervisor probe
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/source-and-provenance-audit.json@sha256:06d1e7e86951db40dca9c1277d979a91d2f9fff7cae0ab72dafe6c8dd0d6e82c
+          observed: Non-DryRun supervisor execution requires the exact hash-bound, expiring execution binding created only after structured Gate/request/approval validation.
+          source: direct production source inspection
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N12R2-A2
+      assertion: Explicit rollback uses the same exact v3 supervisor binding and invalid contract path, selector, hash, mode, state root, or stop root cannot create a child.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/rollback-dry-run/rollback-preflight.json@sha256:c67384392c8056f576eb988215dadaf7b479172f0e448541af5fc526f0d212ae
+          observed: Exact attempt-3 rollback DryRun passed under the verifier-owned independent subtree with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/fixed-input-and-script-audit.json@sha256:9e576c6cf68e69eb0f7fdcb2e26aa74c4ad467bf2e9641d3c5df46409c7e201e
+          observed: All seven fixed inputs and all twelve contract-bound scripts/modules/probes matched byte-exactly; selectorBinding is v31-stack-activation-v3.
+          source: fresh SHA256 rehash and control-state inspection
+      method: test, schema-check, and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N12R2-A3
+      assertion: Production activation failure compensation and the executable counterexamples share Invoke-V31Attempt3Compensation and always write one durable terminal receipt for retained, restart, unknown-owner, and restart-failure outcomes.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/compensation/compensation-probe.json@sha256:ee66443298c9e7d2877f6329fc122aa3e40afc4084019a283c35b45bd6cd82e4
+          observed: Retain and restart returned ROLLED_BACK_RUNTIME_VERIFIED; unknown-owner and restart-failure threw only after ROLLBACK_FAILED; four cases produced four terminal receipts.
+          source: fresh executable production-seam probe
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/ast/ast-audit.json@sha256:0afeb458ad2417835855c9132b408ba1642de7a3d950c89d4e632397deb05f8e
+          observed: Ten PowerShell files parsed under pwsh7 with StrictMode Latest, no bare-false command, and no ConvertFrom-Json missing DateKind String.
+          source: fresh executable AST audit
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N12V2-A1
+      assertion: The repair passes independently without unresolved major or critical findings; only one fresh exact Human request may be created and activation remains unauthorized.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/start-dry-run/preflight.json@sha256:783187bcd086006645655fabb58f5aa34a7221554fe082570ab79ca2a8b28980
+          observed: Start DryRun independently revalidated source 583/dcbce0, build 118/b1c614/Yj0, standalone 1992/ff3afd, predicted prepared 1992/79e580, six secret-name presence flags, and zero target mutation.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/runtime-before/runtime-invariance.json@sha256:aa61e18190af4ec44f6a5147d8afea07410649424d3872fb8bed88d54798cd05
+          observed: Before probes, six exact role listeners plus MinIO were healthy, v30 build was 200, v31 build was 404, and attempt-3 future artifacts and candidate runtime residue were absent.
+          source: fresh read-only runtime inspection
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/independent/runtime-after/runtime-invariance.json@sha256:7ed9cb996fee5ee7e485d3f11c889ad9161dae3f9c725bd552861f2446a3c0e8
+          observed: After all probes, exact PIDs, starts, listeners, health 7/7, build exclusivity, future absence, and zero runtime residue remained unchanged.
+          source: fresh read-only runtime inspection
+        - ref: artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-verification/verification-summary.json@sha256:6bca58817d6282fb2fa67c366141b548090dff268a6398005ca03d07bb0a60bf
+          observed: All four claims passed, findings were empty, target mutation was false, and transition scope was request_creation_only with activation unauthorized.
+          source: independent verification synthesis
+      method: test, source-check, and read-only runtime inspection
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-versioned-supervisor-binding-repair.json@sha256:83e705776f491efbef8a2727bfc29a74a76fdfe383eba92f43ddd1075ebdf96a
+    - artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-3.json@sha256:7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was explicitly excluded by Human direction; this Gate makes no security approval claim.
+    - Non-DryRun activation and rollback, Browser, Git, service control, DB mutation, WorkMesh mutation, product mutation, and ExecutionState/event mutation were prohibited and not executed.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    active_replacement: false
+    request_creation: true
+    activation: false
+    reason: The exact v3 versioned supervisor and production compensation repair passed; only one fresh exact expiring Human request may be created.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact attempt-3 contract and candidate/rollback selectors
+    completion_gate: A fresh attempt-3 Human request and exact unexpired single-use approval are required before any activation.
+  observed_at: 2026-08-14T10:59:24.6922713Z

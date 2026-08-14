@@ -1,0 +1,60 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Gen11ImplementationIndependentVerificationSummary",
+  "observedAt": "2026-08-14T07:47:01.6846193Z",
+  "result": "PASS",
+  "fixedInputs": {
+    "graph": "de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "stateSequence12": "ada8cdbbde84e4b569489a51a67e6b488f6a3a270e37189101688147b18665b0",
+    "eventsThrough12": "d543bf6d4cf17597726c54bffdec1cc3e7ff34422c9e870f640e2dc6bcb09f4a",
+    "contract": "108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b",
+    "implementationReport": "f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9",
+    "implementationStaticAudit": "ba2249b25faed903da8d31dabe3bd022a664fc48584efe39f8acdb391e36d5dc"
+  },
+  "independentStaticAudit": {
+    "source": { "fileCount": 583, "canonicalSha256": "94f4a579484ffa52d1a3fce4014040cac6518247a10bfc838a3526aff30893c7", "changedPaths": 12, "exactAuthorizedPaths": true },
+    "build": { "fileCount": 118, "canonicalSha256": "93dc6d1411c1279efed0f16ee97f14e8a51ab8bce774c086a979e006a04e85aa", "buildId": "FFS43hLDELd0IEM12C3hR", "previewOriginMatches": 5, "activeOriginMatches": 0, "legacyOriginMatches": 0 },
+    "packageIdentity": "6/6 exact",
+    "secretBoundary": "PASS"
+  },
+  "independentMirror": {
+    "sourceSelectorExact": true,
+    "offlineFrozenInstall": { "result": "PASS", "reused": 348, "downloaded": 0 },
+    "test": { "result": "PASS", "tasks": "28/28", "web": "24 files/115 tests", "mcp": "2 files/26 tests", "contracts": "15 files/128 tests" },
+    "typecheck": { "result": "PASS", "tasks": "17/17" },
+    "lint": { "result": "PASS", "tasks": "17/17" },
+    "build": { "result": "PASS", "tasks": "17/17", "webRoutes": 11 },
+    "knownWarnings": [
+      "Next.js workspace-root inference selected the control-root lockfile because the verifier mirror is nested under the workspace.",
+      "Autoprefixer recommends flex-end for one mixed-support end value.",
+      "The Next.js ESLint plugin is not detected by the existing repository configuration."
+    ],
+    "cleanup": { "exactOwnedPath": "G:/Projects/MetronX/WorkMesh/artifacts/gates/dogfood-v31-gen11-implementation-verification/mirror", "existsAfterCleanup": false }
+  },
+  "runtimeAndWorkMesh": {
+    "runtimeHealth": "7/7",
+    "previewPortsClosed": true,
+    "activeBuildExclusive": true,
+    "gen11": "In Progress revision 2 coord:active Dogfood Owner",
+    "mutationExecuted": false
+  },
+  "claimChecks": {
+    "V31_G1": "PASS",
+    "V31_G2": "IMPLEMENTATION_PASS_CANDIDATE_BROWSER_DEFERRED",
+    "V31_G3": "IMPLEMENTATION_PASS_CANDIDATE_BROWSER_DEFERRED",
+    "V31_G4": "IMPLEMENTATION_PASS_AGENT_FIXTURE_DEFERRED",
+    "V31_G5": "IMPLEMENTATION_PASS_CANDIDATE_EVIDENCE_AUDIT_DEFERRED",
+    "V31_G6": "PASS",
+    "V31_G7": "IMPLEMENTATION_PASS_CANDIDATE_BROWSER_DEFERRED",
+    "V31_I_A1": "PASS",
+    "V31_I_A2": "PASS",
+    "V31_I_A3": "PASS"
+  },
+  "findings": [],
+  "transitionAllowed": true,
+  "transitionScope": "candidate_journey_only",
+  "browserUsed": false,
+  "activeReplacementAuthorized": false,
+  "securityScanExecuted": false,
+  "securityApprovalClaimed": false
+}

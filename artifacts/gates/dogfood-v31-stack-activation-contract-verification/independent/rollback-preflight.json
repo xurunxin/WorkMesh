@@ -1,0 +1,15 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackRollbackPreflight",
+  "result": "PASS",
+  "dryRun": true,
+  "contractSha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a",
+  "protectedRoles": [
+    "compatibility",
+    "router",
+    "api",
+    "worker"
+  ],
+  "targetMutationExecuted": false,
+  "capturedAt": "2026-08-14T09:12:46.5657683+00:00"
+}

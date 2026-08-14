@@ -1,0 +1,34 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31TaskGraphAmendmentHumanApproval",
+  "decision": "approved",
+  "approvedAt": "2026-08-14T10:34:50.8704383Z",
+  "humanActor": "user",
+  "proposalPath": "artifacts/plans/dogfood-v31-supervisor-binding-recovery-graph-amendment-proposal.json",
+  "proposalSha256": "f1acd618c00b43b66022f520fb54e33d076e858f7db0cdbed07e289ab04679f4",
+  "baseGraphVersion": 4,
+  "baseGraphSha256": "c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e",
+  "approvedGraphVersion": 5,
+  "approvedGraphSha256": "9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+  "scope": "v31_supervisor_binding_repair_and_attempt3_request_preparation",
+  "budgetAmendment": {
+    "activationAttemptsFrom": 2,
+    "activationAttemptsTo": 3,
+    "additionalActivationAttempts": 1,
+    "supervisorBindingRepairRounds": 1,
+    "supervisorBindingRepairGateAttempts": 1,
+    "noOtherBudgetChange": true
+  },
+  "allowed": [
+    "apply and validate Graph v5",
+    "implement the versioned supervisor and compensation repair without active replacement",
+    "run disposable and read-only verification",
+    "after an independent PASS Gate, create one exact expiring attempt-3 activation request"
+  ],
+  "activeReplacementApproved": false,
+  "activationStillRequiresSeparateHumanApproval": true,
+  "databaseMutationApproved": false,
+  "objectStorageMutationApproved": false,
+  "securityScanApproved": false,
+  "securityApprovalClaimed": false
+}

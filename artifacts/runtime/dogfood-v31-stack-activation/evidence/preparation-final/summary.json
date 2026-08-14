@@ -1,0 +1,58 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationContractPreparationSummary",
+  "result": "PASS",
+  "contract": {
+    "path": "artifacts/runtime/dogfood-v31-stack-activation-contract.json",
+    "sha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a"
+  },
+  "candidate": {
+    "source": "583/dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "build": "118/b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05/Yj0IS_0CtW-lStIuWIemm",
+    "standalone": "1992/ff3afd46b85d15261d916ffdefb7482bd46bd270d53da8a0d3d3c558d361a93f",
+    "preparedPrediction": "1992/79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4"
+  },
+  "checks": {
+    "astAndStrictMode": "PASS",
+    "authorizationPositive": 1,
+    "authorizationNegative": 4,
+    "structuredGatePositive": 1,
+    "structuredGateNegative": 1,
+    "compensationCases": 4,
+    "binaryTransformExact": true,
+    "directStageRejected": true,
+    "outsideRootRejectedPreWrite": true,
+    "stageDryRun": "PASS",
+    "startDryRun": "PASS",
+    "rollbackDryRun": "PASS",
+    "missingAuthorizationFailsBeforeStage": true,
+    "runtimeExactRoles": 6,
+    "healthChecks": "7/7",
+    "activeBuildStatus": 200,
+    "candidateBuildStatus": 404,
+    "futureArtifactsPresent": 0
+  },
+  "boundaries": {
+    "requestCreation": false,
+    "activation": false,
+    "rollback": false,
+    "serviceMutation": false,
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workmeshMutation": false,
+    "browser": false,
+    "git": false,
+    "securityScan": false
+  },
+  "evidence": {
+    "astAuditSha256": "0682011febe7c8d13f6d5d4ad14a83b361d3d135ae69c5bb57b66b1d1e26fa5a",
+    "contractProbeSha256": "26a37c4bd580af045a574c19ff7ca09f473baf2cbd055d39c8f55c810be179b3",
+    "stageDryRunSha256": "7d0bf623a17de08f780399142a448fb2a6e26506b0030f64e5ed68360fcdc0b0",
+    "startDryRunSha256": "a888321f0be19e90ad0f9de3c44be3925b1a1de2a1309e91dd5f5b2cc000826f",
+    "rollbackDryRunSha256": "ce53d5ceb207e79bb2a2c33d7389bf8e0b1e489adc465c32942f1a29b1ebbfda",
+    "authMissingSha256": "251441bfdc9df511ede80b4531d9d84c29e98f3851ef85e4b2c7686231e15200",
+    "runtimeInvarianceSha256": "9be3a76d7f59abae6f4142809e8a911ae57620c76d6c3ec0a3f7e378d8b8044d"
+  },
+  "statusProposal": "verifying",
+  "preparedAt": "2026-08-14T09:10:40.0000000Z"
+}

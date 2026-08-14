@@ -1,0 +1,27 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateRuntimeCleanupEvidence",
+  "observedAt": "2026-08-14T08:00:39.000Z",
+  "activeRuntime": [
+    { "port": 3001, "pid": 44104, "readyStatus": 200 },
+    { "port": 3300, "pid": 30096, "readyStatus": 200 },
+    { "port": 3301, "pid": 24516, "readyStatus": 200 },
+    { "port": 3302, "pid": 70676, "readyStatus": 200 },
+    { "port": 3303, "pid": 72736, "readyStatus": 200 },
+    { "port": 3304, "pid": 71408, "readyStatus": 200 }
+  ],
+  "minio59000Status": 200,
+  "candidatePorts": { "34600Listener": false, "34601Listener": false },
+  "stoppedExactPids": [6764, 16628, 9772, 56644, 16212],
+  "remainingVerifierProcesses": [],
+  "workItem": {
+    "id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "status": "In Progress",
+    "revision": 2,
+    "coordinationLabel": "coord:active",
+    "responsibleHuman": "Dogfood Owner"
+  },
+  "productMutation": false,
+  "workMeshMutation": false,
+  "result": "PASS"
+}

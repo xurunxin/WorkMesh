@@ -1,0 +1,22 @@
+{
+  "artifactVersion": 1,
+  "decisionId": "dogfood-v31-coordination-feature-binding-graph-amendment-approval",
+  "decidedAt": "2026-08-14T11:35:00Z",
+  "actor": "human:user",
+  "decision": "approved",
+  "scope": "v31_coordination_feature_binding_graph_amendment_repair_contract_and_request_preparation",
+  "proposal": "artifacts/plans/dogfood-v31-coordination-feature-binding-graph-amendment-proposal.json",
+  "humanMessage": "批准，继续，然后以新的状态为起点，制定新的goal",
+  "authorizes": [
+    "version the TaskGraph and ExecutionState for the bounded repair chain",
+    "prepare and independently verify the API plus Worker feature-binding activation contract",
+    "create one exact expiring Human activation request after a PASS Gate"
+  ],
+  "doesNotAuthorize": [
+    "service replacement before the exact request is approved",
+    "database or object-storage mutation",
+    "GEN-11 completion",
+    "security approval",
+    "unrelated product or WorkMesh mutation"
+  ]
+}

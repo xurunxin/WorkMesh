@@ -1,0 +1,57 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureActivationRequest",
+  "status": "awaiting_human_decision",
+  "selectorBinding": "v31-coordination-feature-binding-v2",
+  "scope": "v31_api_worker_coordination_feature_activation_once",
+  "singleUse": true,
+  "createdAt": "2026-08-14T13:15:12.1372245Z",
+  "expiresAt": "2026-08-14T17:15:12.1372245Z",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 7,
+    "sha256": "76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0"
+  },
+  "executionState": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sequence": 72,
+    "sha256": "2e3caf585d96dd441213cd86ee3d7319619da227abcced857c0f04fdaa8d6ec0",
+    "eventsPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventsSha256": "72a47644274f95125358d6f0981738b1ac5ad55470427afb0fa8d9636eaeb50a"
+  },
+  "contractPath": "artifacts/runtime/dogfood-v31-coordination-feature-activation-contract-attempt-2.json",
+  "contractSha256": "06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698",
+  "gatePath": "artifacts/gates/dogfood-v31-coordination-feature-binding-gate-attempt-2.yaml",
+  "gateSha256": "0a93c7c61ce7de7ceea5f71e909bdf993eb0e14512557d85f5fa04d9089c30f8",
+  "repairReportPath": "artifacts/implementation/dogfood-v31-coordination-production-compensation-repair.json",
+  "repairReportSha256": "fd02f1224468e1328d3af2e1e776c5727793f24ed36841b6240527baa913ff76",
+  "requestedMutation": {
+    "roles": ["api", "worker"],
+    "environment": {"WORKMESH_BETA_COORDINATION_MCP": "true"},
+    "sourceMutation": false,
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workMeshMutation": false,
+    "protectedRoles": ["web", "mcp", "router", "compatibility", "minio"]
+  },
+  "oldSelectors": {
+    "api": {"supervisorPid":73596,"supervisorStartTimeUtc":"2026-08-14T02:10:21.1365669Z","listenerPid":72736,"port":3303,"root":"G:\\Projects\\MetronX\\WorkMesh-human-experience-v30"},
+    "worker": {"supervisorPid":50476,"supervisorStartTimeUtc":"2026-08-13T18:03:30.5319975Z","listenerPid":71408,"port":3304,"root":"G:\\Projects\\MetronX\\WorkMesh-human-experience-v29"}
+  },
+  "requiredOutcome": {
+    "health": "7/7",
+    "servedBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "coordinationFeatureEnabledFor": ["api", "worker", "mcp"],
+    "terminalCompensation": "mandatory",
+    "freshActiveAcceptanceRequired": true
+  },
+  "rollback": {
+    "automaticOnFailure": true,
+    "sharedProductionCompensation": true,
+    "terminalReceiptRequired": true,
+    "exactOldRoleRestoreRequired": true
+  },
+  "securityScanRun": false,
+  "securityApprovalClaimed": false
+}

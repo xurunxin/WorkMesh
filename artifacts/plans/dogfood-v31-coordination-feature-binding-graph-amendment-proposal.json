@@ -1,0 +1,35 @@
+{
+  "artifactVersion": 1,
+  "proposalId": "dogfood-v31-coordination-feature-binding-graph-amendment",
+  "createdAt": "2026-08-14T11:35:00Z",
+  "baseline": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+    "state": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:b2f3b3487d4dc6fe88bb29267b7a5abfdc328b273c86e108a40b90fb1d2b063b",
+    "events": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@sha256:fdddc485b99e6bd77b8f4c6f7bbfde7468e65034aab48bb5b446934bf6588253",
+    "activeAcceptance": "artifacts/design/human-journey-attempt-31/active-acceptance.json@sha256:2a17dc9ab76de95de1d225393ae3a3f37713efb89c9663a1b477b99b7597e105"
+  },
+  "finding": {
+    "id": "V31-ACTIVE-001",
+    "summary": "The active API and Worker omit WORKMESH_BETA_COORDINATION_MCP while the active MCP role explicitly enables it, so the Human Connection list/create path fails closed although the existing MCP connection remains healthy.",
+    "rollbackRequired": false
+  },
+  "recommendedRepair": {
+    "id": "repair-v31-active-coordination-feature-binding",
+    "scope": "Version and independently verify an API-plus-Worker-only feature-binding activation contract; after a fresh exact Human approval, replace only those two protected role supervisors, preserve Web, MCP, router, compatibility and MinIO, and run the remaining active Browser/fixture attempt.",
+    "sourceMutation": false,
+    "serviceMutationBeforeHumanApproval": false,
+    "workmeshMutationBeforeActiveEvidence": false,
+    "newBudgets": {
+      "coordination_feature_binding_repair_rounds": 1,
+      "coordination_feature_binding_gate_attempts": 1,
+      "coordination_feature_activation_attempts": 1
+    }
+  },
+  "preserves": [
+    "all prior node outcomes and immutable Gate artifacts",
+    "the active v31 Web and MCP supervisors",
+    "the active v30 API and Worker source roots",
+    "all protected listener, database and object-storage boundaries",
+    "the remaining active_browser_attempts and mcp_fixture_mutations budgets"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31RuntimeInvarianceAttempt3",
+  "result": "PASS",
+  "listeners": [
+    {
+      "role": "compatibility",
+      "port": 3001,
+      "expectedPid": 44104,
+      "actualPid": 44104,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "health": 200
+    },
+    {
+      "role": "router",
+      "port": 3301,
+      "expectedPid": 24516,
+      "actualPid": 24516,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "health": 200
+    },
+    {
+      "role": "api",
+      "port": 3303,
+      "expectedPid": 72736,
+      "actualPid": 72736,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T05:46:55.2440417Z",
+      "health": 200
+    },
+    {
+      "role": "worker",
+      "port": 3304,
+      "expectedPid": 71408,
+      "actualPid": 71408,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T05:46:55.1158461Z",
+      "health": 200
+    },
+    {
+      "role": "web",
+      "port": 3300,
+      "expectedPid": 75600,
+      "actualPid": 75600,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T10:26:44.1814559Z",
+      "health": 200
+    },
+    {
+      "role": "mcp",
+      "port": 3302,
+      "expectedPid": 40520,
+      "actualPid": 40520,
+      "pidExact": true,
+      "startTimeUtc": "2026-08-14T10:26:47.8025682Z",
+      "health": 200
+    }
+  ],
+  "minioReady": 200,
+  "activeBuildStatus": 200,
+  "candidateBuildStatus": 404,
+  "futureArtifactsPresent": [],
+  "candidateRuntimeResidue": [],
+  "capturedAt": "2026-08-14T10:56:49.3294061+00:00"
+}

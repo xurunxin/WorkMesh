@@ -1,0 +1,36 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureBindingFixedInputAudit",
+  "result": "PASS",
+  "graphVersion": 6,
+  "stateSequence": 63,
+  "eventRows": 63,
+  "fixedInputs": {
+    "graphSha256": "7903bc646c835e14ac2c7cf5d8b1e9fe5043e5c2c0416a2b0876f07fbc9b4757",
+    "stateSha256": "8adaf463a83030aa2955df52eb3688e577b1f305bb32c2adf6815816f0a53d5e",
+    "eventsSha256": "5f93a0eb3fa71908b756ecc167ebad5784b94e97995eba27d793d2d85410d5b1",
+    "reportSha256": "78daaf724f645ff45736df9736710f42489d4d49398f863ec3f82ed85cc6c46c",
+    "contractSha256": "fd07bfb3f2c1d0e78fb0803ba55107559eed7af07713570e7436bf7bba77ff36",
+    "blockedAcceptanceSha256": "2a17dc9ab76de95de1d225393ae3a3f37713efb89c9663a1b477b99b7597e105"
+  },
+  "scriptBindings": {
+    "count": 7,
+    "mismatches": 0,
+    "module": "e9decfdb441390812033802f10abdee4ffc5b5cae1910f1adc449fb6e47cd10e",
+    "supervisor": "b48901dface6b44e51ff8af75dab18fee94a760dbed2e0db986788ddd2bb0e2d",
+    "start": "6f2289451e5df995378c855960b4b5a90f699f8c2b6d88941c59dd6526071e4c",
+    "rollback": "b04b4c04fe6aa7af6c6a6ef1602a1fe53dec42c08665fb7ef471076989988203",
+    "compensationProbe": "69a2c4a8187b5df4399bde9873ee66f024f76f891f3f6b9f923d7cd4bdfe393d",
+    "astAudit": "b26e9163a263571727a6560e569afc584217728c82323d3f0f293562e62aad27",
+    "runtimeInvariance": "7054cf30587e26bb693474dda126b2be02044b09d6a88594c679fa9b9435a034"
+  },
+  "sourceCompatibility": {
+    "apiV30AgentConnectionRoutesPresent": true,
+    "apiV30FeatureRoutePolicyPresent": true,
+    "workerV29LifecycleWorkerPresent": true,
+    "workerV29FeatureGatedTickPresent": true,
+    "featureDefaultFalse": true,
+    "sourceMutationRequired": false
+  },
+  "capturedAt": "2026-08-14T12:51:53.8597155Z"
+}

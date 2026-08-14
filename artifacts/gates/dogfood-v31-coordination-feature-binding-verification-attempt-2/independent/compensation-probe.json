@@ -1,0 +1,70 @@
+{
+  "artifactVersion": 2,
+  "kind": "DogfoodV31CoordinationFeatureCompensationProbe",
+  "result": "PASS",
+  "cases": [
+    {
+      "name": "both-retained",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptResult": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "api": "retained",
+      "worker": "retained",
+      "startCalls": 0,
+      "stopCalls": 2,
+      "assertProtectedCalls": 1,
+      "passed": true
+    },
+    {
+      "name": "partial-stop-api-restarted-worker-retained",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptResult": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "api": "restarted",
+      "worker": "retained",
+      "startCalls": 1,
+      "stopCalls": 2,
+      "assertProtectedCalls": 1,
+      "passed": true
+    },
+    {
+      "name": "unknown-api-owner",
+      "result": "ROLLBACK_FAILED",
+      "receiptResult": "ROLLBACK_FAILED",
+      "api": "error",
+      "worker": "retained",
+      "startCalls": 0,
+      "stopCalls": 2,
+      "assertProtectedCalls": 1,
+      "passed": true
+    },
+    {
+      "name": "api-restart-failure",
+      "result": "ROLLBACK_FAILED",
+      "receiptResult": "ROLLBACK_FAILED",
+      "api": "error",
+      "worker": "retained",
+      "startCalls": 1,
+      "stopCalls": 2,
+      "assertProtectedCalls": 1,
+      "passed": true
+    },
+    {
+      "name": "candidate-cleanup-failure",
+      "result": "ROLLBACK_FAILED",
+      "receiptResult": "ROLLBACK_FAILED",
+      "api": "retained",
+      "worker": "retained",
+      "startCalls": 0,
+      "stopCalls": 2,
+      "assertProtectedCalls": 1,
+      "passed": true
+    }
+  ],
+  "productionFunctions": [
+    "Invoke-V31CoordinationCompensation",
+    "Invoke-V31OldRoleRestore"
+  ],
+  "productionCatchBinding": "start-feature-binding.ps1",
+  "terminalReceiptExecuted": true,
+  "serviceMutationExecuted": false,
+  "checkedAt": "2026-08-14T13:08:38.2789438+00:00"
+}

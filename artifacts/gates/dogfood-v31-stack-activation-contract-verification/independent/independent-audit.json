@@ -1,0 +1,31 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationContractIndependentAudit",
+  "result": "PASS",
+  "fixed": {
+    "graph": "4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78",
+    "state": "2f3166cc1802c34fcd9a6692a989e4384ada9fae9801875a2e03ed5b508c20df",
+    "events": "47668671e3c8f7b8f3d980ab88fdb02dd37cf22fee3d718cfe3d8bcb651e4000",
+    "contract": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a",
+    "auditScript": "175e9508e2db1b9dd0abbe2871850071b9ad33625a255494c81781212a34df26"
+  },
+  "stateSequence": 32,
+  "eventRows": 32,
+  "boundScripts": "10/10",
+  "candidate": "583/dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8 + 118/b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05/Yj0IS_0CtW-lStIuWIemm",
+  "preparedPrediction": "1992/79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4",
+  "evidence": {
+    "astAudit": "a15cb4e3e4b85212ff0114b340c2109ed4fb233574e7c797b07fb30ccbbdd02f",
+    "contractProbe": "50a4c3d742a71f7d40d1edbeaa25b5912c3e41cb5bcb410d871a1360c54aae38",
+    "stageDryRun": "cea257dcc169b2deceb8e5a78b185962e74d452e495ffa2c475f3be6bf27b737",
+    "startDryRun": "eab992ea7b98b6117094e3a2b2e55d4723ea86f2028b21fbf9c575218848c879",
+    "rollbackDryRun": "08eb54eb58ea23f9f639665ed296f06930bca8cd38f81eb3f39a03647a90887b",
+    "runtimeInvariance": "545777c8418f428fd11cddf44ffff2ba54b65a8f593f43ab03880ea4f8db36b9",
+    "authMissingPreflight": "d4a044b9df4c907118f53573fa426020a6b05eaf84c823ad7f7f680f9ebd06e6"
+  },
+  "migrationTreeEquivalent": true,
+  "futureArtifactsPresent": [],
+  "preparedRootPresent": false,
+  "securityScan": false,
+  "observedAt": "2026-08-14T09:13:20.0000000Z"
+}

@@ -1,0 +1,169 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31McpOnboardingContract",
+  "statusProposal": "verifying",
+  "baseline": "artifacts/runtime/dogfood-v31-gen11-baseline.json",
+  "goal": "Deliver a Human MCP onboarding and diagnostics experience that improves Agent bootstrap while keeping all authorization in existing WorkMesh API/domain boundaries.",
+  "authorityModel": {
+    "humanPrincipal": "A Human creates and owns an Agent Connection; this does not create an Agent Session or grant work authority.",
+    "pairingFragment": "A single-use, expiring connection bootstrap value held only in the URL fragment and browser memory; it is not a bearer credential for work mutations.",
+    "installationIdentity": "Redeeming the exact pairing flow activates one Agent installation identity and returns a credential that belongs only in the Agent secret store.",
+    "agentSession": "Ordinary work mutations still require an active exact Agent Session and its scoped token, not the Human session or installation credential alone.",
+    "delegation": "Delegation, approved Team access, capability scope, approval, lease, revision, and idempotency remain server-enforced and are never inferred from UI availability.",
+    "mcpBoundary": "MCP delegates to REST/contracts and must not reproduce business policy, persist tokens, or mint authority from client configuration."
+  },
+  "clientProfiles": [
+    {
+      "clientType": "codex",
+      "label": "Codex",
+      "transport": "streamable_http",
+      "requiredFacts": ["mcpUrl", "discoveryUrl", "skillName", "skillVersion", "skillSha256", "profileVersion"],
+      "configuration": "Show a copyable secret-free template and separate secret-store steps; never interpolate a live credential into persisted text."
+    },
+    {
+      "clientType": "opencode",
+      "label": "OpenCode",
+      "transport": "streamable_http",
+      "requiredFacts": ["mcpUrl", "discoveryUrl", "skillName", "skillVersion", "skillSha256", "profileVersion"],
+      "configuration": "Show a copyable secret-free template and separate secret-store steps; never interpolate a live credential into persisted text."
+    },
+    {
+      "clientType": "pi",
+      "label": "Pi",
+      "transport": "streamable_http",
+      "requiredFacts": ["mcpUrl", "discoveryUrl", "skillName", "skillVersion", "skillSha256", "profileVersion"],
+      "configuration": "Show a copyable secret-free template and separate secret-store steps; never interpolate a live credential into persisted text."
+    },
+    {
+      "clientType": "generic_mcp",
+      "label": "Generic MCP",
+      "transport": "streamable_http",
+      "requiredFacts": ["mcpUrl", "discoveryUrl", "skillName", "skillVersion", "skillSha256", "profileVersion"],
+      "configuration": "Show protocol-level guidance with placeholders and a safe local stdio fallback; never interpolate a live credential into persisted text."
+    }
+  ],
+  "humanStates": [
+    "loading",
+    "empty",
+    "ready",
+    "pending_pairing",
+    "pairing_expired",
+    "active",
+    "rotating",
+    "revoked",
+    "team_scope_unavailable",
+    "principal_unavailable",
+    "unsupported_client",
+    "coordination_feature_disabled",
+    "discovery_unavailable",
+    "mcp_unavailable",
+    "forbidden",
+    "network_error"
+  ],
+  "agentBootstrapChecklist": [
+    "Fetch /.well-known/workmesh-agent and reject unsupported protocol/profile/Skill selectors.",
+    "Load the exact pinned WorkMesh Skill and verify SHA-256/signature metadata before pairing.",
+    "Redeem only the one-time pairing fragment within its expiry and store the returned installation credential only in the client secret store.",
+    "Call verify_connection and require exact Connection, Coordination Session, Team, principal Human, profile, Skill, and capability scope consistency.",
+    "Call get_workmesh_context before selecting work and never infer mutation authority from tool presence or Human UI state.",
+    "Stop on revoked, expired, mis-scoped, unsupported, feature-disabled, or inconsistent live facts."
+  ],
+  "writeTargets": [
+    {"path": "apps/web/app/connect/page.tsx", "decision": "adapt"},
+    {"path": "apps/web/app/agent-connections-panel.tsx", "decision": "adapt"},
+    {"path": "apps/web/app/lib/connection-diagnostics.ts", "decision": "adapt"},
+    {"path": "apps/web/app/lib/connection-diagnostics.test.ts", "decision": "adapt"},
+    {"path": "apps/web/app/lib/mcp-onboarding.ts", "decision": "add"},
+    {"path": "apps/web/app/lib/mcp-onboarding.test.ts", "decision": "add"},
+    {"path": "apps/web/app/styles.css", "decision": "adapt"},
+    {"path": "apps/web/e2e/connection-diagnostics.spec.ts", "decision": "adapt"},
+    {"path": "apps/web/e2e/mcp-onboarding.spec.ts", "decision": "add"},
+    {"path": "apps/mcp/src/index.ts", "decision": "adapt"},
+    {"path": "apps/mcp/src/index.test.ts", "decision": "adapt"},
+    {"path": "packages/contracts/src/workmesh-skill-manifest.ts", "decision": "adapt_only_if_generated_manifest_source_is_updated_in_same_node"},
+    {"path": "packages/contracts/src/client-profile-contract.test.ts", "decision": "adapt"},
+    {"path": "docs/agent-integration.md", "decision": "adapt"},
+    {"path": "packages/ui/MIGRATION.md", "decision": "adapt_if_shared_UI_contract_changes"}
+  ],
+  "generatedOrConditionalTargets": {
+    "rule": "If a required generated artifact, source generator, route-policy binding, OpenAPI contract, or shared UI export lies outside writeTargets, implementation must stop and version the graph/contract before writing it.",
+    "packageOrLockMutationAllowed": false,
+    "migrationAllowed": false,
+    "apiRouteAdditionAllowed": false,
+    "mcpBusinessPolicyAllowed": false
+  },
+  "secretPolicy": {
+    "secretClasses": [
+      "Human session cookie",
+      "CSRF token",
+      "pairing fragment or code",
+      "installation token",
+      "MCP access token",
+      "Agent exchange token",
+      "Agent Session token",
+      "authorization header",
+      "webhook secret"
+    ],
+    "allowedHumanProjection": ["credential fingerprint prefix", "expiry timestamp", "last-used timestamp", "revoked/rotating status", "server URL", "transport", "profile and Skill selectors", "granted capability names"],
+    "forbiddenSinks": ["DOM after one-time copy flow", "logs", "screenshots", "activities", "messages", "context snapshots", "artifacts", "request audit bodies", "client config persisted by WorkMesh"],
+    "evidenceRule": "Use synthetic canaries and key-name/presence checks; do not read or print live secret values."
+  },
+  "tests": {
+    "unit": ["client profile normalization", "secret-free templates", "diagnostic exhaustive states", "unsupported/disabled/service failures", "safe fingerprint projection"],
+    "component": ["keyboard client selection/copy", "pending/expired/revoked/mis-scoped states", "forbidden/error recovery", "no credential rendering"],
+    "contracts": ["discovery/profile/Skill/MCP selector consistency", "REST/MCP error parity", "unknown profile/client fail closed"],
+    "mcp": ["verify_connection exact live consistency", "get_workmesh_context continuity", "revoked/mis-scoped/disabled failure", "tool presence never expands capabilities"],
+    "integration": ["pairing redeem/verify/revoke with synthetic fixture and deterministic cleanup", "duplicate idempotency", "transaction failure", "server restart or durable replay where applicable"],
+    "browser": ["1280x720", "375x812", "320x800", "keyboard-only", "focus restoration", "no horizontal document overflow", "raw method audit", "secret canary absence"]
+  },
+  "browserContract": {
+    "browser": "in-app Browser only",
+    "candidateAttempts": 2,
+    "activeAttempts": 2,
+    "oneFreshTabPerAttempt": true,
+    "viewportResetRequired": true,
+    "finalizeExactlyOnce": true,
+    "callsAfterFinalize": 0,
+    "directStatesRequired": ["ready", "pending_pairing", "pairing_expired", "revoked", "team_scope_unavailable", "unsupported_client", "coordination_feature_disabled", "discovery_unavailable", "forbidden"],
+    "requestAudit": "GET/OPTIONS plus only explicitly authorized fixture mutations; all mutation methods must bind exact Idempotency-Key, CSRF/authorization boundary, target, and cleanup receipt."
+  },
+  "budgets": {
+    "packageOrLockDelta": 0,
+    "migrationDelta": 0,
+    "webSharedGzipDeltaBytes": 40960,
+    "webRouteGzipDeltaBytes": 73728,
+    "maxWriteParallel": 1,
+    "fixtureMutationLimit": 4,
+    "activeReplacementAttempts": 1
+  },
+  "activation": {
+    "topology": ["compatibility:3001", "web:3300", "router:3301", "mcp:3302", "api:3303", "worker:3304", "minio:59000"],
+    "stageBeforeOldStop": true,
+    "humanApprovalRequiredBeforeStageOrServiceMutation": true,
+    "fixedSelectors": ["contract/Gate/request/approval hashes", "source/build/package hashes", "PID/start/command/root/port", "database migration ledger", "object-storage identity", "secret names presence only"],
+    "compensation": "Every mutation phase must produce a durable terminal receipt and restore exact v30 roles or retain authenticated old owners when failure occurs before cutover.",
+    "activeFixture": "One synthetic Agent Connection only: create, redeem plus verify_connection, and revoke/cleanup; never reuse a real credential or persist a token in evidence."
+  },
+  "rejectedBoundaries": [
+    "Human credential as Agent Session authority",
+    "MCP-side business policy or persistence",
+    "Kaneo backend/auth/WebSocket authority",
+    "client configuration containing a live token",
+    "frontend availability as authorization proof",
+    "unbounded descendant/style/network scans",
+    "Git mutation, GitHub CI, broad security scan, or unrelated refactor"
+  ],
+  "knownLimitations": [
+    "The contract is based on current source and live read-only facts; implementation must stop on any hidden generated-source or route-policy dependency outside the fixed target list.",
+    "A targeted secret/redaction test matrix is required, but no repository-wide security scan or security approval is claimed."
+  ],
+  "mutations": {
+    "product": false,
+    "service": false,
+    "database": false,
+    "workmesh": false,
+    "git": false,
+    "browser": false,
+    "securityScan": false
+  }
+}

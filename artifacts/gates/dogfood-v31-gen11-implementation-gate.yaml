@@ -1,0 +1,66 @@
+GateReport:
+  gate_id: dogfood-v31-gen11-implementation-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 1
+  node_id: verify-v31-implementation
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:12@sha256:ada8cdbbde84e4b569489a51a67e6b488f6a3a270e37189101688147b18665b0
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000012@sha256:d543bf6d4cf17597726c54bffdec1cc3e7ff34422c9e870f640e2dc6bcb09f4a
+    - artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b
+    - artifacts/implementation/dogfood-v31-mcp-onboarding-report.json@sha256:f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9
+    - artifacts/implementation/dogfood-v31-static-audit.json@sha256:ba2249b25faed903da8d31dabe3bd022a664fc48584efe39f8acdb391e36d5dc
+  worker_id: implementation-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-implementation-verifier
+    scope: [fixed_inputs, candidate_delta, source, build, packages, authority, redaction, tests, bundle, runtime, cleanup, workmesh]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N6-A1
+      assertion: All implementation and V31-G2 through V31-G8 implementation-readiness claims independently PASS with no unresolved major or critical finding.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-gen11-implementation-verification/static-audit.json@sha256:3120e63c499199d99f292f92dfebe0071043775bfedb80bec89fde90f4d6a57c
+          observed: Candidate source is 583 files at 94f4a579..., the delta is exactly the 12 authorized paths, build is 118 files at 93dc6d14... with BUILD_ID FFS43hLDELd0IEM12C3hR, package identity is 6/6, and the bounded secret boundary passes.
+          source: fresh independent canonical audit
+        - ref: artifacts/gates/dogfood-v31-gen11-implementation-verification/summary.json@sha256:bddf15d07431624343c4e19cc5987736d7c2716fe81ca0c62b40ced956f1f4a5
+          observed: A byte-exact isolated mirror completed offline frozen install with 348 reused and zero downloads, then passed test 28/28, typecheck 17/17, lint 17/17, and build 17/17; the verifier mirror was removed.
+          source: verifier-owned offline mirror CI and cleanup
+        - ref: artifacts/gates/dogfood-v31-gen11-implementation-verification/runtime-workmesh-readback.json@sha256:cf897ac426d9762227156b114a7359b924424381701d32cdb984803e00dea44c
+          observed: Runtime health is 7/7, preview ports are closed, active v30 build is served while v31 is absent, and GEN-11 remains In Progress revision 2 with coord:active and Dogfood Owner.
+          source: fresh read-only runtime and WorkMesh MCP readback
+      method: fixed-input rehash, independent static audit, isolated offline local CI, source-bounded secret inspection, runtime and WorkMesh readback, exact cleanup
+      gaps:
+        - Fresh direct Browser, responsive, fault-state, raw request-method, and bounded Agent fixture evidence are intentionally deferred to capture-v31-candidate-journey.
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-mcp-onboarding-report.json@sha256:f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9
+    - artifacts/implementation/dogfood-v31-static-audit.json@sha256:ba2249b25faed903da8d31dabe3bd022a664fc48584efe39f8acdb391e36d5dc
+    - artifacts/gates/dogfood-v31-gen11-implementation-verification/summary.json@sha256:bddf15d07431624343c4e19cc5987736d7c2716fe81ca0c62b40ced956f1f4a5
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Candidate Browser and bounded Agent fixture evidence have not run; this Gate only unlocks that isolated journey.
+    - Security scanning was explicitly excluded; this Gate makes no security approval claim.
+    - Active replacement, service control, database migration, WorkMesh mutation, Git mutation, and Browser use were prohibited and not executed by this verifier.
+    - Existing nonblocking build warnings remain: nested-workspace root inference, one autoprefixer flex-end recommendation, and missing Next.js ESLint plugin detection.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: candidate_journey_only
+    candidate_browser: true
+    bounded_agent_fixture: true
+    activation_contract_preparation: false
+    active_replacement: false
+    workmesh_mutation: false
+    reason: The exact v31 candidate implementation passed independent static, local CI, authority/redaction, build, runtime-invariance, and cleanup verification; only the disposable candidate Human and Agent journey is unlocked.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact candidate source/build selectors
+      - exact onboarding contract
+    completion_gate: Capture one fresh in-app Browser journey and one bounded Agent fixture on a disposable source-exact candidate stack, then independently Gate that evidence before activation-contract preparation.
+  observed_at: 2026-08-14T07:47:01.6846193Z

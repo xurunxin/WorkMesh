@@ -1,0 +1,19 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationHumanApproval",
+  "decision": "approved",
+  "selectorBinding": "v31-stack-activation-v1",
+  "scope": "v31_stack_activation_once",
+  "contractSha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a",
+  "gateSha256": "42984f8c8c308bc901095542ec51e1b2ae1f44b2c3c37d78ef06fccca17ecabb",
+  "requestSha256": "09942311175dadd4f508de6d1b912af4db080e3d3c99218f1f1a42dfa4be3592",
+  "approvedAt": "2026-08-14T09:36:48.9340603Z",
+  "expiresAt": "2026-08-14T13:18:55.4814873Z",
+  "humanActor": "user",
+  "approvedAction": "Replace only the active Web and MCP roles with the exact v31 candidate, then capture bounded active Human plus Agent evidence.",
+  "automaticRollbackRequired": true,
+  "databaseMutationApproved": false,
+  "objectStorageMutationApproved": false,
+  "securityScanApproved": false,
+  "securityApprovalClaimed": false
+}

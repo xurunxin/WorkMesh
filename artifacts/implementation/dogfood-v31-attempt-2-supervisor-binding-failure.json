@@ -1,0 +1,63 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActivationFailureReport",
+  "statusProposal": "blocked",
+  "failureCode": "V31-ACT-002",
+  "failedNode": "activate-v31-stack-attempt-2",
+  "failedAttempt": 1,
+  "occurredAt": "2026-08-14T10:24:58.0000000Z",
+  "error": "DOGFOOD_V31_SUPERVISOR_EXITED",
+  "rootCause": {
+    "summary": "The versioned attempt-2 start and rollback scripts pass the v2 contract path and selector to the shared role supervisor, but that supervisor remains hard-bound to the immutable v1 contract path and selector.",
+    "supervisorPath": "artifacts/runtime/dogfood-v31-stack-activation/role-supervisor.ps1",
+    "supervisorSha256": "6d5e84eac19e4c02d327f8f882dd639341540a9dd207af9340b371c53685d784",
+    "requiredBySupervisor": {
+      "contractPath": "artifacts/runtime/dogfood-v31-stack-activation-contract.json",
+      "contractSha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a",
+      "selectorBinding": "v31-stack-activation-v1"
+    },
+    "passedByAttempt2": {
+      "contractPath": "artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json",
+      "contractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+      "selectorBinding": "v31-stack-activation-v2"
+    },
+    "effect": "Candidate Web and MCP supervisors exited before listening. Inline compensation used the same incompatible supervisor and also exited before producing a terminal receipt."
+  },
+  "activationReceiptWritten": false,
+  "serviceMutationStarted": true,
+  "candidateListenerObserved": false,
+  "automaticRollback": {
+    "status": "ROLLED_BACK_RUNTIME_VERIFIED",
+    "receiptPath": "artifacts/runtime/dogfood-v31-stack-rollback.json",
+    "receiptSha256": "59fd050e063e00110422b0d884af6ea36fe202ef8602165dafa142df353c06df",
+    "recoveryScriptPath": "artifacts/runtime/dogfood-v31-stack-activation/recover-v30-after-v31-attempt-2.ps1",
+    "recoveryScriptSha256": "764d15004ce20982bdeb34b802938a2eda4c4dea16eecadc207455471b397f69",
+    "runtimeHealth": "7/7",
+    "rollbackBuildStatus": 200,
+    "candidateBuildStatus": 404
+  },
+  "preflight": {
+    "path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/activation-attempt-2/preflight.json",
+    "sha256": "1b5a8dbfeba4a37d076ad0c8763653cafcca4e39d232649927c6f7e9996b5a93"
+  },
+  "mutations": {
+    "database": false,
+    "objectStorage": false,
+    "workMesh": false,
+    "securityScan": false
+  },
+  "budget": {
+    "activationAttemptsUsed": 2,
+    "activationAttemptsLimit": 2,
+    "remaining": 0
+  },
+  "minimalRepair": {
+    "nodeId": "repair-v31-versioned-supervisor-binding-and-compensation",
+    "requirements": [
+      "Version the supervisor or parameterize its exact contract path and selector so attempt-2-or-later contracts are executable without weakening hash checks.",
+      "Make candidate startup and automatic compensation call the same versioned supervisor seam.",
+      "Add executable positive and negative supervisor bootstrap probes for candidate and rollback modes, including terminal rollback receipt formation.",
+      "Obtain a fresh graph budget amendment and a new exact Human approval before any further active replacement."
+    ]
+  }
+}

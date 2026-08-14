@@ -1,0 +1,68 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateJourneyIndependentVerificationAttempt2",
+  "result": "PASS",
+  "observedAt": "2026-08-14T08:48:00.000Z",
+  "fixedInputs": {
+    "graph": "4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78",
+    "stateSequence27": "870380ec0105002aa66f3681621e1ea362d018cb0572daff6264a06934f89fcb",
+    "eventsThrough27": "8dc39bdff8e2238685e5b3c0623284eb181a1c4cd9c9da2d3a715ce344c749d1",
+    "acceptance": "82ac19416ff90e1ef8ee4aacddcfb69e66fa083c5910a98a28a8f583ba5ddabb",
+    "repairGate": "cfe6a79a9742727e4e70ad73a6bbcda856c7900ed4035dc1d7cee16d0c6504d5",
+    "immutableAttempt1BlockGate": "1de0b68402c0ad0b4bdc43b600ed14dd52a79afcd07459131f5f99e56a6deb28",
+    "auditScript": "57df6b5fced6863ad496280befb4f7efa6ef833ee37117dd07463b16535bde28"
+  },
+  "independentAudit": {
+    "evidenceRefs": "9/9 exact",
+    "candidateSource": "583/dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "candidateBuild": "118/b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05/Yj0IS_0CtW-lStIuWIemm",
+    "requestAudit": "312 rows: GET307 + OPTIONS5 + mutation0",
+    "persistedSecretHeaderValues": 0,
+    "browserStates": "6 public + 10 admin",
+    "responsive": "1280/375/320 no horizontal overflow",
+    "keyboard": "selector focus + dialog Escape + trigger focus restore",
+    "browserLifecycle": "1 fresh tab, viewport reset, finalize1, callsAfter0",
+    "agent": "live verify_connection/context exact Team and capability scope; local disposable fixture revoked and cleaned; active mutation false",
+    "runtime": "listeners/start selectors exact, health7/7, active build200, candidate build404, preview residue0",
+    "workmesh": "GEN-11 In Progress revision2 coord:active Dogfood Owner activeExecutor=null"
+  },
+  "visualInspection": {
+    "directlyInspected": [
+      "02-ready-desktop-attempt-2.png",
+      "03-feature-disabled-attempt-2.png",
+      "16-ready-375-viewport-attempt-2.png",
+      "17-ready-320-viewport-attempt-2.png",
+      "18-revoked-desktop-viewport-attempt-2.png"
+    ],
+    "result": "PASS",
+    "notes": [
+      "Configuration-ready and coordination-feature-disabled messaging are truthful and visibly distinct.",
+      "The revoked state is clear, Human-oriented, and does not expose a credential.",
+      "375 and 320 viewport captures remain contained and legible without document horizontal overflow.",
+      "Long full-page screenshots exhibit a repeated-strip capture quirk and were excluded from layout scoring; bounded viewport screenshots and direct client/scroll metrics are authoritative for responsive layout."
+    ]
+  },
+  "claimChecks": {
+    "V31-R4-A1": "PASS",
+    "V31-G2": "PASS",
+    "V31-G3": "PASS",
+    "V31-G4": "PASS",
+    "V31-G5": "PASS",
+    "V31-G6": "PASS",
+    "V31-G7": "PASS",
+    "V31-G8": "PASS"
+  },
+  "findings": [],
+  "risksOrUnverified": [
+    "Full-page screenshot rasterization is not used as responsive-layout authority.",
+    "The candidate remains isolated; no active stack replacement was performed.",
+    "Security scanning was explicitly excluded and no security approval is claimed."
+  ],
+  "transition": {
+    "allowed": true,
+    "scope": "activation_contract_preparation_only",
+    "candidateJourneyAttempt2Pass": true,
+    "activeReplacement": false,
+    "workmeshMutation": false
+  }
+}

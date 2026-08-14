@@ -1,0 +1,84 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAcceptance",
+  "result": "BLOCK",
+  "statusProposal": "blocked",
+  "observedAt": "2026-08-14T11:25:43.6188338Z",
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+    "stateAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:58@sha256:8b0113456ca4661ef68fc8461e06f5a02d82d5f92d75bac363cb4b21864882f9",
+    "eventsAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000058@sha256:688d8676f96c948bc0d04b942aec70cebbcc1565881e917860a95051b6cfdcc6",
+    "activation": "artifacts/runtime/dogfood-v31-stack-activation-attempt-3.json@sha256:b574ad50f94554e2999e3ecfa84f4752b2e9b420510c5aa2dfb5c59a763c5521",
+    "approval": "artifacts/approvals/dogfood-v31-stack-activation-human-approval-attempt-3.json@sha256:4d7c95642c2e387efc4eb42fdebf687060a375a223d7efc2cf8d9034b0d9fc90"
+  },
+  "evidence": {
+    "browserDom": "artifacts/design/human-journey-attempt-31/active-browser-dom.json@sha256:5498973262440be0fea81a09e33c035a1f0d204469229bd35a13288fae542067",
+    "runtimeReadback": "artifacts/design/human-journey-attempt-31/active-runtime-readback.json@sha256:05af7db5659bc36163f703d66eadad0726f7a06de6331c8d2a29cb68f1093380",
+    "screenshots": [
+      "artifacts/design/human-journey-attempt-31/active-01-connection-load-error.png@sha256:de2fa1aae12cbd43a38551b5ac499976074a08369306685dca8bc99e0bf754be",
+      "artifacts/design/human-journey-attempt-31/active-02-coordination-feature-disabled.png@sha256:7a14517166428ae884fca30efcc37d19307754e581df6ddddbb00e716d7b8234"
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "V31-N13-A1",
+      "result": "BLOCK",
+      "reason": "The served v31 Human surface directly reports WORKMESH_BETA_COORDINATION_MCP disabled. Existing Agent MCP verification passes, but Human Connection listing and creation cannot reach the required onboarding lifecycle, so V31-G2 through V31-G7 are not directly proven on the active deployment."
+    },
+    {
+      "id": "V31-N13-A2",
+      "result": "BLOCK",
+      "reason": "Create was rejected before a Connection fixture existed; redeem, fixture verify, revoke, durable event, and cleanup cannot be exercised. Zero successful fixture mutations occurred and no unrelated data changed."
+    },
+    {
+      "id": "V31-N13-A3",
+      "result": "BLOCK",
+      "reason": "Viewport reset and exactly-once Browser finalization pass, and runtime health/build invariance passes. The mandatory raw active request window and database fixture lifecycle readback are unavailable because the server feature gate stopped the path before an accepted fixture mutation."
+    }
+  ],
+  "finding": {
+    "id": "V31-ACTIVE-001",
+    "severity": "critical",
+    "title": "Active API and Worker omit the coordination feature binding required by the v31 Human onboarding path",
+    "evidence": [
+      "The server-derived WorkMesh feature registry reports WORKMESH_BETA_COORDINATION_MCP enabled=false.",
+      "The active Human Agents page renders FEATURE_DISABLED and cannot list Connections or create the bounded fixture.",
+      "The protected API supervisor environment and retained Worker supervisor environment omit WORKMESH_BETA_COORDINATION_MCP; the v31 MCP supervisor alone sets it true.",
+      "The existing MCP Connection remains healthy, so this is an active onboarding/configuration boundary failure rather than a full runtime outage."
+    ]
+  },
+  "repair": {
+    "id": "repair-v31-active-coordination-feature-binding",
+    "recommended": true,
+    "requiresGraphAmendment": true,
+    "requiresHumanGate": true,
+    "reason": "The current approval authorizes only the completed Web plus MCP replacement. Enabling the beta feature consistently requires protected API and Worker configuration/service replacement and a new bounded active-evidence attempt.",
+    "minimalScope": [
+      "Version the graph with a config-only API plus Worker activation contract that binds WORKMESH_BETA_COORDINATION_MCP=true across the API, Worker, and already-active MCP roles without exposing secrets.",
+      "Independently verify exact process roots, retained protected roles, fail-closed compensation, feature registry true, and unchanged database/object-store state before one fresh Human Gate.",
+      "After approved replacement, use the remaining active Browser budget and the existing four-mutation fixture budget to rerun create, redeem, verify_connection, revoke, raw method audit, durable event, database readback, and cleanup."
+    ]
+  },
+  "runtime": {
+    "health": "7/7",
+    "activeV31BuildStatus": 200,
+    "rollbackV30BuildStatus": 404,
+    "existingMcpConnectionVerified": true,
+    "rollbackRequired": false
+  },
+  "budgets": {
+    "activeBrowserAttempts": "1/2",
+    "mcpFixtureMutations": "0/4",
+    "mcpCompletionMutations": "0/1"
+  },
+  "mutations": {
+    "browser": true,
+    "successfulWorkmeshFixture": false,
+    "workmeshCompletion": false,
+    "database": false,
+    "objectStorage": false,
+    "service": false,
+    "git": false,
+    "securityScan": false
+  }
+}

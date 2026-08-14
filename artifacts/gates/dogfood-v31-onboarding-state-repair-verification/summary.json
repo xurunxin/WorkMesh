@@ -1,0 +1,101 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31OnboardingStateRepairIndependentVerification",
+  "result": "PASS",
+  "observedAt": "2026-08-14T08:26:00.000Z",
+  "fixedInputs": {
+    "graph": "4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78",
+    "stateAtClaim": "ff0dc8a2caa5c5cb2af694e8f2778bf2e1d46d88b376d75d0c9e6baded8dd53f",
+    "eventsAtClaim": "df58e6566c9d5d7b4800cb56795b9d4564ef72143db0e4c4e9677797a915ef88",
+    "repairReport": "4bbdb6e41a7131945f8995eed31037f6731b8a028c168b8ae3420e2ea9839766",
+    "repairAudit": "107b91b3fc897fea5d21dc5c2204de0bc3f6246d3d0321dd0acf881c2d1c4583",
+    "immutableBlockedJourneyGate": "1de0b68402c0ad0b4bdc43b600ed14dd52a79afcd07459131f5f99e56a6deb28"
+  },
+  "repair": {
+    "finding": "V31-F1",
+    "closed": true,
+    "changedPaths": 7,
+    "authorizedPathsOnly": true,
+    "structuredFeatureDisabledPreserved": true,
+    "publicCoordinationHardCodeRemoved": true,
+    "adminOnboardingContextBound": true,
+    "credentialFreeMcpReadinessProbe": true,
+    "frontendAuthorityExpanded": false,
+    "packageOrLockMutation": false,
+    "apiOrMigrationMutation": false
+  },
+  "candidate": {
+    "source": {
+      "files": 583,
+      "sha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8"
+    },
+    "build": {
+      "files": 118,
+      "sha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+      "buildId": "Yj0IS_0CtW-lStIuWIemm",
+      "previewOriginMatches": 5,
+      "activeOriginMatches": 0,
+      "legacyOriginMatches": 0
+    },
+    "bundleWithinBudget": true,
+    "packageIdentity": "6/6"
+  },
+  "independentMirror": {
+    "offlineFrozenInstall": {
+      "result": "PASS",
+      "reusedPackages": 348,
+      "downloadedPackages": 0
+    },
+    "webTests": "PASS 24 files / 116 tests",
+    "webTypecheck": "PASS",
+    "webLint": "PASS",
+    "webBuild": "PASS 11 routes",
+    "knownWarnings": [
+      "Next workspace-root inference selected the control-root lockfile",
+      "Existing autoprefixer mixed end/flex-end warning",
+      "Next ESLint plugin not detected"
+    ],
+    "residue": false
+  },
+  "runtime": {
+    "listeners": {
+      "3001": 44104,
+      "3300": 30096,
+      "3301": 24516,
+      "3302": 70676,
+      "3303": 72736,
+      "3304": 71408
+    },
+    "health": "7/7",
+    "minioReady": 200,
+    "activeReplacement": false
+  },
+  "workmesh": {
+    "connectionSessionState": "executing",
+    "connectionSessionRevision": 1,
+    "effectiveCapabilities": [
+      "comment:write",
+      "message:write",
+      "plan:write",
+      "work:read",
+      "work:write"
+    ],
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "workItem": "GEN-11",
+    "status": "In Progress",
+    "revision": 2,
+    "coordinationLabel": "coord:active",
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null
+  },
+  "securityScan": false,
+  "browserRun": false,
+  "findings": [],
+  "transition": {
+    "allowed": true,
+    "scope": "candidate_journey_attempt_2_only",
+    "activeReplacement": false,
+    "activationContractPreparation": false,
+    "workmeshMutation": false
+  }
+}

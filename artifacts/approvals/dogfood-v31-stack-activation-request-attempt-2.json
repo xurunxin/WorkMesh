@@ -1,0 +1,91 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationApprovalRequest",
+  "status": "WAITING_HUMAN_GATE",
+  "createdAt": "2026-08-14T10:04:40.6502373Z",
+  "expiresAt": "2026-08-14T14:04:40.6502373Z",
+  "runId": "workmesh-human-agent-experience-dogfood-run-031",
+  "graphId": "workmesh-human-agent-experience-dogfood-v31-mcp-onboarding",
+  "graphVersion": 4,
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e",
+  "stateBeforeRequest": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sequence": 44,
+    "sha256": "21d6cf899ad8395715fffd5ab33f2a7c9208a45a017eab062bf35e79732e478f"
+  },
+  "eventsBeforeRequest": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "throughSequence": 44,
+    "sha256": "a7dffd969044b637b08d439325ab61feba2c3b9a8e2635f094d18f68859e2617"
+  },
+  "nodeId": "activate-v31-stack-attempt-2",
+  "approvalNodeId": "approve-v31-stack-activation-attempt-2",
+  "selectorBinding": "v31-stack-activation-v2",
+  "scope": "v31_stack_activation_once",
+  "contractPath": "artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json",
+  "contractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+  "gatePath": "artifacts/gates/dogfood-v31-stack-activation-contract-gate-attempt-2.yaml",
+  "gateSha256": "36a04c51de5946e3fbcda21dfea47a4557f1cea80a8c2ff34e1a8745d017f313",
+  "gateSummaryPath": "artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/verification-summary.json",
+  "gateSummarySha256": "75bd7f6c0a6c141a87e2ef7efe8f12035f060bd4db3675870146a900ca3df7c5",
+  "repairReportPath": "artifacts/implementation/dogfood-v31-empty-byte-staging-repair.json",
+  "repairReportSha256": "165f666f7e0375ffd59aa9d5cc0f082d8fdf0119512e5459e4a3b7b0b9d5043d",
+  "candidate": {
+    "sourceRoot": "G:/Projects/MetronX/WorkMesh-human-experience-v31",
+    "sourceFileCount": 583,
+    "sourceCanonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "buildFileCount": 118,
+    "buildCanonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+    "buildId": "Yj0IS_0CtW-lStIuWIemm",
+    "preparedRoot": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-v31-stack-activation/prepared-active-origin",
+    "preparedFileCount": 1992,
+    "preparedCanonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4",
+    "materializedBeforeApproval": false
+  },
+  "rollback": {
+    "webRoot": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-v30-fault-seam-web-activation/prepared-active-origin-v7",
+    "webBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "mcpRoot": "G:/Projects/MetronX/WorkMesh-dogfood-release-candidate-v2",
+    "webSupervisorPid": 57352,
+    "webListenerPid": 30096,
+    "mcpSupervisorPid": 19872,
+    "mcpListenerPid": 70676
+  },
+  "priorAttempt": {
+    "requestSha256": "09942311175dadd4f508de6d1b912af4db080e3d3c99218f1f1a42dfa4be3592",
+    "approvalSha256": "6da3bac835008d6605edd7b36e2c76224011a3d209c8f1acbde81d1f243b1344",
+    "failureEvent": "dogfood-run-031-000038",
+    "failureCode": "V31-ACT-001",
+    "consumed": true,
+    "serviceMutationExecuted": false
+  },
+  "requestedDecision": {
+    "action": "After the independently verified empty-byte staging repair, replace only the active Web and MCP roles with the exact v31 candidate, then capture bounded active Human plus Agent evidence.",
+    "allowedRuntimeMutation": "After exact unexpired attempt-2 approval only: materialize the exact prepared Web root, stop the exact current Web and MCP supervisor trees, start the exact v31 Web and MCP supervisors, and preserve compatibility, router, API, worker, database, object storage, and their exact current selectors.",
+    "allowedDatabaseMutation": "none",
+    "allowedObjectStorageMutation": "none",
+    "allowedWorkMeshMutation": "only the bounded active-evidence Agent Connection fixture create, redeem, verify, and revoke/cleanup operations within the graph budget; no project or GEN-11 status mutation",
+    "automaticRollback": "required on staging, process, listener, health, build exclusivity, protected-runtime, active evidence, or final Gate failure",
+    "activationAttemptsRemaining": 1,
+    "activeBrowserAttempts": 1,
+    "mcpFixtureMutations": 4,
+    "securityScan": "excluded; this request does not grant security approval"
+  },
+  "approvalArtifact": {
+    "path": "artifacts/approvals/dogfood-v31-stack-activation-human-approval-attempt-2.json",
+    "requiredKind": "DogfoodV31StackActivationHumanApproval",
+    "requiredDecision": "approved",
+    "requiredSelectorBinding": "v31-stack-activation-v2",
+    "requiredScope": "v31_stack_activation_once"
+  },
+  "singleUse": true,
+  "approvalConsumed": false,
+  "activationExecuted": false,
+  "rollbackExecuted": false,
+  "workMeshMutationExecuted": false,
+  "databaseMutationExecuted": false,
+  "objectStorageMutationExecuted": false,
+  "securityScanRun": false,
+  "securityApprovalClaimed": false
+}

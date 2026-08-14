@@ -1,0 +1,73 @@
+GateReport:
+  gate_id: dogfood-v31-stack-activation-contract-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 2
+  node_id: verify-v31-stack-activation-contract
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:32@sha256:2f3166cc1802c34fcd9a6692a989e4384ada9fae9801875a2e03ed5b508c20df
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000032@sha256:47668671e3c8f7b8f3d980ab88fdb02dd37cf22fee3d718cfe3d8bcb651e4000
+    - artifacts/runtime/dogfood-v31-stack-activation-contract.json@sha256:b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a
+    - artifacts/gates/dogfood-v31-gen11-implementation-gate.yaml@sha256:6f4e097a9e8d9a299662fd8fb31a0abc9fc80e2626fbb0b8ff22ab0ffbc75495
+    - artifacts/gates/dogfood-v31-onboarding-state-repair-gate.yaml@sha256:cfe6a79a9742727e4e70ad73a6bbcda856c7900ed4035dc1d7cee16d0c6504d5
+    - artifacts/gates/dogfood-v31-candidate-journey-gate-attempt-2.yaml@sha256:03d2a53dfd16de1e53f14fde7905e26f3307c91ce4d7cb5a6179e1feb95d2604
+  worker_id: activation-contract-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-activation-verifier
+    scope: [fixed_inputs, script_bindings, candidate_selectors, gate_authorization, evidence_boundary, staging, compensation, rollback, runtime, future_absence]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N10-A1
+      assertion: Independent Gate PASS authorizes creation of one fresh exact expiring Human request only; activation remains unauthorized.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification/summary.json@sha256:a4f7cd52e1ca0724a8c7225c90eefc149c086ac3d78155deaae3438792cf7876
+          observed: Fixed graph, sequence 32 state, 32-row event log, contract, candidate, ten bound scripts, migration equivalence, evidence refs, runtime, and future absence independently passed.
+          source: fresh independent summary
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification/independent/contract-probe.json@sha256:50a4c3d742a71f7d40d1edbeaa25b5912c3e41cb5bcb410d871a1360c54aae38
+          observed: Structured Gate positive and negative cases, authorization positive plus four negatives, retained/missing/unknown/orphan compensation, binary-safe origin transformation, direct-stage rejection, and outside-root rejection all passed.
+          source: contract-bound executable probe
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification/independent/preflight.json@sha256:eab992ea7b98b6117094e3a2b2e55d4723ea86f2028b21fbf9c575218848c879
+          observed: Exact start DryRun validated the candidate, protected roles, Web and MCP replacement scope, six secret names without values, and zero database, object-store, target, or service mutation.
+          source: exact contract-bound DryRun
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification/independent/runtime-invariance.json@sha256:545777c8418f428fd11cddf44ffff2ba54b65a8f593f43ab03880ea4f8db36b9
+          observed: Six exact role listener PID/start/command selectors and seven health endpoints passed; active build was 200, candidate build 404, and all four future artifacts were absent.
+          source: fresh runtime readback
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification/independent/auth-missing-counterexample.json@sha256:c8263cb59ccb640240bf85fc12dac5bf956b3b2058b0df6ad7cd7750c0d8dc65
+          observed: A non-Dry invocation without exact authorization completed preflight, then failed with AUTH_ARGUMENT_MISSING before prepared-root creation or any activation/rollback receipt.
+          source: executable fail-closed counterexample
+      method: fixed-input rehash, script-binding audit, candidate canonical verification, AST and strict-mode audit, structured Gate and authorization matrices, binary transformation counterexample, stage/start/rollback DryRuns, exact missing-auth failure, migration equivalence, runtime and future-artifact readback
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/runtime/dogfood-v31-stack-activation-contract.json@sha256:b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a
+    - artifacts/gates/dogfood-v31-stack-activation-contract-verification/summary.json@sha256:a4f7cd52e1ca0724a8c7225c90eefc149c086ac3d78155deaae3438792cf7876
+    - artifacts/gates/dogfood-v31-stack-activation-contract-verification/independent/independent-audit.json@sha256:ddb309fde409336b70df748302b74d11171fd43e3e72af7886d44c4748322109
+  rejected_artifacts: []
+  risks_or_unverified:
+    - The prepared candidate root remains intentionally absent until exact Human approval; production staging was not executed in this Gate.
+    - Browser and active replacement were not performed in this Gate.
+    - Security scanning was explicitly excluded; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    request_creation: true
+    activation: false
+    active_replacement: false
+    service_mutation: false
+    database_mutation: false
+    object_storage_mutation: false
+    workmesh_mutation: false
+    reason: The exact v31 Web plus MCP activation and rollback contract passes all independent non-mutating checks. The only authorized next action is creation of one fresh exact expiring Human approval request.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this PASS Gate
+      - exact contract SHA b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a
+      - current active runtime selectors
+    completion_gate: Create one exact expiring Human approval request; activation requires a separate explicit Human decision bound to this Gate and contract.
+  observed_at: 2026-08-14T09:13:30.000Z

@@ -1,0 +1,76 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureRuntimeInvariance",
+  "result": "PASS",
+  "roles": [
+    {
+      "name": "api",
+      "supervisorPid": 73596,
+      "supervisorStartTimeUtc": "2026-08-14T02:10:21.1365669Z",
+      "listenerPid": 72736,
+      "health": 200
+    },
+    {
+      "name": "worker",
+      "supervisorPid": 50476,
+      "supervisorStartTimeUtc": "2026-08-13T18:03:30.5319975Z",
+      "listenerPid": 71408,
+      "health": 200
+    },
+    {
+      "name": "web",
+      "pid": 57064,
+      "startTimeUtc": "2026-08-14T11:11:23.0971310Z",
+      "listenerPid": 42392,
+      "health": 200
+    },
+    {
+      "name": "mcp",
+      "pid": 72740,
+      "startTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "listenerPid": 10516,
+      "health": 200
+    },
+    {
+      "name": "router",
+      "pid": 24516,
+      "startTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "listenerPid": 24516,
+      "health": 200
+    },
+    {
+      "name": "compatibility",
+      "pid": 44104,
+      "startTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "listenerPid": 44104,
+      "health": 200
+    },
+    {
+      "name": "minio",
+      "containerId": "84e9879d53c2f9962c2c4a1756fa711842584004a2cf28a7d11a169fae647bef",
+      "imageDigest": "sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e",
+      "health": 200
+    }
+  ],
+  "healthCount": "7/7",
+  "futureArtifacts": [
+    {
+      "path": "artifacts/approvals/dogfood-v31-coordination-feature-activation-request.json",
+      "exists": false
+    },
+    {
+      "path": "artifacts/approvals/dogfood-v31-coordination-feature-activation-human-approval.json",
+      "exists": false
+    },
+    {
+      "path": "artifacts/runtime/dogfood-v31-coordination-feature-activation.json",
+      "exists": false
+    },
+    {
+      "path": "artifacts/runtime/dogfood-v31-coordination-feature-rollback.json",
+      "exists": false
+    }
+  ],
+  "serviceMutationExecuted": false,
+  "checkedAt": "2026-08-14T12:51:26.3725069+00:00"
+}

@@ -1,0 +1,13 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31AuthorizationMissingCounterexample",
+  "result": "PASS",
+  "exitCode": 1,
+  "expectedFailure": "DOGFOOD_V31_AUTH_ARGUMENT_MISSING",
+  "preflightCompletedBeforeAuthorization": true,
+  "preparedRootExists": false,
+  "activationReceiptExists": false,
+  "rollbackReceiptExists": false,
+  "targetMutationExecuted": false,
+  "observedAt": "2026-08-14T09:10:26.0000000Z"
+}

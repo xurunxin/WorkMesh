@@ -1,0 +1,93 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31McpOnboardingReport",
+  "statusProposal": "verifying",
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "stateAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:57a82d82a7caec661e79e84342ef64aa37aacc291e1793ce6e3388d8d01a241b",
+    "eventsAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000010@sha256:cdbf3b0f34d1bec3b34089aa9eb3adcef80b86bc83491eb019fc52d6c97db962",
+    "contract": "artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b",
+    "materialization": "artifacts/runtime/dogfood-v31-candidate-materialization.json@sha256:c7b4c83fe5a0cca30bc67b7bcad885de12608027d798f624cdc739b3375ffef5",
+    "gen11Start": "artifacts/workmesh/dogfood-v31-gen11-start.json@sha256:a57dd6db83df45f339448bad636f925d7c164f39ba4b9145af43c002bcceed10"
+  },
+  "implementation": {
+    "summary": "Server-derived, secret-safe Human MCP onboarding for Codex, OpenCode, Pi, and generic MCP; expanded Connection diagnostics; bounded verify_connection bootstrap receipt; contract and operator documentation coverage.",
+    "candidateRoot": "G:/Projects/MetronX/WorkMesh-human-experience-v31",
+    "sourceFileCount": 583,
+    "sourceCanonicalSha256": "94f4a579484ffa52d1a3fce4014040cac6518247a10bfc838a3526aff30893c7",
+    "changedSourcePaths": [
+      "apps/mcp/src/index.test.ts",
+      "apps/mcp/src/index.ts",
+      "apps/web/app/agent-connections-panel.tsx",
+      "apps/web/app/connect/page.tsx",
+      "apps/web/app/lib/connection-diagnostics.test.ts",
+      "apps/web/app/lib/connection-diagnostics.ts",
+      "apps/web/app/lib/mcp-onboarding.test.ts",
+      "apps/web/app/lib/mcp-onboarding.ts",
+      "apps/web/app/styles.css",
+      "apps/web/e2e/mcp-onboarding.spec.ts",
+      "docs/agent-integration.md",
+      "packages/contracts/src/client-profile-contract.test.ts"
+    ],
+    "authorizedDeltaOnly": true,
+    "packageOrLockMutation": false,
+    "migrationMutation": false,
+    "apiRouteAddition": false,
+    "mcpBusinessPolicyMutation": false,
+    "activeRuntimeMutation": false
+  },
+  "candidateBuild": {
+    "fileCount": 118,
+    "canonicalSha256": "93dc6d1411c1279efed0f16ee97f14e8a51ab8bce774c086a979e006a04e85aa",
+    "buildId": "FFS43hLDELd0IEM12C3hR",
+    "previewApiOriginMatches": 5,
+    "activeApiOriginMatches": 0,
+    "legacyLocalhostMatches": 0,
+    "bundle": {
+      "sharedGzipDeltaBytes": 560,
+      "connectRouteGzipDeltaBytes": 2622,
+      "agentsRouteGzipDeltaBytes": 2535,
+      "sharedBudgetBytes": 40960,
+      "routeBudgetBytes": 73728,
+      "withinBudget": true
+    }
+  },
+  "evidence": {
+    "staticAudit": "artifacts/implementation/dogfood-v31-static-audit.json@sha256:ba2249b25faed903da8d31dabe3bd022a664fc48584efe39f8acdb391e36d5dc",
+    "staticAuditScript": "artifacts/implementation/dogfood-v31-static-audit.mjs@sha256:51942ebaada094a5da42d995a089fb9b6dfdf160d235d0676e61f198e30f0056",
+    "focusedWeb": "PASS 2 files / 7 tests",
+    "focusedMcp": "PASS 1 file / 24 tests",
+    "focusedContracts": "PASS 1 file / 3 tests",
+    "rootTest": "PASS 28/28 tasks; Web 24 files/115 tests; MCP 2 files/26 tests; Contracts 15 files/128 tests",
+    "rootTypecheck": "PASS 17/17 tasks",
+    "rootLint": "PASS 17/17 tasks",
+    "rootBuild": "PASS 17/17 tasks; Next 11 routes",
+    "routePolicy": "PASS through full Contracts/API suites",
+    "packageIdentity": "PASS 6/6",
+    "runtimeInvariance": "PASS listeners 3001/3300/3301/3302/3303/3304 exact; health 7/7; active v30 build 200; candidate v31 build 404; preview ports 34600/34601 closed",
+    "workmeshReadback": "GEN-11 In Progress revision 2, coord:active, responsible Human Dogfood Owner"
+  },
+  "authorityAndSecretBoundary": {
+    "configContainsOnlySecretReference": true,
+    "pairingFragmentExcludedFromConfig": true,
+    "installationIdentityDistinctFromSessionAndDelegation": true,
+    "verifyConnectionAddsNoAuthority": true,
+    "mcpDelegatesBusinessPolicyToExistingRestDomainBoundary": true,
+    "targetedCredentialCanaries": "PASS"
+  },
+  "knownLimitations": [
+    "The authored Playwright MCP onboarding specs were typechecked but not executed because this implementation node explicitly prohibits Browser use; the graph reserves fresh candidate Browser evidence for the next authorized node.",
+    "Database-backed pairing/redeem/revoke integration and active request-method evidence are deferred to the graph's bounded disposable candidate journey and Human-approved active fixture nodes.",
+    "The existing Next build emits the pre-existing autoprefixer flex-end compatibility and missing Next ESLint plugin warnings; both are non-blocking and outside this narrow change.",
+    "A security scan was explicitly excluded; targeted authorization and credential-canary tests do not constitute security approval."
+  ],
+  "mutations": {
+    "product": false,
+    "service": false,
+    "database": false,
+    "workmesh": false,
+    "git": false,
+    "browser": false,
+    "securityScan": false
+  }
+}

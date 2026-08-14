@@ -1,0 +1,19 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureStartDryRun",
+  "result": "PASS",
+  "targetMutationExecuted": false,
+  "contractSha256": "06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698",
+  "roles": [
+    "api",
+    "worker"
+  ],
+  "featureValue": "true",
+  "protectedRoles": [
+    "web",
+    "mcp",
+    "router",
+    "compatibility"
+  ],
+  "checkedAt": "2026-08-14T13:04:11.0042826+00:00"
+}

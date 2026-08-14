@@ -1,0 +1,62 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31IndependentStaticAudit",
+  "observedAt": "2026-08-14T07:42:22.004Z",
+  "fixedInputs": {
+    "graph": "de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "state": "ada8cdbbde84e4b569489a51a67e6b488f6a3a270e37189101688147b18665b0",
+    "events": "d543bf6d4cf17597726c54bffdec1cc3e7ff34422c9e870f640e2dc6bcb09f4a",
+    "contract": "108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b",
+    "report": "f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9",
+    "implementationAudit": "ba2249b25faed903da8d31dabe3bd022a664fc48584efe39f8acdb391e36d5dc"
+  },
+  "source": {
+    "fileCount": 583,
+    "canonicalSha256": "94f4a579484ffa52d1a3fce4014040cac6518247a10bfc838a3526aff30893c7",
+    "changedPaths": [
+      "apps/mcp/src/index.test.ts",
+      "apps/mcp/src/index.ts",
+      "apps/web/app/agent-connections-panel.tsx",
+      "apps/web/app/connect/page.tsx",
+      "apps/web/app/lib/connection-diagnostics.test.ts",
+      "apps/web/app/lib/connection-diagnostics.ts",
+      "apps/web/app/lib/mcp-onboarding.test.ts",
+      "apps/web/app/lib/mcp-onboarding.ts",
+      "apps/web/app/styles.css",
+      "apps/web/e2e/mcp-onboarding.spec.ts",
+      "docs/agent-integration.md",
+      "packages/contracts/src/client-profile-contract.test.ts"
+    ],
+    "exactExpectedPaths": true,
+    "gitMetadataPresent": false
+  },
+  "build": {
+    "fileCount": 118,
+    "canonicalSha256": "93dc6d1411c1279efed0f16ee97f14e8a51ab8bce774c086a979e006a04e85aa",
+    "buildId": "FFS43hLDELd0IEM12C3hR",
+    "preview34601Matches": [
+      "apps/web/.next/static/chunks/776-a3dfea81c0aced0c.js",
+      "apps/web/.next/static/chunks/app/connect/page-99db87b463e299ed.js",
+      "apps/web/.next/static/chunks/app/install/page-5203b65f2af85f56.js",
+      "apps/web/.next/static/chunks/app/layout-397ac2c109143b0d.js",
+      "apps/web/.next/static/chunks/app/login/page-dfea61636126fd80.js"
+    ],
+    "active3301Matches": [],
+    "legacyLocalhostMatches": []
+  },
+  "packageIdentity": {
+    "package.json": true,
+    "pnpm-lock.yaml": true,
+    "apps/web/package.json": true,
+    "apps/mcp/package.json": true,
+    "packages/contracts/package.json": true,
+    "packages/ui/package.json": true
+  },
+  "secretBoundary": {
+    "installationTokenReferencePresent": true,
+    "pairingFragmentInterpolationInConfigAbsent": true,
+    "productionCredentialCanaryAbsent": true,
+    "installationIdentitySeparationPresent": true
+  },
+  "result": "PASS"
+}

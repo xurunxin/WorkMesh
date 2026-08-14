@@ -1,0 +1,56 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateJourneyBlockerAudit",
+  "observedAt": "2026-08-14T08:01:16.1367295Z",
+  "findingId": "V31-F1",
+  "severity": "major",
+  "title": "Live feature-disabled response is misclassified and required onboarding states are unreachable",
+  "liveCounterexample": {
+    "request": "GET http://127.0.0.1:3301/.well-known/workmesh-agent",
+    "status": 403,
+    "errorCode": "FEATURE_DISABLED",
+    "feature": "WORKMESH_BETA_COORDINATION_MCP",
+    "expectedHumanState": "coordination_feature_disabled",
+    "observedHumanState": "discovery_unavailable"
+  },
+  "sourceEvidence": [
+    {
+      "path": "apps/web/app/connect/page.tsx",
+      "sha256": "537f208233282a2b12d6badd2f5748f8e7d4df542dd5e0d1522e1ed4eafb3f66",
+      "lines": [14, 47],
+      "observation": "publicJson discards the structured FEATURE_DISABLED code and buildMcpClientGuide is called with coordinationFeatureEnabled hard-coded true."
+    },
+    {
+      "path": "apps/web/app/agent-connections-panel.tsx",
+      "sha256": "44509a52939ccdb3424e2e5cb704422b97decf1f5b2f7806eb49d2a2324e3b4e",
+      "lines": [37, 42],
+      "observation": "diagnoseConnection receives only Team and Human IDs, so its network, discovery, unsupported-client, coordination-disabled, and MCP-unavailable branches are unreachable; buildMcpClientGuide receives no MCP readiness fact."
+    },
+    {
+      "path": "apps/web/app/lib/mcp-onboarding.ts",
+      "sha256": "d938a20eaac792652c2543841a91c41ea996e35cf2e592f5735d5d546985b88f",
+      "observation": "The shared state model contains coordination_feature_disabled and mcp_unavailable, but current callers do not supply the live facts needed to reach them truthfully."
+    },
+    {
+      "path": "apps/web/app/lib/connection-diagnostics.ts",
+      "sha256": "90db0b77073f255650f1e7878ef2a4cacb4c2c2bc43ccfa4045d5f3a2d7b21f9",
+      "observation": "The diagnostic function already has the required fail-closed branches; the defect is the missing live context at the call sites."
+    }
+  ],
+  "contractImpact": [
+    "V31-G3 distinct truthful recoverable states",
+    "V31-G6 fail-closed feature-gate behavior",
+    "V31-N7-A1 direct required Human states"
+  ],
+  "repair": {
+    "nodeId": "repair-v31-onboarding-live-state-wiring",
+    "scope": "existing authorized Web paths only",
+    "actions": [
+      "Preserve and classify structured discovery errors such as FEATURE_DISABLED instead of collapsing every non-OK response into discovery_unavailable.",
+      "Remove the hard-coded coordinationFeatureEnabled=true and supply server-derived feature state.",
+      "Supply network, discovery, supported-client, coordination-feature, and MCP-readiness facts to diagnoseConnection and buildMcpClientGuide.",
+      "Add focused unit/component tests proving every required state is reachable and truthful before a fresh candidate Browser attempt."
+    ],
+    "scopeExpansionRequired": false
+  }
+}

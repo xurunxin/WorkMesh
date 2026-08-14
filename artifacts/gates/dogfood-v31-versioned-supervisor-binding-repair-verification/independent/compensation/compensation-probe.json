@@ -1,0 +1,46 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CompensationProductionSeamProbe",
+  "result": "PASS",
+  "cases": [
+    {
+      "name": "retain",
+      "status": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "threw": false,
+      "candidateStops": 2,
+      "rollbackStarts": 0,
+      "verifyCalls": 1,
+      "terminalReceiptCount": 1
+    },
+    {
+      "name": "restart",
+      "status": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "threw": false,
+      "candidateStops": 2,
+      "rollbackStarts": 2,
+      "verifyCalls": 1,
+      "terminalReceiptCount": 1
+    },
+    {
+      "name": "unknown",
+      "status": "ROLLBACK_FAILED",
+      "threw": true,
+      "candidateStops": 2,
+      "rollbackStarts": 0,
+      "verifyCalls": 0,
+      "terminalReceiptCount": 1
+    },
+    {
+      "name": "restart-failure",
+      "status": "ROLLBACK_FAILED",
+      "threw": true,
+      "candidateStops": 2,
+      "rollbackStarts": 2,
+      "verifyCalls": 0,
+      "terminalReceiptCount": 1
+    }
+  ],
+  "terminalReceipts": 4,
+  "activeRuntimeTouched": false,
+  "capturedAt": "2026-08-14T10:57:16.7096812+00:00"
+}

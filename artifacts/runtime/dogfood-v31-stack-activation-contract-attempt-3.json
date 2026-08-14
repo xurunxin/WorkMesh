@@ -1,0 +1,95 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationContract",
+  "selectorBinding": "v31-stack-activation-v3",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "sha256": "9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+    "version": 5
+  },
+  "executionState": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sha256": "bfe94673b6da094836ab60d63ce747050b4c6ed944627f5eb787704decf883d7",
+    "sequence": 50
+  },
+  "eventLog": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "sha256": "f20d78cde7a917556be619bf7d806873346687342c0ed50f3ff7af0c6614acb7",
+    "cursor": 50
+  },
+  "upstreamGates": {
+    "implementation": {"path": "artifacts/gates/dogfood-v31-gen11-implementation-gate.yaml", "sha256": "6f4e097a9e8d9a299662fd8fb31a0abc9fc80e2626fbb0b8ff22ab0ffbc75495"},
+    "onboardingRepair": {"path": "artifacts/gates/dogfood-v31-onboarding-state-repair-gate.yaml", "sha256": "cfe6a79a9742727e4e70ad73a6bbcda856c7900ed4035dc1d7cee16d0c6504d5"},
+    "candidateJourney": {"path": "artifacts/gates/dogfood-v31-candidate-journey-gate-attempt-2.yaml", "sha256": "03d2a53dfd16de1e53f14fde7905e26f3307c91ce4d7cb5a6179e1feb95d2604"}
+  },
+  "repairProvenance": {
+    "failureReport": {"path": "artifacts/implementation/dogfood-v31-attempt-2-supervisor-binding-failure.json", "sha256": "1431a75607fe5c1957e9f85c927e993092b124fd033e45b8fe8069a4c5a3ad83"},
+    "rollbackReceipt": {"path": "artifacts/runtime/dogfood-v31-stack-rollback.json", "sha256": "59fd050e063e00110422b0d884af6ea36fe202ef8602165dafa142df353c06df"},
+    "graphAmendmentProposal": {"path": "artifacts/plans/dogfood-v31-supervisor-binding-recovery-graph-amendment-proposal.json", "sha256": "f1acd618c00b43b66022f520fb54e33d076e858f7db0cdbed07e289ab04679f4"},
+    "graphAmendmentApproval": {"path": "artifacts/approvals/dogfood-v31-supervisor-binding-recovery-graph-amendment-approval.json", "sha256": "3faf6ce76bdf7d4a0c652f9163c7599eaea7fe6820b0e264de2dfae5d5bf41e6"},
+    "activeRuntimeRestored": true
+  },
+  "priorAttempts": [
+    {"selectorBinding": "v31-stack-activation-v1", "contractPath": "artifacts/runtime/dogfood-v31-stack-activation-contract.json", "consumed": true},
+    {"selectorBinding": "v31-stack-activation-v2", "contractPath": "artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json", "contractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384", "consumed": true, "failureCode": "V31-ACT-002"}
+  ],
+  "candidate": {
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v31",
+    "source": {"fileCount": 583, "canonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8"},
+    "build": {"fileCount": 118, "canonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05", "buildId": "Yj0IS_0CtW-lStIuWIemm"},
+    "standalone": {"root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v31\\apps\\web\\.next\\standalone", "fileCount": 1992, "canonicalSha256": "ff3afd46b85d15261d916ffdefb7482bd46bd270d53da8a0d3d3c558d361a93f", "previewOriginCount": 1},
+    "prepared": {"root": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\prepared-active-origin", "fileCountExcludingAssets": 1992, "canonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4", "buildId": "Yj0IS_0CtW-lStIuWIemm", "materializedBeforeApproval": true, "provenance": "retained exact bytes from consumed attempt-2 staging; reuse requires full selector verification"}
+  },
+  "candidateBuildId": "Yj0IS_0CtW-lStIuWIemm",
+  "rollbackBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+  "replacedRuntime": {
+    "web": {"role": "web", "port": 3300, "healthUrl": "http://127.0.0.1:3300/", "supervisorPid": 62116, "supervisorStartTimeUtc": "2026-08-14T10:26:43.7072484Z", "supervisorCommandContains": "role-supervisor.ps1", "listenerPid": 75600, "listenerStartTimeUtc": "2026-08-14T10:26:44.1814559Z", "listenerCommandContains": "prepared-active-origin-v7\\apps\\web\\server.js", "root": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v30-fault-seam-web-activation\\prepared-active-origin-v7", "stopPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\rollback-recovery-attempt-2-web.stop"},
+    "mcp": {"role": "mcp", "port": 3302, "healthUrl": "http://127.0.0.1:3302/readyz", "supervisorPid": 24544, "supervisorStartTimeUtc": "2026-08-14T10:26:46.8491269Z", "supervisorCommandContains": "role-supervisor.ps1", "listenerPid": 40520, "listenerStartTimeUtc": "2026-08-14T10:26:47.8025682Z", "listenerCommandContains": "artifacts\\runtime\\dogfood-target\\mcp-entrypoint.mts", "root": "G:\\Projects\\MetronX\\WorkMesh-dogfood-release-candidate-v2", "stopPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\rollback-recovery-attempt-2-mcp.stop"}
+  },
+  "protectedRuntime": [
+    {"role": "compatibility", "port": 3001, "healthUrl": "http://localhost:3001/readyz", "supervisorPid": 36880, "supervisorStartTimeUtc": "2026-08-13T18:03:44.3397578Z", "supervisorCommandContains": "role-supervisor-v5.ps1", "listenerPid": 44104, "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z", "listenerCommandContains": "web-api-compat-proxy.mjs"},
+    {"role": "router", "port": 3301, "healthUrl": "http://127.0.0.1:3301/readyz", "supervisorPid": 5780, "supervisorStartTimeUtc": "2026-08-13T18:03:40.1036914Z", "supervisorCommandContains": "role-supervisor-v5.ps1", "listenerPid": 24516, "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z", "listenerCommandContains": "loopback-entrypoint.mjs"},
+    {"role": "api", "port": 3303, "healthUrl": "http://127.0.0.1:3303/readyz", "supervisorPid": 73596, "supervisorStartTimeUtc": "2026-08-14T02:10:21.1365669Z", "supervisorCommandContains": "role-supervisor-attempt-6-renewal.ps1", "listenerPid": 72736, "listenerStartTimeUtc": "2026-08-14T05:46:55.2440417Z", "listenerCommandContains": "src/server.ts"},
+    {"role": "worker", "port": 3304, "healthUrl": "http://127.0.0.1:3304/readyz", "supervisorPid": 50476, "supervisorStartTimeUtc": "2026-08-13T18:03:30.5319975Z", "supervisorCommandContains": "role-supervisor-v5.ps1", "listenerPid": 71408, "listenerStartTimeUtc": "2026-08-14T05:46:55.1158461Z", "listenerCommandContains": "src/index.ts"}
+  ],
+  "runtimeModes": {
+    "candidate": {
+      "web": {"root": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\prepared-active-origin", "port": 3300, "healthUrl": "http://127.0.0.1:3300/"},
+      "mcp": {"root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v31", "port": 3302, "healthUrl": "http://127.0.0.1:3302/readyz"}
+    },
+    "rollback": {
+      "web": {"root": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v30-fault-seam-web-activation\\prepared-active-origin-v7", "port": 3300, "healthUrl": "http://127.0.0.1:3300/"},
+      "mcp": {"root": "G:\\Projects\\MetronX\\WorkMesh-dogfood-release-candidate-v2", "port": 3302, "healthUrl": "http://127.0.0.1:3302/readyz"}
+    }
+  },
+  "database": {"mutationRequired": false, "migrationTreeEquivalentToActiveV30": true, "highestV1Migration": "v1/0006_human_attachments.sql", "highestV1MigrationSha256": "076f92a3257f9ad15c6c9770f31c12755d10a74e7f87b15b0363c391ec050ce5"},
+  "objectStorage": {"mutationRequired": false, "healthUrl": "http://127.0.0.1:59000/minio/health/ready", "requiredStatus": 200},
+  "secretBoundary": {"namesOnly": true, "requiredNames": ["WORKMESH_DOGFOOD_DATABASE_URL","WORKMESH_DOGFOOD_SESSION_SECRET","WORKMESH_DOGFOOD_MASTER_KEY","WORKMESH_DOGFOOD_BOOTSTRAP_TOKEN","WORKMESH_DOGFOOD_CURSOR_KEY","WORKMESH_DOGFOOD_MINIO_PASSWORD"], "valuesMayBeSerialized": false},
+  "scripts": {
+    "module": {"path": "artifacts/runtime/dogfood-v31-stack-activation/runtime-module-attempt-2.psm1", "sha256": "3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474"},
+    "compensationModule": {"path": "artifacts/runtime/dogfood-v31-stack-activation/compensation-attempt-3.psm1", "sha256": "c7cacb1daa816ab31a11a344a9e29919864c5380d892a5e1aaa63812d7f8a3b0"},
+    "stage": {"path": "artifacts/runtime/dogfood-v31-stack-activation/stage-active-origin-attempt-2.ps1", "sha256": "2b0ee923c5293003d8fa4e285d7fa1bd4b69ae1a32dc63b3911ff425a26bb153"},
+    "supervisor": {"path": "artifacts/runtime/dogfood-v31-stack-activation/role-supervisor-attempt-3.ps1", "sha256": "a44d1ab0712cc84c81d6844f246e58e54a7436b0f38ac58dae4cdeca4d23a747"},
+    "start": {"path": "artifacts/runtime/dogfood-v31-stack-activation/start-v31-stack-attempt-3.ps1", "sha256": "2fc546f7c7dab46502c824cdeaa3f842c20a55258911dd913934acea127b2149"},
+    "rollback": {"path": "artifacts/runtime/dogfood-v31-stack-activation/rollback-v31-stack-attempt-3.ps1", "sha256": "a262638cb8a050409b363732f4e809c7f75e641bbf5920fb46b03c1c3fa38a9f"},
+    "candidateVerifier": {"path": "artifacts/runtime/dogfood-v31-stack-activation/verify-candidate.mjs", "sha256": "30c87f07bd8b44f8e08700b5cd1f4c08b634cf5929d3f5d763f2f9376a3f511b"},
+    "mcpEntrypoint": {"path": "artifacts/runtime/dogfood-v31-stack-activation/mcp-entrypoint-v31.mts", "sha256": "8cf70baf67882164f0b1777f6bfa783302d6f76fb3fd85bd921f34c5aa3c1889"},
+    "supervisorProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/test-supervisor-attempt-3.ps1", "sha256": "0291843a04572532abf5786001e73a36c1f2c2f01fbf3dfa29e14fe778e4e8fe"},
+    "compensationProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/test-compensation-attempt-3.ps1", "sha256": "fa0046506f0b91609e53cac244130299ffa17778676acf1ca5ca9ff599c5d533"},
+    "astAudit": {"path": "artifacts/runtime/dogfood-v31-stack-activation/audit-supervisor-attempt-3.ps1", "sha256": "34cecb6232c5f19df7b3fa3a411f602b4cd253fde35521bfc72aa610bf20a79f"},
+    "runtimeProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/verify-runtime-invariance-attempt-3.ps1", "sha256": "4a04168be28f1363fc05e7bba70ec64f3fcf01e4d9c8166b3c29c1c33b5aa3fd"}
+  },
+  "evidenceRoots": {
+    "runtime": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\evidence\\supervisor-binding-attempt-3",
+    "independent": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\gates\\dogfood-v31-versioned-supervisor-binding-repair-verification\\independent"
+  },
+  "contractGate": {"path": "artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-gate.yaml", "sha256": null, "requiredAtExecution": true, "requiredShape": {"GateReport.result": "PASS", "GateReport.transition.allowed": true, "GateReport.transition.scope": "request_creation_only"}},
+  "futureArtifacts": {
+    "request": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\approvals\\dogfood-v31-stack-activation-request-attempt-3.json",
+    "approval": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\approvals\\dogfood-v31-stack-activation-human-approval-attempt-3.json",
+    "activation": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation-attempt-3.json",
+    "rollback": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-rollback-attempt-3.json"
+  },
+  "authorization": {"gateParsing": "structured GateReport/v1", "requestCreationOnlyAfterIndependentGate": true, "approvalRequiredBeforeStageOrServiceMutation": true, "supervisorExecutionBindingRequired": true, "singleUse": true, "expires": true},
+  "mutationBoundary": {"web": true, "mcp": true, "api": false, "worker": false, "router": false, "compatibility": false, "database": false, "objectStorage": false, "workmesh": false, "browser": false, "git": false, "securityScan": false}
+}

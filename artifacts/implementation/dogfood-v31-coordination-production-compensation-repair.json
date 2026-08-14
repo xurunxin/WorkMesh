@@ -1,0 +1,61 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationProductionCompensationRepair",
+  "nodeId": "repair-v31-coordination-production-compensation-seam",
+  "statusProposal": "verifying",
+  "completedAt": "2026-08-14T13:06:00Z",
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+    "claimState": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:cb9d31ad89edfbc0da216ed69304c84d2357aaef8b92e24a3a1930eed6afcdde",
+    "claimEvents": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@sha256:c86bd17a364a3219f84737aca0f5aaa09335519ef37cc45bf9a5a948d196ffa2",
+    "immutableBlockedGate": "artifacts/gates/dogfood-v31-coordination-feature-binding-gate.yaml@sha256:8ba8d01f2ada860bec15c4ee00bf9e196859a317222df8ad4faa10e656cbf537",
+    "immutableBlockedSummary": "artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/verification-summary.json@sha256:9228a0d7343aa737b090719443f9458adf13b48e57016ed2d7fee9651a9710dd",
+    "priorContract": "artifacts/runtime/dogfood-v31-coordination-feature-activation-contract.json@sha256:fd07bfb3f2c1d0e78fb0803ba55107559eed7af07713570e7436bf7bba77ff36",
+    "priorReport": "artifacts/implementation/dogfood-v31-coordination-feature-binding-repair.json@sha256:78daaf724f645ff45736df9736710f42489d4d49398f863ec3f82ed85cc6c46c"
+  },
+  "repair": {
+    "finding": "V31-COORD-GATE-001",
+    "contract": "artifacts/runtime/dogfood-v31-coordination-feature-activation-contract-attempt-2.json@sha256:06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698",
+    "sharedProductionFunctions": ["Invoke-V31CoordinationCompensation", "Invoke-V31OldRoleRestore"],
+    "productionCatchCallsSharedFunction": true,
+    "localRestoreClosureRemaining": false,
+    "sourceMutation": false,
+    "activeServiceMutation": false
+  },
+  "boundScripts": {
+    "module": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime-module.psm1@sha256:2bfdf10c7c82f3803623cacee7236e38fb01d684c762676130cde94766be3bf7",
+    "supervisor": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/role-supervisor.ps1@sha256:3a622717d28b7260c0112349f942658824b382f6467fc419aaf2e25e4ac83192",
+    "start": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/start-feature-binding.ps1@sha256:56624916d20801954165ad53d64757c364ee7493a9bfb462eedbc87229386f44",
+    "rollback": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/rollback-feature-binding.ps1@sha256:19609e1b168d6b670279ac4fc1f3b8fcedac4b7a1ce9bbfc937e4fd611cfa471",
+    "compensationProbe": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/test-compensation.ps1@sha256:7d070ff0b40a800f55fe7d73946e7159458d0ed983898cd0a2ce0787b3a00152",
+    "astAudit": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/audit-ast.ps1@sha256:2907cbbe82ecf9249bc84c7a2b25bab7ce839dc1a26002a5d571dce0359b94ac",
+    "runtimeInvariance": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/verify-runtime-invariance.ps1@sha256:a11da900940541a33234ecc21d0f372813ff026095a44d44b59e0d6a08fd0a69"
+  },
+  "workerEvidence": {
+    "ast": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker/ast-audit.json@sha256:b738aa99f7c5e836ef4fe7ed423a094a9120c1d9eb05e699ef32cb6ae09cfd3c",
+    "compensation": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker/compensation-probe.json@sha256:a9403e21f7a7bf8864725fe5bbc0d2aae1359e69327ca9c8a1e1a0711f6a94a6",
+    "startDryRun": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker/start-dry-run.json@sha256:ce53be8634207428ddb6404aa0734620a373438640f1350bcec7fef45f519398",
+    "rollbackDryRun": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker/rollback-dry-run.json@sha256:c8af6ae9d3884a2cb14a19b662fa6e33e581c79dd2aa6aacbed131fd7f372c76",
+    "runtime": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker/runtime-invariance.json@sha256:9fe0f827e336c7f0594a2d39da4fb3816f51f4e1fff8306c339339aeba6580a9"
+  },
+  "results": {
+    "productionCompensationCases": "5/5 PASS",
+    "terminalReceiptExecuted": true,
+    "astAndStrictMode": "7/7 PASS",
+    "bareFalseCommandAst": 0,
+    "outsideRootRejections": "3/3 pre-write PASS",
+    "missingAuthorization": "rejected before service mutation",
+    "startDryRun": "PASS",
+    "rollbackDryRun": "PASS",
+    "runtimeHealth": "7/7",
+    "futureArtifactsPresent": 0,
+    "secretValuesSerialized": false,
+    "serviceMutationExecuted": false,
+    "workMeshMutationExecuted": false,
+    "databaseMutationExecuted": false,
+    "objectStorageMutationExecuted": false,
+    "securityScanRun": false,
+    "securityApprovalClaimed": false
+  },
+  "nextAuthorizedStep": "fresh independent attempt-2 Gate only"
+}

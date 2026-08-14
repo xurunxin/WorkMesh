@@ -1,0 +1,73 @@
+GateReport:
+  gate_id: dogfood-v31-candidate-journey-gate-attempt-2
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 2
+  node_id: verify-v31-candidate-journey-attempt-2
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:27@sha256:870380ec0105002aa66f3681621e1ea362d018cb0572daff6264a06934f89fcb
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000027@sha256:8dc39bdff8e2238685e5b3c0623284eb181a1c4cd9c9da2d3a715ce344c749d1
+    - artifacts/design/human-journey-attempt-31/candidate-acceptance-attempt-2.json@sha256:82ac19416ff90e1ef8ee4aacddcfb69e66fa083c5910a98a28a8f583ba5ddabb
+    - artifacts/gates/dogfood-v31-onboarding-state-repair-gate.yaml@sha256:cfe6a79a9742727e4e70ad73a6bbcda856c7900ed4035dc1d7cee16d0c6504d5
+    - artifacts/gates/dogfood-v31-candidate-journey-gate.yaml@sha256:1de0b68402c0ad0b4bdc43b600ed14dd52a79afcd07459131f5f99e56a6deb28
+  worker_id: candidate-journey-owner-attempt-2
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-journey-verifier-attempt-2
+    scope: [fixed_inputs, screenshots, dom, responsive, keyboard, request_methods, secrets, agent_scope, cleanup, runtime, workmesh]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-R4-A1
+      assertion: Attempt-2 evidence directly and consistently proves V31-G2 through V31-G8 with V31-F1 closed and no unresolved major or critical finding.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-candidate-journey-verification-attempt-2/summary.json@sha256:a0674cbeed699d1af2483f73e77bbefc69de037fe32e969b6eb37c4590dbf060
+          observed: Independent rehash and canonical audit passed all fixed inputs, 9/9 evidence references, exact candidate source/build selectors, request-method and redaction boundaries, Browser lifecycle, Agent scope, cleanup, runtime, and GEN-11 readback.
+          source: fresh independent audit
+        - ref: artifacts/design/human-journey-attempt-31/candidate-browser-dom-attempt-2.json@sha256:2348347002fc9829cbb9f433c193682b660178d749de47424d1b87098906c674
+          observed: One fresh in-app Browser tab directly exercised six public and ten authenticated Connection states, desktop/375/320 containment, and keyboard focus restoration; viewport reset and exactly-once finalization passed.
+          source: fresh direct Browser evidence
+        - ref: artifacts/design/human-journey-attempt-31/candidate-request-audit-attempt-2.jsonl@sha256:7ecee74611c8add500722e87701c6096488d1800acd7bf07c52709b5163fd46e
+          observed: The bounded window contains 312 rows, exactly 307 GET plus 5 OPTIONS, zero POST/PUT/PATCH/DELETE, and no persisted header values.
+          source: fresh request audit
+        - ref: artifacts/design/human-journey-attempt-31/candidate-agent-transcript-attempt-2.json@sha256:1269c32b5b1aeac07b1a84ca5172301d7d8cf2d34da563dc0d5698140a1e658c
+          observed: Live read-only verify_connection and get_workmesh_context returned the exact executing session, GEN Team, profile, and effective capabilities; the local disposable fixture was revoked and cleaned without active WorkMesh mutation or credential persistence.
+          source: fresh redacted Agent transcript
+        - ref: artifacts/design/human-journey-attempt-31/candidate-runtime-cleanup-attempt-2.json@sha256:1478c619fd076ddbb141c976ca0becde12eda29102efdd4e44e5035aeeeffacb
+          observed: Verifier-owned ports 34600/34601 and processes were removed; active listeners and start selectors remained exact, health was 7/7, active/candidate build exclusivity was 200/404, and GEN-11 remained In Progress revision 2 coord:active.
+          source: fresh cleanup and runtime readback
+      method: fixed-input and evidence rehash, canonical source/build audit, direct screenshot inspection, bounded DOM and width metrics, raw request-method audit, redacted Agent scope review, exact process cleanup, runtime and WorkMesh readback
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/design/human-journey-attempt-31/candidate-acceptance-attempt-2.json@sha256:82ac19416ff90e1ef8ee4aacddcfb69e66fa083c5910a98a28a8f583ba5ddabb
+    - artifacts/gates/dogfood-v31-candidate-journey-verification-attempt-2/summary.json@sha256:a0674cbeed699d1af2483f73e77bbefc69de037fe32e969b6eb37c4590dbf060
+    - artifacts/gates/dogfood-v31-onboarding-state-repair-gate.yaml@sha256:cfe6a79a9742727e4e70ad73a6bbcda856c7900ed4035dc1d7cee16d0c6504d5
+  rejected_artifacts:
+    - artifacts/design/human-journey-attempt-31/candidate-acceptance.json@sha256:10cc026462fc33696d2bbffa3f955fd35b580e10660d65d2c7a092306dce715a
+    - artifacts/gates/dogfood-v31-candidate-journey-gate.yaml@sha256:1de0b68402c0ad0b4bdc43b600ed14dd52a79afcd07459131f5f99e56a6deb28
+  risks_or_unverified:
+    - Long full-page screenshot rasterization repeated narrow strips. Those files remain non-scored provenance; bounded viewport screenshots and direct client/scroll metrics are the responsive-layout authority.
+    - The candidate remains isolated and no active stack replacement was performed.
+    - Security scanning was explicitly excluded; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: activation_contract_preparation_only
+    candidate_journey_attempt_2_pass: true
+    activation_contract_preparation: true
+    request_creation: false
+    activation: false
+    active_replacement: false
+    workmesh_mutation: false
+    reason: All repaired candidate Human and Agent journey assertions pass independently with exact cleanup and unchanged active control-plane state; only non-mutating activation-contract preparation may proceed.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this PASS Gate
+      - exact candidate source/build selectors
+      - current active runtime selectors
+    completion_gate: Prepare the v31 full-stack activation and rollback contract, then obtain a separate independent request-creation-only Gate before any Human approval request or activation.
+  observed_at: 2026-08-14T08:48:00.000Z

@@ -1,0 +1,58 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationPreflight",
+  "result": "PASS",
+  "dryRun": false,
+  "contractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+  "candidate": {
+    "artifactVersion": 1,
+    "kind": "DogfoodV31ActivationCandidateVerification",
+    "result": "PASS",
+    "source": {
+      "fileCount": 583,
+      "canonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8"
+    },
+    "build": {
+      "fileCount": 118,
+      "canonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+      "buildId": "Yj0IS_0CtW-lStIuWIemm"
+    },
+    "standalone": {
+      "fileCount": 1992,
+      "canonicalSha256": "ff3afd46b85d15261d916ffdefb7482bd46bd270d53da8a0d3d3c558d361a93f",
+      "preparedCanonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4",
+      "previewOriginCount": 1,
+      "activeOriginCountAfterTransform": 1
+    },
+    "packages": {
+      "package.json": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+      "pnpm-lock.yaml": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+      "apps/web/package.json": "4451a5443267b46dcf2b675c4e23584a76cc2e50ecfea5aba873ddd2fe7a7598",
+      "apps/mcp/package.json": "0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6",
+      "packages/contracts/package.json": "1fbc71fa9a23ebbd037e9df7d4fb0d64edbf7d6d72313cad02476186f231fb98",
+      "packages/ui/package.json": "3aa6b0d695a953108a1a0beabd19968bbf0b9bf11a8dadc3fcac85ec673986a6"
+    }
+  },
+  "protectedRoles": [
+    "compatibility",
+    "router",
+    "api",
+    "worker"
+  ],
+  "replacedRoles": [
+    "web",
+    "mcp"
+  ],
+  "secretNamesPresent": {
+    "WORKMESH_DOGFOOD_DATABASE_URL": true,
+    "WORKMESH_DOGFOOD_SESSION_SECRET": true,
+    "WORKMESH_DOGFOOD_MASTER_KEY": true,
+    "WORKMESH_DOGFOOD_BOOTSTRAP_TOKEN": true,
+    "WORKMESH_DOGFOOD_CURSOR_KEY": true,
+    "WORKMESH_DOGFOOD_MINIO_PASSWORD": true
+  },
+  "databaseMutationRequired": false,
+  "objectStoreMutationRequired": false,
+  "targetMutationExecuted": false,
+  "capturedAt": "2026-08-14T10:23:00.0693371+00:00"
+}

@@ -1,0 +1,71 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31EmptyByteStagingRepair",
+  "statusProposal": "verifying",
+  "nodeId": "repair-v31-empty-byte-staging",
+  "attempt": 1,
+  "capturedAt": "2026-08-14T09:56:13.5811713Z",
+  "graph": {
+    "version": 4,
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "sha256": "c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e"
+  },
+  "failure": {
+    "code": "V31-ACT-001",
+    "eventId": "dogfood-run-031-000038",
+    "phase": "prepared-byte-materialization-before-service-mutation",
+    "sourceFile": "apps/web/.next/standalone/node_modules/.pnpm/client-only@0.0.1/node_modules/client-only/index.js",
+    "sourceLength": 0,
+    "cause": "PowerShell pipeline enumeration converted an empty byte array function result into no output, so WriteAllBytes received null.",
+    "oldRuntimePreserved": true,
+    "attemptOneConsumed": true
+  },
+  "repair": {
+    "modulePath": "artifacts/runtime/dogfood-v31-stack-activation/runtime-module-attempt-2.psm1",
+    "moduleSha256": "3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474",
+    "change": "Convert-V31OriginBytes emits its typed byte array with Write-Output -NoEnumerate.",
+    "emptyByteArray": {"type": "System.Byte[]", "length": 0, "result": "PASS"},
+    "nonEmptyBinaryTransform": "PASS",
+    "partialProductionPreparedFilesRemoved": 716,
+    "productionPreparedRootPresentAfterRepair": false,
+    "activeTargetMutation": false
+  },
+  "contract": {
+    "path": "artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json",
+    "sha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+    "selectorBinding": "v31-stack-activation-v2",
+    "scriptBindings": 11,
+    "scriptBindingMismatches": 0,
+    "freshRequestRequired": true,
+    "activationAuthorized": false
+  },
+  "evidence": [
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/contract-probe.json@sha256:a5ea17fe539d0a9629ecc3269c75ca0dc292b8fe1f32bc97677d8610fb2cabea",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/prepared-probe.json@sha256:3da726d9db7fd3cc6d64dec63aaf0b01698f6ab5952fa3b08e077c0d16e903e1",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/runtime/runtime-invariance.json@sha256:4658a1b1e0a539652a64f112340010888bb712b7917080d2e55082102bf426da",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/final/ast-audit.json@sha256:5a6f79e4994ceb0ec90ace1d60bc275d401be7334c1622f6aad4331d02305559",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/final/stage/stage-dry-run.json@sha256:0d31bf795a34586efbbf0c3743c21fb2b55289bca6067e740b38ee9eed1ec62c",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/final/start/preflight.json@sha256:8284edbfbac829d43a99a83853b2280e519e873e1306ce9940cd70e4a7a4e967",
+    "artifacts/runtime/dogfood-v31-stack-activation/evidence/repair-attempt-2/final/rollback/rollback-preflight.json@sha256:d8101986a071232cbde28fce650c3776d60193c24dea0e3aee4b0e46b6b8334a"
+  ],
+  "verification": {
+    "contractProbe": "PASS",
+    "preparedFirstWrite": {"fileCount": 1992, "canonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4"},
+    "preparedReuse": {"fileCount": 1992, "canonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4"},
+    "disposablePreparedResidue": 0,
+    "ast": "PASS:9/9",
+    "dryRuns": "PASS:stage+start+rollback",
+    "runtime": "PASS:health7/7;v30-build-200;v31-build-404",
+    "futureAttemptTwoArtifactsPresent": 0
+  },
+  "boundaries": {
+    "serviceMutation": false,
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workMeshMutation": false,
+    "browser": false,
+    "git": false,
+    "securityScan": false,
+    "securityApprovalClaimed": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackActivationHumanApproval",
+  "decision": "approved",
+  "selectorBinding": "v31-stack-activation-v2",
+  "scope": "v31_stack_activation_once",
+  "contractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+  "gateSha256": "36a04c51de5946e3fbcda21dfea47a4557f1cea80a8c2ff34e1a8745d017f313",
+  "requestSha256": "53eda6f2f13ea58dcedc9b4278ef0b57382add3a9e6ff98b41ea85d2340143a0",
+  "approvedAt": "2026-08-14T10:20:10.7960908Z",
+  "expiresAt": "2026-08-14T14:04:40.6502373Z",
+  "humanActor": "user",
+  "approvedAction": "After the independently verified empty-byte staging repair, replace only the active Web and MCP roles with the exact v31 candidate, then capture bounded active Human plus Agent evidence.",
+  "automaticRollbackRequired": true,
+  "databaseMutationApproved": false,
+  "objectStorageMutationApproved": false,
+  "securityScanApproved": false,
+  "securityApprovalClaimed": false
+}
