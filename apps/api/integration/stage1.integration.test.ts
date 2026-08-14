@@ -701,9 +701,11 @@ describe("Stage 1 agent API acceptance", () => {
       const token = await exchange(session, outageAgent.installationToken);
       await ackAndExecute(session, token);
 
-      const streamCursor = Number((await db.query<{ cursor: string }>(
+      // Durable cursors are opaque decimal strings and may exceed the safe
+      // integer range in a shared integration database.
+      const streamCursor = (await db.query<{ cursor: string }>(
         "SELECT COALESCE(max(cursor),0)::text AS cursor FROM domain_events",
-      )).rows[0]!.cursor);
+      )).rows[0]!.cursor;
       const stream = await fetch(
         `${appUrl}/api/v1/events/stream?cursor=${streamCursor}`,
         { headers: { cookie: admin.cookie }, signal: controller.signal },
