@@ -1,6 +1,6 @@
 TaskGraph:
   graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
-  version: 11
+  version: 12
   goal:
     objective: "Deliver GEN-11 as an authority-safe Human MCP onboarding and diagnostics experience, and dogfood the exact Human-to-Agent connection journey without weakening WorkMesh identity, Session, Delegation, capability, revision, idempotency, event, or service boundaries."
     deliverables:
@@ -66,6 +66,9 @@ TaskGraph:
       - artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json
       - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-request.json
       - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-human-approval.json
+      - artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json
+      - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-request.json
+      - artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-human-approval.json
       - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-5.json
       - artifacts/workmesh/dogfood-v31-gen11-completion.json
     acceptance:
@@ -150,7 +153,8 @@ TaskGraph:
       mcp_browser_cors_gate_attempts: 1
       mcp_browser_cors_activation_contract_gate_attempts: 1
       mcp_browser_cors_activation_attempts: 1
-      replacement_active_browser_approval_requests: 3
+      replacement_active_browser_approval_requests: 4
+      active_browser_approval_expiry_repairs: 1
       active_browser_attempts: 5
       mcp_fixture_mutations: 7
       mcp_completion_mutations: 1
@@ -1464,11 +1468,59 @@ TaskGraph:
       iteration: {max_rounds: 1}
       approval: {required: true, before: activate-v31-mcp-browser-cors}
       status: pending
+    - id: repair-v31-active-browser-approval-expiry
+      title: "Repair expired replacement active Browser approval boundary"
+      objective: "Preserve the immutable expired attempt-5 request, add one versioned renewal Human Gate with identical Browser and fixture scope, and make no Browser, fixture, service, database, or WorkMesh mutation."
+      type: work
+      inputs: [artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-request.json, artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json]
+      output_contract:
+        artifact_type: graph_amendment_proposal
+        path_or_ref: artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json
+        schema: GraphAmendmentProposal/v1
+      acceptance:
+        - id: V31-N13Q-R1
+          assertion: "The expired request remains immutable and non-reusable; graph v12 adds exactly one renewal request/Gate with the same one-tab, three-fixture-mutation, cleanup, and completion prohibitions."
+      evidence_required: [expired request hash and timestamp, v11 to v12 graph diff, unchanged activation receipt, zero Browser and fixture mutation]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G4, V31-G5, V31-G6, V31-G7, V31-G9]
+      capabilities: [filesystem_read, filesystem_write]
+      owner: graph-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint
+      priority: 10
+      risk: high
+      budget: {active_browser_approval_expiry_repairs: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: false, before: null}
+      status: pending
+    - id: approve-v31-replacement-active-browser-attempt-5-renewal
+      title: "Renewed Human Gate for replacement active Browser attempt 5"
+      objective: "Create one versioned exact expiring renewal request and wait for a distinct post-request Human decision authorizing one fresh Browser tab and at most three fixture mutations."
+      type: approval
+      inputs: [artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json, artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json]
+      output_contract:
+        artifact_type: human_approval
+        path_or_ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-human-approval.json
+        schema: HumanApproval/v1
+      acceptance:
+        - id: V31-N13Q-R2
+          assertion: "Renewal approval is explicit, unexpired, exact-hash-bound, single-use, postdates the renewal request, and preserves the original one-tab and three-mutation scope."
+      evidence_required: [renewal request, distinct Human decision, expiry, selector binding, activation receipt]
+      covers_goal_acceptance: [V31-G2, V31-G3, V31-G4, V31-G5, V31-G6, V31-G7, V31-G9]
+      capabilities: [filesystem_read, filesystem_write, human_approval]
+      owner: human-owner
+      workspace: G:/Projects/MetronX/worktrees/workmesh-human-experience-v31-checkpoint/artifacts/approvals
+      priority: 10
+      risk: critical
+      budget: {replacement_active_browser_approval_requests: 1}
+      retry_policy: {max_attempts: 1, retry_on: []}
+      iteration: {max_rounds: 1}
+      approval: {required: true, before: repair-v31-active-browser-approval-expiry}
+      status: pending
     - id: capture-v31-active-evidence-attempt-5
       title: "Capture repaired active Human plus Agent acceptance"
       objective: "Use one separately approved fresh in-app Browser tab after MCP-only activation to complete a new exact create/redeem/verify/revoke lifecycle within a three-mutation budget, while reusing attempt-4 create/revoke evidence only as immutable failed-attempt provenance."
       type: work
-      inputs: [artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json, artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-human-approval.json, artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json]
+      inputs: [artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json, artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-human-approval.json, artifacts/design/human-journey-attempt-31/active-acceptance-attempt-4.json]
       output_contract:
         artifact_type: human_agent_acceptance
         path_or_ref: artifacts/design/human-journey-attempt-31/active-acceptance-attempt-5.json
@@ -1490,7 +1542,7 @@ TaskGraph:
       budget: {active_browser_attempts: 1, mcp_fixture_mutations: 3}
       retry_policy: {max_attempts: 1, retry_on: []}
       iteration: {max_rounds: 1}
-      approval: {required: true, before: approve-v31-replacement-active-browser-attempt-5}
+      approval: {required: true, before: approve-v31-replacement-active-browser-attempt-5-renewal}
       status: pending
     - id: verify-v31-final
       title: "Independently Gate active v31 acceptance"
@@ -1772,9 +1824,25 @@ TaskGraph:
       type: requires
       transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json, consumed_as: exact repaired active MCP and protected runtime selectors before Browser approval}]
     - from: approve-v31-replacement-active-browser-attempt-5
+      to: repair-v31-active-browser-approval-expiry
+      type: requires
+      transfers: [{ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-request.json, consumed_as: immutable expired request and non-reuse provenance}]
+    - from: activate-v31-mcp-browser-cors
+      to: repair-v31-active-browser-approval-expiry
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json, consumed_as: unchanged active MCP selector for the renewal request}]
+    - from: repair-v31-active-browser-approval-expiry
+      to: approve-v31-replacement-active-browser-attempt-5-renewal
+      type: requires
+      transfers: [{ref: artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json, consumed_as: exact no-scope-expansion renewal authority}]
+    - from: activate-v31-mcp-browser-cors
+      to: approve-v31-replacement-active-browser-attempt-5-renewal
+      type: requires
+      transfers: [{ref: artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json, consumed_as: exact repaired active MCP and protected runtime selectors before renewed Browser approval}]
+    - from: approve-v31-replacement-active-browser-attempt-5-renewal
       to: capture-v31-active-evidence-attempt-5
       type: approves
-      transfers: [{ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-human-approval.json, consumed_as: exact single-use replacement active Browser attempt authority}]
+      transfers: [{ref: artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-renewal-human-approval.json, consumed_as: exact single-use replacement active Browser attempt renewal authority}]
     - from: activate-v31-mcp-browser-cors
       to: capture-v31-active-evidence-attempt-5
       type: requires
@@ -1788,7 +1856,7 @@ TaskGraph:
       type: approves
       transfers: [{ref: artifacts/gates/dogfood-v31-gen11-final-gate.yaml, consumed_as: exact GEN-11 completion authority}]
   terminal_nodes: [complete-v31-gen11]
-  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation, approve-v31-active-public-mcp-origin-routing, approve-v31-replacement-active-browser-attempt-3, approve-v31-cors-decoupling-activation, approve-v31-replacement-active-browser-attempt-4, approve-v31-mcp-browser-cors-activation, approve-v31-replacement-active-browser-attempt-5]
+  human_gates: [approve-v31-stack-activation, approve-v31-stack-activation-attempt-2, approve-v31-stack-activation-attempt-3, approve-v31-active-coordination-feature-activation, approve-v31-active-public-mcp-origin-routing, approve-v31-replacement-active-browser-attempt-3, approve-v31-cors-decoupling-activation, approve-v31-replacement-active-browser-attempt-4, approve-v31-mcp-browser-cors-activation, approve-v31-replacement-active-browser-attempt-5, approve-v31-replacement-active-browser-attempt-5-renewal]
   stop_policy:
     success_when:
       - all terminal nodes passed

@@ -1,0 +1,64 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveBrowserApprovalRenewalGraphAmendmentProposal",
+  "result": "PASS",
+  "mode": "repair",
+  "reason": "The exact attempt-5 Human response arrived after the immutable request expiry and cannot be retroactively bound.",
+  "priorGraph": {
+    "version": 11,
+    "sha256": "fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca"
+  },
+  "repairedGraph": {
+    "version": 12,
+    "sha256": "478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd"
+  },
+  "expiredRequest": {
+    "path": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-request.json",
+    "sha256": "7776724312c8e8db4dc14b966727d1c793b93f47983b602772949971b773a181",
+    "expiresAt": "2026-08-14T19:04:01.3145509Z",
+    "observedExpiredAt": "2026-08-14T19:27:56.8729374Z",
+    "reusable": false
+  },
+  "activation": {
+    "path": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json",
+    "sha256": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+    "unchanged": true
+  },
+  "nodesAdded": [
+    "repair-v31-active-browser-approval-expiry",
+    "approve-v31-replacement-active-browser-attempt-5-renewal"
+  ],
+  "edgesChanged": [
+    "replace expired approval to capture edge with expired approval to repair",
+    "repair to renewed Human Gate",
+    "renewed Human Gate to existing capture node"
+  ],
+  "budgetChange": {
+    "replacementActiveBrowserApprovalRequests": {"from":3,"to":4},
+    "activeBrowserApprovalExpiryRepairs": {"from":0,"to":1},
+    "activeBrowserAttempts": {"from":5,"to":5},
+    "mcpFixtureMutations": {"from":7,"to":7}
+  },
+  "scopePreserved": {
+    "freshInAppBrowserTabs": 1,
+    "maxWorkMeshFixtureMutations": 3,
+    "fixtureCleanupRequired": true,
+    "viewportResetRequired": true,
+    "exactlyOnceFinalizeRequired": true,
+    "serviceReplacement": false,
+    "gen11Completion": false,
+    "securityApproval": false
+  },
+  "validation": {
+    "validator": "task-graph-design validate_task_graph.py",
+    "result": "PASS",
+    "nodes": 56,
+    "sequencingEdges": 58
+  },
+  "browserUsed": false,
+  "fixtureMutationExecuted": false,
+  "serviceMutationExecuted": false,
+  "workmeshMutationExecuted": false,
+  "securityScanRun": false,
+  "createdAt": "2026-08-14T19:28:30.0000000Z"
+}
