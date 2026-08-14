@@ -1,0 +1,62 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingPreparedSource",
+  "selectorBinding": "v31-public-mcp-origin-cors-decoupling-v1",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "a08ec66ec5ca6c5b9bd5a558b381aa3d4bde347a9231284045e7204ee53f60d2"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "5454a37075aa75b3e676bdc3c95326066708eea303a718ab825be1313b8f2ec3"
+    },
+    {
+      "path": "apps/api/src/agent-connections.ts",
+      "sha256": "3fee3064a203aa0f0b05c37afc0c9b41867ce3b54e4d2af2e33cbe01ca0c656d"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "sha256": "fa8173bc4a55615acf266c5ee894521a0c5b2c6e16a7803c6053f1d01fe3da24"
+    },
+    {
+      "path": "apps/api/src/origin-routing.test.ts",
+      "sha256": "ee7be1ce55cdb3990539f49f396281a93eea571f43010e0c97732f981c9d686c"
+    },
+    {
+      "path": "packages/config/src/index.ts",
+      "sha256": "e0ce817a65da10753256e38d3c6a802e41f40da776f4054d90d5dd0b17a07d63"
+    },
+    {
+      "path": "packages/config/src/index.test.ts",
+      "sha256": "1f086772d09948c6a6f7769c837fca5873125958bbf6edf965fc6ddcd46aa810"
+    },
+    {
+      "path": "packages/config/src/runtime-secrets.mjs",
+      "sha256": "5f131b44c7ce1cb7be2e4df7792e028fe86c7260ea3126481f662ba41a734a87"
+    }
+  ],
+  "packageFiles": [
+    {
+      "path": "package.json",
+      "sha256": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2"
+    },
+    {
+      "path": "apps/api/package.json",
+      "sha256": "a4699f8a1cb17b6e0c340ee765afe0070e5ccc104a7a09d0aec0379e13447343"
+    },
+    {
+      "path": "packages/config/package.json",
+      "sha256": "bc3dabf2d08a97d2d83a35e32748e49d9dd124dc497e0250250f87d13acba8c9"
+    }
+  ],
+  "preparedByReference": true,
+  "targetMutationExecuted": false,
+  "preparedAt": "2026-08-14T16:17:38.3272946+00:00"
+}

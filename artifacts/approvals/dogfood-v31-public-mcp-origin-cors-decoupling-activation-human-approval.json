@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingActivationApproval",
+  "approvalId": "b0217b7e-38b4-4ae8-aa2a-41eebdaf0e7c",
+  "decision": "approved",
+  "selectorBinding": "v31-public-mcp-origin-cors-decoupling-v1",
+  "scope": "v31_api_origin_cors_decoupling_activation_once",
+  "requestPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-cors-decoupling-activation-request.json",
+  "requestSha256": "744c6022c1a4e6200db1123df4d57c4853debb9f57f0623a2e6a591b5f24eeb4",
+  "contractPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "gatePath": "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml",
+  "gateSha256": "43697d67c14bcd9fef44be159a44b0348b6ce7b62ddbfb11d3605f8338d1c711",
+  "decisionText": "Human explicitly approved the exact v31 API-only public MCP origin and Browser CORS decoupling activation in the Codex task after the independent contract Gate passed.",
+  "approvedChange": {
+    "service": "api",
+    "port": 3303,
+    "fromBrowserCorsOrigin": "http://127.0.0.1:3301",
+    "toBrowserCorsOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301",
+    "singleUse": true,
+    "mandatoryCompensation": true
+  },
+  "excluded": {
+    "webReplacement": true,
+    "mcpReplacement": true,
+    "workerReplacement": true,
+    "routerReplacement": true,
+    "compatibilityReplacement": true,
+    "databaseMutation": true,
+    "objectStorageMutation": true,
+    "workMeshMutation": true,
+    "browserUse": true,
+    "gen11Completion": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T16:14:22.3757191Z",
+  "expiresAt": "2026-08-14T17:13:47.2450048Z",
+  "consumed": false
+}

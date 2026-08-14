@@ -1,0 +1,72 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingActivationRequest",
+  "requestId": "c90e4449-886d-43a4-a49a-832fb499ed88",
+  "selectorBinding": "v31-public-mcp-origin-cors-decoupling-v1",
+  "scope": "v31_api_origin_cors_decoupling_activation_once",
+  "decisionRequested": "Approve exactly one API-only supervisor replacement that changes credentialed Browser CORS from http://127.0.0.1:3301 to http://127.0.0.1:3300 while keeping public discovery and MCP URLs on http://127.0.0.1:3301, with mandatory automatic compensation and no other service or data mutation.",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 10,
+    "sha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5"
+  },
+  "controlState": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sequence": 100,
+    "sha256": "07afdb94e2d728f6679fab714ac64e32705abcf448847e6c81b09610dbe7cc3a",
+    "eventLogPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventCursor": 100,
+    "eventLogSha256": "aa4c8431c8bb993028a42c0e412933759141f1d1b2bfaf238858f8acef320778"
+  },
+  "contractPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "gatePath": "artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract-gate.yaml",
+  "gateSha256": "43697d67c14bcd9fef44be159a44b0348b6ce7b62ddbfb11d3605f8338d1c711",
+  "oldApi": {
+    "supervisorPid": 9120,
+    "supervisorStartTimeUtc": "2026-08-14T14:53:56.6254582Z",
+    "listenerPid": 41808,
+    "listenerStartTimeUtc": "2026-08-14T14:53:58.4385278Z",
+    "port": 3303,
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "webOrigin": "http://127.0.0.1:3301"
+  },
+  "candidateApi": {
+    "port": 3303,
+    "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "webOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301",
+    "expectedDiscoveryUrl": "http://127.0.0.1:3301/.well-known/workmesh-agent",
+    "expectedMcpUrl": "http://127.0.0.1:3301/mcp",
+    "expectedUnauthenticatedMcpStatus": 401,
+    "expectedConnectUrl": "http://127.0.0.1:3300/connect",
+    "expectedSkillUrl": "http://127.0.0.1:3300/skills/workmesh-1.1.0.md"
+  },
+  "mandatoryCompensation": {
+    "enabled": true,
+    "terminalReceiptRequired": true,
+    "retainedOldOwnerAcceptedOnlyWhenExact": true,
+    "missingOldOwnerRestoredWithVersionedRollbackSupervisor": true,
+    "unknownOwnerFailsClosed": true,
+    "rollbackBrowserOrigin": "http://127.0.0.1:3301",
+    "rollbackPublicMcpOrigin": "http://127.0.0.1:3301"
+  },
+  "protectedBoundary": {
+    "unchangedRoles": ["web", "mcp", "worker", "public-router", "compatibility", "object-storage"],
+    "requiredHealth": "7/7",
+    "requiredBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workMeshMutation": false,
+    "browserUse": false,
+    "productSourceMutation": false
+  },
+  "idempotencyKey": "750b2ea2-8f54-4c26-a385-4da21c068e7c",
+  "singleUse": true,
+  "createdAt": "2026-08-14T16:13:47.2450048Z",
+  "expiresAt": "2026-08-14T17:13:47.2450048Z",
+  "activationAuthorized": false,
+  "humanDecisionRequired": true,
+  "securityApproval": false
+}
