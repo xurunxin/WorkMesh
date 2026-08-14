@@ -1,0 +1,20 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureActivationApproval",
+  "decision": "approved",
+  "selectorBinding": "v31-coordination-feature-binding-v2",
+  "scope": "v31_api_worker_coordination_feature_activation_once",
+  "contractSha256": "06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698",
+  "gateSha256": "0a93c7c61ce7de7ceea5f71e909bdf993eb0e14512557d85f5fa04d9089c30f8",
+  "requestSha256": "a0063bde6a09461092e3549ff857611f90d90aecac5772c026f2ca1b3c47d49c",
+  "approvedAt": "2026-08-14T13:31:14.9235309Z",
+  "expiresAt": "2026-08-14T17:15:12.1372245Z",
+  "humanActor": "user",
+  "approvedAction": "Replace only the exact active API and Worker roles with WORKMESH_BETA_COORDINATION_MCP=true through the versioned attempt-2 feature-binding seam, preserving Web, MCP, router, compatibility, MinIO, database, object storage, and requiring a durable terminal compensation receipt on any failure.",
+  "automaticRollbackRequired": true,
+  "databaseMutationApproved": false,
+  "objectStorageMutationApproved": false,
+  "workMeshMutationApproved": false,
+  "securityScanApproved": false,
+  "securityApprovalClaimed": false
+}
