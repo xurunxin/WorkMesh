@@ -1,0 +1,50 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRuntimeDatabaseWorkMeshReadback",
+  "result": "PASS",
+  "observedAt": "2026-08-14T20:08:32.630Z",
+  "health": {"3001": 200, "3300": 200, "3301": 200, "3302": 200, "3303": 200, "3304": 200, "59000": 200},
+  "listeners": {
+    "3001": {"pid": 44104, "startUtc": "2026-08-14T05:46:54.5308239Z"},
+    "3300": {"pid": 42392, "startUtc": "2026-08-14T11:11:23.5706870Z"},
+    "3301": {"pid": 24516, "startUtc": "2026-08-14T05:46:54.4997244Z"},
+    "3302": {"pid": 19556, "startUtc": "2026-08-14T18:30:11.7180180Z"},
+    "3303": {"pid": 11832, "startUtc": "2026-08-14T16:17:42.9236161Z"},
+    "3304": {"pid": 10268, "startUtc": "2026-08-14T13:35:29.3399671Z"}
+  },
+  "buildExclusivity": {"v31BuildId": "Yj0IS_0CtW-lStIuWIemm", "v31Status": 200, "v30BuildId": "PDmZRxR35OqR7EPMC3I90", "v30Status": 404},
+  "previewListeners": {"34600": 0, "34601": 0},
+  "objectStorage": {"container": "workmesh-dogfood-v29-minio", "image": "minio/minio@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e", "state": "running", "hostPort": 59000},
+  "fixture": {
+    "connectionId": "bd2c7e2c-8020-4a61-b837-373895056d7a",
+    "name": "V31 Active Acceptance 5",
+    "status": "revoked",
+    "revision": 3,
+    "fingerprintPresent": true,
+    "pairingExpiresAt": null,
+    "pairings": {"total": 1, "consumed": 1, "live": 0},
+    "credentials": {"total": 1, "active": 0, "revoked": 1},
+    "coordinationSession": {"id": "1f8fe3b2-1d67-446f-9805-57835aea1b88", "agentSessionId": "8ec610c2-cab4-4423-8234-7886c5d337cd", "status": "closed", "teamId": "bc8daa41-561c-45e2-8c6d-5028286c1ca2", "principalHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa"},
+    "durableEvents": [
+      {"cursor": "193", "type": "agent.connection.created", "aggregateRevision": 1},
+      {"cursor": "194", "type": "agent.connection.pairing_redeemed", "aggregateRevision": 2},
+      {"cursor": "196", "type": "agent.connection.revoked", "aggregateRevision": 3}
+    ]
+  },
+  "workmesh": {
+    "identity": {"actorId": "4b5ede91-e824-4002-8882-4fd2601f39e8", "sessionId": "19686d4b-5db1-49fe-9897-4368982dec77", "state": "executing", "revision": 1},
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "number": 11,
+    "revision": 2,
+    "status": "In Progress",
+    "statusId": "d262cf6f-e1d1-4820-83e4-4b191bf3ce7e",
+    "labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null,
+    "doneStatusId": "12c209e8-a37f-4aa1-ae53-08fefd9ec685",
+    "eventsAfter197": 0
+  },
+  "rollbackRequired": false,
+  "secretValuesSerialized": false,
+  "securityScanRun": false
+}
