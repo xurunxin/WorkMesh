@@ -1,0 +1,41 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsActivation",
+  "result": "PASS",
+  "status": "ACTIVE_PENDING_REPLACEMENT_HUMAN_ACCEPTANCE",
+  "selectorBinding": "v31-public-mcp-browser-cors-activation-v1",
+  "contractSha256": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df",
+  "gateSha256": "7d0305682ebd66881c4353355989064d8a99816ab4327aaedb92f6246ab4df2f",
+  "requestSha256": "3df39fe7365c430d5bed339610ca02e6ed683b6940ab16852663c5c4b3837089",
+  "approvalSha256": "968837cdb8e8090c6d7197456047cfb95a7510f04b3f4c1f4328c5037c793e33",
+  "candidate": {
+    "artifactVersion": 1,
+    "kind": "DogfoodV31PublicMcpBrowserCorsSupervisor",
+    "status": "RUNNING",
+    "role": "mcp",
+    "mode": "candidate",
+    "supervisorPid": 69744,
+    "supervisorStartTimeUtc": "2026-08-14T18:30:10.7403197Z",
+    "generation": 1,
+    "restartCount": 0,
+    "childPid": 47796,
+    "listenerPid": 19556,
+    "listenerStartTimeUtc": "2026-08-14T18:30:11.7180180Z",
+    "port": 3302,
+    "healthUrl": "http://127.0.0.1:3302/readyz",
+    "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "browserOrigin": "http://127.0.0.1:3300",
+    "contractSha256": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df",
+    "secretValuesSerialized": false,
+    "updatedAt": "2026-08-14T18:30:13.3447569+00:00"
+  },
+  "cors": {
+    "getStatus": 401,
+    "optionsStatus": 204,
+    "allowOrigin": "http://127.0.0.1:3300",
+    "vary": "Origin"
+  },
+  "rollbackReady": true,
+  "completedAt": "2026-08-14T18:30:20.8471189+00:00",
+  "securityScanRun": false
+}

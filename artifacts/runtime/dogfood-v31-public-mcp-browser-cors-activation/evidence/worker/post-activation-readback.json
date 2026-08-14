@@ -1,0 +1,43 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsPostActivationReadback",
+  "result": "PASS",
+  "checkedAt": "2026-08-14T18:31:22.7060364+00:00",
+  "activationSha256": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+  "mcp": {
+    "supervisorPid": 69744,
+    "supervisorStartTimeUtc": "2026-08-14T18:30:10.7403197Z",
+    "listenerPid": 19556,
+    "listenerStartTimeUtc": "2026-08-14T18:30:11.7180180Z",
+    "listenerOwner": 19556,
+    "health": 200,
+    "oldSupervisorPresent": false,
+    "oldListenerPresent": false,
+    "stateSha256": "6194cd48b54d3dbee169e2bae25e24f0eb0da5d28843f2424ea48c0c8a7fe09e"
+  },
+  "protectedRoles": [
+    {"name":"compatibility","port":3001,"supervisorPid":36880,"supervisorStartTimeUtc":"2026-08-13T18:03:44.3397578Z","listenerPid":44104,"listenerStartTimeUtc":"2026-08-14T05:46:54.5308239Z","health":200},
+    {"name":"web","port":3300,"supervisorPid":57064,"supervisorStartTimeUtc":"2026-08-14T11:11:23.0971310Z","listenerPid":42392,"listenerStartTimeUtc":"2026-08-14T11:11:23.5706870Z","health":200},
+    {"name":"router","port":3301,"supervisorPid":5780,"supervisorStartTimeUtc":"2026-08-13T18:03:40.1036914Z","listenerPid":24516,"listenerStartTimeUtc":"2026-08-14T05:46:54.4997244Z","health":200},
+    {"name":"api","port":3303,"supervisorPid":20904,"supervisorStartTimeUtc":"2026-08-14T16:17:40.9437096Z","listenerPid":11832,"listenerStartTimeUtc":"2026-08-14T16:17:42.9236161Z","health":200},
+    {"name":"worker","port":3304,"supervisorPid":37620,"supervisorStartTimeUtc":"2026-08-14T13:35:27.7439740Z","listenerPid":10268,"listenerStartTimeUtc":"2026-08-14T13:35:29.3399671Z","health":200}
+  ],
+  "objectStorage": {
+    "health": 200,
+    "id": "84e9879d53c2f9962c2c4a1756fa711842584004a2cf28a7d11a169fae647bef",
+    "image": "sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e",
+    "name": "workmesh-dogfood-v29-minio"
+  },
+  "cors": {
+    "allowedGet": {"status":401,"allowOrigin":"http://127.0.0.1:3300","vary":"Origin","allowCredentials":null},
+    "allowedOptions": {"status":204,"allowOrigin":"http://127.0.0.1:3300","allowCredentials":null},
+    "wrongOriginGet": {"status":401,"allowOrigin":null,"allowCredentials":null},
+    "wrongOriginOptions": {"status":403,"allowOrigin":null,"allowCredentials":null}
+  },
+  "healthChecksPassed": 7,
+  "rollbackReceiptPresent": false,
+  "browserUsed": false,
+  "databaseMutationExecuted": false,
+  "workmeshMutationExecuted": false,
+  "securityScanRun": false
+}
