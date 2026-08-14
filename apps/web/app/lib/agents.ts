@@ -1,6 +1,6 @@
 'use client'
 
-import { ApiError, apiRequest, json } from './api'
+import { ApiError, apiListRequest, apiRequest, json, type ListResponse } from './api'
 
 export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
 
@@ -28,6 +28,8 @@ export type PlanVersion = { id: string; revision: number; parent_version_id: str
 export type AgentActivity = { id: string; kind: string; summary: string; detailsMarkdown?: string; artifactIds: string[]; ephemeral: boolean; created_at: string; toolInvocation?: { toolName: string; status: string; resultSummary?: string } }
 export type Artifact = { id: string; session_id: string; work_item_id?: string | null; type: string; title: string; uri?: string; source_tool?: string; created_at: string }
 export type Approval = { id: string; session_id: string; approval_type: string; action_name: string; risk_level: string; rationale_summary: string; status: string; revision: number; expires_at: string; created_at: string }
+export type AgentConnection = { id: string; workspace_id: string; team_id: string; agent_actor_id: string; principal_human_actor_id: string; name: string; agent_slug: string; client_type: 'codex'|'opencode'|'pi'|'generic_mcp'; status: 'pending'|'active'|'rotating'|'revoked'; requested_capabilities: string[]; granted_capabilities: string[]; grant_agent_delegate: boolean; skill_version: string|null; skill_sha256: string|null; credential_fingerprint_prefix: string|null; pairing_code_expires_at: string|null; last_used_at: string|null; rotated_at: string|null; revoked_at: string|null; revision: number; redacted_token: true; created_at: string; updated_at: string }
+export type AgentConnectionCreateResponse = { connection: AgentConnection; connect_url: string; skill: { name: 'workmesh'; version: string; sha256: string; signature: string } }
 
 export const agentStateLabel = (state: AgentState): string => state.replaceAll('_', ' ')
 export const agentStateClass = (state: AgentState): string => `agent-state state-${state}`
@@ -96,6 +98,10 @@ export async function optionalAgentRequest<T>(path: string): Promise<T | null> {
   try { return await apiRequest<T>(path) } catch (reason) { if (reason instanceof ApiError && reason.status === 404) return null; throw reason }
 }
 
+export async function optionalAgentListRequest<T>(path: string, init?: RequestInit): Promise<ListResponse<T> | null> {
+  try { return await apiListRequest<T>(path, init) } catch (reason) { if (reason instanceof ApiError && reason.status === 404) return null; throw reason }
+}
+
 export async function grantAgentTeamAccess(agentId: string, teamId: string, approvedCapabilities: string[]): Promise<AgentTeamAccess> {
   return apiRequest<AgentTeamAccess>(`/api/v1/agents/${agentId}/team-access/${teamId}`, {
     method: 'PUT',
@@ -107,6 +113,12 @@ export async function grantAgentTeamAccess(agentId: string, teamId: string, appr
 export async function revokeAgentTeamAccess(agentId: string, teamId: string): Promise<AgentTeamAccess> {
   return apiRequest<AgentTeamAccess>(`/api/v1/agents/${agentId}/team-access/${teamId}`, { method: 'DELETE' })
 }
+
+export async function createAgentConnection(input: { name: string; agentSlug: string; clientType: AgentConnection['client_type']; teamId: string; principalHumanActorId?: string; requestedCapabilities: string[]; grantAgentDelegate: boolean; notes?: string }): Promise<AgentConnectionCreateResponse> { return apiRequest('/api/v1/agent-connections', { method: 'POST', headers: json({}), body: JSON.stringify(input) }) }
+export async function getAgentConnection(id: string): Promise<AgentConnection> { return apiRequest(`/api/v1/agent-connections/${id}`) }
+export async function revokeAgentConnection(connection: AgentConnection): Promise<void> { await apiRequest(`/api/v1/agent-connections/${connection.id}`, { method: 'DELETE', headers: { 'If-Match': `"revision-${connection.revision}"` } }) }
+export async function rotateAgentConnection(connection: AgentConnection): Promise<{ connection: AgentConnection; connect_url: string; pairing_code_expires_at: string; overlap_until: string }> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
+export async function confirmAgentConnectionRotation(connection: AgentConnection): Promise<AgentConnection> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate-confirm`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
 
 export async function delegateAndStart(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
   const approvedCapabilities = approvedAgentCapabilitiesForTeam(input.agent, input.workItemTeamId)

@@ -1,0 +1,523 @@
+import { routeOperationBindings } from './route-policy-bindings.js'
+
+export type RoutePolicyMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+export type RoutePolicyActorKind = 'human' | 'agent' | 'service'
+export type RoutePolicyAuthentication =
+  | 'public'
+  | 'bootstrap'
+  | 'human_session'
+  | 'agent_session'
+  | 'human_or_agent_session'
+  | 'installation_target'
+  | 'provider_signature'
+export type RoutePolicyFeatureTier = 'stable' | 'beta' | 'experimental'
+export type ResourceResolverId =
+  | 'none'
+  | 'workspace'
+  | 'team'
+  | 'project'
+  | 'work_item'
+  | 'comment'
+  | 'agent_definition'
+  | 'agent_connection'
+  | 'delegation'
+  | 'agent_session'
+  | 'artifact'
+  | 'approval'
+  | 'work_room'
+  | 'inbox_item'
+  | 'lease'
+  | 'handoff'
+  | 'decision'
+  | 'repository'
+  | 'provider_connection'
+  | 'provider_action'
+  | 'pull_request'
+  | 'automation'
+  | 'template'
+  | 'a2a_binding'
+  | 'event_audience'
+
+export type RoutePolicyManifestEntry = Readonly<{
+  method: RoutePolicyMethod
+  path: string
+  operationId: string
+  policyId: string
+  authentication: RoutePolicyAuthentication
+  actorKinds: readonly RoutePolicyActorKind[]
+  human: Readonly<{
+    workspaceRoles: readonly ('admin' | 'member')[]
+    teamRoles: readonly ('admin' | 'maintainer' | 'member')[]
+    membership: 'none' | 'workspace' | 'resolved_team'
+    ownerMayManage: boolean
+  }>
+  agent: Readonly<{
+    capabilities: readonly string[]
+    sessionBinding: 'none' | 'current_session' | 'installation_target'
+    requireActiveSession: boolean
+    requireActiveDelegation: boolean
+    requireLiveGrantIntersection: boolean
+    resourceScope: 'none' | 'resolved_resource'
+  }>
+  resourceResolverId: ResourceResolverId
+  approval: Readonly<{
+    required: boolean
+    bindsActionFingerprint: boolean
+  }>
+  lease: Readonly<{
+    required: boolean
+    grantsAuthorization: false
+  }>
+  revision: 'none' | 'if_match'
+  idempotency: 'none' | 'required'
+  secretReplay: 'none' | 'encrypted_auth'
+  credentialRateLimit: 'none' | 'shared_redis'
+  feature: Readonly<{
+    key: string | null
+    tier: RoutePolicyFeatureTier
+    disabledBehavior: 'available' | 'feature_disabled'
+  }>
+  audit: Readonly<{
+    denial: 'required'
+    heartbeatAmplification: 'suppress_repeated'
+  }>
+  bindings: Readonly<{
+    rest: Readonly<{ method: RoutePolicyMethod; path: string }>
+    sse: boolean
+    sdkOperationId: string
+    mcpOperationId: string
+  }>
+}>
+
+export type RoutePolicyFeatureResolver = (
+  path: string,
+) => Readonly<{ key: string; tier: RoutePolicyFeatureTier }> | undefined
+
+const publicOperations = new Set([
+  'live',
+  'ready',
+  'health',
+  'getServerInfo',
+  'getInstallStatus',
+  'login',
+  'getWorkMeshAgentWellKnown',
+  'redeemAgentConnection',
+])
+
+const installationTargetOperations = new Set([
+  'exchangeAgentSessionToken',
+  'refreshAgentSessionToken',
+  'inspectExactTargetHandoff',
+  'rejectHandoff',
+])
+
+export const secretReplayOperationIds = [
+  'installWorkspace',
+  'login',
+  'logout',
+  'registerAgent',
+  'rotateAgentWebhookSecret',
+  'createAgentSession',
+  'delegateAndStartAgentSession',
+  'exchangeAgentSessionToken',
+  'refreshAgentSessionToken',
+  'redeemAgentConnection',
+] as const
+const secretReplayOperations = new Set<string>(secretReplayOperationIds)
+const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff', 'redeemAgentConnection'])
+
+const workspaceAdminOperations = new Set([
+  'getRetentionStatus',
+  'updateWorkspace',
+  'createTeam',
+  'updateTeam',
+  'deleteTeam',
+  'registerAgent',
+  'updateAgent',
+  'createAgentWebhookEndpoint',
+  'rotateAgentWebhookSecret',
+  'approveAgentTeamAccess',
+  'revokeAgentTeamAccess',
+  'createProviderConnection',
+  'setBudgetPolicy',
+  'exportTemplates',
+  'importTemplatesAsDrafts',
+  'publishWorkspaceGuidance',
+  'archiveWorkspaceGuidance',
+  'rollbackWorkspaceGuidance',
+  'listWorkspaceGuidanceHistory',
+  'diffWorkspaceGuidance',
+  'createAgentConnection',
+  'getAgentConnection',
+  'patchAgentConnection',
+  'revokeAgentConnection',
+  'rotateAgentConnection',
+  'confirmAgentConnectionRotation',
+])
+
+const humanOnlyOperations = new Set([
+  ...workspaceAdminOperations,
+  'logout',
+  'listHumanActors',
+  'listAgents',
+  'getAgent',
+  'createWorkflowState',
+  'createDelegation',
+  'getDelegation',
+  'revokeDelegation',
+  'createAgentSession',
+  'promptAgentSession',
+  'signalAgentSession',
+  'retryAgentSession',
+  'patchAgentConnection',
+  'revokeAgentConnection',
+  'rotateAgentConnection',
+  'confirmAgentConnectionRotation',
+  'decideApproval',
+  'getWorkRoomTimeline',
+  'resolveWorkRoomMessage',
+  'forceReleaseLease',
+  'acceptHandoff',
+  'finalizeDecision',
+  'supersedeDecision',
+  'reverseDecision',
+  'connectRepository',
+  'pinRepositoryContext',
+  'createProjectMilestone',
+  'publishProjectUpdate',
+  'createProjectDependency',
+  'decideCompletionSuggestion',
+  'createCycle',
+  'generateCycles',
+  'carryOverCycleWork',
+  'setWorkItemCycle',
+  'createInitiative',
+  'createAdvancedView',
+  'createAutomationRule',
+  'createAutomationRuleVersion',
+  'dryRunAutomationRule',
+  'triggerAutomationRule',
+  'setAutomationRuleState',
+  'createLoop',
+  'setLoopState',
+  'createNotification',
+  'updateNotificationPreferences',
+  'createTemplate',
+  'createTemplateVersion',
+  'setTemplateState',
+  'configureA2ABinding',
+  'acceptA2ATask',
+  'publishTeamGuidance',
+  'archiveTeamGuidance',
+  'rollbackTeamGuidance',
+  'listTeamGuidanceHistory',
+  'diffTeamGuidance',
+  'publishProjectGuidance',
+  'archiveProjectGuidance',
+  'rollbackProjectGuidance',
+  'listProjectGuidanceHistory',
+  'diffProjectGuidance',
+])
+
+const agentOnlyOperations = new Set([
+  'getAgentCapabilityManifest',
+  'claimInboxItem',
+  'acknowledgeInboxItem',
+  'replyInboxItem',
+])
+
+const revisionedOperations = new Set([
+  'updateWorkspace',
+  'updateTeam',
+  'deleteTeam',
+  'updateProject',
+  'deleteProject',
+  'updateWorkItem',
+  'deleteWorkItem',
+  'updateComment',
+  'updateAgent',
+  'rotateAgentWebhookSecret',
+  'revokeDelegation',
+  'transitionAgentSessionState',
+  'publishAgentPlan',
+  'signalAgentSession',
+  'acknowledgeAgentSessionStop',
+  'completeAgentSession',
+  'failAgentSession',
+  'retryAgentSession',
+  'decideApproval',
+  'consumeApproval',
+  'resolveWorkRoomMessage',
+  'renewLease',
+  'releaseLease',
+  'forceReleaseLease',
+  'finalizeDecision',
+  'supersedeDecision',
+  'reverseDecision',
+  'publishProjectUpdate',
+  'decideCompletionSuggestion',
+  'setWorkItemCycle',
+  'createProjectHealthUpdate',
+  'createAutomationRuleVersion',
+  'setAutomationRuleState',
+  'setLoopState',
+  'createTemplateVersion',
+  'setTemplateState',
+  'replyInboxItem',
+])
+
+const approvalOperations = new Set([
+  'requestPullRequestMerge',
+  'forceReleaseLease',
+  'consumeApproval',
+])
+
+const memberMutationOperations = new Set([
+  'decideApproval',
+])
+
+const leaseOperations = new Set([
+  'heartbeatLease',
+  'renewLease',
+  'releaseLease',
+  'requestProviderAction',
+])
+
+function authenticationFor(operationId: string): RoutePolicyAuthentication {
+  if (operationId === 'installWorkspace') return 'bootstrap'
+  if (publicOperations.has(operationId)) return 'public'
+  if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
+  if (installationTargetOperations.has(operationId)) return 'installation_target'
+  if (humanOnlyOperations.has(operationId)) return 'human_session'
+  if (agentOnlyOperations.has(operationId)) return 'agent_session'
+  return 'human_or_agent_session'
+}
+
+function resolverFor(path: string, operationId: string): ResourceResolverId {
+  if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'
+  if (path.includes('/templates')) return 'template'
+  if (path.includes('/a2a-bindings')) return 'a2a_binding'
+  if (path.includes('/automation') || path.includes('/loops')) return 'automation'
+  if (path.includes('/pull-requests')) return 'pull_request'
+  if (path.includes('/provider-connections') || path.includes('/provider-webhooks')) return 'provider_connection'
+  if (path.includes('/provider-actions')) return 'provider_action'
+  if (path.includes('/repositories')) return 'repository'
+  if (path.includes('/decisions')) return 'decision'
+  if (path.includes('/handoffs')) return 'handoff'
+  if (path.includes('/leases')) return 'lease'
+  if (path.includes('/inbox/')) return 'inbox_item'
+  if (path.includes('/rooms') || path.includes('/messages')) return 'work_room'
+  if (path.includes('/approvals')) return 'approval'
+  if (path.includes('/artifacts') || path.includes('/artifact-upload')) return 'artifact'
+  if (path.includes('/agent-sessions')) return 'agent_session'
+  if (path.includes('/delegations')) return 'delegation'
+  if (path.includes('/agents')) return 'agent_definition'
+  if (path.includes('/agent-connections')) return 'agent_connection'
+  if (path.includes('/comments')) return 'comment'
+  if (path.includes('/work-items')) return 'work_item'
+  if (path.includes('/projects')) return 'project'
+  if (path.includes('/teams')) return 'team'
+  if (path === '/api/v1/workspace' || path.includes('/workspaces/')) return 'workspace'
+  return 'none'
+}
+
+function capabilityFor(
+  method: RoutePolicyMethod,
+  path: string,
+  operationId: string,
+): readonly string[] {
+  if (operationId === 'getAgentCapabilityManifest') return []
+  if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
+  if (method === 'GET') {
+    if (path.includes('/repositories')) return ['repo:read']
+    return ['work:read']
+  }
+  if (operationId === 'publishStructuredReview') return ['artifact:write']
+  if (operationId === 'retryPullRequestCheck') return ['ci:run']
+  if (operationId === 'requestPullRequestMerge') return ['repo:merge']
+  if (operationId === 'recordUsage') return ['work:read']
+  if (operationId === 'postWorkRoomMessage') return ['work:write']
+  if (operationId === 'replyInboxItem') return ['work:write']
+  if (path.includes('/inbox')) return ['work:read']
+  if (operationId === 'commentOnPlanStep') return ['work:write']
+  if (path.includes('/comments')) return ['comment:write']
+  if (path.includes('/plan')) return ['plan:write']
+  if (path.includes('/rooms') || path.includes('/messages')) return ['message:write']
+  if (path.includes('/artifacts') || path.includes('/artifact-upload')) return ['artifact:write']
+  if (path.includes('/provider-actions') || path.includes('/repositories')) return ['repo:write_branch']
+  if (path.includes('/automation') || path.includes('/loops')) return ['automation:manage']
+  return ['work:write']
+}
+
+export function createRoutePolicyManifest(
+  featureForRoute: RoutePolicyFeatureResolver = () => undefined,
+): readonly RoutePolicyManifestEntry[] {
+  return Object.freeze(routeOperationBindings.map(binding => {
+    const authentication = authenticationFor(binding.operationId)
+    const humanOnly = authentication === 'human_session'
+    const agentOnly = authentication === 'agent_session'
+    const agentAuthentication = authentication === 'agent_session'
+      || authentication === 'human_or_agent_session'
+      || authentication === 'installation_target'
+    const feature = featureForRoute(binding.path)
+    const workspaceAdmin = workspaceAdminOperations.has(binding.operationId)
+    const mutation = binding.method !== 'GET'
+    const resolver = resolverFor(binding.path, binding.operationId)
+    const policyId = `route.${binding.operationId}`
+
+    return Object.freeze({
+      method: binding.method,
+      path: binding.path,
+      operationId: binding.operationId,
+      policyId,
+      authentication,
+      actorKinds: authentication === 'public' || authentication === 'bootstrap'
+        ? []
+        : authentication === 'provider_signature'
+          ? ['service']
+          : authentication === 'installation_target'
+            ? ['agent']
+            : humanOnly
+              ? ['human']
+              : agentOnly
+                ? ['agent']
+                : ['human', 'agent'],
+      human: {
+        workspaceRoles: workspaceAdmin ? ['admin'] : ['admin', 'member'],
+        teamRoles: workspaceAdmin
+          ? ['admin']
+          : mutation && !memberMutationOperations.has(binding.operationId)
+            ? ['admin', 'maintainer']
+            : ['admin', 'maintainer', 'member'],
+        membership: resolver === 'none' || resolver === 'workspace' ? 'workspace' : 'resolved_team',
+        ownerMayManage: resolver === 'template',
+      },
+      agent: {
+        capabilities: agentAuthentication
+          ? capabilityFor(binding.method, binding.path, binding.operationId)
+          : [],
+        sessionBinding: authentication === 'installation_target' ? 'installation_target' : agentAuthentication ? 'current_session' : 'none',
+        requireActiveSession: authentication !== 'installation_target' && agentAuthentication,
+        requireActiveDelegation: authentication !== 'installation_target' && agentAuthentication,
+        requireLiveGrantIntersection: authentication !== 'installation_target' && agentAuthentication,
+        resourceScope: resolver === 'none' ? 'none' : 'resolved_resource',
+      },
+      resourceResolverId: resolver,
+      approval: {
+        required: approvalOperations.has(binding.operationId),
+        bindsActionFingerprint: approvalOperations.has(binding.operationId),
+      },
+      lease: {
+        required: leaseOperations.has(binding.operationId),
+        grantsAuthorization: false,
+      },
+      revision: revisionedOperations.has(binding.operationId) ? 'if_match' : 'none',
+      idempotency: mutation && authentication !== 'provider_signature' ? 'required' : 'none',
+      secretReplay: secretReplayOperations.has(binding.operationId) ? 'encrypted_auth' : 'none',
+      credentialRateLimit: credentialRateLimitOperations.has(binding.operationId) ? 'shared_redis' : 'none',
+      feature: {
+        key: feature?.key ?? null,
+        tier: feature?.tier ?? 'stable',
+        disabledBehavior: feature ? 'feature_disabled' : 'available',
+      },
+      audit: {
+        denial: 'required',
+        heartbeatAmplification: 'suppress_repeated',
+      },
+      bindings: {
+        rest: { method: binding.method, path: binding.path },
+        sse: binding.operationId === 'streamEvents',
+        sdkOperationId: binding.operationId,
+        mcpOperationId: binding.operationId,
+      },
+    } satisfies RoutePolicyManifestEntry)
+  }))
+}
+
+const mcpOperationIds = {
+  'tool:verify_connection': 'getAgentCapabilityManifest',
+  'tool:get_current_identity': 'getAgentCapabilityManifest',
+  'tool:list_teams': 'listTeams',
+  'tool:list_workflow_states': 'listWorkflowStates',
+  'tool:list_projects': 'listProjects',
+  'tool:get_project': 'getProject',
+  'tool:create_project': 'createProject',
+  'tool:update_project': 'updateProject',
+  'tool:create_work_item': 'createWorkItem',
+  'tool:update_work_item': 'updateWorkItem',
+  'tool:delegate_work_item': 'delegateAndStartAgentSession',
+  'tool:start_agent_session': 'delegateAndStartAgentSession',
+  'resource:server-info': 'getServerInfo',
+  'resource:server-features': 'getDeploymentFeatures',
+  'resource:agent-capabilities': 'getAgentCapabilityManifest',
+  'resource:agent-session': 'getAgentSession',
+  'resource:work-item': 'getWorkItem',
+  'resource:session-context': 'getAgentSessionContext',
+  'resource:session-plan': 'getAgentPlan',
+  'resource:session-activity': 'listAgentActivities',
+  'resource:workspace-guidance': 'getWorkspaceGuidance',
+  'resource:team-guidance': 'getTeamGuidance',
+  'resource:project-guidance': 'getProjectGuidance',
+  'resource:repository-context': 'getRepositoryContext',
+  'tool:list_work_items': 'listWorkItems',
+  'tool:list_events': 'listEvents',
+  'tool:list_session_activities': 'listAgentActivities',
+  'tool:get_work_item': 'getWorkItem',
+  'tool:get_work_room': 'getWorkRoom',
+  'tool:create_repository_branch': 'requestProviderAction',
+  'tool:create_repository_commit': 'requestProviderAction',
+  'tool:open_pull_request': 'requestProviderAction',
+  'tool:publish_delivery_artifact': 'publishDeliveryArtifact',
+  'tool:request_artifact_upload': 'requestArtifactUpload',
+  'tool:finalize_artifact_upload': 'finalizeArtifactUpload',
+  'tool:publish_structured_review': 'publishStructuredReview',
+  'tool:merge_pull_request': 'requestPullRequestMerge',
+  'tool:retry_ci_check': 'retryPullRequestCheck',
+  'tool:draft_project_update': 'createProjectUpdateDraft',
+  'tool:publish_project_update': 'publishProjectUpdate',
+  'tool:decide_completion_suggestion': 'decideCompletionSuggestion',
+  'tool:post_work_room_message': 'postWorkRoomMessage',
+  'tool:list_inbox_items': 'listInbox',
+  'tool:get_inbox_item': 'getInboxItem',
+  'tool:claim_inbox_item': 'claimInboxItem',
+  'tool:acknowledge_inbox_item': 'acknowledgeInboxItem',
+  'tool:reply_inbox_item': 'replyInboxItem',
+  'tool:comment_plan_step': 'commentOnPlanStep',
+  'tool:propose_plan_step_assignment': 'proposePlanAssignment',
+  'tool:create_child_session': 'createChildAgentSession',
+  'tool:append_context_delta': 'appendContextDelta',
+  'tool:create_review_delegation': 'createReviewDelegation',
+  'tool:acquire_lease': 'acquireLease',
+  'tool:offer_handoff': 'offerHandoff',
+  'tool:inspect_pending_handoff': 'inspectExactTargetHandoff',
+  'tool:request_handoff': 'requestHandoff',
+  'tool:reject_handoff': 'rejectHandoff',
+  'tool:ack_agent_session': 'acknowledgeAgentSession',
+  'tool:transition_agent_session_state': 'transitionAgentSessionState',
+  'tool:heartbeat': 'heartbeatAgentSession',
+  'tool:append_activity': 'appendAgentActivity',
+  'tool:publish_plan': 'publishAgentPlan',
+  'tool:send_message': 'appendAgentActivity',
+  'tool:ask': 'appendAgentActivity',
+  'tool:request_approval': 'requestApproval',
+  'tool:publish_artifact': 'publishArtifact',
+  'tool:complete_session': 'completeAgentSession',
+  'tool:fail_session': 'failAgentSession',
+} as const
+
+const declaredOperationIds = new Set(routeOperationBindings.map(binding => binding.operationId))
+for (const [binding, operationId] of Object.entries(mcpOperationIds)) {
+  if (!declaredOperationIds.has(operationId)) {
+    throw new Error(`MCP binding ${binding} references unknown operationId ${operationId}`)
+  }
+}
+
+export const mcpPolicyBindings = Object.freeze(Object.fromEntries(
+  Object.entries(mcpOperationIds).map(([binding, operationId]) => [
+    binding,
+    Object.freeze({ operationId, policyId: `route.${operationId}` }),
+  ]),
+)) as Readonly<Record<keyof typeof mcpOperationIds, Readonly<{
+  operationId: string
+  policyId: string
+}>>>

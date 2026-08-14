@@ -1,24 +1,29 @@
 'use client'
 
 import { type DragEvent, type FormEvent, type PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ApiError, apiBase, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
+import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
 import { AgentWorkPanel } from './agent-work-panel'
-import { type AgentSession, optionalAgentRequest } from './lib/agents'
 import { InboxPanel, WorkRoom } from './work-room'
 import { ProjectDelivery } from './project-delivery'
+import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
+import { homeRefreshTargets } from './lib/realtime-refresh'
 
-type Actor = { id: string; displayName: string }
+type Actor = { id: string; displayName: string; workspace_id?: string }
 type AuthMe = { actor: Actor; csrfToken: string }
 type InstallStatus = { installed: boolean }
+type FeatureRegistry = { features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }> }
+type ReleaseInfo = { serverVersion: string; buildSha: string; schemaBaseline: number }
 type Team = { id: string; name: string; key: string; revision: number }
 type StatusCategory = 'backlog' | 'planned' | 'started' | 'completed' | 'canceled'
 type WorkflowState = { id: string; name: string; category: StatusCategory; color: string; revision: number }
 type Human = { id: string; display_name: string; email: string }
 type Project = { id: string; team_id: string; name: string; summary: string | null; description: string | null; status: string; lead_actor_id: string | null; target_date: string | null; revision: number }
-type WorkItem = { id: string; title: string; description: string | null; number: number; revision: number; status_id: string; status_name: string; status_category: StatusCategory; team_id: string; team_key: string; priority: Priority; due_date: string | null; responsible_human_actor_id: string | null; labels: string[]; project_id: string | null }
+type ExecutorProjection = { agent_id: string; agent_actor_id: string; agent_slug: string; agent_display_name: string; session_id: string; lease_id: string; lease_kind: 'exclusive' | 'review_shared'; resource_type: 'work_item' | 'plan_step'; resource_id: string; execution_state: string; heartbeat_health: 'healthy' | 'degraded' | 'stale'; last_heartbeat_at: string | null; lease_heartbeat_at: string; lease_expires_at: string }
+type WorkItem = { id: string; title: string; description: string | null; number: number; revision: number; status_id: string; status_name: string; status_category: StatusCategory; team_id: string; team_key: string; priority: Priority; due_date: string | null; responsible_human_actor_id: string | null; responsible_human: { actor_id: string; display_name: string } | null; active_executor: ExecutorProjection | null; shared_reviewers: ExecutorProjection[]; labels: string[]; project_id: string | null }
 type Comment = { id: string; body: string; revision: number; parent_comment_id: string | null; reply_to_comment_id: string | null; author_name: string; is_resolved: boolean; created_at: string; mentions: string[] }
 type SavedView = { id: string; name: string; team_id?: string | null; filters: Filters; layout: Layout; builtIn?: boolean }
-type Scope = 'my-work' | 'active' | 'backlog' | 'inbox' | 'projects'
+type Scope = 'my-work' | 'active' | 'backlog' | 'inbox' | 'projects' | 'guidance'
 type Layout = 'list' | 'board'
 type Priority = 'none' | 'urgent' | 'high' | 'medium' | 'low'
 type Filters = { search?: string; statusId?: string; priority?: Priority; ownerId?: string; projectId?: string; label?: string; statusCategory?: StatusCategory; mine?: boolean }
@@ -45,14 +50,7 @@ function toQuery(teamId: string | undefined, filters: Filters): string {
 
 export default function HomePage() {
   const [actor, setActor] = useState<Actor | null>(null)
-  const [teams, setTeams] = useState<Team[]>([])
   const [teamId, setTeamId] = useState<string | null>(null)
-  const [states, setStates] = useState<WorkflowState[]>([])
-  const [humans, setHumans] = useState<Human[]>([])
-  const [projects, setProjects] = useState<Project[]>([])
-  const [items, setItems] = useState<WorkItem[]>([])
-  const [views, setViews] = useState<SavedView[]>([])
-  const [comments, setComments] = useState<Comment[]>([])
   const [selectedItem, setSelectedItem] = useState<WorkItem | null>(null)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [scope, setScope] = useState<Scope>('my-work')
@@ -60,14 +58,38 @@ export default function HomePage() {
   const [filters, setFilters] = useState<Filters>({ mine: true })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [operationsEnabled, setOperationsEnabled] = useState(false)
+  const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
 
+  const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
+  const teams = teamsPage.items
   const selectedTeam = teams.find(team => team.id === teamId) ?? null
+  const statesPage = usePagedApiList<WorkflowState>(
+    actor && selectedTeam ? `/api/v1/teams/${selectedTeam.id}/states` : null,
+  )
+  const humansPage = usePagedApiList<Human>(
+    actor ? `/api/v1/actors/humans${selectedTeam ? `?teamId=${encodeURIComponent(selectedTeam.id)}` : ''}` : null,
+  )
+  const projectsPage = usePagedApiList<Project>(actor ? '/api/v1/projects' : null)
+  const viewsPage = usePagedApiList<SavedView>(
+    actor ? `/api/v1/views${selectedTeam ? `?teamId=${encodeURIComponent(selectedTeam.id)}` : ''}` : null,
+  )
+  const states = statesPage.items
+  const humans = humansPage.items
+  const projects = projectsPage.items
+  const views = viewsPage.items
   const teamProjects = useMemo(() => projects.filter(project => project.team_id === selectedTeam?.id), [projects, selectedTeam?.id])
   const query = useMemo(() => toQuery(selectedTeam?.id, filters), [filters, selectedTeam?.id])
-
-  const loadComments = useCallback(async (workItemId: string) => {
-    setComments(await apiRequest<Comment[]>(`/api/v1/work-items/${workItemId}/comments`))
-  }, [])
+  const itemsPage = usePagedApiList<WorkItem>(actor ? `/api/v1/work-items${query}` : null)
+  const commentsPage = usePagedApiList<Comment>(
+    actor && selectedItem ? `/api/v1/work-items/${selectedItem.id}/comments` : null,
+  )
+  const items = itemsPage.items
+  const comments = commentsPage.items
+  const collectionError = [
+    teamsPage.error, statesPage.error, humansPage.error, projectsPage.error,
+    viewsPage.error, itemsPage.error, commentsPage.error,
+  ].find(Boolean)
 
   const load = useCallback(async () => {
     try {
@@ -80,23 +102,13 @@ export default function HomePage() {
       const auth = await apiRequest<AuthMe>('/api/v1/auth/me')
       saveCsrfToken(auth.csrfToken)
       setActor(auth.actor)
-      const nextTeams = await apiRequest<Team[]>('/api/v1/teams')
-      setTeams(nextTeams)
-      const nextTeamId = nextTeams.some(team => team.id === teamId) ? teamId : nextTeams[0]?.id ?? null
-      if (nextTeamId !== teamId) setTeamId(nextTeamId)
-      const currentQuery = toQuery(nextTeamId ?? undefined, filters)
-      const [nextHumans, nextProjects, nextItems, nextViews, nextStates] = await Promise.all([
-        apiRequest<Human[]>(`/api/v1/actors/humans${nextTeamId ? `?teamId=${encodeURIComponent(nextTeamId)}` : ''}`),
-        apiRequest<Project[]>('/api/v1/projects'),
-        apiRequest<WorkItem[]>(`/api/v1/work-items${currentQuery}`),
-        apiRequest<SavedView[]>(`/api/v1/views${nextTeamId ? `?teamId=${encodeURIComponent(nextTeamId)}` : ''}`),
-        nextTeamId ? apiRequest<WorkflowState[]>(`/api/v1/teams/${nextTeamId}/states`) : Promise.resolve([]),
+      const [featureRegistry, info] = await Promise.all([
+        apiRequest<FeatureRegistry>('/api/v1/features'),
+        publicRequest<ReleaseInfo>('/api/v1/info'),
       ])
-      setHumans(nextHumans)
-      setProjects(nextProjects)
-      setItems(nextItems)
-      setViews(nextViews)
-      setStates(nextStates)
+      setOperationsEnabled(featureRegistry.features.some(feature =>
+        feature.key === 'WORKMESH_BETA_OPERATIONS_UI' && feature.enabled))
+      setReleaseInfo(info)
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) {
         clearCsrfToken()
@@ -107,65 +119,86 @@ export default function HomePage() {
     } finally {
       setLoading(false)
     }
-  }, [filters, teamId])
+  }, [])
 
   useEffect(() => { void load() }, [load])
-  const loadRef = useRef(load)
-  const selectedItemRef = useRef(selectedItem)
-  useEffect(() => { loadRef.current = load }, [load])
-  useEffect(() => { selectedItemRef.current = selectedItem }, [selectedItem])
-
   useEffect(() => {
-    if (!actor) return
-    let refreshTimer: number | undefined
-    const storedCursor = window.localStorage.getItem('workmesh.events.cursor')
-    const cursor = storedCursor ? `?cursor=${encodeURIComponent(storedCursor)}` : ''
-    const stream = new EventSource(`${apiBase}/api/v1/events/stream${cursor}`, { withCredentials: true })
-    stream.onmessage = event => {
-      try {
-        const payload = JSON.parse(event.data) as { cursor?: number }
-        const nextCursor = payload.cursor ?? Number(event.lastEventId)
-        if (Number.isSafeInteger(nextCursor) && nextCursor >= 0) window.localStorage.setItem('workmesh.events.cursor', String(nextCursor))
-      } catch { /* The subsequent durable refetch still establishes the current state. */ }
-      if (refreshTimer !== undefined) window.clearTimeout(refreshTimer)
-      refreshTimer = window.setTimeout(() => {
-        void loadRef.current()
-        const openItem = selectedItemRef.current
-        if (openItem) {
-          void apiRequest<WorkItem>(`/api/v1/work-items/${openItem.id}`).then(setSelectedItem)
-          void loadComments(openItem.id)
-        }
-      }, 150)
+    if (teamsPage.loading) return
+    setTeamId(current => teams.some(team => team.id === current) ? current : teams[0]?.id ?? null)
+  }, [teams, teamsPage.loading])
+  const realtimeResources = useMemo<RealtimeResource[]>(() => [
+    ...(actor?.workspace_id
+      ? [{ type: 'workspace' as const, id: actor.workspace_id }]
+      : []),
+    ...(teamId ? [{ type: 'team' as const, id: teamId }] : []),
+    ...(selectedProject
+      ? [{ type: 'project' as const, id: selectedProject.id }]
+      : []),
+    ...(selectedItem
+      ? [{ type: 'work_item' as const, id: selectedItem.id }]
+      : []),
+  ], [actor?.workspace_id, selectedItem?.id, selectedProject?.id, teamId])
+  useRealtimeSubscription(realtimeResources, invalidation => {
+    const targets = homeRefreshTargets(invalidation, {
+      teamId: teamId ?? undefined,
+      projectId: selectedProject?.id,
+      workItemId: selectedItem?.id,
+    })
+    if (invalidation.reason === 'resync') {
+      const snapshots: Array<Promise<unknown>> = [
+        teamsPage.refresh(), statesPage.refresh(), humansPage.refresh(),
+        projectsPage.refresh(), viewsPage.refresh(), itemsPage.refresh(),
+      ]
+      if (selectedItem) {
+        snapshots.push(apiRequest<WorkItem>(
+          `/api/v1/work-items/${selectedItem.id}`,
+        ).then(setSelectedItem))
+        snapshots.push(commentsPage.refresh())
+      }
+      return Promise.all(snapshots).then(() => undefined)
     }
-    return () => { if (refreshTimer !== undefined) window.clearTimeout(refreshTimer); stream.close() }
-  }, [actor?.id, loadComments])
+    if (targets.has('teams')) void teamsPage.refresh()
+    if (targets.has('states')) void statesPage.refresh()
+    if (targets.has('humans')) void humansPage.refresh()
+    if (targets.has('projects')) void projectsPage.refresh()
+    if (targets.has('views')) void viewsPage.refresh()
+    if (targets.has('items')) void itemsPage.refresh()
+    if (targets.has('items')) {
+      if (
+        selectedItem
+        && invalidation.event.invalidates.some(resource =>
+          resource.type === 'work_item' && resource.id === selectedItem.id)
+      ) {
+        void apiRequest<WorkItem>(
+          `/api/v1/work-items/${selectedItem.id}`,
+        ).then(setSelectedItem)
+      }
+    }
+  })
 
   const chooseTeam = (nextTeamId: string) => {
     setTeamId(nextTeamId)
     setFilters(emptyFilters)
     setSelectedItem(null)
     setSelectedProject(null)
-    setComments([])
   }
   const chooseScope = (nextScope: Scope) => {
     setScope(nextScope)
     setSelectedProject(null)
     setSelectedItem(null)
-    setComments([])
     if (nextScope === 'my-work') setFilters({ mine: true })
     else if (nextScope === 'active') { setFilters({ statusCategory: 'started' }); setLayout('board') }
     else if (nextScope === 'backlog') setFilters({ statusCategory: 'backlog' })
     else setFilters(emptyFilters)
   }
   const openItem = async (id: string) => {
-    try { setError(''); const item = await apiRequest<WorkItem>(`/api/v1/work-items/${id}`); setSelectedItem(item); await loadComments(id) } catch (reason) { setError(requestError(reason)) }
+    try { setError(''); const item = await apiRequest<WorkItem>(`/api/v1/work-items/${id}`); setSelectedItem(item) } catch (reason) { setError(requestError(reason)) }
   }
   const openProject = async (id: string) => {
     try {
       setError('')
       setScope('projects')
       setSelectedItem(null)
-      setComments([])
       const project = await apiRequest<Project>(`/api/v1/projects/${id}`)
       setSelectedProject(project)
       setFilters(current => ({ ...current, projectId: project.id }))
@@ -177,7 +210,7 @@ export default function HomePage() {
     const form = new FormData(formElement)
     try {
       const team = await apiRequest<Team>('/api/v1/teams', { method: 'POST', headers: json({}), body: JSON.stringify({ name: String(form.get('name') ?? ''), key: String(form.get('key') ?? '').toUpperCase() }) })
-      formElement.reset(); setTeamId(team.id); setFilters(emptyFilters); await load()
+      formElement.reset(); setTeamId(team.id); setFilters(emptyFilters); await teamsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const updateTeam = async (event: FormEvent<HTMLFormElement>) => {
@@ -186,7 +219,7 @@ export default function HomePage() {
     const form = new FormData(event.currentTarget)
     try {
       await apiRequest(`/api/v1/teams/${selectedTeam.id}`, { method: 'PATCH', headers: revisionHeader(selectedTeam.revision), body: JSON.stringify({ name: String(form.get('name') ?? ''), key: String(form.get('key') ?? '').toUpperCase() }) })
-      await load()
+      await teamsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const deleteTeam = async () => {
@@ -195,7 +228,7 @@ export default function HomePage() {
       const removedId = selectedTeam.id
       await apiRequest(`/api/v1/teams/${removedId}`, { method: 'DELETE', headers: { 'If-Match': `"revision-${selectedTeam.revision}"` } })
       const next = teams.find(team => team.id !== removedId) ?? null
-      setTeamId(next?.id ?? null); setFilters(emptyFilters); setSelectedItem(null); setSelectedProject(null); await load()
+      setTeamId(next?.id ?? null); setFilters(emptyFilters); setSelectedItem(null); setSelectedProject(null); await teamsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const createState = async (event: FormEvent<HTMLFormElement>) => {
@@ -205,7 +238,7 @@ export default function HomePage() {
     const form = new FormData(formElement)
     try {
       await apiRequest(`/api/v1/teams/${selectedTeam.id}/states`, { method: 'POST', headers: json({}), body: JSON.stringify({ name: String(form.get('name') ?? ''), category: form.get('category'), color: form.get('color') || undefined, position: states.length }) })
-      formElement.reset(); await load()
+      formElement.reset(); await statesPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const createWorkItem = async (event: FormEvent<HTMLFormElement>) => {
@@ -214,14 +247,14 @@ export default function HomePage() {
     const formElement = event.currentTarget; const form = new FormData(formElement); const state = states.find(candidate => candidate.id === form.get('statusId'))
     try {
       await apiRequest('/api/v1/work-items', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, title: String(form.get('title') ?? ''), description: String(form.get('description') ?? '') || undefined, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || undefined, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : undefined), projectId: String(form.get('projectId') ?? '') || undefined, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
-      formElement.reset(); await load()
+      formElement.reset(); await itemsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const moveItem = async (item: WorkItem, state: WorkflowState) => {
     if (!actor) return
     try {
       await apiRequest(`/api/v1/work-items/${item.id}`, { method: 'PATCH', headers: revisionHeader(item.revision), body: JSON.stringify({ statusId: state.id, responsibleHumanActorId: state.category === 'started' ? item.responsible_human_actor_id ?? actor.id : item.responsible_human_actor_id }) })
-      await load(); if (selectedItem?.id === item.id) await openItem(item.id)
+      await itemsPage.refresh(); if (selectedItem?.id === item.id) await openItem(item.id)
     } catch (reason) { setError(requestError(reason)) }
   }
   const saveItem = async (event: FormEvent<HTMLFormElement>) => {
@@ -230,7 +263,7 @@ export default function HomePage() {
     const form = new FormData(event.currentTarget); const state = states.find(candidate => candidate.id === form.get('statusId'))
     try {
       await apiRequest(`/api/v1/work-items/${selectedItem.id}`, { method: 'PATCH', headers: revisionHeader(selectedItem.revision), body: JSON.stringify({ title: String(form.get('title') ?? ''), description: String(form.get('description') ?? '') || null, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || null, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : null), projectId: String(form.get('projectId') ?? '') || null, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
-      await load(); await openItem(selectedItem.id)
+      await itemsPage.refresh(); await openItem(selectedItem.id)
     } catch (reason) { setError(requestError(reason)) }
   }
   const createProject = async (event: FormEvent<HTMLFormElement>) => {
@@ -239,7 +272,7 @@ export default function HomePage() {
     const formElement = event.currentTarget; const form = new FormData(formElement)
     try {
       const project = await apiRequest<{ id: string }>('/api/v1/projects', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, name: String(form.get('name') ?? ''), summary: String(form.get('summary') ?? '') || undefined, description: String(form.get('description') ?? '') || undefined, leadActorId: String(form.get('leadActorId') ?? '') || null, targetDate: String(form.get('targetDate') ?? '') || null }) })
-      formElement.reset(); await load(); await openProject(project.id)
+      formElement.reset(); await projectsPage.refresh(); await openProject(project.id)
     } catch (reason) { setError(requestError(reason)) }
   }
   const createComment = async (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => {
@@ -248,41 +281,159 @@ export default function HomePage() {
     const formElement = event.currentTarget; const form = new FormData(formElement)
     try {
       await apiRequest(`/api/v1/work-items/${selectedItem.id}/comments`, { method: 'POST', headers: json({}), body: JSON.stringify({ body: String(form.get('body') ?? ''), parentCommentId, mentions: form.getAll('mentions').map(String) }) })
-      formElement.reset(); await loadComments(selectedItem.id)
+      formElement.reset(); await commentsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const updateComment = async (comment: Comment, patch: Record<string, string | boolean>) => {
     if (!selectedItem) return
-    try { await apiRequest(`/api/v1/comments/${comment.id}`, { method: 'PATCH', headers: revisionHeader(comment.revision), body: JSON.stringify(patch) }); await loadComments(selectedItem.id) } catch (reason) { setError(requestError(reason)) }
+    try { await apiRequest(`/api/v1/comments/${comment.id}`, { method: 'PATCH', headers: revisionHeader(comment.revision), body: JSON.stringify(patch) }); await commentsPage.refresh() } catch (reason) { setError(requestError(reason)) }
   }
   const createSavedView = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formElement = event.currentTarget; const form = new FormData(formElement)
     try {
       await apiRequest('/api/v1/views', { method: 'POST', headers: json({}), body: JSON.stringify({ name: String(form.get('name') ?? ''), teamId: selectedTeam?.id, filters, layout }) })
-      formElement.reset(); await load()
+      formElement.reset(); await viewsPage.refresh()
     } catch (reason) { setError(requestError(reason)) }
   }
   const applyView = (viewId: string) => {
     const view = views.find(candidate => candidate.id === viewId)
     if (!view) return
     if (view.team_id) setTeamId(view.team_id)
-    setFilters(view.filters ?? emptyFilters); setLayout(view.layout); setSelectedProject(null); setSelectedItem(null); setComments([])
+    setFilters(view.filters ?? emptyFilters); setLayout(view.layout); setSelectedProject(null); setSelectedItem(null)
   }
-  const signOut = async () => { try { await apiRequest('/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; clearCsrfToken(); window.location.assign('/login') }
+  const signOut = async () => { try { await apiMutation('logout', '/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; clearCsrfToken(); window.location.assign('/login') }
 
   if (loading) return <main className="center" data-testid="loading">Loading WorkMesh...</main>
   if (!actor) return <main className="center" data-testid="load-error"><p className="error">{error || 'Unable to load WorkMesh.'}</p><button onClick={() => void load()}>Retry</button></main>
-  const pageTitle = scope === 'inbox' ? 'Inbox' : selectedProject ? selectedProject.name : scope === 'projects' ? 'Projects' : scope === 'my-work' ? 'My Work' : scope === 'active' ? 'Active work' : 'Backlog'
+  const pageTitle = scope === 'inbox' ? 'Inbox' : scope === 'guidance' ? 'Guidance' : selectedProject ? selectedProject.name : scope === 'projects' ? 'Projects' : scope === 'my-work' ? 'My Work' : scope === 'active' ? 'Active work' : 'Backlog'
   return <main className="shell">
-    <a className="operations-shortcut" data-testid="view-operations" href="/operations">Planning &amp; Operations</a>
-    <aside aria-label="Main navigation"><h1>WorkMesh</h1><small>{actor.displayName}</small><label className="team-switcher">Team<select aria-label="Current team" value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>No team</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label><nav><button data-testid="view-inbox" className={scope === 'inbox' ? 'selected' : ''} onClick={() => chooseScope('inbox')}>Inbox <span className="placeholder">Soon</span></button><button data-testid="view-my-work" className={scope === 'my-work' ? 'selected' : ''} onClick={() => chooseScope('my-work')}>My Work</button><button data-testid="view-active" className={scope === 'active' ? 'selected' : ''} onClick={() => chooseScope('active')}>Active</button><button data-testid="view-backlog" className={scope === 'backlog' ? 'selected' : ''} onClick={() => chooseScope('backlog')}>Backlog</button><button data-testid="view-projects" className={scope === 'projects' ? 'selected' : ''} onClick={() => chooseScope('projects')}>Projects</button><a data-testid="view-agents" href="/agents">Agents</a></nav><details className="team-admin"><summary>Team settings</summary><form onSubmit={createTeam}><input name="name" placeholder="New team name" required /><input name="key" placeholder="Key (e.g. ENG)" pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Create team</button></form>{selectedTeam && <><form onSubmit={updateTeam}><input name="name" defaultValue={selectedTeam.name} required /><input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Save team</button></form><button className="danger" onClick={() => void deleteTeam()}>Delete team</button><form onSubmit={createState}><input name="name" placeholder="New workflow status" required /><select name="category" defaultValue="planned"><option value="backlog">Backlog</option><option value="planned">Planned</option><option value="started">Started</option><option value="completed">Completed</option><option value="canceled">Canceled</option></select><input name="color" type="color" defaultValue="#64748b" /><button>Create status</button></form></>}</details><footer><button data-testid="logout" onClick={() => void signOut()}>Sign out</button></footer></aside>
-    <section className="content"><header><div><h2>{pageTitle}</h2>{selectedProject && <p>{selectedProject.summary || 'Project overview'}</p>}</div><div className="layout-toggle" aria-label="Layout"><button className={layout === 'list' ? 'selected' : ''} data-testid="layout-list" onClick={() => setLayout('list')}>List</button><button className={layout === 'board' ? 'selected' : ''} data-testid="layout-board" onClick={() => setLayout('board')}>Board</button></div></header>{error && <p className="error" role="alert">{error}</p>}
-      {scope === 'inbox' ? <InboxPanel /> : <>{selectedTeam ? <><FilterBar filters={filters} states={states} humans={humans} projects={teamProjects} views={views.filter(view => !view.team_id || view.team_id === selectedTeam.id)} onChange={setFilters} onClear={() => { setFilters(emptyFilters); setSelectedProject(null) }} onApplyView={applyView} onCreateView={createSavedView} />
-        {scope === 'projects' && <><section className="project-strip" aria-label="Projects">{teamProjects.map(project => <button key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)}>{project.name}</button>)}{teamProjects.length === 0 && <span className="empty">No projects yet.</span>}</section>{selectedProject && <><section className="project-overview" data-testid="project-overview"><strong>{selectedProject.status}</strong>{selectedProject.target_date && <span>Target: {dateValue(selectedProject.target_date)}</span>}{selectedProject.description && <p>{selectedProject.description}</p>}</section><ProjectDelivery projectId={selectedProject.id} /></>}<form className="project-form" onSubmit={createProject} data-testid="create-project"><input name="name" placeholder="Project name" required /><input name="summary" placeholder="Summary" /><input name="targetDate" type="date" /><select name="leadActorId"><option value="">No lead</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><textarea name="description" placeholder="Project description" /><button>Create project</button></form></>}
-        <form className="work-form" onSubmit={createWorkItem} data-testid="create-work-item"><input name="title" placeholder="Title" required /><textarea name="description" placeholder="Description" /><select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select><select name="priority"><option value="none">No priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><input name="dueDate" type="date" aria-label="Due date" /><select name="ownerId"><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><select name="projectId"><option value="">No project</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select><input name="labels" placeholder="labels, comma separated" /><button disabled={!states[0]} data-testid="create-work-item-submit">Create work item</button></form>{layout === 'list' ? <WorkList items={items} onOpen={openItem} /> : <WorkBoard states={states} items={items} onOpen={openItem} onMove={moveItem} />}</> : <section className="empty">Create a team to start tracking work.</section>}</>}</section>
-    {selectedItem && <WorkItemDrawer key={`${selectedItem.id}:${selectedItem.revision}`} item={selectedItem} humanActorId={actor.id} states={states} humans={humans} projects={teamProjects} comments={comments} onClose={() => { setSelectedItem(null); setComments([]) }} onSave={saveItem} onComment={createComment} onUpdateComment={updateComment} />}
+    <aside aria-label="Main navigation">
+      <h1>WorkMesh</h1>
+      <small>{actor.displayName}</small>
+      <label className="team-switcher">Team<select aria-label="Current team" value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>No team</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label>
+      <LoadMoreButton collection={teamsPage} label="teams" />
+      <nav><button data-testid="view-inbox" className={scope === 'inbox' ? 'selected' : ''} onClick={() => chooseScope('inbox')}>Inbox <span className="placeholder">Soon</span></button><button data-testid="view-my-work" className={scope === 'my-work' ? 'selected' : ''} onClick={() => chooseScope('my-work')}>My Work</button><button data-testid="view-active" className={scope === 'active' ? 'selected' : ''} onClick={() => chooseScope('active')}>Active</button><button data-testid="view-backlog" className={scope === 'backlog' ? 'selected' : ''} onClick={() => chooseScope('backlog')}>Backlog</button><button data-testid="view-projects" className={scope === 'projects' ? 'selected' : ''} onClick={() => chooseScope('projects')}>Projects</button><button data-testid="view-guidance" className={scope === 'guidance' ? 'selected' : ''} onClick={() => chooseScope('guidance')}>Guidance</button><a data-testid="view-agents" href="/agents">Agents</a></nav>
+      <div className="sidebar-release">
+        {operationsEnabled && <a className="operations-shortcut" data-testid="view-operations" href="/operations">Planning &amp; Operations</a>}
+        {releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · build {releaseInfo.buildSha} · schema {releaseInfo.schemaBaseline}</small>}
+      </div>
+      <details className="team-admin"><summary>Team settings</summary><form onSubmit={createTeam}><input name="name" placeholder="New team name" required /><input name="key" placeholder="Key (e.g. ENG)" pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Create team</button></form>{selectedTeam && <><form onSubmit={updateTeam}><input name="name" defaultValue={selectedTeam.name} required /><input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /><button>Save team</button></form><button className="danger" onClick={() => void deleteTeam()}>Delete team</button><form onSubmit={createState}><input name="name" placeholder="New workflow status" required /><select name="category" defaultValue="planned"><option value="backlog">Backlog</option><option value="planned">Planned</option><option value="started">Started</option><option value="completed">Completed</option><option value="canceled">Canceled</option></select><input name="color" type="color" defaultValue="#64748b" /><button>Create status</button></form></>}</details>
+      <footer><button data-testid="logout" onClick={() => void signOut()}>Sign out</button></footer>
+    </aside>
+    <section className="content"><header><div><h2>{pageTitle}</h2>{selectedProject && <p>{selectedProject.summary || 'Project overview'}</p>}</div>{scope !== 'inbox' && scope !== 'guidance' && <div className="layout-toggle" aria-label="Layout"><button className={layout === 'list' ? 'selected' : ''} data-testid="layout-list" onClick={() => setLayout('list')}>List</button><button className={layout === 'board' ? 'selected' : ''} data-testid="layout-board" onClick={() => setLayout('board')}>Board</button></div>}</header>{(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
+      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <><FilterBar filters={filters} states={states} humans={humans} projects={teamProjects} views={views.filter(view => !view.team_id || view.team_id === selectedTeam.id)} onChange={setFilters} onClear={() => { setFilters(emptyFilters); setSelectedProject(null) }} onApplyView={applyView} onCreateView={createSavedView} />
+        <div className="collection-continuation"><LoadMoreButton collection={statesPage} label="workflow states" /><LoadMoreButton collection={humansPage} label="people" /><LoadMoreButton collection={viewsPage} label="saved views" /></div>
+        {scope === 'projects' && <><section className="project-strip" aria-label="Projects">{teamProjects.map(project => <button key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)}>{project.name}</button>)}{teamProjects.length === 0 && <span className="empty">No projects yet.</span>}</section><LoadMoreButton collection={projectsPage} label="projects" />{selectedProject && <><section className="project-overview" data-testid="project-overview"><strong>{selectedProject.status}</strong>{selectedProject.target_date && <span>Target: {dateValue(selectedProject.target_date)}</span>}{selectedProject.description && <p>{selectedProject.description}</p>}</section><ProjectDelivery projectId={selectedProject.id} /></>}<form className="project-form" onSubmit={createProject} data-testid="create-project"><input name="name" placeholder="Project name" required /><input name="summary" placeholder="Summary" /><input name="targetDate" type="date" /><select name="leadActorId"><option value="">No lead</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><textarea name="description" placeholder="Project description" /><button>Create project</button></form></>}
+        <form className="work-form" onSubmit={createWorkItem} data-testid="create-work-item"><input name="title" placeholder="Title" required /><textarea name="description" placeholder="Description" /><select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select><select name="priority"><option value="none">No priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><input name="dueDate" type="date" aria-label="Due date" /><select name="ownerId"><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select><select name="projectId"><option value="">No project</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select><input name="labels" placeholder="labels, comma separated" /><button disabled={!states[0]} data-testid="create-work-item-submit">Create work item</button></form>{layout === 'list' ? <WorkList items={items} onOpen={openItem} /> : <WorkBoard states={states} items={items} onOpen={openItem} onMove={moveItem} />}<LoadMoreButton collection={itemsPage} label="work items" /></> : <section className="empty">Create a team to start tracking work.</section>}</>}</section>
+    {selectedItem && <WorkItemDrawer key={`${selectedItem.id}:${selectedItem.revision}`} item={selectedItem} workspaceId={actor.workspace_id ?? ''} humanActorId={actor.id} states={states} humans={humans} projects={teamProjects} comments={comments} commentsPage={commentsPage} onClose={() => setSelectedItem(null)} onSave={saveItem} onComment={createComment} onUpdateComment={updateComment} />}
   </main>
+}
+
+type GuidanceScope = 'workspace' | 'team' | 'project'
+type GuidanceRevision = { id: string; revisionNumber: number; contentHash: string; changeSummary: string; authorActorId: string; authorDisplayName: string; publishedAt: string }
+type GuidanceCurrent = { scope: GuidanceScope; scopeId: string; documentId: string | null; status: 'unpublished' | 'active' | 'archived'; revision: number; currentRevision: GuidanceRevision | null; markdown: string; updatedAt: string }
+type GuidanceHistory = { scope: GuidanceScope; scopeId: string; documentId: string | null; revision: number; status: GuidanceCurrent['status']; currentRevisionId: string | null; revisions: GuidanceRevision[]; audit: Array<{ id: string; action: 'published' | 'archived' | 'rolled_back'; fromRevisionId: string | null; toRevisionId: string | null; actorId: string; actorDisplayName: string; reason: string; createdAt: string }> }
+type GuidanceDiff = { from: GuidanceRevision; to: GuidanceRevision; changes: Array<{ kind: 'context' | 'removed' | 'added'; oldLine: number | null; newLine: number | null; text: string }> }
+
+function GuidancePanel({ workspaceId, team, projects }: { workspaceId: string; team: Team | null; projects: Project[] }) {
+  const [scope, setScope] = useState<GuidanceScope>('workspace')
+  const [projectId, setProjectId] = useState('')
+  const [current, setCurrent] = useState<GuidanceCurrent | null>(null)
+  const [history, setHistory] = useState<GuidanceHistory | null>(null)
+  const [markdown, setMarkdown] = useState('')
+  const [changeSummary, setChangeSummary] = useState('')
+  const [reason, setReason] = useState('')
+  const [fromRevisionId, setFromRevisionId] = useState('')
+  const [toRevisionId, setToRevisionId] = useState('')
+  const [diff, setDiff] = useState<GuidanceDiff | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    setProjectId(value => projects.some(project => project.id === value) ? value : projects[0]?.id ?? '')
+  }, [projects])
+  const id = scope === 'workspace' ? workspaceId : scope === 'team' ? team?.id ?? '' : projectId
+  const plural = `${scope}s`
+  const root = id ? `/api/v1/${plural}/${id}/guidance` : ''
+  const loadGuidance = useCallback(async () => {
+    if (!root) {
+      setCurrent(null); setHistory(null); setMarkdown(''); setDiff(null)
+      return
+    }
+    setLoading(true); setError('')
+    try {
+      const [nextCurrent, nextHistory] = await Promise.all([
+        apiRequest<GuidanceCurrent>(root),
+        apiRequest<GuidanceHistory>(`${root}/history`),
+      ])
+      setCurrent(nextCurrent); setHistory(nextHistory); setMarkdown(nextCurrent.markdown); setDiff(null)
+      const newest = nextHistory.revisions[0]?.id ?? ''
+      const previous = nextHistory.revisions[1]?.id ?? newest
+      setFromRevisionId(previous); setToRevisionId(newest)
+    } catch (reasonValue) { setError(requestError(reasonValue)) } finally { setLoading(false) }
+  }, [root])
+  useEffect(() => { void loadGuidance() }, [loadGuidance])
+
+  const publish = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!root || !current) return
+    setError('')
+    try {
+      await apiMutation(`guidance:${scope}:${id}:publish`, root, { method: 'PUT', headers: revisionHeader(current.revision), body: JSON.stringify({ markdown, changeSummary }) })
+      setChangeSummary(''); await loadGuidance()
+    } catch (reasonValue) { setError(requestError(reasonValue)) }
+  }
+  const archive = async () => {
+    if (!root || !current || !reason) return
+    setError('')
+    try {
+      await apiMutation(`guidance:${scope}:${id}:archive`, `${root}/archive`, { method: 'POST', headers: revisionHeader(current.revision), body: JSON.stringify({ reason }) })
+      setReason(''); await loadGuidance()
+    } catch (reasonValue) { setError(requestError(reasonValue)) }
+  }
+  const rollback = async (revisionId: string) => {
+    if (!root || !current || !reason) return
+    setError('')
+    try {
+      await apiMutation(`guidance:${scope}:${id}:rollback:${revisionId}`, `${root}/rollback`, { method: 'POST', headers: revisionHeader(current.revision), body: JSON.stringify({ revisionId, reason }) })
+      setReason(''); await loadGuidance()
+    } catch (reasonValue) { setError(requestError(reasonValue)) }
+  }
+  const compare = async () => {
+    if (!root || !fromRevisionId || !toRevisionId) return
+    setError('')
+    try {
+      const query = new URLSearchParams({ fromRevisionId, toRevisionId })
+      setDiff(await apiRequest<GuidanceDiff>(`${root}/diff?${query}`))
+    } catch (reasonValue) { setError(requestError(reasonValue)) }
+  }
+
+  return <section className="guidance-panel" data-testid="guidance-panel">
+    <p className="guidance-intro">Versioned instructions for agents. Published revisions are immutable and Session context pins the exact revision and SHA-256 hash it used.</p>
+    <div className="guidance-toolbar">
+      <label>Scope<select aria-label="Guidance scope" value={scope} onChange={event => setScope(event.currentTarget.value as GuidanceScope)}><option value="workspace">Workspace</option><option value="team">Team</option><option value="project">Project</option></select></label>
+      {scope === 'team' && <label>Team<input value={team?.name ?? 'No team selected'} readOnly /></label>}
+      {scope === 'project' && <label>Project<select aria-label="Guidance project" value={projectId} onChange={event => setProjectId(event.currentTarget.value)}><option value="" disabled>No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
+      <div className={`guidance-status status-${current?.status ?? 'unpublished'}`}><strong>{current?.status ?? 'unavailable'}</strong><span>document revision {current?.revision ?? 0}</span></div>
+    </div>
+    {!root && <p className="empty">Select or create the required scope before editing Guidance.</p>}
+    {error && <p className="error" role="alert">{error}</p>}
+    {loading && <p>Loading Guidance…</p>}
+    {root && current && <>
+      <form className="guidance-editor" onSubmit={event => void publish(event)}>
+        <label>Markdown<textarea data-testid="guidance-markdown" value={markdown} onChange={event => setMarkdown(event.currentTarget.value)} rows={16} maxLength={100000} /></label>
+        <label>Change summary<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
+        <button data-testid="publish-guidance">Publish immutable revision</button>
+      </form>
+      {current.currentRevision && <dl className="guidance-current"><div><dt>Current revision</dt><dd>#{current.currentRevision.revisionNumber}</dd></div><div><dt>Author</dt><dd>{current.currentRevision.authorDisplayName}</dd></div><div><dt>Published</dt><dd>{new Date(current.currentRevision.publishedAt).toLocaleString()}</dd></div><div><dt>SHA-256</dt><dd>{current.currentRevision.contentHash}</dd></div></dl>}
+      <section className="guidance-actions"><label>Audit reason<input value={reason} onChange={event => setReason(event.currentTarget.value)} placeholder="Required for archive or rollback" maxLength={2000} /></label><button className="danger" disabled={!reason || current.status !== 'active'} onClick={() => void archive()}>Archive current Guidance</button></section>
+      <section className="guidance-history"><h3>Revision history</h3>{history?.revisions.length ? <ul>{history.revisions.map(revision => <li key={revision.id} className={history.currentRevisionId === revision.id ? 'selected' : ''}><div><strong>#{revision.revisionNumber} · {revision.changeSummary}</strong><small>{revision.authorDisplayName} · {new Date(revision.publishedAt).toLocaleString()}</small><code>{revision.contentHash}</code></div><button disabled={!reason || history.currentRevisionId === revision.id} onClick={() => void rollback(revision.id)}>Roll back pointer</button></li>)}</ul> : <p className="empty">No published revisions.</p>}</section>
+      {(history?.revisions.length ?? 0) >= 2 && <section className="guidance-compare"><h3>Compare revisions</h3><div><select aria-label="From Guidance revision" value={fromRevisionId} onChange={event => setFromRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><select aria-label="To Guidance revision" value={toRevisionId} onChange={event => setToRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><button onClick={() => void compare()}>Show diff</button></div>{diff && <pre data-testid="guidance-diff">{diff.changes.map((change, index) => <span key={`${change.kind}:${index}`} className={`diff-${change.kind}`}>{change.kind === 'added' ? '+' : change.kind === 'removed' ? '-' : ' '} {change.text}{'\n'}</span>)}</pre>}</section>}
+      <section className="guidance-audit"><h3>Pointer audit</h3>{history?.audit.length ? <ol>{history.audit.map(fact => <li key={fact.id}><strong>{fact.action.replace('_', ' ')}</strong> by {fact.actorDisplayName} · {fact.reason} <time>{new Date(fact.createdAt).toLocaleString()}</time></li>)}</ol> : <p>No pointer changes yet.</p>}</section>
+      {scope === 'project' && projects.find(project => project.id === projectId)?.description && <div className="guidance-description-note"><strong>Project description (not Guidance)</strong><p>{projects.find(project => project.id === projectId)?.description}</p></div>}
+    </>}
+  </section>
 }
 
 function FilterBar({ filters, states, humans, projects, views, onChange, onClear, onApplyView, onCreateView }: { filters: Filters; states: WorkflowState[]; humans: Human[]; projects: Project[]; views: SavedView[]; onChange: (filters: Filters) => void; onClear: () => void; onApplyView: (id: string) => void; onCreateView: (event: FormEvent<HTMLFormElement>) => Promise<void> }) {
@@ -302,10 +453,11 @@ function WorkBoard({ states, items, onOpen, onMove }: { states: WorkflowState[];
 }
 
 function MentionPicker({ humans }: { humans: Human[] }) { return <label className="mentions">Mention people<select name="mentions" multiple aria-label="Mention people">{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label> }
-function WorkItemDrawer({ item, humanActorId, states, humans, projects, comments, onClose, onSave, onComment, onUpdateComment }: { item: WorkItem; humanActorId: string; states: WorkflowState[]; humans: Human[]; projects: Project[]; comments: Comment[]; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => Promise<void>; onComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onUpdateComment: (comment: Comment, patch: Record<string, string | boolean>) => Promise<void> }) {
-  const [sessions, setSessions] = useState<AgentSession[]>([])
-  useEffect(() => { void optionalAgentRequest<AgentSession[]>(`/api/v1/agent-sessions?workItemId=${encodeURIComponent(item.id)}`).then(value => setSessions(value ?? [])).catch(() => setSessions([])) }, [item.id])
-  return <aside className="drawer" aria-label="Work item details" data-testid="work-item-drawer"><header><h2>{item.team_key}-{item.number}</h2><button onClick={onClose}>Close</button></header><form onSubmit={event => void onSave(event)}><label>Title<input name="title" defaultValue={item.title} required /></label><label>Description<textarea name="description" defaultValue={item.description ?? ''} /></label><div className="drawer-grid"><label>Status<select name="statusId" defaultValue={item.status_id}>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label><label>Priority<select name="priority" defaultValue={item.priority}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{priority}</option>)}</select></label><label>Due date<input name="dueDate" type="date" defaultValue={dateValue(item.due_date)} /></label><label>Owner<select name="ownerId" defaultValue={item.responsible_human_actor_id ?? ''}><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label><label>Project<select name="projectId" defaultValue={item.project_id ?? ''}><option value="">No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label><label>Labels<input name="labels" defaultValue={item.labels.join(', ')} /></label></div><button data-testid="save-work-item">Save changes</button></form>
-    <WorkRoom workItemId={item.id} legacyComments={comments} legacyHumans={humans} onLegacyComment={onComment} onLegacyUpdate={onUpdateComment} />
-    <AgentWorkPanel workItemId={item.id} workItemTeamId={item.team_id} workItemRevision={item.revision} humanActorId={humanActorId} onSessionCreated={session => setSessions(current => [session, ...current])} /></aside>
+function WorkItemDrawer({ item, workspaceId, humanActorId, states, humans, projects, comments, commentsPage, onClose, onSave, onComment, onUpdateComment }: { item: WorkItem; workspaceId: string; humanActorId: string; states: WorkflowState[]; humans: Human[]; projects: Project[]; comments: Comment[]; commentsPage: ReturnType<typeof usePagedApiList<Comment>>; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => Promise<void>; onComment: (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => Promise<void>; onUpdateComment: (comment: Comment, patch: Record<string, string | boolean>) => Promise<void> }) {
+  const reviewers = item.shared_reviewers ?? []
+  return <aside className="drawer" aria-label="Work item details" data-testid="work-item-drawer"><header><h2>{item.team_key}-{item.number}</h2><button onClick={onClose}>Close</button></header><form onSubmit={event => void onSave(event)}><label>Title<input name="title" defaultValue={item.title} required /></label><label>Description<textarea name="description" defaultValue={item.description ?? ''} /></label><div className="drawer-grid"><label>Status<select name="statusId" defaultValue={item.status_id}>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label><label>Priority<select name="priority" defaultValue={item.priority}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{priority}</option>)}</select></label><label>Due date<input name="dueDate" type="date" defaultValue={dateValue(item.due_date)} /></label><label>Responsible human<select name="ownerId" defaultValue={item.responsible_human_actor_id ?? ''}><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label><label>Project<select name="projectId" defaultValue={item.project_id ?? ''}><option value="">No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label><label>Labels<input name="labels" defaultValue={item.labels.join(', ')} /></label></div><button data-testid="save-work-item">Save changes</button></form>
+    <section className="executor-summary" aria-label="Responsibility and active execution" data-testid="executor-summary"><h3>Responsibility and execution</h3><p data-testid="responsible-human"><strong>Responsible human:</strong> {item.responsible_human?.display_name ?? 'Unassigned'}</p>{item.active_executor ? <p data-testid="active-executor"><strong>Active executor:</strong> {item.active_executor.agent_display_name} ({item.active_executor.agent_slug}) · {item.active_executor.execution_state} · heartbeat {item.active_executor.heartbeat_health} · lease until {new Date(item.active_executor.lease_expires_at).toLocaleString()}</p> : <p data-testid="active-executor"><strong>Active executor:</strong> None</p>}<div data-testid="shared-reviewers"><strong>Shared reviewers:</strong>{reviewers.length ? <ul>{reviewers.map(reviewer => <li key={reviewer.lease_id}>{reviewer.agent_display_name} ({reviewer.agent_slug}) · {reviewer.execution_state} · lease until {new Date(reviewer.lease_expires_at).toLocaleString()}</li>)}</ul> : ' None'}</div></section>
+    <WorkRoom workItemId={item.id} legacyComments={comments} legacyHumans={humans} onLegacyComment={onComment} onLegacyUpdate={onUpdateComment} onLegacyRefresh={commentsPage.refresh} />
+    <LoadMoreButton collection={commentsPage} label="comments" />
+    <AgentWorkPanel workspaceId={workspaceId} workItemId={item.id} workItemTeamId={item.team_id} workItemRevision={item.revision} humanActorId={humanActorId} /></aside>
 }

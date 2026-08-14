@@ -1,5 +1,7 @@
 import type { AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput, StatusCategory } from '@workmesh/contracts'
 
+export * from './authorization.js'
+
 export class DomainError extends Error { constructor(readonly code: string, message: string, readonly details?: unknown) { super(message) } }
 export const defaultStates: ReadonlyArray<{ name: string; category: StatusCategory; color: string; position: number }> = [
   { name: 'Backlog', category: 'backlog', color: '#6b7280', position: 0 }, { name: 'Ready', category: 'planned', color: '#64748b', position: 1 }, { name: 'In Progress', category: 'started', color: '#3b82f6', position: 2 }, { name: 'In Review', category: 'started', color: '#8b5cf6', position: 3 }, { name: 'Done', category: 'completed', color: '#22c55e', position: 4 }, { name: 'Canceled', category: 'canceled', color: '#ef4444', position: 5 }
@@ -202,7 +204,7 @@ export interface AgentMutationGate {
   lease?: { required: boolean; held: boolean }
   expectedRevision?: number
   idempotencyKey?: string
-  operation: 'ack' | 'heartbeat' | 'prompt' | 'activity' | 'plan' | 'artifact' | 'complete' | 'fail' | 'stop_ack'
+  operation: 'ack' | 'heartbeat' | 'prompt' | 'activity' | 'plan' | 'artifact' | 'complete' | 'fail' | 'stop_ack' | 'room_message' | 'decision' | 'inbox_claim' | 'inbox_ack' | 'inbox_reply'
 }
 
 /**
@@ -224,6 +226,10 @@ export const authorizeAgentMutation = (gate: AgentMutationGate): void => {
     if (!gate.approval.approved) throw new DomainError('APPROVAL_REQUIRED', 'This mutation requires an approved request')
     if (gate.approval.payloadMatches === false) throw new DomainError('APPROVAL_PAYLOAD_MISMATCH', 'Approval payload does not match this mutation')
   }
+  // A heartbeat is diagnostic after Stop/stale/terminal. It still requires the
+  // exact live identity, delegation, capability, and scope above, but it never
+  // restores workflow state or ordinary mutation authority.
+  if (gate.operation === 'heartbeat') return
   if (gate.session.state === 'stopping') {
     if (gate.operation !== 'stop_ack') throw new DomainError('SESSION_STOPPED', 'Stopped sessions cannot perform ordinary writes')
     if (gate.session.stopCleanupAcknowledged) throw new DomainError('STOP_ACK_ALREADY_RECORDED', 'A stop cleanup acknowledgement was already recorded')
@@ -232,7 +238,7 @@ export const authorizeAgentMutation = (gate: AgentMutationGate): void => {
   if (isTerminalAgentSessionState(gate.session.state)) throw new DomainError('SESSION_STOPPED', 'Terminal sessions cannot perform ordinary writes', { state: gate.session.state })
   if (gate.operation === 'stop_ack') throw new DomainError('SESSION_NOT_ACTIVE', 'A stop cleanup acknowledgement is allowed only while stopping')
   if (gate.operation === 'ack' && gate.session.state !== 'queued' && gate.session.state !== 'stale') throw new DomainError('SESSION_NOT_ACTIVE', 'Only queued or stale sessions can be acknowledged', { state: gate.session.state })
-  if (gate.operation !== 'ack' && gate.operation !== 'heartbeat' && !activeAgentSessionStates.includes(gate.session.state as typeof activeAgentSessionStates[number])) {
+  if (gate.operation !== 'ack' && !activeAgentSessionStates.includes(gate.session.state as typeof activeAgentSessionStates[number])) {
     throw new DomainError('SESSION_NOT_ACTIVE', 'Session state does not allow this ordinary write', { state: gate.session.state, operation: gate.operation })
   }
 }

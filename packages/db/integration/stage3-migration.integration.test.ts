@@ -7,7 +7,11 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) thr
 const db = createDb(databaseUrl)
 
 describe('Stage 3 delivery migration', () => {
-  beforeAll(async () => { await applyMigrations(db) })
+  beforeAll(async () => {
+    await db.query('DROP SCHEMA public CASCADE')
+    await db.query('CREATE SCHEMA public')
+    await applyMigrations(db)
+  })
   afterAll(async () => { await db.end() })
 
   it('installs the bounded provider, review, artifact, and project surfaces', async () => {

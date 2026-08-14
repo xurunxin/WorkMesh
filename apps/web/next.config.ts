@@ -1,3 +1,6 @@
 import type { NextConfig } from 'next'
-const nextConfig:NextConfig={transpilePackages:['@workmesh/ui']}
+const nextConfig:NextConfig={
+  output:'standalone',
+  transpilePackages:['@workmesh/ui'],
+}
 export default nextConfig

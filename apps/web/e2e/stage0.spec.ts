@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 type ApiResponse<T> = { status: number; body: T };
+type PageResult<T> = { items: T[]; nextCursor: string | null };
 type Team = { id: string; name: string; key: string; revision: number };
 type State = { id: string; name: string; category: string };
 type WorkItem = {
@@ -128,6 +129,9 @@ test.describe("Stage 0 browser acceptance", () => {
     await page.goto("/install");
     const install = page.getByTestId("install-form");
     await install
+      .getByPlaceholder("Deployment bootstrap token")
+      .fill(process.env.WORKMESH_BOOTSTRAP_TOKEN!);
+    await install
       .getByPlaceholder("Workspace", { exact: true })
       .fill("Acceptance workspace");
     await install
@@ -140,6 +144,8 @@ test.describe("Stage 0 browser acceptance", () => {
       .fill("password-acceptance");
     await install.getByTestId("install-submit").click();
     await expect(page.getByRole("heading", { name: "WorkMesh" })).toBeVisible();
+    await expect(page.getByTestId("release-info")).toContainText("v1.0.0");
+    await expect(page.getByTestId("release-info")).toContainText("schema 1");
 
     const settings = page.locator("details.team-admin");
     await settings.locator("summary").click();
@@ -267,28 +273,31 @@ test.describe("Stage 0 browser acceptance", () => {
     );
 
     const [teams, me] = await Promise.all([
-      api<Team[]>(page, "/api/v1/teams"),
+      api<PageResult<Team>>(page, "/api/v1/teams"),
       api<{ actor: { id: string } }>(page, "/api/v1/auth/me"),
     ]);
     expect(teams.status).toBe(200);
     expect(me.status).toBe(200);
-    const team = teams.body.find(
+    const team = teams.body.items.find(
       (candidate) => candidate.name === editedTeamName,
     );
     expect(team).toBeDefined();
-    const states = await api<State[]>(page, `/api/v1/teams/${team!.id}/states`);
-    const ready = states.body.find((state) => state.name === "Ready");
-    const inProgress = states.body.find(
+    const states = await api<PageResult<State>>(
+      page,
+      `/api/v1/teams/${team!.id}/states`,
+    );
+    const ready = states.body.items.find((state) => state.name === "Ready");
+    const inProgress = states.body.items.find(
       (state) => state.name === "In Progress",
     );
     expect([ready, inProgress]).not.toContain(undefined);
 
     const target = (
-      await api<WorkItem[]>(
+      await api<PageResult<WorkItem>>(
         page,
         `/api/v1/work-items?teamId=${team!.id}&search=Focus%20issue`,
       )
-    ).body.find((item) => item.title === issueTitle);
+    ).body.items.find((item) => item.title === issueTitle);
     expect(target).toBeDefined();
     const ownerInvariant = await api<ApiError>(
       page,

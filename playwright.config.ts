@@ -18,6 +18,12 @@ const apiPort = "3101";
 const webPort = "3100";
 const webUrl = `http://127.0.0.1:${webPort}`;
 const apiUrl = `http://127.0.0.1:${apiPort}`;
+const bootstrapToken = process.env.WORKMESH_BOOTSTRAP_TOKEN;
+if (!bootstrapToken) {
+  throw new Error(
+    "Playwright acceptance tests require an explicit WORKMESH_BOOTSTRAP_TOKEN test fixture.",
+  );
+}
 
 export default defineConfig({
   testDir: "./apps/web/e2e",
@@ -47,8 +53,23 @@ export default defineConfig({
         SESSION_SECRET:
           process.env.SESSION_SECRET ??
           "acceptance-test-session-secret-0123456789",
+        WORKMESH_BOOTSTRAP_TOKEN: bootstrapToken,
         WEB_ORIGIN: webUrl,
         API_PORT: apiPort,
+        // Acceptance starts API + Web without the outbox worker that normally
+        // publishes Redis wake hints, so keep the durable PostgreSQL reconcile
+        // inside Playwright's cross-page assertion window.
+        REALTIME_HEALTHY_RECONCILE_MS: "1000",
+        WORKMESH_BETA_PLANNING: "true",
+        WORKMESH_BETA_TEMPLATES: "true",
+        WORKMESH_BETA_COSTS: "true",
+        WORKMESH_BETA_GITEA: "true",
+        WORKMESH_BETA_OPERATIONS_UI: "true",
+        WORKMESH_EXPERIMENTAL_AUTOMATION: "true",
+        WORKMESH_EXPERIMENTAL_AGENT_LOOPS: "true",
+        WORKMESH_EXPERIMENTAL_A2A: "true",
+        WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: "true",
+        WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: "true",
       },
     },
     {

@@ -1,1 +1,1 @@
-{"name":"@workmesh/config","private":true,"type":"module","exports":"./src/index.ts","scripts":{"build":"tsc -p tsconfig.json","lint":"tsc --noEmit","typecheck":"tsc --noEmit","test":"vitest run"},"dependencies":{"zod":"^3.24.3"}}
+{"name":"@workmesh/config","private":true,"type":"module","exports":"./src/index.ts","scripts":{"build":"tsc -p tsconfig.json","lint":"tsc --noEmit","typecheck":"tsc --noEmit","test":"vitest run"},"dependencies":{"@workmesh/contracts":"workspace:*","zod":"^3.24.3"}}

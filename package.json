@@ -8,15 +8,46 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:integration": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
+    "test:integration": "pnpm test:integration:db && pnpm test:integration:api && pnpm test:integration:worker && pnpm test:integration:recovery",
+    "test:integration:db": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration",
+    "test:integration:api": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration",
+    "test:integration:worker": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
+    "test:integration:recovery": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration",
     "test:e2e": "turbo run test:e2e",
+    "ci:validate": "node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs",
+    "release:manifest": "tsx scripts/create-release-manifest.mts",
     "db:migrate": "pnpm --filter @workmesh/db migrate",
     "db:seed": "pnpm --filter @workmesh/db seed",
     "db:create-admin": "pnpm --filter @workmesh/db create-admin",
-    "db:backup": "pnpm --filter @workmesh/db backup",
-    "db:restore": "pnpm --filter @workmesh/db restore",
+    "db:backup": "pnpm --filter @workmesh/recovery backup",
+    "db:restore": "pnpm --filter @workmesh/recovery restore",
+    "bootstrap:token": "node scripts/generate-bootstrap-token.mjs",
     "mcp:inspector": "pnpm --filter @workmesh/mcp inspector",
-    "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke"
+    "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke",
+    "test:conformance": "pnpm --filter @workmesh/conformance conformance",
+    "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",
+    "check:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts --check",
+    "generate:workmesh-skill": "node scripts/generate-workmesh-skill-artifact.mjs",
+    "check:workmesh-skill": "node scripts/generate-workmesh-skill-artifact.mjs --check",
+    "validate:production-images": "node -- scripts/validate-production-images.mjs",
+    "test:load:realtime": "pnpm --filter @workmesh/api test:load:realtime",
+    "test:load:heartbeat": "pnpm -C apps/api exec tsx ../../scripts/heartbeat-load.mts",
+    "provision:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak-provision.mts",
+    "test:soak:retention:formal": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak-formal.mts",
+    "test:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak.mts",
+    "test:restore:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restore-rehearsal.mts",
+    "test:acceptance:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restart-acceptance.mts",
+    "upgrade:retention:production": "pnpm -C apps/worker exec tsx ../../scripts/retention-production-upgrade.mts"
   },
-  "devDependencies": { "@playwright/test": "^1.55.0", "@types/node": "^22.15.2", "eslint": "^9.25.1", "prettier": "^3.5.3", "turbo": "^2.5.3", "typescript": "^5.8.3", "vitest": "^3.1.3" }
+  "devDependencies": { "@playwright/test": "^1.55.0", "@types/node": "^22.15.2", "eslint": "^9.25.1", "prettier": "^3.5.3", "tsx": "^4.19.3", "turbo": "^2.5.3", "typescript": "^5.8.3", "vitest": "^3.1.3", "yaml": "^2.7.1" },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@1": "1.1.18",
+      "fast-uri@>=3.0.0 <3.1.5": "3.1.5",
+      "fast-uri@>=4.0.0 <4.1.2": "4.1.2",
+      "ip-address@<=10.3.0": "10.3.1",
+      "postcss": "8.5.25",
+      "sharp": "0.35.3"
+    }
+  }
 }

@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "dev": "tsx watch src/http.ts",
-    "start": "tsx src/http.ts",
+    "start": "node dist/http.js",
+    "start:stdio": "node dist/stdio.js",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
     "@workmesh/agent-sdk": "workspace:*",
+    "@workmesh/contracts": "workspace:*",
     "zod": "^3.24.3"
   },
   "devDependencies": {

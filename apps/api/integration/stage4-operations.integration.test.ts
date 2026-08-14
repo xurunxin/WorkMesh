@@ -2,14 +2,28 @@ import { randomUUID } from 'node:crypto'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { FakeA2AAgent } from '@workmesh/a2a-adapter'
+import { loadFeatureConfig } from '@workmesh/config'
 import { buildApp } from '../src/server.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 4 API integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 4 API integration requires a dedicated *test* database.')
 const db = createDb(databaseUrl)
-const app = buildApp()
+const enabledFeatures = loadFeatureConfig({
+  WORKMESH_BETA_PLANNING: 'true',
+  WORKMESH_BETA_TEMPLATES: 'true',
+  WORKMESH_BETA_COSTS: 'true',
+  WORKMESH_BETA_GITEA: 'true',
+  WORKMESH_BETA_OPERATIONS_UI: 'true',
+  WORKMESH_EXPERIMENTAL_AUTOMATION: 'true',
+  WORKMESH_EXPERIMENTAL_AGENT_LOOPS: 'true',
+  WORKMESH_EXPERIMENTAL_A2A: 'true',
+  WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: 'true',
+  WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: 'true',
+})
+const app = buildApp({ features: enabledFeatures })
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
+type Page<T> = { items: T[]; nextCursor: string | null }
 type Human = { cookie: string; csrf: string; actorId: string }
 
 const call = async (
@@ -45,6 +59,92 @@ const agentCall = async (
   },
 }) as unknown as Response
 
+const createExecutingReviewer = async (
+  human: Human,
+  workspaceId: string,
+  teamId: string,
+  workItemId: string,
+  repositoryId: string,
+): Promise<{ sessionId: string; token: string }> => {
+  const capabilities = ['work:read', 'work:write', 'artifact:write', 'repo:read']
+  const suffix = randomUUID().replaceAll('-', '').slice(0, 12)
+  const registration = await call(human, 'POST', '/api/v1/agents/register', {
+    name: `Disabled Gitea reviewer ${suffix}`,
+    slug: `disabled-gitea-reviewer-${suffix}`,
+    provider: 'fake',
+    version: '1',
+    supportedProtocols: ['native_http'],
+    requestedCapabilities: capabilities,
+    approvedCapabilities: capabilities,
+    maxConcurrency: 1,
+  })
+  expect(registration.statusCode, JSON.stringify(registration.json())).toBe(200)
+  const agent = registration.json<{ id: string; installation_token: string }>()
+  expect((await call(human, 'PUT', `/api/v1/agents/${agent.id}/team-access/${teamId}`, {
+    approvedCapabilities: capabilities,
+  })).statusCode).toBe(200)
+  const delegation = await call(human, 'POST', `/api/v1/work-items/${workItemId}/delegations`, {
+    agentId: agent.id,
+    principalHumanActorId: human.actorId,
+    role: 'reviewer',
+    scopeType: 'work_item',
+    scopeId: workItemId,
+    permissionsSnapshot: capabilities,
+    capabilityScope: {
+      workspaceId,
+      teamIds: [teamId],
+      projectIds: [],
+      workItemIds: [workItemId],
+      repositoryIds: [repositoryId],
+      capabilities,
+    },
+  })
+  expect(delegation.statusCode, JSON.stringify(delegation.json())).toBe(200)
+  const session = await call(human, 'POST', '/api/v1/agent-sessions', {
+    delegationId: delegation.json<{ id: string }>().id,
+    workItemId,
+    initialPrompt: 'Review the disabled Gitea pull request',
+  })
+  expect(session.statusCode, JSON.stringify(session.json())).toBe(200)
+  const sessionBody = session.json<{ id: string; exchangeToken: string }>()
+  const exchange = await app.inject({
+    method: 'POST',
+    url: `/api/v1/agent-sessions/${sessionBody.id}/token/exchange`,
+    payload: { exchangeToken: sessionBody.exchangeToken },
+    headers: {
+      authorization: `Bearer ${agent.installation_token}`,
+      'idempotency-key': randomUUID(),
+    },
+  }) as unknown as Response
+  expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
+  const token = exchange.json<{ sessionToken: string }>().sessionToken
+  const acknowledged = await agentCall(token, 'POST', `/api/v1/agent-sessions/${sessionBody.id}/ack`, {
+    summary: 'Review accepted',
+    externalUrls: [],
+  })
+  expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
+  const executing = await app.inject({
+    method: 'POST',
+    url: `/api/v1/agent-sessions/${sessionBody.id}/state`,
+    payload: { state: 'executing', reason: 'Reviewing current pull-request head' },
+    headers: {
+      authorization: `Bearer ${token}`,
+      'idempotency-key': randomUUID(),
+      'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"`,
+    },
+  }) as unknown as Response
+  expect(executing.statusCode, JSON.stringify(executing.json())).toBe(200)
+  await db.query(
+    `INSERT INTO repository_contexts(
+       workspace_id,repository_id,session_id,base_branch,base_sha,branch_pattern,
+       allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+     VALUES($1,$2,$3,'main','base','workmesh/{workItemKey}-{slug}',
+       ARRAY['**'],ARRAY['read','review'],$4,$5)`,
+    [workspaceId, repositoryId, sessionBody.id, `sha256:${'b'.repeat(64)}`, human.actorId],
+  )
+  return { sessionId: sessionBody.id, token }
+}
+
 describe('Stage 4 planning and operations API', () => {
   let human: Human
   let workspaceId: string
@@ -65,7 +165,7 @@ describe('Stage 4 planning and operations API', () => {
         email: `${randomUUID()}@example.test`,
         password: 'stage-four-api-password',
       },
-      headers: { 'idempotency-key': randomUUID() },
+      headers: { 'idempotency-key': randomUUID(), 'x-workmesh-bootstrap-token': process.env.WORKMESH_BOOTSTRAP_TOKEN! },
     }) as unknown as Response
     expect(install.statusCode).toBe(200)
     const setCookie = Array.isArray(install.headers['set-cookie']) ? install.headers['set-cookie'][0] : install.headers['set-cookie']
@@ -76,9 +176,9 @@ describe('Stage 4 planning and operations API', () => {
     }
     const me = await call(human, 'GET', '/api/v1/auth/me')
     human.actorId = me.json<{ actor: { id: string } }>().actor.id
-    teamId = (await call(human, 'GET', '/api/v1/teams')).json<Array<{ id: string }>>()[0]!.id
+    teamId = (await call(human, 'GET', '/api/v1/teams')).json<Page<{ id: string }>>().items[0]!.id
     const stateId = (await call(human, 'GET', `/api/v1/teams/${teamId}/states`))
-      .json<Array<{ id: string; category: string }>>().find(state => state.category === 'backlog')!.id
+      .json<Page<{ id: string; category: string }>>().items.find(state => state.category === 'backlog')!.id
     const project = await call(human, 'POST', '/api/v1/projects', { teamId, name: 'Operations project' })
     projectId = project.json<{ id: string }>().id
     const work = await call(human, 'POST', '/api/v1/work-items', {
@@ -92,6 +192,260 @@ describe('Stage 4 planning and operations API', () => {
     workspaceId = (await db.query<{ workspace_id: string }>('SELECT workspace_id FROM projects WHERE id=$1', [projectId])).rows[0]!.workspace_id
   }, 120_000)
   afterAll(async () => { await app.close(); await db.end() })
+
+  it('publishes safe release metadata and discloses feature state only after authentication', async () => {
+    const info = await app.inject({ method: 'GET', url: '/api/v1/info' }) as unknown as Response
+    expect(info.statusCode).toBe(200)
+    expect(info.json<Record<string, unknown>>()).toMatchObject({
+      serverVersion: '1.0.0',
+      restApiVersion: '1.0',
+      agentProtocolVersion: '1.0',
+      mcpVersion: '1.0.0',
+      a2aUpstreamVersion: '0.3',
+      preferredClientProfileVersion: '1.0',
+      supportedClientProfileVersions: ['1.0'],
+      conformanceSuiteVersion: '1.0',
+      schemaBaseline: 1,
+    })
+    expect(Object.keys(info.json<Record<string, unknown>>()).sort()).toEqual([
+      'a2aUpstreamVersion',
+      'agentProtocolVersion',
+      'buildSha',
+      'conformanceSuiteVersion',
+      'mcpVersion',
+      'preferredClientProfileVersion',
+      'restApiVersion',
+      'schemaBaseline',
+      'serverVersion',
+      'supportedClientProfileVersions',
+    ])
+
+    const unauthenticated = await app.inject({ method: 'GET', url: '/api/v1/features' }) as unknown as Response
+    expect(unauthenticated.statusCode).toBe(401)
+    const registry = await call(human, 'GET', '/api/v1/features')
+    expect(registry.statusCode).toBe(200)
+    const deploymentFlags = registry.json<{
+      features: Array<{ key: string; tier: string; enabled: boolean }>
+    }>().features
+    expect(deploymentFlags).toHaveLength(11)
+    for (const feature of deploymentFlags)
+      expect(Object.keys(feature).sort()).toEqual(['enabled', 'key', 'tier'])
+  })
+
+  it('returns FEATURE_DISABLED after normal authentication without admitting work', async () => {
+    const disabled = buildApp({ features: loadFeatureConfig({}) })
+    try {
+      const response = await disabled.inject({
+        method: 'POST',
+        url: '/api/v1/automation-rules',
+        payload: {
+          name: 'Must not be admitted',
+          trigger: { type: 'event', eventTypes: ['work_item.created'] },
+          actions: [{ type: 'add_label', parameters: { label: 'triage' } }],
+        },
+        headers: {
+          cookie: human.cookie,
+          'x-csrf-token': human.csrf,
+          'idempotency-key': randomUUID(),
+        },
+      }) as unknown as Response
+      expect(response.statusCode).toBe(403)
+      expect(response.json<{ error: { code: string; details: { feature: string } } }>().error)
+        .toMatchObject({
+          code: 'FEATURE_DISABLED',
+          details: { feature: 'WORKMESH_EXPERIMENTAL_AUTOMATION' },
+        })
+      expect((await db.query(
+        "SELECT 1 FROM automation_rules WHERE name='Must not be admitted'",
+      )).rowCount).toBe(0)
+
+      const serviceActorId = (await db.query<{ id: string }>(
+        "INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','Disabled Gitea') RETURNING id",
+        [workspaceId],
+      )).rows[0]!.id
+      const connectionId = (await db.query<{ id: string }>(
+        `INSERT INTO provider_connections(
+           workspace_id,provider,external_account_id,display_name,installation_id,
+           service_actor_id,webhook_secret_ciphertext,credentials_ciphertext
+         ) VALUES($1,'gitea',$2,'Disabled Gitea','https://gitea.example.test',$3,$4,$4)
+         RETURNING id`,
+        [workspaceId, randomUUID(), serviceActorId, Buffer.from('disabled-gitea')],
+      )).rows[0]!.id
+      const repositoryId = (await db.query<{ id: string }>(
+        `INSERT INTO repositories(
+           workspace_id,connection_id,team_id,external_id,full_name,default_branch
+         ) VALUES($1,$2,$3,$4,'acme/disabled-gitea','main') RETURNING id`,
+        [workspaceId, connectionId, teamId, randomUUID()],
+      )).rows[0]!.id
+      const pullRequestId = (await db.query<{ id: string }>(
+        `INSERT INTO pull_request_projections(
+           workspace_id,repository_id,external_id,number,uri,work_item_id,
+           base_branch,head_branch,base_sha,head_sha,state,draft)
+         VALUES($1,$2,'gitea-pr',17,'https://gitea.example.test/pulls/17',$3,
+           'main','workmesh/OPS-1-gitea','base','gitea-head','open',false) RETURNING id`,
+        [workspaceId, repositoryId, workItemId],
+      )).rows[0]!.id
+      const deliveryId = (await db.query<{ id: string }>(
+        `INSERT INTO provider_webhook_deliveries(
+           connection_id,repository_id,delivery_id,event_name,body_hash,payload)
+         VALUES($1,$2,$3,'pull_request_review',$4,'{}') RETURNING id`,
+        [connectionId, repositoryId, `gitea-review-${randomUUID()}`, `sha256:${'a'.repeat(64)}`],
+      )).rows[0]!.id
+      await db.query(
+        `INSERT INTO provider_review_projections(
+           workspace_id,repository_id,pull_request_id,external_id,state,head_sha,
+           author_external_id,author_login,uri,source_delivery_id,
+           provider_observed_at,provider_observation_rank)
+         VALUES($1,$2,$3,'review-17','approved','gitea-head','42','reviewer',
+           'https://gitea.example.test/reviews/17',$4,now(),1)`,
+        [workspaceId, repositoryId, pullRequestId, deliveryId],
+      )
+      await db.query(
+        `INSERT INTO ci_check_projections(
+           pull_request_id,external_id,name,status,required,head_sha,details_url)
+         VALUES($1,'check-17','test','passed',true,'gitea-head',
+           'https://gitea.example.test/checks/17')`,
+        [pullRequestId],
+      )
+
+      const reviewer = await createExecutingReviewer(
+        human,
+        workspaceId,
+        teamId,
+        workItemId,
+        repositoryId,
+      )
+      const reviewIdempotencyKey = randomUUID()
+      const review = await disabled.inject({
+        method: 'POST',
+        url: `/api/v1/pull-requests/${pullRequestId}/reviews`,
+        payload: {
+          sessionId: reviewer.sessionId,
+          artifactId: randomUUID(),
+          headSha: 'gitea-head',
+          verdict: 'changes_requested',
+          summary: 'Must not be admitted while Gitea is disabled',
+          findings: [{
+            severity: 'high',
+            file: 'src/provider.ts',
+            line: 17,
+            summary: 'Must not persist',
+            evidence: 'The provider capability is disabled.',
+            recommendation: 'Enable the reviewed provider before publishing.',
+          }],
+        },
+        headers: {
+          authorization: `Bearer ${reviewer.token}`,
+          'idempotency-key': reviewIdempotencyKey,
+        },
+      }) as unknown as Response
+      expect(review.statusCode).toBe(403)
+      expect(review.json<{ error: { code: string; details: { feature: string } } }>().error)
+        .toMatchObject({
+          code: 'FEATURE_DISABLED',
+          details: { feature: 'WORKMESH_BETA_GITEA' },
+        })
+      expect((await db.query<{
+        reviews: string; findings: string; events: string; outbox: string; idempotency: string
+      }>(
+        `SELECT
+           (SELECT count(*) FROM structured_reviews WHERE pull_request_id=$1)::text AS reviews,
+           (SELECT count(*) FROM structured_review_findings finding
+             JOIN structured_reviews review ON review.id=finding.review_id
+            WHERE review.pull_request_id=$1)::text AS findings,
+           (SELECT count(*) FROM domain_events
+             WHERE aggregate_type='pull_request' AND aggregate_id=$1
+               AND event_type='pull_request.reviewed')::text AS events,
+           (SELECT count(*) FROM outbox_events outbox
+             JOIN domain_events event ON event.id=outbox.domain_event_id
+            WHERE event.aggregate_type='pull_request' AND event.aggregate_id=$1
+              AND event.event_type='pull_request.reviewed')::text AS outbox,
+           (SELECT count(*) FROM api_idempotency_keys
+             WHERE idempotency_key=$2)::text AS idempotency`,
+        [pullRequestId, reviewIdempotencyKey],
+      )).rows[0]).toEqual({
+        reviews: '0',
+        findings: '0',
+        events: '0',
+        outbox: '0',
+        idempotency: '0',
+      })
+
+      for (const url of ['/api/v1/repositories', `/api/v1/repositories/${repositoryId}/context`]) {
+        const read = await disabled.inject({
+          method: 'GET',
+          url,
+          headers: { cookie: human.cookie },
+        }) as unknown as Response
+        expect(read.statusCode).toBe(403)
+        expect(read.json<{ error: { code: string; details: { feature: string } } }>().error)
+          .toMatchObject({
+            code: 'FEATURE_DISABLED',
+            details: { feature: 'WORKMESH_BETA_GITEA' },
+          })
+      }
+      const delivery = await disabled.inject({
+        method: 'GET',
+        url: `/api/v1/projects/${projectId}/delivery`,
+        headers: { cookie: human.cookie },
+      }) as unknown as Response
+      expect(delivery.statusCode).toBe(403)
+      expect(delivery.json<{ error: { code: string; details: { feature: string } } }>().error)
+        .toMatchObject({
+          code: 'FEATURE_DISABLED',
+          details: { feature: 'WORKMESH_BETA_GITEA' },
+        })
+    } finally {
+      await disabled.close()
+    }
+  })
+
+  it('rejects manual trigger and dry-run before admission when a child action feature is disabled', async () => {
+    const ruleId = (await db.query<{ id: string }>(
+      `INSERT INTO automation_rules(workspace_id,team_id,name,created_by_actor_id)
+       VALUES($1,$2,$3,$4) RETURNING id`,
+      [workspaceId, teamId, `disabled-notify-${randomUUID()}`, human.actorId],
+    )).rows[0]!.id
+    const versionId = (await db.query<{ id: string }>(
+      `INSERT INTO automation_rule_versions(
+         rule_id,version,trigger,actions,max_attempts,created_by_actor_id)
+       VALUES($1,1,$2,$3,3,$4) RETURNING id`,
+      [
+        ruleId,
+        { type: 'manual' },
+        JSON.stringify([{ type: 'notify', parameters: { recipientActorId: human.actorId, title: 'No admission' } }]),
+        human.actorId,
+      ],
+    )).rows[0]!.id
+    await db.query('UPDATE automation_rules SET current_version_id=$1 WHERE id=$2', [versionId, ruleId])
+    const childDisabled = buildApp({
+      features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AUTOMATION: 'true' }),
+    })
+    try {
+      for (const operation of ['trigger', 'dry-run']) {
+        const response = await childDisabled.inject({
+          method: 'POST',
+          url: `/api/v1/automation-rules/${ruleId}/${operation}`,
+          payload: { occurrenceKey: `${operation}:${randomUUID()}`, payload: {} },
+          headers: {
+            cookie: human.cookie,
+            'x-csrf-token': human.csrf,
+            'idempotency-key': randomUUID(),
+          },
+        }) as unknown as Response
+        expect(response.statusCode).toBe(403)
+        expect(response.json<{ error: { code: string; details: { feature: string } } }>().error)
+          .toMatchObject({
+            code: 'FEATURE_DISABLED',
+            details: { feature: 'WORKMESH_BETA_PLANNING' },
+          })
+      }
+      expect((await db.query('SELECT 1 FROM automation_runs WHERE rule_id=$1', [ruleId])).rowCount).toBe(0)
+      expect((await db.query('SELECT 1 FROM automation_occurrences WHERE rule_id=$1', [ruleId])).rowCount).toBe(0)
+    } finally {
+      await childDisabled.close()
+    }
+  })
 
   it('serves Cycle carry-over, Initiative rollup, advanced View, and explainable health', async () => {
     const generated = await call(human, 'POST', '/api/v1/cycles/generate', {
@@ -107,7 +461,7 @@ describe('Stage 4 planning and operations API', () => {
     const carry = await call(human, 'POST', `/api/v1/cycles/${firstCycleId}/carry-over`, { targetCycleId: secondCycleId })
     expect(carry.json<{ moved: string[] }>().moved).toEqual([workItemId])
     const cycles = await call(human, 'GET', `/api/v1/cycles?teamId=${teamId}`)
-    expect(cycles.json<Array<{ id: string }>>()).toHaveLength(2)
+    expect(cycles.json<Page<{ id: string }>>().items).toHaveLength(2)
 
     const initiative = await call(human, 'POST', '/api/v1/initiatives', {
       name: 'Reliable operations',
@@ -138,8 +492,7 @@ describe('Stage 4 planning and operations API', () => {
       `/api/v1/advanced-views/${view.json<{ id: string }>().id}/results`,
     )
     expect(evaluated.statusCode, JSON.stringify(evaluated.json())).toBe(200)
-    expect(evaluated.json<{ entityType: string; layout: string; rows: unknown[] }>())
-      .toMatchObject({ entityType: 'session', layout: 'timeline', rows: [] })
+    expect(evaluated.json<Page<unknown>>()).toEqual({ items: [], nextCursor: null })
     const unsupportedView = await call(human, 'POST', '/api/v1/advanced-views', {
       name: 'Unsupported filter',
       entityType: 'issue',
@@ -166,7 +519,7 @@ describe('Stage 4 planning and operations API', () => {
     }, 1)
     expect(health.statusCode, JSON.stringify(health.json())).toBe(200)
     const healthHistory = await call(human, 'GET', `/api/v1/projects/${projectId}/health`)
-    expect(healthHistory.json<Array<{ uncertainty: string; sources: unknown[] }>>()[0])
+    expect(healthHistory.json<Page<{ uncertainty: string; sources: unknown[] }>>().items[0])
       .toEqual(expect.objectContaining({ uncertainty: 'The external queue can change.', sources: expect.any(Array) }))
   })
 
@@ -255,6 +608,17 @@ describe('Stage 4 planning and operations API', () => {
   })
 
   it('atomically applies sequenced A2A deliveries to one Session across outbound streaming', async () => {
+    const exactOutboundCursor = 9_007_199_254_740_993n
+    await db.query(
+      `SELECT setval(
+         'domain_events_cursor_seq',
+         GREATEST($1::bigint,(
+           SELECT COALESCE(max(cursor),0)+1 FROM domain_events
+         )),
+         false
+       )`,
+      [exactOutboundCursor.toString()],
+    )
     const registration = await call(human, 'POST', '/api/v1/agents/register', {
       name: 'A2A conformance',
       slug: `a2a-${randomUUID()}`,
@@ -358,7 +722,9 @@ describe('Stage 4 planning and operations API', () => {
         ORDER BY sequence LIMIT 1`,
       [bindingId, externalTask.id],
     )).rows[0]!.sequence
-    expect(Number(outboundSequence)).toBeGreaterThan(2)
+    expect(outboundSequence).toBe(BigInt(outboundSequence).toString())
+    expect(BigInt(outboundSequence)).toBeGreaterThanOrEqual(exactOutboundCursor)
+    const completionInboundSequence = 3
 
     const completed = {
       ...externalTask,
@@ -385,7 +751,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -422,7 +788,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -437,7 +803,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:write'],
       task: completed,
     })
@@ -449,14 +815,14 @@ describe('Stage 4 planning and operations API', () => {
       projectId,
       title: 'A2A replay sibling',
       statusId: (await call(human, 'GET', `/api/v1/teams/${teamId}/states`))
-        .json<Array<{ id: string; category: string }>>().find(state => state.category === 'backlog')!.id,
+        .json<Page<{ id: string; category: string }>>().items.find(state => state.category === 'backlog')!.id,
       responsibleHumanActorId: human.actorId,
     })
     const changedWorkItem = await call(human, 'POST', `/api/v1/a2a-bindings/${bindingId}/tasks`, {
       teamId,
       workItemId: siblingWork.json<{ id: string }>().id,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -491,7 +857,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId: replayTeamId,
       workItemId: replayTeamWork.json<{ id: string }>().id,
       deliveryId: completionDeliveryId,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -502,7 +868,7 @@ describe('Stage 4 planning and operations API', () => {
       teamId,
       workItemId,
       deliveryId: `delivery-${randomUUID()}`,
-      sequence: Number(outboundSequence),
+      sequence: completionInboundSequence,
       requestedCapabilities: ['work:read'],
       task: completed,
     })
@@ -668,6 +1034,9 @@ describe('Stage 4 planning and operations API', () => {
       costSource: 'manual',
     })
     expect(unauthorizedService.statusCode).toBe(401)
+    expect(unauthorizedService.json<{ error: { code: string } }>()).toMatchObject({
+      error: { code: 'UNAUTHENTICATED' },
+    })
     expect((await db.query<{ count: string }>(
       'SELECT count(*)::text AS count FROM usage_records WHERE workspace_id=$1 AND dedupe_key=ANY($2::text[])',
       [workspaceId, deniedDedupeKeys],
@@ -732,7 +1101,7 @@ describe('Stage 4 planning and operations API', () => {
         `/api/v1/advanced-views/${costView.json<{ id: string }>().id}/results`,
       )
       expect(result.statusCode, JSON.stringify(result.json())).toBe(200)
-      const rows = result.json<{ rows: Array<{ id: string; cost_minor: string; currency: string }> }>().rows
+      const rows = result.json<Page<{ id: string; cost_minor: string; currency: string }>>().items
       expect(rows).toEqual(expect.arrayContaining([
         expect.objectContaining({ cost_minor: '125', currency: 'USD' }),
       ]))
@@ -784,9 +1153,10 @@ describe('Stage 4 planning and operations API', () => {
       'GET',
       `/api/v1/advanced-views/${preciseView.json<{ id: string }>().id}/results`,
     )
-    expect(preciseViewResult.json<{
-      rows: Array<{ cost_minor: string; currency: string }>
-    }>().rows).toEqual(expect.arrayContaining([
+    expect(preciseViewResult.json<Page<{
+      cost_minor: string
+      currency: string
+    }>>().items).toEqual(expect.arrayContaining([
       expect.objectContaining({ cost_minor: preciseCost, currency: 'JPY' }),
     ]))
 

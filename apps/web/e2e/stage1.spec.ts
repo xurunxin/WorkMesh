@@ -147,10 +147,10 @@ test.describe('Stage 1 agent browser acceptance', () => {
       }],
     }
     await page.route(`${apiUrl}/api/v1/auth/me`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ actor: memberActor, csrfToken: 'member-csrf' }) }))
-    await page.route(`${apiUrl}/api/v1/agents`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify([agent]) }))
-    await page.route(`${apiUrl}/api/v1/teams`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify([{ id: teamId, name: 'Read team', key: 'READ' }]) }))
-    await page.route(`${apiUrl}/api/v1/agent-sessions`, route => route.fulfill({ status: 200, headers: corsHeaders, body: '[]' }))
-    await page.route(`${apiUrl}/api/v1/approvals?status=pending`, route => route.fulfill({ status: 200, headers: corsHeaders, body: '[]' }))
+    await page.route(`${apiUrl}/api/v1/agents?**`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ items: [agent], nextCursor: null }) }))
+    await page.route(`${apiUrl}/api/v1/teams?**`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ items: [{ id: teamId, name: 'Read team', key: 'READ' }], nextCursor: null }) }))
+    await page.route(`${apiUrl}/api/v1/agent-sessions?**`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ items: [], nextCursor: null }) }))
+    await page.route(`${apiUrl}/api/v1/approvals?**`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ items: [], nextCursor: null }) }))
 
     await page.goto('/agents')
     const registry = page.getByTestId(`agent-registry-${agentId}`)

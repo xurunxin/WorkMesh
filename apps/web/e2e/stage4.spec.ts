@@ -20,7 +20,30 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
     const body = (payload: unknown, status = 200) =>
       route.fulfill({ status, headers, body: JSON.stringify(payload) })
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers })
-    if (path === '/api/v1/cycles') return body([{
+    if (path === '/api/v1/features') return body({
+      features: [
+        { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_COSTS', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_BETA_GITEA', tier: 'beta', enabled: false },
+        { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', enabled: true },
+        { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', enabled: false },
+        { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', enabled: false },
+        { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', enabled: false },
+      ],
+    })
+    if (path === '/api/v1/info') return body({
+      serverVersion: '1.0.0',
+      restApiVersion: '1.0',
+      agentProtocolVersion: '1.0',
+      mcpVersion: '1.0.0',
+      a2aUpstreamVersion: '0.3',
+      schemaBaseline: 1,
+      buildSha: 'stage4-e2e',
+    })
+    if (path === '/api/v1/cycles') return body({ items: [{
       id: 'cycle-1',
       name: 'Cycle 12',
       state: 'current',
@@ -28,22 +51,22 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
       ends_at: '2026-08-03T00:00:00.000Z',
       total_items: 8,
       completed_items: 5,
-    }])
-    if (path === '/api/v1/initiatives') return body([{
+    }], nextCursor: null })
+    if (path === '/api/v1/initiatives') return body({ items: [{
       id: 'initiative-1',
       name: 'Reliable agent operations',
       status: 'active',
       priority: 'high',
       health: 'at_risk',
-    }])
-    if (path === '/api/v1/automation-rules' && method === 'GET') return body([{
+    }], nextCursor: null })
+    if (path === '/api/v1/automation-rules' && method === 'GET') return body({ items: [{
       id: 'rule-1',
       name: 'Triage new work',
       state: ruleState,
       revision: ruleState === 'active' ? 1 : 2,
       version: 3,
       trigger: { type: 'event' },
-    }])
+    }], nextCursor: null })
     if (path === '/api/v1/automation-rules/rule-1/dry-run' && method === 'POST') {
       dryRuns += 1
       return body({ id: `dry-run-${dryRuns}`, dry_run: true, status: 'dry_run', effectCount: 0 })
@@ -53,15 +76,15 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
       ruleState = 'paused'
       return body({ id: 'rule-1', state: ruleState, revision: 2 })
     }
-    if (path === '/api/v1/loops') return body([{
+    if (path === '/api/v1/loops') return body({ items: [{
       id: 'loop-1',
       name: 'Scheduled triage',
       state: 'active',
       revision: 1,
       next_run_at: '2026-07-27T01:00:00.000Z',
       no_overlap: true,
-    }])
-    if (path === '/api/v1/automation-runs') return body([{
+    }], nextCursor: null })
+    if (path === '/api/v1/automation-runs') return body({ items: [{
       id: 'run-00000001',
       rule_id: null,
       loop_id: 'loop-1',
@@ -72,7 +95,7 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
       max_attempts: 5,
       created_at: '2026-07-26T01:00:00.000Z',
       last_error: null,
-    }])
+    }], nextCursor: null })
     if (path === '/api/v1/usage-summary') return body({
       input_tokens: '1200',
       output_tokens: '300',
@@ -84,13 +107,13 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
         { currency: 'USD', known_cost_minor: '42', unknown_cost_records: 2 },
       ],
     })
-    if (path === '/api/v1/templates') return body([{
+    if (path === '/api/v1/templates') return body({ items: [{
       id: 'template-1',
       kind: 'agent_run',
       name: 'Triage playbook',
       status: 'active',
       version: 4,
-    }])
+    }], nextCursor: null })
     return body({ error: { message: `Unexpected ${method} ${path}` } }, 404)
   })
 

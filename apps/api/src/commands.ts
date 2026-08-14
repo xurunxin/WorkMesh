@@ -1,31 +1,29 @@
 import type { Pool, PoolClient } from "pg";
 import { appendEvent, withTx } from "@workmesh/db";
+import { loadRetentionConfig } from "@workmesh/config";
 import {
   DomainError,
   assertResponsibleHumanForStarted,
   assertRevision,
 } from "@workmesh/domain";
+import type { ApiActor } from "./agent/types.js";
 
 type TeamRole = "admin" | "maintainer" | "member";
-type WorkspaceRole = "admin" | "member";
 type StatusCategory =
   "backlog" | "planned" | "started" | "completed" | "canceled";
 
-export type Actor = {
-  id: string;
-  workspaceId: string;
-  displayName: string;
-  csrfToken: string;
-  workspaceRole: WorkspaceRole;
-  kind: "human" | "agent";
-  agentSessionId?: string;
-};
+export type Actor = ApiActor;
 export type CommandContext = {
   actor: Actor;
   idempotencyKey: string;
   correlationId: string;
   operation: string;
   requestHash: string;
+  clientContext?: Record<string, string | null>;
+};
+export type MutationOptions = {
+  beforeReserve?: (tx: PoolClient) => Promise<void>;
+  authorizeReplay?: (tx: PoolClient) => Promise<void>;
 };
 type Team = { id: string; deleted_at: Date | null };
 const one = <T>(rows: T[]): T => {
@@ -52,6 +50,20 @@ async function teamAccess(
   );
   if (team.deleted_at) throw new DomainError("NOT_FOUND", "Team not found");
   if (c.actor.workspaceRole === "admin") return team;
+  if (c.actor.kind === "agent" && c.actor.agentSessionId) {
+    const coordination = await tx.query(
+      `SELECT 1 FROM agent_sessions s
+       JOIN delegations d ON d.id=s.delegation_id AND d.status='active'
+       JOIN agent_team_access ata ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
+       WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3 AND s.team_id=$4
+         AND s.session_kind='coordination' AND s.state IN ('acknowledged','planning','executing')
+         AND d.role='coordinator' AND d.scope_type='team' AND d.scope_id=$4
+         AND 'work:write'=ANY(d.permissions_snapshot)
+         AND 'work:write'=ANY(ata.approved_capabilities)`,
+      [c.actor.agentSessionId, c.actor.workspaceId, c.actor.id, teamId],
+    );
+    if (coordination.rowCount) return team;
+  }
   const membership = await tx.query<{ role: TeamRole }>(
     "SELECT role FROM memberships WHERE workspace_id=$1 AND team_id=$2 AND actor_id=$3",
     [c.actor.workspaceId, teamId, c.actor.id],
@@ -155,16 +167,35 @@ export async function mutate<T>(
   db: Pool,
   context: CommandContext,
   handler: (tx: PoolClient) => Promise<T>,
+  options: MutationOptions = {},
 ): Promise<T> {
   return withTx(db, async (tx) => {
+    // Cross-resource commands may need one deterministic coordination lock
+    // before the idempotency insert takes actor/workspace foreign-key locks.
+    // Otherwise reciprocal commands can each hold one FK lock before either
+    // reaches its normal domain lock order.
+    await options.beforeReserve?.(tx);
+    const retention = loadRetentionConfig();
     const reserved = await tx.query(
-      "INSERT INTO api_idempotency_keys(workspace_id,actor_id,idempotency_key,operation,request_hash) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING idempotency_key",
+      `INSERT INTO api_idempotency_keys(
+         workspace_id,actor_id,idempotency_key,operation,request_hash,
+         replay_expires_at,conflict_expires_at
+       ) VALUES($1,$2,$3,$4,$5,now()+($6::text||' hours')::interval,now()+($7::text||' days')::interval)
+       ON CONFLICT(workspace_id,actor_id,idempotency_key) DO UPDATE
+         SET operation=EXCLUDED.operation,request_hash=EXCLUDED.request_hash,
+             response_status=NULL,response_body=NULL,created_at=now(),
+             replay_expires_at=EXCLUDED.replay_expires_at,
+             conflict_expires_at=EXCLUDED.conflict_expires_at
+       WHERE api_idempotency_keys.conflict_expires_at<=now()
+       RETURNING idempotency_key`,
       [
         context.actor.workspaceId,
         context.actor.id,
         context.idempotencyKey,
         context.operation,
         context.requestHash,
+        retention.genericReplayHours,
+        retention.genericConflictDays,
       ],
     );
     if (!reserved.rowCount) {
@@ -174,8 +205,9 @@ export async function mutate<T>(
             operation: string;
             request_hash: string;
             response_body: T | null;
+            replay_expires_at: Date;
           }>(
-            "SELECT operation,request_hash,response_body FROM api_idempotency_keys WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3 FOR UPDATE",
+            "SELECT operation,request_hash,response_body,replay_expires_at FROM api_idempotency_keys WHERE workspace_id=$1 AND actor_id=$2 AND idempotency_key=$3 FOR UPDATE",
             [
               context.actor.workspaceId,
               context.actor.id,
@@ -192,11 +224,17 @@ export async function mutate<T>(
           "IDEMPOTENCY_KEY_REUSED",
           "Idempotency key was used for a different operation or request",
         );
+      if (previous.replay_expires_at.getTime() <= Date.now())
+        throw new DomainError(
+          "IDEMPOTENCY_REPLAY_EXPIRED",
+          "Idempotency replay material expired; use a new key",
+        );
       if (previous.response_body === null)
         throw new DomainError(
           "IDEMPOTENCY_REPLAY_UNAVAILABLE",
           "Idempotency response is unavailable",
         );
+      await options.authorizeReplay?.(tx);
       return previous.response_body;
     }
     const response = await handler(tx);
@@ -556,6 +594,16 @@ export const commands = {
   ) =>
     mutate(db, c, async (tx) => {
       await teamAccess(tx, c, input.teamId, "write");
+      let responsibleHumanActorId = input.responsibleHumanActorId;
+      if (!responsibleHumanActorId && c.actor.kind === "agent" && c.actor.agentSessionId) {
+        responsibleHumanActorId = (await tx.query<{ principal_human_actor_id: string }>(
+          `SELECT d.principal_human_actor_id FROM agent_sessions s
+           JOIN delegations d ON d.id=s.delegation_id AND d.status='active'
+           WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3
+             AND s.session_kind='coordination' AND s.team_id=$4`,
+          [c.actor.agentSessionId, c.actor.workspaceId, c.actor.id, input.teamId],
+        )).rows[0]?.principal_human_actor_id;
+      }
       const state = one(
         (
           await tx.query<{ category: StatusCategory }>(
@@ -564,12 +612,12 @@ export const commands = {
           )
         ).rows,
       );
-      if (input.responsibleHumanActorId)
+      if (responsibleHumanActorId)
         await activeHumanInTeam(
           tx,
           c,
           input.teamId,
-          input.responsibleHumanActorId,
+          responsibleHumanActorId,
         );
       if (input.projectId)
         await activeProject(tx, c, input.teamId, input.projectId);
@@ -580,7 +628,7 @@ export const commands = {
         );
       assertResponsibleHumanForStarted(
         state.category,
-        input.responsibleHumanActorId,
+        responsibleHumanActorId,
       );
       const sequence = one(
         (
@@ -603,7 +651,7 @@ export const commands = {
               input.statusId,
               input.priority,
               input.dueDate ?? null,
-              input.responsibleHumanActorId ?? null,
+              responsibleHumanActorId ?? null,
               input.labels,
               input.projectId ?? null,
               input.milestoneId ?? null,
@@ -623,7 +671,7 @@ export const commands = {
         "work_item",
         item.id,
         item.revision,
-        { ...input, number: item.number },
+        { ...input, responsibleHumanActorId, number: item.number },
         input.teamId,
       );
       return item;
