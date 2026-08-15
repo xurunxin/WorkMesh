@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 // @ts-expect-error The preview API runs as native ESM outside the TypeScript build.
-import { matchesPreviewWorkItem } from './project-work-preview-query.mjs'
+import { matchesPreviewWorkItem } from '../../e2e/project-work-preview-query.mjs'
 
 const item = {
   title: 'Implement priority filtering',
