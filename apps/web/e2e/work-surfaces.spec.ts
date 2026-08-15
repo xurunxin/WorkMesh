@@ -28,7 +28,7 @@ test.describe('Issues workbench', () => {
     const overflow = await page.evaluate(() => ({ document: document.documentElement.scrollWidth - document.documentElement.clientWidth, board: (() => { const node = document.querySelector<HTMLElement>('[aria-label="Issue 看板列"]'); return node ? node.scrollWidth - node.clientWidth : 0 })() }))
     expect(overflow.document).toBeLessThanOrEqual(0)
     expect(overflow.board).toBeGreaterThanOrEqual(0)
-    await page.getByRole('button', { name: 'EN' }).click()
+    await page.getByRole('button', { name: 'EN', exact: true }).click()
     await expect(page.getByRole('button', { name: 'Board' })).toBeVisible()
     await page.reload()
     await expect(page.getByRole('button', { name: 'Board' })).toBeVisible()

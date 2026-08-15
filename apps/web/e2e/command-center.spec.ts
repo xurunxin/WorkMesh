@@ -29,7 +29,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
     if (path === '/api/v1/actors/humans') return list([human])
     if (path === '/api/v1/views') return list([])
     if (path === '/api/v1/events/stream') return route.fulfill({ status: 204, headers })
-    const isWorkSurfaceRequest = path === '/api/v1/work-items' && url.searchParams.get('mine') === 'true'
+    const isWorkSurfaceRequest = path === '/api/v1/work-items' && !url.searchParams.has('search')
     if (captureResourceRequests && !isWorkSurfaceRequest && ['/api/v1/projects', '/api/v1/work-items', '/api/v1/agents', '/api/v1/agent-sessions', '/api/v1/inbox'].includes(path)) resourceRequests.push(route.request().url())
     if (path === '/api/v1/projects') return list([project])
     if (path === '/api/v1/work-items') return list([workItem])

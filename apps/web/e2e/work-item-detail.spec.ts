@@ -13,10 +13,10 @@ test.describe('v28 Work Item detail', () => {
     await expect(page.getByTestId('responsible-human')).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Agent executions' })).toBeVisible()
     await page.getByRole('button', { name: 'Open full page' }).click()
-    await expect(page.getByRole('region', { name: 'Full Issue view' })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Full Issue', exact: true })).toBeVisible()
     await expect(page).toHaveURL(/workItem=/)
     await page.goBack()
-    await expect(page.getByRole('region', { name: 'Full Issue view' })).toHaveCount(0)
+    await expect(page.getByRole('region', { name: 'Full Issue', exact: true })).toHaveCount(0)
   })
 
   test('warns before discarding unsaved edits and keeps revisioned mutation headers', async ({ page }) => {
