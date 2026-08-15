@@ -44,7 +44,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
 
     await page.goto('/')
     await page.getByLabel('Current team').first().selectOption(team.body.id)
-    await page.locator(`[data-work-item-id="${work.body.id}"]`).click()
+    await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
     const drawer = page.getByRole('dialog')
     await drawer.getByRole('button', { name: 'Delegate' }).click()
     const delegation = drawer.getByTestId('delegate-agent-form')

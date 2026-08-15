@@ -85,7 +85,7 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
   })
 
   await page.goto('/')
-  await page.locator('[data-work-item-id="work-1"]').click()
+  await page.locator('[data-work-item-id="work-1"] .wm-work-item-title').click()
   await expect(page.getByTestId('responsible-human')).toContainText('Alex')
   const executions = page.getByRole('region', { name: 'Agent executions' })
   await expect(executions).toContainText('Coordinator')
@@ -198,7 +198,7 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
 
   await page.goto('/')
   await page.getByLabel('Current team').first().selectOption(team.body.id)
-  await page.locator(`[data-work-item-id="${work.body.id}"]`).click()
+  await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
   await expect(page.getByTestId('responsible-human')).toContainText(projectedWork.body.responsible_human!.display_name)
   const executions = page.getByRole('region', { name: 'Agent executions' })
   await expect(executions).toContainText('Stage 2 coordinator')

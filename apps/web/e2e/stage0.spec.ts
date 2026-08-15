@@ -336,7 +336,7 @@ test.describe("Stage 0 browser acceptance", () => {
         `[data-work-item-id="${target!.id}"]`,
       );
       await expect(secondPageItem).toBeVisible();
-      await secondPageItem.click();
+      await secondPageItem.locator(".wm-work-item-title").click();
       const secondDrawer = secondPage.getByRole("dialog");
       await expect(secondDrawer).toBeVisible();
 
@@ -375,7 +375,7 @@ test.describe("Stage 0 browser acceptance", () => {
       ).toHaveValue(inProgress!.id);
       expect(secondPageNavigations).toBe(0);
 
-      await page.locator(`[data-work-item-id="${target!.id}"]`).click();
+      await page.locator(`[data-work-item-id="${target!.id}"] .wm-work-item-title`).click();
       const drawer = page.getByRole("dialog");
       await expect(drawer).toBeVisible();
       await drawer
