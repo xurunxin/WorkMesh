@@ -1,0 +1,24 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateBrowserDomEvidence",
+  "observedAt": "2026-08-14T07:58:21.000Z",
+  "browser": "Codex In-app Browser",
+  "tabCount": 1,
+  "url": "http://127.0.0.1:34600/connect#v31-fixture-fragment",
+  "viewport": { "width": 1280, "height": 720 },
+  "documentWidth": 1280,
+  "clientWidth": 1280,
+  "horizontalDocumentOverflow": false,
+  "alerts": [
+    "Discovery unavailable — Discovery failed (403) — Do not infer an endpoint or reuse an older pairing instruction. Retry when this WorkMesh deployment is healthy."
+  ],
+  "headings": [
+    "Connect an Agent to WorkMesh",
+    "Pairing link is present in browser memory"
+  ],
+  "credentialLikeTextPresent": false,
+  "viewportReset": true,
+  "finalizedExactlyOnce": true,
+  "browserCallsAfterFinalize": 0,
+  "screenshot": "artifacts/design/human-journey-attempt-31/01-feature-disabled-misclassified.png@sha256:86382b0bb222bdfd9356e51102474271026c0387a8d4386815cbd966f24f3e7e"
+}

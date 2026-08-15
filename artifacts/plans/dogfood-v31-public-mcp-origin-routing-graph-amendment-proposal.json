@@ -1,0 +1,41 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRoutingGraphAmendmentProposal",
+  "proposalId": "dogfood-v31-public-mcp-origin-routing-graph-amendment",
+  "fromGraphVersion": 7,
+  "toGraphVersion": 8,
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+    "state": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:45953add79f61767ec53b95253c4a0e8e9cf33d56dfecb9654ed4965f0750454",
+    "events": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@sha256:2ad6d6e61735cda2fcb1ea2f41b3556175ba1157a1ab7f5229defae8a5e0dd2b",
+    "blockedAcceptance": "artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json@sha256:602db13b22be4484a2f31a13763444365d58c2fca7347cd403fb230764227c61"
+  },
+  "finding": "V31-ACTIVE-002",
+  "rootCause": "The active API supervisor binds WEB_ORIGIN to the Web renderer at http://127.0.0.1:3300 even though the accepted same-origin discovery and MCP public entrypoint is the API router at http://127.0.0.1:3301. The router already serves discovery with 200 and MCP unauthenticated readiness with 401; no MCP, Web, Worker, database, or identity implementation is missing.",
+  "change": {
+    "addedNodes": [
+      "repair-v31-active-public-mcp-origin-routing",
+      "verify-v31-active-public-mcp-origin-routing",
+      "approve-v31-active-public-mcp-origin-routing",
+      "activate-v31-active-public-mcp-origin-routing",
+      "capture-v31-active-evidence-attempt-3"
+    ],
+    "replacedEdge": "capture-v31-active-evidence-attempt-2 -> verify-v31-final",
+    "replacementPath": "capture-v31-active-evidence-attempt-2 -> repair -> verify -> approve -> activate -> capture-attempt-3 -> verify-v31-final",
+    "budgetChanges": {
+      "active_browser_attempts": {"from": 2, "to": 3},
+      "public_origin_routing_repair_rounds": {"from": 0, "to": 1},
+      "public_origin_routing_gate_attempts": {"from": 0, "to": 1},
+      "public_origin_routing_activation_attempts": {"from": 0, "to": 1}
+    },
+    "implementationBoundary": "Versioned API-supervisor runtime binding only: WEB_ORIGIN http://127.0.0.1:3300 -> http://127.0.0.1:3301. No product source, Web, MCP, Worker, router, compatibility proxy, database, object storage, WorkMesh item, package, lockfile, or schema mutation.",
+    "browserBoundary": "Exactly one replacement active in-app Browser attempt after a separately approved exact activation; the two completed attempts remain immutable.",
+    "removedThresholds": [],
+    "scopeExpansion": false,
+    "serviceMutationAuthorized": false,
+    "requestCreationAuthorized": false,
+    "completionAuthorized": false
+  },
+  "approvalBoundary": "This graph amendment approval authorizes only graph/state/event versioning, runtime-contract preparation, independent verification, and candidate-free dry-run evidence. A fresh exact expiring Human request and approval are still required before replacing the API supervisor.",
+  "createdAt": "2026-08-14T14:18:37.5581151Z"
+}

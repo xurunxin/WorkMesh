@@ -1,0 +1,17 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31SupervisorDryRun",
+  "result": "PASS",
+  "dryRun": true,
+  "role": "web",
+  "mode": "rollback",
+  "contractPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation-contract-attempt-3.json",
+  "contractSha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a",
+  "statePath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\probe-attempt-3\\rollback-web.json",
+  "stopPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\probe-attempt-3\\rollback-web.stop",
+  "root": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v30-fault-seam-web-activation\\prepared-active-origin-v7",
+  "port": 3300,
+  "healthUrl": "http://127.0.0.1:3300/",
+  "childCreated": false,
+  "capturedAt": "2026-08-14T10:51:15.3881643+00:00"
+}

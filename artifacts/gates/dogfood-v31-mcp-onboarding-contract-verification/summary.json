@@ -1,0 +1,42 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31McpOnboardingContractVerificationSummary",
+  "result": "PASS",
+  "transitionAllowed": true,
+  "transitionScope": "start_gen11_and_materialize_isolated_candidate_only",
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "state": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:3@sha256:bb56a6321d1ebe1cc787958622b21676e684567d98885ce5e53fafa0dad0a19b",
+    "events": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000003@sha256:c0fb59319062487bf3328e05c5f78f897d7693960c9d08c5cffa6076449d89a3",
+    "baseline": "artifacts/runtime/dogfood-v31-gen11-baseline.json@sha256:320c19247117ebac8ea5ab3ad904034be010e49dd50f3a66385259b0376ba8dd",
+    "contract": "artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b"
+  },
+  "evidence": {
+    "auditScript": "artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/audit-static.mjs@sha256:0a1080edcfba36c5dd03b37ac5f30947796e7c9f8ad359682616115ab0e5ede8",
+    "staticAudit": "artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/static-audit.json@sha256:af77453d0fea158202fb6fde119e2fdbd1257f477ce2a51c682ca466b9175b03",
+    "runtimeWorkMesh": "artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/runtime-workmesh-readback.json@sha256:849be138ad85fac1cadfb9eedf08e17e4a450393512c3df4a8f6392f0d101d9b"
+  },
+  "checks": {
+    "baselineExact": true,
+    "contractExact": true,
+    "writeTargets15Exact": true,
+    "currentRoutesAndContractsImplementableWithoutApiAddition": true,
+    "fourClientProfilesServerDerived": true,
+    "identityAndAuthoritySeamsExplicit": true,
+    "secretProjectionAndEvidenceRulesFailClosed": true,
+    "testsBrowserBudgetsActivationAndCleanupMachineReadable": true,
+    "sourceBuildPackageSelectorsExact": true,
+    "runtimeHealth7Of7AndBuildExclusive": true,
+    "liveConnectionProfileSkillAndGen11ReadbackExact": true,
+    "unresolvedMajorOrCriticalFindings": 0
+  },
+  "limitations": [
+    "Security scanning is explicitly excluded and this result is not a security approval.",
+    "No Browser, product, service, database, WorkMesh, or Git mutation was performed in this Gate.",
+    "The three new source paths are absent by design and may be created only in the isolated v31 candidate after this Gate."
+  ],
+  "next": {
+    "allowed": ["complete freeze-v31-baseline-and-contract and verify-v31-contract", "start exact GEN-11 revision 1 with coord:active and Dogfood Owner", "materialize one isolated byte-exact v31 candidate"],
+    "prohibited": ["candidate implementation before both start and materialization receipts", "Browser", "active replacement", "database mutation", "security claim"]
+  }
+}

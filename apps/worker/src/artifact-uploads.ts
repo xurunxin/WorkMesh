@@ -7,10 +7,10 @@ type Upload = {
   id: string
   workspace_id: string
   work_item_id: string
-  session_id: string
+  session_id: string | null
   project_id: string | null
   plan_step_id: string | null
-  repository_id: string
+  repository_id: string | null
   pull_request_id: string | null
   head_sha: string | null
   source_tool: string
@@ -65,11 +65,11 @@ export function createArtifactUploadWorker(input: {
       )
       if (!current.rowCount) throw new Error('ARTIFACT_UPLOAD_CLAIM_LOST')
       const artifact = (await tx.query<{ id: string }>(
-        `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,checksum,source_tool,metadata)
-         VALUES($1,$2,$3,$4,'file',$5,$6,$7,$8) RETURNING id`,
+        `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,mime_type,size_bytes,checksum,source_tool,metadata)
+         VALUES($1,$2,$3,$4,'file',$5,$6,$7,$8,$9,$10) RETURNING id`,
         [
           upload.workspace_id, upload.session_id, upload.work_item_id, upload.requested_by_actor_id,
-          upload.filename, verified.checksum, upload.source_tool,
+          upload.filename, verified.mimeType, verified.sizeBytes, verified.checksum, upload.source_tool,
           { storageKey: upload.storage_key, sizeBytes: verified.sizeBytes, mimeType: verified.mimeType, uploadIntentId: upload.id },
         ],
       )).rows[0]!
@@ -99,9 +99,9 @@ export function createArtifactUploadWorker(input: {
       )
       await tx.query(
         `UPDATE artifact_upload_intents
-            SET status='verified',actual_checksum=$3,verified_at=now(),claimed_at=NULL,claimed_by=NULL,last_error=NULL
+            SET status='verified',actual_checksum=$3,artifact_id=$4,verified_at=now(),claimed_at=NULL,claimed_by=NULL,last_error=NULL
           WHERE id=$1 AND claimed_by=$2`,
-        [upload.id, workerId, verified.checksum],
+        [upload.id, workerId, verified.checksum, artifact.id],
       )
       await appendEvent(tx, {
         workspaceId: upload.workspace_id, teamId: upload.team_id, actorId: upload.requested_by_actor_id,

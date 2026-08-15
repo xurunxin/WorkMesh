@@ -1,0 +1,26 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31EmptyByteStagingRepairIndependentVerificationSummary",
+  "observedAt": "2026-08-14T10:00:54.6497328Z",
+  "result": "PASS",
+  "nodeId": "verify-v31-empty-byte-staging-repair",
+  "checks": {
+    "fixedInputs": "PASS",
+    "graphVersion": 4,
+    "attempt1ConsumedProvenance": "PASS contract/gate/request/approval/preflight exact",
+    "emptyByteArray": "PASS non-null System.Byte[] length 0",
+    "nonEmptyBinary": "PASS exact except authorized origin replacement",
+    "prepared": "PASS first-write+reuse 1992/79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4 residue0",
+    "scriptBindings": "PASS 11/11",
+    "ast": "PASS 9/9 StrictMode DateKind no-bare-false",
+    "stageStartRollbackDryRuns": "PASS",
+    "authorizationGateCompensation": "PASS",
+    "runtimeBeforeAfter": "PASS health7/7 v30-build200 v31-build404",
+    "productionPreparedRoot": "ABSENT",
+    "attempt2FutureArtifacts": "ABSENT 0/4"
+  },
+  "transitionAllowed": true,
+  "transitionScope": "request_creation_only",
+  "activationAuthorized": false,
+  "securityScan": "excluded_by_human_direction"
+}

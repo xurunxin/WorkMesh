@@ -1,0 +1,50 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureAstAudit",
+  "result": "PASS",
+  "scripts": [
+    {
+      "name": "module",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "supervisor",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "start",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "rollback",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "compensationProbe",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "astAudit",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    },
+    {
+      "name": "runtimeInvariance",
+      "parseErrors": 0,
+      "bareFalseCommandAst": 0,
+      "strictMode": true
+    }
+  ],
+  "checkedAt": "2026-08-14T13:08:46.5448965+00:00"
+}

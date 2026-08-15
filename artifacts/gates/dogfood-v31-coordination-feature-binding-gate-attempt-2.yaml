@@ -1,0 +1,101 @@
+GateReport:
+  gate_id: dogfood-v31-coordination-feature-binding-gate-attempt-2
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 7
+  node_id: verify-v31-active-coordination-feature-binding-attempt-2
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:69@sha256:78a4aec8aa2dffcdbccd155f373b33347822b2e633500bd97f10da4268c01f90
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:69@sha256:4b1b459298bfa20969af993ca4193592a9b309d0c73d26510f5c9b32f45c32ca
+    - artifacts/implementation/dogfood-v31-coordination-production-compensation-repair.json@sha256:fd02f1224468e1328d3af2e1e776c5727793f24ed36841b6240527baa913ff76
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation-contract-attempt-2.json@sha256:06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698
+    - artifacts/gates/dogfood-v31-coordination-feature-binding-gate.yaml@sha256:8ba8d01f2ada860bec15c4ee00bf9e196859a317222df8ad4faa10e656cbf537
+    - artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/verification-summary.json@sha256:9228a0d7343aa737b090719443f9458adf13b48e57016ed2d7fee9651a9710dd
+  worker_id: coordination-compensation-repair-owner
+  attempt: 2
+  verifier:
+    actor_id: fresh-independent-coordination-feature-verifier-attempt-2
+    scope: [fixed_inputs, immutable_provenance, shared_production_compensation, terminal_receipts, authorization, evidence_roots, ast, dry_run, runtime_invariance]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13R2-A1
+      assertion: Activation catch and the executable probe call the same bound production compensation and old-role restore functions.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/production-seam-and-boundary-audit.json@sha256:0bb66ed6af57213df49a58c25f262275fd7e4abf8ea64fc6338701011ce271a7
+          observed: Production start catch and the probe both call module-owned Invoke-V31CoordinationCompensation; its role loop invokes the same exported Invoke-V31OldRoleRestore and no local restore closure remains.
+          source: direct production/probe source inspection
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/fixed-input-and-script-audit.json@sha256:ceecfd5a1cf7fe255f1e790256f5a0f46fa0eeb196f2e5635368509fc215c12c
+          observed: Graph v7, seq69 state/events, report, contract and both immutable prior BLOCK artifacts matched; all seven versioned script bindings matched byte-exactly.
+          source: fresh SHA256 rehash
+      method: source-check and schema-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N13R2-A2
+      assertion: Retained, partial-stop, unknown-owner, restart-failure, cleanup-failure, protected-runtime, and terminal receipt cases execute with exact expected outcomes and zero service mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/compensation-probe.json@sha256:a7763449e695fae2a488511b1846315b95423a8730aa6d172b4dcee86363592c
+          observed: >-
+            Five cases executed the shared production functions: retained and partial restart returned ROLLED_BACK_RUNTIME_VERIFIED; unknown owner, restart failure and cleanup failure returned ROLLBACK_FAILED; every case wrote the matching terminal receipt, stopped both candidate roles, checked protected runtime once, and performed no service mutation.
+          source: fresh executable production-seam matrix
+      method: test
+      gaps: []
+      repair: null
+    - claim_id: V31-N13R2-A3
+      assertion: The rejected Gate remains immutable; versioned scripts, contract, AST, exact DryRuns, runtime invariance, future absence, and residue cleanup all pass.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/ast-audit.json@sha256:7dd663a624afa471c9494d9c04cfd24ee667e2b5e1e4954417bdf309dd5616a0
+          observed: Seven versioned PowerShell files parsed with StrictMode Latest and no bare-false command; independent AST inspection also found no ConvertFrom-Json missing DateKind String.
+          source: fresh executable and independent AST audits
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/start-dry-run.json@sha256:6c4a7fa850e9e4b69d28e8c009b797b47e05fe921d746654ec86d3ef8ad6a571
+          observed: Exact attempt-2 start DryRun passed for API and Worker with featureValue true and targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/rollback-dry-run.json@sha256:e4097cfbf2b1f1cf47c25eca91bb9ca4abcbcefebb3c6f39ef33eea99e17fdb4
+          observed: Exact attempt-2 rollback DryRun passed with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/runtime-invariance.json@sha256:29d68b243f00dc3db69a2f50e256f7c9c6b38dabb612d266f105391fa468666c
+          observed: Runtime after all probes remained exact health 7/7; v31 build was 200, v30 build was 404, all future artifacts were absent, and attempt-2 candidate runtime residue was zero.
+          source: fresh read-only runtime-before/after verification
+      method: test and read-only runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13V2-A1
+      assertion: All original checks plus the shared production compensation and terminal receipt matrix PASS with no unresolved major or critical finding; scope is request_creation_only and service replacement remains unauthorized.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/production-seam-and-boundary-audit.json@sha256:0bb66ed6af57213df49a58c25f262275fd7e4abf8ea64fc6338701011ce271a7
+          observed: Missing authorization rejected before execution binding or terminal artifacts; the direct supervisor remains authorizing-parent bound; exact independent root passed while parent, worker sibling, prefix sibling and outside root rejected pre-write with zero unexpected markers.
+          source: fresh executable counterexamples and source inspection
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent/verification-summary.json@sha256:f9ae331c7d98f4ea37a9df11f02549959bb7d4053a070cfbe96befc5e269ea42
+          observed: All four claims and every original threshold passed with no finding; transition scope is request_creation_only and activation/service replacement remain false.
+          source: independent verification synthesis
+      method: test, source-check, and inspection
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-coordination-production-compensation-repair.json@sha256:fd02f1224468e1328d3af2e1e776c5727793f24ed36841b6240527baa913ff76
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation-contract-attempt-2.json@sha256:06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was explicitly excluded by Human direction; this Gate makes no security approval claim.
+    - Browser, Git, non-DryRun activation/rollback, service/process control, DB mutation, WorkMesh mutation, product/source mutation, and ExecutionState/event mutation were prohibited and not executed.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    active_replacement: false
+    request_creation: true
+    service_replacement: false
+    activation: false
+    reason: The versioned shared production compensation and terminal receipt repair passed; only one fresh exact expiring Human request may be created.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact attempt-2 contract and API/Worker old/candidate selectors
+    completion_gate: A fresh exact unexpired single-use Human request and approval are required before any service replacement or activation.
+  observed_at: 2026-08-14T13:11:11.1999081Z

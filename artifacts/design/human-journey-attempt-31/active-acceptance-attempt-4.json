@@ -1,0 +1,73 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAcceptance",
+  "attempt": 4,
+  "result": "BLOCK",
+  "statusProposal": "blocked",
+  "observedAt": "2026-08-14T17:32:31.6734448Z",
+  "fixedInputs": {
+    "graph": "sha256:90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5",
+    "activation": "sha256:58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f",
+    "humanApproval": "sha256:3fc1f23aed1fb42ff77870eba2f61f14b3b0e90df520094bb5c766e3962f0e04"
+  },
+  "claimChecks": [
+    {
+      "id": "V31-N13B-A1",
+      "result": "BLOCK",
+      "summary": "Authenticated discovery and connection loading pass, but the Browser cannot observe the expected unauthenticated MCP 401 because the public MCP response has no CORS headers."
+    },
+    {
+      "id": "V31-N13B-A2",
+      "result": "BLOCK_AFTER_SAFE_CLEANUP",
+      "summary": "The bounded fixture was created then revoked without redemption; database readback proves zero credentials and an unconsumed pairing. The full redeem/verify lifecycle could not continue while MCP readiness was false."
+    },
+    {
+      "id": "V31-N13B-A3",
+      "result": "PASS",
+      "summary": "Viewport reset, exactly-once Browser finalize, bounded raw method window, durable create/revoke events, runtime health, WorkMesh readback, and zero credential residue pass."
+    }
+  ],
+  "finding": {
+    "id": "V31-ACTIVE-004",
+    "severity": "critical",
+    "title": "Public MCP endpoint omits exact Browser-origin CORS",
+    "evidence": "GET and OPTIONS http://127.0.0.1:3301/mcp from Origin http://127.0.0.1:3300 return 401 without Access-Control-Allow-Origin or Vary. The active page consequently reports MCP unavailable.",
+    "impact": "The required Human create/redeem/verify/revoke journey cannot reach the redeem step even though all seven runtime health checks pass."
+  },
+  "evidence": [
+    "artifacts/design/human-journey-attempt-31/active4-public-mcp-cors-counterexample.json",
+    "artifacts/design/human-journey-attempt-31/active4-dom-evidence.json",
+    "artifacts/design/human-journey-attempt-31/active4-request-window.json",
+    "artifacts/design/human-journey-attempt-31/active4-runtime-db-workmesh.json",
+    "artifacts/design/human-journey-attempt-31/active4-01-public-mcp-cors-blocker.png"
+  ],
+  "budgetUsage": {
+    "activeBrowserAttempts": "4/4",
+    "mcpFixtureMutations": "2/4",
+    "mcpCompletionMutations": "0/1"
+  },
+  "cleanup": {
+    "browserFinalized": true,
+    "browserCallsAfterFinalize": 0,
+    "fixtureRevoked": true,
+    "unconsumedPairings": 1,
+    "credentials": 0,
+    "rollbackRequired": false,
+    "activeRuntimeHealthy": true
+  },
+  "proposedFollowup": {
+    "nodeId": "repair-v31-public-mcp-browser-cors",
+    "requiresGraphAmendment": true,
+    "requiresHumanGate": true,
+    "minimumRepair": [
+      "Add exact configured Browser-origin CORS to the MCP HTTP server without changing MCP authentication or authorization.",
+      "Independently verify focused tests, wrong-origin failure, and active runtime invariance.",
+      "Prepare and independently Gate an MCP-only activation/rollback contract.",
+      "After an exact Human service-replacement approval, activate only the MCP role and authorize one fresh Browser acceptance attempt."
+    ]
+  },
+  "completionAuthorized": false,
+  "serviceMutationAuthorized": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}

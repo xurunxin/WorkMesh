@@ -111,6 +111,7 @@ declare module "fastify" {
 }
 
 const config = loadConfig();
+const publicMcpOrigin = config.PUBLIC_MCP_ORIGIN ?? config.WEB_ORIGIN;
 const db = createDb();
 const sessionCookie = "workmesh_session";
 const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
@@ -190,52 +191,16 @@ async function assertReadableTeam(
   );
   if (!team.rowCount) throw new DomainError("NOT_FOUND", "Team not found");
   if (current.kind === "agent") {
+    const values: unknown[] = [current.agentSessionId ?? null, current.workspaceId, teamId];
+    const liveAuthorization = liveSessionReadPredicate(current, "$1", "$2", values);
     const authorized = await db.query(
       `SELECT 1
-         FROM agent_sessions session
-         JOIN delegations delegation
-           ON delegation.id=session.delegation_id
-          AND delegation.status='active'
-         JOIN agent_definitions definition
-           ON definition.id=session.agent_id
-          AND definition.is_active
-         JOIN agent_team_access team_access
-           ON team_access.workspace_id=session.workspace_id
-          AND team_access.agent_id=session.agent_id
-          AND team_access.team_id=session.team_id
-          AND team_access.revoked_at IS NULL
-          LEFT JOIN projects session_project
-            ON session_project.id=session.project_id
-           AND session_project.workspace_id=session.workspace_id
-           AND session_project.deleted_at IS NULL
-        WHERE session.id=$1
-          AND session.workspace_id=$2
-          AND session.team_id=$3
-          AND 'work:read'=ANY(delegation.permissions_snapshot)
-          AND 'work:read'=ANY(definition.approved_capabilities)
-          AND 'work:read'=ANY(team_access.approved_capabilities)
-          AND COALESCE(delegation.capability_scope->'teamIds','[]'::jsonb)
-                ? session.team_id::text
-          AND (
-            (
-              session.work_item_id IS NOT NULL
-              AND COALESCE(
-                delegation.capability_scope->'workItemIds',
-                '[]'::jsonb
-              ) ? session.work_item_id::text
-            )
-            OR (
-              session.work_item_id IS NULL
-              AND
-              session.project_id IS NOT NULL
-              AND session_project.id IS NOT NULL
-              AND COALESCE(
-                delegation.capability_scope->'projectIds',
-                '[]'::jsonb
-              ) ? session.project_id::text
-            )
-          )`,
-      [current.agentSessionId, current.workspaceId, teamId],
+         FROM agent_sessions scoped
+        WHERE scoped.id=$1
+          AND scoped.workspace_id=$2
+          AND scoped.team_id=$3
+          AND ${liveAuthorization}`,
+      values,
     );
     if (!authorized.rowCount)
       throw new DomainError(
@@ -254,8 +219,38 @@ async function assertReadableTeam(
 }
 
 async function agentReadableWorkItem(request: FastifyRequest, workItemId: string): Promise<void> {
-  const current = request.actor!;
+  const current = request.actor! as unknown as ApiActor;
   if (current.kind !== "agent") return;
+  if (current.authentication === "coordination_connection") {
+    const values: unknown[] = [current.workspaceId, workItemId, current.agentSessionId];
+    const liveAuthorization = liveSessionReadPredicate(
+      current,
+      "$3",
+      "target.workspace_id",
+      values,
+    );
+    const found = await db.query(
+      `SELECT 1
+         FROM work_items target
+        WHERE target.workspace_id=$1
+          AND target.id=$2
+          AND target.deleted_at IS NULL
+          AND EXISTS (
+            SELECT 1
+              FROM agent_sessions scoped
+             WHERE scoped.id=$3
+               AND scoped.workspace_id=target.workspace_id
+               AND scoped.team_id=target.team_id
+               AND scoped.session_kind='coordination'
+               AND scoped.coordination_connection_id IS NOT NULL
+          )
+          AND ${liveAuthorization}`,
+      values,
+    );
+    if (!found.rowCount)
+      throw new DomainError("RESOURCE_SCOPE_DENIED", "Coordination Connection cannot read this work item");
+    return;
+  }
   const found = await db.query(
     `SELECT 1 FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN agent_definitions a ON a.id=s.agent_id AND a.is_active JOIN agent_team_access ata ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
       WHERE s.id=$1 AND s.workspace_id=$2 AND s.work_item_id=$3 AND d.status='active'
@@ -392,7 +387,7 @@ export const buildApp = (options: {
         workspaceRole: "member",
         kind: "agent",
         agentSessionId: identity.coordination_session.id,
-        authentication: "agent_session",
+        authentication: "coordination_connection",
         credentialHash: tokenHash(coordinationToken),
       };
       return;
@@ -570,7 +565,7 @@ export const buildApp = (options: {
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
                   error.code === "CURSOR_EXPIRED" || error.code === "AGENT_CONNECTION_REVOKED" || error.code === "AGENT_CONNECTION_PAIRING_CONSUMED" ||
-                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED"].includes(error.code)
+                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED", "WORK_ITEM_BLOCK_CYCLE", "WORK_ITEM_PARENT_CYCLE", "WORK_ITEM_MILESTONE_PROJECT_MISMATCH", "WORK_ITEM_MILESTONE_DELETED", "WORK_ITEM_RELATION_ENDPOINT_DELETED", "WORK_ITEM_HAS_ACTIVE_PARENT", "WORK_ITEM_HAS_ACTIVE_CHILDREN", "WORK_ITEM_HAS_ACTIVE_RELATIONS", "MILESTONE_HAS_ACTIVE_WORK_ITEMS", "PLANNING_RELATION_ALREADY_EXISTS"].includes(error.code)
                 ? 409
                 : 400;
       return reply
@@ -852,6 +847,10 @@ export const buildApp = (options: {
         "p.workspace_id",
         values,
       );
+      const coordinationTeamScope = current.authentication === "coordination_connection"
+        ? `(scoped.session_kind='coordination'
+               AND scoped.coordination_connection_id IS NOT NULL)`
+        : "FALSE";
       scope = ` AND EXISTS (
         SELECT 1
           FROM agent_sessions scoped
@@ -863,6 +862,8 @@ export const buildApp = (options: {
            AND scoped.workspace_id=p.workspace_id
            AND scoped.team_id=p.team_id
            AND (
+             ${coordinationTeamScope}
+             OR
              (
                scoped.work_item_id IS NOT NULL
                AND scoped_item.id IS NOT NULL
@@ -1004,7 +1005,7 @@ export const buildApp = (options: {
       route: "/api/v1/work-items/:id/comments",
       filters: { workItemId: id },
       sort: [{ key: "created_at", sql: "c.created_at", direction: "ASC" }, { key: "id", sql: "c.id", direction: "ASC" }],
-    }, `SELECT c.*,a.display_name AS author_name,
+    }, `SELECT c.*,a.display_name AS author_name,a.kind AS author_kind,
           COALESCE(
             array_agg(cm.actor_id) FILTER (WHERE cm.actor_id IS NOT NULL),
             '{}'::uuid[]
@@ -1020,11 +1021,14 @@ export const buildApp = (options: {
         WHERE ch.work_item_id=$1 AND c.workspace_id=$2
           AND c.deleted_at IS NULL AND ${liveAuthorization}`,
       values,
-      " GROUP BY c.id,a.display_name");
+      " GROUP BY c.id,a.display_name,a.kind");
   });
   app.post("/api/v1/work-items/:id/comments", async (request) => {
     const body = commentInputSchema.parse(request.body);
     const id = idParam(request);
+    if ((request.actor! as unknown as ApiActor).kind !== "human") {
+      throw new DomainError("RESOURCE_SCOPE_DENIED", "Work item comments are authored by Humans");
+    }
     return commands.createComment(
       db,
       commandContext(request, body, { id }),
@@ -1035,6 +1039,9 @@ export const buildApp = (options: {
   app.patch("/api/v1/comments/:id", async (request) => {
     const body = commentPatchSchema.parse(request.body);
     const id = idParam(request);
+    if ((request.actor! as unknown as ApiActor).kind !== "human") {
+      throw new DomainError("RESOURCE_SCOPE_DENIED", "Work item comments are authored by Humans");
+    }
     return commands.updateComment(
       db,
       commandContext(request, body, { id }),
@@ -1134,7 +1141,14 @@ export const buildApp = (options: {
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);
-  registerAgentConnectionRoutes(app, { db, webOrigin: config.WEB_ORIGIN, meta: commandContext, header });
+  registerAgentConnectionRoutes(app, {
+    db,
+    webOrigin: config.WEB_ORIGIN,
+    publicMcpOrigin,
+    meta: commandContext,
+    header,
+    paginator,
+  });
   return app;
 };
 
@@ -1260,7 +1274,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     label?: string;
     statusCategory?: string;
   };
-  if (request.actor!.kind === "agent") {
+  if (request.actor!.kind === "agent" && (request.actor! as unknown as ApiActor).authentication !== "coordination_connection") {
     const current = request.actor! as unknown as ApiActor;
     const session = oneRow(await db.query<{ work_item_id: string | null }>("SELECT work_item_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2", [current.agentSessionId, current.workspaceId]));
     if (!session.work_item_id) throw new DomainError("RESOURCE_SCOPE_DENIED", "Agent session has no work-item read scope");
@@ -1301,7 +1315,28 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
   const values: unknown[] = [request.actor!.workspaceId];
   let sql =
     "SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.workspace_id=$1 AND w.deleted_at IS NULL AND t.deleted_at IS NULL";
-  sql += scopedTeamPredicate(request, "w.team_id", values);
+  if (request.actor!.kind === "agent") {
+    const current = request.actor! as unknown as ApiActor;
+    values.push(current.agentSessionId);
+    const sessionParameter = `$${values.length}`;
+    const coordinationAuthorization = liveSessionReadPredicate(
+      current,
+      sessionParameter,
+      "w.workspace_id",
+      values,
+    );
+    sql += ` AND EXISTS (
+      SELECT 1
+        FROM agent_sessions scoped
+       WHERE scoped.id=${sessionParameter}
+         AND scoped.workspace_id=w.workspace_id
+         AND scoped.team_id=w.team_id
+         AND scoped.session_kind='coordination'
+         AND scoped.coordination_connection_id IS NOT NULL
+    ) AND ${coordinationAuthorization}`;
+  } else {
+    sql += scopedTeamPredicate(request, "w.team_id", values);
+  }
   for (const [key, column] of [
     ["teamId", "w.team_id"],
     ["statusId", "w.status_id"],

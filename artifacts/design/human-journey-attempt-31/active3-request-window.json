@@ -1,0 +1,37 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRequestWindow",
+  "result": "PASS_READ_ONLY_WINDOW",
+  "source": "active API supervisor generation-1 stdout log",
+  "startOffset": 7019,
+  "endOffset": 23240,
+  "windowBytes": 16221,
+  "windowSha256": "52b6ba01b0e8ecd8b742ade0e6f886e7dadd0f69f0cb25761f59f53dd257c7ee",
+  "scope": "Browser attempt plus bounded read-only verifier probes after the fixed start offset",
+  "incomingRequests": 35,
+  "methods": {
+    "GET": 29,
+    "OPTIONS": 6,
+    "POST": 0,
+    "PUT": 0,
+    "PATCH": 0,
+    "DELETE": 0
+  },
+  "paths": [
+    {"method": "GET", "path": "/api/v1/auth/me", "count": 17},
+    {"method": "OPTIONS", "path": "/api/v1/auth/me", "count": 6},
+    {"method": "GET", "path": "/readyz", "count": 4},
+    {"method": "GET", "path": "/.well-known/workmesh-agent", "count": 1},
+    {"method": "GET", "path": "/api/v1/agent-capabilities", "count": 1},
+    {"method": "GET", "path": "/api/v1/events?cursor=187&limit=100", "count": 1},
+    {"method": "GET", "path": "/api/v1/features", "count": 1},
+    {"method": "GET", "path": "/api/v1/info", "count": 1},
+    {"method": "GET", "path": "/api/v1/teams?limit=2", "count": 1},
+    {"method": "GET", "path": "/api/v1/teams/bc8daa41-561c-45e2-8c6d-5028286c1ca2/states?limit=200", "count": 1},
+    {"method": "GET", "path": "/api/v1/work-items/4feddd7d-2784-4788-a73b-c9e27cd55e4d", "count": 1}
+  ],
+  "fixtureMutationsObserved": 0,
+  "fixtureMutationsExecuted": 0,
+  "rawRequestBodiesPersisted": false,
+  "secretValuesSerialized": false
+}

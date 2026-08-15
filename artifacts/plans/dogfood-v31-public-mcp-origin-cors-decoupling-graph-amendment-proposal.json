@@ -1,0 +1,86 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingGraphAmendmentProposal",
+  "status": "PROPOSED_WAITING_HUMAN_APPROVAL",
+  "fromGraphVersion": 9,
+  "toGraphVersion": 10,
+  "fixedInputs": {
+    "graph": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:511d6be2906b611d107bc1055c1850160417b5c38d5447b34c51e16cd771580a",
+    "stateAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:321f14722d52baa5a9c013c2601b9fa5a60acb571cfc4e4b04a53213bc4bb16f",
+    "eventsAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@sha256:6d645dc71fbfcc35b753f9a4c0e64aaa33816151d1a2efe00337809c1468e3c4",
+    "blockedAcceptance": "artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json"
+  },
+  "finding": "V31-ACTIVE-003",
+  "rootCause": "WEB_ORIGIN is a single configuration value consumed by credentialed CORS, realtime headers, discovery, and connection URLs. The API-only public MCP repair changed it from the active Web origin 3300 to the public MCP router 3301, so discovery/MCP became correct while the Browser origin became unauthorized.",
+  "proposedGraph": {
+    "version": 10,
+    "mode": "repair",
+    "preservePassedNodes": true,
+    "addedNodes": [
+      "repair-v31-public-mcp-origin-cors-decoupling",
+      "verify-v31-public-mcp-origin-cors-decoupling",
+      "prepare-and-verify-v31-cors-decoupling-activation-contract",
+      "approve-v31-cors-decoupling-activation",
+      "activate-v31-cors-decoupling",
+      "approve-v31-replacement-active-browser-attempt-4",
+      "capture-v31-active-evidence-attempt-4"
+    ],
+    "replacementPath": "capture-v31-active-evidence-attempt-3 -> repair -> verify -> activation-contract -> approve-activation -> activate -> approve-browser-attempt-4 -> capture-attempt-4 -> verify-v31-final",
+    "implementationBoundary": {
+      "config": "Add one validated public MCP origin setting while retaining WEB_ORIGIN for credentialed Browser CORS and realtime.",
+      "api": "Pass the public MCP origin only to discovery/agent-connection URL generation; do not change authorization or mutation policy.",
+      "tests": "Cover Web-origin CORS 3300, public discovery/MCP URLs 3301, credentialed origins, and unchanged secret redaction.",
+      "runtime": "Version an API-only activation that binds WEB_ORIGIN=3300 and the new public MCP origin=3301, preserving all other roles/selectors."
+    },
+    "budgetChanges": {
+      "origin_cors_decoupling_repair_rounds": {"from": 0, "to": 1},
+      "origin_cors_decoupling_gate_attempts": {"from": 0, "to": 1},
+      "origin_cors_decoupling_activation_attempts": {"from": 0, "to": 1},
+      "replacement_active_browser_approval_requests": {"from": 1, "to": 2},
+      "active_browser_attempts": {"from": 3, "to": 4}
+    },
+    "unchanged": [
+      "mcp_fixture_mutations limit 4 and used count 0",
+      "mcp_completion_mutations limit 1 and used count 0",
+      "GEN-11 revision2 In Progress coord:active",
+      "all non-API runtime selectors",
+      "final independent Gate and exact GEN-11 completion threshold"
+    ]
+  },
+  "requestedHumanDecision": {
+    "approvalPhrase": "批准 v31 public MCP origin CORS decoupling repair",
+    "authorizes": [
+      "apply the exact Graph v10 repair topology and budgets",
+      "implement and independently verify the narrow configuration/API/test repair",
+      "prepare and independently Gate an API-only activation/rollback contract"
+    ],
+    "doesNotAuthorize": [
+      "service replacement or activation",
+      "Browser use",
+      "fixture, arbitrary database, object-storage, or WorkMesh mutation",
+      "GEN-11 completion",
+      "security approval or security-scan claim"
+    ]
+  },
+  "runtimeSnapshot": {
+    "health": "7/7",
+    "publicDiscoveryStatus": 200,
+    "publicMcpUnauthenticatedStatus": 401,
+    "activeBrowserStatus": "BLOCKED_BY_CORS",
+    "servedV31Build": 200,
+    "servedV30Build": 404,
+    "workMeshState": "GEN-11 In Progress revision2 coord:active",
+    "rollbackRequired": false
+  },
+  "mutationsPerformed": {
+    "graph": false,
+    "executionState": false,
+    "eventLog": false,
+    "product": false,
+    "service": false,
+    "database": false,
+    "objectStorage": false,
+    "workMesh": false,
+    "securityScan": false
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureAttempt2ProductionSeamAudit",
+  "result": "PASS",
+  "productionSeam": {
+    "moduleOwnedFunction": "Invoke-V31CoordinationCompensation",
+    "moduleOwnedRestore": "Invoke-V31OldRoleRestore",
+    "productionStartCatchCallsSharedFunction": true,
+    "probeCallsSharedFunction": true,
+    "probeExecutesSharedRestore": true,
+    "localRestoreClosureRemaining": false,
+    "cases": 5,
+    "terminalReceipts": 5,
+    "retainedOwner": "PASS",
+    "partialStopRestart": "PASS",
+    "unknownOwner": "ROLLBACK_FAILED",
+    "restartFailure": "ROLLBACK_FAILED",
+    "candidateCleanupFailure": "ROLLBACK_FAILED"
+  },
+  "authorizationAndRoots": {
+    "missingAuthRejectedBeforeService": true,
+    "executionBindingPresentAfterReject": false,
+    "activationPresentAfterReject": false,
+    "rollbackPresentAfterReject": false,
+    "supervisorAuthorizingParentBound": true,
+    "exactIndependentRootAccepted": true,
+    "parentRejectedPreWrite": true,
+    "workerSiblingRejectedPreWrite": true,
+    "prefixSiblingRejectedPreWrite": true,
+    "outsideRootRejectedPreWrite": true,
+    "unexpectedMarkersWritten": 0
+  },
+  "ast": {
+    "files": 7,
+    "parseErrors": 0,
+    "strictModeMissing": 0,
+    "dateKindMissing": 0,
+    "bareFalseCommands": 0
+  },
+  "capturedAt": "2026-08-14T13:11:11.1999081Z"
+}

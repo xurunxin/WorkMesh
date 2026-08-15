@@ -66,6 +66,54 @@ export function liveSessionReadPredicate(
   const humanSessionId = bind(values, current.humanSessionId ?? null)
   const agentSessionId = bind(values, current.agentSessionId ?? null)
   const credentialHash = bind(values, current.credentialHash ?? null)
+  const liveAgentCredential = current.authentication === 'coordination_connection'
+    ? `EXISTS (
+             SELECT 1
+               FROM agent_coordination_sessions live_coordination
+               JOIN agent_connections live_connection
+                 ON live_connection.id=live_coordination.connection_id
+                AND live_connection.workspace_id=live_coordination.workspace_id
+                AND live_connection.team_id=live_coordination.team_id
+                AND live_connection.agent_id=live_coordination.agent_id
+                AND live_connection.agent_actor_id=live_coordination.agent_actor_id
+                AND live_connection.delegation_id=live_coordination.delegation_id
+                AND live_connection.status IN ('active','rotating')
+               JOIN agent_connection_credentials live_credential
+                 ON live_credential.connection_id=live_connection.id
+                AND live_credential.token_hash=${credentialHash}
+                AND (
+                  live_credential.status='active'
+                  OR (
+                    live_credential.status='overlap'
+                    AND live_credential.overlap_until>now()
+                  )
+                )
+               JOIN actors live_principal
+                 ON live_principal.id=live_coordination.principal_human_actor_id
+                AND live_principal.workspace_id=live_coordination.workspace_id
+                AND live_principal.kind='human'
+                AND live_principal.is_active
+              WHERE live_coordination.agent_session_id=live_session.id
+                AND live_coordination.status='active'
+                AND live_coordination.expires_at>now()
+                AND live_coordination.workspace_id=live_session.workspace_id
+                AND live_coordination.team_id=live_session.team_id
+                AND live_coordination.agent_id=live_session.agent_id
+                AND live_coordination.agent_actor_id=live_session.agent_actor_id
+                AND live_coordination.delegation_id=live_session.delegation_id
+                AND live_coordination.principal_human_actor_id=live_connection.principal_human_actor_id
+                AND live_session.session_kind='coordination'
+                AND live_session.coordination_connection_id=live_connection.id
+           )`
+    : `EXISTS (
+             SELECT 1
+               FROM agent_session_tokens live_credential
+              WHERE live_credential.session_id=live_session.id
+                AND live_credential.token_hash=${credentialHash}
+                AND live_credential.expires_at>now()
+                AND live_credential.exchanged_at IS NOT NULL
+                AND live_credential.revoked_at IS NULL
+           )`
   return `EXISTS (
     SELECT 1
       FROM agent_sessions live_session
@@ -110,15 +158,7 @@ export function liveSessionReadPredicate(
              'acknowledged','planning','executing',
              'awaiting_input','awaiting_approval','blocked'
            )
-           AND EXISTS (
-             SELECT 1
-               FROM agent_session_tokens live_credential
-              WHERE live_credential.session_id=live_session.id
-                AND live_credential.token_hash=${credentialHash}
-                AND live_credential.expires_at>now()
-                AND live_credential.exchanged_at IS NOT NULL
-                AND live_credential.revoked_at IS NULL
-           )
+           AND ${liveAgentCredential}
            AND EXISTS (
              SELECT 1
                FROM delegations live_delegation

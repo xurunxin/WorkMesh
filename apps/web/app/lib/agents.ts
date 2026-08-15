@@ -16,7 +16,7 @@ export type AgentTeamAccess = {
 }
 
 export type AgentSession = {
-  id: string; agent_id: string; agent_actor_id: string; delegation_id: string; work_item_id: string | null; state: AgentState
+  id: string; agent_id: string; agent_actor_id: string; principal_human_actor_id?: string; delegation_id: string; work_item_id: string | null; state: AgentState
   state_reason: string | null; revision: number; current_plan_version_id: string | null; budget: Budget; last_heartbeat_at: string | null
   retry_of_session_id?: string | null; stop_requested_at: string | null; error_code: string | null; error_summary: string | null; created_at: string; updated_at: string
 }

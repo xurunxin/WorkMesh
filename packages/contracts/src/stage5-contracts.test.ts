@@ -57,10 +57,11 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     }
   })
 
-  it('exposes only the plan endpoint set, no list / no /agents/connect, but /rotate-confirm IS the explicit "确认成功后撤销旧凭据" operation (plan v0.4)', () => {
+  it('exposes the admin Connection collection and lifecycle endpoints, but no /agents/connect', () => {
     const operations = stage5RouteManifest.map(r => `${r.method} ${r.path}`)
     expect(operations).toEqual([
       'GET /.well-known/workmesh-agent',
+      'GET /api/v1/agent-connections',
       'POST /api/v1/agent-connections',
       'POST /api/v1/agent-connections/redeem',
       'GET /api/v1/agent-connections/{id}',
@@ -69,7 +70,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       'POST /api/v1/agent-connections/{id}/rotate',
       'POST /api/v1/agent-connections/{id}/rotate-confirm',
     ])
-    expect(operations.some(op => op === 'GET /api/v1/agent-connections')).toBe(false)
+    expect(operations.some(op => op === 'GET /api/v1/agent-connections')).toBe(true)
     expect(operations.some(op => op === 'GET /agents/connect')).toBe(false)
     // /rotate-confirm must be revisioned: true (If-Match) and not
     // conflated with /rotate. Plan v0.2/v0.3 dropped it or replaced

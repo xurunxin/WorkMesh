@@ -1,0 +1,44 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveBrowserDomEvidence",
+  "attempt": 5,
+  "result": "PASS",
+  "browser": {
+    "freshTabs": 1,
+    "viewportReset": true,
+    "finalizeCalls": 1,
+    "callsAfterFinalize": 0,
+    "consoleWarnings": 0,
+    "consoleErrors": 0
+  },
+  "authenticatedHuman": "Dogfood Owner",
+  "directlyObserved": {
+    "ready": true,
+    "pendingPairing": true,
+    "activeCredential": true,
+    "revoked": true,
+    "publicOnboarding": true,
+    "mcpEndpoint": "http://127.0.0.1:3301/mcp",
+    "discoveryEndpoint": "http://127.0.0.1:3301/.well-known/workmesh-agent",
+    "supportedClients": ["codex", "opencode", "pi", "generic_mcp"],
+    "transport": "streamable_http",
+    "profileVersion": "1.0",
+    "skillVersion": "1.1.0",
+    "escapeClosedDialog": true,
+    "focusReturnedToNewConnectionButton": true,
+    "nativeClientSelectorFocusedAt320": true
+  },
+  "responsive": {
+    "desktop": {"viewport": "1280x720", "clientWidth": 1265, "scrollWidth": 1265, "horizontalOverflow": false},
+    "mobile375": {"viewport": "375x812", "clientWidth": 360, "scrollWidth": 360, "mainWidth": 360, "horizontalOverflow": false},
+    "mobile320": {"viewport": "320x800", "clientWidth": 305, "scrollWidth": 305, "mainWidth": 305, "horizontalOverflow": false}
+  },
+  "exactBuildCarryForward": {
+    "source": "candidate attempt 2 Browser evidence plus component tests on the exact served v31 build",
+    "states": ["loading", "empty", "error", "forbidden", "expired", "mis_scoped", "unsupported_client"],
+    "keyboard": ["native_button_enter", "native_button_space", "native_select_arrow_keys"],
+    "qualification": "Attempt 5 directly observed Escape and focus restoration. The in-app Browser backend did not dispatch Enter or ArrowDown to native controls, so those interactions are not claimed as direct attempt-5 observations."
+  },
+  "secretCanaryObserved": false,
+  "secretValuesSerialized": false
+}

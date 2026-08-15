@@ -11,6 +11,7 @@ import { useRealtimeSubscription } from './lib/realtime'
 type DetailTab = 'conversation' | 'plan' | 'activity' | 'artifacts'
 type Props = { sessionId: string; compact?: boolean; tab?: DetailTab }
 type ActivityFilter = 'all' | 'actions' | 'questions' | 'evidence' | 'errors'
+type HumanActor = { id: string; display_name: string }
 
 const matchesActivity = (activity: AgentActivity, filter: ActivityFilter): boolean => {
   if (activity.kind === 'heartbeat') return false
@@ -46,12 +47,14 @@ export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
     `/api/v1/approvals?sessionId=${encodeURIComponent(sessionId)}`,
     { optional: true, map: value => normalizeApproval(value as unknown as Record<string, unknown>) },
   )
+  const humansPage = usePagedApiList<HumanActor>('/api/v1/actors/humans', { optional: true })
   const activities = activitiesPage.items
   const plans = plansPage.items
   const artifacts = artifactsPage.items
   const approvals = approvalsPage.items
+  const humans = humansPage.items
   const collectionError = [
-    activitiesPage.error, plansPage.error, artifactsPage.error, approvalsPage.error,
+    activitiesPage.error, plansPage.error, artifactsPage.error, approvalsPage.error, humansPage.error,
   ].find(Boolean)
 
   const load = useCallback(async () => {
@@ -70,11 +73,11 @@ export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
       if (invalidation.reason === 'resync')
         return Promise.all([
           load(), activitiesPage.refresh(), plansPage.refresh(),
-          artifactsPage.refresh(), approvalsPage.refresh(),
+          artifactsPage.refresh(), approvalsPage.refresh(), humansPage.refresh(),
         ]).then(() => undefined)
       void load()
       void activitiesPage.refresh(); void plansPage.refresh()
-      void artifactsPage.refresh(); void approvalsPage.refresh()
+      void artifactsPage.refresh(); void approvalsPage.refresh(); void humansPage.refresh()
     },
   )
 
@@ -109,7 +112,7 @@ export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
   return <section className={compact ? 'agent-session-detail compact' : 'agent-session-detail'} data-testid="agent-session-detail">
     {session && <header><div><h2>{compact ? 'Agent execution' : `Session ${session.id.slice(0, 8)}`}</h2><AgentBadge state={session.state} /></div><div className="session-actions">{session.state === 'paused' && <button disabled={busy} onClick={() => void signal('resume')}>Resume</button>}{canPauseAgentSession(session.state) && <button disabled={busy} onClick={() => void signal('pause')}>Pause</button>}{canRetryAgentSession(session.state) && <button disabled={busy} onClick={() => void retry()}>Retry</button>}<button className="danger" disabled={busy || !canStopAgentSession(session.state)} onClick={() => void signal('stop')}>Stop</button></div></header>}
     {(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
-    {session && <><dl className="session-facts"><div><dt>State</dt><dd>{agentStateLabel(session.state)}</dd></div><div><dt>Current step</dt><dd>{selectedPlan?.steps.find(step => step.status === 'in_progress')?.title ?? 'Not reported'}</dd></div><div><dt>Heartbeat</dt><dd>{formatTime(session.last_heartbeat_at)}</dd></div><div><dt>Budget</dt><dd>{session.budget.maxRuntimeSeconds ? `${session.budget.maxRuntimeSeconds}s max runtime` : 'Default policy'}</dd></div></dl>
+    {session && <><dl className="session-facts"><div><dt>State</dt><dd>{agentStateLabel(session.state)}</dd></div><div><dt>Principal Human</dt><dd>{humans.find(human => human.id === session.principal_human_actor_id)?.display_name ?? (session.principal_human_actor_id ? session.principal_human_actor_id.slice(0, 8) : 'Not reported')}</dd></div><div><dt>Session</dt><dd>{session.id.slice(0, 8)}</dd></div><div><dt>Current step</dt><dd>{selectedPlan?.steps.find(step => step.status === 'in_progress')?.title ?? 'Not reported'}</dd></div><div><dt>Heartbeat</dt><dd>{formatTime(session.last_heartbeat_at)}</dd></div><div><dt>Budget</dt><dd>{session.budget.maxRuntimeSeconds ? `${session.budget.maxRuntimeSeconds}s max runtime` : 'Default policy'}</dd></div></dl>
       {(!tab || tab === 'conversation') && <><form className="prompt-form" onSubmit={event => void prompt(event)}><label>Prompt the agent<textarea name="prompt" placeholder="Give the agent additional context or direction" required /></label><button disabled={busy || ['stopping', 'completed', 'failed', 'canceled'].includes(session.state)}>Send prompt</button></form>
       <section className="approval-inbox" aria-label="Approval inbox"><h3>Approval inbox</h3>{approvals.filter(approval => approval.status === 'pending').length === 0 ? <p className="empty">No pending approvals.</p> : approvals.filter(approval => approval.status === 'pending').map(approval => <article key={approval.id}><strong>{approval.action_name}</strong><span className={`risk-${approval.risk_level}`}>{approval.risk_level} risk</span><p>{approval.rationale_summary}</p><small>Expires {formatTime(approval.expires_at)}</small><div><button disabled={busy} onClick={() => void decide(approval, 'approved')}>Approve</button><button className="danger" disabled={busy} onClick={() => void decide(approval, 'rejected')}>Reject</button></div></article>)}<LoadMoreButton collection={approvalsPage} label="session approvals" /></section></>}
       {(!tab || tab === 'plan') && <section className="plan-panel" aria-label="Plan versions"><header><h3>Plan versions</h3><label>Current<select aria-label="Plan version" value={selectedPlan?.id ?? ''} onChange={event => setSelectedPlanId(event.currentTarget.value)}>{plans.map(plan => <option key={plan.id} value={plan.id}>v{plan.revision} · {plan.change_summary}</option>)}</select></label></header>{selectedPlan ? <><ol>{selectedPlan.steps.slice().sort((a, b) => a.ordinal - b.ordinal).map(step => <li key={step.id}><strong>{step.title}</strong><span className={`plan-step step-${step.status}`}>{step.status.replaceAll('_', ' ')}</span>{step.acceptanceCriteria.length > 0 && <small>Acceptance: {step.acceptanceCriteria.join('; ')}</small>}</li>)}</ol>{plans.length > 1 && <section className="plan-compare" aria-label="Plan version comparison"><label>Compare with<select aria-label="Compare plan version" value={comparisonPlan?.id ?? ''} onChange={event => setComparePlanId(event.currentTarget.value)}>{plans.filter(plan => plan.id !== selectedPlan.id).map(plan => <option key={plan.id} value={plan.id}>v{plan.revision} · {plan.change_summary}</option>)}</select></label>{comparisonPlan && <ul>{stepChanges.length === 0 ? <li>No step changes between v{comparisonPlan.revision} and v{selectedPlan.revision}.</li> : stepChanges.map(change => <li key={change.current?.id ?? change.previous?.id}>{!change.previous ? <><strong>Added:</strong> {change.current?.title}</> : !change.current ? <><strong>Removed:</strong> {change.previous.title}</> : <><strong>Changed:</strong> {change.previous.title}{change.previous.title !== change.current.title && ` → ${change.current.title}`}{change.previous.status !== change.current.status && ` · ${change.previous.status} → ${change.current.status}`}</>}</li>)}</ul>}</section>}</> : <p className="empty">No plan has been published.</p>}<LoadMoreButton collection={plansPage} label="plan versions" /></section>}

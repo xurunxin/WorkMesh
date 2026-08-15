@@ -1,0 +1,41 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31VersionedSupervisorBindingFixedInputAudit",
+  "result": "PASS",
+  "graphVersion": 5,
+  "stateSequence": 51,
+  "eventRows": 51,
+  "fixedInputs": {
+    "graphSha256": "9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+    "stateSha256": "c791ddaea340922d1f7853d54d67e2bfd267c2d7fdd23663728f2351813600d9",
+    "eventsSha256": "3b46cafdfa88727ef9c358bf382d6378bf319bece2fc6a529fec87dd47e198db",
+    "workerReportSha256": "83e705776f491efbef8a2727bfc29a74a76fdfe383eba92f43ddd1075ebdf96a",
+    "contractSha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a",
+    "failureReportSha256": "1431a75607fe5c1957e9f85c927e993092b124fd033e45b8fe8069a4c5a3ad83",
+    "rollbackReceiptSha256": "59fd050e063e00110422b0d884af6ea36fe202ef8602165dafa142df353c06df"
+  },
+  "contractBindings": {
+    "selectorBinding": "v31-stack-activation-v3",
+    "scriptCount": 12,
+    "mismatchCount": 0,
+    "module": "3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474",
+    "compensationModule": "c7cacb1daa816ab31a11a344a9e29919864c5380d892a5e1aaa63812d7f8a3b0",
+    "stage": "2b0ee923c5293003d8fa4e285d7fa1bd4b69ae1a32dc63b3911ff425a26bb153",
+    "supervisor": "a44d1ab0712cc84c81d6844f246e58e54a7436b0f38ac58dae4cdeca4d23a747",
+    "start": "2fc546f7c7dab46502c824cdeaa3f842c20a55258911dd913934acea127b2149",
+    "rollback": "a262638cb8a050409b363732f4e809c7f75e641bbf5920fb46b03c1c3fa38a9f",
+    "candidateVerifier": "30c87f07bd8b44f8e08700b5cd1f4c08b634cf5929d3f5d763f2f9376a3f511b",
+    "mcpEntrypoint": "8cf70baf67882164f0b1777f6bfa783302d6f76fb3fd85bd921f34c5aa3c1889",
+    "supervisorProbe": "0291843a04572532abf5786001e73a36c1f2c2f01fbf3dfa29e14fe778e4e8fe",
+    "compensationProbe": "fa0046506f0b91609e53cac244130299ffa17778676acf1ca5ca9ff599c5d533",
+    "astAudit": "34cecb6232c5f19df7b3fa3a411f602b4cd253fde35521bfc72aa610bf20a79f",
+    "runtimeProbe": "4a04168be28f1363fc05e7bba70ec64f3fcf01e4d9c8166b3c29c1c33b5aa3fd"
+  },
+  "controlState": {
+    "nodeId": "verify-v31-versioned-supervisor-binding-and-compensation",
+    "nodeStatus": "verifying",
+    "gatePath": "artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-gate.yaml",
+    "transitionScope": "request_creation_only"
+  },
+  "capturedAt": "2026-08-14T10:59:24.6922713Z"
+}

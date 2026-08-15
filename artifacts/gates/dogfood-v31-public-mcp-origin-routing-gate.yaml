@@ -1,0 +1,99 @@
+GateReport:
+  gate_id: dogfood-v31-public-mcp-origin-routing-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 8
+  node_id: verify-v31-active-public-mcp-origin-routing
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:81@sha256:4438ab7f36cfaca745224fbcc72878c5b093ecab6613c7bb2ff23cc8d28585bb
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:81@sha256:5abb5aaf89dee10d3a81ed21371c93d508764270e0627c9790fbf133303559d9
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json@sha256:6b1d5ec3b22dacc5deea30e7c5b7562d49405dc82577587026e31b4721a3eaac
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json@sha256:fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json@sha256:602db13b22be4484a2f31a13763444365d58c2fca7347cd403fb230764227c61
+  worker_id: public-mcp-origin-routing-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-public-origin-verifier
+    scope: [fixed_inputs, source_authority, same_origin_endpoints, authorization, compensation, evidence_roots, ast, dry_run, runtime_invariance, future_absence, cleanup]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13C-A1
+      assertion: The repaired API runtime binds WEB_ORIGIN to the existing public router at 3301 while Web 3300 remains renderer-only.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/origin-contract.json@sha256:768c928de908992a46797be177dab9e5c0d677b1013eea072d6dca4957f09186
+          observed: The ADR and API source derive discovery from WEB_ORIGIN; router 3301 converges discovery and MCP. The immutable current counterexample is discovery 200 advertising 3300, 3301/mcp 401, and 3300/mcp 404; the candidate supervisor changes only WEB_ORIGIN to 3301.
+          source: direct source inspection and fresh read-only HTTP probes
+      method: source-check and observation
+      gaps: []
+      repair: null
+    - claim_id: V31-N13C-A2
+      assertion: The repair changes no product source, packages, schemas, data, WorkMesh state, Browser state, or active service.
+      result: PASS
+      evidence:
+        - ref: artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json@sha256:6b1d5ec3b22dacc5deea30e7c5b7562d49405dc82577587026e31b4721a3eaac
+          observed: The exact change is a versioned API supervisor environment binding from 3300 to 3301. Source authority files were hash-bound but not edited; all safety mutation flags are false.
+          source: repair report and fresh fixed-input rehash
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/runtime-after.json@sha256:2f5166cf68207295d1655d47af6e55ed676a0abf8b53324c6860cd752c67e430
+          observed: API plus five protected role selectors and object storage remained exact, health was 7/7, required v31 build was 200, forbidden v30 build was 404, future artifacts were absent, and runtime residue was zero.
+          source: fresh read-only runtime inspection
+      method: rehash and observation
+      gaps: []
+      repair: null
+    - claim_id: V31-N13C-A3
+      assertion: The API-only activation and rollback contract binds exact selectors, authorization, compensation, terminal receipts, DryRun, invariance, and future absence.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/ast-audit.json@sha256:89fc31a913846487a8210a772d83796cc3dcce3206cb24a011ec6a15d53c359f
+          observed: All eight contract-bound scripts matched their hashes, parsed without errors, used StrictMode Latest, had zero bare-false CommandAst, and no ConvertFrom-Json omitted DateKind String.
+          source: fresh AST audit
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/compensation-probe.json@sha256:9c1db042522988ae65af0e83535d1746c2028997ba90dc9dfbaf8913250c741c
+          observed: The shared production compensation function used by start and rollback executed retained, restart, unknown-owner, cleanup-failure, and restart-failure cases with 5/5 matching terminal receipts.
+          source: fresh executable production-seam matrix
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/start-dry-run.json@sha256:0ff3354d7d254105313e0cdd9fca9727bd84fccba0c804ff7bea629b0124900d
+          observed: Exact start DryRun passed with targetMutationExecuted false; a separate missing-authorization invocation rejected before service mutation.
+          source: fresh exact-contract DryRun and negative execution
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/rollback-dry-run.json@sha256:798cd4755311968bf65524a367debf27c751330f5fdb96c879e146113973eec2
+          observed: Exact rollback DryRun passed with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N13V3-A1
+      assertion: All thresholds pass without a major or critical finding and only one fresh exact request may be created.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/runtime-before.json@sha256:6ffd4611b49fa870dd6ac77363d34b8b7c725f20e7bdca154eb2fa0b0f9b3969
+          observed: Runtime before independent probes was exact health 7/7 with no future artifact or candidate residue.
+          source: fresh read-only runtime inspection
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-routing-verification/independent/verification-summary.json@sha256:16474adb7f2339d4e76ad8bb40b64311ad62cf1740e5b4670d46eb7d08667e2b
+          observed: All four claim checks pass; exact independent root passed, six sibling or outside invocations rejected pre-write, missing authorization rejected before service work, and no non-DryRun activation ran.
+          source: independent verification synthesis
+      method: test, inspection, and synthesis
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json@sha256:6b1d5ec3b22dacc5deea30e7c5b7562d49405dc82577587026e31b4721a3eaac
+    - artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json@sha256:fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was excluded and no security approval is claimed.
+    - No Browser, non-DryRun activation or rollback, service control, database mutation, object-storage mutation, WorkMesh mutation, product-source mutation, package mutation, or lockfile mutation was executed.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    active_replacement: false
+    request_creation: true
+    service_replacement: false
+    activation: false
+    reason: The exact API-only public-origin contract passed; only one fresh exact expiring Human request may now be created.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact public-origin contract and old/candidate API selectors
+    completion_gate: A distinct fresh Human approval is required before any API service replacement or non-DryRun activation.
+  observed_at: 2026-08-14T14:44:26.2369118Z

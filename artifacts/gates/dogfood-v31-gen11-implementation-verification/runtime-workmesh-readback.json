@@ -1,0 +1,46 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ImplementationRuntimeWorkMeshReadback",
+  "observedAt": "2026-08-14T07:47:01.6846193Z",
+  "runtime": {
+    "listeners": [
+      { "port": 3001, "pid": 44104, "readyStatus": 200 },
+      { "port": 3300, "pid": 30096, "readyStatus": 200 },
+      { "port": 3301, "pid": 24516, "readyStatus": 200 },
+      { "port": 3302, "pid": 70676, "readyStatus": 200 },
+      { "port": 3303, "pid": 72736, "readyStatus": 200 },
+      { "port": 3304, "pid": 71408, "readyStatus": 200 }
+    ],
+    "minio": { "port": 59000, "healthPath": "/minio/health/live", "status": 200 },
+    "preview": [
+      { "port": 34600, "listenerPid": 0 },
+      { "port": 34601, "listenerPid": 0 }
+    ],
+    "activeBuildStatus": 200,
+    "candidateBuildStatus": 404,
+    "invariant": true
+  },
+  "workItem": {
+    "id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "teamKey": "GEN",
+    "number": 11,
+    "statusName": "In Progress",
+    "statusCategory": "started",
+    "revision": 2,
+    "responsibleHumanDisplayName": "Dogfood Owner",
+    "labels": [
+      "coord:active",
+      "migration",
+      "module:mcp",
+      "owner:human",
+      "roadmap:post-ga",
+      "security",
+      "type:enhancement"
+    ],
+    "activeExecutor": null
+  },
+  "mutationExecuted": false,
+  "browserUsed": false,
+  "securityScanExecuted": false,
+  "result": "PASS"
+}

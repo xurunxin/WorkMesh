@@ -1,0 +1,49 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveBrowserDomEvidence",
+  "result": "BLOCK",
+  "observedAt": "2026-08-14T11:25:43.6188338Z",
+  "browser": {
+    "surface": "in-app Browser",
+    "freshTabs": 1,
+    "viewport": "1280x720",
+    "viewportReset": true,
+    "finalizeCalls": 1,
+    "callsAfterFinalize": 0
+  },
+  "page": {
+    "url": "http://127.0.0.1:3300/agents",
+    "authenticatedHuman": "Dogfood Owner",
+    "alerts": [
+      "Agent workspace needs attention: WORKMESH_BETA_COORDINATION_MCP is disabled for this deployment",
+      "Unable to load Connections. Existing Connections may still be active. Retry before creating a replacement."
+    ],
+    "retryReproduced": true,
+    "newConnectionDialogOpened": true,
+    "submittedFixtureCreated": false,
+    "fixtureVisibleAfterSubmit": false,
+    "secretMaterialObserved": false
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/design/human-journey-attempt-31/active-01-connection-load-error.png",
+      "sha256": "de2fa1aae12cbd43a38551b5ac499976074a08369306685dca8bc99e0bf754be",
+      "bytes": 58133,
+      "directInspection": "PASS: authenticated Connection form and surrounding error surface are legible"
+    },
+    {
+      "path": "artifacts/design/human-journey-attempt-31/active-02-coordination-feature-disabled.png",
+      "sha256": "7a14517166428ae884fca30efcc37d19307754e581df6ddddbb00e716d7b8234",
+      "bytes": 71255,
+      "directInspection": "PASS: feature-disabled and Connection collection failure are directly legible"
+    }
+  ],
+  "mutations": {
+    "successfulFixtureMutations": 0,
+    "fixtureBudgetUsed": 0,
+    "browserBudgetUsed": 1,
+    "database": false,
+    "workmeshCompletion": false,
+    "service": false
+  }
+}

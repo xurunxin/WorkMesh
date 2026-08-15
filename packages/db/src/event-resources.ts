@@ -86,6 +86,7 @@ export const supportedEventAggregateTypes = [
   'artifact_upload_intent',
   'pull_request',
   'project_milestone',
+  'work_item_relation',
   'project_update',
   'project_health_update',
   'completion_suggestion',
@@ -200,7 +201,7 @@ const payloadSeeds = (payload: Record<string, unknown>): EventResource[] => {
   return result
 }
 
-const aggregateSeedSql: Readonly<Record<string, string>> = {
+export const aggregateSeedSql: Readonly<Record<string, string>> = {
   actor:
     `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id
        FROM actors WHERE id=$1 AND workspace_id=$2`,
@@ -362,7 +363,8 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
       WHERE action.id=$1 AND action.workspace_id=$2
         AND repository.workspace_id=$2`,
   artifact_upload_intent:
-    `SELECT 'session'::text AS resource_type,intent.session_id AS resource_id
+    `SELECT CASE WHEN intent.session_id IS NULL THEN 'work_item' ELSE 'session' END AS resource_type,
+            COALESCE(intent.session_id,intent.work_item_id) AS resource_id
        FROM artifact_upload_intents intent
       WHERE intent.id=$1 AND intent.workspace_id=$2`,
   pull_request:
@@ -377,6 +379,14 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
     `SELECT 'project'::text AS resource_type,milestone.project_id AS resource_id
        FROM project_milestones milestone
       WHERE milestone.id=$1 AND milestone.workspace_id=$2`,
+  work_item_relation:
+    `SELECT 'work_item'::text AS resource_type,relation.source_work_item_id AS resource_id
+       FROM work_item_relations relation
+      WHERE relation.id=$1 AND relation.workspace_id=$2
+     UNION ALL
+     SELECT 'work_item'::text AS resource_type,relation.target_work_item_id AS resource_id
+       FROM work_item_relations relation
+      WHERE relation.id=$1 AND relation.workspace_id=$2`,
   project_update:
     `SELECT 'project'::text AS resource_type,update.project_id AS resource_id
        FROM project_updates update
@@ -497,7 +507,7 @@ const aggregateSeedSql: Readonly<Record<string, string>> = {
       WHERE session.id=$4 AND session.workspace_id=$2`,
 }
 
-const authoritySql: Readonly<Record<EventResourceType, string>> = {
+export const authoritySql: Readonly<Record<EventResourceType, string>> = {
   workspace:
     `SELECT workspace.id AS workspace_id,
             NULL::uuid AS team_id,NULL::uuid AS project_id,
@@ -545,14 +555,13 @@ const authoritySql: Readonly<Record<EventResourceType, string>> = {
          ON item.id=COALESCE(room.work_item_id,session.work_item_id)
       WHERE room.id=$1`,
   artifact:
-    `SELECT artifact.workspace_id,session.team_id,
+    `SELECT artifact.workspace_id,COALESCE(session.team_id,item.team_id) AS team_id,
             COALESCE(session.project_id,item.project_id) AS project_id,
-            COALESCE(artifact.work_item_id,session.work_item_id)
-              AS work_item_id,
+            COALESCE(artifact.work_item_id,session.work_item_id) AS work_item_id,
             artifact.session_id,NULL::uuid AS room_id,
             artifact.id AS artifact_id,NULL::uuid AS delivery_id
        FROM artifacts artifact
-       JOIN agent_sessions session ON session.id=artifact.session_id
+       LEFT JOIN agent_sessions session ON session.id=artifact.session_id
        LEFT JOIN work_items item
          ON item.id=COALESCE(artifact.work_item_id,session.work_item_id)
       WHERE artifact.id=$1`,

@@ -1,0 +1,47 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StackRollback",
+  "status": "ROLLED_BACK_RUNTIME_VERIFIED",
+  "reason": "DOGFOOD_V31_SUPERVISOR_EXITED: attempt-2 start passed the versioned v2 contract to a shared supervisor that remained bound to the immutable v1 contract path and selector; candidate startup and inline compensation supervisors exited before listening",
+  "failedContractSha256": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384",
+  "gateSha256": "36a04c51de5946e3fbcda21dfea47a4557f1cea80a8c2ff34e1a8745d017f313",
+  "requestSha256": "53eda6f2f13ea58dcedc9b4278ef0b57382add3a9e6ff98b41ea85d2340143a0",
+  "approvalSha256": "415de42f973bf70ae83176c919385accc99e20cdbd3c9b475412bc54f0446675",
+  "activationReceiptWritten": false,
+  "recoveryContractSha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a",
+  "recoveryScript": {
+    "path": "artifacts/runtime/dogfood-v31-stack-activation/recover-v30-after-v31-attempt-2.ps1",
+    "sha256": "764d15004ce20982bdeb34b802938a2eda4c4dea16eecadc207455471b397f69"
+  },
+  "rolledBackAt": "2026-08-14T10:27:24.8825861Z",
+  "restored": {
+    "web": {
+      "mode": "rollback",
+      "supervisorPid": 62116,
+      "supervisorStartTimeUtc": "2026-08-14T10:26:43.7072484Z",
+      "listenerPid": 75600,
+      "listenerStartTimeUtc": "2026-08-14T10:26:44.1814559Z",
+      "root": "G:/Projects/MetronX/WorkMesh/artifacts/runtime/dogfood-v30-fault-seam-web-activation/prepared-active-origin-v7",
+      "statePath": "artifacts/runtime/dogfood-v31-stack-activation/runtime/rollback-recovery-attempt-2-web.json",
+      "stopPath": "artifacts/runtime/dogfood-v31-stack-activation/runtime/rollback-recovery-attempt-2-web.stop"
+    },
+    "mcp": {
+      "mode": "rollback",
+      "supervisorPid": 24544,
+      "supervisorStartTimeUtc": "2026-08-14T10:26:46.8491269Z",
+      "listenerPid": 40520,
+      "listenerStartTimeUtc": "2026-08-14T10:26:47.8025682Z",
+      "root": "G:/Projects/MetronX/WorkMesh-dogfood-release-candidate-v2",
+      "statePath": "artifacts/runtime/dogfood-v31-stack-activation/runtime/rollback-recovery-attempt-2-mcp.json",
+      "stopPath": "artifacts/runtime/dogfood-v31-stack-activation/runtime/rollback-recovery-attempt-2-mcp.stop"
+    }
+  },
+  "healthChecksPassed": 7,
+  "healthChecksRequired": 7,
+  "rollbackBuildIdStatus": 200,
+  "candidateBuildIdStatus": 404,
+  "databaseMutation": false,
+  "objectStoreMutation": false,
+  "workMeshMutation": false,
+  "securityScanRun": false
+}

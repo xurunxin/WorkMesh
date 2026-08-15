@@ -1,0 +1,81 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31StaticAudit",
+  "observedAt": "2026-08-14T08:19:35.597Z",
+  "source": {
+    "baseFileCount": 580,
+    "candidateFileCount": 583,
+    "baseCanonicalSha256": "15445387c5cff0e70a66940608b1dbbbc8ac6ae4b84a22eaf2a614fa78051f2d",
+    "candidateCanonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "changedPaths": [
+      "apps/mcp/src/index.test.ts",
+      "apps/mcp/src/index.ts",
+      "apps/web/app/agent-connections-panel.tsx",
+      "apps/web/app/connect/page.tsx",
+      "apps/web/app/lib/connection-diagnostics.test.ts",
+      "apps/web/app/lib/connection-diagnostics.ts",
+      "apps/web/app/lib/mcp-onboarding.test.ts",
+      "apps/web/app/lib/mcp-onboarding.ts",
+      "apps/web/app/styles.css",
+      "apps/web/e2e/mcp-onboarding.spec.ts",
+      "docs/agent-integration.md",
+      "packages/contracts/src/client-profile-contract.test.ts"
+    ],
+    "authorizedDeltaOnly": true,
+    "candidateGitMetadataPresent": false
+  },
+  "build": {
+    "base": {
+      "fileCount": 118,
+      "canonicalSha256": "9ec68786ed724b27052a06b4107ac33489daa12f3db56ad91fa43fbea0246231",
+      "buildId": "V-SFnsKVQ5xpM6FrzLW5l",
+      "preview34601Matches": [
+        "apps/web/.next/static/chunks/776-a3dfea81c0aced0c.js",
+        "apps/web/.next/static/chunks/app/connect/page-a274d051e02938db.js",
+        "apps/web/.next/static/chunks/app/install/page-94a0e252ef50be8b.js",
+        "apps/web/.next/static/chunks/app/layout-8932f8b9de77fa88.js",
+        "apps/web/.next/static/chunks/app/login/page-dc2873adf3b704cc.js"
+      ],
+      "active3301Matches": [],
+      "legacyLocalhostMatches": [],
+      "sharedGzipBytes": 120088,
+      "connectRouteGzipBytes": 105241,
+      "agentsRouteGzipBytes": 126589
+    },
+    "candidate": {
+      "fileCount": 118,
+      "canonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+      "buildId": "Yj0IS_0CtW-lStIuWIemm",
+      "preview34601Matches": [
+        "apps/web/.next/static/chunks/776-a3dfea81c0aced0c.js",
+        "apps/web/.next/static/chunks/app/connect/page-7464d164898709ed.js",
+        "apps/web/.next/static/chunks/app/install/page-5203b65f2af85f56.js",
+        "apps/web/.next/static/chunks/app/layout-397ac2c109143b0d.js",
+        "apps/web/.next/static/chunks/app/login/page-dfea61636126fd80.js"
+      ],
+      "active3301Matches": [],
+      "legacyLocalhostMatches": [],
+      "sharedGzipBytes": 120648,
+      "connectRouteGzipBytes": 108139,
+      "agentsRouteGzipBytes": 129465
+    }
+  },
+  "bundle": {
+    "sharedDeltaBytes": 560,
+    "connectRouteDeltaBytes": 2898,
+    "agentsRouteDeltaBytes": 2876,
+    "sharedBudgetBytes": 40960,
+    "routeBudgetBytes": 73728,
+    "withinBudget": true
+  },
+  "packageHashes": {
+    "package.json": "63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+    "pnpm-lock.yaml": "c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+    "apps/web/package.json": "4451a5443267b46dcf2b675c4e23584a76cc2e50ecfea5aba873ddd2fe7a7598",
+    "apps/mcp/package.json": "0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6",
+    "packages/contracts/package.json": "1fbc71fa9a23ebbd037e9df7d4fb0d64edbf7d6d72313cad02476186f231fb98",
+    "packages/ui/package.json": "3aa6b0d695a953108a1a0beabd19968bbf0b9bf11a8dadc3fcac85ec673986a6"
+  },
+  "packageIdentity": true,
+  "result": "PASS"
+}

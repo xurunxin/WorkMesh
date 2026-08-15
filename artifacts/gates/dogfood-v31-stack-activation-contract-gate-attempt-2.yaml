@@ -1,0 +1,103 @@
+GateReport:
+  gate_id: dogfood-v31-stack-activation-contract-gate-attempt-2
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 4
+  node_id: verify-v31-empty-byte-staging-repair
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:41@sha256:9eb536a1e562dc86d3df0dc3093fa4faf35b3f898082f9b015d05593c8c0cc34
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:41@sha256:03da2ac45aaa9fe78e6554ea360c0cc7f81c107f0fc404f613498c6bfc5c89c5
+    - artifacts/implementation/dogfood-v31-empty-byte-staging-repair.json@sha256:165f666f7e0375ffd59aa9d5cc0f082d8fdf0119512e5459e4a3b7b0b9d5043d
+    - artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json@sha256:644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384
+  worker_id: activation-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-activation-repair-verifier
+    scope: [fixed_inputs, empty_byte_correctness, prepared_materialization, provenance, ast, dry_run, authorization, compensation, runtime_invariance]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N12R-A1
+      assertion: The exact zero-length client-only/index.js counterexample returns a non-null byte array of length zero, while non-empty binary bytes remain exact except for the one authorized origin replacement.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/contract/contract-probe.json@sha256:924ed725fbc4a9bd95c1802880786d10d1daf21538efc602aa0d0f2dc404bf4b
+          observed: emptyTransformExact and binaryTransformExact were true; direct non-DryRun stage and outside evidence root were rejected pre-write; Gate, authorization, and compensation matrices passed.
+          source: fresh executable production-module probe
+        - ref: artifacts/runtime/dogfood-v31-stack-activation/runtime-module-attempt-2.psm1@sha256:3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474
+          observed: Convert-V31OriginBytes emits a typed byte array with Write-Output -NoEnumerate after the byte-exact transform loop.
+          source: direct source inspection
+      method: test and source-check
+      gaps: []
+      repair: null
+    - claim_id: V31-N12R-A2
+      assertion: A verifier-owned disposable prepared root passes exact first-write and reuse at 1992/79e580 and is removed without active service, database, object-storage, or WorkMesh mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/prepared/prepared-probe.json@sha256:229d55d21bf6932a583b1893d6a6ac56f7f3a8c48e45aefdf6ec7fb2c1d2c668
+          observed: First-write and reuse both produced 1992 files with canonical SHA 79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4; the zero-byte target was preserved and residualPreparedRoot was false.
+          source: fresh executable disposable materialization probe
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/runtime-after/runtime-invariance.json@sha256:ec1699167a5f694e8f79c7515c25db22f445096e3138d431d2a2b42237706853
+          observed: All six exact role listeners remained healthy and unchanged, MinIO was 200, active v30 build was 200, candidate v31 build was 404, and future artifacts were absent.
+          source: fresh read-only runtime-after probe
+      method: test and read-only runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N12R-A3
+      assertion: The versioned attempt-2 contract binds all changed scripts, fresh Gate/request/approval paths, consumed attempt-1 provenance, and the same compensation and protected-runtime boundaries.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/fixed-inputs-and-provenance.json@sha256:e73eb58700bb0eb75125b7c778e0ac631297a0e39e614ba9c6750f678662bf64
+          observed: Graph v4, seq41 state/events, report and contract matched; attempt-1 contract, Gate, request, approval and failure preflight were byte-exact, event 000038 marked attempt one consumed, and no service mutation occurred.
+          source: fresh SHA256 rehash, event inspection, and artifact readback
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/script-binding-audit.json@sha256:a44c73fb279d88acc92f5ac100ca83c50b3272974c61573e6a6aa5fd95177942
+          observed: All 11 contract-bound scripts and modules matched exactly with zero mismatch.
+          source: fresh SHA256 rehash
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/ast/ast-audit.json@sha256:a3028e5bf67c3d5fdddf6c0605ac2086688df6abb51db860168d85ccfa36d98b
+          observed: All nine PowerShell files parsed under pwsh7 with StrictMode Latest, no bare-false commands, and no ConvertFrom-Json missing DateKind String.
+          source: fresh executable AST audit
+      method: source-check, schema-check, and test
+      gaps: []
+      repair: null
+    - claim_id: V31-N12V-A1
+      assertion: All repair and activation-contract checks pass with no unresolved major or critical finding; transition scope is request_creation_only and activation remains unauthorized.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/stage/stage-dry-run.json@sha256:473d8f9fda49b3591f9fd268deec3f78a139b3209cc9c935f44b1ccb9f42f1f7
+          observed: Exact stage DryRun passed at source 1992/ff3afd and predicted prepared 1992/79e580 with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/start/preflight.json@sha256:41db81358797da3487bdcc34b319833e1d1c4ac125ffeac29e8e620a19a59607
+          observed: Exact start DryRun passed with contract 644d175..., candidate source/build/standalone selectors exact, protected and replaced roles explicit, six secret names present without values, and targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/independent/rollback/rollback-preflight.json@sha256:d03b5be0469ec9209851eefbee1c13ea8815567423d0cc27de87eccbe0817aba
+          observed: Exact rollback DryRun passed with protected roles explicit and targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-stack-activation-contract-verification-attempt-2/verification-summary.json@sha256:75bd7f6c0a6c141a87e2ef7efe8f12035f060bd4db3675870146a900ca3df7c5
+          observed: Production prepared root and all four attempt-2 future artifacts remained absent; runtime before/after remained health 7/7 with v30 build 200 and v31 build 404.
+          source: independent verification synthesis
+      method: test and inspection
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-empty-byte-staging-repair.json@sha256:165f666f7e0375ffd59aa9d5cc0f082d8fdf0119512e5459e4a3b7b0b9d5043d
+    - artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-2.json@sha256:644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was explicitly excluded by Human direction; this Gate makes no security approval claim.
+    - Non-DryRun activation and rollback, Browser, Git, service control, DB mutation, object-storage mutation, WorkMesh mutation, and product mutation were prohibited and not executed.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    active_replacement: false
+    request_creation: true
+    activation: false
+    reason: The versioned empty-byte-safe activation contract passed; only one fresh exact expiring Human request may be created.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact attempt-2 contract and candidate/rollback selectors
+    completion_gate: A fresh attempt-2 Human request and exact unexpired single-use approval are required before any activation.
+  observed_at: 2026-08-14T10:00:54.6497328Z

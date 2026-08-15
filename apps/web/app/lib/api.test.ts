@@ -145,6 +145,23 @@ describe('auth mutation idempotency', () => {
     })
   })
 
+  it('preserves structured error details, correlation and safe next action', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: {
+      code: 'REVISION_CONFLICT',
+      message: 'The Work Item changed',
+      details: { currentRevision: 4 },
+      correlationId: 'corr-detail-1',
+      safeNextAction: 'Reload the latest Work Item before deciding whether to retry.',
+    } }), { status: 409 })))
+    await expect(apiRequest('/api/v1/work-items/work-1')).rejects.toMatchObject({
+      status: 409,
+      code: 'REVISION_CONFLICT',
+      details: { currentRevision: 4 },
+      correlationId: 'corr-detail-1',
+      safeNextAction: 'Reload the latest Work Item before deciding whether to retry.',
+    })
+  })
+
   it('accepts a successful mutation with an empty 204 response', async () => {
     values.set('workmesh.csrf-token', 'csrf')
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 204 })))

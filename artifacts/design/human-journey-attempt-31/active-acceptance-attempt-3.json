@@ -1,0 +1,72 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAcceptance",
+  "attempt": 3,
+  "result": "BLOCK",
+  "statusProposal": "blocked",
+  "observedAt": "2026-08-14T15:14:30.8644368Z",
+  "fixedInputs": {
+    "graph": "sha256:511d6be2906b611d107bc1055c1850160417b5c38d5447b34c51e16cd771580a",
+    "activation": "sha256:879dc5925840b7fd8cf27942ad348e9db6201a58f71f148961b08f5f05c20c44",
+    "humanApproval": "sha256:c63a057bc3c43938a60fee6b4973f56d5100d5b81d0bb998cc624cd781290821"
+  },
+  "claimChecks": [
+    {
+      "id": "V31-N13B-A1",
+      "result": "BLOCK",
+      "summary": "Public discovery and unauthenticated MCP now pass at 3301, but the active Human Web origin at 3300 cannot read the API because credentialed CORS is also pinned to 3301."
+    },
+    {
+      "id": "V31-N13B-A2",
+      "result": "NOT_RUN_AFTER_CRITICAL_STOP",
+      "summary": "The create/redeem/verify/revoke fixture sequence was not started because the authenticated Human surface failed before connection data could load; fixture budget remains 0/4 used."
+    },
+    {
+      "id": "V31-N13B-A3",
+      "result": "PASS",
+      "summary": "Viewport reset, exactly-once Browser finalize, bounded raw request window, runtime/database/WorkMesh readback, zero mutation methods, and zero fixture residue pass."
+    }
+  ],
+  "finding": {
+    "id": "V31-ACTIVE-003",
+    "severity": "critical",
+    "title": "Public MCP origin activation breaks credentialed Browser CORS",
+    "evidence": "The active /agents page at origin 3300 renders Reconnecting and Failed to fetch. OPTIONS from origin 3300 receives Access-Control-Allow-Origin 3301, while origin 3301 is accepted. Source binds CORS, realtime, discovery, and connection URLs to the same WEB_ORIGIN value.",
+    "impact": "The active Human onboarding surface cannot load authenticated API state, so the required Human plus Agent lifecycle cannot start even though public discovery and MCP routing are healthy."
+  },
+  "evidence": [
+    "artifacts/design/human-journey-attempt-31/active3-cors-counterexample.json",
+    "artifacts/design/human-journey-attempt-31/active3-dom-evidence.json",
+    "artifacts/design/human-journey-attempt-31/active3-request-window.json",
+    "artifacts/design/human-journey-attempt-31/active3-runtime-db-workmesh.json",
+    "artifacts/design/human-journey-attempt-31/active3-01-cors-blocker.png"
+  ],
+  "budgetUsage": {
+    "activeBrowserAttempts": "3/3",
+    "mcpFixtureMutations": "0/4",
+    "mcpCompletionMutations": "0/1"
+  },
+  "cleanup": {
+    "browserFinalized": true,
+    "browserCallsAfterFinalize": 0,
+    "fixtureResidue": 0,
+    "rollbackRequired": false,
+    "activeRuntimeHealthy": true
+  },
+  "proposedFollowup": {
+    "nodeId": "repair-v31-public-mcp-origin-cors-decoupling",
+    "requiresGraphAmendment": true,
+    "requiresHumanGate": true,
+    "reason": "The Browser budget is exhausted and the repair changes the API configuration/service boundary.",
+    "minimumRepair": [
+      "Keep credentialed Browser CORS and realtime headers bound to the exact Web origin http://127.0.0.1:3300.",
+      "Introduce a distinct validated public MCP origin bound to http://127.0.0.1:3301 for discovery, connect, MCP, and Skill URLs.",
+      "Add focused configuration, CORS, discovery, and agent-connection regression tests plus an API-only versioned activation/rollback contract.",
+      "Authorize one additional replacement active Browser attempt only after independent PASS and a fresh exact Human approval."
+    ]
+  },
+  "completionAuthorized": false,
+  "serviceMutationAuthorized": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}

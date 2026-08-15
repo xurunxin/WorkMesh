@@ -1,0 +1,74 @@
+GateReport:
+  gate_id: dogfood-v31-public-mcp-browser-cors-activation-contract-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 11
+  node_id: prepare-and-verify-v31-mcp-browser-cors-activation-contract
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:116@sha256:22641bc0d87a15080e2fb467ef3f304a3e7bb3a8c90932aa620f504319dce39b
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:116@sha256:ce9db011dc63368db9e688358e5f962236b5892187acee29570fa591e4d1208e
+    - artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation-contract.json@sha256:e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df
+    - artifacts/gates/dogfood-v31-public-mcp-browser-cors-gate.yaml@sha256:cc1ab8f91b8933d67455987d79ea441eb2058fe6b8178cc73d539b72711c96e9
+  worker_id: activation-contract-controller
+  attempt: 1
+  verifier:
+    actor_id: fresh-mcp-only-activation-contract-verifier
+    scope: [fixed_inputs, script_bindings, ast, authorization_boundary, dry_runs, compensation, wrong_root, runtime_invariance, future_absence]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13N-A1
+      assertion: Contract, versioned entrypoint, MCP-only start and rollback, authorization-before-mutation, compensation, exact DryRuns, wrong-root rejection, protected runtime invariance, and future-artifact absence independently pass.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent/final-independent-summary.json@sha256:7439bd2ae6e85c58ca64f25bc2b96b651ad99cdcea2766e4f2c57b8c94eac6cf
+          observed: Seven contract-bound scripts were exact; supervisor, start, and rollback DryRuns passed; start, rollback, and supervisor rejected a sibling evidence root before writing; the six process roles and MinIO stayed exact and healthy before and after; four future artifacts and all candidate runtime state remained absent.
+          source: fresh independent executable verification
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent/ast-audit.json@sha256:726d04da50d936e346ef7a1b9961daef7366f23f166fc84db685a9f8b5260b88
+          observed: Six PowerShell files parsed without errors, use StrictMode, have no bare-false command, and all JSON parsing uses DateKind String.
+          source: fresh PowerShell AST audit
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent/compensation-matrix.json@sha256:b82b21beacd85d0286d3521853f84d10f60efefd1390abc01ead01f880742b16
+          observed: The shared production compensation seam passed retained, missing, unknown-owner, cleanup-failure, and restore-failure terminal-receipt cases; five old-owner decisions and the live retained owner were exact.
+          source: shared production module executable matrix
+      method: source-check, AST, DryRun, counterexample, and runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13N-A2
+      assertion: PASS authorizes only creation of one exact expiring Human request for MCP role replacement and does not authorize service mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation-contract.json@sha256:e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df
+          observed: The contract binds structured GateReport PASS/request_creation_only parsing, exact contract/Gate/request/approval hashes, expiry, single use, one MCP role mutation, six protected services, and mandatory terminal compensation.
+          source: contract and production-script review
+        - ref: artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent/start-dry-run.json@sha256:20c2d624784f7eef9dd15d413c0664628418a28e417c33a721b458937040f439
+          observed: Exact start DryRun passed with targetMutationExecuted false while the old MCP supervisor 72740 and listener 10516 remained exact.
+          source: exact contract DryRun
+      method: authorization and mutation-boundary review
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation-contract.json@sha256:e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df
+    - artifacts/gates/dogfood-v31-public-mcp-browser-cors-activation-contract-verification/independent/final-independent-summary.json@sha256:7439bd2ae6e85c58ca64f25bc2b96b651ad99cdcea2766e4f2c57b8c94eac6cf
+  rejected_artifacts: []
+  risks_or_unverified:
+    - The contract was verified without non-DryRun service replacement. The active public MCP endpoint still returns 401 without Browser CORS until a distinct Human approves the exact MCP-only activation.
+    - Browser, WorkMesh mutation, integration database tests, and security scanning were excluded; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: request_creation_only
+    request_creation: true
+    active_replacement: false
+    activation: false
+    browser: false
+    workmesh_completion: false
+    reason: The exact MCP-only activation contract passed its one independent Gate and may now create one exact expiring Human request; service replacement remains prohibited until that separate Human decision.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport and exact hash
+      - exact activation contract and script hashes
+      - one fresh expiring Human request bound to this Gate
+    completion_gate: A distinct Human approval is required before the start script may replace the MCP supervisor and listener.
+  observed_at: 2026-08-14T18:06:44.2653514Z

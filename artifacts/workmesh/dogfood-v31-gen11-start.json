@@ -1,0 +1,12 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Gen11StartReceipt",
+  "result": "PASS",
+  "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+  "before": {"revision": 1, "status": "Backlog", "statusId": "6a1d52f6-faca-4f55-a8d7-d1729913761f", "coordination": "coord:paused", "owner": "owner:unassigned"},
+  "after": {"revision": 2, "status": "In Progress", "statusId": "d262cf6f-e1d1-4820-83e4-4b191bf3ce7e", "labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"], "responsibleHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa", "responsibleHumanDisplayName": "Dogfood Owner", "activeExecutor": null},
+  "mutation": {"idempotencyKey": "dogfood-v31-gen11-start-rev1-v1", "firstResponse": {"id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d", "revision": 2}, "identicalReplayResponse": {"id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d", "revision": 2}},
+  "durableEvent": {"cursor": "181", "id": "6af10e93-98e2-4e6f-8e17-d8834513f5d2", "eventType": "work_item.status_changed", "aggregateRevision": 2, "idempotencyKey": "dogfood-v31-gen11-start-rev1-v1", "correlationId": "75bfdbb2-5eba-47b5-af98-ac5c2a37e74c", "eventsAfter181": 0},
+  "observedAt": "2026-08-14T07:15:56.531Z",
+  "mutations": {"workmesh": true, "product": false, "service": false, "databaseDirect": false, "git": false, "browser": false, "securityScan": false}
+}

@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import argon2 from 'argon2'
-import { Pool, type PoolClient, type QueryResultRow } from 'pg'
+import { Pool, types, type PoolClient, type QueryResultRow } from 'pg'
 import { defaultStates } from '@workmesh/domain'
 export * from './schema.js'
 export * from './events.js'
@@ -9,6 +9,10 @@ export * from './agent-locks.js'
 export * from './agent-lock-order-manifest.js'
 import { appendEvent } from './events.js'
 export { applyMigrations } from './migrations.js'
+
+// PostgreSQL DATE is a calendar value, not an instant. The pg default parser
+// creates a local-midnight Date whose JSON form can move to the previous day.
+types.setTypeParser(1082, value => value)
 
 export type Db = Pool
 export type PasswordInput = { password: string }

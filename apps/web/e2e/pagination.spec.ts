@@ -86,12 +86,12 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
   })
 
   await page.goto('/')
-  await expect(page.getByTestId('work-work-first')).toBeVisible()
-  await expect(page.getByTestId('work-work-later')).toHaveCount(0)
+  await expect(page.locator('[data-work-item-id="work-first"]')).toBeVisible()
+  await expect(page.locator('[data-work-item-id="work-later"]')).toHaveCount(0)
 
-  await page.getByTestId('load-more-work-items').click()
-  await expect(page.getByTestId('work-work-later')).toContainText('Only on the second page')
-  await expect(page.getByTestId('work-work-first')).toHaveCount(1)
+  await page.getByRole('button', { name: 'Load more work items' }).click()
+  await expect(page.locator('[data-work-item-id="work-later"]')).toContainText('Only on the second page')
+  await expect(page.locator('[data-work-item-id="work-first"]')).toHaveCount(1)
 
   const continuation = workRequests.find(request =>
     request.searchParams.get('cursor') === 'opaque-work-page-2')
@@ -104,16 +104,16 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
   await expect.poll(() => workRequests.some(request =>
     request.searchParams.get('search') === 'Slow')).toBe(true)
   await search.fill('Filtered')
-  await expect(page.getByTestId('work-work-filtered')).toBeVisible()
-  await expect(page.getByTestId('work-work-later')).toHaveCount(0)
+  await expect(page.locator('[data-work-item-id="work-filtered"]')).toBeVisible()
+  await expect(page.locator('[data-work-item-id="work-later"]')).toHaveCount(0)
   await page.waitForTimeout(450)
-  await expect(page.getByTestId('work-work-stale')).toHaveCount(0)
+  await expect(page.locator('[data-work-item-id="work-stale"]')).toHaveCount(0)
   const filtered = workRequests.find(request => request.searchParams.get('search') === 'Filtered')
   expect(filtered?.searchParams.has('cursor')).toBe(false)
 })
 
 test('isolates changed scopes immediately while retaining same-scope refresh content', async ({ page }) => {
-  let stableScopeRequests = 0
+  let refreshTriggered = false
   let oldCursorRequests = 0
   let newCursorRequests = 0
   let sameScopeRefreshPending = false
@@ -151,8 +151,10 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
     if (path === '/api/v1/projects' || path === '/api/v1/views')
       return body({ items: [], nextCursor: null })
     if (path === '/api/v1/work-items') {
-      if (route.request().method() === 'POST')
+      if (route.request().method() === 'POST') {
+        refreshTriggered = true
         return body(workItem('work-created', 'Refresh trigger', 2))
+      }
       if (url.searchParams.get('cursor') === 'scope-a-old-cursor') {
         oldCursorRequests += 1
         return body({
@@ -176,8 +178,7 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
         })
       }
       if (url.searchParams.get('teamId') === team.id) {
-        stableScopeRequests += 1
-        if (stableScopeRequests > 1) {
+        if (refreshTriggered) {
           sameScopeRefreshPending = true
           await sameScopeRefreshGate
           return body({
@@ -197,16 +198,18 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
   })
 
   await page.goto('/')
-  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')
+  await expect(page.locator('[data-work-item-id="work-scope-a"]')).toContainText('Scope A result')
 
+  await page.getByRole('button', { name: 'New work item', exact: true }).click()
   const form = page.getByTestId('create-work-item')
-  await form.getByPlaceholder('Title').fill('Refresh trigger')
+  await form.getByLabel('Title', { exact: true }).fill('Refresh trigger')
   await form.getByTestId('create-work-item-submit').click()
   await expect.poll(() => sameScopeRefreshPending).toBe(true)
-  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A result')
-  const loadMore = page.getByTestId('load-more-work-items')
+  await expect(page.locator('[data-work-item-id="work-scope-a"]')).toContainText('Scope A result')
+  const loadMore = page.locator('.wm-work-surface-pagination')
   await expect(loadMore).toBeVisible()
   await expect(loadMore).toBeDisabled()
+  await expect(loadMore).toHaveText('Loading…')
   await loadMore.evaluate(element => {
     const button = element as HTMLButtonElement
     button.disabled = false
@@ -215,20 +218,20 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
   await page.waitForTimeout(100)
   expect(oldCursorRequests).toBe(0)
   releaseSameScopeRefresh()
-  await expect(page.getByTestId('work-work-scope-a')).toContainText('Scope A refreshed')
+  await expect(page.locator('[data-work-item-id="work-scope-a"]')).toContainText('Scope A refreshed')
   await expect(loadMore).toBeEnabled()
   await loadMore.click()
-  await expect(page.getByTestId('work-work-new-cursor')).toContainText('Loaded from refreshed cursor')
+  await expect(page.locator('[data-work-item-id="work-new-cursor"]')).toContainText('Loaded from refreshed cursor')
   expect(oldCursorRequests).toBe(0)
   expect(newCursorRequests).toBe(1)
 
   await page.getByLabel('Search work').fill('Scope B')
   await expect.poll(() => changedScopePending).toBe(true)
-  await expect(page.getByTestId('work-work-scope-a')).toHaveCount(0)
-  await expect(page.getByTestId('load-more-work-items')).toHaveCount(0)
-  await expect(page.getByTestId('work-items-empty')).toBeVisible()
+  await expect(page.locator('[data-work-item-id="work-scope-a"]')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Load more work items' })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'No Work Items' })).toBeVisible()
   releaseChangedScope()
-  await expect(page.getByTestId('work-work-scope-b')).toContainText('Scope B result')
+  await expect(page.locator('[data-work-item-id="work-scope-b"]')).toContainText('Scope B result')
 })
 
 test('makes a later Agent registry record reachable through explicit continuation', async ({ page }) => {

@@ -1,0 +1,26 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31EmptyByteRepairAttempt2FixedInputsAndProvenance",
+  "observedAt": "2026-08-14T10:00:54.6497328Z",
+  "result": "PASS",
+  "fixedInputs": {
+    "graphV4": "c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e",
+    "stateSequence41": "9eb536a1e562dc86d3df0dc3093fa4faf35b3f898082f9b015d05593c8c0cc34",
+    "eventsRows41": "03da2ac45aaa9fe78e6554ea360c0cc7f81c107f0fc404f613498c6bfc5c89c5",
+    "implementationReport": "165f666f7e0375ffd59aa9d5cc0f082d8fdf0119512e5459e4a3b7b0b9d5043d",
+    "attempt2Contract": "644d175174c0bdb79f8ea91278a4ea659fc02fdd0a994744d45998cdb8694384"
+  },
+  "attempt1": {
+    "contract": {"path": "artifacts/runtime/dogfood-v31-stack-activation-contract.json", "sha256": "b0d9619ea0ee08ff360bbeb4b8369fec29f6bf8eb39c914eaeff83b2c580f42a", "match": true},
+    "gate": {"path": "artifacts/gates/dogfood-v31-stack-activation-contract-gate.yaml", "sha256": "42984f8c8c308bc901095542ec51e1b2ae1f44b2c3c37d78ef06fccca17ecabb", "match": true},
+    "request": {"path": "artifacts/approvals/dogfood-v31-stack-activation-request.json", "sha256": "09942311175dadd4f508de6d1b912af4db080e3d3c99218f1f1a42dfa4be3592", "match": true},
+    "approval": {"path": "artifacts/approvals/dogfood-v31-stack-activation-human-approval.json", "sha256": "6da3bac835008d6605edd7b36e2c76224011a3d209c8f1acbde81d1f243b1344", "match": true},
+    "preflight": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/activation/preflight.json", "sha256": "4efb0c531497690a74ab4475ac16aa8747b9076b04fcc574ea5d2bfeb234aea6", "match": true},
+    "failureEvent": "dogfood-run-031-000038",
+    "failureCode": "V31-ACT-001",
+    "consumed": true,
+    "serviceMutationExecuted": false
+  },
+  "attempt2FreshAuthorizationRequired": true,
+  "activationAuthorized": false
+}

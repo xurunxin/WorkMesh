@@ -1,0 +1,37 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsActivationRequest",
+  "requestId": "46761a75-ec2f-48eb-bd0a-d768f4e65f8b",
+  "selectorBinding": "v31-public-mcp-browser-cors-activation-v1",
+  "scope": "v31_mcp_browser_cors_activation_once",
+  "graphVersion": 11,
+  "graphSha256": "fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca",
+  "stateSequence": 118,
+  "stateSha256": "0abd1abb5e82d38284bdcfc5afda1ec4a971acfc98d36f84d604592022f1bf97",
+  "eventRows": 118,
+  "eventsSha256": "688f6d19ecce4bba783bffd66e4a63dea5b5a69005868203dd5ebded4330baac",
+  "contractSha256": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df",
+  "gateSha256": "7d0305682ebd66881c4353355989064d8a99816ab4327aaedb92f6246ab4df2f",
+  "idempotencyKey": "5812ed6e-8d5c-417e-a132-0173b1f67df1",
+  "requestedMutation": {
+    "replaceOnlyRole": "mcp",
+    "port": 3302,
+    "oldSupervisorPid": 72740,
+    "oldSupervisorStartTimeUtc": "2026-08-14T11:11:25.9551555Z",
+    "oldListenerPid": 10516,
+    "oldListenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+    "newSourceRoot": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "browserOrigin": "http://127.0.0.1:3300",
+    "mandatoryRollback": true
+  },
+  "prohibited": [
+    "replace web, api, worker, router, compatibility, database, or object storage",
+    "use Browser",
+    "mutate WorkMesh or complete GEN-11",
+    "rewrite Git history",
+    "claim security approval"
+  ],
+  "createdAt": "2026-08-14T18:09:58.8903532Z",
+  "expiresAt": "2026-08-14T18:54:58.8929734Z",
+  "decision": "pending"
+}

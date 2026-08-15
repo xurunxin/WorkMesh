@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveDomEvidence",
+  "result": "BLOCK",
+  "url": "http://127.0.0.1:3300/agents",
+  "observedState": {
+    "reconnecting": true,
+    "attentionAlert": "Agent workspace needs attention",
+    "error": "Failed to fetch",
+    "adminRequired": "Workspace Admin access is required to create or rotate Connections.",
+    "agentsVisible": 0,
+    "sessionsVisible": 0
+  },
+  "retry": {
+    "attempted": 1,
+    "result": "same_failed_to_fetch_state"
+  },
+  "layout": {
+    "viewport": "1280x720",
+    "documentClientWidth": 1265,
+    "documentScrollWidth": 1265,
+    "horizontalOverflow": false
+  },
+  "credentialValueMatches": {
+    "bearer": 0,
+    "tokenKey": 0
+  },
+  "screenshot": {
+    "path": "artifacts/design/human-journey-attempt-31/active3-01-cors-blocker.png",
+    "sha256": "859b29ae14a112d8191c07b93514f49c79072ffdce1163bf0baa3eb15800106b"
+  },
+  "browser": {
+    "freshTabs": 1,
+    "viewportReset": true,
+    "finalizeCalls": 1,
+    "callsAfterFinalize": 0
+  },
+  "fixtureMutationsExecuted": 0,
+  "secretValuesSerialized": false
+}

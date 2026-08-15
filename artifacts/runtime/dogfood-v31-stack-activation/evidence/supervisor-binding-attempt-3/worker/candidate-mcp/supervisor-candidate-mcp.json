@@ -1,0 +1,17 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31SupervisorDryRun",
+  "result": "PASS",
+  "dryRun": true,
+  "role": "mcp",
+  "mode": "candidate",
+  "contractPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation-contract-attempt-3.json",
+  "contractSha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a",
+  "statePath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\probe-attempt-3\\candidate-mcp.json",
+  "stopPath": "G:\\Projects\\MetronX\\WorkMesh\\artifacts\\runtime\\dogfood-v31-stack-activation\\runtime\\probe-attempt-3\\candidate-mcp.stop",
+  "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v31",
+  "port": 3302,
+  "healthUrl": "http://127.0.0.1:3302/readyz",
+  "childCreated": false,
+  "capturedAt": "2026-08-14T10:51:14.4728798+00:00"
+}

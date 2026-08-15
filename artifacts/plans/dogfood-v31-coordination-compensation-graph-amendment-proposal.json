@@ -1,0 +1,20 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationCompensationGraphAmendmentProposal",
+  "graphVersion": 7,
+  "graphSha256": "76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0",
+  "immutableBlockedGate": "artifacts/gates/dogfood-v31-coordination-feature-binding-gate.yaml@sha256:8ba8d01f2ada860bec15c4ee00bf9e196859a317222df8ad4faa10e656cbf537",
+  "finding": "V31-COORD-GATE-001",
+  "change": {
+    "addedNodes": [
+      "repair-v31-coordination-production-compensation-seam",
+      "verify-v31-active-coordination-feature-binding-attempt-2"
+    ],
+    "removedThresholds": [],
+    "scopeExpansion": false,
+    "serviceMutationAuthorized": false,
+    "requestCreationAuthorized": false
+  },
+  "reason": "The first Gate proved runtime and authorization safety but found that the bound probe did not execute the production compensation and terminal receipt seam.",
+  "createdAt": "2026-08-14T12:58:22.4871365Z"
+}

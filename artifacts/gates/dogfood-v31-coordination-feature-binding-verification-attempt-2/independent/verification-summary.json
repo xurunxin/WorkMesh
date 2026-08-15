@@ -1,0 +1,34 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureBindingAttempt2IndependentVerificationSummary",
+  "result": "PASS",
+  "claimResults": {
+    "V31-N13R2-A1": "PASS",
+    "V31-N13R2-A2": "PASS",
+    "V31-N13R2-A3": "PASS",
+    "V31-N13V2-A1": "PASS"
+  },
+  "checks": {
+    "fixedInputs": "7/7",
+    "scriptHashes": "7/7",
+    "sharedProductionCompensation": "5/5",
+    "terminalReceipts": "5/5",
+    "astStrictModeDateKindNoBareFalse": "7/7",
+    "startDryRun": "PASS",
+    "rollbackDryRun": "PASS",
+    "missingAuthPreService": "PASS",
+    "rootCounterexamples": "4/4",
+    "runtimeBeforeAfter": "7/7",
+    "v31BuildStatus": 200,
+    "v30BuildStatus": 404,
+    "futureArtifactsPresent": 0,
+    "candidateRuntimeResidue": 0
+  },
+  "findings": [],
+  "transitionAllowed": true,
+  "transitionScope": "request_creation_only",
+  "serviceReplacementAuthorized": false,
+  "activationAuthorized": false,
+  "securityScan": "excluded_by_human_direction",
+  "capturedAt": "2026-08-14T13:11:11.1999081Z"
+}

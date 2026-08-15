@@ -1,0 +1,107 @@
+GateReport:
+  gate_id: dogfood-v31-public-mcp-origin-cors-decoupling-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 10
+  node_id: verify-v31-public-mcp-origin-cors-decoupling
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:96@sha256:893d5d65e39daefa725b33f8b2968ca2c619b9f6a6bdbb9f506eb669a8150cd6
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:96@sha256:a7bf316e9c33cca8c9107baca23db3adecb95dd619cadba5041a47d1df46ac66
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json@sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2
+    - artifacts/design/human-journey-attempt-31/active-acceptance-attempt-3.json@sha256:6b1103c45bb56b33c3a9c02f80ebc1f3412a5aea0cb4e4f059583d43a46bed04
+  worker_id: implementation-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-origin-cors-verifier
+    scope: [fixed_inputs, configuration, cors, realtime, agent_connection_urls, tests, package_invariance, runtime_invariance]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N13E-A1
+      assertion: WEB_ORIGIN remains the exact credentialed Browser CORS and realtime origin while a separately validated optional PUBLIC_MCP_ORIGIN supplies public discovery and MCP URLs with a backward-compatible fallback.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/audit-origin-routing.mjs@sha256:358dfa7c14d9d43c58754793dbf0f7af016aff2d925b98c2ebdd4cf258cc9b27
+          observed: Fresh source-bound audit passed all 18 checks, including optional URL validation, WEB_ORIGIN CORS and realtime binding, fallback wiring, and distinct discovery/MCP binding.
+          source: fresh static audit
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/verification-summary.json@sha256:20459d88d2adbded27bcb77344465e6675de493ee59b42298976691c507e468c
+          observed: Direct active reachability returned 3300 connect and Skill 200, 3301 connect and Skill 401, discovery 200, and unauthenticated MCP 401; this proves the executable split.
+          source: fresh read-only HTTP observation
+      method: source-check, test, and runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13E-A2
+      assertion: Focused configuration, CORS, discovery, connection URL, validation, typecheck, and local test evidence passes without package or lockfile drift.
+      result: PASS
+      evidence:
+        - ref: artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json@sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2
+          observed: The report fixes eight exact source/configuration paths and binds unchanged root, API, config package, and lockfile hashes.
+          source: exact implementation artifact rehash
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/verification-summary.json@sha256:20459d88d2adbded27bcb77344465e6675de493ee59b42298976691c507e468c
+          observed: Fresh config 14/14, API origin plus realtime 10/10, config/API typecheck, prior full API 146/146, config/API build, and Compose parse all passed.
+          source: fresh and fixed worker local test evidence
+      method: test, schema-check, and hash inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13E-A3
+      assertion: Implementation performs no service, database, object-storage, Browser, WorkMesh, or active-runtime mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/verification-summary.json@sha256:20459d88d2adbded27bcb77344465e6675de493ee59b42298976691c507e468c
+          observed: Exact listener PIDs and starts remained unchanged and all seven health endpoints returned 200 before and after checks.
+          source: fresh read-only runtime inspection
+      method: runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13F-A1
+      assertion: The exact Browser-origin 3300 and public-MCP-origin 3301 contract is executable, source-bound, and has no unresolved major or critical finding.
+      result: PASS
+      evidence:
+        - ref: apps/api/src/origin-routing.test.ts@sha256:ee7be1ce55cdb3990539f49f396281a93eea571f43010e0c97732f981c9d686c
+          observed: Production Fastify injection proves credentialed CORS on 3300 and public well-known/MCP URLs on 3301; the shared production resolver proves connect and Skill remain reachable on 3300.
+          source: fresh executable tests against production modules
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/verification-summary.json@sha256:20459d88d2adbded27bcb77344465e6675de493ee59b42298976691c507e468c
+          observed: Five claim checks passed; the one wording refinement is informational and resolved by current route reachability without weakening authority or acceptance thresholds.
+          source: independent verification synthesis
+      method: test, source-check, and evidence arbitration
+      gaps: []
+      repair: null
+    - claim_id: V31-N13F-A2
+      assertion: PASS authorizes only activation-contract preparation and never authorizes request creation, service replacement, Browser use, or GEN-11 completion.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-public-mcp-origin-cors-decoupling-verification/verification-summary.json@sha256:20459d88d2adbded27bcb77344465e6675de493ee59b42298976691c507e468c
+          observed: Transition scope is activation_contract_preparation_only and all service, Browser, database, WorkMesh, completion, and security authority flags remain false.
+          source: independent verification synthesis
+      method: schema-check
+      gaps: []
+      repair: null
+  findings:
+    - finding_id: V31-CORS-INFO-001
+      severity: info
+      status: accepted
+      summary: Graph v10 planning shorthand grouped connect and Skill URLs under PUBLIC_MCP_ORIGIN, but direct active reachability proves those Browser-delivered resources are served by WEB_ORIGIN. The implementation preserves reachable behavior while moving only discovery and MCP endpoint URLs.
+      resolution_basis: Current executable routes and direct HTTP observations outrank planning shorthand; this does not weaken identity, authorization, CORS, or Human Gate requirements.
+  accepted_artifacts:
+    - artifacts/implementation/dogfood-v31-public-mcp-origin-cors-decoupling-repair.json@sha256:c43558267a92072e157f8504f0279bbb58fcec18403c0a2481ea7ff25b95f1f2
+  rejected_artifacts: []
+  risks_or_unverified:
+    - The repaired bytes are not active; the current API still returns Access-Control-Allow-Origin 3301 until a separate contract, Gate, request, and Human-approved activation execute.
+    - Integration database tests, active Browser acceptance, and security scanning were excluded; this Gate makes no security approval claim.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: activation_contract_preparation_only
+    request_creation: false
+    active_replacement: false
+    activation: false
+    browser: false
+    workmesh_completion: false
+    reason: The narrow executable origin split passed; only preparation and independent verification of the API-only activation contract may proceed.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact implementation report and source hashes
+    completion_gate: A separate activation-contract Gate may authorize one exact expiring Human request; service replacement remains prohibited until that later Human decision.
+  observed_at: 2026-08-14T15:40:09.3711365Z

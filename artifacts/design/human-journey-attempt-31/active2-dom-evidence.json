@@ -1,0 +1,33 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveDomEvidence",
+  "result": "BLOCK",
+  "url": "http://127.0.0.1:3300/agents",
+  "authenticatedHuman": "Dogfood Owner",
+  "connectionPanelPresent": true,
+  "newConnectionEnabled": true,
+  "selectedConnection": "Codex Dogfood Coordinator",
+  "selectedConnectionStatus": "active",
+  "onboardingState": "mcp_unavailable",
+  "diagnosis": "Discovery succeeded, but the advertised MCP endpoint is not ready.",
+  "mcpEndpointRendered": "http://127.0.0.1:3300/mcp",
+  "documentClientWidth": 1265,
+  "documentScrollWidth": 1265,
+  "horizontalOverflow": false,
+  "credentialValueMatches": {
+    "bearer": 0,
+    "workmeshToken": 0,
+    "pairingFragment": 0
+  },
+  "screenshot": {
+    "path": "artifacts/design/human-journey-attempt-31/active2-01-mcp-endpoint-blocker.png",
+    "sha256": "23ad37defb39cc61b3a24a52022adc6963068af63edd276908f21c5fdcba5263"
+  },
+  "browser": {
+    "freshTabs": 1,
+    "viewportReset": true,
+    "finalizeCalls": 1,
+    "callsAfterFinalize": 0
+  },
+  "secretValuesSerialized": false
+}

@@ -1,0 +1,50 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRoutingIndependentVerification",
+  "result": "PASS",
+  "graphVersion": 8,
+  "nodeId": "verify-v31-active-public-mcp-origin-routing",
+  "fixedInputs": [
+    {"path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml", "sha256": "e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a"},
+    {"path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml", "sequence": 81, "sha256": "4438ab7f36cfaca745224fbcc72878c5b093ecab6613c7bb2ff23cc8d28585bb"},
+    {"path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl", "rows": 81, "sha256": "5abb5aaf89dee10d3a81ed21371c93d508764270e0627c9790fbf133303559d9"},
+    {"path": "artifacts/implementation/dogfood-v31-public-mcp-origin-routing-repair.json", "sha256": "6b1d5ec3b22dacc5deea30e7c5b7562d49405dc82577587026e31b4721a3eaac"},
+    {"path": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json", "sha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7"},
+    {"path": "artifacts/design/human-journey-attempt-31/active-acceptance-attempt-2.json", "sha256": "602db13b22be4484a2f31a13763444365d58c2fca7347cd403fb230764227c61"}
+  ],
+  "evidence": [
+    {"path": "ast-audit.json", "sha256": "89fc31a913846487a8210a772d83796cc3dcce3206cb24a011ec6a15d53c359f", "result": "PASS"},
+    {"path": "compensation-probe.json", "sha256": "9c1db042522988ae65af0e83535d1746c2028997ba90dc9dfbaf8913250c741c", "result": "PASS"},
+    {"path": "origin-contract.json", "sha256": "768c928de908992a46797be177dab9e5c0d677b1013eea072d6dca4957f09186", "result": "PASS"},
+    {"path": "start-dry-run.json", "sha256": "0ff3354d7d254105313e0cdd9fca9727bd84fccba0c804ff7bea629b0124900d", "result": "PASS"},
+    {"path": "rollback-dry-run.json", "sha256": "798cd4755311968bf65524a367debf27c751330f5fdb96c879e146113973eec2", "result": "PASS"},
+    {"path": "runtime-before.json", "sha256": "6ffd4611b49fa870dd6ac77363d34b8b7c725f20e7bdca154eb2fa0b0f9b3969", "result": "PASS"},
+    {"path": "runtime-after.json", "sha256": "2f5166cf68207295d1655d47af6e55ed676a0abf8b53324c6860cd752c67e430", "result": "PASS"}
+  ],
+  "claimChecks": [
+    {"claimId": "V31-N13C-A1", "result": "PASS", "observed": "The candidate API supervisor binds WEB_ORIGIN to 3301; the current immutable counterexample proves discovery is served at 3301, 3301/mcp is 401, and the old 3300/mcp route is 404."},
+    {"claimId": "V31-N13C-A2", "result": "PASS", "observed": "The repair adds only versioned runtime, implementation, Gate, and control-plane artifacts; product source, packages, lockfiles, schemas, database, object storage, WorkMesh, Browser, and active services were not changed."},
+    {"claimId": "V31-N13C-A3", "result": "PASS", "observed": "Eight scripts are exact and AST-clean; the shared production compensation writes 5/5 terminal receipts; start and rollback DryRun pass; exact API/protected selectors, health 7/7, build exclusivity, future absence, and zero residue pass before and after."},
+    {"claimId": "V31-N13V3-A1", "result": "PASS", "observed": "All fixed-input, origin, authorization-failure, evidence-root, compensation, DryRun, runtime, future-absence, and cleanup checks pass with no finding. Only request creation is allowed."}
+  ],
+  "boundaryChecks": {
+    "outsideRootRejected": "6/6 pre-write",
+    "missingAuthorizationRejected": "PASS pre-service",
+    "runtimeHealth": "7/7 before and after",
+    "futureArtifacts": "0/4",
+    "runtimeResidue": 0,
+    "nonDryRunExecuted": false
+  },
+  "findings": [],
+  "transition": {
+    "allowed": true,
+    "scope": "request_creation_only",
+    "requestCreation": true,
+    "serviceReplacement": false,
+    "activation": false,
+    "browser": false,
+    "workMeshMutation": false
+  },
+  "securityScanRun": false,
+  "observedAt": "2026-08-14T14:44:26.2369118Z"
+}

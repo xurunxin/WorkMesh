@@ -27,6 +27,7 @@ describe('active executor Work Item contract', () => {
       labels: [],
       project_id: null,
       milestone_id: null,
+      parent_id: null,
       revision: 1,
       deleted_at: null,
       created_at: '2026-08-03T10:00:00.000Z',

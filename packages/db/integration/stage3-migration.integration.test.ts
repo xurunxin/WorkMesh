@@ -62,6 +62,22 @@ describe('Stage 3 delivery migration', () => {
           AND column_name IN ('repository_id','pull_request_id','head_sha','source_tool')`,
     )
     expect(uploadColumns.rowCount).toBe(4)
+    const humanAttachmentColumns = await db.query<{ column_name: string; is_nullable: string }>(
+      `SELECT column_name,is_nullable FROM information_schema.columns
+        WHERE table_schema=current_schema() AND (
+          (table_name='artifact_upload_intents' AND column_name IN ('session_id','repository_id','artifact_id'))
+          OR (table_name='artifacts' AND column_name='session_id')
+          OR (table_name='artifact_links' AND column_name='session_id')
+        )`,
+    )
+    expect(humanAttachmentColumns.rowCount).toBe(5)
+    expect(humanAttachmentColumns.rows.every(column => column.is_nullable === 'YES')).toBe(true)
+    const uploadStatus = await db.query<{ enumlabel: string }>(
+      `SELECT enumlabel FROM pg_enum
+        WHERE enumtypid='artifact_upload_status'::regtype
+        ORDER BY enumsortorder`,
+    )
+    expect(uploadStatus.rows.map(row => row.enumlabel)).toContain('canceled')
     const findingColumns = await db.query<{ column_name: string }>(
       `SELECT column_name FROM information_schema.columns
         WHERE table_schema=current_schema() AND table_name='structured_review_findings'

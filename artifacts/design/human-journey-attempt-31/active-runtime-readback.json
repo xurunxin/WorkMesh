@@ -1,0 +1,57 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRuntimeReadback",
+  "result": "PASS_WITH_ACCEPTANCE_BLOCKER",
+  "observedAt": "2026-08-14T11:25:43.6188338Z",
+  "health": {
+    "compatibility3001": 200,
+    "web3300": 200,
+    "router3301": 200,
+    "mcp3302": 200,
+    "api3303": 200,
+    "worker3304": 200,
+    "minio59000": 200
+  },
+  "listeners": [
+    {"port": 3001, "pid": 44104, "startTimeUtc": "2026-08-14T05:46:54.5308239Z"},
+    {"port": 3300, "pid": 42392, "startTimeUtc": "2026-08-14T11:11:23.5706870Z"},
+    {"port": 3301, "pid": 24516, "startTimeUtc": "2026-08-14T05:46:54.4997244Z"},
+    {"port": 3302, "pid": 10516, "startTimeUtc": "2026-08-14T11:11:26.9111153Z"},
+    {"port": 3303, "pid": 72736, "startTimeUtc": "2026-08-14T05:46:55.2440417Z"},
+    {"port": 3304, "pid": 71408, "startTimeUtc": "2026-08-14T05:46:55.1158461Z"}
+  ],
+  "buildExclusivity": {
+    "v31BuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "v31Status": 200,
+    "v30BuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "v30Status": 404
+  },
+  "workmesh": {
+    "connectionVerified": true,
+    "actorId": "4b5ede91-e824-4002-8882-4fd2601f39e8",
+    "sessionId": "59dca943-0c09-47af-9046-4cc502e6596e",
+    "sessionState": "executing",
+    "sessionRevision": 1,
+    "team": "General",
+    "skillVersion": "1.1.0",
+    "coordinationFeatureEnabled": false,
+    "gen11": {
+      "id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+      "status": "In Progress",
+      "revision": 2,
+      "coordination": "active",
+      "responsibleHuman": "Dogfood Owner",
+      "activeExecutor": null
+    }
+  },
+  "configurationEvidence": {
+    "apiSupervisor": "artifacts/runtime/dogfood-v30-stack-activation-attempt-6-renewal/role-supervisor-attempt-6-renewal.ps1:49-50",
+    "workerSupervisor": "artifacts/runtime/dogfood-v30-v29-baseline-recovery-v5/role-supervisor-v5.ps1:18-19",
+    "v31McpSupervisor": "artifacts/runtime/dogfood-v31-stack-activation/role-supervisor-attempt-3.ps1:53",
+    "finding": "The active API and Worker environments omit WORKMESH_BETA_COORDINATION_MCP, whose contract default is false; the v31 MCP environment alone sets it true. The server-derived feature registry therefore reports false and Human Connection routes fail closed."
+  },
+  "rollback": {
+    "required": false,
+    "reason": "All active roles remain healthy and the existing MCP connection verifies; the blocker is the protected API/Worker feature binding required for new Human onboarding."
+  }
+}

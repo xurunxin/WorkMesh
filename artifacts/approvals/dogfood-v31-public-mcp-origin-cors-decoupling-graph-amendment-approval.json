@@ -1,0 +1,30 @@
+{
+  "artifactVersion": 1,
+  "kind": "HumanApproval",
+  "decision": "approved",
+  "decisionAt": "2026-08-14T15:20:10.3026052Z",
+  "decisionBy": "Human user",
+  "approvalPhrase": "批准 v31 public MCP origin CORS decoupling repair",
+  "proposal": {
+    "path": "artifacts/plans/dogfood-v31-public-mcp-origin-cors-decoupling-graph-amendment-proposal.json",
+    "sha256": "36e6d699808a7a94cc0aa2f470b2b914f21a9ef1f053de35bf8be60fae234a23"
+  },
+  "scope": "v31_graph_v10_public_mcp_origin_cors_decoupling_repair_and_activation_contract_preparation",
+  "authorizes": [
+    "apply the exact Graph v10 repair topology and bounded budgets",
+    "implement the narrow configuration and API origin decoupling with focused tests",
+    "independently verify the repair",
+    "prepare and independently Gate an API-only activation and rollback contract"
+  ],
+  "doesNotAuthorize": [
+    "service replacement, restart, rollback, or activation",
+    "Browser use or another active Browser attempt",
+    "fixture, arbitrary database, object-storage, or WorkMesh mutation",
+    "GEN-11 completion mutation",
+    "Git history rewrite",
+    "security approval or security-scan claim"
+  ],
+  "singleUse": true,
+  "consumedBy": "graph-v10-amendment",
+  "secretValuesSerialized": false
+}

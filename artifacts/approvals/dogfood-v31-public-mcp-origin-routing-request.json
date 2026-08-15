@@ -1,0 +1,68 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginRoutingRequest",
+  "requestId": "24db5147-39c5-4fb0-b69f-97d7f6b71c34",
+  "selectorBinding": "v31-public-mcp-origin-routing-v1",
+  "scope": "v31_api_public_mcp_origin_activation_once",
+  "decisionRequested": "Approve exactly one API-only supervisor replacement that changes WEB_ORIGIN from http://127.0.0.1:3300 to http://127.0.0.1:3301, with mandatory automatic compensation and no other service or data mutation.",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 8,
+    "sha256": "e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a"
+  },
+  "controlState": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sequence": 84,
+    "sha256": "05da6938b6b8f4bb57c9a7f9976704b510f49c4489bfef4f7f25501bab1e138c",
+    "eventLogPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventCursor": 84,
+    "eventLogSha256": "55ff1ef203245327a66e6efbabe517599fa88230d6709a20296c1aa790444a07"
+  },
+  "contractPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-contract.json",
+  "contractSha256": "fbf1387b1f18ccf00af124db1114c5d633366ad125f3dcba0c42bf190f7465a7",
+  "gatePath": "artifacts/gates/dogfood-v31-public-mcp-origin-routing-gate.yaml",
+  "gateSha256": "4b991c2fa16a1dff9219f384d8ba5f3ddd42c3e05061bc614fd26726c121f87b",
+  "oldApi": {
+    "supervisorPid": 60476,
+    "supervisorStartTimeUtc": "2026-08-14T13:35:11.9324457Z",
+    "listenerPid": 24536,
+    "listenerStartTimeUtc": "2026-08-14T13:35:13.6396465Z",
+    "port": 3303,
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "webOrigin": "http://127.0.0.1:3300"
+  },
+  "candidateApi": {
+    "port": 3303,
+    "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+    "webOrigin": "http://127.0.0.1:3301",
+    "expectedDiscoveryUrl": "http://127.0.0.1:3301/.well-known/workmesh-agent",
+    "expectedMcpUrl": "http://127.0.0.1:3301/mcp",
+    "expectedUnauthenticatedMcpStatus": 401
+  },
+  "mandatoryCompensation": {
+    "enabled": true,
+    "terminalReceiptRequired": true,
+    "retainedOldOwnerAcceptedOnlyWhenExact": true,
+    "missingOldOwnerRestoredWithVersionedRollbackSupervisor": true,
+    "unknownOwnerFailsClosed": true,
+    "rollbackOrigin": "http://127.0.0.1:3300"
+  },
+  "protectedBoundary": {
+    "unchangedRoles": ["web", "mcp", "worker", "public-router", "compatibility", "object-storage"],
+    "requiredHealth": "7/7",
+    "requiredBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "databaseMutation": false,
+    "objectStorageMutation": false,
+    "workMeshMutation": false,
+    "browserUse": false,
+    "productSourceMutation": false
+  },
+  "idempotencyKey": "fef07cd2-6588-43d0-b274-3b4f12b0127c",
+  "singleUse": true,
+  "createdAt": "2026-08-14T14:48:22.3308126Z",
+  "expiresAt": "2026-08-14T15:48:22.3308126Z",
+  "activationAuthorized": false,
+  "humanDecisionRequired": true,
+  "securityApproval": false
+}

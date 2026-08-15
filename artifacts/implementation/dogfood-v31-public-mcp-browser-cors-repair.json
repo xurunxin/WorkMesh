@@ -1,0 +1,52 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsRepair",
+  "result": "PASS",
+  "statusProposal": "verifying",
+  "completedAt": "2026-08-14T17:40:28.0000000Z",
+  "fixedInputs": {
+    "graphV11": "sha256:fab630ff7a50d7b9e9a3996349892a7fc2f925c6a840b1cf6cf754c5db6114ca",
+    "blockedAcceptanceAttempt4": "sha256:23c126bee130b6126d958408cdf89e2b1f16a2ccc0a18e05bf5d740d2291d77a",
+    "counterexample": "sha256:a8f7282fa24525e5912061c8a7515fd19fde9825386ee974da9a1558b6919f2f"
+  },
+  "changedPaths": [
+    {
+      "path": "apps/mcp/src/http.ts",
+      "sha256": "cd827082e82319f47a7f0d16f46830d93363fc6b6fa6c06fb6fb1e0d7efaa762"
+    },
+    {
+      "path": "apps/mcp/src/http.test.ts",
+      "sha256": "c0c39669a9c80c9f3eab0da9df43d0d2af8bcd29b46474fdb90d7bbb686d729f"
+    }
+  ],
+  "implementation": {
+    "configuration": "Optional WORKMESH_BROWSER_ORIGIN or browserOrigin option normalized to one credential-free HTTP(S) origin without path, query, or fragment.",
+    "ordinaryResponse": "Only an exact Origin match receives Access-Control-Allow-Origin, Vary: Origin, and mcp-session-id exposure; the expected unauthenticated status remains 401.",
+    "preflight": "Exact-origin OPTIONS returns 204 with the bounded MCP methods and headers; wrong-origin OPTIONS returns 403.",
+    "authorityInvariant": "No MCP token, installation identity, session, delegation, capability, or mutation policy was changed."
+  },
+  "checks": [
+    {"command": "pnpm --filter @workmesh/mcp test -- src/http.test.ts", "result": "PASS", "tests": "9/9"},
+    {"command": "pnpm --filter @workmesh/mcp test", "result": "PASS", "tests": "33/33"},
+    {"command": "pnpm --filter @workmesh/mcp typecheck", "result": "PASS"},
+    {"command": "pnpm --filter @workmesh/mcp lint", "result": "PASS"},
+    {"command": "pnpm --filter @workmesh/mcp build", "result": "PASS"},
+    {"command": "git diff --check", "result": "PASS"}
+  ],
+  "packageInvariance": {
+    "package.json": "sha256:63867ac84160a992340381db9407c540f4fcb7d2aaaefb8f1f451c597603caf6",
+    "pnpm-lock.yaml": "sha256:c1617d9c0e4ae23cb11d3d84db4682bbb8c1f9b7368bca1a7a2bb6e932b6a6e2",
+    "apps/mcp/package.json": "sha256:0e983adcc2b3e9767387a5f99acc6f5a5ea661059ac83415df12b4239b3255c6"
+  },
+  "runtimeInvariance": {
+    "listeners": {"3001": 44104, "3300": 42392, "3301": 24516, "3302": 10516, "3303": 11832, "3304": 10268},
+    "health": {"3001": 200, "3300": 200, "3301": 200, "3302": 200, "3303": 200, "3304": 200, "59000": 200},
+    "serviceMutation": false
+  },
+  "nextAuthorizedScope": "independent_mcp_browser_cors_gate_only",
+  "activationAuthorized": false,
+  "browserAuthorized": false,
+  "workmeshMutationPerformed": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}

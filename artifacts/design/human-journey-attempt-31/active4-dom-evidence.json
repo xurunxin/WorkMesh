@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveDomEvidence",
+  "result": "BLOCK",
+  "url": "http://127.0.0.1:3300/agents",
+  "human": "Dogfood Owner",
+  "observedState": {
+    "authenticated": true,
+    "connectionDataLoaded": true,
+    "advertisedMcpUrl": "http://127.0.0.1:3301/mcp",
+    "mcpStatus": "MCP unavailable",
+    "diagnostic": "Discovery succeeded, but the advertised MCP endpoint is not ready."
+  },
+  "fixture": {
+    "name": "V31 Active Acceptance 4",
+    "connectionId": "d8aace76-1d7f-4314-a6c5-da559d37e0be",
+    "created": true,
+    "redeemed": false,
+    "revoked": true,
+    "setupSecretVisibleAtScreenshot": false
+  },
+  "layout": {
+    "viewport": "1280x720",
+    "documentClientWidth": 1265,
+    "documentScrollWidth": 1265,
+    "horizontalOverflow": false
+  },
+  "credentialLikeValueDetected": false,
+  "screenshot": {
+    "path": "artifacts/design/human-journey-attempt-31/active4-01-public-mcp-cors-blocker.png",
+    "sha256": "65f0a75a739a9dc24c16a754ad886ece9c51095d67960b2455c02e86a638db63"
+  },
+  "browser": {
+    "freshTabs": 1,
+    "viewportReset": true,
+    "finalizeCalls": 1,
+    "callsAfterFinalize": 0
+  },
+  "secretValuesSerialized": false
+}

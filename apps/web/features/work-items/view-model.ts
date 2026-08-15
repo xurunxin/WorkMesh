@@ -1,0 +1,89 @@
+import { ApiError } from '../../app/lib/api'
+import { PRIORITIES, STATUS_CATEGORIES, type WorkItemDto, type WorkSurfaceItem, type WorkSurfaceLayout, type WorkSurfaceQuery, type WorkSurfaceScope, type WorkSurfaceState, type WorkSurfaceViewModel } from './contracts'
+
+const enumValue = <T extends readonly string[]>(value: unknown, values: T): T[number] | 'unknown' => typeof value === 'string' && (values as readonly string[]).includes(value) ? value as T[number] : 'unknown'
+const text = (value: unknown): string => typeof value === 'string' ? value : ''
+
+export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
+  const teamKey = text(item.team_key)
+  const number = typeof item.number === 'number' ? String(item.number) : ''
+  const identifier = text(item.identifier) || (teamKey && number ? `${teamKey}-${number}` : item.id)
+  const human = item.responsible_human?.display_name
+  const executor = item.active_executor
+  return {
+    id: item.id,
+    identifier,
+    title: text(item.title) || identifier,
+    statusId: text(item.status_id) || text(item.statusId),
+    statusName: text(item.status_name) || text(item.statusName) || 'Unknown status',
+    statusCategory: enumValue(item.status_category ?? item.statusCategory, STATUS_CATEGORIES),
+    priority: enumValue(item.priority, PRIORITIES),
+    responsibleHuman: human ? text(human) : null,
+    responsibleHumanActorId: typeof item.responsible_human_actor_id === 'string' ? item.responsible_human_actor_id : null,
+    project: text(item.project_name) || (item.project_id ? text(item.project_id) : null),
+    labels: Array.isArray(item.labels) ? item.labels.filter((label): label is string => typeof label === 'string') : [],
+    revision: typeof item.revision === 'number' ? item.revision : 0,
+    activeAgent: executor?.agent_display_name ? `${executor.agent_display_name}${executor.execution_state ? ` · ${executor.execution_state}` : ''}` : null,
+  }
+}
+
+export function toWorkSurfaceItems(items: WorkItemDto[]): WorkSurfaceItem[] { return items.map(toWorkSurfaceItem) }
+
+export function workSurfaceErrorState(reason: unknown): WorkSurfaceState {
+  if (reason instanceof ApiError) {
+    if (reason.status === 403 || reason.status === 401) return 'forbidden'
+    if (reason.status === 409) return 'conflict'
+  }
+  if (reason instanceof TypeError || (reason instanceof Error && /network|offline|fetch/i.test(reason.message))) return 'offline'
+  return 'error'
+}
+
+export function workSurfaceStateForCollection({
+  error,
+  hasItems,
+  loading,
+  refreshing = false,
+  stale = false,
+}: {
+  error?: unknown
+  hasItems: boolean
+  loading: boolean
+  refreshing?: boolean
+  stale?: boolean
+}): WorkSurfaceState {
+  if (error) return workSurfaceErrorState(error)
+  if (loading && !hasItems) return 'loading'
+  if (refreshing) return 'refreshing'
+  if (stale) return 'reconnecting'
+  return hasItems ? 'ready' : 'empty'
+}
+
+export function createWorkSurfaceViewModel({
+  collection,
+  error,
+  layout,
+  query,
+  scope,
+  state,
+  stale = false,
+}: {
+  collection: { items: WorkItemDto[]; nextCursor: string | null }
+  error?: unknown
+  layout: WorkSurfaceLayout
+  query: WorkSurfaceQuery
+  scope: WorkSurfaceScope
+  state?: WorkSurfaceState
+  stale?: boolean
+}): WorkSurfaceViewModel {
+  const items = toWorkSurfaceItems(collection.items)
+  return {
+    scope,
+    layout,
+    query,
+    items,
+    nextCursor: collection.nextCursor,
+    state: state ?? workSurfaceStateForCollection({ error, hasItems: items.length > 0, loading: false, stale }),
+    stale,
+    ...(error instanceof Error ? { errorMessage: error.message } : {}),
+  }
+}

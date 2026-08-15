@@ -1,0 +1,26 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsActivationApproval",
+  "decision": "approved",
+  "approvedBy": "human:user",
+  "selectorBinding": "v31-public-mcp-browser-cors-activation-v1",
+  "scope": "v31_mcp_browser_cors_activation_once",
+  "requestSha256": "3df39fe7365c430d5bed339610ca02e6ed683b6940ab16852663c5c4b3837089",
+  "contractSha256": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df",
+  "gateSha256": "7d0305682ebd66881c4353355989064d8a99816ab4327aaedb92f6246ab4df2f",
+  "approvedMutation": {
+    "replaceOnlyRole": "mcp",
+    "port": 3302,
+    "mandatoryRollback": true
+  },
+  "prohibited": [
+    "replace web, api, worker, router, compatibility, database, or object storage",
+    "use Browser during activation",
+    "mutate WorkMesh or complete GEN-11",
+    "rewrite Git history",
+    "claim security approval"
+  ],
+  "approvedAt": "2026-08-14T18:24:05.8104358Z",
+  "expiresAt": "2026-08-14T18:54:58.8929734Z",
+  "singleUse": true
+}

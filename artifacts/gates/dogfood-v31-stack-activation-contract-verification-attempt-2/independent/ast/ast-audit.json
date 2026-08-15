@@ -1,0 +1,71 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActivationContractAstAudit",
+  "result": "PASS",
+  "files": [
+    {
+      "file": "runtime-module-attempt-2.psm1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "stage-active-origin-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "role-supervisor.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "start-v31-stack-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "rollback-v31-stack-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "test-contract-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "test-prepared-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "verify-runtime-invariance-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    },
+    {
+      "file": "audit-contract-attempt-2.ps1",
+      "parseErrors": 0,
+      "strictModeLatest": 1,
+      "bareFalseCommands": 0,
+      "convertFromJsonDateKindMissing": 0
+    }
+  ],
+  "capturedAt": "2026-08-14T09:59:12.2153487+00:00"
+}

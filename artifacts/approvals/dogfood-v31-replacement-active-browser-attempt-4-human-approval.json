@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptApproval",
+  "approvalId": "1d959b65-a8b6-4683-9bfa-3943067782e5",
+  "decision": "approved",
+  "selectorBinding": "v31-replacement-active-browser-attempt-4-v1",
+  "scope": "v31_replacement_active_browser_attempt_4_once",
+  "requestPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-4-request.json",
+  "requestSha256": "8d89b769631e12a28fe2232e6fa1e957800f1225b96798957cefa696ff1960ad",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5",
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation.json",
+  "activationSha256": "58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f",
+  "decisionText": "Human explicitly approved v31 replacement active Browser attempt 4 in the Codex task after the API-only public MCP origin and Browser CORS decoupling activation passed.",
+  "approvedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "4/4",
+    "maxWorkMeshFixtureMutations": 4,
+    "rawRequestAudit": true,
+    "responsiveAndKeyboardEvidence": true,
+    "fixtureCleanupRequired": true,
+    "viewportResetRequired": true,
+    "exactlyOnceFinalizeRequired": true
+  },
+  "excluded": {
+    "serviceReplacement": true,
+    "serviceRestart": true,
+    "databaseSchemaMutation": true,
+    "arbitraryDataMutation": true,
+    "objectStorageMutationOutsideFixture": true,
+    "gen11Completion": true,
+    "gitHistoryRewrite": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T17:21:19.5041764Z",
+  "expiresAt": "2026-08-14T18:21:19.5041764Z",
+  "singleUse": true,
+  "consumed": false,
+  "securityScanRun": false
+}

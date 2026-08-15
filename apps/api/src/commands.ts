@@ -32,6 +32,35 @@ const one = <T>(rows: T[]): T => {
   return value;
 };
 
+const workItemPlanningCodes = [
+  "WORK_ITEM_PARENT_SELF",
+  "WORK_ITEM_PARENT_DELETED",
+  "WORK_ITEM_PARENT_PROJECT_MISMATCH",
+  "WORK_ITEM_PARENT_CYCLE",
+  "WORK_ITEM_MILESTONE_PROJECT_MISMATCH",
+  "WORK_ITEM_MILESTONE_DELETED",
+  "WORK_ITEM_HAS_ACTIVE_PARENT",
+  "WORK_ITEM_HAS_ACTIVE_CHILDREN",
+  "WORK_ITEM_HAS_ACTIVE_RELATIONS",
+] as const;
+
+async function planningWorkItemWrite<T>(operation: () => Promise<T>): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    const invariant = workItemPlanningCodes.find((code) => message.includes(code));
+    if (invariant)
+      throw new DomainError(invariant, "Work Item hierarchy or active links violate a WorkMesh invariant");
+    const constraint = (error as { constraint?: unknown }).constraint;
+    if (constraint === "work_items_parent_same_team_fk")
+      throw new DomainError("WORK_ITEM_PARENT_SCOPE_MISMATCH", "Parent and child must belong to the same Team");
+    if (constraint === "work_items_milestone_project_fk")
+      throw new DomainError("WORK_ITEM_MILESTONE_PROJECT_MISMATCH", "Milestone and Work Item must belong to the same Project");
+    throw error;
+  }
+}
+
 /** Stage 0 roles: admins bypass team membership; maintainers administer team
  * configuration/projects; all team members can work on work items/comments. */
 async function teamAccess(
@@ -73,6 +102,14 @@ async function teamAccess(
   if (mode === "manage" && role === "member")
     throw new DomainError("FORBIDDEN", "Team maintainer role is required");
   return team;
+}
+
+export async function authorizeTeamMutation(
+  tx: PoolClient,
+  context: CommandContext,
+  teamId: string,
+): Promise<void> {
+  await teamAccess(tx, context, teamId, "write");
 }
 
 const workspaceAdmin = (c: CommandContext): void => {
@@ -590,6 +627,7 @@ export const commands = {
       labels: string[];
       projectId?: string;
       milestoneId?: string;
+      parentId?: string;
     },
   ) =>
     mutate(db, c, async (tx) => {
@@ -640,8 +678,8 @@ export const commands = {
       );
       const item = one(
         (
-          await tx.query<{ id: string; revision: number; number: number }>(
-            "INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id,revision,number",
+          await planningWorkItemWrite(() => tx.query<{ id: string; revision: number; number: number }>(
+            "INSERT INTO work_items(workspace_id,team_id,number,title,description,status_id,priority,due_date,responsible_human_actor_id,labels,project_id,milestone_id,parent_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id,revision,number",
             [
               c.actor.workspaceId,
               input.teamId,
@@ -655,8 +693,9 @@ export const commands = {
               input.labels,
               input.projectId ?? null,
               input.milestoneId ?? null,
+              input.parentId ?? null,
             ],
-          )
+          ))
         ).rows,
       );
       await tx.query(
@@ -730,8 +769,8 @@ export const commands = {
       assertResponsibleHumanForStarted(status, owner);
       const item = one(
         (
-          await tx.query<{ id: string; revision: number }>(
-            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,revision=revision+1,updated_at=now() WHERE id=$19 RETURNING id,revision",
+          await planningWorkItemWrite(() => tx.query<{ id: string; revision: number }>(
+            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,revision=revision+1,updated_at=now() WHERE id=$21 RETURNING id,revision",
             [
               has("title"),
               input.title ?? null,
@@ -751,9 +790,11 @@ export const commands = {
               input.projectId ?? null,
               has("milestoneId"),
               input.milestoneId ?? null,
+              has("parentId"),
+              input.parentId ?? null,
               id,
             ],
-          )
+          ))
         ).rows,
       );
       await event(
@@ -783,10 +824,10 @@ export const commands = {
       assertRevision(revision, current.revision);
       const item = one(
         (
-          await tx.query<{ id: string; revision: number }>(
+          await planningWorkItemWrite(() => tx.query<{ id: string; revision: number }>(
             "UPDATE work_items SET deleted_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 RETURNING id,revision",
             [id],
-          )
+          ))
         ).rows,
       );
       await event(
@@ -923,7 +964,7 @@ export const commands = {
         input.deleted
           ? "comment.deleted"
           : input.isResolved !== undefined
-            ? "comment.resolved"
+            ? input.isResolved ? "comment.resolved" : "comment.reopened"
             : "comment.updated",
         "comment",
         id,

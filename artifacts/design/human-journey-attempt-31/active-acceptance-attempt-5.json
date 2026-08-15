@@ -1,0 +1,73 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAcceptance",
+  "attempt": 5,
+  "result": "PASS",
+  "statusProposal": "passed",
+  "observedAt": "2026-08-14T20:08:32.630Z",
+  "fixedInputs": {
+    "graph": "sha256:478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd",
+    "state": "sha256:32be77fa6fb12def45c0f2f889718912bee9b572f90ad3fd04c83e4d0aa031d5",
+    "events": "sha256:ff8683d44fcbbf63774485b162b7388d342df55317ea9bd3986695cbee0d86e2",
+    "activation": "sha256:d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+    "renewalApproval": "sha256:f8dd500566cc2deece11a186b5dbaf6633b4bc4e09978d94c36e961870304ec6",
+    "candidateAcceptance": "sha256:82ac19416ff90e1ef8ee4aacddcfb69e66fa083c5910a98a28a8f583ba5ddabb",
+    "candidateGate": "sha256:03d2a53dfd16de1e53f14fde7905e26f3307c91ce4d7cb5a6179e1feb95d2604"
+  },
+  "claimChecks": [
+    {
+      "id": "V31-N13B-A1",
+      "result": "PASS",
+      "summary": "Fresh active Browser evidence directly proves authenticated Human readiness, public MCP discovery and onboarding, exact active endpoints, and responsive presentation on the served v31 build."
+    },
+    {
+      "id": "V31-N13B-A2",
+      "result": "PASS",
+      "summary": "One bounded Human fixture completed create, redeem, real MCP initialize/verify/context, and revoke. Database and durable-event readback prove one consumed pairing, one revoked credential, a closed coordination session, and no live credential residue."
+    },
+    {
+      "id": "V31-N13B-A3",
+      "result": "PASS",
+      "summary": "Exactly one Browser tab was finalized once after viewport reset. The bounded active API log contains only the three authorized fixture mutations, no credential-like log fields, runtime health 7/7, v31-only build serving, and GEN-11 still In Progress revision 2 coord:active."
+    }
+  ],
+  "evidence": [
+    "artifacts/design/human-journey-attempt-31/active5-dom-evidence.json@sha256:ed095f3abaedc4d7688aa8a10605ba04c124831d774d446822396f38f91192fa",
+    "artifacts/design/human-journey-attempt-31/active5-agent-transcript.json@sha256:8d46290af7d2afb470ecc0131f9f40a32f72f3ab9988155d6b0c0fe7e6de20f0",
+    "artifacts/design/human-journey-attempt-31/active5-request-window.json@sha256:c7931f884737c2083e6a39e022bd538b4ed4d0c2e2a13293c4ff0491b0656c28",
+    "artifacts/design/human-journey-attempt-31/active5-runtime-db-workmesh.json@sha256:a6f72aa85d50eddbce7d1fb40a4666d8bf6fabec6d77ad9df12864acd5d0da8f",
+    "artifacts/design/human-journey-attempt-31/audit-active5-db.mjs@sha256:06d758c0e594ed283988e47ab6054ec9695c469af0e4af5fc1fbcddcfe4fed1f",
+    "artifacts/design/human-journey-attempt-31/active5-01-ready-desktop.png@sha256:a35da19c50a392b7f94870c88c6bcaef375ffb62fd8c670a5695a87166a2412f",
+    "artifacts/design/human-journey-attempt-31/active5-02-pending-desktop.png@sha256:1cc22e72a804a9e9b373e578d7290d6c14e2e0100d8533c5d72a837252eca0c0",
+    "artifacts/design/human-journey-attempt-31/active5-03-active-verified-desktop.png@sha256:6462214169b148d213aef26c349d52d598c9894686d1778d91d869c20b6cf045",
+    "artifacts/design/human-journey-attempt-31/active5-04-public-onboarding-desktop.png@sha256:fda91fb618b31234770db7ad15ebe4072ec5d9e3c0676274ec72629d5ac4692c",
+    "artifacts/design/human-journey-attempt-31/active5-05-public-375.png@sha256:e4f4e57141cbee0d5c35185229e2a95bd950c0d6ba1c262f26824bb2c6480ee2",
+    "artifacts/design/human-journey-attempt-31/active5-06-public-320.png@sha256:1f886c8f0e6eaca78fc7c26a3f7605d639494a91a40cece15b6e3f0a0c93bd18",
+    "artifacts/design/human-journey-attempt-31/active5-07-revoked-desktop.png@sha256:da141124cbe9ba4c617c6b8dc7edae6b6f2c6ec02ec31ff188c5d2b8a4513940"
+  ],
+  "evidenceBoundary": {
+    "freshDirectStates": ["ready", "pending_pairing", "active", "revoked", "public_onboarding"],
+    "exactBuildCarryForwardStates": ["loading", "empty", "error", "forbidden", "expired", "mis_scoped", "unsupported_client"],
+    "keyboardQualification": "Escape and focus restoration were directly observed. Native Enter, Space, and select-arrow behavior are covered by exact-source component tests because the in-app Browser backend did not dispatch those keys to native controls."
+  },
+  "budgetUsage": {
+    "activeBrowserAttempts": "5/5",
+    "mcpFixtureMutations": "5/7",
+    "mcpCompletionMutations": "0/1"
+  },
+  "cleanup": {
+    "browserFinalized": true,
+    "browserCallsAfterFinalize": 0,
+    "fixtureRevoked": true,
+    "livePairings": 0,
+    "activeCredentials": 0,
+    "coordinationSessionClosed": true,
+    "previewListeners": 0,
+    "rollbackRequired": false,
+    "activeRuntimeHealthy": true
+  },
+  "completionAuthorized": false,
+  "serviceMutationAuthorized": false,
+  "securityScanRun": false,
+  "secretValuesSerialized": false
+}

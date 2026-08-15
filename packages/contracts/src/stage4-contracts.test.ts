@@ -8,6 +8,8 @@ import {
   loopInputSchema,
   minorUnitDecimalSchema,
   projectHealthInputSchema,
+  notificationListResponseSchema,
+  notificationPreferenceResponseSchema,
   providerConnectionInputSchema,
   stage4RouteManifest,
   usageInputSchema,
@@ -17,6 +19,26 @@ const id = '00000000-0000-4000-8000-000000000001'
 const escaped = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 describe('Stage 4 contracts', () => {
+  it('exposes redacted Human notification projections', () => {
+    expect(notificationPreferenceResponseSchema.parse({
+      channels: ['in_app'], digest: 'immediate', minimum_priority: 'update',
+      muted_kinds: [], webhook_configured: false, revision: 0, updated_at: null,
+    })).not.toHaveProperty('webhook_url')
+    const page = notificationListResponseSchema.parse({ items: [{
+      id, priority: 'approval', kind: 'approval.ready', title: 'Approve', body: '',
+      source_type: 'work_item', source_id: id, read_at: null,
+      created_at: '2026-08-13T00:00:00Z', deliveries: [{
+        channel: 'in_app', status: 'failed', attempt_count: 2,
+        available_at: '2026-08-13T00:00:00Z', claimed_at: null,
+        effect_completed_at: null, delivered_at: null,
+        created_at: '2026-08-13T00:00:00Z', last_error_present: true,
+      }],
+    }], nextCursor: null })
+    expect(page.items[0]?.deliveries[0]).toEqual(expect.objectContaining({
+      status: 'failed', last_error_present: true,
+    }))
+  })
+
   it('bounds Cycle duration and preserves explicit unknown cost', () => {
     expect(cycleInputSchema.parse({
       name: 'Cycle 12',

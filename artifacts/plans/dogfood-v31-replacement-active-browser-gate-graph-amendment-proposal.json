@@ -1,0 +1,129 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserGateGraphAmendmentProposal",
+  "status": "PROPOSED_WAITING_HUMAN_APPROVAL",
+  "currentGraph": {
+    "version": 8,
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "sha256": "e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a"
+  },
+  "currentExecutionState": {
+    "sequence": 88,
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sha256": "6cfca1e000f7e67ccb363f8873a67b45f8406a3932e9b6c61d6c9c36f7f181d1"
+  },
+  "currentEventLog": {
+    "cursor": "88",
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "sha256": "6b1e1e2637009fc9475bcfe4f30e453e7722f68fb23b853a3e438f0f4ddca482"
+  },
+  "trigger": {
+    "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json",
+    "activationSha256": "879dc5925840b7fd8cf27942ad348e9db6201a58f71f148961b08f5f05c20c44",
+    "activationResult": "PASS",
+    "activationStatus": "ACTIVE_PENDING_REPLACEMENT_HUMAN_ACCEPTANCE",
+    "consumedApprovalPath": "artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json",
+    "consumedApprovalSha256": "8f327d59de3b52369e9e8aa258185653e8f43401965e3834eb833a5120507753",
+    "consumedApprovalScope": "v31_api_public_mcp_origin_activation_once",
+    "browserExplicitlyExcluded": true
+  },
+  "problem": {
+    "code": "V31-GRAPH-BROWSER-APPROVAL-BINDING-001",
+    "severity": "critical",
+    "summary": "Graph v8 binds capture-v31-active-evidence-attempt-3 to approve-v31-active-public-mcp-origin-routing even though the resulting single-use approval authorizes only API activation, explicitly excludes Browser use, and has already been consumed.",
+    "consequence": "The replacement active Browser attempt cannot be legally claimed from the current approval snapshot. Reusing or widening the consumed approval would violate the Human Gate and execution-state invariants."
+  },
+  "proposedGraph": {
+    "version": 9,
+    "mode": "repair",
+    "preservePassedNodes": true,
+    "changes": [
+      {
+        "operation": "add_node",
+        "nodeId": "approve-v31-replacement-active-browser-attempt-3",
+        "type": "approval",
+        "objective": "Create one fresh exact expiring request and wait for a distinct Human approval authorizing exactly one replacement active Browser attempt after the successful public-origin activation.",
+        "input": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json",
+        "output": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-human-approval.json",
+        "schema": "HumanApproval/v1",
+        "scope": "v31_replacement_active_browser_attempt_3_once",
+        "budget": {
+          "replacement_active_browser_approval_requests": 1
+        }
+      },
+      {
+        "operation": "replace_approval_binding",
+        "nodeId": "capture-v31-active-evidence-attempt-3",
+        "from": "approve-v31-active-public-mcp-origin-routing",
+        "to": "approve-v31-replacement-active-browser-attempt-3"
+      },
+      {
+        "operation": "replace_input",
+        "nodeId": "capture-v31-active-evidence-attempt-3",
+        "remove": "artifacts/approvals/dogfood-v31-public-mcp-origin-routing-human-approval.json",
+        "add": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-human-approval.json"
+      },
+      {
+        "operation": "add_edge",
+        "from": "activate-v31-active-public-mcp-origin-routing",
+        "to": "approve-v31-replacement-active-browser-attempt-3",
+        "type": "requires",
+        "transfer": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json"
+      },
+      {
+        "operation": "add_edge",
+        "from": "approve-v31-replacement-active-browser-attempt-3",
+        "to": "capture-v31-active-evidence-attempt-3",
+        "type": "approves",
+        "transfer": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-human-approval.json"
+      }
+    ],
+    "unchanged": [
+      "public-origin activation receipt and runtime selectors",
+      "active_browser_attempts limit 3 and used count 2",
+      "mcp_fixture_mutations limit 4 and used count 0",
+      "capture-v31-active-evidence-attempt-3 acceptance threshold",
+      "verify-v31-final independent Gate",
+      "GEN-11 completion Human and mutation boundaries"
+    ]
+  },
+  "requestedHumanDecision": {
+    "approvalPhrase": "批准 v31 replacement active Browser attempt3",
+    "authorizes": [
+      "apply the exact Graph v9 approval-binding repair",
+      "create one exact expiring Browser acceptance request",
+      "use exactly one fresh in-app Browser tab for attempt 3",
+      "perform at most four bounded WorkMesh MCP fixture mutations required by the accepted journey contract",
+      "capture raw request-method, DOM, screenshot, runtime, database, durable-event, and cleanup evidence",
+      "reset the viewport and finalize the Browser exactly once"
+    ],
+    "doesNotAuthorize": [
+      "service replacement or restart",
+      "database schema or arbitrary data mutation",
+      "object-storage mutation outside the accepted fixture flow",
+      "GEN-11 completion mutation",
+      "Git history rewrite",
+      "security approval or security-scan claim"
+    ]
+  },
+  "runtimeSnapshot": {
+    "health": "7/7",
+    "publicDiscoveryStatus": 200,
+    "publicMcpUnauthenticatedStatus": 401,
+    "servedV31Build": 200,
+    "servedV30Build": 404,
+    "workMeshState": "GEN-11 In Progress revision2 coord:active",
+    "rollbackRequired": false
+  },
+  "mutationsPerformed": {
+    "graph": false,
+    "executionState": false,
+    "eventLog": false,
+    "browser": false,
+    "service": false,
+    "database": false,
+    "objectStorage": false,
+    "workMesh": false,
+    "securityScan": false
+  }
+}

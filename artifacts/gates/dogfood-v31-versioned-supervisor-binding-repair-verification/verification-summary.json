@@ -1,0 +1,38 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31VersionedSupervisorBindingIndependentVerificationSummary",
+  "result": "PASS",
+  "claimResults": {
+    "V31-N12R2-A1": "PASS",
+    "V31-N12R2-A2": "PASS",
+    "V31-N12R2-A3": "PASS",
+    "V31-N12V2-A1": "PASS"
+  },
+  "executableEvidence": {
+    "supervisorPositive": 4,
+    "supervisorNegative": 6,
+    "supervisorChildProcessesCreated": 0,
+    "compensationCases": 4,
+    "terminalReceipts": 4,
+    "astFiles": 10,
+    "startDryRun": "PASS",
+    "rollbackDryRun": "PASS",
+    "targetMutationExecuted": false
+  },
+  "runtimeBeforeAfter": {
+    "exactRoleListeners": 6,
+    "health": "7/7",
+    "activeV30BuildStatus": 200,
+    "candidateV31BuildStatus": 404,
+    "minioReady": 200,
+    "pidStartListenerDrift": 0,
+    "futureArtifactsPresent": 0,
+    "candidateRuntimeResidue": 0
+  },
+  "findings": [],
+  "securityScan": "excluded_by_human_direction",
+  "transitionAllowed": true,
+  "transitionScope": "request_creation_only",
+  "activationAuthorized": false,
+  "capturedAt": "2026-08-14T10:59:24.6922713Z"
+}

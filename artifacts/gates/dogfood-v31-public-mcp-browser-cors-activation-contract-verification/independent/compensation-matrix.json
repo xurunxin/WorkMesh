@@ -1,0 +1,61 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpBrowserCorsCompensationMatrix",
+  "result": "PASS",
+  "ownerDecisions": [
+    {
+      "name": "retained",
+      "actual": "retained",
+      "expected": "retained"
+    },
+    {
+      "name": "missing",
+      "actual": "missing",
+      "expected": "missing"
+    },
+    {
+      "name": "wrong-listener",
+      "actual": "unknown",
+      "expected": "unknown"
+    },
+    {
+      "name": "extra-listener",
+      "actual": "unknown",
+      "expected": "unknown"
+    },
+    {
+      "name": "listener-without-supervisor",
+      "actual": "unknown",
+      "expected": "unknown"
+    }
+  ],
+  "liveOwnerDecision": "retained",
+  "cases": [
+    {
+      "name": "retained",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "threw": false
+    },
+    {
+      "name": "missing",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "threw": false
+    },
+    {
+      "name": "unknown",
+      "result": "ROLLBACK_FAILED",
+      "threw": true
+    },
+    {
+      "name": "cleanup-failure",
+      "result": "ROLLBACK_FAILED",
+      "threw": true
+    },
+    {
+      "name": "restore-failure",
+      "result": "ROLLBACK_FAILED",
+      "threw": true
+    }
+  ],
+  "checkedAt": "2026-08-14T18:06:08.6544677+00:00"
+}

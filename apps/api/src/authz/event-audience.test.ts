@@ -21,6 +21,10 @@ const agent = {
   agentSessionId: 'session',
   credentialHash: 'agent-credential',
 }
+const coordinator = {
+  ...agent,
+  authentication: 'coordination_connection' as const,
+}
 
 describe('EventAudiencePolicy SQL', () => {
   it('uses exact normalized Team resources and verified initiative ownership for humans', () => {
@@ -91,6 +95,7 @@ describe('EventAudiencePolicy SQL', () => {
       'agent-credential',
     ])
     expect(query.sql).toContain('authorized_sessions')
+    expect(query.sql).toContain('false AS team_scope')
     expect(query.sql).toContain('e.audience_actor_id=$3')
     expect(query.sql).toContain('e.session_id IN (SELECT id FROM authorized_sessions)')
     expect(query.sql).toContain("resource.resource_type='work_item'")
@@ -115,5 +120,44 @@ describe('EventAudiencePolicy SQL', () => {
     expect(query.sql).not.toContain(
       '(e.audience_actor_id IS NULL OR e.audience_actor_id=$3)',
     )
+  })
+
+  it('uses the live Connection credential and explicit Team scope for coordinators', () => {
+    const query = eventAudienceQuery(coordinator, '12')
+    expect(query.values).toEqual([
+      'workspace',
+      '12',
+      'agent',
+      'session',
+      'agent-credential',
+    ])
+    expect(query.sql).toContain('JOIN agent_coordination_sessions root_coordination')
+    expect(query.sql).toContain('JOIN agent_connections root_connection')
+    expect(query.sql).toContain('JOIN agent_connection_credentials credential')
+    expect(query.sql).toContain("root_connection.status IN ('active','rotating')")
+    expect(query.sql).toContain('true AS team_scope')
+    expect(query.sql).toContain('visible.team_scope')
+    expect(query.sql).toContain('resource.resource_id=visible.team_id')
+    expect(query.sql).not.toContain('JOIN agent_session_tokens credential')
+  })
+
+  it('rechecks the complete live Connection binding before coordinator event reads', async () => {
+    const query = vi.fn().mockResolvedValue({ rowCount: 1 })
+    await assertEventAudienceActive(
+      { query } as unknown as Pool,
+      coordinator,
+    )
+    const sql = query.mock.calls[0]![0] as string
+    expect(sql).toContain('FROM agent_coordination_sessions coordination')
+    expect(sql).toContain('JOIN agent_connections connection')
+    expect(sql).toContain('JOIN agent_connection_credentials credential')
+    expect(sql).toContain('connection.principal_human_actor_id=coordination.principal_human_actor_id')
+    expect(sql).toContain("connection.status IN ('active','rotating')")
+    expect(query.mock.calls[0]![1]).toEqual([
+      coordinator.credentialHash,
+      coordinator.agentSessionId,
+      coordinator.workspaceId,
+      coordinator.id,
+    ])
   })
 })

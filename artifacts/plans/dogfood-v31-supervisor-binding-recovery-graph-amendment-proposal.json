@@ -1,0 +1,112 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31TaskGraphAmendmentProposal",
+  "status": "WAITING_HUMAN_GATE",
+  "createdAt": "2026-08-14T10:30:44.9446382Z",
+  "recommended": true,
+  "base": {
+    "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "graphVersion": 4,
+    "graphSha256": "c35c03a211f624de3c1b5de350112106da61aee766e30ddc2581d88c899f0a6e",
+    "statePath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "stateSequence": 48,
+    "stateSha256": "523b8c005c6513ebc292b75f6f59d8a2fbfdd9e585b18ddbf12bf12033965d93",
+    "eventsPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventsThroughSequence": 48,
+    "eventsSha256": "9545c82869a3a81b6f370cb856e417375d507e923bb232ebc9df3ee016407ac1"
+  },
+  "trigger": {
+    "failureCode": "V31-ACT-002",
+    "failureReportPath": "artifacts/implementation/dogfood-v31-attempt-2-supervisor-binding-failure.json",
+    "failureReportSha256": "1431a75607fe5c1957e9f85c927e993092b124fd033e45b8fe8069a4c5a3ad83",
+    "rollbackReceiptPath": "artifacts/runtime/dogfood-v31-stack-rollback.json",
+    "rollbackReceiptSha256": "59fd050e063e00110422b0d884af6ea36fe202ef8602165dafa142df353c06df",
+    "runtimeStatus": "ROLLED_BACK_RUNTIME_VERIFIED",
+    "activationAttemptsUsed": 2,
+    "activationAttemptsLimit": 2
+  },
+  "proposedGraphVersion": 5,
+  "mode": "repair",
+  "preserve": {
+    "passedNodes": true,
+    "failedAttemptsAndApprovalsImmutable": true,
+    "candidateSourceAndBuildSelectors": true,
+    "protectedRuntimeSelectors": true,
+    "databaseAndObjectStorageBoundaries": true,
+    "activeBrowserAttemptsLimit": 2,
+    "mcpFixtureMutationBudget": 4
+  },
+  "nodesToAdd": [
+    {
+      "id": "repair-v31-versioned-supervisor-binding-and-compensation",
+      "type": "work",
+      "risk": "high",
+      "objective": "Version the Web/MCP role supervisor and bind candidate startup plus automatic compensation to the same exact attempt-3 contract path, selector, and hashes without weakening process, root, listener, or health checks.",
+      "primaryArtifact": "artifacts/implementation/dogfood-v31-versioned-supervisor-binding-repair.json",
+      "acceptance": [
+        "candidate Web and MCP bootstrap execute the production supervisor seam with the versioned contract",
+        "rollback Web and MCP bootstrap execute the same versioned seam",
+        "wrong contract path, selector, hash, mode, state root, and stop root reject before child creation",
+        "candidate failure forms a durable terminal rollback receipt and restores health7/7 with v30 build present and v31 absent",
+        "no production service mutation occurs during repair verification"
+      ]
+    },
+    {
+      "id": "verify-v31-versioned-supervisor-binding-and-compensation",
+      "type": "verify",
+      "risk": "critical",
+      "objective": "Fresh independent verification of exact production supervisor bootstrap and compensation reachability, script/contract bindings, disposable execution probes, runtime invariance, and zero residue.",
+      "primaryArtifact": "artifacts/gates/dogfood-v31-versioned-supervisor-binding-repair-gate.yaml",
+      "transitionScope": "request_creation_only"
+    },
+    {
+      "id": "approve-v31-stack-activation-attempt-3",
+      "type": "approval",
+      "risk": "critical",
+      "objective": "Create one fresh exact expiring Human request only after the independent repair Gate passes; prior approvals remain consumed and non-reusable."
+    },
+    {
+      "id": "activate-v31-stack-attempt-3",
+      "type": "work",
+      "risk": "critical",
+      "objective": "After a separate exact Human approval, replace only Web and MCP once using the repaired versioned supervisor seam, with mandatory automatic rollback and terminal receipt verification."
+    }
+  ],
+  "edgesToAdd": [
+    "activate-v31-stack-attempt-2 BLOCK -> repair-v31-versioned-supervisor-binding-and-compensation (failure evidence)",
+    "repair-v31-versioned-supervisor-binding-and-compensation -> verify-v31-versioned-supervisor-binding-and-compensation (repair artifact and exact scripts)",
+    "verify-v31-versioned-supervisor-binding-and-compensation PASS -> approve-v31-stack-activation-attempt-3 (request-creation-only Gate)",
+    "approve-v31-stack-activation-attempt-3 approved -> activate-v31-stack-attempt-3 (exact request and approval)",
+    "activate-v31-stack-attempt-3 passed -> capture-v31-active-evidence (exact activation receipt)"
+  ],
+  "budgetAmendment": {
+    "activationAttempts": {
+      "from": 2,
+      "to": 3,
+      "additional": 1
+    },
+    "supervisorBindingRepairRounds": 1,
+    "supervisorBindingRepairGateAttempts": 1,
+    "noOtherBudgetChange": true,
+    "externalSpendUsd": 0
+  },
+  "authorityIfApproved": {
+    "allowed": [
+      "apply and validate Graph v5 topology",
+      "implement the bounded versioned supervisor and compensation repair",
+      "run disposable and read-only verification without production service replacement",
+      "create one fresh exact expiring attempt-3 Human activation request only after an independent PASS Gate"
+    ],
+    "notAllowed": [
+      "active Web or MCP replacement",
+      "database or object-storage mutation",
+      "GEN-11 completion mutation",
+      "security scan or security approval claim"
+    ],
+    "activationStillRequiresSeparateHumanApproval": true
+  },
+  "requestedDecision": {
+    "decision": "approve",
+    "phrase": "批准 v31 supervisor recovery graph amendment"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31VersionedSupervisorBindingRepair",
+  "statusProposal": "verifying",
+  "nodeId": "repair-v31-versioned-supervisor-binding-and-compensation",
+  "selectorBinding": "v31-stack-activation-v3",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "sha256": "9126b29e392eeaf776ea418440be145adada6c556ca3df254450b19378eeebe7",
+    "version": 5
+  },
+  "claimedExecution": {
+    "statePath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "stateSha256": "bfe94673b6da094836ab60d63ce747050b4c6ed944627f5eb787704decf883d7",
+    "eventLogPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventLogSha256": "f20d78cde7a917556be619bf7d806873346687342c0ed50f3ff7af0c6614acb7",
+    "sequence": 50,
+    "leaseId": "c09786ce-7828-43bb-8a13-be402224b88f"
+  },
+  "contract": {
+    "path": "artifacts/runtime/dogfood-v31-stack-activation-contract-attempt-3.json",
+    "sha256": "7f7806c50266043f8acf7a717dfe180fc50f69c973c3b21990a1f28fe268640a"
+  },
+  "repair": {
+    "rootCauseClosed": "Attempt-3 candidate and rollback startup now use a versioned supervisor that accepts only the exact v3 contract path, selector, contract hash, runtime state/stop roots, and an expiring execution binding created after exact Human authorization.",
+    "sharedProductionSeam": "Automatic compensation and its executable counterexamples call Invoke-V31Attempt3Compensation from the same contract-bound module.",
+    "terminalReceiptGuarantee": "Successful restoration writes ROLLED_BACK_RUNTIME_VERIFIED; unknown-owner or rollback-start failure writes ROLLBACK_FAILED before throwing.",
+    "activeRuntimeTouched": false
+  },
+  "scripts": {
+    "module": {"path": "artifacts/runtime/dogfood-v31-stack-activation/runtime-module-attempt-2.psm1", "sha256": "3cc8136c7d2d8661762ab79fb4dd3c7071aa81fa2d060be54bc8043f28572474"},
+    "compensationModule": {"path": "artifacts/runtime/dogfood-v31-stack-activation/compensation-attempt-3.psm1", "sha256": "c7cacb1daa816ab31a11a344a9e29919864c5380d892a5e1aaa63812d7f8a3b0"},
+    "stage": {"path": "artifacts/runtime/dogfood-v31-stack-activation/stage-active-origin-attempt-2.ps1", "sha256": "2b0ee923c5293003d8fa4e285d7fa1bd4b69ae1a32dc63b3911ff425a26bb153"},
+    "supervisor": {"path": "artifacts/runtime/dogfood-v31-stack-activation/role-supervisor-attempt-3.ps1", "sha256": "a44d1ab0712cc84c81d6844f246e58e54a7436b0f38ac58dae4cdeca4d23a747"},
+    "start": {"path": "artifacts/runtime/dogfood-v31-stack-activation/start-v31-stack-attempt-3.ps1", "sha256": "2fc546f7c7dab46502c824cdeaa3f842c20a55258911dd913934acea127b2149"},
+    "rollback": {"path": "artifacts/runtime/dogfood-v31-stack-activation/rollback-v31-stack-attempt-3.ps1", "sha256": "a262638cb8a050409b363732f4e809c7f75e641bbf5920fb46b03c1c3fa38a9f"},
+    "supervisorProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/test-supervisor-attempt-3.ps1", "sha256": "0291843a04572532abf5786001e73a36c1f2c2f01fbf3dfa29e14fe778e4e8fe"},
+    "compensationProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/test-compensation-attempt-3.ps1", "sha256": "fa0046506f0b91609e53cac244130299ffa17778676acf1ca5ca9ff599c5d533"},
+    "astAudit": {"path": "artifacts/runtime/dogfood-v31-stack-activation/audit-supervisor-attempt-3.ps1", "sha256": "34cecb6232c5f19df7b3fa3a411f602b4cd253fde35521bfc72aa610bf20a79f"},
+    "runtimeProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/verify-runtime-invariance-attempt-3.ps1", "sha256": "4a04168be28f1363fc05e7bba70ec64f3fcf01e4d9c8166b3c29c1c33b5aa3fd"}
+  },
+  "evidence": {
+    "supervisorProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/supervisor-probe.json", "sha256": "33e896b83d0aae516af70757706b36163e8fbced945e1909d269e7709dc699da", "result": "PASS", "positive": 4, "negative": 6, "childProcessesCreated": 0},
+    "compensationProbe": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/compensation-probe.json", "sha256": "bdc206c445145fce1b76dee559ad9659ba05919458039ae24b19e4dce5a51286", "result": "PASS", "cases": 4, "terminalReceipts": 4},
+    "astAudit": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/ast-audit.json", "sha256": "aa51525591500f8581b3dca4cf00524dc170a84baaec022ce0899832819a39e5", "result": "PASS", "files": 10},
+    "startDryRun": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/start-dry-run/preflight.json", "sha256": "37faa0cfa6ba9725c695d9aa8e8765ffbd6c8f72c751d356829adf19cb447e6d", "result": "PASS", "targetMutationExecuted": false},
+    "rollbackDryRun": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/rollback-dry-run/rollback-preflight.json", "sha256": "4c6834710fbaa6e442185f46debecad8236f492541f6b164507946627caa3be0", "result": "PASS", "targetMutationExecuted": false},
+    "runtimeInvariance": {"path": "artifacts/runtime/dogfood-v31-stack-activation/evidence/supervisor-binding-attempt-3/worker/runtime-invariance.json", "sha256": "f97ce4a9661a444cf293ab3060963552de6d5a860e7519bd875e04de98b73f14", "result": "PASS", "health": "7/7", "rollbackBuildStatus": 200, "candidateBuildStatus": 404}
+  },
+  "candidate": {
+    "source": {"fileCount": 583, "canonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8"},
+    "build": {"fileCount": 118, "canonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05", "buildId": "Yj0IS_0CtW-lStIuWIemm"},
+    "prepared": {"fileCount": 1992, "canonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4", "reuseOnlyAfterFullSelectorVerification": true}
+  },
+  "runtime": {
+    "status": "V30_ROLLBACK_RUNTIME_UNCHANGED",
+    "webSupervisorListener": "62116/75600",
+    "mcpSupervisorListener": "24544/40520",
+    "protectedListenerPids": [44104,24516,72736,71408],
+    "health": "7/7",
+    "attempt3FutureArtifactsPresent": 0,
+    "attempt3CandidateRuntimeResidue": 0
+  },
+  "authorization": {
+    "independentGateRequired": true,
+    "humanApprovalRequiredAfterGate": true,
+    "requestCreated": false,
+    "activationAuthorized": false,
+    "activeReplacementExecuted": false
+  },
+  "excluded": {
+    "browser": true,
+    "git": true,
+    "databaseMutation": true,
+    "workMeshMutation": true,
+    "securityScan": true
+  }
+}

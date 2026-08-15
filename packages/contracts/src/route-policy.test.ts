@@ -56,7 +56,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(198)
+    expect(routePolicyManifest).toHaveLength(211)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)
@@ -204,6 +204,9 @@ describe('routePolicyManifest', () => {
     expect(capabilitiesFor('recordUsage')).toEqual(['work:read'])
     expect(capabilitiesFor('postWorkRoomMessage')).toEqual(['work:write'])
     expect(capabilitiesFor('commentOnPlanStep')).toEqual(['work:write'])
+    expect(capabilitiesFor('getArtifactUploadStatus')).toEqual(['work:read'])
+    expect(capabilitiesFor('listWorkItemArtifacts')).toEqual(['work:read'])
+    expect(capabilitiesFor('cancelArtifactUpload')).toEqual(['artifact:write'])
   })
 
   it('documents bootstrap authentication failures as a structured 401 response', async () => {
@@ -295,7 +298,6 @@ describe('routePolicyManifest', () => {
       'acceptHandoff',
       'connectRepository',
       'pinRepositoryContext',
-      'createProjectMilestone',
       'publishProjectUpdate',
       'createProjectDependency',
       'setWorkItemCycle',

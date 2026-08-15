@@ -11,7 +11,8 @@ const artifactPath = resolve(root, 'apps/web/public/skills/workmesh-1.1.0.md')
 const manifestPath = resolve(root, 'packages/contracts/src/workmesh-skill-manifest.ts')
 const publicKeyPath = resolve(root, 'skills/workmesh/public-key.pem')
 
-const sections = await Promise.all([skillPath, protocolPath, clientsPath].map(path => readFile(path, 'utf8')))
+const normalizeLineEndings = value => value.replace(/\r\n/g, '\n')
+const sections = (await Promise.all([skillPath, protocolPath, clientsPath].map(path => readFile(path, 'utf8')))).map(normalizeLineEndings)
 const artifact = `${sections[0].trim()}\n\n---\n\n${sections[1].trim()}\n\n---\n\n${sections[2].trim()}\n`
 const digest = `sha256:${createHash('sha256').update(artifact).digest('hex')}`
 
@@ -19,7 +20,7 @@ if (check) {
   const [actualArtifact, manifestSource, publicKey] = await Promise.all([
     readFile(artifactPath, 'utf8'), readFile(manifestPath, 'utf8'), readFile(publicKeyPath, 'utf8'),
   ])
-  if (actualArtifact !== artifact) throw new Error('Generated WorkMesh Skill artifact is stale')
+  if (normalizeLineEndings(actualArtifact) !== artifact) throw new Error('Generated WorkMesh Skill artifact is stale')
   const manifest = /sha256: '([^']+)',\s+signature: 'ed25519:([^']+)'/s.exec(manifestSource)
   if (!manifest || manifest[1] !== digest) throw new Error('Generated WorkMesh Skill manifest is stale')
   if (!verify(null, Buffer.from(artifact), publicKey, Buffer.from(manifest[2], 'base64'))) throw new Error('WorkMesh Skill signature is invalid')

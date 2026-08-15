@@ -1,0 +1,56 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptRenewalRequest",
+  "requestId": "03078758-afc8-4e15-8655-62953223644c",
+  "selectorBinding": "v31-replacement-active-browser-attempt-5-renewal-v1",
+  "scope": "v31_replacement_active_browser_attempt_5_once",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphVersion": 12,
+  "graphSha256": "478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd",
+  "executionState": {
+    "sequence": 130,
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sha256": "61281eff4d50271c8d1033d00d9baedb6868df1e0bba93c44bbcd961ff073636"
+  },
+  "eventLog": {
+    "cursor": "130",
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "sha256": "cf653a3f1720022e8d9840957f57ad139014bc4eb6ba850242ada275595cc7a0"
+  },
+  "repairProposalPath": "artifacts/plans/dogfood-v31-active-browser-approval-renewal-graph-amendment-proposal.json",
+  "repairProposalSha256": "a8608543ceec93de64e9aa40082cecaecdfe3c9fc9c7e81a2a6f04ef07cabe3e",
+  "expiredRequestPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-5-request.json",
+  "expiredRequestSha256": "7776724312c8e8db4dc14b966727d1c793b93f47983b602772949971b773a181",
+  "expiredRequestReusable": false,
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-browser-cors-activation.json",
+  "activationSha256": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+  "activationStatus": "ACTIVE_PENDING_REPLACEMENT_HUMAN_ACCEPTANCE",
+  "requestedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "5/5",
+    "maxWorkMeshFixtureMutations": 3,
+    "requiredJourney": [
+      "authenticated Human onboarding and diagnostics",
+      "Browser CORS at 3300 with public discovery and MCP endpoint at 3301",
+      "fresh create redeem verify_connection and revoke fixture lifecycle",
+      "pending expired active rotating revoked mis-scoped unsupported and unavailable states",
+      "1280 375 and 320 responsive plus keyboard accessibility",
+      "raw request-method and secret-absence audit",
+      "fixture durable-event and cleanup verification",
+      "runtime database and WorkMesh post-readback",
+      "viewport reset and exactly-once Browser finalize"
+    ]
+  },
+  "prohibitedActions": [
+    "service replacement restart or rollback",
+    "database schema or arbitrary data mutation",
+    "object-storage mutation outside the accepted fixture flow",
+    "GEN-11 completion mutation",
+    "Git history rewrite",
+    "security approval or security-scan claim"
+  ],
+  "requestedAt": "2026-08-14T19:36:10.5797077Z",
+  "expiresAt": "2026-08-14T21:36:10.5797077Z",
+  "singleUse": true,
+  "consumed": false
+}

@@ -1,0 +1,34 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveAgentConnectionTranscript",
+  "attempt": 5,
+  "result": "PASS",
+  "connectionId": "bd2c7e2c-8020-4a61-b837-373895056d7a",
+  "fixture": {
+    "name": "V31 Active Acceptance 5",
+    "slug": "v31-active-acceptance-5",
+    "clientType": "codex",
+    "teamId": "bc8daa41-561c-45e2-8c6d-5028286c1ca2",
+    "principalHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa"
+  },
+  "lifecycle": [
+    {"step": "create", "revision": 1, "status": "pending_pairing"},
+    {"step": "redeem", "revision": 2, "status": "active"},
+    {"step": "initialize", "result": "PASS"},
+    {"step": "verify_connection", "result": "PASS"},
+    {"step": "get_workmesh_context", "result": "PASS", "teamKey": "GEN"},
+    {"step": "revoke", "revision": 3, "status": "revoked"},
+    {"step": "post_revoke_authentication", "result": "REJECTED", "transportStatus": 200, "protocol": "json_rpc", "summary": "The revoked installation failed closed at the MCP protocol layer."}
+  ],
+  "derivedAgent": {
+    "actorId": "3a5b7473-d450-43d7-9ed9-3dda2a8e8369",
+    "sessionId": "8ec610c2-cab4-4423-8234-7886c5d337cd",
+    "sessionState": "executing",
+    "capabilities": ["comment:write", "message:write", "plan:write", "work:read", "work:write"],
+    "teamIds": ["bc8daa41-561c-45e2-8c6d-5028286c1ca2"]
+  },
+  "fixtureMutationCount": 3,
+  "pairingSecretPersisted": false,
+  "installationTokenPersisted": false,
+  "secretValuesSerialized": false
+}

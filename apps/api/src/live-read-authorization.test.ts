@@ -809,6 +809,33 @@ describe('live paged-read authorization', () => {
     expect(session).toContain('live_scope_item.id IS NOT NULL')
     expect(session).toContain('live_session_project.id IS NOT NULL')
 
+    const coordinationValues: unknown[] = []
+    const coordination = liveSessionReadPredicate(
+      {
+        ...actor,
+        kind: 'agent',
+        humanSessionId: undefined,
+        agentSessionId: actor.humanSessionId,
+        authentication: 'coordination_connection',
+      },
+      'protected.session_id',
+      'protected.workspace_id',
+      coordinationValues,
+    )
+    expect(coordination).toContain('FROM agent_coordination_sessions live_coordination')
+    expect(coordination).toContain('JOIN agent_connections live_connection')
+    expect(coordination).toContain('JOIN agent_connection_credentials live_credential')
+    expect(coordination).toContain("live_connection.status IN ('active','rotating')")
+    expect(coordination).toContain("live_coordination.status='active'")
+    expect(coordination).toContain("live_session.session_kind='coordination'")
+    expect(coordination).not.toContain('FROM agent_session_tokens live_credential')
+    expect(coordinationValues).toEqual([
+      actor.id,
+      null,
+      actor.humanSessionId,
+      actor.credentialHash,
+    ])
+
     const repository = liveSessionReadPredicate(
       { ...actor, kind: 'agent', humanSessionId: undefined, agentSessionId: actor.humanSessionId },
       'protected.session_id',

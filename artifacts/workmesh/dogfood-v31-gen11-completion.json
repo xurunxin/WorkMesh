@@ -1,0 +1,49 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31Gen11Completion",
+  "result": "PASS",
+  "completedAt": "2026-08-14T20:27:23.534Z",
+  "authority": {
+    "gate": "artifacts/gates/dogfood-v31-gen11-final-gate.yaml@sha256:7b427222aca49c395fec160a900d6029c560b1a8ad32c6ab84a478dd09e26ab4",
+    "scope": "exact_gen11_revision2_to_done_revision3_only"
+  },
+  "request": {
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "revision": 2,
+    "statusId": "12c209e8-a37f-4aa1-ae53-08fefd9ec685",
+    "labels": ["coord:completed", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "idempotencyKey": "0a6a3abb-8da6-4cee-840f-53d5f16ecedf"
+  },
+  "firstResponse": {"id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d", "revision": 3},
+  "identicalReplay": {"id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d", "revision": 3, "samePayload": true, "sameIdempotencyKey": true},
+  "readback": {
+    "number": 11,
+    "status": "Done",
+    "statusId": "12c209e8-a37f-4aa1-ae53-08fefd9ec685",
+    "revision": 3,
+    "labels": ["coord:completed", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "responsibleHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa",
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null
+  },
+  "durableEvent": {
+    "cursor": "198",
+    "id": "40df58be-7bb2-49e6-8278-b482ee2e90a7",
+    "type": "work_item.status_changed",
+    "eventVersion": 2,
+    "aggregateRevision": 3,
+    "actorId": "4b5ede91-e824-4002-8882-4fd2601f39e8",
+    "correlationId": "9087225e-7716-4c53-a19b-08354c08161a",
+    "idempotencyKey": "0a6a3abb-8da6-4cee-840f-53d5f16ecedf",
+    "payload": {
+      "statusId": "12c209e8-a37f-4aa1-ae53-08fefd9ec685",
+      "labels": ["coord:completed", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"]
+    }
+  },
+  "eventsAfter197": 1,
+  "eventsAfter198": 0,
+  "projectReadback": {"workItems": 14, "Done": 10, "Backlog": 4},
+  "otherWorkItemMutations": 0,
+  "completionMutationBudget": "1/1",
+  "securityScanRun": false
+}

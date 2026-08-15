@@ -7,7 +7,7 @@ export type ApiActor = {
   kind: "human" | "agent";
   agentSessionId?: string;
   humanSessionId?: string;
-  authentication?: "human_session" | "agent_session" | "installation_target";
+  authentication?: "human_session" | "agent_session" | "coordination_connection" | "installation_target";
   credentialHash?: string;
 };
 

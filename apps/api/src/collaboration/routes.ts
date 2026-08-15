@@ -669,8 +669,9 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
       )
       SELECT * FROM (
         SELECT m.id, m.created_at, 'message' AS kind, m.intent::text AS subtype,
-          jsonb_build_object('body', m.body, 'authorActorId', m.author_actor_id,
-            'authorDisplayName', a.display_name, 'sessionId', m.session_id,
+          jsonb_build_object('body', m.body, 'actorId', m.author_actor_id,
+            'actorDisplayName', a.display_name, 'actorKind', a.kind, 'sessionId', m.session_id,
+            'planStepId', NULL, 'createdAt', m.created_at,
             'recipientActorId', m.recipient_actor_id, 'replyToMessageId', m.reply_to_message_id,
             'threadId', m.thread_id, 'requiresResponse', m.requires_response,
             'resolution', CASE WHEN rr.id IS NULL THEN NULL ELSE jsonb_build_object('id', rr.id, 'resolvedAt', rr.created_at, 'resolvedByActorId', rr.resolved_by_actor_id, 'resolution', rr.resolution) END,
@@ -696,8 +697,8 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
         SELECT cd.id,cd.created_at,'context_delta','delta',jsonb_build_object('sessionId',cd.session_id,'baseSnapshotId',cd.base_snapshot_id,'sourceSnapshotId',cd.source_snapshot_id,'additions',cd.additions,'contentHash',cd.content_hash,'rationale',cd.rationale,'historyLink',cd.history_link,'createdByActorId',cd.created_by_actor_id)
         FROM context_deltas cd WHERE cd.session_id IN (SELECT id FROM session_scope)
         UNION ALL
-        SELECT psc.id,psc.created_at,'step_comment','comment',jsonb_build_object('sessionId',pv.session_id,'planVersionId',psc.plan_version_id,'planStepId',psc.step_id,'authorActorId',psc.author_actor_id,'body',psc.body,'references',psc.references_json)
-        FROM plan_step_comments psc JOIN agent_plan_versions pv ON pv.id=psc.plan_version_id WHERE pv.session_id IN (SELECT id FROM session_scope)
+        SELECT psc.id,psc.created_at,'step_comment','comment',jsonb_build_object('sessionId',pv.session_id,'planVersionId',psc.plan_version_id,'planStepId',psc.step_id,'actorId',psc.author_actor_id,'actorDisplayName',a.display_name,'actorKind',a.kind,'createdAt',psc.created_at,'body',psc.body,'references',psc.references_json)
+        FROM plan_step_comments psc JOIN agent_plan_versions pv ON pv.id=psc.plan_version_id JOIN actors a ON a.id=psc.author_actor_id WHERE pv.session_id IN (SELECT id FROM session_scope)
         UNION ALL
         SELECT ps.id,pv.created_at,'plan_step',ps.status::text,jsonb_build_object('sessionId',pv.session_id,'planVersionId',pv.id,'planStepId',ps.id,'title',ps.title,'description',ps.description,'ownerActorId',ps.owner_actor_id,'ordinal',ps.ordinal,'dependsOn',coalesce((SELECT jsonb_agg(depends_on_step_id ORDER BY depends_on_step_id) FROM agent_plan_step_dependencies WHERE plan_version_id=pv.id AND step_id=ps.id),'[]'::jsonb),'acceptanceCriteria',ps.acceptance_criteria,'expectedArtifacts',ps.expected_artifacts)
         FROM agent_plan_steps ps JOIN agent_plan_versions pv ON pv.id=ps.plan_version_id WHERE pv.session_id IN (SELECT id FROM session_scope)

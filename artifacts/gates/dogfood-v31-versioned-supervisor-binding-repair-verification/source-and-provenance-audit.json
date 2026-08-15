@@ -1,0 +1,51 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31VersionedSupervisorBindingSourceAudit",
+  "result": "PASS",
+  "supervisorBinding": {
+    "contractPathExact": true,
+    "contractShaExact": true,
+    "selectorExact": true,
+    "stateRootExact": true,
+    "stopRootExact": true,
+    "modeAndRoleExact": true,
+    "executionBindingRequiredForNonDryRun": true,
+    "executionBindingHashAndExpiryChecked": true
+  },
+  "authorizationOrdering": {
+    "gateShapeNestedAndExact": true,
+    "requestApprovalHashesAndExpiryChecked": true,
+    "authorizationBeforeExecutionBinding": true,
+    "authorizationBeforePreparedWrite": true,
+    "authorizationBeforeServiceMutation": true,
+    "dryRunTargetMutation": false
+  },
+  "productionCompensation": {
+    "sharedExportedFunction": "Invoke-V31Attempt3Compensation",
+    "calledByProductionStartCatch": true,
+    "calledByExecutableProbe": true,
+    "retainedOldOwnerTerminal": "ROLLED_BACK_RUNTIME_VERIFIED",
+    "restartTerminal": "ROLLED_BACK_RUNTIME_VERIFIED",
+    "unknownOwnerTerminal": "ROLLBACK_FAILED",
+    "restartFailureTerminal": "ROLLBACK_FAILED",
+    "terminalReceiptBeforeThrow": true
+  },
+  "candidateSelectors": {
+    "sourceFileCount": 583,
+    "sourceCanonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "buildFileCount": 118,
+    "buildCanonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+    "buildId": "Yj0IS_0CtW-lStIuWIemm",
+    "standaloneFileCount": 1992,
+    "standaloneCanonicalSha256": "ff3afd46b85d15261d916ffdefb7482bd46bd270d53da8a0d3d3c558d361a93f",
+    "preparedFileCount": 1992,
+    "preparedCanonicalSha256": "79e580040df6234c86e755a29ab10e9cd4ca867756ba155d695555a2d45c16d4"
+  },
+  "provenance": {
+    "attempt2FailureImmutable": true,
+    "rollbackReceiptImmutable": true,
+    "attempt3FutureArtifactsPresent": 0,
+    "candidateRuntimeResidue": 0
+  },
+  "capturedAt": "2026-08-14T10:59:24.6922713Z"
+}

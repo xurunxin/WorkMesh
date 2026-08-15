@@ -1,0 +1,67 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingPostActivationReadback",
+  "result": "PASS",
+  "activationSha256": "58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f",
+  "executionBindingSha256": "d25bc06dd99e2a0d4894129f3adb03c12f865670a905aec9bfb1ca9d61fa16ec",
+  "preparedSourceSha256": "81cbabbd8b4f0984b4c6460dbfa165ba28b2f2ebad473f0b6f9caeb8f8af4e86",
+  "api": {
+    "supervisorPid": 20904,
+    "supervisorStartTimeUtc": "2026-08-14T16:17:40.9437096Z",
+    "childPid": 16976,
+    "childStartTimeUtc": "2026-08-14T16:17:42.3351019Z",
+    "listenerPid": 11832,
+    "listenerStartTimeUtc": "2026-08-14T16:17:42.9236161Z",
+    "port": 3303,
+    "root": "G:\\Projects\\MetronX\\worktrees\\workmesh-human-experience-v31-checkpoint",
+    "webOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301",
+    "generation": 1,
+    "restartCount": 0,
+    "health": 200,
+    "oldSupervisorPresent": false
+  },
+  "originContract": {
+    "corsPreflightStatus": 204,
+    "accessControlAllowOrigin": "http://127.0.0.1:3300",
+    "discoveryStatus": 200,
+    "discoveryMcpUrl": "http://127.0.0.1:3301/mcp",
+    "discoveryWellKnownUrl": "http://127.0.0.1:3301/.well-known/workmesh-agent",
+    "unauthenticatedMcpStatus": 401,
+    "connectStatus": 200,
+    "skillStatus": 200
+  },
+  "protectedRoles": [
+    {"name": "web", "supervisorPid": 57064, "listenerPid": 42392, "health": 200},
+    {"name": "mcp", "supervisorPid": 72740, "listenerPid": 10516, "health": 200},
+    {"name": "worker", "supervisorPid": 37620, "listenerPid": 10268, "health": 200},
+    {"name": "public-router", "supervisorPid": 24516, "listenerPid": 24516, "health": 200},
+    {"name": "compatibility", "supervisorPid": 44104, "listenerPid": 44104, "health": 200}
+  ],
+  "objectStorageHealth": 200,
+  "runtimeHealth": "7/7",
+  "servedBuild": {
+    "requiredV31": 200,
+    "forbiddenV30": 404
+  },
+  "rollbackReceiptPresent": false,
+  "workMesh": {
+    "actorId": "4b5ede91-e824-4002-8882-4fd2601f39e8",
+    "sessionId": "cdc9154d-ffb1-470d-ac81-ee2729215e3d",
+    "sessionState": "executing",
+    "sessionRevision": 1,
+    "gen11WorkItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "gen11Revision": 2,
+    "gen11Status": "In Progress",
+    "gen11Labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "activeExecutor": null,
+    "durableCursor": "187",
+    "eventsAfterCursor": 0,
+    "mutationExecuted": false
+  },
+  "browserUsed": false,
+  "databaseMutationExecuted": false,
+  "objectStorageMutationExecuted": false,
+  "securityScanRun": false,
+  "observedAt": "2026-08-14T16:18:49.1863565Z"
+}

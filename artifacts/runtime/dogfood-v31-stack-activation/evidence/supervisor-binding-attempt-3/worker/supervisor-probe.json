@@ -1,0 +1,70 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31VersionedSupervisorProbe",
+  "result": "PASS",
+  "selectorBinding": "v31-stack-activation-v3",
+  "positive": [
+    {
+      "mode": "candidate",
+      "role": "web",
+      "receiptSha256": "31aab04ca9d6be62b5bd686736a00d2af15ef8f6852faa536a7f48c108f3f903",
+      "childCreated": false,
+      "candidateProcessCount": 0
+    },
+    {
+      "mode": "candidate",
+      "role": "mcp",
+      "receiptSha256": "f308daa752de63ad198c94b343eb6d62a57dc7db914d9a9bbce22b8e233c79b0",
+      "childCreated": false,
+      "candidateProcessCount": 0
+    },
+    {
+      "mode": "rollback",
+      "role": "web",
+      "receiptSha256": "4194e265d1dfef56abc5983e1ee72f2aaa8d808747f341acf632afbfdc1321ae",
+      "childCreated": false,
+      "candidateProcessCount": 0
+    },
+    {
+      "mode": "rollback",
+      "role": "mcp",
+      "receiptSha256": "bb6e30bc962caba1cb034f8c24cf6a5bcab54f5391eb9290b5269e0b6d548148",
+      "childCreated": false,
+      "candidateProcessCount": 0
+    }
+  ],
+  "negative": [
+    {
+      "name": "wrong-contract-path",
+      "rejected": true,
+      "candidateProcessCount": 0
+    },
+    {
+      "name": "wrong-contract-hash",
+      "rejected": true,
+      "candidateProcessCount": 0
+    },
+    {
+      "name": "wrong-state-root",
+      "rejected": true,
+      "candidateProcessCount": 0
+    },
+    {
+      "name": "wrong-stop-root",
+      "rejected": true,
+      "candidateProcessCount": 0
+    },
+    {
+      "name": "wrong-evidence-root",
+      "rejected": true,
+      "candidateProcessCount": 0
+    },
+    {
+      "name": "invalid-mode",
+      "rejected": true,
+      "candidateProcessCount": 0
+    }
+  ],
+  "childProcessesCreated": 0,
+  "capturedAt": "2026-08-14T10:51:22.4756688+00:00"
+}

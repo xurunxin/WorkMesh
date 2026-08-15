@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureCompensationProbe",
+  "result": "PASS",
+  "cases": [
+    {
+      "name": "exact-old-retained",
+      "actual": "retain",
+      "expected": "retain",
+      "passed": true
+    },
+    {
+      "name": "old-missing-clean-port",
+      "actual": "restart",
+      "expected": "restart",
+      "passed": true
+    },
+    {
+      "name": "old-missing-unknown-owner",
+      "actual": "reject",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "name": "old-alive-wrong-listener",
+      "actual": "reject",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "name": "old-alive-duplicate-listener",
+      "actual": "reject",
+      "expected": "reject",
+      "passed": true
+    }
+  ],
+  "productionFunction": "Resolve-V31OldRoleConvergenceDecision",
+  "serviceMutationExecuted": false,
+  "checkedAt": "2026-08-14T12:45:03.8752607+00:00"
+}

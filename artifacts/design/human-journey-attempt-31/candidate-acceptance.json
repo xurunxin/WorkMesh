@@ -1,0 +1,62 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateAcceptance",
+  "statusProposal": "blocked",
+  "result": "BLOCK",
+  "observedAt": "2026-08-14T08:01:16.1367295Z",
+  "fixedInputs": {
+    "graph": "de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "stateSequence15": "05722a6b6780fe15d488bb24edd5dcd3328594043d3b7aa66907ae5f963cb14b",
+    "eventsThrough15": "5a24a1855a1cd8b6db360a73b553867bded99853802e5492a421a055bef39203",
+    "implementationGate": "6f4e097a9e8d9a299662fd8fb31a0abc9fc80e2626fbb0b8ff22ab0ffbc75495",
+    "contract": "108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b",
+    "report": "f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9",
+    "candidateSource": "583/94f4a579484ffa52d1a3fce4014040cac6518247a10bfc838a3526aff30893c7",
+    "candidateBuild": "118/93dc6d1411c1279efed0f16ee97f14e8a51ab8bce774c086a979e006a04e85aa/FFS43hLDELd0IEM12C3hR"
+  },
+  "browser": {
+    "surface": "Codex In-app Browser",
+    "freshTabs": 1,
+    "attempt": 1,
+    "desktopViewport": "1280x720",
+    "directlyObservedStates": ["discovery_unavailable"],
+    "requiredStatesNotObservedAfterStop": ["ready", "pending_pairing", "pairing_expired", "revoked", "team_scope_unavailable", "unsupported_client", "coordination_feature_disabled", "forbidden"],
+    "viewportReset": true,
+    "finalizedExactlyOnce": true,
+    "callsAfterFinalize": 0,
+    "credentialLikeDomTextPresent": false,
+    "documentHorizontalOverflow": false
+  },
+  "requestAudit": {
+    "artifact": "artifacts/design/human-journey-attempt-31/candidate-request-audit.jsonl@sha256:a7ba28c1f6eb56acbae0218f7008a54d545137eba5eaa16701d4dae24114be69",
+    "rows": 5,
+    "methods": { "GET": 4, "OPTIONS": 1 },
+    "mutationMethods": 0,
+    "secretHeaderValuesPersisted": 0
+  },
+  "agentFixture": {
+    "status": "not_executed_after_deterministic_browser_and_source_blocker",
+    "mutationCount": 0,
+    "cleanupRequired": false
+  },
+  "evidence": [
+    "artifacts/design/human-journey-attempt-31/01-feature-disabled-misclassified.png@sha256:86382b0bb222bdfd9356e51102474271026c0387a8d4386815cbd966f24f3e7e",
+    "artifacts/design/human-journey-attempt-31/candidate-browser-dom.json",
+    "artifacts/design/human-journey-attempt-31/candidate-blocker-audit.json",
+    "artifacts/design/human-journey-attempt-31/candidate-runtime-cleanup.json",
+    "artifacts/design/human-journey-attempt-31/candidate-proxy.mjs@sha256:29fd5c661539b1993edcb003ea7790873ba5d2ee7806b6ec6e2cc778cfaa45c6"
+  ],
+  "finding": {
+    "id": "V31-F1",
+    "severity": "major",
+    "summary": "The live FEATURE_DISABLED response is rendered as discovery_unavailable, coordination_feature_disabled is hard-coded unreachable on the public route, and the admin diagnostic callers omit the live context required by several mandatory states.",
+    "repairNode": "repair-v31-onboarding-live-state-wiring"
+  },
+  "runtimeCleanup": "PASS",
+  "activeTargetHealthy": true,
+  "rollbackRequired": false,
+  "transitionAllowed": false,
+  "activationAuthorized": false,
+  "securityScanExecuted": false,
+  "securityApprovalClaimed": false
+}

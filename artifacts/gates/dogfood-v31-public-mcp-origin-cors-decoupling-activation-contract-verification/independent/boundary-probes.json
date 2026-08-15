@@ -1,0 +1,36 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingBoundaryProbes",
+  "result": "PASS",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "preMutationRejections": [
+    {
+      "case": "direct non-DryRun stage without execution binding",
+      "exitCode": 1,
+      "errorCode": "DOGFOOD_V31_CORS_DIRECT_STAGE_REJECTED"
+    },
+    {
+      "case": "non-DryRun start without request and approval",
+      "exitCode": 1,
+      "errorCode": "DOGFOOD_V31_CORS_AUTH_ARGUMENT_MISSING"
+    },
+    {
+      "case": "non-DryRun rollback without activation binding",
+      "exitCode": 1,
+      "errorCode": "DOGFOOD_V31_CORS_ACTIVATION_BINDING_REJECTED"
+    }
+  ],
+  "outsideRootRejections": [
+    {"script": "stage-source.ps1", "exitCode": 1, "errorCode": "DOGFOOD_V31_ORIGIN_EVIDENCE_ROOT_REJECTED"},
+    {"script": "start-api-only.ps1", "exitCode": 1, "errorCode": "DOGFOOD_V31_ORIGIN_EVIDENCE_ROOT_REJECTED"},
+    {"script": "rollback-api-only.ps1", "exitCode": 1, "errorCode": "DOGFOOD_V31_ORIGIN_EVIDENCE_ROOT_REJECTED"}
+  ],
+  "outsideRootCreated": false,
+  "preparedSourceCreated": false,
+  "activationCreated": false,
+  "rollbackCreated": false,
+  "serviceMutationExecuted": false,
+  "databaseMutationExecuted": false,
+  "workMeshMutationExecuted": false,
+  "observedAt": "2026-08-14T15:56:38.7247871+00:00"
+}

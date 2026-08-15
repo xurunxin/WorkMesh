@@ -1,0 +1,122 @@
+GateReport:
+  gate_id: dogfood-v31-coordination-feature-binding-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 6
+  node_id: verify-v31-active-coordination-feature-binding
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:7903bc646c835e14ac2c7cf5d8b1e9fe5043e5c2c0416a2b0876f07fbc9b4757
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:63@sha256:8adaf463a83030aa2955df52eb3688e577b1f305bb32c2adf6815816f0a53d5e
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@rows:63@sha256:5f93a0eb3fa71908b756ecc167ebad5784b94e97995eba27d793d2d85410d5b1
+    - artifacts/implementation/dogfood-v31-coordination-feature-binding-repair.json@sha256:78daaf724f645ff45736df9736710f42489d4d49398f863ec3f82ed85cc6c46c
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation-contract.json@sha256:fd07bfb3f2c1d0e78fb0803ba55107559eed7af07713570e7436bf7bba77ff36
+    - artifacts/design/human-journey-attempt-31/active-acceptance.json@sha256:2a17dc9ab76de95de1d225393ae3a3f37713efb89c9663a1b477b99b7597e105
+  worker_id: coordination-feature-binding-repair-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-coordination-feature-verifier
+    scope: [fixed_inputs, source_compatibility, environment_binding, authorization, supervisor_parent_binding, compensation, ast, dry_run, runtime_invariance]
+    independent_context: true
+  result: BLOCK
+  claim_checks:
+    - claim_id: V31-N13R-A1
+      assertion: The contract changes only API and Worker supervisor environment bindings, sets WORKMESH_BETA_COORDINATION_MCP=true for both, and leaves source, Web, MCP, router, compatibility, MinIO, database, and object storage unchanged.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/fixed-input-and-binding-audit.json@sha256:5547b5f5115f399efa4f7df56fbad9a677e4542003472027d368e8e0d38cd86c
+          observed: Graph v6, seq63 state/events, report, contract and blocked acceptance matched; all seven script bindings matched; API v30 and Worker v29 source already contain the coordination routes, lifecycle worker, feature gate, and default-false registry.
+          source: fresh SHA256 rehash and direct source inspection
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/root-auth-and-runtime-audit.json@sha256:7a049fc9b44c95c6dd0e43ad4c9c3d43c4f5700efdfdb09267dc9c3810941f52
+          observed: Missing authorization rejected before execution binding or terminal artifact creation; exact supervisor parent binding is enforced; runtime stayed health 7/7 with v31 build 200 and v30 build 404.
+          source: executable counterexample and read-only runtime inspection
+      method: source-check and test
+      gaps: []
+      repair: null
+    - claim_id: V31-N13R-A2
+      assertion: Exact old and candidate role selectors, start/stop roots, feature registry, health, and terminal compensation are bound and executable for success, partial-stop, retained-owner, unknown-owner, and restart-failure paths.
+      result: BLOCK
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/compensation-probe.json@sha256:48e62a9c0bf2d50808f1a835464a96fb25f8267ddc954a9699c10b38fc4b5bda
+          observed: Five pure convergence-decision cases passed, but the probe invokes only Resolve-V31OldRoleConvergenceDecision.
+          source: fresh executable bound probe
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/production-seam-counterexample.json@sha256:95dcc1d6269b0a5a303f70cdab91981ff7c35b0259cac1df5f09b41ded901835
+          observed: The bound probe does not invoke production Restore-OldRole, the partial-stop catch, restart-failure behavior, or the terminal rollback receipt writer; therefore it is not the required executable production-seam matrix.
+          source: direct probe and production source comparison
+      method: test and source-check
+      gaps:
+        - No executable evidence invokes the same production compensation closure used by start-feature-binding.ps1 for partial-stop, retained-owner, unknown-owner, restart-failure, and terminal receipt outcomes.
+      repair: repair-v31-coordination-production-compensation-seam
+    - claim_id: V31-N13R-A3
+      assertion: DryRun, AST, hash, secret-containment, runtime-invariance, future-artifact-absence, and zero-residue evidence pass without service mutation.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/ast-audit.json@sha256:a8649c7f609a074e78faa217a78a51c83211940f840789e9b68381a839b3dc92
+          observed: Seven bound PowerShell files parsed with StrictMode Latest, no bare-false command, and an independent AST check found no ConvertFrom-Json missing DateKind String.
+          source: fresh executable and independent AST audits
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/start-dry-run.json@sha256:e602d5fb07335aa295f39ab4a1dc294b3f016b762658777e121b58e4b1d716bd
+          observed: Exact start DryRun passed for API and Worker with featureValue true and targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/rollback-dry-run.json@sha256:ed2d62945ef02fed68c3137ba6801ccb67cc70604eae0781ee79ac4b618e4f99
+          observed: Exact rollback DryRun passed with targetMutationExecuted false.
+          source: fresh exact-contract DryRun
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/runtime-invariance.json@sha256:f37dd9f26b5a04ca156c5a6dfaee17c515b953fb3820f8330911a170a6618a6a
+          observed: Runtime after all probes remained exact and healthy 7/7; all four future artifacts were absent and candidate runtime residue was zero.
+          source: fresh read-only runtime-after probe
+      method: test and read-only runtime inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N13V-A1
+      assertion: All fixed-input, environment-binding, authorization, DryRun, compensation, feature-registry, runtime, future-absence, and cleanup checks PASS with no unresolved major or critical finding; scope is request_creation_only and service replacement remains unauthorized.
+      result: BLOCK
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/verification-summary.json@sha256:9228a0d7343aa737b090719443f9458adf13b48e57016ed2d7fee9651a9710dd
+          observed: Fixed inputs, bindings, AST, DryRuns, authorization rejection, evidence-root boundaries, runtime, future absence and cleanup passed, but the major executable production-compensation evidence gap remains.
+          source: independent verification synthesis
+      method: inspection and test
+      gaps:
+        - V31-N13R-A2 remains BLOCK.
+      repair: repair-v31-coordination-production-compensation-seam
+  findings:
+    - id: V31-COORD-GATE-001
+      severity: major
+      summary: The green compensation probe tests only the decision table, not the production compensation and terminal-receipt seam required by the critical-risk node.
+      evidence_ref: artifacts/gates/dogfood-v31-coordination-feature-binding-verification/independent/production-seam-counterexample.json@sha256:95dcc1d6269b0a5a303f70cdab91981ff7c35b0259cac1df5f09b41ded901835
+  accepted_artifacts: []
+  rejected_artifacts:
+    - artifacts/implementation/dogfood-v31-coordination-feature-binding-repair.json@sha256:78daaf724f645ff45736df9736710f42489d4d49398f863ec3f82ed85cc6c46c
+    - artifacts/runtime/dogfood-v31-coordination-feature-activation-contract.json@sha256:fd07bfb3f2c1d0e78fb0803ba55107559eed7af07713570e7436bf7bba77ff36
+  risks_or_unverified:
+    - Security scanning was explicitly excluded by Human direction; this Gate makes no security approval claim.
+    - Browser, Git, service/process control, DB mutation, WorkMesh mutation, product/source mutation, and ExecutionState/event mutation were prohibited and not executed.
+  repair_nodes:
+    - source_node: repair-v31-active-coordination-feature-binding
+      node_id: repair-v31-coordination-production-compensation-seam
+      failed_assertion: V31-N13R-A2
+      root_cause: Production Restore-OldRole and terminal rollback receipt logic are local to start-feature-binding.ps1, while the bound probe invokes only the pure convergence-decision helper.
+      preserve:
+        - exact Graph v6 and source compatibility findings
+        - seven passing script bindings until intentionally versioned
+        - evidence-root, authorization, supervisor-parent, AST, DryRun, runtime, future-absence, and cleanup checks
+      change:
+        - extract the actual production compensation closure into one contract-bound shared function used by start-feature-binding.ps1
+        - invoke that same function from an executable synthetic matrix covering success, partial-stop, retained-owner, unknown-owner, restart-failure, and terminal receipt-before-throw behavior
+      new_evidence_required:
+        - exact shared-function call sites from production start and probe
+        - executable production-seam matrix with one durable terminal receipt per case
+        - fresh script hashes, AST, start and rollback DryRuns, runtime before/after, future absence, and residue zero
+      owner_capabilities: [filesystem_read, filesystem_write, local_process]
+      max_attempts: 1
+      recheck_scope: [production_compensation_seam, script_hashes, ast, dry_run, runtime_invariance, future_absence, cleanup]
+  transition:
+    allowed: false
+    scope: none
+    active_replacement: false
+    request_creation: false
+    activation: false
+    reason: The required executable production compensation and terminal-receipt matrix is absent.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - repair-v31-coordination-production-compensation-seam
+    completion_gate: A fresh independent Gate must execute the exact shared production compensation seam before request_creation_only can be authorized.
+  observed_at: 2026-08-14T12:51:53.8597155Z

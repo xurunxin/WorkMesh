@@ -1,0 +1,291 @@
+{
+  "artifactVersion": 1,
+  "kind": "KaneoFrontendArchitectureContract",
+  "status": "binding",
+  "decisionRef": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+  "guideRef": "docs/KANEO_FRONTEND_ARCHITECTURE.md",
+  "sourceManifest": "docs/KANEO_EXTRACTION_MANIFEST.json@sha256:3157b2751275d3f5197c38bb1f89c15c180165f0bee8c45fb519827c2e5ea19b",
+  "scope": {
+    "phases": ["M1", "M2", "M3", "M4", "M5"],
+    "v24ProductSourceChanges": false,
+    "v24DependencyInstalls": false,
+    "authoritativeBackend": "WorkMesh REST/SSE, domain/application commands, PostgreSQL and transactional events/outbox"
+  },
+  "architectureVocabulary": ["Module", "Interface", "Implementation", "Seam", "Adapter", "Depth", "Leverage", "Locality"],
+  "modules": [
+    {
+      "id": "ui",
+      "path": "packages/ui",
+      "purpose": "Deep API-free presentation module",
+      "publicInterface": ["tokens", "typed props", "callbacks", "slots", "accessibility state", "generic async surface state"],
+      "owns": ["visual tokens", "headless/presentational components", "focus management", "reduced-motion behavior"],
+      "allowedImports": ["react", "explicitly approved headless or presentation dependencies"],
+      "forbiddenImports": ["apps/*", "next/*", "WorkMesh API clients", "packages/domain", "packages/db", "Kaneo routes", "Kaneo hooks", "Kaneo stores"],
+      "forbiddenBehaviors": ["fetch", "EventSource", "credential storage", "domain persistence", "authorization decisions"]
+    },
+    {
+      "id": "features",
+      "path": "apps/web/features/*",
+      "purpose": "Application-facing feature modules",
+      "publicInterface": ["queries", "commands", "view models", "screen contracts", "route/search serialization"],
+      "owns": ["DTO validation", "normalization", "pagination", "projection convergence", "optimistic rollback", "structured error mapping", "idempotency lifecycle", "feature-aware composition"],
+      "mayImport": ["packages/ui", "apps/web/lib/transport", "packages/contracts types where appropriate"],
+      "mustNotOwn": ["server authorization policy", "durable domain state", "database access"]
+    },
+    {
+      "id": "routes",
+      "path": "apps/web/app/*",
+      "purpose": "Next App Router composition boundary",
+      "owns": ["route parsing", "layouts", "history", "screen composition"],
+      "mustDelegate": ["feature DTO normalization", "feature queries", "feature commands", "feature view models"],
+      "mustNotOwn": ["duplicate transport DTOs after migration", "ad hoc mutation headers", "authorization decisions"]
+    },
+    {
+      "id": "transport",
+      "path": "apps/web/lib/transport",
+      "purpose": "Single HTTP/SSE adapter seam",
+      "owns": ["credentials include", "CSRF", "Idempotency-Key transport", "If-Match transport", "structured error envelope", "correlation", "durable SSE cursor"],
+      "mustNotOwn": ["feature policy", "component state", "server authorization"]
+    }
+  ],
+  "dependencyRules": {
+    "direction": [
+      "apps/web/app -> apps/web/features public interfaces",
+      "apps/web/features -> apps/web/lib/transport",
+      "apps/web/features -> packages/ui",
+      "packages/ui -> React and approved presentation peers"
+    ],
+    "prohibitions": [
+      "packages/ui -> apps/web",
+      "packages/ui -> Next.js",
+      "packages/ui -> WorkMesh API/domain/database",
+      "feature or route -> Kaneo backend/auth/WebSocket authority"
+    ],
+    "enforcement": ["import-boundary test", "package manifest review", "same-interface component and route tests"]
+  },
+  "dependencies": [
+    {
+      "name": "@base-ui/react",
+      "upstreamResolvedVersion": "1.7.0",
+      "license": "MIT",
+      "decision": "conditional",
+      "earliestPhase": "M1",
+      "rationale": "Candidate accessible primitive layer; avoids rebuilding difficult focus behavior while keeping WorkMesh styling and composition.",
+      "risks": ["client boundary", "primitive API churn", "bundle cost", "accessibility regressions"],
+      "requiredGate": ["isolated component spike", "Next client-boundary test", "keyboard/screen-reader evidence", "before/after bundle measurement"],
+      "installedByV24": false
+    },
+    {
+      "name": "lucide-react",
+      "upstreamResolvedVersion": "1.29.0",
+      "license": "ISC",
+      "decision": "conditional",
+      "earliestPhase": "M1",
+      "rationale": "Consistent non-brand icon vocabulary with tree-shakable imports.",
+      "risks": ["notice omission", "brand misuse", "accidental broad imports"],
+      "requiredGate": ["preserve ISC notice", "exclude brand marks", "tree-shaking check", "accessible-name tests"],
+      "installedByV24": false
+    },
+    {
+      "name": "@radix-ui/*",
+      "upstreamResolvedVersion": null,
+      "license": "unknown-until-selected",
+      "decision": "defer-alternate",
+      "earliestPhase": "M1",
+      "rationale": "Not in the pinned Kaneo dependency set and must not coexist as a second primitive stack without demonstrated need.",
+      "risks": ["duplicate primitive stacks", "bundle cost", "inconsistent behavior"],
+      "requiredGate": ["document failed Base UI requirement or missing primitive", "select exact package/version/license", "migration and bundle comparison"],
+      "installedByV24": false
+    },
+    {
+      "name": "shadcn/ui",
+      "upstreamResolvedVersion": null,
+      "license": "per-copied-unit-provenance-required",
+      "decision": "reject-as-stack",
+      "earliestPhase": null,
+      "rationale": "Bulk generated source would create an ungoverned second component baseline; WorkMesh owns its public component interfaces.",
+      "risks": ["source provenance drift", "duplicate patterns", "upgrade fragmentation"],
+      "requiredGate": ["interaction-only or per-unit rewrite", "source and license record", "WorkMesh API-free component tests"],
+      "installedByV24": false
+    },
+    {
+      "name": "tailwindcss",
+      "upstreamResolvedVersion": "4.3.3",
+      "license": "MIT",
+      "decision": "defer",
+      "earliestPhase": "M1",
+      "rationale": "Authored CSS and variables are sufficient for the first foundation slice; a global styling migration needs measured benefit.",
+      "risks": ["global reset conflict", "dual styling systems", "generated CSS growth", "migration churn"],
+      "requiredGate": ["representative migration spike", "CSS size comparison", "global conflict audit", "rollback plan"],
+      "installedByV24": false
+    },
+    {
+      "name": "@dnd-kit/core",
+      "upstreamResolvedVersion": "6.3.1",
+      "license": "MIT",
+      "decision": "conditional",
+      "earliestPhase": "M2",
+      "rationale": "Useful for Board interaction only after the canonical status command and non-drag paths exist.",
+      "risks": ["keyboard exclusion", "touch regressions", "optimistic drift", "stale revision conflict"],
+      "requiredGate": ["pointer/keyboard/touch E2E", "explicit selector alternative", "rollback and 409 recovery", "bundle measurement"],
+      "installedByV24": false
+    },
+    {
+      "name": "@tanstack/react-query",
+      "upstreamResolvedVersion": "5.101.4",
+      "license": "MIT",
+      "decision": "defer",
+      "earliestPhase": "M2",
+      "rationale": "A cache library is optional Implementation detail and must not replace durable cursors or PostgreSQL-backed projections.",
+      "risks": ["cache treated as authority", "duplicate retry policy", "cursor divergence", "hydration complexity"],
+      "requiredGate": ["demonstrated multi-screen cache pressure", "durable cursor convergence tests", "409 no-blind-retry test", "SSR/hydration and bundle evidence"],
+      "installedByV24": false
+    },
+    {
+      "name": "@tanstack/react-table",
+      "upstreamResolvedVersion": null,
+      "license": "unknown-until-selected",
+      "decision": "defer",
+      "earliestPhase": "M2",
+      "rationale": "Native list/board projections should establish required semantics before introducing a table engine.",
+      "risks": ["client-side whole-dataset behavior", "accessibility", "bundle cost"],
+      "requiredGate": ["exact package/version/license", "server pagination preserved", "keyboard/table semantics", "bundle measurement"],
+      "installedByV24": false
+    },
+    {
+      "name": "@tanstack/react-router",
+      "upstreamResolvedVersion": "1.170.24",
+      "license": "MIT",
+      "decision": "reject",
+      "earliestPhase": null,
+      "rationale": "WorkMesh uses Next App Router; a second router adds no necessary variation seam.",
+      "risks": ["two route authorities", "history divergence", "bundle cost"],
+      "requiredGate": ["Human-approved ADR replacing Next App Router", "full route/history migration plan", "rollback proof", "bundle and accessibility regression Gate"],
+      "installedByV24": false
+    },
+    {
+      "name": "@tiptap/react",
+      "upstreamResolvedVersion": "3.29.2",
+      "license": "MIT",
+      "decision": "defer",
+      "earliestPhase": "M3",
+      "rationale": "Rich text requires a separate content model, paste/upload, SSR, fallback and extension decision.",
+      "risks": ["large bundle", "unsafe HTML", "extension lock-in", "SSR mismatch"],
+      "requiredGate": ["rich-content contract", "extension allowlist", "plain text/Markdown fallback", "paste/upload and SSR tests", "bundle measurement"],
+      "installedByV24": false
+    },
+    {
+      "name": "dompurify",
+      "upstreamResolvedVersion": "3.4.13",
+      "license": "MPL-2.0 OR Apache-2.0",
+      "decision": "defer",
+      "earliestPhase": "M3",
+      "rationale": "Sanitization ownership and applicable license must be selected with the rich-content rendering boundary.",
+      "risks": ["incorrect server/client use", "configuration gaps", "license choice", "false sense of content safety"],
+      "requiredGate": ["choose and preserve applicable license", "sanitizer boundary", "dangerous URL/HTML tests", "SSR decision"],
+      "installedByV24": false
+    },
+    {
+      "name": "mermaid",
+      "upstreamResolvedVersion": "11.16.1",
+      "license": "MIT",
+      "decision": "defer",
+      "earliestPhase": "M3",
+      "rationale": "Optional diagrams must not enter the initial route chunk or render untrusted content without isolation.",
+      "risks": ["large bundle", "rendering cost", "untrusted markup", "SSR mismatch"],
+      "requiredGate": ["isolated dynamic import", "input policy", "performance measurement", "fallback rendering"],
+      "installedByV24": false
+    },
+    {
+      "name": "framer-motion",
+      "upstreamResolvedVersion": "13.0.0",
+      "license": "MIT",
+      "decision": "reject-for-foundation",
+      "earliestPhase": null,
+      "rationale": "CSS transitions and reduced-motion behavior cover the foundation without a general animation runtime.",
+      "risks": ["bundle cost", "motion accessibility", "animation-led architecture"],
+      "requiredGate": ["measured interaction unavailable with CSS", "reduced-motion parity", "route-specific dynamic loading"],
+      "installedByV24": false
+    },
+    {
+      "name": "i18next",
+      "upstreamResolvedVersion": "26.3.6",
+      "license": "MIT",
+      "decision": "defer",
+      "earliestPhase": "M5",
+      "rationale": "The glossary and typed catalog contract must exist before a runtime library is selected; Kaneo translations are not reused.",
+      "risks": ["terminology collapse", "untyped keys", "translation provenance"],
+      "requiredGate": ["typed catalog design", "missing/unused key checks", "locale fallback", "Human/Agent terminology tests"],
+      "installedByV24": false
+    }
+  ],
+  "viewModels": {
+    "workItem": {
+      "requiredFields": ["id", "key", "revision", "title", "workflowState", "responsibleHuman", "agentExecutions", "permissions"],
+      "separations": [
+        {"left": "responsibleHuman", "right": "agentExecutions", "rule": "never merge into assignee"},
+        {"left": "workflowState", "right": "agentExecutions[].executionState", "rule": "never merge into status"}
+      ]
+    },
+    "agentExecution": {
+      "requiredFields": ["sessionId", "agent", "delegation", "executionState", "currentStep", "controls"],
+      "mustNotImply": ["Human responsibility", "Work Item workflow transition", "authorization from visibility"]
+    },
+    "unknownValues": {"presentation": "unknown", "actionable": false, "coerceToKnownEnum": false}
+  },
+  "surfaceStates": ["initial", "loading", "ready", "empty", "refreshing", "forbidden", "not_found", "deleted", "conflict", "offline", "reconnecting", "error"],
+  "queries": {
+    "serverPaginationRequired": true,
+    "opaqueCursor": true,
+    "sseRole": "invalidation and convergence",
+    "durableSource": "PostgreSQL-backed REST and event cursor",
+    "duplicateEventsAllowed": true,
+    "browserCursorIsAuthority": false
+  },
+  "commands": {
+    "singleAdapterSeam": true,
+    "requiredInputs": ["intent", "currentRevision where revisioned", "stableOperationId"],
+    "requiredHeaders": ["Idempotency-Key", "If-Match where revisioned", "X-CSRF-Token for Human unsafe requests"],
+    "structuredErrorFields": ["httpStatus", "code", "message", "details", "correlationId", "safeNextAction"],
+    "exactReplayEligible": ["network_error", "408", "425", "429", "retryable_5xx"],
+    "blindRetryForbidden": ["409", "forbidden", "SESSION_STOPPED", "approval failure", "lease failure"],
+    "serverChecksNeverBypassed": ["identity", "session", "delegation", "capability", "resource scope", "approval", "lease", "Stop", "revision", "idempotency"]
+  },
+  "conflictRecovery": ["preserve unsaved intent", "show code and correlationId", "load latest authorized state", "show change or reload option", "require Human-confirmed new command at latest revision"],
+  "verification": {
+    "component": ["roles", "accessible names", "focus", "keyboard", "reduced motion", "controlled state"],
+    "unit": ["DTO normalization", "view-model separations", "unknown enums", "error mapping", "stable idempotency", "optimistic rollback"],
+    "integration": ["authorized", "forbidden", "duplicate key", "stale revision", "pagination", "durable cursor recovery"],
+    "e2e": ["primary Human journey", "offline/reconnect", "conflict recovery", "non-pointer alternative"],
+    "visualViewports": [{"width": 1280}, {"width": 768}, {"width": 375}, {"width": 320}],
+    "visualStates": ["loading", "empty", "error", "forbidden", "conflict"],
+    "accessibility": ["automated audit", "keyboard", "zoom/reflow", "screen-reader checklist"]
+  },
+  "budgets": {
+    "runtimeDependencyDelta": "explicitly approved only",
+    "sharedJavascriptGzipIncreaseKiBPerM1Node": 35,
+    "routeJavascriptGzipIncreaseKiBPerFeatureNode": 50,
+    "optionalEditorOrDiagramInInitialChunk": false,
+    "interactiveReadP95Ms": 500,
+    "commandAcknowledgementP95Ms": 800,
+    "clsMaximum": 0.1,
+    "minimumViewportWidthPx": 320,
+    "documentHorizontalOverflowAllowed": false,
+    "measurementRule": "before and after use the same build mode and fixture"
+  },
+  "migrationSlices": [
+    {"phase": "M1.1", "deliver": "tokens, API-free primitives, async/error surfaces and application shell", "removeLegacyOnlyAfter": "component and route parity"},
+    {"phase": "M1.2", "deliver": "command registry and global search", "removeLegacyOnlyAfter": "action availability and keyboard parity"},
+    {"phase": "M2.1", "deliver": "Work Item query/list then Board/Backlog", "removeLegacyOnlyAfter": "pagination, conflict and non-drag parity"},
+    {"phase": "M2.2", "deliver": "one Work Item model for Sheet and Full Page plus separate Agent executions", "removeLegacyOnlyAfter": "deep-link, revision and dual-projection parity"},
+    {"phase": "M3-M5", "deliver": "collaboration, onboarding, i18n and release gates over the same interfaces", "removeLegacyOnlyAfter": "feature-specific conformance"}
+  ],
+  "provenance": {
+    "copyRequires": ["immutable source commit", "source path", "license notice", "target path", "tests"],
+    "rewriteRequires": ["source inspiration selector", "WorkMesh-owned interface", "tests"],
+    "interactionOnlyRequires": ["documented behavior source", "no source text/assets copied"],
+    "forbidden": ["unknown-origin code", "Kaneo backend", "Kaneo auth", "Kaneo WebSocket authority", "Kaneo translations without separate provenance"]
+  },
+  "securityScanRun": false,
+  "securityApprovalClaimed": false
+}

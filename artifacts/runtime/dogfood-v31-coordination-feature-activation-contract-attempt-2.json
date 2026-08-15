@@ -1,0 +1,151 @@
+{
+  "artifactVersion": 2,
+  "kind": "DogfoodV31CoordinationFeatureActivationContract",
+  "status": "READY_FOR_INDEPENDENT_GATE",
+  "createdAt": "2026-08-14T13:02:04.1715885Z",
+  "nodeId": "repair-v31-coordination-production-compensation-seam",
+  "selectorBinding": "v31-coordination-feature-binding-v2",
+  "graph": {
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "version": 7,
+    "sha256": "76f44625a696632eda84bdaf228c3e1cb766f82cc2d1ab23f91727a44bfaa4d0"
+  },
+  "claimState": {
+    "path": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml",
+    "sequence": 68,
+    "sha256": "cb9d31ad89edfbc0da216ed69304c84d2357aaef8b92e24a3a1930eed6afcdde",
+    "eventsPath": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl",
+    "eventsSha256": "c86bd17a364a3219f84737aca0f5aaa09335519ef37cc45bf9a5a948d196ffa2"
+  },
+  "finding": {
+    "id": "V31-ACTIVE-001",
+    "acceptancePath": "artifacts/design/human-journey-attempt-31/active-acceptance.json",
+    "acceptanceSha256": "2a17dc9ab76de95de1d225393ae3a3f37713efb89c9663a1b477b99b7597e105",
+    "requiredBinding": "WORKMESH_BETA_COORDINATION_MCP=true",
+    "sourceMutationRequired": false
+  },
+  "oldRoles": {
+    "api": {
+      "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+      "port": 3303,
+      "healthUrl": "http://127.0.0.1:3303/readyz",
+      "supervisorPid": 73596,
+      "supervisorStartTimeUtc": "2026-08-14T02:10:21.1365669Z",
+      "listenerPid": 72736,
+      "listenerStartTimeUtc": "2026-08-14T05:46:55.2440417Z",
+      "scriptPath": "artifacts/runtime/dogfood-v30-stack-activation-attempt-6-renewal/role-supervisor-attempt-6-renewal.ps1",
+      "scriptSha256": "69ec19d856b67864f009df91bf2102d4cc6fb712c5447975c4376c77940c66f7",
+      "contractPath": "artifacts/runtime/dogfood-v30-stack-activation-contract-attempt-6-renewal.json",
+      "contractSha256": "ee5a299f6aa07977d3b427da1a41ee649a3d3e29363f1159c9ee5389f6927d9a",
+      "statePath": "artifacts/runtime/dogfood-v30-stack-activation-attempt-6-renewal/runtime/candidate-api.json",
+      "stopPath": "artifacts/runtime/dogfood-v30-stack-activation-attempt-6-renewal/runtime/candidate-api.stop",
+      "mode": "candidate",
+      "coordinationFeatureEnabled": false
+    },
+    "worker": {
+      "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v29",
+      "port": 3304,
+      "healthUrl": "http://127.0.0.1:3304/readyz",
+      "supervisorPid": 50476,
+      "supervisorStartTimeUtc": "2026-08-13T18:03:30.5319975Z",
+      "listenerPid": 71408,
+      "listenerStartTimeUtc": "2026-08-14T05:46:55.1158461Z",
+      "scriptPath": "artifacts/runtime/dogfood-v30-v29-baseline-recovery-v5/role-supervisor-v5.ps1",
+      "scriptSha256": "4ecaa6cd671e727b6ea50fda3122564d3e3819bed3d0020a611ee05ef857e9e1",
+      "contractPath": "artifacts/runtime/dogfood-v30-v29-baseline-recovery-contract-v5.json",
+      "contractSha256": "ac7f57a79ff0ba0fceea791b97a07f5feeeaefd445d3d6caf33ddd5ef4c970dc",
+      "statePath": "artifacts/runtime/dogfood-v30-v29-baseline-recovery-v5/evidence/roles/worker.json",
+      "stopPath": "artifacts/runtime/dogfood-v30-v29-baseline-recovery-v5/evidence/roles/worker.stop",
+      "mode": null,
+      "coordinationFeatureEnabled": false
+    }
+  },
+  "candidateRoles": {
+    "api": {
+      "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v30",
+      "port": 3303,
+      "healthUrl": "http://127.0.0.1:3303/readyz",
+      "statePath": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime/api.json",
+      "stopPath": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime/api.stop",
+      "coordinationFeatureEnabled": true
+    },
+    "worker": {
+      "root": "G:\\Projects\\MetronX\\WorkMesh-human-experience-v29",
+      "port": 3304,
+      "healthUrl": "http://127.0.0.1:3304/readyz",
+      "statePath": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime/worker.json",
+      "stopPath": "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime/worker.stop",
+      "coordinationFeatureEnabled": true
+    }
+  },
+  "protectedRoles": [
+    {"name":"web","pid":57064,"startTimeUtc":"2026-08-14T11:11:23.0971310Z","listenerPid":42392,"port":3300,"healthUrl":"http://127.0.0.1:3300/","commandNeedle":"role-supervisor-attempt-3.ps1"},
+    {"name":"mcp","pid":72740,"startTimeUtc":"2026-08-14T11:11:25.9551555Z","listenerPid":10516,"port":3302,"healthUrl":"http://127.0.0.1:3302/readyz","commandNeedle":"role-supervisor-attempt-3.ps1"},
+    {"name":"router","pid":24516,"startTimeUtc":"2026-08-14T05:46:54.4997244Z","listenerPid":24516,"port":3301,"healthUrl":"http://127.0.0.1:3301/readyz","commandNeedle":"loopback-entrypoint.mjs"},
+    {"name":"compatibility","pid":44104,"startTimeUtc":"2026-08-14T05:46:54.5308239Z","listenerPid":44104,"port":3001,"healthUrl":"http://localhost:3001/readyz","commandNeedle":"web-api-compat-proxy.mjs"}
+  ],
+  "objectStorage": {
+    "name": "workmesh-dogfood-v29-minio",
+    "containerId": "84e9879d53c2f9962c2c4a1756fa711842584004a2cf28a7d11a169fae647bef",
+    "imageDigest": "sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e",
+    "healthUrl": "http://127.0.0.1:59000/minio/health/live"
+  },
+  "servedBuild": {
+    "requiredBuildId": "Yj0IS_0CtW-lStIuWIemm",
+    "forbiddenBuildId": "V-SFnsKVQ5xpM6FrzLW5l"
+  },
+  "scripts": {
+    "module": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/runtime-module.psm1","sha256":"2bfdf10c7c82f3803623cacee7236e38fb01d684c762676130cde94766be3bf7"},
+    "supervisor": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/role-supervisor.ps1","sha256":"3a622717d28b7260c0112349f942658824b382f6467fc419aaf2e25e4ac83192"},
+    "start": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/start-feature-binding.ps1","sha256":"56624916d20801954165ad53d64757c364ee7493a9bfb462eedbc87229386f44"},
+    "rollback": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/rollback-feature-binding.ps1","sha256":"19609e1b168d6b670279ac4fc1f3b8fcedac4b7a1ce9bbfc937e4fd611cfa471"},
+    "compensationProbe": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/test-compensation.ps1","sha256":"7d070ff0b40a800f55fe7d73946e7159458d0ed983898cd0a2ce0787b3a00152"},
+    "astAudit": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/audit-ast.ps1","sha256":"2907cbbe82ecf9249bc84c7a2b25bab7ce839dc1a26002a5d571dce0359b94ac"},
+    "runtimeInvariance": {"path":"artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/verify-runtime-invariance.ps1","sha256":"a11da900940541a33234ecc21d0f372813ff026095a44d44b59e0d6a08fd0a69"}
+  },
+  "evidence": {
+    "allowedRoots": [
+      "artifacts/runtime/dogfood-v31-coordination-feature-activation-attempt-2/evidence/worker",
+      "artifacts/gates/dogfood-v31-coordination-feature-binding-verification-attempt-2/independent"
+    ],
+    "outsideRootsRejectBeforeWrite": true
+  },
+  "execution": {
+    "gatePath": "artifacts/gates/dogfood-v31-coordination-feature-binding-gate-attempt-2.yaml",
+    "requestPath": "artifacts/approvals/dogfood-v31-coordination-feature-activation-request.json",
+    "approvalPath": "artifacts/approvals/dogfood-v31-coordination-feature-activation-human-approval.json",
+    "activationPath": "artifacts/runtime/dogfood-v31-coordination-feature-activation.json",
+    "rollbackPath": "artifacts/runtime/dogfood-v31-coordination-feature-rollback.json",
+    "requestCreationAuthorized": false,
+    "activationAuthorized": false,
+    "approvalRequiredBeforeServiceMutation": true,
+    "automaticCompensation": true
+  },
+  "budgets": {
+    "coordinationFeatureBindingRepairRoundsUsed": 1,
+    "coordinationFeatureBindingRepairRoundsLimit": 1,
+    "coordinationFeatureBindingGateAttemptsUsed": 1,
+    "coordinationFeatureBindingGateAttemptsLimit": 1,
+    "coordinationProductionCompensationRepairRoundsUsed": 1,
+    "coordinationProductionCompensationRepairRoundsLimit": 1,
+    "coordinationProductionCompensationGateAttemptsUsed": 0,
+    "coordinationProductionCompensationGateAttemptsLimit": 1,
+    "coordinationFeatureActivationAttemptsUsed": 0,
+    "coordinationFeatureActivationAttemptsLimit": 1,
+    "activeBrowserAttemptsUsed": 1,
+    "activeBrowserAttemptsLimit": 2,
+    "fixtureMutationsUsed": 0,
+    "fixtureMutationsLimit": 4
+  },
+  "safety": {
+    "secretValuesSerialized": false,
+    "sourceMutationExecuted": false,
+    "serviceMutationExecuted": false,
+    "databaseMutationExecuted": false,
+    "objectStorageMutationExecuted": false,
+    "workMeshMutationExecuted": false,
+    "gitMutationExecuted": false,
+    "securityScanRun": false,
+    "securityApprovalClaimed": false
+  }
+}

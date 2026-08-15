@@ -1,0 +1,79 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingActivationContractIndependentVerification",
+  "result": "PASS",
+  "transitionAllowed": true,
+  "transitionScope": "request_creation_only",
+  "graph": {
+    "version": 10,
+    "sha256": "90def2207c75554c1f41cf9513945d9c63e1284c8ace0c843c25365eac617bf5"
+  },
+  "claim": {
+    "nodeId": "prepare-and-verify-v31-cors-decoupling-activation-contract",
+    "attempt": 1,
+    "stateSequence": 99,
+    "stateSha256": "bed4b26d4a05ed297d039d59eb724462d9afdfb00950706b205d61c97283db3a",
+    "eventCursor": 99,
+    "eventsSha256": "bba031eb2dd3e7dc2137316e450f8f32f1c0fab1eda1ee99452858d78b17c809",
+    "leaseId": "1396b2d2-b011-4d28-bb04-d882b79d0cdb"
+  },
+  "contract": {
+    "path": "artifacts/runtime/dogfood-v31-public-mcp-origin-cors-decoupling-activation-contract.json",
+    "sha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+    "selectorBinding": "v31-public-mcp-origin-cors-decoupling-v1",
+    "apiOnly": true,
+    "browserOrigin": "http://127.0.0.1:3300",
+    "publicMcpOrigin": "http://127.0.0.1:3301"
+  },
+  "claims": [
+    {
+      "id": "V31-N13G-A1",
+      "result": "PASS",
+      "observed": "Contract, eight bound scripts, source and package selectors, old API, five protected roles, MinIO, served build, authorization, exact roots, origin postconditions and future artifacts are fail-closed."
+    },
+    {
+      "id": "V31-N13G-A2",
+      "result": "PASS",
+      "observed": "Shared production compensation executed five retained, missing, unknown, cleanup-failure and verification-failure cases with 5/5 terminal receipts; stage, start and rollback exact DryRuns passed without mutation."
+    },
+    {
+      "id": "V31-N13G-V1",
+      "result": "PASS",
+      "observed": "Runtime before and after was byte-semantically identical for API plus five protected roles; health remained 7/7, active CORS remained 3301, and all future artifacts were absent."
+    },
+    {
+      "id": "V31-N13G-V2",
+      "result": "PASS",
+      "observed": "Direct stage, unauthenticated start and unbound rollback rejected before mutation; all three scripts rejected the sibling evidence root without creating residue."
+    }
+  ],
+  "evidence": [
+    {"path": "ast-audit.json", "sha256": "8e5794ac3b3707dfd4059621e76e3a467796d1adae21d3dd5cbee5e0dae3c9a0"},
+    {"path": "compensation-probe.json", "sha256": "740cc251ecf15edf82f5ed8f46152d8ea699414bd35518e48405b623de8f0986"},
+    {"path": "stage-dry-run.json", "sha256": "0409fdee52eaf78e94d8ead4afd54c57275f56dc1e97ffc3da07c4f16e67496b"},
+    {"path": "start-dry-run.json", "sha256": "20f20b0bfafbc3e7899a2bc737ccbff7df98ebf32751e13fa2ed466388724905"},
+    {"path": "rollback-dry-run.json", "sha256": "5e5927ee9fd784aaf82803a4e61a9a0b035adec2f3c49b480188326f2abe82b4"},
+    {"path": "runtime-before.json", "sha256": "7de1abad038f57a5fbf0618403ebfeb54c81bfc078852d12a785094ce7757033"},
+    {"path": "runtime-after.json", "sha256": "e77cc78ffe7701ecd9b9d60c8be08deb721247890c130a598d4d98e7ca216046"},
+    {"path": "boundary-probes.json", "sha256": "d1519dc7d192d43ce31f17ed40eee67d09fe14076360e314b58589b94648f6b2"}
+  ],
+  "findings": [],
+  "futureArtifactsPresent": [],
+  "mutationSummary": {
+    "nonDryRunActivation": false,
+    "nonDryRunRollback": false,
+    "serviceMutation": false,
+    "databaseMutation": false,
+    "workMeshMutation": false,
+    "browserUse": false,
+    "securityScan": false
+  },
+  "authorization": {
+    "requestCreation": true,
+    "activation": false,
+    "serviceReplacement": false,
+    "browser": false,
+    "gen11Completion": false
+  },
+  "observedAt": "2026-08-14T15:56:38.7247871+00:00"
+}

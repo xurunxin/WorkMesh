@@ -1,0 +1,49 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRuntimeDatabaseWorkMeshReadback",
+  "result": "PASS",
+  "observedAt": "2026-08-14T17:32:31.6734448Z",
+  "health": {
+    "3001": 200,
+    "3300": 200,
+    "3301": 200,
+    "3302": 200,
+    "3303": 200,
+    "3304": 200,
+    "59000": 200
+  },
+  "listeners": {
+    "3001": 44104,
+    "3300": 42392,
+    "3301": 24516,
+    "3302": 10516,
+    "3303": 11832,
+    "3304": 10268
+  },
+  "fixture": {
+    "connectionId": "d8aace76-1d7f-4314-a6c5-da559d37e0be",
+    "name": "V31 Active Acceptance 4",
+    "status": "revoked",
+    "revision": 2,
+    "pairings": 1,
+    "consumedPairings": 0,
+    "credentials": 0,
+    "durableEvents": [
+      {"cursor": "189", "type": "agent.connection.created", "aggregateRevision": 1},
+      {"cursor": "190", "type": "agent.connection.revoked", "aggregateRevision": 2}
+    ]
+  },
+  "workmesh": {
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "number": 11,
+    "revision": 2,
+    "status": "In Progress",
+    "labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null,
+    "latestObservedCursor": "191"
+  },
+  "rollbackRequired": false,
+  "secretValuesSerialized": false,
+  "securityScanRun": false
+}

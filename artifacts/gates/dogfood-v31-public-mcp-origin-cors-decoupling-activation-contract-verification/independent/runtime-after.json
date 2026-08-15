@@ -1,0 +1,67 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingRuntimeInvariance",
+  "result": "PASS",
+  "label": "after",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "runtime": [
+    {
+      "name": "api",
+      "supervisorPid": 9120,
+      "supervisorStartTimeUtc": "2026-08-14T14:53:56.6254582Z",
+      "listenerPid": 41808,
+      "listenerStartTimeUtc": "2026-08-14T14:53:58.4385278Z",
+      "port": 3303,
+      "health": 200
+    },
+    {
+      "name": "web",
+      "supervisorPid": 57064,
+      "supervisorStartTimeUtc": "2026-08-14T11:11:23.0971310Z",
+      "listenerPid": 42392,
+      "listenerStartTimeUtc": "2026-08-14T11:11:23.5706870Z",
+      "port": 3300,
+      "health": 200
+    },
+    {
+      "name": "mcp",
+      "supervisorPid": 72740,
+      "supervisorStartTimeUtc": "2026-08-14T11:11:25.9551555Z",
+      "listenerPid": 10516,
+      "listenerStartTimeUtc": "2026-08-14T11:11:26.9111153Z",
+      "port": 3302,
+      "health": 200
+    },
+    {
+      "name": "worker",
+      "supervisorPid": 37620,
+      "supervisorStartTimeUtc": "2026-08-14T13:35:27.7439740Z",
+      "listenerPid": 10268,
+      "listenerStartTimeUtc": "2026-08-14T13:35:29.3399671Z",
+      "port": 3304,
+      "health": 200
+    },
+    {
+      "name": "public-router",
+      "supervisorPid": 24516,
+      "supervisorStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "listenerPid": 24516,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.4997244Z",
+      "port": 3301,
+      "health": 200
+    },
+    {
+      "name": "compatibility",
+      "supervisorPid": 44104,
+      "supervisorStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "listenerPid": 44104,
+      "listenerStartTimeUtc": "2026-08-14T05:46:54.5308239Z",
+      "port": 3001,
+      "health": 200
+    }
+  ],
+  "health": "7/7",
+  "activeCorsOrigin": "http://127.0.0.1:3301",
+  "futureArtifactsPresent": [],
+  "checkedAt": "2026-08-14T15:56:18.3591639+00:00"
+}

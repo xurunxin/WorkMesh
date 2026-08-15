@@ -1,8 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { AppShell, AsyncStateSurface, Button, EmptyState, ErrorState } from '@workmesh/ui'
 import { apiRequest, json } from '../lib/api'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
+import { RealtimeStatus } from '../realtime-status'
+import { GlobalCommandCenter } from '../../features/command-center'
 
 type Rule = {
   id: string
@@ -73,6 +76,13 @@ type FeatureRegistry = {
 
 const when = (value: string | null) => value ? new Date(value).toLocaleString() : 'Not scheduled'
 const message = (reason: unknown) => reason instanceof Error ? reason.message : 'Request failed'
+const operationsNavigation = [
+  { href: '/?view=inbox', label: 'Inbox' },
+  { href: '/?view=my-work', label: 'My Work' },
+  { href: '/?view=projects', label: 'Projects' },
+  { href: '/agents', label: 'Agents' },
+  { href: '/operations', label: 'Operations', active: true },
+]
 
 export default function OperationsPage() {
   const [usage, setUsage] = useState<Usage | null>(null)
@@ -176,20 +186,22 @@ export default function OperationsPage() {
     }
   }
 
-  if (!features && !error) return <main className="center">Loading operations...</main>
+  const headerActions = <div className="shell-action-cluster"><GlobalCommandCenter /><RealtimeStatus /></div>
+  if (!features && !error) return <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center"><AsyncStateSurface description="Loading durable planning, automation, health, and cost projections." state="loading" title="Loading Operations" /></div></AppShell>
   if (features && !features.has('WORKMESH_BETA_OPERATIONS_UI'))
-    return <main className="center" data-testid="operations-disabled">Operations UI is disabled for this deployment.</main>
+    return <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center" data-testid="operations-disabled"><EmptyState description="This deployment has not enabled the Operations UI feature." title="Operations is disabled" /></div></AppShell>
   return (
-    <main className="operations-shell">
+    <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}>
+    <div className="operations-shell">
       <header className="operations-header">
         <div>
-          <a href="/">← Work</a>
+          <a href="/">Back to work</a>
           <h1>Planning &amp; Operations</h1>
           <p>Durable planning, automation, health, and cost observability.</p>
         </div>
-        <button onClick={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }}>Refresh</button>
+        <Button onClick={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }}>Refresh</Button>
       </header>
-      {(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
+      {(error || collectionError) && <ErrorState actionLabel="Retry" description={error || collectionError?.message || 'Unable to load Operations.'} onAction={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }} title="Operations needs attention" />}
       {data && (
         <>
           {features?.has('WORKMESH_BETA_COSTS') && <section className="operations-metrics" aria-label="Usage and cost">
@@ -215,7 +227,7 @@ export default function OperationsPage() {
                   <small>{when(cycle.starts_at)} → {when(cycle.ends_at)}</small>
                 </article>
               ))}
-              {data.cycles.length === 0 && <p className="empty">No Cycles configured.</p>}
+              {data.cycles.length === 0 && <EmptyState description="Create a Cycle when a planning window is ready." title="No Cycles configured" />}
               <LoadMoreButton collection={cyclesPage} label="cycles" />
             </section>}
             {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="initiatives-panel">
@@ -226,7 +238,7 @@ export default function OperationsPage() {
                   <p>{initiative.status} · {initiative.priority} priority</p>
                 </article>
               ))}
-              {data.initiatives.length === 0 && <p className="empty">No Initiatives configured.</p>}
+              {data.initiatives.length === 0 && <EmptyState description="Initiatives will appear here when the feature has durable data." title="No Initiatives configured" />}
               <LoadMoreButton collection={initiativesPage} label="initiatives" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="automation-panel">
@@ -239,7 +251,7 @@ export default function OperationsPage() {
                   <button onClick={() => void ruleState(rule)}>{rule.state === 'active' ? 'Pause' : 'Resume'}</button>
                 </article>
               ))}
-              {data.rules.length === 0 && <p className="empty">No Rules configured.</p>}
+              {data.rules.length === 0 && <EmptyState description="Automation rules will appear after they are created through an authorized command." title="No Rules configured" />}
               <LoadMoreButton collection={rulesPage} label="automation rules" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') && <section className="operations-panel wide" data-testid="loops-panel">
@@ -251,7 +263,7 @@ export default function OperationsPage() {
                   <button onClick={() => void loopState(loop)}>{loop.state === 'active' ? 'Pause' : 'Resume'}</button>
                 </article>
               ))}
-              {data.loops.length === 0 && <p className="empty">No Loops configured.</p>}
+              {data.loops.length === 0 && <EmptyState description="Agent Loops will appear after they are created through an authorized command." title="No Loops configured" />}
               <LoadMoreButton collection={loopsPage} label="loops" />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="runs-panel">
@@ -270,7 +282,7 @@ export default function OperationsPage() {
                   </div>
                 ))}
               </div>
-              {data.runs.length === 0 && <p className="empty">No run history yet.</p>}
+              {data.runs.length === 0 && <EmptyState description="Durable run history will appear after an automation or loop executes." title="No run history yet" />}
               <LoadMoreButton collection={runsPage} label="automation runs" />
             </section>}
             {features?.has('WORKMESH_BETA_TEMPLATES') && <section className="operations-panel wide" data-testid="templates-panel">
@@ -283,12 +295,13 @@ export default function OperationsPage() {
                   </span>
                 ))}
               </div>
-              {data.templates.length === 0 && <p className="empty">No Templates configured.</p>}
+              {data.templates.length === 0 && <EmptyState description="Templates and playbooks will appear when they are available to this workspace." title="No Templates configured" />}
               <LoadMoreButton collection={templatesPage} label="templates" />
             </section>}
           </div>
         </>
       )}
-    </main>
+    </div>
+    </AppShell>
   )
 }

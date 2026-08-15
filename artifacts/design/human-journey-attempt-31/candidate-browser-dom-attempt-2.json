@@ -1,0 +1,77 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateBrowserDomEvidence",
+  "result": "PASS",
+  "observedAt": "2026-08-14T08:41:00.000Z",
+  "browser": {
+    "surface": "Codex In-app Browser",
+    "freshTabs": 1,
+    "attempt": 2,
+    "viewportReset": true,
+    "finalizedExactlyOnce": true,
+    "callsAfterFinalize": 0
+  },
+  "publicJourney": [
+    {"state": "loading", "direct": true, "marker": "Loading server-derived MCP configuration"},
+    {"state": "ready", "direct": true, "marker": "Configuration ready"},
+    {"state": "coordination_feature_disabled", "direct": true, "marker": "Coordination feature disabled"},
+    {"state": "discovery_unavailable", "direct": true, "marker": "Discovery unavailable"},
+    {"state": "mcp_unavailable", "direct": true, "marker": "MCP unavailable"},
+    {"state": "unsupported_client", "direct": true, "marker": "Unsupported client"}
+  ],
+  "adminJourney": [
+    {"state": "pending_pairing", "direct": true, "marker": "Pending pairing"},
+    {"state": "pairing_expired", "direct": true, "marker": "Pairing expired"},
+    {"state": "active_healthy", "direct": true, "marker": "Healthy"},
+    {"state": "rotating", "direct": true, "marker": "Rotating"},
+    {"state": "revoked", "direct": true, "marker": "This credential can no longer authenticate or coordinate work"},
+    {"state": "team_scope_unavailable", "direct": true, "marker": "Team scope unavailable"},
+    {"state": "unsupported_client", "direct": true, "marker": "The server no longer advertises this Connection client type"},
+    {"state": "forbidden", "direct": true, "marker": "Forbidden"},
+    {"state": "service_error", "direct": true, "marker": "Service unavailable"},
+    {"state": "empty", "direct": true, "marker": "No Agent Connections"}
+  ],
+  "configuration": {
+    "clients": ["Codex", "OpenCode", "Pi", "Generic MCP"],
+    "transport": "streamable_http",
+    "serverDerivedDiscovery": true,
+    "serverDerivedProfile": "1.0",
+    "serverDerivedSkill": "workmesh 1.1.0",
+    "configurationContainsEnvironmentVariableNameOnly": true,
+    "environmentVariable": "WORKMESH_INSTALLATION_TOKEN",
+    "credentialValueRendered": false,
+    "authorityExplanationPresent": true,
+    "verifyConnectionAndContextChecklistPresent": true
+  },
+  "keyboard": {
+    "clientSelectorFocusable": true,
+    "newConnectionDialogOpened": true,
+    "escapeClosedDialog": true,
+    "focusReturnedToTrigger": true
+  },
+  "responsive": {
+    "desktop": {"viewport": "1280x720", "documentClientWidth": 1265, "documentScrollWidth": 1265, "horizontalOverflow": false},
+    "width375": {"viewport": "375x812", "documentClientWidth": 360, "documentScrollWidth": 360, "mainClientWidth": 360, "sectionClientWidth": 328, "horizontalOverflow": false},
+    "width320": {"viewport": "320x800", "documentClientWidth": 305, "documentScrollWidth": 305, "mainClientWidth": 305, "sectionClientWidth": 273, "horizontalOverflow": false}
+  },
+  "visualEvidence": {
+    "scored": [
+      "02-ready-desktop-attempt-2.png",
+      "03-feature-disabled-attempt-2.png",
+      "16-ready-375-viewport-attempt-2.png",
+      "17-ready-320-viewport-attempt-2.png",
+      "18-revoked-desktop-viewport-attempt-2.png"
+    ],
+    "fullPageRasterQuirk": {
+      "observed": true,
+      "scope": "long full-page screenshots only",
+      "notScoredForLayout": ["07-pending-pairing-attempt-2.png", "08-pairing-expired-attempt-2.png", "09-revoked-attempt-2.png", "10-team-scope-attempt-2.png", "11-forbidden-attempt-2.png", "12-empty-attempt-2.png", "13-ready-375-attempt-2.png", "14-ready-320-attempt-2.png", "15-unsupported-client-attempt-2.png"],
+      "disposition": "Bounded viewport screenshots and direct width metrics prove the rendered layout; the repeated-strip full-page raster was retained only as non-scored provenance."
+    }
+  },
+  "secretBoundary": {
+    "credentialLikeDomTextPresent": false,
+    "secretHeaderValuesPersisted": 0,
+    "configurationSecretValuePersisted": false
+  }
+}

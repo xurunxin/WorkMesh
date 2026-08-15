@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateRuntimeCleanup",
+  "result": "PASS",
+  "observedAt": "2026-08-14T08:43:04.1691574Z",
+  "preview": {
+    "webPid": 31564,
+    "proxyPid": 74324,
+    "exactCommandLineAuthenticatedBeforeStop": true,
+    "port34600ListeningAfterCleanup": false,
+    "port34601ListeningAfterCleanup": false,
+    "residue": false
+  },
+  "activeRuntime": {
+    "listeners": [
+      {"port": 3001, "pid": 44104, "startTimeUtc": "2026-08-14T05:46:54.5308239Z", "health": 200},
+      {"port": 3300, "pid": 30096, "startTimeUtc": "2026-08-14T06:35:09.5793750Z", "health": 200},
+      {"port": 3301, "pid": 24516, "startTimeUtc": "2026-08-14T05:46:54.4997244Z", "health": 200},
+      {"port": 3302, "pid": 70676, "startTimeUtc": "2026-08-14T05:46:55.1918851Z", "health": 200},
+      {"port": 3303, "pid": 72736, "startTimeUtc": "2026-08-14T05:46:55.2440417Z", "health": 200},
+      {"port": 3304, "pid": 71408, "startTimeUtc": "2026-08-14T05:46:55.1158461Z", "health": 200}
+    ],
+    "minioReady": 200,
+    "health": "7/7",
+    "activeBuildStatus": 200,
+    "candidateBuildStatus": 404,
+    "activeReplacement": false
+  },
+  "workmesh": {
+    "workItem": "GEN-11",
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "status": "In Progress",
+    "revision": 2,
+    "coordinationLabel": "coord:active",
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null,
+    "mutation": false
+  },
+  "rollbackRequired": false
+}

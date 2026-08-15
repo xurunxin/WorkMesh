@@ -1,0 +1,36 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserGateGraphAmendmentApproval",
+  "approvalId": "b282d54b-b186-48c9-95de-08b866b0dd19",
+  "decision": "approved",
+  "proposalPath": "artifacts/plans/dogfood-v31-replacement-active-browser-gate-graph-amendment-proposal.json",
+  "proposalSha256": "4d5e4a004f33efed5d6f780599225de6dc719e94627ac5faee6f078e35d20bab",
+  "priorGraph": {
+    "version": 8,
+    "sha256": "e148d202b9cce3dd8faa7d93aae43bde62040f31aced23d5440ee7fbb23bca8a"
+  },
+  "approvedGraph": {
+    "version": 9,
+    "path": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+    "sha256": "511d6be2906b611d107bc1055c1850160417b5c38d5447b34c51e16cd771580a"
+  },
+  "scope": "v31_graph_v9_separate_browser_gate_and_attempt3_once",
+  "decisionText": "Human explicitly approved the proposed v31 replacement active Browser attempt 3 after the API-only activation was completed and checkpointed.",
+  "approvedChanges": [
+    "add a distinct replacement active Browser approval node",
+    "bind capture-v31-active-evidence-attempt-3 to the new exact Human approval",
+    "allow one fresh in-app Browser tab and at most four bounded WorkMesh fixture mutations",
+    "preserve all final acceptance and cleanup thresholds"
+  ],
+  "excluded": {
+    "serviceReplacement": true,
+    "databaseSchemaMutation": true,
+    "arbitraryDataMutation": true,
+    "objectStorageMutationOutsideFixture": true,
+    "gen11Completion": true,
+    "gitHistoryRewrite": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T15:02:30.0859961Z",
+  "securityScanRun": false
+}

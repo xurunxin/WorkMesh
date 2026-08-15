@@ -1,5 +1,5 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { WorkMeshClient, WorkMeshSdkError, releaseMetadata } from '@workmesh/agent-sdk'
 import { z } from 'zod'
 import {
@@ -7,6 +7,7 @@ import {
   mcpPolicyBindings,
   workmeshSkillManifest,
 } from '@workmesh/contracts'
+import { applyProjectImport, applyProjectImportSchema, getWorkMeshContext, prepareProjectImport, projectImportSchema, resolveIdentifier } from './coordination-product.js'
 
 export type McpMode = 'read-only' | 'read-write'
 export { mcpPolicyBindings }
@@ -18,6 +19,17 @@ const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:wri
 
 export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer {
   const server = new McpServer({ name: 'workmesh-mcp', version: releaseMetadata.mcpVersion })
+  const serverErrorAdapter = server as unknown as {
+    createToolError: (errorMessage: string) => ReturnType<typeof errorToolResult>
+  }
+  const sdkToolError = serverErrorAdapter.createToolError.bind(serverErrorAdapter)
+  serverErrorAdapter.createToolError = errorMessage => errorMessage.includes('Input validation error:')
+    ? errorToolResult(
+        'MCP_INPUT_INVALID',
+        'MCP tool input failed validation',
+        { issues: [{ code: 'invalid_arguments', message: errorMessage }] },
+      )
+    : sdkToolError(errorMessage)
   server.registerResource('server-info', 'workmesh://server/info', { description: 'Safe WorkMesh release and build metadata.', mimeType: 'application/json' }, async uri => resource(uri, await options.client.getServerInfo()))
   server.registerResource('server-features', 'workmesh://server/features', { description: 'Authenticated deployment feature support tiers and enabled state.', mimeType: 'application/json' }, async uri => resource(uri, await options.client.getFeatures()))
   server.registerResource('agent-capabilities', 'workmesh://agent/capabilities', { description: 'Negotiated Agent Collaboration Client Profile capabilities for the configured exact Agent Session. Support metadata never replaces live authorization.', mimeType: 'application/json' }, async uri => resource(uri, await options.client.getAgentCapabilities()))
@@ -31,9 +43,10 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
   server.registerResource('project-guidance', new ResourceTemplate('workmesh://project/{id}/guidance', { list: undefined }), { description: 'Project guidance available to the authenticated session.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getGuidance('project', String(variables.id))))
   server.registerResource('repository-context', new ResourceTemplate('workmesh://repository/{id}/context', { list: undefined }), { description: 'Authorized repository, pinned base SHA, path scope, and root-to-leaf AGENTS.md provenance.', mimeType: 'application/json' }, async (uri, variables) => resource(uri, await options.client.getRepositoryContext(String(variables.id))))
 
-  server.registerTool('list_work_items', { description: 'List only work items authorized for this session. Pass nextCursor back as cursor to continue.', inputSchema: { teamId: z.string().uuid().optional(), query: z.string().max(500).optional(), statusId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => {
-    const { cursor, limit, ...query } = input
-    return tool(() => options.client.listWorkItems(query, { cursor, limit }))
+  server.registerTool('list_work_items', { description: 'List only work items authorized for this session. Use search for title/full-text matching and pass nextCursor back as cursor to continue.', inputSchema: { teamId: z.string().uuid().optional(), search: z.string().max(500).optional(), query: z.string().max(500).optional().describe('Deprecated alias for search.'), statusId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => {
+    const { cursor, limit, query: legacyQuery, ...filters } = input
+    const search = input.search ?? legacyQuery
+    return tool(() => options.client.listWorkItems(search === undefined ? filters : { ...filters, search }, { cursor, limit }))
   })
   server.registerTool('list_events', {
     description: 'List authorized durable domain events after the caller-supplied decimal cursor. The caller owns and persists its checkpoint; MCP keeps no global cursor.',
@@ -52,6 +65,9 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
       limit: input.limit,
     })))
   server.registerTool('get_work_item', { description: 'Get one authorized work item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItem(input.workItemId)))
+  server.registerTool('list_project_milestones', { description: 'List structured Milestones for an authorized Project. Pass nextCursor back as cursor to continue.', inputSchema: { projectId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => options.client.listProjectMilestones(input.projectId, { cursor: input.cursor, limit: input.limit })))
+  server.registerTool('get_milestone', { description: 'Get one authorized Milestone and its current revision.', inputSchema: { milestoneId: z.string().uuid() } }, async input => tool(() => options.client.getMilestone(input.milestoneId)))
+  server.registerTool('list_work_item_relations', { description: 'List typed blocker and related links touching one authorized Work Item.', inputSchema: { workItemId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => options.client.listWorkItemRelations(input.workItemId, { cursor: input.cursor, limit: input.limit })))
 
   if (options.coordination) registerCoordinationTools(server, options.client, options.mode)
 
@@ -67,17 +83,55 @@ const coordinationKey = (toolName: string, payload: unknown): string =>
   `coordination:${toolName}:${createHash('sha256').update(JSON.stringify(payload)).digest('hex')}`
 
 function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mode: McpMode | undefined): void {
-  server.registerTool('verify_connection', { description: 'Verify the live Connection, derived Coordination Session, capabilities, and pinned WorkMesh Skill.', inputSchema: {} }, async () => tool(async () => ({ manifest: await client.getAgentCapabilities(), skill: workmeshSkillManifest })))
+  server.registerTool('verify_connection', { description: 'Verify the live Connection, derived Coordination Session, capabilities, Team authorization, and pinned WorkMesh Skill.', inputSchema: {} }, async () => tool(async () => {
+    const manifest = await client.getAgentCapabilities()
+    const expectedTeamIds = manifest.agent.capabilityScope.teamIds
+    if (expectedTeamIds.length !== 1) {
+      throw new WorkMeshSdkError('A Coordination Connection must resolve to exactly one Team', {
+        code: 'CONNECTION_SCOPE_INVALID',
+        details: { teamCount: expectedTeamIds.length },
+      })
+    }
+    const teams = await client.listTeams<{ id: string }>({ limit: 1 })
+    if (teams.items.length !== 1 || teams.items[0]?.id !== expectedTeamIds[0]) {
+      throw new WorkMeshSdkError('The live Team authorization probe did not match the Connection scope', {
+        code: 'CONNECTION_LIVE_PROBE_INCONSISTENT',
+        details: { expectedTeamId: expectedTeamIds[0] },
+      })
+    }
+    return {
+      manifest,
+      liveProbe: { teamId: expectedTeamIds[0], teamDiscovery: 'ok' as const },
+      skill: workmeshSkillManifest,
+      bootstrap: {
+        verified: true as const,
+        transport: 'streamable_http' as const,
+        profileVersion: manifest.profileVersion,
+        identityBoundary: 'Installation identity is not an Agent Session or Delegation.',
+        requiredNextTools: ['get_workmesh_context'] as const,
+        authorityEvaluatedPerRequest: true as const,
+      },
+    }
+  }))
   server.registerTool('get_current_identity', { description: 'Return the live Agent actor, Coordination Session, Team scope, and effective capabilities.', inputSchema: {} }, async () => tool(async () => (await client.getAgentCapabilities()).agent))
+  server.registerTool('get_workmesh_context', { description: 'Bootstrap a fresh Agent in one call with live identity, the bound Team, workflow states, default state, release/features, allowed operations, and a durable replay cursor.', inputSchema: {} }, async () => tool(() => getWorkMeshContext(client)))
+  server.registerTool('resolve_identifier', { description: 'Resolve a Team key, readable Project or Milestone reference, or native Work Item key such as WM-123 to the current UUID and revision.', inputSchema: { kind: z.enum(['team', 'workflow_state', 'project', 'work_item', 'milestone']), ref: z.string().min(1).max(500), teamRef: z.string().min(1).max(500).optional(), projectRef: z.string().min(1).max(500).optional() } }, async input => tool(() => resolveIdentifier(client, input)))
+  server.registerTool('prepare_project_import', { description: 'Validate and normalize a complete Project import without side effects. Returns a deterministic content hash that apply_project_import must verify.', inputSchema: projectImportSchema.shape }, async input => tool(async () => prepareProjectImport(input)))
   server.registerTool('list_teams', { description: 'List Teams visible to this Connection.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listTeams({ cursor: input.cursor, limit: input.limit })))
   server.registerTool('list_workflow_states', { description: 'List workflow states for the Connection Team.', inputSchema: { teamId: z.string().uuid(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listWorkflowStates(input.teamId, { cursor: input.cursor, limit: input.limit })))
   server.registerTool('list_projects', { description: 'List authorized Projects.', inputSchema: { teamId: z.string().uuid().optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listProjects({ teamId: input.teamId }, { cursor: input.cursor, limit: input.limit })))
   server.registerTool('get_project', { description: 'Get one authorized Project.', inputSchema: { projectId: z.string().uuid() } }, async input => tool(() => client.getProject(input.projectId)))
   if (mode === 'read-only') return
+  server.registerTool('apply_project_import', { description: 'Apply an exact prepare_project_import plan with deterministic per-entity server idempotency. Safe to resume after response loss by replaying the same content hash and plan; returns the complete source-to-target mapping.', inputSchema: applyProjectImportSchema.shape }, async input => tool(() => applyProjectImport(client, input)))
   server.registerTool('create_project', { description: 'Create a Project in the Connection Team. This cannot archive or delete Projects.', inputSchema: { teamId: z.string().uuid(), name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20_000).optional(), status: z.string().max(80).optional(), idempotencyKey } }, async input => tool(() => client.createProject(input, { idempotencyKey: input.idempotencyKey ?? coordinationKey('create_project', input) })))
   server.registerTool('update_project', { description: 'Update ordinary Project fields at the current revision. Archive and delete remain Human-only.', inputSchema: { projectId: z.string().uuid(), revision: z.number().int().positive(), name: z.string().min(1).max(180).optional(), summary: z.string().max(500).optional(), description: z.string().max(20_000).nullable().optional(), status: z.string().max(80).optional(), idempotencyKey } }, async input => { const { projectId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateProject(projectId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_project', input) })) })
-  server.registerTool('create_work_item', { description: 'Create an Issue in the Connection Team. If responsibleHumanActorId is omitted, the server pins the Connection principal Human.', inputSchema: { teamId: z.string().uuid(), projectId: z.string().uuid().optional(), title: z.string().min(1).max(500), description: z.string().max(50_000).optional(), statusId: z.string().uuid(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async input => tool(() => client.createWorkItem(input, { idempotencyKey: input.idempotencyKey ?? coordinationKey('create_work_item', input) })))
-  server.registerTool('update_work_item', { description: 'Update ordinary Issue fields at the current revision. Delete and bulk mutation remain Human-only.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).nullable().optional(), statusId: z.string().uuid().optional(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().nullable().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async input => { const { workItemId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateWorkItem(workItemId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_work_item', input) })) })
+  server.registerTool('create_work_item', { description: 'Create an Issue in the Connection Team, optionally under a structured Project, Milestone, and parent Work Item. If responsibleHumanActorId is omitted, the server pins the Connection principal Human.', inputSchema: { teamId: z.string().uuid(), projectId: z.string().uuid().optional(), milestoneId: z.string().uuid().optional(), parentId: z.string().uuid().optional(), title: z.string().min(1).max(500), description: z.string().max(50_000).optional(), statusId: z.string().uuid(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), idempotencyKey } }, async input => tool(() => client.createWorkItem(input, { idempotencyKey: input.idempotencyKey ?? coordinationKey('create_work_item', input) })))
+  server.registerTool('update_work_item', { description: 'Update ordinary Issue fields, hierarchy, and Milestone assignment at the current revision. The server rejects cross-Team, cross-Project, and cyclic hierarchy.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), title: z.string().min(1).max(500).optional(), description: z.string().max(50_000).nullable().optional(), statusId: z.string().uuid().optional(), priority: z.enum(['none','low','medium','high','urgent']).optional(), responsibleHumanActorId: z.string().uuid().nullable().optional(), labels: z.array(z.string().min(1).max(60)).max(30).optional(), projectId: z.string().uuid().nullable().optional(), milestoneId: z.string().uuid().nullable().optional(), parentId: z.string().uuid().nullable().optional(), idempotencyKey } }, async input => { const { workItemId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateWorkItem(workItemId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_work_item', input) })) })
+  server.registerTool('create_milestone', { description: 'Create a structured Milestone in an authorized Project.', inputSchema: { projectId: z.string().uuid(), name: z.string().min(1).max(180), description: z.string().max(10_000).optional(), targetDate: z.string().date().optional(), idempotencyKey } }, async input => { const { projectId, idempotencyKey: key, ...body } = input; return tool(() => client.createMilestone(projectId, body, { idempotencyKey: key ?? coordinationKey('create_milestone', input) })) })
+  server.registerTool('update_milestone', { description: 'Update a Milestone at its exact current revision.', inputSchema: { milestoneId: z.string().uuid(), revision: z.number().int().positive(), name: z.string().min(1).max(180).optional(), description: z.string().max(10_000).nullable().optional(), targetDate: z.string().date().nullable().optional(), idempotencyKey } }, async input => { const { milestoneId, revision, idempotencyKey: key, ...body } = input; return tool(() => client.updateMilestone(milestoneId, body, { ifMatch: revision, idempotencyKey: key ?? coordinationKey('update_milestone', input) })) })
+  server.registerTool('delete_milestone', { description: 'Soft-delete an empty Milestone at its exact revision. Active Work Items must be moved first.', inputSchema: { milestoneId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async input => tool(() => client.deleteMilestone(input.milestoneId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? coordinationKey('delete_milestone', input) })))
+  server.registerTool('add_work_item_relation', { description: 'Add an acyclic blocks edge or a canonical related link between Work Items in the same Team.', inputSchema: { workItemId: z.string().uuid(), targetWorkItemId: z.string().uuid(), kind: z.enum(['blocks','related']), idempotencyKey } }, async input => tool(() => client.createWorkItemRelation(input.workItemId, { targetWorkItemId: input.targetWorkItemId, kind: input.kind }, { idempotencyKey: input.idempotencyKey ?? coordinationKey('add_work_item_relation', input) })))
+  server.registerTool('remove_work_item_relation', { description: 'Soft-delete one typed Work Item relation at its exact revision.', inputSchema: { workItemId: z.string().uuid(), relationId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async input => tool(() => client.deleteWorkItemRelation(input.workItemId, input.relationId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? coordinationKey('remove_work_item_relation', input) })))
   const delegateInput = { workItemId: z.string().uuid(), revision: z.number().int().positive(), agentId: z.string().uuid(), principalHumanActorId: z.string().uuid(), role: z.enum(['executor','reviewer','researcher']).optional(), requestedCapabilities: z.array(capability).min(1).max(50), initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: z.string().uuid().optional(), budget: z.record(z.number()).optional(), idempotencyKey }
   const delegate = (toolName: string, input: z.infer<z.ZodObject<typeof delegateInput>>) => {
     const { workItemId, revision, idempotencyKey: key, ...body } = input
@@ -132,12 +186,76 @@ function registerMutations(server: McpServer, client: WorkMeshClient): void {
 }
 
 function resource(uri: URL, value: unknown) { return { contents: [{ uri: uri.toString(), mimeType: 'application/json', text: JSON.stringify(value) }] } }
+function currentRevision(details: unknown): number | undefined {
+  if (!details || typeof details !== 'object') return undefined
+  const value = (details as { currentRevision?: unknown }).currentRevision
+  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0 ? value : undefined
+}
+function safeNextAction(code: string, revision: number | undefined): string {
+  if (code === 'REVISION_CONFLICT') {
+    return revision === undefined
+      ? 'Refetch the resource, reapply the intended change to the returned current revision, and retry once.'
+      : `Refetch the resource, reapply the intended change to revision ${revision}, and retry once with that revision.`
+  }
+  if (code === 'NETWORK_ERROR') return 'Replay the same operation with the same idempotency key or import content hash.'
+  if (code === 'IDENTIFIER_NOT_FOUND') return 'Call get_workmesh_context, then retry resolve_identifier with a Team key, readable reference, or exact UUID.'
+  if (code === 'IDENTIFIER_AMBIGUOUS') return 'Retry resolve_identifier with an exact stable reference or UUID from the returned candidates.'
+  if (code === 'IDENTIFIER_CONTEXT_REQUIRED') return 'Provide the required Team or Project reference and retry resolution.'
+  if (code === 'MCP_INPUT_INVALID') return 'Correct the arguments against the published MCP tool schema, then retry the call.'
+  if (code === 'IMPORT_HASH_MISMATCH') return 'Run prepare_project_import again and pass its contentHash and plan together without modification.'
+  if (code.startsWith('IMPORT_')) return 'Correct the source plan, run prepare_project_import again, and apply only the newly returned hash and plan.'
+  if (code === 'CURSOR_EXPIRED') return 'Resume from the server-provided resync cursor and rebuild local projections before continuing.'
+  if (code === 'RESOURCE_SCOPE_DENIED') return 'Do not retry the out-of-scope resource; use get_workmesh_context to select a resource inside the bound Team.'
+  if (code === 'IDEMPOTENCY_REPLAY_EXPIRED') return 'Inspect the existing target mapping before choosing a new key; do not blindly create the import again.'
+  return 'Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.'
+}
+function errorToolResult(code: string, message: string, details?: unknown, correlationId = `mcp:${randomUUID()}`) {
+  const error = {
+    code,
+    message,
+    correlationId,
+    details,
+    safeNextAction: safeNextAction(code, undefined),
+  }
+  return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ error }) }], structuredContent: { error } }
+}
 async function tool(call: () => Promise<unknown>) {
   try {
     const data = await call()
     return { content: [{ type: 'text' as const, text: JSON.stringify(data) }], structuredContent: { data } }
   } catch (error) {
-    const details = error instanceof WorkMeshSdkError ? { code: error.code, message: error.message, correlationId: error.correlationId, details: error.details } : { code: 'MCP_UPSTREAM_ERROR', message: error instanceof Error ? error.message : 'Unknown upstream error' }
+    const inputError = error instanceof z.ZodError ? error : undefined
+    const code = error instanceof WorkMeshSdkError
+      ? error.code
+      : inputError
+        ? 'MCP_INPUT_INVALID'
+        : 'MCP_UPSTREAM_ERROR'
+    const upstreamDetails = error instanceof WorkMeshSdkError
+      ? error.details
+      : inputError
+        ? {
+            issues: inputError.issues.map(issue => ({
+              path: issue.path,
+              code: issue.code,
+              message: issue.message,
+            })),
+          }
+        : undefined
+    const revision = currentRevision(upstreamDetails)
+    const details = {
+      code,
+      message: error instanceof WorkMeshSdkError
+        ? error.message
+        : inputError
+          ? 'MCP tool input failed validation'
+          : 'An unexpected MCP adapter error occurred',
+      correlationId: error instanceof WorkMeshSdkError && error.correlationId
+        ? error.correlationId
+        : `mcp:${randomUUID()}`,
+      details: upstreamDetails,
+      ...(revision === undefined ? {} : { currentRevision: revision }),
+      safeNextAction: safeNextAction(code, revision),
+    }
     return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ error: details }) }], structuredContent: { error: details } }
   }
 }

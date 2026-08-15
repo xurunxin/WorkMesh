@@ -1,0 +1,28 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31FinalWorkMeshReadback",
+  "result": "PASS",
+  "workItem": {
+    "id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "number": 11,
+    "revision": 2,
+    "statusId": "d262cf6f-e1d1-4820-83e4-4b191bf3ce7e",
+    "statusName": "In Progress",
+    "labels": ["coord:active", "migration", "module:mcp", "owner:human", "roadmap:post-ga", "security", "type:enhancement"],
+    "responsibleHuman": "Dogfood Owner",
+    "activeExecutor": null
+  },
+  "doneStatus": {"id": "12c209e8-a37f-4aa1-ae53-08fefd9ec685", "name": "Done", "category": "completed"},
+  "eventsAfter197": 0,
+  "authorizedTransition": {
+    "workItemId": "4feddd7d-2784-4788-a73b-c9e27cd55e4d",
+    "fromRevision": 2,
+    "toRevision": 3,
+    "statusId": "12c209e8-a37f-4aa1-ae53-08fefd9ec685",
+    "labelChangeOnly": {"remove": ["coord:active"], "add": ["coord:completed"]},
+    "requiresIdenticalReplay": true,
+    "requiresFreshReadback": true,
+    "requiresExactlyOneDurableEvent": true
+  },
+  "mutationPerformed": false
+}

@@ -14,3 +14,6 @@
 \ir packages/db/migrations/v1/0002_active_executor_projection.sql
 \ir packages/db/migrations/v1/0003_versioned_guidance.sql
 \ir packages/db/migrations/v1/0004_agent_connections.sql
+\ir packages/db/migrations/v1/0005_planning_domain_parity.sql
+\ir packages/db/migrations/v1/0006_human_attachments.sql
+\ir packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql

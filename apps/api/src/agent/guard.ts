@@ -19,6 +19,8 @@ export type AgentSessionAuthorityLocator = {
   work_item_project_id: string | null
   session_token_id: string | null
   installation_token_id: string | null
+  coordination_connection_id?: string | null
+  coordination_credential_id?: string | null
 }
 
 const inactiveAuthority = (): never => {
@@ -57,17 +59,50 @@ export async function assertCurrentAgentCredentialInTx(
   ) {
     throw new DomainError('UNAUTHENTICATED', 'An active Agent Session credential is required')
   }
-  const credential = await tx.query(
-    `SELECT id
-       FROM agent_session_tokens
-      WHERE session_id=$1
-        AND token_hash=$2
-        AND expires_at>now()
-        AND exchanged_at IS NOT NULL
-        AND revoked_at IS NULL
-      `,
-    [sessionId, actor.credentialHash],
-  )
+  const credential = actor.authentication === 'coordination_connection'
+    ? await tx.query(
+        `SELECT credential.id
+           FROM agent_coordination_sessions coordination
+           JOIN agent_connections connection
+             ON connection.id=coordination.connection_id
+            AND connection.workspace_id=coordination.workspace_id
+            AND connection.team_id=coordination.team_id
+            AND connection.agent_id=coordination.agent_id
+            AND connection.agent_actor_id=coordination.agent_actor_id
+            AND connection.delegation_id=coordination.delegation_id
+            AND connection.principal_human_actor_id=coordination.principal_human_actor_id
+            AND connection.status IN ('active','rotating')
+           JOIN agent_connection_credentials credential
+             ON credential.connection_id=connection.id
+            AND credential.token_hash=$2
+            AND (
+              credential.status='active'
+              OR (credential.status='overlap' AND credential.overlap_until>now())
+            )
+           JOIN agent_sessions session
+             ON session.id=coordination.agent_session_id
+            AND session.workspace_id=coordination.workspace_id
+            AND session.team_id=coordination.team_id
+            AND session.agent_id=coordination.agent_id
+            AND session.agent_actor_id=coordination.agent_actor_id
+            AND session.delegation_id=coordination.delegation_id
+            AND session.session_kind='coordination'
+            AND session.coordination_connection_id=connection.id
+          WHERE coordination.agent_session_id=$1
+            AND coordination.status='active'
+            AND coordination.expires_at>now()`,
+        [sessionId, actor.credentialHash],
+      )
+    : await tx.query(
+        `SELECT id
+           FROM agent_session_tokens
+          WHERE session_id=$1
+            AND token_hash=$2
+            AND expires_at>now()
+            AND exchanged_at IS NOT NULL
+            AND revoked_at IS NULL`,
+        [sessionId, actor.credentialHash],
+      )
   if (!credential.rowCount) {
     throw new DomainError('UNAUTHENTICATED', 'The Agent Session credential was revoked or expired')
   }
@@ -88,30 +123,87 @@ export async function locateAgentSessionAuthority(
   // This locator may discover only identifiers and immutable routing keys.
   // No authority, capability, state, or protected resource payload is consumed
   // until the complete plan has been locked and every binding is re-read.
-  const locator = (await tx.query<AgentSessionAuthorityLocator>(
-    `SELECT session.agent_id,session.delegation_id,session.team_id,
-            session.work_item_id,session.project_id,
-            item.project_id AS work_item_project_id,
-            credential.id AS session_token_id,
-            credential.installation_token_id
-       FROM agent_sessions session
-       LEFT JOIN work_items item
-         ON item.id=session.work_item_id
-        AND item.workspace_id=session.workspace_id
-       LEFT JOIN agent_session_tokens credential
-         ON credential.session_id=session.id
-        AND credential.token_hash=$3
-      WHERE session.id=$1 AND session.workspace_id=$2`,
-    [sessionId, actor.workspaceId, actor.credentialHash],
-  )).rows[0]
+  const locator = actor.authentication === 'coordination_connection'
+    ? (await tx.query<AgentSessionAuthorityLocator>(
+        `SELECT session.agent_id,session.delegation_id,session.team_id,
+                session.work_item_id,session.project_id,
+                item.project_id AS work_item_project_id,
+                NULL::uuid AS session_token_id,
+                NULL::uuid AS installation_token_id,
+                coordination.connection_id AS coordination_connection_id,
+                credential.id AS coordination_credential_id
+           FROM agent_sessions session
+           JOIN agent_coordination_sessions coordination
+             ON coordination.agent_session_id=session.id
+            AND coordination.workspace_id=session.workspace_id
+            AND coordination.team_id=session.team_id
+            AND coordination.agent_id=session.agent_id
+            AND coordination.agent_actor_id=session.agent_actor_id
+            AND coordination.delegation_id=session.delegation_id
+           JOIN agent_connection_credentials credential
+             ON credential.connection_id=coordination.connection_id
+            AND credential.token_hash=$3
+           LEFT JOIN work_items item
+             ON item.id=session.work_item_id
+            AND item.workspace_id=session.workspace_id
+          WHERE session.id=$1 AND session.workspace_id=$2
+            AND session.session_kind='coordination'
+            AND session.coordination_connection_id=coordination.connection_id`,
+        [sessionId, actor.workspaceId, actor.credentialHash],
+      )).rows[0]
+    : (await tx.query<AgentSessionAuthorityLocator>(
+        `SELECT session.agent_id,session.delegation_id,session.team_id,
+                session.work_item_id,session.project_id,
+                item.project_id AS work_item_project_id,
+                credential.id AS session_token_id,
+                credential.installation_token_id,
+                NULL::uuid AS coordination_connection_id,
+                NULL::uuid AS coordination_credential_id
+           FROM agent_sessions session
+           LEFT JOIN work_items item
+             ON item.id=session.work_item_id
+            AND item.workspace_id=session.workspace_id
+           LEFT JOIN agent_session_tokens credential
+             ON credential.session_id=session.id
+            AND credential.token_hash=$3
+          WHERE session.id=$1 AND session.workspace_id=$2`,
+        [sessionId, actor.workspaceId, actor.credentialHash],
+      )).rows[0]
   if (!locator) {
     throw new DomainError("AGENT_SESSION_NOT_FOUND", "Agent session not found")
   }
   return locator
 }
 
+async function lockCoordinationAuthority(
+  tx: PoolClient,
+  locator: AgentSessionAuthorityLocator,
+  sessionId: string,
+): Promise<void> {
+  if (!locator.coordination_connection_id || !locator.coordination_credential_id) return
+  // Connection lifecycle commands acquire the Connection before they close the
+  // derived Coordination Session and mutate the core Agent authority graph.
+  // Follow that same prefix so revocation and a Coordinator write cannot race.
+  await tx.query(
+    'SELECT id FROM agent_connections WHERE id=$1 FOR UPDATE',
+    [locator.coordination_connection_id],
+  )
+  await tx.query(
+    'SELECT id FROM agent_connection_credentials WHERE id=$1 AND connection_id=$2 FOR UPDATE',
+    [locator.coordination_credential_id, locator.coordination_connection_id],
+  )
+  await tx.query(
+    `SELECT agent_session_id
+       FROM agent_coordination_sessions
+      WHERE agent_session_id=$1 AND connection_id=$2
+      FOR UPDATE`,
+    [sessionId, locator.coordination_connection_id],
+  )
+}
+
 export async function loadAgentSessionForMutation(tx: PoolClient, actor: ApiActor, sessionId: string): Promise<SessionFacts> {
   const locator=await locateAgentSessionAuthority(tx,actor,sessionId)
+  await lockCoordinationAuthority(tx, locator, sessionId)
   await lockAgentAuthorityPlan(tx, {
     definitionIds: [locator.agent_id],
     teamGrants: [{
@@ -239,38 +331,92 @@ export async function revalidateLockedAgentSessionForMutation(
   ) {
     return inactiveAuthority()
   }
-  const credential = locator.session_token_id
-    ? (await tx.query<{
-        installation_token_id: string
-        expires_at: Date
-        exchanged_at: Date | null
-        revoked_at: Date | null
-      }>(
-        `SELECT installation_token_id,expires_at,exchanged_at,revoked_at
-           FROM agent_session_tokens
-          WHERE id=$1 AND session_id=$2 AND token_hash=$3`,
-        [locator.session_token_id, sessionId, actor.credentialHash],
-      )).rows[0]
-    : undefined
-  const installation = locator.installation_token_id
-    ? (await tx.query<{ agent_id: string; expires_at: Date | null; revoked_at: Date | null }>(
-        `SELECT agent_id,expires_at,revoked_at
-           FROM agent_installation_tokens
-          WHERE id=$1`,
-        [locator.installation_token_id],
-      )).rows[0]
-    : undefined
+  let credentialIsActive = false
   if (
-    !credential
-    || credential.installation_token_id !== locator.installation_token_id
-    || credential.revoked_at
-    || !credential.exchanged_at
-    || credential.expires_at <= new Date()
-    || !installation
-    || installation.agent_id !== locator.agent_id
-    || installation.revoked_at
-    || (installation.expires_at && installation.expires_at <= new Date())
+    actor.authentication === 'coordination_connection'
+    && locator.coordination_connection_id
+    && locator.coordination_credential_id
   ) {
+    credentialIsActive = Boolean((await tx.query(
+      `SELECT 1
+         FROM agent_coordination_sessions coordination
+         JOIN agent_connections connection
+           ON connection.id=coordination.connection_id
+          AND connection.workspace_id=coordination.workspace_id
+          AND connection.team_id=coordination.team_id
+          AND connection.agent_id=coordination.agent_id
+          AND connection.agent_actor_id=coordination.agent_actor_id
+          AND connection.delegation_id=coordination.delegation_id
+          AND connection.principal_human_actor_id=coordination.principal_human_actor_id
+          AND connection.status IN ('active','rotating')
+         JOIN agent_connection_credentials credential
+           ON credential.id=$3
+          AND credential.connection_id=connection.id
+          AND credential.token_hash=$4
+          AND (
+            credential.status='active'
+            OR (credential.status='overlap' AND credential.overlap_until>now())
+          )
+         JOIN actors principal
+           ON principal.id=coordination.principal_human_actor_id
+          AND principal.workspace_id=coordination.workspace_id
+          AND principal.kind='human'
+          AND principal.is_active
+         JOIN agent_sessions live_session
+           ON live_session.id=coordination.agent_session_id
+          AND live_session.workspace_id=coordination.workspace_id
+          AND live_session.team_id=coordination.team_id
+          AND live_session.agent_id=coordination.agent_id
+          AND live_session.agent_actor_id=coordination.agent_actor_id
+          AND live_session.delegation_id=coordination.delegation_id
+          AND live_session.session_kind='coordination'
+          AND live_session.coordination_connection_id=connection.id
+        WHERE coordination.agent_session_id=$1
+          AND coordination.connection_id=$2
+          AND coordination.status='active'
+          AND coordination.expires_at>now()`,
+      [
+        sessionId,
+        locator.coordination_connection_id,
+        locator.coordination_credential_id,
+        actor.credentialHash,
+      ],
+    )).rowCount)
+  } else {
+    const credential = locator.session_token_id
+      ? (await tx.query<{
+          installation_token_id: string
+          expires_at: Date
+          exchanged_at: Date | null
+          revoked_at: Date | null
+        }>(
+          `SELECT installation_token_id,expires_at,exchanged_at,revoked_at
+             FROM agent_session_tokens
+            WHERE id=$1 AND session_id=$2 AND token_hash=$3`,
+          [locator.session_token_id, sessionId, actor.credentialHash],
+        )).rows[0]
+      : undefined
+    const installation = locator.installation_token_id
+      ? (await tx.query<{ agent_id: string; expires_at: Date | null; revoked_at: Date | null }>(
+          `SELECT agent_id,expires_at,revoked_at
+             FROM agent_installation_tokens
+            WHERE id=$1`,
+          [locator.installation_token_id],
+        )).rows[0]
+      : undefined
+    credentialIsActive = Boolean(
+      credential
+      && credential.installation_token_id === locator.installation_token_id
+      && !credential.revoked_at
+      && credential.exchanged_at
+      && credential.expires_at > new Date()
+      && installation
+      && installation.agent_id === locator.agent_id
+      && !installation.revoked_at
+      && (!installation.expires_at || installation.expires_at > new Date()),
+    )
+  }
+  if (!credentialIsActive) {
     throw new DomainError('UNAUTHENTICATED', 'The Agent Session credential was revoked or expired')
   }
   let workItemExists = false

@@ -1,0 +1,61 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCorsDecouplingCompensationProbe",
+  "result": "PASS",
+  "contractSha256": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4",
+  "sharedProductionSeam": true,
+  "cases": [
+    {
+      "name": "retained",
+      "decision": "retained",
+      "cleanupFails": false,
+      "verifyFails": false,
+      "restoreCalls": 0,
+      "receiptResult": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptWritten": true,
+      "thrown": null
+    },
+    {
+      "name": "missing",
+      "decision": "missing",
+      "cleanupFails": false,
+      "verifyFails": false,
+      "restoreCalls": 1,
+      "receiptResult": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptWritten": true,
+      "thrown": null
+    },
+    {
+      "name": "unknown",
+      "decision": "unknown",
+      "cleanupFails": false,
+      "verifyFails": false,
+      "restoreCalls": 0,
+      "receiptResult": "ROLLBACK_FAILED",
+      "receiptWritten": true,
+      "thrown": "DOGFOOD_V31_ORIGIN_COMPENSATION_FAILED:restore:DOGFOOD_V31_ORIGIN_OLD_OWNER_REJECTED:unknown"
+    },
+    {
+      "name": "cleanup-failure",
+      "decision": "retained",
+      "cleanupFails": true,
+      "verifyFails": false,
+      "restoreCalls": 0,
+      "receiptResult": "ROLLBACK_FAILED",
+      "receiptWritten": true,
+      "thrown": "DOGFOOD_V31_ORIGIN_COMPENSATION_FAILED:cleanup:cleanup-fault"
+    },
+    {
+      "name": "verify-failure",
+      "decision": "retained",
+      "cleanupFails": false,
+      "verifyFails": true,
+      "restoreCalls": 0,
+      "receiptResult": "ROLLBACK_FAILED",
+      "receiptWritten": true,
+      "thrown": "DOGFOOD_V31_ORIGIN_COMPENSATION_FAILED:restore:verify-fault"
+    }
+  ],
+  "terminalReceipts": "5/5",
+  "checkedAt": "2026-08-14T15:54:54.1699153+00:00"
+}

@@ -1,0 +1,19 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginContractProbe",
+  "result": "PASS",
+  "productSourceChanged": false,
+  "adrSameOrigin": true,
+  "apiDerivesFromWebOrigin": true,
+  "routerConvergesDiscoveryAndMcp": true,
+  "candidateSupervisorWebOrigin": "http://127.0.0.1:3301",
+  "rollbackSupervisorWebOrigin": "http://127.0.0.1:3300",
+  "currentCounterexample": {
+    "discoveryStatus": 200,
+    "advertisedMcpUrl": "http://127.0.0.1:3300/mcp",
+    "advertisedWellKnownUrl": "http://127.0.0.1:3300/.well-known/workmesh-agent",
+    "mcp3301Status": 401,
+    "mcp3300Status": 404
+  },
+  "checkedAt": "2026-08-14T14:42:41.1300959+00:00"
+}

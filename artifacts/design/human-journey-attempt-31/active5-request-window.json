@@ -1,0 +1,22 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveRequestWindow",
+  "result": "PASS_BOUNDED_WINDOW",
+  "source": "active API supervisor generation-1 stdout log",
+  "startOffset": 77895,
+  "endOffset": 116633,
+  "windowBytes": 38738,
+  "windowSha256": "c8ad1affd3250a20335f597a23a3ac92dbb17a9e27cd7d7d0706619b588e474b",
+  "logLines": 163,
+  "incomingRequests": 83,
+  "methods": {"GET": 74, "OPTIONS": 6, "POST": 2, "PUT": 0, "PATCH": 0, "DELETE": 1},
+  "authorizedFixtureMutations": [
+    {"method": "POST", "path": "/api/v1/agent-connections", "count": 1},
+    {"method": "POST", "path": "/api/v1/agent-connections/redeem", "count": 1},
+    {"method": "DELETE", "path": "/api/v1/agent-connections/bd2c7e2c-8020-4a61-b837-373895056d7a", "count": 1}
+  ],
+  "otherMutationCount": 0,
+  "rawRequestBodiesPersisted": false,
+  "credentialLikeLogScan": {"authorization": 0, "bearer": 0, "cookie": 0, "pairingSecretField": 0, "installationTokenField": 0},
+  "secretValuesSerialized": false
+}

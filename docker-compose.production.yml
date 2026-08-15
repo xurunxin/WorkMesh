@@ -205,6 +205,7 @@ services:
       WORKMESH_SERVICE: mcp
       WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
       WORKMESH_API_URL: http://api:3001
+      WORKMESH_BROWSER_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
       # Static Session mode needs both values. Coordination mode authenticates
       # each request with X-WorkMesh-Installation-Token and may leave them empty.
       WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}

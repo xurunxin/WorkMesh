@@ -1,0 +1,45 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31PublicMcpOriginCompensationProbe",
+  "result": "PASS",
+  "productionFunction": "Invoke-V31PublicOriginCompensation",
+  "productionCallers": [
+    "start-public-origin.ps1",
+    "rollback-public-origin.ps1"
+  ],
+  "cases": [
+    {
+      "name": "retained-old-owner",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptCount": 1,
+      "threw": false
+    },
+    {
+      "name": "missing-old-owner-restart",
+      "result": "ROLLED_BACK_RUNTIME_VERIFIED",
+      "receiptCount": 1,
+      "threw": false
+    },
+    {
+      "name": "unknown-owner",
+      "result": "ROLLBACK_FAILED",
+      "receiptCount": 1,
+      "threw": true
+    },
+    {
+      "name": "candidate-cleanup-failure",
+      "result": "ROLLBACK_FAILED",
+      "receiptCount": 1,
+      "threw": true
+    },
+    {
+      "name": "old-restart-failure",
+      "result": "ROLLBACK_FAILED",
+      "receiptCount": 1,
+      "threw": true
+    }
+  ],
+  "terminalReceipts": "5/5",
+  "serviceMutationExecuted": false,
+  "checkedAt": "2026-08-14T14:42:40.0020044+00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ActiveMcpEndpointCounterexample",
+  "result": "BLOCK",
+  "observedAt": "2026-08-14T14:11:36.3781677Z",
+  "discovery": {
+    "requestUrl": "http://127.0.0.1:3303/.well-known/workmesh-agent",
+    "status": 200,
+    "advertisedMcpUrl": "http://127.0.0.1:3300/mcp",
+    "advertisedWellKnownUrl": "http://127.0.0.1:3300/.well-known/workmesh-agent"
+  },
+  "readiness": {
+    "requiredUnauthenticatedStatus": 401,
+    "advertisedMcpStatus": 404,
+    "actualMcpProcessUrl": "http://127.0.0.1:3302/mcp",
+    "actualMcpProcessStatus": 401
+  },
+  "conclusion": "The MCP process is healthy, but the server-derived public endpoint given to Humans and clients is not routed. A client following the active guidance cannot reach verify_connection.",
+  "secretValuesSerialized": false,
+  "mutations": {
+    "fixture": 0,
+    "service": false,
+    "database": false,
+    "workmesh": false
+  }
+}

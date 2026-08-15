@@ -1,0 +1,40 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ReplacementActiveBrowserAttemptApproval",
+  "approvalId": "8dfa7dd5-d51c-4a81-8a83-1de4183c96d4",
+  "decision": "approved",
+  "selectorBinding": "v31-replacement-active-browser-attempt-3-v1",
+  "scope": "v31_replacement_active_browser_attempt_3_once",
+  "requestPath": "artifacts/approvals/dogfood-v31-replacement-active-browser-attempt-3-request.json",
+  "requestSha256": "7fe3ccdacd15c4d1176b6caf946874446d2bd37de95fb36127f74cccb5e0d6e6",
+  "graphPath": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml",
+  "graphSha256": "511d6be2906b611d107bc1055c1850160417b5c38d5447b34c51e16cd771580a",
+  "activationPath": "artifacts/runtime/dogfood-v31-public-mcp-origin-routing-activation.json",
+  "activationSha256": "879dc5925840b7fd8cf27942ad348e9db6201a58f71f148961b08f5f05c20c44",
+  "decisionText": "Human explicitly approved v31 replacement active Browser attempt 3 in the Codex task after reviewing the separate Graph v9 Browser Gate proposal.",
+  "approvedActions": {
+    "freshInAppBrowserTabs": 1,
+    "activeBrowserAttempt": "3/3",
+    "maxWorkMeshFixtureMutations": 4,
+    "rawRequestAudit": true,
+    "responsiveAndKeyboardEvidence": true,
+    "fixtureCleanupRequired": true,
+    "viewportResetRequired": true,
+    "exactlyOnceFinalizeRequired": true
+  },
+  "excluded": {
+    "serviceReplacement": true,
+    "serviceRestart": true,
+    "databaseSchemaMutation": true,
+    "arbitraryDataMutation": true,
+    "objectStorageMutationOutsideFixture": true,
+    "gen11Completion": true,
+    "gitHistoryRewrite": true,
+    "securityApproval": true
+  },
+  "approvedAt": "2026-08-14T15:02:30.0859961Z",
+  "expiresAt": "2026-08-14T16:02:30.0880536Z",
+  "singleUse": true,
+  "consumed": false,
+  "securityScanRun": false
+}

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   agentCapabilityManifestResponseSchema,
+  agentConnectionClientTypeSchema,
+  agentWellKnownResponseSchema,
   clientProfileErrorReactions,
   createAgentCapabilityManifest,
   featureDefinitions,
@@ -39,7 +41,7 @@ describe('Agent Collaboration Client Profile contract', () => {
         activeDelegation: true,
         liveGrantIntersection: true,
       },
-      transports: { mcpBindings: ['resource:agent-capabilities', 'tool:get_current_identity', 'tool:verify_connection'] },
+      transports: { mcpBindings: ['resource:agent-capabilities', 'tool:get_current_identity', 'tool:get_workmesh_context', 'tool:verify_connection'] },
     })
     expect(mcpPolicyBindings['resource:agent-capabilities'].operationId).toBe('getAgentCapabilityManifest')
     expect(manifest.operations.filter(operation => operation.feature.key).every(operation => !operation.supported)).toBe(true)
@@ -58,5 +60,21 @@ describe('Agent Collaboration Client Profile contract', () => {
       'FEATURE_DISABLED',
       'CURSOR_EXPIRED',
     ])
+  })
+
+  it('publishes a closed MCP client set and server-derived discovery selectors', () => {
+    expect(['codex', 'opencode', 'pi', 'generic_mcp'].map(value => agentConnectionClientTypeSchema.parse(value))).toEqual([
+      'codex', 'opencode', 'pi', 'generic_mcp',
+    ])
+    expect(() => agentConnectionClientTypeSchema.parse('unknown-client')).toThrow()
+    const discovery = {
+      protocolVersion: 'v1' as const,
+      mcpUrl: 'https://workmesh.example/mcp',
+      wellKnownUrl: 'https://workmesh.example/.well-known/workmesh-agent',
+      apiVersion: releaseMetadata.restApiVersion,
+      supportedClients: ['codex', 'opencode', 'pi', 'generic_mcp'] as const,
+      skill: { name: 'workmesh' as const, version: '1.1.0', sha256: `sha256:${'a'.repeat(64)}`, signature: 'ed25519:test-signature' },
+    }
+    expect(agentWellKnownResponseSchema.parse(discovery)).toEqual(discovery)
   })
 })

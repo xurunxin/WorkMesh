@@ -1,0 +1,42 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateJourneyIndependentVerificationSummary",
+  "observedAt": "2026-08-14T08:05:00.000Z",
+  "result": "BLOCK",
+  "fixedInputs": {
+    "graph": "de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "stateSequence17": "842cea7f468740f8a83a1c38732936f3e0a555cf36617a5b4eb91fe6069d3081",
+    "eventsThrough17": "cb4229bb89da62b19ed7bd01893ec99e04dcd5fe210be9df4b8c47746713f42c",
+    "acceptance": "10cc026462fc33696d2bbffa3f955fd35b580e10660d65d2c7a092306dce715a",
+    "browserDom": "12cd81479c9e502f1dcb0eaadc8b47cf81d4a76eea54fc1752be6657a3d4d4a8",
+    "blockerAudit": "a866f30b64eb095588c8df755a23d17974b809a1ffa21b96e56164d026c31d4e",
+    "runtimeCleanup": "0e8900689cadce5134a5dcc52ee479533ab8a0ea3b4bb4317a79f5b15618c740",
+    "requestAudit": "a7ba28c1f6eb56acbae0218f7008a54d545137eba5eaa16701d4dae24114be69",
+    "screenshot": "86382b0bb222bdfd9356e51102474271026c0387a8d4386815cbd966f24f3e7e"
+  },
+  "directInspection": {
+    "screenshot": "The desktop capture visibly renders Discovery unavailable and Discovery failed (403), not Coordination feature disabled.",
+    "dom": "1280x720, documentWidth equals clientWidth, no credential-like text, one alert with the same misclassification.",
+    "source": "The public page discards the structured error and hard-codes coordination enabled; the admin diagnostic caller omits its onboarding context.",
+    "liveApi": "The exact discovery request returns 403 FEATURE_DISABLED for WORKMESH_BETA_COORDINATION_MCP."
+  },
+  "preservedPasses": {
+    "browserLifecycle": "one fresh tab, viewport reset, exactly one finalize, zero calls after finalize",
+    "requestAudit": "4 GET + 1 OPTIONS, zero mutation methods, zero persisted secret header values",
+    "runtime": "7/7 health, candidate ports closed, exact active PIDs unchanged",
+    "workMesh": "GEN-11 In Progress revision 2 coord:active Dogfood Owner",
+    "secretEvidenceScan": "zero matches in the bounded JSON/JSONL/log corpus"
+  },
+  "blocker": {
+    "id": "V31-F1",
+    "severity": "major",
+    "affectedClaims": ["V31-G3", "V31-G6", "V31-N7-A1", "V31-N8-A1"],
+    "summary": "Required onboarding states are not truthfully wired to live facts, so candidate Browser evidence cannot directly prove the contracted Human journey."
+  },
+  "repairNode": "repair-v31-onboarding-live-state-wiring",
+  "transitionAllowed": false,
+  "activationAuthorized": false,
+  "rollbackRequired": false,
+  "securityScanExecuted": false,
+  "securityApprovalClaimed": false
+}

@@ -1,0 +1,26 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31McpOnboardingContractStaticAudit",
+  "result": "PASS",
+  "fixedInputs": {
+    "graph": "de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67",
+    "stateAtClaim": "bb56a6321d1ebe1cc787958622b21676e684567d98885ce5e53fafa0dad0a19b",
+    "eventsThrough000003": "c0fb59319062487bf3328e05c5f78f897d7693960c9d08c5cffa6076449d89a3",
+    "baseline": "320c19247117ebac8ea5ab3ad904034be010e49dd50f3a66385259b0376ba8dd",
+    "contract": "108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b"
+  },
+  "source": {"fileCount": 580, "canonicalSha256": "15445387c5cff0e70a66940608b1dbbbc8ac6ae4b84a22eaf2a614fa78051f2d"},
+  "build": {"fileCount": 118, "canonicalSha256": "9ec68786ed724b27052a06b4107ac33489daa12f3db56ad91fa43fbea0246231", "buildId": "V-SFnsKVQ5xpM6FrzLW5l", "preview34601Matches": 5, "active3301Matches": 0, "legacyLocalhost3001Matches": 0},
+  "writeTargets": {"count": 15, "existingAdaptOrConditional": 12, "absentAdds": ["apps/web/app/lib/mcp-onboarding.ts", "apps/web/app/lib/mcp-onboarding.test.ts", "apps/web/e2e/mcp-onboarding.spec.ts"], "exact": true},
+  "compatibility": {
+    "clientTypes": ["codex", "opencode", "pi", "generic_mcp"],
+    "publicDiscovery": ["protocolVersion", "mcpUrl", "wellKnownUrl", "apiVersion", "supportedClients", "skill"],
+    "publicReleaseProfile": "/api/v1/info preferredClientProfileVersion",
+    "mcpTools": ["get_current_identity", "verify_connection", "get_workmesh_context"],
+    "apiRouteAdditionNeeded": false,
+    "packageOrLockMutationNeeded": false,
+    "migrationNeeded": false,
+    "mcpBusinessPolicyNeeded": false
+  },
+  "assertions": {"fixedInputs": true, "source": true, "build": true, "packages": true, "targets": true, "clientDiscovery": true, "mcpBootstrap": true, "diagnostics": true, "authorityBoundary": true, "secretBoundary": true, "budgets": true}
+}

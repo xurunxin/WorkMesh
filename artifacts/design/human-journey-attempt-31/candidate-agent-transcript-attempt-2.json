@@ -1,0 +1,37 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CandidateAgentFixtureTranscript",
+  "result": "PASS",
+  "observedAt": "2026-08-14T08:42:00.000Z",
+  "liveReadOnlyVerification": {
+    "tool": "verify_connection",
+    "connectionVerified": true,
+    "actorId": "4b5ede91-e824-4002-8882-4fd2601f39e8",
+    "sessionId": "09973ca6-feba-4232-8179-5a58a5a0822f",
+    "sessionState": "executing",
+    "sessionRevision": 1,
+    "team": {"id": "bc8daa41-561c-45e2-8c6d-5028286c1ca2", "key": "GEN", "name": "General"},
+    "effectiveCapabilities": ["comment:write", "message:write", "plan:write", "work:read", "work:write"],
+    "supportedProtocols": ["mcp"],
+    "profileVersion": "1.0",
+    "skillSelectorChecked": true,
+    "getWorkmeshContextChecked": true
+  },
+  "boundedDisposableFixture": {
+    "fixtureId": "candidate-proxy-attempt-2",
+    "authority": "local read-only evidence proxy only",
+    "statesExercised": ["pending_pairing", "pairing_expired", "active_healthy", "rotating", "revoked", "team_scope_unavailable", "unsupported_client", "forbidden", "service_error", "empty"],
+    "revoked": true,
+    "cleaned": true,
+    "activeWorkMeshConnectionCreated": false,
+    "activeDataMutation": false,
+    "credentialPersisted": false
+  },
+  "redaction": {
+    "installationToken": "not captured",
+    "sessionToken": "not captured",
+    "authorizationHeaderValue": "not captured",
+    "cookieValue": "not captured",
+    "secretValueCount": 0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31ContractRuntimeWorkMeshReadback",
+  "result": "PASS",
+  "observedAt": "2026-08-14T07:11:46.3007044Z",
+  "runtime": {
+    "listeners": [
+      {"port": 3001, "pid": 44104, "startTimeUtc": "2026-08-14T05:46:54.5308239Z", "health": 200},
+      {"port": 3300, "pid": 30096, "startTimeUtc": "2026-08-14T06:35:09.5793750Z", "health": 200},
+      {"port": 3301, "pid": 24516, "startTimeUtc": "2026-08-14T05:46:54.4997244Z", "health": 200},
+      {"port": 3302, "pid": 70676, "startTimeUtc": "2026-08-14T05:46:55.1918851Z", "health": 200},
+      {"port": 3303, "pid": 72736, "startTimeUtc": "2026-08-14T05:46:55.2440417Z", "health": 200},
+      {"port": 3304, "pid": 71408, "startTimeUtc": "2026-08-14T05:46:55.1158461Z", "health": 200}
+    ],
+    "minio59000Health": 200,
+    "servedBuildId": "V-SFnsKVQ5xpM6FrzLW5l",
+    "servedBuildStatus": 200,
+    "rollbackBuildId": "PDmZRxR35OqR7EPMC3I90",
+    "rollbackBuildStatus": 404,
+    "healthPass": "7/7"
+  },
+  "workmesh": {
+    "connectionVerified": true,
+    "sessionId": "09973ca6-feba-4232-8179-5a58a5a0822f",
+    "sessionState": "executing",
+    "profileVersion": "1.0",
+    "skill": {"name": "workmesh", "version": "1.1.0", "sha256": "sha256:0e23345fdf4d1203474a6b2d310d985314997d6c2507ed040633fa818536e101"},
+    "teamDiscovery": "ok",
+    "gen11": {"id": "4feddd7d-2784-4788-a73b-c9e27cd55e4d", "revision": 1, "status": "Backlog", "statusId": "6a1d52f6-faca-4f55-a8d7-d1729913761f", "labels": ["coord:paused", "migration", "module:mcp", "owner:unassigned", "roadmap:post-ga", "security", "type:enhancement"], "responsibleHumanActorId": "db6d28e8-80e2-4e9a-a3da-4df9dd4d88fa", "responsibleHumanDisplayName": "Dogfood Owner", "activeExecutor": null},
+    "eventsAfter180": 0
+  },
+  "mutations": {"product": false, "service": false, "database": false, "workmesh": false, "git": false, "browser": false, "securityScan": false}
+}

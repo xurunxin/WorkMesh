@@ -1,0 +1,89 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31OnboardingStateRepair",
+  "statusProposal": "verifying",
+  "observedAt": "2026-08-14T08:20:30.7611767Z",
+  "fixedInputs": {
+    "graphV2": "docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:4e7ac2e073c0d4229dea85e8f0cde6c080a5f14e467b2d0a24cd3e7e4c958a78",
+    "stateAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sha256:fda1b7d157c57eb54ea42a128f4a301e9d1e1a503486ba904843a6d27c837721",
+    "eventsAtClaim": "docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000020@sha256:e71eb8ddbb06248fa8a51ac9259863795cde43d5926ff6afee40f468c18e3c60",
+    "immutableBlockedGate": "artifacts/gates/dogfood-v31-candidate-journey-gate.yaml@sha256:1de0b68402c0ad0b4bdc43b600ed14dd52a79afcd07459131f5f99e56a6deb28",
+    "acceptedImplementation": "artifacts/implementation/dogfood-v31-mcp-onboarding-report.json@sha256:f70e76297ad87003a279b2eedc1c1de8d3808b021e754606d55e14dd59a5f7e9"
+  },
+  "repair": {
+    "findingClosed": "V31-F1",
+    "summary": "Preserve structured FEATURE_DISABLED discovery facts, remove the public guide hard-code, supply server-derived onboarding context to public and admin diagnostics, and perform a credential-free MCP readiness challenge.",
+    "changedPaths": [
+      "apps/web/app/agent-connections-panel.tsx",
+      "apps/web/app/connect/page.tsx",
+      "apps/web/app/lib/connection-diagnostics.test.ts",
+      "apps/web/app/lib/connection-diagnostics.ts",
+      "apps/web/app/lib/mcp-onboarding.test.ts",
+      "apps/web/app/lib/mcp-onboarding.ts",
+      "apps/web/e2e/mcp-onboarding.spec.ts"
+    ],
+    "pathHashes": {
+      "apps/web/app/agent-connections-panel.tsx": "6651b8b820af8ab562af05359eeb4ab03ac9e179c10243c1cd3440023c56b182",
+      "apps/web/app/connect/page.tsx": "2dc14a51ddeed0a1bf2d8321c70d5fd0b97c542498acc2f71192d51988268b33",
+      "apps/web/app/lib/connection-diagnostics.test.ts": "c567a1779355e5f9e1ad7485e9606790334c5ebded33070354fd1cc4dae3e4a8",
+      "apps/web/app/lib/connection-diagnostics.ts": "36969c758d84b02ae0af46ef9ea43714d5dc7cd7400d5955ece1f92fa38b1c5f",
+      "apps/web/app/lib/mcp-onboarding.test.ts": "3c697de9d66a0481c60e4cde11ab2691507be24b14fbe744d435b9f0ba321d92",
+      "apps/web/app/lib/mcp-onboarding.ts": "0fdd51fb6ff7a34859df1f9e744ab278bbf155ee87b73ca79e9903f866ca6742",
+      "apps/web/e2e/mcp-onboarding.spec.ts": "1d67d2304a626469c3db94d2ff783ac9efa0a1ac792bce7f32dd6daf2282509d"
+    },
+    "authorityBoundary": {
+      "featureStateDerivedFromStructuredServerResponse": true,
+      "publicCoordinationHardCodeRemoved": true,
+      "adminDiagnosticReceivesOnboardingContext": true,
+      "mcpReadinessProbeCarriesCredential": false,
+      "mcpReadinessExpectedStatus": 401,
+      "frontendGrantsAuthority": false
+    },
+    "packageOrLockMutation": false,
+    "apiOrMigrationMutation": false,
+    "scopeExpanded": false
+  },
+  "candidate": {
+    "root": "G:/Projects/MetronX/WorkMesh-human-experience-v31",
+    "sourceFileCount": 583,
+    "sourceCanonicalSha256": "dcbce0e8010f065482bff53208bf220192ae8f1ea2588964623470444a72f5a8",
+    "buildFileCount": 118,
+    "buildCanonicalSha256": "b1c614df34a603149ebe9a343190bc21d143fc4a305fd0ae845821db2a29ad05",
+    "buildId": "Yj0IS_0CtW-lStIuWIemm",
+    "previewApiOriginMatches": 5,
+    "activeApiOriginMatches": 0,
+    "legacyLocalhostMatches": 0,
+    "bundle": {
+      "sharedGzipDeltaBytes": 560,
+      "connectRouteGzipDeltaBytes": 2898,
+      "agentsRouteGzipDeltaBytes": 2876,
+      "withinBudget": true
+    }
+  },
+  "evidence": {
+    "staticAudit": "artifacts/implementation/dogfood-v31-onboarding-state-repair-audit.json@sha256:107b91b3fc897fea5d21dc5c2204de0bc3f6246d3d0321dd0acf881c2d1c4583",
+    "focusedTests": "PASS 2 files / 8 tests",
+    "fullWebTests": "PASS 24 files / 116 tests",
+    "webTypecheck": "PASS",
+    "webLint": "PASS",
+    "webBuild": "PASS 11 routes",
+    "packageIdentity": "PASS 6/6",
+    "runtimeInvariance": "PASS exact listeners 3001/3300/3301/3302/3303/3304, health 7/7 including MinIO, active v30 build unchanged",
+    "workmeshReadback": "GEN-11 In Progress revision 2, coord:active, responsible Human Dogfood Owner"
+  },
+  "knownLimitations": [
+    "The repaired Playwright route spec is authored but not executed in this repair node; the graph reserves the remaining in-app Browser attempt for candidate acceptance attempt 2.",
+    "The unauthenticated MCP probe treats the exact 401 credential challenge as readiness and never sends an installation or Session credential.",
+    "No security scan was run; focused authorization and secret-boundary tests are not security approval."
+  ],
+  "mutations": {
+    "candidateProduct": true,
+    "activeProduct": false,
+    "service": false,
+    "database": false,
+    "workmesh": false,
+    "git": false,
+    "browser": false,
+    "securityScan": false
+  }
+}

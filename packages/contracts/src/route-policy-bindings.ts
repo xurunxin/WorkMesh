@@ -691,9 +691,24 @@ export const routeOperationBindings = [
     "operationId": "requestArtifactUpload"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/artifact-upload-intents/{id}",
+    "operationId": "getArtifactUploadStatus"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/artifact-upload-intents/{id}/finalize",
     "operationId": "finalizeArtifactUpload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/artifact-upload-intents/{id}/cancel",
+    "operationId": "cancelArtifactUpload"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/work-items/{id}/artifacts",
+    "operationId": "listWorkItemArtifacts"
   },
   {
     "method": "GET",
@@ -721,9 +736,44 @@ export const routeOperationBindings = [
     "operationId": "getProjectDelivery"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/projects/{id}/milestones",
+    "operationId": "listProjectMilestones"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/projects/{id}/milestones",
     "operationId": "createProjectMilestone"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/milestones/{id}",
+    "operationId": "getMilestone"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/milestones/{id}",
+    "operationId": "updateMilestone"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/milestones/{id}",
+    "operationId": "deleteMilestone"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/work-items/{id}/relations",
+    "operationId": "listWorkItemRelations"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/work-items/{id}/relations",
+    "operationId": "createWorkItemRelation"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/work-items/{id}/relations/{relationId}",
+    "operationId": "deleteWorkItemRelation"
   },
   {
     "method": "POST",
@@ -891,9 +941,19 @@ export const routeOperationBindings = [
     "operationId": "setBudgetPolicy"
   },
   {
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "operationId": "listNotifications"
+  },
+  {
     "method": "POST",
     "path": "/api/v1/notifications",
     "operationId": "createNotification"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notification-preferences",
+    "operationId": "getNotificationPreferences"
   },
   {
     "method": "PUT",
@@ -949,6 +1009,11 @@ export const routeOperationBindings = [
     "method": "GET",
     "path": "/.well-known/workmesh-agent",
     "operationId": "getWorkMeshAgentWellKnown"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/agent-connections",
+    "operationId": "listAgentConnections"
   },
   {
     "method": "POST",

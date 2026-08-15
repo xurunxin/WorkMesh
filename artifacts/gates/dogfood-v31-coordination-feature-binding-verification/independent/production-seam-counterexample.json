@@ -1,0 +1,23 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31CoordinationFeatureProductionSeamCounterexample",
+  "result": "BLOCK",
+  "findingId": "V31-COORD-GATE-001",
+  "severity": "major",
+  "failedClaims": ["V31-N13R-A2", "V31-N13V-A1"],
+  "required": "An executable production-seam matrix covering success, partial-stop, retained-owner, unknown-owner, restart-failure, and terminal rollback receipt behavior.",
+  "observed": {
+    "probePath": "artifacts/runtime/dogfood-v31-coordination-feature-activation/test-compensation.ps1",
+    "probeSha256": "69a2c4a8187b5df4399bde9873ee66f024f76f891f3f6b9f923d7cd4bdfe393d",
+    "onlyInvokedFunction": "Resolve-V31OldRoleConvergenceDecision",
+    "productionRestoreOldRoleInvoked": false,
+    "productionPartialStopCatchInvoked": false,
+    "productionRestartFailureInvoked": false,
+    "productionTerminalReceiptWriterInvoked": false,
+    "reportedCases": 5,
+    "decisionCasesPassed": 5
+  },
+  "impact": "The green 5/5 evidence proves only the pure convergence decision table. It does not prove that production compensation performs the correct retained/restart routing or emits ROLLED_BACK_RUNTIME_VERIFIED or ROLLBACK_FAILED before throwing.",
+  "stopRule": "deterministic executable-evidence gap on a critical-risk node",
+  "capturedAt": "2026-08-14T12:51:53.8597155Z"
+}

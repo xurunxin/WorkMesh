@@ -1,0 +1,30 @@
+{
+  "artifactVersion": 1,
+  "kind": "DogfoodV31FinalHashAndProvenanceVerification",
+  "result": "PASS",
+  "observedAt": "2026-08-14T20:21:47.4291039Z",
+  "fixedInputs": {
+    "graph": "478a679e892053fa98afb076083a20098d964b6e12b71ad4802aa3ef000716dd",
+    "stateSequence137": "58cff018427e511ccb2e8c0f5170417e4f8fc4e9c3ca680e2664a3fe0afe4114",
+    "eventsThrough137": "d54ee72eb82c6c17fc57d1f76c4f4a5d9cf73635e1960f87e6c1712aa1262786",
+    "activeAcceptance": "b55f73b5949c689ce50c786c636a873debe007f9b6baf42f7d925149403b6fe0",
+    "mcpActivation": "d1bf4968666e6fd6fe5dd862b528ca17cf5e0d2aaef9891ecfdaa9d4cbc3b89d",
+    "apiActivation": "58f4a29db7130f19391e63d1513426974702729f72322aa5aa28ab024e169d3f",
+    "coordinationActivation": "a20a31bc8ce3bd024e5839392eefbefe94f3540426ee48164b19e84511bbcd72"
+  },
+  "activeAcceptanceReferences": {
+    "count": 12,
+    "rehashMatches": 12,
+    "screenshotsDirectlyInspected": 7,
+    "candidateCarryForwardAcceptance": "82ac19416ff90e1ef8ee4aacddcfb69e66fa083c5910a98a28a8f583ba5ddabb",
+    "candidateCarryForwardGate": "03d2a53dfd16de1e53f14fde7905e26f3307c91ce4d7cb5a6179e1feb95d2604",
+    "exactServedBuildId": "Yj0IS_0CtW-lStIuWIemm"
+  },
+  "activationChains": {
+    "mcp": {"contract": "e409220eec6de6afdbecac4fead1cc6ff9b8b4f11c1dc65e98594d68b927a4df", "gate": "7d0305682ebd66881c4353355989064d8a99816ab4327aaedb92f6246ab4df2f", "request": "3df39fe7365c430d5bed339610ca02e6ed683b6940ab16852663c5c4b3837089", "approval": "968837cdb8e8090c6d7197456047cfb95a7510f04b3f4c1f4328c5037c793e33"},
+    "api": {"contract": "48af261d8f407a8d19810b0657c6bf4aff6e7474c61546084a3f02887e2734d4", "gate": "43697d67c14bcd9fef44be159a44b0348b6ce7b62ddbfb11d3605f8338d1c711", "request": "744c6022c1a4e6200db1123df4d57c4853debb9f57f0623a2e6a591b5f24eeb4", "approval": "d028a6bbd9c8363ef657d3fffa0f869b940085848ae69ffe8a2175239c6692ad"},
+    "coordination": {"contract": "06d2afc9865e49f889e79db6f5a1b2be81dc637498dd510789aeb7851fe99698", "gate": "0a93c7c61ce7de7ceea5f71e909bdf993eb0e14512557d85f5fa04d9089c30f8", "request": "a0063bde6a09461092e3549ff857611f90d90aecac5772c026f2ca1b3c47d49c", "approval": "4606dc4d9fa3189d48cf5796256fb461bf71cca65109bed835623d647559834e"}
+  },
+  "futureCompletionArtifactAbsent": true,
+  "securityScanRun": false
+}

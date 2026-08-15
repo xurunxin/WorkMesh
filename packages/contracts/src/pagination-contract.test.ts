@@ -36,11 +36,14 @@ const collectionPaths = [
   '/api/v1/teams',
   '/api/v1/teams/{id}/states',
   '/api/v1/projects',
+  '/api/v1/projects/{id}/milestones',
   '/api/v1/actors/humans',
   '/api/v1/work-items',
   '/api/v1/work-items/{id}/comments',
+  '/api/v1/work-items/{id}/relations',
   '/api/v1/views',
   '/api/v1/agents',
+  '/api/v1/agent-connections',
   '/api/v1/agent-sessions',
   '/api/v1/agent-sessions/{id}/activities',
   '/api/v1/agent-sessions/{id}/plans',
@@ -59,6 +62,7 @@ const collectionPaths = [
   '/api/v1/automation-rules',
   '/api/v1/automation-runs',
   '/api/v1/loops',
+  '/api/v1/notifications',
   '/api/v1/templates',
 ] as const
 
@@ -83,7 +87,7 @@ describe('pagination OpenAPI contract', () => {
         { $ref: '#/components/parameters/Limit' },
       ]))
       expect(operation?.responses?.['200']?.$ref, path).toMatch(
-        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|InboxItems)$/,
+        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|InboxItems|Milestones|WorkItemRelations)$/,
       )
     }
     const opaqueCursorPaths = Object.entries(openapi.paths)

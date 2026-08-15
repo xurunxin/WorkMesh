@@ -1,0 +1,88 @@
+GateReport:
+  gate_id: dogfood-v31-mcp-onboarding-contract-gate
+  graph_id: workmesh-human-agent-experience-dogfood-v31-mcp-onboarding
+  graph_version: 1
+  node_id: verify-v31-contract
+  artifact_versions:
+    - docs/workgraphs/workmesh-human-agent-experience-dogfood-v31-mcp-onboarding.yaml@sha256:de2513a81bc48c1d99d862953b71f424cdd4a26534cbb99103dcc56264fa6b67
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.yaml@sequence:3@sha256:bb56a6321d1ebe1cc787958622b21676e684567d98885ce5e53fafa0dad0a19b
+    - docs/workgraphs/executions/workmesh-human-agent-experience-dogfood-run-031.events.jsonl@through:000003@sha256:c0fb59319062487bf3328e05c5f78f897d7693960c9d08c5cffa6076449d89a3
+    - artifacts/runtime/dogfood-v31-gen11-baseline.json@sha256:320c19247117ebac8ea5ab3ad904034be010e49dd50f3a66385259b0376ba8dd
+    - artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b
+  worker_id: graph-owner
+  attempt: 1
+  verifier:
+    actor_id: fresh-independent-contract-verifier
+    scope: [fixed_inputs, source, build, packages, write_boundary, routes, identity, authority, secrets, tests, browser_contract, activation, runtime, workmesh]
+    independent_context: true
+  result: PASS
+  claim_checks:
+    - claim_id: V31-N1-A1
+      assertion: Baseline records exact active v30 source, build, package, runtime, and WorkMesh selectors with runtime byproducts excluded.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/static-audit.json@sha256:af77453d0fea158202fb6fde119e2fdbd1257f477ce2a51c682ca466b9175b03
+          observed: Source 580/15445387, build 118/9ec68786/BUILD_ID V-SFns, six package selectors, and all baseline hashes independently matched.
+          source: fresh canonical source/build/package rehash
+        - ref: artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/runtime-workmesh-readback.json@sha256:849be138ad85fac1cadfb9eedf08e17e4a450393512c3df4a8f6392f0d101d9b
+          observed: Runtime listeners and start times remained exact, health was 7/7, active build returned 200, rollback build returned 404, and GEN-11 remained Backlog revision 1.
+          source: fresh read-only runtime and WorkMesh MCP readback
+      method: canonical rehash and read-only runtime/MCP verification
+      gaps: []
+      repair: null
+    - claim_id: V31-N1-A2
+      assertion: Contract enumerates every permitted write target and separates Human, pairing, installation, Agent Session, Delegation, and capability authority.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/static-audit.json@sha256:af77453d0fea158202fb6fde119e2fdbd1257f477ce2a51c682ca466b9175b03
+          observed: All 15 candidate-relative targets matched 12 existing adapt/conditional files plus exactly three absent add paths; package, migration, API-route, and MCP-policy expansion are false.
+          source: fresh target and source compatibility audit
+      method: source and contract inspection
+      gaps: []
+      repair: null
+    - claim_id: V31-N1-A3
+      assertion: Client configuration, diagnostics, secret handling, Browser states, tests, activation, fixture cleanup, and rollback have machine-readable acceptance and budgets.
+      result: PASS
+      evidence:
+        - ref: artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b
+          observed: Four client profiles, 16 Human states, six Agent bootstrap checks, nine secret classes and forbidden sinks, test matrices, two candidate/two active Browser attempts, bundle budgets, one bounded fixture, and compensation rules are explicit.
+          source: independent machine-readable contract inspection
+      method: contract completeness and boundary review
+      gaps: []
+      repair: null
+    - claim_id: V31-N2-A1
+      assertion: All baseline, contract, route, identity, secret, client, state, test, budget, activation, and rollback claims independently PASS with no unresolved major or critical finding.
+      result: PASS
+      evidence:
+        - ref: artifacts/gates/dogfood-v31-mcp-onboarding-contract-verification/summary.json@sha256:50cba3859be4ae3d68fede0ef6c2b6fd70f02265e4535999bb2f642a4fc98d21
+          observed: Existing public discovery and release routes, four-client contract enum, verify_connection/get_workmesh_context/get_current_identity, bounded diagnostics, runtime, live profile/Skill, and exact GEN-11 state all passed without an API addition.
+          source: fresh independent summary
+      method: independent synthesis of fixed source, runtime, and MCP evidence
+      gaps: []
+      repair: null
+  findings: []
+  accepted_artifacts:
+    - artifacts/runtime/dogfood-v31-gen11-baseline.json@sha256:320c19247117ebac8ea5ab3ad904034be010e49dd50f3a66385259b0376ba8dd
+    - artifacts/design/dogfood-v31-mcp-onboarding-contract.json@sha256:108294489b0d4e2977d1bf3ccfcf9ca10a66138ac131b545112e0d9d97bd4b7b
+  rejected_artifacts: []
+  risks_or_unverified:
+    - Security scanning was explicitly excluded; this Gate makes no security approval claim.
+    - Browser, product, service, database, Git, and active-target mutation were prohibited and not executed.
+    - Candidate implementation must stop and version the graph if it discovers any required target outside the exact 15-path boundary.
+  repair_nodes: []
+  transition:
+    allowed: true
+    scope: exact_gen11_revision1_start_and_isolated_v31_materialization_only
+    workmesh_start: true
+    candidate_materialization: true
+    candidate_implementation: false
+    browser: false
+    active_replacement: false
+    reason: The exact baseline and bounded MCP onboarding contract passed independent verification; only GEN-11 start and isolated byte-exact candidate materialization are unlocked.
+  next_handoff:
+    skill: task-graph-execution
+    required_inputs:
+      - this GateReport
+      - exact baseline and contract
+    completion_gate: Start GEN-11 exactly once at revision 1 and independently materialize a byte-exact candidate before implementation.
+  observed_at: 2026-08-14T07:12:53.8497348Z
