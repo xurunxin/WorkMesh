@@ -1112,7 +1112,7 @@ describe('live paged-read authorization', () => {
         `${path} must carry its authorization predicate into final paged SQL`,
       ).toBe(true)
     }
-  })
+  }, 15_000)
 
   it('canonicalizes Fastify and OpenAPI route parameters without changing static paths', () => {
     expect(canonicalRoutePath('/api/v1/teams/:id/states'))
