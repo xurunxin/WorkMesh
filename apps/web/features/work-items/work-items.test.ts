@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../../app/lib/api'
 import { appendWorkSurfacePage, normalizeWorkSurfacePage, serializeWorkSurfaceQuery, workSurfaceQueryForScope, workSurfaceScopeForQuery } from './query'
 import { buildMoveRequest, createWorkItemMoveCommandAdapter, recoverMoveNetworkFailure } from './move-command'
-import { sanitizeSavedViewPreference } from './saved-views'
+import { createSavedViewController, sanitizeSavedViewPreference } from './saved-views'
 import { toWorkSurfaceItem, workSurfaceErrorState } from './view-model'
 import { requestWorkSurfaceLayout } from './work-surfaces'
 
@@ -104,5 +104,24 @@ describe('Work Surface view model and mutation seams', () => {
 describe('Saved View boundary', () => {
   it('persists only preferences and strips rows, cursors, authority and credentials', () => {
     expect(sanitizeSavedViewPreference({ id: 'view-1', name: 'Mine', team_id: 'team-1', layout: 'board', filters: { owner_id: 'human-1', items: [{ id: 'secret' }], csrfToken: 'secret' }, items: [{ id: 'secret' }], resultCursor: 'cursor' })).toEqual({ id: 'view-1', name: 'Mine', teamId: 'team-1', layout: 'board', filters: { responsibleHumanActorId: 'human-1' } })
+  })
+
+  it('merges the create response id into the saved preference', async () => {
+    const controller = createSavedViewController({
+      create: vi.fn().mockResolvedValue({ id: 'view-created', revision: 1 }),
+    })
+
+    await expect(controller.create({
+      name: 'Focused board',
+      teamId: 'team-1',
+      layout: 'board',
+      filters: { label: 'focus' },
+    })).resolves.toEqual({
+      id: 'view-created',
+      name: 'Focused board',
+      teamId: 'team-1',
+      layout: 'board',
+      filters: { label: 'focus' },
+    })
   })
 })

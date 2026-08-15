@@ -59,10 +59,10 @@ export function createSavedViewController(api: SavedViewApi = {}): SavedViewCont
     },
     create: async preference => {
       const response = await createRequest('/api/v1/views', { method: 'POST', headers: { ...json(preferencePayload(preference)) }, body: JSON.stringify(preferencePayload(preference)) })
-      return sanitizeSavedViewPreference(response) ?? preference
+      const id = optionalText(own(response, 'id'))
+      return sanitizeSavedViewPreference({ ...preference, id }) ?? preference
     },
   }
 }
 
 export const savedViewController = createSavedViewController()
-

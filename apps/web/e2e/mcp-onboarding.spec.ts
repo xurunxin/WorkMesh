@@ -30,7 +30,7 @@ test('renders server-derived secret-safe MCP setup for every advertised client',
   await page.goto('/connect#one-time-pairing-fragment')
   await expect(page.getByRole('heading', { name: 'Connect an Agent to WorkMesh' })).toBeVisible()
   await expect(page.getByText('Configuration ready')).toBeVisible()
-  await expect(page.getByText('1.1.0', { exact: false })).toBeVisible()
+  await expect(page.getByText('workmesh 1.1.0')).toBeVisible()
   const select = page.getByLabel('MCP client')
   for (const client of ['codex', 'opencode', 'pi', 'generic_mcp']) {
     await select.selectOption(client)
@@ -49,8 +49,9 @@ test('fails closed when public discovery is unavailable', async ({ page }) => {
     body: JSON.stringify({ error: { code: 'SERVICE_UNAVAILABLE', message: 'offline', correlationId: 'onboarding-e2e' } }),
   }))
   await page.goto('/connect#one-time-pairing-fragment')
-  await expect(page.getByRole('alert')).toContainText('Discovery unavailable')
-  await expect(page.getByRole('alert')).toContainText('Do not infer an endpoint')
+  const alert = page.locator('[role="alert"][data-onboarding-state]')
+  await expect(alert).toContainText('Discovery unavailable')
+  await expect(alert).toContainText('Do not infer endpoints')
 })
 
 test('renders the server feature-disabled state without misclassifying discovery', async ({ page }) => {
@@ -68,7 +69,7 @@ test('renders the server feature-disabled state without misclassifying discovery
     })
   })
   await page.goto('/connect#one-time-pairing-fragment')
-  const alert = page.getByRole('alert')
+  const alert = page.locator('[role="alert"][data-onboarding-state]')
   await expect(alert).toHaveAttribute('data-onboarding-state', 'coordination_feature_disabled')
   await expect(alert).toContainText('Coordination feature disabled')
   await expect(alert).not.toContainText('Discovery unavailable')

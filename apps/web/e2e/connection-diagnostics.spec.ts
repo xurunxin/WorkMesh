@@ -8,6 +8,15 @@ const headers = {
   'Content-Type': 'application/json',
 }
 
+const discovery = {
+  protocolVersion: 'v1',
+  mcpUrl: `${apiUrl}/mcp`,
+  wellKnownUrl: `${apiUrl}/.well-known/workmesh-agent`,
+  apiVersion: '1.0',
+  supportedClients: ['codex'],
+  skill: { name: 'workmesh', version: '1.0.0', sha256: 'a'.repeat(64), signature: 'ed25519:test' },
+}
+
 const baseConnection: AgentConnection = {
   id: 'connection-fault', workspace_id: 'workspace-fault', team_id: 'team-fault',
   agent_actor_id: 'agent-fault', principal_human_actor_id: 'human-fault',
@@ -21,10 +30,14 @@ const baseConnection: AgentConnection = {
 
 test('diagnoses expired, rotating, revoked, and mis-scoped Connections without rendering credentials', async ({ page }) => {
   let connection = { ...baseConnection }
-  await page.route(`${apiUrl}/api/v1/**`, async route => {
+  await page.route(`${apiUrl}/**`, async route => {
     const path = new URL(route.request().url()).pathname
     const body = (payload: unknown, status = 200) => route.fulfill({ status, headers, body: JSON.stringify(payload) })
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
+    if (path === '/.well-known/workmesh-agent') return body(discovery)
+    if (path === '/api/v1/info') return body({ preferredClientProfileVersion: '1.0', supportedClientProfileVersions: ['1.0'], mcpVersion: '1.29.0' })
+    if (path === '/api/v1/features') return body({ features: [{ key: 'WORKMESH_BETA_COORDINATION_MCP', enabled: true }] })
+    if (path === '/mcp') return body({ error: { code: 'UNAUTHORIZED', message: 'credential required', correlationId: 'fault-e2e' } }, 401)
     if (path === '/api/v1/auth/me') return body({ actor: { id: 'human-fault', display_name: 'Rex', workspace_id: 'workspace-fault', workspace_role: 'admin' }, csrfToken: 'fault-csrf' })
     if (path === '/api/v1/teams') return body({ items: [{ id: 'team-fault', name: 'Platform', key: 'PLAT' }], nextCursor: null })
     if (path === '/api/v1/actors/humans') return body({ items: [{ id: 'human-fault', display_name: 'Rex' }], nextCursor: null })
@@ -56,10 +69,14 @@ test('diagnoses expired, rotating, revoked, and mis-scoped Connections without r
 
 test('discovers an existing Connection without browser-local state and distinguishes load failure from empty state', async ({ page }) => {
   let failCollection = false
-  await page.route(`${apiUrl}/api/v1/**`, async route => {
+  await page.route(`${apiUrl}/**`, async route => {
     const path = new URL(route.request().url()).pathname
     const body = (payload: unknown, status = 200) => route.fulfill({ status, headers, body: JSON.stringify(payload) })
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
+    if (path === '/.well-known/workmesh-agent') return body(discovery)
+    if (path === '/api/v1/info') return body({ preferredClientProfileVersion: '1.0', supportedClientProfileVersions: ['1.0'], mcpVersion: '1.29.0' })
+    if (path === '/api/v1/features') return body({ features: [{ key: 'WORKMESH_BETA_COORDINATION_MCP', enabled: true }] })
+    if (path === '/mcp') return body({ error: { code: 'UNAUTHORIZED', message: 'credential required', correlationId: 'fault-e2e' } }, 401)
     if (path === '/api/v1/auth/me') return body({ actor: { id: 'human-fault', display_name: 'Rex', workspace_id: 'workspace-fault', workspace_role: 'admin' }, csrfToken: 'fault-csrf' })
     if (path === '/api/v1/teams') return body({ items: [{ id: 'team-fault', name: 'Platform', key: 'PLAT' }], nextCursor: null })
     if (path === '/api/v1/actors/humans') return body({ items: [{ id: 'human-fault', display_name: 'Rex' }], nextCursor: null })

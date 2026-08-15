@@ -246,9 +246,11 @@ export default function HomePage() {
     setSelectedItem(null)
     if (nextScope === 'project-work-items') {
       const project = teamProjects.find(candidate => candidate.id === view.filters.projectId) ?? null
+      const tab: ProjectWorkspaceTab = view.layout === 'board' ? 'board' : 'list'
       setScope('projects')
       setSelectedProject(project)
-      window.history.pushState({}, '', projectWorkspaceHref({ projectId: project?.id, tab: projectTab }))
+      setProjectTab(tab)
+      window.history.pushState({}, '', projectWorkspaceHref({ projectId: project?.id, tab }))
     } else {
       setScope(nextScope)
       setSelectedProject(null)
@@ -258,6 +260,7 @@ export default function HomePage() {
   const surfaceFilters = useMemo<Filters>(() => {
     if (scope !== 'projects') return filters
     if (projectTab === 'backlog') return { ...filters, statusCategory: 'backlog' }
+    if (filters.statusCategory === undefined) return filters
     const { statusCategory: _statusCategory, ...projectFilters } = filters
     return projectFilters
   }, [filters, projectTab, scope])

@@ -16,7 +16,6 @@ test.describe('v29 Human rich content', () => {
     await page.setViewportSize({ width: 320, height: 800 })
     await page.goto('/?view=active')
     await page.locator('[data-work-item-id]').first().click()
-    await page.getByRole('button', { name: 'Work room' }).click()
     await expect(page.getByRole('textbox', { name: 'Work item comment' })).toBeVisible()
     await page.getByRole('tab', { name: 'Artifacts' }).click()
     await expect(page.getByRole('region', { name: 'Work Item attachments' })).toBeVisible()

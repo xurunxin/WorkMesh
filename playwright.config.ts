@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { resolve } from "node:path";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl) {
@@ -19,6 +20,7 @@ const webPort = "3100";
 const webUrl = `http://127.0.0.1:${webPort}`;
 const apiUrl = `http://127.0.0.1:${apiPort}`;
 const bootstrapToken = process.env.WORKMESH_BOOTSTRAP_TOKEN;
+const authenticatedStatePath = resolve("test-results/.auth/admin.json");
 if (!bootstrapToken) {
   throw new Error(
     "Playwright acceptance tests require an explicit WORKMESH_BOOTSTRAP_TOKEN test fixture.",
@@ -33,6 +35,18 @@ export default defineConfig({
   timeout: 90_000,
   expect: { timeout: 10_000 },
   reporter: [["list"], ["html", { open: "never" }]],
+  projects: [
+    {
+      name: "bootstrap",
+      testMatch: /stage0\.spec\.ts/,
+    },
+    {
+      name: "authenticated",
+      dependencies: ["bootstrap"],
+      testIgnore: /stage0\.spec\.ts/,
+      use: { storageState: authenticatedStatePath },
+    },
+  ],
   use: {
     baseURL: webUrl,
     trace: "retain-on-failure",

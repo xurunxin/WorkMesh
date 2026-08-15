@@ -13,6 +13,7 @@ const workItem = { id: '11b3a703-1b3d-4886-bfe9-b9d4f082bdd4', title: 'Add autho
 
 test('enforces the query threshold, names source failures, and supports keyboard navigation', async ({ page }) => {
   const resourceRequests: string[] = []
+  let captureResourceRequests = false
   await page.route(`${apiUrl}/api/v1/**`, async route => {
     const url = new URL(route.request().url())
     const path = url.pathname
@@ -28,7 +29,8 @@ test('enforces the query threshold, names source failures, and supports keyboard
     if (path === '/api/v1/actors/humans') return list([human])
     if (path === '/api/v1/views') return list([])
     if (path === '/api/v1/events/stream') return route.fulfill({ status: 204, headers })
-    if (['/api/v1/projects', '/api/v1/work-items', '/api/v1/agents', '/api/v1/agent-sessions', '/api/v1/inbox'].includes(path)) resourceRequests.push(route.request().url())
+    const isWorkSurfaceRequest = path === '/api/v1/work-items' && url.searchParams.get('mine') === 'true'
+    if (captureResourceRequests && !isWorkSurfaceRequest && ['/api/v1/projects', '/api/v1/work-items', '/api/v1/agents', '/api/v1/agent-sessions', '/api/v1/inbox'].includes(path)) resourceRequests.push(route.request().url())
     if (path === '/api/v1/projects') return list([project])
     if (path === '/api/v1/work-items') return list([workItem])
     if (path === '/api/v1/agents') return body({ error: { code: 'RESOURCE_SCOPE_DENIED', message: 'Denied', correlationId: 'command-center-e2e' } }, 403)
@@ -42,6 +44,8 @@ test('enforces the query threshold, names source failures, and supports keyboard
 
   await page.goto('/?view=my-work')
   const trigger = page.getByTestId('command-center-trigger')
+  await expect(trigger).toBeVisible()
+  captureResourceRequests = true
   await trigger.click()
   const search = page.getByRole('combobox', { name: 'Search WorkMesh' })
   await expect(search).toBeFocused()

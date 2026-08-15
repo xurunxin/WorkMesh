@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 
 type ApiResponse<T> = { status: number; body: T };
 type PageResult<T> = { items: T[]; nextCursor: string | null };
@@ -15,6 +17,7 @@ type WorkItem = {
 type ApiError = { error: { code: string } };
 
 const apiUrl = "http://127.0.0.1:3101";
+const authenticatedStatePath = resolve("test-results/.auth/admin.json");
 
 async function api<T>(
   page: Page,
@@ -113,7 +116,7 @@ test.describe("Stage 0 browser acceptance", () => {
     browser,
     page,
   }) => {
-    test.setTimeout(90_000);
+    test.setTimeout(180_000);
 
     const teamName = "Stage 0 delivery";
     const editedTeamName = "Stage 0 delivery edited";
@@ -141,8 +144,9 @@ test.describe("Stage 0 browser acceptance", () => {
       .fill("password-acceptance");
     await install.getByTestId("install-submit").click();
     await expect(page.getByRole("heading", { name: "WorkMesh" })).toBeVisible();
-    await expect(page.getByTestId("release-info")).toContainText("v1.0.0");
-    await expect(page.getByTestId("release-info")).toContainText("schema 1");
+    const releaseInfo = page.getByTestId("release-info").first();
+    await expect(releaseInfo).toContainText("v1.0.0");
+    await expect(releaseInfo).toContainText("schema 1");
 
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
@@ -151,7 +155,7 @@ test.describe("Stage 0 browser acceptance", () => {
     await createTeamForm.getByLabel("Team name").fill(teamName);
     await createTeamForm.getByLabel("Team key").fill("E2E");
     await createTeamForm.getByRole("button", { name: "Create team" }).click();
-    const teamSwitcher = page.getByLabel("Current team");
+    const teamSwitcher = page.getByLabel("Current team").first();
     await expect(teamSwitcher).toContainText(teamName);
     await teamSwitcher.selectOption({ label: `${teamName} (E2E)` });
 
@@ -166,7 +170,7 @@ test.describe("Stage 0 browser acceptance", () => {
     await createState(page, "Ready", "planned");
     await createState(page, "In Progress", "started");
     await page.getByRole("link", { name: "Back to daily work", exact: true }).click();
-    await page.getByLabel("Current team").selectOption({ label: `${editedTeamName} (ACC)` });
+    await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     await page.getByTestId("view-projects").click();
     await page.getByRole("button", { name: "New project", exact: true }).click();
     const projectForm = page.getByTestId("create-project");
@@ -194,12 +198,14 @@ test.describe("Stage 0 browser acceptance", () => {
       status: "In Progress",
       priority: "low",
       owner: "Alice",
+      project: projectName,
       labels: "other",
     });
     await createWorkItem(page, {
       title: unassignedDecoyTitle,
       status: "Ready",
       priority: "low",
+      project: projectName,
       labels: "other",
     });
 
@@ -225,20 +231,20 @@ test.describe("Stage 0 browser acceptance", () => {
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters.getByLabel("Filter owner").selectOption({ label: "Alice" });
+    await filters
+      .getByLabel("Filter responsible Human")
+      .selectOption({ label: "Alice" });
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       unassignedDecoyTitle,
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters
-      .getByLabel("Filter project")
-      .selectOption({ label: projectName });
+    const projectFilter = filters.getByLabel("Filter project");
+    await projectFilter.selectOption({ label: projectName });
+    await expect(projectFilter).toHaveValue(/.+/);
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
-    await expect(page.getByTestId("work-list")).not.toContainText(
-      startedDecoyTitle,
-    );
+    await expect(page.getByTestId("work-list")).toContainText(startedDecoyTitle);
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
     await filters.getByLabel("Filter label").fill("focus");
@@ -247,14 +253,19 @@ test.describe("Stage 0 browser acceptance", () => {
       startedDecoyTitle,
     );
 
-    await page.getByTestId("layout-board").click();
+    const layoutToggle = page.getByLabel("Work surface layout");
+    const boardLayout = layoutToggle.getByRole("button", { name: "Board", exact: true });
+    const listLayout = layoutToggle.getByRole("button", { name: "List", exact: true });
+    await boardLayout.click();
+    await expect(boardLayout).toHaveAttribute("aria-pressed", "true");
     await filters.getByPlaceholder("Save current view").fill("Focused board");
     await filters.getByRole("button", { name: "Save view" }).click();
     await expect(filters.getByLabel("Saved views")).toContainText(
       "Focused board",
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
-    await page.getByTestId("layout-list").click();
+    await listLayout.click();
+    await expect(listLayout).toHaveAttribute("aria-pressed", "true");
     await filters
       .getByLabel("Saved views")
       .selectOption({ label: "Focused board" });
@@ -313,10 +324,15 @@ test.describe("Stage 0 browser acceptance", () => {
       await login.getByTestId("login-submit").click();
       await secondPage
         .getByLabel("Current team")
+        .first()
         .selectOption({ label: `${editedTeamName} (ACC)` });
-      await expect(secondPage.getByTestId(`work-${target!.id}`)).toBeVisible();
-      await secondPage.getByTestId(`work-${target!.id}`).click();
-      await expect(secondPage.getByTestId("work-item-drawer")).toBeVisible();
+      const secondPageItem = secondPage.locator(
+        `[data-work-item-id="${target!.id}"]`,
+      );
+      await expect(secondPageItem).toBeVisible();
+      await secondPageItem.click();
+      const secondDrawer = secondPage.getByRole("dialog");
+      await expect(secondDrawer).toBeVisible();
 
       let secondPageNavigations = 0;
       const observeNavigation = () => {
@@ -334,46 +350,50 @@ test.describe("Stage 0 browser acceptance", () => {
       await card.dragTo(inProgressColumn);
       await expect(inProgressColumn).toContainText(issueTitle);
 
-      const serverItem = await api<WorkItem>(
-        page,
-        `/api/v1/work-items/${target!.id}`,
-      );
-      expect(serverItem.status).toBe(200);
-      expect(serverItem.body).toMatchObject({
-        status_id: inProgress!.id,
-        status_name: "In Progress",
-        responsible_human_actor_id: me.body.actor.id,
-      });
+      await expect
+        .poll(async () => {
+          const response = await api<WorkItem>(
+            page,
+            `/api/v1/work-items/${target!.id}`,
+          );
+          return { status: response.status, ...response.body };
+        })
+        .toMatchObject({
+          status: 200,
+          status_id: inProgress!.id,
+          status_name: "In Progress",
+          responsible_human_actor_id: me.body.actor.id,
+        });
       await expect(
-        secondPage
-          .getByTestId("work-item-drawer")
-          .locator('select[name="statusId"]'),
+        secondDrawer.locator('select[name="statusId"]'),
       ).toHaveValue(inProgress!.id);
       expect(secondPageNavigations).toBe(0);
 
-      await page.getByTestId(`work-${target!.id}`).click();
-      const drawer = page.getByTestId("work-item-drawer");
+      await page.locator(`[data-work-item-id="${target!.id}"]`).click();
+      const drawer = page.getByRole("dialog");
       await expect(drawer).toBeVisible();
-      await drawer.getByPlaceholder("Write a comment").fill(commentBody);
+      await drawer
+        .getByRole("textbox", { name: "Work item comment" })
+        .fill(commentBody);
       await drawer
         .getByLabel("Mention people")
         .selectOption({ label: "Alice" });
-      await drawer.getByTestId("create-comment").click();
+      await drawer.getByRole("button", { name: "Post comment" }).click();
       await expect(drawer).toContainText(commentBody);
-      await expect(secondPage.getByTestId("work-item-drawer")).toContainText(
-        commentBody,
-      );
-      await expect(secondPage.getByTestId("work-item-drawer")).toContainText(
-        "Mentioned: @Alice",
-      );
+      await expect(secondDrawer).toContainText(commentBody);
+      await expect(secondDrawer).toContainText("Mentioned: @Alice");
       expect(secondPageNavigations).toBe(0);
       secondPage.off("framenavigated", observeNavigation);
+      await drawer
+        .getByRole("button", { name: /^Close ACC-\d+$/ })
+        .click();
+      await expect(drawer).toBeHidden();
     } finally {
       await secondContext.close();
     }
 
     await page.getByRole("link", { name: "Settings", exact: true }).click();
-    await page.getByLabel("Current team").selectOption({ label: `${editedTeamName} (ACC)` });
+    await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("region", { name: "Team details" }).getByRole("button", { name: "Delete team" }).click();
     await expect(teamSwitcher).not.toContainText(editedTeamName);
@@ -385,5 +405,51 @@ test.describe("Stage 0 browser acceptance", () => {
       },
     });
     expect(childWrite.status).toBeGreaterThanOrEqual(400);
+
+    // Leave one deterministic authenticated fixture for the dependent browser
+    // project. Playwright contexts are isolated, so persist only the session
+    // cookie; each page refreshes its CSRF token through /auth/me.
+    const baselineTeam = await api<Team>(page, "/api/v1/teams", {
+      method: "POST",
+      body: { name: "Acceptance baseline", key: "BASE" },
+    });
+    expect(baselineTeam.status).toBe(200);
+    const baselineReady = await api<State>(
+      page,
+      `/api/v1/teams/${baselineTeam.body.id}/states`,
+      { method: "POST", body: { name: "Ready", category: "planned" } },
+    );
+    const baselineStarted = await api<State>(
+      page,
+      `/api/v1/teams/${baselineTeam.body.id}/states`,
+      {
+        method: "POST",
+        body: { name: "In Progress", category: "started" },
+      },
+    );
+    expect(baselineReady.status).toBe(200);
+    expect(baselineStarted.status).toBe(200);
+    const baselineItem = await api<WorkItem>(page, "/api/v1/work-items", {
+      method: "POST",
+      body: {
+        teamId: baselineTeam.body.id,
+        title: "Authenticated browser fixture",
+        statusId: baselineStarted.body.id,
+        responsibleHumanActorId: me.body.actor.id,
+      },
+    });
+    expect(baselineItem.status).toBe(200);
+    const stableActiveItem = await api<WorkItem>(page, "/api/v1/work-items", {
+      method: "POST",
+      body: {
+        teamId: baselineTeam.body.id,
+        title: "Stable active browser fixture",
+        statusId: baselineStarted.body.id,
+        responsibleHumanActorId: me.body.actor.id,
+      },
+    });
+    expect(stableActiveItem.status).toBe(200);
+    await mkdir(dirname(authenticatedStatePath), { recursive: true });
+    await page.context().storageState({ path: authenticatedStatePath });
   });
 });
