@@ -148,6 +148,10 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(releaseInfo).toContainText("v1.0.0");
     await expect(releaseInfo).toContainText("schema 1");
 
+    const englishLocale = page.getByRole("button", { name: "EN", exact: true });
+    await englishLocale.click();
+    await expect(englishLocale).toHaveAttribute("aria-pressed", "true");
+
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     const teamsRegion = page.getByRole("region", { name: "Teams" });

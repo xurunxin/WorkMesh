@@ -7,6 +7,8 @@ import { expect, test } from '@playwright/test'
  */
 test.describe('Issues workbench', () => {
   test('defaults to Chinese, persists the language switch, and renders the same collection in List and Board', async ({ page }) => {
+    await page.context().clearCookies({ name: 'workmesh_locale' })
+    await page.addInitScript(() => window.localStorage.removeItem('workmesh_locale'))
     await page.goto('/?view=my-work')
     await expect(page.getByRole('region', { name: 'Issue 列表' })).toBeVisible()
     await expect(page.locator('nav')).toContainText('Issues')
