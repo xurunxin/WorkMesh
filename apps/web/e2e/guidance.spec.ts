@@ -49,6 +49,9 @@ test('manages versioned Guidance while keeping Project description separate', as
   })
 
   await page.goto('/')
+  const chineseLocale = page.getByRole('button', { name: '中', exact: true })
+  await chineseLocale.click()
+  await expect(chineseLocale).toHaveAttribute('aria-pressed', 'true')
   await page.getByTestId('view-guidance').click()
   await expect(page.getByTestId('guidance-panel')).toContainText('Reviewed Guidance')
   await page.getByTestId('guidance-markdown').fill('# Workspace\n\nPublished from Web.')

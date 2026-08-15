@@ -264,15 +264,14 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(boardLayout).toHaveAttribute("aria-pressed", "true");
     await filters.getByPlaceholder("Save view").fill("Focused board");
     await filters.getByRole("button", { name: "Save view" }).click();
-    await expect(filters.getByLabel("Saved view")).toContainText(
+    const savedViews = filters.getByRole("combobox", { name: "Saved view", exact: true });
+    await expect(savedViews).toContainText(
       "Focused board",
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
     await listLayout.click();
     await expect(listLayout).toHaveAttribute("aria-pressed", "true");
-    await filters
-      .getByLabel("Saved view")
-      .selectOption({ label: "Focused board" });
+    await savedViews.selectOption({ label: "Focused board" });
     await expect(page.getByTestId("board")).toBeVisible();
     await expect(page.getByTestId("board")).toContainText(issueTitle);
     await expect(page.getByTestId("board")).not.toContainText(
