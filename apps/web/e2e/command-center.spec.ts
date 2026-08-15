@@ -45,6 +45,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
   await page.goto('/?view=my-work')
   const trigger = page.getByTestId('command-center-trigger')
   await expect(trigger).toBeVisible()
+  resourceRequests.length = 0
   captureResourceRequests = true
   await trigger.click()
   const search = page.getByRole('combobox', { name: 'Search WorkMesh' })

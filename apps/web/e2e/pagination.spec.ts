@@ -97,7 +97,7 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
     request.searchParams.get('cursor') === 'opaque-work-page-2')
   expect(continuation?.searchParams.get('limit')).toBe('100')
   expect(continuation?.searchParams.get('teamId')).toBe(team.id)
-  expect(continuation?.searchParams.get('mine')).toBe('true')
+  expect(continuation?.searchParams.has('mine')).toBe(false)
 
   const search = page.getByLabel('Search', { exact: true })
   await search.fill('Slow')

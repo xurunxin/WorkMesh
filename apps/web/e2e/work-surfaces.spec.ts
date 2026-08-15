@@ -6,14 +6,20 @@ import { expect, test } from '@playwright/test'
  * run during this node because no Browser/Playwright runtime is authorized.
  */
 test.describe('Issues workbench', () => {
+  const useChinese = async (page: import('@playwright/test').Page) => {
+    await page.getByRole('button', { name: '中' }).click()
+    await expect(page.getByRole('button', { name: '中' })).toHaveAttribute('aria-pressed', 'true')
+  }
+
   test('defaults to Chinese, persists the language switch, and renders the same collection in List and Board', async ({ page }) => {
     await page.context().clearCookies({ name: 'workmesh_locale' })
     await page.addInitScript(() => window.localStorage.removeItem('workmesh_locale'))
     await page.goto('/?view=my-work')
     await expect(page.getByRole('region', { name: 'Issue 列表' })).toBeVisible()
-    await expect(page.locator('nav')).toContainText('Issues')
-    await expect(page.locator('nav')).not.toContainText('Active')
-    await expect(page.locator('nav')).not.toContainText('Backlog')
+    const workspaceNavigation = page.getByRole('navigation', { name: '工作区导航' })
+    await expect(workspaceNavigation).toContainText('Issues')
+    await expect(workspaceNavigation).not.toContainText('Active')
+    await expect(workspaceNavigation).not.toContainText('Backlog')
     const listIds = await page.locator('[data-work-item-id]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-work-item-id')))
     await page.getByRole('button', { name: '看板视图' }).click()
     await expect(page.getByRole('region', { name: 'Issue 看板列' })).toBeVisible()
@@ -54,6 +60,7 @@ test.describe('Issues workbench', () => {
       await route.abort('failed')
     })
     await page.goto('/?view=active')
+    await useChinese(page)
     const card = page.locator('[data-work-item-id]').first()
     const originalStatus = await card.getAttribute('data-status-id')
     await card.getByRole('combobox').selectOption({ index: 0 })
@@ -72,6 +79,7 @@ test.describe('Issues workbench', () => {
     const methods: string[] = []
     page.on('request', request => { if (request.url().includes('/api/v1/views')) methods.push(request.method()) })
     await page.goto('/?view=my-work')
+    await useChinese(page)
     await page.getByRole('textbox', { name: '保存视图名称' }).fill('My dogfood view')
     await page.getByRole('button', { name: '保存视图' }).click()
     await expect(page.getByRole('combobox', { name: '保存的视图' })).toBeVisible()

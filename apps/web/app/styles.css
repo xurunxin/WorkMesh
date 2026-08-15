@@ -551,6 +551,7 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
 
 @media (max-width: 520px) {
   .shell-action-cluster { gap: var(--wm-space-1); }
+  .command-center-trigger .wm-button-label { display: none; }
   .command-center-trigger kbd { display: none; }
   .command-center { width: min(100%, calc(100vw - 2.5rem)); }
   .command-center-status { align-items: flex-start; flex-direction: column; }

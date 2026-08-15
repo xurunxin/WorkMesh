@@ -13,10 +13,10 @@ test.describe('v28 Work Item detail', () => {
     await expect(page.getByTestId('responsible-human')).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Agent executions' })).toBeVisible()
     await page.getByRole('button', { name: 'Open full page' }).click()
-    await expect(page.getByRole('region', { name: 'Full Work Item view' })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Full Issue view' })).toBeVisible()
     await expect(page).toHaveURL(/workItem=/)
     await page.goBack()
-    await expect(page.getByRole('region', { name: 'Full Work Item view' })).toHaveCount(0)
+    await expect(page.getByRole('region', { name: 'Full Issue view' })).toHaveCount(0)
   })
 
   test('warns before discarding unsaved edits and keeps revisioned mutation headers', async ({ page }) => {
@@ -30,7 +30,7 @@ test.describe('v28 Work Item detail', () => {
     const title = page.getByLabel('Title')
     await title.fill(`${await title.inputValue()} edited`)
     page.once('dialog', dialog => dialog.dismiss())
-    await page.getByRole('button', { name: 'Close', exact: true }).last().click()
+    await page.getByRole('button', { name: /^Close / }).last().click()
     await expect(page.getByText('Unsaved changes')).toBeVisible()
     await page.getByRole('button', { name: 'Save changes' }).click()
     await expect.poll(() => mutations.length).toBe(1)
@@ -47,7 +47,7 @@ test.describe('v28 Work Item detail', () => {
       await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible()
       const width = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
       expect(width.scroll).toBeLessThanOrEqual(width.client)
-      await page.getByRole('button', { name: 'Close', exact: true }).last().click()
+      await page.getByRole('button', { name: /^Close / }).last().click()
     }
   })
 })
