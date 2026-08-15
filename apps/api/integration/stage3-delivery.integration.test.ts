@@ -310,15 +310,16 @@ describe('Stage 3 delivery API', () => {
 
   it('verifies exact raw GitHub bytes and makes duplicate deliveries a single durable effect', async () => {
     const f = await fixture()
+    const deliveryId = randomUUID()
     const raw = JSON.stringify({ repository: { id: 9001 }, ref: 'refs/heads/main', before: 'old', after: 'new' })
     const signature = `sha256=${createHmac('sha256', 'stage3-webhook-secret-value').update(raw).digest('hex')}`
     const call = () => app.inject({
       method: 'POST', url: `/api/v1/provider-webhooks/${f.connectionId}/github`, payload: raw,
-      headers: { 'content-type': 'application/json', 'x-github-delivery': 'delivery-1', 'x-github-event': 'push', 'x-hub-signature-256': signature },
+      headers: { 'content-type': 'application/json', 'x-github-delivery': deliveryId, 'x-github-event': 'push', 'x-hub-signature-256': signature },
     }) as unknown as Promise<Response>
     expect((await call()).statusCode).toBe(202)
     expect((await call()).statusCode).toBe(200)
-    expect((await db.query('SELECT 1 FROM provider_webhook_deliveries WHERE connection_id=$1 AND delivery_id=$2', [f.connectionId, 'delivery-1'])).rowCount).toBe(1)
+    expect((await db.query('SELECT 1 FROM provider_webhook_deliveries WHERE connection_id=$1 AND delivery_id=$2', [f.connectionId, deliveryId])).rowCount).toBe(1)
     const tampered = await app.inject({
       method: 'POST', url: `/api/v1/provider-webhooks/${f.connectionId}/github`, payload: '{}',
       headers: { 'content-type': 'application/json', 'x-github-delivery': 'delivery-2', 'x-github-event': 'push', 'x-hub-signature-256': signature },
