@@ -16,9 +16,10 @@ type RealtimeState = keyof typeof statePresentation
 export function RealtimeStatus({ labels }: { labels?: Partial<Record<RealtimeState, string>> }) {
   const state = useRealtimeConnectionState()
   const presentation = statePresentation[state]
+  const label = labels?.[state] ?? presentation.label
   return (
-    <span aria-live="polite" data-realtime-state={state}>
-      <Badge tone={presentation.tone}>{labels?.[state] ?? presentation.label}</Badge>
+    <span aria-label={label} aria-live="polite" data-realtime-state={state} title={label}>
+      <Badge tone={presentation.tone}>{label}</Badge>
     </span>
   )
 }

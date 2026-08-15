@@ -558,6 +558,11 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
   .command-center-group a { align-items: flex-start; }
   .command-center-group em { display: none; }
 }
+@media (max-width: 360px) {
+  .wm-shell-actions { min-width: 0; padding-right: var(--wm-space-2); }
+  .shell-action-cluster [data-realtime-state] .wm-badge { justify-content: center; width: 24px; padding-inline: 0; overflow: hidden; font-size: 0; }
+  .shell-action-cluster [data-realtime-state] .wm-badge::before { width: 7px; height: 7px; background: currentColor; border-radius: 999px; content: ''; }
+}
 .app-shell .decision-proposal { color: #6941c6; background: #f4f3ff; }
 .app-shell .decision-final { color: #067647; background: #dcfae6; }
 .app-shell .context-delta, .app-shell .activity-timeline li { color: var(--wm-text); background: var(--wm-surface); }
