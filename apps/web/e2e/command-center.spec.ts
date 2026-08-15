@@ -63,7 +63,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
   await expect(search).not.toBeVisible()
   await expect(trigger).toBeFocused()
 
-  const workSearch = page.getByRole('textbox', { name: 'Search work' })
+  const workSearch = page.getByRole('textbox', { name: 'Search', exact: true })
   await workSearch.focus()
   await workSearch.press('Control+k')
   await expect(page.getByRole('dialog')).toHaveCount(0)
