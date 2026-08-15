@@ -88,7 +88,7 @@ async function createWorkItem(
     labels?: string;
   },
 ): Promise<void> {
-  await page.getByRole("button", { name: "New work item", exact: true }).click();
+  await page.getByRole("button", { name: "New issue", exact: true }).click();
   const form = page.getByTestId("create-work-item");
   await form.getByLabel("Title", { exact: true }).fill(input.title);
   await form
@@ -148,6 +148,10 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(releaseInfo).toContainText("v1.0.0");
     await expect(releaseInfo).toContainText("schema 1");
 
+    const englishLocale = page.getByRole("button", { name: "EN", exact: true });
+    await englishLocale.click();
+    await expect(englishLocale).toHaveAttribute("aria-pressed", "true");
+
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     const teamsRegion = page.getByRole("region", { name: "Teams" });
@@ -169,7 +173,7 @@ test.describe("Stage 0 browser acceptance", () => {
     // Newly created teams intentionally start without workflow states, so create the two states used by this browser flow.
     await createState(page, "Ready", "planned");
     await createState(page, "In Progress", "started");
-    await page.getByRole("link", { name: "Back to daily work", exact: true }).click();
+    await page.getByRole("link", { name: "Back to Issues", exact: true }).click();
     await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     await page.getByTestId("view-projects").click();
     await page.getByRole("button", { name: "New project", exact: true }).click();
@@ -190,7 +194,7 @@ test.describe("Stage 0 browser acceptance", () => {
       labels: "acceptance, focus",
     });
     await page
-      .getByRole("region", { name: "Work item filters" })
+      .getByRole("region", { name: "Issue filters" })
       .getByRole("button", { name: "Clear filters" })
       .click();
     await createWorkItem(page, {
@@ -209,22 +213,22 @@ test.describe("Stage 0 browser acceptance", () => {
       labels: "other",
     });
 
-    const filters = page.getByRole("region", { name: "Work item filters" });
-    await filters.getByLabel("Search work").fill("Focus issue");
+    const filters = page.getByRole("region", { name: "Issue filters" });
+    await filters.getByLabel("Search", { exact: true }).fill("Focus issue");
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       startedDecoyTitle,
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters.getByLabel("Filter status").selectOption({ label: "Ready" });
+    await filters.getByLabel("Status", { exact: true }).selectOption({ label: "Ready" });
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       startedDecoyTitle,
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters.getByLabel("Filter priority").selectOption("high");
+    await filters.getByLabel("Priority", { exact: true }).selectOption("high");
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       unassignedDecoyTitle,
@@ -232,7 +236,7 @@ test.describe("Stage 0 browser acceptance", () => {
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
     await filters
-      .getByLabel("Filter responsible Human")
+      .getByLabel("Responsible Human", { exact: true })
       .selectOption({ label: "Alice" });
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
@@ -240,35 +244,34 @@ test.describe("Stage 0 browser acceptance", () => {
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    const projectFilter = filters.getByLabel("Filter project");
+    const projectFilter = filters.getByLabel("Project", { exact: true });
     await projectFilter.selectOption({ label: projectName });
     await expect(projectFilter).toHaveValue(/.+/);
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).toContainText(startedDecoyTitle);
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters.getByLabel("Filter label").fill("focus");
+    await filters.getByLabel("Label", { exact: true }).fill("focus");
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       startedDecoyTitle,
     );
 
-    const layoutToggle = page.getByLabel("Work surface layout");
+    const layoutToggle = page.getByLabel("Issue layout");
     const boardLayout = layoutToggle.getByRole("button", { name: "Board", exact: true });
     const listLayout = layoutToggle.getByRole("button", { name: "List", exact: true });
     await boardLayout.click();
     await expect(boardLayout).toHaveAttribute("aria-pressed", "true");
-    await filters.getByPlaceholder("Save current view").fill("Focused board");
+    await filters.getByPlaceholder("Save view").fill("Focused board");
     await filters.getByRole("button", { name: "Save view" }).click();
-    await expect(filters.getByLabel("Saved views")).toContainText(
+    const savedViews = filters.getByRole("combobox", { name: "Saved view", exact: true });
+    await expect(savedViews).toContainText(
       "Focused board",
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
     await listLayout.click();
     await expect(listLayout).toHaveAttribute("aria-pressed", "true");
-    await filters
-      .getByLabel("Saved views")
-      .selectOption({ label: "Focused board" });
+    await savedViews.selectOption({ label: "Focused board" });
     await expect(page.getByTestId("board")).toBeVisible();
     await expect(page.getByTestId("board")).toContainText(issueTitle);
     await expect(page.getByTestId("board")).not.toContainText(
@@ -322,6 +325,9 @@ test.describe("Stage 0 browser acceptance", () => {
       await login.getByPlaceholder("Email").fill("alice@example.test");
       await login.getByPlaceholder("Password").fill("password-acceptance");
       await login.getByTestId("login-submit").click();
+      const secondEnglishLocale = secondPage.getByRole("button", { name: "EN", exact: true });
+      await secondEnglishLocale.click();
+      await expect(secondEnglishLocale).toHaveAttribute("aria-pressed", "true");
       await secondPage
         .getByLabel("Current team")
         .first()
@@ -330,7 +336,7 @@ test.describe("Stage 0 browser acceptance", () => {
         `[data-work-item-id="${target!.id}"]`,
       );
       await expect(secondPageItem).toBeVisible();
-      await secondPageItem.click();
+      await secondPageItem.locator(".wm-work-item-title").click();
       const secondDrawer = secondPage.getByRole("dialog");
       await expect(secondDrawer).toBeVisible();
 
@@ -369,7 +375,7 @@ test.describe("Stage 0 browser acceptance", () => {
       ).toHaveValue(inProgress!.id);
       expect(secondPageNavigations).toBe(0);
 
-      await page.locator(`[data-work-item-id="${target!.id}"]`).click();
+      await page.locator(`[data-work-item-id="${target!.id}"] .wm-work-item-title`).click();
       const drawer = page.getByRole("dialog");
       await expect(drawer).toBeVisible();
       await drawer

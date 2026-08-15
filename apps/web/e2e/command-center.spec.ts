@@ -29,7 +29,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
     if (path === '/api/v1/actors/humans') return list([human])
     if (path === '/api/v1/views') return list([])
     if (path === '/api/v1/events/stream') return route.fulfill({ status: 204, headers })
-    const isWorkSurfaceRequest = path === '/api/v1/work-items' && url.searchParams.get('mine') === 'true'
+    const isWorkSurfaceRequest = path === '/api/v1/work-items' && !url.searchParams.has('search')
     if (captureResourceRequests && !isWorkSurfaceRequest && ['/api/v1/projects', '/api/v1/work-items', '/api/v1/agents', '/api/v1/agent-sessions', '/api/v1/inbox'].includes(path)) resourceRequests.push(route.request().url())
     if (path === '/api/v1/projects') return list([project])
     if (path === '/api/v1/work-items') return list([workItem])
@@ -45,6 +45,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
   await page.goto('/?view=my-work')
   const trigger = page.getByTestId('command-center-trigger')
   await expect(trigger).toBeVisible()
+  resourceRequests.length = 0
   captureResourceRequests = true
   await trigger.click()
   const search = page.getByRole('combobox', { name: 'Search WorkMesh' })
@@ -54,8 +55,8 @@ test('enforces the query threshold, names source failures, and supports keyboard
 
   await search.fill('GEN-6')
   await expect(page.getByRole('option', { name: /Add authority-aware command palette/ })).toBeVisible()
-  await expect(page.getByLabel('Search source status')).toContainText('Agents is unavailable for this actor.')
-  await expect(page.getByLabel('Search source status')).toContainText('Agent sessions has no matching results.')
+  await expect(page.getByLabel('Search source status')).toContainText('Agents: is unavailable for this user')
+  await expect(page.getByLabel('Search source status')).toContainText('Agent sessions: has no matching results')
   expect(resourceRequests.some(value => value.includes(`/agent-sessions?teamId=${team.id}`))).toBe(true)
 
   await search.press('ArrowDown')
@@ -63,7 +64,7 @@ test('enforces the query threshold, names source failures, and supports keyboard
   await expect(search).not.toBeVisible()
   await expect(trigger).toBeFocused()
 
-  const workSearch = page.getByRole('textbox', { name: 'Search work' })
+  const workSearch = page.getByRole('textbox', { name: 'Search', exact: true })
   await workSearch.focus()
   await workSearch.press('Control+k')
   await expect(page.getByRole('dialog')).toHaveCount(0)

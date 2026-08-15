@@ -1,7 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { WorkItemBoard, WorkItemFilters, WorkItemList, WorkSurfacePagination, WorkSurfaceState, type WorkItemCardData, type WorkItemFilterOption, type WorkItemMoveSource, type WorkItemStatusOption } from '@workmesh/ui'
+import { Button, WorkItemBoard, WorkItemFilters, WorkItemList, WorkSurfacePagination, WorkSurfaceState, type WorkItemCardData, type WorkItemCopy, type WorkItemFilterOption, type WorkItemMoveSource, type WorkItemStatusOption } from '@workmesh/ui'
+import { KanbanIcon } from '@phosphor-icons/react/dist/csr/Kanban'
+import { RowsIcon } from '@phosphor-icons/react/dist/csr/Rows'
 import { ApiError } from '../../app/lib/api'
 import { type RealtimeResource, useRealtimeSubscription } from '../../app/lib/realtime'
 import { createSavedViewController } from './saved-views'
@@ -13,7 +15,56 @@ import { type SavedViewPreference, type StatusCategory, type WorkItemDto, type W
 export type WorkSurfaceStatus = { id: string; name: string; category?: StatusCategory }
 export type WorkSurfaceHuman = { id: string; display_name?: string; displayName?: string }
 export type WorkSurfaceProject = { id: string; name: string }
+export type WorkSurfaceMilestone = { id: string; name: string }
 export type WorkSurfaceView = SavedViewPreference & { builtIn?: boolean }
+
+export type WorkSurfaceCopy = {
+  board: string
+  conflictDescription: string
+  conflictTitle: string
+  emptyDescription: string
+  emptyTitle: string
+  errorDescription: string
+  errorTitle: string
+  forbiddenDescription: string
+  forbiddenTitle: string
+  layoutLabel: string
+  list: string
+  loadingDescription: string
+  loadingTitle: string
+  loadingViews: string
+  offlineDescription: string
+  offlineTitle: string
+  refreshingDescription: string
+  refreshingTitle: string
+  retry: string
+  savedViewsDescription: string
+  savedViewsTitle: string
+}
+
+const defaultCopy: WorkSurfaceCopy = {
+  board: 'Board',
+  conflictDescription: 'Your move conflicted with a newer server revision. Confirm a new move after reviewing the latest Issue.',
+  conflictTitle: 'Issue changed',
+  emptyDescription: 'The authorized query returned no Work Items.',
+  emptyTitle: 'No Work Items',
+  errorDescription: 'The Issue query could not be completed.',
+  errorTitle: 'Issues could not refresh',
+  forbiddenDescription: 'The server did not authorize this Issue query. No cached rows are shown.',
+  forbiddenTitle: 'Issues are unavailable',
+  layoutLabel: 'Issue layout',
+  list: 'List',
+  loadingDescription: 'Loading the authorized Issue projection.',
+  loadingTitle: 'Loading Work Items',
+  loadingViews: 'Loading saved views…',
+  offlineDescription: 'The last authorized projection is unavailable offline. Mutations are disabled.',
+  offlineTitle: 'WorkMesh is offline',
+  refreshingDescription: 'Refreshing this query from the canonical server projection.',
+  refreshingTitle: 'Refreshing Issues',
+  retry: 'Retry',
+  savedViewsDescription: 'Saved views are not available for this Human. Preferences were not retained or applied.',
+  savedViewsTitle: 'Saved views are unavailable',
+}
 
 export type WorkSurfacesProps = {
   teamId?: string | null
@@ -23,20 +74,25 @@ export type WorkSurfacesProps = {
   statuses?: WorkSurfaceStatus[]
   humans?: WorkSurfaceHuman[]
   projects?: WorkSurfaceProject[]
+  milestones?: WorkSurfaceMilestone[]
   initialLayout?: WorkSurfaceLayout
   initialFilters?: WorkSurfaceQuery
   realtimeResources?: RealtimeResource[]
   onOpenItem?: (id: string) => void | Promise<void>
+  onOpenProject?: (id: string) => void | Promise<void>
+  onQueryChange?: (query: WorkSurfaceQuery) => void
   onApplySavedView?: (view: SavedViewPreference) => void
   onLayoutChange?: (layout: WorkSurfaceLayout) => void
   onSelectionReset?: () => void
   onError?: (message: string) => void
   onItemsChange?: (items: WorkItemDto[]) => void
   onRefreshReady?: (refresh: () => Promise<void>) => void
+  copy?: Partial<WorkItemCopy>
+  surfaceCopy?: Partial<WorkSurfaceCopy>
 }
 
 const emptyFilters: WorkSurfaceQuery = {}
-const workItemIdSelector = (id: string): string => `[data-work-item-id="${CSS.escape(id)}"]`
+const workItemIdSelector = (id: string): string => `[data-work-item-id="${CSS.escape(id)}"] .wm-work-item-title`
 const displayName = (human: WorkSurfaceHuman): string => human.display_name ?? human.displayName ?? human.id
 
 function statusOptions(statuses: WorkSurfaceStatus[]): WorkItemStatusOption[] {
@@ -112,7 +168,8 @@ export function useWorkSurfaceController({
   return { actorId, adapter, actionError, collection, conflict, filters, layout, lastRefresh, move, pendingMoves, query, refresh, scope, setFilters, setLayout: setLayoutAndRestoreFocus, setQuery, teamId }
 }
 
-export function WorkSurfaces({ actorId = null, humans = [], initialFilters, initialLayout = 'list', onApplySavedView, onError, onItemsChange, onLayoutChange, onOpenItem, onRefreshReady, onSelectionReset, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], teamId = null }: WorkSurfacesProps) {
+export function WorkSurfaces({ actorId = null, copy, humans = [], initialFilters, initialLayout = 'list', milestones = [], onApplySavedView, onError, onItemsChange, onLayoutChange, onOpenItem, onOpenProject, onQueryChange, onRefreshReady, onSelectionReset, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], surfaceCopy, teamId = null }: WorkSurfacesProps) {
+  const text = { ...defaultCopy, ...surfaceCopy }
   const controller = useWorkSurfaceController({ actorId, initialFilters, initialLayout, realtimeResources, scope, selectedProjectId, teamId })
   const { collection, filters, layout, pendingMoves, query } = controller
   const setControllerLayout = controller.setLayout
@@ -129,11 +186,14 @@ export function WorkSurfaces({ actorId = null, humans = [], initialFilters, init
     void savedViews.list(teamId ?? undefined).then(next => { if (!cancelled) setViews(next) }).catch(reason => { if (!cancelled) setViewsError(reason) }).finally(() => { if (!cancelled) setViewsLoading(false) })
     return () => { cancelled = true }
   }, [savedViews, teamId])
-  const vm = useMemo(() => {
-    const mapped = collection.items.map(item => ({ ...item, statusId: item.status_id ?? item.statusId ?? '', statusName: item.status_name ?? item.statusName ?? '', statusCategory: item.status_category ?? item.statusCategory, priority: item.priority, responsibleHuman: item.responsible_human?.display_name ?? null, project: item.project_id ?? null, activeAgent: item.active_executor?.agent_display_name ?? null, identifier: item.identifier ?? `${item.team_key ?? ''}-${item.number ?? item.id}` }))
-    const projected = mapped.map(item => ({ ...item, statusId: pendingMoves[item.id] ?? item.statusId }))
-    return createWorkSurfaceViewModel({ collection: { items: projected, nextCursor: collection.nextCursor }, error: collection.error ?? controller.actionError, layout, query, scope, stale: Boolean(collection.loading && projected.length > 0) })
-  }, [collection.error, collection.items, collection.loading, collection.nextCursor, controller.actionError, layout, pendingMoves, query, scope])
+  const vm = useMemo(() => createWorkSurfaceViewModel({
+    collection,
+    error: collection.error ?? controller.actionError,
+    layout,
+    query,
+    scope,
+    stale: Boolean(collection.loading && collection.items.length > 0),
+  }), [collection, collection.error, controller.actionError, layout, query, scope])
   useEffect(() => { onItemsChange?.(collection.items) }, [collection.items, onItemsChange])
   useEffect(() => { onRefreshReady?.(controller.refresh) }, [controller.refresh, onRefreshReady])
   const columns = useMemo(() => statusOptions(statuses), [statuses])
@@ -158,22 +218,26 @@ export function WorkSurfaces({ actorId = null, humans = [], initialFilters, init
     const view = await savedViews.create({ name, teamId, filters: query, layout })
     setViews(current => [...current, view])
   }, [layout, query, savedViews, teamId])
-  const uiItems = vm.items.map(item => ({ ...item, statusId: pendingMoves[item.id] ?? item.statusId, statusCategory: item.statusCategory === 'unknown' ? undefined : item.statusCategory, priority: item.priority === 'unknown' ? undefined : item.priority, responsibleHuman: item.responsibleHuman, activeAgent: item.activeAgent }))
+  const changeQuery = useCallback((next: WorkSurfaceQuery) => {
+    controller.setQuery(next)
+    onQueryChange?.(next)
+  }, [controller, onQueryChange])
+  const uiItems = vm.items.map(item => ({ ...item, statusId: pendingMoves[item.id] ?? item.statusId, statusCategory: item.statusCategory === 'unknown' ? undefined : item.statusCategory, priority: item.priority === 'unknown' ? undefined : item.priority }))
   const filterErrorState = viewsError instanceof ApiError && viewsError.status === 403
   const state = workSurfaceErrorState(collection.error ?? controller.actionError)
-  if (state === 'forbidden') return <section className="work-surfaces" data-testid="work-surfaces"><WorkSurfaceState actionLabel="Retry" description="The server did not authorize this Work Item query. No cached rows are shown." onAction={() => void controller.refresh()} state="forbidden" title="Work Items are unavailable" /></section>
+  if (state === 'forbidden') return <section className="work-surfaces" data-testid="work-surfaces"><WorkSurfaceState actionLabel={text.retry} description={text.forbiddenDescription} onAction={() => void controller.refresh()} state="forbidden" title={text.forbiddenTitle} /></section>
   return <section aria-label="Work surfaces" className="work-surfaces" data-testid="work-surfaces">
-    <WorkItemFilters humans={toFilterOptions(humans)} onApplySavedView={applyView} onChange={value => controller.setQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => controller.setQuery({ teamId: teamId ?? undefined })} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
-    {filterErrorState && <WorkSurfaceState description="Saved views are not available for this Human. Preferences were not retained or applied." state="forbidden" title="Saved views are unavailable" />}
-    {viewsLoading && views.length === 0 && <p className="wm-work-surface-loading-note">Loading saved views…</p>}
-    <div aria-label="Work surface layout" className="work-surface-layout-toggle"><button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} onClick={() => requestLayout('list')} type="button">List</button><button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} onClick={() => requestLayout('board')} type="button">Board</button></div>
-    {vm.state === 'loading' && <WorkSurfaceState description="Loading the authorized Work Item projection." state="loading" title="Loading Work Items" />}
-    {vm.state === 'refreshing' && <WorkSurfaceState description="Refreshing this query from the canonical server projection." state="refreshing" title="Refreshing Work Items" />}
-    {vm.state === 'empty' && <WorkSurfaceState description="The authorized query returned no Work Items." state="empty" title="No Work Items" />}
-    {vm.state === 'offline' && <WorkSurfaceState actionLabel="Retry" description="The last authorized projection is unavailable offline. Mutations are disabled." onAction={() => void controller.refresh()} state="offline" title="WorkMesh is offline" />}
-    {vm.state === 'error' && <WorkSurfaceState actionLabel="Retry" description={vm.errorMessage ?? 'The Work Item query could not be completed.'} onAction={() => void controller.refresh()} state="error" title="Work Items could not refresh" />}
-    {vm.state === 'conflict' && <WorkSurfaceState actionLabel="Reload latest" description="Your move conflicted with a newer server revision. Confirm a new move after reviewing the latest Work Item." onAction={() => { controller.setQuery({ ...query }); void controller.refresh() }} state="conflict" title="Work Item changed" />}
-    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList items={uiItems} onMove={move} onOpen={open} statusOptions={columns} /> : <WorkItemBoard columns={columns} items={uiItems} onMove={move} onOpen={open} />}<WorkSurfacePagination loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
+    <WorkItemFilters copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
+    {filterErrorState && <WorkSurfaceState description={text.savedViewsDescription} state="forbidden" title={text.savedViewsTitle} />}
+    {viewsLoading && views.length === 0 && <p className="wm-work-surface-loading-note">{text.loadingViews}</p>}
+    <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button></div>
+    {vm.state === 'loading' && <WorkSurfaceState description={text.loadingDescription} state="loading" title={text.loadingTitle} />}
+    {vm.state === 'refreshing' && <WorkSurfaceState description={text.refreshingDescription} state="refreshing" title={text.refreshingTitle} />}
+    {vm.state === 'empty' && <WorkSurfaceState description={text.emptyDescription} state="empty" title={text.emptyTitle} />}
+    {vm.state === 'offline' && <WorkSurfaceState actionLabel={text.retry} description={text.offlineDescription} onAction={() => void controller.refresh()} state="offline" title={text.offlineTitle} />}
+    {vm.state === 'error' && <WorkSurfaceState actionLabel={text.retry} description={vm.errorMessage ?? text.errorDescription} onAction={() => void controller.refresh()} state="error" title={text.errorTitle} />}
+    {vm.state === 'conflict' && <WorkSurfaceState actionLabel={text.retry} description={text.conflictDescription} onAction={() => { controller.setQuery({ ...query }); void controller.refresh() }} state="conflict" title={text.conflictTitle} />}
+    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columns={columns} copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
   </section>
 }
 

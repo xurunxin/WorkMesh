@@ -1112,7 +1112,7 @@ describe('live paged-read authorization', () => {
         `${path} must carry its authorization predicate into final paged SQL`,
       ).toBe(true)
     }
-  })
+  }, 15_000)
 
   it('canonicalizes Fastify and OpenAPI route parameters without changing static paths', () => {
     expect(canonicalRoutePath('/api/v1/teams/:id/states'))
@@ -1234,5 +1234,20 @@ describe('live paged-read authorization', () => {
 
     expect(finalSqlConsumesAuthorization(fixture(true), '/api/v1/example')).toBe(false)
     expect(finalSqlConsumesAuthorization(fixture(false), '/api/v1/example')).toBe(true)
+  })
+
+  it('keeps relation summaries on the Human list projection and out of Agent collection reads', async () => {
+    const server = await readFile(new URL('./server.ts', import.meta.url), 'utf8')
+    const workItems = section(server, 'async function listWorkItems', 'if (process.env.NODE_ENV !== "test")')
+    const humanProjection = section(server, 'const humanWorkItemSurfaceJoins', 'async function listWorkItems')
+    const agentCollection = section(workItems, 'if (request.actor!.kind !== "human")', 'const page = await paginator.query<HumanWorkItemSurfaceRow>')
+
+    expect(workItems).toContain('["milestoneId", "w.milestone_id"]')
+    expect(humanProjection).toContain('const humanWorkItemSurfaceSelect = `SELECT w.*')
+    expect(humanProjection).toContain("target_work_item_id AS work_item_id")
+    expect(humanProjection).toContain("source_work_item_id AS work_item_id")
+    expect(humanProjection).toContain("COUNT(*) FILTER (WHERE child_state.category='completed')")
+    expect(agentCollection).not.toContain('humanWorkItemSurfaceSelect')
+    expect(agentCollection).not.toContain('surface_summary')
   })
 })

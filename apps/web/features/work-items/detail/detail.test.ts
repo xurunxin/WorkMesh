@@ -39,7 +39,7 @@ describe('Work Item detail model', () => {
     expect(component).toContain('[model.id, model.revision]')
     expect(component).not.toContain('detailDraft(model), [model]')
     expect(component).toContain('props.resetKey')
-    expect(component).toContain('Work Item lifecycle, independent from Agent execution.')
+    expect(component).toContain('Issue lifecycle, independent from Agent execution.')
     expect(component).toContain('Accountable for the outcome; never an Agent assignment.')
     expect(command).toContain(`'If-Match': \`"revision-\${input.revision}"\``)
     expect(command).toContain("apiMutation(`work-item-detail:${input.workItemId}`")

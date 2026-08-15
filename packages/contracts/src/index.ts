@@ -165,6 +165,18 @@ export const workflowStateResponseSchema = z.object({ id: idSchema, team_id: idS
 export const humanActorResponseSchema = z.object({ id: idSchema, email: z.string().email(), display_name: z.string(), kind: z.literal('human').optional(), is_active: z.boolean().optional(), workspace_id: idSchema.optional(), created_at: timestampSchema.optional() })
 export const projectResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, name: z.string(), summary: z.string().nullable(), description: z.string().nullable(), status: z.string(), lead_actor_id: idSchema.nullable(), target_date: dateSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const responsibleHumanProjectionSchema = z.object({ actor_id: idSchema, display_name: z.string() }).strict()
+/**
+ * A bounded, read-only summary used by human-facing Work Item collections.
+ *
+ * It deliberately describes relationships rather than expanding their target
+ * records, so a collection response cannot become a cross-scope read channel.
+ */
+export const workItemSurfaceSummarySchema = z.object({
+  blocked_by_count: z.number().int().nonnegative(),
+  blocking_count: z.number().int().nonnegative(),
+  sub_issue_count: z.number().int().nonnegative(),
+  completed_sub_issue_count: z.number().int().nonnegative(),
+}).strict()
 export const workItemExecutorProjectionSchema = z.object({
   agent_id: idSchema,
   agent_actor_id: idSchema,
@@ -181,7 +193,7 @@ export const workItemExecutorProjectionSchema = z.object({
   lease_heartbeat_at: timestampSchema,
   lease_expires_at: timestampSchema,
 }).strict()
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), author_kind: z.literal('human'), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
@@ -1109,6 +1121,7 @@ export type StructuredReviewInput = z.infer<typeof structuredReviewInputSchema>
 export type CiRetryInput = z.infer<typeof ciRetryInputSchema>
 export type CompletionSuggestionDecisionInput = z.infer<typeof completionSuggestionDecisionInputSchema>
 export type WorkItemResponse = z.infer<typeof workItemResponseSchema>
+export type WorkItemSurfaceSummary = z.infer<typeof workItemSurfaceSummarySchema>
 export type WorkItemRelationInput = z.infer<typeof workItemRelationInputSchema>
 export type WorkItemRelationResponse = z.infer<typeof workItemRelationResponseSchema>
 export type MilestoneResponse = z.infer<typeof milestoneResponseSchema>

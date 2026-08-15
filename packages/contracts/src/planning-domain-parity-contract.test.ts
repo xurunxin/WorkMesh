@@ -31,6 +31,48 @@ describe('planning domain parity public contract', () => {
     expect(publicContracts.milestonePatchSchema!.safeParse({}).success).toBe(false)
   })
 
+  it('publishes the human-only work surface summary as an optional read projection', () => {
+    expect(publicContracts.workItemSurfaceSummarySchema).toBeDefined()
+    expect(publicContracts.workItemSurfaceSummarySchema!.parse({
+      blocked_by_count: 1,
+      blocking_count: 2,
+      sub_issue_count: 3,
+      completed_sub_issue_count: 2,
+    })).toEqual({
+      blocked_by_count: 1,
+      blocking_count: 2,
+      sub_issue_count: 3,
+      completed_sub_issue_count: 2,
+    })
+    expect(publicContracts.workItemResponseSchema!.parse({
+      id,
+      workspace_id: id,
+      team_id: id,
+      number: 1,
+      title: 'Issue',
+      description: null,
+      status_id: id,
+      priority: 'none',
+      due_date: null,
+      responsible_human_actor_id: null,
+      responsible_human: null,
+      active_executor: null,
+      shared_reviewers: [],
+      labels: [],
+      project_id: null,
+      milestone_id: null,
+      parent_id: null,
+      revision: 1,
+      deleted_at: null,
+      created_at: '2026-08-15T00:00:00.000Z',
+      updated_at: '2026-08-15T00:00:00.000Z',
+      team_key: 'WM',
+      status_name: 'Backlog',
+      status_category: 'backlog',
+      surface_summary: { blocked_by_count: 0, blocking_count: 0, sub_issue_count: 1, completed_sub_issue_count: 0 },
+    }).surface_summary).toMatchObject({ sub_issue_count: 1 })
+  })
+
   it('publishes stable planning invariant error codes', () => {
     for (const code of [
       'WORK_ITEM_PARENT_SELF',
@@ -64,7 +106,10 @@ describe('planning domain parity public contract', () => {
     })
     expect(openapi.components.schemas.WorkItem).toMatchObject({
       required: expect.arrayContaining(['parent_id']),
-      properties: { parent_id: { type: ['string', 'null'], format: 'uuid' } },
+      properties: { parent_id: { type: ['string', 'null'], format: 'uuid' }, surface_summary: { $ref: '#/components/schemas/WorkItemSurfaceSummary' } },
+    })
+    expect(openapi.components.schemas.WorkItemSurfaceSummary).toMatchObject({
+      properties: { blocked_by_count: { type: 'integer', minimum: 0 }, completed_sub_issue_count: { type: 'integer', minimum: 0 } },
     })
     expect(openapi.components.schemas.WorkItemRelationInput).toBeDefined()
     expect(openapi.components.schemas.WorkItemRelationResponse).toBeDefined()
@@ -84,5 +129,8 @@ describe('planning domain parity public contract', () => {
     expect(openapi.paths['/api/v1/work-items/{id}/relations']!.get).toMatchObject({ responses: { '200': { $ref: '#/components/responses/WorkItemRelations' } } })
     expect(openapi.paths['/api/v1/work-items/{id}/relations']!.post).toMatchObject({ responses: { '200': { $ref: '#/components/responses/WorkItemRelation' } } })
     expect(openapi.paths['/api/v1/work-items/{id}/relations/{relationId}']!.delete).toMatchObject({ responses: { '200': { $ref: '#/components/responses/Command' } } })
+    expect(openapi.paths['/api/v1/work-items']!.get).toMatchObject({
+      parameters: expect.arrayContaining([{ $ref: '#/components/parameters/MilestoneIdQuery' }]),
+    })
   })
 })

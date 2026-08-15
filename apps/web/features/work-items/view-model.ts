@@ -3,6 +3,7 @@ import { PRIORITIES, STATUS_CATEGORIES, type WorkItemDto, type WorkSurfaceItem, 
 
 const enumValue = <T extends readonly string[]>(value: unknown, values: T): T[number] | 'unknown' => typeof value === 'string' && (values as readonly string[]).includes(value) ? value as T[number] : 'unknown'
 const text = (value: unknown): string => typeof value === 'string' ? value : ''
+const count = (value: unknown): number => typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0
 
 export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
   const teamKey = text(item.team_key)
@@ -20,10 +21,16 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
     priority: enumValue(item.priority, PRIORITIES),
     responsibleHuman: human ? text(human) : null,
     responsibleHumanActorId: typeof item.responsible_human_actor_id === 'string' ? item.responsible_human_actor_id : null,
-    project: text(item.project_name) || (item.project_id ? text(item.project_id) : null),
+    projectId: text(item.project_id) || null,
+    projectName: text(item.project_name) || null,
     labels: Array.isArray(item.labels) ? item.labels.filter((label): label is string => typeof label === 'string') : [],
     revision: typeof item.revision === 'number' ? item.revision : 0,
-    activeAgent: executor?.agent_display_name ? `${executor.agent_display_name}${executor.execution_state ? ` · ${executor.execution_state}` : ''}` : null,
+    activeAgent: executor?.agent_display_name ?? null,
+    activeAgentState: executor?.execution_state ?? null,
+    blockedByCount: count(item.surface_summary?.blocked_by_count),
+    blockingCount: count(item.surface_summary?.blocking_count),
+    subIssueCount: count(item.surface_summary?.sub_issue_count),
+    completedSubIssueCount: count(item.surface_summary?.completed_sub_issue_count),
   }
 }
 
