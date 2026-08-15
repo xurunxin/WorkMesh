@@ -166,7 +166,7 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
           {(view.state === 'error' || view.state === 'partial') && <Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => setRefreshKey(value => value + 1)} type="button" variant="ghost">{text.retry}</Button>}
         </div>
         {view.sourceNotices.length > 0 && <ul aria-label={text.sourceStatus} className="command-center-source-status">
-          {view.sourceNotices.map(notice => <li data-source-state={notice.state} key={notice.source}>{text.sources[notice.source]}：{text.sourceState[notice.state]}</li>)}
+          {view.sourceNotices.map(notice => <li data-source-state={notice.state} key={notice.source}>{text.sources[notice.source]}{locale === 'zh-CN' ? '：' : ': '}{text.sourceState[notice.state]}</li>)}
         </ul>}
         <div className="command-center-results" id="command-center-results" role="listbox">
           {view.groups.map(group => <section aria-label={text.groups[group.id]} className="command-center-group" key={group.id} role="group">

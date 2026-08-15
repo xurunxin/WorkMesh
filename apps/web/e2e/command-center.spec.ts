@@ -55,8 +55,8 @@ test('enforces the query threshold, names source failures, and supports keyboard
 
   await search.fill('GEN-6')
   await expect(page.getByRole('option', { name: /Add authority-aware command palette/ })).toBeVisible()
-  await expect(page.getByLabel('Search source status')).toContainText('Agents is unavailable for this actor.')
-  await expect(page.getByLabel('Search source status')).toContainText('Agent sessions has no matching results.')
+  await expect(page.getByLabel('Search source status')).toContainText('Agents: is unavailable for this user')
+  await expect(page.getByLabel('Search source status')).toContainText('Agent sessions: has no matching results')
   expect(resourceRequests.some(value => value.includes(`/agent-sessions?teamId=${team.id}`))).toBe(true)
 
   await search.press('ArrowDown')
