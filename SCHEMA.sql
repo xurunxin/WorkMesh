@@ -16,3 +16,4 @@
 \ir packages/db/migrations/v1/0004_agent_connections.sql
 \ir packages/db/migrations/v1/0005_planning_domain_parity.sql
 \ir packages/db/migrations/v1/0006_human_attachments.sql
+\ir packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql

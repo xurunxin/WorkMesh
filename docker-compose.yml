@@ -157,6 +157,7 @@ services:
     build: { context: ., dockerfile: infra/docker/mcp.Dockerfile }
     environment:
       WORKMESH_API_URL: ${WORKMESH_API_URL:-http://api:3001}
+      WORKMESH_BROWSER_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
       WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
       WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}

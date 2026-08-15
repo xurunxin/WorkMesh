@@ -180,6 +180,30 @@ describe.sequential('planning domain parity migration', () => {
       .rejects.toThrow('WORK_ITEM_MILESTONE_DELETED')
   })
 
+  it('allows a milestone name to be reused after the prior milestone is soft-deleted', async () => {
+    const scope = await seedPlanningScope()
+    const first = await db.query<{ id: string }>(
+      `INSERT INTO project_milestones(workspace_id,project_id,name)
+       VALUES($1,$2,'Reusable milestone') RETURNING id`,
+      [scope.workspaceId, scope.alphaProjectId],
+    )
+
+    await expect(db.query(
+      `INSERT INTO project_milestones(workspace_id,project_id,name)
+       VALUES($1,$2,'Reusable milestone')`,
+      [scope.workspaceId, scope.alphaProjectId],
+    )).rejects.toThrow()
+
+    await db.query('UPDATE project_milestones SET deleted_at=now() WHERE id=$1', [first.rows[0]!.id])
+    const replacement = await db.query<{ id: string }>(
+      `INSERT INTO project_milestones(workspace_id,project_id,name)
+       VALUES($1,$2,'Reusable milestone') RETURNING id`,
+      [scope.workspaceId, scope.alphaProjectId],
+    )
+
+    expect(replacement.rows[0]?.id).not.toBe(first.rows[0]?.id)
+  })
+
   it('serializes concurrent parent writes so a two-node cycle cannot commit', async () => {
     const scope = await seedPlanningScope()
     const first = await scope.createItem(0, scope.alphaProjectId, 'Concurrent first')

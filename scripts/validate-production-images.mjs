@@ -421,6 +421,10 @@ assert(
   'missing MCP access token must render as empty',
 )
 assert(
+  renderedAgent.services.mcp.environment.WORKMESH_BROWSER_ORIGIN === apiEnvironment.WEB_ORIGIN,
+  'rendered MCP Browser CORS origin must match the externally visible Web origin',
+)
+assert(
   runGuard({
     ...process.env,
     ...renderedAgent.services.mcp.environment,
