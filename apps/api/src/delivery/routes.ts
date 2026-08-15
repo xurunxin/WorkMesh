@@ -470,7 +470,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
         workspaceId: connection.workspace_id, teamId: repo?.team_id, actorId: connection.service_actor_id,
         correlationId: request.correlationId, idempotencyKey: delivery,
         type: 'provider.webhook.received', aggregateType: 'provider_webhook_delivery',
-        aggregateId: row.id, payload: { eventName, deliveryId: delivery, bodyHash },
+        aggregateId: row.id, payload: { eventName, externalDeliveryId: delivery, bodyHash },
       })
       return { id: row.id, replay: false }
     })
