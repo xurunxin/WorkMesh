@@ -550,6 +550,7 @@ paths:
             { $ref: "#/components/parameters/TeamIdQuery" },
             { $ref: "#/components/parameters/StatusIdQuery" },
             { $ref: "#/components/parameters/ProjectIdQuery" },
+            { $ref: "#/components/parameters/MilestoneIdQuery" },
             { $ref: "#/components/parameters/PriorityQuery" },
             { $ref: "#/components/parameters/StatusCategoryQuery" },
             { $ref: "#/components/parameters/ResponsibleHumanActorIdQuery" },
@@ -2078,6 +2079,8 @@ components:
       { name: statusId, in: query, schema: { type: string, format: uuid } }
     ProjectIdQuery:
       { name: projectId, in: query, schema: { type: string, format: uuid } }
+    MilestoneIdQuery:
+      { name: milestoneId, in: query, schema: { type: string, format: uuid } }
     PriorityQuery:
       {
         name: priority,
@@ -3876,6 +3879,19 @@ components:
             lease_expires_at: { $ref: "#/components/schemas/Timestamp" },
           },
       }
+    WorkItemSurfaceSummary:
+      {
+        type: object,
+        readOnly: true,
+        required: [blocked_by_count, blocking_count, sub_issue_count, completed_sub_issue_count],
+        properties:
+          {
+            blocked_by_count: { type: integer, minimum: 0 },
+            blocking_count: { type: integer, minimum: 0 },
+            sub_issue_count: { type: integer, minimum: 0 },
+            completed_sub_issue_count: { type: integer, minimum: 0 },
+          },
+      }
     WorkItem:
       {
         type: object,
@@ -3945,8 +3961,10 @@ components:
               },
             labels: { type: array, items: { type: string } },
             project_id: { type: [string, "null"], format: uuid },
+            project_name: { type: [string, "null"], readOnly: true },
             milestone_id: { type: [string, "null"], format: uuid },
             parent_id: { type: [string, "null"], format: uuid },
+            surface_summary: { $ref: "#/components/schemas/WorkItemSurfaceSummary" },
             revision: { $ref: "#/components/schemas/Revision" },
             deleted_at: { type: [string, "null"], format: date-time },
             created_at: { $ref: "#/components/schemas/Timestamp" },

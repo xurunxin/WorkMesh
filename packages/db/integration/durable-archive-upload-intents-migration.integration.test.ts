@@ -82,7 +82,9 @@ describe("0030 durable archive upload intents migration", () => {
     ).rows[0]!.id;
     await applyMigrations(upgrade, { through: 30 });
     await applyMigrations(clean, { through: 30 });
-  }, 120_000);
+  // This fixture builds three full migration chains. Windows Docker Desktop can
+  // legitimately exceed two minutes even when PostgreSQL remains responsive.
+  }, 300_000);
 
   afterAll(async () => {
     await upgrade?.end();

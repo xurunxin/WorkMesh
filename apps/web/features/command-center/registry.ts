@@ -29,13 +29,13 @@ const words = (value: string): string[] => normalize(value).split(/[^\p{L}\p{N}]
 export function staticCommands(operationsEnabled: boolean): Command[] {
   const commands: Command[] = [
     navigation('navigate:inbox', 'Inbox', '/?view=inbox', ['requests', 'reviews', 'blockers']),
-    navigation('navigate:my-work', 'My Work', '/?view=my-work', ['assigned', 'responsible']),
-    navigation('navigate:active-work', 'Active work', '/?view=active', ['in progress', 'started']),
-    navigation('navigate:backlog', 'Backlog', '/?view=backlog', ['planned', 'queued']),
+    navigation('navigate:issues', 'Issues', '/?view=my-work', ['assigned', 'responsible', 'work items']),
+    navigation('navigate:active-work', 'Issues · Active', '/?view=my-work&statusCategory=started', ['in progress', 'started']),
+    navigation('navigate:backlog', 'Issues · Backlog', '/?view=my-work&statusCategory=backlog', ['planned', 'queued']),
     navigation('navigate:projects', 'Projects', '/?view=projects', ['planning']),
     navigation('navigate:agents', 'Agents', '/agents', ['sessions', 'connections']),
     navigation('navigate:settings', 'Settings', '/settings', ['workspace', 'teams']),
-    create('create:work-item', 'Create work item', '/?view=my-work&intent=create-work-item', ['new task']),
+    create('create:work-item', 'Create issue', '/?view=my-work&intent=create-work-item', ['new task', 'new issue']),
     create('create:project', 'Create project', '/?view=projects&intent=create-project', ['new project']),
   ]
   if (operationsEnabled)

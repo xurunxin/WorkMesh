@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../../app/lib/api'
-import { appendWorkSurfacePage, normalizeWorkSurfacePage, serializeWorkSurfaceQuery, workSurfaceQueryForScope, workSurfaceScopeForQuery } from './query'
+import { appendWorkSurfacePage, normalizeWorkSurfacePage, parseWorkSurfaceLayout, parseWorkSurfaceQuery, serializeWorkSurfaceQuery, workSurfaceHref, workSurfaceQueryForScope, workSurfaceScopeForQuery } from './query'
 import { buildMoveRequest, createWorkItemMoveCommandAdapter, recoverMoveNetworkFailure } from './move-command'
 import { createSavedViewController, sanitizeSavedViewPreference } from './saved-views'
 import { toWorkSurfaceItem, workSurfaceErrorState } from './view-model'
@@ -8,16 +8,24 @@ import { requestWorkSurfaceLayout } from './work-surfaces'
 
 describe('Work Surface query boundary', () => {
   it('serializes visible filters with the canonical Human key and leaves cursor ownership to the paginator', () => {
-    expect(serializeWorkSurfaceQuery({ teamId: 'team-1', search: 'WM-7', ownerId: 'human-1', priority: 'high', mine: true }))
-      .toBe('?teamId=team-1&search=WM-7&priority=high&responsibleHumanActorId=human-1&mine=true')
+    expect(serializeWorkSurfaceQuery({ teamId: 'team-1', search: 'WM-7', ownerId: 'human-1', priority: 'high', milestoneId: 'milestone-1', mine: true }))
+      .toBe('?teamId=team-1&search=WM-7&priority=high&responsibleHumanActorId=human-1&milestoneId=milestone-1&mine=true')
   })
 
-  it('applies scope semantics without changing layout or issuing a second query', () => {
+  it('keeps Issues team-wide while preserving legacy scope semantics', () => {
+    expect(workSurfaceQueryForScope('my-work', { teamId: 'team-1' })).toEqual({ teamId: 'team-1' })
     expect(workSurfaceQueryForScope('active', { teamId: 'team-1', mine: true })).toEqual({ teamId: 'team-1', statusCategory: 'started' })
     expect(workSurfaceQueryForScope('project-work-items', {}, 'project-1')).toEqual({ projectId: 'project-1' })
     expect(workSurfaceQueryForScope('project-work-items', { statusCategory: 'backlog' }, 'project-1')).toEqual({ projectId: 'project-1', statusCategory: 'backlog' })
     expect(workSurfaceScopeForQuery({ projectId: 'project-1' }, 'my-work')).toBe('project-work-items')
     expect(workSurfaceScopeForQuery({ mine: true }, 'active')).toBe('my-work')
+  })
+
+  it('round-trips Issues filters and the chosen layout through a shareable URL', () => {
+    const query = parseWorkSurfaceQuery('?view=my-work&projectId=project-1&milestoneId=milestone-1&label=security&statusCategory=started')
+    expect(query).toEqual({ projectId: 'project-1', milestoneId: 'milestone-1', label: 'security', statusCategory: 'started' })
+    expect(parseWorkSurfaceLayout('?view=my-work&layout=board')).toBe('board')
+    expect(workSurfaceHref('my-work', query, 'board')).toBe('/?view=my-work&projectId=project-1&milestoneId=milestone-1&label=security&statusCategory=started&layout=board')
   })
 
   it('passes the opaque server cursor through and appends by stable id', () => {
@@ -32,10 +40,11 @@ describe('Work Surface view model and mutation seams', () => {
     requestWorkSurfaceLayout('board', layout => calls.push(`local:${layout}`), layout => calls.push(`parent:${layout}`))
     expect(calls).toEqual(['local:board', 'parent:board'])
   })
-  it('maps unknown enum values safely and exposes structured authorization state', () => {
-    const item = toWorkSurfaceItem({ id: '1', title: 'Unknown', revision: 3, status_id: 's', status_name: 'Custom', status_category: 'future', priority: 'critical' })
+  it('maps unknown enum values safely, exposes card summaries, and exposes structured authorization state', () => {
+    const item = toWorkSurfaceItem({ id: '1', title: 'Unknown', revision: 3, status_id: 's', status_name: 'Custom', status_category: 'future', priority: 'critical', project_id: 'project-1', project_name: 'Gateway', surface_summary: { blocked_by_count: 2, blocking_count: 1, sub_issue_count: 4, completed_sub_issue_count: 3 } })
     expect(item.statusCategory).toBe('unknown')
     expect(item.priority).toBe('unknown')
+    expect(item).toMatchObject({ projectId: 'project-1', projectName: 'Gateway', blockedByCount: 2, blockingCount: 1, subIssueCount: 4, completedSubIssueCount: 3 })
     expect(workSurfaceErrorState(new ApiError(403, 'Denied'))).toBe('forbidden')
   })
 
@@ -103,7 +112,7 @@ describe('Work Surface view model and mutation seams', () => {
 
 describe('Saved View boundary', () => {
   it('persists only preferences and strips rows, cursors, authority and credentials', () => {
-    expect(sanitizeSavedViewPreference({ id: 'view-1', name: 'Mine', team_id: 'team-1', layout: 'board', filters: { owner_id: 'human-1', items: [{ id: 'secret' }], csrfToken: 'secret' }, items: [{ id: 'secret' }], resultCursor: 'cursor' })).toEqual({ id: 'view-1', name: 'Mine', teamId: 'team-1', layout: 'board', filters: { responsibleHumanActorId: 'human-1' } })
+    expect(sanitizeSavedViewPreference({ id: 'view-1', name: 'Mine', team_id: 'team-1', layout: 'board', filters: { owner_id: 'human-1', milestone_id: 'milestone-1', items: [{ id: 'secret' }], csrfToken: 'secret' }, items: [{ id: 'secret' }], resultCursor: 'cursor' })).toEqual({ id: 'view-1', name: 'Mine', teamId: 'team-1', layout: 'board', filters: { responsibleHumanActorId: 'human-1', milestoneId: 'milestone-1' } })
   })
 
   it('merges the create response id into the saved preference', async () => {

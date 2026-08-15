@@ -2,6 +2,20 @@
 
 import { type FormEvent, type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, Dialog, ErrorState, Toast, type NavigationItem } from '@workmesh/ui'
+import { BookOpenTextIcon } from '@phosphor-icons/react/dist/csr/BookOpenText'
+import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
+import { GearIcon } from '@phosphor-icons/react/dist/csr/Gear'
+import { ListBulletsIcon } from '@phosphor-icons/react/dist/csr/ListBullets'
+import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
+import { SlidersHorizontalIcon } from '@phosphor-icons/react/dist/csr/SlidersHorizontal'
+import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
+import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
+import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
+import { ArrowsLeftRightIcon } from '@phosphor-icons/react/dist/csr/ArrowsLeftRight'
+import { FolderPlusIcon } from '@phosphor-icons/react/dist/csr/FolderPlus'
+import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
+import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
+import { XIcon } from '@phosphor-icons/react/dist/csr/X'
 import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
 import { AgentWorkPanel } from './agent-work-panel'
 import { InboxPanel, WorkRoom } from './work-room'
@@ -9,6 +23,7 @@ import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { homeRefreshTargets } from './lib/realtime-refresh'
 import { homeScopeHref, parseHomeScope, type HomeScope } from './lib/navigation'
+import { LocaleToggle, useLocale, type GuidanceCopy } from './lib/i18n'
 import { actorDisplayName, type AuthenticatedActor } from './lib/actor'
 import { ProjectWorkspace } from './project-workspace'
 import { RealtimeStatus } from './realtime-status'
@@ -21,7 +36,7 @@ import {
 import { GlobalCommandCenter } from '../features/command-center'
 import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
-import { workSurfaceScopeForQuery } from '../features/work-items/query'
+import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
 
 type Actor = AuthenticatedActor
@@ -46,6 +61,7 @@ const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Ma
 const emptyFilters: Filters = {}
 
 export default function HomePage() {
+  const { detailCopy, guidanceCopy, issueCopy, locale, surfaceCopy, t } = useLocale()
   const [actor, setActor] = useState<Actor | null>(null)
   const [teamId, setTeamId] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<WorkItem | null>(null)
@@ -59,7 +75,7 @@ export default function HomePage() {
   const [detailErrorState, setDetailErrorState] = useState<StructuredDetailError | null>(null)
   const [detailConflict, setDetailConflict] = useState<StructuredDetailError | null>(null)
   const [detailResetKey, setDetailResetKey] = useState(0)
-  const [filters, setFilters] = useState<Filters>({ mine: true })
+  const [filters, setFilters] = useState<Filters>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [operationsEnabled, setOperationsEnabled] = useState(false)
@@ -88,7 +104,9 @@ export default function HomePage() {
   )
   const items = workSurfaceItems
   const comments = commentsPage.items
-  const milestonesPage = usePagedApiList<Milestone>(selectedItem?.project_id ? `/api/v1/projects/${encodeURIComponent(selectedItem.project_id)}/milestones` : null)
+  const detailMilestonesPage = usePagedApiList<Milestone>(selectedItem?.project_id ? `/api/v1/projects/${encodeURIComponent(selectedItem.project_id)}/milestones` : null)
+  const issueMilestoneProjectId = scope === 'projects' ? selectedProject?.id : filters.projectId
+  const issueMilestonesPage = usePagedApiList<Milestone>(issueMilestoneProjectId ? `/api/v1/projects/${encodeURIComponent(issueMilestoneProjectId)}/milestones` : null)
   const refreshWorkSurface = useCallback(async () => { await surfaceRefreshRef.current?.() }, [])
   const collectionError = [
     teamsPage.error, statesPage.error, humansPage.error, projectsPage.error,
@@ -193,7 +211,7 @@ export default function HomePage() {
     setSelectedItem(null)
     setProjectTab('overview')
     setFullItemView(false)
-    if (nextScope === 'my-work') setFilters({ mine: true })
+    if (nextScope === 'my-work') setFilters({})
     else if (nextScope === 'active') { setFilters({ statusCategory: 'started' }); setLayout('board') }
     else if (nextScope === 'backlog') setFilters({ statusCategory: 'backlog' })
     else setFilters(emptyFilters)
@@ -228,7 +246,7 @@ export default function HomePage() {
       const project = await apiRequest<Project>(`/api/v1/projects/${id}`)
       setSelectedProject(project)
       setProjectTab(tab)
-      setFilters(current => ({ ...current, projectId: project.id }))
+      setFilters(current => ({ ...current, projectId: project.id, milestoneId: undefined }))
       if (updateHistory) window.history.pushState({}, '', projectWorkspaceHref({ projectId: project.id, tab }))
     } catch (reason) { setError(requestError(reason)) }
   }
@@ -254,7 +272,7 @@ export default function HomePage() {
     } else {
       setScope(nextScope)
       setSelectedProject(null)
-      window.history.pushState({}, '', homeScopeHref(nextScope))
+      window.history.pushState({}, '', workSurfaceHref('my-work', view.filters, view.layout))
     }
   }
   const surfaceFilters = useMemo<Filters>(() => {
@@ -271,14 +289,22 @@ export default function HomePage() {
     humans={humans}
     initialFilters={surfaceFilters}
     initialLayout={surfaceLayout}
+    copy={issueCopy}
+    milestones={issueMilestonesPage.items}
     onApplySavedView={applySavedView}
     onError={message => setError(message)}
     onItemsChange={setWorkSurfaceItems}
     onLayoutChange={next => {
       setLayout(next)
       if (scope === 'projects') selectProjectTab(next)
+      else window.history.pushState({}, '', workSurfaceHref('my-work', filters, next))
     }}
     onOpenItem={id => openItem(id)}
+    onOpenProject={id => openProject(id)}
+    onQueryChange={next => {
+      setFilters(next)
+      if (scope !== 'projects') window.history.pushState({}, '', workSurfaceHref('my-work', next, layout))
+    }}
     onRefreshReady={refresh => { surfaceRefreshRef.current = refresh }}
     onSelectionReset={() => { setSelectedProject(null); setSelectedItem(null) }}
     projects={teamProjects}
@@ -286,6 +312,7 @@ export default function HomePage() {
     scope={surfaceScope}
     selectedProjectId={selectedProject?.id}
     statuses={states}
+    surfaceCopy={surfaceCopy}
     teamId={selectedTeam.id}
   /> : null
   const closeItem = () => {
@@ -301,11 +328,25 @@ export default function HomePage() {
   useEffect(() => {
     if (!actor) return
     const restoreRoute = () => {
-      const nextScope = parseHomeScope(window.location.search)
+      const requestedScope = parseHomeScope(window.location.search)
+      const nextScope: Scope = requestedScope === 'active' || requestedScope === 'backlog' ? 'my-work' : requestedScope
       const route = readProjectWorkspaceRoute(window.location.search)
       const params = new URLSearchParams(window.location.search)
       const intent = params.get('intent')
-      chooseScope(nextScope)
+      const routeFilters = parseWorkSurfaceQuery(window.location.search)
+      if (requestedScope === 'active') routeFilters.statusCategory = 'started'
+      if (requestedScope === 'backlog') routeFilters.statusCategory = 'backlog'
+      if (requestedScope === 'active' || requestedScope === 'backlog') {
+        params.set('view', 'my-work')
+        params.set('statusCategory', routeFilters.statusCategory ?? (requestedScope === 'active' ? 'started' : 'backlog'))
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`)
+      }
+      setScope(nextScope)
+      setLayout(parseWorkSurfaceLayout(window.location.search))
+      setFilters(routeFilters)
+      setSelectedItem(null)
+      setSelectedProject(null)
+      setFullItemView(false)
       if (intent === 'create-work-item') setCreateWorkItemOpen(true)
       if (intent === 'create-project') setCreateProjectOpen(true)
       if (intent) {
@@ -375,76 +416,81 @@ export default function HomePage() {
 
   if (loading) return <main className="center foundation-center wm-theme" data-testid="loading"><AsyncStateSurface description="Loading your authorized workspace projection." state="loading" title="Loading WorkMesh" /></main>
   if (!actor) return <main className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel="Retry" description={error || 'Unable to load your authorized WorkMesh projection.'} onAction={() => void load()} title="WorkMesh is unavailable" /></main>
-  const pageTitle = scope === 'inbox' ? 'Inbox' : scope === 'guidance' ? 'Guidance' : scope === 'projects' ? 'Projects' : scope === 'my-work' ? 'My Work' : scope === 'active' ? 'Active work' : 'Backlog'
-  const scopeLinks: Array<[Scope, string]> = [
-    ['inbox', 'Inbox'],
-    ['my-work', 'My Work'],
-    ['active', 'Active'],
-    ['backlog', 'Backlog'],
-    ['projects', 'Projects'],
-    ['guidance', 'Guidance'],
+  const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
+  const scopeLinks: Array<[Scope, string, NavigationItem['icon']]> = [
+    ['inbox', t('inbox'), <TrayIcon aria-hidden="true" size={20} weight="regular" />],
+    ['my-work', t('issues'), <ListBulletsIcon aria-hidden="true" size={20} weight="regular" />],
+    ['projects', t('projects'), <FolderSimpleIcon aria-hidden="true" size={20} weight="regular" />],
+    ['guidance', t('guidance'), <BookOpenTextIcon aria-hidden="true" size={20} weight="regular" />],
   ]
-  const scopeNavigation: NavigationItem[] = scopeLinks.map(([value, label]) => ({
+  const scopeNavigation: NavigationItem[] = scopeLinks.map(([value, label, icon]) => ({
     active: scope === value,
     href: homeScopeHref(value),
+    icon,
     label,
     onClick: event => navigateScope(event, value),
     testId: `view-${value}`,
   }))
-  scopeNavigation.push({ href: '/agents', label: 'Agents', testId: 'view-agents' })
+  scopeNavigation.push({ href: '/agents', icon: <RobotIcon aria-hidden="true" size={20} weight="regular" />, label: t('agents'), testId: 'view-agents' })
   const utilityNavigation: NavigationItem[] = [
-    ...(operationsEnabled ? [{ href: '/operations', label: 'Planning & Operations', testId: 'view-operations' }] : []),
-    { href: '/settings', label: 'Settings' },
+    ...(operationsEnabled ? [{ href: '/operations', icon: <SlidersHorizontalIcon aria-hidden="true" size={20} weight="regular" />, label: t('planningAndOperations'), testId: 'view-operations' }] : []),
+    { href: '/settings', icon: <GearIcon aria-hidden="true" size={20} weight="regular" />, label: t('settings') },
   ]
   return <AppShell
+    administrationNavigationLabel={t('administrationNavigation')}
     actorName={actorDisplayName(actor)}
     contextLabel={pageTitle}
-    headerActions={<div className="shell-action-cluster"><GlobalCommandCenter /><RealtimeStatus /></div>}
-    footer={<><Button data-testid="logout" onClick={() => void signOut()} variant="ghost">Sign out</Button>{releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · build {releaseInfo.buildSha} · schema {releaseInfo.schemaBaseline}</small>}</>}
+    headerActions={<div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
+    footer={<><Button data-testid="logout" onClick={() => void signOut()} variant="ghost">{t('signOut')}</Button>{releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · build {releaseInfo.buildSha} · schema {releaseInfo.schemaBaseline}</small>}</>}
+    mainNavigationLabel={t('mainNavigation')}
+    menuLabel={t('menu')}
+    mobileNavigationLabel={t('mobileNavigation')}
     navigation={scopeNavigation}
     productName="WorkMesh"
-    teamSwitcher={<><label className="team-switcher">Team<select aria-label="Current team" value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>No team</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label><LoadMoreButton collection={teamsPage} label="teams" /></>}
+    skipLabel={t('skipToContent')}
+    teamSwitcher={<><label className="team-switcher">{t('team')}<select aria-label={t('currentTeam')} value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>{t('noTeam')}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label><LoadMoreButton collection={teamsPage} label={t('team')} loadingLabel={`${t('loading')}…`} loadMoreLabel={`${t('loadMore')} ${t('team')}`} /></>}
     utilityNavigation={utilityNavigation}
+    workspaceNavigationLabel={t('workspaceNavigation')}
   >
     <section className="content">
       <header>
-        <div><h1>{pageTitle}</h1>{selectedProject && <p>{selectedProject.summary || 'Project overview'}</p>}</div>
+        <div><h1>{pageTitle}</h1>{selectedProject && <p>{selectedProject.summary || t('projectOverview')}</p>}</div>
         <div className="page-actions">
-          {scope === 'projects' && <Button onClick={() => setCreateProjectOpen(true)} variant="secondary">New project</Button>}
-          {scope !== 'inbox' && scope !== 'guidance' && <Button onClick={() => setCreateWorkItemOpen(true)} variant="primary">New work item</Button>}
+          {scope === 'projects' && <Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="secondary">{t('newProject')}</Button>}
+          {scope !== 'inbox' && scope !== 'guidance' && <Button icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => setCreateWorkItemOpen(true)} variant="primary">{t('newIssue')}</Button>}
         </div>
       </header>
-      {collectionError && <ErrorState description={collectionError.message} title="This work view could not refresh" />}
-      <Toast message={error} onDismiss={() => setError('')} open={Boolean(error)} title="Action could not be completed" tone="danger" />
-      {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">Reload latest work</Button></aside>}
-      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
-        <div className="collection-continuation"><LoadMoreButton collection={statesPage} label="workflow states" /><LoadMoreButton collection={humansPage} label="people" /><LoadMoreButton collection={projectsPage} label="projects" /></div>
-        {scope === 'projects' && <section className="project-strip" aria-label="Projects">{teamProjects.map(project => <Button key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)} variant="ghost">{project.name}</Button>)}{teamProjects.length === 0 && <span className="empty">No projects yet.</span>}</section>}
+      {collectionError && <ErrorState description={collectionError.message} title={t('workViewCouldNotRefresh')} />}
+      <Toast message={error} onDismiss={() => setError('')} open={Boolean(error)} title={t('actionCouldNotComplete')} tone="danger" />
+      {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">{t('reloadLatestWork')}</Button></aside>}
+      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
+        <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
+        {scope === 'projects' && <section className="project-strip" aria-label={t('projects')}>{teamProjects.map(project => <Button icon={<FolderSimpleIcon aria-hidden="true" size={16} weight="bold" />} key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)} variant="ghost">{project.name}</Button>)}{teamProjects.length === 0 && <span className="empty">{t('noProjects')}</span>}</section>}
         {scope !== 'projects' && workSurfaces}
         {scope === 'projects' && selectedProject && <ProjectWorkspace project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} />}
-      </> : <section className="empty">Create a team from Settings to start tracking work.</section>}</>}
+      </> : <section className="empty">{t('noTeam')} · {t('settings')}</section>}</>}
     </section>
     <Dialog onClose={() => setCreateProjectOpen(false)} open={createProjectOpen} title="Create project">
       <form className="project-form modal-form" onSubmit={createProject} data-testid="create-project">
-        <label>Project name<input name="name" required /></label>
-        <label>Summary<input name="summary" /></label>
-        <label>Target date<input name="targetDate" type="date" /></label>
-        <label>Lead<select name="leadActorId"><option value="">No lead</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label className="form-span">Description<textarea name="description" /></label>
-        <div className="form-actions"><Button onClick={() => setCreateProjectOpen(false)} type="button">Cancel</Button><Button type="submit" variant="primary">Create project</Button></div>
+        <label>{t('projectName')}<input name="name" required /></label>
+        <label>{t('summary')}<input name="summary" /></label>
+        <label>{t('targetDate')}<input name="targetDate" type="date" /></label>
+        <label>{t('lead')}<select name="leadActorId"><option value="">{t('noLead')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
+        <label className="form-span">{t('description')}<textarea name="description" /></label>
+        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={() => setCreateProjectOpen(false)} type="button">{t('cancel')}</Button><Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createProject')}</Button></div>
       </form>
     </Dialog>
     <Dialog onClose={() => setCreateWorkItemOpen(false)} open={createWorkItemOpen} title="Create work item">
       <form className="work-form modal-form" onSubmit={createWorkItem} data-testid="create-work-item">
-        <label className="form-span">Title<input name="title" required /></label>
-        <label className="form-span">Description<textarea name="description" /></label>
-        <label>Status<select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label>
-        <label>Priority<select name="priority"><option value="none">No priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
-        <label>Due date<input name="dueDate" type="date" /></label>
-        <label>Responsible human<select name="ownerId"><option value="">Unassigned</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label>Project<select name="projectId"><option value="">No project</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
-        <label>Labels<input name="labels" placeholder="Comma separated" /></label>
-        <div className="form-actions"><Button onClick={() => setCreateWorkItemOpen(false)} type="button">Cancel</Button><Button disabled={!states[0]} data-testid="create-work-item-submit" type="submit" variant="primary">Create work item</Button></div>
+        <label className="form-span">{t('title')}<input name="title" required /></label>
+        <label className="form-span">{t('description')}<textarea name="description" /></label>
+        <label>{t('status')}<select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label>
+        <label>{t('priority')}<select name="priority"><option value="none">{t('noPriority')}</option><option value="urgent">{t('urgent')}</option><option value="high">{t('high')}</option><option value="medium">{t('medium')}</option><option value="low">{t('low')}</option></select></label>
+        <label>{t('dueDate')}<input name="dueDate" type="date" /></label>
+        <label>{t('responsibleHuman')}<select name="ownerId"><option value="">{t('unassigned')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
+        <label>{t('projects')}<select name="projectId"><option value="">{t('noProject')}</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
+        <label>{t('labels')}<input name="labels" /></label>
+        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={() => setCreateWorkItemOpen(false)} type="button">{t('cancel')}</Button><Button disabled={!states[0]} data-testid="create-work-item-submit" icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createIssue')}</Button></div>
       </form>
     </Dialog>
     {selectedItem && <WorkItemDetail
@@ -454,6 +500,7 @@ export default function HomePage() {
       model={toWorkItemDetailModel(selectedItem)}
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
+      copy={detailCopy}
       onClose={closeItem}
       onOpenFull={() => void openItem(selectedItem.id, true)}
       onReloadLatest={() => { setDetailConflict(null); setDetailErrorState(null); setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }}
@@ -462,7 +509,7 @@ export default function HomePage() {
         statuses: states.map(state => ({ id: state.id, label: state.name })),
         humans: humans.map(human => ({ id: human.id, label: human.display_name })),
         projects: teamProjects.map(project => ({ id: project.id, label: project.name })),
-        milestones: milestonesPage.items.map(milestone => ({ id: milestone.id, label: milestone.name })),
+        milestones: detailMilestonesPage.items.map(milestone => ({ id: milestone.id, label: milestone.name })),
         parents: items.filter(candidate => candidate.id !== selectedItem.id).map(candidate => ({ id: candidate.id, label: `${candidate.team_key}-${candidate.number} · ${candidate.title}` })),
       }}
       supplemental={<>
@@ -478,6 +525,7 @@ export default function HomePage() {
       onClose={closeItem}
       onRetry={() => void openItem(requestedItem.id, requestedItem.mode === 'full_page', false)}
       requestedKey={requestedItem.id}
+      copy={detailCopy}
     />}
   </AppShell>
 }
@@ -488,7 +536,7 @@ type GuidanceCurrent = { scope: GuidanceScope; scopeId: string; documentId: stri
 type GuidanceHistory = { scope: GuidanceScope; scopeId: string; documentId: string | null; revision: number; status: GuidanceCurrent['status']; currentRevisionId: string | null; revisions: GuidanceRevision[]; audit: Array<{ id: string; action: 'published' | 'archived' | 'rolled_back'; fromRevisionId: string | null; toRevisionId: string | null; actorId: string; actorDisplayName: string; reason: string; createdAt: string }> }
 type GuidanceDiff = { from: GuidanceRevision; to: GuidanceRevision; changes: Array<{ kind: 'context' | 'removed' | 'added'; oldLine: number | null; newLine: number | null; text: string }> }
 
-function GuidancePanel({ workspaceId, team, projects }: { workspaceId: string; team: Team | null; projects: Project[] }) {
+function GuidancePanel({ copy, workspaceId, team, projects }: { copy: GuidanceCopy; workspaceId: string; team: Team | null; projects: Project[] }) {
   const [scope, setScope] = useState<GuidanceScope>('workspace')
   const [projectId, setProjectId] = useState('')
   const [current, setCurrent] = useState<GuidanceCurrent | null>(null)
@@ -562,28 +610,28 @@ function GuidancePanel({ workspaceId, team, projects }: { workspaceId: string; t
   }
 
   return <section className="guidance-panel" data-testid="guidance-panel">
-    <p className="guidance-intro">Versioned instructions for agents. Published revisions are immutable and Session context pins the exact revision and SHA-256 hash it used.</p>
+    <p className="guidance-intro">{copy.intro}</p>
     <div className="guidance-toolbar">
-      <label>Scope<select aria-label="Guidance scope" value={scope} onChange={event => setScope(event.currentTarget.value as GuidanceScope)}><option value="workspace">Workspace</option><option value="team">Team</option><option value="project">Project</option></select></label>
-      {scope === 'team' && <label>Team<input value={team?.name ?? 'No team selected'} readOnly /></label>}
-      {scope === 'project' && <label>Project<select aria-label="Guidance project" value={projectId} onChange={event => setProjectId(event.currentTarget.value)}><option value="" disabled>No project</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
-      <div className={`guidance-status status-${current?.status ?? 'unpublished'}`}><strong>{current?.status ?? 'unavailable'}</strong><span>document revision {current?.revision ?? 0}</span></div>
+      <label>{copy.scope}<select aria-label={copy.scopeLabel} value={scope} onChange={event => setScope(event.currentTarget.value as GuidanceScope)}><option value="workspace">{copy.workspace}</option><option value="team">{copy.team}</option><option value="project">{copy.project}</option></select></label>
+      {scope === 'team' && <label>{copy.team}<input value={team?.name ?? copy.noTeamSelected} readOnly /></label>}
+      {scope === 'project' && <label>{copy.project}<select aria-label={copy.projectLabel} value={projectId} onChange={event => setProjectId(event.currentTarget.value)}><option value="" disabled>{copy.noProject}</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
+      <div className={`guidance-status status-${current?.status ?? 'unpublished'}`}><strong>{copy.status(current?.status ?? 'unavailable')}</strong><span>{copy.documentRevision(current?.revision ?? 0)}</span></div>
     </div>
-    {!root && <p className="empty">Select or create the required scope before editing Guidance.</p>}
+    {!root && <p className="empty">{copy.selectScope}</p>}
     {error && <p className="error" role="alert">{error}</p>}
-    {loading && <p>Loading Guidance…</p>}
+    {loading && <p>{copy.loading}</p>}
     {root && current && <>
       <form className="guidance-editor" onSubmit={event => void publish(event)}>
-        <label>Markdown<textarea data-testid="guidance-markdown" value={markdown} onChange={event => setMarkdown(event.currentTarget.value)} rows={16} maxLength={100000} /></label>
-        <label>Change summary<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
-        <button data-testid="publish-guidance">Publish immutable revision</button>
+        <label>{copy.markdown}<textarea data-testid="guidance-markdown" value={markdown} onChange={event => setMarkdown(event.currentTarget.value)} rows={16} maxLength={100000} /></label>
+        <label>{copy.changeSummary}<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
+        <Button data-testid="publish-guidance" icon={<UploadSimpleIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{copy.publishRevision}</Button>
       </form>
-      {current.currentRevision && <dl className="guidance-current"><div><dt>Current revision</dt><dd>#{current.currentRevision.revisionNumber}</dd></div><div><dt>Author</dt><dd>{current.currentRevision.authorDisplayName}</dd></div><div><dt>Published</dt><dd>{new Date(current.currentRevision.publishedAt).toLocaleString()}</dd></div><div><dt>SHA-256</dt><dd>{current.currentRevision.contentHash}</dd></div></dl>}
-      <section className="guidance-actions"><label>Audit reason<input value={reason} onChange={event => setReason(event.currentTarget.value)} placeholder="Required for archive or rollback" maxLength={2000} /></label><button className="danger" disabled={!reason || current.status !== 'active'} onClick={() => void archive()}>Archive current Guidance</button></section>
-      <section className="guidance-history"><h3>Revision history</h3>{history?.revisions.length ? <ul>{history.revisions.map(revision => <li key={revision.id} className={history.currentRevisionId === revision.id ? 'selected' : ''}><div><strong>#{revision.revisionNumber} · {revision.changeSummary}</strong><small>{revision.authorDisplayName} · {new Date(revision.publishedAt).toLocaleString()}</small><code>{revision.contentHash}</code></div><button disabled={!reason || history.currentRevisionId === revision.id} onClick={() => void rollback(revision.id)}>Roll back pointer</button></li>)}</ul> : <p className="empty">No published revisions.</p>}</section>
-      {(history?.revisions.length ?? 0) >= 2 && <section className="guidance-compare"><h3>Compare revisions</h3><div><select aria-label="From Guidance revision" value={fromRevisionId} onChange={event => setFromRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><select aria-label="To Guidance revision" value={toRevisionId} onChange={event => setToRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><button onClick={() => void compare()}>Show diff</button></div>{diff && <pre data-testid="guidance-diff">{diff.changes.map((change, index) => <span key={`${change.kind}:${index}`} className={`diff-${change.kind}`}>{change.kind === 'added' ? '+' : change.kind === 'removed' ? '-' : ' '} {change.text}{'\n'}</span>)}</pre>}</section>}
-      <section className="guidance-audit"><h3>Pointer audit</h3>{history?.audit.length ? <ol>{history.audit.map(fact => <li key={fact.id}><strong>{fact.action.replace('_', ' ')}</strong> by {fact.actorDisplayName} · {fact.reason} <time>{new Date(fact.createdAt).toLocaleString()}</time></li>)}</ol> : <p>No pointer changes yet.</p>}</section>
-      {scope === 'project' && projects.find(project => project.id === projectId)?.description && <div className="guidance-description-note"><strong>Project description (not Guidance)</strong><p>{projects.find(project => project.id === projectId)?.description}</p></div>}
+      {current.currentRevision && <dl className="guidance-current"><div><dt>{copy.currentRevision}</dt><dd>#{current.currentRevision.revisionNumber}</dd></div><div><dt>{copy.author}</dt><dd>{current.currentRevision.authorDisplayName}</dd></div><div><dt>{copy.published}</dt><dd>{copy.formatDate(current.currentRevision.publishedAt)}</dd></div><div><dt>SHA-256</dt><dd>{current.currentRevision.contentHash}</dd></div></dl>}
+      <section className="guidance-actions"><label>{copy.auditReason}<input value={reason} onChange={event => setReason(event.currentTarget.value)} placeholder={copy.auditPlaceholder} maxLength={2000} /></label><Button className="danger" disabled={!reason || current.status !== 'active'} icon={<ArchiveIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => void archive()} variant="danger">{copy.archiveCurrent}</Button></section>
+      <section className="guidance-history"><h3>{copy.revisionHistory}</h3>{history?.revisions.length ? <ul>{history.revisions.map(revision => <li key={revision.id} className={history.currentRevisionId === revision.id ? 'selected' : ''}><div><strong>#{revision.revisionNumber} · {revision.changeSummary}</strong><small>{revision.authorDisplayName} · {copy.formatDate(revision.publishedAt)}</small><code>{revision.contentHash}</code></div><Button disabled={!reason || history.currentRevisionId === revision.id} icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={16} />} onClick={() => void rollback(revision.id)}>{copy.rollbackPointer}</Button></li>)}</ul> : <p className="empty">{copy.noRevisions}</p>}</section>
+      {(history?.revisions.length ?? 0) >= 2 && <section className="guidance-compare"><h3>{copy.compareRevisions}</h3><div><select aria-label={copy.fromRevision} value={fromRevisionId} onChange={event => setFromRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><select aria-label={copy.toRevision} value={toRevisionId} onChange={event => setToRevisionId(event.currentTarget.value)}>{history?.revisions.map(revision => <option key={revision.id} value={revision.id}>#{revision.revisionNumber}</option>)}</select><Button icon={<ArrowsLeftRightIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => void compare()}>{copy.showDiff}</Button></div>{diff && <pre data-testid="guidance-diff">{diff.changes.map((change, index) => <span key={`${change.kind}:${index}`} className={`diff-${change.kind}`}>{change.kind === 'added' ? '+' : change.kind === 'removed' ? '-' : ' '} {change.text}{'\n'}</span>)}</pre>}</section>}
+      <section className="guidance-audit"><h3>{copy.pointerAudit}</h3>{history?.audit.length ? <ol>{history.audit.map(fact => <li key={fact.id}><strong>{copy.action(fact.action)}</strong> {copy.by} {fact.actorDisplayName} · {fact.reason} <time>{copy.formatDate(fact.createdAt)}</time></li>)}</ol> : <p>{copy.noPointerChanges}</p>}</section>
+      {scope === 'project' && projects.find(project => project.id === projectId)?.description && <div className="guidance-description-note"><strong>{copy.projectDescription}</strong><p>{projects.find(project => project.id === projectId)?.description}</p></div>}
     </>}
   </section>
 }

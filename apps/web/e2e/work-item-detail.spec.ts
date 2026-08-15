@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test'
 test.describe('v28 Work Item detail', () => {
   test('shares the Work Item projection across Sheet and Full Page', async ({ page }) => {
     await page.goto('/?view=active')
-    await page.locator('[data-work-item-id]').first().click()
+    await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
     await expect(page.getByRole('dialog')).toBeVisible()
     await expect(page.getByTestId('responsible-human')).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Agent executions' })).toBeVisible()
@@ -26,7 +26,7 @@ test.describe('v28 Work Item detail', () => {
         mutations.push({ headers: request.headers(), body: request.postData() })
     })
     await page.goto('/?view=active')
-    await page.locator('[data-work-item-id]').first().click()
+    await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
     const title = page.getByLabel('Title')
     await title.fill(`${await title.inputValue()} edited`)
     page.once('dialog', dialog => dialog.dismiss())
@@ -43,7 +43,7 @@ test.describe('v28 Work Item detail', () => {
     for (const viewport of [{ width: 375, height: 812 }, { width: 320, height: 800 }]) {
       await page.setViewportSize(viewport)
       await page.goto('/?view=active')
-      await page.locator('[data-work-item-id]').first().click()
+      await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
       await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible()
       const width = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
       expect(width.scroll).toBeLessThanOrEqual(width.client)

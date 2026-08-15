@@ -16,6 +16,7 @@ export type WorkSurfaceQuery = {
   /** Legacy transport alias accepted at the boundary, never serialized when canonical is present. */
   ownerId?: string
   projectId?: string
+  milestoneId?: string
   label?: string
   statusCategory?: StatusCategory
   mine?: boolean
@@ -50,6 +51,12 @@ export type WorkItemDto = {
   parent_id?: string | null
   labels?: string[]
   active_executor?: { agent_display_name?: string; execution_state?: string } | null
+  surface_summary?: {
+    blocked_by_count?: number
+    blocking_count?: number
+    sub_issue_count?: number
+    completed_sub_issue_count?: number
+  }
 }
 
 export type WorkSurfaceItem = {
@@ -62,10 +69,16 @@ export type WorkSurfaceItem = {
   priority: Priority | 'unknown'
   responsibleHuman: string | null
   responsibleHumanActorId: string | null
-  project: string | null
+  projectId: string | null
+  projectName: string | null
   labels: string[]
   revision: number
   activeAgent: string | null
+  activeAgentState: string | null
+  blockedByCount: number
+  blockingCount: number
+  subIssueCount: number
+  completedSubIssueCount: number
 }
 
 export type WorkSurfaceState = 'initial' | 'loading' | 'ready' | 'empty' | 'refreshing' | 'forbidden' | 'conflict' | 'offline' | 'reconnecting' | 'error'

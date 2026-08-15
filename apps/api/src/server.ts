@@ -1261,11 +1261,93 @@ async function listHumans(request: FastifyRequest, paginator: Paginator) {
   }, sql, values);
 }
 
+type HumanWorkItemSurfaceRow = Record<string, unknown> & {
+  id: string;
+  workspace_id: string;
+  responsible_human_actor_id: string | null;
+  project_name: string | null;
+  blocked_by_count: number;
+  blocking_count: number;
+  sub_issue_count: number;
+  completed_sub_issue_count: number;
+};
+
+type HumanWorkItemSurface = Omit<HumanWorkItemSurfaceRow,
+  "blocked_by_count" | "blocking_count" | "sub_issue_count" | "completed_sub_issue_count"
+> & Pick<HumanWorkItemSurfaceRow, "id" | "workspace_id" | "responsible_human_actor_id"> & {
+  surface_summary: {
+    blocked_by_count: number;
+    blocking_count: number;
+    sub_issue_count: number;
+    completed_sub_issue_count: number;
+  };
+};
+
+/**
+ * The human collection carries only relationship counts, never relationship
+ * targets. Agent collection reads deliberately bypass this projection so a
+ * session cannot use it to infer work outside its live scope.
+ */
+function attachHumanWorkItemSurface(items: readonly HumanWorkItemSurfaceRow[]): HumanWorkItemSurface[] {
+  return items.map((item) => {
+    const {
+      blocked_by_count,
+      blocking_count,
+      completed_sub_issue_count,
+      sub_issue_count,
+      ...workItem
+    } = item;
+    return {
+      ...workItem,
+      surface_summary: {
+        blocked_by_count,
+        blocking_count,
+        completed_sub_issue_count,
+        sub_issue_count,
+      },
+    } as HumanWorkItemSurface;
+  });
+}
+
+const humanWorkItemSurfaceJoins = `
+  LEFT JOIN projects project ON project.id=w.project_id
+    AND project.workspace_id=w.workspace_id
+    AND project.deleted_at IS NULL
+  LEFT JOIN (
+    SELECT target_work_item_id AS work_item_id,COUNT(*)::integer AS blocked_by_count
+      FROM work_item_relations
+     WHERE workspace_id=$1 AND kind='blocks' AND deleted_at IS NULL
+     GROUP BY target_work_item_id
+  ) blocked_by ON blocked_by.work_item_id=w.id
+  LEFT JOIN (
+    SELECT source_work_item_id AS work_item_id,COUNT(*)::integer AS blocking_count
+      FROM work_item_relations
+     WHERE workspace_id=$1 AND kind='blocks' AND deleted_at IS NULL
+     GROUP BY source_work_item_id
+  ) blocking ON blocking.work_item_id=w.id
+  LEFT JOIN (
+    SELECT child.parent_id AS work_item_id,
+           COUNT(*)::integer AS sub_issue_count,
+           COUNT(*) FILTER (WHERE child_state.category='completed')::integer AS completed_sub_issue_count
+      FROM work_items child
+      JOIN workflow_states child_state ON child_state.id=child.status_id
+     WHERE child.workspace_id=$1 AND child.deleted_at IS NULL AND child.parent_id IS NOT NULL
+     GROUP BY child.parent_id
+  ) sub_issues ON sub_issues.work_item_id=w.id`;
+
+const humanWorkItemSurfaceSelect = `SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category,
+  project.name AS project_name,
+  COALESCE(blocked_by.blocked_by_count,0)::integer AS blocked_by_count,
+  COALESCE(blocking.blocking_count,0)::integer AS blocking_count,
+  COALESCE(sub_issues.sub_issue_count,0)::integer AS sub_issue_count,
+  COALESCE(sub_issues.completed_sub_issue_count,0)::integer AS completed_sub_issue_count`;
+
 async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
   const query = request.query as {
     teamId?: string;
     statusId?: string;
     projectId?: string;
+    milestoneId?: string;
     mine?: string;
     search?: string;
     priority?: string;
@@ -1313,8 +1395,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
   }
   if (query.teamId) await assertReadableTeam(request, query.teamId);
   const values: unknown[] = [request.actor!.workspaceId];
-  let sql =
-    "SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category FROM work_items w JOIN teams t ON t.id=w.team_id JOIN workflow_states s ON s.id=w.status_id WHERE w.workspace_id=$1 AND w.deleted_at IS NULL AND t.deleted_at IS NULL";
+  let where = "WHERE w.workspace_id=$1 AND w.deleted_at IS NULL AND t.deleted_at IS NULL";
   if (request.actor!.kind === "agent") {
     const current = request.actor! as unknown as ApiActor;
     values.push(current.agentSessionId);
@@ -1325,7 +1406,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       "w.workspace_id",
       values,
     );
-    sql += ` AND EXISTS (
+    where += ` AND EXISTS (
       SELECT 1
         FROM agent_sessions scoped
        WHERE scoped.id=${sessionParameter}
@@ -1335,19 +1416,20 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
          AND scoped.coordination_connection_id IS NOT NULL
     ) AND ${coordinationAuthorization}`;
   } else {
-    sql += scopedTeamPredicate(request, "w.team_id", values);
+    where += scopedTeamPredicate(request, "w.team_id", values);
   }
   for (const [key, column] of [
     ["teamId", "w.team_id"],
     ["statusId", "w.status_id"],
     ["projectId", "w.project_id"],
+    ["milestoneId", "w.milestone_id"],
     ["priority", "w.priority"],
     ["statusCategory", "s.category"],
   ] as const) {
     const value = query[key];
     if (value) {
       values.push(value);
-      sql += ` AND ${column}=$${values.length}`;
+      where += ` AND ${column}=$${values.length}`;
     }
   }
   const owner =
@@ -1356,22 +1438,23 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     (query.mine === "true" ? request.actor!.id : undefined);
   if (owner) {
     values.push(owner);
-    sql += ` AND w.responsible_human_actor_id=$${values.length}`;
+    where += ` AND w.responsible_human_actor_id=$${values.length}`;
   }
   if (query.label) {
     values.push(query.label);
-    sql += ` AND $${values.length}=ANY(w.labels)`;
+    where += ` AND $${values.length}=ANY(w.labels)`;
   }
   if (query.search) {
     values.push(query.search);
-    sql += ` AND (t.key || '-' || w.number::text = $${values.length} OR w.title % $${values.length} OR to_tsvector('simple',coalesce(w.title,'') || ' ' || coalesce(w.description,'')) @@ plainto_tsquery('simple',$${values.length}))`;
+    where += ` AND (t.key || '-' || w.number::text = $${values.length} OR w.title % $${values.length} OR to_tsvector('simple',coalesce(w.title,'') || ' ' || coalesce(w.description,'')) @@ plainto_tsquery('simple',$${values.length}))`;
   }
-  const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(db, request, request.query, {
+  const binding = {
     route: "/api/v1/work-items",
     filters: {
       teamId: query.teamId ?? null,
       statusId: query.statusId ?? null,
       projectId: query.projectId ?? null,
+      milestoneId: query.milestoneId ?? null,
       priority: query.priority ?? null,
       statusCategory: query.statusCategory ?? null,
       responsibleHumanActorId: owner ?? null,
@@ -1379,8 +1462,29 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       search: query.search ?? null,
     },
     sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
-  }, sql, values);
-  return { ...page, items: await attachWorkItemExecutors(db,page.items) };
+  } as const;
+  if (request.actor!.kind !== "human") {
+    const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(
+      db,
+      request,
+      request.query,
+      binding,
+      `SELECT w.*,t.key AS team_key,s.name AS status_name,s.category AS status_category
+          FROM work_items w
+          JOIN teams t ON t.id=w.team_id
+          JOIN workflow_states s ON s.id=w.status_id
+          ${where}`,
+      values,
+    );
+    return { ...page, items: await attachWorkItemExecutors(db, page.items) };
+  }
+  const page = await paginator.query<HumanWorkItemSurfaceRow>(db, request, request.query, binding, `${humanWorkItemSurfaceSelect}
+          FROM work_items w
+          JOIN teams t ON t.id=w.team_id
+          JOIN workflow_states s ON s.id=w.status_id
+          ${humanWorkItemSurfaceJoins}
+         ${where}`, values);
+  return { ...page, items: await attachWorkItemExecutors(db, attachHumanWorkItemSurface(page.items)) };
 }
 
 if (process.env.NODE_ENV !== "test") {

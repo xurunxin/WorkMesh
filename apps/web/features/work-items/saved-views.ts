@@ -14,6 +14,7 @@ function sanitizeFilters(value: unknown): WorkSurfaceQuery {
   const priority = optionalText(input.priority); if (priority && (PRIORITIES as readonly string[]).includes(priority)) filters.priority = priority as WorkSurfaceQuery['priority']
   const responsible = optionalText(input.responsibleHumanActorId ?? input.responsible_human_actor_id ?? input.ownerId ?? input.owner_id); if (responsible) filters.responsibleHumanActorId = responsible
   const projectId = optionalText(input.projectId ?? input.project_id); if (projectId) filters.projectId = projectId
+  const milestoneId = optionalText(input.milestoneId ?? input.milestone_id); if (milestoneId) filters.milestoneId = milestoneId
   const label = optionalText(input.label); if (label) filters.label = label
   const statusCategory = optionalText(input.statusCategory ?? input.status_category); if (statusCategory && (STATUS_CATEGORIES as readonly string[]).includes(statusCategory)) filters.statusCategory = statusCategory as WorkSurfaceQuery['statusCategory']
   if (input.mine === true) filters.mine = true

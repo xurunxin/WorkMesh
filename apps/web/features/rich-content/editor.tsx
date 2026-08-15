@@ -1,6 +1,21 @@
 'use client'
 
 import React, { type ClipboardEvent, type KeyboardEvent, type RefObject, useEffect, useRef, useState } from 'react'
+import {
+  ArrowUUpLeft,
+  ArrowUUpRight,
+  Code,
+  CodeBlock,
+  LinkSimple,
+  ListBullets,
+  ListNumbers,
+  Quotes,
+  TextB,
+  TextH,
+  TextItalic,
+  TextStrikethrough,
+  type Icon,
+} from '@phosphor-icons/react'
 
 export type DraftIdentity = { workspaceId: string; teamId: string; actorId: string; resourceType: string; resourceId: string; field: string; baseRevision: number }
 export type Draft = DraftIdentity & { value: string; updatedAt: string; expiresAt: string }
@@ -53,7 +68,64 @@ const wrappedValue = (textarea: HTMLTextAreaElement, before: string, after = bef
   return { next: `${textarea.value.slice(0, start)}${before}${textarea.value.slice(start, end)}${after}${textarea.value.slice(end)}`, start: start + before.length, end: end + before.length }
 }
 
-export function RichTextEditor({ identity, label, name, value, onChange, required, textareaRef }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null> }) {
+export type RichTextEditorCopy = {
+  formatting: (label: string) => string
+  undo: string
+  redo: string
+  heading: string
+  bold: string
+  italic: string
+  strike: string
+  bullets: string
+  numbered: string
+  quote: string
+  code: string
+  codeBlock: string
+  link: string
+  draftRestored: string
+  discardDraft: string
+  revisionDraft: (draftRevision: number, currentRevision: number) => string
+  restoreForReview: string
+  discardOldDraft: string
+}
+
+const defaultEditorCopy: RichTextEditorCopy = {
+  formatting: label => `${label} formatting`,
+  undo: 'Undo',
+  redo: 'Redo',
+  heading: 'Heading',
+  bold: 'Bold',
+  italic: 'Italic',
+  strike: 'Strike',
+  bullets: 'Bulleted list',
+  numbered: 'Numbered list',
+  quote: 'Quote',
+  code: 'Inline code',
+  codeBlock: 'Code block',
+  link: 'Link',
+  draftRestored: 'A local draft was restored.',
+  discardDraft: 'Discard draft',
+  revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`,
+  restoreForReview: 'Restore for review',
+  discardOldDraft: 'Discard old draft',
+}
+
+type FormatTool = { label: keyof Pick<RichTextEditorCopy, 'heading' | 'bold' | 'italic' | 'strike' | 'bullets' | 'numbered' | 'quote' | 'code' | 'codeBlock' | 'link'>; before: string; after: string; icon: Icon }
+const formatTools: FormatTool[] = [
+  { label: 'heading', before: '## ', after: '', icon: TextH },
+  { label: 'bold', before: '**', after: '**', icon: TextB },
+  { label: 'italic', before: '*', after: '*', icon: TextItalic },
+  { label: 'strike', before: '~~', after: '~~', icon: TextStrikethrough },
+  { label: 'bullets', before: '- ', after: '', icon: ListBullets },
+  { label: 'numbered', before: '1. ', after: '', icon: ListNumbers },
+  { label: 'quote', before: '> ', after: '', icon: Quotes },
+  { label: 'code', before: '`', after: '`', icon: Code },
+  { label: 'codeBlock', before: '```\n', after: '\n```', icon: CodeBlock },
+  { label: 'link', before: '[', after: '](https://)', icon: LinkSimple },
+]
+
+export function RichTextEditor({ identity, label, name, value, onChange, required, textareaRef, copy }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null>; copy?: Partial<RichTextEditorCopy> }) {
+  const text = { ...defaultEditorCopy, ...copy }
   const internalRef = useRef<HTMLTextAreaElement>(null); const ref = textareaRef ?? internalRef
   const [restored, setRestored] = useState(false)
   const [reconciliation, setReconciliation] = useState<Draft | null>(null)
@@ -85,9 +157,10 @@ export function RichTextEditor({ identity, label, name, value, onChange, require
     event.preventDefault()
     applyHistory(key === 'y' || (key === 'z' && event.shiftKey) ? 'redo' : 'undo')
   }
-  return <section className="rich-editor" data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={`${label} formatting`}>
-    <button aria-label="Undo" onClick={() => applyHistory('undo')} type="button">Undo</button>
-    <button aria-label="Redo" onClick={() => applyHistory('redo')} type="button">Redo</button>
-    {[['Heading','## ',''],['Bold','**','**'],['Italic','*','*'],['Strike','~~','~~'],['Bullets','- ',''],['Numbered','1. ',''],['Quote','> ',''],['Code','`','`'],['Code block','```\n','\n```'],['Link','[','](https://)']].map(([title, before, after]) => <button aria-label={title} key={title} onClick={() => ref.current && format(ref.current, before!, after!)} type="button">{title}</button>)}
-  </div><label>{label}<textarea name={name} onChange={event => change(event.currentTarget.value)} onKeyDown={keyboard} onPaste={paste} ref={ref} required={required} value={value} /></label>{restored && <div className="draft-notice" role="status"><span>A local draft was restored.</span><button type="button" onClick={() => { clearDraft(localStorage, identity); onChange(serverValue.current); setRestored(false) }}>Discard draft</button></div>}{reconciliation && <div className="draft-notice" role="status" data-testid="draft-reconciliation"><span>A draft from revision {reconciliation.baseRevision} is available. Review it before saving against revision {identity.baseRevision}.</span><button type="button" onClick={() => { onChange(reconciliation.value); writeDraft(localStorage, identity, reconciliation.value); clearDraft(localStorage, reconciliation); setReconciliation(null); setRestored(true) }}>Restore for review</button><button type="button" onClick={() => { clearDraft(localStorage, reconciliation); setReconciliation(null) }}>Discard old draft</button></div>}</section>
+  return <section className="rich-editor" data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={text.formatting(label)}>
+    <button aria-label={text.undo} className="rich-editor-tool" onClick={() => applyHistory('undo')} title={text.undo} type="button"><ArrowUUpLeft aria-hidden size={17} /></button>
+    <button aria-label={text.redo} className="rich-editor-tool" onClick={() => applyHistory('redo')} title={text.redo} type="button"><ArrowUUpRight aria-hidden size={17} /></button>
+    <span aria-hidden className="rich-editor-tool-separator" />
+    {formatTools.map(tool => { const ToolIcon = tool.icon; return <button aria-label={text[tool.label]} className="rich-editor-tool" key={tool.label} onClick={() => ref.current && format(ref.current, tool.before, tool.after)} title={text[tool.label]} type="button"><ToolIcon aria-hidden size={17} /></button> })}
+  </div><label>{label}<textarea name={name} onChange={event => change(event.currentTarget.value)} onKeyDown={keyboard} onPaste={paste} ref={ref} required={required} value={value} /></label>{restored && <div className="draft-notice" role="status"><span>{text.draftRestored}</span><button type="button" onClick={() => { clearDraft(localStorage, identity); onChange(serverValue.current); setRestored(false) }}>{text.discardDraft}</button></div>}{reconciliation && <div className="draft-notice" role="status" data-testid="draft-reconciliation"><span>{text.revisionDraft(reconciliation.baseRevision, identity.baseRevision)}</span><button type="button" onClick={() => { onChange(reconciliation.value); writeDraft(localStorage, identity, reconciliation.value); clearDraft(localStorage, reconciliation); setReconciliation(null); setRestored(true) }}>{text.restoreForReview}</button><button type="button" onClick={() => { clearDraft(localStorage, reconciliation); setReconciliation(null) }}>{text.discardOldDraft}</button></div>}</section>
 }

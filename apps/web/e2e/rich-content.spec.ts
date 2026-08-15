@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test.describe('v29 Human rich content', () => {
   test('edits Markdown, keeps unsafe HTML inert, and preserves keyboard access', async ({ page }) => {
     await page.goto('/?view=active')
-    await page.locator('[data-work-item-id]').first().click()
+    await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
     const description = page.getByRole('textbox', { name: 'Description (Markdown)' })
     await expect(description).toBeVisible()
     await description.fill('## Human context\n<script>alert(1)</script>')
@@ -15,7 +15,7 @@ test.describe('v29 Human rich content', () => {
   test('reflows the Work Room and attachments at narrow viewports', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 800 })
     await page.goto('/?view=active')
-    await page.locator('[data-work-item-id]').first().click()
+    await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
     await expect(page.getByRole('textbox', { name: 'Work item comment' })).toBeVisible()
     await page.getByRole('tab', { name: 'Artifacts' }).click()
     await expect(page.getByRole('region', { name: 'Work Item attachments' })).toBeVisible()

@@ -1,5 +1,6 @@
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
+import { matchesPreviewWorkItem } from './project-work-preview-query.mjs'
 
 const port = Number(process.env.PORT ?? 3101)
 const cors = {
@@ -24,7 +25,7 @@ let milestones = [
   { id: 'd0000000-0000-4000-8000-000000000002', workspace_id: 'workspace-preview', project_id: project.id, name: 'Planning surfaces', description: 'Project roadmap, hierarchy, blockers, board, and full Work Item view.', target_date: '2026-08-28', revision: 1, deleted_at: null, created_at: '2026-08-02T00:00:00Z', updated_at: '2026-08-09T00:00:00Z' },
   { id: 'd0000000-0000-4000-8000-000000000003', workspace_id: 'workspace-preview', project_id: project.id, name: 'Dogfood closure', description: 'Run the imported Kaneo plan from WorkMesh.', target_date: '2026-09-15', revision: 1, deleted_at: null, created_at: '2026-08-03T00:00:00Z', updated_at: '2026-08-09T00:00:00Z' },
 ]
-const executor = { agent_id: 'agent-codex', agent_actor_id: 'actor-codex', agent_slug: 'codex', agent_display_name: 'Codex', session_id: 'session-codex', lease_id: 'lease-codex', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: '', execution_state: 'running', heartbeat_health: 'healthy', last_heartbeat_at: '2026-08-10T07:00:00Z', lease_heartbeat_at: '2026-08-10T07:00:00Z', lease_expires_at: '2026-08-10T09:00:00Z' }
+const executor = { agent_id: 'agent-codex', agent_actor_id: 'actor-codex', agent_slug: 'codex', agent_display_name: 'Codex', session_id: 'session-codex', lease_id: 'lease-codex', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: '', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-08-10T07:00:00Z', lease_heartbeat_at: '2026-08-10T07:00:00Z', lease_expires_at: '2026-08-10T09:00:00Z' }
 const titles = [
   'Define Project information hierarchy', 'Build responsive planning shell', 'Add Milestone roadmap', 'Model parent and child Work Items',
   'Show blocking relationships', 'Separate Human and Agent state', 'Build dense keyboard-ready board', 'Add List and Backlog views',
@@ -41,12 +42,19 @@ const items = titles.map((title, index) => {
     responsible_human_actor_id: index === 12 ? null : human.id,
     responsible_human: index === 12 ? null : { actor_id: human.id, display_name: human.display_name },
     active_executor: index >= 5 && index <= 8 ? { ...executor, resource_id: id } : null,
-    shared_reviewers: [], labels: index % 2 ? ['frontend'] : ['planning'], project_id: project.id,
+    shared_reviewers: [], labels: index % 3 === 0 ? ['security'] : index % 2 ? ['frontend'] : ['planning'], project_id: project.id, project_name: project.name,
     milestone_id: milestones[Math.min(2, Math.floor(index / 5))].id,
     parent_id: [3, 4, 6, 7, 8, 10, 11].includes(index) ? `c0000000-0000-4000-8000-${String(index).padStart(12, '0')}` : null,
+    surface_summary: { blocked_by_count: index === 6 ? 1 : 0, blocking_count: index === 4 ? 1 : 0, sub_issue_count: [2, 5, 9].includes(index) ? 3 : 0, completed_sub_issue_count: [2, 5, 9].includes(index) ? index % 3 : 0 },
   }
 })
 let relations = [{ id: 'b0000000-0000-4000-8000-000000000001', workspace_id: 'workspace-preview', team_id: team.id, source_work_item_id: items[4].id, target_work_item_id: items[6].id, kind: 'blocks', created_by_actor_id: human.id, revision: 1, deleted_at: null, created_at: '2026-08-09T00:00:00Z', updated_at: '2026-08-09T00:00:00Z' }]
+let guidanceRevisions = [
+  { id: 'a0000000-0000-4000-8000-000000000002', revisionNumber: 2, contentHash: `sha256:${'b'.repeat(64)}`, changeSummary: '明确 Issues 工作台协作规范', authorActorId: human.id, authorDisplayName: human.display_name, publishedAt: '2026-08-14T08:30:00Z' },
+  { id: 'a0000000-0000-4000-8000-000000000001', revisionNumber: 1, contentHash: `sha256:${'a'.repeat(64)}`, changeSummary: '初始化工作区指南', authorActorId: human.id, authorDisplayName: human.display_name, publishedAt: '2026-08-10T06:00:00Z' },
+]
+let guidanceCurrent = { scope: 'workspace', scopeId: 'workspace-preview', documentId: 'a0000000-0000-4000-8000-000000000010', status: 'active', revision: 2, currentRevision: guidanceRevisions[0], markdown: '# WorkMesh 工作指南\n\n- 人类负责人对结果负责。\n- 智能体执行状态与 Issue 工作流状态保持分离。\n- 所有变更都要提供可验证证据。', updatedAt: guidanceRevisions[0].publishedAt }
+const guidanceAudit = [{ id: 'a0000000-0000-4000-8000-000000000020', action: 'published', fromRevisionId: guidanceRevisions[1].id, toRevisionId: guidanceRevisions[0].id, actorId: human.id, actorDisplayName: human.display_name, reason: guidanceRevisions[0].changeSummary, createdAt: guidanceRevisions[0].publishedAt }]
 
 const readBody = request => new Promise(resolve => {
   let raw = ''
@@ -74,7 +82,28 @@ createServer(async (request, response) => {
   if (path === '/api/v1/projects') return send(response, page([project]))
   if (path === `/api/v1/projects/${project.id}`) return send(response, project)
   if (path === '/api/v1/views') return send(response, page([]))
-  if (path === '/api/v1/work-items') return send(response, page(items.filter(item => !url.searchParams.get('projectId') || item.project_id === url.searchParams.get('projectId'))))
+  if (path === '/api/v1/workspaces/workspace-preview/guidance/history') return send(response, { scope: 'workspace', scopeId: 'workspace-preview', documentId: guidanceCurrent.documentId, revision: guidanceCurrent.revision, status: guidanceCurrent.status, currentRevisionId: guidanceCurrent.currentRevision?.id ?? null, revisions: guidanceRevisions, audit: guidanceAudit })
+  if (path === '/api/v1/workspaces/workspace-preview/guidance/diff') return send(response, { from: guidanceRevisions.find(revision => revision.id === url.searchParams.get('fromRevisionId')) ?? guidanceRevisions[1], to: guidanceRevisions.find(revision => revision.id === url.searchParams.get('toRevisionId')) ?? guidanceRevisions[0], changes: [{ kind: 'removed', oldLine: 2, newLine: null, text: '智能体负责完成工作。' }, { kind: 'added', oldLine: null, newLine: 2, text: '人类负责人对结果负责，智能体通过授权执行。' }] })
+  if (path === '/api/v1/workspaces/workspace-preview/guidance') {
+    if (request.method === 'PUT') {
+      const input = await readBody(request)
+      const revision = { id: randomUUID(), revisionNumber: (guidanceRevisions[0]?.revisionNumber ?? 0) + 1, contentHash: `sha256:${'c'.repeat(64)}`, changeSummary: input.changeSummary, authorActorId: human.id, authorDisplayName: human.display_name, publishedAt: new Date().toISOString() }
+      guidanceRevisions = [revision, ...guidanceRevisions]
+      guidanceCurrent = { ...guidanceCurrent, status: 'active', revision: guidanceCurrent.revision + 1, currentRevision: revision, markdown: input.markdown, updatedAt: revision.publishedAt }
+    }
+    return send(response, guidanceCurrent)
+  }
+  if (path === '/api/v1/workspaces/workspace-preview/guidance/archive') {
+    guidanceCurrent = { ...guidanceCurrent, status: 'archived', revision: guidanceCurrent.revision + 1, markdown: '' }
+    return send(response, guidanceCurrent)
+  }
+  if (path === '/api/v1/workspaces/workspace-preview/guidance/rollback') {
+    const input = await readBody(request)
+    const revision = guidanceRevisions.find(candidate => candidate.id === input.revisionId) ?? guidanceCurrent.currentRevision
+    guidanceCurrent = { ...guidanceCurrent, status: 'active', revision: guidanceCurrent.revision + 1, currentRevision: revision, markdown: revision?.revisionNumber === 1 ? '# WorkMesh 工作指南\n\n智能体负责完成工作。' : guidanceCurrent.markdown }
+    return send(response, guidanceCurrent)
+  }
+  if (path === '/api/v1/work-items') return send(response, page(items.filter(item => matchesPreviewWorkItem(item, url.searchParams))))
   const workMatch = path.match(/^\/api\/v1\/work-items\/([^/]+)$/)
   if (workMatch) {
     const item = items.find(candidate => candidate.id === workMatch[1])

@@ -1,6 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ArrowDown } from '@phosphor-icons/react'
+import { Button } from '@workmesh/ui'
 import { ApiError, apiListRequest, appendUniquePage, pagedPath, type ListResponse } from './api'
 
 type Options<T, R extends { id: string }> = {
@@ -167,20 +169,26 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
 export function LoadMoreButton({
   collection,
   label,
+  loadingLabel = 'Loading…',
+  loadMoreLabel,
 }: {
   collection: Pick<PagedCollection<{ id: string }>, 'nextCursor' | 'loading' | 'loadingMore' | 'loadMore'>
   label: string
+  loadingLabel?: string
+  loadMoreLabel?: string
 }) {
   if (!collection.nextCursor) return null
   return (
-    <button
+    <Button
       type="button"
       className="load-more"
       data-testid={`load-more-${label.toLowerCase().replaceAll(' ', '-')}`}
       disabled={collection.loading || collection.loadingMore}
+      icon={<ArrowDown aria-hidden size={16} />}
       onClick={() => void collection.loadMore()}
+      variant="secondary"
     >
-      {collection.loadingMore ? 'Loading…' : `Load more ${label}`}
-    </button>
+      {collection.loadingMore ? loadingLabel : loadMoreLabel ?? `Load more ${label}`}
+    </Button>
   )
 }

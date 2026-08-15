@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { usePagedApiList } from '../../app/lib/pagination'
 import type { PagedCollection } from '../../app/lib/pagination'
-import { type WorkItemDto, type WorkSurfacePage, type WorkSurfaceQuery, type WorkSurfaceScope } from './contracts'
+import { PRIORITIES, STATUS_CATEGORIES, type WorkItemDto, type WorkSurfaceLayout, type WorkSurfacePage, type WorkSurfaceQuery, type WorkSurfaceScope } from './contracts'
 
 const setIfPresent = (params: URLSearchParams, key: string, value: string | boolean | undefined): void => {
   if (value === undefined || value === '') return
@@ -19,6 +19,7 @@ export function serializeWorkSurfaceQuery(query: WorkSurfaceQuery): string {
   setIfPresent(params, 'priority', query.priority)
   setIfPresent(params, 'responsibleHumanActorId', query.responsibleHumanActorId ?? query.ownerId)
   setIfPresent(params, 'projectId', query.projectId)
+  setIfPresent(params, 'milestoneId', query.milestoneId)
   setIfPresent(params, 'label', query.label)
   setIfPresent(params, 'statusCategory', query.statusCategory)
   if (query.mine) params.set('mine', 'true')
@@ -28,9 +29,8 @@ export function serializeWorkSurfaceQuery(query: WorkSurfaceQuery): string {
 
 export function workSurfaceQueryForScope(scope: WorkSurfaceScope, query: WorkSurfaceQuery, selectedProjectId?: string): WorkSurfaceQuery {
   const next: WorkSurfaceQuery = { ...query }
-  if (scope === 'my-work') { next.mine = true; delete next.responsibleHumanActorId; delete next.ownerId; delete next.projectId; delete next.statusCategory }
-  else if (scope === 'active') { next.statusCategory = 'started'; delete next.mine; delete next.projectId }
-  else if (scope === 'backlog') { next.statusCategory = 'backlog'; delete next.mine; delete next.projectId }
+  if (scope === 'active') { next.statusCategory = 'started'; delete next.mine; delete next.projectId; delete next.milestoneId }
+  else if (scope === 'backlog') { next.statusCategory = 'backlog'; delete next.mine; delete next.projectId; delete next.milestoneId }
   else if (scope === 'project-work-items') { next.projectId = selectedProjectId; delete next.mine }
   return next
 }
@@ -38,10 +38,40 @@ export function workSurfaceQueryForScope(scope: WorkSurfaceScope, query: WorkSur
 /** Resolve the navigation scope encoded by a persisted query without treating the view as authority. */
 export function workSurfaceScopeForQuery(query: WorkSurfaceQuery, fallback: WorkSurfaceScope): WorkSurfaceScope {
   if (query.projectId) return 'project-work-items'
-  if (query.mine) return 'my-work'
-  if (query.statusCategory === 'started') return 'active'
-  if (query.statusCategory === 'backlog') return 'backlog'
-  return fallback
+  return fallback === 'project-work-items' || fallback === 'active' || fallback === 'backlog' ? 'my-work' : fallback
+}
+
+const optionalText = (value: string | null): string | undefined => value?.trim() || undefined
+
+/** Parse only public, filter-only URL state. Cursor and authority never enter browser history. */
+export function parseWorkSurfaceQuery(search: string): WorkSurfaceQuery {
+  const params = new URLSearchParams(search)
+  const priority = optionalText(params.get('priority'))
+  const statusCategory = optionalText(params.get('statusCategory'))
+  return {
+    teamId: optionalText(params.get('teamId')),
+    search: optionalText(params.get('search')),
+    statusId: optionalText(params.get('statusId')),
+    priority: priority && (PRIORITIES as readonly string[]).includes(priority) ? priority as WorkSurfaceQuery['priority'] : undefined,
+    responsibleHumanActorId: optionalText(params.get('responsibleHumanActorId') ?? params.get('ownerId')),
+    projectId: optionalText(params.get('projectId')),
+    milestoneId: optionalText(params.get('milestoneId')),
+    label: optionalText(params.get('label')),
+    statusCategory: statusCategory && (STATUS_CATEGORIES as readonly string[]).includes(statusCategory) ? statusCategory as WorkSurfaceQuery['statusCategory'] : undefined,
+    mine: params.get('mine') === 'true' || undefined,
+  }
+}
+
+export function parseWorkSurfaceLayout(search: string): WorkSurfaceLayout {
+  return new URLSearchParams(search).get('layout') === 'board' ? 'board' : 'list'
+}
+
+export function workSurfaceHref(scope: WorkSurfaceScope, query: WorkSurfaceQuery, layout: WorkSurfaceLayout): string {
+  const params = new URLSearchParams()
+  params.set('view', scope)
+  for (const [key, value] of new URLSearchParams(serializeWorkSurfaceQuery(query).slice(1))) params.set(key, value)
+  params.set('layout', layout)
+  return `/?${params.toString()}`
 }
 
 export function workSurfacePath(query: WorkSurfaceQuery): string {

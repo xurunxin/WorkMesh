@@ -33,8 +33,11 @@ describe('UI authority and token boundary', () => {
       expect(source).toMatch(new RegExp(`export function ${component}`))
     }
     for (const forbidden of ['fetch(', 'apiRequest', 'localStorage', 'sessionStorage', 'EventSource', 'apps/web']) expect(source).not.toContain(forbidden)
-    expect(source).toContain('aria-label="Work item board columns"')
+    expect(source).toContain('aria-label={text.boardColumnsLabel}')
     expect(source).toContain('explicit-status-selector')
+    expect(source).toContain('wm-work-item-project')
+    expect(source).toContain('onOpenProject')
+    expect(source).not.toContain('role="button"')
   })
 
   it('owns the complete M1 token vocabulary and reduced-motion fallback', () => {
