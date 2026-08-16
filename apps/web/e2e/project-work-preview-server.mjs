@@ -2,9 +2,11 @@ import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
 import { matchesPreviewWorkItem } from './project-work-preview-query.mjs'
 
-const port = Number(process.env.PORT ?? 3101)
+const argument = name => process.argv.find(value => value.startsWith(`${name}=`))?.slice(name.length + 1)
+const port = Number(argument('--port') ?? process.env.PORT ?? 3101)
+const webOrigin = argument('--origin') ?? process.env.WEB_ORIGIN ?? 'http://127.0.0.1:3100'
 const cors = {
-  'access-control-allow-origin': 'http://127.0.0.1:3100',
+  'access-control-allow-origin': webOrigin,
   'access-control-allow-credentials': 'true',
   'access-control-allow-headers': 'content-type,if-match,idempotency-key,x-csrf-token',
   'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS',
@@ -26,6 +28,8 @@ let milestones = [
   { id: 'd0000000-0000-4000-8000-000000000003', workspace_id: 'workspace-preview', project_id: project.id, name: 'Dogfood closure', description: 'Run the imported Kaneo plan from WorkMesh.', target_date: '2026-09-15', revision: 1, deleted_at: null, created_at: '2026-08-03T00:00:00Z', updated_at: '2026-08-09T00:00:00Z' },
 ]
 const executor = { agent_id: 'agent-codex', agent_actor_id: 'actor-codex', agent_slug: 'codex', agent_display_name: 'Codex', session_id: 'session-codex', lease_id: 'lease-codex', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: '', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-08-10T07:00:00Z', lease_heartbeat_at: '2026-08-10T07:00:00Z', lease_expires_at: '2026-08-10T09:00:00Z' }
+const agent = { id: 'agent-preview', workspace_id: 'workspace-preview', actor_id: 'actor-agent-preview', name: 'Codex Preview', slug: 'codex-preview', description: 'Frontend preview agent.', provider: 'openai', version: '1.0.0', supported_protocols: ['native_http'], skills: ['frontend'], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], max_concurrency: 1, heartbeat_interval_seconds: 30, is_active: true, revision: 1, team_access: [] }
+const session = { id: 'session-preview', agent_id: agent.id, agent_actor_id: agent.actor_id, principal_human_actor_id: human.id, delegation_id: 'delegation-preview', work_item_id: null, state: 'executing', state_reason: null, revision: 1, current_plan_version_id: null, budget: {}, last_heartbeat_at: '2026-08-16T00:00:00Z', retry_of_session_id: null, stop_requested_at: null, error_code: null, error_summary: null, created_at: '2026-08-16T00:00:00Z', updated_at: '2026-08-16T00:00:00Z' }
 const titles = [
   'Define Project information hierarchy', 'Build responsive planning shell', 'Add Milestone roadmap', 'Model parent and child Work Items',
   'Show blocking relationships', 'Separate Human and Agent state', 'Build dense keyboard-ready board', 'Add List and Backlog views',
@@ -81,6 +85,14 @@ createServer(async (request, response) => {
   if (path === '/api/v1/actors/humans') return send(response, page([human]))
   if (path === '/api/v1/projects') return send(response, page([project]))
   if (path === `/api/v1/projects/${project.id}`) return send(response, project)
+  if (path === '/api/v1/agents') return send(response, page([agent]))
+  if (path === '/api/v1/agent-sessions') return send(response, page([session]))
+  if (path === `/api/v1/agent-sessions/${session.id}`) return send(response, session)
+  if (path === `/api/v1/agent-sessions/${session.id}/activities`) return send(response, page([]))
+  if (path === `/api/v1/agent-sessions/${session.id}/plans`) return send(response, page([]))
+  if (path === '/api/v1/agent-connections') return send(response, page([]))
+  if (path === '/api/v1/approvals') return send(response, page([]))
+  if (path === '/api/v1/artifacts') return send(response, page([]))
   if (path === '/api/v1/views') return send(response, page([]))
   if (path === '/api/v1/workspaces/workspace-preview/guidance/history') return send(response, { scope: 'workspace', scopeId: 'workspace-preview', documentId: guidanceCurrent.documentId, revision: guidanceCurrent.revision, status: guidanceCurrent.status, currentRevisionId: guidanceCurrent.currentRevision?.id ?? null, revisions: guidanceRevisions, audit: guidanceAudit })
   if (path === '/api/v1/workspaces/workspace-preview/guidance/diff') return send(response, { from: guidanceRevisions.find(revision => revision.id === url.searchParams.get('fromRevisionId')) ?? guidanceRevisions[1], to: guidanceRevisions.find(revision => revision.id === url.searchParams.get('toRevisionId')) ?? guidanceRevisions[0], changes: [{ kind: 'removed', oldLine: 2, newLine: null, text: '智能体负责完成工作。' }, { kind: 'added', oldLine: null, newLine: 2, text: '人类负责人对结果负责，智能体通过授权执行。' }] })

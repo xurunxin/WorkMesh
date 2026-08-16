@@ -43,7 +43,7 @@ export default defineConfig({
     {
       name: "authenticated",
       dependencies: ["bootstrap"],
-      testIgnore: /stage0\.spec\.ts/,
+      testIgnore: [/stage0\.spec\.ts/, /frontend-unification\.spec\.ts/],
       use: { storageState: authenticatedStatePath },
     },
   ],

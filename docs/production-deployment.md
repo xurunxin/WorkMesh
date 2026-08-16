@@ -2,6 +2,24 @@
 
 Production uses `docker-compose.production.yml`. The existing `docker-compose.yml` remains the local development stack and is not an application-image release contract.
 
+## Refresh only the Web service
+
+For frontend-only changes that do not alter API, event, database, Worker, or MCP contracts, the local source stack can rebuild and replace only Web:
+
+```powershell
+docker compose build web
+docker compose up -d --no-deps web
+```
+
+In production, after selecting an already qualified immutable Web image, update only `WORKMESH_WEB_IMAGE`, pull it, and replace the Web service without restarting its dependencies:
+
+```powershell
+docker compose --env-file .env.production -f docker-compose.production.yml pull web
+docker compose --env-file .env.production -f docker-compose.production.yml up -d --no-deps web
+```
+
+This operational shortcut does not create a separate release class. Official RC and GA releases still use the verified four-image manifest and matching release provenance described below; API, Worker, MCP, PostgreSQL, Redis, and object storage are not restarted for an isolated Web refresh.
+
 ## Build and publish an exact revision
 
 Build from a clean checkout of the commit being released. Use the full, lower-case 40-character Git SHA for every pre-release image tag and for `WORKMESH_BUILD_SHA`.

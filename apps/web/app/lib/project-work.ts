@@ -33,6 +33,16 @@ export function projectWorkspaceHref(input: Readonly<{
   return `/?${params.toString()}`
 }
 
+export function projectMilestoneIssuesHref(projectId: string, milestoneId: string): string {
+  const params = new URLSearchParams({
+    view: 'my-work',
+    layout: 'list',
+    projectId,
+    milestoneId,
+  })
+  return `/?${params.toString()}`
+}
+
 export function readProjectWorkspaceRoute(search: string): ProjectWorkspaceRoute {
   const params = new URLSearchParams(search)
   const rawTab = params.get('tab')

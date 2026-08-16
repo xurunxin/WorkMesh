@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildWorkHierarchy,
   optionIdentityKey,
+  projectMilestoneIssuesHref,
   projectWorkspaceHref,
   readProjectWorkspaceRoute,
   revisionConflictNotice,
@@ -74,6 +75,11 @@ describe('project and work surface projections', () => {
       tab: 'overview',
       workItemId: undefined,
     })
+  })
+
+  it('opens a milestone in the global Issues list with only project filters', () => {
+    expect(projectMilestoneIssuesHref('project-1', 'milestone-1'))
+      .toBe('/?view=my-work&layout=list&projectId=project-1&milestoneId=milestone-1')
   })
 
   it('turns stale revision responses into a recoverable notice', () => {
