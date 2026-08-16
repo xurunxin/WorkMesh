@@ -669,7 +669,8 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
 .work-surface-layout-toggle button.selected { color: var(--wm-text); background: var(--wm-surface-subtle); border-color: var(--wm-text); }
 .wm-work-item-list { display: grid; gap: .45rem; min-width: 0; }
 .wm-work-item-list-empty { padding: 2.25rem 1rem; text-align: center; color: var(--wm-muted); background: var(--wm-surface); border: 1px dashed var(--wm-border); border-radius: 10px; }
-.wm-work-item-card { position: relative; display: grid; gap: .45rem; min-width: 0; padding: .8rem; color: var(--wm-text); background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 9px; text-align: left; box-shadow: 0 1px 1px #11111108; transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease; }
+.wm-work-item-card { position: relative; display: grid; gap: .45rem; min-width: 0; max-width: 100%; padding: .8rem; color: var(--wm-text); background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 9px; text-align: left; box-shadow: 0 1px 1px #11111108; transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease; }
+.wm-work-item-card > * { min-width: 0; max-width: 100%; }
 .wm-work-item-card:hover, .wm-work-item-card:focus-within { border-color: var(--wm-focus); box-shadow: 0 0 0 2px color-mix(in srgb, var(--wm-focus) 20%, transparent); outline: none; }
 .wm-work-item-card-dragging { opacity: .6; }
 .wm-work-item-card-pending { opacity: .6; pointer-events: none; }
@@ -679,9 +680,10 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
 .wm-work-item-title { display: block; width: 100%; padding: 0; color: var(--wm-text); background: transparent !important; border: 0 !important; border-radius: 0 !important; font-weight: 700; line-height: 1.38; overflow-wrap: anywhere; text-align: left; cursor: pointer; }
 .wm-work-item-title:hover { color: var(--wm-focus); }
 .wm-work-item-project { display: inline-flex; align-items: center; gap: .3rem; width: fit-content; max-width: 100%; padding: .15rem .34rem !important; color: #355da8 !important; background: #f5f8ff !important; border: 1px solid #cad8fb !important; border-radius: 5px !important; font-size: .72rem; text-align: left; }
-.wm-work-item-project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-work-item-project-slot { min-width: 0; }
+.wm-work-item-project span { overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-metadata { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); color: var(--wm-muted); font-size: .74rem; }
-.wm-work-item-metadata span, .wm-work-item-facts span { display: inline-flex; align-items: center; gap: .28rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-work-item-metadata span, .wm-work-item-facts span { display: inline-flex; align-items: center; gap: .28rem; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-labels { display: flex; gap: .3rem; flex-wrap: wrap; }
 .wm-work-item-labels span { padding: .1rem .35rem; color: var(--wm-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 4px; font-size: .68rem; }
 .wm-work-item-labels .wm-label-danger { color: #b42318; background: #fff1f0; border-color: #fecaca; }
@@ -689,13 +691,23 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
 .wm-work-item-labels .wm-label-info { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
 .wm-work-item-labels .wm-label-success { color: #166534; background: #eefbf0; border-color: #bbf7d0; }
 .wm-work-item-labels .wm-label-accent { color: #6d28d9; background: #f5f3ff; border-color: #ddd6fe; }
-.wm-work-item-facts { display: flex; gap: .65rem; padding-top: .45rem; color: var(--wm-muted); border-top: 1px solid var(--wm-border); font-size: .7rem; }
+.wm-work-item-facts { display: flex; gap: .65rem; min-width: 0; padding-top: .45rem; color: var(--wm-muted); border-top: 1px solid var(--wm-border); font-size: .7rem; }
+.wm-work-item-facts.is-empty { border-top-color: transparent; }
 .wm-work-item-status-control { display: block; }
 .wm-work-item-status-control select { width: 100%; }
 .wm-work-item-board { width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
 .wm-work-item-board-scroll { display: flex; gap: .7rem; width: 100%; min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; padding: .15rem .1rem .6rem; scrollbar-width: thin; }
 .wm-work-item-column { display: grid; grid-template-rows: auto 1fr auto; flex: 0 0 min(235px, 82vw); min-height: 260px; padding: .6rem; background: color-mix(in srgb, var(--wm-surface) 88%, var(--wm-surface-subtle)); border: 1px solid var(--wm-border); border-radius: 10px; }
 .wm-work-item-board .wm-work-item-card { gap: .38rem; padding: .7rem; }
+.wm-work-item-card-board { grid-template-rows: auto 2.5rem 1.75rem minmax(3.2rem, auto) minmax(1.4rem, auto) 1.65rem auto; align-content: start; min-height: 19rem; }
+.wm-work-item-card-board .wm-work-item-title { display: -webkit-box; align-self: start; max-height: 2.5rem; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.wm-work-item-card-board .wm-work-item-project-slot { min-height: 1.75rem; }
+.wm-work-item-card-board .wm-work-item-project { max-height: 1.75rem; overflow: hidden; }
+.wm-work-item-card-board .wm-work-item-project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-work-item-card-board .wm-work-item-metadata { grid-template-columns: minmax(0, 1fr); align-content: start; gap: .3rem; }
+.wm-work-item-card-board .wm-work-item-labels { align-content: start; min-height: 1.4rem; max-height: 3.25rem; overflow: hidden; }
+.wm-work-item-card-board .wm-work-item-facts { min-height: 1.65rem; overflow: hidden; }
+.wm-work-item-card-board .wm-work-item-status-control { align-self: end; margin-top: auto; }
 .wm-work-item-column:focus-visible, .wm-work-item-column.is-drop-target { border-color: var(--wm-focus); outline: none; }
 .wm-work-item-column > header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
 .wm-work-item-column > header h3 { margin: 0; font-size: .9rem; }
@@ -724,6 +736,8 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
   .wm-work-item-filter-actions { align-items: stretch; }
   .wm-work-item-filter-actions > label, .wm-work-item-save-view { min-width: 0; flex: 1 1 100%; }
   .wm-work-item-save-view button { flex: 0 0 auto; }
+  .wm-work-item-board-scroll { padding-inline: 0; scroll-padding-inline: 0; scroll-snap-type: x mandatory; }
+  .wm-work-item-column { flex-basis: 100%; scroll-snap-align: start; scroll-snap-stop: always; }
 }
 
 /* v30 Collaboration Hub: durable facts stay readable without widening the document. */

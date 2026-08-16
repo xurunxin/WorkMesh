@@ -17,6 +17,7 @@ import { useLocale } from './lib/i18n'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { useRealtimeSubscription } from './lib/realtime'
 import {
+  projectMilestoneIssuesHref,
   revisionConflictNotice,
   revisionScopedFormKey,
   summarizeProjectWork,
@@ -77,9 +78,9 @@ export function ProjectWorkspace({
 }) {
   const { locale } = useLocale()
   const text = locale === 'zh-CN' ? {
-    unknownStatus: '未知状态', overview: '概览', list: '列表', board: '看板', backlog: '待办', updateError: '无法更新项目计划。', deleteMilestone: (name: string) => `删除里程碑“${name}”？`, noBrief: '尚未发布项目简介。', complete: '已完成', progress: (completed: number, total: number) => `${completed} / ${total} 已完成`, projectSummary: '项目工作汇总', inProgress: '进行中', needsHuman: '需要负责人', activeAgents: '运行中的智能体', notSet: '未设置', targetDate: '目标日期', views: '项目视图', reloadMilestones: '重新加载里程碑', plan: '计划', roadmap: '里程碑路线图', cancel: '取消', addMilestone: '添加里程碑', name: '名称', description: '描述', createMilestone: '创建里程碑', target: '目标日期', save: '保存', delete: '删除', noMilestones: '尚无里程碑', noMilestonesHelp: '先定义成果与目标日期，再将 Issues 分配到该里程碑。', milestones: '里程碑', status: (status: string) => ({ in_progress: '进行中', planned: '已计划', completed: '已完成', canceled: '已取消' }[status] ?? status.replaceAll('_', ' ')),
+    unknownStatus: '未知状态', overview: '概览', list: '列表', board: '看板', backlog: '待办', viewIssues: '查看 Issues', viewMilestoneIssues: (name: string) => `查看 ${name} Issues`, updateError: '无法更新项目计划。', deleteMilestone: (name: string) => `删除里程碑“${name}”？`, noBrief: '尚未发布项目简介。', complete: '已完成', progress: (completed: number, total: number) => `${completed} / ${total} 已完成`, projectSummary: '项目工作汇总', inProgress: '进行中', needsHuman: '需要负责人', activeAgents: '运行中的智能体', notSet: '未设置', targetDate: '目标日期', views: '项目视图', reloadMilestones: '重新加载里程碑', plan: '计划', roadmap: '里程碑路线图', cancel: '取消', addMilestone: '添加里程碑', name: '名称', description: '描述', createMilestone: '创建里程碑', target: '目标日期', save: '保存', delete: '删除', noMilestones: '尚无里程碑', noMilestonesHelp: '先定义成果与目标日期，再将 Issues 分配到该里程碑。', milestones: '里程碑', status: (status: string) => ({ in_progress: '进行中', planned: '已计划', completed: '已完成', canceled: '已取消' }[status] ?? status.replaceAll('_', ' ')),
   } : {
-    unknownStatus: 'Unknown status', overview: 'Overview', list: 'List', board: 'Board', backlog: 'Backlog', updateError: 'Unable to update the project plan.', deleteMilestone: (name: string) => `Delete milestone “${name}”?`, noBrief: 'No project brief has been published yet.', complete: 'complete', progress: (completed: number, total: number) => `${completed} of ${total} complete`, projectSummary: 'Project work summary', inProgress: 'In progress', needsHuman: 'Needs a responsible Human', activeAgents: 'Active Agent executors', notSet: 'Not set', targetDate: 'Target date', views: 'Project views', reloadMilestones: 'Reload milestones', plan: 'Plan', roadmap: 'Milestone roadmap', cancel: 'Cancel', addMilestone: 'Add milestone', name: 'Name', description: 'Description', createMilestone: 'Create milestone', target: 'Target', save: 'Save', delete: 'Delete', noMilestones: 'No milestones yet', noMilestonesHelp: 'Start with an outcome and target date; Work Items can then be assigned to it.', milestones: 'milestones', status: (status: string) => status.replaceAll('_', ' '),
+    unknownStatus: 'Unknown status', overview: 'Overview', list: 'List', board: 'Board', backlog: 'Backlog', viewIssues: 'View Issues', viewMilestoneIssues: (name: string) => `View ${name} Issues`, updateError: 'Unable to update the project plan.', deleteMilestone: (name: string) => `Delete milestone “${name}”?`, noBrief: 'No project brief has been published yet.', complete: 'complete', progress: (completed: number, total: number) => `${completed} of ${total} complete`, projectSummary: 'Project work summary', inProgress: 'In progress', needsHuman: 'Needs a responsible Human', activeAgents: 'Active Agent executors', notSet: 'Not set', targetDate: 'Target date', views: 'Project views', reloadMilestones: 'Reload milestones', plan: 'Plan', roadmap: 'Milestone roadmap', cancel: 'Cancel', addMilestone: 'Add milestone', name: 'Name', description: 'Description', createMilestone: 'Create milestone', target: 'Target', save: 'Save', delete: 'Delete', noMilestones: 'No milestones yet', noMilestonesHelp: 'Start with an outcome and target date; Work Items can then be assigned to it.', milestones: 'milestones', status: (status: string) => status.replaceAll('_', ' '),
   }
   const milestones = usePagedApiList<Milestone>(
     `/api/v1/projects/${encodeURIComponent(project.id)}/milestones`,
@@ -228,7 +229,7 @@ export function ProjectWorkspace({
                 <label>{text.name}<input name="name" defaultValue={milestone.name} required /></label>
                 <label>{text.target}<input name="targetDate" type="date" defaultValue={dateValue(milestone.target_date)} /></label>
                 <label className="form-span">{text.description}<input name="description" defaultValue={milestone.description ?? ''} /></label>
-                <div className="milestone-actions"><span>{complete}/{milestoneItems.length} {text.complete}</span><Button icon={<FloppyDiskIcon aria-hidden="true" size={16} />} type="submit" variant="ghost">{text.save}</Button><Button icon={<TrashSimpleIcon aria-hidden="true" size={16} />} onClick={() => void deleteMilestone(milestone)} type="button" variant="ghost">{text.delete}</Button></div>
+                <div className="milestone-actions"><span>{complete}/{milestoneItems.length} {text.complete}</span><a aria-label={text.viewMilestoneIssues(milestone.name)} className="wm-button wm-button-ghost" href={projectMilestoneIssuesHref(project.id, milestone.id)}>{text.viewIssues}</a><Button icon={<FloppyDiskIcon aria-hidden="true" size={16} />} type="submit" variant="ghost">{text.save}</Button><Button icon={<TrashSimpleIcon aria-hidden="true" size={16} />} onClick={() => void deleteMilestone(milestone)} type="button" variant="ghost">{text.delete}</Button></div>
               </form>
             </article>
           })}
@@ -239,6 +240,6 @@ export function ProjectWorkspace({
       <ProjectDelivery projectId={project.id} />
     </div>}
 
-    {workSurface}
+    {tab !== 'overview' && workSurface}
   </section>
 }

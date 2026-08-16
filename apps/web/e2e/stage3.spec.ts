@@ -149,5 +149,6 @@ test('renders the Stage 3 fake-provider delivery shelf without auto-closing work
   await delivery.getByRole('button', { name: 'Accept suggestion' }).click()
   await expect(delivery).toContainText('accepted')
   await expect(delivery.getByRole('button', { name: 'Accept suggestion' })).toHaveCount(0)
+  await page.getByTestId('project-tab-list').click()
   await expect(page.locator('[data-work-item-id="work-1"]')).toContainText('In progress')
 })

@@ -1,0 +1,81 @@
+import { expect, test } from '@playwright/test'
+
+const projectId = '3f12de4f-b117-4a78-9e10-da102c892ae1'
+const milestoneId = 'd0000000-0000-4000-8000-000000000001'
+
+test.describe('frontend layout and shell unification', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().clearCookies({ name: 'workmesh_locale' })
+    await page.addInitScript(() => window.localStorage.removeItem('workmesh_locale'))
+  })
+
+  test('keeps board content inside equal-height cards at desktop and narrow widths', async ({ page }) => {
+    for (const viewport of [
+      { width: 1280, height: 720 },
+      { width: 768, height: 900 },
+      { width: 375, height: 812 },
+      { width: 320, height: 800 },
+    ]) {
+      await page.setViewportSize(viewport)
+      await page.goto('/?view=my-work&layout=board')
+      await expect(page.getByRole('region', { name: 'Issue 看板列' })).toBeVisible()
+
+      const metrics = await page.evaluate(() => {
+        const board = document.querySelector<HTMLElement>('.wm-work-item-board-scroll')
+        const columns = [...document.querySelectorAll<HTMLElement>('.wm-work-item-column')]
+        const cards = [...document.querySelectorAll<HTMLElement>('.wm-work-item-card-board')]
+        const metadata = [...document.querySelectorAll<HTMLElement>('.wm-work-item-card-board .wm-work-item-metadata span')]
+        if (!board || cards.length === 0) throw new Error('Board fixture did not render')
+        return {
+          documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          boardWidth: board.clientWidth,
+          columnWidths: columns.map(column => column.getBoundingClientRect().width),
+          cardHeights: cards.map(card => card.getBoundingClientRect().height),
+          metadataOverflow: metadata.map(node => node.scrollWidth - node.clientWidth),
+        }
+      })
+
+      expect(metrics.documentOverflow).toBeLessThanOrEqual(0)
+      expect(Math.max(...metrics.cardHeights) - Math.min(...metrics.cardHeights)).toBeLessThanOrEqual(1)
+      expect(Math.max(0, ...metrics.metadataOverflow)).toBeLessThanOrEqual(1)
+      if (viewport.width <= 375)
+        expect(Math.abs((metrics.columnWidths[0] ?? 0) - metrics.boardWidth)).toBeLessThanOrEqual(2)
+    }
+  })
+
+  test('keeps overview project-only and opens milestone-filtered global Issues', async ({ page }) => {
+    await page.goto(`/?view=projects&project=${projectId}`)
+    await expect(page.getByTestId('project-tab-overview')).toHaveAttribute('aria-current', 'page')
+    await expect(page.getByRole('region', { name: 'Work surfaces' })).toHaveCount(0)
+    await expect(page.getByTestId('project-tab-list')).toBeVisible()
+    await expect(page.getByTestId('project-tab-board')).toBeVisible()
+    await expect(page.getByTestId('project-tab-backlog')).toBeVisible()
+
+    await page.getByRole('region', { name: '里程碑路线图' }).getByRole('link', { name: '查看 Foundation Issues' }).click()
+    await expect(page).toHaveURL(new RegExp(`view=my-work.*layout=list.*projectId=${projectId}.*milestoneId=${milestoneId}`))
+    await expect(page.getByRole('combobox', { name: '项目' })).toHaveValue(projectId)
+    await expect(page.getByRole('combobox', { name: '里程碑' })).toHaveValue(milestoneId)
+  })
+
+  test('keeps Agents and Session details in the localized workspace shell', async ({ page }) => {
+    await page.goto('/?view=my-work')
+    await page.getByRole('navigation', { name: '工作区导航' }).getByRole('link', { name: '智能体' }).click()
+    await expect(page).toHaveURL(/\/agents$/)
+
+    const agentsNavigation = page.getByRole('navigation', { name: '工作区导航' })
+    await expect(agentsNavigation).toContainText('Issues')
+    await expect(agentsNavigation).toContainText('智能体')
+    await expect(agentsNavigation).not.toContainText('My Work')
+    await expect(agentsNavigation).not.toContainText('Active')
+    await expect(agentsNavigation).not.toContainText('Backlog')
+    await expect(page.getByRole('button', { name: '中' })).toHaveAttribute('aria-pressed', 'true')
+
+    await page.locator('a[href="/agent-sessions/session-preview"]').click()
+    await expect(page).toHaveURL(/\/agent-sessions\/session-preview$/)
+    const sessionNavigation = page.getByRole('navigation', { name: '工作区导航' })
+    await expect(sessionNavigation).toContainText('Issues')
+    await expect(sessionNavigation).toContainText('智能体')
+    await expect(sessionNavigation).not.toContainText('My Work')
+    await expect(page.getByRole('button', { name: '中' })).toHaveAttribute('aria-pressed', 'true')
+  })
+})
