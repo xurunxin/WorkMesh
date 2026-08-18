@@ -38,6 +38,11 @@ Use `auth_idempotency_records` for every mutation marked
 - Operation, canonical request, or client-context mismatch returns
   `IDEMPOTENCY_KEY_REUSED`. Decryption, key mismatch, or tampering returns
   `IDEMPOTENCY_REPLAY_UNAVAILABLE`; none of these cases re-executes the command.
+- An Idempotency-Key is bound to exactly one normalized authentication subject
+  during the 24-hour conflict window. A PostgreSQL transaction advisory lock on
+  its keyed fingerprint serializes cross-subject claims across API replicas;
+  reusing the key for a different subject returns `IDEMPOTENCY_KEY_REUSED`
+  instead of creating a second composite-key record.
 - Installation password policy/hash work and login credential validation may
   precede the claim. The successful install/session mutation and login/session
   mutation remain transactionally coupled to replay completion.

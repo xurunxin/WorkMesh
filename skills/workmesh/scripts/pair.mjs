@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
@@ -23,6 +23,9 @@ const response = await fetch(connect, {
 })
 const payload = await response.json()
 if (!response.ok) throw new Error(`Pairing failed: ${payload?.error?.code ?? response.status}`)
+if (typeof payload.installation_token !== 'string' || !payload.installation_token.startsWith('wmi_')) throw new Error('Pairing failed: response did not contain a wmi_ Installation Token')
+const fingerprintPrefix = createHash('sha256').update(payload.installation_token).digest('hex').slice(0, 12)
+if (payload.connection?.credential_fingerprint_prefix !== fingerprintPrefix) throw new Error('Pairing failed: Installation Token fingerprint does not match the Connection response')
 const output = resolve(args.output ?? '.workmesh')
 await mkdir(output, { recursive: true })
 await writeFile(resolve(output, '.env'), `WORKMESH_API_URL=${new URL(payload.mcp.url).origin}\nWORKMESH_INSTALLATION_TOKEN=${payload.installation_token}\nWORKMESH_MCP_MODE=read-write\n`, { mode: 0o600 })

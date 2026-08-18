@@ -19,6 +19,10 @@ import { mutate, type CommandContext } from './commands.js'
 import type { Paginator } from './pagination.js'
 
 const skill = workmeshSkillManifest
+const pairingTokenPrefix = 'wmp_'
+const installationTokenPrefix = 'wmi_'
+
+const connectionToken = (prefix: string): string => `${prefix}${opaqueToken()}`
 
 type ConnectionRow = {
   id: string; workspace_id: string; team_id: string; agent_id: string; agent_actor_id: string
@@ -68,7 +72,7 @@ const getLocked = async (tx: PoolClient, workspaceId: string, id: string) => one
 )).rows)
 
 const createPairing = async (tx: PoolClient, connectionId: string, slug: string, clientType: string, purpose: 'initial' | 'rotation', overlapUntil: Date | null = null) => {
-  const code = opaqueToken()
+  const code = connectionToken(pairingTokenPrefix)
   const expiresAt = new Date(Date.now() + 10 * 60_000)
   await tx.query(
     `INSERT INTO agent_connection_pairings(connection_id,code_hash,purpose,expected_agent_slug,expected_client_type,expires_at,overlap_until)
@@ -201,6 +205,8 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
 
   app.post('/api/v1/agent-connections/redeem', async request => {
     const body = agentConnectionRedeemInputSchema.parse(request.body)
+    if (body.pairingCode.startsWith(installationTokenPrefix))
+      throw new DomainError('AGENT_CONNECTION_PAIRING_INVALID', 'An Installation Token cannot be redeemed; use the one-time wmp_ pairing URL fragment')
     const codeHash = tokenHash(body.pairingCode)
     let replay
     try {
@@ -218,7 +224,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       }
       let row = one((await tx.query<ConnectionRow>('SELECT * FROM agent_connections WHERE id=$1 FOR UPDATE', [pairing.connection_id])).rows)
       if (row.status === 'revoked') throw new DomainError('AGENT_CONNECTION_REVOKED', 'Connection is revoked')
-      const installationToken = opaqueToken()
+      const installationToken = connectionToken(installationTokenPrefix)
       const fingerprintPrefix = tokenHash(installationToken).slice(0, 12)
       if (pairing.purpose === 'rotation')
         await tx.query("UPDATE agent_connection_credentials SET status='overlap',overlap_until=$2 WHERE connection_id=$1 AND status='active'", [row.id, pairing.overlap_until])
@@ -323,6 +329,8 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
 }
 
 export async function resolveCoordinationIdentity(db: Pool, installationToken: string) {
+  if (installationToken.startsWith(pairingTokenPrefix))
+    throw new DomainError('UNAUTHENTICATED', 'A wmp_ pairing code cannot authenticate; redeem it once and store the returned wmi_ Installation Token')
   return withTx(db, async tx => {
     const row = one((await tx.query<ConnectionRow & { credential_id: string }>(
       `SELECT c.*,credential.id AS credential_id FROM agent_connection_credentials credential

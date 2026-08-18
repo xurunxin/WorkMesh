@@ -179,7 +179,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
   it('accepts a well-formed fragment-embedded connect URL', () => {
     const accepted = {
       connection: makeResponse(),
-      connect_url: 'https://workmesh.example/connect/backend-coder-1#abcd-1234-efgh',
+      connect_url: `https://workmesh.example/connect#wmp_${'a'.repeat(43)}`,
       pairing_code_expires_at: '2026-08-07T10:10:00Z',
       overlap_until: '2026-08-07T10:15:00Z',
     }
@@ -376,12 +376,12 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
 
   it('validates a redeem input with camelCase fields', () => {
     expect(() => agentConnectionRedeemInputSchema.parse({
-      pairingCode: 'abcd-1234',
+      pairingCode: `wmp_${'a'.repeat(43)}`,
       agentSlug: 'backend-coder-1',
       client: { type: 'codex', version: '0.40.0' },
     })).not.toThrow()
     expect(() => agentConnectionRedeemInputSchema.parse({
-      pairingCode: 'abcd-1234',
+      pairingCode: `wmp_${'a'.repeat(43)}`,
       agentSlug: 'BackendCoder',
       client: { type: 'codex', version: '0.40.0' },
     })).toThrow()
@@ -1031,7 +1031,7 @@ function baseResponse(): Response {
 function makeRedeemResponse() {
   return {
     connection: makeResponse(),
-    installation_token: 'it_' + 'a'.repeat(48),
+    installation_token: 'wmi_' + 'a'.repeat(43),
     mcp: {
       transport: 'streamable_http' as const,
       url: 'https://workmesh.example/mcp/coordination',

@@ -55,13 +55,19 @@ other Agents. Give the generated one-line instruction to the Agent; the
 10-minute pairing code is kept in the URL fragment and is never sent in an HTTP
 request while the landing page opens.
 
-The Agent installs the pinned `workmesh` Skill, redeems the code once, stores
-the returned installation token in its secret store, and calls
+The Agent installs the pinned `workmesh` Skill, redeems the `wmp_` code once,
+stores only the returned `wmi_` Installation Token in its secret store, verifies
+that its SHA-256 prefix matches `connection.credential_fingerprint_prefix`, and calls
 `verify_connection`. The public discovery document is
 `/.well-known/workmesh-agent`; the signed Skill is
 `/skills/workmesh-1.1.0.md`. Never paste an installation token into a repository,
 prompt transcript, command-line argument, or MCP configuration committed to
 source control.
+
+Pairing and Installation credentials deliberately use different prefixes. A
+`wmp_` URL fragment is a ten-minute, single-use input to the redeem endpoint; it
+can never authenticate MCP. A `wmi_` value comes only from a successful redeem
+response and is the only value that belongs in `WORKMESH_INSTALLATION_TOKEN`.
 
 For remote Streamable HTTP MCP, send the installation token on every `POST
 /mcp` request as `X-WorkMesh-Installation-Token`. For local stdio fallback:

@@ -161,16 +161,21 @@ GET /.well-known/workmesh-agent HTTP/1.1
 Connection 生命周期：
 
 1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: true`（连接响应永远不返明文 Token）。配对码只存 hash。
-2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
+2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文 `wmp_` 配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**以 `wmi_` 开头的明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。Agent 在持久化前必须校验 `SHA-256(installation_token)` 的前 12 位等于响应的 `connection.credential_fingerprint_prefix`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
 3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。响应带 `ETag` 头，值等于 `revision`；客户端在 `If-Match` 里回传。
 4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。**扩权必须创建新 Connection**（包含新的 `grantAgentDelegate` 与 `requestedCapabilities`），同时 DELETE 旧 Connection。Rotate 不承载扩权——它的 request body 为空。`PATCH` 必须带 `If-Match`。
 5. `DELETE /api/v1/agent-connections/{id}` **硬撤销**：标记 Connection 为 `revoked`、清空**所有**该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。**与 `/rotate-confirm` 不同**：`DELETE` 撤销的是整个 Connection + 全部活跃 Session + 当前 Installation Token；`/rotate-confirm` 只撤销当前 Rotation 引入的旧 fingerprint、保留新凭据、保留活跃 Session。重叠期内想只撤销旧凭据 → 调 `/rotate-confirm`；想完整下线整个 Connection → 调 `DELETE`。
 6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据。**响应中 `overlap_until` 是真实的截止时间——旧凭据在该时间之前一直可用**。请求 body 为空；Rotate 不改变 `teamId` / `clientType` / `requestedCapabilities` / `grantAgentDelegate`，也不充当 `/rotate-confirm` 端点。Admin 在 15 分钟内可以显式 confirm。
 7. `POST /api/v1/agent-connections/{id}/rotate-confirm` **仅撤销当前 Rotation 引入的旧 fingerprint**——Connection 状态回到 `active`、新凭据保留、活跃 Session 不废。必须带 `If-Match`（Connection 当前 revision）。这是"确认成功后撤销旧凭据"的显式实现；如果 Admin 不调用，15 分钟到期后 worker 走相同结果（worker fallback 是 plan v0.4 明确批准的兜底防线，不是隐式行为）。`agent.connection.rotated` 事件记录。
 
-UI 生成给 Human 复制给 Agent 的一句话统一为：
+UI 生成给 Human 复制给 Agent 的 handoff 必须是可执行的完整步骤，而不是只说“打开链接”。它至少包含：
 
-> 连接此 WorkMesh：打开 `<connectUrl>#<pairingCode>`，按返回指令安装 MCP 与 WorkMesh Skill，并调用 `verify_connection`。
+1. 精确的 `connect_url`、`agentSlug` 与 `clientType`；
+2. 明确说明 fragment 中的 `wmp_` 值只是一次性 pairing code，绝不能作为 MCP header；
+3. discovery 与 redeem 的精确端点、请求体、fresh `Idempotency-Key` 和 exact-retry 规则；
+4. 只保存响应中的 `wmi_` Installation Token，并在保存前核对 fingerprint；
+5. 使用响应的精确 MCP URL、`X-WorkMesh-Installation-Token` header 与固定 Skill；
+6. `verify_connection` 和 `get_workmesh_context` 的验证顺序，以及任一步失败时停止而不是静默换用旧 token。
 
 fragment 携带配对码，绝不进入代理访问日志；`connectUrl` 的 schema 强制要求 fragment 存在。
 

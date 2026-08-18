@@ -1747,8 +1747,8 @@ export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotatin
 // URL pattern + URL parser defense: the regex pins the shape, the URL
 // parser rejects userinfo (https://user:pass@host/...) so an attacker
 // cannot carry a secret in the userinfo segment. The reviewer-flagged
-// bypass `https://code@host.test/connect/x#abcdefgh` is rejected here.
-const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/connect\/[a-z0-9][a-z0-9-]{0,79}#[A-Za-z0-9_-]{8,512}$/
+// bypass `https://code@host.test/connect#wmp_...` is rejected here.
+const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/connect#wmp_[A-Za-z0-9_-]{43}$/
 const connectUrlSchema = z
   .string()
   .superRefine((value, ctx) => {
@@ -1756,7 +1756,7 @@ const connectUrlSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          'connect_url must be https://<host>/connect/<agent-slug>#<pairing-code>; userinfo, query/path credentials, and missing/short fragments are rejected',
+          'connect_url must be https://<host>/connect#wmp_<43-char-pairing-code>; userinfo, query/path credentials, and malformed fragments are rejected',
       })
       return
     }
@@ -1815,7 +1815,7 @@ export const agentConnectionPatchInputSchema = z
 
 export const agentConnectionRedeemInputSchema = z
   .object({
-    pairingCode: z.string().min(1).max(500),
+    pairingCode: z.string().regex(/^wmp_[A-Za-z0-9_-]{43}$/),
     agentSlug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
     client: z
       .object({
@@ -1954,7 +1954,7 @@ export const agentConnectionCreateResponseSchema = z
 export const agentConnectionRedeemResponseSchema = z
   .object({
     connection: agentConnectionResponseSchema,
-    installation_token: z.string().min(32).max(4096),
+    installation_token: z.string().regex(/^wmi_[A-Za-z0-9_-]{43}$/),
     mcp: z
       .object({
         transport: z.literal('streamable_http'),
