@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { publicRequest } from '../lib/api'
+import { useLocale } from '../lib/i18n'
 import {
   buildMcpClientGuide,
   classifyMcpOnboardingFailure,
@@ -15,6 +16,7 @@ import {
 } from '../lib/mcp-onboarding'
 
 export default function ConnectPage() {
+  const { connectCopy: text } = useLocale()
   const [discovery, setDiscovery] = useState<McpDiscovery | null>(null)
   const [release, setRelease] = useState<McpReleaseInfo | null>(null)
   const [clientType, setClientType] = useState<McpClientType>('codex')
@@ -66,13 +68,13 @@ export default function ConnectPage() {
 
   return <main className="center connect-page"><section className="connection-instruction onboarding-shell" aria-labelledby="connect-title">
     <header className="onboarding-heading">
-      <div><p className="eyebrow">Secure Agent setup</p><h1 id="connect-title">Connect an Agent to WorkMesh</h1></div>
-      <span className="health-pill health-neutral">Pair once · verify live</span>
+      <div><p className="eyebrow">{text.eyebrow}</p><h1 id="connect-title">{text.title}</h1></div>
+      <span className="health-pill health-neutral">{text.healthPill}</span>
     </header>
 
     {failureState && <div className={`diagnostic-callout diagnostic-${failureState.tone}`} data-onboarding-state={failure} role="alert"><strong>{failureState.label}</strong><p>{failureState.summary}</p><p>{failureState.nextAction}</p>{failureDetail && <small>{failureDetail}</small>}</div>}
     {!failure && (!discovery || !release) && <p role="status">Loading server-derived MCP configuration…</p>}
-    {!fragmentPresent && <div className="diagnostic-callout diagnostic-critical" role="alert"><strong>Pairing fragment missing</strong><p>Ask a Workspace Admin to generate a new Agent Connection. A fragment is single-use and expires; it is not an Agent Session token.</p></div>}
+    {!fragmentPresent && <div className="diagnostic-callout diagnostic-critical" role="alert"><strong>{text.fragmentMissingTitle}</strong><p>{text.fragmentMissingBody}</p></div>}
 
     {guide && state && <>
       <section className={`diagnostic-callout diagnostic-${state.tone}`} aria-label="MCP configuration status">
@@ -80,25 +82,25 @@ export default function ConnectPage() {
       </section>
       <div className="onboarding-grid">
         <section className="onboarding-card" aria-labelledby="client-config-title">
-          <header><p className="eyebrow">1 · Client</p><h2 id="client-config-title">Choose a supported client</h2></header>
-          <label className="client-picker">MCP client<select value={clientType} onChange={event => setClientType(event.target.value as McpClientType)}>{mcpClientTypes.map(type => <option key={type} value={type}>{type === 'generic_mcp' ? 'Generic MCP' : type === 'opencode' ? 'OpenCode' : type === 'codex' ? 'Codex' : 'Pi'}</option>)}</select></label>
+          <header><p className="eyebrow">{text.step1}</p><h2 id="client-config-title">{text.chooseClient}</h2></header>
+          <label className="client-picker">{text.mcpClient}<select value={clientType} onChange={event => setClientType(event.target.value as McpClientType)}>{mcpClientTypes.map(type => <option key={type} value={type}>{type === 'generic_mcp' ? text.clientGenericMcp : type === 'opencode' ? text.clientOpencode : type === 'codex' ? text.clientCodex : text.clientPi}</option>)}</select></label>
           <dl className="connection-facts compact-facts">
             <div><dt>Transport</dt><dd>{guide.transport}</dd></div>
-            <div><dt>Discovery</dt><dd className="break-value">{guide.discoveryUrl}</dd></div>
+            <div><dt>{text.discovery}</dt><dd className="break-value">{guide.discoveryUrl}</dd></div>
             <div><dt>Profile</dt><dd>{guide.profileVersion}</dd></div>
             <div><dt>Skill</dt><dd>{guide.skill.name} {guide.skill.version}</dd></div>
-            <div><dt>SHA-256</dt><dd className="break-value">{guide.skill.sha256}</dd></div>
+            <div><dt>{text.sha256}</dt><dd className="break-value">{guide.skill.sha256}</dd></div>
           </dl>
         </section>
         <section className="onboarding-card" aria-labelledby="config-template-title">
-          <header className="onboarding-card-actions"><div><p className="eyebrow">2 · Configuration</p><h2 id="config-template-title">{guide.configFile}</h2></div><button type="button" onClick={() => void copy('config', guide.config)}>{copied === 'config' ? 'Copied' : 'Copy config'}</button></header>
+          <header className="onboarding-card-actions"><div><p className="eyebrow">{text.step2}</p><h2 id="config-template-title">{guide.configFile}</h2></div><button type="button" onClick={() => void copy('config', guide.config)}>{copied === 'config' ? text.copied : text.copyConfig}</button></header>
           <pre className="config-preview"><code>{guide.config}</code></pre>
           {guide.localStdioFallback && <p><strong>Local stdio fallback:</strong> {guide.localStdioFallback}</p>}
-          <p className="secret-safety"><strong>Secret boundary:</strong> the template contains only an environment-variable name. Put the redeemed installation credential in the client secret store, never in this file.</p>
+          <p className="secret-safety"><strong>{text.secretBoundary}</strong></p>
         </section>
       </div>
       <section className="onboarding-card" aria-labelledby="bootstrap-title">
-        <header><p className="eyebrow">3 · Verify</p><h2 id="bootstrap-title">Bounded bootstrap checklist</h2></header>
+        <header><p className="eyebrow">{text.step3}</p><h2 id="bootstrap-title">{text.bootstrapChecklist}</h2></header>
         <ol className="bootstrap-checklist">{guide.bootstrapChecks.map(check => <li key={check}>{check}</li>)}</ol>
         <details><summary>Environment checks</summary><ul>{guide.environmentChecks.map(check => <li key={check}>{check}</li>)}</ul></details>
       </section>
