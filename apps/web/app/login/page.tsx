@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { AppShell, Button, Card } from '@workmesh/ui'
 import { ApiError, publicMutation, publicRequest, saveCsrfToken } from '../lib/api'
 import { LocaleToggle, useLocale } from '../lib/i18n'
@@ -12,12 +12,14 @@ export default function LoginPage() {
   const { loginCopy: text } = useLocale()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const textRef = useRef(text)
+  textRef.current = text
 
   useEffect(() => {
     void publicRequest<InstallStatus>('/api/v1/install-status').then(status => {
       if (!status.installed) window.location.replace('/install')
-    }).catch(reason => setError(reason instanceof Error ? reason.message : text.signInFailed))
-  }, [text.signInFailed])
+    }).catch(reason => setError(reason instanceof Error ? reason.message : textRef.current.signInFailed))
+  }, [])
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
