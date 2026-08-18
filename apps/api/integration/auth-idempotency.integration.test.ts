@@ -128,6 +128,29 @@ describe('secret-aware authentication idempotency', () => {
     expect(record).not.toHaveProperty('response_body')
   })
 
+  it('binds one authentication Idempotency-Key to exactly one subject, including concurrent claims', async () => {
+    const invoke = (key: string, subject: string) => authIdempotentTransaction(db, {
+      idempotencyKey: key,
+      subject,
+      operation: 'authSubjectBindingAcceptance',
+      request: { subject },
+      clientContext: { client: 'integration' },
+    }, async () => ({ status: 200, body: { token: `secret-for-${subject}` } }))
+
+    const sequentialKey = `subject-sequential-${randomUUID()}`
+    await expect(invoke(sequentialKey, 'subject-a')).resolves.toMatchObject({ status: 200 })
+    await expect(invoke(sequentialKey, 'subject-b')).rejects.toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+
+    const concurrentKey = `subject-concurrent-${randomUUID()}`
+    const concurrent = await Promise.allSettled([
+      invoke(concurrentKey, 'subject-c'),
+      invoke(concurrentKey, 'subject-d'),
+    ])
+    expect(concurrent.filter(result => result.status === 'fulfilled')).toHaveLength(1)
+    const rejected = concurrent.find(result => result.status === 'rejected') as PromiseRejectedResult
+    expect(rejected.reason).toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+  })
+
   it('replays login exactly and conflicts on a changed client context without another session', async () => {
     const payload = { email: 'ALICE@example.test', password }
     const first = await app.inject({ method: 'POST', url: '/api/v1/auth/login', payload, headers: idempotencyHeaders('login-replay') })

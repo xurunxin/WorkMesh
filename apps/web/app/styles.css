@@ -770,6 +770,7 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
 .config-details { min-width: 0; }
 .config-details summary { margin-bottom: .7rem; cursor: pointer; font-weight: 650; }
 .config-preview { max-width: 100%; margin: .75rem 0; padding: .9rem; overflow: auto; color: #e7e5e4; background: #292524; border: 1px solid #44403c; border-radius: var(--wm-radius-sm); font: .78rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; }
+.agent-connection-instruction { max-width: 100%; margin: 0; padding: 1rem; overflow: auto; color: #292524; background: #fff; border: 1px solid #e6a65d; border-radius: var(--wm-radius-sm); font: .82rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .bootstrap-checklist { display: grid; gap: .55rem; margin: .75rem 0; padding-left: 1.25rem; }
 .bootstrap-checklist li { padding-left: .2rem; }
 .pairing-card { background: #fffaf3; border-color: #e6a65d; }

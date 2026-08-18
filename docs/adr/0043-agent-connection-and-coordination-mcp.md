@@ -137,9 +137,13 @@ unauthenticated. The server:
    Installation Token, marks the pairing code redeemed, and emits
    `agent.connection.pairing_redeemed` plus an outbox row in one
    PostgreSQL transaction.
-4. Returns the **plaintext Installation Token exactly once**
+4. Returns the **plaintext `wmi_` Installation Token exactly once**
    together with the pinned Skill bundle, the MCP configuration
    blob, the `principal_human_actor_id`, and the bound `team_id`.
+   Pairing fragments use the distinct `wmp_` prefix, and the client verifies
+   the returned token's SHA-256 prefix against the Connection fingerprint
+   before persisting it, preventing a pairing fragment from being installed as
+   the long-lived MCP credential.
 5. Retains the success response keyed by `Idempotency-Key` for the
    pairing-code lifetime. A second call with the same key returns
    the same response, so an Agent whose network drops the response

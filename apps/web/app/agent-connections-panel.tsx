@@ -12,7 +12,7 @@ import {
 } from './lib/agents'
 import { diagnoseConnection, safeConnectionFacts } from './lib/connection-diagnostics'
 import { apiRequest, publicRequest } from './lib/api'
-import { buildMcpClientGuide, classifyMcpOnboardingFailure, onboardingStateMessage, probeMcpReadiness, type McpDiscovery, type McpOnboardingState, type McpReleaseInfo } from './lib/mcp-onboarding'
+import { buildAgentConnectionInstruction, buildMcpClientGuide, classifyMcpOnboardingFailure, onboardingStateMessage, probeMcpReadiness, type McpDiscovery, type McpOnboardingState, type McpReleaseInfo } from './lib/mcp-onboarding'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 
 type Team = { id: string; name: string; key: string }
@@ -31,9 +31,9 @@ export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, on
   const [mcpEnvironmentFailure, setMcpEnvironmentFailure] = useState<{ state: McpOnboardingState; detail: string } | null>(null)
   const [mcpEnvironmentLoading, setMcpEnvironmentLoading] = useState(false)
   const [configCopied, setConfigCopied] = useState(false)
-  const sentence = useMemo(() => connectUrl
-    ? `连接此 WorkMesh：打开 ${connectUrl}，按返回指令安装 MCP 与 WorkMesh Skill，并调用 verify_connection。`
-    : '', [connectUrl])
+  const instruction = useMemo(() => connectUrl && connection
+    ? buildAgentConnectionInstruction({ connectUrl, agentSlug: connection.agent_slug, clientType: connection.client_type })
+    : '', [connectUrl, connection])
   const diagnostic = connection ? diagnoseConnection(connection, {
     teamIds: teams.map(team => team.id),
     humanIds: humans.map(human => human.id),
@@ -186,7 +186,7 @@ export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, on
       </>}
     </article>}
 
-    {sentence && <article className="connection-instruction"><header><div><p className="eyebrow">One-time setup</p><h3>Connection sentence</h3></div><Button type="button" onClick={() => void navigator.clipboard.writeText(sentence)}>Copy instruction</Button></header><p>{sentence}</p><small>Expires in ten minutes. This pairing URL is not a session token and is shown only in this browser session.</small></article>}
+    {instruction && <article className="connection-instruction"><header><div><p className="eyebrow">One-time setup</p><h3>Agent handoff instructions</h3><p>Copy the complete procedure to the selected Agent. It distinguishes the one-time pairing code from the long-lived Installation Token and includes the required verification gates.</p></div><Button type="button" onClick={() => void navigator.clipboard.writeText(instruction)}>Copy full instructions</Button></header><pre className="agent-connection-instruction"><code>{instruction}</code></pre><small>The pairing URL expires in ten minutes and is shown only in this browser session. Generate a new rotation instead of reusing an expired or previously redeemed URL.</small></article>}
 
     <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title="New Agent Connection">
       <form onSubmit={create} className="agent-connection-form">

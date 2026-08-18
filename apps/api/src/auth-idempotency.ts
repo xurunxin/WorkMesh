@@ -216,6 +216,31 @@ export async function authIdempotentTransaction<T>(
   );
 
   return withTx(db, async (tx) => {
+    // Bind an Idempotency-Key to one authentication subject for the whole
+    // conflict window. The table's composite uniqueness protects exact
+    // retries; this transaction-scoped advisory lock also closes the race
+    // where two different subjects try to claim the same key concurrently.
+    await tx.query(
+      "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+      [keyFingerprint],
+    );
+    const conflictingSubject = (
+      await tx.query<{ present: number }>(
+        `SELECT 1 AS present
+           FROM auth_idempotency_records
+          WHERE key_fingerprint=$1
+            AND subject_fingerprint<>$2
+            AND conflict_expires_at>now()
+          LIMIT 1`,
+        [keyFingerprint, subjectFingerprint],
+      )
+    ).rows[0];
+    if (conflictingSubject)
+      throw new DomainError(
+        "IDEMPOTENCY_KEY_REUSED",
+        "Idempotency-Key was already used for a different authentication subject",
+      );
+
     let claimed = (
       await tx.query<Pick<AuthIdempotencyRow, "id">>(
         `INSERT INTO auth_idempotency_records(

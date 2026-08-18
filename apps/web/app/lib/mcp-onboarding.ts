@@ -40,6 +40,12 @@ export type McpClientGuide = {
   bootstrapChecks: string[]
 }
 
+export type AgentConnectionInstructionInput = {
+  connectUrl: string
+  agentSlug: string
+  clientType: McpClientType
+}
+
 const labels: Record<McpClientType, string> = {
   codex: 'Codex',
   opencode: 'OpenCode',
@@ -49,6 +55,28 @@ const labels: Record<McpClientType, string> = {
 
 const tokenEnvironmentName = 'WORKMESH_INSTALLATION_TOKEN'
 const tokenHeader = 'X-WorkMesh-Installation-Token'
+
+export function buildAgentConnectionInstruction(input: AgentConnectionInstructionInput): string {
+  const connect = new URL(input.connectUrl)
+  const redeemUrl = new URL('/api/v1/agent-connections/redeem', connect.origin).toString()
+  const discoveryUrl = new URL('/.well-known/workmesh-agent', connect.origin).toString()
+  return [
+    `Connect the ${labels[input.clientType]} Agent ${JSON.stringify(input.agentSlug)} to this WorkMesh deployment.`,
+    '',
+    `One-time pairing URL (expires in 10 minutes): ${input.connectUrl}`,
+    '',
+    'Follow these steps exactly:',
+    `1. Read the URL fragment after # as the one-time wmp_ pairing code. It is not an Installation Token and must never be used as an MCP header.`,
+    `2. Fetch ${discoveryUrl} and verify that it advertises client type ${input.clientType}, the expected WorkMesh Skill, and a Streamable HTTP MCP URL.`,
+    `3. POST ${redeemUrl} with a fresh Idempotency-Key and JSON body {"pairingCode":"<fragment>","agentSlug":${JSON.stringify(input.agentSlug)},"client":{"type":${JSON.stringify(input.clientType)},"version":"<client-version>"}}. Reuse that key only to retry this exact request.`,
+    `4. From the successful response, store only installation_token (the wmi_ value) in the client secret store as ${tokenEnvironmentName}. Confirm SHA-256(installation_token).slice(0,12) equals connection.credential_fingerprint_prefix before saving it.`,
+    `5. Configure the exact mcp.url returned by redemption with transport streamable_http and send ${tokenHeader} from ${tokenEnvironmentName}. Never paste the pairing code or plaintext Installation Token into a repository or committed MCP config.`,
+    '6. Install and verify the exact pinned Skill name, version, SHA-256, and signature returned by redemption.',
+    '7. Reload the MCP client, call verify_connection, require the expected Team, principal Human, profile, Skill, and capabilities, then call get_workmesh_context before selecting work.',
+    '',
+    'Stop and report the exact error code if discovery, redemption, fingerprint verification, Skill verification, or verify_connection fails. Do not substitute an older token or generate a second credential silently.',
+  ].join('\n')
+}
 
 type StructuredRequestFailure = {
   code?: unknown
@@ -152,5 +180,5 @@ export function onboardingStateMessage(state: McpOnboardingState): { label: stri
 }
 
 export function containsCredentialLikeValue(value: string): boolean {
-  return /(?:wm_[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9._~-]{16,}|#[A-Za-z0-9_-]{16,})/.test(value)
+  return /(?:wm[a-z]*_[A-Za-z0-9_-]{16,}|Bearer\s+[A-Za-z0-9._~-]{16,}|#[A-Za-z0-9_-]{16,})/.test(value)
 }

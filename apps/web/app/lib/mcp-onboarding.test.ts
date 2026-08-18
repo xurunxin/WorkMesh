@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildMcpClientGuide, classifyMcpOnboardingFailure, containsCredentialLikeValue, mcpClientTypes, mcpReadinessStatusHealthy, onboardingStateMessage, type McpDiscovery } from './mcp-onboarding'
+import { buildAgentConnectionInstruction, buildMcpClientGuide, classifyMcpOnboardingFailure, containsCredentialLikeValue, mcpClientTypes, mcpReadinessStatusHealthy, onboardingStateMessage, type McpDiscovery } from './mcp-onboarding'
 
 const discovery: McpDiscovery = {
   protocolVersion: 'v1',
@@ -51,6 +51,25 @@ describe('MCP onboarding contract', () => {
     expect(containsCredentialLikeValue('Bearer abcdefghijklmnopqrstuvwxyz')).toBe(true)
     expect(containsCredentialLikeValue('https://example.test/connect#abcdefghijklmnop')).toBe(true)
     expect(containsCredentialLikeValue('wm_abcdefghijklmnop')).toBe(true)
+    expect(containsCredentialLikeValue('wmp_abcdefghijklmnopqrstuvwxyz0123456789abcdefg')).toBe(true)
+    expect(containsCredentialLikeValue('wmi_abcdefghijklmnopqrstuvwxyz0123456789abcdefg')).toBe(true)
     expect(containsCredentialLikeValue('Stored server-side · fingerprint wm_abcd1234')).toBe(false)
+  })
+
+  it('builds an executable handoff that keeps pairing and installation credentials distinct', () => {
+    const instruction = buildAgentConnectionInstruction({
+      connectUrl: 'https://workmesh.example/connect#wmp_one_time_pairing_fragment',
+      agentSlug: 'planning-coordinator',
+      clientType: 'codex',
+    })
+    expect(instruction).toContain('wmp_ pairing code')
+    expect(instruction).toContain('not an Installation Token')
+    expect(instruction).toContain('https://workmesh.example/api/v1/agent-connections/redeem')
+    expect(instruction).toContain('"agentSlug":"planning-coordinator"')
+    expect(instruction).toContain('"type":"codex"')
+    expect(instruction).toContain('wmi_ value')
+    expect(instruction).toContain('credential_fingerprint_prefix')
+    expect(instruction).toContain('verify_connection')
+    expect(instruction).toContain('get_workmesh_context')
   })
 })
