@@ -1,20 +1,23 @@
 'use client'
 
 import { type FormEvent, useEffect, useState } from 'react'
+import { AppShell, Button, Card } from '@workmesh/ui'
 import { ApiError, publicMutation, publicRequest, saveCsrfToken } from '../lib/api'
+import { LocaleToggle, useLocale } from '../lib/i18n'
 
 type InstallResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
 
 export default function InstallPage() {
+  const { installCopy: text } = useLocale()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     void publicRequest<InstallStatus>('/api/v1/install-status').then(status => {
       if (status.installed) window.location.replace('/login')
-    }).catch(reason => setError(reason instanceof Error ? reason.message : 'Unable to check installation status.'))
-  }, [])
+    }).catch(reason => setError(reason instanceof Error ? reason.message : text.installFailed))
+  }, [text.installFailed])
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -40,22 +43,27 @@ export default function InstallPage() {
       saveCsrfToken(result.csrfToken)
       window.location.assign('/')
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : 'Installation failed.')
+      setError(reason instanceof ApiError ? reason.message : text.installFailed)
     } finally {
       setSubmitting(false)
     }
   }
 
-  return <main className="auth"><form onSubmit={submit} data-testid="install-form">
-    <h1>Install WorkMesh</h1>
-    <label>Bootstrap token<input name="bootstrapToken" type="password" autoComplete="off" placeholder="Deployment bootstrap token" /></label>
-    <p className="muted">Required unless the API is in explicit loopback-only development bootstrap mode. The token is sent once and is not stored by this page.</p>
-    <label>Workspace<input name="workspace" placeholder="Workspace" required /></label>
-    <label>Workspace slug<input name="slug" placeholder="workspace-slug" pattern="[a-z0-9-]+" required /></label>
-    <label>Your name<input name="name" placeholder="Your name" required /></label>
-    <label>Email<input name="email" type="email" placeholder="Email" required /></label>
-    <label>Password<input name="password" type="password" minLength={12} placeholder="At least 12 characters" required /></label>
-    {error && <p className="error" role="alert">{error}</p>}
-    <button disabled={submitting} data-testid="install-submit">{submitting ? 'Installing…' : 'Install'}</button>
-  </form></main>
+  return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
+    <div className="auth-shell">
+      <Card title={text.title} subtitle={text.subtitle} className="auth-card">
+        <form onSubmit={submit} data-testid="install-form">
+          <label>{text.bootstrapToken}<input name="bootstrapToken" type="password" autoComplete="off" placeholder={text.bootstrapTokenPlaceholder} /></label>
+          <p className="muted">{text.bootstrapHelp}</p>
+          <label>{text.workspace}<input name="workspace" placeholder={text.workspacePlaceholder} required /></label>
+          <label>{text.slug}<input name="slug" placeholder={text.slugPlaceholder} pattern="[a-z0-9-]+" required /></label>
+          <label>{text.yourName}<input name="name" placeholder={text.yourNamePlaceholder} required /></label>
+          <label>{text.email}<input name="email" type="email" placeholder={text.emailPlaceholder} required /></label>
+          <label>{text.password}<input name="password" type="password" minLength={12} placeholder={text.passwordPlaceholder} required /></label>
+          {error && <p className="error" role="alert">{error}</p>}
+          <Button disabled={submitting} data-testid="install-submit" type="submit" variant="primary">{submitting ? text.installing : text.install}</Button>
+        </form>
+      </Card>
+    </div>
+  </AppShell>
 }

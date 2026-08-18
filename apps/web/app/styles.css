@@ -794,3 +794,7 @@ label { display: grid; gap: .3rem; font-size: .9rem; }
   .compact-facts, .app-shell .mcp-onboarding-overview .connection-facts { grid-template-columns: 1fr; }
   .config-preview { font-size: .72rem; }
 }
+
+/* v32 i18n entry: public /install and /login centers */
+.auth-shell { display: grid; place-items: center; min-height: 70vh; padding: clamp(1.25rem, 4vw, 2.5rem); }
+.auth-card { width: min(420px, 100%); }

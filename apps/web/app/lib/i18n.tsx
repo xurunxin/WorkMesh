@@ -592,8 +592,11 @@ export type InstallCopy = {
   yourName: string
   yourNamePlaceholder: string
   email: string
+  emailPlaceholder: string
   password: string
+  passwordPlaceholder: string
   bootstrapToken: string
+  bootstrapTokenPlaceholder: string
   bootstrapHelp: string
   install: string
   installing: string
@@ -612,8 +615,11 @@ const installCopies: Record<Locale, InstallCopy> = {
     yourName: '管理员姓名',
     yourNamePlaceholder: '管理员姓名',
     email: '邮箱',
+    emailPlaceholder: 'name@example.com',
     password: '密码',
+    passwordPlaceholder: '至少 12 个字符',
     bootstrapToken: '启动令牌',
+    bootstrapTokenPlaceholder: '部署启动令牌',
     bootstrapHelp: '除非 API 处于显式 loopback-only 开发启动模式，否则必填。令牌仅发送一次，本页不保存。',
     install: '安装',
     installing: '正在安装…',
@@ -630,8 +636,11 @@ const installCopies: Record<Locale, InstallCopy> = {
     yourName: 'Your name',
     yourNamePlaceholder: 'Your name',
     email: 'Email',
+    emailPlaceholder: 'name@example.com',
     password: 'Password',
+    passwordPlaceholder: 'At least 12 characters',
     bootstrapToken: 'Bootstrap token',
+    bootstrapTokenPlaceholder: 'Deployment bootstrap token',
     bootstrapHelp: 'Required unless the API is in explicit loopback-only development bootstrap mode. The token is sent once and is not stored by this page.',
     install: 'Install',
     installing: 'Installing…',

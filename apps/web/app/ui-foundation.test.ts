@@ -45,6 +45,19 @@ describe('human UI foundation', () => {
     expect(html).toContain('id="workmesh-main"')
   })
 
+  it('omits the sidebar when both navigation and utilityNavigation are empty', () => {
+    const html = renderToStaticMarkup(createElement(AppShell, {
+      productName: 'WorkMesh',
+      navigation: [],
+      utilityNavigation: [],
+      children: createElement('h1', null, 'Public page'),
+    }))
+    expect(html).not.toContain('<aside')
+    expect(html).not.toContain('class="mobile-navigation"')
+    expect(html).toContain('class="wm-shell-header"')
+    expect(html).toContain('Public page')
+  })
+
   it('renders an accessible modal only while it is open', () => {
     expect(renderToStaticMarkup(createElement(Dialog, {
       open: false,

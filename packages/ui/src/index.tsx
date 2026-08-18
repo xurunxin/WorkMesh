@@ -113,18 +113,19 @@ export function AppShell({
 }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const allNavigation = [...navigation, ...utilityNavigation]
+  const hasNavigation = navigation.length > 0 || utilityNavigation.length > 0
   return <div className="app-shell wm-theme">
     <a className="wm-skip-link" href="#workmesh-main">{skipLabel}</a>
-    <aside className="app-sidebar" aria-label={mainNavigationLabel}>
+    {hasNavigation && <aside className="app-sidebar" aria-label={mainNavigationLabel}>
       <header className="app-brand"><h1>{productName}</h1>{actorName && <small>{actorName}</small>}</header>
       {teamSwitcher && <div className="app-team-switcher">{teamSwitcher}</div>}
       <nav className="app-navigation" aria-label={workspaceNavigationLabel}><NavigationLinks items={navigation} /></nav>
       {utilityNavigation.length > 0 && <nav className="app-navigation app-utility-navigation" aria-label={administrationNavigationLabel}><NavigationLinks items={utilityNavigation} /></nav>}
       {footer && <footer className="app-sidebar-footer">{footer}</footer>}
-    </aside>
+    </aside>}
     <div className="app-workspace">
       <header className="wm-shell-header">
-        <details className="mobile-navigation" onToggle={event => setMobileOpen(event.currentTarget.open)} open={mobileOpen}>
+        {hasNavigation && <details className="mobile-navigation" onToggle={event => setMobileOpen(event.currentTarget.open)} open={mobileOpen}>
           <summary onKeyDown={event => {
             if (event.key !== 'Enter' && event.key !== ' ') return
             event.preventDefault()
@@ -136,7 +137,7 @@ export function AppShell({
           </div>
           <nav aria-label={mobileNavigationLabel}><NavigationLinks items={allNavigation} onNavigate={() => setMobileOpen(false)} testIds={false} /></nav>
           {footer && <footer className="app-sidebar-footer mobile-navigation-footer">{footer}</footer>}
-        </details>
+        </details>}
         <p>{contextLabel}</p>
         {headerActions && <div className="wm-shell-actions">{headerActions}</div>}
       </header>
@@ -425,6 +426,10 @@ export type WorkItemCopy = {
   selectProjectFirst: string
 }
 
+// Default copy is English. It is the FALLBACK layer for consumers that do
+// not provide their own copy. App-layer LocaleProvider
+// (apps/web/app/lib/i18n.tsx) supplies zh-CN-first bundles and is the
+// primary copy source.
 const defaultWorkItemCopy: WorkItemCopy = {
   agentExecutionState: state => ({ queued: 'Queued', acknowledged: 'Acknowledged', planning: 'Planning', executing: 'Executing', awaiting_input: 'Awaiting input', awaiting_approval: 'Awaiting approval', blocked: 'Blocked', paused: 'Paused', stopping: 'Stopping', stale: 'Stale', completed: 'Completed', failed: 'Failed', canceled: 'Canceled' }[state] ?? state),
   allHumans: 'All Humans',
