@@ -1,11 +1,23 @@
 import { expect, test } from '@playwright/test'
 
+const webUrl = 'http://127.0.0.1:3100'
 const apiUrl = 'http://127.0.0.1:3101'
 const headers = {
-  'Access-Control-Allow-Origin': 'http://127.0.0.1:3100',
+  'Access-Control-Allow-Origin': webUrl,
   'Access-Control-Allow-Credentials': 'true',
   'Content-Type': 'application/json',
 }
+
+// Task 3 migrated /connect to read copy from `useLocale().connectCopy`.
+// The default locale is `zh-CN`, which would change the heading, label,
+// and authority note to Chinese. This spec was written against the
+// pre-migration English page; pin every navigation to `en` so the
+// existing English assertions remain authoritative.
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([
+    { name: 'workmesh_locale', value: 'en', url: webUrl },
+  ])
+})
 
 test('renders server-derived secret-safe MCP setup for every advertised client', async ({ page }) => {
   await page.route(`${apiUrl}/**`, async route => {
