@@ -24,7 +24,7 @@
 - **i18n fall-through order (document in `apps/web/app/lib/i18n.tsx` header comment):**
   1. App-layer `Copy` subset in the current `LocaleProvider` value.
   2. `packages/ui` `defaultWorkItemCopy` English fallback.
-  3. Page literal (logged once in dev as `console.warn('[workmesh/i18n] missing copy', { key, locale })`).
+  3. Page literal (logged once in dev as `console.warn('[workmesh/i18n] missing copy: <key>.<field> for locale=<locale>')`). The structured `{ key, locale }` object form is **not** the contract — the single-string form is what `fallbackCopy` emits.
 - **Commit cadence:** one commit per task. Commit messages use Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `chore:`, `style:`).
 - **Validation gate before any task is "done":** `pnpm test` (vitest), `pnpm typecheck`, `pnpm lint`, and `pnpm test:e2e` (Playwright) all green. Existing e2e specs must pass without modification unless the spec is in this plan.
 

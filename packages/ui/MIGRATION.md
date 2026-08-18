@@ -25,7 +25,6 @@ App-layer i18n (`apps/web/app/lib/i18n.tsx`) is the primary copy source
 for the WorkMesh web app. The `LocaleProvider` exposes ten typed `Copy`
 subsets via `useLocale()`:
 
-- `t(key)` — flat dictionary for short labels (nav, buttons, status)
 - `issueCopy` — Work Item list / board copy
 - `surfaceCopy` — Work Surface (loading / empty / error) copy
 - `detailCopy` — Work Item detail copy
@@ -36,6 +35,9 @@ subsets via `useLocale()`:
 - `operationsCopy` — /operations page copy
 - `connectCopy` — /connect onboarding page copy
 - `agentsCopy` — /agents page copy
+
+`useLocale()` also exposes a flat `t(key)` helper for short labels
+(nav, buttons, status) that is shared across pages.
 
 The default locale is `zh-CN`. English dictionaries may be left empty
 for keys that are not yet translated; those fall through to the

@@ -1183,7 +1183,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     accessStatusActive: 'active',
     accessStatusRevoked: 'revoked',
     accessStatusNotGranted: 'not granted',
-    accessApprovedLabel: 'Approved: ',
+    accessApprovedLabel: 'Approved:',
     revokedAt: date => `Revoked ${date}`,
     approvedCapabilitySubset: 'Approved capability subset',
     updateGrant: 'Update grant',

@@ -427,9 +427,10 @@ export type WorkItemCopy = {
 }
 
 // Default copy is English. It is the FALLBACK layer for consumers that do
-// not provide their own copy. App-layer LocaleProvider
-// (apps/web/app/lib/i18n.tsx) supplies zh-CN-first bundles and is the
-// primary copy source.
+// not provide their own copy via the copy={...} prop. The consuming
+// app's LocaleProvider supplies zh-CN-first typed Copy bundles and is
+// the primary copy source. Use this default only when the consumer has
+// no app-layer LocaleProvider wired in.
 const defaultWorkItemCopy: WorkItemCopy = {
   agentExecutionState: state => ({ queued: 'Queued', acknowledged: 'Acknowledged', planning: 'Planning', executing: 'Executing', awaiting_input: 'Awaiting input', awaiting_approval: 'Awaiting approval', blocked: 'Blocked', paused: 'Paused', stopping: 'Stopping', stale: 'Stale', completed: 'Completed', failed: 'Failed', canceled: 'Canceled' }[state] ?? state),
   allHumans: 'All Humans',
