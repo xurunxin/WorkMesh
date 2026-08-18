@@ -641,58 +641,249 @@ const installCopies: Record<Locale, InstallCopy> = {
 }
 
 export type OperationsCopy = {
+  // Page-level chrome
   title: string
   subtitle: string
+  backToWork: string
+  refresh: string
+  // Loading / error / disabled surfaces
   loading: string
   loadingDescription: string
   error: string
   errorDescription: string
+  retry: string
   disabledTitle: string
   disabledDescription: string
+  // Metrics row
   metricsTitle: string
+  metricsKnownCost: string
+  metricsNoKnownCost: string
+  metricsUnknownCost: string
+  metricsNeverTreatedAsZero: string
+  metricsTokens: string
+  metricsRuntime: string
+  metricsToolCalls: string
+  // Section panel headings
   cycles: string
   initiatives: string
   automation: string
   loops: string
   runs: string
   templates: string
+  // Recent-runs table column headers
   run: string
   kind: string
   status: string
   attempts: string
   session: string
   created: string
+  // Display-text functions
   cycleState: (state: string) => string
   initiativeHealth: (health: string) => string
+  ruleState: (state: string) => string
+  loopState: (state: string) => string
+  runState: (status: string) => string
+  cycleProgress: (done: number, total: number) => string
+  notScheduled: string
+  initiativeLine: (status: string, priority: string) => string
+  ruleTrigger: (version: number, type: string, cron: string | null | undefined) => string
+  dryRun: string
+  pause: string
+  resume: string
+  loopNext: (next: string) => string
+  noOverlap: string
+  overlapAllowed: string
+  runKindDryRun: string
+  runKindLoop: string
+  runKindRule: string
+  templateLine: (kind: string, version: number, status: string) => string
+  noCyclesTitle: string
+  noCyclesDescription: string
+  noInitiativesTitle: string
+  noInitiativesDescription: string
+  noRulesTitle: string
+  noRulesDescription: string
+  noLoopsTitle: string
+  noLoopsDescription: string
+  noRunsTitle: string
+  noRunsDescription: string
+  noTemplatesTitle: string
+  noTemplatesDescription: string
+  // Per-state string fields (parallel to the function fields above; the
+  // functions read these so call sites can also reference them directly).
+  cycleStateActive: string
+  cycleStatePlanned: string
+  cycleStateCompleted: string
+  initiativeHealthOnTrack: string
+  initiativeHealthAtRisk: string
+  initiativeHealthOffTrack: string
+  ruleStateActive: string
+  ruleStatePaused: string
+  loopStateActive: string
+  loopStatePaused: string
+  runStateSucceeded: string
+  runStateFailed: string
+  runStateRunning: string
+  runStatePending: string
 }
 
 const operationsCopies: Record<Locale, OperationsCopy> = {
   'zh-CN': {
     title: '运营与规划',
     subtitle: '查看长期规划、自动化、健康度与成本',
+    backToWork: '返回工作区',
+    refresh: '刷新',
     loading: '正在加载运营数据…',
     loadingDescription: '正在获取规划、自动化、健康度与成本数据。',
-    error: '无法加载运营数据。',
+    error: '运营页面需要关注',
     errorDescription: '请稍后重试或联系工作区管理员。',
+    retry: '重试',
     disabledTitle: '运营页面未启用',
     disabledDescription: '本部署未启用 Operations UI 功能。',
-    metricsTitle: '运营指标',
+    metricsTitle: '使用量与成本',
+    metricsKnownCost: '已知成本',
+    metricsNoKnownCost: '尚无已知成本',
+    metricsUnknownCost: '未知成本',
+    metricsNeverTreatedAsZero: '从不当作零处理。',
+    metricsTokens: 'Tokens',
+    metricsRuntime: '运行时长',
+    metricsToolCalls: '工具调用次数',
     cycles: '规划周期',
     initiatives: '主题',
     automation: '自动化规则',
     loops: 'Agent 循环',
-    runs: '运行记录',
-    templates: '模板',
+    runs: '近期运行',
+    templates: '模板与剧本',
     run: '运行',
     kind: '类型',
     status: '状态',
     attempts: '尝试次数',
     session: '会话',
     created: '创建时间',
-    cycleState: state => state,
-    initiativeHealth: health => health,
+    cycleStateActive: '进行中',
+    cycleStatePlanned: '已计划',
+    cycleStateCompleted: '已完成',
+    initiativeHealthOnTrack: '健康',
+    initiativeHealthAtRisk: '存在风险',
+    initiativeHealthOffTrack: '偏离轨道',
+    ruleStateActive: '已启用',
+    ruleStatePaused: '已暂停',
+    loopStateActive: '已启用',
+    loopStatePaused: '已暂停',
+    runStateSucceeded: '已成功',
+    runStateFailed: '已失败',
+    runStateRunning: '运行中',
+    runStatePending: '等待中',
+    cycleState: state => ({ active: '进行中', planned: '已计划', completed: '已完成' }[state] ?? state),
+    initiativeHealth: health => ({ on_track: '健康', at_risk: '存在风险', off_track: '偏离轨道' }[health] ?? health),
+    ruleState: state => ({ active: '已启用', paused: '已暂停' }[state] ?? state),
+    loopState: state => ({ active: '已启用', paused: '已暂停' }[state] ?? state),
+    runState: status => ({ succeeded: '已成功', failed: '已失败', running: '运行中', pending: '等待中' }[status] ?? status),
+    cycleProgress: (done, total) => `${done}/${total} 已完成`,
+    notScheduled: '尚未排期',
+    initiativeLine: (status, priority) => `${status} · ${priority} 优先级`,
+    ruleTrigger: (version, type, cron) => `v${version} · ${type}${cron ? ` ${cron}` : ''}`,
+    dryRun: '试运行',
+    pause: '暂停',
+    resume: '继续',
+    loopNext: next => `下次：${next}`,
+    noOverlap: '不允许重叠',
+    overlapAllowed: '允许重叠',
+    runKindDryRun: '试运行',
+    runKindLoop: '循环',
+    runKindRule: '规则',
+    templateLine: (kind, version, status) => `${kind} · v${version} · ${status}`,
+    noCyclesTitle: '尚未配置规划周期',
+    noCyclesDescription: '当规划窗口就绪时，新建一个 Cycle。',
+    noInitiativesTitle: '尚未配置主题',
+    noInitiativesDescription: '主题产生持久数据后会出现在这里。',
+    noRulesTitle: '尚未配置规则',
+    noRulesDescription: '通过授权命令创建规则后，自动化规则会显示在此。',
+    noLoopsTitle: '尚未配置 Loop',
+    noLoopsDescription: '通过授权命令创建 Loop 后，Agent Loop 会显示在此。',
+    noRunsTitle: '尚无运行历史',
+    noRunsDescription: '当自动化或 Loop 真正执行后，运行历史会出现在这里。',
+    noTemplatesTitle: '尚未配置模板',
+    noTemplatesDescription: '模板与剧本在工作区可用后会显示在此。',
   },
-  en: { /* fallback for now */ } as OperationsCopy,
+  en: {
+    title: 'Planning & Operations',
+    subtitle: 'Durable planning, automation, health, and cost observability.',
+    backToWork: 'Back to work',
+    refresh: 'Refresh',
+    loading: 'Loading Operations',
+    loadingDescription: 'Loading durable planning, automation, health, and cost projections.',
+    error: 'Operations needs attention',
+    errorDescription: 'Unable to load Operations.',
+    retry: 'Retry',
+    disabledTitle: 'Operations is disabled',
+    disabledDescription: 'This deployment has not enabled the Operations UI feature.',
+    metricsTitle: 'Usage and cost',
+    metricsKnownCost: 'Known cost',
+    metricsNoKnownCost: 'No known cost',
+    metricsUnknownCost: 'Unknown cost',
+    metricsNeverTreatedAsZero: 'Never treated as zero.',
+    metricsTokens: 'Tokens',
+    metricsRuntime: 'Runtime',
+    metricsToolCalls: 'Tool calls',
+    cycles: 'Cycles',
+    initiatives: 'Initiatives',
+    automation: 'Automation rules',
+    loops: 'Loops',
+    runs: 'Recent runs',
+    templates: 'Templates & playbooks',
+    run: 'Run',
+    kind: 'Kind',
+    status: 'Status',
+    attempts: 'Attempts',
+    session: 'Session',
+    created: 'Created',
+    cycleStateActive: 'active',
+    cycleStatePlanned: 'planned',
+    cycleStateCompleted: 'completed',
+    initiativeHealthOnTrack: 'on_track',
+    initiativeHealthAtRisk: 'at_risk',
+    initiativeHealthOffTrack: 'off_track',
+    ruleStateActive: 'active',
+    ruleStatePaused: 'paused',
+    loopStateActive: 'active',
+    loopStatePaused: 'paused',
+    runStateSucceeded: 'succeeded',
+    runStateFailed: 'failed',
+    runStateRunning: 'running',
+    runStatePending: 'pending',
+    cycleState: state => ({ active: 'active', planned: 'planned', completed: 'completed' }[state] ?? state),
+    initiativeHealth: health => ({ on_track: 'on_track', at_risk: 'at_risk', off_track: 'off_track' }[health] ?? health),
+    ruleState: state => ({ active: 'active', paused: 'paused' }[state] ?? state),
+    loopState: state => ({ active: 'active', paused: 'paused' }[state] ?? state),
+    runState: status => ({ succeeded: 'succeeded', failed: 'failed', running: 'running', pending: 'pending' }[status] ?? status),
+    cycleProgress: (done, total) => `${done}/${total} completed`,
+    notScheduled: 'Not scheduled',
+    initiativeLine: (status, priority) => `${status} · ${priority} priority`,
+    ruleTrigger: (version, type, cron) => `v${version} · ${type}${cron ? ` ${cron}` : ''}`,
+    dryRun: 'Dry run',
+    pause: 'Pause',
+    resume: 'Resume',
+    loopNext: next => `Next: ${next}`,
+    noOverlap: 'No overlap',
+    overlapAllowed: 'Overlap allowed',
+    runKindDryRun: 'Dry run',
+    runKindLoop: 'Loop',
+    runKindRule: 'Rule',
+    templateLine: (kind, version, status) => `${kind} · v${version} · ${status}`,
+    noCyclesTitle: 'No Cycles configured',
+    noCyclesDescription: 'Create a Cycle when a planning window is ready.',
+    noInitiativesTitle: 'No Initiatives configured',
+    noInitiativesDescription: 'Initiatives will appear here when the feature has durable data.',
+    noRulesTitle: 'No Rules configured',
+    noRulesDescription: 'Automation rules will appear after they are created through an authorized command.',
+    noLoopsTitle: 'No Loops configured',
+    noLoopsDescription: 'Agent Loops will appear after they are created through an authorized command.',
+    noRunsTitle: 'No run history yet',
+    noRunsDescription: 'Durable run history will appear after an automation or loop executes.',
+    noTemplatesTitle: 'No Templates configured',
+    noTemplatesDescription: 'Templates and playbooks will appear when they are available to this workspace.',
+  },
 }
 
 export type ConnectCopy = {

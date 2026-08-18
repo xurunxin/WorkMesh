@@ -1,11 +1,24 @@
 import { expect, test } from '@playwright/test'
 
+const webUrl = 'http://127.0.0.1:3100'
 const apiUrl = 'http://127.0.0.1:3101'
 const headers = {
-  'Access-Control-Allow-Origin': 'http://127.0.0.1:3100',
+  'Access-Control-Allow-Origin': webUrl,
   'Access-Control-Allow-Credentials': 'true',
   'Content-Type': 'application/json',
 }
+
+// Task 5 migrated /operations to read copy from `useLocale().operationsCopy`.
+// The default locale is `zh-CN`, which now renders the page heading, panel
+// titles, status badges, and metric labels in Chinese. This spec was
+// written against the pre-migration English page; pin every test in this
+// file to the `en` locale so the existing English assertions remain
+// authoritative.
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([
+    { name: 'workmesh_locale', value: 'en', url: webUrl },
+  ])
+})
 
 test('renders durable Stage 4 operations and invokes real rule controls', async ({ page }) => {
   let dryRuns = 0
