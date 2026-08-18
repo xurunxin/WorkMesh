@@ -1,23 +1,33 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it, beforeEach } from 'vitest'
+import { describe, expect, it, beforeAll } from 'vitest'
 import { LocaleProvider, useLocale } from './i18n'
 
-// Minimal DOM polyfill so the test can run under vitest's default
-// node environment without adding jsdom/happy-dom. The polyfill is
-// scoped to the test file; the production web build uses Next's
-// browser environment.
-type CookieJar = { value: string }
-type StorageJar = { items: Map<string, string> }
-const g = globalThis as unknown as { document?: CookieJar; window?: { localStorage: StorageJar } }
-if (!g.document) g.document = { value: '' }
-if (!g.window) g.window = { localStorage: { items: new Map<string, string>() } }
-const cookieJar = g.document
-const storageJar = g.window.localStorage
-function readCookie(name: string): string | null {
-  const match = cookieJar.value.split('; ').find(entry => entry.startsWith(`${name}=`))
-  return match ? match.slice(name.length + 1) : null
-}
+// Minimum no-op DOM shim so this test file can be loaded under vitest's
+// default `node` environment without adding jsdom/happy-dom. The test
+// renders with `renderToStaticMarkup`, which never executes `useEffect`,
+// so the cookie/localStorage reads inside `LocaleProvider` never actually
+// run — the shim only exists to keep module evaluation safe.
+beforeAll(() => {
+  if (typeof globalThis.document === 'undefined') {
+    Object.defineProperty(globalThis, 'document', {
+      value: { cookie: '' },
+      configurable: true,
+    })
+  }
+  if (typeof globalThis.window === 'undefined') {
+    Object.defineProperty(globalThis, 'window', {
+      value: {
+        localStorage: {
+          removeItem: () => {},
+          getItem: () => null,
+          setItem: () => {},
+        },
+      },
+      configurable: true,
+    })
+  }
+})
 
 function Probe() {
   const ctx = useLocale()
@@ -33,13 +43,6 @@ function Probe() {
 }
 
 describe('web i18n entry', () => {
-  beforeEach(() => {
-    const existing = readCookie('workmesh_locale')
-    if (existing != null) cookieJar.value = cookieJar.value.split('; ').filter(entry => !entry.startsWith('workmesh_locale=')).join('; ')
-    cookieJar.value = `${cookieJar.value ? cookieJar.value + '; ' : ''}workmesh_locale=; Path=/; Max-Age=0`
-    storageJar.items.delete('workmesh_locale')
-  })
-
   it('exposes ten Copy subsets and the primary t helper', () => {
     const html = renderToStaticMarkup(createElement(LocaleProvider, null, createElement(Probe)))
     const stripped = html
