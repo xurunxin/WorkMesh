@@ -811,6 +811,42 @@ export type AgentsCopy = {
   diagnosticsIntro: string
   allClear: string
   allClearDetail: string
+  // Agent registry card
+  registryStatusActive: string
+  registryStatusInactive: string
+  noRegistryDescription: string
+  approvedLabel: string
+  capabilitiesLabel: (count: number) => string
+  concurrency: string
+  heartbeat: string
+  // Team access details
+  teamAccessAndCapabilities: string
+  requestedLabel: string
+  definitionApprovedLabel: string
+  none: string
+  noTeamsAvailable: string
+  accessStatusActive: string
+  accessStatusRevoked: string
+  accessStatusNotGranted: string
+  accessApprovedLabel: string
+  revokedAt: (date: string) => string
+  approvedCapabilitySubset: string
+  updateGrant: string
+  grantAccess: string
+  revoke: string
+  // Approval inbox panel
+  riskLabel: (risk: string) => string
+  reviewSession: string
+  // Sessions panel
+  sessionLabel: (id: string) => string
+  workItemLabel: (id: string) => string
+  noWorkItem: string
+  heartbeatLabel: (date: string) => string
+  // Load-more controls (visible text in the "Load more <resource>" button)
+  loadMoreAgents: string
+  loadMoreTeams: string
+  loadMoreApprovals: string
+  loadMoreSessions: string
 }
 
 const agentsCopies: Record<Locale, AgentsCopy> = {
@@ -857,6 +893,37 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     diagnosticsIntro: '健康状态来自服务端 Session 与连接事实；实时更新只触发刷新。',
     allClear: '一切正常',
     allClearDetail: '没有可见 Session 处于过期、失败、阻塞或等待人类的状态。',
+    registryStatusActive: '活跃',
+    registryStatusInactive: '停用',
+    noRegistryDescription: '没有注册表描述。',
+    approvedLabel: '已批准',
+    capabilitiesLabel: count => `${count} 项能力`,
+    concurrency: '并发数',
+    heartbeat: '心跳',
+    teamAccessAndCapabilities: '团队访问与能力',
+    requestedLabel: '请求的能力：',
+    definitionApprovedLabel: '定义已批准：',
+    none: '无',
+    noTeamsAvailable: '暂无可用团队。',
+    accessStatusActive: '已启用',
+    accessStatusRevoked: '已撤销',
+    accessStatusNotGranted: '未授予',
+    accessApprovedLabel: '已批准：',
+    revokedAt: date => `撤销于 ${date}`,
+    approvedCapabilitySubset: '已批准的能力子集',
+    updateGrant: '更新授权',
+    grantAccess: '授予访问',
+    revoke: '撤销',
+    riskLabel: risk => `${risk} 级风险`,
+    reviewSession: '查看 Session 与证据',
+    sessionLabel: id => `Session ${id}`,
+    workItemLabel: id => `Issue ${id}`,
+    noWorkItem: '无 Issue',
+    heartbeatLabel: date => `心跳 ${date}`,
+    loadMoreAgents: '加载更多智能体',
+    loadMoreTeams: '加载更多团队',
+    loadMoreApprovals: '加载更多审批',
+    loadMoreSessions: '加载更多 Session',
   },
   en: {
     agents: 'Agents',
@@ -901,6 +968,37 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     diagnosticsIntro: 'Health comes from server-reported session and Connection facts; realtime updates only prompt a refresh.',
     allClear: 'All clear',
     allClearDetail: 'No visible session is stale, failed, blocked, or waiting for a Human.',
+    registryStatusActive: 'active',
+    registryStatusInactive: 'inactive',
+    noRegistryDescription: 'No registry description.',
+    approvedLabel: 'Approved',
+    capabilitiesLabel: count => `${count} capabilities`,
+    concurrency: 'Concurrency',
+    heartbeat: 'Heartbeat',
+    teamAccessAndCapabilities: 'Team access and capabilities',
+    requestedLabel: 'Requested:',
+    definitionApprovedLabel: 'Definition approved:',
+    none: 'None',
+    noTeamsAvailable: 'No teams are available.',
+    accessStatusActive: 'active',
+    accessStatusRevoked: 'revoked',
+    accessStatusNotGranted: 'not granted',
+    accessApprovedLabel: 'Approved: ',
+    revokedAt: date => `Revoked ${date}`,
+    approvedCapabilitySubset: 'Approved capability subset',
+    updateGrant: 'Update grant',
+    grantAccess: 'Grant access',
+    revoke: 'Revoke',
+    riskLabel: risk => `${risk} risk`,
+    reviewSession: 'Review session and evidence',
+    sessionLabel: id => `Session ${id}`,
+    workItemLabel: id => `Work item ${id}`,
+    noWorkItem: 'No work item',
+    heartbeatLabel: date => `Heartbeat ${date}`,
+    loadMoreAgents: 'Load more agents',
+    loadMoreTeams: 'Load more teams',
+    loadMoreApprovals: 'Load more approvals',
+    loadMoreSessions: 'Load more sessions',
   },
 }
 
