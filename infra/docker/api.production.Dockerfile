@@ -30,7 +30,9 @@ WORKDIR /app
 COPY --from=build --chown=10001:10001 /out ./
 COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
 COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.mjs ./
-RUN chmod 0555 /app/entrypoint.sh
+# Windows checkouts may place CRLF in the shell script; normalize the shebang
+# inside the Linux image before making the production entrypoint executable.
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod 0555 /app/entrypoint.sh
 ENV NODE_ENV=production WORKMESH_SERVICE=api WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA API_HOST=0.0.0.0 API_PORT=3001
 LABEL org.opencontainers.image.revision=$WORKMESH_BUILD_SHA \
       org.opencontainers.image.title="WorkMesh API"
