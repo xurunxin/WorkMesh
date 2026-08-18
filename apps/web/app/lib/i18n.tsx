@@ -1,5 +1,31 @@
 'use client'
 
+/**
+ * apps/web/app/lib/i18n.tsx — single i18n entry for the WorkMesh web app.
+ *
+ * This module exports the `LocaleProvider` and the `useLocale` hook. It is
+ * the ONLY place web code should read translated copy from.
+ *
+ * Ten typed `Copy` subsets are exposed via `useLocale()`:
+ *   - `t(key)`             — flat dictionary for short labels (nav, buttons, status)
+ *   - `issueCopy`          — Work Item list / board copy
+ *   - `surfaceCopy`        — Work Surface (loading / empty / error) copy
+ *   - `detailCopy`         — Work Item detail copy
+ *   - `guidanceCopy`       — Guidance revision history copy
+ *   - `settingsCopy`       — Settings page copy
+ *   - `loginCopy`          — /login page copy
+ *   - `installCopy`        — /install page copy
+ *   - `operationsCopy`     — /operations page copy
+ *   - `connectCopy`        — /connect onboarding page copy
+ *   - `agentsCopy`         — /agents page copy
+ *
+ * The default locale is `zh-CN`. The English dictionaries may be left empty
+ * for keys that are not yet translated; those fall through to the
+ * `packages/ui` English defaults and finally to the page literal as a
+ * last resort. The last layer logs a dev-only `console.warn` once per
+ * missing key.
+ */
+
 import { createContext, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import type { WorkItemCopy } from '@workmesh/ui'
 import type { WorkSurfaceCopy } from '../../features/work-items/work-surfaces'
@@ -367,6 +393,545 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
   en: {},
 }
 
+// ---------------------------------------------------------------------------
+// Six new Copy subsets for the page-level migrations (Tasks 2–5).
+// zh-CN is the source of truth; en may be empty for keys that have not yet
+// been translated. The last-layer fall-through (and its dev-only console.warn)
+// is implemented in `fallbackCopy` below.
+// ---------------------------------------------------------------------------
+
+export type SettingsCopy = {
+  loading: string
+  loadFailed: string
+  retry: string
+  back: string
+  team: string
+  currentTeam: string
+  noTeam: string
+  settings: string
+  title: string
+  workspace: string
+  subtitle: string
+  reviewOnly: string
+  workspaceStructure: string
+  teams: string
+  teamName: string
+  teamKey: string
+  createTeam: string
+  selectedTeam: string
+  teamDetails: string
+  saveChanges: string
+  deleteTeam: string
+  deleteHelp: string
+  createFirst: string
+  teamWorkflow: string
+  workflowStates: string
+  noStates: string
+  statusName: string
+  category: string
+  color: string
+  createStatus: string
+  selectTeam: string
+  loadingMore: string
+  loadMoreTeams: string
+  loadMoreStates: string
+  mainNavigation: string
+  workspaceNavigation: string
+  administrationNavigation: string
+  mobileNavigation: string
+  menu: string
+  skip: string
+  confirmDelete: (name: string) => string
+  requestFailed: string
+  categories: { backlog: string; planned: string; started: string; completed: string; canceled: string }
+}
+
+const settingsCopies: Record<Locale, SettingsCopy> = {
+  'zh-CN': {
+    loading: '正在加载设置…',
+    loadFailed: '无法加载设置。',
+    retry: '重试',
+    back: '返回 Issues',
+    team: '团队',
+    currentTeam: '当前团队',
+    noTeam: '无团队',
+    settings: '设置',
+    title: '设置',
+    workspace: '工作区',
+    subtitle: '工作区管理与日常规划保持分离。',
+    reviewOnly: '你可以查看团队设置；工作区管理员负责管理团队和工作流状态。',
+    workspaceStructure: '工作区结构',
+    teams: '团队',
+    teamName: '团队名称',
+    teamKey: '团队标识',
+    createTeam: '新建团队',
+    selectedTeam: '已选团队',
+    teamDetails: '团队详情',
+    saveChanges: '保存更改',
+    deleteTeam: '删除团队',
+    deleteHelp: '从当前工作区导航中移除此团队。',
+    createFirst: '新建团队后即可配置工作流。',
+    teamWorkflow: '团队工作流',
+    workflowStates: '工作流状态',
+    noStates: '暂无工作流状态。',
+    statusName: '状态名称',
+    category: '分类',
+    color: '颜色',
+    createStatus: '新建状态',
+    selectTeam: '请选择团队以管理工作流。',
+    loadingMore: '正在加载…',
+    loadMoreTeams: '加载更多团队',
+    loadMoreStates: '加载更多工作流状态',
+    mainNavigation: '主导航',
+    workspaceNavigation: '工作区导航',
+    administrationNavigation: '管理导航',
+    mobileNavigation: '移动端导航',
+    menu: '菜单',
+    skip: '跳到主要内容',
+    confirmDelete: name => `确定删除团队 ${name}？删除后其工作将不可用。`,
+    requestFailed: '操作失败。',
+    categories: { backlog: '待办', planned: '已规划', started: '进行中', completed: '已完成', canceled: '已取消' },
+  },
+  en: {
+    loading: 'Loading Settings…',
+    loadFailed: 'Unable to load Settings.',
+    retry: 'Retry',
+    back: 'Back to Issues',
+    team: 'Team',
+    currentTeam: 'Current team',
+    noTeam: 'No team',
+    settings: 'Settings',
+    title: 'Settings',
+    workspace: 'Workspace',
+    subtitle: 'Workspace administration stays separate from daily planning.',
+    reviewOnly: 'You can review team settings. Workspace admins manage teams and workflow states.',
+    workspaceStructure: 'Workspace structure',
+    teams: 'Teams',
+    teamName: 'Team name',
+    teamKey: 'Team key',
+    createTeam: 'Create team',
+    selectedTeam: 'Selected team',
+    teamDetails: 'Team details',
+    saveChanges: 'Save changes',
+    deleteTeam: 'Delete team',
+    deleteHelp: 'Remove this team from active workspace navigation.',
+    createFirst: 'Create a team to configure its workflow.',
+    teamWorkflow: 'Team workflow',
+    workflowStates: 'Workflow states',
+    noStates: 'No workflow states yet.',
+    statusName: 'Status name',
+    category: 'Category',
+    color: 'Color',
+    createStatus: 'Create status',
+    selectTeam: 'Select a team to manage its workflow.',
+    loadingMore: 'Loading…',
+    loadMoreTeams: 'Load more teams',
+    loadMoreStates: 'Load more workflow states',
+    mainNavigation: 'Main navigation',
+    workspaceNavigation: 'Workspace navigation',
+    administrationNavigation: 'Administration navigation',
+    mobileNavigation: 'Mobile navigation',
+    menu: 'Menu',
+    skip: 'Skip to content',
+    confirmDelete: name => `Delete team ${name}? Its work remains unavailable after this action.`,
+    requestFailed: 'Something went wrong.',
+    categories: { backlog: 'Backlog', planned: 'Planned', started: 'Started', completed: 'Completed', canceled: 'Canceled' },
+  },
+}
+
+export type LoginCopy = {
+  title: string
+  subtitle: string
+  email: string
+  password: string
+  emailPlaceholder: string
+  passwordPlaceholder: string
+  signIn: string
+  signingIn: string
+  signInFailed: string
+  retry: string
+  installPrompt: string
+}
+
+const loginCopies: Record<Locale, LoginCopy> = {
+  'zh-CN': {
+    title: '登录',
+    subtitle: '使用工作区账号登录',
+    email: '邮箱',
+    password: '密码',
+    emailPlaceholder: 'name@example.com',
+    passwordPlaceholder: '至少 12 个字符',
+    signIn: '登录',
+    signingIn: '正在登录…',
+    signInFailed: '登录失败。',
+    retry: '重试',
+    installPrompt: '工作区尚未安装。',
+  },
+  en: {
+    title: 'Sign in',
+    subtitle: 'Sign in with your workspace account',
+    email: 'Email',
+    password: 'Password',
+    emailPlaceholder: 'name@example.com',
+    passwordPlaceholder: 'At least 12 characters',
+    signIn: 'Sign in',
+    signingIn: 'Signing in…',
+    signInFailed: 'Sign in failed.',
+    retry: 'Retry',
+    installPrompt: 'Workspace is not installed yet.',
+  },
+}
+
+export type InstallCopy = {
+  title: string
+  subtitle: string
+  workspace: string
+  workspacePlaceholder: string
+  slug: string
+  slugPlaceholder: string
+  yourName: string
+  yourNamePlaceholder: string
+  email: string
+  password: string
+  bootstrapToken: string
+  bootstrapHelp: string
+  install: string
+  installing: string
+  installFailed: string
+  retry: string
+}
+
+const installCopies: Record<Locale, InstallCopy> = {
+  'zh-CN': {
+    title: '安装 WorkMesh',
+    subtitle: '首次启动时初始化工作区与管理员账号',
+    workspace: '工作区名称',
+    workspacePlaceholder: 'My Workspace',
+    slug: '工作区标识',
+    slugPlaceholder: 'workspace-slug',
+    yourName: '管理员姓名',
+    yourNamePlaceholder: '管理员姓名',
+    email: '邮箱',
+    password: '密码',
+    bootstrapToken: '启动令牌',
+    bootstrapHelp: '除非 API 处于显式 loopback-only 开发启动模式，否则必填。令牌仅发送一次，本页不保存。',
+    install: '安装',
+    installing: '正在安装…',
+    installFailed: '安装失败。',
+    retry: '重试',
+  },
+  en: {
+    title: 'Install WorkMesh',
+    subtitle: 'Initialize the workspace and admin account on first launch',
+    workspace: 'Workspace name',
+    workspacePlaceholder: 'My Workspace',
+    slug: 'Workspace slug',
+    slugPlaceholder: 'workspace-slug',
+    yourName: 'Your name',
+    yourNamePlaceholder: 'Your name',
+    email: 'Email',
+    password: 'Password',
+    bootstrapToken: 'Bootstrap token',
+    bootstrapHelp: 'Required unless the API is in explicit loopback-only development bootstrap mode. The token is sent once and is not stored by this page.',
+    install: 'Install',
+    installing: 'Installing…',
+    installFailed: 'Installation failed.',
+    retry: 'Retry',
+  },
+}
+
+export type OperationsCopy = {
+  title: string
+  subtitle: string
+  loading: string
+  loadingDescription: string
+  error: string
+  errorDescription: string
+  disabledTitle: string
+  disabledDescription: string
+  metricsTitle: string
+  cycles: string
+  initiatives: string
+  automation: string
+  loops: string
+  runs: string
+  templates: string
+  run: string
+  kind: string
+  status: string
+  attempts: string
+  session: string
+  created: string
+  cycleState: (state: string) => string
+  initiativeHealth: (health: string) => string
+}
+
+const operationsCopies: Record<Locale, OperationsCopy> = {
+  'zh-CN': {
+    title: '运营与规划',
+    subtitle: '查看长期规划、自动化、健康度与成本',
+    loading: '正在加载运营数据…',
+    loadingDescription: '正在获取规划、自动化、健康度与成本数据。',
+    error: '无法加载运营数据。',
+    errorDescription: '请稍后重试或联系工作区管理员。',
+    disabledTitle: '运营页面未启用',
+    disabledDescription: '本部署未启用 Operations UI 功能。',
+    metricsTitle: '运营指标',
+    cycles: '规划周期',
+    initiatives: '主题',
+    automation: '自动化规则',
+    loops: 'Agent 循环',
+    runs: '运行记录',
+    templates: '模板',
+    run: '运行',
+    kind: '类型',
+    status: '状态',
+    attempts: '尝试次数',
+    session: '会话',
+    created: '创建时间',
+    cycleState: state => state,
+    initiativeHealth: health => health,
+  },
+  en: { /* fallback for now */ } as OperationsCopy,
+}
+
+export type ConnectCopy = {
+  eyebrow: string
+  title: string
+  healthPill: string
+  fragmentMissingTitle: string
+  fragmentMissingBody: string
+  step1: string
+  step2: string
+  step3: string
+  mcpClient: string
+  discovery: string
+  sha256: string
+  chooseClient: string
+  bootstrapChecklist: string
+  copyConfig: string
+  copied: string
+  clientGenericMcp: string
+  clientOpencode: string
+  clientCodex: string
+  clientPi: string
+  secretBoundary: string
+  copySuccess: string
+}
+
+const connectCopies: Record<Locale, ConnectCopy> = {
+  'zh-CN': {
+    eyebrow: '安全智能体设置',
+    title: '连接智能体到 WorkMesh',
+    healthPill: '配对一次 · 实时验证',
+    fragmentMissingTitle: '缺少配对片段',
+    fragmentMissingBody: '请工作区管理员生成新的智能体连接。配对片段仅可使用一次并会过期；它不是智能体 Session 令牌。',
+    step1: '1 · 客户端',
+    step2: '2 · 配置',
+    step3: '3 · 验证',
+    mcpClient: 'MCP 客户端',
+    discovery: '发现',
+    sha256: 'SHA-256',
+    chooseClient: '选择支持的客户端',
+    bootstrapChecklist: '受控启动检查',
+    copyConfig: '复制配置',
+    copied: '已复制',
+    clientGenericMcp: '通用 MCP',
+    clientOpencode: 'OpenCode',
+    clientCodex: 'Codex',
+    clientPi: 'Pi',
+    secretBoundary: '凭据边界：模板只包含环境变量名。请把兑换后的安装凭据放入客户端的密钥存储，永远不要写入此文件。',
+    copySuccess: '复制成功',
+  },
+  en: {
+    eyebrow: 'Secure Agent setup',
+    title: 'Connect an Agent to WorkMesh',
+    healthPill: 'Pair once · verify live',
+    fragmentMissingTitle: 'Pairing fragment missing',
+    fragmentMissingBody: 'Ask a Workspace Admin to generate a new Agent Connection. A fragment is single-use and expires; it is not an Agent Session token.',
+    step1: '1 · Client',
+    step2: '2 · Configuration',
+    step3: '3 · Verify',
+    mcpClient: 'MCP client',
+    discovery: 'Discovery',
+    sha256: 'SHA-256',
+    chooseClient: 'Choose a supported client',
+    bootstrapChecklist: 'Bounded bootstrap checklist',
+    copyConfig: 'Copy config',
+    copied: 'Copied',
+    clientGenericMcp: 'Generic MCP',
+    clientOpencode: 'OpenCode',
+    clientCodex: 'Codex',
+    clientPi: 'Pi',
+    secretBoundary: 'Secret boundary: the template contains only an environment-variable name. Put the redeemed installation credential in the client secret store, never in this file.',
+    copySuccess: 'Copied successfully',
+  },
+}
+
+export type AgentsCopy = {
+  agents: string
+  loadingDescription: string
+  loadingTitle: string
+  context: string
+  loadError: string
+  selectCapability: string
+  updateAccessError: string
+  revokeAccessError: string
+  refresh: string
+  eyebrow: string
+  title: string
+  intro: string
+  retry: string
+  attentionTitle: string
+  attentionDescription: string
+  activeAgents: string
+  registered: (count: number) => string
+  liveSessions: string
+  visible: (count: number) => string
+  pendingApprovals: string
+  responseRequired: string
+  queueClear: string
+  needsAttention: string
+  blockedOrWaiting: string
+  registry: string
+  registryIntro: string
+  all: string
+  active: string
+  inactive: string
+  noAgents: string
+  humanQueue: string
+  approvals: string
+  openInbox: string
+  noApprovals: string
+  execution: string
+  sessions: string
+  noSessions: string
+  durableState: string
+  diagnostics: string
+  diagnosticsIntro: string
+  allClear: string
+  allClearDetail: string
+}
+
+const agentsCopies: Record<Locale, AgentsCopy> = {
+  'zh-CN': {
+    agents: '智能体',
+    loadingDescription: '正在加载智能体、Session、审批和连接信息。',
+    loadingTitle: '正在加载智能体工作区',
+    context: '人类控制面',
+    loadError: '无法加载智能体。',
+    selectCapability: '请至少选择一项要授予的能力。',
+    updateAccessError: '无法更新团队访问权限。',
+    revokeAccessError: '无法撤销团队访问权限。',
+    refresh: '刷新',
+    eyebrow: '人类控制面',
+    title: '智能体',
+    intro: '监控委派工作、处理审批，并在不接触凭据的情况下诊断连接。',
+    retry: '重试',
+    attentionTitle: '智能体工作区需要关注',
+    attentionDescription: '无法加载智能体工作区。',
+    activeAgents: '活跃智能体',
+    registered: count => `已注册 ${count} 个`,
+    liveSessions: '运行中 Session',
+    visible: count => `可见 ${count} 个`,
+    pendingApprovals: '待处理审批',
+    responseRequired: '需要人类响应',
+    queueClear: '队列为空',
+    needsAttention: '需要关注',
+    blockedOrWaiting: '阻塞、过期或等待中',
+    registry: '注册表',
+    registryIntro: '先检查定义；仅在需要审阅时展开团队权限。',
+    all: '全部',
+    active: '活跃',
+    inactive: '停用',
+    noAgents: '没有符合当前筛选的已注册智能体。',
+    humanQueue: '人类队列',
+    approvals: '审批',
+    openInbox: '打开收件箱',
+    noApprovals: '没有待处理审批。',
+    execution: '执行',
+    sessions: 'Sessions',
+    noSessions: '当前没有可见的智能体 Session。',
+    durableState: '持久状态',
+    diagnostics: '诊断',
+    diagnosticsIntro: '健康状态来自服务端 Session 与连接事实；实时更新只触发刷新。',
+    allClear: '一切正常',
+    allClearDetail: '没有可见 Session 处于过期、失败、阻塞或等待人类的状态。',
+  },
+  en: {
+    agents: 'Agents',
+    loadingDescription: 'Loading Agents, Sessions, approvals, and Connection facts.',
+    loadingTitle: 'Loading Agent workspace',
+    context: 'Human control plane',
+    loadError: 'Unable to load agents.',
+    selectCapability: 'Select at least one capability to grant.',
+    updateAccessError: 'Unable to update team access.',
+    revokeAccessError: 'Unable to revoke team access.',
+    refresh: 'Refresh',
+    eyebrow: 'Human control plane',
+    title: 'Agents',
+    intro: 'Monitor delegated work, respond to approvals, and diagnose Connections without handling credentials.',
+    retry: 'Retry',
+    attentionTitle: 'Agent workspace needs attention',
+    attentionDescription: 'Unable to load the Agent workspace.',
+    activeAgents: 'Active agents',
+    registered: count => `${count} registered`,
+    liveSessions: 'Live sessions',
+    visible: count => `${count} visible`,
+    pendingApprovals: 'Pending approvals',
+    responseRequired: 'Human response required',
+    queueClear: 'Queue clear',
+    needsAttention: 'Needs attention',
+    blockedOrWaiting: 'Blocked, stale, or waiting',
+    registry: 'Registry',
+    registryIntro: 'Scan definitions first; expand Team authority only when it needs review.',
+    all: 'All',
+    active: 'Active',
+    inactive: 'Inactive',
+    noAgents: 'No registered agents match this filter.',
+    humanQueue: 'Human queue',
+    approvals: 'Approvals',
+    openInbox: 'Open inbox',
+    noApprovals: 'No pending approvals.',
+    execution: 'Execution',
+    sessions: 'Sessions',
+    noSessions: 'No agent session is visible to you.',
+    durableState: 'Durable state',
+    diagnostics: 'Diagnostics',
+    diagnosticsIntro: 'Health comes from server-reported session and Connection facts; realtime updates only prompt a refresh.',
+    allClear: 'All clear',
+    allClearDetail: 'No visible session is stale, failed, blocked, or waiting for a Human.',
+  },
+}
+
+// Last-layer fallback for the new Copy subsets. We keep the keys stable so
+// downstream pages do not need to null-check; the warning is dev-only.
+// Task 7 Step 1 wires the `packages/ui` defaults in through the call site
+// (i.e., the LocaleProvider value). The helper is exported so callers can
+// opt in once the upstream defaults are in place.
+const warnedMissingKeys = new Set<string>()
+export function fallbackCopy<T extends Record<string, unknown>>(key: string, primary: T, fallback: T, locale: Locale): T {
+  if (locale === 'zh-CN') return primary
+  // For non-zh-CN locales, merge the English `primary` over the `fallback`
+  // (English defaults). Empty / nullish fields in `primary` are filled from
+  // `fallback`, and the dev console.warn fires once per missing key.
+  const merged: Record<string, unknown> = { ...fallback }
+  for (const k of Object.keys(primary) as Array<keyof T>) {
+    const kName = String(k)
+    const value = primary[k]
+    if (value == null || value === '') {
+      if (!warnedMissingKeys.has(`${key}.${kName}`)) {
+        warnedMissingKeys.add(`${key}.${kName}`)
+        if (typeof console !== 'undefined') console.warn(`[workmesh/i18n] missing copy: ${key}.${kName} for locale=${locale}`)
+      }
+      merged[kName] = fallback[k]
+    } else {
+      merged[kName] = value
+    }
+  }
+  return merged as T
+}
+
 type LocaleContextValue = {
   locale: Locale
   setLocale: (locale: Locale) => void
@@ -375,6 +940,12 @@ type LocaleContextValue = {
   surfaceCopy: Partial<WorkSurfaceCopy>
   detailCopy: Partial<WorkItemDetailCopy>
   guidanceCopy: GuidanceCopy
+  settingsCopy: SettingsCopy
+  loginCopy: LoginCopy
+  installCopy: InstallCopy
+  operationsCopy: OperationsCopy
+  connectCopy: ConnectCopy
+  agentsCopy: AgentsCopy
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null)
@@ -403,6 +974,12 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     surfaceCopy: surfaceCopies[locale],
     detailCopy: detailCopies[locale],
     guidanceCopy: guidanceCopies[locale],
+    settingsCopy: settingsCopies[locale],
+    loginCopy: loginCopies[locale],
+    installCopy: installCopies[locale],
+    operationsCopy: operationsCopies[locale],
+    connectCopy: connectCopies[locale],
+    agentsCopy: agentsCopies[locale],
   }), [locale])
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
 }
