@@ -377,6 +377,7 @@ export const stage0RouteManifest = [
   { method: 'GET', path: '/api/v1/features', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-capabilities', authenticated: true },
   { method: 'GET', path: '/api/v1/install-status', authenticated: false },
+  { method: 'POST', path: '/api/v1/test/reset-install', authenticated: false, mutation: true },
   { method: 'POST', path: '/api/v1/auth/install', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/auth/login', authenticated: false, mutation: true },
   { method: 'POST', path: '/api/v1/auth/logout', authenticated: true, mutation: true },

@@ -49,6 +49,7 @@ describe('Fastify route policy inventory', () => {
     vi.stubEnv('REDIS_URL', 'redis://localhost:6379')
     vi.stubEnv('SESSION_SECRET', 'route-policy-test-session-secret-32')
     vi.stubEnv('WORKMESH_BOOTSTRAP_TOKEN', randomBytes(32).toString('base64url'))
+    vi.stubEnv('RUN_INTEGRATION', '1')
     const { buildApp } = await import('../server.js')
     const app = buildApp()
     await app.ready()

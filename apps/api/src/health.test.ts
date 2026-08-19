@@ -19,6 +19,7 @@ describe('API process health', () => {
     vi.stubEnv('REDIS_URL', 'redis://127.0.0.1:6379')
     vi.stubEnv('SESSION_SECRET', 'api-health-test-session-secret-0001')
     vi.stubEnv('WORKMESH_BOOTSTRAP_TOKEN', randomBytes(32).toString('base64url'))
+    vi.stubEnv('RUN_INTEGRATION', '1')
     const { buildApp } = await import('./server.js')
     app = buildApp({
       logger: false,

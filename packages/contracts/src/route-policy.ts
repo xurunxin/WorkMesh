@@ -103,6 +103,7 @@ const publicOperations = new Set([
   'login',
   'getWorkMeshAgentWellKnown',
   'redeemAgentConnection',
+  'resetInstall',
 ])
 
 const installationTargetOperations = new Set([

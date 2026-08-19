@@ -50,6 +50,7 @@ describe("credential-route selective fail-closed behavior", () => {
     vi.stubEnv("REDIS_URL", "redis://127.0.0.1:6379");
     vi.stubEnv("SESSION_SECRET", "rate-limit-server-test-secret-000001");
     vi.stubEnv("WORKMESH_BOOTSTRAP_TOKEN", bootstrapToken);
+    vi.stubEnv("RUN_INTEGRATION", "1");
     const { buildApp } = await import("../server.js");
     app = buildApp({ logger: false, authRateLimitStore: store });
     await app.ready();
