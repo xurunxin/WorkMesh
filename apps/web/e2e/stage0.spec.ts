@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
@@ -131,7 +132,9 @@ test.describe("Stage 0 browser acceptance", () => {
   // endpoint is mounted only when RUN_INTEGRATION=1, so it cannot fire in
   // production.
   test.beforeAll(async ({ request }) => {
-    const response = await request.post(`${apiUrl}/api/v1/test/reset-install`);
+    const response = await request.post(`${apiUrl}/api/v1/test/reset-install`, {
+      headers: { "idempotency-key": `reset-install-${randomUUID()}` },
+    });
     expect(response.status(), "reset-install must succeed for the bootstrap project").toBe(200);
     const body = await response.json();
     expect(body).toMatchObject({ ok: true, reset: true });
