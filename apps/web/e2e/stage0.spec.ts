@@ -125,6 +125,18 @@ async function createWorkItem(
 test.describe.configure({ mode: "serial" });
 
 test.describe("Stage 0 browser acceptance", () => {
+  // Defensive reset: the global setup drops + re-applies migrations, but if a
+  // prior fixture run left the API in an installed state, the install page
+  // redirects to /login and this test can never reach the form. The reset
+  // endpoint is mounted only when RUN_INTEGRATION=1, so it cannot fire in
+  // production.
+  test.beforeAll(async ({ request }) => {
+    const response = await request.post(`${apiUrl}/api/v1/test/reset-install`);
+    expect(response.status(), "reset-install must succeed for the bootstrap project").toBe(200);
+    const body = await response.json();
+    expect(body).toMatchObject({ ok: true, reset: true });
+  });
+
   test("installs, manages work, synchronizes drag and mentions over SSE, and rejects child writes after team deletion", async ({
     browser,
     page,
