@@ -24,9 +24,21 @@ test.describe('unified light theme', () => {
       // or /login. The brief's original code raced the redirect: page.goto
       // resolves before the server-side 302 fires, then page.evaluate hits
       // "execution context was destroyed" when the redirect lands. Wait for
-      // the next paint to settle so the body background reflects the page
-      // the user actually lands on.
-      await page.waitForLoadState('networkidle')
+      // the URL to settle on either the requested path or the redirect
+      // target, then wait for the body to be paintable before reading its
+      // background color (M-7).
+      await page.waitForURL(
+        (url) => {
+          const pathname = new URL(url).pathname
+          return (
+            pathname === route.path ||
+            pathname === '/install' ||
+            pathname === '/login'
+          )
+        },
+        { waitUntil: 'load' },
+      )
+      await page.waitForLoadState('domcontentloaded')
       const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor)
       for (const legacy of legacyDarkBackgrounds) {
         expect(bg, `body background should not be the legacy dark ${legacy}`).not.toBe(legacy)
