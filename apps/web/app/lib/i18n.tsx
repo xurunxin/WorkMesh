@@ -630,7 +630,7 @@ const installCopies: Record<Locale, InstallCopy> = {
     title: 'Install WorkMesh',
     subtitle: 'Initialize the workspace and admin account on first launch',
     workspace: 'Workspace name',
-    workspacePlaceholder: 'My Workspace',
+    workspacePlaceholder: 'Workspace',
     slug: 'Workspace slug',
     slugPlaceholder: 'workspace-slug',
     yourName: 'Your name',
