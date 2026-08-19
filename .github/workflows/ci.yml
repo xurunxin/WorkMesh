@@ -372,7 +372,7 @@ jobs:
     name: Browser acceptance
     needs: source-gates
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 50
     env:
       RUN_INTEGRATION: '1'
       DATABASE_URL: postgres://workmesh:workmesh-ci-postgres@127.0.0.1:5432/workmesh_e2e_test
@@ -434,14 +434,6 @@ jobs:
           mkdir -p ci-logs
           set -o pipefail
           pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
-      - name: Restore Playwright browser cache
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml', '.github/workflows/ci.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
       - name: Install Playwright Chromium
         run: |
           set -o pipefail
