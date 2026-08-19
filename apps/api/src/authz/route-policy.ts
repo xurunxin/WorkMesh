@@ -16,6 +16,13 @@ const normalizedPath = (path: string): string =>
 const routeKey = (method: string, path: string): string =>
   `${method.toUpperCase()} ${normalizedPath(path)}`
 
+// Operations whose handler registration is itself gated on
+// `RUN_INTEGRATION === '1'`. They stay in the public manifest (and the
+// generated OpenAPI surface) for documentation but are dropped from the
+// runtime expected set when the integration flag is off, so the onReady
+// completeness check matches what the production server actually mounts.
+const integrationOnlyOperations = new Set(['resetInstall'])
+
 export type RoutePolicyInventory = Readonly<{
   registeredRoutes: () => readonly string[]
 }>
@@ -24,8 +31,12 @@ export function installRoutePolicyInventory(
   app: FastifyInstance,
   manifest: readonly RoutePolicyManifestEntry[] = routePolicyManifest,
 ): RoutePolicyInventory {
+  const integrationEnabled = process.env.RUN_INTEGRATION === '1'
   const expected = new Map<string, RoutePolicyManifestEntry>()
   for (const route of manifest) {
+    if (!integrationEnabled && integrationOnlyOperations.has(route.operationId)) {
+      continue
+    }
     const key = routeKey(route.method, route.path)
     if (expected.has(key)) {
       throw new Error(`Duplicate route policy declaration: ${key}`)
