@@ -38,7 +38,7 @@ export default defineConfig({
   projects: [
     {
       name: "bootstrap",
-      testMatch: /stage0\.spec\.ts/,
+      testMatch: /(stage0|theme-unification)\.spec\.ts/,
     },
     {
       name: "authenticated",

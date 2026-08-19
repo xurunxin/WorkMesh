@@ -164,6 +164,80 @@ Migration
 Spec changes
 ```
 
+## Spec, plan, and execution: dual-track (local + WorkMesh)
+
+WorkMesh has two parallel surfaces for planning and execution. Every
+spec and every plan is recorded in BOTH places, with the same content
+and a stable reference between them. Do not write to one without the
+other.
+
+- **Spec / ADR** — `docs/adr/NNNN-title.md` (local) + a WorkMesh
+  `Project` (remote). The local file is the source of truth; the
+  remote Project carries a pointer to the local file in its
+  description and houses the implementation Issues.
+- **Plan** — `docs/plan/YYYY-MM-DD-<feature-name>.md` (local) + one
+  WorkMesh `WorkItem` per plan task under the matching Project. The
+  local file is the source of truth; each WorkItem's description
+  contains the matching task's full body, the test list, the DoD
+  from the spec, and a `blocks` link to the next gated task.
+- **Execution progress** — recorded in the WorkMesh WorkItem
+  (`acknowledged` → `planning` / `executing` → `awaiting_review` →
+  `completed`), with the matching `append_activity` notes carrying
+  test output, screenshots, and any spec divergence. The local
+  git history is the durable record of file changes; the WorkMesh
+  WorkItem is the durable record of the agent's operational
+  rationale. Both must agree.
+- **Information retention** — anything the user may want to look up
+  later (decisions, tradeoffs, follow-up items, known limitations,
+  cross-session context) lives on the WorkMesh `Project` description
+  and on the relevant `WorkItem` activity stream. Do not store
+  operational context only in the local repo.
+
+Rationale: the local repo answers "what is the code?" and the
+WorkMesh Project answers "what work is happening on this code and
+why?". The control plane is WorkMesh; the code is git. Keep them in
+sync.
+
+## WorkMesh MCP tools to prefer for this project
+
+When working on WorkMesh, prefer the MCP tools over the local CLI
+for the following:
+
+- `mcp__workmesh__create_project` — start a new Project for any spec
+  that will need tracked work.
+- `mcp__workmesh__create_work_item` — one Issue per plan task; carry
+  the full body, test list, and DoD in the description.
+- `mcp__workmesh__add_work_item_relation` — use `kind: 'blocks'` to
+  express a serial dependency between plan tasks.
+- `mcp__workmesh__append_activity` — record test output, screenshots,
+  and spec divergence on the matching WorkItem.
+- `mcp__workmesh__complete_session` / `mcp__workmesh__fail_session` —
+  at the end of a delegated Agent Session, record a summary with
+  the artifact IDs.
+
+The MCP is the control plane; the git repo is the data plane. The
+Project and WorkItem IDs are the durable handoff between them.
+
+- a core invariant;
+- service boundaries;
+- persistence/event semantics;
+- protocol behavior;
+- security policy;
+- a major dependency.
+
+ADR format:
+
+```text
+# Title
+Status
+Context
+Decision
+Alternatives
+Consequences
+Migration
+Spec changes
+```
+
 ## Completion report
 
 At the end of a task, report:

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
@@ -17,7 +18,20 @@ type WorkItem = {
 type ApiError = { error: { code: string } };
 
 const apiUrl = "http://127.0.0.1:3101";
+const webUrl = "http://127.0.0.1:3100";
 const authenticatedStatePath = resolve("test-results/.auth/admin.json");
+
+// Task 6 migrated /install to read copy from `useLocale().installCopy`.
+// The default locale is `zh-CN`, which would change the bootstrap-token
+// input placeholder, the "Workspace" label, the slug/name/email/password
+// placeholders, and the submit button label to Chinese. This spec was
+// written against the pre-migration English page; pin every navigation to
+// `en` so the existing English assertions remain authoritative.
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([
+    { name: "workmesh_locale", value: "en", url: webUrl },
+  ]);
+});
 
 async function api<T>(
   page: Page,
@@ -112,6 +126,20 @@ async function createWorkItem(
 test.describe.configure({ mode: "serial" });
 
 test.describe("Stage 0 browser acceptance", () => {
+  // Defensive reset: the global setup drops + re-applies migrations, but if a
+  // prior fixture run left the API in an installed state, the install page
+  // redirects to /login and this test can never reach the form. The reset
+  // endpoint is mounted only when RUN_INTEGRATION=1, so it cannot fire in
+  // production.
+  test.beforeAll(async ({ request }) => {
+    const response = await request.post(`${apiUrl}/api/v1/test/reset-install`, {
+      headers: { "idempotency-key": `reset-install-${randomUUID()}` },
+    });
+    expect(response.status(), "reset-install must succeed for the bootstrap project").toBe(200);
+    const body = await response.json();
+    expect(body).toMatchObject({ ok: true, reset: true });
+  });
+
   test("installs, manages work, synchronizes drag and mentions over SSE, and rejects child writes after team deletion", async ({
     browser,
     page,
@@ -319,6 +347,9 @@ test.describe("Stage 0 browser acceptance", () => {
     expect(ownerInvariant.body.error.code).toBe("RESPONSIBLE_HUMAN_REQUIRED");
 
     const secondContext = await browser.newContext();
+    await secondContext.addCookies([
+      { name: "workmesh_locale", value: "en", url: webUrl },
+    ]);
     try {
       const secondPage = await secondContext.newPage();
       await secondPage.goto("/login");

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, EmptyState, ErrorState } from '@workmesh/ui'
 import { apiRequest, json } from '../lib/api'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
+import { useLocale } from '../lib/i18n'
 import { RealtimeStatus } from '../realtime-status'
 import { GlobalCommandCenter } from '../../features/command-center'
 
@@ -74,7 +75,7 @@ type FeatureRegistry = {
   features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }>
 }
 
-const when = (value: string | null) => value ? new Date(value).toLocaleString() : 'Not scheduled'
+const when = (value: string | null, notScheduled: string) => value ? new Date(value).toLocaleString() : notScheduled
 const message = (reason: unknown) => reason instanceof Error ? reason.message : 'Request failed'
 const operationsNavigation = [
   { href: '/?view=inbox', label: 'Inbox' },
@@ -85,6 +86,7 @@ const operationsNavigation = [
 ]
 
 export default function OperationsPage() {
+  const { t, operationsCopy } = useLocale()
   const [usage, setUsage] = useState<Usage | null>(null)
   const [error, setError] = useState('')
   const [features, setFeatures] = useState<Set<string> | null>(null)
@@ -187,116 +189,116 @@ export default function OperationsPage() {
   }
 
   const headerActions = <div className="shell-action-cluster"><GlobalCommandCenter /><RealtimeStatus /></div>
-  if (!features && !error) return <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center"><AsyncStateSurface description="Loading durable planning, automation, health, and cost projections." state="loading" title="Loading Operations" /></div></AppShell>
+  if (!features && !error) return <AppShell contextLabel={operationsCopy.title} headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center"><AsyncStateSurface description={operationsCopy.loadingDescription} state="loading" title={operationsCopy.loading} /></div></AppShell>
   if (features && !features.has('WORKMESH_BETA_OPERATIONS_UI'))
-    return <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center" data-testid="operations-disabled"><EmptyState description="This deployment has not enabled the Operations UI feature." title="Operations is disabled" /></div></AppShell>
+    return <AppShell contextLabel={operationsCopy.title} headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}><div className="center" data-testid="operations-disabled"><EmptyState description={operationsCopy.disabledDescription} title={operationsCopy.disabledTitle} /></div></AppShell>
   return (
-    <AppShell contextLabel="Planning & Operations" headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}>
-    <div className="operations-shell">
+    <AppShell contextLabel={operationsCopy.title} headerActions={headerActions} navigation={operationsNavigation} productName="WorkMesh" utilityNavigation={[{ href: '/settings', label: 'Settings' }]}>
+    <div>
       <header className="operations-header">
         <div>
-          <a href="/">Back to work</a>
-          <h1>Planning &amp; Operations</h1>
-          <p>Durable planning, automation, health, and cost observability.</p>
+          <a href="/">{operationsCopy.backToWork}</a>
+          <h1>{operationsCopy.title}</h1>
+          <p>{operationsCopy.subtitle}</p>
         </div>
-        <Button onClick={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }}>Refresh</Button>
+        <Button onClick={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }}>{operationsCopy.refresh}</Button>
       </header>
-      {(error || collectionError) && <ErrorState actionLabel="Retry" description={error || collectionError?.message || 'Unable to load Operations.'} onAction={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }} title="Operations needs attention" />}
+      {(error || collectionError) && <ErrorState actionLabel={operationsCopy.retry} description={error || collectionError?.message || operationsCopy.errorDescription} onAction={() => { void load(); void cyclesPage.refresh(); void initiativesPage.refresh(); void rulesPage.refresh(); void loopsPage.refresh(); void runsPage.refresh(); void templatesPage.refresh() }} title={operationsCopy.error} />}
       {data && (
         <>
-          {features?.has('WORKMESH_BETA_COSTS') && <section className="operations-metrics" aria-label="Usage and cost">
+          {features?.has('WORKMESH_BETA_COSTS') && <section className="operations-metrics" aria-label={operationsCopy.metricsTitle}>
             <article>
-              <span>Known cost</span>
+              <span>{operationsCopy.metricsKnownCost}</span>
               {data.usage.currency_buckets.length === 0
-                ? <strong>No known cost</strong>
+                ? <strong>{operationsCopy.metricsNoKnownCost}</strong>
                 : data.usage.currency_buckets.map(bucket =>
                   <strong key={bucket.currency}>{bucket.known_cost_minor} {bucket.currency}</strong>)}
             </article>
-            <article><span>Unknown cost</span><strong>{data.usage.unknown_cost_records}</strong><small>Never treated as zero.</small></article>
-            <article><span>Tokens</span><strong>{Number(data.usage.input_tokens) + Number(data.usage.output_tokens)}</strong></article>
-            <article><span>Runtime</span><strong>{Math.round(Number(data.usage.runtime_ms) / 1000)}s</strong></article>
-            <article><span>Tool calls</span><strong>{data.usage.tool_calls}</strong></article>
+            <article><span>{operationsCopy.metricsUnknownCost}</span><strong>{data.usage.unknown_cost_records}</strong><small>{operationsCopy.metricsNeverTreatedAsZero}</small></article>
+            <article><span>{operationsCopy.metricsTokens}</span><strong>{Number(data.usage.input_tokens) + Number(data.usage.output_tokens)}</strong></article>
+            <article><span>{operationsCopy.metricsRuntime}</span><strong>{Math.round(Number(data.usage.runtime_ms) / 1000)}s</strong></article>
+            <article><span>{operationsCopy.metricsToolCalls}</span><strong>{data.usage.tool_calls}</strong></article>
           </section>}
           <div className="operations-grid">
             {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="cycles-panel">
-              <h2>Cycles</h2>
+              <h2>{operationsCopy.cycles}</h2>
               {data.cycles.map(cycle => (
                 <article key={cycle.id}>
-                  <div><strong>{cycle.name}</strong><span className={`status ${cycle.state}`}>{cycle.state}</span></div>
-                  <p>{cycle.completed_items}/{cycle.total_items} completed</p>
-                  <small>{when(cycle.starts_at)} → {when(cycle.ends_at)}</small>
+                  <div><strong>{cycle.name}</strong><span className={`status ${cycle.state}`}>{operationsCopy.cycleState(cycle.state)}</span></div>
+                  <p>{operationsCopy.cycleProgress(cycle.completed_items, cycle.total_items)}</p>
+                  <small>{when(cycle.starts_at, operationsCopy.notScheduled)} → {when(cycle.ends_at, operationsCopy.notScheduled)}</small>
                 </article>
               ))}
-              {data.cycles.length === 0 && <EmptyState description="Create a Cycle when a planning window is ready." title="No Cycles configured" />}
-              <LoadMoreButton collection={cyclesPage} label="cycles" />
+              {data.cycles.length === 0 && <EmptyState description={operationsCopy.noCyclesDescription} title={operationsCopy.noCyclesTitle} />}
+              <LoadMoreButton collection={cyclesPage} label={operationsCopy.cycles} loadMoreLabel={`${t('loadMore')} ${operationsCopy.cycles}`} />
             </section>}
             {features?.has('WORKMESH_BETA_PLANNING') && <section className="operations-panel" data-testid="initiatives-panel">
-              <h2>Initiatives</h2>
+              <h2>{operationsCopy.initiatives}</h2>
               {data.initiatives.map(initiative => (
                 <article key={initiative.id}>
-                  <div><strong>{initiative.name}</strong><span className={`health ${initiative.health}`}>{initiative.health}</span></div>
-                  <p>{initiative.status} · {initiative.priority} priority</p>
+                  <div><strong>{initiative.name}</strong><span className={`health ${initiative.health}`}>{operationsCopy.initiativeHealth(initiative.health)}</span></div>
+                  <p>{operationsCopy.initiativeLine(initiative.status, initiative.priority)}</p>
                 </article>
               ))}
-              {data.initiatives.length === 0 && <EmptyState description="Initiatives will appear here when the feature has durable data." title="No Initiatives configured" />}
-              <LoadMoreButton collection={initiativesPage} label="initiatives" />
+              {data.initiatives.length === 0 && <EmptyState description={operationsCopy.noInitiativesDescription} title={operationsCopy.noInitiativesTitle} />}
+              <LoadMoreButton collection={initiativesPage} label={operationsCopy.initiatives} loadMoreLabel={`${t('loadMore')} ${operationsCopy.initiatives}`} />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="automation-panel">
-              <h2>Automation rules</h2>
+              <h2>{operationsCopy.automation}</h2>
               {data.rules.map(rule => (
                 <article key={rule.id} className="automation-row">
-                  <div><strong>{rule.name}</strong><small>v{rule.version} · {rule.trigger.type}{rule.trigger.cron ? ` ${rule.trigger.cron}` : ''}</small></div>
-                  <span className={`status ${rule.state}`}>{rule.state}</span>
-                  <button onClick={() => void dryRun(rule)}>Dry run</button>
-                  <button onClick={() => void ruleState(rule)}>{rule.state === 'active' ? 'Pause' : 'Resume'}</button>
+                  <div><strong>{rule.name}</strong><small>{operationsCopy.ruleTrigger(rule.version, rule.trigger.type, rule.trigger.cron)}</small></div>
+                  <span className={`status ${rule.state}`}>{operationsCopy.ruleState(rule.state)}</span>
+                  <button onClick={() => void dryRun(rule)}>{operationsCopy.dryRun}</button>
+                  <button onClick={() => void ruleState(rule)}>{rule.state === 'active' ? operationsCopy.pause : operationsCopy.resume}</button>
                 </article>
               ))}
-              {data.rules.length === 0 && <EmptyState description="Automation rules will appear after they are created through an authorized command." title="No Rules configured" />}
-              <LoadMoreButton collection={rulesPage} label="automation rules" />
+              {data.rules.length === 0 && <EmptyState description={operationsCopy.noRulesDescription} title={operationsCopy.noRulesTitle} />}
+              <LoadMoreButton collection={rulesPage} label={operationsCopy.automation} loadMoreLabel={`${t('loadMore')} ${operationsCopy.automation}`} />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AGENT_LOOPS') && <section className="operations-panel wide" data-testid="loops-panel">
-              <h2>Loops</h2>
+              <h2>{operationsCopy.loops}</h2>
               {data.loops.map(loop => (
                 <article key={loop.id} className="automation-row">
-                  <div><strong>{loop.name}</strong><small>Next: {when(loop.next_run_at)} · {loop.no_overlap ? 'No overlap' : 'Overlap allowed'}</small></div>
-                  <span className={`status ${loop.state}`}>{loop.state}</span>
-                  <button onClick={() => void loopState(loop)}>{loop.state === 'active' ? 'Pause' : 'Resume'}</button>
+                  <div><strong>{loop.name}</strong><small>{operationsCopy.loopNext(when(loop.next_run_at, operationsCopy.notScheduled))} · {loop.no_overlap ? operationsCopy.noOverlap : operationsCopy.overlapAllowed}</small></div>
+                  <span className={`status ${loop.state}`}>{operationsCopy.loopState(loop.state)}</span>
+                  <button onClick={() => void loopState(loop)}>{loop.state === 'active' ? operationsCopy.pause : operationsCopy.resume}</button>
                 </article>
               ))}
-              {data.loops.length === 0 && <EmptyState description="Agent Loops will appear after they are created through an authorized command." title="No Loops configured" />}
-              <LoadMoreButton collection={loopsPage} label="loops" />
+              {data.loops.length === 0 && <EmptyState description={operationsCopy.noLoopsDescription} title={operationsCopy.noLoopsTitle} />}
+              <LoadMoreButton collection={loopsPage} label={operationsCopy.loops} loadMoreLabel={`${t('loadMore')} ${operationsCopy.loops}`} />
             </section>}
             {features?.has('WORKMESH_EXPERIMENTAL_AUTOMATION') && <section className="operations-panel wide" data-testid="runs-panel">
-              <h2>Recent runs</h2>
+              <h2>{operationsCopy.runs}</h2>
               <div className="operations-table">
-                <div className="table-head"><span>Run</span><span>Kind</span><span>Status</span><span>Attempts</span><span>Session</span><span>Created</span></div>
+                <div className="table-head"><span>{operationsCopy.run}</span><span>{operationsCopy.kind}</span><span>{operationsCopy.status}</span><span>{operationsCopy.attempts}</span><span>{operationsCopy.session}</span><span>{operationsCopy.created}</span></div>
                 {data.runs.map(run => (
                   <div key={run.id}>
                     <code>{run.id.slice(0, 8)}</code>
-                    <span>{run.dry_run ? 'Dry run' : run.loop_id ? 'Loop' : 'Rule'}</span>
-                    <span className={`status ${run.status}`}>{run.status}</span>
+                    <span>{run.dry_run ? operationsCopy.runKindDryRun : run.loop_id ? operationsCopy.runKindLoop : operationsCopy.runKindRule}</span>
+                    <span className={`status ${run.status}`}>{operationsCopy.runState(run.status)}</span>
                     <span>{run.attempt_count}/{run.max_attempts}</span>
                     <code>{run.session_id?.slice(0, 8) ?? '—'}</code>
-                    <time>{when(run.created_at)}</time>
+                    <time>{when(run.created_at, operationsCopy.notScheduled)}</time>
                     {run.last_error && <small className="error">{run.last_error}</small>}
                   </div>
                 ))}
               </div>
-              {data.runs.length === 0 && <EmptyState description="Durable run history will appear after an automation or loop executes." title="No run history yet" />}
-              <LoadMoreButton collection={runsPage} label="automation runs" />
+              {data.runs.length === 0 && <EmptyState description={operationsCopy.noRunsDescription} title={operationsCopy.noRunsTitle} />}
+              <LoadMoreButton collection={runsPage} label={operationsCopy.runs} loadMoreLabel={`${t('loadMore')} ${operationsCopy.runs}`} />
             </section>}
             {features?.has('WORKMESH_BETA_TEMPLATES') && <section className="operations-panel wide" data-testid="templates-panel">
-              <h2>Templates &amp; playbooks</h2>
+              <h2>{operationsCopy.templates}</h2>
               <div className="template-list">
                 {data.templates.map(template => (
                   <span key={template.id}>
                     <strong>{template.name}</strong>
-                    <small>{template.kind} · v{template.version} · {template.status}</small>
+                    <small>{operationsCopy.templateLine(template.kind, template.version, template.status)}</small>
                   </span>
                 ))}
               </div>
-              {data.templates.length === 0 && <EmptyState description="Templates and playbooks will appear when they are available to this workspace." title="No Templates configured" />}
-              <LoadMoreButton collection={templatesPage} label="templates" />
+              {data.templates.length === 0 && <EmptyState description={operationsCopy.noTemplatesDescription} title={operationsCopy.noTemplatesTitle} />}
+              <LoadMoreButton collection={templatesPage} label={operationsCopy.templates} loadMoreLabel={`${t('loadMore')} ${operationsCopy.templates}`} />
             </section>}
           </div>
         </>

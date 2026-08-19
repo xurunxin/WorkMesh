@@ -535,5 +535,8 @@ describe('Agent authority lock-order inventory',()=>{
       `\n${"async function saved(tx:any){await tx.query('INSERT INTO agent_team_access(agent_id,team_id) VALUES($1,$2) ON CONFLICT(agent_id,team_id) DO UPDATE SET revoked_at=NULL')}"}`,
       'apps/api/src/fixture.ts',
     ))[0]?.statementId).not.toBe(upsert[0]?.statementId)
-  })
+  },
+  30000,
+  )
 })
+

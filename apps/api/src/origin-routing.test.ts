@@ -22,6 +22,7 @@ describe('Browser CORS and public MCP origin routing', () => {
     vi.stubEnv('WEB_ORIGIN', 'http://127.0.0.1:3300')
     vi.stubEnv('PUBLIC_MCP_ORIGIN', 'http://127.0.0.1:3301')
     vi.stubEnv('WORKMESH_BETA_COORDINATION_MCP', 'true')
+    vi.stubEnv('RUN_INTEGRATION', '1')
     const { buildApp } = await import('./server.js')
     app = buildApp({
       logger: false,

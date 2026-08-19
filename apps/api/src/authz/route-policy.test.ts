@@ -49,6 +49,7 @@ describe('Fastify route policy inventory', () => {
     vi.stubEnv('REDIS_URL', 'redis://localhost:6379')
     vi.stubEnv('SESSION_SECRET', 'route-policy-test-session-secret-32')
     vi.stubEnv('WORKMESH_BOOTSTRAP_TOKEN', randomBytes(32).toString('base64url'))
+    vi.stubEnv('RUN_INTEGRATION', '1')
     const { buildApp } = await import('../server.js')
     const app = buildApp()
     await app.ready()
@@ -94,5 +95,46 @@ describe('Fastify route policy inventory', () => {
     const app = Fastify()
     expect(() => installRoutePolicyInventory(app, [route(), route()]))
       .toThrow(/Duplicate route policy declaration/)
+  })
+
+  it('drops integration-only operations from the expected set when RUN_INTEGRATION is off', async () => {
+    const previous = process.env.RUN_INTEGRATION
+    process.env.RUN_INTEGRATION = '0'
+    try {
+      const app = Fastify()
+      const inventory = installRoutePolicyInventory(app, [route({
+        method: 'POST',
+        path: '/api/v1/test/reset-install',
+        operationId: 'resetInstall',
+      })])
+      // The reset-install handler would itself be skipped in this mode, so
+      // the inventory must not require it; the onReady hook must pass.
+      await app.ready()
+      expect(inventory.registeredRoutes()).toEqual([])
+      await app.close()
+    } finally {
+      if (previous === undefined) delete process.env.RUN_INTEGRATION
+      else process.env.RUN_INTEGRATION = previous
+    }
+  })
+
+  it('keeps integration-only operations in the expected set when RUN_INTEGRATION=1', async () => {
+    const previous = process.env.RUN_INTEGRATION
+    process.env.RUN_INTEGRATION = '1'
+    try {
+      const app = Fastify()
+      const inventory = installRoutePolicyInventory(app, [route({
+        method: 'POST',
+        path: '/api/v1/test/reset-install',
+        operationId: 'resetInstall',
+      })])
+      app.post('/api/v1/test/reset-install', async () => ({ ok: true }))
+      await app.ready()
+      expect(inventory.registeredRoutes()).toEqual(['POST /api/v1/test/reset-install'])
+      await app.close()
+    } finally {
+      if (previous === undefined) delete process.env.RUN_INTEGRATION
+      else process.env.RUN_INTEGRATION = previous
+    }
   })
 })

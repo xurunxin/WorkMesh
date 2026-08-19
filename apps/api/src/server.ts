@@ -31,6 +31,7 @@ import {
 } from "@workmesh/contracts";
 import {
   appendEvent,
+  applyMigrations,
   assertPasswordPolicy,
   createDb,
   type Db,
@@ -125,6 +126,7 @@ const publicPaths = new Set([
   "/health",
   "/.well-known/workmesh-agent",
   "/api/v1/agent-connections/redeem",
+  ...(process.env.RUN_INTEGRATION === "1" ? ["/api/v1/test/reset-install"] as const : []),
 ]);
 
 const stable = (value: unknown): unknown => {
@@ -1149,6 +1151,18 @@ export const buildApp = (options: {
     header,
     paginator,
   });
+  if (process.env.RUN_INTEGRATION === "1") {
+    // Acceptance-only: drop the public schema and re-apply migrations so the
+    // install flow can run against an empty database. Mounted only when the
+    // operator opts in via RUN_INTEGRATION=1; the route is also pinned in
+    // `publicPaths` for the same reason.
+    app.post("/api/v1/test/reset-install", async () => {
+      await db.query("DROP SCHEMA public CASCADE");
+      await db.query("CREATE SCHEMA public");
+      await applyMigrations(db);
+      return { ok: true, reset: true };
+    });
+  }
   return app;
 };
 

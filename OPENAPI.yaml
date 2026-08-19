@@ -151,6 +151,19 @@ paths:
         responses:
           { "200": { $ref: "#/components/responses/InstallationStatus" } },
       }
+  /api/v1/test/reset-install:
+    post:
+      {
+        x-workmesh-policy-id: route.resetInstall,
+        x-workmesh-actor-kinds: [],
+        x-workmesh-feature-key: none,
+        x-workmesh-feature-tier: stable,
+        security: [],
+        operationId: resetInstall,
+        description: "Test-only endpoint mounted when RUN_INTEGRATION=1 to drop the public schema, re-apply migrations, and return to a pre-install state. Used by the e2e stage0 suite to guarantee the install form is reachable across CI runs. Never mounted in production.",
+        parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }],
+        responses: { "200": { description: "Reset complete; the database is back to a pre-install state.", content: { application/json: { schema: { type: object, additionalProperties: false, required: [ok, reset], properties: { ok: { type: boolean, enum: [true] }, reset: { type: boolean, enum: [true] } } } } } }, "404": { $ref: "#/components/responses/NotFound" } },
+      }
   /api/v1/auth/install:
     post:
       {

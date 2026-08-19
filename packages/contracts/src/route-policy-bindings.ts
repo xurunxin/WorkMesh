@@ -37,6 +37,11 @@ export const routeOperationBindings = [
   },
   {
     "method": "POST",
+    "path": "/api/v1/test/reset-install",
+    "operationId": "resetInstall"
+  },
+  {
+    "method": "POST",
     "path": "/api/v1/auth/install",
     "operationId": "installWorkspace"
   },
