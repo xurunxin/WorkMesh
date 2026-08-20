@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { AppShell } from '@workmesh/ui'
 import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
@@ -10,16 +9,6 @@ import { OperationsContent } from '../operations-content'
 
 export default function OperationsPage() {
   const { locale, t } = useLocale()
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const target = new URL(window.location.href)
-    if (target.pathname === '/operations') {
-      target.pathname = '/settings'
-      target.searchParams.set('tab', 'operations')
-      target.hash = 'settings-tab-operations'
-      window.location.replace(target.toString())
-    }
-  }, [])
   const headerActions = <div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>
   const navigation = workspaceNavigation({ active: 'agents', t, onHomeNavigate: undefined })
   const utilityNavigation = workspaceUtilityNavigation({ t })
