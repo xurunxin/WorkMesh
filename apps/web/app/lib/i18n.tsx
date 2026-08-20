@@ -2685,7 +2685,7 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     planStepComment: 'Step comment',
     decisionsEmpty: 'No decisions recorded yet.',
     leasesEmpty: 'No active or conflicting leases.',
-    legacyAria: 'Legacy comment controls',
+    legacyAria: 'Work item comment',
     legacyEditPrompt: 'Edit comment',
     legacyReopen: 'Reopen',
     legacyResolve: 'Resolve',
