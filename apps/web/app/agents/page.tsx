@@ -2,10 +2,12 @@
 
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, ErrorState } from '@workmesh/ui'
+import { CheckCircleIcon, EyeIcon, XCircleIcon } from '@phosphor-icons/react'
 import { ApiError, apiRequest, clearCsrfToken, saveCsrfToken } from '../lib/api'
 import {
   type Agent,
   type AgentSession,
+  type AgentTeamAccess,
   type Approval,
   agentHeartbeat,
   agentName,
@@ -85,9 +87,7 @@ export default function AgentsPage() {
     if (targets.has('approvals')) void approvalsPage.refresh()
   })
 
-  const grantAccess = async (event: FormEvent<HTMLFormElement>, agent: Agent, team: Team) => {
-    event.preventDefault()
-    const approvedCapabilities = new FormData(event.currentTarget).getAll('capabilities').map(String)
+  const grantCapabilities = async (agent: Agent, team: Team, approvedCapabilities: string[]) => {
     if (approvedCapabilities.length === 0) { setError(text.selectCapability); return }
     const operation = `${agent.id}:${team.id}`
     try { setBusyAccess(operation); setError(''); await grantAgentTeamAccess(agent.id, team.id, approvedCapabilities); await agentsPage.refresh() }
@@ -147,7 +147,16 @@ export default function AgentsPage() {
               const status = access?.status ?? (access?.revoked_at ? 'revoked' : 'not granted')
               const statusLabel = status === 'active' ? text.accessStatusActive : status === 'revoked' ? text.accessStatusRevoked : text.accessStatusNotGranted
               const operation = `${agent.id}:${team.id}`
-              return <article key={team.id} data-testid={`team-access-${agent.id}-${team.id}`}><header><strong>{team.name} ({team.key})</strong><span className={status === 'active' ? 'registry-active' : 'registry-inactive'}>{statusLabel}</span></header><p>{text.accessApprovedLabel} {access?.approved_capabilities.length ? access.approved_capabilities.join(', ') : text.none}</p>{access?.revoked_at && <small>{text.revokedAt(formatTime(access.revoked_at))}</small>}{canManageAccess && <form key={`${operation}:${access?.revision ?? 0}:${status}`} onSubmit={event => void grantAccess(event, agent, team)}><fieldset disabled={busyAccess === operation || agent.requested_capabilities.length === 0}><legend>{text.approvedCapabilitySubset}</legend>{agent.requested_capabilities.map(capability => <label key={capability}><input type="checkbox" name="capabilities" value={capability} defaultChecked={access?.status === 'active' && access.approved_capabilities.includes(capability)} /> {capability}</label>)}</fieldset><div className="session-actions"><button data-testid={`team-access-grant-${agent.id}-${team.id}`} disabled={busyAccess === operation || agent.requested_capabilities.length === 0}>{access?.status === 'active' ? text.updateGrant : text.grantAccess}</button>{access?.status === 'active' && <button data-testid={`team-access-revoke-${agent.id}-${team.id}`} className="danger" type="button" disabled={busyAccess === operation} onClick={() => void revokeAccess(agent, team)}>{text.revoke}</button>}</div></form>}</article>
+              return <TeamAccessCard
+                agent={agent}
+                access={access ?? null}
+                busy={busyAccess === operation}
+                canManage={canManageAccess}
+                key={team.id}
+                onGrant={next => void grantCapabilities(agent, team, next)}
+                onRevoke={() => void revokeAccess(agent, team)}
+                team={team}
+              />
             })}</section></details>
           </article>)}</div>}
           <LoadMoreButton collection={agentsPage} label="agents" loadMoreLabel={text.loadMoreAgents} /><LoadMoreButton collection={teamsPage} label="teams" loadMoreLabel={text.loadMoreTeams} />
@@ -156,11 +165,179 @@ export default function AgentsPage() {
         <div className="agent-side-stack">
           <section className="surface-panel approval-inbox" aria-label="Approval inbox"><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>{approvals.length === 0 ? <p className="empty">{text.noApprovals}</p> : approvals.map(approval => <article key={approval.id}><header><strong>{approval.action_name}</strong><span className={`risk-${approval.risk_level}`}>{text.riskLabel(approval.risk_level)}</span></header><p>{approval.rationale_summary}</p><a href={`/agent-sessions/${approval.session_id}`}>{text.reviewSession}</a></article>)}<LoadMoreButton collection={approvalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} /></section>
 
-          <section className="surface-panel" aria-label="Agent sessions"><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-table">{sessions.map(session => <a key={session.id} href={`/agent-sessions/${session.id}`}><div><span className={agentStateClass(session.state)}>{agentStateLabel(session.state)}</span><strong>{agentName(agents.find(agent => agent.id === session.agent_id))}</strong></div><span>{text.sessionLabel(session.id.slice(0, 8))}</span><span>{session.work_item_id ? text.workItemLabel(session.work_item_id.slice(0, 8)) : text.noWorkItem}</span><span>{text.heartbeatLabel(formatTime(session.last_heartbeat_at))}</span></a>)}</div>}<LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} /></section>
+          <section className="surface-panel" aria-label="Agent sessions"><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}<LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} /></section>
 
           <section className="surface-panel diagnostics" aria-label="Agent diagnostics"><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header><p>{text.diagnosticsIntro}</p><ul>{attentionSessions.map(session => <li key={session.id}><a href={`/agent-sessions/${session.id}`}>{text.sessionLabel(session.id.slice(0, 8))}</a><span>{session.state_reason || session.error_summary || agentStateLabel(session.state)}</span></li>)}{attentionSessions.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></section>
         </div>
       </section>
     </section>
   </AppShell>
+}
+
+type TeamAccessCardProps = {
+  agent: Agent
+  team: { id: string; name: string; key: string }
+  access: AgentTeamAccess | null
+  canManage: boolean
+  busy: boolean
+  onGrant: (approvedCapabilities: string[]) => void
+  onRevoke: () => void
+}
+
+function TeamAccessCard({ access, agent, busy, canManage, onGrant, onRevoke, team }: TeamAccessCardProps) {
+  const { agentsCopy } = useLocale()
+  const text = agentsCopy
+  const [view, setView] = useState<'requested' | 'approved'>('approved')
+  const requested = agent.requested_capabilities
+  const initialApproved = access?.status === 'active' ? access.approved_capabilities : []
+  const [approved, setApproved] = useState<string[]>(initialApproved)
+  useEffect(() => { setApproved(initialApproved) }, [initialApproved.join('|')])
+  const isActive = access?.status === 'active'
+  const status = !access ? text.accessStatusNotGranted : access.status === 'active' ? text.accessStatusActive : text.accessStatusRevoked
+  const toggle = (capability: string) => {
+    setApproved(current => current.includes(capability) ? current.filter(value => value !== capability) : [...current, capability])
+  }
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    onGrant(approved)
+  }
+  return (
+    <article className="team-access-card" data-testid={`team-access-${agent.id}-${team.id}`}>
+      <header>
+        <div>
+          <strong>{team.name} <small>({team.key})</small></strong>
+          {access?.revoked_at && <small>{text.revokedAt(formatTime(access.revoked_at))}</small>}
+        </div>
+        <span className={isActive ? 'pill is-active' : 'pill is-inactive'}>{status}</span>
+      </header>
+      {canManage ? (
+        <form className="team-access-form" key={`${access?.revision ?? 0}:${isActive}`} onSubmit={submit}>
+          <div className="team-access-toggle" role="tablist" aria-label={text.teamAccessViewLabel}>
+            <button
+              aria-pressed={view === 'requested'}
+              className={view === 'requested' ? 'is-selected' : ''}
+              onClick={() => setView('requested')}
+              type="button"
+              role="tab"
+            >
+              <EyeIcon aria-hidden size={14} weight="bold" />
+              {text.teamAccessViewRequested}
+              <span className="team-access-toggle-count">{requested.length}</span>
+            </button>
+            <button
+              aria-pressed={view === 'approved'}
+              className={view === 'approved' ? 'is-selected' : ''}
+              onClick={() => setView('approved')}
+              type="button"
+              role="tab"
+            >
+              <CheckCircleIcon aria-hidden size={14} weight="bold" />
+              {text.teamAccessViewApproved}
+              <span className="team-access-toggle-count">{approved.length}</span>
+            </button>
+          </div>
+          {view === 'requested' ? (
+            <div className="team-access-chips" role="tabpanel" aria-label={text.teamAccessViewRequested}>
+              {requested.length === 0
+                ? <p className="empty">{text.teamAccessEmptyRequested}</p>
+                : requested.map(capability => (
+                  <span className="chip chip-outline" key={capability}>
+                    {text.teamAccessRequestedChipLabel(capability)}
+                  </span>
+                ))}
+            </div>
+          ) : (
+            <div className="team-access-chips" role="tabpanel" aria-label={text.teamAccessViewApproved}>
+              {requested.length === 0
+                ? <p className="empty">{text.teamAccessEmptyRequested}</p>
+                : (
+                  <>
+                    {requested.map(capability => {
+                      const isSelected = approved.includes(capability)
+                      return (
+                        <button
+                          aria-pressed={isSelected}
+                          className={`chip ${isSelected ? 'chip-solid' : 'chip-outline'}`}
+                          disabled={busy}
+                          key={capability}
+                          onClick={() => toggle(capability)}
+                          type="button"
+                        >
+                          {isSelected
+                            ? <CheckCircleIcon aria-hidden size={12} weight="bold" />
+                            : null}
+                          {text.teamAccessApprovedChipLabel(capability)}
+                        </button>
+                      )
+                    })}
+                    {approved.length === 0 && <p className="empty team-access-hint">{text.teamAccessNoSelection}</p>}
+                  </>
+                )}
+            </div>
+          )}
+          <div className="team-access-actions">
+            <small className="team-access-meta">{text.teamAccessSelectedCount(approved.length)} · {text.teamAccessToggleHint}</small>
+            <div className="team-access-buttons">
+              <Button
+                disabled={busy || approved.length === 0}
+                icon={<CheckCircleIcon aria-hidden size={16} weight="bold" />}
+                type="submit"
+                variant="primary"
+              >
+                {isActive ? text.updateGrant : text.grantAccess}
+              </Button>
+              {isActive && (
+                <Button
+                  className="danger"
+                  disabled={busy}
+                  icon={<XCircleIcon aria-hidden size={16} weight="bold" />}
+                  onClick={onRevoke}
+                  type="button"
+                  variant="danger"
+                >
+                  {text.revoke}
+                </Button>
+              )}
+            </div>
+          </div>
+        </form>
+      ) : (
+        <div className="team-access-chips" aria-label={text.teamAccessViewApproved}>
+          {(isActive && approved.length > 0
+            ? approved
+            : requested
+          ).map(capability => (
+            <span className={isActive && approved.includes(capability) ? 'chip chip-solid' : 'chip chip-outline'} key={capability}>
+              {isActive && approved.includes(capability)
+                ? text.teamAccessApprovedChipLabel(capability)
+                : text.teamAccessRequestedChipLabel(capability)}
+            </span>
+          ))}
+          {!isActive && requested.length === 0 && <p className="empty">{text.teamAccessEmptyRequested}</p>}
+        </div>
+      )}
+    </article>
+  )
+}
+
+type SessionCardProps = {
+  session: AgentSession
+  agentName: string
+  copy: ReturnType<typeof useLocale>['agentsCopy']
+}
+
+function SessionCard({ agentName: name, copy, session }: SessionCardProps) {
+  return (
+    <a className="session-card" data-testid={`session-card-${session.id}`} href={`/agent-sessions/${session.id}`}>
+      <header>
+        <span className={`pill ${agentStateClass(session.state)}`}>{agentStateLabel(session.state)}</span>
+        <strong className="session-card-name">{name || copy.noWorkItem}</strong>
+      </header>
+      <dl>
+        <div><dt>{copy.sessionLabel('')}</dt><dd><code>{session.id.slice(0, 8)}</code></dd></div>
+        <div><dt>{copy.workItemLabel('')}</dt><dd>{session.work_item_id ? <code>{session.work_item_id.slice(0, 8)}</code> : <span className="muted">{copy.noWorkItem}</span>}</dd></div>
+        <div><dt>{copy.heartbeatLabel('')}</dt><dd>{formatTime(session.last_heartbeat_at)}</dd></div>
+      </dl>
+    </a>
+  )
 }

@@ -153,30 +153,30 @@ export function buildMcpClientGuide(input: {
     skill: input.discovery.skill,
     ...config,
     localStdioFallback: input.clientType === 'generic_mcp'
-      ? 'Set WORKMESH_API_URL and WORKMESH_INSTALLATION_TOKEN in the local secret environment, then run pnpm --filter @workmesh/mcp start:stdio.'
+      ? '在本地密钥环境中设置 WORKMESH_API_URL 和 WORKMESH_INSTALLATION_TOKEN，然后运行 pnpm --filter @workmesh/mcp start:stdio。'
       : null,
     environmentChecks: [
-      `Store the redeemed installation credential as ${tokenEnvironmentName}; never paste it into the config file.`,
-      `Send it only as ${tokenHeader} to the exact server URL shown above.`,
-      `Require Client Profile ${input.release.preferredClientProfileVersion} and Skill ${input.discovery.skill.version} (${input.discovery.skill.sha256}).`,
+      `把兑换得到的安装凭据保存为 ${tokenEnvironmentName}，不要粘贴到配置文件里。`,
+      `只通过 ${tokenHeader} 头发送到上方展示的精确服务端 URL。`,
+      `要求 Client Profile ${input.release.preferredClientProfileVersion} 与 Skill ${input.discovery.skill.version}（${input.discovery.skill.sha256}）。`,
     ],
     bootstrapChecks: [
-      'Fetch the public discovery document and reject an unknown protocol, client, profile, or Skill selector.',
-      'Redeem the one-time pairing fragment before expiry and keep the returned credential only in the client secret store.',
-      'Call verify_connection and require one live Team plus matching profile, Skill, capability scope, and principal Human.',
-      'Call get_workmesh_context before selecting work; tool presence never grants mutation authority.',
-      'Stop on revoked, expired, mis-scoped, disabled, or inconsistent live facts.',
+      '拉取公共发现文档，拒绝协议、客户端、Profile 或技能选择器中的未知值。',
+      '在一次性配对片段过期前完成兑换，并把得到的凭据仅保存在客户端密钥库中。',
+      '调用 verify_connection，并要求存在一个活跃的 Team、匹配的 Profile / Skill / 能力范围以及负责人。',
+      '在选择工作前先调用 get_workmesh_context；工具存在并不授予任何写权限。',
+      '当发现已撤销、过期、范围不符、停用或实时事实不一致时立即停止。',
     ],
   }
 }
 
-export function onboardingStateMessage(state: McpOnboardingState): { label: string; summary: string; nextAction: string; tone: 'positive' | 'warning' | 'critical' } {
-  if (state === 'unsupported_client') return { label: 'Unsupported client', tone: 'critical', summary: 'This server did not advertise the selected MCP client.', nextAction: 'Choose an advertised client or upgrade the WorkMesh deployment before pairing.' }
-  if (state === 'coordination_feature_disabled') return { label: 'Coordination feature disabled', tone: 'warning', summary: 'Base discovery is available, but this deployment reports the Coordination MCP beta feature as disabled.', nextAction: 'Keep the configuration for review only; an operator must enable and verify the feature before pairing.' }
-  if (state === 'network_unavailable') return { label: 'Network unavailable', tone: 'critical', summary: 'Live onboarding facts could not be refreshed from this WorkMesh deployment.', nextAction: 'Restore network access, then retry. Do not reuse cached credentials or endpoints.' }
-  if (state === 'discovery_unavailable') return { label: 'Discovery unavailable', tone: 'critical', summary: 'WorkMesh could not provide server-derived MCP and Skill selectors.', nextAction: 'Retry discovery. Do not infer endpoints or reuse an older pairing instruction.' }
-  if (state === 'mcp_unavailable') return { label: 'MCP unavailable', tone: 'critical', summary: 'Discovery succeeded, but the advertised MCP service did not pass its bounded readiness check.', nextAction: 'Keep existing credentials untouched and retry only after the service is healthy.' }
-  return { label: 'Configuration ready', tone: 'positive', summary: 'The selected client, server, profile, and pinned Skill selectors are consistent.', nextAction: 'Pair once, store the credential in the client secret store, then run verify_connection.' }
+export function onboardingStateMessage(state: McpOnboardingState, copy: { stateReadyLabel: string; stateReadySummary: string; stateReadyNextAction: string; stateUnsupportedClientLabel: string; stateUnsupportedClientSummary: string; stateUnsupportedClientNextAction: string; stateCoordinationFeatureDisabledLabel: string; stateCoordinationFeatureDisabledSummary: string; stateCoordinationFeatureDisabledNextAction: string; stateNetworkUnavailableLabel: string; stateNetworkUnavailableSummary: string; stateNetworkUnavailableNextAction: string; stateDiscoveryUnavailableLabel: string; stateDiscoveryUnavailableSummary: string; stateDiscoveryUnavailableNextAction: string; stateMcpUnavailableLabel: string; stateMcpUnavailableSummary: string; stateMcpUnavailableNextAction: string }): { label: string; summary: string; nextAction: string; tone: 'positive' | 'warning' | 'critical' } {
+  if (state === 'unsupported_client') return { label: copy.stateUnsupportedClientLabel, tone: 'critical', summary: copy.stateUnsupportedClientSummary, nextAction: copy.stateUnsupportedClientNextAction }
+  if (state === 'coordination_feature_disabled') return { label: copy.stateCoordinationFeatureDisabledLabel, tone: 'warning', summary: copy.stateCoordinationFeatureDisabledSummary, nextAction: copy.stateCoordinationFeatureDisabledNextAction }
+  if (state === 'network_unavailable') return { label: copy.stateNetworkUnavailableLabel, tone: 'critical', summary: copy.stateNetworkUnavailableSummary, nextAction: copy.stateNetworkUnavailableNextAction }
+  if (state === 'discovery_unavailable') return { label: copy.stateDiscoveryUnavailableLabel, tone: 'critical', summary: copy.stateDiscoveryUnavailableSummary, nextAction: copy.stateDiscoveryUnavailableNextAction }
+  if (state === 'mcp_unavailable') return { label: copy.stateMcpUnavailableLabel, tone: 'critical', summary: copy.stateMcpUnavailableSummary, nextAction: copy.stateMcpUnavailableNextAction }
+  return { label: copy.stateReadyLabel, tone: 'positive', summary: copy.stateReadySummary, nextAction: copy.stateReadyNextAction }
 }
 
 export function containsCredentialLikeValue(value: string): boolean {

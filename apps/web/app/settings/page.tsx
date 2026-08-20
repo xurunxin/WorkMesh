@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, useCallback, useEffect, useState } from 'react'
+import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { AppShell, Button } from '@workmesh/ui'
 import { ArrowLeft, FloppyDisk, Gear, Plus, Trash } from '@phosphor-icons/react'
 import { ApiError, apiRequest, clearCsrfToken, json, saveCsrfToken } from '../lib/api'
@@ -9,21 +9,28 @@ import { canManageWorkspace } from '../lib/settings-permissions'
 import { actorDisplayName, type AuthenticatedActor } from '../lib/actor'
 import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
+import { OperationsContent } from '../operations-content'
 
 type Actor = AuthenticatedActor
 type AuthMe = { actor: Actor; csrfToken: string }
 type Team = { id: string; name: string; key: string; revision: number }
 type WorkflowState = { id: string; name: string; category: string; color: string; revision: number }
 
+type SettingsTab = 'workspace' | 'operations'
+
 const requestError = (reason: unknown): string => reason instanceof Error ? reason.message : 'Something went wrong.'
 const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Match': `"revision-${revision}"` })
 
+const parseTab = (raw: string | null | undefined): SettingsTab =>
+  raw === 'operations' ? 'operations' : 'workspace'
+
 export default function SettingsPage() {
-  const { locale, settingsCopy: text } = useLocale()
+  const { locale, settingsCopy: text, t } = useLocale()
   const [actor, setActor] = useState<Actor | null>(null)
   const [teamId, setTeamId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [tab, setTab] = useState<SettingsTab>('workspace')
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
   const teams = teamsPage.items
   const selectedTeam = teams.find(team => team.id === teamId) ?? null
@@ -51,9 +58,33 @@ export default function SettingsPage() {
 
   useEffect(() => { void load() }, [load])
   useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    setTab(parseTab(params.get('tab')))
+  }, [])
+  useEffect(() => {
     if (teamsPage.loading) return
     setTeamId(current => teams.some(team => team.id === current) ? current : teams[0]?.id ?? null)
   }, [teams, teamsPage.loading])
+
+  const selectTab = (next: SettingsTab) => {
+    setTab(next)
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    if (next === 'operations') {
+      url.searchParams.set('tab', 'operations')
+      url.hash = 'settings-tab-operations'
+    } else {
+      url.searchParams.delete('tab')
+      url.hash = 'settings-tab-workspace'
+    }
+    window.history.replaceState(null, '', url.toString())
+  }
+
+  const tabs = useMemo(() => ([
+    { key: 'workspace' as const, id: 'settings-tab-workspace', label: text.tabWorkspace, description: text.tabWorkspaceDescription },
+    { key: 'operations' as const, id: 'settings-tab-operations', label: text.tabOperations, description: text.tabOperationsDescription },
+  ]), [text.tabWorkspace, text.tabWorkspaceDescription, text.tabOperations, text.tabOperationsDescription])
 
   const createTeam = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -150,41 +181,77 @@ export default function SettingsPage() {
   >
     <section className="content settings-page">
       <header><div><h1>{text.title}</h1><p>{text.subtitle}</p></div></header>
-      {!canManage && <p className="settings-notice">{text.reviewOnly}</p>}
-      {(error || teamsPage.error || statesPage.error) && <p className="error" role="alert">{error || teamsPage.error?.message || statesPage.error?.message}</p>}
-      <div className="settings-grid">
-        <section className="settings-card" aria-labelledby="team-settings-heading">
-          <header><div><p className="eyebrow">{text.workspaceStructure}</p><h2 id="team-settings-heading">{text.teams}</h2></div></header>
-          {canManage && <form className="settings-form" onSubmit={createTeam}>
-            <label>{text.teamName}<input name="name" required /></label>
-            <label>{text.teamKey}<input name="key" pattern="[A-Z][A-Z0-9]{1,9}" placeholder="ENG" required /></label>
-            <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createTeam}</Button>
-          </form>}
-          <LoadMoreButton collection={teamsPage} label="teams" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreTeams} />
+      <nav className="settings-tabs" role="tablist" aria-label={text.settingsTabsLabel}>
+        {tabs.map(entry => (
+          <button
+            aria-controls={entry.id}
+            aria-selected={tab === entry.key}
+            className={tab === entry.key ? 'is-selected' : ''}
+            id={`${entry.id}-trigger`}
+            key={entry.key}
+            onClick={() => selectTab(entry.key)}
+            role="tab"
+            type="button"
+          >
+            <span className="settings-tab-label">{entry.label}</span>
+            <span className="settings-tab-description">{entry.description}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="settings-tab-panels">
+        <section
+          aria-labelledby="settings-tab-workspace-trigger"
+          className={`settings-tab-panel${tab === 'workspace' ? ' is-active' : ''}`}
+          hidden={tab !== 'workspace'}
+          id="settings-tab-workspace"
+          role="tabpanel"
+        >
+          {!canManage && <p className="settings-notice">{text.reviewOnly}</p>}
+          {(error || teamsPage.error || statesPage.error) && tab === 'workspace' && <p className="error" role="alert">{error || teamsPage.error?.message || statesPage.error?.message}</p>}
+          <div className="settings-grid">
+            <section className="settings-card" aria-labelledby="team-settings-heading">
+              <header><div><p className="eyebrow">{text.workspaceStructure}</p><h2 id="team-settings-heading">{text.teams}</h2></div></header>
+              {canManage && <form className="settings-form" onSubmit={createTeam}>
+                <label>{text.teamName}<input name="name" required /></label>
+                <label>{text.teamKey}<input name="key" pattern="[A-Z][A-Z0-9]{1,9}" placeholder="ENG" required /></label>
+                <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createTeam}</Button>
+              </form>}
+              <LoadMoreButton collection={teamsPage} label="teams" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreTeams} />
+            </section>
+            <section className="settings-card" aria-labelledby="current-team-heading">
+              <header><div><p className="eyebrow">{text.selectedTeam}</p><h2 id="current-team-heading">{text.teamDetails}</h2></div></header>
+              {selectedTeam ? <>
+                {canManage ? <form className="settings-form" key={`${selectedTeam.id}:${selectedTeam.revision}`} onSubmit={updateTeam}>
+                  <label>{text.teamName}<input name="name" defaultValue={selectedTeam.name} required /></label>
+                  <label>{text.teamKey}<input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /></label>
+                  <Button icon={<FloppyDisk aria-hidden size={16} />} type="submit">{text.saveChanges}</Button>
+                </form> : <dl className="settings-summary"><div><dt>{text.teamName}</dt><dd>{selectedTeam.name}</dd></div><div><dt>{text.teamKey}</dt><dd>{selectedTeam.key}</dd></div></dl>}
+                {canManage && <div className="danger-zone"><div><strong>{text.deleteTeam}</strong><p>{text.deleteHelp}</p></div><Button icon={<Trash aria-hidden size={16} />} onClick={() => void deleteTeam()} variant="danger">{text.deleteTeam}</Button></div>}
+              </> : <p className="empty">{text.createFirst}</p>}
+            </section>
+            <section className="settings-card settings-card-wide" aria-labelledby="workflow-settings-heading">
+              <header><div><p className="eyebrow">{text.teamWorkflow}</p><h2 id="workflow-settings-heading">{text.workflowStates}</h2></div></header>
+              {selectedTeam ? <>
+                <div className="workflow-state-list">{statesPage.items.map(state => <article key={state.id}><span className="workflow-color" style={{ backgroundColor: state.color }} aria-hidden="true" /><div><strong>{state.name}</strong><small>{text.categories[state.category as keyof typeof text.categories] ?? state.category}</small></div></article>)}{statesPage.items.length === 0 && <p className="empty">{text.noStates}</p>}</div>
+                {canManage && <form className="settings-form settings-form-inline" onSubmit={createState}>
+                  <label>{text.statusName}<input name="name" required /></label>
+                  <label>{text.category}<select name="category" defaultValue="planned">{Object.entries(text.categories).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                  <label>{text.color}<input name="color" type="color" defaultValue="#73736f" /></label>
+                  <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createStatus}</Button>
+                </form>}
+                <LoadMoreButton collection={statesPage} label="workflow states" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreStates} />
+              </> : <p className="empty">{text.selectTeam}</p>}
+            </section>
+          </div>
         </section>
-        <section className="settings-card" aria-labelledby="current-team-heading">
-          <header><div><p className="eyebrow">{text.selectedTeam}</p><h2 id="current-team-heading">{text.teamDetails}</h2></div></header>
-          {selectedTeam ? <>
-            {canManage ? <form className="settings-form" key={`${selectedTeam.id}:${selectedTeam.revision}`} onSubmit={updateTeam}>
-              <label>{text.teamName}<input name="name" defaultValue={selectedTeam.name} required /></label>
-              <label>{text.teamKey}<input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /></label>
-              <Button icon={<FloppyDisk aria-hidden size={16} />} type="submit">{text.saveChanges}</Button>
-            </form> : <dl className="settings-summary"><div><dt>{text.teamName}</dt><dd>{selectedTeam.name}</dd></div><div><dt>{text.teamKey}</dt><dd>{selectedTeam.key}</dd></div></dl>}
-            {canManage && <div className="danger-zone"><div><strong>{text.deleteTeam}</strong><p>{text.deleteHelp}</p></div><Button icon={<Trash aria-hidden size={16} />} onClick={() => void deleteTeam()} variant="danger">{text.deleteTeam}</Button></div>}
-          </> : <p className="empty">{text.createFirst}</p>}
-        </section>
-        <section className="settings-card settings-card-wide" aria-labelledby="workflow-settings-heading">
-          <header><div><p className="eyebrow">{text.teamWorkflow}</p><h2 id="workflow-settings-heading">{text.workflowStates}</h2></div></header>
-          {selectedTeam ? <>
-            <div className="workflow-state-list">{statesPage.items.map(state => <article key={state.id}><span className="workflow-color" style={{ backgroundColor: state.color }} aria-hidden="true" /><div><strong>{state.name}</strong><small>{text.categories[state.category as keyof typeof text.categories] ?? state.category}</small></div></article>)}{statesPage.items.length === 0 && <p className="empty">{text.noStates}</p>}</div>
-            {canManage && <form className="settings-form settings-form-inline" onSubmit={createState}>
-              <label>{text.statusName}<input name="name" required /></label>
-              <label>{text.category}<select name="category" defaultValue="planned">{Object.entries(text.categories).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-              <label>{text.color}<input name="color" type="color" defaultValue="#73736f" /></label>
-              <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createStatus}</Button>
-            </form>}
-            <LoadMoreButton collection={statesPage} label="workflow states" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreStates} />
-          </> : <p className="empty">{text.selectTeam}</p>}
+        <section
+          aria-labelledby="settings-tab-operations-trigger"
+          className={`settings-tab-panel${tab === 'operations' ? ' is-active' : ''}`}
+          hidden={tab !== 'operations'}
+          id="settings-tab-operations"
+          role="tabpanel"
+        >
+          <OperationsContent embedded />
         </section>
       </div>
     </section>

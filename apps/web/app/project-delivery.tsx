@@ -80,8 +80,14 @@ function safeExternalHref(value: string | null): string | undefined {
   }
 }
 
+const healthTone: Record<string, string> = {
+  on_track: 'health-positive',
+  at_risk: 'health-warning',
+  off_track: 'health-critical',
+}
+
 export function ProjectDelivery({ projectId }: { projectId: string }) {
-  const { locale } = useLocale()
+  const { locale, projectDeliveryHealthLabel: healthLabel } = useLocale()
   const text = locale === 'zh-CN' ? {
     loadError: '无法加载交付数据', decideError: '无法处理完成建议', loading: '正在加载交付数据…', delivery: '交付', humanControlled: '由人类控制完成状态', milestones: '里程碑', viewIssues: '查看 Issues', viewMilestoneIssues: (name: string) => `查看 ${name} Issues`, noMilestones: '暂无里程碑。', agentEvidence: '智能体证据', noAgentEvidence: '暂无智能体证据。', providerState: '提供方确认状态', source: '来源', unavailable: '不可用', required: '必需', optional: '可选', check: '检查', providerReview: '提供方审阅观察', notAuthority: '不代表 WorkMesh 合并权限。', structuredReview: 'WorkMesh 结构化审阅权限', evidence: '证据', recommendation: '建议', noFindings: '无结构化发现。', noPullRequests: '暂无提供方确认的拉取请求。', mergeApprovals: '精确合并审批', head: '提交', method: '方式', status: '状态', invalidated: '已失效', noApprovals: '暂无精确合并审批。', dependencies: '项目依赖', dependsOn: '依赖', state: '状态', noDependencies: '暂无项目依赖。', healthUpdates: '健康度更新', noHealthUpdates: '暂无健康度更新。', completionSuggestions: '完成建议', decisionHelp: '这里只记录决策；在人类执行工作流转换前，Issue 不会变化。', accept: '接受建议', dismiss: '忽略建议', noSuggestions: '暂无建议。',
   } : {
@@ -96,7 +102,7 @@ export function ProjectDelivery({ projectId }: { projectId: string }) {
       .then(value => { if (active) setDelivery(value) })
       .catch(reason => { if (active) setError(reason instanceof Error ? reason.message : text.loadError) })
     return () => { active = false }
-  }, [projectId])
+  }, [projectId, text.loadError])
   const decideSuggestion = async (suggestion: Delivery['completionSuggestions'][number], decision: 'accepted' | 'dismissed') => {
     setError('')
     setDecidingId(suggestion.id)
@@ -120,7 +126,7 @@ export function ProjectDelivery({ projectId }: { projectId: string }) {
     }
   }
   if (error) return <p className="error" role="alert">{error}</p>
-  if (!delivery) return <section className="project-delivery" data-testid="project-delivery">{text.loading}</section>
+  if (!delivery) return <section className="project-delivery" data-testid="project-delivery"><header><h3>{text.delivery}</h3><span>{text.loading}</span></header></section>
   return <section className="project-delivery" data-testid="project-delivery">
     <header><h3>{text.delivery}</h3><span>{text.humanControlled}</span></header>
     <div className="delivery-grid">
@@ -132,7 +138,7 @@ export function ProjectDelivery({ projectId }: { projectId: string }) {
         const href = safeExternalHref(artifact.uri)
         return <div key={artifact.id} className="delivery-row"><strong>{artifact.type}</strong>{href ? <a href={href} rel="noopener noreferrer">{artifact.title}</a> : <span>{artifact.title}</span>}<code>{artifact.checksum}</code></div>
       })}{delivery.artifacts.length === 0 && <small>{text.noAgentEvidence}</small>}</article>
-      <article><h4>{text.providerState}</h4>{delivery.providerPullRequests.map(pullRequest => {
+      <article className="delivery-priority-wide"><h4>{text.providerState}</h4>{delivery.providerPullRequests.map(pullRequest => {
         const href = safeExternalHref(pullRequest.uri)
         return <div key={pullRequest.id} className="delivery-row">
           <strong>{pullRequest.provider} PR #{pullRequest.number} · {pullRequest.state}</strong>
@@ -176,8 +182,15 @@ export function ProjectDelivery({ projectId }: { projectId: string }) {
           <span>{text.state}: {dependency.depends_on_project_status}</span>
         </div>,
       )}{delivery.dependencies.length === 0 && <small>{text.noDependencies}</small>}</article>
-      <article><h4>{text.healthUpdates}</h4>{delivery.updates.map(update => <div key={update.id} className="delivery-row"><strong>{update.health} · {update.status}</strong><span>{update.body}</span></div>)}{delivery.updates.length === 0 && <small>{text.noHealthUpdates}</small>}</article>
-      <article><h4>{text.completionSuggestions}</h4>{delivery.completionSuggestions.map(suggestion => <div key={suggestion.id} className="delivery-row"><strong>{suggestion.status}</strong><span>{suggestion.rationale}</span><small>{text.decisionHelp}</small>{suggestion.status === 'open' && <span><Button disabled={decidingId === suggestion.id} icon={<CheckIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => void decideSuggestion(suggestion, 'accepted')} type="button">{text.accept}</Button><Button disabled={decidingId === suggestion.id} icon={<XIcon aria-hidden="true" size={15} />} onClick={() => void decideSuggestion(suggestion, 'dismissed')} type="button" variant="ghost">{text.dismiss}</Button></span>}</div>)}{delivery.completionSuggestions.length === 0 && <small>{text.noSuggestions}</small>}</article>
+      <article><h4>{text.healthUpdates}</h4>{delivery.updates.map(update => {
+        const tone = healthTone[update.health] ?? 'health-neutral'
+        const label = healthLabel(update.health)
+        return <div key={update.id} className="delivery-row">
+          <strong><span className={`health-pill ${tone}`}>{label}</span> · {update.status}</strong>
+          <span>{update.body}</span>
+        </div>
+      })}{delivery.updates.length === 0 && <small>{text.noHealthUpdates}</small>}</article>
+      <article className="delivery-priority-wide"><h4>{text.completionSuggestions}</h4>{delivery.completionSuggestions.map(suggestion => <div key={suggestion.id} className="delivery-row"><strong>{suggestion.status}</strong><span>{suggestion.rationale}</span><small>{text.decisionHelp}</small>{suggestion.status === 'open' && <span style={{ display: 'flex', gap: '.4rem' }}><Button disabled={decidingId === suggestion.id} icon={<CheckIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => void decideSuggestion(suggestion, 'accepted')} type="button">{text.accept}</Button><Button disabled={decidingId === suggestion.id} icon={<XIcon aria-hidden="true" size={15} />} onClick={() => void decideSuggestion(suggestion, 'dismissed')} type="button" variant="ghost">{text.dismiss}</Button></span>}</div>)}{delivery.completionSuggestions.length === 0 && <small>{text.noSuggestions}</small>}</article>
     </div>
   </section>
 }

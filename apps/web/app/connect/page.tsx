@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { Button } from '@workmesh/ui'
 import { publicRequest } from '../lib/api'
 import { useLocale } from '../lib/i18n'
 import {
@@ -17,6 +18,7 @@ import {
 
 export default function ConnectPage() {
   const { connectCopy: text } = useLocale()
+  const mcpCopy = text
   const [discovery, setDiscovery] = useState<McpDiscovery | null>(null)
   const [release, setRelease] = useState<McpReleaseInfo | null>(null)
   const [clientType, setClientType] = useState<McpClientType>('codex')
@@ -57,8 +59,8 @@ export default function ConnectPage() {
   const guide = useMemo(() => discovery && release && coordinationFeatureEnabled !== null
     ? buildMcpClientGuide({ clientType, discovery, release, coordinationFeatureEnabled, mcpHealthy })
     : null, [clientType, coordinationFeatureEnabled, discovery, mcpHealthy, release])
-  const state = guide ? onboardingStateMessage(guide.state) : null
-  const failureState = failure ? onboardingStateMessage(failure) : null
+  const state = guide ? onboardingStateMessage(guide.state, mcpCopy) : null
+  const failureState = failure ? onboardingStateMessage(failure, mcpCopy) : null
 
   const copy = async (kind: 'config' | 'link', value: string) => {
     await navigator.clipboard.writeText(value)
@@ -73,7 +75,7 @@ export default function ConnectPage() {
     </header>
 
     {failureState && <div className={`diagnostic-callout diagnostic-${failureState.tone}`} data-onboarding-state={failure} role="alert"><strong>{failureState.label}</strong><p>{failureState.summary}</p><p>{failureState.nextAction}</p>{failureDetail && <small>{failureDetail}</small>}</div>}
-    {!failure && (!discovery || !release) && <p role="status">Loading server-derived MCP configuration…</p>}
+    {!failure && (!discovery || !release) && <p role="status">{text.loadingStatus}</p>}
     {!fragmentPresent && <div className="diagnostic-callout diagnostic-critical" role="alert"><strong>{text.fragmentMissingTitle}</strong><p>{text.fragmentMissingBody}</p></div>}
 
     {guide && state && <>
@@ -85,32 +87,32 @@ export default function ConnectPage() {
           <header><p className="eyebrow">{text.step1}</p><h2 id="client-config-title">{text.chooseClient}</h2></header>
           <label className="client-picker">{text.mcpClient}<select value={clientType} onChange={event => setClientType(event.target.value as McpClientType)}>{mcpClientTypes.map(type => <option key={type} value={type}>{type === 'generic_mcp' ? text.clientGenericMcp : type === 'opencode' ? text.clientOpencode : type === 'codex' ? text.clientCodex : text.clientPi}</option>)}</select></label>
           <dl className="connection-facts compact-facts">
-            <div><dt>Transport</dt><dd>{guide.transport}</dd></div>
+            <div><dt>{text.transport}</dt><dd>{guide.transport}</dd></div>
             <div><dt>{text.discovery}</dt><dd className="break-value">{guide.discoveryUrl}</dd></div>
-            <div><dt>Profile</dt><dd>{guide.profileVersion}</dd></div>
-            <div><dt>Skill</dt><dd>{guide.skill.name} {guide.skill.version}</dd></div>
+            <div><dt>{text.profile}</dt><dd>{guide.profileVersion}</dd></div>
+            <div><dt>{text.skill}</dt><dd>{guide.skill.name} {guide.skill.version}</dd></div>
             <div><dt>{text.sha256}</dt><dd className="break-value">{guide.skill.sha256}</dd></div>
           </dl>
         </section>
         <section className="onboarding-card" aria-labelledby="config-template-title">
-          <header className="onboarding-card-actions"><div><p className="eyebrow">{text.step2}</p><h2 id="config-template-title">{guide.configFile}</h2></div><button type="button" onClick={() => void copy('config', guide.config)}>{copied === 'config' ? text.copied : text.copyConfig}</button></header>
+          <header className="onboarding-card-actions"><div><p className="eyebrow">{text.step2}</p><h2 id="config-template-title">{guide.configFile}</h2></div><Button onClick={() => void copy('config', guide.config)} type="button" variant="secondary">{copied === 'config' ? text.copied : text.copyConfig}</Button></header>
           <pre className="config-preview"><code>{guide.config}</code></pre>
-          {guide.localStdioFallback && <p><strong>Local stdio fallback:</strong> {guide.localStdioFallback}</p>}
+          {guide.localStdioFallback && <p>{text.localStdioFallback(guide.localStdioFallback)}</p>}
           <p className="secret-safety"><strong>{text.secretBoundary}</strong></p>
         </section>
       </div>
       <section className="onboarding-card" aria-labelledby="bootstrap-title">
         <header><p className="eyebrow">{text.step3}</p><h2 id="bootstrap-title">{text.bootstrapChecklist}</h2></header>
         <ol className="bootstrap-checklist">{guide.bootstrapChecks.map(check => <li key={check}>{check}</li>)}</ol>
-        <details><summary>Environment checks</summary><ul>{guide.environmentChecks.map(check => <li key={check}>{check}</li>)}</ul></details>
+        <details><summary>{text.environmentChecks}</summary><ul>{guide.environmentChecks.map(check => <li key={check}>{check}</li>)}</ul></details>
       </section>
     </>}
 
     {fragmentPresent && <section className="onboarding-card pairing-card" aria-labelledby="pairing-title">
-      <header><div><p className="eyebrow">One-time handoff</p><h2 id="pairing-title">Pairing link is present in browser memory</h2></div><button type="button" onClick={() => void copy('link', window.location.href)}>{copied === 'link' ? 'Copied' : 'Copy secure connect URL'}</button></header>
-      <p>The fragment has not been sent to WorkMesh. Give the exact link only to the intended Agent, redeem it before expiry, and then discard it.</p>
+      <header><div><p className="eyebrow">{text.handoffEyebrow}</p><h2 id="pairing-title">{text.handoffTitle}</h2></div><Button onClick={() => void copy('link', window.location.href)} type="button" variant="secondary">{copied === 'link' ? text.copiedLink : text.copyLink}</Button></header>
+      <p>{text.handoffBody}</p>
     </section>}
-    <p className="onboarding-authority-note"><strong>Authority stays server-side.</strong> A Human Connection creates an installation identity only. Ordinary mutations still require an active Agent Session, Delegation, capability and resource scope, plus approval, lease, revision, and idempotency where applicable.</p>
+    <p className="onboarding-authority-note"><strong>{text.authorityTitle}</strong> {text.authorityBody}</p>
     <span className="sr-only" aria-live="polite">{copied ? `${copied} copied` : ''}</span>
   </section></main>
 }
