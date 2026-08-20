@@ -313,7 +313,7 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
     filterMilestone: 'Milestone',
     filterPriority: 'Priority',
     filterProject: 'Project',
-    filterResponsibleHuman: 'Responsible',
+    filterResponsibleHuman: 'Responsible Human',
     filterStatus: 'Status',
     filtersLabel: 'Issue filters',
     labelAddPlaceholder: 'Add or edit labels...',
