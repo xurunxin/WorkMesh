@@ -614,14 +614,15 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
           {viewMode === 'editor' ? null : <span className="guidance-view-toggle-meta">{markdown.length} 字符</span>}
         </div>
         {viewMode === 'editor'
-          ? <div data-testid="guidance-markdown"><RichTextEditor
+          ? <RichTextEditor
               identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
               label={copy.markdown}
               name="markdown"
               value={markdown}
               onChange={setMarkdown}
               required
-            /></div>
+              testId="guidance-markdown"
+            />
           : <section className="guidance-rendered" aria-label="Markdown 渲染预览">
               {markdown.trim()
                 ? <Markdown source={markdown} />
