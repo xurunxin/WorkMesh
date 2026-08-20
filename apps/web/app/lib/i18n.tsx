@@ -496,7 +496,7 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
       discardOldDraft: 'Discard old draft',
     },
     executionState: 'Execution state',
-    fullWorkItem: 'Full Work Item',
+    fullWorkItem: 'Full Issue',
     heartbeat: 'Heartbeat',
     humanResponsibility: 'Human responsibility',
     labels: 'Labels',
