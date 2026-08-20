@@ -41,8 +41,8 @@ export default function LoginPage() {
     }
   }
 
-  return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
-    <div className="auth-shell">
+  return <AppShell productName="WorkMesh" contextLabel={text.title} navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
+    <div className="auth-shell auth-shell-centered">
       <Card title={text.title} subtitle={text.subtitle} className="auth-card">
         <form onSubmit={submit} data-testid="login-form">
           <label>{text.email}<input name="email" type="email" placeholder={text.emailPlaceholder} required /></label>

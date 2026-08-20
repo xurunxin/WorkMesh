@@ -14,6 +14,7 @@ import { diagnoseConnection, safeConnectionFacts } from './lib/connection-diagno
 import { apiRequest, publicRequest } from './lib/api'
 import { buildAgentConnectionInstruction, buildMcpClientGuide, classifyMcpOnboardingFailure, onboardingStateMessage, probeMcpReadiness, type McpDiscovery, type McpOnboardingState, type McpReleaseInfo } from './lib/mcp-onboarding'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
+import { useLocale } from './lib/i18n'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
@@ -22,6 +23,7 @@ type Props = { admin: boolean; teams: Team[]; humans: Human[]; currentHumanId: s
 const capabilities = ['work:read', 'work:write', 'comment:write', 'message:write', 'plan:write']
 
 export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, onError }: Props) {
+  const { agentsCopy: text } = useLocale()
   const connections = usePagedApiList<AgentConnection>(admin ? '/api/v1/agent-connections' : null, { limit: 50 })
   const [connection, setConnection] = useState<AgentConnection | null>(null)
   const [connectUrl, setConnectUrl] = useState('')
@@ -134,70 +136,70 @@ export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, on
     sessionStorage.setItem('workmesh.last-agent-connection-id', selected.id)
   }
 
-  return <section className="connection-panel" aria-label="Agent Connections">
+  return <section className="connection-panel" aria-label={text.connectionsTitle}>
     <header className="surface-header">
-      <div><p className="eyebrow">Agent access</p><h2>Connections</h2><p>Scoped MCP identities with visible Human ownership and revocable Team authority.</p></div>
-      {admin && <div className="page-actions"><Button disabled={connections.loading} onClick={() => void connections.refresh()}>Refresh Connections</Button><Button variant="primary" onClick={() => setCreateOpen(true)}>New connection</Button></div>}
+      <div><p className="eyebrow">{text.connectionsEyebrow}</p><h2>{text.connectionsTitle}</h2><p>{text.connectionsIntro}</p></div>
+      {admin && <div className="page-actions"><Button disabled={connections.loading} onClick={() => void connections.refresh()}>{text.refreshConnections}</Button><Button variant="primary" onClick={() => setCreateOpen(true)}>{text.newConnection}</Button></div>}
     </header>
 
-    {!admin && <p className="empty">Workspace Admin access is required to create or rotate Connections.</p>}
-    {admin && connections.error && <div className="connection-load-error" role="alert"><strong>Unable to load Connections.</strong><p>Existing Connections may still be active. Retry before creating a replacement.</p><Button onClick={() => void connections.refresh()}>Retry</Button></div>}
-    {admin && connections.loading && !connection && <p role="status">Loading Connections…</p>}
-    {admin && !connections.loading && !connections.error && connections.items.length === 0 && <div className="connection-empty"><strong>No Connections yet</strong><p>Create a Connection to see safe lifecycle diagnostics here. Credentials are never rendered in this dashboard.</p></div>}
-    {admin && connections.items.length > 0 && <><div className="connection-list" aria-label="Existing Connections">{connections.items.map(item => <button type="button" key={item.id} className={item.id === connection?.id ? 'selected' : ''} aria-pressed={item.id === connection?.id} onClick={() => selectConnection(item)}><span><strong>{item.name}</strong><small>{item.agent_slug} · {teams.find(team => team.id === item.team_id)?.name ?? 'Unavailable Team'}</small></span><span className={`connection-status connection-status-${item.status}`}>{item.status}</span></button>)}</div><LoadMoreButton collection={connections} label="Connections" /></>}
+    {!admin && <p className="empty">{text.adminRequiredHint}</p>}
+    {admin && connections.error && <div className="connection-load-error" role="alert"><strong>{text.unableToLoadConnections}</strong><p>{text.retryLoadHint}</p><Button onClick={() => void connections.refresh()}>{text.retry}</Button></div>}
+    {admin && connections.loading && !connection && <p role="status">{text.loadingConnections}</p>}
+    {admin && !connections.loading && !connections.error && connections.items.length === 0 && <div className="connection-empty"><strong>{text.noConnectionsTitle}</strong><p>{text.noConnectionsHint}</p></div>}
+    {admin && connections.items.length > 0 && <><div className="connection-list" aria-label={text.existingConnections}>{connections.items.map(item => { const statusKey = `connectionStatus${item.status[0]!.toUpperCase()}${item.status.slice(1)}` as keyof typeof text; const statusLabel = typeof text[statusKey] === 'string' ? (text[statusKey] as string) : item.status; return <button type="button" key={item.id} className={item.id === connection?.id ? 'selected' : ''} aria-pressed={item.id === connection?.id} onClick={() => selectConnection(item)}><span><strong>{item.name}</strong><small>{item.agent_slug} · {teams.find(team => team.id === item.team_id)?.name ?? text.unavailableTeam}</small></span><span className={`connection-status connection-status-${item.status}`}>{statusLabel}</span></button>; })}</div><LoadMoreButton collection={connections} label={text.connectionsTitle} /></>}
 
     {connection && diagnostic && facts && <article className="connection-overview" data-testid="connection-diagnostic">
       <header><div><p className="eyebrow">{connection.client_type.replaceAll('_', ' ')}</p><h3>{connection.name}</h3><p>{connection.agent_slug}</p></div><span className={`health-pill health-${diagnostic.tone}`}>{diagnostic.label}</span></header>
-      <section className={`diagnostic-callout diagnostic-${diagnostic.tone}`} aria-label="Connection diagnosis">
+      <section className={`diagnostic-callout diagnostic-${diagnostic.tone}`} aria-label={text.connectionsTitle}>
         <strong>{diagnostic.summary}</strong><p>{diagnostic.nextAction}</p>
       </section>
       <dl className="connection-facts">
-        <div><dt>Team scope</dt><dd>{teams.find(team => team.id === facts.teamId)?.name ?? 'Unavailable'}</dd></div>
-        <div><dt>Principal Human</dt><dd>{humans.find(human => human.id === facts.principalHumanActorId)?.display_name ?? 'Unavailable'}</dd></div>
-        <div><dt>Credential</dt><dd>{facts.credential}</dd></div>
-        <div><dt>Last used</dt><dd>{formatTime(facts.lastUsedAt)}</dd></div>
-        <div><dt>Capabilities</dt><dd>{connection.granted_capabilities.join(', ') || 'None granted'}</dd></div>
-        <div><dt>Skill</dt><dd>{connection.skill_version ?? 'Pending'}{connection.skill_sha256 ? ` · ${connection.skill_sha256.slice(0, 12)}…` : ''}</dd></div>
+        <div><dt>{text.teamScope}</dt><dd>{teams.find(team => team.id === facts.teamId)?.name ?? text.unavailable}</dd></div>
+        <div><dt>{text.principalHuman}</dt><dd>{humans.find(human => human.id === facts.principalHumanActorId)?.display_name ?? text.unavailable}</dd></div>
+        <div><dt>{text.credential}</dt><dd>{facts.credential}</dd></div>
+        <div><dt>{text.lastUsed}</dt><dd>{formatTime(facts.lastUsedAt)}</dd></div>
+        <div><dt>{text.capabilities}</dt><dd>{connection.granted_capabilities.join(', ') || text.noCapabilities}</dd></div>
+        <div><dt>{text.skill}</dt><dd>{connection.skill_version ?? text.credentialPending}{connection.skill_sha256 ? ` · ${connection.skill_sha256.slice(0, 12)}…` : ''}</dd></div>
       </dl>
-      <p className="secret-safety"><strong>Credential safety:</strong> session and installation tokens stay server-side. This screen exposes only a non-secret fingerprint for support and audit.</p>
+      <p className="secret-safety"><strong>{text.credentialSafety}</strong></p>
       <div className="session-actions">
-        {connection.status === 'active' && <Button disabled={busy} onClick={() => void run(async () => { const result = await rotateAgentConnection(connection); setConnection(result.connection); setConnectUrl(result.connect_url); await connections.refresh() })}>Rotate credential</Button>}
-        {connection.status === 'rotating' && <Button disabled={busy} onClick={() => void run(async () => { setConnection(await confirmAgentConnectionRotation(connection)); await connections.refresh() })}>Confirm verified rotation</Button>}
-        {connection.status !== 'revoked' && <Button variant="danger" disabled={busy} onClick={() => void run(async () => { await revokeAgentConnection(connection); setConnection({ ...connection, status: 'revoked', revoked_at: new Date().toISOString(), revision: connection.revision + 1 }); setConnectUrl(''); await connections.refresh() })}>Revoke connection</Button>}
+        {connection.status === 'active' && <Button disabled={busy} onClick={() => void run(async () => { const result = await rotateAgentConnection(connection); setConnection(result.connection); setConnectUrl(result.connect_url); await connections.refresh() })}>{text.rotateCredential}</Button>}
+        {connection.status === 'rotating' && <Button disabled={busy} onClick={() => void run(async () => { setConnection(await confirmAgentConnectionRotation(connection)); await connections.refresh() })}>{text.confirmRotation}</Button>}
+        {connection.status !== 'revoked' && <Button variant="danger" disabled={busy} onClick={() => void run(async () => { await revokeAgentConnection(connection); setConnection({ ...connection, status: 'revoked', revoked_at: new Date().toISOString(), revision: connection.revision + 1 }); setConnectUrl(''); await connections.refresh() })}>{text.revokeConnection}</Button>}
       </div>
     </article>}
 
     {connection && <article className="connection-overview mcp-onboarding-overview" data-testid="mcp-onboarding-diagnostic">
-      <header><div><p className="eyebrow">MCP onboarding</p><h3>Configuration and live checks</h3><p>Server-derived setup facts for {connection.client_type.replaceAll('_', ' ')}. No bearer or installation credential is rendered.</p></div>{mcpEnvironmentLoading && <span className="health-pill health-neutral">Loading</span>}</header>
+      <header><div><p className="eyebrow">{text.mcpOnboardingEyebrow}</p><h3>{text.mcpOnboardingTitle}</h3><p>{text.mcpOnboardingIntro(connection.client_type.replaceAll('_', ' '))}</p></div>{mcpEnvironmentLoading && <span className="health-pill health-neutral">{text.mcpLoading}</span>}</header>
       {mcpFailureState && mcpEnvironmentFailure && <section className={`diagnostic-callout diagnostic-${mcpFailureState.tone}`} data-onboarding-state={mcpEnvironmentFailure.state} role="alert"><strong>{mcpFailureState.label}</strong><p>{mcpFailureState.summary}</p><p>{mcpFailureState.nextAction}</p><small>{mcpEnvironmentFailure.detail}</small></section>}
       {mcpGuide && mcpState && <>
-        <section className={`diagnostic-callout diagnostic-${mcpState.tone}`} data-onboarding-state={mcpGuide.state} aria-label="MCP onboarding state"><strong>{mcpState.label}</strong><p>{mcpState.summary}</p><p>{mcpState.nextAction}</p></section>
+        <section className={`diagnostic-callout diagnostic-${mcpState.tone}`} data-onboarding-state={mcpGuide.state} aria-label={text.mcpOnboardingTitle}><strong>{mcpState.label}</strong><p>{mcpState.summary}</p><p>{mcpState.nextAction}</p></section>
         <dl className="connection-facts">
-          <div><dt>MCP endpoint</dt><dd className="break-value">{mcpGuide.mcpUrl}</dd></div>
-          <div><dt>Discovery</dt><dd className="break-value">{mcpGuide.discoveryUrl}</dd></div>
-          <div><dt>Transport</dt><dd>{mcpGuide.transport}</dd></div>
-          <div><dt>Client Profile</dt><dd>{mcpGuide.profileVersion}</dd></div>
-          <div><dt>Auth readiness</dt><dd>{connection.status === 'active' ? 'Installation credential active' : connection.status === 'pending' ? 'Awaiting pairing' : connection.status}</dd></div>
-          <div><dt>Capability summary</dt><dd>{connection.granted_capabilities.join(', ') || 'None granted'}</dd></div>
-          <div><dt>Skill selector</dt><dd>{mcpGuide.skill.version} · {mcpGuide.skill.sha256.slice(0, 19)}…</dd></div>
+          <div><dt>{text.mcpEndpoint}</dt><dd className="break-value">{mcpGuide.mcpUrl}</dd></div>
+          <div><dt>{text.mcpDiscovery}</dt><dd className="break-value">{mcpGuide.discoveryUrl}</dd></div>
+          <div><dt>{text.mcpTransport}</dt><dd>{mcpGuide.transport}</dd></div>
+          <div><dt>{text.mcpProfile}</dt><dd>{mcpGuide.profileVersion}</dd></div>
+          <div><dt>{text.mcpAuthReadiness}</dt><dd>{connection.status === 'active' ? text.mcpAuthActive : connection.status === 'pending' ? text.mcpAuthPending : connection.status}</dd></div>
+          <div><dt>{text.mcpCapabilitySummary}</dt><dd>{connection.granted_capabilities.join(', ') || text.noCapabilities}</dd></div>
+          <div><dt>{text.mcpSkillSelector}</dt><dd>{mcpGuide.skill.version} · {mcpGuide.skill.sha256.slice(0, 19)}…</dd></div>
         </dl>
-        <details className="config-details"><summary>Secret-safe {mcpGuide.configFile}</summary><pre className="config-preview"><code>{mcpGuide.config}</code></pre>{mcpGuide.localStdioFallback && <p><strong>Local stdio fallback:</strong> {mcpGuide.localStdioFallback}</p>}<Button type="button" onClick={() => void navigator.clipboard.writeText(mcpGuide.config).then(() => { setConfigCopied(true); window.setTimeout(() => setConfigCopied(false), 1800) })}>{configCopied ? 'Copied' : 'Copy config'}</Button></details>
-        <ol className="bootstrap-checklist" aria-label="Agent bootstrap checklist">{mcpGuide.bootstrapChecks.map(check => <li key={check}>{check}</li>)}</ol>
+        <details className="config-details"><summary>{text.secretSafeConfig(mcpGuide.configFile)}</summary><pre className="config-preview"><code>{mcpGuide.config}</code></pre>{mcpGuide.localStdioFallback && <p><strong>{text.localStdioFallback}</strong> {mcpGuide.localStdioFallback}</p>}<Button type="button" onClick={() => void navigator.clipboard.writeText(mcpGuide.config).then(() => { setConfigCopied(true); window.setTimeout(() => setConfigCopied(false), 1800) })}>{configCopied ? text.configCopied : text.copyConfig}</Button></details>
+        <ol className="bootstrap-checklist" aria-label={text.bootstrapChecklist}>{mcpGuide.bootstrapChecks.map(check => <li key={check}>{check}</li>)}</ol>
       </>}
     </article>}
 
-    {instruction && <article className="connection-instruction"><header><div><p className="eyebrow">One-time setup</p><h3>Agent handoff instructions</h3><p>Copy the complete procedure to the selected Agent. It distinguishes the one-time pairing code from the long-lived Installation Token and includes the required verification gates.</p></div><Button type="button" onClick={() => void navigator.clipboard.writeText(instruction)}>Copy full instructions</Button></header><pre className="agent-connection-instruction"><code>{instruction}</code></pre><small>The pairing URL expires in ten minutes and is shown only in this browser session. Generate a new rotation instead of reusing an expired or previously redeemed URL.</small></article>}
+    {instruction && <article className="connection-instruction"><header><div><p className="eyebrow">{text.handoffEyebrow}</p><h3>{text.handoffTitle}</h3><p>{text.handoffIntro}</p></div><Button type="button" onClick={() => void navigator.clipboard.writeText(instruction)}>{text.copyFullInstructions}</Button></header><pre className="agent-connection-instruction"><code>{instruction}</code></pre><small>{text.handoffExpiryNote}</small></article>}
 
-    <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title="New Agent Connection">
+    <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title={text.newConnectionTitle}>
       <form onSubmit={create} className="agent-connection-form">
-        <label>Client<select name="client" defaultValue="codex"><option value="codex">Codex</option><option value="opencode">OpenCode</option><option value="pi">pi</option><option value="generic_mcp">Generic MCP</option></select></label>
-        <label>Agent name<input name="name" required maxLength={120} placeholder="Planning coordinator" /></label>
-        <label>Agent slug<input name="slug" required pattern="[a-z0-9][a-z0-9-]{0,79}" placeholder="planning-coordinator" /></label>
-        <label>Team<select name="team" required>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label>
-        <label>Principal Human<select name="principal" defaultValue={currentHumanId}>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}{human.email ? ` · ${human.email}` : ''}</option>)}</select></label>
-        <label className="checkbox-field"><input type="checkbox" name="agentDelegate" /> Allow this coordinator to start approved Agents</label>
-        <label className="full-field">Notes<textarea name="notes" maxLength={2000} /></label>
-        <footer><Button type="button" onClick={() => setCreateOpen(false)}>Cancel</Button><Button variant="primary" disabled={busy || teams.length === 0}>Generate connection sentence</Button></footer>
+        <label>{text.fieldClient}<select name="client" defaultValue="codex"><option value="codex">Codex</option><option value="opencode">OpenCode</option><option value="pi">pi</option><option value="generic_mcp">Generic MCP</option></select></label>
+        <label>{text.fieldAgentName}<input name="name" required maxLength={120} placeholder="Planning coordinator" /></label>
+        <label>{text.fieldAgentSlug}<input name="slug" required pattern="[a-z0-9][a-z0-9-]{0,79}" placeholder="planning-coordinator" /></label>
+        <label>{text.fieldTeam}<select name="team" required>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select></label>
+        <label>{text.fieldPrincipal}<select name="principal" defaultValue={currentHumanId}>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}{human.email ? ` · ${human.email}` : ''}</option>)}</select></label>
+        <label className="checkbox-field"><input type="checkbox" name="agentDelegate" /> {text.fieldAgentDelegate}</label>
+        <label className="full-field">{text.fieldNotes}<textarea name="notes" maxLength={2000} /></label>
+        <footer><Button type="button" onClick={() => setCreateOpen(false)}>{text.cancel}</Button><Button variant="primary" disabled={busy || teams.length === 0}>{text.generateConnection}</Button></footer>
       </form>
     </Dialog>
   </section>

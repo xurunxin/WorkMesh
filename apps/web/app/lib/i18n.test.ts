@@ -39,11 +39,18 @@ function Probe() {
     operationsTitleZh: ctx.operationsCopy.title,
     connectTitleZh: ctx.connectCopy.title,
     agentsLabelZh: ctx.agentsCopy.agents,
+    inboxTitleZh: ctx.inboxCopy.title,
+    sessionLoadingZh: ctx.sessionDetailCopy.loading,
+    liveAgentsZh: ctx.agentWorkCopy.liveAgents,
+    relationsTitleZh: ctx.relationsCopy.title,
+    evidenceTitleZh: ctx.evidenceCopy.title,
+    workRoomTitleZh: ctx.workRoomCopy.title,
+    healthOnTrackZh: ctx.projectDeliveryHealthLabel('on_track'),
   }))
 }
 
 describe('web i18n entry', () => {
-  it('exposes ten Copy subsets and the primary t helper', () => {
+  it('exposes sixteen Copy subsets and the primary t helper', () => {
     const html = renderToStaticMarkup(createElement(LocaleProvider, null, createElement(Probe)))
     const stripped = html
       .replace(/<[^>]+>/g, '')
@@ -53,19 +60,26 @@ describe('web i18n entry', () => {
       .replace(/&gt;/g, '>')
     const payload = JSON.parse(stripped)
     expect(payload.keys).toEqual([
+      'agentWorkCopy',
       'agentsCopy',
       'connectCopy',
       'detailCopy',
+      'evidenceCopy',
       'guidanceCopy',
+      'inboxCopy',
       'installCopy',
       'issueCopy',
       'locale',
       'loginCopy',
       'operationsCopy',
+      'projectDeliveryHealthLabel',
+      'relationsCopy',
+      'sessionDetailCopy',
       'setLocale',
       'settingsCopy',
       'surfaceCopy',
       't',
+      'workRoomCopy',
     ])
     expect(payload.settingsLoadingZh).toBe('正在加载设置…')
     expect(payload.loginTitleZh).toBe('登录')
@@ -73,5 +87,12 @@ describe('web i18n entry', () => {
     expect(payload.operationsTitleZh).toBe('运营与规划')
     expect(payload.connectTitleZh).toBe('连接智能体到 WorkMesh')
     expect(payload.agentsLabelZh).toBe('智能体')
+    expect(payload.inboxTitleZh).toBe('收件箱')
+    expect(payload.sessionLoadingZh).toBe('正在加载智能体 Session…')
+    expect(payload.liveAgentsZh).toBe('在线智能体')
+    expect(payload.relationsTitleZh).toBe('阻塞与关联工作')
+    expect(payload.evidenceTitleZh).toBe('协作状态展示')
+    expect(payload.workRoomTitleZh).toBe('Work Room')
+    expect(payload.healthOnTrackZh).toBe('进展顺利')
   })
 })

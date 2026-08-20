@@ -52,7 +52,7 @@ export default function InstallPage() {
   }
 
   return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
-    <div className="auth-shell">
+    <div className="auth-shell auth-shell-centered">
       <Card title={text.title} subtitle={text.subtitle} className="auth-card">
         <form onSubmit={submit} data-testid="install-form">
           <label>{text.bootstrapToken}<input name="bootstrapToken" type="password" autoComplete="off" placeholder={text.bootstrapTokenPlaceholder} /></label>

@@ -37,7 +37,12 @@ describe('human UI layout contract', () => {
     }
     expect(home).toContain('ErrorState')
     expect(agents).toContain('ErrorState')
-    expect(operations).toContain('EmptyState')
+    // Operations content is now embedded inside the Settings page as a tab.
+    expect(settings).toContain('OperationsContent')
+    // The standalone /operations route is a thin wrapper that redirects and re-uses
+    // the same AppShell. It must still render via the unified shell.
+    expect(operations).toContain('AppShell')
+    expect(operations).toContain('OperationsContent')
   })
 
   it('removes legacy dark theme colors and class names', () => {
@@ -45,16 +50,20 @@ describe('human UI layout contract', () => {
     for (const color of ['#0f172a', '#1e293b', '#334155', '#475569', '#1d4ed8', '#fca5a5', '#94a3b8', '#cbd5e1', '#e2e8f0', '#7f1d1d', '#111827']) {
       expect(styles, `legacy color ${color} should be gone`).not.toContain(color)
     }
-    for (const cls of ['.shell ', '.auth,', '.auth {', '.work-tabs', '.state-executing', '.state-completed', '.state-failed']) {
+    for (const cls of ['.shell ', '.auth,', '.auth {', '.work-tabs']) {
       expect(styles, `legacy class ${cls} should be gone`).not.toContain(cls)
     }
-    // The bare class names .agent-center and .session-page are still used by the new
-    // foundation as .app-shell .agent-center / .app-shell .session-page (the active
-    // agents and session pages both render those class names), so a plain substring
-    // check would over-match. Use anchored patterns that fire only on the legacy
-    // selectors (where these names start the selector, not mid-compound).
+    // The bare class names .agent-center / .session-page and the agent-state
+    // sub-classes .state-executing / .state-completed / .state-failed are all
+    // still in use as compound selectors under .app-shell .agent-state (e.g.
+    // .app-shell .agent-state.state-executing). A plain substring check would
+    // over-match, so use anchored patterns that only fire when these names
+    // start a selector (the legacy form), not when they're mid-compound.
     expect(styles, 'legacy .agent-center should be gone').not.toMatch(/(^|[,;{])\.agent-center[, >{]/)
     expect(styles, 'legacy .session-page should be gone').not.toMatch(/(^|[,;{])\.session-page[, >{]/)
+    for (const stateClass of ['.state-executing', '.state-completed', '.state-failed']) {
+      expect(styles, `legacy class ${stateClass} should be gone`).not.toMatch(new RegExp(`(^|[,;{])\\${stateClass}[, >{]`))
+    }
   })
 
   it('removes operations-only theme colors and class names', () => {

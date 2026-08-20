@@ -153,30 +153,30 @@ export function buildMcpClientGuide(input: {
     skill: input.discovery.skill,
     ...config,
     localStdioFallback: input.clientType === 'generic_mcp'
-      ? 'Set WORKMESH_API_URL and WORKMESH_INSTALLATION_TOKEN in the local secret environment, then run pnpm --filter @workmesh/mcp start:stdio.'
+      ? '在本地密钥环境中设置 WORKMESH_API_URL 和 WORKMESH_INSTALLATION_TOKEN，然后运行 pnpm --filter @workmesh/mcp start:stdio。'
       : null,
     environmentChecks: [
-      `Store the redeemed installation credential as ${tokenEnvironmentName}; never paste it into the config file.`,
-      `Send it only as ${tokenHeader} to the exact server URL shown above.`,
-      `Require Client Profile ${input.release.preferredClientProfileVersion} and Skill ${input.discovery.skill.version} (${input.discovery.skill.sha256}).`,
+      `把兑换得到的安装凭据保存为 ${tokenEnvironmentName}，不要粘贴到配置文件里。`,
+      `只通过 ${tokenHeader} 头发送到上方展示的精确服务端 URL。`,
+      `要求 Client Profile ${input.release.preferredClientProfileVersion} 与 Skill ${input.discovery.skill.version}（${input.discovery.skill.sha256}）。`,
     ],
     bootstrapChecks: [
-      'Fetch the public discovery document and reject an unknown protocol, client, profile, or Skill selector.',
-      'Redeem the one-time pairing fragment before expiry and keep the returned credential only in the client secret store.',
-      'Call verify_connection and require one live Team plus matching profile, Skill, capability scope, and principal Human.',
-      'Call get_workmesh_context before selecting work; tool presence never grants mutation authority.',
-      'Stop on revoked, expired, mis-scoped, disabled, or inconsistent live facts.',
+      '拉取公共发现文档，拒绝协议、客户端、Profile 或技能选择器中的未知值。',
+      '在一次性配对片段过期前完成兑换，并把得到的凭据仅保存在客户端密钥库中。',
+      '调用 verify_connection，并要求存在一个活跃的 Team、匹配的 Profile / Skill / 能力范围以及负责人。',
+      '在选择工作前先调用 get_workmesh_context；工具存在并不授予任何写权限。',
+      '当发现已撤销、过期、范围不符、停用或实时事实不一致时立即停止。',
     ],
   }
 }
 
 export function onboardingStateMessage(state: McpOnboardingState): { label: string; summary: string; nextAction: string; tone: 'positive' | 'warning' | 'critical' } {
-  if (state === 'unsupported_client') return { label: 'Unsupported client', tone: 'critical', summary: 'This server did not advertise the selected MCP client.', nextAction: 'Choose an advertised client or upgrade the WorkMesh deployment before pairing.' }
-  if (state === 'coordination_feature_disabled') return { label: 'Coordination feature disabled', tone: 'warning', summary: 'Base discovery is available, but this deployment reports the Coordination MCP beta feature as disabled.', nextAction: 'Keep the configuration for review only; an operator must enable and verify the feature before pairing.' }
-  if (state === 'network_unavailable') return { label: 'Network unavailable', tone: 'critical', summary: 'Live onboarding facts could not be refreshed from this WorkMesh deployment.', nextAction: 'Restore network access, then retry. Do not reuse cached credentials or endpoints.' }
-  if (state === 'discovery_unavailable') return { label: 'Discovery unavailable', tone: 'critical', summary: 'WorkMesh could not provide server-derived MCP and Skill selectors.', nextAction: 'Retry discovery. Do not infer endpoints or reuse an older pairing instruction.' }
-  if (state === 'mcp_unavailable') return { label: 'MCP unavailable', tone: 'critical', summary: 'Discovery succeeded, but the advertised MCP service did not pass its bounded readiness check.', nextAction: 'Keep existing credentials untouched and retry only after the service is healthy.' }
-  return { label: 'Configuration ready', tone: 'positive', summary: 'The selected client, server, profile, and pinned Skill selectors are consistent.', nextAction: 'Pair once, store the credential in the client secret store, then run verify_connection.' }
+  if (state === 'unsupported_client') return { label: '不支持的客户端', tone: 'critical', summary: '此服务端未声明所选的 MCP 客户端。', nextAction: '请选择已声明的客户端，或先升级 WorkMesh 部署再进行配对。' }
+  if (state === 'coordination_feature_disabled') return { label: '协调功能未启用', tone: 'warning', summary: '基础发现可用，但此部署报告 Coordination MCP beta 功能被关闭。', nextAction: '暂时只作为审阅使用；配对前需由运维开启并验证该功能。' }
+  if (state === 'network_unavailable') return { label: '网络不可用', tone: 'critical', summary: '无法从当前 WorkMesh 部署刷新实时接入事实。', nextAction: '恢复网络后重试。请勿重用旧的凭据或端点。' }
+  if (state === 'discovery_unavailable') return { label: '发现不可用', tone: 'critical', summary: 'WorkMesh 无法提供服务端派生的 MCP 和技能选择器。', nextAction: '重试发现流程；请勿推测端点或重用旧配对说明。' }
+  if (state === 'mcp_unavailable') return { label: 'MCP 不可用', tone: 'critical', summary: '发现成功，但已声明的 MCP 服务未通过就绪检查。', nextAction: '保留已有凭据不变，待服务恢复后再重试。' }
+  return { label: '配置就绪', tone: 'positive', summary: '所选客户端、服务端、Profile 与固定版本的技能选择器彼此一致。', nextAction: '配对一次后，把凭据存入客户端密钥库，然后运行 verify_connection。' }
 }
 
 export function containsCredentialLikeValue(value: string): boolean {

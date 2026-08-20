@@ -114,7 +114,7 @@ export function AppShell({
   const [mobileOpen, setMobileOpen] = useState(false)
   const allNavigation = [...navigation, ...utilityNavigation]
   const hasNavigation = navigation.length > 0 || utilityNavigation.length > 0
-  return <div className="app-shell wm-theme">
+  return <div className={`app-shell wm-theme${hasNavigation ? '' : ' app-shell--no-sidebar'}`}>
     <a className="wm-skip-link" href="#workmesh-main">{skipLabel}</a>
     {hasNavigation && <aside className="app-sidebar" aria-label={mainNavigationLabel}>
       <header className="app-brand"><h1>{productName}</h1>{actorName && <small>{actorName}</small>}</header>
@@ -408,6 +408,13 @@ export type WorkItemCopy = {
   filterResponsibleHuman: string
   filterStatus: string
   filtersLabel: string
+  labelAddPlaceholder: string
+  labelMenuAriaLabel: (title: string) => string
+  labelMenuEmpty: string
+  labelMenuHeading: string
+  labelMenuRemoveAll: string
+  labelMenuSuggestions: string
+  labelMoreCount: (count: number) => string
   loadMore: string
   loading: string
   moveItem: (title: string) => string
@@ -449,6 +456,13 @@ const defaultWorkItemCopy: WorkItemCopy = {
   filterResponsibleHuman: 'Responsible Human',
   filterStatus: 'Status',
   filtersLabel: 'Issue filters',
+  labelAddPlaceholder: 'Change or add labels…',
+  labelMenuAriaLabel: title => `Labels for ${title}`,
+  labelMenuEmpty: 'No labels available yet.',
+  labelMenuHeading: 'Labels',
+  labelMenuRemoveAll: 'Remove all labels',
+  labelMenuSuggestions: 'Suggestions',
+  labelMoreCount: count => `+${count} labels`,
   loadMore: 'Load more work items',
   loading: 'Loading…',
   moveItem: title => `Move ${title}`,
@@ -474,6 +488,7 @@ function resolveWorkItemCopy(copy?: Partial<WorkItemCopy>): WorkItemCopy {
 export type WorkItemStatusOption = { id: string; name: string; category?: string }
 export type WorkItemMoveSource = 'pointer' | 'keyboard' | 'explicit-status-selector'
 export type WorkItemMoveCallback = (item: WorkItemCardData, targetStatusId: string, source: WorkItemMoveSource) => void | Promise<void>
+export type WorkItemLabelChangeCallback = (item: WorkItemCardData, nextLabels: string[]) => void | Promise<void>
 export type WorkItemCardProps = {
   item: WorkItemCardData
   layout?: 'list' | 'board'
@@ -481,6 +496,9 @@ export type WorkItemCardProps = {
   onOpen?: (item: WorkItemCardData) => void
   onOpenProject?: (projectId: string) => void
   onMove?: WorkItemMoveCallback
+  onLabelsChange?: WorkItemLabelChangeCallback
+  availableLabels?: string[]
+  maxVisibleLabels?: number
   draggable?: boolean
   dragState?: 'idle' | 'dragging' | 'pending'
   className?: string
@@ -498,6 +516,165 @@ function handlePresentationPromise(callback: (() => void | Promise<void>) | unde
   } catch { /* Feature controller owns errors; presentation remains render-safe. */ }
 }
 
+const MAX_LABELS_BOARD = 3
+const MAX_LABELS_LIST = 4
+
+type WorkItemLabelMenuProps = {
+  align?: 'start' | 'end'
+  availableLabels: string[]
+  current: string[]
+  hiddenLabels: string[]
+  item: WorkItemCardData
+  onLabelsChange?: WorkItemLabelChangeCallback
+  onOpenChange: (open: boolean) => void
+  open: boolean
+  text: WorkItemCopy
+  title: string
+}
+
+function WorkItemLabelMenu({ align = 'start', availableLabels, current, hiddenLabels, item, onLabelsChange, onOpenChange, open, text, title }: WorkItemLabelMenuProps) {
+  const [query, setQuery] = useState('')
+  const [panelPos, setPanelPos] = useState<{ left: number; top: number; width: number; placement: 'start' | 'end' } | null>(null)
+  const panelId = useId()
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const panelPortalRef = useRef<HTMLDivElement | null>(null)
+  const toggle = (label: string) => {
+    if (!onLabelsChange) return
+    const next = current.includes(label) ? current.filter(existing => existing !== label) : [...current, label]
+    handlePresentationPromise(() => onLabelsChange(item, next))
+  }
+  const removeAll = () => {
+    if (!onLabelsChange || current.length === 0) return
+    handlePresentationPromise(() => onLabelsChange(item, []))
+  }
+  const addCustom = () => {
+    const trimmed = query.trim()
+    if (!onLabelsChange || !trimmed || current.includes(trimmed)) return
+    handlePresentationPromise(() => onLabelsChange(item, [...current, trimmed]))
+    setQuery('')
+  }
+  useEffect(() => {
+    if (!open) return
+    const closeOutside = (event: PointerEvent) => {
+      const target = event.target as Node | null
+      if (!target) return
+      if (rootRef.current?.contains(target)) return
+      if (panelPortalRef.current?.contains(target)) return
+      onOpenChange(false)
+    }
+    const closeEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onOpenChange(false)
+        triggerRef.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    document.addEventListener('keydown', closeEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside)
+      document.removeEventListener('keydown', closeEscape)
+    }
+  }, [onOpenChange, open])
+  useEffect(() => {
+    if (open) {
+      const handle = window.setTimeout(() => inputRef.current?.focus(), 0)
+      const recompute = () => {
+        const trigger = triggerRef.current
+        if (!trigger) return
+        const rect = trigger.getBoundingClientRect()
+        const preferredWidth = Math.min(352, Math.max(256, rect.width + 160))
+        const minLeft = 12
+        const maxLeft = window.innerWidth - preferredWidth - 12
+        const left = align === 'end' ? Math.max(minLeft, Math.min(maxLeft, rect.right - preferredWidth)) : Math.max(minLeft, Math.min(maxLeft, rect.left))
+        const top = rect.bottom + 6
+        setPanelPos({ left, top, width: preferredWidth, placement: align })
+      }
+      recompute()
+      window.addEventListener('resize', recompute)
+      window.addEventListener('scroll', recompute, true)
+      return () => {
+        window.clearTimeout(handle)
+        window.removeEventListener('resize', recompute)
+        window.removeEventListener('scroll', recompute, true)
+      }
+    }
+    setPanelPos(null)
+    return undefined
+  }, [align, open])
+  const currentSet = new Set(current)
+  const normalizedQuery = query.trim().toLowerCase()
+  const suggestions = availableLabels
+    .filter(label => !currentSet.has(label) && (normalizedQuery === '' || label.toLowerCase().includes(normalizedQuery)))
+  const matchedCurrent = normalizedQuery === '' ? current : current.filter(label => label.toLowerCase().includes(normalizedQuery))
+  const customMatch = normalizedQuery !== '' && !availableLabels.some(label => label.toLowerCase() === normalizedQuery) && !currentSet.has(query.trim())
+  const dotsToShow = hiddenLabels.slice(0, 3)
+  const extraCount = hiddenLabels.length - dotsToShow.length
+  const panel = open && panelPos ? (
+    <div
+      aria-label={text.labelMenuAriaLabel(title)}
+      className={workItemClassNames('wm-work-item-label-menu-panel', `align-${align}`)}
+      id={panelId}
+      role="dialog"
+      onPointerDown={event => event.stopPropagation()}
+      ref={panelPortalRef}
+      style={{ left: `${panelPos.left}px`, position: 'fixed', top: `${panelPos.top}px`, width: `${panelPos.width}px` }}
+    >
+      <label className="wm-work-item-label-menu-input">
+        <span className="wm-visually-hidden">{text.labelAddPlaceholder}</span>
+        <input
+          aria-label={text.labelAddPlaceholder}
+          onChange={event => setQuery(event.currentTarget.value)}
+          onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); addCustom() } }}
+          placeholder={text.labelAddPlaceholder}
+          ref={inputRef}
+          type="text"
+          value={query}
+        />
+      </label>
+      {suggestions.length > 0 && (
+        <section aria-label={text.labelMenuSuggestions} className="wm-work-item-label-menu-section">
+          <h4>{text.labelMenuSuggestions}</h4>
+          <ul>{suggestions.map(label => <li key={label}><button aria-pressed="false" className={`wm-work-item-label-menu-row wm-label-${workItemLabelTone(label)}`} onClick={() => toggle(label)} type="button"><span aria-hidden="true" className="wm-work-item-label-menu-row-check" /><span className="wm-work-item-label-menu-row-name">{label}</span></button></li>)}</ul>
+        </section>
+      )}
+      {current.length > 0 && (
+        <section aria-label={text.labelMenuHeading} className="wm-work-item-label-menu-section">
+          <h4>{text.labelMenuHeading}</h4>
+          <ul>{matchedCurrent.map(label => <li key={label}><button aria-pressed="true" className={`wm-work-item-label-menu-row is-checked wm-label-${workItemLabelTone(label)}`} onClick={() => toggle(label)} type="button"><span aria-hidden="true" className="wm-work-item-label-menu-row-check">✓</span><span className="wm-work-item-label-menu-row-name">{label}</span></button></li>)}</ul>
+          <button className="wm-work-item-label-menu-remove-all" disabled={!onLabelsChange} onClick={removeAll} type="button">{text.labelMenuRemoveAll}</button>
+        </section>
+      )}
+      {current.length === 0 && suggestions.length === 0 && !customMatch && (
+        <p className="wm-work-item-label-menu-empty">{text.labelMenuEmpty}</p>
+      )}
+      {customMatch && (
+        <button className="wm-work-item-label-menu-custom" disabled={!onLabelsChange} onClick={addCustom} type="button">{text.labelAddPlaceholder} "{query.trim()}"</button>
+      )}
+    </div>
+  ) : null
+  return <div className="wm-work-item-label-menu" ref={rootRef}>
+    <button
+      aria-controls={panelId}
+      aria-expanded={open}
+      aria-haspopup="dialog"
+      aria-label={text.labelMenuAriaLabel(title)}
+      className="wm-work-item-label-more"
+      onClick={() => onOpenChange(!open)}
+      onPointerDown={event => event.stopPropagation()}
+      ref={triggerRef}
+      type="button"
+    >
+      <span aria-hidden="true" className="wm-work-item-label-more-dots">
+        {dotsToShow.map(label => <span key={label} aria-hidden="true" className={`wm-work-item-label-more-dot wm-label-${workItemLabelTone(label)}`} />)}
+      </span>
+      {extraCount > 0 && <span className="wm-work-item-label-more-text">+{extraCount}</span>}
+    </button>
+    {panel}
+  </div>
+}
+
 function workItemLabelTone(label: string): string {
   const normalized = label.toLowerCase()
   if (/security|safe|安全|blocker|阻塞/.test(normalized)) return 'danger'
@@ -508,8 +685,9 @@ function workItemLabelTone(label: string): string {
   return 'neutral'
 }
 
-export function WorkItemCard({ className, draggable = false, dragState = 'idle', item, layout = 'list', onMove, onOpen, onOpenProject, onPointerDown, showStatusControl = true, statusOptions = [], copy }: WorkItemCardProps) {
+export function WorkItemCard({ availableLabels, className, copy, draggable = false, dragState = 'idle', item, layout = 'list', maxVisibleLabels, onLabelsChange, onMove, onOpen, onOpenProject, onPointerDown, showStatusControl = true, statusOptions = [] }: WorkItemCardProps) {
   const text = resolveWorkItemCopy(copy)
+  const [labelMenuOpen, setLabelMenuOpen] = useState(false)
   const move = (statusId: string, source: WorkItemMoveSource) => {
     if (!onMove || !statusId || statusId === item.statusId) return
     handlePresentationPromise(() => onMove(item, statusId, source))
@@ -517,34 +695,124 @@ export function WorkItemCard({ className, draggable = false, dragState = 'idle',
   const handleDragStart = (event: DragEvent<HTMLElement>) => { event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', item.id) }
   const stopPointer = (event: ReactPointerEvent<HTMLElement>) => event.stopPropagation()
   const hasFacts = Boolean(item.blockedByCount || item.blockingCount || item.subIssueCount)
-  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, `wm-work-item-card-${dragState}`, className)} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown}>
-    <div className="wm-work-item-card-heading"><span className="wm-work-item-identifier">{item.identifier}</span>{item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}>{text.priorityName(item.priority)}</span>}</div>
+  const hasLabels = Boolean(item.labels && item.labels.length > 0)
+  const statusCategory = item.statusCategory ?? 'unknown'
+  const subIssueTotal = item.subIssueCount ?? 0
+  const subIssueDone = item.completedSubIssueCount ?? 0
+  const subIssuePct = subIssueTotal > 0 ? Math.round((subIssueDone / subIssueTotal) * 100) : 0
+  const visibleLimit = maxVisibleLabels ?? (layout === 'board' ? MAX_LABELS_BOARD : MAX_LABELS_LIST)
+  const labels = item.labels ?? []
+  const overflow = Math.max(0, labels.length - visibleLimit)
+  const shownLabels = overflow > 0 ? labels.slice(0, visibleLimit) : labels
+  const hiddenLabels = overflow > 0 ? labels.slice(visibleLimit) : []
+  const canEditLabels = Boolean(onLabelsChange && availableLabels && availableLabels.length > 0)
+  const showLabelRow = layout === 'board' || hasLabels
+  const openLabelMenu = () => {
+    if (!canEditLabels) return
+    setLabelMenuOpen(true)
+  }
+  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown}>
+    <div className="wm-work-item-card-heading">
+      <span className="wm-work-item-identifier">{item.identifier}</span>
+      {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}>{text.priorityName(item.priority)}</span>}
+    </div>
     <button className="wm-work-item-title" onClick={() => handlePresentationPromise(onOpen ? () => onOpen(item) : undefined)} onPointerDown={stopPointer} type="button">{item.title}</button>
-    {(layout === 'board' || (item.projectId && item.projectName)) && <div aria-hidden={!item.projectId || !item.projectName || undefined} className="wm-work-item-project-slot">{item.projectId && item.projectName && <button aria-label={text.openProject(item.projectName)} className="wm-work-item-project" onClick={() => handlePresentationPromise(onOpenProject ? () => onOpenProject(item.projectId!) : undefined)} onPointerDown={stopPointer} type="button"><FolderSimpleIcon aria-hidden="true" size={15} weight="bold" /><span>{item.projectName}</span></button>}</div>}
+    {(layout === 'board' || (item.projectId && item.projectName)) && <div aria-hidden={!item.projectId || !item.projectName || undefined} className="wm-work-item-project-slot">{item.projectId && item.projectName && <button aria-label={text.openProject(item.projectName)} className="wm-work-item-project" onClick={() => handlePresentationPromise(onOpenProject ? () => onOpenProject(item.projectId!) : undefined)} onPointerDown={stopPointer} type="button"><FolderSimpleIcon aria-hidden="true" size={13} weight="bold" /><span>{item.projectName}</span></button>}</div>}
     <div className="wm-work-item-metadata"><span><UserCircleIcon aria-hidden="true" size={15} weight="fill" />{item.responsibleHuman ?? text.noResponsibleHuman}</span><span><RobotIcon aria-hidden="true" size={15} weight="duotone" />{item.activeAgent ? `${item.activeAgent}${item.activeAgentState ? ` · ${text.agentExecutionState(item.activeAgentState)}` : ''}` : text.noActiveAgent}</span></div>
-    {(layout === 'board' || (item.labels && item.labels.length > 0)) && <div aria-hidden={!item.labels?.length || undefined} className="wm-work-item-labels">{item.labels?.map(label => <span className={`wm-label-${workItemLabelTone(label)}`} key={label}>{label}</span>)}</div>}
-    {(layout === 'board' || hasFacts) && <div aria-hidden={!hasFacts || undefined} className={workItemClassNames('wm-work-item-facts', !hasFacts && 'is-empty')}>{item.blockedByCount ? <span><ProhibitIcon aria-hidden="true" size={14} weight="bold" />{item.blockedByCount}</span> : null}{item.blockingCount ? <span><ProhibitIcon aria-hidden="true" size={14} weight="regular" />{item.blockingCount}</span> : null}{item.subIssueCount ? <span><GitBranchIcon aria-hidden="true" size={14} weight="bold" />{text.completedSubIssues(item.completedSubIssueCount ?? 0, item.subIssueCount)}</span> : null}</div>}
+    {showLabelRow && <div aria-hidden={!hasLabels || undefined} className={workItemClassNames('wm-work-item-labels', !hasLabels && 'is-empty')}>
+      {shownLabels.map(label => canEditLabels
+        ? <button aria-label={text.labelMenuAriaLabel(item.title)} className={`wm-work-item-label wm-label-${workItemLabelTone(label)}`} key={label} onClick={openLabelMenu} onPointerDown={stopPointer} type="button">{label}</button>
+        : <span className={`wm-work-item-label wm-label-${workItemLabelTone(label)}`} key={label}>{label}</span>)}
+      {overflow > 0 && <WorkItemLabelMenu
+        align="end"
+        availableLabels={availableLabels ?? []}
+        current={labels}
+        hiddenLabels={hiddenLabels}
+        item={item}
+        onLabelsChange={onLabelsChange}
+        onOpenChange={setLabelMenuOpen}
+        open={labelMenuOpen}
+        text={text}
+        title={item.title}
+      />}
+    </div>}
+    {(layout === 'board' || hasFacts) && <div aria-hidden={!hasFacts || undefined} className={workItemClassNames('wm-work-item-facts', !hasFacts && 'is-empty')}>{item.blockedByCount ? <span className="wm-fact-blocker" title="被阻塞"><ProhibitIcon aria-hidden="true" size={14} weight="bold" />{item.blockedByCount}</span> : null}{item.blockingCount ? <span className="wm-fact-blocking" title="阻塞下游"><ProhibitIcon aria-hidden="true" size={14} weight="regular" />{item.blockingCount}</span> : null}{subIssueTotal > 0 ? <span className="wm-fact-sub-issue" title="子 Issue 进度"><span className="wm-sub-progress" aria-hidden="true"><span className="wm-sub-progress-fill" style={{ width: `${subIssuePct}%` }} /></span><GitBranchIcon aria-hidden="true" size={14} weight="bold" />{text.completedSubIssues(subIssueDone, subIssueTotal)}</span> : null}</div>}
     {showStatusControl && onMove && statusOptions.length > 0 && <label className="wm-work-item-status-control" onClick={event => event.stopPropagation()} onPointerDown={event => event.stopPropagation()}><span className="wm-visually-hidden">{text.moveItem(item.title)}</span><select aria-label={text.moveItem(item.title)} disabled={dragState === 'pending'} onChange={(event: ChangeEvent<HTMLSelectElement>) => move(event.currentTarget.value, 'explicit-status-selector')} value={item.statusId}>{statusOptions.map(status => <option key={status.id} value={status.id}>{status.name}</option>)}</select></label>}
   </article>
 }
 
-export type WorkItemListProps = { items: WorkItemCardData[]; statusOptions?: WorkItemStatusOption[]; onOpen?: (item: WorkItemCardData) => void; onOpenProject?: (projectId: string) => void; onMove?: WorkItemMoveCallback; empty?: ReactNode; copy?: Partial<WorkItemCopy> }
-export function WorkItemList({ empty = 'No work items match this view.', items, onMove, onOpen, onOpenProject, statusOptions = [], copy }: WorkItemListProps) {
+export type WorkItemListProps = { items: WorkItemCardData[]; statusOptions?: WorkItemStatusOption[]; onOpen?: (item: WorkItemCardData) => void; onOpenProject?: (projectId: string) => void; onMove?: WorkItemMoveCallback; onLabelsChange?: WorkItemLabelChangeCallback; availableLabels?: string[]; maxVisibleLabels?: number; empty?: ReactNode; copy?: Partial<WorkItemCopy> }
+export function WorkItemList({ availableLabels, copy, empty = 'No work items match this view.', items, maxVisibleLabels, onLabelsChange, onMove, onOpen, onOpenProject, statusOptions = [] }: WorkItemListProps) {
   const text = resolveWorkItemCopy(copy)
   if (items.length === 0) return <section aria-label={text.listLabel} className="wm-work-item-list-empty" data-testid="work-items-empty">{empty}</section>
-  return <section aria-label={text.listLabel} className="wm-work-item-list" data-testid="work-list">{items.map(item => <WorkItemCard copy={copy} item={item} key={item.id} layout="list" onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} statusOptions={statusOptions} />)}</section>
+  return <section aria-label={text.listLabel} className="wm-work-item-list" data-testid="work-list">{items.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} item={item} key={item.id} layout="list" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} statusOptions={statusOptions} />)}</section>
 }
 
-export type WorkItemBoardProps = { items: WorkItemCardData[]; columns: WorkItemStatusOption[]; onOpen?: (item: WorkItemCardData) => void; onOpenProject?: (projectId: string) => void; onMove?: WorkItemMoveCallback; copy?: Partial<WorkItemCopy> }
-export function WorkItemBoard({ columns, items, onMove, onOpen, onOpenProject, copy }: WorkItemBoardProps) {
+export type WorkItemBoardProps = { items: WorkItemCardData[]; columns: WorkItemStatusOption[]; onOpen?: (item: WorkItemCardData) => void; onOpenProject?: (projectId: string) => void; onMove?: WorkItemMoveCallback; onLabelsChange?: WorkItemLabelChangeCallback; availableLabels?: string[]; maxVisibleLabels?: number; copy?: Partial<WorkItemCopy>; columnWidths?: Record<string, number>; onColumnWidthChange?: (columnId: string, width: number) => void; pannable?: boolean; minColumnWidth?: number; maxColumnWidth?: number }
+const DEFAULT_COLUMN_WIDTH = 320
+const MIN_COLUMN_WIDTH = 240
+const MAX_COLUMN_WIDTH = 600
+export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, items, maxColumnWidth = MAX_COLUMN_WIDTH, maxVisibleLabels, minColumnWidth = MIN_COLUMN_WIDTH, onColumnWidthChange, onLabelsChange, onMove, onOpen, onOpenProject, pannable = true }: WorkItemBoardProps) {
   const text = resolveWorkItemCopy(copy)
   const draggedItem = useRef<string | null>(null)
   const [pointerItem, setPointerItem] = useState<string | null>(null)
   const [dropColumn, setDropColumn] = useState<string | null>(null)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const panning = useRef<{ x: number; y: number; left: number; top: number } | null>(null)
+  const [isPanning, setIsPanning] = useState(false)
   const itemFor = (id: string | null) => id ? items.find(item => item.id === id) : undefined
   const moveTo = (column: WorkItemStatusOption, source: WorkItemMoveSource, id: string | null) => { const item = itemFor(id); draggedItem.current = null; setPointerItem(null); setDropColumn(null); if (item && item.statusId !== column.id) handlePresentationPromise(onMove ? () => onMove(item, column.id, source) : undefined) }
   const handleDrop = (column: WorkItemStatusOption, event: DragEvent<HTMLDivElement>) => { event.preventDefault(); moveTo(column, 'pointer', event.dataTransfer.getData('text/plain') || draggedItem.current) }
-  return <section aria-label={text.boardLabel} className="wm-work-item-board" data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`}>{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard copy={copy} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p></div> })}</div></section>
+  const startResize = (column: WorkItemStatusOption) => (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!onColumnWidthChange) return
+    event.preventDefault()
+    event.stopPropagation()
+    const startX = event.clientX
+    const startWidth = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH
+    const target = event.currentTarget
+    target.setPointerCapture(event.pointerId)
+    const onMovePointer = (moveEvent: PointerEvent) => {
+      const delta = moveEvent.clientX - startX
+      const next = Math.min(maxColumnWidth, Math.max(minColumnWidth, Math.round(startWidth + delta)))
+      onColumnWidthChange(column.id, next)
+    }
+    const onUpPointer = () => {
+      target.removeEventListener('pointermove', onMovePointer)
+      target.removeEventListener('pointerup', onUpPointer)
+      target.removeEventListener('pointercancel', onUpPointer)
+    }
+    target.addEventListener('pointermove', onMovePointer)
+    target.addEventListener('pointerup', onUpPointer)
+    target.addEventListener('pointercancel', onUpPointer)
+  }
+  const onPointerDownBoard = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!pannable) return
+    if (event.button !== 0) return
+    const target = event.target as HTMLElement
+    if (target.closest('.wm-work-item-card') || target.closest('.wm-work-item-status-control') || target.closest('button, select, a, input, textarea')) return
+    const scroller = scrollRef.current
+    if (!scroller) return
+    panning.current = { x: event.clientX, y: event.clientY, left: scroller.scrollLeft, top: scroller.scrollTop }
+    setIsPanning(true)
+    const target_el = event.currentTarget
+    target_el.setPointerCapture(event.pointerId)
+    const onMovePointer = (moveEvent: PointerEvent) => {
+      if (!panning.current || !scroller) return
+      scroller.scrollLeft = panning.current.left - (moveEvent.clientX - panning.current.x)
+      scroller.scrollTop = panning.current.top - (moveEvent.clientY - panning.current.y)
+    }
+    const onUpPointer = () => {
+      panning.current = null
+      setIsPanning(false)
+      target_el.removeEventListener('pointermove', onMovePointer)
+      target_el.removeEventListener('pointerup', onUpPointer)
+      target_el.removeEventListener('pointercancel', onUpPointer)
+    }
+    target_el.addEventListener('pointermove', onMovePointer)
+    target_el.addEventListener('pointerup', onUpPointer)
+    target_el.addEventListener('pointercancel', onUpPointer)
+  }
+  return <section aria-label={text.boardLabel} className={workItemClassNames('wm-work-item-board', isPanning && 'is-panning')} data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" onPointerDown={onPointerDownBoard} ref={scrollRef} role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); const statusCategory = column.category ?? 'unknown'; const width = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH; return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-status-category={statusCategory} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} style={{ flex: `0 0 ${width}px` }} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`} className="wm-column-count">{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p>{onColumnWidthChange ? <div aria-hidden className="wm-work-item-column-resize" onPointerDown={startResize(column)} title="拖动调整列宽"><span className="wm-work-item-column-resize-grip" /></div> : null}</div> })}</div></section>
 }
 
 export type WorkItemFilterValues = { search?: string; statusId?: string; priority?: string; responsibleHumanActorId?: string; ownerId?: string; projectId?: string; milestoneId?: string; label?: string; statusCategory?: string; mine?: boolean }
@@ -557,7 +825,22 @@ export function WorkItemFilters({ humans = [], milestones = [], onApplySavedView
   const setResponsibleHuman = (next: string) => onChange({ ...value, responsibleHumanActorId: next || undefined, ownerId: undefined, mine: undefined })
   const setProject = (next: string) => onChange({ ...value, projectId: next || undefined, milestoneId: undefined })
   const submitSavedView = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!savedViewName.trim() || !onCreateSavedView) return; handlePresentationPromise(() => onCreateSavedView(savedViewName.trim())); setSavedViewName('') }
-  return <section aria-label={text.filtersLabel} className="wm-work-item-filters"><label>{text.search}<input aria-label={text.search} onChange={event => set('search', event.currentTarget.value)} placeholder={text.searchPlaceholder} value={value.search ?? ''} /></label><label>{text.filterStatus}<select aria-label={text.filterStatus} onChange={event => set('statusId', event.currentTarget.value)} value={value.statusId ?? ''}><option value="">{text.allStatuses}</option>{statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.filterPriority}<select aria-label={text.filterPriority} onChange={event => set('priority', event.currentTarget.value)} value={value.priority ?? ''}><option value="">{text.allPriorities}</option>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label><label>{text.filterResponsibleHuman}<select aria-label={text.filterResponsibleHuman} onChange={event => setResponsibleHuman(event.currentTarget.value)} value={value.responsibleHumanActorId ?? value.ownerId ?? ''}><option value="">{text.allHumans}</option>{humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.filterProject}<select aria-label={text.filterProject} onChange={event => setProject(event.currentTarget.value)} value={value.projectId ?? ''}><option value="">{text.allProjects}</option>{projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.filterMilestone}<select aria-label={text.filterMilestone} disabled={!value.projectId} onChange={event => set('milestoneId', event.currentTarget.value)} value={value.milestoneId ?? ''}><option value="">{value.projectId ? text.allMilestones : text.selectProjectFirst}</option>{milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.filterLabel}<input aria-label={text.filterLabel} onChange={event => set('label', event.currentTarget.value)} placeholder={text.filterLabel} value={value.label ?? ''} /></label><div className="wm-work-item-filter-actions">{onClear && <Button icon={<FunnelXIcon size={16} weight="bold" />} onClick={onClear} type="button" variant="ghost">{text.clearFilters}</Button>}{savedViews.length > 0 && <label>{text.savedView}<select aria-label={text.savedView} defaultValue="" onChange={event => { if (event.currentTarget.value) onApplySavedView?.(event.currentTarget.value); event.currentTarget.value = '' }}><option value="">{text.savedView}</option>{savedViews.map(view => <option key={view.id} value={view.id}>{view.name}</option>)}</select></label>}{onCreateSavedView && <form className="wm-work-item-save-view" onSubmit={submitSavedView}><label className="wm-visually-hidden" htmlFor="wm-save-view-name">{text.saveViewName}</label><input id="wm-save-view-name" onChange={event => setSavedViewName(event.currentTarget.value)} placeholder={text.saveView} required value={savedViewName} /><Button icon={<FloppyDiskIcon size={16} weight="bold" />} type="submit">{text.saveView}</Button></form>}</div></section>
+  return <section aria-label={text.filtersLabel} className="wm-work-item-filters">
+    <div className="wm-work-item-filter-row">
+      <label>{text.search}<input aria-label={text.search} onChange={event => set('search', event.currentTarget.value)} placeholder={text.searchPlaceholder} value={value.search ?? ''} /></label>
+      <label>{text.filterStatus}<select aria-label={text.filterStatus} onChange={event => set('statusId', event.currentTarget.value)} value={value.statusId ?? ''}><option value="">{text.allStatuses}</option>{statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      <label>{text.filterPriority}<select aria-label={text.filterPriority} onChange={event => set('priority', event.currentTarget.value)} value={value.priority ?? ''}><option value="">{text.allPriorities}</option>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label>
+      <label>{text.filterResponsibleHuman}<select aria-label={text.filterResponsibleHuman} onChange={event => setResponsibleHuman(event.currentTarget.value)} value={value.responsibleHumanActorId ?? value.ownerId ?? ''}><option value="">{text.allHumans}</option>{humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      <label>{text.filterProject}<select aria-label={text.filterProject} onChange={event => setProject(event.currentTarget.value)} value={value.projectId ?? ''}><option value="">{text.allProjects}</option>{projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      <label>{text.filterMilestone}<select aria-label={text.filterMilestone} disabled={!value.projectId} onChange={event => set('milestoneId', event.currentTarget.value)} value={value.milestoneId ?? ''}><option value="">{value.projectId ? text.allMilestones : text.selectProjectFirst}</option>{milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      <label>{text.filterLabel}<input aria-label={text.filterLabel} onChange={event => set('label', event.currentTarget.value)} placeholder={text.filterLabel} value={value.label ?? ''} /></label>
+      {onClear && <Button icon={<FunnelXIcon size={16} weight="bold" />} onClick={onClear} type="button" variant="ghost">{text.clearFilters}</Button>}
+    </div>
+    {(savedViews.length > 0 || onCreateSavedView) && <div className="wm-work-item-filter-saved">
+      {savedViews.length > 0 && <label className="wm-work-item-saved-views">{text.savedView}<select aria-label={text.savedView} defaultValue="" onChange={event => { if (event.currentTarget.value) onApplySavedView?.(event.currentTarget.value); event.currentTarget.value = '' }}><option value="">{text.savedView}</option>{savedViews.map(view => <option key={view.id} value={view.id}>{view.name}</option>)}</select></label>}
+      {onCreateSavedView && <form className="wm-work-item-save-view" onSubmit={submitSavedView}><label className="wm-visually-hidden" htmlFor="wm-save-view-name">{text.saveViewName}</label><input id="wm-save-view-name" onChange={event => setSavedViewName(event.currentTarget.value)} placeholder={text.saveView} required value={savedViewName} /><Button icon={<FloppyDiskIcon size={16} weight="bold" />} type="submit">{text.saveView}</Button></form>}
+    </div>}
+  </section>
 }
 
 export type WorkSurfaceStateKind = 'initial' | 'loading' | 'ready' | 'empty' | 'refreshing' | 'forbidden' | 'conflict' | 'offline' | 'reconnecting' | 'error'

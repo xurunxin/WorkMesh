@@ -18,6 +18,8 @@
  *   - `operationsCopy`     — /operations page copy
  *   - `connectCopy`        — /connect onboarding page copy
  *   - `agentsCopy`         — /agents page copy
+ *   - `inboxCopy`          — Inbox panel copy
+ *   - `workRoomCopy`       — Work Room panel copy (session tree, leases, handoffs, decisions)
  *
  * The default locale is `zh-CN`. The English dictionaries may be left empty
  * for keys that are not yet translated; those fall through to the
@@ -272,6 +274,13 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
     filterResponsibleHuman: '负责人',
     filterStatus: '状态',
     filtersLabel: 'Issue 筛选器',
+    labelAddPlaceholder: '添加或修改标签…',
+    labelMenuAriaLabel: title => `${title} · 标签菜单`,
+    labelMenuEmpty: '没有可用的标签。',
+    labelMenuHeading: '标签',
+    labelMenuRemoveAll: '移除所有标签',
+    labelMenuSuggestions: '建议',
+    labelMoreCount: count => `+${count} 个标签`,
     loadMore: '加载更多 Issue',
     loading: '加载中…',
     moveItem: title => `移动 ${title}`,
@@ -444,6 +453,11 @@ export type SettingsCopy = {
   confirmDelete: (name: string) => string
   requestFailed: string
   categories: { backlog: string; planned: string; started: string; completed: string; canceled: string }
+  settingsTabsLabel: string
+  tabWorkspace: string
+  tabWorkspaceDescription: string
+  tabOperations: string
+  tabOperationsDescription: string
 }
 
 const settingsCopies: Record<Locale, SettingsCopy> = {
@@ -491,6 +505,11 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     confirmDelete: name => `确定删除团队 ${name}？删除后其工作将不可用。`,
     requestFailed: '操作失败。',
     categories: { backlog: '待办', planned: '已规划', started: '进行中', completed: '已完成', canceled: '已取消' },
+    settingsTabsLabel: '设置分区',
+    tabWorkspace: '工作区',
+    tabWorkspaceDescription: '团队、工作流状态与权限',
+    tabOperations: '运营与规划',
+    tabOperationsDescription: '周期、自动化与运行历史',
   },
   en: {
     loading: 'Loading Settings…',
@@ -536,6 +555,11 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     confirmDelete: name => `Delete team ${name}? Its work remains unavailable after this action.`,
     requestFailed: 'Something went wrong.',
     categories: { backlog: 'Backlog', planned: 'Planned', started: 'Started', completed: 'Completed', canceled: 'Canceled' },
+    settingsTabsLabel: 'Settings sections',
+    tabWorkspace: 'Workspace',
+    tabWorkspaceDescription: 'Teams, workflow states, and access',
+    tabOperations: 'Operations & Planning',
+    tabOperationsDescription: 'Cycles, automation, and run history',
   },
 }
 
@@ -917,6 +941,19 @@ export type ConnectCopy = {
   clientPi: string
   secretBoundary: string
   copySuccess: string
+  transport: string
+  profile: string
+  skill: string
+  environmentChecks: string
+  localStdioFallback: (label: string) => string
+  loadingStatus: string
+  handoffEyebrow: string
+  handoffTitle: string
+  handoffBody: string
+  copyLink: string
+  copiedLink: string
+  authorityTitle: string
+  authorityBody: string
 }
 
 const connectCopies: Record<Locale, ConnectCopy> = {
@@ -942,6 +979,19 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     clientPi: 'Pi',
     secretBoundary: '凭据边界：模板只包含环境变量名。请把兑换后的安装凭据放入客户端的密钥存储，永远不要写入此文件。',
     copySuccess: '复制成功',
+    transport: '传输',
+    profile: 'Profile',
+    skill: 'Skill',
+    environmentChecks: '环境检查',
+    localStdioFallback: label => `本地 stdio 兜底：${label}`,
+    loadingStatus: '正在加载服务端 MCP 配置…',
+    handoffEyebrow: '一次性交接',
+    handoffTitle: '配对链接已驻留在浏览器内存中',
+    handoffBody: '片段尚未发送到 WorkMesh。请仅把完整链接交给目标智能体，在过期前完成兑换，然后销毁该链接。',
+    copyLink: '复制安全连接 URL',
+    copiedLink: '已复制',
+    authorityTitle: '权限仍在服务端。',
+    authorityBody: '人类连接只会创建一个安装身份。普通写入仍需有效的智能体 Session、Delegation、能力与资源范围，并按需配合审批、Lease、版本与幂等键。',
   },
   en: {
     eyebrow: 'Secure Agent setup',
@@ -965,6 +1015,19 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     clientPi: 'Pi',
     secretBoundary: 'Secret boundary: the template contains only an environment-variable name. Put the redeemed installation credential in the client secret store, never in this file.',
     copySuccess: 'Copied successfully',
+    transport: 'Transport',
+    profile: 'Profile',
+    skill: 'Skill',
+    environmentChecks: 'Environment checks',
+    localStdioFallback: label => `Local stdio fallback: ${label}`,
+    loadingStatus: 'Loading server-derived MCP configuration…',
+    handoffEyebrow: 'One-time handoff',
+    handoffTitle: 'Pairing link is present in browser memory',
+    handoffBody: 'The fragment has not been sent to WorkMesh. Give the exact link only to the intended Agent, redeem it before expiry, and then discard it.',
+    copyLink: 'Copy secure connect URL',
+    copiedLink: 'Copied',
+    authorityTitle: 'Authority stays server-side.',
+    authorityBody: 'A Human Connection creates an installation identity only. Ordinary mutations still require an active Agent Session, Delegation, capability and resource scope, plus approval, lease, revision, and idempotency where applicable.',
   },
 }
 
@@ -1034,6 +1097,17 @@ export type AgentsCopy = {
   updateGrant: string
   grantAccess: string
   revoke: string
+  // Team access chip view
+  teamAccessViewRequested: string
+  teamAccessViewApproved: string
+  teamAccessViewLabel: string
+  teamAccessEmptyRequested: string
+  teamAccessNoSelection: string
+  teamAccessSelectedCount: (count: number) => string
+  teamAccessToggleHint: string
+  teamAccessApprovedChipLabel: (capability: string) => string
+  teamAccessRequestedChipLabel: (capability: string) => string
+  saveAccess: string
   // Approval inbox panel
   riskLabel: (risk: string) => string
   reviewSession: string
@@ -1047,6 +1121,78 @@ export type AgentsCopy = {
   loadMoreTeams: string
   loadMoreApprovals: string
   loadMoreSessions: string
+  // Agent Connections panel
+  connectionsEyebrow: string
+  connectionsTitle: string
+  connectionsIntro: string
+  refreshConnections: string
+  newConnection: string
+  adminRequiredHint: string
+  unableToLoadConnections: string
+  retryLoadHint: string
+  loadingConnections: string
+  noConnectionsTitle: string
+  noConnectionsHint: string
+  existingConnections: string
+  unavailableTeam: string
+  // Connection diagnostic facts
+  teamScope: string
+  principalHuman: string
+  credential: string
+  lastUsed: string
+  capabilities: string
+  noCapabilities: string
+  skill: string
+  credentialSafety: string
+  rotateCredential: string
+  confirmRotation: string
+  revokeConnection: string
+  // MCP onboarding panel
+  mcpOnboardingEyebrow: string
+  mcpOnboardingTitle: string
+  mcpOnboardingIntro: (client: string) => string
+  mcpLoading: string
+  mcpEndpoint: string
+  mcpDiscovery: string
+  mcpTransport: string
+  mcpProfile: string
+  mcpAuthReadiness: string
+  mcpAuthActive: string
+  mcpAuthPending: string
+  mcpCapabilitySummary: string
+  mcpSkillSelector: string
+  secretSafeConfig: (file: string) => string
+  localStdioFallback: string
+  copyConfig: string
+  configCopied: string
+  bootstrapChecklist: string
+  // Handoff instructions
+  handoffEyebrow: string
+  handoffTitle: string
+  handoffIntro: string
+  copyFullInstructions: string
+  handoffExpiryNote: string
+  // Create dialog
+  newConnectionTitle: string
+  fieldClient: string
+  fieldAgentName: string
+  fieldAgentSlug: string
+  fieldTeam: string
+  fieldPrincipal: string
+  fieldAgentDelegate: string
+  fieldNotes: string
+  cancel: string
+  generateConnection: string
+  // Item kind labels
+  intentLabel: (kind: string) => string
+  unavailable: string
+  notReported: string
+  // Status pills
+  connectionStatusActive: string
+  connectionStatusPending: string
+  connectionStatusRotating: string
+  connectionStatusRevoked: string
+  credentialPending: string
 }
 
 const agentsCopies: Record<Locale, AgentsCopy> = {
@@ -1114,6 +1260,16 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     updateGrant: '更新授权',
     grantAccess: '授予访问',
     revoke: '撤销',
+    teamAccessViewRequested: '已申请',
+    teamAccessViewApproved: '已批准',
+    teamAccessViewLabel: '能力视图',
+    teamAccessEmptyRequested: '该智能体尚未声明任何能力。',
+    teamAccessNoSelection: '未选择任何能力，点击上方 chip 进行切换。',
+    teamAccessSelectedCount: count => `已选 ${count} 项`,
+    teamAccessToggleHint: '点击 chip 进行切换；点击「保存」写入授权。',
+    teamAccessApprovedChipLabel: capability => `已批准 ${capability}`,
+    teamAccessRequestedChipLabel: capability => `已申请 ${capability}`,
+    saveAccess: '保存授权',
     riskLabel: risk => `${risk} 级风险`,
     reviewSession: '查看 Session 与证据',
     sessionLabel: id => `Session ${id}`,
@@ -1124,6 +1280,72 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     loadMoreTeams: '加载更多团队',
     loadMoreApprovals: '加载更多审批',
     loadMoreSessions: '加载更多 Session',
+    // Agent Connections panel
+    connectionsEyebrow: '智能体访问',
+    connectionsTitle: '连接',
+    connectionsIntro: '可审计的 MCP 身份；显式的人类所有权与可撤销的团队权限。',
+    refreshConnections: '刷新连接',
+    newConnection: '新建连接',
+    adminRequiredHint: '需要工作区管理员权限才能创建或轮换连接。',
+    unableToLoadConnections: '无法加载连接。',
+    retryLoadHint: '现有连接可能仍然有效，请重试后再考虑新建。',
+    loadingConnections: '正在加载连接…',
+    noConnectionsTitle: '暂无连接',
+    noConnectionsHint: '新建一个连接以查看其生命周期诊断。凭据永远不会在此页面渲染。',
+    existingConnections: '现有连接',
+    unavailableTeam: '团队不可用',
+    teamScope: '团队作用域',
+    principalHuman: '负责人',
+    credential: '凭据',
+    lastUsed: '最近使用',
+    capabilities: '已授予能力',
+    noCapabilities: '未授予任何能力',
+    skill: '技能',
+    credentialSafety: '凭据安全：会话与安装令牌始终留在服务端。此页面仅暴露非敏感的指纹供支持与审计使用。',
+    rotateCredential: '轮换凭据',
+    confirmRotation: '确认完成轮换',
+    revokeConnection: '撤销连接',
+    mcpOnboardingEyebrow: 'MCP 接入',
+    mcpOnboardingTitle: '配置与实时检查',
+    mcpOnboardingIntro: client => `${client} 的服务端接入事实。不会渲染任何 bearer 或安装凭据。`,
+    mcpLoading: '正在检查',
+    mcpEndpoint: 'MCP 端点',
+    mcpDiscovery: '发现端点',
+    mcpTransport: '传输',
+    mcpProfile: '客户端 Profile',
+    mcpAuthReadiness: '认证就绪',
+    mcpAuthActive: '安装凭据已激活',
+    mcpAuthPending: '等待配对',
+    mcpCapabilitySummary: '能力摘要',
+    mcpSkillSelector: '技能选择器',
+    secretSafeConfig: file => `仅含环境变量名的 ${file}`,
+    localStdioFallback: '本地 stdio 回退：',
+    copyConfig: '复制配置',
+    configCopied: '已复制',
+    bootstrapChecklist: '智能体引导清单',
+    handoffEyebrow: '一次性接入',
+    handoffTitle: '智能体接入步骤',
+    handoffIntro: '将完整流程复制到目标智能体。文档区分一次性配对码与长期安装令牌，并包含必要的验证门禁。',
+    copyFullInstructions: '复制完整步骤',
+    handoffExpiryNote: '配对 URL 十分钟内有效，且只在此浏览器会话显示。过期后请生成新的轮换。',
+    newConnectionTitle: '新建智能体连接',
+    fieldClient: '客户端',
+    fieldAgentName: '智能体名称',
+    fieldAgentSlug: '智能体标识',
+    fieldTeam: '团队',
+    fieldPrincipal: '负责人',
+    fieldAgentDelegate: '允许此协调员启动已批准的智能体',
+    fieldNotes: '备注',
+    cancel: '取消',
+    generateConnection: '生成连接语句',
+    intentLabel: kind => ({ ask: '提问', answer: '回答', propose: '提议', decide: '决策', claim: '认领', handoff: '交接', blocker: '阻塞', review_request: '审阅请求', review_result: '审阅结果', status: '状态', inform: '通知' }[kind] ?? kind),
+    unavailable: '不可用',
+    notReported: '未提供',
+    connectionStatusActive: '已启用',
+    connectionStatusPending: '等待中',
+    connectionStatusRotating: '轮换中',
+    connectionStatusRevoked: '已撤销',
+    credentialPending: '等待中',
   },
   en: {
     agents: 'Agents',
@@ -1189,6 +1411,16 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     updateGrant: 'Update grant',
     grantAccess: 'Grant access',
     revoke: 'Revoke',
+    teamAccessViewRequested: 'Requested',
+    teamAccessViewApproved: 'Approved',
+    teamAccessViewLabel: 'Capability view',
+    teamAccessEmptyRequested: 'This agent has not declared any capabilities yet.',
+    teamAccessNoSelection: 'No capabilities selected. Tap a chip to toggle.',
+    teamAccessSelectedCount: count => `${count} selected`,
+    teamAccessToggleHint: 'Tap a chip to toggle; press Save to commit the grant.',
+    teamAccessApprovedChipLabel: capability => `Approved ${capability}`,
+    teamAccessRequestedChipLabel: capability => `Requested ${capability}`,
+    saveAccess: 'Save grant',
     riskLabel: risk => `${risk} risk`,
     reviewSession: 'Review session and evidence',
     sessionLabel: id => `Session ${id}`,
@@ -1199,6 +1431,1167 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     loadMoreTeams: 'Load more teams',
     loadMoreApprovals: 'Load more approvals',
     loadMoreSessions: 'Load more sessions',
+    connectionsEyebrow: 'Agent access',
+    connectionsTitle: 'Connections',
+    connectionsIntro: 'Scoped MCP identities with visible Human ownership and revocable Team authority.',
+    refreshConnections: 'Refresh connections',
+    newConnection: 'New connection',
+    adminRequiredHint: 'Workspace Admin access is required to create or rotate Connections.',
+    unableToLoadConnections: 'Unable to load Connections.',
+    retryLoadHint: 'Existing Connections may still be active. Retry before creating a replacement.',
+    loadingConnections: 'Loading Connections…',
+    noConnectionsTitle: 'No Connections yet',
+    noConnectionsHint: 'Create a Connection to see safe lifecycle diagnostics here. Credentials are never rendered in this dashboard.',
+    existingConnections: 'Existing Connections',
+    unavailableTeam: 'Unavailable Team',
+    teamScope: 'Team scope',
+    principalHuman: 'Principal Human',
+    credential: 'Credential',
+    lastUsed: 'Last used',
+    capabilities: 'Capabilities',
+    noCapabilities: 'None granted',
+    skill: 'Skill',
+    credentialSafety: 'Credential safety: session and installation tokens stay server-side. This screen exposes only a non-secret fingerprint for support and audit.',
+    rotateCredential: 'Rotate credential',
+    confirmRotation: 'Confirm verified rotation',
+    revokeConnection: 'Revoke connection',
+    mcpOnboardingEyebrow: 'MCP onboarding',
+    mcpOnboardingTitle: 'Configuration and live checks',
+    mcpOnboardingIntro: client => `Server-derived setup facts for ${client}. No bearer or installation credential is rendered.`,
+    mcpLoading: 'Loading',
+    mcpEndpoint: 'MCP endpoint',
+    mcpDiscovery: 'Discovery',
+    mcpTransport: 'Transport',
+    mcpProfile: 'Client Profile',
+    mcpAuthReadiness: 'Auth readiness',
+    mcpAuthActive: 'Installation credential active',
+    mcpAuthPending: 'Awaiting pairing',
+    mcpCapabilitySummary: 'Capability summary',
+    mcpSkillSelector: 'Skill selector',
+    secretSafeConfig: file => `Secret-safe ${file}`,
+    localStdioFallback: 'Local stdio fallback:',
+    copyConfig: 'Copy config',
+    configCopied: 'Copied',
+    bootstrapChecklist: 'Agent bootstrap checklist',
+    handoffEyebrow: 'One-time setup',
+    handoffTitle: 'Agent handoff instructions',
+    handoffIntro: 'Copy the complete procedure to the selected Agent. It distinguishes the one-time pairing code from the long-lived Installation Token and includes the required verification gates.',
+    copyFullInstructions: 'Copy full instructions',
+    handoffExpiryNote: 'The pairing URL expires in ten minutes and is shown only in this browser session. Generate a new rotation instead of reusing an expired or previously redeemed URL.',
+    newConnectionTitle: 'New Agent Connection',
+    fieldClient: 'Client',
+    fieldAgentName: 'Agent name',
+    fieldAgentSlug: 'Agent slug',
+    fieldTeam: 'Team',
+    fieldPrincipal: 'Principal Human',
+    fieldAgentDelegate: 'Allow this coordinator to start approved Agents',
+    fieldNotes: 'Notes',
+    cancel: 'Cancel',
+    generateConnection: 'Generate connection sentence',
+    intentLabel: kind => kind.replaceAll('_', ' '),
+    unavailable: 'Unavailable',
+    notReported: 'not reported',
+    connectionStatusActive: 'active',
+    connectionStatusPending: 'pending',
+    connectionStatusRotating: 'rotating',
+    connectionStatusRevoked: 'revoked',
+    credentialPending: 'Pending',
+  },
+}
+
+export type InboxCopy = {
+  title: string
+  intro: string
+  status: string
+  statusOpen: string
+  statusResolved: string
+  empty: string
+  loadError: string
+  acknowledgeError: string
+  acknowledging: string
+  acknowledge: string
+  openWorkRoom: string
+  // Item fact labels
+  source: string
+  risk: string
+  deadline: string
+  itemStatus: string
+  responsibleHuman: string
+  context: string
+  currentHuman: string
+  inspectCanonical: string
+  notReported: string
+  intentLabel: (kind: string) => string
+  // Notification feedback panel
+  feedbackTitle: string
+  feedbackIntro: string
+  refresh: string
+  noFeedbackTitle: string
+  noFeedbackHint: string
+  preferencesTitle: string
+  preferencesRevision: (revision: number) => string
+  channels: string
+  digest: string
+  minimumPriority: string
+  webhook: string
+  webhookUnavailable: string
+  webhookConfigured: string
+  revisionFallback: string
+  credentialPending: string
+  // Collaboration state panel (status copy)
+  stateLoadingTitle: string
+  stateLoadingBody: string
+  stateEmptyTitle: string
+  stateEmptyBody: string
+  stateForbiddenTitle: string
+  stateForbiddenBody: string
+  stateErrorTitle: string
+  stateErrorBody: string
+  stateConflictTitle: string
+  stateConflictBody: string
+  stateExpiredTitle: string
+  stateExpiredBody: string
+  stateReconnectingTitle: string
+  stateReconnectingBody: string
+  preferencesLoadError: string
+  noDeliveryChannel: string
+  deliveryFailed: string
+  deliveryRecordedError: string
+}
+
+const inboxCopies: Record<Locale, InboxCopy> = {
+  'zh-CN': {
+    title: '收件箱',
+    intro: '需要人类响应或审阅的请求。',
+    status: '状态',
+    statusOpen: '待处理',
+    statusResolved: '已处理',
+    empty: '当前没有待处理的提问、审阅请求、阻塞或交接。',
+    loadError: '无法加载收件箱。',
+    acknowledgeError: '无法确认此收件箱条目。',
+    acknowledging: '确认中…',
+    acknowledge: '确认',
+    openWorkRoom: '打开工作会话',
+    source: '来源',
+    risk: '风险',
+    deadline: '截止 / 过期',
+    itemStatus: '状态',
+    responsibleHuman: '负责人',
+    context: '上下文',
+    currentHuman: '当前人类',
+    inspectCanonical: '打开权威源以查看记录上下文。',
+    notReported: '未提供',
+    intentLabel: kind => ({ ask: '提问', answer: '回答', propose: '提议', decide: '决策', claim: '认领', handoff: '交接', blocker: '阻塞', review_request: '审阅请求', review_result: '审阅结果', status: '状态', inform: '通知' }[kind] ?? kind),
+    feedbackTitle: '通知反馈',
+    feedbackIntro: '偏好与投递结果分别由服务端持久化。',
+    refresh: '刷新',
+    noFeedbackTitle: '暂无投递反馈',
+    noFeedbackHint: '协作请求仍会出现在上方的收件箱中。',
+    preferencesTitle: '投递偏好',
+    preferencesRevision: revision => `版本 ${revision}`,
+    channels: '渠道',
+    digest: '摘要',
+    minimumPriority: '最低优先级',
+    webhook: 'Webhook',
+    webhookUnavailable: '不可用 / 已停用',
+    webhookConfigured: '已配置（密钥已隐藏）',
+    revisionFallback: '未知',
+    credentialPending: '等待中',
+    stateLoadingTitle: '正在加载协作信号',
+    stateLoadingBody: '读取持久化的通知与偏好事实。',
+    stateEmptyTitle: '暂无投递反馈',
+    stateEmptyBody: '协作请求仍会出现在上方的收件箱中。',
+    stateForbiddenTitle: '协作反馈不可访问',
+    stateForbiddenBody: '当前人类 Session 没有读取这些事实的权限。',
+    stateErrorTitle: '无法加载协作反馈',
+    stateErrorBody: '重试权威读取；不会重放任何写入。',
+    stateConflictTitle: '协作事实已变更',
+    stateConflictBody: '在做出下一次决策前重新加载当前服务端事实。',
+    stateExpiredTitle: '审批已过期',
+    stateExpiredBody: '重新加载收件箱以查看持久化的当前状态。',
+    stateReconnectingTitle: '正在重连持久化协作事实',
+    stateReconnectingBody: '重连期间既有服务端事实保持可见。',
+    preferencesLoadError: '无法加载通知偏好。',
+    noDeliveryChannel: '未配置投递渠道',
+    deliveryFailed: '投递失败。保存偏好不会让本次投递成功；重试仍由服务端控制。',
+    deliveryRecordedError: '已记录错误',
+  },
+  en: {
+    title: 'Inbox',
+    intro: 'Requests that require a human response or review.',
+    status: 'Status',
+    statusOpen: 'Open',
+    statusResolved: 'Resolved',
+    empty: 'No open asks, review requests, blockers, or handoffs.',
+    loadError: 'Unable to load the Inbox.',
+    acknowledgeError: 'Unable to acknowledge this Inbox item.',
+    acknowledging: 'Acknowledging…',
+    acknowledge: 'Acknowledge',
+    openWorkRoom: 'Open Work Room',
+    source: 'Source',
+    risk: 'Risk',
+    deadline: 'Deadline / expiry',
+    itemStatus: 'Status',
+    responsibleHuman: 'Responsible Human',
+    context: 'Context',
+    currentHuman: 'current Human',
+    inspectCanonical: 'Inspect the canonical source.',
+    notReported: 'not reported',
+    intentLabel: kind => kind.replaceAll('_', ' '),
+    feedbackTitle: 'Notification feedback',
+    feedbackIntro: 'Preferences and delivery outcomes are separate server facts.',
+    refresh: 'Refresh',
+    noFeedbackTitle: 'No delivery feedback yet',
+    noFeedbackHint: 'Collaboration requests still appear in the Inbox above.',
+    preferencesTitle: 'Delivery preferences',
+    preferencesRevision: revision => `Revision ${revision}`,
+    channels: 'Channels',
+    digest: 'Digest',
+    minimumPriority: 'Minimum priority',
+    webhook: 'Webhook',
+    webhookUnavailable: 'Unavailable / disabled',
+    webhookConfigured: 'Configured (secret hidden)',
+    revisionFallback: 'unknown',
+    credentialPending: 'Pending',
+    stateLoadingTitle: 'Loading collaboration signals',
+    stateLoadingBody: 'Reading durable notification and preference facts.',
+    stateEmptyTitle: 'No delivery feedback yet',
+    stateEmptyBody: 'Collaboration requests still appear in the Inbox above.',
+    stateForbiddenTitle: 'Collaboration feedback is unavailable',
+    stateForbiddenBody: 'This Human session is not authorized to read these facts.',
+    stateErrorTitle: 'Unable to load collaboration feedback',
+    stateErrorBody: 'Retry the canonical reads; no mutation will be replayed.',
+    stateConflictTitle: 'Collaboration facts changed',
+    stateConflictBody: 'Reload current server facts before making another decision.',
+    stateExpiredTitle: 'The approval expired',
+    stateExpiredBody: 'Reload the Inbox to see its durable current status.',
+    stateReconnectingTitle: 'Reconnecting to durable collaboration facts',
+    stateReconnectingBody: 'Existing server facts remain visible while the connection recovers.',
+    preferencesLoadError: 'Unable to load notification preferences.',
+    noDeliveryChannel: 'No delivery channel',
+    deliveryFailed: 'Delivery failed. Saving preferences did not make this delivery successful; retry remains server-owned.',
+    deliveryRecordedError: 'error recorded',
+  },
+}
+
+export type SessionDetailCopy = {
+  loading: string
+  headerTitle: (id: string) => string
+  compactTitle: string
+  resume: string
+  pause: string
+  retry: string
+  stop: string
+  details: string
+  factState: string
+  factPrincipal: string
+  factSession: string
+  factCurrentStep: string
+  factHeartbeat: string
+  factBudget: string
+  notReported: string
+  maxRuntimeSeconds: (seconds: number) => string
+  defaultPolicy: string
+  promptTitle: string
+  promptPlaceholder: string
+  sendPrompt: string
+  approvalInboxTitle: string
+  approvalInboxEmpty: string
+  approvalExpires: (date: string) => string
+  approvalRisk: (level: string) => string
+  approve: string
+  reject: string
+  planVersionsTitle: string
+  planCurrent: string
+  planCompareWith: string
+  planNoPlan: string
+  planStepChangedTitle: (from: number, to: number) => string
+  planAdded: (title: string) => string
+  planRemoved: (title: string) => string
+  planChanged: (previous: string, status: string) => string
+  planRenamed: (previous: string, next: string) => string
+  acceptanceCriteria: (criteria: string) => string
+  activityTitle: string
+  showHeartbeats: string
+  activityFilterAll: string
+  activityFilterActions: string
+  activityFilterQuestions: string
+  activityFilterEvidence: string
+  activityFilterErrors: string
+  activityEmpty: string
+  activityTool: (tool: string, status: string) => string
+  artifactsTitle: string
+  artifactsEmpty: string
+  loadError: string
+  updateError: string
+  promptError: string
+  decideError: string
+  retryError: string
+  loadMoreApprovals: string
+  loadMorePlans: string
+  loadMoreActivities: string
+  loadMoreArtifacts: string
+  planStepStatus: (status: string) => string
+  activityKind: (kind: string) => string
+}
+
+const sessionDetailCopies: Record<Locale, SessionDetailCopy> = {
+  'zh-CN': {
+    loading: '正在加载智能体 Session…',
+    headerTitle: id => `Session ${id}`,
+    compactTitle: '智能体执行',
+    resume: '继续',
+    pause: '暂停',
+    retry: '重试',
+    stop: '停止',
+    details: '详情',
+    factState: '状态',
+    factPrincipal: '负责人类',
+    factSession: 'Session',
+    factCurrentStep: '当前步骤',
+    factHeartbeat: '心跳',
+    factBudget: '预算',
+    notReported: '未提供',
+    maxRuntimeSeconds: seconds => `${seconds}s 最大运行时长`,
+    defaultPolicy: '默认策略',
+    promptTitle: '向智能体发送指令',
+    promptPlaceholder: '给智能体补充上下文或方向',
+    sendPrompt: '发送指令',
+    approvalInboxTitle: '审批收件箱',
+    approvalInboxEmpty: '暂无待处理审批。',
+    approvalExpires: date => `${date} 过期`,
+    approvalRisk: level => `${level} 级风险`,
+    approve: '通过',
+    reject: '驳回',
+    planVersionsTitle: '计划版本',
+    planCurrent: '当前',
+    planCompareWith: '对比',
+    planNoPlan: '尚未发布计划。',
+    planStepChangedTitle: (from, to) => `v${from} 与 v${to} 之间没有步骤变化。`,
+    planAdded: title => `已新增：${title}`,
+    planRemoved: title => `已删除：${title}`,
+    planChanged: (previous, status) => `已变更：${previous} · 状态 ${status}`,
+    planRenamed: (previous, next) => `已重命名：${previous} → ${next}`,
+    acceptanceCriteria: criteria => `验收标准：${criteria}`,
+    activityTitle: '活动',
+    showHeartbeats: '显示心跳',
+    activityFilterAll: '全部',
+    activityFilterActions: '动作',
+    activityFilterQuestions: '提问',
+    activityFilterEvidence: '证据',
+    activityFilterErrors: '错误',
+    activityEmpty: '暂无匹配活动。心跳默认隐藏。',
+    activityTool: (tool, status) => `工具：${tool} · ${status}`,
+    artifactsTitle: '制品与证据',
+    artifactsEmpty: '尚未发布制品。',
+    loadError: '无法加载此 Session。',
+    updateError: '无法更新此 Session。',
+    promptError: '无法发送指令。',
+    decideError: '无法处理审批。',
+    retryError: '无法重试此 Session。',
+    loadMoreApprovals: '加载更多审批',
+    loadMorePlans: '加载更多计划',
+    loadMoreActivities: '加载更多活动',
+    loadMoreArtifacts: '加载更多制品',
+    planStepStatus: status => status.replaceAll('_', ' '),
+    activityKind: kind => kind.replaceAll('_', ' '),
+  },
+  en: {
+    loading: 'Loading agent session…',
+    headerTitle: id => `Session ${id}`,
+    compactTitle: 'Agent execution',
+    resume: 'Resume',
+    pause: 'Pause',
+    retry: 'Retry',
+    stop: 'Stop',
+    details: 'Details',
+    factState: 'State',
+    factPrincipal: 'Principal Human',
+    factSession: 'Session',
+    factCurrentStep: 'Current step',
+    factHeartbeat: 'Heartbeat',
+    factBudget: 'Budget',
+    notReported: 'Not reported',
+    maxRuntimeSeconds: seconds => `${seconds}s max runtime`,
+    defaultPolicy: 'Default policy',
+    promptTitle: 'Prompt the agent',
+    promptPlaceholder: 'Give the agent additional context or direction',
+    sendPrompt: 'Send prompt',
+    approvalInboxTitle: 'Approval inbox',
+    approvalInboxEmpty: 'No pending approvals.',
+    approvalExpires: date => `Expires ${date}`,
+    approvalRisk: level => `${level} risk`,
+    approve: 'Approve',
+    reject: 'Reject',
+    planVersionsTitle: 'Plan versions',
+    planCurrent: 'Current',
+    planCompareWith: 'Compare with',
+    planNoPlan: 'No plan has been published.',
+    planStepChangedTitle: (from, to) => `No step changes between v${from} and v${to}.`,
+    planAdded: title => `Added: ${title}`,
+    planRemoved: title => `Removed: ${title}`,
+    planChanged: (previous, status) => `Changed: ${previous} · ${status}`,
+    planRenamed: (previous, next) => `Renamed: ${previous} → ${next}`,
+    acceptanceCriteria: criteria => `Acceptance: ${criteria}`,
+    activityTitle: 'Activity',
+    showHeartbeats: 'Show heartbeats',
+    activityFilterAll: 'All',
+    activityFilterActions: 'Actions',
+    activityFilterQuestions: 'Questions',
+    activityFilterEvidence: 'Evidence',
+    activityFilterErrors: 'Errors',
+    activityEmpty: 'No matching activity. Heartbeats are hidden by default.',
+    activityTool: (tool, status) => `Tool: ${tool} · ${status}`,
+    artifactsTitle: 'Artifacts & evidence',
+    artifactsEmpty: 'No artifacts published yet.',
+    loadError: 'Unable to load this session.',
+    updateError: 'Unable to update this session.',
+    promptError: 'Unable to send prompt.',
+    decideError: 'Unable to decide approval.',
+    retryError: 'Unable to retry this session.',
+    loadMoreApprovals: 'Load more approvals',
+    loadMorePlans: 'Load more plan versions',
+    loadMoreActivities: 'Load more activities',
+    loadMoreArtifacts: 'Load more artifacts',
+    planStepStatus: status => status.replaceAll('_', ' '),
+    activityKind: kind => kind.replaceAll('_', ' '),
+  },
+}
+
+export type AgentWorkCopy = {
+  liveAgents: string
+  liveAgentsHint: string
+  delegate: string
+  delegateUnavailableReason: (reason: string) => string
+  delegateFormAgent: string
+  delegateFormAgentPlaceholder: string
+  delegateFormInitialPrompt: string
+  delegateFormInitialPromptPlaceholder: string
+  delegateFormStart: string
+  noSessions: string
+  blockingReasonMissing: string
+  heartbeat: (date: string) => string
+  resume: string
+  pause: string
+  retry: string
+  stop: string
+  details: string
+  availableAgentsLabel: string
+  workItemSessionsLabel: string
+  updateError: string
+  delegateError: string
+  retryError: string
+  noActiveAgents: string
+  noActiveGrant: string
+  noSharedDefinition: string
+  projectionCurrentStep: string
+  projectionPendingApprovals: string
+  projectionStatus: string
+  projectionFailedHint: string
+  capabilitiesLine: (provider: string, capabilities: string) => string
+  notReported: string
+  unavail: (reason: string) => string
+  badgeAria: (state: string) => string
+  projectionFailedStatus: string
+}
+
+const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
+  'zh-CN': {
+    liveAgents: '在线智能体',
+    liveAgentsHint: 'Session 从持久化服务端状态刷新。',
+    delegate: '委派',
+    delegateUnavailableReason: reason => `无可用智能体：${reason}`,
+    delegateFormAgent: '智能体',
+    delegateFormAgentPlaceholder: '选择本团队已批准的智能体',
+    delegateFormInitialPrompt: '初始指令',
+    delegateFormInitialPromptPlaceholder: '该智能体应当做什么？',
+    delegateFormStart: '启动 Session',
+    noSessions: '尚未委派任何智能体 Session。',
+    blockingReasonMissing: '未报告阻塞原因。',
+    heartbeat: date => `心跳：${date}`,
+    resume: '继续',
+    pause: '暂停',
+    retry: '重试',
+    stop: '停止',
+    details: '详情',
+    availableAgentsLabel: '加载更多智能体',
+    workItemSessionsLabel: '加载更多 Session',
+    updateError: '无法更新 Session。',
+    delegateError: '无法委派工作。',
+    retryError: '无法重试此 Session。',
+    noActiveAgents: '没有已注册的活跃智能体。',
+    noActiveGrant: '没有智能体对本 Issue 团队持有活跃授权。',
+    noSharedDefinition: '没有同时被定义和本团队批准的能力。',
+    projectionCurrentStep: '当前计划步骤',
+    projectionPendingApprovals: '待处理审批',
+    projectionStatus: '预测状态',
+    projectionFailedHint: '计划或审批预测不可用，请打开详情页重试。',
+    capabilitiesLine: (provider, capabilities) => `${provider} · ${capabilities}`,
+    notReported: '未提供',
+    unavail: reason => `不可用：${reason}`,
+    badgeAria: state => `智能体 Session 状态：${state}`,
+    projectionFailedStatus: '预测失败',
+  },
+  en: {
+    liveAgents: 'Live agents',
+    liveAgentsHint: 'Sessions are refreshed from durable server state.',
+    delegate: 'Delegate',
+    delegateUnavailableReason: reason => `No delegatable agent: ${reason}`,
+    delegateFormAgent: 'Agent',
+    delegateFormAgentPlaceholder: 'Choose an agent approved for this team',
+    delegateFormInitialPrompt: 'Initial prompt',
+    delegateFormInitialPromptPlaceholder: 'What should this agent do?',
+    delegateFormStart: 'Start session',
+    noSessions: 'No delegated agent session yet.',
+    blockingReasonMissing: 'No blocking reason reported.',
+    heartbeat: date => `Heartbeat: ${date}`,
+    resume: 'Resume',
+    pause: 'Pause',
+    retry: 'Retry',
+    stop: 'Stop',
+    details: 'Details',
+    availableAgentsLabel: 'available agents',
+    workItemSessionsLabel: 'work item sessions',
+    updateError: 'Unable to update session.',
+    delegateError: 'Unable to delegate work.',
+    retryError: 'Unable to retry this session.',
+    noActiveAgents: 'No active agents are registered.',
+    noActiveGrant: 'No active agent has an active grant for this work item team.',
+    noSharedDefinition: 'No active agent has capabilities approved by both its definition and this team.',
+    projectionCurrentStep: 'Current plan step',
+    projectionPendingApprovals: 'Pending approvals',
+    projectionStatus: 'Projection status',
+    projectionFailedHint: 'Plan or approval projection unavailable. Open Details to retry.',
+    capabilitiesLine: (provider, capabilities) => `${provider} · ${capabilities}`,
+    notReported: 'Not reported',
+    unavail: reason => `unavailable: ${reason}`,
+    badgeAria: state => `Agent session ${state}`,
+    projectionFailedStatus: 'Projection failed',
+  },
+}
+
+export type RelationsCopy = {
+  eyebrow: string
+  title: string
+  empty: string
+  related: string
+  blocks: string
+  blockedBy: string
+  remove: string
+  fieldKind: string
+  kindBlocks: string
+  kindRelated: string
+  fieldWorkItem: string
+  fieldWorkItemPlaceholder: string
+  add: string
+  loadMore: string
+  reload: string
+  conflictTitle: string
+  conflictAction: string
+}
+
+const relationsCopies: Record<Locale, RelationsCopy> = {
+  'zh-CN': {
+    eyebrow: '依赖',
+    title: '阻塞与关联工作',
+    empty: '暂无阻塞或关联 Work Item。',
+    related: '关联到',
+    blocks: '阻塞',
+    blockedBy: '被阻塞于',
+    remove: '移除',
+    fieldKind: '关系',
+    kindBlocks: '阻塞',
+    kindRelated: '关联',
+    fieldWorkItem: 'Work Item',
+    fieldWorkItemPlaceholder: '选择 Work Item',
+    add: '添加关系',
+    loadMore: '加载更多关系',
+    reload: '重新加载关系',
+    conflictTitle: '关系已变更',
+    conflictAction: '服务端已写入新版本，重新加载后重试。',
+  },
+  en: {
+    eyebrow: 'Dependencies',
+    title: 'Blockers and related work',
+    empty: 'No blockers or related Work Items.',
+    related: 'Related to',
+    blocks: 'Blocks',
+    blockedBy: 'Blocked by',
+    remove: 'Remove',
+    fieldKind: 'Relationship',
+    kindBlocks: 'Blocks',
+    kindRelated: 'Related',
+    fieldWorkItem: 'Work Item',
+    fieldWorkItemPlaceholder: 'Select Work Item',
+    add: 'Add relationship',
+    loadMore: 'Load more relations',
+    reload: 'Reload relations',
+    conflictTitle: 'Relations changed',
+    conflictAction: 'A newer version was written server-side. Reload to continue.',
+  },
+}
+
+export type EvidenceCopy = {
+  metaTitle: string
+  eyebrow: string
+  title: string
+  intro: string
+  nav: string
+  conflict: string
+  expired: string
+  returnHome: string
+  navAria: string
+}
+
+const evidenceCopies: Record<Locale, EvidenceCopy> = {
+  'zh-CN': {
+    metaTitle: '协作状态证据 · WorkMesh',
+    eyebrow: '只读证据夹具',
+    title: '协作状态展示',
+    intro: '此未链接页面仅用于模拟展示。它不会发送任何服务端请求或写入，也不代表真实的服务端故障。',
+    nav: '协作证据状态',
+    conflict: '冲突',
+    expired: '过期',
+    returnHome: '返回 WorkMesh',
+    navAria: '协作证据状态',
+  },
+  en: {
+    metaTitle: 'Collaboration state evidence · WorkMesh',
+    eyebrow: 'Read-only evidence fixture',
+    title: 'Collaboration state presentation',
+    intro: 'This unlinked page simulates presentation only. It performs no server request or mutation and does not claim that a real server fault occurred.',
+    nav: 'Collaboration evidence states',
+    conflict: 'Conflict',
+    expired: 'Expired',
+    returnHome: 'Return to WorkMesh',
+    navAria: 'Collaboration evidence states',
+  },
+}
+
+export type ProjectDeliveryHealthLabel = (state: string) => string
+
+const projectDeliveryHealthLabels: Record<Locale, ProjectDeliveryHealthLabel> = {
+  'zh-CN': state => ({ on_track: '进展顺利', at_risk: '存在风险', off_track: '已偏离轨道' }[state] ?? state),
+  en: state => ({ on_track: 'on track', at_risk: 'at risk', off_track: 'off track' }[state] ?? state),
+}
+
+// Work Room copy (apps/web/app/work-room.tsx) covers the SessionTree,
+// LeaseCard, HandoffCard, DecisionCard, and the main WorkRoom panel.
+export type WorkRoomCopy = {
+  // Page-level chrome
+  title: string
+  intro: string
+  refresh: string
+  loadError: string
+  decisionsLoadError: string
+  sendError: string
+  resolveError: string
+  forceReleaseError: string
+  handoffActionError: string
+  decisionActionError: string
+  sessionControlError: string
+  notReported: string
+  unknownActor: string
+  unknownHolder: string
+  resourceNotReported: string
+  // Summary stats
+  agentParticipants: string
+  principalHumans: string
+  sessionsStat: string
+  pendingResponses: string
+  evidenceStat: string
+  decisionsHandoffs: string
+  noneReported: string
+  // Tabs
+  tabAria: string
+  tabConversation: string
+  tabPlan: string
+  tabActivity: string
+  tabArtifacts: string
+  tabDecisions: string
+  tabSessions: string
+  // Message form
+  messageIntentLabel: string
+  messageIntentComment: string
+  messageIntentAsk: string
+  messageIntentAnswer: string
+  messageIntentReviewRequest: string
+  messageIntentBlocker: string
+  messageIntentHandoff: string
+  messageBodyLabel: string
+  messageBodyPlaceholder: string
+  messageSend: string
+  noTimeline: string
+  roomUnavailable: string
+  // Session tree
+  sessionTreeAria: string
+  sessionTreeTitle: string
+  sessionTreeEmpty: string
+  sessionStatePlanAttached: string
+  sessionStateNoPlan: string
+  sessionStateHeartbeat: string
+  sessionStateBudget: string
+  sessionStateBudgetDefault: string
+  sessionActionInterrupt: string
+  sessionActionStop: string
+  sessionInterruptReason: string
+  sessionStopReason: string
+  sessionInterruptMessage: string
+  // Lease card
+  leaseTitle: string
+  leaseConflictTitle: string
+  leaseHolderAgent: string
+  leaseSession: string
+  leasePlanStep: string
+  leaseExpires: string
+  leaseConflictHint: string
+  leaseRefresh: string
+  leaseForceRelease: string
+  leaseForceReleaseConfirm: string
+  leaseForceReleaseReason: string
+  // Handoff card
+  handoffTitle: string
+  handoffSummaryMissing: string
+  handoffRequestedAction: string
+  handoffTo: string
+  handoffScope: string
+  handoffContextSnapshot: string
+  handoffArtifacts: string
+  handoffLeasePolicy: string
+  handoffRouting: string
+  handoffRoutingCandidates: (count: number) => string
+  handoffRejection: string
+  handoffCompletedWork: string
+  handoffRemainingWork: string
+  handoffOpenQuestions: string
+  handoffRisks: string
+  handoffAcceptanceCriteria: string
+  handoffRequest: string
+  handoffAccept: string
+  handoffReject: string
+  handoffCancel: string
+  handoffComplete: string
+  handoffAcceptReason: string
+  handoffRejectReason: string
+  handoffCancelReason: string
+  handoffCompleteReason: string
+  // Decision card
+  decisionTitle: string
+  decisionFinal: string
+  decisionProposal: string
+  decisionQuestionMissing: string
+  decisionSelected: string
+  decisionRationale: string
+  decisionProposedBy: string
+  decisionFinalizedBy: string
+  decisionAffected: string
+  decisionLineage: string
+  decisionFinalize: string
+  decisionSupersede: string
+  decisionReverse: string
+  decisionSupersedeReason: string
+  // Activity / Artifacts tabs
+  activityAria: string
+  activityFilterSession: string
+  activityFilterAll: string
+  activityShowHeartbeats: string
+  activityEmpty: string
+  artifactsAria: string
+  artifactsEmpty: string
+  artifactsAttribution: string
+  // Plans tab
+  planAria: string
+  planEmpty: string
+  planStepFallback: string
+  planOwner: string
+  planDependencies: string
+  planRequired: string
+  planAssignment: string
+  planClaim: string
+  planStepComment: string
+  // Decisions tab
+  decisionsEmpty: string
+  // Sessions tab
+  leasesEmpty: string
+  // Legacy comments
+  legacyAria: string
+  legacyEditPrompt: string
+  legacyReopen: string
+  legacyResolve: string
+  legacyDelete: string
+  legacyDeleteConfirm: string
+  legacyPostComment: string
+  legacyReplyPlaceholder: string
+  legacyReply: string
+  legacyMentioned: string
+  legacyHuman: string
+  // Timeline card
+  timelineActor: string
+  timelineIntent: string
+  timelineSession: string
+  timelinePlanStep: string
+  timelineBodyMissing: string
+  timelineContextDelta: string
+  timelineContextDeltaBase: string
+  timelineContextDeltaNew: string
+  timelineContextDeltaHash: string
+  timelineContextDeltaAddedBy: string
+  timelineContextDeltaSource: string
+  timelineContextDeltaSourceFallback: string
+  timelineContextDeltaHashFallback: string
+  timelineResolveRequest: string
+  // Agent message controls
+  viewSession: string
+  agentPrompt: string
+  agentPromptPlaceholder: string
+  agentPause: string
+  agentStop: string
+  agentPauseReason: string
+  agentStopReason: string
+  // Empty / loading strings
+  notFinalized: string
+  notSelected: string
+  notClaimed: string
+  unassigned: string
+  noMessage: string
+  noQuestion: string
+  noHandoffSummary: string
+  noArtifacts: string
+  none: string
+}
+
+const workRoomCopies: Record<Locale, WorkRoomCopy> = {
+  'zh-CN': {
+    title: 'Work Room',
+    intro: '持久、人类可见的协作状态。智能体之间的消息从不隐藏。',
+    refresh: '刷新',
+    loadError: '无法加载 Work Room。',
+    decisionsLoadError: '无法加载决策。',
+    sendError: '无法发送消息。',
+    resolveError: '无法解决该消息。',
+    forceReleaseError: '无法强制释放租约。',
+    handoffActionError: '无法更新交接。',
+    decisionActionError: '无法更新决策。',
+    sessionControlError: '无法控制该智能体执行。',
+    notReported: '未上报',
+    unknownActor: '未知参与者',
+    unknownHolder: '未知持有者',
+    resourceNotReported: '资源未上报',
+    agentParticipants: '参与的智能体',
+    principalHumans: '责任人类',
+    sessionsStat: 'Sessions',
+    pendingResponses: '待回复',
+    evidenceStat: '证据',
+    decisionsHandoffs: '决策 / 交接',
+    noneReported: '未上报',
+    tabAria: 'Work Room 标签',
+    tabConversation: '会话',
+    tabPlan: '计划',
+    tabActivity: '活动',
+    tabArtifacts: '证据',
+    tabDecisions: '决策',
+    tabSessions: 'Sessions',
+    messageIntentLabel: '消息意图',
+    messageIntentComment: '评论',
+    messageIntentAsk: '提问',
+    messageIntentAnswer: '回答',
+    messageIntentReviewRequest: '请求评审',
+    messageIntentBlocker: '阻塞',
+    messageIntentHandoff: '交接',
+    messageBodyLabel: '消息',
+    messageBodyPlaceholder: '编写人类可见的协作消息',
+    messageSend: '发送消息',
+    noTimeline: '暂无人类或智能体消息。',
+    roomUnavailable: '本服务的 Work Room API 不可用；已回退到 REST v1 Work Item 评论。',
+    sessionTreeAria: 'Session 树',
+    sessionTreeTitle: 'Session 树',
+    sessionTreeEmpty: '本 Work Item 还没有任何智能体执行。',
+    sessionStatePlanAttached: '已附加计划',
+    sessionStateNoPlan: '无计划',
+    sessionStateHeartbeat: '心跳',
+    sessionStateBudget: '预算',
+    sessionStateBudgetDefault: '策略默认',
+    sessionActionInterrupt: '中断',
+    sessionActionStop: '停止',
+    sessionInterruptReason: '人类在 Work Room 中要求中断 agent-to-agent 通信。',
+    sessionStopReason: '人类在 Work Room 中停止了该 Session。',
+    sessionInterruptMessage: '人类中断了 Session {id}。',
+    leaseTitle: '租约',
+    leaseConflictTitle: '租约冲突',
+    leaseHolderAgent: '持有智能体',
+    leaseSession: 'Session',
+    leasePlanStep: '计划步骤',
+    leaseExpires: '过期时间',
+    leaseConflictHint: '该资源当前被另一个活跃 Session 持有。刷新以在过期后重试认领。',
+    leaseRefresh: '刷新 / 重试',
+    leaseForceRelease: '强制释放',
+    leaseForceReleaseConfirm: '强制释放该租约？可能中断另一个智能体 Session。',
+    leaseForceReleaseReason: '人类在 Work Room 中强制释放。',
+    handoffTitle: '交接',
+    handoffSummaryMissing: '未上报交接摘要。',
+    handoffRequestedAction: '请求的操作',
+    handoffTo: '接收方',
+    handoffScope: '范围',
+    handoffContextSnapshot: '上下文快照',
+    handoffArtifacts: '证据',
+    handoffLeasePolicy: '租约策略',
+    handoffRouting: '路由',
+    handoffRoutingCandidates: (count) => `从 ${count} 个候选中选中。`,
+    handoffRejection: '拒绝原因',
+    handoffCompletedWork: '已完成的工作',
+    handoffRemainingWork: '剩余工作',
+    handoffOpenQuestions: '未决问题',
+    handoffRisks: '风险',
+    handoffAcceptanceCriteria: '验收标准',
+    handoffRequest: '请求交接',
+    handoffAccept: '接受',
+    handoffReject: '拒绝',
+    handoffCancel: '取消',
+    handoffComplete: '完成交接',
+    handoffAcceptReason: '人类在 Work Room 中接受交接。',
+    handoffRejectReason: '人类在 Work Room 中拒绝交接。',
+    handoffCancelReason: '人类在 Work Room 中取消交接。',
+    handoffCompleteReason: '人类在 Work Room 中完成交接。',
+    decisionTitle: '决策',
+    decisionFinal: '人类定稿',
+    decisionProposal: '智能体提案',
+    decisionQuestionMissing: '未记录问题。',
+    decisionSelected: '选定',
+    decisionRationale: '理由',
+    decisionProposedBy: '提案方',
+    decisionFinalizedBy: '定稿方',
+    decisionAffected: '影响的资源',
+    decisionLineage: '决策谱系',
+    decisionFinalize: '由人类定稿',
+    decisionSupersede: '取代',
+    decisionReverse: '撤销',
+    decisionSupersedeReason: '人类在 Work Room 中取代该决策。',
+    activityAria: '协作活动',
+    activityFilterSession: 'Session',
+    activityFilterAll: '全部 Sessions',
+    activityShowHeartbeats: '显示心跳',
+    activityEmpty: '没有匹配的活动。默认折叠心跳。',
+    artifactsAria: '证据与上下文增量',
+    artifactsEmpty: '暂无智能体证据或上下文增量。',
+    artifactsAttribution: '证据归属于对应的人类或智能体、确切 Session 以及适用的计划步骤。',
+    planAria: '计划归属与依赖',
+    planEmpty: '暂无已发布的计划步骤分配或认领。',
+    planStepFallback: '计划步骤',
+    planOwner: '负责人',
+    planDependencies: '依赖',
+    planRequired: '需要',
+    planAssignment: '分配',
+    planClaim: '认领',
+    planStepComment: '步骤备注',
+    decisionsEmpty: '暂无决策记录。',
+    leasesEmpty: '暂无活跃或冲突的租约。',
+    legacyAria: '旧版评论控件',
+    legacyEditPrompt: '编辑评论',
+    legacyReopen: '重新打开',
+    legacyResolve: '解决',
+    legacyDelete: '删除',
+    legacyDeleteConfirm: '软删除该评论？',
+    legacyPostComment: '发布评论',
+    legacyReplyPlaceholder: '回复',
+    legacyReply: '回复',
+    legacyMentioned: '提及',
+    legacyHuman: '人类',
+    timelineActor: '参与者',
+    timelineIntent: '意图',
+    timelineSession: 'Session',
+    timelinePlanStep: '计划步骤',
+    timelineBodyMissing: '未记录消息正文。',
+    timelineContextDelta: '上下文增量',
+    timelineContextDeltaBase: '基线快照',
+    timelineContextDeltaNew: '新快照',
+    timelineContextDeltaHash: '增量哈希',
+    timelineContextDeltaAddedBy: '添加人',
+    timelineContextDeltaSource: '来源',
+    timelineContextDeltaSourceFallback: '来源',
+    timelineContextDeltaHashFallback: '哈希未上报',
+    timelineResolveRequest: '解决请求',
+    viewSession: '查看 Session',
+    agentPrompt: '提示',
+    agentPromptPlaceholder: '提示该智能体',
+    agentPause: '暂停',
+    agentStop: '停止',
+    agentPauseReason: '人类在 Work Room 中中断了 agent-to-agent 通信。',
+    agentStopReason: '人类在 Work Room 中停止了 agent-to-agent 通信。',
+    notFinalized: '未定稿',
+    notSelected: '未选择',
+    notClaimed: '未认领',
+    unassigned: '未分配',
+    noMessage: '暂无消息。',
+    noQuestion: '未记录问题。',
+    noHandoffSummary: '未上报交接摘要。',
+    noArtifacts: '无',
+    none: '无',
+  },
+  en: {
+    title: 'Work Room',
+    intro: 'Durable, human-visible collaboration state. Agent-to-agent messages are never hidden.',
+    refresh: 'Refresh',
+    loadError: 'Unable to load the Work Room.',
+    decisionsLoadError: 'Unable to load decisions.',
+    sendError: 'Unable to send message.',
+    resolveError: 'Unable to resolve the message.',
+    forceReleaseError: 'Unable to force release lease.',
+    handoffActionError: 'Unable to update handoff.',
+    decisionActionError: 'Unable to update decision.',
+    sessionControlError: 'Unable to control this agent session.',
+    notReported: 'not reported',
+    unknownActor: 'Unknown actor',
+    unknownHolder: 'Unknown holder',
+    resourceNotReported: 'Resource not reported',
+    agentParticipants: 'Agent participants',
+    principalHumans: 'Principal Humans',
+    sessionsStat: 'Sessions',
+    pendingResponses: 'Pending responses',
+    evidenceStat: 'Evidence',
+    decisionsHandoffs: 'Decisions / handoffs',
+    noneReported: 'None reported',
+    tabAria: 'Work Room tabs',
+    tabConversation: 'Conversation',
+    tabPlan: 'Plan',
+    tabActivity: 'Activity',
+    tabArtifacts: 'Artifacts',
+    tabDecisions: 'Decisions',
+    tabSessions: 'Sessions',
+    messageIntentLabel: 'Message intent',
+    messageIntentComment: 'Comment',
+    messageIntentAsk: 'Ask',
+    messageIntentAnswer: 'Answer',
+    messageIntentReviewRequest: 'Review request',
+    messageIntentBlocker: 'Blocker',
+    messageIntentHandoff: 'Handoff',
+    messageBodyLabel: 'Message',
+    messageBodyPlaceholder: 'Write a human-visible collaboration message',
+    messageSend: 'Send typed message',
+    noTimeline: 'No human or agent messages yet.',
+    roomUnavailable: 'The Work Room API is unavailable on this server; showing the REST v1 compatible Work Item comments fallback.',
+    sessionTreeAria: 'Session tree',
+    sessionTreeTitle: 'Session tree',
+    sessionTreeEmpty: 'No agent session is attached to this work item.',
+    sessionStatePlanAttached: 'Plan attached',
+    sessionStateNoPlan: 'No plan',
+    sessionStateHeartbeat: 'Heartbeat',
+    sessionStateBudget: 'Budget',
+    sessionStateBudgetDefault: 'policy default',
+    sessionActionInterrupt: 'Interrupt',
+    sessionActionStop: 'Stop',
+    sessionInterruptReason: 'Human interrupted agent-to-agent communication from the Work Room.',
+    sessionStopReason: 'Human stopped the session from the Work Room.',
+    sessionInterruptMessage: 'Human interrupted session {id}.',
+    leaseTitle: 'Lease',
+    leaseConflictTitle: 'Lease conflict',
+    leaseHolderAgent: 'Holder agent',
+    leaseSession: 'Session',
+    leasePlanStep: 'Plan step',
+    leaseExpires: 'Expires',
+    leaseConflictHint: 'This resource is currently held by another active session. Refresh to retry the claim after expiry.',
+    leaseRefresh: 'Refresh / retry',
+    leaseForceRelease: 'Force release',
+    leaseForceReleaseConfirm: 'Force release this lease? This may interrupt another agent session.',
+    leaseForceReleaseReason: 'Human force released from Work Room.',
+    handoffTitle: 'Handoff',
+    handoffSummaryMissing: 'No handoff summary reported.',
+    handoffRequestedAction: 'Requested action',
+    handoffTo: 'To',
+    handoffScope: 'Scope',
+    handoffContextSnapshot: 'Context snapshot',
+    handoffArtifacts: 'Artifacts',
+    handoffLeasePolicy: 'Lease policy',
+    handoffRouting: 'Routing',
+    handoffRoutingCandidates: (count) => `selected from ${count} eligible candidates.`,
+    handoffRejection: 'Rejection reason',
+    handoffCompletedWork: 'Completed work',
+    handoffRemainingWork: 'Remaining work',
+    handoffOpenQuestions: 'Open questions',
+    handoffRisks: 'Risks',
+    handoffAcceptanceCriteria: 'Acceptance criteria',
+    handoffRequest: 'Request handoff',
+    handoffAccept: 'Accept',
+    handoffReject: 'Reject',
+    handoffCancel: 'Cancel',
+    handoffComplete: 'Complete handoff',
+    handoffAcceptReason: 'Human accepted the handoff from the Work Room.',
+    handoffRejectReason: 'Human rejected the handoff from the Work Room.',
+    handoffCancelReason: 'Human cancelled the handoff from the Work Room.',
+    handoffCompleteReason: 'Human completed the handoff from the Work Room.',
+    decisionTitle: 'Decision',
+    decisionFinal: 'Human final',
+    decisionProposal: 'Agent proposal',
+    decisionQuestionMissing: 'No question recorded.',
+    decisionSelected: 'Decision',
+    decisionRationale: 'Rationale',
+    decisionProposedBy: 'Proposed by',
+    decisionFinalizedBy: 'Finalized by',
+    decisionAffected: 'Affected resources',
+    decisionLineage: 'Decision lineage',
+    decisionFinalize: 'Finalize as human',
+    decisionSupersede: 'Supersede',
+    decisionReverse: 'Reverse',
+    decisionSupersedeReason: 'Human superseded this decision from the Work Room.',
+    activityAria: 'Collaboration activity',
+    activityFilterSession: 'Session',
+    activityFilterAll: 'All sessions',
+    activityShowHeartbeats: 'Show heartbeats',
+    activityEmpty: 'No matching activity. Heartbeats are collapsed by default.',
+    artifactsAria: 'Artifacts and context deltas',
+    artifactsEmpty: 'No Agent artifacts or context deltas recorded yet.',
+    artifactsAttribution: 'Artifacts are attributed to the Human or Agent, exact session, and plan-step when applicable.',
+    planAria: 'Plan ownership and dependencies',
+    planEmpty: 'No published plan-step assignments or claims yet.',
+    planStepFallback: 'Plan step',
+    planOwner: 'Owner',
+    planDependencies: 'Dependencies',
+    planRequired: 'Required',
+    planAssignment: 'Assignment',
+    planClaim: 'Claim',
+    planStepComment: 'Step comment',
+    decisionsEmpty: 'No decisions recorded yet.',
+    leasesEmpty: 'No active or conflicting leases.',
+    legacyAria: 'Legacy comment controls',
+    legacyEditPrompt: 'Edit comment',
+    legacyReopen: 'Reopen',
+    legacyResolve: 'Resolve',
+    legacyDelete: 'Delete',
+    legacyDeleteConfirm: 'Soft-delete this comment?',
+    legacyPostComment: 'Post comment',
+    legacyReplyPlaceholder: 'Reply',
+    legacyReply: 'Reply',
+    legacyMentioned: 'Mentioned',
+    legacyHuman: 'Human',
+    timelineActor: 'Actor',
+    timelineIntent: 'Intent',
+    timelineSession: 'Session',
+    timelinePlanStep: 'Plan step',
+    timelineBodyMissing: 'No message body was recorded.',
+    timelineContextDelta: 'Context delta',
+    timelineContextDeltaBase: 'Base snapshot',
+    timelineContextDeltaNew: 'New snapshot',
+    timelineContextDeltaHash: 'Delta hash',
+    timelineContextDeltaAddedBy: 'Added by',
+    timelineContextDeltaSource: 'source',
+    timelineContextDeltaSourceFallback: 'source',
+    timelineContextDeltaHashFallback: 'hash not reported',
+    timelineResolveRequest: 'Resolve request',
+    viewSession: 'View session',
+    agentPrompt: 'Prompt',
+    agentPromptPlaceholder: 'Prompt this agent',
+    agentPause: 'Pause',
+    agentStop: 'Stop',
+    agentPauseReason: 'Human interrupted agent-to-agent communication from the Work Room.',
+    agentStopReason: 'Human stopped agent-to-agent communication from the Work Room.',
+    notFinalized: 'not finalized',
+    notSelected: 'not selected',
+    notClaimed: 'not claimed',
+    unassigned: 'unassigned',
+    noMessage: 'No message recorded.',
+    noQuestion: 'No question recorded.',
+    noHandoffSummary: 'No handoff summary reported.',
+    noArtifacts: 'none',
+    none: 'none',
   },
 }
 
@@ -1244,6 +2637,13 @@ type LocaleContextValue = {
   operationsCopy: OperationsCopy
   connectCopy: ConnectCopy
   agentsCopy: AgentsCopy
+  inboxCopy: InboxCopy
+  sessionDetailCopy: SessionDetailCopy
+  agentWorkCopy: AgentWorkCopy
+  relationsCopy: RelationsCopy
+  evidenceCopy: EvidenceCopy
+  workRoomCopy: WorkRoomCopy
+  projectDeliveryHealthLabel: ProjectDeliveryHealthLabel
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null)
@@ -1278,6 +2678,13 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     operationsCopy: operationsCopies[locale],
     connectCopy: connectCopies[locale],
     agentsCopy: agentsCopies[locale],
+    inboxCopy: inboxCopies[locale],
+    sessionDetailCopy: sessionDetailCopies[locale],
+    agentWorkCopy: agentWorkCopies[locale],
+    relationsCopy: relationsCopies[locale],
+    evidenceCopy: evidenceCopies[locale],
+    workRoomCopy: workRoomCopies[locale],
+    projectDeliveryHealthLabel: projectDeliveryHealthLabels[locale],
   }), [locale])
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
 }

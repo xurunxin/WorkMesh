@@ -6,7 +6,9 @@ import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react/dist/csr/ArrowsLeftRight'
+import { EyeIcon } from '@phosphor-icons/react/dist/csr/Eye'
 import { FolderPlusIcon } from '@phosphor-icons/react/dist/csr/FolderPlus'
+import { NotePencilIcon } from '@phosphor-icons/react/dist/csr/NotePencil'
 import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
@@ -33,6 +35,8 @@ import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
+import { Markdown } from '../features/rich-content/markdown'
+import { RichTextEditor } from '../features/rich-content/editor'
 
 type Actor = AuthenticatedActor
 type AuthMe = { actor: Actor; csrfToken: string }
@@ -56,7 +60,7 @@ const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Ma
 const emptyFilters: Filters = {}
 
 export default function HomePage() {
-  const { detailCopy, guidanceCopy, issueCopy, locale, surfaceCopy, t } = useLocale()
+  const { detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t } = useLocale()
   const [actor, setActor] = useState<Actor | null>(null)
   const [teamId, setTeamId] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<WorkItem | null>(null)
@@ -73,7 +77,6 @@ export default function HomePage() {
   const [filters, setFilters] = useState<Filters>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [operationsEnabled, setOperationsEnabled] = useState(false)
   const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
   const [createProjectOpen, setCreateProjectOpen] = useState(false)
   const [createWorkItemOpen, setCreateWorkItemOpen] = useState(false)
@@ -123,9 +126,8 @@ export default function HomePage() {
         apiRequest<FeatureRegistry>('/api/v1/features'),
         publicRequest<ReleaseInfo>('/api/v1/info'),
       ])
-      setOperationsEnabled(featureRegistry.features.some(feature =>
-        feature.key === 'WORKMESH_BETA_OPERATIONS_UI' && feature.enabled))
       setReleaseInfo(info)
+      void featureRegistry
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) {
         clearCsrfToken()
@@ -413,7 +415,7 @@ export default function HomePage() {
   if (!actor) return <main className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel="Retry" description={error || 'Unable to load your authorized WorkMesh projection.'} onAction={() => void load()} title="WorkMesh is unavailable" /></main>
   const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const scopeNavigation = workspaceNavigation({ active: scope, onHomeNavigate: (event, value) => navigateScope(event, value), t })
-  const utilityNavigation = workspaceUtilityNavigation({ operationsEnabled, t })
+  const utilityNavigation = workspaceUtilityNavigation({ t })
   return <AppShell
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actorDisplayName(actor)}
@@ -441,7 +443,7 @@ export default function HomePage() {
       {collectionError && <ErrorState description={collectionError.message} title={t('workViewCouldNotRefresh')} />}
       <Toast message={error} onDismiss={() => setError('')} open={Boolean(error)} title={t('actionCouldNotComplete')} tone="danger" />
       {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">{t('reloadLatestWork')}</Button></aside>}
-      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
+      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
         {scope === 'projects' && <section className="project-strip" aria-label={t('projects')}>{teamProjects.map(project => <Button icon={<FolderSimpleIcon aria-hidden="true" size={16} weight="bold" />} key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)} variant="ghost">{project.name}</Button>)}{teamProjects.length === 0 && <span className="empty">{t('noProjects')}</span>}</section>}
         {scope !== 'projects' && workSurfaces}
@@ -514,7 +516,7 @@ type GuidanceCurrent = { scope: GuidanceScope; scopeId: string; documentId: stri
 type GuidanceHistory = { scope: GuidanceScope; scopeId: string; documentId: string | null; revision: number; status: GuidanceCurrent['status']; currentRevisionId: string | null; revisions: GuidanceRevision[]; audit: Array<{ id: string; action: 'published' | 'archived' | 'rolled_back'; fromRevisionId: string | null; toRevisionId: string | null; actorId: string; actorDisplayName: string; reason: string; createdAt: string }> }
 type GuidanceDiff = { from: GuidanceRevision; to: GuidanceRevision; changes: Array<{ kind: 'context' | 'removed' | 'added'; oldLine: number | null; newLine: number | null; text: string }> }
 
-function GuidancePanel({ copy, workspaceId, team, projects }: { copy: GuidanceCopy; workspaceId: string; team: Team | null; projects: Project[] }) {
+function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: GuidanceCopy; workspaceId: string; team: Team | null; projects: Project[]; actorId: string }) {
   const [scope, setScope] = useState<GuidanceScope>('workspace')
   const [projectId, setProjectId] = useState('')
   const [current, setCurrent] = useState<GuidanceCurrent | null>(null)
@@ -525,6 +527,7 @@ function GuidancePanel({ copy, workspaceId, team, projects }: { copy: GuidanceCo
   const [fromRevisionId, setFromRevisionId] = useState('')
   const [toRevisionId, setToRevisionId] = useState('')
   const [diff, setDiff] = useState<GuidanceDiff | null>(null)
+  const [viewMode, setViewMode] = useState<'editor' | 'preview'>('editor')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -590,17 +593,40 @@ function GuidancePanel({ copy, workspaceId, team, projects }: { copy: GuidanceCo
   return <section className="guidance-panel" data-testid="guidance-panel">
     <p className="guidance-intro">{copy.intro}</p>
     <div className="guidance-toolbar">
-      <label>{copy.scope}<select aria-label={copy.scopeLabel} value={scope} onChange={event => setScope(event.currentTarget.value as GuidanceScope)}><option value="workspace">{copy.workspace}</option><option value="team">{copy.team}</option><option value="project">{copy.project}</option></select></label>
-      {scope === 'team' && <label>{copy.team}<input value={team?.name ?? copy.noTeamSelected} readOnly /></label>}
-      {scope === 'project' && <label>{copy.project}<select aria-label={copy.projectLabel} value={projectId} onChange={event => setProjectId(event.currentTarget.value)}><option value="" disabled>{copy.noProject}</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
-      <div className={`guidance-status status-${current?.status ?? 'unpublished'}`}><strong>{copy.status(current?.status ?? 'unavailable')}</strong><span>{copy.documentRevision(current?.revision ?? 0)}</span></div>
+      <div className="guidance-toolbar-fields">
+        <label>{copy.scope}<select aria-label={copy.scopeLabel} value={scope} onChange={event => setScope(event.currentTarget.value as GuidanceScope)}><option value="workspace">{copy.workspace}</option><option value="team">{copy.team}</option><option value="project">{copy.project}</option></select></label>
+        {scope === 'team' && <label>{copy.team}<input value={team?.name ?? copy.noTeamSelected} readOnly /></label>}
+        {scope === 'project' && <label>{copy.project}<select aria-label={copy.projectLabel} value={projectId} onChange={event => setProjectId(event.currentTarget.value)}><option value="" disabled>{copy.noProject}</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>}
+      </div>
+      <div className={`guidance-status status-${current?.status ?? 'unpublished'}`}>
+        <span className="guidance-status-label">{copy.status(current?.status ?? 'unavailable')}</span>
+        <span className="guidance-status-revision">{copy.documentRevision(current?.revision ?? 0)}</span>
+      </div>
     </div>
     {!root && <p className="empty">{copy.selectScope}</p>}
     {error && <p className="error" role="alert">{error}</p>}
     {loading && <p>{copy.loading}</p>}
     {root && current && <>
       <form className="guidance-editor" onSubmit={event => void publish(event)}>
-        <label>{copy.markdown}<textarea data-testid="guidance-markdown" value={markdown} onChange={event => setMarkdown(event.currentTarget.value)} rows={16} maxLength={100000} /></label>
+        <div className="guidance-view-toggle" role="tablist" aria-label={copy.markdown}>
+          <Button aria-pressed={viewMode === 'editor'} icon={<NotePencilIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('editor')} role="tab" type="button" variant={viewMode === 'editor' ? 'primary' : 'ghost'}>编辑</Button>
+          <Button aria-pressed={viewMode === 'preview'} icon={<EyeIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('preview')} role="tab" type="button" variant={viewMode === 'preview' ? 'primary' : 'ghost'}>预览</Button>
+          {viewMode === 'editor' ? null : <span className="guidance-view-toggle-meta">{markdown.length} 字符</span>}
+        </div>
+        {viewMode === 'editor'
+          ? <RichTextEditor
+              identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
+              label={copy.markdown}
+              name="markdown"
+              value={markdown}
+              onChange={setMarkdown}
+              required
+            />
+          : <section className="guidance-rendered" aria-label="Markdown 渲染预览">
+              {markdown.trim()
+                ? <Markdown source={markdown} />
+                : <p className="guidance-preview-empty">在编辑模式下撰写 Markdown，切换到预览即可查看渲染结果。</p>}
+            </section>}
         <label>{copy.changeSummary}<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
         <Button data-testid="publish-guidance" icon={<UploadSimpleIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{copy.publishRevision}</Button>
       </form>
@@ -614,11 +640,15 @@ function GuidancePanel({ copy, workspaceId, team, projects }: { copy: GuidanceCo
   </section>
 }
 
-function MentionPicker({ humans }: { humans: Human[] }) { return <label className="mentions">Mention people<select name="mentions" multiple aria-label="Mention people">{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label> }
+function MentionPicker({ humans }: { humans: Human[] }) {
+  const { relationsCopy: text } = useLocale()
+  return <label className="mentions">{text.fieldWorkItem}<select name="mentions" multiple aria-label={text.fieldWorkItem}>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
+}
 type Milestone = { id: string; name: string; description: string | null; target_date: string | null; revision: number }
 type WorkItemRelation = { id: string; source_work_item_id: string; target_work_item_id: string; kind: 'blocks' | 'related'; revision: number }
 
 function WorkItemRelationships({ item, projectItems }: { item: WorkItem; projectItems: WorkItemDto[] }) {
+  const { relationsCopy: text } = useLocale()
   const relations = usePagedApiList<WorkItemRelation>(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations`)
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState<ReturnType<typeof revisionConflictNotice>>(null)
@@ -654,15 +684,15 @@ function WorkItemRelationships({ item, projectItems }: { item: WorkItem; project
     }
   }
   return <section className="relationship-panel" aria-labelledby="relationships-heading">
-    <header><div><span className="eyebrow">Dependencies</span><h3 id="relationships-heading">Blockers and related work</h3></div></header>
+    <header><div><span className="eyebrow">{text.eyebrow}</span><h3 id="relationships-heading">{text.title}</h3></div></header>
     {(error || relations.error) && <p className="error" role="alert">{error || relations.error?.message}</p>}
-    {conflict && <aside className="conflict-notice" role="alert"><div><strong>{conflict.title}</strong><p>{conflict.action}</p></div><button onClick={() => { setConflict(null); void relations.refresh() }}>Reload relations</button></aside>}
+    {conflict && <aside className="conflict-notice" role="alert"><div><strong>{text.conflictTitle}</strong><p>{text.conflictAction}</p></div><button onClick={() => { setConflict(null); void relations.refresh() }} type="button">{text.reload}</button></aside>}
     <div className="relation-list">{relations.items.map(relation => {
       const otherId = relation.source_work_item_id === item.id ? relation.target_work_item_id : relation.source_work_item_id
-      const direction = relation.kind === 'related' ? 'Related to' : relation.source_work_item_id === item.id ? 'Blocks' : 'Blocked by'
-      return <article key={relation.id}><span className={`relation-kind relation-${relation.kind}`}>{direction}</span><strong>{workLabel(otherId)}</strong><button onClick={() => void remove(relation)} type="button">Remove</button></article>
-    })}{!relations.loading && relations.items.length === 0 && <p className="empty">No blockers or related Work Items.</p>}</div>
-    <form className="relation-create" onSubmit={event => void add(event)}><label>Relationship<select name="kind"><option value="blocks">Blocks</option><option value="related">Related</option></select></label><label>Work Item<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>Select Work Item</option>{projectItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={projectItems.length < 2}>Add relationship</button></form>
-    <LoadMoreButton collection={relations} label="relations" />
+      const direction = relation.kind === 'related' ? text.related : relation.source_work_item_id === item.id ? text.blocks : text.blockedBy
+      return <article key={relation.id}><span className={`relation-kind relation-${relation.kind}`}>{direction}</span><strong>{workLabel(otherId)}</strong><button onClick={() => void remove(relation)} type="button">{text.remove}</button></article>
+    })}{!relations.loading && relations.items.length === 0 && <p className="empty">{text.empty}</p>}</div>
+    <form className="relation-create" onSubmit={event => void add(event)}><label>{text.fieldKind}<select name="kind"><option value="blocks">{text.kindBlocks}</option><option value="related">{text.kindRelated}</option></select></label><label>{text.fieldWorkItem}<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>{text.fieldWorkItemPlaceholder}</option>{projectItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={projectItems.length < 2} type="submit">{text.add}</button></form>
+    <LoadMoreButton collection={relations} label={text.loadMore} />
   </section>
 }

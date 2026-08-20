@@ -5,7 +5,6 @@ import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { GearIcon } from '@phosphor-icons/react/dist/csr/Gear'
 import { ListBulletsIcon } from '@phosphor-icons/react/dist/csr/ListBullets'
 import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
-import { SlidersHorizontalIcon } from '@phosphor-icons/react/dist/csr/SlidersHorizontal'
 import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
 import { homeScopeHref, type HomeScope } from './navigation'
 
@@ -16,14 +15,12 @@ type NavigationTranslationKey =
   | 'guidance'
   | 'inbox'
   | 'issues'
-  | 'planningAndOperations'
   | 'projects'
   | 'settings'
 
 type WorkspaceNavigationOptions = Readonly<{
   active: WorkspaceNavigationKey
   onHomeNavigate?: (event: MouseEvent<HTMLAnchorElement>, scope: HomeScope) => void
-  operationsEnabled?: boolean
   t: (key: NavigationTranslationKey) => string
 }>
 
@@ -53,9 +50,8 @@ export function workspaceNavigation({ active, onHomeNavigate, t }: WorkspaceNavi
   ]
 }
 
-export function workspaceUtilityNavigation({ operationsEnabled = false, t }: Pick<WorkspaceNavigationOptions, 'operationsEnabled' | 't'>): NavigationItem[] {
+export function workspaceUtilityNavigation({ t }: Pick<WorkspaceNavigationOptions, 't'>): NavigationItem[] {
   return [
-    ...(operationsEnabled ? [{ href: '/operations', icon: <SlidersHorizontalIcon aria-hidden="true" size={20} weight="regular" />, label: t('planningAndOperations'), testId: 'view-operations' }] : []),
-    { href: '/settings', icon: <GearIcon aria-hidden="true" size={20} weight="regular" />, label: t('settings') },
+    { href: '/settings', icon: <GearIcon aria-hidden="true" size={20} weight="regular" />, label: t('settings'), testId: 'view-settings' },
   ]
 }

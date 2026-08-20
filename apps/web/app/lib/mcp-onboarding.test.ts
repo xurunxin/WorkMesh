@@ -35,7 +35,7 @@ describe('MCP onboarding contract', () => {
     expect(buildMcpClientGuide({ clientType: 'pi', discovery: { ...discovery, supportedClients: ['codex'] }, release, coordinationFeatureEnabled: true }).state).toBe('unsupported_client')
     expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: false }).state).toBe('coordination_feature_disabled')
     expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: true, mcpHealthy: false }).state).toBe('mcp_unavailable')
-    expect(onboardingStateMessage('discovery_unavailable').nextAction).toContain('Do not infer')
+    expect(onboardingStateMessage('discovery_unavailable').nextAction).toContain('请勿推测')
   })
 
   it('preserves structured feature failures and treats only the credential challenge as MCP readiness', () => {

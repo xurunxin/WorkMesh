@@ -6,7 +6,6 @@ const labels = {
   guidance: '指南',
   inbox: '收件箱',
   issues: 'Issues',
-  planningAndOperations: '规划与运营',
   projects: '项目',
   settings: '设置',
 } as const
@@ -20,7 +19,7 @@ describe('shared workspace navigation', () => {
     expect(navigation.filter(item => item.active).map(item => item.href)).toEqual(['/agents'])
   })
 
-  it('keeps Settings in utility navigation without inventing team scope', () => {
+  it('keeps only Settings in utility navigation (Operations is now a Settings tab)', () => {
     expect(workspaceUtilityNavigation({ t }).map(item => item.label)).toEqual(['设置'])
   })
 })

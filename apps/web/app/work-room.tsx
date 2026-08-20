@@ -40,6 +40,7 @@ import {
 } from "../features/rich-content/editor";
 import { WorkItemArtifacts } from "../features/rich-content/artifacts";
 import { CollaborationHub } from "../features/collaboration/collaboration-hub";
+import { type WorkRoomCopy, useLocale } from "./lib/i18n";
 
 type Tab =
   "conversation" | "plan" | "activity" | "artifacts" | "decisions" | "sessions";
@@ -73,14 +74,6 @@ type Props = {
   onLegacyRefresh: () => Promise<unknown>;
 };
 
-const tabs: { id: Tab; label: string }[] = [
-  { id: "conversation", label: "Conversation" },
-  { id: "plan", label: "Plan" },
-  { id: "activity", label: "Activity" },
-  { id: "artifacts", label: "Artifacts" },
-  { id: "decisions", label: "Decisions" },
-  { id: "sessions", label: "Sessions" },
-];
 const titleCase = (value: string): string =>
   value.replaceAll("_", " ") || "message";
 const itemKind = (item: RoomRecord): string =>
@@ -94,7 +87,7 @@ const itemKind = (item: RoomRecord): string =>
   ) || "comment";
 const itemBody = (item: RoomRecord): string =>
   stringValue(item, "body", "bodyMarkdown", "body_markdown", "summary", "text");
-const itemActor = (item: RoomRecord): string =>
+const itemActor = (item: RoomRecord, fallback = "Unknown actor"): string =>
   stringValue(
     item,
     "actorName",
@@ -107,7 +100,7 @@ const itemActor = (item: RoomRecord): string =>
     "sender_name",
     "actorId",
     "actor_id",
-  ) || "Unknown actor";
+  ) || fallback;
 const itemTime = (item: RoomRecord): string =>
   stringValue(item, "createdAt", "created_at", "timestamp");
 const itemPayload = (item: RoomRecord): RoomRecord =>
@@ -202,9 +195,11 @@ export function summarizeWorkRoom(
 function AgentMessageControls({
   sessionId,
   revision,
+  text,
 }: {
   sessionId: string;
   revision?: number;
+  text: WorkRoomCopy;
 }) {
   const control = async (signal: "pause" | "stop") => {
     await apiRequest(
@@ -219,13 +214,13 @@ function AgentMessageControls({
         },
         body: JSON.stringify({
           signal,
-          reason: `Human ${signal === "pause" ? "interrupted" : "stopped"} agent-to-agent communication from the Work Room.`,
+          reason: signal === "pause" ? text.agentPauseReason : text.agentStopReason,
         }),
       },
     );
   };
   const prompt = async () => {
-    const body = window.prompt("Prompt this agent")?.trim();
+    const body = window.prompt(text.agentPromptPlaceholder)?.trim();
     if (!body) return;
     await apiRequest(
       `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/prompt`,
@@ -244,20 +239,20 @@ function AgentMessageControls({
   return (
     <span className="message-session-controls">
       <a href={`/agent-sessions/${encodeURIComponent(sessionId)}`}>
-        View session
+        {text.viewSession}
       </a>
       <button type="button" onClick={() => void prompt()}>
-        Prompt
+        {text.agentPrompt}
       </button>
       <button type="button" onClick={() => void control("pause")}>
-        Pause
+        {text.agentPause}
       </button>
       <button
         className="danger"
         type="button"
         onClick={() => void control("stop")}
       >
-        Stop
+        {text.agentStop}
       </button>
     </span>
   );
@@ -270,6 +265,7 @@ function TimelineCard({
   item: RoomRecord;
   onResolve: (item: RoomRecord) => void;
 }) {
+  const { workRoomCopy: text } = useLocale();
   const intent = itemKind(item);
   const payload = itemPayload(item);
   const status = stringValue(
@@ -315,19 +311,19 @@ function TimelineCard({
     >
       <header className="timeline-attribution">
         <span className="timeline-fact">
-          <small>Actor</small>
-          <strong>{itemActor(item)}</strong>
+          <small>{text.timelineActor}</small>
+          <strong>{itemActor(item, text.unknownActor)}</strong>
           {actorKind && (
             <span className="intent-badge">{titleCase(actorKind)}</span>
           )}
         </span>
         <span className="timeline-fact">
-          <small>Intent</small>
+          <small>{text.timelineIntent}</small>
           <span className="intent-badge">{titleCase(intent)}</span>
         </span>
         {sessionId && (
           <span className="timeline-fact">
-            <small>Session</small>
+            <small>{text.timelineSession}</small>
             <a href={`/agent-sessions/${encodeURIComponent(sessionId)}`}>
               {sessionId.slice(0, 8)}
             </a>
@@ -335,13 +331,13 @@ function TimelineCard({
         )}
         {step && (
           <span className="timeline-fact">
-            <small>Plan step</small>
+            <small>{text.timelinePlanStep}</small>
             <span className="plan-step">{step}</span>
           </span>
         )}
         <time>{formatTime(itemTime(item))}</time>
       </header>
-      <Markdown source={itemBody(item) || "No message body was recorded."} />
+      <Markdown source={itemBody(item) || text.timelineBodyMissing} />
       {sessionId && (
         <AgentMessageControls
           sessionId={sessionId}
@@ -350,30 +346,31 @@ function TimelineCard({
             "sessionRevision",
             "session_revision",
           )}
+          text={text}
         />
       )}
       {intent === "context_delta" && (
         <p>
-          Base snapshot:{" "}
+          {text.timelineContextDeltaBase}:{" "}
           {stringValue(payload, "baseSnapshotId", "base_snapshot_id") ||
-            "not reported"}{" "}
-          · New snapshot:{" "}
+            text.notReported}{" "}
+          · {text.timelineContextDeltaNew}:{" "}
           {stringValue(payload, "sourceSnapshotId", "source_snapshot_id") ||
-            "not reported"}{" "}
-          · Delta hash:{" "}
+            text.notReported}{" "}
+          · {text.timelineContextDeltaHash}:{" "}
           {stringValue(payload, "contentHash", "content_hash") ||
-            "not reported"}{" "}
-          · Added by:{" "}
+            text.notReported}{" "}
+          · {text.timelineContextDeltaAddedBy}:{" "}
           {stringValue(payload, "createdByActorId", "created_by_actor_id") ||
-            "not reported"}
+            text.notReported}
         </p>
       )}
       {context.length > 0 && (
-        <section className="context-delta" aria-label="Context delta">
-          <strong>Context delta</strong>
+        <section className="context-delta" aria-label={text.timelineContextDelta}>
+          <strong>{text.timelineContextDelta}</strong>
           {context.map((source, index) => (
             <span key={`${stringValue(source, "hash", "checksum")}:${index}`}>
-              Added{" "}
+              {text.timelineContextDeltaSource}{" "}
               {stringValue(
                 source,
                 "source",
@@ -383,15 +380,15 @@ function TimelineCard({
                 "source_type",
                 "sourceId",
                 "source_id",
-              ) || "source"}{" "}
-              · {stringValue(source, "hash", "checksum") || "hash not reported"}
+              ) || text.timelineContextDeltaSourceFallback}{" "}
+              · {stringValue(source, "hash", "checksum") || text.timelineContextDeltaHashFallback}
             </span>
           ))}
         </section>
       )}
       {status === "open" && (
         <button type="button" onClick={() => onResolve(item)}>
-          Resolve request
+          {text.timelineResolveRequest}
         </button>
       )}
     </article>
@@ -409,6 +406,7 @@ function SessionTree({
   onError: (message: string) => void;
   reload: () => Promise<void>;
 }) {
+  const { workRoomCopy: text } = useLocale();
   const byParent = useMemo(
     () =>
       sessions.reduce<Record<string, AgentSession[]>>((all, session) => {
@@ -433,13 +431,19 @@ function SessionTree({
         headers: { ...json({}), "If-Match": `"revision-${session.revision}"` },
         body: JSON.stringify({
           signal: signalName,
-          reason: `Human ${signalName === "pause" ? "interrupted agent-to-agent communication" : "stopped the session"} from the Work Room.`,
+          reason:
+            signalName === "pause"
+              ? text.sessionInterruptReason
+              : text.sessionStopReason,
         }),
       });
       if (roomId && signalName === "pause")
         await createRoomMessage(roomId, {
           intent: "blocker",
-          body: `Human interrupted session ${session.id.slice(0, 8)}.`,
+          body: text.sessionInterruptMessage.replace(
+            "{id}",
+            session.id.slice(0, 8),
+          ),
           payload: { sessionId: session.id, action: "interrupt" },
         });
       await reload();
@@ -447,7 +451,7 @@ function SessionTree({
       onError(
         reason instanceof Error
           ? reason.message
-          : "Unable to control this agent session.",
+          : text.sessionControlError,
       );
     }
   };
@@ -461,17 +465,21 @@ function SessionTree({
             </span>
             <strong>{session.id.slice(0, 8)}</strong>
             <span>
-              {session.current_plan_version_id ? "Plan attached" : "No plan"}
+              {session.current_plan_version_id
+                ? text.sessionStatePlanAttached
+                : text.sessionStateNoPlan}
             </span>
-            <span>Heartbeat: {formatTime(session.last_heartbeat_at)}</span>
             <span>
-              Budget:{" "}
+              {text.sessionStateHeartbeat}: {formatTime(session.last_heartbeat_at)}
+            </span>
+            <span>
+              {text.sessionStateBudget}:{" "}
               {session.budget.maxRuntimeSeconds
                 ? `${session.budget.maxRuntimeSeconds}s`
-                : "policy default"}
+                : text.sessionStateBudgetDefault}
             </span>
             <button type="button" onClick={() => void signal(session, "pause")}>
-              Interrupt
+              {text.sessionActionInterrupt}
             </button>
             <button
               className="danger"
@@ -479,7 +487,7 @@ function SessionTree({
               disabled={!canStopAgentSession(session.state)}
               onClick={() => void signal(session, "stop")}
             >
-              Stop
+              {text.sessionActionStop}
             </button>
           </div>
           {branch(session.id)}
@@ -488,10 +496,10 @@ function SessionTree({
     </ul>
   );
   return (
-    <section className="session-tree-panel" aria-label="Session tree">
-      <h3>Session tree</h3>
+    <section className="session-tree-panel" aria-label={text.sessionTreeAria}>
+      <h3>{text.sessionTreeTitle}</h3>
       {sessions.length === 0 ? (
-        <p className="empty">No agent session is attached to this work item.</p>
+        <p className="empty">{text.sessionTreeEmpty}</p>
       ) : (
         branch("root")
       )}
@@ -508,6 +516,7 @@ function LeaseCard({
   onForceRelease: (lease: RoomRecord) => void;
   onRefresh: () => void;
 }) {
+  const { workRoomCopy: text } = useLocale();
   const holder =
     stringValue(
       lease,
@@ -515,7 +524,7 @@ function LeaseCard({
       "holder_name",
       "holderActorId",
       "holder_actor_id",
-    ) || "Unknown holder";
+    ) || text.unknownHolder;
   const resource =
     stringValue(
       lease,
@@ -523,7 +532,7 @@ function LeaseCard({
       "resource_id",
       "resourceType",
       "resource_type",
-    ) || "Resource not reported";
+    ) || text.resourceNotReported;
   const conflict =
     stringValue(lease, "status", "errorCode", "error_code") === "conflict" ||
     stringValue(lease, "errorCode", "error_code") === "LEASE_CONFLICT";
@@ -533,41 +542,40 @@ function LeaseCard({
       data-testid={`lease-${stringValue(lease, "id")}`}
     >
       <header>
-        <strong>{conflict ? "Lease conflict" : "Lease"}</strong>
+        <strong>{conflict ? text.leaseConflictTitle : text.leaseTitle}</strong>
         <span className="intent-badge">{resource}</span>
       </header>
       <p>
-        Holder agent: {holder} · Session:{" "}
+        {text.leaseHolderAgent}: {holder} · {text.leaseSession}:{" "}
         {stringValue(lease, "holderSessionId", "holder_session_id") ||
-          "not reported"}
+          text.notReported}
       </p>
       <p>
-        Plan step:{" "}
+        {text.leasePlanStep}:{" "}
         {stringValue(
           lease,
           "planStepId",
           "plan_step_id",
           "stepId",
           "step_id",
-        ) || "not reported"}{" "}
-        · Expires: {formatTime(stringValue(lease, "expiresAt", "expires_at"))}
+        ) || text.notReported}{" "}
+        · {text.leaseExpires}: {formatTime(stringValue(lease, "expiresAt", "expires_at"))}
       </p>
       {conflict && (
         <p className="error">
-          This resource is currently held by another active session. Refresh to
-          retry the claim after expiry.
+          {text.leaseConflictHint}
         </p>
       )}
       <div className="session-actions">
         <button type="button" onClick={onRefresh}>
-          Refresh / retry
+          {text.leaseRefresh}
         </button>
         <button
           className="danger"
           type="button"
           onClick={() => onForceRelease(lease)}
         >
-          Force release
+          {text.leaseForceRelease}
         </button>
       </div>
     </article>
@@ -582,6 +590,7 @@ function HandoffCard({
   handoff: RoomRecord;
   onAction: (handoff: RoomRecord, action: HandoffAction) => void;
 }) {
+  const { workRoomCopy: text } = useLocale();
   const status = stringValue(handoff, "status") || "requested";
   const routingValue = value(handoff, "routingSnapshot", "routing_snapshot");
   const routing =
@@ -591,12 +600,12 @@ function HandoffCard({
       ? (routingValue as RoomRecord)
       : {};
   const sections: Array<[string, string[]]> = [
-    ["Completed work", textList(handoff, "completedWork", "completed_work")],
-    ["Remaining work", textList(handoff, "remainingWork", "remaining_work")],
-    ["Open questions", textList(handoff, "openQuestions", "open_questions")],
-    ["Risks", textList(handoff, "risks")],
+    [text.handoffCompletedWork, textList(handoff, "completedWork", "completed_work")],
+    [text.handoffRemainingWork, textList(handoff, "remainingWork", "remaining_work")],
+    [text.handoffOpenQuestions, textList(handoff, "openQuestions", "open_questions")],
+    [text.handoffRisks, textList(handoff, "risks")],
     [
-      "Acceptance criteria",
+      text.handoffAcceptanceCriteria,
       textList(handoff, "acceptanceCriteria", "acceptance_criteria"),
     ],
   ];
@@ -606,17 +615,17 @@ function HandoffCard({
       data-testid={`handoff-${stringValue(handoff, "id")}`}
     >
       <header>
-        <strong>Handoff</strong>
+        <strong>{text.handoffTitle}</strong>
         <span className="intent-badge">{status}</span>
       </header>
-      <p>{stringValue(handoff, "summary") || "No handoff summary reported."}</p>
+      <p>{stringValue(handoff, "summary") || text.handoffSummaryMissing}</p>
       <p>
-        Requested action:{" "}
+        {text.handoffRequestedAction}:{" "}
         {stringValue(handoff, "requestedAction", "requested_action") ||
-          "not reported"}
+          text.notReported}
       </p>
       <p>
-        To:{" "}
+        {text.handoffTo}:{" "}
         {stringValue(
           handoff,
           "toAgentName",
@@ -625,33 +634,32 @@ function HandoffCard({
           "target_skill",
           "targetAgentId",
           "target_agent_id",
-        ) || "not reported"}{" "}
-        · Scope:{" "}
-        {stringValue(handoff, "scopeType", "scope_type") || "not reported"}{" "}
+        ) || text.notReported}{" "}
+        · {text.handoffScope}:{" "}
+        {stringValue(handoff, "scopeType", "scope_type") || text.notReported}{" "}
         {stringValue(handoff, "scopeId", "scope_id")}
       </p>
       <p>
-        Context snapshot:{" "}
+        {text.handoffContextSnapshot}:{" "}
         {stringValue(handoff, "contextSnapshotId", "context_snapshot_id") ||
-          "not reported"}{" "}
-        · Artifacts:{" "}
-        {textList(handoff, "artifactIds", "artifact_ids").join(", ") || "none"}{" "}
-        · Lease policy:{" "}
+          text.notReported}{" "}
+        · {text.handoffArtifacts}:{" "}
+        {textList(handoff, "artifactIds", "artifact_ids").join(", ") || text.noArtifacts}{" "}
+        · {text.handoffLeasePolicy}:{" "}
         {stringValue(handoff, "leaseTransferPolicy", "lease_transfer_policy") ||
           "retain"}
       </p>
       {Object.keys(routing).length > 0 && (
         <p>
-          Routing: selected{" "}
+          {text.handoffRouting}: selected{" "}
           {stringValue(routing, "selectedAgentId", "selected_agent_id") ||
-            "none"}{" "}
-          from {textList(routing, "candidateIds", "candidate_ids").length || 0}{" "}
-          eligible candidates.
+            text.none}{" "}
+          {text.handoffRoutingCandidates(textList(routing, "candidateIds", "candidate_ids").length || 0)}
         </p>
       )}
       {stringValue(handoff, "machineRejectReason", "machine_reject_reason") && (
         <p>
-          Rejection reason:{" "}
+          {text.handoffRejection}:{" "}
           {stringValue(handoff, "machineRejectReason", "machine_reject_reason")}
         </p>
       )}
@@ -671,17 +679,17 @@ function HandoffCard({
       <div className="session-actions">
         {status === "draft" && (
           <button onClick={() => onAction(handoff, "request")}>
-            Request handoff
+            {text.handoffRequest}
           </button>
         )}
         {status === "requested" && (
           <>
-            <button onClick={() => onAction(handoff, "accept")}>Accept</button>
+            <button onClick={() => onAction(handoff, "accept")}>{text.handoffAccept}</button>
             <button
               className="danger"
               onClick={() => onAction(handoff, "reject")}
             >
-              Reject
+              {text.handoffReject}
             </button>
           </>
         )}
@@ -690,12 +698,12 @@ function HandoffCard({
             className="danger"
             onClick={() => onAction(handoff, "cancel")}
           >
-            Cancel
+            {text.handoffCancel}
           </button>
         )}
         {status === "accepted" && (
           <button onClick={() => onAction(handoff, "complete")}>
-            Complete handoff
+            {text.handoffComplete}
           </button>
         )}
       </div>
@@ -713,6 +721,7 @@ function DecisionCard({
     action: "finalize" | "supersede" | "reverse",
   ) => void;
 }) {
+  const { workRoomCopy: text } = useLocale();
   const final =
     ["final", "finalized", "accepted"].includes(
       stringValue(decision, "status"),
@@ -731,33 +740,33 @@ function DecisionCard({
       data-testid={`decision-${stringValue(decision, "id")}`}
     >
       <header>
-        <strong>Decision</strong>
+        <strong>{text.decisionTitle}</strong>
         <span className={final ? "decision-final" : "decision-proposal"}>
-          {final ? "Human final" : "Agent proposal"}
+          {final ? text.decisionFinal : text.decisionProposal}
         </span>
       </header>
       <p>
         {stringValue(decision, "question", "title", "summary") ||
-          "No question recorded."}
+          text.decisionQuestionMissing}
       </p>
       <p>
-        Decision:{" "}
+        {text.decisionSelected}:{" "}
         {stringValue(decision, "selectedOption", "selected_option") ||
-          "not selected"}{" "}
-        · Rationale: {stringValue(decision, "rationale") || "not reported"}
+          text.notSelected}{" "}
+        · {text.decisionRationale}: {stringValue(decision, "rationale") || text.notReported}
       </p>
       <p>
-        Proposed by:{" "}
+        {text.decisionProposedBy}:{" "}
         {stringValue(
           decision,
           "proposedByActorId",
           "proposed_by_actor_id",
           "actorId",
           "actor_id",
-        ) || "agent not reported"}{" "}
-        · Finalized by:{" "}
+        ) || `${text.unknownActor} (${text.notReported})`}{" "}
+        · {text.decisionFinalizedBy}:{" "}
         {stringValue(decision, "finalizedByActorId", "finalized_by_actor_id") ||
-          "not finalized"}
+          text.notFinalized}
       </p>
       {options.length > 0 && (
         <ul>
@@ -768,7 +777,7 @@ function DecisionCard({
       )}
       {affected.length > 0 && (
         <p>
-          Affected resources:{" "}
+          {text.decisionAffected}:{" "}
           {affected
             .map(
               (resource) =>
@@ -779,7 +788,7 @@ function DecisionCard({
       )}
       {relations.length > 0 && (
         <p>
-          Decision lineage:{" "}
+          {text.decisionLineage}:{" "}
           {relations
             .map(
               (relation) =>
@@ -791,19 +800,19 @@ function DecisionCard({
       <div className="session-actions">
         {!final && (
           <button onClick={() => onAction(decision, "finalize")}>
-            Finalize as human
+            {text.decisionFinalize}
           </button>
         )}
         {final && (
           <>
             <button onClick={() => onAction(decision, "supersede")}>
-              Supersede
+              {text.decisionSupersede}
             </button>
             <button
               className="danger"
               onClick={() => onAction(decision, "reverse")}
             >
-              Reverse
+              {text.decisionReverse}
             </button>
           </>
         )}
@@ -821,6 +830,15 @@ export function WorkRoom({
   onLegacyUpdate,
   onLegacyRefresh,
 }: Props) {
+  const { workRoomCopy: text } = useLocale();
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "conversation", label: text.tabConversation },
+    { id: "plan", label: text.tabPlan },
+    { id: "activity", label: text.tabActivity },
+    { id: "artifacts", label: text.tabArtifacts },
+    { id: "decisions", label: text.tabDecisions },
+    { id: "sessions", label: text.tabSessions },
+  ];
   const [tab, setTab] = useState<Tab>("conversation");
   const [room, setRoom] = useState<Room | null>(null);
   const [decisions, setDecisions] = useState<RoomRecord[]>([]);
@@ -901,10 +919,10 @@ export function WorkRoom({
       setError(
         reason instanceof Error
           ? reason.message
-          : "Unable to load the Work Room.",
+          : text.loadError,
       );
     }
-  }, [workItemId]);
+  }, [workItemId, text.loadError]);
   useEffect(() => {
     void load();
   }, [load]);
@@ -950,7 +968,7 @@ export function WorkRoom({
           setError(
             reason instanceof Error
               ? reason.message
-              : "Unable to load decisions.",
+              : text.decisionsLoadError,
           );
       });
     return () => {
@@ -997,7 +1015,7 @@ export function WorkRoom({
       await timelinePage.refresh();
     } catch (reason) {
       setError(
-        reason instanceof Error ? reason.message : "Unable to send message.",
+        reason instanceof Error ? reason.message : text.sendError,
       );
     } finally {
       setBusy(false);
@@ -1014,7 +1032,7 @@ export function WorkRoom({
       setError(
         reason instanceof Error
           ? reason.message
-          : "Unable to resolve the message.",
+          : text.resolveError,
       );
     } finally {
       setBusy(false);
@@ -1022,16 +1040,14 @@ export function WorkRoom({
   };
   const forceRelease = async (lease: RoomRecord) => {
     if (
-      !window.confirm(
-        "Force release this lease? This may interrupt another agent session.",
-      )
+      !window.confirm(text.leaseForceReleaseConfirm)
     )
       return;
     try {
       setBusy(true);
       await roomMutation(
         `/api/v1/leases/${encodeURIComponent(stringValue(lease, "id"))}/force-release`,
-        { reason: "Human force released from Work Room." },
+        { reason: text.leaseForceReleaseReason },
         numberValue(lease, "revision"),
       );
       await leasesPage.refresh();
@@ -1039,7 +1055,7 @@ export function WorkRoom({
       setError(
         reason instanceof Error
           ? reason.message
-          : "Unable to force release lease.",
+          : text.forceReleaseError,
       );
     } finally {
       setBusy(false);
@@ -1048,10 +1064,12 @@ export function WorkRoom({
   const handoffAction = async (handoff: RoomRecord, action: HandoffAction) => {
     try {
       setBusy(true);
-      const body =
-        action === "accept"
-          ? {}
-          : { reason: `Human ${action} action from Work Room.` };
+      const reasonText =
+        action === "accept" ? text.handoffAcceptReason
+        : action === "reject" ? text.handoffRejectReason
+        : action === "cancel" ? text.handoffCancelReason
+        : text.handoffCompleteReason;
+      const body = action === "accept" ? {} : { reason: reasonText };
       await roomMutation(
         `/api/v1/handoffs/${encodeURIComponent(stringValue(handoff, "id"))}/${action}`,
         body,
@@ -1060,7 +1078,7 @@ export function WorkRoom({
       await handoffsPage.refresh();
     } catch (reason) {
       setError(
-        reason instanceof Error ? reason.message : "Unable to update handoff.",
+        reason instanceof Error ? reason.message : text.handoffActionError,
       );
     } finally {
       setBusy(false);
@@ -1075,14 +1093,14 @@ export function WorkRoom({
       await roomMutation(
         `/api/v1/decisions/${encodeURIComponent(stringValue(decision, "id"))}/${action}`,
         action === "supersede"
-          ? { reason: "Human superseded this decision from the Work Room." }
+          ? { reason: text.decisionSupersedeReason }
           : {},
         numberValue(decision, "revision"),
       );
       await timelinePage.refresh();
     } catch (reason) {
       setError(
-        reason instanceof Error ? reason.message : "Unable to update decision.",
+        reason instanceof Error ? reason.message : text.decisionActionError,
       );
     } finally {
       setBusy(false);
@@ -1129,19 +1147,18 @@ export function WorkRoom({
   return (
     <section
       className="work-room"
-      aria-label="Work Room"
+      aria-label={text.title}
       data-testid="work-room"
     >
       <header>
         <div>
-          <h3>Work Room</h3>
+          <h3>{text.title}</h3>
           <p>
-            Durable, human-visible collaboration state. Agent-to-agent messages
-            are never hidden.
+            {text.intro}
           </p>
         </div>
         <button disabled={busy} onClick={() => void refreshAll()}>
-          Refresh
+          {text.refresh}
         </button>
       </header>
       {(error || collectionError) && (
@@ -1151,42 +1168,42 @@ export function WorkRoom({
       )}
       <section
         className="work-room-attribution"
-        aria-label="Work Room attribution"
+        aria-label={text.tabAria}
       >
         <div>
-          <small>Agent participants</small>
+          <small>{text.agentParticipants}</small>
           <strong>
             {participantNames.join(", ") ||
               summary.agentActors.join(", ") ||
-              "None reported"}
+              text.noneReported}
           </strong>
         </div>
         <div>
-          <small>Principal Humans</small>
+          <small>{text.principalHumans}</small>
           <strong>
-            {summary.principalHumans.join(", ") || "Not reported"}
+            {summary.principalHumans.join(", ") || text.notReported}
           </strong>
         </div>
         <div>
-          <small>Sessions</small>
+          <small>{text.sessionsStat}</small>
           <strong>{summary.sessions}</strong>
         </div>
         <div>
-          <small>Pending responses</small>
+          <small>{text.pendingResponses}</small>
           <strong>{summary.pendingResponses}</strong>
         </div>
         <div>
-          <small>Evidence</small>
+          <small>{text.evidenceStat}</small>
           <strong>{summary.evidence}</strong>
         </div>
         <div>
-          <small>Decisions / handoffs</small>
+          <small>{text.decisionsHandoffs}</small>
           <strong>
             {summary.decisions} / {summary.handoffs}
           </strong>
         </div>
       </section>
-      <div role="tablist" aria-label="Work Room tabs">
+      <div role="tablist" aria-label={text.tabAria}>
         {tabs.map((item) => (
           <button
             key={item.id}
@@ -1207,25 +1224,25 @@ export function WorkRoom({
               onSubmit={(event) => void send(event)}
             >
               <label>
-                Message intent
+                {text.messageIntentLabel}
                 <select name="intent" defaultValue="inform">
-                  <option value="inform">Comment</option>
-                  <option value="ask">Ask</option>
-                  <option value="answer">Answer</option>
-                  <option value="review_request">Review request</option>
-                  <option value="blocker">Blocker</option>
-                  <option value="handoff">Handoff</option>
+                  <option value="inform">{text.messageIntentComment}</option>
+                  <option value="ask">{text.messageIntentAsk}</option>
+                  <option value="answer">{text.messageIntentAnswer}</option>
+                  <option value="review_request">{text.messageIntentReviewRequest}</option>
+                  <option value="blocker">{text.messageIntentBlocker}</option>
+                  <option value="handoff">{text.messageIntentHandoff}</option>
                 </select>
               </label>
               <label>
-                Message
+                {text.messageBodyLabel}
                 <textarea
                   name="body"
-                  placeholder="Write a human-visible collaboration message"
+                  placeholder={text.messageBodyPlaceholder}
                   required
                 />
               </label>
-              <button disabled={busy}>Send typed message</button>
+              <button disabled={busy}>{text.messageSend}</button>
             </form>
           )}
           <LegacyCommentComposer
@@ -1235,13 +1252,12 @@ export function WorkRoom({
           />
           {!room && (
             <p className="empty">
-              The Work Room API is unavailable on this server; showing the REST
-              v1 compatible Work Item comments fallback.
+              {text.roomUnavailable}
             </p>
           )}
-          <div className="combined-timeline" aria-label="Combined timeline">
+          <div className="combined-timeline" aria-label={text.tabAria}>
             {visibleTimeline.length === 0 ? (
-              <p className="empty">No human or agent messages yet.</p>
+              <p className="empty">{text.noTimeline}</p>
             ) : (
               visibleTimeline.map((item) => (
                 <TimelineCard
@@ -1256,7 +1272,7 @@ export function WorkRoom({
           {legacyComments.length > 0 && (
             <section
               className="legacy-comment-controls"
-              aria-label="Legacy comment controls"
+              aria-label={text.legacyAria}
             >
               {legacyComments.map((comment) => {
                 const mentioned = legacyHumans
@@ -1266,26 +1282,26 @@ export function WorkRoom({
                   <article className="room-card" key={comment.id}>
                     <header>
                       <strong>{comment.author_name}</strong>
-                      <span className="intent-badge">Human</span>
+                      <span className="intent-badge">{text.legacyHuman}</span>
                       <span>{comment.is_resolved ? "Resolved" : "Open"}</span>
                     </header>
                     <Markdown source={comment.body} />
                     {mentioned.length > 0 && (
-                      <p>Mentioned: {mentioned.join(", ")}</p>
+                      <p>{text.legacyMentioned}: {mentioned.join(", ")}</p>
                     )}
                     <div className="session-actions">
                       <button
                         type="button"
                         onClick={() => {
                           const body = window.prompt(
-                            "Edit comment",
+                            text.legacyEditPrompt,
                             comment.body,
                           );
                           if (body?.trim())
                             void onLegacyUpdate(comment, { body: body.trim() });
                         }}
                       >
-                        Edit
+                        {text.legacyEditPrompt}
                       </button>
                       <button
                         type="button"
@@ -1295,17 +1311,17 @@ export function WorkRoom({
                           })
                         }
                       >
-                        {comment.is_resolved ? "Reopen" : "Resolve"}
+                        {comment.is_resolved ? text.legacyReopen : text.legacyResolve}
                       </button>
                       <button
                         className="danger"
                         type="button"
                         onClick={() => {
-                          if (window.confirm("Soft-delete this comment?"))
+                          if (window.confirm(text.legacyDeleteConfirm))
                             void onLegacyUpdate(comment, { deleted: true });
                         }}
                       >
-                        Delete
+                        {text.legacyDelete}
                       </button>
                     </div>
                     <form
@@ -1317,8 +1333,8 @@ export function WorkRoom({
                         )
                       }
                     >
-                      <textarea name="body" placeholder="Reply" required />
-                      <button>Reply</button>
+                      <textarea name="body" placeholder={text.legacyReplyPlaceholder} required />
+                      <button>{text.legacyReply}</button>
                     </form>
                   </article>
                 );
@@ -1330,11 +1346,11 @@ export function WorkRoom({
       {tab === "plan" && (
         <section
           className="combined-timeline"
-          aria-label="Plan ownership and dependencies"
+          aria-label={text.planAria}
         >
           {planItems.length === 0 ? (
             <p className="empty">
-              No published plan-step assignments or claims yet.
+              {text.planEmpty}
             </p>
           ) : (
             planItems.map((item) => {
@@ -1350,41 +1366,41 @@ export function WorkRoom({
                         "step_title",
                       ) ||
                         itemBody(item) ||
-                        "Plan step"}
+                        text.planStepFallback}
                     </strong>
                     <span className="plan-step">
                       {stringValue(payload, "status") || itemKind(item)}
                     </span>
                   </header>
                   <p>
-                    Owner:{" "}
+                    {text.planOwner}:{" "}
                     {stringValue(
                       payload,
                       "ownerName",
                       "owner_name",
                       "ownerActorId",
                       "owner_actor_id",
-                    ) || "unassigned"}{" "}
-                    · Dependencies:{" "}
+                    ) || text.unassigned}{" "}
+                    · {text.planDependencies}:{" "}
                     {arrayValue(payload, "dependsOn", "depends_on")
                       .map((value) => stringValue(value, "id", "title"))
                       .filter(Boolean)
-                      .join(", ") || "none"}
+                      .join(", ") || text.none}
                   </p>
                   <p>
-                    Required:{" "}
+                    {text.planRequired}:{" "}
                     {stringValue(
                       payload,
                       "required",
                       "requiredApproval",
                       "required_approval",
-                    ) || "not reported"}{" "}
-                    · Assignment:{" "}
+                    ) || text.notReported}{" "}
+                    · {text.planAssignment}:{" "}
                     {stringValue(payload, "assignmentId", "assignment_id") ||
-                      "not reported"}{" "}
-                    · Claim:{" "}
+                      text.notReported}{" "}
+                    · {text.planClaim}:{" "}
                     {stringValue(payload, "leaseId", "lease_id") ||
-                      "not claimed"}
+                      text.notClaimed}
                   </p>
                   {stringValue(
                     payload,
@@ -1393,7 +1409,7 @@ export function WorkRoom({
                     "step_comment",
                   ) && (
                     <p>
-                      Step comment:{" "}
+                      {text.planStepComment}:{" "}
                       {stringValue(
                         payload,
                         "comment",
@@ -1418,18 +1434,18 @@ export function WorkRoom({
       {tab === "activity" && (
         <section
           className="combined-timeline"
-          aria-label="Collaboration activity"
+          aria-label={text.activityAria}
         >
           <div className="activity-filters">
             <label>
-              Session
+              {text.activityFilterSession}
               <select
                 value={activitySessionId}
                 onChange={(event) =>
                   setActivitySessionId(event.currentTarget.value)
                 }
               >
-                <option value="">All sessions</option>
+                <option value="">{text.activityFilterAll}</option>
                 {sessions.map((session) => (
                   <option key={session.id} value={session.id}>
                     {session.id.slice(0, 8)}
@@ -1445,7 +1461,7 @@ export function WorkRoom({
                   setShowHeartbeats(event.currentTarget.checked)
                 }
               />{" "}
-              Show heartbeats
+              {text.activityShowHeartbeats}
             </label>
           </div>
           {activityItems.map((item) => (
@@ -1457,7 +1473,7 @@ export function WorkRoom({
           ))}
           {activityItems.length === 0 && (
             <p className="empty">
-              No matching activity. Heartbeats are collapsed by default.
+              {text.activityEmpty}
             </p>
           )}
           <LoadMoreButton collection={timelinePage} label="timeline" />
@@ -1475,7 +1491,7 @@ export function WorkRoom({
       {tab === "artifacts" && (
         <section
           className="combined-timeline"
-          aria-label="Artifacts and context deltas"
+          aria-label={text.artifactsAria}
         >
           <WorkItemArtifacts workItemId={workItemId} />
           {artifactItems.map((item) => (
@@ -1487,20 +1503,19 @@ export function WorkRoom({
           ))}
           {artifactItems.length === 0 && (
             <p className="empty">
-              No Agent artifacts or context deltas recorded yet.
+              {text.artifactsEmpty}
             </p>
           )}
           <LoadMoreButton collection={timelinePage} label="timeline" />
           <p className="empty">
-            Artifacts are attributed to the Human or Agent, exact session, and
-            plan-step when applicable.
+            {text.artifactsAttribution}
           </p>
         </section>
       )}
       {tab === "decisions" && (
         <section className="decision-list">
           {decisions.length === 0 ? (
-            <p className="empty">No decisions recorded yet.</p>
+            <p className="empty">{text.decisionsEmpty}</p>
           ) : (
             decisions.map((decision) => (
               <DecisionCard
@@ -1532,7 +1547,7 @@ export function WorkRoom({
           <LoadMoreButton collection={sessionsPage} label="sessions" />
           <section className="lease-list">
             {leases.length === 0 ? (
-              <p className="empty">No active or conflicting leases.</p>
+              <p className="empty">{text.leasesEmpty}</p>
             ) : (
               leases.map((lease) => (
                 <LeaseCard
@@ -1553,6 +1568,7 @@ export function WorkRoom({
 
 type InboxItem = RoomRecord;
 export function InboxPanel() {
+  const { inboxCopy: text } = useLocale();
   const [status, setStatus] = useState("open");
   const [busyItemId, setBusyItemId] = useState("");
   const [actionError, setActionError] = useState("");
@@ -1577,7 +1593,7 @@ export function InboxPanel() {
       setActionError(
         reason instanceof Error
           ? reason.message
-          : "Unable to acknowledge this Inbox item.",
+          : text.acknowledgeError,
       );
     } finally {
       setBusyItemId("");
@@ -1587,17 +1603,17 @@ export function InboxPanel() {
     <section className="inbox-panel" data-testid="stage2-inbox">
       <header>
         <div>
-          <h3>Inbox</h3>
-          <p>Requests that require a human response or review.</p>
+          <h3>{text.title}</h3>
+          <p>{text.intro}</p>
         </div>
         <label>
-          Status
+          {text.status}
           <select
             value={status}
             onChange={(event) => setStatus(event.currentTarget.value)}
           >
-            <option value="open">Open</option>
-            <option value="resolved">Resolved</option>
+            <option value="open">{text.statusOpen}</option>
+            <option value="resolved">{text.statusResolved}</option>
           </select>
         </label>
       </header>
@@ -1607,9 +1623,7 @@ export function InboxPanel() {
         </p>
       )}
       {items.length === 0 ? (
-        <p className="empty">
-          No open asks, review requests, blockers, or handoffs.
-        </p>
+        <p className="empty">{text.empty}</p>
       ) : (
         items.map((item) => {
           const payload = itemPayload(item);
@@ -1627,7 +1641,7 @@ export function InboxPanel() {
             >
               <header>
                 <span className="intent-badge">
-                  {titleCase(itemKind(item))}
+                  {text.intentLabel(itemKind(item))}
                 </span>
                 <strong>
                   {stringValue(
@@ -1650,26 +1664,26 @@ export function InboxPanel() {
                     "context_summary",
                     "body",
                   ) ||
-                  "Open the source to inspect the recorded context."}
+                  text.inspectCanonical}
               </p>
               <dl className="inbox-facts">
                 <div>
-                  <dt>Source</dt>
+                  <dt>{text.source}</dt>
                   <dd>
-                    {sourceType || "not reported"} ·{" "}
-                    {sourceId ? sourceId.slice(0, 8) : "not reported"}
+                    {sourceType || text.notReported} ·{" "}
+                    {sourceId ? sourceId.slice(0, 8) : text.notReported}
                   </dd>
                 </div>
                 <div>
-                  <dt>Risk</dt>
+                  <dt>{text.risk}</dt>
                   <dd>
                     {stringValue(item, "riskLevel", "risk_level") ||
                       stringValue(payload, "riskLevel", "risk_level", "risk") ||
-                      "not reported"}
+                      text.notReported}
                   </dd>
                 </div>
                 <div>
-                  <dt>Deadline / expiry</dt>
+                  <dt>{text.deadline}</dt>
                   <dd>
                     {formatTime(
                       stringValue(
@@ -1688,11 +1702,11 @@ export function InboxPanel() {
                   </dd>
                 </div>
                 <div>
-                  <dt>Status</dt>
-                  <dd>{stringValue(item, "status") || "open"}</dd>
+                  <dt>{text.itemStatus}</dt>
+                  <dd>{text.intentLabel(stringValue(item, "status") || "open")}</dd>
                 </div>
                 <div>
-                  <dt>Responsible Human</dt>
+                  <dt>{text.responsibleHuman}</dt>
                   <dd>
                     {stringValue(
                       item,
@@ -1706,25 +1720,25 @@ export function InboxPanel() {
                         "responsibleHumanName",
                         "responsible_human_name",
                       ) ||
-                      "current Human"}
+                      text.currentHuman}
                   </dd>
                 </div>
                 <div>
-                  <dt>Context</dt>
+                  <dt>{text.context}</dt>
                   <dd>
                     {stringValue(
                       payload,
                       "contextSummary",
                       "context_summary",
                       "summary",
-                    ) || "Inspect the canonical source."}
+                    ) || text.inspectCanonical}
                   </dd>
                 </div>
               </dl>
               <div className="session-actions">
                 {workItemId && (
                   <a href={`/?workItemId=${encodeURIComponent(workItemId)}`}>
-                    Open Work Room
+                    {text.openWorkRoom}
                   </a>
                 )}
                 {status === "open" && (
@@ -1733,7 +1747,7 @@ export function InboxPanel() {
                     disabled={busyItemId === id}
                     onClick={() => void acknowledge(item)}
                   >
-                    {busyItemId === id ? "Acknowledging…" : "Acknowledge"}
+                    {busyItemId === id ? text.acknowledging : text.acknowledge}
                   </button>
                 )}
               </div>
@@ -1741,7 +1755,7 @@ export function InboxPanel() {
           );
         })
       )}
-      <LoadMoreButton collection={page} label="inbox items" />
+      <LoadMoreButton collection={page} label={text.title} />
       <CollaborationHub />
     </section>
   );
@@ -1756,6 +1770,7 @@ function LegacyCommentComposer({
   humans: LegacyHuman[];
   onSubmit: Props["onLegacyComment"];
 }) {
+  const { workRoomCopy: text } = useLocale();
   const [body, setBody] = useState("");
   return (
     <form
@@ -1766,15 +1781,15 @@ function LegacyCommentComposer({
     >
       <RichTextEditor
         identity={{ ...draftIdentity, field: "comment", baseRevision: 0 }}
-        label="Work item comment"
+        label={text.legacyAria}
         name="body"
         required
         value={body}
         onChange={setBody}
       />
       <label className="mentions">
-        Mention people
-        <select name="mentions" multiple aria-label="Mention people">
+        {text.legacyMentioned}
+        <select name="mentions" multiple aria-label={text.legacyMentioned}>
           {humans.map((human) => (
             <option key={human.id} value={human.id}>
               {human.display_name}
@@ -1782,7 +1797,7 @@ function LegacyCommentComposer({
           ))}
         </select>
       </label>
-      <button data-testid="create-comment">Post comment</button>
+      <button data-testid="create-comment">{text.legacyPostComment}</button>
     </form>
   );
 }

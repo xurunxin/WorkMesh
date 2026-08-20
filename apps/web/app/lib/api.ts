@@ -1,6 +1,9 @@
 'use client'
 
-export const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
+const fallbackApiBase = typeof process !== 'undefined' && process.env
+  ? (process.env.NEXT_PUBLIC_API_URL_TEST ?? 'http://localhost:3001')
+  : 'http://localhost:3001'
+export const apiBase = process.env.NEXT_PUBLIC_API_URL ?? (typeof window === 'undefined' ? fallbackApiBase : '')
 
 const csrfStorageKey = 'workmesh.csrf-token'
 const logicalAttempts = new Map<string, { key: string; requestIdentity: string }>()

@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, type ReactNode, useMemo, useState } from 'react'
+import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Button } from '@workmesh/ui'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { FlagIcon } from '@phosphor-icons/react/dist/csr/Flag'
@@ -24,6 +24,7 @@ import {
   type ProjectWorkspaceTab,
 } from './lib/project-work'
 import { ProjectDelivery } from './project-delivery'
+import { Markdown } from '../features/rich-content/markdown'
 import type { WorkItemDto } from '../features/work-items/contracts'
 
 type Project = Readonly<{
@@ -85,6 +86,16 @@ export function ProjectWorkspace({
   const milestones = usePagedApiList<Milestone>(
     `/api/v1/projects/${encodeURIComponent(project.id)}/milestones`,
   )
+  // Project summary (progress / metrics) must reflect the CURRENT project only,
+  // never whatever the Work Surfaces happen to be showing. Load the canonical
+  // project issues directly so opening a project always shows its own progress.
+  const projectWorkItems = usePagedApiList<WorkItemDto>(
+    `/api/v1/work-items?projectId=${encodeURIComponent(project.id)}&limit=200`,
+  )
+  const [allProjectItems, setAllProjectItems] = useState<WorkItemDto[]>([])
+  useEffect(() => {
+    setAllProjectItems(projectWorkItems.items)
+  }, [projectWorkItems.items])
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState<ReturnType<typeof revisionConflictNotice>>(null)
@@ -92,10 +103,12 @@ export function ProjectWorkspace({
     if (invalidation.reason === 'resync' || [
       ...invalidation.event.scopes,
       ...invalidation.event.invalidates,
-    ].some(resource => resource.type === 'project' && resource.id === project.id))
-      return milestones.refresh()
+    ].some(resource => resource.type === 'project' && resource.id === project.id)) {
+      void milestones.refresh()
+      void projectWorkItems.refresh()
+    }
   })
-  const normalizedItems = useMemo<WorkItem[]>(() => items.map(item => ({
+  const normalizedItems = useMemo<WorkItem[]>(() => allProjectItems.map(item => ({
     id: item.id,
     title: item.title,
     number: item.number ?? 0,
@@ -107,7 +120,7 @@ export function ProjectWorkspace({
     milestone_id: item.milestone_id ?? null,
     responsible_human: item.responsible_human?.display_name ? { actor_id: item.responsible_human.actor_id ?? '', display_name: item.responsible_human.display_name } : null,
     active_executor: item.active_executor?.agent_display_name ? { agent_display_name: item.active_executor.agent_display_name, execution_state: item.active_executor.execution_state ?? 'unknown' } : null,
-  })), [items, text.unknownStatus])
+  })), [allProjectItems, text.unknownStatus])
   const summary = useMemo(() => summarizeProjectWork(normalizedItems), [normalizedItems])
   const tabs: Array<[ProjectWorkspaceTab, string, ReactNode]> = [
     ['overview', text.overview, <HouseIcon aria-hidden="true" size={16} weight="bold" />],
@@ -175,7 +188,7 @@ export function ProjectWorkspace({
       <div className="project-plan-copy">
         <span className="project-status">{text.status(project.status)}</span>
         <h2>{project.name}</h2>
-        <p>{project.description || project.summary || text.noBrief}</p>
+        {project.description ? <Markdown source={project.description} /> : <p>{project.summary || text.noBrief}</p>}
       </div>
       <div className="project-progress" aria-label={`${summary.progressPercent}% ${text.complete}`}>
         <strong>{summary.progressPercent}%</strong>
