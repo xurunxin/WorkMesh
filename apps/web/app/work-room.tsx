@@ -1788,8 +1788,8 @@ function LegacyCommentComposer({
         onChange={setBody}
       />
       <label className="mentions">
-        {text.legacyMentioned}
-        <select name="mentions" multiple aria-label={text.legacyMentioned}>
+        {text.legacyMentionLabel}
+        <select name="mentions" multiple aria-label={text.legacyMentionLabel}>
           {humans.map((human) => (
             <option key={human.id} value={human.id}>
               {human.display_name}

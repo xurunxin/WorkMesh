@@ -2356,6 +2356,7 @@ export type WorkRoomCopy = {
   legacyReplyPlaceholder: string
   legacyReply: string
   legacyMentioned: string
+  legacyMentionLabel: string
   legacyHuman: string
   // Timeline card
   timelineActor: string
@@ -2527,6 +2528,7 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     legacyReplyPlaceholder: '回复',
     legacyReply: '回复',
     legacyMentioned: '提及',
+    legacyMentionLabel: '提及人员',
     legacyHuman: '人类',
     timelineActor: '参与者',
     timelineIntent: '意图',
@@ -2693,6 +2695,7 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     legacyReplyPlaceholder: 'Reply',
     legacyReply: 'Reply',
     legacyMentioned: 'Mentioned',
+    legacyMentionLabel: 'Mention people',
     legacyHuman: 'Human',
     timelineActor: 'Actor',
     timelineIntent: 'Intent',
