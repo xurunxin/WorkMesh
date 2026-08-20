@@ -309,7 +309,7 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
     clearFilters: 'Clear filters',
     completedSubIssues: (completed, total) => `sub-issues ${completed}/${total}`,
     dropWorkHere: 'Drop Issue here',
-    filterLabel: 'Labels',
+    filterLabel: 'Label',
     filterMilestone: 'Milestone',
     filterPriority: 'Priority',
     filterProject: 'Project',
