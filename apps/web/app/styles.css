@@ -210,6 +210,8 @@ button, input, textarea, select { font: inherit; }
 .settings-tab-panel { display: none; }
 .settings-tab-panel.is-active { display: block; }
 .settings-tab-actions { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
+.settings-tab-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.settings-tab-heading h2 { margin: 0; font-size: 1.2rem; letter-spacing: -.02em; }
 @media (max-width: 720px) { .settings-tabs { grid-template-columns: 1fr; } .settings-grid { grid-template-columns: 1fr; } .settings-form-inline { grid-template-columns: 1fr; } }
 
 /* Operations content reused inside Settings tab */
@@ -737,7 +739,15 @@ button, input, textarea, select { font: inherit; }
 .work-item-detail-form { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(250px, .8fr); gap: 1rem; align-items: start; }
 .work-item-detail-content, .work-item-properties, .responsibility-projection, .agent-execution-projection { border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); padding: 1rem; min-width: 0; }
 .work-item-detail-content, .work-item-properties { display: grid; gap: .8rem; }
+.work-item-detail-content > *, .work-item-properties > * { min-width: 0; }
+.work-item-detail-content textarea, .work-item-detail-content input, .work-item-detail-content select,
+.work-item-properties textarea, .work-item-properties input, .work-item-properties select { min-width: 0; max-width: 100%; }
+.work-item-properties label { min-width: 0; }
+.work-item-properties label > select { min-width: 0; width: 100%; }
 .work-item-detail-content textarea { min-height: 16rem; resize: vertical; }
+@media (max-width: 480px) {
+  .rich-editor-toolbar .rich-editor-tool { width: 1.75rem; min-width: 1.75rem; height: 1.75rem; min-height: 1.75rem; }
+}
 .rich-editor { display: grid; gap: .55rem; min-width: 0; }
 .rich-editor-toolbar { display: flex; gap: .25rem; flex-wrap: wrap; align-items: center; padding: .35rem; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
 .rich-editor-toolbar .rich-editor-tool { display: inline-grid; width: 2rem; min-width: 2rem; height: 2rem; min-height: 2rem; place-items: center; padding: 0; color: var(--wm-muted); background: transparent; border: 1px solid transparent; border-radius: 6px; }
@@ -787,7 +797,7 @@ button, input, textarea, select { font: inherit; }
 }
 
 /* v27 Work Surface primitives: the board owns horizontal scrolling; the document never does. */
-.work-surfaces { display: flex; flex-direction: column; gap: .8rem; width: 100%; min-width: 0; max-width: 100%; flex: 1 1 auto; min-height: 0; max-height: calc(100dvh - 1.25rem); }
+.work-surfaces { display: flex; flex-direction: column; gap: .8rem; width: 100%; min-width: 0; max-width: 100%; flex: 1 1 auto; min-height: 0; max-height: calc(100dvh - 1.25rem); overflow: hidden; }
 .work-surfaces > * { min-width: 0; max-width: 100%; }
 /* v28 Board fills available vertical space — bidirectional scroll lives here. */
 .wm-work-item-board { min-height: 0; max-height: 100dvh; flex: 1 1 auto; }

@@ -207,7 +207,7 @@ export function OperationsContent({ embedded = false }: OperationsContentProps) 
         </div>
         <Button onClick={refreshAll}>{operationsCopy.refresh}</Button>
       </header>}
-      {embedded && <div className="settings-tab-actions"><Button onClick={refreshAll}>{operationsCopy.refresh}</Button></div>}
+      {embedded && <div className="settings-tab-heading"><h2>{operationsCopy.title}</h2><div className="settings-tab-actions"><Button onClick={refreshAll}>{operationsCopy.refresh}</Button></div></div>}
       {(error || collectionError) && <ErrorState actionLabel={operationsCopy.retry} description={error || collectionError?.message || operationsCopy.errorDescription} onAction={refreshAll} title={operationsCopy.error} />}
       {data && (
         <>
