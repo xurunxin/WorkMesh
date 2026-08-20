@@ -1086,6 +1086,24 @@ export type ConnectCopy = {
   copiedLink: string
   authorityTitle: string
   authorityBody: string
+  stateReadyLabel: string
+  stateReadySummary: string
+  stateReadyNextAction: string
+  stateUnsupportedClientLabel: string
+  stateUnsupportedClientSummary: string
+  stateUnsupportedClientNextAction: string
+  stateCoordinationFeatureDisabledLabel: string
+  stateCoordinationFeatureDisabledSummary: string
+  stateCoordinationFeatureDisabledNextAction: string
+  stateNetworkUnavailableLabel: string
+  stateNetworkUnavailableSummary: string
+  stateNetworkUnavailableNextAction: string
+  stateDiscoveryUnavailableLabel: string
+  stateDiscoveryUnavailableSummary: string
+  stateDiscoveryUnavailableNextAction: string
+  stateMcpUnavailableLabel: string
+  stateMcpUnavailableSummary: string
+  stateMcpUnavailableNextAction: string
 }
 
 const connectCopies: Record<Locale, ConnectCopy> = {
@@ -1124,6 +1142,24 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     copiedLink: '已复制',
     authorityTitle: '权限仍在服务端。',
     authorityBody: '人类连接只会创建一个安装身份。普通写入仍需有效的智能体 Session、Delegation、能力与资源范围，并按需配合审批、Lease、版本与幂等键。',
+    stateReadyLabel: '配置就绪',
+    stateReadySummary: '所选客户端、服务端、Profile 与固定版本的技能选择器彼此一致。',
+    stateReadyNextAction: '配对一次后，把凭据存入客户端密钥库，然后运行 verify_connection。',
+    stateUnsupportedClientLabel: '不支持的客户端',
+    stateUnsupportedClientSummary: '此服务端未声明所选的 MCP 客户端。',
+    stateUnsupportedClientNextAction: '请选择已声明的客户端，或先升级 WorkMesh 部署再进行配对。',
+    stateCoordinationFeatureDisabledLabel: '协调功能未启用',
+    stateCoordinationFeatureDisabledSummary: '基础发现可用，但此部署报告 Coordination MCP beta 功能被关闭。',
+    stateCoordinationFeatureDisabledNextAction: '暂时只作为审阅使用；配对前需由运维开启并验证该功能。',
+    stateNetworkUnavailableLabel: '网络不可用',
+    stateNetworkUnavailableSummary: '无法从当前 WorkMesh 部署刷新实时接入事实。',
+    stateNetworkUnavailableNextAction: '恢复网络后重试。请勿重用旧的凭据或端点。',
+    stateDiscoveryUnavailableLabel: '发现不可用',
+    stateDiscoveryUnavailableSummary: 'WorkMesh 无法提供服务端派生的 MCP 和技能选择器。',
+    stateDiscoveryUnavailableNextAction: '重试发现流程；请勿推测端点或重用旧配对说明。',
+    stateMcpUnavailableLabel: 'MCP 不可用',
+    stateMcpUnavailableSummary: '发现成功，但已声明的 MCP 服务未通过就绪检查。',
+    stateMcpUnavailableNextAction: '保留已有凭据不变，待服务恢复后再重试。',
   },
   en: {
     eyebrow: 'Secure Agent setup',
@@ -1160,6 +1196,24 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     copiedLink: 'Copied',
     authorityTitle: 'Authority stays server-side.',
     authorityBody: 'A Human Connection creates an installation identity only. Ordinary mutations still require an active Agent Session, Delegation, capability and resource scope, plus approval, lease, revision, and idempotency where applicable.',
+    stateReadyLabel: 'Configuration ready',
+    stateReadySummary: 'Selected client, server, profile, and pinned-version skill selectors all agree.',
+    stateReadyNextAction: 'After pairing once, store the credential in the client secret store, then run verify_connection.',
+    stateUnsupportedClientLabel: 'Unsupported client',
+    stateUnsupportedClientSummary: 'This server does not advertise the selected MCP client.',
+    stateUnsupportedClientNextAction: 'Pick an advertised client, or upgrade the WorkMesh deployment before pairing.',
+    stateCoordinationFeatureDisabledLabel: 'Coordination feature disabled',
+    stateCoordinationFeatureDisabledSummary: 'Discovery is reachable, but this deployment reports the Coordination MCP beta as disabled.',
+    stateCoordinationFeatureDisabledNextAction: 'Review only for now; operations must enable and verify the feature before pairing.',
+    stateNetworkUnavailableLabel: 'Network unavailable',
+    stateNetworkUnavailableSummary: 'Cannot refresh live onboarding facts from the current WorkMesh deployment.',
+    stateNetworkUnavailableNextAction: 'Retry once the network is back. Do not reuse old credentials or endpoints.',
+    stateDiscoveryUnavailableLabel: 'Discovery unavailable',
+    stateDiscoveryUnavailableSummary: 'WorkMesh cannot serve the server-derived MCP and skill selectors.',
+    stateDiscoveryUnavailableNextAction: 'Retry discovery; do not infer endpoints or reuse old pairing instructions.',
+    stateMcpUnavailableLabel: 'MCP unavailable',
+    stateMcpUnavailableSummary: 'Discovery succeeded, but the advertised MCP service did not pass its readiness check.',
+    stateMcpUnavailableNextAction: 'Keep existing credentials; retry once the service is back.',
   },
 }
 

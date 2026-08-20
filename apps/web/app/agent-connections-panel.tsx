@@ -23,7 +23,7 @@ type Props = { admin: boolean; teams: Team[]; humans: Human[]; currentHumanId: s
 const capabilities = ['work:read', 'work:write', 'comment:write', 'message:write', 'plan:write']
 
 export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, onError }: Props) {
-  const { agentsCopy: text } = useLocale()
+  const { agentsCopy: text, connectCopy: copy } = useLocale()
   const connections = usePagedApiList<AgentConnection>(admin ? '/api/v1/agent-connections' : null, { limit: 50 })
   const [connection, setConnection] = useState<AgentConnection | null>(null)
   const [connectUrl, setConnectUrl] = useState('')
@@ -61,8 +61,8 @@ export function AgentConnectionsPanel({ admin, teams, humans, currentHumanId, on
     coordinationFeatureEnabled: mcpEnvironment.coordinationEnabled,
     mcpHealthy: mcpEnvironment.mcpHealthy,
   }) : null, [connection, mcpEnvironment])
-  const mcpState = mcpGuide ? onboardingStateMessage(mcpGuide.state) : null
-  const mcpFailureState = mcpEnvironmentFailure ? onboardingStateMessage(mcpEnvironmentFailure.state) : null
+  const mcpState = mcpGuide ? onboardingStateMessage(mcpGuide.state, copy) : null
+  const mcpFailureState = mcpEnvironmentFailure ? onboardingStateMessage(mcpEnvironmentFailure.state, copy) : null
 
   useEffect(() => {
     if (!admin || connections.loading || connections.error) return

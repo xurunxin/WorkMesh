@@ -18,6 +18,7 @@ import {
 
 export default function ConnectPage() {
   const { connectCopy: text } = useLocale()
+  const mcpCopy = text
   const [discovery, setDiscovery] = useState<McpDiscovery | null>(null)
   const [release, setRelease] = useState<McpReleaseInfo | null>(null)
   const [clientType, setClientType] = useState<McpClientType>('codex')
@@ -58,8 +59,8 @@ export default function ConnectPage() {
   const guide = useMemo(() => discovery && release && coordinationFeatureEnabled !== null
     ? buildMcpClientGuide({ clientType, discovery, release, coordinationFeatureEnabled, mcpHealthy })
     : null, [clientType, coordinationFeatureEnabled, discovery, mcpHealthy, release])
-  const state = guide ? onboardingStateMessage(guide.state) : null
-  const failureState = failure ? onboardingStateMessage(failure) : null
+  const state = guide ? onboardingStateMessage(guide.state, mcpCopy) : null
+  const failureState = failure ? onboardingStateMessage(failure, mcpCopy) : null
 
   const copy = async (kind: 'config' | 'link', value: string) => {
     await navigator.clipboard.writeText(value)

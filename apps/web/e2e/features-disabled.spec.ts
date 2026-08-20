@@ -33,7 +33,7 @@ test('hides default-off Operations without requesting gated endpoints', async ({
       gatedRequests.push(path)
       return route.abort()
     }
-    return body([])
+    return body({ items: [], nextCursor: null })
   })
 
   await page.goto('/')

@@ -170,13 +170,13 @@ export function buildMcpClientGuide(input: {
   }
 }
 
-export function onboardingStateMessage(state: McpOnboardingState): { label: string; summary: string; nextAction: string; tone: 'positive' | 'warning' | 'critical' } {
-  if (state === 'unsupported_client') return { label: '不支持的客户端', tone: 'critical', summary: '此服务端未声明所选的 MCP 客户端。', nextAction: '请选择已声明的客户端，或先升级 WorkMesh 部署再进行配对。' }
-  if (state === 'coordination_feature_disabled') return { label: '协调功能未启用', tone: 'warning', summary: '基础发现可用，但此部署报告 Coordination MCP beta 功能被关闭。', nextAction: '暂时只作为审阅使用；配对前需由运维开启并验证该功能。' }
-  if (state === 'network_unavailable') return { label: '网络不可用', tone: 'critical', summary: '无法从当前 WorkMesh 部署刷新实时接入事实。', nextAction: '恢复网络后重试。请勿重用旧的凭据或端点。' }
-  if (state === 'discovery_unavailable') return { label: '发现不可用', tone: 'critical', summary: 'WorkMesh 无法提供服务端派生的 MCP 和技能选择器。', nextAction: '重试发现流程；请勿推测端点或重用旧配对说明。' }
-  if (state === 'mcp_unavailable') return { label: 'MCP 不可用', tone: 'critical', summary: '发现成功，但已声明的 MCP 服务未通过就绪检查。', nextAction: '保留已有凭据不变，待服务恢复后再重试。' }
-  return { label: '配置就绪', tone: 'positive', summary: '所选客户端、服务端、Profile 与固定版本的技能选择器彼此一致。', nextAction: '配对一次后，把凭据存入客户端密钥库，然后运行 verify_connection。' }
+export function onboardingStateMessage(state: McpOnboardingState, copy: { stateReadyLabel: string; stateReadySummary: string; stateReadyNextAction: string; stateUnsupportedClientLabel: string; stateUnsupportedClientSummary: string; stateUnsupportedClientNextAction: string; stateCoordinationFeatureDisabledLabel: string; stateCoordinationFeatureDisabledSummary: string; stateCoordinationFeatureDisabledNextAction: string; stateNetworkUnavailableLabel: string; stateNetworkUnavailableSummary: string; stateNetworkUnavailableNextAction: string; stateDiscoveryUnavailableLabel: string; stateDiscoveryUnavailableSummary: string; stateDiscoveryUnavailableNextAction: string; stateMcpUnavailableLabel: string; stateMcpUnavailableSummary: string; stateMcpUnavailableNextAction: string }): { label: string; summary: string; nextAction: string; tone: 'positive' | 'warning' | 'critical' } {
+  if (state === 'unsupported_client') return { label: copy.stateUnsupportedClientLabel, tone: 'critical', summary: copy.stateUnsupportedClientSummary, nextAction: copy.stateUnsupportedClientNextAction }
+  if (state === 'coordination_feature_disabled') return { label: copy.stateCoordinationFeatureDisabledLabel, tone: 'warning', summary: copy.stateCoordinationFeatureDisabledSummary, nextAction: copy.stateCoordinationFeatureDisabledNextAction }
+  if (state === 'network_unavailable') return { label: copy.stateNetworkUnavailableLabel, tone: 'critical', summary: copy.stateNetworkUnavailableSummary, nextAction: copy.stateNetworkUnavailableNextAction }
+  if (state === 'discovery_unavailable') return { label: copy.stateDiscoveryUnavailableLabel, tone: 'critical', summary: copy.stateDiscoveryUnavailableSummary, nextAction: copy.stateDiscoveryUnavailableNextAction }
+  if (state === 'mcp_unavailable') return { label: copy.stateMcpUnavailableLabel, tone: 'critical', summary: copy.stateMcpUnavailableSummary, nextAction: copy.stateMcpUnavailableNextAction }
+  return { label: copy.stateReadyLabel, tone: 'positive', summary: copy.stateReadySummary, nextAction: copy.stateReadyNextAction }
 }
 
 export function containsCredentialLikeValue(value: string): boolean {
