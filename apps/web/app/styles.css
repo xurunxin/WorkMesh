@@ -881,6 +881,13 @@ button, input, textarea, select { font: inherit; }
 .wm-work-item-priority.priority-medium { color: #1e40af; background: #dbeafe; border: 1px solid #bfdbfe; }
 .wm-work-item-priority.priority-low { color: #566376; background: #f1f5f9; border: 1px solid #dde2ea; }
 .wm-work-item-priority.priority-none { display: none; }
+
+/* Status name pill — shows the workflow state name in the card heading,
+   colored by status category so the eye can read the bucket at a glance. */
+.wm-work-item-status-pill { padding: .15rem .45rem; border-radius: 999px; font-size: .7rem; font-weight: 650; background: var(--wm-surface-subtle); color: var(--wm-muted); border: 1px solid var(--wm-border); }
+.wm-work-item-status-pill.status-started, .wm-work-item-status-pill.status-in_progress { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.wm-work-item-status-pill.status-review, .wm-work-item-status-pill.status-in_review { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.wm-work-item-status-pill.status-done { background: #dcfce7; color: #14532d; border-color: #bbf7d0; }
 .wm-work-item-title { display: block; width: 100%; padding: 0 0 .5rem; margin: 0; color: var(--wm-text); background: transparent !important; border: 0 !important; border-radius: 0 !important; font-weight: 700; font-size: .92rem; line-height: 1.35; overflow-wrap: anywhere; text-align: left; cursor: pointer; transition: color .12s ease; }
 .wm-work-item-title:hover { color: var(--wm-focus); }
 .wm-work-item-project { display: inline-flex; align-items: center; gap: .2rem; width: fit-content; max-width: 100%; padding: .06rem .45rem !important; color: #1e3a8a !important; background: #eff6ff !important; border: 1px solid #dbeafe !important; border-radius: 999px !important; font-size: .58rem !important; font-weight: 500; line-height: 1.4; text-align: left; transition: background-color .12s ease, border-color .12s ease, color .12s ease; }

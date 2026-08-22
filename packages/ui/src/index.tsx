@@ -720,6 +720,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
   return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown}>
     <div className="wm-work-item-card-heading">
       <span className="wm-work-item-identifier">{item.identifier}</span>
+      <span className={workItemClassNames('wm-work-item-status-pill', `status-${statusCategory}`)}>{item.statusName}</span>
       {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}>{text.priorityName(item.priority)}</span>}
     </div>
     <button className="wm-work-item-title" onClick={() => handlePresentationPromise(onOpen ? () => onOpen(item) : undefined)} onPointerDown={stopPointer} type="button">{item.title}</button>

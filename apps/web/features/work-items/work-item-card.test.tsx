@@ -47,3 +47,38 @@ describe('WorkItemCard density modifier', () => {
     expect(article?.className).toContain('wm-work-item-card-board')
   })
 })
+
+describe('WorkItemCard status name pill', () => {
+  it('renders the status name as a pill next to the identifier', () => {
+    const { container } = render(<WorkItemCard item={baseItem} layout="list" />)
+    const pill = container.querySelector('.wm-work-item-status-pill')
+    expect(pill).not.toBeNull()
+    expect(pill?.textContent).toBe('Open')
+  })
+
+  it('places the status pill inside the heading row alongside the identifier', () => {
+    const { container } = render(<WorkItemCard item={baseItem} layout="list" />)
+    const heading = container.querySelector('.wm-work-item-card-heading')
+    expect(heading).not.toBeNull()
+    const identifier = heading?.querySelector('.wm-work-item-identifier')
+    const pill = heading?.querySelector('.wm-work-item-status-pill')
+    expect(identifier).not.toBeNull()
+    expect(pill).not.toBeNull()
+    expect(identifier?.textContent).toBe('WM-1')
+  })
+
+  it('applies a status-category modifier class to the pill', () => {
+    const item: WorkItemCardData = { ...baseItem, statusCategory: 'in_progress' }
+    const { container } = render(<WorkItemCard item={item} layout="list" />)
+    const pill = container.querySelector('.wm-work-item-status-pill')
+    expect(pill).not.toBeNull()
+    expect(pill?.className).toContain('status-in_progress')
+  })
+
+  it('falls back to the "unknown" status-category modifier when statusCategory is missing', () => {
+    const { container } = render(<WorkItemCard item={baseItem} layout="list" />)
+    const pill = container.querySelector('.wm-work-item-status-pill')
+    expect(pill).not.toBeNull()
+    expect(pill?.className).toContain('status-unknown')
+  })
+})

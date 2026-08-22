@@ -49,3 +49,12 @@ describe('UI authority and token boundary', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
   })
 })
+
+describe('WorkItemCard status name pill', () => {
+  it('renders a status name pill colored by statusCategory', () => {
+    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
+    expect(source).toContain('wm-work-item-status-pill')
+    expect(source).toMatch(/`status-\$\{statusCategory\}`/)
+    expect(source).toMatch(/\{item\.statusName\}/)
+  })
+})
