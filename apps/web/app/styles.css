@@ -1026,6 +1026,8 @@ button, input, textarea, select { font: inherit; }
 .wm-work-surface-state.state-error .wm-work-surface-state-marker, .wm-work-surface-state.state-forbidden .wm-work-surface-state-marker, .wm-work-surface-state.state-conflict .wm-work-surface-state-marker { background: #dc2626; }
 .wm-work-surface-state.state-refreshing .wm-work-surface-state-marker, .wm-work-surface-state.state-reconnecting .wm-work-surface-state-marker { background: #d97706; }
 .wm-work-surface-stale { opacity: .72; }
+@keyframes work-surface-pulse { 0% { opacity: .65; } 50% { opacity: 1; } 100% { opacity: .65; } }
+.work-surface-stale { animation: work-surface-pulse 1.6s ease-in-out infinite; }
 .wm-work-surface-loading-note { margin: 0; color: var(--wm-muted); font-size: .8rem; }
 .locale-toggle { display: inline-flex; gap: 1px; padding: 2px; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 7px; }
 .locale-toggle button { min-width: 2rem; min-height: 28px; padding: .1rem .35rem; color: var(--wm-muted); background: transparent; border: 0; border-radius: 5px; font-size: .72rem; font-weight: 700; }
