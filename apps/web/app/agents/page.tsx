@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
-import { AppShell, AsyncStateSurface, Button, ErrorState } from '@workmesh/ui'
+import { AppShell, AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
 import { CheckCircleIcon, EyeIcon, XCircleIcon } from '@phosphor-icons/react'
 import {
   type Agent,
@@ -27,16 +27,20 @@ import { AgentConnectionsPanel } from '../agent-connections-panel'
 import { RealtimeStatus } from '../realtime-status'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
+import { useMediaQuery } from '../lib/use-media-query'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
 type AgentFilter = 'all' | 'active' | 'inactive'
+type AgentsTab = 'agents' | 'sessions' | 'approvals'
 
 export default function AgentsPage() {
   const { t, agentsCopy } = useLocale()
   const text = agentsCopy
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
+  const isCompact = useMediaQuery('(max-width: 720px)')
+  const [activeTab, setActiveTab] = useState<AgentsTab>('agents')
   const [filter, setFilter] = useState<AgentFilter>('all')
   const [error, setError] = useState('')
   const [busyAccess, setBusyAccess] = useState('')
@@ -122,41 +126,58 @@ export default function AgentsPage() {
 
       <AgentConnectionsPanel admin={actor?.workspace_role === 'admin'} teams={teams} humans={humans.length ? humans : actor ? [{ id: actor.id, display_name: actor.display_name }] : []} currentHumanId={actor?.id ?? ''} onError={setError} />
 
-      <section className="agent-center-grid">
-        <section className="surface-panel agent-registry" aria-label="Agent registry">
-          <header className="surface-header"><div><p className="eyebrow">{text.registry}</p><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{text[value]}</button>)}</div></header>
-          {shownAgents.length === 0 ? <p className="empty">{text.noAgents}</p> : <div className="registry-list">{shownAgents.map(agent => <article className="agent-summary-card" id={`agent-${agent.id}`} key={agent.id} data-testid={`agent-registry-${agent.id}`}>
-            <header><div><h3>{agentName(agent)}</h3><small>{agent.slug} · {agentProvider(agent)} {agentVersion(agent)}</small></div><span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? text.registryStatusActive : text.registryStatusInactive}</span></header>
-            <p>{agent.description || text.noRegistryDescription}</p>
-            <dl className="agent-key-facts"><div><dt>{text.approvedLabel}</dt><dd>{text.capabilitiesLabel(agent.approved_capabilities.length || 0)}</dd></div><div><dt>{text.concurrency}</dt><dd>{agent.max_concurrency}</dd></div><div><dt>{text.heartbeat}</dt><dd>{agentHeartbeat(agent)}s</dd></div></dl>
-            <details className="agent-access-details"><summary>{text.teamAccessAndCapabilities}</summary><p><strong>{text.requestedLabel}</strong> {agent.requested_capabilities.join(', ') || text.none}</p><p><strong>{text.definitionApprovedLabel}</strong> {agent.approved_capabilities.join(', ') || text.none}</p><section className="team-access-list" aria-label={`${agentName(agent)} team access`}>{teams.length === 0 ? <p className="empty">{text.noTeamsAvailable}</p> : teams.map(team => {
-              const access = agent.team_access?.find(candidate => candidate.team_id === team.id)
-              const status = access?.status ?? (access?.revoked_at ? 'revoked' : 'not granted')
-              const statusLabel = status === 'active' ? text.accessStatusActive : status === 'revoked' ? text.accessStatusRevoked : text.accessStatusNotGranted
-              const operation = `${agent.id}:${team.id}`
-              return <TeamAccessCard
-                agent={agent}
-                access={access ?? null}
-                busy={busyAccess === operation}
-                canManage={canManageAccess}
-                key={team.id}
-                onGrant={next => void grantCapabilities(agent, team, next)}
-                onRevoke={() => void revokeAccess(agent, team)}
-                team={team}
-              />
-            })}</section></details>
-          </article>)}</div>}
-          <LoadMoreButton collection={agentsPage} label="agents" loadMoreLabel={text.loadMoreAgents} /><LoadMoreButton collection={teamsPage} label="teams" loadMoreLabel={text.loadMoreTeams} />
-        </section>
-
-        <div className="agent-side-stack">
-          <section className="surface-panel approval-inbox" aria-label="Approval inbox"><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>{approvals.length === 0 ? <p className="empty">{text.noApprovals}</p> : approvals.map(approval => <article key={approval.id}><header><strong>{approval.action_name}</strong><span className={`risk-${approval.risk_level}`}>{text.riskLabel(approval.risk_level)}</span></header><p>{approval.rationale_summary}</p><a href={`/agent-sessions/${approval.session_id}`}>{text.reviewSession}</a></article>)}<LoadMoreButton collection={approvalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} /></section>
-
-          <section className="surface-panel" aria-label="Agent sessions"><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}<LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} /></section>
-
-          <section className="surface-panel diagnostics" aria-label="Agent diagnostics"><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header><p>{text.diagnosticsIntro}</p><ul>{attentionSessions.map(session => <li key={session.id}><a href={`/agent-sessions/${session.id}`}>{text.sessionLabel(session.id.slice(0, 8))}</a><span>{session.state_reason || session.error_summary || agentStateLabel(session.state)}</span></li>)}{attentionSessions.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></section>
-        </div>
-      </section>
+      <Tabs
+        ariaLabel={text.tabsAriaLabel}
+        compact={isCompact}
+        onValueChange={value => setActiveTab(value as AgentsTab)}
+        tabs={[
+          {
+            id: 'agents',
+            label: text.tabAgents,
+            panel: <section className="surface-panel agent-registry" aria-label="Agent registry">
+              <header className="surface-header"><div><p className="eyebrow">{text.registry}</p><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{text[value]}</button>)}</div></header>
+              {shownAgents.length === 0 ? <p className="empty">{text.noAgents}</p> : <div className="registry-list">{shownAgents.map(agent => <article className="agent-summary-card" id={`agent-${agent.id}`} key={agent.id} data-testid={`agent-registry-${agent.id}`}>
+                <header><div><h3>{agentName(agent)}</h3><small>{agent.slug} · {agentProvider(agent)} {agentVersion(agent)}</small></div><span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? text.registryStatusActive : text.registryStatusInactive}</span></header>
+                <p>{agent.description || text.noRegistryDescription}</p>
+                <dl className="agent-key-facts"><div><dt>{text.approvedLabel}</dt><dd>{text.capabilitiesLabel(agent.approved_capabilities.length || 0)}</dd></div><div><dt>{text.concurrency}</dt><dd>{agent.max_concurrency}</dd></div><div><dt>{text.heartbeat}</dt><dd>{agentHeartbeat(agent)}s</dd></div></dl>
+                <details className="agent-access-details"><summary>{text.teamAccessAndCapabilities}</summary><p><strong>{text.requestedLabel}</strong> {agent.requested_capabilities.join(', ') || text.none}</p><p><strong>{text.definitionApprovedLabel}</strong> {agent.approved_capabilities.join(', ') || text.none}</p><section className="team-access-list" aria-label={`${agentName(agent)} team access`}>{teams.length === 0 ? <p className="empty">{text.noTeamsAvailable}</p> : teams.map(team => {
+                  const access = agent.team_access?.find(candidate => candidate.team_id === team.id)
+                  const status = access?.status ?? (access?.revoked_at ? 'revoked' : 'not granted')
+                  const statusLabel = status === 'active' ? text.accessStatusActive : status === 'revoked' ? text.accessStatusRevoked : text.accessStatusNotGranted
+                  const operation = `${agent.id}:${team.id}`
+                  return <TeamAccessCard
+                    agent={agent}
+                    access={access ?? null}
+                    busy={busyAccess === operation}
+                    canManage={canManageAccess}
+                    key={team.id}
+                    onGrant={next => void grantCapabilities(agent, team, next)}
+                    onRevoke={() => void revokeAccess(agent, team)}
+                    team={team}
+                  />
+                })}</section></details>
+              </article>)}</div>}
+              <LoadMoreButton collection={agentsPage} label="agents" loadMoreLabel={text.loadMoreAgents} /><LoadMoreButton collection={teamsPage} label="teams" loadMoreLabel={text.loadMoreTeams} />
+            </section>,
+          },
+          {
+            id: 'sessions',
+            label: text.tabSessions,
+            panel: <div className="agent-side-stack">
+              <section className="surface-panel" aria-label="Agent sessions"><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}<LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} /></section>
+              <section className="surface-panel diagnostics" aria-label="Agent diagnostics"><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header><p>{text.diagnosticsIntro}</p><ul>{attentionSessions.map(session => <li key={session.id}><a href={`/agent-sessions/${session.id}`}>{text.sessionLabel(session.id.slice(0, 8))}</a><span>{session.state_reason || session.error_summary || agentStateLabel(session.state)}</span></li>)}{attentionSessions.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></section>
+            </div>,
+          },
+          {
+            id: 'approvals',
+            label: text.tabApprovals,
+            panel: <div className="agent-side-stack">
+              <section className="surface-panel approval-inbox" aria-label="Approval inbox"><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>{approvals.length === 0 ? <p className="empty">{text.noApprovals}</p> : approvals.map(approval => <article key={approval.id}><header><strong>{approval.action_name}</strong><span className={`risk-${approval.risk_level}`}>{text.riskLabel(approval.risk_level)}</span></header><p>{approval.rationale_summary}</p><a href={`/agent-sessions/${approval.session_id}`}>{text.reviewSession}</a></article>)}<LoadMoreButton collection={approvalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} /></section>
+            </div>,
+          },
+        ]}
+        value={activeTab}
+      />
     </section>
   </AppShell>
 }

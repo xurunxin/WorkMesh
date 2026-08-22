@@ -1296,6 +1296,11 @@ export type AgentsCopy = {
   execution: string
   sessions: string
   noSessions: string
+  // Top-level section tabs (Phase 3 Task 3.1)
+  tabsAriaLabel: string
+  tabAgents: string
+  tabSessions: string
+  tabApprovals: string
   durableState: string
   diagnostics: string
   diagnosticsIntro: string
@@ -1455,6 +1460,10 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     inactive: '停用',
     noAgents: '没有符合当前筛选的已注册智能体。',
     humanQueue: '人类队列',
+    tabsAriaLabel: '智能体工作区分区',
+    tabAgents: '智能体',
+    tabSessions: 'Session',
+    tabApprovals: '审批',
     approvals: '审批',
     openInbox: '打开收件箱',
     noApprovals: '没有待处理审批。',
@@ -1606,6 +1615,10 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     inactive: 'Inactive',
     noAgents: 'No registered agents match this filter.',
     humanQueue: 'Human queue',
+    tabsAriaLabel: 'Agent workspace sections',
+    tabAgents: 'Agents',
+    tabSessions: 'Sessions',
+    tabApprovals: 'Approvals',
     approvals: 'Approvals',
     openInbox: 'Open inbox',
     noApprovals: 'No pending approvals.',
