@@ -105,3 +105,14 @@ describe('attachment recovery controls', () => {
     expect(uploadRecoveryActions('idle', false, false)).toEqual({ retry: false, cancel: false })
   })
 })
+
+describe('Markdown preview toggle', () => {
+  it('renders Markdown when preview is on', () => {
+    const html = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', onChange: () => undefined, preview: true, value: '**bold**',
+    }))
+    expect(html).toContain('rich-markdown')
+    expect(html).toContain('<strong>bold</strong>')
+    expect(html).not.toContain('<textarea')
+  })
+})

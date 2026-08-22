@@ -82,7 +82,7 @@ const defaultCopy: WorkItemDetailCopy = {
   dueDate: 'Due date',
   editProjection: 'Edit the authorized Issue projection.',
   editorCopy: {
-    formatting: label => `${label} formatting`, undo: 'Undo', redo: 'Redo', heading: 'Heading', bold: 'Bold', italic: 'Italic', strike: 'Strike', bullets: 'Bulleted list', numbered: 'Numbered list', quote: 'Quote', code: 'Inline code', codeBlock: 'Code block', link: 'Link', draftRestored: 'A local draft was restored.', discardDraft: 'Discard draft', revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`, restoreForReview: 'Restore for review', discardOldDraft: 'Discard old draft',
+    formatting: label => `${label} formatting`, undo: 'Undo', redo: 'Redo', heading: 'Heading', bold: 'Bold', italic: 'Italic', strike: 'Strike', bullets: 'Bulleted list', numbered: 'Numbered list', quote: 'Quote', code: 'Inline code', codeBlock: 'Code block', link: 'Link', preview: 'Preview', edit: 'Edit', draftRestored: 'A local draft was restored.', discardDraft: 'Discard draft', revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`, restoreForReview: 'Restore for review', discardOldDraft: 'Discard old draft',
   },
   executionState: 'Execution state',
   fullWorkItem: 'Full Issue',
