@@ -334,5 +334,22 @@ function drawerCopy() {
     connectionStatusRotating: 'rotating',
     connectionStatusRevoked: 'revoked',
     credentialPending: 'Pending',
+    // Bulk approval table keys (Phase 3 Task 3.4) — the drawer does not
+    // read them, but the test factory still has to satisfy the wider
+    // AgentsCopy type that the production page now hands in.
+    selectAllApprovals: 'Select all on this page',
+    approvalRowCheckbox: (actionName: string) => `Select approval: ${actionName}`,
+    selectedApprovalsCount: (count: number) => `${count} selected`,
+    clearSelection: 'Clear selection',
+    approveSelected: 'Approve selected',
+    rejectSelected: 'Reject selected',
+    bulkApproveError: 'Unable to approve the selected approvals.',
+    bulkRejectError: 'Unable to reject the selected approvals.',
+    approvalTableAriaLabel: 'Pending approvals table',
+    approvalColumnAction: 'Action',
+    approvalColumnRisk: 'Risk',
+    approvalColumnRationale: 'Rationale',
+    approvalColumnExpires: 'Expires',
+    approvalColumnSession: 'Session',
   }
 }

@@ -1354,6 +1354,21 @@ export type AgentsCopy = {
   // Approval inbox panel
   riskLabel: (risk: string) => string
   reviewSession: string
+  // Bulk approval table (Phase 3 Task 3.4)
+  selectAllApprovals: string
+  approvalRowCheckbox: (actionName: string) => string
+  selectedApprovalsCount: (count: number) => string
+  clearSelection: string
+  approveSelected: string
+  rejectSelected: string
+  bulkApproveError: string
+  bulkRejectError: string
+  approvalTableAriaLabel: string
+  approvalColumnAction: string
+  approvalColumnRisk: string
+  approvalColumnRationale: string
+  approvalColumnExpires: string
+  approvalColumnSession: string
   // Sessions panel
   sessionLabel: (id: string) => string
   workItemLabel: (id: string) => string
@@ -1528,6 +1543,20 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     saveAccess: '保存授权',
     riskLabel: risk => `${risk} 级风险`,
     reviewSession: '查看 Session 与证据',
+    selectAllApprovals: '全选当前页',
+    approvalRowCheckbox: actionName => `选择审批：${actionName}`,
+    selectedApprovalsCount: count => `已选 ${count} 项`,
+    clearSelection: '清空选择',
+    approveSelected: '通过所选',
+    rejectSelected: '驳回所选',
+    bulkApproveError: '无法批量通过所选审批。',
+    bulkRejectError: '无法批量驳回所选审批。',
+    approvalTableAriaLabel: '待处理审批表',
+    approvalColumnAction: '操作',
+    approvalColumnRisk: '风险',
+    approvalColumnRationale: '理由',
+    approvalColumnExpires: '过期时间',
+    approvalColumnSession: 'Session',
     sessionLabel: id => `Session ${id}`,
     workItemLabel: id => `Issue ${id}`,
     noWorkItem: '无 Issue',
@@ -1692,6 +1721,20 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     saveAccess: 'Save grant',
     riskLabel: risk => `${risk} risk`,
     reviewSession: 'Review session and evidence',
+    selectAllApprovals: 'Select all on this page',
+    approvalRowCheckbox: actionName => `Select approval: ${actionName}`,
+    selectedApprovalsCount: count => `${count} selected`,
+    clearSelection: 'Clear selection',
+    approveSelected: 'Approve selected',
+    rejectSelected: 'Reject selected',
+    bulkApproveError: 'Unable to approve the selected approvals.',
+    bulkRejectError: 'Unable to reject the selected approvals.',
+    approvalTableAriaLabel: 'Pending approvals table',
+    approvalColumnAction: 'Action',
+    approvalColumnRisk: 'Risk',
+    approvalColumnRationale: 'Rationale',
+    approvalColumnExpires: 'Expires',
+    approvalColumnSession: 'Session',
     sessionLabel: id => `Session ${id}`,
     workItemLabel: id => `Work item ${id}`,
     noWorkItem: 'No work item',

@@ -1,12 +1,13 @@
 'use client'
 
-import { type KeyboardEvent, useMemo, useState } from 'react'
+import { type ChangeEvent, type KeyboardEvent, useCallback, useMemo, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import {
   type Agent,
   type AgentSession,
   type Approval,
+  type ApprovalDecision,
   agentHeartbeat,
   agentName,
   agentProvider,
@@ -14,6 +15,7 @@ import {
   agentStateLabel,
   agentVersion,
   canManageAgentTeamAccess,
+  decideApproval,
   formatTime,
   grantAgentTeamAccess,
   normalizeApproval,
@@ -29,6 +31,7 @@ import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { useMediaQuery } from '../lib/use-media-query'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 import { filterAgents, uniqueRequestedCapabilities, type AgentStateFilter } from './filters'
+import { ApprovalsTable } from './approvals-table'
 import { TeamAccessDrawer } from './team-access-drawer'
 
 type Team = { id: string; name: string; key: string }
@@ -94,6 +97,76 @@ export default function AgentsPage() {
     try { setBusyAccess(operation); setError(''); await revokeAgentTeamAccess(agent.id, teamId); await agentsPage.refresh() }
     catch (reason) { setError(reason instanceof Error ? reason.message : text.revokeAccessError) }
     finally { setBusyAccess('') }
+  }
+
+  // Bulk approval selection state. The set is keyed by approval id so the
+  // table can render a checkbox per row and the action bar can read the
+  // current selection in O(1) without re-scanning the approvals array on
+  // every render. The "live" helpers below project the selection against
+  // the visible list so stale ids (decided elsewhere, expired, paginated
+  // out) cannot drive a bulk action — the action bar only counts rows
+  // the user can still see, and `decideApprovals` only operates on those.
+  const [selectedApprovalIds, setSelectedApprovalIds] = useState<Set<string>>(() => new Set())
+  const [bulkApprovalBusy, setBulkApprovalBusy] = useState(false)
+  const visibleApprovalIds = useMemo(() => approvals.map(approval => approval.id), [approvals])
+  const selectedLiveApprovalIds = useMemo(
+    () => visibleApprovalIds.filter(id => selectedApprovalIds.has(id)),
+    [visibleApprovalIds, selectedApprovalIds],
+  )
+  const selectedLiveCount = selectedLiveApprovalIds.length
+  const toggleApproval = useCallback((id: string) => {
+    setSelectedApprovalIds(current => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
+  const toggleAllApprovals = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.checked) {
+      setSelectedApprovalIds(new Set(visibleApprovalIds))
+    } else {
+      // The page's selection is scoped to the currently visible rows;
+      // "uncheck all" clears them outright rather than retaining ids from
+      // a previous page that the user can no longer see.
+      setSelectedApprovalIds(new Set())
+    }
+  }, [visibleApprovalIds])
+  const clearApprovalSelection = useCallback(() => {
+    setSelectedApprovalIds(new Set())
+  }, [])
+  // Decide a list of approvals in parallel. Failed ids are kept in the
+  // selection so the user can retry; succeeded ids are dropped because
+  // they have left the visible list after `approvalsPage.refresh()`.
+  const decideApprovals = async (decision: ApprovalDecision) => {
+    if (selectedLiveCount === 0 || bulkApprovalBusy) return
+    const targets = selectedLiveApprovalIds
+      .map(id => approvals.find(approval => approval.id === id))
+      .filter((approval): approval is Approval => approval !== undefined)
+    if (targets.length === 0) return
+    setBulkApprovalBusy(true)
+    setError('')
+    try {
+      const results = await Promise.allSettled(targets.map(approval => decideApproval(approval, decision)))
+      const failedIds = new Set<string>()
+      const failureMessages: string[] = []
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          failedIds.add(targets[index]!.id)
+          const reason = result.reason
+          failureMessages.push(reason instanceof Error ? reason.message : String(reason))
+        }
+      })
+      await approvalsPage.refresh()
+      if (failedIds.size > 0) {
+        setSelectedApprovalIds(failedIds)
+        setError(failureMessages[0] ?? (decision === 'approved' ? text.bulkApproveError : text.bulkRejectError))
+      } else {
+        setSelectedApprovalIds(new Set())
+      }
+    } finally {
+      setBulkApprovalBusy(false)
+    }
   }
 
   const shownAgents = useMemo(
@@ -197,7 +270,19 @@ export default function AgentsPage() {
             id: 'approvals',
             label: text.tabApprovals,
             panel: <div className="agent-side-stack">
-              <section className="surface-panel approval-inbox" aria-label="Approval inbox"><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>{approvals.length === 0 ? <p className="empty">{text.noApprovals}</p> : approvals.map(approval => <article key={approval.id}><header><strong>{approval.action_name}</strong><span className={`risk-${approval.risk_level}`}>{text.riskLabel(approval.risk_level)}</span></header><p>{approval.rationale_summary}</p><a href={`/agent-sessions/${approval.session_id}`}>{text.reviewSession}</a></article>)}<LoadMoreButton collection={approvalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} /></section>
+              <section className="surface-panel approval-inbox" aria-label="Approval inbox"><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>
+                <ApprovalsTable
+                  approvals={approvals}
+                  bulkBusy={bulkApprovalBusy}
+                  copy={text}
+                  onClear={clearApprovalSelection}
+                  onDecide={decision => void decideApprovals(decision)}
+                  onToggle={toggleApproval}
+                  onToggleAll={toggleAllApprovals}
+                  selectedIds={selectedApprovalIds}
+                />
+                <LoadMoreButton collection={approvalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} />
+              </section>
             </div>,
           },
         ]}

@@ -3,10 +3,12 @@ import {
   type Agent,
   type AgentSession,
   type AgentState,
+  type Approval,
   approvedAgentCapabilitiesForTeam,
   canManageAgentTeamAccess,
   canPauseAgentSession,
   canRetryAgentSession,
+  decideApproval,
   delegateAndStart,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
@@ -268,6 +270,110 @@ describe('agent control requests', () => {
     await expect(delegateAndStart({ ...baseInput, agent: withoutGrant })).rejects.toThrow('no capabilities approved')
     await expect(delegateAndStart({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('no capabilities approved')
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+})
+
+describe('decideApproval', () => {
+  const approval: Approval = {
+    id: '00000000-0000-4000-8000-0000000000a1',
+    session_id: '00000000-0000-4000-8000-0000000000a2',
+    approval_type: 'merge_pull_request',
+    action_name: 'Merge PR #42',
+    risk_level: 'high',
+    rationale_summary: 'Squash merges a platform-blocking change.',
+    status: 'pending',
+    revision: 4,
+    expires_at: '2026-08-23T00:00:00.000Z',
+    created_at: '2026-08-22T22:00:00.000Z',
+  }
+
+  let storageValues: Map<string, string>
+
+  beforeEach(() => {
+    storageValues = new Map([['workmesh.csrf-token', 'csrf-token']])
+    vi.stubGlobal('sessionStorage', {
+      getItem: vi.fn((key: string) => storageValues.get(key) ?? null),
+      setItem: vi.fn((key: string, value: string) => storageValues.set(key, value)),
+      removeItem: vi.fn((key: string) => storageValues.delete(key)),
+    })
+    // decideApproval uses apiMutation, which has its own logical
+    // operation dedupe map keyed by the function call identity. Reset
+    // the module graph so the freshly-imported `decideApproval` binds
+    // to a fresh `logicalAttempts` map and the per-test isolation
+    // holds (otherwise the first "idempotency" test would see the key
+    // minted by the first "posts to /decide" test).
+    vi.resetModules()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it('posts to /decide with the correct method, headers, and body', async () => {
+    const { decideApproval: decideFresh } = await import('./agents')
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'approved' }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(decideFresh(approval, 'approved', 'Manual override')).resolves.toMatchObject({ status: 'approved' })
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    const [url, init] = fetchMock.mock.calls[0]!
+    expect(new URL(String(url)).pathname).toBe(`/api/v1/approvals/${approval.id}/decide`)
+    expect(init?.method).toBe('POST')
+    const headers = new Headers(init?.headers)
+    expect(headers.get('Content-Type')).toBe('application/json')
+    expect(headers.get('If-Match')).toBe('"revision-4"')
+    expect(headers.get('Idempotency-Key')).toBeTruthy()
+    expect(JSON.parse(String(init?.body))).toEqual({ decision: 'approved', reason: 'Manual override' })
+  })
+
+  it('falls back to a default reason when none is supplied', async () => {
+    const { decideApproval: decideFresh } = await import('./agents')
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'rejected' }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await decideFresh(approval, 'rejected')
+
+    const [, init] = fetchMock.mock.calls[0]!
+    expect(JSON.parse(String(init?.body))).toEqual({ decision: 'rejected', reason: 'Human rejected from the approval inbox.' })
+  })
+
+  it('reuses the same idempotency key on identical URL+body so a double-click cannot double-write', async () => {
+    const { decideApproval: decideFresh } = await import('./agents')
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'approved' }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await Promise.all([
+      decideFresh(approval, 'approved'),
+      decideFresh(approval, 'approved'),
+    ])
+
+    // apiMutation only shares the idempotency key, not the in-flight
+    // promise; the server is responsible for collapsing the two writes
+    // to one. We assert the same key on both calls so the server can do
+    // its job.
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
+    const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
+    expect(firstKey).toBeTruthy()
+    expect(secondKey).toBe(firstKey)
+  })
+
+  it('generates a fresh idempotency key when the decision changes', async () => {
+    const { decideApproval: decideFresh } = await import('./agents')
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'rejected' }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await decideFresh(approval, 'approved')
+    await decideFresh(approval, 'rejected')
+
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
+    const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
+    expect(firstKey).toBeTruthy()
+    expect(secondKey).toBeTruthy()
+    expect(secondKey).not.toBe(firstKey)
   })
 })
 
