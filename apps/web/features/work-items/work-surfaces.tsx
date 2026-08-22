@@ -92,6 +92,23 @@ export type WorkSurfacesProps = {
 }
 
 const emptyFilters: WorkSurfaceQuery = {}
+const FILTERS_COMPACT_STORAGE_KEY = 'wm:filters:compact'
+const readCompactPreference = (): boolean => {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.localStorage.getItem(FILTERS_COMPACT_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+const writeCompactPreference = (next: boolean): void => {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(FILTERS_COMPACT_STORAGE_KEY, next ? 'true' : 'false')
+  } catch {
+    /* localStorage may be unavailable (private mode, quota); ignore. */
+  }
+}
 const workItemIdSelector = (id: string): string => `[data-work-item-id="${CSS.escape(id)}"] .wm-work-item-title`
 const displayName = (human: WorkSurfaceHuman): string => human.display_name ?? human.displayName ?? human.id
 
@@ -179,6 +196,16 @@ export function WorkSurfaces({ actorId = null, copy, humans = [], initialFilters
   const [views, setViews] = useState<WorkSurfaceView[]>([])
   const [viewsError, setViewsError] = useState<unknown>()
   const [viewsLoading, setViewsLoading] = useState(false)
+  // The filter row's compact preference is a UI choice, not a query input —
+  // it lives in localStorage so the user's choice survives page reloads and
+  // does not leak into URL/query state. The lazy initializer runs once on
+  // mount so the first render already reflects the saved preference without
+  // a follow-up effect that would flash the wrong layout.
+  const [filtersCompact, setFiltersCompact] = useState<boolean>(() => readCompactPreference())
+  const updateFiltersCompact = useCallback((next: boolean) => {
+    setFiltersCompact(next)
+    writeCompactPreference(next)
+  }, [])
   const savedViews = useMemo(() => createSavedViewController(), [])
   useEffect(() => {
     let cancelled = false
@@ -227,7 +254,7 @@ export function WorkSurfaces({ actorId = null, copy, humans = [], initialFilters
   const state = workSurfaceErrorState(collection.error ?? controller.actionError)
   if (state === 'forbidden') return <section className="work-surfaces" data-testid="work-surfaces"><WorkSurfaceState actionLabel={text.retry} description={text.forbiddenDescription} onAction={() => void controller.refresh()} state="forbidden" title={text.forbiddenTitle} /></section>
   return <section aria-label="Work surfaces" className="work-surfaces" data-testid="work-surfaces">
-    <WorkItemFilters copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
+    <WorkItemFilters compact={filtersCompact} copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCompactChange={updateFiltersCompact} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
     {filterErrorState && <WorkSurfaceState description={text.savedViewsDescription} state="forbidden" title={text.savedViewsTitle} />}
     {viewsLoading && views.length === 0 && <p className="wm-work-surface-loading-note">{text.loadingViews}</p>}
     <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button></div>

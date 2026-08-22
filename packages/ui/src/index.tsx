@@ -402,7 +402,9 @@ export type WorkItemCopy = {
   completedSubIssues: (completed: number, total: number) => string
   dropWorkHere: string
   filterLabel: string
+  filterLess: string
   filterMilestone: string
+  filterMore: string
   filterPriority: string
   filterProject: string
   filterResponsibleHuman: string
@@ -450,7 +452,9 @@ const defaultWorkItemCopy: WorkItemCopy = {
   completedSubIssues: (completed, total) => `Sub-issues ${completed}/${total}`,
   dropWorkHere: 'Drop work here',
   filterLabel: 'Label',
+  filterLess: 'Fewer filters',
   filterMilestone: 'Milestone',
+  filterMore: 'More filters',
   filterPriority: 'Priority',
   filterProject: 'Project',
   filterResponsibleHuman: 'Responsible Human',
@@ -817,10 +821,24 @@ export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, it
 
 export type WorkItemFilterValues = { search?: string; statusId?: string; priority?: string; responsibleHumanActorId?: string; ownerId?: string; projectId?: string; milestoneId?: string; label?: string; statusCategory?: string; mine?: boolean }
 export type WorkItemFilterOption = { id: string; label: string; name?: string }
-export type WorkItemFiltersProps = { value: WorkItemFilterValues; statuses?: WorkItemFilterOption[]; humans?: WorkItemFilterOption[]; projects?: WorkItemFilterOption[]; milestones?: WorkItemFilterOption[]; savedViews?: Array<{ id: string; name: string }>; onChange: (value: WorkItemFilterValues) => void; onClear?: () => void; onApplySavedView?: (id: string) => void; onCreateSavedView?: (name: string) => void | Promise<void>; copy?: Partial<WorkItemCopy> }
-export function WorkItemFilters({ humans = [], milestones = [], onApplySavedView, onChange, onClear, onCreateSavedView, projects = [], savedViews = [], statuses = [], value, copy }: WorkItemFiltersProps) {
+export type WorkItemFiltersProps = { value: WorkItemFilterValues; statuses?: WorkItemFilterOption[]; humans?: WorkItemFilterOption[]; projects?: WorkItemFilterOption[]; milestones?: WorkItemFilterOption[]; savedViews?: Array<{ id: string; name: string }>; onChange: (value: WorkItemFilterValues) => void; onClear?: () => void; onApplySavedView?: (id: string) => void; onCreateSavedView?: (name: string) => void | Promise<void>; copy?: Partial<WorkItemCopy>; compact?: boolean; onCompactChange?: (next: boolean) => void }
+export function WorkItemFilters({ compact, humans = [], milestones = [], onApplySavedView, onChange, onClear, onCompactChange, onCreateSavedView, projects = [], savedViews = [], statuses = [], value, copy }: WorkItemFiltersProps) {
   const text = resolveWorkItemCopy(copy)
   const [savedViewName, setSavedViewName] = useState('')
+  // In compact mode, Milestone/Label collapse behind a "More filters" toggle.
+  // The user-driven state is local to the component so the parent's filter
+  // values never change just from expanding the row. When the parent supplies
+  // an onCompactChange handler, the toggle also reports the new preference
+  // back so the parent can persist it.
+  const [advancedExpanded, setAdvancedExpanded] = useState<boolean>(!compact)
+  const showAdvanced = !compact || advancedExpanded
+  const toggleAdvanced = () => {
+    const next = !advancedExpanded
+    setAdvancedExpanded(next)
+    // Report the parent's view of compact mode (the negation of the local
+    // "are the advanced fields visible" state) so it can persist.
+    if (onCompactChange) onCompactChange(!next)
+  }
   const set = (key: keyof WorkItemFilterValues, next: string | boolean | undefined) => onChange({ ...value, [key]: next || undefined })
   const setResponsibleHuman = (next: string) => onChange({ ...value, responsibleHumanActorId: next || undefined, ownerId: undefined, mine: undefined })
   const setProject = (next: string) => onChange({ ...value, projectId: next || undefined, milestoneId: undefined })
@@ -832,8 +850,9 @@ export function WorkItemFilters({ humans = [], milestones = [], onApplySavedView
       <label>{text.filterPriority}<select aria-label={text.filterPriority} onChange={event => set('priority', event.currentTarget.value)} value={value.priority ?? ''}><option value="">{text.allPriorities}</option>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label>
       <label>{text.filterResponsibleHuman}<select aria-label={text.filterResponsibleHuman} onChange={event => setResponsibleHuman(event.currentTarget.value)} value={value.responsibleHumanActorId ?? value.ownerId ?? ''}><option value="">{text.allHumans}</option>{humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
       <label>{text.filterProject}<select aria-label={text.filterProject} onChange={event => setProject(event.currentTarget.value)} value={value.projectId ?? ''}><option value="">{text.allProjects}</option>{projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-      <label>{text.filterMilestone}<select aria-label={text.filterMilestone} disabled={!value.projectId} onChange={event => set('milestoneId', event.currentTarget.value)} value={value.milestoneId ?? ''}><option value="">{value.projectId ? text.allMilestones : text.selectProjectFirst}</option>{milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-      <label>{text.filterLabel}<input aria-label={text.filterLabel} onChange={event => set('label', event.currentTarget.value)} placeholder={text.filterLabel} value={value.label ?? ''} /></label>
+      {showAdvanced && <label>{text.filterMilestone}<select aria-label={text.filterMilestone} disabled={!value.projectId} onChange={event => set('milestoneId', event.currentTarget.value)} value={value.milestoneId ?? ''}><option value="">{value.projectId ? text.allMilestones : text.selectProjectFirst}</option>{milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>}
+      {showAdvanced && <label>{text.filterLabel}<input aria-label={text.filterLabel} onChange={event => set('label', event.currentTarget.value)} placeholder={text.filterLabel} value={value.label ?? ''} /></label>}
+      {compact && <Button aria-expanded={advancedExpanded} aria-label={advancedExpanded ? text.filterLess : text.filterMore} className="wm-work-item-filters-more" data-testid="work-item-filters-more" onClick={toggleAdvanced} type="button" variant="ghost">{advancedExpanded ? text.filterLess : text.filterMore}</Button>}
       {onClear && <Button icon={<FunnelXIcon size={16} weight="bold" />} onClick={onClear} type="button" variant="ghost">{text.clearFilters}</Button>}
     </div>
     {(savedViews.length > 0 || onCreateSavedView) && <div className="wm-work-item-filter-saved">
