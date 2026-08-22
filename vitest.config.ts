@@ -6,5 +6,5 @@ import { defineConfig } from 'vitest/config'
 // uses `"jsx": "react-jsx"`, so this setting is a no-op there.
 export default defineConfig({
   esbuild: { jsx: 'automatic' },
-  test: { include: ['**/*.test.ts'], exclude: ['**/node_modules/**', '**/integration/**'], passWithNoTests: true },
+  test: { include: ['**/*.test.ts', '**/*.test.tsx'], exclude: ['**/node_modules/**', '**/integration/**'], setupFiles: ['./vitest-setup.ts'], passWithNoTests: true },
 })
