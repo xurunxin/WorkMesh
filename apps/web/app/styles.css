@@ -850,6 +850,11 @@ button, input, textarea, select { font: inherit; }
 /* Card baseline — neutral surface, soft shadow, status stripe on the left edge. */
 .wm-work-item-card { position: relative; display: grid; gap: .5rem; min-width: 0; max-width: 100%; padding: .8rem .85rem .8rem 1.05rem; color: var(--wm-text); background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 10px; text-align: left; box-shadow: 0 1px 1px #11111108; transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, opacity .15s ease; cursor: pointer; }
 .wm-work-item-card::before { content: ''; position: absolute; top: 8px; bottom: 8px; left: 4px; width: 4px; border-radius: 4px; background: var(--wm-muted); transition: background-color .15s ease; }
+.wm-work-item-card--compact { padding: .5rem .65rem .5rem .85rem; gap: .35rem; }
+.wm-work-item-card--compact.wm-work-item-card-board { padding: .5rem .65rem .5rem .85rem; gap: .3rem; }
+.wm-work-item-card--compact .wm-work-item-card-heading { font-size: .82rem; }
+.wm-work-item-card--compact .wm-work-item-title { font-size: .86rem; }
+.wm-work-item-card--compact .wm-work-item-metadata { font-size: .72rem; }
 .wm-work-item-card[data-status-category='open']::before,
 .wm-work-item-card[data-status-category='ready']::before,
 .wm-work-item-card[data-status-category='backlog']::before { background: #2563eb; }

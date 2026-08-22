@@ -10,7 +10,7 @@ import { createSavedViewController } from './saved-views'
 import { useWorkSurfaceQuery, workSurfaceQueryForScope } from './query'
 import { createWorkItemMoveCommandAdapter, recoverMoveNetworkFailure } from './move-command'
 import { createWorkSurfaceViewModel, workSurfaceErrorState } from './view-model'
-import { type SavedViewPreference, type StatusCategory, type WorkItemDto, type WorkSurfaceLayout, type WorkSurfaceQuery, type WorkSurfaceScope } from './contracts'
+import { type SavedViewPreference, type StatusCategory, type WorkItemDto, type WorkSurfaceDensity, type WorkSurfaceLayout, type WorkSurfaceQuery, type WorkSurfaceScope, WORK_SURFACE_DENSITIES } from './contracts'
 
 export type WorkSurfaceStatus = { id: string; name: string; category?: StatusCategory }
 export type WorkSurfaceHuman = { id: string; display_name?: string; displayName?: string }
@@ -22,6 +22,9 @@ export type WorkSurfaceCopy = {
   board: string
   conflictDescription: string
   conflictTitle: string
+  densityCompact: string
+  densityComfortable: string
+  densityLabel: string
   emptyDescription: string
   emptyTitle: string
   errorDescription: string
@@ -46,6 +49,9 @@ const defaultCopy: WorkSurfaceCopy = {
   board: 'Board',
   conflictDescription: 'Your move conflicted with a newer server revision. Confirm a new move after reviewing the latest Issue.',
   conflictTitle: 'Issue changed',
+  densityCompact: 'Compact',
+  densityComfortable: 'Comfortable',
+  densityLabel: 'Issue density',
   emptyDescription: 'The authorized query returned no Work Items.',
   emptyTitle: 'No Work Items',
   errorDescription: 'The Issue query could not be completed.',
@@ -95,6 +101,7 @@ export type WorkSurfacesProps = {
 
 const emptyFilters: WorkSurfaceQuery = {}
 const FILTERS_COMPACT_STORAGE_KEY = 'wm:filters:compact'
+const DENSITY_STORAGE_KEY = 'wm:board:density'
 const readCompactPreference = (): boolean => {
   if (typeof window === 'undefined') return false
   try {
@@ -107,6 +114,25 @@ const writeCompactPreference = (next: boolean): void => {
   if (typeof window === 'undefined') return
   try {
     window.localStorage.setItem(FILTERS_COMPACT_STORAGE_KEY, next ? 'true' : 'false')
+  } catch {
+    /* localStorage may be unavailable (private mode, quota); ignore. */
+  }
+}
+const readDensityPreference = (): WorkSurfaceDensity => {
+  if (typeof window === 'undefined') return 'comfortable'
+  try {
+    const value = window.localStorage.getItem(DENSITY_STORAGE_KEY)
+    return value && (WORK_SURFACE_DENSITIES as readonly string[]).includes(value)
+      ? (value as WorkSurfaceDensity)
+      : 'comfortable'
+  } catch {
+    return 'comfortable'
+  }
+}
+const writeDensityPreference = (next: WorkSurfaceDensity): void => {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(DENSITY_STORAGE_KEY, next)
   } catch {
     /* localStorage may be unavailable (private mode, quota); ignore. */
   }
@@ -208,6 +234,18 @@ export function WorkSurfaces({ actorId = null, columnWidths, copy, humans = [], 
     setFiltersCompact(next)
     writeCompactPreference(next)
   }, [])
+  // Card density follows the same pattern: persisted locally so the
+  // preference survives reloads but never becomes part of the shareable
+  // query / URL state. The lazy initializer mirrors the saved choice into
+  // the first render to avoid a visible density flicker.
+  const [density, setDensityState] = useState<WorkSurfaceDensity>(() => readDensityPreference())
+  const updateDensity = useCallback((next: WorkSurfaceDensity) => {
+    setDensityState(next)
+    writeDensityPreference(next)
+  }, [])
+  const toggleDensity = useCallback(() => {
+    updateDensity(density === 'compact' ? 'comfortable' : 'compact')
+  }, [density, updateDensity])
   const savedViews = useMemo(() => createSavedViewController(), [])
   useEffect(() => {
     let cancelled = false
@@ -259,14 +297,14 @@ export function WorkSurfaces({ actorId = null, columnWidths, copy, humans = [], 
     <WorkItemFilters compact={filtersCompact} copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCompactChange={updateFiltersCompact} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
     {filterErrorState && <WorkSurfaceState description={text.savedViewsDescription} state="forbidden" title={text.savedViewsTitle} />}
     {viewsLoading && views.length === 0 && <p className="wm-work-surface-loading-note">{text.loadingViews}</p>}
-    <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button></div>
+    <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button><Button aria-label={text.densityLabel} aria-pressed={density === 'compact'} className={density === 'compact' ? 'selected' : undefined} data-testid="work-surface-density-toggle" onClick={toggleDensity} type="button" variant="ghost">{density === 'compact' ? text.densityComfortable : text.densityCompact}</Button></div>
     {vm.state === 'loading' && <WorkSurfaceState description={text.loadingDescription} state="loading" title={text.loadingTitle} />}
     {vm.state === 'refreshing' && <WorkSurfaceState description={text.refreshingDescription} state="refreshing" title={text.refreshingTitle} />}
     {vm.state === 'empty' && <WorkSurfaceState description={text.emptyDescription} state="empty" title={text.emptyTitle} />}
     {vm.state === 'offline' && <WorkSurfaceState actionLabel={text.retry} description={text.offlineDescription} onAction={() => void controller.refresh()} state="offline" title={text.offlineTitle} />}
     {vm.state === 'error' && <WorkSurfaceState actionLabel={text.retry} description={vm.errorMessage ?? text.errorDescription} onAction={() => void controller.refresh()} state="error" title={text.errorTitle} />}
     {vm.state === 'conflict' && <WorkSurfaceState actionLabel={text.retry} description={text.conflictDescription} onAction={() => { controller.setQuery({ ...query }); void controller.refresh() }} state="conflict" title={text.conflictTitle} />}
-    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columnWidths={columnWidths} columns={columns} copy={copy} items={uiItems} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
+    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} density={density} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columnWidths={columnWidths} columns={columns} copy={copy} density={density} items={uiItems} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
   </section>
 }
 
