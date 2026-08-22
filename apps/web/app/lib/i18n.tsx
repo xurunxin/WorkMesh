@@ -89,6 +89,11 @@ type TranslationKey =
   | 'workViewCouldNotRefresh'
   | 'workspaceNavigation'
   | 'currentTeam'
+  | 'backToHome'
+  | 'notFoundDescription'
+  | 'notFoundTitle'
+  | 'pageLoadError'
+  | 'retry'
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   'zh-CN': {
@@ -145,6 +150,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     workViewCouldNotRefresh: '当前工作视图无法刷新',
     workspaceNavigation: '工作区导航',
     currentTeam: '当前团队',
+    backToHome: '返回首页',
+    notFoundDescription: '你查找的页面不存在或已被移动。',
+    notFoundTitle: '未找到页面',
+    pageLoadError: '页面加载出错',
+    retry: '重试',
   },
   en: {
     agents: 'Agents',
@@ -200,6 +210,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     workViewCouldNotRefresh: 'This work view could not refresh',
     workspaceNavigation: 'Workspace navigation',
     currentTeam: 'Current team',
+    backToHome: 'Back to home',
+    notFoundDescription: 'The page you are looking for does not exist or has been moved.',
+    notFoundTitle: 'Page not found',
+    pageLoadError: 'Page failed to load',
+    retry: 'Retry',
   },
 }
 
