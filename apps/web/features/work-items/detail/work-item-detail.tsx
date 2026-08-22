@@ -169,6 +169,13 @@ function DetailUnavailableContent({ mode, requestedKey, error, onClose, onRetry,
 function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props) {
   const text = resolveCopy(copy)
   const fullPageRef = useRef<HTMLElement | null>(null)
+  // The Save button receives keyboard focus as soon as a revision conflict
+  // surfaces so the Human can re-issue the save without hunting for the
+  // primary action (especially inside the sheet viewport, where the conflict
+  // banner scrolls the Save row out of view). The effect only runs when
+  // `hasConflict` flips, so ordinary edits do not yank focus mid-typing.
+  const saveRef = useRef<HTMLButtonElement>(null)
+  const hasConflict = Boolean(conflict)
   // The route adapter rebuilds the view-model object on ordinary parent renders.
   // Reset drafts only when the durable resource version changes; otherwise a
   // structured conflict render would erase the Human's unsaved intent.
@@ -195,6 +202,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
   useEffect(() => { if (mode === 'full_page') fullPageRef.current?.focus() }, [mode])
+  useEffect(() => { if (hasConflict) saveRef.current?.focus() }, [hasConflict])
   const confirmDiscard = (action: () => void) => { if (!dirty || window.confirm(text.discardChanges)) action() }
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setSaving(true)
@@ -212,7 +220,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
       <form className="work-item-detail-form" data-dirty={dirty} onSubmit={event => void submit(event)}>
         <section className="work-item-detail-content" aria-labelledby="work-item-content-heading"><h3 id="work-item-content-heading">{text.workItem}</h3><label>{text.title}<input name="title" required value={draft.title} onChange={event => set('title', event.currentTarget.value)} /></label><RichTextEditor copy={text.editorCopy} identity={{...draftIdentity,field:'description',baseRevision:model.revision}} label={text.description} mode="description" name="description" onChange={value=>set('description',value)} onSavedAt={setLastDraftSavedAt} value={draft.description} /></section>
         <aside className="work-item-properties" aria-labelledby="work-item-properties-heading"><h3 id="work-item-properties-heading">{text.properties}</h3><label>{text.workflowStatus}<select name="statusId" value={draft.statusId} onChange={event => set('statusId', event.currentTarget.value)}>{options.statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.workflowHelp}</small></label><label>{text.priority}<select name="priority" value={draft.priority} onChange={event => set('priority', event.currentTarget.value as WorkItemDetailDraft['priority'])}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label><label>{text.dueDate}<input name="dueDate" type="date" value={draft.dueDate} onChange={event => set('dueDate', event.currentTarget.value)} /></label><label>{text.responsibleHuman}<select name="responsibleHumanActorId" value={draft.responsibleHumanActorId} onChange={event => set('responsibleHumanActorId', event.currentTarget.value)}><option value="">{text.unassigned}</option>{options.humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.responsibleHumanHelp}</small></label><label>{text.project}<select name="projectId" value={draft.projectId} onChange={event => set('projectId', event.currentTarget.value)}><option value="">{text.noProject}</option>{options.projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.milestone}<select name="milestoneId" value={draft.milestoneId} onChange={event => set('milestoneId', event.currentTarget.value)}><option value="">{text.noMilestone}</option>{options.milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.parentWorkItem}<select name="parentId" value={draft.parentId} onChange={event => set('parentId', event.currentTarget.value)}><option value="">{text.noParent}</option>{options.parents.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.labels}<input name="labels" value={draft.labels} onChange={event => set('labels', event.currentTarget.value)} /></label></aside>
-        <div className="work-item-detail-actions"><Button disabled={saving || !dirty} icon={<FloppyDisk aria-hidden size={16} />} type="submit" variant="primary">{saving ? text.saving : text.saveChanges}</Button><Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => confirmDiscard(onReloadLatest)} type="button" variant="secondary">{text.reloadLatest}</Button><span aria-live="polite">{dirty ? text.unsavedChanges : text.allChangesSaved}</span></div>
+        <div className="work-item-detail-actions"><Button disabled={saving || !dirty} icon={<FloppyDisk aria-hidden size={16} />} ref={saveRef} type="submit" variant="primary">{saving ? text.saving : text.saveChanges}</Button><Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => confirmDiscard(onReloadLatest)} type="button" variant="secondary">{text.reloadLatest}</Button><span aria-live="polite">{dirty ? text.unsavedChanges : text.allChangesSaved}</span></div>
       </form>
       <Tabs
         ariaLabel={text.detailTabsAriaLabel}

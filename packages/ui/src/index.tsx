@@ -13,6 +13,7 @@ import {
   type KeyboardEvent,
   type PropsWithChildren,
   type ReactNode,
+  type RefAttributes,
   type SelectHTMLAttributes,
   type PointerEvent as ReactPointerEvent,
 } from 'react'
@@ -29,7 +30,7 @@ function classNames(...values: Array<string | false | null | undefined>): string
   return values.filter(Boolean).join(' ')
 }
 
-export type ButtonProps = PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & {
+export type ButtonProps = PropsWithChildren<RefAttributes<HTMLButtonElement> & ButtonHTMLAttributes<HTMLButtonElement>> & {
   icon?: ReactNode
   iconPosition?: 'start' | 'end'
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
