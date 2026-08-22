@@ -29,10 +29,10 @@ import { LocaleToggle, useLocale } from '../lib/i18n'
 import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { useMediaQuery } from '../lib/use-media-query'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
+import { filterAgents, uniqueRequestedCapabilities, type AgentStateFilter } from './filters'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
-type AgentFilter = 'all' | 'active' | 'inactive'
 type AgentsTab = 'agents' | 'sessions' | 'approvals'
 
 export default function AgentsPage() {
@@ -41,7 +41,10 @@ export default function AgentsPage() {
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
   const isCompact = useMediaQuery('(max-width: 720px)')
   const [activeTab, setActiveTab] = useState<AgentsTab>('agents')
-  const [filter, setFilter] = useState<AgentFilter>('all')
+  const [filter, setFilter] = useState<AgentStateFilter>('all')
+  const [nameFilter, setNameFilter] = useState('')
+  const [teamFilter, setTeamFilter] = useState('')
+  const [capabilityFilter, setCapabilityFilter] = useState('')
   const [error, setError] = useState('')
   const [busyAccess, setBusyAccess] = useState('')
   const agentsPage = usePagedApiList<Agent>(actor ? '/api/v1/agents' : null)
@@ -92,7 +95,11 @@ export default function AgentsPage() {
     finally { setBusyAccess('') }
   }
 
-  const shownAgents = useMemo(() => agents.filter(agent => filter === 'all' || (filter === 'active' ? agent.is_active : !agent.is_active)), [agents, filter])
+  const shownAgents = useMemo(
+    () => filterAgents(agents, { name: nameFilter, teamId: teamFilter, capability: capabilityFilter, state: filter }),
+    [agents, nameFilter, teamFilter, capabilityFilter, filter],
+  )
+  const capabilityOptions = useMemo(() => uniqueRequestedCapabilities(agents), [agents])
   const canManageAccess = canManageAgentTeamAccess(actor?.workspace_role)
   const attentionSessions = sessions.filter(session => ['stale', 'failed', 'blocked', 'awaiting_approval', 'awaiting_input'].includes(session.state))
   const refresh = () => { void refreshActor(); void agentsPage.refresh(); void teamsPage.refresh(); void humansPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }
@@ -135,7 +142,13 @@ export default function AgentsPage() {
             id: 'agents',
             label: text.tabAgents,
             panel: <section className="surface-panel agent-registry" aria-label="Agent registry">
-              <header className="surface-header"><div><p className="eyebrow">{text.registry}</p><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{text[value]}</button>)}</div></header>
+              <header className="surface-header"><div><p className="eyebrow">{text.registry}</p><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentStateFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{text[value]}</button>)}</div></header>
+              <div className="agent-registry-filters" role="group" aria-label={text.filterAriaLabel}>
+                <label><span>{text.filterName}</span><input aria-label={text.filterName} className="wm-input" placeholder={text.filterNamePlaceholder} type="search" value={nameFilter} onChange={event => setNameFilter(event.currentTarget.value)} /></label>
+                <label><span>{text.filterTeam}</span><select aria-label={text.filterTeam} value={teamFilter} onChange={event => setTeamFilter(event.currentTarget.value)}><option value="">{text.allTeams}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select></label>
+                <label><span>{text.filterCapability}</span><select aria-label={text.filterCapability} value={capabilityFilter} onChange={event => setCapabilityFilter(event.currentTarget.value)}><option value="">{text.allCapabilities}</option>{capabilityOptions.map(capability => <option key={capability} value={capability}>{capability}</option>)}</select></label>
+                <label><span>{text.filterStatus}</span><select aria-label={text.filterStatus} value={filter} onChange={event => setFilter(event.currentTarget.value as AgentStateFilter)}><option value="all">{text.all}</option><option value="active">{text.active}</option><option value="inactive">{text.inactive}</option></select></label>
+              </div>
               {shownAgents.length === 0 ? <p className="empty">{text.noAgents}</p> : <div className="registry-list">{shownAgents.map(agent => <article className="agent-summary-card" id={`agent-${agent.id}`} key={agent.id} data-testid={`agent-registry-${agent.id}`}>
                 <header><div><h3>{agentName(agent)}</h3><small>{agent.slug} · {agentProvider(agent)} {agentVersion(agent)}</small></div><span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? text.registryStatusActive : text.registryStatusInactive}</span></header>
                 <p>{agent.description || text.noRegistryDescription}</p>

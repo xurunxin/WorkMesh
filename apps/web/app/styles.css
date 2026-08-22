@@ -703,6 +703,9 @@ button, input, textarea, select { font: inherit; }
 .app-shell .activity-filters { display: inline-flex; flex-wrap: wrap; gap: .35rem; padding: .25rem; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 8px; margin-bottom: .65rem; }
 .app-shell .activity-filters button { min-height: 30px; padding: .2rem .65rem; font-size: .78rem; }
 .app-shell .activity-filters button.selected { background: var(--wm-surface); border-color: var(--wm-border-strong); color: var(--wm-text); }
+.app-shell .agent-registry-filters { display: grid; grid-template-columns: minmax(140px, 1.4fr) repeat(3, minmax(120px, 1fr)); gap: .5rem; align-items: end; margin-bottom: .65rem; }
+.app-shell .agent-registry-filters label { display: grid; gap: .25rem; color: var(--wm-muted); font-size: .76rem; font-weight: 650; }
+.app-shell .agent-registry-filters input, .app-shell .agent-registry-filters select { min-width: 0; }
 .app-shell .approval-inbox article { display: grid; gap: .45rem; padding: .8rem .9rem; }
 .app-shell .approval-inbox .approval-actions { display: inline-flex; flex-wrap: wrap; gap: .45rem; margin-top: .35rem; }
 .app-shell .heartbeat-toggle { display: inline-flex; align-items: center; gap: .4rem; color: var(--wm-muted); font-size: .82rem; }
@@ -727,6 +730,8 @@ button, input, textarea, select { font: inherit; }
   .app-shell .page-header, .app-shell .surface-header, .app-shell .connection-overview > header, .app-shell .connection-instruction > header { align-items: flex-start; flex-direction: column; }
   .app-shell .control-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .agent-connection-form, .app-shell .agent-key-facts, .app-shell .connection-facts, .app-shell .session-facts { grid-template-columns: 1fr; }
+  .app-shell .agent-registry-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-shell .agent-registry-filters > :first-child { grid-column: 1 / -1; }
   .app-shell .work-room-attribution { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .drawer .work-room-attribution { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .timeline-attribution { align-items: flex-start; }

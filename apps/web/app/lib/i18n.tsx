@@ -1301,6 +1301,15 @@ export type AgentsCopy = {
   tabAgents: string
   tabSessions: string
   tabApprovals: string
+  // Agents registry filter row (Phase 3 Task 3.2)
+  filterAriaLabel: string
+  filterName: string
+  filterNamePlaceholder: string
+  filterTeam: string
+  allTeams: string
+  filterCapability: string
+  allCapabilities: string
+  filterStatus: string
   durableState: string
   diagnostics: string
   diagnosticsIntro: string
@@ -1464,6 +1473,14 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     tabAgents: '智能体',
     tabSessions: 'Session',
     tabApprovals: '审批',
+    filterAriaLabel: '智能体筛选',
+    filterName: '名称',
+    filterNamePlaceholder: '按名称、Slug 搜索',
+    filterTeam: '团队',
+    allTeams: '全部团队',
+    filterCapability: '能力',
+    allCapabilities: '全部能力',
+    filterStatus: '状态',
     approvals: '审批',
     openInbox: '打开收件箱',
     noApprovals: '没有待处理审批。',
@@ -1619,6 +1636,14 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     tabAgents: 'Agents',
     tabSessions: 'Sessions',
     tabApprovals: 'Approvals',
+    filterAriaLabel: 'Agent filters',
+    filterName: 'Name',
+    filterNamePlaceholder: 'Search by name or slug',
+    filterTeam: 'Team',
+    allTeams: 'All teams',
+    filterCapability: 'Capability',
+    allCapabilities: 'All capabilities',
+    filterStatus: 'Status',
     approvals: 'Approvals',
     openInbox: 'Open inbox',
     noApprovals: 'No pending approvals.',
