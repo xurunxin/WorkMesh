@@ -1,18 +1,17 @@
 'use client'
 
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { AppShell, Button } from '@workmesh/ui'
 import { ArrowLeft, FloppyDisk, Gear, Plus, Trash } from '@phosphor-icons/react'
-import { ApiError, apiRequest, clearCsrfToken, json, saveCsrfToken } from '../lib/api'
+import { apiRequest, json } from '../lib/api'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
 import { canManageWorkspace } from '../lib/settings-permissions'
-import { actorDisplayName, type AuthenticatedActor } from '../lib/actor'
+import { actorDisplayName } from '../lib/actor'
 import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
+import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { OperationsContent } from '../operations-content'
 
-type Actor = AuthenticatedActor
-type AuthMe = { actor: Actor; csrfToken: string }
 type Team = { id: string; name: string; key: string; revision: number }
 type WorkflowState = { id: string; name: string; category: string; color: string; revision: number }
 
@@ -26,9 +25,8 @@ const parseTab = (raw: string | null | undefined): SettingsTab =>
 
 export default function SettingsPage() {
   const { locale, settingsCopy: text, t } = useLocale()
-  const [actor, setActor] = useState<Actor | null>(null)
+  const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
   const [teamId, setTeamId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [tab, setTab] = useState<SettingsTab>('workspace')
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
@@ -38,25 +36,6 @@ export default function SettingsPage() {
     actor && selectedTeam ? `/api/v1/teams/${selectedTeam.id}/states` : null,
   )
 
-  const load = useCallback(async () => {
-    try {
-      setError('')
-      const auth = await apiRequest<AuthMe>('/api/v1/auth/me')
-      saveCsrfToken(auth.csrfToken)
-      setActor(auth.actor)
-    } catch (reason) {
-      if (reason instanceof ApiError && reason.status === 401) {
-        clearCsrfToken()
-        window.location.assign('/login')
-        return
-      }
-      setError(requestError(reason))
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => { void load() }, [load])
   useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
@@ -161,7 +140,7 @@ export default function SettingsPage() {
   }
 
   if (loading) return <main className="center foundation-center">{text.loading}</main>
-  if (!actor) return <main className="center foundation-center"><p className="error">{error || text.loadFailed}</p><Button icon={<ArrowLeft aria-hidden size={16} />} onClick={() => void load()}>{text.retry}</Button></main>
+  if (!actor) return <main className="center foundation-center"><p className="error">{actorError || text.loadFailed}</p><Button icon={<ArrowLeft aria-hidden size={16} />} onClick={() => void refreshActor()}>{text.retry}</Button></main>
   const canManage = canManageWorkspace(actor.workspace_role)
 
   return <AppShell

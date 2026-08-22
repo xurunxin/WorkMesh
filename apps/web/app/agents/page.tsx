@@ -1,9 +1,8 @@
 'use client'
 
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, ErrorState } from '@workmesh/ui'
 import { CheckCircleIcon, EyeIcon, XCircleIcon } from '@phosphor-icons/react'
-import { ApiError, apiRequest, clearCsrfToken, saveCsrfToken } from '../lib/api'
 import {
   type Agent,
   type AgentSession,
@@ -28,9 +27,9 @@ import { AgentConnectionsPanel } from '../agent-connections-panel'
 import { RealtimeStatus } from '../realtime-status'
 import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
+import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 
-type AuthMe = { actor: { id: string; display_name: string; workspace_id: string; workspace_role: 'admin' | 'member' }; csrfToken: string }
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
 type AgentFilter = 'all' | 'active' | 'inactive'
@@ -38,10 +37,9 @@ type AgentFilter = 'all' | 'active' | 'inactive'
 export default function AgentsPage() {
   const { locale, t, agentsCopy } = useLocale()
   const text = agentsCopy
-  const [actor, setActor] = useState<AuthMe['actor'] | null>(null)
+  const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
   const [filter, setFilter] = useState<AgentFilter>('all')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
   const [busyAccess, setBusyAccess] = useState('')
   const agentsPage = usePagedApiList<Agent>(actor ? '/api/v1/agents' : null)
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
@@ -58,21 +56,10 @@ export default function AgentsPage() {
   const approvals = approvalsPage.items
   const collectionError = [agentsPage.error, teamsPage.error, humansPage.error, sessionsPage.error, approvalsPage.error].find(Boolean)
 
-  const load = useCallback(async () => {
-    try {
-      setError('')
-      const auth = await apiRequest<AuthMe>('/api/v1/auth/me')
-      saveCsrfToken(auth.csrfToken)
-      setActor(auth.actor)
-    } catch (reason) {
-      if (reason instanceof ApiError && reason.status === 401) { clearCsrfToken(); window.location.assign('/login'); return }
-      setError(reason instanceof Error ? reason.message : text.loadError)
-    } finally { setLoading(false) }
-  }, [text.loadError])
-  useEffect(() => { void load() }, [load])
-
   const realtimeResources = useMemo<RealtimeResource[]>(() => [
-    ...(actor ? [{ type: 'workspace' as const, id: actor.workspace_id }] : []),
+    ...(actor?.workspace_id
+      ? [{ type: 'workspace' as const, id: actor.workspace_id }]
+      : []),
     ...teams.map(team => ({ type: 'team' as const, id: team.id })),
     ...sessions.map(session => ({ type: 'session' as const, id: session.id })),
   ], [actor?.workspace_id, sessions, teams])
@@ -105,9 +92,10 @@ export default function AgentsPage() {
   const shownAgents = useMemo(() => agents.filter(agent => filter === 'all' || (filter === 'active' ? agent.is_active : !agent.is_active)), [agents, filter])
   const canManageAccess = canManageAgentTeamAccess(actor?.workspace_role)
   const attentionSessions = sessions.filter(session => ['stale', 'failed', 'blocked', 'awaiting_approval', 'awaiting_input'].includes(session.state))
-  const refresh = () => { void load(); void agentsPage.refresh(); void teamsPage.refresh(); void humansPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }
+  const refresh = () => { void refreshActor(); void agentsPage.refresh(); void teamsPage.refresh(); void humansPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }
 
   if (loading) return <main className="center foundation-center wm-theme"><AsyncStateSurface description={text.loadingDescription} state="loading" title={text.loadingTitle} /></main>
+  if (!actor) return <main className="center foundation-center wm-theme"><ErrorState actionLabel={text.retry} description={actorError || text.loadError} onAction={() => void refreshActor()} title={text.attentionTitle} /></main>
   return <AppShell
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actor?.display_name}
