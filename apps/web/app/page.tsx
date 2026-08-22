@@ -22,6 +22,7 @@ import { homeScopeHref, parseHomeScope, type HomeScope } from './lib/navigation'
 import { LocaleToggle, useLocale, type GuidanceCopy } from './lib/i18n'
 import { actorDisplayName, type AuthenticatedActor } from './lib/actor'
 import { useAuthenticatedActor } from './lib/use-authenticated-actor'
+import { useBoardColumnWidths } from './lib/use-board-column-widths'
 import { useCurrentTeam } from './lib/use-current-team'
 import { workspaceNavigation, workspaceUtilityNavigation } from './lib/workspace-navigation'
 import { ProjectWorkspace } from './project-workspace'
@@ -92,6 +93,10 @@ export default function HomePage() {
   // Derive `selectedTeam` from the local `teamsPage` so the full Team shape
   // (including `revision`) is preserved for downstream consumers like GuidancePanel.
   const selectedTeam = teamsPage.items.find(team => team.id === teamId) ?? null
+  // Board column widths are a per-team UI preference; they live in localStorage
+  // (via the hook) so the user's drag-to-resize survives reloads but never leaks
+  // into URL state or the canonical query string.
+  const { setWidth: setBoardColumnWidth, widths: boardColumnWidths } = useBoardColumnWidths(selectedTeam?.id ?? null)
   const statesPage = usePagedApiList<WorkflowState>(
     actor && selectedTeam ? `/api/v1/teams/${selectedTeam.id}/states` : null,
   )
@@ -279,12 +284,14 @@ export default function HomePage() {
   const surfaceScope = scope === 'projects' ? 'project-work-items' : scope === 'my-work' || scope === 'active' || scope === 'backlog' ? scope : 'my-work'
   const workSurfaces = actor && selectedTeam ? <WorkSurfaces
     actorId={actor.id}
+    columnWidths={boardColumnWidths}
     humans={humans}
     initialFilters={surfaceFilters}
     initialLayout={surfaceLayout}
     copy={issueCopy}
     milestones={issueMilestonesPage.items}
     onApplySavedView={applySavedView}
+    onColumnWidthChange={setBoardColumnWidth}
     onError={message => setError(message)}
     onItemsChange={setWorkSurfaceItems}
     onLayoutChange={next => {

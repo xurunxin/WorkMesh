@@ -89,6 +89,8 @@ export type WorkSurfacesProps = {
   onRefreshReady?: (refresh: () => Promise<void>) => void
   copy?: Partial<WorkItemCopy>
   surfaceCopy?: Partial<WorkSurfaceCopy>
+  columnWidths?: Record<string, number>
+  onColumnWidthChange?: (columnId: string, width: number) => void
 }
 
 const emptyFilters: WorkSurfaceQuery = {}
@@ -185,7 +187,7 @@ export function useWorkSurfaceController({
   return { actorId, adapter, actionError, collection, conflict, filters, layout, lastRefresh, move, pendingMoves, query, refresh, scope, setFilters, setLayout: setLayoutAndRestoreFocus, setQuery, teamId }
 }
 
-export function WorkSurfaces({ actorId = null, copy, humans = [], initialFilters, initialLayout = 'list', milestones = [], onApplySavedView, onError, onItemsChange, onLayoutChange, onOpenItem, onOpenProject, onQueryChange, onRefreshReady, onSelectionReset, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], surfaceCopy, teamId = null }: WorkSurfacesProps) {
+export function WorkSurfaces({ actorId = null, columnWidths, copy, humans = [], initialFilters, initialLayout = 'list', milestones = [], onApplySavedView, onColumnWidthChange, onError, onItemsChange, onLayoutChange, onOpenItem, onOpenProject, onQueryChange, onRefreshReady, onSelectionReset, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], surfaceCopy, teamId = null }: WorkSurfacesProps) {
   const text = { ...defaultCopy, ...surfaceCopy }
   const controller = useWorkSurfaceController({ actorId, initialFilters, initialLayout, realtimeResources, scope, selectedProjectId, teamId })
   const { collection, filters, layout, pendingMoves, query } = controller
@@ -264,7 +266,7 @@ export function WorkSurfaces({ actorId = null, copy, humans = [], initialFilters
     {vm.state === 'offline' && <WorkSurfaceState actionLabel={text.retry} description={text.offlineDescription} onAction={() => void controller.refresh()} state="offline" title={text.offlineTitle} />}
     {vm.state === 'error' && <WorkSurfaceState actionLabel={text.retry} description={vm.errorMessage ?? text.errorDescription} onAction={() => void controller.refresh()} state="error" title={text.errorTitle} />}
     {vm.state === 'conflict' && <WorkSurfaceState actionLabel={text.retry} description={text.conflictDescription} onAction={() => { controller.setQuery({ ...query }); void controller.refresh() }} state="conflict" title={text.conflictTitle} />}
-    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columns={columns} copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
+    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columnWidths={columnWidths} columns={columns} copy={copy} items={uiItems} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
   </section>
 }
 
