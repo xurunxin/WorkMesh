@@ -59,7 +59,12 @@ function remember(command: Command): void {
   } catch { /* Recency is optional and must never block navigation. */ }
 }
 
-export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLabel?: string; locale?: CommandCenterLocale }) {
+export type GlobalCommandCenterProps = {
+  triggerLabel?: string
+  locale?: CommandCenterLocale
+}
+
+export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: GlobalCommandCenterProps) {
   const text = commandCenterText[locale]
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
@@ -82,9 +87,19 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   }, [])
   useEffect(() => {
     const shortcut = (event: globalThis.KeyboardEvent) => {
-      if (event.defaultPrevented || editableTarget(event.target) || !(event.ctrlKey || event.metaKey) || event.key.toLocaleLowerCase() !== 'k') return
-      event.preventDefault()
-      setOpen(true)
+      if (event.defaultPrevented || editableTarget(event.target)) return
+      // Cmd/Ctrl+K — universal palette shortcut.
+      if ((event.ctrlKey || event.metaKey) && event.key.toLocaleLowerCase() === 'k') {
+        event.preventDefault()
+        setOpen(true)
+        return
+      }
+      // `/` (forward slash) — slash to open, but only when the key is plain
+      // (no modifiers) so browser shortcuts like Ctrl+/ are not swallowed.
+      if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        event.preventDefault()
+        setOpen(true)
+      }
     }
     window.addEventListener('keydown', shortcut)
     return () => window.removeEventListener('keydown', shortcut)

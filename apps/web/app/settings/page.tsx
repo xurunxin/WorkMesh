@@ -7,7 +7,6 @@ import { apiRequest, json } from '../lib/api'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
 import { canManageWorkspace } from '../lib/settings-permissions'
 import { actorDisplayName } from '../lib/actor'
-import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { OperationsContent } from '../operations-content'
@@ -24,7 +23,7 @@ const parseTab = (raw: string | null | undefined): SettingsTab =>
   raw === 'operations' ? 'operations' : 'workspace'
 
 export default function SettingsPage() {
-  const { locale, settingsCopy: text, t } = useLocale()
+  const { settingsCopy: text, t } = useLocale()
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
   const [teamId, setTeamId] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -147,7 +146,7 @@ export default function SettingsPage() {
     administrationNavigationLabel={text.administrationNavigation}
     actorName={actorDisplayName(actor)}
     contextLabel={text.workspace}
-    headerActions={<div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} /></div>}
+    headerActions={<div className="shell-action-cluster"><LocaleToggle /></div>}
     mainNavigationLabel={text.mainNavigation}
     menuLabel={text.menu}
     mobileNavigationLabel={text.mobileNavigation}

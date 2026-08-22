@@ -32,7 +32,6 @@ import {
   revisionConflictNotice,
   type ProjectWorkspaceTab,
 } from './lib/project-work'
-import { GlobalCommandCenter } from '../features/command-center'
 import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
@@ -417,7 +416,7 @@ export default function HomePage() {
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actorDisplayName(actor)}
     contextLabel={pageTitle}
-    headerActions={<div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
+    headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
     footer={<><Button data-testid="logout" onClick={() => void signOut()} variant="ghost">{t('signOut')}</Button>{releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · build {releaseInfo.buildSha} · schema {releaseInfo.schemaBaseline}</small>}</>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}

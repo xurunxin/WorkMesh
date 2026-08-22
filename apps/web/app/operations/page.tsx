@@ -1,15 +1,14 @@
 'use client'
 
 import { AppShell } from '@workmesh/ui'
-import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { RealtimeStatus } from '../realtime-status'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 import { OperationsContent } from '../operations-content'
 
 export default function OperationsPage() {
-  const { locale, t } = useLocale()
-  const headerActions = <div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>
+  const { t } = useLocale()
+  const headerActions = <div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>
   const navigation = workspaceNavigation({ active: 'agents', t, onHomeNavigate: undefined })
   const utilityNavigation = workspaceUtilityNavigation({ t })
   return <AppShell

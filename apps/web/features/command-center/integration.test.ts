@@ -6,14 +6,19 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const read = (path: string) => readFileSync(`${root}${path}`, 'utf8')
 
 describe('command-center integration contract', () => {
-  it('is present on every authenticated application shell', () => {
+  it('is mounted once at the root layout, not per-page', () => {
+    // The command center is centralized: a single instance is rendered in the
+    // root layout so every authenticated route shares one trigger + dialog.
+    // Pages must NOT import `GlobalCommandCenter` directly.
+    expect(read('app/layout.tsx')).toContain('CommandCenterMount')
+    expect(read('app/command-center-mount.tsx')).toContain('GlobalCommandCenter')
     for (const path of [
       'app/page.tsx',
       'app/agents/page.tsx',
       'app/settings/page.tsx',
       'app/operations/page.tsx',
       'app/agent-sessions/[id]/page.tsx',
-    ]) expect(read(path)).toContain('GlobalCommandCenter')
+    ]) expect(read(path)).not.toContain('GlobalCommandCenter')
   })
 
   it('restores safe create intents and generic work-item deep links through existing forms', () => {

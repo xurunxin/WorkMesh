@@ -25,7 +25,6 @@ import { type RealtimeResource, useRealtimeSubscription } from '../lib/realtime'
 import { agentRegistryRefreshTargets } from '../lib/realtime-refresh'
 import { AgentConnectionsPanel } from '../agent-connections-panel'
 import { RealtimeStatus } from '../realtime-status'
-import { GlobalCommandCenter } from '../../features/command-center'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
@@ -35,7 +34,7 @@ type Human = { id: string; display_name: string; email?: string }
 type AgentFilter = 'all' | 'active' | 'inactive'
 
 export default function AgentsPage() {
-  const { locale, t, agentsCopy } = useLocale()
+  const { t, agentsCopy } = useLocale()
   const text = agentsCopy
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
   const [filter, setFilter] = useState<AgentFilter>('all')
@@ -100,7 +99,7 @@ export default function AgentsPage() {
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actor?.display_name}
     contextLabel={text.context}
-    headerActions={<div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
+    headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}
     mobileNavigationLabel={t('mobileNavigation')}
