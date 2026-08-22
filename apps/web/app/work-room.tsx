@@ -1782,6 +1782,7 @@ function LegacyCommentComposer({
       <RichTextEditor
         identity={{ ...draftIdentity, field: "comment", baseRevision: 0 }}
         label={text.legacyAria}
+        mode="comment"
         name="body"
         required
         value={body}

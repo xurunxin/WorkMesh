@@ -38,6 +38,26 @@ describe('revision-bound local drafts', () => {
     expect(html).toContain('aria-label="Undo"')
     expect(html).toContain('aria-label="Redo"')
   })
+  it('applies the mode-specific border class to the editor wrapper', () => {
+    const commentHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Comment', mode: 'comment', name: 'body', value: 'hi', onChange: () => undefined,
+    }))
+    const replyHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Reply', mode: 'reply', name: 'body', value: 'hi', onChange: () => undefined,
+    }))
+    const descriptionHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', mode: 'description', name: 'description', value: 'hi', onChange: () => undefined,
+    }))
+    const plainHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', value: 'hi', onChange: () => undefined,
+    }))
+    expect(commentHtml).toContain('class="rich-editor rich-editor--comment"')
+    expect(replyHtml).toContain('class="rich-editor rich-editor--reply"')
+    expect(descriptionHtml).toContain('class="rich-editor rich-editor--description"')
+    expect(plainHtml).not.toContain('rich-editor--comment')
+    expect(plainHtml).not.toContain('rich-editor--reply')
+    expect(plainHtml).not.toContain('rich-editor--description')
+  })
   it('keeps controlled editor undo and redo deterministic', () => {
     const recorded = recordEditorChange({ undo: [], redo: [] }, 'before', '**after**')
     const undone = undoEditorChange(recorded, '**after**')

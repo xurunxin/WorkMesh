@@ -1112,3 +1112,8 @@ button, input, textarea, select { font: inherit; }
 /* Loading state — shared SkeletonList (apps/web/app/lib/skeleton-list.tsx) */
 .skeleton-list { display: grid; gap: .55rem; padding: 1rem 0; }
 .skeleton-list-cell { height: 1.6rem; }
+
+/* v33 rich-content: distinguish comment / reply / description editor modes with a colored left border so the form purpose is readable at a glance. */
+.rich-editor--comment { border-left: 3px solid #2563eb; padding-left: .55rem; }
+.rich-editor--reply { border-left: 3px solid #16a34a; padding-left: .55rem; }
+.rich-editor--description { border-left: 3px solid #d97706; padding-left: .55rem; }

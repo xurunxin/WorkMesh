@@ -124,7 +124,10 @@ const formatTools: FormatTool[] = [
   { label: 'link', before: '[', after: '](https://)', icon: LinkSimple },
 ]
 
-export function RichTextEditor({ identity, label, name, value, onChange, required, textareaRef, copy, testId }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null>; copy?: Partial<RichTextEditorCopy>; testId?: string }) {
+export type RichTextEditorMode = 'comment' | 'reply' | 'description'
+const editorModeClass = (mode: RichTextEditorMode | undefined): string => mode ? `rich-editor rich-editor--${mode}` : 'rich-editor'
+
+export function RichTextEditor({ identity, label, mode, name, value, onChange, required, textareaRef, copy, testId }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; mode?: RichTextEditorMode; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null>; copy?: Partial<RichTextEditorCopy>; testId?: string }) {
   const text = { ...defaultEditorCopy, ...copy }
   const internalRef = useRef<HTMLTextAreaElement>(null); const ref = textareaRef ?? internalRef
   const [restored, setRestored] = useState(false)
@@ -157,7 +160,7 @@ export function RichTextEditor({ identity, label, name, value, onChange, require
     event.preventDefault()
     applyHistory(key === 'y' || (key === 'z' && event.shiftKey) ? 'redo' : 'undo')
   }
-  return <section className="rich-editor" data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={text.formatting(label)}>
+  return <section className={editorModeClass(mode)} data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={text.formatting(label)}>
     <button aria-label={text.undo} className="rich-editor-tool" onClick={() => applyHistory('undo')} title={text.undo} type="button"><ArrowUUpLeft aria-hidden size={17} /></button>
     <button aria-label={text.redo} className="rich-editor-tool" onClick={() => applyHistory('redo')} title={text.redo} type="button"><ArrowUUpRight aria-hidden size={17} /></button>
     <span aria-hidden className="rich-editor-tool-separator" />
