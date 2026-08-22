@@ -21,6 +21,8 @@ import { homeRefreshTargets } from './lib/realtime-refresh'
 import { homeScopeHref, parseHomeScope, type HomeScope } from './lib/navigation'
 import { LocaleToggle, useLocale, type GuidanceCopy } from './lib/i18n'
 import { actorDisplayName, type AuthenticatedActor } from './lib/actor'
+import { useAuthenticatedActor } from './lib/use-authenticated-actor'
+import { useCurrentTeam } from './lib/use-current-team'
 import { workspaceNavigation, workspaceUtilityNavigation } from './lib/workspace-navigation'
 import { ProjectWorkspace } from './project-workspace'
 import { RealtimeStatus } from './realtime-status'
@@ -61,8 +63,8 @@ const emptyFilters: Filters = {}
 
 export default function HomePage() {
   const { detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t } = useLocale()
-  const [actor, setActor] = useState<Actor | null>(null)
-  const [teamId, setTeamId] = useState<string | null>(null)
+  const { actor, loading: actorLoading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
+  const { teamId, teams, setTeamId, loading: teamsLoading } = useCurrentTeam(actor)
   const [selectedItem, setSelectedItem] = useState<WorkItem | null>(null)
   const [requestedItem, setRequestedItem] = useState<{ id: string; mode: 'sheet' | 'full_page' } | null>(null)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
@@ -75,7 +77,6 @@ export default function HomePage() {
   const [detailConflict, setDetailConflict] = useState<StructuredDetailError | null>(null)
   const [detailResetKey, setDetailResetKey] = useState(0)
   const [filters, setFilters] = useState<Filters>({})
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
   const [createProjectOpen, setCreateProjectOpen] = useState(false)
@@ -83,9 +84,15 @@ export default function HomePage() {
   const [workSurfaceItems, setWorkSurfaceItems] = useState<WorkItemDto[]>([])
   const surfaceRefreshRef = useRef<(() => Promise<void>) | null>(null)
 
+  // Local `teamsPage` is kept for the team LoadMoreButton and realtime refresh; the
+  // hook's `teams` drives the rendered team list so this subscription only carries
+  // pagination state (error, refresh, cursor, loadMore).
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
-  const teams = teamsPage.items
-  const selectedTeam = teams.find(team => team.id === teamId) ?? null
+  const loading = actorLoading || teamsLoading
+  const initialError = actorError || error
+  // Derive `selectedTeam` from the local `teamsPage` so the full Team shape
+  // (including `revision`) is preserved for downstream consumers like GuidancePanel.
+  const selectedTeam = teamsPage.items.find(team => team.id === teamId) ?? null
   const statesPage = usePagedApiList<WorkflowState>(
     actor && selectedTeam ? `/api/v1/teams/${selectedTeam.id}/states` : null,
   )
@@ -111,7 +118,9 @@ export default function HomePage() {
     commentsPage.error,
   ].find(Boolean)
 
-  const load = useCallback(async () => {
+  // Bootstraps the install check and release info; the auth chain is owned by
+  // `useAuthenticatedActor` and runs in parallel.
+  const bootstrap = useCallback(async () => {
     try {
       setError('')
       const installation = await publicRequest<InstallStatus>('/api/v1/install-status')
@@ -119,32 +128,20 @@ export default function HomePage() {
         window.location.replace('/install')
         return
       }
-      const auth = await apiRequest<AuthMe>('/api/v1/auth/me')
-      saveCsrfToken(auth.csrfToken)
-      setActor(auth.actor)
-      const [featureRegistry, info] = await Promise.all([
-        apiRequest<FeatureRegistry>('/api/v1/features'),
+      const [info] = await Promise.all([
         publicRequest<ReleaseInfo>('/api/v1/info'),
+        apiRequest<FeatureRegistry>('/api/v1/features').catch(() => null),
       ])
       setReleaseInfo(info)
-      void featureRegistry
     } catch (reason) {
-      if (reason instanceof ApiError && reason.status === 401) {
-        clearCsrfToken()
-        window.location.replace('/login')
-        return
-      }
+      if (reason instanceof ApiError && reason.status === 401) return
       setError(requestError(reason))
-    } finally {
-      setLoading(false)
     }
   }, [])
 
-  useEffect(() => { void load() }, [load])
   useEffect(() => {
-    if (teamsPage.loading) return
-    setTeamId(current => teams.some(team => team.id === current) ? current : teams[0]?.id ?? null)
-  }, [teams, teamsPage.loading])
+    void bootstrap()
+  }, [bootstrap])
   const realtimeResources = useMemo<RealtimeResource[]>(() => [
     ...(actor?.workspace_id
       ? [{ type: 'workspace' as const, id: actor.workspace_id }]
@@ -412,7 +409,7 @@ export default function HomePage() {
   const signOut = async () => { try { await apiMutation('logout', '/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; clearCsrfToken(); window.location.assign('/login') }
 
   if (loading) return <main className="center foundation-center wm-theme" data-testid="loading"><AsyncStateSurface description="Loading your authorized workspace projection." state="loading" title="Loading WorkMesh" /></main>
-  if (!actor) return <main className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel="Retry" description={error || 'Unable to load your authorized WorkMesh projection.'} onAction={() => void load()} title="WorkMesh is unavailable" /></main>
+  if (!actor) return <main className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel="Retry" description={error || 'Unable to load your authorized WorkMesh projection.'} onAction={() => void refreshActor()} title="WorkMesh is unavailable" /></main>
   const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const scopeNavigation = workspaceNavigation({ active: scope, onHomeNavigate: (event, value) => navigateScope(event, value), t })
   const utilityNavigation = workspaceUtilityNavigation({ t })
