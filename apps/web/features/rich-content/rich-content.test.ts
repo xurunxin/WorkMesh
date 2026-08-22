@@ -116,3 +116,13 @@ describe('Markdown preview toggle', () => {
     expect(html).not.toContain('<textarea')
   })
 })
+
+describe('Draft saved indicator', () => {
+  it('shows a not-saved indicator until the editor writes its first draft', () => {
+    const html = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', onChange: () => undefined, value: 'hi',
+    }))
+    expect(html).toContain('rich-editor-saved')
+    expect(html).toContain('Not saved yet')
+  })
+})

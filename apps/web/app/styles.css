@@ -760,6 +760,7 @@ button, input, textarea, select { font: inherit; }
 .rich-editor-toolbar .rich-editor-tool:hover { color: var(--wm-text); background: var(--wm-surface); border-color: var(--wm-border); }
 .rich-editor-toolbar .rich-editor-tool:focus-visible { outline: 2px solid color-mix(in srgb, var(--wm-focus) 44%, transparent); outline-offset: 1px; }
 .rich-editor-tool-separator { width: 1px; height: 1.25rem; margin: 0 .1rem; background: var(--wm-border); }
+.rich-editor-saved { margin-left: auto; padding: 0 .35rem; font-size: .78rem; color: var(--wm-muted); white-space: nowrap; }
 .draft-notice { display: flex; gap: .6rem; align-items: center; justify-content: space-between; padding: .55rem .65rem; color: var(--wm-warning); background: color-mix(in srgb, var(--wm-warning) 8%, var(--wm-surface)); border: 1px solid color-mix(in srgb, var(--wm-warning) 28%, var(--wm-border)); border-radius: var(--wm-radius-md); }
 .rich-markdown { min-width: 0; overflow-wrap: anywhere; }
 .rich-markdown > :first-child { margin-top: 0; }
