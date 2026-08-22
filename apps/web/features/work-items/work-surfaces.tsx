@@ -102,12 +102,13 @@ export type WorkSurfacesProps = {
 const emptyFilters: WorkSurfaceQuery = {}
 const FILTERS_COMPACT_STORAGE_KEY = 'wm:filters:compact'
 const DENSITY_STORAGE_KEY = 'wm:board:density'
-const readCompactPreference = (): boolean => {
-  if (typeof window === 'undefined') return false
+export const readCompactPreference = (): boolean => {
+  if (typeof window === 'undefined') return true
   try {
-    return window.localStorage.getItem(FILTERS_COMPACT_STORAGE_KEY) === 'true'
+    const stored = window.localStorage.getItem(FILTERS_COMPACT_STORAGE_KEY)
+    return stored === null ? true : stored === 'true'
   } catch {
-    return false
+    return true
   }
 }
 const writeCompactPreference = (next: boolean): void => {
@@ -263,6 +264,21 @@ export function WorkSurfaces({ actorId = null, columnWidths, copy, humans = [], 
   }), [collection, collection.error, controller.actionError, layout, query, scope])
   useEffect(() => { onItemsChange?.(collection.items) }, [collection.items, onItemsChange])
   useEffect(() => { onRefreshReady?.(controller.refresh) }, [controller.refresh, onRefreshReady])
+  // Auto-load the next page once the Load More sentinel becomes visible, so a
+  // filter (e.g. a project with 200+ Issues) can show every row without
+  // requiring the user to find the button below the fold.
+  const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const target = loadMoreSentinelRef.current
+    if (!target || !collection.nextCursor || !collection.loadMore) return
+    if (collection.loading || collection.loadingMore) return
+    const observer = new IntersectionObserver(entries => {
+      const entry = entries[0]
+      if (entry?.isIntersecting) void collection.loadMore?.()
+    }, { rootMargin: '320px 0px' })
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [collection.nextCursor, collection.loadMore, collection.loading, collection.loadingMore, collection.items.length])
   const columns = useMemo(() => statusOptions(statuses), [statuses])
   const move = useCallback((item: WorkItemCardData, targetStatusId: string, source: WorkItemMoveSource) => {
     const targetStatus = statuses.find(status => status.id === targetStatusId)
@@ -304,7 +320,14 @@ export function WorkSurfaces({ actorId = null, columnWidths, copy, humans = [], 
     {vm.state === 'offline' && <WorkSurfaceState actionLabel={text.retry} description={text.offlineDescription} onAction={() => void controller.refresh()} state="offline" title={text.offlineTitle} />}
     {vm.state === 'error' && <WorkSurfaceState actionLabel={text.retry} description={vm.errorMessage ?? text.errorDescription} onAction={() => void controller.refresh()} state="error" title={text.errorTitle} />}
     {vm.state === 'conflict' && <WorkSurfaceState actionLabel={text.retry} description={text.conflictDescription} onAction={() => { controller.setQuery({ ...query }); void controller.refresh() }} state="conflict" title={text.conflictTitle} />}
-    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div className={vm.stale ? 'work-surface-stale' : undefined} data-stale={vm.stale || undefined}>{layout === 'list' ? <WorkItemList copy={copy} density={density} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columnWidths={columnWidths} columns={columns} copy={copy} density={density} items={uiItems} onColumnWidthChange={onColumnWidthChange} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div>}
+    {(vm.state === 'ready' || vm.state === 'reconnecting' || vm.state === 'refreshing') && <div
+      className={[
+        'work-surface-content',
+        layout === 'list' ? 'work-surface-content--list' : 'work-surface-content--board',
+        vm.stale ? 'work-surface-stale' : undefined,
+      ].filter(Boolean).join(' ')}
+      data-stale={vm.stale || undefined}
+    >{layout === 'list' ? <WorkItemList copy={copy} density={density} items={uiItems} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} statusOptions={columns} /> : <WorkItemBoard columnWidths={columnWidths} columns={columns} copy={copy} density={density} items={uiItems} onColumnWidthChange={onColumnWidthChange} onLoadMore={collection.nextCursor && !collection.loadingMore ? collection.loadMore : undefined} onMove={move} onOpen={open} onOpenProject={id => void onOpenProject?.(id)} />}<div className="work-surface-load-more-sentinel" data-testid="work-surface-load-more-sentinel" ref={loadMoreSentinelRef}><WorkSurfacePagination copy={copy} loading={collection.loading || collection.loadingMore} nextCursor={collection.nextCursor} onLoadMore={collection.loadMore} /></div></div>}
   </section>
 }
 
