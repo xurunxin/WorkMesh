@@ -264,9 +264,15 @@ export function Popover({ align = 'start', children, label, onOpenChange, open, 
 }
 
 export type TabItem = { id: string; label: string; panel: ReactNode }
-export type TabsProps = { ariaLabel: string; onValueChange: (value: string) => void; tabs: TabItem[]; value: string }
+export type TabsProps = {
+  ariaLabel: string
+  compact?: boolean
+  onValueChange: (value: string) => void
+  tabs: TabItem[]
+  value: string
+}
 
-export function Tabs({ ariaLabel, onValueChange, tabs, value }: TabsProps) {
+export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }: TabsProps) {
   const baseId = useId()
   const selected = tabs.find(tab => tab.id === value) ?? tabs[0]
   const move = (event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
@@ -281,6 +287,21 @@ export function Tabs({ ariaLabel, onValueChange, tabs, value }: TabsProps) {
     if (!target) return
     onValueChange(target.id)
     document.getElementById(`${baseId}-tab-${target.id}`)?.focus()
+  }
+  // When compact, render a native <select> so the tab list collapses into
+  // a single form control on narrow viewports. The select still drives the
+  // same onValueChange handler so the active panel and any controlled
+  // parent state stay in lock-step with the keyboard/button variant.
+  if (compact) {
+    return <div className="wm-tabs wm-tabs-compact">
+      <label className="wm-tab-list-compact">
+        <span className="wm-visually-hidden">{ariaLabel}</span>
+        <Select aria-label={ariaLabel} className="wm-tab-select" value={selected?.id ?? ''} onChange={event => onValueChange(event.currentTarget.value)}>
+          {tabs.map(tab => <option key={tab.id} value={tab.id}>{tab.label}</option>)}
+        </Select>
+      </label>
+      {selected && <div aria-labelledby={`${baseId}-tab-${selected.id}`} className="wm-tab-panel" id={`${baseId}-panel-${selected.id}`} role="tabpanel">{selected.panel}</div>}
+    </div>
   }
   return <div className="wm-tabs">
     <div aria-label={ariaLabel} className="wm-tab-list" role="tablist">{tabs.map((tab, index) => <button

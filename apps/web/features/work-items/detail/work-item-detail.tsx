@@ -1,8 +1,9 @@
 'use client'
 
 import { type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, ConflictState, ErrorState, ForbiddenState, Sheet } from '@workmesh/ui'
+import { Button, ConflictState, ErrorState, ForbiddenState, Sheet, Tabs } from '@workmesh/ui'
 import { ArrowClockwise, ArrowSquareOut, FloppyDisk, X } from '@phosphor-icons/react'
+import { useMediaQuery } from '../../../app/lib/use-media-query'
 import type { StructuredDetailError, WorkItemDetailDraft, WorkItemDetailModel, WorkItemDetailOptions } from './contracts'
 import { detailDraft, sameDetailDraft } from './view-model'
 import { clearDraft, RichTextEditor, type DraftIdentity, type RichTextEditorCopy } from '../../rich-content/editor'
@@ -17,6 +18,10 @@ export type WorkItemDetailCopy = {
   correlation: string
   delegation: string
   description: string
+  detailTabsAriaLabel: string
+  detailTabDiscussion: string
+  detailTabResponsibility: string
+  detailTabAgentExecutions: string
   discardChanges: string
   dueDate: string
   editProjection: string
@@ -69,6 +74,10 @@ const defaultCopy: WorkItemDetailCopy = {
   correlation: 'Correlation',
   delegation: 'Delegation',
   description: 'Description (Markdown)',
+  detailTabsAriaLabel: 'Issue sections',
+  detailTabDiscussion: 'Discussion',
+  detailTabResponsibility: 'Responsibility',
+  detailTabAgentExecutions: 'Agent executions',
   discardChanges: 'Discard unsaved Issue changes?',
   dueDate: 'Due date',
   editProjection: 'Edit the authorized Issue projection.',
@@ -166,6 +175,12 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
   const initial = useMemo(() => detailDraft(model), [model.id, model.revision])
   const [draft, setDraft] = useState(initial)
   const [saving, setSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState<string>('responsibility')
+  // The Issue detail page is laid out as a 2-column form on wide viewports
+  // (1180px+) and stacks the supplementary sections below it on narrower
+  // screens. Once the supplementary sections overflow, swapping the button
+  // row for a <select> keeps the page usable without horizontal scrolling.
+  const isCompact = useMediaQuery('(max-width: 1180px)')
   useEffect(() => setDraft(initial), [initial])
   const dirty = !sameDetailDraft(initial, draft)
   useEffect(() => {
@@ -194,9 +209,17 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
         <aside className="work-item-properties" aria-labelledby="work-item-properties-heading"><h3 id="work-item-properties-heading">{text.properties}</h3><label>{text.workflowStatus}<select name="statusId" value={draft.statusId} onChange={event => set('statusId', event.currentTarget.value)}>{options.statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.workflowHelp}</small></label><label>{text.priority}<select name="priority" value={draft.priority} onChange={event => set('priority', event.currentTarget.value as WorkItemDetailDraft['priority'])}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label><label>{text.dueDate}<input name="dueDate" type="date" value={draft.dueDate} onChange={event => set('dueDate', event.currentTarget.value)} /></label><label>{text.responsibleHuman}<select name="responsibleHumanActorId" value={draft.responsibleHumanActorId} onChange={event => set('responsibleHumanActorId', event.currentTarget.value)}><option value="">{text.unassigned}</option>{options.humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.responsibleHumanHelp}</small></label><label>{text.project}<select name="projectId" value={draft.projectId} onChange={event => set('projectId', event.currentTarget.value)}><option value="">{text.noProject}</option>{options.projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.milestone}<select name="milestoneId" value={draft.milestoneId} onChange={event => set('milestoneId', event.currentTarget.value)}><option value="">{text.noMilestone}</option>{options.milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.parentWorkItem}<select name="parentId" value={draft.parentId} onChange={event => set('parentId', event.currentTarget.value)}><option value="">{text.noParent}</option>{options.parents.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.labels}<input name="labels" value={draft.labels} onChange={event => set('labels', event.currentTarget.value)} /></label></aside>
         <div className="work-item-detail-actions"><Button disabled={saving || !dirty} icon={<FloppyDisk aria-hidden size={16} />} type="submit" variant="primary">{saving ? text.saving : text.saveChanges}</Button><Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => confirmDiscard(onReloadLatest)} type="button" variant="secondary">{text.reloadLatest}</Button><span aria-live="polite">{dirty ? text.unsavedChanges : text.allChangesSaved}</span></div>
       </form>
-      <section className="responsibility-projection" aria-labelledby="responsibility-heading"><h3 id="responsibility-heading">{text.humanResponsibility}</h3><strong data-testid="responsible-human">{model.responsibleHuman?.displayName ?? text.unassigned}</strong><p>{text.ownsOutcome}</p></section>
-      <section className="agent-execution-projection" aria-labelledby="agent-executions-heading"><h3 id="agent-executions-heading">{text.agentExecutions}</h3>{model.agentExecutions.length ? model.agentExecutions.map(execution => <article key={execution.delegation.leaseId}><strong>{execution.agent.displayName}</strong><span>{text.executionState}: {execution.executionState}</span><span>{text.session(execution.sessionId.slice(0, 8))}</span><span>{text.heartbeat}: {execution.heartbeat.health}</span><span>{text.delegation}: {execution.delegation.kind}</span></article>) : <p>{text.noActiveAgent}</p>}</section>
-      <div className="work-item-detail-supplemental">{supplemental}</div>
+      <Tabs
+        ariaLabel={text.detailTabsAriaLabel}
+        compact={isCompact}
+        onValueChange={setActiveTab}
+        tabs={[
+          { id: 'responsibility', label: text.detailTabResponsibility, panel: <section className="responsibility-projection" aria-labelledby="responsibility-heading"><h3 id="responsibility-heading">{text.humanResponsibility}</h3><strong data-testid="responsible-human">{model.responsibleHuman?.displayName ?? text.unassigned}</strong><p>{text.ownsOutcome}</p></section> },
+          { id: 'agent', label: text.detailTabAgentExecutions, panel: <section className="agent-execution-projection" aria-labelledby="agent-executions-heading"><h3 id="agent-executions-heading">{text.agentExecutions}</h3>{model.agentExecutions.length ? model.agentExecutions.map(execution => <article key={execution.delegation.leaseId}><strong>{execution.agent.displayName}</strong><span>{text.executionState}: {execution.executionState}</span><span>{text.session(execution.sessionId.slice(0, 8))}</span><span>{text.heartbeat}: {execution.heartbeat.health}</span><span>{text.delegation}: {execution.delegation.kind}</span></article>) : <p>{text.noActiveAgent}</p>}</section> },
+          { id: 'discussion', label: text.detailTabDiscussion, panel: <div className="work-item-detail-supplemental">{supplemental}</div> },
+        ]}
+        value={activeTab}
+      />
     </div>
   </div>
   return mode === 'sheet' ? <Sheet className="work-item-detail-sheet" closeLabel={text.close} description={text.editProjection} onClose={() => confirmDiscard(onClose)} open title={model.key}>{body}</Sheet> : <section className="work-item-full-page" aria-label={text.fullWorkItem} ref={fullPageRef} tabIndex={-1}>{body}</section>

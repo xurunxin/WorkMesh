@@ -121,6 +121,32 @@ describe('human UI foundation', () => {
     expect(tabs).toContain('role="tabpanel"')
   })
 
+  it('collapses Tabs into a select when compact is true so narrow viewports stay usable', () => {
+    const compact = renderToStaticMarkup(createElement(Tabs, {
+      ariaLabel: 'Detail sections',
+      compact: true,
+      value: 'discussion',
+      onValueChange: () => undefined,
+      tabs: [
+        { id: 'responsibility', label: 'Responsibility', panel: 'Responsibility panel' },
+        { id: 'agent', label: 'Agent executions', panel: 'Agent panel' },
+        { id: 'discussion', label: 'Discussion', panel: 'Discussion panel' },
+      ],
+    }))
+    // The button-row variant is gone; a single <select> drives the active panel.
+    expect(compact).not.toContain('role="tablist"')
+    expect(compact).not.toContain('class="wm-tab-list"')
+    expect(compact).toContain('class="wm-tabs wm-tabs-compact"')
+    expect(compact).toContain('wm-tab-select')
+    expect(compact).toContain('aria-label="Detail sections"')
+    expect(compact).toContain('<option value="responsibility"')
+    expect(compact).toContain('<option value="agent"')
+    expect(compact).toContain('<option value="discussion"')
+    // The active panel still renders so callers can keep their state unchanged.
+    expect(compact).toContain('role="tabpanel"')
+    expect(compact).toContain('Discussion panel')
+  })
+
   it('announces loading, empty, error, forbidden, conflict and toast feedback', () => {
     const html = renderToStaticMarkup(createElement('div', null, [
       createElement(AsyncStateSurface, { key: 'loading', state: 'loading', title: 'Loading work', description: 'Please wait.' }),
