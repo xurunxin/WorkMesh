@@ -521,13 +521,20 @@ button, input, textarea, select { font: inherit; }
 .app-shell .registry-list article, .app-shell .approval-inbox article, .app-shell .diagnostics, .app-shell .plan-panel, .app-shell .activity-panel, .app-shell .artifact-panel, .app-shell .agent-session-detail { color: var(--wm-text); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); }
 .app-shell .agent-summary-card { padding: 1rem; }
 .app-shell .agent-summary-card p, .app-shell .registry-list article p { color: var(--wm-muted); }
+/* The Phase 3 Task 3.3 drawer refactor made the entire registry card
+ * clickable: cursor + focus ring mirror the work-surface "card-as-button"
+ * pattern, and the .agent-summary-card-affordance row tells the user
+ * what will happen on click. */
+.app-shell .agent-summary-card-clickable { display: grid; gap: .55rem; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+.app-shell .agent-summary-card-clickable:hover { border-color: #c4d1ea; box-shadow: 0 1px 4px #11111118; }
+.app-shell .agent-summary-card-clickable:focus-visible { outline: 2px solid var(--wm-info); outline-offset: 2px; }
+.app-shell .agent-summary-card-affordance { display: inline-flex; align-items: center; gap: .35rem; align-self: end; color: var(--wm-muted); font-size: .82rem; font-weight: 600; }
+.app-shell .agent-summary-card-clickable:hover .agent-summary-card-affordance { color: var(--wm-text); }
 .app-shell .agent-key-facts, .app-shell .connection-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; margin: .8rem 0; }
 .app-shell .agent-key-facts div, .app-shell .connection-facts div { display: grid; gap: .2rem; min-width: 0; }
 .app-shell .agent-key-facts dt, .app-shell .connection-facts dt { color: var(--wm-muted); font-size: .76rem; }
 .app-shell .agent-key-facts dd, .app-shell .connection-facts dd { margin: 0; overflow-wrap: anywhere; }
-.app-shell .agent-access-details { margin-top: .8rem; padding-top: .75rem; border-top: 1px solid var(--wm-border); }
-.app-shell .agent-access-details summary { color: var(--wm-text); font-weight: 650; cursor: pointer; }
-.app-shell .team-access-list { display: grid; gap: .75rem; margin-top: .65rem; padding: 0; list-style: none; border: none; }
+.app-shell .team-access-list { display: grid; gap: .75rem; padding: 0; list-style: none; border: none; }
 .app-shell .team-access-card { display: grid; gap: .55rem; padding: .8rem .9rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 10px; }
 .app-shell .team-access-card > header { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
 .app-shell .team-access-card > header > div { display: grid; gap: .15rem; min-width: 0; }

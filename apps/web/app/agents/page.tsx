@@ -1,12 +1,11 @@
 'use client'
 
-import { type FormEvent, useEffect, useMemo, useState } from 'react'
+import { type KeyboardEvent, useMemo, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
-import { CheckCircleIcon, EyeIcon, XCircleIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon } from '@phosphor-icons/react'
 import {
   type Agent,
   type AgentSession,
-  type AgentTeamAccess,
   type Approval,
   agentHeartbeat,
   agentName,
@@ -30,6 +29,7 @@ import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { useMediaQuery } from '../lib/use-media-query'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 import { filterAgents, uniqueRequestedCapabilities, type AgentStateFilter } from './filters'
+import { TeamAccessDrawer } from './team-access-drawer'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
@@ -47,6 +47,7 @@ export default function AgentsPage() {
   const [capabilityFilter, setCapabilityFilter] = useState('')
   const [error, setError] = useState('')
   const [busyAccess, setBusyAccess] = useState('')
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
   const agentsPage = usePagedApiList<Agent>(actor ? '/api/v1/agents' : null)
   const teamsPage = usePagedApiList<Team>(actor ? '/api/v1/teams' : null)
   const humansPage = usePagedApiList<Human>(actor ? '/api/v1/actors/humans' : null)
@@ -80,17 +81,17 @@ export default function AgentsPage() {
     if (targets.has('approvals')) void approvalsPage.refresh()
   })
 
-  const grantCapabilities = async (agent: Agent, team: Team, approvedCapabilities: string[]) => {
+  const grantCapabilities = async (agent: Agent, teamId: string, approvedCapabilities: string[]) => {
     if (approvedCapabilities.length === 0) { setError(text.selectCapability); return }
-    const operation = `${agent.id}:${team.id}`
-    try { setBusyAccess(operation); setError(''); await grantAgentTeamAccess(agent.id, team.id, approvedCapabilities); await agentsPage.refresh() }
+    const operation = `${agent.id}:${teamId}`
+    try { setBusyAccess(operation); setError(''); await grantAgentTeamAccess(agent.id, teamId, approvedCapabilities); await agentsPage.refresh() }
     catch (reason) { setError(reason instanceof Error ? reason.message : text.updateAccessError) }
     finally { setBusyAccess('') }
   }
 
-  const revokeAccess = async (agent: Agent, team: Team) => {
-    const operation = `${agent.id}:${team.id}`
-    try { setBusyAccess(operation); setError(''); await revokeAgentTeamAccess(agent.id, team.id); await agentsPage.refresh() }
+  const revokeAccess = async (agent: Agent, teamId: string) => {
+    const operation = `${agent.id}:${teamId}`
+    try { setBusyAccess(operation); setError(''); await revokeAgentTeamAccess(agent.id, teamId); await agentsPage.refresh() }
     catch (reason) { setError(reason instanceof Error ? reason.message : text.revokeAccessError) }
     finally { setBusyAccess('') }
   }
@@ -103,6 +104,19 @@ export default function AgentsPage() {
   const canManageAccess = canManageAgentTeamAccess(actor?.workspace_role)
   const attentionSessions = sessions.filter(session => ['stale', 'failed', 'blocked', 'awaiting_approval', 'awaiting_input'].includes(session.state))
   const refresh = () => { void refreshActor(); void agentsPage.refresh(); void teamsPage.refresh(); void humansPage.refresh(); void sessionsPage.refresh(); void approvalsPage.refresh() }
+
+  // Resolve the currently selected agent from the loaded list. The drawer
+  // stays mounted but renders nothing when this resolves to `null` (no
+  // selection, or the agent was filtered out from under the open drawer).
+  const selectedAgent = useMemo(() => shownAgents.find(agent => agent.id === selectedAgentId) ?? null, [shownAgents, selectedAgentId])
+  const openDrawer = (agentId: string) => setSelectedAgentId(agentId)
+  const closeDrawer = () => setSelectedAgentId(null)
+  const activateAgent = (agentId: string) => (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      openDrawer(agentId)
+    }
+  }
 
   if (loading) return <main className="center foundation-center wm-theme"><AsyncStateSurface description={text.loadingDescription} state="loading" title={text.loadingTitle} /></main>
   if (!actor) return <main className="center foundation-center wm-theme"><ErrorState actionLabel={text.retry} description={actorError || text.loadError} onAction={() => void refreshActor()} title={text.attentionTitle} /></main>
@@ -149,26 +163,24 @@ export default function AgentsPage() {
                 <label><span>{text.filterCapability}</span><select aria-label={text.filterCapability} value={capabilityFilter} onChange={event => setCapabilityFilter(event.currentTarget.value)}><option value="">{text.allCapabilities}</option>{capabilityOptions.map(capability => <option key={capability} value={capability}>{capability}</option>)}</select></label>
                 <label><span>{text.filterStatus}</span><select aria-label={text.filterStatus} value={filter} onChange={event => setFilter(event.currentTarget.value as AgentStateFilter)}><option value="all">{text.all}</option><option value="active">{text.active}</option><option value="inactive">{text.inactive}</option></select></label>
               </div>
-              {shownAgents.length === 0 ? <p className="empty">{text.noAgents}</p> : <div className="registry-list">{shownAgents.map(agent => <article className="agent-summary-card" id={`agent-${agent.id}`} key={agent.id} data-testid={`agent-registry-${agent.id}`}>
+              {shownAgents.length === 0 ? <p className="empty">{text.noAgents}</p> : <div className="registry-list">{shownAgents.map(agent => <article
+                aria-label={`${agentName(agent)} — ${text.openTeamAccess}`}
+                className="agent-summary-card agent-summary-card-clickable"
+                data-testid={`agent-registry-${agent.id}`}
+                id={`agent-${agent.id}`}
+                key={agent.id}
+                onClick={() => openDrawer(agent.id)}
+                onKeyDown={activateAgent(agent.id)}
+                role="button"
+                tabIndex={0}
+              >
                 <header><div><h3>{agentName(agent)}</h3><small>{agent.slug} · {agentProvider(agent)} {agentVersion(agent)}</small></div><span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? text.registryStatusActive : text.registryStatusInactive}</span></header>
                 <p>{agent.description || text.noRegistryDescription}</p>
                 <dl className="agent-key-facts"><div><dt>{text.approvedLabel}</dt><dd>{text.capabilitiesLabel(agent.approved_capabilities.length || 0)}</dd></div><div><dt>{text.concurrency}</dt><dd>{agent.max_concurrency}</dd></div><div><dt>{text.heartbeat}</dt><dd>{agentHeartbeat(agent)}s</dd></div></dl>
-                <details className="agent-access-details"><summary>{text.teamAccessAndCapabilities}</summary><p><strong>{text.requestedLabel}</strong> {agent.requested_capabilities.join(', ') || text.none}</p><p><strong>{text.definitionApprovedLabel}</strong> {agent.approved_capabilities.join(', ') || text.none}</p><section className="team-access-list" aria-label={`${agentName(agent)} team access`}>{teams.length === 0 ? <p className="empty">{text.noTeamsAvailable}</p> : teams.map(team => {
-                  const access = agent.team_access?.find(candidate => candidate.team_id === team.id)
-                  const status = access?.status ?? (access?.revoked_at ? 'revoked' : 'not granted')
-                  const statusLabel = status === 'active' ? text.accessStatusActive : status === 'revoked' ? text.accessStatusRevoked : text.accessStatusNotGranted
-                  const operation = `${agent.id}:${team.id}`
-                  return <TeamAccessCard
-                    agent={agent}
-                    access={access ?? null}
-                    busy={busyAccess === operation}
-                    canManage={canManageAccess}
-                    key={team.id}
-                    onGrant={next => void grantCapabilities(agent, team, next)}
-                    onRevoke={() => void revokeAccess(agent, team)}
-                    team={team}
-                  />
-                })}</section></details>
+                <div className="agent-summary-card-affordance">
+                  <span>{text.openTeamAccess}</span>
+                  <ArrowRightIcon aria-hidden size={14} weight="bold" />
+                </div>
               </article>)}</div>}
               <LoadMoreButton collection={agentsPage} label="agents" loadMoreLabel={text.loadMoreAgents} /><LoadMoreButton collection={teamsPage} label="teams" loadMoreLabel={text.loadMoreTeams} />
             </section>,
@@ -192,153 +204,17 @@ export default function AgentsPage() {
         value={activeTab}
       />
     </section>
+    <TeamAccessDrawer
+      agent={selectedAgent}
+      busyAccess={busyAccess}
+      canManage={canManageAccess}
+      onClose={closeDrawer}
+      onGrant={(teamId, capabilities) => { if (selectedAgent) void grantCapabilities(selectedAgent, teamId, capabilities) }}
+      onRevoke={teamId => { if (selectedAgent) void revokeAccess(selectedAgent, teamId) }}
+      open={selectedAgent !== null}
+      teams={teams}
+    />
   </AppShell>
-}
-
-type TeamAccessCardProps = {
-  agent: Agent
-  team: { id: string; name: string; key: string }
-  access: AgentTeamAccess | null
-  canManage: boolean
-  busy: boolean
-  onGrant: (approvedCapabilities: string[]) => void
-  onRevoke: () => void
-}
-
-function TeamAccessCard({ access, agent, busy, canManage, onGrant, onRevoke, team }: TeamAccessCardProps) {
-  const { agentsCopy } = useLocale()
-  const text = agentsCopy
-  const [view, setView] = useState<'requested' | 'approved'>('approved')
-  const requested = agent.requested_capabilities
-  const initialApproved = access?.status === 'active' ? access.approved_capabilities : []
-  const [approved, setApproved] = useState<string[]>(initialApproved)
-  useEffect(() => { setApproved(initialApproved) }, [initialApproved.join('|')])
-  const isActive = access?.status === 'active'
-  const status = !access ? text.accessStatusNotGranted : access.status === 'active' ? text.accessStatusActive : text.accessStatusRevoked
-  const toggle = (capability: string) => {
-    setApproved(current => current.includes(capability) ? current.filter(value => value !== capability) : [...current, capability])
-  }
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    onGrant(approved)
-  }
-  return (
-    <article className="team-access-card" data-testid={`team-access-${agent.id}-${team.id}`}>
-      <header>
-        <div>
-          <strong>{team.name} <small>({team.key})</small></strong>
-          {access?.revoked_at && <small>{text.revokedAt(formatTime(access.revoked_at))}</small>}
-        </div>
-        <span className={isActive ? 'pill is-active' : 'pill is-inactive'}>{status}</span>
-      </header>
-      {canManage ? (
-        <form className="team-access-form" key={`${access?.revision ?? 0}:${isActive}`} onSubmit={submit}>
-          <div className="team-access-toggle" role="tablist" aria-label={text.teamAccessViewLabel}>
-            <button
-              aria-pressed={view === 'requested'}
-              className={view === 'requested' ? 'is-selected' : ''}
-              onClick={() => setView('requested')}
-              type="button"
-              role="tab"
-            >
-              <EyeIcon aria-hidden size={14} weight="bold" />
-              {text.teamAccessViewRequested}
-              <span className="team-access-toggle-count">{requested.length}</span>
-            </button>
-            <button
-              aria-pressed={view === 'approved'}
-              className={view === 'approved' ? 'is-selected' : ''}
-              onClick={() => setView('approved')}
-              type="button"
-              role="tab"
-            >
-              <CheckCircleIcon aria-hidden size={14} weight="bold" />
-              {text.teamAccessViewApproved}
-              <span className="team-access-toggle-count">{approved.length}</span>
-            </button>
-          </div>
-          {view === 'requested' ? (
-            <div className="team-access-chips" role="tabpanel" aria-label={text.teamAccessViewRequested}>
-              {requested.length === 0
-                ? <p className="empty">{text.teamAccessEmptyRequested}</p>
-                : requested.map(capability => (
-                  <span className="chip chip-outline" key={capability}>
-                    {text.teamAccessRequestedChipLabel(capability)}
-                  </span>
-                ))}
-            </div>
-          ) : (
-            <div className="team-access-chips" role="tabpanel" aria-label={text.teamAccessViewApproved}>
-              {requested.length === 0
-                ? <p className="empty">{text.teamAccessEmptyRequested}</p>
-                : (
-                  <>
-                    {requested.map(capability => {
-                      const isSelected = approved.includes(capability)
-                      return (
-                        <button
-                          aria-pressed={isSelected}
-                          className={`chip ${isSelected ? 'chip-solid' : 'chip-outline'}`}
-                          disabled={busy}
-                          key={capability}
-                          onClick={() => toggle(capability)}
-                          type="button"
-                        >
-                          {isSelected
-                            ? <CheckCircleIcon aria-hidden size={12} weight="bold" />
-                            : null}
-                          {text.teamAccessApprovedChipLabel(capability)}
-                        </button>
-                      )
-                    })}
-                    {approved.length === 0 && <p className="empty team-access-hint">{text.teamAccessNoSelection}</p>}
-                  </>
-                )}
-            </div>
-          )}
-          <div className="team-access-actions">
-            <small className="team-access-meta">{text.teamAccessSelectedCount(approved.length)} · {text.teamAccessToggleHint}</small>
-            <div className="team-access-buttons">
-              <Button
-                disabled={busy || approved.length === 0}
-                icon={<CheckCircleIcon aria-hidden size={16} weight="bold" />}
-                type="submit"
-                variant="primary"
-              >
-                {isActive ? text.updateGrant : text.grantAccess}
-              </Button>
-              {isActive && (
-                <Button
-                  className="danger"
-                  disabled={busy}
-                  icon={<XCircleIcon aria-hidden size={16} weight="bold" />}
-                  onClick={onRevoke}
-                  type="button"
-                  variant="danger"
-                >
-                  {text.revoke}
-                </Button>
-              )}
-            </div>
-          </div>
-        </form>
-      ) : (
-        <div className="team-access-chips" aria-label={text.teamAccessViewApproved}>
-          {(isActive && approved.length > 0
-            ? approved
-            : requested
-          ).map(capability => (
-            <span className={isActive && approved.includes(capability) ? 'chip chip-solid' : 'chip chip-outline'} key={capability}>
-              {isActive && approved.includes(capability)
-                ? text.teamAccessApprovedChipLabel(capability)
-                : text.teamAccessRequestedChipLabel(capability)}
-            </span>
-          ))}
-          {!isActive && requested.length === 0 && <p className="empty">{text.teamAccessEmptyRequested}</p>}
-        </div>
-      )}
-    </article>
-  )
 }
 
 type SessionCardProps = {

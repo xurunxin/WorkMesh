@@ -1310,6 +1310,8 @@ export type AgentsCopy = {
   filterCapability: string
   allCapabilities: string
   filterStatus: string
+  // Team access drawer affordance (Phase 3 Task 3.3)
+  openTeamAccess: string
   durableState: string
   diagnostics: string
   diagnosticsIntro: string
@@ -1481,6 +1483,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     filterCapability: '能力',
     allCapabilities: '全部能力',
     filterStatus: '状态',
+    openTeamAccess: '查看团队访问',
     approvals: '审批',
     openInbox: '打开收件箱',
     noApprovals: '没有待处理审批。',
@@ -1644,6 +1647,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     filterCapability: 'Capability',
     allCapabilities: 'All capabilities',
     filterStatus: 'Status',
+    openTeamAccess: 'Open team access',
     approvals: 'Approvals',
     openInbox: 'Open inbox',
     noApprovals: 'No pending approvals.',
