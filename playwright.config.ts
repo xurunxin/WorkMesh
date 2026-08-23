@@ -1,5 +1,5 @@
 import { defineConfig } from "@playwright/test";
-import { resolve } from "node:path";
+import path from "node:path";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl) {
@@ -20,7 +20,27 @@ const webPort = "3100";
 const webUrl = `http://127.0.0.1:${webPort}`;
 const apiUrl = `http://127.0.0.1:${apiPort}`;
 const bootstrapToken = process.env.WORKMESH_BOOTSTRAP_TOKEN;
-const authenticatedStatePath = resolve("test-results/.auth/admin.json");
+const configuredRunRoot = process.env.WORKMESH_PLAYWRIGHT_RUN_DIR?.trim();
+if (configuredRunRoot && !path.isAbsolute(configuredRunRoot)) {
+  throw new Error("WORKMESH_PLAYWRIGHT_RUN_DIR must be an absolute path");
+}
+const rootTopologyDirectory = configuredRunRoot
+  ? path.join(path.normalize(configuredRunRoot), "root-mixed")
+  : process.cwd();
+const runPaths = {
+  authenticatedStatePath: configuredRunRoot
+    ? path.join(rootTopologyDirectory, ".auth", "admin.json")
+    : path.join(rootTopologyDirectory, "test-results", ".auth", "admin.json"),
+  outputDirectory: configuredRunRoot
+    ? path.join(rootTopologyDirectory, "output")
+    : path.join(rootTopologyDirectory, "test-results"),
+  htmlReportDirectory: configuredRunRoot
+    ? path.join(rootTopologyDirectory, "html-report")
+    : path.join(rootTopologyDirectory, "playwright-report"),
+};
+const authenticatedStatePath = runPaths.authenticatedStatePath;
+const mockedSpecPattern = /[\\/]mocked[\\/].*\.mocked\.spec\.ts$/;
+const vitestFilePattern = /\.test\.tsx?$/;
 if (!bootstrapToken) {
   throw new Error(
     "Playwright acceptance tests require an explicit WORKMESH_BOOTSTRAP_TOKEN test fixture.",
@@ -29,12 +49,17 @@ if (!bootstrapToken) {
 
 export default defineConfig({
   testDir: "./apps/web/e2e",
+  testIgnore: [mockedSpecPattern, vitestFilePattern],
   globalSetup: "./apps/web/e2e/global-setup.ts",
   fullyParallel: false,
   workers: 1,
   timeout: 90_000,
   expect: { timeout: 10_000 },
-  reporter: [["list"], ["html", { open: "never" }]],
+  outputDir: runPaths.outputDirectory,
+  reporter: [
+    ["list"],
+    ["html", { open: "never", outputFolder: runPaths.htmlReportDirectory }],
+  ],
   projects: [
     {
       name: "bootstrap",
@@ -43,7 +68,12 @@ export default defineConfig({
     {
       name: "authenticated",
       dependencies: ["bootstrap"],
-      testIgnore: [/stage0\.spec\.ts/, /frontend-unification\.spec\.ts/],
+      testIgnore: [
+        /stage0\.spec\.ts/,
+        /frontend-unification\.spec\.ts/,
+        mockedSpecPattern,
+        vitestFilePattern,
+      ],
       use: { storageState: authenticatedStatePath },
     },
   ],

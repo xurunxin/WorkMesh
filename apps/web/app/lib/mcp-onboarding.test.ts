@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildAgentConnectionInstruction, buildMcpClientGuide, classifyMcpOnboardingFailure, containsCredentialLikeValue, mcpClientTypes, mcpReadinessStatusHealthy, onboardingStateMessage, type McpDiscovery } from './mcp-onboarding'
+import { buildAgentConnectionInstruction, buildMcpClientGuide, classifyMcpOnboardingFailure, containsCredentialLikeValue, mcpClientFacts, mcpClientTypes, mcpReadinessStatusHealthy, onboardingStateMessage, supportedMcpClientTypes, type McpDiscovery } from './mcp-onboarding'
 
 const discovery: McpDiscovery = {
   protocolVersion: 'v1',
@@ -10,11 +10,39 @@ const discovery: McpDiscovery = {
   skill: { name: 'workmesh', version: '1.1.0', sha256: `sha256:${'a'.repeat(64)}`, signature: 'ed25519:safe-public-signature' },
 }
 const release = { preferredClientProfileVersion: '1.0', supportedClientProfileVersions: ['1.0'], mcpVersion: '1.0.0' }
+const guideCopy = {
+  environmentCheckItems: (facts: { tokenEnvironmentName: string; tokenHeader: string; profileVersion: string; skillVersion: string; skillSha256: string }) => [
+    `Store ${facts.tokenEnvironmentName}.`,
+    `Send ${facts.tokenHeader}.`,
+    `Require ${facts.profileVersion} ${facts.skillVersion} ${facts.skillSha256}.`,
+  ],
+  bootstrapCheckItems: (facts: { clientLabel: string }) => [`Verify ${facts.clientLabel}.`, 'Call verify_connection.', 'Call get_workmesh_context.'],
+  localStdioFallback: (command: string) => `Run ${command}.`,
+}
 
 describe('MCP onboarding contract', () => {
+  it('normalizes only known advertised clients without changing server order', () => {
+    expect(supportedMcpClientTypes(['opencode', 'future-client', 'codex', 'opencode', null, 'generic_mcp'])).toEqual([
+      'opencode', 'codex', 'generic_mcp',
+    ])
+    expect(supportedMcpClientTypes(['future-client', null, 42])).toEqual([])
+  })
+
+  it('keeps client labels, configuration rules, transport, and fallback commands in one facts source', () => {
+    expect(mcpClientTypes.map(type => mcpClientFacts(type).label)).toEqual(['Codex', 'OpenCode', 'Pi', 'Generic MCP'])
+    for (const clientType of mcpClientTypes) {
+      const facts = mcpClientFacts(clientType)
+      expect(facts.transport).toBe('streamable_http')
+      expect(facts.configLabel).not.toMatch(/[\\/](?:Users|home|Library)[\\/]/i)
+      expect(facts.buildConfig(discovery.mcpUrl)).toContain('WORKMESH_INSTALLATION_TOKEN')
+    }
+    expect(mcpClientFacts('generic_mcp').localStdioCommand).toContain('start:stdio')
+    expect(mcpClientFacts('codex').localStdioCommand).toBeNull()
+  })
+
   it('builds secret-store-backed templates for every advertised client', () => {
     for (const clientType of mcpClientTypes) {
-      const guide = buildMcpClientGuide({ clientType, discovery, release, coordinationFeatureEnabled: true })
+      const guide = buildMcpClientGuide({ clientType, discovery, release, coordinationFeatureEnabled: true }, guideCopy)
       expect(guide.state).toBe('ready')
       expect(guide.config).toContain('WORKMESH_INSTALLATION_TOKEN')
       expect(guide.discoveryUrl).toBe(discovery.wellKnownUrl)
@@ -27,14 +55,14 @@ describe('MCP onboarding contract', () => {
   })
 
   it('offers a bounded local stdio fallback only for the generic profile', () => {
-    expect(buildMcpClientGuide({ clientType: 'generic_mcp', discovery, release, coordinationFeatureEnabled: true }).localStdioFallback).toContain('start:stdio')
-    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: true }).localStdioFallback).toBeNull()
+    expect(buildMcpClientGuide({ clientType: 'generic_mcp', discovery, release, coordinationFeatureEnabled: true }, guideCopy).localStdioFallback).toContain('start:stdio')
+    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: true }, guideCopy).localStdioFallback).toBeNull()
   })
 
   it('fails closed for unsupported, disabled, and unavailable states', () => {
-    expect(buildMcpClientGuide({ clientType: 'pi', discovery: { ...discovery, supportedClients: ['codex'] }, release, coordinationFeatureEnabled: true }).state).toBe('unsupported_client')
-    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: false }).state).toBe('coordination_feature_disabled')
-    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: true, mcpHealthy: false }).state).toBe('mcp_unavailable')
+    expect(buildMcpClientGuide({ clientType: 'pi', discovery: { ...discovery, supportedClients: ['codex'] }, release, coordinationFeatureEnabled: true }, guideCopy).state).toBe('unsupported_client')
+    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: false }, guideCopy).state).toBe('coordination_feature_disabled')
+    expect(buildMcpClientGuide({ clientType: 'codex', discovery, release, coordinationFeatureEnabled: true, mcpHealthy: false }, guideCopy).state).toBe('mcp_unavailable')
     expect(onboardingStateMessage('discovery_unavailable', {
       stateReadyLabel: '配置就绪',
       stateReadySummary: '',

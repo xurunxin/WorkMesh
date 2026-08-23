@@ -15,7 +15,47 @@ describe('human UI layout contract', () => {
 
     expect(styles).toMatch(/\.app-shell,\s*\.app-workspace,\s*\.app-content,\s*\.content,\s*\.project-workspace,\s*\.project-plan-header,\s*\.project-plan-copy\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%;/s)
     expect(styles).toMatch(/\.project-plan-copy\s+:where\(h2,\s*p\)\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
-    expect(styles).toMatch(/\.project-strip\s*\{[^}]*max-width:\s*100%;[^}]*overflow-x:\s*auto;/s)
+    expect(styles).toMatch(/\.project-strip\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*nowrap;[^}]*max-width:\s*100%;[^}]*overflow-x:\s*auto;[^}]*overscroll-behavior-inline:\s*contain;/s)
+    expect(styles).toMatch(/\.project-strip\s*>\s*\*\s*\{[^}]*flex:\s*0\s+0\s+auto;/s)
+  })
+
+  it('removes the real Work Surface pulse under reduced motion without hiding its state', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*\.work-surface-stale\s*\{[^}]*animation:\s*none\s*!important;/s)
+    expect(styles).toContain('.wm-work-surface-stale { opacity: .72; }')
+    expect(styles).toContain('.wm-work-surface-state-marker')
+  })
+
+  it('covers public Connect descendants with the reduced-motion duration contract', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\.connect-page\s+\*,\s*\.connect-page\s+\*::before,\s*\.connect-page\s+\*::after\s*\{[^}]*transition-duration:\s*\.01ms\s*!important;[^}]*animation-duration:\s*\.01ms\s*!important;[^}]*animation-iteration-count:\s*1\s*!important;/s)
+  })
+
+  it('keeps the 760/761 shell boundary and mobile discrete controls explicit', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/\.app-brand\s*>\s*strong\s*\{[^}]*font-size:\s*1\.08rem;[^}]*letter-spacing:\s*-\.02em;/s)
+    expect(styles).not.toMatch(/\.app-brand\s+h1\s*\{/)
+    expect(styles).toMatch(/main#workmesh-main:focus-visible\s*\{[^}]*outline:\s*0;[^}]*box-shadow:\s*inset\s+0\s+3px\s+0\s+var\(--wm-focus\);/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)\s*\{[^}]*\.app-shell\s*\{\s*display:\s*block;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*\.app-shell\s+:where\([^)]*button[^)]*summary[^)]*\)\s*\{[^}]*min-height:\s*40px;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*900px\)[\s\S]*\.app-shell\s+\.agent-registry-filters\s*\{[^}]*grid-template-columns:\s*repeat\(2,/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*600px\)\s*\{[^}]*\.operations-tab\s*>\s*header\.operations-header\s*\{[^}]*flex-direction:\s*column;/s)
+  })
+
+  it('keeps compact text controls above the measured 40px touch boundary', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*?\.app-shell\s+input:not\(\[type='checkbox'\]\):not\(\[type='radio'\]\):not\(\[type='file'\]\):not\(\[type='range'\]\):not\(\[type='date'\]\):not\(\[type='time'\]\):not\(\[type='color'\]\)\s*\{[^}]*min-height:\s*42px;/s)
+  })
+
+  it('keeps standalone Operations metrics dense without crossing the padded content box', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(min-width:\s*1200px\)\s*and\s*\(max-width:\s*1599px\)\s*\{[\s\S]*?\.content--full\s+\.operations-usage-loading\s+\.skeleton-list,\s*\.content--full\s+\.operations-metrics-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*13rem\),\s*17rem\)\);/s)
+    expect(styles).toMatch(/@media\s*\(min-width:\s*1600px\)\s*\{[\s\S]*?\.content--full\s+\.operations-metrics\s*\{[^}]*width:\s*calc\(85%\s*\+\s*3rem\s*\+\s*1px\);/s)
   })
 
   it('owns foundation tokens in packages/ui and migrates the four workspace shell routes', () => {

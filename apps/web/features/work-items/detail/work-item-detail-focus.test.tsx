@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { WorkItemDetail } from './work-item-detail'
+import { WorkItemDetail, WorkItemDetailUnavailable } from './work-item-detail'
 import { toWorkItemDetailModel } from './view-model'
 import type { StructuredDetailError, WorkItemDetailDto, WorkItemDetailOptions } from './contracts'
 import type { DraftIdentity } from '../../rich-content/editor'
@@ -136,5 +136,77 @@ describe('WorkItemDetail focus on revision conflict', () => {
     // The full-page shell still receives focus on mount (existing behaviour),
     // so we only need to assert that focus is NOT sitting on the Save button.
     expect(document.activeElement).not.toBe(saveButton)
+  })
+})
+
+describe('WorkItemDetail full-page heading ownership', () => {
+  it('owns exactly one h1 named for the active Issue without changing the visible key toolbar', () => {
+    render(
+      <WorkItemDetail
+        copy={undefined}
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    const detail = screen.getByTestId('work-item-detail')
+    const surface = detail.closest('.work-item-full-page')
+    expect(surface).not.toBeNull()
+    const headings = surface?.querySelectorAll('h1') ?? []
+    expect(headings).toHaveLength(1)
+    const heading = headings[0]
+    expect(heading).toHaveTextContent('Detail')
+    expect(heading).toHaveClass('wm-visually-hidden')
+    expect(surface).toHaveAttribute('aria-labelledby', heading?.id)
+    expect(detail.querySelector('.work-item-detail-toolbar strong')).toHaveTextContent('GEN-8')
+  })
+
+  it('keeps the quick-view Sheet free of a competing page h1', () => {
+    render(
+      <WorkItemDetail
+        copy={undefined}
+        draftIdentity={draftIdentity}
+        mode="sheet"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    expect(screen.getByTestId('work-item-detail').querySelectorAll('h1')).toHaveLength(0)
+    expect(screen.getByRole('dialog')).toHaveAccessibleName('GEN-8')
+  })
+
+  it('gives the unavailable full-page surface its own requested-Issue h1', () => {
+    render(
+      <WorkItemDetailUnavailable
+        copy={undefined}
+        error={conflict}
+        mode="full_page"
+        onClose={noop}
+        onRetry={noop}
+        requestedKey="GEN-404"
+      />,
+    )
+
+    const surface = screen.getByTestId('work-item-detail-unavailable').closest('.work-item-full-page')
+    expect(surface).not.toBeNull()
+    const headings = surface?.querySelectorAll('h1') ?? []
+    expect(headings).toHaveLength(1)
+    expect(headings[0]).toHaveTextContent('GEN-404')
+    expect(surface).toHaveAttribute('aria-labelledby', headings[0]?.id)
   })
 })

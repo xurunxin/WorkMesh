@@ -96,7 +96,7 @@ export function appendWorkSurfacePage<T extends { id: string }>(current: WorkSur
 export type WorkSurfaceQueryCollection = PagedCollection<WorkItemDto>
 
 /** The only React query boundary for a Work Surface. List and Board consume this collection. */
-export function useWorkSurfaceQuery(query: WorkSurfaceQuery): WorkSurfaceQueryCollection {
+export function useWorkSurfaceQuery(query: WorkSurfaceQuery, scopeKey: string | null = null): WorkSurfaceQueryCollection {
   const path = useMemo(() => workSurfacePath(query), [query])
-  return usePagedApiList<WorkItemDto>(path)
+  return usePagedApiList<WorkItemDto>(path, { scopeKey })
 }

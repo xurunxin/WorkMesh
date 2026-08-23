@@ -9,7 +9,7 @@ type InstallResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
 
 export default function InstallPage() {
-  const { installCopy: text } = useLocale()
+  const { installCopy: text, t } = useLocale()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const textRef = useRef(text)
@@ -51,9 +51,9 @@ export default function InstallPage() {
     }
   }
 
-  return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
+  return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
     <div className="auth-shell auth-shell-centered">
-      <Card title={text.title} subtitle={text.subtitle} className="auth-card">
+      <Card title={text.title} subtitle={text.subtitle} className="auth-card" headingLevel={1}>
         <form onSubmit={submit} data-testid="install-form">
           <label>{text.bootstrapToken}<input name="bootstrapToken" type="password" autoComplete="off" placeholder={text.bootstrapTokenPlaceholder} /></label>
           <p className="muted">{text.bootstrapHelp}</p>

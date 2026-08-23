@@ -1,7 +1,9 @@
 'use client'
 
 import { GlobalCommandCenter } from '../features/command-center'
+import { usePathname } from 'next/navigation'
 import { useLocale } from './lib/i18n'
+import { isAuthenticatedWorkspacePath } from './lib/shortcut-scope'
 
 /**
  * Mounts the global command center once, in the root layout, so every route
@@ -10,6 +12,8 @@ import { useLocale } from './lib/i18n'
  * element), so pages never need to import `GlobalCommandCenter` themselves.
  */
 export function CommandCenterMount() {
+  const pathname = usePathname()
   const { locale, t } = useLocale()
+  if (!isAuthenticatedWorkspacePath(pathname)) return null
   return <GlobalCommandCenter locale={locale} triggerLabel={t('search')} />
 }

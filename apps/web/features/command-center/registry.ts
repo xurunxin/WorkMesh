@@ -91,7 +91,7 @@ export function agentCommand(agent: Readonly<{ id: string; name?: string; displa
     title,
     subtitle: `${agent.slug} · ${agent.is_active === false ? 'inactive' : 'active'}`,
     keywords: [agent.id, agent.slug, agent.description ?? ''],
-    href: `/agents#agent-${encodeURIComponent(agent.id)}`,
+    href: `/agents/${encodeURIComponent(agent.id)}`,
     resourceId: agent.id,
     source: 'agents',
   }

@@ -10,6 +10,12 @@ import { WorkItemFilters } from '@workmesh/ui'
 afterEach(() => { cleanup() })
 
 describe('WorkItemFilters compact mode', () => {
+  it('marks only its visible Search input as the page hotkey filter', () => {
+    render(<WorkItemFilters value={{}} onChange={() => {}} />)
+    expect(screen.getByLabelText(/search/i)).toHaveAttribute('data-hotkey-filter', 'true')
+    expect(document.querySelectorAll('[data-hotkey-filter="true"]')).toHaveLength(1)
+  })
+
   it('hides Milestone and Label when compact is true', () => {
     render(<WorkItemFilters compact value={{}} onChange={() => {}} />)
     expect(screen.queryByLabelText(/milestone/i)).toBeNull()

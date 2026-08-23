@@ -1,6 +1,73 @@
 export const mcpClientTypes = ['codex', 'opencode', 'pi', 'generic_mcp'] as const
 export type McpClientType = (typeof mcpClientTypes)[number]
 
+const tokenEnvironmentName = 'WORKMESH_INSTALLATION_TOKEN'
+const tokenHeader = 'X-WorkMesh-Installation-Token'
+const knownMcpClientTypes: ReadonlySet<string> = new Set(mcpClientTypes)
+
+export function supportedMcpClientTypes(values: readonly unknown[]): McpClientType[] {
+  const normalized: McpClientType[] = []
+  const seen = new Set<McpClientType>()
+  for (const value of values) {
+    if (typeof value !== 'string' || !knownMcpClientTypes.has(value)) continue
+    const clientType = value as McpClientType
+    if (seen.has(clientType)) continue
+    seen.add(clientType)
+    normalized.push(clientType)
+  }
+  return normalized
+}
+
+export type McpClientFacts = Readonly<{
+  label: string
+  configLabel: string
+  transport: 'streamable_http'
+  buildConfig: (mcpUrl: string) => string
+  localStdioCommand: string | null
+}>
+
+const clientFacts: Record<McpClientType, McpClientFacts> = {
+  codex: {
+    label: 'Codex',
+    configLabel: 'Codex MCP server configuration',
+    transport: 'streamable_http',
+    buildConfig: mcpUrl => `[mcp_servers.workmesh]\nurl = ${JSON.stringify(mcpUrl)}\nenv_http_headers = { ${JSON.stringify(tokenHeader)} = ${JSON.stringify(tokenEnvironmentName)} }`,
+    localStdioCommand: null,
+  },
+  opencode: {
+    label: 'OpenCode',
+    configLabel: 'OpenCode remote MCP configuration',
+    transport: 'streamable_http',
+    buildConfig: mcpUrl => JSON.stringify({
+      $schema: 'https://opencode.ai/config.json',
+      mcp: { workmesh: { type: 'remote', url: mcpUrl, enabled: true, oauth: false, headers: { [tokenHeader]: `{env:${tokenEnvironmentName}}` } } },
+    }, null, 2),
+    localStdioCommand: null,
+  },
+  pi: {
+    label: 'Pi',
+    configLabel: 'Pi MCP extension configuration',
+    transport: 'streamable_http',
+    buildConfig: mcpUrl => JSON.stringify({
+      mcpServers: { workmesh: { transport: 'streamable_http', url: mcpUrl, headers: { [tokenHeader]: `\${${tokenEnvironmentName}}` } } },
+    }, null, 2),
+    localStdioCommand: null,
+  },
+  generic_mcp: {
+    label: 'Generic MCP',
+    configLabel: 'Generic Streamable HTTP MCP configuration',
+    transport: 'streamable_http',
+    buildConfig: mcpUrl => JSON.stringify({
+      mcpServers: { workmesh: { transport: 'streamable_http', url: mcpUrl, headers: { [tokenHeader]: `\${${tokenEnvironmentName}}` } } },
+    }, null, 2),
+    localStdioCommand: 'pnpm --filter @workmesh/mcp start:stdio',
+  },
+}
+
+export function mcpClientFacts(type: McpClientType): McpClientFacts {
+  return clientFacts[type]
+}
+
 export type McpDiscovery = {
   protocolVersion: 'v1'
   mcpUrl: string
@@ -33,12 +100,27 @@ export type McpClientGuide = {
   discoveryUrl: string
   profileVersion: string
   skill: McpDiscovery['skill']
-  configFile: string
+  configLabel: string
   config: string
   localStdioFallback: string | null
   environmentChecks: string[]
   bootstrapChecks: string[]
 }
+
+export type McpGuideCopyFacts = Readonly<{
+  clientLabel: string
+  tokenEnvironmentName: string
+  tokenHeader: string
+  profileVersion: string
+  skillVersion: string
+  skillSha256: string
+}>
+
+export type McpClientGuideCopy = Readonly<{
+  environmentCheckItems: (facts: McpGuideCopyFacts) => readonly string[]
+  bootstrapCheckItems: (facts: McpGuideCopyFacts) => readonly string[]
+  localStdioFallback: (command: string) => string
+}>
 
 export type AgentConnectionInstructionInput = {
   connectUrl: string
@@ -46,22 +128,12 @@ export type AgentConnectionInstructionInput = {
   clientType: McpClientType
 }
 
-const labels: Record<McpClientType, string> = {
-  codex: 'Codex',
-  opencode: 'OpenCode',
-  pi: 'Pi',
-  generic_mcp: 'Generic MCP',
-}
-
-const tokenEnvironmentName = 'WORKMESH_INSTALLATION_TOKEN'
-const tokenHeader = 'X-WorkMesh-Installation-Token'
-
 export function buildAgentConnectionInstruction(input: AgentConnectionInstructionInput): string {
   const connect = new URL(input.connectUrl)
   const redeemUrl = new URL('/api/v1/agent-connections/redeem', connect.origin).toString()
   const discoveryUrl = new URL('/.well-known/workmesh-agent', connect.origin).toString()
   return [
-    `Connect the ${labels[input.clientType]} Agent ${JSON.stringify(input.agentSlug)} to this WorkMesh deployment.`,
+    `Connect the ${mcpClientFacts(input.clientType).label} Agent ${JSON.stringify(input.agentSlug)} to this WorkMesh deployment.`,
     '',
     `One-time pairing URL (expires in 10 minutes): ${input.connectUrl}`,
     '',
@@ -108,32 +180,15 @@ export async function probeMcpReadiness(mcpUrl: string, signal?: AbortSignal): P
   }
 }
 
-function configFor(clientType: McpClientType, mcpUrl: string): { configFile: string; config: string } {
-  if (clientType === 'codex') return {
-    configFile: 'Codex config.toml',
-    config: `[mcp_servers.workmesh]\nurl = ${JSON.stringify(mcpUrl)}\nenv_http_headers = { ${JSON.stringify(tokenHeader)} = ${JSON.stringify(tokenEnvironmentName)} }`,
-  }
-  if (clientType === 'opencode') return {
-    configFile: 'opencode.json',
-    config: JSON.stringify({
-      $schema: 'https://opencode.ai/config.json',
-      mcp: { workmesh: { type: 'remote', url: mcpUrl, enabled: true, oauth: false, headers: { [tokenHeader]: `{env:${tokenEnvironmentName}}` } } },
-    }, null, 2),
-  }
-  const shared = JSON.stringify({
-    mcpServers: { workmesh: { transport: 'streamable_http', url: mcpUrl, headers: { [tokenHeader]: `\${${tokenEnvironmentName}}` } } },
-  }, null, 2)
-  return { configFile: clientType === 'pi' ? 'Pi MCP extension config' : 'MCP client config', config: shared }
-}
-
 export function buildMcpClientGuide(input: {
   clientType: McpClientType
   discovery: McpDiscovery
   release: McpReleaseInfo
   coordinationFeatureEnabled: boolean
   mcpHealthy?: boolean
-}): McpClientGuide {
-  const supported = input.discovery.supportedClients.includes(input.clientType)
+}, copy: McpClientGuideCopy): McpClientGuide {
+  const facts = mcpClientFacts(input.clientType)
+  const supported = supportedMcpClientTypes(input.discovery.supportedClients).includes(input.clientType)
   const state: McpOnboardingState = !supported
     ? 'unsupported_client'
     : input.mcpHealthy === false
@@ -141,32 +196,28 @@ export function buildMcpClientGuide(input: {
       : input.coordinationFeatureEnabled
         ? 'ready'
         : 'coordination_feature_disabled'
-  const config = configFor(input.clientType, input.discovery.mcpUrl)
+  const copyFacts: McpGuideCopyFacts = {
+    clientLabel: facts.label,
+    tokenEnvironmentName,
+    tokenHeader,
+    profileVersion: input.release.preferredClientProfileVersion,
+    skillVersion: input.discovery.skill.version,
+    skillSha256: input.discovery.skill.sha256,
+  }
   return {
     clientType: input.clientType,
-    label: labels[input.clientType],
+    label: facts.label,
     state,
-    transport: 'streamable_http',
+    transport: facts.transport,
     mcpUrl: input.discovery.mcpUrl,
     discoveryUrl: input.discovery.wellKnownUrl,
     profileVersion: input.release.preferredClientProfileVersion,
     skill: input.discovery.skill,
-    ...config,
-    localStdioFallback: input.clientType === 'generic_mcp'
-      ? '在本地密钥环境中设置 WORKMESH_API_URL 和 WORKMESH_INSTALLATION_TOKEN，然后运行 pnpm --filter @workmesh/mcp start:stdio。'
-      : null,
-    environmentChecks: [
-      `把兑换得到的安装凭据保存为 ${tokenEnvironmentName}，不要粘贴到配置文件里。`,
-      `只通过 ${tokenHeader} 头发送到上方展示的精确服务端 URL。`,
-      `要求 Client Profile ${input.release.preferredClientProfileVersion} 与 Skill ${input.discovery.skill.version}（${input.discovery.skill.sha256}）。`,
-    ],
-    bootstrapChecks: [
-      '拉取公共发现文档，拒绝协议、客户端、Profile 或技能选择器中的未知值。',
-      '在一次性配对片段过期前完成兑换，并把得到的凭据仅保存在客户端密钥库中。',
-      '调用 verify_connection，并要求存在一个活跃的 Team、匹配的 Profile / Skill / 能力范围以及负责人。',
-      '在选择工作前先调用 get_workmesh_context；工具存在并不授予任何写权限。',
-      '当发现已撤销、过期、范围不符、停用或实时事实不一致时立即停止。',
-    ],
+    configLabel: facts.configLabel,
+    config: facts.buildConfig(input.discovery.mcpUrl),
+    localStdioFallback: facts.localStdioCommand ? copy.localStdioFallback(facts.localStdioCommand) : null,
+    environmentChecks: [...copy.environmentCheckItems(copyFacts)],
+    bootstrapChecks: [...copy.bootstrapCheckItems(copyFacts)],
   }
 }
 

@@ -46,8 +46,12 @@ export type ApprovalsTableProps = {
  * property via a ref callback because JSX does not express it.
  */
 export function ApprovalsTable({ approvals, bulkBusy, copy, onClear, onDecide, onToggle, onToggleAll, selectedIds }: ApprovalsTableProps) {
-  if (approvals.length === 0) return <p className="empty">{copy.noApprovals}</p>
-  const visibleIds = approvals.map(approval => approval.id)
+  // The server query is status-scoped, but the transport boundary remains
+  // defensive: decided rows from a stale cache or permissive proxy never
+  // regain a checkbox or a decision action.
+  const pendingApprovals = approvals.filter(approval => approval.status === 'pending')
+  if (pendingApprovals.length === 0) return <p className="empty">{copy.noApprovals}</p>
+  const visibleIds = pendingApprovals.map(approval => approval.id)
   const selectedLiveIds = visibleIds.filter(id => selectedIds.has(id))
   const selectedLiveCount = selectedLiveIds.length
   const allSelected = selectedLiveCount === visibleIds.length
@@ -59,6 +63,7 @@ export function ApprovalsTable({ approvals, bulkBusy, copy, onClear, onDecide, o
       <Button disabled={bulkBusy} icon={<XCircleIcon aria-hidden size={14} weight="bold" />} onClick={() => onDecide('rejected')} type="button" variant="danger">{copy.rejectSelected}</Button>
       <Button className="approval-bulk-clear" disabled={bulkBusy} onClick={onClear} type="button" variant="ghost">{copy.clearSelection}</Button>
     </div>}
+    <div aria-label={copy.approvalTableAriaLabel} className="approval-table-wrap" role="region" tabIndex={0}>
     <table className="approval-table" aria-label={copy.approvalTableAriaLabel}>
       <thead>
         <tr>
@@ -87,7 +92,7 @@ export function ApprovalsTable({ approvals, bulkBusy, copy, onClear, onDecide, o
         </tr>
       </thead>
       <tbody>
-        {approvals.map(approval => {
+        {pendingApprovals.map(approval => {
           const isSelected = selectedIds.has(approval.id)
           const checkboxId = `approval-checkbox-${approval.id}`
           return <tr aria-selected={isSelected} className={isSelected ? 'is-selected' : ''} data-testid={`approval-row-${approval.id}`} key={approval.id}>
@@ -113,5 +118,6 @@ export function ApprovalsTable({ approvals, bulkBusy, copy, onClear, onDecide, o
         })}
       </tbody>
     </table>
+    </div>
   </>
 }

@@ -112,6 +112,30 @@ describe('ApprovalsTable', () => {
     expect(screen.getByText('medium risk')).toBeInTheDocument()
   })
 
+  it('defensively excludes approvals that are no longer pending', () => {
+    render(
+      <ApprovalsTable
+        approvals={[
+          baseApproval({ id: 'pending', action_name: 'Pending action' }),
+          baseApproval({ id: 'approved', action_name: 'Approved action', status: 'approved' }),
+          baseApproval({ id: 'rejected', action_name: 'Rejected action', status: 'rejected' }),
+        ]}
+        bulkBusy={false}
+        copy={copy()}
+        onClear={() => undefined}
+        onDecide={() => undefined}
+        onToggle={() => undefined}
+        onToggleAll={() => undefined}
+        selectedIds={new Set()}
+      />,
+    )
+
+    expect(screen.getByText('Pending action')).toBeInTheDocument()
+    expect(screen.queryByText('Approved action')).not.toBeInTheDocument()
+    expect(screen.queryByText('Rejected action')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2)
+  })
+
   it('does not render the action bar when nothing is selected', () => {
     render(
       <ApprovalsTable

@@ -11,7 +11,7 @@ describe('PageHeader', () => {
     expect(screen.getByRole('button', { name: 'New' })).toBeInTheDocument()
   })
   it('renders a back link when backHref is provided', () => {
-    render(<PageHeader title="Agent" backHref="/agents" />)
-    expect(screen.getByRole('link', { name: /back/i })).toHaveAttribute('href', '/agents')
+    render(<PageHeader backHref="/agents" backLabel="返回智能体注册表" title="Agent" />)
+    expect(screen.getByRole('link', { name: '返回智能体注册表' })).toHaveAttribute('href', '/agents')
   })
 })

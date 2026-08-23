@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { LocaleProvider } from '../lib/i18n'
 import { TeamAccessDrawer } from './team-access-drawer'
@@ -9,7 +9,20 @@ import type { Agent, AgentTeamAccess } from '../lib/agents'
 // is `jsdom` and the project has been initialized for it; in this monorepo
 // the suite mixes node + jsdom files, so we unmount explicitly to keep each
 // test's DOM isolated. (Same pattern as use-board-column-widths.test.tsx.)
-afterEach(() => { cleanup() })
+afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+
+function useCompactViewport(): void {
+  vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
+    addEventListener: vi.fn(),
+    addListener: vi.fn(),
+    dispatchEvent: vi.fn(() => true),
+    matches: query === '(max-width: 720px)',
+    media: query,
+    onchange: null,
+    removeEventListener: vi.fn(),
+    removeListener: vi.fn(),
+  })))
+}
 
 const baseAgent = (overrides: Partial<Agent> = {}): Agent => ({
   id: 'agent-1',
@@ -119,6 +132,26 @@ describe('TeamAccessDrawer', () => {
     // The drawer must carry the Sheet's right-side class for visual parity
     // with the other overlays.
     expect(dialog.className).toContain('wm-sheet-right')
+    expect(screen.getByRole('region', { name: 'Manage team access for Coder Bot' })).toBeInTheDocument()
+  })
+
+  it('uses the active locale for the close control and accessible region name', () => {
+    render(
+      <LocaleProvider>
+        <TeamAccessDrawer
+          agent={baseAgent()}
+          busyAccess=""
+          canManage={true}
+          onClose={() => undefined}
+          onGrant={() => undefined}
+          onRevoke={() => undefined}
+          open={true}
+          teams={[baseTeam()]}
+        />
+      </LocaleProvider>,
+    )
+    expect(screen.getByRole('button', { name: '关闭 Coder Bot' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: '管理 Coder Bot 的团队访问' })).toBeInTheDocument()
   })
 
   it('calls onClose when the close button is clicked', () => {
@@ -162,6 +195,76 @@ describe('TeamAccessDrawer', () => {
     const dialog = screen.getByRole('dialog')
     fireEvent.keyDown(dialog, { key: 'Escape' })
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('implements a complete desktop roving tab and tabpanel contract', () => {
+    render(
+      <LocaleProvider>
+        <TeamAccessDrawer
+          agent={baseAgent({ team_access: [baseAccess()] })}
+          busyAccess=""
+          canManage={true}
+          copy={drawerCopy()}
+          onClose={() => undefined}
+          onGrant={() => undefined}
+          onRevoke={() => undefined}
+          open={true}
+          teams={[baseTeam()]}
+        />
+      </LocaleProvider>,
+    )
+    const tablist = screen.getByRole('tablist', { name: 'Capability view' })
+    const tabs = within(tablist).getAllByRole('tab')
+    expect(tabs).toHaveLength(2)
+    expect(tabs.filter(tab => tab.getAttribute('aria-selected') === 'true')).toHaveLength(1)
+    expect(tabs.filter(tab => tab.tabIndex === 0)).toHaveLength(1)
+    for (const tab of tabs) {
+      const panelId = tab.getAttribute('aria-controls')
+      expect(panelId).toBeTruthy()
+      const panel = panelId ? document.getElementById(panelId) : null
+      expect(panel).toHaveAttribute('role', 'tabpanel')
+      expect(panel).toHaveAttribute('aria-labelledby', tab.id)
+    }
+
+    const [requested, approved] = tabs
+    expect(approved).toHaveAttribute('aria-selected', 'true')
+    approved?.focus()
+    fireEvent.keyDown(approved!, { key: 'ArrowRight' })
+    expect(requested).toHaveFocus()
+    expect(requested).toHaveAttribute('aria-selected', 'true')
+    fireEvent.keyDown(requested!, { key: 'ArrowLeft' })
+    expect(approved).toHaveFocus()
+    fireEvent.keyDown(approved!, { key: 'Home' })
+    expect(requested).toHaveFocus()
+    fireEvent.keyDown(requested!, { key: 'End' })
+    expect(approved).toHaveFocus()
+  })
+
+  it('uses one named compact selector and one labelled active panel on narrow viewports', async () => {
+    useCompactViewport()
+    render(
+      <LocaleProvider>
+        <TeamAccessDrawer
+          agent={baseAgent({ team_access: [baseAccess()] })}
+          busyAccess=""
+          canManage={true}
+          copy={drawerCopy()}
+          onClose={() => undefined}
+          onGrant={() => undefined}
+          onRevoke={() => undefined}
+          open={true}
+          teams={[baseTeam()]}
+        />
+      </LocaleProvider>,
+    )
+    const selector = await screen.findByRole('combobox', { name: 'Capability view' })
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    let panel = screen.getByRole('tabpanel')
+    expect(panel).toHaveAccessibleName('Capability view: Approved')
+    fireEvent.change(selector, { target: { value: 'requested' } })
+    panel = screen.getByRole('tabpanel')
+    expect(panel).toHaveAccessibleName('Capability view: Requested')
+    expect(panel).toHaveTextContent('Requested work:read')
   })
 })
 
@@ -235,6 +338,8 @@ function drawerCopy() {
     capabilitiesLabel: (count: number) => `${count} capabilities`,
     concurrency: 'Concurrency',
     heartbeat: 'Heartbeat',
+    closePeek: 'Close',
+    manageTeamAccess: (name: string) => `Manage team access for ${name}`,
     teamAccessAndCapabilities: 'Team access and capabilities',
     requestedLabel: 'Requested:',
     definitionApprovedLabel: 'Definition approved:',

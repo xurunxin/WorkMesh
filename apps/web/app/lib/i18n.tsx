@@ -6,7 +6,7 @@
  * This module exports the `LocaleProvider` and the `useLocale` hook. It is
  * the ONLY place web code should read translated copy from.
  *
- * Ten typed `Copy` subsets are exposed via `useLocale()`:
+ * Typed `Copy` subsets are exposed via `useLocale()`:
  *   - `t(key)`             — flat dictionary for short labels (nav, buttons, status)
  *   - `issueCopy`          — Work Item list / board copy
  *   - `surfaceCopy`        — Work Surface (loading / empty / error) copy
@@ -21,17 +21,17 @@
  *   - `inboxCopy`          — Inbox panel copy
  *   - `workRoomCopy`       — Work Room panel copy (session tree, leases, handoffs, decisions)
  *
- * The default locale is `zh-CN`. The English dictionaries may be left empty
- * for keys that are not yet translated; those fall through to the
- * `packages/ui` English defaults and finally to the page literal as a
- * last resort. The last layer logs a dev-only `console.warn` once per
- * missing key.
+ * The default locale is `zh-CN`. Both locale dictionaries are complete and
+ * non-empty. Imported Partial Copy contracts may omit only exact documented
+ * downstream defaults; empty or whitespace strings never fall back.
  */
 
 import { createContext, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import type { WorkItemCopy } from '@workmesh/ui'
 import type { WorkSurfaceCopy } from '../../features/work-items/work-surfaces'
 import type { WorkItemDetailCopy } from '../../features/work-items/detail/work-item-detail'
+import type { WorkItemArtifactsCopy } from '../../features/rich-content/artifacts'
+import type { McpClientType, McpGuideCopyFacts } from './mcp-onboarding'
 
 export type Locale = 'zh-CN' | 'en'
 
@@ -39,7 +39,9 @@ type TranslationKey =
   | 'agents'
   | 'administrationNavigation'
   | 'actionCouldNotComplete'
+  | 'build'
   | 'cancel'
+  | 'close'
   | 'createIssue'
   | 'createProject'
   | 'connecting'
@@ -53,6 +55,7 @@ type TranslationKey =
   | 'loading'
   | 'loadMore'
   | 'labels'
+  | 'language'
   | 'lead'
   | 'low'
   | 'medium'
@@ -76,6 +79,7 @@ type TranslationKey =
   | 'responsibleHuman'
   | 'reconnecting'
   | 'search'
+  | 'schema'
   | 'settings'
   | 'signOut'
   | 'status'
@@ -100,7 +104,9 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     agents: '智能体',
     administrationNavigation: '管理导航',
     actionCouldNotComplete: '操作未能完成',
+    build: '构建',
     cancel: '取消',
+    close: '关闭',
     createIssue: '创建 Issue',
     createProject: '创建项目',
     connecting: '正在连接',
@@ -114,6 +120,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     loading: '正在加载',
     loadMore: '加载更多',
     labels: '标签',
+    language: '语言',
     lead: '负责人',
     low: '低',
     medium: '中',
@@ -137,6 +144,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: '负责人',
     reconnecting: '正在重新连接',
     search: '搜索',
+    schema: '数据库架构',
     settings: '设置',
     signOut: '退出登录',
     status: '状态',
@@ -160,7 +168,9 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     agents: 'Agents',
     administrationNavigation: 'Administration navigation',
     actionCouldNotComplete: 'Action could not be completed',
+    build: 'build',
     cancel: 'Cancel',
+    close: 'Close',
     createIssue: 'Create issue',
     createProject: 'Create project',
     connecting: 'Connecting',
@@ -174,6 +184,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     loading: 'Loading',
     loadMore: 'Load more',
     labels: 'Labels',
+    language: 'Language',
     lead: 'Lead',
     low: 'Low',
     medium: 'Medium',
@@ -197,6 +208,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: 'Responsible human',
     reconnecting: 'Reconnecting',
     search: 'Search',
+    schema: 'schema',
     settings: 'Settings',
     signOut: 'Sign out',
     status: 'Status',
@@ -218,6 +230,88 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
   },
 }
 
+export type ToastCopy = {
+  notifications: string
+  dismiss: string
+  dismissLabel: (title: string, position: number, total: number) => string
+  issueCreatedTitle: string
+  issueCreatedDescription: (title: string) => string
+  issueCreateFailedTitle: string
+  issueCreateFailedDescription: string
+  approvalsApprovedTitle: (count: number) => string
+  approvalsRejectedTitle: (count: number) => string
+  approvalsDecisionDescription: string
+  approvalsPartialTitle: string
+  approvalsPartialDescription: (succeeded: number, failed: number) => string
+  approvalsFailedTitle: string
+  approvalsFailedDescription: string
+  dryRunStartedTitle: string
+  dryRunStartedDescription: (name: string) => string
+  dryRunFailedTitle: string
+  dryRunFailedDescription: string
+  teamCreatedTitle: string
+  teamCreatedDescription: (name: string) => string
+  workflowStateCreatedTitle: string
+  workflowStateCreatedDescription: (name: string) => string
+  teamDeletedTitle: string
+  teamDeletedDescription: (name: string) => string
+}
+
+const toastCopies: Record<Locale, ToastCopy> = {
+  'zh-CN': {
+    notifications: '通知',
+    dismiss: '关闭',
+    dismissLabel: (title, position, total) => `关闭通知：${title}（${position}/${total}）`,
+    issueCreatedTitle: 'Issue 已创建',
+    issueCreatedDescription: title => `已创建「${title}」。`,
+    issueCreateFailedTitle: '无法创建 Issue',
+    issueCreateFailedDescription: '请检查连接后重试；表单内容仍保留。',
+    approvalsApprovedTitle: count => `已批准 ${count} 项请求`,
+    approvalsRejectedTitle: count => `已拒绝 ${count} 项请求`,
+    approvalsDecisionDescription: '审批收件箱已更新。',
+    approvalsPartialTitle: '部分审批未完成',
+    approvalsPartialDescription: (succeeded, failed) => `已完成 ${succeeded} 项，${failed} 项仍保留供重试。`,
+    approvalsFailedTitle: '审批操作未完成',
+    approvalsFailedDescription: '所选请求仍保留，请检查连接后重试。',
+    dryRunStartedTitle: '试运行已启动',
+    dryRunStartedDescription: name => `已为「${name}」创建试运行。`,
+    dryRunFailedTitle: '无法启动试运行',
+    dryRunFailedDescription: '请检查连接后重试。',
+    teamCreatedTitle: '团队已创建',
+    teamCreatedDescription: name => `团队「${name}」已可使用。`,
+    workflowStateCreatedTitle: '工作流状态已创建',
+    workflowStateCreatedDescription: name => `状态「${name}」已可使用。`,
+    teamDeletedTitle: '团队已删除',
+    teamDeletedDescription: name => `团队「${name}」已从活动导航中移除。`,
+  },
+  en: {
+    notifications: 'Notifications',
+    dismiss: 'Dismiss',
+    dismissLabel: (title, position, total) => `Dismiss notification: ${title} (${position}/${total})`,
+    issueCreatedTitle: 'Issue created',
+    issueCreatedDescription: title => `Created “${title}”.`,
+    issueCreateFailedTitle: 'Issue could not be created',
+    issueCreateFailedDescription: 'Check your connection and try again; the form is still intact.',
+    approvalsApprovedTitle: count => `Approved ${count} request${count === 1 ? '' : 's'}`,
+    approvalsRejectedTitle: count => `Rejected ${count} request${count === 1 ? '' : 's'}`,
+    approvalsDecisionDescription: 'The approval inbox is up to date.',
+    approvalsPartialTitle: 'Some approvals were not completed',
+    approvalsPartialDescription: (succeeded, failed) => `Completed ${succeeded}; ${failed} remain selected for retry.`,
+    approvalsFailedTitle: 'Approval action could not be completed',
+    approvalsFailedDescription: 'The selected requests remain available. Check your connection and try again.',
+    dryRunStartedTitle: 'Dry run started',
+    dryRunStartedDescription: name => `Started a dry run for “${name}”.`,
+    dryRunFailedTitle: 'Dry run could not be started',
+    dryRunFailedDescription: 'Check your connection and try again.',
+    teamCreatedTitle: 'Team created',
+    teamCreatedDescription: name => `Team “${name}” is ready to use.`,
+    workflowStateCreatedTitle: 'Workflow state created',
+    workflowStateCreatedDescription: name => `State “${name}” is ready to use.`,
+    teamDeletedTitle: 'Team deleted',
+    teamDeletedDescription: name => `Team “${name}” was removed from active navigation.`,
+  },
+}
+
 export type GuidanceCopy = {
   intro: string
   scope: string
@@ -233,6 +327,11 @@ export type GuidanceCopy = {
   selectScope: string
   loading: string
   markdown: string
+  edit: string
+  preview: string
+  characterCount: (count: number) => string
+  renderedPreviewLabel: string
+  previewEmpty: string
   changeSummary: string
   publishRevision: string
   currentRevision: string
@@ -261,12 +360,12 @@ const guidanceCopies: Record<Locale, GuidanceCopy> = {
     intro: '为智能体维护可追溯、版本化的工作指南。已发布版本不可变，会话上下文会固定其准确版本与 SHA-256 哈希。',
     scope: '作用域', scopeLabel: '指南作用域', workspace: '工作区', team: '团队', project: '项目', noTeamSelected: '未选择团队', noProject: '请选择项目', projectLabel: '指南项目',
     status: status => ({ unpublished: '未发布', active: '已生效', archived: '已归档', unavailable: '不可用' }[status] ?? status),
-    documentRevision: revision => `文档版本 ${revision}`, selectScope: '请选择或创建所需作用域后再编辑指南。', loading: '正在加载指南…', markdown: 'Markdown 内容', changeSummary: '变更摘要', publishRevision: '发布不可变版本', currentRevision: '当前版本', author: '作者', published: '发布时间', auditReason: '审计原因', auditPlaceholder: '归档或回滚时必填', archiveCurrent: '归档当前指南', revisionHistory: '版本历史', rollbackPointer: '回滚至此版本', noRevisions: '尚无已发布版本。', compareRevisions: '比较版本', fromRevision: '起始指南版本', toRevision: '目标指南版本', showDiff: '显示差异', pointerAudit: '指针审计', action: action => ({ published: '已发布', archived: '已归档', rolled_back: '已回滚' }[action] ?? action.replaceAll('_', ' ')), by: '操作人', noPointerChanges: '尚无指针变更。', projectDescription: '项目描述（不属于指南）', formatDate: value => new Date(value).toLocaleString('zh-CN'),
+    documentRevision: revision => `文档版本 ${revision}`, selectScope: '请选择或创建所需作用域后再编辑指南。', loading: '正在加载指南…', markdown: 'Markdown 内容', edit: '编辑', preview: '预览', characterCount: count => `${count} 个字符`, renderedPreviewLabel: 'Markdown 渲染预览', previewEmpty: '在编辑模式下撰写 Markdown，切换到预览即可查看渲染结果。', changeSummary: '变更摘要', publishRevision: '发布不可变版本', currentRevision: '当前版本', author: '作者', published: '发布时间', auditReason: '审计原因', auditPlaceholder: '归档或回滚时必填', archiveCurrent: '归档当前指南', revisionHistory: '版本历史', rollbackPointer: '回滚至此版本', noRevisions: '尚无已发布版本。', compareRevisions: '比较版本', fromRevision: '起始指南版本', toRevision: '目标指南版本', showDiff: '显示差异', pointerAudit: '指针审计', action: action => ({ published: '已发布', archived: '已归档', rolled_back: '已回滚' }[action] ?? action.replaceAll('_', ' ')), by: '操作人', noPointerChanges: '尚无指针变更。', projectDescription: '项目描述（不属于指南）', formatDate: value => new Date(value).toLocaleString('zh-CN'),
   },
   en: {
     intro: 'Versioned instructions for agents. Published revisions are immutable and Session context pins the exact revision and SHA-256 hash it used.',
     scope: 'Scope', scopeLabel: 'Guidance scope', workspace: 'Workspace', team: 'Team', project: 'Project', noTeamSelected: 'No team selected', noProject: 'No project', projectLabel: 'Guidance project',
-    status: status => status, documentRevision: revision => `Document revision ${revision}`, selectScope: 'Select or create the required scope before editing Guidance.', loading: 'Loading Guidance…', markdown: 'Markdown', changeSummary: 'Change summary', publishRevision: 'Publish immutable revision', currentRevision: 'Current revision', author: 'Author', published: 'Published', auditReason: 'Audit reason', auditPlaceholder: 'Required for archive or rollback', archiveCurrent: 'Archive current Guidance', revisionHistory: 'Revision history', rollbackPointer: 'Roll back pointer', noRevisions: 'No published revisions.', compareRevisions: 'Compare revisions', fromRevision: 'From Guidance revision', toRevision: 'To Guidance revision', showDiff: 'Show diff', pointerAudit: 'Pointer audit', action: action => action.replaceAll('_', ' '), by: 'by', noPointerChanges: 'No pointer changes yet.', projectDescription: 'Project description (not Guidance)', formatDate: value => new Date(value).toLocaleString('en'),
+    status: status => status, documentRevision: revision => `Document revision ${revision}`, selectScope: 'Select or create the required scope before editing Guidance.', loading: 'Loading Guidance…', markdown: 'Markdown', edit: 'Edit', preview: 'Preview', characterCount: count => `${count} characters`, renderedPreviewLabel: 'Rendered Markdown preview', previewEmpty: 'Write Markdown in edit mode, then switch to preview to see the rendered result.', changeSummary: 'Change summary', publishRevision: 'Publish immutable revision', currentRevision: 'Current revision', author: 'Author', published: 'Published', auditReason: 'Audit reason', auditPlaceholder: 'Required for archive or rollback', archiveCurrent: 'Archive current Guidance', revisionHistory: 'Revision history', rollbackPointer: 'Roll back pointer', noRevisions: 'No published revisions.', compareRevisions: 'Compare revisions', fromRevision: 'From Guidance revision', toRevision: 'To Guidance revision', showDiff: 'Show diff', pointerAudit: 'Pointer audit', action: action => action.replaceAll('_', ' '), by: 'by', noPointerChanges: 'No pointer changes yet.', projectDescription: 'Project description (not Guidance)', formatDate: value => new Date(value).toLocaleString('en'),
   },
 }
 
@@ -363,6 +462,7 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
 
 const surfaceCopies: Record<Locale, Partial<WorkSurfaceCopy>> = {
   'zh-CN': {
+    ariaLabel: '工作项视图',
     board: '看板视图',
     conflictDescription: '此操作与服务器上的较新版本冲突。请查看最新 Issue 后再次确认移动。',
     conflictTitle: 'Issue 已更新',
@@ -389,6 +489,7 @@ const surfaceCopies: Record<Locale, Partial<WorkSurfaceCopy>> = {
     savedViewsTitle: '保存的视图暂不可用',
   },
   en: {
+    ariaLabel: 'Work surfaces',
     board: 'Board',
     conflictDescription: 'This action conflicts with a newer version on the server. Review the latest Issue and confirm the move again.',
     conflictTitle: 'Issue was updated',
@@ -605,6 +706,15 @@ export type SettingsCopy = {
   saveChanges: string
   deleteTeam: string
   deleteHelp: string
+  deleteDialogTitle: string
+  deleteDescription: string
+  deleteConstraint: string
+  deleteCancel: string
+  deleteClose: string
+  deletingTeam: string
+  deleteRevisionConflict: string
+  deleteLastActiveTeamConflict: string
+  deleteFailed: string
   createFirst: string
   teamWorkflow: string
   workflowStates: string
@@ -612,7 +722,13 @@ export type SettingsCopy = {
   statusName: string
   category: string
   color: string
+  workflowColorLegend: string
+  workflowColorPresets: { neutral: string; blue: string; green: string; amber: string; red: string }
+  customColor: string
+  customColorInput: string
+  colorValue: string
   createStatus: string
+  statusCreated: (name: string) => string
   selectTeam: string
   loadingMore: string
   loadMoreTeams: string
@@ -623,14 +739,13 @@ export type SettingsCopy = {
   mobileNavigation: string
   menu: string
   skip: string
-  confirmDelete: (name: string) => string
+  deleteConfirmAccessible: (name: string) => string
   requestFailed: string
+  teamUnavailable: string
   categories: { backlog: string; planned: string; started: string; completed: string; canceled: string }
   settingsTabsLabel: string
   tabWorkspace: string
-  tabWorkspaceDescription: string
   tabOperations: string
-  tabOperationsDescription: string
 }
 
 const settingsCopies: Record<Locale, SettingsCopy> = {
@@ -656,7 +771,16 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     teamDetails: '团队详情',
     saveChanges: '保存更改',
     deleteTeam: '删除团队',
-    deleteHelp: '从当前工作区导航中移除此团队。',
+    deleteHelp: '从活动导航中移除此团队；关联工作将保留，但不可用。',
+    deleteDialogTitle: '删除团队',
+    deleteDescription: '该团队将从活动导航中移除；关联工作会保留，但将不可用。',
+    deleteConstraint: '至少必须保留一个活动团队。',
+    deleteCancel: '取消',
+    deleteClose: '关闭',
+    deletingTeam: '正在删除…',
+    deleteRevisionConflict: '团队已被其他操作更新。请关闭对话框、刷新后重试。',
+    deleteLastActiveTeamConflict: '无法删除最后一个活动团队。请先创建另一个活动团队。',
+    deleteFailed: '无法删除团队。请检查连接后重试。',
     createFirst: '新建团队后即可配置工作流。',
     teamWorkflow: '团队工作流',
     workflowStates: '工作流状态',
@@ -664,7 +788,13 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     statusName: '状态名称',
     category: '分类',
     color: '颜色',
+    workflowColorLegend: '状态颜色',
+    workflowColorPresets: { neutral: '中性', blue: '蓝色', green: '绿色', amber: '琥珀色', red: '红色' },
+    customColor: '自定义',
+    customColorInput: '自定义颜色',
+    colorValue: '颜色值',
     createStatus: '新建状态',
+    statusCreated: name => `已创建工作流状态 ${name}。`,
     selectTeam: '请选择团队以管理工作流。',
     loadingMore: '正在加载…',
     loadMoreTeams: '加载更多团队',
@@ -675,14 +805,13 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     mobileNavigation: '移动端导航',
     menu: '菜单',
     skip: '跳到主要内容',
-    confirmDelete: name => `确定删除团队 ${name}？删除后其工作将不可用。`,
+    deleteConfirmAccessible: name => `确认删除团队 ${name}`,
     requestFailed: '操作失败。',
+    teamUnavailable: '所选团队不可用或你已无权访问。请重试以恢复工作区设置。',
     categories: { backlog: '待办', planned: '已规划', started: '进行中', completed: '已完成', canceled: '已取消' },
     settingsTabsLabel: '设置分区',
     tabWorkspace: '工作区',
-    tabWorkspaceDescription: '团队、工作流状态与权限',
     tabOperations: '运营与规划',
-    tabOperationsDescription: '周期、自动化与运行历史',
   },
   en: {
     loading: 'Loading Settings…',
@@ -706,7 +835,16 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     teamDetails: 'Team details',
     saveChanges: 'Save changes',
     deleteTeam: 'Delete team',
-    deleteHelp: 'Remove this team from active workspace navigation.',
+    deleteHelp: 'Remove this Team from active navigation; associated work is retained but unavailable.',
+    deleteDialogTitle: 'Delete Team',
+    deleteDescription: 'This Team leaves active navigation; associated work is retained but unavailable.',
+    deleteConstraint: 'At least one active Team must remain.',
+    deleteCancel: 'Cancel',
+    deleteClose: 'Close',
+    deletingTeam: 'Deleting…',
+    deleteRevisionConflict: 'This Team changed in another operation. Close this dialog, refresh, and try again.',
+    deleteLastActiveTeamConflict: 'The last active Team cannot be deleted. Create another active Team first.',
+    deleteFailed: 'Unable to delete this Team. Check your connection and try again.',
     createFirst: 'Create a team to configure its workflow.',
     teamWorkflow: 'Team workflow',
     workflowStates: 'Workflow states',
@@ -714,7 +852,13 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     statusName: 'Status name',
     category: 'Category',
     color: 'Color',
+    workflowColorLegend: 'Status color',
+    workflowColorPresets: { neutral: 'Neutral', blue: 'Blue', green: 'Green', amber: 'Amber', red: 'Red' },
+    customColor: 'Custom',
+    customColorInput: 'Custom color',
+    colorValue: 'Color value',
     createStatus: 'Create status',
+    statusCreated: name => `Created workflow state ${name}.`,
     selectTeam: 'Select a team to manage its workflow.',
     loadingMore: 'Loading…',
     loadMoreTeams: 'Load more teams',
@@ -725,14 +869,13 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     mobileNavigation: 'Mobile navigation',
     menu: 'Menu',
     skip: 'Skip to content',
-    confirmDelete: name => `Delete team ${name}? Its work remains unavailable after this action.`,
+    deleteConfirmAccessible: name => `Delete Team ${name}`,
     requestFailed: 'Something went wrong.',
+    teamUnavailable: 'The selected team is unavailable or no longer accessible. Retry to restore Workspace settings.',
     categories: { backlog: 'Backlog', planned: 'Planned', started: 'Started', completed: 'Completed', canceled: 'Canceled' },
     settingsTabsLabel: 'Settings sections',
     tabWorkspace: 'Workspace',
-    tabWorkspaceDescription: 'Teams, workflow states, and access',
     tabOperations: 'Planning & Operations',
-    tabOperationsDescription: 'Cycles, automation, and run history',
   },
 }
 
@@ -852,6 +995,7 @@ export type OperationsCopy = {
   subtitle: string
   backToWork: string
   refresh: string
+  noScript: string
   // Loading / error / disabled surfaces
   loading: string
   loadingDescription: string
@@ -860,12 +1004,28 @@ export type OperationsCopy = {
   retry: string
   disabledTitle: string
   disabledDescription: string
+  sectionNavigation: string
+  noSectionsTitle: string
+  noSectionsDescription: string
+  searchLabel: string
+  searchDescription: string
+  searchPlaceholder: string
+  collectionLoading: (collection: string) => string
+  collectionLoadingDescription: (collection: string) => string
+  noMatchesTitle: (collection: string) => string
+  noMatchesDescription: (query: string) => string
   // Metrics row
   metricsTitle: string
   metricsKnownCost: string
   metricsNoKnownCost: string
   metricsUnknownCost: string
   metricsNeverTreatedAsZero: string
+  metricsUnavailable: string
+  metricsRecords: string
+  metricsMinorUnits: (currency: string) => string
+  metricsDurationHourUnit: string
+  metricsDurationMinuteUnit: string
+  metricsDurationSecondUnit: string
   metricsTokens: string
   metricsRuntime: string
   metricsToolCalls: string
@@ -885,6 +1045,8 @@ export type OperationsCopy = {
   created: string
   // Display-text functions
   cycleState: (state: string) => string
+  initiativeStatus: (status: string) => string
+  initiativePriority: (priority: string) => string
   initiativeHealth: (health: string) => string
   ruleState: (state: string) => string
   loopState: (state: string) => string
@@ -902,6 +1064,8 @@ export type OperationsCopy = {
   runKindDryRun: string
   runKindLoop: string
   runKindRule: string
+  templateKind: (kind: string) => string
+  templateStatus: (status: string) => string
   templateLine: (kind: string, version: number, status: string) => string
   noCyclesTitle: string
   noCyclesDescription: string
@@ -915,22 +1079,6 @@ export type OperationsCopy = {
   noRunsDescription: string
   noTemplatesTitle: string
   noTemplatesDescription: string
-  // Per-state string fields (parallel to the function fields above; the
-  // functions read these so call sites can also reference them directly).
-  cycleStateActive: string
-  cycleStatePlanned: string
-  cycleStateCompleted: string
-  initiativeHealthOnTrack: string
-  initiativeHealthAtRisk: string
-  initiativeHealthOffTrack: string
-  ruleStateActive: string
-  ruleStatePaused: string
-  loopStateActive: string
-  loopStatePaused: string
-  runStateSucceeded: string
-  runStateFailed: string
-  runStateRunning: string
-  runStatePending: string
 }
 
 const operationsCopies: Record<Locale, OperationsCopy> = {
@@ -939,6 +1087,7 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     subtitle: '查看长期规划、自动化、健康度与成本',
     backToWork: '返回工作区',
     refresh: '刷新',
+    noScript: '请使用支持 JavaScript 的浏览器查看运营与规划。',
     loading: '正在加载运营数据…',
     loadingDescription: '正在获取规划、自动化、健康度与成本数据。',
     error: '运营页面需要关注',
@@ -946,11 +1095,27 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     retry: '重试',
     disabledTitle: '运营页面未启用',
     disabledDescription: '本部署未启用 Operations UI 功能。',
+    sectionNavigation: '运营分区',
+    noSectionsTitle: '尚无可用运营模块',
+    noSectionsDescription: '此部署已启用运营页面，但尚未启用任何运营模块。',
+    searchLabel: '搜索已加载的运营记录',
+    searchDescription: '仅筛选当前已加载的运营记录；加载更多后结果可能增加。',
+    searchPlaceholder: '搜索名称、状态、日期或错误',
+    collectionLoading: collection => `正在加载${collection}`,
+    collectionLoadingDescription: collection => `正在获取${collection}。`,
+    noMatchesTitle: collection => `已加载的${collection}中没有匹配项`,
+    noMatchesDescription: query => `当前已加载的记录均不匹配“${query}”。可加载更多记录后继续搜索。`,
     metricsTitle: '使用量与成本',
     metricsKnownCost: '已知成本',
     metricsNoKnownCost: '尚无已知成本',
     metricsUnknownCost: '未知成本',
     metricsNeverTreatedAsZero: '从不当作零处理。',
+    metricsUnavailable: '使用量数据不可用',
+    metricsRecords: '条记录',
+    metricsMinorUnits: currency => `${currency} 最小货币单位`,
+    metricsDurationHourUnit: '小时',
+    metricsDurationMinuteUnit: '分',
+    metricsDurationSecondUnit: '秒',
     metricsTokens: 'Tokens',
     metricsRuntime: '运行时长',
     metricsToolCalls: '工具调用次数',
@@ -966,28 +1131,16 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     attempts: '尝试次数',
     session: '会话',
     created: '创建时间',
-    cycleStateActive: '进行中',
-    cycleStatePlanned: '已计划',
-    cycleStateCompleted: '已完成',
-    initiativeHealthOnTrack: '健康',
-    initiativeHealthAtRisk: '存在风险',
-    initiativeHealthOffTrack: '偏离轨道',
-    ruleStateActive: '已启用',
-    ruleStatePaused: '已暂停',
-    loopStateActive: '已启用',
-    loopStatePaused: '已暂停',
-    runStateSucceeded: '已成功',
-    runStateFailed: '已失败',
-    runStateRunning: '运行中',
-    runStatePending: '等待中',
-    cycleState: state => ({ active: '进行中', planned: '已计划', completed: '已完成' }[state] ?? state),
-    initiativeHealth: health => ({ on_track: '健康', at_risk: '存在风险', off_track: '偏离轨道' }[health] ?? health),
-    ruleState: state => ({ active: '已启用', paused: '已暂停' }[state] ?? state),
-    loopState: state => ({ active: '已启用', paused: '已暂停' }[state] ?? state),
-    runState: status => ({ succeeded: '已成功', failed: '已失败', running: '运行中', pending: '等待中' }[status] ?? status),
+    cycleState: state => ({ current: '当前', upcoming: '即将开始', history: '历史' }[state] ?? state),
+    initiativeStatus: status => ({ planned: '已计划', active: '进行中', paused: '已暂停', completed: '已完成', canceled: '已取消' }[status] ?? status),
+    initiativePriority: priority => ({ none: '无', low: '低', medium: '中', high: '高', urgent: '紧急' }[priority] ?? priority),
+    initiativeHealth: health => ({ on_track: '健康', at_risk: '存在风险', off_track: '偏离轨道', unknown: '未知' }[health] ?? health),
+    ruleState: state => ({ active: '已启用', paused: '已暂停', disabled: '已禁用' }[state] ?? state),
+    loopState: state => ({ active: '已启用', paused: '已暂停', disabled: '已禁用' }[state] ?? state),
+    runState: status => ({ pending: '等待中', claimed: '已领取', running: '运行中', succeeded: '已成功', failed: '已失败', dead: '已终止', canceled: '已取消', dry_run: '试运行' }[status] ?? status),
     cycleProgress: (done, total) => `${done}/${total} 已完成`,
     notScheduled: '尚未排期',
-    initiativeLine: (status, priority) => `${status} · ${priority} 优先级`,
+    initiativeLine: (status, priority) => `${status} · ${priority}优先级`,
     ruleTrigger: (version, type, cron) => `v${version} · ${type}${cron ? ` ${cron}` : ''}`,
     dryRun: '试运行',
     pause: '暂停',
@@ -998,6 +1151,8 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     runKindDryRun: '试运行',
     runKindLoop: '循环',
     runKindRule: '规则',
+    templateKind: kind => ({ work_item: '工作项', project: '项目', agent_run: 'Agent 运行', handoff: '交接', automation: '自动化' }[kind] ?? kind),
+    templateStatus: status => ({ draft: '草稿', active: '已启用', archived: '已归档' }[status] ?? status),
     templateLine: (kind, version, status) => `${kind} · v${version} · ${status}`,
     noCyclesTitle: '尚未配置规划周期',
     noCyclesDescription: '当规划窗口就绪时，新建一个 Cycle。',
@@ -1017,6 +1172,7 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     subtitle: 'Durable planning, automation, health, and cost observability.',
     backToWork: 'Back to work',
     refresh: 'Refresh',
+    noScript: 'Use a browser with JavaScript support to view Planning & Operations.',
     loading: 'Loading Operations',
     loadingDescription: 'Loading durable planning, automation, health, and cost projections.',
     error: 'Operations needs attention',
@@ -1024,11 +1180,27 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     retry: 'Retry',
     disabledTitle: 'Operations is disabled',
     disabledDescription: 'This deployment has not enabled the Operations UI feature.',
+    sectionNavigation: 'Operations sections',
+    noSectionsTitle: 'No Operations modules are available',
+    noSectionsDescription: 'This deployment enables the Operations page, but no Operations modules are enabled yet.',
+    searchLabel: 'Search loaded Operations records',
+    searchDescription: 'Filters only Operations records already loaded in this view. Load more to expand the searchable set.',
+    searchPlaceholder: 'Search names, statuses, dates, or errors',
+    collectionLoading: collection => `Loading ${collection}`,
+    collectionLoadingDescription: collection => `Fetching ${collection}.`,
+    noMatchesTitle: collection => `No loaded ${collection} match`,
+    noMatchesDescription: query => `No loaded records match “${query}”. Load more records to continue searching.`,
     metricsTitle: 'Usage and cost',
     metricsKnownCost: 'Known cost',
     metricsNoKnownCost: 'No known cost',
     metricsUnknownCost: 'Unknown cost',
     metricsNeverTreatedAsZero: 'Never treated as zero.',
+    metricsUnavailable: 'Usage data unavailable',
+    metricsRecords: 'records',
+    metricsMinorUnits: currency => `${currency} minor units`,
+    metricsDurationHourUnit: 'h',
+    metricsDurationMinuteUnit: 'm',
+    metricsDurationSecondUnit: 's',
     metricsTokens: 'Tokens',
     metricsRuntime: 'Runtime',
     metricsToolCalls: 'Tool calls',
@@ -1044,25 +1216,13 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     attempts: 'Attempts',
     session: 'Session',
     created: 'Created',
-    cycleStateActive: 'active',
-    cycleStatePlanned: 'planned',
-    cycleStateCompleted: 'completed',
-    initiativeHealthOnTrack: 'on_track',
-    initiativeHealthAtRisk: 'at_risk',
-    initiativeHealthOffTrack: 'off_track',
-    ruleStateActive: 'active',
-    ruleStatePaused: 'paused',
-    loopStateActive: 'active',
-    loopStatePaused: 'paused',
-    runStateSucceeded: 'succeeded',
-    runStateFailed: 'failed',
-    runStateRunning: 'running',
-    runStatePending: 'pending',
-    cycleState: state => ({ active: 'active', planned: 'planned', completed: 'completed' }[state] ?? state),
-    initiativeHealth: health => ({ on_track: 'on_track', at_risk: 'at_risk', off_track: 'off_track' }[health] ?? health),
-    ruleState: state => ({ active: 'active', paused: 'paused' }[state] ?? state),
-    loopState: state => ({ active: 'active', paused: 'paused' }[state] ?? state),
-    runState: status => ({ succeeded: 'succeeded', failed: 'failed', running: 'running', pending: 'pending' }[status] ?? status),
+    cycleState: state => ({ current: 'Current', upcoming: 'Upcoming', history: 'History' }[state] ?? state),
+    initiativeStatus: status => ({ planned: 'Planned', active: 'Active', paused: 'Paused', completed: 'Completed', canceled: 'Canceled' }[status] ?? status),
+    initiativePriority: priority => ({ none: 'None', low: 'Low', medium: 'Medium', high: 'High', urgent: 'Urgent' }[priority] ?? priority),
+    initiativeHealth: health => ({ on_track: 'On track', at_risk: 'At risk', off_track: 'Off track', unknown: 'Unknown' }[health] ?? health),
+    ruleState: state => ({ active: 'Enabled', paused: 'Paused', disabled: 'Disabled' }[state] ?? state),
+    loopState: state => ({ active: 'Enabled', paused: 'Paused', disabled: 'Disabled' }[state] ?? state),
+    runState: status => ({ pending: 'Pending', claimed: 'Claimed', running: 'Running', succeeded: 'Succeeded', failed: 'Failed', dead: 'Dead', canceled: 'Canceled', dry_run: 'Dry run' }[status] ?? status),
     cycleProgress: (done, total) => `${done}/${total} completed`,
     notScheduled: 'Not scheduled',
     initiativeLine: (status, priority) => `${status} · ${priority} priority`,
@@ -1076,6 +1236,8 @@ const operationsCopies: Record<Locale, OperationsCopy> = {
     runKindDryRun: 'Dry run',
     runKindLoop: 'Loop',
     runKindRule: 'Rule',
+    templateKind: kind => ({ work_item: 'Work item', project: 'Project', agent_run: 'Agent run', handoff: 'Handoff', automation: 'Automation' }[kind] ?? kind),
+    templateStatus: status => ({ draft: 'Draft', active: 'Active', archived: 'Archived' }[status] ?? status),
     templateLine: (kind, version, status) => `${kind} · v${version} · ${status}`,
     noCyclesTitle: 'No Cycles configured',
     noCyclesDescription: 'Create a Cycle when a planning window is ready.',
@@ -1108,16 +1270,20 @@ export type ConnectCopy = {
   bootstrapChecklist: string
   copyConfig: string
   copied: string
-  clientGenericMcp: string
-  clientOpencode: string
-  clientCodex: string
-  clientPi: string
+  clientDescription: (type: McpClientType) => string
+  clientConfiguration: (label: string) => string
+  configurationStatus: string
+  configRegionLabel: (label: string) => string
+  configCopiedAnnouncement: string
+  linkCopiedAnnouncement: string
   secretBoundary: string
   copySuccess: string
   transport: string
   profile: string
   skill: string
   environmentChecks: string
+  environmentCheckItems: (facts: McpGuideCopyFacts) => readonly string[]
+  bootstrapCheckItems: (facts: McpGuideCopyFacts) => readonly string[]
   localStdioFallback: (label: string) => string
   loadingStatus: string
   handoffEyebrow: string
@@ -1164,17 +1330,36 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     bootstrapChecklist: '受控启动检查',
     copyConfig: '复制配置',
     copied: '已复制',
-    clientGenericMcp: '通用 MCP',
-    clientOpencode: 'OpenCode',
-    clientCodex: 'Codex',
-    clientPi: 'Pi',
+    clientDescription: type => ({
+      codex: '通过 TOML MCP server 配置使用环境变量支持的请求头。',
+      opencode: '通过远程 JSON 配置使用环境变量支持的请求头。',
+      pi: '通过扩展配置连接 Streamable HTTP 服务。',
+      generic_mcp: '通过标准兼容的 Streamable HTTP 配置连接。',
+    })[type],
+    clientConfiguration: label => `配置模板：${label}`,
+    configurationStatus: 'MCP 配置状态',
+    configRegionLabel: label => `配置预览：${label}`,
+    configCopiedAnnouncement: '配置已复制到剪贴板。',
+    linkCopiedAnnouncement: '安全连接链接已复制到剪贴板。',
     secretBoundary: '凭据边界：模板只包含环境变量名。请把兑换后的安装凭据放入客户端的密钥存储，永远不要写入此文件。',
     copySuccess: '复制成功',
     transport: '传输',
     profile: 'Profile',
     skill: 'Skill',
     environmentChecks: '环境检查',
-    localStdioFallback: label => `本地 stdio 兜底：${label}`,
+    environmentCheckItems: facts => [
+      `把兑换得到的安装凭据保存为 ${facts.tokenEnvironmentName}，不要粘贴到配置文件里。`,
+      `只通过 ${facts.tokenHeader} 头发送到上方展示的精确服务端 URL。`,
+      `要求 Client Profile ${facts.profileVersion} 与 Skill ${facts.skillVersion}（${facts.skillSha256}）。`,
+    ],
+    bootstrapCheckItems: facts => [
+      `拉取公共发现文档，并确认服务端声明 ${facts.clientLabel}；拒绝协议、客户端、Profile 或技能选择器中的未知值。`,
+      '在一次性配对片段过期前完成兑换，并把得到的凭据仅保存在客户端密钥库中。',
+      '调用 verify_connection，并要求存在一个活跃的 Team、匹配的 Profile / Skill / 能力范围以及负责人。',
+      '在选择工作前先调用 get_workmesh_context；工具存在并不授予任何写权限。',
+      '当发现已撤销、过期、范围不符、停用或实时事实不一致时立即停止。',
+    ],
+    localStdioFallback: command => `本地 stdio 兜底：在本地密钥环境中设置 WORKMESH_API_URL 和 WORKMESH_INSTALLATION_TOKEN，然后运行 ${command}。`,
     loadingStatus: '正在加载服务端 MCP 配置…',
     handoffEyebrow: '一次性交接',
     handoffTitle: '配对链接已驻留在浏览器内存中',
@@ -1218,17 +1403,36 @@ const connectCopies: Record<Locale, ConnectCopy> = {
     bootstrapChecklist: 'Bounded bootstrap checklist',
     copyConfig: 'Copy config',
     copied: 'Copied',
-    clientGenericMcp: 'Generic MCP',
-    clientOpencode: 'OpenCode',
-    clientCodex: 'Codex',
-    clientPi: 'Pi',
+    clientDescription: type => ({
+      codex: 'Use TOML MCP server configuration with environment-backed request headers.',
+      opencode: 'Use remote JSON configuration with environment-backed request headers.',
+      pi: 'Use extension configuration over Streamable HTTP.',
+      generic_mcp: 'Use a standards-compatible Streamable HTTP configuration.',
+    })[type],
+    clientConfiguration: label => `Configuration template: ${label}`,
+    configurationStatus: 'MCP configuration status',
+    configRegionLabel: label => `Configuration preview: ${label}`,
+    configCopiedAnnouncement: 'Configuration copied to the clipboard.',
+    linkCopiedAnnouncement: 'Secure connection link copied to the clipboard.',
     secretBoundary: 'Secret boundary: the template contains only an environment-variable name. Put the redeemed installation credential in the client secret store, never in this file.',
     copySuccess: 'Copied successfully',
     transport: 'Transport',
     profile: 'Profile',
     skill: 'Skill',
     environmentChecks: 'Environment checks',
-    localStdioFallback: label => `Local stdio fallback: ${label}`,
+    environmentCheckItems: facts => [
+      `Store the redeemed installation credential as ${facts.tokenEnvironmentName}; never paste it into a configuration file.`,
+      `Send it only through the ${facts.tokenHeader} header to the exact server URL shown above.`,
+      `Require Client Profile ${facts.profileVersion} and Skill ${facts.skillVersion} (${facts.skillSha256}).`,
+    ],
+    bootstrapCheckItems: facts => [
+      `Fetch public discovery and confirm the server advertises ${facts.clientLabel}; reject unknown protocol, client, Profile, or Skill selectors.`,
+      'Redeem before the one-time pairing fragment expires and keep the resulting credential only in the client secret store.',
+      'Call verify_connection and require an active Team, matching Profile / Skill / capability scope, and responsible Human.',
+      'Call get_workmesh_context before selecting work; tool availability never grants write authority.',
+      'Stop when discovery reports revocation, expiry, scope mismatch, disablement, or inconsistent live facts.',
+    ],
+    localStdioFallback: command => `Local stdio fallback: set WORKMESH_API_URL and WORKMESH_INSTALLATION_TOKEN in the local secret environment, then run ${command}.`,
     loadingStatus: 'Loading server-derived MCP configuration…',
     handoffEyebrow: 'One-time handoff',
     handoffTitle: 'Pairing link is present in browser memory',
@@ -1453,7 +1657,61 @@ export type AgentsCopy = {
   credentialPending: string
 }
 
-const agentsCopies: Record<Locale, AgentsCopy> = {
+export type ApprovalHistoryLocaleCopy = {
+  approvalViewsAriaLabel: string
+  approvalViewPending: string
+  approvalViewHistory: string
+  approvalHistoryStatus: string
+  approvalStatusApproved: string
+  approvalStatusRejected: string
+  approvalStatusExpired: string
+  approvalStatusConsumed: string
+  approvalStatusCanceled: string
+  noApprovalHistory: string
+  approvalHistoryTableAriaLabel: string
+  approvalHistoryLoading: string
+  approvalColumnStatus: string
+  approvalColumnRequested: string
+  loadMoreApprovalHistory: string
+}
+
+export type AgentDetailLocaleCopy = {
+  agentDetailEyebrow: string
+  agentDetailIntro: string
+  agentDetailFacts: string
+  agentSlug: string
+  agentDescription: string
+  agentProvider: string
+  agentVersion: string
+  agentStatus: string
+  agentSupportedProtocols: string
+  agentRequestedCapabilities: string
+  agentApprovedCapabilities: string
+  heartbeatSeconds: (seconds: number) => string
+  openAgentDetailsLabel: string
+  openAgentDetails: (name: string) => string
+  peekShortcutHint: string
+  peekTitle: (name: string) => string
+  peekDescription: string
+  closePeek: string
+  manageTeamAccessLabel: string
+  manageTeamAccess: (name: string) => string
+  backToAgentRegistry: string
+  agentNotFoundTitle: string
+  agentNotFoundDescription: string
+  agentDetailErrorTitle: string
+  agentDetailErrorDescription: string
+  teamAccessProjection: string
+  teamAccessLoadedEmpty: string
+  teamAccessTeam: string
+}
+
+export type AgentControlLocaleCopy = {
+  controlSummaryAriaLabel: string
+  fieldAgentNamePlaceholder: string
+}
+
+const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy> = {
   'zh-CN': {
     agents: '智能体',
     loadingDescription: '正在加载智能体、Session、审批和连接信息。',
@@ -1470,6 +1728,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     retry: '重试',
     attentionTitle: '智能体工作区需要关注',
     attentionDescription: '无法加载智能体工作区。',
+    controlSummaryAriaLabel: '智能体控制摘要',
     activeAgents: '活跃智能体',
     registered: count => `已注册 ${count} 个`,
     liveSessions: '运行中 Session',
@@ -1517,6 +1776,34 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     capabilitiesLabel: count => `${count} 项能力`,
     concurrency: '并发数',
     heartbeat: '心跳',
+    agentDetailEyebrow: '智能体定义',
+    agentDetailIntro: '查看稳定身份、运行合同与能力事实；团队授权由注册表中的权威聚合数据管理。',
+    agentDetailFacts: '智能体事实',
+    agentSlug: '标识',
+    agentDescription: '描述',
+    agentProvider: '提供方',
+    agentVersion: '版本',
+    agentStatus: '状态',
+    agentSupportedProtocols: '支持的协议',
+    agentRequestedCapabilities: '申请的能力',
+    agentApprovedCapabilities: '定义已批准的能力',
+    heartbeatSeconds: seconds => `${seconds} 秒`,
+    openAgentDetailsLabel: '打开详情',
+    openAgentDetails: name => `打开 ${name} 的详情`,
+    peekShortcutHint: '按空格键快速查看',
+    peekTitle: name => `快速查看 ${name}`,
+    peekDescription: '只读定义事实；关闭后返回注册表中的原位置。',
+    closePeek: '关闭',
+    manageTeamAccessLabel: '管理团队访问',
+    manageTeamAccess: name => `管理 ${name} 的团队访问`,
+    backToAgentRegistry: '返回智能体注册表',
+    agentNotFoundTitle: '找不到智能体',
+    agentNotFoundDescription: '该智能体不存在，或你无权查看其定义。',
+    agentDetailErrorTitle: '无法加载智能体详情',
+    agentDetailErrorDescription: '无法读取当前智能体定义，请重试。',
+    teamAccessProjection: '已加载的团队访问',
+    teamAccessLoadedEmpty: '当前注册表结果确认没有团队授权。',
+    teamAccessTeam: '团队',
     teamAccessAndCapabilities: '团队访问与能力',
     requestedLabel: '请求的能力：',
     definitionApprovedLabel: '定义已批准：',
@@ -1557,6 +1844,20 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     approvalColumnRationale: '理由',
     approvalColumnExpires: '过期时间',
     approvalColumnSession: 'Session',
+    approvalViewsAriaLabel: '审批视图',
+    approvalViewPending: '待处理',
+    approvalViewHistory: '历史记录',
+    approvalHistoryStatus: '结果',
+    approvalStatusApproved: '已通过',
+    approvalStatusRejected: '已驳回',
+    approvalStatusExpired: '已过期',
+    approvalStatusConsumed: '已使用',
+    approvalStatusCanceled: '已取消',
+    noApprovalHistory: '没有此结果的审批记录。',
+    approvalHistoryTableAriaLabel: '审批历史记录',
+    approvalHistoryLoading: '正在加载审批历史记录…',
+    approvalColumnStatus: '结果',
+    approvalColumnRequested: '请求时间',
     sessionLabel: id => `Session ${id}`,
     workItemLabel: id => `Issue ${id}`,
     noWorkItem: '无 Issue',
@@ -1564,6 +1865,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     loadMoreAgents: '加载更多智能体',
     loadMoreTeams: '加载更多团队',
     loadMoreApprovals: '加载更多审批',
+    loadMoreApprovalHistory: '加载更多历史审批',
     loadMoreSessions: '加载更多 Session',
     // Agent Connections panel
     connectionsEyebrow: '智能体访问',
@@ -1616,6 +1918,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     newConnectionTitle: '新建智能体连接',
     fieldClient: '客户端',
     fieldAgentName: '智能体名称',
+    fieldAgentNamePlaceholder: '规划协调员',
     fieldAgentSlug: '智能体标识',
     fieldTeam: '团队',
     fieldPrincipal: '负责人',
@@ -1648,6 +1951,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     retry: 'Retry',
     attentionTitle: 'Agent workspace needs attention',
     attentionDescription: 'Unable to load the Agent workspace.',
+    controlSummaryAriaLabel: 'Agent control summary',
     activeAgents: 'Active agents',
     registered: count => `${count} registered`,
     liveSessions: 'Live sessions',
@@ -1695,6 +1999,34 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     capabilitiesLabel: count => `${count} capabilities`,
     concurrency: 'Concurrency',
     heartbeat: 'Heartbeat',
+    agentDetailEyebrow: 'Agent definition',
+    agentDetailIntro: 'Review stable identity, runtime contracts, and capability facts. Team authority is managed from the registry’s authoritative aggregate.',
+    agentDetailFacts: 'Agent facts',
+    agentSlug: 'Slug',
+    agentDescription: 'Description',
+    agentProvider: 'Provider',
+    agentVersion: 'Version',
+    agentStatus: 'Status',
+    agentSupportedProtocols: 'Supported protocols',
+    agentRequestedCapabilities: 'Requested capabilities',
+    agentApprovedCapabilities: 'Definition-approved capabilities',
+    heartbeatSeconds: seconds => `${seconds} seconds`,
+    openAgentDetailsLabel: 'Open details',
+    openAgentDetails: name => `Open details for ${name}`,
+    peekShortcutHint: 'Press Space to Peek',
+    peekTitle: name => `Peek at ${name}`,
+    peekDescription: 'Read-only definition facts. Closing returns focus to the registry.',
+    closePeek: 'Close',
+    manageTeamAccessLabel: 'Manage team access',
+    manageTeamAccess: name => `Manage team access for ${name}`,
+    backToAgentRegistry: 'Back to Agent registry',
+    agentNotFoundTitle: 'Agent not found',
+    agentNotFoundDescription: 'This Agent does not exist or its definition is not available to you.',
+    agentDetailErrorTitle: 'Could not load Agent details',
+    agentDetailErrorDescription: 'The current Agent definition could not be loaded. Try again.',
+    teamAccessProjection: 'Loaded Team access',
+    teamAccessLoadedEmpty: 'The current registry result confirms that there are no Team grants.',
+    teamAccessTeam: 'Team',
     teamAccessAndCapabilities: 'Team access and capabilities',
     requestedLabel: 'Requested:',
     definitionApprovedLabel: 'Definition approved:',
@@ -1735,6 +2067,20 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     approvalColumnRationale: 'Rationale',
     approvalColumnExpires: 'Expires',
     approvalColumnSession: 'Session',
+    approvalViewsAriaLabel: 'Approval views',
+    approvalViewPending: 'Pending',
+    approvalViewHistory: 'History',
+    approvalHistoryStatus: 'Outcome',
+    approvalStatusApproved: 'Approved',
+    approvalStatusRejected: 'Rejected',
+    approvalStatusExpired: 'Expired',
+    approvalStatusConsumed: 'Consumed',
+    approvalStatusCanceled: 'Canceled',
+    noApprovalHistory: 'No approvals have this outcome.',
+    approvalHistoryTableAriaLabel: 'Approval history',
+    approvalHistoryLoading: 'Loading approval history…',
+    approvalColumnStatus: 'Outcome',
+    approvalColumnRequested: 'Requested',
     sessionLabel: id => `Session ${id}`,
     workItemLabel: id => `Work item ${id}`,
     noWorkItem: 'No work item',
@@ -1742,6 +2088,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     loadMoreAgents: 'Load more agents',
     loadMoreTeams: 'Load more teams',
     loadMoreApprovals: 'Load more approvals',
+    loadMoreApprovalHistory: 'Load more approval history',
     loadMoreSessions: 'Load more sessions',
     connectionsEyebrow: 'Agent access',
     connectionsTitle: 'Connections',
@@ -1793,6 +2140,7 @@ const agentsCopies: Record<Locale, AgentsCopy> = {
     newConnectionTitle: 'New Agent Connection',
     fieldClient: 'Client',
     fieldAgentName: 'Agent name',
+    fieldAgentNamePlaceholder: 'Planning coordinator',
     fieldAgentSlug: 'Agent slug',
     fieldTeam: 'Team',
     fieldPrincipal: 'Principal Human',
@@ -1869,6 +2217,7 @@ export type InboxCopy = {
   noDeliveryChannel: string
   deliveryFailed: string
   deliveryRecordedError: string
+  deliveryHealthLabel: (title: string) => string
 }
 
 const inboxCopies: Record<Locale, InboxCopy> = {
@@ -1927,6 +2276,7 @@ const inboxCopies: Record<Locale, InboxCopy> = {
     noDeliveryChannel: '未配置投递渠道',
     deliveryFailed: '投递失败。保存偏好不会让本次投递成功；重试仍由服务端控制。',
     deliveryRecordedError: '已记录错误',
+    deliveryHealthLabel: title => `${title} 的投递状态`,
   },
   en: {
     title: 'Inbox',
@@ -1983,6 +2333,7 @@ const inboxCopies: Record<Locale, InboxCopy> = {
     noDeliveryChannel: 'No delivery channel',
     deliveryFailed: 'Delivery failed. Saving preferences did not make this delivery successful; retry remains server-owned.',
     deliveryRecordedError: 'error recorded',
+    deliveryHealthLabel: title => `Delivery health for ${title}`,
   },
 }
 
@@ -2471,6 +2822,7 @@ export type WorkRoomCopy = {
   handoffArtifacts: string
   handoffLeasePolicy: string
   handoffRouting: string
+  selectedLabel: string
   handoffRoutingCandidates: (count: number) => string
   handoffRejection: string
   handoffCompletedWork: string
@@ -2511,6 +2863,7 @@ export type WorkRoomCopy = {
   artifactsAria: string
   artifactsEmpty: string
   artifactsAttribution: string
+  artifactAttachments: WorkItemArtifactsCopy
   // Plans tab
   planAria: string
   planEmpty: string
@@ -2538,6 +2891,8 @@ export type WorkRoomCopy = {
   legacyMentioned: string
   legacyMentionLabel: string
   legacyHuman: string
+  resolved: string
+  open: string
   // Timeline card
   timelineActor: string
   timelineIntent: string
@@ -2649,6 +3004,7 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     handoffArtifacts: '证据',
     handoffLeasePolicy: '租约策略',
     handoffRouting: '路由',
+    selectedLabel: '已选择',
     handoffRoutingCandidates: (count) => `从 ${count} 个候选中选中。`,
     handoffRejection: '拒绝原因',
     handoffCompletedWork: '已完成的工作',
@@ -2687,6 +3043,27 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     artifactsAria: '证据与上下文增量',
     artifactsEmpty: '暂无智能体证据或上下文增量。',
     artifactsAttribution: '证据归属于对应的人类或智能体、确切 Session 以及适用的计划步骤。',
+    artifactAttachments: {
+      ariaLabel: 'Work Item 附件',
+      title: '附件',
+      provenance: '文件不可变，并保留其人类或智能体来源。',
+      attachFile: '附加文件',
+      inputLabel: '选择要附加的文件',
+      cancel: '取消',
+      retryUpload: '重试上传',
+      cancelUpload: '取消上传',
+      formatBytes: bytes => `${bytes} 字节`,
+      empty: '暂无附件。',
+      fileFallback: '文件',
+      verificationTimedOut: '上传验证超时。',
+      loadErrorFallback: '无法加载附件。',
+      objectUploadFailed: status => `对象上传失败（${status}）。`,
+      uploadStatusError: status => `上传未通过验证（${status}）。`,
+      uploadErrorFallback: '上传失败。',
+      cancelErrorFallback: '无法取消上传。',
+      phases: { preparing: '准备', uploading: '上传', verifying: '验证' },
+      phaseAnnouncement: phase => `正在${phase}附件…`,
+    },
     planAria: '计划归属与依赖',
     planEmpty: '暂无已发布的计划步骤分配或认领。',
     planStepFallback: '计划步骤',
@@ -2710,6 +3087,8 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     legacyMentioned: '提及',
     legacyMentionLabel: '提及人员',
     legacyHuman: '人类',
+    resolved: '已解决',
+    open: '待处理',
     timelineActor: '参与者',
     timelineIntent: '意图',
     timelineSession: 'Session',
@@ -2816,6 +3195,7 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     handoffArtifacts: 'Artifacts',
     handoffLeasePolicy: 'Lease policy',
     handoffRouting: 'Routing',
+    selectedLabel: 'selected',
     handoffRoutingCandidates: (count) => `selected from ${count} eligible candidates.`,
     handoffRejection: 'Rejection reason',
     handoffCompletedWork: 'Completed work',
@@ -2854,6 +3234,27 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     artifactsAria: 'Artifacts and context deltas',
     artifactsEmpty: 'No Agent artifacts or context deltas recorded yet.',
     artifactsAttribution: 'Artifacts are attributed to the Human or Agent, exact session, and plan-step when applicable.',
+    artifactAttachments: {
+      ariaLabel: 'Work Item attachments',
+      title: 'Attachments',
+      provenance: 'Files remain immutable and keep their Human or Agent provenance.',
+      attachFile: 'Attach file',
+      inputLabel: 'Choose a file to attach',
+      cancel: 'Cancel',
+      retryUpload: 'Retry upload',
+      cancelUpload: 'Cancel upload',
+      formatBytes: bytes => `${bytes} bytes`,
+      empty: 'No attachments yet.',
+      fileFallback: 'file',
+      verificationTimedOut: 'Upload verification timed out.',
+      loadErrorFallback: 'Unable to load attachments.',
+      objectUploadFailed: status => `Object upload failed (${status}).`,
+      uploadStatusError: status => `Upload did not verify (${status}).`,
+      uploadErrorFallback: 'Upload failed.',
+      cancelErrorFallback: 'Unable to cancel upload.',
+      phases: { preparing: 'Preparing', uploading: 'Uploading', verifying: 'Verifying' },
+      phaseAnnouncement: phase => `${phase} attachment…`,
+    },
     planAria: 'Plan ownership and dependencies',
     planEmpty: 'No published plan-step assignments or claims yet.',
     planStepFallback: 'Plan step',
@@ -2877,6 +3278,8 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     legacyMentioned: 'Mentioned',
     legacyMentionLabel: 'Mention people',
     legacyHuman: 'Human',
+    resolved: 'Resolved',
+    open: 'Open',
     timelineActor: 'Actor',
     timelineIntent: 'Intent',
     timelineSession: 'Session',
@@ -2942,6 +3345,7 @@ type LocaleContextValue = {
   locale: Locale
   setLocale: (locale: Locale) => void
   t: (key: TranslationKey) => string
+  toastCopy: ToastCopy
   issueCopy: Partial<WorkItemCopy>
   surfaceCopy: Partial<WorkSurfaceCopy>
   detailCopy: Partial<WorkItemDetailCopy>
@@ -2951,7 +3355,7 @@ type LocaleContextValue = {
   installCopy: InstallCopy
   operationsCopy: OperationsCopy
   connectCopy: ConnectCopy
-  agentsCopy: AgentsCopy
+  agentsCopy: AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy
   inboxCopy: InboxCopy
   sessionDetailCopy: SessionDetailCopy
   agentWorkCopy: AgentWorkCopy
@@ -2983,6 +3387,7 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     locale,
     setLocale: setCurrentLocale,
     t: key => messages[locale][key],
+    toastCopy: toastCopies[locale],
     issueCopy: issueCopies[locale],
     surfaceCopy: surfaceCopies[locale],
     detailCopy: detailCopies[locale],
@@ -3011,8 +3416,8 @@ export function useLocale(): LocaleContextValue {
 }
 
 export function LocaleToggle() {
-  const { locale, setLocale } = useLocale()
-  return <div aria-label={locale === 'zh-CN' ? '语言' : 'Language'} className="locale-toggle" role="group">
+  const { locale, setLocale, t } = useLocale()
+  return <div aria-label={t('language')} className="locale-toggle" role="group">
     <button aria-pressed={locale === 'zh-CN'} onClick={() => setLocale('zh-CN')} type="button">中</button>
     <button aria-pressed={locale === 'en'} onClick={() => setLocale('en')} type="button">EN</button>
   </div>

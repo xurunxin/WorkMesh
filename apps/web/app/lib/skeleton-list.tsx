@@ -1,11 +1,30 @@
 import { Skeleton } from '@workmesh/ui'
+import type { CSSProperties } from 'react'
 
-export function SkeletonList({ rows = 6, columns = 1 }: { rows?: number; columns?: number }) {
-  return <div className="skeleton-list" role="status" aria-label="Loading">
-    {Array.from({ length: rows }, (_, row) => (
-      <div key={row} className="skeleton-list-row" style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: '.5rem' }}>
-        {Array.from({ length: columns }, (_, col) => <Skeleton key={col} aria-busy="true" className="skeleton-list-cell" />)}
-      </div>
+type SkeletonListProps = {
+  columns: number
+  items: number
+  label: string
+}
+
+export function SkeletonList({ columns, items, label }: SkeletonListProps) {
+  const safeColumns = Math.max(1, Math.floor(columns))
+  const safeItems = Math.max(0, Math.floor(items))
+  return <div
+    aria-busy="true"
+    aria-label={label}
+    className="skeleton-list"
+    role="status"
+    style={{ '--columns': String(safeColumns) } as CSSProperties}
+  >
+    {Array.from({ length: safeItems }, (_, index) => (
+      <Skeleton
+        aria-hidden="true"
+        aria-label={undefined}
+        className="skeleton-list-cell"
+        key={index}
+        role="presentation"
+      />
     ))}
   </div>
 }

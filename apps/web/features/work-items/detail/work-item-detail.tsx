@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type FormEvent, type ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button, ConflictState, ErrorState, ForbiddenState, Sheet, Tabs } from '@workmesh/ui'
 import { ArrowClockwise, ArrowSquareOut, FloppyDisk, X } from '@phosphor-icons/react'
 import { useMediaQuery } from '../../../app/lib/use-media-query'
@@ -154,20 +154,22 @@ const errorDescription = (error: StructuredDetailError, text: WorkItemDetailCopy
 
 function DetailUnavailableContent({ mode, requestedKey, error, onClose, onRetry, copy }: UnavailableProps) {
   const text = resolveCopy(copy)
+  const fullPageHeadingId = useId()
   const state = error.httpStatus === 403
     ? <ForbiddenState description={errorDescription(error, text)} title={text.accessDenied} />
     : <ErrorState actionLabel={text.retry} description={errorDescription(error, text)} onAction={onRetry} title={error.httpStatus === 404 ? text.notFound : error.code === 'NETWORK_UNAVAILABLE' ? text.offline : text.couldNotLoad} />
   const body = <div className="work-item-detail work-item-detail-unavailable" data-mode={mode} data-testid="work-item-detail-unavailable">
-    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span><strong>{requestedKey}</strong></div>{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={onClose} type="button" variant="ghost">{text.close}</Button>}</header>
+    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{requestedKey}</h1>}<strong>{requestedKey}</strong></div>{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={onClose} type="button" variant="ghost">{text.close}</Button>}</header>
     {state}
   </div>
   return mode === 'sheet'
     ? <Sheet className="work-item-detail-sheet" closeLabel={text.close} description={text.unavailableDescription} onClose={onClose} open title={requestedKey}>{body}</Sheet>
-    : <section className="work-item-full-page" aria-label={text.fullWorkItem}>{body}</section>
+    : <section className="work-item-full-page" aria-labelledby={fullPageHeadingId}>{body}</section>
 }
 
 function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props) {
   const text = resolveCopy(copy)
+  const fullPageHeadingId = useId()
   const fullPageRef = useRef<HTMLElement | null>(null)
   // The Save button receives keyboard focus as soon as a revision conflict
   // surfaces so the Human can re-issue the save without hunting for the
@@ -213,7 +215,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
   }
   const set = <Key extends keyof WorkItemDetailDraft>(key: Key, value: WorkItemDetailDraft[Key]) => setDraft(current => ({ ...current, [key]: value }))
   const body = <div className="work-item-detail" data-mode={mode} data-testid="work-item-detail">
-    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span><strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div>{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
+    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div>{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
     {error?.httpStatus === 403 ? <ForbiddenState description={errorDescription(error, text)} title={text.accessDenied} /> : error && <ErrorState actionLabel={text.reloadLatest} description={errorDescription(error, text)} onAction={() => confirmDiscard(onReloadLatest)} title={error.httpStatus === 404 ? text.notFound : error.code === 'NETWORK_UNAVAILABLE' ? text.offline : text.couldNotLoad} />}
     {conflict && <ConflictState actionLabel={text.reloadLatest} description={`${errorDescription(conflict, text)} ${text.conflictIntentPreserved}`} onAction={onReloadLatest} title={text.serverConflictTitle} />}
     <div className="work-item-detail-layout">
@@ -235,7 +237,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
       />
     </div>
   </div>
-  return mode === 'sheet' ? <Sheet className="work-item-detail-sheet" closeLabel={text.close} description={text.editProjection} onClose={() => confirmDiscard(onClose)} open title={model.key}>{body}</Sheet> : <section className="work-item-full-page" aria-label={text.fullWorkItem} ref={fullPageRef} tabIndex={-1}>{body}</section>
+  return mode === 'sheet' ? <Sheet className="work-item-detail-sheet" closeLabel={text.close} description={text.editProjection} onClose={() => confirmDiscard(onClose)} open title={model.key}>{body}</Sheet> : <section className="work-item-full-page" aria-labelledby={fullPageHeadingId} ref={fullPageRef} tabIndex={-1}>{body}</section>
 }
 
 export function WorkItemDetail(props: Props) { return <WorkItemDetailContent key={`${props.model.id}:${props.model.revision}:${props.mode}:${props.resetKey}`} {...props} /> }

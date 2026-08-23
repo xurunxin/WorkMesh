@@ -651,7 +651,7 @@ function HandoffCard({
       </p>
       {Object.keys(routing).length > 0 && (
         <p>
-          {text.handoffRouting}: selected{" "}
+          {text.handoffRouting}: {text.selectedLabel}{" "}
           {stringValue(routing, "selectedAgentId", "selected_agent_id") ||
             text.none}{" "}
           {text.handoffRoutingCandidates(textList(routing, "candidateIds", "candidate_ids").length || 0)}
@@ -1283,7 +1283,7 @@ export function WorkRoom({
                     <header>
                       <strong>{comment.author_name}</strong>
                       <span className="intent-badge">{text.legacyHuman}</span>
-                      <span>{comment.is_resolved ? "Resolved" : "Open"}</span>
+                      <span>{comment.is_resolved ? text.resolved : text.open}</span>
                     </header>
                     <Markdown source={comment.body} />
                     {mentioned.length > 0 && (
@@ -1493,7 +1493,7 @@ export function WorkRoom({
           className="combined-timeline"
           aria-label={text.artifactsAria}
         >
-          <WorkItemArtifacts workItemId={workItemId} />
+          <WorkItemArtifacts copy={text.artifactAttachments} workItemId={workItemId} />
           {artifactItems.map((item) => (
             <TimelineCard
               key={stringValue(item, "id")}

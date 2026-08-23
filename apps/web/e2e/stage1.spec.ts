@@ -12,6 +12,12 @@ async function humanApi<T>(page: Page, path: string, method = 'GET', body?: unkn
   }, { apiUrl, path, method, body })
 }
 
+async function expectAuthenticatedWorkspace(page: Page) {
+  const sidebar = page.getByRole('complementary')
+  await expect(sidebar).toBeVisible()
+  await expect(sidebar).toContainText('WorkMesh')
+}
+
 test.describe('Stage 1 agent browser acceptance', () => {
   test('delegates and starts one queued session with the atomic work-item command', async ({ page }) => {
     test.setTimeout(90_000)
@@ -19,7 +25,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await page.getByPlaceholder('Email').fill('alice@example.test')
     await page.getByPlaceholder('Password').fill('password-acceptance')
     await page.getByTestId('login-submit').click()
-    await expect(page.getByRole('heading', { name: 'WorkMesh' })).toBeVisible()
+    await expectAuthenticatedWorkspace(page)
 
     const capabilities = ['work:read', 'work:write', 'plan:write', 'artifact:write']
     const teamCapabilities = ['work:read', 'plan:write']
@@ -46,7 +52,10 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await page.getByLabel('Current team').first().selectOption(team.body.id)
     await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
     const drawer = page.getByRole('dialog')
-    await drawer.getByRole('button', { name: 'Delegate' }).click()
+    await drawer.getByRole('tab', { name: 'Discussion' }).click()
+    const delegateButton = drawer.getByRole('button', { name: 'Delegate' })
+    await expect(delegateButton).toBeVisible()
+    await delegateButton.click()
     const delegation = drawer.getByTestId('delegate-agent-form')
     await expect(delegation.getByRole('option', { name: 'Ungranted agent · No active grant for this team' })).toHaveAttribute('disabled', '')
     await delegation.getByLabel('Agent').selectOption(registered.body.id)
@@ -74,12 +83,15 @@ test.describe('Stage 1 agent browser acceptance', () => {
 
     await page.goto('/agents')
     const registry = page.getByTestId(`agent-registry-${registered.body.id}`)
-    await expect(registry).toContainText('Requested:')
-    await expect(registry).toContainText('Definition approved')
+    await expect(registry.getByText('Approved', { exact: true })).toBeVisible()
+    await expect(registry.getByText('Approved', { exact: true }).locator('xpath=following-sibling::dd')).toHaveText(`${capabilities.length} capabilities`)
     await expect(registry.getByText('Concurrency', { exact: true })).toBeVisible()
     await expect(registry.getByText('Concurrency', { exact: true }).locator('xpath=following-sibling::dd')).toHaveText('1')
-    await registry.getByText('Team access and capabilities', { exact: true }).click()
-    const teamAccess = page.getByTestId(`team-access-${registered.body.id}-${team.body.id}`)
+    await registry.getByRole('button', { name: 'Manage team access for Acceptance agent' }).click()
+    const accessDrawer = page.getByRole('dialog', { name: 'Acceptance agent' })
+    await expect(accessDrawer).toContainText('Requested:')
+    await expect(accessDrawer).toContainText('Definition approved:')
+    const teamAccess = accessDrawer.getByTestId(`team-access-${registered.body.id}-${team.body.id}`)
     await expect(teamAccess).toContainText('active')
     await expect(teamAccess).toContainText('work:read')
     await expect(teamAccess.getByRole('button', { name: 'Update grant' })).toBeVisible()
@@ -91,7 +103,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await page.getByPlaceholder('Email').fill('alice@example.test')
     await page.getByPlaceholder('Password').fill('password-acceptance')
     await page.getByTestId('login-submit').click()
-    await expect(page.getByRole('heading', { name: 'WorkMesh' })).toBeVisible()
+    await expectAuthenticatedWorkspace(page)
 
     const sourceId = '00000000-0000-4000-8000-000000000101'
     const nextId = '00000000-0000-4000-8000-000000000102'
@@ -132,7 +144,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await page.getByPlaceholder('Email').fill('alice@example.test')
     await page.getByPlaceholder('Password').fill('password-acceptance')
     await page.getByTestId('login-submit').click()
-    await expect(page.getByRole('heading', { name: 'WorkMesh' })).toBeVisible()
+    await expectAuthenticatedWorkspace(page)
 
     const agentId = '00000000-0000-4000-8000-000000000201'
     const teamId = '00000000-0000-4000-8000-000000000202'
@@ -156,11 +168,15 @@ test.describe('Stage 1 agent browser acceptance', () => {
 
     await page.goto('/agents')
     const registry = page.getByTestId(`agent-registry-${agentId}`)
-    await expect(registry).toContainText('work:read, work:write')
-    await expect(registry).toContainText('Definition approved')
+    await expect(registry.getByText('Approved', { exact: true })).toBeVisible()
+    await expect(registry.getByText('Approved', { exact: true }).locator('xpath=following-sibling::dd')).toHaveText('1 capabilities')
     await expect(registry.locator('dt', { hasText: 'Concurrency' })).toBeVisible()
     await expect(registry.locator('dt', { hasText: 'Concurrency' }).locator('xpath=following-sibling::dd')).toHaveText('2')
-    const teamAccess = page.getByTestId(`team-access-${agentId}-${teamId}`)
+    await registry.getByRole('button', { name: 'Manage team access for Controlled agent' }).click()
+    const accessDrawer = page.getByRole('dialog', { name: 'Controlled agent' })
+    await expect(accessDrawer).toContainText('Requested: work:read, work:write')
+    await expect(accessDrawer).toContainText('Definition approved: work:read')
+    const teamAccess = accessDrawer.getByTestId(`team-access-${agentId}-${teamId}`)
     await expect(teamAccess).toContainText('active')
     await expect(teamAccess).toContainText('Approved: work:read')
     await expect(teamAccess.getByRole('button', { name: /grant|revoke/i })).toHaveCount(0)

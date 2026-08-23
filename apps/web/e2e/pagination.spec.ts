@@ -99,7 +99,7 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
   expect(continuation?.searchParams.get('teamId')).toBe(team.id)
   expect(continuation?.searchParams.has('mine')).toBe(false)
 
-  const search = page.getByLabel('Search', { exact: true })
+  const search = page.getByRole('textbox', { name: 'Search', exact: true })
   await search.fill('Slow')
   await expect.poll(() => workRequests.some(request =>
     request.searchParams.get('search') === 'Slow')).toBe(true)
@@ -225,11 +225,12 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
   expect(oldCursorRequests).toBe(0)
   expect(newCursorRequests).toBe(1)
 
-  await page.getByLabel('Search', { exact: true }).fill('Scope B')
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill('Scope B')
   await expect.poll(() => changedScopePending).toBe(true)
   await expect(page.locator('[data-work-item-id="work-scope-a"]')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Load more work items' })).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: 'No Work Items' })).toBeVisible()
+  await expect(page.getByRole('status', { name: 'Loading Issues' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'No Work Items' })).toHaveCount(0)
   releaseChangedScope()
   await expect(page.locator('[data-work-item-id="work-scope-b"]')).toContainText('Scope B result')
 })
