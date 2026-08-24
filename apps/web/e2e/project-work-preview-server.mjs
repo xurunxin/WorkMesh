@@ -159,6 +159,16 @@ const finalTourExecutor = {
   lease_heartbeat_at: fixedNow,
   lease_expires_at: '2026-08-22T10:00:00.000Z',
 }
+const finalTourAssignment = {
+  delegation_id: 'delegation-final-tour',
+  agent_id: 'agent/1',
+  agent_actor_id: 'actor-agent-final-tour-1',
+  agent_slug: 'codex',
+  agent_display_name: 'Codex',
+  session_id: 'session-1',
+  session_state: 'executing',
+  assigned_at: '2026-08-22T08:45:00.000Z',
+}
 const finalTourWorkItems = [
   {
     id: 'work-101',
@@ -175,6 +185,7 @@ const finalTourWorkItems = [
     due_date: '2026-08-31',
     responsible_human_actor_id: human.id,
     responsible_human: { actor_id: human.id, display_name: human.display_name },
+    active_assignment: finalTourAssignment,
     active_executor: finalTourExecutor,
     shared_reviewers: [],
     labels: ['frontend', 'final-tour'],
@@ -199,6 +210,7 @@ const finalTourWorkItems = [
     due_date: null,
     responsible_human_actor_id: human.id,
     responsible_human: { actor_id: human.id, display_name: human.display_name },
+    active_assignment: null,
     active_executor: null,
     shared_reviewers: [],
     labels: ['frontend'],
@@ -238,7 +250,14 @@ const finalTourAgents = [
     heartbeat_interval_seconds: 30,
     is_active: true,
     revision: 3,
-    team_access: [finalTourTeamAccess('agent/1')],
+    team_access: [
+      finalTourTeamAccess('agent/1'),
+      {
+        ...finalTourTeamAccess('agent/1'),
+        team_id: 'team-1',
+        approved_capabilities: ['work:read', 'work:write'],
+      },
+    ],
   },
   {
     id: 'agent/2',
