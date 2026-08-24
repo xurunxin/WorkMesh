@@ -84,6 +84,89 @@ const pairConnection = async (
     token: redeemed.json<{ installation_token: string }>().installation_token,
   }
 }
+type StaleSelfClaimFixture = {
+  workspaceId: string
+  paired: Awaited<ReturnType<typeof pairConnection>>
+  agentId: string
+  agentActorId: string
+  workItem: { id: string; revision: number }
+  delegationId: string
+  staleSessionId: string
+  leaseId: string
+  inboxId: string
+}
+const createReadyWorkItem = async (title: string) => {
+  const created = await human('POST', '/api/v1/work-items', {
+    teamId,
+    title,
+    statusId: readyId,
+    priority: 'high',
+    labels: [],
+    responsibleHumanActorId: actorId,
+  })
+  expect(created.statusCode, created.body).toBe(200)
+  return created.json<{ id: string; revision: number }>()
+}
+const prepareStaleSelfClaimFixture = async (slug: string): Promise<StaleSelfClaimFixture> => {
+  const paired = await pairConnection(slug)
+  const workspaceId = (await db.query<{ workspace_id: string }>(
+    'SELECT workspace_id FROM actors WHERE id=$1',
+    [actorId],
+  )).rows[0]!.workspace_id
+  const agent = (await db.query<{ agent_id: string; agent_actor_id: string }>(
+    'SELECT agent_id,agent_actor_id FROM agent_connections WHERE id=$1',
+    [paired.connection.id],
+  )).rows[0]!
+  const workItem = await createReadyWorkItem(`Stale self-claim recovery ${slug}`)
+  const claimed = await coordinator(
+    paired.token,
+    'POST',
+    `/api/v1/work-items/${workItem.id}/claim`,
+    {},
+    workItem.revision,
+  )
+  expect(claimed.statusCode, claimed.body).toBe(200)
+  const claim = claimed.json<{ delegation: { id: string }; session: { id: string } }>()
+  await db.query(
+    `UPDATE agent_sessions
+        SET state='stale',state_reason='heartbeat timeout fixture',
+            last_heartbeat_at=now()-interval '1 hour',revision=revision+1,updated_at=now()
+      WHERE id=$1 AND session_kind='execution'`,
+    [claim.session.id],
+  )
+  const lease = (await db.query<{ id: string }>(
+    `INSERT INTO leases(
+       workspace_id,session_id,holder_actor_id,resource_type,resource_id,
+       kind,status,reason,expires_at,heartbeat_at,version
+     ) VALUES($1,$2,$3,'work_item',$4,'exclusive','active',
+       'stale recovery fixture',now()+interval '1 hour',now(),1)
+     RETURNING id`,
+    [workspaceId, claim.session.id, agent.agent_actor_id, workItem.id],
+  )).rows[0]!
+  const inbox = (await db.query<{ id: string }>(
+    `INSERT INTO inbox_items(
+       workspace_id,recipient_human_actor_id,session_id,kind,source_type,source_id,payload
+     ) VALUES($1,$2,$3,'session_stale','agent_session',$3,'{}'::jsonb)
+     RETURNING id`,
+    [workspaceId, actorId, claim.session.id],
+  )).rows[0]!
+  expect((await db.query<{ count: number }>(
+    `SELECT count(*)::int AS count FROM agent_session_tokens
+      WHERE session_id=$1 AND revoked_at IS NULL`,
+    [claim.session.id],
+  )).rows[0]?.count).toBeGreaterThan(0)
+  return {
+    workspaceId,
+    paired,
+    agentId: agent.agent_id,
+    agentActorId: agent.agent_actor_id,
+    workItem,
+    delegationId: claim.delegation.id,
+    staleSessionId: claim.session.id,
+    leaseId: lease.id,
+    inboxId: inbox.id,
+  }
+}
 beforeAll(async () => {
   await applyMigrations(db); await db.query('TRUNCATE auth_idempotency_records,workspaces CASCADE')
   await listenApi()
@@ -2632,6 +2715,263 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       [cursorBefore, rejectedWorkItemId],
     )).rows[0]?.count).toBe(0)
     expect(paired.connection.id).toMatch(/^[0-9a-f-]{36}$/)
+  })
+
+  it('recovers one stale self-claim assignment atomically and converges concurrent claims', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`recover-${randomUUID().slice(0, 8)}`)
+    const claimable = await coordinator(
+      fixture.paired.token,
+      'GET',
+      '/api/v1/work-items?claimable=true&limit=200',
+    )
+    expect(claimable.statusCode, claimable.body).toBe(200)
+    expect(claimable.json<{ items: Array<{ id: string }> }>().items.map(item => item.id))
+      .toContain(fixture.workItem.id)
+
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const attempts = await Promise.all(Array.from({ length: 16 }, (_, index) => app.inject({
+      method: 'POST',
+      url: `/api/v1/work-items/${fixture.workItem.id}/claim`,
+      payload: {},
+      headers: {
+        'x-workmesh-installation-token': fixture.paired.token,
+        'idempotency-key': `stale-recovery-${fixture.workItem.id}-${index}`,
+        'if-match': `"revision-${fixture.workItem.revision}"`,
+      },
+    })))
+    expect(attempts.filter(attempt => attempt.statusCode === 200)).toHaveLength(1)
+    expect(attempts.filter(attempt => attempt.statusCode === 409)).toHaveLength(15)
+    expect(attempts.filter(attempt => ![200, 409].includes(attempt.statusCode))).toHaveLength(0)
+
+    const successful = attempts.find(attempt => attempt.statusCode === 200)!
+    const successfulBody = successful.json<{
+      delegation: { id: string }
+      session: { id: string }
+    }>()
+    expect(successfulBody.delegation.id).toBe(fixture.delegationId)
+    expect(successfulBody.session.id).not.toBe(fixture.staleSessionId)
+
+    const sessions = (await db.query<{
+      delegation_id: string
+      id: string
+      state: string
+      retry_of_session_id: string | null
+    }>(
+      `SELECT delegation_id,id,state,retry_of_session_id
+         FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [fixture.delegationId],
+    )).rows
+    expect(sessions).toEqual([{
+      delegation_id: fixture.delegationId,
+      id: successfulBody.session.id,
+      state: 'queued',
+      retry_of_session_id: fixture.staleSessionId,
+    }])
+    expect((await db.query<{
+      state: string
+      state_reason: string
+      ended_at: Date | null
+    }>(
+      'SELECT state,state_reason,ended_at FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]).toMatchObject({
+      state: 'canceled',
+      state_reason: 'replaced by stale self-claim recovery',
+    })
+    expect((await db.query<{ ended_at: Date | null }>(
+      'SELECT ended_at FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]?.ended_at).not.toBeNull()
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_session_tokens
+        WHERE session_id=$1 AND revoked_at IS NULL`,
+      [fixture.staleSessionId],
+    )).rows[0]?.count).toBe(0)
+    expect((await db.query<{ status: string; released_at: Date | null }>(
+      'SELECT status,released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0]).toMatchObject({ status: 'released' })
+    expect((await db.query<{ released_at: Date | null }>(
+      'SELECT released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0]?.released_at).not.toBeNull()
+    expect((await db.query<{ status: string; resolved_at: Date | null }>(
+      'SELECT status,resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]).toMatchObject({ status: 'resolved' })
+    expect((await db.query<{ resolved_at: Date | null }>(
+      'SELECT resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]?.resolved_at).not.toBeNull()
+
+    const recoveryEvents = (await db.query<{ event_type: string; outbox_id: string }>(
+      `SELECT event.event_type,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint
+          AND event.event_type=ANY($2::text[])
+        ORDER BY event.cursor`,
+      [cursorBefore, ['agent.session.state_changed', 'lease.released', 'agent.session.created']],
+    )).rows
+    expect(recoveryEvents.map(event => event.event_type)).toEqual([
+      'agent.session.state_changed',
+      'lease.released',
+      'agent.session.created',
+    ])
+    expect(recoveryEvents.every(event => Boolean(event.outbox_id))).toBe(true)
+  })
+
+  it('does not recover mixed stale and queued assignments or a stale assignment owned by another Agent', async () => {
+    const mixed = await prepareStaleSelfClaimFixture(`mixed-${randomUUID().slice(0, 8)}`)
+    await db.query(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state
+       ) VALUES($1,$2,$3,$4,$5,$6,'queued')`,
+      [mixed.workspaceId, teamId, mixed.agentId, mixed.agentActorId,
+        mixed.delegationId, mixed.workItem.id],
+    )
+    const mixedBefore = (await db.query<{
+      id: string
+      state: string
+      state_reason: string | null
+      retry_of_session_id: string | null
+    }>(
+      `SELECT id,state,state_reason,retry_of_session_id
+         FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'
+        ORDER BY id`,
+      [mixed.delegationId],
+    )).rows
+    const mixedClaim = await coordinator(
+      mixed.paired.token,
+      'POST',
+      `/api/v1/work-items/${mixed.workItem.id}/claim`,
+      {},
+      mixed.workItem.revision,
+    )
+    expect(mixedClaim.statusCode, mixedClaim.body).toBe(409)
+    expect(mixedClaim.json<{ error: { code: string } }>().error.code)
+      .toBe('WORK_ITEM_ALREADY_ASSIGNED')
+    expect((await db.query<{
+      id: string
+      state: string
+      state_reason: string | null
+      retry_of_session_id: string | null
+    }>(
+      `SELECT id,state,state_reason,retry_of_session_id
+         FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'
+        ORDER BY id`,
+      [mixed.delegationId],
+    )).rows).toEqual(mixedBefore)
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL',
+      [mixed.staleSessionId],
+    )).rows[0]?.count).toBeGreaterThan(0)
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM leases WHERE id=$1',
+      [mixed.leaseId],
+    )).rows[0]?.status).toBe('active')
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM inbox_items WHERE id=$1',
+      [mixed.inboxId],
+    )).rows[0]?.status).toBe('open')
+
+    const foreign = await pairConnection(`foreign-stale-${randomUUID().slice(0, 8)}`)
+    const foreignClaim = await coordinator(
+      foreign.token,
+      'POST',
+      `/api/v1/work-items/${mixed.workItem.id}/claim`,
+      {},
+      mixed.workItem.revision,
+    )
+    expect(foreignClaim.statusCode, foreignClaim.body).toBe(409)
+    expect(foreignClaim.json<{ error: { code: string } }>().error.code)
+      .toBe('WORK_ITEM_ALREADY_ASSIGNED')
+    const foreignClaimable = await coordinator(
+      foreign.token,
+      'GET',
+      '/api/v1/work-items?claimable=true&limit=200',
+    )
+    expect(foreignClaimable.statusCode, foreignClaimable.body).toBe(200)
+    expect(foreignClaimable.json<{ items: Array<{ id: string }> }>().items.map(item => item.id))
+      .not.toContain(mixed.workItem.id)
+  })
+
+  it('rolls back stale recovery mutations when replacement Session admission fails', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`rollback-${randomUUID().slice(0, 8)}`)
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await db.query('DROP TRIGGER IF EXISTS stage5_fail_stale_recovery ON agent_sessions')
+    await db.query('DROP FUNCTION IF EXISTS stage5_fail_stale_recovery()')
+    await db.query(`CREATE FUNCTION stage5_fail_stale_recovery() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${fixture.workItem.id}'::uuid
+           AND NEW.session_kind='execution' AND NEW.state='queued' THEN
+          RAISE EXCEPTION 'stale recovery rollback fixture';
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_fail_stale_recovery
+      BEFORE INSERT ON agent_sessions FOR EACH ROW EXECUTE FUNCTION stage5_fail_stale_recovery()`)
+    try {
+      const failed = await coordinator(
+        fixture.paired.token,
+        'POST',
+        `/api/v1/work-items/${fixture.workItem.id}/claim`,
+        {},
+        fixture.workItem.revision,
+      )
+      expect(failed.statusCode, failed.body).toBe(500)
+    } finally {
+      await db.query('DROP TRIGGER IF EXISTS stage5_fail_stale_recovery ON agent_sessions')
+      await db.query('DROP FUNCTION IF EXISTS stage5_fail_stale_recovery()')
+    }
+    expect((await db.query<{
+      state: string
+      state_reason: string | null
+      ended_at: Date | null
+    }>(
+      'SELECT state,state_reason,ended_at FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]).toMatchObject({
+      state: 'stale',
+      state_reason: 'heartbeat timeout fixture',
+      ended_at: null,
+    })
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL',
+      [fixture.staleSessionId],
+    )).rows[0]?.count).toBeGreaterThan(0)
+    expect((await db.query<{ status: string; released_at: Date | null }>(
+      'SELECT status,released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0]).toMatchObject({ status: 'active', released_at: null })
+    expect((await db.query<{ status: string; resolved_at: Date | null }>(
+      'SELECT status,resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]).toMatchObject({ status: 'open', resolved_at: null })
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count
+         FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'`,
+      [fixture.delegationId],
+    )).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint
+          AND event.event_type IN ('agent.session.state_changed','lease.released','agent.session.created')`,
+      [cursorBefore],
+    )).rows[0]?.count).toBe(0)
   })
 
   it('lists Connections for Workspace Admins with cursor pagination and no credential material', async () => {
