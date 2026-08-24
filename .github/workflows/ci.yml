@@ -464,8 +464,8 @@ jobs:
         with:
           name: e2e-playwright-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            playwright-report
-            test-results
+            apps/web/playwright-report
+            apps/web/test-results
           if-no-files-found: error
           retention-days: 14
 

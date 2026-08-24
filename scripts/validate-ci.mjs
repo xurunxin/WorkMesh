@@ -190,9 +190,9 @@ if (playwrightUpload) {
   )
   requireCondition(
     playwrightUpload.path === '|' &&
-      playwrightUpload.section.includes('            playwright-report') &&
-      playwrightUpload.section.includes('            test-results'),
-    `e2e/${playwrightArtifact} must upload playwright-report and test-results`,
+      playwrightUpload.section.includes('            apps/web/playwright-report') &&
+      playwrightUpload.section.includes('            apps/web/test-results'),
+    `e2e/${playwrightArtifact} must upload Playwright evidence from the web package directory`,
   )
   requireCondition(
     playwrightUpload.missingFiles === 'error',
