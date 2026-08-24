@@ -3137,6 +3137,102 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     )).rows[0]?.resolved_at).not.toBeNull()
   })
 
+  it('replays the same stale self-claim idempotency key with the same replacement Session and exchange token', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`replay-${randomUUID().slice(0, 8)}`)
+    const idempotencyKey = `stale-recovery-replay-${fixture.workItem.id}`
+    const claim = () => app.inject({
+      method: 'POST',
+      url: `/api/v1/work-items/${fixture.workItem.id}/claim`,
+      payload: {},
+      headers: {
+        'x-workmesh-installation-token': fixture.paired.token,
+        'idempotency-key': idempotencyKey,
+        'if-match': `"revision-${fixture.workItem.revision}"`,
+      },
+    })
+    const first = await claim()
+    const replay = await claim()
+    expect(first.statusCode, first.body).toBe(200)
+    expect(replay.statusCode, replay.body).toBe(200)
+    expect(replay.body).toBe(first.body)
+    const firstBody = first.json<{
+      delegation: { id: string }
+      session: { id: string }
+      exchangeToken: string
+    }>()
+    const replayBody = replay.json<typeof firstBody>()
+    expect(firstBody.delegation.id).toBe(fixture.delegationId)
+    expect(firstBody.session.id).not.toBe(fixture.staleSessionId)
+    expect(firstBody.exchangeToken).toEqual(expect.any(String))
+    expect(replayBody).toEqual(firstBody)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count
+         FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [fixture.delegationId],
+    )).rows[0]?.count).toBe(1)
+  })
+
+  it('resolves stale inbox and releases its lease when Human forced assignment replaces the same Agent', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`forced-stale-${randomUUID().slice(0, 8)}`)
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const forced = await human(
+      'POST',
+      `/api/v1/work-items/${fixture.workItem.id}/agent-session`,
+      {
+        agentId: fixture.agentId,
+        principalHumanActorId: actorId,
+        role: 'executor',
+        requestedCapabilities: ['work:read', 'work:write'],
+        initialPrompt: 'Human forced replacement of stale self-claim.',
+        budget: {},
+      },
+      fixture.workItem.revision,
+    )
+    expect(forced.statusCode, forced.body).toBe(200)
+    expect((await db.query<{ state: string; state_reason: string; ended_at: Date | null }>(
+      'SELECT state,state_reason,ended_at FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]).toMatchObject({
+      state: 'canceled',
+      state_reason: 'replaced by Human forced assignment',
+    })
+    expect((await db.query<{ ended_at: Date | null }>(
+      'SELECT ended_at FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]?.ended_at).not.toBeNull()
+    expect((await db.query<{ status: string; released_at: Date | null }>(
+      'SELECT status,released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0]).toMatchObject({ status: 'released' })
+    expect((await db.query<{ released_at: Date | null }>(
+      'SELECT released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0]?.released_at).not.toBeNull()
+    expect((await db.query<{ status: string; resolved_at: Date | null }>(
+      'SELECT status,resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]).toMatchObject({ status: 'resolved' })
+    expect((await db.query<{ resolved_at: Date | null }>(
+      'SELECT resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]?.resolved_at).not.toBeNull()
+    const leaseEvents = (await db.query<{ event_type: string; outbox_id: string }>(
+      `SELECT event.event_type,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint AND event.event_type='lease.released'
+          AND event.aggregate_id=$2
+        ORDER BY event.cursor`,
+      [cursorBefore, fixture.leaseId],
+    )).rows
+    expect(leaseEvents).toHaveLength(1)
+    expect(leaseEvents[0]?.outbox_id).toEqual(expect.any(String))
+  })
+
   it('lists Connections for Workspace Admins with cursor pagination and no credential material', async () => {
     for (const name of ['Discovery alpha', 'Discovery beta']) {
       const suffix = randomUUID().replaceAll('-', '').slice(0, 8)
