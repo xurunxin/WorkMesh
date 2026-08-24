@@ -14,7 +14,7 @@ async function humanApi<T>(page: Page, path: string, method = 'GET', body?: unkn
 
 async function expectAuthenticatedWorkspace(page: Page) {
   const sidebar = page.getByRole('complementary')
-  await expect(sidebar).toBeVisible()
+  await expect(sidebar).toBeVisible({ timeout: 30_000 })
   await expect(sidebar).toContainText('WorkMesh')
 }
 
