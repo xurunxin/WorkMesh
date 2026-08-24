@@ -331,6 +331,14 @@ describe('agent control requests', () => {
     expect(isCurrentAgentDelegationScope(currentScope, scopeA)).toBe(false)
     expect(isCurrentAgentDelegationScope(currentScope, scopeB)).toBe(true)
   })
+
+  it('keeps the delegation display scope stable across a Work Item revision refresh', () => {
+    const scopeAtCreate = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 7, humanActorId: 'human-a' })
+    const scopeAfterRefresh = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 8, humanActorId: 'human-a' })
+
+    expect(scopeAfterRefresh).toBe(scopeAtCreate)
+    expect(isCurrentAgentDelegationScope(scopeAfterRefresh, scopeAtCreate)).toBe(true)
+  })
 })
 
 describe('decideApproval', () => {

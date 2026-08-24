@@ -54,7 +54,10 @@ export const canAgentExecuteWorkForTeam = (agent: Agent, teamId: string): boolea
 }
 
 export type AgentDelegationScope = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string; scopeKey?: string | null }
-export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.scopeKey ?? null, scope.workItemId, scope.workItemTeamId, scope.workItemRevision, scope.humanActorId])
+// A server revision update is a refresh of the same Issue, not a new
+// delegation scope. Keep the revision available to createAgentSession for its
+// If-Match header, but do not use it to invalidate an in-flight projection.
+export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.scopeKey ?? null, scope.workItemId, scope.workItemTeamId, scope.humanActorId])
 export const isCurrentAgentDelegationScope = (currentKey: string, capturedKey: string): boolean => currentKey === capturedKey
 
 export const normalizePlan = (value: Record<string, unknown>): PlanVersion => ({
