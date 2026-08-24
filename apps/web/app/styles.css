@@ -939,7 +939,6 @@ main#workmesh-main:focus-visible {
 @media (max-width: 760px) {
   .app-shell button,
   .app-shell select,
-  .app-shell textarea,
   .app-shell summary { min-width: 44px; min-height: 44px; }
   .app-shell .wm-button { min-width: 44px; min-height: 44px; }
   .app-shell input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='date']):not([type='time']):not([type='color']) { min-height: 42px; }
