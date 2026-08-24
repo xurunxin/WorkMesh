@@ -5,7 +5,7 @@ import { AgentWorkPanel, useAgentDelegationController, type AgentDelegationContr
 import { createAgentSession, type Agent, type AgentSession } from './lib/agents'
 import { LocaleProvider } from './lib/i18n'
 
-const paginationState = vi.hoisted(() => ({ agentNextCursor: null as string | null }))
+const paginationState = vi.hoisted(() => ({ agentNextCursor: null as string | null, sessionsInitialized: true, sessionsLoading: false }))
 
 vi.mock('./lib/agents', async () => {
   const actual = await vi.importActual<typeof import('./lib/agents')>('./lib/agents')
@@ -19,8 +19,8 @@ vi.mock('./lib/pagination', async () => {
     usePagedApiList: vi.fn((path: string) => ({
       items: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? [] : [agent],
       nextCursor: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? null : paginationState.agentNextCursor,
-      initialized: true,
-      loading: false,
+      initialized: path.includes('/agent-sessions?') ? paginationState.sessionsInitialized : true,
+      loading: path.includes('/agent-sessions?') ? paginationState.sessionsLoading : false,
       loadingMore: false,
       error: null,
       refresh: vi.fn(async () => undefined),
@@ -52,6 +52,8 @@ describe('useAgentDelegationController', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     paginationState.agentNextCursor = null
+    paginationState.sessionsInitialized = true
+    paginationState.sessionsLoading = false
     agent.team_access![0]!.approved_capabilities = ['work:read', 'work:write']
   })
   afterEach(() => cleanup())
@@ -132,6 +134,22 @@ describe('useAgentDelegationController', () => {
     fireEvent.click(disclosure)
     await waitFor(() => expect(screen.getByRole('combobox')).toHaveFocus())
     expect(disclosure).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('explains forced replacement and does not render a false empty state while sessions load', () => {
+    paginationState.sessionsInitialized = false
+    paginationState.sessionsLoading = true
+    const props = { workItemId: 'work-a', workItemTeamId: 'team-a', workItemRevision: 1, humanActorId: 'human-a', scopeKey: 'authority-a' }
+    const { result } = renderHook(() => useAgentDelegationController(props))
+
+    render(<LocaleProvider><AgentWorkPanel activeExecutorName="Agent Previous" controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+
+    expect(screen.getByRole('button', { name: '强制改派' })).toBeEnabled()
+    expect(screen.getByText(/人类委派是强制任务分配/)).toBeVisible()
+    expect(screen.getByText(/将停止 Agent Previous 的当前执行/)).toBeVisible()
+    expect(screen.getByTestId('sessions-loading')).toHaveTextContent('正在加载智能体执行记录')
+    expect(screen.queryByText('尚未委派任何智能体 Session。')).not.toBeInTheDocument()
+    expect(screen.getByTestId('live-agent-panel')).toHaveAttribute('aria-busy', 'true')
   })
 
   it.each([

@@ -140,6 +140,32 @@ describe('WorkItemDetail focus on revision conflict', () => {
 })
 
 describe('WorkItemDetail full-page heading ownership', () => {
+  it('shows the reason beside an unavailable Human assignment action', () => {
+    render(
+      <WorkItemDetail
+        agentAction={{ disabled: true, label: 'Choose an Agent', onClick: noop, reason: 'No eligible Agent has both required capabilities.' }}
+        copy={undefined}
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    const button = screen.getByRole('button', { name: 'Choose an Agent' })
+    const hint = screen.getByText('No eligible Agent has both required capabilities.')
+    expect(button).toBeDisabled()
+    expect(hint).toBeVisible()
+    expect(hint).not.toHaveClass('wm-visually-hidden')
+    expect(button).toHaveAttribute('aria-describedby', hint.id)
+  })
+
   it('owns exactly one h1 named for the active Issue without changing the visible key toolbar', () => {
     render(
       <WorkItemDetail

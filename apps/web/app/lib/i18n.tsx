@@ -2537,6 +2537,11 @@ export type AgentWorkCopy = {
   delegateFormStart: string
   oneClickDelegate: string
   oneClickPrompt: (title: string) => string
+  forceReassign: string
+  forceAssign: string
+  chooseReplacementAgent: string
+  forcedAssignmentPolicy: string
+  replacementHint: (agent: string) => string
   advancedOptions: string
   chooseAgent: string
   openAgents: string
@@ -2548,6 +2553,7 @@ export type AgentWorkCopy = {
   noResponsible: string
   refresh: string
   noSessions: string
+  loadingSessions: string
   blockingReasonMissing: string
   heartbeat: (date: string) => string
   resume: string
@@ -2587,6 +2593,11 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormStart: '启动 Session',
     oneClickDelegate: '一键委派',
     oneClickPrompt: title => `请接手这个 Issue${title ? `“${title}”` : ''}，先检查上下文和验收条件，然后推进到可交付状态。`,
+    forceReassign: '强制改派',
+    forceAssign: '强制分配',
+    chooseReplacementAgent: '选择改派智能体',
+    forcedAssignmentPolicy: '人类委派是强制任务分配；未被委派的 Issue 可由智能体自行接手。',
+    replacementHint: agent => `将停止 ${agent} 的当前执行，并由你选择的智能体接手。`,
     advancedOptions: '高级配置',
     chooseAgent: '选择智能体',
     openAgents: '打开智能体管理',
@@ -2598,6 +2609,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     noResponsible: '请先设置人类负责人；负责人对结果负责，智能体负责执行。',
     refresh: '刷新状态',
     noSessions: '尚未委派任何智能体 Session。',
+    loadingSessions: '正在加载智能体执行记录…',
     blockingReasonMissing: '未报告阻塞原因。',
     heartbeat: date => `心跳：${date}`,
     resume: '继续',
@@ -2635,6 +2647,11 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormStart: 'Start session',
     oneClickDelegate: 'Delegate now',
     oneClickPrompt: title => `Take over this Issue${title ? ` “${title}”` : ''}, review its context and acceptance criteria, then move it toward a deliverable state.`,
+    forceReassign: 'Force reassign',
+    forceAssign: 'Force assign',
+    chooseReplacementAgent: 'Choose replacement agent',
+    forcedAssignmentPolicy: 'Human delegation is a forced assignment. Unassigned Issues remain available for agents to claim.',
+    replacementHint: agent => `This stops ${agent}'s current execution and hands the Issue to the Agent you choose.`,
     advancedOptions: 'Advanced options',
     chooseAgent: 'Choose an agent',
     openAgents: 'Open Agent management',
@@ -2646,6 +2663,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     noResponsible: 'Set a responsible Human first. The Human owns the outcome; the Agent owns execution.',
     refresh: 'Refresh status',
     noSessions: 'No delegated agent session yet.',
+    loadingSessions: 'Loading agent executions…',
     blockingReasonMissing: 'No blocking reason reported.',
     heartbeat: date => `Heartbeat: ${date}`,
     resume: 'Resume',

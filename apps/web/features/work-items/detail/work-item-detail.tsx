@@ -136,7 +136,7 @@ type Props = {
   conflict?: StructuredDetailError | null
   supplemental: ReactNode
   agentPanel?: ReactNode
-  agentAction?: { label: string; onClick: () => void; disabled?: boolean; reason?: string }
+  agentAction?: { label: string; onClick: () => void; disabled?: boolean; reason?: string; hint?: string }
   resetKey: number
   draftIdentity: Omit<DraftIdentity, 'field' | 'baseRevision'>
   onClose: () => void
@@ -221,8 +221,9 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     } finally { setSaving(false) }
   }
   const set = <Key extends keyof WorkItemDetailDraft>(key: Key, value: WorkItemDetailDraft[Key]) => setDraft(current => ({ ...current, [key]: value }))
+  const agentActionHint = agentAction?.hint ?? agentAction?.reason
   const body = <div className="work-item-detail" data-mode={mode} data-testid="work-item-detail">
-    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div className="work-item-detail-toolbar-actions">{agentAction && <Button aria-describedby={agentAction.reason ? agentActionReasonId : undefined} disabled={agentAction.disabled} onClick={() => { setActiveTab('agent'); agentAction.onClick() }} title={agentAction.reason} type="button" variant="primary">{agentAction.label}</Button>}{agentAction?.reason && <span className="wm-visually-hidden" id={agentActionReasonId}>{agentAction.reason}</span>}{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
+    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div className="work-item-detail-toolbar-actions">{agentAction && <div className="work-item-detail-agent-action"><Button aria-describedby={agentActionHint ? agentActionReasonId : undefined} disabled={agentAction.disabled} onClick={() => { setActiveTab('agent'); agentAction.onClick() }} title={agentActionHint} type="button" variant="primary">{agentAction.label}</Button>{agentActionHint && <small id={agentActionReasonId}>{agentActionHint}</small>}</div>}{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
     {error?.httpStatus === 403 ? <ForbiddenState description={errorDescription(error, text)} title={text.accessDenied} /> : error && <ErrorState actionLabel={text.reloadLatest} description={errorDescription(error, text)} onAction={() => confirmDiscard(onReloadLatest)} title={error.httpStatus === 404 ? text.notFound : error.code === 'NETWORK_UNAVAILABLE' ? text.offline : text.couldNotLoad} />}
     {conflict && <ConflictState actionLabel={text.reloadLatest} description={`${errorDescription(conflict, text)} ${text.conflictIntentPreserved}`} onAction={onReloadLatest} title={text.serverConflictTitle} />}
     <div className="work-item-detail-layout">
