@@ -74,7 +74,7 @@ vi.mock('./agent-work-panel', () => ({
   useAgentDelegationController: () => ({
     scopeKey: 'test-authority', agentsPage: { items: [], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
     eligibleAgents: [], directAgent: undefined, canDirect: false, canChoose: false, disabled: true, reason: 'no_eligible_agent',
-    chooserRequest: 0, requestChooser: vi.fn(), create: vi.fn(), error: null, busy: false, latest: null,
+    chooserRequest: 0, requestChooser: vi.fn(), consumeChooserRequest: vi.fn(), create: vi.fn(), error: null, busy: false, latest: null,
     clearLatest: vi.fn(), clearError: vi.fn(),
   }),
 }))

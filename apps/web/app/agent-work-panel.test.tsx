@@ -5,6 +5,8 @@ import { AgentWorkPanel, useAgentDelegationController, type AgentDelegationContr
 import { createAgentSession, type Agent, type AgentSession } from './lib/agents'
 import { LocaleProvider } from './lib/i18n'
 
+const paginationState = vi.hoisted(() => ({ agentNextCursor: null as string | null }))
+
 vi.mock('./lib/agents', async () => {
   const actual = await vi.importActual<typeof import('./lib/agents')>('./lib/agents')
   return { ...actual, createAgentSession: vi.fn() }
@@ -16,7 +18,7 @@ vi.mock('./lib/pagination', async () => {
     ...actual,
     usePagedApiList: vi.fn((path: string) => ({
       items: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? [] : [agent],
-      nextCursor: null,
+      nextCursor: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? null : paginationState.agentNextCursor,
       initialized: true,
       loading: false,
       loadingMore: false,
@@ -47,7 +49,10 @@ const deferred = <T,>() => {
 }
 
 describe('useAgentDelegationController', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    paginationState.agentNextCursor = null
+  })
   afterEach(() => cleanup())
 
   it('clears pending Issue A state before the first Issue B render and ignores the late result', async () => {
@@ -82,11 +87,26 @@ describe('useAgentDelegationController', () => {
     expect(result.current.reason).toBeNull()
   })
 
+  it('opens the chooser while more Agent pages remain without guessing a direct default', async () => {
+    paginationState.agentNextCursor = 'agents-page-2'
+    const props = { workItemId: 'work-a', workItemTeamId: 'team-a', workItemRevision: 1, humanActorId: 'human-a', scopeKey: 'authority-a' }
+    const { result } = renderHook(() => useAgentDelegationController(props))
+    expect(result.current.canDirect).toBe(false)
+    expect(result.current.canChoose).toBe(true)
+    expect(result.current.disabled).toBe(false)
+    expect(result.current.reason).toBeNull()
+
+    render(<LocaleProvider><AgentWorkPanel controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    fireEvent.click(screen.getByRole('button', { name: '选择智能体' }))
+    await waitFor(() => expect(screen.getByRole('combobox')).toHaveFocus())
+    expect(screen.getByTestId('delegate-agent-form')).not.toHaveAttribute('hidden')
+  })
+
   it('focuses the Agent selector when the disclosure opens', async () => {
     const controller: AgentDelegationController = {
       scopeKey: 'authority-a:work-a', agentsPage: { items: [agent], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
       eligibleAgents: [agent], directAgent: agent, canDirect: true, canChoose: true, disabled: false, reason: null,
-      chooserRequest: 0, requestChooser: vi.fn(), create: vi.fn(async () => session), error: null, busy: false, latest: null,
+      chooserRequest: 0, requestChooser: vi.fn(), consumeChooserRequest: vi.fn(), create: vi.fn(async () => session), error: null, busy: false, latest: null,
       clearLatest: vi.fn(), clearError: vi.fn(),
     }
     render(<LocaleProvider><AgentWorkPanel controller={controller} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
@@ -105,7 +125,7 @@ describe('useAgentDelegationController', () => {
     const controller: AgentDelegationController = {
       scopeKey: `authority-a:${reason}`, agentsPage: { items: [], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
       eligibleAgents: [], directAgent: undefined, canDirect: false, canChoose: false, disabled: true, reason,
-      chooserRequest: 0, requestChooser: vi.fn(), create: vi.fn(async () => session), error: null, busy: false, latest: null,
+      chooserRequest: 0, requestChooser: vi.fn(), consumeChooserRequest: vi.fn(), create: vi.fn(async () => session), error: null, busy: false, latest: null,
       clearLatest: vi.fn(), clearError: vi.fn(),
     }
     render(<LocaleProvider><AgentWorkPanel controller={controller} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId={humanActorId} /></LocaleProvider>)
@@ -114,5 +134,23 @@ describe('useAgentDelegationController', () => {
     expect(primary).toHaveAttribute('title')
     expect(screen.getByTestId(expectedReason)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '高级配置' })).toBeDisabled()
+  })
+
+  it('consumes a Header chooser request so a same-scope remount stays closed', async () => {
+    let chooserRequest = 1
+    const consumeChooserRequest = vi.fn(() => { chooserRequest = 0 })
+    const controller = (): AgentDelegationController => ({
+      scopeKey: 'authority-a:work-a', agentsPage: { items: [agent], nextCursor: 'agents-page-2', initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
+      eligibleAgents: [agent], directAgent: undefined, canDirect: false, canChoose: true, disabled: false, reason: null,
+      chooserRequest, requestChooser: vi.fn(), consumeChooserRequest, create: vi.fn(async () => session), error: null, busy: false, latest: null,
+      clearLatest: vi.fn(), clearError: vi.fn(),
+    })
+    const first = render(<LocaleProvider><AgentWorkPanel controller={controller()} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    await waitFor(() => expect(consumeChooserRequest).toHaveBeenCalledOnce())
+    expect(screen.getByTestId('delegate-agent-form')).not.toHaveAttribute('hidden')
+    first.unmount()
+
+    render(<LocaleProvider><AgentWorkPanel controller={controller()} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    expect(screen.getByTestId('delegate-agent-form')).toHaveAttribute('hidden')
   })
 })

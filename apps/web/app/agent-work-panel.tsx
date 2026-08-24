@@ -23,6 +23,7 @@ export type AgentDelegationController = {
   reason: AgentDelegationAvailabilityReason
   chooserRequest: number
   requestChooser: () => void
+  consumeChooserRequest: () => void
   create: (agent: Agent, prompt: string) => Promise<AgentSession>
   error: unknown
   busy: boolean
@@ -54,16 +55,16 @@ export function useAgentDelegationController(input: DelegationControllerInput): 
   const eligibleAgents = useMemo(() => agentsPage.items.filter(agent => agent.is_active && input.workItemTeamId !== null && approvedAgentCapabilitiesForTeam(agent, input.workItemTeamId).length > 0), [agentsPage.items, input.workItemTeamId])
   const agentsComplete = agentsPage.initialized && !agentsPage.loading && !agentsPage.loadingMore && agentsPage.nextCursor === null
   const canDirect = Boolean(input.humanActorId && agentsComplete && eligibleAgents.length === 1)
-  const canChoose = Boolean(input.humanActorId && agentsComplete && eligibleAgents.length > 0)
+  const canChoose = Boolean(input.humanActorId && agentsPage.initialized && !agentsPage.error && (eligibleAgents.length > 0 || agentsPage.nextCursor !== null))
   const reason: AgentDelegationAvailabilityReason = scopedState.busy
     ? 'delegating'
     : !input.humanActorId
       ? 'missing_responsible_human'
       : agentsPage.error
         ? 'agents_unavailable'
-        : !agentsComplete
+        : !agentsPage.initialized || (!canChoose && (agentsPage.loading || agentsPage.loadingMore))
           ? 'loading_agents'
-          : eligibleAgents.length === 0
+          : agentsComplete && eligibleAgents.length === 0
             ? 'no_eligible_agent'
             : null
   const disabled = scopedState.busy || (!canDirect && !canChoose)
@@ -86,6 +87,9 @@ export function useAgentDelegationController(input: DelegationControllerInput): 
   const requestChooser = useCallback(() => setState(current => current.scopeKey === generationKey
     ? { ...current, chooserRequest: current.chooserRequest + 1 }
     : { ...emptyDelegationControllerState(generationKey), chooserRequest: 1 }), [generationKey])
+  const consumeChooserRequest = useCallback(() => setState(current => current.scopeKey === generationKey && current.chooserRequest !== 0
+    ? { ...current, chooserRequest: 0 }
+    : current), [generationKey])
   useEffect(() => {
     setState(emptyDelegationControllerState(generationKey))
   }, [generationKey])
@@ -100,6 +104,7 @@ export function useAgentDelegationController(input: DelegationControllerInput): 
     reason,
     chooserRequest: scopedState.chooserRequest,
     requestChooser,
+    consumeChooserRequest,
     create,
     error: scopedState.error,
     busy: scopedState.busy,
@@ -188,7 +193,11 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
     setPrompt('')
     setShowDelegate(false)
   }, [controller.scopeKey])
-  useEffect(() => { if (controller.chooserRequest > 0) setShowDelegate(true) }, [controller.chooserRequest])
+  useEffect(() => {
+    if (controller.chooserRequest <= 0) return
+    setShowDelegate(true)
+    controller.consumeChooserRequest()
+  }, [controller.chooserRequest, controller.consumeChooserRequest])
   useEffect(() => {
     if (displayedShowDelegate) agentSelectRef.current?.focus()
   }, [displayedShowDelegate])
