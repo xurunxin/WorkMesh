@@ -59,6 +59,9 @@ Implementation
   exchange execution authentication through the existing endpoint in a second
   short transaction.
 - Add Agent SDK method and MCP `list_claimable_work_items` / `claim_work_item`.
+- Bridge later stateless MCP execution calls by refreshing exact-Session
+  authority inside each request; return only redacted bridge metadata to the
+  Agent, never a Session token.
 - Return safe assignment/capacity details for recoverable 409 responses.
 
 Tests
@@ -72,6 +75,8 @@ Tests
 - Coordination + first execution succeeds at concurrency 1; second execution is
   the only request rejected.
 - SDK and MCP transport/input/error parity.
+- Two independent MCP request/client instances complete
+  `claim → acknowledge → activity → complete` without changing client config.
 
 Definition of done
 

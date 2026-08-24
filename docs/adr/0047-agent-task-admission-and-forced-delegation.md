@@ -128,11 +128,18 @@ capabilities, revision, assignment, and capacity before writing state, events,
 and outbox.
 
 The claim transaction returns a replayable exchange bootstrap bound to the new
-Session. The MCP adapter exchanges it through the existing token-exchange path
-in a second short transaction and returns the resulting execution
-authentication to the caller. Bootstrap and Session credentials never enter
-events, outbox, activities, or logs. Cancellation before either commit rolls
-that unit back. If a committed response is lost, replay with the same
+Session. The MCP adapter consumes it through the existing token-exchange path
+in a second short transaction and returns only a redacted
+`connection_session_bridge` handle. It never exposes a Session token in an MCP
+tool result.
+
+Remote MCP transport is stateless. For each later execution tool call, the SDK
+uses the authenticated Connection credential to refresh authority for the
+exact requested Session, keeps the resulting Session token only in that request
+instance, and immediately performs the mutation. The refresh cannot select a
+different Agent or Session. Bootstrap and Session credentials never enter MCP
+content, events, outbox, activities, or logs. Cancellation before either commit
+rolls that unit back. If a committed response is lost, replay with the same
 idempotency key recovers the same result; a retry with changed input uses a new
 key. Normal recovery never requires a Human to run a clean command.
 
