@@ -95,9 +95,10 @@ type StaleSelfClaimFixture = {
   leaseId: string
   inboxId: string
 }
-const createReadyWorkItem = async (title: string) => {
+const createReadyWorkItem = async (title: string, projectId?: string) => {
   const created = await human('POST', '/api/v1/work-items', {
     teamId,
+    ...(projectId ? { projectId } : {}),
     title,
     statusId: readyId,
     priority: 'high',
@@ -107,7 +108,7 @@ const createReadyWorkItem = async (title: string) => {
   expect(created.statusCode, created.body).toBe(200)
   return created.json<{ id: string; revision: number }>()
 }
-const prepareStaleSelfClaimFixture = async (slug: string): Promise<StaleSelfClaimFixture> => {
+const prepareStaleSelfClaimFixture = async (slug: string, projectId?: string): Promise<StaleSelfClaimFixture> => {
   const paired = await pairConnection(slug)
   const workspaceId = (await db.query<{ workspace_id: string }>(
     'SELECT workspace_id FROM actors WHERE id=$1',
@@ -117,7 +118,7 @@ const prepareStaleSelfClaimFixture = async (slug: string): Promise<StaleSelfClai
     'SELECT agent_id,agent_actor_id FROM agent_connections WHERE id=$1',
     [paired.connection.id],
   )).rows[0]!
-  const workItem = await createReadyWorkItem(`Stale self-claim recovery ${slug}`)
+  const workItem = await createReadyWorkItem(`Stale self-claim recovery ${slug}`, projectId)
   const claimed = await coordinator(
     paired.token,
     'POST',
@@ -166,6 +167,73 @@ const prepareStaleSelfClaimFixture = async (slug: string): Promise<StaleSelfClai
     leaseId: lease.id,
     inboxId: inbox.id,
   }
+}
+const expectExactScopeClaimRejected = async (fixture: StaleSelfClaimFixture) => {
+  const snapshot = async () => ({
+    delegation: (await db.query<{
+      status: string
+      revision: number
+      capability_scope: string
+    }>(
+      'SELECT status,revision,capability_scope::text FROM delegations WHERE id=$1',
+      [fixture.delegationId],
+    )).rows[0],
+    session: (await db.query<{
+      state: string
+      revision: number
+      retry_of_session_id: string | null
+    }>(
+      'SELECT state,revision,retry_of_session_id FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0],
+    liveTokenCount: (await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL',
+      [fixture.staleSessionId],
+    )).rows[0]?.count,
+    lease: (await db.query<{ status: string; released_at: Date | null }>(
+      'SELECT status,released_at FROM leases WHERE id=$1',
+      [fixture.leaseId],
+    )).rows[0],
+    inbox: (await db.query<{ status: string; resolved_at: Date | null }>(
+      'SELECT status,resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0],
+    executionCount: (await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'`,
+      [fixture.delegationId],
+    )).rows[0]?.count,
+  })
+  const before = await snapshot()
+  const cursorBefore = (await db.query<{ cursor: string }>(
+    'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+  )).rows[0]!.cursor
+  const claimable = await coordinator(
+    fixture.paired.token,
+    'GET',
+    '/api/v1/work-items?claimable=true&limit=200',
+  )
+  expect(claimable.statusCode, claimable.body).toBe(200)
+  expect(claimable.json<{ items: Array<{ id: string }> }>().items.map(item => item.id))
+    .not.toContain(fixture.workItem.id)
+  const rejected = await coordinator(
+    fixture.paired.token,
+    'POST',
+    `/api/v1/work-items/${fixture.workItem.id}/claim`,
+    {},
+    fixture.workItem.revision,
+  )
+  expect(rejected.statusCode, rejected.body).toBe(409)
+  expect(rejected.json<{ error: { code: string } }>().error.code)
+    .toBe('WORK_ITEM_ALREADY_ASSIGNED')
+  expect(await snapshot()).toEqual(before)
+  expect((await db.query<{ count: number }>(
+    `SELECT count(*)::int AS count
+       FROM domain_events event
+       JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+      WHERE event.cursor>$1::bigint`,
+    [cursorBefore],
+  )).rows[0]?.count).toBe(0)
 }
 beforeAll(async () => {
   await applyMigrations(db); await db.query('TRUNCATE auth_idempotency_records,workspaces CASCADE')
@@ -2972,6 +3040,101 @@ describe('Stage 5 Agent Connection lifecycle', () => {
           AND event.event_type IN ('agent.session.state_changed','lease.released','agent.session.created')`,
       [cursorBefore],
     )).rows[0]?.count).toBe(0)
+  })
+
+  it('requires an exact self-claim capability scope and rejects broad assignment scopes', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`broad-scope-${randomUUID().slice(0, 8)}`)
+    await db.query(
+      'UPDATE delegations SET capability_scope=$2::jsonb WHERE id=$1',
+      [fixture.delegationId, JSON.stringify({
+        workspaceId: fixture.workspaceId,
+        teamIds: [teamId, randomUUID()],
+        projectIds: [randomUUID()],
+        workItemIds: [fixture.workItem.id, randomUUID()],
+        repositoryIds: [randomUUID()],
+        capabilities: ['work:read', 'work:write'],
+      })],
+    )
+    await expectExactScopeClaimRejected(fixture)
+  })
+
+  it('rejects a stale self-claim when the assignment capability scope targets another Project', async () => {
+    const project = await human('POST', '/api/v1/projects', {
+      teamId,
+      name: `Stale recovery project ${randomUUID().slice(0, 8)}`,
+    })
+    expect(project.statusCode, project.body).toBe(200)
+    const projectId = project.json<{ id: string }>().id
+    const otherProject = await human('POST', '/api/v1/projects', {
+      teamId,
+      name: `Stale recovery mismatch ${randomUUID().slice(0, 8)}`,
+    })
+    expect(otherProject.statusCode, otherProject.body).toBe(200)
+    const otherProjectId = otherProject.json<{ id: string }>().id
+    const fixture = await prepareStaleSelfClaimFixture(
+      `project-scope-${randomUUID().slice(0, 8)}`,
+      projectId,
+    )
+    const scope = (await db.query<{ capability_scope: Record<string, unknown> }>(
+      'SELECT capability_scope FROM delegations WHERE id=$1',
+      [fixture.delegationId],
+    )).rows[0]!.capability_scope
+    await db.query(
+      'UPDATE delegations SET capability_scope=jsonb_set(capability_scope,\'{projectIds}\',$2::jsonb) WHERE id=$1',
+      [fixture.delegationId, JSON.stringify([otherProjectId])],
+    )
+    expect(scope.projectIds).toEqual([projectId])
+    await expectExactScopeClaimRejected(fixture)
+  })
+
+  it('keeps generic stale state transitions inactive while dedicated ACK recovers and resolves the stale inbox', async () => {
+    const fixture = await prepareStaleSelfClaimFixture(`ack-${randomUUID().slice(0, 8)}`)
+    const stale = (await db.query<{ revision: number }>(
+      'SELECT revision FROM agent_sessions WHERE id=$1 AND state=\'stale\'',
+      [fixture.staleSessionId],
+    )).rows[0]!
+    const genericTransition = await coordinator(
+      fixture.paired.token,
+      'POST',
+      `/api/v1/agent-sessions/${fixture.staleSessionId}/state`,
+      { state: 'acknowledged', reason: 'generic stale recovery attempt' },
+      stale.revision,
+    )
+    expect(genericTransition.statusCode, genericTransition.body).toBe(409)
+    expect(genericTransition.json<{ error: { code: string } }>().error.code)
+      .toBe('SESSION_NOT_ACTIVE')
+    expect((await db.query<{ state: string; revision: number }>(
+      'SELECT state,revision FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]).toEqual({ state: 'stale', revision: stale.revision })
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]?.status).toBe('open')
+
+    const acknowledged = await coordinator(
+      fixture.paired.token,
+      'POST',
+      `/api/v1/agent-sessions/${fixture.staleSessionId}/ack`,
+      { summary: 'Dedicated stale acknowledgement recovery', externalUrls: [] },
+    )
+    expect(acknowledged.statusCode, acknowledged.body).toBe(200)
+    expect(acknowledged.json<{ id: string; state: string }>().state).toBe('acknowledged')
+    expect((await db.query<{ state: string; state_reason: string }>(
+      'SELECT state,state_reason FROM agent_sessions WHERE id=$1',
+      [fixture.staleSessionId],
+    )).rows[0]).toEqual({
+      state: 'acknowledged',
+      state_reason: 'Dedicated stale acknowledgement recovery',
+    })
+    expect((await db.query<{ status: string; resolved_at: Date | null; resolved_by_actor_id: string | null }>(
+      'SELECT status,resolved_at,resolved_by_actor_id FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]).toMatchObject({ status: 'resolved', resolved_by_actor_id: actorId })
+    expect((await db.query<{ resolved_at: Date | null }>(
+      'SELECT resolved_at FROM inbox_items WHERE id=$1',
+      [fixture.inboxId],
+    )).rows[0]?.resolved_at).not.toBeNull()
   })
 
   it('lists Connections for Workspace Admins with cursor pagination and no credential material', async () => {
