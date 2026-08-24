@@ -368,8 +368,12 @@ function resourceInScope(
   return true
 }
 
-function sessionActiveForOperation(state: string, operationId: string): boolean {
-  if (operationId === 'acknowledgeAgentSession') return state === 'queued'
+export function sessionActiveForOperation(state: string, operationId: string): boolean {
+  // ACK restores stale Sessions. Acknowledged is admitted only as a coarse
+  // route predicate so a committed same-key ACK can reach idempotency replay;
+  // the command gate still rejects a different key in that state.
+  if (operationId === 'acknowledgeAgentSession')
+    return state === 'queued' || state === 'stale' || state === 'acknowledged'
   // Capability negotiation is part of exact Session attachment and therefore
   // must be available before ACK. Delegation, live grant, actor binding, and
   // capability checks still run through the ordinary route-policy decision.

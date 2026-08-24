@@ -2,7 +2,19 @@ import type { FastifyRequest } from 'fastify'
 import type { Pool } from 'pg'
 import { describe, expect, it, vi } from 'vitest'
 import { DomainError } from '@workmesh/domain'
-import { recordAuthorizationDenial } from './authorize.js'
+import { recordAuthorizationDenial, sessionActiveForOperation } from './authorize.js'
+
+describe('Agent Session route admission', () => {
+  it('admits ACK recovery and same-key replay without broadening other inactive states', () => {
+    expect(sessionActiveForOperation('queued', 'acknowledgeAgentSession')).toBe(true)
+    expect(sessionActiveForOperation('stale', 'acknowledgeAgentSession')).toBe(true)
+    expect(sessionActiveForOperation('acknowledged', 'acknowledgeAgentSession')).toBe(true)
+
+    for (const state of ['executing', 'paused', 'stopping', 'completed', 'failed', 'canceled']) {
+      expect(sessionActiveForOperation(state, 'acknowledgeAgentSession')).toBe(false)
+    }
+  })
+})
 
 describe('authorization denial audit', () => {
   it('persists only policy metadata and keyed resource fingerprints', async () => {
