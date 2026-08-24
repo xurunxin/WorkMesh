@@ -7,6 +7,7 @@ import { loadFeatureConfig } from '@workmesh/config'
 import { buildApp } from '../src/server.js'
 import { createAgentConnectionLifecycleWorker } from '../../worker/src/agent-connections.js'
 import { createWorkMeshMcpHttpServer } from '../../mcp/src/http.js'
+import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 5 integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
@@ -3093,13 +3094,17 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'SELECT revision FROM agent_sessions WHERE id=$1 AND state=\'stale\'',
       [fixture.staleSessionId],
     )).rows[0]!
-    const genericTransition = await coordinator(
-      fixture.paired.token,
-      'POST',
-      `/api/v1/agent-sessions/${fixture.staleSessionId}/state`,
-      { state: 'acknowledged', reason: 'generic stale recovery attempt' },
-      stale.revision,
-    )
+    const bearer = await seedAgentSessionBearer(db, fixture.staleSessionId, fixture.agentId)
+    const genericTransition = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${fixture.staleSessionId}/state`,
+      payload: { state: 'acknowledged', reason: 'generic stale recovery attempt' },
+      headers: {
+        authorization: `Bearer ${bearer}`,
+        'idempotency-key': randomUUID(),
+        'if-match': `"revision-${stale.revision}"`,
+      },
+    })
     expect(genericTransition.statusCode, genericTransition.body).toBe(409)
     expect(genericTransition.json<{ error: { code: string } }>().error.code)
       .toBe('SESSION_NOT_ACTIVE')
@@ -3112,12 +3117,15 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       [fixture.inboxId],
     )).rows[0]?.status).toBe('open')
 
-    const acknowledged = await coordinator(
-      fixture.paired.token,
-      'POST',
-      `/api/v1/agent-sessions/${fixture.staleSessionId}/ack`,
-      { summary: 'Dedicated stale acknowledgement recovery', externalUrls: [] },
-    )
+    const acknowledged = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${fixture.staleSessionId}/ack`,
+      payload: { summary: 'Dedicated stale acknowledgement recovery', externalUrls: [] },
+      headers: {
+        authorization: `Bearer ${bearer}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
     expect(acknowledged.statusCode, acknowledged.body).toBe(200)
     expect(acknowledged.json<{ id: string; state: string }>().state).toBe('acknowledged')
     expect((await db.query<{ state: string; state_reason: string }>(
@@ -3130,7 +3138,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect((await db.query<{ status: string; resolved_at: Date | null; resolved_by_actor_id: string | null }>(
       'SELECT status,resolved_at,resolved_by_actor_id FROM inbox_items WHERE id=$1',
       [fixture.inboxId],
-    )).rows[0]).toMatchObject({ status: 'resolved', resolved_by_actor_id: actorId })
+    )).rows[0]).toMatchObject({
+      status: 'resolved',
+      resolved_by_actor_id: fixture.agentActorId,
+    })
     expect((await db.query<{ resolved_at: Date | null }>(
       'SELECT resolved_at FROM inbox_items WHERE id=$1',
       [fixture.inboxId],
