@@ -159,14 +159,22 @@ async function createAgentFixture(input: {
   repositoryIds?: string[]
   projectIds?: string[]
 }): Promise<AgentFixture> {
+  // Every fixture is created through the Human forced-assignment route. Keep
+  // its mandatory execution capabilities while retaining each test's extra
+  // capability or scope-specific assertions.
+  const executorCapabilities = [...new Set([
+    'work:read',
+    'work:write',
+    ...input.capabilities,
+  ])]
   const registered = await humanCall(admin, 'POST', '/api/v1/agents/register', {
     name: input.slug,
     slug: input.slug,
     provider: 'fake',
     version: '1',
     supportedProtocols: ['native_http'],
-    requestedCapabilities: input.capabilities,
-    approvedCapabilities: input.capabilities,
+    requestedCapabilities: executorCapabilities,
+    approvedCapabilities: executorCapabilities,
   })
   expect(registered.statusCode, registered.body).toBe(200)
   const registration = registered.json<{
@@ -178,7 +186,7 @@ async function createAgentFixture(input: {
     admin,
     'PUT',
     `/api/v1/agents/${registration.id}/team-access/${input.teamId}`,
-    { approvedCapabilities: input.capabilities },
+    { approvedCapabilities: executorCapabilities },
   )
   expect(grant.statusCode, grant.body).toBe(200)
   const workItemRevision = (await db.query<{ revision: number }>(
@@ -193,7 +201,7 @@ async function createAgentFixture(input: {
       agentId: registration.id,
       principalHumanActorId: admin.actorId,
       role: 'executor',
-      requestedCapabilities: input.capabilities,
+      requestedCapabilities: executorCapabilities,
       initialPrompt: 'Exercise route policy authorization.',
       budget: {},
     },
@@ -214,11 +222,11 @@ async function createAgentFixture(input: {
       projectIds: input.projectIds ?? [],
       workItemIds: [input.workItemId],
       repositoryIds: input.repositoryIds ?? [],
-      capabilities: input.capabilities,
+      capabilities: executorCapabilities,
     }],
   )
   const token = await seedAgentSessionBearer(db, session.id, registration.id)
-  if (input.capabilities.includes('work:write')) {
+  if (executorCapabilities.includes('work:write')) {
     const acknowledged = await agentCall(
       token,
       'POST',

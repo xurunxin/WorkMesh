@@ -455,7 +455,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     await durableEvent('lease.revoked', leased.id)
   })
 
-  it('supports project-linked Work Items through standard Session creation and exact or actor-targeted Inbox replies', async () => {
+  it('supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies', async () => {
     const f = await makeFixture()
     const project = await humanCall(f.human, 'POST', '/api/v1/projects', {
       teamId: f.teamId,
@@ -481,7 +481,7 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect(siblingWork.statusCode, JSON.stringify(siblingWork.json())).toBe(200)
     const siblingWorkId = siblingWork.json<{ id: string }>().id
-    const startStandard = async (agent: Agent, role: 'executor' | 'reviewer') => {
+    const startStandard = async (agent: Agent) => {
       const response = await humanCall(
         f.human,
         'POST',
@@ -489,8 +489,8 @@ describe('Stage 2 collaboration API acceptance', () => {
         {
           agentId: agent.id,
           principalHumanActorId: f.human.actorId,
-          role,
-          requestedCapabilities: ['work:read', 'work:write'],
+          role: 'executor',
+          requestedCapabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write'],
           initialPrompt: 'Exercise project-linked Inbox compatibility.',
           budget: {},
         },
@@ -499,10 +499,54 @@ describe('Stage 2 collaboration API acceptance', () => {
       expect(response.statusCode, JSON.stringify(response.json())).toBe(200)
       return response.json<{ delegation: { id: string }; session: Session }>()
     }
-    const source = await startStandard(f.runner, 'executor')
-    const exactTarget = await startStandard(f.reviewer, 'reviewer')
-    const actorTarget = await startStandard(f.reviewer, 'reviewer')
+    const source = await startStandard(f.runner)
     const sourceToken = await exchangeAndExecute(source.session, f.runner)
+    const [exactReviewStepId, actorReviewStepId] = [randomUUID(), randomUUID()]
+    const sourceRevision = (await db.query<{ revision: number }>(
+      'SELECT revision FROM agent_sessions WHERE id=$1',
+      [source.session.id],
+    )).rows[0]!.revision
+    const reviewPlan = await agentCall(
+      sourceToken,
+      'PUT',
+      `/api/v1/agent-sessions/${source.session.id}/plan`,
+      {
+        changeSummary: 'Route project-linked Inbox replies through canonical review Sessions.',
+        steps: [
+          { id: exactReviewStepId, title: 'Exact Session reply', ordinal: 0, dependsOn: [], acceptanceCriteria: [], expectedArtifacts: [], status: 'pending' },
+          { id: actorReviewStepId, title: 'Actor-targeted reply', ordinal: 1, dependsOn: [], acceptanceCriteria: [], expectedArtifacts: [], status: 'pending' },
+        ],
+      },
+      { 'if-match': `"revision-${sourceRevision}"` },
+    )
+    expect(reviewPlan.statusCode, JSON.stringify(reviewPlan.json())).toBe(200)
+    const reviewPlanVersionId = (await db.query<{ current_plan_version_id: string }>(
+      'SELECT current_plan_version_id FROM agent_sessions WHERE id=$1',
+      [source.session.id],
+    )).rows[0]!.current_plan_version_id
+    const startReview = async (planStepId: string, initialPrompt: string) => {
+      const response = await agentCall(
+        sourceToken,
+        'POST',
+        `/api/v1/agent-sessions/${source.session.id}/review-delegations`,
+        {
+          reviewerAgentId: f.reviewer.id,
+          planStepId,
+          planVersionId: reviewPlanVersionId,
+          initialPrompt,
+          ttlSeconds: 60,
+        },
+      )
+      expect(response.statusCode, JSON.stringify(response.json())).toBe(200)
+      const data = response.json<{ session: Session; lease: { id: string } }>()
+      const delegation = (await db.query<{ id: string }>(
+        'SELECT delegation_id AS id FROM agent_sessions WHERE id=$1',
+        [data.session.id],
+      )).rows[0]!
+      return { ...data, delegation }
+    }
+    const exactTarget = await startReview(exactReviewStepId, 'Reply to one exact Session Inbox target.')
+    const actorTarget = await startReview(actorReviewStepId, 'Reply through an actor-targeted Inbox item.')
     const exactTargetToken = await exchangeAndExecute(exactTarget.session, f.reviewer)
     const actorTargetToken = await exchangeAndExecute(actorTarget.session, f.reviewer)
     const decisionProjection = async (sessionId: string) => (await db.query<{
@@ -560,7 +604,7 @@ describe('Stage 2 collaboration API acceptance', () => {
       expect(row).toMatchObject({
         work_item_id: projectWork.id,
         project_id: null,
-        project_ids: [],
+        project_ids: [projectId],
         work_item_ids: [projectWork.id],
       })
     }
