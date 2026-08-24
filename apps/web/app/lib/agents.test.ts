@@ -5,15 +5,16 @@ import {
   type AgentState,
   type Approval,
   approvedAgentCapabilitiesForTeam,
+  agentDelegationScopeKey,
   canManageAgentTeamAccess,
   canPauseAgentSession,
   canRetryAgentSession,
   decideApproval,
   createAgentSession,
-  preferredAgentForTeam,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
   retryAgentSession,
+  isCurrentAgentDelegationScope,
 } from './agents'
 
 const agentTeamId = '00000000-0000-4000-8000-000000000030'
@@ -273,13 +274,54 @@ describe('agent control requests', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('selects a deterministic one-click delegate from active team-approved agents', () => {
-    const narrower: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000002', approved_capabilities: ['work:read'], team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read'] }] }
-    const broader: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000003', approved_capabilities: ['work:read', 'work:write', 'plan:write'], team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read', 'work:write', 'plan:write'] }] }
-    const inactive: Agent = { ...broader, id: '00000000-0000-4000-8000-000000000004', is_active: false }
+  it('uses a new request identity when the Agent or prompt changes after an unknown result', async () => {
+    let attempts = 0
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => {
+      attempts += 1
+      if (attempts === 1) throw new TypeError('response was lost')
+      return jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const input = {
+      workItemId: session.work_item_id,
+      workItemTeamId: agentTeamId,
+      workItemRevision: 7,
+      humanActorId: '00000000-0000-4000-8000-000000000013',
+      agent,
+      prompt: 'Run the acceptance checks.',
+      budget: {},
+    }
 
-    expect(preferredAgentForTeam([narrower, inactive, broader], agentTeamId)?.id).toBe(broader.id)
-    expect(preferredAgentForTeam([inactive], agentTeamId)).toBeUndefined()
+    await expect(createAgentSession(input)).rejects.toThrow('response was lost')
+    await expect(createAgentSession({ ...input, prompt: 'Run the updated acceptance checks.' })).resolves.toEqual(session)
+
+    const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
+    const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
+    expect(firstKey).toBeTruthy()
+    expect(secondKey).toBeTruthy()
+    expect(secondKey).not.toBe(firstKey)
+
+    const changedAgent: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000099' }
+    await expect(createAgentSession({ ...input, agent: changedAgent, prompt: 'Run the updated acceptance checks.' })).resolves.toEqual(session)
+    const thirdKey = new Headers(fetchMock.mock.calls[2]![1]?.headers).get('Idempotency-Key')
+    expect(thirdKey).toBeTruthy()
+    expect(thirdKey).not.toBe(secondKey)
+  })
+
+  it('does not apply an older pending delegation result after the Work Item scope changes', async () => {
+    const scopeA = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 7, humanActorId: 'human-a' })
+    const scopeB = agentDelegationScopeKey({ workItemId: 'work-b', workItemTeamId: agentTeamId, workItemRevision: 3, humanActorId: 'human-b' })
+    let currentScope = scopeA
+    let latest: AgentSession | null = null
+    const pending = Promise.resolve(session)
+    const capturedScope = currentScope
+    currentScope = scopeB
+    const result = await pending
+    if (isCurrentAgentDelegationScope(currentScope, capturedScope)) latest = result
+
+    expect(latest).toBeNull()
+    expect(isCurrentAgentDelegationScope(currentScope, scopeA)).toBe(false)
+    expect(isCurrentAgentDelegationScope(currentScope, scopeB)).toBe(true)
   })
 })
 

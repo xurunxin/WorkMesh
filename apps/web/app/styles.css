@@ -1026,7 +1026,7 @@ main#workmesh-main:focus-visible {
 .work-item-detail-supplemental :where(.relationship-panel, .work-room, .agent-work-panel) { width: auto; min-width: 0; max-width: 100%; }
 .work-item-detail-supplemental :where(pre, code, a, p, strong, small, dd) { overflow-wrap: anywhere; }
 .wm-sheet .work-item-detail { width: 100%; }
-.wm-sheet.work-item-detail-sheet { width: min(720px, 100%); }
+.wm-sheet.work-item-detail-sheet { width: min(720px, 100%) !important; max-width: min(720px, 100%) !important; }
 .wm-sheet .work-item-detail-form { grid-template-columns: 1fr; }
 .wm-sheet .work-item-detail-actions { grid-column: 1; }
 @media (max-width: 760px) {

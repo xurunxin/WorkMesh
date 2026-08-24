@@ -7,6 +7,7 @@ export const apiBase = process.env.NEXT_PUBLIC_API_URL ?? (typeof window === 'un
 
 const csrfStorageKey = 'workmesh.csrf-token'
 const logicalAttempts = new Map<string, { key: string; requestIdentity: string }>()
+const logicalAttemptStoragePrefix = 'workmesh.idempotency.'
 
 type ApiErrorBody = { error?: { code?: string; message?: string; details?: unknown; correlationId?: string; safeNextAction?: string } }
 export type ListResponse<T> = { items: T[]; nextCursor: string | null }
@@ -79,7 +80,37 @@ function mutationRequestIdentity(path: string, init: RequestInit): string {
   if (typeof body === 'string') {
     try { body = stable(JSON.parse(body) as unknown) } catch { /* Compare non-JSON bodies exactly. */ }
   }
-  return JSON.stringify({ method: init.method ?? 'POST', path, body })
+  const ifMatch = new Headers(init.headers).get('If-Match')
+  const canonical = JSON.stringify({ method: init.method ?? 'POST', path, ifMatch, body })
+  let hash = 2166136261
+  for (let index = 0; index < canonical.length; index += 1) {
+    hash ^= canonical.charCodeAt(index)
+    hash = Math.imul(hash, 16777619)
+  }
+  return `request-${(hash >>> 0).toString(16)}`
+}
+
+function readStoredAttempt(operation: string): { key: string; requestIdentity: string } | undefined {
+  if (typeof sessionStorage === 'undefined') return undefined
+  const raw = sessionStorage.getItem(`${logicalAttemptStoragePrefix}${operation}`)
+  if (!raw) return undefined
+  try {
+    const parsed = JSON.parse(raw) as { key?: unknown; requestIdentity?: unknown }
+    return typeof parsed.key === 'string' && typeof parsed.requestIdentity === 'string'
+      ? { key: parsed.key, requestIdentity: parsed.requestIdentity }
+      : undefined
+  } catch { return undefined }
+}
+
+function storeAttempt(operation: string, attempt: { key: string; requestIdentity: string }): void {
+  if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(`${logicalAttemptStoragePrefix}${operation}`, JSON.stringify(attempt))
+}
+
+function clearStoredAttempt(operation: string, key: string): void {
+  if (typeof sessionStorage === 'undefined') return
+  const storageKey = `${logicalAttemptStoragePrefix}${operation}`
+  const stored = readStoredAttempt(operation)
+  if (stored?.key === key) sessionStorage.removeItem(storageKey)
 }
 
 async function logicalMutation<T>(
@@ -87,20 +118,24 @@ async function logicalMutation<T>(
   requestIdentity: string,
   request: (key: string) => Promise<T>,
 ): Promise<T> {
-  const current = logicalAttempts.get(operation)
+  const current = logicalAttempts.get(operation) ?? readStoredAttempt(operation)
   const attempt = current?.requestIdentity === requestIdentity
     ? current
     : { key: crypto.randomUUID(), requestIdentity }
   logicalAttempts.set(operation, attempt)
+  storeAttempt(operation, attempt)
   try {
     const result = await request(attempt.key)
     if (logicalAttempts.get(operation)?.key === attempt.key) logicalAttempts.delete(operation)
+    clearStoredAttempt(operation, attempt.key)
     return result
   } catch (reason) {
     const retryableResponse = reason instanceof ApiError
-      && (reason.status === 429 || reason.status >= 500)
-    if (reason instanceof ApiError && !retryableResponse && logicalAttempts.get(operation)?.key === attempt.key)
+      && ([408, 425, 429].includes(reason.status) || reason.status >= 500)
+    if (reason instanceof ApiError && !retryableResponse && logicalAttempts.get(operation)?.key === attempt.key) {
       logicalAttempts.delete(operation)
+      clearStoredAttempt(operation, attempt.key)
+    }
     throw reason
   }
 }

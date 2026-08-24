@@ -528,6 +528,7 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     correlation: '关联 ID',
     delegation: '委派',
     delegateToAgent: '交给智能体',
+    viewAgentOptions: '选择智能体',
     description: '描述（Markdown）',
     detailTabsAriaLabel: 'Issue 区块',
     detailTabDiscussion: '讨论',
@@ -607,6 +608,7 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     correlation: 'Correlation ID',
     delegation: 'Delegation',
     delegateToAgent: 'Delegate to Agent',
+    viewAgentOptions: 'Choose an Agent',
     description: 'Description (Markdown)',
     detailTabsAriaLabel: 'Issue sections',
     detailTabDiscussion: 'Discussion',
@@ -2536,6 +2538,10 @@ export type AgentWorkCopy = {
   oneClickDelegate: string
   oneClickPrompt: (title: string) => string
   advancedOptions: string
+  chooseAgent: string
+  openAgents: string
+  reloadIssue: string
+  errorCode: (code: string) => string
   delegateSuccess: (agent: string, state: string) => string
   noResponsible: string
   refresh: string
@@ -2580,6 +2586,10 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     oneClickDelegate: '一键委派',
     oneClickPrompt: title => `请接手这个 Issue${title ? `“${title}”` : ''}，先检查上下文和验收条件，然后推进到可交付状态。`,
     advancedOptions: '高级配置',
+    chooseAgent: '选择智能体',
+    openAgents: '打开智能体管理',
+    reloadIssue: '重新加载 Issue',
+    errorCode: code => `错误 ${code}`,
     delegateSuccess: (agent, state) => `已将任务交给 ${agent}，Session 当前为 ${state}。`,
     noResponsible: '请先设置人类负责人；负责人对结果负责，智能体负责执行。',
     refresh: '刷新状态',
@@ -2622,6 +2632,10 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     oneClickDelegate: 'Delegate now',
     oneClickPrompt: title => `Take over this Issue${title ? ` “${title}”` : ''}, review its context and acceptance criteria, then move it toward a deliverable state.`,
     advancedOptions: 'Advanced options',
+    chooseAgent: 'Choose an agent',
+    openAgents: 'Open Agent management',
+    reloadIssue: 'Reload Issue',
+    errorCode: code => `Error ${code}`,
     delegateSuccess: (agent, state) => `Assigned to ${agent}; the session is ${state}.`,
     noResponsible: 'Set a responsible Human first. The Human owns the outcome; the Agent owns execution.',
     refresh: 'Refresh status',
