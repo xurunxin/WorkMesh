@@ -9,7 +9,8 @@ import {
   canPauseAgentSession,
   canRetryAgentSession,
   decideApproval,
-  delegateAndStart,
+  createAgentSession,
+  preferredAgentForTeam,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
   retryAgentSession,
@@ -87,7 +88,7 @@ describe('agent control requests', () => {
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session }))
     vi.stubGlobal('fetch', fetchMock)
 
-    const result = await delegateAndStart({
+    const result = await createAgentSession({
       workItemId: session.work_item_id,
       workItemTeamId: agentTeamId,
       workItemRevision: 7,
@@ -132,8 +133,8 @@ describe('agent control requests', () => {
       budget: {},
     }
 
-    await expect(delegateAndStart(input)).rejects.toThrow('response was lost')
-    await expect(delegateAndStart(input)).resolves.toEqual(session)
+    await expect(createAgentSession(input)).rejects.toThrow('response was lost')
+    await expect(createAgentSession(input)).resolves.toEqual(session)
 
     const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
     const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
@@ -160,8 +161,8 @@ describe('agent control requests', () => {
       budget: {},
     }
 
-    await expect(delegateAndStart(input)).rejects.toThrow('Revision conflict')
-    await expect(delegateAndStart(input)).resolves.toEqual(session)
+    await expect(createAgentSession(input)).rejects.toThrow('Revision conflict')
+    await expect(createAgentSession(input)).resolves.toEqual(session)
 
     const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
     const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
@@ -234,7 +235,7 @@ describe('agent control requests', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     expect(approvedAgentCapabilitiesForTeam(restrictedAgent, agentTeamId)).toEqual(['work:read', 'plan:write'])
-    await expect(delegateAndStart({
+    await expect(createAgentSession({
       workItemId: session.work_item_id,
       workItemTeamId: agentTeamId,
       workItemRevision: 7,
@@ -267,9 +268,18 @@ describe('agent control requests', () => {
 
     expect(approvedAgentCapabilitiesForTeam(withoutGrant, agentTeamId)).toEqual([])
     expect(approvedAgentCapabilitiesForTeam(withoutIntersection, agentTeamId)).toEqual([])
-    await expect(delegateAndStart({ ...baseInput, agent: withoutGrant })).rejects.toThrow('no capabilities approved')
-    await expect(delegateAndStart({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('no capabilities approved')
+    await expect(createAgentSession({ ...baseInput, agent: withoutGrant })).rejects.toThrow('no capabilities approved')
+    await expect(createAgentSession({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('no capabilities approved')
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('selects a deterministic one-click delegate from active team-approved agents', () => {
+    const narrower: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000002', approved_capabilities: ['work:read'], team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read'] }] }
+    const broader: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000003', approved_capabilities: ['work:read', 'work:write', 'plan:write'], team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read', 'work:write', 'plan:write'] }] }
+    const inactive: Agent = { ...broader, id: '00000000-0000-4000-8000-000000000004', is_active: false }
+
+    expect(preferredAgentForTeam([narrower, inactive, broader], agentTeamId)?.id).toBe(broader.id)
+    expect(preferredAgentForTeam([inactive], agentTeamId)).toBeUndefined()
   })
 })
 

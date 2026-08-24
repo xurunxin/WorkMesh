@@ -17,6 +17,7 @@ export type WorkItemDetailCopy = {
   couldNotLoad: string
   correlation: string
   delegation: string
+  delegateToAgent: string
   description: string
   detailTabsAriaLabel: string
   detailTabDiscussion: string
@@ -73,6 +74,7 @@ const defaultCopy: WorkItemDetailCopy = {
   couldNotLoad: 'Issue could not load',
   correlation: 'Correlation',
   delegation: 'Delegation',
+  delegateToAgent: 'Delegate to Agent',
   description: 'Description (Markdown)',
   detailTabsAriaLabel: 'Issue sections',
   detailTabDiscussion: 'Discussion',
@@ -131,6 +133,7 @@ type Props = {
   error?: StructuredDetailError | null
   conflict?: StructuredDetailError | null
   supplemental: ReactNode
+  agentPanel?: ReactNode
   resetKey: number
   draftIdentity: Omit<DraftIdentity, 'field' | 'baseRevision'>
   onClose: () => void
@@ -167,7 +170,7 @@ function DetailUnavailableContent({ mode, requestedKey, error, onClose, onRetry,
     : <section className="work-item-full-page" aria-labelledby={fullPageHeadingId}>{body}</section>
 }
 
-function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props) {
+function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, agentPanel, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props) {
   const text = resolveCopy(copy)
   const fullPageHeadingId = useId()
   const fullPageRef = useRef<HTMLElement | null>(null)
@@ -215,7 +218,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
   }
   const set = <Key extends keyof WorkItemDetailDraft>(key: Key, value: WorkItemDetailDraft[Key]) => setDraft(current => ({ ...current, [key]: value }))
   const body = <div className="work-item-detail" data-mode={mode} data-testid="work-item-detail">
-    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div>{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
+    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div className="work-item-detail-toolbar-actions">{agentPanel && <Button onClick={() => setActiveTab('agent')} type="button" variant="primary">{text.delegateToAgent}</Button>}{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
     {error?.httpStatus === 403 ? <ForbiddenState description={errorDescription(error, text)} title={text.accessDenied} /> : error && <ErrorState actionLabel={text.reloadLatest} description={errorDescription(error, text)} onAction={() => confirmDiscard(onReloadLatest)} title={error.httpStatus === 404 ? text.notFound : error.code === 'NETWORK_UNAVAILABLE' ? text.offline : text.couldNotLoad} />}
     {conflict && <ConflictState actionLabel={text.reloadLatest} description={`${errorDescription(conflict, text)} ${text.conflictIntentPreserved}`} onAction={onReloadLatest} title={text.serverConflictTitle} />}
     <div className="work-item-detail-layout">
@@ -230,7 +233,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
         onValueChange={setActiveTab}
         tabs={[
           { id: 'responsibility', label: text.detailTabResponsibility, panel: <section className="responsibility-projection" aria-labelledby="responsibility-heading"><h3 id="responsibility-heading">{text.humanResponsibility}</h3><strong data-testid="responsible-human">{model.responsibleHuman?.displayName ?? text.unassigned}</strong><p>{text.ownsOutcome}</p></section> },
-          { id: 'agent', label: text.detailTabAgentExecutions, panel: <section className="agent-execution-projection" aria-labelledby="agent-executions-heading"><h3 id="agent-executions-heading">{text.agentExecutions}</h3>{model.agentExecutions.length ? model.agentExecutions.map(execution => <article key={execution.delegation.leaseId}><strong>{execution.agent.displayName}</strong><span>{text.executionState}: {execution.executionState}</span><span>{text.session(execution.sessionId.slice(0, 8))}</span><span>{text.heartbeat}: {execution.heartbeat.health}</span><span>{text.delegation}: {execution.delegation.kind}</span></article>) : <p>{text.noActiveAgent}</p>}</section> },
+          { id: 'agent', label: text.detailTabAgentExecutions, panel: <section className="agent-execution-projection" aria-labelledby="agent-executions-heading"><h3 id="agent-executions-heading">{text.agentExecutions}</h3>{model.agentExecutions.length ? model.agentExecutions.map(execution => <article key={execution.delegation.leaseId}><strong>{execution.agent.displayName}</strong><span>{text.executionState}: {execution.executionState}</span><span>{text.session(execution.sessionId.slice(0, 8))}</span><span>{text.heartbeat}: {execution.heartbeat.health}</span><span>{text.delegation}: {execution.delegation.kind}</span></article>) : <p>{text.noActiveAgent}</p>}{agentPanel}</section> },
           { id: 'discussion', label: text.detailTabDiscussion, panel: <div className="work-item-detail-supplemental">{supplemental}</div> },
         ]}
         value={activeTab}

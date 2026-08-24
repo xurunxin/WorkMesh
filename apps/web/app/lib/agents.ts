@@ -49,6 +49,19 @@ export const approvedAgentCapabilitiesForTeam = (agent: Agent, teamId: string): 
   return agent.approved_capabilities.filter(capability => teamAccess.approved_capabilities.includes(capability))
 }
 
+/** Pick a stable default for the one-click handoff. Prefer the broadest
+ * approved capability set, then the lowest configured concurrency and finally
+ * the agent id so the same Issue does not jump between agents on rerenders. */
+export const preferredAgentForTeam = (agents: Agent[], teamId: string): Agent | undefined => agents
+  .filter(agent => agent.is_active && approvedAgentCapabilitiesForTeam(agent, teamId).length > 0)
+  .slice()
+  .sort((left, right) => {
+    const capabilityDelta = approvedAgentCapabilitiesForTeam(right, teamId).length - approvedAgentCapabilitiesForTeam(left, teamId).length
+    if (capabilityDelta !== 0) return capabilityDelta
+    const concurrencyDelta = left.max_concurrency - right.max_concurrency
+    return concurrencyDelta !== 0 ? concurrencyDelta : left.id.localeCompare(right.id)
+  })[0]
+
 const idempotencyStoragePrefix = 'workmesh.idempotency.'
 const inFlightOperationKeys = new Map<string, string>()
 
@@ -140,10 +153,11 @@ export async function revokeAgentConnection(connection: AgentConnection): Promis
 export async function rotateAgentConnection(connection: AgentConnection): Promise<{ connection: AgentConnection; connect_url: string; pairing_code_expires_at: string; overlap_until: string }> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
 export async function confirmAgentConnectionRotation(connection: AgentConnection): Promise<AgentConnection> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate-confirm`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
 
-export async function delegateAndStart(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
+/** Create the delegation and its first execution session in one atomic API call. */
+export async function createAgentSession(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
   const approvedCapabilities = approvedAgentCapabilitiesForTeam(input.agent, input.workItemTeamId)
   if (approvedCapabilities.length === 0) throw new Error('This agent has no capabilities approved for the work item team.')
-  const result = await idempotentAgentMutation(`delegate-start:${input.workItemId}`, idempotencyKey => {
+  const result = await idempotentAgentMutation(`agent-session:${input.workItemId}`, idempotencyKey => {
     return apiRequest<{ delegation: Delegation; session: AgentSession }>(`/api/v1/work-items/${input.workItemId}/agent-session`, {
       method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${input.workItemRevision}"`, 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({

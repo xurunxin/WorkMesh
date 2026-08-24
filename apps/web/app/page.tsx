@@ -602,6 +602,7 @@ function HomePageScope({
       model={toWorkItemDetailModel(selectedItem)}
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
+      agentPanel={<AgentWorkPanel workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
       copy={detailCopy}
       onClose={closeItem}
       onOpenFull={() => void openItem(selectedItem.id, true)}
@@ -618,7 +619,6 @@ function HomePageScope({
         <WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />
         <WorkRoom workItemId={selectedItem.id} draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }} legacyComments={comments} legacyHumans={humans} onLegacyComment={createComment} onLegacyUpdate={updateComment} onLegacyRefresh={commentsPage.refresh} />
         <LoadMoreButton collection={commentsPage} label="comments" />
-        <AgentWorkPanel workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={actor.id} />
       </>}
     />}
     {!selectedItem && requestedItem && detailErrorState && <WorkItemDetailUnavailable

@@ -527,6 +527,7 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     couldNotLoad: '无法加载 Issue',
     correlation: '关联 ID',
     delegation: '委派',
+    delegateToAgent: '交给智能体',
     description: '描述（Markdown）',
     detailTabsAriaLabel: 'Issue 区块',
     detailTabDiscussion: '讨论',
@@ -605,6 +606,7 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     couldNotLoad: 'Could not load Issue',
     correlation: 'Correlation ID',
     delegation: 'Delegation',
+    delegateToAgent: 'Delegate to Agent',
     description: 'Description (Markdown)',
     detailTabsAriaLabel: 'Issue sections',
     detailTabDiscussion: 'Discussion',
@@ -2531,6 +2533,12 @@ export type AgentWorkCopy = {
   delegateFormInitialPrompt: string
   delegateFormInitialPromptPlaceholder: string
   delegateFormStart: string
+  oneClickDelegate: string
+  oneClickPrompt: (title: string) => string
+  advancedOptions: string
+  delegateSuccess: (agent: string, state: string) => string
+  noResponsible: string
+  refresh: string
   noSessions: string
   blockingReasonMissing: string
   heartbeat: (date: string) => string
@@ -2569,6 +2577,12 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: '初始指令',
     delegateFormInitialPromptPlaceholder: '该智能体应当做什么？',
     delegateFormStart: '启动 Session',
+    oneClickDelegate: '一键委派',
+    oneClickPrompt: title => `请接手这个 Issue${title ? `“${title}”` : ''}，先检查上下文和验收条件，然后推进到可交付状态。`,
+    advancedOptions: '高级配置',
+    delegateSuccess: (agent, state) => `已将任务交给 ${agent}，Session 当前为 ${state}。`,
+    noResponsible: '请先设置人类负责人；负责人对结果负责，智能体负责执行。',
+    refresh: '刷新状态',
     noSessions: '尚未委派任何智能体 Session。',
     blockingReasonMissing: '未报告阻塞原因。',
     heartbeat: date => `心跳：${date}`,
@@ -2605,6 +2619,12 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: 'Initial prompt',
     delegateFormInitialPromptPlaceholder: 'What should this agent do?',
     delegateFormStart: 'Start session',
+    oneClickDelegate: 'Delegate now',
+    oneClickPrompt: title => `Take over this Issue${title ? ` “${title}”` : ''}, review its context and acceptance criteria, then move it toward a deliverable state.`,
+    advancedOptions: 'Advanced options',
+    delegateSuccess: (agent, state) => `Assigned to ${agent}; the session is ${state}.`,
+    noResponsible: 'Set a responsible Human first. The Human owns the outcome; the Agent owns execution.',
+    refresh: 'Refresh status',
     noSessions: 'No delegated agent session yet.',
     blockingReasonMissing: 'No blocking reason reported.',
     heartbeat: date => `Heartbeat: ${date}`,

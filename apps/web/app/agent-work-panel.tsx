@@ -3,13 +3,13 @@
 import { type FormEvent, useMemo, useState } from 'react'
 import { Button } from '@workmesh/ui'
 import { apiRequest, json } from './lib/api'
-import { type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, delegateAndStart, formatTime, normalizeApproval, normalizePlan, retryAgentSession } from './lib/agents'
+import { type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, createAgentSession, formatTime, normalizeApproval, normalizePlan, preferredAgentForTeam, retryAgentSession } from './lib/agents'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { agentWorkRefreshTargets } from './lib/realtime-refresh'
 import { useLocale } from './lib/i18n'
 
-type Props = { workspaceId: string; workItemId: string; workItemTeamId: string; workItemRevision: number; humanActorId: string; onSessionCreated?: (session: AgentSession) => void }
+type Props = { workspaceId: string; workItemId: string; workItemTeamId: string; workItemRevision: number; humanActorId: string; workItemTitle?: string; onSessionCreated?: (session: AgentSession) => void }
 
 export function AgentBadge({ state }: { state: AgentSession['state'] }) {
   const { agentWorkCopy: text } = useLocale()
@@ -36,11 +36,13 @@ function AgentExecutionProjection({ session }: { session: AgentSession }) {
   </dl>
 }
 
-export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workItemRevision, humanActorId, onSessionCreated }: Props) {
+export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workItemRevision, humanActorId, workItemTitle, onSessionCreated }: Props) {
   const { agentWorkCopy: text } = useLocale()
   const [error, setError] = useState('')
   const [showDelegate, setShowDelegate] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [prompt, setPrompt] = useState('')
   const agentsPage = usePagedApiList<Agent>('/api/v1/agents', { optional: true })
   const sessionsPage = usePagedApiList<AgentSession>(
     `/api/v1/agent-sessions?workItemId=${encodeURIComponent(workItemId)}`,
@@ -83,16 +85,19 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
     } catch (reason) { setError(reason instanceof Error ? reason.message : text.updateError) } finally { setBusy(false) }
   }
 
+  const delegateWith = async (agent: Agent | undefined, initialPrompt: string) => {
+    if (!agent) return
+    try {
+      setBusy(true); setError(''); setSuccess('')
+      const session = await createAgentSession({ workItemId, workItemTeamId, workItemRevision, humanActorId, agent, prompt: initialPrompt, budget: {} })
+      await sessionsPage.refresh(); setShowDelegate(false); setPrompt(''); setSuccess(text.delegateSuccess(agentName(agent), session.state)); onSessionCreated?.(session)
+    } catch (reason) { setError(reason instanceof Error ? reason.message : text.delegateError) } finally { setBusy(false) }
+  }
+
   const delegate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
-    const agent = agents.find(candidate => candidate.id === String(form.get('agentId')))
-    if (!agent) return
-    try {
-      setBusy(true); setError('')
-      const session = await delegateAndStart({ workItemId, workItemTeamId, workItemRevision, humanActorId, agent, prompt: String(form.get('prompt') ?? ''), budget: {} })
-      await sessionsPage.refresh(); setShowDelegate(false); onSessionCreated?.(session)
-    } catch (reason) { setError(reason instanceof Error ? reason.message : text.delegateError) } finally { setBusy(false) }
+    await delegateWith(agents.find(candidate => candidate.id === String(form.get('agentId'))), String(form.get('prompt') ?? '').trim())
   }
 
   const retry = async (session: AgentSession) => {
@@ -106,6 +111,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
 
   const activeAgents = agents.filter(agent => agent.is_active)
   const delegatableAgents = activeAgents.filter(agent => approvedAgentCapabilitiesForTeam(agent, workItemTeamId).length > 0)
+  const preferredAgent = preferredAgentForTeam(agents, workItemTeamId)
   const unavailableReason = (agent: Agent): string => activeAgentTeamAccess(agent, workItemTeamId)
     ? text.noSharedDefinition
     : text.noActiveGrant
@@ -113,16 +119,18 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
     ? text.noActiveAgents
     : activeAgents.some(agent => activeAgentTeamAccess(agent, workItemTeamId))
       ? text.noSharedDefinition
-      : text.noActiveGrant
+    : text.noActiveGrant
 
   return <section className="agent-work-panel" aria-label={text.liveAgents} data-testid="live-agent-panel">
-    <header><div><h3>{text.liveAgents}</h3><p>{text.liveAgentsHint}</p></div><Button disabled={delegatableAgents.length === 0} onClick={() => setShowDelegate(current => !current)} type="button" variant="primary">{text.delegate}</Button></header>
+    <header><div><h3>{text.liveAgents}</h3><p>{text.liveAgentsHint}</p></div><div className="agent-work-panel-actions"><Button disabled={busy || !humanActorId || delegatableAgents.length === 0} onClick={() => void delegateWith(preferredAgent, text.oneClickPrompt(workItemTitle ?? ''))} type="button" variant="primary">{text.oneClickDelegate}</Button><Button disabled={busy || delegatableAgents.length === 0} onClick={() => setShowDelegate(current => !current)} type="button" variant="secondary">{text.advancedOptions}</Button></div></header>
     {delegatableAgents.length === 0 && <p className="empty" data-testid="delegate-unavailable-reason">{text.delegateUnavailableReason(delegationUnavailableMessage)}</p>}
-    {(error || collectionError) && <p className="error" role="alert">{error || collectionError?.message}</p>}
+    {!humanActorId && <p className="empty" data-testid="delegate-no-responsible">{text.noResponsible}</p>}
+    {success && <p className="success" role="status" data-testid="delegate-success">{success}</p>}
+    {(error || collectionError) && <div className="error-state"><p className="error" role="alert">{error || collectionError?.message}</p>{collectionError && <Button disabled={busy} onClick={() => { void agentsPage.refresh(); void sessionsPage.refresh() }} type="button" variant="secondary">{text.refresh}</Button>}</div>}
     {showDelegate && <form className="delegate-form" onSubmit={event => void delegate(event)} data-testid="delegate-agent-form">
-      <label>{text.delegateFormAgent}<select name="agentId" required><option value="">{text.delegateFormAgentPlaceholder}</option>{activeAgents.map(agent => { const capabilities = approvedAgentCapabilitiesForTeam(agent, workItemTeamId); return <option key={agent.id} value={agent.id} disabled={capabilities.length === 0}>{agentName(agent)} · {capabilities.length > 0 ? text.capabilitiesLine(agentProvider(agent), capabilities.join(', ')) : text.unavail(unavailableReason(agent))}</option> })}</select></label>
-      <label>{text.delegateFormInitialPrompt}<textarea name="prompt" placeholder={text.delegateFormInitialPromptPlaceholder} required /></label>
-      <Button disabled={busy} type="submit" variant="primary">{text.delegateFormStart}</Button>
+      <label>{text.delegateFormAgent}<select defaultValue={preferredAgent?.id ?? ''} name="agentId" required><option value="">{text.delegateFormAgentPlaceholder}</option>{activeAgents.map(agent => { const capabilities = approvedAgentCapabilitiesForTeam(agent, workItemTeamId); return <option key={agent.id} value={agent.id} disabled={capabilities.length === 0}>{agentName(agent)} · {capabilities.length > 0 ? text.capabilitiesLine(agentProvider(agent), capabilities.join(', ')) : text.unavail(unavailableReason(agent))}</option> })}</select></label>
+      <label>{text.delegateFormInitialPrompt}<textarea name="prompt" onChange={event => setPrompt(event.currentTarget.value)} placeholder={text.delegateFormInitialPromptPlaceholder} required value={prompt} /></label>
+      <Button disabled={busy || !humanActorId} type="submit" variant="primary">{text.delegateFormStart}</Button>
     </form>}
     {sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-mini-list">{sessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || text.blockingReasonMissing}</p><small>{text.heartbeat(formatTime(session.last_heartbeat_at))}</small><AgentExecutionProjection session={session} /><div className="session-actions">{session.state === 'paused' && <Button disabled={busy} onClick={() => void signal(session, 'resume')} type="button" variant="secondary">{text.resume}</Button>}{canPauseAgentSession(session.state) && <Button disabled={busy} onClick={() => void signal(session, 'pause')} type="button" variant="secondary">{text.pause}</Button>}{canRetryAgentSession(session.state) && <Button disabled={busy} onClick={() => void retry(session)} type="button" variant="secondary">{text.retry}</Button>}<Button disabled={busy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')} type="button" variant="danger">{text.stop}</Button><a href={`/agent-sessions/${session.id}`}>{text.details}</a></div></article>)}</div>}
     <LoadMoreButton collection={agentsPage} label={text.availableAgentsLabel} />
