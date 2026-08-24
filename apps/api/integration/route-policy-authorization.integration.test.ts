@@ -13,6 +13,7 @@ import { authorizeCommandInTx } from '../src/agent/guard.js'
 import type { ApiActor } from '../src/agent/types.js'
 import { buildApp } from '../src/server.js'
 import type { AuthRateLimitStore } from '../src/auth-rate-limit/redis-store.js'
+import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl)
@@ -158,14 +159,22 @@ async function createAgentFixture(input: {
   repositoryIds?: string[]
   projectIds?: string[]
 }): Promise<AgentFixture> {
+  // Every fixture is created through the Human forced-assignment route. Keep
+  // its mandatory execution capabilities while retaining each test's extra
+  // capability or scope-specific assertions.
+  const executorCapabilities = [...new Set([
+    'work:read',
+    'work:write',
+    ...input.capabilities,
+  ])]
   const registered = await humanCall(admin, 'POST', '/api/v1/agents/register', {
     name: input.slug,
     slug: input.slug,
     provider: 'fake',
     version: '1',
     supportedProtocols: ['native_http'],
-    requestedCapabilities: input.capabilities,
-    approvedCapabilities: input.capabilities,
+    requestedCapabilities: executorCapabilities,
+    approvedCapabilities: executorCapabilities,
   })
   expect(registered.statusCode, registered.body).toBe(200)
   const registration = registered.json<{
@@ -177,52 +186,47 @@ async function createAgentFixture(input: {
     admin,
     'PUT',
     `/api/v1/agents/${registration.id}/team-access/${input.teamId}`,
-    { approvedCapabilities: input.capabilities },
+    { approvedCapabilities: executorCapabilities },
   )
   expect(grant.statusCode, grant.body).toBe(200)
-  const delegated = await humanCall(
+  const workItemRevision = (await db.query<{ revision: number }>(
+    'SELECT revision FROM work_items WHERE id=$1',
+    [input.workItemId],
+  )).rows[0]!.revision
+  const started = await humanCall(
     admin,
     'POST',
-    `/api/v1/work-items/${input.workItemId}/delegations`,
+    `/api/v1/work-items/${input.workItemId}/agent-session`,
     {
       agentId: registration.id,
       principalHumanActorId: admin.actorId,
       role: 'executor',
-      scopeType: 'work_item',
-      scopeId: input.workItemId,
-      permissionsSnapshot: input.capabilities,
-      capabilityScope: {
-        workspaceId,
-        teamIds: [input.teamId],
-        projectIds: input.projectIds ?? [],
-        workItemIds: [input.workItemId],
-        repositoryIds: input.repositoryIds ?? [],
-        capabilities: input.capabilities,
-      },
+      requestedCapabilities: executorCapabilities,
+      initialPrompt: 'Exercise route policy authorization.',
+      budget: {},
     },
+    { 'if-match': `"revision-${workItemRevision}"` },
   )
-  expect(delegated.statusCode, delegated.body).toBe(200)
-  const delegationId = delegated.json<{ id: string }>().id
-  const started = await humanCall(admin, 'POST', '/api/v1/agent-sessions', {
-    delegationId,
-    workItemId: input.workItemId,
-    initialPrompt: 'Exercise route policy authorization.',
-    budget: {},
-  })
   expect(started.statusCode, started.body).toBe(200)
-  const session = started.json<{ id: string; exchangeToken: string }>()
-  const exchanged = await app.inject({
-    method: 'POST',
-    url: `/api/v1/agent-sessions/${session.id}/token/exchange`,
-    payload: { exchangeToken: session.exchangeToken },
-    headers: {
-      authorization: `Bearer ${registration.installation_token}`,
-      'idempotency-key': randomUUID(),
-    },
-  }) as unknown as Response
-  expect(exchanged.statusCode, exchanged.body).toBe(200)
-  const token = exchanged.json<{ sessionToken: string }>().sessionToken
-  if (input.capabilities.includes('work:write')) {
+  const assignment = started.json<{
+    delegation: { id: string }
+    session: { id: string }
+  }>()
+  const delegationId = assignment.delegation.id
+  const session = assignment.session
+  await db.query(
+    'UPDATE delegations SET capability_scope=$2 WHERE id=$1',
+    [delegationId, {
+      workspaceId,
+      teamIds: [input.teamId],
+      projectIds: input.projectIds ?? [],
+      workItemIds: [input.workItemId],
+      repositoryIds: input.repositoryIds ?? [],
+      capabilities: executorCapabilities,
+    }],
+  )
+  const token = await seedAgentSessionBearer(db, session.id, registration.id)
+  if (executorCapabilities.includes('work:write')) {
     const acknowledged = await agentCall(
       token,
       'POST',
@@ -477,6 +481,41 @@ afterAll(async () => {
 }, 300_000)
 
 describe('declarative route policy live authorization', () => {
+  it('rejects an ordinary execution Session from the Human-or-Coordination forced assignment route', async () => {
+    const source = await createWorkItemFixture(teamA, readyA, 'Ordinary Agent source')
+    const target = await createWorkItemFixture(teamA, readyA, 'Forced assignment target')
+    const ordinary = await createAgentFixture({
+      slug: `ordinary-force-denied-${randomUUID()}`,
+      workItemId: source.id,
+      teamId: teamA,
+      capabilities: ['work:read', 'work:write', 'agent:delegate'],
+    })
+    const denied = await agentCall(
+      ordinary.token,
+      'POST',
+      `/api/v1/work-items/${target.id}/agent-session`,
+      {
+        agentId: ordinary.agentId,
+        principalHumanActorId: admin.actorId,
+        role: 'executor',
+        requestedCapabilities: ['work:read', 'work:write'],
+        initialPrompt: 'An ordinary execution Session must not force assignment.',
+        budget: {},
+      },
+      { 'if-match': `"revision-${target.revision}"` },
+    )
+    expect(denied.statusCode, denied.body).toBe(401)
+    expect(errorCode(denied)).toBe('UNAUTHENTICATED')
+    expect((await db.query(
+      'SELECT 1 FROM delegations WHERE work_item_id=$1',
+      [target.id],
+    )).rowCount).toBe(0)
+    expect((await db.query(
+      'SELECT 1 FROM agent_sessions WHERE work_item_id=$1',
+      [target.id],
+    )).rowCount).toBe(0)
+  })
+
   it('fails closed across principals, resources, audit, events, revocation, and feature gates', async () => {
     const member = await createHuman('Team Member', teamA)
     const outsider = await createHuman('Outside Team')

@@ -18,13 +18,18 @@ const digest = `sha256:${createHash('sha256').update(artifact).digest('hex')}`
 
 if (check) {
   const [actualArtifact, manifestSource, publicKey] = await Promise.all([
-    readFile(artifactPath, 'utf8'), readFile(manifestPath, 'utf8'), readFile(publicKeyPath, 'utf8'),
+    readFile(artifactPath), readFile(manifestPath, 'utf8'), readFile(publicKeyPath, 'utf8'),
   ])
-  if (normalizeLineEndings(actualArtifact) !== artifact) throw new Error('Generated WorkMesh Skill artifact is stale')
+  const expectedArtifact = Buffer.from(artifact, 'utf8')
+  if (!actualArtifact.equals(expectedArtifact))
+    throw new Error('Generated WorkMesh Skill artifact bytes are stale or not canonical LF UTF-8')
+  const actualDigest = `sha256:${createHash('sha256').update(actualArtifact).digest('hex')}`
   const manifest = /sha256: '([^']+)',\s+signature: 'ed25519:([^']+)'/s.exec(manifestSource)
-  if (!manifest || manifest[1] !== digest) throw new Error('Generated WorkMesh Skill manifest is stale')
-  if (!verify(null, Buffer.from(artifact), publicKey, Buffer.from(manifest[2], 'base64'))) throw new Error('WorkMesh Skill signature is invalid')
-  process.stdout.write(`${digest} verified\n`)
+  if (!manifest || manifest[1] !== digest || manifest[1] !== actualDigest)
+    throw new Error('Generated WorkMesh Skill manifest is stale')
+  if (!verify(null, actualArtifact, publicKey, Buffer.from(manifest[2], 'base64')))
+    throw new Error('WorkMesh Skill signature is invalid for the exact published bytes')
+  process.stdout.write(`${actualDigest} verified\n`)
   process.exit(0)
 }
 

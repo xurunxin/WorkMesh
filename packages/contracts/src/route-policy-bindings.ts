@@ -232,13 +232,13 @@ export const routeOperationBindings = [
   },
   {
     "method": "POST",
-    "path": "/api/v1/work-items/{id}/delegations",
-    "operationId": "createDelegation"
+    "path": "/api/v1/work-items/{id}/agent-session",
+    "operationId": "delegateAndStartAgentSession"
   },
   {
     "method": "POST",
-    "path": "/api/v1/work-items/{id}/agent-session",
-    "operationId": "delegateAndStartAgentSession"
+    "path": "/api/v1/work-items/{id}/claim",
+    "operationId": "claimWorkItem"
   },
   {
     "method": "GET",
@@ -254,11 +254,6 @@ export const routeOperationBindings = [
     "method": "GET",
     "path": "/api/v1/agent-sessions",
     "operationId": "listAgentSessions"
-  },
-  {
-    "method": "POST",
-    "path": "/api/v1/agent-sessions",
-    "operationId": "createAgentSession"
   },
   {
     "method": "GET",
@@ -1029,6 +1024,11 @@ export const routeOperationBindings = [
     "method": "POST",
     "path": "/api/v1/agent-connections/redeem",
     "operationId": "redeemAgentConnection"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/agent-connections/current-identity",
+    "operationId": "getCurrentAgentConnectionIdentity"
   },
   {
     "method": "GET",

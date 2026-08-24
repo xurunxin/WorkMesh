@@ -94,7 +94,12 @@ import {
   type RealtimeWakeSource,
 } from "./realtime/wake-source.js";
 import { registerRealtimeRoutes } from "./realtime/routes.js";
-import { registerAgentConnectionRoutes, resolveCoordinationIdentity } from "./agent-connections.js";
+import {
+  CoordinationIdentityResolutionError,
+  registerAgentConnectionRoutes,
+  resolveCoordinationIdentity,
+} from "./agent-connections.js";
+import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -102,6 +107,7 @@ declare module "fastify" {
     correlationId: string;
     idempotencyKey?: string;
     rawBody?: Buffer;
+    coordinationIdentity?: AgentConnectionCurrentIdentity;
   }
 
   interface FastifyInstance {
@@ -379,8 +385,29 @@ export const buildApp = (options: {
     )
       return;
     const coordinationToken = header(request, "x-workmesh-installation-token");
-    if (coordinationToken) {
-      const identity = await resolveCoordinationIdentity(db, coordinationToken);
+    const requiresCoordinationToken = request.routeOptions.url
+      === "/api/v1/agent-connections/current-identity";
+    if (coordinationToken || requiresCoordinationToken) {
+      const candidateToken = coordinationToken ?? "";
+      let identity: AgentConnectionCurrentIdentity;
+      try {
+        identity = await resolveCoordinationIdentity(db, candidateToken, {
+          auditSecret: config.SESSION_SECRET,
+        });
+      } catch (error) {
+        if (error instanceof CoordinationIdentityResolutionError) {
+          request.log.warn({
+            coordinationAuthDiagnosticId: error.diagnosticId,
+            coordinationAuthReason: error.diagnosticReason,
+            credentialAuditFingerprint: error.credentialAuditFingerprint,
+            recognizedCredentialFingerprintPrefix:
+              error.recognizedCredentialFingerprintPrefix,
+            correlationId: request.correlationId,
+          }, "Agent Connection authentication rejected");
+        }
+        throw error;
+      }
+      request.coordinationIdentity = identity;
       request.actor = {
         id: identity.agent_actor_id,
         workspaceId: identity.connection.workspace_id,
@@ -390,7 +417,7 @@ export const buildApp = (options: {
         kind: "agent",
         agentSessionId: identity.coordination_session.id,
         authentication: "coordination_connection",
-        credentialHash: tokenHash(coordinationToken),
+        credentialHash: tokenHash(candidateToken),
       };
       return;
     }
@@ -567,7 +594,7 @@ export const buildApp = (options: {
                   error.code.startsWith("IDEMPOTENCY") ||
                   error.code === "INSTALLATION_ALREADY_COMPLETED" ||
                   error.code === "CURSOR_EXPIRED" || error.code === "AGENT_CONNECTION_REVOKED" || error.code === "AGENT_CONNECTION_PAIRING_CONSUMED" ||
-                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED", "WORK_ITEM_BLOCK_CYCLE", "WORK_ITEM_PARENT_CYCLE", "WORK_ITEM_MILESTONE_PROJECT_MISMATCH", "WORK_ITEM_MILESTONE_DELETED", "WORK_ITEM_RELATION_ENDPOINT_DELETED", "WORK_ITEM_HAS_ACTIVE_PARENT", "WORK_ITEM_HAS_ACTIVE_CHILDREN", "WORK_ITEM_HAS_ACTIVE_RELATIONS", "MILESTONE_HAS_ACTIVE_WORK_ITEMS", "PLANNING_RELATION_ALREADY_EXISTS"].includes(error.code)
+                  ["SESSION_STOPPED", "SESSION_NOT_ACTIVE", "INVALID_SESSION_TRANSITION", "STOP_ACK_ALREADY_RECORDED", "PLAN_REVISION_CONFLICT", "AGENT_CONCURRENCY_LIMIT", "ACTIVE_DELEGATION_SCOPE_MISMATCH", "WORK_ITEM_ALREADY_ASSIGNED", "WORK_ITEM_NOT_CLAIMABLE", "CHILD_SESSION_LIMIT", "PARENT_CHILDREN_INCOMPLETE", "CHILD_BUDGET_EXCEEDED", "COMPLETION_PLAN_INCOMPLETE", "REVIEW_COMPLETION_EVIDENCE_REQUIRED", "LEASE_CONFLICT", "LEASE_EXPIRED", "HANDOFF_STATE_CONFLICT", "HANDOFF_NOT_ACCEPTED", "HANDOFF_TARGET_INCOMPLETE", "HANDOFF_LEASE_POLICY_INCOMPLETE", "STALE_PLAN_VERSION", "ROUTING_TARGET_LOCKED", "ROUTING_TARGET_REQUIRED", "DELEGATION_NOT_ACTIVE", "DECISION_TRANSITION_CONFLICT", "REPOSITORY_HEAD_CHANGED", "MERGE_HEAD_CHANGED", "WORK_ITEM_BLOCK_CYCLE", "WORK_ITEM_PARENT_CYCLE", "WORK_ITEM_MILESTONE_PROJECT_MISMATCH", "WORK_ITEM_MILESTONE_DELETED", "WORK_ITEM_RELATION_ENDPOINT_DELETED", "WORK_ITEM_HAS_ACTIVE_PARENT", "WORK_ITEM_HAS_ACTIVE_CHILDREN", "WORK_ITEM_HAS_ACTIVE_RELATIONS", "MILESTONE_HAS_ACTIVE_WORK_ITEMS", "PLANNING_RELATION_ALREADY_EXISTS"].includes(error.code)
                 ? 409
                 : 400;
       return reply
@@ -1369,6 +1396,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     responsibleHumanActorId?: string;
     label?: string;
     statusCategory?: string;
+    claimable?: string;
   };
   if (request.actor!.kind === "agent" && (request.actor! as unknown as ApiActor).authentication !== "coordination_connection") {
     const current = request.actor! as unknown as ApiActor;
@@ -1432,6 +1460,33 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
   } else {
     where += scopedTeamPredicate(request, "w.team_id", values);
   }
+  if (query.claimable !== undefined && query.claimable !== "true" && query.claimable !== "false")
+    throw new DomainError("VALIDATION_ERROR", "claimable must be true or false");
+  if (query.claimable === "true") {
+    const identity = request.coordinationIdentity;
+    if (
+      request.actor!.kind !== "agent"
+      || (request.actor! as unknown as ApiActor).authentication !== "coordination_connection"
+      || !identity
+    ) throw new DomainError("FORBIDDEN", "An active Coordination Connection is required to list claimable Work Items");
+    if (
+      !identity.granted_capabilities.includes("work:read")
+      || !identity.granted_capabilities.includes("work:write")
+    ) where += " AND FALSE";
+    values.push(identity.team_id);
+    where += ` AND w.team_id=$${values.length}`;
+    values.push(identity.principal_human_actor_id);
+    where += ` AND w.responsible_human_actor_id=$${values.length}`;
+    where += ` AND s.category NOT IN ('completed','canceled')
+      AND NOT EXISTS (
+        SELECT 1
+          FROM delegations assignment
+         WHERE assignment.workspace_id=w.workspace_id
+           AND assignment.work_item_id=w.id
+           AND assignment.role='executor'
+           AND assignment.status='active'
+      )`;
+  }
   for (const [key, column] of [
     ["teamId", "w.team_id"],
     ["statusId", "w.status_id"],
@@ -1471,6 +1526,7 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       milestoneId: query.milestoneId ?? null,
       priority: query.priority ?? null,
       statusCategory: query.statusCategory ?? null,
+      claimable: query.claimable === "true",
       responsibleHumanActorId: owner ?? null,
       label: query.label ?? null,
       search: query.search ?? null,

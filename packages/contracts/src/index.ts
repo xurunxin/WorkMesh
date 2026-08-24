@@ -193,7 +193,17 @@ export const workItemExecutorProjectionSchema = z.object({
   lease_heartbeat_at: timestampSchema,
   lease_expires_at: timestampSchema,
 }).strict()
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemAssignmentProjectionSchema = z.object({
+  delegation_id: idSchema,
+  agent_id: idSchema,
+  agent_actor_id: idSchema,
+  agent_slug: z.string(),
+  agent_display_name: z.string(),
+  session_id: idSchema.nullable(),
+  session_state: agentSessionStateSchema.nullable(),
+  assigned_at: timestampSchema,
+}).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_assignment: workItemAssignmentProjectionSchema.nullable().default(null), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), author_kind: z.literal('human'), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
@@ -592,17 +602,6 @@ export const capabilityScopeSchema = z.object({
   repositoryIds: z.array(z.string().min(1).max(300)).max(100).default([]),
   capabilities: z.array(capabilitySchema).max(50),
 })
-export const delegationInputSchema = z.object({
-  agentId: idSchema,
-  principalHumanActorId: idSchema,
-  role: delegationRoleSchema,
-  scopeType: delegationScopeTypeSchema,
-  scopeId: idSchema,
-  permissionsSnapshot: z.array(capabilitySchema).min(1).max(50),
-  capabilityScope: capabilityScopeSchema,
-  startsAt: timestampSchema.optional(),
-  endsAt: timestampSchema.optional(),
-})
 export const delegationResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, principal_human_actor_id: idSchema,
   work_item_id: idSchema.nullable(), role: delegationRoleSchema, scope_type: delegationScopeTypeSchema, scope_id: idSchema,
@@ -613,14 +612,16 @@ export const delegationResponseSchema = z.object({
 
 export const budgetSchema = z.object({ maxRuntimeSeconds: z.number().int().positive().max(604_800).optional(), maxInputTokens: z.number().int().nonnegative().optional(), maxOutputTokens: z.number().int().nonnegative().optional(), maxCostUsd: z.number().nonnegative().optional() }).default({})
 export const externalUrlSchema = z.object({ label: z.string().min(1).max(120), url: z.string().url() })
-export const createAgentSessionInputSchema = z.object({
-  delegationId: idSchema, workItemId: idSchema.optional(), projectId: idSchema.optional(), planStepId: idSchema.optional(),
-  initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: idSchema.optional(), budget: budgetSchema,
-}).refine(value => Number(Boolean(value.workItemId)) + Number(Boolean(value.projectId)) + Number(Boolean(value.planStepId)) === 1, 'Exactly one execution subject is required')
 export const delegateAndStartAgentSessionInputSchema = z.object({
-  agentId: idSchema, principalHumanActorId: idSchema, role: delegationRoleSchema.default('executor'), requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
+  agentId: idSchema, principalHumanActorId: idSchema, role: z.literal('executor').default('executor'), requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
   initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: idSchema.optional(), budget: budgetSchema,
 })
+export const claimWorkItemInputSchema = z.object({
+  requestedCapabilities: z.array(capabilitySchema).min(1).max(50).optional(),
+  initialPrompt: z.string().min(1).max(50_000).optional(),
+  contextSnapshotId: idSchema.optional(),
+  budget: budgetSchema.optional(),
+}).strict()
 export const agentSessionResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, delegation_id: idSchema,
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
@@ -632,6 +633,11 @@ export const agentSessionResponseSchema = z.object({
   created_at: timestampSchema, updated_at: timestampSchema,
 })
 export const delegateAndStartAgentSessionResponseSchema = z.object({ delegation: delegationResponseSchema, session: agentSessionResponseSchema })
+export const claimWorkItemResponseSchema = z.object({
+  delegation: delegationResponseSchema,
+  session: agentSessionResponseSchema,
+  exchangeToken: z.string().min(32).max(4_096),
+}).strict()
 export const retryAgentSessionInputSchema = z.object({ reason: z.string().min(1).max(2_000), initialPrompt: z.string().min(1).max(50_000).optional(), reuseContext: z.boolean().default(true) })
 export const acknowledgeAgentSessionInputSchema = z.object({ summary: z.string().min(1).max(2_000), externalUrls: z.array(externalUrlSchema).max(20).default([]) })
 export const exchangeAgentSessionTokenInputSchema = z.object({ exchangeToken: z.string().min(32).max(4_096) })
@@ -745,7 +751,33 @@ export const approvalDecisionResponseSchema = z.object({ approval: approvalRespo
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 
-export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.coordination_session.opened', 'agent.coordination_session.refreshed', 'agent.coordination_session.closed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const coordinationSessionOpenedReasonSchema = z.enum(['initial', 'expired', 'recovered_terminal_backing', 'recovered_invalid_backing'])
+export const coordinationSessionClosedReasonSchema = z.enum(['expired', 'terminal_backing', 'invalid_binding', 'invalid_backing', 'connection_revoked'])
+export const coordinationSessionOpenedEventPayloadSchema = z.object({
+  connectionId: idSchema,
+  sessionId: idSchema,
+  reason: coordinationSessionOpenedReasonSchema,
+  expiresAt: timestampSchema,
+}).strict()
+export const coordinationSessionRefreshedEventPayloadSchema = z.object({
+  connectionId: idSchema,
+  sessionId: idSchema,
+  previousExpiresAt: timestampSchema,
+  expiresAt: timestampSchema,
+}).strict()
+const coordinationSessionClosedEventPayloadBaseSchema = z.object({
+  connectionId: idSchema,
+  reason: coordinationSessionClosedReasonSchema,
+})
+export const coordinationSessionClosedEventPayloadSchema = z.union([
+  coordinationSessionClosedEventPayloadBaseSchema.extend({
+    sessionId: idSchema,
+  }).strict(),
+  coordinationSessionClosedEventPayloadBaseSchema.extend({
+    sessionReferenceOmitted: z.literal('resource_scope_mismatch'),
+  }).strict(),
+])
 export const approvalRequestedEventPayloadSchema = z.object({
   approvalId: idSchema, sessionId: idSchema, status: z.literal('pending'), actionName: z.string().min(1), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   requiredApprovals: z.number().int().positive(), expiresAt: timestampSchema,
@@ -773,6 +805,7 @@ export const agentEventEnvelopeSchema = eventEnvelopeSchema.extend({ event_type:
 
 export const stage1ApiErrorCodeSchema = z.enum([
   'AGENT_NOT_ACTIVE', 'AGENT_CONCURRENCY_LIMIT', 'AGENT_IDENTITY_REQUIRED', 'AGENT_SESSION_NOT_FOUND', 'AGENT_SESSION_TOKEN_MISMATCH',
+  'WORK_ITEM_ALREADY_ASSIGNED', 'WORK_ITEM_NOT_CLAIMABLE',
   'SESSION_NOT_ACTIVE', 'SESSION_STOPPED', 'STOP_ACK_ALREADY_RECORDED', 'INVALID_SESSION_TRANSITION', 'DELEGATION_NOT_ACTIVE',
   'CAPABILITY_DENIED', 'RESOURCE_SCOPE_DENIED', 'APPROVAL_REQUIRED', 'APPROVAL_NOT_APPROVED', 'APPROVAL_EXPIRED', 'APPROVAL_PAYLOAD_MISMATCH',
   'APPROVAL_ALREADY_CONSUMED', 'PLAN_REVISION_CONFLICT', 'PLAN_STEP_ID_REUSED', 'PLAN_STEP_DEPENDENCY_MISSING', 'PLAN_STEP_DEPENDENCY_CYCLE',
@@ -791,6 +824,32 @@ export const stage1ApiErrorCodeSchema = z.enum([
 ])
 export const agentApiErrorCodeSchema = z.union([apiErrorCodeSchema, stage1ApiErrorCodeSchema])
 export const agentErrorResponseSchema = z.object({ error: z.object({ code: agentApiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
+export const agentExecutionConcurrencyStateSchema = z.enum([
+  'queued',
+  'acknowledged',
+  'planning',
+  'executing',
+  'awaiting_input',
+  'awaiting_approval',
+  'blocked',
+  'paused',
+  'stopping',
+  'stale',
+])
+export const agentConcurrencyLimitDetailsSchema = z.object({
+  maxConcurrency: z.number().int().positive(),
+  activeExecutionSessionCount: z.number().int().nonnegative(),
+  countedSessionKinds: z.tuple([z.literal('execution')]),
+  countedSessionStates: z.array(agentExecutionConcurrencyStateSchema).length(10)
+    .refine(states => new Set(states).size === states.length, 'countedSessionStates must be unique'),
+  activeExecutionSessionsByState: z.record(z.number().int().nonnegative()).superRefine((counts, context) => {
+    for (const key of Object.keys(counts)) {
+      if (!agentExecutionConcurrencyStateSchema.safeParse(key).success) {
+        context.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown execution concurrency state: ${key}` })
+      }
+    }
+  }),
+}).strict()
 
 export const stage1RouteManifest = [
   { method: 'GET', path: '/api/v1/agents', authenticated: true },
@@ -801,11 +860,10 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret', authenticated: true, mutation: true, revisioned: true },
   { method: 'PUT', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'DELETE', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
-  { method: 'POST', path: '/api/v1/work-items/{id}/delegations', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/agent-session', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/work-items/{id}/claim', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/delegations/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/delegations/{id}/revoke', authenticated: true, mutation: true, revisioned: true },
-  { method: 'POST', path: '/api/v1/agent-sessions', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/agent-sessions', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/token/exchange', authenticated: false, mutation: true },
@@ -1126,6 +1184,7 @@ export type WorkItemSurfaceSummary = z.infer<typeof workItemSurfaceSummarySchema
 export type WorkItemRelationInput = z.infer<typeof workItemRelationInputSchema>
 export type WorkItemRelationResponse = z.infer<typeof workItemRelationResponseSchema>
 export type MilestoneResponse = z.infer<typeof milestoneResponseSchema>
+export type WorkItemAssignmentProjection = z.infer<typeof workItemAssignmentProjectionSchema>
 export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
 export type GuidanceScope = z.infer<typeof guidanceScopeSchema>
 export type GuidanceResponse = z.infer<typeof guidanceResponseSchema>
@@ -1138,6 +1197,8 @@ export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>
 export type CompleteAgentSessionInput = z.infer<typeof completeAgentSessionInputSchema>
+export type ClaimWorkItemInput = z.infer<typeof claimWorkItemInputSchema>
+export type ClaimWorkItemResponse = z.infer<typeof claimWorkItemResponseSchema>
 export type ApprovalEventEnvelope = z.infer<typeof approvalEventEnvelopeSchema>
 
 // Stage 4: planning, operational automation, usage, notifications, templates,
@@ -1524,6 +1585,7 @@ export const stage5RouteManifest = [
   { method: 'GET', path: '/api/v1/agent-connections', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-connections/redeem', authenticated: false, mutation: true },
+  { method: 'GET', path: '/api/v1/agent-connections/current-identity', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
@@ -1585,7 +1647,7 @@ const clientProfileFeatureSchema = z.object({
 const clientProfileOperationSchema = z.object({
   operationId: z.string().min(1),
   policyId: z.string().min(1),
-  authentication: z.enum(['agent_session', 'human_or_agent_session', 'installation_target']),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target']),
   transports: z.object({
     rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
     sse: z.boolean(),
@@ -1668,7 +1730,7 @@ export function createAgentCapabilityManifest(input: AgentCapabilityManifestInpu
       return {
         operationId: policy.operationId,
         policyId: policy.policyId,
-        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'installation_target',
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target',
         transports: {
           rest: policy.bindings.rest,
           sse: policy.bindings.sse,
@@ -2050,7 +2112,7 @@ export const coordinationSessionResponseSchema = z
 // OpenAPI enforces (a) and (b) per-capability via if/then/else blocks
 // (JSON Schema 2020-12 has no subset operator); Zod enforces all
 // four so non-OpenAPI clients also get the contract.
-export const agentConnectionIdentitySchema = z
+const agentConnectionIdentityCoreSchema = z
   .object({
     connection: agentConnectionResponseSchema,
     coordination_session: coordinationSessionResponseSchema,
@@ -2062,7 +2124,10 @@ export const agentConnectionIdentitySchema = z
       .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
   })
   .strict()
-  .superRefine((value, ctx) => {
+const validateAgentConnectionIdentity = (
+  value: z.infer<typeof agentConnectionIdentityCoreSchema>,
+  ctx: z.RefinementCtx,
+): void => {
     // (a) Subset: coordination_session.granted_capabilities ⊆ connection.granted_capabilities
     const connectionGranted = new Set(value.connection.granted_capabilities)
     const unrequested = value.coordination_session.granted_capabilities.filter(c => !connectionGranted.has(c))
@@ -2107,7 +2172,28 @@ export const agentConnectionIdentitySchema = z
         })
       }
     }
-  })
+}
+
+export const agentConnectionIdentitySchema = agentConnectionIdentityCoreSchema
+  .superRefine(validateAgentConnectionIdentity)
+
+export const agentConnectionAuthenticatedCredentialSchema = z.discriminatedUnion('status', [
+  z.object({
+    fingerprint_prefix: z.string().regex(/^[a-f0-9]{12}$/),
+    status: z.literal('active'),
+    overlap_until: z.null(),
+  }).strict(),
+  z.object({
+    fingerprint_prefix: z.string().regex(/^[a-f0-9]{12}$/),
+    status: z.literal('overlap'),
+    overlap_until: timestampSchema,
+  }).strict(),
+])
+
+export const agentConnectionCurrentIdentitySchema = agentConnectionIdentityCoreSchema
+  .extend({ authenticated_credential: agentConnectionAuthenticatedCredentialSchema })
+  .strict()
+  .superRefine(validateAgentConnectionIdentity)
 
 export type AgentConnectionClientType = z.infer<typeof agentConnectionClientTypeSchema>
 export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>
@@ -2122,3 +2208,4 @@ export type AgentConnectionRotateResponse = z.infer<typeof agentConnectionRotate
 export type AgentWellKnownResponse = z.infer<typeof agentWellKnownResponseSchema>
 export type CoordinationSessionResponse = z.infer<typeof coordinationSessionResponseSchema>
 export type AgentConnectionIdentity = z.infer<typeof agentConnectionIdentitySchema>
+export type AgentConnectionCurrentIdentity = z.infer<typeof agentConnectionCurrentIdentitySchema>

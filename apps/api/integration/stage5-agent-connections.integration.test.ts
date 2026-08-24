@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
+import { Writable } from 'node:stream'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
@@ -12,7 +13,7 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 
 if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 5 integration requires a dedicated *test* database.')
 const db = createDb(databaseUrl)
 const features = loadFeatureConfig({ WORKMESH_BETA_COORDINATION_MCP: 'true' })
-let app = buildApp({ features })
+let app = buildApp({ features, logger: { level: 'error' } })
 let cookie = '', csrf = '', actorId = '', teamId = '', teamKey = '', otherTeamId = '', readyId = '', apiBaseUrl = ''
 type Reply = { statusCode: number; headers: Record<string, string|string[]|number|undefined>; json: <T>() => T; body: string }
 const human = async (method: 'GET'|'POST'|'PUT'|'PATCH'|'DELETE', url: string, payload?: object, revision?: number): Promise<Reply> => app.inject({ method, url, payload, headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID(), ...(revision ? { 'if-match': `"revision-${revision}"` } : {}) } }) as unknown as Reply
@@ -48,6 +49,40 @@ const listenApi = async () => {
   const address = app.server.address()
   if (!address || typeof address === 'string') throw new Error('Expected API TCP listening address')
   apiBaseUrl = `http://127.0.0.1:${address.port}`
+}
+const pairConnection = async (
+  agentSlug: string,
+  requestedCapabilities = ['work:read', 'work:write'],
+) => {
+  const created = await human('POST', '/api/v1/agent-connections', {
+    name: `Connection ${agentSlug}`,
+    agentSlug,
+    clientType: 'codex',
+    teamId,
+    principalHumanActorId: actorId,
+    requestedCapabilities,
+    grantAgentDelegate: false,
+  })
+  expect(created.statusCode, created.body).toBe(201)
+  const envelope = created.json<{
+    connection: { id: string; agent_actor_id: string; revision: number }
+    connect_url: string
+  }>()
+  const redeemed = await app.inject({
+    method: 'POST',
+    url: '/api/v1/agent-connections/redeem',
+    payload: {
+      pairingCode: new URL(envelope.connect_url).hash.slice(1),
+      agentSlug,
+      client: { type: 'codex', version: '1.1.0' },
+    },
+    headers: { 'idempotency-key': randomUUID() },
+  })
+  expect(redeemed.statusCode, redeemed.body).toBe(200)
+  return {
+    connection: envelope.connection,
+    token: redeemed.json<{ installation_token: string }>().installation_token,
+  }
 }
 beforeAll(async () => {
   await applyMigrations(db); await db.query('TRUNCATE auth_idempotency_records,workspaces CASCADE')
@@ -90,7 +125,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect(redeemed.connection.credential_fingerprint_prefix).toBe(tokenHash(token).slice(0, 12))
     const pairingAsCredential = await coordinator(pairingCode, 'GET', '/api/v1/agent-capabilities')
     expect(pairingAsCredential.statusCode).toBe(401)
-    expect(pairingAsCredential.json<{ error: { message: string } }>().error.message).toContain('cannot authenticate')
+    expect(pairingAsCredential.json<{ error: { code: string; message: string } }>().error).toMatchObject({
+      code: 'UNAUTHENTICATED',
+      message: 'Installation Token is invalid or inactive',
+    })
     const visibleTeams = await coordinator(token, 'GET', '/api/v1/teams')
     expect(visibleTeams.statusCode, visibleTeams.body).toBe(200)
     expect(visibleTeams.json<{ items: { id: string }[] }>().items.map(team => team.id)).toEqual([teamId])
@@ -145,6 +183,68 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       expect((mcpTeams.structuredContent?.data as { items: { id: string }[] }).items.map(team => team.id)).toContain(teamId)
       const mcpStates = await mcpTool(mcpUrl, token, 'list_workflow_states', { teamId })
       expect((mcpStates.structuredContent?.data as { items: { id: string }[] }).items.map(state => state.id)).toContain(readyId)
+      const claimCandidate = await mcpTool(mcpUrl, token, 'create_work_item', {
+        teamId,
+        title: 'Remote MCP self-claim lifecycle',
+        description: 'Prove claim through completion without replacing the configured Connection credential.',
+        statusId: readyId,
+      })
+      const candidate = claimCandidate.structuredContent?.data as { id: string; revision: number }
+      const claimable = await mcpTool(mcpUrl, token, 'list_claimable_work_items', { limit: 200 })
+      expect((claimable.structuredContent?.data as { items: { id: string }[] }).items.map(item => item.id)).toContain(candidate.id)
+      const claimed = await mcpTool(mcpUrl, token, 'claim_work_item', {
+        workItemId: candidate.id,
+        revision: candidate.revision,
+        initialPrompt: 'Execute the remote MCP lifecycle acceptance fixture.',
+        idempotencyKey: `claim:${candidate.id}`,
+      })
+      const claimedData = claimed.structuredContent?.data as {
+        session: { id: string; revision: number }
+        executionAuth: { mode: string; sessionId: string; expiresAt?: string }
+      }
+      expect(claimedData.executionAuth).toMatchObject({
+        mode: 'connection_session_bridge',
+        sessionId: claimedData.session.id,
+      })
+      expect(JSON.stringify(claimedData)).not.toContain('sessionToken')
+      expect(JSON.stringify(claimedData)).not.toContain('exchangeToken')
+      const acknowledged = await mcpTool(mcpUrl, token, 'ack_agent_session', {
+        sessionId: claimedData.session.id,
+        summary: 'Accepted through the unchanged Connection configuration.',
+      })
+      const acknowledgedData = acknowledged.structuredContent?.data as { revision: number }
+      await mcpTool(mcpUrl, token, 'transition_agent_session_state', {
+        sessionId: claimedData.session.id,
+        state: 'executing',
+        reason: 'Remote MCP bridge acceptance',
+        revision: acknowledgedData.revision,
+      })
+      await Promise.all([
+        mcpTool(mcpUrl, token, 'append_activity', {
+          sessionId: claimedData.session.id,
+          kind: 'evidence',
+          summary: 'First parallel request-local exact Session refresh succeeded.',
+        }),
+        mcpTool(mcpUrl, token, 'append_activity', {
+          sessionId: claimedData.session.id,
+          kind: 'evidence',
+          summary: 'Second parallel request-local exact Session refresh succeeded.',
+        }),
+      ])
+      const completionRevision = (await db.query<{ revision: number }>(
+        'SELECT revision FROM agent_sessions WHERE id=$1',
+        [claimedData.session.id],
+      )).rows[0]!.revision
+      const completed = await mcpTool(mcpUrl, token, 'complete_session', {
+        sessionId: claimedData.session.id,
+        revision: completionRevision,
+        summary: 'Remote MCP self-claim lifecycle completed.',
+        noArtifactReason: 'Protocol acceptance produces no repository artifact.',
+      })
+      expect(completed.structuredContent?.data).toMatchObject({
+        id: claimedData.session.id,
+        state: 'completed',
+      })
       const mcpProject = await mcpTool(mcpUrl, token, 'create_project', {
         teamId,
         name: 'MCP transport acceptance',
@@ -167,7 +267,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       await once(mcp, 'close')
     }
     await app.close()
-    app = buildApp({ features })
+    app = buildApp({ features, logger: { level: 'error' } })
     await listenApi()
     const restartedMcp = await createWorkMeshMcpHttpServer({
       baseUrl: apiBaseUrl,
@@ -277,9 +377,788 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect((await coordinator(token, 'GET', '/api/v1/projects')).statusCode).toBe(200); expect((await coordinator(nextToken, 'GET', '/api/v1/projects')).statusCode).toBe(200)
     const confirmed = await human('POST', `/api/v1/agent-connections/${envelope.connection.id}/rotate-confirm`, {}, second.json<{ connection: { revision: number } }>().connection.revision)
     expect(confirmed.statusCode, confirmed.body).toBe(200); expect((await coordinator(token, 'GET', '/api/v1/projects')).statusCode).toBe(401); expect((await coordinator(nextToken, 'GET', '/api/v1/projects')).statusCode).toBe(200)
+    await db.query(
+      `UPDATE agent_sessions
+          SET session_kind='execution',coordination_connection_id=NULL,work_item_id=$2
+        WHERE id=$1`,
+      [coordinationSessionId, issueId],
+    )
+    const revokeCursor = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
     const revoked = await human('DELETE', `/api/v1/agent-connections/${envelope.connection.id}`, undefined, confirmed.json<{ revision: number }>().revision); expect(revoked.statusCode, revoked.body).toBe(204)
+    expect((await db.query<{ revoked_at: Date | null }>(
+      'SELECT revoked_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(nextToken)],
+    )).rows[0]?.revoked_at).toEqual(expect.any(Date))
+    expect((await db.query<{ state: string }>(
+      'SELECT state FROM agent_sessions WHERE id=$1',
+      [coordinationSessionId],
+    )).rows[0]?.state).toBe('canceled')
+    const revokeEvents = (await db.query<{ event_type: string }>(
+      `SELECT event_type FROM domain_events
+        WHERE cursor>$1::bigint
+          AND (aggregate_id=$2 OR aggregate_id=$3)
+        ORDER BY cursor`,
+      [revokeCursor, coordinationSessionId, envelope.connection.id],
+    )).rows.map(event => event.event_type)
+    expect(revokeEvents).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+      'agent.connection.revoked',
+    ])
     const denied = await coordinator(nextToken, 'GET', '/api/v1/projects'); expect(denied.statusCode).toBe(401)
+    expect((await coordinator(
+      nextToken,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )).statusCode).toBe(401)
   })
+
+  it('lazily reconciles existing Connection credentials and admits exactly one concurrent self-claim', async () => {
+    const oldAgentSlug = `legacy-claim-${randomUUID().slice(0, 8)}`
+    const oldConnection = await pairConnection(oldAgentSlug)
+    const oldAgent = (await db.query<{ agent_id: string }>(
+      'SELECT agent_id FROM agent_connections WHERE id=$1',
+      [oldConnection.connection.id],
+    )).rows[0]!
+    await db.query(
+      'DELETE FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(oldConnection.token)],
+    )
+    const legacyIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Legacy Connection claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    expect(legacyIssue.statusCode, legacyIssue.body).toBe(200)
+    const legacyItem = legacyIssue.json<{ id: string; revision: number }>()
+    const replayKey = randomUUID()
+    const claimLegacy = () => app.inject({
+      method: 'POST',
+      url: `/api/v1/work-items/${legacyItem.id}/claim`,
+      payload: {},
+      headers: {
+        'x-workmesh-installation-token': oldConnection.token,
+        'idempotency-key': replayKey,
+        'if-match': `"revision-${legacyItem.revision}"`,
+      },
+    }) as unknown as Promise<Reply>
+    const first = await claimLegacy()
+    expect(first.statusCode, first.body).toBe(200)
+    const replay = await claimLegacy()
+    expect(replay.statusCode, replay.body).toBe(200)
+    expect(replay.body).toBe(first.body)
+    const firstBody = first.json<{
+      delegation: { id: string }
+      session: { id: string }
+      exchangeToken: string
+    }>()
+    expect(firstBody.exchangeToken).toHaveLength(43)
+    const reconciled = (await db.query<{
+      id: string
+      agent_id: string
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      `SELECT id,agent_id,revoked_at,expires_at
+         FROM agent_installation_tokens WHERE token_hash=$1`,
+      [tokenHash(oldConnection.token)],
+    )).rows
+    expect(reconciled).toEqual([expect.objectContaining({
+      agent_id: oldAgent.agent_id,
+      revoked_at: null,
+      expires_at: null,
+    })])
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM delegations
+        WHERE work_item_id=$1 AND role='executor' AND status='active'`,
+      [legacyItem.id],
+    )).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE work_item_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [legacyItem.id],
+    )).rows[0]?.count).toBe(1)
+
+    const refreshKey = randomUUID()
+    const refresh = () => app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${oldConnection.token}`,
+        'idempotency-key': refreshKey,
+      },
+    })
+    const firstRefresh = await refresh()
+    expect(firstRefresh.statusCode, firstRefresh.body).toBe(200)
+    const replayedRefresh = await refresh()
+    expect(replayedRefresh.statusCode, replayedRefresh.body).toBe(200)
+    expect(replayedRefresh.body).toBe(firstRefresh.body)
+    const parallelRefreshes = await Promise.all([0, 1].map(() => app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${oldConnection.token}`,
+        'idempotency-key': randomUUID(),
+      },
+    })))
+    expect(parallelRefreshes.every(response => response.statusCode === 200)).toBe(true)
+    const parallelTokens = parallelRefreshes.map(response =>
+      response.json<{ sessionToken: string }>().sessionToken)
+    const acknowledged = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/ack`,
+      payload: { summary: 'First overlapping refresh remains usable.', externalUrls: [] },
+      headers: {
+        authorization: `Bearer ${parallelTokens[0]}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(acknowledged.statusCode, acknowledged.body).toBe(200)
+    const appended = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/activities`,
+      payload: {
+        kind: 'evidence',
+        summary: 'Second overlapping refresh remains usable.',
+        artifactIds: [],
+        references: [],
+        visibility: 'team',
+        ephemeral: false,
+      },
+      headers: {
+        authorization: `Bearer ${parallelTokens[1]}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(appended.statusCode, appended.body).toBe(200)
+
+    const crossTeamCreated = await human('POST', '/api/v1/agent-connections', {
+      name: 'Same Agent other Team',
+      agentSlug: oldAgentSlug,
+      clientType: 'codex',
+      teamId: otherTeamId,
+      principalHumanActorId: actorId,
+      requestedCapabilities: ['work:read', 'work:write'],
+      grantAgentDelegate: false,
+    })
+    expect(crossTeamCreated.statusCode, crossTeamCreated.body).toBe(201)
+    const crossTeamEnvelope = crossTeamCreated.json<{ connect_url: string }>()
+    const crossTeamRedeemed = await app.inject({
+      method: 'POST',
+      url: '/api/v1/agent-connections/redeem',
+      payload: {
+        pairingCode: new URL(crossTeamEnvelope.connect_url).hash.slice(1),
+        agentSlug: oldAgentSlug,
+        client: { type: 'codex', version: '1.1.0' },
+      },
+      headers: { 'idempotency-key': randomUUID() },
+    })
+    expect(crossTeamRedeemed.statusCode, crossTeamRedeemed.body).toBe(200)
+    const crossTeamToken = crossTeamRedeemed.json<{ installation_token: string }>().installation_token
+    const crossTeamRefresh = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${crossTeamToken}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(crossTeamRefresh.statusCode, crossTeamRefresh.body).toBe(401)
+
+    const partialConnection = await pairConnection(`partial-claim-${randomUUID().slice(0, 8)}`)
+    await db.query(
+      `UPDATE agent_installation_tokens SET revoked_at=now()
+        WHERE token_hash=$1`,
+      [tokenHash(partialConnection.token)],
+    )
+    const partialIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Partial mirror claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    const partialItem = partialIssue.json<{ id: string; revision: number }>()
+    const partialClaim = await coordinator(
+      partialConnection.token,
+      'POST',
+      `/api/v1/work-items/${partialItem.id}/claim`,
+      {},
+      partialItem.revision,
+    )
+    expect(partialClaim.statusCode, partialClaim.body).toBe(200)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_installation_tokens
+        WHERE token_hash=$1 AND revoked_at IS NULL`,
+      [tokenHash(partialConnection.token)],
+    )).rows[0]?.count).toBe(1)
+
+    const contenders = await Promise.all([
+      pairConnection(`claim-a-${randomUUID().slice(0, 8)}`),
+      pairConnection(`claim-b-${randomUUID().slice(0, 8)}`),
+    ])
+    const contestedIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Contested self-claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'high',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    const contested = contestedIssue.json<{ id: string; revision: number }>()
+    const attempts = await Promise.all(Array.from({ length: 16 }, (_, index) =>
+      app.inject({
+        method: 'POST',
+        url: `/api/v1/work-items/${contested.id}/claim`,
+        payload: {},
+        headers: {
+          'x-workmesh-installation-token': contenders[index % contenders.length]!.token,
+          'idempotency-key': randomUUID(),
+          'if-match': `"revision-${contested.revision}"`,
+        },
+      })))
+    expect(attempts.filter(attempt => attempt.statusCode === 200)).toHaveLength(1)
+    expect(attempts.filter(attempt => attempt.statusCode === 409)).toHaveLength(15)
+    const assignment = (await db.query<{ delegation_id: string; session_id: string }>(
+      `SELECT delegation.id AS delegation_id,session.id AS session_id
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.work_item_id=$1
+          AND delegation.role='executor' AND delegation.status='active'
+          AND session.session_kind='execution'
+          AND session.state NOT IN ('completed','failed','canceled')`,
+      [contested.id],
+    )).rows
+    expect(assignment).toHaveLength(1)
+    const projectedResponse = await human('GET', `/api/v1/work-items/${contested.id}`)
+    expect(projectedResponse.statusCode, projectedResponse.body).toBe(200)
+    expect(projectedResponse.json<{
+      active_assignment: {
+        delegation_id: string
+        session_id: string | null
+        session_state: string | null
+      } | null
+      active_executor: unknown | null
+    }>()).toMatchObject({
+      active_assignment: {
+        delegation_id: assignment[0]!.delegation_id,
+        session_id: assignment[0]!.session_id,
+        session_state: 'queued',
+      },
+      active_executor: null,
+    })
+    const eventRows = (await db.query<{ event_type: string; outbox_id: string }>(
+      `SELECT event.event_type,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE (event.aggregate_id=$1 OR event.aggregate_id=$2)
+          AND event.event_type IN ('agent.delegation.created','agent.session.created')
+        ORDER BY event.cursor`,
+      [assignment[0]!.delegation_id, assignment[0]!.session_id],
+    )).rows
+    expect(eventRows.map(row => row.event_type)).toEqual([
+      'agent.delegation.created',
+      'agent.session.created',
+    ])
+    expect(eventRows.every(row => Boolean(row.outbox_id))).toBe(true)
+  })
+
+  it('does not advertise claimable Issues when the live Connection lacks work:write', async () => {
+    const readOnly = await pairConnection(
+      `claim-read-only-${randomUUID().slice(0, 8)}`,
+      ['work:read'],
+    )
+    const issue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Read-only claim candidate ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    expect(issue.statusCode, issue.body).toBe(200)
+    const candidate = issue.json<{ id: string; revision: number }>()
+
+    const listed = await coordinator(
+      readOnly.token,
+      'GET',
+      '/api/v1/work-items?claimable=true&limit=200',
+    )
+    expect(listed.statusCode, listed.body).toBe(200)
+    expect(listed.json<{ items: Array<{ id: string }> }>().items).toEqual([])
+
+    const rejected = await coordinator(
+      readOnly.token,
+      'POST',
+      `/api/v1/work-items/${candidate.id}/claim`,
+      {},
+      candidate.revision,
+    )
+    expect(rejected.statusCode, rejected.body).toBe(403)
+    expect(rejected.json<{ error: { code: string } }>().error.code).toBe('CAPABILITY_DENIED')
+  })
+
+  it('keeps Human forced assignment authoritative before, during, and after self-claim and rolls back replacement failures', async () => {
+    const [claimingConnection, forcedConnection] = await Promise.all([
+      pairConnection(`claim-race-${randomUUID().slice(0, 8)}`),
+      pairConnection(`force-race-${randomUUID().slice(0, 8)}`),
+    ])
+    const connectionAgents = (await db.query<{ id: string; agent_id: string }>(
+      'SELECT id,agent_id FROM agent_connections WHERE id=ANY($1::uuid[])',
+      [[claimingConnection.connection.id, forcedConnection.connection.id]],
+    )).rows
+    const claimingAgentId = connectionAgents.find(row => row.id === claimingConnection.connection.id)!.agent_id
+    const forcedAgentId = connectionAgents.find(row => row.id === forcedConnection.connection.id)!.agent_id
+    await db.query(
+      'UPDATE agent_definitions SET max_concurrency=8 WHERE id=ANY($1::uuid[])',
+      [[claimingAgentId, forcedAgentId]],
+    )
+
+    const createItem = async (suffix: string) => {
+      const response = await human('POST', '/api/v1/work-items', {
+        teamId,
+        title: `Forced assignment ${suffix} ${randomUUID()}`,
+        statusId: readyId,
+        priority: 'high',
+        labels: [],
+        responsibleHumanActorId: actorId,
+      })
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<{ id: string; revision: number }>()
+    }
+    const forceAssign = (item: { id: string; revision: number }) => human(
+      'POST',
+      `/api/v1/work-items/${item.id}/agent-session`,
+      {
+        agentId: forcedAgentId,
+        principalHumanActorId: actorId,
+        role: 'executor',
+        requestedCapabilities: ['work:read', 'work:write'],
+        initialPrompt: 'Human forced assignment wins.',
+        budget: {},
+      },
+      item.revision,
+    )
+    const selfClaim = (item: { id: string; revision: number }) => coordinator(
+      claimingConnection.token,
+      'POST',
+      `/api/v1/work-items/${item.id}/claim`,
+      {},
+      item.revision,
+    )
+    const activeAssignments = async (workItemId: string) => (await db.query<{
+      delegation_id: string
+      session_id: string
+      agent_id: string
+      delegation_status: string
+      session_state: string
+    }>(
+      `SELECT delegation.id AS delegation_id,session.id AS session_id,
+              delegation.agent_id,delegation.status AS delegation_status,
+              session.state AS session_state
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.work_item_id=$1
+          AND delegation.role='executor' AND delegation.status='active'
+          AND session.session_kind='execution'
+          AND session.state NOT IN ('completed','failed','canceled')
+        ORDER BY delegation.id,session.id`,
+      [workItemId],
+    )).rows
+    const expectForcedWinner = async (workItemId: string) => {
+      expect(await activeAssignments(workItemId)).toEqual([
+        expect.objectContaining({ agent_id: forcedAgentId, delegation_status: 'active' }),
+      ])
+    }
+
+    const before = await createItem('before claim')
+    const forcedBefore = await forceAssign(before)
+    expect(forcedBefore.statusCode, forcedBefore.body).toBe(200)
+    const rejectedClaim = await selfClaim(before)
+    expect(rejectedClaim.statusCode, rejectedClaim.body).toBe(409)
+    expect(rejectedClaim.json<{ error: { code: string } }>().error.code).toBe('WORK_ITEM_ALREADY_ASSIGNED')
+    await expectForcedWinner(before.id)
+    expect((await db.query(
+      'SELECT 1 FROM delegations WHERE work_item_id=$1 AND agent_id=$2',
+      [before.id, claimingAgentId],
+    )).rowCount).toBe(0)
+
+    const after = await createItem('after claim')
+    const claimedAfter = await selfClaim(after)
+    expect(claimedAfter.statusCode, claimedAfter.body).toBe(200)
+    const claimedAfterBody = claimedAfter.json<{ delegation: { id: string }; session: { id: string } }>()
+    const forcedAfter = await forceAssign(after)
+    expect(forcedAfter.statusCode, forcedAfter.body).toBe(200)
+    await expectForcedWinner(after.id)
+    expect((await db.query<{ status: string; state: string; state_reason: string }>(
+      `SELECT delegation.status,session.state,session.state_reason
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [claimedAfterBody.delegation.id, claimedAfterBody.session.id],
+    )).rows[0]).toEqual({
+      status: 'revoked',
+      state: 'canceled',
+      state_reason: 'replaced by Human forced assignment',
+    })
+    expect((await db.query(
+      'SELECT 1 FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL',
+      [claimedAfterBody.session.id],
+    )).rowCount).toBe(0)
+
+    const during = await createItem('during claim')
+    const advisoryKey = 754781
+    const gate = await db.connect()
+    await db.query('DROP TRIGGER IF EXISTS stage5_pause_self_claim ON delegations')
+    await db.query('DROP FUNCTION IF EXISTS stage5_pause_self_claim()')
+    await db.query(`CREATE FUNCTION stage5_pause_self_claim() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${during.id}'::uuid AND NEW.agent_id='${claimingAgentId}'::uuid THEN
+          PERFORM pg_advisory_xact_lock(${advisoryKey});
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_pause_self_claim
+      BEFORE INSERT ON delegations FOR EACH ROW EXECUTE FUNCTION stage5_pause_self_claim()`)
+    let gateOpen = false
+    try {
+      await gate.query('BEGIN')
+      gateOpen = true
+      await gate.query('SELECT pg_advisory_xact_lock($1)', [advisoryKey])
+      const claimDuring = selfClaim(during)
+      let claimReachedInsert = false
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        const waiting = (await db.query<{ count: number }>(
+          "SELECT count(*)::int AS count FROM pg_locks WHERE locktype='advisory' AND granted=false",
+        )).rows[0]!.count
+        if (waiting > 0) {
+          claimReachedInsert = true
+          break
+        }
+        await new Promise(resolve => setTimeout(resolve, 10))
+      }
+      expect(claimReachedInsert).toBe(true)
+      const forceDuring = forceAssign(during)
+      await new Promise(resolve => setTimeout(resolve, 20))
+      await gate.query('COMMIT')
+      gateOpen = false
+      const [claimed, forced] = await Promise.all([claimDuring, forceDuring])
+      expect(claimed.statusCode, claimed.body).toBe(200)
+      expect(forced.statusCode, forced.body).toBe(200)
+      await expectForcedWinner(during.id)
+      const claimBody = claimed.json<{ delegation: { id: string }; session: { id: string } }>()
+      expect((await db.query<{ status: string; state: string }>(
+        `SELECT delegation.status,session.state
+           FROM delegations delegation
+           JOIN agent_sessions session ON session.delegation_id=delegation.id
+          WHERE delegation.id=$1 AND session.id=$2`,
+        [claimBody.delegation.id, claimBody.session.id],
+      )).rows[0]).toEqual({ status: 'revoked', state: 'canceled' })
+    } finally {
+      if (gateOpen) await gate.query('ROLLBACK')
+      gate.release()
+      await db.query('DROP TRIGGER IF EXISTS stage5_pause_self_claim ON delegations')
+      await db.query('DROP FUNCTION IF EXISTS stage5_pause_self_claim()')
+    }
+
+    const rollback = await createItem('rollback')
+    const claimedRollback = await selfClaim(rollback)
+    expect(claimedRollback.statusCode, claimedRollback.body).toBe(200)
+    const rollbackClaim = claimedRollback.json<{ delegation: { id: string }; session: { id: string } }>()
+    const beforeRollback = (await db.query<{
+      status: string
+      state: string
+      revision: number
+      token_count: number
+    }>(
+      `SELECT delegation.status,session.state,session.revision,
+              (SELECT count(*)::int FROM agent_session_tokens token
+                WHERE token.session_id=session.id AND token.revoked_at IS NULL) AS token_count
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [rollbackClaim.delegation.id, rollbackClaim.session.id],
+    )).rows[0]!
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await db.query('DROP TRIGGER IF EXISTS stage5_fail_forced_assignment ON delegations')
+    await db.query('DROP FUNCTION IF EXISTS stage5_fail_forced_assignment()')
+    await db.query(`CREATE FUNCTION stage5_fail_forced_assignment() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${rollback.id}'::uuid AND NEW.agent_id='${forcedAgentId}'::uuid THEN
+          RAISE EXCEPTION 'forced assignment rollback fixture';
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_fail_forced_assignment
+      BEFORE INSERT ON delegations FOR EACH ROW EXECUTE FUNCTION stage5_fail_forced_assignment()`)
+    try {
+      const failed = await forceAssign(rollback)
+      expect(failed.statusCode, failed.body).toBe(500)
+    } finally {
+      await db.query('DROP TRIGGER IF EXISTS stage5_fail_forced_assignment ON delegations')
+      await db.query('DROP FUNCTION IF EXISTS stage5_fail_forced_assignment()')
+    }
+    expect((await db.query<{
+      status: string
+      state: string
+      revision: number
+      token_count: number
+    }>(
+      `SELECT delegation.status,session.state,session.revision,
+              (SELECT count(*)::int FROM agent_session_tokens token
+                WHERE token.session_id=session.id AND token.revoked_at IS NULL) AS token_count
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [rollbackClaim.delegation.id, rollbackClaim.session.id],
+    )).rows[0]).toEqual(beforeRollback)
+    expect((await db.query(
+      'SELECT 1 FROM delegations WHERE work_item_id=$1 AND agent_id=$2',
+      [rollback.id, forcedAgentId],
+    )).rowCount).toBe(0)
+    expect((await db.query<{ events: number; outbox: number }>(
+      `SELECT
+         (SELECT count(*)::int FROM domain_events event
+           WHERE event.cursor>$1::bigint) AS events,
+         (SELECT count(*)::int FROM outbox_events outbox
+           JOIN domain_events event ON event.id=outbox.domain_event_id
+          WHERE event.cursor>$1::bigint) AS outbox`,
+      [cursorBefore],
+    )).rows[0]).toEqual({ events: 0, outbox: 0 })
+    const retry = await forceAssign(rollback)
+    expect(retry.statusCode, retry.body).toBe(200)
+    await expectForcedWinner(rollback.id)
+  }, 120_000)
+
+  it('rolls back every self-claim write boundary and allows a clean retry', async () => {
+    const connection = await pairConnection(`claim-boundary-${randomUUID().slice(0, 8)}`)
+    const agentId = (await db.query<{ agent_id: string }>(
+      'SELECT agent_id FROM agent_connections WHERE id=$1',
+      [connection.connection.id],
+    )).rows[0]!.agent_id
+    await db.query('UPDATE agent_definitions SET max_concurrency=16 WHERE id=$1', [agentId])
+
+    const createItem = async (boundary: string) => {
+      const response = await human('POST', '/api/v1/work-items', {
+        teamId,
+        title: `Self-claim ${boundary} rollback ${randomUUID()}`,
+        description: 'Failure injection fixture for atomic self-claim recovery.',
+        statusId: readyId,
+        priority: 'high',
+        labels: [],
+        responsibleHumanActorId: actorId,
+      })
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<{ id: string; revision: number }>()
+    }
+
+    const rollbackBoundaries = [
+      { name: 'delegation', table: 'delegations' },
+      { name: 'session', table: 'agent_sessions' },
+      { name: 'session_credential', table: 'agent_session_tokens' },
+      { name: 'prompt', table: 'agent_session_prompts' },
+      { name: 'event', table: 'domain_events' },
+      { name: 'outbox', table: 'outbox_events' },
+    ] as const
+
+    for (const boundary of rollbackBoundaries) {
+      const item = await createItem(boundary.name)
+      const triggerName = `stage5_claim_boundary_failure_${boundary.name}`
+      const functionName = `${triggerName}_fn`
+      await db.query(`DROP TRIGGER IF EXISTS ${triggerName} ON ${boundary.table}`)
+      await db.query(`DROP FUNCTION IF EXISTS ${functionName}()`)
+
+      switch (boundary.name) {
+        case 'delegation':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.work_item_id='${item.id}'::uuid AND NEW.agent_id='${agentId}'::uuid THEN
+                RAISE EXCEPTION 'stage5 self-claim delegation boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'session':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.work_item_id='${item.id}'::uuid AND NEW.agent_id='${agentId}'::uuid THEN
+                RAISE EXCEPTION 'stage5 self-claim session boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'session_credential':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.agent_id='${agentId}'::uuid AND EXISTS(
+                SELECT 1 FROM agent_sessions session
+                 WHERE session.id=NEW.session_id
+                   AND session.work_item_id='${item.id}'::uuid
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim session credential boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'prompt':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF EXISTS(
+                SELECT 1 FROM agent_sessions session
+                 WHERE session.id=NEW.session_id
+                   AND session.work_item_id='${item.id}'::uuid
+                   AND session.agent_id='${agentId}'::uuid
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim prompt boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'event':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.event_type='agent.session.created'
+                 AND NEW.payload->>'workItemId'='${item.id}' THEN
+                RAISE EXCEPTION 'stage5 self-claim event boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'outbox':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.topic='agent.session.created' AND EXISTS(
+                SELECT 1 FROM domain_events event
+                 WHERE event.id=NEW.domain_event_id
+                   AND event.payload->>'workItemId'='${item.id}'
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim outbox boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+      }
+      await db.query(`CREATE TRIGGER ${triggerName}
+        BEFORE INSERT ON ${boundary.table}
+        FOR EACH ROW EXECUTE FUNCTION ${functionName}()`)
+
+      const cursorBefore = (await db.query<{ cursor: string }>(
+        'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+      )).rows[0]!.cursor
+      try {
+        const failed = await coordinator(
+          connection.token,
+          'POST',
+          `/api/v1/work-items/${item.id}/claim`,
+          {},
+          item.revision,
+        )
+        expect(failed.statusCode, failed.body).toBe(500)
+      } finally {
+        await db.query(`DROP TRIGGER IF EXISTS ${triggerName} ON ${boundary.table}`)
+        await db.query(`DROP FUNCTION IF EXISTS ${functionName}()`)
+      }
+
+      const residue = (await db.query<{
+        delegations: number
+        sessions: number
+        session_credentials: number
+        prompts: number
+        context_snapshots: number
+        channels: number
+        events: number
+        outbox: number
+        webhook_deliveries: number
+      }>(
+        `SELECT
+           (SELECT count(*)::int FROM delegations
+             WHERE work_item_id=$1 AND agent_id=$2 AND role='executor') AS delegations,
+           (SELECT count(*)::int FROM agent_sessions
+             WHERE work_item_id=$1 AND agent_id=$2 AND session_kind='execution') AS sessions,
+           (SELECT count(*)::int FROM agent_session_tokens token
+             JOIN agent_sessions session ON session.id=token.session_id
+            WHERE session.work_item_id=$1 AND session.agent_id=$2) AS session_credentials,
+           (SELECT count(*)::int FROM agent_session_prompts prompt
+             JOIN agent_sessions session ON session.id=prompt.session_id
+            WHERE session.work_item_id=$1 AND session.agent_id=$2) AS prompts,
+           (SELECT count(*)::int FROM context_snapshots
+             WHERE work_item_id=$1 AND created_by_actor_id=$4) AS context_snapshots,
+           (SELECT count(*)::int FROM work_room_channels channel
+             JOIN agent_sessions session ON session.id=channel.session_id
+            WHERE channel.subject_kind='session'
+              AND session.work_item_id=$1 AND session.agent_id=$2) AS channels,
+           (SELECT count(*)::int FROM domain_events event
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS events,
+           (SELECT count(*)::int FROM outbox_events outbox
+             JOIN domain_events event ON event.id=outbox.domain_event_id
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS outbox,
+           (SELECT count(*)::int FROM agent_webhook_deliveries delivery
+             JOIN domain_events event ON event.id=delivery.event_id
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS webhook_deliveries`,
+        [item.id, agentId, cursorBefore, actorId],
+      )).rows[0]
+      expect(residue).toEqual({
+        delegations: 0,
+        sessions: 0,
+        session_credentials: 0,
+        prompts: 0,
+        context_snapshots: 0,
+        channels: 0,
+        events: 0,
+        outbox: 0,
+        webhook_deliveries: 0,
+      })
+
+      const retry = await coordinator(
+        connection.token,
+        'POST',
+        `/api/v1/work-items/${item.id}/claim`,
+        {},
+        item.revision,
+      )
+      expect(retry.statusCode, retry.body).toBe(200)
+      const assignment = (await db.query<{ delegation_id: string; session_id: string }>(
+        `SELECT delegation.id AS delegation_id,session.id AS session_id
+           FROM delegations delegation
+           JOIN agent_sessions session ON session.delegation_id=delegation.id
+          WHERE delegation.work_item_id=$1
+            AND delegation.agent_id=$2
+            AND delegation.status='active'
+            AND session.session_kind='execution'
+            AND session.state NOT IN ('completed','failed','canceled')`,
+        [item.id, agentId],
+      )).rows
+      expect(assignment).toHaveLength(1)
+    }
+  }, 120_000)
 
   it('imports a prepared Project once and reconstructs the full mapping after API and MCP restart', async () => {
     const unique = randomUUID().replaceAll('-', '').slice(0, 10)
@@ -395,7 +1274,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     }
 
     await app.close()
-    app = buildApp({ features })
+    app = buildApp({ features, logger: { level: 'error' } })
     await listenApi()
     const replayMcp = await startMcp()
     try {
@@ -462,10 +1341,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
 
   it('allows an explicitly privileged coordinator to delegate an issue', async () => {
     const suffix = randomUUID().slice(0, 8)
-    const target = await human('POST', '/api/v1/agents/register', { slug: `target-${suffix}`, name: 'Target executor', provider: 'fake', version: '1.0.0', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read'], approvedCapabilities: ['work:read'], outputArtifactTypes: [], maxConcurrency: 1 })
+    const target = await human('POST', '/api/v1/agents/register', { slug: `target-${suffix}`, name: 'Target executor', provider: 'fake', version: '1.0.0', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read','work:write'], approvedCapabilities: ['work:read','work:write'], outputArtifactTypes: [], maxConcurrency: 1 })
     expect(target.statusCode, target.body).toBe(200)
     const targetId = target.json<{ id: string }>().id
-    expect((await human('PUT', `/api/v1/agents/${targetId}/team-access/${teamId}`, { approvedCapabilities: ['work:read'] })).statusCode).toBe(200)
+    expect((await human('PUT', `/api/v1/agents/${targetId}/team-access/${teamId}`, { approvedCapabilities: ['work:read','work:write'] })).statusCode).toBe(200)
     const created = await human('POST', '/api/v1/agent-connections', { name: 'Delegating coordinator', agentSlug: `delegate-${suffix}`, clientType: 'generic_mcp', teamId, principalHumanActorId: actorId, requestedCapabilities: ['work:read','work:write','agent:delegate'], grantAgentDelegate: true })
     expect(created.statusCode, created.body).toBe(201)
     const envelope = created.json<{ connect_url: string }>()
@@ -475,7 +1354,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     const work = await coordinator(token, 'POST', '/api/v1/work-items', { teamId, title: 'Delegated by coordinator', statusId: readyId, priority: 'medium', labels: [] })
     expect(work.statusCode, work.body).toBe(200)
     const item = work.json<{ id: string; revision: number }>()
-    const started = await coordinator(token, 'POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId: targetId, principalHumanActorId: actorId, role: 'executor', requestedCapabilities: ['work:read'], initialPrompt: 'Execute this issue.', budget: {} }, item.revision)
+    const started = await coordinator(token, 'POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId: targetId, principalHumanActorId: actorId, role: 'executor', requestedCapabilities: ['work:read','work:write'], initialPrompt: 'Execute this issue.', budget: {} }, item.revision)
     expect(started.statusCode, started.body).toBe(200)
     expect(started.json<{ session: { id: string } }>().session.id).toMatch(/^[0-9a-f-]{36}$/)
   })
@@ -555,15 +1434,1161 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     await db.query("UPDATE agent_coordination_sessions SET expires_at=now()-interval '1 second' WHERE agent_session_id=$1", [principalState.session_id])
     await createAgentConnectionLifecycleWorker({ db }).tick()
     expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [principalState.session_id])).rows[0]?.state).toBe('canceled')
-    const durableExpiry = await db.query<{ event_type: string; outbox_id: string }>(
-      `SELECT event.event_type,outbox.id AS outbox_id
+    const durableExpiry = await db.query<{
+      event_type: string
+      payload: Record<string, unknown>
+      outbox_id: string
+    }>(
+      `SELECT event.event_type,event.payload,outbox.id AS outbox_id
          FROM domain_events event
          JOIN outbox_events outbox ON outbox.domain_event_id=event.id
-        WHERE event.aggregate_type='agent_session' AND event.aggregate_id=$1
-          AND event.event_type='agent.session.state_changed'`,
+        WHERE (event.event_type='agent.coordination_session.closed'
+               AND event.payload->>'sessionId'=$1::text)
+           OR (event.event_type='agent.session.state_changed'
+               AND event.aggregate_type='agent_session' AND event.aggregate_id=$1::uuid)
+        ORDER BY event.cursor`,
       [principalState.session_id],
     )
-    expect(durableExpiry.rows).toHaveLength(1)
+    expect(durableExpiry.rows.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+    ])
+    expect(durableExpiry.rows.every(event => Boolean(event.outbox_id))).toBe(true)
+    expect(durableExpiry.rows[0]?.payload).toMatchObject({
+      connectionId: envelope.connection.id,
+      sessionId: principalState.session_id,
+      reason: 'expired',
+    })
+    expect(durableExpiry.rows[0]?.payload).not.toHaveProperty('sessionReferenceOmitted')
+
+    const recovered = await coordinator(
+      token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(recovered.statusCode, recovered.body).toBe(200)
+    const terminalSessionId = recovered.json<{ coordination_session: { id: string } }>()
+      .coordination_session.id
+    await db.query(
+      `UPDATE agent_sessions
+          SET state='completed',state_reason='terminal expiry fixture',ended_at=now(),
+              revision=revision+1,updated_at=now()
+        WHERE id=$1`,
+      [terminalSessionId],
+    )
+    await db.query(
+      "UPDATE agent_coordination_sessions SET expires_at=now()-interval '1 second' WHERE agent_session_id=$1",
+      [terminalSessionId],
+    )
+    const terminalCursor = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await createAgentConnectionLifecycleWorker({ db }).tick()
+    expect((await db.query<{ state: string }>(
+      'SELECT state FROM agent_sessions WHERE id=$1',
+      [terminalSessionId],
+    )).rows[0]?.state).toBe('completed')
+    expect((await db.query<{ event_type: string }>(
+      `SELECT event_type FROM domain_events
+        WHERE cursor>$1::bigint
+          AND (aggregate_id=$2::uuid OR payload->>'sessionId'=$2::text)
+        ORDER BY cursor`,
+      [terminalCursor, terminalSessionId],
+    )).rows.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+    ])
+
+    const scoped = await pairConnection(
+      `worker-scope-${randomUUID().slice(0, 8)}`,
+      ['work:read'],
+    )
+    const scopedIdentityResponse = await coordinator(
+      scoped.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(scopedIdentityResponse.statusCode, scopedIdentityResponse.body).toBe(200)
+    const scopedSessionId = scopedIdentityResponse
+      .json<{ coordination_session: { id: string } }>().coordination_session.id
+    await db.query(
+      'UPDATE agent_sessions SET team_id=$2 WHERE id=$1',
+      [scopedSessionId, otherTeamId],
+    )
+    await db.query(
+      "UPDATE agent_coordination_sessions SET expires_at=now()-interval '1 second' WHERE agent_session_id=$1",
+      [scopedSessionId],
+    )
+    const scopedCursor = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await createAgentConnectionLifecycleWorker({ db }).tick()
+    const scopedEvents = (await db.query<{
+      event_type: string
+      team_id: string | null
+      actor_id: string
+      correlation_id: string
+      aggregate_type: string
+      aggregate_id: string
+      payload: Record<string, unknown>
+      outbox_id: string
+    }>(
+      `SELECT event.event_type,event.team_id,event.actor_id,event.correlation_id,
+              event.aggregate_type,event.aggregate_id,event.payload,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint
+        ORDER BY event.cursor`,
+      [scopedCursor],
+    )).rows
+    expect(scopedEvents.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+    ])
+    expect(scopedEvents[0]).toMatchObject({
+      team_id: teamId,
+      aggregate_type: 'agent_connection',
+      aggregate_id: scoped.connection.id,
+      payload: {
+        connectionId: scoped.connection.id,
+        reason: 'expired',
+        sessionReferenceOmitted: 'resource_scope_mismatch',
+      },
+    })
+    expect(scopedEvents[0]?.payload).not.toHaveProperty('sessionId')
+    expect(scopedEvents[1]).toMatchObject({
+      team_id: otherTeamId,
+      actor_id: scoped.connection.agent_actor_id,
+      aggregate_type: 'agent_session',
+      aggregate_id: scopedSessionId,
+      payload: {
+        state: 'canceled',
+        reason: 'coordination session expired',
+      },
+    })
+    expect(scopedEvents[1]?.correlation_id)
+      .toBe(`worker:agent-session:${scopedSessionId}:expired`)
+    expect(scopedEvents[1]?.payload).not.toHaveProperty('connectionId')
+    expect(JSON.stringify(scopedEvents[1])).not.toContain(scoped.connection.id)
+    expect(scopedEvents.every(event => Boolean(event.outbox_id))).toBe(true)
+  })
+
+  it('returns the exact active or overlap credential identity across rotation', async () => {
+    const slug = `identity-${randomUUID().slice(0, 8)}`
+    const paired = await pairConnection(slug, ['work:read'])
+    const first = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(first.statusCode, first.body).toBe(200)
+    const activeIdentity = first.json<{
+      connection: { id: string }
+      coordination_session: { id: string }
+      agent_actor_id: string
+      principal_human_actor_id: string
+      team_id: string
+      authenticated_credential: {
+        fingerprint_prefix: string
+        status: string
+        overlap_until: string | null
+      }
+    }>()
+    expect(activeIdentity).toMatchObject({
+      connection: { id: paired.connection.id },
+      agent_actor_id: paired.connection.agent_actor_id,
+      principal_human_actor_id: actorId,
+      team_id: teamId,
+      authenticated_credential: {
+        fingerprint_prefix: tokenHash(paired.token).slice(0, 12),
+        status: 'active',
+        overlap_until: null,
+      },
+    })
+    expect((await db.query<{
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      'SELECT revoked_at,expires_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(paired.token)],
+    )).rows).toEqual([{ revoked_at: null, expires_at: null }])
+
+    const detail = await human('GET', `/api/v1/agent-connections/${paired.connection.id}`)
+    const rotated = await human(
+      'POST',
+      `/api/v1/agent-connections/${paired.connection.id}/rotate`,
+      {},
+      detail.json<{ revision: number }>().revision,
+    )
+    expect(rotated.statusCode, rotated.body).toBe(201)
+    const rotation = rotated.json<{ connect_url: string }>()
+    const next = await app.inject({
+      method: 'POST',
+      url: '/api/v1/agent-connections/redeem',
+      payload: {
+        pairingCode: new URL(rotation.connect_url).hash.slice(1),
+        agentSlug: slug,
+        client: { type: 'codex', version: '1.1.1' },
+      },
+      headers: { 'idempotency-key': randomUUID() },
+    })
+    expect(next.statusCode, next.body).toBe(200)
+    const nextBody = next.json<{
+      installation_token: string
+      connection: { revision: number }
+    }>()
+    const mirroredRotation = (await db.query<{
+      token_hash: string
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      `SELECT token_hash,revoked_at,expires_at
+         FROM agent_installation_tokens
+        WHERE token_hash=ANY($1::text[])
+        ORDER BY token_hash`,
+      [[tokenHash(paired.token), tokenHash(nextBody.installation_token)]],
+    )).rows
+    expect(mirroredRotation).toHaveLength(2)
+    expect(mirroredRotation.find(row => row.token_hash === tokenHash(paired.token))).toMatchObject({
+      revoked_at: null,
+      expires_at: expect.any(Date),
+    })
+    expect(mirroredRotation.find(row => row.token_hash === tokenHash(nextBody.installation_token))).toMatchObject({
+      revoked_at: null,
+      expires_at: null,
+    })
+    await db.query(
+      `UPDATE agent_sessions
+          SET state='paused',state_reason='overlap convergence fixture',
+              revision=revision+1,updated_at=now()
+        WHERE id=$1`,
+      [activeIdentity.coordination_session.id],
+    )
+    const overlapResponses = await Promise.all(Array.from({ length: 16 }, (_, index) =>
+      coordinator(
+        index % 2 === 0 ? paired.token : nextBody.installation_token,
+        'GET',
+        '/api/v1/agent-connections/current-identity',
+      )))
+    expect(overlapResponses.every(response => response.statusCode === 200)).toBe(true)
+    const overlapIdentities = overlapResponses.map(response =>
+      response.json<typeof activeIdentity>())
+    const oldIdentity = overlapIdentities[0]!
+    const newIdentity = overlapIdentities[1]!
+    expect(oldIdentity.authenticated_credential).toMatchObject({
+      fingerprint_prefix: tokenHash(paired.token).slice(0, 12),
+      status: 'overlap',
+    })
+    expect(oldIdentity.authenticated_credential.overlap_until).toEqual(expect.any(String))
+    expect(newIdentity.authenticated_credential).toEqual({
+      fingerprint_prefix: tokenHash(nextBody.installation_token).slice(0, 12),
+      status: 'active',
+      overlap_until: null,
+    })
+    expect(new Set(overlapIdentities.map(identity => identity.coordination_session.id)).size).toBe(1)
+    expect(newIdentity.coordination_session.id).toBe(oldIdentity.coordination_session.id)
+    expect(newIdentity.coordination_session.id).not.toBe(activeIdentity.coordination_session.id)
+    expect((await db.query<{ coordination: number; backing: number }>(
+      `SELECT
+         (SELECT count(*)::int FROM agent_coordination_sessions
+           WHERE connection_id=$1 AND status='active') AS coordination,
+         (SELECT count(*)::int FROM agent_sessions
+           WHERE coordination_connection_id=$1 AND session_kind='coordination'
+             AND state NOT IN ('completed','failed','canceled')) AS backing`,
+      [paired.connection.id],
+    )).rows[0]).toEqual({ coordination: 1, backing: 1 })
+
+    await db.query(
+      `UPDATE agent_connection_credentials
+          SET overlap_until=now()-interval '1 second'
+        WHERE connection_id=$1 AND token_hash=$2 AND status='overlap'`,
+      [paired.connection.id, tokenHash(paired.token)],
+    )
+    const expiredOverlap = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(expiredOverlap.statusCode, expiredOverlap.body).toBe(401)
+    expect(expiredOverlap.json<{ error: { code: string; message: string } }>().error)
+      .toMatchObject({
+        code: 'UNAUTHENTICATED',
+        message: 'Installation Token is invalid or inactive',
+      })
+    expect((await coordinator(
+      nextBody.installation_token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )).statusCode).toBe(200)
+
+    const confirmed = await human(
+      'POST',
+      `/api/v1/agent-connections/${paired.connection.id}/rotate-confirm`,
+      {},
+      nextBody.connection.revision,
+    )
+    expect(confirmed.statusCode, confirmed.body).toBe(200)
+    expect((await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )).statusCode).toBe(401)
+    expect((await coordinator(
+      nextBody.installation_token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )).statusCode).toBe(200)
+    expect((await db.query<{ revoked_at: Date | null }>(
+      'SELECT revoked_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(paired.token)],
+    )).rows[0]?.revoked_at).toEqual(expect.any(Date))
+  })
+
+  it('rejects an existing Agent capability overgrant before creating durable pairing state', async () => {
+    const slug = `approval-${randomUUID().slice(0, 8)}`
+    const paired = await pairConnection(slug, ['work:read', 'work:write'])
+    const agent = (await db.query<{ id: string }>(
+      'SELECT agent_id AS id FROM agent_connections WHERE id=$1',
+      [paired.connection.id],
+    )).rows[0]!
+    await db.query(
+      `UPDATE agent_definitions
+          SET approved_capabilities=ARRAY['work:read'],revision=revision+1,updated_at=now()
+        WHERE id=$1`,
+      [agent.id],
+    )
+
+    const denied = await human('POST', '/api/v1/agent-connections', {
+      name: 'Rejected capability overgrant',
+      agentSlug: slug,
+      clientType: 'codex',
+      teamId: otherTeamId,
+      principalHumanActorId: actorId,
+      requestedCapabilities: ['work:read', 'work:write'],
+      grantAgentDelegate: false,
+    })
+    expect(denied.statusCode, denied.body).toBe(403)
+    expect(denied.json<{ error: { code: string; message: string } }>().error)
+      .toEqual(expect.objectContaining({
+        code: 'CAPABILITY_DENIED',
+        message: 'Connection capabilities require matching Agent definition approval',
+      }))
+    expect((await db.query<{
+      connections: number
+      pairings: number
+      delegations: number
+      team_access: number
+    }>(
+      `SELECT
+         (SELECT count(*)::int FROM agent_connections
+           WHERE agent_id=$1 AND team_id=$2) AS connections,
+         (SELECT count(*)::int FROM agent_connection_pairings pairing
+           JOIN agent_connections connection ON connection.id=pairing.connection_id
+          WHERE connection.agent_id=$1 AND connection.team_id=$2) AS pairings,
+         (SELECT count(*)::int FROM delegations
+           WHERE agent_id=$1 AND team_id=$2 AND role='coordinator') AS delegations,
+         (SELECT count(*)::int FROM agent_team_access
+           WHERE agent_id=$1 AND team_id=$2) AS team_access`,
+      [agent.id, otherTeamId],
+    )).rows[0]).toEqual({
+      connections: 0,
+      pairings: 0,
+      delegations: 0,
+      team_access: 0,
+    })
+  })
+
+  it('revokes a cross-Team backing without exposing Connection metadata to that Team', async () => {
+    const paired = await pairConnection(
+      `revoke-scope-${randomUUID().slice(0, 8)}`,
+      ['work:read'],
+    )
+    const identityResponse = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(identityResponse.statusCode, identityResponse.body).toBe(200)
+    const sessionId = identityResponse
+      .json<{ coordination_session: { id: string } }>().coordination_session.id
+    await db.query(
+      'UPDATE agent_sessions SET team_id=$2 WHERE id=$1',
+      [sessionId, otherTeamId],
+    )
+    const detail = await human('GET', `/api/v1/agent-connections/${paired.connection.id}`)
+    const before = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const revoked = await human(
+      'DELETE',
+      `/api/v1/agent-connections/${paired.connection.id}`,
+      undefined,
+      detail.json<{ revision: number }>().revision,
+    )
+    expect(revoked.statusCode, revoked.body).toBe(204)
+
+    const events = (await db.query<{
+      event_type: string
+      team_id: string | null
+      actor_id: string
+      correlation_id: string
+      aggregate_type: string
+      aggregate_id: string
+      payload: Record<string, unknown>
+      outbox_id: string
+    }>(
+      `SELECT event.event_type,event.team_id,event.actor_id,event.correlation_id,
+              event.aggregate_type,event.aggregate_id,event.payload,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint
+        ORDER BY event.cursor`,
+      [before],
+    )).rows
+    expect(events.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+      'agent.connection.revoked',
+    ])
+    expect(events[0]).toMatchObject({
+      team_id: teamId,
+      aggregate_type: 'agent_connection',
+      aggregate_id: paired.connection.id,
+      payload: {
+        connectionId: paired.connection.id,
+        reason: 'connection_revoked',
+        sessionReferenceOmitted: 'resource_scope_mismatch',
+      },
+    })
+    expect(events[0]?.payload).not.toHaveProperty('sessionId')
+    expect(events[1]).toMatchObject({
+      team_id: otherTeamId,
+      actor_id: paired.connection.agent_actor_id,
+      aggregate_type: 'agent_session',
+      aggregate_id: sessionId,
+      payload: {
+        state: 'canceled',
+        reason: 'coordination connection revoked',
+      },
+    })
+    expect(events[1]?.correlation_id)
+      .toBe(`agent-session:${sessionId}:connection-revoked`)
+    expect(events[1]?.payload).not.toHaveProperty('connectionId')
+    expect(JSON.stringify(events[1])).not.toContain(paired.connection.id)
+    expect(events.every(event => Boolean(event.outbox_id))).toBe(true)
+    expect((await db.query<{ state: string }>(
+      'SELECT state FROM agent_sessions WHERE id=$1',
+      [sessionId],
+    )).rows[0]?.state).toBe('canceled')
+  })
+
+  it('recovers terminal, invalid, expired, and concurrent Coordination backings atomically', async () => {
+    const paired = await pairConnection(
+      `recover-${randomUUID().slice(0, 8)}`,
+      ['work:read', 'work:write'],
+    )
+    const readIdentity = async () => {
+      const response = await coordinator(
+        paired.token,
+        'GET',
+        '/api/v1/agent-connections/current-identity',
+      )
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<{ coordination_session: { id: string } }>()
+    }
+    const cursor = async () => (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const recoveryEvents = async (after: string) => (await db.query<{
+      event_type: string
+      workspace_id: string
+      team_id: string | null
+      actor_id: string
+      correlation_id: string
+      aggregate_type: string
+      aggregate_id: string
+      payload: Record<string, unknown> & { reason?: string }
+      resources: Array<{ relation: string; type: string; id: string }>
+      outbox_id: string
+    }>(
+      `SELECT event.event_type,event.workspace_id,event.team_id,event.actor_id,
+              event.correlation_id,event.aggregate_type,event.aggregate_id,event.payload,
+              COALESCE((
+                SELECT jsonb_agg(jsonb_build_object(
+                  'relation',resource.relation,
+                  'type',resource.resource_type,
+                  'id',resource.resource_id
+                ) ORDER BY resource.relation,resource.resource_type,resource.resource_id)
+                  FROM domain_event_resources resource
+                 WHERE resource.domain_event_id=event.id
+              ),'[]'::jsonb) AS resources,
+              outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint
+        ORDER BY event.cursor`,
+      [after],
+    )).rows
+
+    let currentSessionId = (await readIdentity()).coordination_session.id
+    const bindingWork = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Binding recovery ${randomUUID().slice(0, 8)}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    expect(bindingWork.statusCode, bindingWork.body).toBe(200)
+    const bindingWorkItemId = bindingWork.json<{ id: string }>().id
+    for (const terminalState of ['completed', 'failed', 'canceled']) {
+      await db.query(
+        `UPDATE agent_sessions
+            SET state=$2::agent_session_state,state_reason=$2::text,
+                ended_at=now(),revision=revision+1,updated_at=now()
+          WHERE id=$1`,
+        [currentSessionId, terminalState],
+      )
+      const before = await cursor()
+      const responses = terminalState === 'completed'
+        ? await Promise.all(Array.from({ length: 16 }, () => coordinator(
+            paired.token,
+            'GET',
+            '/api/v1/agent-connections/current-identity',
+          )))
+        : [await coordinator(
+            paired.token,
+            'GET',
+            '/api/v1/agent-connections/current-identity',
+          )]
+      expect(responses.every(response => response.statusCode === 200)).toBe(true)
+      const nextSessionIds = responses.map(response =>
+        response.json<{ coordination_session: { id: string } }>().coordination_session.id)
+      expect(new Set(nextSessionIds).size).toBe(1)
+      expect(nextSessionIds[0]).not.toBe(currentSessionId)
+      expect((await db.query<{ state: string }>(
+        'SELECT state FROM agent_sessions WHERE id=$1',
+        [currentSessionId],
+      )).rows[0]?.state).toBe(terminalState)
+      const events = await recoveryEvents(before)
+      expect(events.map(event => event.event_type)).toEqual([
+        'agent.coordination_session.closed',
+        'agent.session.created',
+        'agent.coordination_session.opened',
+      ])
+      expect(events[0]?.payload.reason).toBe('terminal_backing')
+      expect(events[0]?.payload).toMatchObject({
+        connectionId: paired.connection.id,
+        sessionId: currentSessionId,
+      })
+      expect(events[0]?.payload).not.toHaveProperty('sessionReferenceOmitted')
+      expect(events[2]?.payload.reason).toBe('recovered_terminal_backing')
+      expect(events.every(event => Boolean(event.outbox_id))).toBe(true)
+      currentSessionId = nextSessionIds[0]!
+    }
+
+    for (const invalidState of ['queued', 'paused', 'stopping', 'stale']) {
+      await db.query(
+        `UPDATE agent_sessions
+            SET state=$2::agent_session_state,state_reason=$2::text,
+                ended_at=NULL,revision=revision+1,updated_at=now()
+          WHERE id=$1`,
+        [currentSessionId, invalidState],
+      )
+      const before = await cursor()
+      const next = await readIdentity()
+      expect(next.coordination_session.id).not.toBe(currentSessionId)
+      expect((await db.query<{ state: string }>(
+        'SELECT state FROM agent_sessions WHERE id=$1',
+        [currentSessionId],
+      )).rows[0]?.state).toBe('canceled')
+      const events = await recoveryEvents(before)
+      expect(events.map(event => event.event_type)).toEqual([
+        'agent.coordination_session.closed',
+        'agent.session.state_changed',
+        'agent.session.created',
+        'agent.coordination_session.opened',
+      ])
+      expect(events[0]?.payload.reason).toBe('invalid_backing')
+      expect(events[0]?.payload).toMatchObject({
+        connectionId: paired.connection.id,
+        sessionId: currentSessionId,
+      })
+      expect(events[0]?.payload).not.toHaveProperty('sessionReferenceOmitted')
+      expect(events[3]?.payload.reason).toBe('recovered_invalid_backing')
+      currentSessionId = next.coordination_session.id
+    }
+
+    await db.query(
+      "UPDATE agent_coordination_sessions SET granted_capabilities=ARRAY['work:read','work:read'] WHERE agent_session_id=$1",
+      [currentSessionId],
+    )
+    const beforeDuplicateCapability = await cursor()
+    const duplicateCapabilityRecovery = await readIdentity()
+    expect(duplicateCapabilityRecovery.coordination_session.id).not.toBe(currentSessionId)
+    const duplicateCapabilityEvents = await recoveryEvents(beforeDuplicateCapability)
+    expect(duplicateCapabilityEvents.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+      'agent.session.created',
+      'agent.coordination_session.opened',
+    ])
+    expect(duplicateCapabilityEvents[0]?.payload.reason).toBe('invalid_binding')
+    expect(duplicateCapabilityEvents[0]?.payload).toMatchObject({
+      connectionId: paired.connection.id,
+      sessionId: currentSessionId,
+    })
+    expect(duplicateCapabilityEvents[0]?.payload)
+      .not.toHaveProperty('sessionReferenceOmitted')
+    expect(duplicateCapabilityEvents[3]?.payload.reason).toBe('recovered_invalid_backing')
+    currentSessionId = duplicateCapabilityRecovery.coordination_session.id
+
+    for (const bindingMutation of [
+      {
+        sql: `UPDATE agent_sessions
+                SET session_kind='execution',coordination_connection_id=NULL,work_item_id=$2
+              WHERE id=$1`,
+        values: [currentSessionId, bindingWorkItemId],
+      },
+      {
+        sql: 'UPDATE agent_sessions SET coordination_connection_id=NULL WHERE id=$1',
+        values: [currentSessionId],
+      },
+    ]) {
+      bindingMutation.values[0] = currentSessionId
+      await db.query(bindingMutation.sql, bindingMutation.values)
+      const beforeBindingRecovery = await cursor()
+      const bindingRecovery = await readIdentity()
+      expect(bindingRecovery.coordination_session.id).not.toBe(currentSessionId)
+      expect((await db.query<{ state: string }>(
+        'SELECT state FROM agent_sessions WHERE id=$1',
+        [currentSessionId],
+      )).rows[0]?.state).toBe('canceled')
+      const bindingEvents = await recoveryEvents(beforeBindingRecovery)
+      expect(bindingEvents.map(event => event.event_type)).toEqual([
+        'agent.coordination_session.closed',
+        'agent.session.state_changed',
+        'agent.session.created',
+        'agent.coordination_session.opened',
+      ])
+      expect(bindingEvents[0]?.payload.reason).toBe('invalid_binding')
+      expect(bindingEvents[0]?.payload).toMatchObject({
+        connectionId: paired.connection.id,
+        sessionId: currentSessionId,
+      })
+      expect(bindingEvents[0]?.payload).not.toHaveProperty('sessionReferenceOmitted')
+      expect(bindingEvents[3]?.payload.reason).toBe('recovered_invalid_backing')
+      currentSessionId = bindingRecovery.coordination_session.id
+    }
+
+    const foreignConnection = await human('POST', '/api/v1/agent-connections', {
+      name: `Foreign Team ${randomUUID().slice(0, 8)}`,
+      agentSlug: `foreign-team-${randomUUID().slice(0, 8)}`,
+      clientType: 'codex',
+      teamId: otherTeamId,
+      principalHumanActorId: actorId,
+      requestedCapabilities: ['work:read', 'work:write'],
+      grantAgentDelegate: false,
+    })
+    expect(foreignConnection.statusCode, foreignConnection.body).toBe(201)
+    const foreignConnectionId = foreignConnection.json<{ connection: { id: string } }>()
+      .connection.id
+    const foreignBinding = (await db.query<{
+      agent_id: string
+      agent_actor_id: string
+      delegation_id: string
+    }>(
+      `SELECT agent_id,agent_actor_id,delegation_id
+         FROM agent_connections WHERE id=$1`,
+      [foreignConnectionId],
+    )).rows[0]!
+    const crossTeamSessionId = currentSessionId
+    await db.query(
+      `UPDATE agent_sessions
+          SET team_id=$2,agent_id=$3,agent_actor_id=$4,delegation_id=$5
+        WHERE id=$1`,
+      [crossTeamSessionId, otherTeamId, foreignBinding.agent_id,
+        foreignBinding.agent_actor_id, foreignBinding.delegation_id],
+    )
+    const beforeCrossTeam = await cursor()
+    const rebound = await readIdentity()
+    expect(rebound.coordination_session.id).not.toBe(crossTeamSessionId)
+    const crossTeamEvents = await recoveryEvents(beforeCrossTeam)
+    expect(crossTeamEvents.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+      'agent.session.created',
+      'agent.coordination_session.opened',
+    ])
+    const crossTeamClosed = crossTeamEvents[0]!
+    expect(crossTeamClosed).toMatchObject({
+      workspace_id: crossTeamEvents[2]!.workspace_id,
+      team_id: teamId,
+      actor_id: paired.connection.agent_actor_id,
+      aggregate_type: 'agent_connection',
+      aggregate_id: paired.connection.id,
+      payload: {
+        connectionId: paired.connection.id,
+        reason: 'invalid_binding',
+        sessionReferenceOmitted: 'resource_scope_mismatch',
+      },
+    })
+    expect(crossTeamClosed.payload).not.toHaveProperty('sessionId')
+    expect(crossTeamClosed.correlation_id).not.toContain(crossTeamSessionId)
+    expect(crossTeamClosed.correlation_id).not.toContain(foreignConnectionId)
+    expect(crossTeamClosed.resources.some(resource =>
+      resource.id === otherTeamId || resource.id === crossTeamSessionId)).toBe(false)
+    const crossTeamState = crossTeamEvents[1]!
+    expect(crossTeamState).toMatchObject({
+      team_id: otherTeamId,
+      actor_id: foreignBinding.agent_actor_id,
+      aggregate_type: 'agent_session',
+      aggregate_id: crossTeamSessionId,
+      payload: {
+        state: 'canceled',
+        reason: 'coordination backing session recovered',
+      },
+    })
+    expect(crossTeamState.correlation_id)
+      .toBe(`agent-session:${crossTeamSessionId}:coordination-recovered`)
+    expect(crossTeamState.payload).not.toHaveProperty('connectionId')
+    expect(JSON.stringify(crossTeamState)).not.toContain(paired.connection.id)
+    expect(crossTeamState.resources.some(resource =>
+      resource.type === 'team' && resource.id === otherTeamId)).toBe(true)
+    expect(crossTeamState.resources.some(resource =>
+      resource.type === 'team' && resource.id === teamId)).toBe(false)
+    currentSessionId = rebound.coordination_session.id
+
+    const foreignWorkspaceId = randomUUID()
+    const foreignTeamId = randomUUID()
+    const foreignHumanActorId = randomUUID()
+    const foreignAgentActorId = randomUUID()
+    const foreignAgentId = randomUUID()
+    const foreignDelegationId = randomUUID()
+    const foreignSessionId = randomUUID()
+    await db.query(
+      `INSERT INTO workspaces(id,name,slug)
+       VALUES($1,'Foreign recovery scope',$2)`,
+      [foreignWorkspaceId, `foreign-${randomUUID()}`],
+    )
+    await db.query(
+      `INSERT INTO teams(id,workspace_id,name,key)
+       VALUES($1,$2,'Foreign recovery team',$3)`,
+      [foreignTeamId, foreignWorkspaceId,
+        `F${randomUUID().replaceAll('-', '').slice(0, 7).toUpperCase()}`],
+    )
+    await db.query(
+      `INSERT INTO actors(
+         id,workspace_id,kind,workspace_role,email,display_name,password_hash,is_active
+       ) VALUES(
+         $1,$2,'human','member',$3,'Foreign human','unused-test-password-hash',true
+       ),(
+         $4,$2,'agent',NULL,NULL,'Foreign agent',NULL,true
+       )`,
+      [foreignHumanActorId, foreignWorkspaceId,
+        `foreign-${randomUUID()}@example.test`, foreignAgentActorId],
+    )
+    await db.query(
+      `INSERT INTO agent_definitions(
+         id,workspace_id,actor_id,slug,display_name,manifest,supported_protocols,
+         skills,requested_capabilities,approved_capabilities,output_artifact_types,
+         max_concurrency
+       ) VALUES(
+         $1,$2,$3,$4,'Foreign agent','{}',ARRAY['mcp']::agent_protocol[],
+         ARRAY['workmesh'],ARRAY['work:read'],ARRAY['work:read'],'{}',1
+       )`,
+      [foreignAgentId, foreignWorkspaceId, foreignAgentActorId,
+        `foreign-${randomUUID()}`],
+    )
+    await db.query(
+      `INSERT INTO delegations(
+         id,workspace_id,team_id,agent_id,agent_actor_id,
+         principal_human_actor_id,role,scope_type,scope_id,
+         permissions_snapshot,capability_scope,status
+       ) VALUES(
+         $1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::uuid,$6::uuid,
+         'coordinator','team',$3::uuid,
+         ARRAY['work:read'],jsonb_build_object(
+           'workspaceId',$2::uuid::text,
+           'teamIds',jsonb_build_array($3::uuid::text),
+           'projectIds','[]'::jsonb,'workItemIds','[]'::jsonb,
+           'repositoryIds','[]'::jsonb,'capabilities',jsonb_build_array('work:read')
+         ),'active'
+       )`,
+      [foreignDelegationId, foreignWorkspaceId, foreignTeamId, foreignAgentId,
+        foreignAgentActorId, foreignHumanActorId],
+    )
+    await db.query(
+      `INSERT INTO agent_sessions(
+         id,workspace_id,team_id,agent_id,agent_actor_id,delegation_id,state,
+         state_reason,acknowledged_at,last_heartbeat_at,session_kind
+       ) VALUES(
+         $1,$2,$3,$4,$5,$6,'executing','foreign binding fixture',now(),now(),
+         'coordination'
+       )`,
+      [foreignSessionId, foreignWorkspaceId, foreignTeamId, foreignAgentId,
+        foreignAgentActorId, foreignDelegationId],
+    )
+    await db.query(
+      `UPDATE agent_coordination_sessions SET agent_session_id=$2
+        WHERE connection_id=$1 AND status='active'`,
+      [paired.connection.id, foreignSessionId],
+    )
+    const previousLocalSessionId = currentSessionId
+    const beforeCrossWorkspace = await cursor()
+    const crossWorkspaceRecovery = await readIdentity()
+    expect(crossWorkspaceRecovery.coordination_session.id)
+      .not.toBe(previousLocalSessionId)
+    const crossWorkspaceEvents = await recoveryEvents(beforeCrossWorkspace)
+    expect(crossWorkspaceEvents[0]?.event_type)
+      .toBe('agent.coordination_session.closed')
+    expect(crossWorkspaceEvents.slice(-2).map(event => event.event_type)).toEqual([
+      'agent.session.created',
+      'agent.coordination_session.opened',
+    ])
+    expect(crossWorkspaceEvents.slice(1, -2).map(event => event.event_type))
+      .toEqual(['agent.session.state_changed', 'agent.session.state_changed'])
+    const crossWorkspaceClosed = crossWorkspaceEvents[0]!
+    expect(crossWorkspaceClosed).toMatchObject({
+      team_id: teamId,
+      aggregate_type: 'agent_connection',
+      aggregate_id: paired.connection.id,
+      payload: {
+        connectionId: paired.connection.id,
+        reason: 'invalid_binding',
+        sessionReferenceOmitted: 'resource_scope_mismatch',
+      },
+    })
+    expect(crossWorkspaceClosed.payload).not.toHaveProperty('sessionId')
+    expect(crossWorkspaceClosed.correlation_id).not.toContain(foreignSessionId)
+    expect(crossWorkspaceClosed.correlation_id).not.toContain(foreignWorkspaceId)
+    expect(crossWorkspaceClosed.correlation_id).not.toContain(foreignTeamId)
+    expect(crossWorkspaceClosed.correlation_id).not.toContain(foreignAgentActorId)
+    expect(crossWorkspaceClosed.resources.some(resource =>
+      resource.id === foreignWorkspaceId
+      || resource.id === foreignTeamId
+      || resource.id === foreignSessionId)).toBe(false)
+    const foreignStateEvent = crossWorkspaceEvents.find(event =>
+      event.aggregate_id === foreignSessionId)!
+    expect(foreignStateEvent).toMatchObject({
+      workspace_id: foreignWorkspaceId,
+      team_id: foreignTeamId,
+      actor_id: foreignAgentActorId,
+      aggregate_type: 'agent_session',
+      aggregate_id: foreignSessionId,
+      payload: {
+        state: 'canceled',
+        reason: 'coordination backing session recovered',
+      },
+    })
+    expect(foreignStateEvent.correlation_id)
+      .toBe(`agent-session:${foreignSessionId}:coordination-recovered`)
+    expect(foreignStateEvent.payload).not.toHaveProperty('connectionId')
+    expect(JSON.stringify(foreignStateEvent)).not.toContain(paired.connection.id)
+    expect(foreignStateEvent.resources.some(resource =>
+      resource.type === 'workspace' && resource.id === foreignWorkspaceId)).toBe(true)
+    expect(foreignStateEvent.resources.some(resource =>
+      resource.type === 'team' && resource.id === teamId)).toBe(false)
+    expect((await db.query<{ state: string }>(
+      'SELECT state FROM agent_sessions WHERE id=$1',
+      [foreignSessionId],
+    )).rows[0]?.state).toBe('canceled')
+    currentSessionId = crossWorkspaceRecovery.coordination_session.id
+
+    await db.query(
+      "UPDATE agent_coordination_sessions SET expires_at=now()-interval '1 second' WHERE agent_session_id=$1",
+      [currentSessionId],
+    )
+    const beforeExpiry = await cursor()
+    const renewed = await readIdentity()
+    expect(renewed.coordination_session.id).not.toBe(currentSessionId)
+    const expiryEvents = await recoveryEvents(beforeExpiry)
+    expect(expiryEvents.map(event => event.event_type)).toEqual([
+      'agent.coordination_session.closed',
+      'agent.session.state_changed',
+      'agent.session.created',
+      'agent.coordination_session.opened',
+    ])
+    expect(expiryEvents[0]?.payload.reason).toBe('expired')
+    expect(expiryEvents[0]?.payload).toMatchObject({
+      connectionId: paired.connection.id,
+      sessionId: currentSessionId,
+    })
+    expect(expiryEvents[0]?.payload).not.toHaveProperty('sessionReferenceOmitted')
+    expect(expiryEvents[3]?.payload.reason).toBe('expired')
+    const active = await db.query<{ coordination: number; backing: number }>(
+      `SELECT
+         (SELECT count(*)::int FROM agent_coordination_sessions
+           WHERE connection_id=$1 AND status='active') AS coordination,
+         (SELECT count(*)::int FROM agent_sessions
+           WHERE coordination_connection_id=$1 AND session_kind='coordination'
+             AND state NOT IN ('completed','failed','canceled')) AS backing`,
+      [paired.connection.id],
+    )
+    expect(active.rows[0]).toEqual({ coordination: 1, backing: 1 })
+  })
+
+  it('rolls back close and event writes when Coordination recovery creation fails', async () => {
+    const paired = await pairConnection(`rollback-${randomUUID().slice(0, 8)}`, ['work:read'])
+    const initial = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(initial.statusCode, initial.body).toBe(200)
+    const sessionId = initial.json<{ coordination_session: { id: string } }>()
+      .coordination_session.id
+    await db.query(
+      `UPDATE agent_sessions
+          SET state='completed',state_reason='forced terminal fixture',ended_at=now(),
+              revision=revision+1,updated_at=now()
+        WHERE id=$1`,
+      [sessionId],
+    )
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await db.query('DROP TRIGGER IF EXISTS stage5_fail_coordination_recovery ON agent_sessions')
+    await db.query('DROP FUNCTION IF EXISTS stage5_fail_coordination_recovery()')
+    await db.query(`CREATE FUNCTION stage5_fail_coordination_recovery() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.session_kind='coordination' THEN
+          RAISE EXCEPTION 'forced coordination recovery failure';
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_fail_coordination_recovery
+      BEFORE INSERT ON agent_sessions FOR EACH ROW
+      EXECUTE FUNCTION stage5_fail_coordination_recovery()`)
+    try {
+      const failed = await coordinator(
+        paired.token,
+        'GET',
+        '/api/v1/agent-connections/current-identity',
+      )
+      expect(failed.statusCode, failed.body).toBe(500)
+    } finally {
+      await db.query('DROP TRIGGER IF EXISTS stage5_fail_coordination_recovery ON agent_sessions')
+      await db.query('DROP FUNCTION IF EXISTS stage5_fail_coordination_recovery()')
+    }
+
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM agent_coordination_sessions WHERE agent_session_id=$1',
+      [sessionId],
+    )).rows[0]?.status).toBe('active')
+    expect((await db.query<{ state: string }>(
+      'SELECT state FROM agent_sessions WHERE id=$1',
+      [sessionId],
+    )).rows[0]?.state).toBe('completed')
+    expect((await db.query<{ count: string }>(
+      'SELECT count(*)::text AS count FROM domain_events WHERE cursor>$1::bigint',
+      [cursorBefore],
+    )).rows[0]?.count).toBe('0')
+
+    const recovered = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(recovered.statusCode, recovered.body).toBe(200)
+    expect(recovered.json<{ coordination_session: { id: string } }>()
+      .coordination_session.id).not.toBe(sessionId)
+  })
+
+  it('keeps unknown credential diagnostics uniform and keyed without logging credential bytes', async () => {
+    const logLines: string[] = []
+    const stream = new Writable({
+      write(chunk, _encoding, callback) {
+        logLines.push(chunk.toString())
+        callback()
+      },
+    })
+    const diagnosticApp = buildApp({
+      features,
+      logger: { level: 'warn', stream },
+    })
+    const unknownToken = `wmi_${opaqueToken()}`
+    const pairingCode = `wmp_${opaqueToken()}`
+    try {
+      const responses = await Promise.all([
+        { headers: { 'x-workmesh-installation-token': unknownToken } },
+        { headers: { 'x-workmesh-installation-token': pairingCode } },
+        { headers: {} },
+        { headers: { 'x-workmesh-installation-token': '' } },
+        { headers: { cookie } },
+      ].map(options => diagnosticApp.inject({
+          method: 'GET',
+          url: '/api/v1/agent-connections/current-identity',
+          headers: options.headers,
+        })))
+      expect(responses.map(response => response.statusCode))
+        .toEqual([401, 401, 401, 401, 401])
+      expect(responses.map(response => response.json<{ error: { code: string; message: string } }>().error))
+        .toEqual(Array.from({ length: 5 }, () => ({
+          code: 'UNAUTHENTICATED',
+          message: 'Installation Token is invalid or inactive',
+          correlationId: expect.any(String),
+        })))
+    } finally {
+      await diagnosticApp.close()
+    }
+    const logs = logLines.join('')
+    expect(logs).not.toContain(unknownToken)
+    expect(logs).not.toContain(pairingCode)
+    expect(logs).not.toContain(cookie)
+    expect(logs).not.toContain(tokenHash(unknownToken))
+    expect(logs).not.toContain(tokenHash(pairingCode))
+    expect(logs).toMatch(/"credentialAuditFingerprint":"[a-f0-9]{24}"/)
+    expect(logs).not.toContain('recognizedCredentialFingerprintPrefix')
+  })
+
+  it('rejects stale Connection grants after Agent definition capabilities shrink', async () => {
+    const paired = await pairConnection(
+      `definition-shrink-${randomUUID().slice(0, 8)}`,
+      ['work:read', 'work:write'],
+    )
+    const agentId = (await db.query<{ agent_id: string }>(
+      'SELECT agent_id FROM agent_connections WHERE id=$1',
+      [paired.connection.id],
+    )).rows[0]!.agent_id
+    await db.query(
+      "UPDATE agent_definitions SET approved_capabilities=ARRAY['work:read'],updated_at=now() WHERE id=$1",
+      [agentId],
+    )
+
+    const denied = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(denied.statusCode, denied.body).toBe(401)
+    expect(denied.json<{ error: { code: string; message: string } }>().error).toMatchObject({
+      code: 'UNAUTHENTICATED',
+      message: 'Installation Token is invalid or inactive',
+    })
+  })
+
+  it('does not charge Coordination Sessions against execution admission capacity', async () => {
+    const slug = `capacity-${randomUUID().slice(0, 8)}`
+    const capabilities = ['work:read', 'work:write']
+    const registration = await human('POST', '/api/v1/agents/register', {
+      name: `Capacity ${slug}`,
+      slug,
+      provider: 'fake',
+      version: '1',
+      supportedProtocols: ['native_http'],
+      requestedCapabilities: capabilities,
+      approvedCapabilities: capabilities,
+      maxConcurrency: 1,
+    })
+    expect(registration.statusCode, registration.body).toBe(200)
+    const agentId = registration.json<{ id: string }>().id
+    const teamGrant = await human(
+      'PUT',
+      `/api/v1/agents/${agentId}/team-access/${teamId}`,
+      { approvedCapabilities: capabilities },
+    )
+    expect(teamGrant.statusCode, teamGrant.body).toBe(200)
+    const paired = await pairConnection(slug, capabilities)
+    const coordinationIdentity = await coordinator(
+      paired.token,
+      'GET',
+      '/api/v1/agent-connections/current-identity',
+    )
+    expect(coordinationIdentity.statusCode, coordinationIdentity.body).toBe(200)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE agent_id=$1 AND session_kind='coordination'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [agentId],
+    )).rows[0]?.count).toBe(1)
+
+    const works = await Promise.all(['alpha', 'beta'].map(suffix => human(
+      'POST',
+      '/api/v1/work-items',
+      {
+        teamId,
+        title: `Capacity race ${suffix} ${slug}`,
+        statusId: readyId,
+        priority: 'medium',
+        labels: [],
+        responsibleHumanActorId: actorId,
+      },
+    )))
+    expect(works.every(work => work.statusCode === 200)).toBe(true)
+    const workItems = works.map(work => work.json<{ id: string; revision: number }>())
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const starts = await Promise.all(workItems.map((workItem, index) => human(
+      'POST',
+      `/api/v1/work-items/${workItem.id}/agent-session`,
+      {
+        agentId,
+        principalHumanActorId: actorId,
+        role: 'executor',
+        requestedCapabilities: capabilities,
+        initialPrompt: `Capacity race ${index}`,
+        budget: {},
+      },
+      workItem.revision,
+    )))
+    expect(starts.map(start => start.statusCode).sort()).toEqual([200, 409])
+    const rejectedIndex = starts.findIndex(start => start.statusCode === 409)
+    const rejected = starts[rejectedIndex]!
+    expect(rejected.json<{
+      error: {
+        code: string
+        details: {
+          maxConcurrency: number
+          activeExecutionSessionCount: number
+          countedSessionKinds: string[]
+          countedSessionStates: string[]
+          activeExecutionSessionsByState: Record<string, number>
+        }
+      }
+    }>().error).toMatchObject({
+      code: 'AGENT_CONCURRENCY_LIMIT',
+      details: {
+        maxConcurrency: 1,
+        activeExecutionSessionCount: 1,
+        countedSessionKinds: ['execution'],
+        countedSessionStates: [
+          'queued',
+          'acknowledged',
+          'planning',
+          'executing',
+          'awaiting_input',
+          'awaiting_approval',
+          'blocked',
+          'paused',
+          'stopping',
+          'stale',
+        ],
+        activeExecutionSessionsByState: { queued: 1 },
+      },
+    })
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE agent_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [agentId],
+    )).rows[0]?.count).toBe(1)
+    const rejectedWorkItemId = workItems[rejectedIndex]!.id
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM delegations WHERE work_item_id=$1',
+      [rejectedWorkItemId],
+    )).rows[0]?.count).toBe(0)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE event.cursor>$1::bigint AND event.payload->>'workItemId'=$2
+          AND event.event_type LIKE 'agent.%'`,
+      [cursorBefore, rejectedWorkItemId],
+    )).rows[0]?.count).toBe(0)
+    expect(paired.connection.id).toMatch(/^[0-9a-f-]{36}$/)
   })
 
   it('lists Connections for Workspace Admins with cursor pagination and no credential material', async () => {

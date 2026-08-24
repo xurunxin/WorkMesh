@@ -12,4 +12,12 @@ WORKMESH_INSTALLATION_TOKEN=<secret>
 WORKMESH_MCP_MODE=read-write
 ```
 
-After any configuration path, install the pinned Skill and call `verify_connection` before creating or updating work.
+After any configuration path, install the pinned Skill and call `verify_connection`, then `get_workmesh_context`, before creating, claiming, or updating work.
+
+For autonomous execution, use this loop after the identity checks:
+
+1. Call `list_claimable_work_items`; it returns only Issues that remain eligible after live `work:read` and `work:write` authorization is revalidated.
+2. Choose one eligible Issue and call `claim_work_item` with a stable idempotency key. Keep using the same MCP Connection; the server refreshes exact-Session authority for later execution tools.
+3. If the response is lost, replay the same key; do not issue a second claim key for the same intent.
+4. On `CLAIM_CONFLICT`, `AGENT_CONCURRENCY_LIMIT`, cancellation, or Stop, re-read state and continue the next discovery round.
+5. After completion, publish evidence and repeat discovery. A Human force assignment is authoritative and may atomically replace a self-claimed execution; `delegate_work_item` remains the separate Agent-to-Agent operation.

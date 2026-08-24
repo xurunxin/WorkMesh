@@ -519,15 +519,27 @@ async function resolveProject(client: WorkMeshClient, ref: string, team?: TeamRo
 }
 
 export async function getWorkMeshContext(client: WorkMeshClient): Promise<unknown> {
-  const [manifest, team] = await Promise.all([
+  const [manifest, connectionIdentity, team] = await Promise.all([
     client.getAgentCapabilities(),
+    client.getCurrentAgentConnectionIdentity(),
     connectionTeam(client),
   ])
   if (manifest.agent.capabilityScope.teamIds.length !== 1
-    || manifest.agent.capabilityScope.teamIds[0] !== team.id) {
+    || manifest.agent.capabilityScope.teamIds[0] !== team.id
+    || connectionIdentity.team_id !== team.id
+    || connectionIdentity.agent_actor_id !== manifest.agent.actorId
+    || connectionIdentity.coordination_session.id !== manifest.agent.sessionId) {
     throw new WorkMeshSdkError('The live Team does not match the Coordination capability scope', {
       code: 'CONNECTION_LIVE_PROBE_INCONSISTENT',
-      details: { teamId: team.id, scopedTeamIds: manifest.agent.capabilityScope.teamIds },
+      details: {
+        teamId: team.id,
+        scopedTeamIds: manifest.agent.capabilityScope.teamIds,
+        connectionTeamId: connectionIdentity.team_id,
+        connectionActorId: connectionIdentity.agent_actor_id,
+        manifestActorId: manifest.agent.actorId,
+        connectionSessionId: connectionIdentity.coordination_session.id,
+        manifestSessionId: manifest.agent.sessionId,
+      },
     })
   }
   const [workflowPage, release, features] = await Promise.all([
@@ -560,6 +572,7 @@ export async function getWorkMeshContext(client: WorkMeshClient): Promise<unknow
     .sort()
   return {
     identity: manifest.agent,
+    connectionIdentity,
     team: { ...team, ref: team.key.toUpperCase() },
     workflowStates,
     defaultWorkflowState,

@@ -32,9 +32,15 @@ class ProvisionServer {
   readonly counts = new Map<string, number>();
   readonly replay = new Map<string, StoredResponse>();
   readonly bodies = new Map<string, Record<string, unknown>>();
+  readonly requestHeaders = new Map<string, Headers>();
   installed = false;
   admin: Readonly<{ email: string; password: string }> | undefined;
-  fault: "install" | "registerAgent" | "exchangeToken" | undefined;
+  fault:
+    | "install"
+    | "registerAgent"
+    | "delegateAndStart"
+    | "refreshToken"
+    | undefined;
   faultConsumed = false;
 
   constructor(fault?: ProvisionServer["fault"]) {
@@ -96,7 +102,7 @@ class ProvisionServer {
       if (path === "/api/v1/work-items") {
         this.bodies.set("createWorkItem", body);
         return this.complete("createWorkItem", key, {
-          body: { id: "work-item-id" },
+          body: { id: "work-item-id", revision: 1 },
         });
       }
       if (path === "/api/v1/agents/register") {
@@ -112,18 +118,18 @@ class ProvisionServer {
         this.bodies.set("grantTeamAccess", body);
         return this.complete("grantTeamAccess", key, { body: {} });
       }
-      if (path === "/api/v1/work-items/work-item-id/delegations") {
-        this.bodies.set("createDelegation", body);
-        return this.complete("createDelegation", key, {
-          body: { id: "delegation-id" },
+      if (path === "/api/v1/work-items/work-item-id/agent-session") {
+        this.bodies.set("delegateAndStart", body);
+        this.requestHeaders.set("delegateAndStart", headers);
+        return this.complete("delegateAndStart", key, {
+          body: {
+            delegation: { id: "delegation-id" },
+            session: { id: "session-id" },
+          },
         });
       }
-      if (path === "/api/v1/agent-sessions" && method === "POST")
-        return this.complete("createSession", key, {
-          body: { id: "session-id", exchangeToken: "x".repeat(32) },
-        });
-      if (path === "/api/v1/agent-sessions/session-id/token/exchange")
-        return this.complete("exchangeToken", key, {
+      if (path === "/api/v1/agent-sessions/session-id/token/refresh")
+        return this.complete("refreshToken", key, {
           body: {
             sessionToken: "temporary-session-secret",
             expiresAt: "2026-07-29T00:15:00.000Z",
@@ -180,7 +186,12 @@ const privateTestOptions = async (
 });
 
 describe("retention soak provisioning", () => {
-  for (const fault of ["install", "registerAgent", "exchangeToken"] as const) {
+  for (const fault of [
+    "install",
+    "registerAgent",
+    "delegateAndStart",
+    "refreshToken",
+  ] as const) {
     it(`resumes without duplicates after ${fault} response loss`, async () => {
       const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
       temporaryDirectories.push(directory);
@@ -244,7 +255,7 @@ describe("retention soak provisioning", () => {
     expect(server.counts.get("login")).toBe(1);
   });
 
-  it("uses only work:write for the soak Agent and delegation", async () => {
+  it("uses work:read and work:write for the soak Agent and delegation", async () => {
     const directory = await mkdtemp(join(tmpdir(), "workmesh-soak-"));
     temporaryDirectories.push(directory);
     const server = new ProvisionServer();
@@ -252,16 +263,21 @@ describe("retention soak provisioning", () => {
     await provisionRetentionSoak(options);
 
     expect(server.bodies.get("registerAgent")).toMatchObject({
-      requestedCapabilities: ["work:write"],
-      approvedCapabilities: ["work:write"],
+      requestedCapabilities: ["work:read", "work:write"],
+      approvedCapabilities: ["work:read", "work:write"],
     });
     expect(server.bodies.get("grantTeamAccess")).toEqual({
-      approvedCapabilities: ["work:write"],
+      approvedCapabilities: ["work:read", "work:write"],
     });
-    expect(server.bodies.get("createDelegation")).toMatchObject({
-      permissionsSnapshot: ["work:write"],
-      capabilityScope: { capabilities: ["work:write"] },
+    expect(server.bodies.get("delegateAndStart")).toMatchObject({
+      agentId: "agent-id",
+      principalHumanActorId: "actor-id",
+      role: "executor",
+      requestedCapabilities: ["work:read", "work:write"],
     });
+    expect(server.requestHeaders.get("delegateAndStart")?.get("if-match")).toBe(
+      '"revision-1"',
+    );
   });
 
   it("refuses native Windows before persistence or remote access", async () => {

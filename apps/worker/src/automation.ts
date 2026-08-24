@@ -440,7 +440,7 @@ export function createAutomationWorker({
           if ((locked.trigger.timezone ?? 'UTC') !== 'UTC') throw new Error('LOOP_TIMEZONE_UNSUPPORTED')
           const scheduledFor = locked.next_run_at
           const next = nextCronOccurrence(locked.trigger.cron, scheduledFor)
-          await admitLoopRun(tx, {
+          const admission = await admitLoopRun(tx, {
             meta: {
               workspaceId: locked.workspace_id,
               actorId: locked.owner_actor_id,
@@ -452,6 +452,7 @@ export function createAutomationWorker({
             authorization: { kind: 'trusted_worker' },
             notificationChannels,
           })
+          if (admission.deferred) return
           await tx.query('UPDATE loops SET next_run_at=$1,updated_at=now() WHERE id=$2', [next, locked.id])
         })
       } catch (error) {

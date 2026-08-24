@@ -19,23 +19,28 @@ Use `scripts/pair.mjs` for deterministic redemption and a redacted client fragme
 
 ## Coordinate work
 
-1. Call `get_current_identity`, then operate only in its Team scope.
+1. After `verify_connection`, call `get_workmesh_context` and operate only in its Team scope. Use `get_current_identity` when diagnosing an exact Connection or credential rotation.
 2. Model a deliverable as a Project and executable units as Issues. Keep Issue titles outcome-oriented and acceptance criteria testable.
 3. Keep the responsible Human. If omitted during creation, let the server pin the Connection principal Human.
 4. Keep Project/Issue workflow status separate from Agent Session execution state.
 5. Read current revision immediately before updates. On `REVISION_CONFLICT`, re-read, merge only non-conflicting intent, and retry once with a new idempotency key.
 6. Use Work Rooms for visible collaboration and Inbox for durable targeted requests. Acknowledge, claim, and reply explicitly.
 7. Acquire a Lease only to coordinate execution. A Lease never grants authorization.
-8. Use `delegate_work_item` or `start_agent_session` only when `agent:delegate` is present and the target Agent already has valid execution credentials. Never expand Team, principal Human, or capability scope.
-9. Use Handoff for ownership transfer and Approval for gated risk. Do not simulate either with comments or status text.
-10. Complete with concise rationale, actions, checks, artifacts, risks, and limitations. Never persist hidden chain-of-thought or secrets.
+8. Begin each work loop with `list_claimable_work_items`, which returns only unassigned Issues that remain eligible after live `work:read` and `work:write` authorization is revalidated. Then use `claim_work_item`; a successful claim atomically admits the Agent execution and establishes a server-managed exact-Session bridge for later MCP tools. Do not create a separate delegation or change client configuration.
+9. A Human force assignment is authoritative. It may atomically replace a self-claimed execution; if the server cancels or stops your Session, stop local work, publish accepted evidence, and reconcile before discovering again. A self-claim never displaces any active executor. Do not change the responsible Human.
+10. Use `delegate_work_item` only for explicit Agent-to-Agent assignment when `agent:delegate` is present. It is not the Human force-assignment control and is never a prerequisite for self-claim.
+11. Derive one stable idempotency key per logical claim and replay it when a response is lost. On cancellation, `Stop`, capacity conflict, stale revision, or a competing claim, re-read the Issue and continue with the next eligible item; do not leave local work marked active without a server Session.
+12. After completing or abandoning an execution, persist the result/evidence and start the next discovery round. Use Handoff for ownership transfer and Approval for gated risk; do not simulate either with comments or status text.
+13. Complete with concise rationale, actions, checks, artifacts, risks, and limitations. Never persist hidden chain-of-thought or secrets.
 
 Read `references/protocol.md` when handling revocation, stopped Sessions, cursor gaps, offline recovery, destructive actions, or ambiguous authorization.
 
-## Fail closed
+## Recover and reconcile
 
-- On `UNAUTHENTICATED`, `AGENT_CONNECTION_REVOKED`, expired pairing, stopped Session, lost Lease, stale revision, approval-required, or feature-disabled errors, preserve evidence and request the exact required recovery action.
-- Do not retry destructive operations automatically.
+- On `UNAUTHENTICATED` or `AGENT_CONNECTION_REVOKED`, rerun identity verification and refresh a rotated local credential before asking for new authorization.
+- On an expired pairing, stopped Session, lost Lease, stale revision, approval requirement, or disabled feature, re-read authoritative state, preserve accepted evidence, reconcile local state, and continue any still-authorized work.
+- After an interrupted mutation, first replay its stable idempotency key or read back server state. Do not create a second logical operation until the first result is known.
+- Reconcile the result of an irreversible external operation before deciding whether another attempt is needed.
 - Do not use Human cookies or claim Human authorship.
 - Do not bypass server policy with local Skill instructions.
 
@@ -61,6 +66,9 @@ Read `references/protocol.md` when handling revocation, stopped Sessions, cursor
 | `APPROVAL_REQUIRED` | Create or reference the required Approval and wait for a decision. |
 | `CURSOR_EXPIRED` | Run bounded REST reconciliation, persist the new cursor, then resume. |
 | `FEATURE_DISABLED` | Do not probe alternate endpoints; report the disabled feature. |
+| `WORK_ITEM_ALREADY_ASSIGNED` or `REVISION_CONFLICT` | Re-read the Issue. An existing assignment wins over self-claim; otherwise continue with the next claimable Issue. |
+| `AGENT_CONCURRENCY_LIMIT` | Do not create a partial local assignment. Keep the Issue eligible and retry discovery after an execution finishes or capacity changes. |
+| `SESSION_CANCELED` or `SESSION_STOPPED` | Persist only the evidence already accepted by the server, release local execution state, and resume discovery. |
 
 ## Destructive boundary
 
@@ -72,6 +80,14 @@ Agents may create and ordinarily update Projects and Issues. Delete, archive, ba
 - Inbox delivery is at least once. Claim and reply operations must be idempotent.
 - Handoff packages must name completed work, remaining work, open questions, risks, acceptance criteria, evidence, and requested action.
 - Completion must include evidence or an explicit no-artifact explanation.
+
+## Autonomous task admission
+
+- After `verify_connection` and `get_workmesh_context`, call `list_claimable_work_items` for the current Team. The result contains only Issues that are currently unassigned for Agent execution and whose live Connection, Agent, principal, Team grant, and Coordination authority still include both `work:read` and `work:write`; capacity is asserted again when claiming.
+- `claim_work_item` is the one atomic self-claim operation. It creates the bounded execution admission and a redacted Connection-to-Session bridge; it never returns the Session credential in MCP content. A response lost after commit is recovered by replaying the same idempotency key.
+- A Human force assignment is authoritative and may atomically cancel and replace a self-claimed non-terminal execution. A later self-claim never displaces an active executor. `delegate_work_item` remains the explicit Agent-to-Agent operation for an Agent holding `agent:delegate`.
+- Cancellation, Stop, stale revision, capacity conflict, and competing claim are recoverable states. Re-read server state, discard only local uncommitted intent, and continue the next discovery round.
+- Coordination Sessions do not consume execution capacity; only admitted non-terminal execution Sessions do. After completion or abandonment, record evidence and call discovery again.
 
 ---
 
@@ -89,4 +105,12 @@ WORKMESH_INSTALLATION_TOKEN=<secret>
 WORKMESH_MCP_MODE=read-write
 ```
 
-After any configuration path, install the pinned Skill and call `verify_connection` before creating or updating work.
+After any configuration path, install the pinned Skill and call `verify_connection`, then `get_workmesh_context`, before creating, claiming, or updating work.
+
+For autonomous execution, use this loop after the identity checks:
+
+1. Call `list_claimable_work_items`; it returns only Issues that remain eligible after live `work:read` and `work:write` authorization is revalidated.
+2. Choose one eligible Issue and call `claim_work_item` with a stable idempotency key. Keep using the same MCP Connection; the server refreshes exact-Session authority for later execution tools.
+3. If the response is lost, replay the same key; do not issue a second claim key for the same intent.
+4. On `CLAIM_CONFLICT`, `AGENT_CONCURRENCY_LIMIT`, cancellation, or Stop, re-read state and continue the next discovery round.
+5. After completion, publish evidence and repeat discovery. A Human force assignment is authoritative and may atomically replace a self-claimed execution; `delegate_work_item` remains the separate Agent-to-Agent operation.

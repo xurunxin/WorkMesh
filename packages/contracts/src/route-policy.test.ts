@@ -28,6 +28,10 @@ const securityFor = (
       return [{ AgentSessionToken: [] }]
     case 'human_or_agent_session':
       return [{ SessionCookie: [] }, { AgentSessionToken: [] }]
+    case 'human_or_coordination_connection':
+      return [{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }]
+    case 'coordination_connection':
+      return [{ AgentConnectionInstallationToken: [] }]
     case 'installation_target':
       return [{ AgentInstallationToken: [] }]
     case 'provider_signature':
@@ -124,6 +128,12 @@ describe('routePolicyManifest', () => {
         bearerFormat: 'WorkMeshInstallationToken',
         description: 'Installation-scoped bearer credential used by installation_target operations, including token exchange, refresh, and exact-target handoff actions. It cannot perform ordinary session work.',
       },
+      AgentConnectionInstallationToken: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-WorkMesh-Installation-Token',
+        description: 'Agent Connection credential used only for Coordination MCP and current-identity requests. It is distinct from pairing codes and from Bearer installation-target credentials.',
+      },
       GitHubWebhookSignature: {
         type: 'apiKey',
         in: 'header',
@@ -160,7 +170,13 @@ describe('routePolicyManifest', () => {
       expect(
         effectiveSecurity,
         `${route.operationId} effective OpenAPI security must match ${route.authentication}`,
-      ).toEqual(securityFor(route.authentication))
+      ).toEqual(route.operationId === 'listWorkItems'
+        ? [
+            { SessionCookie: [] },
+            { AgentSessionToken: [] },
+            { AgentConnectionInstallationToken: [] },
+          ]
+        : securityFor(route.authentication))
       if (route.credentialRateLimit === 'shared_redis') {
         expect(operation).toMatchObject({
           'x-workmesh-auth-rate-limit': 'shared_redis',
@@ -268,6 +284,22 @@ describe('routePolicyManifest', () => {
     })
   })
 
+  it('limits forced assignment to a Human Session or Coordination Connection', () => {
+    const policy = routePolicyManifest.find(
+      route => route.operationId === 'delegateAndStartAgentSession',
+    )
+    expect(policy).toMatchObject({
+      authentication: 'human_or_coordination_connection',
+      actorKinds: ['human', 'agent'],
+      agent: {
+        capabilities: ['agent:delegate'],
+        requireActiveSession: true,
+        requireActiveDelegation: true,
+        requireLiveGrantIntersection: true,
+      },
+    })
+  })
+
   it('keeps deployment feature discovery authenticated for humans and agents', async () => {
     const policy = routePolicyManifest.find(
       route => route.operationId === 'getDeploymentFeatures',
@@ -291,7 +323,6 @@ describe('routePolicyManifest', () => {
       'listAgents',
       'getAgent',
       'getDelegation',
-      'createAgentSession',
       'promptAgentSession',
       'getWorkRoomTimeline',
       'resolveWorkRoomMessage',

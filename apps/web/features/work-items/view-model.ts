@@ -10,7 +10,12 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
   const number = typeof item.number === 'number' ? String(item.number) : ''
   const identifier = text(item.identifier) || (teamKey && number ? `${teamKey}-${number}` : item.id)
   const human = item.responsible_human?.display_name
-  const executor = item.active_executor
+  const executor = item.active_executor ?? (item.active_assignment
+    ? {
+        agent_display_name: item.active_assignment.agent_display_name,
+        execution_state: item.active_assignment.session_state ?? 'assigned',
+      }
+    : null)
   return {
     id: item.id,
     identifier,

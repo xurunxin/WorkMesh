@@ -377,8 +377,7 @@ describe('secret-aware auth mutation inventory', () => {
     const commandOperation = new Map([
       ['registerAgent', 'registerAgent'],
       ['rotateWebhookSecret', 'rotateAgentWebhookSecret'],
-      ['createAgentSession', 'createAgentSession'],
-      ['delegateAndStartAgentSession', 'delegateAndStartAgentSession'],
+      ['claimWorkItem', 'claimWorkItem'],
       ['exchangeAgentToken', 'exchangeAgentSessionToken'],
       ['refreshAgentToken', 'refreshAgentSessionToken'],
     ])

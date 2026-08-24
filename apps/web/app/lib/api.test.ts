@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   ApiError,
+  apiMutation,
   apiRequest,
   apiListRequest,
   appendUniquePage,
@@ -79,6 +80,32 @@ describe('auth mutation idempotency', () => {
     expect([...values.values()].join('')).not.toContain('password')
   })
 
+  it('treats If-Match as part of the persisted request identity', async () => {
+    values.set('workmesh.csrf-token', 'csrf')
+    const fetch = vi.fn()
+      .mockRejectedValueOnce(new TypeError('first response lost'))
+      .mockRejectedValueOnce(new TypeError('revision changed response lost'))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true }), { status: 200 }))
+    vi.stubGlobal('fetch', fetch)
+    const invoke = (revision: number) => apiMutation<{ ok: boolean }>('if-match-identity', '/api/v1/work-items/work-1/agent-session', {
+      method: 'POST',
+      headers: { 'If-Match': `"revision-${revision}"` },
+      body: JSON.stringify({ agentId: 'agent-1', prompt: 'same prompt' }),
+    })
+
+    await expect(invoke(1)).rejects.toThrow('first response lost')
+    await expect(invoke(2)).rejects.toThrow('revision changed response lost')
+    const persisted = [...values.values()].join('')
+    await expect(invoke(2)).resolves.toEqual({ ok: true })
+
+    const keys = fetch.mock.calls.map(call => new Headers(call[1]?.headers).get('Idempotency-Key'))
+    expect(keys[1]).not.toBe(keys[0])
+    expect(keys[2]).toBe(keys[1])
+    expect(persisted).toContain('requestIdentity')
+    expect(persisted).toMatch(/"requestIdentity":"request-[0-9a-f]{64}"/)
+    expect(persisted).not.toContain('same prompt')
+  })
+
   it('does not retry authorization denials and starts a later logical attempt with a new key', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: { message: 'Invalid credentials' } }), { status: 401 }))
@@ -98,7 +125,7 @@ describe('auth mutation idempotency', () => {
     expect(second).not.toBe(first)
   })
 
-  it.each([429, 503])('retains the logical attempt key after retryable HTTP %s', async status => {
+  it.each([408, 425, 429, 503])('retains the logical attempt key after retryable HTTP %s', async status => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: { message: 'Try again' } }), { status }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ csrfToken: 'csrf' }), { status: 200 }))

@@ -17,6 +17,8 @@ export type AgentAuthorityLockPlan = Readonly<{
   projectIds?: readonly string[]
 }>
 
+type InstallationTokenRankWrite<T> = (tx: PoolClient) => Promise<T>
+
 const sortedIds = (values: readonly string[] | undefined): string[] =>
   [...new Set(values ?? [])].sort((left, right) => left.localeCompare(right))
 
@@ -65,6 +67,24 @@ export async function lockAgentAuthorityPlan(
   tx: PoolClient,
   plan: AgentAuthorityLockPlan,
 ): Promise<void> {
+  await lockAgentAuthorityPlanWithInstallationTokenWrite(
+    tx,
+    plan,
+    async () => undefined,
+  )
+}
+
+/**
+ * Runs a narrowly scoped InstallationToken reconciliation at rank 7 while the
+ * rest of the authority plan remains in the canonical rank order. Callers must
+ * discover every lower-rank authority ID before entering this helper and pass
+ * any existing InstallationToken row in installationTokenIds.
+ */
+export async function lockAgentAuthorityPlanWithInstallationTokenWrite<T>(
+  tx: PoolClient,
+  plan: AgentAuthorityLockPlan,
+  writeInstallationToken: InstallationTokenRankWrite<T>,
+): Promise<T> {
   await lockIds(tx, 'agent_definitions', plan.definitionIds)
 
   const grants = sortedTeamGrants(plan.teamGrants)
@@ -91,6 +111,8 @@ export async function lockAgentAuthorityPlan(
   await lockIds(tx, 'agent_sessions', plan.sessionIds)
   await lockIds(tx, 'agent_session_tokens', plan.sessionTokenIds)
   await lockIds(tx, 'agent_installation_tokens', plan.installationTokenIds)
+  const result = await writeInstallationToken(tx)
   await lockIds(tx, 'work_items', plan.workItemIds)
   await lockIds(tx, 'projects', plan.projectIds)
+  return result
 }

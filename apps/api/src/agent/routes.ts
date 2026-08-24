@@ -5,8 +5,8 @@ import net from "node:net";
 import { z } from "zod";
 import {
   acknowledgeAgentSessionInputSchema, agentPatchSchema, agentRegistrationInputSchema, appendActivityInputSchema, exchangeAgentSessionTokenInputSchema,
-  artifactInputSchema, completeAgentSessionInputSchema, createAgentSessionInputSchema, decideApprovalInputSchema,
-  delegationInputSchema, failAgentSessionInputSchema, heartbeatInputSchema, promptAgentSessionInputSchema,
+  artifactInputSchema, claimWorkItemInputSchema, completeAgentSessionInputSchema, decideApprovalInputSchema,
+  failAgentSessionInputSchema, heartbeatInputSchema, promptAgentSessionInputSchema,
   publishPlanInputSchema, requestApprovalInputSchema, signalAgentSessionInputSchema, stopAcknowledgementInputSchema, agentSessionStateSchema, retryAgentSessionInputSchema, refreshAgentSessionTokenInputSchema, delegateAndStartAgentSessionInputSchema, consumeApprovalInputSchema,
   sessionContextResponseSchema,
 } from "@workmesh/contracts";
@@ -78,8 +78,8 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
   app.put("/api/v1/agents/:id/team-access/:teamId", async request => { const body = z.object({ approvedCapabilities: z.array(z.string()).min(1) }).parse(request.body); return commands.grantAgentTeamAccess(h.db, h.meta(request, body, request.params as Record<string, unknown>), id(request), z.object({ teamId: z.string().uuid() }).parse(request.params).teamId, body.approvedCapabilities as never); });
   app.delete("/api/v1/agents/:id/team-access/:teamId", async request => commands.revokeAgentTeamAccess(h.db, h.meta(request, {}, request.params as Record<string, unknown>), id(request), z.object({ teamId: z.string().uuid() }).parse(request.params).teamId));
 
-  app.post("/api/v1/work-items/:id/delegations", async request => { const body = delegationInputSchema.parse(request.body); const workItemId = id(request); return commands.createDelegation(h.db, h.meta(request, body, { id: workItemId }), workItemId, body); });
   app.post("/api/v1/work-items/:id/agent-session", async request => { const body = delegateAndStartAgentSessionInputSchema.parse(request.body); const workItemId = id(request); return commands.delegateAndStartAgentSession(h.db, h.meta(request, body, { id: workItemId }), workItemId, parseRevision(h.header(request, "if-match")), body); });
+  app.post("/api/v1/work-items/:id/claim", async request => { const body = claimWorkItemInputSchema.parse(request.body ?? {}); const workItemId = id(request); return commands.claimWorkItem(h.db, h.meta(request, body, { id: workItemId }), workItemId, parseRevision(h.header(request, "if-match")), body); });
   app.get("/api/v1/delegations/:id", async request => { needHuman(request); const row = (await h.db.query("SELECT * FROM delegations WHERE id=$1 AND workspace_id=$2", [id(request), actor(request).workspaceId])).rows[0] as { team_id?: string } | undefined; if (!row) throw new DomainError("NOT_FOUND", "Delegation not found"); await h.readableTeam(request, row.team_id!); return row; });
   app.post("/api/v1/delegations/:id/revoke", async request => commands.revokeDelegation(h.db,h.meta(request,{}, {id:id(request)}),id(request),parseRevision(h.header(request,"if-match"))));
 
@@ -134,7 +134,6 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
          JOIN agent_definitions a ON a.id=s.agent_id
         WHERE ${where.join(" AND ")}`,values);
   });
-  app.post("/api/v1/agent-sessions", async request => { const body = createAgentSessionInputSchema.parse(request.body); return commands.createAgentSession(h.db, h.meta(request, body), body); });
   app.post("/api/v1/agent-sessions/:id/token/exchange", async request => { const body = exchangeAgentSessionTokenInputSchema.parse(request.body); const bearer = h.header(request, "authorization")?.replace(/^Bearer\s+/i, ""); if (!bearer) throw new DomainError("UNAUTHENTICATED", "Installation bearer token is required"); return commands.exchangeAgentToken(h.db, { sessionId: id(request), nonce: body.exchangeToken, installationBearer: bearer, idempotencyKey: request.idempotencyKey!, clientContext: authClientContext(request) }); });
   app.post("/api/v1/agent-sessions/:id/token/refresh", async request => { const body = refreshAgentSessionTokenInputSchema.parse(request.body); const bearer = h.header(request, "authorization")?.replace(/^Bearer\s+/i, ""); if (!bearer) throw new DomainError("UNAUTHENTICATED", "Installation bearer token is required"); return commands.refreshAgentToken(h.db,{ sessionId:id(request), tokenId:body.tokenId, installationBearer:bearer, idempotencyKey:request.idempotencyKey!, clientContext:authClientContext(request) }); });
   app.get("/api/v1/agent-sessions/:id", async request => { const sessionId = id(request); await readableSession(request,h,sessionId); const row = (await h.db.query("SELECT s.*,coalesce((a.manifest->>'heartbeatIntervalSeconds')::int,30) AS heartbeat_interval_seconds,s.created_at+interval '10 seconds' AS ack_deadline FROM agent_sessions s JOIN agent_definitions a ON a.id=s.agent_id WHERE s.id=$1 AND s.workspace_id=$2", [sessionId, actor(request).workspaceId])).rows[0]; if (!row) throw new DomainError("NOT_FOUND", "Agent session not found"); return row; });

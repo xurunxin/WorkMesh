@@ -13,7 +13,7 @@ import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
 import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
-import { AgentWorkPanel } from './agent-work-panel'
+import { AgentWorkPanel, useAgentDelegationController } from './agent-work-panel'
 import { InboxPanel, WorkRoom } from './work-room'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { SkeletonList } from './lib/skeleton-list'
@@ -104,7 +104,7 @@ function HomePageScope({
   actorLoading: boolean
   refreshActor: () => Promise<void>
 }) {
-  const { detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
+  const { agentWorkCopy, detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
   const { push: pushToast } = useToast()
   const authorityScopeKey = actorAuthorityScopeKey(actor)
   const isAuthorityCurrent = useAuthorityLifetime()
@@ -150,6 +150,43 @@ function HomePageScope({
   const selectedTeam = teamAuthoritiesInitialized
     ? teamsPage.items.find(team => team.id === teamId) ?? null
     : null
+  const agentController = useAgentDelegationController({
+    humanActorId: selectedItem?.responsible_human_actor_id ?? '',
+    scopeKey: authorityScopeKey,
+    workItemId: selectedItem?.id ?? null,
+    workItemRevision: selectedItem?.revision ?? 0,
+    workItemTeamId: selectedItem?.team_id ?? selectedTeam?.id ?? null,
+    workItemTitle: selectedItem?.title,
+  })
+  const agentAction = useMemo(() => {
+    if (!selectedItem) return undefined
+    const directAgent = agentController.directAgent
+    const activeAssignmentName = selectedItem.active_assignment?.agent_display_name ?? null
+    const reason = agentController.reason === 'missing_responsible_human'
+      ? agentWorkCopy.noResponsible
+      : agentController.reason === 'loading_agents'
+        ? `${agentWorkCopy.liveAgents}…`
+        : agentController.reason === 'agents_unavailable'
+          ? agentWorkCopy.refresh
+          : agentController.reason === 'no_eligible_agent'
+            ? agentWorkCopy.delegateUnavailableReason(agentWorkCopy.noActiveGrant)
+            : agentController.reason === 'delegating'
+              ? `${agentWorkCopy.liveAgents}…`
+              : undefined
+    return {
+      label: agentController.canDirect && directAgent ? agentWorkCopy.oneClickDelegate : agentWorkCopy.chooseAgent,
+      disabled: agentController.disabled,
+      reason,
+      hint: reason ?? (activeAssignmentName
+        ? agentWorkCopy.replacementHint(activeAssignmentName)
+        : agentWorkCopy.forcedAssignmentPolicy),
+      onClick: () => {
+        if (agentController.canDirect && directAgent) {
+          void agentController.create(directAgent, agentWorkCopy.oneClickPrompt(selectedItem.title)).catch(() => undefined)
+        } else if (agentController.canChoose) agentController.requestChooser()
+      },
+    }
+  }, [agentController, agentWorkCopy, selectedItem])
   // Board column widths are a per-team UI preference; they live in localStorage
   // (via the hook) so the user's drag-to-resize survives reloads but never leaks
   // into URL state or the canonical query string.
@@ -602,6 +639,8 @@ function HomePageScope({
       model={toWorkItemDetailModel(selectedItem)}
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
+      agentAction={agentAction}
+      agentPanel={<AgentWorkPanel activeAssignmentName={selectedItem.active_assignment?.agent_display_name ?? null} controller={agentController} onReloadWorkItem={() => { void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }} workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
       copy={detailCopy}
       onClose={closeItem}
       onOpenFull={() => void openItem(selectedItem.id, true)}
@@ -618,7 +657,6 @@ function HomePageScope({
         <WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />
         <WorkRoom workItemId={selectedItem.id} draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }} legacyComments={comments} legacyHumans={humans} onLegacyComment={createComment} onLegacyUpdate={updateComment} onLegacyRefresh={commentsPage.refresh} />
         <LoadMoreButton collection={commentsPage} label="comments" />
-        <AgentWorkPanel workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={actor.id} />
       </>}
     />}
     {!selectedItem && requestedItem && detailErrorState && <WorkItemDetailUnavailable

@@ -14,6 +14,20 @@ const artifactId = '00000000-0000-4000-8000-000000000006'
 const workspaceId = '00000000-0000-4000-8000-000000000007'
 const teamId = '00000000-0000-4000-8000-000000000008'
 
+const currentConnectionIdentity = (capabilities = ['work:read', 'work:write']) => ({
+  connection: { id: projectId },
+  coordination_session: { id: sessionId },
+  agent_actor_id: artifactId,
+  principal_human_actor_id: workItemId,
+  team_id: teamId,
+  granted_capabilities: capabilities,
+  authenticated_credential: {
+    fingerprint_prefix: '0123456789ab',
+    status: 'active',
+    overlap_until: null,
+  },
+})
+
 async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClient, coordination = false) {
   const server = createWorkMeshMcpServer({ client, mode, coordination })
   const [serverTransport, clientTransport] = InMemoryTransport.createLinkedPair()
@@ -24,6 +38,104 @@ async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClien
 }
 
 describe('WorkMesh MCP adapter', () => {
+  it('claims an eligible Issue and returns only a recoverable execution bridge receipt', async () => {
+    const exchangeToken = 'exchange-secret-must-not-escape'
+    const sessionToken = 'session-secret-must-not-escape'
+    const claimWorkItem = vi.fn().mockResolvedValue({
+      delegation: { id: artifactId, role: 'executor' },
+      session: { id: sessionId, state: 'queued', revision: 1 },
+      exchangeToken,
+    })
+    const exchangeClaimedSessionToken = vi.fn().mockResolvedValue({
+      sessionToken,
+      expiresAt: '2026-08-24T14:00:00.000Z',
+    })
+    const listClaimableWorkItems = vi.fn().mockResolvedValue({
+      items: [{ id: workItemId, revision: 4 }],
+      nextCursor: null,
+    })
+    const requestHandoff = vi.fn().mockResolvedValue({
+      id: projectId,
+      status: 'requested',
+    })
+    const api = {
+      claimWorkItem,
+      exchangeClaimedSessionToken,
+      listClaimableWorkItems,
+      requestHandoff,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const tools = (await protocol.listTools()).tools
+      const names = tools.map(tool => tool.name)
+      expect(names).toEqual(expect.arrayContaining(['list_claimable_work_items', 'claim_work_item']))
+      expect(names).not.toContain('start_agent_session')
+      expect(tools.find(tool => tool.name === 'list_claimable_work_items')?.description)
+        .toContain('live work:read and work:write authorization')
+
+      const claimable = await protocol.callTool({
+        name: 'list_claimable_work_items',
+        arguments: { limit: 25 },
+      })
+      expect(claimable.isError).not.toBe(true)
+      expect(listClaimableWorkItems).toHaveBeenCalledWith({ cursor: undefined, limit: 25 })
+
+      const claimed = await protocol.callTool({
+        name: 'claim_work_item',
+        arguments: {
+          workItemId,
+          revision: 4,
+          requestedCapabilities: ['work:read', 'work:write'],
+          initialPrompt: 'Take ownership and deliver this Issue.',
+          idempotencyKey: 'claim-stable-key',
+        },
+      })
+      expect(claimed.isError, JSON.stringify(claimed.structuredContent)).not.toBe(true)
+      expect(claimWorkItem).toHaveBeenCalledWith(workItemId, {
+        requestedCapabilities: ['work:read', 'work:write'],
+        initialPrompt: 'Take ownership and deliver this Issue.',
+        contextSnapshotId: undefined,
+        budget: undefined,
+      }, { ifMatch: 4, idempotencyKey: 'claim-stable-key' })
+      expect(exchangeClaimedSessionToken).toHaveBeenCalledWith(
+        sessionId,
+        exchangeToken,
+        { idempotencyKey: expect.stringMatching(/^coordination:claim_work_item_exchange:/) },
+      )
+      expect(claimed.structuredContent).toMatchObject({
+        data: {
+          delegation: { id: artifactId },
+          session: { id: sessionId },
+          executionAuth: {
+            mode: 'connection_session_bridge',
+            sessionId,
+            expiresAt: '2026-08-24T14:00:00.000Z',
+          },
+        },
+      })
+      expect(JSON.stringify(claimed.structuredContent)).not.toContain(exchangeToken)
+      expect(JSON.stringify(claimed.structuredContent)).not.toContain(sessionToken)
+
+      const requested = await protocol.callTool({
+        name: 'request_handoff',
+        arguments: {
+          handoffId: projectId,
+          sourceSessionId: sessionId,
+          reason: 'ready for transfer',
+          idempotencyKey: 'handoff-request-key',
+        },
+      })
+      expect(requested.isError).not.toBe(true)
+      expect(requestHandoff).toHaveBeenCalledWith(
+        projectId,
+        { reason: 'ready for transfer' },
+        { sessionId, idempotencyKey: 'handoff-request-key' },
+      )
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls', async () => {
     const manifest = {
       profileVersion: '1.0.0',
@@ -56,6 +168,7 @@ describe('WorkMesh MCP adapter', () => {
     const listProjects = vi.fn().mockResolvedValue({ items: [project], nextCursor: null })
     const api = {
       getAgentCapabilities: vi.fn().mockResolvedValue(manifest),
+      getCurrentAgentConnectionIdentity: vi.fn().mockResolvedValue(currentConnectionIdentity()),
       listTeams,
       listWorkflowStates,
       listProjects,
@@ -71,10 +184,25 @@ describe('WorkMesh MCP adapter', () => {
       expect(context.structuredContent).toMatchObject({
         data: {
           identity: { actorId: artifactId, sessionId, sessionRevision: 4 },
+          connectionIdentity: {
+            connection: { id: projectId },
+            authenticated_credential: { fingerprint_prefix: '0123456789ab' },
+          },
           team: { id: teamId, key: 'WM', ref: 'WM' },
           defaultWorkflowState: { id: pullRequestId, name: 'Ready', ref: 'WM/state/ready' },
           eventCursor: { cursor: '0', semantics: 'replay_from_origin' },
           allowedOperations: ['createProject'],
+        },
+      })
+      const identity = await protocol.callTool({ name: 'get_current_identity', arguments: {} })
+      expect(identity.structuredContent).toMatchObject({
+        data: {
+          actorId: artifactId,
+          sessionId,
+          connectionIdentity: {
+            connection: { id: projectId },
+            principal_human_actor_id: workItemId,
+          },
         },
       })
       const resolved = await protocol.callTool({
@@ -395,7 +523,14 @@ describe('WorkMesh MCP adapter', () => {
   })
 
   it('fails verify_connection when the Team live authorization probe is unavailable', async () => {
-    const manifest = { agent: { capabilityScope: { teamIds: [teamId] } } }
+    const manifest = {
+      agent: {
+        actorId: artifactId,
+        sessionId,
+        effectiveCapabilities: ['work:read'],
+        capabilityScope: { teamIds: [teamId] },
+      },
+    }
     const getAgentCapabilities = vi.fn().mockResolvedValue(manifest)
     const listTeams = vi.fn().mockRejectedValue(new WorkMeshSdkError(
       'Team discovery is unavailable',
@@ -407,6 +542,9 @@ describe('WorkMesh MCP adapter', () => {
     ))
     const api = {
       getAgentCapabilities,
+      getCurrentAgentConnectionIdentity: vi.fn().mockResolvedValue(
+        currentConnectionIdentity(['work:read']),
+      ),
       listTeams,
       listWorkItems: vi.fn(),
       getWorkItem: vi.fn(),
@@ -876,11 +1014,19 @@ describe('WorkMesh MCP adapter', () => {
   it('returns a bounded secret-safe bootstrap receipt after live Connection verification', async () => {
     const manifest = {
       profileVersion: '1.0',
-      agent: { capabilityScope: { teamIds: [teamId] } },
+      agent: {
+        actorId: artifactId,
+        sessionId,
+        effectiveCapabilities: ['work:read'],
+        capabilityScope: { teamIds: [teamId] },
+      },
       credential: 'installation-secret-must-not-escape',
     }
     const api = {
       getAgentCapabilities: vi.fn().mockResolvedValue(manifest),
+      getCurrentAgentConnectionIdentity: vi.fn().mockResolvedValue(
+        currentConnectionIdentity(['work:read']),
+      ),
       listTeams: vi.fn().mockResolvedValue({ items: [{ id: teamId }], nextCursor: null }),
       listWorkItems: vi.fn(),
       getWorkItem: vi.fn(),

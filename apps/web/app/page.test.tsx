@@ -52,7 +52,15 @@ vi.mock('../features/work-items/work-surfaces', () => ({
     </section>
   },
 }))
-vi.mock('./agent-work-panel', () => ({ AgentWorkPanel: () => null }))
+vi.mock('./agent-work-panel', () => ({
+  AgentWorkPanel: ({ onReloadWorkItem }: { onReloadWorkItem?: () => void }) => <button data-testid="agent-panel-auto-reload" onClick={() => onReloadWorkItem?.()} type="button">Mock agent projection refresh</button>,
+  useAgentDelegationController: () => ({
+    scopeKey: 'test-authority', agentsPage: { items: [], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
+    eligibleAgents: [], directAgent: undefined, canDirect: false, canChoose: false, disabled: true, reason: 'no_eligible_agent',
+    chooserRequest: 0, requestChooser: vi.fn(), consumeChooserRequest: vi.fn(), create: vi.fn(), error: null, busy: false, latest: null,
+    clearLatest: vi.fn(), clearError: vi.fn(),
+  }),
+}))
 vi.mock('./work-room', () => ({ InboxPanel: () => null, WorkRoom: () => null }))
 vi.mock('./project-workspace', () => ({
   ProjectWorkspace: ({ project }: { project: { name: string } }) => <div data-testid="project-workspace">{project.name}</div>,
@@ -272,5 +280,24 @@ describe('Home full-page WorkItem semantics', () => {
     expect(obscuredContent).toHaveAttribute('inert')
     expect(obscuredContent).not.toHaveAttribute('hidden')
     expect(obscuredHeading.closest('header')).toHaveAttribute('hidden')
+  })
+
+  it('keeps Agent executions selected when the automatic agent projection refreshes', async () => {
+    window.localStorage.clear()
+    window.history.replaceState({}, '', `/?view=my-work&workItem=${fullPageWorkItem.id}`)
+    apiMock.apiRequest.mockImplementation(async (path: string) => {
+      if (path === '/api/v1/features') return { features: [] }
+      if (path === `/api/v1/work-items/${fullPageWorkItem.id}`) return fullPageWorkItem
+      return projects.find(candidate => path === `/api/v1/projects/${candidate.id}`) ?? { id: 'fixture' }
+    })
+
+    render(<LocaleProvider><HomePage /></LocaleProvider>)
+
+    await screen.findByTestId('work-item-detail')
+    fireEvent.click(screen.getByRole('tab', { name: 'Agent executions' }))
+    expect(screen.getByRole('tab', { name: 'Agent executions' })).toHaveAttribute('aria-selected', 'true')
+
+    fireEvent.click(screen.getByTestId('agent-panel-auto-reload'))
+    await waitFor(() => expect(screen.getByRole('tab', { name: 'Agent executions' })).toHaveAttribute('aria-selected', 'true'))
   })
 })

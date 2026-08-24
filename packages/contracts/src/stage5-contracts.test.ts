@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   agentConnectionClientTypeSchema,
   agentConnectionCreateInputSchema,
+  agentConnectionCurrentIdentitySchema,
   agentConnectionIdentitySchema,
   agentConnectionPatchInputSchema,
   agentConnectionRedeemInputSchema,
@@ -12,9 +13,14 @@ import {
   agentConnectionStatusSchema,
   agentSessionKindSchema,
   agentWellKnownResponseSchema,
+  agentConcurrencyLimitDetailsSchema,
+  agentEventTypeSchema,
   apiErrorCodeSchema,
   capabilitySchema,
   coordinationSessionResponseSchema,
+  coordinationSessionClosedEventPayloadSchema,
+  coordinationSessionOpenedEventPayloadSchema,
+  coordinationSessionRefreshedEventPayloadSchema,
   delegationScopeTypeSchema,
   semverPattern,
   stage5RouteManifest,
@@ -64,6 +70,7 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       'GET /api/v1/agent-connections',
       'POST /api/v1/agent-connections',
       'POST /api/v1/agent-connections/redeem',
+      'GET /api/v1/agent-connections/current-identity',
       'GET /api/v1/agent-connections/{id}',
       'PATCH /api/v1/agent-connections/{id}',
       'DELETE /api/v1/agent-connections/{id}',
@@ -372,6 +379,113 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
       granted_capabilities: ['work:read', 'work:write'],
     })
     expect(identity.coordination_session.role).toBe('coordinator')
+  })
+
+  it('proves the exact active or overlap credential without exposing credential identifiers or secrets', () => {
+    const currentIdentity = {
+      connection: makeResponse(),
+      coordination_session: {
+        id,
+        connection_id: id,
+        session_kind: 'coordination',
+        role: 'coordinator',
+        delegation_scope: 'team',
+        granted_capabilities: ['work:read', 'work:write'],
+        expires_at: '2026-08-07T11:00:00Z',
+        refreshed_at: null,
+        team_id: id,
+        principal_human_actor_id: id,
+      },
+      agent_actor_id: id,
+      principal_human_actor_id: id,
+      team_id: id,
+      granted_capabilities: ['work:read', 'work:write'],
+      authenticated_credential: {
+        fingerprint_prefix: '0123456789ab',
+        status: 'active',
+        overlap_until: null,
+      },
+    } as const
+    expect(agentConnectionCurrentIdentitySchema.parse(currentIdentity).authenticated_credential)
+      .toEqual(currentIdentity.authenticated_credential)
+    expect(() => agentConnectionCurrentIdentitySchema.parse({
+      ...currentIdentity,
+      authenticated_credential: {
+        ...currentIdentity.authenticated_credential,
+        credential_id: id,
+      },
+    })).toThrow()
+    expect(() => agentConnectionCurrentIdentitySchema.parse({
+      ...currentIdentity,
+      authenticated_credential: {
+        fingerprint_prefix: '0123456789ab',
+        status: 'active',
+        overlap_until: '2026-08-07T10:15:00Z',
+      },
+    })).toThrow()
+    expect(() => agentConnectionCurrentIdentitySchema.parse({
+      ...currentIdentity,
+      authenticated_credential: {
+        fingerprint_prefix: '0123456789ab',
+        status: 'overlap',
+        overlap_until: '2026-08-07T10:15:00Z',
+      },
+    })).not.toThrow()
+  })
+
+  it('publishes closed coordination lifecycle payloads and safe execution-capacity details', () => {
+    expect(agentEventTypeSchema.options).toEqual(expect.arrayContaining([
+      'agent.coordination_session.opened',
+      'agent.coordination_session.refreshed',
+      'agent.coordination_session.closed',
+    ]))
+    expect(() => coordinationSessionOpenedEventPayloadSchema.parse({
+      connectionId: id,
+      sessionId: id,
+      reason: 'recovered_terminal_backing',
+      expiresAt: '2026-08-07T11:00:00Z',
+    })).not.toThrow()
+    expect(() => coordinationSessionRefreshedEventPayloadSchema.parse({
+      connectionId: id,
+      sessionId: id,
+      previousExpiresAt: '2026-08-07T11:00:00Z',
+      expiresAt: '2026-08-07T11:30:00Z',
+    })).not.toThrow()
+    expect(() => coordinationSessionClosedEventPayloadSchema.parse({
+      connectionId: id,
+      sessionId: id,
+      reason: 'invalid_binding',
+    })).not.toThrow()
+    expect(() => coordinationSessionClosedEventPayloadSchema.parse({
+      connectionId: id,
+      reason: 'invalid_binding',
+      sessionReferenceOmitted: 'resource_scope_mismatch',
+    })).not.toThrow()
+    expect(() => coordinationSessionClosedEventPayloadSchema.parse({
+      connectionId: id,
+      reason: 'invalid_binding',
+    })).toThrow()
+
+    const countedSessionStates = [
+      'queued', 'acknowledged', 'planning', 'executing', 'awaiting_input',
+      'awaiting_approval', 'blocked', 'paused', 'stopping', 'stale',
+    ] as const
+    const details = {
+      maxConcurrency: 1,
+      activeExecutionSessionCount: 1,
+      countedSessionKinds: ['execution'],
+      countedSessionStates,
+      activeExecutionSessionsByState: { executing: 1 },
+    } as const
+    expect(agentConcurrencyLimitDetailsSchema.parse(details)).toEqual(details)
+    expect(() => agentConcurrencyLimitDetailsSchema.parse({
+      ...details,
+      countedSessionStates: [...countedSessionStates.slice(0, 9), 'queued'],
+    })).toThrow(/unique/)
+    expect(() => agentConcurrencyLimitDetailsSchema.parse({
+      ...details,
+      activeExecutionSessionsByState: { coordination: 1 },
+    })).toThrow(/Unknown execution concurrency state/)
   })
 
   it('validates a redeem input with camelCase fields', () => {

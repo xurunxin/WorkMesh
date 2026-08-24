@@ -527,6 +527,8 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     couldNotLoad: '无法加载 Issue',
     correlation: '关联 ID',
     delegation: '委派',
+    delegateToAgent: '交给智能体',
+    viewAgentOptions: '选择智能体',
     description: '描述（Markdown）',
     detailTabsAriaLabel: 'Issue 区块',
     detailTabDiscussion: '讨论',
@@ -605,6 +607,8 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
     couldNotLoad: 'Could not load Issue',
     correlation: 'Correlation ID',
     delegation: 'Delegation',
+    delegateToAgent: 'Delegate to Agent',
+    viewAgentOptions: 'Choose an Agent',
     description: 'Description (Markdown)',
     detailTabsAriaLabel: 'Issue sections',
     detailTabDiscussion: 'Discussion',
@@ -2531,7 +2535,23 @@ export type AgentWorkCopy = {
   delegateFormInitialPrompt: string
   delegateFormInitialPromptPlaceholder: string
   delegateFormStart: string
+  oneClickDelegate: string
+  oneClickPrompt: (title: string) => string
+  forceAssign: string
+  forcedAssignmentPolicy: string
+  replacementHint: (agent: string) => string
+  advancedOptions: string
+  chooseAgent: string
+  openAgents: string
+  reloadIssue: string
+  errorCode: (code: string) => string
+  capacitySummary: (active: string, max: string, states: string) => string
+  diagnosticId: (id: string) => string
+  delegateSuccess: (agent: string, state: string) => string
+  noResponsible: string
+  refresh: string
   noSessions: string
+  loadingSessions: string
   blockingReasonMissing: string
   heartbeat: (date: string) => string
   resume: string
@@ -2546,7 +2566,7 @@ export type AgentWorkCopy = {
   retryError: string
   noActiveAgents: string
   noActiveGrant: string
-  noSharedDefinition: string
+  missingExecutionCapabilities: string
   projectionCurrentStep: string
   projectionPendingApprovals: string
   projectionStatus: string
@@ -2569,7 +2589,23 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: '初始指令',
     delegateFormInitialPromptPlaceholder: '该智能体应当做什么？',
     delegateFormStart: '启动 Session',
+    oneClickDelegate: '一键强制委派',
+    oneClickPrompt: title => `请接手这个 Issue${title ? `“${title}”` : ''}，先检查上下文和验收条件，然后推进到可交付状态。`,
+    forceAssign: '强制分配并启动',
+    forcedAssignmentPolicy: '人类委派始终是强制任务分配，会替换已有智能体分配；未被委派的 Issue 可由智能体自行接手。',
+    replacementHint: agent => `当前任务已分配给 ${agent}；强制委派会结束其仍在运行的执行，并由你选择的智能体接手。`,
+    advancedOptions: '高级配置',
+    chooseAgent: '选择强制委派智能体',
+    openAgents: '打开智能体管理',
+    reloadIssue: '重新加载 Issue',
+    errorCode: code => `错误 ${code}`,
+    capacitySummary: (active, max, states) => `执行容量：${active}/${max}${states ? `（${states}）` : ''}`,
+    diagnosticId: id => `诊断 ID：${id}`,
+    delegateSuccess: (agent, state) => `已将任务交给 ${agent}，Session 当前为 ${state}。`,
+    noResponsible: '请先设置人类负责人；负责人对结果负责，智能体负责执行。',
+    refresh: '刷新状态',
     noSessions: '尚未委派任何智能体 Session。',
+    loadingSessions: '正在加载智能体执行记录…',
     blockingReasonMissing: '未报告阻塞原因。',
     heartbeat: date => `心跳：${date}`,
     resume: '继续',
@@ -2584,7 +2620,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     retryError: '无法重试此 Session。',
     noActiveAgents: '没有已注册的活跃智能体。',
     noActiveGrant: '没有智能体对本 Issue 团队持有活跃授权。',
-    noSharedDefinition: '没有同时被定义和本团队批准的能力。',
+    missingExecutionCapabilities: '智能体需要同时获批 work:read 与 work:write。',
     projectionCurrentStep: '当前计划步骤',
     projectionPendingApprovals: '待处理审批',
     projectionStatus: '预测状态',
@@ -2605,7 +2641,23 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: 'Initial prompt',
     delegateFormInitialPromptPlaceholder: 'What should this agent do?',
     delegateFormStart: 'Start session',
+    oneClickDelegate: 'Force assign now',
+    oneClickPrompt: title => `Take over this Issue${title ? ` “${title}”` : ''}, review its context and acceptance criteria, then move it toward a deliverable state.`,
+    forceAssign: 'Force assign and start',
+    forcedAssignmentPolicy: 'Human delegation is always a forced assignment and replaces any existing Agent assignment. Unassigned Issues remain available for agents to claim.',
+    replacementHint: agent => `This Issue is assigned to ${agent}. Force assignment ends any non-terminal execution and hands the Issue to the Agent you choose.`,
+    advancedOptions: 'Advanced options',
+    chooseAgent: 'Choose an Agent to force assign',
+    openAgents: 'Open Agent management',
+    reloadIssue: 'Reload Issue',
+    errorCode: code => `Error ${code}`,
+    capacitySummary: (active, max, states) => `Execution capacity: ${active}/${max}${states ? ` (${states})` : ''}`,
+    diagnosticId: id => `Diagnostic ID: ${id}`,
+    delegateSuccess: (agent, state) => `Assigned to ${agent}; the session is ${state}.`,
+    noResponsible: 'Set a responsible Human first. The Human owns the outcome; the Agent owns execution.',
+    refresh: 'Refresh status',
     noSessions: 'No delegated agent session yet.',
+    loadingSessions: 'Loading agent executions…',
     blockingReasonMissing: 'No blocking reason reported.',
     heartbeat: date => `Heartbeat: ${date}`,
     resume: 'Resume',
@@ -2620,7 +2672,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     retryError: 'Unable to retry this session.',
     noActiveAgents: 'No active agents are registered.',
     noActiveGrant: 'No active grant for this team',
-    noSharedDefinition: 'No active agent has capabilities approved by both its definition and this team.',
+    missingExecutionCapabilities: 'The Agent requires both work:read and work:write approval.',
     projectionCurrentStep: 'Current plan step',
     projectionPendingApprovals: 'Pending approvals',
     projectionStatus: 'Projection status',

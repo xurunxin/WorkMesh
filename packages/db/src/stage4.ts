@@ -3,6 +3,10 @@ import type { PoolClient } from 'pg'
 import { DomainError, assertLoopAdmission, dryRunAutomation, evaluateAutomationCondition } from '@workmesh/domain'
 import { appendEvent } from './index.js'
 import { lockAgentAuthorityPlan } from './agent-locks.js'
+import {
+  agentExecutionCapacitySqlPredicate,
+  assertAgentExecutionCapacityAfterLock,
+} from './agent-concurrency.js'
 
 type AutomationCondition = Parameters<typeof evaluateAutomationCondition>[0]
 type AutomationAction = Parameters<typeof dryRunAutomation>[1][number]
@@ -282,6 +286,10 @@ export async function admitNotification(
   return { id: notification.id, channels, digest: preference?.digest ?? 'immediate', suppressed }
 }
 
+export type LoopRunAdmission =
+  | { runId: string; sessionId: string; duplicate: boolean; deferred?: false }
+  | { runId: string; sessionId: null; duplicate: boolean; deferred: true; retryAt: string }
+
 export async function admitLoopRun(
   tx: PoolClient,
   input: {
@@ -292,7 +300,7 @@ export async function admitLoopRun(
     authorization: Stage4AdmissionAuthorization
     notificationChannels?: ReadonlyArray<'in_app' | 'browser' | 'webhook'>
   },
-): Promise<{ runId: string; sessionId: string; duplicate: boolean }> {
+): Promise<LoopRunAdmission> {
   const loopLocator = (await tx.query<{
     agent_id: string
     workspace_id: string
@@ -368,13 +376,35 @@ export async function admitLoopRun(
   ) throw new Error('LOOP_AUTHORITY_ROUTING_CHANGED')
   await assertAdmissionAuthorization(tx, input.meta, teamId, input.authorization)
 
-  const existing = (await tx.query<{ run_id: string; session_id: string }>(
-    `SELECT run.id AS run_id,run.session_id
+  const existing = (await tx.query<{
+    run_id: string
+    session_id: string | null
+    status: string
+    retry_due: boolean
+    available_at: Date
+    attempt_count: number
+    trace: Record<string, unknown>
+  }>(
+    `SELECT run.id AS run_id,run.session_id,run.status,
+            run.available_at<=now() AS retry_due,run.available_at,
+            run.attempt_count,run.trace
        FROM automation_runs run
       WHERE run.loop_id=$1 AND run.trace->>'occurrenceKey'=$2`,
     [loop.id, input.occurrenceKey],
   )).rows[0]
   if (existing?.session_id) return { runId: existing.run_id, sessionId: existing.session_id, duplicate: true }
+  const existingDeferred = existing?.status === 'failed'
+    && existing.trace.deferredReason === 'AGENT_CONCURRENCY_LIMIT'
+  if (existing && !existingDeferred) throw new Error('LOOP_RUN_INCOMPLETE')
+  if (existingDeferred && !existing.retry_due) {
+    return {
+      runId: existing.run_id,
+      sessionId: null,
+      duplicate: true,
+      deferred: true,
+      retryAt: existing.available_at.toISOString(),
+    }
+  }
 
   const activeRunCount = Number((await tx.query<{ count: string }>(
     `SELECT count(*)::text AS count FROM automation_runs
@@ -431,20 +461,81 @@ export async function admitLoopRun(
     loop.approved_capabilities.includes(capability) && teamGrant.approved_capabilities.includes(capability))
   if (allowed.length !== requestedCapabilities.length) throw new Error('LOOP_TEMPLATE_CAPABILITY_DENIED')
 
-  const run = (await tx.query<{ id: string }>(
-    `INSERT INTO automation_runs(
-       workspace_id,team_id,loop_id,status,trace,max_attempts,available_at,enforce_no_overlap
-     ) VALUES($1,$2,$3,'pending',$4,$5,$6,$7) RETURNING id`,
-    [
-      loop.workspace_id,
-      teamId,
-      loop.id,
-      { occurrenceKey: input.occurrenceKey, scheduledFor: input.scheduledFor.toISOString() },
-      Number((loop.budget.maxRetries as number | undefined) ?? 5),
-      input.scheduledFor,
-      loop.no_overlap,
-    ],
-  )).rows[0]!
+  try {
+    await assertAgentExecutionCapacityAfterLock(tx, {
+      workspaceId: loop.workspace_id,
+      agentId: loop.agent_id,
+    })
+  } catch (error) {
+    if (
+      !(error instanceof DomainError)
+      || error.code !== 'AGENT_CONCURRENCY_LIMIT'
+      || input.authorization.kind !== 'trusted_worker'
+    ) throw error
+    const attempt = Math.min(12, (existing?.attempt_count ?? 0) + 1)
+    const delaySeconds = Math.min(300, 5 * 2 ** Math.max(0, attempt - 1))
+    const trace = {
+      ...(existing?.trace ?? {}),
+      occurrenceKey: input.occurrenceKey,
+      scheduledFor: input.scheduledFor.toISOString(),
+      deferredReason: error.code,
+      deferAttempt: attempt,
+    }
+    const deferred = existing
+      ? (await tx.query<{ id: string; available_at: Date }>(
+          `UPDATE automation_runs
+              SET status='failed',trace=$2,attempt_count=$3,
+                  available_at=now()+($4::text || ' seconds')::interval,
+                  last_error=$5,finished_at=NULL
+            WHERE id=$1 AND session_id IS NULL
+            RETURNING id,available_at`,
+          [existing.run_id, trace, attempt, delaySeconds, error.code],
+        )).rows[0]
+      : (await tx.query<{ id: string; available_at: Date }>(
+          `INSERT INTO automation_runs(
+             workspace_id,team_id,loop_id,status,trace,attempt_count,max_attempts,
+             available_at,enforce_no_overlap,last_error
+           ) VALUES($1,$2,$3,'failed',$4,$5,$6,
+             now()+($7::text || ' seconds')::interval,$8,$9)
+           RETURNING id,available_at`,
+          [
+            loop.workspace_id,
+            teamId,
+            loop.id,
+            trace,
+            attempt,
+            Number((loop.budget.maxRetries as number | undefined) ?? 5),
+            delaySeconds,
+            loop.no_overlap,
+            error.code,
+          ],
+        )).rows[0]
+    if (!deferred) throw new Error('LOOP_DEFER_CONFLICT')
+    return {
+      runId: deferred.id,
+      sessionId: null,
+      duplicate: Boolean(existing),
+      deferred: true,
+      retryAt: deferred.available_at.toISOString(),
+    }
+  }
+
+  const run = existingDeferred
+    ? { id: existing.run_id }
+    : (await tx.query<{ id: string }>(
+        `INSERT INTO automation_runs(
+           workspace_id,team_id,loop_id,status,trace,max_attempts,available_at,enforce_no_overlap
+         ) VALUES($1,$2,$3,'pending',$4,$5,$6,$7) RETURNING id`,
+        [
+          loop.workspace_id,
+          teamId,
+          loop.id,
+          { occurrenceKey: input.occurrenceKey, scheduledFor: input.scheduledFor.toISOString() },
+          Number((loop.budget.maxRetries as number | undefined) ?? 5),
+          input.scheduledFor,
+          loop.no_overlap,
+        ],
+      )).rows[0]!
   const delegation = (await tx.query<{ id: string }>(
     `INSERT INTO delegations(
        workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
@@ -467,7 +558,18 @@ export async function admitLoopRun(
      ) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     [loop.workspace_id, teamId, loop.agent_id, loop.agent_actor_id, delegation.id, run.id, loop.budget],
   )).rows[0]!
-  await tx.query('UPDATE automation_runs SET session_id=$1 WHERE id=$2', [session.id, run.id])
+  if (existingDeferred) {
+    const { deferredReason: _, deferAttempt: __, ...trace } = existing.trace
+    await tx.query(
+      `UPDATE automation_runs
+          SET session_id=$1,status='pending',trace=$3,available_at=now(),
+              last_error=NULL,finished_at=NULL
+        WHERE id=$2 AND session_id IS NULL AND status='failed'`,
+      [session.id, run.id, trace],
+    )
+  } else {
+    await tx.query('UPDATE automation_runs SET session_id=$1 WHERE id=$2', [session.id, run.id])
+  }
   await tx.query(
     `INSERT INTO loop_budget_reservations(loop_id,automation_run_id,amount)
      VALUES($1,$2,$3)`,
@@ -634,8 +736,10 @@ async function locateAutomationActionAuthority(
   if(actionSessionId) sessionIds.add(actionSessionId)
   if(targetAgentId) {
     const targetSessions=await tx.query<{id:string}>(
-      'SELECT id FROM agent_sessions WHERE agent_id=$1',
-      [targetAgentId],
+      `SELECT id FROM agent_sessions session
+        WHERE session.agent_id=$1 AND session.workspace_id=$2
+          AND ${agentExecutionCapacitySqlPredicate('session')}`,
+      [targetAgentId,run.workspace_id],
     )
     for(const row of targetSessions.rows) sessionIds.add(row.id)
   }
@@ -1210,6 +1314,10 @@ export async function executeAutomationAction(
     if (!target || !targetAgent)
       throw new Error('AUTOMATION_TARGET_SCOPE_DENIED')
     if (!target.responsible_human_actor_id) throw new Error('RESPONSIBLE_HUMAN_REQUIRED')
+    await assertAgentExecutionCapacityAfterLock(tx, {
+      workspaceId: authority.workspace_id,
+      agentId,
+    })
     const delegation = (await tx.query<{ id: string }>(
       `INSERT INTO delegations(
          workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,

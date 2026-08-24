@@ -31,7 +31,7 @@ describe('authentication idempotency contract', () => {
   })
 
   it('marks every secret-response mutation for encrypted replay', () => {
-    expect(secretReplayOperationIds).toHaveLength(10)
+    expect(secretReplayOperationIds).toHaveLength(9)
     const marked = routePolicyManifest
       .filter(route => route.secretReplay === 'encrypted_auth')
       .map(route => route.operationId)

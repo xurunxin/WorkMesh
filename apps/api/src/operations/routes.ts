@@ -28,10 +28,12 @@ import {
   type AgentSessionState,
 } from '@workmesh/contracts'
 import {
+  agentExecutionCapacitySqlPredicate,
   admitAutomationOccurrence,
   admitLoopRun,
   admitNotification,
   appendEvent,
+  assertAgentExecutionCapacityAfterLock,
   lockAgentAuthorityPlan,
   type Stage4CommandMeta,
   type Stage4AdmissionAuthorization,
@@ -1965,8 +1967,9 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
             `SELECT session.id,session.delegation_id
                FROM agent_sessions session
               WHERE session.agent_id=$1
-                AND session.state NOT IN ('completed','failed','canceled')`,
-            [locator.agent_id],
+                AND session.workspace_id=$2
+                AND ${agentExecutionCapacitySqlPredicate('session')}`,
+            [locator.agent_id,authorization.workspaceId],
           )).rows
           await lockAgentAuthorityPlan(tx,{
             definitionIds:[locator.agent_id],
@@ -2094,6 +2097,13 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
               sequence: existing.sequence,
             }
           } else {
+            const terminal = ['completed', 'failed', 'canceled'].includes(taskCommand.state)
+            if (!terminal) {
+              await assertAgentExecutionCapacityAfterLock(tx, {
+                workspaceId: meta.actor.workspaceId,
+                agentId: target.agent_id,
+              })
+            }
             const delegation = one((await tx.query<{ id: string }>(
               `INSERT INTO delegations(
                 workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,
@@ -2105,7 +2115,6 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
                   projectIds: target.project_id ? [target.project_id] : [],
                 }],
             )).rows)
-            const terminal = ['completed', 'failed', 'canceled'].includes(taskCommand.state)
             const inserted = one((await tx.query<{
               id: string
               state: AgentSessionState

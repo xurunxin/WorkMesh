@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { agentCapabilityManifestResponseSchema, guidanceDiffResponseSchema, guidanceHistoryResponseSchema, guidanceResponseSchema, sessionContextResponseSchema } from '@workmesh/contracts'
 import { buildApp } from '../src/server.js'
+import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Guidance integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
@@ -74,14 +75,12 @@ describe('versioned Guidance acceptance', () => {
     const capabilities = ['work:read', 'work:write', 'plan:write']
     const registration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `guidance-agent-${randomUUID().slice(0, 8)}`, name: 'Guidance Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: capabilities, approvedCapabilities: capabilities, maxConcurrency: 1 })
     expect(registration.statusCode, JSON.stringify(registration.json())).toBe(200)
-    const registered = registration.json<{ id: string; installation_token: string }>()
+    const registered = registration.json<{ id: string }>()
     expect((await humanCall(human, 'PUT', `/api/v1/agents/${registered.id}/team-access/${teamId}`, { approvedCapabilities: capabilities })).statusCode).toBe(200)
     const startedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${workItem.id}/agent-session`, { agentId: registered.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: capabilities, initialPrompt: 'Use pinned Guidance.', budget: {} }, { 'if-match': `"revision-${workItem.revision}"` })
     expect(startedResponse.statusCode, JSON.stringify(startedResponse.json())).toBe(200)
-    const started = startedResponse.json<{ session: { id: string; exchangeToken: string } }>().session
-    const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${started.id}/token/exchange`, payload: { exchangeToken: started.exchangeToken }, headers: { authorization: `Bearer ${registered.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
-    expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
-    const token = exchange.json<{ sessionToken: string }>().sessionToken
+    const started = startedResponse.json<{ session: { id: string } }>().session
+    const token = await seedAgentSessionBearer(db, started.id, registered.id)
     const humanManifest = await humanCall(human, 'GET', '/api/v1/agent-capabilities')
     expect(humanManifest.statusCode).toBe(403)
     const manifestResponse = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${token}`, 'workmesh-client-profile': '1.0' } }) as unknown as Response
@@ -96,16 +95,23 @@ describe('versioned Guidance acceptance', () => {
     expect(limitedWorkResponse.statusCode, JSON.stringify(limitedWorkResponse.json())).toBe(200)
     const limitedWork = limitedWorkResponse.json<{ id: string; revision: number }>()
     const limitedCapabilities = ['work:write']
-    const limitedRegistration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `limited-agent-${randomUUID().slice(0, 8)}`, name: 'Limited Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: limitedCapabilities, approvedCapabilities: limitedCapabilities, maxConcurrency: 1 })
+    const limitedAssignmentCapabilities = ['work:read', 'work:write']
+    const limitedRegistration = await humanCall(human, 'POST', '/api/v1/agents/register', { slug: `limited-agent-${randomUUID().slice(0, 8)}`, name: 'Limited Agent', provider: 'fake', version: '1', supportedProtocols: ['native_http'], requestedCapabilities: limitedAssignmentCapabilities, approvedCapabilities: limitedAssignmentCapabilities, maxConcurrency: 1 })
     expect(limitedRegistration.statusCode, JSON.stringify(limitedRegistration.json())).toBe(200)
-    const limitedAgent = limitedRegistration.json<{ id: string; installation_token: string }>()
-    expect((await humanCall(human, 'PUT', `/api/v1/agents/${limitedAgent.id}/team-access/${teamId}`, { approvedCapabilities: limitedCapabilities })).statusCode).toBe(200)
-    const limitedStartedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${limitedWork.id}/agent-session`, { agentId: limitedAgent.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: limitedCapabilities, initialPrompt: 'Discover supported operations.', budget: {} }, { 'if-match': `"revision-${limitedWork.revision}"` })
+    const limitedAgent = limitedRegistration.json<{ id: string }>()
+    expect((await humanCall(human, 'PUT', `/api/v1/agents/${limitedAgent.id}/team-access/${teamId}`, { approvedCapabilities: limitedAssignmentCapabilities })).statusCode).toBe(200)
+    const limitedStartedResponse = await humanCall(human, 'POST', `/api/v1/work-items/${limitedWork.id}/agent-session`, { agentId: limitedAgent.id, principalHumanActorId: actor.id, role: 'executor', requestedCapabilities: limitedAssignmentCapabilities, initialPrompt: 'Discover supported operations.', budget: {} }, { 'if-match': `"revision-${limitedWork.revision}"` })
     expect(limitedStartedResponse.statusCode, JSON.stringify(limitedStartedResponse.json())).toBe(200)
-    const limitedStarted = limitedStartedResponse.json<{ session: { id: string; exchangeToken: string } }>().session
-    const limitedExchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${limitedStarted.id}/token/exchange`, payload: { exchangeToken: limitedStarted.exchangeToken }, headers: { authorization: `Bearer ${limitedAgent.installation_token}`, 'idempotency-key': randomUUID() } }) as unknown as Response
-    expect(limitedExchange.statusCode, JSON.stringify(limitedExchange.json())).toBe(200)
-    const limitedToken = limitedExchange.json<{ sessionToken: string }>().sessionToken
+    const limitedStarted = limitedStartedResponse.json<{ session: { id: string } }>().session
+    const limitedToken = await seedAgentSessionBearer(db, limitedStarted.id, limitedAgent.id)
+    await db.query(
+      'UPDATE agent_definitions SET approved_capabilities=$2 WHERE id=$1',
+      [limitedAgent.id, limitedCapabilities],
+    )
+    await db.query(
+      'UPDATE agent_team_access SET approved_capabilities=$3 WHERE agent_id=$1 AND team_id=$2',
+      [limitedAgent.id, teamId, limitedCapabilities],
+    )
     const limitedManifestResponse = await app.inject({ method: 'GET', url: '/api/v1/agent-capabilities', headers: { authorization: `Bearer ${limitedToken}`, 'workmesh-client-profile': '1.0' } }) as unknown as Response
     expect(limitedManifestResponse.statusCode, JSON.stringify(limitedManifestResponse.json())).toBe(200)
     const limitedManifest = agentCapabilityManifestResponseSchema.parse(limitedManifestResponse.json())

@@ -8,6 +8,8 @@ export type RoutePolicyAuthentication =
   | 'human_session'
   | 'agent_session'
   | 'human_or_agent_session'
+  | 'human_or_coordination_connection'
+  | 'coordination_connection'
   | 'installation_target'
   | 'provider_signature'
 export type RoutePolicyFeatureTier = 'stable' | 'beta' | 'experimental'
@@ -119,8 +121,7 @@ export const secretReplayOperationIds = [
   'logout',
   'registerAgent',
   'rotateAgentWebhookSecret',
-  'createAgentSession',
-  'delegateAndStartAgentSession',
+  'claimWorkItem',
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
   'redeemAgentConnection',
@@ -165,10 +166,8 @@ const humanOnlyOperations = new Set([
   'listAgents',
   'getAgent',
   'createWorkflowState',
-  'createDelegation',
   'getDelegation',
   'revokeDelegation',
-  'createAgentSession',
   'promptAgentSession',
   'signalAgentSession',
   'retryAgentSession',
@@ -225,6 +224,7 @@ const humanOnlyOperations = new Set([
 
 const agentOnlyOperations = new Set([
   'getAgentCapabilityManifest',
+  'getCurrentAgentConnectionIdentity',
   'claimInboxItem',
   'acknowledgeInboxItem',
   'replyInboxItem',
@@ -294,6 +294,8 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
   if (operationId === 'installWorkspace') return 'bootstrap'
   if (publicOperations.has(operationId)) return 'public'
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
+  if (operationId === 'getCurrentAgentConnectionIdentity' || operationId === 'claimWorkItem') return 'coordination_connection'
+  if (operationId === 'delegateAndStartAgentSession') return 'human_or_coordination_connection'
   if (installationTargetOperations.has(operationId)) return 'installation_target'
   if (humanOnlyOperations.has(operationId)) return 'human_session'
   if (agentOnlyOperations.has(operationId)) return 'agent_session'
@@ -301,6 +303,7 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
 }
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {
+  if (operationId === 'getCurrentAgentConnectionIdentity') return 'none'
   if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'
   if (operationId === 'listWorkItemArtifacts') return 'work_item'
   if (path.includes('/templates')) return 'template'
@@ -335,7 +338,8 @@ function capabilityFor(
   path: string,
   operationId: string,
 ): readonly string[] {
-  if (operationId === 'getAgentCapabilityManifest') return []
+  if (operationId === 'getAgentCapabilityManifest' || operationId === 'getCurrentAgentConnectionIdentity') return []
+  if (operationId === 'claimWorkItem') return ['work:read', 'work:write']
   if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
   if (method === 'GET') {
     if (path.includes('/repositories')) return ['repo:read']
@@ -367,6 +371,8 @@ export function createRoutePolicyManifest(
     const agentOnly = authentication === 'agent_session'
     const agentAuthentication = authentication === 'agent_session'
       || authentication === 'human_or_agent_session'
+      || authentication === 'human_or_coordination_connection'
+      || authentication === 'coordination_connection'
       || authentication === 'installation_target'
     const feature = featureForRoute(binding.path)
     const workspaceAdmin = workspaceAdminOperations.has(binding.operationId)
@@ -384,7 +390,7 @@ export function createRoutePolicyManifest(
         ? []
         : authentication === 'provider_signature'
           ? ['service']
-          : authentication === 'installation_target'
+          : authentication === 'installation_target' || authentication === 'coordination_connection'
             ? ['agent']
             : humanOnly
               ? ['human']
@@ -444,9 +450,9 @@ export function createRoutePolicyManifest(
 }
 
 const mcpOperationIds = {
-  'tool:verify_connection': 'getAgentCapabilityManifest',
-  'tool:get_current_identity': 'getAgentCapabilityManifest',
-  'tool:get_workmesh_context': 'getAgentCapabilityManifest',
+  'tool:verify_connection': 'getCurrentAgentConnectionIdentity',
+  'tool:get_current_identity': 'getCurrentAgentConnectionIdentity',
+  'tool:get_workmesh_context': 'getCurrentAgentConnectionIdentity',
   'tool:resolve_identifier': 'listProjects',
   'tool:prepare_project_import': 'listProjects',
   'tool:apply_project_import': 'createProject',
@@ -463,8 +469,9 @@ const mcpOperationIds = {
   'tool:delete_milestone': 'deleteMilestone',
   'tool:add_work_item_relation': 'createWorkItemRelation',
   'tool:remove_work_item_relation': 'deleteWorkItemRelation',
+  'tool:list_claimable_work_items': 'listWorkItems',
+  'tool:claim_work_item': 'claimWorkItem',
   'tool:delegate_work_item': 'delegateAndStartAgentSession',
-  'tool:start_agent_session': 'delegateAndStartAgentSession',
   'resource:server-info': 'getServerInfo',
   'resource:server-features': 'getDeploymentFeatures',
   'resource:agent-capabilities': 'getAgentCapabilityManifest',

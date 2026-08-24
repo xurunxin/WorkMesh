@@ -22,9 +22,8 @@ type ProvisionOperation =
   | "createWorkItem"
   | "registerAgent"
   | "grantTeamAccess"
-  | "createDelegation"
-  | "createSession"
-  | "exchangeToken"
+  | "delegateAndStart"
+  | "refreshToken"
   | "acknowledge"
   | "initialHeartbeat"
   | "transitionExecuting";
@@ -98,9 +97,8 @@ const operationNames: readonly ProvisionOperation[] = [
   "createWorkItem",
   "registerAgent",
   "grantTeamAccess",
-  "createDelegation",
-  "createSession",
-  "exchangeToken",
+  "delegateAndStart",
+  "refreshToken",
   "acknowledge",
   "initialHeartbeat",
   "transitionExecuting",
@@ -461,10 +459,11 @@ export const provisionRetentionSoak = async (
     method: string,
     path: string,
     body?: object,
+    headers: Readonly<Record<string, string>> = {},
   ): Promise<unknown> =>
     (
       await request(operation, method, path, {
-        headers: { cookie: auth.cookie, "x-csrf-token": auth.csrf },
+        headers: { cookie: auth.cookie, "x-csrf-token": auth.csrf, ...headers },
         body,
       })
     ).body;
@@ -531,7 +530,10 @@ export const provisionRetentionSoak = async (
     "id",
     "RETENTION_SOAK_PROVISION_WORK_ITEM_INVALID",
   );
-  const capabilities = ["work:write"];
+  const workItemRevision = work.revision;
+  if (typeof workItemRevision !== "number" || !Number.isInteger(workItemRevision))
+    throw new Error("RETENTION_SOAK_PROVISION_WORK_ITEM_INVALID");
+  const capabilities = ["work:read", "work:write"];
   const agent = record(
     await human("registerAgent", "POST", "/api/v1/agents/register", {
       name: "Retention Soak Agent",
@@ -561,42 +563,25 @@ export const provisionRetentionSoak = async (
     `/api/v1/agents/${agentId}/team-access/${teamId}`,
     { approvedCapabilities: capabilities },
   );
-  const delegation = record(
+  const assignment = record(
     await human(
-      "createDelegation",
+      "delegateAndStart",
       "POST",
-      `/api/v1/work-items/${workItemId}/delegations`,
+      `/api/v1/work-items/${workItemId}/agent-session`,
       {
         agentId,
         principalHumanActorId: actorId,
         role: "executor",
-        scopeType: "work_item",
-        scopeId: workItemId,
-        permissionsSnapshot: capabilities,
-        capabilityScope: {
-          workspaceId,
-          teamIds: [teamId],
-          projectIds: [],
-          workItemIds: [workItemId],
-          repositoryIds: [],
-          capabilities,
-        },
+        requestedCapabilities: capabilities,
+        initialPrompt: "Run the formal 24-hour retention soak",
+        budget: {},
       },
+      { "if-match": `"revision-${workItemRevision}"` },
     ),
-    "RETENTION_SOAK_PROVISION_DELEGATION_INVALID",
-  );
-  const delegationId = stringField(
-    delegation,
-    "id",
-    "RETENTION_SOAK_PROVISION_DELEGATION_INVALID",
+    "RETENTION_SOAK_PROVISION_ASSIGNMENT_INVALID",
   );
   const session = record(
-    await human("createSession", "POST", "/api/v1/agent-sessions", {
-      delegationId,
-      workItemId,
-      initialPrompt: "Run the formal 24-hour retention soak",
-      budget: {},
-    }),
+    assignment.session,
     "RETENTION_SOAK_PROVISION_SESSION_INVALID",
   );
   const sessionId = stringField(
@@ -604,26 +589,21 @@ export const provisionRetentionSoak = async (
     "id",
     "RETENTION_SOAK_PROVISION_SESSION_INVALID",
   );
-  const exchangeToken = stringField(
-    session,
-    "exchangeToken",
-    "RETENTION_SOAK_PROVISION_SESSION_INVALID",
-  );
-  const exchange = await request(
-    "exchangeToken",
+  const refresh = await request(
+    "refreshToken",
     "POST",
-    `/api/v1/agent-sessions/${sessionId}/token/exchange`,
+    `/api/v1/agent-sessions/${sessionId}/token/refresh`,
     {
       headers: { authorization: `Bearer ${installationToken}` },
-      body: { exchangeToken },
+      body: {},
     },
   );
-  const exchanged = exchangeAgentSessionTokenResponseSchema.safeParse(
-    exchange.body,
+  const refreshed = exchangeAgentSessionTokenResponseSchema.safeParse(
+    refresh.body,
   );
-  if (!exchanged.success)
-    throw new Error("RETENTION_SOAK_PROVISION_EXCHANGE_RESPONSE_INVALID");
-  const sessionToken = exchanged.data.sessionToken;
+  if (!refreshed.success)
+    throw new Error("RETENTION_SOAK_PROVISION_REFRESH_RESPONSE_INVALID");
+  const sessionToken = refreshed.data.sessionToken;
   const ack = record(
     (
       await request(

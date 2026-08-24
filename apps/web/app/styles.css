@@ -953,11 +953,14 @@ main#workmesh-main:focus-visible {
 }
 
 /* v28 Work Item detail: one authority-safe model, rendered as Sheet or Full Page. */
-.work-item-full-page { position: fixed; inset: 0; z-index: 20; overflow: auto; background: var(--wm-canvas); padding: 1.25rem; }
-.work-item-full-page > .work-item-detail { max-width: 1180px; margin: 0 auto; }
+.work-item-full-page { position: fixed; inset: 0; z-index: 20; max-width: 100%; overflow-x: hidden; overflow-y: auto; background: var(--wm-canvas); padding: 1.25rem; }
+.work-item-full-page > .work-item-detail { width: 100%; max-width: 1180px; margin: 0 auto; }
 .work-item-detail { min-width: 0; color: var(--wm-text); }
 .work-item-detail-toolbar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .75rem; margin: -.75rem -.75rem 1rem; background: color-mix(in srgb, var(--wm-surface) 94%, transparent); border-bottom: 1px solid var(--wm-border); backdrop-filter: blur(10px); }
 .work-item-detail-toolbar > div { display: flex; align-items: baseline; gap: .55rem; flex-wrap: wrap; }
+.work-item-detail-toolbar-actions { align-items: center !important; justify-content: flex-end; min-width: 0; }
+.work-item-detail-agent-action { display: grid; justify-items: end; gap: .2rem; min-width: 0; max-width: 23rem; }
+.work-item-detail-agent-action small { max-width: 100%; color: var(--wm-muted); font-size: var(--wm-text-xs); line-height: 1.35; overflow-wrap: anywhere; text-align: right; }
 .work-item-detail-layout { display: grid; gap: 1rem; min-width: 0; }
 .work-item-detail-form { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(250px, .8fr); gap: 1rem; align-items: start; }
 .work-item-detail-content, .work-item-properties, .responsibility-projection, .agent-execution-projection { border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); padding: 1rem; min-width: 0; }
@@ -1003,13 +1006,31 @@ main#workmesh-main:focus-visible {
 .agent-execution-facts div { min-width: 0; padding: .5rem; background: var(--wm-surface-subtle); border-radius: var(--wm-radius-sm); }
 .agent-execution-facts dt { color: var(--wm-muted); font-size: var(--wm-text-xs); }
 .agent-execution-facts dd { margin: .15rem 0 0; overflow-wrap: anywhere; font-weight: 600; }
+.agent-work-panel { display: grid; gap: .8rem; margin-top: 1rem; padding: 1rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface-subtle); }
+.agent-work-panel > header { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+.agent-work-panel > header h3 { margin: 0; }
+.agent-work-panel > header p { margin: .25rem 0 0; color: var(--wm-muted); }
+.agent-work-panel-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem; }
+.agent-work-panel .agent-assignment-policy { margin: 0; color: var(--wm-muted); font-size: var(--wm-text-sm); }
+.agent-work-panel .agent-replacement-notice { margin: 0; padding: .65rem .75rem; color: var(--wm-warning); background: color-mix(in srgb, var(--wm-warning) 8%, var(--wm-surface)); border: 1px solid color-mix(in srgb, var(--wm-warning) 28%, var(--wm-border)); border-radius: var(--wm-radius-md); }
+.agent-work-panel .delegate-form { display: grid; gap: .7rem; padding: .8rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface); }
+.agent-work-panel .delegate-form label { display: grid; gap: .3rem; }
+.agent-work-panel .delegate-form textarea { min-height: 5rem; resize: vertical; }
+.agent-work-panel .session-mini-list { display: grid; gap: .65rem; }
+.agent-work-panel .session-mini-list article { display: grid; gap: .4rem; padding: .75rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface); }
+.agent-work-panel .session-mini-list article > div:first-child { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.agent-work-panel .session-mini-list article p, .agent-work-panel .session-mini-list article small { margin: 0; color: var(--wm-muted); overflow-wrap: anywhere; }
+.agent-work-panel .session-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+.agent-work-panel .error-state { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; }
+.agent-work-panel .error-state p { margin: 0; }
+.agent-work-panel .success { margin: 0; color: var(--wm-success, #166534); }
 .work-item-detail-unavailable { display: grid; gap: var(--wm-space-5); }
 .work-item-detail-supplemental { display: grid; gap: 1rem; min-width: 0; }
 .work-item-detail-supplemental > * { min-width: 0; max-width: 100%; }
 .work-item-detail-supplemental :where(.relationship-panel, .work-room, .agent-work-panel) { width: auto; min-width: 0; max-width: 100%; }
 .work-item-detail-supplemental :where(pre, code, a, p, strong, small, dd) { overflow-wrap: anywhere; }
 .wm-sheet .work-item-detail { width: 100%; }
-.wm-sheet.work-item-detail-sheet { width: min(420px, 100%); }
+.wm-sheet.work-item-detail-sheet { width: min(720px, 100%) !important; max-width: min(720px, 100%) !important; }
 .wm-sheet .work-item-detail-form { grid-template-columns: 1fr; }
 .wm-sheet .work-item-detail-actions { grid-column: 1; }
 @media (max-width: 760px) {
@@ -1018,6 +1039,17 @@ main#workmesh-main:focus-visible {
   .work-item-detail-actions { grid-column: 1; }
   .agent-execution-projection article { grid-template-columns: 1fr; }
   .agent-execution-projection article strong { grid-column: 1; }
+  .work-item-detail-toolbar-actions { align-items: stretch !important; }
+  .agent-work-panel > header { flex-direction: column; }
+  .agent-work-panel-actions { justify-content: flex-start; width: 100%; }
+  .agent-work-panel-actions .wm-button { flex: 1 1 auto; }
+}
+@media (max-width: 560px) {
+  .work-item-detail-toolbar { align-items: stretch; flex-direction: column; }
+  .work-item-detail-toolbar-actions { align-items: stretch !important; justify-content: flex-start; width: 100%; flex-wrap: wrap; }
+  .work-item-detail-agent-action { justify-items: stretch; width: 100%; max-width: none; }
+  .work-item-detail-agent-action small { text-align: left; }
+  .work-item-detail-agent-action .wm-button { width: 100%; }
 }
 
 /* v27 Work Surface primitives: the board owns horizontal scrolling; the document never does. */

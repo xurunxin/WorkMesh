@@ -25,7 +25,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await openAuthenticatedWorkspace(page)
 
     const capabilities = ['work:read', 'work:write', 'plan:write', 'artifact:write']
-    const teamCapabilities = ['work:read', 'plan:write']
+    const teamCapabilities = ['work:read', 'work:write', 'plan:write']
     const registered = await humanApi<{ id: string; installation_token: string }>(page, '/api/v1/agents/register', 'POST', {
       name: 'Acceptance agent', slug: 'acceptance-agent', provider: 'playwright', version: '1.0.0', supportedProtocols: ['native_http'], requestedCapabilities: capabilities, approvedCapabilities: capabilities, outputArtifactTypes: ['test_report'], maxConcurrency: 1, heartbeatIntervalSeconds: 30,
     })
@@ -49,21 +49,17 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await page.getByLabel('Current team').first().selectOption(team.body.id)
     await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
     const drawer = page.getByRole('dialog')
-    await drawer.getByRole('tab', { name: 'Discussion' }).click()
-    const delegateButton = drawer.getByRole('button', { name: 'Delegate' })
+    await drawer.getByRole('tab', { name: 'Agent executions' }).click()
+    const agentPanel = drawer.getByTestId('live-agent-panel')
+    const delegateButton = agentPanel.getByRole('button', { name: 'Force assign now' })
     await expect(delegateButton).toBeVisible()
-    await delegateButton.click()
-    const delegation = drawer.getByTestId('delegate-agent-form')
-    await expect(delegation.getByRole('option', { name: 'Ungranted agent · No active grant for this team' })).toHaveAttribute('disabled', '')
-    await delegation.getByLabel('Agent').selectOption(registered.body.id)
-    await delegation.getByPlaceholder('What should this agent do?').fill('Inspect the acceptance work item and report progress.')
     const mutationPaths: string[] = []
     page.on('request', request => { if (request.method() === 'POST') mutationPaths.push(new URL(request.url()).pathname) })
     const atomicPath = `/api/v1/work-items/${work.body.id}/agent-session`
     const atomicRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === atomicPath)
     const createdSessionResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === atomicPath)
-    await delegation.getByRole('button', { name: 'Start session' }).click()
-    await expect(drawer.getByTestId('live-agent-panel')).toContainText('queued')
+    await delegateButton.click()
+    await expect(agentPanel).toContainText('queued')
 
     expect((await atomicRequest).postDataJSON().requestedCapabilities).toEqual(teamCapabilities)
     const created = await (await createdSessionResponse).json() as { delegation: { id: string; permissions_snapshot: string[]; capability_scope: { capabilities: string[] } }; session: { id: string } }

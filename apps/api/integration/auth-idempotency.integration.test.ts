@@ -6,6 +6,7 @@ import {
   tokenHash,
 } from '@workmesh/db'
 import { authIdempotentTransaction } from '../src/auth-idempotency.js'
+import { seedAgentSessionExchangeToken } from './agent-session-test-credentials.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl)
@@ -305,40 +306,49 @@ describe('secret-aware authentication idempotency', () => {
     expect(changedRotation.json<{ error: { code: string } }>().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
   })
 
-  it('keeps secret-bearing Agent session creation out of the generic replay table', async () => {
+  it('replays atomic assignment without exposing bootstrap credentials or using the generic replay table', async () => {
     const stateId = (await db.query<{ id: string }>("SELECT id FROM workflow_states WHERE team_id=$1 AND category='backlog' LIMIT 1", [teamId])).rows[0]!.id
-    const itemId = (await db.query<{ id: string }>("INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) VALUES($1,$2,900,'Secret session',$3,$4) RETURNING id", [workspaceId, teamId, stateId, actorId])).rows[0]!.id
+    const workItem = (await db.query<{ id: string; revision: number }>("INSERT INTO work_items(workspace_id,team_id,number,title,status_id,responsible_human_actor_id) VALUES($1,$2,900,'Secret session',$3,$4) RETURNING id,revision", [workspaceId, teamId, stateId, actorId])).rows[0]!
+    const itemId = workItem.id
     const agentActorId = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Secret Agent') RETURNING id", [workspaceId])).rows[0]!.id
     const agentId = (await db.query<{ id: string }>("INSERT INTO agent_definitions(workspace_id,actor_id,slug,display_name,supported_protocols,requested_capabilities,approved_capabilities,max_concurrency) VALUES($1,$2,'secret-agent','Secret Agent',ARRAY['native_http']::agent_protocol[],ARRAY['work:read','work:write'],ARRAY['work:read','work:write'],2) RETURNING id", [workspaceId, agentActorId])).rows[0]!.id
     await db.query("INSERT INTO agent_team_access(workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities) VALUES($1,$2,$3,$4,ARRAY['work:read','work:write'])", [workspaceId, agentId, teamId, actorId])
     installationToken = `installation-${randomUUID()}-sentinel`
     const installationId = (await db.query<{ id: string }>('INSERT INTO agent_installation_tokens(agent_id,token_hash,created_by_actor_id) VALUES($1,$2,$3) RETURNING id', [agentId, tokenHash(installationToken), actorId])).rows[0]!.id
-    const scope = { workspaceId, teamIds: [teamId], projectIds: [], workItemIds: [itemId], repositoryIds: [], capabilities: ['work:read', 'work:write'] }
-    const delegationId = (await db.query<{ id: string }>("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,ARRAY['work:read','work:write'],$7) RETURNING id", [workspaceId, teamId, agentId, agentActorId, actorId, itemId, scope])).rows[0]!.id
     expect(installationId).toBeTruthy()
 
-    const payload = { delegationId, workItemId: itemId, initialPrompt: 'Run secret-safe acceptance.', budget: {} }
+    const payload = {
+      agentId,
+      principalHumanActorId: actorId,
+      role: 'executor',
+      requestedCapabilities: ['work:read', 'work:write'],
+      initialPrompt: 'Run secret-safe acceptance.',
+      budget: {},
+    }
     const headers = idempotencyHeaders('create-agent-session-secret', {
       cookie: loginCookie,
       'x-csrf-token': loginCsrf,
+      'if-match': `"revision-${workItem.revision}"`,
     })
+    const url = `/api/v1/work-items/${itemId}/agent-session`
     const [first, second] = await Promise.all([
-      app.inject({ method: 'POST', url: '/api/v1/agent-sessions', payload, headers }),
-      app.inject({ method: 'POST', url: '/api/v1/agent-sessions', payload, headers }),
+      app.inject({ method: 'POST', url, payload, headers }),
+      app.inject({ method: 'POST', url, payload, headers }),
     ])
     expect(first.statusCode).toBe(200)
     expect(second.statusCode).toBe(200)
     expect(first.json()).toEqual(second.json())
-    const response = first.json<{ id: string; exchangeToken: string }>()
-    agentSessionId = response.id
-    exchangeToken = response.exchangeToken
+    const response = first.json<{ delegation: { id: string }; session: { id: string } }>()
+    agentSessionId = response.session.id
+    exchangeToken = await seedAgentSessionExchangeToken(db, agentSessionId, agentId)
     expect(exchangeToken.length).toBeGreaterThan(30)
-    expect((await db.query('SELECT 1 FROM agent_sessions WHERE delegation_id=$1', [delegationId])).rowCount).toBe(1)
+    expect((await db.query('SELECT 1 FROM agent_sessions WHERE delegation_id=$1', [response.delegation.id])).rowCount).toBe(1)
+    expect((await db.query("SELECT 1 FROM delegations WHERE work_item_id=$1 AND role='executor' AND revoked_at IS NULL", [itemId])).rowCount).toBe(1)
     expect((await db.query("SELECT 1 FROM api_idempotency_keys WHERE idempotency_key='create-agent-session-secret'")).rowCount).toBe(0)
 
     const conflict = await app.inject({
       method: 'POST',
-      url: '/api/v1/agent-sessions',
+      url,
       payload: { ...payload, initialPrompt: 'A different canonical request.' },
       headers,
     })
@@ -370,7 +380,7 @@ describe('secret-aware authentication idempotency', () => {
     refreshedSessionToken = firstRefresh.json<{ sessionToken: string }>().sessionToken
     expect(refreshedSessionToken).not.toBe(issuedSessionToken)
     expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM agent_session_tokens WHERE session_id=$1', [agentSessionId])).rows[0]!.count).toBe(beforeRefresh + 1)
-    expect((await db.query("SELECT 1 FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL", [agentSessionId])).rowCount).toBe(1)
+    expect((await db.query("SELECT 1 FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL", [agentSessionId])).rowCount).toBe(2)
   })
 
   it('fails closed for expired, tampered, and wrong-key replay without new sessions', async () => {

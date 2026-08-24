@@ -15,6 +15,14 @@ describe('Work Item executor response projection', () => {
         work_item_id: item.id,
         responsible_human_actor_id: item.responsible_human_actor_id,
         responsible_human_display_name: 'Release owner',
+        assignment_delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        assignment_agent_id: '44444444-4444-4444-8444-444444444444',
+        assignment_agent_actor_id: '55555555-5555-4555-8555-555555555555',
+        assignment_agent_slug: 'executor',
+        assignment_agent_display_name: 'Executor',
+        assignment_session_id: '66666666-6666-4666-8666-666666666666',
+        assignment_session_state: 'executing',
+        assignment_assigned_at: now,
         projection_role: 'primary',
         agent_id: '44444444-4444-4444-8444-444444444444',
         agent_actor_id: '55555555-5555-4555-8555-555555555555',
@@ -35,6 +43,14 @@ describe('Work Item executor response projection', () => {
         work_item_id: item.id,
         responsible_human_actor_id: item.responsible_human_actor_id,
         responsible_human_display_name: 'Release owner',
+        assignment_delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        assignment_agent_id: '44444444-4444-4444-8444-444444444444',
+        assignment_agent_actor_id: '55555555-5555-4555-8555-555555555555',
+        assignment_agent_slug: 'executor',
+        assignment_agent_display_name: 'Executor',
+        assignment_session_id: '66666666-6666-4666-8666-666666666666',
+        assignment_session_state: 'executing',
+        assignment_assigned_at: now,
         projection_role: 'reviewer',
         agent_id: '88888888-8888-4888-8888-888888888888',
         agent_actor_id: '99999999-9999-4999-8999-999999999999',
@@ -55,9 +71,57 @@ describe('Work Item executor response projection', () => {
 
     const [projected] = await attachWorkItemExecutors({ query } as never,[item])
     expect(projected?.responsible_human).toEqual({ actor_id: item.responsible_human_actor_id, display_name: 'Release owner' })
+    expect(projected?.active_assignment).toMatchObject({ agent_slug: 'executor', session_id: '66666666-6666-4666-8666-666666666666', session_state: 'executing' })
     expect(projected?.active_executor).toMatchObject({ agent_slug: 'executor', session_id: '66666666-6666-4666-8666-666666666666', lease_kind: 'exclusive' })
     expect(projected?.shared_reviewers).toEqual([expect.objectContaining({ agent_slug: 'reviewer', lease_kind: 'review_shared' })])
     expect(String(query.mock.calls[0]?.[0])).toContain('projection.lease_expires_at>now()')
+  })
+
+  it('shows a queued self-claim assignment before the Session obtains a lease', async () => {
+    const assignedAt = new Date('2026-08-03T10:00:00.000Z')
+    const query = vi.fn().mockResolvedValue({ rows: [{
+      work_item_id: item.id,
+      responsible_human_actor_id: item.responsible_human_actor_id,
+      responsible_human_display_name: 'Release owner',
+      assignment_delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      assignment_agent_id: '44444444-4444-4444-8444-444444444444',
+      assignment_agent_actor_id: '55555555-5555-4555-8555-555555555555',
+      assignment_agent_slug: 'self-claiming-agent',
+      assignment_agent_display_name: 'Self-claiming Agent',
+      assignment_session_id: '66666666-6666-4666-8666-666666666666',
+      assignment_session_state: 'queued',
+      assignment_assigned_at: assignedAt,
+      projection_role: null,
+      agent_id: null,
+      agent_actor_id: null,
+      agent_slug: null,
+      agent_display_name: null,
+      session_id: null,
+      lease_id: null,
+      lease_kind: null,
+      resource_type: null,
+      resource_id: null,
+      execution_state: null,
+      heartbeat_health: null,
+      last_heartbeat_at: null,
+      lease_heartbeat_at: null,
+      lease_expires_at: null,
+    }] })
+
+    const [projected] = await attachWorkItemExecutors({ query } as never,[item])
+
+    expect(projected?.active_assignment).toEqual({
+      delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      agent_id: '44444444-4444-4444-8444-444444444444',
+      agent_actor_id: '55555555-5555-4555-8555-555555555555',
+      agent_slug: 'self-claiming-agent',
+      agent_display_name: 'Self-claiming Agent',
+      session_id: '66666666-6666-4666-8666-666666666666',
+      session_state: 'queued',
+      assigned_at: assignedAt.toISOString(),
+    })
+    expect(projected?.active_executor).toBeNull()
+    expect(String(query.mock.calls[0]?.[0])).toContain("delegation.status='active'")
   })
 
   it('does not query for an empty page', async () => {

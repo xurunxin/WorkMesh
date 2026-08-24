@@ -118,6 +118,15 @@ X-Correlation-Id: <trace-id>
 Content-Type: application/json
 ```
 
+Coordination MCP 请求使用 Connection 安装凭据，不使用通用 Bearer：
+
+```http
+X-WorkMesh-Installation-Token: <installation-token>
+```
+
+该 header 只在 Coordination MCP / current-identity 边界使用；普通执行写入仍
+使用目标 Session 的 Bearer Token。
+
 `X-Correlation-Id` 是可选的调用方追踪值，最长 200 个字符，只允许 ASCII
 字母、数字、点、下划线、冒号、斜杠和连字符；凭证样式的前缀会被拒绝。
 授权拒绝审计始终使用服务端生成的 request id，不把调用方值写入不可变账本。
@@ -186,11 +195,61 @@ Installation Token 长期有效至撤销，但**不能**直接执行普通 mutat
 每次 Coordination MCP 请求：
 
 1. 解析 Installation Token（原始字节，非 `Bearer` 头），定位到唯一 Connection。
-2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态；通过则开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
+2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态，以及 active coordination 对应 backing Agent Session 的 kind、authority-active state 与全部身份绑定；通过则复用、开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
 3. 该 Session 复用既有 `agent_sessions` 表，新增枚举值 `session_kind = 'coordination'`、`connection_id` 外键、`role = 'coordinator'`、`delegation_scope = 'team'`。
 4. Session 到期前自动续期；Connection 撤销后下一次请求即失败关闭，错误码 `COORDINATION_SESSION_CONNECTION_REVOKED`。
 
 Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegation 约束；它走的是 Connection × Team 的整组授权。
+
+`max_concurrency` 只统计 `session_kind='execution'` 且状态非终态的 Session。占位状态固定为 `queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`；`completed`、`failed`、`canceled` 释放槽位。所有 execution admission 在持有目标 Agent definition 行锁后复用同一断言，包括普通 delegation/start/retry、child/review/handoff、Loop、Automation 和 A2A 新非终态任务。
+
+active coordination 指向终态或无效 backing Session 时，服务端必须在同一事务关闭旧 coordination；终态 backing 保持不可变，其他无效非终态 backing 先取消，再创建替代 Coordination Session。并发重连必须收敛到唯一 active coordination 与唯一非终态 backing Session。
+
+## 3.6 Task admission、强制委派与自主领取（v1.2）
+
+人类的手动委派是**强制任务分配**，通过一次调用完成 delegation 与 executor
+Session 创建：
+
+```http
+POST /api/v1/work-items/{id}/agent-session
+If-Match: "revision-4"
+Idempotency-Key: <stable-operation-key>
+```
+
+请求的 `role` 只能是 `executor`。同一 assignment 与 active Session 的重放收敛为
+同一结果；人类可以明确替换旧的非终态 executor，但不能依靠隐式重试覆盖新结果。
+该端点不返回 exchange token 或其它 secret。旧的公开两步
+`POST /work-items/{id}/delegations` 与 `POST /agent-sessions` 路径已移除；创建
+executor delegation 必须使用上述一次性端点。
+
+未被明确委派的、可领取 Work Item 可以由 Coordination Agent 自主领取：
+
+```http
+GET /api/v1/work-items?claimable=true
+POST /api/v1/work-items/{id}/claim
+X-WorkMesh-Installation-Token: <installation-token>
+If-Match: "revision-4"
+Idempotency-Key: <stable-claim-key>
+```
+
+服务端在短事务中校验并锁定同一 Connection、Team、principal Human、Agent、
+Coordination Session、delegation、capability 与 Work Item。只有这些身份和授权全部
+匹配，且 requested capabilities 是 Team grant 的子集时才能领取；省略请求能力时由
+服务端计算 Connection、Agent definition、Team grant 与 Coordination delegation 的
+实时交集，排除 `agent:delegate`，且 `work:read` 与 `work:write` 必须同时保留。并发
+请求对同一未分配 Item 恰好一个成功，其余返回冲突；成功重放返回同一 delegation、
+Session 与交换凭据。状态、事件和 outbox 在同一事务原子提交。
+
+Claim 响应中的 exchange token 仅供已认证的 MCP/SDK 适配器立即兑换。MCP 在适配器
+内部完成 exchange，并对每一个实际执行请求刷新该请求目标的 exact Session；token
+不进入 MCP tool output、模型上下文、普通 idempotency 响应、持久化日志或 webhook
+payload。长生命周期客户端不保存该 request-local bridge token。
+
+执行容量只计算 `session_kind=execution` 且处于非终态的 Session：
+`queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、
+`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`。Coordination Session
+不占用该槽位；`completed`、`failed`、`canceled` 释放槽位。所有入口使用同一个
+最终 admission 断言，领取失败不得留下半成品 delegation、Session、event 或 outbox。
 
 ---
 
@@ -271,6 +330,9 @@ Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegat
 - `agent.session.completed`
 - `agent.session.failed`
 - `agent.session.canceled`
+- `agent.coordination_session.opened`
+- `agent.coordination_session.refreshed`
+- `agent.coordination_session.closed`
 
 ### Plan / Activity
 
@@ -915,16 +977,20 @@ Inbox current rows 和 receipts 是 PostgreSQL durable facts。事件归档或 r
 - Stop/Cancel 自动失效；
 - Worker 定期标记过期并发事件。
 
-## 11.4 Work Item Active Executor 投影
+## 11.4 Work Item Assignment 与 Active Executor 投影
 
 `GET /api/v1/work-items`、`GET /api/v1/work-items/{id}`、Session Context、
 Native SDK 与 MCP Work Item resource/tool 使用同一响应：
 
 - `responsible_human` 是负责人的 Human Actor；它与 Agent 执行互不覆盖；
+- `active_assignment` 来自 active executor Delegation，包含被分配的 Agent、
+  Delegation、最新 execution Session 及其状态；queued Session 尚未取得 Lease 时也必须
+  立即可见；
 - `active_executor` 是唯一 primary exclusive executor，包含 Agent definition/
   actor、Session、代表 Lease、execution state、heartbeat health/时间与 expiry；
 - `shared_reviewers` 是 `review_shared` Lease 的稳定集合，不替换 primary；
-- 已过期 Lease、stale/terminal Session 或非 active Delegation 不可继续出现在投影；
+- 非 active Delegation 不可出现在 `active_assignment`；已过期 Lease、stale/terminal
+  Session 或非 active Delegation 不可继续出现在 `active_executor`；
 - release、renew、heartbeat、Worker expiry、Session stop/failure 和 handoff 的
   权威事实与投影在同一 PostgreSQL 事务提交；
 - Work Item 级 exclusive Lease 只能有一个有效持有 Session；不同 Plan Step
@@ -1216,6 +1282,14 @@ scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平�
 - Tool description 明确权限和副作用；
 - High-risk tool 不应只靠自然语言提醒。
 
+Coordination MCP 还提供 `list_claimable_work_items` 与 `claim_work_item`。前者只返回
+当前 Connection 的 Team、principal、Agent 与 capability 范围内、经实时授权确认
+同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用的摘要；后者执行上面
+的原子自主领取并启动 executor Session。两者都不要求 Agent 先通过人类创建
+delegation。人类明确分配时使用一次性的
+`delegate_work_item`（对应 forced assignment），而不是拆开的 delegation/start
+调用；`start_agent_session` 不再作为公开工具。
+
 集合读取使用 `list_work_items` 和 `list_session_activities`。两者返回完整
 `{items,nextCursor}`；调用方必须将 `nextCursor` 原样作为下一次调用的
 `cursor`，不得解析或跨 Session、Actor、Route 复用。
@@ -1392,7 +1466,7 @@ SDK 要求：
 - Connection 配对（单用 / 过期 / 限流 / 同一 Idempotency-Key 重放拿回原响应）；
 - Connection 撤销后 Coordination Session 立即失败关闭；
 - Team scope delegation 跨 Team 拒绝；
-- `agent:delegate` 缺失时拒绝 `start_agent_session` / `delegate_work_item`；**不**作用于 `create_child_session`；
+- `agent:delegate` 缺失时拒绝 `delegate_work_item`；**不**作用于 `claim_work_item` 或 `create_child_session`；并验证已移除的 `start_agent_session` 不在工具清单中；
 - Coordinator 阻断破坏性操作（删除 / 归档 / 批量 / 健康发布）；
 - Coordination MCP 多 Connection 并发隔离；
 - Work Item 创建时 `responsible_human_actor_id` 默认填充 principal Human；
@@ -1532,6 +1606,10 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 - 服务端解析 → 校验 Connection、Agent、Team grant、Delegation、能力、撤销状态；
 - 通过则开/续一条 1 小时（最长 2 小时）的 Coordination Session；
 - Connection 撤销后下一次请求立即失败关闭（`COORDINATION_SESSION_CONNECTION_REVOKED`）。
+- `claim_work_item` 成功后，MCP 适配器在内部立即 exchange 返回的 one-time
+  exchange token；每个实际执行请求都按目标 `sessionId` 刷新 exact Session token，
+ 只在该请求的内存桥接上下文中使用。token 不返回给模型、不写入工具结果或长生命
+  客户端状态；Coordination 请求仍继续带 `X-WorkMesh-Installation-Token`。
 
 ## 23.2 基础工具（永远允许）
 
@@ -1539,16 +1617,19 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 - `verify_connection` — 回传 Connection 身份与当前 pinned Skill 版本。
 - `get_current_identity` — 返回 Agent actor、Connection、principal Human、Team、授予的能力集。
+- 三个 bootstrap 工具保留旧字段并返回 `connectionIdentity`；其中 `authenticated_credential.fingerprint_prefix/status/overlap_until` 证明本次请求实际使用的 active 或 overlap credential。`connection.credential_fingerprint_prefix` 仍表示 Connection 当前 active credential。
+- `GET /api/v1/agent-connections/current-identity` 只接受 `X-WorkMesh-Installation-Token`，不接受普通 Session Bearer；不得返回 credential ID、Token、完整 hash 或请求头。
 - `list_teams`、`list_workflow_states` — Team 与状态只读发现。
 - `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
 - `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
+- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、实时授权仍同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用的 Work Item；claim 同时创建 executor delegation 与 execution Session。
 - `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
 - `draft_project_update`（发布仍为 Human-only transition）。
 
 ## 23.3 显式授权工具（需要匹配能力）
 
-- `delegate_work_item` — 需要 `agent:delegate` 和现有 child session 创建的所有前置条件。
-- `start_agent_session` — 需要 `agent:delegate`；派生的是真 executor Session，仍受父→子预算、并发、Team access 约束。
+- `delegate_work_item` — 人类或具备 `agent:delegate` 的 Coordination Agent 发起一次性的 forced executor assignment；不再拆分为 delegation 与 start 两个公开步骤，仍受并发、Team access、principal 与 capability 约束。
+- `claim_work_item` — Coordination Agent 的自主领取入口；只匹配当前 Connection 的 Team、principal、Agent 与能力，竞争同一 Work Item 时恰好一个成功。
 - `create_child_session` — 需要现有 `work:write`、父 Session/Plan Step scope 与 Team access；**不**需要 `agent:delegate`。父 Coordinator 是否携带 `agent:delegate` 与能否 `create_child_session` 无关；后者是 plan-step 子 Session，与跨 Work Item 启动其他 Agent 是两件不同的事。
 - `offer_handoff` — 需要 Team 写权限。
 - `request_approval` — 记录与 Work Item 或 Plan Step 绑定的结构化审批请求；审批由 Human actor 决定。
@@ -1562,7 +1643,7 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 ## 23.5 与 v1.0 MCP 的边界
 
-- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。
+- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。旧的公开两步 delegation/start 组合不再提供。
 - v1.1 Coordination MCP：每请求动态派生 Session；范围绑定 Team 与 Connection；涵盖基础 CRUD + 显式授权工具。
 - 两者都**不**是授权层：revision、授权、状态、事务全部由 domain 裁决；MCP 工具描述描述策略，server 强制执行。
 
@@ -1570,6 +1651,9 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 - `agent.connection.created` / `pairing_redeemed` / `rotated` / `revoked`。
 - `agent.coordination_session.opened` / `refreshed` / `closed`。
+- `opened` reason 为 `initial | expired | recovered_terminal_backing | recovered_invalid_backing`；`closed` reason 为 `expired | terminal_backing | invalid_binding | invalid_backing | connection_revoked`。恢复顺序固定为 closed → 旧 Session state_changed（仅实际取消）→ 新 Session created → opened，全部与 outbox 同事务。
+- `closed` 以 Connection 资源域为可信归档边界。正常绑定携带 `sessionId`；若 backing Session 的 workspace 或 Team 已与 Connection 不一致，则不得把跨域 Session 引用加入 Connection 事件，改为固定的 `sessionReferenceOmitted: resource_scope_mismatch`。旧 Session 的 `state_changed` 只在其自身资源域归档，且不携带 Connection ID 或 Connection correlation metadata。
+- 对外认证失败保持统一 `UNAUTHENTICATED`；内部 reason 只进入服务端审计并绑定服务端生成的 diagnostic ID，不能放入公开 error details。recognized credential 最多记录安全 fingerprint prefix，unknown credential 只允许审计密钥 HMAC 标识。
 - 错误码（加入 `apiErrorCodeSchema`）：
   - `AGENT_CONNECTION_PAIRING_INVALID | PAIRING_EXPIRED | PAIRING_CONSUMED | PAIRING_LOCKED`
   - `AGENT_CONNECTION_REVOKED | AGENT_CONNECTION_PRIVILEGE_ESCALATION`

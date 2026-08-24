@@ -5,14 +5,17 @@ import {
   type AgentState,
   type Approval,
   approvedAgentCapabilitiesForTeam,
+  agentDelegationScopeKey,
+  canAgentExecuteWorkForTeam,
   canManageAgentTeamAccess,
   canPauseAgentSession,
   canRetryAgentSession,
   decideApproval,
-  delegateAndStart,
+  createAgentSession,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
   retryAgentSession,
+  isCurrentAgentDelegationScope,
 } from './agents'
 
 const agentTeamId = '00000000-0000-4000-8000-000000000030'
@@ -87,7 +90,7 @@ describe('agent control requests', () => {
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session }))
     vi.stubGlobal('fetch', fetchMock)
 
-    const result = await delegateAndStart({
+    const result = await createAgentSession({
       workItemId: session.work_item_id,
       workItemTeamId: agentTeamId,
       workItemRevision: 7,
@@ -132,8 +135,8 @@ describe('agent control requests', () => {
       budget: {},
     }
 
-    await expect(delegateAndStart(input)).rejects.toThrow('response was lost')
-    await expect(delegateAndStart(input)).resolves.toEqual(session)
+    await expect(createAgentSession(input)).rejects.toThrow('response was lost')
+    await expect(createAgentSession(input)).resolves.toEqual(session)
 
     const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
     const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
@@ -160,8 +163,8 @@ describe('agent control requests', () => {
       budget: {},
     }
 
-    await expect(delegateAndStart(input)).rejects.toThrow('Revision conflict')
-    await expect(delegateAndStart(input)).resolves.toEqual(session)
+    await expect(createAgentSession(input)).rejects.toThrow('Revision conflict')
+    await expect(createAgentSession(input)).resolves.toEqual(session)
 
     const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
     const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
@@ -225,7 +228,7 @@ describe('agent control requests', () => {
       ...agent,
       approved_capabilities: ['work:read', 'work:write', 'plan:write'],
       team_access: [{
-        agent_id: agent.id, team_id: agentTeamId, approved_capabilities: ['work:read', 'plan:write'],
+        agent_id: agent.id, team_id: agentTeamId, approved_capabilities: ['work:read', 'work:write', 'plan:write'],
         status: 'active', approved_by_actor_id: '00000000-0000-4000-8000-000000000013', revision: 1,
         created_at: '2026-07-23T00:00:00.000Z', updated_at: '2026-07-23T00:00:00.000Z', revoked_at: null,
       }],
@@ -233,8 +236,9 @@ describe('agent control requests', () => {
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session }))
     vi.stubGlobal('fetch', fetchMock)
 
-    expect(approvedAgentCapabilitiesForTeam(restrictedAgent, agentTeamId)).toEqual(['work:read', 'plan:write'])
-    await expect(delegateAndStart({
+    expect(approvedAgentCapabilitiesForTeam(restrictedAgent, agentTeamId)).toEqual(['work:read', 'work:write', 'plan:write'])
+    expect(canAgentExecuteWorkForTeam(restrictedAgent, agentTeamId)).toBe(true)
+    await expect(createAgentSession({
       workItemId: session.work_item_id,
       workItemTeamId: agentTeamId,
       workItemRevision: 7,
@@ -245,7 +249,7 @@ describe('agent control requests', () => {
     })).resolves.toEqual(session)
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).requestedCapabilities).toEqual(['work:read', 'plan:write'])
+    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).requestedCapabilities).toEqual(['work:read', 'work:write', 'plan:write'])
   })
 
   it('does not start when the team has no active grant or no shared approved capability', async () => {
@@ -264,12 +268,76 @@ describe('agent control requests', () => {
       ...agent,
       team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['plan:write'] }],
     }
+    const missingWrite: Agent = {
+      ...agent,
+      team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read'] }],
+    }
 
     expect(approvedAgentCapabilitiesForTeam(withoutGrant, agentTeamId)).toEqual([])
     expect(approvedAgentCapabilitiesForTeam(withoutIntersection, agentTeamId)).toEqual([])
-    await expect(delegateAndStart({ ...baseInput, agent: withoutGrant })).rejects.toThrow('no capabilities approved')
-    await expect(delegateAndStart({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('no capabilities approved')
+    expect(canAgentExecuteWorkForTeam(missingWrite, agentTeamId)).toBe(false)
+    await expect(createAgentSession({ ...baseInput, agent: withoutGrant })).rejects.toThrow('requires work:read and work:write')
+    await expect(createAgentSession({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('requires work:read and work:write')
+    await expect(createAgentSession({ ...baseInput, agent: missingWrite })).rejects.toThrow('requires work:read and work:write')
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('uses a new request identity when the Agent or prompt changes after an unknown result', async () => {
+    let attempts = 0
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => {
+      attempts += 1
+      if (attempts === 1) throw new TypeError('response was lost')
+      return jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const input = {
+      workItemId: session.work_item_id,
+      workItemTeamId: agentTeamId,
+      workItemRevision: 7,
+      humanActorId: '00000000-0000-4000-8000-000000000013',
+      agent,
+      prompt: 'Run the acceptance checks.',
+      budget: {},
+    }
+
+    await expect(createAgentSession(input)).rejects.toThrow('response was lost')
+    await expect(createAgentSession({ ...input, prompt: 'Run the updated acceptance checks.' })).resolves.toEqual(session)
+
+    const firstKey = new Headers(fetchMock.mock.calls[0]![1]?.headers).get('Idempotency-Key')
+    const secondKey = new Headers(fetchMock.mock.calls[1]![1]?.headers).get('Idempotency-Key')
+    expect(firstKey).toBeTruthy()
+    expect(secondKey).toBeTruthy()
+    expect(secondKey).not.toBe(firstKey)
+
+    const changedAgent: Agent = { ...agent, id: '00000000-0000-4000-8000-000000000099' }
+    await expect(createAgentSession({ ...input, agent: changedAgent, prompt: 'Run the updated acceptance checks.' })).resolves.toEqual(session)
+    const thirdKey = new Headers(fetchMock.mock.calls[2]![1]?.headers).get('Idempotency-Key')
+    expect(thirdKey).toBeTruthy()
+    expect(thirdKey).not.toBe(secondKey)
+  })
+
+  it('does not apply an older pending delegation result after the Work Item scope changes', async () => {
+    const scopeA = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 7, humanActorId: 'human-a' })
+    const scopeB = agentDelegationScopeKey({ workItemId: 'work-b', workItemTeamId: agentTeamId, workItemRevision: 3, humanActorId: 'human-b' })
+    let currentScope = scopeA
+    let latest: AgentSession | null = null
+    const pending = Promise.resolve(session)
+    const capturedScope = currentScope
+    currentScope = scopeB
+    const result = await pending
+    if (isCurrentAgentDelegationScope(currentScope, capturedScope)) latest = result
+
+    expect(latest).toBeNull()
+    expect(isCurrentAgentDelegationScope(currentScope, scopeA)).toBe(false)
+    expect(isCurrentAgentDelegationScope(currentScope, scopeB)).toBe(true)
+  })
+
+  it('keeps the delegation display scope stable across a Work Item revision refresh', () => {
+    const scopeAtCreate = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 7, humanActorId: 'human-a' })
+    const scopeAfterRefresh = agentDelegationScopeKey({ workItemId: 'work-a', workItemTeamId: agentTeamId, workItemRevision: 8, humanActorId: 'human-a' })
+
+    expect(scopeAfterRefresh).toBe(scopeAtCreate)
+    expect(isCurrentAgentDelegationScope(scopeAfterRefresh, scopeAtCreate)).toBe(true)
   })
 })
 

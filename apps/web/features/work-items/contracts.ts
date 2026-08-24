@@ -52,6 +52,7 @@ export type WorkItemDto = {
   milestone_id?: string | null
   parent_id?: string | null
   labels?: string[]
+  active_assignment?: { agent_display_name?: string; session_state?: string | null } | null
   active_executor?: { agent_display_name?: string; execution_state?: string } | null
   surface_summary?: {
     blocked_by_count?: number

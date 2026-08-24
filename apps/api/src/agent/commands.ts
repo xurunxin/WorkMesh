@@ -1,20 +1,35 @@
 import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
-import { appendEvent, lockAgentAuthorityPlan, opaqueToken, tokenHash, withTx } from "@workmesh/db";
+import {
+  agentExecutionCapacitySqlPredicate,
+  appendEvent,
+  assertAgentExecutionCapacityAfterLock,
+  lockAgentAuthorityPlan,
+  lockAgentAuthorityPlanWithInstallationTokenWrite,
+  opaqueToken,
+  tokenHash,
+  withTx,
+} from "@workmesh/db";
 import { loadRetentionConfig } from "@workmesh/config";
 import { agentSessionResponseSchema } from "@workmesh/contracts";
 import {
   assertAgentSessionTransition, assertCompletionEvidence, assertRevision,
+  assertWorkItemSelfClaimable,
   DomainError, validatePlanSteps,
 } from "@workmesh/domain";
 import type {
-  AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
+  AgentSessionState, Capability, ClaimWorkItemInput, CompleteAgentSessionInput,
+  PlanStepInput, StatusCategory,
 } from "@workmesh/contracts";
 import { authIdempotentTransaction } from "../auth-idempotency.js";
 import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.js";
 import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 import { materializeSessionContextSnapshot } from "../guidance.js";
+import {
+  locateConnectionInstallationTokenId,
+  reconcileConnectionInstallationToken,
+} from "../connection-installation-token.js";
 
 const one = <T>(rows: T[]): T => { const value = rows[0]; if (!value) throw new DomainError("NOT_FOUND", "Resource not found"); return value; };
 const normalizedSensitiveKeys = new Set([
@@ -97,75 +112,184 @@ export async function queueWebhookDeliveries(tx: PoolClient, agentId: string, ev
   for (const target of targets.rows) await tx.query("INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) VALUES($1,$2,$3,$4,$5,$6,$7,$8)", [agentId, target.endpoint_id, target.version, eventId, crypto.randomUUID(), eventType, sessionId ?? null, payload]);
 }
 
+export type ExecutionInstallationAuthority = Readonly<{
+  id: string
+  connection_id: string | null
+  credential_id: string | null
+  connection_delegation_id: string | null
+}>
+
+export async function locateExecutionInstallationAuthority(
+  tx: PoolClient,
+  input: Readonly<{
+    agentId: string
+    teamId: string
+    principalHumanActorId: string
+    installationTokenId?: string
+  }>,
+): Promise<ExecutionInstallationAuthority | undefined> {
+  return (await tx.query<ExecutionInstallationAuthority>(
+    `SELECT token.id,connection.id AS connection_id,
+            credential.id AS credential_id,
+            connection.delegation_id AS connection_delegation_id
+       FROM agent_installation_tokens token
+       JOIN agent_definitions definition ON definition.id=token.agent_id
+       LEFT JOIN agent_connection_credentials credential
+         ON credential.token_hash=token.token_hash
+       LEFT JOIN agent_connections connection
+         ON connection.id=credential.connection_id
+       LEFT JOIN delegations authority
+         ON authority.id=connection.delegation_id
+      WHERE token.agent_id=$1
+        AND ($4::uuid IS NULL OR token.id=$4)
+        AND token.revoked_at IS NULL
+        AND (token.expires_at IS NULL OR token.expires_at>clock_timestamp())
+        AND definition.is_active
+        AND (
+          credential.id IS NULL
+          OR (
+            (
+              credential.status='active'
+              OR (
+                credential.status='overlap'
+                AND credential.overlap_until IS NOT NULL
+                AND credential.overlap_until>clock_timestamp()
+              )
+            )
+            AND connection.status IN ('active','rotating')
+            AND connection.agent_id=token.agent_id
+            AND connection.agent_actor_id=definition.actor_id
+            AND connection.team_id=$2
+            AND connection.principal_human_actor_id=$3
+            AND authority.status='active'
+            AND authority.role='coordinator'
+            AND authority.scope_type='team'
+            AND authority.scope_id=connection.team_id
+            AND authority.team_id=connection.team_id
+            AND authority.agent_id=connection.agent_id
+            AND authority.agent_actor_id=connection.agent_actor_id
+            AND authority.principal_human_actor_id=connection.principal_human_actor_id
+          )
+        )
+      ORDER BY (credential.id IS NOT NULL) DESC,token.created_at DESC,token.id
+      LIMIT 1`,
+    [
+      input.agentId,
+      input.teamId,
+      input.principalHumanActorId,
+      input.installationTokenId ?? null,
+    ],
+  )).rows[0]
+}
+
+/**
+ * Connection-backed Installation authority is an outer lock tier. Lock every
+ * selected Connection first and every exact credential second, both in stable
+ * ID order, before entering the shared Agent authority lock plan. Native
+ * Installation Tokens have neither row and therefore need no outer lock.
+ */
+export async function lockExecutionInstallationAuthorities(
+  tx: PoolClient,
+  authorities: readonly Pick<
+    ExecutionInstallationAuthority,
+    'connection_id' | 'credential_id'
+  >[],
+): Promise<void> {
+  const connectionIds = [...new Set(authorities.flatMap(authority =>
+    authority.connection_id ? [authority.connection_id] : []))].sort()
+  if (connectionIds.length) await tx.query(
+    `SELECT id FROM agent_connections
+      WHERE id=ANY($1::uuid[])
+      ORDER BY id
+      FOR UPDATE`,
+    [connectionIds],
+  )
+  const credentialIds = [...new Set(authorities.flatMap(authority =>
+    authority.credential_id ? [authority.credential_id] : []))].sort()
+  if (credentialIds.length) await tx.query(
+    `SELECT id FROM agent_connection_credentials
+      WHERE id=ANY($1::uuid[])
+      ORDER BY id
+      FOR UPDATE`,
+    [credentialIds],
+  )
+}
+
+export async function revalidateExecutionInstallationAuthority(
+  tx: PoolClient,
+  input: Readonly<{
+    authority: ExecutionInstallationAuthority
+    agentId: string
+    teamId: string
+    principalHumanActorId: string
+  }>,
+): Promise<ExecutionInstallationAuthority> {
+  const live = await locateExecutionInstallationAuthority(tx, {
+    agentId: input.agentId,
+    teamId: input.teamId,
+    principalHumanActorId: input.principalHumanActorId,
+    installationTokenId: input.authority.id,
+  })
+  if (
+    !live
+    || live.connection_id !== input.authority.connection_id
+    || live.credential_id !== input.authority.credential_id
+    || live.connection_delegation_id !== input.authority.connection_delegation_id
+  ) throw new DomainError(
+    'DELEGATION_NOT_ACTIVE',
+    'Session delivery installation authority changed',
+  )
+  return live
+}
+
 /**
  * Provision delivery for a newly-created session inside the caller's existing
  * transaction.  The exchange nonce is deliberately only placed in the target
  * agent's webhook delivery, never returned to the coordinating session.
  */
-export async function provisionNewSessionDelivery(tx: PoolClient, meta: RequestMeta, input: { sessionId: string; agentId: string; delegationId: string; teamId: string; workItemId: string | null; initialPrompt: string }): Promise<void> {
+export async function provisionNewSessionDelivery(tx: PoolClient, meta: RequestMeta, input: { sessionId: string; agentId: string; delegationId: string; teamId: string; workItemId: string | null; initialPrompt: string; installationAuthority: ExecutionInstallationAuthority }): Promise<void> {
   const locator = one((await tx.query<{
-    installation_token_id: string | null
     project_id: string | null
+    principal_human_actor_id: string
   }>(
-    `SELECT (
-              SELECT token.id
-                FROM agent_installation_tokens token
-               WHERE token.agent_id=session.agent_id
-               ORDER BY token.created_at DESC,token.id
-               LIMIT 1
-            ) AS installation_token_id,
-            coalesce(item.project_id,session.project_id) AS project_id
+    `SELECT coalesce(item.project_id,session.project_id) AS project_id,
+            delegation.principal_human_actor_id
        FROM agent_sessions session
+       JOIN delegations delegation ON delegation.id=session.delegation_id
        LEFT JOIN work_items item ON item.id=session.work_item_id
       WHERE session.id=$1 AND session.agent_id=$2
         AND session.delegation_id=$3 AND session.team_id=$4`,
     [input.sessionId, input.agentId, input.delegationId, input.teamId],
   )).rows);
-  await lockAgentAuthorityPlan(tx, {
-    definitionIds: [input.agentId],
-    teamGrants: [{
-      workspaceId: meta.actor.workspaceId,
-      agentId: input.agentId,
-      teamId: input.teamId,
-    }],
-    delegationIds: [input.delegationId],
-    sessionIds: [input.sessionId],
-    installationTokenIds: locator.installation_token_id
-      ? [locator.installation_token_id]
-      : [],
-    workItemIds: input.workItemId ? [input.workItemId] : [],
-    projectIds: locator.project_id ? [locator.project_id] : [],
-  });
-  const installation = locator.installation_token_id
-    ? (await tx.query<{ id: string }>(
-        `SELECT token.id
-           FROM agent_installation_tokens token
-           JOIN agent_sessions session ON session.agent_id=token.agent_id
-           JOIN delegations delegation ON delegation.id=session.delegation_id
-           JOIN agent_definitions definition ON definition.id=session.agent_id
-           JOIN agent_team_access access
-             ON access.workspace_id=session.workspace_id
-            AND access.agent_id=session.agent_id
-            AND access.team_id=session.team_id
-          WHERE token.id=$1 AND session.id=$2
-            AND session.agent_id=$3 AND session.delegation_id=$4
-            AND session.team_id=$5 AND session.workspace_id=$6
-            AND delegation.status='active'
-            AND definition.is_active
-            AND access.revoked_at IS NULL
-            AND token.revoked_at IS NULL
-            AND (token.expires_at IS NULL OR token.expires_at>now())`,
-        [
-          locator.installation_token_id,
-          input.sessionId,
-          input.agentId,
-          input.delegationId,
-          input.teamId,
-          meta.actor.workspaceId,
-        ],
-      )).rows[0]
-    : undefined;
-  if (!installation) throw new DomainError("DELEGATION_NOT_ACTIVE", "Session delivery authority is no longer active");
+  const liveSessionAuthority = (await tx.query(
+    `SELECT 1
+       FROM agent_sessions session
+       JOIN delegations delegation ON delegation.id=session.delegation_id
+       JOIN agent_definitions definition ON definition.id=session.agent_id
+       JOIN agent_team_access access
+         ON access.workspace_id=session.workspace_id
+        AND access.agent_id=session.agent_id
+        AND access.team_id=session.team_id
+      WHERE session.id=$1 AND session.agent_id=$2
+        AND session.delegation_id=$3 AND session.team_id=$4
+        AND session.workspace_id=$5 AND delegation.status='active'
+        AND definition.is_active AND access.revoked_at IS NULL`,
+    [
+      input.sessionId,
+      input.agentId,
+      input.delegationId,
+      input.teamId,
+      meta.actor.workspaceId,
+    ],
+  )).rows[0];
+  if (!liveSessionAuthority)
+    throw new DomainError('DELEGATION_NOT_ACTIVE', 'Session delivery authority is no longer active')
+  const installation = await revalidateExecutionInstallationAuthority(tx, {
+    authority: input.installationAuthority,
+    agentId: input.agentId,
+    teamId: input.teamId,
+    principalHumanActorId: locator.principal_human_actor_id,
+  })
   const exchangeToken = opaqueToken();
   await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)", [input.sessionId, input.agentId, installation.id, tokenHash(opaqueToken()), tokenHash(exchangeToken), meta.actor.id]);
   const eventId = await event(tx, meta, "agent.session.created", "agent_session", input.sessionId, 1, { delegationId: input.delegationId, workItemId: input.workItemId }, input.teamId, input.sessionId, 0);
@@ -439,258 +563,1213 @@ export async function revokeDelegation(db: Pool, meta: RequestMeta, delegationId
   });
 }
 
-export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: string, input: {
-  agentId: string; principalHumanActorId: string; role: string; scopeType: string; scopeId: string;
-  permissionsSnapshot: Capability[];
-  capabilityScope: {
-    workspaceId: string; teamIds: string[]; projectIds: string[]; workItemIds: string[];
-    repositoryIds: string[]; capabilities: Capability[];
-  };
-  startsAt?: string; endsAt?: string;
-}) {
-  if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can delegate work");
-  return agentMutate(db, meta, async tx => {
-    const locator = one((await tx.query<{ team_id: string; project_id: string | null }>(
-      "SELECT team_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2",
-      [workItemId, meta.actor.workspaceId],
-    )).rows);
-    await lockAgentAuthorityPlan(tx, {
-      definitionIds: [input.agentId],
-      teamGrants: [{
-        workspaceId: meta.actor.workspaceId,
-        agentId: input.agentId,
-        teamId: locator.team_id,
-      }],
-      workItemIds: [workItemId],
-      projectIds: locator.project_id ? [locator.project_id] : [],
-    });
-    const agent = one((await tx.query<{ id: string; approved_capabilities: Capability[]; max_concurrency: number }>("SELECT id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true", [input.agentId, meta.actor.workspaceId])).rows);
-    const grant = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL", [meta.actor.workspaceId, input.agentId, locator.team_id])).rows);
-    const work = one((await tx.query<{ team_id: string; project_id: string | null; responsible_human_actor_id: string | null }>("SELECT team_id,project_id,responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL", [workItemId, meta.actor.workspaceId])).rows);
-    if (work.team_id !== locator.team_id || work.project_id !== locator.project_id)
-      throw new DomainError("RESOURCE_SCOPE_DENIED", "Work item routing changed while delegation authority was acquired");
-    await assertHumanTeam(tx, meta.actor, work.team_id);
-    if (input.scopeType !== "work_item" || input.scopeId !== workItemId) throw new DomainError("VALIDATION_ERROR", "A work-item delegation must scope exactly that work item");
-    if (!work.responsible_human_actor_id || input.principalHumanActorId !== work.responsible_human_actor_id) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED", "Delegation principal must be the work item's responsible human");
-    one((await tx.query("SELECT 1 FROM actors a JOIN memberships m ON m.actor_id=a.id AND m.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.kind='human' AND a.is_active AND m.team_id=$3", [input.principalHumanActorId, meta.actor.workspaceId, work.team_id])).rows);
-    const granted = agent.approved_capabilities.filter(capability => grant.approved_capabilities.includes(capability));
-    if (input.permissionsSnapshot.some(capability => !granted.includes(capability))) throw new DomainError("CAPABILITY_DENIED", "Requested delegation capabilities exceed definition or team approval");
-    const scope = input.capabilityScope;
-    const scopeCapabilities = new Set(scope.capabilities);
-    if (
-      scope.workspaceId !== meta.actor.workspaceId
-      || scope.teamIds.length !== 1 || scope.teamIds[0] !== work.team_id
-      || scope.workItemIds.length !== 1 || scope.workItemIds[0] !== workItemId
-      || scope.projectIds.some(projectId => projectId !== work.project_id)
-      || scope.capabilities.some(capability => !input.permissionsSnapshot.includes(capability))
-      || input.permissionsSnapshot.some(capability => !scopeCapabilities.has(capability))
-    ) throw new DomainError("RESOURCE_SCOPE_DENIED", "Delegation capability scope must match its exact workspace, team, work item, project, and capabilities");
-    if (scope.repositoryIds.length > 0) {
-      const repositories = await tx.query(
-        "SELECT id FROM repositories WHERE workspace_id=$1 AND team_id=$2 AND active AND id::text=ANY($3::text[])",
-        [meta.actor.workspaceId, work.team_id, scope.repositoryIds],
-      );
-      if (repositories.rowCount !== new Set(scope.repositoryIds).size)
-        throw new DomainError("RESOURCE_SCOPE_DENIED", "Delegation repository scope contains an unauthorized repository");
-    }
-    const active = await tx.query<{ count: number }>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')", [input.agentId]);
-    if ((active.rows[0]?.count ?? 0) >= agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT", "Agent concurrency limit reached");
-    const capabilityScope = {
-      workspaceId: meta.actor.workspaceId,
-      teamIds: [work.team_id],
-      projectIds: work.project_id ? [work.project_id] : [],
-      workItemIds: [workItemId],
-      repositoryIds: [...new Set(scope.repositoryIds)],
-      capabilities: input.permissionsSnapshot,
-    };
-    const row = one((await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,status) SELECT $1,$2,a.id,a.actor_id,$3,$4,$5,$6,$4,$8,$9,'active' FROM agent_definitions a WHERE a.id=$7 AND a.workspace_id=$1 RETURNING *", [meta.actor.workspaceId, work.team_id, input.principalHumanActorId, workItemId, input.role, input.scopeType, input.agentId, input.permissionsSnapshot, capabilityScope])).rows);
-    await event(tx, meta, "agent.delegation.created", "delegation", String((row as { id: string }).id), Number((row as { revision: number }).revision), { workItemId, agentId: input.agentId }, work.team_id);
-    return row;
-  });
+class RetryForcedAssignment extends Error {}
+
+type CoordinationCallerCredentialLocator = Readonly<{
+  connection_id: string
+  credential_id: string
+  connection_delegation_id: string
+}>
+
+async function locateCoordinationCallerCredential(
+  tx: PoolClient,
+  input: Readonly<{
+    workspaceId: string
+    actorId: string
+    sessionId: string
+    credentialHash: string
+  }>,
+): Promise<CoordinationCallerCredentialLocator | undefined> {
+  return (await tx.query<CoordinationCallerCredentialLocator>(
+    `SELECT connection.id AS connection_id,
+            credential.id AS credential_id,
+            connection.delegation_id AS connection_delegation_id
+       FROM agent_connection_credentials credential
+       JOIN agent_connections connection
+         ON connection.id=credential.connection_id
+       JOIN agent_coordination_sessions coordination
+         ON coordination.connection_id=connection.id
+       JOIN agent_sessions caller
+         ON caller.id=coordination.agent_session_id
+      WHERE credential.token_hash=$1
+        AND connection.workspace_id=$2
+        AND caller.id=$3
+        AND caller.agent_actor_id=$4`,
+    [
+      input.credentialHash,
+      input.workspaceId,
+      input.sessionId,
+      input.actorId,
+    ],
+  )).rows[0]
 }
 
-export async function createAgentSession(db: Pool, meta: RequestMeta, input: { delegationId: string; workItemId?: string; projectId?: string; planStepId?: string; initialPrompt: string; contextSnapshotId?: string; budget: unknown }) {
-  if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can start an agent session");
-  return secretAgentMutate(db, meta, input, async tx => {
-    assertSafeText(input.initialPrompt, "initial prompt");
-    const locator = one((await tx.query<{
-      agent_id: string
-      team_id: string
-      work_item_id: string | null
-      work_item_project_id: string | null
-      installation_token_id: string | null
-    }>(
-      `SELECT delegation.agent_id,delegation.team_id,delegation.work_item_id,
-              item.project_id AS work_item_project_id,
-              (
-                SELECT token.id FROM agent_installation_tokens token
-                 WHERE token.agent_id=delegation.agent_id
-                 ORDER BY token.created_at DESC,token.id LIMIT 1
-              ) AS installation_token_id
-         FROM delegations delegation
-         LEFT JOIN work_items item ON item.id=delegation.work_item_id
-        WHERE delegation.id=$1 AND delegation.workspace_id=$2`,
-      [input.delegationId, meta.actor.workspaceId],
-    )).rows);
-    const activeSessionIds = (await tx.query<{ id: string }>(
-      `SELECT id FROM agent_sessions
-        WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')`,
-      [locator.agent_id],
-    )).rows.map(row => row.id);
-    await lockAgentAuthorityPlan(tx, {
-      definitionIds: [locator.agent_id],
-      teamGrants: [{
-        workspaceId: meta.actor.workspaceId,
-        agentId: locator.agent_id,
-        teamId: locator.team_id,
-      }],
-      delegationIds: [input.delegationId],
-      sessionIds: activeSessionIds,
-      installationTokenIds: locator.installation_token_id
-        ? [locator.installation_token_id]
-        : [],
-      workItemIds: locator.work_item_id ? [locator.work_item_id] : [],
-      projectIds: [
-        ...(locator.work_item_project_id ? [locator.work_item_project_id] : []),
-        ...(input.projectId ? [input.projectId] : []),
-      ],
-    });
-    const delegation = one((await tx.query<{ id: string; team_id: string; agent_id: string; agent_actor_id: string; work_item_id: string | null; principal_human_actor_id: string; status: string; permissions_snapshot: Capability[] }>("SELECT id,team_id,agent_id,agent_actor_id,work_item_id,principal_human_actor_id,status,permissions_snapshot FROM delegations WHERE id=$1 AND workspace_id=$2", [input.delegationId, meta.actor.workspaceId])).rows);
-    if (
-      delegation.agent_id !== locator.agent_id
-      || delegation.team_id !== locator.team_id
-      || delegation.work_item_id !== locator.work_item_id
-    ) throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation binding changed while authority was acquired");
-    if (delegation.status !== "active") throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation is not active"); await assertHumanTeam(tx, meta.actor, delegation.team_id);
-    const agent = one((await tx.query<{ max_concurrency: number; approved_capabilities: Capability[] }>("SELECT max_concurrency,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active", [delegation.agent_id, meta.actor.workspaceId])).rows);
-    const grant = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL", [meta.actor.workspaceId, delegation.agent_id, delegation.team_id])).rows);
-    const delegationCapabilities = delegation.permissions_snapshot;
-    if (delegationCapabilities.some(capability => !grant.approved_capabilities.includes(capability) || !agent.approved_capabilities.includes(capability))) throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation capabilities are no longer approved for this team");
-    const active = await tx.query("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')", [delegation.agent_id]);
-    if ((active.rowCount ?? 0) >= agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT", "Agent concurrency limit reached");
-    const workItemId = input.workItemId ?? delegation.work_item_id;
-    if (workItemId !== delegation.work_item_id) throw new DomainError("RESOURCE_SCOPE_DENIED", "The session subject is outside the delegation");
-    const work = workItemId ? one((await tx.query<{ id: string; title: string; description: string | null; revision: number; responsible_human_actor_id: string | null; project_id: string | null }>("SELECT id,title,description,revision,responsible_human_actor_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL", [workItemId, meta.actor.workspaceId])).rows) : undefined;
-    if (work && work.project_id !== locator.work_item_project_id)
-      throw new DomainError("RESOURCE_SCOPE_DENIED", "Work item routing changed while session authority was acquired");
-    if (work && !work.responsible_human_actor_id) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED", "A delegated work item must retain a responsible human");
-    let contextSnapshotId = input.contextSnapshotId;
-    if (contextSnapshotId) {
-      const context = one((await tx.query<{ id:string }>("SELECT id FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id IS NOT DISTINCT FROM $3",[contextSnapshotId,meta.actor.workspaceId,workItemId ?? null])).rows);
-      contextSnapshotId=context.id;
+export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, workItemId: string, expectedRevision: number, input: { agentId:string; principalHumanActorId:string; role:"executor"; requestedCapabilities:Capability[]; initialPrompt:string; contextSnapshotId?:string; budget:unknown }) {
+  if (meta.actor.kind !== "human" && !meta.actor.agentSessionId) throw new DomainError("FORBIDDEN", "A Human or authorized Coordination Session is required");
+  assertSafeText(input.initialPrompt, "initial prompt");
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    try {
+      return await secretAgentMutate(db, meta, { workItemId, expectedRevision, ...input }, async tx => {
+        const locator = one((await tx.query<{
+          team_id: string
+          project_id: string | null
+          delegation_id: string | null
+          assigned_agent_id: string | null
+        }>(
+          `SELECT item.team_id,item.project_id,
+                  assignment.id AS delegation_id,
+                  assignment.agent_id AS assigned_agent_id
+             FROM work_items item
+             LEFT JOIN LATERAL (
+               SELECT delegation.id,delegation.agent_id
+                 FROM delegations delegation
+                WHERE delegation.workspace_id=item.workspace_id
+                  AND delegation.work_item_id=item.id
+                  AND delegation.role='executor'
+                  AND delegation.status='active'
+                ORDER BY delegation.id
+                LIMIT 1
+             ) assignment ON true
+            WHERE item.id=$1 AND item.workspace_id=$2
+              AND item.deleted_at IS NULL`,
+          [workItemId, meta.actor.workspaceId],
+        )).rows);
+        const caller = meta.actor.kind === "agent" && meta.actor.agentSessionId
+          ? (await tx.query<{
+              id: string
+              agent_id: string
+              team_id: string
+              delegation_id: string
+            }>(
+              `SELECT id,agent_id,team_id,delegation_id
+                 FROM agent_sessions
+                WHERE id=$1 AND workspace_id=$2`,
+              [meta.actor.agentSessionId, meta.actor.workspaceId],
+            )).rows[0]
+          : undefined;
+        if (meta.actor.kind === "agent" && !caller)
+          throw new DomainError("SESSION_NOT_ACTIVE", "The Coordination Session is no longer active");
+
+        const callerCredential = caller && meta.actor.credentialHash
+          ? await locateCoordinationCallerCredential(tx, {
+              workspaceId: meta.actor.workspaceId,
+              actorId: meta.actor.id,
+              sessionId: caller.id,
+              credentialHash: meta.actor.credentialHash,
+            })
+          : undefined
+        if (meta.actor.kind === "agent" && !callerCredential)
+          throw new DomainError(
+            "SESSION_NOT_ACTIVE",
+            "The exact Coordination credential is no longer active",
+          );
+
+        const activeSessionIds = (await tx.query<{ id: string }>(
+          `SELECT id
+             FROM agent_sessions session
+            WHERE session.workspace_id=$1
+              AND (
+                (session.agent_id=$2 AND ${agentExecutionCapacitySqlPredicate("session")})
+                OR (
+                  $3::uuid IS NOT NULL
+                  AND session.delegation_id=$3
+                  AND ${agentExecutionCapacitySqlPredicate("session")}
+                )
+                OR session.id=$4::uuid
+              )
+            ORDER BY id`,
+          [
+            meta.actor.workspaceId,
+            input.agentId,
+            locator.delegation_id,
+            caller?.id ?? null,
+          ],
+        )).rows.map(row => row.id);
+        const installationAuthority = await locateExecutionInstallationAuthority(tx, {
+          agentId: input.agentId,
+          teamId: locator.team_id,
+          principalHumanActorId: input.principalHumanActorId,
+        });
+        const installationTokenId = installationAuthority?.id;
+        await lockExecutionInstallationAuthorities(tx, [
+          ...(callerCredential ? [callerCredential] : []),
+          ...(installationAuthority ? [installationAuthority] : []),
+        ])
+
+        const definitionIds = [
+          input.agentId,
+          ...(locator.assigned_agent_id ? [locator.assigned_agent_id] : []),
+          ...(caller ? [caller.agent_id] : []),
+        ];
+        await lockAgentAuthorityPlan(tx, {
+          definitionIds,
+          teamGrants: definitionIds.map(agentId => ({
+            workspaceId: meta.actor.workspaceId,
+            agentId,
+            teamId: locator.team_id,
+          })),
+          delegationIds: [
+            ...(locator.delegation_id ? [locator.delegation_id] : []),
+            ...(caller ? [caller.delegation_id] : []),
+            ...(callerCredential ? [callerCredential.connection_delegation_id] : []),
+            ...(installationAuthority?.connection_delegation_id
+              ? [installationAuthority.connection_delegation_id]
+              : []),
+          ],
+          sessionIds: activeSessionIds,
+          installationTokenIds: installationTokenId ? [installationTokenId] : [],
+          workItemIds: [workItemId],
+          projectIds: locator.project_id ? [locator.project_id] : [],
+        });
+
+        const work = one((await tx.query<{
+          team_id: string
+          project_id: string | null
+          revision: number
+          responsible_human_actor_id: string | null
+          title: string
+          description: string | null
+        }>(
+          `SELECT team_id,project_id,revision,responsible_human_actor_id,
+                  title,description
+             FROM work_items
+            WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL`,
+          [workItemId, meta.actor.workspaceId],
+        )).rows);
+        if (work.team_id !== locator.team_id || work.project_id !== locator.project_id)
+          throw new RetryForcedAssignment();
+
+        if (meta.actor.kind === "human") {
+          await assertHumanTeam(tx, meta.actor, work.team_id);
+        } else {
+          one((await tx.query(
+            `SELECT connection.id
+               FROM agent_sessions caller
+               JOIN agent_coordination_sessions coordination
+                 ON coordination.agent_session_id=caller.id
+                 AND coordination.status='active'
+                 AND coordination.expires_at>clock_timestamp()
+               JOIN agent_connections connection
+                 ON connection.id=coordination.connection_id
+                AND connection.id=caller.coordination_connection_id
+                AND connection.workspace_id=caller.workspace_id
+                AND connection.team_id=caller.team_id
+                AND connection.agent_id=caller.agent_id
+                AND connection.agent_actor_id=caller.agent_actor_id
+                 AND connection.delegation_id=caller.delegation_id
+                 AND connection.principal_human_actor_id=coordination.principal_human_actor_id
+               JOIN agent_connection_credentials credential
+                 ON credential.connection_id=connection.id
+                AND credential.token_hash=$6
+               JOIN delegations authority
+                 ON authority.id=connection.delegation_id
+                AND authority.status='active'
+               JOIN agent_team_access team_grant
+                 ON team_grant.workspace_id=connection.workspace_id
+                AND team_grant.agent_id=connection.agent_id
+                AND team_grant.team_id=connection.team_id
+                AND team_grant.revoked_at IS NULL
+              WHERE caller.id=$1 AND caller.workspace_id=$2
+                AND caller.agent_actor_id=$3
+                AND caller.session_kind='coordination'
+                 AND caller.state IN ('acknowledged','planning','executing')
+                 AND connection.status IN ('active','rotating')
+                 AND (
+                   credential.status='active'
+                   OR (
+                     credential.status='overlap'
+                     AND credential.overlap_until IS NOT NULL
+                     AND credential.overlap_until>clock_timestamp()
+                   )
+                 )
+                AND connection.team_id=$4
+                AND connection.principal_human_actor_id=$5
+                AND connection.grant_agent_delegate
+                AND 'agent:delegate'=ANY(connection.granted_capabilities)
+                AND 'agent:delegate'=ANY(authority.permissions_snapshot)
+                AND 'agent:delegate'=ANY(team_grant.approved_capabilities)`,
+            [
+              caller!.id,
+              meta.actor.workspaceId,
+              meta.actor.id,
+              work.team_id,
+              input.principalHumanActorId,
+              meta.actor.credentialHash,
+            ],
+          )).rows);
+        }
+        assertRevision(expectedRevision, work.revision);
+        if (
+          !work.responsible_human_actor_id
+          || work.responsible_human_actor_id !== input.principalHumanActorId
+        ) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED", "Delegation principal must remain the Work Item responsible Human");
+        one((await tx.query(
+          `SELECT 1
+             FROM actors actor
+             JOIN memberships membership
+               ON membership.actor_id=actor.id
+              AND membership.workspace_id=actor.workspace_id
+            WHERE actor.id=$1 AND actor.workspace_id=$2
+              AND actor.kind='human' AND actor.is_active
+              AND membership.team_id=$3`,
+          [input.principalHumanActorId, meta.actor.workspaceId, work.team_id],
+        )).rows);
+
+        const agent = one((await tx.query<{
+          actor_id: string
+          approved_capabilities: Capability[]
+        }>(
+          `SELECT actor_id,approved_capabilities
+             FROM agent_definitions
+            WHERE id=$1 AND workspace_id=$2 AND is_active`,
+          [input.agentId, meta.actor.workspaceId],
+        )).rows);
+        const grant = one((await tx.query<{ approved_capabilities: Capability[] }>(
+          `SELECT approved_capabilities
+             FROM agent_team_access
+            WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
+              AND revoked_at IS NULL`,
+          [meta.actor.workspaceId, input.agentId, work.team_id],
+        )).rows);
+        const granted = agent.approved_capabilities.filter(capability =>
+          grant.approved_capabilities.includes(capability));
+        if (
+          !input.requestedCapabilities.includes("work:read")
+          || !input.requestedCapabilities.includes("work:write")
+          || input.requestedCapabilities.some(capability => !granted.includes(capability))
+        ) throw new DomainError(
+          "CAPABILITY_DENIED",
+          "Executor assignment requires approved work:read and work:write capabilities",
+        );
+
+        const current = (await tx.query<{
+          id: string
+          agent_id: string
+          agent_actor_id: string
+          principal_human_actor_id: string
+          role: string
+          scope_type: string
+          scope_id: string
+          permissions_snapshot: Capability[]
+          revision: number
+        }>(
+          `SELECT id,agent_id,agent_actor_id,principal_human_actor_id,role,
+                  scope_type,scope_id,permissions_snapshot,revision
+             FROM delegations
+            WHERE workspace_id=$1 AND work_item_id=$2
+              AND role='executor' AND status='active'
+            ORDER BY id
+            LIMIT 1`,
+          [meta.actor.workspaceId, workItemId],
+        )).rows[0];
+        if ((current?.id ?? null) !== locator.delegation_id)
+          throw new RetryForcedAssignment();
+
+        const currentSessions = current
+          ? (await tx.query<Record<string, unknown> & {
+              id: string
+              state: AgentSessionState
+              revision: number
+              sequence: string | number
+            }>(
+              `SELECT *
+                 FROM agent_sessions session
+                WHERE workspace_id=$1 AND delegation_id=$2
+                  AND ${agentExecutionCapacitySqlPredicate("session")}
+                ORDER BY created_at DESC,id DESC`,
+              [meta.actor.workspaceId, current.id],
+            )).rows
+          : [];
+        const plannedSessionIds = new Set(activeSessionIds);
+        if (currentSessions.some(session => !plannedSessionIds.has(session.id)))
+          throw new RetryForcedAssignment();
+
+        const requestedCapabilities = [...input.requestedCapabilities].sort();
+        const currentCapabilities = current
+          ? [...current.permissions_snapshot].sort()
+          : [];
+        const compatible = current
+          && current.agent_id === input.agentId
+          && current.agent_actor_id === agent.actor_id
+          && current.principal_human_actor_id === input.principalHumanActorId
+          && current.role === input.role
+          && current.scope_type === "work_item"
+          && current.scope_id === workItemId
+          && JSON.stringify(currentCapabilities) === JSON.stringify(requestedCapabilities);
+        if (compatible && currentSessions[0]) return {
+          delegation: current,
+          session: normalizeAgentSessionResponse(currentSessions[0]),
+        };
+
+        if (current && meta.actor.kind !== "human")
+          throw new DomainError(
+            "WORK_ITEM_ALREADY_ASSIGNED",
+            "Only a Human can replace the current executor assignment",
+            {
+              agentId: current.agent_id,
+              activeExecutionStates: Object.fromEntries(
+                currentSessions.map(session => session.state).map(state => [
+                  state,
+                  currentSessions.filter(session => session.state === state).length,
+                ]),
+              ),
+            },
+          );
+
+        if (current) {
+          for (const oldSession of currentSessions) {
+            const canceled = one((await tx.query<{
+              revision: number
+              sequence: string | number
+            }>(
+              `UPDATE agent_sessions
+                  SET state='canceled',
+                      state_reason='replaced by Human forced assignment',
+                      ended_at=now(),revision=revision+1,
+                      sequence=sequence+1,updated_at=now()
+                WHERE id=$1 AND session_kind='execution'
+                  AND state NOT IN ('completed','failed','canceled')
+              RETURNING revision,sequence`,
+              [oldSession.id],
+            )).rows);
+            await tx.query(
+              `UPDATE agent_session_tokens
+                  SET revoked_at=COALESCE(revoked_at,now())
+                WHERE session_id=$1 AND revoked_at IS NULL`,
+              [oldSession.id],
+            );
+            await tx.query(
+              `UPDATE leases
+                  SET status='released',released_at=now(),
+                      released_by_actor_id=$2,
+                      audit_reason='replaced by Human forced assignment',
+                      version=version+1,updated_at=now()
+                WHERE session_id=$1 AND status='active'`,
+              [oldSession.id, meta.actor.id],
+            );
+            const canceledEventId = await event(
+              tx,
+              meta,
+              "agent.session.state_changed",
+              "agent_session",
+              oldSession.id,
+              canceled.revision,
+              {
+                state: "canceled",
+                reason: "replaced by Human forced assignment",
+                assignmentMode: "forced",
+              },
+              work.team_id,
+              oldSession.id,
+              Number(canceled.sequence),
+            );
+            await queueWebhookDeliveries(
+              tx,
+              current.agent_id,
+              canceledEventId,
+              "agent.session.state_changed",
+              oldSession.id,
+              {
+                sessionId: oldSession.id,
+                state: "canceled",
+                reason: "replaced by Human forced assignment",
+              },
+            );
+          }
+          const revoked = one((await tx.query<{ revision: number }>(
+            `UPDATE delegations
+                SET status='revoked',revoked_at=now(),
+                    revoked_by_actor_id=$2,revision=revision+1,updated_at=now()
+              WHERE id=$1 AND status='active'
+            RETURNING revision`,
+            [current.id, meta.actor.id],
+          )).rows);
+          const revokedEventId = await event(
+            tx,
+            meta,
+            "agent.delegation.revoked",
+            "delegation",
+            current.id,
+            revoked.revision,
+            {
+              workItemId,
+              assignmentMode: "forced",
+              replacedByAgentId: input.agentId,
+            },
+            work.team_id,
+          );
+          await queueWebhookDeliveries(
+            tx,
+            current.agent_id,
+            revokedEventId,
+            "agent.delegation.revoked",
+            undefined,
+            { delegationId: current.id, workItemId },
+          );
+        }
+
+        await assertAgentExecutionCapacityAfterLock(tx, {
+          workspaceId: meta.actor.workspaceId,
+          agentId: input.agentId,
+        });
+        if (!installationTokenId || !installationAuthority)
+          throw new DomainError("NOT_FOUND", "Active installation token not found");
+        const installation = await revalidateExecutionInstallationAuthority(tx, {
+          authority: installationAuthority,
+          agentId: input.agentId,
+          teamId: work.team_id,
+          principalHumanActorId: input.principalHumanActorId,
+        });
+
+        let contextSnapshotId = input.contextSnapshotId;
+        if (contextSnapshotId) one((await tx.query<{ id: string }>(
+          `SELECT id FROM context_snapshots
+            WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3`,
+          [contextSnapshotId, meta.actor.workspaceId, workItemId],
+        )).rows);
+        if (!contextSnapshotId) contextSnapshotId = (await materializeSessionContextSnapshot(tx, {
+          workspaceId: meta.actor.workspaceId,
+          teamId: work.team_id,
+          projectId: work.project_id,
+          workItemId,
+          workItem: {
+            id: workItemId,
+            title: work.title,
+            description: work.description,
+            revision: work.revision,
+          },
+          actorId: meta.actor.id,
+        })).id;
+        await revalidateExecutionInstallationAuthority(tx, {
+          authority: installation,
+          agentId: input.agentId,
+          teamId: work.team_id,
+          principalHumanActorId: input.principalHumanActorId,
+        })
+        const scope = {
+          workspaceId: meta.actor.workspaceId,
+          teamIds: [work.team_id],
+          projectIds: work.project_id ? [work.project_id] : [],
+          workItemIds: [workItemId],
+          repositoryIds: [],
+          capabilities: input.requestedCapabilities,
+        };
+        const delegation = one((await tx.query<Record<string, unknown>>(
+          `INSERT INTO delegations(
+             workspace_id,team_id,agent_id,agent_actor_id,
+             principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+             permissions_snapshot,capability_scope,status
+           ) VALUES($1,$2,$3,$4,$5,$6,$7,'work_item',$6,$8,$9,'active')
+           RETURNING *`,
+          [
+            meta.actor.workspaceId,
+            work.team_id,
+            input.agentId,
+            agent.actor_id,
+            input.principalHumanActorId,
+            workItemId,
+            input.role,
+            input.requestedCapabilities,
+            scope,
+          ],
+        )).rows);
+        await event(
+          tx,
+          meta,
+          "agent.delegation.created",
+          "delegation",
+          String(delegation.id),
+          Number(delegation.revision),
+          { workItemId, agentId: input.agentId, assignmentMode: "forced" },
+          work.team_id,
+        );
+
+        const session = one((await tx.query<Record<string, unknown>>(
+          `INSERT INTO agent_sessions(
+             workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+             work_item_id,context_snapshot_id,budget
+           ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)
+           RETURNING *`,
+          [
+            meta.actor.workspaceId,
+            work.team_id,
+            input.agentId,
+            agent.actor_id,
+            delegation.id,
+            workItemId,
+            contextSnapshotId,
+            input.budget,
+          ],
+        )).rows);
+        await tx.query(
+          `INSERT INTO work_room_channels(
+             workspace_id,subject_kind,subject_id,team_id
+           ) VALUES($1,'session',$2,$3)
+           ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING`,
+          [meta.actor.workspaceId, session.id, work.team_id],
+        );
+        const exchangeToken = opaqueToken();
+        await tx.query(
+          `INSERT INTO agent_session_tokens(
+             session_id,agent_id,installation_token_id,token_hash,
+             exchange_nonce_hash,expires_at,issued_by_actor_id
+           ) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)`,
+          [
+            session.id,
+            input.agentId,
+            installation.id,
+            tokenHash(opaqueToken()),
+            tokenHash(exchangeToken),
+            meta.actor.id,
+          ],
+        );
+        await tx.query(
+          `INSERT INTO agent_session_prompts(
+             session_id,author_actor_id,body_markdown
+           ) VALUES($1,$2,$3)`,
+          [session.id, meta.actor.id, input.initialPrompt],
+        );
+        const sessionEventId = await event(
+          tx,
+          meta,
+          "agent.session.created",
+          "agent_session",
+          String(session.id),
+          1,
+          {
+            delegationId: delegation.id,
+            workItemId,
+            assignmentMode: "forced",
+          },
+          work.team_id,
+          String(session.id),
+          0,
+        );
+        await queueWebhookDeliveries(
+          tx,
+          input.agentId,
+          sessionEventId,
+          "agent.session.created",
+          String(session.id),
+          {
+            sessionId: session.id,
+            exchangeToken,
+            initialPrompt: input.initialPrompt,
+          },
+        );
+        return {
+          delegation,
+          session: normalizeAgentSessionResponse(session),
+        };
+      });
+    } catch (error) {
+      if (error instanceof RetryForcedAssignment && attempt < 7) continue;
+      if (error instanceof RetryForcedAssignment)
+        throw new DomainError(
+          "REVISION_CONFLICT",
+          "The Work Item assignment changed repeatedly; retry the forced assignment",
+        );
+      throw error;
     }
-    if (!contextSnapshotId) {
-      contextSnapshotId = (await materializeSessionContextSnapshot(tx, {
+  }
+  throw new DomainError("INTERNAL_ERROR", "Forced assignment retry loop did not terminate");
+}
+
+const defaultSelfClaimPrompt =
+  "Execute this Work Item according to its current description, acceptance criteria, dependency state, and applicable WorkMesh Guidance.";
+
+type SelfClaimIdentity = Readonly<{
+  connection_id: string
+  credential_id: string
+  connection_team_id: string
+  connection_agent_id: string
+  connection_agent_actor_id: string
+  connection_principal_human_actor_id: string
+  connection_delegation_id: string
+  connection_status: "active" | "rotating" | "revoked" | "pending"
+  connection_capabilities: Capability[]
+  credential_status: "active" | "overlap" | "rotated" | "revoked"
+  credential_overlap_until: Date | null
+  coordination_id: string
+  coordination_status: "active" | "closed"
+  coordination_expires_at: Date
+  coordination_capabilities: Capability[]
+  caller_session_id: string
+  caller_session_kind: "execution" | "coordination"
+  caller_session_state: AgentSessionState
+  caller_coordination_connection_id: string | null
+  caller_delegation_id: string
+}>;
+
+async function locateSelfClaimIdentity(
+  tx: PoolClient,
+  input: Readonly<{
+    credentialHash: string
+    workspaceId: string
+    coordinationSessionId: string
+    actorId: string
+  }>,
+): Promise<SelfClaimIdentity | undefined> {
+  return (await tx.query<SelfClaimIdentity>(
+    `SELECT connection.id AS connection_id,
+            credential.id AS credential_id,
+            connection.team_id AS connection_team_id,
+            connection.agent_id AS connection_agent_id,
+            connection.agent_actor_id AS connection_agent_actor_id,
+            connection.principal_human_actor_id AS connection_principal_human_actor_id,
+            connection.delegation_id AS connection_delegation_id,
+            connection.status AS connection_status,
+            connection.granted_capabilities AS connection_capabilities,
+            credential.status AS credential_status,
+            credential.overlap_until AS credential_overlap_until,
+            coordination.id AS coordination_id,
+            coordination.status AS coordination_status,
+            coordination.expires_at AS coordination_expires_at,
+            coordination.granted_capabilities AS coordination_capabilities,
+            caller.id AS caller_session_id,
+            caller.session_kind AS caller_session_kind,
+            caller.state AS caller_session_state,
+            caller.coordination_connection_id AS caller_coordination_connection_id,
+            caller.delegation_id AS caller_delegation_id
+       FROM agent_connection_credentials credential
+       JOIN agent_connections connection
+         ON connection.id=credential.connection_id
+       JOIN agent_coordination_sessions coordination
+         ON coordination.connection_id=connection.id
+       JOIN agent_sessions caller
+         ON caller.id=coordination.agent_session_id
+      WHERE credential.token_hash=$1
+        AND connection.workspace_id=$2
+        AND caller.id=$3
+        AND caller.agent_actor_id=$4`,
+    [
+      input.credentialHash,
+      input.workspaceId,
+      input.coordinationSessionId,
+      input.actorId,
+    ],
+  )).rows[0]
+}
+
+/**
+ * Atomically admits the current Coordination Agent to an unassigned Work Item.
+ * Connection and exact credential identity are locked before the established
+ * Agent authority order. The response bootstrap is only stored in the encrypted
+ * authentication idempotency record and returned to the same Coordination
+ * Session; it is never written to an event or delivery payload.
+ */
+export async function claimWorkItem(
+  db: Pool,
+  meta: RequestMeta,
+  workItemId: string,
+  expectedRevision: number,
+  input: ClaimWorkItemInput,
+) {
+  if (
+    meta.actor.kind !== "agent"
+    || meta.actor.authentication !== "coordination_connection"
+    || !meta.actor.agentSessionId
+    || !meta.actor.credentialHash
+  ) throw new DomainError("FORBIDDEN", "An active Coordination Connection is required to claim work");
+  const coordinationSessionId = meta.actor.agentSessionId;
+  const credentialHash = meta.actor.credentialHash;
+
+  return secretAgentMutate(
+    db,
+    meta,
+    { workItemId, expectedRevision, ...input },
+    async tx => {
+      const initialPrompt = input.initialPrompt ?? defaultSelfClaimPrompt;
+      assertSafeText(initialPrompt, "initial prompt");
+
+      const locatedIdentity = one([await locateSelfClaimIdentity(tx, {
+        credentialHash,
         workspaceId: meta.actor.workspaceId,
-        teamId: delegation.team_id,
-        projectId: work?.project_id ?? input.projectId ?? null,
-        workItemId: workItemId ?? null,
-        workItem: work ? { id: work.id, title: work.title, description: work.description, revision: work.revision } : null,
+        coordinationSessionId,
+        actorId: meta.actor.id,
+      })].filter((value): value is SelfClaimIdentity => value !== undefined));
+      await lockExecutionInstallationAuthorities(tx, [{
+        connection_id: locatedIdentity.connection_id,
+        credential_id: locatedIdentity.credential_id,
+      }]);
+      const identity = one([await locateSelfClaimIdentity(tx, {
+        credentialHash,
+        workspaceId: meta.actor.workspaceId,
+        coordinationSessionId,
+        actorId: meta.actor.id,
+      })].filter((value): value is SelfClaimIdentity => value !== undefined));
+      if (
+        identity.connection_id !== locatedIdentity.connection_id
+        || identity.credential_id !== locatedIdentity.credential_id
+      ) throw new DomainError(
+        "AGENT_CONNECTION_REVOKED",
+        "The exact Coordination credential changed while claim authority was acquired",
+      );
+
+      const credentialActive = identity.credential_status === "active"
+        || (
+          identity.credential_status === "overlap"
+          && identity.credential_overlap_until !== null
+          && identity.credential_overlap_until.getTime() > Date.now()
+        );
+      const coordinationActive = identity.coordination_status === "active"
+        && identity.coordination_expires_at.getTime() > Date.now()
+        && identity.caller_session_kind === "coordination"
+        && ["acknowledged", "planning", "executing"].includes(identity.caller_session_state)
+        && identity.caller_coordination_connection_id === identity.connection_id
+        && identity.caller_delegation_id === identity.connection_delegation_id;
+      if (
+        !credentialActive
+        || !coordinationActive
+        || !["active", "rotating"].includes(identity.connection_status)
+      ) throw new DomainError("AGENT_CONNECTION_REVOKED", "The Coordination Connection is no longer active");
+
+      const existingInstallationTokenId = await locateConnectionInstallationTokenId(tx, {
+        agentId: identity.connection_agent_id,
+        credentialHash,
+      });
+
+      const locator = one((await tx.query<{
+        team_id: string
+        project_id: string | null
+        active_delegation_id: string | null
+      }>(
+        `SELECT item.team_id,item.project_id,
+                assignment.id AS active_delegation_id
+           FROM work_items item
+           LEFT JOIN LATERAL (
+             SELECT delegation.id
+               FROM delegations delegation
+              WHERE delegation.workspace_id=item.workspace_id
+                AND delegation.work_item_id=item.id
+                AND delegation.role='executor'
+                AND delegation.status='active'
+              ORDER BY delegation.id
+              LIMIT 1
+           ) assignment ON true
+          WHERE item.id=$1 AND item.workspace_id=$2
+            AND item.deleted_at IS NULL`,
+        [workItemId, meta.actor.workspaceId],
+      )).rows);
+      const countedSessionIds = (await tx.query<{ id: string }>(
+        `SELECT session.id
+           FROM agent_sessions session
+          WHERE session.workspace_id=$1
+            AND (
+              session.id=$2
+              OR (
+                session.agent_id=$3
+                AND ${agentExecutionCapacitySqlPredicate("session")}
+              )
+              OR (
+                $4::uuid IS NOT NULL
+                AND session.delegation_id=$4
+                AND ${agentExecutionCapacitySqlPredicate("session")}
+              )
+            )
+          ORDER BY session.id`,
+        [
+          meta.actor.workspaceId,
+          identity.caller_session_id,
+          identity.connection_agent_id,
+          locator.active_delegation_id,
+        ],
+      )).rows.map(row => row.id);
+
+      const installationTokenId = await lockAgentAuthorityPlanWithInstallationTokenWrite(tx, {
+        definitionIds: [identity.connection_agent_id],
+        teamGrants: [{
+          workspaceId: meta.actor.workspaceId,
+          agentId: identity.connection_agent_id,
+          teamId: identity.connection_team_id,
+        }],
+        delegationIds: [
+          identity.connection_delegation_id,
+          ...(locator.active_delegation_id ? [locator.active_delegation_id] : []),
+        ],
+        sessionIds: countedSessionIds,
+        installationTokenIds: existingInstallationTokenId
+          ? [existingInstallationTokenId]
+          : [],
+        workItemIds: [workItemId],
+        projectIds: locator.project_id ? [locator.project_id] : [],
+      }, async rankTx => reconcileConnectionInstallationToken(rankTx, {
+        agentId: identity.connection_agent_id,
+        credentialHash,
+        expiresAt: identity.credential_status === "overlap"
+          ? identity.credential_overlap_until
+          : null,
+        createdByActorId: meta.actor.id,
+      }));
+      const claimInstallationAuthority: ExecutionInstallationAuthority = {
+        id: installationTokenId,
+        connection_id: identity.connection_id,
+        credential_id: identity.credential_id,
+        connection_delegation_id: identity.connection_delegation_id,
+      }
+
+      const coordination = one((await tx.query<{
+        status: "active" | "closed"
+        expires_at: Date
+        connection_id: string
+        workspace_id: string
+        team_id: string
+        agent_id: string
+        agent_actor_id: string
+        principal_human_actor_id: string
+        delegation_id: string
+        granted_capabilities: Capability[]
+        session_state: AgentSessionState
+        session_kind: "execution" | "coordination"
+        session_connection_id: string | null
+        session_delegation_id: string
+      }>(
+        `SELECT coordination.status,coordination.expires_at,
+                coordination.connection_id,coordination.workspace_id,
+                coordination.team_id,coordination.agent_id,
+                coordination.agent_actor_id,
+                coordination.principal_human_actor_id,
+                coordination.delegation_id,
+                coordination.granted_capabilities,
+                session.state AS session_state,
+                session.session_kind AS session_kind,
+                session.coordination_connection_id AS session_connection_id,
+                session.delegation_id AS session_delegation_id
+           FROM agent_coordination_sessions coordination
+           JOIN agent_sessions session
+             ON session.id=coordination.agent_session_id
+          WHERE coordination.id=$1 AND session.id=$2
+          FOR UPDATE OF coordination`,
+        [identity.coordination_id, identity.caller_session_id],
+      )).rows);
+      if (
+        coordination.status !== "active"
+        || coordination.expires_at.getTime() <= Date.now()
+        || coordination.connection_id !== identity.connection_id
+        || coordination.workspace_id !== meta.actor.workspaceId
+        || coordination.team_id !== identity.connection_team_id
+        || coordination.agent_id !== identity.connection_agent_id
+        || coordination.agent_actor_id !== meta.actor.id
+        || coordination.principal_human_actor_id !== identity.connection_principal_human_actor_id
+        || coordination.delegation_id !== identity.connection_delegation_id
+        || coordination.session_kind !== "coordination"
+        || !["acknowledged", "planning", "executing"].includes(coordination.session_state)
+        || coordination.session_connection_id !== identity.connection_id
+        || coordination.session_delegation_id !== identity.connection_delegation_id
+      ) throw new DomainError("SESSION_NOT_ACTIVE", "The Coordination Session is no longer active");
+
+      const definition = one((await tx.query<{
+        actor_id: string
+        approved_capabilities: Capability[]
+        is_active: boolean
+      }>(
+        `SELECT actor_id,approved_capabilities,is_active
+           FROM agent_definitions
+          WHERE id=$1 AND workspace_id=$2`,
+        [identity.connection_agent_id, meta.actor.workspaceId],
+      )).rows);
+      const grant = one((await tx.query<{
+        approved_capabilities: Capability[]
+        revoked_at: Date | null
+      }>(
+        `SELECT approved_capabilities,revoked_at
+           FROM agent_team_access
+          WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3`,
+        [
+          meta.actor.workspaceId,
+          identity.connection_agent_id,
+          identity.connection_team_id,
+        ],
+      )).rows);
+      const authority = one((await tx.query<{
+        status: string
+        agent_id: string
+        agent_actor_id: string
+        principal_human_actor_id: string
+        team_id: string
+        permissions_snapshot: Capability[]
+      }>(
+        `SELECT status,agent_id,agent_actor_id,principal_human_actor_id,
+                team_id,permissions_snapshot
+           FROM delegations
+          WHERE id=$1 AND workspace_id=$2`,
+        [identity.connection_delegation_id, meta.actor.workspaceId],
+      )).rows);
+      if (
+        !definition.is_active
+        || definition.actor_id !== meta.actor.id
+        || grant.revoked_at !== null
+        || authority.status !== "active"
+        || authority.agent_id !== identity.connection_agent_id
+        || authority.agent_actor_id !== meta.actor.id
+        || authority.principal_human_actor_id !== identity.connection_principal_human_actor_id
+        || authority.team_id !== identity.connection_team_id
+      ) throw new DomainError("DELEGATION_NOT_ACTIVE", "The Connection authority is no longer active");
+
+      const liveCapabilities = identity.connection_capabilities.filter(capability =>
+        capability !== "agent:delegate"
+        && identity.coordination_capabilities.includes(capability)
+        && coordination.granted_capabilities.includes(capability)
+        && definition.approved_capabilities.includes(capability)
+        && grant.approved_capabilities.includes(capability)
+        && authority.permissions_snapshot.includes(capability));
+      if (!liveCapabilities.includes("work:read") || !liveCapabilities.includes("work:write"))
+        throw new DomainError("CAPABILITY_DENIED", "Self-claim requires live work:read and work:write capabilities");
+      const requestedCapabilities = input.requestedCapabilities ?? liveCapabilities;
+      if (
+        !requestedCapabilities.includes("work:read")
+        || !requestedCapabilities.includes("work:write")
+        || requestedCapabilities.includes("agent:delegate")
+        || requestedCapabilities.some(capability => !liveCapabilities.includes(capability))
+      ) throw new DomainError("CAPABILITY_DENIED", "Requested execution capabilities exceed the live Connection authority");
+
+      const work = one((await tx.query<{
+        team_id: string
+        project_id: string | null
+        revision: number
+        responsible_human_actor_id: string | null
+        title: string
+        description: string | null
+        status_category: StatusCategory
+      }>(
+        `SELECT item.team_id,item.project_id,item.revision,
+                item.responsible_human_actor_id,item.title,item.description,
+                state.category AS status_category
+           FROM work_items item
+           JOIN workflow_states state ON state.id=item.status_id
+          WHERE item.id=$1 AND item.workspace_id=$2
+            AND item.deleted_at IS NULL`,
+        [workItemId, meta.actor.workspaceId],
+      )).rows);
+      if (
+        work.team_id !== locator.team_id
+        || work.project_id !== locator.project_id
+        || work.team_id !== identity.connection_team_id
+      ) throw new DomainError("RESOURCE_SCOPE_DENIED", "The Work Item is outside the Connection Team");
+      assertRevision(expectedRevision, work.revision);
+
+      const assignment = (await tx.query<{
+        id: string
+        agent_id: string
+      }>(
+        `SELECT id,agent_id
+           FROM delegations
+          WHERE workspace_id=$1 AND work_item_id=$2
+            AND role='executor' AND status='active'
+          ORDER BY id
+          LIMIT 1`,
+        [meta.actor.workspaceId, workItemId],
+      )).rows[0];
+      if (assignment) {
+        const stateRows = (await tx.query<{ state: AgentSessionState; count: string }>(
+          `SELECT state,count(*)::text AS count
+             FROM agent_sessions session
+            WHERE session.workspace_id=$1
+              AND session.delegation_id=$2
+              AND ${agentExecutionCapacitySqlPredicate("session")}
+            GROUP BY state
+            ORDER BY state`,
+          [meta.actor.workspaceId, assignment.id],
+        )).rows;
+        throw new DomainError(
+          "WORK_ITEM_ALREADY_ASSIGNED",
+          "The Work Item already has an active executor assignment",
+          {
+            agentId: assignment.agent_id,
+            activeExecutionStates: Object.fromEntries(
+              stateRows.map(row => [row.state, Number(row.count)]),
+            ),
+          },
+        );
+      }
+      assertWorkItemSelfClaimable({
+        statusCategory: work.status_category,
+        responsibleHumanActorId: work.responsible_human_actor_id,
+        principalHumanActorId: identity.connection_principal_human_actor_id,
+        hasActiveExecutorDelegation: false,
+      });
+      await assertAgentExecutionCapacityAfterLock(tx, {
+        workspaceId: meta.actor.workspaceId,
+        agentId: identity.connection_agent_id,
+      });
+
+      let contextSnapshotId = input.contextSnapshotId;
+      if (contextSnapshotId) one((await tx.query<{ id: string }>(
+        `SELECT id FROM context_snapshots
+          WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3`,
+        [contextSnapshotId, meta.actor.workspaceId, workItemId],
+      )).rows);
+      if (!contextSnapshotId) contextSnapshotId = (await materializeSessionContextSnapshot(tx, {
+        workspaceId: meta.actor.workspaceId,
+        teamId: work.team_id,
+        projectId: work.project_id,
+        workItemId,
+        workItem: {
+          id: workItemId,
+          title: work.title,
+          description: work.description,
+          revision: work.revision,
+        },
         actorId: meta.actor.id,
       })).id;
-    }
-    const session = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *", [meta.actor.workspaceId, delegation.team_id, delegation.agent_id, delegation.agent_actor_id, delegation.id, workItemId ?? null, input.projectId ?? null, input.planStepId ?? null, contextSnapshotId, input.budget])).rows);
-    await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, (session as { id: string }).id, delegation.team_id]);
-    if (!locator.installation_token_id)
-      throw new DomainError("NOT_FOUND", "Active installation token not found");
-    const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())", [locator.installation_token_id, delegation.agent_id])).rows);
-    const exchangeNonce = opaqueToken();
-    await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)", [(session as { id: string }).id, delegation.agent_id, installation.id, tokenHash(opaqueToken()), tokenHash(exchangeNonce), meta.actor.id]);
-    await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)", [(session as { id: string }).id, meta.actor.id, input.initialPrompt]);
-    const eventId = await event(tx, meta, "agent.session.created", "agent_session", String((session as { id: string }).id), 1, { delegationId: delegation.id, workItemId: workItemId ?? null }, delegation.team_id, String((session as { id: string }).id), 0);
-    await queueWebhookDeliveries(tx, delegation.agent_id, eventId, "agent.session.created", String((session as { id: string }).id), { sessionId: (session as { id: string }).id, exchangeToken: exchangeNonce, initialPrompt: input.initialPrompt });
-    return { ...session as object, exchangeToken: exchangeNonce };
-  });
-}
 
-export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, workItemId: string, expectedRevision: number, input: { agentId:string; principalHumanActorId:string; role:string; requestedCapabilities:Capability[]; initialPrompt:string; contextSnapshotId?:string; budget:unknown }) {
-  if (meta.actor.kind !== "human" && !meta.actor.agentSessionId) throw new DomainError("FORBIDDEN", "A Human or authorized Coordination Session is required");
-  return secretAgentMutate(db, meta, { workItemId, expectedRevision, ...input }, async tx => {
-    assertSafeText(input.initialPrompt, "initial prompt");
-    const locator=one((await tx.query<{team_id:string;project_id:string|null}>("SELECT team_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2",[workItemId,meta.actor.workspaceId])).rows);
-    const delegationIds=(await tx.query<{id:string}>("SELECT id FROM delegations WHERE workspace_id=$1 AND work_item_id=$2 AND agent_id=$3 AND principal_human_actor_id=$4 AND role=$5 AND status='active'",[meta.actor.workspaceId,workItemId,input.agentId,input.principalHumanActorId,input.role])).rows.map(row=>row.id);
-    const activeSessionIds=(await tx.query<{id:string}>("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[input.agentId])).rows.map(row=>row.id);
-    const installationTokenId=(await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 ORDER BY created_at DESC,id LIMIT 1",[input.agentId])).rows[0]?.id;
-    await lockAgentAuthorityPlan(tx,{
-      definitionIds:[input.agentId],
-      teamGrants:[{workspaceId:meta.actor.workspaceId,agentId:input.agentId,teamId:locator.team_id}],
-      delegationIds,
-      sessionIds:activeSessionIds,
-      installationTokenIds:installationTokenId?[installationTokenId]:[],
-      workItemIds:[workItemId],
-      projectIds:locator.project_id?[locator.project_id]:[],
-    });
-    const work=one((await tx.query<{team_id:string;project_id:string|null;revision:number;responsible_human_actor_id:string|null;title:string;description:string|null}>("SELECT team_id,project_id,revision,responsible_human_actor_id,title,description FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL",[workItemId,meta.actor.workspaceId])).rows);
-    if(work.team_id!==locator.team_id||work.project_id!==locator.project_id) throw new DomainError("RESOURCE_SCOPE_DENIED","Work item routing changed while session authority was acquired");
-    if (meta.actor.kind === "human") {
-      await assertHumanTeam(tx,meta.actor,work.team_id);
-    } else {
-      one((await tx.query(
-        `SELECT c.id
-           FROM agent_sessions caller
-           JOIN agent_coordination_sessions coordination
-             ON coordination.agent_session_id=caller.id
-            AND coordination.status='active' AND coordination.expires_at>now()
-           JOIN agent_connections c
-             ON c.id=coordination.connection_id
-            AND c.id=caller.coordination_connection_id
-            AND c.workspace_id=caller.workspace_id
-            AND c.team_id=caller.team_id
-            AND c.agent_id=caller.agent_id
-            AND c.agent_actor_id=caller.agent_actor_id
-            AND c.delegation_id=caller.delegation_id
-            AND c.principal_human_actor_id=coordination.principal_human_actor_id
-           JOIN delegations authority ON authority.id=c.delegation_id AND authority.status='active'
-           JOIN agent_team_access team_grant
-             ON team_grant.workspace_id=c.workspace_id AND team_grant.agent_id=c.agent_id
-            AND team_grant.team_id=c.team_id AND team_grant.revoked_at IS NULL
-          WHERE caller.id=$1 AND caller.workspace_id=$2 AND caller.agent_actor_id=$3
-            AND caller.session_kind='coordination'
-            AND caller.state IN ('acknowledged','planning','executing')
-            AND c.status IN ('active','rotating') AND c.team_id=$4
-            AND c.principal_human_actor_id=$5
-            AND c.grant_agent_delegate
-            AND 'agent:delegate'=ANY(c.granted_capabilities)
-            AND 'agent:delegate'=ANY(authority.permissions_snapshot)
-            AND 'agent:delegate'=ANY(team_grant.approved_capabilities)`,
-        [meta.actor.agentSessionId,meta.actor.workspaceId,meta.actor.id,work.team_id,input.principalHumanActorId],
+      const finalIdentity = await locateSelfClaimIdentity(tx, {
+        credentialHash,
+        workspaceId: meta.actor.workspaceId,
+        coordinationSessionId,
+        actorId: meta.actor.id,
+      })
+      const finalAuthorityCheckAt = Date.now()
+      const finalCredentialActive = finalIdentity?.credential_status === "active"
+        || (
+          finalIdentity?.credential_status === "overlap"
+          && finalIdentity.credential_overlap_until !== null
+          && finalIdentity.credential_overlap_until.getTime() > finalAuthorityCheckAt
+        )
+      if (
+        !finalIdentity
+        || finalIdentity.connection_id !== identity.connection_id
+        || finalIdentity.credential_id !== identity.credential_id
+        || finalIdentity.connection_status === "revoked"
+        || !finalCredentialActive
+        || finalIdentity.coordination_status !== "active"
+        || finalIdentity.coordination_expires_at.getTime() <= finalAuthorityCheckAt
+        || finalIdentity.caller_session_kind !== "coordination"
+        || !["acknowledged", "planning", "executing"].includes(
+          finalIdentity.caller_session_state,
+        )
+        || finalIdentity.caller_coordination_connection_id !== identity.connection_id
+        || finalIdentity.caller_delegation_id !== identity.connection_delegation_id
+      ) throw new DomainError(
+        "AGENT_CONNECTION_REVOKED",
+        "The exact Coordination authority expired before the claim was admitted",
+      )
+      await revalidateExecutionInstallationAuthority(tx, {
+        authority: claimInstallationAuthority,
+        agentId: identity.connection_agent_id,
+        teamId: work.team_id,
+        principalHumanActorId: identity.connection_principal_human_actor_id,
+      })
+
+      const capabilityScope = {
+        workspaceId: meta.actor.workspaceId,
+        teamIds: [work.team_id],
+        projectIds: work.project_id ? [work.project_id] : [],
+        workItemIds: [workItemId],
+        repositoryIds: [],
+        capabilities: requestedCapabilities,
+      };
+      const delegation = one((await tx.query<Record<string, unknown>>(
+        `INSERT INTO delegations(
+           workspace_id,team_id,agent_id,agent_actor_id,
+           principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+           permissions_snapshot,capability_scope,status
+         ) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8,'active')
+         RETURNING *`,
+        [
+          meta.actor.workspaceId,
+          work.team_id,
+          identity.connection_agent_id,
+          meta.actor.id,
+          identity.connection_principal_human_actor_id,
+          workItemId,
+          requestedCapabilities,
+          capabilityScope,
+        ],
       )).rows);
-    }
-    assertRevision(expectedRevision,work.revision);
-    if (!work.responsible_human_actor_id || work.responsible_human_actor_id!==input.principalHumanActorId) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED","Delegation principal must remain the work item's responsible human");
-    one((await tx.query("SELECT 1 FROM actors a JOIN memberships m ON m.actor_id=a.id AND m.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.kind='human' AND a.is_active AND m.team_id=$3",[input.principalHumanActorId,meta.actor.workspaceId,work.team_id])).rows);
-    const agent=one((await tx.query<{actor_id:string;approved_capabilities:Capability[];max_concurrency:number}>("SELECT actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active",[input.agentId,meta.actor.workspaceId])).rows);
-    const grant=one((await tx.query<{approved_capabilities:Capability[]}>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL",[meta.actor.workspaceId,input.agentId,work.team_id])).rows);
-    const granted=agent.approved_capabilities.filter(capability=>grant.approved_capabilities.includes(capability));
-    if (input.requestedCapabilities.some(capability=>!granted.includes(capability))) throw new DomainError("CAPABILITY_DENIED","Requested delegation capabilities exceed definition or team approval");
-    let delegation=(await tx.query("SELECT * FROM delegations WHERE id=ANY($1::uuid[]) AND workspace_id=$2 AND work_item_id=$3 AND agent_id=$4 AND principal_human_actor_id=$5 AND role=$6 AND status='active' ORDER BY id",[delegationIds,meta.actor.workspaceId,workItemId,input.agentId,input.principalHumanActorId,input.role])).rows[0] as Record<string,unknown>|undefined;
-    if (delegation) {
-      const existingCapabilities = [...((delegation.permissions_snapshot as Capability[]) ?? [])].sort();
-      const requestedCapabilities = [...input.requestedCapabilities].sort();
-      if (JSON.stringify(existingCapabilities) !== JSON.stringify(requestedCapabilities) || delegation.scope_type !== "work_item" || delegation.scope_id !== workItemId) throw new DomainError("ACTIVE_DELEGATION_SCOPE_MISMATCH", "Existing active delegation has a different work-item scope or capability snapshot");
-    }
-    if (!delegation) {
-      const scope={workspaceId:meta.actor.workspaceId,teamIds:[work.team_id],projectIds:[],workItemIds:[workItemId],repositoryIds:[],capabilities:input.requestedCapabilities};
-      delegation=one((await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,status) VALUES($1,$2,$3,$4,$5,$6,$7,'work_item',$6,$8,$9,'active') RETURNING *",[meta.actor.workspaceId,work.team_id,input.agentId,agent.actor_id,input.principalHumanActorId,workItemId,input.role,input.requestedCapabilities,scope])).rows) as Record<string,unknown>;
-      await event(tx,meta,"agent.delegation.created","delegation",String(delegation.id),Number(delegation.revision),{workItemId,agentId:input.agentId},work.team_id);
-    }
-    const active=await tx.query("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[input.agentId]);
-    if ((active.rowCount ?? 0)>=agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
-    let contextId=input.contextSnapshotId;
-    if (contextId) one((await tx.query("SELECT id FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3",[contextId,meta.actor.workspaceId,workItemId])).rows);
-    if (!contextId) contextId=(await materializeSessionContextSnapshot(tx,{
-      workspaceId:meta.actor.workspaceId,teamId:work.team_id,projectId:work.project_id,
-      workItemId,workItem:{id:workItemId,title:work.title,description:work.description,revision:work.revision},actorId:meta.actor.id,
-    })).id;
-    const session=one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,context_snapshot_id,budget) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",[meta.actor.workspaceId,work.team_id,input.agentId,agent.actor_id,delegation.id,workItemId,contextId,input.budget])).rows) as Record<string,unknown>;
-    await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [meta.actor.workspaceId, session.id as string, work.team_id]);
-    if(!installationTokenId) throw new DomainError("NOT_FOUND","Active installation token not found");
-    const install=one((await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())",[installationTokenId,input.agentId])).rows);
-    const exchange=opaqueToken(); await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,issued_by_actor_id) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)",[session.id,input.agentId,install.id,tokenHash(opaqueToken()),tokenHash(exchange),meta.actor.id]);
-    await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)",[session.id,meta.actor.id,input.initialPrompt]);
-    const eventId=await event(tx,meta,"agent.session.created","agent_session",String(session.id),1,{delegationId:delegation.id,workItemId},work.team_id,String(session.id),0); await queueWebhookDeliveries(tx,input.agentId,eventId,"agent.session.created",String(session.id),{sessionId:session.id,exchangeToken:exchange,initialPrompt:input.initialPrompt});
-    return {delegation,session:{...session,exchangeToken:exchange}};
-  });
+      await event(
+        tx,
+        meta,
+        "agent.delegation.created",
+        "delegation",
+        String(delegation.id),
+        Number(delegation.revision),
+        {
+          workItemId,
+          agentId: identity.connection_agent_id,
+          assignmentMode: "self_claim",
+        },
+        work.team_id,
+      );
+
+      const session = one((await tx.query<Record<string, unknown>>(
+        `INSERT INTO agent_sessions(
+           workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+           work_item_id,context_snapshot_id,budget
+         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)
+         RETURNING *`,
+        [
+          meta.actor.workspaceId,
+          work.team_id,
+          identity.connection_agent_id,
+          meta.actor.id,
+          delegation.id,
+          workItemId,
+          contextSnapshotId,
+          input.budget ?? {},
+        ],
+      )).rows);
+      await tx.query(
+        `INSERT INTO work_room_channels(
+           workspace_id,subject_kind,subject_id,team_id
+         ) VALUES($1,'session',$2,$3)
+         ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING`,
+        [meta.actor.workspaceId, session.id, work.team_id],
+      );
+
+      const exchangeToken = opaqueToken();
+      await tx.query(
+        `INSERT INTO agent_session_tokens(
+           session_id,agent_id,installation_token_id,token_hash,
+           exchange_nonce_hash,expires_at,issued_by_actor_id
+         ) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',$6)`,
+        [
+          session.id,
+          identity.connection_agent_id,
+          installationTokenId,
+          tokenHash(opaqueToken()),
+          tokenHash(exchangeToken),
+          meta.actor.id,
+        ],
+      );
+      await tx.query(
+        `INSERT INTO agent_session_prompts(
+           session_id,author_actor_id,body_markdown
+         ) VALUES($1,$2,$3)`,
+        [session.id, meta.actor.id, initialPrompt],
+      );
+      const sessionEventId = await event(
+        tx,
+        meta,
+        "agent.session.created",
+        "agent_session",
+        String(session.id),
+        1,
+        {
+          delegationId: delegation.id,
+          workItemId,
+          assignmentMode: "self_claim",
+        },
+        work.team_id,
+        String(session.id),
+        0,
+      );
+      await queueWebhookDeliveries(
+        tx,
+        identity.connection_agent_id,
+        sessionEventId,
+        "agent.session.created",
+        String(session.id),
+        { sessionId: session.id, initialPrompt },
+      );
+      return {
+        delegation,
+        session: normalizeAgentSessionResponse(session),
+        exchangeToken,
+      };
+    },
+  );
 }
 
 export async function resolveInstallationSessionSubject(
@@ -714,9 +1793,45 @@ export async function resolveInstallationSessionSubject(
          FROM agent_sessions s
          JOIN agent_definitions d ON d.id=s.agent_id
          JOIN agent_installation_tokens t ON t.agent_id=d.id
+         JOIN delegations execution_delegation ON execution_delegation.id=s.delegation_id
+         LEFT JOIN agent_connection_credentials credential
+           ON credential.token_hash=t.token_hash
+         LEFT JOIN agent_connections connection
+           ON connection.id=credential.connection_id
+         LEFT JOIN delegations connection_authority
+           ON connection_authority.id=connection.delegation_id
         WHERE s.id=$1 AND t.token_hash=$2 AND t.revoked_at IS NULL
-          AND (t.expires_at IS NULL OR t.expires_at>now())
+          AND (t.expires_at IS NULL OR t.expires_at>clock_timestamp())
           AND d.is_active
+          AND (
+            credential.id IS NULL
+            OR (
+              credential.status='active'
+              OR (
+                credential.status='overlap'
+                AND credential.overlap_until IS NOT NULL
+                AND credential.overlap_until>clock_timestamp()
+              )
+            )
+          )
+          AND (
+            credential.id IS NULL
+            OR (
+              connection.status IN ('active','rotating')
+              AND connection.agent_id=s.agent_id
+              AND connection.agent_actor_id=s.agent_actor_id
+              AND connection.team_id=s.team_id
+              AND connection.principal_human_actor_id=execution_delegation.principal_human_actor_id
+              AND connection_authority.status='active'
+              AND connection_authority.role='coordinator'
+              AND connection_authority.scope_type='team'
+              AND connection_authority.scope_id=connection.team_id
+              AND connection_authority.agent_id=connection.agent_id
+              AND connection_authority.agent_actor_id=connection.agent_actor_id
+              AND connection_authority.team_id=connection.team_id
+              AND connection_authority.principal_human_actor_id=connection.principal_human_actor_id
+            )
+          )
           ${exchangePredicate}
         LIMIT 1`,
       values,
@@ -740,6 +1855,41 @@ type CredentialAuthorityLocator = {
   installation_token_id: string | null
 }
 
+type ConnectionCredentialAuthority = {
+  connection_id: string
+  credential_id: string
+  connection_status: string
+  connection_team_id: string
+  connection_agent_id: string
+  connection_agent_actor_id: string
+  connection_principal_human_actor_id: string
+  connection_delegation_id: string
+  credential_status: string
+  credential_overlap_until: Date | null
+}
+
+async function locateConnectionCredentialAuthority(
+  tx: Pick<PoolClient, 'query'> | Pool,
+  installationHash: string,
+): Promise<ConnectionCredentialAuthority | undefined> {
+  return (await tx.query<ConnectionCredentialAuthority>(
+    `SELECT connection.id AS connection_id,
+            credential.id AS credential_id,
+            connection.status AS connection_status,
+            connection.team_id AS connection_team_id,
+            connection.agent_id AS connection_agent_id,
+            connection.agent_actor_id AS connection_agent_actor_id,
+            connection.principal_human_actor_id AS connection_principal_human_actor_id,
+            connection.delegation_id AS connection_delegation_id,
+            credential.status AS credential_status,
+            credential.overlap_until AS credential_overlap_until
+       FROM agent_connection_credentials credential
+       JOIN agent_connections connection ON connection.id=credential.connection_id
+      WHERE credential.token_hash=$1`,
+    [installationHash],
+  )).rows[0]
+}
+
 async function lockCredentialAuthority(
   tx: PoolClient,
   input: {
@@ -749,6 +1899,42 @@ async function lockCredentialAuthority(
     sessionTokenIds: string[]
   },
 ): Promise<CredentialAuthorityLocator> {
+  const locatedConnection = await locateConnectionCredentialAuthority(
+    tx,
+    input.installationHash,
+  )
+  if (locatedConnection) await lockExecutionInstallationAuthorities(tx, [{
+    connection_id: locatedConnection.connection_id,
+    credential_id: locatedConnection.credential_id,
+  }])
+  const connection = await locateConnectionCredentialAuthority(
+    tx,
+    input.installationHash,
+  )
+  if (
+    Boolean(connection) !== Boolean(locatedConnection)
+    || (
+      connection
+      && locatedConnection
+      && (
+        connection.connection_id !== locatedConnection.connection_id
+        || connection.credential_id !== locatedConnection.credential_id
+      )
+    )
+  ) throw new DomainError(
+    'UNAUTHENTICATED',
+    'Installation credential binding changed while authority was acquired',
+  )
+  if (connection) {
+    const credentialActive = connection.credential_status === 'active'
+      || (
+        connection.credential_status === 'overlap'
+        && connection.credential_overlap_until !== null
+        && connection.credential_overlap_until.getTime() > Date.now()
+      )
+    if (!credentialActive || !['active', 'rotating'].includes(connection.connection_status))
+      throw new DomainError('UNAUTHENTICATED', 'Active installation credential is required')
+  }
   const locator = one((await tx.query<CredentialAuthorityLocator>(
     `SELECT session.agent_id,session.delegation_id,session.team_id,
             session.work_item_id,session.project_id,
@@ -767,14 +1953,28 @@ async function lockCredentialAuthority(
     'SELECT workspace_id FROM agent_sessions WHERE id=$1',
     [input.sessionId],
   )).rows).workspace_id
-  await lockAgentAuthorityPlan(tx, {
-    definitionIds: [locator.agent_id],
-    teamGrants: [{
+  const authorityDefinitions = [...new Set([
+    locator.agent_id,
+    ...(connection ? [connection.connection_agent_id] : []),
+  ])]
+  const authorityTeamGrants = [
+    { workspaceId, agentId: locator.agent_id, teamId: locator.team_id },
+    ...(connection ? [{
       workspaceId,
-      agentId: locator.agent_id,
-      teamId: locator.team_id,
-    }],
-    delegationIds: [locator.delegation_id],
+      agentId: connection.connection_agent_id,
+      teamId: connection.connection_team_id,
+    }] : []),
+  ].filter((candidate, index, rows) => rows.findIndex(row =>
+    row.workspaceId === candidate.workspaceId
+    && row.agentId === candidate.agentId
+    && row.teamId === candidate.teamId) === index)
+  await lockAgentAuthorityPlan(tx, {
+    definitionIds: authorityDefinitions,
+    teamGrants: authorityTeamGrants,
+    delegationIds: [...new Set([
+      locator.delegation_id,
+      ...(connection ? [connection.connection_delegation_id] : []),
+    ])],
     sessionIds: [input.sessionId],
     sessionTokenIds: input.sessionTokenIds,
     installationTokenIds: locator.installation_token_id
@@ -788,13 +1988,17 @@ async function lockCredentialAuthority(
   })
   const live = (await tx.query<{
     agent_id: string
+    agent_actor_id: string
     delegation_id: string
+    principal_human_actor_id: string
     team_id: string
     work_item_id: string | null
     project_id: string | null
     work_item_project_id: string | null
   }>(
-    `SELECT session.agent_id,session.delegation_id,session.team_id,
+    `SELECT session.agent_id,session.agent_actor_id,session.delegation_id,
+            delegation.principal_human_actor_id,
+            session.team_id,
             session.work_item_id,session.project_id,item.project_id AS work_item_project_id
        FROM agent_sessions session
        JOIN agent_definitions definition
@@ -836,6 +2040,58 @@ async function lockCredentialAuthority(
     || live.project_id !== locator.project_id
     || live.work_item_project_id !== locator.work_item_project_id
   ) throw new DomainError("DELEGATION_NOT_ACTIVE", "Agent credential authority is no longer active")
+  if (connection) {
+    const connectionAuthority = one((await tx.query<{
+      status: string
+      role: string
+      scope_type: string
+      scope_id: string
+      team_id: string
+      agent_id: string
+      agent_actor_id: string
+      principal_human_actor_id: string
+    }>(
+      `SELECT status,role,scope_type,scope_id,team_id,agent_id,
+              agent_actor_id,principal_human_actor_id
+         FROM delegations WHERE id=$1`,
+      [connection.connection_delegation_id],
+    )).rows)
+    if (
+      connection.connection_agent_id !== live.agent_id
+      || connection.connection_agent_actor_id !== live.agent_actor_id
+      || connection.connection_team_id !== live.team_id
+      || connection.connection_principal_human_actor_id !== live.principal_human_actor_id
+      || connectionAuthority.status !== 'active'
+      || connectionAuthority.role !== 'coordinator'
+      || connectionAuthority.scope_type !== 'team'
+      || connectionAuthority.scope_id !== connection.connection_team_id
+      || connectionAuthority.team_id !== connection.connection_team_id
+      || connectionAuthority.agent_id !== connection.connection_agent_id
+      || connectionAuthority.agent_actor_id !== connection.connection_agent_actor_id
+      || connectionAuthority.principal_human_actor_id !== connection.connection_principal_human_actor_id
+    ) throw new DomainError('UNAUTHENTICATED', 'Installation credential does not match the exact Session authority')
+
+    const finalConnection = await locateConnectionCredentialAuthority(
+      tx,
+      input.installationHash,
+    )
+    const finalCredentialActive = finalConnection?.credential_status === 'active'
+      || (
+        finalConnection?.credential_status === 'overlap'
+        && finalConnection.credential_overlap_until !== null
+        && finalConnection.credential_overlap_until.getTime() > Date.now()
+      )
+    if (
+      !finalConnection
+      || finalConnection.connection_id !== connection.connection_id
+      || finalConnection.credential_id !== connection.credential_id
+      || !['active', 'rotating'].includes(finalConnection.connection_status)
+      || !finalCredentialActive
+    ) throw new DomainError(
+      'UNAUTHENTICATED',
+      'Installation credential expired while Session authority was acquired',
+    )
+  }
   return locator
 }
 
@@ -871,10 +2127,10 @@ export async function exchangeAgentToken(
       installationHash: tokenHash(input.installationBearer),
       sessionTokenIds: [tokenId],
     });
-    const token = one((await tx.query<{ id: string; installation_token_id: string; expires_at: Date }>("SELECT t.id,t.installation_token_id,t.expires_at FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id WHERE t.id=$1 AND t.session_id=$2 AND t.exchange_nonce_hash=$3 AND t.expires_at>now() AND t.exchanged_at IS NULL AND t.revoked_at IS NULL AND s.state NOT IN ('completed','failed','canceled')", [tokenId, input.sessionId, tokenHash(input.nonce)])).rows);
+    const token = one((await tx.query<{ id: string; installation_token_id: string; expires_at: Date }>("SELECT t.id,t.installation_token_id,t.expires_at FROM agent_session_tokens t JOIN agent_sessions s ON s.id=t.session_id WHERE t.id=$1 AND t.session_id=$2 AND t.exchange_nonce_hash=$3 AND t.expires_at>clock_timestamp() AND t.exchanged_at IS NULL AND t.revoked_at IS NULL AND s.state NOT IN ('completed','failed','canceled')", [tokenId, input.sessionId, tokenHash(input.nonce)])).rows);
     if (token.installation_token_id !== locator.installation_token_id)
       throw new DomainError("UNAUTHENTICATED", "Installation credential binding changed");
-    const installation = await tx.query("SELECT 1 FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND token_hash=$3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())", [token.installation_token_id, locator.agent_id, tokenHash(input.installationBearer)]);
+    const installation = await tx.query("SELECT 1 FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND token_hash=$3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>clock_timestamp())", [token.installation_token_id, locator.agent_id, tokenHash(input.installationBearer)]);
     if (!installation.rowCount) throw new DomainError("UNAUTHENTICATED", "Active installation credential is required");
     const bearer = opaqueToken();
     await tx.query("UPDATE agent_session_tokens SET token_hash=$2,exchanged_at=now() WHERE id=$1", [token.id, tokenHash(bearer)]);
@@ -907,7 +2163,24 @@ export async function refreshAgentToken(
     clientContext: input.clientContext,
   }, async tx => {
     const sessionTokenIds = (await tx.query<{ id: string }>(
-      'SELECT id FROM agent_session_tokens WHERE session_id=$1',
+      `WITH ranked_live AS (
+         SELECT id,row_number() OVER(ORDER BY created_at DESC,id DESC) AS live_rank
+           FROM agent_session_tokens
+          WHERE session_id=$1 AND revoked_at IS NULL
+            AND expires_at>clock_timestamp()
+       ), cleanup AS (
+         SELECT token.id,token.created_at
+           FROM agent_session_tokens token
+           LEFT JOIN ranked_live live ON live.id=token.id
+          WHERE token.session_id=$1
+            AND (
+              token.revoked_at IS NOT NULL
+              OR token.expires_at<=clock_timestamp()
+              OR live.live_rank>=64
+            )
+          ORDER BY token.created_at,token.id
+          LIMIT 256
+       ) SELECT id FROM cleanup ORDER BY id`,
       [input.sessionId],
     )).rows.map(row => row.id);
     const locator = await lockCredentialAuthority(tx, {
@@ -919,8 +2192,23 @@ export async function refreshAgentToken(
     if (["stopping", "completed", "failed", "canceled"].includes(session.state)) throw new DomainError("SESSION_STOPPED", "Stopped session cannot refresh its token");
     if (!locator.installation_token_id)
       throw new DomainError("UNAUTHENTICATED", "Active installation credential is required");
-    const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND token_hash=$3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())", [locator.installation_token_id, session.agent_id, tokenHash(input.installationBearer)])).rows);
-    await tx.query("UPDATE agent_session_tokens SET revoked_at=now() WHERE session_id=$1 AND revoked_at IS NULL", [input.sessionId]);
+    const installation = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND token_hash=$3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>clock_timestamp())", [locator.installation_token_id, session.agent_id, tokenHash(input.installationBearer)])).rows);
+    if (sessionTokenIds.length) await tx.query(
+      `DELETE FROM agent_session_tokens
+        WHERE session_id=$1 AND id=ANY($2::uuid[])
+          AND (
+            revoked_at IS NOT NULL
+            OR expires_at<=clock_timestamp()
+            OR id NOT IN (
+              SELECT id FROM agent_session_tokens
+               WHERE session_id=$1 AND revoked_at IS NULL
+                 AND expires_at>clock_timestamp()
+               ORDER BY created_at DESC,id DESC
+               LIMIT 63
+            )
+          )`,
+      [input.sessionId, sessionTokenIds],
+    );
     const raw = opaqueToken(); await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at,exchanged_at) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes',now())", [input.sessionId, session.agent_id, installation.id, tokenHash(raw), tokenHash(opaqueToken())]);
     return { status: 200, body: { sessionToken: raw, expiresAt: new Date(Date.now() + 900_000).toISOString() } };
   });
@@ -933,14 +2221,32 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     assertSafeText(input.reason, "retry reason"); assertSafeText(input.initialPrompt, "retry prompt");
     const locator=one((await tx.query<{
       agent_id:string;delegation_id:string;team_id:string;work_item_id:string|null
-      project_id:string|null;work_item_project_id:string|null
-    }>("SELECT s.agent_id,s.delegation_id,s.team_id,s.work_item_id,s.project_id,w.project_id AS work_item_project_id FROM agent_sessions s LEFT JOIN work_items w ON w.id=s.work_item_id WHERE s.id=$1 AND s.workspace_id=$2",[sourceId,meta.actor.workspaceId])).rows);
-    const relatedSessionIds=(await tx.query<{id:string}>("SELECT id FROM agent_sessions WHERE retry_of_session_id=$1 OR (delegation_id=$2 AND state NOT IN ('completed','failed','canceled'))",[sourceId,locator.delegation_id])).rows.map(row=>row.id);
-    const installationTokenId=(await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 ORDER BY created_at DESC,id LIMIT 1",[locator.agent_id])).rows[0]?.id;
+      project_id:string|null;work_item_project_id:string|null;principal_human_actor_id:string
+    }>(`SELECT s.agent_id,s.delegation_id,s.team_id,s.work_item_id,s.project_id,
+               w.project_id AS work_item_project_id,
+               delegation.principal_human_actor_id
+          FROM agent_sessions s
+          JOIN delegations delegation ON delegation.id=s.delegation_id
+          LEFT JOIN work_items w ON w.id=s.work_item_id
+         WHERE s.id=$1 AND s.workspace_id=$2`,[sourceId,meta.actor.workspaceId])).rows);
+    const relatedSessionIds=(await tx.query<{id:string}>(`SELECT id FROM agent_sessions session WHERE session.retry_of_session_id=$1 OR (session.delegation_id=$2 AND ${agentExecutionCapacitySqlPredicate('session')})`,[sourceId,locator.delegation_id])).rows.map(row=>row.id);
+    const installationAuthority=await locateExecutionInstallationAuthority(tx,{
+      agentId:locator.agent_id,
+      teamId:locator.team_id,
+      principalHumanActorId:locator.principal_human_actor_id,
+    });
+    const installationTokenId=installationAuthority?.id;
+    await lockExecutionInstallationAuthorities(tx,
+      installationAuthority ? [installationAuthority] : [])
     await lockAgentAuthorityPlan(tx,{
       definitionIds:[locator.agent_id],
       teamGrants:[{workspaceId:meta.actor.workspaceId,agentId:locator.agent_id,teamId:locator.team_id}],
-      delegationIds:[locator.delegation_id],
+      delegationIds:[
+        locator.delegation_id,
+        ...(installationAuthority?.connection_delegation_id
+          ? [installationAuthority.connection_delegation_id]
+          : []),
+      ],
       sessionIds:[sourceId,...relatedSessionIds],
       installationTokenIds:installationTokenId?[installationTokenId]:[],
       workItemIds:locator.work_item_id?[locator.work_item_id]:[],
@@ -956,12 +2262,12 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     if (!source.agent_active || source.delegation_status!=="active" || !source.team_active) throw new DomainError("DELEGATION_NOT_ACTIVE","Retry requires an active agent delegation and team grant");
     if ((await tx.query("SELECT 1 FROM agent_sessions WHERE retry_of_session_id=$1",[sourceId])).rowCount) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED","A direct retry already exists for this source session");
     if (source.state === "stale") {
-      const competing = await tx.query("SELECT 1 FROM agent_sessions WHERE delegation_id=$1 AND id<>$2 AND state NOT IN ('completed','failed','canceled')", [source.delegation_id, sourceId]);
+      const competing = await tx.query(`SELECT 1 FROM agent_sessions session WHERE session.delegation_id=$1 AND session.id<>$2 AND ${agentExecutionCapacitySqlPredicate('session')}`, [source.delegation_id, sourceId]);
       if (competing.rowCount) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED", "A stale session cannot be retried while another session is active for its delegation");
       const canceled = one((await tx.query("UPDATE agent_sessions SET state='canceled',state_reason='retrying stale session',ended_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING revision,sequence", [sourceId])).rows);
       await event(tx, meta, "agent.session.state_changed", "agent_session", sourceId, Number((canceled as {revision:number}).revision), { state: "canceled", reason: "retrying stale session" }, source.team_id as string, sourceId, Number((canceled as {sequence:number}).sequence));
     }
-    const activeCount=await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[source.agent_id]); if((activeCount.rows[0]?.count??0)>=Number(source.max_concurrency)) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
+    await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:meta.actor.workspaceId,agentId:source.agent_id as string});
     const prompt = input.initialPrompt ?? `Retry: ${input.reason}`;
     let retryContextId=source.context_snapshot_id as string|null;
     if(!input.reuseContext) {
@@ -971,10 +2277,17 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
         workItemId:source.work_item_id as string|null,workItem:retryWork,actorId:meta.actor.id,
       })).id;
     }
+    if(!installationTokenId||!installationAuthority)
+      throw new DomainError("NOT_FOUND","Active installation token not found");
+    const install = await revalidateExecutionInstallationAuthority(tx,{
+      authority:installationAuthority,
+      agentId:locator.agent_id,
+      teamId:locator.team_id,
+      principalHumanActorId:locator.principal_human_actor_id,
+    });
     const row = one((await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,project_id,plan_step_id,context_snapshot_id,budget,retry_of_session_id,retry_reason,retry_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *", [source.workspace_id,source.team_id,source.agent_id,source.agent_actor_id,source.delegation_id,source.work_item_id,source.project_id,source.plan_step_id,retryContextId,source.budget,sourceId,input.reason,(source.retry_count as number)+1])).rows);
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING", [source.workspace_id as string, (row as { id: string }).id, source.team_id as string]);
-    if(!installationTokenId) throw new DomainError("NOT_FOUND","Active installation token not found");
-    const install = one((await tx.query<{ id: string }>("SELECT id FROM agent_installation_tokens WHERE id=$1 AND agent_id=$2 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())", [installationTokenId,source.agent_id])).rows); const exchange = opaqueToken();
+    const exchange = opaqueToken();
     await tx.query("INSERT INTO agent_session_tokens(session_id,agent_id,installation_token_id,token_hash,exchange_nonce_hash,expires_at) VALUES($1,$2,$3,$4,$5,now()+interval '15 minutes')", [(row as {id:string}).id,source.agent_id,install.id,tokenHash(opaqueToken()),tokenHash(exchange)]);
     await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)", [(row as {id:string}).id,meta.actor.id,prompt]);
     const eid = await event(tx,meta,"agent.session.created","agent_session",(row as {id:string}).id,1,{retryOf:sourceId},source.team_id as string,(row as {id:string}).id,0); await queueWebhookDeliveries(tx,source.agent_id as string,eid,"agent.session.created",(row as {id:string}).id,{sessionId:(row as {id:string}).id,exchangeToken:exchange,initialPrompt:prompt}); return row;

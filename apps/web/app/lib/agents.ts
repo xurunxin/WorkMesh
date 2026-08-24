@@ -48,42 +48,17 @@ export const approvedAgentCapabilitiesForTeam = (agent: Agent, teamId: string): 
   if (!teamAccess) return []
   return agent.approved_capabilities.filter(capability => teamAccess.approved_capabilities.includes(capability))
 }
-
-const idempotencyStoragePrefix = 'workmesh.idempotency.'
-const inFlightOperationKeys = new Map<string, string>()
-
-function operationIdempotencyKey(operation: string): string {
-  const cached = inFlightOperationKeys.get(operation) ?? sessionStorage.getItem(`${idempotencyStoragePrefix}${operation}`)
-  if (cached) {
-    inFlightOperationKeys.set(operation, cached)
-    return cached
-  }
-  const created = crypto.randomUUID()
-  inFlightOperationKeys.set(operation, created)
-  sessionStorage.setItem(`${idempotencyStoragePrefix}${operation}`, created)
-  return created
+export const canAgentExecuteWorkForTeam = (agent: Agent, teamId: string): boolean => {
+  const capabilities = approvedAgentCapabilitiesForTeam(agent, teamId)
+  return capabilities.includes('work:read') && capabilities.includes('work:write')
 }
 
-function clearOperationIdempotencyKey(operation: string): void {
-  inFlightOperationKeys.delete(operation)
-  sessionStorage.removeItem(`${idempotencyStoragePrefix}${operation}`)
-}
-
-function preservesOperationIdempotencyKey(reason: unknown): boolean {
-  return !(reason instanceof ApiError) || reason.status === 408 || reason.status === 425 || reason.status === 429 || reason.status >= 500
-}
-
-async function idempotentAgentMutation<T>(operation: string, request: (idempotencyKey: string) => Promise<T>): Promise<T> {
-  const idempotencyKey = operationIdempotencyKey(operation)
-  try {
-    const result = await request(idempotencyKey)
-    clearOperationIdempotencyKey(operation)
-    return result
-  } catch (reason) {
-    if (!preservesOperationIdempotencyKey(reason)) clearOperationIdempotencyKey(operation)
-    throw reason
-  }
-}
+export type AgentDelegationScope = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string; scopeKey?: string | null }
+// A server revision update is a refresh of the same Issue, not a new
+// delegation scope. Keep the revision available to createAgentSession for its
+// If-Match header, but do not use it to invalidate an in-flight projection.
+export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.scopeKey ?? null, scope.workItemId, scope.workItemTeamId, scope.humanActorId])
+export const isCurrentAgentDelegationScope = (currentKey: string, capturedKey: string): boolean => currentKey === capturedKey
 
 export const normalizePlan = (value: Record<string, unknown>): PlanVersion => ({
   id: String(value.id), revision: Number(value.revision), parent_version_id: value.parent_version_id as string | null, change_summary: String(value.change_summary ?? ''), created_at: String(value.created_at),
@@ -140,31 +115,28 @@ export async function revokeAgentConnection(connection: AgentConnection): Promis
 export async function rotateAgentConnection(connection: AgentConnection): Promise<{ connection: AgentConnection; connect_url: string; pairing_code_expires_at: string; overlap_until: string }> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
 export async function confirmAgentConnectionRotation(connection: AgentConnection): Promise<AgentConnection> { return apiRequest(`/api/v1/agent-connections/${connection.id}/rotate-confirm`, { method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${connection.revision}"` }, body: '{}' }) }
 
-export async function delegateAndStart(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
+/** Create the delegation and its first execution session in one atomic API call. */
+export async function createAgentSession(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
   const approvedCapabilities = approvedAgentCapabilitiesForTeam(input.agent, input.workItemTeamId)
-  if (approvedCapabilities.length === 0) throw new Error('This agent has no capabilities approved for the work item team.')
-  const result = await idempotentAgentMutation(`delegate-start:${input.workItemId}`, idempotencyKey => {
-    return apiRequest<{ delegation: Delegation; session: AgentSession }>(`/api/v1/work-items/${input.workItemId}/agent-session`, {
-      method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${input.workItemRevision}"`, 'Idempotency-Key': idempotencyKey },
-      body: JSON.stringify({
-        agentId: input.agent.id,
-        principalHumanActorId: input.humanActorId,
-        role: 'executor',
-        requestedCapabilities: approvedCapabilities,
-        initialPrompt: input.prompt,
-        budget: input.budget,
-      }),
-    })
+  if (!canAgentExecuteWorkForTeam(input.agent, input.workItemTeamId)) throw new Error('This agent requires work:read and work:write approved for the work item team.')
+  const result = await apiMutation<{ delegation: Delegation; session: AgentSession }>(`agent-session:${input.workItemId}`, `/api/v1/work-items/${input.workItemId}/agent-session`, {
+    method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${input.workItemRevision}"` },
+    body: JSON.stringify({
+      agentId: input.agent.id,
+      principalHumanActorId: input.humanActorId,
+      role: 'executor',
+      requestedCapabilities: approvedCapabilities,
+      initialPrompt: input.prompt,
+      budget: input.budget,
+    }),
   })
   return result.session
 }
 
 export async function retryAgentSession(session: AgentSession): Promise<AgentSession> {
-  return idempotentAgentMutation(`retry:${session.id}`, idempotencyKey => {
-    return apiRequest<AgentSession>(`/api/v1/agent-sessions/${session.id}/retry`, {
-      method: 'POST',
-      headers: { ...json({}), 'If-Match': `"revision-${session.revision}"`, 'Idempotency-Key': idempotencyKey },
-      body: JSON.stringify({ reason: 'Human requested a retry from WorkMesh.', reuseContext: true }),
-    })
+  return apiMutation<AgentSession>(`retry:${session.id}`, `/api/v1/agent-sessions/${session.id}/retry`, {
+    method: 'POST',
+    headers: { ...json({}), 'If-Match': `"revision-${session.revision}"` },
+    body: JSON.stringify({ reason: 'Human requested a retry from WorkMesh.', reuseContext: true }),
   })
 }
