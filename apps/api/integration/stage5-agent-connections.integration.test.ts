@@ -894,6 +894,220 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     await expectForcedWinner(rollback.id)
   }, 120_000)
 
+  it('rolls back every self-claim write boundary and allows a clean retry', async () => {
+    const connection = await pairConnection(`claim-boundary-${randomUUID().slice(0, 8)}`)
+    const agentId = (await db.query<{ agent_id: string }>(
+      'SELECT agent_id FROM agent_connections WHERE id=$1',
+      [connection.connection.id],
+    )).rows[0]!.agent_id
+    await db.query('UPDATE agent_definitions SET max_concurrency=16 WHERE id=$1', [agentId])
+
+    const createItem = async (boundary: string) => {
+      const response = await human('POST', '/api/v1/work-items', {
+        teamId,
+        title: `Self-claim ${boundary} rollback ${randomUUID()}`,
+        description: 'Failure injection fixture for atomic self-claim recovery.',
+        statusId: readyId,
+        priority: 'high',
+        labels: [],
+        responsibleHumanActorId: actorId,
+      })
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<{ id: string; revision: number }>()
+    }
+
+    const rollbackBoundaries = [
+      { name: 'delegation', table: 'delegations' },
+      { name: 'session', table: 'agent_sessions' },
+      { name: 'session_credential', table: 'agent_session_tokens' },
+      { name: 'prompt', table: 'agent_session_prompts' },
+      { name: 'event', table: 'domain_events' },
+      { name: 'outbox', table: 'outbox_events' },
+    ] as const
+
+    for (const boundary of rollbackBoundaries) {
+      const item = await createItem(boundary.name)
+      const triggerName = `stage5_claim_boundary_failure_${boundary.name}`
+      const functionName = `${triggerName}_fn`
+      await db.query(`DROP TRIGGER IF EXISTS ${triggerName} ON ${boundary.table}`)
+      await db.query(`DROP FUNCTION IF EXISTS ${functionName}()`)
+
+      switch (boundary.name) {
+        case 'delegation':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.work_item_id='${item.id}'::uuid AND NEW.agent_id='${agentId}'::uuid THEN
+                RAISE EXCEPTION 'stage5 self-claim delegation boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'session':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.work_item_id='${item.id}'::uuid AND NEW.agent_id='${agentId}'::uuid THEN
+                RAISE EXCEPTION 'stage5 self-claim session boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'session_credential':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.agent_id='${agentId}'::uuid AND EXISTS(
+                SELECT 1 FROM agent_sessions session
+                 WHERE session.id=NEW.session_id
+                   AND session.work_item_id='${item.id}'::uuid
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim session credential boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'prompt':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF EXISTS(
+                SELECT 1 FROM agent_sessions session
+                 WHERE session.id=NEW.session_id
+                   AND session.work_item_id='${item.id}'::uuid
+                   AND session.agent_id='${agentId}'::uuid
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim prompt boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'event':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.event_type='agent.session.created'
+                 AND NEW.payload->>'workItemId'='${item.id}' THEN
+                RAISE EXCEPTION 'stage5 self-claim event boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+        case 'outbox':
+          await db.query(`CREATE FUNCTION ${functionName}() RETURNS trigger
+            LANGUAGE plpgsql AS $$
+            BEGIN
+              IF NEW.topic='agent.session.created' AND EXISTS(
+                SELECT 1 FROM domain_events event
+                 WHERE event.id=NEW.domain_event_id
+                   AND event.payload->>'workItemId'='${item.id}'
+              ) THEN
+                RAISE EXCEPTION 'stage5 self-claim outbox boundary failure';
+              END IF;
+              RETURN NEW;
+            END
+            $$`)
+          break
+      }
+      await db.query(`CREATE TRIGGER ${triggerName}
+        BEFORE INSERT ON ${boundary.table}
+        FOR EACH ROW EXECUTE FUNCTION ${functionName}()`)
+
+      const cursorBefore = (await db.query<{ cursor: string }>(
+        'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+      )).rows[0]!.cursor
+      try {
+        const failed = await coordinator(
+          connection.token,
+          'POST',
+          `/api/v1/work-items/${item.id}/claim`,
+          {},
+          item.revision,
+        )
+        expect(failed.statusCode, failed.body).toBe(500)
+      } finally {
+        await db.query(`DROP TRIGGER IF EXISTS ${triggerName} ON ${boundary.table}`)
+        await db.query(`DROP FUNCTION IF EXISTS ${functionName}()`)
+      }
+
+      const residue = (await db.query<{
+        delegations: number
+        sessions: number
+        session_credentials: number
+        prompts: number
+        context_snapshots: number
+        channels: number
+        events: number
+        outbox: number
+        webhook_deliveries: number
+      }>(
+        `SELECT
+           (SELECT count(*)::int FROM delegations
+             WHERE work_item_id=$1 AND agent_id=$2 AND role='executor') AS delegations,
+           (SELECT count(*)::int FROM agent_sessions
+             WHERE work_item_id=$1 AND agent_id=$2 AND session_kind='execution') AS sessions,
+           (SELECT count(*)::int FROM agent_session_tokens token
+             JOIN agent_sessions session ON session.id=token.session_id
+            WHERE session.work_item_id=$1 AND session.agent_id=$2) AS session_credentials,
+           (SELECT count(*)::int FROM agent_session_prompts prompt
+             JOIN agent_sessions session ON session.id=prompt.session_id
+            WHERE session.work_item_id=$1 AND session.agent_id=$2) AS prompts,
+           (SELECT count(*)::int FROM context_snapshots
+             WHERE work_item_id=$1 AND created_by_actor_id=$4) AS context_snapshots,
+           (SELECT count(*)::int FROM work_room_channels channel
+             JOIN agent_sessions session ON session.id=channel.session_id
+            WHERE channel.subject_kind='session'
+              AND session.work_item_id=$1 AND session.agent_id=$2) AS channels,
+           (SELECT count(*)::int FROM domain_events event
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS events,
+           (SELECT count(*)::int FROM outbox_events outbox
+             JOIN domain_events event ON event.id=outbox.domain_event_id
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS outbox,
+           (SELECT count(*)::int FROM agent_webhook_deliveries delivery
+             JOIN domain_events event ON event.id=delivery.event_id
+            WHERE event.cursor>$3::bigint AND event.payload->>'workItemId'=$1::text) AS webhook_deliveries`,
+        [item.id, agentId, cursorBefore, actorId],
+      )).rows[0]
+      expect(residue).toEqual({
+        delegations: 0,
+        sessions: 0,
+        session_credentials: 0,
+        prompts: 0,
+        context_snapshots: 0,
+        channels: 0,
+        events: 0,
+        outbox: 0,
+        webhook_deliveries: 0,
+      })
+
+      const retry = await coordinator(
+        connection.token,
+        'POST',
+        `/api/v1/work-items/${item.id}/claim`,
+        {},
+        item.revision,
+      )
+      expect(retry.statusCode, retry.body).toBe(200)
+      const assignment = (await db.query<{ delegation_id: string; session_id: string }>(
+        `SELECT delegation.id AS delegation_id,session.id AS session_id
+           FROM delegations delegation
+           JOIN agent_sessions session ON session.delegation_id=delegation.id
+          WHERE delegation.work_item_id=$1
+            AND delegation.agent_id=$2
+            AND delegation.status='active'
+            AND session.session_kind='execution'
+            AND session.state NOT IN ('completed','failed','canceled')`,
+        [item.id, agentId],
+      )).rows
+      expect(assignment).toHaveLength(1)
+    }
+  }, 120_000)
+
   it('imports a prepared Project once and reconstructs the full mapping after API and MCP restart', async () => {
     const unique = randomUUID().replaceAll('-', '').slice(0, 10)
     const agentSlug = `import-coordinator-${unique}`
