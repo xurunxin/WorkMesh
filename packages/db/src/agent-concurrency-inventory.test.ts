@@ -14,7 +14,10 @@ describe('Agent execution-capacity admission inventory', () => {
       source('apps/api/src/operations/routes.ts'),
       source('packages/db/src/stage4.ts'),
     ])
-    expect(occurrences(commands, /assertAgentExecutionCapacityAfterLock\(/g)).toBe(4)
+    // The retired public two-step Session creator no longer contributes a
+    // fourth admission site. The remaining three are forced assignment,
+    // autonomous claim, and retry, each behind the shared locked predicate.
+    expect(occurrences(commands, /assertAgentExecutionCapacityAfterLock\(/g)).toBe(3)
     expect(occurrences(collaboration, /assertAgentExecutionCapacityAfterLock\(/g)).toBe(3)
     expect(occurrences(operations, /assertAgentExecutionCapacityAfterLock\(/g)).toBe(1)
     expect(occurrences(stage4, /assertAgentExecutionCapacityAfterLock\(/g)).toBe(2)
