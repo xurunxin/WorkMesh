@@ -75,6 +75,36 @@ describe('WorkMeshClient', () => {
     })
   })
 
+  it('reads the exact Agent Connection identity with the coordination credential header', async () => {
+    const identity = {
+      connection: { id: 'connection-id' },
+      authenticated_credential: {
+        fingerprint_prefix: '0123456789ab',
+        status: 'active',
+        overlap_until: null,
+      },
+    }
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(identity), { status: 200 }),
+    )
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'wmi_exact-credential',
+      fetch,
+    })
+
+    await expect(client.getCurrentAgentConnectionIdentity()).resolves.toEqual(identity)
+    expect(fetch).toHaveBeenCalledWith(
+      'https://workmesh.test/api/v1/agent-connections/current-identity',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          'x-workmesh-installation-token': 'wmi_exact-credential',
+        }),
+      }),
+    )
+  })
+
   it('lists exact decimal event cursors above 2^53', async () => {
     const fetch = vi.fn().mockResolvedValue(
       new Response(JSON.stringify([realtimeEvent]), { status: 200 }),

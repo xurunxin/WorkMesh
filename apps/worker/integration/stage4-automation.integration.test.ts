@@ -51,6 +51,28 @@ const meta = (suffix: string) => ({
   correlationId: `stage4:${suffix}:${randomUUID()}`,
 })
 
+type AgentAdmissionPersistenceCounts = {
+  delegation_count: number
+  session_count: number
+  agent_event_count: number
+  agent_outbox_count: number
+}
+
+async function agentAdmissionPersistenceCounts(agentId: string): Promise<AgentAdmissionPersistenceCounts> {
+  return (await db.query<AgentAdmissionPersistenceCounts>(
+    `SELECT
+       (SELECT count(*)::int FROM delegations WHERE workspace_id=$1 AND agent_id=$2) AS delegation_count,
+       (SELECT count(*)::int FROM agent_sessions WHERE workspace_id=$1 AND agent_id=$2) AS session_count,
+       (SELECT count(*)::int FROM domain_events
+         WHERE workspace_id=$1 AND event_type IN ('agent.delegation.created','agent.session.created')) AS agent_event_count,
+       (SELECT count(*)::int FROM outbox_events outbox
+         JOIN domain_events event ON event.id=outbox.domain_event_id
+        WHERE event.workspace_id=$1
+          AND event.event_type IN ('agent.delegation.created','agent.session.created')) AS agent_outbox_count`,
+    [fixture.workspaceId, agentId],
+  )).rows[0]!
+}
+
 async function createRule(
   name: string,
   action: { type: string; parameters: Record<string, unknown> }
@@ -129,8 +151,9 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     const capabilities = ['work:read', 'work:write']
     const agent = (await db.query<{ id: string }>(
       `INSERT INTO agent_definitions(
-        workspace_id,actor_id,slug,display_name,supported_protocols,requested_capabilities,approved_capabilities
-      ) VALUES($1,$2,$3,'Stage 4 Agent',ARRAY['native_http']::agent_protocol[],$4,$4) RETURNING id`,
+        workspace_id,actor_id,slug,display_name,supported_protocols,requested_capabilities,
+        approved_capabilities,max_concurrency
+      ) VALUES($1,$2,$3,'Stage 4 Agent',ARRAY['native_http']::agent_protocol[],$4,$4,100) RETURNING id`,
       [installed.workspaceId, agentActor.id, `stage4-${randomUUID()}`, capabilities],
     )).rows[0]!
     await db.query(
@@ -231,6 +254,97 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
       [fixture.workspaceId, blockedTitle],
     )).rowCount).toBe(0)
     await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
+  })
+
+  it('retries Automation Session admission after execution capacity becomes available', async () => {
+    await db.query('UPDATE agent_definitions SET max_concurrency=1 WHERE id=$1', [fixture.agentId])
+    let createdSessionId: string | undefined
+    try {
+      const blockerLoopId = await createLoop('automation-capacity-blocker', { noOverlap: false })
+      const blocker = await withTx(db, tx => admitLoopRun(tx, {
+        meta: meta('automation-capacity-blocker'),
+        loopId: blockerLoopId,
+        occurrenceKey: `schedule:${randomUUID()}`,
+        scheduledFor: new Date(),
+        authorization: { kind: 'trusted_worker' },
+      }))
+      if (!blocker.sessionId) throw new Error('Expected blocker Session')
+
+      const ruleId = await createRule('capacity-retry', {
+        type: 'start_session',
+        parameters: {
+          workItemId: fixture.workItemId,
+          agentId: fixture.agentId,
+          capabilities: ['work:read', 'work:write'],
+          budget: {},
+        },
+      })
+      const admitted = await withTx(db, tx => admitAutomationOccurrence(tx, {
+        meta: meta('capacity-retry'),
+        ruleId,
+        occurrenceKey: `event:${randomUUID()}`,
+        eventId: randomUUID(),
+        payload: {},
+        dryRun: false,
+        authorization: { kind: 'trusted_worker' },
+      }))
+      const worker = createAutomationWorker({ db, workerId: `capacity-retry-${randomUUID()}` })
+      const first = (await worker.claimEffects()).find(effect => effect.runId === admitted.id)
+      expect(first).toBeDefined()
+      const persistenceBeforeCapacityFailure = await agentAdmissionPersistenceCounts(fixture.agentId)
+      await worker.executeEffect(first!)
+      expect((await db.query<{
+        status: string
+        attempt_count: number
+        last_error: string
+      }>(
+        'SELECT status,attempt_count,last_error FROM automation_effects WHERE id=$1',
+        [first!.id],
+      )).rows[0]).toMatchObject({
+        status: 'pending',
+        attempt_count: 1,
+        last_error: expect.stringContaining('Agent execution concurrency limit reached'),
+      })
+      expect((await db.query(
+        `SELECT 1 FROM agent_sessions
+          WHERE agent_id=$1 AND work_item_id=$2
+            AND session_kind='execution'
+            AND state NOT IN ('completed','failed','canceled')`,
+        [fixture.agentId, fixture.workItemId],
+      )).rowCount).toBe(0)
+      expect(await agentAdmissionPersistenceCounts(fixture.agentId))
+        .toEqual(persistenceBeforeCapacityFailure)
+
+      await db.query(
+        "UPDATE agent_sessions SET state='completed',ended_at=now() WHERE id=$1",
+        [blocker.sessionId],
+      )
+      await db.query('UPDATE automation_effects SET available_at=now() WHERE id=$1', [first!.id])
+      const retry = (await worker.claimEffects()).find(effect => effect.runId === admitted.id)
+      expect(retry).toBeDefined()
+      await worker.executeEffect(retry!)
+      expect((await db.query<{ status: string }>(
+        'SELECT status FROM automation_effects WHERE id=$1',
+        [first!.id],
+      )).rows[0]!.status).toBe('completed')
+      createdSessionId = (await db.query<{ id: string }>(
+        `SELECT id FROM agent_sessions
+          WHERE agent_id=$1 AND work_item_id=$2
+            AND session_kind='execution'
+            AND state NOT IN ('completed','failed','canceled')`,
+        [fixture.agentId, fixture.workItemId],
+      )).rows[0]?.id
+      expect(createdSessionId).toMatch(/^[0-9a-f-]{36}$/)
+      await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
+    } finally {
+      if (createdSessionId) {
+        await db.query(
+          "UPDATE agent_sessions SET state='completed',ended_at=now() WHERE id=$1",
+          [createdSessionId],
+        )
+      }
+      await db.query('UPDATE agent_definitions SET max_concurrency=100 WHERE id=$1', [fixture.agentId])
+    }
   })
 
   it('serializes action ordinals across concurrent workers', async () => {
@@ -435,6 +549,111 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     }))).rejects.toThrow('LOOP_AGENT_TEAM_ACCESS_REVOKED')
     expect((await db.query('SELECT 1 FROM automation_runs WHERE loop_id=$1', [revokedLoopId])).rowCount).toBe(0)
     await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2', [fixture.agentId, fixture.teamId])
+  })
+
+  it('durably defers one scheduled Loop occurrence while execution capacity is full', async () => {
+    await db.query(
+      `UPDATE agent_sessions
+          SET state='completed',ended_at=coalesce(ended_at,now())
+        WHERE agent_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [fixture.agentId],
+    )
+    await db.query('UPDATE agent_definitions SET max_concurrency=1 WHERE id=$1', [fixture.agentId])
+    try {
+      const blockerLoopId = await createLoop('capacity-blocker', { noOverlap: false })
+      const blocker = await withTx(db, tx => admitLoopRun(tx, {
+        meta: meta('capacity-blocker'),
+        loopId: blockerLoopId,
+        occurrenceKey: `schedule:${randomUUID()}`,
+        scheduledFor: new Date(),
+        authorization: { kind: 'trusted_worker' },
+      }))
+      expect(blocker.deferred).not.toBe(true)
+      if (!blocker.sessionId) throw new Error('Expected blocker Session')
+
+      const deferredLoopId = await createLoop('capacity-deferred', { noOverlap: false })
+      const occurrenceKey = `schedule:${randomUUID()}`
+      const scheduledFor = new Date()
+      const persistenceBeforeDeferral = await agentAdmissionPersistenceCounts(fixture.agentId)
+      const deferred = await withTx(db, tx => admitLoopRun(tx, {
+        meta: meta('capacity-deferred'),
+        loopId: deferredLoopId,
+        occurrenceKey,
+        scheduledFor,
+        authorization: { kind: 'trusted_worker' },
+      }))
+      expect(deferred).toMatchObject({
+        sessionId: null,
+        duplicate: false,
+        deferred: true,
+      })
+      const deferredRow = (await db.query<{
+        status: string
+        session_id: string | null
+        trace: Record<string, unknown>
+      }>(
+        'SELECT status,session_id,trace FROM automation_runs WHERE id=$1',
+        [deferred.runId],
+      )).rows[0]!
+      expect(deferredRow).toMatchObject({
+        status: 'failed',
+        session_id: null,
+        trace: { occurrenceKey, deferredReason: 'AGENT_CONCURRENCY_LIMIT' },
+      })
+      expect(await agentAdmissionPersistenceCounts(fixture.agentId)).toEqual(persistenceBeforeDeferral)
+
+      const earlyReplay = await withTx(db, tx => admitLoopRun(tx, {
+        meta: meta('capacity-deferred-replay'),
+        loopId: deferredLoopId,
+        occurrenceKey,
+        scheduledFor,
+        authorization: { kind: 'trusted_worker' },
+      }))
+      expect(earlyReplay).toMatchObject({
+        runId: deferred.runId,
+        sessionId: null,
+        duplicate: true,
+        deferred: true,
+      })
+      expect((await db.query(
+        `SELECT 1 FROM automation_runs
+          WHERE loop_id=$1 AND trace->>'occurrenceKey'=$2`,
+        [deferredLoopId, occurrenceKey],
+      )).rowCount).toBe(1)
+
+      await db.query(
+        "UPDATE agent_sessions SET state='completed',ended_at=now() WHERE id=$1",
+        [blocker.sessionId],
+      )
+      await db.query(
+        "UPDATE automation_runs SET available_at=now()-interval '1 second' WHERE id=$1",
+        [deferred.runId],
+      )
+      const resumed = await withTx(db, tx => admitLoopRun(tx, {
+        meta: meta('capacity-deferred-resume'),
+        loopId: deferredLoopId,
+        occurrenceKey,
+        scheduledFor,
+        authorization: { kind: 'trusted_worker' },
+      }))
+      expect(resumed.runId).toBe(deferred.runId)
+      expect(resumed.deferred).not.toBe(true)
+      expect(resumed.sessionId).toMatch(/^[0-9a-f-]{36}$/)
+      expect((await db.query(
+        `SELECT 1 FROM automation_runs
+          WHERE loop_id=$1 AND trace->>'occurrenceKey'=$2`,
+        [deferredLoopId, occurrenceKey],
+      )).rowCount).toBe(1)
+      if (resumed.sessionId) {
+        await db.query(
+          "UPDATE agent_sessions SET state='completed',ended_at=now() WHERE id=$1",
+          [resumed.sessionId],
+        )
+      }
+    } finally {
+      await db.query('UPDATE agent_definitions SET max_concurrency=100 WHERE id=$1', [fixture.agentId])
+    }
   })
 
   it('gates loop soft and failure notification admission by Planning and External Webhooks', async () => {

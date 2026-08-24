@@ -2,7 +2,13 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
-import { appendEvent, lockAgentAuthorityPlan, withTx } from '@workmesh/db'
+import {
+  agentExecutionCapacitySqlPredicate,
+  appendEvent,
+  assertAgentExecutionCapacityAfterLock,
+  lockAgentAuthorityPlan,
+  withTx,
+} from '@workmesh/db'
 import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '@workmesh/domain'
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
@@ -117,10 +123,11 @@ async function lockCollaborationSessionTargets(
   const targets=[...new Set(targetAgentIds)]
   const targetSessionIds=targets.length
     ? (await tx.query<{id:string}>(
-        `SELECT id FROM agent_sessions
-          WHERE agent_id=ANY($1::uuid[])
-            AND state NOT IN ('completed','failed','canceled')`,
-        [targets],
+        `SELECT id FROM agent_sessions session
+          WHERE session.agent_id=ANY($1::uuid[])
+            AND session.workspace_id=$2
+            AND ${agentExecutionCapacitySqlPredicate('session')}`,
+        [targets,current.workspaceId],
       )).rows.map(row=>row.id)
     : []
   const installationTokenIds=targets.length
@@ -1353,17 +1360,16 @@ async function createChild(h:Helpers,request:FastifyRequest){
     if(!step) throw new DomainError('NOT_FOUND','Plan step is not part of the current plan version')
     const stable=(await tx.query('SELECT 1 FROM agent_plan_step_identities WHERE session_id=$1 AND stable_step_id=$2',[parentId,body.planStepId])).rowCount
     if(!stable) throw new DomainError('PLAN_STEP_IDENTITY_MISSING','Plan step does not have a stable identity for this session')
-    const count=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE parent_session_id=$1 AND state NOT IN ('completed','failed','canceled')",[parentId])).rows[0]!.count
+    const count=(await tx.query<{count:number}>(`SELECT count(*)::int AS count FROM agent_sessions session WHERE session.parent_session_id=$1 AND ${agentExecutionCapacitySqlPredicate('session')}`,[parentId])).rows[0]!.count
     if(count>=parent.max_child_sessions)throw new DomainError('CHILD_SESSION_LIMIT','Parent child-session limit reached',{maxChildren:parent.max_child_sessions,activeChildren:count})
-    const stepCount=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE parent_session_id=$1 AND plan_step_id=$2 AND plan_step_version_id=$3 AND state NOT IN ('completed','failed','canceled')",[parentId,body.planStepId,body.planVersionId])).rows[0]!.count
+    const stepCount=(await tx.query<{count:number}>(`SELECT count(*)::int AS count FROM agent_sessions session WHERE session.parent_session_id=$1 AND session.plan_step_id=$2 AND session.plan_step_version_id=$3 AND ${agentExecutionCapacitySqlPredicate('session')}`,[parentId,body.planStepId,body.planVersionId])).rows[0]!.count
     if(stepCount>=step.max_child_sessions)throw new DomainError('PLAN_STEP_CHILD_SESSION_LIMIT','Plan step child-session limit reached',{maxChildren:step.max_child_sessions,activeChildren:stepCount})
-    const agent=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>("SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true",[body.agentId,actor(request).workspaceId])).rows[0]
+    const agent=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[]}>("SELECT id,actor_id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true",[body.agentId,actor(request).workspaceId])).rows[0]
     if(!agent)throw new DomainError('NOT_FOUND','Target agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,agent.id,parent.team_id])).rows[0]
     const parentGrant=(await tx.query<{permissions_snapshot:string[]}>('SELECT permissions_snapshot FROM delegations WHERE id=$1 AND status=$2',[parent.delegation_id,'active'])).rows[0]
     const caps=['work:read','work:write']; if(!parentGrant || !access || !caps.every(cap=>parentGrant.permissions_snapshot.includes(cap)&&agent.approved_capabilities.includes(cap)&&access.approved_capabilities.includes(cap)))throw new DomainError('CAPABILITY_DENIED','Child capabilities must be authorized by the parent delegation, target agent, and team grant')
-    const active=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[agent.id])).rows[0]!.count
-    if(active>=agent.max_concurrency)throw new DomainError('AGENT_CONCURRENCY_LIMIT','Target agent is at concurrency limit')
+    await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:actor(request).workspaceId,agentId:agent.id})
     const budget=inheritChildBudget(parent.budget as Record<string,number>,body.budget??{})
     const reservations=(await tx.query<{reserved:Record<string,number>}>('SELECT reserved FROM session_budget_reservations WHERE parent_session_id=$1 AND status=$2 FOR UPDATE',[parentId,'reserved'])).rows
     for(const [key,value] of Object.entries(budget)){const used=reservations.reduce((sum,row)=>sum+Number(row.reserved[key]??0),0);const cap=Number((parent.budget as Record<string,number>)[key]??Infinity);if(used+Number(value)>cap)throw new DomainError('CHILD_BUDGET_EXCEEDED','Child budget exceeds parent reservation',{key,used,requested:value,cap})}
@@ -1433,7 +1439,7 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     const step=(await tx.query('SELECT 1 FROM agent_plan_steps WHERE plan_version_id=$1 AND id=$2',[body.planVersionId,body.planStepId])).rowCount
     const stable=(await tx.query('SELECT 1 FROM agent_plan_step_identities WHERE session_id=$1 AND stable_step_id=$2',[sessionId,body.planStepId])).rowCount
     if(!plan || !step || !stable) throw new DomainError('STALE_PLAN_VERSION','Review must target a stable step in the current plan')
-    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number}>('SELECT id,actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[body.reviewerAgentId,actor(request).workspaceId])).rows[0]
+    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[]}>('SELECT id,actor_id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[body.reviewerAgentId,actor(request).workspaceId])).rows[0]
     if(!target) throw new DomainError('NOT_FOUND','Reviewer agent not found')
     const access=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,target.id,parent.team_id])).rows[0]
     const source=(await tx.query<{principal_human_actor_id:string;capability_scope:Record<string,unknown>;permissions_snapshot:string[]}>('SELECT principal_human_actor_id,capability_scope,permissions_snapshot FROM delegations WHERE id=$1 AND status=$2',[parent.delegation_id,'active'])).rows[0]
@@ -1441,8 +1447,7 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     // for ACK/state/heartbeat protocol writes. Reviewers still lack plan:write.
     const reviewCaps=['work:read','work:write','artifact:write']
     if(!source || !access || !reviewCaps.every(cap=>source.permissions_snapshot.includes(cap)&&target.approved_capabilities.includes(cap)&&access.approved_capabilities.includes(cap))) throw new DomainError('CAPABILITY_DENIED','Review capabilities must be authorized by the parent delegation, reviewer, and team grant')
-    const active=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[target.id])).rows[0]!.count
-    if(active>=target.max_concurrency) throw new DomainError('AGENT_CONCURRENCY_LIMIT','Reviewer agent is at concurrency limit')
+    await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:actor(request).workspaceId,agentId:target.id})
     const delegation=(await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,parent_delegation_id) VALUES($1,$2,$3,$4,$5,NULL,'reviewer','plan_step',$6,$7,$8,$9) RETURNING id",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,source.principal_human_actor_id,body.planStepId,reviewCaps,{...source.capability_scope,capabilities:reviewCaps},parent.delegation_id])).rows[0] as {id:string}
     const child=(await tx.query("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,parent_session_id,work_item_id,plan_step_id,plan_step_version_id,context_snapshot_id,state,state_reason,budget,inherited_budget,required_for_parent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'queued',$11,$12,$12,true) RETURNING *",[actor(request).workspaceId,parent.team_id,target.id,target.actor_id,delegation.id,parent.id,parent.work_item_id,body.planStepId,body.planVersionId,parent.context_snapshot_id,body.initialPrompt,parent.budget])).rows[0] as {id:string}
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT DO NOTHING",[actor(request).workspaceId,child.id,parent.team_id])
@@ -1522,7 +1527,8 @@ async function recordHandoffRoutingAttempt(h: Helpers, request: FastifyRequest, 
     if(!sourceDel) throw new DomainError('DELEGATION_NOT_ACTIVE','Handoff source delegation is unavailable')
     const required=handoff.requested_capabilities.length?handoff.requested_capabilities:sourceDel.permissions_snapshot
     const exactId=handoff.target_agent_id??input.agentId
-    const candidates=(await tx.query<{id:string}>(exactId ? "SELECT a.id FROM agent_definitions a JOIN agent_team_access ata ON ata.agent_id=a.id AND ata.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.is_active AND ata.team_id=$3 AND ata.revoked_at IS NULL AND a.approved_capabilities @> $4::text[] AND ata.approved_capabilities @> $4::text[] AND (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND s.state NOT IN ('completed','failed','canceled'))<a.max_concurrency" : "SELECT a.id FROM agent_definitions a JOIN agent_team_access ata ON ata.agent_id=a.id AND ata.workspace_id=a.workspace_id WHERE a.workspace_id=$1 AND a.is_active AND ata.team_id=$2 AND ata.revoked_at IS NULL AND a.skills @> ARRAY[$3]::text[] AND a.approved_capabilities @> $4::text[] AND ata.approved_capabilities @> $4::text[] AND (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND s.state NOT IN ('completed','failed','canceled'))<a.max_concurrency ORDER BY (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND s.state NOT IN ('completed','failed','canceled')),a.slug,a.id",exactId?[exactId,actor(request).workspaceId,source.team_id,required]:[actor(request).workspaceId,source.team_id,handoff.target_skill,required])).rows
+    const capacityPredicate=agentExecutionCapacitySqlPredicate('s')
+    const candidates=(await tx.query<{id:string}>(exactId ? `SELECT a.id FROM agent_definitions a JOIN agent_team_access ata ON ata.agent_id=a.id AND ata.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.is_active AND ata.team_id=$3 AND ata.revoked_at IS NULL AND a.approved_capabilities @> $4::text[] AND ata.approved_capabilities @> $4::text[] AND (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND ${capacityPredicate})<a.max_concurrency` : `SELECT a.id FROM agent_definitions a JOIN agent_team_access ata ON ata.agent_id=a.id AND ata.workspace_id=a.workspace_id WHERE a.workspace_id=$1 AND a.is_active AND ata.team_id=$2 AND ata.revoked_at IS NULL AND a.skills @> ARRAY[$3]::text[] AND a.approved_capabilities @> $4::text[] AND ata.approved_capabilities @> $4::text[] AND (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND ${capacityPredicate})<a.max_concurrency ORDER BY (SELECT count(*) FROM agent_sessions s WHERE s.agent_id=a.id AND ${capacityPredicate}),a.slug,a.id`,exactId?[exactId,actor(request).workspaceId,source.team_id,required]:[actor(request).workspaceId,source.team_id,handoff.target_skill,required])).rows
     const selected=candidates[0]?.id??null; const outcome=selected?'selected':'no_candidate'
     await tx.query("INSERT INTO routing_attempts(workspace_id,handoff_id,source_session_id,attempt_key,requested_skill,required_capabilities,candidate_count,selected_agent_id,outcome,failure_code,rationale) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT(workspace_id,handoff_id,attempt_key) DO NOTHING",[actor(request).workspaceId,handoffId,source.id,attemptKey,handoff.target_skill,required,candidates.length,selected,outcome,selected?null:'ROUTING_TARGET_REQUIRED',{rule:'preflight',exactTargetId:exactId,candidateIds:candidates.map(candidate=>candidate.id)}])
   })
@@ -1569,7 +1575,7 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
       const candidates=(await tx.query<{id:string;slug:string;active_sessions:number;max_concurrency:number}>(`
         SELECT a.id,a.slug,a.max_concurrency,
           (SELECT count(*)::int FROM agent_sessions active
-           WHERE active.agent_id=a.id AND active.state NOT IN ('completed','failed','canceled')) AS active_sessions
+           WHERE active.agent_id=a.id AND ${agentExecutionCapacitySqlPredicate('active')}) AS active_sessions
         FROM agent_definitions a
         JOIN agent_team_access ata ON ata.agent_id=a.id AND ata.workspace_id=a.workspace_id
         WHERE a.workspace_id=$1 AND a.is_active=true
@@ -1578,7 +1584,7 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
           AND a.approved_capabilities @> $4::text[]
           AND ata.approved_capabilities @> $4::text[]
           AND (SELECT count(*) FROM agent_sessions active
-               WHERE active.agent_id=a.id AND active.state NOT IN ('completed','failed','canceled')) < a.max_concurrency
+               WHERE active.agent_id=a.id AND ${agentExecutionCapacitySqlPredicate('active')}) < a.max_concurrency
         ORDER BY active_sessions,a.slug,a.id
         `,[actor(request).workspaceId,source.team_id,handoff.target_skill,requested])).rows
       for (let index=0; index<candidates.length; index++) await tx.query("INSERT INTO routing_records(workspace_id,source_session_id,target_agent_id,requested_skill,required_capabilities,outcome,sort_rank,rationale) VALUES($1,$2,$3,$4,$5,'candidate',$6,$7)",[actor(request).workspaceId,source.id,candidates[index]!.id,handoff.target_skill,requested,index+1,{rule:'skill+capability+team+status+concurrency',activeSessions:candidates[index]!.active_sessions,maxConcurrency:candidates[index]!.max_concurrency,slug:candidates[index]!.slug}])
@@ -1587,17 +1593,16 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
       await tx.query('UPDATE handoffs SET routing_snapshot=$2 WHERE id=$1',[handoffId,{requestedSkill:handoff.target_skill,requiredCapabilities:requested,candidateIds:candidates.map(candidate=>candidate.id),selectedAgentId:targetId,ordering:['active_sessions','slug','id'],filters:['skill','capability','team_access','active_status','concurrency']}])
     }
     if(!targetId) throw new DomainError('ROUTING_TARGET_REQUIRED','A handoff target must be selected')
-    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];max_concurrency:number;skills:string[];slug:string}>('SELECT id,actor_id,approved_capabilities,max_concurrency,skills,slug FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[targetId,actor(request).workspaceId])).rows[0]
+    const target=(await tx.query<{id:string;actor_id:string;approved_capabilities:string[];skills:string[];slug:string}>('SELECT id,actor_id,approved_capabilities,skills,slug FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true',[targetId,actor(request).workspaceId])).rows[0]
     if(!target) throw new DomainError('NOT_FOUND','Target agent not found')
     if(handoff.target_skill && !target.skills.includes(handoff.target_skill)) throw new DomainError('CAPABILITY_DENIED','Selected handoff target does not advertise the requested skill')
     const teamAccess=(await tx.query<{approved_capabilities:string[]}>('SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL',[actor(request).workspaceId,target.id,source.team_id])).rows[0]
     if(!teamAccess) throw new DomainError('CAPABILITY_DENIED','Target agent is not authorized for the source team')
-    const active=(await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[target.id])).rows[0]!.count
-    if(active>=target.max_concurrency) throw new DomainError('AGENT_CONCURRENCY_LIMIT','Handoff target is at concurrency limit')
+    const capacity=await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:actor(request).workspaceId,agentId:target.id})
     const caps=requested.filter(cap=>sourceDel.permissions_snapshot.includes(cap) && target.approved_capabilities.includes(cap) && teamAccess.approved_capabilities.includes(cap))
     if(caps.length!==requested.length) throw new DomainError('CAPABILITY_DENIED','Handoff target lacks requested capabilities')
     if(!caps.includes('work:write')) throw new DomainError('CAPABILITY_DENIED','Accepted handoff sessions require scoped work:write for lifecycle protocol operations')
-    if (!handoff.target_skill) await tx.query('UPDATE handoffs SET routing_snapshot=$2 WHERE id=$1',[handoffId,{exactAgentId:target.id,requiredCapabilities:requested,selectedAgentId:target.id,filters:['capability','team_access','active_status','concurrency'],activeSessions:active,maxConcurrency:target.max_concurrency,slug:target.slug}])
+    if (!handoff.target_skill) await tx.query('UPDATE handoffs SET routing_snapshot=$2 WHERE id=$1',[handoffId,{exactAgentId:target.id,requiredCapabilities:requested,selectedAgentId:target.id,filters:['capability','team_access','active_status','concurrency'],activeSessions:capacity.activeExecutionSessionCount,maxConcurrency:capacity.maxConcurrency,slug:target.slug}])
     if (handoff.context_snapshot_id) {
       const context=(await tx.query('SELECT 1 FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id IS NOT DISTINCT FROM $3',[handoff.context_snapshot_id,actor(request).workspaceId,source.work_item_id])).rowCount
       if(!context) throw new DomainError('RESOURCE_SCOPE_DENIED','Handoff context snapshot is outside the source work scope')

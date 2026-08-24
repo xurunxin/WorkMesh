@@ -1,9 +1,10 @@
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID, verify } from 'node:crypto'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import { spawnSync } from 'node:child_process'
+import { setTimeout as delay } from 'node:timers/promises'
 import { isDeepStrictEqual } from 'node:util'
 import { parse } from 'yaml'
 
@@ -46,6 +47,288 @@ const hardenedServices = ['migrate', ...applicationServices]
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message)
+}
+
+const workmeshCredentialPattern = /(?:^|[^A-Za-z0-9_-])(?:wmp|wmi)_[A-Za-z0-9_-]{16,}(?:$|[^A-Za-z0-9_-])/u
+
+const assertNoWorkMeshCredential = (value, location) => {
+  assert(
+    !workmeshCredentialPattern.test(String(value ?? '')),
+    `${location} must not contain a WorkMesh pairing or Installation credential`,
+  )
+}
+
+const sanitizeDiagnostic = (value) =>
+  String(value ?? '')
+    .replace(/\b(?:wmp|wmi)_[A-Za-z0-9_-]+\b/gu, '[REDACTED_WORKMESH_CREDENTIAL]')
+    .slice(-4_000)
+
+const describeCommandFailure = (action, result) => {
+  const reason = result.error instanceof Error ? result.error.message : `exit ${String(result.status)}`
+  const diagnostic = sanitizeDiagnostic(result.stderr || result.stdout)
+  return `${action} failed (${reason})${diagnostic ? `: ${diagnostic}` : ''}`
+}
+
+const runDocker = (dockerArguments, options = {}) =>
+  spawnSync('docker', dockerArguments, {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+    ...options,
+  })
+
+const assertDockerSuccess = (result, action) => {
+  assert(result.status === 0, describeCommandFailure(action, result))
+  return result
+}
+
+const inspectContainer = (containerId) => {
+  const result = runDocker(['inspect', containerId])
+  if (result.status !== 0) return undefined
+  const inspections = JSON.parse(result.stdout)
+  return inspections.length === 1 ? inspections[0] : undefined
+}
+
+const inspectImage = (imageReference) => {
+  const result = runDocker(['image', 'inspect', imageReference])
+  if (result.status !== 0) return undefined
+  const inspections = JSON.parse(result.stdout)
+  return inspections.length === 1 ? inspections[0] : undefined
+}
+
+const exactContainerMatches = (containerName) => {
+  const result = assertDockerSuccess(
+    runDocker([
+      'ps',
+      '-a',
+      '--no-trunc',
+      '--filter',
+      `name=${containerName}`,
+      '--format',
+      '{{.ID}}|{{.Names}}',
+    ]),
+    'Docker exact-name preflight',
+  )
+  return result.stdout
+    .trim()
+    .split(/\r?\n/u)
+    .filter(Boolean)
+    .map((value) => {
+      const separator = value.indexOf('|')
+      return { id: value.slice(0, separator), name: value.slice(separator + 1) }
+    })
+    .filter(({ name }) => name === containerName)
+}
+
+const loadPinnedSkill = async () => {
+  const [artifact, manifestSource, publicKey] = await Promise.all([
+    readFile(path.join(root, 'apps', 'web', 'public', 'skills', 'workmesh-1.1.0.md')),
+    readFile(path.join(root, 'packages', 'contracts', 'src', 'workmesh-skill-manifest.ts'), 'utf8'),
+    readFile(path.join(root, 'skills', 'workmesh', 'public-key.pem'), 'utf8'),
+  ])
+  const manifest = /sha256: '([^']+)',\s+signature: 'ed25519:([^']+)'/su.exec(manifestSource)
+  assert(manifest, 'WorkMesh Skill manifest must contain a SHA-256 digest and Ed25519 signature')
+  const digest = `sha256:${createHash('sha256').update(artifact).digest('hex')}`
+  assert(manifest[1] === digest, 'tracked WorkMesh Skill bytes must match the pinned manifest digest')
+  const signature = Buffer.from(manifest[2], 'base64')
+  assert(verify(null, artifact, publicKey, signature), 'tracked WorkMesh Skill signature must be valid')
+  return { artifact, digest, publicKey, signature }
+}
+
+const probeWebSkillImage = async (imageReference, runId) => {
+  const containerName = `workmesh-web-skill-probe-${runId}`
+  const ownershipLabel = `io.workmesh.validation.run=${runId}`
+  assert(
+    exactContainerMatches(containerName).length === 0,
+    `Web Skill probe container name is already in use: ${containerName}`,
+  )
+
+  const createResult = assertDockerSuccess(
+    runDocker([
+      'create',
+      '--name',
+      containerName,
+      '--label',
+      ownershipLabel,
+      '--network',
+      'none',
+      '--read-only',
+      '--cap-drop',
+      'ALL',
+      '--security-opt',
+      'no-new-privileges:true',
+      '--tmpfs',
+      '/tmp:rw,noexec,nosuid,size=64m',
+      imageReference,
+    ]),
+    'Docker Web Skill probe container creation',
+  )
+  const containerId = createResult.stdout.trim()
+  assert(/^[a-f0-9]{64}$/u.test(containerId), 'Docker must return the full Web Skill probe container ID')
+
+  let failure
+  try {
+    const inspection = inspectContainer(containerId)
+    assert(inspection?.Id === containerId, 'Docker must inspect the exact Web Skill probe container')
+    assert(
+      /^sha256:[a-f0-9]{64}$/u.test(inspection.Image),
+      'Docker must expose the immutable Web image content ID',
+    )
+    const imageId = inspection.Image
+    const imageInspection = inspectImage(imageId)
+    assert(imageInspection?.Id === imageId, 'Docker must inspect the exact immutable Web image')
+    assertNoWorkMeshCredential(
+      JSON.stringify({
+        env: imageInspection.Config?.Env,
+        labels: imageInspection.Config?.Labels,
+        repoDigests: imageInspection.RepoDigests,
+        repoTags: imageInspection.RepoTags,
+      }),
+      'production Web image metadata and environment',
+    )
+    const history = assertDockerSuccess(
+      runDocker(['history', '--no-trunc', '--format', '{{json .}}', imageId]),
+      'Docker Web image history inspection',
+    )
+    assertNoWorkMeshCredential(history.stdout, 'production Web image history')
+    assert(
+      inspection.Config.Labels['io.workmesh.validation.run'] === runId,
+      'Web Skill probe container must carry the validator ownership label',
+    )
+    assert(
+      inspection.HostConfig.NetworkMode === 'none',
+      'Web Skill probe container must not have external network access',
+    )
+    assertNoWorkMeshCredential(
+      JSON.stringify({ env: inspection.Config.Env, labels: inspection.Config.Labels }),
+      'production Web probe container metadata and environment',
+    )
+    assertDockerSuccess(runDocker(['start', containerId]), 'Docker Web Skill probe container start')
+
+    const probeSource = [
+      "const response = await fetch('http://127.0.0.1:3000/skills/workmesh-1.1.0.md', { redirect: 'manual' })",
+      'const body = Buffer.from(await response.arrayBuffer())',
+      "process.stdout.write(JSON.stringify({ status: response.status, location: response.headers.get('location'), body: body.toString('base64') }))",
+    ].join('; ')
+    let probeResult
+    const deadline = Date.now() + 60_000
+    while (Date.now() < deadline) {
+      const current = runDocker(['exec', containerId, 'node', '--input-type=module', '-e', probeSource])
+      if (current.status === 0) {
+        probeResult = current
+        break
+      }
+      const currentInspection = inspectContainer(containerId)
+      if (!currentInspection?.State?.Running) {
+        const logs = runDocker(['logs', containerId])
+        throw new Error(
+          `Web Skill probe container stopped before serving the artifact: ${sanitizeDiagnostic(logs.stderr || logs.stdout)}`,
+        )
+      }
+      await delay(500)
+    }
+    assert(probeResult, 'Web Skill probe timed out waiting for the production Web runtime')
+
+    const response = JSON.parse(probeResult.stdout)
+    assert(response.status === 200, `versioned WorkMesh Skill URL must return 200, got ${String(response.status)}`)
+    assert(response.location === null, 'versioned WorkMesh Skill URL must not redirect')
+    const downloadedArtifact = Buffer.from(response.body, 'base64')
+    const pinned = await loadPinnedSkill()
+    assert(
+      downloadedArtifact.equals(pinned.artifact),
+      'production Web image must serve the exact tracked WorkMesh Skill bytes',
+    )
+    const downloadedDigest = `sha256:${createHash('sha256').update(downloadedArtifact).digest('hex')}`
+    assert(downloadedDigest === pinned.digest, 'served WorkMesh Skill bytes must match the manifest digest')
+    assert(
+      verify(null, downloadedArtifact, pinned.publicKey, pinned.signature),
+      'served WorkMesh Skill signature must validate over the exact response bytes',
+    )
+    assertNoWorkMeshCredential(downloadedArtifact.toString('utf8'), 'served WorkMesh Skill')
+    const logs = assertDockerSuccess(
+      runDocker(['logs', containerId]),
+      'Docker Web Skill probe log inspection',
+    )
+    assertNoWorkMeshCredential(
+      `${logs.stdout}\n${logs.stderr}`,
+      'production Web runtime logs',
+    )
+    return { artifactDigest: downloadedDigest, imageId }
+  } catch (error) {
+    failure = error
+    throw error
+  } finally {
+    const inspection = inspectContainer(containerId)
+    if (inspection !== undefined) {
+      const owned =
+        inspection.Id === containerId &&
+        inspection.Config.Labels['io.workmesh.validation.run'] === runId
+      if (!owned) {
+        if (failure === undefined)
+          throw new Error('Refusing to remove a Web Skill probe container without the ownership label')
+      } else {
+        const cleanup = runDocker(['rm', '-f', containerId])
+        if (cleanup.status !== 0 && failure === undefined)
+          throw new Error(describeCommandFailure('Docker Web Skill probe cleanup', cleanup))
+      }
+    }
+  }
+}
+
+const validateProductionWebSkill = async () => {
+  const runId = randomUUID()
+  let imageReference = environmentFile ? process.env.WORKMESH_WEB_IMAGE : undefined
+  let locallyBuilt = false
+  if (!imageReference) {
+    imageReference = `workmesh-validation/workmesh-web-skill:${runId}`
+    const build = runDocker([
+      'build',
+      '--build-arg',
+      `WORKMESH_BUILD_SHA=${'f'.repeat(40)}`,
+      '--build-arg',
+      'NEXT_PUBLIC_API_URL=http://127.0.0.1:3001',
+      '--label',
+      `io.workmesh.validation.run=${runId}`,
+      '--file',
+      path.join(root, 'infra', 'docker', 'web.production.Dockerfile'),
+      '--tag',
+      imageReference,
+      root,
+    ])
+    assertDockerSuccess(build, 'Docker production Web image build')
+    locallyBuilt = true
+  }
+
+  let failure
+  try {
+    const { artifactDigest, imageId } = await probeWebSkillImage(imageReference, runId)
+    console.log(
+      `Production Web Skill runtime probe passed (artifact ${artifactDigest}; image ${imageId})`,
+    )
+  } catch (error) {
+    failure = error
+    throw error
+  } finally {
+    if (locallyBuilt) {
+      const inspection = inspectImage(imageReference)
+      if (inspection === undefined) {
+        if (failure === undefined)
+          throw new Error('Locally built validation Web image disappeared before ownership cleanup')
+      } else {
+        const owned = inspection.Config?.Labels?.['io.workmesh.validation.run'] === runId
+          && inspection.RepoTags?.includes(imageReference)
+          && /^sha256:[a-f0-9]{64}$/u.test(inspection.Id)
+        if (!owned) {
+          if (failure === undefined)
+            throw new Error('Refusing to remove a validation Web image without exact ownership proof')
+        } else {
+          const cleanup = runDocker(['image', 'rm', inspection.Id])
+          if (cleanup.status !== 0 && failure === undefined)
+            throw new Error(describeCommandFailure('Docker validation Web image cleanup', cleanup))
+        }
+      }
+    }
+  }
 }
 
 for (const name of applicationServices) {
@@ -222,9 +505,36 @@ const webDockerfile = await readFile(
   path.join(root, 'infra', 'docker', 'web.production.Dockerfile'),
   'utf8',
 )
+const gitAttributes = await readFile(path.join(root, '.gitattributes'), 'utf8')
+assert(
+  gitAttributes
+    .split(/\r?\n/u)
+    .some((line) => line.trim() === 'apps/web/public/skills/*.md text eol=lf'),
+  'published WorkMesh Skill artifacts must be pinned to LF in .gitattributes',
+)
 assert(
   webDockerfile.includes('io.workmesh.web.api-url=$NEXT_PUBLIC_API_URL'),
   'web image must expose its compiled API URL through the stable WorkMesh label',
+)
+assert(
+  webDockerfile.includes('pnpm check:workmesh-skill'),
+  'web image build must verify the pinned WorkMesh Skill before building Next.js',
+)
+assert(
+  !webDockerfile.includes('COPY skills/workmesh ./skills/workmesh')
+    && webDockerfile.includes(
+      'COPY skills/workmesh/SKILL.md skills/workmesh/public-key.pem ./skills/workmesh/',
+    )
+    && webDockerfile.includes(
+      'COPY skills/workmesh/references/protocol.md skills/workmesh/references/clients.md ./skills/workmesh/references/',
+    ),
+  'web image build must copy only public Skill sources and the verification key',
+)
+assert(
+  webDockerfile.includes(
+    'cp -R apps/web/public apps/web/.next/standalone/apps/web/public',
+  ),
+  'web image must copy public assets into the Next.js standalone runtime tree',
 )
 
 const deployPreparation = await readFile(
@@ -899,5 +1209,7 @@ try {
 } finally {
   await rm(dollarRoundTripDirectory, { recursive: true, force: true })
 }
+
+await validateProductionWebSkill()
 
 console.log('Production image and Compose contract validation passed')

@@ -8,6 +8,7 @@ import type {
   GuidanceResponse, GuidanceScope,
   AgentCapabilityManifest,
   AgentConnectionCreateInput, AgentConnectionCreateResponse,
+  AgentConnectionCurrentIdentity,
   AgentConnectionPatchInput, AgentConnectionResponse,
   AgentConnectionRedeemInput, AgentConnectionRedeemResponse,
   AgentConnectionRotateResponse, AgentWellKnownResponse,
@@ -236,6 +237,10 @@ export class WorkMeshClient {
 
   getAgentCapabilities(options: RequestOptions = {}): Promise<AgentCapabilityManifest> {
     return this.request('GET', '/api/v1/agent-capabilities', undefined, options)
+  }
+
+  getCurrentAgentConnectionIdentity(options: RequestOptions = {}): Promise<AgentConnectionCurrentIdentity> {
+    return this.request('GET', '/api/v1/agent-connections/current-identity', undefined, options)
   }
 
   getWellKnown(options?: RequestOptions): Promise<AgentWellKnownResponse> { return this.request('GET', '/.well-known/workmesh-agent', undefined, options) }

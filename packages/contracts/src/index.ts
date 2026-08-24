@@ -745,7 +745,33 @@ export const approvalDecisionResponseSchema = z.object({ approval: approvalRespo
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 
-export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.coordination_session.opened', 'agent.coordination_session.refreshed', 'agent.coordination_session.closed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
+export const coordinationSessionOpenedReasonSchema = z.enum(['initial', 'expired', 'recovered_terminal_backing', 'recovered_invalid_backing'])
+export const coordinationSessionClosedReasonSchema = z.enum(['expired', 'terminal_backing', 'invalid_binding', 'invalid_backing', 'connection_revoked'])
+export const coordinationSessionOpenedEventPayloadSchema = z.object({
+  connectionId: idSchema,
+  sessionId: idSchema,
+  reason: coordinationSessionOpenedReasonSchema,
+  expiresAt: timestampSchema,
+}).strict()
+export const coordinationSessionRefreshedEventPayloadSchema = z.object({
+  connectionId: idSchema,
+  sessionId: idSchema,
+  previousExpiresAt: timestampSchema,
+  expiresAt: timestampSchema,
+}).strict()
+const coordinationSessionClosedEventPayloadBaseSchema = z.object({
+  connectionId: idSchema,
+  reason: coordinationSessionClosedReasonSchema,
+})
+export const coordinationSessionClosedEventPayloadSchema = z.union([
+  coordinationSessionClosedEventPayloadBaseSchema.extend({
+    sessionId: idSchema,
+  }).strict(),
+  coordinationSessionClosedEventPayloadBaseSchema.extend({
+    sessionReferenceOmitted: z.literal('resource_scope_mismatch'),
+  }).strict(),
+])
 export const approvalRequestedEventPayloadSchema = z.object({
   approvalId: idSchema, sessionId: idSchema, status: z.literal('pending'), actionName: z.string().min(1), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   requiredApprovals: z.number().int().positive(), expiresAt: timestampSchema,
@@ -791,6 +817,32 @@ export const stage1ApiErrorCodeSchema = z.enum([
 ])
 export const agentApiErrorCodeSchema = z.union([apiErrorCodeSchema, stage1ApiErrorCodeSchema])
 export const agentErrorResponseSchema = z.object({ error: z.object({ code: agentApiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
+export const agentExecutionConcurrencyStateSchema = z.enum([
+  'queued',
+  'acknowledged',
+  'planning',
+  'executing',
+  'awaiting_input',
+  'awaiting_approval',
+  'blocked',
+  'paused',
+  'stopping',
+  'stale',
+])
+export const agentConcurrencyLimitDetailsSchema = z.object({
+  maxConcurrency: z.number().int().positive(),
+  activeExecutionSessionCount: z.number().int().nonnegative(),
+  countedSessionKinds: z.tuple([z.literal('execution')]),
+  countedSessionStates: z.array(agentExecutionConcurrencyStateSchema).length(10)
+    .refine(states => new Set(states).size === states.length, 'countedSessionStates must be unique'),
+  activeExecutionSessionsByState: z.record(z.number().int().nonnegative()).superRefine((counts, context) => {
+    for (const key of Object.keys(counts)) {
+      if (!agentExecutionConcurrencyStateSchema.safeParse(key).success) {
+        context.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown execution concurrency state: ${key}` })
+      }
+    }
+  }),
+}).strict()
 
 export const stage1RouteManifest = [
   { method: 'GET', path: '/api/v1/agents', authenticated: true },
@@ -1524,6 +1576,7 @@ export const stage5RouteManifest = [
   { method: 'GET', path: '/api/v1/agent-connections', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-connections', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/agent-connections/redeem', authenticated: false, mutation: true },
+  { method: 'GET', path: '/api/v1/agent-connections/current-identity', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-connections/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'DELETE', path: '/api/v1/agent-connections/{id}', authenticated: true, mutation: true, revisioned: true },
@@ -1585,7 +1638,7 @@ const clientProfileFeatureSchema = z.object({
 const clientProfileOperationSchema = z.object({
   operationId: z.string().min(1),
   policyId: z.string().min(1),
-  authentication: z.enum(['agent_session', 'human_or_agent_session', 'installation_target']),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'coordination_connection', 'installation_target']),
   transports: z.object({
     rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
     sse: z.boolean(),
@@ -1668,7 +1721,7 @@ export function createAgentCapabilityManifest(input: AgentCapabilityManifestInpu
       return {
         operationId: policy.operationId,
         policyId: policy.policyId,
-        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'installation_target',
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'coordination_connection' | 'installation_target',
         transports: {
           rest: policy.bindings.rest,
           sse: policy.bindings.sse,
@@ -2050,7 +2103,7 @@ export const coordinationSessionResponseSchema = z
 // OpenAPI enforces (a) and (b) per-capability via if/then/else blocks
 // (JSON Schema 2020-12 has no subset operator); Zod enforces all
 // four so non-OpenAPI clients also get the contract.
-export const agentConnectionIdentitySchema = z
+const agentConnectionIdentityCoreSchema = z
   .object({
     connection: agentConnectionResponseSchema,
     coordination_session: coordinationSessionResponseSchema,
@@ -2062,7 +2115,10 @@ export const agentConnectionIdentitySchema = z
       .refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
   })
   .strict()
-  .superRefine((value, ctx) => {
+const validateAgentConnectionIdentity = (
+  value: z.infer<typeof agentConnectionIdentityCoreSchema>,
+  ctx: z.RefinementCtx,
+): void => {
     // (a) Subset: coordination_session.granted_capabilities ⊆ connection.granted_capabilities
     const connectionGranted = new Set(value.connection.granted_capabilities)
     const unrequested = value.coordination_session.granted_capabilities.filter(c => !connectionGranted.has(c))
@@ -2107,7 +2163,28 @@ export const agentConnectionIdentitySchema = z
         })
       }
     }
-  })
+}
+
+export const agentConnectionIdentitySchema = agentConnectionIdentityCoreSchema
+  .superRefine(validateAgentConnectionIdentity)
+
+export const agentConnectionAuthenticatedCredentialSchema = z.discriminatedUnion('status', [
+  z.object({
+    fingerprint_prefix: z.string().regex(/^[a-f0-9]{12}$/),
+    status: z.literal('active'),
+    overlap_until: z.null(),
+  }).strict(),
+  z.object({
+    fingerprint_prefix: z.string().regex(/^[a-f0-9]{12}$/),
+    status: z.literal('overlap'),
+    overlap_until: timestampSchema,
+  }).strict(),
+])
+
+export const agentConnectionCurrentIdentitySchema = agentConnectionIdentityCoreSchema
+  .extend({ authenticated_credential: agentConnectionAuthenticatedCredentialSchema })
+  .strict()
+  .superRefine(validateAgentConnectionIdentity)
 
 export type AgentConnectionClientType = z.infer<typeof agentConnectionClientTypeSchema>
 export type AgentConnectionStatus = z.infer<typeof agentConnectionStatusSchema>
@@ -2122,3 +2199,4 @@ export type AgentConnectionRotateResponse = z.infer<typeof agentConnectionRotate
 export type AgentWellKnownResponse = z.infer<typeof agentWellKnownResponseSchema>
 export type CoordinationSessionResponse = z.infer<typeof coordinationSessionResponseSchema>
 export type AgentConnectionIdentity = z.infer<typeof agentConnectionIdentitySchema>
+export type AgentConnectionCurrentIdentity = z.infer<typeof agentConnectionCurrentIdentitySchema>

@@ -94,7 +94,12 @@ import {
   type RealtimeWakeSource,
 } from "./realtime/wake-source.js";
 import { registerRealtimeRoutes } from "./realtime/routes.js";
-import { registerAgentConnectionRoutes, resolveCoordinationIdentity } from "./agent-connections.js";
+import {
+  CoordinationIdentityResolutionError,
+  registerAgentConnectionRoutes,
+  resolveCoordinationIdentity,
+} from "./agent-connections.js";
+import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -102,6 +107,7 @@ declare module "fastify" {
     correlationId: string;
     idempotencyKey?: string;
     rawBody?: Buffer;
+    coordinationIdentity?: AgentConnectionCurrentIdentity;
   }
 
   interface FastifyInstance {
@@ -379,8 +385,29 @@ export const buildApp = (options: {
     )
       return;
     const coordinationToken = header(request, "x-workmesh-installation-token");
-    if (coordinationToken) {
-      const identity = await resolveCoordinationIdentity(db, coordinationToken);
+    const requiresCoordinationToken = request.routeOptions.url
+      === "/api/v1/agent-connections/current-identity";
+    if (coordinationToken || requiresCoordinationToken) {
+      const candidateToken = coordinationToken ?? "";
+      let identity: AgentConnectionCurrentIdentity;
+      try {
+        identity = await resolveCoordinationIdentity(db, candidateToken, {
+          auditSecret: config.SESSION_SECRET,
+        });
+      } catch (error) {
+        if (error instanceof CoordinationIdentityResolutionError) {
+          request.log.warn({
+            coordinationAuthDiagnosticId: error.diagnosticId,
+            coordinationAuthReason: error.diagnosticReason,
+            credentialAuditFingerprint: error.credentialAuditFingerprint,
+            recognizedCredentialFingerprintPrefix:
+              error.recognizedCredentialFingerprintPrefix,
+            correlationId: request.correlationId,
+          }, "Agent Connection authentication rejected");
+        }
+        throw error;
+      }
+      request.coordinationIdentity = identity;
       request.actor = {
         id: identity.agent_actor_id,
         workspaceId: identity.connection.workspace_id,
@@ -390,7 +417,7 @@ export const buildApp = (options: {
         kind: "agent",
         agentSessionId: identity.coordination_session.id,
         authentication: "coordination_connection",
-        credentialHash: tokenHash(coordinationToken),
+        credentialHash: tokenHash(candidateToken),
       };
       return;
     }

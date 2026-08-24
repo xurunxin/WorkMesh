@@ -10,11 +10,16 @@ WORKDIR /workspace
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
 COPY apps ./apps
 COPY packages ./packages
+COPY scripts/generate-workmesh-skill-artifact.mjs ./scripts/generate-workmesh-skill-artifact.mjs
+COPY skills/workmesh/SKILL.md skills/workmesh/public-key.pem ./skills/workmesh/
+COPY skills/workmesh/references/protocol.md skills/workmesh/references/clients.md ./skills/workmesh/references/
 RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --store-dir /pnpm/store
-RUN pnpm --filter @workmesh/config build \
+RUN pnpm check:workmesh-skill \
+    && pnpm --filter @workmesh/config build \
     && pnpm --filter @workmesh/web... build \
-    && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
+    && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static \
+    && cp -R apps/web/public apps/web/.next/standalone/apps/web/public
 
 FROM node:22.17.1-alpine3.22 AS runtime
 ARG WORKMESH_BUILD_SHA

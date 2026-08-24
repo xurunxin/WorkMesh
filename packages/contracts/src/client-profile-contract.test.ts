@@ -41,9 +41,15 @@ describe('Agent Collaboration Client Profile contract', () => {
         activeDelegation: true,
         liveGrantIntersection: true,
       },
-      transports: { mcpBindings: ['resource:agent-capabilities', 'tool:get_current_identity', 'tool:get_workmesh_context', 'tool:verify_connection'] },
+      transports: { mcpBindings: ['resource:agent-capabilities'] },
     })
     expect(mcpPolicyBindings['resource:agent-capabilities'].operationId).toBe('getAgentCapabilityManifest')
+    const connectionIdentity = manifest.operations.find(operation => operation.operationId === 'getCurrentAgentConnectionIdentity')
+    expect(connectionIdentity).toMatchObject({
+      supported: false,
+      eligibleByCapability: true,
+      transports: { mcpBindings: ['tool:get_current_identity', 'tool:get_workmesh_context', 'tool:verify_connection'] },
+    })
     expect(manifest.operations.filter(operation => operation.feature.key).every(operation => !operation.supported)).toBe(true)
     expect(manifest.extensions).toContainEqual({ id: 'workmesh.engineering-graph', tier: 'experimental', enabled: false, negotiationRequired: true })
   })

@@ -1,6 +1,14 @@
 import crypto from "node:crypto";
 import type { Pool, PoolClient } from "pg";
-import { appendEvent, lockAgentAuthorityPlan, opaqueToken, tokenHash, withTx } from "@workmesh/db";
+import {
+  agentExecutionCapacitySqlPredicate,
+  appendEvent,
+  assertAgentExecutionCapacityAfterLock,
+  lockAgentAuthorityPlan,
+  opaqueToken,
+  tokenHash,
+  withTx,
+} from "@workmesh/db";
 import { loadRetentionConfig } from "@workmesh/config";
 import { agentSessionResponseSchema } from "@workmesh/contracts";
 import {
@@ -464,7 +472,7 @@ export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: 
       workItemIds: [workItemId],
       projectIds: locator.project_id ? [locator.project_id] : [],
     });
-    const agent = one((await tx.query<{ id: string; approved_capabilities: Capability[]; max_concurrency: number }>("SELECT id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true", [input.agentId, meta.actor.workspaceId])).rows);
+    const agent = one((await tx.query<{ id: string; approved_capabilities: Capability[] }>("SELECT id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active=true", [input.agentId, meta.actor.workspaceId])).rows);
     const grant = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL", [meta.actor.workspaceId, input.agentId, locator.team_id])).rows);
     const work = one((await tx.query<{ team_id: string; project_id: string | null; responsible_human_actor_id: string | null }>("SELECT team_id,project_id,responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL", [workItemId, meta.actor.workspaceId])).rows);
     if (work.team_id !== locator.team_id || work.project_id !== locator.project_id)
@@ -493,8 +501,10 @@ export async function createDelegation(db: Pool, meta: RequestMeta, workItemId: 
       if (repositories.rowCount !== new Set(scope.repositoryIds).size)
         throw new DomainError("RESOURCE_SCOPE_DENIED", "Delegation repository scope contains an unauthorized repository");
     }
-    const active = await tx.query<{ count: number }>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')", [input.agentId]);
-    if ((active.rows[0]?.count ?? 0) >= agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT", "Agent concurrency limit reached");
+    await assertAgentExecutionCapacityAfterLock(tx, {
+      workspaceId: meta.actor.workspaceId,
+      agentId: input.agentId,
+    });
     const capabilityScope = {
       workspaceId: meta.actor.workspaceId,
       teamIds: [work.team_id],
@@ -533,9 +543,10 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
       [input.delegationId, meta.actor.workspaceId],
     )).rows);
     const activeSessionIds = (await tx.query<{ id: string }>(
-      `SELECT id FROM agent_sessions
-        WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')`,
-      [locator.agent_id],
+      `SELECT id FROM agent_sessions session
+        WHERE session.agent_id=$1 AND session.workspace_id=$2
+          AND ${agentExecutionCapacitySqlPredicate('session')}`,
+      [locator.agent_id, meta.actor.workspaceId],
     )).rows.map(row => row.id);
     await lockAgentAuthorityPlan(tx, {
       definitionIds: [locator.agent_id],
@@ -562,12 +573,14 @@ export async function createAgentSession(db: Pool, meta: RequestMeta, input: { d
       || delegation.work_item_id !== locator.work_item_id
     ) throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation binding changed while authority was acquired");
     if (delegation.status !== "active") throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation is not active"); await assertHumanTeam(tx, meta.actor, delegation.team_id);
-    const agent = one((await tx.query<{ max_concurrency: number; approved_capabilities: Capability[] }>("SELECT max_concurrency,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active", [delegation.agent_id, meta.actor.workspaceId])).rows);
+    const agent = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active", [delegation.agent_id, meta.actor.workspaceId])).rows);
     const grant = one((await tx.query<{ approved_capabilities: Capability[] }>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL", [meta.actor.workspaceId, delegation.agent_id, delegation.team_id])).rows);
     const delegationCapabilities = delegation.permissions_snapshot;
     if (delegationCapabilities.some(capability => !grant.approved_capabilities.includes(capability) || !agent.approved_capabilities.includes(capability))) throw new DomainError("DELEGATION_NOT_ACTIVE", "Delegation capabilities are no longer approved for this team");
-    const active = await tx.query("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')", [delegation.agent_id]);
-    if ((active.rowCount ?? 0) >= agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT", "Agent concurrency limit reached");
+    await assertAgentExecutionCapacityAfterLock(tx, {
+      workspaceId: meta.actor.workspaceId,
+      agentId: delegation.agent_id,
+    });
     const workItemId = input.workItemId ?? delegation.work_item_id;
     if (workItemId !== delegation.work_item_id) throw new DomainError("RESOURCE_SCOPE_DENIED", "The session subject is outside the delegation");
     const work = workItemId ? one((await tx.query<{ id: string; title: string; description: string | null; revision: number; responsible_human_actor_id: string | null; project_id: string | null }>("SELECT id,title,description,revision,responsible_human_actor_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL", [workItemId, meta.actor.workspaceId])).rows) : undefined;
@@ -609,7 +622,7 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
     assertSafeText(input.initialPrompt, "initial prompt");
     const locator=one((await tx.query<{team_id:string;project_id:string|null}>("SELECT team_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2",[workItemId,meta.actor.workspaceId])).rows);
     const delegationIds=(await tx.query<{id:string}>("SELECT id FROM delegations WHERE workspace_id=$1 AND work_item_id=$2 AND agent_id=$3 AND principal_human_actor_id=$4 AND role=$5 AND status='active'",[meta.actor.workspaceId,workItemId,input.agentId,input.principalHumanActorId,input.role])).rows.map(row=>row.id);
-    const activeSessionIds=(await tx.query<{id:string}>("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[input.agentId])).rows.map(row=>row.id);
+    const activeSessionIds=(await tx.query<{id:string}>(`SELECT id FROM agent_sessions session WHERE session.agent_id=$1 AND session.workspace_id=$2 AND ${agentExecutionCapacitySqlPredicate('session')}`,[input.agentId,meta.actor.workspaceId])).rows.map(row=>row.id);
     const installationTokenId=(await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 ORDER BY created_at DESC,id LIMIT 1",[input.agentId])).rows[0]?.id;
     await lockAgentAuthorityPlan(tx,{
       definitionIds:[input.agentId],
@@ -659,7 +672,7 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
     assertRevision(expectedRevision,work.revision);
     if (!work.responsible_human_actor_id || work.responsible_human_actor_id!==input.principalHumanActorId) throw new DomainError("RESPONSIBLE_HUMAN_REQUIRED","Delegation principal must remain the work item's responsible human");
     one((await tx.query("SELECT 1 FROM actors a JOIN memberships m ON m.actor_id=a.id AND m.workspace_id=a.workspace_id WHERE a.id=$1 AND a.workspace_id=$2 AND a.kind='human' AND a.is_active AND m.team_id=$3",[input.principalHumanActorId,meta.actor.workspaceId,work.team_id])).rows);
-    const agent=one((await tx.query<{actor_id:string;approved_capabilities:Capability[];max_concurrency:number}>("SELECT actor_id,approved_capabilities,max_concurrency FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active",[input.agentId,meta.actor.workspaceId])).rows);
+    const agent=one((await tx.query<{actor_id:string;approved_capabilities:Capability[]}>("SELECT actor_id,approved_capabilities FROM agent_definitions WHERE id=$1 AND workspace_id=$2 AND is_active",[input.agentId,meta.actor.workspaceId])).rows);
     const grant=one((await tx.query<{approved_capabilities:Capability[]}>("SELECT approved_capabilities FROM agent_team_access WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND revoked_at IS NULL",[meta.actor.workspaceId,input.agentId,work.team_id])).rows);
     const granted=agent.approved_capabilities.filter(capability=>grant.approved_capabilities.includes(capability));
     if (input.requestedCapabilities.some(capability=>!granted.includes(capability))) throw new DomainError("CAPABILITY_DENIED","Requested delegation capabilities exceed definition or team approval");
@@ -674,8 +687,7 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
       delegation=one((await tx.query("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope,status) VALUES($1,$2,$3,$4,$5,$6,$7,'work_item',$6,$8,$9,'active') RETURNING *",[meta.actor.workspaceId,work.team_id,input.agentId,agent.actor_id,input.principalHumanActorId,workItemId,input.role,input.requestedCapabilities,scope])).rows) as Record<string,unknown>;
       await event(tx,meta,"agent.delegation.created","delegation",String(delegation.id),Number(delegation.revision),{workItemId,agentId:input.agentId},work.team_id);
     }
-    const active=await tx.query("SELECT id FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[input.agentId]);
-    if ((active.rowCount ?? 0)>=agent.max_concurrency) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
+    await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:meta.actor.workspaceId,agentId:input.agentId});
     let contextId=input.contextSnapshotId;
     if (contextId) one((await tx.query("SELECT id FROM context_snapshots WHERE id=$1 AND workspace_id=$2 AND work_item_id=$3",[contextId,meta.actor.workspaceId,workItemId])).rows);
     if (!contextId) contextId=(await materializeSessionContextSnapshot(tx,{
@@ -935,7 +947,7 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
       agent_id:string;delegation_id:string;team_id:string;work_item_id:string|null
       project_id:string|null;work_item_project_id:string|null
     }>("SELECT s.agent_id,s.delegation_id,s.team_id,s.work_item_id,s.project_id,w.project_id AS work_item_project_id FROM agent_sessions s LEFT JOIN work_items w ON w.id=s.work_item_id WHERE s.id=$1 AND s.workspace_id=$2",[sourceId,meta.actor.workspaceId])).rows);
-    const relatedSessionIds=(await tx.query<{id:string}>("SELECT id FROM agent_sessions WHERE retry_of_session_id=$1 OR (delegation_id=$2 AND state NOT IN ('completed','failed','canceled'))",[sourceId,locator.delegation_id])).rows.map(row=>row.id);
+    const relatedSessionIds=(await tx.query<{id:string}>(`SELECT id FROM agent_sessions session WHERE session.retry_of_session_id=$1 OR (session.delegation_id=$2 AND ${agentExecutionCapacitySqlPredicate('session')})`,[sourceId,locator.delegation_id])).rows.map(row=>row.id);
     const installationTokenId=(await tx.query<{id:string}>("SELECT id FROM agent_installation_tokens WHERE agent_id=$1 ORDER BY created_at DESC,id LIMIT 1",[locator.agent_id])).rows[0]?.id;
     await lockAgentAuthorityPlan(tx,{
       definitionIds:[locator.agent_id],
@@ -956,12 +968,12 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     if (!source.agent_active || source.delegation_status!=="active" || !source.team_active) throw new DomainError("DELEGATION_NOT_ACTIVE","Retry requires an active agent delegation and team grant");
     if ((await tx.query("SELECT 1 FROM agent_sessions WHERE retry_of_session_id=$1",[sourceId])).rowCount) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED","A direct retry already exists for this source session");
     if (source.state === "stale") {
-      const competing = await tx.query("SELECT 1 FROM agent_sessions WHERE delegation_id=$1 AND id<>$2 AND state NOT IN ('completed','failed','canceled')", [source.delegation_id, sourceId]);
+      const competing = await tx.query(`SELECT 1 FROM agent_sessions session WHERE session.delegation_id=$1 AND session.id<>$2 AND ${agentExecutionCapacitySqlPredicate('session')}`, [source.delegation_id, sourceId]);
       if (competing.rowCount) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED", "A stale session cannot be retried while another session is active for its delegation");
       const canceled = one((await tx.query("UPDATE agent_sessions SET state='canceled',state_reason='retrying stale session',ended_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING revision,sequence", [sourceId])).rows);
       await event(tx, meta, "agent.session.state_changed", "agent_session", sourceId, Number((canceled as {revision:number}).revision), { state: "canceled", reason: "retrying stale session" }, source.team_id as string, sourceId, Number((canceled as {sequence:number}).sequence));
     }
-    const activeCount=await tx.query<{count:number}>("SELECT count(*)::int AS count FROM agent_sessions WHERE agent_id=$1 AND state NOT IN ('completed','failed','canceled')",[source.agent_id]); if((activeCount.rows[0]?.count??0)>=Number(source.max_concurrency)) throw new DomainError("AGENT_CONCURRENCY_LIMIT","Agent concurrency limit reached");
+    await assertAgentExecutionCapacityAfterLock(tx,{workspaceId:meta.actor.workspaceId,agentId:source.agent_id as string});
     const prompt = input.initialPrompt ?? `Retry: ${input.reason}`;
     let retryContextId=source.context_snapshot_id as string|null;
     if(!input.reuseContext) {

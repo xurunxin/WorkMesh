@@ -40,6 +40,13 @@ docker push "ghcr.io/$namespace/workmesh-mcp:$sha"
 docker push "ghcr.io/$namespace/workmesh-web:$sha"
 ```
 
+The Web production build runs `pnpm check:workmesh-skill` before Next.js and
+fails unless the tracked versioned Skill artifact has the canonical LF UTF-8
+bytes, manifest SHA-256, and valid Ed25519 signature. The signing private key is
+never part of the image build. The verified `apps/web/public` tree is copied
+into the Next.js standalone runtime so `/skills/workmesh-1.1.0.md` is present in
+the final image rather than only in the source checkout.
+
 Exact-SHA tags are accepted for pre-release validation. Release deployment uses the immutable digest returned by GHCR after each push. Set the four full references in the production environment:
 
 ```powershell
@@ -83,7 +90,17 @@ pnpm validate:production-images --env-file=.env.production
 docker compose --env-file .env.production -f docker-compose.production.yml --profile agent config --quiet
 ```
 
-The validator uses Node's built-in environment-file loader and checks the four image references from `.env.production` before rendering Compose. Omit `--profile agent` when MCP is not deployed.
+The validator uses Node's built-in environment-file loader and checks the four
+image references from `.env.production` before rendering Compose. It then
+starts the exact configured Web image with no external network, requests the
+versioned Skill over the container loopback interface without following
+redirects, and requires a 200 response whose raw bytes match the tracked
+artifact, SHA-256, and Ed25519 signature. The response is also checked for
+credential-shaped `wmp_` or `wmi_` values. Without `--env-file`, the same command
+builds an ephemeral Web image from the current checkout, runs the identical
+runtime probe, and removes only its uniquely labelled container and image. The
+Docker daemon and access to any configured private image are therefore required.
+Omit `--profile agent` when MCP is not deployed.
 
 ### Coordination MCP pre-release deployment
 

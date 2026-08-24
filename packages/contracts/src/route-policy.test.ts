@@ -28,6 +28,8 @@ const securityFor = (
       return [{ AgentSessionToken: [] }]
     case 'human_or_agent_session':
       return [{ SessionCookie: [] }, { AgentSessionToken: [] }]
+    case 'coordination_connection':
+      return [{ AgentConnectionInstallationToken: [] }]
     case 'installation_target':
       return [{ AgentInstallationToken: [] }]
     case 'provider_signature':
@@ -56,7 +58,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(212)
+    expect(routePolicyManifest).toHaveLength(213)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)
@@ -123,6 +125,12 @@ describe('routePolicyManifest', () => {
         scheme: 'bearer',
         bearerFormat: 'WorkMeshInstallationToken',
         description: 'Installation-scoped bearer credential used by installation_target operations, including token exchange, refresh, and exact-target handoff actions. It cannot perform ordinary session work.',
+      },
+      AgentConnectionInstallationToken: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-WorkMesh-Installation-Token',
+        description: 'Agent Connection credential used only for Coordination MCP and current-identity requests. It is distinct from pairing codes and from Bearer installation-target credentials.',
       },
       GitHubWebhookSignature: {
         type: 'apiKey',

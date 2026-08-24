@@ -979,7 +979,7 @@ paths:
           {
             "201": { $ref: "#/components/responses/Delegation" },
             "400": { $ref: "#/components/responses/BadRequest" },
-            "409": { $ref: "#/components/responses/Conflict" },
+            "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
           },
       }
   /api/v1/work-items/{id}/agent-session:
@@ -1010,7 +1010,7 @@ paths:
               { $ref: "#/components/responses/DelegateAndStartAgentSession" },
             "400": { $ref: "#/components/responses/BadRequest" },
             "403": { $ref: "#/components/responses/Forbidden" },
-            "409": { $ref: "#/components/responses/Conflict" },
+            "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
           },
       }
   /api/v1/delegations/{id}:
@@ -1110,7 +1110,7 @@ paths:
           {
             "201": { $ref: "#/components/responses/AgentSession" },
             "400": { $ref: "#/components/responses/BadRequest" },
-            "409": { $ref: "#/components/responses/Conflict" },
+            "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
           },
       }
   /api/v1/agent-sessions/{id}:
@@ -1480,7 +1480,7 @@ paths:
             "201": { $ref: "#/components/responses/AgentSession" },
             "400": { $ref: "#/components/responses/BadRequest" },
             "403": { $ref: "#/components/responses/Forbidden" },
-            "409": { $ref: "#/components/responses/Conflict" },
+            "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
           },
       }
   /api/v1/artifacts:
@@ -1689,7 +1689,7 @@ paths:
   /api/v1/handoffs/{id}/request:
     post: { x-workmesh-policy-id: route.requestHandoff, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: requestHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/handoffs/{id}/accept:
-    post: { x-workmesh-policy-id: route.acceptHandoff, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: acceptHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffAcceptInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.acceptHandoff, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: acceptHandoff, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffAcceptInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/AgentConcurrencyLimit" } } }
   /api/v1/handoffs/{id}/reject:
     post: { x-workmesh-policy-id: route.rejectHandoff, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [{ AgentInstallationToken: [] }], operationId: rejectHandoff, description: A human supplies reason. The exact target agent may authenticate with its installation credential only for this operation and supplies a protocol machineReason., parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/HandoffRejectInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
   /api/v1/handoffs/{id}/cancel:
@@ -1715,11 +1715,11 @@ paths:
   /api/v1/agent-sessions/{id}/assignment-proposals:
     post: { x-workmesh-policy-id: route.proposePlanAssignment, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: proposePlanAssignment, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
   /api/v1/agent-sessions/{id}/children:
-    post: { x-workmesh-policy-id: route.createChildAgentSession, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createChildAgentSession, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ChildSessionInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.createChildAgentSession, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createChildAgentSession, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ChildSessionInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/AgentConcurrencyLimit" } } }
   /api/v1/agent-sessions/{id}/context-deltas:
     post: { x-workmesh-policy-id: route.appendContextDelta, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: appendContextDelta, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ContextDeltaInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" } } }
   /api/v1/agent-sessions/{id}/review-delegations:
-    post: { x-workmesh-policy-id: route.createReviewDelegation, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createReviewDelegation, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ReviewDelegationInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.createReviewDelegation, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createReviewDelegation, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { $ref: "#/components/requestBodies/ReviewDelegationInput" }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/AgentConcurrencyLimit" } } }
   /api/v1/workspaces/{id}/guidance:
     get:
       {
@@ -1895,7 +1895,7 @@ paths:
     get: { x-workmesh-policy-id: route.listLoops, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listLoops, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/PagedJson" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
     post: { x-workmesh-policy-id: route.createLoop, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: createLoop, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/LoopInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/loops/{id}/run:
-    post: { x-workmesh-policy-id: route.runLoopNow, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: runLoopNow, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [occurrenceKey], properties: { occurrenceKey: { type: string }, scheduledFor: { $ref: "#/components/schemas/Timestamp" } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
+    post: { x-workmesh-policy-id: route.runLoopNow, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: runLoopNow, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [occurrenceKey], properties: { occurrenceKey: { type: string }, scheduledFor: { $ref: "#/components/schemas/Timestamp" } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/AgentConcurrencyLimit" } } }
   /api/v1/loops/{id}/state:
     post: { x-workmesh-policy-id: route.setLoopState, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_AGENT_LOOPS, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: setLoopState, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [active, paused, disabled] } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/usage-records:
@@ -1924,7 +1924,7 @@ paths:
   /api/v1/a2a-bindings:
     post: { x-workmesh-policy-id: route.configureA2ABinding, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: configureA2ABinding, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ABindingInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /api/v1/a2a-bindings/{id}/tasks:
-    post: { x-workmesh-policy-id: route.acceptA2ATask, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: acceptA2ATask, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ATaskInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
+    post: { x-workmesh-policy-id: route.acceptA2ATask, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }], operationId: acceptA2ATask, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/A2ATaskInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" }, "409": { $ref: "#/components/responses/AgentConcurrencyLimit" } } }
   /api/v1/a2a-bindings/{id}/tasks/{taskId}/events:
     get: { x-workmesh-policy-id: route.streamA2ATaskEvents, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: WORKMESH_EXPERIMENTAL_A2A, x-workmesh-feature-tier: experimental, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: streamA2ATaskEvents, parameters: [{ $ref: "#/components/parameters/Id" }, { name: taskId, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 500 } }, { name: after, in: query, description: Decimal PostgreSQL bigint cursor returned as a string to preserve precision., schema: { type: string, pattern: "^[0-9]{1,19}$", default: "0" } }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/FeatureDisabled" } } }
   /.well-known/workmesh-agent:
@@ -1934,6 +1934,8 @@ paths:
     post: { x-workmesh-policy-id: route.createAgentConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createAgentConnection, description: "Workspace Admin creates a pre-authorized Connection envelope. Returns the connect URL with the pairing code in the URL fragment; the plaintext code is shown only once and never logged.", parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCreateInput" } } } }, responses: { "201": { description: Connection created, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCreateResponse" } } } }, "400": { $ref: "#/components/responses/ValidationError" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/agent-connections/redeem:
     post: { x-workmesh-policy-id: route.redeemAgentConnection, x-workmesh-actor-kinds: [], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentConnection, description: "Public endpoint hit by an Agent to exchange a one-time 10-minute pairing code for an Installation Token, MCP config, and pinned Skill bundle. The plaintext Installation Token is returned exactly once. The success response is keyed by Idempotency-Key for the lifetime of the pairing code, so an Agent whose network drops the response can replay the same Idempotency-Key and receive the exact same body.", parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemInput" } } } }, responses: { "200": { description: Redeem succeeded, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "400": { $ref: "#/components/responses/ValidationError" }, "404": { $ref: "#/components/responses/NotFound" }, "409": { description: Pairing code already consumed (different Idempotency-Key), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "410": { description: Pairing code expired, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "423": { description: Pairing code locked by rate limiter, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
+  /api/v1/agent-connections/current-identity:
+    get: { x-workmesh-policy-id: route.getCurrentAgentConnectionIdentity, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ AgentConnectionInstallationToken: [] }], operationId: getCurrentAgentConnectionIdentity, description: "Return the live Connection and Coordination Session identity plus a redacted projection of the exact active or overlap credential that authenticated this request. Only X-WorkMesh-Installation-Token is accepted. The response never contains a credential ID, token, complete hash, or request header.", responses: { "200": { description: Current Coordination Connection identity, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCurrentIdentity" } } } }, "401": { $ref: "#/components/responses/Unauthorized" } } }
   /api/v1/agent-connections/{id}:
     parameters: [{ $ref: "#/components/parameters/Id" }]
     get: { x-workmesh-policy-id: route.getAgentConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: getAgentConnection, description: "Get one Agent Connection. The plaintext Installation Token is never returned; only a fingerprint prefix. The response carries an ETag header whose value is the Connection revision; clients must echo it back in If-Match for PATCH / DELETE / rotate.", responses: { "200": { description: Connection detail, headers: { ETag: { schema: { type: string }, description: "Revision ETag; clients echo this in If-Match on PATCH / DELETE / rotate." } }, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionResponse" } } } }, "404": { $ref: "#/components/responses/NotFound" } } }
@@ -1983,6 +1985,13 @@ components:
         scheme: bearer,
         bearerFormat: WorkMeshSessionToken,
         description: "Short-lived agent session token; revocation is checked server-side.",
+      }
+    AgentConnectionInstallationToken:
+      {
+        type: apiKey,
+        in: header,
+        name: X-WorkMesh-Installation-Token,
+        description: "Agent Connection credential used only for Coordination MCP and current-identity requests. It is distinct from pairing codes and from Bearer installation-target credentials.",
       }
     AgentInstallationToken:
       {
@@ -2850,6 +2859,27 @@ components:
               { schema: { $ref: "#/components/schemas/Error" } },
           },
       }
+    AgentConcurrencyLimit:
+      description: "Conflict response for an execution-admission endpoint. When code is AGENT_CONCURRENCY_LIMIT, the target Agent has no free execution slot and details contain only safe capacity/state counts. The endpoint may also return another documented conflict code. Coordination Sessions are excluded from this count."
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - { $ref: "#/components/schemas/AgentConcurrencyLimitError" }
+              - { $ref: "#/components/schemas/Error" }
+          examples:
+            capacityFull:
+              value:
+                error:
+                  code: AGENT_CONCURRENCY_LIMIT
+                  message: Agent execution concurrency limit reached. Coordination Sessions do not consume capacity; complete, stop, or cancel an execution Session, or increase maxConcurrency before retrying.
+                  correlationId: request-example
+                  details:
+                    maxConcurrency: 1
+                    activeExecutionSessionCount: 1
+                    countedSessionKinds: [execution]
+                    countedSessionStates: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale]
+                    activeExecutionSessionsByState: { executing: 1 }
     CursorExpired:
       {
         description: The decimal cursor is below the workspace retention floor; reset durable state from resyncCursor before reconnecting,
@@ -3141,6 +3171,68 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    AgentConnectionAuthenticatedCredential:
+      description: "Redacted proof of the exact credential that authenticated this request. No credential ID, token, complete hash, or header is returned."
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [fingerprint_prefix, status, overlap_until]
+          properties:
+            fingerprint_prefix: { type: string, pattern: "^[a-f0-9]{12}$" }
+            status: { const: active }
+            overlap_until: { type: "null" }
+        - type: object
+          additionalProperties: false
+          required: [fingerprint_prefix, status, overlap_until]
+          properties:
+            fingerprint_prefix: { type: string, pattern: "^[a-f0-9]{12}$" }
+            status: { const: overlap }
+            overlap_until: { type: string, format: date-time }
+      discriminator: { propertyName: status }
+    AgentConnectionCurrentIdentity:
+      type: object
+      additionalProperties: false
+      required: [connection, coordination_session, agent_actor_id, principal_human_actor_id, team_id, granted_capabilities, authenticated_credential]
+      description: "Additive current Connection identity returned only to the presented X-WorkMesh-Installation-Token. It preserves all AgentConnectionIdentity cross-field invariants and adds proof of the exact active or overlap credential used for this request."
+      properties:
+        connection: { $ref: "#/components/schemas/AgentConnectionResponse" }
+        coordination_session: { $ref: "#/components/schemas/CoordinationSession" }
+        agent_actor_id: { $ref: "#/components/schemas/Id" }
+        principal_human_actor_id: { $ref: "#/components/schemas/Id" }
+        team_id: { $ref: "#/components/schemas/Id" }
+        granted_capabilities: { type: array, items: { $ref: "#/components/schemas/Capability" }, uniqueItems: true }
+        authenticated_credential: { $ref: "#/components/schemas/AgentConnectionAuthenticatedCredential" }
+    AgentExecutionConcurrencyState:
+      type: string
+      enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, stale]
+    AgentConcurrencyLimitDetails:
+      type: object
+      additionalProperties: false
+      required: [maxConcurrency, activeExecutionSessionCount, countedSessionKinds, countedSessionStates, activeExecutionSessionsByState]
+      description: "Safe diagnostics for AGENT_CONCURRENCY_LIMIT. Counts execution Sessions only and never exposes Session IDs or work content."
+      properties:
+        maxConcurrency: { type: integer, minimum: 1 }
+        activeExecutionSessionCount: { type: integer, minimum: 0 }
+        countedSessionKinds: { type: array, minItems: 1, maxItems: 1, items: { const: execution } }
+        countedSessionStates: { type: array, minItems: 10, maxItems: 10, uniqueItems: true, items: { $ref: "#/components/schemas/AgentExecutionConcurrencyState" } }
+        activeExecutionSessionsByState:
+          type: object
+          propertyNames: { $ref: "#/components/schemas/AgentExecutionConcurrencyState" }
+          additionalProperties: { type: integer, minimum: 0 }
+    AgentConcurrencyLimitError:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message, details, correlationId]
+          properties:
+            code: { const: AGENT_CONCURRENCY_LIMIT }
+            message: { type: string }
+            details: { $ref: "#/components/schemas/AgentConcurrencyLimitDetails" }
+            correlationId: { type: string, minLength: 1 }
     RetentionStatus:
       type: object
       additionalProperties: false
@@ -3248,7 +3340,7 @@ components:
             properties:
               operationId: { type: string }
               policyId: { type: string }
-              authentication: { type: string, enum: [agent_session, human_or_agent_session, installation_target] }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, coordination_connection, installation_target] }
               transports:
                 type: object
                 additionalProperties: false

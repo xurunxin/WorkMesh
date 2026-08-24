@@ -186,11 +186,15 @@ Installation Token 长期有效至撤销，但**不能**直接执行普通 mutat
 每次 Coordination MCP 请求：
 
 1. 解析 Installation Token（原始字节，非 `Bearer` 头），定位到唯一 Connection。
-2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态；通过则开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
+2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态，以及 active coordination 对应 backing Agent Session 的 kind、authority-active state 与全部身份绑定；通过则复用、开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
 3. 该 Session 复用既有 `agent_sessions` 表，新增枚举值 `session_kind = 'coordination'`、`connection_id` 外键、`role = 'coordinator'`、`delegation_scope = 'team'`。
 4. Session 到期前自动续期；Connection 撤销后下一次请求即失败关闭，错误码 `COORDINATION_SESSION_CONNECTION_REVOKED`。
 
 Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegation 约束；它走的是 Connection × Team 的整组授权。
+
+`max_concurrency` 只统计 `session_kind='execution'` 且状态非终态的 Session。占位状态固定为 `queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`；`completed`、`failed`、`canceled` 释放槽位。所有 execution admission 在持有目标 Agent definition 行锁后复用同一断言，包括普通 delegation/start/retry、child/review/handoff、Loop、Automation 和 A2A 新非终态任务。
+
+active coordination 指向终态或无效 backing Session 时，服务端必须在同一事务关闭旧 coordination；终态 backing 保持不可变，其他无效非终态 backing 先取消，再创建替代 Coordination Session。并发重连必须收敛到唯一 active coordination 与唯一非终态 backing Session。
 
 ---
 
@@ -1539,6 +1543,8 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 - `verify_connection` — 回传 Connection 身份与当前 pinned Skill 版本。
 - `get_current_identity` — 返回 Agent actor、Connection、principal Human、Team、授予的能力集。
+- 三个 bootstrap 工具保留旧字段并返回 `connectionIdentity`；其中 `authenticated_credential.fingerprint_prefix/status/overlap_until` 证明本次请求实际使用的 active 或 overlap credential。`connection.credential_fingerprint_prefix` 仍表示 Connection 当前 active credential。
+- `GET /api/v1/agent-connections/current-identity` 只接受 `X-WorkMesh-Installation-Token`，不接受普通 Session Bearer；不得返回 credential ID、Token、完整 hash 或请求头。
 - `list_teams`、`list_workflow_states` — Team 与状态只读发现。
 - `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
 - `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
@@ -1570,6 +1576,9 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 - `agent.connection.created` / `pairing_redeemed` / `rotated` / `revoked`。
 - `agent.coordination_session.opened` / `refreshed` / `closed`。
+- `opened` reason 为 `initial | expired | recovered_terminal_backing | recovered_invalid_backing`；`closed` reason 为 `expired | terminal_backing | invalid_binding | invalid_backing | connection_revoked`。恢复顺序固定为 closed → 旧 Session state_changed（仅实际取消）→ 新 Session created → opened，全部与 outbox 同事务。
+- `closed` 以 Connection 资源域为可信归档边界。正常绑定携带 `sessionId`；若 backing Session 的 workspace 或 Team 已与 Connection 不一致，则不得把跨域 Session 引用加入 Connection 事件，改为固定的 `sessionReferenceOmitted: resource_scope_mismatch`。旧 Session 的 `state_changed` 只在其自身资源域归档，且不携带 Connection ID 或 Connection correlation metadata。
+- 对外认证失败保持统一 `UNAUTHENTICATED`；内部 reason 只进入服务端审计并绑定服务端生成的 diagnostic ID，不能放入公开 error details。recognized credential 最多记录安全 fingerprint prefix，unknown credential 只允许审计密钥 HMAC 标识。
 - 错误码（加入 `apiErrorCodeSchema`）：
   - `AGENT_CONNECTION_PAIRING_INVALID | PAIRING_EXPIRED | PAIRING_CONSUMED | PAIRING_LOCKED`
   - `AGENT_CONNECTION_REVOKED | AGENT_CONNECTION_PRIVILEGE_ESCALATION`

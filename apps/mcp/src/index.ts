@@ -84,12 +84,35 @@ const coordinationKey = (toolName: string, payload: unknown): string =>
 
 function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mode: McpMode | undefined): void {
   server.registerTool('verify_connection', { description: 'Verify the live Connection, derived Coordination Session, capabilities, Team authorization, and pinned WorkMesh Skill.', inputSchema: {} }, async () => tool(async () => {
-    const manifest = await client.getAgentCapabilities()
+    const [manifest, connectionIdentity] = await Promise.all([
+      client.getAgentCapabilities(),
+      client.getCurrentAgentConnectionIdentity(),
+    ])
     const expectedTeamIds = manifest.agent.capabilityScope.teamIds
     if (expectedTeamIds.length !== 1) {
       throw new WorkMeshSdkError('A Coordination Connection must resolve to exactly one Team', {
         code: 'CONNECTION_SCOPE_INVALID',
         details: { teamCount: expectedTeamIds.length },
+      })
+    }
+    if (
+      connectionIdentity.team_id !== expectedTeamIds[0]
+      || connectionIdentity.agent_actor_id !== manifest.agent.actorId
+      || connectionIdentity.coordination_session.id !== manifest.agent.sessionId
+      || connectionIdentity.granted_capabilities.length !== manifest.agent.effectiveCapabilities.length
+      || connectionIdentity.granted_capabilities.some(capability =>
+        !manifest.agent.effectiveCapabilities.includes(capability))
+    ) {
+      throw new WorkMeshSdkError('The live Connection identity did not match the capability manifest', {
+        code: 'CONNECTION_IDENTITY_INCONSISTENT',
+        details: {
+          connectionTeamId: connectionIdentity.team_id,
+          manifestTeamIds: expectedTeamIds,
+          connectionActorId: connectionIdentity.agent_actor_id,
+          manifestActorId: manifest.agent.actorId,
+          connectionSessionId: connectionIdentity.coordination_session.id,
+          manifestSessionId: manifest.agent.sessionId,
+        },
       })
     }
     const teams = await client.listTeams<{ id: string }>({ limit: 1 })
@@ -100,6 +123,7 @@ function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mo
       })
     }
     return {
+      connectionIdentity,
       manifest,
       liveProbe: { teamId: expectedTeamIds[0], teamDiscovery: 'ok' as const },
       skill: workmeshSkillManifest,
@@ -113,7 +137,13 @@ function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mo
       },
     }
   }))
-  server.registerTool('get_current_identity', { description: 'Return the live Agent actor, Coordination Session, Team scope, and effective capabilities.', inputSchema: {} }, async () => tool(async () => (await client.getAgentCapabilities()).agent))
+  server.registerTool('get_current_identity', { description: 'Return the live Agent actor plus the exact redacted Connection credential identity that authenticated this request.', inputSchema: {} }, async () => tool(async () => {
+    const [manifest, connectionIdentity] = await Promise.all([
+      client.getAgentCapabilities(),
+      client.getCurrentAgentConnectionIdentity(),
+    ])
+    return { ...manifest.agent, connectionIdentity }
+  }))
   server.registerTool('get_workmesh_context', { description: 'Bootstrap a fresh Agent in one call with live identity, the bound Team, workflow states, default state, release/features, allowed operations, and a durable replay cursor.', inputSchema: {} }, async () => tool(() => getWorkMeshContext(client)))
   server.registerTool('resolve_identifier', { description: 'Resolve a Team key, readable Project or Milestone reference, or native Work Item key such as WM-123 to the current UUID and revision.', inputSchema: { kind: z.enum(['team', 'workflow_state', 'project', 'work_item', 'milestone']), ref: z.string().min(1).max(500), teamRef: z.string().min(1).max(500).optional(), projectRef: z.string().min(1).max(500).optional() } }, async input => tool(() => resolveIdentifier(client, input)))
   server.registerTool('prepare_project_import', { description: 'Validate and normalize a complete Project import without side effects. Returns a deterministic content hash that apply_project_import must verify.', inputSchema: projectImportSchema.shape }, async input => tool(async () => prepareProjectImport(input)))

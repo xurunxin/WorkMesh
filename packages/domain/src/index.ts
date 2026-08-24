@@ -14,6 +14,30 @@ export const etag = (revision: number): string => `"revision-${revision}"`
 export const activeAgentSessionStates = ['acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked'] as const satisfies readonly AgentSessionState[]
 export const terminalAgentSessionStates = ['completed', 'failed', 'canceled'] as const satisfies readonly AgentSessionState[]
 
+/**
+ * Every non-terminal execution Session reserves one Agent execution slot.
+ * Coordination Sessions are authorization/control-plane Sessions and never
+ * participate in executor admission.
+ */
+export const agentExecutionCapacityStates = [
+  'queued',
+  'acknowledged',
+  'planning',
+  'executing',
+  'awaiting_input',
+  'awaiting_approval',
+  'blocked',
+  'paused',
+  'stopping',
+  'stale',
+] as const satisfies readonly AgentSessionState[]
+
+export const countsTowardAgentExecutionCapacity = (
+  sessionKind: 'execution' | 'coordination',
+  state: AgentSessionState,
+): boolean => sessionKind === 'execution'
+  && agentExecutionCapacityStates.includes(state as typeof agentExecutionCapacityStates[number])
+
 export const agentSessionTransitions: Readonly<Record<AgentSessionState, readonly AgentSessionState[]>> = {
   queued: ['acknowledged', 'stale', 'stopping', 'canceled'],
   acknowledged: ['planning', 'executing', 'stopping', 'failed'],

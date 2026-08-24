@@ -1032,6 +1032,11 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/agent-connections/current-identity",
+    "operationId": "getCurrentAgentConnectionIdentity"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/agent-connections/{id}",
     "operationId": "getAgentConnection"
   },

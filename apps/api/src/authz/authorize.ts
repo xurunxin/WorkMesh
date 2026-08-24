@@ -402,6 +402,16 @@ export async function authorizeRequest(
   }
   const actor = request.actor
   if (!actor) throw new DomainError('UNAUTHENTICATED', 'An authenticated principal is required')
+  if (
+    policy.authentication === 'coordination_connection'
+    && actor.authentication !== 'coordination_connection'
+  ) {
+    throw new DomainError('UNAUTHENTICATED', 'An active Agent Connection is required', {
+      authorizationStage: 'identity',
+      policyId: policy.policyId,
+      suppressAuthorizationDenial: true,
+    })
+  }
   if (!policy.actorKinds.includes(actor.kind)) {
     throw new DomainError('FORBIDDEN', 'The authenticated principal kind is not allowed for this route', {
       authorizationStage: 'identity',
