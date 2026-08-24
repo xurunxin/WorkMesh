@@ -686,6 +686,15 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
             caller?.id ?? null,
           ],
         )).rows.map(row => row.id);
+        const activeSessionTokenIds = activeSessionIds.length
+          ? (await tx.query<{ id: string }>(
+              `SELECT id
+                 FROM agent_session_tokens
+                WHERE session_id=ANY($1::uuid[]) AND revoked_at IS NULL
+                ORDER BY id`,
+              [activeSessionIds],
+            )).rows.map(row => row.id)
+          : [];
         const installationAuthority = await locateExecutionInstallationAuthority(tx, {
           agentId: input.agentId,
           teamId: locator.team_id,
@@ -718,6 +727,7 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
               : []),
           ],
           sessionIds: activeSessionIds,
+          sessionTokenIds: activeSessionTokenIds,
           installationTokenIds: installationTokenId ? [installationTokenId] : [],
           workItemIds: [workItemId],
           projectIds: locator.project_id ? [locator.project_id] : [],
@@ -884,6 +894,18 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
         const plannedSessionIds = new Set(activeSessionIds);
         if (currentSessions.some(session => !plannedSessionIds.has(session.id)))
           throw new RetryForcedAssignment();
+        const currentSessionTokenIds = currentSessions.length
+          ? (await tx.query<{ id: string }>(
+              `SELECT id
+                 FROM agent_session_tokens
+                WHERE session_id=ANY($1::uuid[]) AND revoked_at IS NULL
+                ORDER BY id`,
+              [currentSessions.map(session => session.id)],
+            )).rows.map(row => row.id)
+          : [];
+        const plannedSessionTokenIds = new Set(activeSessionTokenIds);
+        if (currentSessionTokenIds.some(id => !plannedSessionTokenIds.has(id)))
+          throw new RetryForcedAssignment();
 
         const requestedCapabilities = [...input.requestedCapabilities].sort();
         const currentCapabilities = current
@@ -897,7 +919,12 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
           && current.scope_type === "work_item"
           && current.scope_id === workItemId
           && JSON.stringify(currentCapabilities) === JSON.stringify(requestedCapabilities);
-        if (compatible && currentSessions[0]) return {
+        if (
+          compatible
+          && currentSessions.length === 1
+          && currentSessions[0]
+          && !["stale", "stopping"].includes(currentSessions[0].state)
+        ) return {
           delegation: current,
           session: normalizeAgentSessionResponse(currentSessions[0]),
         };
@@ -939,14 +966,24 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
                 WHERE session_id=$1 AND revoked_at IS NULL`,
               [oldSession.id],
             );
-            await tx.query(
+            const releasedLeases = (await tx.query<{ id: string; version: number }>(
               `UPDATE leases
                   SET status='released',released_at=now(),
                       released_by_actor_id=$2,
                       audit_reason='replaced by Human forced assignment',
                       version=version+1,updated_at=now()
-                WHERE session_id=$1 AND status='active'`,
+                WHERE session_id=$1 AND status='active'
+              RETURNING id,version`,
               [oldSession.id, meta.actor.id],
+            )).rows;
+            await tx.query(
+              `UPDATE inbox_items
+                  SET status='resolved',resolved_at=now(),resolved_by_actor_id=$3,
+                      revision=revision+1,updated_at=now()
+                WHERE workspace_id=$1 AND session_id=$2 AND status='open'
+                  AND kind='session_stale'
+                  AND source_type='agent_session' AND source_id=$2`,
+              [meta.actor.workspaceId, oldSession.id, meta.actor.id],
             );
             const canceledEventId = await event(
               tx,
@@ -975,6 +1012,21 @@ export async function delegateAndStartAgentSession(db: Pool, meta: RequestMeta, 
                 state: "canceled",
                 reason: "replaced by Human forced assignment",
               },
+            );
+            for (const lease of releasedLeases) await event(
+              tx,
+              meta,
+              "lease.released",
+              "lease",
+              lease.id,
+              lease.version,
+              {
+                reason: "replaced by Human forced assignment",
+                sessionId: oldSession.id,
+              },
+              work.team_id,
+              oldSession.id,
+              Number(canceled.sequence),
             );
           }
           const revoked = one((await tx.query<{ revision: number }>(
@@ -1202,6 +1254,84 @@ type SelfClaimIdentity = Readonly<{
   caller_delegation_id: string
 }>;
 
+type SelfClaimCapabilityScope = Readonly<{
+  workspaceId?: string
+  teamIds?: string[]
+  projectIds?: string[]
+  workItemIds?: string[]
+  repositoryIds?: string[]
+  capabilities?: Capability[]
+}>;
+
+type ActiveSelfClaimAssignment = Record<string, unknown> & Readonly<{
+  id: string
+  team_id: string
+  agent_id: string
+  agent_actor_id: string
+  principal_human_actor_id: string
+  work_item_id: string | null
+  role: string
+  scope_type: string
+  scope_id: string
+  permissions_snapshot: Capability[]
+  capability_scope: SelfClaimCapabilityScope
+}>;
+
+type RecoverableSelfClaimSession = Readonly<{
+  id: string
+  state: AgentSessionState
+  revision: number
+  sequence: number | string
+  retry_count: number
+  created_at: Date
+}>;
+
+const sameUniqueSet = <T extends string>(
+  left: readonly T[],
+  right: readonly T[],
+): boolean => left.length === new Set(left).size
+  && right.length === new Set(right).size
+  && left.length === right.length
+  && left.every(value => right.includes(value));
+
+const exactSelfClaimScopeKeys = new Set([
+  "workspaceId",
+  "teamIds",
+  "projectIds",
+  "workItemIds",
+  "repositoryIds",
+  "capabilities",
+]);
+
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(entry => typeof entry === "string");
+
+const isExactSelfClaimScope = (
+  scope: SelfClaimCapabilityScope,
+  expected: Readonly<{
+    workspaceId: string
+    teamId: string
+    projectId: string | null
+    workItemId: string
+    capabilities: readonly Capability[]
+  }>,
+): boolean => {
+  const keys = Object.keys(scope);
+  return keys.length === exactSelfClaimScopeKeys.size
+    && keys.every(key => exactSelfClaimScopeKeys.has(key))
+    && scope.workspaceId === expected.workspaceId
+    && isStringArray(scope.teamIds)
+    && isStringArray(scope.projectIds)
+    && isStringArray(scope.workItemIds)
+    && isStringArray(scope.repositoryIds)
+    && isStringArray(scope.capabilities)
+    && sameUniqueSet(scope.teamIds ?? [], [expected.teamId])
+    && sameUniqueSet(scope.projectIds ?? [], expected.projectId ? [expected.projectId] : [])
+    && sameUniqueSet(scope.workItemIds ?? [], [expected.workItemId])
+    && sameUniqueSet(scope.repositoryIds ?? [], [])
+    && sameUniqueSet(scope.capabilities ?? [], expected.capabilities);
+};
+
 async function locateSelfClaimIdentity(
   tx: PoolClient,
   input: Readonly<{
@@ -1376,6 +1506,19 @@ export async function claimWorkItem(
           locator.active_delegation_id,
         ],
       )).rows.map(row => row.id);
+      const replacementSessionTokenIds = locator.active_delegation_id
+        ? (await tx.query<{ id: string }>(
+            `SELECT token.id
+               FROM agent_session_tokens token
+               JOIN agent_sessions session ON session.id=token.session_id
+              WHERE session.workspace_id=$1
+                AND session.delegation_id=$2
+                AND ${agentExecutionCapacitySqlPredicate("session")}
+                AND token.revoked_at IS NULL
+              ORDER BY token.id`,
+            [meta.actor.workspaceId, locator.active_delegation_id],
+          )).rows.map(row => row.id)
+        : [];
 
       const installationTokenId = await lockAgentAuthorityPlanWithInstallationTokenWrite(tx, {
         definitionIds: [identity.connection_agent_id],
@@ -1389,6 +1532,7 @@ export async function claimWorkItem(
           ...(locator.active_delegation_id ? [locator.active_delegation_id] : []),
         ],
         sessionIds: countedSessionIds,
+        sessionTokenIds: replacementSessionTokenIds,
         installationTokenIds: existingInstallationTokenId
           ? [existingInstallationTokenId]
           : [],
@@ -1516,12 +1660,15 @@ export async function claimWorkItem(
         && authority.permissions_snapshot.includes(capability));
       if (!liveCapabilities.includes("work:read") || !liveCapabilities.includes("work:write"))
         throw new DomainError("CAPABILITY_DENIED", "Self-claim requires live work:read and work:write capabilities");
-      const requestedCapabilities = input.requestedCapabilities ?? liveCapabilities;
+      const explicitlyRequestedCapabilities = input.requestedCapabilities;
       if (
-        !requestedCapabilities.includes("work:read")
-        || !requestedCapabilities.includes("work:write")
-        || requestedCapabilities.includes("agent:delegate")
-        || requestedCapabilities.some(capability => !liveCapabilities.includes(capability))
+        explicitlyRequestedCapabilities
+        && (
+          !explicitlyRequestedCapabilities.includes("work:read")
+          || !explicitlyRequestedCapabilities.includes("work:write")
+          || explicitlyRequestedCapabilities.includes("agent:delegate")
+          || explicitlyRequestedCapabilities.some(capability => !liveCapabilities.includes(capability))
+        )
       ) throw new DomainError("CAPABILITY_DENIED", "Requested execution capabilities exceed the live Connection authority");
 
       const work = one((await tx.query<{
@@ -1549,11 +1696,8 @@ export async function claimWorkItem(
       ) throw new DomainError("RESOURCE_SCOPE_DENIED", "The Work Item is outside the Connection Team");
       assertRevision(expectedRevision, work.revision);
 
-      const assignment = (await tx.query<{
-        id: string
-        agent_id: string
-      }>(
-        `SELECT id,agent_id
+      const assignment = (await tx.query<ActiveSelfClaimAssignment>(
+        `SELECT *
            FROM delegations
           WHERE workspace_id=$1 AND work_item_id=$2
             AND role='executor' AND status='active'
@@ -1561,26 +1705,80 @@ export async function claimWorkItem(
           LIMIT 1`,
         [meta.actor.workspaceId, workItemId],
       )).rows[0];
-      if (assignment) {
-        const stateRows = (await tx.query<{ state: AgentSessionState; count: string }>(
-          `SELECT state,count(*)::text AS count
+      if ((assignment?.id ?? null) !== locator.active_delegation_id)
+        throw new DomainError(
+          "REVISION_CONFLICT",
+          "The Work Item assignment changed while stale recovery authority was acquired; retry the claim",
+        );
+      const assignmentSessions = assignment
+        ? (await tx.query<RecoverableSelfClaimSession>(
+          `SELECT id,state,revision,sequence,retry_count,created_at
              FROM agent_sessions session
             WHERE session.workspace_id=$1
               AND session.delegation_id=$2
               AND ${agentExecutionCapacitySqlPredicate("session")}
-            GROUP BY state
-            ORDER BY state`,
+            ORDER BY created_at DESC,id DESC`,
           [meta.actor.workspaceId, assignment.id],
-        )).rows;
+        )).rows
+        : [];
+      const activeAssignmentSessionTokenIds = assignmentSessions.length
+        ? (await tx.query<{ id: string }>(
+            `SELECT id
+               FROM agent_session_tokens
+              WHERE session_id=ANY($1::uuid[]) AND revoked_at IS NULL
+              ORDER BY id`,
+            [assignmentSessions.map(session => session.id)],
+          )).rows.map(row => row.id)
+        : [];
+      if (!sameUniqueSet(activeAssignmentSessionTokenIds, replacementSessionTokenIds))
+        throw new DomainError(
+          "REVISION_CONFLICT",
+          "The stale Session credentials changed while recovery authority was acquired; retry the claim",
+        );
+      const assignmentCapabilities = assignment?.permissions_snapshot ?? [];
+      const assignmentScope = assignment?.capability_scope ?? {};
+      const assignmentCompatible = Boolean(
+        assignment
+        && assignment.team_id === work.team_id
+        && assignment.agent_id === identity.connection_agent_id
+        && assignment.agent_actor_id === meta.actor.id
+        && assignment.principal_human_actor_id === identity.connection_principal_human_actor_id
+        && assignment.work_item_id === workItemId
+        && assignment.role === "executor"
+        && assignment.scope_type === "work_item"
+        && assignment.scope_id === workItemId
+        && assignmentCapabilities.includes("work:read")
+        && assignmentCapabilities.includes("work:write")
+        && !assignmentCapabilities.includes("agent:delegate")
+        && assignmentCapabilities.every(capability => liveCapabilities.includes(capability))
+        && isExactSelfClaimScope(assignmentScope, {
+          workspaceId: meta.actor.workspaceId,
+          teamId: work.team_id,
+          projectId: work.project_id,
+          workItemId,
+          capabilities: assignmentCapabilities,
+        })
+        && (
+          !explicitlyRequestedCapabilities
+          || sameUniqueSet(explicitlyRequestedCapabilities, assignmentCapabilities)
+        )
+        && assignmentSessions.length > 0
+        && assignmentSessions.every(session => countedSessionIds.includes(session.id))
+        && assignmentSessions.every(session => session.state === "stale")
+      );
+      if (assignment && !assignmentCompatible) {
+        const activeExecutionStates = Object.fromEntries(
+          [...new Set(assignmentSessions.map(session => session.state))]
+            .sort()
+            .map(state => [
+              state,
+              assignmentSessions.filter(session => session.state === state).length,
+            ]),
+        );
         throw new DomainError(
           "WORK_ITEM_ALREADY_ASSIGNED",
-          "The Work Item already has an active executor assignment",
-          {
-            agentId: assignment.agent_id,
-            activeExecutionStates: Object.fromEntries(
-              stateRows.map(row => [row.state, Number(row.count)]),
-            ),
-          },
+          "The Work Item has an executor assignment that this Connection cannot recover",
+          { agentId: assignment.agent_id, activeExecutionStates },
         );
       }
       assertWorkItemSelfClaimable({
@@ -1589,6 +1787,80 @@ export async function claimWorkItem(
         principalHumanActorId: identity.connection_principal_human_actor_id,
         hasActiveExecutorDelegation: false,
       });
+
+      const replacementReason = "replaced by stale self-claim recovery";
+      for (const oldSession of assignmentSessions) {
+        const canceled = one((await tx.query<{
+          revision: number
+          sequence: number | string
+        }>(
+          `UPDATE agent_sessions
+              SET state='canceled',state_reason=$2,ended_at=now(),
+                  revision=revision+1,sequence=sequence+1,updated_at=now()
+            WHERE id=$1 AND session_kind='execution' AND state='stale'
+          RETURNING revision,sequence`,
+          [oldSession.id, replacementReason],
+        )).rows);
+        await tx.query(
+          `UPDATE agent_session_tokens
+              SET revoked_at=COALESCE(revoked_at,now())
+            WHERE session_id=$1 AND revoked_at IS NULL`,
+          [oldSession.id],
+        );
+        const releasedLeases = (await tx.query<{ id: string; version: number }>(
+          `UPDATE leases
+              SET status='released',released_at=now(),released_by_actor_id=$2,
+                  audit_reason=$3,version=version+1,updated_at=now()
+            WHERE session_id=$1 AND status='active'
+          RETURNING id,version`,
+          [oldSession.id, meta.actor.id, replacementReason],
+        )).rows;
+        await tx.query(
+          `UPDATE inbox_items
+              SET status='resolved',resolved_at=now(),resolved_by_actor_id=$3,
+                  revision=revision+1,updated_at=now()
+            WHERE workspace_id=$1 AND session_id=$2 AND status='open'
+              AND kind='session_stale'
+              AND source_type='agent_session' AND source_id=$2`,
+          [meta.actor.workspaceId, oldSession.id, meta.actor.id],
+        );
+        const canceledEventId = await event(
+          tx,
+          meta,
+          "agent.session.state_changed",
+          "agent_session",
+          oldSession.id,
+          canceled.revision,
+          {
+            state: "canceled",
+            reason: replacementReason,
+            assignmentMode: "self_claim_recovery",
+          },
+          work.team_id,
+          oldSession.id,
+          Number(canceled.sequence),
+        );
+        await queueWebhookDeliveries(
+          tx,
+          identity.connection_agent_id,
+          canceledEventId,
+          "agent.session.state_changed",
+          oldSession.id,
+          { sessionId: oldSession.id, state: "canceled", reason: replacementReason },
+        );
+        for (const lease of releasedLeases) await event(
+          tx,
+          meta,
+          "lease.released",
+          "lease",
+          lease.id,
+          lease.version,
+          { reason: replacementReason, sessionId: oldSession.id },
+          work.team_id,
+          oldSession.id,
+          Number(canceled.sequence),
+        );
+      }
       await assertAgentExecutionCapacityAfterLock(tx, {
         workspaceId: meta.actor.workspaceId,
         agentId: identity.connection_agent_id,
@@ -1652,52 +1924,62 @@ export async function claimWorkItem(
         principalHumanActorId: identity.connection_principal_human_actor_id,
       })
 
+      const executionCapabilities = assignment
+        ? assignmentCapabilities
+        : explicitlyRequestedCapabilities ?? liveCapabilities;
       const capabilityScope = {
         workspaceId: meta.actor.workspaceId,
         teamIds: [work.team_id],
         projectIds: work.project_id ? [work.project_id] : [],
         workItemIds: [workItemId],
         repositoryIds: [],
-        capabilities: requestedCapabilities,
+        capabilities: executionCapabilities,
       };
-      const delegation = one((await tx.query<Record<string, unknown>>(
-        `INSERT INTO delegations(
-           workspace_id,team_id,agent_id,agent_actor_id,
-           principal_human_actor_id,work_item_id,role,scope_type,scope_id,
-           permissions_snapshot,capability_scope,status
-         ) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8,'active')
-         RETURNING *`,
-        [
-          meta.actor.workspaceId,
+      let delegation: Record<string, unknown>;
+      if (assignment) {
+        delegation = assignment;
+      } else {
+        delegation = one((await tx.query<Record<string, unknown>>(
+          `INSERT INTO delegations(
+             workspace_id,team_id,agent_id,agent_actor_id,
+             principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+             permissions_snapshot,capability_scope,status
+           ) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8,'active')
+           RETURNING *`,
+          [
+            meta.actor.workspaceId,
+            work.team_id,
+            identity.connection_agent_id,
+            meta.actor.id,
+            identity.connection_principal_human_actor_id,
+            workItemId,
+            executionCapabilities,
+            capabilityScope,
+          ],
+        )).rows);
+        await event(
+          tx,
+          meta,
+          "agent.delegation.created",
+          "delegation",
+          String(delegation.id),
+          Number(delegation.revision),
+          {
+            workItemId,
+            agentId: identity.connection_agent_id,
+            assignmentMode: "self_claim",
+          },
           work.team_id,
-          identity.connection_agent_id,
-          meta.actor.id,
-          identity.connection_principal_human_actor_id,
-          workItemId,
-          requestedCapabilities,
-          capabilityScope,
-        ],
-      )).rows);
-      await event(
-        tx,
-        meta,
-        "agent.delegation.created",
-        "delegation",
-        String(delegation.id),
-        Number(delegation.revision),
-        {
-          workItemId,
-          agentId: identity.connection_agent_id,
-          assignmentMode: "self_claim",
-        },
-        work.team_id,
-      );
+        );
+      }
 
+      const recoverySource = assignmentSessions[0];
       const session = one((await tx.query<Record<string, unknown>>(
         `INSERT INTO agent_sessions(
            workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
-           work_item_id,context_snapshot_id,budget
-         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)
+           work_item_id,context_snapshot_id,budget,retry_of_session_id,
+           retry_reason,retry_count
+         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          RETURNING *`,
         [
           meta.actor.workspaceId,
@@ -1708,6 +1990,9 @@ export async function claimWorkItem(
           workItemId,
           contextSnapshotId,
           input.budget ?? {},
+          recoverySource?.id ?? null,
+          assignment ? replacementReason : null,
+          recoverySource ? recoverySource.retry_count + 1 : 0,
         ],
       )).rows);
       await tx.query(
@@ -1749,7 +2034,8 @@ export async function claimWorkItem(
         {
           delegationId: delegation.id,
           workItemId,
-          assignmentMode: "self_claim",
+          assignmentMode: assignment ? "self_claim_recovery" : "self_claim",
+          retryOfSessionId: recoverySource?.id ?? null,
         },
         work.team_id,
         String(session.id),
@@ -2314,6 +2600,15 @@ export async function acknowledge(db: Pool, meta: RequestMeta, sessionId: string
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: "ack", idempotencyKey: meta.idempotencyKey });
     assertAgentSessionTransition(session.state, "acknowledged");
     const row = one((await tx.query("UPDATE agent_sessions SET state='acknowledged',state_reason=$2,acknowledged_at=now(),external_urls=$3::jsonb,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, input.summary, JSON.stringify(input.externalUrls)])).rows);
+    if (session.state === "stale") await tx.query(
+      `UPDATE inbox_items
+          SET status='resolved',resolved_at=now(),resolved_by_actor_id=$3,
+              revision=revision+1,updated_at=now()
+        WHERE workspace_id=$1 AND session_id=$2 AND status='open'
+          AND kind='session_stale'
+          AND source_type='agent_session' AND source_id=$2`,
+      [meta.actor.workspaceId, sessionId, meta.actor.id],
+    );
     await event(tx, meta, "agent.session.acknowledged", "agent_session", sessionId, Number((row as { revision: number }).revision), { summary: input.summary }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
   });
   return normalizeAgentSessionResponse(response);

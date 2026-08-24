@@ -30,6 +30,7 @@ import {
   workspaceInputSchema,
 } from "@workmesh/contracts";
 import {
+  agentExecutionCapacitySqlPredicate,
   appendEvent,
   applyMigrations,
   assertPasswordPolicy,
@@ -1477,14 +1478,100 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
     where += ` AND w.team_id=$${values.length}`;
     values.push(identity.principal_human_actor_id);
     where += ` AND w.responsible_human_actor_id=$${values.length}`;
+    values.push(identity.agent_actor_id);
+    const claimAgentActorParameter = `$${values.length}`;
+    values.push(identity.granted_capabilities);
+    const claimCapabilitiesParameter = `$${values.length}`;
     where += ` AND s.category NOT IN ('completed','canceled')
-      AND NOT EXISTS (
-        SELECT 1
-          FROM delegations assignment
-         WHERE assignment.workspace_id=w.workspace_id
-           AND assignment.work_item_id=w.id
-           AND assignment.role='executor'
-           AND assignment.status='active'
+      AND (
+        NOT EXISTS (
+          SELECT 1
+            FROM delegations assignment
+           WHERE assignment.workspace_id=w.workspace_id
+             AND assignment.work_item_id=w.id
+             AND assignment.role='executor'
+             AND assignment.status='active'
+        )
+        OR EXISTS (
+          SELECT 1
+            FROM delegations assignment
+           WHERE assignment.workspace_id=w.workspace_id
+             AND assignment.team_id=w.team_id
+             AND assignment.work_item_id=w.id
+             AND assignment.agent_actor_id=${claimAgentActorParameter}
+             AND assignment.principal_human_actor_id=w.responsible_human_actor_id
+             AND assignment.role='executor'
+             AND assignment.scope_type='work_item'
+             AND assignment.scope_id=w.id
+             AND assignment.status='active'
+             AND assignment.permissions_snapshot <@ ${claimCapabilitiesParameter}::text[]
+             AND cardinality(assignment.permissions_snapshot)=(
+               SELECT count(DISTINCT permission.capability)::integer
+                 FROM unnest(assignment.permissions_snapshot)
+                   AS permission(capability)
+             )
+             AND 'work:read'=ANY(assignment.permissions_snapshot)
+             AND 'work:write'=ANY(assignment.permissions_snapshot)
+             AND NOT ('agent:delegate'=ANY(assignment.permissions_snapshot))
+             AND jsonb_typeof(assignment.capability_scope)='object'
+             AND assignment.capability_scope ?& ARRAY[
+               'workspaceId','teamIds','projectIds','workItemIds',
+               'repositoryIds','capabilities'
+             ]::text[]
+             AND (assignment.capability_scope - ARRAY[
+               'workspaceId','teamIds','projectIds','workItemIds',
+               'repositoryIds','capabilities'
+             ]::text[])='{}'::jsonb
+             AND assignment.capability_scope->>'workspaceId'=w.workspace_id::text
+             AND assignment.capability_scope->'teamIds'=jsonb_build_array(w.team_id::text)
+             AND assignment.capability_scope->'projectIds'=(
+               CASE WHEN w.project_id IS NULL
+                 THEN '[]'::jsonb
+                 ELSE jsonb_build_array(w.project_id::text)
+               END
+             )
+             AND assignment.capability_scope->'workItemIds'=jsonb_build_array(w.id::text)
+             AND assignment.capability_scope->'repositoryIds'='[]'::jsonb
+             AND CASE
+                   WHEN jsonb_typeof(assignment.capability_scope->'capabilities')='array'
+                   THEN jsonb_array_length(assignment.capability_scope->'capabilities')
+                     =cardinality(assignment.permissions_snapshot)
+                     AND jsonb_array_length(assignment.capability_scope->'capabilities')=(
+                       SELECT count(DISTINCT scoped.capability)::integer
+                         FROM jsonb_array_elements_text(
+                           assignment.capability_scope->'capabilities'
+                         ) AS scoped(capability)
+                     )
+                     AND NOT EXISTS (
+                       SELECT 1
+                         FROM jsonb_array_elements(
+                           assignment.capability_scope->'capabilities'
+                         ) AS scoped_value(value)
+                        WHERE jsonb_typeof(scoped_value.value)<>'string'
+                     )
+                   ELSE false
+                 END
+             AND (assignment.capability_scope->'capabilities')
+               @> to_jsonb(assignment.permissions_snapshot)
+             AND to_jsonb(assignment.permissions_snapshot)
+               @> (assignment.capability_scope->'capabilities')
+             AND EXISTS (
+               SELECT 1
+                 FROM agent_sessions recoverable
+                WHERE recoverable.workspace_id=w.workspace_id
+                  AND recoverable.delegation_id=assignment.id
+                  AND ${agentExecutionCapacitySqlPredicate("recoverable")}
+                  AND recoverable.state='stale'
+             )
+             AND NOT EXISTS (
+               SELECT 1
+                 FROM agent_sessions conflicting
+                WHERE conflicting.workspace_id=w.workspace_id
+                  AND conflicting.delegation_id=assignment.id
+                  AND ${agentExecutionCapacitySqlPredicate("conflicting")}
+                  AND conflicting.state<>'stale'
+             )
+        )
       )`;
   }
   for (const [key, column] of [

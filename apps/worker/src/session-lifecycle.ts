@@ -7,22 +7,30 @@ export type SessionLiveness = 'healthy' | 'degraded' | 'stale'
 
 export const classifyHeartbeatLiveness = ({
   lastHeartbeatAt,
+  acknowledgedAt,
+  createdAt,
   heartbeatIntervalSeconds,
   staleAfterSeconds,
   now = new Date(),
 }: {
-  lastHeartbeatAt: Date | string | null
+  /** The first accepted heartbeat becomes the authoritative baseline. */
+  lastHeartbeatAt?: Date | string | null
+  /** Used until the first heartbeat is accepted. */
+  acknowledgedAt?: Date | string | null
+  /** Legacy acknowledged sessions may not have acknowledged_at populated. */
+  createdAt?: Date | string | null
   heartbeatIntervalSeconds: number
   staleAfterSeconds: number
   now?: Date
 }): SessionLiveness => {
-  if (!lastHeartbeatAt) return 'stale'
-  const ageSeconds = Math.max(0, (now.getTime() - new Date(lastHeartbeatAt).getTime()) / 1_000)
+  const baselineAt = lastHeartbeatAt ?? acknowledgedAt ?? createdAt ?? null
+  if (!baselineAt) return 'stale'
+  const ageSeconds = Math.max(0, (now.getTime() - new Date(baselineAt).getTime()) / 1_000)
   if (ageSeconds >= staleAfterSeconds) return 'stale'
   return ageSeconds > heartbeatIntervalSeconds * 2 ? 'degraded' : 'healthy'
 }
 
-type LockedSession = { id: string; workspaceId: string; teamId: string; responsibleHumanActorId?: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
+type LockedSession = { id: string; workspaceId: string; teamId: string; responsibleHumanActorId?: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; acknowledgedAt?: Date | null; createdAt?: Date | null; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
 type UpdatedSession = { id: string; workspaceId: string; revision: number; sequence: string }
 type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string }
 
@@ -174,6 +182,8 @@ export function createSessionLifecycleWorker({
              item.responsible_human_actor_id AS "responsibleHumanActorId",s.state,
              s.revision,s.sequence::text AS sequence,
              s.heartbeat_health AS "heartbeatHealth",
+             s.acknowledged_at AS "acknowledgedAt",
+             s.created_at AS "createdAt",
              s.last_heartbeat_at AS "lastHeartbeatAt",
              COALESCE((definition.manifest->>'heartbeatIntervalSeconds')::int,30)
                AS "heartbeatIntervalSeconds"
@@ -182,7 +192,7 @@ export function createSessionLifecycleWorker({
       JOIN work_items item ON item.id=s.work_item_id AND item.workspace_id=s.workspace_id
       JOIN agent_definitions definition ON definition.id=s.agent_id
       WHERE s.state IN ('acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked')
-      ORDER BY COALESCE(s.last_heartbeat_at,s.created_at)
+      ORDER BY COALESCE(s.last_heartbeat_at,s.acknowledged_at,s.created_at)
       FOR UPDATE OF s SKIP LOCKED LIMIT $1
     `,
         [limit],
@@ -191,6 +201,8 @@ export function createSessionLifecycleWorker({
       for (const session of candidates.rows) {
         const next = classifyHeartbeatLiveness({
           lastHeartbeatAt: session.lastHeartbeatAt ?? null,
+          acknowledgedAt: session.acknowledgedAt ?? null,
+          createdAt: session.createdAt ?? null,
           heartbeatIntervalSeconds: session.heartbeatIntervalSeconds ?? 30,
           staleAfterSeconds: heartbeatStaleAfterSeconds,
         });
