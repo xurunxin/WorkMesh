@@ -1506,6 +1506,18 @@ export async function claimWorkItem(
           locator.active_delegation_id,
         ],
       )).rows.map(row => row.id);
+      const locatedTerminalRecoverySourceId = locator.active_delegation_id
+        ? (await tx.query<{ id: string }>(
+            `SELECT id
+               FROM agent_sessions
+              WHERE workspace_id=$1 AND delegation_id=$2
+                AND session_kind='execution'
+                AND state IN ('completed','failed','canceled')
+              ORDER BY created_at DESC,id DESC
+              LIMIT 1`,
+            [meta.actor.workspaceId, locator.active_delegation_id],
+          )).rows[0]?.id ?? null
+        : null;
       const replacementSessionTokenIds = locator.active_delegation_id
         ? (await tx.query<{ id: string }>(
             `SELECT token.id
@@ -1531,7 +1543,10 @@ export async function claimWorkItem(
           identity.connection_delegation_id,
           ...(locator.active_delegation_id ? [locator.active_delegation_id] : []),
         ],
-        sessionIds: countedSessionIds,
+        sessionIds: [
+          ...countedSessionIds,
+          ...(locatedTerminalRecoverySourceId ? [locatedTerminalRecoverySourceId] : []),
+        ],
         sessionTokenIds: replacementSessionTokenIds,
         installationTokenIds: existingInstallationTokenId
           ? [existingInstallationTokenId]
@@ -1721,6 +1736,23 @@ export async function claimWorkItem(
           [meta.actor.workspaceId, assignment.id],
         )).rows
         : [];
+      const terminalRecoverySource = assignment
+        ? (await tx.query<RecoverableSelfClaimSession>(
+            `SELECT id,state,revision,sequence,retry_count,created_at
+               FROM agent_sessions
+              WHERE workspace_id=$1 AND delegation_id=$2
+                AND session_kind='execution'
+                AND state IN ('completed','failed','canceled')
+              ORDER BY created_at DESC,id DESC
+              LIMIT 1`,
+            [meta.actor.workspaceId, assignment.id],
+          )).rows[0]
+        : undefined;
+      if ((terminalRecoverySource?.id ?? null) !== locatedTerminalRecoverySourceId)
+        throw new DomainError(
+          "REVISION_CONFLICT",
+          "The terminal Session history changed while recovery authority was acquired; retry the claim",
+        );
       const activeAssignmentSessionTokenIds = assignmentSessions.length
         ? (await tx.query<{ id: string }>(
             `SELECT id
@@ -1762,7 +1794,6 @@ export async function claimWorkItem(
           !explicitlyRequestedCapabilities
           || sameUniqueSet(explicitlyRequestedCapabilities, assignmentCapabilities)
         )
-        && assignmentSessions.length > 0
         && assignmentSessions.every(session => countedSessionIds.includes(session.id))
         && assignmentSessions.every(session => session.state === "stale")
       );
@@ -1788,7 +1819,9 @@ export async function claimWorkItem(
         hasActiveExecutorDelegation: false,
       });
 
-      const replacementReason = "replaced by stale self-claim recovery";
+      const replacementReason = assignmentSessions.length > 0
+        ? "replaced by stale self-claim recovery"
+        : "continued from inactive self-claim assignment";
       for (const oldSession of assignmentSessions) {
         const canceled = one((await tx.query<{
           revision: number
@@ -1973,7 +2006,7 @@ export async function claimWorkItem(
         );
       }
 
-      const recoverySource = assignmentSessions[0];
+      const recoverySource = assignmentSessions[0] ?? terminalRecoverySource;
       const session = one((await tx.query<Record<string, unknown>>(
         `INSERT INTO agent_sessions(
            workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
@@ -2035,6 +2068,13 @@ export async function claimWorkItem(
           delegationId: delegation.id,
           workItemId,
           assignmentMode: assignment ? "self_claim_recovery" : "self_claim",
+          recoveryMode: assignment
+            ? assignmentSessions.length > 0
+              ? "stale"
+              : recoverySource
+                ? "terminal"
+                : "sessionless"
+            : null,
           retryOfSessionId: recoverySource?.id ?? null,
         },
         work.team_id,

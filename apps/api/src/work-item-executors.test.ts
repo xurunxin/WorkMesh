@@ -124,6 +124,46 @@ describe('Work Item executor response projection', () => {
     expect(String(query.mock.calls[0]?.[0])).toContain("delegation.status='active'")
   })
 
+  it('keeps terminal assignment history separate from active runtime execution', async () => {
+    const assignedAt = new Date('2026-08-03T10:00:00.000Z')
+    const query = vi.fn().mockResolvedValue({ rows: [{
+      work_item_id: item.id,
+      responsible_human_actor_id: item.responsible_human_actor_id,
+      responsible_human_display_name: 'Release owner',
+      assignment_delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      assignment_agent_id: '44444444-4444-4444-8444-444444444444',
+      assignment_agent_actor_id: '55555555-5555-4555-8555-555555555555',
+      assignment_agent_slug: 'self-claiming-agent',
+      assignment_agent_display_name: 'Self-claiming Agent',
+      assignment_session_id: '66666666-6666-4666-8666-666666666666',
+      assignment_session_state: 'completed',
+      assignment_assigned_at: assignedAt,
+      projection_role: null,
+      agent_id: null,
+      agent_actor_id: null,
+      agent_slug: null,
+      agent_display_name: null,
+      session_id: null,
+      lease_id: null,
+      lease_kind: null,
+      resource_type: null,
+      resource_id: null,
+      execution_state: null,
+      heartbeat_health: null,
+      last_heartbeat_at: null,
+      lease_heartbeat_at: null,
+      lease_expires_at: null,
+    }] })
+
+    const [projected] = await attachWorkItemExecutors({ query } as never,[item])
+
+    expect(projected?.active_assignment).toMatchObject({
+      session_id: '66666666-6666-4666-8666-666666666666',
+      session_state: 'completed',
+    })
+    expect(projected?.active_executor).toBeNull()
+  })
+
   it('does not query for an empty page', async () => {
     const query = vi.fn()
     await expect(attachWorkItemExecutors({ query } as never,[])).resolves.toEqual([])

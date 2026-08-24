@@ -1555,14 +1555,6 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
                @> to_jsonb(assignment.permissions_snapshot)
              AND to_jsonb(assignment.permissions_snapshot)
                @> (assignment.capability_scope->'capabilities')
-             AND EXISTS (
-               SELECT 1
-                 FROM agent_sessions recoverable
-                WHERE recoverable.workspace_id=w.workspace_id
-                  AND recoverable.delegation_id=assignment.id
-                  AND ${agentExecutionCapacitySqlPredicate("recoverable")}
-                  AND recoverable.state='stale'
-             )
              AND NOT EXISTS (
                SELECT 1
                  FROM agent_sessions conflicting

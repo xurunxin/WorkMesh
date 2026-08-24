@@ -556,7 +556,7 @@ paths:
         x-workmesh-feature-tier: stable,
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }, { AgentConnectionInstallationToken: [] }],
         operationId: listWorkItems,
-        description: "Ordinary listing accepts a Human Session or Agent Session. claimable=true requires an active Coordination Connection Installation Token and includes unassigned Work Items plus exact same-identity assignments whose non-terminal execution Sessions are all stale and recoverable by claimWorkItem.",
+        description: "Ordinary listing accepts a Human Session or Agent Session. claimable=true requires an active Coordination Connection Installation Token and includes unassigned Work Items plus exact same-identity assignments whose non-terminal execution Sessions are all stale or whose non-terminal set is empty, making them recoverable by claimWorkItem.",
         parameters:
           [
             { $ref: "#/components/parameters/Cursor" },
@@ -572,7 +572,7 @@ paths:
             { $ref: "#/components/parameters/MineQuery" },
             { $ref: "#/components/parameters/LabelQuery" },
             { $ref: "#/components/parameters/SearchQuery" },
-            { name: claimable, in: query, description: "When true, requires a Coordination Connection and returns only Work Items this Agent can atomically claim, including a compatible same-identity assignment when every non-terminal execution Session is stale.", schema: { type: boolean, default: false } },
+            { name: claimable, in: query, description: "When true, requires a Coordination Connection and returns only Work Items this Agent can atomically claim, including a compatible same-identity assignment when every non-terminal execution Session is stale or no non-terminal execution remains.", schema: { type: boolean, default: false } },
           ],
         responses:
           {
@@ -970,7 +970,7 @@ paths:
         security: [{ AgentConnectionInstallationToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: claimWorkItem,
-        description: "Atomically self-claim one eligible Work Item from the current Coordination Connection. An unassigned Work Item creates an executor Delegation and queued Session. A compatible same-identity active assignment whose non-terminal execution Sessions are all stale retains the Delegation, cancels and fences the stale Sessions, releases their active Leases, and creates one distinct retry-linked queued Session. Different or live assignments remain conflicts. Eligibility is bound to the exact Connection Team, principal human, Agent actor, approved capabilities, and active Coordination Session. The exchange token is returned only through the encrypted authentication-idempotency envelope; MCP adapters exchange it internally and never expose it to the model.",
+        description: "Atomically self-claim one eligible Work Item from the current Coordination Connection. An unassigned Work Item creates an executor Delegation and queued Session. A compatible same-identity active assignment is recoverable when every non-terminal execution Session is stale or no non-terminal execution remains. Recovery retains the Delegation, cancels and fences stale Sessions, releases their active Leases, keeps terminal Sessions immutable, and creates one distinct queued Session linked to the newest stale or terminal attempt when one exists. Different or live assignments remain conflicts. Eligibility is bound to the exact Connection Team, principal human, Agent actor, approved capabilities, and active Coordination Session. The exchange token is returned only through the encrypted authentication-idempotency envelope; MCP adapters exchange it internally and never expose it to the model.",
         parameters:
           [
             { $ref: "#/components/parameters/Id" },
@@ -2988,7 +2988,7 @@ components:
       }
     ClaimWorkItem:
       {
-        description: Atomically self-claimed or stale-recovered delegation, queued execution Session, and one-time exchange token. A stale recovery preserves the compatible delegation and returns a distinct retry-linked Session. The token is available only to the authenticated Coordination adapter through the encrypted authentication-idempotency envelope; it is never included in webhook payloads or MCP tool output.,
+        description: Atomically self-claimed or recovered delegation, queued execution Session, and one-time exchange token. Recovery preserves the compatible delegation, keeps terminal history immutable, and returns a distinct Session linked to the newest stale or terminal attempt when one exists. The token is available only to the authenticated Coordination adapter through the encrypted authentication-idempotency envelope; it is never included in webhook payloads or MCP tool output.,
         content:
           {
             application/json:
