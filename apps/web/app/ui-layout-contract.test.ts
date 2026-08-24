@@ -40,7 +40,7 @@ describe('human UI layout contract', () => {
     expect(styles).not.toMatch(/\.app-brand\s+h1\s*\{/)
     expect(styles).toMatch(/main#workmesh-main:focus-visible\s*\{[^}]*outline:\s*0;[^}]*box-shadow:\s*inset\s+0\s+3px\s+0\s+var\(--wm-focus\);/s)
     expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)\s*\{[^}]*\.app-shell\s*\{\s*display:\s*block;/s)
-    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*\.app-shell\s+:where\([^)]*button[^)]*summary[^)]*\)\s*\{[^}]*min-height:\s*44px;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*\.app-shell\s+button,\s*\.app-shell\s+select,\s*\.app-shell\s+textarea,\s*\.app-shell\s+summary\s*\{[^}]*min-height:\s*44px;/s)
     expect(styles).toMatch(/@media\s*\(max-width:\s*900px\)[\s\S]*\.app-shell\s+\.agent-registry-filters\s*\{[^}]*grid-template-columns:\s*repeat\(2,/s)
     expect(styles).toMatch(/@media\s*\(max-width:\s*600px\)\s*\{[^}]*\.operations-tab\s*>\s*header\.operations-header\s*\{[^}]*flex-direction:\s*column;/s)
   })

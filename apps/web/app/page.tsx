@@ -66,7 +66,11 @@ const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Ma
 const emptyFilters: Filters = {}
 
 function handleProjectStripKeyDown(event: KeyboardEvent<HTMLElement>): void {
-  if (event.currentTarget !== event.target || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+  if (event.currentTarget !== event.target) {
+    if (event.target instanceof HTMLButtonElement) event.preventDefault()
+    return
+  }
   event.preventDefault()
   const strip = event.currentTarget
   const direction = event.key === 'ArrowRight' ? 1 : -1

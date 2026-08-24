@@ -233,7 +233,7 @@ describe('Home project strip keyboard contract', () => {
 
     const projectButton = screen.getByRole('button', { name: /Responsive operations/ })
     const beforeChildArrow = strip.scrollLeft
-    expect(fireEvent.keyDown(projectButton, { key: 'ArrowRight' })).toBe(true)
+    expect(fireEvent.keyDown(projectButton, { key: 'ArrowRight' })).toBe(false)
     expect(strip.scrollLeft).toBe(beforeChildArrow)
     expect(fireEvent.keyDown(projectButton, { key: 'Enter' })).toBe(true)
     fireEvent.click(projectButton)
