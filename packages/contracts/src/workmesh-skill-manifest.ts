@@ -2,6 +2,6 @@
 export const workmeshSkillManifest = Object.freeze({
   name: 'workmesh' as const,
   version: '1.1.0',
-  sha256: 'sha256:0e23345fdf4d1203474a6b2d310d985314997d6c2507ed040633fa818536e101',
-  signature: 'ed25519:zzQHpAfcNRPd0z5ZOb5WcDJaAqOVsFw8MZXDyAgQdR/q5Pntv51y86fLaryze5zrmZkydPgg9Icm2O269S4NCg==',
+  sha256: 'sha256:59e09ba6183aed95491dfd8de053b06677a50d4a352cccac44fbe1dda3f58ec1',
+  signature: 'ed25519:5FT9n6WG1OJaQvXXPCLvfEZVI7UHRWLFwTtgUInPZrFDqLI6bpXT+yjkffWDglC3iJg46IuwXOO3ySjDzR2zDA==',
 })

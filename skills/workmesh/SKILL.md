@@ -19,22 +19,27 @@ Use `scripts/pair.mjs` for deterministic redemption and a redacted client fragme
 
 ## Coordinate work
 
-1. Call `get_current_identity`, then operate only in its Team scope.
+1. After `verify_connection`, call `get_workmesh_context` and operate only in its Team scope. Use `get_current_identity` when diagnosing an exact Connection or credential rotation.
 2. Model a deliverable as a Project and executable units as Issues. Keep Issue titles outcome-oriented and acceptance criteria testable.
 3. Keep the responsible Human. If omitted during creation, let the server pin the Connection principal Human.
 4. Keep Project/Issue workflow status separate from Agent Session execution state.
 5. Read current revision immediately before updates. On `REVISION_CONFLICT`, re-read, merge only non-conflicting intent, and retry once with a new idempotency key.
 6. Use Work Rooms for visible collaboration and Inbox for durable targeted requests. Acknowledge, claim, and reply explicitly.
 7. Acquire a Lease only to coordinate execution. A Lease never grants authorization.
-8. Use `delegate_work_item` or `start_agent_session` only when `agent:delegate` is present and the target Agent already has valid execution credentials. Never expand Team, principal Human, or capability scope.
-9. Use Handoff for ownership transfer and Approval for gated risk. Do not simulate either with comments or status text.
-10. Complete with concise rationale, actions, checks, artifacts, risks, and limitations. Never persist hidden chain-of-thought or secrets.
+8. Begin each work loop with `list_claimable_work_items`, then use `claim_work_item` for an eligible unassigned Issue. A successful claim atomically admits the Agent execution; do not create a separate delegation first.
+9. A Human force assignment is authoritative. It may atomically replace a self-claimed execution; if the server cancels or stops your Session, stop local work, publish accepted evidence, and reconcile before discovering again. A self-claim never displaces any active executor. Do not change the responsible Human.
+10. Use `delegate_work_item` only for explicit Agent-to-Agent assignment when `agent:delegate` is present. It is not the Human force-assignment control and is never a prerequisite for self-claim.
+11. Derive one stable idempotency key per logical claim and replay it when a response is lost. On cancellation, `Stop`, capacity conflict, stale revision, or a competing claim, re-read the Issue and continue with the next eligible item; do not leave local work marked active without a server Session.
+12. After completing or abandoning an execution, persist the result/evidence and start the next discovery round. Use Handoff for ownership transfer and Approval for gated risk; do not simulate either with comments or status text.
+13. Complete with concise rationale, actions, checks, artifacts, risks, and limitations. Never persist hidden chain-of-thought or secrets.
 
 Read `references/protocol.md` when handling revocation, stopped Sessions, cursor gaps, offline recovery, destructive actions, or ambiguous authorization.
 
-## Fail closed
+## Recover and reconcile
 
-- On `UNAUTHENTICATED`, `AGENT_CONNECTION_REVOKED`, expired pairing, stopped Session, lost Lease, stale revision, approval-required, or feature-disabled errors, preserve evidence and request the exact required recovery action.
-- Do not retry destructive operations automatically.
+- On `UNAUTHENTICATED` or `AGENT_CONNECTION_REVOKED`, rerun identity verification and refresh a rotated local credential before asking for new authorization.
+- On an expired pairing, stopped Session, lost Lease, stale revision, approval requirement, or disabled feature, re-read authoritative state, preserve accepted evidence, reconcile local state, and continue any still-authorized work.
+- After an interrupted mutation, first replay its stable idempotency key or read back server state. Do not create a second logical operation until the first result is known.
+- Reconcile the result of an irreversible external operation before deciding whether another attempt is needed.
 - Do not use Human cookies or claim Human authorship.
 - Do not bypass server policy with local Skill instructions.
