@@ -1171,6 +1171,15 @@ describe('Agent authority total lock order', () => {
         LIMIT 1`,
       [fixture.reviewer.id],
     )).rows[0]!.id
+    const exchangeToken = opaqueToken()
+    const seededNonce = await db.query(
+      `UPDATE agent_session_tokens
+          SET exchange_nonce_hash=$2
+        WHERE session_id=$1 AND agent_id=$3
+          AND revoked_at IS NULL`,
+      [started.session.id, tokenHash(exchangeToken), fixture.reviewer.id],
+    )
+    expect(seededNonce.rowCount).toBe(1)
     const tokenIds = (await db.query<{ id: string }>(
       'SELECT id FROM agent_session_tokens WHERE session_id=$1 ORDER BY id',
       [started.session.id],
@@ -1180,7 +1189,7 @@ describe('Agent authority total lock order', () => {
     const exchange = () => app.inject({
         method: 'POST',
         url: `/api/v1/agent-sessions/${started.session.id}/token/exchange`,
-        payload: { exchangeToken: started.session.exchangeToken },
+        payload: { exchangeToken },
         headers: {
           authorization: `Bearer ${fixture.reviewer.installationToken}`,
           'idempotency-key': exchangeIdempotencyKey,
@@ -1251,7 +1260,7 @@ describe('Agent authority total lock order', () => {
         WHERE session_id=$1 AND revoked_at IS NULL`,
       [started.session.id],
     )).rows[0]!.count
-    expect(liveTokens).toBe(1)
+    expect(liveTokens).toBe(2)
   })
 
   it('completes reciprocal child, review, and handoff acquisition in sorted order', async () => {
