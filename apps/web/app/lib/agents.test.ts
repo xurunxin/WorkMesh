@@ -6,6 +6,7 @@ import {
   type Approval,
   approvedAgentCapabilitiesForTeam,
   agentDelegationScopeKey,
+  canAgentExecuteWorkForTeam,
   canManageAgentTeamAccess,
   canPauseAgentSession,
   canRetryAgentSession,
@@ -227,7 +228,7 @@ describe('agent control requests', () => {
       ...agent,
       approved_capabilities: ['work:read', 'work:write', 'plan:write'],
       team_access: [{
-        agent_id: agent.id, team_id: agentTeamId, approved_capabilities: ['work:read', 'plan:write'],
+        agent_id: agent.id, team_id: agentTeamId, approved_capabilities: ['work:read', 'work:write', 'plan:write'],
         status: 'active', approved_by_actor_id: '00000000-0000-4000-8000-000000000013', revision: 1,
         created_at: '2026-07-23T00:00:00.000Z', updated_at: '2026-07-23T00:00:00.000Z', revoked_at: null,
       }],
@@ -235,7 +236,8 @@ describe('agent control requests', () => {
     const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ delegation: { id: session.delegation_id, revision: 1 }, session }))
     vi.stubGlobal('fetch', fetchMock)
 
-    expect(approvedAgentCapabilitiesForTeam(restrictedAgent, agentTeamId)).toEqual(['work:read', 'plan:write'])
+    expect(approvedAgentCapabilitiesForTeam(restrictedAgent, agentTeamId)).toEqual(['work:read', 'work:write', 'plan:write'])
+    expect(canAgentExecuteWorkForTeam(restrictedAgent, agentTeamId)).toBe(true)
     await expect(createAgentSession({
       workItemId: session.work_item_id,
       workItemTeamId: agentTeamId,
@@ -247,7 +249,7 @@ describe('agent control requests', () => {
     })).resolves.toEqual(session)
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).requestedCapabilities).toEqual(['work:read', 'plan:write'])
+    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).requestedCapabilities).toEqual(['work:read', 'work:write', 'plan:write'])
   })
 
   it('does not start when the team has no active grant or no shared approved capability', async () => {
@@ -266,11 +268,17 @@ describe('agent control requests', () => {
       ...agent,
       team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['plan:write'] }],
     }
+    const missingWrite: Agent = {
+      ...agent,
+      team_access: [{ ...agent.team_access[0]!, approved_capabilities: ['work:read'] }],
+    }
 
     expect(approvedAgentCapabilitiesForTeam(withoutGrant, agentTeamId)).toEqual([])
     expect(approvedAgentCapabilitiesForTeam(withoutIntersection, agentTeamId)).toEqual([])
-    await expect(createAgentSession({ ...baseInput, agent: withoutGrant })).rejects.toThrow('no capabilities approved')
-    await expect(createAgentSession({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('no capabilities approved')
+    expect(canAgentExecuteWorkForTeam(missingWrite, agentTeamId)).toBe(false)
+    await expect(createAgentSession({ ...baseInput, agent: withoutGrant })).rejects.toThrow('requires work:read and work:write')
+    await expect(createAgentSession({ ...baseInput, agent: withoutIntersection })).rejects.toThrow('requires work:read and work:write')
+    await expect(createAgentSession({ ...baseInput, agent: missingWrite })).rejects.toThrow('requires work:read and work:write')
     expect(fetchMock).not.toHaveBeenCalled()
   })
 

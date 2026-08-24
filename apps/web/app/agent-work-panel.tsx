@@ -3,7 +3,7 @@
 import { type FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button } from '@workmesh/ui'
 import { ApiError, apiRequest, json } from './lib/api'
-import { agentDelegationScopeKey, type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, createAgentSession, formatTime, isCurrentAgentDelegationScope, normalizeApproval, normalizePlan, retryAgentSession } from './lib/agents'
+import { agentDelegationScopeKey, type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canAgentExecuteWorkForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, createAgentSession, formatTime, isCurrentAgentDelegationScope, normalizeApproval, normalizePlan, retryAgentSession } from './lib/agents'
 import { LoadMoreButton, type PagedCollection, usePagedApiList } from './lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { agentWorkRefreshTargets } from './lib/realtime-refresh'
@@ -52,7 +52,7 @@ export function useAgentDelegationController(input: DelegationControllerInput): 
   // render that observes a new Issue so a pending request cannot flash in the
   // next Issue before the reset effect runs.
   const scopedState = state.scopeKey === generationKey ? state : emptyDelegationControllerState(generationKey)
-  const eligibleAgents = useMemo(() => agentsPage.items.filter(agent => agent.is_active && input.workItemTeamId !== null && approvedAgentCapabilitiesForTeam(agent, input.workItemTeamId).length > 0), [agentsPage.items, input.workItemTeamId])
+  const eligibleAgents = useMemo(() => agentsPage.items.filter(agent => agent.is_active && input.workItemTeamId !== null && canAgentExecuteWorkForTeam(agent, input.workItemTeamId)), [agentsPage.items, input.workItemTeamId])
   const agentsComplete = agentsPage.initialized && !agentsPage.loading && !agentsPage.loadingMore && agentsPage.nextCursor === null
   const canDirect = Boolean(input.humanActorId && agentsComplete && eligibleAgents.length === 1)
   const canChoose = Boolean(input.humanActorId && agentsPage.initialized && !agentsPage.error && (eligibleAgents.length > 0 || agentsPage.nextCursor !== null))
@@ -270,12 +270,12 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
 
   const activeAgents = agents.filter(agent => agent.is_active)
   const unavailableReason = (agent: Agent): string => activeAgentTeamAccess(agent, workItemTeamId)
-    ? text.noSharedDefinition
+    ? text.missingExecutionCapabilities
     : text.noActiveGrant
   const delegationUnavailableMessage = activeAgents.length === 0
     ? text.noActiveAgents
     : activeAgents.some(agent => activeAgentTeamAccess(agent, workItemTeamId))
-      ? text.noSharedDefinition
+      ? text.missingExecutionCapabilities
     : text.noActiveGrant
 
   const directAgent = controller.directAgent
@@ -309,7 +309,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
     {displayedSuccess && <p className="success" role="status" data-testid="delegate-success">{displayedSuccess}</p>}
     {(surfacedError || collectionError) && <div className="error-state"><p className="error" role="alert">{errorMessage}{errorApi?.code && ` [${text.errorCode(errorApi.code)}]`}{capacityDetails && ` ${capacityDetails}`}{diagnosticId && ` ${text.diagnosticId(diagnosticId)}`}{errorApi?.safeNextAction && ` ${errorApi.safeNextAction}`}</p>{(errorApi || collectionError) && <Button disabled={displayedBusy} onClick={refreshPanel} type="button" variant="secondary">{recoveryNeedsReload ? text.reloadIssue : text.refresh}</Button>}{recoveryNeedsAgents && <a href="/agents">{text.openAgents}</a>}</div>}
     <form className="delegate-form" hidden={!displayedShowDelegate} id="agent-delegation-form" onSubmit={event => void delegate(event)} data-testid="delegate-agent-form">
-      <label>{text.delegateFormAgent}<select defaultValue="" name="agentId" ref={agentSelectRef} required><option value="">{text.delegateFormAgentPlaceholder}</option>{activeAgents.map(agent => { const capabilities = approvedAgentCapabilitiesForTeam(agent, workItemTeamId); return <option key={agent.id} value={agent.id} disabled={capabilities.length === 0}>{agentName(agent)} · {capabilities.length > 0 ? text.capabilitiesLine(agentProvider(agent), capabilities.join(', ')) : text.unavail(unavailableReason(agent))}</option> })}</select></label>
+      <label>{text.delegateFormAgent}<select defaultValue="" name="agentId" ref={agentSelectRef} required><option value="">{text.delegateFormAgentPlaceholder}</option>{activeAgents.map(agent => { const capabilities = approvedAgentCapabilitiesForTeam(agent, workItemTeamId); const canExecute = canAgentExecuteWorkForTeam(agent, workItemTeamId); return <option key={agent.id} value={agent.id} disabled={!canExecute}>{agentName(agent)} · {canExecute ? text.capabilitiesLine(agentProvider(agent), capabilities.join(', ')) : text.unavail(unavailableReason(agent))}</option> })}</select></label>
       <label>{text.delegateFormInitialPrompt}<textarea name="prompt" onChange={event => setPrompt(event.currentTarget.value)} placeholder={text.delegateFormInitialPromptPlaceholder} required value={displayedPrompt} /></label>
       <Button disabled={displayedBusy || !humanActorId || !controller.canChoose} type="submit" variant="primary">{text.delegateFormStart}</Button>
     </form>

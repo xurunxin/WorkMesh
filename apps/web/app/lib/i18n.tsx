@@ -2562,7 +2562,7 @@ export type AgentWorkCopy = {
   retryError: string
   noActiveAgents: string
   noActiveGrant: string
-  noSharedDefinition: string
+  missingExecutionCapabilities: string
   projectionCurrentStep: string
   projectionPendingApprovals: string
   projectionStatus: string
@@ -2612,7 +2612,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     retryError: '无法重试此 Session。',
     noActiveAgents: '没有已注册的活跃智能体。',
     noActiveGrant: '没有智能体对本 Issue 团队持有活跃授权。',
-    noSharedDefinition: '没有同时被定义和本团队批准的能力。',
+    missingExecutionCapabilities: '智能体需要同时获批 work:read 与 work:write。',
     projectionCurrentStep: '当前计划步骤',
     projectionPendingApprovals: '待处理审批',
     projectionStatus: '预测状态',
@@ -2660,7 +2660,7 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     retryError: 'Unable to retry this session.',
     noActiveAgents: 'No active agents are registered.',
     noActiveGrant: 'No active grant for this team',
-    noSharedDefinition: 'No active agent has capabilities approved by both its definition and this team.',
+    missingExecutionCapabilities: 'The Agent requires both work:read and work:write approval.',
     projectionCurrentStep: 'Current plan step',
     projectionPendingApprovals: 'Pending approvals',
     projectionStatus: 'Projection status',

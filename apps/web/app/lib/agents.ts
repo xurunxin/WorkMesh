@@ -48,6 +48,10 @@ export const approvedAgentCapabilitiesForTeam = (agent: Agent, teamId: string): 
   if (!teamAccess) return []
   return agent.approved_capabilities.filter(capability => teamAccess.approved_capabilities.includes(capability))
 }
+export const canAgentExecuteWorkForTeam = (agent: Agent, teamId: string): boolean => {
+  const capabilities = approvedAgentCapabilitiesForTeam(agent, teamId)
+  return capabilities.includes('work:read') && capabilities.includes('work:write')
+}
 
 export type AgentDelegationScope = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string; scopeKey?: string | null }
 export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.scopeKey ?? null, scope.workItemId, scope.workItemTeamId, scope.workItemRevision, scope.humanActorId])
@@ -111,7 +115,7 @@ export async function confirmAgentConnectionRotation(connection: AgentConnection
 /** Create the delegation and its first execution session in one atomic API call. */
 export async function createAgentSession(input: { workItemId: string; workItemTeamId: string; workItemRevision: number; agent: Agent; humanActorId: string; prompt: string; budget: Budget }): Promise<AgentSession> {
   const approvedCapabilities = approvedAgentCapabilitiesForTeam(input.agent, input.workItemTeamId)
-  if (approvedCapabilities.length === 0) throw new Error('This agent has no capabilities approved for the work item team.')
+  if (!canAgentExecuteWorkForTeam(input.agent, input.workItemTeamId)) throw new Error('This agent requires work:read and work:write approved for the work item team.')
   const result = await apiMutation<{ delegation: Delegation; session: AgentSession }>(`agent-session:${input.workItemId}`, `/api/v1/work-items/${input.workItemId}/agent-session`, {
     method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${input.workItemRevision}"` },
     body: JSON.stringify({

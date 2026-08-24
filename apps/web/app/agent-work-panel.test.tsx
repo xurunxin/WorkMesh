@@ -52,6 +52,7 @@ describe('useAgentDelegationController', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     paginationState.agentNextCursor = null
+    agent.team_access![0]!.approved_capabilities = ['work:read', 'work:write']
   })
   afterEach(() => cleanup())
 
@@ -85,6 +86,21 @@ describe('useAgentDelegationController', () => {
     expect(result.current.canChoose).toBe(true)
     expect(result.current.disabled).toBe(false)
     expect(result.current.reason).toBeNull()
+  })
+
+  it('does not offer an Agent missing either required execution capability', () => {
+    agent.team_access![0]!.approved_capabilities = ['work:read']
+    const props = { workItemId: 'work-a', workItemTeamId: 'team-a', workItemRevision: 1, humanActorId: 'human-a', scopeKey: 'authority-a' }
+    const { result } = renderHook(() => useAgentDelegationController(props))
+    expect(result.current.eligibleAgents).toEqual([])
+    expect(result.current.canDirect).toBe(false)
+    expect(result.current.canChoose).toBe(false)
+    expect(result.current.reason).toBe('no_eligible_agent')
+
+    render(<LocaleProvider><AgentWorkPanel controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    expect(screen.getByTestId('delegate-unavailable-reason')).toHaveTextContent('work:read')
+    expect(screen.getByTestId('delegate-unavailable-reason')).toHaveTextContent('work:write')
+    expect(screen.getByRole('button', { name: '选择智能体' })).toHaveAttribute('title', expect.stringContaining('work:write'))
   })
 
   it('opens the chooser while more Agent pages remain without guessing a direct default', async () => {
