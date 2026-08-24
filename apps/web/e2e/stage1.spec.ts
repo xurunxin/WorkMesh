@@ -12,7 +12,8 @@ async function humanApi<T>(page: Page, path: string, method = 'GET', body?: unkn
   }, { apiUrl, path, method, body })
 }
 
-async function expectAuthenticatedWorkspace(page: Page) {
+async function openAuthenticatedWorkspace(page: Page) {
+  await page.goto('/')
   const sidebar = page.getByRole('complementary')
   await expect(sidebar).toBeVisible({ timeout: 30_000 })
   await expect(sidebar).toContainText('WorkMesh')
@@ -21,11 +22,7 @@ async function expectAuthenticatedWorkspace(page: Page) {
 test.describe('Stage 1 agent browser acceptance', () => {
   test('delegates and starts one queued session with the atomic work-item command', async ({ page }) => {
     test.setTimeout(90_000)
-    await page.goto('/login')
-    await page.getByPlaceholder('Email').fill('alice@example.test')
-    await page.getByPlaceholder('Password').fill('password-acceptance')
-    await page.getByTestId('login-submit').click()
-    await expectAuthenticatedWorkspace(page)
+    await openAuthenticatedWorkspace(page)
 
     const capabilities = ['work:read', 'work:write', 'plan:write', 'artifact:write']
     const teamCapabilities = ['work:read', 'plan:write']
@@ -99,11 +96,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
   })
 
   test('offers retry for a failed session and navigates to the new queued session', async ({ page }) => {
-    await page.goto('/login')
-    await page.getByPlaceholder('Email').fill('alice@example.test')
-    await page.getByPlaceholder('Password').fill('password-acceptance')
-    await page.getByTestId('login-submit').click()
-    await expectAuthenticatedWorkspace(page)
+    await openAuthenticatedWorkspace(page)
 
     const sourceId = '00000000-0000-4000-8000-000000000101'
     const nextId = '00000000-0000-4000-8000-000000000102'
@@ -140,11 +133,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
   })
 
   test('shows projected team access data read-only to non-admin humans', async ({ page }) => {
-    await page.goto('/login')
-    await page.getByPlaceholder('Email').fill('alice@example.test')
-    await page.getByPlaceholder('Password').fill('password-acceptance')
-    await page.getByTestId('login-submit').click()
-    await expectAuthenticatedWorkspace(page)
+    await openAuthenticatedWorkspace(page)
 
     const agentId = '00000000-0000-4000-8000-000000000201'
     const teamId = '00000000-0000-4000-8000-000000000202'
