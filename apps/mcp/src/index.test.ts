@@ -68,9 +68,12 @@ describe('WorkMesh MCP adapter', () => {
     } as unknown as WorkMeshClient
     const { server, protocol } = await connected('read-write', api, true)
     try {
-      const names = (await protocol.listTools()).tools.map(tool => tool.name)
+      const tools = (await protocol.listTools()).tools
+      const names = tools.map(tool => tool.name)
       expect(names).toEqual(expect.arrayContaining(['list_claimable_work_items', 'claim_work_item']))
       expect(names).not.toContain('start_agent_session')
+      expect(tools.find(tool => tool.name === 'list_claimable_work_items')?.description)
+        .toContain('live work:read and work:write authorization')
 
       const claimable = await protocol.callTool({
         name: 'list_claimable_work_items',

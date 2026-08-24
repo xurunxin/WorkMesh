@@ -235,9 +235,10 @@ Idempotency-Key: <stable-claim-key>
 服务端在短事务中校验并锁定同一 Connection、Team、principal Human、Agent、
 Coordination Session、delegation、capability 与 Work Item。只有这些身份和授权全部
 匹配，且 requested capabilities 是 Team grant 的子集时才能领取；省略请求能力时由
-服务端从当前授权能力计算可用集合。并发请求对同一未分配 Item 恰好一个成功，其余
-返回冲突；成功重放返回同一 delegation、Session 与交换凭据。状态、事件和 outbox
-在同一事务原子提交。
+服务端计算 Connection、Agent definition、Team grant 与 Coordination delegation 的
+实时交集，排除 `agent:delegate`，且 `work:read` 与 `work:write` 必须同时保留。并发
+请求对同一未分配 Item 恰好一个成功，其余返回冲突；成功重放返回同一 delegation、
+Session 与交换凭据。状态、事件和 outbox 在同一事务原子提交。
 
 Claim 响应中的 exchange token 仅供已认证的 MCP/SDK 适配器立即兑换。MCP 在适配器
 内部完成 exchange，并对每一个实际执行请求刷新该请求目标的 exact Session；token
@@ -1278,9 +1279,10 @@ scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平�
 - High-risk tool 不应只靠自然语言提醒。
 
 Coordination MCP 还提供 `list_claimable_work_items` 与 `claim_work_item`。前者只返回
-当前 Connection 的 Team、principal、Agent 与 capability 范围内尚未被 executor
-占用的摘要；后者执行上面的原子自主领取并启动 executor Session。两者都不要求
-Agent 先通过人类创建 delegation。人类明确分配时使用一次性的
+当前 Connection 的 Team、principal、Agent 与 capability 范围内、经实时授权确认
+同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用的摘要；后者执行上面
+的原子自主领取并启动 executor Session。两者都不要求 Agent 先通过人类创建
+delegation。人类明确分配时使用一次性的
 `delegate_work_item`（对应 forced assignment），而不是拆开的 delegation/start
 调用；`start_agent_session` 不再作为公开工具。
 
@@ -1460,7 +1462,7 @@ SDK 要求：
 - Connection 配对（单用 / 过期 / 限流 / 同一 Idempotency-Key 重放拿回原响应）；
 - Connection 撤销后 Coordination Session 立即失败关闭；
 - Team scope delegation 跨 Team 拒绝；
-- `agent:delegate` 缺失时拒绝 `start_agent_session` / `delegate_work_item`；**不**作用于 `create_child_session`；
+- `agent:delegate` 缺失时拒绝 `delegate_work_item`；**不**作用于 `claim_work_item` 或 `create_child_session`；并验证已移除的 `start_agent_session` 不在工具清单中；
 - Coordinator 阻断破坏性操作（删除 / 归档 / 批量 / 健康发布）；
 - Coordination MCP 多 Connection 并发隔离；
 - Work Item 创建时 `responsible_human_actor_id` 默认填充 principal Human；
@@ -1616,7 +1618,7 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 - `list_teams`、`list_workflow_states` — Team 与状态只读发现。
 - `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
 - `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
-- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、尚未被 executor 占用的 Work Item；claim 同时创建 executor delegation 与 execution Session。
+- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、实时授权仍同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用的 Work Item；claim 同时创建 executor delegation 与 execution Session。
 - `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
 - `draft_project_update`（发布仍为 Human-only transition）。
 

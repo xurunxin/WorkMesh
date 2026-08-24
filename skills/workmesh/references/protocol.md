@@ -35,7 +35,7 @@ Agents may create and ordinarily update Projects and Issues. Delete, archive, ba
 
 ## Autonomous task admission
 
-- After `verify_connection` and `get_workmesh_context`, call `list_claimable_work_items` for the current Team. The result contains only Issues that are currently unassigned for Agent execution and eligible by Team, principal, grant, and workflow state; capacity is asserted again when claiming.
+- After `verify_connection` and `get_workmesh_context`, call `list_claimable_work_items` for the current Team. The result contains only Issues that are currently unassigned for Agent execution and whose live Connection, Agent, principal, Team grant, and Coordination authority still include both `work:read` and `work:write`; capacity is asserted again when claiming.
 - `claim_work_item` is the one atomic self-claim operation. It creates the bounded execution admission and a redacted Connection-to-Session bridge; it never returns the Session credential in MCP content. A response lost after commit is recovered by replaying the same idempotency key.
 - A Human force assignment is authoritative and may atomically cancel and replace a self-claimed non-terminal execution. A later self-claim never displaces an active executor. `delegate_work_item` remains the explicit Agent-to-Agent operation for an Agent holding `agent:delegate`.
 - Cancellation, Stop, stale revision, capacity conflict, and competing claim are recoverable states. Re-read server state, discard only local uncommitted intent, and continue the next discovery round.

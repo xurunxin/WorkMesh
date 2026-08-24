@@ -88,7 +88,8 @@ Coordination MCP adds:
 - `list_claimable_work_items` — uses the normal Work Item list contract with
   `claimable=true` and a cursor. It returns only non-deleted, non-terminal Issues
   in the Connection Team whose responsible Human equals the Connection
-  principal and which have no active executor Delegation.
+  principal, which have no active executor Delegation, and for which the live
+  Connection authority still includes both `work:read` and `work:write`.
 - `claim_work_item` — maps to the new Coordination-only
   `POST /api/v1/work-items/{id}/claim` operation.
 
@@ -100,9 +101,9 @@ role is always `executor`.
 
 If capabilities are omitted, the server uses the live intersection of the
 Connection, Agent definition, Team grant, and Coordination Delegation, excluding
-`agent:delegate`; `work:read` must remain. If the prompt is omitted, the server
-creates a stable prompt to execute the current Issue description, acceptance
-criteria, and applicable Guidance.
+`agent:delegate`; both `work:read` and `work:write` must remain. If the prompt is
+omitted, the server creates a stable prompt to execute the current Issue
+description, acceptance criteria, and applicable Guidance.
 
 Self-claim never displaces existing work. Any active executor Delegation returns
 `WORK_ITEM_ALREADY_ASSIGNED` with safe current assignment/session state. Concurrent
