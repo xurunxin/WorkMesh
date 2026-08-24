@@ -136,6 +136,97 @@ describe('WorkMesh MCP adapter', () => {
     } finally { await protocol.close(); await server.close() }
   })
 
+  it('keeps explicit mutation idempotency keys out of API request bodies', async () => {
+    const createProject = vi.fn().mockResolvedValue({ id: projectId, revision: 1 })
+    const createWorkItem = vi.fn().mockResolvedValue({ id: workItemId, revision: 1 })
+    const acquireLease = vi.fn().mockResolvedValue({ id: artifactId, revision: 1 })
+    const publishArtifact = vi.fn().mockResolvedValue({ id: artifactId, revision: 1 })
+    const api = {
+      createProject,
+      createWorkItem,
+      acquireLease,
+      publishArtifact,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    try {
+      const project = await protocol.callTool({
+        name: 'create_project',
+        arguments: {
+          teamId,
+          name: 'Production acceptance',
+          idempotencyKey: 'create-project-stable-key',
+        },
+      })
+      const created = await protocol.callTool({
+        name: 'create_work_item',
+        arguments: {
+          teamId,
+          projectId,
+          title: 'Production intake acceptance',
+          description: 'Exercise the explicit MCP idempotency boundary.',
+          statusId: repositoryId,
+          priority: 'low',
+          labels: ['acceptance'],
+          idempotencyKey: 'create-work-item-stable-key',
+        },
+      })
+      const lease = await protocol.callTool({
+        name: 'acquire_lease',
+        arguments: {
+          sessionId,
+          resourceType: 'work_item',
+          resourceId: workItemId,
+          reason: 'Exercise the explicit MCP idempotency boundary.',
+          idempotencyKey: 'acquire-lease-stable-key',
+        },
+      })
+      const artifact = await protocol.callTool({
+        name: 'publish_artifact',
+        arguments: {
+          sessionId,
+          workItemId,
+          type: 'test_report',
+          title: 'Production acceptance result',
+          idempotencyKey: 'publish-artifact-stable-key',
+        },
+      })
+      expect(project.isError, JSON.stringify(project.structuredContent)).not.toBe(true)
+      expect(created.isError, JSON.stringify(created.structuredContent)).not.toBe(true)
+      expect(lease.isError, JSON.stringify(lease.structuredContent)).not.toBe(true)
+      expect(artifact.isError, JSON.stringify(artifact.structuredContent)).not.toBe(true)
+      expect(createProject).toHaveBeenCalledWith(expect.objectContaining({
+        teamId,
+        name: 'Production acceptance',
+      }), { idempotencyKey: 'create-project-stable-key' })
+      expect(createWorkItem).toHaveBeenCalledWith(expect.objectContaining({
+        teamId,
+        projectId,
+        title: 'Production intake acceptance',
+        description: 'Exercise the explicit MCP idempotency boundary.',
+        statusId: repositoryId,
+        priority: 'low',
+        labels: ['acceptance'],
+      }), { idempotencyKey: 'create-work-item-stable-key' })
+      expect(acquireLease).toHaveBeenCalledWith(expect.objectContaining({
+        sessionId,
+        resourceType: 'work_item',
+        resourceId: workItemId,
+        reason: 'Exercise the explicit MCP idempotency boundary.',
+      }), { idempotencyKey: 'acquire-lease-stable-key' })
+      expect(publishArtifact).toHaveBeenCalledWith(expect.objectContaining({
+        sessionId,
+        workItemId,
+        type: 'test_report',
+        title: 'Production acceptance result',
+      }), { idempotencyKey: 'publish-artifact-stable-key' })
+      for (const mutation of [createProject, createWorkItem, acquireLease, publishArtifact]) {
+        expect(mutation.mock.calls[0]?.[0]).not.toHaveProperty('idempotencyKey')
+      }
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('bootstraps a fresh coordination Agent and resolves a stable Project reference in two calls', async () => {
     const manifest = {
       profileVersion: '1.0.0',
