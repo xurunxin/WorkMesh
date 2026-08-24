@@ -38,6 +38,26 @@ describe('revision-bound local drafts', () => {
     expect(html).toContain('aria-label="Undo"')
     expect(html).toContain('aria-label="Redo"')
   })
+  it('applies the mode-specific border class to the editor wrapper', () => {
+    const commentHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Comment', mode: 'comment', name: 'body', value: 'hi', onChange: () => undefined,
+    }))
+    const replyHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Reply', mode: 'reply', name: 'body', value: 'hi', onChange: () => undefined,
+    }))
+    const descriptionHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', mode: 'description', name: 'description', value: 'hi', onChange: () => undefined,
+    }))
+    const plainHtml = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', value: 'hi', onChange: () => undefined,
+    }))
+    expect(commentHtml).toContain('class="rich-editor rich-editor--comment"')
+    expect(replyHtml).toContain('class="rich-editor rich-editor--reply"')
+    expect(descriptionHtml).toContain('class="rich-editor rich-editor--description"')
+    expect(plainHtml).not.toContain('rich-editor--comment')
+    expect(plainHtml).not.toContain('rich-editor--reply')
+    expect(plainHtml).not.toContain('rich-editor--description')
+  })
   it('keeps controlled editor undo and redo deterministic', () => {
     const recorded = recordEditorChange({ undo: [], redo: [] }, 'before', '**after**')
     const undone = undoEditorChange(recorded, '**after**')
@@ -83,5 +103,26 @@ describe('attachment recovery controls', () => {
     expect(uploadRecoveryActions('failed', true, false)).toEqual({ retry: true, cancel: true })
     expect(uploadRecoveryActions('verifying', true, true)).toEqual({ retry: false, cancel: false })
     expect(uploadRecoveryActions('idle', false, false)).toEqual({ retry: false, cancel: false })
+  })
+})
+
+describe('Markdown preview toggle', () => {
+  it('renders Markdown when preview is on', () => {
+    const html = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', onChange: () => undefined, preview: true, value: '**bold**',
+    }))
+    expect(html).toContain('rich-markdown')
+    expect(html).toContain('<strong>bold</strong>')
+    expect(html).not.toContain('<textarea')
+  })
+})
+
+describe('Draft saved indicator', () => {
+  it('shows a not-saved indicator until the editor writes its first draft', () => {
+    const html = renderToStaticMarkup(createElement(RichTextEditor, {
+      identity, label: 'Description', name: 'description', onChange: () => undefined, value: 'hi',
+    }))
+    expect(html).toContain('rich-editor-saved')
+    expect(html).toContain('Not saved yet')
   })
 })

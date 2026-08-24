@@ -35,7 +35,9 @@ describe('authority-aware command registry', () => {
       id: 'resource:work-item:item-1',
       href: '/?workItem=item-1',
     })
-    expect(agentCommand({ id: 'agent-1', name: 'Codex', slug: 'codex' }).href).toBe('/agents#agent-agent-1')
+    expect(agentCommand({ id: 'agent-1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent-1')
+    expect(agentCommand({ id: 'agent/1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent%2F1')
+    expect(agentCommand({ id: 'agent%2F1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent%252F1')
   })
 
   it('ranks exact identifiers before prefixes, words, substrings, and metadata', () => {
@@ -106,6 +108,7 @@ describe('command-center state projection', () => {
     const html = renderToStaticMarkup(createElement(GlobalCommandCenter))
     expect(html).toContain('data-testid="command-center-trigger"')
     expect(html).toContain('aria-keyshortcuts="Control+K Meta+K"')
+    expect(html).toContain('aria-label="Search"')
     expect(html).toContain('Search')
     expect(html).not.toContain('role="dialog"')
   })

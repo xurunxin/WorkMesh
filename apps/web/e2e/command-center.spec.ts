@@ -69,5 +69,8 @@ test('enforces the query threshold, names source failures, and supports keyboard
   await workSearch.press('Control+k')
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await trigger.press('Control+k')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await trigger.blur()
+  await page.keyboard.press('Control+k')
   await expect(page.getByRole('dialog')).toBeVisible()
 })

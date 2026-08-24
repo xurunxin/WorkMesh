@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { dirname } from "node:path";
+import { resolvePlaywrightRunPaths } from "./playwright-run-directory.js";
 
 type ApiResponse<T> = { status: number; body: T };
 type PageResult<T> = { items: T[]; nextCursor: string | null };
@@ -19,7 +20,7 @@ type ApiError = { error: { code: string } };
 
 const apiUrl = "http://127.0.0.1:3101";
 const webUrl = "http://127.0.0.1:3100";
-const authenticatedStatePath = resolve("test-results/.auth/admin.json");
+const authenticatedStatePath = resolvePlaywrightRunPaths("root-mixed").authenticatedStatePath;
 
 // Task 6 migrated /install to read copy from `useLocale().installCopy`.
 // The default locale is `zh-CN`, which would change the bootstrap-token
@@ -70,11 +71,15 @@ async function createState(
   page: Page,
   name: string,
   category: string,
+  color: { option: "Blue" | "Custom"; value: "#2563eb" | "#8b5cf6" },
 ): Promise<void> {
   const workflow = page.getByRole("region", { name: "Workflow states" });
   const form = workflow.locator("form");
   await form.getByLabel("Status name").fill(name);
   await form.locator('select[name="category"]').selectOption(category);
+  await form.getByRole("radio", { name: color.option }).click();
+  if (color.option === "Custom")
+    await expect(form.getByLabel("Custom color")).toHaveValue(color.value);
   const responsePromise = page.waitForResponse((response) => {
     const request = response.request();
     return (
@@ -88,6 +93,13 @@ async function createState(
   const response = await responsePromise;
   expect(response.status()).toBeGreaterThanOrEqual(200);
   expect(response.status()).toBeLessThan(300);
+  expect(response.request().postDataJSON()).toEqual({ name, category, color: color.value });
+  const successToast = page
+    .getByRole("region", { name: "Notifications" })
+    .getByRole("status")
+    .filter({ hasText: `State “${name}” is ready to use.` });
+  await expect(successToast).toContainText("Workflow state created");
+  await expect(form.getByRole("radio", { name: "Neutral" })).toBeChecked();
   await expect(workflow).toContainText(name);
 }
 
@@ -199,8 +211,8 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(teamSwitcher).toHaveText(/Stage 0 delivery edited \(ACC\)/);
 
     // Newly created teams intentionally start without workflow states, so create the two states used by this browser flow.
-    await createState(page, "Ready", "planned");
-    await createState(page, "In Progress", "started");
+    await createState(page, "Ready", "planned", { option: "Blue", value: "#2563eb" });
+    await createState(page, "In Progress", "started", { option: "Custom", value: "#8b5cf6" });
     await page.getByRole("link", { name: "Back to Issues", exact: true }).click();
     await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     await page.getByTestId("view-projects").click();
@@ -280,7 +292,12 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(page.getByTestId("work-list")).toContainText(startedDecoyTitle);
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    await filters.getByLabel("Label", { exact: true }).fill("focus");
+    const moreFilters = filters.getByRole("button", { name: "More filters", exact: true });
+    await expect(moreFilters).toHaveAttribute("aria-expanded", "false");
+    await moreFilters.click();
+    const labelFilter = filters.getByLabel("Label", { exact: true });
+    await expect(labelFilter).toBeVisible();
+    await labelFilter.fill("focus");
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
       startedDecoyTitle,
@@ -406,10 +423,12 @@ test.describe("Stage 0 browser acceptance", () => {
         secondDrawer.locator('select[name="statusId"]'),
       ).toHaveValue(inProgress!.id);
       expect(secondPageNavigations).toBe(0);
+      await secondDrawer.getByRole("tab", { name: "Discussion", exact: true }).click();
 
       await page.locator(`[data-work-item-id="${target!.id}"] .wm-work-item-title`).click();
       const drawer = page.getByRole("dialog");
       await expect(drawer).toBeVisible();
+      await drawer.getByRole("tab", { name: "Discussion", exact: true }).click();
       await drawer
         .getByRole("textbox", { name: "Work item comment" })
         .fill(commentBody);
@@ -432,8 +451,10 @@ test.describe("Stage 0 browser acceptance", () => {
 
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
-    page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("region", { name: "Team details" }).getByRole("button", { name: "Delete team" }).click();
+    const deleteDialog = page.getByRole("dialog", { name: "Delete Team" });
+    await expect(deleteDialog).toContainText(editedTeamName);
+    await deleteDialog.getByRole("button", { name: `Delete Team ${editedTeamName}` }).click();
     await expect(teamSwitcher).not.toContainText(editedTeamName);
     const childWrite = await api<ApiError>(page, "/api/v1/projects", {
       method: "POST",

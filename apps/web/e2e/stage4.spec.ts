@@ -33,6 +33,15 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
     const body = (payload: unknown, status = 200) =>
       route.fulfill({ status, headers, body: JSON.stringify(payload) })
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers })
+    if (path === '/api/v1/auth/me') return body({
+      actor: {
+        id: 'human-stage4',
+        display_name: 'Stage 4 admin',
+        workspace_id: 'workspace-stage4',
+        workspace_role: 'admin',
+      },
+      csrfToken: 'stage4-e2e-csrf',
+    })
     if (path === '/api/v1/features') return body({
       features: [
         { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: true },
@@ -133,14 +142,16 @@ test('renders durable Stage 4 operations and invokes real rule controls', async 
   await page.goto('/operations')
   await expect(page.getByRole('heading', { name: 'Planning & Operations' })).toBeVisible()
   await expect(page.getByTestId('cycles-panel')).toContainText('Cycle 12')
-  await expect(page.getByTestId('initiatives-panel')).toContainText('at_risk')
+  await expect(page.getByTestId('initiatives-panel')).toContainText('At risk')
   await expect(page.getByTestId('loops-panel')).toContainText('No overlap')
-  await expect(page.getByTestId('runs-panel')).toContainText('succeeded')
+  await expect(page.getByTestId('runs-panel')).toContainText('Succeeded')
   await expect(page.getByTestId('templates-panel')).toContainText('Triage playbook')
-  await expect(page.getByLabel('Usage and cost')).toContainText('Never treated as zero.')
+  await expect(page.getByRole('region', { name: 'Usage and cost' })).toContainText(
+    'Never treated as zero.',
+  )
 
   await page.getByTestId('automation-panel').getByRole('button', { name: 'Dry run' }).click()
   await expect.poll(() => dryRuns).toBe(1)
   await page.getByTestId('automation-panel').getByRole('button', { name: 'Pause' }).click()
-  await expect(page.getByTestId('automation-panel')).toContainText('paused')
+  await expect(page.getByTestId('automation-panel')).toContainText('Paused')
 })

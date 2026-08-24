@@ -9,14 +9,17 @@ test.describe('v28 Work Item detail', () => {
   test('shares the Work Item projection across Sheet and Full Page', async ({ page }) => {
     await page.goto('/?view=active')
     await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
-    await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(page.getByTestId('responsible-human')).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Agent executions' })).toBeVisible()
-    await page.getByRole('button', { name: 'Open full page' }).click()
-    await expect(page.getByRole('region', { name: 'Full Issue', exact: true })).toBeVisible()
+    const detail = page.getByRole('dialog')
+    await expect(detail).toBeVisible()
+    await expect(detail.getByTestId('responsible-human')).toBeVisible()
+    await detail.getByRole('tab', { name: 'Agent executions', exact: true }).click()
+    await expect(detail.getByRole('heading', { name: 'Agent executions', exact: true })).toBeVisible()
+    await detail.getByRole('button', { name: 'Open full page' }).click()
+    const fullPage = page.getByRole('region', { name: 'Stable active browser fixture', exact: true })
+    await expect(fullPage).toBeVisible()
     await expect(page).toHaveURL(/workItem=/)
     await page.goBack()
-    await expect(page.getByRole('region', { name: 'Full Issue', exact: true })).toHaveCount(0)
+    await expect(fullPage).toHaveCount(0)
   })
 
   test('warns before discarding unsaved edits and keeps revisioned mutation headers', async ({ page }) => {

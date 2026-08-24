@@ -3,7 +3,6 @@
 import { use } from 'react'
 import { AppShell } from '@workmesh/ui'
 import { AgentSessionDetail } from '../../agent-session-detail'
-import { GlobalCommandCenter } from '../../../features/command-center'
 import { LocaleToggle, useLocale } from '../../lib/i18n'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../../lib/workspace-navigation'
 import { RealtimeStatus } from '../../realtime-status'
@@ -19,7 +18,7 @@ export default function AgentSessionPage({ params }: { params: Promise<{ id: str
   return <AppShell
     administrationNavigationLabel={t('administrationNavigation')}
     contextLabel={text.context}
-    headerActions={<div className="shell-action-cluster"><LocaleToggle /><GlobalCommandCenter locale={locale} triggerLabel={t('search')} /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
+    headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}
     mobileNavigationLabel={t('mobileNavigation')}

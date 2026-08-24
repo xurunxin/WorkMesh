@@ -1,6 +1,6 @@
 'use client'
 
-import { ApiError, apiListRequest, apiRequest, json, type ListResponse } from './api'
+import { ApiError, apiListRequest, apiMutation, apiRequest, json, type ListResponse } from './api'
 
 export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
 
@@ -112,6 +112,26 @@ export async function grantAgentTeamAccess(agentId: string, teamId: string, appr
 
 export async function revokeAgentTeamAccess(agentId: string, teamId: string): Promise<AgentTeamAccess> {
   return apiRequest<AgentTeamAccess>(`/api/v1/agents/${agentId}/team-access/${teamId}`, { method: 'DELETE' })
+}
+
+/** Outcomes a Human can record for a pending Approval. */
+export type ApprovalDecision = 'approved' | 'rejected'
+
+/**
+ * Resolve a pending Approval by recording the Human's decision.
+ *
+ * Wraps the per-approval `POST /api/v1/approvals/{id}/decide` endpoint and is
+ * the single seam the Agents page (single + bulk action bar) and the session
+ * detail view share. Using `apiMutation` makes the call idempotent across
+ * the same URL+body so a double-click on the bulk bar cannot produce two
+ * independent writes to the same approval.
+ */
+export async function decideApproval(approval: Approval, decision: ApprovalDecision, reason?: string): Promise<Approval> {
+  return apiMutation<Approval>(`decide-approval:${approval.id}`, `/api/v1/approvals/${approval.id}/decide`, {
+    method: 'POST',
+    headers: { ...json({}), 'If-Match': `"revision-${approval.revision}"` },
+    body: JSON.stringify({ decision, reason: reason ?? `Human ${decision} from the approval inbox.` }),
+  })
 }
 
 export async function createAgentConnection(input: { name: string; agentSlug: string; clientType: AgentConnection['client_type']; teamId: string; principalHumanActorId?: string; requestedCapabilities: string[]; grantAgentDelegate: boolean; notes?: string }): Promise<AgentConnectionCreateResponse> { return apiRequest('/api/v1/agent-connections', { method: 'POST', headers: json({}), body: JSON.stringify(input) }) }

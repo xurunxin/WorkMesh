@@ -48,19 +48,21 @@ export function workSurfaceErrorState(reason: unknown): WorkSurfaceState {
 export function workSurfaceStateForCollection({
   error,
   hasItems,
+  initialized,
   loading,
   refreshing = false,
   stale = false,
 }: {
   error?: unknown
   hasItems: boolean
+  initialized: boolean
   loading: boolean
   refreshing?: boolean
   stale?: boolean
 }): WorkSurfaceState {
   if (error) return workSurfaceErrorState(error)
-  if (loading && !hasItems) return 'loading'
-  if (refreshing) return 'refreshing'
+  if (!initialized) return 'loading'
+  if (refreshing || loading) return 'refreshing'
   if (stale) return 'reconnecting'
   return hasItems ? 'ready' : 'empty'
 }
@@ -74,7 +76,12 @@ export function createWorkSurfaceViewModel({
   state,
   stale = false,
 }: {
-  collection: { items: WorkItemDto[]; nextCursor: string | null }
+  collection: {
+    initialized: boolean
+    items: WorkItemDto[]
+    loading: boolean
+    nextCursor: string | null
+  }
   error?: unknown
   layout: WorkSurfaceLayout
   query: WorkSurfaceQuery
@@ -89,7 +96,13 @@ export function createWorkSurfaceViewModel({
     query,
     items,
     nextCursor: collection.nextCursor,
-    state: state ?? workSurfaceStateForCollection({ error, hasItems: items.length > 0, loading: false, stale }),
+    state: state ?? workSurfaceStateForCollection({
+      error,
+      hasItems: items.length > 0,
+      initialized: collection.initialized,
+      loading: collection.loading,
+      stale,
+    }),
     stale,
     ...(error instanceof Error ? { errorMessage: error.message } : {}),
   }

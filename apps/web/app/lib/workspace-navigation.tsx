@@ -8,7 +8,7 @@ import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
 import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
 import { homeScopeHref, type HomeScope } from './navigation'
 
-export type WorkspaceNavigationKey = HomeScope | 'agents'
+export type WorkspaceNavigationKey = HomeScope | 'agents' | 'operations'
 
 type NavigationTranslationKey =
   | 'agents'

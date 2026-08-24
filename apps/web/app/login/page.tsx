@@ -9,7 +9,7 @@ type LoginResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
 
 export default function LoginPage() {
-  const { loginCopy: text } = useLocale()
+  const { loginCopy: text, t } = useLocale()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const textRef = useRef(text)
@@ -41,9 +41,9 @@ export default function LoginPage() {
     }
   }
 
-  return <AppShell productName="WorkMesh" contextLabel={text.title} navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />}>
+  return <AppShell productName="WorkMesh" contextLabel={text.title} navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
     <div className="auth-shell auth-shell-centered">
-      <Card title={text.title} subtitle={text.subtitle} className="auth-card">
+      <Card title={text.title} subtitle={text.subtitle} className="auth-card" headingLevel={1}>
         <form onSubmit={submit} data-testid="login-form">
           <label>{text.email}<input name="email" type="email" placeholder={text.emailPlaceholder} required /></label>
           <label>{text.password}<input name="password" type="password" placeholder={text.passwordPlaceholder} required /></label>

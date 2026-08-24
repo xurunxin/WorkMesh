@@ -1,6 +1,6 @@
 'use client'
 
-import React, { type KeyboardEvent as ReactKeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
+import React, { type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Dialog, Input } from '@workmesh/ui'
 import { ArrowClockwise, MagnifyingGlass } from '@phosphor-icons/react'
@@ -8,9 +8,13 @@ import type { AuthorizedCommandSnapshot, Command, RecentCommandRef } from './con
 import { queryAuthorizedCommands } from './queries'
 import { intersectRecent, staticCommands } from './registry'
 import { commandCenterViewModel } from './view-model'
+import { isInteractiveKeyboardTarget } from '../../app/lib/list-interactions'
 
 const recentStorageKey = 'workmesh.command-center.recent.v1'
+const returnFocusStateKey = '__workmeshCommandCenterReturnFocusV1'
 const emptySnapshot: AuthorizedCommandSnapshot = { commands: [], errors: [], operationsEnabled: false, sourceStatuses: [], truncatedSources: [] }
+
+type ReturnFocusMarker = Readonly<{ from: string; to: string }>
 
 type CommandCenterLocale = 'zh-CN' | 'en'
 const commandCenterText = {
@@ -32,9 +36,44 @@ const commandCenterText = {
   },
 } as const
 
-function editableTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false
-  return target.matches('input, textarea, select, [contenteditable="true"]') || Boolean(target.closest('[contenteditable="true"]'))
+function semanticLayerOpen(): boolean {
+  return Boolean(document.querySelector('[aria-modal="true"]'))
+}
+
+function relativeLocation(): string {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`
+}
+
+function historyRecord(): Record<string, unknown> {
+  const state: unknown = window.history.state
+  return state !== null && typeof state === 'object' && !Array.isArray(state)
+    ? { ...state as Record<string, unknown> }
+    : {}
+}
+
+function isReturnFocusMarker(value: unknown): value is ReturnFocusMarker {
+  if (value === null || typeof value !== 'object') return false
+  const marker = value as Partial<ReturnFocusMarker>
+  return typeof marker.from === 'string' && typeof marker.to === 'string'
+}
+
+function markCommandCenterNavigation(href: string): void {
+  const target = new URL(href, window.location.href)
+  if (target.origin !== window.location.origin) return
+  const marker: ReturnFocusMarker = {
+    from: relativeLocation(),
+    to: `${target.pathname}${target.search}${target.hash}`,
+  }
+  window.history.replaceState({ ...historyRecord(), [returnFocusStateKey]: marker }, '', window.location.href)
+}
+
+function consumeReturnFocusMarker(): ReturnFocusMarker | null {
+  const state = historyRecord()
+  const marker = state[returnFocusStateKey]
+  if (!isReturnFocusMarker(marker) || marker.from !== relativeLocation()) return null
+  delete state[returnFocusStateKey]
+  window.history.replaceState(Object.keys(state).length > 0 ? state : null, '', window.location.href)
+  return marker
 }
 
 function readRecent(): RecentCommandRef[] {
@@ -59,7 +98,13 @@ function remember(command: Command): void {
   } catch { /* Recency is optional and must never block navigation. */ }
 }
 
-export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLabel?: string; locale?: CommandCenterLocale }) {
+export type GlobalCommandCenterProps = {
+  getLayerOpen?: () => boolean
+  triggerLabel?: string
+  locale?: CommandCenterLocale
+}
+
+export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerLabel, locale = 'en' }: GlobalCommandCenterProps) {
   const text = commandCenterText[locale]
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
@@ -71,8 +116,29 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   const [activeIndex, setActiveIndex] = useState(0)
   const [refreshKey, setRefreshKey] = useState(0)
   const generationRef = useRef(0)
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const openCommandCenter = () => {
+    if (getLayerOpen()) return
+    setOpen(true)
+  }
 
   useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    const restoreTriggerFocus = () => {
+      if (!consumeReturnFocusMarker()) return
+      const activeElement = document.activeElement
+      if (activeElement === triggerRef.current) return
+      if (activeElement && activeElement !== document.body && activeElement !== document.documentElement) return
+      triggerRef.current?.focus({ preventScroll: true })
+    }
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) restoreTriggerFocus()
+    }
+    restoreTriggerFocus()
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
   useEffect(() => {
     const update = () => setOnline(navigator.onLine)
     update()
@@ -82,18 +148,23 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   }, [])
   useEffect(() => {
     const shortcut = (event: globalThis.KeyboardEvent) => {
-      if (event.defaultPrevented || editableTarget(event.target) || !(event.ctrlKey || event.metaKey) || event.key.toLocaleLowerCase() !== 'k') return
-      event.preventDefault()
-      setOpen(true)
+      if (event.defaultPrevented || event.repeat || event.isComposing || isInteractiveKeyboardTarget(event.target) || getLayerOpen()) return
+      // Cmd/Ctrl+K — universal palette shortcut.
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLocaleLowerCase() === 'k') {
+        event.preventDefault()
+        openCommandCenter()
+        return
+      }
+      // `/` (forward slash) — slash to open, but only when the key is plain
+      // (no modifiers) so browser shortcuts like Ctrl+/ are not swallowed.
+      if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+        event.preventDefault()
+        openCommandCenter()
+      }
     }
     window.addEventListener('keydown', shortcut)
     return () => window.removeEventListener('keydown', shortcut)
-  }, [])
-  useEffect(() => {
-    if (!open) return
-    const frame = requestAnimationFrame(() => document.getElementById('workmesh-command-center-input')?.focus())
-    return () => cancelAnimationFrame(frame)
-  }, [open])
+  }, [getLayerOpen])
   useEffect(() => {
     const generation = ++generationRef.current
     if (!open || !online) {
@@ -141,8 +212,15 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   const close = () => { setOpen(false); setQuery(''); setActiveIndex(0) }
   const activate = (command: Command) => {
     remember(command)
+    markCommandCenterNavigation(command.href)
     close()
     window.location.assign(command.href)
+  }
+  const followLink = (event: ReactMouseEvent<HTMLAnchorElement>, command: Command) => {
+    remember(command)
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+      return
+    markCommandCenterNavigation(command.href)
   }
   const move = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -156,10 +234,10 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   }
 
   const dialog = mounted ? createPortal(
-    <Dialog closeLabel={text.close} description={text.description} onClose={close} open={open} title={text.title}>
+    <Dialog closeLabel={text.close} description={text.description} initialFocusRef={searchInputRef} onClose={close} open={open} title={text.title}>
       <div className="command-center" data-command-state={view.state} data-testid="command-center">
         <label className="command-center-search">{text.field}
-          <Input aria-activedescendant={active ? `command-${active.id}` : undefined} aria-controls="command-center-results" aria-expanded="true" aria-label={text.title} autoComplete="off" id="workmesh-command-center-input" onChange={event => setQuery(event.currentTarget.value)} onKeyDown={move} placeholder={text.placeholder} role="combobox" value={query} />
+          <Input aria-activedescendant={active ? `command-${active.id}` : undefined} aria-controls="command-center-results" aria-expanded="true" aria-label={text.title} autoComplete="off" onChange={event => setQuery(event.currentTarget.value)} onKeyDown={move} placeholder={text.placeholder} ref={searchInputRef} role="combobox" value={query} />
         </label>
         <div aria-live="polite" className={`command-center-status state-${view.state}`} role="status">
           <span>{view.state === 'ready' && query.trim() ? text.results(view.actionable.length) : text[view.state]}</span>
@@ -173,7 +251,7 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
             <h3>{text.groups[group.id]}</h3>
             {group.commands.map(command => {
               const selected = active?.id === command.id
-              return <a aria-selected={selected} className={selected ? 'is-active' : undefined} href={command.href} id={`command-${command.id}`} key={`${group.id}:${command.id}`} onClick={() => remember(command)} onMouseEnter={() => setActiveIndex(view.actionable.findIndex(candidate => candidate.id === command.id))} role="option">
+            return <a aria-selected={selected} className={selected ? 'is-active' : undefined} href={command.href} id={`command-${command.id}`} key={`${group.id}:${command.id}`} onClick={event => followLink(event, command)} onMouseEnter={() => setActiveIndex(view.actionable.findIndex(candidate => candidate.id === command.id))} role="option">
                 <span><strong>{command.source === 'static' ? text.staticTitles[command.id as keyof typeof text.staticTitles] ?? command.title : command.title}</strong>{command.subtitle && <small>{command.subtitle}</small>}</span>
                 <em>{text.kinds[command.kind]}</em>
               </a>
@@ -186,7 +264,7 @@ export function GlobalCommandCenter({ triggerLabel, locale = 'en' }: { triggerLa
   ) : null
 
   return <>
-    <Button aria-keyshortcuts="Control+K Meta+K" className="command-center-trigger" data-testid="command-center-trigger" icon={<MagnifyingGlass aria-hidden size={16} />} onClick={() => setOpen(true)} type="button" variant="ghost">
+    <Button aria-keyshortcuts="Control+K Meta+K" aria-label={triggerLabel ?? text.search} className="command-center-trigger" data-testid="command-center-trigger" icon={<MagnifyingGlass aria-hidden size={16} />} onClick={openCommandCenter} ref={triggerRef} type="button" variant="ghost">
       <span>{triggerLabel ?? text.search}</span><kbd>Ctrl K</kbd>
     </Button>
     {dialog}

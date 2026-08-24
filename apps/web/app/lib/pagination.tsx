@@ -9,18 +9,23 @@ type Options<T, R extends { id: string }> = {
   optional?: boolean
   limit?: number
   map?: (item: T) => R
+  scopeKey?: string | null
 }
 
 type CollectionScope = {
   path: string | null
   limit: number
+  scopeKey: string | null
 }
 
-type ScopedPage<R> = ListResponse<R> & CollectionScope
+type ScopedPage<R> = ListResponse<R> & CollectionScope & {
+  initialized: boolean
+}
 
 export type PagedCollection<R extends { id: string }> = {
   items: R[]
   nextCursor: string | null
+  initialized: boolean
   loading: boolean
   loadingMore: boolean
   error: Error | null
@@ -37,9 +42,12 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
 ): PagedCollection<R> {
   const optional = options.optional ?? false
   const limit = options.limit ?? 100
+  const scopeKey = options.scopeKey ?? null
   const [page, setPage] = useState<ScopedPage<R>>({
     path,
     limit,
+    scopeKey,
+    initialized: false,
     items: [],
     nextCursor: null,
   })
@@ -50,7 +58,7 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
   const controller = useRef<AbortController | null>(null)
   const loadMoreInFlight = useRef(false)
   const refreshInFlight = useRef<number | null>(null)
-  const activeScope = useRef<CollectionScope>({ path, limit })
+  const activeScope = useRef<CollectionScope>({ path, limit, scopeKey })
   const mapRef = useRef(options.map)
   mapRef.current = options.map
 
@@ -82,8 +90,10 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
   }, [limit, optional, path])
 
   const refresh = useCallback(async () => {
-    const scopeChanged = activeScope.current.path !== path || activeScope.current.limit !== limit
-    activeScope.current = { path, limit }
+    const scopeChanged = activeScope.current.path !== path
+      || activeScope.current.limit !== limit
+      || activeScope.current.scopeKey !== scopeKey
+    activeScope.current = { path, limit, scopeKey }
     const requestGeneration = ++generation.current
     refreshInFlight.current = requestGeneration
     loadMoreInFlight.current = false
@@ -91,7 +101,8 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
     setLoadingMore(false)
     setError(null)
     // Background refreshes keep the current tree mounted; a new query scope must not show stale rows.
-    if (scopeChanged || !path) setPage({ path, limit, items: [], nextCursor: null })
+    if (scopeChanged || !path)
+      setPage({ path, limit, scopeKey, initialized: false, items: [], nextCursor: null })
     if (!path) {
       controller.current?.abort()
       controller.current = null
@@ -101,16 +112,16 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
     try {
       const response = await request(null, requestGeneration)
       if (response && requestGeneration === generation.current)
-        setPage({ ...response, path, limit })
+        setPage({ ...response, path, limit, scopeKey, initialized: true })
     } catch (reason) {
       if (requestGeneration === generation.current) setError(asError(reason))
     } finally {
       if (requestGeneration === generation.current) setLoading(false)
       if (refreshInFlight.current === requestGeneration) refreshInFlight.current = null
     }
-  }, [path, request])
+  }, [limit, path, request, scopeKey])
 
-  const pageMatchesScope = page.path === path && page.limit === limit
+  const pageMatchesScope = page.path === path && page.limit === limit && page.scopeKey === scopeKey
 
   const loadMore = useCallback(async () => {
     const cursor = pageMatchesScope ? page.nextCursor : null
@@ -127,10 +138,12 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
     try {
       const response = await request(cursor, requestGeneration)
       if (response && requestGeneration === generation.current)
-        setPage(current => current.path === path && current.limit === limit
+        setPage(current => current.path === path && current.limit === limit && current.scopeKey === scopeKey
           ? {
               path,
               limit,
+              scopeKey,
+              initialized: current.initialized,
               items: appendUniquePage(current.items, response.items),
               nextCursor: response.nextCursor,
             }
@@ -143,7 +156,7 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
         setLoadingMore(false)
       }
     }
-  }, [limit, page.nextCursor, pageMatchesScope, path, request])
+  }, [limit, page.nextCursor, pageMatchesScope, path, request, scopeKey])
 
   useEffect(() => {
     void refresh()
@@ -158,6 +171,7 @@ export function usePagedApiList<T extends { id: string }, R extends { id: string
   return {
     items: pageMatchesScope ? page.items : [],
     nextCursor: pageMatchesScope ? page.nextCursor : null,
+    initialized: pageMatchesScope ? page.initialized : false,
     loading: pageMatchesScope ? loading : Boolean(path),
     loadingMore: pageMatchesScope ? loadingMore : false,
     error: pageMatchesScope ? error : null,

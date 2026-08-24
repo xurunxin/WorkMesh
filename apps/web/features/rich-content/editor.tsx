@@ -6,6 +6,7 @@ import {
   ArrowUUpRight,
   Code,
   CodeBlock,
+  Eye,
   LinkSimple,
   ListBullets,
   ListNumbers,
@@ -16,6 +17,8 @@ import {
   TextStrikethrough,
   type Icon,
 } from '@phosphor-icons/react'
+
+import { Markdown } from './markdown'
 
 export type DraftIdentity = { workspaceId: string; teamId: string; actorId: string; resourceType: string; resourceId: string; field: string; baseRevision: number }
 export type Draft = DraftIdentity & { value: string; updatedAt: string; expiresAt: string }
@@ -82,11 +85,15 @@ export type RichTextEditorCopy = {
   code: string
   codeBlock: string
   link: string
+  preview: string
+  edit: string
   draftRestored: string
   discardDraft: string
   revisionDraft: (draftRevision: number, currentRevision: number) => string
   restoreForReview: string
   discardOldDraft: string
+  notSaved: string
+  savedAgo: (seconds: number) => string
 }
 
 const defaultEditorCopy: RichTextEditorCopy = {
@@ -103,11 +110,15 @@ const defaultEditorCopy: RichTextEditorCopy = {
   code: 'Inline code',
   codeBlock: 'Code block',
   link: 'Link',
+  preview: 'Preview',
+  edit: 'Edit',
   draftRestored: 'A local draft was restored.',
   discardDraft: 'Discard draft',
   revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`,
   restoreForReview: 'Restore for review',
   discardOldDraft: 'Discard old draft',
+  notSaved: 'Not saved yet',
+  savedAgo: seconds => `Saved ${seconds}s ago`,
 }
 
 type FormatTool = { label: keyof Pick<RichTextEditorCopy, 'heading' | 'bold' | 'italic' | 'strike' | 'bullets' | 'numbered' | 'quote' | 'code' | 'codeBlock' | 'link'>; before: string; after: string; icon: Icon }
@@ -124,11 +135,17 @@ const formatTools: FormatTool[] = [
   { label: 'link', before: '[', after: '](https://)', icon: LinkSimple },
 ]
 
-export function RichTextEditor({ identity, label, name, value, onChange, required, textareaRef, copy, testId }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null>; copy?: Partial<RichTextEditorCopy>; testId?: string }) {
+export type RichTextEditorMode = 'comment' | 'reply' | 'description'
+const editorModeClass = (mode: RichTextEditorMode | undefined): string => mode ? `rich-editor rich-editor--${mode}` : 'rich-editor'
+
+export function RichTextEditor({ identity, label, mode, name, value, onChange, onSavedAt, preview, required, textareaRef, copy, testId }: { identity: DraftIdentity; label: string; name: string; value: string; onChange: (value: string) => void; onSavedAt?: (date: Date) => void; mode?: RichTextEditorMode; preview?: boolean; required?: boolean; textareaRef?: RefObject<HTMLTextAreaElement | null>; copy?: Partial<RichTextEditorCopy>; testId?: string }) {
   const text = { ...defaultEditorCopy, ...copy }
   const internalRef = useRef<HTMLTextAreaElement>(null); const ref = textareaRef ?? internalRef
   const [restored, setRestored] = useState(false)
   const [reconciliation, setReconciliation] = useState<Draft | null>(null)
+  const [isPreview, setPreview] = useState(preview ?? false)
+  const [savedAt, setSavedAt] = useState<Date | null>(null)
+  const [now, setNow] = useState(() => Date.now())
   const serverValue = useRef(value)
   const currentValue = useRef(value)
   const history = useRef<EditorHistory>({ undo: [], redo: [] })
@@ -140,8 +157,19 @@ export function RichTextEditor({ identity, label, name, value, onChange, require
     if (exact && exact.value !== value) { onChange(exact.value); setRestored(true); setReconciliation(null); return }
     setReconciliation(findReconciliationDraft(localStorage, identity))
   }, [identityKey])
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
   currentValue.current = value
-  const persist = (next: string) => { currentValue.current = next; onChange(next); if (next === serverValue.current) clearDraft(localStorage, identity); else writeDraft(localStorage, identity, next) }
+  const persist = (next: string) => {
+    currentValue.current = next; onChange(next)
+    if (next === serverValue.current) { clearDraft(localStorage, identity); return }
+    const at = new Date()
+    setSavedAt(at)
+    onSavedAt?.(at)
+    writeDraft(localStorage, identity, next)
+  }
   const change = (next: string) => { history.current = recordEditorChange(history.current, currentValue.current, next); persist(next) }
   const applyHistory = (direction: 'undo' | 'redo') => {
     const result = direction === 'redo' ? redoEditorChange(history.current, currentValue.current) : undoEditorChange(history.current, currentValue.current)
@@ -157,10 +185,14 @@ export function RichTextEditor({ identity, label, name, value, onChange, require
     event.preventDefault()
     applyHistory(key === 'y' || (key === 'z' && event.shiftKey) ? 'redo' : 'undo')
   }
-  return <section className="rich-editor" data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={text.formatting(label)}>
+  const savedAgoSeconds = savedAt ? Math.max(0, Math.floor((now - savedAt.getTime()) / 1000)) : null
+  return <section className={editorModeClass(mode)} data-restored={restored || undefined}><div className="rich-editor-toolbar" role="toolbar" aria-label={text.formatting(label)}>
     <button aria-label={text.undo} className="rich-editor-tool" onClick={() => applyHistory('undo')} title={text.undo} type="button"><ArrowUUpLeft aria-hidden size={17} /></button>
     <button aria-label={text.redo} className="rich-editor-tool" onClick={() => applyHistory('redo')} title={text.redo} type="button"><ArrowUUpRight aria-hidden size={17} /></button>
     <span aria-hidden className="rich-editor-tool-separator" />
     {formatTools.map(tool => { const ToolIcon = tool.icon; return <button aria-label={text[tool.label]} className="rich-editor-tool" key={tool.label} onClick={() => ref.current && format(ref.current, tool.before, tool.after)} title={text[tool.label]} type="button"><ToolIcon aria-hidden size={17} /></button> })}
-  </div><label>{label}<textarea data-testid={testId} name={name} onChange={event => change(event.currentTarget.value)} onKeyDown={keyboard} onPaste={paste} ref={ref} required={required} value={value} /></label>{restored && <div className="draft-notice" role="status"><span>{text.draftRestored}</span><button type="button" onClick={() => { clearDraft(localStorage, identity); onChange(serverValue.current); setRestored(false) }}>{text.discardDraft}</button></div>}{reconciliation && <div className="draft-notice" role="status" data-testid="draft-reconciliation"><span>{text.revisionDraft(reconciliation.baseRevision, identity.baseRevision)}</span><button type="button" onClick={() => { onChange(reconciliation.value); writeDraft(localStorage, identity, reconciliation.value); clearDraft(localStorage, reconciliation); setReconciliation(null); setRestored(true) }}>{text.restoreForReview}</button><button type="button" onClick={() => { clearDraft(localStorage, reconciliation); setReconciliation(null) }}>{text.discardOldDraft}</button></div>}</section>
+    <span aria-hidden className="rich-editor-tool-separator" />
+    <button aria-label={isPreview ? text.edit : text.preview} aria-pressed={isPreview} className="rich-editor-tool" onClick={() => setPreview(current => !current)} title={isPreview ? text.edit : text.preview} type="button"><Eye aria-hidden size={17} /></button>
+    <span aria-live="polite" className="rich-editor-saved" data-testid="rich-editor-saved" role="status">{savedAgoSeconds === null ? text.notSaved : text.savedAgo(savedAgoSeconds)}</span>
+  </div><label>{label}{isPreview ? <Markdown source={value} /> : <textarea data-testid={testId} name={name} onChange={event => change(event.currentTarget.value)} onKeyDown={keyboard} onPaste={paste} ref={ref} required={required} value={value} />}</label>{restored && <div className="draft-notice" role="status"><span>{text.draftRestored}</span><button type="button" onClick={() => { clearDraft(localStorage, identity); onChange(serverValue.current); setRestored(false) }}>{text.discardDraft}</button></div>}{reconciliation && <div className="draft-notice" role="status" data-testid="draft-reconciliation"><span>{text.revisionDraft(reconciliation.baseRevision, identity.baseRevision)}</span><button type="button" onClick={() => { onChange(reconciliation.value); writeDraft(localStorage, identity, reconciliation.value); clearDraft(localStorage, reconciliation); setReconciliation(null); setRestored(true) }}>{text.restoreForReview}</button><button type="button" onClick={() => { clearDraft(localStorage, reconciliation); setReconciliation(null) }}>{text.discardOldDraft}</button></div>}</section>
 }
