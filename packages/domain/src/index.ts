@@ -7,6 +7,19 @@ export const defaultStates: ReadonlyArray<{ name: string; category: StatusCatego
   { name: 'Backlog', category: 'backlog', color: '#6b7280', position: 0 }, { name: 'Ready', category: 'planned', color: '#64748b', position: 1 }, { name: 'In Progress', category: 'started', color: '#3b82f6', position: 2 }, { name: 'In Review', category: 'started', color: '#8b5cf6', position: 3 }, { name: 'Done', category: 'completed', color: '#22c55e', position: 4 }, { name: 'Canceled', category: 'canceled', color: '#ef4444', position: 5 }
 ]
 export const assertResponsibleHumanForStarted = (category: StatusCategory, responsibleHumanActorId: string | null | undefined): void => { if (category === 'started' && !responsibleHumanActorId) throw new DomainError('RESPONSIBLE_HUMAN_REQUIRED', 'A started work item requires a responsible human') }
+export const assertWorkItemSelfClaimable = (input: Readonly<{
+  statusCategory: StatusCategory
+  responsibleHumanActorId: string | null
+  principalHumanActorId: string
+  hasActiveExecutorDelegation: boolean
+}>): void => {
+  if (input.statusCategory === 'completed' || input.statusCategory === 'canceled')
+    throw new DomainError('WORK_ITEM_NOT_CLAIMABLE', 'A terminal Work Item cannot be claimed')
+  if (!input.responsibleHumanActorId || input.responsibleHumanActorId !== input.principalHumanActorId)
+    throw new DomainError('RESOURCE_SCOPE_DENIED', 'The Work Item responsible Human does not match the Connection principal')
+  if (input.hasActiveExecutorDelegation)
+    throw new DomainError('WORK_ITEM_ALREADY_ASSIGNED', 'The Work Item already has an active executor assignment')
+}
 export const parseRevision = (value: string | undefined): number => { const match = value?.match(/^"?revision-(\d+)"?$/); if (!match) throw new DomainError('IF_MATCH_REQUIRED', 'If-Match must be a revision ETag'); return Number(match[1]) }
 export const assertRevision = (expected: number, actual: number): void => { if (expected !== actual) throw new DomainError('REVISION_CONFLICT', 'Resource has changed', { expectedRevision: expected, currentRevision: actual }) }
 export const etag = (revision: number): string => `"revision-${revision}"`

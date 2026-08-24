@@ -183,6 +183,68 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       expect((mcpTeams.structuredContent?.data as { items: { id: string }[] }).items.map(team => team.id)).toContain(teamId)
       const mcpStates = await mcpTool(mcpUrl, token, 'list_workflow_states', { teamId })
       expect((mcpStates.structuredContent?.data as { items: { id: string }[] }).items.map(state => state.id)).toContain(readyId)
+      const claimCandidate = await mcpTool(mcpUrl, token, 'create_work_item', {
+        teamId,
+        title: 'Remote MCP self-claim lifecycle',
+        description: 'Prove claim through completion without replacing the configured Connection credential.',
+        statusId: readyId,
+      })
+      const candidate = claimCandidate.structuredContent?.data as { id: string; revision: number }
+      const claimable = await mcpTool(mcpUrl, token, 'list_claimable_work_items', { limit: 200 })
+      expect((claimable.structuredContent?.data as { items: { id: string }[] }).items.map(item => item.id)).toContain(candidate.id)
+      const claimed = await mcpTool(mcpUrl, token, 'claim_work_item', {
+        workItemId: candidate.id,
+        revision: candidate.revision,
+        initialPrompt: 'Execute the remote MCP lifecycle acceptance fixture.',
+        idempotencyKey: `claim:${candidate.id}`,
+      })
+      const claimedData = claimed.structuredContent?.data as {
+        session: { id: string; revision: number }
+        executionAuth: { mode: string; sessionId: string; expiresAt?: string }
+      }
+      expect(claimedData.executionAuth).toMatchObject({
+        mode: 'connection_session_bridge',
+        sessionId: claimedData.session.id,
+      })
+      expect(JSON.stringify(claimedData)).not.toContain('sessionToken')
+      expect(JSON.stringify(claimedData)).not.toContain('exchangeToken')
+      const acknowledged = await mcpTool(mcpUrl, token, 'ack_agent_session', {
+        sessionId: claimedData.session.id,
+        summary: 'Accepted through the unchanged Connection configuration.',
+      })
+      const acknowledgedData = acknowledged.structuredContent?.data as { revision: number }
+      await mcpTool(mcpUrl, token, 'transition_agent_session_state', {
+        sessionId: claimedData.session.id,
+        state: 'executing',
+        reason: 'Remote MCP bridge acceptance',
+        revision: acknowledgedData.revision,
+      })
+      await Promise.all([
+        mcpTool(mcpUrl, token, 'append_activity', {
+          sessionId: claimedData.session.id,
+          kind: 'evidence',
+          summary: 'First parallel request-local exact Session refresh succeeded.',
+        }),
+        mcpTool(mcpUrl, token, 'append_activity', {
+          sessionId: claimedData.session.id,
+          kind: 'evidence',
+          summary: 'Second parallel request-local exact Session refresh succeeded.',
+        }),
+      ])
+      const completionRevision = (await db.query<{ revision: number }>(
+        'SELECT revision FROM agent_sessions WHERE id=$1',
+        [claimedData.session.id],
+      )).rows[0]!.revision
+      const completed = await mcpTool(mcpUrl, token, 'complete_session', {
+        sessionId: claimedData.session.id,
+        revision: completionRevision,
+        summary: 'Remote MCP self-claim lifecycle completed.',
+        noArtifactReason: 'Protocol acceptance produces no repository artifact.',
+      })
+      expect(completed.structuredContent?.data).toMatchObject({
+        id: claimedData.session.id,
+        state: 'completed',
+      })
       const mcpProject = await mcpTool(mcpUrl, token, 'create_project', {
         teamId,
         name: 'MCP transport acceptance',
@@ -325,6 +387,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
     )).rows[0]!.cursor
     const revoked = await human('DELETE', `/api/v1/agent-connections/${envelope.connection.id}`, undefined, confirmed.json<{ revision: number }>().revision); expect(revoked.statusCode, revoked.body).toBe(204)
+    expect((await db.query<{ revoked_at: Date | null }>(
+      'SELECT revoked_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(nextToken)],
+    )).rows[0]?.revoked_at).toEqual(expect.any(Date))
     expect((await db.query<{ state: string }>(
       'SELECT state FROM agent_sessions WHERE id=$1',
       [coordinationSessionId],
@@ -347,6 +413,247 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'GET',
       '/api/v1/agent-connections/current-identity',
     )).statusCode).toBe(401)
+  })
+
+  it('lazily reconciles existing Connection credentials and admits exactly one concurrent self-claim', async () => {
+    const oldAgentSlug = `legacy-claim-${randomUUID().slice(0, 8)}`
+    const oldConnection = await pairConnection(oldAgentSlug)
+    const oldAgent = (await db.query<{ agent_id: string }>(
+      'SELECT agent_id FROM agent_connections WHERE id=$1',
+      [oldConnection.connection.id],
+    )).rows[0]!
+    await db.query(
+      'DELETE FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(oldConnection.token)],
+    )
+    const legacyIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Legacy Connection claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    expect(legacyIssue.statusCode, legacyIssue.body).toBe(200)
+    const legacyItem = legacyIssue.json<{ id: string; revision: number }>()
+    const replayKey = randomUUID()
+    const claimLegacy = () => app.inject({
+      method: 'POST',
+      url: `/api/v1/work-items/${legacyItem.id}/claim`,
+      payload: {},
+      headers: {
+        'x-workmesh-installation-token': oldConnection.token,
+        'idempotency-key': replayKey,
+        'if-match': `"revision-${legacyItem.revision}"`,
+      },
+    }) as unknown as Promise<Reply>
+    const first = await claimLegacy()
+    expect(first.statusCode, first.body).toBe(200)
+    const replay = await claimLegacy()
+    expect(replay.statusCode, replay.body).toBe(200)
+    expect(replay.body).toBe(first.body)
+    const firstBody = first.json<{
+      delegation: { id: string }
+      session: { id: string }
+      exchangeToken: string
+    }>()
+    expect(firstBody.exchangeToken).toHaveLength(43)
+    const reconciled = (await db.query<{
+      id: string
+      agent_id: string
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      `SELECT id,agent_id,revoked_at,expires_at
+         FROM agent_installation_tokens WHERE token_hash=$1`,
+      [tokenHash(oldConnection.token)],
+    )).rows
+    expect(reconciled).toEqual([expect.objectContaining({
+      agent_id: oldAgent.agent_id,
+      revoked_at: null,
+      expires_at: null,
+    })])
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM delegations
+        WHERE work_item_id=$1 AND role='executor' AND status='active'`,
+      [legacyItem.id],
+    )).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE work_item_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [legacyItem.id],
+    )).rows[0]?.count).toBe(1)
+
+    const refreshKey = randomUUID()
+    const refresh = () => app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${oldConnection.token}`,
+        'idempotency-key': refreshKey,
+      },
+    })
+    const firstRefresh = await refresh()
+    expect(firstRefresh.statusCode, firstRefresh.body).toBe(200)
+    const replayedRefresh = await refresh()
+    expect(replayedRefresh.statusCode, replayedRefresh.body).toBe(200)
+    expect(replayedRefresh.body).toBe(firstRefresh.body)
+    const parallelRefreshes = await Promise.all([0, 1].map(() => app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${oldConnection.token}`,
+        'idempotency-key': randomUUID(),
+      },
+    })))
+    expect(parallelRefreshes.every(response => response.statusCode === 200)).toBe(true)
+    const parallelTokens = parallelRefreshes.map(response =>
+      response.json<{ sessionToken: string }>().sessionToken)
+    const acknowledged = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/ack`,
+      payload: { summary: 'First overlapping refresh remains usable.', externalUrls: [] },
+      headers: {
+        authorization: `Bearer ${parallelTokens[0]}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(acknowledged.statusCode, acknowledged.body).toBe(200)
+    const appended = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/activities`,
+      payload: {
+        kind: 'evidence',
+        summary: 'Second overlapping refresh remains usable.',
+        artifactIds: [],
+        references: [],
+        visibility: 'team',
+        ephemeral: false,
+      },
+      headers: {
+        authorization: `Bearer ${parallelTokens[1]}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(appended.statusCode, appended.body).toBe(200)
+
+    const crossTeamCreated = await human('POST', '/api/v1/agent-connections', {
+      name: 'Same Agent other Team',
+      agentSlug: oldAgentSlug,
+      clientType: 'codex',
+      teamId: otherTeamId,
+      principalHumanActorId: actorId,
+      requestedCapabilities: ['work:read', 'work:write'],
+      grantAgentDelegate: false,
+    })
+    expect(crossTeamCreated.statusCode, crossTeamCreated.body).toBe(201)
+    const crossTeamEnvelope = crossTeamCreated.json<{ connect_url: string }>()
+    const crossTeamRedeemed = await app.inject({
+      method: 'POST',
+      url: '/api/v1/agent-connections/redeem',
+      payload: {
+        pairingCode: new URL(crossTeamEnvelope.connect_url).hash.slice(1),
+        agentSlug: oldAgentSlug,
+        client: { type: 'codex', version: '1.1.0' },
+      },
+      headers: { 'idempotency-key': randomUUID() },
+    })
+    expect(crossTeamRedeemed.statusCode, crossTeamRedeemed.body).toBe(200)
+    const crossTeamToken = crossTeamRedeemed.json<{ installation_token: string }>().installation_token
+    const crossTeamRefresh = await app.inject({
+      method: 'POST',
+      url: `/api/v1/agent-sessions/${firstBody.session.id}/token/refresh`,
+      payload: {},
+      headers: {
+        authorization: `Bearer ${crossTeamToken}`,
+        'idempotency-key': randomUUID(),
+      },
+    })
+    expect(crossTeamRefresh.statusCode, crossTeamRefresh.body).toBe(401)
+
+    const partialConnection = await pairConnection(`partial-claim-${randomUUID().slice(0, 8)}`)
+    await db.query(
+      `UPDATE agent_installation_tokens SET revoked_at=now()
+        WHERE token_hash=$1`,
+      [tokenHash(partialConnection.token)],
+    )
+    const partialIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Partial mirror claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    const partialItem = partialIssue.json<{ id: string; revision: number }>()
+    const partialClaim = await coordinator(
+      partialConnection.token,
+      'POST',
+      `/api/v1/work-items/${partialItem.id}/claim`,
+      {},
+      partialItem.revision,
+    )
+    expect(partialClaim.statusCode, partialClaim.body).toBe(200)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_installation_tokens
+        WHERE token_hash=$1 AND revoked_at IS NULL`,
+      [tokenHash(partialConnection.token)],
+    )).rows[0]?.count).toBe(1)
+
+    const contenders = await Promise.all([
+      pairConnection(`claim-a-${randomUUID().slice(0, 8)}`),
+      pairConnection(`claim-b-${randomUUID().slice(0, 8)}`),
+    ])
+    const contestedIssue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Contested self-claim ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'high',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    const contested = contestedIssue.json<{ id: string; revision: number }>()
+    const attempts = await Promise.all(Array.from({ length: 16 }, (_, index) =>
+      app.inject({
+        method: 'POST',
+        url: `/api/v1/work-items/${contested.id}/claim`,
+        payload: {},
+        headers: {
+          'x-workmesh-installation-token': contenders[index % contenders.length]!.token,
+          'idempotency-key': randomUUID(),
+          'if-match': `"revision-${contested.revision}"`,
+        },
+      })))
+    expect(attempts.filter(attempt => attempt.statusCode === 200)).toHaveLength(1)
+    expect(attempts.filter(attempt => attempt.statusCode === 409)).toHaveLength(15)
+    const assignment = (await db.query<{ delegation_id: string; session_id: string }>(
+      `SELECT delegation.id AS delegation_id,session.id AS session_id
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.work_item_id=$1
+          AND delegation.role='executor' AND delegation.status='active'
+          AND session.session_kind='execution'
+          AND session.state NOT IN ('completed','failed','canceled')`,
+      [contested.id],
+    )).rows
+    expect(assignment).toHaveLength(1)
+    const eventRows = (await db.query<{ event_type: string; outbox_id: string }>(
+      `SELECT event.event_type,outbox.id AS outbox_id
+         FROM domain_events event
+         JOIN outbox_events outbox ON outbox.domain_event_id=event.id
+        WHERE (event.aggregate_id=$1 OR event.aggregate_id=$2)
+          AND event.event_type IN ('agent.delegation.created','agent.session.created')
+        ORDER BY event.cursor`,
+      [assignment[0]!.delegation_id, assignment[0]!.session_id],
+    )).rows
+    expect(eventRows.map(row => row.event_type)).toEqual([
+      'agent.delegation.created',
+      'agent.session.created',
+    ])
+    expect(eventRows.every(row => Boolean(row.outbox_id))).toBe(true)
   })
 
   it('imports a prepared Project once and reconstructs the full mapping after API and MCP restart', async () => {
@@ -530,10 +837,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
 
   it('allows an explicitly privileged coordinator to delegate an issue', async () => {
     const suffix = randomUUID().slice(0, 8)
-    const target = await human('POST', '/api/v1/agents/register', { slug: `target-${suffix}`, name: 'Target executor', provider: 'fake', version: '1.0.0', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read'], approvedCapabilities: ['work:read'], outputArtifactTypes: [], maxConcurrency: 1 })
+    const target = await human('POST', '/api/v1/agents/register', { slug: `target-${suffix}`, name: 'Target executor', provider: 'fake', version: '1.0.0', supportedProtocols: ['native_http'], requestedCapabilities: ['work:read','work:write'], approvedCapabilities: ['work:read','work:write'], outputArtifactTypes: [], maxConcurrency: 1 })
     expect(target.statusCode, target.body).toBe(200)
     const targetId = target.json<{ id: string }>().id
-    expect((await human('PUT', `/api/v1/agents/${targetId}/team-access/${teamId}`, { approvedCapabilities: ['work:read'] })).statusCode).toBe(200)
+    expect((await human('PUT', `/api/v1/agents/${targetId}/team-access/${teamId}`, { approvedCapabilities: ['work:read','work:write'] })).statusCode).toBe(200)
     const created = await human('POST', '/api/v1/agent-connections', { name: 'Delegating coordinator', agentSlug: `delegate-${suffix}`, clientType: 'generic_mcp', teamId, principalHumanActorId: actorId, requestedCapabilities: ['work:read','work:write','agent:delegate'], grantAgentDelegate: true })
     expect(created.statusCode, created.body).toBe(201)
     const envelope = created.json<{ connect_url: string }>()
@@ -543,7 +850,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     const work = await coordinator(token, 'POST', '/api/v1/work-items', { teamId, title: 'Delegated by coordinator', statusId: readyId, priority: 'medium', labels: [] })
     expect(work.statusCode, work.body).toBe(200)
     const item = work.json<{ id: string; revision: number }>()
-    const started = await coordinator(token, 'POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId: targetId, principalHumanActorId: actorId, role: 'executor', requestedCapabilities: ['work:read'], initialPrompt: 'Execute this issue.', budget: {} }, item.revision)
+    const started = await coordinator(token, 'POST', `/api/v1/work-items/${item.id}/agent-session`, { agentId: targetId, principalHumanActorId: actorId, role: 'executor', requestedCapabilities: ['work:read','work:write'], initialPrompt: 'Execute this issue.', budget: {} }, item.revision)
     expect(started.statusCode, started.body).toBe(200)
     expect(started.json<{ session: { id: string } }>().session.id).toMatch(/^[0-9a-f-]{36}$/)
   })
@@ -793,6 +1100,13 @@ describe('Stage 5 Agent Connection lifecycle', () => {
         overlap_until: null,
       },
     })
+    expect((await db.query<{
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      'SELECT revoked_at,expires_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(paired.token)],
+    )).rows).toEqual([{ revoked_at: null, expires_at: null }])
 
     const detail = await human('GET', `/api/v1/agent-connections/${paired.connection.id}`)
     const rotated = await human(
@@ -818,6 +1132,26 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       installation_token: string
       connection: { revision: number }
     }>()
+    const mirroredRotation = (await db.query<{
+      token_hash: string
+      revoked_at: Date | null
+      expires_at: Date | null
+    }>(
+      `SELECT token_hash,revoked_at,expires_at
+         FROM agent_installation_tokens
+        WHERE token_hash=ANY($1::text[])
+        ORDER BY token_hash`,
+      [[tokenHash(paired.token), tokenHash(nextBody.installation_token)]],
+    )).rows
+    expect(mirroredRotation).toHaveLength(2)
+    expect(mirroredRotation.find(row => row.token_hash === tokenHash(paired.token))).toMatchObject({
+      revoked_at: null,
+      expires_at: expect.any(Date),
+    })
+    expect(mirroredRotation.find(row => row.token_hash === tokenHash(nextBody.installation_token))).toMatchObject({
+      revoked_at: null,
+      expires_at: null,
+    })
     await db.query(
       `UPDATE agent_sessions
           SET state='paused',state_reason='overlap convergence fixture',
@@ -899,6 +1233,10 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'GET',
       '/api/v1/agent-connections/current-identity',
     )).statusCode).toBe(200)
+    expect((await db.query<{ revoked_at: Date | null }>(
+      'SELECT revoked_at FROM agent_installation_tokens WHERE token_hash=$1',
+      [tokenHash(paired.token)],
+    )).rows[0]?.revoked_at).toEqual(expect.any(Date))
   })
 
   it('rejects an existing Agent capability overgrant before creating durable pairing state', async () => {

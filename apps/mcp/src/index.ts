@@ -145,6 +145,7 @@ function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mo
     return { ...manifest.agent, connectionIdentity }
   }))
   server.registerTool('get_workmesh_context', { description: 'Bootstrap a fresh Agent in one call with live identity, the bound Team, workflow states, default state, release/features, allowed operations, and a durable replay cursor.', inputSchema: {} }, async () => tool(() => getWorkMeshContext(client)))
+  server.registerTool('list_claimable_work_items', { description: 'List non-terminal, unassigned Issues in the Connection Team whose responsible Human matches the Connection principal. Pass nextCursor back as cursor to continue.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listClaimableWorkItems({ cursor: input.cursor, limit: input.limit })))
   server.registerTool('resolve_identifier', { description: 'Resolve a Team key, readable Project or Milestone reference, or native Work Item key such as WM-123 to the current UUID and revision.', inputSchema: { kind: z.enum(['team', 'workflow_state', 'project', 'work_item', 'milestone']), ref: z.string().min(1).max(500), teamRef: z.string().min(1).max(500).optional(), projectRef: z.string().min(1).max(500).optional() } }, async input => tool(() => resolveIdentifier(client, input)))
   server.registerTool('prepare_project_import', { description: 'Validate and normalize a complete Project import without side effects. Returns a deterministic content hash that apply_project_import must verify.', inputSchema: projectImportSchema.shape }, async input => tool(async () => prepareProjectImport(input)))
   server.registerTool('list_teams', { description: 'List Teams visible to this Connection.', inputSchema: { cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => client.listTeams({ cursor: input.cursor, limit: input.limit })))
@@ -162,13 +163,45 @@ function registerCoordinationTools(server: McpServer, client: WorkMeshClient, mo
   server.registerTool('delete_milestone', { description: 'Soft-delete an empty Milestone at its exact revision. Active Work Items must be moved first.', inputSchema: { milestoneId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async input => tool(() => client.deleteMilestone(input.milestoneId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? coordinationKey('delete_milestone', input) })))
   server.registerTool('add_work_item_relation', { description: 'Add an acyclic blocks edge or a canonical related link between Work Items in the same Team.', inputSchema: { workItemId: z.string().uuid(), targetWorkItemId: z.string().uuid(), kind: z.enum(['blocks','related']), idempotencyKey } }, async input => tool(() => client.createWorkItemRelation(input.workItemId, { targetWorkItemId: input.targetWorkItemId, kind: input.kind }, { idempotencyKey: input.idempotencyKey ?? coordinationKey('add_work_item_relation', input) })))
   server.registerTool('remove_work_item_relation', { description: 'Soft-delete one typed Work Item relation at its exact revision.', inputSchema: { workItemId: z.string().uuid(), relationId: z.string().uuid(), revision: z.number().int().positive(), idempotencyKey } }, async input => tool(() => client.deleteWorkItemRelation(input.workItemId, input.relationId, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey ?? coordinationKey('remove_work_item_relation', input) })))
-  const delegateInput = { workItemId: z.string().uuid(), revision: z.number().int().positive(), agentId: z.string().uuid(), principalHumanActorId: z.string().uuid(), role: z.enum(['executor','reviewer','researcher']).optional(), requestedCapabilities: z.array(capability).min(1).max(50), initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: z.string().uuid().optional(), budget: z.record(z.number()).optional(), idempotencyKey }
+  server.registerTool('claim_work_item', { description: 'Atomically claim one eligible Issue for this Connection Agent and establish a recoverable exact-Session execution bridge for subsequent tools.', inputSchema: { workItemId: z.string().uuid(), revision: z.number().int().positive(), requestedCapabilities: z.array(capability).min(1).max(50).optional(), initialPrompt: z.string().min(1).max(50_000).optional(), contextSnapshotId: z.string().uuid().optional(), budget: z.record(z.number()).optional(), idempotencyKey } }, async input => tool(async () => {
+    const claimKey = input.idempotencyKey ?? coordinationKey('claim_work_item', input)
+    const claimed = await client.claimWorkItem(
+      input.workItemId,
+      {
+        requestedCapabilities: input.requestedCapabilities,
+        initialPrompt: input.initialPrompt,
+        contextSnapshotId: input.contextSnapshotId,
+        budget: input.budget,
+      },
+      { ifMatch: input.revision, idempotencyKey: claimKey },
+    )
+    const execution = await client.exchangeClaimedSessionToken(
+      claimed.session.id,
+      claimed.exchangeToken,
+      {
+        idempotencyKey: coordinationKey('claim_work_item_exchange', {
+          workItemId: input.workItemId,
+          claimKey,
+          sessionId: claimed.session.id,
+        }),
+      },
+    )
+    return {
+      delegation: claimed.delegation,
+      session: claimed.session,
+      executionAuth: {
+        mode: 'connection_session_bridge' as const,
+        sessionId: claimed.session.id,
+        expiresAt: execution.expiresAt,
+      },
+    }
+  }))
+  const delegateInput = { workItemId: z.string().uuid(), revision: z.number().int().positive(), agentId: z.string().uuid(), principalHumanActorId: z.string().uuid(), role: z.literal('executor').optional(), requestedCapabilities: z.array(capability).min(1).max(50), initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: z.string().uuid().optional(), budget: z.record(z.number()).optional(), idempotencyKey }
   const delegate = (toolName: string, input: z.infer<z.ZodObject<typeof delegateInput>>) => {
     const { workItemId, revision, idempotencyKey: key, ...body } = input
     return tool(() => client.delegateAndStart(workItemId, { ...body, role: body.role ?? 'executor', budget: body.budget ?? {} }, { ifMatch: revision, idempotencyKey: key ?? coordinationKey(toolName, input) }))
   }
   server.registerTool('delegate_work_item', { description: 'Atomically delegate a Work Item and start its Agent Session. Requires the Connection agent:delegate capability and the Work Item responsible Human to match the Connection principal.', inputSchema: delegateInput }, async input => delegate('delegate_work_item', input))
-  server.registerTool('start_agent_session', { description: 'Start an Agent Session using the same atomic delegation gate. Requires agent:delegate; it cannot expand Team, Human, or capability scope.', inputSchema: delegateInput }, async input => delegate('start_agent_session', input))
 }
 
 function registerMutations(server: McpServer, client: WorkMeshClient): void {
@@ -200,7 +233,7 @@ function registerMutations(server: McpServer, client: WorkMeshClient): void {
   server.registerTool('acquire_lease', { description: 'Acquire a coordination lease after normal session authorization; it never grants permissions.', inputSchema: { sessionId, resourceType: z.enum(['work_item','plan_step']), resourceId: z.string().uuid(), kind: z.enum(['exclusive','review_shared']).optional(), ttlSeconds: z.number().int().positive().optional(), reason: z.string().min(1), idempotencyKey } }, async input => tool(() => client.acquireLease(input, { idempotencyKey: input.idempotencyKey })))
   server.registerTool('offer_handoff', { description: 'Offer a scoped, auditable handoff from the current agent session. Acceptance remains a human control-plane action.', inputSchema: { fromSessionId: sessionId, targetAgentId: z.string().uuid().optional(), targetSkill: z.string().min(1).max(160).optional(), scopeType: z.enum(['workspace','project','work_item','plan_step']).optional(), scopeId: z.string().uuid().optional(), summary: z.string().min(1).max(20_000), completedWork: z.array(z.string().min(1).max(10_000)).max(100).optional(), remainingWork: z.array(z.string().min(1).max(10_000)).max(100).optional(), openQuestions: z.array(z.string().min(1).max(2_000)).max(100).optional(), risks: z.array(z.string().min(1).max(2_000)).max(100).optional(), acceptanceCriteria: z.array(z.string().min(1).max(2_000)).max(100).optional(), requestedAction: z.string().min(1).max(10_000).optional(), leaseTransferPolicy: z.enum(['retain','transfer','release']).optional(), artifactIds: z.array(z.string().uuid()).max(100).optional(), contextSnapshotId: z.string().uuid().optional(), requestedCapabilities: z.array(capability).max(50).optional(), status: z.enum(['draft','requested']).optional(), idempotencyKey } }, async input => tool(() => client.offerHandoff({ fromSessionId: input.fromSessionId, targetAgentId: input.targetAgentId, targetSkill: input.targetSkill, scopeType: input.scopeType, scopeId: input.scopeId, summary: input.summary, completedWork: input.completedWork, remainingWork: input.remainingWork, openQuestions: input.openQuestions, risks: input.risks, acceptanceCriteria: input.acceptanceCriteria, requestedAction: input.requestedAction, leaseTransferPolicy: input.leaseTransferPolicy, artifactIds: input.artifactIds, contextSnapshotId: input.contextSnapshotId, requestedCapabilities: input.requestedCapabilities, status: input.status }, { idempotencyKey: input.idempotencyKey })))
   server.registerTool('inspect_pending_handoff', { description: 'Inspect the full structured package and immutable context snapshot for an exact-target requested handoff using the configured installation identity. This is read-only and grants no work authority.', inputSchema: { handoffId: z.string().uuid() } }, async input => tool(() => client.inspectPendingHandoff(input.handoffId)))
-  server.registerTool('request_handoff', { description: 'Request a previously drafted handoff after server-side source-session authorization.', inputSchema: { handoffId: z.string().uuid(), reason: z.string().min(1).max(10_000).optional(), idempotencyKey } }, async input => tool(() => client.requestHandoff(input.handoffId, { reason: input.reason }, { idempotencyKey: input.idempotencyKey })))
+  server.registerTool('request_handoff', { description: 'Request a previously drafted handoff after server-side source-session authorization.', inputSchema: { handoffId: z.string().uuid(), sourceSessionId: sessionId, reason: z.string().min(1).max(10_000).optional(), idempotencyKey } }, async input => tool(() => client.requestHandoff(input.handoffId, { reason: input.reason }, { sessionId: input.sourceSessionId, idempotencyKey: input.idempotencyKey })))
   server.registerTool('reject_handoff', { description: 'Reject an exact-target handoff using a protocol machine reason.', inputSchema: { handoffId: z.string().uuid(), machineReason: z.enum(['capability_missing', 'budget_insufficient', 'concurrency_limit', 'context_incomplete', 'conflict', 'manual_reject']), idempotencyKey } }, async input => tool(() => client.rejectHandoff(input.handoffId, { machineReason: input.machineReason }, { idempotencyKey: input.idempotencyKey })))
   server.registerTool('ack_agent_session', { description: 'Acknowledge receipt of the current Agent session. This is an immutable session transition.', inputSchema: { sessionId, summary: z.string().min(1).max(2_000), externalUrls: z.array(z.object({ label: z.string().min(1), url: z.string().url() })).optional(), idempotencyKey } }, async input => tool(() => client.acknowledge(input.sessionId, { summary: input.summary, externalUrls: input.externalUrls }, { idempotencyKey: input.idempotencyKey })))
   server.registerTool('transition_agent_session_state', { description: 'Transition the exact Agent Session using its current revision. The server enforces the state machine.', inputSchema: { sessionId, state: z.enum(['queued', 'acknowledged', 'planning', 'executing', 'awaiting_input', 'awaiting_approval', 'blocked', 'paused', 'stopping', 'stale', 'completed', 'failed', 'canceled']), reason: z.string().min(1).max(2_000), revision: z.number().int().positive(), idempotencyKey } }, async input => tool(() => client.transitionState(input.sessionId, input.state, input.reason, { ifMatch: input.revision, idempotencyKey: input.idempotencyKey })))

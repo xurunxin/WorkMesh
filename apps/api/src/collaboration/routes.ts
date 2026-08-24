@@ -13,7 +13,13 @@ import { DomainError, assertRevision, inheritChildBudget, parseRevision } from '
 import { acquireLeaseInputSchema, assignmentProposalInputSchema, contextDeltaInputSchema, decisionInputSchema, handoffInputSchema, handoffRejectInputSchema, roomMessageInputSchema } from '@workmesh/contracts'
 import { mutate, type CommandContext } from '../commands.js'
 import { isHeartbeatReplay, recordHeartbeatKey } from '../heartbeat-idempotency.js'
-import { provisionNewSessionDelivery, queueWebhookDeliveries } from '../agent/commands.js'
+import {
+  lockExecutionInstallationAuthorities,
+  locateExecutionInstallationAuthority,
+  provisionNewSessionDelivery,
+  queueWebhookDeliveries,
+  type ExecutionInstallationAuthority,
+} from '../agent/commands.js'
 import {
   assertAgentWrite,
   authorizeCommandInTx,
@@ -92,12 +98,16 @@ async function assertSessionWrite(tx: PoolClient, current: ApiActor, sessionId: 
   return row
 }
 
+type LockedCollaborationSessionTargets = Readonly<{
+  installationAuthorities: ReadonlyMap<string, ExecutionInstallationAuthority>
+}>
+
 async function lockCollaborationSessionTargets(
   tx: PoolClient,
   current: ApiActor,
   sourceSessionId: string,
   targetAgentIds: readonly string[],
-): Promise<void> {
+): Promise<LockedCollaborationSessionTargets> {
   const source = (await tx.query<{
     agent_id: string
     delegation_id: string
@@ -105,13 +115,16 @@ async function lockCollaborationSessionTargets(
     work_item_id: string | null
     project_id: string | null
     work_item_project_id: string | null
+    principal_human_actor_id: string
     session_token_id: string | null
     installation_token_id: string | null
   }>(
     `SELECT session.agent_id,session.delegation_id,session.team_id,
             session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+            delegation.principal_human_actor_id,
             credential.id AS session_token_id,credential.installation_token_id
        FROM agent_sessions session
+       JOIN delegations delegation ON delegation.id=session.delegation_id
        LEFT JOIN work_items item ON item.id=session.work_item_id
        LEFT JOIN agent_session_tokens credential
          ON credential.session_id=session.id
@@ -130,15 +143,32 @@ async function lockCollaborationSessionTargets(
         [targets,current.workspaceId],
       )).rows.map(row=>row.id)
     : []
-  const installationTokenIds=targets.length
-    ? (await tx.query<{id:string}>(
-        `SELECT DISTINCT ON (agent_id) id
-           FROM agent_installation_tokens
-          WHERE agent_id=ANY($1::uuid[])
-          ORDER BY agent_id,created_at DESC,id`,
-        [targets],
-      )).rows.map(row=>row.id)
-    : []
+  const installationAuthorities = new Map<string, ExecutionInstallationAuthority>()
+  for (const agentId of targets) {
+    const authority = await locateExecutionInstallationAuthority(tx, {
+      agentId,
+      teamId: source.team_id,
+      principalHumanActorId: source.principal_human_actor_id,
+    })
+    if (authority) installationAuthorities.set(agentId, authority)
+  }
+  const sourceInstallationAuthority = source.installation_token_id
+    ? await locateExecutionInstallationAuthority(tx, {
+        agentId: source.agent_id,
+        teamId: source.team_id,
+        principalHumanActorId: source.principal_human_actor_id,
+        installationTokenId: source.installation_token_id,
+      })
+    : undefined
+  if (current.kind === 'agent' && source.installation_token_id && !sourceInstallationAuthority)
+    throw new DomainError(
+      'DELEGATION_NOT_ACTIVE',
+      'Source Session installation authority is no longer active',
+    )
+  await lockExecutionInstallationAuthorities(tx, [
+    ...(sourceInstallationAuthority ? [sourceInstallationAuthority] : []),
+    ...installationAuthorities.values(),
+  ])
   await lockAgentAuthorityPlan(tx,{
     definitionIds:[source.agent_id,...targets],
     teamGrants:[source.agent_id,...targets].map(agentId=>({
@@ -146,12 +176,18 @@ async function lockCollaborationSessionTargets(
       agentId,
       teamId:source.team_id,
     })),
-    delegationIds:[source.delegation_id],
+    delegationIds:[
+      source.delegation_id,
+      ...[...installationAuthorities.values()].flatMap(authority =>
+        authority.connection_delegation_id
+          ? [authority.connection_delegation_id]
+          : []),
+    ],
     sessionIds:[sourceSessionId,...targetSessionIds],
     sessionTokenIds:source.session_token_id?[source.session_token_id]:[],
     installationTokenIds:[
       ...(source.installation_token_id?[source.installation_token_id]:[]),
-      ...installationTokenIds,
+      ...[...installationAuthorities.values()].map(authority => authority.id),
     ],
     workItemIds:source.work_item_id?[source.work_item_id]:[],
     projectIds:[
@@ -159,6 +195,7 @@ async function lockCollaborationSessionTargets(
       ...(source.work_item_project_id?[source.work_item_project_id]:[]),
     ],
   })
+  return { installationAuthorities }
 }
 function assertDecisionSubjectInSessionScope(
   currentSession: {
@@ -1352,7 +1389,7 @@ async function leaseAction(h:Helpers,request:FastifyRequest,action:'heartbeat'|'
 async function createChild(h:Helpers,request:FastifyRequest){
   const parentId=id(request); const body=z.object({agentId:uuid,planStepId:uuid,planVersionId:uuid,role:z.enum(['executor','reviewer','researcher']).default('executor'),initialPrompt:z.string().min(1).max(50000),required:z.boolean().default(true),budget:z.record(z.number()).optional()}).parse(request.body)
   return command(h.db,h.meta(request,body,{id:parentId}),async tx=>{
-    await lockCollaborationSessionTargets(tx,actor(request),parentId,[body.agentId])
+    const lockedTargets=await lockCollaborationSessionTargets(tx,actor(request),parentId,[body.agentId])
     const parent=await assertSessionWrite(tx,actor(request),parentId)
     const currentPlan=(await tx.query<{id:string}>('SELECT id FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,parentId])).rows[0]
     if(!currentPlan) throw new DomainError('STALE_PLAN_VERSION','Child sessions must use the parent current plan version')
@@ -1379,7 +1416,9 @@ async function createChild(h:Helpers,request:FastifyRequest){
     await tx.query("INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id) VALUES($1,'session',$2,$3) ON CONFLICT DO NOTHING",[actor(request).workspaceId,child.id,parent.team_id])
     await tx.query('INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown) VALUES($1,$2,$3)',[child.id,actor(request).id,body.initialPrompt])
     await tx.query('INSERT INTO routing_records(workspace_id,source_session_id,target_agent_id,required_capabilities,outcome,sort_rank,rationale) VALUES($1,$2,$3,$4,$5,$6,$7)',[actor(request).workspaceId,parentId,agent.id,caps,'selected',1,{rule:'exact-agent',budgetReserved:budget}])
-    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:agent.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt})
+    const installationAuthority=lockedTargets.installationAuthorities.get(agent.id)
+    if(!installationAuthority) throw new DomainError('NOT_FOUND','Active installation token not found for the exact child Session authority')
+    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:agent.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt,installationAuthority})
     await emit(tx,h.meta(request,body),'agent.session.child_created','agent_session',child.id,{parentSessionId:parentId,planStepId:body.planStepId,required:body.required},parent.team_id);return child
   })
 }
@@ -1433,7 +1472,7 @@ async function appendDelta(h:Helpers,request:FastifyRequest){
 async function createReview(h:Helpers,request:FastifyRequest) {
   const sessionId=id(request); const body=z.object({reviewerAgentId:uuid,planStepId:uuid,planVersionId:uuid,initialPrompt:z.string().min(1).max(50000),ttlSeconds:z.number().int().min(10).max(3600).default(300)}).parse(request.body)
   return command(h.db,h.meta(request,body,{id:sessionId}),async tx=>{
-    await lockCollaborationSessionTargets(tx,actor(request),sessionId,[body.reviewerAgentId])
+    const lockedTargets=await lockCollaborationSessionTargets(tx,actor(request),sessionId,[body.reviewerAgentId])
     const parent=await assertSessionWrite(tx,actor(request),sessionId)
     const plan=(await tx.query('SELECT 1 FROM agent_plan_versions WHERE id=$1 AND session_id=$2 AND id=(SELECT current_plan_version_id FROM agent_sessions WHERE id=$2)',[body.planVersionId,sessionId])).rowCount
     const step=(await tx.query('SELECT 1 FROM agent_plan_steps WHERE plan_version_id=$1 AND id=$2',[body.planVersionId,body.planStepId])).rowCount
@@ -1457,7 +1496,9 @@ async function createReview(h:Helpers,request:FastifyRequest) {
     const conflict=(await tx.query("SELECT id FROM leases WHERE workspace_id=$1 AND resource_type='plan_step' AND resource_id=$2 AND status='active' AND kind='exclusive' FOR UPDATE",[actor(request).workspaceId,body.planStepId])).rows[0]
     if(conflict) throw new DomainError('LEASE_CONFLICT','Plan step is exclusively leased')
     const reviewLease=(await tx.query("INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,'plan_step',$3,'review_shared','review delegation',now()+($4::text || ' seconds')::interval) RETURNING *",[actor(request).workspaceId,child.id,body.planStepId,body.ttlSeconds])).rows[0] as {id:string}
-    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt})
+    const installationAuthority=lockedTargets.installationAuthorities.get(target.id)
+    if(!installationAuthority) throw new DomainError('NOT_FOUND','Active installation token not found for the exact review Session authority')
+    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:delegation.id,teamId:parent.team_id,workItemId:parent.work_item_id,initialPrompt:body.initialPrompt,installationAuthority})
     await emit(tx,h.meta(request,body),'review.delegation.created','lease',reviewLease.id,{sessionId,childSessionId:child.id,planStepId:body.planStepId},parent.team_id)
     return {session:child,lease:reviewLease}
   })
@@ -1553,7 +1594,7 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
             [actor(request).workspaceId],
           )).rows.map(row=>row.id)
         : []
-    await lockCollaborationSessionTargets(
+    const lockedTargets=await lockCollaborationSessionTargets(
       tx,
       actor(request),
       handoffLocator.from_session_id,
@@ -1629,7 +1670,9 @@ async function acceptHandoff(h:Helpers,request:FastifyRequest) {
         if(handoff.lease_transfer_policy==='transfer') await tx.query('INSERT INTO leases(workspace_id,session_id,resource_type,resource_id,kind,reason,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7)',[actor(request).workspaceId,child.id,lease.resource_type,lease.resource_id,lease.kind,'handoff transfer',lease.expires_at])
       }
     }
-    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:del.id,teamId:source.team_id,workItemId:source.work_item_id,initialPrompt:body.initialPrompt})
+    const installationAuthority=lockedTargets.installationAuthorities.get(target.id)
+    if(!installationAuthority) throw new DomainError('NOT_FOUND','Active installation token not found for the exact handoff Session authority')
+    await provisionNewSessionDelivery(tx,h.meta(request,body),{sessionId:child.id,agentId:target.id,delegationId:del.id,teamId:source.team_id,workItemId:source.work_item_id,initialPrompt:body.initialPrompt,installationAuthority})
     await tx.query("UPDATE handoffs SET status='accepted',accepted_session_id=$2,resolved_agent_id=$3,resolved_delegation_id=$4,decided_at=now(),revision=revision+1 WHERE id=$1",[handoffId,child.id,target.id,del.id])
     await tx.query(
       `INSERT INTO inbox_items(

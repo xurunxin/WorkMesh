@@ -120,8 +120,7 @@ export const secretReplayOperationIds = [
   'logout',
   'registerAgent',
   'rotateAgentWebhookSecret',
-  'createAgentSession',
-  'delegateAndStartAgentSession',
+  'claimWorkItem',
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
   'redeemAgentConnection',
@@ -166,10 +165,8 @@ const humanOnlyOperations = new Set([
   'listAgents',
   'getAgent',
   'createWorkflowState',
-  'createDelegation',
   'getDelegation',
   'revokeDelegation',
-  'createAgentSession',
   'promptAgentSession',
   'signalAgentSession',
   'retryAgentSession',
@@ -296,7 +293,7 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
   if (operationId === 'installWorkspace') return 'bootstrap'
   if (publicOperations.has(operationId)) return 'public'
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
-  if (operationId === 'getCurrentAgentConnectionIdentity') return 'coordination_connection'
+  if (operationId === 'getCurrentAgentConnectionIdentity' || operationId === 'claimWorkItem') return 'coordination_connection'
   if (installationTargetOperations.has(operationId)) return 'installation_target'
   if (humanOnlyOperations.has(operationId)) return 'human_session'
   if (agentOnlyOperations.has(operationId)) return 'agent_session'
@@ -340,6 +337,7 @@ function capabilityFor(
   operationId: string,
 ): readonly string[] {
   if (operationId === 'getAgentCapabilityManifest' || operationId === 'getCurrentAgentConnectionIdentity') return []
+  if (operationId === 'claimWorkItem') return ['work:read', 'work:write']
   if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
   if (method === 'GET') {
     if (path.includes('/repositories')) return ['repo:read']
@@ -468,8 +466,9 @@ const mcpOperationIds = {
   'tool:delete_milestone': 'deleteMilestone',
   'tool:add_work_item_relation': 'createWorkItemRelation',
   'tool:remove_work_item_relation': 'deleteWorkItemRelation',
+  'tool:list_claimable_work_items': 'listWorkItems',
+  'tool:claim_work_item': 'claimWorkItem',
   'tool:delegate_work_item': 'delegateAndStartAgentSession',
-  'tool:start_agent_session': 'delegateAndStartAgentSession',
   'resource:server-info': 'getServerInfo',
   'resource:server-features': 'getDeploymentFeatures',
   'resource:agent-capabilities': 'getAgentCapabilityManifest',

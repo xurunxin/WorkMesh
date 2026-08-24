@@ -592,17 +592,6 @@ export const capabilityScopeSchema = z.object({
   repositoryIds: z.array(z.string().min(1).max(300)).max(100).default([]),
   capabilities: z.array(capabilitySchema).max(50),
 })
-export const delegationInputSchema = z.object({
-  agentId: idSchema,
-  principalHumanActorId: idSchema,
-  role: delegationRoleSchema,
-  scopeType: delegationScopeTypeSchema,
-  scopeId: idSchema,
-  permissionsSnapshot: z.array(capabilitySchema).min(1).max(50),
-  capabilityScope: capabilityScopeSchema,
-  startsAt: timestampSchema.optional(),
-  endsAt: timestampSchema.optional(),
-})
 export const delegationResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, principal_human_actor_id: idSchema,
   work_item_id: idSchema.nullable(), role: delegationRoleSchema, scope_type: delegationScopeTypeSchema, scope_id: idSchema,
@@ -613,14 +602,16 @@ export const delegationResponseSchema = z.object({
 
 export const budgetSchema = z.object({ maxRuntimeSeconds: z.number().int().positive().max(604_800).optional(), maxInputTokens: z.number().int().nonnegative().optional(), maxOutputTokens: z.number().int().nonnegative().optional(), maxCostUsd: z.number().nonnegative().optional() }).default({})
 export const externalUrlSchema = z.object({ label: z.string().min(1).max(120), url: z.string().url() })
-export const createAgentSessionInputSchema = z.object({
-  delegationId: idSchema, workItemId: idSchema.optional(), projectId: idSchema.optional(), planStepId: idSchema.optional(),
-  initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: idSchema.optional(), budget: budgetSchema,
-}).refine(value => Number(Boolean(value.workItemId)) + Number(Boolean(value.projectId)) + Number(Boolean(value.planStepId)) === 1, 'Exactly one execution subject is required')
 export const delegateAndStartAgentSessionInputSchema = z.object({
-  agentId: idSchema, principalHumanActorId: idSchema, role: delegationRoleSchema.default('executor'), requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
+  agentId: idSchema, principalHumanActorId: idSchema, role: z.literal('executor').default('executor'), requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
   initialPrompt: z.string().min(1).max(50_000), contextSnapshotId: idSchema.optional(), budget: budgetSchema,
 })
+export const claimWorkItemInputSchema = z.object({
+  requestedCapabilities: z.array(capabilitySchema).min(1).max(50).optional(),
+  initialPrompt: z.string().min(1).max(50_000).optional(),
+  contextSnapshotId: idSchema.optional(),
+  budget: budgetSchema.optional(),
+}).strict()
 export const agentSessionResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, agent_id: idSchema, agent_actor_id: idSchema, delegation_id: idSchema,
   work_item_id: idSchema.nullable(), project_id: idSchema.nullable(), plan_step_id: idSchema.nullable(), state: agentSessionStateSchema,
@@ -632,6 +623,11 @@ export const agentSessionResponseSchema = z.object({
   created_at: timestampSchema, updated_at: timestampSchema,
 })
 export const delegateAndStartAgentSessionResponseSchema = z.object({ delegation: delegationResponseSchema, session: agentSessionResponseSchema })
+export const claimWorkItemResponseSchema = z.object({
+  delegation: delegationResponseSchema,
+  session: agentSessionResponseSchema,
+  exchangeToken: z.string().min(32).max(4_096),
+}).strict()
 export const retryAgentSessionInputSchema = z.object({ reason: z.string().min(1).max(2_000), initialPrompt: z.string().min(1).max(50_000).optional(), reuseContext: z.boolean().default(true) })
 export const acknowledgeAgentSessionInputSchema = z.object({ summary: z.string().min(1).max(2_000), externalUrls: z.array(externalUrlSchema).max(20).default([]) })
 export const exchangeAgentSessionTokenInputSchema = z.object({ exchangeToken: z.string().min(32).max(4_096) })
@@ -799,6 +795,7 @@ export const agentEventEnvelopeSchema = eventEnvelopeSchema.extend({ event_type:
 
 export const stage1ApiErrorCodeSchema = z.enum([
   'AGENT_NOT_ACTIVE', 'AGENT_CONCURRENCY_LIMIT', 'AGENT_IDENTITY_REQUIRED', 'AGENT_SESSION_NOT_FOUND', 'AGENT_SESSION_TOKEN_MISMATCH',
+  'WORK_ITEM_ALREADY_ASSIGNED', 'WORK_ITEM_NOT_CLAIMABLE',
   'SESSION_NOT_ACTIVE', 'SESSION_STOPPED', 'STOP_ACK_ALREADY_RECORDED', 'INVALID_SESSION_TRANSITION', 'DELEGATION_NOT_ACTIVE',
   'CAPABILITY_DENIED', 'RESOURCE_SCOPE_DENIED', 'APPROVAL_REQUIRED', 'APPROVAL_NOT_APPROVED', 'APPROVAL_EXPIRED', 'APPROVAL_PAYLOAD_MISMATCH',
   'APPROVAL_ALREADY_CONSUMED', 'PLAN_REVISION_CONFLICT', 'PLAN_STEP_ID_REUSED', 'PLAN_STEP_DEPENDENCY_MISSING', 'PLAN_STEP_DEPENDENCY_CYCLE',
@@ -853,11 +850,10 @@ export const stage1RouteManifest = [
   { method: 'POST', path: '/api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret', authenticated: true, mutation: true, revisioned: true },
   { method: 'PUT', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
   { method: 'DELETE', path: '/api/v1/agents/{id}/team-access/{teamId}', authenticated: true, mutation: true },
-  { method: 'POST', path: '/api/v1/work-items/{id}/delegations', authenticated: true, mutation: true, revisioned: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/agent-session', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/work-items/{id}/claim', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/delegations/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/delegations/{id}/revoke', authenticated: true, mutation: true, revisioned: true },
-  { method: 'POST', path: '/api/v1/agent-sessions', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/agent-sessions', authenticated: true },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/agent-sessions/{id}/token/exchange', authenticated: false, mutation: true },
@@ -1190,6 +1186,8 @@ export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>
 export type CompleteAgentSessionInput = z.infer<typeof completeAgentSessionInputSchema>
+export type ClaimWorkItemInput = z.infer<typeof claimWorkItemInputSchema>
+export type ClaimWorkItemResponse = z.infer<typeof claimWorkItemResponseSchema>
 export type ApprovalEventEnvelope = z.infer<typeof approvalEventEnvelopeSchema>
 
 // Stage 4: planning, operational automation, usage, notifications, templates,

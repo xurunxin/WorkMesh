@@ -284,6 +284,152 @@ describe('WorkMeshClient', () => {
     expect(JSON.stringify(warn.mock.calls)).not.toContain('installation-secret')
     expect(JSON.stringify(warn.mock.calls)).not.toContain('exchange-secret')
   })
+
+  it('keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally', async () => {
+    const fetch = vi.fn().mockImplementation(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input)
+      if (url.endsWith('/work-items/work-1/claim')) {
+        return new Response(JSON.stringify({
+          delegation: { id: 'delegation-a' },
+          session: { id: 'session-a' },
+          exchangeToken: 'exchange-a',
+        }), { status: 201 })
+      }
+      if (url.endsWith('/agent-sessions/session-a/token/exchange')) {
+        return new Response(JSON.stringify({ sessionToken: 'bootstrap-a' }), { status: 200 })
+      }
+      if (url.includes('/work-items?claimable=true')) {
+        return new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 })
+      }
+      if (url.endsWith('/agent-sessions/session-a/token/refresh')) {
+        return new Response(JSON.stringify({ sessionToken: 'execution-a' }), { status: 200 })
+      }
+      if (url.endsWith('/agent-sessions/session-a/ack')) {
+        return new Response(JSON.stringify({ id: 'session-a', revision: 2 }), { status: 200 })
+      }
+      if (url.endsWith('/agent-sessions/session-b/token/refresh')) {
+        return new Response(JSON.stringify({ sessionToken: 'execution-b' }), { status: 200 })
+      }
+      if (url.endsWith('/agent-sessions/session-b')) {
+        return new Response(JSON.stringify({ id: 'session-b' }), { status: 200 })
+      }
+      if (url.endsWith('/handoffs/handoff-1/request')) {
+        return new Response(JSON.stringify({ id: 'handoff-1', status: 'requested' }), { status: 200 })
+      }
+      return new Response(JSON.stringify({ method: init?.method, url }), { status: 404 })
+    })
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'connection-token',
+      installationToken: 'connection-token',
+      fetch,
+    })
+
+    const claimed = await client.claimWorkItem('work-1', {}, { ifMatch: 1, idempotencyKey: 'claim-1' })
+    await client.exchangeClaimedSessionToken(claimed.session.id, claimed.exchangeToken, { idempotencyKey: 'exchange-1' })
+    await client.listClaimableWorkItems()
+    await client.acknowledge('session-a', { summary: 'accepted' }, { idempotencyKey: 'ack-a' })
+    await client.getSession('session-b')
+    await client.requestHandoff(
+      'handoff-1',
+      { reason: 'ready for transfer' },
+      { sessionId: 'session-a', idempotencyKey: 'handoff-request' },
+    )
+
+    const calls = fetch.mock.calls.map(([input, init]) => ({
+      url: String(input),
+      headers: (init?.headers ?? {}) as Record<string, string>,
+      body: init?.body,
+    }))
+    expect(calls[0]?.headers).toMatchObject({ 'x-workmesh-installation-token': 'connection-token' })
+    expect(calls[1]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
+    expect(calls[2]?.headers).toMatchObject({ 'x-workmesh-installation-token': 'connection-token' })
+    expect(calls[2]?.headers.authorization).toBeUndefined()
+    expect(calls[3]?.url).toContain('/agent-sessions/session-a/token/refresh')
+    expect(calls[3]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
+    expect(calls[4]?.headers).toMatchObject({ authorization: 'Bearer execution-a' })
+    expect(calls[5]?.url).toContain('/agent-sessions/session-b/token/refresh')
+    expect(calls[5]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
+    expect(calls[6]?.headers).toMatchObject({ authorization: 'Bearer execution-b' })
+    expect(calls[7]?.url).toContain('/agent-sessions/session-a/token/refresh')
+    expect(calls[7]?.headers).toMatchObject({ authorization: 'Bearer connection-token' })
+    expect(calls[8]?.url).toContain('/handoffs/handoff-1/request')
+    expect(calls[8]?.headers).toMatchObject({ authorization: 'Bearer execution-a' })
+    expect(JSON.parse(String(calls[8]?.body))).toEqual({ reason: 'ready for transfer' })
+    expect(String(calls[8]?.body)).not.toContain('sourceSessionId')
+    const sessionARefreshKeys = calls
+      .filter(call => call.url.includes('/agent-sessions/session-a/token/refresh'))
+      .map(call => call.headers['idempotency-key'])
+    expect(sessionARefreshKeys).toHaveLength(2)
+    expect(sessionARefreshKeys[0]).not.toBe(sessionARefreshKeys[1])
+    expect(JSON.stringify(calls)).not.toContain('bootstrap-a')
+  })
+
+  it('rebuilds exact-session authorization independently in separate stateless bridge clients', async () => {
+    const makeFetch = (sessionId: string, sessionToken: string) => vi.fn().mockImplementation(async (input: string | URL | Request) => {
+      const url = String(input)
+      if (url.endsWith(`/agent-sessions/${sessionId}/token/refresh`)) {
+        return new Response(JSON.stringify({ sessionToken }), { status: 200 })
+      }
+      return new Response(JSON.stringify({ id: sessionId, revision: 2 }), { status: 200 })
+    })
+    const firstFetch = makeFetch('session-a', 'execution-a')
+    const secondFetch = makeFetch('session-b', 'execution-b')
+    const first = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'connection-token',
+      installationToken: 'connection-token',
+      fetch: firstFetch,
+    })
+    const second = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'connection-token',
+      installationToken: 'connection-token',
+      fetch: secondFetch,
+    })
+
+    await Promise.all([
+      first.appendActivity('session-a', { kind: 'message', summary: 'first' }),
+      second.complete('session-b', {
+        summary: 'done',
+        artifactIds: [],
+        checks: [],
+        limitations: [],
+        noArtifactReason: 'No artifact required.',
+      }),
+    ])
+
+    expect(firstFetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer connection-token')
+    expect(firstFetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer execution-a')
+    expect(secondFetch.mock.calls[0]?.[1].headers.authorization).toBe('Bearer connection-token')
+    expect(secondFetch.mock.calls[1]?.[1].headers.authorization).toBe('Bearer execution-b')
+  })
+
+  it('propagates cancellation through the exact-session refresh before sending the target request', async () => {
+    const controller = new AbortController()
+    const fetch = vi.fn().mockImplementation(async (_input: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal?.reason), { once: true })
+      }))
+    const client = new WorkMeshClient({
+      baseUrl: 'https://workmesh.test',
+      coordinationToken: 'connection-token',
+      installationToken: 'connection-token',
+      fetch,
+    })
+
+    const request = client.appendActivity(
+      'session-a',
+      { kind: 'message', summary: 'cancel before target' },
+      { signal: controller.signal },
+    )
+    await vi.waitFor(() => expect(fetch).toHaveBeenCalledOnce())
+    controller.abort(new Error('caller canceled'))
+
+    await expect(request).rejects.toThrow('caller canceled')
+    expect(fetch).toHaveBeenCalledOnce()
+    expect(fetch.mock.calls[0]?.[1].signal).toBe(controller.signal)
+  })
   it('waits for the full Retry-After duration without changing the logical authentication attempt', async () => {
     vi.useFakeTimers()
     const fetch = vi.fn()

@@ -21,6 +21,7 @@ import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
 import { authClientContext, authIdempotentTransaction } from './auth-idempotency.js'
 import type { ApiActor, RequestMeta } from './agent/types.js'
 import { mutate, type CommandContext } from './commands.js'
+import { reconcileConnectionInstallationToken } from './connection-installation-token.js'
 import type { Paginator } from './pagination.js'
 
 const skill = workmeshSkillManifest
@@ -38,6 +39,38 @@ type ConnectionRow = {
   active_credential_fingerprint_prefix: string | null; pairing_code_expires_at: Date | null
   last_used_at: Date | null; rotated_at: Date | null; revoked_at: Date | null
   revision: number; created_at: Date; updated_at: Date
+}
+
+async function expireConnectionInstallationTokens(
+  tx: PoolClient,
+  connectionId: string,
+  expiresAt: Date,
+): Promise<void> {
+  await tx.query(
+    `UPDATE agent_installation_tokens installation
+        SET expires_at=$2
+       FROM agent_connection_credentials credential
+      WHERE credential.connection_id=$1
+        AND credential.status='overlap'
+        AND installation.token_hash=credential.token_hash`,
+    [connectionId, expiresAt],
+  )
+}
+
+async function revokeConnectionInstallationTokens(
+  tx: PoolClient,
+  connectionId: string,
+  statuses: readonly string[],
+): Promise<void> {
+  await tx.query(
+    `UPDATE agent_installation_tokens installation
+        SET revoked_at=COALESCE(installation.revoked_at,now())
+       FROM agent_connection_credentials credential
+      WHERE credential.connection_id=$1
+        AND credential.status=ANY($2::text[])
+        AND installation.token_hash=credential.token_hash`,
+    [connectionId, statuses],
+  )
 }
 
 type AuthenticatedConnectionRow = ConnectionRow & {
@@ -448,13 +481,22 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       let row = one((await tx.query<ConnectionRow>('SELECT * FROM agent_connections WHERE id=$1 FOR UPDATE', [pairing.connection_id])).rows)
       if (row.status === 'revoked') throw new DomainError('AGENT_CONNECTION_REVOKED', 'Connection is revoked')
       const installationToken = connectionToken(installationTokenPrefix)
-      const fingerprintPrefix = tokenHash(installationToken).slice(0, 12)
-      if (pairing.purpose === 'rotation')
+      const installationTokenHash = tokenHash(installationToken)
+      const fingerprintPrefix = installationTokenHash.slice(0, 12)
+      if (pairing.purpose === 'rotation') {
         await tx.query("UPDATE agent_connection_credentials SET status='overlap',overlap_until=$2 WHERE connection_id=$1 AND status='active'", [row.id, pairing.overlap_until])
+        await expireConnectionInstallationTokens(tx, row.id, pairing.overlap_until!)
+      }
       await tx.query(
         `INSERT INTO agent_connection_credentials(connection_id,token_hash,fingerprint_prefix,status)
-         VALUES($1,$2,$3,'active')`, [row.id, tokenHash(installationToken), fingerprintPrefix],
+         VALUES($1,$2,$3,'active')`, [row.id, installationTokenHash, fingerprintPrefix],
       )
+      await reconcileConnectionInstallationToken(tx, {
+        agentId: row.agent_id,
+        credentialHash: installationTokenHash,
+        expiresAt: null,
+        createdByActorId: row.agent_actor_id,
+      })
       await tx.query('UPDATE agent_connection_pairings SET consumed_at=now() WHERE id=$1', [pairing.id])
       row = one((await tx.query<ConnectionRow>(
         `UPDATE agent_connections SET status=CASE WHEN $2='rotation' THEN 'rotating' ELSE 'active' END,
@@ -512,6 +554,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
     await mutate(db, context as unknown as CommandContext, async tx => {
       let row = await getLocked(tx, context.actor.workspaceId, id(request)); assertRevision(parseRevision(header(request, 'if-match')), row.revision)
       await tx.query("UPDATE agent_connection_credentials SET status='revoked',revoked_at=now() WHERE connection_id=$1 AND status IN ('active','overlap')", [row.id])
+      await revokeConnectionInstallationTokens(tx, row.id, ['revoked'])
       const activeCoordination = (await tx.query<{
         id: string
         agent_session_id: string
@@ -619,6 +662,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       if (!rotation.consumed_at || !rotation.has_active || !rotation.has_overlap)
         throw new DomainError('INVALID_STATE_TRANSITION', 'Rotation pairing must be redeemed before confirmation')
       await tx.query("UPDATE agent_connection_credentials SET status='rotated',revoked_at=now() WHERE connection_id=$1 AND status='overlap'", [row.id])
+      await revokeConnectionInstallationTokens(tx, row.id, ['rotated'])
       row = one((await tx.query<ConnectionRow>("UPDATE agent_connections SET status='active',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [row.id])).rows)
       await connectionEvent(tx, context, row, 'agent.connection.rotation_confirmed', {}); return response(row)
     })

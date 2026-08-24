@@ -72,7 +72,11 @@ export async function createWorkMeshMcpHttpServer(options: {
     const dynamic = options.coordination && coordinationToken
     if (!dynamic && (!options.accessToken || !bearerMatches(request, options.accessToken))) { response.writeHead(401, { 'www-authenticate': 'Bearer, X-WorkMesh-Installation-Token' }).end(); return }
     const client = new WorkMeshClient(dynamic
-      ? { baseUrl: options.baseUrl, coordinationToken }
+      ? {
+          baseUrl: options.baseUrl,
+          coordinationToken,
+          installationToken: coordinationToken,
+        }
       : { baseUrl: options.baseUrl, sessionToken: options.sessionToken })
     const mcp = createWorkMeshMcpServer({ client, mode: options.mode, coordination: Boolean(dynamic) })
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined })

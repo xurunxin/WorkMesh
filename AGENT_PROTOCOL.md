@@ -118,6 +118,15 @@ X-Correlation-Id: <trace-id>
 Content-Type: application/json
 ```
 
+Coordination MCP 请求使用 Connection 安装凭据，不使用通用 Bearer：
+
+```http
+X-WorkMesh-Installation-Token: <installation-token>
+```
+
+该 header 只在 Coordination MCP / current-identity 边界使用；普通执行写入仍
+使用目标 Session 的 Bearer Token。
+
 `X-Correlation-Id` 是可选的调用方追踪值，最长 200 个字符，只允许 ASCII
 字母、数字、点、下划线、冒号、斜杠和连字符；凭证样式的前缀会被拒绝。
 授权拒绝审计始终使用服务端生成的 request id，不把调用方值写入不可变账本。
@@ -195,6 +204,51 @@ Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegat
 `max_concurrency` 只统计 `session_kind='execution'` 且状态非终态的 Session。占位状态固定为 `queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`；`completed`、`failed`、`canceled` 释放槽位。所有 execution admission 在持有目标 Agent definition 行锁后复用同一断言，包括普通 delegation/start/retry、child/review/handoff、Loop、Automation 和 A2A 新非终态任务。
 
 active coordination 指向终态或无效 backing Session 时，服务端必须在同一事务关闭旧 coordination；终态 backing 保持不可变，其他无效非终态 backing 先取消，再创建替代 Coordination Session。并发重连必须收敛到唯一 active coordination 与唯一非终态 backing Session。
+
+## 3.6 Task admission、强制委派与自主领取（v1.2）
+
+人类的手动委派是**强制任务分配**，通过一次调用完成 delegation 与 executor
+Session 创建：
+
+```http
+POST /api/v1/work-items/{id}/agent-session
+If-Match: "revision-4"
+Idempotency-Key: <stable-operation-key>
+```
+
+请求的 `role` 只能是 `executor`。同一 assignment 与 active Session 的重放收敛为
+同一结果；人类可以明确替换旧的非终态 executor，但不能依靠隐式重试覆盖新结果。
+该端点不返回 exchange token 或其它 secret。旧的公开两步
+`POST /work-items/{id}/delegations` 与 `POST /agent-sessions` 路径已移除；创建
+executor delegation 必须使用上述一次性端点。
+
+未被明确委派的、可领取 Work Item 可以由 Coordination Agent 自主领取：
+
+```http
+GET /api/v1/work-items?claimable=true
+POST /api/v1/work-items/{id}/claim
+X-WorkMesh-Installation-Token: <installation-token>
+If-Match: "revision-4"
+Idempotency-Key: <stable-claim-key>
+```
+
+服务端在短事务中校验并锁定同一 Connection、Team、principal Human、Agent、
+Coordination Session、delegation、capability 与 Work Item。只有这些身份和授权全部
+匹配，且 requested capabilities 是 Team grant 的子集时才能领取；省略请求能力时由
+服务端从当前授权能力计算可用集合。并发请求对同一未分配 Item 恰好一个成功，其余
+返回冲突；成功重放返回同一 delegation、Session 与交换凭据。状态、事件和 outbox
+在同一事务原子提交。
+
+Claim 响应中的 exchange token 仅供已认证的 MCP/SDK 适配器立即兑换。MCP 在适配器
+内部完成 exchange，并对每一个实际执行请求刷新该请求目标的 exact Session；token
+不进入 MCP tool output、模型上下文、普通 idempotency 响应、持久化日志或 webhook
+payload。长生命周期客户端不保存该 request-local bridge token。
+
+执行容量只计算 `session_kind=execution` 且处于非终态的 Session：
+`queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、
+`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`。Coordination Session
+不占用该槽位；`completed`、`failed`、`canceled` 释放槽位。所有入口使用同一个
+最终 admission 断言，领取失败不得留下半成品 delegation、Session、event 或 outbox。
 
 ---
 
@@ -275,6 +329,9 @@ active coordination 指向终态或无效 backing Session 时，服务端必须�
 - `agent.session.completed`
 - `agent.session.failed`
 - `agent.session.canceled`
+- `agent.coordination_session.opened`
+- `agent.coordination_session.refreshed`
+- `agent.coordination_session.closed`
 
 ### Plan / Activity
 
@@ -1220,6 +1277,13 @@ scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平�
 - Tool description 明确权限和副作用；
 - High-risk tool 不应只靠自然语言提醒。
 
+Coordination MCP 还提供 `list_claimable_work_items` 与 `claim_work_item`。前者只返回
+当前 Connection 的 Team、principal、Agent 与 capability 范围内尚未被 executor
+占用的摘要；后者执行上面的原子自主领取并启动 executor Session。两者都不要求
+Agent 先通过人类创建 delegation。人类明确分配时使用一次性的
+`delegate_work_item`（对应 forced assignment），而不是拆开的 delegation/start
+调用；`start_agent_session` 不再作为公开工具。
+
 集合读取使用 `list_work_items` 和 `list_session_activities`。两者返回完整
 `{items,nextCursor}`；调用方必须将 `nextCursor` 原样作为下一次调用的
 `cursor`，不得解析或跨 Session、Actor、Route 复用。
@@ -1536,6 +1600,10 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 - 服务端解析 → 校验 Connection、Agent、Team grant、Delegation、能力、撤销状态；
 - 通过则开/续一条 1 小时（最长 2 小时）的 Coordination Session；
 - Connection 撤销后下一次请求立即失败关闭（`COORDINATION_SESSION_CONNECTION_REVOKED`）。
+- `claim_work_item` 成功后，MCP 适配器在内部立即 exchange 返回的 one-time
+  exchange token；每个实际执行请求都按目标 `sessionId` 刷新 exact Session token，
+ 只在该请求的内存桥接上下文中使用。token 不返回给模型、不写入工具结果或长生命
+  客户端状态；Coordination 请求仍继续带 `X-WorkMesh-Installation-Token`。
 
 ## 23.2 基础工具（永远允许）
 
@@ -1548,13 +1616,14 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 - `list_teams`、`list_workflow_states` — Team 与状态只读发现。
 - `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
 - `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
+- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、尚未被 executor 占用的 Work Item；claim 同时创建 executor delegation 与 execution Session。
 - `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
 - `draft_project_update`（发布仍为 Human-only transition）。
 
 ## 23.3 显式授权工具（需要匹配能力）
 
-- `delegate_work_item` — 需要 `agent:delegate` 和现有 child session 创建的所有前置条件。
-- `start_agent_session` — 需要 `agent:delegate`；派生的是真 executor Session，仍受父→子预算、并发、Team access 约束。
+- `delegate_work_item` — 人类或具备 `agent:delegate` 的 Coordination Agent 发起一次性的 forced executor assignment；不再拆分为 delegation 与 start 两个公开步骤，仍受并发、Team access、principal 与 capability 约束。
+- `claim_work_item` — Coordination Agent 的自主领取入口；只匹配当前 Connection 的 Team、principal、Agent 与能力，竞争同一 Work Item 时恰好一个成功。
 - `create_child_session` — 需要现有 `work:write`、父 Session/Plan Step scope 与 Team access；**不**需要 `agent:delegate`。父 Coordinator 是否携带 `agent:delegate` 与能否 `create_child_session` 无关；后者是 plan-step 子 Session，与跨 Work Item 启动其他 Agent 是两件不同的事。
 - `offer_handoff` — 需要 Team 写权限。
 - `request_approval` — 记录与 Work Item 或 Plan Step 绑定的结构化审批请求；审批由 Human actor 决定。
@@ -1568,7 +1637,7 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 
 ## 23.5 与 v1.0 MCP 的边界
 
-- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。
+- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。旧的公开两步 delegation/start 组合不再提供。
 - v1.1 Coordination MCP：每请求动态派生 Session；范围绑定 Team 与 Connection；涵盖基础 CRUD + 显式授权工具。
 - 两者都**不**是授权层：revision、授权、状态、事务全部由 domain 裁决；MCP 工具描述描述策略，server 强制执行。
 

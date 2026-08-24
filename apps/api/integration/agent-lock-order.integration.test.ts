@@ -6,6 +6,8 @@ import {
   applyMigrations,
   createDb,
   executeAutomationAction,
+  opaqueToken,
+  tokenHash,
 } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
 import { canonicalJson } from '../src/auth-idempotency.js'
@@ -45,7 +47,6 @@ type Agent = {
 type Session = {
   id: string
   revision: number
-  exchangeToken: string
 }
 type Fixture = {
   human: Human
@@ -179,17 +180,15 @@ async function startAtomic(
 }
 
 async function exchangeAndExecute(session: Session, agent: Agent): Promise<string> {
-  const exchanged = await app.inject({
-    method: 'POST',
-    url: `/api/v1/agent-sessions/${session.id}/token/exchange`,
-    payload: { exchangeToken: session.exchangeToken },
-    headers: {
-      authorization: `Bearer ${agent.installationToken}`,
-      'idempotency-key': randomUUID(),
-    },
-  }) as unknown as Response
-  expect(exchanged.statusCode, JSON.stringify(exchanged.json())).toBe(200)
-  const token = exchanged.json<{ sessionToken: string }>().sessionToken
+  const token = opaqueToken()
+  const seeded = await db.query(
+    `UPDATE agent_session_tokens
+        SET token_hash=$2,exchanged_at=now()
+      WHERE session_id=$1 AND agent_id=$3
+        AND revoked_at IS NULL`,
+    [session.id, tokenHash(token), agent.id],
+  )
+  expect(seeded.rowCount).toBe(1)
   const acknowledged = await agentCall(
     token,
     'POST',
@@ -966,12 +965,11 @@ describe('Agent authority total lock order', () => {
     }
   })
 
-  it('lets WorkItem reparent win while createDelegation and delegateAndStart wait on Definition', async () => {
+  it('lets WorkItem reparent win while forced assignment waits on Definition', async () => {
     const fixture = await makeFixture()
-    const createTarget = await createWork(fixture, 'Create delegation lock probe')
     const startTarget = await createWork(fixture, 'Atomic start lock probe')
-    for (const operation of ['createDelegation', 'delegateAndStart'] as const) {
-      const work = operation === 'createDelegation' ? createTarget : startTarget
+    for (const operation of ['delegateAndStart'] as const) {
+      const work = startTarget
       const destination = await humanCall(
         fixture.human,
         'POST',
@@ -1002,42 +1000,20 @@ describe('Agent authority total lock order', () => {
           'SELECT id FROM agent_definitions WHERE id=$1 FOR UPDATE',
           [fixture.reviewer.id],
         )
-        const request = operation === 'createDelegation'
-          ? humanCall(
-              fixture.human,
-              'POST',
-              `/api/v1/work-items/${work.id}/delegations`,
-              {
-                agentId: fixture.reviewer.id,
-                principalHumanActorId: fixture.human.actorId,
-                role: 'executor',
-                scopeType: 'work_item',
-                scopeId: work.id,
-                permissionsSnapshot: ['work:read', 'work:write'],
-                capabilityScope: {
-                  workspaceId: fixture.workspaceId,
-                  teamIds: [fixture.teamId],
-                  projectIds: [fixture.projectId],
-                  workItemIds: [work.id],
-                  repositoryIds: [],
-                  capabilities: ['work:read', 'work:write'],
-                },
-              },
-            )
-          : humanCall(
-              fixture.human,
-              'POST',
-              `/api/v1/work-items/${work.id}/agent-session`,
-              {
-                agentId: fixture.reviewer.id,
-                principalHumanActorId: fixture.human.actorId,
-                role: 'executor',
-                requestedCapabilities: ['work:read', 'work:write'],
-                initialPrompt: 'Atomic start lock probe.',
-                budget: {},
-              },
-              { 'if-match': `"revision-${work.revision}"` },
-            )
+        const request = humanCall(
+          fixture.human,
+          'POST',
+          `/api/v1/work-items/${work.id}/agent-session`,
+          {
+            agentId: fixture.reviewer.id,
+            principalHumanActorId: fixture.human.actorId,
+            role: 'executor',
+            requestedCapabilities: ['work:read', 'work:write'],
+            initialPrompt: 'Atomic start lock probe.',
+            budget: {},
+          },
+          { 'if-match': `"revision-${work.revision}"` },
+        )
         await waitForDirectWaiter(gate.pid)
         const writer = await beginGate()
         try {
@@ -1058,7 +1034,10 @@ describe('Agent authority total lock order', () => {
         await closeGate(gate)
         gateOpen = false
         const response = await request
-        expect(response.statusCode, JSON.stringify(response.json())).toBe(403)
+        expect(response.statusCode, JSON.stringify(response.json())).toBe(409)
+        expect(response.json<{ error: { code: string } }>()).toMatchObject({
+          error: { code: 'REVISION_CONFLICT' },
+        })
         const after = (await db.query<typeof before>(
           `SELECT
             (SELECT count(*)::int FROM delegations WHERE work_item_id=$1) AS delegations,

@@ -12,6 +12,7 @@ import type {
   AgentConnectionPatchInput, AgentConnectionResponse,
   AgentConnectionRedeemInput, AgentConnectionRedeemResponse,
   AgentConnectionRotateResponse, AgentWellKnownResponse,
+  ClaimWorkItemInput, ClaimWorkItemResponse,
 } from '@workmesh/contracts'
 import {
   durableEventCursorSchema,
@@ -137,7 +138,7 @@ export interface Heartbeat { currentStepId?: string; usage: { runtimeSeconds: nu
 export interface ActivityInput { kind: string; summary: string; detailsMarkdown?: string; toolInvocation?: unknown; artifactIds?: string[]; references?: unknown[]; visibility?: 'workspace' | 'team' | 'private'; ephemeral?: boolean }
 export interface ApprovalInput { sessionId: string; approvalType: string; actionName: string; actionPayloadSanitized: Record<string, unknown>; actionPayloadHash: string; riskLevel: 'low' | 'medium' | 'high' | 'critical'; rationaleSummary: string; requiredApprovals?: number; expiresAt: string }
 export interface ArtifactInput { sessionId: string; workItemId?: string; type: 'commit' | 'pull_request' | 'test_report' | 'code_review' | 'document' | 'link' | 'file' | 'other'; title: string; uri?: string; checksum?: string; sourceTool?: string; metadata?: Record<string, unknown> }
-export interface DelegateAndStartInput { agentId: string; principalHumanActorId: string; role?: 'executor' | 'reviewer' | 'researcher' | 'coordinator' | 'triager'; requestedCapabilities: Capability[]; initialPrompt: string; contextSnapshotId?: string; budget?: Record<string, number> }
+export interface DelegateAndStartInput { agentId: string; principalHumanActorId: string; role?: 'executor'; requestedCapabilities: Capability[]; initialPrompt: string; contextSnapshotId?: string; budget?: Record<string, number> }
 export type RoomMessageIntent = 'inform' | 'ask' | 'answer' | 'propose' | 'decide' | 'claim' | 'handoff' | 'blocker' | 'review_request' | 'review_result' | 'status'
 export interface RoomMessageInput { intent: RoomMessageIntent; body: string; recipientActorId?: string; recipientActorIds?: string[]; recipientSessionId?: string; recipientSessionIds?: string[]; replyToMessageId?: string; threadId?: string; payload?: Record<string, unknown>; requiresResponse?: boolean; sessionId?: string }
 
@@ -272,23 +273,27 @@ export class WorkMeshClient {
   async exchangeSessionToken(sessionId: string, exchangeToken: string, installationToken: string, options: RequestOptions = {}): Promise<TokenExchange> {
     // The one-time code is not a bearer credential: the active installation token proves the Agent identity.
     const result = await this.request<TokenExchange>('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/token/exchange`, { exchangeToken }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'token-exchange'), authorizationToken: installationToken, skipTokenRefresh: true })
-    this.sessionToken = result.sessionToken
+    if (!this.coordinationToken) this.sessionToken = result.sessionToken
     return result
   }
   async refreshSessionToken(sessionId: string, installationToken = this.installationToken, options: RequestOptions = {}): Promise<TokenExchange> {
     if (!installationToken) throw new WorkMeshSdkError('An installation token is required to refresh a session token', { code: 'INSTALLATION_TOKEN_REQUIRED' })
     const result = await this.request<TokenExchange>('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/token/refresh`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'token-refresh'), authorizationToken: installationToken, skipTokenRefresh: true, refreshSessionId: sessionId })
-    this.sessionToken = result.sessionToken
+    if (!this.coordinationToken) this.sessionToken = result.sessionToken
     return result
+  }
+  async exchangeClaimedSessionToken(sessionId: string, exchangeToken: string, options: RequestOptions = {}): Promise<TokenExchange> {
+    if (!this.installationToken) throw new WorkMeshSdkError('An installation token is required to exchange a claimed Session bootstrap', { code: 'INSTALLATION_TOKEN_REQUIRED' })
+    return this.exchangeSessionToken(sessionId, exchangeToken, this.installationToken, options)
   }
 
   getSession<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}`, undefined, { ...options, refreshSessionId: sessionId }) }
   getSessionContext<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/context`, undefined, { ...options, refreshSessionId: sessionId }) }
   getPlan<T = unknown>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/plan`, undefined, { ...options, refreshSessionId: sessionId }) }
   getActivities<T = unknown>(sessionId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/activities`, {}, options), undefined, { ...options, refreshSessionId: sessionId }) }
-  getRoom<T = unknown>(query: { workItemId?: string; projectId?: string; sessionId?: string }, options: RequestOptions = {}): Promise<T> { const params = new URLSearchParams(Object.entries(query).filter(([, value]) => value !== undefined) as [string,string][]); return this.request('GET', `/api/v1/rooms?${params}`, undefined, options) }
+  getRoom<T = unknown>(query: { workItemId?: string; projectId?: string; sessionId?: string }, options: RequestOptions = {}): Promise<T> { const params = new URLSearchParams(Object.entries(query).filter(([, value]) => value !== undefined) as [string,string][]); return this.request('GET', `/api/v1/rooms?${params}`, undefined, { ...options, refreshSessionId: query.sessionId }) }
   getRoomTimeline<T = unknown>(roomId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/rooms/${encodeURIComponent(roomId)}/timeline`, {}, options), undefined, options) }
-  postRoomMessage<T = unknown>(roomId: string, input: RoomMessageInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId ?? roomId, 'room-message') }) }
+  postRoomMessage<T = unknown>(roomId: string, input: RoomMessageInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId ?? roomId, 'room-message'), refreshSessionId: input.sessionId }) }
   listInbox<T = InboxListItem>(status: 'open' | 'resolved' = 'open', options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/inbox', { status }, options), undefined, options) }
   getInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}`, undefined, options) }
   claimInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/claim`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-claim') }) }
@@ -299,14 +304,14 @@ export class WorkMeshClient {
   createChildSession<T = unknown>(parentSessionId: string, input: ChildSessionInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(parentSessionId)}/children`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(parentSessionId, `child-session:${input.planStepId}`), refreshSessionId: parentSessionId }) }
   appendContextDelta<T = unknown>(sessionId: string, input: ContextDeltaInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/context-deltas`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, 'context-delta'), refreshSessionId: sessionId }) }
   createReviewDelegation<T = unknown>(sessionId: string, input: ReviewDelegationInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/review-delegations`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, `review-delegation:${input.planStepId}`), refreshSessionId: sessionId }) }
-  acquireLease<T = unknown>(input: LeaseInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/leases', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, 'lease') }) }
-  mutateLease<T = unknown>(leaseId: string, action: 'heartbeat' | 'renew' | 'release' | 'force-release', input: { ttlSeconds?: number; reason?: string } = {}, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/leases/${encodeURIComponent(leaseId)}/${action}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(leaseId, action) }) }
+  acquireLease<T = unknown>(input: LeaseInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/leases', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, 'lease'), refreshSessionId: input.sessionId }) }
+  mutateLease<T = unknown>(leaseId: string, action: 'heartbeat' | 'renew' | 'release' | 'force-release', input: { ttlSeconds?: number; reason?: string } = {}, options: RequestOptions & { sessionId?: string } = {}): Promise<T> { return this.request('POST', `/api/v1/leases/${encodeURIComponent(leaseId)}/${action}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(leaseId, action), refreshSessionId: options.sessionId }) }
   offerHandoff<T = unknown>(input: HandoffInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/handoffs', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.fromSessionId, 'handoff-offer'), refreshSessionId: input.fromSessionId }) }
   inspectPendingHandoff<T = unknown>(handoffId: string, installationToken = this.installationToken, options: RequestOptions = {}): Promise<T> {
     if (!installationToken) throw new WorkMeshSdkError('An installation token is required to inspect a pending handoff', { code: 'INSTALLATION_TOKEN_REQUIRED' })
     return this.request('GET', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/inspect`, undefined, { ...options, authorizationToken: installationToken, skipTokenRefresh: true })
   }
-  requestHandoff<T = unknown>(handoffId: string, input: HandoffTransitionInput = {}, options: RequestOptions = {}): Promise<T> { return this.mutateHandoff(handoffId, 'request', input, options) }
+  requestHandoff<T = unknown>(handoffId: string, input: HandoffTransitionInput, options: RequestOptions & { sessionId: string }): Promise<T> { return this.mutateHandoff(handoffId, 'request', input, options, options.sessionId) }
   cancelHandoff<T = unknown>(handoffId: string, input: HandoffTransitionInput = {}, options: RequestOptions = {}): Promise<T> { return this.mutateHandoff(handoffId, 'cancel', input, options) }
   completeHandoff<T = unknown>(handoffId: string, input: HandoffTransitionInput = {}, options: RequestOptions = {}): Promise<T> { return this.mutateHandoff(handoffId, 'complete', input, options) }
   rejectHandoff<T = unknown>(handoffId: string, input: HandoffRejectInput, options: RequestOptions = {}): Promise<T> {
@@ -317,6 +322,16 @@ export class WorkMeshClient {
   getWorkItem<T = WorkItemResponse>(workItemId: string, options?: RequestOptions): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}`, undefined, options) }
   listWorkItems<T = WorkItemResponse>(query: Record<string, string | number | boolean | undefined> = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> {
     return this.request('GET', pagedPath('/api/v1/work-items', query, options), undefined, options)
+  }
+  listClaimableWorkItems<T = WorkItemResponse>(options: PageRequestOptions = {}): Promise<ListResponse<T>> {
+    return this.listWorkItems<T>({ claimable: true }, options)
+  }
+  claimWorkItem(workItemId: string, input: ClaimWorkItemInput, options: RequestOptions & { ifMatch: number | string }): Promise<ClaimWorkItemResponse> {
+    return this.request('POST', `/api/v1/work-items/${encodeURIComponent(workItemId)}/claim`, input, {
+      ...options,
+      idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(workItemId, 'claim-work-item'),
+      ifMatch: options.ifMatch,
+    })
   }
   async listEvents(options: EventListOptions): Promise<EventEnvelope[]> {
     const cursor = durableEventCursorSchema.parse(options.cursor)
@@ -494,17 +509,42 @@ export class WorkMeshClient {
     return this.request(method, `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/${operation}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(sessionId, operation), ifMatch: revisioned ? options.ifMatch : undefined, refreshSessionId: sessionId })
   }
 
-  private mutateHandoff<T>(handoffId: string, action: 'request' | 'cancel' | 'complete' | 'reject', input: HandoffTransitionInput | HandoffRejectInput, options: RequestOptions): Promise<T> {
-    return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/${action}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, `handoff-${action}`) })
+  private mutateHandoff<T>(handoffId: string, action: 'request' | 'cancel' | 'complete' | 'reject', input: HandoffTransitionInput | HandoffRejectInput, options: RequestOptions, refreshSessionId?: string): Promise<T> {
+    return this.request('POST', `/api/v1/handoffs/${encodeURIComponent(handoffId)}/${action}`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(handoffId, `handoff-${action}`), refreshSessionId })
   }
 
   private async request<T>(method: string, path: string, body?: unknown, options: RequestOptions & { authorizationToken?: string; skipTokenRefresh?: boolean; refreshSessionId?: string } = {}): Promise<T> {
+    let refreshedSessionToken: string | undefined
+    if (
+      !options.skipTokenRefresh
+      && !options.authorizationToken
+      && options.refreshSessionId
+      && this.installationToken
+      && (Boolean(this.coordinationToken) || !this.sessionToken)
+    ) {
+      const refreshed = await this.request<TokenExchange>(
+        'POST',
+        `/api/v1/agent-sessions/${encodeURIComponent(options.refreshSessionId)}/token/refresh`,
+        {},
+        {
+          signal: options.signal,
+          correlationId: options.correlationId,
+          profileVersion: options.profileVersion,
+          idempotencyKey: stableIdempotencyKey(options.refreshSessionId, 'token-refresh'),
+          authorizationToken: this.installationToken,
+          skipTokenRefresh: true,
+          refreshSessionId: options.refreshSessionId,
+        },
+      )
+      refreshedSessionToken = refreshed.sessionToken
+    }
     const url = new URL(path, `${this.baseUrl}/`).toString()
     resolveSdkRoutePolicy(method, new URL(url).pathname)
     const headers: Record<string, string> = { accept: 'application/json' }
     if (body !== undefined) headers['content-type'] = 'application/json'
-    if (options.authorizationToken ?? this.sessionToken) headers.authorization = `Bearer ${options.authorizationToken ?? this.sessionToken}`
-    if (this.coordinationToken) headers['x-workmesh-installation-token'] = this.coordinationToken
+    const authorizationToken = options.authorizationToken ?? refreshedSessionToken ?? this.sessionToken
+    if (authorizationToken) headers.authorization = `Bearer ${authorizationToken}`
+    else if (this.coordinationToken) headers['x-workmesh-installation-token'] = this.coordinationToken
     if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey
     if (options.correlationId) headers['x-correlation-id'] = options.correlationId
     if (options.profileVersion) headers['workmesh-client-profile'] = options.profileVersion

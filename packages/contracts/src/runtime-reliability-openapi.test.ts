@@ -27,9 +27,8 @@ const runtimeReliabilitySchemas = [
 ] as const
 
 const executionAdmissionOperationIds = [
-  'createDelegation',
   'delegateAndStartAgentSession',
-  'createAgentSession',
+  'claimWorkItem',
   'retryAgentSession',
   'acceptHandoff',
   'createChildAgentSession',

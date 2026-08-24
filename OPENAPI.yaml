@@ -571,6 +571,7 @@ paths:
             { $ref: "#/components/parameters/MineQuery" },
             { $ref: "#/components/parameters/LabelQuery" },
             { $ref: "#/components/parameters/SearchQuery" },
+            { name: claimable, in: query, description: "When true, requires a Coordination Connection and returns only Work Items this Agent can atomically self-claim.", schema: { type: boolean, default: false } },
           ],
         responses:
           {
@@ -958,15 +959,17 @@ paths:
     post: { x-workmesh-policy-id: route.createAgentWebhookEndpoint, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: createAgentWebhookEndpoint, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/CorrelationId" }], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [url], properties: { url: { type: string, format: uri } } } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/agents/{id}/webhook-endpoints/{endpointId}/rotate-secret:
     post: { x-workmesh-policy-id: route.rotateAgentWebhookSecret, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], x-workmesh-secret-replay: encrypted_auth, description: "Rotate and return a webhook signing secret. Exact retries replay only the encrypted authentication-idempotency envelope.", operationId: rotateAgentWebhookSecret, parameters: [{ $ref: "#/components/parameters/Id" }, { name: endpointId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/CorrelationId" }], responses: { "200": { $ref: "#/components/responses/Json" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
-  /api/v1/work-items/{id}/delegations:
+  /api/v1/work-items/{id}/claim:
     post:
       {
-        x-workmesh-policy-id: route.createDelegation,
-        x-workmesh-actor-kinds: [human],
+        x-workmesh-policy-id: route.claimWorkItem,
+        x-workmesh-actor-kinds: [agent],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }],
-        operationId: createDelegation,
+        security: [{ AgentConnectionInstallationToken: [] }],
+        x-workmesh-secret-replay: encrypted_auth,
+        operationId: claimWorkItem,
+        description: "Atomically self-claim one eligible unassigned Work Item from the current Coordination Connection. Eligibility is bound to the exact Connection Team, principal human, Agent actor, approved capabilities, and active Coordination Session. The exchange token is returned only through the encrypted authentication-idempotency envelope; MCP adapters exchange it internally and never expose it to the model.",
         parameters:
           [
             { $ref: "#/components/parameters/Id" },
@@ -974,11 +977,13 @@ paths:
             { $ref: "#/components/parameters/IfMatch" },
             { $ref: "#/components/parameters/CorrelationId" },
           ],
-        requestBody: { $ref: "#/components/requestBodies/DelegationInput" },
+        requestBody: { $ref: "#/components/requestBodies/ClaimWorkItemInput" },
         responses:
           {
-            "201": { $ref: "#/components/responses/Delegation" },
+            "200": { $ref: "#/components/responses/ClaimWorkItem" },
             "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
             "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
           },
       }
@@ -992,7 +997,7 @@ paths:
         security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: delegateAndStartAgentSession,
-        description: "Atomically create an executor delegation and its initial queued session for this work item. The exchange token is replayed only from the encrypted auth-idempotency envelope and is never stored in the generic idempotency response.",
+        description: "Human or an authorized Coordination Agent performs a forced, one-call executor assignment and starts its initial queued execution Session. role is fixed to executor. No exchange token or other secret is returned by this forced-assignment endpoint.",
         parameters:
           [
             { $ref: "#/components/parameters/Id" },
@@ -1088,30 +1093,6 @@ paths:
             },
           ],
         responses: { "200": { $ref: "#/components/responses/AgentSessions" } },
-      }
-    post:
-      {
-        x-workmesh-policy-id: route.createAgentSession,
-        x-workmesh-actor-kinds: [human],
-        x-workmesh-feature-key: none,
-        x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }],
-        x-workmesh-secret-replay: encrypted_auth,
-        operationId: createAgentSession,
-        description: "Create one Agent session. The exchange token is replayed only from the encrypted auth-idempotency envelope and is never stored in the generic idempotency response.",
-        parameters:
-          [
-            { $ref: "#/components/parameters/IdempotencyKey" },
-            { $ref: "#/components/parameters/CorrelationId" },
-          ],
-        requestBody:
-          { $ref: "#/components/requestBodies/CreateAgentSessionInput" },
-        responses:
-          {
-            "201": { $ref: "#/components/responses/AgentSession" },
-            "400": { $ref: "#/components/responses/BadRequest" },
-            "409": { $ref: "#/components/responses/AgentConcurrencyLimit" },
-          },
       }
   /api/v1/agent-sessions/{id}:
     get:
@@ -2308,15 +2289,6 @@ components:
               { schema: { $ref: "#/components/schemas/AgentTeamAccessInput" } },
           },
       }
-    DelegationInput:
-      {
-        required: true,
-        content:
-          {
-            application/json:
-              { schema: { $ref: "#/components/schemas/DelegationInput" } },
-          },
-      }
     DelegateAndStartAgentSessionInput:
       {
         required: true,
@@ -2331,16 +2303,13 @@ components:
               },
           },
       }
-    CreateAgentSessionInput:
+    ClaimWorkItemInput:
       {
-        required: true,
+        required: false,
         content:
           {
             application/json:
-              {
-                schema:
-                  { $ref: "#/components/schemas/CreateAgentSessionInput" },
-              },
+              { schema: { $ref: "#/components/schemas/ClaimWorkItemInput" } },
           },
       }
     ExchangeAgentSessionTokenInput:
@@ -3016,6 +2985,15 @@ components:
               },
           },
       }
+    ClaimWorkItem:
+      {
+        description: Atomically self-claimed delegation, initial queued execution Session, and one-time exchange token. The token is available only to the authenticated Coordination adapter through the encrypted authentication-idempotency envelope; it is never included in webhook payloads or MCP tool output.,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/ClaimWorkItemResponse" } },
+          },
+      }
     AgentSessions:
       {
         description: Agent sessions,
@@ -3602,7 +3580,7 @@ components:
           {
             agentId: { $ref: "#/components/schemas/Id" },
             principalHumanActorId: { $ref: "#/components/schemas/Id" },
-            role: { $ref: "#/components/schemas/DelegationRole" },
+            role: { type: string, const: executor },
             requestedCapabilities:
               {
                 type: array,
@@ -4580,46 +4558,19 @@ components:
               },
           },
       }
-    DelegationInput:
+    ClaimWorkItemInput:
       {
         type: object,
-        required:
-          [
-            agentId,
-            principalHumanActorId,
-            role,
-            scopeType,
-            scopeId,
-            permissionsSnapshot,
-            capabilityScope,
-          ],
+        additionalProperties: false,
         properties:
           {
-            agentId: { $ref: "#/components/schemas/Id" },
-            principalHumanActorId: { $ref: "#/components/schemas/Id" },
-            role: { $ref: "#/components/schemas/DelegationRole" },
-            scopeType: { $ref: "#/components/schemas/DelegationScopeType" },
-            scopeId: { $ref: "#/components/schemas/Id" },
-            permissionsSnapshot:
+            requestedCapabilities:
               {
                 type: array,
+                minItems: 1,
+                maxItems: 50,
                 items: { $ref: "#/components/schemas/Capability" },
               },
-            capabilityScope: { $ref: "#/components/schemas/CapabilityScope" },
-            startsAt: { $ref: "#/components/schemas/Timestamp" },
-            endsAt: { $ref: "#/components/schemas/Timestamp" },
-          },
-      }
-    CreateAgentSessionInput:
-      {
-        type: object,
-        required: [delegationId, initialPrompt],
-        properties:
-          {
-            delegationId: { $ref: "#/components/schemas/Id" },
-            workItemId: { $ref: "#/components/schemas/Id" },
-            projectId: { $ref: "#/components/schemas/Id" },
-            planStepId: { $ref: "#/components/schemas/Id" },
             initialPrompt: { type: string, minLength: 1, maxLength: 50000 },
             contextSnapshotId: { $ref: "#/components/schemas/Id" },
             budget:
@@ -4628,19 +4579,13 @@ components:
                 additionalProperties: false,
                 properties:
                   {
-                    maxRuntimeSeconds: { type: integer, minimum: 1 },
+                    maxRuntimeSeconds: { type: integer, minimum: 1, maximum: 604800 },
                     maxInputTokens: { type: integer, minimum: 0 },
                     maxOutputTokens: { type: integer, minimum: 0 },
                     maxCostUsd: { type: number, minimum: 0 },
                   },
               },
           },
-        oneOf:
-          [
-            { required: [workItemId] },
-            { required: [projectId] },
-            { required: [planStepId] },
-          ],
       }
     ExchangeAgentSessionTokenInput:
       {
@@ -5122,6 +5067,24 @@ components:
           {
             delegation: { $ref: "#/components/schemas/Delegation" },
             session: { $ref: "#/components/schemas/AgentSession" },
+          },
+      }
+    ClaimWorkItemResponse:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [delegation, session, exchangeToken],
+        properties:
+          {
+            delegation: { $ref: "#/components/schemas/Delegation" },
+            session: { $ref: "#/components/schemas/AgentSession" },
+            exchangeToken:
+              {
+                type: string,
+                minLength: 32,
+                maxLength: 4096,
+                description: One-time exchange credential returned only through the authenticated encrypted replay envelope; never log, persist in generic idempotency data, webhook payloads, or MCP output.,
+              },
           },
       }
     PlanVersion:

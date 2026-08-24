@@ -8,6 +8,7 @@ import {
   approvalEventEnvelopeSchema,
   stage1RouteManifest,
   completeAgentSessionInputSchema,
+  delegateAndStartAgentSessionInputSchema,
   planVersionHistoryResponseSchema,
   publishPlanInputSchema,
   sessionContextResponseSchema,
@@ -69,10 +70,26 @@ describe('Stage 1 agent contracts', () => {
   it('covers atomic start, retry, refresh and approval consumption routes', () => {
     expect(stage1RouteManifest).toEqual(expect.arrayContaining([
       expect.objectContaining({ method: 'POST', path: '/api/v1/work-items/{id}/agent-session', mutation: true, revisioned: true }),
+      expect.objectContaining({ method: 'POST', path: '/api/v1/work-items/{id}/claim', mutation: true, revisioned: true }),
       expect.objectContaining({ method: 'POST', path: '/api/v1/agent-sessions/{id}/retry', mutation: true, revisioned: true }),
       expect.objectContaining({ method: 'POST', path: '/api/v1/agent-sessions/{id}/token/refresh', mutation: true }),
       expect.objectContaining({ method: 'POST', path: '/api/v1/approvals/{id}/consume', mutation: true, revisioned: true }),
     ]))
+    expect(delegateAndStartAgentSessionInputSchema.parse({
+      agentId: id,
+      principalHumanActorId: id,
+      requestedCapabilities: ['work:read', 'work:write'],
+      initialPrompt: 'Execute this Issue.',
+      budget: {},
+    }).role).toBe('executor')
+    expect(() => delegateAndStartAgentSessionInputSchema.parse({
+      agentId: id,
+      principalHumanActorId: id,
+      role: 'reviewer',
+      requestedCapabilities: ['work:read', 'work:write'],
+      initialPrompt: 'Execute this Issue.',
+      budget: {},
+    })).toThrow()
     expect(() => publishPlanInputSchema.parse({ changeSummary: 'Approved change', steps: [{ id, title: 'Ship', ordinal: 0 }], approvalId: id })).toThrow(/together/)
   })
 
