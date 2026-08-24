@@ -208,11 +208,54 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       })
       expect(JSON.stringify(claimedData)).not.toContain('sessionToken')
       expect(JSON.stringify(claimedData)).not.toContain('exchangeToken')
-      const acknowledged = await mcpTool(mcpUrl, token, 'ack_agent_session', {
+      await db.query(
+        `UPDATE agent_sessions
+            SET state='stale',state_reason='production recovery simulation',
+                revision=revision+1,updated_at=now()
+          WHERE id=$1`,
+        [claimedData.session.id],
+      )
+      const acknowledgementKey = `stale-ack:${claimedData.session.id}`
+      const acknowledgementInput = {
         sessionId: claimedData.session.id,
         summary: 'Accepted through the unchanged Connection configuration.',
+        idempotencyKey: acknowledgementKey,
+      }
+      const acknowledged = await mcpTool(mcpUrl, token, 'ack_agent_session', acknowledgementInput)
+      const acknowledgedData = acknowledged.structuredContent?.data as {
+        id: string
+        state: string
+        revision: number
+      }
+      expect(acknowledgedData).toMatchObject({
+        id: claimedData.session.id,
+        state: 'acknowledged',
       })
-      const acknowledgedData = acknowledged.structuredContent?.data as { revision: number }
+      const acknowledgementReplay = await mcpTool(
+        mcpUrl,
+        token,
+        'ack_agent_session',
+        acknowledgementInput,
+      )
+      expect(acknowledgementReplay.structuredContent?.data).toEqual(acknowledgedData)
+      const differentKey = await mcpRequest(mcpUrl, token, 'tools/call', {
+        name: 'ack_agent_session',
+        arguments: {
+          ...acknowledgementInput,
+          idempotencyKey: `different-stale-ack:${claimedData.session.id}`,
+        },
+      })
+      expect(differentKey.result?.isError).toBe(true)
+      expect(differentKey.result?.structuredContent).toMatchObject({
+        error: { code: 'SESSION_NOT_ACTIVE' },
+      })
+      expect((await db.query<{ state: string; revision: number }>(
+        'SELECT state,revision FROM agent_sessions WHERE id=$1',
+        [claimedData.session.id],
+      )).rows[0]).toEqual({
+        state: 'acknowledged',
+        revision: acknowledgedData.revision,
+      })
       await mcpTool(mcpUrl, token, 'transition_agent_session_state', {
         sessionId: claimedData.session.id,
         state: 'executing',
