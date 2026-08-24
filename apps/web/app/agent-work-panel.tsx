@@ -172,6 +172,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
   const [busy, setBusy] = useState(false)
   const [success, setSuccess] = useState('')
   const [prompt, setPrompt] = useState('')
+  const latestProjectionRefreshRef = useRef<string | null>(null)
   const sessionsPage = usePagedApiList<AgentSession>(
     `/api/v1/agent-sessions?workItemId=${encodeURIComponent(workItemId)}`,
     { optional: true, scopeKey: controller.scopeKey },
@@ -184,6 +185,11 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
   const agentsPage = controller.agentsPage
   const agents = agentsPage.items
   const sessions = sessionsPage.items
+  const visibleSessions = useMemo(() => {
+    const latestSession = controller.latest?.session
+    if (!latestSession || sessions.some(session => session.id === latestSession.id)) return sessions
+    return [latestSession, ...sessions]
+  }, [controller.latest, sessions])
   const collectionError = agentsPage.error ?? sessionsPage.error
   const agentSelectRef = useRef<HTMLSelectElement>(null)
   useEffect(() => {
@@ -203,29 +209,38 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
   }, [displayedShowDelegate])
   useEffect(() => {
     const latest = controller.latest
-    if (!latest) return
+    if (!latest) {
+      latestProjectionRefreshRef.current = null
+      return
+    }
+    if (latestProjectionRefreshRef.current === latest.session.id) return
+    latestProjectionRefreshRef.current = latest.session.id
     void sessionsPage.refresh()
     setShowDelegate(false)
     setPrompt('')
     setSuccess(text.delegateSuccess(agentName(latest.agent), latest.session.state))
     onSessionCreated?.(latest.session)
-    onReloadWorkItem?.()
+  }, [controller.latest, onSessionCreated, sessionsPage.refresh, text.delegateSuccess])
+  useEffect(() => {
+    const latestSession = controller.latest?.session
+    if (!latestSession || !sessions.some(session => session.id === latestSession.id)) return
     controller.clearLatest()
-  }, [controller.clearLatest, controller.latest, onReloadWorkItem, onSessionCreated, sessionsPage.refresh, text.delegateSuccess])
+    onReloadWorkItem?.()
+  }, [controller.clearLatest, controller.latest, onReloadWorkItem, sessions])
   const realtimeResources = useMemo<RealtimeResource[]>(() => [
     { type: 'workspace', id: workspaceId },
     { type: 'team', id: workItemTeamId },
     { type: 'work_item', id: workItemId },
-    ...sessions.map(session => ({
+    ...visibleSessions.map(session => ({
       type: 'session' as const,
       id: session.id,
     })),
-  ], [sessions, workItemId, workItemTeamId, workspaceId])
+  ], [visibleSessions, workItemId, workItemTeamId, workspaceId])
   useRealtimeSubscription(realtimeResources, invalidation => {
     const targets = agentWorkRefreshTargets(invalidation, {
       teamId: workItemTeamId,
       workItemId,
-      sessionIds: new Set(sessions.map(session => session.id)),
+      sessionIds: new Set(visibleSessions.map(session => session.id)),
     })
     if (invalidation.reason === 'resync')
       return Promise.all([
@@ -304,8 +319,8 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
     onReloadWorkItem?.()
   }
   const sessionsBusy = !sessionsPage.initialized || sessionsPage.loading || sessionsPage.loadingMore
-  const showSessionsLoading = sessions.length === 0 && !sessionsPage.error && sessionsBusy
-  const showSessionsEmpty = sessions.length === 0 && sessionsPage.initialized && !sessionsPage.loading && !sessionsPage.error
+  const showSessionsLoading = visibleSessions.length === 0 && !sessionsPage.error && sessionsBusy
+  const showSessionsEmpty = visibleSessions.length === 0 && sessionsPage.initialized && !sessionsPage.loading && !sessionsPage.error
   const primaryLabel = directAgent ? text.oneClickDelegate : text.chooseAgent
   return <section className="agent-work-panel" aria-busy={sessionsBusy} aria-label={text.liveAgents} data-testid="live-agent-panel">
     <header><div><h3>{text.liveAgents}</h3><p>{text.liveAgentsHint}</p></div><div className="agent-work-panel-actions"><Button aria-describedby={controller.disabled && availabilityMessage ? availabilityReasonId : undefined} disabled={primaryDisabled} onClick={() => directAgent ? void delegateWith(directAgent, text.oneClickPrompt(workItemTitle ?? '')) : controller.canChoose ? setShowDelegate(true) : undefined} title={controller.disabled && availabilityMessage ? availabilityMessage : undefined} type="button" variant="primary">{primaryLabel}</Button><Button aria-controls="agent-delegation-form" aria-expanded={displayedShowDelegate} disabled={displayedBusy || controller.busy || !controller.canChoose} onClick={() => setShowDelegate(current => !current)} type="button" variant="secondary">{text.advancedOptions}</Button></div></header>
@@ -321,7 +336,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
       <label>{text.delegateFormInitialPrompt}<textarea name="prompt" onChange={event => setPrompt(event.currentTarget.value)} placeholder={text.delegateFormInitialPromptPlaceholder} required value={displayedPrompt} /></label>
       <Button disabled={displayedBusy || !humanActorId || !controller.canChoose} type="submit" variant="primary">{text.forceAssign}</Button>
     </form>
-    {showSessionsLoading ? <p className="empty" data-testid="sessions-loading" role="status">{text.loadingSessions}</p> : showSessionsEmpty ? <p className="empty">{text.noSessions}</p> : sessions.length > 0 && <div className="session-mini-list">{sessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || text.blockingReasonMissing}</p><small>{text.heartbeat(formatTime(session.last_heartbeat_at))}</small><AgentExecutionProjection session={session} /><div className="session-actions">{session.state === 'paused' && <Button disabled={displayedBusy} onClick={() => void signal(session, 'resume')} type="button" variant="secondary">{text.resume}</Button>}{canPauseAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void signal(session, 'pause')} type="button" variant="secondary">{text.pause}</Button>}{canRetryAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void retry(session)} type="button" variant="secondary">{text.retry}</Button>}<Button disabled={displayedBusy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')} type="button" variant="danger">{text.stop}</Button><a href={`/agent-sessions/${session.id}`}>{text.details}</a></div></article>)}</div>}
+    {showSessionsLoading ? <p className="empty" data-testid="sessions-loading" role="status">{text.loadingSessions}</p> : showSessionsEmpty ? <p className="empty">{text.noSessions}</p> : visibleSessions.length > 0 && <div className="session-mini-list">{visibleSessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || text.blockingReasonMissing}</p><small>{text.heartbeat(formatTime(session.last_heartbeat_at))}</small><AgentExecutionProjection session={session} /><div className="session-actions">{session.state === 'paused' && <Button disabled={displayedBusy} onClick={() => void signal(session, 'resume')} type="button" variant="secondary">{text.resume}</Button>}{canPauseAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void signal(session, 'pause')} type="button" variant="secondary">{text.pause}</Button>}{canRetryAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void retry(session)} type="button" variant="secondary">{text.retry}</Button>}<Button disabled={displayedBusy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')} type="button" variant="danger">{text.stop}</Button><a href={`/agent-sessions/${session.id}`}>{text.details}</a></div></article>)}</div>}
     <LoadMoreButton collection={agentsPage} label={text.availableAgentsLabel} />
     <LoadMoreButton collection={sessionsPage} label={text.workItemSessionsLabel} />
   </section>

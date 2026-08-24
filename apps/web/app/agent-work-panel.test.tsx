@@ -5,7 +5,7 @@ import { AgentWorkPanel, useAgentDelegationController, type AgentDelegationContr
 import { createAgentSession, type Agent, type AgentSession } from './lib/agents'
 import { LocaleProvider } from './lib/i18n'
 
-const paginationState = vi.hoisted(() => ({ agentNextCursor: null as string | null, sessionsInitialized: true, sessionsLoading: false }))
+const paginationState = vi.hoisted(() => ({ agentNextCursor: null as string | null, sessions: [] as AgentSession[], sessionsInitialized: true, sessionsLoading: false, sessionsRefreshCount: 0 }))
 
 vi.mock('./lib/agents', async () => {
   const actual = await vi.importActual<typeof import('./lib/agents')>('./lib/agents')
@@ -17,13 +17,13 @@ vi.mock('./lib/pagination', async () => {
   return {
     ...actual,
     usePagedApiList: vi.fn((path: string) => ({
-      items: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? [] : [agent],
+      items: path.includes('/agent-sessions?') ? paginationState.sessions : path.includes('/plans') || path.includes('/approvals?') ? [] : [agent],
       nextCursor: path.includes('/agent-sessions?') || path.includes('/plans') || path.includes('/approvals?') ? null : paginationState.agentNextCursor,
       initialized: path.includes('/agent-sessions?') ? paginationState.sessionsInitialized : true,
       loading: path.includes('/agent-sessions?') ? paginationState.sessionsLoading : false,
       loadingMore: false,
       error: null,
-      refresh: vi.fn(async () => undefined),
+      refresh: vi.fn(async () => { if (path.includes('/agent-sessions?')) paginationState.sessionsRefreshCount += 1 }),
       loadMore: vi.fn(async () => undefined),
     })),
   }
@@ -52,8 +52,10 @@ describe('useAgentDelegationController', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     paginationState.agentNextCursor = null
+    paginationState.sessions = []
     paginationState.sessionsInitialized = true
     paginationState.sessionsLoading = false
+    paginationState.sessionsRefreshCount = 0
     agent.team_access![0]!.approved_capabilities = ['work:read', 'work:write']
   })
   afterEach(() => cleanup())
@@ -150,6 +152,31 @@ describe('useAgentDelegationController', () => {
     expect(screen.getByTestId('sessions-loading')).toHaveTextContent('正在加载智能体执行记录')
     expect(screen.queryByText('尚未委派任何智能体 Session。')).not.toBeInTheDocument()
     expect(screen.getByTestId('live-agent-panel')).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('keeps a created queued session visible until the server sessions projection catches up', async () => {
+    const queuedSession = { ...session, id: 'session-queued', state: 'queued' } as AgentSession
+    const clearLatest = vi.fn()
+    const onReloadWorkItem = vi.fn()
+    const controller: AgentDelegationController = {
+      scopeKey: 'authority-a:work-a', agentsPage: { items: [agent], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
+      eligibleAgents: [agent], directAgent: agent, canDirect: true, canChoose: true, disabled: false, reason: null,
+      chooserRequest: 0, requestChooser: vi.fn(), consumeChooserRequest: vi.fn(), create: vi.fn(async () => queuedSession), error: null, busy: false,
+      latest: { agent, session: queuedSession }, clearLatest, clearError: vi.fn(),
+    }
+    const view = render(<LocaleProvider><AgentWorkPanel controller={controller} onReloadWorkItem={onReloadWorkItem} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+
+    await waitFor(() => expect(screen.getByText('queued')).toBeVisible())
+    expect(screen.queryByText('尚未委派任何智能体 Session。')).not.toBeInTheDocument()
+    expect(paginationState.sessionsRefreshCount).toBe(1)
+    expect(clearLatest).not.toHaveBeenCalled()
+    expect(onReloadWorkItem).not.toHaveBeenCalled()
+
+    paginationState.sessions = [queuedSession]
+    view.rerender(<LocaleProvider><AgentWorkPanel controller={controller} onReloadWorkItem={onReloadWorkItem} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    await waitFor(() => expect(clearLatest).toHaveBeenCalledOnce())
+    expect(onReloadWorkItem).toHaveBeenCalledOnce()
+    expect(paginationState.sessionsRefreshCount).toBe(1)
   })
 
   it.each([
