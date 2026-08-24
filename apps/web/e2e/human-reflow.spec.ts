@@ -170,7 +170,10 @@ for (const viewport of viewports) {
           ? [] : [{ label: element.getAttribute('aria-label') ?? element.textContent?.trim() ?? element.tagName, height: value.height, width: value.width }]
       }))
       expect(controls.length).toBeGreaterThan(0)
-      expect(controls.every(control => control.height >= 40 && control.width >= 40)).toBe(true)
+      expect(
+        controls.filter(control => control.height < 40 || control.width < 40),
+        'visible mobile controls smaller than 40px',
+      ).toEqual([])
     }
 
     const child = strip.getByRole('button', { name: /secondary planning project/i })
