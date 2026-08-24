@@ -248,5 +248,9 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
   return mode === 'sheet' ? <Sheet className="work-item-detail-sheet" closeLabel={text.close} description={text.editProjection} onClose={() => confirmDiscard(onClose)} open title={model.key}>{body}</Sheet> : <section className="work-item-full-page" aria-labelledby={fullPageHeadingId} ref={fullPageRef} tabIndex={-1}>{body}</section>
 }
 
-export function WorkItemDetail(props: Props) { return <WorkItemDetailContent key={`${props.model.id}:${props.model.revision}:${props.mode}:${props.resetKey}`} {...props} /> }
+// A server revision refreshes the editable model but is not a navigation event.
+// Keep the content mounted so transient UI state (notably the Agent executions
+// tab opened by a one-click delegation) survives the refresh. A changed Issue,
+// mode, or explicit resetKey still remounts the content and resets that state.
+export function WorkItemDetail(props: Props) { return <WorkItemDetailContent key={`${props.model.id}:${props.mode}:${props.resetKey}`} {...props} /> }
 export function WorkItemDetailUnavailable(props: UnavailableProps) { return <DetailUnavailableContent key={`${props.requestedKey}:${props.mode}:${props.error.code}`} {...props} /> }

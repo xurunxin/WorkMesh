@@ -237,3 +237,95 @@ describe('WorkItemDetail full-page heading ownership', () => {
     expect(surface).toHaveAttribute('aria-labelledby', headings[0]?.id)
   })
 })
+
+describe('WorkItemDetail tab continuity', () => {
+  it('keeps Agent executions selected when the same Issue receives a newer revision', () => {
+    const { rerender } = render(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('tab', { name: /^Agent executions$/ }))
+    expect(screen.getByRole('tab', { name: /^Agent executions$/ })).toHaveAttribute('aria-selected', 'true')
+
+    rerender(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel({ ...item, revision: 3, title: 'Updated detail' })}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    expect(screen.getByRole('tab', { name: /^Agent executions$/ })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('heading', { name: /^Agent executions$/ })).toBeVisible()
+    expect(screen.getByDisplayValue('Updated detail')).toBeVisible()
+  })
+
+  it('resets the selected tab when the Issue changes or an explicit reset is requested', () => {
+    const { rerender } = render(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('tab', { name: /^Agent executions$/ }))
+    rerender(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel({ ...item, id: 'w2', number: 9, revision: 1, title: 'Another detail' })}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+    expect(screen.getByRole('tab', { name: /^Responsibility$/ })).toHaveAttribute('aria-selected', 'true')
+
+    fireEvent.click(screen.getByRole('tab', { name: /^Agent executions$/ }))
+    rerender(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="full_page"
+        model={toWorkItemDetailModel({ ...item, id: 'w2', number: 9, revision: 2, title: 'Another detail' })}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={1}
+        supplemental={null}
+      />,
+    )
+    expect(screen.getByRole('tab', { name: /^Responsibility$/ })).toHaveAttribute('aria-selected', 'true')
+  })
+})
