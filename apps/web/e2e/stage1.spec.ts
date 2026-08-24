@@ -51,7 +51,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     const drawer = page.getByRole('dialog')
     await drawer.getByRole('tab', { name: 'Agent executions' }).click()
     const agentPanel = drawer.getByTestId('live-agent-panel')
-    const delegateButton = agentPanel.getByRole('button', { name: 'One-click delegate' })
+    const delegateButton = agentPanel.getByRole('button', { name: 'Force assign now' })
     await expect(delegateButton).toBeVisible()
     const mutationPaths: string[] = []
     page.on('request', request => { if (request.method() === 'POST') mutationPaths.push(new URL(request.url()).pathname) })
