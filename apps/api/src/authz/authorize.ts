@@ -403,7 +403,13 @@ export async function authorizeRequest(
   const actor = request.actor
   if (!actor) throw new DomainError('UNAUTHENTICATED', 'An authenticated principal is required')
   if (
-    policy.authentication === 'coordination_connection'
+    (
+      policy.authentication === 'coordination_connection'
+      || (
+        policy.authentication === 'human_or_coordination_connection'
+        && actor.kind === 'agent'
+      )
+    )
     && actor.authentication !== 'coordination_connection'
   ) {
     throw new DomainError('UNAUTHENTICATED', 'An active Agent Connection is required', {

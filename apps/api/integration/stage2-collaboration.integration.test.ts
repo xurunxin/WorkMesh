@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb, opaqueToken, tokenHash } from '@workmesh/db'
 import { buildApp } from '../src/server.js'
+import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl) throw new Error('Stage 2 API integration requires RUN_INTEGRATION=1 and DATABASE_URL.')
@@ -14,10 +15,10 @@ const restoreSessionSubjectConstraint = async (): Promise<void> => {
       WHERE conname='agent_sessions_scope_kind_check'
         AND conrelid='agent_sessions'::regclass`,
   )
+  if (exists.rowCount) return
   await db.query(
     'ALTER TABLE agent_sessions DROP CONSTRAINT IF EXISTS agent_sessions_subject_container_check',
   )
-  if (exists.rowCount) return
   await db.query(
     'UPDATE agent_sessions SET project_id=NULL WHERE work_item_id IS NOT NULL',
   )
@@ -41,7 +42,7 @@ const app = buildApp()
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T }
 type Human = { cookie: string; csrf: string; actorId: string }
 type Agent = { id: string; actorId: string; installationToken: string }
-type Session = { id: string; revision: number; exchangeToken: string }
+type Session = { id: string; revision: number }
 type Fixture = { human: Human; workspaceId: string; teamId: string; readyId: string; workItemId: string; parent: Session; parentToken: string; runner: Agent; reviewer: Agent; overflow: Agent; planVersionId: string; stepA: string; stepB: string; stepC: string }
 
 const humanCall = async (human: Human, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT', url: string, payload?: object, extra: Record<string, string> = {}): Promise<Response> =>
@@ -66,21 +67,25 @@ async function registerWithoutTeamAccess(human: Human, slug: string): Promise<Ag
   return { id: created.id, actorId: row.rows[0]!.actor_id, installationToken: created.installation_token }
 }
 
-async function start(human: Human, agent: Agent, workspaceId: string, teamId: string, workItemId: string, budget: Record<string, number> = {}, role: 'executor' | 'reviewer' = 'executor'): Promise<Session> {
-  const delegation = await humanCall(human, 'POST', `/api/v1/work-items/${workItemId}/delegations`, {
-    agentId: agent.id, principalHumanActorId: human.actorId, role, scopeType: 'work_item', scopeId: workItemId,
-    permissionsSnapshot: ['work:read', 'work:write', 'plan:write', 'artifact:write'], capabilityScope: { workspaceId, teamIds: [teamId], projectIds: [], workItemIds: [workItemId], repositoryIds: [], capabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write'] },
-  })
-  expect(delegation.statusCode).toBe(200)
-  const response = await humanCall(human, 'POST', '/api/v1/agent-sessions', { delegationId: delegation.json<{ id: string }>().id, workItemId, initialPrompt: 'Stage 2 integration', budget })
+async function start(human: Human, agent: Agent, _workspaceId: string, _teamId: string, workItemId: string, budget: Record<string, number> = {}): Promise<Session> {
+  const revision = (await db.query<{ revision: number }>(
+    'SELECT revision FROM work_items WHERE id=$1',
+    [workItemId],
+  )).rows[0]!.revision
+  const response = await humanCall(human, 'POST', `/api/v1/work-items/${workItemId}/agent-session`, {
+    agentId: agent.id,
+    principalHumanActorId: human.actorId,
+    role: 'executor',
+    requestedCapabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write'],
+    initialPrompt: 'Stage 2 integration',
+    budget,
+  }, { 'if-match': `"revision-${revision}"` })
   expect(response.statusCode).toBe(200)
-  return response.json<Session>()
+  return response.json<{ session: Session }>().session
 }
 
 async function exchangeAndExecute(session: Session, agent: Agent): Promise<string> {
-  const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${session.id}/token/exchange`, payload: { exchangeToken: session.exchangeToken }, headers: { authorization: `Bearer ${agent.installationToken}`, 'idempotency-key': randomUUID() } }) as unknown as Response
-  expect(exchange.statusCode).toBe(200)
-  const token = exchange.json<{ sessionToken: string }>().sessionToken
+  const token = await seedAgentSessionBearer(db, session.id, agent.id)
   const ack = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/ack`, { summary: 'accepted', externalUrls: [] })
   expect(ack.statusCode).toBe(200)
   const state = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/state`, { state: 'executing', reason: 'integration' }, { 'if-match': `"revision-${ack.json<{ revision: number }>().revision}"` })
@@ -89,9 +94,7 @@ async function exchangeAndExecute(session: Session, agent: Agent): Promise<strin
 }
 
 async function exchangeOnly(session: Session, agent: Agent): Promise<string> {
-  const exchange = await app.inject({ method: 'POST', url: `/api/v1/agent-sessions/${session.id}/token/exchange`, payload: { exchangeToken: session.exchangeToken }, headers: { authorization: `Bearer ${agent.installationToken}`, 'idempotency-key': randomUUID() } }) as unknown as Response
-  expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200)
-  return exchange.json<{ sessionToken: string }>().sessionToken
+  return seedAgentSessionBearer(db, session.id, agent.id)
 }
 
 async function makeFixture(): Promise<Fixture> {
@@ -139,6 +142,84 @@ async function directSession(f: Fixture, agent: Agent, title: string): Promise<{
   const delegation = await db.query<{ id: string }>("INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,work_item_id,role,scope_type,scope_id,permissions_snapshot,capability_scope) VALUES($1,$2,$3,$4,$5,$6,'executor','work_item',$6,$7,$8) RETURNING id", [f.workspaceId, f.teamId, agent.id, agent.actorId, f.human.actorId, workItemId, ['work:read', 'work:write'], { workspaceId: f.workspaceId, teamIds: [f.teamId], workItemIds: [workItemId], capabilities: ['work:read', 'work:write'] }])
   const session = await db.query<{ id: string }>("INSERT INTO agent_sessions(workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,context_snapshot_id,state,budget,inherited_budget) VALUES($1,$2,$3,$4,$5,$6,$7,'executing',$8,$8) RETURNING id", [f.workspaceId, f.teamId, agent.id, agent.actorId, delegation.rows[0]!.id, workItemId, context.rows[0]!.id, { maxRuntimeSeconds: 600, maxInputTokens: 200 }])
   return { id: session.rows[0]!.id, delegationId: delegation.rows[0]!.id, workItemId }
+}
+
+async function directBoundSession(
+  delegationId: string,
+  subject: { workItemId?: string; projectId?: string },
+): Promise<Session> {
+  const authority = (await db.query<{
+    workspace_id: string
+    team_id: string
+    agent_id: string
+    agent_actor_id: string
+  }>(
+    `SELECT workspace_id,team_id,agent_id,agent_actor_id
+       FROM delegations WHERE id=$1`,
+    [delegationId],
+  )).rows[0]!
+  const contextSnapshotId = subject.workItemId
+    ? (await db.query<{ id: string }>(
+        `SELECT id FROM context_snapshots
+          WHERE workspace_id=$1 AND work_item_id=$2
+          ORDER BY created_at DESC,id DESC LIMIT 1`,
+        [authority.workspace_id, subject.workItemId],
+      )).rows[0]?.id ?? null
+    : null
+  const session = (await db.query<Session>(
+    `INSERT INTO agent_sessions(
+       workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+       work_item_id,project_id,context_snapshot_id,budget
+     ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,'{}'::jsonb)
+     RETURNING id,revision`,
+    [
+      authority.workspace_id,
+      authority.team_id,
+      authority.agent_id,
+      authority.agent_actor_id,
+      delegationId,
+      subject.workItemId ?? null,
+      subject.projectId ?? null,
+      contextSnapshotId,
+    ],
+  )).rows[0]!
+  await db.query(
+    `INSERT INTO work_room_channels(workspace_id,subject_kind,subject_id,team_id)
+     VALUES($1,'session',$2,$3)
+     ON CONFLICT(workspace_id,subject_kind,subject_id) DO NOTHING`,
+    [authority.workspace_id, session.id, authority.team_id],
+  )
+  return session
+}
+
+async function directReviewerSession(f: Fixture, agent: Agent): Promise<Session> {
+  const capabilities = ['work:read', 'work:write', 'plan:write', 'artifact:write']
+  const delegation = (await db.query<{ id: string }>(
+    `INSERT INTO delegations(
+       workspace_id,team_id,agent_id,agent_actor_id,
+       principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+       permissions_snapshot,capability_scope,status
+     ) VALUES($1,$2,$3,$4,$5,$6,'reviewer','work_item',$6,$7,$8,'active')
+     RETURNING id`,
+    [
+      f.workspaceId,
+      f.teamId,
+      agent.id,
+      agent.actorId,
+      f.human.actorId,
+      f.workItemId,
+      capabilities,
+      {
+        workspaceId: f.workspaceId,
+        teamIds: [f.teamId],
+        projectIds: [],
+        workItemIds: [f.workItemId],
+        repositoryIds: [],
+        capabilities,
+      },
+    ],
+  )).rows[0]!
+  return directBoundSession(delegation.id, { workItemId: f.workItemId })
 }
 
 async function tokenFor(sessionId: string, agent: Agent): Promise<string> {
@@ -960,14 +1041,10 @@ describe('Stage 2 collaboration API acceptance', () => {
         },
       ],
     )).rows[0]!.id
-    const projectOnlyCreated = await humanCall(f.human, 'POST', '/api/v1/agent-sessions', {
-      delegationId: projectOnlyDelegationId,
-      projectId,
-      initialPrompt: 'Exercise explicit Project scope.',
-      budget: {},
-    })
-    expect(projectOnlyCreated.statusCode, JSON.stringify(projectOnlyCreated.json())).toBe(200)
-    const projectOnlySession = projectOnlyCreated.json<Session>()
+    const projectOnlySession = await directBoundSession(
+      projectOnlyDelegationId,
+      { projectId },
+    )
     const projectOnlyToken = await exchangeOnly(projectOnlySession, f.overflow)
     await db.query("UPDATE agent_sessions SET state='executing' WHERE id=$1", [projectOnlySession.id])
 
@@ -1760,15 +1837,7 @@ describe('Stage 2 collaboration API acceptance', () => {
 
   it('revalidates claim, acknowledge, and reply idempotency replays against live scope', async () => {
     const f = await makeFixture()
-    const targetSession = await start(
-      f.human,
-      f.reviewer,
-      f.workspaceId,
-      f.teamId,
-      f.workItemId,
-      {},
-      'reviewer',
-    )
+    const targetSession = await directReviewerSession(f, f.reviewer)
     const targetToken = await exchangeAndExecute(targetSession, f.reviewer)
     const targetDelegation = (await db.query<{
       delegation_id: string
@@ -1932,13 +2001,12 @@ describe('Stage 2 collaboration API acceptance', () => {
 
   it('claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated', async () => {
     const f = await makeFixture()
-    const reviewerSession = await start(f.human, f.reviewer, f.workspaceId, f.teamId, f.workItemId, {}, 'reviewer')
+    const reviewerSession = await directReviewerSession(f, f.reviewer)
     const reviewerDelegationId = (await db.query<{ delegation_id: string }>('SELECT delegation_id FROM agent_sessions WHERE id=$1', [reviewerSession.id])).rows[0]!.delegation_id
-    const siblingResponse = await humanCall(f.human, 'POST', '/api/v1/agent-sessions', {
-      delegationId: reviewerDelegationId, workItemId: f.workItemId, initialPrompt: 'Compete for actor-targeted Inbox work', budget: {},
-    })
-    expect(siblingResponse.statusCode, JSON.stringify(siblingResponse.json())).toBe(200)
-    const siblingSession = siblingResponse.json<Session>()
+    const siblingSession = await directBoundSession(
+      reviewerDelegationId,
+      { workItemId: f.workItemId },
+    )
     const siblingToken = await exchangeAndExecute(siblingSession, f.reviewer)
     const reviewerToken = await exchangeAndExecute(reviewerSession, f.reviewer)
     const room = await humanCall(f.human, 'GET', `/api/v1/rooms?workItemId=${f.workItemId}`)

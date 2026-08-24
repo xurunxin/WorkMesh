@@ -28,6 +28,8 @@ const securityFor = (
       return [{ AgentSessionToken: [] }]
     case 'human_or_agent_session':
       return [{ SessionCookie: [] }, { AgentSessionToken: [] }]
+    case 'human_or_coordination_connection':
+      return [{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }]
     case 'coordination_connection':
       return [{ AgentConnectionInstallationToken: [] }]
     case 'installation_target':
@@ -168,7 +170,13 @@ describe('routePolicyManifest', () => {
       expect(
         effectiveSecurity,
         `${route.operationId} effective OpenAPI security must match ${route.authentication}`,
-      ).toEqual(securityFor(route.authentication))
+      ).toEqual(route.operationId === 'listWorkItems'
+        ? [
+            { SessionCookie: [] },
+            { AgentSessionToken: [] },
+            { AgentConnectionInstallationToken: [] },
+          ]
+        : securityFor(route.authentication))
       if (route.credentialRateLimit === 'shared_redis') {
         expect(operation).toMatchObject({
           'x-workmesh-auth-rate-limit': 'shared_redis',
@@ -273,6 +281,22 @@ describe('routePolicyManifest', () => {
     expect(policy?.human).toMatchObject({
       membership: 'resolved_team',
       teamRoles: ['admin', 'maintainer', 'member'],
+    })
+  })
+
+  it('limits forced assignment to a Human Session or Coordination Connection', () => {
+    const policy = routePolicyManifest.find(
+      route => route.operationId === 'delegateAndStartAgentSession',
+    )
+    expect(policy).toMatchObject({
+      authentication: 'human_or_coordination_connection',
+      actorKinds: ['human', 'agent'],
+      agent: {
+        capabilities: ['agent:delegate'],
+        requireActiveSession: true,
+        requireActiveDelegation: true,
+        requireLiveGrantIntersection: true,
+      },
     })
   })
 

@@ -1,6 +1,24 @@
 import type { PoolClient } from 'pg'
 import { DomainError } from '@workmesh/domain'
 
+export async function locateConnectionInstallationTokenId(
+  tx: PoolClient,
+  input: Readonly<{ agentId: string; credentialHash: string }>,
+): Promise<string | undefined> {
+  const row = (await tx.query<{ id: string; agent_id: string }>(
+    `SELECT id,agent_id
+       FROM agent_installation_tokens
+      WHERE token_hash=$1`,
+    [input.credentialHash],
+  )).rows[0]
+  if (row && row.agent_id !== input.agentId)
+    throw new DomainError(
+      'AGENT_IDENTITY_REQUIRED',
+      'Connection credential does not belong to the current Agent',
+    )
+  return row?.id
+}
+
 /**
  * Reconciles the exact Connection credential into the existing Installation
  * Token table used by execution-Session exchange. The token hash is the stable

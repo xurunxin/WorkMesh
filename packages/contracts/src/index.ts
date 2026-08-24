@@ -1636,7 +1636,7 @@ const clientProfileFeatureSchema = z.object({
 const clientProfileOperationSchema = z.object({
   operationId: z.string().min(1),
   policyId: z.string().min(1),
-  authentication: z.enum(['agent_session', 'human_or_agent_session', 'coordination_connection', 'installation_target']),
+  authentication: z.enum(['agent_session', 'human_or_agent_session', 'human_or_coordination_connection', 'coordination_connection', 'installation_target']),
   transports: z.object({
     rest: z.object({ method: z.string().min(1), path: z.string().min(1) }).strict(),
     sse: z.boolean(),
@@ -1719,7 +1719,7 @@ export function createAgentCapabilityManifest(input: AgentCapabilityManifestInpu
       return {
         operationId: policy.operationId,
         policyId: policy.policyId,
-        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'coordination_connection' | 'installation_target',
+        authentication: policy.authentication as 'agent_session' | 'human_or_agent_session' | 'human_or_coordination_connection' | 'coordination_connection' | 'installation_target',
         transports: {
           rest: policy.bindings.rest,
           sse: policy.bindings.sse,

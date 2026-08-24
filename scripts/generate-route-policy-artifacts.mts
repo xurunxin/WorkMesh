@@ -49,6 +49,8 @@ const securityFor = (
       return '[{ AgentSessionToken: [] }]'
     case 'human_or_agent_session':
       return '[{ SessionCookie: [] }, { AgentSessionToken: [] }]'
+    case 'human_or_coordination_connection':
+      return '[{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }]'
     case 'coordination_connection':
       return '[{ AgentConnectionInstallationToken: [] }]'
     case 'installation_target':
@@ -98,7 +100,9 @@ for (const policy of routePolicyManifest) {
   const opening = openapi.indexOf('{', methodStart)
   const flow = opening !== -1 && opening < operationStart
   const featureKey = policy.feature.key ?? 'none'
-  const security = securityFor(policy.authentication)
+  const security = policy.operationId === 'listWorkItems'
+    ? '[{ SessionCookie: [] }, { AgentSessionToken: [] }, { AgentConnectionInstallationToken: [] }]'
+    : securityFor(policy.authentication)
   const credentialRateLimit = policy.credentialRateLimit === 'shared_redis'
     ? 'x-workmesh-auth-rate-limit: shared_redis, '
     : ''

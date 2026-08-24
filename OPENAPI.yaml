@@ -554,8 +554,9 @@ paths:
         x-workmesh-actor-kinds: [human, agent],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
+        security: [{ SessionCookie: [] }, { AgentSessionToken: [] }, { AgentConnectionInstallationToken: [] }],
         operationId: listWorkItems,
+        description: "Ordinary listing accepts a Human Session or Agent Session. claimable=true is query-dependent and requires an active Coordination Connection Installation Token.",
         parameters:
           [
             { $ref: "#/components/parameters/Cursor" },
@@ -994,7 +995,7 @@ paths:
         x-workmesh-actor-kinds: [human, agent],
         x-workmesh-feature-key: none,
         x-workmesh-feature-tier: stable,
-        security: [{ SessionCookie: [] }, { AgentSessionToken: [] }],
+        security: [{ SessionCookie: [] }, { AgentConnectionInstallationToken: [] }],
         x-workmesh-secret-replay: encrypted_auth,
         operationId: delegateAndStartAgentSession,
         description: "Human or an authorized Coordination Agent performs a forced, one-call executor assignment and starts its initial queued execution Session. role is fixed to executor. No exchange token or other secret is returned by this forced-assignment endpoint.",
@@ -1011,7 +1012,7 @@ paths:
           },
         responses:
           {
-            "201":
+            "200":
               { $ref: "#/components/responses/DelegateAndStartAgentSession" },
             "400": { $ref: "#/components/responses/BadRequest" },
             "403": { $ref: "#/components/responses/Forbidden" },
@@ -3318,7 +3319,7 @@ components:
             properties:
               operationId: { type: string }
               policyId: { type: string }
-              authentication: { type: string, enum: [agent_session, human_or_agent_session, coordination_connection, installation_target] }
+              authentication: { type: string, enum: [agent_session, human_or_agent_session, human_or_coordination_connection, coordination_connection, installation_target] }
               transports:
                 type: object
                 additionalProperties: false

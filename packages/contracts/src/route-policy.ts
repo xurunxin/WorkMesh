@@ -8,6 +8,7 @@ export type RoutePolicyAuthentication =
   | 'human_session'
   | 'agent_session'
   | 'human_or_agent_session'
+  | 'human_or_coordination_connection'
   | 'coordination_connection'
   | 'installation_target'
   | 'provider_signature'
@@ -294,6 +295,7 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
   if (publicOperations.has(operationId)) return 'public'
   if (operationId === 'receiveGitHubWebhook') return 'provider_signature'
   if (operationId === 'getCurrentAgentConnectionIdentity' || operationId === 'claimWorkItem') return 'coordination_connection'
+  if (operationId === 'delegateAndStartAgentSession') return 'human_or_coordination_connection'
   if (installationTargetOperations.has(operationId)) return 'installation_target'
   if (humanOnlyOperations.has(operationId)) return 'human_session'
   if (agentOnlyOperations.has(operationId)) return 'agent_session'
@@ -369,6 +371,7 @@ export function createRoutePolicyManifest(
     const agentOnly = authentication === 'agent_session'
     const agentAuthentication = authentication === 'agent_session'
       || authentication === 'human_or_agent_session'
+      || authentication === 'human_or_coordination_connection'
       || authentication === 'coordination_connection'
       || authentication === 'installation_target'
     const feature = featureForRoute(binding.path)

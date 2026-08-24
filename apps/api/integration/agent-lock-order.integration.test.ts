@@ -1056,7 +1056,7 @@ describe('Agent authority total lock order', () => {
     }
   })
 
-  it('serializes createSession, retry, and revoke with no partial Session graph', async () => {
+  it('serializes forced assignment, retry, and revoke with no partial Session graph', async () => {
     const fixture = await makeFixture()
     await db.query(
       'UPDATE agent_definitions SET max_concurrency=1 WHERE id=$1',
@@ -1085,13 +1085,16 @@ describe('Agent authority total lock order', () => {
       const create = humanCall(
         fixture.human,
         'POST',
-        '/api/v1/agent-sessions',
+        `/api/v1/work-items/${fixture.workItemId}/agent-session`,
         {
-          delegationId: fixture.delegationId,
-          workItemId: fixture.workItemId,
+          agentId: fixture.runner.id,
+          principalHumanActorId: fixture.human.actorId,
+          role: 'executor',
+          requestedCapabilities: ['work:read', 'work:write', 'plan:write', 'artifact:write'],
           initialPrompt: 'Concurrent direct creation.',
           budget: {},
         },
+        { 'if-match': `"revision-${fixture.workItemRevision}"` },
       )
       const retry = humanCall(
         fixture.human,

@@ -656,6 +656,244 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect(eventRows.every(row => Boolean(row.outbox_id))).toBe(true)
   })
 
+  it('keeps Human forced assignment authoritative before, during, and after self-claim and rolls back replacement failures', async () => {
+    const [claimingConnection, forcedConnection] = await Promise.all([
+      pairConnection(`claim-race-${randomUUID().slice(0, 8)}`),
+      pairConnection(`force-race-${randomUUID().slice(0, 8)}`),
+    ])
+    const connectionAgents = (await db.query<{ id: string; agent_id: string }>(
+      'SELECT id,agent_id FROM agent_connections WHERE id=ANY($1::uuid[])',
+      [[claimingConnection.connection.id, forcedConnection.connection.id]],
+    )).rows
+    const claimingAgentId = connectionAgents.find(row => row.id === claimingConnection.connection.id)!.agent_id
+    const forcedAgentId = connectionAgents.find(row => row.id === forcedConnection.connection.id)!.agent_id
+    await db.query(
+      'UPDATE agent_definitions SET max_concurrency=8 WHERE id=ANY($1::uuid[])',
+      [[claimingAgentId, forcedAgentId]],
+    )
+
+    const createItem = async (suffix: string) => {
+      const response = await human('POST', '/api/v1/work-items', {
+        teamId,
+        title: `Forced assignment ${suffix} ${randomUUID()}`,
+        statusId: readyId,
+        priority: 'high',
+        labels: [],
+        responsibleHumanActorId: actorId,
+      })
+      expect(response.statusCode, response.body).toBe(200)
+      return response.json<{ id: string; revision: number }>()
+    }
+    const forceAssign = (item: { id: string; revision: number }) => human(
+      'POST',
+      `/api/v1/work-items/${item.id}/agent-session`,
+      {
+        agentId: forcedAgentId,
+        principalHumanActorId: actorId,
+        role: 'executor',
+        requestedCapabilities: ['work:read', 'work:write'],
+        initialPrompt: 'Human forced assignment wins.',
+        budget: {},
+      },
+      item.revision,
+    )
+    const selfClaim = (item: { id: string; revision: number }) => coordinator(
+      claimingConnection.token,
+      'POST',
+      `/api/v1/work-items/${item.id}/claim`,
+      {},
+      item.revision,
+    )
+    const activeAssignments = async (workItemId: string) => (await db.query<{
+      delegation_id: string
+      session_id: string
+      agent_id: string
+      delegation_status: string
+      session_state: string
+    }>(
+      `SELECT delegation.id AS delegation_id,session.id AS session_id,
+              delegation.agent_id,delegation.status AS delegation_status,
+              session.state AS session_state
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.work_item_id=$1
+          AND delegation.role='executor' AND delegation.status='active'
+          AND session.session_kind='execution'
+          AND session.state NOT IN ('completed','failed','canceled')
+        ORDER BY delegation.id,session.id`,
+      [workItemId],
+    )).rows
+    const expectForcedWinner = async (workItemId: string) => {
+      expect(await activeAssignments(workItemId)).toEqual([
+        expect.objectContaining({ agent_id: forcedAgentId, delegation_status: 'active' }),
+      ])
+    }
+
+    const before = await createItem('before claim')
+    const forcedBefore = await forceAssign(before)
+    expect(forcedBefore.statusCode, forcedBefore.body).toBe(200)
+    const rejectedClaim = await selfClaim(before)
+    expect(rejectedClaim.statusCode, rejectedClaim.body).toBe(409)
+    expect(rejectedClaim.json<{ error: { code: string } }>().error.code).toBe('WORK_ITEM_ALREADY_ASSIGNED')
+    await expectForcedWinner(before.id)
+    expect((await db.query(
+      'SELECT 1 FROM delegations WHERE work_item_id=$1 AND agent_id=$2',
+      [before.id, claimingAgentId],
+    )).rowCount).toBe(0)
+
+    const after = await createItem('after claim')
+    const claimedAfter = await selfClaim(after)
+    expect(claimedAfter.statusCode, claimedAfter.body).toBe(200)
+    const claimedAfterBody = claimedAfter.json<{ delegation: { id: string }; session: { id: string } }>()
+    const forcedAfter = await forceAssign(after)
+    expect(forcedAfter.statusCode, forcedAfter.body).toBe(200)
+    await expectForcedWinner(after.id)
+    expect((await db.query<{ status: string; state: string; state_reason: string }>(
+      `SELECT delegation.status,session.state,session.state_reason
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [claimedAfterBody.delegation.id, claimedAfterBody.session.id],
+    )).rows[0]).toEqual({
+      status: 'revoked',
+      state: 'canceled',
+      state_reason: 'replaced by Human forced assignment',
+    })
+    expect((await db.query(
+      'SELECT 1 FROM agent_session_tokens WHERE session_id=$1 AND revoked_at IS NULL',
+      [claimedAfterBody.session.id],
+    )).rowCount).toBe(0)
+
+    const during = await createItem('during claim')
+    const advisoryKey = 754781
+    const gate = await db.connect()
+    await db.query('DROP TRIGGER IF EXISTS stage5_pause_self_claim ON delegations')
+    await db.query('DROP FUNCTION IF EXISTS stage5_pause_self_claim()')
+    await db.query(`CREATE FUNCTION stage5_pause_self_claim() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${during.id}'::uuid AND NEW.agent_id='${claimingAgentId}'::uuid THEN
+          PERFORM pg_advisory_xact_lock(${advisoryKey});
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_pause_self_claim
+      BEFORE INSERT ON delegations FOR EACH ROW EXECUTE FUNCTION stage5_pause_self_claim()`)
+    let gateOpen = false
+    try {
+      await gate.query('BEGIN')
+      gateOpen = true
+      await gate.query('SELECT pg_advisory_xact_lock($1)', [advisoryKey])
+      const claimDuring = selfClaim(during)
+      let claimReachedInsert = false
+      for (let attempt = 0; attempt < 100; attempt += 1) {
+        const waiting = (await db.query<{ count: number }>(
+          "SELECT count(*)::int AS count FROM pg_locks WHERE locktype='advisory' AND granted=false",
+        )).rows[0]!.count
+        if (waiting > 0) {
+          claimReachedInsert = true
+          break
+        }
+        await new Promise(resolve => setTimeout(resolve, 10))
+      }
+      expect(claimReachedInsert).toBe(true)
+      const forceDuring = forceAssign(during)
+      await new Promise(resolve => setTimeout(resolve, 20))
+      await gate.query('COMMIT')
+      gateOpen = false
+      const [claimed, forced] = await Promise.all([claimDuring, forceDuring])
+      expect(claimed.statusCode, claimed.body).toBe(200)
+      expect(forced.statusCode, forced.body).toBe(200)
+      await expectForcedWinner(during.id)
+      const claimBody = claimed.json<{ delegation: { id: string }; session: { id: string } }>()
+      expect((await db.query<{ status: string; state: string }>(
+        `SELECT delegation.status,session.state
+           FROM delegations delegation
+           JOIN agent_sessions session ON session.delegation_id=delegation.id
+          WHERE delegation.id=$1 AND session.id=$2`,
+        [claimBody.delegation.id, claimBody.session.id],
+      )).rows[0]).toEqual({ status: 'revoked', state: 'canceled' })
+    } finally {
+      if (gateOpen) await gate.query('ROLLBACK')
+      gate.release()
+      await db.query('DROP TRIGGER IF EXISTS stage5_pause_self_claim ON delegations')
+      await db.query('DROP FUNCTION IF EXISTS stage5_pause_self_claim()')
+    }
+
+    const rollback = await createItem('rollback')
+    const claimedRollback = await selfClaim(rollback)
+    expect(claimedRollback.statusCode, claimedRollback.body).toBe(200)
+    const rollbackClaim = claimedRollback.json<{ delegation: { id: string }; session: { id: string } }>()
+    const beforeRollback = (await db.query<{
+      status: string
+      state: string
+      revision: number
+      token_count: number
+    }>(
+      `SELECT delegation.status,session.state,session.revision,
+              (SELECT count(*)::int FROM agent_session_tokens token
+                WHERE token.session_id=session.id AND token.revoked_at IS NULL) AS token_count
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [rollbackClaim.delegation.id, rollbackClaim.session.id],
+    )).rows[0]!
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await db.query('DROP TRIGGER IF EXISTS stage5_fail_forced_assignment ON delegations')
+    await db.query('DROP FUNCTION IF EXISTS stage5_fail_forced_assignment()')
+    await db.query(`CREATE FUNCTION stage5_fail_forced_assignment() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${rollback.id}'::uuid AND NEW.agent_id='${forcedAgentId}'::uuid THEN
+          RAISE EXCEPTION 'forced assignment rollback fixture';
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_fail_forced_assignment
+      BEFORE INSERT ON delegations FOR EACH ROW EXECUTE FUNCTION stage5_fail_forced_assignment()`)
+    try {
+      const failed = await forceAssign(rollback)
+      expect(failed.statusCode, failed.body).toBe(500)
+    } finally {
+      await db.query('DROP TRIGGER IF EXISTS stage5_fail_forced_assignment ON delegations')
+      await db.query('DROP FUNCTION IF EXISTS stage5_fail_forced_assignment()')
+    }
+    expect((await db.query<{
+      status: string
+      state: string
+      revision: number
+      token_count: number
+    }>(
+      `SELECT delegation.status,session.state,session.revision,
+              (SELECT count(*)::int FROM agent_session_tokens token
+                WHERE token.session_id=session.id AND token.revoked_at IS NULL) AS token_count
+         FROM delegations delegation
+         JOIN agent_sessions session ON session.delegation_id=delegation.id
+        WHERE delegation.id=$1 AND session.id=$2`,
+      [rollbackClaim.delegation.id, rollbackClaim.session.id],
+    )).rows[0]).toEqual(beforeRollback)
+    expect((await db.query(
+      'SELECT 1 FROM delegations WHERE work_item_id=$1 AND agent_id=$2',
+      [rollback.id, forcedAgentId],
+    )).rowCount).toBe(0)
+    expect((await db.query<{ events: number; outbox: number }>(
+      `SELECT
+         (SELECT count(*)::int FROM domain_events event
+           WHERE event.cursor>$1::bigint) AS events,
+         (SELECT count(*)::int FROM outbox_events outbox
+           JOIN domain_events event ON event.id=outbox.domain_event_id
+          WHERE event.cursor>$1::bigint) AS outbox`,
+      [cursorBefore],
+    )).rows[0]).toEqual({ events: 0, outbox: 0 })
+    const retry = await forceAssign(rollback)
+    expect(retry.statusCode, retry.body).toBe(200)
+    await expectForcedWinner(rollback.id)
+  }, 120_000)
+
   it('imports a prepared Project once and reconstructs the full mapping after API and MCP restart', async () => {
     const unique = randomUUID().replaceAll('-', '').slice(0, 10)
     const agentSlug = `import-coordinator-${unique}`

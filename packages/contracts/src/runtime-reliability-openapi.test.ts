@@ -61,10 +61,24 @@ describe('runtime reliability OpenAPI contract', () => {
 
     const currentIdentity = findOperation(openapi, 'getCurrentAgentConnectionIdentity')
     expect(currentIdentity.security).toEqual([{ AgentConnectionInstallationToken: [] }])
+    const listWorkItems = findOperation(openapi, 'listWorkItems')
+    expect(listWorkItems.security).toContainEqual({
+      AgentConnectionInstallationToken: [],
+    })
+    const forcedAssignment = findOperation(openapi, 'delegateAndStartAgentSession')
+    expect(forcedAssignment.security).toEqual([
+      { SessionCookie: [] },
+      { AgentConnectionInstallationToken: [] },
+    ])
+    expect(forcedAssignment.responses?.['200']).toBeDefined()
+    expect(forcedAssignment.responses?.['201']).toBeUndefined()
     expect(resolveObjectPath(
       openapi.components.schemas.AgentCapabilityManifest,
       ['properties', 'operations', 'items', 'properties', 'authentication', 'enum'],
-    )).toEqual(expect.arrayContaining(['coordination_connection']))
+    )).toEqual(expect.arrayContaining([
+      'human_or_coordination_connection',
+      'coordination_connection',
+    ]))
 
     for (const operationId of executionAdmissionOperationIds) {
       const operation = findOperation(openapi, operationId)

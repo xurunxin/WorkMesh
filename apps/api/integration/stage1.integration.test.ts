@@ -6,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { applyMigrations, createDb, hashPassword, opaqueToken, tokenHash } from "@workmesh/db";
 import { buildApp } from "../src/server.js";
 import type { AuthRateLimitStore } from "../src/auth-rate-limit/redis-store.js";
+import { seedAgentSessionBearer } from "./agent-session-test-credentials.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl) throw new Error("Stage 1 integration requires RUN_INTEGRATION=1 and DATABASE_URL.");
@@ -38,8 +39,12 @@ const app = buildApp({
 });
 type Response = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T };
 type Human = { cookie: string; csrf: string; actorId: string };
-type Agent = { id: string; installationToken: string };
-type Session = { id: string; revision: number; exchangeToken: string };
+type Agent = { id: string };
+type Session = { id: string; revision: number };
+type AtomicStart = {
+  delegation: { id: string; revision: number };
+  session: Session;
+};
 let admin: Human; let teamId = ""; let readyId = ""; let workItemId = ""; let agent: Agent;
 let appUrl = "";
 
@@ -78,19 +83,26 @@ async function registerAgent(slug: string): Promise<Agent> {
   expect(body.installation_token).toHaveLength(43);
   const grant = await humanCall(admin, "PUT", `/api/v1/agents/${body.id}/team-access/${teamId}`, { approvedCapabilities: ["work:read", "work:write", "plan:write", "artifact:write"] });
   expect(grant.statusCode).toBe(200);
-  return { id: body.id, installationToken: body.installation_token };
+  return { id: body.id };
 }
-async function delegate(agentId: string, key: string = randomUUID()) {
-  const input = { agentId, principalHumanActorId: admin.actorId, role: "executor", scopeType: "work_item", scopeId: workItemId, permissionsSnapshot: ["work:read", "work:write", "plan:write", "artifact:write"], capabilityScope: { workspaceId: (await db.query<{ workspace_id: string }>("SELECT workspace_id FROM work_items WHERE id=$1", [workItemId])).rows[0]!.workspace_id, teamIds: [teamId], projectIds: [], workItemIds: [workItemId], repositoryIds: [], capabilities: ["work:read", "work:write", "plan:write", "artifact:write"] } };
-  return await humanCall(admin, "POST", `/api/v1/work-items/${workItemId}/delegations`, input, { "idempotency-key": key });
+async function start(agentId: string, key: string = randomUUID()): Promise<AtomicStart> {
+  const revision = (await db.query<{ revision: number }>(
+    "SELECT revision FROM work_items WHERE id=$1",
+    [workItemId],
+  )).rows[0]!.revision;
+  const response = await humanCall(admin, "POST", `/api/v1/work-items/${workItemId}/agent-session`, {
+    agentId,
+    principalHumanActorId: admin.actorId,
+    role: "executor",
+    requestedCapabilities: ["work:read", "work:write", "plan:write", "artifact:write"],
+    initialPrompt: "Implement the work item",
+    budget: {},
+  }, { "idempotency-key": key, "if-match": `"revision-${revision}"` });
+  expect(response.statusCode, JSON.stringify(response.json())).toBe(200);
+  return response.json<AtomicStart>();
 }
-async function start(delegationId: string, key: string = randomUUID()): Promise<Session> {
-  const response = await humanCall(admin, "POST", "/api/v1/agent-sessions", { delegationId, workItemId, initialPrompt: "Implement the work item", budget: {} }, { "idempotency-key": key });
-  expect(response.statusCode).toBe(200); return response.json<Session>();
-}
-async function exchange(session: Session, installationToken: string): Promise<string> {
-  const response = await app.inject({ method: "POST", url: `/api/v1/agent-sessions/${session.id}/token/exchange`, payload: { exchangeToken: session.exchangeToken }, headers: { authorization: `Bearer ${installationToken}`, "idempotency-key": randomUUID() } });
-  expect(response.statusCode).toBe(200); return response.json<{ sessionToken: string }>().sessionToken;
+async function sessionBearer(session: Session, agentId: string): Promise<string> {
+  return seedAgentSessionBearer(db, session.id, agentId);
 }
 async function ackAndExecute(session: Session, token: string): Promise<{ revision: number }> {
   const ack = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/ack`, { summary: "accepted", externalUrls: [] }); expect(ack.statusCode).toBe(200);
@@ -116,30 +128,30 @@ describe("Stage 1 agent API acceptance", () => {
   afterAll(async () => { await app.close(); await db.end(); });
 
   it("runs delegation, idempotent start, agent exchange, plan, question/answer, and completion evidence", async () => {
-    const delegation = await delegate(agent.id); expect(delegation.statusCode).toBe(200);
-    const idempotencyKey = "stage1-start-replay"; const first = await start(delegation.json<{ id: string }>().id, idempotencyKey); const replay = await start(delegation.json<{ id: string }>().id, idempotencyKey);
-    expect(replay.id).toBe(first.id);
-    const token = await exchange(first, agent.installationToken); let current = await ackAndExecute(first, token);
+    const idempotencyKey = "stage1-start-replay"; const first = await start(agent.id, idempotencyKey); const replay = await start(agent.id, idempotencyKey);
+    expect(replay.session.id).toBe(first.session.id);
+    const token = await sessionBearer(first.session, agent.id); let current = await ackAndExecute(first.session, token);
     const stepId = randomUUID(); const plan = { changeSummary: "one step", steps: [{ id: stepId, title: "Implement", ordinal: 0, dependsOn: [], acceptanceCriteria: [], expectedArtifacts: [], status: "pending" }] };
-    const published = await agentCall(token, "PUT", `/api/v1/agent-sessions/${first.id}/plan`, plan, { "if-match": `"revision-${current.revision}"` }); expect(published.statusCode).toBe(200); current = published.json<{ revision: number }>();
-    const conflict = await agentCall(token, "PUT", `/api/v1/agent-sessions/${first.id}/plan`, plan, { "if-match": `"revision-${current.revision - 1}"` }); expect(conflict.statusCode).toBe(409);
-    const question = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.id}/activities`, { kind: "question", summary: "Need clarification", artifactIds: [], references: [], visibility: "team", ephemeral: false }); expect(question.statusCode).toBe(200);
-    const reply = await humanCall(admin, "POST", `/api/v1/agent-sessions/${first.id}/prompt`, { bodyMarkdown: "Proceed", planRevision: 1 }); expect(reply.statusCode).toBe(200);
-    const noEvidence = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.id}/complete`, { summary: "done", artifactIds: [], checks: [], limitations: [] }, { "if-match": `"revision-${reply.json<{ revision: number }>().revision}"` }); expect(noEvidence.statusCode).toBe(400);
-    const done = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.id}/complete`, { summary: "done", artifactIds: [], checks: [{ name: "unit", status: "passed", summary: "ok" }], limitations: [] }, { "if-match": `"revision-${reply.json<{ revision: number }>().revision}"` }); expect(done.statusCode).toBe(200);
-    const delegationBody = delegation.json<{ id: string; revision: number }>(); const revoke = await humanCall(admin, "POST", `/api/v1/delegations/${delegationBody.id}/revoke`, {}, { "if-match": `"revision-${delegationBody.revision}"` }); expect(revoke.statusCode).toBe(200);
+    const published = await agentCall(token, "PUT", `/api/v1/agent-sessions/${first.session.id}/plan`, plan, { "if-match": `"revision-${current.revision}"` }); expect(published.statusCode).toBe(200); current = published.json<{ revision: number }>();
+    const conflict = await agentCall(token, "PUT", `/api/v1/agent-sessions/${first.session.id}/plan`, plan, { "if-match": `"revision-${current.revision - 1}"` }); expect(conflict.statusCode).toBe(409);
+    const question = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.session.id}/activities`, { kind: "question", summary: "Need clarification", artifactIds: [], references: [], visibility: "team", ephemeral: false }); expect(question.statusCode).toBe(200);
+    const reply = await humanCall(admin, "POST", `/api/v1/agent-sessions/${first.session.id}/prompt`, { bodyMarkdown: "Proceed", planRevision: 1 }); expect(reply.statusCode).toBe(200);
+    const noEvidence = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.session.id}/complete`, { summary: "done", artifactIds: [], checks: [], limitations: [] }, { "if-match": `"revision-${reply.json<{ revision: number }>().revision}"` }); expect(noEvidence.statusCode).toBe(400);
+    const done = await agentCall(token, "POST", `/api/v1/agent-sessions/${first.session.id}/complete`, { summary: "done", artifactIds: [], checks: [{ name: "unit", status: "passed", summary: "ok" }], limitations: [] }, { "if-match": `"revision-${reply.json<{ revision: number }>().revision}"` }); expect(done.statusCode).toBe(200);
+    const delegationBody = first.delegation; const revoke = await humanCall(admin, "POST", `/api/v1/delegations/${delegationBody.id}/revoke`, {}, { "if-match": `"revision-${delegationBody.revision}"` }); expect(revoke.statusCode).toBe(200);
   });
 
-  it("rejects invalid transitions, writes after stop, expired session tokens, cross-team reads, and duplicate executors", async () => {
+  it("rejects invalid transitions, writes after stop, expired session tokens, cross-team reads, and keeps one forced executor", async () => {
     const secondAgent = await registerAgent("second-agent");
-    const firstDelegation = await delegate(secondAgent.id); const session = await start(firstDelegation.json<{ id: string }>().id); const token = await exchange(session, secondAgent.installationToken);
+    const firstAssignment = await start(secondAgent.id); const session = firstAssignment.session; const token = await sessionBearer(session, secondAgent.id);
     const ack = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/ack`, { summary: "ack", externalUrls: [] }); const ackRevision = ack.json<{ revision: number }>().revision;
     const invalid = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/state`, { state: "paused", reason: "invalid" }, { "if-match": `"revision-${ackRevision}"` }); expect(invalid.statusCode).toBe(409);
     const executing = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/state`, { state: "executing", reason: "run" }, { "if-match": `"revision-${ackRevision}"` });
     const stop = await humanCall(admin, "POST", `/api/v1/agent-sessions/${session.id}/signals`, { signal: "stop", reason: "halt" }, { "if-match": `"revision-${executing.json<{ revision: number }>().revision}"` }); expect(stop.statusCode).toBe(200);
     const stoppedWrite = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/activities`, { kind: "message", summary: "must fail", artifactIds: [], references: [], visibility: "team", ephemeral: false }); expect(stoppedWrite.statusCode).toBe(409);
     await db.query("UPDATE agent_session_tokens SET created_at=now()-interval '2 minutes',expires_at=now()-interval '1 second' WHERE session_id=$1", [session.id]); const expired = await agentCall(token, "POST", `/api/v1/agent-sessions/${session.id}/heartbeat`, { usage: { runtimeSeconds: 1 } }); expect(expired.statusCode).toBe(401);
-    const duplicate = await delegate(agent.id); expect(duplicate.statusCode).toBe(409);
+    await start(agent.id);
+    expect((await db.query<{ count: number }>("SELECT count(*)::int AS count FROM delegations WHERE work_item_id=$1 AND role='executor' AND status='active'", [workItemId])).rows[0]!.count).toBe(1);
     const workspaceId = (await db.query<{ workspace_id: string }>("SELECT workspace_id FROM work_items WHERE id=$1", [workItemId])).rows[0]!.workspace_id; const outsiderId = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','member',$2,'Outsider',$3) RETURNING id", [workspaceId, `outsider-${randomUUID()}@example.test`, await hashPassword("outside-password")])).rows[0]!.id; const outsiderToken = opaqueToken(); await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 day')", [outsiderId, tokenHash(outsiderToken), opaqueToken()]);
     const forbidden = await app.inject({ method: "GET", url: `/api/v1/agent-sessions/${session.id}`, headers: { cookie: `workmesh_session=${outsiderToken}`, "idempotency-key": randomUUID() } }); expect(forbidden.statusCode).toBe(403);
   });
@@ -159,9 +171,9 @@ describe("Stage 1 agent API acceptance", () => {
       const heartbeatAgent = await registerAgent(
         `heartbeat-agent-${randomUUID()}`,
       );
-      const delegation = await delegate(heartbeatAgent.id);
-      const session = await start(delegation.json<{ id: string }>().id);
-      const token = await exchange(session, heartbeatAgent.installationToken);
+      const assignment = await start(heartbeatAgent.id);
+      const session = assignment.session;
+      const token = await sessionBearer(session, heartbeatAgent.id);
       await ackAndExecute(session, token);
       const sessionK1 = randomUUID();
       const sessionK2 = randomUUID();
@@ -669,9 +681,9 @@ describe("Stage 1 agent API acceptance", () => {
       const statusAgent = await registerAgent(
         `retention-status-agent-${randomUUID()}`,
       );
-      const delegation = await delegate(statusAgent.id);
-      const session = await start(delegation.json<{ id: string }>().id);
-      const token = await exchange(session, statusAgent.installationToken);
+      const assignment = await start(statusAgent.id);
+      const session = assignment.session;
+      const token = await sessionBearer(session, statusAgent.id);
       const agentResponse = await agentCall(
         token,
         "GET",
@@ -696,9 +708,9 @@ describe("Stage 1 agent API acceptance", () => {
       });
       workItemId = work.json<{ id: string }>().id;
       const outageAgent = await registerAgent(`outage-agent-${randomUUID()}`);
-      const delegation = await delegate(outageAgent.id);
-      const session = await start(delegation.json<{ id: string }>().id);
-      const token = await exchange(session, outageAgent.installationToken);
+      const assignment = await start(outageAgent.id);
+      const session = assignment.session;
+      const token = await sessionBearer(session, outageAgent.id);
       await ackAndExecute(session, token);
 
       // Durable cursors are opaque decimal strings and may exceed the safe

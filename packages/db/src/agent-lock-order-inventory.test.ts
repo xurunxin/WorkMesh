@@ -319,6 +319,34 @@ describe('Agent authority lock-order inventory',()=>{
     expect(source).toMatch(/ORDER BY id[\s\S]*FOR UPDATE/)
   })
 
+  it('keeps Connection credential reconciliation inside rank 7 of the unified claim plan',async()=>{
+    const locks=await readFile(join(root,'packages/db/src/agent-locks.ts'),'utf8')
+    const helperStart=locks.indexOf(
+      'export async function lockAgentAuthorityPlanWithInstallationTokenWrite',
+    )
+    const helper=locks.slice(helperStart)
+    expect(helperStart).toBeGreaterThanOrEqual(0)
+    expect(helper.indexOf("lockIds(tx, 'agent_sessions'")).toBeLessThan(
+      helper.indexOf('writeInstallationToken(tx)'),
+    )
+    expect(helper.indexOf("lockIds(tx, 'agent_installation_tokens'")).toBeLessThan(
+      helper.indexOf('writeInstallationToken(tx)'),
+    )
+    expect(helper.indexOf('writeInstallationToken(tx)')).toBeLessThan(
+      helper.indexOf("lockIds(tx, 'work_items'"),
+    )
+
+    const commands=await readFile(join(root,'apps/api/src/agent/commands.ts'),'utf8')
+    const claimStart=commands.indexOf('export async function claimWorkItem')
+    const claimEnd=commands.indexOf('export async function exchangeAgentToken',claimStart)
+    const claim=commands.slice(claimStart,claimEnd)
+    expect(claim).toContain('lockAgentAuthorityPlanWithInstallationTokenWrite')
+    expect(claim).toMatch(
+      /lockAgentAuthorityPlanWithInstallationTokenWrite[\s\S]*async rankTx => reconcileConnectionInstallationToken\(rankTx/,
+    )
+    expect(claim.match(/reconcileConnectionInstallationToken\(/g)).toHaveLength(1)
+  })
+
   it('manifests every production file with ranked locking or writes',async()=>{
     const manifested=new Set(agentLockManifest.map(entry=>entry.file))
     const offenders:string[]=[]

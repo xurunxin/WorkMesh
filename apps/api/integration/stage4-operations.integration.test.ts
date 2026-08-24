@@ -9,6 +9,7 @@ import {
 import { FakeA2AAgent } from "@workmesh/a2a-adapter";
 import { loadFeatureConfig } from "@workmesh/config";
 import { buildApp } from "../src/server.js";
+import { seedAgentSessionBearer } from "./agent-session-test-credentials.js";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
@@ -116,18 +117,26 @@ const createExecutingReviewer = async (
       )
     ).statusCode,
   ).toBe(200);
-  const delegation = await call(
-    human,
-    "POST",
-    `/api/v1/work-items/${workItemId}/delegations`,
-    {
-      agentId: agent.id,
-      principalHumanActorId: human.actorId,
-      role: "reviewer",
-      scopeType: "work_item",
-      scopeId: workItemId,
-      permissionsSnapshot: capabilities,
-      capabilityScope: {
+  const actorId = (await db.query<{ actor_id: string }>(
+    "SELECT actor_id FROM agent_definitions WHERE id=$1",
+    [agent.id],
+  )).rows[0]!.actor_id;
+  const delegationId = (await db.query<{ id: string }>(
+    `INSERT INTO delegations(
+       workspace_id,team_id,agent_id,agent_actor_id,
+       principal_human_actor_id,work_item_id,role,scope_type,scope_id,
+       permissions_snapshot,capability_scope,status
+     ) VALUES($1,$2,$3,$4,$5,$6,'reviewer','work_item',$6,$7,$8,'active')
+     RETURNING id`,
+    [
+      workspaceId,
+      teamId,
+      agent.id,
+      actorId,
+      human.actorId,
+      workItemId,
+      capabilities,
+      {
         workspaceId,
         teamIds: [teamId],
         projectIds: [],
@@ -135,27 +144,31 @@ const createExecutingReviewer = async (
         repositoryIds: [repositoryId],
         capabilities,
       },
-    },
-  );
-  expect(delegation.statusCode, JSON.stringify(delegation.json())).toBe(200);
-  const session = await call(human, "POST", "/api/v1/agent-sessions", {
-    delegationId: delegation.json<{ id: string }>().id,
-    workItemId,
-    initialPrompt: "Review the disabled Gitea pull request",
-  });
-  expect(session.statusCode, JSON.stringify(session.json())).toBe(200);
-  const sessionBody = session.json<{ id: string; exchangeToken: string }>();
-  const exchange = (await app.inject({
-    method: "POST",
-    url: `/api/v1/agent-sessions/${sessionBody.id}/token/exchange`,
-    payload: { exchangeToken: sessionBody.exchangeToken },
-    headers: {
-      authorization: `Bearer ${agent.installation_token}`,
-      "idempotency-key": randomUUID(),
-    },
-  })) as unknown as Response;
-  expect(exchange.statusCode, JSON.stringify(exchange.json())).toBe(200);
-  const token = exchange.json<{ sessionToken: string }>().sessionToken;
+    ],
+  )).rows[0]!.id;
+  const contextSnapshotId = (await db.query<{ id: string }>(
+    `SELECT id FROM context_snapshots
+      WHERE workspace_id=$1 AND work_item_id=$2
+      ORDER BY created_at DESC,id DESC LIMIT 1`,
+    [workspaceId, workItemId],
+  )).rows[0]?.id ?? null;
+  const sessionBody = (await db.query<{ id: string }>(
+    `INSERT INTO agent_sessions(
+       workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+       work_item_id,context_snapshot_id,budget
+     ) VALUES($1,$2,$3,$4,$5,$6,$7,'{}'::jsonb)
+     RETURNING id`,
+    [
+      workspaceId,
+      teamId,
+      agent.id,
+      actorId,
+      delegationId,
+      workItemId,
+      contextSnapshotId,
+    ],
+  )).rows[0]!;
+  const token = await seedAgentSessionBearer(db, sessionBody.id, agent.id);
   const acknowledged = await agentCall(
     token,
     "POST",
@@ -1377,8 +1390,8 @@ describe("Stage 4 planning and operations API", () => {
       provider: "fake",
       version: "1",
       supportedProtocols: ["a2a"],
-      requestedCapabilities: ["work:read"],
-      approvedCapabilities: ["work:read"],
+      requestedCapabilities: ["work:read", "work:write"],
+      approvedCapabilities: ["work:read", "work:write"],
       maxConcurrency: 1,
     });
     expect(registration.statusCode, JSON.stringify(registration.json())).toBe(200);
@@ -1387,7 +1400,7 @@ describe("Stage 4 planning and operations API", () => {
       human,
       "PUT",
       `/api/v1/agents/${agentId}/team-access/${teamId}`,
-      { approvedCapabilities: ["work:read"] },
+      { approvedCapabilities: ["work:read", "work:write"] },
     )).statusCode).toBe(200);
     const fake = new FakeA2AAgent();
     const binding = await call(human, "POST", "/api/v1/a2a-bindings", {
@@ -1563,7 +1576,7 @@ describe("Stage 4 planning and operations API", () => {
           agentId,
           principalHumanActorId: human.actorId,
           role: "executor",
-          requestedCapabilities: ["work:read"],
+          requestedCapabilities: ["work:read", "work:write"],
           initialPrompt: "Compete for the final execution slot",
           budget: {},
         },

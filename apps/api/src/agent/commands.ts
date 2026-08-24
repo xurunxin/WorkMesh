@@ -5,6 +5,7 @@ import {
   appendEvent,
   assertAgentExecutionCapacityAfterLock,
   lockAgentAuthorityPlan,
+  lockAgentAuthorityPlanWithInstallationTokenWrite,
   opaqueToken,
   tokenHash,
   withTx,
@@ -25,7 +26,10 @@ import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.
 import { assertAgentWrite, loadAgentSessionForMutation } from "./guard.js";
 import type { ApiActor, RequestMeta } from "./types.js";
 import { materializeSessionContextSnapshot } from "../guidance.js";
-import { reconcileConnectionInstallationToken } from "../connection-installation-token.js";
+import {
+  locateConnectionInstallationTokenId,
+  reconcileConnectionInstallationToken,
+} from "../connection-installation-token.js";
 
 const one = <T>(rows: T[]): T => { const value = rows[0]; if (!value) throw new DomainError("NOT_FOUND", "Resource not found"); return value; };
 const normalizedSensitiveKeys = new Set([
@@ -1321,20 +1325,10 @@ export async function claimWorkItem(
         || !["active", "rotating"].includes(identity.connection_status)
       ) throw new DomainError("AGENT_CONNECTION_REVOKED", "The Coordination Connection is no longer active");
 
-      const installationTokenId = await reconcileConnectionInstallationToken(tx, {
+      const existingInstallationTokenId = await locateConnectionInstallationTokenId(tx, {
         agentId: identity.connection_agent_id,
         credentialHash,
-        expiresAt: identity.credential_status === "overlap"
-          ? identity.credential_overlap_until
-          : null,
-        createdByActorId: meta.actor.id,
       });
-      const claimInstallationAuthority: ExecutionInstallationAuthority = {
-        id: installationTokenId,
-        connection_id: identity.connection_id,
-        credential_id: identity.credential_id,
-        connection_delegation_id: identity.connection_delegation_id,
-      }
 
       const locator = one((await tx.query<{
         team_id: string
@@ -1383,7 +1377,7 @@ export async function claimWorkItem(
         ],
       )).rows.map(row => row.id);
 
-      await lockAgentAuthorityPlan(tx, {
+      const installationTokenId = await lockAgentAuthorityPlanWithInstallationTokenWrite(tx, {
         definitionIds: [identity.connection_agent_id],
         teamGrants: [{
           workspaceId: meta.actor.workspaceId,
@@ -1395,10 +1389,25 @@ export async function claimWorkItem(
           ...(locator.active_delegation_id ? [locator.active_delegation_id] : []),
         ],
         sessionIds: countedSessionIds,
-        installationTokenIds: [installationTokenId],
+        installationTokenIds: existingInstallationTokenId
+          ? [existingInstallationTokenId]
+          : [],
         workItemIds: [workItemId],
         projectIds: locator.project_id ? [locator.project_id] : [],
-      });
+      }, async rankTx => reconcileConnectionInstallationToken(rankTx, {
+        agentId: identity.connection_agent_id,
+        credentialHash,
+        expiresAt: identity.credential_status === "overlap"
+          ? identity.credential_overlap_until
+          : null,
+        createdByActorId: meta.actor.id,
+      }));
+      const claimInstallationAuthority: ExecutionInstallationAuthority = {
+        id: installationTokenId,
+        connection_id: identity.connection_id,
+        credential_id: identity.credential_id,
+        connection_delegation_id: identity.connection_delegation_id,
+      }
 
       const coordination = one((await tx.query<{
         status: "active" | "closed"
