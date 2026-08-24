@@ -640,6 +640,23 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       [contested.id],
     )).rows
     expect(assignment).toHaveLength(1)
+    const projectedResponse = await human('GET', `/api/v1/work-items/${contested.id}`)
+    expect(projectedResponse.statusCode, projectedResponse.body).toBe(200)
+    expect(projectedResponse.json<{
+      active_assignment: {
+        delegation_id: string
+        session_id: string | null
+        session_state: string | null
+      } | null
+      active_executor: unknown | null
+    }>()).toMatchObject({
+      active_assignment: {
+        delegation_id: assignment[0]!.delegation_id,
+        session_id: assignment[0]!.session_id,
+        session_state: 'queued',
+      },
+      active_executor: null,
+    })
     const eventRows = (await db.query<{ event_type: string; outbox_id: string }>(
       `SELECT event.event_type,outbox.id AS outbox_id
          FROM domain_events event
@@ -654,6 +671,41 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'agent.session.created',
     ])
     expect(eventRows.every(row => Boolean(row.outbox_id))).toBe(true)
+  })
+
+  it('does not advertise claimable Issues when the live Connection lacks work:write', async () => {
+    const readOnly = await pairConnection(
+      `claim-read-only-${randomUUID().slice(0, 8)}`,
+      ['work:read'],
+    )
+    const issue = await human('POST', '/api/v1/work-items', {
+      teamId,
+      title: `Read-only claim candidate ${randomUUID()}`,
+      statusId: readyId,
+      priority: 'medium',
+      labels: [],
+      responsibleHumanActorId: actorId,
+    })
+    expect(issue.statusCode, issue.body).toBe(200)
+    const candidate = issue.json<{ id: string; revision: number }>()
+
+    const listed = await coordinator(
+      readOnly.token,
+      'GET',
+      '/api/v1/work-items?claimable=true&limit=200',
+    )
+    expect(listed.statusCode, listed.body).toBe(200)
+    expect(listed.json<{ items: Array<{ id: string }> }>().items).toEqual([])
+
+    const rejected = await coordinator(
+      readOnly.token,
+      'POST',
+      `/api/v1/work-items/${candidate.id}/claim`,
+      {},
+      candidate.revision,
+    )
+    expect(rejected.statusCode, rejected.body).toBe(403)
+    expect(rejected.json<{ error: { code: string } }>().error.code).toBe('CAPABILITY_DENIED')
   })
 
   it('keeps Human forced assignment authoritative before, during, and after self-claim and rolls back replacement failures', async () => {

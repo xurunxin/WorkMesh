@@ -158,6 +158,11 @@ and current Session. It submits the Work Item's responsible Human, preserves the
 idempotency key across unknown-result retries, and provides local recovery for
 revision, grant, capability, capacity, and assignment conflicts.
 
+The Work Item read model exposes `active_assignment` from the active executor
+Delegation independently of the lease-backed `active_executor`. A self-claimed
+queued Session is therefore visible immediately, before it acquires a Lease;
+`active_executor` continues to describe only current runtime/lease ownership.
+
 The quick sheet uses a wider desktop breakpoint and a sticky execution action;
 the full page and narrow layout reuse the same component and mutation path.
 
@@ -185,7 +190,8 @@ Migration
 
 No database migration is required. Existing Delegations already represent
 specific assignments and therefore block self-claim. The current active executor
-unique index and executor projection are reused. Production migration still runs
+unique index and lease projection are reused; `active_assignment` is a bounded
+read projection over those existing Delegations and Sessions. Production migration still runs
 the normal immutable migration manifest and verifies that no pending migration
 is skipped.
 

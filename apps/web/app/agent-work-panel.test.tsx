@@ -102,7 +102,7 @@ describe('useAgentDelegationController', () => {
     render(<LocaleProvider><AgentWorkPanel controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
     expect(screen.getByTestId('delegate-unavailable-reason')).toHaveTextContent('work:read')
     expect(screen.getByTestId('delegate-unavailable-reason')).toHaveTextContent('work:write')
-    expect(screen.getByRole('button', { name: '选择智能体' })).toHaveAttribute('title', expect.stringContaining('work:write'))
+    expect(screen.getByRole('button', { name: '选择强制委派智能体' })).toHaveAttribute('title', expect.stringContaining('work:write'))
   })
 
   it('opens the chooser while more Agent pages remain without guessing a direct default', async () => {
@@ -115,7 +115,7 @@ describe('useAgentDelegationController', () => {
     expect(result.current.reason).toBeNull()
 
     render(<LocaleProvider><AgentWorkPanel controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
-    fireEvent.click(screen.getByRole('button', { name: '选择智能体' }))
+    fireEvent.click(screen.getByRole('button', { name: '选择强制委派智能体' }))
     await waitFor(() => expect(screen.getByRole('combobox')).toHaveFocus())
     expect(screen.getByTestId('delegate-agent-form')).not.toHaveAttribute('hidden')
   })
@@ -142,11 +142,11 @@ describe('useAgentDelegationController', () => {
     const props = { workItemId: 'work-a', workItemTeamId: 'team-a', workItemRevision: 1, humanActorId: 'human-a', scopeKey: 'authority-a' }
     const { result } = renderHook(() => useAgentDelegationController(props))
 
-    render(<LocaleProvider><AgentWorkPanel activeExecutorName="Agent Previous" controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
+    render(<LocaleProvider><AgentWorkPanel activeAssignmentName="Agent Previous" controller={result.current} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId="human-a" /></LocaleProvider>)
 
-    expect(screen.getByRole('button', { name: '强制改派' })).toBeEnabled()
-    expect(screen.getByText(/人类委派是强制任务分配/)).toBeVisible()
-    expect(screen.getByText(/将停止 Agent Previous 的当前执行/)).toBeVisible()
+    expect(screen.getByRole('button', { name: '一键强制委派' })).toBeEnabled()
+    expect(screen.getByText(/人类委派始终是强制任务分配/)).toBeVisible()
+    expect(screen.getByText(/当前任务已分配给 Agent Previous/)).toBeVisible()
     expect(screen.getByTestId('sessions-loading')).toHaveTextContent('正在加载智能体执行记录')
     expect(screen.queryByText('尚未委派任何智能体 Session。')).not.toBeInTheDocument()
     expect(screen.getByTestId('live-agent-panel')).toHaveAttribute('aria-busy', 'true')
@@ -163,7 +163,7 @@ describe('useAgentDelegationController', () => {
       clearLatest: vi.fn(), clearError: vi.fn(),
     }
     render(<LocaleProvider><AgentWorkPanel controller={controller} workItemId="work-a" workItemRevision={1} workItemTeamId="team-a" workspaceId="workspace-a" humanActorId={humanActorId} /></LocaleProvider>)
-    const primary = screen.getByRole('button', { name: '选择智能体' })
+    const primary = screen.getByRole('button', { name: '选择强制委派智能体' })
     expect(primary).toBeDisabled()
     expect(primary).toHaveAttribute('title')
     expect(screen.getByTestId(expectedReason)).toBeInTheDocument()

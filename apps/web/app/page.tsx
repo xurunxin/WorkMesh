@@ -161,7 +161,7 @@ function HomePageScope({
   const agentAction = useMemo(() => {
     if (!selectedItem) return undefined
     const directAgent = agentController.directAgent
-    const activeExecutorName = selectedItem.active_executor?.agent_display_name ?? null
+    const activeAssignmentName = selectedItem.active_assignment?.agent_display_name ?? null
     const reason = agentController.reason === 'missing_responsible_human'
       ? agentWorkCopy.noResponsible
       : agentController.reason === 'loading_agents'
@@ -174,12 +174,12 @@ function HomePageScope({
               ? `${agentWorkCopy.liveAgents}…`
               : undefined
     return {
-      label: activeExecutorName
-        ? agentController.canDirect && directAgent ? agentWorkCopy.forceReassign : agentWorkCopy.chooseReplacementAgent
-        : agentController.canDirect && directAgent ? agentWorkCopy.oneClickDelegate : agentWorkCopy.chooseAgent,
+      label: agentController.canDirect && directAgent ? agentWorkCopy.oneClickDelegate : agentWorkCopy.chooseAgent,
       disabled: agentController.disabled,
       reason,
-      hint: reason ?? (activeExecutorName ? agentWorkCopy.replacementHint(activeExecutorName) : undefined),
+      hint: reason ?? (activeAssignmentName
+        ? agentWorkCopy.replacementHint(activeAssignmentName)
+        : agentWorkCopy.forcedAssignmentPolicy),
       onClick: () => {
         if (agentController.canDirect && directAgent) {
           void agentController.create(directAgent, agentWorkCopy.oneClickPrompt(selectedItem.title)).catch(() => undefined)
@@ -640,7 +640,7 @@ function HomePageScope({
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
       agentAction={agentAction}
-      agentPanel={<AgentWorkPanel activeExecutorName={selectedItem.active_executor?.agent_display_name ?? null} controller={agentController} onReloadWorkItem={() => { setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }} workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
+      agentPanel={<AgentWorkPanel activeAssignmentName={selectedItem.active_assignment?.agent_display_name ?? null} controller={agentController} onReloadWorkItem={() => { setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }} workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
       copy={detailCopy}
       onClose={closeItem}
       onOpenFull={() => void openItem(selectedItem.id, true)}

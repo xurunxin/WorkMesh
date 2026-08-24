@@ -1469,6 +1469,10 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       || (request.actor! as unknown as ApiActor).authentication !== "coordination_connection"
       || !identity
     ) throw new DomainError("FORBIDDEN", "An active Coordination Connection is required to list claimable Work Items");
+    if (
+      !identity.granted_capabilities.includes("work:read")
+      || !identity.granted_capabilities.includes("work:write")
+    ) where += " AND FALSE";
     values.push(identity.team_id);
     where += ` AND w.team_id=$${values.length}`;
     values.push(identity.principal_human_actor_id);

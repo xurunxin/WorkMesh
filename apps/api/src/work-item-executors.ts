@@ -1,5 +1,6 @@
 import type { Pool, PoolClient } from 'pg'
 import type {
+  WorkItemAssignmentProjection,
   WorkItemExecutorProjection,
   WorkItemResponse,
 } from '@workmesh/contracts'
@@ -14,6 +15,14 @@ type ProjectionRow = {
   work_item_id: string
   responsible_human_actor_id: string | null
   responsible_human_display_name: string | null
+  assignment_delegation_id: string | null
+  assignment_agent_id: string | null
+  assignment_agent_actor_id: string | null
+  assignment_agent_slug: string | null
+  assignment_agent_display_name: string | null
+  assignment_session_id: string | null
+  assignment_session_state: WorkItemAssignmentProjection['session_state']
+  assignment_assigned_at: Date | null
   projection_role: 'primary' | 'reviewer' | null
   agent_id: string | null
   agent_actor_id: string | null
@@ -29,6 +38,27 @@ type ProjectionRow = {
   last_heartbeat_at: Date | null
   lease_heartbeat_at: Date | null
   lease_expires_at: Date | null
+}
+
+const assignment = (row: ProjectionRow): WorkItemAssignmentProjection | null => {
+  if (
+    !row.assignment_delegation_id
+    || !row.assignment_agent_id
+    || !row.assignment_agent_actor_id
+    || !row.assignment_agent_slug
+    || !row.assignment_agent_display_name
+    || !row.assignment_assigned_at
+  ) return null
+  return {
+    delegation_id: row.assignment_delegation_id,
+    agent_id: row.assignment_agent_id,
+    agent_actor_id: row.assignment_agent_actor_id,
+    agent_slug: row.assignment_agent_slug,
+    agent_display_name: row.assignment_agent_display_name,
+    session_id: row.assignment_session_id,
+    session_state: row.assignment_session_state,
+    assigned_at: row.assignment_assigned_at.toISOString(),
+  }
 }
 
 const executor = (row: ProjectionRow): WorkItemExecutorProjection | null => {
@@ -67,14 +97,16 @@ const executor = (row: ProjectionRow): WorkItemExecutorProjection | null => {
 }
 
 /**
- * Adds the shared Work Item executor contract in one bounded query. PostgreSQL
- * trigger-maintained rows are authoritative; the expiry predicate prevents a
- * delayed Worker sweep from exposing an already-expired executor.
+ * Adds responsibility, assignment, and runtime executor projections in one
+ * bounded query. Assignment comes from the active executor Delegation and is
+ * visible before a queued Session obtains a lease. Runtime execution remains
+ * lease-backed; the expiry predicate prevents a delayed Worker sweep from
+ * exposing an already-expired executor.
  */
 export async function attachWorkItemExecutors<T extends WorkItemBase>(
   db: Queryable,
   items: readonly T[],
-): Promise<Array<T & Pick<WorkItemResponse, 'responsible_human' | 'active_executor' | 'shared_reviewers'>>> {
+): Promise<Array<T & Pick<WorkItemResponse, 'responsible_human' | 'active_assignment' | 'active_executor' | 'shared_reviewers'>>> {
   if (!items.length) return []
   const workspaceIds = [...new Set(items.map(item => item.workspace_id))]
   if (workspaceIds.length !== 1) throw new Error('Work Item projection query must be scoped to one Workspace')
@@ -82,6 +114,14 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
     `SELECT item.id AS work_item_id,
             human.id AS responsible_human_actor_id,
             human.display_name AS responsible_human_display_name,
+            assignment.id AS assignment_delegation_id,
+            assignment.agent_id AS assignment_agent_id,
+            assignment.agent_actor_id AS assignment_agent_actor_id,
+            assignment_definition.slug AS assignment_agent_slug,
+            assignment_actor.display_name AS assignment_agent_display_name,
+            assignment_session.id AS assignment_session_id,
+            assignment_session.state AS assignment_session_state,
+            assignment.created_at AS assignment_assigned_at,
             projection.projection_role,projection.agent_id,
             projection.agent_actor_id,definition.slug AS agent_slug,
             agent_actor.display_name AS agent_display_name,
@@ -94,6 +134,32 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
        LEFT JOIN actors human
          ON human.id=item.responsible_human_actor_id
         AND human.workspace_id=item.workspace_id
+       LEFT JOIN LATERAL (
+         SELECT delegation.id,delegation.agent_id,delegation.agent_actor_id,
+                delegation.created_at
+           FROM delegations delegation
+          WHERE delegation.workspace_id=item.workspace_id
+            AND delegation.work_item_id=item.id
+            AND delegation.role='executor'
+            AND delegation.status='active'
+          ORDER BY delegation.created_at DESC,delegation.id DESC
+          LIMIT 1
+       ) assignment ON true
+       LEFT JOIN agent_definitions assignment_definition
+         ON assignment_definition.id=assignment.agent_id
+        AND assignment_definition.workspace_id=item.workspace_id
+       LEFT JOIN actors assignment_actor
+         ON assignment_actor.id=assignment.agent_actor_id
+        AND assignment_actor.workspace_id=item.workspace_id
+       LEFT JOIN LATERAL (
+         SELECT session.id,session.state
+           FROM agent_sessions session
+          WHERE session.workspace_id=item.workspace_id
+            AND session.delegation_id=assignment.id
+            AND session.session_kind='execution'
+          ORDER BY session.created_at DESC,session.id DESC
+          LIMIT 1
+       ) assignment_session ON true
        LEFT JOIN work_item_executor_projections projection
          ON projection.work_item_id=item.id
         AND projection.workspace_id=item.workspace_id
@@ -112,6 +178,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
 
   const projections = new Map<string, {
     responsible_human: WorkItemResponse['responsible_human']
+    active_assignment: WorkItemAssignmentProjection | null
     active_executor: WorkItemExecutorProjection | null
     shared_reviewers: WorkItemExecutorProjection[]
   }>()
@@ -120,6 +187,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
       responsible_human: row.responsible_human_actor_id && row.responsible_human_display_name
         ? { actor_id: row.responsible_human_actor_id, display_name: row.responsible_human_display_name }
         : null,
+      active_assignment: assignment(row),
       active_executor: null,
       shared_reviewers: [],
     }
@@ -133,6 +201,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
     ...item,
     ...(projections.get(item.id) ?? {
       responsible_human: null,
+      active_assignment: null,
       active_executor: null,
       shared_reviewers: [],
     }),

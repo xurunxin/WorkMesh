@@ -3963,6 +3963,31 @@ components:
             lease_expires_at: { $ref: "#/components/schemas/Timestamp" },
           },
       }
+    WorkItemAssignmentProjection:
+      {
+        type: object,
+        additionalProperties: false,
+        readOnly: true,
+        required: [delegation_id, agent_id, agent_actor_id, agent_slug, agent_display_name, session_id, session_state, assigned_at],
+        properties:
+          {
+            delegation_id: { $ref: "#/components/schemas/Id" },
+            agent_id: { $ref: "#/components/schemas/Id" },
+            agent_actor_id: { $ref: "#/components/schemas/Id" },
+            agent_slug: { type: string },
+            agent_display_name: { type: string },
+            session_id: { type: [string, "null"], format: uuid },
+            session_state:
+              {
+                oneOf:
+                  [
+                    { $ref: "#/components/schemas/AgentSessionState" },
+                    { type: "null" },
+                  ],
+              },
+            assigned_at: { $ref: "#/components/schemas/Timestamp" },
+          },
+      }
     WorkItemSurfaceSummary:
       {
         type: object,
@@ -3992,6 +4017,7 @@ components:
             due_date,
             responsible_human_actor_id,
             responsible_human,
+            active_assignment,
             active_executor,
             shared_reviewers,
             labels,
@@ -4025,6 +4051,15 @@ components:
                 oneOf:
                   [
                     { $ref: "#/components/schemas/ResponsibleHumanProjection" },
+                    { type: "null" },
+                  ],
+              },
+            active_assignment:
+              {
+                readOnly: true,
+                oneOf:
+                  [
+                    { $ref: "#/components/schemas/WorkItemAssignmentProjection" },
                     { type: "null" },
                   ],
               },

@@ -29,6 +29,7 @@ const item: WorkItemDetailDto = {
   due_date: null,
   responsible_human_actor_id: 'h1',
   responsible_human: { actor_id: 'h1', display_name: 'Human' },
+  active_assignment: null,
   active_executor: null,
   shared_reviewers: [],
   labels: ['coord:active'],

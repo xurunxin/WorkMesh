@@ -977,16 +977,20 @@ Inbox current rows 和 receipts 是 PostgreSQL durable facts。事件归档或 r
 - Stop/Cancel 自动失效；
 - Worker 定期标记过期并发事件。
 
-## 11.4 Work Item Active Executor 投影
+## 11.4 Work Item Assignment 与 Active Executor 投影
 
 `GET /api/v1/work-items`、`GET /api/v1/work-items/{id}`、Session Context、
 Native SDK 与 MCP Work Item resource/tool 使用同一响应：
 
 - `responsible_human` 是负责人的 Human Actor；它与 Agent 执行互不覆盖；
+- `active_assignment` 来自 active executor Delegation，包含被分配的 Agent、
+  Delegation、最新 execution Session 及其状态；queued Session 尚未取得 Lease 时也必须
+  立即可见；
 - `active_executor` 是唯一 primary exclusive executor，包含 Agent definition/
   actor、Session、代表 Lease、execution state、heartbeat health/时间与 expiry；
 - `shared_reviewers` 是 `review_shared` Lease 的稳定集合，不替换 primary；
-- 已过期 Lease、stale/terminal Session 或非 active Delegation 不可继续出现在投影；
+- 非 active Delegation 不可出现在 `active_assignment`；已过期 Lease、stale/terminal
+  Session 或非 active Delegation 不可继续出现在 `active_executor`；
 - release、renew、heartbeat、Worker expiry、Session stop/failure 和 handoff 的
   权威事实与投影在同一 PostgreSQL 事务提交；
 - Work Item 级 exclusive Lease 只能有一个有效持有 Session；不同 Plan Step

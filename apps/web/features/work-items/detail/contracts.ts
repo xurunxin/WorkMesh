@@ -16,12 +16,24 @@ export type WorkItemDetailDto = {
   due_date: string | null
   responsible_human_actor_id: string | null
   responsible_human: { actor_id: string; display_name: string } | null
+  active_assignment: AgentAssignmentDto | null
   active_executor: AgentExecutionDto | null
   shared_reviewers: AgentExecutionDto[]
   labels: string[]
   project_id: string | null
   milestone_id: string | null
   parent_id: string | null
+}
+
+export type AgentAssignmentDto = {
+  delegation_id: string
+  agent_id: string
+  agent_actor_id: string
+  agent_slug: string
+  agent_display_name: string
+  session_id: string | null
+  session_state: string | null
+  assigned_at: string
 }
 
 export type AgentExecutionDto = {

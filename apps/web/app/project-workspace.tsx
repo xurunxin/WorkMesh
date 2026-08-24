@@ -119,7 +119,12 @@ export function ProjectWorkspace({
     parent_id: item.parent_id ?? null,
     milestone_id: item.milestone_id ?? null,
     responsible_human: item.responsible_human?.display_name ? { actor_id: item.responsible_human.actor_id ?? '', display_name: item.responsible_human.display_name } : null,
-    active_executor: item.active_executor?.agent_display_name ? { agent_display_name: item.active_executor.agent_display_name, execution_state: item.active_executor.execution_state ?? 'unknown' } : null,
+    active_executor: (item.active_executor ?? item.active_assignment)?.agent_display_name
+      ? {
+          agent_display_name: (item.active_executor ?? item.active_assignment)?.agent_display_name ?? '',
+          execution_state: item.active_executor?.execution_state ?? item.active_assignment?.session_state ?? 'assigned',
+        }
+      : null,
   })), [allProjectItems, text.unknownStatus])
   const summary = useMemo(() => summarizeProjectWork(normalizedItems), [normalizedItems])
   const tabs: Array<[ProjectWorkspaceTab, string, ReactNode]> = [

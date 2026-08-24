@@ -193,7 +193,17 @@ export const workItemExecutorProjectionSchema = z.object({
   lease_heartbeat_at: timestampSchema,
   lease_expires_at: timestampSchema,
 }).strict()
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemAssignmentProjectionSchema = z.object({
+  delegation_id: idSchema,
+  agent_id: idSchema,
+  agent_actor_id: idSchema,
+  agent_slug: z.string(),
+  agent_display_name: z.string(),
+  session_id: idSchema.nullable(),
+  session_state: agentSessionStateSchema.nullable(),
+  assigned_at: timestampSchema,
+}).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_assignment: workItemAssignmentProjectionSchema.nullable().default(null), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), author_kind: z.literal('human'), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
@@ -1174,6 +1184,7 @@ export type WorkItemSurfaceSummary = z.infer<typeof workItemSurfaceSummarySchema
 export type WorkItemRelationInput = z.infer<typeof workItemRelationInputSchema>
 export type WorkItemRelationResponse = z.infer<typeof workItemRelationResponseSchema>
 export type MilestoneResponse = z.infer<typeof milestoneResponseSchema>
+export type WorkItemAssignmentProjection = z.infer<typeof workItemAssignmentProjectionSchema>
 export type WorkItemExecutorProjection = z.infer<typeof workItemExecutorProjectionSchema>
 export type GuidanceScope = z.infer<typeof guidanceScopeSchema>
 export type GuidanceResponse = z.infer<typeof guidanceResponseSchema>

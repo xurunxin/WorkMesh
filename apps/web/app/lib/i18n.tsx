@@ -2537,9 +2537,7 @@ export type AgentWorkCopy = {
   delegateFormStart: string
   oneClickDelegate: string
   oneClickPrompt: (title: string) => string
-  forceReassign: string
   forceAssign: string
-  chooseReplacementAgent: string
   forcedAssignmentPolicy: string
   replacementHint: (agent: string) => string
   advancedOptions: string
@@ -2591,15 +2589,13 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: '初始指令',
     delegateFormInitialPromptPlaceholder: '该智能体应当做什么？',
     delegateFormStart: '启动 Session',
-    oneClickDelegate: '一键委派',
+    oneClickDelegate: '一键强制委派',
     oneClickPrompt: title => `请接手这个 Issue${title ? `“${title}”` : ''}，先检查上下文和验收条件，然后推进到可交付状态。`,
-    forceReassign: '强制改派',
-    forceAssign: '强制分配',
-    chooseReplacementAgent: '选择改派智能体',
-    forcedAssignmentPolicy: '人类委派是强制任务分配；未被委派的 Issue 可由智能体自行接手。',
-    replacementHint: agent => `将停止 ${agent} 的当前执行，并由你选择的智能体接手。`,
+    forceAssign: '强制分配并启动',
+    forcedAssignmentPolicy: '人类委派始终是强制任务分配，会替换已有智能体分配；未被委派的 Issue 可由智能体自行接手。',
+    replacementHint: agent => `当前任务已分配给 ${agent}；强制委派会结束其仍在运行的执行，并由你选择的智能体接手。`,
     advancedOptions: '高级配置',
-    chooseAgent: '选择智能体',
+    chooseAgent: '选择强制委派智能体',
     openAgents: '打开智能体管理',
     reloadIssue: '重新加载 Issue',
     errorCode: code => `错误 ${code}`,
@@ -2645,15 +2641,13 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     delegateFormInitialPrompt: 'Initial prompt',
     delegateFormInitialPromptPlaceholder: 'What should this agent do?',
     delegateFormStart: 'Start session',
-    oneClickDelegate: 'Delegate now',
+    oneClickDelegate: 'Force assign now',
     oneClickPrompt: title => `Take over this Issue${title ? ` “${title}”` : ''}, review its context and acceptance criteria, then move it toward a deliverable state.`,
-    forceReassign: 'Force reassign',
-    forceAssign: 'Force assign',
-    chooseReplacementAgent: 'Choose replacement agent',
-    forcedAssignmentPolicy: 'Human delegation is a forced assignment. Unassigned Issues remain available for agents to claim.',
-    replacementHint: agent => `This stops ${agent}'s current execution and hands the Issue to the Agent you choose.`,
+    forceAssign: 'Force assign and start',
+    forcedAssignmentPolicy: 'Human delegation is always a forced assignment and replaces any existing Agent assignment. Unassigned Issues remain available for agents to claim.',
+    replacementHint: agent => `This Issue is assigned to ${agent}. Force assignment ends any non-terminal execution and hands the Issue to the Agent you choose.`,
     advancedOptions: 'Advanced options',
-    chooseAgent: 'Choose an agent',
+    chooseAgent: 'Choose an Agent to force assign',
     openAgents: 'Open Agent management',
     reloadIssue: 'Reload Issue',
     errorCode: code => `Error ${code}`,
