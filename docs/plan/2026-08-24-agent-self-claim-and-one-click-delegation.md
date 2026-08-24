@@ -136,7 +136,10 @@ Implementation
 - Document stable idempotency keys, cancellation, response-loss replay, capacity,
   assignment conflict, Stop, completion and the next discovery cycle.
 - Regenerate the LF-only public Skill artifact, hash and Ed25519 signature using
-  the existing private-key build input; CI remains verification-only.
+  a repository-external private-key build input; CI remains verification-only.
+- Rotate the pinned public trust root in the same slice because the previously
+  published private material is unavailable, and record that divergence in the
+  WorkItem and release evidence.
 - Keep the production Web image byte-download validator green.
 
 Tests
