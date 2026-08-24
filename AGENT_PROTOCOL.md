@@ -1295,7 +1295,8 @@ scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平�
 Coordination MCP 还提供 `list_claimable_work_items` 与 `claim_work_item`。前者只返回
 当前 Connection 的 Team、principal、Agent 与 capability 范围内、经实时授权确认
 同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用或仅保留同身份可恢复
-全 stale assignment 的摘要；后者执行上面的原子自主领取或 stale replacement，并启动
+assignment 的摘要；可恢复 assignment 的每个非终态 execution 都必须为 stale，空的非终态
+集合（仅有终态历史或尚无 execution）同样可恢复。后者执行原子自主领取或 replacement，并启动
 executor Session。两者都不要求 Agent 先通过人类创建
 delegation。人类明确分配时使用一次性的
 `delegate_work_item`（对应 forced assignment），而不是拆开的 delegation/start
@@ -1633,14 +1634,14 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
 - `list_teams`、`list_workflow_states` — Team 与状态只读发现。
 - `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
 - `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
-- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、实时授权仍同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用或仅存在同身份可恢复全 stale assignment 的 Work Item；新领取创建 executor Delegation 与 execution Session，stale recovery 保留兼容 Delegation、终结旧 execution 并创建新的 queued Session。
+- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、实时授权仍同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用或仅存在同身份可恢复 assignment 的 Work Item；每个非终态 execution 必须为 stale，空的非终态集合也允许恢复。新领取创建 executor Delegation 与 execution Session；recovery 保留兼容 Delegation，终结旧 stale execution、保持 terminal history 不变，并创建新的 queued Session。
 - `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
 - `draft_project_update`（发布仍为 Human-only transition）。
 
 ## 23.3 显式授权工具（需要匹配能力）
 
 - `delegate_work_item` — 人类或具备 `agent:delegate` 的 Coordination Agent 发起一次性的 forced executor assignment；不再拆分为 delegation 与 start 两个公开步骤，仍受并发、Team access、principal 与 capability 约束。
-- `claim_work_item` — Coordination Agent 的自主领取与兼容 stale assignment 恢复入口；只匹配当前 Connection 的 Team、principal、Agent 与能力，竞争同一 Work Item 时恰好一个成功。旧 Session 的原地恢复必须使用 `ack_agent_session`，不得用 generic state transition 代替 ACK metadata。
+- `claim_work_item` — Coordination Agent 的自主领取与兼容 inactive assignment 恢复入口；只匹配当前 Connection 的 Team、principal、Agent 与能力，且所有非终态 execution 必须为 stale。没有非终态 execution 时从最新 terminal history 创建 distinct retry，终态 Session 不得重开。竞争同一 Work Item 时恰好一个成功。旧 stale Session 的原地恢复必须使用 `ack_agent_session`，不得用 generic state transition 代替 ACK metadata。
 - `create_child_session` — 需要现有 `work:write`、父 Session/Plan Step scope 与 Team access；**不**需要 `agent:delegate`。父 Coordinator 是否携带 `agent:delegate` 与能否 `create_child_session` 无关；后者是 plan-step 子 Session，与跨 Work Item 启动其他 Agent 是两件不同的事。
 - `offer_handoff` — 需要 Team 写权限。
 - `request_approval` — 记录与 Work Item 或 Plan Step 绑定的结构化审批请求；审批由 Human actor 决定。

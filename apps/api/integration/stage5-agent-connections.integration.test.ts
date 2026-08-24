@@ -96,6 +96,16 @@ type StaleSelfClaimFixture = {
   leaseId: string
   inboxId: string
 }
+type TerminalExecutionState = 'completed' | 'failed' | 'canceled'
+type TerminalSelfClaimFixture = {
+  workspaceId: string
+  paired: Awaited<ReturnType<typeof pairConnection>>
+  agentId: string
+  agentActorId: string
+  workItem: { id: string; revision: number }
+  delegationId: string
+  terminalSessionId: string
+}
 const createReadyWorkItem = async (title: string, projectId?: string) => {
   const created = await human('POST', '/api/v1/work-items', {
     teamId,
@@ -167,6 +177,58 @@ const prepareStaleSelfClaimFixture = async (slug: string, projectId?: string): P
     staleSessionId: claim.session.id,
     leaseId: lease.id,
     inboxId: inbox.id,
+  }
+}
+const prepareTerminalSelfClaimFixture = async (
+  state: TerminalExecutionState,
+  slug: string,
+): Promise<TerminalSelfClaimFixture> => {
+  const paired = await pairConnection(slug)
+  const connection = (await db.query<{
+    workspace_id: string
+    agent_id: string
+    agent_actor_id: string
+  }>(
+    `SELECT workspace_id,agent_id,agent_actor_id
+       FROM agent_connections WHERE id=$1`,
+    [paired.connection.id],
+  )).rows[0]!
+  const workItem = await createReadyWorkItem(`Terminal self-claim recovery ${slug}`)
+  const claimed = await coordinator(
+    paired.token,
+    'POST',
+    `/api/v1/work-items/${workItem.id}/claim`,
+    {},
+    workItem.revision,
+  )
+  expect(claimed.statusCode, claimed.body).toBe(200)
+  const claim = claimed.json<{ delegation: { id: string }; session: { id: string } }>()
+  await db.query(
+    `UPDATE agent_sessions
+        SET state=$2,state_reason=$3,
+            result_summary=$4,result_evidence=$5::jsonb,
+            no_artifact_reason=$6,error_code=$7,error_summary=$8,
+            ended_at=now(),revision=revision+1,sequence=sequence+1,updated_at=now()
+      WHERE id=$1 AND session_kind='execution'`,
+    [
+      claim.session.id,
+      state,
+      `${state} terminal recovery fixture`,
+      state === 'completed' ? 'Terminal completion must stay immutable.' : null,
+      JSON.stringify(state === 'completed' ? { checks: [{ name: 'fixture', status: 'passed' }] } : {}),
+      state === 'completed' ? 'Fixture has no external artifact.' : null,
+      state === 'failed' ? 'TERMINAL_FIXTURE_FAILED' : null,
+      state === 'failed' ? 'Terminal failure must stay immutable.' : null,
+    ],
+  )
+  return {
+    workspaceId: connection.workspace_id,
+    paired,
+    agentId: connection.agent_id,
+    agentActorId: connection.agent_actor_id,
+    workItem,
+    delegationId: claim.delegation.id,
+    terminalSessionId: claim.session.id,
   }
 }
 const expectExactScopeClaimRejected = async (fixture: StaleSelfClaimFixture) => {
@@ -2786,8 +2848,327 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect(paired.connection.id).toMatch(/^[0-9a-f-]{36}$/)
   })
 
+  it('recovers completed, failed, and canceled terminal-only assignments without rewriting history', async () => {
+    for (const state of ['completed', 'failed', 'canceled'] as const) {
+      const fixture = await prepareTerminalSelfClaimFixture(
+        state,
+        `terminal-${state}-${randomUUID().slice(0, 8)}`,
+      )
+      if (state === 'completed') await db.query(
+        `INSERT INTO agent_sessions(
+           workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+           work_item_id,state,state_reason,error_code,error_summary,ended_at,
+           created_at,updated_at
+         )
+         SELECT workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+                work_item_id,'failed','older terminal fixture',
+                'OLDER_TERMINAL_FIXTURE','Older terminal history',
+                created_at-interval '2 minutes',created_at-interval '2 minutes',
+                created_at-interval '2 minutes'
+           FROM agent_sessions WHERE id=$1`,
+        [fixture.terminalSessionId],
+      )
+
+      const terminalBefore = (await db.query<{
+        state: string
+        state_reason: string | null
+        result_summary: string | null
+        result_evidence: unknown
+        no_artifact_reason: string | null
+        error_code: string | null
+        error_summary: string | null
+        ended_at: Date | null
+        revision: number
+        sequence: string
+      }>(
+        `SELECT state,state_reason,result_summary,result_evidence,
+                no_artifact_reason,error_code,error_summary,ended_at,
+                revision,sequence::text
+           FROM agent_sessions WHERE id=$1`,
+        [fixture.terminalSessionId],
+      )).rows[0]!
+      const detailBefore = await human('GET', `/api/v1/work-items/${fixture.workItem.id}`)
+      expect(detailBefore.statusCode, detailBefore.body).toBe(200)
+      expect(detailBefore.json<{
+        active_assignment: { session_id: string; session_state: string }
+        active_executor: unknown
+      }>()).toMatchObject({
+        active_assignment: {
+          session_id: fixture.terminalSessionId,
+          session_state: state,
+        },
+        active_executor: null,
+      })
+
+      const claimable = await coordinator(
+        fixture.paired.token,
+        'GET',
+        '/api/v1/work-items?claimable=true&limit=200',
+      )
+      expect(claimable.statusCode, claimable.body).toBe(200)
+      expect(claimable.json<{ items: Array<{ id: string }> }>().items.map(item => item.id))
+        .toContain(fixture.workItem.id)
+
+      const idempotencyKey = `terminal-recovery-${fixture.workItem.id}`
+      const claim = () => app.inject({
+        method: 'POST',
+        url: `/api/v1/work-items/${fixture.workItem.id}/claim`,
+        payload: {},
+        headers: {
+          'x-workmesh-installation-token': fixture.paired.token,
+          'idempotency-key': idempotencyKey,
+          'if-match': `"revision-${fixture.workItem.revision}"`,
+        },
+      })
+      const claimed = await claim()
+      expect(claimed.statusCode, claimed.body).toBe(200)
+      if (state === 'canceled') {
+        const replay = await claim()
+        expect(replay.statusCode, replay.body).toBe(200)
+        expect(replay.body).toBe(claimed.body)
+      }
+      const claimBody = claimed.json<{
+        delegation: { id: string }
+        session: { id: string; state: string; retry_of_session_id: string | null }
+        exchangeToken: string
+      }>()
+      expect(claimBody.delegation.id).toBe(fixture.delegationId)
+      expect(claimBody.session).toMatchObject({
+        state: 'queued',
+        retry_of_session_id: fixture.terminalSessionId,
+      })
+      expect(claimBody.session.id).not.toBe(fixture.terminalSessionId)
+      expect((await db.query(
+        'SELECT 1 FROM delegations WHERE id=$1 AND status=\'active\'',
+        [fixture.delegationId],
+      )).rowCount).toBe(1)
+      expect((await db.query<{ count: number }>(
+        `SELECT count(*)::int AS count FROM agent_sessions
+          WHERE delegation_id=$1 AND session_kind='execution'
+            AND state NOT IN ('completed','failed','canceled')`,
+        [fixture.delegationId],
+      )).rows[0]?.count).toBe(1)
+      expect((await db.query(
+        `SELECT state,state_reason,result_summary,result_evidence,
+                no_artifact_reason,error_code,error_summary,ended_at,
+                revision,sequence::text
+           FROM agent_sessions WHERE id=$1`,
+        [fixture.terminalSessionId],
+      )).rows[0]).toEqual(terminalBefore)
+
+      if (state === 'completed') {
+        const exchanged = await app.inject({
+          method: 'POST',
+          url: `/api/v1/agent-sessions/${claimBody.session.id}/token/exchange`,
+          payload: { exchangeToken: claimBody.exchangeToken },
+          headers: {
+            authorization: `Bearer ${fixture.paired.token}`,
+            'idempotency-key': `terminal-exchange-${claimBody.session.id}`,
+          },
+        })
+        expect(exchanged.statusCode, exchanged.body).toBe(200)
+        const sessionToken = exchanged.json<{ sessionToken: string }>().sessionToken
+        const acknowledged = await app.inject({
+          method: 'POST',
+          url: `/api/v1/agent-sessions/${claimBody.session.id}/ack`,
+          payload: { summary: 'Terminal recovery execution accepted.', externalUrls: [] },
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+            'idempotency-key': `terminal-ack-${claimBody.session.id}`,
+          },
+        })
+        expect(acknowledged.statusCode, acknowledged.body).toBe(200)
+        const heartbeat = await app.inject({
+          method: 'POST',
+          url: `/api/v1/agent-sessions/${claimBody.session.id}/heartbeat`,
+          payload: { usage: { runtimeSeconds: 1, toolCalls: 1 } },
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+            'idempotency-key': `terminal-heartbeat-${claimBody.session.id}`,
+          },
+        })
+        expect(heartbeat.statusCode, heartbeat.body).toBe(200)
+        const planning = await app.inject({
+          method: 'POST',
+          url: `/api/v1/agent-sessions/${claimBody.session.id}/state`,
+          payload: { state: 'planning', reason: 'Plan recovered terminal work.' },
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+            'idempotency-key': `terminal-planning-${claimBody.session.id}`,
+            'if-match': `"revision-${acknowledged.json<{ revision: number }>().revision}"`,
+          },
+        })
+        expect(planning.statusCode, planning.body).toBe(200)
+        const executing = await app.inject({
+          method: 'POST',
+          url: `/api/v1/agent-sessions/${claimBody.session.id}/state`,
+          payload: { state: 'executing', reason: 'Execute recovered terminal work.' },
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+            'idempotency-key': `terminal-executing-${claimBody.session.id}`,
+            'if-match': `"revision-${planning.json<{ revision: number }>().revision}"`,
+          },
+        })
+        expect(executing.statusCode, executing.body).toBe(200)
+        const lease = await app.inject({
+          method: 'POST',
+          url: '/api/v1/leases',
+          payload: {
+            sessionId: claimBody.session.id,
+            resourceType: 'work_item',
+            resourceId: fixture.workItem.id,
+            kind: 'exclusive',
+            ttlSeconds: 60,
+            reason: 'Execute the terminal-only recovery acceptance.',
+          },
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+            'idempotency-key': `terminal-lease-${claimBody.session.id}`,
+          },
+        })
+        expect(lease.statusCode, lease.body).toBe(200)
+        const projected = await human('GET', `/api/v1/work-items/${fixture.workItem.id}`)
+        expect(projected.statusCode, projected.body).toBe(200)
+        expect(projected.json<{ active_executor: { session_id: string } }>().active_executor)
+          .toMatchObject({ session_id: claimBody.session.id })
+      }
+    }
+  }, 120_000)
+
+  it('converges concurrent terminal-only claims to one queued retry', async () => {
+    const fixture = await prepareTerminalSelfClaimFixture(
+      'completed',
+      `terminal-concurrent-${randomUUID().slice(0, 8)}`,
+    )
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    const attempts = await Promise.all(Array.from({ length: 16 }, (_, index) => app.inject({
+      method: 'POST',
+      url: `/api/v1/work-items/${fixture.workItem.id}/claim`,
+      payload: {},
+      headers: {
+        'x-workmesh-installation-token': fixture.paired.token,
+        'idempotency-key': `terminal-concurrent-${fixture.workItem.id}-${index}`,
+        'if-match': `"revision-${fixture.workItem.revision}"`,
+      },
+    })))
+    expect(attempts.filter(attempt => attempt.statusCode === 200)).toHaveLength(1)
+    expect(attempts.filter(attempt => attempt.statusCode === 409)).toHaveLength(15)
+    const replacementId = attempts.find(attempt => attempt.statusCode === 200)!
+      .json<{ session: { id: string } }>().session.id
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'
+          AND state NOT IN ('completed','failed','canceled')`,
+      [fixture.delegationId],
+    )).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM agent_session_tokens WHERE session_id=$1',
+      [replacementId],
+    )).rows[0]?.count).toBe(1)
+    const durableRows = (await db.query<{ events: number; outbox: number; deliveries: number }>(
+      `SELECT
+         (SELECT count(*)::int FROM domain_events event
+           WHERE event.cursor>$1::bigint AND event.aggregate_id=$2
+             AND event.event_type='agent.session.created') AS events,
+         (SELECT count(*)::int FROM outbox_events outbox
+           JOIN domain_events event ON event.id=outbox.domain_event_id
+          WHERE event.cursor>$1::bigint AND event.aggregate_id=$2
+            AND event.event_type='agent.session.created') AS outbox,
+         (SELECT count(*)::int FROM agent_webhook_deliveries delivery
+           JOIN domain_events event ON event.id=delivery.event_id
+          WHERE event.cursor>$1::bigint AND event.aggregate_id=$2
+            AND event.event_type='agent.session.created') AS deliveries`,
+      [cursorBefore, replacementId],
+    )).rows[0]!
+    expect(durableRows).toMatchObject({ events: 1, outbox: 1 })
+    expect(durableRows.deliveries).toBeLessThanOrEqual(1)
+  }, 120_000)
+
+  it('keeps terminal-only recovery atomic when replacement admission fails', async () => {
+    const fixture = await prepareTerminalSelfClaimFixture(
+      'failed',
+      `terminal-rollback-${randomUUID().slice(0, 8)}`,
+    )
+    const terminalBefore = (await db.query(
+      'SELECT * FROM agent_sessions WHERE id=$1',
+      [fixture.terminalSessionId],
+    )).rows[0]
+    const cursorBefore = (await db.query<{ cursor: string }>(
+      'SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events',
+    )).rows[0]!.cursor
+    await db.query('DROP TRIGGER IF EXISTS stage5_fail_terminal_recovery ON agent_sessions')
+    await db.query('DROP FUNCTION IF EXISTS stage5_fail_terminal_recovery()')
+    await db.query(`CREATE FUNCTION stage5_fail_terminal_recovery() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.work_item_id='${fixture.workItem.id}'::uuid
+           AND NEW.session_kind='execution' AND NEW.state='queued' THEN
+          RAISE EXCEPTION 'terminal recovery rollback fixture';
+        END IF;
+        RETURN NEW;
+      END
+      $$`)
+    await db.query(`CREATE TRIGGER stage5_fail_terminal_recovery
+      BEFORE INSERT ON agent_sessions FOR EACH ROW EXECUTE FUNCTION stage5_fail_terminal_recovery()`)
+    try {
+      const failed = await coordinator(
+        fixture.paired.token,
+        'POST',
+        `/api/v1/work-items/${fixture.workItem.id}/claim`,
+        {},
+        fixture.workItem.revision,
+      )
+      expect(failed.statusCode, failed.body).toBe(500)
+    } finally {
+      await db.query('DROP TRIGGER IF EXISTS stage5_fail_terminal_recovery ON agent_sessions')
+      await db.query('DROP FUNCTION IF EXISTS stage5_fail_terminal_recovery()')
+    }
+    expect((await db.query(
+      'SELECT * FROM agent_sessions WHERE id=$1',
+      [fixture.terminalSessionId],
+    )).rows[0]).toEqual(terminalBefore)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM agent_sessions
+        WHERE delegation_id=$1 AND session_kind='execution'`,
+      [fixture.delegationId],
+    )).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM domain_events event
+        WHERE event.cursor>$1::bigint AND event.payload->>'workItemId'=$2`,
+      [cursorBefore, fixture.workItem.id],
+    )).rows[0]?.count).toBe(0)
+    const retry = await coordinator(
+      fixture.paired.token,
+      'POST',
+      `/api/v1/work-items/${fixture.workItem.id}/claim`,
+      {},
+      fixture.workItem.revision,
+    )
+    expect(retry.statusCode, retry.body).toBe(200)
+  }, 120_000)
+
   it('recovers one stale self-claim assignment atomically and converges concurrent claims', async () => {
     const fixture = await prepareStaleSelfClaimFixture(`recover-${randomUUID().slice(0, 8)}`)
+    const historicalTerminal = (await db.query<{
+      id: string
+      state: string
+      state_reason: string
+      ended_at: Date
+    }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+         work_item_id,state,state_reason,ended_at,created_at,updated_at
+       )
+       SELECT workspace_id,team_id,agent_id,agent_actor_id,delegation_id,
+              work_item_id,'completed','older completed history',
+              created_at-interval '2 minutes',created_at-interval '2 minutes',
+              created_at-interval '2 minutes'
+         FROM agent_sessions WHERE id=$1
+       RETURNING id,state,state_reason,ended_at`,
+      [fixture.staleSessionId],
+    )).rows[0]!
     const claimable = await coordinator(
       fixture.paired.token,
       'GET',
@@ -2876,6 +3257,15 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       'SELECT resolved_at FROM inbox_items WHERE id=$1',
       [fixture.inboxId],
     )).rows[0]?.resolved_at).not.toBeNull()
+    expect((await db.query<{
+      id: string
+      state: string
+      state_reason: string
+      ended_at: Date
+    }>(
+      'SELECT id,state,state_reason,ended_at FROM agent_sessions WHERE id=$1',
+      [historicalTerminal.id],
+    )).rows[0]).toEqual(historicalTerminal)
 
     const recoveryEvents = (await db.query<{ event_type: string; outbox_id: string }>(
       `SELECT event.event_type,outbox.id AS outbox_id
@@ -2969,6 +3359,42 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     expect(foreignClaimable.statusCode, foreignClaimable.body).toBe(200)
     expect(foreignClaimable.json<{ items: Array<{ id: string }> }>().items.map(item => item.id))
       .not.toContain(mixed.workItem.id)
+
+    const terminalWithLive = await prepareTerminalSelfClaimFixture(
+      'completed',
+      `terminal-live-${randomUUID().slice(0, 8)}`,
+    )
+    await db.query(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,state
+       ) VALUES($1,$2,$3,$4,$5,$6,'queued')`,
+      [
+        terminalWithLive.workspaceId,
+        teamId,
+        terminalWithLive.agentId,
+        terminalWithLive.agentActorId,
+        terminalWithLive.delegationId,
+        terminalWithLive.workItem.id,
+      ],
+    )
+    const terminalLiveClaimable = await coordinator(
+      terminalWithLive.paired.token,
+      'GET',
+      '/api/v1/work-items?claimable=true&limit=200',
+    )
+    expect(terminalLiveClaimable.statusCode, terminalLiveClaimable.body).toBe(200)
+    expect(terminalLiveClaimable.json<{ items: Array<{ id: string }> }>()
+      .items.map(item => item.id)).not.toContain(terminalWithLive.workItem.id)
+    const terminalLiveClaim = await coordinator(
+      terminalWithLive.paired.token,
+      'POST',
+      `/api/v1/work-items/${terminalWithLive.workItem.id}/claim`,
+      {},
+      terminalWithLive.workItem.revision,
+    )
+    expect(terminalLiveClaim.statusCode, terminalLiveClaim.body).toBe(409)
+    expect(terminalLiveClaim.json<{ error: { code: string } }>().error.code)
+      .toBe('WORK_ITEM_ALREADY_ASSIGNED')
   })
 
   it('rolls back stale recovery mutations when replacement Session admission fails', async () => {

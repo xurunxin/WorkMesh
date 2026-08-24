@@ -74,6 +74,10 @@ describe('WorkMesh MCP adapter', () => {
       expect(names).not.toContain('start_agent_session')
       expect(tools.find(tool => tool.name === 'list_claimable_work_items')?.description)
         .toContain('live work:read and work:write authorization')
+      expect(tools.find(tool => tool.name === 'list_claimable_work_items')?.description)
+        .toContain('or no non-terminal execution remains')
+      expect(tools.find(tool => tool.name === 'claim_work_item')?.description)
+        .toContain('Terminal history stays immutable')
 
       const claimable = await protocol.callTool({
         name: 'list_claimable_work_items',
