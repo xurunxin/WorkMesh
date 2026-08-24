@@ -69,7 +69,15 @@ vi.mock('../features/work-items/work-surfaces', () => ({
     </div>
   },
 }))
-vi.mock('./agent-work-panel', () => ({ AgentWorkPanel: () => null }))
+vi.mock('./agent-work-panel', () => ({
+  AgentWorkPanel: () => null,
+  useAgentDelegationController: () => ({
+    scopeKey: 'test-authority', agentsPage: { items: [], nextCursor: null, initialized: true, loading: false, loadingMore: false, error: null, refresh: vi.fn(async () => undefined), loadMore: vi.fn(async () => undefined) },
+    eligibleAgents: [], directAgent: undefined, canDirect: false, canChoose: false, disabled: true, reason: 'no_eligible_agent',
+    chooserRequest: 0, requestChooser: vi.fn(), create: vi.fn(), error: null, busy: false, latest: null,
+    clearLatest: vi.fn(), clearError: vi.fn(),
+  }),
+}))
 vi.mock('./work-room', () => ({ InboxPanel: () => null, WorkRoom: () => null }))
 vi.mock('./project-workspace', () => ({ ProjectWorkspace: () => null }))
 vi.mock('./realtime-status', () => ({ RealtimeStatus: () => null }))

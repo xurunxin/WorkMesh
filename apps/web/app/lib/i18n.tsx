@@ -2542,6 +2542,8 @@ export type AgentWorkCopy = {
   openAgents: string
   reloadIssue: string
   errorCode: (code: string) => string
+  capacitySummary: (active: string, max: string, states: string) => string
+  diagnosticId: (id: string) => string
   delegateSuccess: (agent: string, state: string) => string
   noResponsible: string
   refresh: string
@@ -2590,6 +2592,8 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     openAgents: '打开智能体管理',
     reloadIssue: '重新加载 Issue',
     errorCode: code => `错误 ${code}`,
+    capacitySummary: (active, max, states) => `执行容量：${active}/${max}${states ? `（${states}）` : ''}`,
+    diagnosticId: id => `诊断 ID：${id}`,
     delegateSuccess: (agent, state) => `已将任务交给 ${agent}，Session 当前为 ${state}。`,
     noResponsible: '请先设置人类负责人；负责人对结果负责，智能体负责执行。',
     refresh: '刷新状态',
@@ -2636,6 +2640,8 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     openAgents: 'Open Agent management',
     reloadIssue: 'Reload Issue',
     errorCode: code => `Error ${code}`,
+    capacitySummary: (active, max, states) => `Execution capacity: ${active}/${max}${states ? ` (${states})` : ''}`,
+    diagnosticId: id => `Diagnostic ID: ${id}`,
     delegateSuccess: (agent, state) => `Assigned to ${agent}; the session is ${state}.`,
     noResponsible: 'Set a responsible Human first. The Human owns the outcome; the Agent owns execution.',
     refresh: 'Refresh status',

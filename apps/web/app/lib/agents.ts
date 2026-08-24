@@ -49,8 +49,8 @@ export const approvedAgentCapabilitiesForTeam = (agent: Agent, teamId: string): 
   return agent.approved_capabilities.filter(capability => teamAccess.approved_capabilities.includes(capability))
 }
 
-export type AgentDelegationScope = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string }
-export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.workItemId, scope.workItemTeamId, scope.workItemRevision, scope.humanActorId])
+export type AgentDelegationScope = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string; scopeKey?: string | null }
+export const agentDelegationScopeKey = (scope: AgentDelegationScope): string => JSON.stringify([scope.scopeKey ?? null, scope.workItemId, scope.workItemTeamId, scope.workItemRevision, scope.humanActorId])
 export const isCurrentAgentDelegationScope = (currentKey: string, capturedKey: string): boolean => currentKey === capturedKey
 
 export const normalizePlan = (value: Record<string, unknown>): PlanVersion => ({

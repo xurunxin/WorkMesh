@@ -161,13 +161,25 @@ function HomePageScope({
   const agentAction = useMemo(() => {
     if (!selectedItem) return undefined
     const directAgent = agentController.directAgent
+    const reason = agentController.reason === 'missing_responsible_human'
+      ? agentWorkCopy.noResponsible
+      : agentController.reason === 'loading_agents'
+        ? `${agentWorkCopy.liveAgents}…`
+        : agentController.reason === 'agents_unavailable'
+          ? agentWorkCopy.refresh
+          : agentController.reason === 'no_eligible_agent'
+            ? agentWorkCopy.delegateUnavailableReason(agentWorkCopy.noActiveGrant)
+            : agentController.reason === 'delegating'
+              ? `${agentWorkCopy.liveAgents}…`
+              : undefined
     return {
-      label: directAgent ? agentWorkCopy.oneClickDelegate : agentWorkCopy.chooseAgent,
-      disabled: agentController.busy,
+      label: agentController.canDirect && directAgent ? agentWorkCopy.oneClickDelegate : agentWorkCopy.chooseAgent,
+      disabled: agentController.disabled,
+      reason,
       onClick: () => {
-        if (directAgent) {
+        if (agentController.canDirect && directAgent) {
           void agentController.create(directAgent, agentWorkCopy.oneClickPrompt(selectedItem.title)).catch(() => undefined)
-        } else agentController.requestChooser()
+        } else if (agentController.canChoose) agentController.requestChooser()
       },
     }
   }, [agentController, agentWorkCopy, selectedItem])

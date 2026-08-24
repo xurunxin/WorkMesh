@@ -102,6 +102,7 @@ describe('auth mutation idempotency', () => {
     expect(keys[1]).not.toBe(keys[0])
     expect(keys[2]).toBe(keys[1])
     expect(persisted).toContain('requestIdentity')
+    expect(persisted).toMatch(/"requestIdentity":"request-[0-9a-f]{64}"/)
     expect(persisted).not.toContain('same prompt')
   })
 
