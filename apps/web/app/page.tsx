@@ -640,7 +640,7 @@ function HomePageScope({
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
       agentAction={agentAction}
-      agentPanel={<AgentWorkPanel activeAssignmentName={selectedItem.active_assignment?.agent_display_name ?? null} controller={agentController} onReloadWorkItem={() => { setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }} workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
+      agentPanel={<AgentWorkPanel activeAssignmentName={selectedItem.active_assignment?.agent_display_name ?? null} controller={agentController} onReloadWorkItem={() => { void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }} workspaceId={actor.workspace_id ?? ''} workItemId={selectedItem.id} workItemTeamId={selectedItem.team_id} workItemRevision={selectedItem.revision} humanActorId={selectedItem.responsible_human_actor_id ?? ''} workItemTitle={selectedItem.title} />}
       copy={detailCopy}
       onClose={closeItem}
       onOpenFull={() => void openItem(selectedItem.id, true)}
