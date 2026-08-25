@@ -531,6 +531,64 @@ export type InboxListItem = z.infer<typeof inboxListItemResponseSchema>
 export type InboxReceipt = z.infer<typeof inboxReceiptResponseSchema>
 export type InboxItemDetail = z.infer<typeof inboxItemDetailResponseSchema>
 export type InboxReplyResponse = z.infer<typeof inboxReplyResponseSchema>
+export const humanAttentionProjectionVersionSchema = z.literal(1)
+export const humanAttentionKindSchema = z.enum(['decision', 'approval', 'clarification', 'conflict', 'recovery', 'completion_review'])
+export const humanAttentionStatusSchema = z.enum(['open', 'seen', 'decided', 'applying', 'verified', 'failed', 'expired', 'superseded'])
+export const humanAttentionSeveritySchema = z.enum(['info', 'low', 'medium', 'high', 'critical'])
+export const humanAttentionUrgencySchema = z.enum(['normal', 'soon', 'immediate'])
+export const freshnessStateSchema = z.enum(['current', 'refreshing', 'stale', 'offline', 'resync_required', 'partial'])
+export const attentionActorReferenceSchema = z.object({ id: idSchema, kind: actorKindSchema, displayName: z.string().min(1) }).strict()
+export const attentionResourceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: idSchema, label: z.string().min(1).max(500).optional() }).strict()
+export const attentionEvidenceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: z.string().min(1).max(2_000), title: z.string().min(1).max(500).optional(), uri: z.string().url().optional(), status: z.string().min(1).max(100).optional() }).strict()
+export const attentionOptionSchema = z.object({
+  id: z.string().min(1).max(100),
+  label: z.string().min(1).max(200),
+  command: z.string().min(1).max(200),
+  method: z.enum(['POST', 'PATCH', 'PUT', 'DELETE']),
+  path: z.string().startsWith('/api/v1/').max(2_000),
+  targetRevision: revisionSchema.optional(),
+  requiredCapabilities: z.array(capabilitySchema).max(50),
+  requiredActorKinds: z.array(actorKindSchema).min(1).max(3),
+  requiresApproval: z.boolean(),
+}).strict()
+export const humanAttentionFreshnessSchema = z.object({ state: freshnessStateSchema, observedAt: timestampSchema, sourceUpdatedAt: timestampSchema, invalidAfter: timestampSchema.optional() }).strict()
+export const humanAttentionItemSchema = z.object({
+  projectionVersion: humanAttentionProjectionVersionSchema,
+  id: z.string().regex(/^v1:[a-z_]+:[0-9a-f-]{36}$/),
+  kind: humanAttentionKindSchema,
+  status: humanAttentionStatusSchema,
+  workspaceId: idSchema,
+  teamId: idSchema.nullable(),
+  projectId: idSchema.nullable(),
+  workItemId: idSchema.nullable(),
+  sessionId: idSchema.nullable(),
+  planVersionId: idSchema.nullable(),
+  planStepId: idSchema.nullable(),
+  title: z.string().min(1).max(500),
+  summary: z.string().min(1).max(20_000),
+  summaryDerived: z.literal(true),
+  reasonCodes: z.array(z.string().regex(/^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+$/)).min(1).max(20),
+  severity: humanAttentionSeveritySchema,
+  urgency: humanAttentionUrgencySchema,
+  requestedBy: attentionActorReferenceSchema,
+  responsibleHuman: attentionActorReferenceSchema.nullable(),
+  options: z.array(attentionOptionSchema).max(20),
+  recommendedOptionId: z.string().min(1).max(100).nullable(),
+  impactSummary: z.string().min(1).max(20_000),
+  affectedResources: z.array(attentionResourceReferenceSchema).max(100),
+  evidence: z.array(attentionEvidenceReferenceSchema).max(100),
+  expiresAt: timestampSchema.nullable(),
+  sourceRevision: revisionSchema,
+  source: z.object({ type: z.string().min(1).max(100), id: idSchema, status: z.string().min(1).max(100) }).strict(),
+  freshness: humanAttentionFreshnessSchema,
+  correlationId: z.string().min(1).max(200),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+}).strict()
+export const humanAttentionListResponseSchema = z.object({ items: z.array(humanAttentionItemSchema).max(200), nextCursor: z.string().nullable() }).strict()
+export type HumanAttentionKind = z.infer<typeof humanAttentionKindSchema>
+export type HumanAttentionStatus = z.infer<typeof humanAttentionStatusSchema>
+export type HumanAttentionItem = z.infer<typeof humanAttentionItemSchema>
 export const decisionInputSchema = z.object({ title: z.string().min(1).max(500), rationale: z.string().min(1).max(20_000), options: z.array(z.string().min(1).max(2_000)).max(50).default([]), selectedOption: z.string().max(2_000).optional(), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]), affectedResources: z.array(z.object({ resourceType: z.enum(['work_item', 'plan_step', 'artifact', 'session']), resourceId: idSchema, impact: z.string().min(1).max(2_000).default('affected') })).max(100).default([]), sessionId: idSchema.optional() })
 export const leaseKindSchema = z.enum(['exclusive', 'review_shared'])
 export const leaseResourceTypeSchema = z.enum(['work_item', 'plan_step'])
@@ -1593,6 +1651,11 @@ export const stage5RouteManifest = [
   { method: 'POST', path: '/api/v1/agent-connections/{id}/rotate-confirm', authenticated: true, mutation: true, revisioned: true },
 ] as const
 
+export const humanAttentionRouteManifest = [
+  { method: 'GET', path: '/api/v1/human-attention', authenticated: true },
+  { method: 'GET', path: '/api/v1/human-attention/{id}', authenticated: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
@@ -1600,6 +1663,7 @@ export const agentRouteManifest = [
   ...stage3RouteManifest,
   ...stage4RouteManifest,
   ...stage5RouteManifest,
+  ...humanAttentionRouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {

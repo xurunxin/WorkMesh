@@ -147,6 +147,7 @@ let agents: TestCollection
 let teams: TestCollection
 let humans: TestCollection
 let sessions: TestCollection
+let attention: TestCollection
 let pending: TestCollection
 let history: TestCollection
 
@@ -173,6 +174,7 @@ beforeEach(() => {
   teams = collection([])
   humans = collection([])
   sessions = collection([])
+  attention = collection([])
   history = collection([])
   routeMock.state.approvalStatus = 'approved'
   routeMock.state.approvalView = 'pending'
@@ -190,6 +192,7 @@ beforeEach(() => {
     if (path === '/api/v1/teams') return teams
     if (path === '/api/v1/actors/humans') return humans
     if (path === '/api/v1/agent-sessions') return sessions
+    if (path === '/api/v1/human-attention?status=open') return attention
     if (path === '/api/v1/approvals?status=pending') return pending
     return history
   })
@@ -249,7 +252,7 @@ describe('Agents bulk approval outcomes', () => {
       state: 'executing', state_reason: null, revision: 1, current_plan_version_id: null, budget: {}, last_heartbeat_at: null,
       stop_requested_at: null, error_code: null, error_summary: null, created_at: '2026-08-23T00:00:00.000Z', updated_at: '2026-08-23T00:00:00.000Z',
     }]
-    const oldCollections = [agents, teams, humans, sessions, pending]
+    const oldCollections = [agents, teams, humans, sessions, attention, pending]
     const view = render(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
     expect(screen.getByText('A private Agent')).toBeVisible()
     expect(screen.getAllByText(/A private Team/).length).toBeGreaterThan(0)
@@ -271,6 +274,7 @@ describe('Agents bulk approval outcomes', () => {
     teams = { ...collection([]), initialized: false, loading: true }
     humans = { ...collection([]), initialized: false, loading: true }
     sessions = { ...collection([]), initialized: false, loading: true }
+    attention = { ...collection([]), initialized: false, loading: true }
     pending = { ...collection([]), initialized: false, loading: true }
     history = { ...collection([]), initialized: false, loading: true }
     view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
@@ -500,16 +504,54 @@ describe('Agents bulk approval outcomes', () => {
     expect(screen.getByRole('alert')).toBeVisible()
   })
 
-  it('does not report clear diagnostics or expose stale pagination after Sessions authority is revoked', () => {
+  it('does not report clear diagnostics or expose stale pagination after its authorities are revoked', () => {
     routeMock.state.tab = 'sessions'
     sessions.nextCursor = 'sessions-more'
     sessions.error = new ApiError(403, 'forbidden')
+    attention.error = new ApiError(403, 'forbidden')
 
     renderPage()
 
     const diagnostics = screen.getByRole('region', { name: '诊断' })
     expect(within(diagnostics).queryByRole('list')).toBeNull()
     expect(screen.queryByTestId('load-more-sessions')).toBeNull()
+  })
+
+  it('counts and renders only server-projected Human Attention items', () => {
+    routeMock.state.tab = 'sessions'
+    sessions.items = [{
+      id: 'failed-session',
+      agent_id: 'agent-1',
+      agent_actor_id: 'agent-actor-1',
+      delegation_id: 'delegation-1',
+      work_item_id: 'work-1',
+      state: 'failed',
+      state_reason: 'Failed source fixture',
+      revision: 1,
+      current_plan_version_id: null,
+      budget: {},
+      last_heartbeat_at: null,
+      stop_requested_at: null,
+      error_code: 'FAILED',
+      error_summary: 'Failed source fixture',
+      created_at: '2026-08-26T00:00:00.000Z',
+      updated_at: '2026-08-26T00:00:00.000Z',
+    }]
+    const view = render(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
+    expect(screen.getByText('需要关注').closest('article')).toHaveTextContent('0')
+
+    attention.items = [{
+      id: 'v1:agent_session:00000000-0000-4000-8000-000000000001',
+      title: 'Authoritative recovery item',
+      summary: 'The server projection requires a Human recovery decision.',
+      sessionId: 'failed-session',
+    }]
+    view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
+
+    expect(screen.getByText('需要关注').closest('article')).toHaveTextContent('1')
+    expect(screen.getByRole('link', { name: 'Authoritative recovery item' }))
+      .toHaveAttribute('href', '/agent-sessions/failed-session')
+    expect(screen.getByText('The server projection requires a Human recovery decision.')).toBeVisible()
   })
 
   it('emits one localized success toast only after every selected decision succeeds', async () => {

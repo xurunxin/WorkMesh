@@ -49,6 +49,7 @@ const collectionPaths = [
   '/api/v1/agent-sessions/{id}/plans',
   '/api/v1/artifacts',
   '/api/v1/approvals',
+  '/api/v1/human-attention',
   '/api/v1/rooms/{id}/timeline',
   '/api/v1/inbox',
   '/api/v1/leases',
@@ -87,7 +88,7 @@ describe('pagination OpenAPI contract', () => {
         { $ref: '#/components/parameters/Limit' },
       ]))
       expect(operation?.responses?.['200']?.$ref, path).toMatch(
-        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|InboxItems|Milestones|WorkItemRelations)$/,
+        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|InboxItems|Milestones|WorkItemRelations)$/,
       )
     }
     const opaqueCursorPaths = Object.entries(openapi.paths)

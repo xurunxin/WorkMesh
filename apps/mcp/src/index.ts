@@ -74,6 +74,25 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
   server.registerTool('get_work_room', { description: 'Read the human-visible durable Work Room for one work item, project, or session.', inputSchema: { workItemId: z.string().uuid().optional(), projectId: z.string().uuid().optional(), sessionId: z.string().uuid().optional() } }, async input => tool(() => options.client.getRoom(input)))
   server.registerTool('list_inbox_items', { description: 'List Inbox items authorized for the configured exact Agent Session. Unclaimed actor-targeted items expose bounded metadata only.', inputSchema: { status: z.enum(['open', 'resolved']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(200).optional() } }, async input => tool(() => options.client.listInbox(input.status ?? 'open', { cursor: input.cursor, limit: input.limit })))
   server.registerTool('get_inbox_item', { description: 'Read full Inbox detail only when the configured exact Session is the recipient or claimant.', inputSchema: { inboxItemId: z.string().uuid() } }, async input => tool(() => options.client.getInboxItem(input.inboxItemId)))
+  server.registerTool('list_human_attention', {
+    description: 'List typed Human Attention projections authorized for the configured exact Agent Session. Returned options describe existing commands and never grant authority.',
+    inputSchema: {
+      kind: z.enum(['decision', 'approval', 'clarification', 'conflict', 'recovery', 'completion_review']).optional(),
+      status: z.enum(['open', 'seen', 'decided', 'applying', 'verified', 'failed', 'expired', 'superseded']).optional(),
+      projectId: z.string().uuid().optional(),
+      workItemId: z.string().uuid().optional(),
+      sessionId: z.string().uuid().optional(),
+      cursor: z.string().max(8192).optional(),
+      limit: z.number().int().min(1).max(200).optional(),
+    },
+  }, async input => {
+    const { cursor, limit, ...filters } = input
+    return tool(() => options.client.listHumanAttention(filters, { cursor, limit }))
+  })
+  server.registerTool('get_human_attention', {
+    description: 'Read one typed Human Attention projection when its source remains authorized for the configured exact Agent Session.',
+    inputSchema: { attentionId: z.string().min(1).max(255) },
+  }, async input => tool(() => options.client.getHumanAttention(input.attentionId)))
 
   if (options.mode !== 'read-only') registerMutations(server, options.client)
   return server

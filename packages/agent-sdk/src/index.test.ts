@@ -807,6 +807,27 @@ describe('WorkMeshClient', () => {
     })
   })
 
+  it('reads the authorized Human Attention projection without local classification', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'v1:decision:decision-1' }), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+
+    await client.listHumanAttention({
+      kind: 'decision',
+      status: 'open',
+      projectId: 'project-1',
+      workItemId: 'work-1',
+      sessionId: 'session-1',
+    }, { cursor: 'opaque', limit: 17 })
+    await client.getHumanAttention('v1:decision:decision-1')
+
+    expect(fetch.mock.calls.map(call => call[0])).toEqual([
+      'https://workmesh.test/api/v1/human-attention?kind=decision&status=open&projectId=project-1&workItemId=work-1&sessionId=session-1&cursor=opaque&limit=17',
+      'https://workmesh.test/api/v1/human-attention/v1%3Adecision%3Adecision-1',
+    ])
+  })
+
   it('uses a new default key per public mutation while retaining it for retry and explicit callers', async () => {
     const fetch = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'one', revision: 1 }), { status: 200 }))

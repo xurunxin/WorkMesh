@@ -683,11 +683,40 @@ describe('WorkMesh MCP adapter', () => {
       expect(names).toContain('get_work_item')
       expect(names).toContain('list_inbox_items')
       expect(names).toContain('get_inbox_item')
+      expect(names).toContain('list_human_attention')
+      expect(names).toContain('get_human_attention')
       expect(names).not.toContain('send_message')
       expect(names).not.toContain('ack_agent_session')
       expect(names).not.toContain('claim_inbox_item')
       const resources = (await protocol.listResources()).resources.map(item => item.name)
       expect(resources).toContain('agent-capabilities')
+    } finally { await protocol.close(); await server.close() }
+  })
+
+  it('forwards Human Attention filters through the read-only MCP surface', async () => {
+    const listHumanAttention = vi.fn().mockResolvedValue({ items: [], nextCursor: null })
+    const getHumanAttention = vi.fn().mockResolvedValue({ id: 'v1:decision:decision-1' })
+    const api = {
+      listHumanAttention,
+      getHumanAttention,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      await protocol.callTool({
+        name: 'list_human_attention',
+        arguments: { kind: 'decision', status: 'open', projectId, cursor: 'opaque', limit: 17 },
+      })
+      await protocol.callTool({
+        name: 'get_human_attention',
+        arguments: { attentionId: 'v1:decision:decision-1' },
+      })
+      expect(listHumanAttention).toHaveBeenCalledWith(
+        { kind: 'decision', status: 'open', projectId },
+        { cursor: 'opaque', limit: 17 },
+      )
+      expect(getHumanAttention).toHaveBeenCalledWith('v1:decision:decision-1')
     } finally { await protocol.close(); await server.close() }
   })
 

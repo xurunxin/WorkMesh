@@ -8,6 +8,7 @@ export type AgentRegistryRefreshTarget =
   | 'teams'
   | 'sessions'
   | 'approvals'
+  | 'attention'
 export type AgentWorkRefreshTarget = 'agents' | 'sessions'
 export type WorkRoomRefreshTarget = 'timeline' | 'comments'
 export type HomeRefreshTarget =
@@ -17,12 +18,18 @@ export type HomeRefreshTarget =
   | 'projects'
   | 'views'
   | 'items'
+const attentionAggregateTypes = new Set([
+  'decision',
+  'approval',
+  'inbox_item',
+  'completion_suggestion',
+])
 
 export const agentRegistryRefreshTargets = (
   invalidation: RealtimeInvalidation,
 ): ReadonlySet<AgentRegistryRefreshTarget> => {
   if (invalidation.reason === 'resync')
-    return new Set(['agents', 'teams', 'sessions', 'approvals'])
+    return new Set(['agents', 'teams', 'sessions', 'approvals', 'attention'])
   const invalidates = new Set(
     invalidation.event.invalidates.map(resource => resource.type),
   )
@@ -38,6 +45,8 @@ export const agentRegistryRefreshTargets = (
     && invalidation.event.aggregate_type === 'agent'
   )
     targets.add('agents')
+  if (attentionAggregateTypes.has(invalidation.event.aggregate_type))
+    targets.add('attention')
   return targets
 }
 

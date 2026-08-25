@@ -4,6 +4,7 @@ import type {
   CiRetryInput, ProviderActionInput, StructuredReviewInput, FeatureRegistry,
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
   InboxListItem, InboxItemDetail, InboxReplyResponse,
+  HumanAttentionItem, HumanAttentionKind, HumanAttentionStatus,
   WorkItemResponse, WorkItemRelationInput, WorkItemRelationResponse, MilestoneResponse,
   GuidanceResponse, GuidanceScope,
   AgentCapabilityManifest,
@@ -124,6 +125,13 @@ export interface WorkMeshClientOptions {
 }
 export interface RequestOptions { signal?: AbortSignal; idempotencyKey?: string; ifMatch?: number | string; correlationId?: string; profileVersion?: string }
 export interface PageRequestOptions extends RequestOptions { cursor?: string; limit?: number }
+export interface HumanAttentionListFilters {
+  kind?: HumanAttentionKind
+  status?: HumanAttentionStatus
+  projectId?: string
+  workItemId?: string
+  sessionId?: string
+}
 export interface EventListOptions extends RequestOptions {
   cursor: string
   limit?: number
@@ -296,6 +304,8 @@ export class WorkMeshClient {
   postRoomMessage<T = unknown>(roomId: string, input: RoomMessageInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/rooms/${encodeURIComponent(roomId)}/messages`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId ?? roomId, 'room-message'), refreshSessionId: input.sessionId }) }
   listInbox<T = InboxListItem>(status: 'open' | 'resolved' = 'open', options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/inbox', { status }, options), undefined, options) }
   getInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}`, undefined, options) }
+  listHumanAttention<T = HumanAttentionItem>(filters: HumanAttentionListFilters = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/human-attention', { ...filters }, options), undefined, options) }
+  getHumanAttention<T = HumanAttentionItem>(attentionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/human-attention/${encodeURIComponent(attentionId)}`, undefined, options) }
   claimInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/claim`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-claim') }) }
   acknowledgeInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/acknowledge`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-acknowledge') }) }
   replyInboxItem<T = InboxReplyResponse>(inboxItemId: string, input: { body: string; payload?: Record<string, unknown> }, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/reply`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-reply') }) }

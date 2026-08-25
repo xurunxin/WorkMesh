@@ -507,6 +507,8 @@ const mcpOperationIds = {
   'tool:post_work_room_message': 'postWorkRoomMessage',
   'tool:list_inbox_items': 'listInbox',
   'tool:get_inbox_item': 'getInboxItem',
+  'tool:list_human_attention': 'listHumanAttention',
+  'tool:get_human_attention': 'getHumanAttention',
   'tool:claim_inbox_item': 'claimInboxItem',
   'tool:acknowledge_inbox_item': 'acknowledgeInboxItem',
   'tool:reply_inbox_item': 'replyInboxItem',
