@@ -1647,6 +1647,21 @@ paths:
   /api/v1/human-attention/{id}:
     get:
       { x-workmesh-policy-id: route.getHumanAttention, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getHumanAttention, parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: "^v1:(decision|approval|inbox_item|completion_suggestion):[0-9a-f-]{36}$" } }], responses: { "200": { $ref: "#/components/responses/HumanAttentionItem" }, "404": { $ref: "#/components/responses/NotFound" } } }
+  /api/v1/control-center:
+    get:
+      { x-workmesh-policy-id: route.listControlCenter, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listControlCenter, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit100" }, { name: collection, in: query, schema: { $ref: "#/components/schemas/ControlCenterCollection" } }], responses: { "200": { $ref: "#/components/responses/ControlCenter" } } }
+  /api/v1/projects/{projectId}/control-center:
+    get:
+      { x-workmesh-policy-id: route.getProjectControlCenter, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectControlCenter, parameters: [{ name: projectId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit100" }, { name: collection, in: query, schema: { $ref: "#/components/schemas/ControlCenterCollection" } }], responses: { "200": { $ref: "#/components/responses/ControlCenter" }, "404": { $ref: "#/components/responses/NotFound" } } }
+  /api/v1/agent-sessions/{sessionId}/explanation:
+    get:
+      { x-workmesh-policy-id: route.explainAgentSession, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: explainAgentSession, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/RunExplanation" }, "404": { $ref: "#/components/responses/NotFound" } } }
+  /api/v1/work-items/{workItemId}/execution-summary:
+    get:
+      { x-workmesh-policy-id: route.getWorkItemExecutionSummary, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getWorkItemExecutionSummary, parameters: [{ name: workItemId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/WorkItemExecutionSummary" }, "404": { $ref: "#/components/responses/NotFound" } } }
+  /api/v1/agent-sessions/{sessionId}/control-preview:
+    post:
+      { x-workmesh-policy-id: route.previewAgentSessionControl, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: previewAgentSessionControl, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: false, required: [action], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" } } } } } }, responses: { "200": { $ref: "#/components/responses/ActionPreview" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/inbox:
     get:
       { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }], responses: { "200": { $ref: "#/components/responses/InboxItems" } } }
@@ -2008,6 +2023,12 @@ components:
       required: false
       description: Maximum number of authorized items returned in this page.
       schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+    Limit100:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of authorized control-plane digests returned for the selected collection.
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
     Id:
       {
         name: id,
@@ -2512,6 +2533,14 @@ components:
       { description: Authorized deterministic Human Attention projection page., content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionItem" } }, nextCursor: { type: [string, "null"] } } } } } }
     HumanAttentionItem:
       { description: One authorized Human Attention item with source provenance and non-authoritative command descriptors., content: { application/json: { schema: { $ref: "#/components/schemas/HumanAttentionItem" } } } }
+    ControlCenter:
+      { description: Bounded authorized Workspace or Project control-plane projection., headers: { ETag: { schema: { type: string }, description: Strong projection ETag. } }, content: { application/json: { schema: { $ref: "#/components/schemas/ControlCenterResponse" } } } }
+    RunExplanation:
+      { description: Authorized causal explanation for one Agent Session., headers: { ETag: { schema: { type: string }, description: Strong projection ETag. } }, content: { application/json: { schema: { $ref: "#/components/schemas/RunExplanation" } } } }
+    WorkItemExecutionSummary:
+      { description: Authorized bounded execution summary for one Work Item., headers: { ETag: { schema: { type: string }, description: Strong projection ETag. } }, content: { application/json: { schema: { $ref: "#/components/schemas/WorkItemExecutionSummary" } } } }
+    ActionPreview:
+      { description: Advisory current-revision preview that reserves no mutation authority., headers: { ETag: { schema: { type: string }, description: Strong source-revision ETag. } }, content: { application/json: { schema: { $ref: "#/components/schemas/ActionPreview" } } } }
     InboxItems:
       { description: Session-authorized Inbox summary page. Actor-targeted items expose bounded metadata until claimed by the exact Session., content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/InboxListItem" } }, nextCursor: { type: [string, "null"] } } } } } }
     InboxItem:
@@ -3483,6 +3512,71 @@ components:
       { type: object, additionalProperties: false, required: [decision], properties: { decision: { type: string, enum: [accepted, dismissed] } } }
     HumanAttentionKind:
       { type: string, enum: [decision, approval, clarification, conflict, recovery, completion_review] }
+    ControlCenterCollection:
+      { type: string, enum: [attention, running, risks, recently_verified, ready_work, blocked_work] }
+    AgentSessionControlAction:
+      { type: string, enum: [pause, resume, stop, retry, handoff, replan, steer] }
+    ControlPlaneFreshness:
+      { type: object, additionalProperties: false, required: [state, observedAt, sourceUpdatedAt], properties: { state: { type: string, enum: [current, refreshing, stale, offline, resync_required, partial] }, observedAt: { type: string, format: date-time }, sourceUpdatedAt: { type: string, format: date-time }, invalidAfter: { type: string, format: date-time } } }
+    ControlPlaneResourceReference:
+      { type: object, additionalProperties: false, required: [type, id], properties: { type: { type: string }, id: { type: string, format: uuid }, revision: { type: integer, minimum: 1 }, label: { type: string } } }
+    ControlCenterDigest:
+      { type: object, additionalProperties: false, required: [id, kind, title, summary, projectId, workItemId, sessionId, state, revision, source, updatedAt], properties: { id: { type: string }, kind: { type: string }, title: { type: string }, summary: { type: string }, projectId: { type: [string, "null"], format: uuid }, workItemId: { type: [string, "null"], format: uuid }, sessionId: { type: [string, "null"], format: uuid }, state: { type: string }, revision: { type: integer, minimum: 1 }, source: { $ref: "#/components/schemas/ControlPlaneResourceReference" }, updatedAt: { type: string, format: date-time } } }
+    ControlCenterSection:
+      { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlCenterDigest" } }, nextCursor: { type: [string, "null"] } } }
+    ControlCenterResponse:
+      { type: object, additionalProperties: false, required: [projectionVersion, scope, project, revision, freshness, collections], properties: { projectionVersion: { const: 1 }, scope: { type: object, additionalProperties: false, required: [workspaceId, projectId], properties: { workspaceId: { type: string, format: uuid }, projectId: { type: [string, "null"], format: uuid } } }, project: { type: [object, "null"], additionalProperties: false, required: [id, name, status, revision], properties: { id: { type: string, format: uuid }, name: { type: string }, status: { type: string }, revision: { type: integer, minimum: 1 } } }, revision: { type: integer, minimum: 1 }, freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }, collections: { type: object, additionalProperties: false, required: [attention, running, risks, recently_verified, ready_work, blocked_work], properties: { attention: { $ref: "#/components/schemas/ControlCenterSection" }, running: { $ref: "#/components/schemas/ControlCenterSection" }, risks: { $ref: "#/components/schemas/ControlCenterSection" }, recently_verified: { $ref: "#/components/schemas/ControlCenterSection" }, ready_work: { $ref: "#/components/schemas/ControlCenterSection" }, blocked_work: { $ref: "#/components/schemas/ControlCenterSection" } } } } }
+    ControlCapability:
+      { type: object, additionalProperties: false, required: [action, allowed, reasonCode, targetState], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" }, allowed: { type: boolean }, reasonCode: { type: string }, targetState: { anyOf: [{ $ref: "#/components/schemas/AgentSessionState" }, { type: "null" }] } } }
+    CausalEventGroup:
+      { type: object, additionalProperties: false, required: [id, kind, summary, count, firstSequence, lastSequence, sourceActivityIds], properties: { id: { type: string }, kind: { type: string }, summary: { type: string }, count: { type: integer, minimum: 1 }, firstSequence: { type: integer, minimum: 0 }, lastSequence: { type: integer, minimum: 0 }, sourceActivityIds: { type: array, maxItems: 200, items: { type: string, format: uuid } } } }
+    RunExplanation:
+      type: object
+      additionalProperties: false
+      required: [projectionVersion, session, workItem, responsibleHuman, activeAgent, plan, currentStep, causalGroups, pendingAttention, changes, evidence, health, freshness, allowedControls]
+      properties:
+        projectionVersion: { const: 1 }
+        session: { type: object, additionalProperties: false, required: [id, state, revision, stateReason, updatedAt], properties: { id: { type: string, format: uuid }, state: { $ref: "#/components/schemas/AgentSessionState" }, revision: { type: integer, minimum: 1 }, stateReason: { type: [string, "null"] }, updatedAt: { type: string, format: date-time } } }
+        workItem: { type: [object, "null"], additionalProperties: false, required: [id, title, revision], properties: { id: { type: string, format: uuid }, title: { type: string }, revision: { type: integer, minimum: 1 } } }
+        responsibleHuman: { anyOf: [{ $ref: "#/components/schemas/HumanAttentionActorReference" }, { type: "null" }] }
+        activeAgent: { $ref: "#/components/schemas/HumanAttentionActorReference" }
+        plan: { type: [object, "null"], additionalProperties: true }
+        currentStep: { type: [object, "null"], additionalProperties: true }
+        causalGroups: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/CausalEventGroup" } }
+        pendingAttention: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/HumanAttentionItem" } }
+        changes: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
+        evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }
+        health: { type: object, additionalProperties: false, required: [heartbeat, lastHeartbeatAt, leaseCount, pendingApprovalCount], properties: { heartbeat: { type: string, enum: [healthy, degraded, stale] }, lastHeartbeatAt: { type: [string, "null"], format: date-time }, leaseCount: { type: integer, minimum: 0 }, pendingApprovalCount: { type: integer, minimum: 0 } } }
+        freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }
+        allowedControls: { type: array, minItems: 7, maxItems: 7, items: { $ref: "#/components/schemas/ControlCapability" } }
+    WorkItemExecutionSummary:
+      { type: object, additionalProperties: false, required: [projectionVersion, workItem, activeRuns, recentRuns, evidence, freshness], properties: { projectionVersion: { const: 1 }, workItem: { type: object, additionalProperties: false, required: [id, title, revision, status], properties: { id: { type: string, format: uuid }, title: { type: string }, revision: { type: integer, minimum: 1 }, status: { type: string } } }, activeRuns: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlCenterDigest" } }, recentRuns: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlCenterDigest" } }, evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }, freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" } } }
+    ActionPreview:
+      type: object
+      additionalProperties: false
+      required: [projectionVersion, action, allowed, reasonCode, sourceRevision, currentState, targetState, affectedResources, consequences, reversible, releaseLease, preserveArtifacts, preserveUncommittedWork, nextWorkItemState, invalidatedApprovals, requiredReason, requiredApproval, warnings, expiresAt, freshness, advisory]
+      properties:
+        projectionVersion: { const: 1 }
+        action: { $ref: "#/components/schemas/AgentSessionControlAction" }
+        allowed: { type: boolean }
+        reasonCode: { type: string }
+        sourceRevision: { type: integer, minimum: 1 }
+        currentState: { $ref: "#/components/schemas/AgentSessionState" }
+        targetState: { anyOf: [{ $ref: "#/components/schemas/AgentSessionState" }, { type: "null" }] }
+        affectedResources: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
+        consequences: { type: array, maxItems: 100, items: { type: object, additionalProperties: false, required: [code, summary], properties: { code: { type: string }, summary: { type: string } } } }
+        reversible: { type: boolean }
+        releaseLease: { type: boolean }
+        preserveArtifacts: { type: boolean }
+        preserveUncommittedWork: { type: string, enum: [yes, no, unknown, runtime_dependent] }
+        nextWorkItemState: { type: [string, "null"] }
+        invalidatedApprovals: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
+        requiredReason: { type: boolean }
+        requiredApproval: { type: object, additionalProperties: false, required: [required, approvalType], properties: { required: { type: boolean }, approvalType: { type: [string, "null"] } } }
+        warnings: { type: array, maxItems: 100, items: { type: string } }
+        expiresAt: { type: string, format: date-time }
+        freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }
+        advisory: { const: true }
     HumanAttentionStatus:
       { type: string, enum: [open, seen, decided, applying, verified, failed, expired, superseded] }
     HumanAttentionActorReference:

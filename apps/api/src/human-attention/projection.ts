@@ -32,6 +32,7 @@ export type HumanAttentionRow = Readonly<{
   correlation_id: string | null
   created_at: Date | string
   updated_at: Date | string
+  updated_cursor?: string
   recipient_actor_id: string | null
 }>
 
@@ -342,7 +343,8 @@ WITH attention AS (
     JOIN work_items work ON work.id=suggestion.work_item_id AND work.workspace_id=suggestion.workspace_id AND work.deleted_at IS NULL
    WHERE suggestion.workspace_id=$1
 )
-SELECT attention.*,requester.kind::text AS requested_by_kind,requester.display_name AS requested_by_name,
+SELECT attention.*,to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS updated_cursor,
+       requester.kind::text AS requested_by_kind,requester.display_name AS requested_by_name,
        responsible.display_name AS responsible_human_name
   FROM attention
   JOIN actors requester ON requester.id=attention.requested_by_actor_id AND requester.workspace_id=attention.workspace_id

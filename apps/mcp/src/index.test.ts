@@ -38,6 +38,29 @@ async function connected(mode: 'read-only' | 'read-write', client: WorkMeshClien
 }
 
 describe('WorkMesh MCP adapter', () => {
+  it('keeps Control Plane read tools in parity with the Agent SDK', async () => {
+    const getControlCenter = vi.fn().mockResolvedValue({ projectionVersion: 1 })
+    const getProjectControlCenter = vi.fn().mockResolvedValue({ projectionVersion: 1 })
+    const explainAgentSession = vi.fn().mockResolvedValue({ projectionVersion: 1 })
+    const getWorkItemExecutionSummary = vi.fn().mockResolvedValue({ projectionVersion: 1 })
+    const previewAgentSessionControl = vi.fn().mockResolvedValue({ projectionVersion: 1, advisory: true })
+    const api = { getControlCenter, getProjectControlCenter, explainAgentSession, getWorkItemExecutionSummary, previewAgentSessionControl } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const names = (await protocol.listTools()).tools.map(tool => tool.name)
+      expect(names).toEqual(expect.arrayContaining(['get_control_center','get_project_control_center','explain_agent_session','get_work_item_execution_summary','preview_agent_session_control']))
+      await protocol.callTool({ name: 'get_control_center', arguments: { collection: 'running', limit: 25 } })
+      await protocol.callTool({ name: 'get_project_control_center', arguments: { projectId, collection: 'risks' } })
+      await protocol.callTool({ name: 'explain_agent_session', arguments: { sessionId } })
+      await protocol.callTool({ name: 'get_work_item_execution_summary', arguments: { workItemId } })
+      await protocol.callTool({ name: 'preview_agent_session_control', arguments: { sessionId, action: 'stop' } })
+      expect(getControlCenter).toHaveBeenCalledWith('running', { cursor: undefined, limit: 25 })
+      expect(getProjectControlCenter).toHaveBeenCalledWith(projectId, 'risks', { cursor: undefined, limit: undefined })
+      expect(explainAgentSession).toHaveBeenCalledWith(sessionId)
+      expect(getWorkItemExecutionSummary).toHaveBeenCalledWith(workItemId)
+      expect(previewAgentSessionControl).toHaveBeenCalledWith(sessionId, 'stop')
+    } finally { await protocol.close(); await server.close() }
+  })
   it('claims an eligible Issue and returns only a recoverable execution bridge receipt', async () => {
     const exchangeToken = 'exchange-secret-must-not-escape'
     const sessionToken = 'session-secret-must-not-escape'

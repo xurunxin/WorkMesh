@@ -55,6 +55,7 @@ import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerInboxRoutes } from "./inbox/routes.js";
 import { registerHumanAttentionRoutes } from "./human-attention/routes.js";
+import { registerControlCenterRoutes } from "./control-center/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
 import { registerAdminRetentionRoutes } from "./admin-retention.js";
@@ -523,6 +524,7 @@ export const buildApp = (options: {
           ? (JSON.parse(payload) as unknown)
           : (payload as unknown);
       if (
+        !reply.hasHeader("ETag") &&
         value &&
         typeof value === "object" &&
         "revision" in value &&
@@ -1170,6 +1172,7 @@ export const buildApp = (options: {
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
   registerHumanAttentionRoutes(app, { db, paginator });
+  registerControlCenterRoutes(app, { db, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);

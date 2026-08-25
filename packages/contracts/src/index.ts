@@ -589,6 +589,132 @@ export const humanAttentionListResponseSchema = z.object({ items: z.array(humanA
 export type HumanAttentionKind = z.infer<typeof humanAttentionKindSchema>
 export type HumanAttentionStatus = z.infer<typeof humanAttentionStatusSchema>
 export type HumanAttentionItem = z.infer<typeof humanAttentionItemSchema>
+export const controlPlaneProjectionVersionSchema = z.literal(1)
+export const controlCenterCollectionSchema = z.enum(['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work'])
+export const controlPlaneResourceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: idSchema, revision: revisionSchema.optional(), label: z.string().min(1).max(500).optional() }).strict()
+export const controlCenterDigestSchema = z.object({
+  id: z.string().min(1).max(200),
+  kind: z.string().min(1).max(100),
+  title: z.string().min(1).max(500),
+  summary: z.string().min(1).max(20_000),
+  projectId: idSchema.nullable(),
+  workItemId: idSchema.nullable(),
+  sessionId: idSchema.nullable(),
+  state: z.string().min(1).max(100),
+  revision: revisionSchema,
+  source: controlPlaneResourceReferenceSchema,
+  updatedAt: timestampSchema,
+}).strict()
+export const controlCenterSectionSchema = z.object({ items: z.array(controlCenterDigestSchema).max(100), nextCursor: z.string().nullable() }).strict()
+export const controlCenterResponseSchema = z.object({
+  projectionVersion: controlPlaneProjectionVersionSchema,
+  scope: z.object({ workspaceId: idSchema, projectId: idSchema.nullable() }).strict(),
+  project: z.object({ id: idSchema, name: z.string().min(1).max(500), status: z.string().min(1).max(100), revision: revisionSchema }).strict().nullable(),
+  revision: revisionSchema,
+  freshness: humanAttentionFreshnessSchema,
+  collections: z.object({
+    attention: controlCenterSectionSchema,
+    running: controlCenterSectionSchema,
+    risks: controlCenterSectionSchema,
+    recently_verified: controlCenterSectionSchema,
+    ready_work: controlCenterSectionSchema,
+    blocked_work: controlCenterSectionSchema,
+  }).strict(),
+}).strict()
+export const causalEventGroupSchema = z.object({
+  id: z.string().min(1).max(200),
+  kind: z.string().min(1).max(100),
+  summary: z.string().min(1).max(20_000),
+  count: z.number().int().positive().max(10_000),
+  firstSequence: z.number().int().nonnegative(),
+  lastSequence: z.number().int().nonnegative(),
+  sourceActivityIds: z.array(idSchema).max(200),
+}).strict()
+export const runExplanationResponseSchema = z.object({
+  projectionVersion: controlPlaneProjectionVersionSchema,
+  session: z.object({ id: idSchema, state: agentSessionStateSchema, revision: revisionSchema, stateReason: z.string().nullable(), updatedAt: timestampSchema }).strict(),
+  workItem: z.object({ id: idSchema, title: z.string(), revision: revisionSchema }).strict().nullable(),
+  responsibleHuman: attentionActorReferenceSchema.nullable(),
+  activeAgent: attentionActorReferenceSchema,
+  plan: z.object({ id: idSchema, revision: revisionSchema, changeSummary: z.string() }).strict().nullable(),
+  currentStep: z.object({ id: idSchema, title: z.string(), status: planStepStatusSchema, ordinal: z.number().int().nonnegative() }).strict().nullable(),
+  causalGroups: z.array(causalEventGroupSchema).max(100),
+  pendingAttention: z.array(humanAttentionItemSchema).max(100),
+  changes: z.array(controlPlaneResourceReferenceSchema).max(200),
+  evidence: z.array(attentionEvidenceReferenceSchema).max(200),
+  health: z.object({ heartbeat: z.enum(['healthy', 'degraded', 'stale']), lastHeartbeatAt: timestampSchema.nullable(), leaseCount: z.number().int().nonnegative(), pendingApprovalCount: z.number().int().nonnegative() }).strict(),
+  freshness: humanAttentionFreshnessSchema,
+  allowedControls: z.array(z.object({ action: z.enum(['pause', 'resume', 'stop', 'retry', 'handoff', 'replan', 'steer']), allowed: z.boolean(), reasonCode: z.string(), targetState: agentSessionStateSchema.nullable() }).strict()).length(7),
+}).strict()
+export const workItemExecutionSummaryResponseSchema = z.object({
+  projectionVersion: controlPlaneProjectionVersionSchema,
+  workItem: z.object({ id: idSchema, title: z.string(), revision: revisionSchema, status: z.string() }).strict(),
+  activeRuns: z.array(controlCenterDigestSchema).max(100),
+  recentRuns: z.array(controlCenterDigestSchema).max(100),
+  evidence: z.array(attentionEvidenceReferenceSchema).max(200),
+  freshness: humanAttentionFreshnessSchema,
+}).strict()
+export const agentSessionControlActionSchema = z.enum(['pause', 'resume', 'stop', 'retry', 'handoff', 'replan', 'steer'])
+export const agentSessionControlPreviewInputSchema = z.object({ action: agentSessionControlActionSchema }).strict()
+export const actionPreviewResponseSchema = z.object({
+  projectionVersion: controlPlaneProjectionVersionSchema,
+  action: agentSessionControlActionSchema,
+  allowed: z.boolean(),
+  reasonCode: z.string().min(1).max(200),
+  sourceRevision: revisionSchema,
+  currentState: agentSessionStateSchema,
+  targetState: agentSessionStateSchema.nullable(),
+  affectedResources: z.array(controlPlaneResourceReferenceSchema).max(200),
+  consequences: z.array(z.object({ code: z.string().min(1).max(200), summary: z.string().min(1).max(2_000) }).strict()).max(100),
+  reversible: z.boolean(),
+  releaseLease: z.boolean(),
+  preserveArtifacts: z.boolean(),
+  preserveUncommittedWork: z.enum(['yes', 'no', 'unknown', 'runtime_dependent']),
+  nextWorkItemState: z.string().nullable(),
+  invalidatedApprovals: z.array(controlPlaneResourceReferenceSchema).max(100),
+  requiredReason: z.boolean(),
+  requiredApproval: z.object({ required: z.boolean(), approvalType: z.string().nullable() }).strict(),
+  warnings: z.array(z.string().min(1).max(2_000)).max(100),
+  expiresAt: timestampSchema,
+  freshness: humanAttentionFreshnessSchema,
+  advisory: z.literal(true),
+}).strict()
+export const controlPlaneInvalidationSchema = z.object({
+  projection: z.enum(['control_center', 'run_explanation', 'execution_summary', 'control_preview']),
+  scopeId: idSchema,
+  fragments: z.array(controlCenterCollectionSchema).max(6),
+}).strict()
+export type ControlPlaneInvalidation = z.infer<typeof controlPlaneInvalidationSchema>
+
+export const controlPlaneInvalidationsForEvent = (event: EventEnvelope): ControlPlaneInvalidation[] => {
+  const fragments = new Set<z.infer<typeof controlCenterCollectionSchema>>()
+  if (/^(approval|decision|inbox|completion_suggestion)\./.test(event.event_type)) fragments.add('attention')
+  if (/^(agent\.session|lease|handoff)\./.test(event.event_type)) {
+    fragments.add('running')
+    fragments.add('risks')
+    fragments.add('recently_verified')
+  }
+  if (/^(work_item|agent\.plan)\./.test(event.event_type)) {
+    fragments.add('ready_work')
+    fragments.add('blocked_work')
+  }
+  if (/^(artifact|delivery)\./.test(event.event_type)) fragments.add('recently_verified')
+  const resources = [...event.scopes, ...event.invalidates]
+  const result: ControlPlaneInvalidation[] = [{ projection: 'control_center', scopeId: event.workspace_id, fragments: [...fragments] }]
+  for (const resource of resources) {
+    if (resource.type === 'project') result.push({ projection: 'control_center', scopeId: resource.id, fragments: [...fragments] })
+    if (resource.type === 'work_item') result.push({ projection: 'execution_summary', scopeId: resource.id, fragments: [] })
+    if (resource.type === 'session') {
+      result.push({ projection: 'run_explanation', scopeId: resource.id, fragments: [] })
+      result.push({ projection: 'control_preview', scopeId: resource.id, fragments: [] })
+    }
+  }
+  return [...new Map(result.map(item => [`${item.projection}:${item.scopeId}`, item])).values()]
+}
+export type ControlCenterResponse = z.infer<typeof controlCenterResponseSchema>
+export type RunExplanation = z.infer<typeof runExplanationResponseSchema>
+export type WorkItemExecutionSummary = z.infer<typeof workItemExecutionSummaryResponseSchema>
+export type ActionPreview = z.infer<typeof actionPreviewResponseSchema>
 export const decisionInputSchema = z.object({ title: z.string().min(1).max(500), rationale: z.string().min(1).max(20_000), options: z.array(z.string().min(1).max(2_000)).max(50).default([]), selectedOption: z.string().max(2_000).optional(), evidence: z.array(z.string().min(1).max(2_000)).max(100).default([]), affectedResources: z.array(z.object({ resourceType: z.enum(['work_item', 'plan_step', 'artifact', 'session']), resourceId: idSchema, impact: z.string().min(1).max(2_000).default('affected') })).max(100).default([]), sessionId: idSchema.optional() })
 export const leaseKindSchema = z.enum(['exclusive', 'review_shared'])
 export const leaseResourceTypeSchema = z.enum(['work_item', 'plan_step'])
@@ -1656,6 +1782,14 @@ export const humanAttentionRouteManifest = [
   { method: 'GET', path: '/api/v1/human-attention/{id}', authenticated: true },
 ] as const
 
+export const controlPlaneReadRouteManifest = [
+  { method: 'GET', path: '/api/v1/control-center', authenticated: true },
+  { method: 'GET', path: '/api/v1/projects/{projectId}/control-center', authenticated: true },
+  { method: 'GET', path: '/api/v1/agent-sessions/{sessionId}/explanation', authenticated: true },
+  { method: 'GET', path: '/api/v1/work-items/{workItemId}/execution-summary', authenticated: true },
+  { method: 'POST', path: '/api/v1/agent-sessions/{sessionId}/control-preview', authenticated: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
@@ -1664,6 +1798,7 @@ export const agentRouteManifest = [
   ...stage4RouteManifest,
   ...stage5RouteManifest,
   ...humanAttentionRouteManifest,
+  ...controlPlaneReadRouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {

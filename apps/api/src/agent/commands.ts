@@ -13,7 +13,7 @@ import {
 import { loadRetentionConfig } from "@workmesh/config";
 import { agentSessionResponseSchema } from "@workmesh/contracts";
 import {
-  assertAgentSessionTransition, assertCompletionEvidence, assertRevision,
+  assertAgentSessionTransition, assertAgentSessionControlAllowed, assertCompletionEvidence, assertRevision,
   assertWorkItemSelfClaimable,
   DomainError, validatePlanSteps,
 } from "@workmesh/domain";
@@ -2584,7 +2584,7 @@ export async function retrySession(db: Pool, meta: RequestMeta, sourceId: string
     const source = one((await tx.query<Record<string, unknown>>("SELECT s.*,d.principal_human_actor_id,d.status AS delegation_status,a.is_active AS agent_active,EXISTS(SELECT 1 FROM agent_team_access ata WHERE ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id AND ata.team_id=s.team_id AND ata.revoked_at IS NULL) AS team_active,a.max_concurrency,w.project_id AS work_item_project_id FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id JOIN agent_definitions a ON a.id=s.agent_id LEFT JOIN work_items w ON w.id=s.work_item_id AND w.workspace_id=s.workspace_id AND w.deleted_at IS NULL WHERE s.id=$1 AND s.workspace_id=$2", [sourceId, meta.actor.workspaceId])).rows) as Record<string, unknown>;
     if(source.agent_id!==locator.agent_id||source.delegation_id!==locator.delegation_id||source.team_id!==locator.team_id||source.work_item_id!==locator.work_item_id||source.project_id!==locator.project_id||source.work_item_project_id!==locator.work_item_project_id) throw new DomainError("DELEGATION_NOT_ACTIVE","Retry authority binding changed");
     await assertHumanTeam(tx, meta.actor, source.team_id as string); assertRevision(revision, source.revision as number);
-    if (!['failed','canceled','stale'].includes(source.state as string)) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED", "Only failed, canceled, or stale sessions can be retried");
+    assertAgentSessionControlAllowed(source.state as AgentSessionState, 'retry');
     if (!source.agent_active || source.delegation_status!=="active" || !source.team_active) throw new DomainError("DELEGATION_NOT_ACTIVE","Retry requires an active agent delegation and team grant");
     if ((await tx.query("SELECT 1 FROM agent_sessions WHERE retry_of_session_id=$1",[sourceId])).rowCount) throw new DomainError("AGENT_SESSION_RETRY_NOT_ALLOWED","A direct retry already exists for this source session");
     if (source.state === "stale") {
@@ -2789,7 +2789,7 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.reason, "signal reason");
     const session = one((await tx.query<{ state: AgentSessionState; revision: number; team_id: string }>("SELECT state,revision,team_id FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id); assertRevision(expectedRevision, session.revision);
-    const next: AgentSessionState = input.signal === "stop" ? "stopping" : input.signal === "pause" ? "paused" : "executing"; assertAgentSessionTransition(session.state, next);
+    const next: AgentSessionState = input.signal === "stop" ? "stopping" : input.signal === "pause" ? "paused" : "executing"; assertAgentSessionControlAllowed(session.state, input.signal);
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2::agent_session_state,state_reason=$3,stop_requested_at=CASE WHEN $2::agent_session_state='stopping' THEN now() ELSE stop_requested_at END,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, next, input.reason])).rows);
     if (input.signal === "stop") {
       const leases = (await tx.query<{ id: string }>("UPDATE leases SET status='released',released_at=now(),released_by_actor_id=$2,audit_reason='stop requested',version=version+1,updated_at=now() WHERE session_id=$1 AND status='active' RETURNING id", [sessionId, meta.actor.id])).rows;

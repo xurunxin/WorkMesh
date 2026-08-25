@@ -93,6 +93,17 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
     description: 'Read one typed Human Attention projection when its source remains authorized for the configured exact Agent Session.',
     inputSchema: { attentionId: z.string().min(1).max(255) },
   }, async input => tool(() => options.client.getHumanAttention(input.attentionId)))
+  server.registerTool('get_control_center', {
+    description: 'Read a bounded Workspace control-plane projection. Select one collection and pass nextCursor back to expand it.',
+    inputSchema: { collection: z.enum(['attention','running','risks','recently_verified','ready_work','blocked_work']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(100).optional() },
+  }, async input => tool(() => options.client.getControlCenter(input.collection, { cursor: input.cursor, limit: input.limit })))
+  server.registerTool('get_project_control_center', {
+    description: 'Read a bounded Project control-plane projection authorized for the configured identity.',
+    inputSchema: { projectId: z.string().uuid(), collection: z.enum(['attention','running','risks','recently_verified','ready_work','blocked_work']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(100).optional() },
+  }, async input => tool(() => options.client.getProjectControlCenter(input.projectId, input.collection, { cursor: input.cursor, limit: input.limit })))
+  server.registerTool('explain_agent_session', { description: 'Read the bounded causal explanation for one authorized Agent Session.', inputSchema: { sessionId } }, async input => tool(() => options.client.explainAgentSession(input.sessionId)))
+  server.registerTool('get_work_item_execution_summary', { description: 'Read bounded current and recent execution facts for one authorized Work Item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItemExecutionSummary(input.workItemId)))
+  server.registerTool('preview_agent_session_control', { description: 'Preview current-revision Session control consequences without reserving authority or mutating state.', inputSchema: { sessionId, action: z.enum(['pause','resume','stop','retry','handoff','replan','steer']) } }, async input => tool(() => options.client.previewAgentSessionControl(input.sessionId, input.action)))
 
   if (options.mode !== 'read-only') registerMutations(server, options.client)
   return server

@@ -82,6 +82,52 @@ export const assertAgentSessionRetryAllowed = (sourceState: AgentSessionState): 
   }
 }
 
+export type AgentSessionControlAction = 'pause' | 'resume' | 'stop' | 'retry' | 'handoff' | 'replan' | 'steer'
+
+export type AgentSessionControlPolicy = Readonly<{
+  action: AgentSessionControlAction
+  allowed: boolean
+  reasonCode: string
+  targetState: AgentSessionState | null
+}>
+
+/** Shared state-policy source for Human control previews and final commands. */
+export const evaluateAgentSessionControl = (
+  currentState: AgentSessionState,
+  action: AgentSessionControlAction,
+): AgentSessionControlPolicy => {
+  const targetState = action === 'pause'
+    ? 'paused'
+    : action === 'resume'
+      ? 'executing'
+      : action === 'stop'
+        ? 'stopping'
+        : null
+  try {
+    if (targetState) assertAgentSessionTransition(currentState, targetState)
+    else if (action === 'retry') assertAgentSessionRetryAllowed(currentState)
+    else if (isTerminalAgentSessionState(currentState) || currentState === 'stopping')
+      throw new DomainError('AGENT_SESSION_CONTROL_NOT_ALLOWED', `Cannot ${action} a session in ${currentState}`, { currentState, action })
+    return { action, allowed: true, reasonCode: 'control.allowed', targetState }
+  } catch (error) {
+    if (!(error instanceof DomainError)) throw error
+    return { action, allowed: false, reasonCode: error.code.toLowerCase(), targetState }
+  }
+}
+
+export const assertAgentSessionControlAllowed = (
+  currentState: AgentSessionState,
+  action: AgentSessionControlAction,
+): void => {
+  const policy = evaluateAgentSessionControl(currentState, action)
+  if (policy.allowed) return
+  // Final commands retain their established public error codes while sharing
+  // the exact transition predicates used by the advisory preview.
+  if (action === 'retry') assertAgentSessionRetryAllowed(currentState)
+  if (policy.targetState) assertAgentSessionTransition(currentState, policy.targetState)
+  throw new DomainError('AGENT_SESSION_CONTROL_NOT_ALLOWED', `Cannot ${action} a session in ${currentState}`, { currentState, action, reasonCode: policy.reasonCode })
+}
+
 type PlanStepLike = Pick<PlanStepInput, 'id' | 'status' | 'dependsOn' | 'ordinal' | 'cancellationReason'>
 const startedPlanStepStates = new Set<PlanStepInput['status']>(['in_progress', 'blocked', 'completed'])
 

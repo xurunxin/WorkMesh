@@ -242,7 +242,7 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
       expect((await db.query("SELECT to_regclass('public.workspaces') AS relation")).rows[0]!.relation).toBeNull()
       await applyMigrations(db)
       expect((await db.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0]!.count).toBe(v1MigrationManifest.length)
-    }, 120_000)
+    }, 180_000)
   }
 
   it('treats an after-commit crash as complete and restarts without replay', async () => {

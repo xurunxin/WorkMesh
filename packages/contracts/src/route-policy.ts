@@ -279,6 +279,8 @@ const approvalOperations = new Set([
   'consumeApproval',
 ])
 
+const readOnlyPostOperations = new Set(['previewAgentSessionControl'])
+
 const memberMutationOperations = new Set([
   'decideApproval',
 ])
@@ -302,7 +304,16 @@ function authenticationFor(operationId: string): RoutePolicyAuthentication {
   return 'human_or_agent_session'
 }
 
+const selfAuthorizedProjectionOperations = new Set([
+  'listControlCenter',
+  'getProjectControlCenter',
+  'explainAgentSession',
+  'getWorkItemExecutionSummary',
+  'previewAgentSessionControl',
+])
+
 function resolverFor(path: string, operationId: string): ResourceResolverId {
+  if (selfAuthorizedProjectionOperations.has(operationId)) return 'none'
   if (operationId === 'getCurrentAgentConnectionIdentity') return 'none'
   if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'
   if (operationId === 'listWorkItemArtifacts') return 'work_item'
@@ -339,6 +350,7 @@ function capabilityFor(
   operationId: string,
 ): readonly string[] {
   if (operationId === 'getAgentCapabilityManifest' || operationId === 'getCurrentAgentConnectionIdentity') return []
+  if (operationId === 'previewAgentSessionControl') return ['work:read']
   if (operationId === 'claimWorkItem') return ['work:read', 'work:write']
   if (operationId === 'delegateAndStartAgentSession') return ['agent:delegate']
   if (method === 'GET') {
@@ -376,7 +388,7 @@ export function createRoutePolicyManifest(
       || authentication === 'installation_target'
     const feature = featureForRoute(binding.path)
     const workspaceAdmin = workspaceAdminOperations.has(binding.operationId)
-    const mutation = binding.method !== 'GET'
+    const mutation = binding.method !== 'GET' && !readOnlyPostOperations.has(binding.operationId)
     const resolver = resolverFor(binding.path, binding.operationId)
     const policyId = `route.${binding.operationId}`
 
@@ -509,6 +521,11 @@ const mcpOperationIds = {
   'tool:get_inbox_item': 'getInboxItem',
   'tool:list_human_attention': 'listHumanAttention',
   'tool:get_human_attention': 'getHumanAttention',
+  'tool:get_control_center': 'listControlCenter',
+  'tool:get_project_control_center': 'getProjectControlCenter',
+  'tool:explain_agent_session': 'explainAgentSession',
+  'tool:get_work_item_execution_summary': 'getWorkItemExecutionSummary',
+  'tool:preview_agent_session_control': 'previewAgentSessionControl',
   'tool:claim_inbox_item': 'claimInboxItem',
   'tool:acknowledge_inbox_item': 'acknowledgeInboxItem',
   'tool:reply_inbox_item': 'replyInboxItem',

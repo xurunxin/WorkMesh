@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 import {
   DomainError,
   assertAgentMutationAllowed,
+  assertAgentSessionControlAllowed,
   assertAgentSessionRetryAllowed,
   assertAgentSessionTransition,
+  evaluateAgentSessionControl,
   assertApprovalUsable,
   assertCompletionEvidence,
   assertPlanPublicationApproval,
@@ -58,6 +60,20 @@ describe('Stage 1 agent domain invariants', () => {
   it('retries by creating a linked session without reopening terminal history', () => {
     expect(() => assertAgentSessionRetryAllowed('failed')).not.toThrow()
     expect(() => assertAgentSessionRetryAllowed('executing')).toThrow(DomainError)
+  })
+
+  it('shares one state policy across control previews and final commands', () => {
+    expect(evaluateAgentSessionControl('executing', 'pause')).toMatchObject({ allowed: true, targetState: 'paused' })
+    expect(evaluateAgentSessionControl('paused', 'resume')).toMatchObject({ allowed: true, targetState: 'executing' })
+    expect(evaluateAgentSessionControl('executing', 'retry')).toMatchObject({ allowed: false, targetState: null })
+    expect(evaluateAgentSessionControl('failed', 'retry')).toMatchObject({ allowed: true, targetState: null })
+    expect(evaluateAgentSessionControl('completed', 'steer')).toMatchObject({ allowed: false, targetState: null })
+    expect(() => assertAgentSessionControlAllowed('executing', 'retry')).toThrowError(
+      expect.objectContaining({ code: 'AGENT_SESSION_RETRY_NOT_ALLOWED' }),
+    )
+    expect(() => assertAgentSessionControlAllowed('completed', 'stop')).toThrowError(
+      expect.objectContaining({ code: 'INVALID_SESSION_TRANSITION' }),
+    )
   })
 
   it('requires a matching usable approval for plan publication while awaiting approval', () => {
