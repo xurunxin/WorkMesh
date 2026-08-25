@@ -382,6 +382,16 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/human-attention",
+    "operationId": "listHumanAttention"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/human-attention/{id}",
+    "operationId": "getHumanAttention"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/rooms",
     "operationId": "getWorkRoom"
   },

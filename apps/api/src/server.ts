@@ -54,6 +54,7 @@ import {
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerInboxRoutes } from "./inbox/routes.js";
+import { registerHumanAttentionRoutes } from "./human-attention/routes.js";
 import { registerDeliveryRoutes } from "./delivery/routes.js";
 import { registerOperationsRoutes } from "./operations/routes.js";
 import { registerAdminRetentionRoutes } from "./admin-retention.js";
@@ -1168,6 +1169,7 @@ export const buildApp = (options: {
   registerGuidanceRoutes(app, { db, meta: commandContext, header });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
+  registerHumanAttentionRoutes(app, { db, paginator });
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);

@@ -121,6 +121,14 @@ describe('workspace realtime refresh policies', () => {
     )]).toEqual(['sessions'])
     expect([...agentRegistryRefreshTargets(selectedSession)])
       .toEqual(['sessions', 'approvals'])
+
+    const decision = realtimeEvent({
+      aggregateType: 'decision',
+      scopes: [{ type: 'workspace', id: workspaceId }],
+      invalidates: [{ type: 'session', id: sessionId }],
+    })
+    expect([...agentRegistryRefreshTargets(decision)])
+      .toEqual(['sessions', 'approvals', 'attention'])
   })
 
   it('refreshes selected comments without widening unrelated Work Rooms', () => {

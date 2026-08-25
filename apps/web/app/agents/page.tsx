@@ -2,6 +2,7 @@
 
 import { memo, type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
+import type { HumanAttentionItem } from '@workmesh/contracts'
 import {
   type Agent,
   type AgentSession,
@@ -49,6 +50,12 @@ import { TeamAccessDrawer } from './team-access-drawer'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
+const attentionHref = (item: HumanAttentionItem): string => {
+  if (item.sessionId) return `/agent-sessions/${item.sessionId}`
+  if (item.workItemId) return `/?workItemId=${encodeURIComponent(item.workItemId)}`
+  if (item.projectId) return `/?view=projects&projectId=${encodeURIComponent(item.projectId)}`
+  return '/'
+}
 
 export default function AgentsPage() {
   const { agentsCopy: text } = useLocale()
@@ -101,6 +108,7 @@ function AgentsPageScope({
   const teamsPage = usePagedApiList<Team>('/api/v1/teams', { scopeKey: authorityScopeKey })
   const humansPage = usePagedApiList<Human>('/api/v1/actors/humans', { scopeKey: authorityScopeKey })
   const sessionsPage = usePagedApiList<AgentSession>('/api/v1/agent-sessions', { optional: true, scopeKey: authorityScopeKey })
+  const attentionPage = usePagedApiList<HumanAttentionItem>('/api/v1/human-attention?status=open', { optional: true, scopeKey: authorityScopeKey })
   const pendingApprovalsPage = usePagedApiList<Approval, Approval>('/api/v1/approvals?status=pending', {
     optional: true,
     map: value => normalizeApproval(value as unknown as Record<string, unknown>),
@@ -117,21 +125,24 @@ function AgentsPageScope({
   const teamsAuthorized = !isCollectionAuthorityRevoked(teamsPage.error)
   const humansAuthorized = !isCollectionAuthorityRevoked(humansPage.error)
   const sessionsAuthorized = !isCollectionAuthorityRevoked(sessionsPage.error)
+  const attentionAuthorized = !isCollectionAuthorityRevoked(attentionPage.error)
   const pendingApprovalsAuthorized = !isCollectionAuthorityRevoked(pendingApprovalsPage.error)
   const historyApprovalsAuthorized = !isCollectionAuthorityRevoked(historyApprovalsPage.error)
   const agents = agentsAuthorized ? agentsPage.items : []
   const teams = teamsAuthorized ? teamsPage.items : []
   const humans = humansAuthorized ? humansPage.items : []
   const sessions = sessionsAuthorized ? sessionsPage.items : []
+  const attentionItems = attentionAuthorized ? attentionPage.items : []
   const approvals = useMemo(
     () => pendingApprovalsAuthorized ? pendingApprovalsPage.items.filter(approval => approval.status === 'pending') : [],
     [pendingApprovalsAuthorized, pendingApprovalsPage.items],
   )
   const historyApprovals = historyApprovalsAuthorized ? historyApprovalsPage.items : []
-  const collectionError = [agentsPage.error, teamsPage.error, humansPage.error, sessionsPage.error, pendingApprovalsPage.error, historyApprovalsPage.error].find(Boolean)
-  const summaryError = agentsPage.error ?? sessionsPage.error ?? pendingApprovalsPage.error
+  const collectionError = [agentsPage.error, teamsPage.error, humansPage.error, sessionsPage.error, attentionPage.error, pendingApprovalsPage.error, historyApprovalsPage.error].find(Boolean)
+  const summaryError = agentsPage.error ?? sessionsPage.error ?? attentionPage.error ?? pendingApprovalsPage.error
   const summaryInitialized = agentsPage.initialized && agentsAuthorized
     && sessionsPage.initialized && sessionsAuthorized
+    && attentionPage.initialized && attentionAuthorized
     && pendingApprovalsPage.initialized && pendingApprovalsAuthorized
   const registryInitialized = agentsPage.initialized && agentsAuthorized
   const sessionsInitialized = sessionsPage.initialized && sessionsAuthorized
@@ -148,11 +159,12 @@ function AgentsPageScope({
   useRealtimeSubscription(realtimeResources, invalidation => {
     const targets = agentRegistryRefreshTargets(invalidation)
     if (invalidation.reason === 'resync') return Promise.all([
-      agentsPage.refresh(), teamsPage.refresh(), humansPage.refresh(), sessionsPage.refresh(), pendingApprovalsPage.refresh(), historyApprovalsPage.refresh(),
+      agentsPage.refresh(), teamsPage.refresh(), humansPage.refresh(), sessionsPage.refresh(), attentionPage.refresh(), pendingApprovalsPage.refresh(), historyApprovalsPage.refresh(),
     ]).then(() => undefined)
     if (targets.has('agents')) void agentsPage.refresh()
     if (targets.has('teams')) void teamsPage.refresh()
     if (targets.has('sessions')) void sessionsPage.refresh()
+    if (targets.has('attention')) void attentionPage.refresh()
     if (targets.has('approvals')) {
       void pendingApprovalsPage.refresh()
       void historyApprovalsPage.refresh()
@@ -283,13 +295,13 @@ function AgentsPageScope({
   )
   const capabilityOptions = useMemo(() => uniqueRequestedCapabilities(agents), [agents])
   const canManageAccess = canManageAgentTeamAccess(actor?.workspace_role)
-  const attentionSessions = sessions.filter(session => ['stale', 'failed', 'blocked', 'awaiting_approval', 'awaiting_input'].includes(session.state))
   const refresh = () => {
     void refreshActor()
     void agentsPage.refresh()
     void teamsPage.refresh()
     void humansPage.refresh()
     void sessionsPage.refresh()
+    void attentionPage.refresh()
     void pendingApprovalsPage.refresh()
     void historyApprovalsPage.refresh()
   }
@@ -412,14 +424,14 @@ function AgentsPageScope({
       {(error || actorError || collectionError) && <ErrorState actionLabel={text.retry} description={error || actorError || collectionError?.message || text.attentionDescription} onAction={refresh} title={text.attentionTitle} />}
 
       {summaryInitialized ? <section
-        aria-busy={agentsPage.loading || sessionsPage.loading || pendingApprovalsPage.loading || undefined}
+        aria-busy={agentsPage.loading || sessionsPage.loading || attentionPage.loading || pendingApprovalsPage.loading || undefined}
         className="control-summary"
         aria-label={text.controlSummaryAriaLabel}
       >
         <article><span>{text.activeAgents}</span><strong>{agents.filter(agent => agent.is_active).length}</strong><small>{text.registered(agents.length)}</small></article>
         <article><span>{text.liveSessions}</span><strong>{sessions.filter(session => !['completed', 'failed', 'canceled'].includes(session.state)).length}</strong><small>{text.visible(sessions.length)}</small></article>
         <article className={approvals.length ? 'needs-attention' : ''}><span>{text.pendingApprovals}</span><strong>{approvals.length}</strong><small>{approvals.length ? text.responseRequired : text.queueClear}</small></article>
-        <article className={attentionSessions.length ? 'needs-attention' : ''}><span>{text.needsAttention}</span><strong>{attentionSessions.length}</strong><small>{text.blockedOrWaiting}</small></article>
+        <article className={attentionItems.length ? 'needs-attention' : ''}><span>{text.needsAttention}</span><strong>{attentionItems.length}</strong><small>{text.blockedOrWaiting}</small></article>
       </section> : summaryError ? null : <div className="agent-summary-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>}
 
       <AgentConnectionsPanel
@@ -471,7 +483,7 @@ function AgentsPageScope({
             label: text.tabSessions,
             panel: <div className="agent-side-stack">
               <section aria-busy={sessionsInitialized && (sessionsPage.loading || sessionsPage.loadingMore) || undefined} className="surface-panel" aria-label={text.sessions}><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{!sessionsInitialized ? (sessionsPage.error ? null : <div className="agent-sessions-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>) : sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}{sessionsInitialized && <LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} />}</section>
-              <section aria-busy={sessionsInitialized && (sessionsPage.loading || sessionsPage.loadingMore) || undefined} className="surface-panel diagnostics" aria-label={text.diagnostics}><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header>{sessionsInitialized ? <><p>{text.diagnosticsIntro}</p><ul>{attentionSessions.map(session => <li key={session.id}><a href={`/agent-sessions/${session.id}`}>{text.sessionLabel(session.id.slice(0, 8))}</a><span>{session.state_reason || session.error_summary || agentStateLabel(session.state)}</span></li>)}{attentionSessions.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></> : sessionsPage.error ? null : <SkeletonList columns={1} items={3} label={text.loadingTitle} />}</section>
+              <section aria-busy={attentionPage.initialized && (attentionPage.loading || attentionPage.loadingMore) || undefined} className="surface-panel diagnostics" aria-label={text.diagnostics}><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header>{attentionPage.initialized && attentionAuthorized ? <><p>{text.diagnosticsIntro}</p><ul>{attentionItems.map(item => <li key={item.id}><a href={attentionHref(item)}>{item.title}</a><span>{item.summary}</span></li>)}{attentionItems.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></> : attentionPage.error ? null : <SkeletonList columns={1} items={3} label={text.loadingTitle} />}</section>
             </div>,
           },
           {

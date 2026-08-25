@@ -1672,4 +1672,34 @@ Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，
   - `AGENT_CONNECTION_NOT_FOUND | AGENT_CONNECTION_CLIENT_TYPE_MISMATCH | AGENT_CONNECTION_TEAM_MISMATCH | AGENT_CONNECTION_INSTALLATION_MISMATCH`
   - `COORDINATION_SESSION_CONNECTION_REVOKED | COORDINATION_SESSION_REFRESH_FAILED | COORDINATION_SESSION_TEAM_SCOPE_DENIED`
   - `AGENT_DELEGATE_NOT_GRANTED | COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN | COORDINATOR_AGENT_DELEGATE_NOT_TRANSITIVE | COORDINATOR_PRINCIPAL_HUMAN_INVALID`
-  - `AGENT_SKILL_VERSION_MISMATCH | AGENT_SKILL_SIGNATURE_INVALID`
+- `AGENT_SKILL_VERSION_MISMATCH | AGENT_SKILL_SIGNATURE_INVALID`
+
+---
+
+# 24. Human Attention projection (v1)
+
+Human Attention is an authorized read projection over Decision, Approval,
+Inbox, Agent Session, and Completion Suggestion records. It is not a second
+workflow state machine and does not grant permission to execute an option.
+Source mapping and lifecycle rules are normative in
+`docs/adr/0050-human-attention-authorized-projection.md`.
+
+Native clients use:
+
+- `GET /api/v1/human-attention` with typed kind/status and resource filters;
+- `GET /api/v1/human-attention/{id}` with stable identity
+  `v1:<source-type>:<source-id>`.
+
+MCP clients use the equivalent read-only `list_human_attention` and
+`get_human_attention` tools. REST, Agent SDK, and MCP preserve the same fields;
+adapters must not reclassify intent names, Session state strings, error text, or
+message content. `options` only describes an existing command path. The client
+must submit that command normally so the server can re-evaluate live identity,
+scope, capability, revision, lease, approval, and idempotency requirements.
+
+Consumers refresh on the existing committed source invalidations and perform a
+snapshot read after `CURSOR_EXPIRED` or realtime resync. An item absent from an
+authorized response is not inferable through detail errors, counts, timing, or
+debug metadata. Projection payloads contain bounded operational summaries and
+references only; hidden model reasoning, private prompts, secrets, and
+unsanitized tool input are prohibited.

@@ -60,7 +60,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(212)
+    expect(routePolicyManifest).toHaveLength(214)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)
