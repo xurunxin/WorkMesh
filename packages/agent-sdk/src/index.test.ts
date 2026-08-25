@@ -39,6 +39,24 @@ describe('WorkMeshClient', () => {
     occurred_at: '2026-07-28T00:00:00.000Z',
   }
 
+  it('binds Control Center, explanation, execution summary, and preview routes', async () => {
+    const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({}), { status: 200 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
+    await client.getControlCenter('running', { cursor: 'next', limit: 25 })
+    await client.getProjectControlCenter('project/id', 'risks', { limit: 10 })
+    await client.explainAgentSession('session/id')
+    await client.getWorkItemExecutionSummary('work/item')
+    await client.previewAgentSessionControl('session/id', 'stop')
+    expect(fetch.mock.calls.map(call => call[0])).toEqual([
+      'https://workmesh.test/api/v1/control-center?collection=running&cursor=next&limit=25',
+      'https://workmesh.test/api/v1/projects/project%2Fid/control-center?collection=risks&limit=10',
+      'https://workmesh.test/api/v1/agent-sessions/session%2Fid/explanation',
+      'https://workmesh.test/api/v1/work-items/work%2Fitem/execution-summary',
+      'https://workmesh.test/api/v1/agent-sessions/session%2Fid/control-preview',
+    ])
+    expect(fetch.mock.calls[4]?.[1]).toMatchObject({ method: 'POST', body: JSON.stringify({ action: 'stop' }) })
+  })
+
   it('binds structured planning methods to the versioned REST routes and headers', async () => {
     const fetch = vi.fn().mockImplementation(async () =>
       new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200 }))

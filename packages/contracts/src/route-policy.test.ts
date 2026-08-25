@@ -60,7 +60,7 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(214)
+    expect(routePolicyManifest).toHaveLength(219)
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)
@@ -81,7 +81,11 @@ describe('routePolicyManifest', () => {
       if (route.approval.required) {
         expect(route.approval.bindsActionFingerprint).toBe(true)
       }
-      if (route.method !== 'GET' && route.authentication !== 'provider_signature') {
+      if (
+        route.method !== 'GET'
+        && route.authentication !== 'provider_signature'
+        && route.operationId !== 'previewAgentSessionControl'
+      ) {
         expect(route.idempotency).toBe('required')
       }
       if (route.authentication === 'provider_signature') {
@@ -89,6 +93,17 @@ describe('routePolicyManifest', () => {
         expect(route.idempotency).toBe('none')
       }
     }
+
+    expect(
+      routePolicyManifest.find(route => route.operationId === 'previewAgentSessionControl'),
+    ).toMatchObject({
+      method: 'POST',
+      idempotency: 'none',
+      resourceResolverId: 'none',
+      agent: {
+        capabilities: ['work:read'],
+      },
+    })
   })
 
   it('parses OPENAPI.yaml as valid YAML before checking generated extensions', async () => {

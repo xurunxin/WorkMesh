@@ -5,6 +5,7 @@ import type {
   ReleaseInfo, RoutePolicyManifestEntry, ListResponse, EventEnvelope,
   InboxListItem, InboxItemDetail, InboxReplyResponse,
   HumanAttentionItem, HumanAttentionKind, HumanAttentionStatus,
+  ControlCenterResponse, RunExplanation, WorkItemExecutionSummary, ActionPreview,
   WorkItemResponse, WorkItemRelationInput, WorkItemRelationResponse, MilestoneResponse,
   GuidanceResponse, GuidanceScope,
   AgentCapabilityManifest,
@@ -132,6 +133,7 @@ export interface HumanAttentionListFilters {
   workItemId?: string
   sessionId?: string
 }
+export type ControlCenterCollection = 'attention' | 'running' | 'risks' | 'recently_verified' | 'ready_work' | 'blocked_work'
 export interface EventListOptions extends RequestOptions {
   cursor: string
   limit?: number
@@ -306,6 +308,11 @@ export class WorkMeshClient {
   getInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}`, undefined, options) }
   listHumanAttention<T = HumanAttentionItem>(filters: HumanAttentionListFilters = {}, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/human-attention', { ...filters }, options), undefined, options) }
   getHumanAttention<T = HumanAttentionItem>(attentionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/human-attention/${encodeURIComponent(attentionId)}`, undefined, options) }
+  getControlCenter<T = ControlCenterResponse>(collection?: ControlCenterCollection, options: PageRequestOptions = {}): Promise<T> { return this.request('GET', pagedPath('/api/v1/control-center', { collection }, options), undefined, options) }
+  getProjectControlCenter<T = ControlCenterResponse>(projectId: string, collection?: ControlCenterCollection, options: PageRequestOptions = {}): Promise<T> { return this.request('GET', pagedPath(`/api/v1/projects/${encodeURIComponent(projectId)}/control-center`, { collection }, options), undefined, options) }
+  explainAgentSession<T = RunExplanation>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/explanation`, undefined, { ...options, refreshSessionId: sessionId }) }
+  getWorkItemExecutionSummary<T = WorkItemExecutionSummary>(workItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}/execution-summary`, undefined, options) }
+  previewAgentSessionControl<T = ActionPreview>(sessionId: string, action: 'pause' | 'resume' | 'stop' | 'retry' | 'handoff' | 'replan' | 'steer', options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/control-preview`, { action }, { ...options, refreshSessionId: sessionId }) }
   claimInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/claim`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-claim') }) }
   acknowledgeInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/acknowledge`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-acknowledge') }) }
   replyInboxItem<T = InboxReplyResponse>(inboxItemId: string, input: { body: string; payload?: Record<string, unknown> }, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/reply`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-reply') }) }

@@ -4,6 +4,10 @@ import { applyMigrations, createDb } from '@workmesh/db'
 import {
   humanAttentionItemSchema,
   humanAttentionListResponseSchema,
+  actionPreviewResponseSchema,
+  controlCenterResponseSchema,
+  runExplanationResponseSchema,
+  workItemExecutionSummaryResponseSchema,
 } from '@workmesh/contracts'
 import { buildApp } from '../src/server.js'
 import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
@@ -196,6 +200,77 @@ describe('Human Attention projection acceptance', () => {
     })
     expect(completion.statusCode, JSON.stringify(completion.json())).toBe(200)
 
+    for (let index = 0; index < 3; index += 1) {
+      const activity = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+        kind: 'action_completed',
+        summary: 'Read the same bounded source',
+        artifactIds: [],
+        references: [],
+        visibility: 'team',
+        ephemeral: false,
+      })
+      expect(activity.statusCode, JSON.stringify(activity.json())).toBe(200)
+    }
+
+    const controlCenterResponse = await humanCall(human, 'GET', `/api/v1/projects/${project.id}/control-center`)
+    expect(controlCenterResponse.statusCode, JSON.stringify(controlCenterResponse.json())).toBe(200)
+    expect(controlCenterResponse.headers.etag).toMatch(/^"control-center-v1-/)
+    const controlCenter = controlCenterResponseSchema.parse(controlCenterResponse.json())
+    expect(controlCenter.project?.id).toBe(project.id)
+    expect(controlCenter.collections.running.items).toEqual(expect.arrayContaining([
+      expect.objectContaining({ sessionId: session.id }),
+    ]))
+    expect(controlCenter.collections.attention.items.length).toBeGreaterThanOrEqual(3)
+
+    await db.query(
+      `INSERT INTO work_items(workspace_id,team_id,number,title,status_id,priority,responsible_human_actor_id,labels,project_id)
+       SELECT $1,$2,1000+series,concat('Ready fixture ',series),$3,'medium',$4,'{}'::text[],$5
+         FROM generate_series(1,150) series`,
+      [actor.workspace_id, teamId, readyId, actor.id, project.id],
+    )
+    const readyFirst = controlCenterResponseSchema.parse((await humanCall(
+      human,
+      'GET',
+      `/api/v1/projects/${project.id}/control-center?collection=ready_work&limit=100`,
+    )).json())
+    expect(readyFirst.collections.ready_work.items).toHaveLength(100)
+    expect(readyFirst.collections.ready_work.nextCursor).not.toBeNull()
+    const readySecond = controlCenterResponseSchema.parse((await humanCall(
+      human,
+      'GET',
+      `/api/v1/projects/${project.id}/control-center?collection=ready_work&limit=100&cursor=${encodeURIComponent(readyFirst.collections.ready_work.nextCursor!)}`,
+    )).json())
+    expect(readySecond.collections.ready_work.items).toHaveLength(50)
+    const readyFirstIds = new Set(readyFirst.collections.ready_work.items.map(item => item.id))
+    expect(readySecond.collections.ready_work.items.some(item => readyFirstIds.has(item.id))).toBe(false)
+
+    const explanationResponse = await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)
+    expect(explanationResponse.statusCode, JSON.stringify(explanationResponse.json())).toBe(200)
+    expect(explanationResponse.headers.etag).toMatch(/^"run-explanation-v1-/)
+    const explanation = runExplanationResponseSchema.parse(explanationResponse.json())
+    expect(explanation.session.id).toBe(session.id)
+    expect(explanation.causalGroups).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'action_completed', count: 3, sourceActivityIds: expect.any(Array) }),
+    ]))
+    expect(explanation.pendingAttention.length).toBeGreaterThanOrEqual(3)
+
+    const executionResponse = await humanCall(human, 'GET', `/api/v1/work-items/${work.id}/execution-summary`)
+    expect(executionResponse.statusCode, JSON.stringify(executionResponse.json())).toBe(200)
+    const execution = workItemExecutionSummaryResponseSchema.parse(executionResponse.json())
+    expect(execution.activeRuns).toEqual(expect.arrayContaining([
+      expect.objectContaining({ sessionId: session.id }),
+    ]))
+
+    const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })
+    expect(previewResponse.statusCode, JSON.stringify(previewResponse.json())).toBe(200)
+    const preview = actionPreviewResponseSchema.parse(previewResponse.json())
+    expect(preview).toMatchObject({ action: 'stop', allowed: true, releaseLease: true, advisory: true })
+    expect((await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })).statusCode).toBe(200)
+    await db.query('UPDATE agent_sessions SET revision=revision+1,updated_at=now() WHERE id=$1', [session.id])
+    const staleFinal = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/signals`, { signal: 'stop', reason: 'stale preview race' }, { 'if-match': `"revision-${preview.sourceRevision}"` })
+    expect(staleFinal.statusCode).toBe(409)
+    expect(staleFinal.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'REVISION_CONFLICT' } })
+
     const first = await humanCall(human, 'GET', '/api/v1/human-attention?status=open&limit=50')
     expect(first.statusCode, JSON.stringify(first.json())).toBe(200)
     const firstPage = humanAttentionListResponseSchema.parse(first.json())
@@ -250,6 +325,23 @@ describe('Human Attention projection acceptance', () => {
       [actor.workspace_id, otherProject.id, otherWork.id, agentActorId],
     )).rows[0]!
 
+    const hiddenControlCenter = await agentCall(token, 'GET', `/api/v1/projects/${otherProject.id}/control-center`)
+    expect(hiddenControlCenter.statusCode).toBe(404)
+
+    const crossTeamId = randomUUID()
+    const crossTeamProjectId = randomUUID()
+    await db.query("INSERT INTO teams(id,workspace_id,name,key) VALUES($1,$2,'Hidden Team',$3)", [crossTeamId, actor.workspace_id, `hidden-${randomUUID().slice(0, 8)}`])
+    await db.query("INSERT INTO projects(id,workspace_id,team_id,name,status) VALUES($1,$2,$3,'Cross Team Project','active')", [crossTeamProjectId, actor.workspace_id, crossTeamId])
+    expect((await agentCall(token, 'GET', `/api/v1/projects/${crossTeamProjectId}/control-center`)).statusCode).toBe(404)
+
+    const crossWorkspaceId = randomUUID()
+    const crossWorkspaceTeamId = randomUUID()
+    const crossWorkspaceProjectId = randomUUID()
+    await db.query("INSERT INTO workspaces(id,name,slug) VALUES($1,'Hidden Workspace',$2)", [crossWorkspaceId, `hidden-${randomUUID().slice(0, 8)}`])
+    await db.query("INSERT INTO teams(id,workspace_id,name,key) VALUES($1,$2,'Hidden Workspace Team',$3)", [crossWorkspaceTeamId, crossWorkspaceId, `hidden-${randomUUID().slice(0, 8)}`])
+    await db.query("INSERT INTO projects(id,workspace_id,team_id,name,status) VALUES($1,$2,$3,'Cross Workspace Project','active')", [crossWorkspaceProjectId, crossWorkspaceId, crossWorkspaceTeamId])
+    expect((await agentCall(token, 'GET', `/api/v1/projects/${crossWorkspaceProjectId}/control-center`)).statusCode).toBe(404)
+
     const agentPageResponse = await agentCall(token, 'GET', '/api/v1/human-attention?status=open&limit=50')
     expect(agentPageResponse.statusCode, JSON.stringify(agentPageResponse.json())).toBe(200)
     const agentPage = humanAttentionListResponseSchema.parse(agentPageResponse.json())
@@ -261,6 +353,11 @@ describe('Human Attention projection acceptance', () => {
     )
     expect(deniedDetail.statusCode).toBe(404)
     expect(deniedDetail.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'NOT_FOUND' } })
+
+    const delegationId = (await db.query<{ delegation_id: string }>('SELECT delegation_id FROM agent_sessions WHERE id=$1', [session.id])).rows[0]!.delegation_id
+    await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1", [delegationId])
+    expect([401,403,404,409]).toContain((await agentCall(token, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)).statusCode)
+    await db.query("UPDATE delegations SET status='active',revoked_at=NULL WHERE id=$1", [delegationId])
 
     await db.query(
       `UPDATE inbox_items
@@ -277,6 +374,7 @@ describe('Human Attention projection acceptance', () => {
         WHERE id=$1`,
       [session.id],
     )
+    expect([401,403,404,409]).toContain((await agentCall(token, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)).statusCode)
     const failedRecovery = humanAttentionListResponseSchema.parse(
       (await humanCall(human, 'GET', '/api/v1/human-attention?kind=recovery&status=open&limit=50')).json(),
     )

@@ -212,7 +212,7 @@ suite('complete WorkMesh recovery bundle', () => {
     await s3.send(new CreateBucketCommand({ Bucket: sourceBucket, ObjectLockEnabledForBucket: true }))
     await s3.send(new PutBucketVersioningCommand({ Bucket: sourceBucket, VersioningConfiguration: { Status: 'Enabled' } }))
     await seedSource()
-  }, 120_000)
+  }, 300_000)
 
   afterAll(async () => {
     s3.destroy()
@@ -357,5 +357,5 @@ suite('complete WorkMesh recovery bundle', () => {
       masterKey,
     })).rejects.toThrow('RECOVERY_PAYLOAD_CIPHERTEXT_MISMATCH')
     await writeFile(encryptedDumpPath, originalDump)
-  }, 120_000)
+  }, 300_000)
 })

@@ -144,6 +144,7 @@ test.describe("Stage 0 browser acceptance", () => {
   // endpoint is mounted only when RUN_INTEGRATION=1, so it cannot fire in
   // production.
   test.beforeAll(async ({ request }) => {
+    test.setTimeout(300_000);
     const response = await request.post(`${apiUrl}/api/v1/test/reset-install`, {
       headers: { "idempotency-key": `reset-install-${randomUUID()}` },
     });

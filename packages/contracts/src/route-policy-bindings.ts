@@ -392,6 +392,31 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/control-center",
+    "operationId": "listControlCenter"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{projectId}/control-center",
+    "operationId": "getProjectControlCenter"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/agent-sessions/{sessionId}/explanation",
+    "operationId": "explainAgentSession"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/work-items/{workItemId}/execution-summary",
+    "operationId": "getWorkItemExecutionSummary"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-sessions/{sessionId}/control-preview",
+    "operationId": "previewAgentSessionControl"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/rooms",
     "operationId": "getWorkRoom"
   },

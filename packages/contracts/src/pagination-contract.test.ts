@@ -50,6 +50,8 @@ const collectionPaths = [
   '/api/v1/artifacts',
   '/api/v1/approvals',
   '/api/v1/human-attention',
+  '/api/v1/control-center',
+  '/api/v1/projects/{projectId}/control-center',
   '/api/v1/rooms/{id}/timeline',
   '/api/v1/inbox',
   '/api/v1/leases',
@@ -67,6 +69,11 @@ const collectionPaths = [
   '/api/v1/templates',
 ] as const
 
+const limit100Paths = new Set<string>([
+  '/api/v1/control-center',
+  '/api/v1/projects/{projectId}/control-center',
+])
+
 describe('pagination OpenAPI contract', () => {
   it('declares the common cursor and limit on every paged collection', async () => {
     const source = await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8')
@@ -80,15 +87,25 @@ describe('pagination OpenAPI contract', () => {
       maximum: 200,
       default: 50,
     })
+    expect(openapi.components.parameters.Limit100?.schema).toMatchObject({
+      type: 'integer',
+      minimum: 1,
+      maximum: 100,
+      default: 20,
+    })
     for (const path of collectionPaths) {
       const operation = openapi.paths[path]?.get
       expect(operation, path).toBeDefined()
       expect(operation?.parameters, path).toEqual(expect.arrayContaining([
         { $ref: '#/components/parameters/Cursor' },
-        { $ref: '#/components/parameters/Limit' },
+        {
+          $ref: limit100Paths.has(path)
+            ? '#/components/parameters/Limit100'
+            : '#/components/parameters/Limit',
+        },
       ]))
       expect(operation?.responses?.['200']?.$ref, path).toMatch(
-        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|InboxItems|Milestones|WorkItemRelations)$/,
+        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|ControlCenter|InboxItems|Milestones|WorkItemRelations)$/,
       )
     }
     const opaqueCursorPaths = Object.entries(openapi.paths)

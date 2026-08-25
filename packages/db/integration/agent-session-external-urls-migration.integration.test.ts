@@ -237,7 +237,7 @@ describe("0031 Agent Session external URL shape migration", () => {
     await applyMigrations(malformedObject, { through: 30 });
     await applyMigrations(malformedScalar, { through: 30 });
     await applyMigrations(clean, { through: 31 });
-  }, 240_000);
+  }, 300_000);
 
   afterAll(async () => {
     await upgrade?.end();

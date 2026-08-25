@@ -131,7 +131,7 @@ export function registerHumanAttentionRoutes(
         route: '/api/v1/human-attention',
         filters: query,
         sort: [
-          { key: 'created_at', sql: 'attention.created_at', direction: 'DESC' },
+          { key: 'updated_cursor', sql: `to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' },
           { key: 'source_id', sql: 'attention.source_id', direction: 'DESC' },
         ],
       },
