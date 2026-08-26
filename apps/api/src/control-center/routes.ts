@@ -36,6 +36,13 @@ const MAX_LIMIT = 100
 const PREVIEW_TTL_MS = 30_000
 
 type Helpers = Readonly<{ db: Pool; paginator: Paginator }>
+type ControlCenterFilters = Readonly<{
+  responsibleHumanActorId?: string
+  agentActorId?: string
+  risk?: 'at_risk'
+  workItemState?: string
+  timeWindow?: '24h' | '7d' | '30d'
+}>
 type DigestRow = QueryResultRow & Readonly<{
   id: string
   kind: string
@@ -48,11 +55,30 @@ type DigestRow = QueryResultRow & Readonly<{
   revision: number
   source_type: string
   updated_at: Date | string
+  responsible_human_id?: string | null
+  responsible_human_name?: string | null
+  active_agent_id?: string | null
+  active_agent_name?: string | null
+  work_item_title?: string | null
+  plan_step_id?: string | null
+  plan_step_title?: string | null
+  plan_step_status?: z.infer<typeof import('@workmesh/contracts').planStepStatusSchema> | null
+  plan_step_ordinal?: number | null
+  heartbeat_health?: 'healthy' | 'degraded' | 'stale' | null
+  last_heartbeat_at?: Date | string | null
+  last_activity_id?: string | null
+  last_activity_kind?: string | null
+  last_activity_summary?: string | null
+  last_activity_at?: Date | string | null
+  pending_human_action_count?: string | number | null
+  evidence_count?: string | number | null
+  verified?: boolean | null
 }>
-type ProjectRow = QueryResultRow & Readonly<{ id: string; name: string; status: string; revision: number; updated_at: Date | string }>
+type ProjectRow = QueryResultRow & Readonly<{ id: string; name: string; status: string; target_date: Date | string | null; lead_actor_id: string | null; lead_name: string | null; revision: number; updated_at: Date | string }>
 
 const requestActor = (request: FastifyRequest): ApiActor => request.actor as ApiActor
 const iso = (value: Date | string): string => value instanceof Date ? value.toISOString() : new Date(value).toISOString()
+const dateOnly = (value: Date | string): string => value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10)
 const idParam = (request: FastifyRequest, key: string): string => z.object({ [key]: z.string().uuid() }).parse(request.params)[key]!
 const boundedQuery = async <T extends QueryResultRow>(db: Pool, text: string, values: unknown[]): Promise<QueryResult<T>> => {
   const client = await db.connect()
@@ -110,8 +136,63 @@ const digest = (row: DigestRow) => ({
   state: row.state,
   revision: Number(row.revision),
   source: { type: row.source_type, id: row.id, revision: Number(row.revision) },
+  responsibleHuman: row.responsible_human_id && row.responsible_human_name
+    ? { id: row.responsible_human_id, kind: 'human' as const, displayName: row.responsible_human_name }
+    : null,
+  activeAgent: row.active_agent_id && row.active_agent_name
+    ? { id: row.active_agent_id, kind: 'agent' as const, displayName: row.active_agent_name }
+    : null,
+  workItem: row.work_item_id && row.work_item_title
+    ? { id: row.work_item_id, title: row.work_item_title }
+    : null,
+  currentStep: row.plan_step_id && row.plan_step_title && row.plan_step_status !== null && row.plan_step_status !== undefined && row.plan_step_ordinal !== null && row.plan_step_ordinal !== undefined
+    ? { id: row.plan_step_id, title: row.plan_step_title, status: row.plan_step_status, ordinal: Number(row.plan_step_ordinal) }
+    : null,
+  health: row.heartbeat_health
+    ? { heartbeat: row.heartbeat_health, lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null }
+    : null,
+  lastActivity: row.last_activity_id && row.last_activity_kind && row.last_activity_summary && row.last_activity_at
+    ? { id: row.last_activity_id, kind: row.last_activity_kind, summary: row.last_activity_summary, createdAt: iso(row.last_activity_at) }
+    : null,
+  pendingHumanActionCount: Number(row.pending_human_action_count ?? 0),
+  evidenceCount: Number(row.evidence_count ?? 0),
+  verified: row.verified === true,
   updatedAt: iso(row.updated_at),
 })
+
+const sessionDigestColumns = `
+       ,responsible.id AS responsible_human_id,responsible.display_name AS responsible_human_name,
+        agent.id AS active_agent_id,agent.display_name AS active_agent_name,item.title AS work_item_title,
+        item_state.category::text AS work_item_state,
+        step.id AS plan_step_id,step.title AS plan_step_title,step.status AS plan_step_status,step.ordinal AS plan_step_ordinal,
+        session.heartbeat_health,session.last_heartbeat_at,
+        activity.id AS last_activity_id,activity.kind AS last_activity_kind,
+        activity.summary AS last_activity_summary,activity.created_at AS last_activity_at,
+        ((SELECT count(*) FROM decisions decision WHERE decision.session_id=session.id AND decision.status='proposed')
+          +(SELECT count(*) FROM approvals approval WHERE approval.session_id=session.id AND approval.status='pending' AND approval.expires_at>now())
+          +(SELECT count(*) FROM inbox_items inbox WHERE inbox.session_id=session.id AND inbox.status='open' AND inbox.requires_response=true)) AS pending_human_action_count,
+        (SELECT count(*) FROM artifacts artifact WHERE artifact.session_id=session.id AND artifact.workspace_id=session.workspace_id) AS evidence_count,
+        EXISTS(SELECT 1 FROM artifacts artifact WHERE artifact.session_id=session.id AND artifact.workspace_id=session.workspace_id) AS verified`
+
+const sessionDigestJoins = `
+      JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
+      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      LEFT JOIN workflow_states item_state ON item_state.id=item.status_id AND item_state.workspace_id=session.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=session.workspace_id AND responsible.kind='human'
+      LEFT JOIN LATERAL (
+        SELECT candidate.id,candidate.title,candidate.status,candidate.ordinal
+          FROM agent_plan_steps candidate
+         WHERE candidate.plan_version_id=session.current_plan_version_id
+         ORDER BY (candidate.id=session.heartbeat_current_step_id) DESC,(candidate.status='in_progress') DESC,candidate.ordinal
+         LIMIT 1
+      ) step ON true
+      LEFT JOIN LATERAL (
+        SELECT candidate.id,candidate.kind,candidate.summary,candidate.created_at
+          FROM agent_activities candidate
+         WHERE candidate.session_id=session.id AND candidate.ephemeral=false AND candidate.kind<>'heartbeat'
+         ORDER BY candidate.sequence DESC,candidate.id DESC
+         LIMIT 1
+      ) activity ON true`
 
 const collectionSql = (collection: z.infer<typeof controlCenterCollectionSchema>) => {
   if (collection === 'running') return `
@@ -119,10 +200,9 @@ const collectionSql = (collection: z.infer<typeof controlCenterCollectionSchema>
            COALESCE(NULLIF(session.state_reason,''),concat('Agent Session is ',session.state::text)) AS summary,
            COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
            session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
-           session.team_id,session.workspace_id
+           session.team_id,session.workspace_id${sessionDigestColumns}
       FROM agent_sessions session
-      JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
-      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      ${sessionDigestJoins}
      WHERE session.workspace_id=$1
        AND session.state IN ('queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked','paused','stopping','stale')`
   if (collection === 'risks') return `
@@ -130,9 +210,9 @@ const collectionSql = (collection: z.infer<typeof controlCenterCollectionSchema>
            COALESCE(NULLIF(session.error_summary,''),NULLIF(session.state_reason,''),'Execution health needs review') AS summary,
            COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
            session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
-           session.team_id,session.workspace_id
+           session.team_id,session.workspace_id${sessionDigestColumns}
       FROM agent_sessions session
-      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      ${sessionDigestJoins}
      WHERE session.workspace_id=$1
        AND (session.state IN ('blocked','failed','stale') OR session.heartbeat_health IN ('degraded','stale'))`
   if (collection === 'recently_verified') return `
@@ -140,18 +220,23 @@ const collectionSql = (collection: z.infer<typeof controlCenterCollectionSchema>
            COALESCE(NULLIF(session.result_summary,''),'Execution completed with recorded evidence') AS summary,
            COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
            session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
-           session.team_id,session.workspace_id
+           session.team_id,session.workspace_id${sessionDigestColumns}
       FROM agent_sessions session
-      LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
-     WHERE session.workspace_id=$1 AND session.state='completed'`
+      ${sessionDigestJoins}
+     WHERE session.workspace_id=$1 AND session.state='completed'
+       AND EXISTS(SELECT 1 FROM artifacts evidence WHERE evidence.session_id=session.id AND evidence.workspace_id=session.workspace_id)`
   if (collection === 'ready_work') return `
     SELECT item.id,'ready_work'::text AS kind,item.title,
            COALESCE(NULLIF(item.description,''),'Work Item is ready for execution') AS summary,
            item.project_id,item.id AS work_item_id,NULL::uuid AS session_id,
            state.category::text AS state,item.revision,'work_item'::text AS source_type,item.updated_at,
-           item.team_id,item.workspace_id
+           item.team_id,item.workspace_id,responsible.id AS responsible_human_id,
+           responsible.display_name AS responsible_human_name,item.title AS work_item_title,
+           NULL::uuid AS active_agent_id,NULL::text AS active_agent_name,
+           state.category::text AS work_item_state,NULL::text AS heartbeat_health
       FROM work_items item
       JOIN workflow_states state ON state.id=item.status_id AND state.workspace_id=item.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=item.workspace_id AND responsible.kind='human'
      WHERE item.workspace_id=$1 AND item.deleted_at IS NULL AND state.category='planned'
        AND NOT EXISTS (SELECT 1 FROM agent_sessions active WHERE active.work_item_id=item.id AND active.workspace_id=item.workspace_id AND active.state NOT IN ('completed','failed','canceled'))`
   return `
@@ -159,25 +244,47 @@ const collectionSql = (collection: z.infer<typeof controlCenterCollectionSchema>
            COALESCE(NULLIF(blocked.state_reason,''),'Work Item has a blocked Agent execution') AS summary,
            item.project_id,item.id AS work_item_id,blocked.id AS session_id,
            blocked.state::text AS state,GREATEST(item.revision,blocked.revision) AS revision,'work_item'::text AS source_type,
-           GREATEST(item.updated_at,blocked.updated_at) AS updated_at,item.team_id,item.workspace_id
+           GREATEST(item.updated_at,blocked.updated_at) AS updated_at,item.team_id,item.workspace_id,
+           responsible.id AS responsible_human_id,responsible.display_name AS responsible_human_name,
+           blocked.agent_actor_id AS active_agent_id,blocked.agent_name AS active_agent_name,
+           item.title AS work_item_title,item_state.category::text AS work_item_state,
+           blocked.heartbeat_health,blocked.last_heartbeat_at
       FROM work_items item
+      JOIN workflow_states item_state ON item_state.id=item.status_id AND item_state.workspace_id=item.workspace_id
+      LEFT JOIN actors responsible ON responsible.id=item.responsible_human_actor_id AND responsible.workspace_id=item.workspace_id AND responsible.kind='human'
       JOIN LATERAL (
-        SELECT session.id,session.state,session.state_reason,session.revision,session.updated_at
+        SELECT session.id,session.state,session.state_reason,session.revision,session.updated_at,
+               session.agent_actor_id,agent.display_name AS agent_name,session.heartbeat_health,session.last_heartbeat_at
           FROM agent_sessions session
+          JOIN actors agent ON agent.id=session.agent_actor_id AND agent.workspace_id=session.workspace_id
          WHERE session.workspace_id=item.workspace_id AND session.work_item_id=item.id AND session.state='blocked'
          ORDER BY session.updated_at DESC,session.id DESC LIMIT 1
       ) blocked ON true
      WHERE item.workspace_id=$1 AND item.deleted_at IS NULL`
 }
 
-async function readAttentionPage(h: Helpers, request: FastifyRequest, projectId: string | undefined, rawPage: unknown) {
+const applyTimeWindow = (column: string, timeWindow: ControlCenterFilters['timeWindow'], where: string[]) => {
+  if (timeWindow === '24h') where.push(`${column}>=now()-interval '24 hours'`)
+  else if (timeWindow === '7d') where.push(`${column}>=now()-interval '7 days'`)
+  else if (timeWindow === '30d') where.push(`${column}>=now()-interval '30 days'`)
+}
+
+async function readAttentionPage(h: Helpers, request: FastifyRequest, projectId: string | undefined, rawPage: unknown, filters: ControlCenterFilters) {
   const current = requestActor(request)
   const values: unknown[] = [current.workspaceId]
   const where = [humanAttentionAuthorizationPredicate(current, values), "attention.status='open'"]
   if (projectId) { values.push(projectId); where.push(`attention.project_id=$${values.length}`) }
+  if (filters.responsibleHumanActorId) { values.push(filters.responsibleHumanActorId); where.push(`attention.responsible_human_actor_id=$${values.length}`) }
+  if (filters.agentActorId) { values.push(filters.agentActorId); where.push(`attention.requested_by_actor_id=$${values.length} AND requester.kind='agent'`) }
+  if (filters.risk === 'at_risk') where.push(`(attention.risk_level IN ('high','critical') OR attention.kind IN ('conflict','recovery'))`)
+  if (filters.workItemState) {
+    values.push(filters.workItemState)
+    where.push(`EXISTS (SELECT 1 FROM work_items filtered_item JOIN workflow_states filtered_state ON filtered_state.id=filtered_item.status_id AND filtered_state.workspace_id=filtered_item.workspace_id WHERE filtered_item.id=attention.work_item_id AND filtered_item.workspace_id=attention.workspace_id AND filtered_item.deleted_at IS NULL AND filtered_state.category::text=$${values.length})`)
+  }
+  applyTimeWindow('attention.updated_at', filters.timeWindow, where)
   const page = h.paginator.prepare(request, rawPage, {
     route: projectId ? '/api/v1/projects/:projectId/control-center:attention' : '/api/v1/control-center:attention',
-    filters: { projectId: projectId ?? null, collection: 'attention' },
+    filters: { projectId: projectId ?? null, collection: 'attention', ...filters },
     sort: [{ key: 'updated_cursor', sql: `to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' }, { key: 'source_id', sql: 'attention.source_id', direction: 'DESC' }],
   }, values)
   page.values.push(page.limit + 1)
@@ -194,6 +301,15 @@ async function readAttentionPage(h: Helpers, request: FastifyRequest, projectId:
       projectId: item.projectId, workItemId: item.workItemId, sessionId: item.sessionId,
       state: item.status, revision: item.sourceRevision,
       source: { type: item.source.type, id: item.source.id, revision: item.sourceRevision },
+      responsibleHuman: item.responsibleHuman,
+      activeAgent: item.requestedBy.kind === 'agent' ? item.requestedBy : null,
+      workItem: null,
+      currentStep: null,
+      health: null,
+      lastActivity: null,
+      pendingHumanActionCount: item.status === 'open' ? 1 : 0,
+      evidenceCount: item.evidence.length,
+      verified: item.status === 'verified',
       updatedAt: item.updatedAt,
     }
   }) }
@@ -205,6 +321,7 @@ async function readDigestPage(
   collection: Exclude<z.infer<typeof controlCenterCollectionSchema>, 'attention'>,
   projectId: string | undefined,
   rawPage: unknown,
+  filters: ControlCenterFilters,
 ) {
   const current = requestActor(request)
   const values: unknown[] = [current.workspaceId]
@@ -215,10 +332,15 @@ async function readDigestPage(
   }, values)
   const where = [scope]
   if (projectId) { values.push(projectId); where.push(`source.project_id=$${values.length}`) }
+  if (filters.responsibleHumanActorId) { values.push(filters.responsibleHumanActorId); where.push(`source.responsible_human_id=$${values.length}`) }
+  if (filters.agentActorId) { values.push(filters.agentActorId); where.push(`source.active_agent_id=$${values.length}`) }
+  if (filters.risk === 'at_risk') where.push(`(source.kind='risk' OR source.state IN ('blocked','failed','stale') OR source.heartbeat_health IN ('degraded','stale'))`)
+  if (filters.workItemState) { values.push(filters.workItemState); where.push(`source.work_item_state=$${values.length}`) }
+  applyTimeWindow('source.updated_at', filters.timeWindow, where)
   const route = projectId ? `/api/v1/projects/:projectId/control-center:${collection}` : `/api/v1/control-center:${collection}`
   const page = h.paginator.prepare(request, rawPage, {
     route,
-    filters: { projectId: projectId ?? null, collection },
+    filters: { projectId: projectId ?? null, collection, ...filters },
     sort: [{ key: 'updated_cursor', sql: `to_char(source.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' }, { key: 'id', sql: 'source.id', direction: 'DESC' }],
   }, values)
   page.values.push(page.limit + 1)
@@ -236,7 +358,19 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
     collection: controlCenterCollectionSchema.optional(),
     cursor: z.string().max(8_192).optional(),
     limit: z.coerce.number().int().min(1).max(MAX_LIMIT).default(20),
+    responsibleHumanActorId: z.string().uuid().optional(),
+    agentActorId: z.string().uuid().optional(),
+    risk: z.literal('at_risk').optional(),
+    workItemState: z.enum(['backlog', 'planned', 'started', 'completed', 'canceled']).optional(),
+    timeWindow: z.enum(['24h', '7d', '30d']).optional(),
   }).parse(request.query)
+  const filters: ControlCenterFilters = {
+    responsibleHumanActorId: query.responsibleHumanActorId,
+    agentActorId: query.agentActorId,
+    risk: query.risk,
+    workItemState: query.workItemState,
+    timeWindow: query.timeWindow,
+  }
   const current = requestActor(request)
   let project: ProjectRow | null = null
   if (projectId) {
@@ -246,7 +380,7 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
       session: 'NULL::uuid', workItem: 'NULL::uuid',
     }, values)
     project = (await boundedQuery<ProjectRow>(h.db,
-      `SELECT project.id,project.name,project.status,project.revision,project.updated_at FROM projects project WHERE project.id=$1 AND project.workspace_id=$2 AND project.deleted_at IS NULL AND ${auth}`,
+      `SELECT project.id,project.name,project.status,project.target_date,project.lead_actor_id,lead.display_name AS lead_name,project.revision,project.updated_at FROM projects project LEFT JOIN actors lead ON lead.id=project.lead_actor_id AND lead.workspace_id=project.workspace_id AND lead.kind='human' WHERE project.id=$1 AND project.workspace_id=$2 AND project.deleted_at IS NULL AND ${auth}`,
       values,
     )).rows[0] ?? null
     if (!project) throw new DomainError('NOT_FOUND', 'Project Control Center not found')
@@ -256,12 +390,12 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
     if (query.collection && query.collection !== collection) return [collection, { items: [], nextCursor: null }] as const
     const rawPage = { cursor: query.collection === collection ? query.cursor : undefined, limit: query.collection ? query.limit : INITIAL_LIMIT }
     const page = collection === 'attention'
-      ? await readAttentionPage(h, request, projectId, rawPage)
-      : await readDigestPage(h, request, collection, projectId, rawPage)
+      ? await readAttentionPage(h, request, projectId, rawPage, filters)
+      : await readDigestPage(h, request, collection, projectId, rawPage, filters)
     return [collection, page] as const
   }))
   const sectionMap = Object.fromEntries(pages)
-  const allItems = pages.flatMap(([, page]) => page.items)
+  const allItems = pages.flatMap(([, page]) => page.items as Array<{ revision: number; updatedAt: string }>)
   const revision = Math.max(project?.revision ?? 1, ...allItems.map(item => item.revision))
   const sourceUpdatedAt = allItems.map(item => item.updatedAt).sort().at(-1) ?? project?.updated_at ?? new Date()
   const observedAt = new Date().toISOString()
@@ -269,7 +403,14 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
   return controlCenterResponseSchema.parse({
     projectionVersion: 1,
     scope: { workspaceId: current.workspaceId, projectId: projectId ?? null },
-    project: project ? { id: project.id, name: project.name, status: project.status, revision: project.revision } : null,
+    project: project ? {
+      id: project.id,
+      name: project.name,
+      status: project.status,
+      targetDate: project.target_date ? dateOnly(project.target_date) : null,
+      responsibleHuman: project.lead_actor_id && project.lead_name ? { id: project.lead_actor_id, kind: 'human', displayName: project.lead_name } : null,
+      revision: project.revision,
+    } : null,
     revision,
     freshness: { state: 'current', observedAt, sourceUpdatedAt: iso(sourceUpdatedAt) },
     collections: sectionMap,

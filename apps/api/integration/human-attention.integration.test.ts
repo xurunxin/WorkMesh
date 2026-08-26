@@ -103,6 +103,8 @@ describe('Human Attention projection acceptance', () => {
     const project = (await humanCall(human, 'POST', '/api/v1/projects', {
       teamId,
       name: 'Attention Project',
+      leadActorId: actor.id,
+      targetDate: '2026-09-30',
     })).json<{ id: string }>()
     const work = (await humanCall(human, 'POST', '/api/v1/work-items', {
       teamId,
@@ -212,15 +214,90 @@ describe('Human Attention projection acceptance', () => {
       expect(activity.statusCode, JSON.stringify(activity.json())).toBe(200)
     }
 
+    const planVersion = (await db.query<{ id: string }>(
+      `INSERT INTO agent_plan_versions(session_id,revision,change_summary,author_actor_id)
+       VALUES($1,1,'Project Control Center digest fixture',$2) RETURNING id`,
+      [session.id, agentActorId],
+    )).rows[0]!
+    const planStepId = randomUUID()
+    await db.query(
+      `INSERT INTO agent_plan_steps(plan_version_id,id,title,status,ordinal)
+       VALUES($1,$2,'Verify authoritative digest','in_progress',0)`,
+      [planVersion.id, planStepId],
+    )
+    await db.query(
+      `UPDATE agent_sessions
+          SET current_plan_version_id=$2,heartbeat_current_step_id=$3,
+              heartbeat_health='healthy',last_heartbeat_at=now(),revision=revision+1
+        WHERE id=$1`,
+      [session.id, planVersion.id, planStepId],
+    )
+    await db.query(
+      `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri)
+       VALUES($1,$2,$3,$4,'test','Control Center running evidence','https://example.test/running-evidence')`,
+      [actor.workspace_id, session.id, work.id, agentActorId],
+    )
+
+    const completedWithoutEvidence = (await db.query<{ id: string }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+         state,result_summary,ended_at
+       ) SELECT workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+                'completed','Completed without evidence',now()
+           FROM agent_sessions WHERE id=$1 RETURNING id`,
+      [session.id],
+    )).rows[0]!
+    const completedWithEvidence = (await db.query<{ id: string }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+         state,result_summary,ended_at
+       ) SELECT workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+                'completed','Completed with evidence',now()+interval '1 second'
+           FROM agent_sessions WHERE id=$1 RETURNING id`,
+      [session.id],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri)
+       VALUES($1,$2,$3,$4,'test','Verified outcome evidence','https://example.test/verified-evidence')`,
+      [actor.workspace_id, completedWithEvidence.id, work.id, agentActorId],
+    )
+
     const controlCenterResponse = await humanCall(human, 'GET', `/api/v1/projects/${project.id}/control-center`)
     expect(controlCenterResponse.statusCode, JSON.stringify(controlCenterResponse.json())).toBe(200)
     expect(controlCenterResponse.headers.etag).toMatch(/^"control-center-v1-/)
     const controlCenter = controlCenterResponseSchema.parse(controlCenterResponse.json())
     expect(controlCenter.project?.id).toBe(project.id)
+    expect(controlCenter.project).toMatchObject({ targetDate: '2026-09-30', responsibleHuman: { id: actor.id, kind: 'human' } })
     expect(controlCenter.collections.running.items).toEqual(expect.arrayContaining([
-      expect.objectContaining({ sessionId: session.id }),
+      expect.objectContaining({
+        sessionId: session.id,
+        activeAgent: expect.objectContaining({ id: agentActorId, kind: 'agent' }),
+        responsibleHuman: expect.objectContaining({ id: actor.id, kind: 'human' }),
+        workItem: expect.objectContaining({ id: work.id, title: 'Attention source work' }),
+        currentStep: expect.objectContaining({ id: planStepId, title: 'Verify authoritative digest' }),
+        health: expect.objectContaining({ heartbeat: 'healthy', lastHeartbeatAt: expect.any(String) }),
+        lastActivity: expect.objectContaining({ kind: 'action_completed', summary: 'Read the same bounded source' }),
+        pendingHumanActionCount: expect.any(Number),
+        evidenceCount: 1,
+        verified: true,
+      }),
     ]))
     expect(controlCenter.collections.attention.items.length).toBeGreaterThanOrEqual(3)
+    expect(controlCenter.collections.recently_verified.items.map(item => item.sessionId)).toContain(completedWithEvidence.id)
+    expect(controlCenter.collections.recently_verified.items.map(item => item.sessionId)).not.toContain(completedWithoutEvidence.id)
+
+    const filteredControlCenter = controlCenterResponseSchema.parse((await humanCall(
+      human,
+      'GET',
+      `/api/v1/projects/${project.id}/control-center?responsibleHumanActorId=${actor.id}&agentActorId=${agentActorId}&workItemState=planned&timeWindow=24h`,
+    )).json())
+    expect(filteredControlCenter.collections.running.items.map(item => item.sessionId)).toContain(session.id)
+    const emptyAgentFilter = controlCenterResponseSchema.parse((await humanCall(
+      human,
+      'GET',
+      `/api/v1/projects/${project.id}/control-center?agentActorId=${randomUUID()}`,
+    )).json())
+    expect(emptyAgentFilter.collections.running.items).toHaveLength(0)
 
     await db.query(
       `INSERT INTO work_items(workspace_id,team_id,number,title,status_id,priority,responsible_human_actor_id,labels,project_id)

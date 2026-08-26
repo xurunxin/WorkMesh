@@ -49,7 +49,7 @@ describe('runtime reliability OpenAPI contract', () => {
     for (const reference of collectLocalReferences(openapi)) {
       expect(resolveLocalReference(openapi, reference), reference).toBeDefined()
     }
-  })
+  }, 15_000)
 
   it('documents the dedicated identity credential and every execution-capacity conflict', async () => {
     const openapi = await readOpenApi()

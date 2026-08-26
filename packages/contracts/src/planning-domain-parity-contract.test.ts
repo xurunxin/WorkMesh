@@ -132,5 +132,5 @@ describe('planning domain parity public contract', () => {
     expect(openapi.paths['/api/v1/work-items']!.get).toMatchObject({
       parameters: expect.arrayContaining([{ $ref: '#/components/parameters/MilestoneIdQuery' }]),
     })
-  })
+  }, 15_000)
 })

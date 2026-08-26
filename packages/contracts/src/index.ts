@@ -603,13 +603,42 @@ export const controlCenterDigestSchema = z.object({
   state: z.string().min(1).max(100),
   revision: revisionSchema,
   source: controlPlaneResourceReferenceSchema,
+  responsibleHuman: attentionActorReferenceSchema.nullable(),
+  activeAgent: attentionActorReferenceSchema.nullable(),
+  workItem: z.object({ id: idSchema, title: z.string().min(1).max(500) }).strict().nullable(),
+  currentStep: z.object({
+    id: idSchema,
+    title: z.string().min(1).max(500),
+    status: planStepStatusSchema,
+    ordinal: z.number().int().nonnegative(),
+  }).strict().nullable(),
+  health: z.object({
+    heartbeat: z.enum(['healthy', 'degraded', 'stale']),
+    lastHeartbeatAt: timestampSchema.nullable(),
+  }).strict().nullable(),
+  lastActivity: z.object({
+    id: idSchema,
+    kind: z.string().min(1).max(100),
+    summary: z.string().min(1).max(20_000),
+    createdAt: timestampSchema,
+  }).strict().nullable(),
+  pendingHumanActionCount: z.number().int().nonnegative(),
+  evidenceCount: z.number().int().nonnegative(),
+  verified: z.boolean(),
   updatedAt: timestampSchema,
 }).strict()
 export const controlCenterSectionSchema = z.object({ items: z.array(controlCenterDigestSchema).max(100), nextCursor: z.string().nullable() }).strict()
 export const controlCenterResponseSchema = z.object({
   projectionVersion: controlPlaneProjectionVersionSchema,
   scope: z.object({ workspaceId: idSchema, projectId: idSchema.nullable() }).strict(),
-  project: z.object({ id: idSchema, name: z.string().min(1).max(500), status: z.string().min(1).max(100), revision: revisionSchema }).strict().nullable(),
+  project: z.object({
+    id: idSchema,
+    name: z.string().min(1).max(500),
+    status: z.string().min(1).max(100),
+    targetDate: dateSchema.nullable(),
+    responsibleHuman: attentionActorReferenceSchema.nullable(),
+    revision: revisionSchema,
+  }).strict().nullable(),
   revision: revisionSchema,
   freshness: humanAttentionFreshnessSchema,
   collections: z.object({

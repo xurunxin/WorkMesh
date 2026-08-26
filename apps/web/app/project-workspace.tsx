@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, type ReactNode, useMemo, useState } from 'react'
 import { Button } from '@workmesh/ui'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { FlagIcon } from '@phosphor-icons/react/dist/csr/Flag'
@@ -24,6 +24,7 @@ import {
   type ProjectWorkspaceTab,
 } from './lib/project-work'
 import { ProjectDelivery } from './project-delivery'
+import { ProjectControlCenter, projectControlCenterFeatureEnabled } from './project-control-center'
 import { Markdown } from '../features/rich-content/markdown'
 import type { WorkItemDto } from '../features/work-items/contracts'
 
@@ -63,6 +64,7 @@ const revisionHeaders = (revision: number): HeadersInit => ({
   ...json({}),
   'If-Match': `"revision-${revision}"`,
 })
+const projectControlCenterEnabled = projectControlCenterFeatureEnabled()
 
 export function ProjectWorkspace({
   project,
@@ -84,18 +86,15 @@ export function ProjectWorkspace({
     unknownStatus: 'Unknown status', overview: 'Overview', list: 'List', board: 'Board', backlog: 'Backlog', viewIssues: 'View Issues', viewMilestoneIssues: (name: string) => `View ${name} Issues`, updateError: 'Unable to update the project plan.', deleteMilestone: (name: string) => `Delete milestone “${name}”?`, noBrief: 'No project brief has been published yet.', complete: 'complete', progress: (completed: number, total: number) => `${completed} of ${total} complete`, projectSummary: 'Project work summary', inProgress: 'In progress', needsHuman: 'Needs a responsible Human', activeAgents: 'Active Agent executors', notSet: 'Not set', targetDate: 'Target date', views: 'Project views', reloadMilestones: 'Reload milestones', plan: 'Plan', roadmap: 'Milestone roadmap', cancel: 'Cancel', addMilestone: 'Add milestone', name: 'Name', description: 'Description', createMilestone: 'Create milestone', target: 'Target', save: 'Save', delete: 'Delete', noMilestones: 'No milestones yet', noMilestonesHelp: 'Start with an outcome and target date; Work Items can then be assigned to it.', milestones: 'milestones', status: (status: string) => status.replaceAll('_', ' '),
   }
   const milestones = usePagedApiList<Milestone>(
-    `/api/v1/projects/${encodeURIComponent(project.id)}/milestones`,
+    tab === 'list' || (tab === 'overview' && !projectControlCenterEnabled)
+      ? `/api/v1/projects/${encodeURIComponent(project.id)}/milestones`
+      : null,
   )
-  // Project summary (progress / metrics) must reflect the CURRENT project only,
-  // never whatever the Work Surfaces happen to be showing. Load the canonical
-  // project issues directly so opening a project always shows its own progress.
-  const projectWorkItems = usePagedApiList<WorkItemDto>(
-    `/api/v1/work-items?projectId=${encodeURIComponent(project.id)}&limit=200`,
+  const fallbackOverviewItems = usePagedApiList<WorkItemDto>(
+    tab === 'overview' && !projectControlCenterEnabled
+      ? `/api/v1/work-items?projectId=${encodeURIComponent(project.id)}&limit=200`
+      : null,
   )
-  const [allProjectItems, setAllProjectItems] = useState<WorkItemDto[]>([])
-  useEffect(() => {
-    setAllProjectItems(projectWorkItems.items)
-  }, [projectWorkItems.items])
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState<ReturnType<typeof revisionConflictNotice>>(null)
@@ -105,10 +104,11 @@ export function ProjectWorkspace({
       ...invalidation.event.invalidates,
     ].some(resource => resource.type === 'project' && resource.id === project.id)) {
       void milestones.refresh()
-      void projectWorkItems.refresh()
+      void fallbackOverviewItems.refresh()
     }
   })
-  const normalizedItems = useMemo<WorkItem[]>(() => allProjectItems.map(item => ({
+  const projectItems = tab === 'overview' && !projectControlCenterEnabled ? fallbackOverviewItems.items : items
+  const normalizedItems = useMemo<WorkItem[]>(() => projectItems.map(item => ({
     id: item.id,
     title: item.title,
     number: item.number ?? 0,
@@ -125,7 +125,7 @@ export function ProjectWorkspace({
           execution_state: item.active_executor?.execution_state ?? item.active_assignment?.session_state ?? 'assigned',
         }
       : null,
-  })), [allProjectItems, text.unknownStatus])
+  })), [projectItems, text.unknownStatus])
   const summary = useMemo(() => summarizeProjectWork(normalizedItems), [normalizedItems])
   const tabs: Array<[ProjectWorkspaceTab, string, ReactNode]> = [
     ['overview', text.overview, <HouseIcon aria-hidden="true" size={16} weight="bold" />],
@@ -189,7 +189,7 @@ export function ProjectWorkspace({
   }
 
   return <section className={`project-workspace project-tab-${tab}`} data-testid="project-workspace">
-    <div className="project-plan-header">
+    {(!projectControlCenterEnabled || tab !== 'overview') && <div className="project-plan-header">
       <div className="project-plan-copy">
         <span className="project-status">{text.status(project.status)}</span>
         <h2>{project.name}</h2>
@@ -200,16 +200,16 @@ export function ProjectWorkspace({
         <span>{text.progress(summary.completed, summary.total)}</span>
         <progress max={100} value={summary.progressPercent} />
       </div>
-    </div>
+    </div>}
 
-    <div className="project-metrics" aria-label={text.projectSummary}>
+    {(!projectControlCenterEnabled || tab !== 'overview') && <div className="project-metrics" aria-label={text.projectSummary}>
       <article><strong>{summary.inProgress}</strong><span>{text.inProgress}</span></article>
       <article><strong>{summary.withoutResponsibleHuman}</strong><span>{text.needsHuman}</span></article>
       <article><strong>{summary.activeAgents}</strong><span>{text.activeAgents}</span></article>
       <article><strong>{project.target_date ? dateValue(project.target_date) : text.notSet}</strong><span>{text.targetDate}</span></article>
-    </div>
+    </div>}
 
-    <nav className="project-tabs" aria-label={text.views}>
+    {(!projectControlCenterEnabled || tab !== 'overview') && <nav className="project-tabs" aria-label={text.views}>
       {tabs.map(([value, label, icon]) => <Button
         aria-current={tab === value ? 'page' : undefined}
         className={tab === value ? 'selected' : ''}
@@ -220,15 +220,19 @@ export function ProjectWorkspace({
         type="button"
         variant="ghost"
       >{label}{value === 'backlog' && <span>{items.filter(item => item.status_category === 'backlog').length}</span>}</Button>)}
-    </nav>
+    </nav>}
 
-    {(error || milestones.error) && <p className="error" role="alert">{error || milestones.error?.message}</p>}
+    {(error || milestones.error || fallbackOverviewItems.error) && <p className="error" role="alert">{error || milestones.error?.message || fallbackOverviewItems.error?.message}</p>}
     {conflict && <aside className="conflict-notice" role="alert" data-testid="milestone-conflict">
       <div><strong>{conflict.title}</strong><p>{conflict.action}</p></div>
       <Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => { setConflict(null); void milestones.refresh() }} variant="secondary">{text.reloadMilestones}</Button>
     </aside>}
 
-    {tab === 'overview' && <div className="project-overview-grid">
+    {tab === 'overview' && projectControlCenterEnabled && <ProjectControlCenter project={project} onOpenWork={() => onTabChange('list')} />}
+
+    {tab !== 'overview' && workSurface}
+
+    {((tab === 'overview' && !projectControlCenterEnabled) || tab === 'list') && <div className="project-overview-grid project-plan-management">
       <section className="roadmap-panel" aria-labelledby="roadmap-heading">
         <header><div><span className="eyebrow">{text.plan}</span><h3 id="roadmap-heading">{text.roadmap}</h3></div><Button icon={creating ? <XIcon aria-hidden="true" size={16} /> : <PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => setCreating(value => !value)} variant="secondary">{creating ? text.cancel : text.addMilestone}</Button></header>
         {creating && <form className="milestone-create" onSubmit={event => void createMilestone(event)}>
@@ -258,6 +262,5 @@ export function ProjectWorkspace({
       <ProjectDelivery projectId={project.id} />
     </div>}
 
-    {tab !== 'overview' && workSurface}
   </section>
 }
