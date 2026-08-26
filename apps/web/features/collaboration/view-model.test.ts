@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { collaborationState, notificationHealth, sortNotifications } from './view-model'
+import { collaborationState, groupNotifications, notificationHealth, sortNotifications } from './view-model'
 import type { NotificationFact } from './contracts'
 
 const item = (patch: Partial<NotificationFact> = {}): NotificationFact => ({
@@ -28,5 +28,18 @@ describe('collaboration projection', () => {
     expect(collaborationState({ loading: false, reconnecting: true, count: 1 })).toBe('reconnecting')
     expect(collaborationState({ loading: false, error: { code: 'SSE_RECONNECTING' }, count: 1 })).toBe('reconnecting')
     expect(collaborationState({ loading: false, count: 0 })).toBe('empty')
+  })
+
+  it('groups equivalent low-value updates without hiding high-value or failed facts', () => {
+    const duplicate = item({ id: '00000000-0000-4000-8000-000000000003' })
+    const failed = item({
+      id: '00000000-0000-4000-8000-000000000004',
+      deliveries: [{ channel: 'webhook', status: 'failed', attempt_count: 1, available_at: '2026-08-13T00:00:00Z', claimed_at: null, effect_completed_at: null, delivered_at: null, created_at: '2026-08-13T00:00:00Z', last_error_present: true }],
+    })
+    const approval = item({ id: '00000000-0000-4000-8000-000000000005', kind: 'approval.updated', priority: 'update' })
+    const groups = groupNotifications([item(), duplicate, failed, approval])
+    expect(groups.map(group => group.count).sort()).toEqual([1, 1, 2])
+    expect(groups.find(group => group.notification.id === failed.id)?.count).toBe(1)
+    expect(groups.find(group => group.notification.id === approval.id)?.count).toBe(1)
   })
 })

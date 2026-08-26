@@ -679,15 +679,170 @@ function listAgentInbox(
   );
 }
 
+const activeAgentInboxStates = [
+  "queued",
+  "acknowledged",
+  "planning",
+  "executing",
+  "awaiting_input",
+  "awaiting_approval",
+  "blocked",
+] as const;
+
+const humanQueueProjectionColumns = (observableOnly: boolean) => `
+  i.id,i.kind,i.source_type,i.source_id,i.status,i.requires_response,
+  i.recipient_session_id,i.claimed_by_session_id,i.claimed_at,
+  i.revision,i.created_at,i.updated_at,
+  ${observableOnly ? "'{}'::jsonb" : "i.payload"} AS payload,
+  ${observableOnly ? "false" : "true"} AS detail_available,
+  i.recipient_actor_id,
+  recipient_actor.kind::text AS recipient_actor_kind,
+  recipient_actor.display_name AS recipient_actor_name,
+  recipient_session.state::text AS recipient_session_state,
+  claiming_session.state::text AS claimed_by_session_state,
+  source_author.display_name AS source_author_name,
+  source_channel.subject_kind::text AS source_subject_kind,
+  source_channel.subject_id AS source_subject_id,
+  CASE
+    WHEN source_channel.subject_kind='work_item'
+      THEN subject_team.key || '-' || subject_work_item.number::text
+    WHEN source_channel.subject_kind='project' THEN subject_project.name
+    WHEN source_channel.subject_kind='session' THEN subject_agent.display_name
+    ELSE NULL
+  END AS source_subject_key,
+  COALESCE(subject_work_item.title,subject_project.name,subject_agent.display_name)
+    AS source_subject_title,
+  source_message.thread_id AS source_thread_id,
+  COALESCE(
+    subject_work_item.title,
+    subject_project.name,
+    subject_agent.display_name,
+    replace(i.source_type,'_',' ')
+  ) AS source_summary,
+  COALESCE(i.payload->>'deadline',i.payload->>'expiresAt',i.payload->>'expires_at')
+    AS deadline,
+  jsonb_build_object(
+    'claimed',receipt_facts.claimed,
+    'read',receipt_facts.read,
+    'acknowledged',receipt_facts.acknowledged,
+    'replied',receipt_facts.replied,
+    'lastReceiptAt',receipt_facts.last_receipt_at
+  ) AS receipt_summary,
+  (
+    NOT recipient_actor.is_active
+    OR (
+      i.recipient_session_id IS NOT NULL
+      AND recipient_session.state::text NOT IN (${activeAgentInboxStates.map((state) => `'${state}'`).join(",")})
+    )
+    OR (
+      i.claimed_by_session_id IS NOT NULL
+      AND claiming_session.state::text NOT IN (${activeAgentInboxStates.map((state) => `'${state}'`).join(",")})
+    )
+    OR (
+      i.recipient_human_actor_id IS NULL
+      AND i.recipient_session_id IS NULL
+      AND i.claimed_by_session_id IS NULL
+      AND NOT EXISTS (
+        SELECT 1 FROM agent_sessions active_recipient
+         WHERE active_recipient.workspace_id=i.workspace_id
+           AND active_recipient.team_id=i.team_id
+           AND active_recipient.agent_actor_id=i.recipient_actor_id
+           AND active_recipient.state::text IN (${activeAgentInboxStates.map((state) => `'${state}'`).join(",")})
+      )
+    )
+  ) AS stale_recipient,
+  ${observableOnly ? "true" : "false"} AS observable_only`;
+
+const humanQueueProjectionJoins = `
+  JOIN actors recipient_actor
+    ON recipient_actor.id=i.recipient_actor_id
+   AND recipient_actor.workspace_id=i.workspace_id
+  LEFT JOIN agent_sessions recipient_session
+    ON recipient_session.id=i.recipient_session_id
+   AND recipient_session.workspace_id=i.workspace_id
+  LEFT JOIN agent_sessions claiming_session
+    ON claiming_session.id=i.claimed_by_session_id
+   AND claiming_session.workspace_id=i.workspace_id
+  LEFT JOIN room_messages source_message
+    ON source_message.id=i.source_room_message_id
+   AND source_message.workspace_id=i.workspace_id
+  LEFT JOIN actors source_author
+    ON source_author.id=source_message.author_actor_id
+   AND source_author.workspace_id=source_message.workspace_id
+  LEFT JOIN work_room_channels source_channel
+    ON source_channel.id=source_message.channel_id
+   AND source_channel.workspace_id=source_message.workspace_id
+  LEFT JOIN work_items subject_work_item
+    ON source_channel.subject_kind='work_item'
+   AND subject_work_item.id=source_channel.subject_id
+   AND subject_work_item.workspace_id=i.workspace_id
+   AND subject_work_item.deleted_at IS NULL
+  LEFT JOIN teams subject_team
+    ON subject_team.id=subject_work_item.team_id
+   AND subject_team.workspace_id=subject_work_item.workspace_id
+  LEFT JOIN projects subject_project
+    ON source_channel.subject_kind='project'
+   AND subject_project.id=source_channel.subject_id
+   AND subject_project.workspace_id=i.workspace_id
+   AND subject_project.deleted_at IS NULL
+  LEFT JOIN agent_sessions subject_session
+    ON source_channel.subject_kind='session'
+   AND subject_session.id=source_channel.subject_id
+   AND subject_session.workspace_id=i.workspace_id
+  LEFT JOIN agent_definitions subject_agent
+    ON subject_agent.id=subject_session.agent_id
+   AND subject_agent.workspace_id=subject_session.workspace_id
+  LEFT JOIN LATERAL (
+    SELECT
+      count(*) FILTER (WHERE receipt.kind='claimed')::int AS claimed,
+      count(*) FILTER (WHERE receipt.kind='read')::int AS read,
+      count(*) FILTER (WHERE receipt.kind='acknowledged')::int AS acknowledged,
+      count(*) FILTER (WHERE receipt.kind='replied')::int AS replied,
+      max(receipt.created_at) AS last_receipt_at
+      FROM inbox_item_receipts receipt
+     WHERE receipt.inbox_item_id=i.id
+  ) receipt_facts ON true`;
+
 export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
   app.get("/api/v1/inbox", async (request) => {
     const actor = currentActor(request);
     const query = z
       .object({
         status: z.enum(["open", "resolved"]).default("open"),
+        scope: z.enum(["mine", "agent_observability"]).default("mine"),
       })
       .parse(request.query);
     if (actor.kind === "human") {
+      if (query.scope === "agent_observability") {
+        const values: unknown[] = [actor.workspaceId, query.status];
+        const liveAuthorization = liveHumanTeamReadPredicate(
+          actor,
+          "i.workspace_id",
+          "i.team_id",
+          values,
+        );
+        return h.paginator.query(
+          h.db,
+          request,
+          request.query,
+          {
+            route: "/api/v1/inbox",
+            filters: { status: query.status, scope: query.scope },
+            sort: [
+              { key: "created_at", sql: "i.created_at", direction: "DESC" },
+              { key: "id", sql: "i.id", direction: "DESC" },
+            ],
+          },
+          `SELECT ${humanQueueProjectionColumns(true)}
+             FROM inbox_items i
+             ${humanQueueProjectionJoins}
+            WHERE i.workspace_id=$1
+              AND i.status=$2
+              AND i.recipient_human_actor_id IS NULL
+              AND ${liveAuthorization}`,
+          values,
+        );
+      }
       const values: unknown[] = [actor.workspaceId, actor.id, query.status];
       const liveAuthorization = liveHumanTeamReadPredicate(
         actor,
@@ -701,18 +856,15 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
         request.query,
         {
           route: "/api/v1/inbox",
-          filters: { status: query.status },
+          filters: { status: query.status, scope: query.scope },
           sort: [
-            { key: "created_at", sql: "created_at", direction: "DESC" },
-            { key: "id", sql: "id", direction: "DESC" },
+            { key: "created_at", sql: "i.created_at", direction: "DESC" },
+            { key: "id", sql: "i.id", direction: "DESC" },
           ],
         },
-        `SELECT i.id,i.kind,i.source_type,i.source_id,i.status,
-                i.requires_response,i.recipient_session_id,
-                i.claimed_by_session_id,i.claimed_at,i.revision,
-                i.created_at,i.updated_at,i.payload,
-                true AS detail_available
+        `SELECT ${humanQueueProjectionColumns(false)}
            FROM inbox_items i
+           ${humanQueueProjectionJoins}
           WHERE i.workspace_id=$1
             AND i.recipient_human_actor_id=$2
             AND i.status=$3
@@ -720,6 +872,9 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
         values,
       );
     }
+
+    if (query.scope !== "mine")
+      throw new DomainError("NOT_FOUND", "Inbox scope is not available");
 
     return listAgentInbox(request, h, actor, query.status);
   });

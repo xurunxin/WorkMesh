@@ -6,6 +6,7 @@ import {
   agentCommand,
   commandCenterViewModel,
   groupCommands,
+  inboxCommand,
   intersectRecent,
   projectCommand,
   rankCommands,
@@ -38,6 +39,11 @@ describe('authority-aware command registry', () => {
     expect(agentCommand({ id: 'agent-1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent-1')
     expect(agentCommand({ id: 'agent/1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent%2F1')
     expect(agentCommand({ id: 'agent%2F1', name: 'Codex', slug: 'codex' }).href).toBe('/agents/agent%252F1')
+  })
+
+  it('deep-links Inbox resources into the URL-owned Messages queue', () => {
+    expect(inboxCommand({ id: 'inbox/one', kind: 'mention', source_type: 'message', source_id: 'source-1', requires_response: false }).href)
+      .toBe('/?view=inbox&queue=messages&inboxItem=inbox%2Fone')
   })
 
   it('ranks exact identifiers before prefixes, words, substrings, and metadata', () => {

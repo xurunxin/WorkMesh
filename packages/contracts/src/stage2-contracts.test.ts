@@ -87,6 +87,27 @@ describe('Stage 2 collaboration contracts', () => {
     }
     expect(inboxListItemResponseSchema.parse(listItem)).toEqual(listItem)
     expect(inboxListItemResponseSchema.safeParse({ ...listItem, source_message_body: 'must not leak' }).success).toBe(false)
+    expect(inboxListItemResponseSchema.parse({
+      ...listItem,
+      payload: {},
+      detail_available: false,
+      recipient_actor_id: otherId,
+      recipient_actor_kind: 'agent',
+      recipient_actor_name: 'Reviewer',
+      recipient_session_state: 'executing',
+      claimed_by_session_state: null,
+      source_author_name: 'Coordinator',
+      source_subject_kind: 'work_item',
+      source_subject_id: id,
+      source_subject_key: 'ENG-42',
+      source_subject_title: 'Review the release',
+      source_thread_id: otherId,
+      source_summary: 'Review the release',
+      deadline: null,
+      receipt_summary: { claimed: 0, read: 0, acknowledged: 1, replied: 0, lastReceiptAt: timestamp },
+      stale_recipient: false,
+      observable_only: true,
+    })).toMatchObject({ payload: {}, detail_available: false, observable_only: true })
 
     const detail = {
       ...listItem,

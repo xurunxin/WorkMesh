@@ -469,6 +469,8 @@ export const inboxReplyInputSchema = z.object({ body: z.string().min(1).max(50_0
 export const inboxItemKindSchema = z.enum(['waiting_input', 'approval', 'session_stale', 'ask', 'review_request', 'blocker', 'handoff', 'mention'])
 export const inboxItemStatusSchema = z.enum(['open', 'resolved'])
 export const inboxReceiptKindSchema = z.enum(['claimed', 'read', 'acknowledged', 'replied'])
+export type InboxItemKind = z.infer<typeof inboxItemKindSchema>
+export type InboxItemStatus = z.infer<typeof inboxItemStatusSchema>
 export const inboxListItemResponseSchema = z.object({
   id: idSchema,
   kind: inboxItemKindSchema,
@@ -484,6 +486,28 @@ export const inboxListItemResponseSchema = z.object({
   updated_at: timestampSchema,
   payload: z.record(z.unknown()),
   detail_available: z.boolean(),
+  recipient_actor_id: idSchema.optional(),
+  recipient_actor_kind: actorKindSchema.optional(),
+  recipient_actor_name: z.string().min(1).optional(),
+  recipient_session_state: agentSessionStateSchema.nullable().optional(),
+  claimed_by_session_state: agentSessionStateSchema.nullable().optional(),
+  source_author_name: z.string().min(1).nullable().optional(),
+  source_subject_kind: roomSubjectKindSchema.nullable().optional(),
+  source_subject_id: idSchema.nullable().optional(),
+  source_subject_key: z.string().min(1).nullable().optional(),
+  source_subject_title: z.string().min(1).nullable().optional(),
+  source_thread_id: idSchema.nullable().optional(),
+  source_summary: z.string().min(1).optional(),
+  deadline: z.string().nullable().optional(),
+  receipt_summary: z.object({
+    claimed: z.number().int().nonnegative(),
+    read: z.number().int().nonnegative(),
+    acknowledged: z.number().int().nonnegative(),
+    replied: z.number().int().nonnegative(),
+    lastReceiptAt: timestampSchema.nullable(),
+  }).strict().optional(),
+  stale_recipient: z.boolean().optional(),
+  observable_only: z.boolean().optional(),
 }).strict()
 export const inboxReceiptResponseSchema = z.object({
   id: idSchema,

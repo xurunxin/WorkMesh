@@ -1664,7 +1664,7 @@ paths:
       { x-workmesh-policy-id: route.previewAgentSessionControl, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: previewAgentSessionControl, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: false, required: [action], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" }, stopMode: { $ref: "#/components/schemas/AgentSessionStopMode" }, steeringScope: { $ref: "#/components/schemas/AgentSessionSteeringScope" } } } } } }, responses: { "200": { $ref: "#/components/responses/ActionPreview" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/inbox:
     get:
-      { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }], responses: { "200": { $ref: "#/components/responses/InboxItems" } } }
+      { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }, { name: scope, in: query, description: Human-only bounded Agent delivery observability; Agent principals use mine., schema: { type: string, enum: [mine, agent_observability], default: mine } }], responses: { "200": { $ref: "#/components/responses/InboxItems" } } }
   /api/v1/inbox/{id}:
     get: { x-workmesh-policy-id: route.getInboxItem, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getInboxItem, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/InboxItem" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/inbox/{id}/claim:
@@ -2549,7 +2549,7 @@ components:
     ActionPreview:
       { description: Advisory current-revision preview that reserves no mutation authority., headers: { ETag: { schema: { type: string }, description: Strong source-revision ETag. } }, content: { application/json: { schema: { $ref: "#/components/schemas/ActionPreview" } } } }
     InboxItems:
-      { description: Session-authorized Inbox summary page. Actor-targeted items expose bounded metadata until claimed by the exact Session., content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/InboxListItem" } }, nextCursor: { type: [string, "null"] } } } } } }
+      { description: Principal-authorized Inbox summary page. Human Agent-observability scope is body-redacted and exposes only bounded recipient, claim, receipt, source-subject, and stale-recipient facts., content: { application/json: { schema: { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/InboxListItem" } }, nextCursor: { type: [string, "null"] } } } } } }
     InboxItem:
       { description: Full Inbox detail available only to the current Human recipient or exact Agent Session recipient or claimant., content: { application/json: { schema: { $ref: "#/components/schemas/InboxItemDetail" } } } }
     InboxReply:
@@ -3714,7 +3714,49 @@ components:
     InboxReplyInput:
       { type: object, additionalProperties: false, required: [body], properties: { body: { type: string, minLength: 1, maxLength: 50000 }, payload: { type: object, additionalProperties: true } } }
     InboxListItem:
-      { type: object, additionalProperties: false, required: [id, kind, source_type, source_id, status, requires_response, recipient_session_id, claimed_by_session_id, claimed_at, revision, created_at, updated_at, payload, detail_available], properties: { id: { type: string, format: uuid }, kind: { type: string, enum: [waiting_input, approval, session_stale, ask, review_request, blocker, handoff, mention] }, source_type: { type: string, minLength: 1 }, source_id: { type: string, format: uuid }, status: { type: string, enum: [open, resolved] }, requires_response: { type: boolean }, recipient_session_id: { type: [string, "null"], format: uuid }, claimed_by_session_id: { type: [string, "null"], format: uuid }, claimed_at: { type: [string, "null"], format: date-time }, revision: { type: integer, minimum: 1 }, created_at: { type: string, format: date-time }, updated_at: { type: string, format: date-time }, payload: { type: object, additionalProperties: true }, detail_available: { type: boolean } } }
+      type: object
+      additionalProperties: false
+      required: [id, kind, source_type, source_id, status, requires_response, recipient_session_id, claimed_by_session_id, claimed_at, revision, created_at, updated_at, payload, detail_available]
+      properties:
+        id: { type: string, format: uuid }
+        kind: { type: string, enum: [waiting_input, approval, session_stale, ask, review_request, blocker, handoff, mention] }
+        source_type: { type: string, minLength: 1 }
+        source_id: { type: string, format: uuid }
+        status: { type: string, enum: [open, resolved] }
+        requires_response: { type: boolean }
+        recipient_session_id: { type: [string, "null"], format: uuid }
+        claimed_by_session_id: { type: [string, "null"], format: uuid }
+        claimed_at: { type: [string, "null"], format: date-time }
+        revision: { type: integer, minimum: 1 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        payload: { type: object, additionalProperties: true }
+        detail_available: { type: boolean }
+        recipient_actor_id: { type: string, format: uuid }
+        recipient_actor_kind: { type: string, enum: [human, agent, service] }
+        recipient_actor_name: { type: string, minLength: 1 }
+        recipient_session_state: { type: [string, "null"], enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, completed, failed, cancelled, null] }
+        claimed_by_session_state: { type: [string, "null"], enum: [queued, acknowledged, planning, executing, awaiting_input, awaiting_approval, blocked, paused, stopping, completed, failed, cancelled, null] }
+        source_author_name: { type: [string, "null"], minLength: 1 }
+        source_subject_kind: { type: [string, "null"], enum: [work_item, project, session, null] }
+        source_subject_id: { type: [string, "null"], format: uuid }
+        source_subject_key: { type: [string, "null"], minLength: 1 }
+        source_subject_title: { type: [string, "null"], minLength: 1 }
+        source_thread_id: { type: [string, "null"], format: uuid }
+        source_summary: { type: string, minLength: 1 }
+        deadline: { type: [string, "null"] }
+        receipt_summary:
+          type: object
+          additionalProperties: false
+          required: [claimed, read, acknowledged, replied, lastReceiptAt]
+          properties:
+            claimed: { type: integer, minimum: 0 }
+            read: { type: integer, minimum: 0 }
+            acknowledged: { type: integer, minimum: 0 }
+            replied: { type: integer, minimum: 0 }
+            lastReceiptAt: { type: [string, "null"], format: date-time }
+        stale_recipient: { type: boolean }
+        observable_only: { type: boolean }
     InboxReceipt:
       { type: object, additionalProperties: false, required: [id, actor_id, session_id, kind, reply_message_id, created_at], properties: { id: { type: string, format: uuid }, actor_id: { type: string, format: uuid }, session_id: { type: string, format: uuid }, kind: { type: string, enum: [claimed, read, acknowledged, replied] }, reply_message_id: { type: [string, "null"], format: uuid }, created_at: { type: string, format: date-time } } }
     InboxItemDetail:

@@ -2805,6 +2805,98 @@ describe('Stage 2 collaboration API acceptance', () => {
     expect(validGuidance.statusCode, JSON.stringify(validGuidance.json())).toBe(200)
   })
 
+  it('projects body-redacted Agent Inbox delivery facts to authorized Humans', async () => {
+    const f = await makeFixture()
+    const child = await agentCall(f.parentToken, 'POST', `/api/v1/agent-sessions/${f.parent.id}/children`, {
+      agentId: f.reviewer.id,
+      planStepId: f.stepB,
+      planVersionId: f.planVersionId,
+      initialPrompt: 'Receive observable Inbox work',
+      budget: { maxRuntimeSeconds: 120, maxInputTokens: 50 },
+    })
+    expect(child.statusCode, JSON.stringify(child.json())).toBe(200)
+    const reviewerSessionId = child.json<{ id: string }>().id
+    const reviewerToken = await tokenFor(reviewerSessionId, f.reviewer)
+    const childAck = await agentCall(reviewerToken, 'POST', `/api/v1/agent-sessions/${reviewerSessionId}/ack`, { summary: 'ready', externalUrls: [] })
+    expect(childAck.statusCode, JSON.stringify(childAck.json())).toBe(200)
+    const childExecuting = await agentCall(reviewerToken, 'POST', `/api/v1/agent-sessions/${reviewerSessionId}/state`, { state: 'executing', reason: 'observability test' }, { 'if-match': `"revision-${childAck.json<{ revision: number }>().revision}"` })
+    expect(childExecuting.statusCode, JSON.stringify(childExecuting.json())).toBe(200)
+    const room = await humanCall(f.human, 'GET', `/api/v1/rooms?sessionId=${f.parent.id}`)
+    expect(room.statusCode, JSON.stringify(room.json())).toBe(200)
+    const channelId = room.json<{ id: string }>().id
+
+    const exactMessage = await agentCall(f.parentToken, 'POST', `/api/v1/rooms/${channelId}/messages`, {
+      sessionId: f.parent.id,
+      intent: 'ask',
+      body: 'Exact Session secret body',
+      recipientSessionId: reviewerSessionId,
+      requiresResponse: true,
+    })
+    expect(exactMessage.statusCode, JSON.stringify(exactMessage.json())).toBe(200)
+    const exactInboxId = (await db.query<{ id: string }>(
+      "SELECT id FROM inbox_items WHERE source_id=$1 AND recipient_session_id=$2",
+      [exactMessage.json<{ id: string }>().id, reviewerSessionId],
+    )).rows[0]!.id
+
+    const actorInboxId = (await db.query<{ id: string }>(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_actor_id,team_id,kind,source_type,source_id,
+         requires_response,payload
+       ) VALUES($1,$2,$3,'review_request','handoff',$4,true,$5)
+       RETURNING id`,
+      [f.workspaceId, f.reviewer.actorId, f.teamId, randomUUID(), { summary: 'Actor queue secret body' }],
+    )).rows[0]!.id
+
+    const claimed = await agentCall(reviewerToken, 'POST', `/api/v1/inbox/${actorInboxId}/claim`, {})
+    expect(claimed.statusCode, JSON.stringify(claimed.json())).toBe(200)
+    const acknowledged = await agentCall(reviewerToken, 'POST', `/api/v1/inbox/${actorInboxId}/acknowledge`, {})
+    expect(acknowledged.statusCode, JSON.stringify(acknowledged.json())).toBe(200)
+
+    const observed = await humanCall(f.human, 'GET', '/api/v1/inbox?scope=agent_observability&status=open')
+    expect(observed.statusCode, JSON.stringify(observed.json())).toBe(200)
+    const observations = observed.json<Page<{
+      id: string
+      payload: Record<string, unknown>
+      detail_available: boolean
+      observable_only: boolean
+      recipient_session_id: string | null
+      claimed_by_session_id: string | null
+      recipient_actor_name: string
+      receipt_summary: { claimed: number; acknowledged: number }
+      source_subject_key: string | null
+      stale_recipient: boolean
+    }>>().items
+    expect(observations).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: exactInboxId,
+        payload: {},
+        detail_available: false,
+        observable_only: true,
+        recipient_session_id: reviewerSessionId,
+        claimed_by_session_id: null,
+        stale_recipient: false,
+      }),
+      expect.objectContaining({
+        id: actorInboxId,
+        payload: {},
+        detail_available: false,
+        observable_only: true,
+        claimed_by_session_id: reviewerSessionId,
+        receipt_summary: expect.objectContaining({ claimed: 1, acknowledged: 1 }),
+        stale_recipient: false,
+      }),
+    ]))
+    expect(JSON.stringify(observations)).not.toContain('secret body')
+    expect((await humanCall(f.human, 'GET', `/api/v1/inbox/${exactInboxId}`)).statusCode).toBe(404)
+
+    const otherTeam = await humanCall(f.human, 'POST', '/api/v1/teams', { name: 'Observation boundary', key: `O${randomUUID().replaceAll('-', '').slice(0, 5).toUpperCase()}` })
+    const otherMember = await memberForTeam(f.workspaceId, otherTeam.json<{ id: string }>().id)
+    const concealed = await humanCall(otherMember, 'GET', '/api/v1/inbox?scope=agent_observability&status=open')
+    expect(concealed.statusCode, JSON.stringify(concealed.json())).toBe(200)
+    expect(concealed.json<Page<{ id: string }>>().items.map(item => item.id)).not.toContain(exactInboxId)
+    expect(concealed.json<Page<{ id: string }>>().items.map(item => item.id)).not.toContain(actorInboxId)
+  })
+
   it('accepts, rolls back, and rejects handoffs atomically with durable events and outbox', async () => {
     const f = await makeFixture()
     const source = await directSession(f, f.runner, 'Handoff accepted source')

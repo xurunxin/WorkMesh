@@ -848,14 +848,14 @@ describe('live paged-read authorization', () => {
     expect(repository).toContain("'repo:read'=ANY(live_team_access.approved_capabilities)")
   })
 
-  it('uses the standard live Human predicate in both final Inbox reads', async () => {
+  it('uses the standard live Human predicate in every final Inbox read', async () => {
     const inbox = await readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8')
     const humanInboxReads = section(
       inbox,
       'app.get("/api/v1/inbox"',
       'app.post("/api/v1/inbox/:id/claim"',
     )
-    expect(humanInboxReads.match(/liveHumanTeamReadPredicate\(/g)).toHaveLength(2)
+    expect(humanInboxReads.match(/liveHumanTeamReadPredicate\(/g)).toHaveLength(3)
     expect(humanInboxReads).toContain('"i.workspace_id"')
     expect(humanInboxReads).toContain('"i.team_id"')
     expect(humanInboxReads).not.toContain('FROM memberships recipient_membership')
