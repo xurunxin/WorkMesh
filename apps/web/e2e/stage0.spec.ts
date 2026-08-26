@@ -225,7 +225,7 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(
       page.getByRole("heading", { name: projectName }),
     ).toBeVisible();
-    await page.getByTestId("project-tab-list").click();
+    await page.getByTestId("project-control-view-work").click();
 
     await createWorkItem(page, {
       title: issueTitle,

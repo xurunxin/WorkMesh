@@ -252,7 +252,7 @@ export function ProjectControlCenter({ project, onOpenWork }: { project: Project
 
   return <div className="hcp-reference project-control-center" data-testid="project-control-center">
     <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div><p>{project.description || project.summary || local.empty}</p></div><div className="hcp-project-actions"><Button icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
+      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div><p>{project.description || project.summary || local.empty}</p></div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
       <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>rev {data.revision}</dd></div></dl>
     </header>
     <ProjectControlNavigation items={navigation} label={copy.projectNavigation} />
