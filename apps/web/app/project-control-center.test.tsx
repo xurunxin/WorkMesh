@@ -73,6 +73,17 @@ describe('Project Control Center', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toBe(`/api/v1/projects/${projectId}/control-center?limit=10`)
   })
 
+  it('keeps Project identity and the work escape available while the projection fails', async () => {
+    const onOpenWork = vi.fn()
+    vi.stubGlobal('fetch', vi.fn(async () => ({ headers: new Headers(), ok: false, status: 503, json: async () => ({ error: { message: 'Projection unavailable' } }) })))
+    render(<LocaleProvider><ProjectControlCenter onOpenWork={onOpenWork} project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
+
+    expect(screen.getByRole('heading', { name: 'Runtime Reliability' })).toBeVisible()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Projection unavailable')
+    fireEvent.click(screen.getByTestId('project-control-view-work'))
+    expect(onOpenWork).toHaveBeenCalledTimes(1)
+  })
+
   it('paginates a collection independently and restores focus after closing detail', async () => {
     const next = { ...response, collections: { ...response.collections, running: { items: [digest({ id: 'agent_session:99999999-9999-4999-8999-999999999999', sessionId: '99999999-9999-4999-8999-999999999999', title: 'Second Agent' })], nextCursor: null } } }
     const fetchMock = vi.fn(async (input: string) => ({ ok: true, status: 200, json: async () => input.includes('cursor=') ? next : response }))

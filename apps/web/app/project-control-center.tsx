@@ -210,7 +210,7 @@ export function ProjectControlCenter({ project, onOpenWork }: { project: Project
     relationshipLabel={copy.agentRelationship}
     responsibleHuman={{ label: copy.responsibleHuman, name: item.responsibleHuman?.displayName ?? local.noHuman }}
   />
-  const freshness = connectionState === 'offline' ? 'offline' : data?.freshness.state === 'stale' ? 'stale' : data?.freshness.state === 'partial' ? 'partial' : 'fresh'
+  const freshness = connectionState === 'offline' ? 'offline' : !data ? error ? 'partial' : 'stale' : data.freshness.state === 'stale' ? 'stale' : data.freshness.state === 'partial' ? 'partial' : 'fresh'
   const freshnessLabel = freshness === 'fresh' ? copy.freshNow : freshness === 'offline' ? 'Offline' : freshness === 'partial' ? 'Partial' : copy.stale
   const allDigests = data ? collectionOrder.flatMap(collection => data.collections[collection].items) : []
   const humanOptions = [...new Map(allDigests.flatMap(item => item.responsibleHuman ? [[item.responsibleHuman.id, item.responsibleHuman.displayName] as const] : [])).entries()]
@@ -234,8 +234,16 @@ export function ProjectControlCenter({ project, onOpenWork }: { project: Project
     </ControlCenterSection>
   }
 
-  if (!data && !error) return <div className="project-control-loading" role="status">{local.loading}</div>
-  if (!data) return <div className="project-control-loading" role="alert"><span>{error || local.loadError}</span><Button onClick={() => void refreshAll()} type="button">{local.retry}</Button></div>
+  const projectHeader = <>
+    <header className="hcp-project-header">
+      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div><p>{project.description || project.summary || local.empty}</p></div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
+      <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data?.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data?.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>{data ? `rev ${data.revision}` : '-'}</dd></div></dl>
+    </header>
+    <ProjectControlNavigation items={navigation} label={copy.projectNavigation} />
+  </>
+
+  if (!data && !error) return <div className="hcp-reference project-control-center" data-testid="project-control-center">{projectHeader}<div className="project-control-loading" role="status">{local.loading}</div></div>
+  if (!data) return <div className="hcp-reference project-control-center" data-testid="project-control-center">{projectHeader}<div className="project-control-loading" role="alert"><span>{error || local.loadError}</span><Button onClick={() => void refreshAll()} type="button">{local.retry}</Button></div></div>
 
   const attention = genericSection('attention', copy.needsYou, copy.needsYouDescription, 'attention', item => <><AttentionKindBadge categoryLabel={copy.attentionKind} label={item.kind.replaceAll('_', ' ')} value={(item.kind === 'completion_review' ? 'completion_review' : item.kind === 'approval' ? 'approval' : item.kind === 'clarification' ? 'clarification' : item.kind === 'conflict' ? 'conflict' : item.kind === 'recovery' ? 'recovery' : 'decision')} /><LifecycleBadge categoryLabel={copy.lifecycle} label={copy.statusOpen} value="open" /></>)
   const running = <ControlCenterSection count={data.collections.running.items.length} description={copy.runningDescription} title={copy.running} tone="running">
@@ -251,11 +259,7 @@ export function ProjectControlCenter({ project, onOpenWork }: { project: Project
   const surfaces: Record<ProjectControlSurface, ReactNode> = { overview: <>{attention}{running}{risks}{verified}{ready}{blocked}</>, attention, runs: running, work: null, graph: null, activity: null, settings: null }
 
   return <div className="hcp-reference project-control-center" data-testid="project-control-center">
-    <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div><p>{project.description || project.summary || local.empty}</p></div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
-      <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>rev {data.revision}</dd></div></dl>
-    </header>
-    <ProjectControlNavigation items={navigation} label={copy.projectNavigation} />
+    {projectHeader}
     <form aria-label={local.filters} className="project-control-filters" onSubmit={applyFilters}>
       <label>{local.responsibleHumanFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, responsibleHumanActorId: value || undefined })) }} value={draftFilters.responsibleHumanActorId ?? ''}><option value="">{local.all}</option>{humanOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <label>{copy.activeAgent}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, agentActorId: value || undefined })) }} value={draftFilters.agentActorId ?? ''}><option value="">{local.all}</option>{agentOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>

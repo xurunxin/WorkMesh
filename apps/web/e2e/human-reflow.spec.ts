@@ -54,6 +54,18 @@ async function installRoutes(page: Page): Promise<string[]> {
     if (path === '/api/v1/projects') return list(projects)
     const selectedProject = projects.find(candidate => path === `/api/v1/projects/${candidate.id}`)
     if (selectedProject) return body(selectedProject)
+    const controlCenterProject = projects.find(candidate => path === `/api/v1/projects/${candidate.id}/control-center`)
+    if (controlCenterProject) {
+      const empty = { items: [], nextCursor: null }
+      return body({
+        projectionVersion: 1,
+        scope: { workspaceId: 'workspace-preview', projectId: controlCenterProject.id },
+        project: { id: controlCenterProject.id, name: controlCenterProject.name, status: controlCenterProject.status, targetDate: controlCenterProject.target_date, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: controlCenterProject.revision },
+        revision: controlCenterProject.revision,
+        freshness: { state: 'fresh', observedAt: '2026-08-26T00:00:00.000Z', sourceUpdatedAt: '2026-08-26T00:00:00.000Z' },
+        collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+      })
+    }
     const projectId = path.match(/^\/api\/v1\/projects\/([^/]+)\/(milestones|delivery)$/)?.[1]
     if (projectId && path.endsWith('/milestones')) return list([])
     if (projectId && path.endsWith('/delivery')) return body({ milestones: [], updates: [], artifacts: [], dependencies: [], completionSuggestions: [], providerPullRequests: [], providerReviews: [], workMeshStructuredReviews: [], mergeApprovals: [] })
