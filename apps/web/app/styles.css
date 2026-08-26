@@ -1443,6 +1443,25 @@ main#workmesh-main:focus-visible {
 .hcp-control-grid .wm-control-section-running .wm-run-digest-details { padding-top: .75rem; border-top: 1px solid var(--wm-border); }
 .hcp-reference .wm-evidence-list + .wm-causal-timeline { margin-top: 1rem; }
 .hcp-reference .wm-capability-bar + .wm-evidence-list { margin-top: 1rem; }
+.project-control-center { padding-top: .5rem; }
+.project-control-center .hcp-control-grid { padding-bottom: 1rem; }
+.project-control-center .wm-control-section-content > .wm-work-surface-pagination { margin: .7rem .85rem; }
+.project-control-digest-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem 1rem; margin: .75rem 0 0; }
+.project-control-digest-meta > div { min-width: 0; }
+.project-control-digest-meta dt { color: var(--wm-muted); font-size: .7rem; }
+.project-control-digest-meta dd { margin: .1rem 0 0; font-size: .78rem; overflow-wrap: anywhere; }
+.project-control-run-state { color: var(--wm-muted); font-size: .75rem; text-transform: capitalize; }
+.project-control-section-state,
+.project-control-loading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 4rem; padding: .85rem; color: var(--wm-muted); }
+.project-control-loading { min-height: 14rem; border: 1px solid var(--wm-border); border-radius: 8px; }
+.project-control-project-status { display: flex; flex-wrap: wrap; gap: .65rem 1.5rem; margin: 0; color: var(--wm-muted); font-size: .72rem; }
+.project-control-project-status > div { display: grid; gap: .1rem; min-width: 7rem; }
+.project-control-project-status dd { margin: 0; color: var(--wm-text); font-size: .82rem; text-transform: capitalize; }
+.project-control-filters { display: grid; grid-template-columns: repeat(5, minmax(8rem, 1fr)) auto; align-items: end; gap: .55rem; margin: .9rem 0 0; padding: .75rem; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 8px; }
+.project-control-filters label { display: grid; gap: .25rem; min-width: 0; color: var(--wm-muted); font-size: .7rem; }
+.project-control-filters select { width: 100%; min-width: 0; }
+.project-control-filter-actions { display: flex; align-items: center; gap: .35rem; }
+.project-plan-management { margin-top: 1rem; }
 .wm-sheet-content > .wm-capability-bar + .wm-evidence-list { margin-top: 1rem; }
 .wm-sheet-content > .wm-evidence-list + .wm-causal-timeline { margin-top: 1rem; }
 .wm-sheet-content > .wm-causal-timeline + .wm-technical-events { margin-top: .25rem; }
@@ -1454,6 +1473,7 @@ main#workmesh-main:focus-visible {
   .hcp-summary-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hcp-summary-strip article:nth-child(3) { border-right: 0; }
   .hcp-summary-strip article:nth-child(-n+3) { border-bottom: 1px solid var(--wm-border); }
+  .project-control-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
@@ -1466,11 +1486,16 @@ main#workmesh-main:focus-visible {
   .hcp-summary-strip article:nth-child(3) { border-right: 1px solid var(--wm-border); }
   .hcp-summary-strip article:nth-child(even) { border-right: 0; }
   .hcp-summary-strip article:nth-child(-n+4) { border-bottom: 1px solid var(--wm-border); }
+  .project-control-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-control-filter-actions { grid-column: 1 / -1; }
 }
 
 @media (max-width: 420px) {
   .hcp-summary-strip article { grid-template-columns: 1fr; gap: .1rem; padding: .6rem; }
   .hcp-title-row { align-items: flex-start; flex-direction: column; }
+  .project-control-digest-meta { grid-template-columns: 1fr; }
+  .project-control-filters { grid-template-columns: 1fr; }
+  .project-control-filter-actions { grid-column: auto; }
 }
 
 /* v32 i18n entry: public /install and /login centers */
