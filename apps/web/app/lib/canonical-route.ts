@@ -10,7 +10,7 @@ export type CanonicalObject =
   | { kind: 'artifact'; id: string; source?: string }
   | { kind: 'lease'; id: string }
   | { kind: 'recovery'; id: string; projectId?: string }
-  | { kind: 'graph'; id: string; enabled: boolean }
+  | { kind: 'graph'; id: string; negotiatedHref?: string }
 
 const root = (params: URLSearchParams): string => `/?${params.toString()}`
 
@@ -40,8 +40,20 @@ export function canonicalObjectHref(target: CanonicalObject): string | undefined
       params.set('view', 'recovery'); params.set('recoveryLifecycle', 'active'); params.set('recoveryItem', target.id)
       if (target.projectId) params.set('recoveryProject', target.projectId)
       return root(params)
-    case 'graph': return target.enabled ? `/?view=graph&graphSubject=${encodeURIComponent(target.id)}` : undefined
+    // Graph identity and authorization belong to its optional domain. The Web
+    // app follows only a server-provided internal link and never manufactures
+    // a route from an otherwise hidden subject ID.
+    case 'graph': return safeInternalHref(target.negotiatedHref)
   }
+}
+
+export function safeInternalHref(value?: string | null): string | undefined {
+  if (!value) return undefined
+  try {
+    const url = new URL(value, 'http://workmesh.local')
+    if (url.origin !== 'http://workmesh.local' || !value.startsWith('/') || value.startsWith('//')) return undefined
+    return `${url.pathname}${url.search}${url.hash}`
+  } catch { return undefined }
 }
 
 export function evidenceDrawerHref(currentHref: string, evidenceId?: string, source?: string, anchor?: string): string {
