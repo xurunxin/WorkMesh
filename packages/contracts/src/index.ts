@@ -775,7 +775,13 @@ export const workItemExecutionSummaryResponseSchema = z.object({
   freshness: humanAttentionFreshnessSchema,
 }).strict()
 export const agentSessionControlActionSchema = z.enum(['pause', 'resume', 'stop', 'retry', 'handoff', 'replan', 'steer'])
-export const agentSessionControlPreviewInputSchema = z.object({ action: agentSessionControlActionSchema }).strict()
+export const agentSessionStopModeSchema = z.enum(['graceful', 'immediate'])
+export const agentSessionSteeringScopeSchema = z.enum(['current_step', 'remaining_plan', 'session', 'guidance_proposal'])
+export const agentSessionControlPreviewInputSchema = z.object({
+  action: agentSessionControlActionSchema,
+  stopMode: agentSessionStopModeSchema.optional(),
+  steeringScope: agentSessionSteeringScopeSchema.optional(),
+}).strict()
 export const actionPreviewResponseSchema = z.object({
   projectionVersion: controlPlaneProjectionVersionSchema,
   action: agentSessionControlActionSchema,
@@ -794,6 +800,16 @@ export const actionPreviewResponseSchema = z.object({
   invalidatedApprovals: z.array(controlPlaneResourceReferenceSchema).max(100),
   requiredReason: z.boolean(),
   requiredApproval: z.object({ required: z.boolean(), approvalType: z.string().nullable() }).strict(),
+  stopMode: agentSessionStopModeSchema.nullable(),
+  supportedStopModes: z.array(z.object({ mode: agentSessionStopModeSchema, available: z.boolean(), summary: z.string().min(1).max(2_000) }).strict()).max(2),
+  steeringScope: agentSessionSteeringScopeSchema.nullable(),
+  supportedSteeringScopes: z.array(z.object({ scope: agentSessionSteeringScopeSchema, available: z.boolean(), reasonCode: z.string().min(1).max(200), summary: z.string().min(1).max(2_000), result: z.enum(['prompt', 'plan_version_request', 'guidance_navigation']) }).strict()).max(4),
+  currentPlan: z.object({ id: idSchema, revision: revisionSchema }).strict().nullable(),
+  currentStep: z.object({ id: idSchema, title: z.string().min(1).max(500) }).strict().nullable(),
+  lastHeartbeatAt: timestampSchema.nullable(),
+  leaseBehavior: z.enum(['unchanged', 'release_now', 'retain_for_handoff', 'server_controlled']),
+  recoveryPath: z.string().min(1).max(2_000),
+  resultResource: z.enum(['same_session', 'new_session', 'handoff_request', 'plan_version_request', 'guidance']).nullable(),
   warnings: z.array(z.string().min(1).max(2_000)).max(100),
   expiresAt: timestampSchema,
   freshness: humanAttentionFreshnessSchema,
@@ -950,7 +966,7 @@ export const refreshAgentSessionTokenInputSchema = z.object({ tokenId: z.string(
 export const heartbeatInputSchema = z.object({ currentStepId: idSchema.optional(), usage: z.object({ runtimeSeconds: z.number().int().nonnegative(), inputTokens: z.number().int().nonnegative().optional(), outputTokens: z.number().int().nonnegative().optional(), toolCalls: z.number().int().nonnegative().optional() }) })
 export const promptAgentSessionInputSchema = z.object({ bodyMarkdown: z.string().min(1).max(50_000), planRevision: revisionSchema.optional(), workItemRevision: revisionSchema.optional() })
 export const sessionSignalSchema = z.enum(['stop', 'pause', 'resume'])
-export const signalAgentSessionInputSchema = z.object({ signal: sessionSignalSchema, reason: z.string().min(1).max(2_000) })
+export const signalAgentSessionInputSchema = z.object({ signal: sessionSignalSchema, reason: z.string().min(1).max(2_000), stopMode: agentSessionStopModeSchema.optional() })
 export const stopAcknowledgementInputSchema = z.object({ cleanupSummary: z.string().min(1).max(10_000), residualRisks: z.array(z.string().min(1).max(1_000)).max(50).default([]) })
 
 export const planStepInputSchema = z.object({

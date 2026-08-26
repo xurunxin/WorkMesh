@@ -126,7 +126,7 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
     return tool(() => options.client.explainAgentSession(id, filters, { cursor, limit }))
   })
   server.registerTool('get_work_item_execution_summary', { description: 'Read bounded current and recent execution facts for one authorized Work Item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItemExecutionSummary(input.workItemId)))
-  server.registerTool('preview_agent_session_control', { description: 'Preview current-revision Session control consequences without reserving authority or mutating state.', inputSchema: { sessionId, action: z.enum(['pause','resume','stop','retry','handoff','replan','steer']) } }, async input => tool(() => options.client.previewAgentSessionControl(input.sessionId, input.action)))
+  server.registerTool('preview_agent_session_control', { description: 'Preview current-revision Session control consequences without reserving authority or mutating state.', inputSchema: { sessionId, action: z.enum(['pause','resume','stop','retry','handoff','replan','steer']), stopMode: z.enum(['graceful','immediate']).optional(), steeringScope: z.enum(['current_step','remaining_plan','session','guidance_proposal']).optional() } }, async input => tool(() => options.client.previewAgentSessionControl(input.sessionId, input.action, { stopMode: input.stopMode, steeringScope: input.steeringScope })))
 
   if (options.mode !== 'read-only') registerMutations(server, options.client)
   return server

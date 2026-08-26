@@ -2770,11 +2770,11 @@ export async function publishPlan(db: Pool, meta: RequestMeta, sessionId: string
   return result;
 }
 
-export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, input: { bodyMarkdown: string; planRevision?: number; workItemRevision?: number }) {
+export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, input: { bodyMarkdown: string; planRevision?: number; workItemRevision?: number }, expectedRevision?: number) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can prompt an agent session");
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.bodyMarkdown,"prompt");
-    const session = one((await tx.query<{ id: string; team_id: string; state: AgentSessionState; revision: number; sequence: number }>("SELECT id,team_id,state,revision,sequence FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id);
+    const session = one((await tx.query<{ id: string; team_id: string; state: AgentSessionState; revision: number; sequence: number }>("SELECT id,team_id,state,revision,sequence FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id); if (expectedRevision !== undefined) assertRevision(expectedRevision, session.revision);
     await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown,plan_revision,work_item_revision) VALUES($1,$2,$3,$4,$5)", [sessionId, meta.actor.id, input.bodyMarkdown, input.planRevision ?? null, input.workItemRevision ?? null]);
     const state = session.state === "awaiting_input" ? "executing" : session.state;
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, state])).rows);
@@ -2784,7 +2784,7 @@ export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, inp
   });
 }
 
-export async function signal(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { signal: "stop" | "pause" | "resume"; reason: string }) {
+export async function signal(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { signal: "stop" | "pause" | "resume"; reason: string; stopMode?: "graceful" | "immediate" }) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can control an agent session");
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.reason, "signal reason");
@@ -2796,8 +2796,9 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
       for (const lease of leases) await event(tx, meta, "lease.released", "lease", lease.id, 1, { reason: "stop requested", sessionId }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
     }
     const eventType=`agent.session.signal.${input.signal}`;
-    const eventId = await event(tx, meta, eventType, "agent_session", sessionId, Number((row as { revision: number }).revision), { signal: input.signal, reason: input.reason, state: next }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
-    await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, eventType, sessionId, { sessionId, signal: input.signal, reason: input.reason, state:next }); return row;
+    const stopMode = input.signal === "stop" ? input.stopMode ?? "graceful" : undefined;
+    const eventId = await event(tx, meta, eventType, "agent_session", sessionId, Number((row as { revision: number }).revision), { signal: input.signal, reason: input.reason, state: next, ...(stopMode ? { stopMode } : {}) }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
+    await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, eventType, sessionId, { sessionId, signal: input.signal, reason: input.reason, state:next, ...(stopMode ? { stopMode } : {}) }); return row;
   });
 }
 

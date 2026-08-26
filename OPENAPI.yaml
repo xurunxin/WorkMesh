@@ -1661,7 +1661,7 @@ paths:
       { x-workmesh-policy-id: route.getWorkItemExecutionSummary, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getWorkItemExecutionSummary, parameters: [{ name: workItemId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/WorkItemExecutionSummary" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/agent-sessions/{sessionId}/control-preview:
     post:
-      { x-workmesh-policy-id: route.previewAgentSessionControl, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: previewAgentSessionControl, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: false, required: [action], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" } } } } } }, responses: { "200": { $ref: "#/components/responses/ActionPreview" }, "404": { $ref: "#/components/responses/NotFound" } } }
+      { x-workmesh-policy-id: route.previewAgentSessionControl, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: previewAgentSessionControl, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: false, required: [action], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" }, stopMode: { $ref: "#/components/schemas/AgentSessionStopMode" }, steeringScope: { $ref: "#/components/schemas/AgentSessionSteeringScope" } } } } } }, responses: { "200": { $ref: "#/components/responses/ActionPreview" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/inbox:
     get:
       { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }], responses: { "200": { $ref: "#/components/responses/InboxItems" } } }
@@ -3523,6 +3523,10 @@ components:
       { type: string, enum: [attention, running, risks, recently_verified, ready_work, blocked_work] }
     AgentSessionControlAction:
       { type: string, enum: [pause, resume, stop, retry, handoff, replan, steer] }
+    AgentSessionStopMode:
+      { type: string, enum: [graceful, immediate] }
+    AgentSessionSteeringScope:
+      { type: string, enum: [current_step, remaining_plan, session, guidance_proposal] }
     ControlPlaneFreshness:
       { type: object, additionalProperties: false, required: [state, observedAt, sourceUpdatedAt], properties: { state: { type: string, enum: [current, refreshing, stale, offline, resync_required, partial] }, observedAt: { type: string, format: date-time }, sourceUpdatedAt: { type: string, format: date-time }, invalidAfter: { type: string, format: date-time } } }
     ControlPlaneResourceReference:
@@ -3623,7 +3627,7 @@ components:
     ActionPreview:
       type: object
       additionalProperties: false
-      required: [projectionVersion, action, allowed, reasonCode, sourceRevision, currentState, targetState, affectedResources, consequences, reversible, releaseLease, preserveArtifacts, preserveUncommittedWork, nextWorkItemState, invalidatedApprovals, requiredReason, requiredApproval, warnings, expiresAt, freshness, advisory]
+      required: [projectionVersion, action, allowed, reasonCode, sourceRevision, currentState, targetState, affectedResources, consequences, reversible, releaseLease, preserveArtifacts, preserveUncommittedWork, nextWorkItemState, invalidatedApprovals, requiredReason, requiredApproval, stopMode, supportedStopModes, steeringScope, supportedSteeringScopes, currentPlan, currentStep, lastHeartbeatAt, leaseBehavior, recoveryPath, resultResource, warnings, expiresAt, freshness, advisory]
       properties:
         projectionVersion: { const: 1 }
         action: { $ref: "#/components/schemas/AgentSessionControlAction" }
@@ -3642,6 +3646,16 @@ components:
         invalidatedApprovals: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
         requiredReason: { type: boolean }
         requiredApproval: { type: object, additionalProperties: false, required: [required, approvalType], properties: { required: { type: boolean }, approvalType: { type: [string, "null"] } } }
+        stopMode: { anyOf: [{ $ref: "#/components/schemas/AgentSessionStopMode" }, { type: "null" }] }
+        supportedStopModes: { type: array, maxItems: 2, items: { type: object, additionalProperties: false, required: [mode, available, summary], properties: { mode: { $ref: "#/components/schemas/AgentSessionStopMode" }, available: { type: boolean }, summary: { type: string } } } }
+        steeringScope: { anyOf: [{ $ref: "#/components/schemas/AgentSessionSteeringScope" }, { type: "null" }] }
+        supportedSteeringScopes: { type: array, maxItems: 4, items: { type: object, additionalProperties: false, required: [scope, available, reasonCode, summary, result], properties: { scope: { $ref: "#/components/schemas/AgentSessionSteeringScope" }, available: { type: boolean }, reasonCode: { type: string }, summary: { type: string }, result: { type: string, enum: [prompt, plan_version_request, guidance_navigation] } } } }
+        currentPlan: { anyOf: [{ type: object, additionalProperties: false, required: [id, revision], properties: { id: { type: string, format: uuid }, revision: { type: integer, minimum: 1 } } }, { type: "null" }] }
+        currentStep: { anyOf: [{ type: object, additionalProperties: false, required: [id, title], properties: { id: { type: string, format: uuid }, title: { type: string } } }, { type: "null" }] }
+        lastHeartbeatAt: { type: [string, "null"], format: date-time }
+        leaseBehavior: { type: string, enum: [unchanged, release_now, retain_for_handoff, server_controlled] }
+        recoveryPath: { type: string }
+        resultResource: { type: [string, "null"], enum: [same_session, new_session, handoff_request, plan_version_request, guidance, null] }
         warnings: { type: array, maxItems: 100, items: { type: string } }
         expiresAt: { type: string, format: date-time }
         freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }
@@ -5024,6 +5038,7 @@ components:
           {
             signal: { type: string, enum: [stop, pause, resume] },
             reason: { type: string, minLength: 1, maxLength: 2000 },
+            stopMode: { $ref: "#/components/schemas/AgentSessionStopMode" },
           },
       }
     StopAcknowledgementInput:

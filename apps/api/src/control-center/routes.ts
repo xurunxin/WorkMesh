@@ -4,6 +4,7 @@ import { z } from 'zod'
 import {
   actionPreviewResponseSchema,
   agentSessionControlActionSchema,
+  agentSessionControlPreviewInputSchema,
   controlCenterCollectionSchema,
   controlCenterResponseSchema,
   runExplanationResponseSchema,
@@ -765,29 +766,34 @@ async function readExecutionSummary(h: Helpers, request: FastifyRequest, reply: 
   })
 }
 
-const consequences = (action: AgentSessionControlAction, leaseCount: number) => {
+const consequences = (action: AgentSessionControlAction, leaseCount: number, stopMode: 'graceful' | 'immediate' | null, steeringScope: 'current_step' | 'remaining_plan' | 'session' | 'guidance_proposal' | null) => {
   if (action === 'stop') return [
-    { code: 'session.transition.stopping', summary: 'The Session enters stopping and ordinary writes are blocked.' },
+    { code: 'session.transition.stopping', summary: stopMode === 'immediate' ? 'The Session enters stopping immediately and later ordinary writes are fenced.' : 'The Session enters stopping and the Agent may acknowledge cleanup at the next safe boundary.' },
     ...(leaseCount ? [{ code: 'lease.release', summary: `${leaseCount} active Lease(s) will be released by the stop command.` }] : []),
   ]
   if (action === 'pause') return [{ code: 'session.transition.paused', summary: 'Execution pauses while durable Session history and artifacts remain.' }]
   if (action === 'resume') return [{ code: 'session.transition.executing', summary: 'Execution resumes after final authority and revision validation.' }]
   if (action === 'retry') return [{ code: 'session.retry.create', summary: 'A distinct queued retry Session is created; terminal history is not reopened.' }]
   if (action === 'handoff') return [{ code: 'handoff.offer', summary: 'A scoped Handoff package is offered; acceptance remains a separate command.' }]
-  if (action === 'replan') return [{ code: 'plan.revision.request', summary: 'The Agent is asked to publish a new immutable Plan version.' }]
-  return [{ code: 'session.prompt', summary: 'A Human prompt steers the current Session without rewriting prior facts.' }]
+  if (action === 'replan') return [{ code: 'plan.revision.request', summary: 'The Agent is asked to publish a new immutable Plan version for remaining work.' }]
+  if (steeringScope === 'guidance_proposal') return [{ code: 'guidance.navigate', summary: 'Open versioned Guidance editing; no Session prompt is created.' }]
+  if (steeringScope === 'remaining_plan') return [{ code: 'plan.revision.request', summary: 'Request a new immutable Plan version without rewriting completed steps.' }]
+  if (steeringScope === 'current_step') return [{ code: 'session.prompt.step', summary: 'Guidance is bound to the current Plan Step and cannot expand authority.' }]
+  return [{ code: 'session.prompt', summary: 'A Human instruction applies to subsequent Session behavior without rewriting prior facts.' }]
 }
 
 async function previewControl(h: Helpers, request: FastifyRequest, reply: FastifyReply, sessionId: string) {
   const current = requestActor(request)
-  const input = z.object({ action: agentSessionControlActionSchema }).parse(request.body)
+  const input = agentSessionControlPreviewInputSchema.parse(request.body)
   const values: unknown[] = [sessionId, current.workspaceId]
   const auth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', values)
   const row = (await boundedQuery<QueryResultRow & {
     id: string; state: z.infer<typeof import('@workmesh/contracts').agentSessionStateSchema>; revision: number; updated_at: Date | string
     project_id: string | null; work_item_id: string | null; team_id: string; lease_count: string; approval_ids: string[]; delegation_status: string; agent_active: boolean; team_active: boolean; direct_retry_exists: boolean
+    current_plan_version_id: string | null; plan_revision: number | null; step_id: string | null; step_title: string | null; last_heartbeat_at: Date | string | null
   }>(h.db, `
-    SELECT session.id,session.state,session.revision,session.updated_at,COALESCE(session.project_id,item.project_id) AS project_id,
+    SELECT session.id,session.state,session.revision,session.updated_at,session.last_heartbeat_at,session.current_plan_version_id,plan.revision AS plan_revision,
+           current_step.id AS step_id,current_step.title AS step_title,COALESCE(session.project_id,item.project_id) AS project_id,
            session.work_item_id,session.team_id,delegation.status AS delegation_status,agent.is_active AS agent_active,
            EXISTS(SELECT 1 FROM agent_team_access access WHERE access.workspace_id=session.workspace_id AND access.agent_id=session.agent_id AND access.team_id=session.team_id AND access.revoked_at IS NULL) AS team_active,
            EXISTS(SELECT 1 FROM agent_sessions retry WHERE retry.retry_of_session_id=session.id) AS direct_retry_exists,
@@ -797,14 +803,29 @@ async function previewControl(h: Helpers, request: FastifyRequest, reply: Fastif
       JOIN delegations delegation ON delegation.id=session.delegation_id
       JOIN agent_definitions agent ON agent.id=session.agent_id
       LEFT JOIN work_items item ON item.id=session.work_item_id AND item.workspace_id=session.workspace_id AND item.deleted_at IS NULL
+      LEFT JOIN agent_plan_versions plan ON plan.id=session.current_plan_version_id
+      LEFT JOIN LATERAL (SELECT step.id,step.title FROM agent_plan_steps step WHERE step.plan_version_id=session.current_plan_version_id AND step.status='in_progress' ORDER BY step.ordinal,step.id LIMIT 1) current_step ON true
      WHERE session.id=$1 AND session.workspace_id=$2 AND ${auth}`,
     values,
   )).rows[0]
   if (!row) throw new DomainError('NOT_FOUND', 'Session control preview not found')
   const policy = evaluateAgentSessionControl(row.state, input.action)
   const retryAuthority = input.action !== 'retry' || (row.delegation_status === 'active' && row.agent_active && row.team_active && !row.direct_retry_exists)
-  const allowed = policy.allowed && retryAuthority
   const leaseCount = Number(row.lease_count)
+  const stopMode = input.action === 'stop' ? input.stopMode ?? 'graceful' : null
+  const defaultSteeringScope = row.step_id ? 'current_step' as const : 'session' as const
+  const steeringScope = input.action === 'steer'
+    ? input.steeringScope ?? defaultSteeringScope
+    : input.action === 'replan' ? 'remaining_plan' as const
+      : input.action === 'handoff' ? 'session' as const : null
+  const supportedSteeringScopes = [
+    { scope: 'current_step' as const, available: Boolean(row.step_id), reasonCode: row.step_id ? 'control.allowed' : 'control.current_step_missing', summary: 'Guide only the active Plan Step; completed history remains immutable.', result: 'prompt' as const },
+    { scope: 'remaining_plan' as const, available: Boolean(row.current_plan_version_id), reasonCode: row.current_plan_version_id ? 'control.allowed' : 'control.plan_missing', summary: 'Request a new Plan Version for remaining work.', result: 'plan_version_request' as const },
+    { scope: 'session' as const, available: true, reasonCode: 'control.allowed', summary: 'Apply an instruction to subsequent behavior in this Session.', result: 'prompt' as const },
+    { scope: 'guidance_proposal' as const, available: Boolean(row.project_id), reasonCode: row.project_id ? 'control.allowed' : 'control.project_missing', summary: 'Open versioned Project Guidance; do not inject text into this Session.', result: 'guidance_navigation' as const },
+  ]
+  const selectedScopeAvailable = !steeringScope || supportedSteeringScopes.find(item => item.scope === steeringScope)?.available !== false
+  const allowed = policy.allowed && retryAuthority && selectedScopeAvailable
   const observedAt = new Date()
   const expiresAt = new Date(observedAt.getTime() + PREVIEW_TTL_MS).toISOString()
   const warnings = [
@@ -816,7 +837,7 @@ async function previewControl(h: Helpers, request: FastifyRequest, reply: Fastif
     projectionVersion: 1,
     action: input.action,
     allowed,
-    reasonCode: allowed ? policy.reasonCode : retryAuthority ? policy.reasonCode : 'retry.authority_unavailable',
+    reasonCode: allowed ? policy.reasonCode : !retryAuthority ? 'retry.authority_unavailable' : !selectedScopeAvailable ? 'control.scope_unavailable' : policy.reasonCode,
     sourceRevision: row.revision,
     currentState: row.state,
     targetState: policy.targetState,
@@ -825,7 +846,7 @@ async function previewControl(h: Helpers, request: FastifyRequest, reply: Fastif
       ...(row.project_id ? [{ type: 'project', id: row.project_id }] : []),
       ...(row.work_item_id ? [{ type: 'work_item', id: row.work_item_id }] : []),
     ],
-    consequences: consequences(input.action, leaseCount),
+    consequences: consequences(input.action, leaseCount, stopMode, steeringScope),
     reversible: input.action === 'pause' || input.action === 'resume' || input.action === 'steer' || input.action === 'replan',
     releaseLease: input.action === 'stop',
     preserveArtifacts: true,
@@ -834,6 +855,19 @@ async function previewControl(h: Helpers, request: FastifyRequest, reply: Fastif
     invalidatedApprovals: input.action === 'retry' || input.action === 'stop' ? row.approval_ids.map(id => ({ type: 'approval', id })) : [],
     requiredReason: true,
     requiredApproval: { required: false, approvalType: null },
+    stopMode,
+    supportedStopModes: input.action === 'stop' ? [
+      { mode: 'graceful', available: true, summary: 'Fence ordinary writes, release Leases, and allow one bounded cleanup acknowledgement.' },
+      { mode: 'immediate', available: true, summary: 'Fence ordinary writes immediately; uncommitted runtime work remains runtime-dependent.' },
+    ] : [],
+    steeringScope,
+    supportedSteeringScopes: ['steer', 'replan', 'handoff'].includes(input.action) ? supportedSteeringScopes : [],
+    currentPlan: row.current_plan_version_id && row.plan_revision ? { id: row.current_plan_version_id, revision: row.plan_revision } : null,
+    currentStep: row.step_id && row.step_title ? { id: row.step_id, title: row.step_title } : null,
+    lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null,
+    leaseBehavior: input.action === 'stop' ? 'release_now' : input.action === 'handoff' ? 'retain_for_handoff' : leaseCount ? 'server_controlled' : 'unchanged',
+    recoveryPath: input.action === 'pause' ? 'Resume revalidates Session authority and revision.' : input.action === 'stop' ? 'Retry creates a distinct linked Session after the source becomes terminal.' : input.action === 'retry' ? 'The source Session remains immutable; open the linked retry result.' : input.action === 'handoff' ? 'The source Session remains authoritative until a Handoff is offered and accepted.' : input.action === 'replan' || steeringScope === 'remaining_plan' ? 'Review the new immutable Plan Version before execution continues.' : 'Submit another scoped instruction or use versioned Guidance for durable policy.',
+    resultResource: input.action === 'retry' ? 'new_session' : input.action === 'handoff' ? 'handoff_request' : input.action === 'replan' || steeringScope === 'remaining_plan' ? 'plan_version_request' : steeringScope === 'guidance_proposal' ? 'guidance' : 'same_session',
     warnings,
     expiresAt,
     freshness: { state: 'current', observedAt: observedAt.toISOString(), sourceUpdatedAt: iso(row.updated_at), invalidAfter: expiresAt },

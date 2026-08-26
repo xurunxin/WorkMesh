@@ -53,12 +53,12 @@ describe('WorkMesh MCP adapter', () => {
       await protocol.callTool({ name: 'get_project_control_center', arguments: { projectId, collection: 'risks' } })
       await protocol.callTool({ name: 'explain_agent_session', arguments: { sessionId, attention: 'true', timeWindow: '7d' } })
       await protocol.callTool({ name: 'get_work_item_execution_summary', arguments: { workItemId } })
-      await protocol.callTool({ name: 'preview_agent_session_control', arguments: { sessionId, action: 'stop' } })
+      await protocol.callTool({ name: 'preview_agent_session_control', arguments: { sessionId, action: 'stop', stopMode: 'immediate' } })
       expect(getControlCenter).toHaveBeenCalledWith('running', { cursor: undefined, limit: 25 })
       expect(getProjectControlCenter).toHaveBeenCalledWith(projectId, 'risks', { cursor: undefined, limit: undefined })
       expect(explainAgentSession).toHaveBeenCalledWith(sessionId, { attention: 'true', timeWindow: '7d' }, { cursor: undefined, limit: undefined })
       expect(getWorkItemExecutionSummary).toHaveBeenCalledWith(workItemId)
-      expect(previewAgentSessionControl).toHaveBeenCalledWith(sessionId, 'stop')
+      expect(previewAgentSessionControl).toHaveBeenCalledWith(sessionId, 'stop', { stopMode: 'immediate', steeringScope: undefined })
     } finally { await protocol.close(); await server.close() }
   })
   it('claims an eligible Issue and returns only a recoverable execution bridge receipt', async () => {

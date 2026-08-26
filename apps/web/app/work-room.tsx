@@ -41,6 +41,9 @@ import {
 import { WorkItemArtifacts } from "../features/rich-content/artifacts";
 import { CollaborationHub } from "../features/collaboration/collaboration-hub";
 import { type WorkRoomCopy, useLocale } from "./lib/i18n";
+import { Button, Dialog } from "@workmesh/ui";
+import { AgentControlDialog, type AgentControlAction } from "./agent-control-dialog";
+import { GovernedReasonDialog } from "./governed-reason-dialog";
 
 type Tab =
   "conversation" | "plan" | "activity" | "artifacts" | "decisions" | "sessions";
@@ -194,67 +197,31 @@ export function summarizeWorkRoom(
 
 function AgentMessageControls({
   sessionId,
-  revision,
   text,
 }: {
   sessionId: string;
-  revision?: number;
   text: WorkRoomCopy;
 }) {
-  const control = async (signal: "pause" | "stop") => {
-    await apiRequest(
-      `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/signals`,
-      {
-        method: "POST",
-        headers: {
-          ...json({}),
-          ...(revision === undefined
-            ? {}
-            : { "If-Match": `"revision-${revision}"` }),
-        },
-        body: JSON.stringify({
-          signal,
-          reason: signal === "pause" ? text.agentPauseReason : text.agentStopReason,
-        }),
-      },
-    );
-  };
-  const prompt = async () => {
-    const body = window.prompt(text.agentPromptPlaceholder)?.trim();
-    if (!body) return;
-    await apiRequest(
-      `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/prompt`,
-      {
-        method: "POST",
-        headers: {
-          ...json({}),
-          ...(revision === undefined
-            ? {}
-            : { "If-Match": `"revision-${revision}"` }),
-        },
-        body: JSON.stringify({ bodyMarkdown: body }),
-      },
-    );
-  };
+  const [action, setAction] = useState<AgentControlAction | null>(null);
   return (
-    <span className="message-session-controls">
+    <><span className="message-session-controls">
       <a href={`/agent-sessions/${encodeURIComponent(sessionId)}`}>
         {text.viewSession}
       </a>
-      <button type="button" onClick={() => void prompt()}>
+      <button type="button" onClick={() => setAction("steer")}>
         {text.agentPrompt}
       </button>
-      <button type="button" onClick={() => void control("pause")}>
+      <button type="button" onClick={() => setAction("pause")}>
         {text.agentPause}
       </button>
       <button
         className="danger"
         type="button"
-        onClick={() => void control("stop")}
+        onClick={() => setAction("stop")}
       >
         {text.agentStop}
       </button>
-    </span>
+    </span><AgentControlDialog action={action} onClose={() => setAction(null)} open={action !== null} sessionId={sessionId} /></>
   );
 }
 
@@ -341,11 +308,6 @@ function TimelineCard({
       {sessionId && (
         <AgentMessageControls
           sessionId={sessionId}
-          revision={numberValue(
-            itemPayload(item),
-            "sessionRevision",
-            "session_revision",
-          )}
           text={text}
         />
       )}
@@ -583,6 +545,26 @@ function LeaseCard({
 }
 
 type HandoffAction = "request" | "accept" | "reject" | "cancel" | "complete";
+type GovernedRoomAction =
+  | { kind: "force-release"; record: RoomRecord }
+  | { kind: "handoff"; action: "reject" | "cancel"; record: RoomRecord }
+  | { kind: "decision"; action: "supersede" | "reverse"; record: RoomRecord };
+type LegacyDialog = { action: "edit" | "delete"; comment: LegacyComment };
+
+function LegacyCommentDialog({ dialog, onClose, onSubmit }: { dialog: LegacyDialog | null; onClose: () => void; onSubmit: (body?: string) => void | Promise<void> }) {
+  const { locale } = useLocale();
+  const [body, setBody] = useState("");
+  useEffect(() => { setBody(dialog?.comment.body ?? ""); }, [dialog]);
+  if (!dialog) return null;
+  const editing = dialog.action === "edit";
+  const title = locale === "zh-CN" ? (editing ? "编辑评论" : "删除评论") : (editing ? "Edit comment" : "Delete comment");
+  return <Dialog closeLabel={locale === "zh-CN" ? "关闭" : "Close"} onClose={onClose} open title={title}>
+    <form className="agent-control-form" onSubmit={event => { event.preventDefault(); void onSubmit(editing ? body.trim() : undefined); }}>
+      {editing ? <label>{locale === "zh-CN" ? "评论内容" : "Comment body"}<textarea autoFocus onChange={event => setBody(event.currentTarget.value)} required value={body} /></label> : <p>{locale === "zh-CN" ? "该评论将从当前工作区视图删除。" : "This comment will be deleted from the current workspace view."}</p>}
+      <div className="agent-control-actions"><Button disabled={editing && !body.trim()} type="submit" variant={editing ? "primary" : "danger"}>{locale === "zh-CN" ? (editing ? "保存" : "删除") : (editing ? "Save" : "Delete")}</Button><Button onClick={onClose} type="button" variant="secondary">{locale === "zh-CN" ? "取消" : "Cancel"}</Button></div>
+    </form>
+  </Dialog>;
+}
 function HandoffCard({
   handoff,
   onAction,
@@ -830,7 +812,7 @@ export function WorkRoom({
   onLegacyUpdate,
   onLegacyRefresh,
 }: Props) {
-  const { workRoomCopy: text } = useLocale();
+  const { locale, workRoomCopy: text } = useLocale();
   const tabs: { id: Tab; label: string }[] = [
     { id: "conversation", label: text.tabConversation },
     { id: "plan", label: text.tabPlan },
@@ -844,6 +826,8 @@ export function WorkRoom({
   const [decisions, setDecisions] = useState<RoomRecord[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [governedAction, setGovernedAction] = useState<GovernedRoomAction | null>(null);
+  const [legacyDialog, setLegacyDialog] = useState<LegacyDialog | null>(null);
   const [activitySessionId, setActivitySessionId] = useState("");
   const [showHeartbeats, setShowHeartbeats] = useState(false);
   const timelinePage = usePagedApiList<
@@ -1039,15 +1023,14 @@ export function WorkRoom({
     }
   };
   const forceRelease = async (lease: RoomRecord) => {
-    if (
-      !window.confirm(text.leaseForceReleaseConfirm)
-    )
-      return;
+    setGovernedAction({ kind: "force-release", record: lease });
+  };
+  const executeForceRelease = async (lease: RoomRecord, reason: string) => {
     try {
       setBusy(true);
       await roomMutation(
         `/api/v1/leases/${encodeURIComponent(stringValue(lease, "id"))}/force-release`,
-        { reason: text.leaseForceReleaseReason },
+        { reason },
         numberValue(lease, "revision"),
       );
       await leasesPage.refresh();
@@ -1061,13 +1044,17 @@ export function WorkRoom({
       setBusy(false);
     }
   };
-  const handoffAction = async (handoff: RoomRecord, action: HandoffAction) => {
+  const handoffAction = async (handoff: RoomRecord, action: HandoffAction, humanReason?: string) => {
+    if ((action === "reject" || action === "cancel") && !humanReason) {
+      setGovernedAction({ kind: "handoff", action, record: handoff });
+      return;
+    }
     try {
       setBusy(true);
       const reasonText =
         action === "accept" ? text.handoffAcceptReason
-        : action === "reject" ? text.handoffRejectReason
-        : action === "cancel" ? text.handoffCancelReason
+        : action === "reject" ? humanReason!
+        : action === "cancel" ? humanReason!
         : text.handoffCompleteReason;
       const body = action === "accept" ? {} : { reason: reasonText };
       await roomMutation(
@@ -1087,13 +1074,18 @@ export function WorkRoom({
   const decisionAction = async (
     decision: RoomRecord,
     action: "finalize" | "supersede" | "reverse",
+    humanReason?: string,
   ) => {
+    if ((action === "supersede" || action === "reverse") && !humanReason) {
+      setGovernedAction({ kind: "decision", action, record: decision });
+      return;
+    }
     try {
       setBusy(true);
       await roomMutation(
         `/api/v1/decisions/${encodeURIComponent(stringValue(decision, "id"))}/${action}`,
-        action === "supersede"
-          ? { reason: text.decisionSupersedeReason }
+        action === "supersede" || action === "reverse"
+          ? { reason: humanReason }
           : {},
         numberValue(decision, "revision"),
       );
@@ -1292,14 +1284,7 @@ export function WorkRoom({
                     <div className="session-actions">
                       <button
                         type="button"
-                        onClick={() => {
-                          const body = window.prompt(
-                            text.legacyEditPrompt,
-                            comment.body,
-                          );
-                          if (body?.trim())
-                            void onLegacyUpdate(comment, { body: body.trim() });
-                        }}
+                        onClick={() => setLegacyDialog({ action: "edit", comment })}
                       >
                         {text.legacyEditPrompt}
                       </button>
@@ -1316,10 +1301,7 @@ export function WorkRoom({
                       <button
                         className="danger"
                         type="button"
-                        onClick={() => {
-                          if (window.confirm(text.legacyDeleteConfirm))
-                            void onLegacyUpdate(comment, { deleted: true });
-                        }}
+                        onClick={() => setLegacyDialog({ action: "delete", comment })}
                       >
                         {text.legacyDelete}
                       </button>
@@ -1562,6 +1544,27 @@ export function WorkRoom({
           </section>
         </section>
       )}
+      <GovernedReasonDialog
+        consequences={governedAction?.kind === "force-release"
+          ? [locale === "zh-CN" ? "当前租约将被撤销；这不会向其他参与者授予执行权限。" : "The active Lease will be revoked; this does not grant execution authority to another actor.", locale === "zh-CN" ? "Session 历史和已发布证据会保留。" : "Session history and published evidence remain preserved."]
+          : governedAction?.kind === "decision"
+            ? [locale === "zh-CN" ? "原决策保持为不可变历史，新决策会记录替代或反转关系。" : "The original Decision remains immutable history and a new Decision records the superseding or reversing relation."]
+            : [locale === "zh-CN" ? "源 Session 历史和上下文保持不变。" : "The source Session history and context remain unchanged.", locale === "zh-CN" ? "拒绝或取消只终止当前移交提议。" : "Rejecting or canceling ends only this Handoff proposal."]}
+        onClose={() => setGovernedAction(null)}
+        onSubmit={async reason => {
+          if (!governedAction) return;
+          if (governedAction.kind === "force-release") await executeForceRelease(governedAction.record, reason);
+          else if (governedAction.kind === "handoff") await handoffAction(governedAction.record, governedAction.action, reason);
+          else await decisionAction(governedAction.record, governedAction.action, reason);
+        }}
+        open={governedAction !== null}
+        title={governedAction?.kind === "force-release"
+          ? (locale === "zh-CN" ? "强制释放租约" : "Force-release Lease")
+          : governedAction?.kind === "decision"
+            ? (locale === "zh-CN" ? `${governedAction.action === "reverse" ? "反转" : "替代"}决策` : `${governedAction.action === "reverse" ? "Reverse" : "Supersede"} Decision`)
+            : (locale === "zh-CN" ? `${governedAction?.action === "reject" ? "拒绝" : "取消"}移交` : `${governedAction?.action === "reject" ? "Reject" : "Cancel"} Handoff`)}
+      />
+      <LegacyCommentDialog dialog={legacyDialog} onClose={() => setLegacyDialog(null)} onSubmit={async body => { if (!legacyDialog) return; await onLegacyUpdate(legacyDialog.comment, legacyDialog.action === "edit" ? { body: body! } : { deleted: true }); setLegacyDialog(null); }} />
     </section>
   );
 }

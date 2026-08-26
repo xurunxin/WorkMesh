@@ -1508,6 +1508,30 @@ main#workmesh-main:focus-visible {
 
 .agent-run-timeline { display: grid; gap: 1rem; margin: 1rem 0; padding: clamp(.85rem, 2vw, 1.35rem); border: 1px solid var(--wm-border); border-radius: 12px; background: var(--wm-surface); }
 .agent-session-detail:has(> .agent-run-timeline) > :is(.plan-panel, .activity-panel, .artifact-panel) { display: none; }
+
+.agent-control-form { display: grid; gap: 1rem; min-width: min(36rem, 82vw); }
+.agent-control-form > label, .agent-control-form fieldset label { display: grid; gap: .4rem; }
+.agent-control-form textarea { min-height: 6rem; resize: vertical; }
+.agent-control-form fieldset { border: 1px solid var(--wm-border); border-radius: .75rem; display: grid; gap: .65rem; padding: .85rem; }
+.agent-control-form fieldset label { grid-template-columns: auto 1fr; align-items: start; }
+.agent-control-form fieldset label span { color: var(--wm-muted); grid-column: 2; }
+.agent-control-preview { background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: .75rem; display: grid; gap: .75rem; padding: .9rem; }
+.agent-control-preview h3 { margin: 0; }
+.agent-control-preview ul { display: grid; gap: .5rem; margin: 0; padding-inline-start: 1.25rem; }
+.agent-control-preview li { display: grid; gap: .2rem; }
+.agent-control-preview dl { display: grid; gap: .45rem; margin: 0; }
+.agent-control-preview dl > div { display: grid; gap: .4rem; grid-template-columns: minmax(8rem, .45fr) 1fr; }
+.agent-control-preview dt { color: var(--wm-muted); }
+.control-warning, .control-conflict { border-inline-start: .25rem solid var(--wm-warning); margin: 0; padding: .65rem .8rem; }
+.control-conflict { background: var(--wm-surface-subtle); display: grid; gap: .6rem; }
+.control-conflict p { margin: 0; }
+.agent-control-actions { display: flex; flex-wrap: wrap; gap: .65rem; justify-content: flex-end; }
+
+@media (max-width: 560px) {
+  .agent-control-form { min-width: 0; width: 100%; }
+  .agent-control-preview dl > div { grid-template-columns: 1fr; }
+  .agent-control-actions > * { flex: 1 1 auto; }
+}
 .run-timeline-header, .run-plan-section > header, .run-causal-group > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
 .run-timeline-header h2, .run-plan-section h3, .run-causal-groups h3, .run-evidence-section h3 { margin: 0; }
 .run-timeline-header p { margin: .3rem 0 0; color: var(--wm-muted); }

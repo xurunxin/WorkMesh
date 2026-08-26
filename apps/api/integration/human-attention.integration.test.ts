@@ -407,10 +407,16 @@ describe('Human Attention projection acceptance', () => {
       expect.objectContaining({ sessionId: session.id }),
     ]))
 
-    const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })
+    const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop', stopMode: 'immediate' })
     expect(previewResponse.statusCode, JSON.stringify(previewResponse.json())).toBe(200)
     const preview = actionPreviewResponseSchema.parse(previewResponse.json())
-    expect(preview).toMatchObject({ action: 'stop', allowed: true, releaseLease: true, advisory: true })
+    expect(preview).toMatchObject({ action: 'stop', allowed: true, releaseLease: true, advisory: true, stopMode: 'immediate', leaseBehavior: 'release_now', resultResource: 'same_session' })
+    expect(preview.supportedStopModes).toHaveLength(2)
+    expect(preview.currentPlan).toMatchObject({ id: planVersion.id })
+    expect(preview.currentStep).toMatchObject({ id: planStepId })
+    const steerPreview = actionPreviewResponseSchema.parse((await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'steer', steeringScope: 'remaining_plan' })).json())
+    expect(steerPreview).toMatchObject({ steeringScope: 'remaining_plan', resultResource: 'plan_version_request' })
+    expect(steerPreview.supportedSteeringScopes).toHaveLength(4)
     expect((await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })).statusCode).toBe(200)
     await db.query('UPDATE agent_sessions SET revision=revision+1,updated_at=now() WHERE id=$1', [session.id])
     const staleFinal = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/signals`, { signal: 'stop', reason: 'stale preview race' }, { 'if-match': `"revision-${preview.sourceRevision}"` })

@@ -9,7 +9,8 @@ import { useLocale } from './lib/i18n'
 import { useRealtimeSubscription } from './lib/realtime'
 import { parseRunTimelineRouteState, runActions, runPhases, writeRunTimelineRouteState, type RunTimelineRouteState } from './run-timeline-route-state'
 
-type Props = { compact?: boolean; onControl?: (action: 'pause' | 'resume' | 'stop') => void | Promise<void>; sessionId: string }
+type RunControlAction = RunExplanation['allowedControls'][number]['action']
+type Props = { compact?: boolean; onControl?: (action: RunControlAction) => void | Promise<void>; sessionId: string }
 type PlanVersion = RunExplanation['planVersions'][number]
 
 const healthValue = (value: RunExplanation['health']['heartbeat']): 'healthy' | 'degraded' | 'stalled' => value === 'stale' ? 'stalled' : value
@@ -40,7 +41,7 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
     filters: '时间线筛选', phase: '阶段', step: '计划步骤', actor: '参与者', action: '动作类型', risk: '风险', evidence: '证据', failures: '仅失败', attentionOnly: '仅需人类处理', time: '时间', technical: '显示技术记录', all: '全部', present: '有证据', missing: '缺少证据',
     timeline: '因果事件组', empty: '当前筛选没有匹配的事件。', trigger: '触发来源', validation: '验证', affected: '受影响资源', technicalRecords: '技术来源记录', sourceIds: '源 Activity', correlation: '关联 ID', cursor: '事件游标', input: '已清理输入', result: '结果摘要',
     evidenceTitle: '证据与变更', notVerified: '未验证', pending: '待验证', verified: '已验证', failed: '验证失败', older: '查看更早事件',
-    pause: '暂停', resume: '继续', stop: '停止', unavailable: '当前不可用', offline: '当前投影较旧；危险控制保持禁用。',
+    pause: '暂停', resume: '继续', stop: '停止', handoff: '移交', replan: '重新规划', steer: '引导', unavailable: '当前不可用', offline: '当前投影较旧；危险控制保持禁用。',
     phaseLabels: { all: '全部阶段', intake: '接收', investigation: '调查', planning: '计划 / 重计划', implementation: '实现 / 变更', validation: '验证 / 评审', human_input: '人类输入', recovery: '恢复 / 移交', completion: '完成 / 失败' }, timeLabels: { all: '全部时间', '24h': '最近 24 小时', '7d': '最近 7 天', '30d': '最近 30 天' },
   } : {
     title: 'Causal Run Timeline', loading: 'Loading the execution story…', loadError: 'The execution story could not be loaded.', retry: 'Retry',
@@ -50,7 +51,7 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
     filters: 'Timeline filters', phase: 'Phase', step: 'Plan Step', actor: 'Actor', action: 'Action type', risk: 'Risk', evidence: 'Evidence', failures: 'Failures only', attentionOnly: 'Human attention only', time: 'Time', technical: 'Show technical records', all: 'All', present: 'Evidence present', missing: 'Evidence missing',
     timeline: 'Causal event groups', empty: 'No events match the current filters.', trigger: 'Trigger', validation: 'Validation', affected: 'Affected resources', technicalRecords: 'Technical source records', sourceIds: 'Source Activities', correlation: 'Correlation ID', cursor: 'Event cursor', input: 'Sanitized input', result: 'Result summary',
     evidenceTitle: 'Evidence and changes', notVerified: 'Not verified', pending: 'Pending verification', verified: 'Verified', failed: 'Validation failed', older: 'View older events',
-    pause: 'Pause', resume: 'Resume', stop: 'Stop', unavailable: 'Currently unavailable', offline: 'This projection is stale; dangerous controls remain disabled.',
+    pause: 'Pause', resume: 'Resume', stop: 'Stop', handoff: 'Handoff', replan: 'Replan', steer: 'Steer', unavailable: 'Currently unavailable', offline: 'This projection is stale; dangerous controls remain disabled.',
     phaseLabels: { all: 'All phases', intake: 'Intake', investigation: 'Investigation', planning: 'Planning / replan', implementation: 'Implementation / change', validation: 'Validation / review', human_input: 'Human input', recovery: 'Recovery / handoff', completion: 'Completion / failure' }, timeLabels: { all: 'All time', '24h': 'Last 24 hours', '7d': 'Last 7 days', '30d': 'Last 30 days' },
   }
 
@@ -101,7 +102,7 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
   }) : []
   const verificationLabel = explanation.verification.state === 'verified' ? text.verified : explanation.verification.state === 'failed' ? text.failed : explanation.verification.state === 'pending' ? text.pending : text.notVerified
   const stale = explanation.freshness.state === 'stale'
-  const control = (action: 'pause' | 'resume' | 'stop') => explanation.allowedControls.find(item => item.action === action)
+  const control = (action: RunControlAction) => explanation.allowedControls.find(item => item.action === action)
   const actors = [...new Map(explanation.causalGroups.map(group => [group.actor.id, group.actor])).values()]
 
   return <section aria-busy={refreshing || undefined} className={`agent-run-timeline ${compact ? 'compact' : 'full'}`} data-testid="run-timeline">
@@ -109,7 +110,7 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
     <dl className="run-timeline-facts"><div><dt>{text.project}</dt><dd>{explanation.project?.name ?? '—'}</dd></div><div><dt>{text.workItem}</dt><dd>{explanation.workItem?.title ?? '—'}</dd></div><div><dt>{text.session}</dt><dd><code>{sessionId}</code></dd></div><div><dt>{text.revision}</dt><dd>{explanation.session.revision}</dd></div><div><dt>{text.currentPlan}</dt><dd>{explanation.plan ? `v${explanation.plan.revision} · ${explanation.plan.changeSummary}` : '—'}</dd></div><div><dt>{text.currentStep}</dt><dd>{explanation.currentStep?.title ?? '—'}</dd></div><div><dt>{text.budget}</dt><dd>{Object.keys(explanation.session.budget).length ? Object.entries(explanation.session.budget).map(([key, value]) => `${key}: ${value}`).join(' · ') : '—'}</dd></div><div><dt>{text.attention}</dt><dd>{explanation.pendingAttention.length}</dd></div></dl>
     <ActorAttribution activeAgent={{ label: text.agent, name: explanation.activeAgent.displayName }} relationshipLabel={text.relationship} responsibleHuman={{ label: text.responsible, name: explanation.responsibleHuman?.displayName ?? '—' }} />
     {stale && <p className="run-stale-warning" role="status">{text.offline}</p>}
-    {!compact && <div aria-label={text.title} className="run-control-bar" role="toolbar">{(['pause', 'resume', 'stop'] as const).map(action => { const policy = control(action); return <Button aria-label={policy?.allowed ? text[action] : `${text[action]} — ${policy?.reasonCode ?? text.unavailable}`} disabled={stale || !policy?.allowed || !onControl} key={action} onClick={() => void onControl?.(action)} type="button" variant={action === 'stop' ? 'danger' : 'secondary'}>{text[action]}</Button> })}</div>}
+    {!compact && <div aria-label={text.title} className="run-control-bar" role="toolbar">{(['pause', 'resume', 'stop', 'retry', 'handoff', 'replan', 'steer'] as const).map(action => { const policy = control(action); return <Button aria-label={policy?.allowed ? text[action] : `${text[action]} — ${policy?.reasonCode ?? text.unavailable}`} disabled={stale || !policy?.allowed || !onControl} key={action} onClick={() => void onControl?.(action)} type="button" variant={action === 'stop' ? 'danger' : 'secondary'}>{text[action]}</Button> })}</div>}
 
     <section aria-label={text.planRail} className="run-plan-section"><header><h3>{text.planRail}</h3><label>{text.version}<select value={selectedPlan?.id ?? ''} onChange={event => updateState({ planId: event.currentTarget.value, stepId: '', groupId: '' })}>{explanation.planVersions.map(plan => <option key={plan.id} value={plan.id}>v{plan.revision} · {plan.changeSummary}</option>)}</select></label>{!compact && <label>{text.compare}<select value={comparison?.id ?? ''} onChange={event => updateState({ comparePlanId: event.currentTarget.value })}><option value="">{text.noCompare}</option>{explanation.planVersions.filter(plan => plan.id !== selectedPlan?.id).map(plan => <option key={plan.id} value={plan.id}>v{plan.revision} · {plan.changeSummary}</option>)}</select></label>}</header>
       {selectedPlan && <ol className="run-plan-rail">{selectedPlan.steps.map(step => <li className={`state-${planState(step.status)} ${state.stepId === step.id ? 'selected' : ''}`} key={`${selectedPlan.id}:${step.id}`}><button aria-pressed={state.stepId === step.id} onClick={() => updateState({ stepId: state.stepId === step.id ? '' : step.id, groupId: '' })} type="button"><span aria-hidden="true" /><strong>{step.title}</strong><small>{step.status} · {step.causalGroupIds.length} groups · {step.evidenceIds.length} evidence</small>{step.acceptanceCriteria.length > 0 && <em>{step.acceptanceCriteria.join('; ')}</em>}</button></li>)}</ol>}

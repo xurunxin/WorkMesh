@@ -46,7 +46,7 @@ describe('WorkMeshClient', () => {
     await client.getProjectControlCenter('project/id', 'risks', { limit: 10 })
     await client.explainAgentSession('session/id', { attention: 'true', timeWindow: '7d' })
     await client.getWorkItemExecutionSummary('work/item')
-    await client.previewAgentSessionControl('session/id', 'stop')
+    await client.previewAgentSessionControl('session/id', 'stop', { stopMode: 'immediate' })
     expect(fetch.mock.calls.map(call => call[0])).toEqual([
       'https://workmesh.test/api/v1/control-center?collection=running&cursor=next&limit=25',
       'https://workmesh.test/api/v1/projects/project%2Fid/control-center?collection=risks&limit=10',
@@ -54,7 +54,7 @@ describe('WorkMeshClient', () => {
       'https://workmesh.test/api/v1/work-items/work%2Fitem/execution-summary',
       'https://workmesh.test/api/v1/agent-sessions/session%2Fid/control-preview',
     ])
-    expect(fetch.mock.calls[4]?.[1]).toMatchObject({ method: 'POST', body: JSON.stringify({ action: 'stop' }) })
+    expect(fetch.mock.calls[4]?.[1]).toMatchObject({ method: 'POST', body: JSON.stringify({ action: 'stop', stopMode: 'immediate' }) })
   })
 
   it('binds structured planning methods to the versioned REST routes and headers', async () => {
