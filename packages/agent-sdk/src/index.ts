@@ -129,6 +129,16 @@ export interface PageRequestOptions extends RequestOptions { cursor?: string; li
 export interface HumanAttentionListFilters {
   kind?: HumanAttentionKind
   status?: HumanAttentionStatus
+  view?: 'active' | 'history'
+  severity?: 'info' | 'low' | 'medium' | 'high' | 'critical'
+  urgency?: 'normal' | 'soon' | 'immediate'
+  audience?: 'assigned_to_me' | 'visible_to_me' | 'workspace_administration'
+  requestedByActorId?: string
+  responsibleHumanActorId?: string
+  expiresBefore?: string
+  expiresAfter?: string
+  updatedAfter?: string
+  updatedBefore?: string
   projectId?: string
   workItemId?: string
   sessionId?: string

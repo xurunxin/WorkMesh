@@ -67,12 +67,14 @@ const revisionHeaders = (revision: number): HeadersInit => ({
 const projectControlCenterEnabled = projectControlCenterFeatureEnabled()
 
 export function ProjectWorkspace({
+  actor,
   project,
   items,
   tab,
   workSurface,
   onTabChange,
 }: {
+  actor?: Readonly<{ id: string; workspace_id?: string; workspace_role: 'admin' | 'member' }>
   project: Project
   items: WorkItemDto[]
   tab: ProjectWorkspaceTab
@@ -228,7 +230,7 @@ export function ProjectWorkspace({
       <Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => { setConflict(null); void milestones.refresh() }} variant="secondary">{text.reloadMilestones}</Button>
     </aside>}
 
-    {tab === 'overview' && projectControlCenterEnabled && <ProjectControlCenter project={project} onOpenWork={() => onTabChange('list')} />}
+    {tab === 'overview' && projectControlCenterEnabled && <ProjectControlCenter actor={actor} project={project} onOpenWork={() => onTabChange('list')} />}
 
     {tab !== 'overview' && workSurface}
 

@@ -253,6 +253,46 @@ main#workmesh-main:focus-visible {
   .settings-form-inline { grid-template-columns: 1fr; }
 }
 
+/* Human Attention Center */
+.app-shell .attention-center { display: grid; gap: 1rem; min-width: 0; }
+.app-shell .attention-center-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.app-shell .attention-center-header h2 { margin: 0; }
+.app-shell .attention-center-header p { color: var(--wm-muted); margin: .35rem 0 0; max-width: 70ch; }
+.app-shell .attention-view-switch { display: inline-flex; gap: .35rem; }
+.app-shell .attention-filters { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: .65rem; padding: .85rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface-subtle); }
+.app-shell .attention-filters label, .app-shell .attention-response-form label, .app-shell .attention-bulk-bar label { display: grid; gap: .35rem; color: var(--wm-muted); font-size: .82rem; }
+.app-shell .attention-filter-actions { display: flex; align-items: flex-end; gap: .45rem; grid-column: 1 / -1; }
+.app-shell .attention-banner { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem .9rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
+.app-shell .attention-banner.error { border-color: color-mix(in srgb, var(--wm-danger) 45%, var(--wm-border)); color: var(--wm-danger); }
+.app-shell .attention-bulk-bar { position: sticky; top: .5rem; z-index: 3; display: flex; align-items: flex-end; flex-wrap: wrap; gap: .65rem; padding: .8rem; border: 1px solid var(--wm-info); border-radius: var(--wm-radius-lg); background: var(--wm-surface); box-shadow: var(--wm-shadow-md); }
+.app-shell .attention-bulk-bar label { min-width: min(320px, 100%); flex: 1; }
+.app-shell .attention-list { display: grid; gap: .7rem; }
+.app-shell .attention-row { display: grid; grid-template-columns: minmax(112px, auto) minmax(0, 1fr); align-items: start; gap: .65rem; }
+.app-shell .attention-row > article { min-width: 0; }
+.app-shell .attention-bulk-check { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .4rem; padding: .65rem .5rem; color: var(--wm-muted); font-size: .78rem; }
+.app-shell .attention-bulk-check input { margin: 0; }
+.app-shell .attention-empty { margin: 0; padding: 2rem; text-align: center; color: var(--wm-muted); border: 1px dashed var(--wm-border); border-radius: var(--wm-radius-lg); }
+.app-shell .attention-detail { display: grid; gap: 1rem; }
+.app-shell .attention-detail dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; margin: 0; }
+.app-shell .attention-detail dl > div { padding: .65rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
+.app-shell .attention-detail dt { color: var(--wm-muted); font-size: .78rem; }
+.app-shell .attention-detail dd { margin: .25rem 0 0; overflow-wrap: anywhere; }
+.app-shell .attention-detail h3, .app-shell .attention-preview h3 { margin: 0 0 .4rem; font-size: .92rem; }
+.app-shell .attention-detail ul, .app-shell .attention-preview ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+.app-shell .attention-response-form { display: grid; gap: .8rem; }
+.app-shell .attention-response-form textarea { min-height: 7rem; resize: vertical; }
+.app-shell .attention-preview { padding: .8rem; border: 1px solid color-mix(in srgb, var(--wm-warning) 40%, var(--wm-border)); border-radius: var(--wm-radius-md); background: color-mix(in srgb, var(--wm-warning) 8%, var(--wm-surface)); }
+.app-shell .attention-response-actions { display: flex; justify-content: flex-end; gap: .5rem; }
+@media (max-width: 980px) { .app-shell .attention-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .app-shell .attention-center-header { display: grid; }
+  .app-shell .attention-filters { grid-template-columns: 1fr; }
+  .app-shell .attention-row { grid-template-columns: 1fr; }
+  .app-shell .attention-bulk-check { grid-template-columns: auto 1fr; padding-bottom: 0; }
+  .app-shell .attention-detail dl { grid-template-columns: 1fr; }
+  .app-shell .attention-response-actions { display: grid; grid-template-columns: 1fr; }
+}
+
 @media (max-width: 1100px) {
   .workflow-color-presets { grid-template-columns: repeat(3, minmax(112px, 1fr)); }
 }

@@ -198,6 +198,60 @@ async function loadAgentItemForUpdate(
   return row;
 }
 
+async function loadHumanItemForUpdate(
+  tx: PoolClient,
+  request: FastifyRequest,
+): Promise<InboxItem> {
+  const actor = currentActor(request);
+  if (actor.kind !== "human")
+    throw new DomainError("NOT_FOUND", "Inbox item not found");
+  const row = (
+    await tx.query<InboxItem>(
+      `SELECT i.*,
+              source_message.channel_id,
+              source_message.body AS source_message_body,
+              source_message.intent::text AS source_message_intent,
+              source_message.author_actor_id AS source_author_actor_id,
+              source_message.session_id AS source_author_session_id,
+              source_message.thread_id AS source_thread_id,
+              source_channel.subject_kind::text AS source_subject_kind,
+              source_channel.subject_id AS source_subject_id
+         FROM inbox_items i
+         LEFT JOIN room_messages source_message
+           ON source_message.id=i.source_room_message_id
+          AND source_message.workspace_id=i.workspace_id
+         LEFT JOIN work_room_channels source_channel
+           ON source_channel.id=source_message.channel_id
+          AND source_channel.workspace_id=source_message.workspace_id
+        WHERE i.id=$1
+          AND i.workspace_id=$2
+          AND i.recipient_actor_id=$3
+          AND (
+            $4='admin'
+            OR EXISTS (
+              SELECT 1 FROM memberships membership
+               WHERE membership.workspace_id=i.workspace_id
+                 AND membership.team_id=i.team_id
+                 AND membership.actor_id=$3
+            )
+          )
+        FOR UPDATE OF i`,
+      [itemId(request), actor.workspaceId, actor.id, actor.workspaceRole],
+    )
+  ).rows[0];
+  if (!row) throw new DomainError("NOT_FOUND", "Inbox item not found");
+  return row;
+}
+
+async function loadReplyItemForUpdate(
+  tx: PoolClient,
+  request: FastifyRequest,
+): Promise<InboxItem> {
+  return currentActor(request).kind === "human"
+    ? loadHumanItemForUpdate(tx, request)
+    : loadAgentItemForUpdate(tx, request, "work:write", "inbox_reply");
+}
+
 async function assertReviewReplyAuthority(
   tx: PoolClient,
   request: FastifyRequest,
@@ -205,6 +259,7 @@ async function assertReviewReplyAuthority(
 ): Promise<void> {
   if (item.kind !== "review_request") return;
   const actor = currentActor(request);
+  if (actor.kind === "human") return;
   await authorizeCommandInTx(tx, {
     actor,
     sessionId: actor.agentSessionId!,
@@ -235,12 +290,9 @@ async function authorizeInboxReplay(
   capability: "work:read" | "work:write",
   operation: "inbox_claim" | "inbox_ack" | "inbox_reply",
 ): Promise<void> {
-  const item = await loadAgentItemForUpdate(
-    tx,
-    request,
-    capability,
-    operation,
-  );
+  const item = operation === "inbox_reply"
+    ? await loadReplyItemForUpdate(tx, request)
+    : await loadAgentItemForUpdate(tx, request, capability, operation);
   if (operation === "inbox_claim") {
     const actor = currentActor(request);
     if (
@@ -259,7 +311,16 @@ async function lockReplyParticipantsBeforeReservation(
   request: FastifyRequest,
 ): Promise<void> {
   const actor = currentActor(request);
-  if (actor.kind !== "agent" || !actor.agentSessionId)
+  if (actor.kind === "human") {
+    const item = await loadHumanItemForUpdate(tx, request);
+    const lockKeys = [item.source_author_session_id]
+      .filter((value): value is string => Boolean(value))
+      .map((sessionId) => `${actor.workspaceId}:inbox-reply-session:${sessionId}`);
+    for (const lockKey of lockKeys)
+      await tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [lockKey]);
+    return;
+  }
+  if (!actor.agentSessionId)
     throw new DomainError("NOT_FOUND", "Inbox item not found");
   const participants = (
     await tx.query<{ source_session_id: string | null }>(
@@ -851,12 +912,7 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
       h.db,
       h.meta(request, body, { id: itemId(request) }),
       async (tx) => {
-        const item = await loadAgentItemForUpdate(
-          tx,
-          request,
-          "work:write",
-          "inbox_reply",
-        );
+        const item = await loadReplyItemForUpdate(tx, request);
         assertRevision(expectedRevision, item.revision);
         if (
           item.status !== "open" ||
@@ -1039,7 +1095,10 @@ export function registerInboxRoutes(app: FastifyInstance, h: Helpers): void {
             },
           );
         }
-        await insertReceipt(tx, meta, item.id, "replied", reply.id);
+        // Agent Inbox receipts are session-scoped. Human responses retain their
+        // immutable provenance through the reply message and Inbox domain event.
+        if (currentActor(request).kind === "agent")
+          await insertReceipt(tx, meta, item.id, "replied", reply.id);
         await appendInboxEvent(tx, meta, result, "inbox.item.replied", {
           replyMessageId: reply.id,
         });

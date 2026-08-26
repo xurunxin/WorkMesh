@@ -1052,9 +1052,18 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
       return row
     })
   })
-  app.post('/api/v1/messages/:id/resolve', async request => command(h.db, h.meta(request, {}, { id: id(request) }), async tx => {
-    const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]; if(!row) throw new DomainError('NOT_FOUND','Message not found'); await assertHumanTeam(tx,actor(request),row.team_id); await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved']); await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id]); await emit(tx,h.meta(request,{}),'room.message.resolved','room_message',row.id,{},row.team_id); return {id:row.id,resolved:true}
-  }))
+  app.post('/api/v1/messages/:id/resolve', async request => {
+    const body = z.object({ reason: z.string().min(1).max(10000).optional() }).parse(request.body ?? {})
+    return command(h.db, h.meta(request, body, { id: id(request) }), async tx => {
+      const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]
+      if(!row) throw new DomainError('NOT_FOUND','Message not found')
+      await assertHumanTeam(tx,actor(request),row.team_id)
+      await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved'])
+      await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id])
+      await emit(tx,h.meta(request,body),'room.message.resolved','room_message',row.id,{ reason: body.reason ?? null },row.team_id)
+      return {id:row.id,resolved:true}
+    })
+  })
 
   app.post('/api/v1/work-items/:id/decisions', async request => createDecision(h, request, 'work_item', id(request)))
   app.post('/api/v1/projects/:id/decisions', async request => createDecision(h, request, 'project', id(request)))

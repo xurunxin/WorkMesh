@@ -227,7 +227,6 @@ const agentOnlyOperations = new Set([
   'getCurrentAgentConnectionIdentity',
   'claimInboxItem',
   'acknowledgeInboxItem',
-  'replyInboxItem',
 ])
 
 const revisionedOperations = new Set([

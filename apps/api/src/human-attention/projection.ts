@@ -42,6 +42,8 @@ const record = (value: unknown): Record<string, unknown> =>
     : {}
 const strings = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
+const number = (value: unknown): number | null =>
+  typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : null
 const iso = (value: Date | string): string =>
   value instanceof Date ? value.toISOString() : new Date(value).toISOString()
 
@@ -128,6 +130,7 @@ const option = (
   command: string,
   path: string,
   targetRevision: number | null,
+  consequencePreviewPath?: string,
 ) => ({
   id,
   label,
@@ -138,10 +141,12 @@ const option = (
   requiredCapabilities: ['work:write' as const],
   requiredActorKinds: ['human' as const],
   requiresApproval: false,
+  ...(consequencePreviewPath ? { consequencePreviewPath } : {}),
 })
 
 const options = (row: HumanAttentionRow) => {
   if (row.status !== 'open') return []
+  const payload = record(row.payload)
   if (row.kind === 'decision')
     return [option('finalize', 'Finalize decision', 'finalizeDecision', `/api/v1/decisions/${row.source_id}/finalize`, row.target_revision)]
   if (row.kind === 'approval')
@@ -154,17 +159,86 @@ const options = (row: HumanAttentionRow) => {
       option('accept', 'Accept completion', 'decideCompletionSuggestion', `/api/v1/completion-suggestions/${row.source_id}/decision`, row.target_revision),
       option('dismiss', 'Dismiss', 'decideCompletionSuggestion', `/api/v1/completion-suggestions/${row.source_id}/decision`, row.target_revision),
     ]
-  const payload = record(row.payload)
-  if (typeof payload.sourceMessageId === 'string')
-    return [option('resolve', 'Resolve request', 'resolveRoomMessage', `/api/v1/messages/${payload.sourceMessageId}/resolve`, null)]
+  if (row.kind === 'clarification' && row.source_type === 'inbox_item' && typeof payload.sourceMessageId === 'string')
+    return [option('answer', 'Answer in context', 'replyInboxItem', `/api/v1/inbox/${row.source_id}/reply`, number(payload.inboxRevision))]
+  if (row.kind === 'conflict' && typeof payload.sourceMessageId === 'string')
+    return [option('resolve', 'Resolve conflict', 'resolveRoomMessage', `/api/v1/messages/${payload.sourceMessageId}/resolve`, null)]
+  if (row.kind === 'recovery' && payload.inboxKind === 'handoff' && typeof payload.inboxSourceId === 'string')
+    return [
+      option('accept', 'Accept handoff', 'acceptHandoff', `/api/v1/handoffs/${payload.inboxSourceId}/accept`, number(payload.handoffRevision)),
+      option('reject', 'Reject handoff', 'rejectHandoff', `/api/v1/handoffs/${payload.inboxSourceId}/reject`, number(payload.handoffRevision)),
+    ]
   if (row.kind === 'recovery' && row.session_id)
-    return [option('retry', 'Retry execution', 'retryAgentSession', `/api/v1/agent-sessions/${row.session_id}/retry`, row.target_revision)]
+    return [option('retry', 'Retry execution', 'retryAgentSession', `/api/v1/agent-sessions/${row.session_id}/retry`, number(payload.sessionRevision) ?? row.target_revision, `/api/v1/agent-sessions/${row.session_id}/control-preview`)]
+  if (row.kind === 'completion_review' && row.source_type === 'inbox_item' && typeof payload.sourceMessageId === 'string')
+    return [option('respond', 'Respond to review', 'replyInboxItem', `/api/v1/inbox/${row.source_id}/reply`, number(payload.inboxRevision))]
   return []
+}
+
+export type HumanAttentionViewer = Readonly<{
+  id: string
+  kind: 'human' | 'agent'
+  workspaceRole: 'admin' | 'member'
+}>
+
+const audience = (row: HumanAttentionRow, availableOptions: ReturnType<typeof options>, viewer?: HumanAttentionViewer) => {
+  const relationship = !viewer
+    ? 'visible_to_me' as const
+    : row.responsible_human_actor_id === viewer.id || row.recipient_actor_id === viewer.id
+      ? 'assigned_to_me' as const
+      : viewer.workspaceRole === 'admin'
+        ? 'workspace_administration' as const
+        : 'visible_to_me' as const
+  const requiresExactRecipient = availableOptions.some(candidate => candidate.command === 'replyInboxItem')
+  return {
+    relationship,
+    canRespond: viewer?.kind === 'human'
+      && row.status === 'open'
+      && availableOptions.length > 0
+      && (!requiresExactRecipient || row.recipient_actor_id === viewer.id),
+  }
+}
+
+const response = (row: HumanAttentionRow) => {
+  const payload = record(row.payload)
+  const choices = row.kind === 'decision'
+    ? strings(payload.decisionOptions).map(value => ({ id: value, label: value }))
+    : []
+  return {
+    workflow: row.kind,
+    requiresReason: ['decision', 'approval', 'conflict', 'recovery'].includes(row.kind),
+    requiresMessage: row.kind === 'clarification' || (row.kind === 'completion_review' && row.source_type === 'inbox_item'),
+    choices,
+    expectedStatus: row.kind === 'decision' || row.kind === 'approval' ? 'decided' as const : 'verified' as const,
+  }
+}
+
+const bulk = (row: HumanAttentionRow) => {
+  const payload = record(row.payload)
+  const payloadHash = typeof payload.actionPayloadHash === 'string' ? payload.actionPayloadHash : null
+  const eligible = row.status === 'open'
+    && row.kind === 'approval'
+    && (row.risk_level === 'info' || row.risk_level === 'low')
+    && payloadHash !== null
+  const prohibitedReason = eligible
+    ? null
+    : row.kind !== 'approval'
+      ? 'bulk.kind_not_supported'
+      : row.risk_level !== 'info' && row.risk_level !== 'low'
+        ? 'bulk.risk_prohibited'
+        : 'bulk.exact_payload_required'
+  return {
+    eligible,
+    compatibilityKey: eligible ? `approval:${payloadHash}` : null,
+    prohibitedReason,
+    revalidateIndividually: true as const,
+  }
 }
 
 export function projectHumanAttentionRow(
   row: HumanAttentionRow,
   observedAt = new Date(),
+  viewer?: HumanAttentionViewer,
 ): HumanAttentionItem {
   const availableOptions = options(row)
   const sourceUpdatedAt = iso(row.updated_at)
@@ -197,6 +271,9 @@ export function projectHumanAttentionRow(
       : null,
     options: availableOptions,
     recommendedOptionId: availableOptions[0]?.id ?? null,
+    audience: audience(row, availableOptions, viewer),
+    response: response(row),
+    bulk: bulk(row),
     impactSummary: row.impact_summary,
     affectedResources: affectedResources(row),
     evidence: evidence(row),
@@ -233,6 +310,8 @@ WITH attention AS (
          COALESCE(w.responsible_human_actor_id,p.lead_actor_id) AS responsible_human_actor_id,
          jsonb_build_object(
            'evidence',d.evidence,
+           'decisionOptions',d.options,
+           'selectedOption',d.selected_option,
            'affectedResources',COALESCE((SELECT jsonb_agg(jsonb_build_object('type',resource_type,'id',resource_id)) FROM decision_affected_resources WHERE decision_id=d.id),'[]'::jsonb)
          ) AS payload,
          (SELECT correlation_id FROM domain_events WHERE aggregate_type='decision' AND aggregate_id=d.id ORDER BY cursor DESC LIMIT 1) AS correlation_id,
@@ -254,7 +333,13 @@ WITH attention AS (
          a.revision,concat('Approval: ',a.action_name),a.rationale_summary,
          concat('The protected action ',a.action_name,' remains governed by its existing approval handler.'),
          a.risk_level::text,a.expires_at,a.requested_by_actor_id,w.responsible_human_actor_id,
-         jsonb_build_object('evidenceArtifactIds',COALESCE((SELECT jsonb_agg(id) FROM artifacts WHERE session_id=a.session_id),'[]'::jsonb)),
+         jsonb_build_object(
+           'approvalType',a.approval_type,
+           'actionName',a.action_name,
+           'actionPayload',a.action_payload_sanitized,
+           'actionPayloadHash',a.action_payload_hash,
+           'evidenceArtifactIds',COALESCE((SELECT jsonb_agg(id) FROM artifacts WHERE session_id=a.session_id),'[]'::jsonb)
+         ),
          (SELECT correlation_id FROM domain_events WHERE aggregate_type='approval' AND aggregate_id=a.id ORDER BY cursor DESC LIMIT 1),
          a.created_at,a.updated_at,NULL::uuid
     FROM approvals a
@@ -286,7 +371,10 @@ WITH attention AS (
             'inboxKind',i.kind::text,
             'inboxSourceType',i.source_type,
             'inboxSourceId',i.source_id,
-            'sourceMessageId',i.source_room_message_id
+            'sourceMessageId',i.source_room_message_id,
+            'inboxRevision',i.revision,
+            'sessionRevision',s.revision,
+            'handoffRevision',(SELECT h.revision FROM handoffs h WHERE h.id=i.source_id AND h.workspace_id=i.workspace_id)
           ),
          (SELECT correlation_id FROM domain_events WHERE aggregate_type='inbox_item' AND aggregate_id=i.id ORDER BY cursor DESC LIMIT 1),
          i.created_at,i.updated_at,i.recipient_actor_id
@@ -307,7 +395,7 @@ WITH attention AS (
          COALESCE(NULLIF(session.error_summary,''),NULLIF(session.state_reason,''),'The Agent Session requires an explicit Human recovery decision.'),
          'The authoritative Session cannot continue ordinary execution until an existing recovery command succeeds.',
          'high',NULL::timestamptz,session.agent_actor_id,work.responsible_human_actor_id,
-         jsonb_build_object('errorCode',session.error_code,'retrySessionId',retry.id),
+         jsonb_build_object('errorCode',session.error_code,'retrySessionId',retry.id,'sessionRevision',session.revision),
          (SELECT correlation_id FROM domain_events WHERE aggregate_type='agent_session' AND aggregate_id=session.id ORDER BY cursor DESC LIMIT 1),
          session.created_at,session.updated_at,NULL::uuid
     FROM agent_sessions session

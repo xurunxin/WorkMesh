@@ -550,6 +550,25 @@ export const attentionOptionSchema = z.object({
   requiredCapabilities: z.array(capabilitySchema).max(50),
   requiredActorKinds: z.array(actorKindSchema).min(1).max(3),
   requiresApproval: z.boolean(),
+  consequencePreviewPath: z.string().startsWith('/api/v1/').max(2_000).optional(),
+}).strict()
+export const attentionAudienceRelationshipSchema = z.enum(['assigned_to_me', 'visible_to_me', 'workspace_administration'])
+export const attentionAudienceSchema = z.object({
+  relationship: attentionAudienceRelationshipSchema,
+  canRespond: z.boolean(),
+}).strict()
+export const attentionResponseSchema = z.object({
+  workflow: humanAttentionKindSchema,
+  requiresReason: z.boolean(),
+  requiresMessage: z.boolean(),
+  choices: z.array(z.object({ id: z.string().min(1).max(2_000), label: z.string().min(1).max(2_000) }).strict()).max(50),
+  expectedStatus: humanAttentionStatusSchema,
+}).strict()
+export const attentionBulkPolicySchema = z.object({
+  eligible: z.boolean(),
+  compatibilityKey: z.string().min(1).max(500).nullable(),
+  prohibitedReason: z.string().min(1).max(500).nullable(),
+  revalidateIndividually: z.literal(true),
 }).strict()
 export const humanAttentionFreshnessSchema = z.object({ state: freshnessStateSchema, observedAt: timestampSchema, sourceUpdatedAt: timestampSchema, invalidAfter: timestampSchema.optional() }).strict()
 export const humanAttentionItemSchema = z.object({
@@ -574,6 +593,9 @@ export const humanAttentionItemSchema = z.object({
   responsibleHuman: attentionActorReferenceSchema.nullable(),
   options: z.array(attentionOptionSchema).max(20),
   recommendedOptionId: z.string().min(1).max(100).nullable(),
+  audience: attentionAudienceSchema,
+  response: attentionResponseSchema,
+  bulk: attentionBulkPolicySchema,
   impactSummary: z.string().min(1).max(20_000),
   affectedResources: z.array(attentionResourceReferenceSchema).max(100),
   evidence: z.array(attentionEvidenceReferenceSchema).max(100),

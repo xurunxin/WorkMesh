@@ -110,4 +110,39 @@ describe('Human Attention deterministic projection', () => {
     })
     expect(item.evidence).toEqual([{ type: 'room_message', id: uuid(10) }])
   })
+
+  it('declares viewer responsibility and only exact low-risk approval payloads as bulk compatible', () => {
+    const item = projectHumanAttentionRow({
+      ...row('approval', 'approval'),
+      risk_level: 'low',
+      payload: { actionPayloadHash: `sha256:${'a'.repeat(64)}` },
+    }, new Date('2026-08-26T00:02:00.000Z'), {
+      id: uuid(8),
+      kind: 'human',
+      workspaceRole: 'member',
+    })
+    expect(item.audience).toEqual({ relationship: 'assigned_to_me', canRespond: true })
+    expect(item.bulk).toEqual({
+      eligible: true,
+      compatibilityKey: `approval:sha256:${'a'.repeat(64)}`,
+      prohibitedReason: null,
+      revalidateIndividually: true,
+    })
+  })
+
+  it('does not advertise an Inbox reply to a workspace admin who is not the exact recipient', () => {
+    const item = projectHumanAttentionRow({
+      ...row('inbox_item', 'clarification'),
+      payload: { sourceMessageId: uuid(10), inboxRevision: 2 },
+    }, new Date('2026-08-26T00:02:00.000Z'), {
+      id: uuid(11),
+      kind: 'human',
+      workspaceRole: 'admin',
+    })
+    expect(item.options).toMatchObject([{ command: 'replyInboxItem' }])
+    expect(item.audience).toEqual({
+      relationship: 'workspace_administration',
+      canRespond: false,
+    })
+  })
 })

@@ -178,7 +178,22 @@ describe('Human Attention projection acceptance', () => {
       'SELECT actor_id FROM agent_definitions WHERE id=$1',
       [agent.id],
     )).rows[0]!.actor_id
-    for (const kind of ['waiting_input', 'blocker', 'session_stale'] as const) {
+    const clarificationMessage = (await db.query<{ id: string }>(
+      `INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,recipient_actor_id,body,requires_response)
+       SELECT channel.id,$1,$2,$3,'ask',$4,'Which release branch should execution use?',true
+         FROM work_room_channels channel
+        WHERE channel.workspace_id=$1 AND channel.subject_kind='session' AND channel.subject_id=$3
+       RETURNING id`,
+      [actor.workspace_id, agentActorId, session.id, actor.id],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,
+         team_id,kind,source_type,source_id,source_room_message_id,requires_response,payload
+       ) VALUES($1,$2,$2,$3,$4,'waiting_input','room_message',$5,$5,true,$6)`,
+      [actor.workspace_id, actor.id, session.id, teamId, clarificationMessage.id, { summary: 'waiting_input fixture' }],
+    )
+    for (const kind of ['blocker', 'session_stale'] as const) {
       await db.query(
         `INSERT INTO inbox_items(
            workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,
@@ -364,7 +379,17 @@ describe('Human Attention projection acceptance', () => {
       severity: 'high',
       urgency: 'immediate',
       options: [{ id: 'approve' }, { id: 'reject' }],
+      bulk: { eligible: false, prohibitedReason: 'bulk.risk_prohibited' },
     })
+    expect(firstPage.items.every(item => item.audience.relationship === 'assigned_to_me')).toBe(true)
+    const assigned = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', `/api/v1/human-attention?view=active&audience=assigned_to_me&projectId=${project.id}&limit=50`)).json(),
+    )
+    expect(assigned.items.map(item => item.id).sort()).toEqual(firstPage.items.map(item => item.id).sort())
+    const immediate = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?view=active&urgency=immediate&limit=50')).json(),
+    )
+    expect(immediate.items.every(item => item.urgency === 'immediate')).toBe(true)
 
     const rebuilt = humanAttentionListResponseSchema.parse(
       (await humanCall(human, 'GET', '/api/v1/human-attention?status=open&limit=50')).json(),
@@ -382,6 +407,22 @@ describe('Human Attention projection acceptance', () => {
       kind: selected.kind,
       status: selected.status,
     })
+
+    const clarification = firstPage.items.find(item => item.kind === 'clarification')!
+    const clarificationOption = clarification.options.find(option => option.command === 'replyInboxItem')!
+    const humanReply = await humanCall(human, 'POST', clarificationOption.path, {
+      body: 'Use the current release branch and preserve the published evidence.',
+      payload: { attentionId: clarification.id },
+    }, { 'if-match': `"revision-${clarificationOption.targetRevision}"` })
+    expect(humanReply.statusCode, JSON.stringify(humanReply.json())).toBe(200)
+    expect(humanReply.json<{ status: string; replyMessageId: string }>()).toMatchObject({
+      status: 'resolved',
+      replyMessageId: expect.any(String),
+    })
+    const afterReply = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=clarification&view=active&limit=50')).json(),
+    )
+    expect(afterReply.items.some(item => item.id === clarification.id)).toBe(false)
 
     const otherProject = (await humanCall(human, 'POST', '/api/v1/projects', {
       teamId,

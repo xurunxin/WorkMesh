@@ -29,6 +29,7 @@ import {
   type ProjectControlSurface,
 } from './lib/human-control-plane-navigation'
 import { useRealtimeConnectionState, useRealtimeSubscription, type RealtimeEvent } from './lib/realtime'
+import { AttentionCenter } from './attention-center'
 
 type Collection = keyof ControlCenterResponse['collections']
 type Digest = ControlCenterResponse['collections'][Collection]['items'][number]
@@ -100,7 +101,11 @@ const refreshItems = (current: readonly Digest[], incoming: readonly Digest[]): 
   return [...retained, ...incoming.filter(item => !currentIds.has(item.id))]
 }
 
-export function ProjectControlCenter({ project, onOpenWork }: { project: Project; onOpenWork: () => void }) {
+export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-000000000000', workspace_role: 'member' }, project, onOpenWork }: {
+  actor?: Readonly<{ id: string; workspace_id?: string; workspace_role: 'admin' | 'member' }>
+  project: Project
+  onOpenWork: () => void
+}) {
   const { humanControlPlaneCopy: copy, locale } = useLocale()
   const local = locale === 'zh-CN' ? {
     activeAgent: '运行中的智能体', all: '全部', applyFilters: '应用筛选', blockedDescription: '被执行状态或依赖阻塞的工作。', clearFilters: '清除筛选', currentStep: '当前计划步骤', details: '查看详情', empty: '当前没有项目。', evidenceCount: '证据', filters: 'Project Control Center 筛选', heartbeat: '心跳', lastActivity: '最近活动', loadError: '无法加载 Project Control Center。', loading: '正在加载 Project Control Center...', loadingMore: '正在加载…', loadMore: '加载更多工作项', noActivity: '暂无可显示的活动', noHuman: '未指定负责人', noItems: '当前没有此类项目。', pendingHuman: '待 Human 处理', projectStatus: '项目状态', readyDescription: '已满足服务端就绪条件、可进入执行的工作。', responsibleHumanFilter: '负责人', retry: '重试', riskFilter: '风险', stateFilter: '工作状态', timeFilter: '时间窗口', workItem: '工作项',
@@ -256,7 +261,7 @@ export function ProjectControlCenter({ project, onOpenWork }: { project: Project
   const verified = genericSection('recently_verified', copy.recentlyVerified, copy.recentlyVerifiedDescription, 'verified', () => <LifecycleBadge categoryLabel={copy.lifecycle} label={copy.statusVerified} value="verified" />)
   const ready = genericSection('ready_work', copy.ready, local.readyDescription, 'verified', () => <LifecycleBadge categoryLabel={copy.lifecycle} label={copy.ready} value="open" />)
   const blocked = genericSection('blocked_work', copy.blocked, local.blockedDescription, 'risk', () => <RiskBadge categoryLabel={copy.risk} label={copy.blocked} value="high" />)
-  const surfaces: Record<ProjectControlSurface, ReactNode> = { overview: <>{attention}{running}{risks}{verified}{ready}{blocked}</>, attention, runs: running, work: null, graph: null, activity: null, settings: null }
+  const surfaces: Record<ProjectControlSurface, ReactNode> = { overview: <>{attention}{running}{risks}{verified}{ready}{blocked}</>, attention: <AttentionCenter actor={actor} projectId={project.id} />, runs: running, work: null, graph: null, activity: null, settings: null }
 
   return <div className="hcp-reference project-control-center" data-testid="project-control-center">
     {projectHeader}
