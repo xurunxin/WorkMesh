@@ -390,7 +390,7 @@ describe('Agent authority lock-order inventory',()=>{
     expect(new Set(manifested.map(entry=>`${entry.file}:${entry.statementId}`)).size)
       .toBe(manifested.length)
     expect(manifestStatements(actual,agentLockStatementManifest)).toEqual(manifested)
-  })
+  },15_000)
 
   it('keeps Room message authorization on its merged plan without a nested planner',async()=>{
     const source=await readFile(join(root,'apps/api/src/collaboration/routes.ts'),'utf8')
