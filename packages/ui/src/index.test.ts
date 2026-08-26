@@ -64,6 +64,17 @@ describe('UI authority and token boundary', () => {
     expect(source).not.toContain('role="button"')
   })
 
+  it('exports the API-free Human Control Plane component inventory', () => {
+    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
+    for (const component of ['ProjectControlNavigation', 'AttentionCard', 'AttentionListItem', 'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge', 'RunStatusBar', 'RunDigestCard', 'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceDrawer', 'EvidenceReferenceList', 'ConsequencePreviewDialog', 'ActorAttribution', 'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar', 'ControlCenterSection']) {
+      expect(source).toMatch(new RegExp(`export function ${component}`))
+    }
+    expect(source).not.toContain('window.prompt')
+    expect(source).not.toContain('window.confirm')
+    expect(source).toContain('initialFocusRef={cancelRef}')
+    expect(source).toContain('aria-label={`${categoryLabel}: ${label}`}')
+  })
+
   it('owns the complete M1 token vocabulary and reduced-motion fallback', () => {
     const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
     for (const token of ['--wm-canvas', '--wm-font-sans', '--wm-space-4', '--wm-radius-md', '--wm-shadow-md', '--wm-motion-normal', '--wm-focus-ring']) {
@@ -72,6 +83,13 @@ describe('UI authority and token boundary', () => {
     expect(css).toMatch(/\.wm-card\s*>\s*header\s+:where\(h1,\s*h2\)\s*\{[^}]*margin:\s*0;[^}]*font-size:\s*var\(--wm-text-md\);/s)
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*\.wm-skeleton\s*\{[^}]*animation:\s*none\s*!important;/)
+  })
+
+  it('keeps lifecycle, health, risk, urgency, and freshness as separate semantic values', () => {
+    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
+    for (const type of ['LifecycleState', 'RunHealth', 'RiskLevel', 'UrgencyLevel', 'FreshnessState']) expect(source).toContain(`export type ${type}`)
+    const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
+    for (const value of ['healthy', 'stalled', 'critical', 'urgent', 'fresh', 'stale', 'verified']) expect(css).toContain(`.wm-semantic-${value}`)
   })
 })
 

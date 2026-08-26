@@ -3,6 +3,7 @@ import type { NavigationItem } from '@workmesh/ui'
 import { BookOpenTextIcon } from '@phosphor-icons/react/dist/csr/BookOpenText'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { GearIcon } from '@phosphor-icons/react/dist/csr/Gear'
+import { GitBranchIcon } from '@phosphor-icons/react/dist/csr/GitBranch'
 import { ListBulletsIcon } from '@phosphor-icons/react/dist/csr/ListBullets'
 import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
 import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
@@ -15,6 +16,7 @@ type NavigationTranslationKey =
   | 'guidance'
   | 'inbox'
   | 'issues'
+  | 'operations'
   | 'projects'
   | 'settings'
 
@@ -25,21 +27,24 @@ type WorkspaceNavigationOptions = Readonly<{
 }>
 
 export function workspaceNavigation({ active, onHomeNavigate, t }: WorkspaceNavigationOptions): NavigationItem[] {
-  const homeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
+  const primaryHomeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
     ['inbox', t('inbox'), <TrayIcon aria-hidden="true" size={20} weight="regular" />],
-    ['my-work', t('issues'), <ListBulletsIcon aria-hidden="true" size={20} weight="regular" />],
     ['projects', t('projects'), <FolderSimpleIcon aria-hidden="true" size={20} weight="regular" />],
+  ]
+  const legacyHomeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
+    ['my-work', t('issues'), <ListBulletsIcon aria-hidden="true" size={20} weight="regular" />],
     ['guidance', t('guidance'), <BookOpenTextIcon aria-hidden="true" size={20} weight="regular" />],
   ]
+  const homeItem = ([scope, label, icon]: [HomeScope, string, NavigationItem['icon']]): NavigationItem => ({
+    active: active === scope,
+    href: homeScopeHref(scope),
+    icon,
+    label,
+    onClick: onHomeNavigate ? (event: MouseEvent<HTMLAnchorElement>) => onHomeNavigate(event, scope) : undefined,
+    testId: `view-${scope}`,
+  })
   return [
-    ...homeItems.map(([scope, label, icon]) => ({
-      active: active === scope,
-      href: homeScopeHref(scope),
-      icon,
-      label,
-      onClick: onHomeNavigate ? (event: MouseEvent<HTMLAnchorElement>) => onHomeNavigate(event, scope) : undefined,
-      testId: `view-${scope}`,
-    })),
+    ...primaryHomeItems.map(homeItem),
     {
       active: active === 'agents',
       href: '/agents',
@@ -47,6 +52,14 @@ export function workspaceNavigation({ active, onHomeNavigate, t }: WorkspaceNavi
       label: t('agents'),
       testId: 'view-agents',
     },
+    {
+      active: active === 'operations',
+      href: '/operations',
+      icon: <GitBranchIcon aria-hidden="true" size={20} weight="regular" />,
+      label: t('operations'),
+      testId: 'view-operations',
+    },
+    ...legacyHomeItems.map(homeItem),
   ]
 }
 

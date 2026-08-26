@@ -1415,6 +1415,64 @@ main#workmesh-main:focus-visible {
   .config-preview { font-size: .72rem; }
 }
 
+/* #90 gated Human Control Plane reference surface. */
+.hcp-reference { display: grid; width: 100%; max-width: 1560px; min-width: 0; margin: 0 auto; padding: 1.35rem 2rem 2rem; }
+.hcp-project-header { display: grid; gap: .9rem; padding-bottom: 1rem; }
+.hcp-breadcrumb { color: var(--wm-muted); font-size: .75rem; }
+.hcp-breadcrumb strong { color: var(--wm-text); }
+.hcp-project-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.hcp-project-heading > div:first-child { min-width: 0; }
+.hcp-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+.hcp-title-row h1 { margin: 0; font-size: 1.45rem; letter-spacing: 0; }
+.hcp-project-heading p { margin: .3rem 0 0; color: var(--wm-muted); }
+.hcp-project-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem; }
+.hcp-reference > .wm-project-navigation { margin-inline: -2rem; padding-inline: 1.25rem; }
+.hcp-summary-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 1rem 0; overflow: hidden; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
+.hcp-summary-strip article { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: .45rem; min-width: 0; padding: .75rem .85rem; }
+.hcp-summary-strip article:not(:last-child) { border-right: 1px solid var(--wm-border); }
+.hcp-summary-strip strong { font-size: 1.15rem; }
+.hcp-summary-strip span { min-width: 0; color: var(--wm-muted); font-size: .75rem; overflow-wrap: anywhere; }
+.hcp-summary-strip .tone-attention strong { color: #b54708; }
+.hcp-summary-strip .tone-running strong { color: #175cd3; }
+.hcp-summary-strip .tone-risk strong,
+.hcp-summary-strip .tone-blocked strong { color: #b42318; }
+.hcp-summary-strip .tone-verified strong,
+.hcp-summary-strip .tone-ready strong { color: #087443; }
+.hcp-control-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; min-width: 0; align-items: start; }
+.hcp-control-grid .wm-control-section { min-height: 15rem; }
+.hcp-control-grid .wm-control-section-running .wm-run-digest-details { padding-top: .75rem; border-top: 1px solid var(--wm-border); }
+.hcp-reference .wm-evidence-list + .wm-causal-timeline { margin-top: 1rem; }
+.hcp-reference .wm-capability-bar + .wm-evidence-list { margin-top: 1rem; }
+.wm-sheet-content > .wm-capability-bar + .wm-evidence-list { margin-top: 1rem; }
+.wm-sheet-content > .wm-evidence-list + .wm-causal-timeline { margin-top: 1rem; }
+.wm-sheet-content > .wm-causal-timeline + .wm-technical-events { margin-top: .25rem; }
+.wm-technical-events .wm-resource-list + .wm-reason-list { margin-top: .75rem; }
+
+@media (max-width: 1180px) {
+  .hcp-control-grid { grid-template-columns: 1fr; }
+  .hcp-control-grid .wm-control-section { min-height: 0; }
+  .hcp-summary-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hcp-summary-strip article:nth-child(3) { border-right: 0; }
+  .hcp-summary-strip article:nth-child(-n+3) { border-bottom: 1px solid var(--wm-border); }
+}
+
+@media (max-width: 760px) {
+  .hcp-reference { padding: 1rem; }
+  .hcp-project-heading { flex-direction: column; }
+  .hcp-project-actions { width: 100%; justify-content: stretch; }
+  .hcp-project-actions .wm-button { flex: 1 1 auto; }
+  .hcp-reference > .wm-project-navigation { margin-inline: -1rem; padding-inline: .35rem; }
+  .hcp-summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hcp-summary-strip article:nth-child(3) { border-right: 1px solid var(--wm-border); }
+  .hcp-summary-strip article:nth-child(even) { border-right: 0; }
+  .hcp-summary-strip article:nth-child(-n+4) { border-bottom: 1px solid var(--wm-border); }
+}
+
+@media (max-width: 420px) {
+  .hcp-summary-strip article { grid-template-columns: 1fr; gap: .1rem; padding: .6rem; }
+  .hcp-title-row { align-items: flex-start; flex-direction: column; }
+}
+
 /* v32 i18n entry: public /install and /login centers */
 .auth-shell { display: grid; place-items: center; min-height: 70vh; padding: clamp(1.25rem, 4vw, 2.5rem); }
 .auth-card { width: min(420px, 100%); }

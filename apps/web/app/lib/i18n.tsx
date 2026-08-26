@@ -70,6 +70,7 @@ type TranslationKey =
   | 'noProjects'
   | 'noTeam'
   | 'offline'
+  | 'operations'
   | 'planningAndOperations'
   | 'projects'
   | 'priority'
@@ -114,7 +115,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     description: '描述',
     dueDate: '截止日期',
     high: '高',
-    inbox: '收件箱',
+    inbox: '需要我处理',
     issues: 'Issues',
     live: '实时',
     loading: '正在加载',
@@ -135,6 +136,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     noProjects: '尚无项目。',
     noTeam: '无团队',
     offline: '离线',
+    operations: '运营',
     planningAndOperations: '规划与运营',
     projects: '项目',
     priority: '优先级',
@@ -178,7 +180,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     description: 'Description',
     dueDate: 'Due date',
     high: 'High',
-    inbox: 'Inbox',
+    inbox: 'Needs You',
     issues: 'Issues',
     live: 'Live',
     loading: 'Loading',
@@ -199,6 +201,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     noProjects: 'No projects yet.',
     noTeam: 'No team',
     offline: 'Offline',
+    operations: 'Operations',
     planningAndOperations: 'Planning & Operations',
     projects: 'Projects',
     priority: 'Priority',
@@ -3393,6 +3396,83 @@ export function fallbackCopy<T extends Record<string, unknown>>(key: string, pri
   return merged as T
 }
 
+export type HumanControlPlaneCopy = {
+  activeAgent: string
+  affectedResources: string
+  agentRelationship: string
+  atRisk: string
+  atRiskDescription: string
+  attention: string
+  attentionKind: string
+  beta: string
+  blocked: string
+  close: string
+  completionReview: string
+  consequenceDescription: string
+  consequenceImpact: { stop: string; lease: string; resume: string }
+  consequenceTitle: string
+  continueReview: string
+  decision: string
+  evidence: string
+  evidenceDescription: string
+  evidenceLabel: string
+  evidenceType: string
+  freshness: string
+  freshNow: string
+  graph: string
+  health: string
+  lifecycle: string
+  needsYou: string
+  needsYouDescription: string
+  overview: string
+  pauseRun: string
+  planSteps: string
+  projectDescription: string
+  projectNavigation: string
+  projectSettings: string
+  ready: string
+  reasonCodes: string
+  recentlyVerified: string
+  recentlyVerifiedDescription: string
+  resync: string
+  responsibleHuman: string
+  risk: string
+  riskHigh: string
+  runDescription: string
+  runHealthy: string
+  running: string
+  runningDescription: string
+  runs: string
+  stale: string
+  staleDescription: string
+  statusOpen: string
+  statusVerified: string
+  summaryLabel: string
+  stepImplement: string
+  stepReview: string
+  stepVerify: string
+  technicalDetails: string
+  timeline: string
+  title: string
+  urgency: string
+  urgencySoon: string
+  verifiedDescription: string
+  verifiedTitle: string
+  viewEvidence: string
+  viewWork: string
+  work: string
+  activity: string
+}
+
+const humanControlPlaneCopies: Record<Locale, HumanControlPlaneCopy> = {
+  'zh-CN': {
+    activeAgent: '运行中的智能体', affectedResources: '受影响资源', agentRelationship: '智能体代表负责人执行', atRisk: '存在风险', atRiskDescription: '需要恢复或重新同步的执行。', attention: '关注事项', attentionKind: '关注类型', beta: 'Beta', blocked: '阻塞', close: '关闭', completionReview: '完成审阅', consequenceDescription: '暂停前请确认对当前执行和后续步骤的影响。', consequenceImpact: { stop: '当前步骤将在安全边界停止。', lease: '租约仍由服务端规则处理，不会因预览而改变。', resume: '恢复执行需要重新验证权限和 Session revision。' }, consequenceTitle: '暂停这次运行？', continueReview: '继续审阅', decision: '决策', evidence: '证据', evidenceDescription: '本次运行的可追溯产物与因果记录。', evidenceLabel: '证据引用', evidenceType: '测试证据', freshness: '新鲜度', freshNow: '刚刚更新', graph: '图谱', health: '执行健康度', lifecycle: '生命周期', needsYou: '需要我处理', needsYouDescription: '等待负责人决策或审阅的事项。', overview: '概览', pauseRun: '暂停运行', planSteps: '计划步骤', projectDescription: 'Agent 运行可靠性、恢复与可验证交付。', projectNavigation: '项目导航', projectSettings: '项目设置', ready: '就绪', reasonCodes: '原因代码', recentlyVerified: '最近已验证', recentlyVerifiedDescription: '已完成验证并留有证据的工作。', resync: '重新同步', responsibleHuman: '负责人', risk: '风险', riskHigh: '高风险', runDescription: '将 Session 恢复规则应用到稳定执行路径。', runHealthy: '健康', running: '运行中', runningDescription: 'Agent 当前正在执行的工作。', runs: '运行', stale: '已过期', staleDescription: '心跳已过期，投影需要重新同步。', statusOpen: '待处理', statusVerified: '已验证', summaryLabel: '项目运行摘要', stepImplement: '实现恢复规则', stepReview: '审阅变更', stepVerify: '验证集成路径', technicalDetails: '技术详情', timeline: '因果时间线', title: 'Runtime Reliability', urgency: '紧迫度', urgencySoon: '尽快', verifiedDescription: '本地集成验证通过，证据已关联。', verifiedTitle: '连接恢复验证', viewEvidence: '查看证据', viewWork: '查看工作', work: '工作', activity: '活动',
+  },
+  en: {
+    activeAgent: 'Active Agent Executor', affectedResources: 'Affected resources', agentRelationship: 'Agent acting on behalf of Human', atRisk: 'At Risk', atRiskDescription: 'Execution that needs recovery or resynchronization.', attention: 'Attention', attentionKind: 'Attention kind', beta: 'Beta', blocked: 'Blocked', close: 'Close', completionReview: 'Completion review', consequenceDescription: 'Review the effect on the current execution and later steps before pausing.', consequenceImpact: { stop: 'The current step will stop at a safe boundary.', lease: 'Lease behavior remains server-controlled and is not changed by this preview.', resume: 'Resume will revalidate authority and the Session revision.' }, consequenceTitle: 'Pause this run?', continueReview: 'Continue review', decision: 'Decision', evidence: 'Evidence', evidenceDescription: 'Traceable artifacts and causal records for this run.', evidenceLabel: 'Evidence references', evidenceType: 'Test evidence', freshness: 'Freshness', freshNow: 'Updated just now', graph: 'Graph', health: 'Execution health', lifecycle: 'Lifecycle', needsYou: 'Needs You', needsYouDescription: 'Items waiting for the responsible Human to decide or review.', overview: 'Overview', pauseRun: 'Pause run', planSteps: 'Plan steps', projectDescription: 'Agent runtime reliability, recovery, and verifiable delivery.', projectNavigation: 'Project navigation', projectSettings: 'Project Settings', ready: 'Ready', reasonCodes: 'Reason codes', recentlyVerified: 'Recently Verified', recentlyVerifiedDescription: 'Work with completed verification and linked evidence.', resync: 'Resync', responsibleHuman: 'Responsible Human', risk: 'Risk', riskHigh: 'High risk', runDescription: 'Apply Session recovery rules to the stable execution path.', runHealthy: 'Healthy', running: 'Running', runningDescription: 'Work currently being executed by Agents.', runs: 'Runs', stale: 'Stale', staleDescription: 'Heartbeat is stale and the projection needs resynchronization.', statusOpen: 'Open', statusVerified: 'Verified', summaryLabel: 'Project operational summary', stepImplement: 'Implement recovery rule', stepReview: 'Review changes', stepVerify: 'Verify integration path', technicalDetails: 'Technical details', timeline: 'Causal timeline', title: 'Runtime Reliability', urgency: 'Urgency', urgencySoon: 'Soon', verifiedDescription: 'Local integration verification passed and evidence is linked.', verifiedTitle: 'Connection recovery verification', viewEvidence: 'View evidence', viewWork: 'View Work', work: 'Work', activity: 'Activity',
+  },
+}
+
 type LocaleContextValue = {
   locale: Locale
   setLocale: (locale: Locale) => void
@@ -3415,6 +3495,7 @@ type LocaleContextValue = {
   evidenceCopy: EvidenceCopy
   workRoomCopy: WorkRoomCopy
   projectDeliveryHealthLabel: ProjectDeliveryHealthLabel
+  humanControlPlaneCopy: HumanControlPlaneCopy
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null)
@@ -3457,6 +3538,7 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     evidenceCopy: evidenceCopies[locale],
     workRoomCopy: workRoomCopies[locale],
     projectDeliveryHealthLabel: projectDeliveryHealthLabels[locale],
+    humanControlPlaneCopy: humanControlPlaneCopies[locale],
   }), [locale])
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
 }
