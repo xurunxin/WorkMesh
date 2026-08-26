@@ -4,6 +4,7 @@ import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } fro
 import type { FreshnessState, RecoveryCondition, RecoveryItem } from '@workmesh/contracts'
 import { Badge, Button, FreshnessBadge, WorkSurfaceState } from '@workmesh/ui'
 import { AgentControlDialog, type AgentControlAction } from './agent-control-dialog'
+import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from './evidence-drawer'
 import { apiRequest } from './lib/api'
 import { useLocale } from './lib/i18n'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
@@ -65,6 +66,20 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
     return `/api/v1/recovery-items?${params}`
   }, [route.condition, route.lifecycle, route.projectId, route.severity])
   const page = usePagedApiList<RecoveryItem>(query, { scopeKey: `${actor.id}:${query}` })
+  const recoveryEvidence = useMemo<EvidenceDrawerItem[]>(() => {
+    const sources = selected ? [selected] : page.items
+    return sources.flatMap(source => source.preservedWork.artifacts.map(item => ({
+      ...item,
+      sessionId: source.scope.sessionId ?? undefined,
+      workItem: source.scope.workItemId ? { id: source.scope.workItemId, label: source.scope.workItemTitle ?? 'Work Item', projectId: source.scope.projectId ?? undefined } : undefined,
+      producer: source.executor.agent ? { id: source.executor.agent.id, label: source.executor.agent.displayName, kind: 'agent' as const } : undefined,
+      principalHuman: source.scope.responsibleHuman ? { id: source.scope.responsibleHuman.id, label: source.scope.responsibleHuman.displayName } : undefined,
+      freshness: effectiveRecoveryFreshness(source, connection, trust),
+      validationState: item.status === 'validated' ? 'verified' as const : item.status === 'failed' ? 'failed' as const : item.status === 'superseded' ? 'superseded' as const : item.status === 'produced' ? 'pending' as const : 'unknown' as const,
+      summary: `Preserved by recovery source ${source.condition}; uncommitted runtime work is ${source.preservedWork.uncommitted}.`,
+    })))
+  }, [connection, page.items, selected, trust])
+  const evidenceDrawer = useEvidenceDrawer(recoveryEvidence, 'recovery')
 
   const writeRoute = useCallback((next: RecoveryRoute, replace = false) => {
     const href = recoveryHref(window.location.href, next)
@@ -94,11 +109,7 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
     return () => { current = false }
   }, [copy.error, page.items, route.selectedId])
 
-  const effectiveFreshness = (item: RecoveryItem): FreshnessState => connection === 'offline'
-    ? 'offline'
-    : trust === 'resync_required' ? 'resync_required'
-      : trust === 'refreshing' ? 'refreshing'
-        : item.freshness.state
+  const effectiveFreshness = (item: RecoveryItem): FreshnessState => effectiveRecoveryFreshness(item, connection, trust)
   const freshnessLabel = (state: FreshnessState) => state === 'current' ? copy.current : state === 'refreshing' ? copy.refreshing : state === 'offline' ? copy.offline : state === 'resync_required' ? copy.resync : state === 'partial' ? copy.partial : copy.stale
   const executorLabel = (item: RecoveryItem) => item.executor.state === 'active_executor' ? copy.activeExecutor : item.executor.state === 'terminal_only_assignment' ? copy.terminalOnly : item.executor.state === 'unassigned' ? copy.unassigned : copy.historical
   const openItem = (item: RecoveryItem, trigger: HTMLElement) => { returnFocusRef.current = trigger; setSelected(item); writeRoute({ ...route, selectedId: item.id }) }
@@ -130,7 +141,7 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
       <div className="recovery-detail-badges"><Badge tone={selected.severity === 'critical' ? 'danger' : 'warning'}>{selected.severity}</Badge><Badge tone={selected.lifecycle === 'resolved' ? 'success' : 'warning'}>{selected.lifecycle}</Badge><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel(fresh)} value={freshnessValue(fresh)} /></div>
       {!current && <p className="recovery-trust-warning" role="status">{trust !== 'current' ? copy.pending : copy.unsafe}</p>}
       <section><h4>{copy.executor}</h4><dl className="recovery-facts"><div><dt>{copy.executor}</dt><dd>{executorLabel(selected)} · {selected.executor.agent?.displayName ?? '—'}</dd></div><div><dt>{copy.session}</dt><dd>{selected.authority.sessionState ?? '—'}</dd></div><div><dt>{copy.delegation}</dt><dd>{selected.authority.delegationStatus ?? '—'}</dd></div><div><dt>{copy.connection}</dt><dd>{selected.authority.connectionStatus ?? '—'}</dd></div><div><dt>{copy.lease}</dt><dd>{selected.lease.status}{selected.lease.expiresAt ? ` · ${new Date(selected.lease.expiresAt).toLocaleString(locale)}` : ''}</dd></div></dl></section>
-      <section><h4>{copy.preserved}</h4><dl className="recovery-facts"><div><dt>{copy.artifacts}</dt><dd>{selected.preservedWork.artifacts.length}</dd></div><div><dt>{copy.messages}</dt><dd>{selected.preservedWork.messages}</dd></div><div><dt>{copy.context}</dt><dd>{selected.preservedWork.contextSnapshotId ?? '—'}</dd></div><div><dt>{copy.uncommitted}</dt><dd>{selected.preservedWork.uncommitted} · {selected.preservedWork.uncommittedExplanation}</dd></div></dl>{selected.preservedWork.artifacts.length > 0 && <ul>{selected.preservedWork.artifacts.map(item => <li key={`${item.type}:${item.id}`}>{item.uri ? <a href={item.uri} rel="noreferrer" target="_blank">{item.title ?? item.id}</a> : item.title ?? item.id} · {item.status ?? item.type}</li>)}</ul>}</section>
+      <section><h4>{copy.preserved}</h4><dl className="recovery-facts"><div><dt>{copy.artifacts}</dt><dd>{selected.preservedWork.artifacts.length}</dd></div><div><dt>{copy.messages}</dt><dd>{selected.preservedWork.messages}</dd></div><div><dt>{copy.context}</dt><dd>{selected.preservedWork.contextSnapshotId ?? '—'}</dd></div><div><dt>{copy.uncommitted}</dt><dd>{selected.preservedWork.uncommitted} · {selected.preservedWork.uncommittedExplanation}</dd></div></dl>{selected.preservedWork.artifacts.length > 0 && <ul className="evidence-reference-buttons">{selected.preservedWork.artifacts.map(item => { const evidence = recoveryEvidence.find(candidate => candidate.id === item.id); return <li key={`${item.type}:${item.id}`}><button disabled={!evidence} onClick={event => evidence && evidenceDrawer.open(evidence, event.currentTarget)} type="button"><span>{item.type}</span>{item.title ?? item.id} · {item.status ?? 'unknown'}</button></li> })}</ul>}</section>
       <section><h4>{copy.attempts}</h4><dl className="recovery-facts"><div><dt>{copy.used}</dt><dd>{selected.attempts.used}</dd></div><div><dt>{copy.remaining}</dt><dd>{selected.attempts.remaining ?? copy.unsupported}</dd></div><div><dt>{copy.circuit}</dt><dd>{selected.attempts.circuitBreaker}</dd></div></dl></section>
       <section><h4>{copy.impact}</h4><p>{selected.downstreamImpact}</p></section>
       <section><h4>{copy.recommended}</h4><div className="recovery-actions">{recommended && renderAction(recommended)}</div><h4>{copy.alternatives}</h4><div className="recovery-actions">{selected.actions.filter(item => item.id !== recommended?.id).map(renderAction)}</div></section>
@@ -145,5 +156,10 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
     <form className="recovery-filters" onSubmit={submitFilters}><label>{copy.condition}<select onChange={event => setDraftRoute(value => ({ ...value, condition: event.currentTarget.value ? event.currentTarget.value as RecoveryCondition : undefined }))} value={draftRoute.condition ?? ''}><option value="">{copy.all}</option>{conditions.map(condition => <option key={condition} value={condition}>{condition.replaceAll('_', ' ')}</option>)}</select></label><label>{copy.severity}<select onChange={event => setDraftRoute(value => ({ ...value, severity: event.currentTarget.value === 'medium' || event.currentTarget.value === 'high' || event.currentTarget.value === 'critical' ? event.currentTarget.value : undefined }))} value={draftRoute.severity ?? ''}><option value="">{copy.all}</option><option value="medium">medium</option><option value="high">high</option><option value="critical">critical</option></select></label><Button type="submit" variant="secondary">{copy.apply}</Button></form>
     {trust !== 'current' && <p className="recovery-update-notice" role="status">{copy.pending}</p>}
     <div className={`recovery-layout${route.selectedId ? ' has-detail' : ''}`}><section aria-label={copy.title} className="recovery-list">{page.error ? <WorkSurfaceState actionLabel={copy.retry} description={page.error.message} onAction={() => void refresh()} state="error" title={copy.error} /> : page.loading && page.items.length === 0 ? <WorkSurfaceState description={copy.intro} state="loading" title={copy.loading} /> : page.items.length === 0 ? <WorkSurfaceState description={copy.empty} state="empty" title={copy.title} /> : <>{page.items.map(card)}<LoadMoreButton collection={page} label={copy.title} /></>}</section>{detailError ? <p className="error" role="alert">{detailError}</p> : detail}</div>
+    <EvidenceDrawer item={evidenceDrawer.selected} onClose={evidenceDrawer.close} />
   </section>
+}
+
+function effectiveRecoveryFreshness(item: RecoveryItem, connection: string, trust: ProjectionTrust): FreshnessState {
+  return connection === 'offline' ? 'offline' : trust === 'resync_required' ? 'resync_required' : trust === 'refreshing' ? 'refreshing' : item.freshness.state
 }

@@ -26,6 +26,7 @@ import {
   WorkSurfacePagination,
 } from "@workmesh/ui";
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/csr/ArrowRight";
+import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from "./evidence-drawer";
 import { ApiError, apiMutation, apiRequest, json } from "./lib/api";
 import { useLocale } from "./lib/i18n";
 import {
@@ -302,6 +303,17 @@ export function AttentionCenter({
   const [bulkMessage, setBulkMessage] = useState("");
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const connectionState = useRealtimeConnectionState();
+  const attentionEvidence = useMemo<EvidenceDrawerItem[]>(() =>
+    selected?.evidence.map(reference => ({
+      ...reference,
+      sessionId: selected.sessionId ?? undefined,
+      workItem: selected.workItemId ? { id: selected.workItemId, label: "Related Work Item", projectId } : undefined,
+      principalHuman: selected.responsibleHuman ? { id: selected.responsibleHuman.id, label: selected.responsibleHuman.displayName } : undefined,
+      freshness: connectionState === "offline" ? "offline" : selected.freshness.state,
+      validationState: reference.status === "validated" ? "verified" : reference.status === "failed" ? "failed" : reference.status === "superseded" ? "superseded" : reference.status === "produced" ? "pending" : "unknown",
+      summary: `Evidence explicitly referenced by ${selected.title}.`,
+    })) ?? [], [connectionState, projectId, selected]);
+  const evidenceDrawer = useEvidenceDrawer(attentionEvidence, "attention");
 
   const refresh = useCallback(
     async (next = route) => {
@@ -896,29 +908,10 @@ export function AttentionCenter({
             <section>
               <h3>{copy.evidence}</h3>
               {selected.evidence.length ? (
-                <ul>
+                <ul className="evidence-reference-buttons">
                   {selected.evidence.map((reference) => (
                     <li key={`${reference.type}:${reference.id}`}>
-                      {reference.uri ? (
-                        <a
-                          href={reference.uri}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          {reference.title ?? reference.type}
-                        </a>
-                      ) : (
-                        <a
-                          href={attentionResourceHref(
-                            selected,
-                            reference.type,
-                            reference.id,
-                          )}
-                        >
-                          {reference.title ?? reference.type}
-                        </a>
-                      )}
-                      {reference.status ? ` · ${reference.status}` : ""}
+                      <button onClick={event => { const item = attentionEvidence.find(candidate => candidate.id === reference.id); if (item) evidenceDrawer.open(item, event.currentTarget) }} type="button"><span>{reference.type}</span>{reference.title ?? reference.type}{reference.status ? ` · ${reference.status}` : ""}</button>
                     </li>
                   ))}
                 </ul>
@@ -1088,6 +1081,7 @@ export function AttentionCenter({
           </form>
         )}
       </Dialog>
+      <EvidenceDrawer item={evidenceDrawer.selected} onClose={evidenceDrawer.close} />
     </section>
   );
 }

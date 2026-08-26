@@ -2,8 +2,9 @@
 
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import type { HumanAttentionItem, ListResponse, WorkItemExecutionSummary } from '@workmesh/contracts'
-import { Button, EvidenceReferenceList, FreshnessBadge, RunHealthBadge } from '@workmesh/ui'
+import { Button, FreshnessBadge, RunHealthBadge } from '@workmesh/ui'
 import { AgentRunTimeline } from '../../../app/agent-run-timeline'
+import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from '../../../app/evidence-drawer'
 import { apiRequest } from '../../../app/lib/api'
 import { useRealtimeSubscription } from '../../../app/lib/realtime'
 import type { WorkItemDetailModel } from './contracts'
@@ -76,6 +77,13 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
     : evidence.length === 0 ? 'missing' : 'unknown'
   const freshness = error && summary ? 'partial'
       : summary?.freshness.state ?? 'current'
+  const drawerItems: EvidenceDrawerItem[] = evidence.map(item => ({
+    ...item,
+    workItem: { id: model.id, label: model.title },
+    freshness,
+    validationState: evidenceState === 'verified' ? 'verified' : evidenceState === 'missing' ? 'missing' : 'unknown',
+  }))
+  const evidenceDrawer = useEvidenceDrawer(drawerItems, `work-item:${model.id}`)
 
   return <section aria-busy={refreshing || undefined} className="work-item-execution-workspace" data-testid="work-item-execution-workspace">
     <header className="work-item-execution-header">
@@ -112,10 +120,11 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
 
     <section className="work-item-evidence-summary" aria-labelledby="work-item-evidence-title">
       <h3 id="work-item-evidence-title">{text.evidence}</h3>
-      {evidence.length ? <EvidenceReferenceList evidence={evidence.map(item => ({ id: item.id, href: item.uri ?? `#work-item-evidence-${item.id}`, label: item.title ?? item.id, typeLabel: item.type }))} label={text.evidence} /> : <p className="empty">{text.noEvidence}</p>}
+      {drawerItems.length ? <ul className="evidence-reference-buttons">{drawerItems.map(item => <li key={item.id}><button onClick={event => evidenceDrawer.open(item, event.currentTarget)} type="button"><span>{item.type}</span>{item.title ?? item.id}</button></li>)}</ul> : <p className="empty">{text.noEvidence}</p>}
     </section>
 
     {recentRuns.length ? <section className="work-item-run-history" aria-labelledby="work-item-run-history-title"><h3 id="work-item-run-history-title">{text.history}</h3><ul>{recentRuns.slice(0, 5).map(run => <li key={run.id}><a href={run.sessionId ? `/agent-sessions/${run.sessionId}` : '#'}>{run.title}</a><span>{run.state} · {run.summary}</span></li>)}</ul></section> : null}
     {relationships && <section className="work-item-overview-relationships" aria-labelledby="work-item-overview-relationships-title"><h3 id="work-item-overview-relationships-title">{text.relationships}</h3>{relationships}</section>}
+    <EvidenceDrawer item={evidenceDrawer.selected} onClose={evidenceDrawer.close} />
   </section>
 }

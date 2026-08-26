@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { WorkItemExecutionWorkspace } from './work-item-execution-workspace'
 import type { WorkItemDetailModel } from './contracts'
@@ -46,7 +46,9 @@ describe('WorkItemExecutionWorkspace', () => {
     expect(screen.getByText('Approve release')).toBeVisible()
     expect(screen.getByRole('link', { name: 'Review and respond' })).toHaveAttribute('href', expect.stringContaining('attentionSelected='))
     expect(screen.getByText('Verified')).toBeVisible()
-    expect(screen.getByRole('link', { name: /Focused test report/ })).toHaveAttribute('href', 'https://example.test/evidence')
+    fireEvent.click(screen.getByRole('button', { name: /Focused test report/ }))
+    expect(screen.getByRole('dialog', { name: 'Focused test report' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Open external evidence' })).toHaveAttribute('href', 'https://example.test/evidence')
     expect(screen.getByText('Blocked by GEN-0')).toBeVisible()
     await waitFor(() => expect(apiRequest).toHaveBeenCalledTimes(2))
   })
