@@ -145,6 +145,16 @@ test('Attention Center preserves URL state, uses governed forms, retains partial
   await center.getByRole('textbox', { name: 'Response', exact: true }).fill('Use the current release branch.')
   await center.getByRole('button', { name: 'Submit response' }).click()
   await expect.poll(() => attempts.get('/api/v1/test-attention/3') ?? 0).toBe(1)
+  await expect.poll(() => page.evaluate(() => performance.getEntriesByType('measure')
+    .filter(entry => entry.name.startsWith('workmesh.product.'))
+    .map(entry => entry.name))).toEqual(expect.arrayContaining([
+      'workmesh.product.first_attention_detail',
+      'workmesh.product.attention_response',
+    ]))
+  const attentionMetrics = await page.evaluate(() => performance.getEntriesByType('measure')
+    .filter(entry => entry.name.startsWith('workmesh.product.'))
+    .map(entry => ({ name: entry.name, detail: (entry as PerformanceMeasure).detail })))
+  expect(JSON.stringify(attentionMetrics)).not.toMatch(/attentionSelected|correlation|test-attention|release branch/i)
 
   await center.getByRole('button', { name: 'Clear' }).click()
   const bulkOne = center.getByLabel('Bulk response: approval 1')

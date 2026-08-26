@@ -28,6 +28,7 @@ import {
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from "./evidence-drawer";
 import { ApiError, apiMutation, apiRequest, json } from "./lib/api";
+import { productMetricError, recordProductMetric, startProductMetric } from "./lib/product-telemetry";
 import { useLocale } from "./lib/i18n";
 import {
   useRealtimeConnectionState,
@@ -286,6 +287,8 @@ export function AttentionCenter({
     null,
   );
   const [selected, setSelected] = useState<HumanAttentionItem | null>(null);
+  const attentionOpenedAtRef = useRef(typeof performance === "undefined" ? 0 : performance.now());
+  const firstAttentionOpenedRef = useRef(false);
   const [responseOpen, setResponseOpen] = useState(false);
   const [responseDraft, setResponseDraft] = useState<AttentionResponseDraft>({
     optionId: "",
@@ -374,6 +377,10 @@ export function AttentionCenter({
     writeRoute({ ...draftFilters, cursor: undefined, selectedId: undefined });
   };
   const openItem = (item: HumanAttentionItem, trigger: HTMLElement) => {
+    if (!firstAttentionOpenedRef.current) {
+      firstAttentionOpenedRef.current = true;
+      recordProductMetric("first_attention_detail", (typeof performance === "undefined" ? attentionOpenedAtRef.current : performance.now()) - attentionOpenedAtRef.current, { surface: "attention", actionClass: "open" }, { outcome: "success" });
+    }
     returnFocusRef.current = trigger;
     setSelected(item);
     writeRoute({ ...route, selectedId: item.id }, false);
@@ -425,6 +432,7 @@ export function AttentionCenter({
   const submitResponse = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selected) return;
+    const finishMetric = startProductMetric("attention_response", { surface: "attention", actionClass: "respond" });
     try {
       setBusy(true);
       setError("");
@@ -433,7 +441,9 @@ export function AttentionCenter({
       setResponseOpen(false);
       await refresh({ ...route, selectedId: undefined });
       writeRoute({ ...route, selectedId: undefined }, true);
+      finishMetric({ outcome: "success" });
     } catch (reason) {
+      finishMetric({ outcome: "failure", errorClass: productMetricError(reason) });
       const prefix =
         reason instanceof ApiError && [409, 412].includes(reason.status)
           ? `${reason.message} ${copy.refresh}`

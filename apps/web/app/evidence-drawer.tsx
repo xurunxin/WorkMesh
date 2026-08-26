@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, FreshnessBadge } from '@workmesh/ui'
 import { canonicalObjectHref, evidenceDrawerHref, safeExternalHref, type CanonicalObject } from './lib/canonical-route'
+import { productMetricSurface, recordProductMetric } from './lib/product-telemetry'
 
 export type EvidenceDrawerItem = Readonly<{
   id: string
@@ -41,7 +42,10 @@ export function useEvidenceDrawer(items: readonly EvidenceDrawerItem[], source: 
       const shouldRestoreFocus = Boolean(selectedIdRef.current) && !nextSelectedId
       selectedIdRef.current = nextSelectedId
       setSelectedId(nextSelectedId)
-      if (shouldRestoreFocus) queueMicrotask(() => returnFocus.current?.focus())
+      if (shouldRestoreFocus) queueMicrotask(() => {
+        returnFocus.current?.focus()
+        recordProductMetric('navigation_restore', 0, { surface: productMetricSurface(source), actionClass: 'back' }, { outcome: document.activeElement === returnFocus.current ? 'success' : 'failure' })
+      })
     }
     window.addEventListener('popstate', restore)
     return () => window.removeEventListener('popstate', restore)
@@ -53,12 +57,22 @@ export function useEvidenceDrawer(items: readonly EvidenceDrawerItem[], source: 
     window.history.pushState(window.history.state, '', evidenceDrawerHref(window.location.href, item.id, source, trigger?.id))
     selectedIdRef.current = item.id
     setSelectedId(item.id)
+    recordProductMetric('evidence_navigation', 0, { surface: productMetricSurface(source), actionClass: 'open' }, { outcome: 'success' })
   }, [source])
   const close = useCallback(() => {
-    if (openedHere.current) { openedHere.current = false; window.history.back() }
-    else { window.history.replaceState(window.history.state, '', evidenceDrawerHref(window.location.href)); selectedIdRef.current = ''; setSelectedId('') }
-    queueMicrotask(() => returnFocus.current?.focus())
-  }, [])
+    if (openedHere.current) {
+      openedHere.current = false
+      window.history.back()
+      return
+    }
+    window.history.replaceState(window.history.state, '', evidenceDrawerHref(window.location.href))
+    selectedIdRef.current = ''
+    setSelectedId('')
+    queueMicrotask(() => {
+      returnFocus.current?.focus()
+      recordProductMetric('navigation_restore', 0, { surface: productMetricSurface(source), actionClass: 'back' }, { outcome: document.activeElement === returnFocus.current ? 'success' : 'failure' })
+    })
+  }, [source])
   return { selected, open, close }
 }
 

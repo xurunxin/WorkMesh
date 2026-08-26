@@ -48,7 +48,7 @@ test.describe('v28 Work Item detail', () => {
       await page.setViewportSize(viewport)
       await page.goto('/?view=active')
       await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
-      await page.getByRole('dialog').getByRole('tab', { name: 'Details', exact: true }).click()
+      await page.getByRole('dialog').getByRole('combobox', { name: 'Issue sections' }).selectOption({ label: 'Details' })
       await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible()
       const width = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
       expect(width.scroll).toBeLessThanOrEqual(width.client)

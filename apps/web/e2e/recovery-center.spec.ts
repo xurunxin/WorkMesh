@@ -104,6 +104,14 @@ test('Recovery Center preserves evidence, governed actions, canonical state, and
   await expect(page.getByRole('dialog', { name: 'Commit abc123' })).toHaveCount(0)
   await expect(page).toHaveURL(new RegExp('recoveryItem=v1%3Asession_failed'))
   await expect(evidenceTrigger).toBeFocused()
+  const productMetrics = await page.evaluate(() => performance.getEntriesByType('measure')
+    .filter(entry => entry.name.startsWith('workmesh.product.'))
+    .map(entry => ({ name: entry.name, detail: (entry as PerformanceMeasure).detail })))
+  expect(productMetrics.map(metric => metric.name)).toEqual(expect.arrayContaining([
+    'workmesh.product.evidence_navigation',
+    'workmesh.product.navigation_restore',
+  ]))
+  expect(JSON.stringify(productMetrics)).not.toMatch(/20000000|Commit abc123|recoveryItem|evidenceId/i)
 
   await page.reload()
   await expect(center.getByRole('heading', { name: 'Agent Session failed' })).toBeVisible()

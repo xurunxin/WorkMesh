@@ -4,6 +4,7 @@ test.describe('v29 Human rich content', () => {
   test('edits Markdown, keeps unsafe HTML inert, and preserves keyboard access', async ({ page }) => {
     await page.goto('/?view=active')
     await page.locator('[data-work-item-id] .wm-work-item-title').first().click()
+    await page.getByRole('dialog').getByRole('tab', { name: 'Details', exact: true }).click()
     const description = page.getByRole('textbox', { name: 'Description (Markdown)' })
     await expect(description).toBeVisible()
     await description.fill('## Human context\n<script>alert(1)</script>')
