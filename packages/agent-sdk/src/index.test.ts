@@ -44,13 +44,13 @@ describe('WorkMeshClient', () => {
     const client = new WorkMeshClient({ baseUrl: 'https://workmesh.test', sessionToken: 'session-token', fetch })
     await client.getControlCenter('running', { cursor: 'next', limit: 25 })
     await client.getProjectControlCenter('project/id', 'risks', { limit: 10 })
-    await client.explainAgentSession('session/id')
+    await client.explainAgentSession('session/id', { attention: 'true', timeWindow: '7d' })
     await client.getWorkItemExecutionSummary('work/item')
     await client.previewAgentSessionControl('session/id', 'stop')
     expect(fetch.mock.calls.map(call => call[0])).toEqual([
       'https://workmesh.test/api/v1/control-center?collection=running&cursor=next&limit=25',
       'https://workmesh.test/api/v1/projects/project%2Fid/control-center?collection=risks&limit=10',
-      'https://workmesh.test/api/v1/agent-sessions/session%2Fid/explanation',
+      'https://workmesh.test/api/v1/agent-sessions/session%2Fid/explanation?attention=true&timeWindow=7d',
       'https://workmesh.test/api/v1/work-items/work%2Fitem/execution-summary',
       'https://workmesh.test/api/v1/agent-sessions/session%2Fid/control-preview',
     ])

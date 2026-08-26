@@ -173,6 +173,7 @@ describe('Human Attention projection acceptance', () => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
     })
     expect(approval.statusCode, JSON.stringify(approval.json())).toBe(200)
+    const approvalId = approval.json<{ id: string }>().id
 
     const agentActorId = (await db.query<{ actor_id: string }>(
       'SELECT actor_id FROM agent_definitions WHERE id=$1',
@@ -247,11 +248,11 @@ describe('Human Attention projection acceptance', () => {
         WHERE id=$1`,
       [session.id, planVersion.id, planStepId],
     )
-    await db.query(
+    const runningEvidence = (await db.query<{ id: string }>(
       `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri)
-       VALUES($1,$2,$3,$4,'test','Control Center running evidence','https://example.test/running-evidence')`,
+       VALUES($1,$2,$3,$4,'test_report','Control Center running evidence','https://example.test/running-evidence') RETURNING id`,
       [actor.workspace_id, session.id, work.id, agentActorId],
-    )
+    )).rows[0]!
 
     const completedWithoutEvidence = (await db.query<{ id: string }>(
       `INSERT INTO agent_sessions(
@@ -336,6 +337,33 @@ describe('Human Attention projection acceptance', () => {
     const readyFirstIds = new Set(readyFirst.collections.ready_work.items.map(item => item.id))
     expect(readySecond.collections.ready_work.items.some(item => readyFirstIds.has(item.id))).toBe(false)
 
+    const rejectedSensitiveActivity = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Sensitive invocation must never persist', artifactIds: [], references: [], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { authorization: 'Bearer secret-value-12345' }, status: 'started' },
+    })
+    expect(rejectedSensitiveActivity.statusCode).toBe(400)
+    expect(rejectedSensitiveActivity.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'VALIDATION_ERROR' } })
+    expect((await db.query<{ count: number }>("SELECT count(*)::int AS count FROM agent_activities WHERE session_id=$1 AND summary='Sensitive invocation must never persist'", [session.id])).rows[0]!.count).toBe(0)
+
+    const decisionActivity = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'decision_request', summary: 'Human approval is required before recovery', artifactIds: [],
+      references: [{ type: 'approval', id: approvalId }, { type: 'plan_step', id: planStepId }], visibility: 'team', ephemeral: false,
+    })
+    expect(decisionActivity.statusCode, JSON.stringify(decisionActivity.json())).toBe(200)
+
+    const failedValidation = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Focused validation failed', artifactIds: [],
+      references: [{ type: 'plan_step', id: planStepId }], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { suite: 'run-explanation' }, status: 'failed', resultSummary: 'One focused assertion failed.' },
+    })
+    expect(failedValidation.statusCode, JSON.stringify(failedValidation.json())).toBe(200)
+    const recoveredValidation = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Focused validation passed', artifactIds: [runningEvidence.id],
+      references: [{ type: 'plan_step', id: planStepId }, { type: 'artifact', id: runningEvidence.id }], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { suite: 'run-explanation' }, status: 'succeeded', resultSummary: 'All focused assertions passed.' },
+    })
+    expect(recoveredValidation.statusCode, JSON.stringify(recoveredValidation.json())).toBe(200)
+
     const explanationResponse = await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)
     expect(explanationResponse.statusCode, JSON.stringify(explanationResponse.json())).toBe(200)
     expect(explanationResponse.headers.etag).toMatch(/^"run-explanation-v1-/)
@@ -343,8 +371,34 @@ describe('Human Attention projection acceptance', () => {
     expect(explanation.session.id).toBe(session.id)
     expect(explanation.causalGroups).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'action_completed', count: 3, sourceActivityIds: expect.any(Array) }),
+      expect.objectContaining({ phase: 'validation', failure: true, count: 1, validation: expect.objectContaining({ state: 'failed' }) }),
+      expect.objectContaining({ phase: 'validation', failure: false, count: 1, planStepId, evidence: expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id })]) }),
     ]))
+    expect(explanation.planVersions).toEqual(expect.arrayContaining([expect.objectContaining({ id: planVersion.id, steps: expect.arrayContaining([expect.objectContaining({ id: planStepId, causalGroupIds: expect.any(Array) })]) })]))
+    expect(explanation.evidenceDetails).toEqual(expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id, validationState: 'verified' })]))
+    expect(explanation.verification.state).toBe('failed')
     expect(explanation.pendingAttention.length).toBeGreaterThanOrEqual(3)
+
+    const attentionExplanation = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?attention=true&timeWindow=24h`)).json())
+    expect(attentionExplanation.causalGroups.length).toBeGreaterThan(0)
+    expect(attentionExplanation.causalGroups.every(group => group.attention)).toBe(true)
+    expect(attentionExplanation.causalGroups).toEqual(expect.arrayContaining([expect.objectContaining({ actionType: 'decision', planStepId })]))
+    expect(attentionExplanation.verification.state).toBe('failed')
+
+    const currentMaxSequence = (await db.query<{ sequence: number }>('SELECT max(sequence)::int AS sequence FROM agent_activities WHERE session_id=$1', [session.id])).rows[0]!.sequence
+    await db.query(
+      `INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,artifact_ids,references_json,visibility,ephemeral)
+       SELECT $1,$2,$3+ordinal,'action_completed','Pagination fixture '||ordinal,'{}'::uuid[],'[]'::jsonb,'team',false
+         FROM generate_series(1,45) ordinal`,
+      [session.id, agentActorId, currentMaxSequence],
+    )
+    const explanationFirstPage = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?limit=20`)).json())
+    expect(explanationFirstPage.causalGroups).toHaveLength(20)
+    expect(explanationFirstPage.nextCursor).not.toBeNull()
+    const explanationSecondPage = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?limit=20&cursor=${explanationFirstPage.nextCursor}`)).json())
+    expect(explanationSecondPage.causalGroups).toHaveLength(20)
+    const firstPageSources = new Set(explanationFirstPage.causalGroups.flatMap(group => group.sourceActivityIds))
+    expect(explanationSecondPage.causalGroups.some(group => group.sourceActivityIds.some(id => firstPageSources.has(id)))).toBe(false)
 
     const executionResponse = await humanCall(human, 'GET', `/api/v1/work-items/${work.id}/execution-summary`)
     expect(executionResponse.statusCode, JSON.stringify(executionResponse.json())).toBe(200)

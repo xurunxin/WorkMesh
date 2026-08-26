@@ -122,6 +122,9 @@ describe('pagination OpenAPI contract', () => {
     const eventParameters = openapi.paths['/api/v1/events']?.get?.parameters ?? []
     expect(eventParameters).not.toContainEqual({ $ref: '#/components/parameters/Cursor' })
     expect(eventParameters).not.toContainEqual({ $ref: '#/components/parameters/Limit' })
+    const runParameters = openapi.paths['/api/v1/agent-sessions/{sessionId}/explanation']?.get?.parameters ?? []
+    expect(runParameters).toContainEqual({ $ref: '#/components/parameters/RunSequenceCursor' })
+    expect(runParameters).not.toContainEqual({ $ref: '#/components/parameters/Cursor' })
     expect(
       openapi.components.schemas.Error
         ?.properties?.error?.properties?.code?.enum,

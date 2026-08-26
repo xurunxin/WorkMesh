@@ -1655,7 +1655,7 @@ paths:
       { x-workmesh-policy-id: route.getProjectControlCenter, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getProjectControlCenter, parameters: [{ name: projectId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit100" }, { name: collection, in: query, schema: { $ref: "#/components/schemas/ControlCenterCollection" } }, { name: responsibleHumanActorId, in: query, schema: { type: string, format: uuid } }, { name: agentActorId, in: query, schema: { type: string, format: uuid } }, { name: risk, in: query, schema: { type: string, enum: [at_risk] } }, { name: workItemState, in: query, schema: { type: string, enum: [backlog, planned, started, completed, canceled] } }, { name: timeWindow, in: query, schema: { type: string, enum: [24h, 7d, 30d] } }], responses: { "200": { $ref: "#/components/responses/ControlCenter" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/agent-sessions/{sessionId}/explanation:
     get:
-      { x-workmesh-policy-id: route.explainAgentSession, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: explainAgentSession, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/RunExplanation" }, "404": { $ref: "#/components/responses/NotFound" } } }
+      { x-workmesh-policy-id: route.explainAgentSession, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: explainAgentSession, parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/RunSequenceCursor" }, { $ref: "#/components/parameters/Limit100" }, { name: phase, in: query, schema: { type: string, enum: [intake, investigation, planning, implementation, validation, human_input, recovery, completion] } }, { name: planStepId, in: query, schema: { type: string, format: uuid } }, { name: actorId, in: query, schema: { type: string, format: uuid } }, { name: actionType, in: query, schema: { type: string, enum: [acknowledgement, read, write, tool, state_transition, plan, message, approval, decision, evidence, validation, handoff, heartbeat, other] } }, { name: risk, in: query, schema: { type: string, enum: [low, medium, high, critical] } }, { name: evidence, in: query, schema: { type: string, enum: [present, missing] } }, { name: failure, in: query, schema: { type: string, enum: ["true"] } }, { name: attention, in: query, schema: { type: string, enum: ["true"] } }, { name: timeWindow, in: query, schema: { type: string, enum: [24h, 7d, 30d] } }], responses: { "200": { $ref: "#/components/responses/RunExplanation" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/work-items/{workItemId}/execution-summary:
     get:
       { x-workmesh-policy-id: route.getWorkItemExecutionSummary, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getWorkItemExecutionSummary, parameters: [{ name: workItemId, in: path, required: true, schema: { type: string, format: uuid } }], responses: { "200": { $ref: "#/components/responses/WorkItemExecutionSummary" }, "404": { $ref: "#/components/responses/NotFound" } } }
@@ -2090,6 +2090,13 @@ components:
         name: cursor,
         in: query,
         description: Canonical decimal PostgreSQL domain-event cursor; distinct from opaque collection and A2A cursors,
+        schema: { $ref: "#/components/schemas/DurableEventCursor" },
+      }
+    RunSequenceCursor:
+      {
+        name: cursor,
+        in: query,
+        description: Canonical decimal Agent Activity sequence for one Session; distinct from opaque collection and domain-event cursors,
         schema: { $ref: "#/components/schemas/DurableEventCursor" },
       }
     LastEventId:
@@ -3552,23 +3559,62 @@ components:
     ControlCapability:
       { type: object, additionalProperties: false, required: [action, allowed, reasonCode, targetState], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" }, allowed: { type: boolean }, reasonCode: { type: string }, targetState: { anyOf: [{ $ref: "#/components/schemas/AgentSessionState" }, { type: "null" }] } } }
     CausalEventGroup:
-      { type: object, additionalProperties: false, required: [id, kind, summary, count, firstSequence, lastSequence, sourceActivityIds], properties: { id: { type: string }, kind: { type: string }, summary: { type: string }, count: { type: integer, minimum: 1 }, firstSequence: { type: integer, minimum: 0 }, lastSequence: { type: integer, minimum: 0 }, sourceActivityIds: { type: array, maxItems: 200, items: { type: string, format: uuid } } } }
+      type: object
+      additionalProperties: false
+      required: [id, kind, phase, actionType, summary, trigger, actor, planVersionId, planStepId, risk, count, firstSequence, lastSequence, sourceActivityIds, affectedResources, evidence, validation, startedAt, endedAt, durationMs, collapsed, material, failure, attention, technicalRecords]
+      properties:
+        id: { type: string }
+        kind: { type: string }
+        phase: { type: string, enum: [intake, investigation, planning, implementation, validation, human_input, recovery, completion] }
+        actionType: { type: string, enum: [acknowledgement, read, write, tool, state_transition, plan, message, approval, decision, evidence, validation, handoff, heartbeat, other] }
+        summary: { type: string }
+        trigger: { type: object, additionalProperties: false, required: [kind, summary, sourceActivityId], properties: { kind: { type: string }, summary: { type: string }, sourceActivityId: { type: string, format: uuid } } }
+        actor: { $ref: "#/components/schemas/HumanAttentionActorReference" }
+        planVersionId: { type: [string, "null"], format: uuid }
+        planStepId: { type: [string, "null"], format: uuid }
+        risk: { type: [string, "null"], enum: [low, medium, high, critical, null] }
+        count: { type: integer, minimum: 1 }
+        firstSequence: { type: integer, minimum: 0 }
+        lastSequence: { type: integer, minimum: 0 }
+        sourceActivityIds: { type: array, maxItems: 200, items: { type: string, format: uuid } }
+        affectedResources: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
+        evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }
+        validation: { type: object, additionalProperties: false, required: [state, summary], properties: { state: { type: string, enum: [not_verified, pending, verified, failed] }, summary: { type: [string, "null"] } } }
+        startedAt: { type: string, format: date-time }
+        endedAt: { type: string, format: date-time }
+        durationMs: { type: integer, minimum: 0 }
+        collapsed: { type: boolean }
+        material: { type: boolean }
+        failure: { type: boolean }
+        attention: { type: boolean }
+        technicalRecords: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/RunTechnicalRecord" } }
+    RunTechnicalRecord:
+      { type: object, additionalProperties: false, required: [id, sequence, kind, summary, detailsSummary, actor, createdAt, correlationId, eventCursor, toolInvocation, references], properties: { id: { type: string, format: uuid }, sequence: { type: integer, minimum: 1 }, kind: { type: string }, summary: { type: string }, detailsSummary: { type: [string, "null"] }, actor: { $ref: "#/components/schemas/HumanAttentionActorReference" }, createdAt: { type: string, format: date-time }, correlationId: { type: [string, "null"] }, eventCursor: { type: [string, "null"], pattern: "^[0-9]{1,19}$" }, toolInvocation: { type: [object, "null"], additionalProperties: true }, references: { type: array, maxItems: 100, items: { type: object, additionalProperties: false, required: [type, id], properties: { type: { type: string, enum: [work_item, plan_step, artifact, approval] }, id: { type: string, format: uuid } } } } } }
+    RunPlanVersion:
+      { type: object, additionalProperties: false, required: [id, revision, parentVersionId, changeSummary, author, createdAt, steps], properties: { id: { type: string, format: uuid }, revision: { type: integer, minimum: 1 }, parentVersionId: { type: [string, "null"], format: uuid }, changeSummary: { type: string }, author: { $ref: "#/components/schemas/HumanAttentionActorReference" }, createdAt: { type: string, format: date-time }, steps: { type: array, maxItems: 500, items: { type: object, additionalProperties: false, required: [id, title, description, status, ordinal, dependsOn, acceptanceCriteria, expectedArtifacts, causalGroupIds, evidenceIds], properties: { id: { type: string, format: uuid }, title: { type: string }, description: { type: [string, "null"] }, status: { $ref: "#/components/schemas/PlanStepStatus" }, ordinal: { type: integer, minimum: 0 }, dependsOn: { type: array, maxItems: 100, items: { type: string, format: uuid } }, acceptanceCriteria: { type: array, maxItems: 100, items: { type: string } }, expectedArtifacts: { type: array, maxItems: 50, items: { type: string } }, causalGroupIds: { type: array, maxItems: 200, items: { type: string } }, evidenceIds: { type: array, maxItems: 200, items: { type: string, format: uuid } } } } } } }
+    RunEvidenceDetail:
+      { type: object, additionalProperties: false, required: [type, id, checksum, sourceTool, createdAt, planStepId, causalGroupIds, validationState, repository], properties: { type: { type: string }, id: { type: string }, title: { type: string }, uri: { type: string, format: uri }, status: { type: string }, checksum: { type: [string, "null"] }, sourceTool: { type: [string, "null"] }, createdAt: { type: string, format: date-time }, planStepId: { type: [string, "null"], format: uuid }, causalGroupIds: { type: array, maxItems: 200, items: { type: string } }, validationState: { type: string, enum: [not_verified, pending, verified, failed] }, repository: { type: [object, "null"], additionalProperties: false, required: [repository, branch, commit, pullRequest], properties: { repository: { type: [string, "null"] }, branch: { type: [string, "null"] }, commit: { type: [string, "null"] }, pullRequest: { type: [string, "null"], format: uri } } } } }
     RunExplanation:
       type: object
       additionalProperties: false
-      required: [projectionVersion, session, workItem, responsibleHuman, activeAgent, plan, currentStep, causalGroups, pendingAttention, changes, evidence, health, freshness, allowedControls]
+      required: [projectionVersion, session, project, workItem, responsibleHuman, activeAgent, plan, currentStep, planVersions, causalGroups, nextCursor, pendingAttention, changes, evidence, evidenceDetails, verification, health, freshness, allowedControls]
       properties:
         projectionVersion: { const: 1 }
-        session: { type: object, additionalProperties: false, required: [id, state, revision, stateReason, updatedAt], properties: { id: { type: string, format: uuid }, state: { $ref: "#/components/schemas/AgentSessionState" }, revision: { type: integer, minimum: 1 }, stateReason: { type: [string, "null"] }, updatedAt: { type: string, format: date-time } } }
+        session: { type: object, additionalProperties: false, required: [id, state, revision, stateReason, budget, updatedAt], properties: { id: { type: string, format: uuid }, state: { $ref: "#/components/schemas/AgentSessionState" }, revision: { type: integer, minimum: 1 }, stateReason: { type: [string, "null"] }, budget: { type: object, additionalProperties: { type: number } }, updatedAt: { type: string, format: date-time } } }
+        project: { type: [object, "null"], additionalProperties: false, required: [id, name, revision], properties: { id: { type: string, format: uuid }, name: { type: string }, revision: { type: integer, minimum: 1 } } }
         workItem: { type: [object, "null"], additionalProperties: false, required: [id, title, revision], properties: { id: { type: string, format: uuid }, title: { type: string }, revision: { type: integer, minimum: 1 } } }
         responsibleHuman: { anyOf: [{ $ref: "#/components/schemas/HumanAttentionActorReference" }, { type: "null" }] }
         activeAgent: { $ref: "#/components/schemas/HumanAttentionActorReference" }
         plan: { type: [object, "null"], additionalProperties: true }
         currentStep: { type: [object, "null"], additionalProperties: true }
+        planVersions: { type: array, maxItems: 50, items: { $ref: "#/components/schemas/RunPlanVersion" } }
         causalGroups: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/CausalEventGroup" } }
+        nextCursor: { type: [string, "null"], pattern: "^[0-9]{1,19}$" }
         pendingAttention: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/HumanAttentionItem" } }
         changes: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
         evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }
+        evidenceDetails: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/RunEvidenceDetail" } }
+        verification: { type: object, additionalProperties: false, required: [state, summary], properties: { state: { type: string, enum: [not_verified, pending, verified, failed] }, summary: { type: string } } }
         health: { type: object, additionalProperties: false, required: [heartbeat, lastHeartbeatAt, leaseCount, pendingApprovalCount], properties: { heartbeat: { type: string, enum: [healthy, degraded, stale] }, lastHeartbeatAt: { type: [string, "null"], format: date-time }, leaseCount: { type: integer, minimum: 0 }, pendingApprovalCount: { type: integer, minimum: 0 } } }
         freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }
         allowedControls: { type: array, minItems: 7, maxItems: 7, items: { $ref: "#/components/schemas/ControlCapability" } }

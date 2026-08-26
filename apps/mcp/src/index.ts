@@ -111,7 +111,20 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
     description: 'Read a bounded Project control-plane projection authorized for the configured identity.',
     inputSchema: { projectId: z.string().uuid(), collection: z.enum(['attention','running','risks','recently_verified','ready_work','blocked_work']).optional(), cursor: z.string().max(8192).optional(), limit: z.number().int().min(1).max(100).optional() },
   }, async input => tool(() => options.client.getProjectControlCenter(input.projectId, input.collection, { cursor: input.cursor, limit: input.limit })))
-  server.registerTool('explain_agent_session', { description: 'Read the bounded causal explanation for one authorized Agent Session.', inputSchema: { sessionId } }, async input => tool(() => options.client.explainAgentSession(input.sessionId)))
+  server.registerTool('explain_agent_session', {
+    description: 'Read the server-authored causal explanation for one authorized Agent Session. Filters preserve exact provenance and nextCursor loads older groups.',
+    inputSchema: {
+      sessionId, cursor: z.string().regex(/^[1-9][0-9]{0,18}$/).optional(), limit: z.number().int().min(1).max(100).optional(),
+      phase: z.enum(['intake','investigation','planning','implementation','validation','human_input','recovery','completion']).optional(),
+      planStepId: z.string().uuid().optional(), actorId: z.string().uuid().optional(),
+      actionType: z.enum(['acknowledgement','read','write','tool','state_transition','plan','message','approval','decision','evidence','validation','handoff','heartbeat','other']).optional(),
+      risk: z.enum(['low','medium','high','critical']).optional(), evidence: z.enum(['present','missing']).optional(), failure: z.literal('true').optional(),
+      attention: z.literal('true').optional(), timeWindow: z.enum(['24h','7d','30d']).optional(),
+    },
+  }, async input => {
+    const { sessionId: id, cursor, limit, ...filters } = input
+    return tool(() => options.client.explainAgentSession(id, filters, { cursor, limit }))
+  })
   server.registerTool('get_work_item_execution_summary', { description: 'Read bounded current and recent execution facts for one authorized Work Item.', inputSchema: { workItemId: z.string().uuid() } }, async input => tool(() => options.client.getWorkItemExecutionSummary(input.workItemId)))
   server.registerTool('preview_agent_session_control', { description: 'Preview current-revision Session control consequences without reserving authority or mutating state.', inputSchema: { sessionId, action: z.enum(['pause','resume','stop','retry','handoff','replan','steer']) } }, async input => tool(() => options.client.previewAgentSessionControl(input.sessionId, input.action)))
 

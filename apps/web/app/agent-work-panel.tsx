@@ -8,6 +8,7 @@ import { LoadMoreButton, type PagedCollection, usePagedApiList } from './lib/pag
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { agentWorkRefreshTargets } from './lib/realtime-refresh'
 import { useLocale } from './lib/i18n'
+import { AgentRunTimeline } from './agent-run-timeline'
 
 type DelegationControllerInput = { workItemId: string | null; workItemTeamId: string | null; workItemRevision: number; humanActorId: string; workItemTitle?: string; scopeKey?: string | null }
 export type LatestAgentSession = { agent: Agent; session: AgentSession }
@@ -337,6 +338,7 @@ export function AgentWorkPanel({ workspaceId, workItemId, workItemTeamId, workIt
       <Button disabled={displayedBusy || !humanActorId || !controller.canChoose} type="submit" variant="primary">{text.forceAssign}</Button>
     </form>
     {showSessionsLoading ? <p className="empty" data-testid="sessions-loading" role="status">{text.loadingSessions}</p> : showSessionsEmpty ? <p className="empty">{text.noSessions}</p> : visibleSessions.length > 0 && <div className="session-mini-list">{visibleSessions.map(session => <article key={session.id}><div><AgentBadge state={session.state} /><strong>{agentName(agents.find(agent => agent.id === session.agent_id) ?? { id: '', workspace_id: '', actor_id: '', slug: 'Agent', description: null, supported_protocols: [], skills: [], requested_capabilities: [], approved_capabilities: [], max_concurrency: 1, is_active: true, revision: 1 })}</strong></div><p>{session.state_reason || text.blockingReasonMissing}</p><small>{text.heartbeat(formatTime(session.last_heartbeat_at))}</small><AgentExecutionProjection session={session} /><div className="session-actions">{session.state === 'paused' && <Button disabled={displayedBusy} onClick={() => void signal(session, 'resume')} type="button" variant="secondary">{text.resume}</Button>}{canPauseAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void signal(session, 'pause')} type="button" variant="secondary">{text.pause}</Button>}{canRetryAgentSession(session.state) && <Button disabled={displayedBusy} onClick={() => void retry(session)} type="button" variant="secondary">{text.retry}</Button>}<Button disabled={displayedBusy || !canStopAgentSession(session.state)} onClick={() => void signal(session, 'stop')} type="button" variant="danger">{text.stop}</Button><a href={`/agent-sessions/${session.id}`}>{text.details}</a></div></article>)}</div>}
+    {visibleSessions[0] && <details className="embedded-run-timeline"><summary>{text.details} · {visibleSessions[0].id.slice(0, 8)}</summary><AgentRunTimeline compact sessionId={visibleSessions[0].id} /></details>}
     <LoadMoreButton collection={agentsPage} label={text.availableAgentsLabel} />
     <LoadMoreButton collection={sessionsPage} label={text.workItemSessionsLabel} />
   </section>
