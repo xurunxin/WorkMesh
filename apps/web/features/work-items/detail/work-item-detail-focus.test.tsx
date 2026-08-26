@@ -12,7 +12,7 @@ import type { DraftIdentity } from '../../rich-content/editor'
 // test's DOM isolated. We also reset localStorage so a draft left over from
 // a previous case cannot auto-restore and dirty the form on mount.
 afterEach(() => { cleanup() })
-beforeEach(() => { window.localStorage.clear() })
+beforeEach(() => { window.localStorage.clear(); window.history.replaceState({}, '', '/') })
 
 const item: WorkItemDetailDto = {
   id: 'w1',
@@ -87,6 +87,7 @@ describe('WorkItemDetail focus on revision conflict', () => {
         supplemental={null}
       />,
     )
+    fireEvent.click(screen.getByRole('tab', { name: /^Details$/ }))
     const titleInput = screen.getByLabelText(/title/i) as HTMLInputElement
     fireEvent.change(titleInput, { target: { value: 'Changed title' } })
 
@@ -107,6 +108,7 @@ describe('WorkItemDetail focus on revision conflict', () => {
       />,
     )
 
+    fireEvent.click(screen.getByRole('tab', { name: /^Details$/ }))
     const saveButton = screen.getByRole('button', { name: /save changes/i }) as HTMLButtonElement
     // The implementation calls `saveRef.current?.focus()` inside a useEffect
     // keyed on `hasConflict`; under jsdom the call lands synchronously inside
@@ -133,6 +135,7 @@ describe('WorkItemDetail focus on revision conflict', () => {
       />,
     )
 
+    fireEvent.click(screen.getByRole('tab', { name: /^Details$/ }))
     const saveButton = screen.getByRole('button', { name: /save changes/i }) as HTMLButtonElement
     // The full-page shell still receives focus on mount (existing behaviour),
     // so we only need to assert that focus is NOT sitting on the Save button.
@@ -257,6 +260,8 @@ describe('WorkItemDetail tab continuity', () => {
 
     fireEvent.click(screen.getByRole('tab', { name: /^Agent executions$/ }))
     expect(screen.getByRole('tab', { name: /^Agent executions$/ })).toHaveAttribute('aria-selected', 'true')
+    expect(window.location.search).toContain('workItemSection=agent')
+    expect(window.location.search).toContain('workItemSectionItem=w1')
 
     rerender(
       <WorkItemDetail
@@ -275,6 +280,7 @@ describe('WorkItemDetail tab continuity', () => {
 
     expect(screen.getByRole('tab', { name: /^Agent executions$/ })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('heading', { name: /^Agent executions$/ })).toBeVisible()
+    fireEvent.click(screen.getByRole('tab', { name: /^Details$/ }))
     expect(screen.getByDisplayValue('Updated detail')).toBeVisible()
   })
 
@@ -309,7 +315,7 @@ describe('WorkItemDetail tab continuity', () => {
         supplemental={null}
       />,
     )
-    expect(screen.getByRole('tab', { name: /^Responsibility$/ })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: /^Overview$/ })).toHaveAttribute('aria-selected', 'true')
 
     fireEvent.click(screen.getByRole('tab', { name: /^Agent executions$/ }))
     rerender(
@@ -326,6 +332,20 @@ describe('WorkItemDetail tab continuity', () => {
         supplemental={null}
       />,
     )
-    expect(screen.getByRole('tab', { name: /^Responsibility$/ })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: /^Overview$/ })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('restores a URL-owned section after remount without coupling it to an internal reset counter', () => {
+    const props = {
+      draftIdentity, mode: 'full_page' as const, model: toWorkItemDetailModel(item), onClose: noop, onOpenFull: noop,
+      onReloadLatest: noop, onSave: resolveSave, options, resetKey: 0, supplemental: null,
+    }
+    const first = render(<WorkItemDetail {...props} />)
+    fireEvent.click(screen.getByRole('tab', { name: /^Discussion$/ }))
+    first.unmount()
+
+    render(<WorkItemDetail {...props} />)
+    expect(screen.getByRole('tab', { name: /^Discussion$/ })).toHaveAttribute('aria-selected', 'true')
+    expect(window.location.search).not.toContain('workItemSectionReset')
   })
 })

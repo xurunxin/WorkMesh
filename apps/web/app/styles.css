@@ -1002,6 +1002,33 @@ main#workmesh-main:focus-visible {
 .work-item-detail-agent-action { display: grid; justify-items: end; gap: .2rem; min-width: 0; max-width: 23rem; }
 .work-item-detail-agent-action small { max-width: 100%; color: var(--wm-muted); font-size: var(--wm-text-xs); line-height: 1.35; overflow-wrap: anywhere; text-align: right; }
 .work-item-detail-layout { display: grid; gap: 1rem; min-width: 0; }
+.work-item-detail-layout > .wm-tabs { min-width: 0; }
+.work-item-execution-workspace { display: grid; gap: 1rem; min-width: 0; }
+.work-item-execution-workspace > section, .work-item-execution-header { min-width: 0; padding: 1rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
+.work-item-execution-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.work-item-execution-header h3, .work-item-execution-header p, .work-item-execution-workspace section > h3, .work-item-execution-workspace section > header h3 { margin: 0; }
+.work-item-execution-header > div > p:last-child { margin-top: .35rem; color: var(--wm-muted); }
+.work-item-execution-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; margin: 0; }
+.work-item-execution-facts div, .work-item-current-execution article dl div { min-width: 0; padding: .65rem; background: var(--wm-surface-subtle); border-radius: var(--wm-radius-md); }
+.work-item-execution-facts dt, .work-item-current-execution article dt { color: var(--wm-muted); font-size: var(--wm-text-xs); }
+.work-item-execution-facts dd, .work-item-current-execution article dd { margin: .2rem 0 0; overflow-wrap: anywhere; font-weight: 600; }
+.work-item-needs-you, .work-item-current-execution, .work-item-run-history { display: grid; gap: .75rem; }
+.work-item-needs-you > header, .work-item-current-execution > header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.work-item-needs-you article { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem; border-left: 3px solid var(--wm-warning); background: var(--wm-surface-subtle); border-radius: var(--wm-radius-md); }
+.work-item-needs-you article p, .work-item-needs-you article small { display: block; margin: .2rem 0 0; color: var(--wm-muted); overflow-wrap: anywhere; }
+.work-item-current-execution > article { display: grid; gap: .75rem; }
+.work-item-current-run-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+.work-item-current-run-heading > div { display: grid; gap: .2rem; min-width: 0; }
+.work-item-current-run-heading span { color: var(--wm-muted); overflow-wrap: anywhere; }
+.work-item-current-execution article dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; margin: 0; }
+.work-item-current-run-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.work-item-run-timeline { min-width: 0; border-top: 1px solid var(--wm-border); padding-top: .75rem; }
+.work-item-run-timeline > summary { cursor: pointer; font-weight: 650; }
+.work-item-run-timeline .agent-run-timeline { margin-top: .75rem; }
+.work-item-run-history ul { display: grid; gap: .5rem; padding: 0; margin: 0; list-style: none; }
+.work-item-run-history li { display: grid; gap: .15rem; padding: .65rem; background: var(--wm-surface-subtle); border-radius: var(--wm-radius-md); }
+.work-item-run-history li span { color: var(--wm-muted); overflow-wrap: anywhere; }
+.work-item-overview-relationships .relationship-panel { margin-top: .75rem; }
 .work-item-detail-form { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(250px, .8fr); gap: 1rem; align-items: start; }
 .work-item-detail-content, .work-item-properties, .responsibility-projection, .agent-execution-projection { border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); padding: 1rem; min-width: 0; }
 .work-item-detail-content, .work-item-properties { display: grid; gap: .8rem; }
@@ -1076,6 +1103,8 @@ main#workmesh-main:focus-visible {
 @media (max-width: 760px) {
   .work-item-full-page { padding: .75rem; }
   .work-item-detail-form { grid-template-columns: 1fr; }
+  .work-item-execution-facts, .work-item-current-execution article dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .work-item-needs-you article { align-items: stretch; flex-direction: column; }
   .work-item-detail-actions { grid-column: 1; }
   .agent-execution-projection article { grid-template-columns: 1fr; }
   .agent-execution-projection article strong { grid-column: 1; }
@@ -1090,6 +1119,8 @@ main#workmesh-main:focus-visible {
   .work-item-detail-agent-action { justify-items: stretch; width: 100%; max-width: none; }
   .work-item-detail-agent-action small { text-align: left; }
   .work-item-detail-agent-action .wm-button { width: 100%; }
+  .work-item-execution-header, .work-item-current-run-heading { align-items: stretch; flex-direction: column; }
+  .work-item-execution-facts, .work-item-current-execution article dl { grid-template-columns: 1fr; }
 }
 
 /* v27 Work Surface primitives: the board owns horizontal scrolling; the document never does. */

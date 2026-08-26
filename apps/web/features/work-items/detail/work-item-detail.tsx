@@ -7,6 +7,7 @@ import { useMediaQuery } from '../../../app/lib/use-media-query'
 import type { StructuredDetailError, WorkItemDetailDraft, WorkItemDetailModel, WorkItemDetailOptions } from './contracts'
 import { detailDraft, sameDetailDraft } from './view-model'
 import { clearDraft, RichTextEditor, type DraftIdentity, type RichTextEditorCopy } from '../../rich-content/editor'
+import { WorkItemExecutionWorkspace } from './work-item-execution-workspace'
 
 export type WorkItemDetailCopy = {
   agentExecutions: string
@@ -21,6 +22,8 @@ export type WorkItemDetailCopy = {
   viewAgentOptions: string
   description: string
   detailTabsAriaLabel: string
+  detailTabOverview: string
+  detailTabDetails: string
   detailTabDiscussion: string
   detailTabResponsibility: string
   detailTabAgentExecutions: string
@@ -79,6 +82,8 @@ const defaultCopy: WorkItemDetailCopy = {
   viewAgentOptions: 'Choose an Agent',
   description: 'Description (Markdown)',
   detailTabsAriaLabel: 'Issue sections',
+  detailTabOverview: 'Overview',
+  detailTabDetails: 'Details',
   detailTabDiscussion: 'Discussion',
   detailTabResponsibility: 'Responsibility',
   detailTabAgentExecutions: 'Agent executions',
@@ -135,6 +140,8 @@ type Props = {
   error?: StructuredDetailError | null
   conflict?: StructuredDetailError | null
   supplemental: ReactNode
+  relationships?: ReactNode
+  locale?: 'en' | 'zh-CN'
   agentPanel?: ReactNode
   agentAction?: { label: string; onClick: () => void; disabled?: boolean; reason?: string; hint?: string }
   resetKey: number
@@ -173,11 +180,12 @@ function DetailUnavailableContent({ mode, requestedKey, error, onClose, onRetry,
     : <section className="work-item-full-page" aria-labelledby={fullPageHeadingId}>{body}</section>
 }
 
-function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, agentPanel, agentAction, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props) {
+function WorkItemDetailContent({ mode, model, options, error, conflict, supplemental, relationships, locale, agentPanel, agentAction, restoreSectionOnMount, draftIdentity, onClose, onOpenFull, onReloadLatest, onSave, copy }: Props & { restoreSectionOnMount: boolean }) {
   const text = resolveCopy(copy)
   const fullPageHeadingId = useId()
   const agentActionReasonId = useId()
   const fullPageRef = useRef<HTMLElement | null>(null)
+  const shouldRestoreSection = useRef(restoreSectionOnMount)
   // The Save button receives keyboard focus as soon as a revision conflict
   // surfaces so the Human can re-issue the save without hunting for the
   // primary action (especially inside the sheet viewport, where the conflict
@@ -191,7 +199,7 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
   const initial = useMemo(() => detailDraft(model), [model.id, model.revision])
   const [draft, setDraft] = useState(initial)
   const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<string>('responsibility')
+  const [activeTab, setActiveTab] = useState<string>('overview')
   // The editor renders its own "Saved Xs ago" indicator inside the toolbar, but
   // the parent keeps a copy of the timestamp so future detail-page surfaces
   // (e.g. a global "draft saved" toast) can show the same fact without having
@@ -211,7 +219,20 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
   useEffect(() => { if (mode === 'full_page') fullPageRef.current?.focus() }, [mode])
-  useEffect(() => { if (hasConflict) saveRef.current?.focus() }, [hasConflict])
+  useEffect(() => { if (hasConflict) setActiveTab('details') }, [hasConflict])
+  useEffect(() => { if (hasConflict && activeTab === 'details') saveRef.current?.focus() }, [activeTab, hasConflict])
+  useEffect(() => {
+    const restoreSection = () => {
+      const params = new URLSearchParams(window.location.search)
+      const section = params.get('workItemSection')
+      const ownsSection = params.get('workItemSectionItem') === model.id
+      setActiveTab(ownsSection && section && ['overview', 'details', 'agent', 'discussion'].includes(section) ? section : 'overview')
+    }
+    if (shouldRestoreSection.current) restoreSection()
+    else setActiveTab('overview')
+    window.addEventListener('popstate', restoreSection)
+    return () => window.removeEventListener('popstate', restoreSection)
+  }, [model.id])
   const confirmDiscard = (action: () => void) => { if (!dirty || window.confirm(text.discardChanges)) action() }
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setSaving(true)
@@ -221,23 +242,36 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     } finally { setSaving(false) }
   }
   const set = <Key extends keyof WorkItemDetailDraft>(key: Key, value: WorkItemDetailDraft[Key]) => setDraft(current => ({ ...current, [key]: value }))
+  const selectTab = (next: string, writeHistory = true) => {
+    setActiveTab(next)
+    if (!writeHistory) return
+    const url = new URL(window.location.href)
+    if (next === 'overview') {
+      url.searchParams.delete('workItemSection')
+      url.searchParams.delete('workItemSectionItem')
+    } else {
+      url.searchParams.set('workItemSection', next)
+      url.searchParams.set('workItemSectionItem', model.id)
+    }
+    window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`)
+  }
   const agentActionHint = agentAction?.hint ?? agentAction?.reason
   const body = <div className="work-item-detail" data-mode={mode} data-testid="work-item-detail">
-    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div className="work-item-detail-toolbar-actions">{agentAction && <div className="work-item-detail-agent-action"><Button aria-describedby={agentActionHint ? agentActionReasonId : undefined} disabled={agentAction.disabled} onClick={() => { setActiveTab('agent'); agentAction.onClick() }} title={agentActionHint} type="button" variant="primary">{agentAction.label}</Button>{agentActionHint && <small id={agentActionReasonId}>{agentActionHint}</small>}</div>}{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
+    <header className="work-item-detail-toolbar"><div><span className="eyebrow">{mode === 'full_page' ? text.fullWorkItem : text.quickView}</span>{mode === 'full_page' && <h1 className="wm-visually-hidden" id={fullPageHeadingId}>{model.title}</h1>}<strong>{model.key}</strong><small>{text.revision(model.revision)}</small></div><div className="work-item-detail-toolbar-actions">{agentAction && <div className="work-item-detail-agent-action"><Button aria-describedby={agentActionHint ? agentActionReasonId : undefined} disabled={agentAction.disabled} onClick={() => { selectTab('agent'); agentAction.onClick() }} title={agentActionHint} type="button" variant="primary">{agentAction.label}</Button>{agentActionHint && <small id={agentActionReasonId}>{agentActionHint}</small>}</div>}{mode === 'sheet' && <Button icon={<ArrowSquareOut aria-hidden size={16} />} onClick={() => confirmDiscard(onOpenFull)} type="button" variant="secondary">{text.openFullPage}</Button>}{mode === 'full_page' && <Button icon={<X aria-hidden size={16} />} onClick={() => confirmDiscard(onClose)} type="button" variant="ghost">{text.close}</Button>}</div></header>
     {error?.httpStatus === 403 ? <ForbiddenState description={errorDescription(error, text)} title={text.accessDenied} /> : error && <ErrorState actionLabel={text.reloadLatest} description={errorDescription(error, text)} onAction={() => confirmDiscard(onReloadLatest)} title={error.httpStatus === 404 ? text.notFound : error.code === 'NETWORK_UNAVAILABLE' ? text.offline : text.couldNotLoad} />}
     {conflict && <ConflictState actionLabel={text.reloadLatest} description={`${errorDescription(conflict, text)} ${text.conflictIntentPreserved}`} onAction={onReloadLatest} title={text.serverConflictTitle} />}
     <div className="work-item-detail-layout">
-      <form className="work-item-detail-form" data-dirty={dirty} onSubmit={event => void submit(event)}>
-        <section className="work-item-detail-content" aria-labelledby="work-item-content-heading"><h3 id="work-item-content-heading">{text.workItem}</h3><label>{text.title}<input name="title" required value={draft.title} onChange={event => set('title', event.currentTarget.value)} /></label><RichTextEditor copy={text.editorCopy} identity={{...draftIdentity,field:'description',baseRevision:model.revision}} label={text.description} mode="description" name="description" onChange={value=>set('description',value)} onSavedAt={setLastDraftSavedAt} value={draft.description} /></section>
-        <aside className="work-item-properties" aria-labelledby="work-item-properties-heading"><h3 id="work-item-properties-heading">{text.properties}</h3><label>{text.workflowStatus}<select name="statusId" value={draft.statusId} onChange={event => set('statusId', event.currentTarget.value)}>{options.statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.workflowHelp}</small></label><label>{text.priority}<select name="priority" value={draft.priority} onChange={event => set('priority', event.currentTarget.value as WorkItemDetailDraft['priority'])}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label><label>{text.dueDate}<input name="dueDate" type="date" value={draft.dueDate} onChange={event => set('dueDate', event.currentTarget.value)} /></label><label>{text.responsibleHuman}<select name="responsibleHumanActorId" value={draft.responsibleHumanActorId} onChange={event => set('responsibleHumanActorId', event.currentTarget.value)}><option value="">{text.unassigned}</option>{options.humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.responsibleHumanHelp}</small></label><label>{text.project}<select name="projectId" value={draft.projectId} onChange={event => set('projectId', event.currentTarget.value)}><option value="">{text.noProject}</option>{options.projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.milestone}<select name="milestoneId" value={draft.milestoneId} onChange={event => set('milestoneId', event.currentTarget.value)}><option value="">{text.noMilestone}</option>{options.milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.parentWorkItem}<select name="parentId" value={draft.parentId} onChange={event => set('parentId', event.currentTarget.value)}><option value="">{text.noParent}</option>{options.parents.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.labels}<input name="labels" value={draft.labels} onChange={event => set('labels', event.currentTarget.value)} /></label></aside>
-        <div className="work-item-detail-actions"><Button disabled={saving || !dirty} icon={<FloppyDisk aria-hidden size={16} />} ref={saveRef} type="submit" variant="primary">{saving ? text.saving : text.saveChanges}</Button><Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => confirmDiscard(onReloadLatest)} type="button" variant="secondary">{text.reloadLatest}</Button><span aria-live="polite">{dirty ? text.unsavedChanges : text.allChangesSaved}</span></div>
-      </form>
       <Tabs
         ariaLabel={text.detailTabsAriaLabel}
         compact={isCompact}
-        onValueChange={setActiveTab}
+        onValueChange={selectTab}
         tabs={[
-          { id: 'responsibility', label: text.detailTabResponsibility, panel: <section className="responsibility-projection" aria-labelledby="responsibility-heading"><h3 id="responsibility-heading">{text.humanResponsibility}</h3><strong data-testid="responsible-human">{model.responsibleHuman?.displayName ?? text.unassigned}</strong><p>{text.ownsOutcome}</p></section> },
+          { id: 'overview', label: text.detailTabOverview, panel: <WorkItemExecutionWorkspace locale={locale} model={model} onOpenAgent={() => selectTab('agent')} relationships={relationships} /> },
+          { id: 'details', label: text.detailTabDetails, panel: <form className="work-item-detail-form" data-dirty={dirty} onSubmit={event => void submit(event)}>
+        <section className="work-item-detail-content" aria-labelledby="work-item-content-heading"><h3 id="work-item-content-heading">{text.workItem}</h3><label>{text.title}<input name="title" required value={draft.title} onChange={event => set('title', event.currentTarget.value)} /></label><RichTextEditor copy={text.editorCopy} identity={{...draftIdentity,field:'description',baseRevision:model.revision}} label={text.description} mode="description" name="description" onChange={value=>set('description',value)} onSavedAt={setLastDraftSavedAt} value={draft.description} /></section>
+        <aside className="work-item-properties" aria-labelledby="work-item-properties-heading"><h3 id="work-item-properties-heading">{text.properties}</h3><label>{text.workflowStatus}<select name="statusId" value={draft.statusId} onChange={event => set('statusId', event.currentTarget.value)}>{options.statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.workflowHelp}</small></label><label>{text.priority}<select name="priority" value={draft.priority} onChange={event => set('priority', event.currentTarget.value as WorkItemDetailDraft['priority'])}>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label><label>{text.dueDate}<input name="dueDate" type="date" value={draft.dueDate} onChange={event => set('dueDate', event.currentTarget.value)} /></label><label>{text.responsibleHuman}<select name="responsibleHumanActorId" value={draft.responsibleHumanActorId} onChange={event => set('responsibleHumanActorId', event.currentTarget.value)}><option value="">{text.unassigned}</option>{options.humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select><small>{text.responsibleHumanHelp}</small></label><label>{text.project}<select name="projectId" value={draft.projectId} onChange={event => set('projectId', event.currentTarget.value)}><option value="">{text.noProject}</option>{options.projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.milestone}<select name="milestoneId" value={draft.milestoneId} onChange={event => set('milestoneId', event.currentTarget.value)}><option value="">{text.noMilestone}</option>{options.milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.parentWorkItem}<select name="parentId" value={draft.parentId} onChange={event => set('parentId', event.currentTarget.value)}><option value="">{text.noParent}</option>{options.parents.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label><label>{text.labels}<input name="labels" value={draft.labels} onChange={event => set('labels', event.currentTarget.value)} /></label></aside>
+        <div className="work-item-detail-actions"><Button disabled={saving || !dirty} icon={<FloppyDisk aria-hidden size={16} />} ref={saveRef} type="submit" variant="primary">{saving ? text.saving : text.saveChanges}</Button><Button icon={<ArrowClockwise aria-hidden size={16} />} onClick={() => confirmDiscard(onReloadLatest)} type="button" variant="secondary">{text.reloadLatest}</Button><span aria-live="polite">{dirty ? text.unsavedChanges : text.allChangesSaved}</span></div>
+      </form> },
           { id: 'agent', label: text.detailTabAgentExecutions, panel: <section className="agent-execution-projection" aria-labelledby="agent-executions-heading"><h3 id="agent-executions-heading">{text.agentExecutions}</h3>{model.agentExecutions.length ? model.agentExecutions.map(execution => <article key={execution.delegation.leaseId}><strong>{execution.agent.displayName}</strong><span>{text.executionState}: {execution.executionState}</span><span>{text.session(execution.sessionId.slice(0, 8))}</span><span>{text.heartbeat}: {execution.heartbeat.health}</span><span>{text.delegation}: {execution.delegation.kind}</span></article>) : <p>{text.noActiveAgent}</p>}{agentPanel}</section> },
           { id: 'discussion', label: text.detailTabDiscussion, panel: <div className="work-item-detail-supplemental">{supplemental}</div> },
         ]}
@@ -252,5 +286,10 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
 // Keep the content mounted so transient UI state (notably the Agent executions
 // tab opened by a one-click delegation) survives the refresh. A changed Issue,
 // mode, or explicit resetKey still remounts the content and resets that state.
-export function WorkItemDetail(props: Props) { return <WorkItemDetailContent key={`${props.model.id}:${props.mode}:${props.resetKey}`} {...props} /> }
+export function WorkItemDetail(props: Props) {
+  const previousResetKey = useRef(props.resetKey)
+  const restoreSectionOnMount = previousResetKey.current === props.resetKey
+  useEffect(() => { previousResetKey.current = props.resetKey }, [props.resetKey])
+  return <WorkItemDetailContent key={`${props.model.id}:${props.mode}:${props.resetKey}`} {...props} restoreSectionOnMount={restoreSectionOnMount} />
+}
 export function WorkItemDetailUnavailable(props: UnavailableProps) { return <DetailUnavailableContent key={`${props.requestedKey}:${props.mode}:${props.error.code}`} {...props} /> }

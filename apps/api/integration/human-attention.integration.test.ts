@@ -404,7 +404,16 @@ describe('Human Attention projection acceptance', () => {
     expect(executionResponse.statusCode, JSON.stringify(executionResponse.json())).toBe(200)
     const execution = workItemExecutionSummaryResponseSchema.parse(executionResponse.json())
     expect(execution.activeRuns).toEqual(expect.arrayContaining([
-      expect.objectContaining({ sessionId: session.id }),
+      expect.objectContaining({
+        sessionId: session.id,
+        responsibleHuman: expect.objectContaining({ id: actor.id, kind: 'human' }),
+        activeAgent: expect.objectContaining({ id: agentActorId, kind: 'agent' }),
+        currentStep: expect.objectContaining({ id: planStepId }),
+        health: expect.objectContaining({ heartbeat: 'healthy' }),
+        lastActivity: expect.objectContaining({ kind: 'action_completed' }),
+        pendingHumanActionCount: expect.any(Number),
+        evidenceCount: expect.any(Number),
+      }),
     ]))
 
     const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop', stopMode: 'immediate' })

@@ -637,6 +637,7 @@ function HomePageScope({
       conflict={detailConflict}
       error={detailErrorState}
       mode={fullItemView ? 'full_page' : 'sheet'}
+      locale={locale}
       model={toWorkItemDetailModel(selectedItem)}
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
@@ -647,6 +648,7 @@ function HomePageScope({
       onOpenFull={() => void openItem(selectedItem.id, true)}
       onReloadLatest={() => { setDetailConflict(null); setDetailErrorState(null); setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }}
       onSave={saveItem}
+      relationships={<WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />}
       options={{
         statuses: states.map(state => ({ id: state.id, label: state.name })),
         humans: humans.map(human => ({ id: human.id, label: human.display_name })),
@@ -655,7 +657,6 @@ function HomePageScope({
         parents: items.filter(candidate => candidate.id !== selectedItem.id).map(candidate => ({ id: candidate.id, label: `${candidate.team_key}-${candidate.number} · ${candidate.title}` })),
       }}
       supplemental={<>
-        <WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />
         <WorkRoom workItemId={selectedItem.id} draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }} legacyComments={comments} legacyHumans={humans} onLegacyComment={createComment} onLegacyUpdate={updateComment} onLegacyRefresh={commentsPage.refresh} />
         <LoadMoreButton collection={commentsPage} label="comments" />
       </>}

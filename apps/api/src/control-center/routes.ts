@@ -736,16 +736,16 @@ async function readExecutionSummary(h: Helpers, request: FastifyRequest, reply: 
   if (!item) throw new DomainError('NOT_FOUND', 'Work Item execution summary not found')
   const runValues: unknown[] = [workItemId, current.workspaceId]
   const runAuth = sourceScopePredicate(current, {
-    workspace: 'work.workspace_id', team: 'work.team_id', project: 'work.project_id', session: 'session.id', workItem: 'work.id',
+    workspace: 'item.workspace_id', team: 'item.team_id', project: 'item.project_id', session: 'session.id', workItem: 'item.id',
   }, runValues)
   const runs = (await boundedQuery<DigestRow>(h.db, `
     SELECT session.id,'run'::text AS kind,agent.display_name AS title,
            COALESCE(NULLIF(session.result_summary,''),NULLIF(session.state_reason,''),concat('Agent Session is ',session.state::text)) AS summary,
-           COALESCE(session.project_id,work.project_id) AS project_id,session.work_item_id,session.id AS session_id,
-           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at
+           COALESCE(session.project_id,item.project_id) AS project_id,session.work_item_id,session.id AS session_id,
+           session.state::text AS state,session.revision,'agent_session'::text AS source_type,session.updated_at,
+           session.team_id,session.workspace_id${sessionDigestColumns}
       FROM agent_sessions session
-      JOIN actors agent ON agent.id=session.agent_actor_id
-      JOIN work_items work ON work.id=session.work_item_id AND work.workspace_id=session.workspace_id
+      ${sessionDigestJoins}
      WHERE session.work_item_id=$1 AND session.workspace_id=$2 AND ${runAuth}
      ORDER BY session.updated_at DESC,session.id DESC LIMIT 100`, runValues)).rows
   const artifactValues: unknown[] = [workItemId, current.workspaceId]
