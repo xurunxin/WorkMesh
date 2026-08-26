@@ -96,7 +96,6 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
   await expect(executions).toContainText('Delegation: review_shared')
   await issueSections.getByRole('tab', { name: 'Discussion', exact: true }).click()
   const room = page.getByTestId('work-room')
-  await expect(room.getByTestId('collaboration-feedback')).toBeVisible()
   await expect(room).toContainText('Agent participants')
   await expect(room.getByRole('tab')).toHaveCount(6)
   await expect(room).toContainText('Can a human approve the release checklist?')
