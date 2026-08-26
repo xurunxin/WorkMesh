@@ -128,6 +128,7 @@ function Probe() {
     evidenceTitleZh: ctx.evidenceCopy.title,
     workRoomTitleZh: ctx.workRoomCopy.title,
     healthOnTrackZh: ctx.projectDeliveryHealthLabel('on_track'),
+    humanControlPlaneZh: [ctx.humanControlPlaneCopy.needsYou, ctx.humanControlPlaneCopy.running, ctx.humanControlPlaneCopy.atRisk],
   }))
 }
 
@@ -233,6 +234,7 @@ describe('web i18n entry', () => {
       'detailCopy',
       'evidenceCopy',
       'guidanceCopy',
+      'humanControlPlaneCopy',
       'inboxCopy',
       'installCopy',
       'issueCopy',

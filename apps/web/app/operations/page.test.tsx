@@ -46,25 +46,28 @@ describe('OperationsPage navigation', () => {
     expect(source).toContain('<noscript><p>{operationsCopy.noScript}</p></noscript>')
   })
 
-  it('keeps the visible workspace destinations without falsely marking Agents active', () => {
+  it('marks the first-class Operations destination active without falsely marking Agents active', () => {
     render(<LocaleProvider><OperationsPage /></LocaleProvider>)
 
     expect(screen.getByTestId('operations-content')).toBeInTheDocument()
     expect(document.querySelector('.center')).toBeNull()
     expect(screen.getByTestId('view-agents')).not.toHaveClass('is-active')
-    expect(document.querySelectorAll('.app-navigation-link.is-active')).toHaveLength(0)
+    expect(screen.getByTestId('view-operations')).toHaveClass('is-active')
+    expect([...document.querySelectorAll<HTMLAnchorElement>('.app-navigation-link.is-active')].map(link => link.getAttribute('href'))).toEqual(['/operations', '/operations'])
     expect([
       'view-inbox',
-      'view-my-work',
       'view-projects',
-      'view-guidance',
       'view-agents',
+      'view-operations',
+      'view-my-work',
+      'view-guidance',
     ].map(testId => screen.getByTestId(testId).getAttribute('href'))).toEqual([
       '/?view=inbox',
-      '/?view=my-work',
       '/?view=projects',
-      '/?view=guidance',
       '/agents',
+      '/operations',
+      '/?view=my-work',
+      '/?view=guidance',
     ])
   })
 

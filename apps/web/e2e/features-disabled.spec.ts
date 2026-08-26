@@ -14,7 +14,7 @@ const featureKeys = [
   'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME',
 ]
 
-test('hides default-off Operations without requesting gated endpoints', async ({ page }) => {
+test('keeps Operations discoverable while default-off without requesting gated endpoints', async ({ page }) => {
   const gatedRequests: string[] = []
   await page.route(`${apiUrl}/api/v1/**`, async route => {
     const path = new URL(route.request().url()).pathname
@@ -37,7 +37,7 @@ test('hides default-off Operations without requesting gated endpoints', async ({
   })
 
   await page.goto('/')
-  await expect(page.getByTestId('view-operations')).toHaveCount(0)
+  await expect(page.getByTestId('view-operations')).toBeVisible()
   await page.goto('/operations')
   await expect(page.getByTestId('operations-disabled')).toBeVisible()
   expect(gatedRequests).toEqual([])
