@@ -44,6 +44,7 @@ async function agentApi<T>(page: Page, bearerToken: string, path: string, method
 }
 
 test('renders auditable multi-agent Work Room cards and confirms force release', async ({ page }) => {
+  await page.context().addCookies([{ name: 'workmesh_locale', value: 'en', url: 'http://127.0.0.1:3100' }])
   const actor = { id: 'human-1', displayName: 'Alex' }
   const executor = { agent_id: 'agent-definition-coordinator', agent_actor_id: 'agent-coordinator', agent_slug: 'coordinator', agent_display_name: 'Coordinator', session_id: 'session-parent', lease_id: 'lease-executor', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: 'work-1', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_expires_at: '2026-07-23T01:30:00.000Z' }
   const reviewer = { agent_id: 'agent-definition-reviewer', agent_actor_id: 'agent-reviewer', agent_slug: 'reviewer', agent_display_name: 'Reviewer', session_id: 'session-child', lease_id: 'lease-reviewer', lease_kind: 'review_shared', resource_type: 'plan_step', resource_id: 'step-review', execution_state: 'awaiting_input', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_expires_at: '2026-07-23T01:31:00.000Z' }
@@ -116,8 +117,10 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
 
   await room.getByRole('tab', { name: 'Sessions' }).click()
   await expect(room.getByTestId('lease-lease-1')).toContainText('Lease conflict')
-  page.once('dialog', dialog => dialog.accept())
   await room.getByRole('button', { name: 'Force release' }).click()
+  const forceRelease = page.getByRole('dialog', { name: 'Force-release Lease' })
+  await forceRelease.getByLabel('Reason').fill('The conflicted review lease blocks final validation.')
+  await forceRelease.getByRole('button', { name: 'Confirm action' }).click()
   await expect.poll(() => forceReleaseCalled).toBe(true)
 })
 
@@ -225,9 +228,11 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   await expect(workRoom).toContainText('Agent proposal')
   await workRoom.getByRole('tab', { name: 'Sessions' }).click()
   await expect(workRoom.getByTestId(`lease-${lease.body.id}`)).toBeVisible()
-  page.once('dialog', dialog => dialog.accept())
   const releaseResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === `/api/v1/leases/${lease.body.id}/force-release`)
   await workRoom.getByRole('button', { name: 'Force release' }).click()
+  const forceRelease = page.getByRole('dialog', { name: 'Force-release Lease' })
+  await forceRelease.getByLabel('Reason').fill('The active lease blocks the acceptance transition.')
+  await forceRelease.getByRole('button', { name: 'Confirm action' }).click()
   expect((await releaseResponse).status()).toBeLessThan(300)
   const rootTree = workRoom.getByTestId(`session-tree-${created.body.session.id}`)
   const stopResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === `/api/v1/agent-sessions/${created.body.session.id}/signals`)
