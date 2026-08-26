@@ -119,7 +119,7 @@ test.describe('Stage 1 agent browser acceptance', () => {
     await expect(detail).toContainText('failed')
     await expect(detail.getByRole('button', { name: 'Pause' })).toHaveCount(0)
     const retryRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === `/api/v1/agent-sessions/${sourceId}/retry`)
-    await detail.getByRole('button', { name: 'Retry' }).click()
+    await detail.getByRole('button', { name: 'Retry' }).first().click()
     const request = await retryRequest
     expect(request.headers()['if-match']).toBe('"revision-4"')
     expect(request.postDataJSON()).toEqual({ reason: 'Human requested a retry from WorkMesh.', reuseContext: true })
