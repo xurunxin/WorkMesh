@@ -73,6 +73,7 @@ type TranslationKey =
   | 'operations'
   | 'planningAndOperations'
   | 'projects'
+  | 'recovery'
   | 'priority'
   | 'projectName'
   | 'projectOverview'
@@ -139,6 +140,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     operations: '运营',
     planningAndOperations: '规划与运营',
     projects: '项目',
+    recovery: '恢复中心',
     priority: '优先级',
     projectName: '项目名称',
     projectOverview: '项目概览',
@@ -204,6 +206,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     operations: 'Operations',
     planningAndOperations: 'Planning & Operations',
     projects: 'Projects',
+    recovery: 'Recovery',
     priority: 'Priority',
     projectName: 'Project name',
     projectOverview: 'Project overview',

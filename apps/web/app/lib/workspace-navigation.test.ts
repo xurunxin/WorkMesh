@@ -8,6 +8,7 @@ const labels = {
   issues: 'Issues',
   operations: '运营',
   projects: '项目',
+  recovery: '恢复中心',
   settings: '设置',
 } as const
 
@@ -16,7 +17,7 @@ describe('shared workspace navigation', () => {
 
   it('publishes task-oriented destinations first and keeps Stable workflows reachable', () => {
     const navigation = workspaceNavigation({ active: 'agents', t })
-    expect(navigation.map(item => item.label)).toEqual(['收件箱', '项目', '智能体', '运营', 'Issues', '指南'])
+    expect(navigation.map(item => item.label)).toEqual(['收件箱', '恢复中心', '项目', '智能体', '运营', 'Issues', '指南'])
     expect(navigation.filter(item => item.active).map(item => item.href)).toEqual(['/agents'])
     expect(navigation.map(item => item.href)).toEqual(expect.arrayContaining(['/?view=my-work', '/?view=guidance', '/operations']))
   })

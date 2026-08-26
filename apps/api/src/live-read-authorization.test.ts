@@ -924,21 +924,22 @@ describe('live paged-read authorization', () => {
     expect(repositoryList).toContain('applicableAgentRepositoryContexts')
   })
 
-  it('audits all 24 Agent-readable routes derived from the 27-route pagination inventory', async () => {
-    const [server, agents, collaboration, inbox, delivery, operations, inventory] = await Promise.all([
+  it('audits all 25 Agent-readable routes derived from the 28-route pagination inventory', async () => {
+    const [server, agents, collaboration, inbox, delivery, operations, recovery, inventory] = await Promise.all([
       readFile(new URL('./server.ts', import.meta.url), 'utf8'),
       readFile(new URL('./agent/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./collaboration/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./inbox/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./delivery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./operations/routes.ts', import.meta.url), 'utf8'),
+      readFile(new URL('./recovery/routes.ts', import.meta.url), 'utf8'),
       readFile(new URL('./pagination-inventory.test.ts', import.meta.url), 'utf8'),
     ])
     const pagedRoutes = [...inventory.matchAll(/^\s+'(\/api\/v1\/[^']+)',\s*$/gm)]
       .map(match => match[1]!)
-    expect(pagedRoutes).toHaveLength(27)
+    expect(pagedRoutes).toHaveLength(28)
     const canonicalPagedRoutes = new Set(pagedRoutes.map(canonicalRoutePath))
-    expect(canonicalPagedRoutes.size).toBe(27)
+    expect(canonicalPagedRoutes.size).toBe(28)
     const agentRoutes = createRoutePolicyManifest()
       .filter(policy =>
         policy.method === 'GET'
@@ -947,9 +948,15 @@ describe('live paged-read authorization', () => {
       )
       .map(policy => canonicalRoutePath(policy.path))
       .sort()
-    expect(agentRoutes).toHaveLength(24)
+    expect(agentRoutes).toHaveLength(25)
 
     const evidence = new Map<string, FinalSqlAudit>([
+      ['/api/v1/recovery-items', {
+        fileName: 'recovery/routes.ts',
+        source: recovery,
+        authorization: { calls: ['recoveryAuthorizationPredicate'] },
+        query: 'paginator',
+      }],
       ['/api/v1/teams', {
         fileName: 'server.ts',
         source: server,
@@ -1096,7 +1103,7 @@ describe('live paged-read authorization', () => {
       }],
     ])
 
-    expect(evidence.size).toBe(24)
+    expect(evidence.size).toBe(25)
     const canonicalEvidence = new Map(
       [...evidence.entries()].map(([sourcePath, audit]) => [
         canonicalRoutePath(sourcePath),

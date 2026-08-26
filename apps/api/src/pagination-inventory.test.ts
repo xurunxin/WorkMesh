@@ -14,6 +14,7 @@ describe('pagination surface inventory', () => {
       read('apps/api/src/inbox/routes.ts'),
       read('apps/api/src/delivery/routes.ts'),
       read('apps/api/src/operations/routes.ts'),
+      read('apps/api/src/recovery/routes.ts'),
     ].join('\n')
     for (const route of [
       '/api/v1/teams',
@@ -43,6 +44,7 @@ describe('pagination surface inventory', () => {
       '/api/v1/automation-runs',
       '/api/v1/loops',
       '/api/v1/templates',
+      '/api/v1/recovery-items',
     ]) expect(source).toContain(route)
     expect(source).not.toMatch(/\bOFFSET\b/i)
     expect(source).not.toContain("Buffer.from(q.cursor, 'base64url')")

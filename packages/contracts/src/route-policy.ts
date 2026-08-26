@@ -309,6 +309,8 @@ const selfAuthorizedProjectionOperations = new Set([
   'explainAgentSession',
   'getWorkItemExecutionSummary',
   'previewAgentSessionControl',
+  'listRecoveryItems',
+  'getRecoveryItem',
 ])
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {

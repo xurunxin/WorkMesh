@@ -561,6 +561,7 @@ export const humanAttentionStatusSchema = z.enum(['open', 'seen', 'decided', 'ap
 export const humanAttentionSeveritySchema = z.enum(['info', 'low', 'medium', 'high', 'critical'])
 export const humanAttentionUrgencySchema = z.enum(['normal', 'soon', 'immediate'])
 export const freshnessStateSchema = z.enum(['current', 'refreshing', 'stale', 'offline', 'resync_required', 'partial'])
+export type FreshnessState = z.infer<typeof freshnessStateSchema>
 export const attentionActorReferenceSchema = z.object({ id: idSchema, kind: actorKindSchema, displayName: z.string().min(1) }).strict()
 export const attentionResourceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: idSchema, label: z.string().min(1).max(500).optional() }).strict()
 export const attentionEvidenceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: z.string().min(1).max(2_000), title: z.string().min(1).max(500).optional(), uri: z.string().url().optional(), status: z.string().min(1).max(100).optional() }).strict()
@@ -635,6 +636,131 @@ export const humanAttentionListResponseSchema = z.object({ items: z.array(humanA
 export type HumanAttentionKind = z.infer<typeof humanAttentionKindSchema>
 export type HumanAttentionStatus = z.infer<typeof humanAttentionStatusSchema>
 export type HumanAttentionItem = z.infer<typeof humanAttentionItemSchema>
+export const recoveryProjectionVersionSchema = z.literal(1)
+export const recoveryConditionSchema = z.enum([
+  'missing_first_heartbeat',
+  'heartbeat_timeout',
+  'session_stale',
+  'session_failed',
+  'session_canceled',
+  'session_blocked',
+  'assignment_without_active_executor',
+  'lease_lost',
+  'approval_expired',
+  'validation_attempts_exhausted',
+  'completion_evidence_missing',
+  'budget_exhausted',
+])
+export const recoveryLifecycleSchema = z.enum(['active', 'resolved'])
+export const recoveryExecutorStateSchema = z.enum([
+  'active_executor',
+  'historical_assignment',
+  'terminal_only_assignment',
+  'unassigned',
+])
+export const recoveryUncommittedWorkSchema = z.enum(['known_preserved', 'none', 'unknown', 'runtime_dependent'])
+export const recoveryCircuitBreakerSchema = z.enum(['closed', 'open', 'unsupported'])
+export const recoveryActionKindSchema = z.enum([
+  'refresh', 'resync', 'reconnect', 'retry', 'handoff', 'pause', 'stop',
+  'release_lease', 'reacquire_lease', 'renew_approval', 'open_run',
+  'open_work_item', 'open_agent', 'open_operations',
+])
+export const recoveryActionSchema = z.object({
+  id: z.string().min(1).max(100),
+  kind: recoveryActionKindSchema,
+  label: z.string().min(1).max(200),
+  method: z.enum(['GET', 'POST']),
+  path: z.string().startsWith('/').max(2_000),
+  consequencePreviewPath: z.string().startsWith('/api/v1/').max(2_000).nullable(),
+  dangerous: z.boolean(),
+  requiresCurrent: z.boolean(),
+  requiredCapabilities: z.array(capabilitySchema).max(50),
+  requiresApproval: z.boolean(),
+  requiresReason: z.boolean(),
+  tradeoff: z.string().min(1).max(2_000),
+}).strict()
+export const recoveryItemSchema = z.object({
+  projectionVersion: recoveryProjectionVersionSchema,
+  id: z.string().regex(/^v1:[a-z_]+:[0-9a-f-]{36}$/),
+  condition: recoveryConditionSchema,
+  lifecycle: recoveryLifecycleSchema,
+  severity: humanAttentionSeveritySchema,
+  title: z.string().min(1).max(500),
+  summary: z.string().min(1).max(20_000),
+  happenedAt: timestampSchema,
+  scope: z.object({
+    workspaceId: idSchema,
+    teamId: idSchema.nullable(),
+    projectId: idSchema.nullable(),
+    projectName: z.string().min(1).max(500).nullable(),
+    workItemId: idSchema.nullable(),
+    workItemTitle: z.string().min(1).max(500).nullable(),
+    sessionId: idSchema.nullable(),
+    planStepId: idSchema.nullable(),
+    responsibleHuman: attentionActorReferenceSchema.nullable(),
+  }).strict(),
+  source: z.object({
+    type: z.string().min(1).max(100),
+    id: idSchema,
+    status: z.string().min(1).max(100),
+    revision: revisionSchema,
+    eventCursor: durableEventCursorSchema.nullable(),
+    updatedAt: timestampSchema,
+  }).strict(),
+  freshness: humanAttentionFreshnessSchema,
+  executor: z.object({
+    state: recoveryExecutorStateSchema,
+    active: z.boolean(),
+    agent: attentionActorReferenceSchema.nullable(),
+    delegationId: idSchema.nullable(),
+    delegationStatus: delegationStatusSchema.nullable(),
+    sessionState: agentSessionStateSchema.nullable(),
+    connectionStatus: z.enum(['pending', 'active', 'rotating', 'revoked']).nullable(),
+  }).strict(),
+  lease: z.object({
+    id: idSchema.nullable(),
+    status: z.enum(['active', 'lost', 'expired', 'released', 'revoked', 'none']),
+    version: revisionSchema.nullable(),
+    expiresAt: timestampSchema.nullable(),
+  }).strict(),
+  authority: z.object({
+    sessionState: agentSessionStateSchema.nullable(),
+    delegationStatus: delegationStatusSchema.nullable(),
+    connectionStatus: z.enum(['pending', 'active', 'rotating', 'revoked']).nullable(),
+    currentStateRequired: z.boolean(),
+  }).strict(),
+  preservedWork: z.object({
+    artifacts: z.array(attentionEvidenceReferenceSchema).max(200),
+    messages: z.number().int().nonnegative(),
+    contextSnapshotId: idSchema.nullable(),
+    uncommitted: recoveryUncommittedWorkSchema,
+    uncommittedExplanation: z.string().min(1).max(2_000),
+  }).strict(),
+  attempts: z.object({
+    used: z.number().int().nonnegative(),
+    limit: z.number().int().positive().nullable(),
+    remaining: z.number().int().nonnegative().nullable(),
+    circuitBreaker: recoveryCircuitBreakerSchema,
+  }).strict(),
+  downstreamImpact: z.string().min(1).max(20_000),
+  recommendedActionId: z.string().min(1).max(100).nullable(),
+  actions: z.array(recoveryActionSchema).max(20),
+  resolvedBy: z.object({
+    type: z.string().min(1).max(100),
+    id: idSchema,
+    revision: revisionSchema.optional(),
+    label: z.string().min(1).max(500).optional(),
+  }).strict().nullable().optional(),
+  technicalDetailsPath: z.string().startsWith('/api/v1/').max(2_000),
+}).strict()
+export const recoveryListResponseSchema = z.object({
+  items: z.array(recoveryItemSchema).max(200),
+  nextCursor: z.string().nullable(),
+  freshness: humanAttentionFreshnessSchema,
+}).strict()
+export type RecoveryCondition = z.infer<typeof recoveryConditionSchema>
+export type RecoveryItem = z.infer<typeof recoveryItemSchema>
+export type RecoveryListResponse = z.infer<typeof recoveryListResponseSchema>
 export const controlPlaneProjectionVersionSchema = z.literal(1)
 export const controlCenterCollectionSchema = z.enum(['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work'])
 export const controlPlaneResourceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: idSchema, revision: revisionSchema.optional(), label: z.string().min(1).max(500).optional() }).strict()
@@ -1942,6 +2068,11 @@ export const humanAttentionRouteManifest = [
   { method: 'GET', path: '/api/v1/human-attention/{id}', authenticated: true },
 ] as const
 
+export const recoveryRouteManifest = [
+  { method: 'GET', path: '/api/v1/recovery-items', authenticated: true },
+  { method: 'GET', path: '/api/v1/recovery-items/{id}', authenticated: true },
+] as const
+
 export const controlPlaneReadRouteManifest = [
   { method: 'GET', path: '/api/v1/control-center', authenticated: true },
   { method: 'GET', path: '/api/v1/projects/{projectId}/control-center', authenticated: true },
@@ -1958,6 +2089,7 @@ export const agentRouteManifest = [
   ...stage4RouteManifest,
   ...stage5RouteManifest,
   ...humanAttentionRouteManifest,
+  ...recoveryRouteManifest,
   ...controlPlaneReadRouteManifest,
 ] as const
 

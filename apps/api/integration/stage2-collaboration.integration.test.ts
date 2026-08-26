@@ -3095,4 +3095,77 @@ describe('Stage 2 collaboration API acceptance', () => {
     })
     expect((await db.query<{ status: string; children: number; accepted_events: number }>("SELECT h.status,(SELECT count(*)::int FROM agent_sessions s WHERE s.parent_session_id=h.from_session_id) AS children,(SELECT count(*)::int FROM domain_events e WHERE e.aggregate_id=h.id AND e.event_type='handoff.accepted') AS accepted_events FROM handoffs h WHERE h.id=$1", [noCandidateId])).rows[0]).toEqual({ status: 'requested', children: 0, accepted_events: 0 })
   })
+
+  it('projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry', async () => {
+    const f = await makeFixture()
+    const failed = await directSession(f, f.runner, 'Recovery projection source')
+    await db.query(
+      `UPDATE agent_sessions
+          SET state='failed',state_reason='Validation worker exited',error_code='VALIDATION_FAILED',
+              error_summary='Three validation attempts failed',retry_count=2,ended_at=now(),updated_at=now()
+        WHERE id=$1`,
+      [failed.id],
+    )
+
+    const active = await humanCall(
+      f.human,
+      'GET',
+      `/api/v1/recovery-items?lifecycle=active&condition=session_failed&sessionId=${failed.id}`,
+    )
+    expect(active.statusCode, JSON.stringify(active.json())).toBe(200)
+    const source = active.json<Page<{
+      id: string
+      lifecycle: string
+      source: { id: string; status: string; revision: number }
+      executor: { state: string; active: boolean }
+      preservedWork: { uncommitted: string; contextSnapshotId: string | null }
+      actions: Array<{ id: string; consequencePreviewPath: string | null }>
+    }>>().items[0]!
+    expect(source).toMatchObject({
+      lifecycle: 'active',
+      source: { id: failed.id, status: 'failed' },
+      executor: { state: 'terminal_only_assignment', active: false },
+      preservedWork: { uncommitted: 'unknown', contextSnapshotId: expect.any(String) },
+    })
+    expect(source.actions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'retry', consequencePreviewPath: `/api/v1/agent-sessions/${failed.id}/control-preview` }),
+      expect.objectContaining({ id: 'handoff', consequencePreviewPath: `/api/v1/agent-sessions/${failed.id}/control-preview` }),
+    ]))
+    const detail = await humanCall(f.human, 'GET', `/api/v1/recovery-items/${source.id}`)
+    expect(detail.statusCode, JSON.stringify(detail.json())).toBe(200)
+
+    const exactToken = await tokenFor(failed.id, f.runner)
+    const exactAgentRead = await agentCall(exactToken, 'GET', `/api/v1/recovery-items?sessionId=${failed.id}`)
+    expect(exactAgentRead.statusCode, JSON.stringify(exactAgentRead.json())).toBe(409)
+    expect(exactAgentRead.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'SESSION_NOT_ACTIVE' } })
+
+    const otherTeam = await humanCall(f.human, 'POST', '/api/v1/teams', { name: 'Recovery isolation', key: `R${randomUUID().replaceAll('-', '').slice(0, 5).toUpperCase()}` })
+    const otherMember = await memberForTeam(f.workspaceId, otherTeam.json<{ id: string }>().id)
+    const concealed = await humanCall(otherMember, 'GET', `/api/v1/recovery-items?sessionId=${failed.id}`)
+    expect(concealed.statusCode, JSON.stringify(concealed.json())).toBe(200)
+    expect(concealed.json<Page<{ id: string }>>().items).toEqual([])
+    expect((await humanCall(otherMember, 'GET', `/api/v1/recovery-items/${source.id}`)).statusCode).toBe(404)
+
+    const retry = await db.query<{ id: string; revision: number }>(
+      `INSERT INTO agent_sessions(
+         workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+         context_snapshot_id,state,budget,inherited_budget,retry_of_session_id
+       )
+       SELECT workspace_id,team_id,agent_id,agent_actor_id,delegation_id,work_item_id,
+              context_snapshot_id,'queued',budget,inherited_budget,id
+         FROM agent_sessions WHERE id=$1
+       RETURNING id,revision`,
+      [failed.id],
+    )
+    const resolved = await humanCall(
+      f.human,
+      'GET',
+      `/api/v1/recovery-items?lifecycle=resolved&condition=session_failed&sessionId=${failed.id}`,
+    )
+    expect(resolved.statusCode, JSON.stringify(resolved.json())).toBe(200)
+    expect(resolved.json<Page<{ lifecycle: string; resolvedBy: { type: string; id: string; revision: number } }>>().items[0]).toMatchObject({
+      lifecycle: 'resolved',
+      resolvedBy: { type: 'session', id: retry.rows[0]!.id, revision: retry.rows[0]!.revision },
+    })
+  })
 })

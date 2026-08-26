@@ -7,6 +7,7 @@ import { GitBranchIcon } from '@phosphor-icons/react/dist/csr/GitBranch'
 import { ListBulletsIcon } from '@phosphor-icons/react/dist/csr/ListBullets'
 import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
 import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
+import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { homeScopeHref, type HomeScope } from './navigation'
 
 export type WorkspaceNavigationKey = HomeScope | 'agents' | 'operations'
@@ -18,6 +19,7 @@ type NavigationTranslationKey =
   | 'issues'
   | 'operations'
   | 'projects'
+  | 'recovery'
   | 'settings'
 
 type WorkspaceNavigationOptions = Readonly<{
@@ -29,6 +31,7 @@ type WorkspaceNavigationOptions = Readonly<{
 export function workspaceNavigation({ active, onHomeNavigate, t }: WorkspaceNavigationOptions): NavigationItem[] {
   const primaryHomeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
     ['inbox', t('inbox'), <TrayIcon aria-hidden="true" size={20} weight="regular" />],
+    ['recovery', t('recovery'), <ArrowCounterClockwiseIcon aria-hidden="true" size={20} weight="regular" />],
     ['projects', t('projects'), <FolderSimpleIcon aria-hidden="true" size={20} weight="regular" />],
   ]
   const legacyHomeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
