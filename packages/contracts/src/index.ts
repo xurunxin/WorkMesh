@@ -92,8 +92,6 @@ const featureRoutePrefixes = [
   ['/api/v1/budget-policies', 'WORKMESH_BETA_COSTS'],
   ['/api/v1/automation-rules', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
   ['/api/v1/automation-runs', 'WORKMESH_EXPERIMENTAL_AUTOMATION'],
-  ['/api/v1/notifications', 'WORKMESH_BETA_PLANNING'],
-  ['/api/v1/notification-preferences', 'WORKMESH_BETA_PLANNING'],
   ['/api/v1/agent-connections', 'WORKMESH_BETA_COORDINATION_MCP'],
   ['/.well-known/workmesh-agent', 'WORKMESH_BETA_COORDINATION_MCP'],
   ['/api/v1/loops', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS'],
@@ -1055,13 +1053,14 @@ export const agentTeamAccessResponseSchema = z.object({
   agent_id: idSchema, team_id: idSchema, approved_capabilities: z.array(capabilitySchema), status: z.enum(['active', 'revoked']),
   approved_by_actor_id: idSchema, revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema, revoked_at: timestampSchema.nullable(),
 })
+export const agentLifecycleStatusSchema = z.enum(['active', 'archived'])
 export const agentResponseSchema = z.object({
   id: idSchema, workspace_id: idSchema, actor_id: idSchema, name: z.string(), slug: z.string(), description: z.string().nullable(),
   icon: z.string().nullable(), provider: z.string(), version: z.string(), endpoint_url: z.string().nullable(),
   supported_protocols: z.array(agentProtocolSchema), skills: z.array(z.string()), requested_capabilities: z.array(capabilitySchema),
   approved_capabilities: z.array(capabilitySchema), output_artifact_types: z.array(artifactTypeSchema), max_concurrency: z.number().int().positive(),
-  heartbeat_interval_seconds: z.number().int().positive(), metadata: z.record(z.unknown()), team_access: z.array(agentTeamAccessResponseSchema), is_active: z.boolean(), revision: revisionSchema,
-  created_at: timestampSchema, updated_at: timestampSchema,
+  heartbeat_interval_seconds: z.number().int().positive(), metadata: z.record(z.unknown()), team_access: z.array(agentTeamAccessResponseSchema), is_active: z.boolean(), lifecycle_status: agentLifecycleStatusSchema, revision: revisionSchema,
+  archived_at: timestampSchema.nullable(), archived_by_actor_id: idSchema.nullable(), archived_reason: z.string().nullable(), created_at: timestampSchema, updated_at: timestampSchema,
 })
 
 export const capabilityScopeSchema = z.object({
@@ -1215,11 +1214,47 @@ export const guidanceDiffResponseSchema = z.object({
 export const requestApprovalInputSchema = z.object({ sessionId: idSchema, approvalType: z.string().min(1).max(160), actionName: z.string().min(1).max(300), actionPayloadSanitized: z.record(z.unknown()), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), riskLevel: approvalRiskLevelSchema, rationaleSummary: z.string().min(1).max(10_000), requiredApprovals: z.number().int().positive().max(20).default(1), expiresAt: timestampSchema })
 export const decideApprovalInputSchema = z.object({ decision: z.enum(['approved', 'rejected']), reason: z.string().min(1).max(10_000) })
 export const approvalQuorumSchema = z.object({ required: z.number().int().positive(), approved: z.number().int().nonnegative(), rejected: z.number().int().nonnegative(), reached: z.boolean() })
-export const approvalDecisionSchema = z.object({ actor_id: idSchema, decision: z.enum(['approved', 'rejected']), reason: z.string(), decided_at: timestampSchema })
+export const approvalDecisionSourceSchema = z.enum(['human', 'workspace_policy'])
+export const approvalDecisionSchema = z.object({
+  actor_id: idSchema,
+  decision: z.enum(['approved', 'rejected']),
+  reason: z.string(),
+  source: approvalDecisionSourceSchema,
+  policy_workspace_id: idSchema.nullable(),
+  policy_revision: revisionSchema.nullable(),
+  decided_at: timestampSchema,
+})
 export const approvalResponseSchema = requestApprovalInputSchema.extend({ id: idSchema, requested_by_actor_id: idSchema, status: approvalStatusSchema, decisions: z.array(approvalDecisionSchema), quorum: approvalQuorumSchema, consumed_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
 export const approvalDecisionResponseSchema = z.object({ approval: approvalResponseSchema, decision: approvalDecisionSchema, quorum: approvalQuorumSchema, status: approvalStatusSchema })
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
+
+export const approvalAutonomyModeSchema = z.enum(['human_required', 'yolo'])
+export const approvalAutonomyPolicyInputSchema = z.object({
+  mode: approvalAutonomyModeSchema,
+  excludedProjectIds: z.array(idSchema).max(1_000).default([]),
+}).strict()
+export const approvalPolicyReconciliationSchema = z.object({
+  id: idSchema,
+  status: z.enum(['pending', 'running', 'completed', 'completed_with_skips']),
+  pending_count: z.number().int().nonnegative(),
+  completed_count: z.number().int().nonnegative(),
+  skipped_count: z.number().int().nonnegative(),
+  last_skip_reason: z.string().nullable(),
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  completed_at: timestampSchema.nullable(),
+}).strict()
+export const approvalAutonomyPolicySchema = z.object({
+  workspace_id: idSchema,
+  mode: approvalAutonomyModeSchema,
+  excluded_project_ids: z.array(idSchema),
+  revision: revisionSchema,
+  updated_by_actor_id: idSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  reconciliation: approvalPolicyReconciliationSchema.nullable(),
+}).strict()
 
 export const agentEventTypeSchema = z.enum(['agent.registered', 'agent.delegation.created', 'agent.delegation.revoked', 'agent.session.created', 'agent.session.acknowledged', 'agent.session.prompted', 'agent.session.state_changed', 'agent.session.health_changed', 'agent.session.stale', 'agent.session.completed', 'agent.session.failed', 'agent.coordination_session.opened', 'agent.coordination_session.refreshed', 'agent.coordination_session.closed', 'agent.plan.published', 'agent.activity.appended', 'approval.requested', 'approval.decision.recorded', 'approval.approved', 'approval.rejected', 'approval.expired', 'artifact.published'])
 export const coordinationSessionOpenedReasonSchema = z.enum(['initial', 'expired', 'recovered_terminal_backing', 'recovered_invalid_backing'])
@@ -1917,6 +1952,33 @@ export const notificationResponseSchema = z.object({
 }).strict()
 export const notificationListResponseSchema = listResponseSchema(notificationResponseSchema)
 
+export const browserPushConfigResponseSchema = z.object({
+  configured: z.boolean(),
+  public_key: z.string().nullable(),
+}).strict()
+export const browserPushSubscriptionInputSchema = z.object({
+  endpoint: z.string().url().max(4_096),
+  keys: z.object({
+    p256dh: z.string().min(1).max(512),
+    auth: z.string().min(1).max(512),
+  }).strict(),
+  deviceId: z.string().min(1).max(200),
+}).strict()
+export const browserPushSubscriptionStatusSchema = z.enum(['active', 'revoked', 'invalid'])
+export const browserPushSubscriptionSchema = z.object({
+  id: idSchema,
+  device_id: z.string(),
+  endpoint_fingerprint: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  status: browserPushSubscriptionStatusSchema,
+  last_delivery_status: z.string().nullable(),
+  last_delivery_at: timestampSchema.nullable(),
+  revision: revisionSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  revoked_at: timestampSchema.nullable(),
+}).strict()
+export const browserPushSubscriptionListResponseSchema = listResponseSchema(browserPushSubscriptionSchema)
+
 export const usageInputSchema = z.object({
   dedupeKey: z.string().min(1).max(500),
   agentId: idSchema,
@@ -2081,6 +2143,19 @@ export const controlPlaneReadRouteManifest = [
   { method: 'POST', path: '/api/v1/agent-sessions/{sessionId}/control-preview', authenticated: true },
 ] as const
 
+export const autonomousControlPlaneRouteManifest = [
+  { method: 'GET', path: '/api/v1/approval-autonomy-policy', authenticated: true },
+  { method: 'PUT', path: '/api/v1/approval-autonomy-policy', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/browser-push/config', authenticated: true },
+  { method: 'GET', path: '/api/v1/browser-push/subscriptions', authenticated: true },
+  { method: 'POST', path: '/api/v1/browser-push/subscriptions', authenticated: true, mutation: true },
+  { method: 'DELETE', path: '/api/v1/browser-push/subscriptions/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/agent-enrollment-policies', authenticated: true },
+  { method: 'POST', path: '/api/v1/agent-enrollment-policies', authenticated: true, mutation: true },
+  { method: 'DELETE', path: '/api/v1/agent-enrollment-policies/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/agent-enrollments/redeem', authenticated: false, mutation: true },
+] as const
+
 export const agentRouteManifest = [
   ...stage0RouteManifest,
   ...stage1RouteManifest,
@@ -2091,6 +2166,7 @@ export const agentRouteManifest = [
   ...humanAttentionRouteManifest,
   ...recoveryRouteManifest,
   ...controlPlaneReadRouteManifest,
+  ...autonomousControlPlaneRouteManifest,
 ] as const
 
 export const routePolicyManifest = createRoutePolicyManifest((path) => {
@@ -2472,6 +2548,8 @@ export const agentConnectionResponseSchema = z
     agent_slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
     client_type: agentConnectionClientTypeSchema,
     status: agentConnectionStatusSchema,
+    source: z.enum(['manual', 'enrollment']),
+    enrollment_policy_id: idSchema.nullable(),
     requested_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'requested_capabilities must not contain duplicates' }),
     granted_capabilities: z.array(capabilitySchema).refine(arr => new Set(arr).size === arr.length, { message: 'granted_capabilities must not contain duplicates' }),
     grant_agent_delegate: z.boolean(),
@@ -2532,6 +2610,61 @@ export const agentConnectionRedeemResponseSchema = z
       .strict(),
   })
   .strict()
+
+export const agentEnrollmentPolicyStatusSchema = z.enum(['active', 'revoked', 'expired', 'exhausted'])
+export const agentEnrollmentPolicyCreateInputSchema = z.object({
+  name: z.string().min(1).max(120),
+  teamId: idSchema,
+  principalHumanActorId: idSchema.optional(),
+  allowedClientTypes: z.array(agentConnectionClientTypeSchema).min(1).max(4),
+  capabilityCeiling: z.array(capabilitySchema).min(1).max(50),
+  grantAgentDelegate: z.boolean().default(false),
+  expiresAt: timestampSchema,
+  maxUses: z.number().int().positive().max(10_000),
+}).strict().superRefine((value, context) => {
+  if (new Set(value.allowedClientTypes).size !== value.allowedClientTypes.length) context.addIssue({ code: z.ZodIssueCode.custom, message: 'allowedClientTypes must not contain duplicates', path: ['allowedClientTypes'] })
+  if (new Set(value.capabilityCeiling).size !== value.capabilityCeiling.length) context.addIssue({ code: z.ZodIssueCode.custom, message: 'capabilityCeiling must not contain duplicates', path: ['capabilityCeiling'] })
+})
+export const agentEnrollmentPolicySchema = z.object({
+  id: idSchema,
+  workspace_id: idSchema,
+  name: z.string(),
+  team_id: idSchema,
+  principal_human_actor_id: idSchema,
+  allowed_client_types: z.array(agentConnectionClientTypeSchema),
+  capability_ceiling: z.array(capabilitySchema),
+  grant_agent_delegate: z.boolean(),
+  expires_at: timestampSchema,
+  max_uses: z.number().int().positive(),
+  used_count: z.number().int().nonnegative(),
+  remaining_uses: z.number().int().nonnegative(),
+  status: agentEnrollmentPolicyStatusSchema,
+  revision: revisionSchema,
+  created_by_actor_id: idSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  revoked_at: timestampSchema.nullable(),
+}).strict()
+export const agentEnrollmentPolicyCreateResponseSchema = z.object({
+  policy: agentEnrollmentPolicySchema,
+  enrollment_token: z.string().regex(/^wme_[A-Za-z0-9_-]{43}$/),
+}).strict()
+export const agentEnrollmentPolicyListResponseSchema = listResponseSchema(agentEnrollmentPolicySchema)
+export const agentEnrollmentRedeemInputSchema = z.object({
+  enrollmentToken: z.string().regex(/^wme_[A-Za-z0-9_-]{43}$/),
+  name: z.string().min(1).max(120),
+  slug: z.string().regex(/^[a-z0-9][a-z0-9-]{0,79}$/),
+  client: z.object({
+    type: agentConnectionClientTypeSchema,
+    version: z.string().min(1).max(80),
+    runtime: z.string().min(1).max(160).optional(),
+  }).strict(),
+  manifest: z.record(z.unknown()),
+  requestedCapabilities: z.array(capabilitySchema).min(1).max(50),
+}).strict().superRefine((value, context) => {
+  if (new Set(value.requestedCapabilities).size !== value.requestedCapabilities.length) context.addIssue({ code: z.ZodIssueCode.custom, message: 'requestedCapabilities must not contain duplicates', path: ['requestedCapabilities'] })
+})
+export const agentEnrollmentRedeemResponseSchema = agentConnectionRedeemResponseSchema
 
 export const agentConnectionRotateResponseSchema = z
   .object({
@@ -2700,3 +2833,11 @@ export type AgentWellKnownResponse = z.infer<typeof agentWellKnownResponseSchema
 export type CoordinationSessionResponse = z.infer<typeof coordinationSessionResponseSchema>
 export type AgentConnectionIdentity = z.infer<typeof agentConnectionIdentitySchema>
 export type AgentConnectionCurrentIdentity = z.infer<typeof agentConnectionCurrentIdentitySchema>
+export type ApprovalAutonomyMode = z.infer<typeof approvalAutonomyModeSchema>
+export type ApprovalAutonomyPolicy = z.infer<typeof approvalAutonomyPolicySchema>
+export type ApprovalPolicyReconciliation = z.infer<typeof approvalPolicyReconciliationSchema>
+export type BrowserPushSubscription = z.infer<typeof browserPushSubscriptionSchema>
+export type AgentLifecycleStatus = z.infer<typeof agentLifecycleStatusSchema>
+export type AgentEnrollmentPolicy = z.infer<typeof agentEnrollmentPolicySchema>
+export type AgentEnrollmentRedeemInput = z.infer<typeof agentEnrollmentRedeemInputSchema>
+export type AgentEnrollmentRedeemResponse = z.infer<typeof agentEnrollmentRedeemResponseSchema>

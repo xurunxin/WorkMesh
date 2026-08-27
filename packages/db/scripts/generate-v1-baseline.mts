@@ -122,6 +122,7 @@ const supportedUpgradeEndpoints = [
   '0007_stage2_work_rooms_leases_handoffs',
   '0014_provider_action_kinds',
   '0021_stage4_a2a_direction_and_prompt_identity',
+  '0035_decision_session_provenance',
 ] as const
 const bundleEntries: Array<Readonly<{ fromVersion: string; file: string; checksumSha256: string }>> = []
 await mkdir(upgradesDirectory, { recursive: true })

@@ -14,6 +14,8 @@ import type {
   AgentConnectionPatchInput, AgentConnectionResponse,
   AgentConnectionRedeemInput, AgentConnectionRedeemResponse,
   AgentConnectionRotateResponse, AgentWellKnownResponse,
+  ApprovalAutonomyPolicy,
+  AgentEnrollmentPolicy, AgentEnrollmentRedeemInput, AgentEnrollmentRedeemResponse,
   ClaimWorkItemInput, ClaimWorkItemResponse,
 } from '@workmesh/contracts'
 import {
@@ -283,6 +285,12 @@ export class WorkMeshClient {
   revokeAgentConnection(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<void> { return this.request('DELETE', `/api/v1/agent-connections/${encodeURIComponent(id)}`, undefined, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-revoke') }) }
   rotateAgentConnection(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<AgentConnectionRotateResponse> { return this.request('POST', `/api/v1/agent-connections/${encodeURIComponent(id)}/rotate`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-rotate') }) }
   confirmAgentConnectionRotation(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<AgentConnectionResponse> { return this.request('POST', `/api/v1/agent-connections/${encodeURIComponent(id)}/rotate-confirm`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(id, 'agent-connection-rotate-confirm') }) }
+  getApprovalAutonomyPolicy(options?: RequestOptions): Promise<ApprovalAutonomyPolicy> { return this.request('GET', '/api/v1/approval-autonomy-policy', undefined, options) }
+  updateApprovalAutonomyPolicy(input: { mode: 'human_required' | 'yolo'; excludedProjectIds?: string[] }, options: RequestOptions & { ifMatch: number | string }): Promise<ApprovalAutonomyPolicy> { return this.request('PUT', '/api/v1/approval-autonomy-policy', input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  listAgentEnrollmentPolicies(options: PageRequestOptions = {}): Promise<ListResponse<AgentEnrollmentPolicy>> { return this.request('GET', pagedPath('/api/v1/agent-enrollment-policies', {}, options), undefined, options) }
+  createAgentEnrollmentPolicy(input: { name: string; teamId: string; principalHumanActorId?: string; allowedClientTypes: Array<'codex'|'opencode'|'pi'|'generic_mcp'>; capabilityCeiling: Capability[]; grantAgentDelegate?: boolean; expiresAt: string; maxUses: number }, options: RequestOptions = {}): Promise<{ policy: AgentEnrollmentPolicy; enrollment_token: string }> { return this.request('POST', '/api/v1/agent-enrollment-policies', input, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  revokeAgentEnrollmentPolicy(id: string, options: RequestOptions & { ifMatch: number | string }): Promise<void> { return this.request('DELETE', `/api/v1/agent-enrollment-policies/${encodeURIComponent(id)}`, undefined, { ...options, idempotencyKey: options.idempotencyKey ?? randomUUID() }) }
+  redeemAgentEnrollment(input: AgentEnrollmentRedeemInput, options: RequestOptions = {}): Promise<AgentEnrollmentRedeemResponse> { return this.request('POST', '/api/v1/agent-enrollments/redeem', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.enrollmentToken, 'agent-enrollment-redeem') }) }
 
   listTeams<T = unknown>(options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath('/api/v1/teams', {}, options), undefined, options) }
   listWorkflowStates<T = unknown>(teamId: string, options: PageRequestOptions = {}): Promise<ListResponse<T>> { return this.request('GET', pagedPath(`/api/v1/teams/${encodeURIComponent(teamId)}/states`, {}, options), undefined, options) }

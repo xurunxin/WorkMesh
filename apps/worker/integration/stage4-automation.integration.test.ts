@@ -392,7 +392,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     await db.query("UPDATE automation_rules SET state='paused' WHERE id=$1", [ruleId])
   })
 
-  it('gates notifications on Beta Planning and skips a disabled webhook at the queue head', async () => {
+  it('delivers notifications independently of Beta Planning and skips a disabled webhook at the queue head', async () => {
     await db.query(
       `INSERT INTO notification_preferences(
          workspace_id,actor_id,channels,digest,minimum_priority,muted_kinds,webhook_url
@@ -454,7 +454,9 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     })
     await disabledPlanning.deliverNotification(claims[0]!)
     expect(browserDeliveries).toBe(0)
-    await expect(disabledPlanning.claimNotifications()).resolves.toEqual([])
+    const remaining = await disabledPlanning.claimNotifications()
+    expect(remaining.length).toBeGreaterThan(0)
+    expect(remaining.every(delivery => delivery.channel !== 'webhook')).toBe(true)
   })
 
   it('atomically enforces Loop overlap, budget cutoff, rollback, and revocation', async () => {
@@ -713,13 +715,116 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
        JOIN notifications notification ON notification.id=delivery.notification_id
        WHERE notification.source_id=$1 ORDER BY delivery.channel`,
       [internalOnly.runId],
-    )).rows.map(row => row.channel)).toEqual(['in_app', 'in_app', 'browser', 'browser'])
+    )).rows.map(row => row.channel)).toEqual(['in_app', 'in_app'])
     expect((await db.query(
       `SELECT 1 FROM notification_deliveries delivery
        JOIN notifications notification ON notification.id=delivery.notification_id
        WHERE notification.source_id=$1 AND delivery.channel='webhook'`,
       [internalOnly.runId],
     )).rowCount).toBe(0)
+  })
+
+  it('delivers generic browser push deep links and invalidates gone subscriptions', async () => {
+    await db.query(
+      `INSERT INTO notification_preferences(workspace_id,actor_id,channels)
+       VALUES($1,$2,ARRAY['in_app','browser']::notification_channel[])
+       ON CONFLICT(workspace_id,actor_id) DO UPDATE SET channels=EXCLUDED.channels,digest='immediate'`,
+      [fixture.workspaceId, fixture.humanId],
+    )
+    const createSubscription = async (suffix: string) => (await db.query<{ id: string }>(
+      `INSERT INTO browser_push_subscriptions(
+         workspace_id,actor_id,device_id,endpoint,endpoint_hash,p256dh,auth_secret
+       ) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+      [
+        fixture.workspaceId,
+        fixture.humanId,
+        `device-${suffix}-${randomUUID()}`,
+        `https://push.example.test/${suffix}/${randomUUID()}`,
+        `sha256:${randomUUID().replaceAll('-', '').padEnd(64, '0')}`,
+        `p256dh-${suffix}`,
+        `auth-${suffix}`,
+      ],
+    )).rows[0]!.id
+
+    const deliveredSubscriptionId = await createSubscription('delivered')
+    const approvalId = randomUUID()
+    const notification = await withTx(db, tx => admitNotification(tx, {
+      workspaceId: fixture.workspaceId,
+      recipientActorId: fixture.humanId,
+      priority: 'approval',
+      kind: 'approval.requested',
+      title: 'Approval required',
+      body: 'Open WorkMesh to review a pending approval.',
+      sourceType: 'approval',
+      sourceId: approvalId,
+      dedupeKey: `browser-push-success:${randomUUID()}`,
+      requestedChannels: ['browser'],
+    }))
+    const deliveredInputs: Array<Record<string, unknown>> = []
+    const deliveryWorker = createBaseAutomationWorker({
+      db,
+      workerId: `browser-success-${randomUUID()}`,
+      features: loadFeatureConfig({}),
+      sink: {
+        callWebhook: async () => ({ status: 202 }),
+        deliverBrowser: async input => {
+          deliveredInputs.push(input)
+          return { receipt: 'push-receipt' }
+        },
+      },
+    })
+    const successClaim = (await deliveryWorker.claimNotifications(100))
+      .find(claim => claim.notificationId === notification.id && claim.browserPushSubscriptionId === deliveredSubscriptionId)
+    expect(successClaim).toBeDefined()
+    await deliveryWorker.deliverNotification(successClaim!)
+    expect(deliveredInputs).toEqual([expect.objectContaining({
+      title: 'Approval required',
+      body: 'Open WorkMesh to review a pending approval.',
+      url: `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:approval:${approvalId}`)}`,
+    })])
+    expect(JSON.stringify(deliveredInputs[0])).not.toMatch(/reason|credential|payload/i)
+    expect((await db.query<{ status: string; last_delivered_at: Date | null }>(
+      'SELECT status,last_delivered_at FROM browser_push_subscriptions WHERE id=$1',
+      [deliveredSubscriptionId],
+    )).rows[0]).toMatchObject({ status: 'active', last_delivered_at: expect.any(Date) })
+
+    const goneSubscriptionId = await createSubscription('gone')
+    const goneNotification = await withTx(db, tx => admitNotification(tx, {
+      workspaceId: fixture.workspaceId,
+      recipientActorId: fixture.humanId,
+      priority: 'approval',
+      kind: 'approval.requested',
+      title: 'Approval required',
+      body: 'Open WorkMesh to review a pending approval.',
+      sourceType: 'approval',
+      sourceId: randomUUID(),
+      dedupeKey: `browser-push-gone:${randomUUID()}`,
+      requestedChannels: ['browser'],
+    }))
+    const goneWorker = createBaseAutomationWorker({
+      db,
+      workerId: `browser-gone-${randomUUID()}`,
+      features: loadFeatureConfig({}),
+      sink: {
+        callWebhook: async () => ({ status: 202 }),
+        deliverBrowser: async () => {
+          throw Object.assign(new Error('subscription gone'), { statusCode: 410 })
+        },
+      },
+    })
+    const goneClaim = (await goneWorker.claimNotifications(100))
+      .find(claim => claim.notificationId === goneNotification.id && claim.browserPushSubscriptionId === goneSubscriptionId)
+    expect(goneClaim).toBeDefined()
+    await goneWorker.deliverNotification(goneClaim!)
+    expect((await db.query<{ status: string; last_failure_code: string }>(
+      'SELECT status,last_failure_code FROM browser_push_subscriptions WHERE id=$1',
+      [goneSubscriptionId],
+    )).rows[0]).toEqual({ status: 'invalid', last_failure_code: '410' })
+    expect((await db.query<{ status: string; last_error: string }>(
+      `SELECT status,last_error FROM notification_deliveries
+        WHERE notification_id=$1 AND browser_push_subscription_id=$2`,
+      [goneNotification.id, goneSubscriptionId],
+    )).rows[0]).toEqual({ status: 'dead', last_error: 'BROWSER_PUSH_SUBSCRIPTION_INVALID:410' })
   })
 
   it('executes every declared internal action through the same authority boundary', async () => {

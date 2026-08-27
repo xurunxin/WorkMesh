@@ -7,7 +7,7 @@ export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 
 export type Agent = {
   id: string; workspace_id: string; actor_id: string; name?: string; display_name?: string; slug: string; description: string | null; provider?: string; version?: string
   manifest?: { provider?: string; version?: string; heartbeatIntervalSeconds?: number }; supported_protocols: string[]; skills: string[]; requested_capabilities: string[]; approved_capabilities: string[]
-  max_concurrency: number; heartbeat_interval_seconds?: number; is_active: boolean; revision: number; team_access?: AgentTeamAccess[]
+  max_concurrency: number; heartbeat_interval_seconds?: number; is_active: boolean; lifecycle_status?: 'active'|'archived'; archived_at?: string|null; archived_by_actor_id?: string|null; archived_reason?: string|null; revision: number; team_access?: AgentTeamAccess[]
 }
 
 export type AgentTeamAccess = {
@@ -28,7 +28,7 @@ export type PlanVersion = { id: string; revision: number; parent_version_id: str
 export type AgentActivity = { id: string; kind: string; summary: string; detailsMarkdown?: string; artifactIds: string[]; ephemeral: boolean; created_at: string; toolInvocation?: { toolName: string; status: string; resultSummary?: string } }
 export type Artifact = { id: string; session_id: string; work_item_id?: string | null; type: string; title: string; uri?: string; source_tool?: string; created_at: string }
 export type Approval = { id: string; session_id: string; approval_type: string; action_name: string; risk_level: string; rationale_summary: string; status: string; revision: number; expires_at: string; created_at: string }
-export type AgentConnection = { id: string; workspace_id: string; team_id: string; agent_actor_id: string; principal_human_actor_id: string; name: string; agent_slug: string; client_type: 'codex'|'opencode'|'pi'|'generic_mcp'; status: 'pending'|'active'|'rotating'|'revoked'; requested_capabilities: string[]; granted_capabilities: string[]; grant_agent_delegate: boolean; skill_version: string|null; skill_sha256: string|null; credential_fingerprint_prefix: string|null; pairing_code_expires_at: string|null; last_used_at: string|null; rotated_at: string|null; revoked_at: string|null; revision: number; redacted_token: true; created_at: string; updated_at: string }
+export type AgentConnection = { id: string; workspace_id: string; team_id: string; agent_actor_id: string; principal_human_actor_id: string; name: string; agent_slug: string; client_type: 'codex'|'opencode'|'pi'|'generic_mcp'; status: 'pending'|'active'|'rotating'|'revoked'; source: 'manual'|'enrollment'; enrollment_policy_id: string|null; requested_capabilities: string[]; granted_capabilities: string[]; grant_agent_delegate: boolean; skill_version: string|null; skill_sha256: string|null; credential_fingerprint_prefix: string|null; pairing_code_expires_at: string|null; last_used_at: string|null; rotated_at: string|null; revoked_at: string|null; revision: number; redacted_token: true; created_at: string; updated_at: string }
 export type AgentConnectionCreateResponse = { connection: AgentConnection; connect_url: string; skill: { name: 'workmesh'; version: string; sha256: string; signature: string } }
 
 export const agentStateLabel = (state: AgentState): string => state.replaceAll('_', ' ')

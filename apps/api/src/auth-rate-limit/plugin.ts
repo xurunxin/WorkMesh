@@ -32,7 +32,8 @@ function subjectFor(
     return typeof email === "string" ? email.trim().toLowerCase() : undefined;
   }
   if (kind === "pairing") {
-    const pairingCode = (request.body as { pairingCode?: unknown } | undefined)?.pairingCode;
+    const body = request.body as { pairingCode?: unknown; enrollmentToken?: unknown } | undefined;
+    const pairingCode = body?.pairingCode ?? body?.enrollmentToken;
     return typeof pairingCode === "string" ? pairingCode : undefined;
   }
   const id = (request.params as { id?: unknown } | undefined)?.id;

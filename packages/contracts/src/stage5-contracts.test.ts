@@ -1098,6 +1098,8 @@ type Response = {
   agent_slug: string
   client_type: 'codex' | 'opencode' | 'pi'
   status: 'pending' | 'active' | 'rotating' | 'revoked'
+  source: 'manual' | 'enrollment'
+  enrollment_policy_id: string | null
   requested_capabilities: Capability[]
   granted_capabilities: Capability[]
   grant_agent_delegate: boolean
@@ -1125,6 +1127,8 @@ function baseResponse(): Response {
     agent_slug: 'backend-coder-1',
     client_type: 'codex',
     status: 'active',
+    source: 'manual',
+    enrollment_policy_id: null,
     requested_capabilities: ['work:read', 'work:write'],
     granted_capabilities: ['work:read', 'work:write'],
     grant_agent_delegate: false,

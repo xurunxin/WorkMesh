@@ -1,6 +1,6 @@
 import type { PoolClient } from 'pg'
 import { coordinationSessionClosedEventPayloadSchema } from '@workmesh/contracts'
-import { appendEvent, type Db, withTx } from '@workmesh/db'
+import { appendEvent, reconcileAgentLifecycle, type Db, withTx } from '@workmesh/db'
 
 export const createAgentConnectionLifecycleWorker = ({ db }: { db: Db }) => ({
   tick: async (): Promise<void> => withTx(db, async (tx: PoolClient) => {
@@ -154,5 +154,50 @@ export const createAgentConnectionLifecycleWorker = ({ db }: { db: Db }) => ({
           payload: { state: 'canceled', reason: 'coordination session expired' },
         })
     }
+
+    const orphanedAgents = (await tx.query<{
+      id: string
+      workspace_id: string
+      system_actor_id: string
+    }>(`
+      SELECT definition.id,definition.workspace_id,installation.system_actor_id
+        FROM agent_definitions definition
+        JOIN platform_installation installation
+          ON installation.workspace_id=definition.workspace_id
+       WHERE definition.is_active
+         AND NOT EXISTS(
+           SELECT 1 FROM agent_connections connection
+            WHERE connection.agent_id=definition.id
+              AND connection.status IN ('pending','active','rotating')
+         )
+         AND NOT EXISTS(
+           SELECT 1 FROM agent_installation_tokens token
+            WHERE token.agent_id=definition.id AND token.revoked_at IS NULL
+              AND (token.expires_at IS NULL OR token.expires_at>now())
+         )
+         AND NOT EXISTS(
+           SELECT 1 FROM agent_team_access access
+            WHERE access.agent_id=definition.id AND access.revoked_at IS NULL
+         )
+         AND NOT EXISTS(
+           SELECT 1 FROM delegations delegation
+            WHERE delegation.agent_id=definition.id AND delegation.status='active'
+         )
+         AND NOT EXISTS(
+           SELECT 1 FROM agent_sessions session
+            WHERE session.agent_id=definition.id
+              AND session.state NOT IN ('completed','failed','canceled')
+         )
+       ORDER BY definition.updated_at,definition.id
+       FOR UPDATE OF definition SKIP LOCKED LIMIT 100
+    `)).rows
+    for (const agent of orphanedAgents)
+      await reconcileAgentLifecycle(tx, {
+        workspaceId: agent.workspace_id,
+        agentId: agent.id,
+        actorId: agent.system_actor_id,
+        correlationId: `worker:agent-lifecycle:${agent.id}`,
+        reason: 'authority_reconciliation',
+      })
   }),
 })

@@ -188,7 +188,8 @@ beforeEach(() => {
   agentCardRenderMock.render.mockReset()
   paginationMock.usePagedApiList.mockReset()
   paginationMock.usePagedApiList.mockImplementation((path: string | null) => {
-    if (path === '/api/v1/agents') return agents
+    if (path?.startsWith('/api/v1/agents?lifecycle=active')) return agents
+    if (path === '/api/v1/agents?lifecycle=archived') return collection([])
     if (path === '/api/v1/teams') return teams
     if (path === '/api/v1/actors/humans') return humans
     if (path === '/api/v1/agent-sessions') return sessions
@@ -256,7 +257,11 @@ describe('Agents bulk approval outcomes', () => {
     const view = render(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
     expect(screen.getByText('A private Agent')).toBeVisible()
     expect(screen.getAllByText(/A private Team/).length).toBeGreaterThan(0)
+    routeMock.state.tab = 'connections'
+    view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
     expect(screen.getByText(/A private Human/)).toBeVisible()
+    routeMock.state.tab = 'agents'
+    view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
     fireEvent.click(screen.getByRole('button', { name: 'Peek A private Agent' }))
     expect(screen.getByTestId('agent-peek-proof')).toHaveTextContent('A private Agent')
     fireEvent.click(screen.getByRole('button', { name: 'Access A private Agent' }))

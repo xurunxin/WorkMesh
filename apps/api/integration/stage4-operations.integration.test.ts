@@ -2013,6 +2013,22 @@ describe("Stage 4 planning and operations API", () => {
         )
       ).rowCount,
     ).toBe(0);
+    const pushSubscriptionId = randomUUID();
+    await db.query(
+      `INSERT INTO browser_push_subscriptions(
+         id,workspace_id,actor_id,device_id,endpoint,endpoint_hash,p256dh,auth_secret
+       ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+      [
+        pushSubscriptionId,
+        workspaceId,
+        human.actorId,
+        `stage4-${pushSubscriptionId}`,
+        `https://push.example.test/${pushSubscriptionId}`,
+        `sha256:${pushSubscriptionId.replaceAll("-", "").padEnd(64, "0")}`,
+        "stage4-p256dh",
+        "stage4-auth",
+      ],
+    );
     const digested = await call(human, "POST", "/api/v1/notifications", {
       recipientActorId: human.actorId,
       priority: "approval",

@@ -105,6 +105,7 @@ const publicOperations = new Set([
   'login',
   'getWorkMeshAgentWellKnown',
   'redeemAgentConnection',
+  'redeemAgentEnrollment',
   'resetInstall',
 ])
 
@@ -125,9 +126,10 @@ export const secretReplayOperationIds = [
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
   'redeemAgentConnection',
+  'redeemAgentEnrollment',
 ] as const
 const secretReplayOperations = new Set<string>(secretReplayOperationIds)
-const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff', 'redeemAgentConnection'])
+const credentialRateLimitOperations = new Set(['installWorkspace', 'login', 'exchangeAgentSessionToken', 'refreshAgentSessionToken', 'inspectExactTargetHandoff', 'rejectHandoff', 'redeemAgentConnection', 'redeemAgentEnrollment'])
 
 const workspaceAdminOperations = new Set([
   'getRetentionStatus',
@@ -157,6 +159,10 @@ const workspaceAdminOperations = new Set([
   'revokeAgentConnection',
   'rotateAgentConnection',
   'confirmAgentConnectionRotation',
+  'updateApprovalAutonomyPolicy',
+  'listAgentEnrollmentPolicies',
+  'createAgentEnrollmentPolicy',
+  'revokeAgentEnrollmentPolicy',
 ])
 
 const humanOnlyOperations = new Set([
@@ -220,6 +226,11 @@ const humanOnlyOperations = new Set([
   'rollbackProjectGuidance',
   'listProjectGuidanceHistory',
   'diffProjectGuidance',
+  'getApprovalAutonomyPolicy',
+  'getBrowserPushConfig',
+  'listBrowserPushSubscriptions',
+  'createBrowserPushSubscription',
+  'revokeBrowserPushSubscription',
 ])
 
 const agentOnlyOperations = new Set([
@@ -270,6 +281,9 @@ const revisionedOperations = new Set([
   'createTemplateVersion',
   'setTemplateState',
   'replyInboxItem',
+  'updateApprovalAutonomyPolicy',
+  'revokeBrowserPushSubscription',
+  'revokeAgentEnrollmentPolicy',
 ])
 
 const approvalOperations = new Set([

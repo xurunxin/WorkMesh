@@ -18,14 +18,12 @@ import {
   AttentionKindBadge,
   AttentionListItem,
   Button,
-  Dialog,
   FreshnessBadge,
   LifecycleBadge,
   RiskBadge,
   UrgencyBadge,
   WorkSurfacePagination,
 } from "@workmesh/ui";
-import { ArrowRightIcon } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from "./evidence-drawer";
 import { ApiError, apiMutation, apiRequest, json } from "./lib/api";
 import { productMetricError, recordProductMetric, startProductMetric } from "./lib/product-telemetry";
@@ -209,6 +207,17 @@ export function AttentionCenter({
           partial: "部分数据",
           historyStatus: "历史状态",
           status: "状态",
+          immediate: "立即处理",
+          soon: "即将到期",
+          normal: "普通",
+          expiredCount: (count: number) => `历史已过期 ${count} 项`,
+          selectPrompt: "从左侧选择一项，查看完整决策上下文。",
+          request: "请求内容",
+          boundary: "允许边界",
+          exclusions: "排除项",
+          boundaryHint: "仅限下列明确列出的资源与当前来源 revision。",
+          exclusionsHint: "未列出的资源和超出当前 revision 的变更不在本次授权范围内。",
+          readOnly: "该事项已结束，仅可查看历史详情。",
         }
       : {
           title: projectId ? "Project Attention Center" : "Needs You",
@@ -276,6 +285,17 @@ export function AttentionCenter({
           partial: "Partial data",
           historyStatus: "History status",
           status: "Status",
+          immediate: "Act now",
+          soon: "Due soon",
+          normal: "Normal",
+          expiredCount: (count: number) => `${count} expired in history`,
+          selectPrompt: "Select an item on the left to review its full decision context.",
+          request: "Request",
+          boundary: "Allowed boundary",
+          exclusions: "Excluded",
+          boundaryHint: "Limited to the explicitly listed resources and current source revision.",
+          exclusionsHint: "Unlisted resources and changes beyond the current revision are outside this authorization.",
+          readOnly: "This item is closed and available as read-only history.",
         };
   const [route, setRoute] = useState<AttentionRouteState>(() =>
     typeof window === "undefined"
@@ -289,7 +309,6 @@ export function AttentionCenter({
   const [selected, setSelected] = useState<HumanAttentionItem | null>(null);
   const attentionOpenedAtRef = useRef(typeof performance === "undefined" ? 0 : performance.now());
   const firstAttentionOpenedRef = useRef(false);
-  const [responseOpen, setResponseOpen] = useState(false);
   const [responseDraft, setResponseDraft] = useState<AttentionResponseDraft>({
     optionId: "",
     reason: "",
@@ -318,6 +337,33 @@ export function AttentionCenter({
     })) ?? [], [connectionState, projectId, selected]);
   const evidenceDrawer = useEvidenceDrawer(attentionEvidence, "attention");
 
+  const prepareResponse = useCallback(async (item: HumanAttentionItem) => {
+    const optionId = item.recommendedOptionId ?? item.options[0]?.id ?? "";
+    setResponseDraft({
+      optionId,
+      reason: "",
+      message: "",
+      choice: item.response.choices[0]?.id ?? "",
+    });
+    setPreview(null);
+    const option = item.options.find((candidate) => candidate.id === optionId);
+    if (!option?.consequencePreviewPath) return;
+    setPreviewLoading(true);
+    try {
+      setPreview(
+        await apiRequest<ActionPreview>(option.consequencePreviewPath, {
+          method: "POST",
+          headers: json({}),
+          body: JSON.stringify({ action: option.id }),
+        }),
+      );
+    } catch {
+      setPreview(null);
+    } finally {
+      setPreviewLoading(false);
+    }
+  }, []);
+
   const refresh = useCallback(
     async (next = route) => {
       setError("");
@@ -330,18 +376,18 @@ export function AttentionCenter({
           const fromPage = loaded.items.find(
             (item) => item.id === next.selectedId,
           );
-          setSelected(
-            fromPage ??
-              (await apiRequest<HumanAttentionItem>(
-                `/api/v1/human-attention/${encodeURIComponent(next.selectedId)}`,
-              )),
-          );
+          const loadedSelected = fromPage ??
+            (await apiRequest<HumanAttentionItem>(
+              `/api/v1/human-attention/${encodeURIComponent(next.selectedId)}`,
+            ));
+          setSelected(loadedSelected);
+          void prepareResponse(loadedSelected);
         } else setSelected(null);
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : copy.loadError);
       }
     },
-    [copy.loadError, projectId, route],
+    [copy.loadError, prepareResponse, projectId, route],
   );
 
   useEffect(() => {
@@ -383,40 +429,13 @@ export function AttentionCenter({
     }
     returnFocusRef.current = trigger;
     setSelected(item);
+    void prepareResponse(item);
     writeRoute({ ...route, selectedId: item.id }, false);
   };
   const closeItem = () => {
     setSelected(null);
-    setResponseOpen(false);
     writeRoute({ ...route, selectedId: undefined }, true);
     queueMicrotask(() => returnFocusRef.current?.focus());
-  };
-  const openResponse = async (item: HumanAttentionItem) => {
-    const optionId = item.recommendedOptionId ?? item.options[0]?.id ?? "";
-    setResponseDraft({
-      optionId,
-      reason: "",
-      message: "",
-      choice: item.response.choices[0]?.id ?? "",
-    });
-    setPreview(null);
-    setResponseOpen(true);
-    const option = item.options.find((candidate) => candidate.id === optionId);
-    if (!option?.consequencePreviewPath) return;
-    setPreviewLoading(true);
-    try {
-      setPreview(
-        await apiRequest<ActionPreview>(option.consequencePreviewPath, {
-          method: "POST",
-          headers: json({}),
-          body: JSON.stringify({ action: option.id }),
-        }),
-      );
-    } catch {
-      setPreview(null);
-    } finally {
-      setPreviewLoading(false);
-    }
   };
   const execute = async (
     item: HumanAttentionItem,
@@ -432,13 +451,15 @@ export function AttentionCenter({
   const submitResponse = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selected) return;
+    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    const optionId = submitter?.value || responseDraft.optionId;
+    const nextDraft = { ...responseDraft, optionId };
     const finishMetric = startProductMetric("attention_response", { surface: "attention", actionClass: "respond" });
     try {
       setBusy(true);
       setError("");
-      await execute(selected, responseDraft);
+      await execute(selected, nextDraft);
       setApplying(copy.applying);
-      setResponseOpen(false);
       await refresh({ ...route, selectedId: undefined });
       writeRoute({ ...route, selectedId: undefined }, true);
       finishMetric({ outcome: "success" });
@@ -510,6 +531,18 @@ export function AttentionCenter({
         ? "partial"
         : "fresh";
   const items = page?.items ?? [];
+  const groupedItems = useMemo(() => {
+    const groups = {
+      immediate: [] as HumanAttentionItem[],
+      soon: [] as HumanAttentionItem[],
+      normal: [] as HumanAttentionItem[],
+    };
+    for (const item of items) groups[item.urgency].push(item);
+    return groups;
+  }, [items]);
+  const expiredCount = route.view === "history"
+    ? items.filter((item) => item.status === "expired").length
+    : 0;
   const historyStatuses = ["verified", "expired", "superseded"] as const;
   return (
     <section className="attention-center" data-testid="attention-center">
@@ -734,363 +767,165 @@ export function AttentionCenter({
           </Button>
         </section>
       )}
-      <div className="attention-list" role="list">
-        {items.map((item) => {
-          const incompatible = Boolean(
-            bulkCompatibility &&
-            item.bulk.compatibilityKey !== bulkCompatibility,
-          );
-          const audienceLabel =
-            item.audience.relationship === "assigned_to_me"
-              ? copy.assigned
-              : item.audience.relationship === "workspace_administration"
-                ? copy.workspaceAdmin
-                : copy.visibleToMe;
-          const risk = item.severity === "info" ? "none" : item.severity;
-          const urgency =
-            item.urgency === "immediate" ? "urgent" : item.urgency;
-          return (
-            <div className="attention-row" key={item.id} role="listitem">
-              <label
-                className="attention-bulk-check"
-                title={
-                  !item.bulk.eligible
-                    ? copy.prohibited
-                    : incompatible
-                      ? copy.incompatible
-                      : undefined
-                }
-              >
-                <input
-                  aria-label={`${copy.bulk}: ${item.title}`}
-                  checked={bulkSelected.has(item.id)}
-                  disabled={!item.bulk.eligible || incompatible}
-                  onChange={() => toggleBulk(item)}
-                  type="checkbox"
-                />
-                <span>{audienceLabel}</span>
-              </label>
-              <AttentionListItem
-                actions={
-                  <Button
-                    icon={<ArrowRightIcon aria-hidden="true" size={16} />}
-                    iconPosition="end"
-                    onClick={(event) => openItem(item, event.currentTarget)}
-                    type="button"
-                    variant="ghost"
-                  >
-                    {copy.details}
-                  </Button>
-                }
-                actor={
-                  <ActorAttribution
-                    activeAgent={{
-                      label: copy.requestedBy,
-                      name: item.requestedBy.displayName,
-                    }}
-                    relationshipLabel=""
-                    responsibleHuman={{
-                      label: copy.responsible,
-                      name: item.responsibleHuman?.displayName ?? copy.none,
-                    }}
-                  />
-                }
-                badges={
-                  <>
-                    <AttentionKindBadge
-                      categoryLabel={copy.kind}
-                      label={item.kind.replaceAll("_", " ")}
-                      value={item.kind}
-                    />
-                    <RiskBadge
-                      categoryLabel={copy.severity}
-                      label={item.severity}
-                      value={risk}
-                    />
-                    <UrgencyBadge
-                      categoryLabel={copy.urgency}
-                      label={item.urgency}
-                      value={urgency}
-                    />
-                    <LifecycleBadge
-                      categoryLabel={copy.status}
-                      label={item.status}
-                      value={item.status}
-                    />
-                  </>
-                }
-                description={item.summary}
-                title={item.title}
-              />
-            </div>
-          );
-        })}
-        {page && items.length === 0 && (
-          <p className="attention-empty">{copy.empty}</p>
-        )}
-        {!page && !error && (
-          <p className="attention-empty">{copy.loadingMore}</p>
-        )}
-      </div>
-      <WorkSurfacePagination
-        copy={{ loadMore: copy.loadMore, loading: copy.loadingMore }}
-        loading={false}
-        nextCursor={page?.nextCursor ?? null}
-        onLoadMore={() => {
-          if (page?.nextCursor)
-            writeRoute({
-              ...route,
-              cursor: page.nextCursor,
-              selectedId: undefined,
-            });
-        }}
-      />
-      <Dialog
-        closeLabel={copy.cancel}
-        description={selected?.summary}
-        onClose={closeItem}
-        open={Boolean(selected) && !responseOpen}
-        title={selected?.title ?? copy.details}
-      >
-        {selected && (
-          <div className="attention-detail">
-            <ActorAttribution
-              activeAgent={{
-                label: copy.requestedBy,
-                name: selected.requestedBy.displayName,
-              }}
-              relationshipLabel=""
-              responsibleHuman={{
-                label: copy.responsible,
-                name: selected.responsibleHuman?.displayName ?? copy.none,
-              }}
-            />
-            <dl>
-              <div>
-                <dt>{copy.source}</dt>
-                <dd>
-                  {selected.source.type} · {selected.source.status}
-                </dd>
-              </div>
-              <div>
-                <dt>{copy.revision}</dt>
-                <dd>{selected.sourceRevision}</dd>
-              </div>
-              <div>
-                <dt>{copy.expires}</dt>
-                <dd>
-                  {selected.expiresAt
-                    ? new Date(selected.expiresAt).toLocaleString(locale)
-                    : copy.none}
-                </dd>
-              </div>
-              <div>
-                <dt>{copy.updated}</dt>
-                <dd>{new Date(selected.updatedAt).toLocaleString(locale)}</dd>
-              </div>
-            </dl>
-            <section>
-              <h3>{copy.impact}</h3>
-              <p>{selected.impactSummary}</p>
-            </section>
-            <section>
-              <h3>{copy.resources}</h3>
-              {selected.affectedResources.length ? (
-                <ul>
-                  {selected.affectedResources.map((resource) => (
-                    <li key={`${resource.type}:${resource.id}`}>
-                      <a
-                        href={attentionResourceHref(
-                          selected,
-                          resource.type,
-                          resource.id,
+      <div className="attention-workbench">
+        <aside aria-label={copy.title} className="attention-queue">
+          {route.view === "history" && expiredCount > 0 && (
+            <p className="attention-expired-count">{copy.expiredCount(expiredCount)}</p>
+          )}
+          {(["immediate", "soon", "normal"] as const).map((group) => {
+            const groupItems = groupedItems[group];
+            if (groupItems.length === 0) return null;
+            return (
+              <section className="attention-queue-group" key={group}>
+                <h3>{copy[group]} <span>{groupItems.length}</span></h3>
+                <div className="attention-list" role="list">
+                  {groupItems.map((item) => {
+                    const incompatible = Boolean(bulkCompatibility && item.bulk.compatibilityKey !== bulkCompatibility);
+                    const risk = item.severity === "info" ? "none" : item.severity;
+                    const urgency = item.urgency === "immediate" ? "urgent" : item.urgency;
+                    return (
+                      <div className={`attention-row${selected?.id === item.id ? " selected" : ""}`} key={item.id} role="listitem">
+                        {item.bulk.eligible && (
+                          <label className="attention-bulk-check" title={incompatible ? copy.incompatible : undefined}>
+                            <input
+                              aria-label={`${copy.bulk}: ${item.title}`}
+                              checked={bulkSelected.has(item.id)}
+                              disabled={incompatible}
+                              onChange={() => toggleBulk(item)}
+                              type="checkbox"
+                            />
+                            <span>{copy.bulk}</span>
+                          </label>
                         )}
-                      >
-                        {resource.label ?? resource.type}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>{copy.none}</p>
-              )}
-            </section>
-            <section>
-              <h3>{copy.evidence}</h3>
-              {selected.evidence.length ? (
-                <ul className="evidence-reference-buttons">
-                  {selected.evidence.map((reference) => (
-                    <li key={`${reference.type}:${reference.id}`}>
-                      <button onClick={event => { const item = attentionEvidence.find(candidate => candidate.id === reference.id); if (item) evidenceDrawer.open(item, event.currentTarget) }} type="button"><span>{reference.type}</span>{reference.title ?? reference.type}{reference.status ? ` · ${reference.status}` : ""}</button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>{copy.none}</p>
-              )}
-            </section>
-            <details>
-              <summary>{copy.technical}</summary>
-              <p>
-                {copy.reasonCodes}: {selected.reasonCodes.join(", ")}
-              </p>
-              <p>{selected.correlationId}</p>
-              <p>{selected.id}</p>
-            </details>
-            {selected.audience.canRespond && selected.options.length > 0 && (
-              <Button
-                disabled={
-                  (connectionState === "offline" ||
-                    selected.freshness.state !== "current") &&
-                  isDangerous(selected)
-                }
-                onClick={() => void openResponse(selected)}
-                type="button"
-              >
-                {(connectionState === "offline" ||
-                  selected.freshness.state !== "current") &&
-                isDangerous(selected)
-                  ? copy.stale
-                  : copy.response}
-              </Button>
-            )}
-          </div>
-        )}
-      </Dialog>
-      <Dialog
-        closeLabel={copy.cancel}
-        description={selected?.impactSummary}
-        dismissible={!busy}
-        onClose={() => setResponseOpen(false)}
-        open={Boolean(selected) && responseOpen}
-        title={`${copy.response}: ${selected?.kind.replaceAll("_", " ") ?? ""}`}
-      >
-        {selected && (
-          <form className="attention-response-form" onSubmit={submitResponse}>
-            {selected.options.length > 1 && (
-              <label>
-                {copy.response}
-                <select
-                  onChange={(event) => {
-                    const optionId = event.currentTarget.value;
-                    setResponseDraft((current) => ({ ...current, optionId }));
-                  }}
-                  value={responseDraft.optionId}
-                >
-                  {selected.options.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            {selected.response.choices.length > 0 && (
-              <label>
-                {copy.choice}
-                <select
-                  onChange={(event) => {
-                    const choice = event.currentTarget.value;
-                    setResponseDraft((current) => ({
-                      ...current,
-                      choice,
-                    }));
-                  }}
-                  value={responseDraft.choice}
-                >
-                  {selected.response.choices.map((choice) => (
-                    <option key={choice.id} value={choice.id}>
-                      {choice.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            {(selected.response.requiresReason ||
-              selected.kind !== "clarification") && (
-              <label>
-                {copy.reason}
-                <textarea
-                  onChange={(event) => {
-                    const reason = event.currentTarget.value;
-                    setResponseDraft((current) => ({
-                      ...current,
-                      reason,
-                    }));
-                  }}
-                  required={selected.response.requiresReason}
-                  value={responseDraft.reason}
-                />
-              </label>
-            )}
-            {selected.response.requiresMessage && (
-              <label>
-                {copy.message}
-                <textarea
-                  onChange={(event) => {
-                    const message = event.currentTarget.value;
-                    setResponseDraft((current) => ({
-                      ...current,
-                      message,
-                    }));
-                  }}
-                  required
-                  value={responseDraft.message}
-                />
-              </label>
-            )}
-            {(previewLoading ||
-              selected.options.find(
-                (option) => option.id === responseDraft.optionId,
-              )?.consequencePreviewPath) && (
-              <section className="attention-preview">
-                <h3>{copy.preview}</h3>
-                {previewLoading ? (
-                  <p>{copy.previewLoading}</p>
-                ) : preview ? (
-                  <>
-                    <p>{preview.reasonCode}</p>
-                    <ul>
-                      {preview.consequences.map((consequence) => (
-                        <li key={consequence.code}>{consequence.summary}</li>
-                      ))}
-                      {preview.warnings.map((warning, index) => (
-                        <li key={`warning-${index}`}>{warning}</li>
-                      ))}
-                    </ul>
-                  </>
-                ) : (
-                  <p>{copy.previewUnavailable}</p>
-                )}
+                        <AttentionListItem
+                          actions={
+                            <Button onClick={(event) => openItem(item, event.currentTarget)} type="button" variant="ghost">
+                              {copy.details}
+                            </Button>
+                          }
+                          actor={<span className="attention-queue-actor">{item.requestedBy.displayName}</span>}
+                          badges={
+                            <>
+                              <AttentionKindBadge categoryLabel={copy.kind} label={item.kind.replaceAll("_", " ")} value={item.kind} />
+                              <RiskBadge categoryLabel={copy.severity} label={item.severity} value={risk} />
+                              <UrgencyBadge categoryLabel={copy.urgency} label={item.urgency} value={urgency} />
+                              <LifecycleBadge categoryLabel={copy.status} label={item.status} value={item.status} />
+                            </>
+                          }
+                          description={item.summary}
+                          title={item.title}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </section>
-            )}
-            <div className="attention-response-actions">
-              <Button
-                disabled={busy}
-                onClick={() => setResponseOpen(false)}
-                type="button"
-                variant="ghost"
-              >
-                {copy.cancel}
-              </Button>
-              <Button
-                disabled={
-                  busy ||
-                  (Boolean(
-                    selected.options.find(
-                      (option) => option.id === responseDraft.optionId,
-                    )?.consequencePreviewPath,
-                  ) &&
-                    !preview)
-                }
-                type="submit"
-              >
-                {copy.submit}
-              </Button>
-            </div>
-          </form>
-        )}
-      </Dialog>
+            );
+          })}
+          {page && items.length === 0 && <p className="attention-empty">{copy.empty}</p>}
+          {!page && !error && <p className="attention-empty">{copy.loadingMore}</p>}
+          <WorkSurfacePagination
+            copy={{ loadMore: copy.loadMore, loading: copy.loadingMore }}
+            loading={false}
+            nextCursor={page?.nextCursor ?? null}
+            onLoadMore={() => {
+              if (page?.nextCursor) writeRoute({ ...route, cursor: page.nextCursor, selectedId: undefined });
+            }}
+          />
+        </aside>
+        <main className="attention-decision-context">
+          {!selected ? (
+            <p className="attention-select-prompt">{copy.selectPrompt}</p>
+          ) : (
+            <>
+              <header className="attention-detail-heading">
+                <div>
+                  <p>{selected.kind.replaceAll("_", " ")} · {selected.severity}</p>
+                  <h3>{selected.title}</h3>
+                </div>
+                <Button onClick={closeItem} type="button" variant="ghost">{copy.cancel}</Button>
+              </header>
+              <div className="attention-detail">
+                <section>
+                  <h3>{copy.request}</h3>
+                  <p>{selected.summary}</p>
+                </section>
+                <ActorAttribution
+                  activeAgent={{ label: copy.requestedBy, name: selected.requestedBy.displayName }}
+                  relationshipLabel=""
+                  responsibleHuman={{ label: copy.responsible, name: selected.responsibleHuman?.displayName ?? copy.none }}
+                />
+                <dl>
+                  <div><dt>{copy.source}</dt><dd>{selected.source.type} · {selected.source.status}</dd></div>
+                  <div><dt>{copy.revision}</dt><dd>{selected.sourceRevision}</dd></div>
+                  <div><dt>{copy.expires}</dt><dd>{selected.expiresAt ? new Date(selected.expiresAt).toLocaleString(locale) : copy.none}</dd></div>
+                  <div><dt>{copy.updated}</dt><dd>{new Date(selected.updatedAt).toLocaleString(locale)}</dd></div>
+                </dl>
+                <section><h3>{copy.impact}</h3><p>{selected.impactSummary}</p></section>
+                <section className="attention-boundary-grid">
+                  <div>
+                    <h3>{copy.boundary}</h3>
+                    <p>{copy.boundaryHint}</p>
+                    {selected.affectedResources.length ? (
+                      <ul>{selected.affectedResources.map((resource) => (
+                        <li key={`${resource.type}:${resource.id}`}><a href={attentionResourceHref(selected, resource.type, resource.id)}>{resource.label ?? resource.type}</a></li>
+                      ))}</ul>
+                    ) : <p>{copy.none}</p>}
+                  </div>
+                  <div><h3>{copy.exclusions}</h3><p>{copy.exclusionsHint}</p></div>
+                </section>
+                <section>
+                  <h3>{copy.evidence}</h3>
+                  {selected.evidence.length ? (
+                    <ul className="evidence-reference-buttons">{selected.evidence.map((reference) => (
+                      <li key={`${reference.type}:${reference.id}`}><button onClick={event => { const item = attentionEvidence.find(candidate => candidate.id === reference.id); if (item) evidenceDrawer.open(item, event.currentTarget) }} type="button"><span>{reference.type}</span>{reference.title ?? reference.type}{reference.status ? ` · ${reference.status}` : ""}</button></li>
+                    ))}</ul>
+                  ) : <p>{copy.none}</p>}
+                </section>
+                <details><summary>{copy.technical}</summary><p>{copy.reasonCodes}: {selected.reasonCodes.join(", ")}</p><p>{selected.correlationId}</p><p>{selected.id}</p></details>
+              </div>
+              {selected.audience.canRespond && selected.options.length > 0 ? (
+                <form className="attention-response-form" onSubmit={submitResponse}>
+                  {selected.response.choices.length > 0 && (
+                    <fieldset className="attention-choice-list"><legend>{copy.choice}</legend>{selected.response.choices.map((choice) => (
+                      <label key={choice.id}><input checked={responseDraft.choice === choice.id} name="attention-choice" onChange={() => setResponseDraft((current) => ({ ...current, choice: choice.id }))} type="radio" value={choice.id} />{choice.label}</label>
+                    ))}</fieldset>
+                  )}
+                  {(selected.response.requiresReason || selected.kind !== "clarification") && (
+                    <label>{copy.reason}<textarea onChange={(event) => { const reason = event.currentTarget.value; setResponseDraft((current) => ({ ...current, reason })); }} required={selected.response.requiresReason} value={responseDraft.reason} /></label>
+                  )}
+                  {selected.response.requiresMessage && (
+                    <label>{copy.message}<textarea onChange={(event) => { const message = event.currentTarget.value; setResponseDraft((current) => ({ ...current, message })); }} required value={responseDraft.message} /></label>
+                  )}
+                  {(previewLoading || selected.options.some((option) => option.consequencePreviewPath)) && (
+                    <section className="attention-preview"><h3>{copy.preview}</h3>{previewLoading ? <p>{copy.previewLoading}</p> : preview ? <><p>{preview.reasonCode}</p><ul>{preview.consequences.map((consequence) => <li key={consequence.code}>{consequence.summary}</li>)}{preview.warnings.map((warning, index) => <li key={`warning-${index}`}>{warning}</li>)}</ul></> : <p>{copy.previewUnavailable}</p>}</section>
+                  )}
+                  <div className="attention-response-actions">
+                    {(selected.kind === "approval"
+                      ? [...selected.options].sort((left, right) => Number(right.id === "reject") - Number(left.id === "reject"))
+                      : selected.options).map((option) => (
+                      <Button
+                        disabled={busy || ((connectionState === "offline" || selected.freshness.state !== "current") && isDangerous(selected)) || (Boolean(option.consequencePreviewPath) && !preview)}
+                        key={option.id}
+                        name="attention-option"
+                        type="submit"
+                        value={option.id}
+                        variant={["reject", "dismiss"].includes(option.id) ? "danger" : "primary"}
+                      >
+                        {selected.kind === "approval" && option.id === "approve"
+                          ? (locale === "zh-CN" ? "批准并继续" : "Approve and continue")
+                          : selected.kind === "approval" && option.id === "reject"
+                            ? (locale === "zh-CN" ? "拒绝" : "Reject")
+                          : option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </form>
+              ) : <p className="attention-readonly">{copy.readOnly}</p>}
+            </>
+          )}
+        </main>
+      </div>
       <EvidenceDrawer item={evidenceDrawer.selected} onClose={evidenceDrawer.close} />
     </section>
   );

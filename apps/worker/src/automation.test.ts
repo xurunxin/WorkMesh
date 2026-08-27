@@ -20,11 +20,15 @@ describe('Stage 4 automation scheduling', () => {
   })
 
   it('does not query, claim, or effect disabled automation work', async () => {
-    const db = {
-      query: async () => {
-        throw new Error('disabled worker must not touch automation state')
+    const tx = {
+      query: async (sql: string) => {
+        if (/automation_(?:rules|runs|effects)/.test(sql))
+          throw new Error('disabled worker must not touch automation state')
+        return { rows: [], rowCount: 0 }
       },
-    } as unknown as Db
+      release: () => undefined,
+    }
+    const db = { connect: async () => tx } as unknown as Db
     const sink = {
       callWebhook: async () => {
         throw new Error('disabled worker must not call external webhooks')
@@ -38,16 +42,21 @@ describe('Stage 4 automation scheduling', () => {
     await expect(worker.tick()).resolves.toBeUndefined()
   })
 
-  it('does not query notification state when Beta Planning is disabled', async () => {
-    const db = {
-      query: async () => {
-        throw new Error('disabled planning must not touch notification state')
+  it('claims durable notification work independently of the Beta Planning feature gate', async () => {
+    let claimed = false
+    const tx = {
+      query: async (sql: string) => {
+        if (sql.includes('UPDATE notification_deliveries')) claimed = true
+        return { rows: [], rowCount: 0 }
       },
-    } as unknown as Db
+      release: () => undefined,
+    }
+    const db = { connect: async () => tx } as unknown as Db
     const worker = createAutomationWorker({
       db,
       features: loadFeatureConfig({ WORKMESH_EXPERIMENTAL_AUTOMATION: 'true' }),
     })
     await expect(worker.claimNotifications()).resolves.toEqual([])
+    expect(claimed).toBe(true)
   })
 })

@@ -63,3 +63,30 @@ actions remain visible without document-level horizontal scrolling.
 - `docs/evidence/human-control-plane/hcp-option-2-en-390x844.png`
 - `docs/evidence/human-control-plane/hcp-option-2-evidence-drawer-1440x1024.png`
 - `docs/evidence/human-control-plane/hcp-option-2-consequence-dialog-1440x1024.png`
+
+---
+
+# Design QA — Autonomous Human Control Plane
+
+## Sources compared
+
+- Existing WorkMesh control-plane captures: `workmesh-control-audit/01-inbox.png` and `workmesh-control-audit/04-agents.png`.
+- Implemented captures: `workmesh-hcp-final/approval-yolo-final.png`, `desktop-1440x1024.png`, `mobile-390x844.png`, `mobile-detail-390x844.png`, `agents-enrollment-1440x1024.png`, and `agents-enrollment-390x844.png`.
+- Visual target: selected option 3 — compact attention queue, complete decision context, and a sticky response bar.
+
+## Verification
+
+- Desktop 1440×1024: the autonomy policy and Web Push state are visible before the attention queue; selection remains in the URL; queue, context, boundary, evidence, and response controls are visible without a modal.
+- Approved/rejected decisions leave the active queue immediately; the final live check showed only the excluded pending Approval in the queue and rendered explicit `拒绝` / `批准并继续` actions.
+- Mobile 390×844: controls reflow to one column without document overflow; the attention queue remains scannable; the response form remains sticky while the decision context scrolls; enrollment fields and capability limits remain reachable.
+- Agents: primary navigation is split into Agents, Connections, Enrollment policies, and Archived. The enrollment wizard uses the existing WorkMesh visual language and becomes a compact selector on mobile.
+- Accessibility: semantic landmarks, tablists, labelled fields, buttons, switches, and visible focus styles are retained. Automated keyboard/reflow E2E coverage passed at 320, 375, 390, 760, 761, 768, 1440, and 1920 widths.
+- Comparison outcome: the implementation preserves the existing neutral palette, typography, borders, spacing, and component system while making the action hierarchy and lifecycle separation explicit.
+
+## Findings
+
+- P0: none.
+- P1: none.
+- P2: none.
+
+final result: passed

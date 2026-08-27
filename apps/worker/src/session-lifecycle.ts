@@ -32,13 +32,14 @@ export const classifyHeartbeatLiveness = ({
 
 type LockedSession = { id: string; workspaceId: string; teamId: string; responsibleHumanActorId?: string; state: string; revision?: number; sequence?: string; heartbeatHealth?: SessionLiveness; acknowledgedAt?: Date | null; createdAt?: Date | null; lastHeartbeatAt?: Date | null; heartbeatIntervalSeconds?: number }
 type UpdatedSession = { id: string; workspaceId: string; revision: number; sequence: string }
-type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string }
+type LockedApproval = { id: string; workspaceId: string; teamId: string; sessionId: string; agentId: string }
 
 export type SessionLifecycleWorker = {
   expireAckDeadlines: (limit?: number) => Promise<number>
   reconcileHeartbeatLiveness: (limit?: number) => Promise<number>
   expireStopGrace: (limit?: number) => Promise<number>
   expireApprovals: (limit?: number) => Promise<number>
+  reconcileApprovalAutonomy: (limit?: number) => Promise<number>
   expireLeases: (limit?: number) => Promise<number>
   rebuildExecutorProjections: (workspaceId?: string, workItemId?: string) => Promise<number>
   cleanupAuthIdempotency: (limit?: number) => Promise<{ wiped: number; deleted: number }>
@@ -76,8 +77,8 @@ const appendOutboxEvent = async (tx: Transaction, input: {
   sessionId?: string
   sessionSequence?: string
   payload: Record<string, unknown>
-}): Promise<void> => {
-  await appendEvent(tx, {
+}): Promise<string> => {
+  return appendEvent(tx, {
     workspaceId: input.workspaceId,
     teamId: input.teamId,
     actorId: input.actorId,
@@ -90,6 +91,34 @@ const appendOutboxEvent = async (tx: Transaction, input: {
     sessionSequence: input.sessionSequence,
     payload: input.payload,
   })
+}
+
+const queueAgentWebhookDeliveries = async (
+  tx: Transaction,
+  input: {
+    agentId: string
+    eventId: string
+    eventType: string
+    sessionId: string
+    payload: Record<string, unknown>
+  },
+): Promise<void> => {
+  const targets = await tx.query<{ endpoint_id: string; version: number }>(
+    `SELECT endpoint.id AS endpoint_id,secret.version
+       FROM agent_webhook_endpoints endpoint
+       JOIN agent_webhook_secrets secret ON secret.endpoint_id=endpoint.id
+      WHERE endpoint.agent_id=$1 AND endpoint.is_active
+        AND secret.status='active'
+        AND (secret.valid_until IS NULL OR secret.valid_until>now())`,
+    [input.agentId],
+  )
+  for (const target of targets.rows)
+    await tx.query(
+      `INSERT INTO agent_webhook_deliveries(
+         agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload
+       ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+      [input.agentId, target.endpoint_id, target.version, input.eventId, randomUUID(), input.eventType, input.sessionId, input.payload],
+    )
 }
 
 const insertInbox = async (tx: Transaction, input: {
@@ -311,33 +340,301 @@ export function createSessionLifecycleWorker({
 
   const expireApprovals = async (limit = 50): Promise<number> => withTx(db, async tx => {
     const candidates = await tx.query<LockedApproval>(`
-      SELECT a.id, a.workspace_id AS "workspaceId", d.team_id AS "teamId", a.session_id AS "sessionId"
+      SELECT a.id, a.workspace_id AS "workspaceId", d.team_id AS "teamId", a.session_id AS "sessionId", s.agent_id AS "agentId"
       FROM approvals a
       JOIN agent_sessions s ON s.id=a.session_id AND s.workspace_id=a.workspace_id
       JOIN delegations d ON d.id=s.delegation_id AND d.workspace_id=s.workspace_id
       WHERE a.status='pending' AND a.expires_at <= now()
-      ORDER BY a.expires_at FOR UPDATE SKIP LOCKED LIMIT $1
+      ORDER BY a.expires_at FOR UPDATE OF a SKIP LOCKED LIMIT $1
     `, [limit])
     let changed = 0
     for (const approval of candidates.rows) {
-      const result = await tx.query<{ revision: number }>(`
+      const result = await tx.query<{ revision: number; updated_at: Date }>(`
         UPDATE approvals SET status='expired', revision=revision+1, updated_at=now()
-        WHERE id=$1 AND status='pending' RETURNING revision
+        WHERE id=$1 AND status='pending' RETURNING revision,updated_at
       `, [approval.id])
-      const revision = result.rows[0]?.revision
-      if (!revision) continue
+      const expired = result.rows[0]
+      if (!expired) continue
       const actorId = await systemActorId(tx, approval.workspaceId)
-      await appendOutboxEvent(tx, {
+      const payload = { approvalId: approval.id, status: 'expired', expiredAt: expired.updated_at.toISOString() }
+      const eventId = await appendOutboxEvent(tx, {
         workspaceId: approval.workspaceId, teamId: approval.teamId, actorId, correlationId: `${workerId}:approval-expiry:${approval.id}`,
-        eventType: 'approval.expired', aggregateType: 'approval', aggregateId: approval.id, revision,
-        sessionId: approval.sessionId, payload: { sessionId: approval.sessionId },
+        eventType: 'approval.expired', aggregateType: 'approval', aggregateId: approval.id, revision: expired.revision,
+        sessionId: approval.sessionId, payload,
       })
+      await queueAgentWebhookDeliveries(tx, { agentId: approval.agentId, eventId, eventType: 'approval.expired', sessionId: approval.sessionId, payload: { ...payload, sessionId: approval.sessionId } })
       await tx.query(`
         UPDATE inbox_items SET status='resolved', resolved_at=now(), resolved_by_actor_id=$1, revision=revision+1, updated_at=now()
         WHERE session_id=$2 AND kind='approval' AND source_type='approval' AND source_id=$3 AND status='open'
       `, [actorId, approval.sessionId, approval.id])
       changed += 1
     }
+    return changed
+  })
+
+  const reconcileApprovalAutonomy = async (limit = 50): Promise<number> => withTx(db, async tx => {
+    const reconciliation = (await tx.query<{
+      id: string
+      workspace_id: string
+      policy_revision: number
+    }>(`
+      SELECT reconciliation.id,reconciliation.workspace_id,reconciliation.policy_revision
+        FROM approval_policy_reconciliations reconciliation
+       WHERE reconciliation.status IN ('pending','running','completed_with_skips')
+         AND EXISTS(
+           SELECT 1 FROM approval_policy_reconciliation_items item
+            WHERE item.reconciliation_id=reconciliation.id
+              AND (
+                item.status='pending'
+                OR (item.status='skipped' AND item.updated_at<=now()-interval '15 seconds')
+              )
+         )
+       ORDER BY reconciliation.created_at,reconciliation.id
+       FOR UPDATE SKIP LOCKED LIMIT 1
+    `)).rows[0]
+    if (!reconciliation) return 0
+    await tx.query(
+      `UPDATE approval_policy_reconciliations
+          SET status='running',started_at=coalesce(started_at,now()),updated_at=now()
+        WHERE id=$1`,
+      [reconciliation.id],
+    )
+    const candidates = await tx.query<{
+      approval_id: string
+      approval_status: string
+      expires_at: Date
+      required_approvals: number
+      session_id: string
+      session_state: string
+      session_revision: number
+      session_sequence: string
+      workspace_id: string
+      team_id: string
+      agent_id: string
+      agent_actor_id: string
+      work_item_id: string | null
+      project_id: string | null
+      policy_mode: 'human_required' | 'yolo'
+      current_policy_revision: number
+      policy_actor_id: string
+      definition_active: boolean
+      agent_actor_active: boolean
+      principal_active: boolean
+      access_active: boolean
+      delegation_active: boolean
+      capability_active: boolean
+      work_item_active: boolean
+      project_active: boolean
+      project_excluded: boolean
+    }>(`
+      SELECT approval.id AS approval_id,approval.status AS approval_status,
+             approval.expires_at,approval.required_approvals,
+             session.id AS session_id,session.state AS session_state,
+             session.revision AS session_revision,session.sequence::text AS session_sequence,
+             session.workspace_id,coalesce(session.team_id,delegation.team_id) AS team_id,
+             session.agent_id,session.agent_actor_id,
+             session.work_item_id,coalesce(item.project_id,session.project_id) AS project_id,
+             policy.mode AS policy_mode,policy.revision AS current_policy_revision,
+             policy.updated_by_actor_id AS policy_actor_id,
+             definition.is_active AS definition_active,
+             agent_actor.is_active AS agent_actor_active,
+             principal.is_active AS principal_active,
+             access.revoked_at IS NULL AS access_active,
+             delegation.status='active' AS delegation_active,
+             ('work:write'=ANY(definition.approved_capabilities)
+               AND 'work:write'=ANY(access.approved_capabilities)
+               AND 'work:write'=ANY(delegation.permissions_snapshot)) AS capability_active,
+             (session.work_item_id IS NULL OR (item.id IS NOT NULL AND item.deleted_at IS NULL)) AS work_item_active,
+             (coalesce(item.project_id,session.project_id) IS NULL
+               OR (project.id IS NOT NULL AND project.deleted_at IS NULL)) AS project_active,
+             EXISTS(
+               SELECT 1 FROM approval_autonomy_project_exclusions exclusion
+                WHERE exclusion.workspace_id=session.workspace_id
+                  AND exclusion.project_id=coalesce(item.project_id,session.project_id)
+             ) AS project_excluded
+        FROM approval_policy_reconciliation_items reconciliation_item
+        JOIN approvals approval ON approval.id=reconciliation_item.approval_id
+        JOIN agent_sessions session ON session.id=approval.session_id
+        JOIN approval_autonomy_policies policy ON policy.workspace_id=session.workspace_id
+        JOIN agent_definitions definition ON definition.id=session.agent_id
+        JOIN actors agent_actor ON agent_actor.id=session.agent_actor_id
+        JOIN delegations delegation ON delegation.id=session.delegation_id
+        JOIN actors principal ON principal.id=delegation.principal_human_actor_id
+        LEFT JOIN agent_team_access access
+          ON access.workspace_id=session.workspace_id
+         AND access.agent_id=session.agent_id
+         AND access.team_id=coalesce(session.team_id,delegation.team_id)
+        LEFT JOIN work_items item ON item.id=session.work_item_id
+        LEFT JOIN projects project ON project.id=coalesce(item.project_id,session.project_id)
+       WHERE reconciliation_item.reconciliation_id=$1
+         AND (
+           reconciliation_item.status='pending'
+           OR (reconciliation_item.status='skipped'
+             AND reconciliation_item.updated_at<=now()-interval '15 seconds')
+         )
+       ORDER BY (reconciliation_item.status='pending') DESC,
+                reconciliation_item.updated_at,approval.created_at,approval.id
+       FOR UPDATE OF reconciliation_item,approval,session SKIP LOCKED LIMIT $2
+    `, [reconciliation.id, limit])
+    let changed = 0
+    let lastError: string | null = null
+    for (const candidate of candidates.rows) {
+      const reason = candidate.policy_mode !== 'yolo'
+        ? 'policy_disabled'
+        : candidate.current_policy_revision !== reconciliation.policy_revision
+          ? 'policy_revision_changed'
+          : candidate.project_excluded
+            ? 'project_excluded'
+            : candidate.approval_status !== 'pending'
+              ? `approval_${candidate.approval_status}`
+              : candidate.expires_at.getTime() <= Date.now()
+                ? 'approval_expired'
+                : !['queued','acknowledged','planning','executing','awaiting_input','awaiting_approval','blocked'].includes(candidate.session_state)
+                  ? `session_${candidate.session_state}`
+                  : !candidate.definition_active || !candidate.agent_actor_active
+                    ? 'agent_inactive'
+                    : !candidate.principal_active
+                      ? 'principal_inactive'
+                      : !candidate.access_active
+                        ? 'team_access_revoked'
+                        : !candidate.delegation_active
+                          ? 'delegation_inactive'
+                          : !candidate.capability_active
+                            ? 'capability_denied'
+                            : !candidate.work_item_active || !candidate.project_active
+                              ? 'resource_scope_invalid'
+                              : null
+      if (reason) {
+        lastError = reason
+        await tx.query(
+          `UPDATE approval_policy_reconciliation_items
+              SET status='skipped',attempt_count=attempt_count+1,last_error=$3,updated_at=now()
+            WHERE reconciliation_id=$1 AND approval_id=$2`,
+          [reconciliation.id, candidate.approval_id, reason],
+        )
+        continue
+      }
+      const inserted = await tx.query<{
+        actor_id: string
+        decision: 'approved'
+        reason: string
+        source: 'workspace_policy'
+        policy_workspace_id: string
+        policy_revision: number
+        decided_at: Date
+      }>(
+        `INSERT INTO approval_decisions(
+           approval_id,actor_id,decision,reason,source,policy_workspace_id,policy_revision
+         ) VALUES($1,$2,'approved','Approved by workspace YOLO policy reconciliation',
+                  'workspace_policy',$3,$4)
+         ON CONFLICT DO NOTHING
+         RETURNING actor_id,decision,reason,source,policy_workspace_id,policy_revision,decided_at`,
+        [candidate.approval_id, candidate.policy_actor_id, candidate.workspace_id, reconciliation.policy_revision],
+      )
+      const updated = await tx.query<{ revision: number; updated_at: Date }>(
+        `UPDATE approvals SET status='approved',revision=revision+1,updated_at=now()
+          WHERE id=$1 AND status='pending' AND expires_at>now()
+          RETURNING revision,updated_at`,
+        [candidate.approval_id],
+      )
+      if (!updated.rowCount) {
+        lastError = 'approval_changed'
+        await tx.query(
+          `UPDATE approval_policy_reconciliation_items
+              SET status='skipped',attempt_count=attempt_count+1,last_error='approval_changed',updated_at=now()
+            WHERE reconciliation_id=$1 AND approval_id=$2`,
+          [reconciliation.id, candidate.approval_id],
+        )
+        continue
+      }
+      const revision = updated.rows[0]!.revision
+      const decisionRow = inserted.rows[0] ?? (await tx.query<{
+        actor_id: string; decision: 'approved'; reason: string; source: 'workspace_policy'
+        policy_workspace_id: string; policy_revision: number; decided_at: Date
+      }>(
+        `SELECT actor_id,decision,reason,source,policy_workspace_id,policy_revision,decided_at
+           FROM approval_decisions
+          WHERE approval_id=$1 AND source='workspace_policy'
+          ORDER BY decided_at,id LIMIT 1`,
+        [candidate.approval_id],
+      )).rows[0]!
+      const quorum = { required: candidate.required_approvals, approved: 1, rejected: 0, reached: true }
+      const decision = { ...decisionRow, decided_at: decisionRow.decided_at.toISOString() }
+      const decisionPayload = { approvalId: candidate.approval_id, decision, quorum, status: 'approved' }
+      const decisionEventId = await appendOutboxEvent(tx, {
+        workspaceId: candidate.workspace_id, teamId: candidate.team_id,
+        actorId: candidate.policy_actor_id,
+        correlationId: `${workerId}:approval-policy:${reconciliation.id}:${candidate.approval_id}:decision`,
+        eventType: 'approval.decision.recorded', aggregateType: 'approval',
+        aggregateId: candidate.approval_id, revision, sessionId: candidate.session_id,
+        sessionSequence: candidate.session_sequence, payload: decisionPayload,
+      })
+      await queueAgentWebhookDeliveries(tx, {
+        agentId: candidate.agent_id, eventId: decisionEventId,
+        eventType: 'approval.decision.recorded', sessionId: candidate.session_id,
+        payload: { ...decisionPayload, sessionId: candidate.session_id },
+      })
+      const approvedPayload = {
+        approvalId: candidate.approval_id,
+        status: 'approved',
+        quorum,
+        finalizedAt: updated.rows[0]!.updated_at.toISOString(),
+      }
+      const approvedEventId = await appendOutboxEvent(tx, {
+        workspaceId: candidate.workspace_id, teamId: candidate.team_id,
+        actorId: candidate.policy_actor_id,
+        correlationId: `${workerId}:approval-policy:${reconciliation.id}:${candidate.approval_id}:approved`,
+        eventType: 'approval.approved', aggregateType: 'approval',
+        aggregateId: candidate.approval_id, revision, sessionId: candidate.session_id,
+        sessionSequence: candidate.session_sequence, payload: approvedPayload,
+      })
+      await queueAgentWebhookDeliveries(tx, {
+        agentId: candidate.agent_id, eventId: approvedEventId,
+        eventType: 'approval.approved', sessionId: candidate.session_id,
+        payload: { ...approvedPayload, sessionId: candidate.session_id },
+      })
+      await appendOutboxEvent(tx, {
+        workspaceId: candidate.workspace_id, teamId: candidate.team_id,
+        actorId: candidate.policy_actor_id,
+        correlationId: `${workerId}:approval-policy:${reconciliation.id}:${candidate.approval_id}:auto-approved`,
+        eventType: 'approval.auto_approved', aggregateType: 'approval',
+        aggregateId: candidate.approval_id, revision, sessionId: candidate.session_id,
+        sessionSequence: candidate.session_sequence,
+        payload: { approvalId: candidate.approval_id, policyRevision: reconciliation.policy_revision, projectId: candidate.project_id },
+      })
+      await tx.query(
+        `UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$1,
+                revision=revision+1,updated_at=now()
+          WHERE workspace_id=$2 AND source_type='approval' AND source_id=$3 AND status='open'`,
+        [candidate.policy_actor_id, candidate.workspace_id, candidate.approval_id],
+      )
+      await tx.query(
+        `UPDATE approval_policy_reconciliation_items
+            SET status='approved',attempt_count=attempt_count+1,last_error=NULL,updated_at=now()
+          WHERE reconciliation_id=$1 AND approval_id=$2`,
+        [reconciliation.id, candidate.approval_id],
+      )
+      changed += 1
+    }
+    const counts = (await tx.query<{
+      total: number; approved: number; skipped: number; pending: number
+    }>(`
+      SELECT count(*)::int AS total,
+             count(*) FILTER(WHERE status='approved')::int AS approved,
+             count(*) FILTER(WHERE status='skipped')::int AS skipped,
+             count(*) FILTER(WHERE status='pending')::int AS pending
+        FROM approval_policy_reconciliation_items WHERE reconciliation_id=$1
+    `, [reconciliation.id])).rows[0]!
+    await tx.query(
+      `UPDATE approval_policy_reconciliations
+          SET processed_count=$2,approved_count=$3,skipped_count=$4,last_error=$5,
+              status=CASE WHEN $6>0 THEN 'running'::approval_policy_reconciliation_status
+                          WHEN $4>0 THEN 'completed_with_skips'::approval_policy_reconciliation_status
+                          ELSE 'completed'::approval_policy_reconciliation_status END,
+              completed_at=CASE WHEN $6=0 THEN now() ELSE NULL END,updated_at=now()
+        WHERE id=$1`,
+      [reconciliation.id, counts.total - counts.pending, counts.approved, counts.skipped, lastError, counts.pending],
+    )
     return changed
   })
 
@@ -413,9 +710,10 @@ export function createSessionLifecycleWorker({
     await reconcileHeartbeatLiveness()
     await expireStopGrace()
     await expireApprovals()
+    await reconcileApprovalAutonomy()
     await expireLeases()
     await cleanupAuthIdempotency()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, expireLeases, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, reconcileApprovalAutonomy, expireLeases, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
 }

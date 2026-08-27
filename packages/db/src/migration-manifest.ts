@@ -42,24 +42,29 @@ export const legacyMigrationManifest = [
   { version: '0033_inbox_receipt_reply_binding', file: '0033_inbox_receipt_reply_binding.sql', checksumSha256: 'f04600d723c8aef76aca57f15f7a3c8ea70849970b2e573bcbbbbd14f5cfb086' },
   { version: '0034_legacy_inbox_scope_derivation', file: '0034_legacy_inbox_scope_derivation.sql', checksumSha256: '5d100a5a912489804e7a471a62b0551559f0438bfd898fb685d01b7981033171' },
   { version: '0035_decision_session_provenance', file: '0035_decision_session_provenance.sql', checksumSha256: '0680da47336f7188f7ce3f5ace4d8b6a11f7ac0fd503efa040c91a481c8a2084' },
+  { version: '0036_approval_autonomy_policy', file: '0036_approval_autonomy_policy.sql', checksumSha256: '3a18472657d5a2017738c093b9d875ced9a6e214090dfb13fbb43cd5beb76880' },
+  { version: '0037_browser_push', file: '0037_browser_push.sql', checksumSha256: '3c06693e8d95aab781a1bfd7028d87ab263e6dc75ad913e22c563683d51ae7c7' },
+  { version: '0038_agent_enrollment_and_archive', file: '0038_agent_enrollment_and_archive.sql', checksumSha256: 'f3ffbe41b202b11d0fed78cc3d6e710bff2775b0630f137cc7b70c2fb06f1173' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const v1MigrationManifest = [
-  { version: '0001_v1_baseline', file: 'v1/0001_v1_baseline.sql', checksumSha256: '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83' },
+  { version: '0001_v1_baseline', file: 'v1/0001_v1_baseline.sql', checksumSha256: '58b6132da65f7b1897aee89e94c884ef53ac5bd2c31b89fcfc1b81ebbb9b57b0' },
   { version: '0002_active_executor_projection', file: 'v1/0002_active_executor_projection.sql', checksumSha256: '0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2' },
   { version: '0003_versioned_guidance', file: 'v1/0003_versioned_guidance.sql', checksumSha256: '199adac75057ed0a2b285453440359d68aea1ae62cba33b2274ac8e6364fa2e7' },
   { version: '0004_agent_connections', file: 'v1/0004_agent_connections.sql', checksumSha256: 'c31fde289828e87e7919cf114cccd24fb67ace2ee8007539a66273cfb6b90548' },
   { version: '0005_planning_domain_parity', file: 'v1/0005_planning_domain_parity.sql', checksumSha256: '1810ceb56156b7d0305b03b6b69b65453fb85d8b949afbfc78eed2ebf2295be4' },
   { version: '0006_human_attachments', file: 'v1/0006_human_attachments.sql', checksumSha256: '076f92a3257f9ad15c6c9770f31c12755d10a74e7f87b15b0363c391ec050ce5' },
   { version: '0007_active_milestone_name_uniqueness', file: 'v1/0007_active_milestone_name_uniqueness.sql', checksumSha256: 'a3313489a85a5aac71192f540cae57f84f29036a023018c7f2d295d7f5a87302' },
+  { version: '0008_autonomous_control_push_enrollment', file: 'v1/0008_autonomous_control_push_enrollment.sql', checksumSha256: 'ca8ecf47510edfda6221de7f6f375c55d20d4cda588d39ff39816ebed24031d3' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const legacyUpgradeBundleManifest = [
-  { fromVersion: '0002_stage0_integrity_delivery', file: 'upgrades/from_0002_to_v1.sql', checksumSha256: '61656b9a771f9d4efe22a134ee1304f00f03b8fcc8ff39fbfeddab13e2ac86de' },
-  { fromVersion: '0006_stage1_review_fixes', file: 'upgrades/from_0006_to_v1.sql', checksumSha256: '3a82baa40f2b63dac6f5453e46b55492ee724f1691b1792a789f6d947be5e120' },
-  { fromVersion: '0007_stage2_work_rooms_leases_handoffs', file: 'upgrades/from_0007_to_v1.sql', checksumSha256: '43b74a66fc980c5b87cf9b49b2175978ee1e6cc6f03c2494fc0a7a474f0f725f' },
-  { fromVersion: '0014_provider_action_kinds', file: 'upgrades/from_0014_to_v1.sql', checksumSha256: '1dbd8372f5729f65c4f6452627f09d5d33abd6bddcf99a5c84095cefa35a371c' },
-  { fromVersion: '0021_stage4_a2a_direction_and_prompt_identity', file: 'upgrades/from_0021_to_v1.sql', checksumSha256: '4b03632f73653b08cc3954d22018ca921ddc175890b7fd1966e5d01f01b38573' },
+  { fromVersion: '0002_stage0_integrity_delivery', file: 'upgrades/from_0002_to_v1.sql', checksumSha256: '74149f3b8e715b1f9a1d57b408fa28a4659977b944bfdf4d3bd8de222a39d62e' },
+  { fromVersion: '0006_stage1_review_fixes', file: 'upgrades/from_0006_to_v1.sql', checksumSha256: 'eec6410539fe3bd0ee1c2b48f476bbdf94024c7aa5542a02a4a782425329688e' },
+  { fromVersion: '0007_stage2_work_rooms_leases_handoffs', file: 'upgrades/from_0007_to_v1.sql', checksumSha256: 'bbb60714eae06cb77614a8cc00736d69d96e60e1a2d33f84a64419cfd90ebb56' },
+  { fromVersion: '0014_provider_action_kinds', file: 'upgrades/from_0014_to_v1.sql', checksumSha256: '795c395123856937f7770932ae8c24cff4ec71a8e4866b3abec625b4e1411929' },
+  { fromVersion: '0021_stage4_a2a_direction_and_prompt_identity', file: 'upgrades/from_0021_to_v1.sql', checksumSha256: '14af5c1e1921cf010dff6623d8e9ef590d3957f530b5c7e56e6185246d5817d5' },
+  { fromVersion: '0035_decision_session_provenance', file: 'upgrades/from_0035_to_v1.sql', checksumSha256: '167eeb06fbcf17fbf78d01ad601eae51013562d0ab487b94a929733221fe5657' },
 ] as const
 
 export const supportedLegacyUpgradeEndpoints = [
@@ -68,4 +73,5 @@ export const supportedLegacyUpgradeEndpoints = [
   '0007_stage2_work_rooms_leases_handoffs',
   '0014_provider_action_kinds',
   '0021_stage4_a2a_direction_and_prompt_identity',
+  '0035_decision_session_provenance',
 ] as const

@@ -416,6 +416,9 @@ describe('secret-aware auth mutation inventory', () => {
       ...(agentConnections.includes("operation: 'redeemAgentConnection'")
         && agentConnections.includes('authIdempotentTransaction')
         ? ['redeemAgentConnection'] : []),
+      ...(agentConnections.includes("operation: 'redeemAgentEnrollment'")
+        && agentConnections.includes('authIdempotentTransaction')
+        ? ['redeemAgentEnrollment'] : []),
     ].filter((operation): operation is string => Boolean(operation)).sort()
     expect(marked).toEqual(discovered)
     expect([...secretReplayOperationIds].sort()).toEqual(discovered)

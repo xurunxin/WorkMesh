@@ -50,6 +50,7 @@ const directAggregateResourceTypes = {
   provider_webhook_delivery: 'delivery',
   room: 'room',
   work_room: 'room',
+  approval_autonomy_policy: 'workspace',
 } as const satisfies Readonly<Record<string, EventResourceType>>
 
 /**
@@ -67,6 +68,8 @@ export const supportedEventAggregateTypes = [
   'agent',
   'agent_team_access',
   'agent_connection',
+  'agent_enrollment_policy',
+  'browser_push_subscription',
   'delegation',
   'agent_activity',
   'agent_plan_version',
@@ -147,6 +150,7 @@ export const privateEventAudienceForms = [
   'aggregate:saved_view',
   'aggregate:notification',
   'aggregate:advanced_saved_view:private',
+  'aggregate:browser_push_subscription',
   'event:notification.preferences_updated',
 ] as const
 
@@ -220,6 +224,12 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
   agent_connection:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_connections WHERE id=$1 AND workspace_id=$2`,
+  agent_enrollment_policy:
+    `SELECT 'team'::text AS resource_type,team_id AS resource_id
+       FROM agent_enrollment_policies WHERE id=$1 AND workspace_id=$2`,
+  browser_push_subscription:
+    `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id
+       FROM browser_push_subscriptions WHERE id=$1 AND workspace_id=$2`,
   comment:
     `SELECT 'work_item'::text AS resource_type,channel.work_item_id AS resource_id
        FROM comments comment
@@ -678,6 +688,10 @@ async function resolveAudienceActorId(
     privateAudienceSql =
       `SELECT recipient_actor_id AS audience_actor_id,true AS is_private
          FROM notifications WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'browser_push_subscription') {
+    privateAudienceSql =
+      `SELECT actor_id AS audience_actor_id,true AS is_private
+         FROM browser_push_subscriptions WHERE id=$1 AND workspace_id=$2`
   } else if (input.aggregateType === 'advanced_saved_view') {
     privateAudienceSql =
       `SELECT owner_actor_id AS audience_actor_id,
