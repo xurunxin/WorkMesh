@@ -24,6 +24,9 @@ describe('v1 migration manifest', () => {
   })
 
   it('pins the v1 baseline and all five supported atomic upgrade bundles', async () => {
+    expect(v1MigrationManifest[0]?.checksumSha256).toBe(
+      '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83',
+    )
     expect(v1MigrationManifest.at(-1)?.version).toBe('0008_autonomous_control_push_enrollment')
     expect(supportedLegacyUpgradeEndpoints).toEqual([
       '0002_stage0_integrity_delivery',

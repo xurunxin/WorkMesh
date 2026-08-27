@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '../src/index.js'
 import { legacyMigrationManifest, supportedLegacyUpgradeEndpoints, v1MigrationManifest } from '../src/migration-manifest.js'
@@ -24,6 +26,32 @@ let cleanSchemaInventory: SchemaInventory | undefined
 const recreatePublicSchema = async (): Promise<void> => {
   await db.query('DROP SCHEMA public CASCADE')
   await db.query('CREATE SCHEMA public')
+}
+
+const installDeployedV1Through0007 = async (): Promise<void> => {
+  await db.query(`
+    CREATE TABLE schema_migrations(
+      version text PRIMARY KEY,
+      applied_at timestamptz NOT NULL DEFAULT now(),
+      checksum_sha256 text NOT NULL CHECK(checksum_sha256 ~ '^[a-f0-9]{64}$'),
+      execution_mode text NOT NULL CHECK(execution_mode IN ('applied','adopted','legacy'))
+    )
+  `)
+  const client = await db.connect()
+  try {
+    for (const entry of v1MigrationManifest.filter(({ version }) => version <= '0007_active_milestone_name_uniqueness')) {
+      const source = await readFile(join(import.meta.dirname, '../migrations', entry.file), 'utf8')
+      await migrationTestSupport.runTransaction(client, async () => {
+        await client.query(source)
+        await client.query(
+          'INSERT INTO schema_migrations(version,checksum_sha256,execution_mode) VALUES($1,$2,$3)',
+          [entry.version, entry.checksumSha256, 'applied'],
+        )
+      })
+    }
+  } finally {
+    client.release()
+  }
 }
 
 const readSchemaInventory = async (): Promise<SchemaInventory> => (
@@ -129,6 +157,20 @@ describe.sequential('atomic checksummed v1 migration baseline', () => {
     expect((await db.query("SELECT to_regclass('public.agent_sessions') AS relation")).rows[0]!.relation)
       .toBe('agent_sessions')
     cleanSchemaInventory = await readSchemaInventory()
+  }, 120_000)
+
+  it('upgrades an already-deployed v1 database through 0007 without baseline checksum drift', async () => {
+    await installDeployedV1Through0007()
+    await applyMigrations(db)
+    expect((await db.query(
+      "SELECT checksum_sha256,execution_mode FROM schema_migrations WHERE version='0001_v1_baseline'",
+    )).rows[0]).toEqual({
+      checksum_sha256: '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83',
+      execution_mode: 'applied',
+    })
+    expect((await db.query(
+      "SELECT count(*)::int AS count FROM schema_migrations WHERE version='0008_autonomous_control_push_enrollment'",
+    )).rows[0]!.count).toBe(1)
   }, 120_000)
 
   for (const endpoint of supportedLegacyUpgradeEndpoints) {
