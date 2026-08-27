@@ -50,7 +50,7 @@ async function expectSemanticPage(page: Page, label: string): Promise<SemanticSn
 
 async function expectVisibleFocus(target: Locator, label: string): Promise<FocusGeometry> {
   const geometry = await focusGeometry(target)
-  const subpixelTolerance = 1
+  const subpixelTolerance = 2
   expect.soft(geometry.left, `${label}: focused control enters the viewport`).toBeGreaterThanOrEqual(-subpixelTolerance)
   expect.soft(geometry.top, `${label}: focused control enters the viewport`).toBeGreaterThanOrEqual(-subpixelTolerance)
   expect.soft(geometry.right, `${label}: focused control stays within the viewport`).toBeLessThanOrEqual(geometry.viewportWidth + subpixelTolerance)

@@ -130,7 +130,7 @@ const tourCases = [
   {
     slug: 'work-101-detail',
     route: '/?view=my-work&workItem=work-101',
-    unique: { selector: '[data-testid="work-item-detail"] input[name="title"]', value: 'Final visual tour Issue' },
+    unique: { selector: '[data-testid="work-item-detail"] .work-item-execution-header h3', text: 'Final visual tour Issue' },
     focusSelector: '.work-item-detail-agent-action .wm-button',
     rootSelector: '.work-item-full-page',
     dominantSelector: '.work-item-detail-layout',

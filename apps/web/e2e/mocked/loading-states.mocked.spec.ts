@@ -43,6 +43,7 @@ function baseResponse(url: URL, method: string): JsonResponse | null {
   if (url.pathname === '/api/v1/agent-connections') return { body: { items: [], nextCursor: null } }
   if (url.pathname === '/api/v1/agent-sessions') return { body: { items: [], nextCursor: null } }
   if (url.pathname === '/api/v1/approvals') return { body: { items: [], nextCursor: null } }
+  if (url.pathname === '/api/v1/human-attention') return { body: { items: [], nextCursor: null } }
   if (url.pathname === '/api/v1/events/stream') return { body: null, status: 204 }
   return null
 }
@@ -545,11 +546,13 @@ test.describe('Task 6.4 Agent secondary surfaces', () => {
     const historyPath = '/api/v1/approvals?status=approved&limit=100'
     const sessionsPending = deferredResponse()
     const connectionsPending = deferredResponse()
+    const attentionPending = deferredResponse()
     const pendingApprovals = deferredResponse()
     const historyPending = deferredResponse()
     routes.set('/api/v1/agents', { body: { items: [browserAgent], nextCursor: null } })
     routes.set(sessionsPath, sessionsPending.promise)
     routes.set(connectionsPath, connectionsPending.promise)
+    routes.set('/api/v1/human-attention', attentionPending.promise)
     routes.set(pendingPath, pendingApprovals.promise)
     routes.set(historyPath, historyPending.promise)
     await page.goto('/agents?tab=sessions&approvalView=history&approvalStatus=approved', { waitUntil: 'domcontentloaded' })
@@ -572,6 +575,8 @@ test.describe('Task 6.4 Agent secondary surfaces', () => {
     sessionsPending.resolve(notFound)
     routes.set(connectionsPath, { body: { items: [], nextCursor: null } })
     connectionsPending.resolve({ body: { items: [], nextCursor: null } })
+    routes.set('/api/v1/human-attention', { body: { items: [], nextCursor: null } })
+    attentionPending.resolve({ body: { items: [], nextCursor: null } })
     await expect(sessions.locator('.skeleton-list')).toHaveCount(0)
     await expect(diagnostics.locator('.skeleton-list')).toHaveCount(0)
     await expect(connections.locator('.skeleton-list')).toHaveCount(0)

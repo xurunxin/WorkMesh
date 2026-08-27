@@ -273,10 +273,30 @@ export class AccessibilityFixture {
     if (path === '/api/v1/actors/humans') return list([human])
     if (path === '/api/v1/projects') return list([project])
     if (path === `/api/v1/projects/${ids.project}`) return { body: project }
+    if (path === `/api/v1/projects/${ids.project}/control-center`) {
+      const empty = { items: [], nextCursor: null }
+      return { body: {
+        projectionVersion: 1,
+        scope: { workspaceId: 'workspace-preview', projectId: ids.project },
+        project: { id: ids.project, name: project.name, status: project.status, targetDate: project.target_date, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: project.revision },
+        revision: project.revision,
+        freshness: { state: 'fresh', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+        collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+      } }
+    }
     if (path === `/api/v1/projects/${ids.project}/milestones`) return list([])
     if (path === '/api/v1/views') return list([])
     if (path === '/api/v1/work-items') return list([workItem])
     if (path === `/api/v1/work-items/${ids.workItem}`) return { body: workItem }
+    if (path === `/api/v1/work-items/${ids.workItem}/execution-summary`) return { body: {
+      projectionVersion: 1,
+      workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision, status: workItem.status_name },
+      activeRuns: [],
+      recentRuns: [],
+      evidence: [],
+      freshness: { state: 'current', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+    } }
+    if (path === '/api/v1/human-attention') return list([])
     if (path === `/api/v1/work-items/${ids.workItem}/comments`) return list([])
     if (path === `/api/v1/work-items/${ids.workItem}/relations`) return list([])
     if (path === '/api/v1/rooms') return { body: [] }
@@ -288,6 +308,35 @@ export class AccessibilityFixture {
     if (path === `/api/v1/agents/${ids.agentTwo}`) return { body: agents[1] }
     if (path === '/api/v1/agent-sessions') return list([session])
     if (path === `/api/v1/agent-sessions/${ids.session}`) return { body: session }
+    if (path === `/api/v1/agent-sessions/${ids.session}/explanation`) return { body: {
+      projectionVersion: 1,
+      session: { id: session.id, state: session.state, revision: session.revision, stateReason: session.state_reason, budget: session.budget, updatedAt: session.updated_at },
+      project: { id: project.id, name: project.name, revision: project.revision },
+      workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision },
+      responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name },
+      activeAgent: { id: agents[0].actor_id, kind: 'agent', displayName: agents[0].name },
+      plan: null,
+      currentStep: null,
+      planVersions: [],
+      causalGroups: [],
+      nextCursor: null,
+      pendingAttention: [],
+      changes: [{ type: 'agent_session', id: session.id, revision: session.revision }],
+      evidence: [],
+      evidenceDetails: [],
+      verification: { state: 'pending', summary: 'Execution has not yet published successful validation evidence.' },
+      health: { heartbeat: 'healthy', lastHeartbeatAt: session.last_heartbeat_at, leaseCount: 0, pendingApprovalCount: 0 },
+      freshness: { state: 'current', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: session.updated_at },
+      allowedControls: [
+        { action: 'pause', allowed: true, reasonCode: 'ALLOWED', targetState: 'paused' },
+        { action: 'resume', allowed: false, reasonCode: 'SESSION_NOT_PAUSED', targetState: null },
+        { action: 'stop', allowed: true, reasonCode: 'ALLOWED', targetState: 'stopping' },
+        { action: 'retry', allowed: false, reasonCode: 'SESSION_NOT_TERMINAL', targetState: null },
+        { action: 'handoff', allowed: true, reasonCode: 'ALLOWED', targetState: 'awaiting_input' },
+        { action: 'replan', allowed: true, reasonCode: 'ALLOWED', targetState: 'planning' },
+        { action: 'steer', allowed: true, reasonCode: 'ALLOWED', targetState: 'executing' },
+      ],
+    } }
     if (path === `/api/v1/agent-sessions/${ids.session}/activities`) return list([])
     if (path === `/api/v1/agent-sessions/${ids.session}/plans`) return list([])
     if (path === '/api/v1/artifacts') return list([])

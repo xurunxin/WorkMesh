@@ -299,6 +299,42 @@ const finalTourSession = {
   created_at: '2026-08-22T08:45:00.000Z',
   updated_at: fixedNow,
 }
+const runExplanationFixture = ({ selectedSession, selectedAgent, selectedWorkItem = null, selectedProject = null }) => ({
+  projectionVersion: 1,
+  session: {
+    id: selectedSession.id,
+    state: selectedSession.state,
+    revision: selectedSession.revision,
+    stateReason: selectedSession.state_reason,
+    budget: selectedSession.budget,
+    updatedAt: selectedSession.updated_at,
+  },
+  project: selectedProject ? { id: selectedProject.id, name: selectedProject.name, revision: selectedProject.revision } : null,
+  workItem: selectedWorkItem ? { id: selectedWorkItem.id, title: selectedWorkItem.title, revision: selectedWorkItem.revision } : null,
+  responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name },
+  activeAgent: { id: selectedAgent.actor_id, kind: 'agent', displayName: selectedAgent.name },
+  plan: null,
+  currentStep: null,
+  planVersions: [],
+  causalGroups: [],
+  nextCursor: null,
+  pendingAttention: [],
+  changes: [{ type: 'agent_session', id: selectedSession.id, revision: selectedSession.revision }],
+  evidence: [],
+  evidenceDetails: [],
+  verification: { state: 'pending', summary: 'Execution has not yet published successful validation evidence.' },
+  health: { heartbeat: 'healthy', lastHeartbeatAt: selectedSession.last_heartbeat_at, leaseCount: 0, pendingApprovalCount: 0 },
+  freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: selectedSession.updated_at },
+  allowedControls: [
+    { action: 'pause', allowed: true, reasonCode: 'ALLOWED', targetState: 'paused' },
+    { action: 'resume', allowed: false, reasonCode: 'SESSION_NOT_PAUSED', targetState: null },
+    { action: 'stop', allowed: true, reasonCode: 'ALLOWED', targetState: 'stopping' },
+    { action: 'retry', allowed: false, reasonCode: 'SESSION_NOT_TERMINAL', targetState: null },
+    { action: 'handoff', allowed: true, reasonCode: 'ALLOWED', targetState: 'awaiting_input' },
+    { action: 'replan', allowed: true, reasonCode: 'ALLOWED', targetState: 'planning' },
+    { action: 'steer', allowed: true, reasonCode: 'ALLOWED', targetState: 'executing' },
+  ],
+})
 const finalTourApprovals = [
   {
     ...approvalFixture('approval-pending', 'pending', 'Final tour approval', finalTourSession.id),
@@ -670,6 +706,25 @@ const handleFinalTourRoute = (request, response, url) => {
     send(response, finalTourProject)
     return true
   }
+  if (method === 'GET' && path === `/api/v1/projects/${finalTourProject.id}/control-center`) {
+    const empty = page([])
+    send(response, {
+      projectionVersion: 1,
+      scope: { workspaceId: 'workspace-preview', projectId: finalTourProject.id },
+      project: {
+        id: finalTourProject.id,
+        name: finalTourProject.name,
+        status: finalTourProject.status,
+        targetDate: finalTourProject.target_date,
+        responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' },
+        revision: finalTourProject.revision,
+      },
+      revision: finalTourProject.revision,
+      freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: fixedNow },
+      collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+    })
+    return true
+  }
   if (method === 'GET' && path === `/api/v1/projects/${finalTourProject.id}/milestones`) {
     send(response, page([finalTourMilestone]))
     return true
@@ -719,6 +774,15 @@ const handleFinalTourRoute = (request, response, url) => {
     send(response, finalTourSession)
     return true
   }
+  if (method === 'GET' && path === `/api/v1/agent-sessions/${finalTourSession.id}/explanation`) {
+    send(response, runExplanationFixture({
+      selectedSession: finalTourSession,
+      selectedAgent: finalTourAgents[0],
+      selectedWorkItem: finalTourWorkItems[0],
+      selectedProject: finalTourProject,
+    }))
+    return true
+  }
   if (method === 'GET' && (
     path === `/api/v1/agent-sessions/${finalTourSession.id}/activities`
     || path === `/api/v1/agent-sessions/${finalTourSession.id}/plans`
@@ -741,6 +805,42 @@ const handleFinalTourRoute = (request, response, url) => {
     send(response, page(finalTourWorkItems.filter(item => matchesPreviewWorkItem(item, url.searchParams))))
     return true
   }
+  const finalTourExecutionSummaryMatch = path.match(/^\/api\/v1\/work-items\/([^/]+)\/execution-summary$/)
+  if (method === 'GET' && finalTourExecutionSummaryMatch) {
+    const workItemId = decodeURIComponent(finalTourExecutionSummaryMatch[1])
+    const selected = finalTourWorkItems.find(candidate => candidate.id === workItemId)
+    if (!selected) send(response, { error: { code: 'NOT_FOUND', message: 'Work Item not found.' } }, 404)
+    else send(response, {
+      projectionVersion: 1,
+      workItem: { id: selected.id, title: selected.title, revision: selected.revision, status: selected.status_name },
+      activeRuns: selected.id === finalTourSession.work_item_id ? [{
+        id: finalTourSession.id,
+        kind: 'run',
+        title: finalTourAgents[0].name,
+        summary: finalTourSession.state_reason,
+        projectId: finalTourProject.id,
+        workItemId: selected.id,
+        sessionId: finalTourSession.id,
+        state: finalTourSession.state,
+        revision: finalTourSession.revision,
+        source: { type: 'agent_session', id: finalTourSession.id, revision: finalTourSession.revision },
+        responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name },
+        activeAgent: { id: finalTourAgents[0].actor_id, kind: 'agent', displayName: finalTourAgents[0].name },
+        workItem: { id: selected.id, title: selected.title },
+        currentStep: null,
+        health: { heartbeat: 'healthy', lastHeartbeatAt: finalTourSession.last_heartbeat_at },
+        lastActivity: null,
+        pendingHumanActionCount: 0,
+        evidenceCount: 0,
+        verified: false,
+        updatedAt: finalTourSession.updated_at,
+      }] : [],
+      recentRuns: [],
+      evidence: [],
+      freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: fixedNow },
+    })
+    return true
+  }
   const finalTourWorkItemMatch = path.match(/^\/api\/v1\/work-items\/([^/]+)$/)
   if (method === 'GET' && finalTourWorkItemMatch) {
     const workItemId = decodeURIComponent(finalTourWorkItemMatch[1])
@@ -749,6 +849,10 @@ const handleFinalTourRoute = (request, response, url) => {
     return true
   }
   if (method === 'GET' && /^\/api\/v1\/work-items\/[^/]+\/(?:comments|relations)$/.test(path)) {
+    send(response, page([]))
+    return true
+  }
+  if (method === 'GET' && path === '/api/v1/human-attention') {
     send(response, page([]))
     return true
   }
@@ -997,9 +1101,30 @@ createServer(async (request, response) => {
   if (path === '/api/v1/actors/humans') return send(response, page([human]))
   if (path === '/api/v1/projects') return send(response, page([project]))
   if (path === `/api/v1/projects/${project.id}`) return send(response, project)
+  const controlCenterMatch = path.match(/^\/api\/v1\/projects\/([^/]+)\/control-center$/)
+  if (controlCenterMatch) {
+    const projectId = controlCenterMatch[1]
+    const empty = page([])
+    return send(response, {
+      projectionVersion: 1,
+      scope: { workspaceId: 'workspace-preview', projectId },
+      project: {
+        id: projectId,
+        name: projectId === project.id ? project.name : 'Preview project',
+        status: 'in_progress',
+        targetDate: null,
+        responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' },
+        revision: 1,
+      },
+      revision: 1,
+      freshness: { state: 'fresh', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+      collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+    })
+  }
   if (path === '/api/v1/agents') return send(response, page([agent]))
   if (path === '/api/v1/agent-sessions') return send(response, page([session]))
   if (path === `/api/v1/agent-sessions/${session.id}`) return send(response, session)
+  if (path === `/api/v1/agent-sessions/${session.id}/explanation`) return send(response, runExplanationFixture({ selectedSession: session, selectedAgent: agent }))
   if (path === `/api/v1/agent-sessions/${session.id}/activities`) return send(response, page([]))
   if (path === `/api/v1/agent-sessions/${session.id}/plans`) return send(response, page([]))
   if (path === '/api/v1/agent-connections') return send(response, page([]))
@@ -1028,6 +1153,19 @@ createServer(async (request, response) => {
     return send(response, guidanceCurrent)
   }
   if (path === '/api/v1/work-items') return send(response, page(items.filter(item => matchesPreviewWorkItem(item, url.searchParams))))
+  const executionSummaryMatch = path.match(/^\/api\/v1\/work-items\/([^/]+)\/execution-summary$/)
+  if (executionSummaryMatch) {
+    const item = items.find(candidate => candidate.id === executionSummaryMatch[1])
+    return send(response, {
+      projectionVersion: 1,
+      workItem: { id: executionSummaryMatch[1], title: item?.title ?? 'Preview work item', revision: item?.revision ?? 1, status: item?.status_name ?? 'Backlog' },
+      activeRuns: [],
+      recentRuns: [],
+      evidence: [],
+      freshness: { state: 'current', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+    })
+  }
+  if (path === '/api/v1/human-attention') return send(response, page([]))
   const workMatch = path.match(/^\/api\/v1\/work-items\/([^/]+)$/)
   if (workMatch) {
     const item = items.find(candidate => candidate.id === workMatch[1])
