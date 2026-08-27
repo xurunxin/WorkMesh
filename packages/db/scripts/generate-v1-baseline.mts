@@ -10,6 +10,7 @@ const manifestPath = join(import.meta.dirname, '../src/migration-manifest.ts')
 const legacyFilePattern = /^(\d{4})_.*\.sql$/
 const v1FilePattern = /^\d{4}_.*\.sql$/
 const transactionControlPattern = /^\s*(?:BEGIN|COMMIT|ROLLBACK|START\s+TRANSACTION)\s*;\s*$/i
+const v1BaselineLegacyCutoff = '0035_decision_session_provenance'
 
 const canonicalize = (source: string): string => source.replace(/\r\n?/g, '\n')
 const checksum = (source: string): string => createHash('sha256').update(canonicalize(source)).digest('hex')
@@ -84,13 +85,18 @@ for (const file of legacyFiles) {
   legacyEntries.push({ version, file, checksumSha256: checksum(source) })
   legacySources.set(file, source)
 
-  const body = forFreshBaseline(file, source)
+  // 0001 is already deployed and checksum-pinned. New legacy migrations remain
+  // available to pre-v1 adopters, but fresh v1 installs receive them through
+  // ordinary post-baseline v1 migrations so this immutable file never drifts.
+  if (version.localeCompare(v1BaselineLegacyCutoff) <= 0) {
+    const body = forFreshBaseline(file, source)
 
-  if (body.split('\n').some(line => transactionControlPattern.test(line))) {
-    throw new Error(`Legacy migration ${file} still contains top-level transaction control`)
+    if (body.split('\n').some(line => transactionControlPattern.test(line))) {
+      throw new Error(`Legacy migration ${file} still contains top-level transaction control`)
+    }
+
+    baselineSections.push(`-- legacy:${version}:begin`, body, `-- legacy:${version}:end`, '')
   }
-
-  baselineSections.push(`-- legacy:${version}:begin`, body, `-- legacy:${version}:end`, '')
 }
 
 const baselineSource = `${baselineSections.join('\n').trim()}\n`

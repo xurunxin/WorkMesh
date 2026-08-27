@@ -48,7 +48,7 @@ export const legacyMigrationManifest = [
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const v1MigrationManifest = [
-  { version: '0001_v1_baseline', file: 'v1/0001_v1_baseline.sql', checksumSha256: '58b6132da65f7b1897aee89e94c884ef53ac5bd2c31b89fcfc1b81ebbb9b57b0' },
+  { version: '0001_v1_baseline', file: 'v1/0001_v1_baseline.sql', checksumSha256: '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83' },
   { version: '0002_active_executor_projection', file: 'v1/0002_active_executor_projection.sql', checksumSha256: '0742da4ba547e484f463687e67392c3762e3628f2f841473cfde66c2725342d2' },
   { version: '0003_versioned_guidance', file: 'v1/0003_versioned_guidance.sql', checksumSha256: '199adac75057ed0a2b285453440359d68aea1ae62cba33b2274ac8e6364fa2e7' },
   { version: '0004_agent_connections', file: 'v1/0004_agent_connections.sql', checksumSha256: 'c31fde289828e87e7919cf114cccd24fb67ace2ee8007539a66273cfb6b90548' },
