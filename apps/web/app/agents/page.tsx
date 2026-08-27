@@ -47,6 +47,7 @@ import {
 } from './approval-route-state'
 import { ApprovalsTable } from './approvals-table'
 import { TeamAccessDrawer } from './team-access-drawer'
+import { EnrollmentPoliciesPanel } from './enrollment-policies-panel'
 
 type Team = { id: string; name: string; key: string }
 type Human = { id: string; display_name: string; email?: string }
@@ -82,7 +83,7 @@ function AgentsPageScope({
   loading: boolean
   refreshActor: () => Promise<void>
 }) {
-  const { t, agentsCopy, toastCopy } = useLocale()
+  const { t, agentsCopy, toastCopy, locale } = useLocale()
   const { push: pushToast } = useToast()
   const isAuthorityCurrent = useAuthorityLifetime()
   const text = agentsCopy
@@ -104,7 +105,15 @@ function AgentsPageScope({
   const [focusedAgentId, setFocusedAgentId] = useState<string | null>(null)
   const [peekAgentId, setPeekAgentId] = useState<string | null>(null)
   const agentLinkRefs = useRef(new Map<string, HTMLAnchorElement>())
-  const agentsPage = usePagedApiList<Agent>('/api/v1/agents', { scopeKey: authorityScopeKey })
+  const agentsPath = useMemo(() => {
+    const params = new URLSearchParams({ lifecycle: 'active' })
+    if (nameFilter) params.set('q', nameFilter)
+    if (teamFilter) params.set('teamId', teamFilter)
+    if (capabilityFilter) params.set('capability', capabilityFilter)
+    return `/api/v1/agents?${params.toString()}`
+  }, [capabilityFilter, nameFilter, teamFilter])
+  const agentsPage = usePagedApiList<Agent>(agentsPath, { scopeKey: `${authorityScopeKey}:${agentsPath}` })
+  const archivedAgentsPage = usePagedApiList<Agent>('/api/v1/agents?lifecycle=archived', { scopeKey: `${authorityScopeKey}:archived` })
   const teamsPage = usePagedApiList<Team>('/api/v1/teams', { scopeKey: authorityScopeKey })
   const humansPage = usePagedApiList<Human>('/api/v1/actors/humans', { scopeKey: authorityScopeKey })
   const sessionsPage = usePagedApiList<AgentSession>('/api/v1/agent-sessions', { optional: true, scopeKey: authorityScopeKey })
@@ -161,7 +170,10 @@ function AgentsPageScope({
     if (invalidation.reason === 'resync') return Promise.all([
       agentsPage.refresh(), teamsPage.refresh(), humansPage.refresh(), sessionsPage.refresh(), attentionPage.refresh(), pendingApprovalsPage.refresh(), historyApprovalsPage.refresh(),
     ]).then(() => undefined)
-    if (targets.has('agents')) void agentsPage.refresh()
+    if (targets.has('agents')) {
+      void agentsPage.refresh()
+      void archivedAgentsPage.refresh()
+    }
     if (targets.has('teams')) void teamsPage.refresh()
     if (targets.has('sessions')) void sessionsPage.refresh()
     if (targets.has('attention')) void attentionPage.refresh()
@@ -298,6 +310,7 @@ function AgentsPageScope({
   const refresh = () => {
     void refreshActor()
     void agentsPage.refresh()
+    void archivedAgentsPage.refresh()
     void teamsPage.refresh()
     void humansPage.refresh()
     void sessionsPage.refresh()
@@ -434,19 +447,6 @@ function AgentsPageScope({
         <article className={attentionItems.length ? 'needs-attention' : ''}><span>{text.needsAttention}</span><strong>{attentionItems.length}</strong><small>{text.blockedOrWaiting}</small></article>
       </section> : summaryError ? null : <div className="agent-summary-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>}
 
-      <AgentConnectionsPanel
-        admin={actor?.workspace_role === 'admin'}
-        authorityKey={authorityScopeKey}
-        contextError={teamsPage.error ?? humansPage.error}
-        contextInitialized={connectionContextInitialized}
-        contextLoading={teamsPage.loading || humansPage.loading}
-        teams={teams}
-        humans={humans.length ? humans : actor ? [{ id: actor.id, display_name: actor.display_name }] : []}
-        currentHumanId={actor?.id ?? ''}
-        onError={setError}
-        onRefreshContext={() => Promise.all([teamsPage.refresh(), humansPage.refresh()]).then(() => undefined)}
-      />
-
       <Tabs
         ariaLabel={text.tabsAriaLabel}
         compact={isCompact}
@@ -558,8 +558,39 @@ function AgentsPageScope({
               </section>
             </div>,
           },
-        ]}
-        value={activeTab}
+          {
+            id: 'connections',
+            label: locale === 'zh-CN' ? '连接' : 'Connections',
+            panel: <AgentConnectionsPanel
+              admin={actor?.workspace_role === 'admin'}
+              authorityKey={authorityScopeKey}
+              contextError={teamsPage.error ?? humansPage.error}
+              contextInitialized={connectionContextInitialized}
+              contextLoading={teamsPage.loading || humansPage.loading}
+              teams={teams}
+              humans={humans.length ? humans : actor ? [{ id: actor.id, display_name: actor.display_name }] : []}
+              currentHumanId={actor?.id ?? ''}
+              onError={setError}
+              onRefreshContext={() => Promise.all([teamsPage.refresh(), humansPage.refresh()]).then(() => undefined)}
+            />,
+          },
+          {
+            id: 'enrollment',
+            label: locale === 'zh-CN' ? '自动接入策略' : 'Auto enrollment',
+            panel: <EnrollmentPoliciesPanel admin={actor?.workspace_role === 'admin'} teams={teams} />,
+          },
+          {
+            id: 'archived',
+            label: locale === 'zh-CN' ? '已归档' : 'Archived',
+            panel: <section className="surface-panel archived-agent-registry" aria-label={locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}>
+              <header className="surface-header"><div><p className="eyebrow">Agent lifecycle</p><h2>{locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}</h2><p>{locale === 'zh-CN' ? '撤销最后一项有效授权后归档的智能体；保留历史，不进入默认工作列表。' : 'Agents are archived after their last valid authority is revoked. History remains available outside the default work list.'}</p></div></header>
+              {archivedAgentsPage.loading && !archivedAgentsPage.initialized ? <SkeletonList columns={1} items={4} label={text.loadingTitle} /> : archivedAgentsPage.items.length === 0 ? <p className="empty">{locale === 'zh-CN' ? '当前没有已归档智能体。' : 'There are no archived agents.'}</p> : <div className="archived-agent-table" role="table" aria-label={locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}>{archivedAgentsPage.items.map(agent => <article key={agent.id} role="row"><div><strong>{agentName(agent)}</strong><code>{agent.slug}</code></div><span>{agent.archived_reason ?? (locale === 'zh-CN' ? '授权已撤销' : 'Authority revoked')}</span><time>{formatTime(agent.archived_at)}</time><a href={`/agents/${encodeURIComponent(agent.id)}`}>{locale === 'zh-CN' ? '查看历史' : 'View history'}</a></article>)}</div>}
+              {archivedAgentsPage.initialized && <LoadMoreButton collection={archivedAgentsPage} label="archived-agents" loadMoreLabel={text.loadMoreAgents} />}
+            </section>,
+          },
+        ].filter(tab => ['agents', 'connections', 'enrollment', 'archived'].includes(tab.id)
+          || (['sessions', 'approvals'].includes(activeTab) && tab.id === activeTab))}
+        value={['agents', 'connections', 'enrollment', 'archived', 'sessions', 'approvals'].includes(activeTab) ? activeTab : 'agents'}
       />
     </section>
     <AgentPeek agent={peekAgent} onClose={() => setPeekAgentId(null)} open={peekAgent !== null} />

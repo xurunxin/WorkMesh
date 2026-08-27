@@ -59,6 +59,8 @@ const baseConnection = (overrides: Partial<AgentConnection> = {}): AgentConnecti
   skill_sha256: 'a'.repeat(64),
   skill_version: '1.0.0',
   status: 'active',
+  source: 'manual',
+  enrollment_policy_id: null,
   team_id: 'team-1',
   updated_at: '2026-08-23T00:00:00.000Z',
   workspace_id: 'workspace-1',

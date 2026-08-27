@@ -59,6 +59,7 @@ describe("authentication rate-limit inventory and privacy", () => {
       "inspectExactTargetHandoff",
       "rejectHandoff",
       "redeemAgentConnection",
+      "redeemAgentEnrollment",
     ]);
   });
 

@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { loadFeatureConfig, type FeatureConfig } from '@workmesh/config'
+import webPush from 'web-push'
 import type { AutomationAction, NotificationPriority } from '@workmesh/contracts'
 import {
   admitAutomationOccurrence,
@@ -53,6 +54,10 @@ type ClaimedNotification = {
   minimumPriority: NotificationPriority
   mutedKinds: string[]
   webhookUrl: string | null
+  browserPushSubscriptionId: string | null
+  browserEndpoint: string | null
+  browserP256dh: string | null
+  browserAuth: string | null
 }
 
 export type AutomationExternalSink = {
@@ -66,6 +71,10 @@ export type AutomationExternalSink = {
     effectKey: string
     title: string
     body: string
+    endpoint: string
+    p256dh: string
+    auth: string
+    url: string
   }) => Promise<{ receipt?: string }>
 }
 
@@ -80,7 +89,13 @@ export async function assertPublicWebhookTarget(
   if (target.url.protocol !== 'https:') throw new Error('WEBHOOK_TARGET_INVALID')
 }
 
-const createDefaultSink = (dnsLookup: WebhookDnsLookup): AutomationExternalSink => ({
+const createDefaultSink = (dnsLookup: WebhookDnsLookup): AutomationExternalSink => {
+  const publicKey = process.env.WORKMESH_WEB_PUSH_PUBLIC_KEY
+  const privateKey = process.env.WORKMESH_WEB_PUSH_PRIVATE_KEY
+  const subject = process.env.WORKMESH_WEB_PUSH_SUBJECT
+  if (publicKey && privateKey && subject)
+    webPush.setVapidDetails(subject, publicKey, privateKey)
+  return ({
   async callWebhook(input) {
     const target = await resolveWebhookTarget(input.url, {
       dnsLookup,
@@ -112,12 +127,18 @@ const createDefaultSink = (dnsLookup: WebhookDnsLookup): AutomationExternalSink 
       throw new Error(`NOTIFICATION_WEBHOOK_FAILED:${response.status}`)
     return { status: response.status }
   },
-  async deliverBrowser() {
-    // Browser notifications are pulled from the durable Inbox. Completing this
-    // delivery makes the observable record available to a subscribed browser.
-    return {}
+  async deliverBrowser(input) {
+    if (!publicKey || !privateKey || !subject)
+      throw new Error('BROWSER_PUSH_NOT_CONFIGURED')
+    const result = await webPush.sendNotification(
+      { endpoint: input.endpoint, keys: { p256dh: input.p256dh, auth: input.auth } },
+      JSON.stringify({ title: input.title, body: input.body, url: input.url }),
+      { TTL: 300, urgency: 'high', topic: createHash('sha256').update(input.effectKey).digest('base64url').slice(0, 32) },
+    )
+    return { receipt: String(result.statusCode) }
   },
-})
+  })
+}
 
 type FieldMatcher = (value: number) => boolean
 const parseField = (raw: string, minimum: number, maximum: number): FieldMatcher => {
@@ -654,7 +675,7 @@ export function createAutomationWorker({
   }
 
   const claimNotifications = async (limit = 25, lockTimeoutSeconds = 60): Promise<ClaimedNotification[]> =>
-    !features.WORKMESH_BETA_PLANNING ? [] : withTx(db, async tx => (await tx.query<ClaimedNotification>(
+    withTx(db, async tx => (await tx.query<ClaimedNotification>(
       `WITH candidates AS (
         SELECT delivery.id FROM notification_deliveries delivery
         WHERE delivery.attempt_count<8 AND (
@@ -665,24 +686,36 @@ export function createAutomationWorker({
         ORDER BY delivery.available_at,delivery.created_at
         FOR UPDATE SKIP LOCKED LIMIT $1
       )
-      UPDATE notification_deliveries delivery SET status='claimed',claimed_at=now(),claimed_by=$3,
-        claim_fence=delivery.claim_fence+1,attempt_count=delivery.attempt_count+1
-      FROM candidates,notifications notification
+      , claimed AS (
+        UPDATE notification_deliveries delivery SET status='claimed',claimed_at=now(),claimed_by=$3,
+          claim_fence=delivery.claim_fence+1,attempt_count=delivery.attempt_count+1
+        FROM candidates,notifications notification
+        WHERE delivery.id=candidates.id AND notification.id=delivery.notification_id
+        RETURNING delivery.id,delivery.notification_id,delivery.channel,delivery.effect_key,
+          delivery.attempt_count,delivery.claim_fence,delivery.browser_push_subscription_id,
+          notification.workspace_id,notification.recipient_actor_id,notification.priority,
+          notification.kind,notification.title,notification.body,notification.source_type,
+          notification.source_id
+      )
+      SELECT claimed.id,claimed.notification_id AS "notificationId",claimed.channel,
+        claimed.effect_key AS "effectKey",claimed.attempt_count AS "attemptCount",
+        claimed.claim_fence AS "claimFence",claimed.workspace_id AS "workspaceId",
+        claimed.recipient_actor_id AS "recipientActorId",claimed.priority,
+        claimed.kind,claimed.title,claimed.body,claimed.source_type AS "sourceType",
+        claimed.source_id AS "sourceId",coalesce(preference.minimum_priority,'update') AS "minimumPriority",
+        coalesce(preference.muted_kinds,'{}') AS "mutedKinds",preference.webhook_url AS "webhookUrl",
+        claimed.browser_push_subscription_id AS "browserPushSubscriptionId",
+        subscription.endpoint AS "browserEndpoint",subscription.p256dh AS "browserP256dh",
+        subscription.auth_secret AS "browserAuth"
+      FROM claimed
       LEFT JOIN notification_preferences preference
-        ON preference.workspace_id=notification.workspace_id AND preference.actor_id=notification.recipient_actor_id
-      WHERE delivery.id=candidates.id AND notification.id=delivery.notification_id
-      RETURNING delivery.id,delivery.notification_id AS "notificationId",delivery.channel,
-        delivery.effect_key AS "effectKey",delivery.attempt_count AS "attemptCount",
-        delivery.claim_fence AS "claimFence",notification.workspace_id AS "workspaceId",
-        notification.recipient_actor_id AS "recipientActorId",notification.priority,
-        notification.kind,notification.title,notification.body,notification.source_type AS "sourceType",
-        notification.source_id AS "sourceId",coalesce(preference.minimum_priority,'update') AS "minimumPriority",
-        coalesce(preference.muted_kinds,'{}') AS "mutedKinds",preference.webhook_url AS "webhookUrl"`,
+        ON preference.workspace_id=claimed.workspace_id AND preference.actor_id=claimed.recipient_actor_id
+      LEFT JOIN browser_push_subscriptions subscription
+        ON subscription.id=claimed.browser_push_subscription_id`,
       [limit, lockTimeoutSeconds, workerId, features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS],
     )).rows)
 
   const deliverNotification = async (delivery: ClaimedNotification): Promise<void> => {
-    if (!features.WORKMESH_BETA_PLANNING) return
     if (delivery.channel === 'webhook' && !features.WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS) return
     try {
       if (!shouldDeliverNotification(delivery)) {
@@ -709,11 +742,19 @@ export function createAutomationWorker({
           },
         })
       } else if (delivery.channel === 'browser') {
+        if (!delivery.browserPushSubscriptionId || !delivery.browserEndpoint || !delivery.browserP256dh || !delivery.browserAuth)
+          throw new Error('BROWSER_PUSH_SUBSCRIPTION_MISSING')
         checkpoint = await externalSink.deliverBrowser({
           recipientActorId: delivery.recipientActorId,
           effectKey: delivery.effectKey,
           title: delivery.title,
           body: delivery.body,
+          endpoint: delivery.browserEndpoint,
+          p256dh: delivery.browserP256dh,
+          auth: delivery.browserAuth,
+          url: delivery.sourceType === 'approval'
+            ? `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:approval:${delivery.sourceId}`)}`
+            : `/?view=inbox&queue=messages&inboxItem=${encodeURIComponent(delivery.notificationId)}`,
         })
       }
       await withTx(db, async tx => {
@@ -724,6 +765,13 @@ export function createAutomationWorker({
           [delivery.id, workerId, delivery.claimFence],
         )
         if (updated.rowCount !== 1) throw new Error('NOTIFICATION_CLAIM_LOST')
+        if (delivery.browserPushSubscriptionId)
+          await tx.query(
+            `UPDATE browser_push_subscriptions
+                SET last_delivered_at=now(),last_failure_at=NULL,last_failure_code=NULL,updated_at=now()
+              WHERE id=$1 AND status='active'`,
+            [delivery.browserPushSubscriptionId],
+          )
         await appendEvent(tx, {
           workspaceId: delivery.workspaceId,
           actorId: delivery.recipientActorId,
@@ -736,13 +784,43 @@ export function createAutomationWorker({
         })
       })
     } catch (error) {
+      const statusCode = typeof error === 'object' && error !== null && 'statusCode' in error
+        ? Number((error as { statusCode?: unknown }).statusCode)
+        : undefined
+      if (delivery.browserPushSubscriptionId && (statusCode === 404 || statusCode === 410)) {
+        await withTx(db, async tx => {
+          await tx.query(
+            `UPDATE browser_push_subscriptions
+                SET status='invalid',revoked_at=now(),revision=revision+1,
+                    last_failure_at=now(),last_failure_code=$2,updated_at=now()
+              WHERE id=$1 AND status='active'`,
+            [delivery.browserPushSubscriptionId, String(statusCode)],
+          )
+          await tx.query(
+            `UPDATE notification_deliveries
+                SET status='dead',claimed_at=NULL,claimed_by=NULL,last_error=$2
+              WHERE id=$1 AND status='claimed' AND claimed_by=$3 AND claim_fence=$4`,
+            [delivery.id, `BROWSER_PUSH_SUBSCRIPTION_INVALID:${statusCode}`, workerId, delivery.claimFence],
+          )
+        })
+        return
+      }
       const retry = automationRetry(delivery.attemptCount, 8)
-      await db.query(
-        `UPDATE notification_deliveries SET status=$1,
-          available_at=now()+($2::text || ' seconds')::interval,claimed_at=NULL,claimed_by=NULL,last_error=$3
-         WHERE id=$4 AND status='claimed' AND claimed_by=$5 AND claim_fence=$6`,
-        [retry.status, retry.delaySeconds, errorText(error).slice(0, 1000), delivery.id, workerId, delivery.claimFence],
-      )
+      await withTx(db, async tx => {
+        await tx.query(
+          `UPDATE notification_deliveries SET status=$1,
+            available_at=now()+($2::text || ' seconds')::interval,claimed_at=NULL,claimed_by=NULL,last_error=$3
+           WHERE id=$4 AND status='claimed' AND claimed_by=$5 AND claim_fence=$6`,
+          [retry.status, retry.delaySeconds, errorText(error).slice(0, 1000), delivery.id, workerId, delivery.claimFence],
+        )
+        if (delivery.browserPushSubscriptionId)
+          await tx.query(
+            `UPDATE browser_push_subscriptions
+                SET last_failure_at=now(),last_failure_code=$2,updated_at=now()
+              WHERE id=$1 AND status='active'`,
+            [delivery.browserPushSubscriptionId, statusCode ? String(statusCode) : 'temporary_error'],
+          )
+      })
     }
   }
 
@@ -752,8 +830,7 @@ export function createAutomationWorker({
       await scheduleDueRules()
       for (const effect of await claimEffects()) await executeEffect(effect)
     }
-    if (features.WORKMESH_BETA_PLANNING)
-      for (const notification of await claimNotifications()) await deliverNotification(notification)
+    for (const notification of await claimNotifications()) await deliverNotification(notification)
     if (features.WORKMESH_EXPERIMENTAL_AGENT_LOOPS) {
       await scheduleDueLoops()
       await reconcileLoopRuns()

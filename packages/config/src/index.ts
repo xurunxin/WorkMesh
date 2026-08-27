@@ -146,6 +146,14 @@ const envSchema = z
       (value) => (value === '' ? undefined : value),
       z.string().url().optional(),
     ),
+    WORKMESH_WEB_PUSH_PUBLIC_KEY: optionalString,
+    WORKMESH_WEB_PUSH_PRIVATE_KEY: optionalString,
+    WORKMESH_WEB_PUSH_SUBJECT: z.preprocess(
+      (value) => (value === '' ? undefined : value),
+      z.string().refine(value => value.startsWith('mailto:') || value.startsWith('https://'), {
+        message: 'WORKMESH_WEB_PUSH_SUBJECT must use mailto: or https:',
+      }).optional(),
+    ),
     API_PORT: z.coerce.number().int().positive().default(3001),
   })
   .superRefine((value, context) => {
@@ -160,6 +168,17 @@ const envSchema = z
         code: z.ZodIssueCode.custom,
         path: ['REALTIME_FALLBACK_RECONCILE_MS'],
         message: 'Realtime fallback reconciliation must not be slower than healthy reconciliation',
+      })
+    const webPushValues = [
+      value.WORKMESH_WEB_PUSH_PUBLIC_KEY,
+      value.WORKMESH_WEB_PUSH_PRIVATE_KEY,
+      value.WORKMESH_WEB_PUSH_SUBJECT,
+    ]
+    if (webPushValues.some(Boolean) && !webPushValues.every(Boolean))
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['WORKMESH_WEB_PUSH_PUBLIC_KEY'],
+        message: 'All WORKMESH_WEB_PUSH_* values must be configured together',
       })
   })
 export type Config = z.infer<typeof envSchema> & {

@@ -455,7 +455,7 @@ const startWorkerProcess = async (): Promise<void> => {
       () => providerActionWorker.tick(),
       () => artifactUploadWorker.tick(),
       () => automationWorker.tick(),
-      ...(features.WORKMESH_BETA_COORDINATION_MCP ? [() => agentConnectionWorker.tick()] : []),
+      () => agentConnectionWorker.tick(),
     ]
     for (const job of jobs) {
       if (!admissionOpen) return

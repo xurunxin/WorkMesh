@@ -3,10 +3,12 @@ import type { Pool, PoolClient } from "pg";
 import {
   agentExecutionCapacitySqlPredicate,
   appendEvent,
+  admitNotification,
   assertAgentExecutionCapacityAfterLock,
   lockAgentAuthorityPlan,
   lockAgentAuthorityPlanWithInstallationTokenWrite,
   opaqueToken,
+  reconcileAgentLifecycle,
   tokenHash,
   withTx,
 } from "@workmesh/db";
@@ -447,14 +449,29 @@ export async function updateAgent(db: Pool, meta: RequestMeta, id: string, revis
     const requestedCapabilities = (input.requestedCapabilities ?? current.requested_capabilities) as Capability[];
     const approvedCapabilities = (input.approvedCapabilities ?? current.approved_capabilities) as Capability[];
     if (approvedCapabilities.some(capability => !requestedCapabilities.includes(capability))) throw new DomainError("CAPABILITY_DENIED", "Approved capabilities must be a subset of requested capabilities");
-    const fields: Array<[string, unknown]> = [["display_name", input.name], ["description", input.description], ["endpoint_url", input.endpointUrl], ["supported_protocols", input.supportedProtocols], ["skills", input.skills], ["requested_capabilities", input.requestedCapabilities], ["approved_capabilities", input.approvedCapabilities], ["output_artifact_types", input.outputArtifactTypes], ["max_concurrency", input.maxConcurrency], ["is_active", input.isActive]];
+    const fields: Array<[string, unknown]> = [["display_name", input.name], ["description", input.description], ["endpoint_url", input.endpointUrl], ["supported_protocols", input.supportedProtocols], ["skills", input.skills], ["requested_capabilities", input.requestedCapabilities], ["approved_capabilities", input.approvedCapabilities], ["output_artifact_types", input.outputArtifactTypes], ["max_concurrency", input.maxConcurrency]];
     const changed = fields.filter(([, value]) => value !== undefined);
-    if (!changed.length) throw new DomainError("VALIDATION_ERROR", "At least one field is required");
-    const values: unknown[] = [id, meta.actor.workspaceId];
-    const assignments = changed.map(([column, value], index) => { values.push(value); return `${column}=$${index + 3}`; });
-    const row = one((await tx.query(`UPDATE agent_definitions SET ${assignments.join(",")},revision=revision+1,updated_at=now() WHERE id=$1 AND workspace_id=$2 RETURNING *`, values)).rows);
-    if (input.isActive === false) { await tx.query("UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND agent_id=$3 AND status='active'", [meta.actor.workspaceId, meta.actor.id, id]); await tx.query("UPDATE agent_session_tokens t SET revoked_at=now() FROM agent_sessions s WHERE t.session_id=s.id AND s.workspace_id=$1 AND s.agent_id=$2 AND t.revoked_at IS NULL", [meta.actor.workspaceId, id]); }
-    await event(tx, meta, input.isActive === false ? "agent.delegation.revoked" : "agent.registered", "agent", id, Number((row as { revision: number }).revision), { updated: changed.map(([name]) => name) });
+    if (!changed.length && input.isActive === undefined) throw new DomainError("VALIDATION_ERROR", "At least one field is required");
+    let row: Record<string, unknown>
+    if (changed.length) {
+      const values: unknown[] = [id, meta.actor.workspaceId];
+      const assignments = changed.map(([column, value], index) => { values.push(value); return `${column}=$${index + 3}`; });
+      row = one((await tx.query(`UPDATE agent_definitions SET ${assignments.join(",")},revision=revision+1,updated_at=now() WHERE id=$1 AND workspace_id=$2 RETURNING *`, values)).rows) as Record<string, unknown>;
+    } else row = one((await tx.query('SELECT * FROM agent_definitions WHERE id=$1 AND workspace_id=$2',[id,meta.actor.workspaceId])).rows) as Record<string, unknown>;
+    if (input.isActive === false) {
+      await tx.query("UPDATE agent_team_access SET revoked_at=coalesce(revoked_at,now()) WHERE workspace_id=$1 AND agent_id=$2 AND revoked_at IS NULL",[meta.actor.workspaceId,id]);
+      await tx.query("UPDATE delegations SET status='revoked',revoked_at=coalesce(revoked_at,now()),revoked_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND agent_id=$3 AND status='active'", [meta.actor.workspaceId, meta.actor.id, id]);
+      const connections=(await tx.query<{id:string}>("UPDATE agent_connections SET status='revoked',revoked_at=coalesce(revoked_at,now()),revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND agent_id=$2 AND status IN ('pending','active','rotating') RETURNING id",[meta.actor.workspaceId,id])).rows;
+      if(connections.length){const connectionIds=connections.map(connection=>connection.id);await tx.query("UPDATE agent_connection_credentials SET status='revoked',revoked_at=coalesce(revoked_at,now()) WHERE connection_id=ANY($1::uuid[]) AND status IN ('active','overlap')",[connectionIds]);await tx.query("UPDATE agent_installation_tokens installation SET revoked_at=coalesce(installation.revoked_at,now()) FROM agent_connection_credentials credential WHERE credential.connection_id=ANY($1::uuid[]) AND installation.token_hash=credential.token_hash",[connectionIds]);}
+      await tx.query("UPDATE agent_installation_tokens SET revoked_at=coalesce(revoked_at,now()) WHERE agent_id=$1 AND revoked_at IS NULL",[id]);
+      await cancelRevokedAuthoritySessions(tx,meta,{agentId:id});
+      await reconcileAgentLifecycle(tx,{workspaceId:meta.actor.workspaceId,agentId:id,actorId:meta.actor.id,correlationId:`${meta.correlationId}:agent-lifecycle`,reason:'admin_revoked_all_authority'});
+      row=one((await tx.query('SELECT * FROM agent_definitions WHERE id=$1',[id])).rows) as Record<string,unknown>;
+    } else if (input.isActive === true) {
+      row=one((await tx.query("UPDATE agent_definitions SET is_active=true,archived_at=NULL,archived_by_actor_id=NULL,archive_reason=NULL,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[id])).rows) as Record<string,unknown>;
+      await tx.query('UPDATE actors SET is_active=true WHERE id=$1',[current.actor_id]);
+    }
+    if (input.isActive !== false) await event(tx, meta, "agent.registered", "agent", id, Number(row.revision), { updated: [...changed.map(([name]) => name),...(input.isActive===true?['is_active']:[])] });
     return row;
   });
 }
@@ -524,9 +541,35 @@ export async function revokeAgentTeamAccess(db: Pool, meta: RequestMeta, agentId
     const delegations=await tx.query<{id:string;revision:number;agent_id:string}>("UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$4,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3 AND status='active' RETURNING id,revision,agent_id",[meta.actor.workspaceId,agentId,teamId,meta.actor.id]);
     const sessions=await tx.query<{id:string;delegation_id:string}>("SELECT s.id,s.delegation_id FROM agent_sessions s WHERE s.workspace_id=$1 AND s.agent_id=$2 AND s.team_id=$3",[meta.actor.workspaceId,agentId,teamId]);
     await tx.query("UPDATE agent_session_tokens t SET revoked_at=now() FROM agent_sessions s WHERE t.session_id=s.id AND s.workspace_id=$1 AND s.agent_id=$2 AND s.team_id=$3 AND t.revoked_at IS NULL",[meta.actor.workspaceId,agentId,teamId]);
+    const revokedConnections = (await tx.query<{ id: string }>(
+      `UPDATE agent_connections SET status='revoked',revoked_at=coalesce(revoked_at,now()),
+              revision=revision+1,updated_at=now()
+        WHERE workspace_id=$1 AND agent_id=$2 AND team_id=$3
+          AND status IN ('pending','active','rotating') RETURNING id`,
+      [meta.actor.workspaceId,agentId,teamId],
+    )).rows
+    if (revokedConnections.length) {
+      const connectionIds = revokedConnections.map(connection => connection.id)
+      await tx.query(
+        `UPDATE agent_connection_credentials
+            SET status='revoked',revoked_at=coalesce(revoked_at,now())
+          WHERE connection_id=ANY($1::uuid[]) AND status IN ('active','overlap')`,
+        [connectionIds],
+      )
+      await tx.query(
+        `UPDATE agent_installation_tokens installation
+            SET revoked_at=coalesce(installation.revoked_at,now())
+           FROM agent_connection_credentials credential
+          WHERE credential.connection_id=ANY($1::uuid[])
+            AND installation.token_hash=credential.token_hash`,
+        [connectionIds],
+      )
+    }
+    await cancelRevokedAuthoritySessions(tx,meta,{agentId,teamId})
     const updated=one((await tx.query("UPDATE agent_definitions SET revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[agentId])).rows);
     await event(tx,meta,"agent.registered","agent_team_access",agentId,Number((updated as {revision:number}).revision),{agentId,teamId,revoked:true},teamId);
     for(const delegation of delegations.rows){ const eventId=await event(tx,meta,"agent.delegation.revoked","delegation",delegation.id,delegation.revision,{teamAccessRevoked:true},teamId); for(const session of sessions.rows.filter(session=>session.delegation_id===delegation.id)) await queueWebhookDeliveries(tx,agentId,eventId,"agent.delegation.revoked",session.id,{delegationId:delegation.id,sessionId:session.id}); }
+    await reconcileAgentLifecycle(tx,{workspaceId:meta.actor.workspaceId,agentId,actorId:meta.actor.id,correlationId:`${meta.correlationId}:agent-lifecycle`,reason:'authorization_revoked'})
     return row;
   });
 }
@@ -558,8 +601,34 @@ export async function revokeDelegation(db: Pool, meta: RequestMeta, delegationId
     assertRevision(revision,delegation.revision);
     const row = one((await tx.query("UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[delegationId,meta.actor.id])).rows);
     await tx.query("UPDATE agent_session_tokens t SET revoked_at=now() FROM agent_sessions s WHERE s.delegation_id=$1 AND t.session_id=s.id AND t.revoked_at IS NULL",[delegationId]);
+    const connections = (await tx.query<{ id: string }>(
+      `UPDATE agent_connections SET status='revoked',revoked_at=coalesce(revoked_at,now()),
+              revision=revision+1,updated_at=now()
+        WHERE delegation_id=$1 AND status IN ('pending','active','rotating') RETURNING id`,
+      [delegationId],
+    )).rows
+    if (connections.length) {
+      const connectionIds = connections.map(connection => connection.id)
+      await tx.query(
+        `UPDATE agent_connection_credentials
+            SET status='revoked',revoked_at=coalesce(revoked_at,now())
+          WHERE connection_id=ANY($1::uuid[]) AND status IN ('active','overlap')`,
+        [connectionIds],
+      )
+      await tx.query(
+        `UPDATE agent_installation_tokens installation
+            SET revoked_at=coalesce(installation.revoked_at,now())
+           FROM agent_connection_credentials credential
+          WHERE credential.connection_id=ANY($1::uuid[])
+            AND installation.token_hash=credential.token_hash`,
+        [connectionIds],
+      )
+    }
+    await cancelRevokedAuthoritySessions(tx,meta,{agentId:delegation.agent_id,delegationId})
     const sessions=await tx.query<{id:string}>("SELECT id FROM agent_sessions WHERE delegation_id=$1",[delegationId]); const eid=await event(tx,meta,"agent.delegation.revoked","delegation",delegationId,Number((row as {revision:number}).revision),{},delegation.team_id);
-    for(const session of sessions.rows) await queueWebhookDeliveries(tx,delegation.agent_id,eid,"agent.delegation.revoked",session.id,{delegationId,sessionId:session.id}); return row;
+    for(const session of sessions.rows) await queueWebhookDeliveries(tx,delegation.agent_id,eid,"agent.delegation.revoked",session.id,{delegationId,sessionId:session.id});
+    await reconcileAgentLifecycle(tx,{workspaceId:meta.actor.workspaceId,agentId:delegation.agent_id,actorId:meta.actor.id,correlationId:`${meta.correlationId}:agent-lifecycle`,reason:'authorization_revoked'})
+    return row;
   });
 }
 
@@ -2856,11 +2925,119 @@ export async function requestApproval(db: Pool, meta: RequestMeta, input: { sess
     if (new Date(input.expiresAt).getTime() <= Date.now()) throw new DomainError("VALIDATION_ERROR", "Approval expiry must be in the future");
     if (canonicalPayloadHash(input.actionPayloadSanitized) !== input.actionPayloadHash) throw new DomainError("APPROVAL_PAYLOAD_MISMATCH", "Approval hash must match the canonical sanitized payload");
     const session = await loadAgentSessionForMutation(tx, meta.actor, input.sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId: input.sessionId, capability: "work:write", operation: "activity", idempotencyKey: meta.idempotencyKey });
-    const row = one((await tx.query("INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,required_approvals,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *", [meta.actor.workspaceId, input.sessionId, meta.actor.id, input.approvalType, input.actionName, input.actionPayloadSanitized, input.actionPayloadHash, input.riskLevel, input.rationaleSummary, input.requiredApprovals, input.expiresAt])).rows);
-    const responsible = one((await tx.query<{ responsible_human_actor_id: string }>("SELECT responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2", [session.work_item_id, meta.actor.workspaceId])).rows); await tx.query("INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,team_id,kind,source_type,source_id,payload) VALUES($1,$2,$2,$3,$4,'approval','approval',$5,$6)", [meta.actor.workspaceId, responsible.responsible_human_actor_id, input.sessionId, session.team_id, (row as { id: string }).id, { action: input.actionName }]);
-    const requestedPayload={approvalId:String((row as {id:string}).id),sessionId:input.sessionId,status:"pending" as const,actionName:input.actionName,actionPayloadHash:input.actionPayloadHash,requiredApprovals:input.requiredApprovals,expiresAt:new Date((row as {expires_at:Date}).expires_at).toISOString()};
-    await event(tx, meta, "approval.requested", "approval", requestedPayload.approvalId, 1, requestedPayload, session.team_id, input.sessionId); return row;
+    let row = one((await tx.query("INSERT INTO approvals(workspace_id,session_id,requested_by_actor_id,approval_type,action_name,action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,required_approvals,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *", [meta.actor.workspaceId, input.sessionId, meta.actor.id, input.approvalType, input.actionName, input.actionPayloadSanitized, input.actionPayloadHash, input.riskLevel, input.rationaleSummary, input.requiredApprovals, input.expiresAt])).rows) as Record<string, unknown>;
+    const responsible = one((await tx.query<{ responsible_human_actor_id: string; project_id: string | null }>("SELECT responsible_human_actor_id,project_id FROM work_items WHERE id=$1 AND workspace_id=$2", [session.work_item_id, meta.actor.workspaceId])).rows);
+    const policy = (await tx.query<{ mode: 'human_required' | 'yolo'; revision: number; updated_by_actor_id: string }>(
+      `SELECT policy.mode,policy.revision,policy.updated_by_actor_id
+         FROM approval_autonomy_policies policy
+        WHERE policy.workspace_id=$1
+          AND NOT EXISTS(
+            SELECT 1 FROM approval_autonomy_project_exclusions exclusion
+             WHERE exclusion.workspace_id=policy.workspace_id
+               AND exclusion.project_id=$2
+          )`,
+      [meta.actor.workspaceId, responsible.project_id],
+    )).rows[0];
+    const approvalId = String(row.id);
+    if (policy?.mode === 'yolo') {
+      const recorded = one((await tx.query<{
+        actor_id: string; decision: 'approved'; reason: string; source: 'workspace_policy';
+        policy_workspace_id: string; policy_revision: number; decided_at: Date;
+      }>(
+        `INSERT INTO approval_decisions(
+           approval_id,actor_id,decision,reason,source,policy_workspace_id,policy_revision
+         ) VALUES($1,$2,'approved','Approved by workspace YOLO policy','workspace_policy',$3,$4)
+         RETURNING actor_id,decision,reason,source,policy_workspace_id,policy_revision,decided_at`,
+        [approvalId, policy.updated_by_actor_id, meta.actor.workspaceId, policy.revision],
+      )).rows);
+      row = one((await tx.query(
+        "UPDATE approvals SET status='approved',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",
+        [approvalId],
+      )).rows) as Record<string, unknown>;
+      const quorum = { required: input.requiredApprovals, approved: 1, rejected: 0, reached: true };
+      const decision = { ...recorded, decided_at: recorded.decided_at.toISOString() };
+      const decisionPayload = { approvalId, decision, quorum, status: 'approved' as const };
+      const decisionEventId = await event(tx, meta, 'approval.decision.recorded', 'approval', approvalId, Number(row.revision), decisionPayload, session.team_id, input.sessionId);
+      await queueWebhookDeliveries(tx, session.agent_id, decisionEventId, 'approval.decision.recorded', input.sessionId, { ...decisionPayload, sessionId: input.sessionId });
+      const finalizedAt = new Date(row.updated_at as Date).toISOString();
+      const approvedPayload = { approvalId, status: 'approved' as const, quorum, finalizedAt };
+      const approvedEventId = await event(tx, meta, 'approval.approved', 'approval', approvalId, Number(row.revision), approvedPayload, session.team_id, input.sessionId);
+      await queueWebhookDeliveries(tx, session.agent_id, approvedEventId, 'approval.approved', input.sessionId, { ...approvedPayload, sessionId: input.sessionId });
+      await event(tx, meta, 'approval.auto_approved', 'approval', approvalId, Number(row.revision), { approvalId, policyRevision: policy.revision, projectId: responsible.project_id }, session.team_id, input.sessionId);
+      return { ...row, decisions: [decision], quorum };
+    }
+    await tx.query("INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,team_id,kind,source_type,source_id,payload) VALUES($1,$2,$2,$3,$4,'approval','approval',$5,$6)", [meta.actor.workspaceId, responsible.responsible_human_actor_id, input.sessionId, session.team_id, approvalId, { action: input.actionName }]);
+    await admitNotification(tx, {
+      workspaceId: meta.actor.workspaceId,
+      recipientActorId: responsible.responsible_human_actor_id,
+      priority: 'approval',
+      kind: 'approval.requested',
+      title: 'WorkMesh 中有新的审批请求',
+      body: '请打开 WorkMesh 控制面处理。',
+      sourceType: 'approval',
+      sourceId: approvalId,
+      dedupeKey: `approval:${approvalId}:requested`,
+      requestedChannels: ['in_app', 'browser'],
+    });
+    const requestedPayload={approvalId,sessionId:input.sessionId,status:"pending" as const,actionName:input.actionName,actionPayloadHash:input.actionPayloadHash,requiredApprovals:input.requiredApprovals,expiresAt:new Date(row.expires_at as Date).toISOString()};
+    await event(tx, meta, "approval.requested", "approval", approvalId, 1, requestedPayload, session.team_id, input.sessionId);
+    return { ...row, decisions: [], quorum: { required: input.requiredApprovals, approved: 0, rejected: 0, reached: false } };
   });
+}
+
+async function cancelRevokedAuthoritySessions(
+  tx: PoolClient,
+  meta: RequestMeta,
+  input: { agentId: string; teamId?: string; delegationId?: string },
+): Promise<void> {
+  const conditions = [
+    'session.workspace_id=$1',
+    'session.agent_id=$2',
+    "session.state NOT IN ('completed','failed','canceled')",
+  ]
+  const values: unknown[] = [meta.actor.workspaceId, input.agentId]
+  if (input.teamId) {
+    values.push(input.teamId)
+    conditions.push(`session.team_id=$${values.length}`)
+  }
+  if (input.delegationId) {
+    values.push(input.delegationId)
+    conditions.push(`session.delegation_id=$${values.length}`)
+  }
+  const sessions = (await tx.query<{
+    id: string; team_id: string; revision: number; sequence: string
+  }>(
+    `UPDATE agent_sessions session
+        SET state='canceled',state_reason='authorization revoked',ended_at=now(),
+            revision=revision+1,sequence=sequence+1,updated_at=now()
+      WHERE ${conditions.join(' AND ')}
+      RETURNING id,team_id,revision,sequence`,
+    values,
+  )).rows
+  if (!sessions.length) return
+  const sessionIds = sessions.map(session => session.id)
+  await tx.query(
+    `UPDATE agent_session_tokens SET revoked_at=coalesce(revoked_at,now())
+      WHERE session_id=ANY($1::uuid[]) AND revoked_at IS NULL`,
+    [sessionIds],
+  )
+  await tx.query(
+    `UPDATE leases SET status='released',released_at=now(),released_by_actor_id=$2,
+            audit_reason='authorization revoked',version=version+1,updated_at=now()
+      WHERE session_id=ANY($1::uuid[]) AND status='active'`,
+    [sessionIds, meta.actor.id],
+  )
+  await tx.query(
+    `UPDATE agent_coordination_sessions
+        SET status='closed',closed_at=now(),updated_at=now()
+      WHERE agent_session_id=ANY($1::uuid[]) AND status='active'`,
+    [sessionIds],
+  )
+  for (const session of sessions)
+    await event(tx, meta, 'agent.session.state_changed', 'agent_session', session.id, session.revision, {
+      state: 'canceled',
+      reason: 'authorization revoked',
+    }, session.team_id, session.id, Number(session.sequence))
 }
 
 export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: string, expectedRevision: number, input: { decision: "approved" | "rejected"; reason: string }) {
@@ -2947,13 +3124,13 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
     await assertHumanTeam(tx, meta.actor, approval.team_id); assertRevision(expectedRevision, approval.revision);
     if (approval.status !== "pending") throw new DomainError("CONFLICT", "Approval is no longer pending");
     if (approval.expires_at.getTime() <= Date.now()) { const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[approvalId])).rows); const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,approval.session_id); await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",approval.session_id,{...payload,sessionId:approval.session_id}); return {expired:true}; }
-    const inserted=await tx.query("INSERT INTO approval_decisions(approval_id,actor_id,decision,reason) VALUES($1,$2,$3,$4) ON CONFLICT(approval_id,actor_id) DO NOTHING RETURNING actor_id,decision,reason,decided_at", [approvalId, meta.actor.id, input.decision, input.reason]); if(!inserted.rowCount) throw new DomainError("CONFLICT","Actor already decided this approval");
+    const inserted=await tx.query("INSERT INTO approval_decisions(approval_id,actor_id,decision,reason,source) VALUES($1,$2,$3,$4,'human') ON CONFLICT(approval_id,actor_id) DO NOTHING RETURNING actor_id,decision,reason,source,policy_workspace_id,policy_revision,decided_at", [approvalId, meta.actor.id, input.decision, input.reason]); if(!inserted.rowCount) throw new DomainError("CONFLICT","Actor already decided this approval");
     const counts=one((await tx.query<{approved:number;rejected:number}>("SELECT count(*) FILTER(WHERE decision='approved')::int AS approved,count(*) FILTER(WHERE decision='rejected')::int AS rejected FROM approval_decisions WHERE approval_id=$1",[approvalId])).rows);
     const status=input.decision==='rejected' ? 'rejected' : counts.approved>=approval.required_approvals ? 'approved' : 'pending';
     const row = one((await tx.query("UPDATE approvals SET status=$2,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [approvalId,status])).rows);
     if(status!=="pending") await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='approval' AND source_id=$3 AND status='open'", [meta.actor.workspaceId, meta.actor.id, approvalId]);
     const quorum={required:approval.required_approvals,approved:counts.approved,rejected:counts.rejected,reached:counts.approved>=approval.required_approvals};
-    const recorded=inserted.rows[0] as {actor_id:string;decision:"approved"|"rejected";reason:string;decided_at:Date};
+    const recorded=inserted.rows[0] as {actor_id:string;decision:"approved"|"rejected";reason:string;source:'human';policy_workspace_id:null;policy_revision:null;decided_at:Date};
     const decision={...recorded,decided_at:new Date(recorded.decided_at).toISOString()};
     const decisionPayload={approvalId,decision,quorum,status:status as "pending"|"approved"|"rejected"};
     const decisionEventId=await event(tx, meta, "approval.decision.recorded", "approval", approvalId, Number((row as { revision: number }).revision), decisionPayload, approval.team_id, approval.session_id);
@@ -2974,7 +3151,7 @@ async function consumeApprovalInTx(tx: PoolClient, meta: RequestMeta, sessionId:
   if(approval.expires_at.getTime()<=Date.now()){ const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 AND status='approved' RETURNING revision,updated_at",[approvalId])).rows); const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,sessionId); await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",sessionId,{...payload,sessionId}); return {expired:true as const}; }
   if(approval.status==='consumed') throw new DomainError("APPROVAL_ALREADY_CONSUMED","Approval was already consumed");
   if(approval.status!=="approved") throw new DomainError("APPROVAL_NOT_APPROVED","Approval is not approved");
-  const quorum=one((await tx.query<{approved:number}>("SELECT count(*) FILTER(WHERE decision='approved')::int AS approved FROM approval_decisions WHERE approval_id=$1",[approvalId])).rows); if(quorum.approved<approval.required_approvals) throw new DomainError("APPROVAL_QUORUM_NOT_REACHED","Approval quorum has not been reached");
+  const quorum=one((await tx.query<{approved:number;policy_approved:boolean}>("SELECT count(*) FILTER(WHERE decision='approved' AND source='human')::int AS approved,bool_or(decision='approved' AND source='workspace_policy') AS policy_approved FROM approval_decisions WHERE approval_id=$1",[approvalId])).rows); if(!quorum.policy_approved && quorum.approved<approval.required_approvals) throw new DomainError("APPROVAL_QUORUM_NOT_REACHED","Approval quorum has not been reached");
   return one((await tx.query("UPDATE approvals SET status='consumed',consumed_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 AND status='approved' RETURNING *",[approvalId])).rows);
 }
 

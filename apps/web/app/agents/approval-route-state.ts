@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { AgentStateFilter } from './filters'
 
-export type AgentsTab = 'agents' | 'sessions' | 'approvals'
+export type AgentsTab = 'agents' | 'connections' | 'enrollment' | 'archived' | 'sessions' | 'approvals'
 export type ApprovalView = 'pending' | 'history'
 export type ApprovalTerminalStatus = 'approved' | 'rejected' | 'expired' | 'consumed' | 'canceled'
 
@@ -18,7 +18,7 @@ export type AgentsRouteState = {
   teamAccessAgentId: string
 }
 
-const agentTabs: readonly AgentsTab[] = ['agents', 'sessions', 'approvals']
+const agentTabs: readonly AgentsTab[] = ['agents', 'connections', 'enrollment', 'archived', 'sessions', 'approvals']
 const approvalViews: readonly ApprovalView[] = ['pending', 'history']
 export const approvalTerminalStatuses: readonly ApprovalTerminalStatus[] = ['approved', 'rejected', 'expired', 'consumed', 'canceled']
 const agentStatuses: readonly AgentStateFilter[] = ['all', 'active', 'inactive']

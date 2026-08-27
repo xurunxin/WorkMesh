@@ -184,7 +184,9 @@ describe('Stage 4 contracts', () => {
       expect(block).toMatch(new RegExp(`^    ${route.method.toLowerCase()}:`, 'm'))
       const operation = block.split(/\r?\n/)
         .find(line => line.startsWith(`    ${route.method.toLowerCase()}:`))
-      expect(operation, `${route.method} ${route.path}`).toContain(
+      const stableNotificationRoute = route.path === '/api/v1/notifications'
+        || route.path === '/api/v1/notification-preferences'
+      if (!stableNotificationRoute) expect(operation, `${route.method} ${route.path}`).toContain(
         '"403": { $ref: "#/components/responses/FeatureDisabled" }',
       )
       if ('mutation' in route && route.mutation)

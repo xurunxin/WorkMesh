@@ -104,6 +104,7 @@ import {
   resolveCoordinationIdentity,
 } from "./agent-connections.js";
 import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
+import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -136,6 +137,7 @@ const publicPaths = new Set([
   "/health",
   "/.well-known/workmesh-agent",
   "/api/v1/agent-connections/redeem",
+  "/api/v1/agent-enrollments/redeem",
   ...(process.env.RUN_INTEGRATION === "1" ? ["/api/v1/test/reset-install"] as const : []),
 ]);
 
@@ -1185,6 +1187,17 @@ export const buildApp = (options: {
     meta: commandContext,
     header,
     paginator,
+  });
+  registerAutonomousControlPlaneRoutes(app, {
+    db,
+    webPushPublicKey: config.WORKMESH_WEB_PUSH_PUBLIC_KEY,
+    webPushConfigured: Boolean(
+      config.WORKMESH_WEB_PUSH_PUBLIC_KEY
+      && config.WORKMESH_WEB_PUSH_PRIVATE_KEY
+      && config.WORKMESH_WEB_PUSH_SUBJECT
+    ),
+    meta: commandContext,
+    header,
   });
   if (process.env.RUN_INTEGRATION === "1") {
     // Acceptance-only: drop the public schema and re-apply migrations so the

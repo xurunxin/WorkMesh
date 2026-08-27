@@ -34,6 +34,7 @@ const runtimeBindings: Readonly<Record<string, RuntimeBinding>> = Object.freeze(
   },
   rejectHandoff: { endpointClass: "handoff_target", subject: "handoff" },
   redeemAgentConnection: { endpointClass: "pairing", subject: "pairing" },
+  redeemAgentEnrollment: { endpointClass: "pairing", subject: "pairing" },
 });
 
 const declaredCredentialRoutes = routePolicyManifest.filter(
@@ -53,6 +54,8 @@ function classForPath(path: string): RuntimeBinding {
   if (/^\/api\/v1\/handoffs\/\{[^}]+\}\/(?:inspect|reject)$/.test(path))
     return { endpointClass: "handoff_target", subject: "handoff" };
   if (path === "/api/v1/agent-connections/redeem")
+    return { endpointClass: "pairing", subject: "pairing" };
+  if (path === "/api/v1/agent-enrollments/redeem")
     return { endpointClass: "pairing", subject: "pairing" };
   throw new Error(
     `Authentication rate-limit route has no endpoint-class rule: ${path}`,

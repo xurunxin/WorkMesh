@@ -7,6 +7,10 @@ import {
   agentConnectionRedeemInputSchema,
   agentConnectionCurrentIdentitySchema,
   agentConnectionResponseSchema,
+  agentEnrollmentPolicyCreateInputSchema,
+  agentEnrollmentPolicySchema,
+  agentEnrollmentRedeemInputSchema,
+  agentEnrollmentRedeemResponseSchema,
   agentWellKnownResponseSchema,
   coordinationSessionClosedEventPayloadSchema,
   coordinationSessionOpenedEventPayloadSchema,
@@ -16,7 +20,7 @@ import {
   type AgentConnectionCurrentIdentity,
   workmeshSkillManifest,
 } from '@workmesh/contracts'
-import { appendEvent, opaqueToken, tokenHash, withTx } from '@workmesh/db'
+import { appendEvent, opaqueToken, reconcileAgentLifecycle, tokenHash, withTx } from '@workmesh/db'
 import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
 import { authClientContext, authIdempotentTransaction } from './auth-idempotency.js'
 import type { ApiActor, RequestMeta } from './agent/types.js'
@@ -34,11 +38,52 @@ type ConnectionRow = {
   id: string; workspace_id: string; team_id: string; agent_id: string; agent_actor_id: string
   principal_human_actor_id: string; delegation_id: string; name: string; agent_slug: string
   client_type: 'codex' | 'opencode' | 'pi' | 'generic_mcp'; status: 'pending' | 'active' | 'rotating' | 'revoked'
+  source: 'manual' | 'enrollment'
   requested_capabilities: string[]; granted_capabilities: string[]; grant_agent_delegate: boolean
   notes: string | null; skill_version: string | null; skill_sha256: string | null
+  enrollment_policy_id: string | null
   active_credential_fingerprint_prefix: string | null; pairing_code_expires_at: Date | null
   last_used_at: Date | null; rotated_at: Date | null; revoked_at: Date | null
   revision: number; created_at: Date; updated_at: Date
+}
+
+type EnrollmentPolicyRow = {
+  id: string; workspace_id: string; team_id: string; principal_human_actor_id: string
+  name: string; token_hash: string; allowed_client_types: Array<'codex' | 'opencode' | 'pi' | 'generic_mcp'>
+  capability_ceiling: string[]; grant_agent_delegate: boolean; expires_at: Date
+  max_redemptions: number; redemption_count: number; status: 'active' | 'revoked'
+  revision: number; created_by_actor_id: string; revoked_at: Date | null
+  created_at: Date; updated_at: Date
+}
+
+const enrollmentPolicyResponse = (row: EnrollmentPolicyRow) => {
+  const effectiveStatus = row.status === 'revoked'
+    ? 'revoked'
+    : row.expires_at.getTime() <= Date.now()
+      ? 'expired'
+      : row.redemption_count >= row.max_redemptions
+        ? 'exhausted'
+        : 'active'
+  return agentEnrollmentPolicySchema.parse({
+    id: row.id,
+    workspace_id: row.workspace_id,
+    name: row.name,
+    team_id: row.team_id,
+    principal_human_actor_id: row.principal_human_actor_id,
+    allowed_client_types: row.allowed_client_types,
+    capability_ceiling: row.capability_ceiling,
+    grant_agent_delegate: row.grant_agent_delegate,
+    expires_at: row.expires_at.toISOString(),
+    max_uses: row.max_redemptions,
+    used_count: row.redemption_count,
+    remaining_uses: Math.max(0, row.max_redemptions - row.redemption_count),
+    status: effectiveStatus,
+    revision: row.revision,
+    created_by_actor_id: row.created_by_actor_id,
+    created_at: row.created_at.toISOString(),
+    updated_at: row.updated_at.toISOString(),
+    revoked_at: row.revoked_at?.toISOString() ?? null,
+  })
 }
 
 async function expireConnectionInstallationTokens(
@@ -277,6 +322,7 @@ const response = (row: ConnectionRow): AgentConnectionResponse => agentConnectio
   id: row.id, workspace_id: row.workspace_id, team_id: row.team_id,
   agent_actor_id: row.agent_actor_id, principal_human_actor_id: row.principal_human_actor_id,
   name: row.name, agent_slug: row.agent_slug, client_type: row.client_type, status: row.status,
+  source: row.source, enrollment_policy_id: row.enrollment_policy_id,
   requested_capabilities: row.requested_capabilities, granted_capabilities: row.granted_capabilities,
   grant_agent_delegate: row.grant_agent_delegate, skill_version: row.skill_version,
   skill_sha256: row.skill_sha256, credential_fingerprint_prefix: row.active_credential_fingerprint_prefix,
@@ -603,11 +649,25 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
           WHERE (
               id=ANY($2::uuid[])
               OR (coordination_connection_id=$1 AND session_kind='coordination')
+              OR delegation_id=$3
             )
             AND state NOT IN ('completed','failed','canceled')
         RETURNING id,revision,sequence,workspace_id,team_id,agent_actor_id`,
-        [row.id, activeCoordination.map(coordination => coordination.agent_session_id)],
+        [row.id, activeCoordination.map(coordination => coordination.agent_session_id), row.delegation_id],
       )).rows
+      await tx.query(
+        `UPDATE agent_session_tokens token SET revoked_at=coalesce(token.revoked_at,now())
+          FROM agent_sessions session
+         WHERE session.delegation_id=$1 AND token.session_id=session.id AND token.revoked_at IS NULL`,
+        [row.delegation_id],
+      )
+      if (canceledSessions.length)
+        await tx.query(
+          `UPDATE leases SET status='released',released_at=now(),released_by_actor_id=$2,
+                  audit_reason='connection revoked',version=version+1,updated_at=now()
+            WHERE session_id=ANY($1::uuid[]) AND status='active'`,
+          [canceledSessions.map(session => session.id), context.actor.id],
+        )
       for (const canceled of canceledSessions)
         await appendEvent(tx, {
           workspaceId: canceled.workspace_id,
@@ -626,7 +686,15 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
         })
       await tx.query("UPDATE delegations SET status='revoked',revoked_at=now(),revoked_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE id=$1", [row.delegation_id, context.actor.id])
       row = one((await tx.query<ConnectionRow>("UPDATE agent_connections SET status='revoked',revoked_at=now(),revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [row.id])).rows)
-      await connectionEvent(tx, context, row, 'agent.connection.revoked', {}); return response(row)
+      await connectionEvent(tx, context, row, 'agent.connection.revoked', {})
+      await reconcileAgentLifecycle(tx, {
+        workspaceId: row.workspace_id,
+        agentId: row.agent_id,
+        actorId: context.actor.id,
+        correlationId: `${context.correlationId}:agent-lifecycle`,
+        reason: 'authorization_revoked',
+      })
+      return response(row)
     })
     return reply.code(204).send()
   })
@@ -666,6 +734,243 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       row = one((await tx.query<ConnectionRow>("UPDATE agent_connections SET status='active',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [row.id])).rows)
       await connectionEvent(tx, context, row, 'agent.connection.rotation_confirmed', {}); return response(row)
     })
+  })
+  app.get('/api/v1/agent-enrollment-policies', async request => {
+    const actor = request.actor as ApiActor
+    requireAdmin(actor)
+    const page = await paginator.query<EnrollmentPolicyRow & { status_rank: number }>(
+      db,
+      request,
+      request.query,
+      {
+        route: '/api/v1/agent-enrollment-policies',
+        filters: {},
+        sort: [
+          { key: 'status_rank', sql: "CASE WHEN status='active' AND expires_at>now() AND redemption_count<max_redemptions THEN 0 ELSE 1 END", direction: 'ASC' },
+          { key: 'updated_at', sql: 'updated_at', direction: 'DESC' },
+          { key: 'id', sql: 'id', direction: 'DESC' },
+        ],
+      },
+      `SELECT *,CASE WHEN status='active' AND expires_at>now() AND redemption_count<max_redemptions THEN 0 ELSE 1 END AS status_rank
+         FROM agent_enrollment_policies WHERE workspace_id=$1`,
+      [actor.workspaceId],
+    )
+    return { items: page.items.map(enrollmentPolicyResponse), nextCursor: page.nextCursor }
+  })
+
+  app.post('/api/v1/agent-enrollment-policies', async (request, reply) => {
+    const body = agentEnrollmentPolicyCreateInputSchema.parse(request.body)
+    const context = meta(request, body)
+    requireAdmin(context.actor)
+    if (new Date(body.expiresAt).getTime() <= Date.now())
+      throw new DomainError('VALIDATION_ERROR', 'Enrollment policy expiry must be in the future')
+    const result = await mutate(db, context as unknown as CommandContext, async tx => {
+      one((await tx.query(
+        'SELECT id FROM teams WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL FOR UPDATE',
+        [body.teamId, context.actor.workspaceId],
+      )).rows)
+      const principal = body.principalHumanActorId ?? context.actor.id
+      one((await tx.query(
+        `SELECT actor.id FROM actors actor
+          WHERE actor.id=$1 AND actor.workspace_id=$2 AND actor.kind='human' AND actor.is_active
+            AND (actor.workspace_role='admin' OR EXISTS(
+              SELECT 1 FROM memberships membership
+               WHERE membership.workspace_id=actor.workspace_id
+                 AND membership.team_id=$3 AND membership.actor_id=actor.id
+            )) FOR UPDATE`,
+        [principal, context.actor.workspaceId, body.teamId],
+      )).rows, 'FORBIDDEN')
+      if (!body.grantAgentDelegate && body.capabilityCeiling.includes('agent:delegate'))
+        throw new DomainError('AGENT_CONNECTION_PRIVILEGE_ESCALATION', 'agent:delegate requires grantAgentDelegate')
+      const enrollmentToken = connectionToken('wme_')
+      const row = one((await tx.query<EnrollmentPolicyRow>(
+        `INSERT INTO agent_enrollment_policies(
+           workspace_id,team_id,principal_human_actor_id,name,token_hash,
+           allowed_client_types,capability_ceiling,grant_agent_delegate,
+           expires_at,max_redemptions,created_by_actor_id
+         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+        [context.actor.workspaceId, body.teamId, principal, body.name, tokenHash(enrollmentToken), body.allowedClientTypes, body.capabilityCeiling, body.grantAgentDelegate, body.expiresAt, body.maxUses, context.actor.id],
+      )).rows)
+      await appendEvent(tx, {
+        workspaceId: row.workspace_id,
+        teamId: row.team_id,
+        actorId: context.actor.id,
+        correlationId: context.correlationId,
+        idempotencyKey: context.idempotencyKey,
+        type: 'agent.enrollment_policy.created',
+        aggregateType: 'agent_enrollment_policy',
+        aggregateId: row.id,
+        revision: row.revision,
+        payload: { policyId: row.id, expiresAt: row.expires_at.toISOString(), maxUses: row.max_redemptions },
+      })
+      return { policy: enrollmentPolicyResponse(row), enrollment_token: enrollmentToken }
+    })
+    return reply.code(201).send(result)
+  })
+
+  app.delete('/api/v1/agent-enrollment-policies/:id', async (request, reply) => {
+    const context = meta(request, {}, { id: id(request) })
+    requireAdmin(context.actor)
+    await mutate(db, context as unknown as CommandContext, async tx => {
+      const row = one((await tx.query<EnrollmentPolicyRow>(
+        'SELECT * FROM agent_enrollment_policies WHERE id=$1 AND workspace_id=$2 FOR UPDATE',
+        [id(request), context.actor.workspaceId],
+      )).rows, 'AGENT_ENROLLMENT_POLICY_NOT_FOUND')
+      assertRevision(parseRevision(header(request, 'if-match')), row.revision)
+      if (row.status === 'active') {
+        const revoked = one((await tx.query<EnrollmentPolicyRow>(
+          `UPDATE agent_enrollment_policies
+              SET status='revoked',revoked_at=now(),revision=revision+1,updated_at=now()
+            WHERE id=$1 RETURNING *`,
+          [row.id],
+        )).rows)
+        await appendEvent(tx, {
+          workspaceId: row.workspace_id,
+          teamId: row.team_id,
+          actorId: context.actor.id,
+          correlationId: context.correlationId,
+          idempotencyKey: context.idempotencyKey,
+          type: 'agent.enrollment_policy.revoked',
+          aggregateType: 'agent_enrollment_policy',
+          aggregateId: row.id,
+          revision: revoked.revision,
+          payload: { policyId: row.id },
+        })
+      }
+      return { revoked: true }
+    })
+    return reply.code(204).send()
+  })
+
+  app.post('/api/v1/agent-enrollments/redeem', async request => {
+    const body = agentEnrollmentRedeemInputSchema.parse(request.body)
+    const policyTokenHash = tokenHash(body.enrollmentToken)
+    const requestFingerprint = tokenHash(JSON.stringify({
+      name: body.name,
+      slug: body.slug,
+      client: body.client,
+      manifest: body.manifest,
+      requestedCapabilities: [...body.requestedCapabilities].sort(),
+    }))
+    const replay = await authIdempotentTransaction(db, {
+      idempotencyKey: request.idempotencyKey!,
+      subject: policyTokenHash,
+      operation: 'redeemAgentEnrollment',
+      request: body,
+      clientContext: authClientContext(request),
+    }, async tx => {
+      const policy = one((await tx.query<EnrollmentPolicyRow>(
+        'SELECT * FROM agent_enrollment_policies WHERE token_hash=$1 FOR UPDATE',
+        [policyTokenHash],
+      )).rows, 'AGENT_ENROLLMENT_POLICY_INVALID')
+      if (policy.status !== 'active')
+        throw new DomainError('AGENT_ENROLLMENT_POLICY_REVOKED', 'Enrollment policy is revoked')
+      if (policy.expires_at.getTime() <= Date.now())
+        throw new DomainError('AGENT_ENROLLMENT_POLICY_EXPIRED', 'Enrollment policy expired')
+      if (policy.redemption_count >= policy.max_redemptions)
+        throw new DomainError('AGENT_ENROLLMENT_POLICY_EXHAUSTED', 'Enrollment policy has no remaining uses')
+      if (!policy.allowed_client_types.includes(body.client.type))
+        throw new DomainError('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'Client type is not allowed by this enrollment policy')
+      const outsideCeiling = body.requestedCapabilities.filter(capability => !policy.capability_ceiling.includes(capability))
+      if (outsideCeiling.length)
+        throw new DomainError('CAPABILITY_DENIED', 'Requested capabilities exceed the enrollment policy ceiling', { capabilities: outsideCeiling })
+      if (body.requestedCapabilities.includes('agent:delegate') && !policy.grant_agent_delegate)
+        throw new DomainError('AGENT_CONNECTION_PRIVILEGE_ESCALATION', 'This enrollment policy cannot grant agent:delegate')
+      const existing = await tx.query(
+        'SELECT id,is_active,archived_at FROM agent_definitions WHERE workspace_id=$1 AND slug=$2 FOR UPDATE',
+        [policy.workspace_id, body.slug],
+      )
+      if (existing.rowCount)
+        throw new DomainError('AGENT_SLUG_CONFLICT', 'Agent slug already exists; archived Agents require explicit Admin reactivation')
+      one((await tx.query(
+        `UPDATE agent_enrollment_policies
+            SET redemption_count=redemption_count+1,revision=revision+1,updated_at=now()
+          WHERE id=$1 AND status='active' AND expires_at>now()
+            AND redemption_count<max_redemptions RETURNING id`,
+        [policy.id],
+      )).rows, 'AGENT_ENROLLMENT_POLICY_EXHAUSTED')
+      const agentActor = one((await tx.query<{ id: string }>(
+        "INSERT INTO actors(workspace_id,kind,display_name,is_active) VALUES($1,'agent',$2,true) RETURNING id",
+        [policy.workspace_id, body.name],
+      )).rows)
+      const agent = one((await tx.query<{ id: string; actor_id: string }>(
+        `INSERT INTO agent_definitions(
+           workspace_id,actor_id,slug,display_name,manifest,supported_protocols,skills,
+           requested_capabilities,approved_capabilities,output_artifact_types,max_concurrency
+         ) VALUES($1,$2,$3,$4,$5,ARRAY['mcp']::agent_protocol[],ARRAY['workmesh'],$6,$6,'{}',1)
+         RETURNING id,actor_id`,
+        [policy.workspace_id, agentActor.id, body.slug, body.name, body.manifest, body.requestedCapabilities],
+      )).rows)
+      await tx.query(
+        `INSERT INTO agent_team_access(
+           workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities,revoked_at
+         ) VALUES($1,$2,$3,$4,$5,NULL)`,
+        [policy.workspace_id, agent.id, policy.team_id, policy.created_by_actor_id, body.requestedCapabilities],
+      )
+      const delegation = one((await tx.query<{ id: string }>(
+        `INSERT INTO delegations(
+           workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,
+           role,scope_type,scope_id,permissions_snapshot,capability_scope,status
+         ) VALUES($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::uuid,'coordinator','team',$2::uuid,$6,
+           jsonb_build_object('workspaceId',$1::text,'teamIds',jsonb_build_array($2::text),'projectIds','[]'::jsonb,'workItemIds','[]'::jsonb,'repositoryIds','[]'::jsonb,'capabilities',to_jsonb($6::text[])),'active')
+         RETURNING id`,
+        [policy.workspace_id, policy.team_id, agent.id, agent.actor_id, policy.principal_human_actor_id, body.requestedCapabilities],
+      )).rows)
+      const installationToken = connectionToken(installationTokenPrefix)
+      const installationTokenHash = tokenHash(installationToken)
+      const fingerprintPrefix = installationTokenHash.slice(0, 12)
+      const connection = one((await tx.query<ConnectionRow>(
+        `INSERT INTO agent_connections(
+           workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,
+           delegation_id,name,agent_slug,client_type,status,requested_capabilities,
+           granted_capabilities,grant_agent_delegate,skill_version,skill_sha256,
+            active_credential_fingerprint_prefix,source,enrollment_policy_id,created_by_actor_id
+          ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,'active',$10,$10,$11,$12,$13,$14,'enrollment',$15,$16)
+         RETURNING *`,
+        [policy.workspace_id, policy.team_id, agent.id, agent.actor_id, policy.principal_human_actor_id, delegation.id, body.name, body.slug, body.client.type, body.requestedCapabilities, policy.grant_agent_delegate, skill.version, skill.sha256, fingerprintPrefix, policy.id, policy.created_by_actor_id],
+      )).rows)
+      await tx.query(
+        `INSERT INTO agent_connection_credentials(connection_id,token_hash,fingerprint_prefix,status)
+         VALUES($1,$2,$3,'active')`,
+        [connection.id, installationTokenHash, fingerprintPrefix],
+      )
+      await reconcileConnectionInstallationToken(tx, {
+        agentId: agent.id,
+        credentialHash: installationTokenHash,
+        expiresAt: null,
+        createdByActorId: agent.actor_id,
+      })
+      await tx.query(
+        `INSERT INTO agent_enrollment_redemptions(
+           policy_id,connection_id,agent_id,request_fingerprint
+         ) VALUES($1,$2,$3,$4)`,
+        [policy.id, connection.id, agent.id, requestFingerprint],
+      )
+      await appendEvent(tx, {
+        workspaceId: policy.workspace_id,
+        teamId: policy.team_id,
+        actorId: agent.actor_id,
+        correlationId: request.correlationId,
+        idempotencyKey: request.idempotencyKey,
+        type: 'agent.enrollment_policy.redeemed',
+        aggregateType: 'agent_enrollment_policy',
+        aggregateId: policy.id,
+        revision: policy.revision + 1,
+        payload: { policyId: policy.id, connectionId: connection.id, agentId: agent.id, clientType: body.client.type },
+        resources: { scopes: [{ type: 'team', id: policy.team_id }], invalidates: [{ type: 'team', id: policy.team_id }] },
+      })
+      const responseBody = agentEnrollmentRedeemResponseSchema.parse({
+        connection: response(connection),
+        installation_token: installationToken,
+        mcp: { transport: 'streamable_http', url: endpointUrls.mcpUrl, auth: { type: 'installation_token', header: 'X-WorkMesh-Installation-Token' } },
+        skill: { ...skill, download_url: endpointUrls.skillDownloadUrl },
+        principal_human_actor_id: policy.principal_human_actor_id,
+        team_id: policy.team_id,
+        idempotency_replay: { replayable_until: new Date(Date.now() + 15 * 60_000).toISOString(), replay_returns_identical_body: true },
+      })
+      return { status: 200, body: responseBody }
+    })
+    return replay.body
   })
 }
 

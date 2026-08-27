@@ -44,6 +44,7 @@ const collectionPaths = [
   '/api/v1/views',
   '/api/v1/agents',
   '/api/v1/agent-connections',
+  '/api/v1/agent-enrollment-policies',
   '/api/v1/agent-sessions',
   '/api/v1/agent-sessions/{id}/activities',
   '/api/v1/agent-sessions/{id}/plans',

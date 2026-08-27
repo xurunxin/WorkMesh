@@ -1102,6 +1102,56 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/approval-autonomy-policy",
+    "operationId": "getApprovalAutonomyPolicy"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/approval-autonomy-policy",
+    "operationId": "updateApprovalAutonomyPolicy"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/browser-push/config",
+    "operationId": "getBrowserPushConfig"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/browser-push/subscriptions",
+    "operationId": "listBrowserPushSubscriptions"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/browser-push/subscriptions",
+    "operationId": "createBrowserPushSubscription"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/browser-push/subscriptions/{id}",
+    "operationId": "revokeBrowserPushSubscription"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/agent-enrollment-policies",
+    "operationId": "listAgentEnrollmentPolicies"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-enrollment-policies",
+    "operationId": "createAgentEnrollmentPolicy"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/agent-enrollment-policies/{id}",
+    "operationId": "revokeAgentEnrollmentPolicy"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/agent-enrollments/redeem",
+    "operationId": "redeemAgentEnrollment"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/admin/retention/status",
     "operationId": "getRetentionStatus"
   }

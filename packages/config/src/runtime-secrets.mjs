@@ -8,6 +8,7 @@ export const runtimeSecretEnvironmentNames = [
   'S3_SECRET_ACCESS_KEY',
   'WORKMESH_SESSION_TOKEN',
   'WORKMESH_MCP_ACCESS_TOKEN',
+  'WORKMESH_WEB_PUSH_PRIVATE_KEY',
 ]
 
 /** @type {Record<string, readonly string[]>} */
@@ -48,6 +49,7 @@ const minimumLengths = {
   S3_SECRET_ACCESS_KEY: 32,
   WORKMESH_SESSION_TOKEN: 32,
   WORKMESH_MCP_ACCESS_TOKEN: 32,
+  WORKMESH_WEB_PUSH_PRIVATE_KEY: 32,
 }
 
 const urlNames = [
@@ -195,7 +197,7 @@ export const validateRuntimeEnvironment = (environment, comparisonEnvironment = 
 
   for (const [name, minimum] of Object.entries(minimumLengths)) {
     const value = runtimeSecretValue(environment, name)
-    if (value !== undefined && value.length < minimum)
+    if (value && value.length < minimum)
       throw new Error(`${name} must contain at least ${minimum} characters`)
   }
 

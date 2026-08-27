@@ -8,6 +8,7 @@ export * from './event-resources.js'
 export * from './agent-locks.js'
 export * from './agent-concurrency.js'
 export * from './agent-lock-order-manifest.js'
+export * from './agent-lifecycle.js'
 import { appendEvent } from './events.js'
 export { applyMigrations } from './migrations.js'
 
@@ -62,6 +63,16 @@ export async function installWorkspaceInTx(tx: PoolClient, input: {
   const workspaceId = workspace.rows[0]!.id
   const systemActor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'service','WorkMesh System') RETURNING id", [workspaceId])
   const actor = await tx.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash) VALUES($1,'human','admin',$2,$3,$4) RETURNING id", [workspaceId, input.email, input.adminName, input.passwordHash])
+  const autonomyPolicyTable = await tx.query<{ present: boolean }>(
+    "SELECT to_regclass('public.approval_autonomy_policies') IS NOT NULL AS present",
+  )
+  if (autonomyPolicyTable.rows[0]?.present) {
+    await tx.query(
+      `INSERT INTO approval_autonomy_policies(workspace_id,mode,updated_by_actor_id)
+       VALUES($1,'human_required',$2)`,
+      [workspaceId, actor.rows[0]!.id],
+    )
+  }
   const team = await tx.query<{ id: string }>("INSERT INTO teams(workspace_id,name,key) VALUES($1,'General','GEN') RETURNING id", [workspaceId])
   await tx.query('INSERT INTO platform_installation(singleton,workspace_id,system_actor_id) VALUES(true,$1,$2)', [workspaceId, systemActor.rows[0]!.id])
   await tx.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'admin')", [workspaceId, team.rows[0]!.id, actor.rows[0]!.id])

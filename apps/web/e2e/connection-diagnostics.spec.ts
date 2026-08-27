@@ -3,6 +3,7 @@ import type { AgentConnection } from '../app/lib/agents'
 
 const apiUrl = 'http://127.0.0.1:3101'
 const webUrl = 'http://127.0.0.1:3100'
+const connectionsUrl = '/agents?tab=connections'
 const headers = {
   'Access-Control-Allow-Origin': webUrl,
   'Access-Control-Allow-Credentials': 'true',
@@ -26,7 +27,8 @@ const baseConnection: AgentConnection = {
   id: 'connection-fault', workspace_id: 'workspace-fault', team_id: 'team-fault',
   agent_actor_id: 'agent-fault', principal_human_actor_id: 'human-fault',
   name: 'Codex coordinator', agent_slug: 'codex-coordinator', client_type: 'codex',
-  status: 'active', requested_capabilities: ['work:read'], granted_capabilities: ['work:read'],
+  status: 'active', source: 'manual', enrollment_policy_id: null,
+  requested_capabilities: ['work:read'], granted_capabilities: ['work:read'],
   grant_agent_delegate: false, skill_version: '1.0.0', skill_sha256: 'a'.repeat(64),
   credential_fingerprint_prefix: 'wm_safe1234', pairing_code_expires_at: null,
   last_used_at: '2026-08-10T00:00:00.000Z', rotated_at: null, revoked_at: null,
@@ -62,7 +64,7 @@ test('diagnoses expired, rotating, revoked, and mis-scoped Connections without r
 
   for (const [fault, label] of cases) {
     connection = { ...baseConnection, ...fault }
-    await page.goto('/agents')
+    await page.goto(connectionsUrl)
     const diagnostic = page.getByTestId('connection-diagnostic')
     await expect(diagnostic).toContainText(label)
     await expect(diagnostic).toContainText('fingerprint wm_safe1234')
@@ -72,7 +74,7 @@ test('diagnoses expired, rotating, revoked, and mis-scoped Connections without r
   }
 
   connection = { ...baseConnection }
-  await page.goto('/agents')
+  await page.goto(connectionsUrl)
   await page.locator('.config-details summary').click()
   const configRegion = page.getByRole('region', { name: 'Configuration preview: Codex MCP server configuration' })
   await expect(configRegion).toHaveAttribute('tabindex', '0')
@@ -84,7 +86,7 @@ test('diagnoses expired, rotating, revoked, and mis-scoped Connections without r
   await expect.poll(() => configRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(startScroll)
 
   connection = { ...baseConnection, client_type: 'generic_mcp', name: 'Generic gateway' }
-  await page.goto('/agents')
+  await page.goto(connectionsUrl)
   await expect(page.getByTestId('connection-diagnostic').locator('.eyebrow')).toHaveText('Generic MCP')
 
   await page.getByRole('button', { name: 'New connection' }).click()
@@ -110,7 +112,7 @@ test('classifies administrator MCP discovery failure without rendering raw publi
     return body({ error: { code: 'NOT_FOUND', message: 'Unexpected route.', correlationId: 'fault-e2e' } }, 404)
   })
 
-  await page.goto('/agents')
+  await page.goto(connectionsUrl)
   const diagnostic = page.getByTestId('mcp-onboarding-diagnostic')
   await expect(diagnostic.locator('[role="alert"]')).toHaveAttribute('data-onboarding-state', 'discovery_unavailable')
   await expect(diagnostic).toContainText('Discovery unavailable')
@@ -139,7 +141,7 @@ test('discovers an existing Connection without browser-local state and distingui
     return body({ error: { code: 'NOT_FOUND', message: `Unexpected ${path}`, correlationId: 'fault-e2e' } }, 404)
   })
 
-  await page.goto('/agents')
+  await page.goto(connectionsUrl)
   await expect(page.getByTestId('connection-diagnostic')).toContainText('Codex coordinator')
   await expect(page.getByText('No Connections yet')).toHaveCount(0)
 

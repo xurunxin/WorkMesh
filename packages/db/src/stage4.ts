@@ -273,13 +273,34 @@ export async function admitNotification(
     ],
   )).rows[0]!
   for (const channel of channels) {
+    if (channel === 'browser') {
+      await tx.query(
+        `INSERT INTO notification_deliveries(
+           notification_id,channel,browser_push_subscription_id,effect_key,available_at
+         )
+         SELECT $1::uuid,'browser',subscription.id,
+                concat('notification:',$1::uuid,':browser:',subscription.id),
+                CASE $3
+                  WHEN 'hourly' THEN date_trunc('hour',now())+interval '1 hour'
+                  WHEN 'daily' THEN date_trunc('day',now())+interval '1 day'
+                  ELSE now()
+                END
+           FROM browser_push_subscriptions subscription
+          WHERE subscription.workspace_id=$2
+            AND subscription.actor_id=$4
+            AND subscription.status='active'
+         ON CONFLICT DO NOTHING`,
+        [notification.id, input.workspaceId, preference?.digest ?? 'immediate', input.recipientActorId],
+      )
+      continue
+    }
     await tx.query(
       `INSERT INTO notification_deliveries(notification_id,channel,effect_key,available_at)
        VALUES($1,$2,$3,CASE $4
          WHEN 'hourly' THEN date_trunc('hour',now())+interval '1 hour'
          WHEN 'daily' THEN date_trunc('day',now())+interval '1 day'
          ELSE now() END)
-       ON CONFLICT(notification_id,channel) DO NOTHING`,
+       ON CONFLICT DO NOTHING`,
       [notification.id, channel, `notification:${notification.id}:${channel}`, preference?.digest ?? 'immediate'],
     )
   }

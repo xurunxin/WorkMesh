@@ -115,6 +115,83 @@ describe('stage 1 worker durability', () => {
     await expect(createDelivery(data, sessionId, deliveryId)).rejects.toThrow()
   })
 
+  it('reconciles existing pending approvals under YOLO exactly once across worker restarts', async () => {
+    const data = await fixture()
+    await db.query(
+      "UPDATE agent_definitions SET requested_capabilities=ARRAY['work:write'],approved_capabilities=ARRAY['work:write'] WHERE id=$1",
+      [data.agentId],
+    )
+    await db.query(
+      "UPDATE delegations SET permissions_snapshot=ARRAY['work:write'] WHERE id=$1",
+      [data.delegationId],
+    )
+    await db.query(
+      `INSERT INTO agent_team_access(
+         workspace_id,agent_id,team_id,granted_by_actor_id,approved_capabilities
+       ) VALUES($1,$2,$3,$4,ARRAY['work:write'])`,
+      [data.workspaceId, data.agentId, data.teamId, data.humanActorId],
+    )
+    const sessionId = await createSession(data, 'acknowledged')
+    const approval = (await db.query<{ id: string }>(
+      `INSERT INTO approvals(
+         workspace_id,session_id,requested_by_actor_id,approval_type,action_name,
+         action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,
+         required_approvals,expires_at
+       ) VALUES(
+         $1,$2,$3,'protected_action','worker.reconcile','{}',
+         $4,'critical','Reconcile existing pending approval',4,now()+interval '1 hour'
+       ) RETURNING id`,
+      [data.workspaceId, sessionId, data.agentActorId, `sha256:${'a'.repeat(64)}`],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,team_id,
+         kind,source_type,source_id,payload
+       ) VALUES($1,$2,$2,$3,$4,'approval','approval',$5,'{}')`,
+      [data.workspaceId, data.humanActorId, sessionId, data.teamId, approval.id],
+    )
+    await db.query(
+      `INSERT INTO approval_autonomy_policies(workspace_id,mode,revision,updated_by_actor_id)
+       VALUES($1,'yolo',1,$2)`,
+      [data.workspaceId, data.humanActorId],
+    )
+    const reconciliation = (await db.query<{ id: string }>(
+      `INSERT INTO approval_policy_reconciliations(workspace_id,policy_revision,status)
+       VALUES($1,1,'pending') RETURNING id`,
+      [data.workspaceId],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO approval_policy_reconciliation_items(reconciliation_id,approval_id)
+       VALUES($1,$2)`,
+      [reconciliation.id, approval.id],
+    )
+
+    const firstWorker = createSessionLifecycleWorker({ db, workerId: 'approval-policy-worker-1' })
+    expect(await firstWorker.reconcileApprovalAutonomy()).toBe(1)
+    const secondWorker = createSessionLifecycleWorker({ db, workerId: 'approval-policy-worker-2' })
+    expect(await secondWorker.reconcileApprovalAutonomy()).toBe(0)
+    expect((await db.query<{ status: string; revision: number }>(
+      'SELECT status,revision FROM approvals WHERE id=$1',
+      [approval.id],
+    )).rows[0]).toMatchObject({ status: 'approved', revision: 2 })
+    expect((await db.query<{ source: string; policy_revision: number }>(
+      'SELECT source,policy_revision FROM approval_decisions WHERE approval_id=$1',
+      [approval.id],
+    )).rows).toEqual([{ source: 'workspace_policy', policy_revision: 1 }])
+    expect((await db.query<{ status: string }>(
+      'SELECT status FROM inbox_items WHERE source_type=\'approval\' AND source_id=$1',
+      [approval.id],
+    )).rows[0]?.status).toBe('resolved')
+    expect((await db.query<{ status: string; approved_count: number; skipped_count: number }>(
+      'SELECT status,approved_count,skipped_count FROM approval_policy_reconciliations WHERE id=$1',
+      [reconciliation.id],
+    )).rows[0]).toEqual({ status: 'completed', approved_count: 1, skipped_count: 0 })
+    expect((await db.query(
+      "SELECT 1 FROM domain_events WHERE aggregate_id=$1 AND event_type='approval.auto_approved'",
+      [approval.id],
+    )).rowCount).toBe(1)
+  })
+
   it('retries, reclaims after a crash, and dead-letters bounded failures without persisting receiver errors', async () => {
     const data = await fixture()
     const sessionId = await createSession(data)

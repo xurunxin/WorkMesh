@@ -133,8 +133,8 @@ export function registerHumanAttentionRoutes(
     addFilter(where, values, 'attention.kind', query.kind)
     if (query.status) addFilter(where, values, 'attention.status', query.status)
     else where.push(query.view === 'active'
-      ? "attention.status IN ('open','seen','decided','applying','failed')"
-      : "attention.status IN ('verified','expired','superseded')")
+      ? "attention.status IN ('open','seen','applying','failed')"
+      : "attention.status IN ('decided','verified','expired','superseded')")
     addFilter(where, values, 'attention.risk_level', query.severity)
     addFilter(where, values, 'attention.requested_by_actor_id', query.requestedByActorId)
     addFilter(where, values, 'attention.responsible_human_actor_id', query.responsibleHumanActorId)

@@ -45,12 +45,31 @@ async function readableSession(request: FastifyRequest, h: Helpers, sessionId: s
 export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
   app.get("/api/v1/agents", async request => {
     needHuman(request);
+    const query = z.object({
+      q: z.string().trim().max(200).optional(),
+      teamId: z.string().uuid().optional(),
+      clientType: z.enum(['codex','opencode','pi','generic_mcp']).optional(),
+      capability: z.string().max(120).optional(),
+      connectionStatus: z.enum(['pending','active','rotating','revoked']).optional(),
+      lifecycle: z.enum(['active','archived','all']).default('active'),
+    }).passthrough().parse(request.query);
+    const values: unknown[] = [actor(request).workspaceId];
+    const where = ['a.workspace_id=$1'];
+    if(query.lifecycle!=='all') { values.push(query.lifecycle==='active'); where.push(`a.is_active=$${values.length}`); }
+    if(query.q){values.push(`%${query.q}%`);where.push(`(a.display_name ILIKE $${values.length} OR a.slug ILIKE $${values.length})`);}
+    if(query.teamId){values.push(query.teamId);where.push(`EXISTS(SELECT 1 FROM agent_team_access filter_access WHERE filter_access.agent_id=a.id AND filter_access.team_id=$${values.length} AND filter_access.revoked_at IS NULL)`);}
+    if(query.clientType){values.push(query.clientType);where.push(`EXISTS(SELECT 1 FROM agent_connections filter_connection WHERE filter_connection.agent_id=a.id AND filter_connection.client_type=$${values.length})`);}
+    if(query.capability){values.push(query.capability);where.push(`$${values.length}=ANY(a.approved_capabilities)`);}
+    if(query.connectionStatus){values.push(query.connectionStatus);where.push(`EXISTS(SELECT 1 FROM agent_connections filter_connection WHERE filter_connection.agent_id=a.id AND filter_connection.status=$${values.length})`);}
     return h.paginator.query(h.db, request, request.query, {
       route: "/api/v1/agents",
-      filters: {},
+      filters: query,
       sort: [{ key: "display_name", sql: "a.display_name", direction: "ASC" }, { key: "id", sql: "a.id", direction: "ASC" }],
     },
-      `SELECT a.*, COALESCE(access.team_access, '[]'::jsonb) AS team_access
+      `SELECT a.*,
+              CASE WHEN a.is_active THEN 'active' ELSE 'archived' END AS lifecycle_status,
+              a.archive_reason AS archived_reason,
+              COALESCE(access.team_access, '[]'::jsonb) AS team_access
        FROM agent_definitions a
        LEFT JOIN LATERAL (
          SELECT jsonb_agg(jsonb_build_object(
@@ -67,11 +86,36 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
            ORDER BY scoped.created_at DESC,scoped.team_id LIMIT 200
          ) ata
        ) access ON true
-       WHERE a.workspace_id=$1`,
-      [actor(request).workspaceId]);
+       WHERE ${where.join(' AND ')}`,
+      values);
   });
   app.post("/api/v1/agents/register", async request => { const body=agentRegistrationInputSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); return commands.registerAgent(h.db,h.meta(request,body),body); });
-  app.get("/api/v1/agents/:id", async request => { needHuman(request); const row = (await h.db.query("SELECT * FROM agent_definitions WHERE id=$1 AND workspace_id=$2", [id(request), actor(request).workspaceId])).rows[0]; if (!row) throw new DomainError("NOT_FOUND", "Agent not found"); return row; });
+  app.get("/api/v1/agents/:id", async request => {
+    needHuman(request);
+    const row = (await h.db.query(
+      `SELECT definition.*,
+              CASE WHEN definition.is_active THEN 'active' ELSE 'archived' END AS lifecycle_status,
+              definition.archive_reason AS archived_reason,
+              COALESCE(access.team_access,'[]'::jsonb) AS team_access
+         FROM agent_definitions definition
+         LEFT JOIN LATERAL (
+           SELECT jsonb_agg(jsonb_build_object(
+             'agent_id',team_access.agent_id,'team_id',team_access.team_id,
+             'approved_capabilities',team_access.approved_capabilities,
+             'status',CASE WHEN team_access.revoked_at IS NULL THEN 'active' ELSE 'revoked' END,
+             'approved_by_actor_id',team_access.granted_by_actor_id,
+             'revision',definition.revision,'created_at',team_access.created_at,
+             'updated_at',team_access.created_at,'revoked_at',team_access.revoked_at
+           ) ORDER BY team_access.created_at) AS team_access
+             FROM agent_team_access team_access
+            WHERE team_access.workspace_id=definition.workspace_id AND team_access.agent_id=definition.id
+         ) access ON true
+        WHERE definition.id=$1 AND definition.workspace_id=$2`,
+      [id(request), actor(request).workspaceId],
+    )).rows[0];
+    if (!row) throw new DomainError("NOT_FOUND", "Agent not found");
+    return row;
+  });
   app.patch("/api/v1/agents/:id", async request => { const body = agentPatchSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); const agentId = id(request); return commands.updateAgent(h.db, h.meta(request, body, { id: agentId }), agentId, parseRevision(h.header(request, "if-match")), body); });
   app.post("/api/v1/agents/:id/webhook-endpoints", async request => { needAdmin(request); const body = z.object({ url: z.string().url() }).parse(request.body); await assertWebhookUrl(body.url); const agentId = id(request); return commands.createWebhookEndpoint(h.db,h.meta(request,body,{id:agentId}),agentId,body.url); });
   app.post("/api/v1/agents/:id/webhook-endpoints/:endpointId/rotate-secret", async request => commands.rotateWebhookSecret(h.db, h.meta(request, {}, request.params as Record<string, unknown>), id(request), z.object({ endpointId: z.string().uuid() }).parse(request.params).endpointId, parseRevision(h.header(request, "if-match"))));

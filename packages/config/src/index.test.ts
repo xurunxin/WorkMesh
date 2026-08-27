@@ -53,6 +53,16 @@ describe('production runtime secrets', () => {
       }),
     ).toThrow(/POSTGRES_PASSWORD.*PAGINATION_CURSOR_KEYS|PAGINATION_CURSOR_KEYS.*POSTGRES_PASSWORD/)
   })
+
+  it('allows optional Web Push credentials to remain unconfigured', () => {
+    expect(() =>
+      validateRuntimeEnvironment({
+        ...runtimeEnvironment,
+        DATABASE_URL: `postgres://workmesh:${'p'.repeat(32)}@postgres/workmesh`,
+        WORKMESH_WEB_PUSH_PRIVATE_KEY: '',
+      }),
+    ).not.toThrow()
+  })
 })
 
 describe('release and feature configuration', () => {
@@ -367,5 +377,28 @@ describe('release and feature configuration', () => {
         PAGINATION_CURSOR_KEYS: `test-1:${paginationMaterial.toString('base64url')},test-2:${paginationMaterial.toString('base64url')}`,
       }),
     ).toThrow(/distinct material/)
+  })
+
+  it('requires Web Push VAPID configuration as a complete set', () => {
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: 'public-key',
+    })).toThrow(/All WORKMESH_WEB_PUSH/)
+    expect(loadConfig({
+      ...baseEnvironment,
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: 'public-key',
+      WORKMESH_WEB_PUSH_PRIVATE_KEY: 'private-key',
+      WORKMESH_WEB_PUSH_SUBJECT: 'mailto:admin@example.test',
+    })).toMatchObject({
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: 'public-key',
+      WORKMESH_WEB_PUSH_PRIVATE_KEY: 'private-key',
+      WORKMESH_WEB_PUSH_SUBJECT: 'mailto:admin@example.test',
+    })
+    expect(() => loadConfig({
+      ...baseEnvironment,
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: 'public-key',
+      WORKMESH_WEB_PUSH_PRIVATE_KEY: 'private-key',
+      WORKMESH_WEB_PUSH_SUBJECT: 'admin@example.test',
+    })).toThrow(/mailto: or https:/)
   })
 })
