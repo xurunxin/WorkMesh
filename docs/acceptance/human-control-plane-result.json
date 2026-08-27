@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "programIssue": 87,
+  "finalGateIssue": 100,
+  "status": "pass",
+  "testedImplementationSha": "67afb7675260efe3311e76205e257f12149045f7",
+  "completedAt": "2026-08-27T00:11:52.903Z",
+  "acceptanceContract": "docs/acceptance/human-control-plane-acceptance.json",
+  "finalPlaywright": {
+    "result": "artifacts/web-ui-final/playwright-runs/2026-08-27-wm-ux-013-final-2/run-result.json",
+    "status": "pass",
+    "topologies": [
+      { "id": "root-mixed-real-local", "tests": 64, "passed": 64 },
+      { "id": "mocked-dev", "tests": 136, "passed": 136 },
+      { "id": "production-web-plus-mocked-api", "tests": 50, "passed": 50, "productionBuild": "pass" }
+    ],
+    "viewports": [
+      { "width": 390, "height": 844 },
+      { "width": 768, "height": 1024 },
+      { "width": 1440, "height": 1000 },
+      { "width": 1920, "height": 1080 }
+    ]
+  },
+  "repositoryValidation": [
+    { "command": "pnpm lint", "status": "pass", "tasks": "17/17" },
+    { "command": "pnpm typecheck", "status": "pass", "tasks": "17/17" },
+    { "command": "pnpm test", "status": "pass", "tasks": "28/28", "details": ["web: 102 files, 662 tests", "api: 31 files, 164 tests"] },
+    { "command": "pnpm build", "status": "pass", "tasks": "17/17" }
+  ],
+  "integrationValidation": [
+    { "scope": "database", "status": "pass", "files": 17, "tests": 75 },
+    { "scope": "api", "status": "pass", "files": 14, "tests": 121 },
+    { "scope": "worker", "status": "pass", "filesPassed": 8, "filesSkipped": 1, "testsPassed": 76, "testsSkipped": 1, "skipReason": "suite-declared optional topology" },
+    { "scope": "recovery", "status": "pass", "tests": 1 }
+  ],
+  "telemetryValidation": {
+    "transport": "browser-performance-timeline-only",
+    "externalTransmission": false,
+    "boundedEntries": 200,
+    "optOutValidated": true,
+    "sensitiveFieldForwarding": false
+  },
+  "limitations": [
+    "Acceptance used isolated local test data; no production data was accessed.",
+    "The evidence supports the scoped keyboard, semantic, responsive, and focus contracts; it is not a claim of complete WCAG conformance.",
+    "Unavailable optional integrations remain explicit feature-disabled boundaries and do not block stable Human Control Plane closure.",
+    "Enabled Graph autonomy was not exercised by this roadmap acceptance run."
+  ],
+  "specDivergence": []
+}
