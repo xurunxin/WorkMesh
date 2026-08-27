@@ -14,7 +14,29 @@ import { useLocale } from '../lib/i18n'
 import { useMediaQuery } from '../lib/use-media-query'
 
 type Team = { id: string; name: string; key: string }
-type TeamAccessDrawerCopy = AgentsCopy & Pick<AgentDetailLocaleCopy, 'closePeek' | 'manageTeamAccess'>
+type TeamAccessDrawerCopy = Pick<AgentsCopy,
+  | 'teamAccessAndCapabilities'
+  | 'requestedLabel'
+  | 'definitionApprovedLabel'
+  | 'none'
+  | 'noTeamsAvailable'
+  | 'accessStatusNotGranted'
+  | 'accessStatusActive'
+  | 'accessStatusRevoked'
+  | 'revokedAt'
+  | 'teamAccessViewRequested'
+  | 'teamAccessViewApproved'
+  | 'teamAccessViewLabel'
+  | 'teamAccessEmptyRequested'
+  | 'teamAccessRequestedChipLabel'
+  | 'teamAccessApprovedChipLabel'
+  | 'teamAccessNoSelection'
+  | 'teamAccessSelectedCount'
+  | 'teamAccessToggleHint'
+  | 'updateGrant'
+  | 'grantAccess'
+  | 'revoke'
+> & Pick<AgentDetailLocaleCopy, 'closePeek' | 'manageTeamAccess'>
 
 export type TeamAccessDrawerProps = {
   /** Selected agent, or `null` when the drawer should not render. */
@@ -92,7 +114,7 @@ type TeamAccessCardProps = {
   canManage: boolean
   busy: boolean
   compact: boolean
-  copy?: AgentsCopy
+  copy?: TeamAccessDrawerCopy
   onGrant: (approvedCapabilities: string[]) => void
   onRevoke: () => void
 }

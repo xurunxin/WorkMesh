@@ -26,8 +26,21 @@ import {
 } from "@workmesh/ui";
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from "./evidence-drawer";
 import { ApiError, apiMutation, apiRequest, json } from "./lib/api";
+import {
+  classifyApprovalDecisionFailure,
+  decideApproval,
+  defaultApprovalDecisionReason,
+  type Approval,
+  type ApprovalDecision,
+} from "./lib/agents";
 import { productMetricError, recordProductMetric, startProductMetric } from "./lib/product-telemetry";
 import { useLocale } from "./lib/i18n";
+import {
+  ApprovalDecisionControls,
+  type ApprovalDecisionUiState,
+} from "./agents/approval-decision-controls";
+import { approvalFromAttentionItem } from "./agents/attention-approval";
+export { approvalFromAttentionItem } from "./agents/attention-approval";
 import {
   useRealtimeConnectionState,
   useRealtimeSubscription,
@@ -73,7 +86,7 @@ export function describeAttentionMutation(
   const reason = draft.reason.trim();
   const message = draft.message.trim();
   const choice = draft.choice.trim();
-  if (item.response.requiresReason && !reason)
+  if (item.response.requiresReason && !reason && option.command !== "decideApproval")
     throw new Error("A reason is required.");
   if (item.response.requiresMessage && !message)
     throw new Error("A response is required.");
@@ -81,7 +94,7 @@ export function describeAttentionMutation(
   if (option.command === "decideApproval")
     body = {
       decision: option.id === "approve" ? "approved" : "rejected",
-      reason,
+      reason: reason || defaultApprovalDecisionReason(option.id === "approve" ? "approved" : "rejected"),
     };
   else if (option.command === "finalizeDecision")
     body = {
@@ -141,7 +154,7 @@ export function AttentionCenter({
   actor: Actor;
   projectId?: string;
 }) {
-  const { locale } = useLocale();
+  const { locale, agentsCopy } = useLocale();
   const copy =
     locale === "zh-CN"
       ? {
@@ -190,7 +203,7 @@ export function AttentionCenter({
           stale: "当前数据不可用于高风险响应，请重新同步。",
           applying: "命令已提交，正在从权威状态重新同步。",
           bulk: "批量处理",
-          bulkReason: "批量理由",
+          bulkReason: "批量理由（可选）",
           bulkApprove: "批量批准",
           bulkReject: "批量拒绝",
           bulkResult: (ok: number, failed: number) =>
@@ -268,7 +281,7 @@ export function AttentionCenter({
             "Current data cannot authorize a high-risk response. Resynchronize first.",
           applying: "Command committed; resynchronizing authoritative state.",
           bulk: "Bulk response",
-          bulkReason: "Bulk reason",
+          bulkReason: "Bulk reason (optional)",
           bulkApprove: "Bulk approve",
           bulkReject: "Bulk reject",
           bulkResult: (ok: number, failed: number) =>
@@ -315,6 +328,7 @@ export function AttentionCenter({
     message: "",
     choice: "",
   });
+  const [approvalDecisionState, setApprovalDecisionState] = useState<ApprovalDecisionUiState>({ status: "idle" });
   const [preview, setPreview] = useState<ActionPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState("");
@@ -346,6 +360,7 @@ export function AttentionCenter({
       choice: item.response.choices[0]?.id ?? "",
     });
     setPreview(null);
+    setApprovalDecisionState({ status: "idle" });
     const option = item.options.find((candidate) => candidate.id === optionId);
     if (!option?.consequencePreviewPath) return;
     setPreviewLoading(true);
@@ -448,6 +463,40 @@ export function AttentionCenter({
       described.init,
     );
   };
+  const decideAttentionApproval = async (
+    approval: Approval,
+    decision: ApprovalDecision,
+    reason?: string,
+  ): Promise<boolean> => {
+    if (approvalDecisionState.status === "busy" || approvalDecisionState.status === "success") return false;
+    setApprovalDecisionState({ status: "busy", decision });
+    try {
+      const result = await decideApproval(approval, decision, reason);
+      setApprovalDecisionState({
+        status: "success",
+        decision,
+        message: result.status === "pending" && !result.quorum.reached
+          ? agentsCopy.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
+          : agentsCopy.approvalDecisionRecorded(decision),
+        quorum: result.quorum,
+      });
+      setApplying(copy.applying);
+      window.setTimeout(() => void refresh(route), 1200);
+      return true;
+    } catch (reason) {
+      const failure = classifyApprovalDecisionFailure(reason);
+      if (failure === "conflict" || failure === "expired" || failure === "authority_inactive") {
+        await refresh(route);
+      }
+      setApprovalDecisionState({
+        status: "error",
+        decision,
+        message: agentsCopy.approvalDecisionFailure(failure),
+        retryable: failure === "network" || failure === "server",
+      });
+      return false;
+    }
+  };
   const submitResponse = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selected) return;
@@ -497,7 +546,7 @@ export function AttentionCenter({
   };
   const runBulk = async (decision: "approve" | "reject") => {
     const items = page?.items.filter((item) => bulkSelected.has(item.id)) ?? [];
-    if (!bulkReason.trim() || items.length === 0) return;
+    if (items.length === 0) return;
     setBusy(true);
     setError("");
     setApplying("");
@@ -506,7 +555,7 @@ export function AttentionCenter({
       items.map((item) =>
         execute(item, {
           optionId: decision,
-          reason: bulkReason,
+          reason: bulkReason.trim() || defaultApprovalDecisionReason(decision === "approve" ? "approved" : "rejected"),
           message: "",
           choice: "",
         }),
@@ -543,6 +592,7 @@ export function AttentionCenter({
   const expiredCount = route.view === "history"
     ? items.filter((item) => item.status === "expired").length
     : 0;
+  const selectedApproval = selected ? approvalFromAttentionItem(selected) : null;
   const historyStatuses = ["verified", "expired", "superseded"] as const;
   return (
     <section className="attention-center" data-testid="attention-center">
@@ -751,14 +801,14 @@ export function AttentionCenter({
             />
           </label>
           <Button
-            disabled={busy || !bulkReason.trim()}
+            disabled={busy}
             onClick={() => void runBulk("approve")}
             type="button"
           >
             {copy.bulkApprove}
           </Button>
           <Button
-            disabled={busy || !bulkReason.trim()}
+            disabled={busy}
             onClick={() => void runBulk("reject")}
             type="button"
             variant="danger"
@@ -884,7 +934,24 @@ export function AttentionCenter({
                 </section>
                 <details><summary>{copy.technical}</summary><p>{copy.reasonCodes}: {selected.reasonCodes.join(", ")}</p><p>{selected.correlationId}</p><p>{selected.id}</p></details>
               </div>
-              {selected.audience.canRespond && selected.options.length > 0 ? (
+              {selectedApproval ? (
+                <section className="attention-approval-decision" aria-label={copy.response}>
+                  <h3>{copy.response}</h3>
+                  <ApprovalDecisionControls
+                    approval={selectedApproval}
+                    copy={agentsCopy}
+                    key={`${selectedApproval.id}:${selectedApproval.revision}`}
+                    onDecide={decideAttentionApproval}
+                    state={approvalDecisionState}
+                  />
+                  {selectedApproval.viewer_actionability?.status === "blocked" && (
+                    <div className="attention-recovery-links">
+                      {selected.sessionId && <a href={attentionResourceHref(selected, "session", selected.sessionId)}>{copy.source}: Session</a>}
+                      {selected.workItemId && <a href={attentionResourceHref(selected, "work_item", selected.workItemId)}>{copy.source}: WorkItem</a>}
+                    </div>
+                  )}
+                </section>
+              ) : selected.audience.canRespond && selected.options.length > 0 ? (
                 <form className="attention-response-form" onSubmit={submitResponse}>
                   {selected.response.choices.length > 0 && (
                     <fieldset className="attention-choice-list"><legend>{copy.choice}</legend>{selected.response.choices.map((choice) => (

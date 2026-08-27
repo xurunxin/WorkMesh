@@ -11,10 +11,12 @@ import {
   agentName,
   agentStateClass,
   agentStateLabel,
+  classifyApprovalDecisionFailure,
   canManageAgentTeamAccess,
   decideApproval,
   formatTime,
   grantAgentTeamAccess,
+  isApprovalActionable,
   normalizeApproval,
   revokeAgentTeamAccess,
 } from '../lib/agents'
@@ -45,7 +47,7 @@ import {
   findLoadedAgent,
   useAgentsRouteState,
 } from './approval-route-state'
-import { ApprovalsTable } from './approvals-table'
+import { ApprovalsTable, type ApprovalDecisionUiState } from './approvals-table'
 import { TeamAccessDrawer } from './team-access-drawer'
 import { EnrollmentPoliciesPanel } from './enrollment-policies-panel'
 
@@ -216,21 +218,38 @@ function AgentsPageScope({
     }
   }
 
-  // Bulk approval selection state. The set is keyed by approval id so the
-  // table can render a checkbox per row and the action bar can read the
-  // current selection in O(1) without re-scanning the approvals array on
-  // every render. The "live" helpers below project the selection against
-  // the visible list so stale ids (decided elsewhere, expired, paginated
-  // out) cannot drive a bulk action — the action bar only counts rows
-  // the user can still see, and `decideApprovals` only operates on those.
+  // Per-approval mutation state keeps progress and recoverable errors next to
+  // the decision that caused them. Bulk selection remains a secondary path.
   const [selectedApprovalIds, setSelectedApprovalIds] = useState<Set<string>>(() => new Set())
   const [bulkApprovalBusy, setBulkApprovalBusy] = useState(false)
-  const visibleApprovalIds = useMemo(() => approvals.map(approval => approval.id), [approvals])
+  const [approvalDecisionStates, setApprovalDecisionStates] = useState<Record<string, ApprovalDecisionUiState | undefined>>({})
+  const approvalRefreshTimers = useRef(new Set<number>())
+  const visibleApprovalIds = useMemo(
+    () => approvals
+      .filter(approval => isApprovalActionable(approval) && approvalDecisionStates[approval.id]?.status !== 'success')
+      .map(approval => approval.id),
+    [approvalDecisionStates, approvals],
+  )
   const selectedLiveApprovalIds = useMemo(
     () => visibleApprovalIds.filter(id => selectedApprovalIds.has(id)),
     [visibleApprovalIds, selectedApprovalIds],
   )
   const selectedLiveCount = selectedLiveApprovalIds.length
+  useEffect(() => () => {
+    approvalRefreshTimers.current.forEach(timer => window.clearTimeout(timer))
+    approvalRefreshTimers.current.clear()
+  }, [])
+  useEffect(() => {
+    const pendingIds = new Set(approvals.map(approval => approval.id))
+    setSelectedApprovalIds(current => {
+      const next = new Set([...current].filter(id => visibleApprovalIds.includes(id)))
+      return next.size === current.size && [...next].every(id => current.has(id)) ? current : next
+    })
+    setApprovalDecisionStates(current => {
+      const entries = Object.entries(current).filter(([id]) => pendingIds.has(id))
+      return entries.length === Object.keys(current).length ? current : Object.fromEntries(entries)
+    })
+  }, [approvals, visibleApprovalIds])
   const toggleApproval = useCallback((id: string) => {
     setSelectedApprovalIds(current => {
       const next = new Set(current)
@@ -252,9 +271,64 @@ function AgentsPageScope({
   const clearApprovalSelection = useCallback(() => {
     setSelectedApprovalIds(new Set())
   }, [])
-  // Decide a list of approvals in parallel. Failed ids are kept in the
-  // selection so the user can retry; succeeded ids are dropped because
-  // they have left the visible list after `pendingApprovalsPage.refresh()`.
+
+  const scheduleApprovalRefresh = () => {
+    const timer = window.setTimeout(() => {
+      approvalRefreshTimers.current.delete(timer)
+      if (isAuthorityCurrent()) void pendingApprovalsPage.refresh()
+    }, 1200)
+    approvalRefreshTimers.current.add(timer)
+  }
+
+  const decisionSuccessState = (
+    decision: ApprovalDecision,
+    result: Awaited<ReturnType<typeof decideApproval>>,
+  ): ApprovalDecisionUiState => ({
+    status: 'success',
+    decision,
+    message: result.status === 'pending' && !result.quorum.reached
+      ? text.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
+      : text.approvalDecisionRecorded(decision),
+    quorum: result.quorum,
+  })
+
+  const decideOneApproval = async (approval: Approval, decision: ApprovalDecision, reason?: string): Promise<boolean> => {
+    const currentState = approvalDecisionStates[approval.id]
+    if (bulkApprovalBusy || currentState?.status === 'busy' || currentState?.status === 'success') return false
+    setApprovalDecisionStates(current => ({ ...current, [approval.id]: { status: 'busy', decision } }))
+    try {
+      const result = await decideApproval(approval, decision, reason)
+      if (!isAuthorityCurrent()) return false
+      setApprovalDecisionStates(current => ({ ...current, [approval.id]: decisionSuccessState(decision, result) }))
+      pushToast({
+        dedupeKey: `agents:approval:${approval.id}`,
+        description: result.status === 'pending' && !result.quorum.reached
+          ? text.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
+          : toastCopy.approvalsDecisionDescription,
+        title: decision === 'approved' ? toastCopy.approvalsApprovedTitle(1) : toastCopy.approvalsRejectedTitle(1),
+        tone: 'success',
+      })
+      scheduleApprovalRefresh()
+      return true
+    } catch (reason) {
+      if (!isAuthorityCurrent()) return false
+      const failure = classifyApprovalDecisionFailure(reason)
+      setApprovalDecisionStates(current => ({
+        ...current,
+        [approval.id]: {
+          status: 'error',
+          decision,
+          message: text.approvalDecisionFailure(failure),
+          retryable: failure === 'network' || failure === 'server',
+        },
+      }))
+      if (failure === 'conflict' || failure === 'expired' || failure === 'authority_inactive') void pendingApprovalsPage.refresh()
+      return false
+    }
+  }
+
+  // Decide selected approvals in parallel while preserving each failure next
+  // to its own row. Failed ids stay selected for an explicit Human retry.
   const decideApprovals = async (decision: ApprovalDecision) => {
     if (selectedLiveCount === 0 || bulkApprovalBusy) return
     const targets = selectedLiveApprovalIds
@@ -263,10 +337,33 @@ function AgentsPageScope({
     if (targets.length === 0) return
     setBulkApprovalBusy(true)
     setError('')
+    setApprovalDecisionStates(current => ({
+      ...current,
+      ...Object.fromEntries(targets.map(approval => [approval.id, { status: 'busy' as const, decision }])),
+    }))
     try {
       const results = await Promise.allSettled(targets.map(approval => decideApproval(approval, decision)))
       if (!isAuthorityCurrent()) return
       const failedIds = new Set<string>()
+      setApprovalDecisionStates(current => {
+        const next = { ...current }
+        results.forEach((result, index) => {
+          const approval = targets[index]!
+          if (result.status === 'fulfilled') {
+            next[approval.id] = decisionSuccessState(decision, result.value)
+            return
+          }
+          failedIds.add(approval.id)
+          const failure = classifyApprovalDecisionFailure(result.reason)
+          next[approval.id] = {
+            status: 'error',
+            decision,
+            message: text.approvalDecisionFailure(failure),
+            retryable: failure === 'network' || failure === 'server',
+          }
+        })
+        return next
+      })
       results.forEach((result, index) => {
         if (result.status === 'rejected') {
           failedIds.add(targets[index]!.id)
@@ -505,14 +602,18 @@ function AgentsPageScope({
                         {!pendingApprovalsPage.initialized || !pendingApprovalsAuthorized
                           ? (pendingApprovalsPage.error ? null : <SkeletonList columns={1} items={4} label={text.approvalHistoryLoading} />)
                           : <ApprovalsTable
+                          agents={agents}
                           approvals={approvals}
                           bulkBusy={bulkApprovalBusy}
                           copy={text}
+                          decisionStates={approvalDecisionStates}
                           onClear={clearApprovalSelection}
                           onDecide={decision => void decideApprovals(decision)}
+                          onDecideApproval={decideOneApproval}
                           onToggle={toggleApproval}
                           onToggleAll={toggleAllApprovals}
                           selectedIds={selectedApprovalIds}
+                          sessions={sessions}
                         />}
                         {pendingApprovalsPage.initialized && pendingApprovalsAuthorized && <LoadMoreButton collection={pendingApprovalsPage} label="approvals" loadMoreLabel={text.loadMoreApprovals} />}
                       </div>,

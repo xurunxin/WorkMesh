@@ -1587,6 +1587,29 @@ export type AgentsCopy = {
   approvalColumnRationale: string
   approvalColumnExpires: string
   approvalColumnSession: string
+  approvalColumnDecision: string
+  approvalBulkActions: string
+  approvalDecisionActions: (actionName: string) => string
+  approvalApprove: string
+  approvalReject: string
+  approvalOtherFeedback: string
+  approvalApproveWithRequirements: string
+  approvalRejectWithFeedback: string
+  approvalFeedbackLabel: string
+  approvalFeedbackPlaceholder: string
+  approvalFeedbackRequired: string
+  approvalCancel: string
+  approvalConfirmDecisionTitle: string
+  approvalConfirmScope: (actionName: string, riskLabel: string) => string
+  approvalConfirmApprove: string
+  approvalConfirmReject: string
+  approvalDecisionWorking: string
+  approvalDecisionRecorded: (decision: 'approved' | 'rejected') => string
+  approvalDecisionQuorum: (approved: number, required: number) => string
+  approvalUnavailable: string
+  approvalBlockedReason: (reason: string) => string
+  approvalDecisionFailure: (kind: string) => string
+  approvalRetry: string
   // Sessions panel
   sessionLabel: (id: string) => string
   workItemLabel: (id: string) => string
@@ -1858,6 +1881,42 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     approvalColumnRationale: '理由',
     approvalColumnExpires: '过期时间',
     approvalColumnSession: 'Session',
+    approvalColumnDecision: '决定',
+    approvalBulkActions: '批量审批操作',
+    approvalDecisionActions: actionName => `${actionName} 的审批操作`,
+    approvalApprove: '通过',
+    approvalReject: '驳回',
+    approvalOtherFeedback: '其他意见',
+    approvalApproveWithRequirements: '通过并附带要求',
+    approvalRejectWithFeedback: '驳回并附带反馈',
+    approvalFeedbackLabel: '给 Agent 的决定信息',
+    approvalFeedbackPlaceholder: '说明要求、边界或需要调整的内容…',
+    approvalFeedbackRequired: '请先填写要留给 Agent 的意见。',
+    approvalCancel: '取消',
+    approvalConfirmDecisionTitle: '确认高风险审批范围',
+    approvalConfirmScope: (actionName, riskLabel) => `即将决定“${actionName}”（${riskLabel}）。请确认操作范围和下方理由。`,
+    approvalConfirmApprove: '确认通过',
+    approvalConfirmReject: '确认驳回',
+    approvalDecisionWorking: '正在提交…',
+    approvalDecisionRecorded: decision => decision === 'approved' ? '已记录通过决定。' : '已记录驳回决定。',
+    approvalDecisionQuorum: (approved, required) => `你的决定已记录；当前 ${approved}/${required} 票通过，正在等待其他审批人。`,
+    approvalUnavailable: '当前不可操作',
+    approvalBlockedReason: reason => ({
+      viewer_already_decided: '你已经提交决定，正在等待其他审批人。',
+      expired: '审批已过期，需要 Agent 重新发起。',
+      session_inactive: '关联 Session 已停止，无法继续审批。',
+      authority_revoked: 'Agent 的执行授权已撤销。',
+      already_decided: '该审批已经完成。',
+    }[reason] ?? '该审批当前不可操作。'),
+    approvalDecisionFailure: kind => ({
+      forbidden: '你当前没有决定此审批的权限。',
+      conflict: '审批已发生变化，列表已刷新，请重新确认。',
+      expired: '审批已过期，列表已刷新。',
+      authority_inactive: 'Session 或 Agent 授权已失效，无法提交决定。',
+      network: '网络连接中断；审批尚未提交，可以重试。',
+      server: '审批服务暂时不可用；审批尚未提交，可以重试。',
+    }[kind] ?? '无法提交审批决定，请重试。'),
+    approvalRetry: '重试',
     approvalViewsAriaLabel: '审批视图',
     approvalViewPending: '待处理',
     approvalViewHistory: '历史记录',
@@ -2081,6 +2140,42 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     approvalColumnRationale: 'Rationale',
     approvalColumnExpires: 'Expires',
     approvalColumnSession: 'Session',
+    approvalColumnDecision: 'Decision',
+    approvalBulkActions: 'Bulk approval actions',
+    approvalDecisionActions: actionName => `Approval actions for ${actionName}`,
+    approvalApprove: 'Approve',
+    approvalReject: 'Reject',
+    approvalOtherFeedback: 'Other feedback',
+    approvalApproveWithRequirements: 'Approve with requirements',
+    approvalRejectWithFeedback: 'Reject with feedback',
+    approvalFeedbackLabel: 'Decision information for the Agent',
+    approvalFeedbackPlaceholder: 'Describe requirements, boundaries, or requested changes…',
+    approvalFeedbackRequired: 'Enter the feedback that should be sent to the Agent.',
+    approvalCancel: 'Cancel',
+    approvalConfirmDecisionTitle: 'Confirm high-risk approval scope',
+    approvalConfirmScope: (actionName, riskLabel) => `You are deciding “${actionName}” (${riskLabel}). Confirm the scope and rationale below.`,
+    approvalConfirmApprove: 'Confirm approval',
+    approvalConfirmReject: 'Confirm rejection',
+    approvalDecisionWorking: 'Submitting…',
+    approvalDecisionRecorded: decision => decision === 'approved' ? 'Approval decision recorded.' : 'Rejection decision recorded.',
+    approvalDecisionQuorum: (approved, required) => `Your decision was recorded; ${approved}/${required} approvals are present, so WorkMesh is waiting for other reviewers.`,
+    approvalUnavailable: 'Unavailable',
+    approvalBlockedReason: reason => ({
+      viewer_already_decided: 'You already decided; WorkMesh is waiting for other reviewers.',
+      expired: 'This approval expired. The Agent must request it again.',
+      session_inactive: 'The related Session stopped and can no longer be approved.',
+      authority_revoked: 'The Agent execution authority was revoked.',
+      already_decided: 'This approval is already complete.',
+    }[reason] ?? 'This approval cannot be decided right now.'),
+    approvalDecisionFailure: kind => ({
+      forbidden: 'You do not currently have authority to decide this approval.',
+      conflict: 'The approval changed. The list was refreshed; confirm the current scope before deciding again.',
+      expired: 'The approval expired and the list was refreshed.',
+      authority_inactive: 'The Session or Agent authority is no longer active, so this decision cannot be submitted.',
+      network: 'The network connection failed. The approval was not submitted and can be retried.',
+      server: 'The approval service is temporarily unavailable. The approval was not submitted and can be retried.',
+    }[kind] ?? 'The approval decision could not be submitted. Try again.'),
+    approvalRetry: 'Retry',
     approvalViewsAriaLabel: 'Approval views',
     approvalViewPending: 'Pending',
     approvalViewHistory: 'History',

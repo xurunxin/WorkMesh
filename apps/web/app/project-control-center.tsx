@@ -30,6 +30,7 @@ import {
 } from './lib/human-control-plane-navigation'
 import { useRealtimeConnectionState, useRealtimeSubscription, type RealtimeEvent } from './lib/realtime'
 import { AttentionCenter } from './attention-center'
+import { RichContent } from '../features/rich-content/markdown'
 
 type Collection = keyof ControlCenterResponse['collections']
 type Digest = ControlCenterResponse['collections'][Collection]['items'][number]
@@ -241,7 +242,7 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
 
   const projectHeader = <>
     <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div><p>{project.description || project.summary || local.empty}</p></div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
+      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.description || project.summary ? <RichContent density="document" source={project.description || project.summary || ''} /> : <p>{local.empty}</p>}</div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
       <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data?.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data?.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>{data ? `rev ${data.revision}` : '-'}</dd></div></dl>
     </header>
     <ProjectControlNavigation items={navigation} label={copy.projectNavigation} />

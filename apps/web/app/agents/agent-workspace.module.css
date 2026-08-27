@@ -1,0 +1,182 @@
+.workspace {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.header,
+.sectionHeader,
+.sessionHeader,
+.contextHeader {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.header > div,
+.sectionHeader > div,
+.sessionHeader > div,
+.contextHeader > div {
+  min-width: 0;
+}
+
+.header h2,
+.sectionHeader h3,
+.contextHeader h3 {
+  margin: 0;
+}
+
+.header p,
+.sectionHeader p,
+.contextHeader p {
+  color: var(--text-muted, #64748b);
+  margin: 4px 0 0;
+  max-width: 72ch;
+}
+
+.facts,
+.contextFacts {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle, #dbe3ec);
+  border-radius: 12px;
+  background: var(--border-subtle, #dbe3ec);
+}
+
+.facts > div,
+.contextFacts > div {
+  background: var(--surface-raised, #fff);
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.facts dt,
+.contextFacts dt {
+  color: var(--text-muted, #64748b);
+  font-size: 12px;
+}
+
+.facts dd,
+.contextFacts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sessionList,
+.guidanceList,
+.stepList {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sessionList {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.sessionButton {
+  align-items: flex-start;
+  background: var(--surface-raised, #fff);
+  border: 1px solid var(--border-subtle, #dbe3ec);
+  border-radius: 10px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.sessionButton[data-selected='true'] {
+  border-color: var(--accent, #2563eb);
+  box-shadow: 0 0 0 1px var(--accent, #2563eb);
+}
+
+.sessionButton strong,
+.sessionButton span,
+.sessionButton small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.contextCard,
+.runCard {
+  background: var(--surface-raised, #fff);
+  border: 1px solid var(--border-subtle, #dbe3ec);
+  border-radius: 12px;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.guidanceList a {
+  overflow-wrap: anywhere;
+}
+
+.stepList li {
+  border-left: 3px solid var(--border-subtle, #dbe3ec);
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 6px 10px;
+}
+
+.stepList li[data-current='true'] {
+  border-left-color: var(--accent, #2563eb);
+}
+
+.stepList span,
+.stepList small {
+  overflow-wrap: anywhere;
+}
+
+.status,
+.error {
+  border-radius: 10px;
+  margin: 0;
+  padding: 12px;
+}
+
+.status {
+  background: var(--surface-subtle, #f8fafc);
+  color: var(--text-muted, #64748b);
+}
+
+.error {
+  background: var(--danger-surface, #fff1f2);
+  color: var(--danger-text, #9f1239);
+}
+
+@media (max-width: 900px) {
+  .facts,
+  .contextFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 390px) {
+  .facts,
+  .contextFacts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .header :global(.wm-button),
+  .sectionHeader :global(.wm-button) {
+    width: 100%;
+  }
+}

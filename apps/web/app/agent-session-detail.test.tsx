@@ -78,15 +78,17 @@ describe('agent-session-detail approval inbox', () => {
     expect(surfaceRule?.style.background).toBe('var(--wm-surface-subtle)')
   })
 
-  it('restores the approval-actions flex row removed by 868478f', () => {
+  it('lays out the shared direct approval controls as a wrapping action row', () => {
     const { container } = render(
       <section className="app-shell">
         <section className="agent-session-detail">
           <section className="approval-inbox" aria-label="Approval inbox">
             <article>
-              <div className="approval-actions">
+              <div className="approval-decision-controls">
+                <div className="approval-row-actions">
                 <button type="button">Approve</button>
                 <button type="button">Reject</button>
+                </div>
               </div>
             </article>
           </section>
@@ -94,52 +96,19 @@ describe('agent-session-detail approval inbox', () => {
       </section>,
     )
 
-    const actions = container.querySelector('.approval-inbox .approval-actions')
-    expect(actions, 'session-detail wraps approve/reject in a .approval-actions row').not.toBeNull()
+    const actions = container.querySelector('.approval-inbox .approval-row-actions')
+    expect(actions, 'session-detail reuses the shared direct approval action row').not.toBeNull()
     const actionsStyle = getComputedStyle(actions as HTMLElement)
     // Without the restored rule, the buttons would stack vertically on a
     // default block div. The restored rule forces a wrapping flex row.
-    expect(actionsStyle.display).toBe('inline-flex')
+    expect(actionsStyle.display).toBe('flex')
     expect(actionsStyle.flexWrap).toBe('wrap')
   })
 
-  it('does not bleed the restored rules outside an agent-session-detail root', () => {
-    // The agents page wraps an <ApprovalsTable> in <section class="approval-inbox">,
-    // but that table renders <table>/<tr>/<td> — never <article>. The restored
-    // `.approval-inbox article` rule must therefore stay inert for the agents
-    // page so the bulk-approval table keeps its own styling.
-    const { container } = render(
-      <section className="app-shell">
-        <section className="approval-inbox" aria-label="Approval inbox">
-          <article data-testid="agents-approval-card">
-            <div className="approval-actions">
-              <button type="button">Approve</button>
-            </div>
-          </article>
-          <table className="approval-table">
-            <thead><tr><th>Action</th></tr></thead>
-            <tbody><tr><td>Merge PR #42</td></tr></tbody>
-          </table>
-        </section>
-      </section>,
-    )
-    const unrelatedArticle = container.querySelector('[data-testid="agents-approval-card"]')
-    expect(unrelatedArticle).not.toBeNull()
-    const unrelatedArticleStyle = getComputedStyle(unrelatedArticle as HTMLElement)
-    expect(unrelatedArticleStyle.display).not.toBe('grid')
-    expect(unrelatedArticleStyle.borderTopStyle).not.toBe('solid')
-
-    const unrelatedActions = container.querySelector('[data-testid="agents-approval-card"] .approval-actions')
-    expect(unrelatedActions).not.toBeNull()
-    expect(getComputedStyle(unrelatedActions as HTMLElement).display).not.toBe('inline-flex')
-
-    const table = container.querySelector('.approval-inbox > table')
-    expect(table).not.toBeNull()
-    const tableStyle = getComputedStyle(table as HTMLElement)
-    // `<table>` defaults to `display: table`. The restored `.approval-inbox
-    // article` rule targets <article>, not <table>, so it must not apply.
-    expect(tableStyle.display).not.toBe('grid')
-    // The detail-only surface rule must not add a card border to the table.
-    expect(tableStyle.borderTopStyle).not.toBe('solid')
+  it('uses the shared decision component instead of a second raw decide endpoint', () => {
+    const source = readFileSync(join(import.meta.dirname, 'agent-session-detail.tsx'), 'utf8')
+    expect(source).toContain('<ApprovalDecisionControls')
+    expect(source).toContain('decideApproval(approval, decision, reason)')
+    expect(source).not.toMatch(/api\/v1\/approvals\/\$\{approval\.id\}\/decide/)
   })
 })

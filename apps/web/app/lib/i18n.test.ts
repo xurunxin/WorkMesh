@@ -217,6 +217,18 @@ function EnglishOperationsProbe() {
   }))
 }
 
+function ApprovalCopyProbe() {
+  const { agentsCopy, locale } = useLocale()
+  return createElement('pre', { 'data-testid': 'approval-copy' }, JSON.stringify({
+    locale,
+    actions: [agentsCopy.approvalApprove, agentsCopy.approvalReject, agentsCopy.approvalOtherFeedback],
+    feedback: [agentsCopy.approvalApproveWithRequirements, agentsCopy.approvalRejectWithFeedback, agentsCopy.approvalFeedbackRequired],
+    blocked: ['viewer_already_decided', 'expired', 'session_inactive', 'authority_revoked', 'already_decided'].map(agentsCopy.approvalBlockedReason),
+    failures: ['forbidden', 'conflict', 'expired', 'authority_inactive', 'network', 'server'].map(agentsCopy.approvalDecisionFailure),
+    quorum: agentsCopy.approvalDecisionQuorum(1, 2),
+  }))
+}
+
 describe('web i18n entry', () => {
   it('exposes every typed Copy subset and the primary t helper', () => {
     const html = renderToStaticMarkup(createElement(LocaleProvider, null, createElement(Probe)))
@@ -455,5 +467,26 @@ describe('web i18n entry', () => {
       templateKind: ['Work item', 'Project', 'Agent run', 'Handoff', 'Automation'],
       templateStatus: ['Draft', 'Active', 'Archived'],
     })
+  })
+
+  it('provides concise Chinese and English approval decisions, authority states, and recovery copy', async () => {
+    const { unmount } = render(createElement(LocaleProvider, null, createElement(ApprovalCopyProbe)))
+    const probe = screen.getByTestId('approval-copy')
+    let payload = JSON.parse(probe.textContent ?? '{}')
+    expect(payload.actions).toEqual(['通过', '驳回', '其他意见'])
+    expect(payload.feedback).toEqual(['通过并附带要求', '驳回并附带反馈', '请先填写要留给 Agent 的意见。'])
+    expect(payload.blocked).toHaveLength(5)
+    expect(payload.failures).toHaveLength(6)
+    expect(payload.quorum).toContain('1/2')
+
+    unmount()
+    document.cookie = 'workmesh_locale=en; Path=/'
+    render(createElement(LocaleProvider, null, createElement(ApprovalCopyProbe)))
+    await waitFor(() => expect(JSON.parse(screen.getByTestId('approval-copy').textContent ?? '{}').locale).toBe('en'))
+    payload = JSON.parse(screen.getByTestId('approval-copy').textContent ?? '{}')
+    expect(payload.actions).toEqual(['Approve', 'Reject', 'Other feedback'])
+    expect(payload.feedback).toEqual(['Approve with requirements', 'Reject with feedback', 'Enter the feedback that should be sent to the Agent.'])
+    expect(payload.failures.every((message: string) => message.length > 20)).toBe(true)
+    expect(payload.quorum).toContain('1/2')
   })
 })

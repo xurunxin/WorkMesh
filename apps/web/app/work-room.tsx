@@ -33,7 +33,7 @@ import {
 import { LoadMoreButton, usePagedApiList } from "./lib/pagination";
 import { useRealtimeSubscription } from "./lib/realtime";
 import { workRoomRefreshTargets } from "./lib/realtime-refresh";
-import { Markdown } from "../features/rich-content/markdown";
+import { RichContent } from "../features/rich-content/markdown";
 import {
   RichTextEditor,
   type DraftIdentity,
@@ -303,7 +303,7 @@ function TimelineCard({
         )}
         <time>{formatTime(itemTime(item))}</time>
       </header>
-      <Markdown source={itemBody(item) || text.timelineBodyMissing} />
+      <RichContent density="compact" source={itemBody(item) || text.timelineBodyMissing} />
       {sessionId && (
         <AgentMessageControls
           sessionId={sessionId}
@@ -1276,7 +1276,7 @@ export function WorkRoom({
                       <span className="intent-badge">{text.legacyHuman}</span>
                       <span>{comment.is_resolved ? text.resolved : text.open}</span>
                     </header>
-                    <Markdown source={comment.body} />
+                    <RichContent density="compact" source={comment.body} />
                     {mentioned.length > 0 && (
                       <p>{text.legacyMentioned}: {mentioned.join(", ")}</p>
                     )}

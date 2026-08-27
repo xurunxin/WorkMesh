@@ -4,10 +4,15 @@ import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react
 import type { HumanAttentionItem, ListResponse, WorkItemExecutionSummary } from '@workmesh/contracts'
 import { Button, FreshnessBadge, RunHealthBadge } from '@workmesh/ui'
 import { AgentRunTimeline } from '../../../app/agent-run-timeline'
+import { ApprovalDecisionControls, type ApprovalDecisionUiState } from '../../../app/agents/approval-decision-controls'
+import { approvalFromAttentionItem } from '../../../app/agents/attention-approval'
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from '../../../app/evidence-drawer'
 import { apiRequest } from '../../../app/lib/api'
+import { classifyApprovalDecisionFailure, decideApproval, type Approval, type ApprovalDecision } from '../../../app/lib/agents'
+import { useLocale } from '../../../app/lib/i18n'
 import { useRealtimeSubscription } from '../../../app/lib/realtime'
 import type { WorkItemDetailModel } from './contracts'
+import { RichContent } from '../../rich-content/markdown'
 
 type Props = Readonly<{
   model: WorkItemDetailModel
@@ -26,18 +31,20 @@ const attentionHref = (workItemId: string, attentionId: string): string => {
 }
 
 export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, locale = 'en' }: Props) {
+  const { agentsCopy } = useLocale()
   const [summary, setSummary] = useState<WorkItemExecutionSummary | null>(null)
   const [attention, setAttention] = useState<HumanAttentionItem | null>(null)
+  const [approvalDecisionState, setApprovalDecisionState] = useState<ApprovalDecisionUiState>({ status: 'idle' })
   const [error, setError] = useState('')
   const [refreshing, setRefreshing] = useState(false)
   const text = locale === 'zh-CN' ? {
     title: '当前状态', intro: '来自授权执行、关注事项和证据投影的当前事实。', workflow: '工作流状态', responsibility: '负责人类', executor: '当前智能体执行者', none: '无',
-    loading: '正在加载执行工作区…', failed: '无法加载执行工作区。', refresh: '刷新', needsYou: '需要你处理', noAttention: '当前没有需要 Human 响应的事项。', review: '审阅并响应',
+    loading: '正在加载执行工作区…', failed: '无法加载执行工作区。', refresh: '刷新', needsYou: '需要你处理', noAttention: '当前没有需要 Human 响应的事项。', review: '完整决策上下文',
     execution: '当前执行', noExecution: '当前没有活跃 Run。', state: 'Session 状态', step: '当前步骤', health: '执行健康', activity: '最近有效活动', humanActions: '待处理 Human 事项', openRun: '打开 Run', controls: '打开智能体控制',
     evidence: '验收与证据', verified: '已验证', missing: '缺少证据', unknown: '已产出，尚未验证', notLoaded: '尚未加载', noEvidence: '尚未发布证据。', history: '最近 Run', relationships: '依赖与关系', timeline: '展开因果 Run 时间线', freshness: '数据新鲜度', offline: '离线', partial: '部分',
   } : {
     title: 'Current state', intro: 'Current facts from authorized execution, Attention, and evidence projections.', workflow: 'Workflow state', responsibility: 'Responsible Human', executor: 'Active Agent Executor', none: 'None',
-    loading: 'Loading the execution workspace…', failed: 'The execution workspace could not be loaded.', refresh: 'Refresh', needsYou: 'Needs You', noAttention: 'No Human response is currently required.', review: 'Review and respond',
+    loading: 'Loading the execution workspace…', failed: 'The execution workspace could not be loaded.', refresh: 'Refresh', needsYou: 'Needs You', noAttention: 'No Human response is currently required.', review: 'Full decision context',
     execution: 'Current execution', noExecution: 'No active Run exists.', state: 'Session state', step: 'Current Step', health: 'Execution health', activity: 'Last meaningful activity', humanActions: 'Pending Human action', openRun: 'Open Run', controls: 'Open Agent controls',
     evidence: 'Acceptance and evidence', verified: 'Verified', missing: 'Evidence missing', unknown: 'Produced, not verified', notLoaded: 'Not loaded', noEvidence: 'No evidence has been published.', history: 'Recent Runs', relationships: 'Dependencies and relationships', timeline: 'Expand causal Run Timeline', freshness: 'Data freshness', offline: 'Offline', partial: 'Partial',
   }
@@ -60,6 +67,7 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
   }, [model.id, text.failed])
 
   useEffect(() => { void load(false) }, [load])
+  useEffect(() => { setApprovalDecisionState({ status: 'idle' }) }, [attention?.id, attention?.sourceRevision])
   useRealtimeSubscription(useMemo(() => [{ type: 'work_item' as const, id: model.id }], [model.id]), () => load(true))
 
   // Treat the projection as an external boundary even though the API client is
@@ -84,6 +92,38 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
     validationState: evidenceState === 'verified' ? 'verified' : evidenceState === 'missing' ? 'missing' : 'unknown',
   }))
   const evidenceDrawer = useEvidenceDrawer(drawerItems, `work-item:${model.id}`)
+  const approval = attention ? approvalFromAttentionItem(attention) : null
+  const decideAttentionApproval = async (
+    current: Approval,
+    decision: ApprovalDecision,
+    reason?: string,
+  ): Promise<boolean> => {
+    if (approvalDecisionState.status === 'busy' || approvalDecisionState.status === 'success') return false
+    setApprovalDecisionState({ status: 'busy', decision })
+    try {
+      const result = await decideApproval(current, decision, reason)
+      setApprovalDecisionState({
+        status: 'success',
+        decision,
+        message: result.status === 'pending' && !result.quorum.reached
+          ? agentsCopy.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
+          : agentsCopy.approvalDecisionRecorded(decision),
+        quorum: result.quorum,
+      })
+      window.setTimeout(() => void load(true), 1200)
+      return true
+    } catch (reason) {
+      const failure = classifyApprovalDecisionFailure(reason)
+      if (failure === 'conflict' || failure === 'expired' || failure === 'authority_inactive') await load(true)
+      setApprovalDecisionState({
+        status: 'error',
+        decision,
+        message: agentsCopy.approvalDecisionFailure(failure),
+        retryable: failure === 'network' || failure === 'server',
+      })
+      return false
+    }
+  }
 
   return <section aria-busy={refreshing || undefined} className="work-item-execution-workspace" data-testid="work-item-execution-workspace">
     <header className="work-item-execution-header">
@@ -97,14 +137,17 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
       <div><dt>{text.evidence}</dt><dd><span className={`verification verification-${evidenceState === 'unknown' ? 'not_verified' : evidenceState}`}>{!summary ? text.notLoaded : evidenceState === 'verified' ? text.verified : evidenceState === 'missing' ? text.missing : text.unknown}</span></dd></div>
     </dl>
 
+    {model.description && <section className="work-item-overview-description" aria-labelledby="work-item-overview-description-title"><h3 id="work-item-overview-description-title">{locale === 'zh-CN' ? '工作说明' : 'Work description'}</h3><RichContent density="document" source={model.description} /></section>}
+
     {!summary && !error && <p className="empty" role="status">{text.loading}</p>}
     {error && <div className="error-state"><p className="error" role="alert">{error}</p><Button onClick={() => void load(false)} type="button" variant="secondary">{text.refresh}</Button></div>}
 
     <section className="work-item-needs-you" aria-labelledby="work-item-needs-you-title">
       <header><h3 id="work-item-needs-you-title">{text.needsYou}</h3></header>
-      {attention ? <article>
-        <div><strong>{attention.title}</strong><p>{attention.summary}</p><small>{attention.impactSummary}</small></div>
-        <a className="wm-button wm-button-primary" href={attentionHref(model.id, attention.id)}>{text.review}</a>
+      {attention ? <article className={approval ? 'has-inline-approval' : undefined}>
+        <div><strong>{attention.title}</strong><RichContent density="compact" source={attention.summary} /><small>{attention.impactSummary}</small></div>
+        {approval && <ApprovalDecisionControls approval={approval} copy={agentsCopy} key={`${approval.id}:${approval.revision}`} onDecide={decideAttentionApproval} state={approvalDecisionState} />}
+        <a className="wm-button wm-button-secondary" href={attentionHref(model.id, attention.id)}>{text.review}</a>
       </article> : <p className="empty">{text.noAttention}</p>}
     </section>
 

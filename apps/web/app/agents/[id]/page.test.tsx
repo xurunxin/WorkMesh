@@ -20,6 +20,7 @@ vi.mock('../../lib/use-authenticated-actor', () => ({
   }),
 }))
 vi.mock('../../realtime-status', () => ({ RealtimeStatus: () => null }))
+vi.mock('../agent-workspace', () => ({ AgentWorkspace: ({ agentId }: { agentId: string }) => <div data-testid="agent-workspace">{agentId}</div> }))
 
 afterEach(() => { cleanup() })
 beforeEach(() => { vi.mocked(apiRequest).mockReset() })
@@ -47,6 +48,7 @@ describe('Agent detail route', () => {
     expect(screen.getByRole('link', { name: /注册表|registry/i })).toHaveAttribute('href', '/agents?tab=agents')
     expect(screen.getByRole('link', { name: /Coder Bot/ })).toHaveAttribute('href', '/agents?tab=agents&teamAccessAgent=agent-1')
     expect(screen.queryByTestId('agent-team-access-projection')).toBeNull()
+    expect(screen.getByTestId('agent-workspace')).toHaveTextContent('agent-1')
   })
 
   it('decodes the raw Next segment once, then encodes the logical id once for API and management URLs', async () => {

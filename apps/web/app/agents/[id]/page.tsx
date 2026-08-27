@@ -9,6 +9,7 @@ import { useAuthenticatedActor } from '../../lib/use-authenticated-actor'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../../lib/workspace-navigation'
 import { RealtimeStatus } from '../../realtime-status'
 import { AgentDetailPanel } from '../agent-detail-panel'
+import { AgentWorkspace } from '../agent-workspace'
 import { agentTeamAccessHref, decodeAgentRouteSegment } from '../approval-route-state'
 
 export default function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -86,7 +87,8 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
                   ? <ErrorState actionLabel={text.retry} description={requestError || text.agentDetailErrorDescription} onAction={retry} title={text.agentDetailErrorTitle} />
                   : agent
                     ? <>
-                      <AgentDetailPanel agent={agent} />
+                      <AgentDetailPanel agent={agent} loadedTeamAccess={agent.team_access} />
+                      <AgentWorkspace agentId={agent.id} />
                       <aside className="agent-detail-management">
                         <p>{text.teamAccessAndCapabilities}</p>
                         <a aria-label={text.manageTeamAccess(agentName(agent))} href={agentTeamAccessHref(agent.id)}>{text.manageTeamAccessLabel}</a>

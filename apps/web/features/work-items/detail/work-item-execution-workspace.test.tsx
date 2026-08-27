@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { WorkItemExecutionWorkspace } from './work-item-execution-workspace'
 import type { WorkItemDetailModel } from './contracts'
+import { LocaleProvider } from '../../../app/lib/i18n'
 
 const apiRequest = vi.hoisted(() => vi.fn())
 
@@ -15,6 +17,12 @@ const model: WorkItemDetailModel = {
   workflowState: { id: 'started', name: 'In Progress', category: 'started' }, priority: 'high', dueDate: '', labels: [], projectId: 'project-1', milestoneId: null, parentId: null,
   responsibleHuman: { actorId: 'human-1', displayName: 'Human Owner' }, agentExecutions: [],
 }
+
+const renderWorkspace = (relationships?: ReactNode) => render(
+  <LocaleProvider>
+    <WorkItemExecutionWorkspace model={model} onOpenAgent={vi.fn()} relationships={relationships} />
+  </LocaleProvider>,
+)
 
 describe('WorkItemExecutionWorkspace', () => {
   beforeEach(() => {
@@ -37,14 +45,14 @@ describe('WorkItemExecutionWorkspace', () => {
   afterEach(() => { cleanup(); vi.clearAllMocks() })
 
   it('renders responsibility, live execution, Human attention, and verified evidence from server projections', async () => {
-    render(<WorkItemExecutionWorkspace model={model} onOpenAgent={vi.fn()} relationships={<p>Blocked by GEN-0</p>} />)
+    renderWorkspace(<p>Blocked by GEN-0</p>)
 
     expect(await screen.findByText('Human Owner')).toBeVisible()
     expect(screen.getByText('Codex')).toBeVisible()
     expect(screen.getByText('Run acceptance checks')).toBeVisible()
     expect(screen.getByText('Web tests passed')).toBeVisible()
     expect(screen.getByText('Approve release')).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Review and respond' })).toHaveAttribute('href', expect.stringContaining('attentionSelected='))
+    expect(screen.getByRole('link', { name: 'Full decision context' })).toHaveAttribute('href', expect.stringContaining('attentionSelected='))
     expect(screen.getByText('Verified')).toBeVisible()
     fireEvent.click(screen.getByRole('button', { name: /Focused test report/ }))
     expect(screen.getByRole('dialog', { name: 'Focused test report' })).toBeVisible()
@@ -55,7 +63,7 @@ describe('WorkItemExecutionWorkspace', () => {
 
   it('degrades a partial execution-summary payload to empty projections', async () => {
     apiRequest.mockImplementation(async (path: string) => path.includes('/execution-summary') ? { freshness: { state: 'partial' } } : { items: [] })
-    render(<WorkItemExecutionWorkspace model={model} onOpenAgent={vi.fn()} />)
+    renderWorkspace()
 
     expect(await screen.findByText('No active Run exists.')).toBeVisible()
     expect(screen.getByText('No evidence has been published.')).toBeVisible()
