@@ -1572,6 +1572,9 @@ export type AgentsCopy = {
   // Approval inbox panel
   riskLabel: (risk: string) => string
   reviewSession: string
+  approvalPayloadLabel: string
+  approvalContextLabel: string
+  approvalEvidenceLink: string
   // Bulk approval table (Phase 3 Task 3.4)
   selectAllApprovals: string
   approvalRowCheckbox: (actionName: string) => string
@@ -1867,6 +1870,9 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     saveAccess: '保存授权',
     riskLabel: risk => `${risk} 级风险`,
     reviewSession: '查看 Session 与证据',
+    approvalPayloadLabel: '已清理的作用域与参数',
+    approvalContextLabel: '审批上下文',
+    approvalEvidenceLink: '查看证据',
     selectAllApprovals: '全选当前页',
     approvalRowCheckbox: actionName => `选择审批：${actionName}`,
     selectedApprovalsCount: count => `已选 ${count} 项`,
@@ -2126,6 +2132,9 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     saveAccess: 'Save grant',
     riskLabel: risk => `${risk} risk`,
     reviewSession: 'Review session and evidence',
+    approvalPayloadLabel: 'Sanitized scope and payload',
+    approvalContextLabel: 'Approval context',
+    approvalEvidenceLink: 'View evidence',
     selectAllApprovals: 'Select all on this page',
     approvalRowCheckbox: actionName => `Select approval: ${actionName}`,
     selectedApprovalsCount: count => `${count} selected`,

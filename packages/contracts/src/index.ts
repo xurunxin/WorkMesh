@@ -219,6 +219,25 @@ export const durableEventCursorSchema = z
     DURABLE_EVENT_CURSOR_PATTERN,
     'Cursor exceeds the PostgreSQL bigint range',
   )
+export const RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN = /^r1\.[A-Za-z0-9_-]{1,8189}$/
+export const runExplanationOpaqueCursorSchema = z
+  .string()
+  .max(8_192)
+  .regex(
+    RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN,
+    'Run Explanation cursor must be an r1 keyset cursor',
+  )
+export const runExplanationCursorPayloadSchema = z.object({
+  v: z.literal(1),
+  sequence: durableEventCursorSchema.refine(value => value !== '0'),
+  at: timestampSchema,
+  source: z.enum(['activity', 'approval']),
+  id: idSchema,
+}).strict()
+export const runExplanationCursorSchema = z.union([
+  durableEventCursorSchema,
+  runExplanationOpaqueCursorSchema,
+])
 export const eventResourceTypeSchema = z.enum([
   'workspace',
   'team',
@@ -904,7 +923,7 @@ export const runExplanationResponseSchema = z.object({
   currentStep: z.object({ id: idSchema, title: z.string(), status: planStepStatusSchema, ordinal: z.number().int().nonnegative() }).strict().nullable(),
   planVersions: z.array(runPlanVersionSchema).max(50),
   causalGroups: z.array(causalEventGroupSchema).max(100),
-  nextCursor: durableEventCursorSchema.nullable(),
+  nextCursor: runExplanationCursorSchema.nullable(),
   pendingAttention: z.array(humanAttentionItemSchema).max(100),
   changes: z.array(controlPlaneResourceReferenceSchema).max(200),
   evidence: z.array(attentionEvidenceReferenceSchema).max(200),

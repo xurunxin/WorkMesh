@@ -49,7 +49,9 @@ const viewer = (kind: 'human' | 'agent') => ({
 describe('Approval API projection', () => {
   it('returns a contract-valid actionable Human read with quorum facts', async () => {
     const db = { query: vi.fn().mockResolvedValue({ rows: [facts()] }) }
-    const [approval] = await projectApprovalResponses(db as never, [row], viewer('human'), now)
+    const approvals = await projectApprovalResponses(db as never, [row], viewer('human'), now)
+    expect(approvals).toHaveLength(1)
+    const approval = approvals[0]!
 
     expect(humanApprovalResponseSchema.parse(approval)).toMatchObject({
       quorum: { required: 2, approved: 0, rejected: 0, reached: false },
@@ -86,7 +88,9 @@ describe('Approval API projection', () => {
 
   it('omits Human actionability from an Agent context read', async () => {
     const db = { query: vi.fn().mockResolvedValue({ rows: [facts()] }) }
-    const [approval] = await projectApprovalResponses(db as never, [row], viewer('agent'), now)
+    const approvals = await projectApprovalResponses(db as never, [row], viewer('agent'), now)
+    expect(approvals).toHaveLength(1)
+    const approval = approvals[0]!
 
     expect(approval.viewer_actionability).toBeUndefined()
   })
@@ -96,11 +100,13 @@ describe('Approval API projection', () => {
       approved_count: 1,
       policy_approved: true,
     })] }) }
-    const [approval] = await projectApprovalResponses(db as never, [{
+    const approvals = await projectApprovalResponses(db as never, [{
       ...row,
       status: 'approved',
       revision: 2,
     }], viewer('human'), now)
+    expect(approvals).toHaveLength(1)
+    const approval = approvals[0]!
 
     expect(approval.quorum).toEqual({ required: 2, approved: 1, rejected: 0, reached: true })
     expect(approval.viewer_actionability).toEqual({ status: 'blocked', reason: 'already_decided' })

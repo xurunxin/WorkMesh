@@ -78,11 +78,32 @@ export async function projectApprovalResponses(
   const facts = (await db.query<ApprovalProjectionFacts>(
     `SELECT approval.id AS approval_id,
             session.state AS session_state,
-            coalesce(definition.is_active,false) AS definition_active,
-            (access.agent_id IS NOT NULL AND access.revoked_at IS NULL) AS team_grant_active,
-            (delegation.id IS NOT NULL AND delegation.status='active') AS delegation_active,
             (
-              (session.work_item_id IS NULL OR item.id IS NOT NULL)
+              coalesce(definition.is_active,false)
+              AND 'work:write'=ANY(coalesce(definition.approved_capabilities,'{}'::text[]))
+            ) AS definition_active,
+            (
+              access.agent_id IS NOT NULL
+              AND access.revoked_at IS NULL
+              AND 'work:write'=ANY(coalesce(access.approved_capabilities,'{}'::text[]))
+            ) AS team_grant_active,
+            (
+              delegation.id IS NOT NULL
+              AND delegation.status='active'
+              AND 'work:write'=ANY(coalesce(delegation.permissions_snapshot,'{}'::text[]))
+            ) AS delegation_active,
+            (
+              coalesce(delegation.capability_scope->'teamIds','[]'::jsonb) ? session.team_id::text
+              AND (
+                session.work_item_id IS NULL
+                OR coalesce(delegation.capability_scope->'workItemIds','[]'::jsonb) ? session.work_item_id::text
+              )
+              AND (
+                session.work_item_id IS NOT NULL
+                OR coalesce(item.project_id,session.project_id) IS NULL
+                OR coalesce(delegation.capability_scope->'projectIds','[]'::jsonb) ? coalesce(item.project_id,session.project_id)::text
+              )
+              AND (session.work_item_id IS NULL OR item.id IS NOT NULL)
               AND (
                 coalesce(item.project_id,session.project_id) IS NULL
                 OR project.id IS NOT NULL

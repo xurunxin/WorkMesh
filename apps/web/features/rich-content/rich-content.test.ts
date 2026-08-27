@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -67,6 +69,44 @@ describe('rich-content safety boundary', () => {
     expect(container.querySelector('img')).toBeNull()
     expect(container.textContent).toContain('unsafe')
     expect(container.textContent).toContain('diagram')
+  })
+
+  it('keeps CJK, Windows paths, UUIDs, and hashes readable while rejecting unsafe protocols and raw HTML', () => {
+    const uuid = '550e8400-e29b-41d4-a716-446655440000'
+    const hash = `sha256:${'a'.repeat(64)}`
+    const source = [
+      '人机协同审批说明',
+      '',
+      '`C:\\Projects\\WorkMesh\\README.md`',
+      '',
+      `UUID: \`${uuid}\``,
+      '',
+      `Hash: \`${hash}\``,
+      '',
+      '[unsafe protocol](javascript:alert(1))',
+      '',
+      '<span>raw HTML must not render</span>',
+    ].join('\n')
+    const { container } = render(createElement(Markdown, { source }))
+
+    expect(container.textContent).toContain('人机协同审批说明')
+    expect(container.textContent).toContain('C:\\Projects\\WorkMesh\\README.md')
+    expect(container.textContent).toContain(uuid)
+    expect(container.textContent).toContain(hash)
+    expect(container.textContent).toContain('unsafe protocol')
+    expect(container.querySelector('a')).toBeNull()
+    expect(Array.from(container.querySelectorAll('span')).some(span => span.textContent?.includes('raw HTML'))).toBe(false)
+    expect(container.innerHTML).not.toMatch(/<span[^>]*>raw HTML must not render/)
+  })
+
+  it('keeps the 14px and 1.625 line-height baseline for both densities at mobile widths', () => {
+    // The CSS module is the source of truth for the responsive typography
+    // contract; keep this assertion explicit so a mobile override cannot
+    // silently reduce the readable body size again.
+    const stylesheet = readFileSync(join(import.meta.dirname, 'markdown.module.css'), 'utf8')
+    expect(stylesheet).toMatch(/\.document\s*\{[^}]*font-size:\s*14px;[^}]*line-height:\s*1\.625;/s)
+    expect(stylesheet).toMatch(/\.compact\s*\{[^}]*font-size:\s*14px;[^}]*line-height:\s*1\.625;/s)
+    expect(stylesheet).not.toMatch(/@media[\s\S]*\.document\s*\{[^}]*font-size:\s*13px/s)
   })
 
   it('collapses only oversized compact content and exposes an accessible toggle', () => {

@@ -27,9 +27,11 @@ import {
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from "./evidence-drawer";
 import { ApiError, apiMutation, apiRequest, json } from "./lib/api";
 import {
+  approvalActionability,
   classifyApprovalDecisionFailure,
   decideApproval,
   defaultApprovalDecisionReason,
+  getApproval,
   type Approval,
   type ApprovalDecision,
 } from "./lib/agents";
@@ -68,6 +70,38 @@ type MutationDescription = Readonly<{
   operation: string;
   path: string;
   init: RequestInit;
+}>;
+
+export type BulkFailureResolution = Readonly<{
+  kind: ReturnType<typeof classifyApprovalDecisionFailure>;
+  retryable: boolean;
+  requiresReconfirmation: boolean;
+}>;
+
+/**
+ * Keep bulk response recovery aligned with the single-approval path. A
+ * forbidden or stale decision is not safe to replay; only transport/server
+ * failures get an item-level retry affordance.
+ */
+export function describeBulkFailure(reason: unknown): BulkFailureResolution {
+  const kind = classifyApprovalDecisionFailure(reason);
+  return {
+    kind,
+    retryable: kind === "network" || kind === "server",
+    requiresReconfirmation: kind === "conflict",
+  };
+}
+
+type BulkItemResult = Readonly<{
+  itemId: string;
+  approvalId: string;
+  title: string;
+  decision: "approve" | "reject";
+  reason: string;
+  status: "busy" | "success" | "error";
+  message?: string;
+  retryable: boolean;
+  requiresReconfirmation: boolean;
 }>;
 
 const ifMatch = (revision?: number): HeadersInit => ({
@@ -192,6 +226,8 @@ export function AttentionCenter({
           reasonCodes: "原因代码",
           technical: "技术详情",
           response: "响应",
+          approvalLoading: "正在加载权威审批范围…",
+          approvalLoadFailed: "无法加载完整审批范围，决策已保持关闭。",
           cancel: "取消",
           submit: "提交响应",
           reason: "理由",
@@ -208,6 +244,20 @@ export function AttentionCenter({
           bulkReject: "批量拒绝",
           bulkResult: (ok: number, failed: number) =>
             `${ok} 项成功，${failed} 项仍需处理。`,
+          bulkResults: "批量处理结果",
+          bulkWorking: "处理中…",
+          bulkSucceeded: "已完成",
+          bulkFailureForbidden: "权限已拒绝，不会自动重试。",
+          bulkFailureConflict: "来源已变化，已重新同步；请重新确认后再提交。",
+          bulkFailureExpired: "审批已过期，无法重试。",
+          bulkFailureAuthority: "授权已失效，无法重试。",
+          bulkFailureNetwork: "网络暂时不可用，可重试此项。",
+          bulkFailureServer: "服务暂时不可用，可重试此项。",
+          bulkFailureUnknown: "处理失败，请查看详情后决定是否重试。",
+          bulkReconciled: "权威状态已同步；此项已不再需要处理。",
+          bulkReconcileMismatch: "权威状态已变化，但未找到你刚提交的相同决定；不会将此项误报为成功。",
+          bulkRetry: "重试此项",
+          bulkReconfirm: "重新同步并确认",
           selected: (count: number) => `已选择 ${count} 项兼容审批`,
           incompatible: "与当前选择的精确 payload 不兼容",
           prohibited: "此事项不能批量处理",
@@ -268,6 +318,8 @@ export function AttentionCenter({
           reasonCodes: "Reason codes",
           technical: "Technical details",
           response: "Response",
+          approvalLoading: "Loading authoritative approval scope…",
+          approvalLoadFailed: "The complete approval scope could not be loaded. Decisions remain disabled.",
           cancel: "Cancel",
           submit: "Submit response",
           reason: "Reason",
@@ -286,6 +338,20 @@ export function AttentionCenter({
           bulkReject: "Bulk reject",
           bulkResult: (ok: number, failed: number) =>
             `${ok} succeeded; ${failed} remain actionable.`,
+          bulkResults: "Bulk response results",
+          bulkWorking: "Working…",
+          bulkSucceeded: "Completed",
+          bulkFailureForbidden: "Permission denied; this item will not be retried.",
+          bulkFailureConflict: "The source changed; data was refreshed. Confirm again before submitting.",
+          bulkFailureExpired: "The approval expired and cannot be retried.",
+          bulkFailureAuthority: "The authority is no longer active and cannot be retried.",
+          bulkFailureNetwork: "The network is unavailable; retry this item.",
+          bulkFailureServer: "The service is unavailable; retry this item.",
+          bulkFailureUnknown: "The response failed; review the details before deciding whether to retry.",
+          bulkReconciled: "Authoritative state synchronized; this item no longer needs action.",
+          bulkReconcileMismatch: "Authoritative state changed, but your matching decision was not recorded; this item is not reported as successful.",
+          bulkRetry: "Retry this item",
+          bulkReconfirm: "Refresh and confirm",
           selected: (count: number) => `${count} compatible approvals selected`,
           incompatible: "Incompatible with the selected exact payload",
           prohibited: "This item cannot be handled in bulk",
@@ -329,6 +395,11 @@ export function AttentionCenter({
     choice: "",
   });
   const [approvalDecisionState, setApprovalDecisionState] = useState<ApprovalDecisionUiState>({ status: "idle" });
+  const [approvalDetail, setApprovalDetail] = useState<Approval | null>(null);
+  const [approvalDetailLoading, setApprovalDetailLoading] = useState(false);
+  const [approvalDetailError, setApprovalDetailError] = useState("");
+  const responsePreparationIdRef = useRef(0);
+  const responseDraftItemIdRef = useRef<string | null>(null);
   const [preview, setPreview] = useState<ActionPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState("");
@@ -337,6 +408,7 @@ export function AttentionCenter({
   const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
   const [bulkReason, setBulkReason] = useState("");
   const [bulkMessage, setBulkMessage] = useState("");
+  const [bulkResults, setBulkResults] = useState<Record<string, BulkItemResult>>({});
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const connectionState = useRealtimeConnectionState();
   const attentionEvidence = useMemo<EvidenceDrawerItem[]>(() =>
@@ -352,15 +424,37 @@ export function AttentionCenter({
   const evidenceDrawer = useEvidenceDrawer(attentionEvidence, "attention");
 
   const prepareResponse = useCallback(async (item: HumanAttentionItem) => {
+    const preparationId = ++responsePreparationIdRef.current;
     const optionId = item.recommendedOptionId ?? item.options[0]?.id ?? "";
-    setResponseDraft({
-      optionId,
-      reason: "",
-      message: "",
-      choice: item.response.choices[0]?.id ?? "",
-    });
+    if (responseDraftItemIdRef.current !== item.id) {
+      responseDraftItemIdRef.current = item.id;
+      setResponseDraft({
+        optionId,
+        reason: "",
+        message: "",
+        choice: item.response.choices[0]?.id ?? "",
+      });
+    }
     setPreview(null);
     setApprovalDecisionState({ status: "idle" });
+    setApprovalDetail(null);
+    setApprovalDetailError("");
+    if (item.kind === "approval" && item.source.type === "approval") {
+      setApprovalDetailLoading(true);
+      void getApproval(item.source.id).then((loaded) => {
+        if (responsePreparationIdRef.current === preparationId) {
+          setApprovalDetail(loaded);
+          setApprovalDetailError("");
+        }
+      }).catch((reason) => {
+        if (responsePreparationIdRef.current === preparationId) {
+          setApprovalDetail(null);
+          setApprovalDetailError(reason instanceof Error ? reason.message : copy.approvalLoadFailed);
+        }
+      }).finally(() => {
+        if (responsePreparationIdRef.current === preparationId) setApprovalDetailLoading(false);
+      });
+    } else setApprovalDetailLoading(false);
     const option = item.options.find((candidate) => candidate.id === optionId);
     if (!option?.consequencePreviewPath) return;
     setPreviewLoading(true);
@@ -377,7 +471,7 @@ export function AttentionCenter({
     } finally {
       setPreviewLoading(false);
     }
-  }, []);
+  }, [copy.approvalLoadFailed]);
 
   const refresh = useCallback(
     async (next = route) => {
@@ -397,9 +491,14 @@ export function AttentionCenter({
             ));
           setSelected(loadedSelected);
           void prepareResponse(loadedSelected);
-        } else setSelected(null);
+        } else {
+          responseDraftItemIdRef.current = null;
+          setSelected(null);
+        }
+        return loaded;
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : copy.loadError);
+        return null;
       }
     },
     [copy.loadError, prepareResponse, projectId, route],
@@ -424,7 +523,7 @@ export function AttentionCenter({
         : []),
       ...(projectId ? [{ type: "project" as const, id: projectId }] : []),
     ],
-    () => refresh(route),
+    () => { void refresh(route); },
   );
 
   const writeRoute = (next: AttentionRouteState, replace = false) => {
@@ -448,6 +547,7 @@ export function AttentionCenter({
     writeRoute({ ...route, selectedId: item.id }, false);
   };
   const closeItem = () => {
+    responseDraftItemIdRef.current = null;
     setSelected(null);
     writeRoute({ ...route, selectedId: undefined }, true);
     queueMicrotask(() => returnFocusRef.current?.focus());
@@ -475,6 +575,7 @@ export function AttentionCenter({
       setApprovalDecisionState({
         status: "success",
         decision,
+        reason: result.decision.reason,
         message: result.status === "pending" && !result.quorum.reached
           ? agentsCopy.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
           : agentsCopy.approvalDecisionRecorded(decision),
@@ -544,33 +645,213 @@ export function AttentionCenter({
       return next;
     });
   };
-  const runBulk = async (decision: "approve" | "reject") => {
-    const items = page?.items.filter((item) => bulkSelected.has(item.id)) ?? [];
-    if (items.length === 0) return;
+  const bulkFailureMessage = (reason: unknown, resolution: BulkFailureResolution): string => {
+    const label: Record<BulkFailureResolution["kind"], string> = {
+      forbidden: copy.bulkFailureForbidden,
+      conflict: copy.bulkFailureConflict,
+      expired: copy.bulkFailureExpired,
+      authority_inactive: copy.bulkFailureAuthority,
+      network: copy.bulkFailureNetwork,
+      server: copy.bulkFailureServer,
+      unknown: copy.bulkFailureUnknown,
+    };
+    const detail = reason instanceof ApiError
+      ? `${reason.message}${reason.code ? ` (${reason.code})` : ""}`
+      : reason instanceof Error
+        ? reason.message
+        : copy.bulkFailureUnknown;
+    return `${label[resolution.kind]} ${detail}`.trim();
+  };
+
+  const reconcileBulkOutcome = async (outcome: BulkItemResult): Promise<BulkItemResult> => {
+    if (outcome.status !== "error" || !outcome.retryable) return outcome;
+    try {
+      const current = await getApproval(outcome.approvalId);
+      const actionability = approvalActionability(current);
+      const expectedDecision = outcome.decision === "approve" ? "approved" : "rejected";
+      const matchingDecision = current.decisions?.some((decision) =>
+        decision.actor_id === actor.id
+        && decision.decision === expectedDecision
+        && decision.reason === outcome.reason,
+      ) ?? false;
+      if (matchingDecision) {
+        return { ...outcome, status: "success", message: copy.bulkReconciled, retryable: false };
+      }
+      if (current.status !== "pending"
+        || (actionability.status === "blocked" && ["viewer_already_decided", "already_decided"].includes(actionability.reason))) {
+        return {
+          ...outcome,
+          message: copy.bulkReconcileMismatch,
+          retryable: false,
+          requiresReconfirmation: false,
+        };
+      }
+      if (actionability.status === "blocked" && actionability.reason === "expired") {
+        return { ...outcome, message: copy.bulkFailureExpired, retryable: false };
+      }
+      if (actionability.status === "blocked"
+        && (actionability.reason === "session_inactive" || actionability.reason === "authority_revoked")) {
+        return { ...outcome, message: copy.bulkFailureAuthority, retryable: false };
+      }
+    } catch {
+      // The authoritative read failed too. Preserve the original retryable
+      // transport/server error instead of guessing that the mutation landed.
+    }
+    return outcome;
+  };
+
+  const runBulkItems = async (
+    requests: ReadonlyArray<{
+      item: HumanAttentionItem;
+      decision: "approve" | "reject";
+      reason: string;
+    }>,
+  ) => {
+    if (requests.length === 0 || busy) return;
+    const pendingResults = Object.fromEntries(
+      requests.map(({ item, decision, reason }) => [item.id, {
+        itemId: item.id,
+        approvalId: item.source.id,
+        title: item.title,
+        decision,
+        reason,
+        status: "busy" as const,
+        retryable: false,
+        requiresReconfirmation: false,
+      } satisfies BulkItemResult]),
+    );
     setBusy(true);
     setError("");
     setApplying("");
     setBulkMessage("");
-    const results = await Promise.allSettled(
-      items.map((item) =>
-        execute(item, {
-          optionId: decision,
-          reason: bulkReason.trim() || defaultApprovalDecisionReason(decision === "approve" ? "approved" : "rejected"),
-          message: "",
-          choice: "",
-        }),
-      ),
-    );
-    const failedIds = new Set(
-      items
-        .filter((_, index) => results[index]?.status === "rejected")
-        .map((item) => item.id),
-    );
-    const succeeded = items.length - failedIds.size;
-    setBulkSelected(failedIds);
-    await refresh(route);
-    setBulkMessage(copy.bulkResult(succeeded, failedIds.size));
-    setBusy(false);
+    setBulkResults((current) => ({ ...current, ...pendingResults }));
+    try {
+      const settled = await Promise.allSettled(
+        requests.map(({ item, decision, reason }) =>
+          execute(item, {
+            optionId: decision,
+            reason,
+            message: "",
+            choice: "",
+          }),
+        ),
+      );
+      const outcomes = requests.map((request, index): BulkItemResult => {
+        const result = settled[index];
+        if (result?.status === "fulfilled") {
+          return {
+            itemId: request.item.id,
+            approvalId: request.item.source.id,
+            title: request.item.title,
+            decision: request.decision,
+            reason: request.reason,
+            status: "success",
+            message: copy.bulkSucceeded,
+            retryable: false,
+            requiresReconfirmation: false,
+          };
+        }
+        const resolution = describeBulkFailure(result?.reason);
+        return {
+          itemId: request.item.id,
+          approvalId: request.item.source.id,
+          title: request.item.title,
+          decision: request.decision,
+          reason: request.reason,
+          status: "error",
+          message: bulkFailureMessage(result?.reason, resolution),
+          retryable: resolution.retryable,
+          requiresReconfirmation: resolution.requiresReconfirmation,
+        };
+      });
+      // Always reconcile after a batch. In particular, a revision conflict
+      // must refresh the authoritative item before the Human can confirm it.
+      await refresh(route);
+      const reconciledOutcomes = await Promise.all(outcomes.map(reconcileBulkOutcome));
+      setBulkResults((current) => ({
+        ...current,
+        ...Object.fromEntries(reconciledOutcomes.map((outcome) => [outcome.itemId, outcome])),
+      }));
+      setBulkSelected((current) => {
+        const next = new Set(current);
+        reconciledOutcomes.forEach((outcome) => {
+          if (outcome.status === "error") next.add(outcome.itemId);
+          else next.delete(outcome.itemId);
+        });
+        return next;
+      });
+      const failed = reconciledOutcomes.filter((outcome) => outcome.status === "error").length;
+      setBulkMessage(copy.bulkResult(reconciledOutcomes.length - failed, failed));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const runBulk = async (decision: "approve" | "reject") => {
+    const reason = bulkReason.trim() || defaultApprovalDecisionReason(decision === "approve" ? "approved" : "rejected");
+    const items = page?.items.filter((item) => bulkSelected.has(item.id)) ?? [];
+    await runBulkItems(items.map((item) => ({ item, decision, reason })));
+  };
+
+  const retryBulkItem = async (itemId: string) => {
+    const previous = bulkResults[itemId];
+    const item = page?.items.find((candidate) => candidate.id === itemId);
+    if (!previous || previous.status !== "error" || !previous.retryable) return;
+    if (!item) {
+      setBusy(true);
+      setBulkResults((current) => ({ ...current, [itemId]: { ...previous, status: "busy" } }));
+      try {
+        const currentApproval = await getApproval(previous.approvalId);
+        const actionability = approvalActionability(currentApproval);
+        if (actionability.status === "actionable") {
+          const result = await decideApproval(
+            currentApproval,
+            previous.decision === "approve" ? "approved" : "rejected",
+            previous.reason,
+          );
+          setBulkResults((current) => ({
+            ...current,
+            [itemId]: {
+              ...previous,
+              status: "success",
+              message: result.status === "pending" && !result.quorum.reached
+                ? agentsCopy.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
+                : copy.bulkSucceeded,
+              retryable: false,
+            },
+          }));
+          setBulkSelected((current) => {
+            const next = new Set(current);
+            next.delete(itemId);
+            return next;
+          });
+        } else {
+          const reconciled = await reconcileBulkOutcome({ ...previous, status: "error" });
+          setBulkResults((current) => ({ ...current, [itemId]: reconciled }));
+        }
+        await refresh(route);
+      } catch (reason) {
+        const resolution = describeBulkFailure(reason);
+        setBulkResults((current) => ({
+          ...current,
+          [itemId]: {
+            ...previous,
+            status: "error",
+            message: bulkFailureMessage(reason, resolution),
+            retryable: resolution.retryable,
+            requiresReconfirmation: resolution.requiresReconfirmation,
+          },
+        }));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+    await runBulkItems([{
+      item,
+      decision: previous.decision,
+      reason: previous.reason,
+    }]);
   };
 
   const freshness =
@@ -592,7 +873,13 @@ export function AttentionCenter({
   const expiredCount = route.view === "history"
     ? items.filter((item) => item.status === "expired").length
     : 0;
-  const selectedApproval = selected ? approvalFromAttentionItem(selected) : null;
+  const projectedApproval = selected ? approvalFromAttentionItem(selected) : null;
+  const selectedApproval = projectedApproval && approvalDetail?.id === projectedApproval.id
+    ? approvalDetail
+    : projectedApproval?.viewer_actionability?.status === "blocked"
+      && projectedApproval.viewer_actionability.reason !== "viewer_already_decided"
+      ? projectedApproval
+      : null;
   const historyStatuses = ["verified", "expired", "superseded"] as const;
   return (
     <section className="attention-center" data-testid="attention-center">
@@ -789,32 +1076,67 @@ export function AttentionCenter({
           </Button>
         </div>
       )}
-      {bulkSelected.size > 0 && (
+      {(bulkSelected.size > 0 || Object.keys(bulkResults).length > 0) && (
         <section aria-label={copy.bulk} className="attention-bulk-bar">
-          <strong>{copy.selected(bulkSelected.size)}</strong>
-          <label>
-            {copy.bulkReason}
-            <input
-              onChange={(event) => setBulkReason(event.currentTarget.value)}
-              required
-              value={bulkReason}
-            />
-          </label>
-          <Button
-            disabled={busy}
-            onClick={() => void runBulk("approve")}
-            type="button"
-          >
-            {copy.bulkApprove}
-          </Button>
-          <Button
-            disabled={busy}
-            onClick={() => void runBulk("reject")}
-            type="button"
-            variant="danger"
-          >
-            {copy.bulkReject}
-          </Button>
+          {bulkSelected.size > 0 && <>
+            <strong>{copy.selected(bulkSelected.size)}</strong>
+            <label>
+              {copy.bulkReason}
+              <input
+                aria-label={copy.bulkReason}
+                onChange={(event) => setBulkReason(event.currentTarget.value)}
+                value={bulkReason}
+              />
+            </label>
+            <Button
+              disabled={busy}
+              onClick={() => void runBulk("approve")}
+              type="button"
+            >
+              {copy.bulkApprove}
+            </Button>
+            <Button
+              disabled={busy}
+              onClick={() => void runBulk("reject")}
+              type="button"
+              variant="danger"
+            >
+              {copy.bulkReject}
+            </Button>
+          </>}
+          {Object.values(bulkResults).length > 0 && (
+            <div aria-label={copy.bulkResults} className="attention-bulk-results">
+              <strong aria-live="polite" role="status">{copy.bulkResults}</strong>
+              <ul>
+                {Object.values(bulkResults).map((result) => (
+                  <li data-testid={`attention-bulk-result-${result.itemId}`} key={result.itemId}>
+                    <span>{result.title}</span>
+                    <span>{result.status === "busy" ? copy.bulkWorking : result.message}</span>
+                    {result.status === "error" && result.retryable && (
+                      <Button
+                        disabled={busy}
+                        onClick={() => void retryBulkItem(result.itemId)}
+                        type="button"
+                        variant="secondary"
+                      >
+                        {copy.bulkRetry}
+                      </Button>
+                    )}
+                    {result.status === "error" && result.requiresReconfirmation && (
+                      <Button
+                        disabled={busy}
+                        onClick={() => void refresh(route)}
+                        type="button"
+                        variant="secondary"
+                      >
+                        {copy.bulkReconfirm}
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
       )}
       <div className="attention-workbench">
@@ -934,7 +1256,15 @@ export function AttentionCenter({
                 </section>
                 <details><summary>{copy.technical}</summary><p>{copy.reasonCodes}: {selected.reasonCodes.join(", ")}</p><p>{selected.correlationId}</p><p>{selected.id}</p></details>
               </div>
-              {selectedApproval ? (
+              {projectedApproval && !selectedApproval ? (
+                <section className="attention-approval-decision" aria-label={copy.response}>
+                  <h3>{copy.response}</h3>
+                  <div className={approvalDetailError ? "approval-detail-gate is-error" : "approval-detail-gate"} role={approvalDetailError ? "alert" : "status"}>
+                    <span>{approvalDetailError ? copy.approvalLoadFailed : copy.approvalLoading}</span>
+                    {approvalDetailError && <Button disabled={approvalDetailLoading} onClick={() => void prepareResponse(selected)} type="button" variant="secondary">{copy.retry}</Button>}
+                  </div>
+                </section>
+              ) : selectedApproval ? (
                 <section className="attention-approval-decision" aria-label={copy.response}>
                   <h3>{copy.response}</h3>
                   <ApprovalDecisionControls

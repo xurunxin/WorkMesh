@@ -26,6 +26,7 @@ export type MockScenario =
   | 'settings-delete-retry'
   | 'command-center'
   | 'large-list'
+  | 'approval-journey'
 
 export type SanitizedRequestEvidence = Readonly<{
   method: string

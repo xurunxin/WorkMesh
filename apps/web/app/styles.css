@@ -267,6 +267,11 @@ main#workmesh-main:focus-visible {
 .app-shell .attention-banner.error { border-color: color-mix(in srgb, var(--wm-danger) 45%, var(--wm-border)); color: var(--wm-danger); }
 .app-shell .attention-bulk-bar { position: sticky; top: .5rem; z-index: 3; display: flex; align-items: flex-end; flex-wrap: wrap; gap: .65rem; padding: .8rem; border: 1px solid var(--wm-info); border-radius: var(--wm-radius-lg); background: var(--wm-surface); box-shadow: var(--wm-shadow-md); }
 .app-shell .attention-bulk-bar label { min-width: min(320px, 100%); flex: 1; }
+.app-shell .attention-bulk-results { display: grid; flex: 1 1 100%; min-width: 0; gap: .5rem; padding-top: .65rem; border-top: 1px solid var(--wm-border); }
+.app-shell .attention-bulk-results > strong { font-size: .82rem; }
+.app-shell .attention-bulk-results ul { display: grid; gap: .4rem; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.app-shell .attention-bulk-results li { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1.5fr) auto; align-items: center; gap: .5rem; min-width: 0; padding: .5rem .6rem; border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
+.app-shell .attention-bulk-results li > span { min-width: 0; overflow-wrap: anywhere; }
 .app-shell .attention-workbench { display: grid; grid-template-columns: minmax(310px, .78fr) minmax(0, 1.5fr); min-height: 640px; overflow: hidden; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
 .app-shell .attention-queue { min-width: 0; max-height: 820px; overflow: auto; padding: .75rem; border-right: 1px solid var(--wm-border); background: var(--wm-surface-subtle); }
 .app-shell .attention-queue-group + .attention-queue-group { margin-top: 1rem; }
@@ -315,7 +320,8 @@ main#workmesh-main:focus-visible {
   .app-shell .attention-filters { grid-template-columns: minmax(0, 1fr); }
   .app-shell .attention-workbench { grid-template-columns: 1fr; min-height: 0; overflow: visible; }
   .app-shell .attention-queue { max-height: none; border-right: 0; border-bottom: 1px solid var(--wm-border); }
-  .app-shell .attention-decision-context { min-height: 420px; }
+  .app-shell .attention-decision-context { min-height: 0; }
+  .app-shell .attention-select-prompt { margin: 0; padding: 1.25rem; }
   .app-shell .attention-decision-context > .attention-detail { overflow: visible; }
   .app-shell .attention-bulk-check { grid-template-columns: auto 1fr; padding-bottom: 0; }
   .app-shell .attention-detail dl { grid-template-columns: 1fr; }
@@ -969,6 +975,12 @@ main#workmesh-main:focus-visible {
 .app-shell .approval-cell-expires { color: var(--wm-muted); font-size: .8rem; }
 .app-shell .approval-cell-session a { overflow-wrap: anywhere; font-size: .8rem; }
 .app-shell .approval-authority-context { color: var(--wm-muted); font-size: .78rem; overflow-wrap: anywhere; }
+.app-shell .approval-scope-details { min-width: 0; margin-top: .1rem; padding: .45rem .5rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); background: var(--wm-surface-subtle); }
+.app-shell .approval-scope-details summary { cursor: pointer; color: var(--wm-text); font-size: .76rem; font-weight: 650; }
+.app-shell .approval-payload { width: 100%; max-width: 100%; margin: .45rem 0 0; padding: .5rem; overflow-x: auto; overflow-wrap: anywhere; white-space: pre-wrap; color: var(--wm-text); background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); font: .72rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.app-shell .approval-payload-hash { display: block; max-width: 100%; margin-top: .35rem; color: var(--wm-muted); font-size: .68rem; overflow-wrap: anywhere; }
+.app-shell .approval-context-links { display: flex; flex-wrap: wrap; gap: .3rem .65rem; min-width: 0; }
+.app-shell .approval-context-links a { min-width: 0; overflow-wrap: anywhere; }
 .app-shell .approval-selection-placeholder { color: var(--wm-muted); }
 .app-shell .approval-grid .risk-pill, .app-shell .agent-session-detail .approval-inbox .risk-low, .app-shell .agent-session-detail .approval-inbox .risk-medium, .app-shell .agent-session-detail .approval-inbox .risk-high, .app-shell .agent-session-detail .approval-inbox .risk-critical { display: inline-flex; width: fit-content; align-items: center; padding: .15rem .55rem; border-radius: 999px; font-size: .72rem; font-weight: 650; letter-spacing: .03em; text-transform: uppercase; background: var(--wm-surface); color: var(--wm-muted); border: 1px solid var(--wm-border); }
 .app-shell .approval-grid .risk-pill.risk-high, .app-shell .approval-grid .risk-pill.risk-critical, .app-shell .agent-session-detail .approval-inbox .risk-high, .app-shell .agent-session-detail .approval-inbox .risk-critical { color: #8a2433; background: #fde8ec; border-color: #f4b9c4; }
@@ -983,10 +995,19 @@ main#workmesh-main:focus-visible {
 .app-shell .approval-feedback-error, .app-shell .approval-confirm-rationale, .app-shell .approval-scope-confirmation p { margin: 0; font-size: .8rem; line-height: 1.45; }
 .app-shell .approval-feedback-error { color: var(--wm-danger, #a6243b); }
 .app-shell .approval-confirm-rationale { color: var(--wm-muted); }
+.app-shell .approval-confirm-payload { display: grid; gap: .15rem; min-width: 0; }
+.app-shell .approval-confirm-payload > span { color: var(--wm-text); font-size: .76rem; font-weight: 650; }
+.app-shell .approval-confirm-payload .approval-payload { max-height: 12rem; margin-top: .2rem; }
+.app-shell .approval-detail-gate { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; padding: .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); color: var(--wm-muted); font-size: .8rem; line-height: 1.45; }
+.app-shell .approval-detail-gate.is-error { border-color: #f4b9c4; background: #fde8ec; color: #8a2433; }
 .app-shell .approval-decision-status, .app-shell .approval-decision-blocked { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; min-width: 0; padding: .5rem .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); color: var(--wm-muted); font-size: .78rem; line-height: 1.45; overflow-wrap: anywhere; }
 .app-shell .approval-decision-status.is-success { color: #0c6b3f; background: #e8f6ee; border-color: #b6e1c5; }
 .app-shell .approval-decision-status.is-error { color: #8a2433; background: #fde8ec; border-color: #f4b9c4; }
 .app-shell .approval-decision-blocked { display: grid; gap: .2rem; }
+.app-shell .approval-decision-reason { min-width: 0; overflow-wrap: anywhere; }
+.app-shell .approval-history-decisions { display: grid; gap: .35rem; margin-top: .45rem; }
+.app-shell .approval-history-decision { display: grid; gap: .15rem; min-width: 0; margin: 0; padding: .4rem .5rem; border-left: 3px solid var(--wm-border-strong); background: var(--wm-surface-subtle); color: var(--wm-text); }
+.app-shell .approval-history-decision > strong { font-size: .72rem; text-transform: capitalize; }
 .app-shell .approval-table-wrap, .app-shell .approval-history-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border: 1px solid var(--wm-border); border-radius: 8px; }
 .app-shell .approval-table-wrap:focus-visible, .app-shell .approval-history-table-wrap:focus-visible { outline: 2px solid var(--wm-focus); outline-offset: 2px; }
 .app-shell .approval-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
@@ -1059,11 +1080,11 @@ main#workmesh-main:focus-visible {
   .app-shell .drawer .work-room-attribution { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .timeline-attribution { align-items: flex-start; }
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .app-shell .approval-grid { overflow: visible; border: 0; background: transparent; }
   .app-shell .approval-grid-header { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
   .app-shell .approval-grid-body { display: grid; gap: .75rem; }
-  .app-shell .approval-grid-row { grid-template-columns: 42px minmax(0, 1fr); gap: .65rem .75rem; padding: .85rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
+  .app-shell .approval-grid-row { grid-template-columns: 44px minmax(0, 1fr); gap: .65rem .75rem; padding: .85rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
   .app-shell .approval-grid-row:last-child { border-bottom: 1px solid var(--wm-border); }
   .app-shell .approval-grid-row .approval-cell-checkbox { grid-column: 1; grid-row: 1; }
   .app-shell .approval-grid-row .approval-cell-action { grid-column: 2; grid-row: 1; }
@@ -1077,7 +1098,8 @@ main#workmesh-main:focus-visible {
   .app-shell summary { min-width: 44px; min-height: 44px; }
   .app-shell .wm-button { min-width: 44px; min-height: 44px; }
   .app-shell input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='date']):not([type='time']):not([type='color']) { min-height: 42px; }
-  .app-shell :where(.checkbox-field, .approval-row-checkbox-label) { min-width: 40px; min-height: 40px; align-items: center; }
+  .app-shell .checkbox-field { min-width: 40px; min-height: 40px; align-items: center; }
+  .app-shell .approval-row-checkbox-label { min-width: 44px; min-height: 44px; align-items: center; }
   .app-shell .approval-bulk-bar { display: flex; width: 100%; }
   .app-shell .approval-bulk-bar .approval-bulk-count { flex: 1 0 100%; }
   .app-shell .approval-bulk-bar .approval-bulk-clear { margin-left: 0; }
@@ -1089,6 +1111,8 @@ main#workmesh-main:focus-visible {
   .app-shell .agent-summary-card-actions { justify-content: stretch; }
   .app-shell .agent-summary-card-actions button { width: 100%; }
   .app-shell .approval-row-actions .wm-button, .app-shell .approval-feedback-actions .wm-button { flex: 1 1 100%; width: 100%; }
+  .app-shell .attention-bulk-results li { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+  .app-shell .attention-bulk-results .wm-button { width: 100%; }
 }
 
 /* v28 Work Item detail: one authority-safe model, rendered as Sheet or Full Page. */
@@ -1542,6 +1566,7 @@ main#workmesh-main:focus-visible {
 .autonomy-banner-facts, .autonomy-banner-actions { display: grid; min-width: 0; gap: .4rem; color: var(--wm-muted); font-size: .78rem; }
 .autonomy-banner-actions { justify-items: stretch; }
 .autonomy-banner-actions .wm-button { min-width: 0; max-width: 100%; white-space: normal; }
+.autonomy-banner-actions .wm-button-label { white-space: normal; overflow-wrap: anywhere; }
 .autonomy-switch { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem .65rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface); color: var(--wm-text); font-weight: 650; }
 .autonomy-switch input { width: 2.3rem; height: 1.25rem; accent-color: var(--wm-warning); }
 .autonomy-push-help, .autonomy-banner-error { margin: 0; color: var(--wm-muted); font-size: .75rem; }

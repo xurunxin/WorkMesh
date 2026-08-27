@@ -56,6 +56,66 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
     { id: 'delta-1', kind: 'context_delta', subtype: 'delta', occurredAt: '2026-07-23T01:03:30.000Z', payload: { sessionId: 'session-parent', baseSnapshotId: 'snapshot-base', sourceSnapshotId: 'snapshot-delta', additions: [{ sourceType: 'artifact', sourceId: 'artifact-review', hash: `sha256:${'a'.repeat(64)}` }], contentHash: `sha256:${'b'.repeat(64)}`, rationale: 'Added security review evidence.', createdByActorId: 'agent-coordinator' } },
     { id: 'decision-1', kind: 'decision', subtype: 'proposed', occurredAt: '2026-07-23T01:04:00.000Z', payload: { title: 'Ship this release?' } },
   ]
+  const approvalId = '00000000-0000-4000-8000-000000000001'
+  const approval = {
+    id: approvalId,
+    session_id: 'session-parent',
+    approval_type: 'release',
+    action_name: 'Approve release evidence',
+    action_payload_sanitized: { workItemId: workItem.id, action: 'publish_release_evidence' },
+    action_payload_hash: `sha256:${'a'.repeat(64)}`,
+    risk_level: 'low',
+    rationale_summary: 'Review the final validation report.',
+    required_approvals: 1,
+    status: 'pending',
+    expires_at: '2099-07-23T01:30:00.000Z',
+    consumed_at: null,
+    revision: 4,
+    created_at: '2026-07-23T01:04:00.000Z',
+    updated_at: '2026-07-23T01:04:00.000Z',
+    decisions: [],
+    quorum: { required: 1, approved: 0, rejected: 0, reached: false },
+    viewer_actionability: { status: 'actionable', allowed_decisions: ['approved', 'rejected'] },
+  }
+  const attentionItem = {
+    projectionVersion: 1,
+    id: `v1:approval:${approvalId}`,
+    kind: 'approval',
+    status: 'open',
+    workspaceId: 'workspace-1',
+    teamId: 'team-1',
+    projectId: null,
+    workItemId: workItem.id,
+    sessionId: 'session-parent',
+    planVersionId: 'plan-1',
+    planStepId: 'step-review',
+    title: 'Approve release evidence',
+    summary: 'Review the final validation report.',
+    summaryDerived: true,
+    reasonCodes: ['approval.response_required'],
+    severity: 'low',
+    urgency: 'soon',
+    requestedBy: { id: 'agent-coordinator', kind: 'agent', displayName: 'Coordinator' },
+    responsibleHuman: { id: actor.id, kind: 'human', displayName: actor.displayName },
+    options: [
+      { id: 'approve', label: 'Approve', command: 'decideApproval', method: 'POST', path: `/api/v1/approvals/${approvalId}/decide`, targetRevision: 4, requiredCapabilities: ['work:write'], requiredActorKinds: ['human'], requiresApproval: false },
+      { id: 'reject', label: 'Reject', command: 'decideApproval', method: 'POST', path: `/api/v1/approvals/${approvalId}/decide`, targetRevision: 4, requiredCapabilities: ['work:write'], requiredActorKinds: ['human'], requiresApproval: false },
+    ],
+    recommendedOptionId: 'approve',
+    audience: { relationship: 'assigned_to_me', canRespond: true },
+    response: { workflow: 'approval', requiresReason: false, requiresMessage: false, choices: [], expectedStatus: 'decided' },
+    bulk: { eligible: false, compatibilityKey: null, prohibitedReason: 'bulk.exact_payload_required', revalidateIndividually: true },
+    impactSummary: 'The release remains blocked until approval.',
+    affectedResources: [{ type: 'work_item', id: workItem.id, label: workItem.title }],
+    evidence: [{ type: 'test_result', id: 'artifact-review', title: 'Security review', uri: 'https://example.test/security-review' }],
+    expiresAt: approval.expires_at,
+    sourceRevision: approval.revision,
+    source: { type: 'approval', id: approval.id, status: approval.status },
+    freshness: { state: 'current', observedAt: '2026-07-23T01:04:00.000Z', sourceUpdatedAt: '2026-07-23T01:04:00.000Z' },
+    correlationId: 'stage2-approval',
+    createdAt: '2026-07-23T01:04:00.000Z',
+    updatedAt: '2026-07-23T01:04:00.000Z',
+  }
   let forceReleaseCalled = false
   await page.route(`${apiUrl}/api/v1/**`, async route => {
     const url = new URL(route.request().url()); const path = url.pathname; const method = route.request().method()
@@ -72,13 +132,15 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
     if (path === '/api/v1/work-items') return body({ items: [workItem], nextCursor: null })
     if (path === '/api/v1/work-items/work-1') return body(workItem)
     if (path === '/api/v1/work-items/work-1/comments') return body({ items: [], nextCursor: null })
+    if (path === '/api/v1/work-items/work-1/relations') return body({ items: [], nextCursor: null })
     if (path === '/api/v1/work-items/work-1/execution-summary') return body({
       projectionVersion: 1,
       workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision, status: workItem.status_name },
       activeRuns: [{ id: 'session-parent', kind: 'run', title: 'Coordinator', summary: 'Release validation is in progress.', projectId: null, workItemId: workItem.id, sessionId: 'session-parent', state: 'executing', revision: 2, source: { type: 'agent_session', id: 'session-parent', revision: 2 }, responsibleHuman: { id: actor.id, kind: 'human', displayName: 'Alex' }, activeAgent: { id: 'agent-coordinator', kind: 'agent', displayName: 'Coordinator' }, workItem: { id: workItem.id, title: workItem.title }, currentStep: { id: 'step-review', title: 'Validate release evidence', status: 'in_progress', ordinal: 1 }, health: { heartbeat: 'healthy', lastHeartbeatAt: '2026-07-23T01:00:00.000Z' }, lastActivity: { id: 'activity-validation', kind: 'validation', summary: 'Security review passed', createdAt: '2026-07-23T01:04:00.000Z' }, pendingHumanActionCount: 1, evidenceCount: 1, verified: true, updatedAt: '2026-07-23T01:04:00.000Z' }],
       recentRuns: [], evidence: [{ id: 'artifact-review', type: 'test_result', title: 'Security review', uri: 'https://example.test/security-review' }], freshness: { state: 'current', observedAt: '2026-07-23T01:04:00.000Z', sourceUpdatedAt: '2026-07-23T01:04:00.000Z' },
     })
-    if (path === '/api/v1/human-attention') return body({ items: [{ id: 'v1:approval:00000000-0000-0000-0000-000000000001', title: 'Approve release evidence', summary: 'Review the final validation report.', impactSummary: 'The release remains blocked until approval.' }], nextCursor: null })
+    if (path === '/api/v1/human-attention') return body({ items: [attentionItem], nextCursor: null })
+    if (path === `/api/v1/approvals/${approvalId}`) return body(approval)
     if (path === '/api/v1/agents') return body({ items: [], nextCursor: null })
     if (path === '/api/v1/agent-sessions') return body({ items: sessions, nextCursor: null })
     if (path === '/api/v1/rooms') return body([{ id: 'room-1', activeParticipants: [{ id: actor.id, displayName: 'Alex' }, { id: 'agent-coordinator', displayName: 'Coordinator' }] }])

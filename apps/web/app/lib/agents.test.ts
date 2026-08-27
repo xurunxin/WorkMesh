@@ -13,6 +13,7 @@ import {
   canRetryAgentSession,
   classifyApprovalDecisionFailure,
   decideApproval,
+  formatApprovalPayload,
   createAgentSession,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
@@ -475,6 +476,8 @@ describe('approval viewer actionability', () => {
     revision: 2,
     expires_at: '2099-01-01T00:00:00.000Z',
     created_at: '2026-01-01T00:00:00.000Z',
+    action_payload_sanitized: { repository: 'acme/workmesh', scope: 'release' },
+    action_payload_hash: `sha256:${'b'.repeat(64)}`,
   }
 
   it('normalizes snake-case and camel-case actionability projections', () => {
@@ -488,9 +491,61 @@ describe('approval viewer actionability', () => {
     }).viewer_actionability).toEqual({ status: 'blocked', reason: 'authority_revoked' })
   })
 
-  it('only derives actionable for a pending, unexpired legacy projection', () => {
+  it('retains the server-sanitized action scope and payload in the Web model', () => {
+    const approval = normalizeApproval(rawApproval)
+    expect(approval.action_payload_sanitized).toEqual({ repository: 'acme/workmesh', scope: 'release' })
+    expect(approval.action_payload_hash).toBe(`sha256:${'b'.repeat(64)}`)
+    expect(formatApprovalPayload(approval.action_payload_sanitized)).toContain('acme/workmesh')
+  })
+
+  it('retains immutable decision reasons and quorum facts in approval projections', () => {
+    const approval = normalizeApproval({
+      ...rawApproval,
+      decisions: [{
+        actor_id: 'human-a',
+        decision: 'approved',
+        reason: 'Keep rollback evidence attached before proceeding.',
+        source: 'human',
+        policy_workspace_id: null,
+        policy_revision: null,
+        decided_at: '2026-08-28T00:01:00.000Z',
+      }],
+      quorum: { required: 2, approved: 1, rejected: 0, reached: false },
+    })
+
+    expect(approval.decisions).toEqual([expect.objectContaining({
+      decision: 'approved',
+      reason: 'Keep rollback evidence attached before proceeding.',
+      source: 'human',
+    })])
+    expect(approval.quorum).toEqual({ required: 2, approved: 1, rejected: 0, reached: false })
+  })
+
+  it('normalizes camel-case decision fields without losing attached requirements', () => {
+    const approval = normalizeApproval({
+      ...rawApproval,
+      decisions: [{
+        actorId: 'human-a',
+        decision: 'approved',
+        reason: 'Run the migration only after the backup check.',
+        source: 'human',
+        policyWorkspaceId: null,
+        policyRevision: null,
+        decidedAt: '2026-08-28T00:01:00.000Z',
+      }],
+      quorum: { required: 1, approved: 1, rejected: 0, reached: true },
+    })
+
+    expect(approval.decisions?.[0]).toMatchObject({
+      actor_id: 'human-a',
+      reason: 'Run the migration only after the backup check.',
+      decided_at: '2026-08-28T00:01:00.000Z',
+    })
+  })
+
+  it('fails closed when an old or malformed Human projection omits actionability', () => {
     const legacy = normalizeApproval(rawApproval)
-    expect(approvalActionability(legacy, Date.parse('2027-01-01T00:00:00.000Z'))).toEqual({ status: 'actionable', allowed_decisions: ['approved', 'rejected'] })
+    expect(approvalActionability(legacy, Date.parse('2027-01-01T00:00:00.000Z'))).toEqual({ status: 'blocked', reason: 'authority_revoked' })
     expect(approvalActionability({ ...legacy, expires_at: '2020-01-01T00:00:00.000Z' }, Date.parse('2027-01-01T00:00:00.000Z'))).toEqual({ status: 'blocked', reason: 'expired' })
     expect(approvalActionability({ ...legacy, status: 'approved' })).toEqual({ status: 'blocked', reason: 'already_decided' })
   })

@@ -3079,11 +3079,18 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
       agent_id:string;delegation_id:string;team_id:string;work_item_id:string|null;
       project_id:string|null;work_item_project_id:string|null;state:string;
       definition_active:boolean;grant_revoked_at:Date|null;delegation_status:string;
+      definition_capabilities:Capability[];grant_capabilities:Capability[];
+      permissions_snapshot:Capability[];
+      capability_scope:{teamIds?:string[];workItemIds?:string[];projectIds?:string[]};
       work_item_exists:boolean;project_exists:boolean;
     }>(`SELECT session.agent_id,session.delegation_id,session.team_id,
-               session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
-               session.state,definition.is_active AS definition_active,
-               access.revoked_at AS grant_revoked_at,delegation.status AS delegation_status,
+                session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+                session.state,definition.is_active AS definition_active,
+                definition.approved_capabilities AS definition_capabilities,
+                access.revoked_at AS grant_revoked_at,
+                access.approved_capabilities AS grant_capabilities,
+                delegation.status AS delegation_status,
+                delegation.permissions_snapshot,delegation.capability_scope,
                (session.work_item_id IS NULL OR item.id IS NOT NULL) AS work_item_exists,
                (coalesce(item.project_id,session.project_id) IS NULL OR project.id IS NOT NULL)
                  AS project_exists
@@ -3123,14 +3130,20 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
       'SELECT 1 FROM approval_decisions WHERE approval_id=$1 AND actor_id=$2',
       [approvalId,meta.actor.id],
     )).rowCount);
+    const scope=live.capability_scope??{};
+    const resourceInScope=scope.teamIds?.includes(live.team_id)===true
+      && (live.work_item_id
+        ? scope.workItemIds?.includes(live.work_item_id)===true
+        : !(live.project_id??live.work_item_project_id)
+          || scope.projectIds?.includes((live.project_id??live.work_item_project_id)!)===true);
     const actionability=evaluateApprovalViewerActionability({
       status:approval.status as ApprovalStatus,
       expiresAt:approval.expires_at,
       sessionState:live.state as AgentSessionState,
-      definitionActive:bindingStable&&live.definition_active,
-      teamGrantActive:live.grant_revoked_at===null,
-      delegationActive:live.delegation_status==='active',
-      resourceScopeActive:live.work_item_exists&&live.project_exists,
+      definitionActive:bindingStable&&live.definition_active&&live.definition_capabilities?.includes('work:write')===true,
+      teamGrantActive:live.grant_revoked_at===null&&live.grant_capabilities?.includes('work:write')===true,
+      delegationActive:live.delegation_status==='active'&&live.permissions_snapshot?.includes('work:write')===true,
+      resourceScopeActive:live.work_item_exists&&live.project_exists&&resourceInScope,
       viewerAlreadyDecided,
     });
     if(actionability.status==='blocked'){

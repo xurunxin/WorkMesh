@@ -4,7 +4,7 @@ import { type ChangeEvent } from 'react'
 import { Button } from '@workmesh/ui'
 import { CheckCircleIcon, XCircleIcon } from '@phosphor-icons/react'
 import type { Agent, AgentSession, Approval, ApprovalDecision } from '../lib/agents'
-import { agentName, approvalActionability, formatTime } from '../lib/agents'
+import { agentName, approvalActionability, formatApprovalPayload, formatTime } from '../lib/agents'
 import type { AgentsCopy } from '../lib/i18n'
 import { ApprovalDecisionControls, type ApprovalDecisionUiState } from './approval-decision-controls'
 
@@ -42,7 +42,6 @@ export function ApprovalsTable({
   sessions = [],
 }: ApprovalsTableProps) {
   const pendingApprovals = approvals.filter(approval => approval.status === 'pending')
-  if (pendingApprovals.length === 0) return <p className="empty">{copy.noApprovals}</p>
 
   const actionableIds = pendingApprovals
     .filter(approval => approvalActionability(approval).status === 'actionable')
@@ -52,15 +51,16 @@ export function ApprovalsTable({
   const allSelected = actionableIds.length > 0 && selectedLiveCount === actionableIds.length
   const someSelected = selectedLiveCount > 0 && !allSelected
 
-  return <>
-    {selectedLiveCount > 0 && <div className="approval-bulk-bar" role="group" aria-label={copy.approvalBulkActions}>
+  return <div aria-label={copy.approvalTableAriaLabel} className="approval-table-region" role="region">
+    {pendingApprovals.length === 0 ? <p className="empty">{copy.noApprovals}</p> : <>
+      {selectedLiveCount > 0 && <div className="approval-bulk-bar" role="group" aria-label={copy.approvalBulkActions}>
       <span className="approval-bulk-count">{copy.selectedApprovalsCount(selectedLiveCount)}</span>
       <Button disabled={bulkBusy} icon={<CheckCircleIcon aria-hidden size={14} weight="bold" />} onClick={() => onDecide('approved')} type="button" variant="primary">{copy.approveSelected}</Button>
       <Button disabled={bulkBusy} icon={<XCircleIcon aria-hidden size={14} weight="bold" />} onClick={() => onDecide('rejected')} type="button" variant="danger">{copy.rejectSelected}</Button>
       <Button className="approval-bulk-clear" disabled={bulkBusy} onClick={onClear} type="button" variant="ghost">{copy.clearSelection}</Button>
-    </div>}
+      </div>}
 
-    <div aria-label={copy.approvalTableAriaLabel} className="approval-grid" role="table">
+      <div aria-label={copy.approvalTableAriaLabel} className="approval-grid" role="table">
       <div className="approval-grid-header" role="row">
         <div className="approval-cell-checkbox" role="columnheader">
           <input
@@ -106,6 +106,11 @@ export function ApprovalsTable({
               <span className="approval-cell-label">{copy.approvalColumnAction}</span>
               <strong>{approval.action_name}</strong>
               <p>{approval.rationale_summary}</p>
+              <details className="approval-scope-details" data-testid={`approval-scope-${approval.id}`}>
+                <summary>{copy.approvalPayloadLabel}</summary>
+                <pre className="approval-payload" data-testid={`approval-payload-${approval.id}`}>{formatApprovalPayload(approval.action_payload_sanitized)}</pre>
+                {approval.action_payload_hash && <code className="approval-payload-hash">{approval.action_payload_hash}</code>}
+              </details>
             </div>
             <div className="approval-cell-risk" role="cell">
               <span className="approval-cell-label">{copy.approvalColumnRisk}</span>
@@ -118,8 +123,11 @@ export function ApprovalsTable({
             <div className="approval-cell-session" role="cell">
               <span className="approval-cell-label">{copy.approvalColumnSession}</span>
               {session && <span className="approval-authority-context">{copy.agents}: {agentName(requestingAgent)}</span>}
-              {session?.work_item_id && <a href={`/?workItemId=${encodeURIComponent(session.work_item_id)}`}>{copy.workItemLabel(session.work_item_id.slice(0, 8))}</a>}
-              <a href={`/agent-sessions/${approval.session_id}`}>{copy.reviewSession}</a>
+              <nav aria-label={copy.approvalContextLabel} className="approval-context-links">
+                <a href={`/agent-sessions/${approval.session_id}`}>{copy.sessionLabel?.(approval.session_id.slice(0, 8)) ?? `Session ${approval.session_id.slice(0, 8)}`}</a>
+                {session?.work_item_id && <a href={`/?workItemId=${encodeURIComponent(session.work_item_id)}`}>{copy.workItemLabel?.(session.work_item_id.slice(0, 8)) ?? `Work item ${session.work_item_id.slice(0, 8)}`}</a>}
+                <a href={`/agent-sessions/${approval.session_id}?tab=artifacts`}>{copy.approvalEvidenceLink}</a>
+              </nav>
             </div>
             <div className="approval-cell-decision" role="cell">
               <span className="approval-cell-label">{copy.approvalColumnDecision}</span>
@@ -128,8 +136,9 @@ export function ApprovalsTable({
           </article>
         })}
       </div>
-    </div>
-  </>
+      </div>
+    </>}
+  </div>
 }
 
 export type { ApprovalDecisionUiState } from './approval-decision-controls'

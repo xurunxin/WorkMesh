@@ -2119,8 +2119,8 @@ components:
       {
         name: cursor,
         in: query,
-        description: Canonical decimal Agent Activity sequence for one Session; distinct from opaque collection and domain-event cursors,
-        schema: { $ref: "#/components/schemas/DurableEventCursor" },
+        description: Backward-compatible decimal Agent Activity sequence or opaque r1 keyset cursor for one Session; distinct from opaque collection and domain-event cursors,
+        schema: { $ref: "#/components/schemas/RunExplanationCursor" },
       }
     LastEventId:
       {
@@ -3640,7 +3640,7 @@ components:
         currentStep: { type: [object, "null"], additionalProperties: true }
         planVersions: { type: array, maxItems: 50, items: { $ref: "#/components/schemas/RunPlanVersion" } }
         causalGroups: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/CausalEventGroup" } }
-        nextCursor: { type: [string, "null"], pattern: "^[0-9]{1,19}$" }
+        nextCursor: { anyOf: [{ $ref: "#/components/schemas/RunExplanationCursor" }, { type: "null" }] }
         pendingAttention: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/HumanAttentionItem" } }
         changes: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
         evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }
@@ -4558,6 +4558,15 @@ components:
         maxLength: 19,
         examples: ["9007199254740993"],
       }
+    RunExplanationOpaqueCursor:
+      type: string
+      pattern: "^r1\\.[A-Za-z0-9_-]{1,8189}$"
+      maxLength: 8192
+      description: Versioned base64url keyset cursor. The encoded payload is strictly validated by the API.
+    RunExplanationCursor:
+      oneOf:
+        - { $ref: "#/components/schemas/DurableEventCursor" }
+        - { $ref: "#/components/schemas/RunExplanationOpaqueCursor" }
     EventResource:
       {
         type: object,

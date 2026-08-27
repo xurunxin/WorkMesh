@@ -34,17 +34,26 @@ export type Artifact = { id: string; session_id: string; work_item_id?: string |
 export type ApprovalViewerActionability = TransportApprovalViewerActionability
 export type ApprovalDecision = Extract<ApprovalViewerActionability, { status: 'actionable' }>['allowed_decisions'][number]
 export type ApprovalBlockedReason = Extract<ApprovalViewerActionability, { status: 'blocked' }>['reason']
+export type ApprovalDecisionRecord = TransportApprovalDecisionResponse['approval']['decisions'][number]
 export type Approval = {
   id: string
   session_id: string
   approval_type: string
   action_name: string
+  /** Server-sanitized action scope. React renders this as text only. */
+  action_payload_sanitized?: Record<string, unknown>
+  /** Stable hash of the exact sanitized action payload. */
+  action_payload_hash?: string
   risk_level: string
   rationale_summary: string
   status: string
   revision: number
   expires_at: string
   created_at: string
+  /** Immutable votes returned by the authoritative Approval projection. */
+  decisions?: ApprovalDecisionRecord[]
+  /** The complete approval quorum at the same projection point as decisions. */
+  quorum?: ApprovalQuorum
   viewer_actionability?: ApprovalViewerActionability
 }
 export type ApprovalQuorum = TransportApprovalDecisionResponse['quorum']
@@ -88,6 +97,39 @@ export const normalizePlan = (value: Record<string, unknown>): PlanVersion => ({
 export const normalizeActivity = (value: Record<string, unknown>): AgentActivity => ({ id: String(value.id), kind: String(value.kind), summary: String(value.summary), detailsMarkdown: (value.detailsMarkdown ?? value.details_markdown) as string | undefined, artifactIds: (value.artifactIds ?? value.artifact_ids ?? []) as string[], ephemeral: Boolean(value.ephemeral), created_at: String(value.created_at), toolInvocation: (value.toolInvocation ?? value.tool_invocation) as AgentActivity['toolInvocation'] })
 export const normalizeArtifact = (value: Record<string, unknown>): Artifact => ({ id: String(value.id), session_id: String(value.session_id ?? value.sessionId), work_item_id: (value.work_item_id ?? value.workItemId) as string | null | undefined, type: String(value.type), title: String(value.title), uri: value.uri as string | undefined, source_tool: (value.source_tool ?? value.sourceTool) as string | undefined, created_at: String(value.created_at) })
 const approvalBlockedReasons: readonly ApprovalBlockedReason[] = ['viewer_already_decided', 'expired', 'session_inactive', 'authority_revoked', 'already_decided']
+const approvalDecisionSources: readonly ApprovalDecisionRecord['source'][] = ['human', 'workspace_policy']
+
+const normalizeApprovalDecision = (value: unknown): ApprovalDecisionRecord | undefined => {
+  if (!value || typeof value !== 'object') return undefined
+  const item = value as Record<string, unknown>
+  if (item.decision !== 'approved' && item.decision !== 'rejected') return undefined
+  if (!approvalDecisionSources.includes(item.source as ApprovalDecisionRecord['source'])) return undefined
+  const policyRevision = item.policy_revision ?? item.policyRevision
+  return {
+    actor_id: String(item.actor_id ?? item.actorId),
+    decision: item.decision,
+    reason: String(item.reason ?? ''),
+    source: item.source as ApprovalDecisionRecord['source'],
+    policy_workspace_id: (item.policy_workspace_id ?? item.policyWorkspaceId ?? null) as string | null,
+    policy_revision: policyRevision === undefined || policyRevision === null ? null : Number(policyRevision),
+    decided_at: String(item.decided_at ?? item.decidedAt),
+  }
+}
+
+const normalizeApprovalDecisions = (value: unknown): ApprovalDecisionRecord[] => Array.isArray(value)
+  ? value.map(normalizeApprovalDecision).filter((decision): decision is ApprovalDecisionRecord => decision !== undefined)
+  : []
+
+const normalizeApprovalQuorum = (value: unknown): ApprovalQuorum | undefined => {
+  if (!value || typeof value !== 'object') return undefined
+  const item = value as Record<string, unknown>
+  const required = Number(item.required)
+  const approved = Number(item.approved)
+  const rejected = Number(item.rejected)
+  if (!Number.isInteger(required) || required < 1 || !Number.isInteger(approved) || approved < 0 || !Number.isInteger(rejected) || rejected < 0 || typeof item.reached !== 'boolean') return undefined
+  return { required, approved, rejected, reached: item.reached }
+}
+
 const normalizeApprovalActionability = (value: unknown): ApprovalViewerActionability | undefined => {
   if (!value || typeof value !== 'object') return undefined
   const item = value as Record<string, unknown>
@@ -103,29 +145,61 @@ const normalizeApprovalActionability = (value: unknown): ApprovalViewerActionabi
   }
   return undefined
 }
+
+const normalizeApprovalPayload = (value: unknown): Record<string, unknown> => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(Object.entries(value))
+}
+
+/**
+ * Serialize the server-sanitized scope without treating it as markup. The
+ * fallback keeps a malformed legacy response readable without exposing the
+ * original object through an unsafe renderer.
+ */
+export const formatApprovalPayload = (payload: Record<string, unknown> | undefined): string => {
+  try {
+    return JSON.stringify(payload ?? {}, null, 2) ?? '{}'
+  } catch {
+    return '{}'
+  }
+}
+
 export const normalizeApproval = (value: Record<string, unknown>): Approval => ({
   id: String(value.id),
   session_id: String(value.session_id ?? value.sessionId),
   approval_type: String(value.approval_type ?? value.approvalType),
   action_name: String(value.action_name ?? value.actionName),
+  action_payload_sanitized: normalizeApprovalPayload(value.action_payload_sanitized ?? value.actionPayloadSanitized),
+  action_payload_hash: typeof (value.action_payload_hash ?? value.actionPayloadHash) === 'string'
+    ? String(value.action_payload_hash ?? value.actionPayloadHash)
+    : undefined,
   risk_level: String(value.risk_level ?? value.riskLevel),
   rationale_summary: String(value.rationale_summary ?? value.rationaleSummary),
   status: String(value.status),
   revision: Number(value.revision),
   expires_at: String(value.expires_at ?? value.expiresAt),
   created_at: String(value.created_at ?? value.createdAt),
+  decisions: normalizeApprovalDecisions(value.decisions),
+  quorum: normalizeApprovalQuorum(value.quorum),
   viewer_actionability: normalizeApprovalActionability(value.viewer_actionability ?? value.viewerActionability),
 })
 
+/** Load one complete Human Approval projection, including immutable decisions and quorum. */
+export async function getApproval(id: string): Promise<Approval> {
+  const value = await apiRequest<Record<string, unknown>>(`/api/v1/approvals/${encodeURIComponent(id)}`)
+  return normalizeApproval(value)
+}
+
 /**
- * Read the server-authoritative viewer actionability while remaining safe
- * during rolling upgrades where older approval projections omit it.
+ * Read the server-authoritative viewer actionability. Human Approval reads
+ * guarantee this projection; an omitted or malformed field must fail closed
+ * instead of exposing a decision that the server may reject.
  */
 export function approvalActionability(approval: Approval, now = Date.now()): ApprovalViewerActionability {
   if (approval.status !== 'pending') return { status: 'blocked', reason: 'already_decided' }
   const expiresAt = Date.parse(approval.expires_at)
   if (!Number.isFinite(expiresAt) || expiresAt <= now) return { status: 'blocked', reason: 'expired' }
-  return approval.viewer_actionability ?? { status: 'actionable', allowed_decisions: ['approved', 'rejected'] }
+  return approval.viewer_actionability ?? { status: 'blocked', reason: 'authority_revoked' }
 }
 
 export const isApprovalActionable = (approval: Approval, now = Date.now()): boolean => approvalActionability(approval, now).status === 'actionable'

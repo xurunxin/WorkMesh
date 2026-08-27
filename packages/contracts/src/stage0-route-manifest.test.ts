@@ -6,6 +6,9 @@ import {
   durableEventCursorSchema,
   errorResponseSchema,
   eventEnvelopeSchema,
+  RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN,
+  runExplanationCursorPayloadSchema,
+  runExplanationCursorSchema,
   stage0RouteManifest,
 } from './index.js'
 
@@ -138,6 +141,56 @@ describe('Stage 0 transport contract manifest', () => {
         `runtime cursor ${value}`,
       ).toBe(accepted)
     }
+  })
+
+  it('documents and validates the backward-compatible Run Explanation keyset cursor', async () => {
+    const source = await readFile(
+      new URL('../../../OPENAPI.yaml', import.meta.url),
+      'utf8',
+    )
+    const document = parse(source) as {
+      components?: {
+        parameters?: {
+          RunSequenceCursor?: { schema?: { $ref?: unknown } }
+        }
+        schemas?: {
+          RunExplanationOpaqueCursor?: { pattern?: unknown; maxLength?: unknown }
+        }
+      }
+    }
+    expect(document.components?.parameters?.RunSequenceCursor?.schema?.$ref)
+      .toBe('#/components/schemas/RunExplanationCursor')
+    expect(document.components?.schemas?.RunExplanationOpaqueCursor?.pattern)
+      .toBe(RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN.source)
+    expect(document.components?.schemas?.RunExplanationOpaqueCursor?.maxLength)
+      .toBe(8_192)
+
+    const opaque = `r1.${Buffer.from(JSON.stringify({
+      v: 1,
+      sequence: '1',
+      at: '2026-08-26T00:00:00.000Z',
+      source: 'approval',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }), 'utf8').toString('base64url')}`
+    expect(runExplanationCursorSchema.parse('42')).toBe('42')
+    expect(runExplanationCursorSchema.parse(opaque)).toBe(opaque)
+    expect(runExplanationCursorPayloadSchema.safeParse({
+      v: 1,
+      sequence: '1',
+      at: '2026-08-26T00:00:00.000Z',
+      source: 'approval',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+      extra: 'rejected',
+    }).success).toBe(false)
+    expect(runExplanationCursorPayloadSchema.safeParse({
+      v: 1,
+      sequence: '0',
+      at: '2026-08-26T00:00:00.000Z',
+      source: 'approval',
+      id: 'a7e7dcbd-2ea9-4f9d-8d79-c86ee3df2438',
+    }).success).toBe(false)
+    expect(runExplanationCursorSchema.safeParse(`r1.${'a'.repeat(8_190)}`).success).toBe(false)
+    expect(runExplanationCursorSchema.safeParse('r1.bad+alphabet').success).toBe(false)
   })
 
   it('represents normalized multi-resource audiences without claiming Workspace visibility', () => {

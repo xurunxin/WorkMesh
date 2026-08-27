@@ -111,4 +111,13 @@ describe('agent-session-detail approval inbox', () => {
     expect(source).toContain('decideApproval(approval, decision, reason)')
     expect(source).not.toMatch(/api\/v1\/approvals\/\$\{approval\.id\}\/decide/)
   })
+
+  it('keeps the approval scope, sanitized payload, and explicit context links on Session', () => {
+    const source = readFileSync(join(import.meta.dirname, 'agent-session-detail.tsx'), 'utf8')
+    expect(source).toContain('formatApprovalPayload(approval.action_payload_sanitized)')
+    expect(source).toContain('approval.action_payload_hash')
+    expect(source).toContain('sessionId}?tab=artifacts')
+    expect(source).toContain('session.work_item_id')
+    expect(source).toContain('aria-label={agentsCopy.approvalContextLabel}')
+  })
 })

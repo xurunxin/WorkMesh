@@ -175,6 +175,179 @@ describe('Human Attention projection acceptance', () => {
     expect(approval.statusCode, JSON.stringify(approval.json())).toBe(200)
     const approvalId = approval.json<{ id: string }>().id
 
+    // These decisions intentionally have no follow-up Agent Activity. The
+    // Run Explanation must still expose the immutable Human reasons from the
+    // approval decision fact/event projection.
+    const approvedWithRequirementsReason = 'Keep rollback evidence attached before proceeding.'
+    const approvedWithRequirements = await agentCall(token, 'POST', '/api/v1/approvals', {
+      sessionId: session.id,
+      approvalType: 'protected_action',
+      actionName: 'publish_verified_result',
+      actionPayloadSanitized: { target: 'verified-result' },
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify({ target: 'verified-result' })).digest('hex')}`,
+      riskLevel: 'medium',
+      rationaleSummary: 'The verified result requires a Human decision.',
+      requiredApprovals: 1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+    })
+    expect(approvedWithRequirements.statusCode, JSON.stringify(approvedWithRequirements.json())).toBe(200)
+    const approvedWithRequirementsId = approvedWithRequirements.json<{ id: string; revision: number }>()
+    const approvedDecision = await humanCall(human, 'POST', `/api/v1/approvals/${approvedWithRequirementsId.id}/decide`, {
+      decision: 'approved', reason: approvedWithRequirementsReason,
+    }, { 'if-match': `"revision-${approvedWithRequirementsId.revision}"` })
+    expect(approvedDecision.statusCode, JSON.stringify(approvedDecision.json())).toBe(200)
+
+    const rejectedWithFeedbackReason = 'Do not publish until the release checklist is complete.'
+    const rejectedWithFeedback = await agentCall(token, 'POST', '/api/v1/approvals', {
+      sessionId: session.id,
+      approvalType: 'protected_action',
+      actionName: 'publish_unverified_draft',
+      actionPayloadSanitized: { target: 'unverified-draft' },
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify({ target: 'unverified-draft' })).digest('hex')}`,
+      riskLevel: 'medium',
+      rationaleSummary: 'The draft publication requires a Human decision.',
+      requiredApprovals: 1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+    })
+    expect(rejectedWithFeedback.statusCode, JSON.stringify(rejectedWithFeedback.json())).toBe(200)
+    const rejectedWithFeedbackId = rejectedWithFeedback.json<{ id: string; revision: number }>()
+    const rejectedDecision = await humanCall(human, 'POST', `/api/v1/approvals/${rejectedWithFeedbackId.id}/decide`, {
+      decision: 'rejected', reason: rejectedWithFeedbackReason,
+    }, { 'if-match': `"revision-${rejectedWithFeedbackId.revision}"` })
+    expect(rejectedDecision.statusCode, JSON.stringify(rejectedDecision.json())).toBe(200)
+
+    const crossPageSummary = 'Read the same bounded source around approval decisions.'
+    const activityBeforeDecisions = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: crossPageSummary, artifactIds: [], references: [], visibility: 'team', ephemeral: false,
+    })
+    expect(activityBeforeDecisions.statusCode, JSON.stringify(activityBeforeDecisions.json())).toBe(200)
+    const activityBeforeId = activityBeforeDecisions.json<{ id: string }>().id
+
+    const crossPageApproved = await agentCall(token, 'POST', '/api/v1/approvals', {
+      sessionId: session.id,
+      approvalType: 'protected_action',
+      actionName: 'cross_page_approved_action',
+      actionPayloadSanitized: { target: 'cross-page-approved' },
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify({ target: 'cross-page-approved' })).digest('hex')}`,
+      riskLevel: 'medium',
+      rationaleSummary: 'The cross-page approval fixture needs a Human decision.',
+      requiredApprovals: 1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+    })
+    expect(crossPageApproved.statusCode, JSON.stringify(crossPageApproved.json())).toBe(200)
+    const crossPageApprovedId = crossPageApproved.json<{ id: string; revision: number }>()
+    const crossPageApprovedDecision = await humanCall(human, 'POST', `/api/v1/approvals/${crossPageApprovedId.id}/decide`, {
+      decision: 'approved', reason: 'Approve the first cross-page fixture decision.',
+    }, { 'if-match': `"revision-${crossPageApprovedId.revision}"` })
+    expect(crossPageApprovedDecision.statusCode, JSON.stringify(crossPageApprovedDecision.json())).toBe(200)
+
+    const crossPageRejected = await agentCall(token, 'POST', '/api/v1/approvals', {
+      sessionId: session.id,
+      approvalType: 'protected_action',
+      actionName: 'cross_page_rejected_action',
+      actionPayloadSanitized: { target: 'cross-page-rejected' },
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify({ target: 'cross-page-rejected' })).digest('hex')}`,
+      riskLevel: 'medium',
+      rationaleSummary: 'The second cross-page approval fixture needs a Human decision.',
+      requiredApprovals: 1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+    })
+    expect(crossPageRejected.statusCode, JSON.stringify(crossPageRejected.json())).toBe(200)
+    const crossPageRejectedId = crossPageRejected.json<{ id: string; revision: number }>()
+    const crossPageRejectedDecision = await humanCall(human, 'POST', `/api/v1/approvals/${crossPageRejectedId.id}/decide`, {
+      decision: 'rejected', reason: 'Reject the second cross-page fixture decision.',
+    }, { 'if-match': `"revision-${crossPageRejectedId.revision}"` })
+    expect(crossPageRejectedDecision.statusCode, JSON.stringify(crossPageRejectedDecision.json())).toBe(200)
+
+    const activityAfterDecisions = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: crossPageSummary, artifactIds: [], references: [], visibility: 'team', ephemeral: false,
+    })
+    expect(activityAfterDecisions.statusCode, JSON.stringify(activityAfterDecisions.json())).toBe(200)
+    const activityAfterId = activityAfterDecisions.json<{ id: string }>().id
+    const crossPageDecisionIds = (await db.query<{ id: string }>(
+      'SELECT id FROM approval_decisions WHERE approval_id = ANY($1::uuid[]) ORDER BY decided_at,id',
+      [[crossPageApprovedId.id, crossPageRejectedId.id]],
+    )).rows.map(row => row.id)
+    expect(crossPageDecisionIds).toHaveLength(2)
+
+    const decimalCursorPage = await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?limit=2&cursor=999`)
+    expect(decimalCursorPage.statusCode, JSON.stringify(decimalCursorPage.json())).toBe(200)
+    runExplanationResponseSchema.parse(decimalCursorPage.json())
+
+    const explanationPages = [] as Array<ReturnType<typeof runExplanationResponseSchema.parse>>
+    let explanationCursor: string | null = null
+    do {
+      const pageUrl = `/api/v1/agent-sessions/${session.id}/explanation?limit=2${explanationCursor ? `&cursor=${encodeURIComponent(explanationCursor)}` : ''}`
+      const pageResponse = await humanCall(human, 'GET', pageUrl)
+      expect(pageResponse.statusCode, JSON.stringify(pageResponse.json())).toBe(200)
+      const page = runExplanationResponseSchema.parse(pageResponse.json())
+      explanationPages.push(page)
+      if (page.nextCursor === explanationCursor) throw new Error(`Run Explanation cursor repeated: ${page.nextCursor}`)
+      explanationCursor = page.nextCursor
+    } while (explanationCursor)
+    const pagedGroups = explanationPages.flatMap(page => page.causalGroups)
+    const activitySourceOccurrences = pagedGroups.flatMap(group => group.sourceActivityIds)
+    for (const sourceId of [activityBeforeId, activityAfterId])
+      expect(activitySourceOccurrences.filter(id => id === sourceId)).toHaveLength(1)
+    for (const decisionId of crossPageDecisionIds)
+      expect(pagedGroups.filter(group => group.id === `approval-decision-group:${decisionId}`)).toHaveLength(1)
+
+    // Legacy approvals can have an immutable decision fact without the
+    // approval.decision.recorded event that normally supplies a session
+    // sequence. They all fall back to sequence 1, so paginate several rows
+    // created in the same timestamp bucket with limit=1 to prove the cursor
+    // keeps the decided_at + decision-id tie-breaker.
+    const legacyDecidedAt = new Date(Date.now() - 5_000).toISOString()
+    const legacyDecisionIds: string[] = []
+    for (const index of [1, 2, 3]) {
+      const legacyApprovalId = randomUUID()
+      const legacyDecisionId = randomUUID()
+      await db.query(
+        `INSERT INTO approvals(
+           id,workspace_id,session_id,requested_by_actor_id,approval_type,action_name,
+           action_payload_sanitized,action_payload_hash,risk_level,rationale_summary,
+           required_approvals,status,expires_at,created_at,updated_at
+         ) VALUES($1,$2,$3,$4,'protected_action',$5,$6::jsonb,$7,'low',$8,1,'approved',$9::timestamptz,$10::timestamptz,$10::timestamptz)`,
+        [
+          legacyApprovalId,
+          actor.workspace_id,
+          session.id,
+          actor.id,
+          `legacy_action_${index}`,
+          JSON.stringify({ target: `legacy-${index}` }),
+          `sha256:legacy-${index}`,
+          `Legacy approval ${index}`,
+          new Date(new Date(legacyDecidedAt).getTime() + 86_400_000).toISOString(),
+          legacyDecidedAt,
+        ],
+      )
+      await db.query(
+        `INSERT INTO approval_decisions(id,approval_id,actor_id,decision,reason,source,decided_at)
+         VALUES($1,$2,$3,'approved',$4,'human',$5::timestamptz)`,
+        [legacyDecisionId, legacyApprovalId, actor.id, `Legacy decision ${index}`, legacyDecidedAt],
+      )
+      legacyDecisionIds.push(legacyDecisionId)
+    }
+    const expectedLegacyGroups = new Set(legacyDecisionIds.map(id => `approval-decision-group:${id}`))
+    const observedLegacyGroups = new Set<string>()
+    const seenLegacyCursors = new Set<string>()
+    let legacyCursor: string | null = null
+    for (let pageIndex = 0; pageIndex < 200 && observedLegacyGroups.size < expectedLegacyGroups.size; pageIndex += 1) {
+      const legacyPageUrl = `/api/v1/agent-sessions/${session.id}/explanation?limit=1${legacyCursor ? `&cursor=${encodeURIComponent(legacyCursor)}` : ''}`
+      const legacyPageResponse = await humanCall(human, 'GET', legacyPageUrl)
+      expect(legacyPageResponse.statusCode, JSON.stringify(legacyPageResponse.json())).toBe(200)
+      const legacyPage = runExplanationResponseSchema.parse(legacyPageResponse.json())
+      for (const group of legacyPage.causalGroups.filter(item => expectedLegacyGroups.has(item.id))) {
+        expect(observedLegacyGroups.has(group.id)).toBe(false)
+        observedLegacyGroups.add(group.id)
+      }
+      if (!legacyPage.nextCursor) break
+      expect(seenLegacyCursors.has(legacyPage.nextCursor)).toBe(false)
+      seenLegacyCursors.add(legacyPage.nextCursor)
+      legacyCursor = legacyPage.nextCursor
+    }
+    expect(observedLegacyGroups).toEqual(expectedLegacyGroups)
+
     const agentActorId = (await db.query<{ actor_id: string }>(
       'SELECT actor_id FROM agent_definitions WHERE id=$1',
       [agent.id],
@@ -373,6 +546,28 @@ describe('Human Attention projection acceptance', () => {
       expect.objectContaining({ kind: 'action_completed', count: 3, sourceActivityIds: expect.any(Array) }),
       expect.objectContaining({ phase: 'validation', failure: true, count: 1, validation: expect.objectContaining({ state: 'failed' }) }),
       expect.objectContaining({ phase: 'validation', failure: false, count: 1, planStepId, evidence: expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id })]) }),
+      expect.objectContaining({
+        kind: 'approval_decision',
+        actionType: 'approval',
+        summary: expect.stringContaining(approvedWithRequirementsReason),
+        sourceActivityIds: [],
+        technicalRecords: [expect.objectContaining({
+          kind: 'approval.decision.recorded',
+          summary: expect.stringContaining(approvedWithRequirementsReason),
+          references: [{ type: 'approval', id: approvedWithRequirementsId.id }],
+        })],
+      }),
+      expect.objectContaining({
+        kind: 'approval_decision',
+        actionType: 'approval',
+        summary: expect.stringContaining(rejectedWithFeedbackReason),
+        sourceActivityIds: [],
+        technicalRecords: [expect.objectContaining({
+          kind: 'approval.decision.recorded',
+          summary: expect.stringContaining(rejectedWithFeedbackReason),
+          references: [{ type: 'approval', id: rejectedWithFeedbackId.id }],
+        })],
+      }),
     ]))
     expect(explanation.planVersions).toEqual(expect.arrayContaining([expect.objectContaining({ id: planVersion.id, steps: expect.arrayContaining([expect.objectContaining({ id: planStepId, causalGroupIds: expect.any(Array) })]) })]))
     expect(explanation.evidenceDetails).toEqual(expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id, validationState: 'verified' })]))
@@ -399,6 +594,8 @@ describe('Human Attention projection acceptance', () => {
     expect(explanationSecondPage.causalGroups).toHaveLength(20)
     const firstPageSources = new Set(explanationFirstPage.causalGroups.flatMap(group => group.sourceActivityIds))
     expect(explanationSecondPage.causalGroups.some(group => group.sourceActivityIds.some(id => firstPageSources.has(id)))).toBe(false)
+    const firstPageGroupIds = new Set(explanationFirstPage.causalGroups.map(group => group.id))
+    expect(explanationSecondPage.causalGroups.some(group => firstPageGroupIds.has(group.id))).toBe(false)
 
     const executionResponse = await humanCall(human, 'GET', `/api/v1/work-items/${work.id}/execution-summary`)
     expect(executionResponse.statusCode, JSON.stringify(executionResponse.json())).toBe(200)
@@ -477,6 +674,75 @@ describe('Human Attention projection acceptance', () => {
       status: selected.status,
     })
 
+    const refillPayload = { target: 'refill' }
+    const refillApproval = await agentCall(token, 'POST', '/api/v1/approvals', {
+      sessionId: session.id,
+      approvalType: 'protected_action',
+      actionName: 'refill_delivery',
+      actionPayloadSanitized: refillPayload,
+      actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify(refillPayload)).digest('hex')}`,
+      riskLevel: 'low',
+      rationaleSummary: 'Remain actionable after an expired row is filtered.',
+      requiredApprovals: 1,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+    })
+    expect(refillApproval.statusCode, JSON.stringify(refillApproval.json())).toBe(200)
+    const refillApprovalId = refillApproval.json<{ id: string }>().id
+    // Keep five raw-pending approvals ahead of the actionable row. This
+    // viewer has already voted on each one, so the shared evaluator projects
+    // them as seen while quorum remains open. A fixed 5x raw scan would return
+    // an empty effective page for limit=1 and hide refillApproval.
+    for (let index = 0; index < 5; index += 1) {
+      const blockedPayload = { target: `already-voted-${index}` }
+      const blockedApproval = await agentCall(token, 'POST', '/api/v1/approvals', {
+        sessionId: session.id,
+        approvalType: 'protected_action',
+        actionName: `already_voted_${index}`,
+        actionPayloadSanitized: blockedPayload,
+        actionPayloadHash: `sha256:${createHash('sha256').update(JSON.stringify(blockedPayload)).digest('hex')}`,
+        riskLevel: 'low',
+        rationaleSummary: 'Quorum remains open after this Human decision.',
+        requiredApprovals: 2,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
+      })
+      expect(blockedApproval.statusCode, JSON.stringify(blockedApproval.json())).toBe(200)
+      const blocked = blockedApproval.json<{ id: string; revision: number }>()
+      const recorded = await humanCall(human, 'POST', `/api/v1/approvals/${blocked.id}/decide`, {
+        decision: 'approved',
+        reason: `Recorded vote ${index}`,
+      }, { 'if-match': `"revision-${blocked.revision}"` })
+      expect(recorded.statusCode, JSON.stringify(recorded.json())).toBe(200)
+      expect(recorded.json<{ status: string }>().status).toBe('pending')
+    }
+    await db.query(
+      "UPDATE approvals SET created_at=now()-interval '2 minutes',expires_at=now()-interval '1 minute',updated_at=now()+interval '1 minute' WHERE id=$1",
+      [approvalId],
+    )
+    const actionableRefill = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=approval&status=open&limit=1')).json(),
+    )
+    expect(actionableRefill.items).toHaveLength(1)
+    expect(actionableRefill.items[0]).toMatchObject({
+      source: { id: refillApprovalId },
+      status: 'open',
+      audience: { canRespond: true },
+    })
+    const expiredAttention = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=approval&status=expired&limit=1')).json(),
+    )
+    expect(expiredAttention.items[0]).toMatchObject({
+      source: { id: approvalId },
+      status: 'expired',
+      audience: { canRespond: false },
+    })
+    const activeApprovalRecovery = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=approval&view=active&limit=50')).json(),
+    )
+    expect(activeApprovalRecovery.items.find(item => item.source.id === approvalId)).toMatchObject({
+      status: 'expired',
+      audience: { canRespond: false },
+    })
+
     const clarification = firstPage.items.find(item => item.kind === 'clarification')!
     const clarificationOption = clarification.options.find(option => option.command === 'replyInboxItem')!
     const humanReply = await humanCall(human, 'POST', clarificationOption.path, {
@@ -544,6 +810,17 @@ describe('Human Attention projection acceptance', () => {
     const delegationId = (await db.query<{ delegation_id: string }>('SELECT delegation_id FROM agent_sessions WHERE id=$1', [session.id])).rows[0]!.delegation_id
     await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1", [delegationId])
     expect([401,403,404,409]).toContain((await agentCall(token, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)).statusCode)
+    const revokedOpenApprovals = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=approval&status=open&limit=50')).json(),
+    )
+    expect(revokedOpenApprovals.items).toEqual([])
+    const revokedApprovalRecovery = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=approval&status=failed&limit=50')).json(),
+    )
+    expect(revokedApprovalRecovery.items.find(item => item.source.id === refillApprovalId)).toMatchObject({
+      status: 'failed',
+      audience: { canRespond: false },
+    })
     await db.query("UPDATE delegations SET status='active',revoked_at=NULL WHERE id=$1", [delegationId])
 
     await db.query(

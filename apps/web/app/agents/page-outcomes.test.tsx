@@ -140,6 +140,10 @@ function approval(id: string, actionName: string): Approval {
     risk_level: 'medium',
     session_id: `session-${id}`,
     status: 'pending',
+    viewer_actionability: {
+      status: 'actionable',
+      allowed_decisions: ['approved', 'rejected'],
+    },
   }
 }
 
@@ -568,6 +572,7 @@ describe('Agents bulk approval outcomes', () => {
       id: 'v1:agent_session:00000000-0000-4000-8000-000000000001',
       title: 'Authoritative recovery item',
       summary: 'The server projection requires a Human recovery decision.',
+      audience: { canRespond: true },
       sessionId: 'failed-session',
     }]
     view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)

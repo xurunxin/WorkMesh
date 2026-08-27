@@ -121,6 +121,7 @@ test('replays an equivalent direct decision once and rejects a conflicting body 
   const headers = {
     'Content-Type': 'application/json',
     'Idempotency-Key': 'task-7-1-direct-equivalence',
+    'If-Match': '"revision-3"',
   }
   const approved = { decision: 'approved', reason: 'Equivalent direct fixture.' }
   const first = await request.post(`${apiUrl}${path}`, { data: approved, headers })
@@ -148,4 +149,32 @@ test('replays an equivalent direct decision once and rejects a conflicting body 
   expect(decisions.every(entry => entry.hasIdempotencyKey)).toBe(true)
   expect(equivalenceGroup(ledger, 1)).toEqual({ group: 1, requestCount: 3, commitCount: 1 })
   await writeMockEvidence({ ledger, name: 'agents-idempotency-green', testInfo })
+})
+
+test('rejects malformed approval decisions before mutating the fixture', async ({ request }) => {
+  const path = `/api/v1/approvals/${mockIds.approvalDirect}/decide`
+  const validHeaders = {
+    'Content-Type': 'application/json',
+    'If-Match': '"revision-3"',
+  }
+  const cases = [
+    { name: 'invalid decision enum', body: { decision: 'approved_with_requirements', reason: 'Not a supported domain decision.' }, status: 422, code: 'INVALID_APPROVAL_DECISION' },
+    { name: 'missing reason', body: { decision: 'approved', reason: '   ' }, status: 422, code: 'APPROVAL_REASON_REQUIRED' },
+    { name: 'stale revision', body: { decision: 'approved', reason: 'Current enough text.' }, headers: { ...validHeaders, 'If-Match': '"revision-2"' }, status: 412, code: 'STALE_REVISION' },
+  ] as const
+  for (const [index, candidate] of cases.entries()) {
+    const response = await request.post(`${apiUrl}${path}`, {
+      data: candidate.body,
+      headers: { ...validHeaders, ...('headers' in candidate ? candidate.headers : {}), 'Idempotency-Key': `strict-approval-${index}` },
+    })
+    expect(response.status(), candidate.name).toBe(candidate.status)
+    expect(await response.json()).toEqual({ error: expect.objectContaining({ code: candidate.code }) })
+  }
+  const missingKey = await request.post(`${apiUrl}${path}`, { data: { decision: 'approved', reason: 'A valid reason.' }, headers: validHeaders })
+  expect(missingKey.status()).toBe(400)
+  expect(await missingKey.json()).toEqual({ error: expect.objectContaining({ code: 'IDEMPOTENCY_KEY_REQUIRED' }) })
+
+  const approval = await request.get(`${apiUrl}/api/v1/approvals/${mockIds.approvalDirect}`)
+  expect(approval.status()).toBe(200)
+  expect(await approval.json()).toEqual(expect.objectContaining({ status: 'pending', revision: 3, decisions: [] }))
 })

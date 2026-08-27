@@ -51,7 +51,7 @@ union derived by the same domain evaluator used by the decide command:
 
 ```ts
 type ApprovalViewerActionability =
-  | { status: 'actionable'; allowedDecisions: ['approved', 'rejected'] }
+  | { status: 'actionable'; allowed_decisions: ['approved', 'rejected'] }
   | {
       status: 'blocked'
       reason:

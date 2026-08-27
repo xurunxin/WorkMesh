@@ -10,8 +10,8 @@
 }
 
 .compact {
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.625;
 }
 
 .content {
@@ -234,7 +234,6 @@
 }
 
 @media (max-width: 390px) {
-  .document { font-size: 13px; }
   .tableFrame :where(th, td) { max-width: 82vw; }
 }
 

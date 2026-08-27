@@ -140,19 +140,21 @@ const pendingApproval = {
   action_name: 'Review keyboard closure',
   approval_type: 'merge_pull_request',
   created_at: '2026-08-23T01:00:00.000Z',
-  expires_at: '2026-08-24T01:00:00.000Z',
+  expires_at: '2099-08-24T01:00:00.000Z',
   id: ids.approvalPending,
   rationale_summary: 'A Human must review the deterministic change.',
   revision: 1,
   risk_level: 'medium',
   session_id: ids.session,
   status: 'pending',
+  viewer_actionability: { status: 'actionable', allowed_decisions: ['approved', 'rejected'] },
 }
 const historyApproval = {
   ...pendingApproval,
   action_name: 'Reviewed keyboard closure',
   id: ids.approvalHistory,
   status: 'approved',
+  viewer_actionability: { status: 'blocked', reason: 'already_decided' },
 }
 const run = {
   attempt_count: 3,
@@ -308,6 +310,13 @@ export class AccessibilityFixture {
     if (path === `/api/v1/agents/${ids.agentTwo}`) return { body: agents[1] }
     if (path === '/api/v1/agent-sessions') return list([session])
     if (path === `/api/v1/agent-sessions/${ids.session}`) return { body: session }
+    if (path === `/api/v1/agent-sessions/${ids.session}/context`) return { body: {
+      contextSnapshotId: '44444444-4444-4444-8444-444444444444',
+      guidanceUris: [],
+      guidancePins: [],
+      plan: null,
+      workItem: { id: workItem.id, title: workItem.title, team_key: workItem.team_key, number: workItem.number },
+    } }
     if (path === `/api/v1/agent-sessions/${ids.session}/explanation`) return { body: {
       projectionVersion: 1,
       session: { id: session.id, state: session.state, revision: session.revision, stateReason: session.state_reason, budget: session.budget, updatedAt: session.updated_at },

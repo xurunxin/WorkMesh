@@ -25,8 +25,9 @@ const agent = {
   revision: 1, skills: ['frontend'], slug: 'responsive-agent', supported_protocols: ['native_http'], team_access: [], version: '1.0.0', workspace_id: 'workspace-preview',
 }
 const approval = {
-  action_name: 'Approve responsive release', approval_type: 'merge_pull_request', created_at: '2026-08-23T00:00:00.000Z', expires_at: '2026-08-24T00:00:00.000Z',
+  action_name: 'Approve responsive release', approval_type: 'merge_pull_request', created_at: '2026-08-23T00:00:00.000Z', expires_at: '2099-08-24T00:00:00.000Z',
   id: 'approval-responsive', rationale_summary: 'Wide and narrow acceptance evidence is ready.', revision: 1, risk_level: 'medium', session_id: 'session-responsive', status: 'pending',
+  viewer_actionability: { status: 'actionable', allowed_decisions: ['approved', 'rejected'] },
 }
 const canonicalFeatures = [
   { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: true }, { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: true },
@@ -203,9 +204,19 @@ for (const viewport of viewports) {
 
     await page.goto('/agents?tab=approvals&approvalView=pending', { waitUntil: 'domcontentloaded' })
     await expect(page.getByTestId(`approval-row-${approval.id}`)).toBeVisible()
-    const approvals = await geometry(page, '.approval-table-wrap')
+    const approvals = await geometry(page, '.approval-grid')
     expectContained(approvals)
-    expect(approvals.root.scrollWidth).toBeGreaterThanOrEqual(approvals.root.clientWidth)
+    expect(approvals.root.scrollWidth).toBe(approvals.root.clientWidth)
+    const approvalCard = page.getByTestId(`approval-row-${approval.id}`)
+    await expect(approvalCard.getByRole('button', { name: 'Approve' })).toBeVisible()
+    await expect(approvalCard.getByRole('button', { name: 'Reject' })).toBeVisible()
+    await expect(approvalCard.getByRole('button', { name: 'Other feedback' })).toBeVisible()
+    if (viewport.width <= 768) {
+      const actionBounds = await approvalCard.locator('.approval-row-actions').boundingBox()
+      expect(actionBounds).not.toBeNull()
+      if (actionBounds) expect(actionBounds.x + actionBounds.width).toBeLessThanOrEqual(viewport.width + 0.5)
+      expect(approvals.document.scrollWidth).toBe(approvals.document.clientWidth)
+    }
     evidence.approvals = approvals
     await saveSurface(page, `agents-pending-${viewport.width}x${viewport.height}`)
 

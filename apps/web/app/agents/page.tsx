@@ -148,6 +148,14 @@ function AgentsPageScope({
     () => pendingApprovalsAuthorized ? pendingApprovalsPage.items.filter(approval => approval.status === 'pending') : [],
     [pendingApprovalsAuthorized, pendingApprovalsPage.items],
   )
+  const actionableApprovals = useMemo(
+    () => approvals.filter(approval => isApprovalActionable(approval)),
+    [approvals],
+  )
+  const actionableAttentionItems = useMemo(
+    () => attentionItems.filter(item => item.kind !== 'approval' && item.audience.canRespond),
+    [attentionItems],
+  )
   const historyApprovals = historyApprovalsAuthorized ? historyApprovalsPage.items : []
   const collectionError = [agentsPage.error, teamsPage.error, humansPage.error, sessionsPage.error, attentionPage.error, pendingApprovalsPage.error, historyApprovalsPage.error].find(Boolean)
   const summaryError = agentsPage.error ?? sessionsPage.error ?? attentionPage.error ?? pendingApprovalsPage.error
@@ -286,6 +294,7 @@ function AgentsPageScope({
   ): ApprovalDecisionUiState => ({
     status: 'success',
     decision,
+    reason: result.decision.reason,
     message: result.status === 'pending' && !result.quorum.reached
       ? text.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
       : text.approvalDecisionRecorded(decision),
@@ -540,8 +549,8 @@ function AgentsPageScope({
       >
         <article><span>{text.activeAgents}</span><strong>{agents.filter(agent => agent.is_active).length}</strong><small>{text.registered(agents.length)}</small></article>
         <article><span>{text.liveSessions}</span><strong>{sessions.filter(session => !['completed', 'failed', 'canceled'].includes(session.state)).length}</strong><small>{text.visible(sessions.length)}</small></article>
-        <article className={approvals.length ? 'needs-attention' : ''}><span>{text.pendingApprovals}</span><strong>{approvals.length}</strong><small>{approvals.length ? text.responseRequired : text.queueClear}</small></article>
-        <article className={attentionItems.length ? 'needs-attention' : ''}><span>{text.needsAttention}</span><strong>{attentionItems.length}</strong><small>{text.blockedOrWaiting}</small></article>
+        <article className={actionableApprovals.length ? 'needs-attention' : ''}><span>{text.pendingApprovals}</span><strong>{actionableApprovals.length}</strong><small>{actionableApprovals.length ? text.responseRequired : text.queueClear}</small></article>
+        <article className={actionableAttentionItems.length ? 'needs-attention' : ''}><span>{text.needsAttention}</span><strong>{actionableAttentionItems.length}</strong><small>{text.blockedOrWaiting}</small></article>
       </section> : summaryError ? null : <div className="agent-summary-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>}
 
       <Tabs

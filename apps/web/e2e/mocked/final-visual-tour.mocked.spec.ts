@@ -169,11 +169,12 @@ const tourCases = [
     slug: 'approvals-pending',
     route: '/agents?tab=approvals&approvalView=pending',
     unique: { selector: '[data-testid="approval-row-approval-pending"]', text: 'Final tour approval' },
-    focusSelector: '[data-testid="approval-checkbox-approval-pending"]',
+    focusSelector: '[data-testid="approval-row-approval-pending"] .approval-row-actions button:first-of-type',
     rootSelector: '.agent-center',
-    dominantSelector: '.approval-table-wrap',
+    dominantSelector: '.approval-grid',
     initialMcpReadiness401Count: 1,
     compactTabsMaxWidth: 720,
+    minimumTouchTarget: true,
     wideContract: 'agent-side-stack',
   },
   {
@@ -778,7 +779,30 @@ async function expectViewportContract(
   }
   if (viewport.width <= 768 && (tourCase.slug === 'approvals-pending' || tourCase.slug === 'approvals-history-rejected')) {
     const owner = requiredNode(geometry.nodes.dominant, 'approval scroll owner')
-    expect(owner.scrollWidth).toBeGreaterThan(owner.clientWidth)
+    // Pending approvals become cards below the desktop grid breakpoint. The
+    // decision group must remain visible in the card and the page itself must
+    // not acquire horizontal scrolling just to reach the buttons.
+    if (tourCase.slug === 'approvals-history-rejected') {
+      // Historical approvals intentionally keep their dense table in a local
+      // scroll frame; only the frame, never the page, may overflow.
+      expect(owner.scrollWidth).toBeGreaterThan(owner.clientWidth)
+      expect(geometry.document.scrollWidth).toBe(viewport.width)
+    } else {
+      expect(owner.scrollWidth).toBe(owner.clientWidth)
+    }
+    if (tourCase.slug === 'approvals-pending') {
+      const row = page.getByTestId('approval-row-approval-pending')
+      await expect(row.locator('.approval-row-actions')).toBeVisible()
+      await expect(row.getByRole('button', { name: 'Approve' })).toBeVisible()
+      await expect(row.getByRole('button', { name: 'Reject' })).toBeVisible()
+      await expect(row.getByRole('button', { name: 'Other feedback' })).toBeVisible()
+      const actionBounds = await row.locator('.approval-row-actions .wm-button').evaluateAll(buttons => buttons.map(button => {
+        const bounds = button.getBoundingClientRect()
+        return { bottom: bounds.bottom, left: bounds.left, right: bounds.right, top: bounds.top }
+      }))
+      expect(actionBounds.length).toBe(3)
+      expect(actionBounds.every(bounds => bounds.left >= -0.5 && bounds.right <= viewport.width + 0.5 && bounds.top >= -0.5 && bounds.bottom <= viewport.height + 0.5)).toBe(true)
+    }
   }
   if (viewport.width <= 768 && tourCase.slug === 'settings-operations-failed-runs') {
     const owner = requiredNode(geometry.nodes.runsWrapper, 'Runs scroll owner')

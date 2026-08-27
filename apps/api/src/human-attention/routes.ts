@@ -132,9 +132,14 @@ export function registerHumanAttentionRoutes(
     const values: unknown[] = [current.workspaceId]
     const where = [humanAttentionAuthorizationPredicate(current, values)]
     addFilter(where, values, 'attention.kind', query.kind)
-    if (query.status) addFilter(where, values, 'attention.status', query.status)
-    else where.push(query.view === 'active'
-      ? "attention.status IN ('open','seen','applying','failed')"
+    if (query.status) {
+      values.push(query.status)
+      // Pending Approval rows may become seen/failed/expired only after the
+      // shared live-authority evaluator runs. Include those candidates here,
+      // then apply the requested status to the effective projection below.
+      where.push(`(attention.status=$${values.length} OR (attention.source_type='approval' AND attention.status='open'))`)
+    } else where.push(query.view === 'active'
+      ? "(attention.status IN ('open','seen','applying','failed') OR (attention.source_type='approval' AND attention.status='expired'))"
       : "attention.status IN ('decided','verified','expired','superseded')")
     addFilter(where, values, 'attention.risk_level', query.severity)
     addFilter(where, values, 'attention.requested_by_actor_id', query.requestedByActorId)
@@ -164,36 +169,64 @@ export function registerHumanAttentionRoutes(
         where.push(`attention.responsible_human_actor_id IS DISTINCT FROM $${values.length} AND attention.recipient_actor_id IS DISTINCT FROM $${values.length}`)
       }
     }
-    const page = await h.paginator.query<HumanAttentionRow>(
-      h.db,
-      request,
-      request.query,
-      {
-        route: '/api/v1/human-attention',
-        filters: query,
-        sort: [
-          { key: 'updated_cursor', sql: `to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' },
-          { key: 'source_id', sql: 'attention.source_id', direction: 'DESC' },
-        ],
-      },
-      `${humanAttentionProjectionSql} AND ${where.join(' AND ')}`,
-      values,
+    const binding = {
+      route: '/api/v1/human-attention',
+      filters: query,
+      sort: [
+        { key: 'updated_cursor', sql: `to_char(attention.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`, direction: 'DESC' as const },
+        { key: 'source_id', sql: 'attention.source_id', direction: 'DESC' as const },
+      ],
+    }
+    const prepared = h.paginator.prepare(request, request.query, binding, values)
+    // A requested effective status can differ from the raw SQL projection
+    // after live Approval authority is evaluated (for example, a raw pending
+    // row becomes viewer_already_decided). Scan a bounded candidate window in
+    // one round trip so small consumers such as the WorkItem workspace do not
+    // receive an empty page while actionable rows still exist immediately
+    // behind filtered candidates.
+    const scanWindow = query.status ? 1_000 : prepared.limit
+    const scanValues = [...prepared.values, scanWindow + 1]
+    const cursorPredicate = prepared.predicate ? ` AND ${prepared.predicate}` : ''
+    await prepared.beforeQuery()
+    const result = await h.db.query<HumanAttentionRow>(
+      `${humanAttentionProjectionSql} AND ${where.join(' AND ')}${cursorPredicate}
+       ORDER BY ${prepared.orderBy} LIMIT $${scanValues.length}`,
+      scanValues,
     )
+    const scannedRows = result.rows.slice(0, scanWindow)
     const observedAt = new Date()
     const approvalActionability = await loadApprovalViewerActionability(
       h.db,
-      page.items.filter(row => row.source_type === 'approval').map(row => row.source_id),
+      scannedRows.filter(row => row.source_type === 'approval').map(row => row.source_id),
       current,
       observedAt.getTime(),
     )
+    const projected = scannedRows
+      .map(row => ({
+        item: projectHumanAttentionRow(
+          row,
+          observedAt,
+          current,
+          approvalActionability.get(row.source_id),
+        ),
+        source_id: row.source_id,
+        updated_cursor: row.updated_cursor ?? new Date(row.updated_at).toISOString(),
+      }))
+      .filter(row => query.status === undefined || row.item.status === query.status)
+    if (projected.length > prepared.limit) {
+      const page = prepared.finish(projected)
+      return { items: page.items.map(row => row.item), nextCursor: page.nextCursor }
+    }
+    const rawHasMore = result.rows.length > scanWindow
+    const lastScanned = scannedRows.at(-1)
     return {
-      ...page,
-      items: page.items.map(row => projectHumanAttentionRow(
-        row,
-        observedAt,
-        current,
-        approvalActionability.get(row.source_id),
-      )),
+      items: projected.map(row => row.item),
+      nextCursor: rawHasMore && lastScanned
+        ? prepared.cursorFor({
+            ...lastScanned,
+            updated_cursor: lastScanned.updated_cursor ?? new Date(lastScanned.updated_at).toISOString(),
+          })
+        : null,
     }
   })
 

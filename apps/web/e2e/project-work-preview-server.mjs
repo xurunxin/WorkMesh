@@ -69,6 +69,7 @@ const scenarioNames = new Set([
   'command-center',
   'large-list',
   'final-tour',
+  'approval-journey',
 ])
 const fixedNow = '2026-08-22T09:30:00.000Z'
 const scenarioTeams = [
@@ -100,7 +101,12 @@ const scenarioAgents = [
 const approvalFixture = (id, status, action, sessionId) => ({
   id, session_id: sessionId, approval_type: 'tool', action_name: action, risk_level: status === 'pending' ? 'medium' : 'low',
   rationale_summary: `Deterministic ${status} approval fixture.`, status, revision: 3,
-  expires_at: '2026-08-24T09:30:00.000Z', created_at: '2026-08-22T08:00:00.000Z',
+  // Keep pending fixtures actionable during local and production-tour runs;
+  // historical rows still exercise their terminal presentation separately.
+  expires_at: status === 'pending' ? '2099-08-24T09:30:00.000Z' : '2026-08-24T09:30:00.000Z', created_at: '2026-08-22T08:00:00.000Z',
+  viewer_actionability: status === 'pending'
+    ? { status: 'actionable', allowed_decisions: ['approved', 'rejected'] }
+    : { status: 'blocked', reason: 'already_decided' },
 })
 const initialScenarioApprovals = [
   approvalFixture('approval-retry', 'pending', 'Retry deployment', 'session-retry'),
@@ -345,6 +351,79 @@ const finalTourApprovals = [
     rationale_summary: 'Historical rejected decision for the final tour.',
   },
 ]
+
+// A small stateful fake Agent fixture used by the M6.6 human/Agent journey.
+// It starts with no approvals: the test asks the fake Agent to request one,
+// then the Human decision mutates the same authoritative approval record. The
+// resulting activity and artifact are intentionally exposed through the same
+// read routes as a real Agent Session so the E2E verifies the hand-off rather
+// than only inspecting the POST response.
+const approvalJourneyIds = {
+  workspace: '00000000-0000-4000-8000-000000000001',
+  team: '00000000-0000-4000-8000-000000000002',
+  project: '00000000-0000-4000-8000-000000000003',
+  workItem: '00000000-0000-4000-8000-000000000004',
+  session: '00000000-0000-4000-8000-000000000005',
+  agentActor: '00000000-0000-4000-8000-000000000006',
+  delegation: '00000000-0000-4000-8000-000000000007',
+}
+const approvalJourneyAgent = {
+  id: 'agent-approval-journey', workspace_id: approvalJourneyIds.workspace, actor_id: approvalJourneyIds.agentActor,
+  name: 'Approval Journey Agent', slug: 'approval-journey-agent', description: 'A deterministic fake Agent for the Human decision hand-off.',
+  provider: 'fixture', version: 'm6.6', supported_protocols: ['native_http'], skills: ['approval-journey'],
+  requested_capabilities: ['work:read', 'work:write'], approved_capabilities: ['work:read', 'work:write'], max_concurrency: 1,
+  heartbeat_interval_seconds: 30, is_active: true, revision: 1,
+  team_access: [{
+    agent_id: 'agent-approval-journey', team_id: approvalJourneyIds.team, approved_capabilities: ['work:read', 'work:write'], status: 'active',
+    approved_by_actor_id: human.id, revision: 1, created_at: '2026-08-28T00:00:00.000Z', updated_at: fixedNow, revoked_at: null,
+  }],
+}
+let approvalJourneySession = {
+  id: approvalJourneyIds.session, agent_id: approvalJourneyAgent.id, agent_actor_id: approvalJourneyAgent.actor_id,
+  principal_human_actor_id: human.id, delegation_id: approvalJourneyIds.delegation, work_item_id: approvalJourneyIds.workItem,
+  state: 'awaiting_approval', state_reason: 'Waiting for the Human decision on the requested action.', revision: 1,
+  current_plan_version_id: null, budget: { maxRuntimeSeconds: 600 }, last_heartbeat_at: fixedNow, retry_of_session_id: null,
+  stop_requested_at: null, error_code: null, error_summary: null, created_at: fixedNow, updated_at: fixedNow,
+}
+const approvalJourneyWorkItem = {
+  id: approvalJourneyIds.workItem, title: 'Human approval hand-off', description: 'Verify that an Agent receives an immutable Human decision and answers with evidence.',
+  number: 660, revision: 1, status_id: '00000000-0000-4000-8000-000000000008', status_name: 'In Progress', status_category: 'started',
+  team_id: approvalJourneyIds.team, team_key: 'M6', priority: 'high', due_date: null, responsible_human_actor_id: human.id,
+  responsible_human: { actor_id: human.id, display_name: human.display_name }, active_assignment: null, active_executor: null,
+  shared_reviewers: [], labels: ['approval', 'e2e'], project_id: approvalJourneyIds.project, project_name: 'M6.6 Human Attention',
+  milestone_id: null, parent_id: null, surface_summary: { blocked_by_count: 0, blocking_count: 0, sub_issue_count: 0, completed_sub_issue_count: 0 },
+}
+const approvalJourneyProject = {
+  id: approvalJourneyIds.project, team_id: approvalJourneyIds.team, name: 'M6.6 Human Attention',
+  summary: 'Deterministic fake Agent approval hand-off for the M6.6 dogfood journey.',
+  description: 'The fake Agent requests approval, receives a Human decision with an immutable reason, and publishes evidence for the result.',
+  status: 'in_progress', lead_actor_id: human.id, target_date: null, revision: 1,
+}
+const approvalJourneyStates = [
+  { id: '00000000-0000-4000-8000-000000000008', name: 'In Progress', category: 'started', color: '#2563eb', revision: 1 },
+  { id: '00000000-0000-4000-8000-000000000009', name: 'Done', category: 'completed', color: '#16a34a', revision: 1 },
+]
+const approvalJourneyDefinitions = {
+  approve: { id: '00000000-0000-4000-8000-000000000101', action: 'Publish the verified result', rationale: 'The Agent has produced the requested result and asks Human authority to publish it.', payloadHash: '1' },
+  reject: { id: '00000000-0000-4000-8000-000000000102', action: 'Delete the unverified draft', rationale: 'The Agent asks whether the unverified draft may be removed from the workspace.', payloadHash: '2' },
+  requirements: { id: '00000000-0000-4000-8000-000000000103', action: 'Apply the readability improvements', rationale: 'The Agent asks to apply the agreed Markdown and approval UX improvements.', payloadHash: '3' },
+}
+const approvalJourneyApproval = (kind, requestedAt = fixedNow) => {
+  const definition = approvalJourneyDefinitions[kind]
+  return {
+    id: definition.id, workspace_id: approvalJourneyIds.workspace, session_id: approvalJourneySession.id, requested_by_actor_id: approvalJourneyAgent.actor_id,
+    approval_type: 'tool', action_name: definition.action, action_payload_sanitized: { fixture: 'approval-journey', kind }, action_payload_hash: `sha256:${definition.payloadHash.repeat(64)}`,
+    risk_level: 'low', rationale_summary: definition.rationale, required_approvals: 1, status: 'pending', expires_at: '2099-08-31T23:59:59.000Z',
+    consumed_at: null, revision: 1, created_at: requestedAt, updated_at: requestedAt, decisions: [], quorum: { required: 1, approved: 0, rejected: 0, reached: false },
+    viewer_actionability: { status: 'actionable', allowed_decisions: ['approved', 'rejected'] },
+  }
+}
+const initialApprovalJourneyState = { approvals: [], activities: [], artifacts: [], received: [], requestCount: 0 }
+let approvalJourneyApprovals = structuredClone(initialApprovalJourneyState.approvals)
+let approvalJourneyActivities = structuredClone(initialApprovalJourneyState.activities)
+let approvalJourneyArtifacts = structuredClone(initialApprovalJourneyState.artifacts)
+let approvalJourneyReceived = structuredClone(initialApprovalJourneyState.received)
+let approvalJourneyRequestCount = initialApprovalJourneyState.requestCount
 const finalTourFeatures = [
   { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', enabled: true },
   { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', enabled: true },
@@ -500,6 +579,11 @@ const resetScenario = scenario => {
   idempotencyRecords = new Map()
   failedOnce = new Set()
   scenarioApprovals = structuredClone(initialScenarioApprovals)
+  approvalJourneyApprovals = structuredClone(initialApprovalJourneyState.approvals)
+  approvalJourneyActivities = structuredClone(initialApprovalJourneyState.activities)
+  approvalJourneyArtifacts = structuredClone(initialApprovalJourneyState.artifacts)
+  approvalJourneyReceived = structuredClone(initialApprovalJourneyState.received)
+  approvalJourneyRequestCount = initialApprovalJourneyState.requestCount
   currentScenarioAgents = structuredClone(scenarioAgents)
   currentScenarioTeams = structuredClone(scenarioTeams)
   currentScenarioStates = structuredClone(scenarioStates)
@@ -599,6 +683,30 @@ const sendIdempotent = async ({ request, response, path, commit, shouldFailOnce 
   return send(response, record.payload, record.status)
 }
 
+const parseIfMatchRevision = request => {
+  const header = request.headers['if-match']
+  const value = Array.isArray(header) ? header[0] : header
+  const match = /^"revision-(\d+)"$/.exec(value ?? '')
+  return match ? Number(match[1]) : null
+}
+
+const approvalDecisionValidation = (body, request, selected) => {
+  if (!body || typeof body !== 'object' || (body.decision !== 'approved' && body.decision !== 'rejected')) {
+    return { status: 422, payload: { error: { code: 'INVALID_APPROVAL_DECISION', message: 'Decision must be approved or rejected.' } } }
+  }
+  if (typeof body.reason !== 'string' || !body.reason.trim()) {
+    return { status: 422, payload: { error: { code: 'APPROVAL_REASON_REQUIRED', message: 'A non-empty approval decision reason is required.' } } }
+  }
+  const revision = parseIfMatchRevision(request)
+  if (revision === null) {
+    return { status: 428, payload: { error: { code: 'IF_MATCH_REQUIRED', message: 'If-Match must contain the current approval revision.' } } }
+  }
+  if (selected && revision !== selected.revision) {
+    return { status: 412, payload: { error: { code: 'STALE_REVISION', message: 'The approval revision is stale. Refresh before deciding.' } } }
+  }
+  return null
+}
+
 const finalTourCollectionRoutes = new Map([
   ['/api/v1/cycles', finalTourCycles],
   ['/api/v1/initiatives', finalTourInitiatives],
@@ -616,6 +724,343 @@ const finalTourCollectionRoutes = new Map([
   ['/api/v1/messages', []],
   ['/api/v1/agent-messages', []],
 ])
+
+const approvalJourneyUuid = ordinal => `00000000-0000-4000-8000-${String(ordinal).padStart(12, '0')}`
+const approvalJourneyAttentionItem = approval => ({
+  projectionVersion: 1,
+  id: `v1:approval:${approval.id}`,
+  kind: 'approval',
+  status: 'open',
+  workspaceId: approvalJourneyIds.workspace,
+  teamId: approvalJourneyIds.team,
+  projectId: approvalJourneyIds.project,
+  workItemId: approvalJourneyIds.workItem,
+  sessionId: approvalJourneySession.id,
+  planVersionId: null,
+  planStepId: null,
+  title: approval.action_name,
+  summary: approval.rationale_summary,
+  summaryDerived: true,
+  reasonCodes: ['approval.response_required'],
+  severity: approval.risk_level,
+  urgency: 'immediate',
+  requestedBy: { id: approval.requested_by_actor_id, kind: 'agent', displayName: approvalJourneyAgent.name },
+  responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name },
+  options: [
+    { id: 'approve', label: 'Approve', command: 'decideApproval', method: 'POST', path: `/api/v1/approvals/${approval.id}/decide`, targetRevision: approval.revision, requiredCapabilities: ['work:write'], requiredActorKinds: ['human'], requiresApproval: false },
+    { id: 'reject', label: 'Reject', command: 'decideApproval', method: 'POST', path: `/api/v1/approvals/${approval.id}/decide`, targetRevision: approval.revision, requiredCapabilities: ['work:write'], requiredActorKinds: ['human'], requiresApproval: false },
+  ],
+  recommendedOptionId: 'approve',
+  audience: { relationship: 'assigned_to_me', canRespond: true },
+  response: { workflow: 'approval', requiresReason: false, requiresMessage: false, choices: [], expectedStatus: 'decided' },
+  bulk: { eligible: true, compatibilityKey: `approval-journey:${approval.action_payload_hash}`, prohibitedReason: null, revalidateIndividually: true },
+  impactSummary: 'The fake Agent remains paused until this Human decision is recorded.',
+  affectedResources: [{ type: 'work_item', id: approvalJourneyIds.workItem, label: 'M6.6 Human approval hand-off' }],
+  evidence: [],
+  expiresAt: approval.expires_at,
+  sourceRevision: approval.revision,
+  source: { type: 'approval', id: approval.id, status: approval.status },
+  freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: approval.updated_at },
+  correlationId: `approval-journey:${approval.id}`,
+  createdAt: approval.created_at,
+  updatedAt: approval.updated_at,
+})
+
+const recordApprovalJourneyDecision = (approval, decision, reason) => {
+  const ordinal = approvalJourneyReceived.length + 1
+  const decidedAt = fixedNow
+  const decisionRecord = {
+    actor_id: human.id, decision, reason, source: 'human', policy_workspace_id: null, policy_revision: null, decided_at: decidedAt,
+  }
+  const artifact = {
+    id: approvalJourneyUuid(500 + ordinal), session_id: approvalJourneySession.id, work_item_id: approvalJourneyIds.workItem,
+    type: 'test_report', title: `Evidence for ${approval.action_name}`, uri: `https://example.test/workmesh/evidence/${approval.id}`,
+    source_tool: 'fake-agent', created_at: decidedAt,
+  }
+  const resultSummary = decision === 'approved'
+    ? `The Agent applied the Human approval for “${approval.action_name}” and published the verified result.`
+    : `The Agent recorded the Human rejection for “${approval.action_name}” and retained the draft for review.`
+  const activityStart = 600 + ordinal * 2
+  const receivedActivity = {
+    id: approvalJourneyUuid(activityStart), session_id: approvalJourneySession.id, actor_id: approvalJourneyAgent.actor_id,
+    sequence: approvalJourneyActivities.length + 1, kind: 'message',
+    summary: `Agent received Human ${decision} decision for ${approval.action_name}.`,
+    details_markdown: `## Decision received\n\n**Decision:** ${decision}\n\n**Immutable reason:** ${reason}\n\nThe Agent received this Human decision from WorkMesh and will not mutate the recorded reason.`,
+    artifact_ids: [], ephemeral: false, created_at: decidedAt,
+  }
+  const resultActivity = {
+    id: approvalJourneyUuid(activityStart + 1), session_id: approvalJourneySession.id, actor_id: approvalJourneyAgent.actor_id,
+    sequence: approvalJourneyActivities.length + 2, kind: 'completion', summary: resultSummary,
+    details_markdown: `## Result summary\n\n${resultSummary}\n\n**Decision reason:** ${reason}\n\n**Evidence:** ${artifact.title}`,
+    artifact_ids: [artifact.id], ephemeral: false, created_at: decidedAt,
+  }
+  approvalJourneyArtifacts = [...approvalJourneyArtifacts, artifact]
+  approvalJourneyActivities = [...approvalJourneyActivities, receivedActivity, resultActivity]
+  approvalJourneyReceived = [...approvalJourneyReceived, {
+    approvalId: approval.id, decision, reason, immutable: true, resultSummary, artifactId: artifact.id, receivedAt: decidedAt,
+  }]
+  approvalJourneySession = {
+    ...approvalJourneySession,
+    state: 'executing',
+    state_reason: `Agent incorporated the Human ${decision} decision and published result evidence.`,
+    revision: approvalJourneySession.revision + 1,
+    updated_at: decidedAt,
+  }
+  return { decisionRecord, artifact, resultSummary }
+}
+
+// Project the fake Agent hand-off into the same human-visible run explanation
+// used by the real Session page. The activity/artifact endpoints remain the
+// append-only source fixtures, while this projection lets the dogfood journey
+// verify that an immutable reason and its evidence are visible in the causal
+// timeline rather than only in a test-only state endpoint.
+const approvalJourneyRunExplanation = () => {
+  const base = runExplanationFixture({
+    selectedSession: approvalJourneySession,
+    selectedAgent: approvalJourneyAgent,
+    selectedWorkItem: approvalJourneyWorkItem,
+    selectedProject: approvalJourneyProject,
+  })
+  const groups = approvalJourneyReceived.map((received, index) => {
+    const approval = approvalJourneyApprovals.find(candidate => candidate.id === received.approvalId)
+    const receivedActivity = approvalJourneyActivities.find(activity => activity.id === approvalJourneyUuid(602 + index * 2))
+    const resultActivity = approvalJourneyActivities.find(activity => activity.id === approvalJourneyUuid(603 + index * 2))
+    const artifact = approvalJourneyArtifacts.find(candidate => candidate.id === received.artifactId)
+    const groupId = `approval-journey-group:${received.approvalId}`
+    const startedAt = receivedActivity?.created_at ?? received.receivedAt
+    const endedAt = resultActivity?.created_at ?? received.receivedAt
+    const sourceActivityId = receivedActivity?.id ?? resultActivity?.id ?? approvalJourneyUuid(602 + index * 2)
+    const evidence = artifact ? [{ type: artifact.type, id: artifact.id, title: artifact.title, uri: artifact.uri }] : []
+    return {
+      id: groupId,
+      kind: 'agent_decision_response',
+      phase: 'completion',
+      actionType: 'approval',
+      summary: `Result summary: ${received.resultSummary} Decision reason: ${received.reason}`,
+      trigger: { kind: 'approval_decision', summary: `Human ${received.decision} decision received for ${approval?.action_name ?? received.approvalId}.`, sourceActivityId },
+      actor: { id: approvalJourneyAgent.actor_id, kind: 'agent', displayName: approvalJourneyAgent.name },
+      planVersionId: null,
+      planStepId: null,
+      risk: approval?.risk_level ?? 'low',
+      count: 1,
+      firstSequence: receivedActivity?.sequence ?? index + 1,
+      lastSequence: resultActivity?.sequence ?? receivedActivity?.sequence ?? index + 1,
+      sourceActivityIds: [receivedActivity?.id, resultActivity?.id].filter(Boolean),
+      affectedResources: [
+        { type: 'approval', id: received.approvalId, label: approval?.action_name ?? received.approvalId },
+        { type: 'work_item', id: approvalJourneyIds.workItem, label: approvalJourneyWorkItem.title },
+      ],
+      evidence,
+      validation: { state: 'verified', summary: 'The Agent responded with the immutable decision reason and evidence.' },
+      startedAt,
+      endedAt,
+      durationMs: 0,
+      collapsed: false,
+      material: true,
+      failure: false,
+      attention: false,
+      technicalRecords: [],
+    }
+  })
+  const evidenceDetails = approvalJourneyArtifacts.map((artifact, index) => {
+    const receipt = approvalJourneyReceived.find(candidate => candidate.artifactId === artifact.id)
+    return {
+      type: artifact.type,
+      id: artifact.id,
+      title: artifact.title,
+      uri: artifact.uri,
+      checksum: `sha256:${String(index + 1).repeat(64)}`,
+      sourceTool: artifact.source_tool,
+      createdAt: artifact.created_at,
+      planStepId: null,
+      causalGroupIds: receipt ? [`approval-journey-group:${receipt.approvalId}`] : [],
+      validationState: 'verified',
+      repository: null,
+    }
+  })
+  return {
+    ...base,
+    session: { ...base.session, stateReason: approvalJourneySession.state_reason, revision: approvalJourneySession.revision, updatedAt: approvalJourneySession.updated_at },
+    project: { id: approvalJourneyProject.id, name: approvalJourneyProject.name, revision: approvalJourneyProject.revision },
+    workItem: { id: approvalJourneyWorkItem.id, title: approvalJourneyWorkItem.title, revision: approvalJourneyWorkItem.revision },
+    causalGroups: groups,
+    pendingAttention: approvalJourneyApprovals.filter(approval => approval.status === 'pending').map(approvalJourneyAttentionItem),
+    changes: [
+      { type: 'agent_session', id: approvalJourneySession.id, revision: approvalJourneySession.revision },
+      ...approvalJourneyArtifacts.map(artifact => ({ type: 'artifact', id: artifact.id, label: artifact.title })),
+    ],
+    evidence: evidenceDetails.map(({ checksum: _checksum, sourceTool: _sourceTool, createdAt: _createdAt, planStepId: _planStepId, causalGroupIds: _causalGroupIds, validationState: _validationState, repository: _repository, ...reference }) => reference),
+    evidenceDetails,
+    verification: approvalJourneyArtifacts.length > 0
+      ? { state: 'verified', summary: 'The Agent responded to each Human decision with result evidence.' }
+      : { state: 'pending', summary: 'The Agent is waiting for a Human decision.' },
+    health: { ...base.health, pendingApprovalCount: approvalJourneyApprovals.filter(approval => approval.status === 'pending').length },
+    freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: approvalJourneySession.updated_at },
+  }
+}
+
+const handleApprovalJourneyRoute = async (request, response, url) => {
+  const path = url.pathname
+  const method = request.method ?? 'GET'
+
+  if (method === 'GET' && path === '/api/v1/install-status') { send(response, { installed: true }); return true }
+  if (method === 'GET' && path === '/api/v1/auth/me') {
+    send(response, {
+      actor: { ...human, kind: 'human', workspace_id: approvalJourneyIds.workspace, workspace_role: 'admin' }, csrfToken: 'approval-journey-csrf',
+    })
+    return true
+  }
+  if (method === 'GET' && path === '/api/v1/features') { send(response, { features: [] }); return true }
+  if (method === 'GET' && path === '/api/v1/info') { send(response, { serverVersion: '1.29.0-approval-journey', buildSha: 'approval-journey-fixture', schemaBaseline: 24 }); return true }
+  if (method === 'GET' && path === '/api/v1/events/stream') { send(response, undefined, 204); return true }
+  if (method === 'GET' && path === '/mcp') { send(response, { error: { code: 'AUTHENTICATION_REQUIRED', message: 'Installation Token required.' } }, 401); return true }
+
+  if (method === 'POST' && path === '/__test/agent/request-approval') {
+    const body = await readBody(request)
+    const kind = typeof body.kind === 'string' ? body.kind : ''
+    if (!Object.prototype.hasOwnProperty.call(approvalJourneyDefinitions, kind)) {
+      send(response, { error: { code: 'INVALID_APPROVAL_KIND', message: 'Use approve, reject, or requirements.' } }, 422)
+      return true
+    }
+    const approval = approvalJourneyApproval(kind, fixedNow)
+    approvalJourneyApprovals = [...approvalJourneyApprovals, approval]
+    approvalJourneyRequestCount += 1
+    approvalJourneySession = { ...approvalJourneySession, state: 'awaiting_approval', state_reason: `Agent requested Human approval for ${approval.action_name}.`, updated_at: fixedNow }
+    approvalJourneyActivities = [...approvalJourneyActivities, {
+      id: approvalJourneyUuid(300 + approvalJourneyRequestCount), session_id: approvalJourneySession.id, actor_id: approvalJourneyAgent.actor_id,
+      sequence: approvalJourneyActivities.length + 1, kind: 'decision_request', summary: `Agent requested approval: ${approval.action_name}.`,
+      details_markdown: `## Approval requested\n\nThe Agent requests Human authorization for **${approval.action_name}**.`, artifact_ids: [], ephemeral: false, created_at: fixedNow,
+    }]
+    send(response, { approval: structuredClone(approval), session: structuredClone(approvalJourneySession) })
+    return true
+  }
+  if (method === 'GET' && path === '/__test/agent/state') {
+    send(response, { session: approvalJourneySession, approvals: approvalJourneyApprovals, received: approvalJourneyReceived, activities: approvalJourneyActivities, artifacts: approvalJourneyArtifacts })
+    return true
+  }
+
+  if (method === 'GET' && path === '/api/v1/teams') { send(response, page([{ id: approvalJourneyIds.team, name: 'M6.6 Human Attention', key: 'M6', revision: 1 }])); return true }
+  if (method === 'GET' && path === `/api/v1/teams/${approvalJourneyIds.team}/states`) { send(response, page(approvalJourneyStates)); return true }
+  if (method === 'GET' && path === '/api/v1/actors/humans') { send(response, page([human])); return true }
+  if (method === 'GET' && path === '/api/v1/agents') { send(response, page([approvalJourneyAgent])); return true }
+  if (method === 'GET' && path === `/api/v1/agents/${approvalJourneyAgent.id}`) { send(response, approvalJourneyAgent); return true }
+  if (method === 'GET' && path === '/api/v1/agent-sessions') { send(response, page([approvalJourneySession])); return true }
+  if (method === 'GET' && path === `/api/v1/agent-sessions/${approvalJourneySession.id}`) { send(response, approvalJourneySession); return true }
+  if (method === 'GET' && path === `/api/v1/agent-sessions/${approvalJourneySession.id}/explanation`) { send(response, approvalJourneyRunExplanation()); return true }
+  if (method === 'GET' && path === `/api/v1/agent-sessions/${approvalJourneySession.id}/plans`) { send(response, page([])); return true }
+  if (method === 'GET' && path === `/api/v1/agent-sessions/${approvalJourneySession.id}/activities`) { send(response, page(approvalJourneyActivities)); return true }
+  if (method === 'GET' && path === '/api/v1/artifacts') { send(response, page(approvalJourneyArtifacts.filter(artifact => !url.searchParams.get('sessionId') || artifact.session_id === url.searchParams.get('sessionId')))); return true }
+  if (method === 'GET' && path === '/api/v1/projects') { send(response, page([approvalJourneyProject])); return true }
+  if (method === 'GET' && path === `/api/v1/projects/${approvalJourneyIds.project}`) { send(response, approvalJourneyProject); return true }
+  if (method === 'GET' && path === `/api/v1/projects/${approvalJourneyIds.project}/control-center`) {
+    const empty = page([])
+    send(response, {
+      projectionVersion: 1,
+      scope: { workspaceId: approvalJourneyIds.workspace, projectId: approvalJourneyProject.id },
+      project: { id: approvalJourneyProject.id, name: approvalJourneyProject.name, status: approvalJourneyProject.status, targetDate: null, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: approvalJourneyProject.revision },
+      revision: approvalJourneyProject.revision,
+      freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: fixedNow },
+      collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+    })
+    return true
+  }
+  if (method === 'GET' && path === `/api/v1/projects/${approvalJourneyIds.project}/milestones`) { send(response, page([])); return true }
+  if (method === 'GET' && path === `/api/v1/projects/${approvalJourneyIds.project}/delivery`) {
+    send(response, {
+    milestones: [], updates: [], artifacts: approvalJourneyArtifacts, dependencies: [], completionSuggestions: [],
+    providerPullRequests: [], providerReviews: [], workMeshStructuredReviews: [], mergeApprovals: [],
+    })
+    return true
+  }
+  if (method === 'GET' && path === '/api/v1/views') { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/inbox') { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/agent-connections') { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/approval-autonomy-policy') {
+    send(response, {
+    workspace_id: approvalJourneyIds.workspace, mode: 'human_required', excluded_project_ids: [], revision: 1,
+    updated_by_actor_id: human.id, created_at: fixedNow, updated_at: fixedNow, reconciliation: null,
+    })
+    return true
+  }
+  if (method === 'GET' && path === '/api/v1/browser-push/config') { send(response, { configured: false, public_key: null }); return true }
+  if (method === 'GET' && path === '/api/v1/browser-push/subscriptions') { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/notifications') { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/notification-preferences') { send(response, { email_enabled: false, browser_push_enabled: false }); return true }
+
+  if (method === 'GET' && path === '/api/v1/approvals') {
+    const sessionId = url.searchParams.get('sessionId')
+    const status = url.searchParams.get('status')
+    const history = url.searchParams.get('view') === 'history'
+    const visible = approvalJourneyApprovals.filter(approval => (
+      (!sessionId || approval.session_id === sessionId)
+      && (history ? approval.status !== 'pending' && (!status || approval.status === status) : (!status || approval.status === status))
+    ))
+    send(response, page(visible.map(approval => structuredClone(approval))))
+    return true
+  }
+  const approvalGetMatch = path.match(/^\/api\/v1\/approvals\/([^/]+)$/)
+  if (method === 'GET' && approvalGetMatch) {
+    const selected = approvalJourneyApprovals.find(approval => approval.id === decodeURIComponent(approvalGetMatch[1]))
+    send(response, selected ? structuredClone(selected) : { error: { code: 'NOT_FOUND', message: 'Approval not found.' } }, selected ? 200 : 404)
+    return true
+  }
+  const approvalDecisionMatch = path.match(/^\/api\/v1\/approvals\/([^/]+)\/decide$/)
+  if (method === 'POST' && approvalDecisionMatch) {
+    const approvalId = decodeURIComponent(approvalDecisionMatch[1])
+    await sendIdempotent({
+      request, response, path,
+      commit: async body => {
+        await new Promise(resolve => setTimeout(resolve, 350))
+        const selected = approvalJourneyApprovals.find(approval => approval.id === approvalId)
+        if (!selected) return { status: 404, payload: { error: { code: 'NOT_FOUND', message: 'Approval not found.' } } }
+        const validation = approvalDecisionValidation(body, request, selected)
+        if (validation) return validation
+        if (selected.status !== 'pending') return { status: 409, payload: { error: { code: 'APPROVAL_ALREADY_DECIDED', message: 'This approval has already been decided.' } } }
+        const decision = body.decision
+        const reason = body.reason.trim()
+        const recorded = recordApprovalJourneyDecision(selected, decision, reason)
+        Object.assign(selected, {
+          status: decision, revision: selected.revision + 1, updated_at: fixedNow, decisions: [recorded.decisionRecord],
+          quorum: { required: 1, approved: decision === 'approved' ? 1 : 0, rejected: decision === 'rejected' ? 1 : 0, reached: true },
+          viewer_actionability: { status: 'blocked', reason: 'already_decided' },
+        })
+        return {
+          payload: { approval: structuredClone(selected), decision: recorded.decisionRecord, quorum: selected.quorum, status: decision, resultSummary: recorded.resultSummary },
+        }
+      },
+    })
+    return true
+  }
+
+  if (method === 'GET' && path === '/api/v1/human-attention') {
+    const status = url.searchParams.get('status')
+    const workItemId = url.searchParams.get('workItemId')
+    const visible = approvalJourneyApprovals.filter(approval => approval.status === 'pending' && (!workItemId || workItemId === approvalJourneyIds.workItem))
+    send(response, page(status === 'history' || url.searchParams.get('view') === 'history' ? [] : visible.map(approvalJourneyAttentionItem)))
+    return true
+  }
+  const attentionMatch = path.match(/^\/api\/v1\/human-attention\/([^/]+)$/)
+  if (method === 'GET' && attentionMatch) {
+    const selected = approvalJourneyApprovals.find(approval => `v1:approval:${approval.id}` === decodeURIComponent(attentionMatch[1]))
+    send(response, selected && selected.status === 'pending' ? approvalJourneyAttentionItem(selected) : { error: { code: 'NOT_FOUND', message: 'Attention item not found.' } }, selected && selected.status === 'pending' ? 200 : 404)
+    return true
+  }
+  if (method === 'GET' && path === '/api/v1/work-items') { send(response, page([approvalJourneyWorkItem])); return true }
+  if (method === 'GET' && path === `/api/v1/work-items/${approvalJourneyIds.workItem}`) { send(response, approvalJourneyWorkItem); return true }
+  if (method === 'GET' && new RegExp(`^/api/v1/work-items/${approvalJourneyIds.workItem}/(?:comments|relations)$`).test(path)) { send(response, page([])); return true }
+  if (method === 'GET' && path === '/api/v1/rooms') { send(response, page([])); return true }
+  if (method === 'GET' && /^\/api\/v1\/rooms\/[^/]+\/timeline$/.test(path)) { send(response, page([])); return true }
+  if (method === 'GET' && path === `/api/v1/work-items/${approvalJourneyIds.workItem}/execution-summary`) {
+    send(response, {
+    projectionVersion: 1, workItem: { id: approvalJourneyWorkItem.id, title: approvalJourneyWorkItem.title, revision: approvalJourneyWorkItem.revision, status: approvalJourneyWorkItem.status_name },
+    activeRuns: [{ id: approvalJourneySession.id, kind: 'run', title: approvalJourneyAgent.name, summary: approvalJourneySession.state_reason, projectId: approvalJourneyIds.project, workItemId: approvalJourneyWorkItem.id, sessionId: approvalJourneySession.id, state: approvalJourneySession.state, revision: approvalJourneySession.revision, source: { type: 'agent_session', id: approvalJourneySession.id, revision: approvalJourneySession.revision }, responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name }, activeAgent: { id: approvalJourneyAgent.actor_id, kind: 'agent', displayName: approvalJourneyAgent.name }, workItem: { id: approvalJourneyWorkItem.id, title: approvalJourneyWorkItem.title }, currentStep: null, health: { heartbeat: 'healthy', lastHeartbeatAt: approvalJourneySession.last_heartbeat_at }, lastActivity: approvalJourneyActivities.at(-1) ?? null, pendingHumanActionCount: approvalJourneyApprovals.filter(approval => approval.status === 'pending').length, evidenceCount: approvalJourneyArtifacts.length, verified: approvalJourneyArtifacts.length > 0, updatedAt: approvalJourneySession.updated_at }],
+    recentRuns: [], evidence: approvalJourneyArtifacts, freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: approvalJourneySession.updated_at },
+    })
+    return true
+  }
+  send(response, { error: { code: 'UNEXPECTED_APPROVAL_JOURNEY_REQUEST', message: `Approval-journey route not found: ${method} ${path}` } }, 500)
+  return true
+}
 
 const handleFinalTourRoute = (request, response, url) => {
   const path = url.pathname
@@ -889,6 +1334,7 @@ const handleScenarioRoute = async (request, response, url) => {
   const path = url.pathname
   const method = request.method ?? 'GET'
 
+  if (activeScenario === 'approval-journey') return handleApprovalJourneyRoute(request, response, url)
   if (activeScenario === 'final-tour') return handleFinalTourRoute(request, response, url)
 
   if (activeScenario === 'large-list' && method === 'GET' && (path === '/api/v1/work-items' || path === '/api/v1/agents')) {
@@ -987,9 +1433,12 @@ const handleScenarioRoute = async (request, response, url) => {
 
   if (activeScenario === 'agents-interactions' && path === '/api/v1/approvals' && method === 'GET') {
     const status = url.searchParams.get('status')
-    const visible = status === 'pending'
-      ? scenarioApprovals.filter(approval => approval.status === 'pending' || approval.id === 'approval-mixed-approved')
-      : scenarioApprovals.filter(approval => approval.status === status)
+    const history = url.searchParams.get('view') === 'history'
+    const visible = history
+      ? scenarioApprovals.filter(approval => approval.status !== 'pending' && (!status || approval.status === status))
+      : status === 'pending'
+        ? scenarioApprovals.filter(approval => approval.status === 'pending' || approval.id === 'approval-mixed-approved')
+        : scenarioApprovals.filter(approval => approval.status === status)
     send(response, page(visible))
     return true
   }
@@ -1004,7 +1453,10 @@ const handleScenarioRoute = async (request, response, url) => {
       commit: async body => {
         const selected = scenarioApprovals.find(approval => approval.id === approvalId)
         if (!selected) return { status: 404, payload: { error: { code: 'NOT_FOUND', message: 'Approval not found' } } }
-        const decision = body.decision === 'rejected' ? 'rejected' : 'approved'
+        const validation = approvalDecisionValidation(body, request, selected)
+        if (validation) return validation
+        if (selected.status !== 'pending') return { status: 409, payload: { error: { code: 'APPROVAL_ALREADY_DECIDED', message: 'This approval has already been decided.' } } }
+        const decision = body.decision
         Object.assign(selected, { status: decision, revision: selected.revision + 1 })
         return { payload: selected }
       },

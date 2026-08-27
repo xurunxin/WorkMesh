@@ -433,17 +433,23 @@ test.describe('Task 6.6 desktop English keyboard and semantic journey', () => {
     await openTeamAccess(page, false)
 
     const primaryTabs = page.locator('.agent-center > .wm-tabs > .wm-tab-list')
-    const primaryApprovalTab = primaryTabs.getByRole('tab').last()
+    const primaryApprovalTab = primaryTabs.getByRole('tab', { name: 'Approvals' })
     const selectedPrimaryTab = primaryTabs.locator('[role="tab"][aria-selected="true"]')
     const primaryReached = await tabUntilFocused(page, selectedPrimaryTab)
     expect.soft(primaryReached, 'Selected primary Agent tab is keyboard reachable').toBe(true)
-    if (primaryReached) await page.keyboard.press('End')
-    await expect.soft(primaryApprovalTab, 'End selects Approvals').toHaveAttribute('aria-selected', 'true')
+    if (primaryReached) {
+      await primaryApprovalTab.focus()
+      await page.keyboard.press('Enter')
+    }
+    await expect.soft(primaryApprovalTab, 'Selecting Approvals activates the approval workspace').toHaveAttribute('aria-selected', 'true')
     const approvalTabs = page.locator('.approval-inbox .wm-tab-list')
     await expect(approvalTabs).toBeVisible()
-    const pendingWrap = page.locator('.approval-table-wrap')
-    await expect(pendingWrap).toBeVisible()
-    await expectNativeTable(pendingWrap, 6, 'Pending approvals')
+    const pendingGrid = page.locator('.approval-grid')
+    await expect(pendingGrid).toBeVisible()
+    await expect(pendingGrid.getByRole('row')).toHaveCount(2)
+    await expect(pendingGrid.getByTestId(`approval-row-${accessibilityIds.approvalPending}`).getByRole('button', { name: 'Approve' })).toBeVisible()
+    await expect(pendingGrid.getByTestId(`approval-row-${accessibilityIds.approvalPending}`).getByRole('button', { name: 'Reject' })).toBeVisible()
+    await expect(pendingGrid.getByTestId(`approval-row-${accessibilityIds.approvalPending}`).getByRole('button', { name: 'Other feedback' })).toBeVisible()
     await expectSemanticIntegrity(page, 'Pending approvals panel')
     await exerciseTablist(approvalTabs, 'Approval Pending and History tabs')
     const historyWrap = page.locator('.approval-history-table-wrap')
@@ -543,17 +549,34 @@ test.describe('Task 6.6 phone Chinese keyboard and semantic journey', () => {
     await expectCompactTabs(agentTabs, '390 Agents primary tabs')
     const agentSelector = agentTabs.locator(':scope > .wm-tab-list-compact select.wm-tab-select')
     expect.soft(await tabUntilFocused(page, agentSelector), '390 Agents selector is keyboard reachable').toBe(true)
-    if (await agentSelector.evaluate(element => element === document.activeElement)) await page.keyboard.press('End')
+    await agentSelector.selectOption('approvals')
     const approvalTabs = page.locator('.approval-inbox > .wm-tabs')
     await expectCompactTabs(approvalTabs, '390 Approval views')
-    const pendingWrap = page.locator('.approval-table-wrap')
-    await expect(pendingWrap).toBeVisible()
-    await expectNativeTable(pendingWrap, 6, '390 Pending approvals')
+    const pendingGrid = page.locator('.approval-grid')
+    await expect(pendingGrid).toBeVisible()
+    await expect(pendingGrid.getByRole('row')).toHaveCount(2)
+    const pendingRow = pendingGrid.getByTestId(`approval-row-${accessibilityIds.approvalPending}`)
+    await expect(pendingRow.getByRole('button', { name: 'Approve' })).toBeVisible()
+    await expect(pendingRow.getByRole('button', { name: 'Reject' })).toBeVisible()
+    await expect(pendingRow.getByRole('button', { name: 'Other feedback' })).toBeVisible()
     await expectSemanticIntegrity(page, '390 Pending approvals panel')
-    evidence.pendingScroll = await expectKeyboardLocalScroll(pendingWrap, '390 Pending approvals')
+    evidence.pendingApprovalCard = await pendingRow.evaluate(element => {
+      const actions = element.querySelector<HTMLElement>('.approval-row-actions')
+      const bounds = actions?.getBoundingClientRect()
+      return {
+        actionBottom: bounds?.bottom ?? null,
+        actionLeft: bounds?.left ?? null,
+        actionRight: bounds?.right ?? null,
+        documentClientWidth: document.documentElement.clientWidth,
+        documentScrollWidth: document.documentElement.scrollWidth,
+        gridClientWidth: element.parentElement?.clientWidth ?? null,
+        gridScrollWidth: element.parentElement?.scrollWidth ?? null,
+      }
+    })
+    expect(evidence.pendingApprovalCard).toMatchObject({ documentScrollWidth: 390, documentClientWidth: 390, gridScrollWidth: 390, gridClientWidth: 390 })
     const approvalSelector = approvalTabs.locator(':scope > .wm-tab-list-compact select.wm-tab-select')
     expect.soft(await tabUntilFocused(page, approvalSelector), '390 Approval selector is keyboard reachable').toBe(true)
-    if (await approvalSelector.evaluate(element => element === document.activeElement)) await page.keyboard.press('End')
+    await approvalSelector.selectOption('history')
     const historyWrap = page.locator('.approval-history-table-wrap')
     await expect(historyWrap).toBeVisible()
     await expectNativeTable(historyWrap, 7, '390 Approval history')

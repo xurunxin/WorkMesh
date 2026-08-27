@@ -7,8 +7,8 @@ import { AgentRunTimeline } from '../../../app/agent-run-timeline'
 import { ApprovalDecisionControls, type ApprovalDecisionUiState } from '../../../app/agents/approval-decision-controls'
 import { approvalFromAttentionItem } from '../../../app/agents/attention-approval'
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from '../../../app/evidence-drawer'
-import { apiRequest } from '../../../app/lib/api'
-import { classifyApprovalDecisionFailure, decideApproval, type Approval, type ApprovalDecision } from '../../../app/lib/agents'
+import { apiRequest, pagedPath } from '../../../app/lib/api'
+import { classifyApprovalDecisionFailure, decideApproval, getApproval, type Approval, type ApprovalDecision } from '../../../app/lib/agents'
 import { useLocale } from '../../../app/lib/i18n'
 import { useRealtimeSubscription } from '../../../app/lib/realtime'
 import type { WorkItemDetailModel } from './contracts'
@@ -30,41 +30,106 @@ const attentionHref = (workItemId: string, attentionId: string): string => {
   return `/?${params.toString()}`
 }
 
+const workItemAttentionPageLimit = 100
+
+/**
+ * Attention rows can be visible in the open projection while a viewer is not
+ * allowed to act on them anymore. Walk the cursor rather than assuming the
+ * first projected row is the decision the Human can make.
+ */
+async function findHumanAttention(
+  path: string,
+  predicate: (item: HumanAttentionItem) => boolean,
+): Promise<HumanAttentionItem | null> {
+  let cursor: string | null = null
+  const seenCursors = new Set<string>()
+
+  while (true) {
+    const page: ListResponse<HumanAttentionItem> = await apiRequest<ListResponse<HumanAttentionItem>>(
+      pagedPath(path, cursor, workItemAttentionPageLimit),
+    )
+    const match = page.items.find(predicate)
+    if (match) return match
+
+    const nextCursor: string | null = page.nextCursor
+    if (!nextCursor || seenCursors.has(nextCursor)) return null
+    seenCursors.add(nextCursor)
+    cursor = nextCursor
+  }
+}
+
 export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, locale = 'en' }: Props) {
   const { agentsCopy } = useLocale()
   const [summary, setSummary] = useState<WorkItemExecutionSummary | null>(null)
   const [attention, setAttention] = useState<HumanAttentionItem | null>(null)
   const [approvalDecisionState, setApprovalDecisionState] = useState<ApprovalDecisionUiState>({ status: 'idle' })
+  const [approvalDetail, setApprovalDetail] = useState<Approval | null>(null)
+  const [approvalDetailLoading, setApprovalDetailLoading] = useState(false)
+  const [approvalDetailError, setApprovalDetailError] = useState('')
   const [error, setError] = useState('')
   const [refreshing, setRefreshing] = useState(false)
   const text = locale === 'zh-CN' ? {
     title: '当前状态', intro: '来自授权执行、关注事项和证据投影的当前事实。', workflow: '工作流状态', responsibility: '负责人类', executor: '当前智能体执行者', none: '无',
-    loading: '正在加载执行工作区…', failed: '无法加载执行工作区。', refresh: '刷新', needsYou: '需要你处理', noAttention: '当前没有需要 Human 响应的事项。', review: '完整决策上下文',
+    loading: '正在加载执行工作区…', failed: '无法加载执行工作区。', refresh: '刷新', needsYou: '需要你处理', noAttention: '当前没有需要 Human 响应的事项。', review: '完整决策上下文', approvalLoading: '正在加载权威审批范围…', approvalLoadFailed: '无法加载完整审批范围，决策已保持关闭。',
     execution: '当前执行', noExecution: '当前没有活跃 Run。', state: 'Session 状态', step: '当前步骤', health: '执行健康', activity: '最近有效活动', humanActions: '待处理 Human 事项', openRun: '打开 Run', controls: '打开智能体控制',
     evidence: '验收与证据', verified: '已验证', missing: '缺少证据', unknown: '已产出，尚未验证', notLoaded: '尚未加载', noEvidence: '尚未发布证据。', history: '最近 Run', relationships: '依赖与关系', timeline: '展开因果 Run 时间线', freshness: '数据新鲜度', offline: '离线', partial: '部分',
   } : {
     title: 'Current state', intro: 'Current facts from authorized execution, Attention, and evidence projections.', workflow: 'Workflow state', responsibility: 'Responsible Human', executor: 'Active Agent Executor', none: 'None',
-    loading: 'Loading the execution workspace…', failed: 'The execution workspace could not be loaded.', refresh: 'Refresh', needsYou: 'Needs You', noAttention: 'No Human response is currently required.', review: 'Full decision context',
+    loading: 'Loading the execution workspace…', failed: 'The execution workspace could not be loaded.', refresh: 'Refresh', needsYou: 'Needs You', noAttention: 'No Human response is currently required.', review: 'Full decision context', approvalLoading: 'Loading authoritative approval scope…', approvalLoadFailed: 'The complete approval scope could not be loaded. Decisions remain disabled.',
     execution: 'Current execution', noExecution: 'No active Run exists.', state: 'Session state', step: 'Current Step', health: 'Execution health', activity: 'Last meaningful activity', humanActions: 'Pending Human action', openRun: 'Open Run', controls: 'Open Agent controls',
     evidence: 'Acceptance and evidence', verified: 'Verified', missing: 'Evidence missing', unknown: 'Produced, not verified', notLoaded: 'Not loaded', noEvidence: 'No evidence has been published.', history: 'Recent Runs', relationships: 'Dependencies and relationships', timeline: 'Expand causal Run Timeline', freshness: 'Data freshness', offline: 'Offline', partial: 'Partial',
   }
 
+  const loadApprovalDetail = useCallback(async (approvalId: string): Promise<Approval | null> => {
+    setApprovalDetailLoading(true)
+    setApprovalDetailError('')
+    try {
+      const loaded = await getApproval(approvalId)
+      setApprovalDetail(loaded)
+      return loaded
+    } catch (reason) {
+      setApprovalDetail(null)
+      setApprovalDetailError(reason instanceof Error ? reason.message : text.approvalLoadFailed)
+      return null
+    } finally {
+      setApprovalDetailLoading(false)
+    }
+  }, [text.approvalLoadFailed])
+
   const load = useCallback(async (background = false) => {
     if (background) setRefreshing(true)
     try {
-      const [nextSummary, attentionPage] = await Promise.all([
+      const [nextSummary, actionable] = await Promise.all([
         apiRequest<WorkItemExecutionSummary>(`/api/v1/work-items/${model.id}/execution-summary`),
-        apiRequest<ListResponse<HumanAttentionItem>>(`/api/v1/human-attention?status=open&workItemId=${encodeURIComponent(model.id)}&limit=1`),
+        findHumanAttention(
+          `/api/v1/human-attention?status=open&workItemId=${encodeURIComponent(model.id)}`,
+          item => item.audience.canRespond,
+        ),
       ])
+      const nextAttention = actionable
+        ?? await findHumanAttention(
+          `/api/v1/human-attention?kind=approval&status=seen&workItemId=${encodeURIComponent(model.id)}`,
+          item => item.reasonCodes.includes('approval.viewer_already_decided'),
+        )
+        ?? null
+      const nextApproval = nextAttention?.kind === 'approval' && nextAttention.source.type === 'approval'
+        ? await loadApprovalDetail(nextAttention.source.id)
+        : null
+      if (!nextAttention || nextAttention.kind !== 'approval') {
+        setApprovalDetail(null)
+        setApprovalDetailError('')
+        setApprovalDetailLoading(false)
+      }
       setSummary(nextSummary)
-      setAttention(attentionPage.items[0] ?? null)
+      setAttention(nextAttention)
+      setApprovalDetail(nextApproval)
       setError('')
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : text.failed)
     } finally {
       setRefreshing(false)
     }
-  }, [model.id, text.failed])
+  }, [loadApprovalDetail, model.id, text.failed])
 
   useEffect(() => { void load(false) }, [load])
   useEffect(() => { setApprovalDecisionState({ status: 'idle' }) }, [attention?.id, attention?.sourceRevision])
@@ -92,7 +157,13 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
     validationState: evidenceState === 'verified' ? 'verified' : evidenceState === 'missing' ? 'missing' : 'unknown',
   }))
   const evidenceDrawer = useEvidenceDrawer(drawerItems, `work-item:${model.id}`)
-  const approval = attention ? approvalFromAttentionItem(attention) : null
+  const projectedApproval = attention ? approvalFromAttentionItem(attention) : null
+  const approval = projectedApproval && approvalDetail?.id === projectedApproval.id
+    ? approvalDetail
+    : projectedApproval?.viewer_actionability?.status === 'blocked'
+      && projectedApproval.viewer_actionability.reason !== 'viewer_already_decided'
+      ? projectedApproval
+      : null
   const decideAttentionApproval = async (
     current: Approval,
     decision: ApprovalDecision,
@@ -105,6 +176,7 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
       setApprovalDecisionState({
         status: 'success',
         decision,
+        reason: result.decision.reason,
         message: result.status === 'pending' && !result.quorum.reached
           ? agentsCopy.approvalDecisionQuorum(result.quorum.approved, result.quorum.required)
           : agentsCopy.approvalDecisionRecorded(decision),
@@ -146,6 +218,7 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
       <header><h3 id="work-item-needs-you-title">{text.needsYou}</h3></header>
       {attention ? <article className={approval ? 'has-inline-approval' : undefined}>
         <div><strong>{attention.title}</strong><RichContent density="compact" source={attention.summary} /><small>{attention.impactSummary}</small></div>
+        {projectedApproval && !approval && <div className={approvalDetailError ? 'approval-detail-gate is-error' : 'approval-detail-gate'} role={approvalDetailError ? 'alert' : 'status'}><span>{approvalDetailError ? text.approvalLoadFailed : text.approvalLoading}</span>{approvalDetailError && <Button disabled={approvalDetailLoading} onClick={() => void loadApprovalDetail(projectedApproval.id)} type="button" variant="secondary">{text.refresh}</Button>}</div>}
         {approval && <ApprovalDecisionControls approval={approval} copy={agentsCopy} key={`${approval.id}:${approval.revision}`} onDecide={decideAttentionApproval} state={approvalDecisionState} />}
         <a className="wm-button wm-button-secondary" href={attentionHref(model.id, attention.id)}>{text.review}</a>
       </article> : <p className="empty">{text.noAttention}</p>}
