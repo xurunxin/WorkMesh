@@ -129,11 +129,32 @@ export interface PageRequestOptions extends RequestOptions { cursor?: string; li
 export interface HumanAttentionListFilters {
   kind?: HumanAttentionKind
   status?: HumanAttentionStatus
+  view?: 'active' | 'history'
+  severity?: 'info' | 'low' | 'medium' | 'high' | 'critical'
+  urgency?: 'normal' | 'soon' | 'immediate'
+  audience?: 'assigned_to_me' | 'visible_to_me' | 'workspace_administration'
+  requestedByActorId?: string
+  responsibleHumanActorId?: string
+  expiresBefore?: string
+  expiresAfter?: string
+  updatedAfter?: string
+  updatedBefore?: string
   projectId?: string
   workItemId?: string
   sessionId?: string
 }
 export type ControlCenterCollection = 'attention' | 'running' | 'risks' | 'recently_verified' | 'ready_work' | 'blocked_work'
+export interface RunExplanationFilters {
+  attention?: 'true'
+  phase?: 'intake' | 'investigation' | 'planning' | 'implementation' | 'validation' | 'human_input' | 'recovery' | 'completion'
+  planStepId?: string
+  actorId?: string
+  actionType?: 'acknowledgement' | 'read' | 'write' | 'tool' | 'state_transition' | 'plan' | 'message' | 'approval' | 'decision' | 'evidence' | 'validation' | 'handoff' | 'heartbeat' | 'other'
+  risk?: 'low' | 'medium' | 'high' | 'critical'
+  evidence?: 'present' | 'missing'
+  failure?: 'true'
+  timeWindow?: '24h' | '7d' | '30d'
+}
 export interface EventListOptions extends RequestOptions {
   cursor: string
   limit?: number
@@ -310,9 +331,9 @@ export class WorkMeshClient {
   getHumanAttention<T = HumanAttentionItem>(attentionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/human-attention/${encodeURIComponent(attentionId)}`, undefined, options) }
   getControlCenter<T = ControlCenterResponse>(collection?: ControlCenterCollection, options: PageRequestOptions = {}): Promise<T> { return this.request('GET', pagedPath('/api/v1/control-center', { collection }, options), undefined, options) }
   getProjectControlCenter<T = ControlCenterResponse>(projectId: string, collection?: ControlCenterCollection, options: PageRequestOptions = {}): Promise<T> { return this.request('GET', pagedPath(`/api/v1/projects/${encodeURIComponent(projectId)}/control-center`, { collection }, options), undefined, options) }
-  explainAgentSession<T = RunExplanation>(sessionId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/explanation`, undefined, { ...options, refreshSessionId: sessionId }) }
+  explainAgentSession<T = RunExplanation>(sessionId: string, filters: RunExplanationFilters = {}, options: PageRequestOptions = {}): Promise<T> { return this.request('GET', pagedPath(`/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/explanation`, { ...filters }, options), undefined, { ...options, refreshSessionId: sessionId }) }
   getWorkItemExecutionSummary<T = WorkItemExecutionSummary>(workItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('GET', `/api/v1/work-items/${encodeURIComponent(workItemId)}/execution-summary`, undefined, options) }
-  previewAgentSessionControl<T = ActionPreview>(sessionId: string, action: 'pause' | 'resume' | 'stop' | 'retry' | 'handoff' | 'replan' | 'steer', options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/control-preview`, { action }, { ...options, refreshSessionId: sessionId }) }
+  previewAgentSessionControl<T = ActionPreview>(sessionId: string, action: 'pause' | 'resume' | 'stop' | 'retry' | 'handoff' | 'replan' | 'steer', preview: { stopMode?: 'graceful' | 'immediate'; steeringScope?: 'current_step' | 'remaining_plan' | 'session' | 'guidance_proposal' } = {}, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/agent-sessions/${encodeURIComponent(sessionId)}/control-preview`, { action, ...preview }, { ...options, refreshSessionId: sessionId }) }
   claimInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/claim`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-claim') }) }
   acknowledgeInboxItem<T = InboxItemDetail>(inboxItemId: string, options: RequestOptions = {}): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/acknowledge`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-acknowledge') }) }
   replyInboxItem<T = InboxReplyResponse>(inboxItemId: string, input: { body: string; payload?: Record<string, unknown> }, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/inbox/${encodeURIComponent(inboxItemId)}/reply`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(inboxItemId, 'inbox-reply') }) }

@@ -227,7 +227,6 @@ const agentOnlyOperations = new Set([
   'getCurrentAgentConnectionIdentity',
   'claimInboxItem',
   'acknowledgeInboxItem',
-  'replyInboxItem',
 ])
 
 const revisionedOperations = new Set([
@@ -310,6 +309,8 @@ const selfAuthorizedProjectionOperations = new Set([
   'explainAgentSession',
   'getWorkItemExecutionSummary',
   'previewAgentSessionControl',
+  'listRecoveryItems',
+  'getRecoveryItem',
 ])
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {

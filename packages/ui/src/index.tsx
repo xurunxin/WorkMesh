@@ -1904,8 +1904,8 @@ export function CausalTimeline({ entries, label }: { entries: readonly TimelineE
   return <ol aria-label={label} className="wm-causal-timeline">{entries.map(entry => <li key={entry.id}><span aria-hidden="true" className="wm-causal-marker" /><div><header><strong>{entry.label}</strong><time dateTime={entry.time}>{entry.time}</time></header><p>{entry.description}</p>{entry.actor && <small>{entry.actor}</small>}</div></li>)}</ol>
 }
 
-export function TechnicalEventGroup({ children, count, label }: PropsWithChildren<{ count: number; label: string }>) {
-  return <details className="wm-technical-events"><summary>{label}<span>{count}</span></summary><div>{children}</div></details>
+export function TechnicalEventGroup({ children, count, label, open }: PropsWithChildren<{ count: number; label: string; open?: boolean }>) {
+  return <details className="wm-technical-events" open={open}><summary>{label}<span>{count}</span></summary><div>{children}</div></details>
 }
 
 export type EvidenceReference = {

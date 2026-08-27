@@ -33,7 +33,7 @@ describe('command-center integration contract', () => {
     expect(home).toContain('data-testid="create-work-item"')
   })
 
-  it('provides stable Agent routes and Inbox anchor targets', () => {
+  it('provides stable Agent routes and Inbox queue deep links', () => {
     const agentCard = read('app/agents/agent-registry-card.tsx')
     expect(agentDetailHref('agent/command-route')).toBe('/agents/agent%2Fcommand-route')
     expect(agentDetailHref('agent%2Fcommand-route')).toBe('/agents/agent%252Fcommand-route')
@@ -41,7 +41,8 @@ describe('command-center integration contract', () => {
     expect(agentCard).toMatch(/^\s*const detailHref = agentDetailHref\(agent\.id\)$/m)
     expect(agentCard).toMatch(/^\s*href=\{detailHref\}$/m)
     expect(agentCard).toContain('id={`agent-${encodeURIComponent(agent.id)}`}')
-    expect(read('app/work-room.tsx')).toContain("id={`inbox-${stringValue(item, 'id')}`}")
+    expect(read('features/command-center/registry.ts')).toContain("href: `/?view=inbox&queue=messages&inboxItem=${encodeURIComponent(item.id)}`")
+    expect(read('app/collaboration-queues.tsx')).toContain('readCollaborationQueueRoute(window.location.search)')
   })
 
   it('bounds and cancels endpoint fanout without adding mutation methods', () => {

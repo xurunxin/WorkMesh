@@ -5,11 +5,15 @@ export default defineConfig({
     include: ['**/integration/**/*.test.ts'],
     exclude: ['**/node_modules/**'],
     passWithNoTests: false,
-    // Tinypool's child-process IPC can close before long-lived integration servers finish on Windows.
-    pool: process.platform === 'win32' ? 'threads' : 'forks',
+    // Long transaction/lock-order suites outlive Tinypool's Windows thread worker,
+    // which can exit without a Vitest failure summary. Process workers keep the
+    // Fastify/PostgreSQL lifecycle isolated and complete the same suites reliably.
+    pool: 'forks',
     fileParallelism: false,
     maxWorkers: 1,
-    hookTimeout: 120_000,
-    testTimeout: 120_000,
+    // Windows PostgreSQL can spend more than two minutes syncing a cascading
+    // truncate or completing an integration fixture; let each atomic unit finish.
+    hookTimeout: 300_000,
+    testTimeout: 300_000,
   },
 })

@@ -18,6 +18,36 @@ export function sortNotifications(items: NotificationFact[]): NotificationFact[]
     || right.id.localeCompare(left.id))
 }
 
+export type NotificationGroup = Readonly<{
+  key: string
+  notification: NotificationFact
+  count: number
+  ids: string[]
+}>
+
+const highValueKind = /(fail|error|conflict|decision|approval|evidence|artifact|delivery|transition|blocked|recovery|handoff)/i
+
+export function groupNotifications(items: NotificationFact[]): NotificationGroup[] {
+  const groups: NotificationGroup[] = []
+  const groupable = new Map<string, number>()
+  for (const notification of sortNotifications(items)) {
+    const health = notificationHealth(notification)
+    const canGroup = notification.priority === 'update'
+      && health !== 'failed'
+      && !highValueKind.test(notification.kind)
+    const key = [notification.kind, notification.source_type, notification.source_id, notification.title, notification.body, health].join('\u0000')
+    const index = canGroup ? groupable.get(key) : undefined
+    if (index === undefined) {
+      const next = groups.push({ key: `${key}\u0000${notification.id}`, notification, count: 1, ids: [notification.id] }) - 1
+      if (canGroup) groupable.set(key, next)
+      continue
+    }
+    const current = groups[index]!
+    groups[index] = { ...current, count: current.count + 1, ids: [...current.ids, notification.id] }
+  }
+  return groups
+}
+
 export function collaborationState(input: { loading: boolean; error?: { status?: number; code?: string } | null; count: number; reconnecting?: boolean }): CollaborationState {
   if (input.reconnecting) return 'reconnecting'
   if (input.loading) return 'loading'

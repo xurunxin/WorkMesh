@@ -140,7 +140,7 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
   app.post("/api/v1/agent-sessions/:id/ack", async request => { const body = acknowledgeAgentSessionInputSchema.parse(request.body); return commands.acknowledge(h.db, h.meta(request, body, { id: id(request) }), id(request), body); });
   app.post("/api/v1/agent-sessions/:id/heartbeat", async request => { const body = heartbeatInputSchema.parse(request.body); return commands.heartbeat(h.db, h.meta(request, body, { id: id(request) }), id(request), body); });
   app.post("/api/v1/agent-sessions/:id/state", async request => { const body = z.object({ state: agentSessionStateSchema, reason: z.string().min(1).max(2_000) }).parse(request.body); return commands.transitionState(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });
-  app.post("/api/v1/agent-sessions/:id/prompt", async request => { const body = promptAgentSessionInputSchema.parse(request.body); return commands.prompt(h.db, h.meta(request, body, { id: id(request) }), id(request), body); });
+  app.post("/api/v1/agent-sessions/:id/prompt", async request => { const body = promptAgentSessionInputSchema.parse(request.body); const ifMatch=h.header(request,"if-match"); return commands.prompt(h.db, h.meta(request, body, { id: id(request) }), id(request), body, ifMatch ? parseRevision(ifMatch) : undefined); });
   app.post("/api/v1/agent-sessions/:id/activities", async request => { const body = appendActivityInputSchema.parse(request.body); return commands.appendActivity(h.db, h.meta(request, body, { id: id(request) }), id(request), body); });
   app.get("/api/v1/agent-sessions/:id/activities", async request => {
     const sessionId = id(request);

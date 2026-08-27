@@ -14,7 +14,9 @@ import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
 import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
 import { AgentWorkPanel, useAgentDelegationController } from './agent-work-panel'
-import { InboxPanel, WorkRoom } from './work-room'
+import { WorkRoom } from './work-room'
+import { ActionableCollaborationQueues } from './collaboration-queues'
+import { RecoveryCenter } from './recovery-center'
 import { LoadMoreButton, usePagedApiList } from './lib/pagination'
 import { SkeletonList } from './lib/skeleton-list'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
@@ -558,7 +560,7 @@ function HomePageScope({
   }
   const signOut = async () => { try { await apiMutation('logout', '/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; if (!isAuthorityCurrent()) return; clearCsrfToken(); window.location.assign('/login') }
 
-  const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
+  const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'recovery' ? t('recovery') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const fullPageDetailActive = fullItemView && (selectedItem !== null || (requestedItem?.mode === 'full_page' && detailErrorState !== null))
   const scopeNavigation = workspaceNavigation({ active: scope, onHomeNavigate: (event, value) => navigateScope(event, value), t })
   const utilityNavigation = workspaceUtilityNavigation({ t })
@@ -590,18 +592,18 @@ function HomePageScope({
         <div><h1>{pageTitle}</h1>{selectedProject && <p>{selectedProject.summary || t('projectOverview')}</p>}</div>
         <div className="page-actions">
           {scope === 'projects' && <Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="secondary">{t('newProject')}</Button>}
-          {scope !== 'inbox' && scope !== 'guidance' && <Button icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>}
+          {scope !== 'inbox' && scope !== 'recovery' && scope !== 'guidance' && <Button icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>}
         </div>
       </header>
       {collectionError && <ErrorState description={collectionError.message} title={t('workViewCouldNotRefresh')} />}
       {actorError && <ErrorState actionLabel={t('retry')} description={actorError} onAction={() => void refreshActor()} title={t('workViewCouldNotRefresh')} />}
       {error && <ErrorState description={error} title={t('actionCouldNotComplete')} />}
       {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">{t('reloadLatestWork')}</Button></aside>}
-      {scope === 'inbox' ? <InboxPanel /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
+      {scope === 'inbox' ? <ActionableCollaborationQueues actor={actor} /> : scope === 'recovery' ? <RecoveryCenter actor={actor} /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
         {scope === 'projects' && <section className="project-strip" aria-label={t('projects')} onKeyDown={handleProjectStripKeyDown} role="region" tabIndex={0}>{teamProjects.map(project => <Button icon={<FolderSimpleIcon aria-hidden="true" size={16} weight="bold" />} key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)} variant="ghost">{project.name}</Button>)}{teamProjects.length === 0 && <span className="empty">{t('noProjects')}</span>}</section>}
         {scope !== 'projects' && workSurfaces}
-        {scope === 'projects' && selectedProject && <ProjectWorkspace project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} />}
+        {scope === 'projects' && selectedProject && <ProjectWorkspace actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} />}
       </> : teamAuthoritiesInitialized
         ? <section className="empty">{t('noTeam')} · {t('settings')}</section>
         : teamAuthorityError
@@ -636,6 +638,7 @@ function HomePageScope({
       conflict={detailConflict}
       error={detailErrorState}
       mode={fullItemView ? 'full_page' : 'sheet'}
+      locale={locale}
       model={toWorkItemDetailModel(selectedItem)}
       resetKey={detailResetKey}
       draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }}
@@ -646,6 +649,7 @@ function HomePageScope({
       onOpenFull={() => void openItem(selectedItem.id, true)}
       onReloadLatest={() => { setDetailConflict(null); setDetailErrorState(null); setDetailResetKey(value => value + 1); void refreshWorkSurface(); void openItem(selectedItem.id, fullItemView, false) }}
       onSave={saveItem}
+      relationships={<WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />}
       options={{
         statuses: states.map(state => ({ id: state.id, label: state.name })),
         humans: humans.map(human => ({ id: human.id, label: human.display_name })),
@@ -654,7 +658,6 @@ function HomePageScope({
         parents: items.filter(candidate => candidate.id !== selectedItem.id).map(candidate => ({ id: candidate.id, label: `${candidate.team_key}-${candidate.number} · ${candidate.title}` })),
       }}
       supplemental={<>
-        <WorkItemRelationships authorityKey={authorityScopeKey} item={selectedItem} projectItems={items} />
         <WorkRoom workItemId={selectedItem.id} draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }} legacyComments={comments} legacyHumans={humans} onLegacyComment={createComment} onLegacyUpdate={updateComment} onLegacyRefresh={commentsPage.refresh} />
         <LoadMoreButton collection={commentsPage} label="comments" />
       </>}

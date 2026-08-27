@@ -109,6 +109,19 @@ test.describe('Stage 1 agent browser acceptance', () => {
     }
     await page.route(`${apiUrl}/api/v1/agent-sessions/${sourceId}`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify(sourceSession) }))
     await page.route(`${apiUrl}/api/v1/agent-sessions/${nextId}`, route => route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify(nextSession) }))
+    await page.route(`${apiUrl}/api/v1/agent-sessions/${sourceId}/control-preview`, route => {
+      if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { ...corsHeaders, 'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key, If-Match, X-CSRF-Token', 'Access-Control-Allow-Methods': 'POST, OPTIONS' } })
+      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
+        projectionVersion: 1, action: 'retry', allowed: true, reasonCode: 'control.allowed', sourceRevision: 4,
+        currentState: 'failed', targetState: 'queued', affectedResources: [{ type: 'agent_session', id: sourceId, revision: 4 }],
+        consequences: [{ code: 'session.retry.created', summary: 'Create a distinct queued Session.' }], reversible: false,
+        releaseLease: false, preserveArtifacts: true, preserveUncommittedWork: 'not_applicable', nextWorkItemState: null,
+        invalidatedApprovals: [], requiredReason: true, requiredApproval: { required: false, approvalType: null },
+        stopMode: null, supportedStopModes: [], steeringScope: null, supportedSteeringScopes: [], currentPlan: null, currentStep: null,
+        lastHeartbeatAt: null, leaseBehavior: 'not_applicable', recoveryPath: 'The failed Session remains immutable.', resultResource: 'new_session',
+        warnings: [], expiresAt: '2026-08-27T00:05:00.000Z', freshness: { state: 'current', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-07-23T00:01:00.000Z', invalidAfter: '2026-08-27T00:05:00.000Z' }, advisory: true,
+      }) })
+    })
     await page.route(`${apiUrl}/api/v1/agent-sessions/${sourceId}/retry`, route => {
       if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { ...corsHeaders, 'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key, If-Match, X-CSRF-Token', 'Access-Control-Allow-Methods': 'POST, OPTIONS' } })
       return route.fulfill({ status: 201, headers: corsHeaders, body: JSON.stringify(nextSession) })
@@ -118,8 +131,12 @@ test.describe('Stage 1 agent browser acceptance', () => {
     const detail = page.getByTestId('agent-session-detail')
     await expect(detail).toContainText('failed')
     await expect(detail.getByRole('button', { name: 'Pause' })).toHaveCount(0)
+    await detail.getByRole('button', { name: 'Retry' }).first().click()
+    const retryDialog = page.getByRole('dialog', { name: 'Retry' })
+    await expect(retryDialog.getByText('session.retry.created')).toBeVisible()
+    await retryDialog.getByRole('textbox', { name: 'Reason' }).fill('Human requested a retry from WorkMesh.')
     const retryRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === `/api/v1/agent-sessions/${sourceId}/retry`)
-    await detail.getByRole('button', { name: 'Retry' }).click()
+    await retryDialog.getByRole('button', { name: 'Confirm and execute' }).click()
     const request = await retryRequest
     expect(request.headers()['if-match']).toBe('"revision-4"')
     expect(request.postDataJSON()).toEqual({ reason: 'Human requested a retry from WorkMesh.', reuseContext: true })

@@ -1697,6 +1697,15 @@ message content. `options` only describes an existing command path. The client
 must submit that command normally so the server can re-evaluate live identity,
 scope, capability, revision, lease, approval, and idempotency requirements.
 
+`audience` describes the current viewer relationship, `response` describes the
+source-specific form, and `bulk` declares only compatibility for client
+orchestration. None grants write authority. Bulk responses submit each source
+command independently with its current revision and idempotency key; partial
+failure retains failed items and does not replay successful items as a new
+logical attempt. Human clarification and completion-review replies use the
+revisioned Inbox reply command for the exact Human recipient and preserve Work
+Room provenance.
+
 Consumers refresh on the existing committed source invalidations and perform a
 snapshot read after `CURSOR_EXPIRED` or realtime resync. An item absent from an
 authorized response is not inferable through detail errors, counts, timing, or

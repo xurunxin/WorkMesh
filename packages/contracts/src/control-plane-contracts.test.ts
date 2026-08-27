@@ -51,12 +51,22 @@ describe('Human Control Plane read contracts', () => {
       invalidatedApprovals: [],
       requiredReason: true,
       requiredApproval: { required: false, approvalType: null },
+      stopMode: 'immediate',
+      supportedStopModes: [{ mode: 'graceful', available: true, summary: 'Stop at a safe boundary.' }, { mode: 'immediate', available: true, summary: 'Fence later writes now.' }],
+      steeringScope: null,
+      supportedSteeringScopes: [],
+      currentPlan: { id, revision: 2 },
+      currentStep: { id, title: 'Verify control' },
+      lastHeartbeatAt: now,
+      leaseBehavior: 'release_now',
+      recoveryPath: 'Retry creates a distinct Session.',
+      resultResource: 'same_session',
       warnings: ['The final command revalidates authority.'],
       expiresAt: '2026-08-26T00:00:30.000Z',
       freshness: { state: 'current', observedAt: now, sourceUpdatedAt: now, invalidAfter: '2026-08-26T00:00:30.000Z' },
       advisory: true,
     })
-    expect(preview).toMatchObject({ advisory: true, sourceRevision: 4, releaseLease: true })
+    expect(preview).toMatchObject({ advisory: true, sourceRevision: 4, releaseLease: true, stopMode: 'immediate', leaseBehavior: 'release_now' })
   })
 
   it('binds all five REST and MCP reads to stable read policies', async () => {

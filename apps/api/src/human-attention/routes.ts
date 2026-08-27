@@ -4,7 +4,9 @@ import { z } from 'zod'
 import {
   humanAttentionItemSchema,
   humanAttentionKindSchema,
+  humanAttentionSeveritySchema,
   humanAttentionStatusSchema,
+  humanAttentionUrgencySchema,
 } from '@workmesh/contracts'
 import { DomainError } from '@workmesh/domain'
 import type { ApiActor } from '../agent/types.js'
@@ -26,7 +28,17 @@ type Helpers = Readonly<{
 
 const listQuerySchema = z.object({
   kind: humanAttentionKindSchema.optional(),
-  status: humanAttentionStatusSchema.default('open'),
+  status: humanAttentionStatusSchema.optional(),
+  view: z.enum(['active', 'history']).default('active'),
+  severity: humanAttentionSeveritySchema.optional(),
+  urgency: humanAttentionUrgencySchema.optional(),
+  audience: z.enum(['assigned_to_me', 'visible_to_me', 'workspace_administration']).optional(),
+  requestedByActorId: z.string().uuid().optional(),
+  responsibleHumanActorId: z.string().uuid().optional(),
+  expiresBefore: z.string().datetime({ offset: true }).optional(),
+  expiresAfter: z.string().datetime({ offset: true }).optional(),
+  updatedAfter: z.string().datetime({ offset: true }).optional(),
+  updatedBefore: z.string().datetime({ offset: true }).optional(),
   projectId: z.string().uuid().optional(),
   workItemId: z.string().uuid().optional(),
   sessionId: z.string().uuid().optional(),
@@ -119,10 +131,38 @@ export function registerHumanAttentionRoutes(
     const values: unknown[] = [current.workspaceId]
     const where = [humanAttentionAuthorizationPredicate(current, values)]
     addFilter(where, values, 'attention.kind', query.kind)
-    addFilter(where, values, 'attention.status', query.status)
+    if (query.status) addFilter(where, values, 'attention.status', query.status)
+    else where.push(query.view === 'active'
+      ? "attention.status IN ('open','seen','decided','applying','failed')"
+      : "attention.status IN ('verified','expired','superseded')")
+    addFilter(where, values, 'attention.risk_level', query.severity)
+    addFilter(where, values, 'attention.requested_by_actor_id', query.requestedByActorId)
+    addFilter(where, values, 'attention.responsible_human_actor_id', query.responsibleHumanActorId)
     addFilter(where, values, 'attention.project_id', query.projectId)
     addFilter(where, values, 'attention.work_item_id', query.workItemId)
     addFilter(where, values, 'attention.session_id', query.sessionId)
+    if (query.urgency === 'immediate') where.push("(attention.kind IN ('conflict','recovery') OR attention.risk_level IN ('high','critical') OR (attention.expires_at IS NOT NULL AND attention.expires_at<=now()+interval '1 hour'))")
+    if (query.urgency === 'soon') where.push("attention.kind IN ('decision','approval','completion_review') AND attention.risk_level NOT IN ('high','critical') AND attention.kind NOT IN ('conflict','recovery') AND (attention.expires_at IS NULL OR attention.expires_at>now()+interval '1 hour')")
+    if (query.urgency === 'normal') where.push("attention.kind NOT IN ('decision','approval','completion_review','conflict','recovery') AND attention.risk_level NOT IN ('high','critical') AND (attention.expires_at IS NULL OR attention.expires_at>now()+interval '24 hours')")
+    if (query.expiresBefore) { values.push(query.expiresBefore); where.push(`attention.expires_at<=$${values.length}::timestamptz`) }
+    if (query.expiresAfter) { values.push(query.expiresAfter); where.push(`attention.expires_at>=$${values.length}::timestamptz`) }
+    if (query.updatedAfter) { values.push(query.updatedAfter); where.push(`attention.updated_at>=$${values.length}::timestamptz`) }
+    if (query.updatedBefore) { values.push(query.updatedBefore); where.push(`attention.updated_at<=$${values.length}::timestamptz`) }
+    if (query.audience === 'assigned_to_me') {
+      values.push(current.id)
+      where.push(`(attention.responsible_human_actor_id=$${values.length} OR attention.recipient_actor_id=$${values.length})`)
+    }
+    if (query.audience === 'visible_to_me') {
+      values.push(current.id)
+      where.push(`attention.responsible_human_actor_id IS DISTINCT FROM $${values.length} AND attention.recipient_actor_id IS DISTINCT FROM $${values.length}`)
+    }
+    if (query.audience === 'workspace_administration') {
+      if (current.workspaceRole !== 'admin') where.push('false')
+      else {
+        values.push(current.id)
+        where.push(`attention.responsible_human_actor_id IS DISTINCT FROM $${values.length} AND attention.recipient_actor_id IS DISTINCT FROM $${values.length}`)
+      }
+    }
     const page = await h.paginator.query<HumanAttentionRow>(
       h.db,
       request,
@@ -141,7 +181,7 @@ export function registerHumanAttentionRoutes(
     const observedAt = new Date()
     return {
       ...page,
-      items: page.items.map(row => projectHumanAttentionRow(row, observedAt)),
+      items: page.items.map(row => projectHumanAttentionRow(row, observedAt, current)),
     }
   })
 
@@ -163,6 +203,6 @@ export function registerHumanAttentionRoutes(
     )
     const row = result.rows[0]
     if (!row) throw new DomainError('NOT_FOUND', 'Human attention item not found')
-    return humanAttentionItemSchema.parse(projectHumanAttentionRow(row))
+    return humanAttentionItemSchema.parse(projectHumanAttentionRow(row, new Date(), current))
   })
 }

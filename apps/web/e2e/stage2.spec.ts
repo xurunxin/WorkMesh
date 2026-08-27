@@ -44,6 +44,7 @@ async function agentApi<T>(page: Page, bearerToken: string, path: string, method
 }
 
 test('renders auditable multi-agent Work Room cards and confirms force release', async ({ page }) => {
+  await page.context().addCookies([{ name: 'workmesh_locale', value: 'en', url: 'http://127.0.0.1:3100' }])
   const actor = { id: 'human-1', displayName: 'Alex' }
   const executor = { agent_id: 'agent-definition-coordinator', agent_actor_id: 'agent-coordinator', agent_slug: 'coordinator', agent_display_name: 'Coordinator', session_id: 'session-parent', lease_id: 'lease-executor', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: 'work-1', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_heartbeat_at: '2026-07-23T01:00:00.000Z', lease_expires_at: '2026-07-23T01:30:00.000Z' }
   const reviewer = { agent_id: 'agent-definition-reviewer', agent_actor_id: 'agent-reviewer', agent_slug: 'reviewer', agent_display_name: 'Reviewer', session_id: 'session-child', lease_id: 'lease-reviewer', lease_kind: 'review_shared', resource_type: 'plan_step', resource_id: 'step-review', execution_state: 'awaiting_input', heartbeat_health: 'healthy', last_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_heartbeat_at: '2026-07-23T01:01:00.000Z', lease_expires_at: '2026-07-23T01:31:00.000Z' }
@@ -71,6 +72,13 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
     if (path === '/api/v1/work-items') return body({ items: [workItem], nextCursor: null })
     if (path === '/api/v1/work-items/work-1') return body(workItem)
     if (path === '/api/v1/work-items/work-1/comments') return body({ items: [], nextCursor: null })
+    if (path === '/api/v1/work-items/work-1/execution-summary') return body({
+      projectionVersion: 1,
+      workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision, status: workItem.status_name },
+      activeRuns: [{ id: 'session-parent', kind: 'run', title: 'Coordinator', summary: 'Release validation is in progress.', projectId: null, workItemId: workItem.id, sessionId: 'session-parent', state: 'executing', revision: 2, source: { type: 'agent_session', id: 'session-parent', revision: 2 }, responsibleHuman: { id: actor.id, kind: 'human', displayName: 'Alex' }, activeAgent: { id: 'agent-coordinator', kind: 'agent', displayName: 'Coordinator' }, workItem: { id: workItem.id, title: workItem.title }, currentStep: { id: 'step-review', title: 'Validate release evidence', status: 'in_progress', ordinal: 1 }, health: { heartbeat: 'healthy', lastHeartbeatAt: '2026-07-23T01:00:00.000Z' }, lastActivity: { id: 'activity-validation', kind: 'validation', summary: 'Security review passed', createdAt: '2026-07-23T01:04:00.000Z' }, pendingHumanActionCount: 1, evidenceCount: 1, verified: true, updatedAt: '2026-07-23T01:04:00.000Z' }],
+      recentRuns: [], evidence: [{ id: 'artifact-review', type: 'test_result', title: 'Security review', uri: 'https://example.test/security-review' }], freshness: { state: 'current', observedAt: '2026-07-23T01:04:00.000Z', sourceUpdatedAt: '2026-07-23T01:04:00.000Z' },
+    })
+    if (path === '/api/v1/human-attention') return body({ items: [{ id: 'v1:approval:00000000-0000-0000-0000-000000000001', title: 'Approve release evidence', summary: 'Review the final validation report.', impactSummary: 'The release remains blocked until approval.' }], nextCursor: null })
     if (path === '/api/v1/agents') return body({ items: [], nextCursor: null })
     if (path === '/api/v1/agent-sessions') return body({ items: sessions, nextCursor: null })
     if (path === '/api/v1/rooms') return body([{ id: 'room-1', activeParticipants: [{ id: actor.id, displayName: 'Alex' }, { id: 'agent-coordinator', displayName: 'Coordinator' }] }])
@@ -88,6 +96,13 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
   await page.locator('[data-work-item-id="work-1"] .wm-work-item-title').click()
   await expect(page.getByTestId('responsible-human')).toContainText('Alex')
   const issueSections = page.getByRole('tablist', { name: 'Issue sections' })
+  await expect(issueSections.getByRole('tab', { name: 'Overview', exact: true })).toHaveAttribute('aria-selected', 'true')
+  const overview = page.getByRole('tabpanel', { name: 'Overview', exact: true })
+  await expect(overview).toContainText('Coordinator')
+  await expect(overview).toContainText('Validate release evidence')
+  await expect(overview).toContainText('Security review passed')
+  await expect(overview).toContainText('Approve release evidence')
+  await expect(overview).toContainText('Verified')
   await issueSections.getByRole('tab', { name: 'Agent executions', exact: true }).click()
   const executions = page.getByRole('tabpanel', { name: 'Agent executions', exact: true }).getByRole('region', { name: 'Agent executions' })
   await expect(executions).toContainText('Coordinator')
@@ -116,8 +131,10 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
 
   await room.getByRole('tab', { name: 'Sessions' }).click()
   await expect(room.getByTestId('lease-lease-1')).toContainText('Lease conflict')
-  page.once('dialog', dialog => dialog.accept())
   await room.getByRole('button', { name: 'Force release' }).click()
+  const forceRelease = page.getByRole('dialog', { name: 'Force-release Lease' })
+  await forceRelease.getByLabel('Reason').fill('The conflicted review lease blocks final validation.')
+  await forceRelease.getByRole('button', { name: 'Confirm action' }).click()
   await expect.poll(() => forceReleaseCalled).toBe(true)
 })
 
@@ -225,9 +242,11 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   await expect(workRoom).toContainText('Agent proposal')
   await workRoom.getByRole('tab', { name: 'Sessions' }).click()
   await expect(workRoom.getByTestId(`lease-${lease.body.id}`)).toBeVisible()
-  page.once('dialog', dialog => dialog.accept())
   const releaseResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === `/api/v1/leases/${lease.body.id}/force-release`)
   await workRoom.getByRole('button', { name: 'Force release' }).click()
+  const forceRelease = page.getByRole('dialog', { name: 'Force-release Lease' })
+  await forceRelease.getByLabel('Reason').fill('The active lease blocks the acceptance transition.')
+  await forceRelease.getByRole('button', { name: 'Confirm action' }).click()
   expect((await releaseResponse).status()).toBeLessThan(300)
   const rootTree = workRoom.getByTestId(`session-tree-${created.body.session.id}`)
   const stopResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === `/api/v1/agent-sessions/${created.body.session.id}/signals`)

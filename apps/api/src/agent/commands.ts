@@ -2627,7 +2627,7 @@ export async function appendActivity(db: Pool, meta: RequestMeta, sessionId: str
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId); assertAgentWrite({ actor: meta.actor, session, sessionId, capability: "work:write", operation: "activity", idempotencyKey: meta.idempotencyKey, expectedRevision: revision });
     if (input.kind === "question") assertAgentSessionTransition(session.state, "awaiting_input");
     const updated = one((await tx.query<{ sequence: number; revision: number }>("UPDATE agent_sessions SET state=CASE WHEN $2='question' THEN 'awaiting_input'::agent_session_state ELSE state END,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING sequence,revision", [sessionId, input.kind])).rows);
-    const row = one((await tx.query("INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,details_markdown,tool_invocation,artifact_ids,references_json,visibility,ephemeral) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *", [sessionId, meta.actor.id, updated.sequence, input.kind, input.summary, input.detailsMarkdown ?? null, input.toolInvocation ?? null, input.artifactIds, input.references, input.visibility, input.ephemeral])).rows);
+    const row = one((await tx.query("INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,details_markdown,tool_invocation,artifact_ids,references_json,visibility,ephemeral) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11) RETURNING *", [sessionId, meta.actor.id, updated.sequence, input.kind, input.summary, input.detailsMarkdown ?? null, input.toolInvocation ?? null, input.artifactIds, JSON.stringify(input.references), input.visibility, input.ephemeral])).rows);
     if (input.kind === "question") { const responsible = one((await tx.query<{ responsible_human_actor_id: string }>("SELECT responsible_human_actor_id FROM work_items WHERE id=$1 AND workspace_id=$2", [session.work_item_id, meta.actor.workspaceId])).rows); await tx.query("INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,team_id,kind,source_type,source_id,payload) VALUES($1,$2,$2,$3,$4,'waiting_input','activity',$5,$6) ON CONFLICT DO NOTHING", [meta.actor.workspaceId, responsible.responsible_human_actor_id, sessionId, session.team_id, (row as { id: string }).id, { summary: input.summary }]); }
     await event(tx, meta, "agent.activity.appended", "agent_activity", String((row as { id: string }).id), updated.revision, { kind: input.kind }, session.team_id, sessionId, updated.sequence);
     return row;
@@ -2770,11 +2770,11 @@ export async function publishPlan(db: Pool, meta: RequestMeta, sessionId: string
   return result;
 }
 
-export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, input: { bodyMarkdown: string; planRevision?: number; workItemRevision?: number }) {
+export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, input: { bodyMarkdown: string; planRevision?: number; workItemRevision?: number }, expectedRevision?: number) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can prompt an agent session");
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.bodyMarkdown,"prompt");
-    const session = one((await tx.query<{ id: string; team_id: string; state: AgentSessionState; revision: number; sequence: number }>("SELECT id,team_id,state,revision,sequence FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id);
+    const session = one((await tx.query<{ id: string; team_id: string; state: AgentSessionState; revision: number; sequence: number }>("SELECT id,team_id,state,revision,sequence FROM agent_sessions WHERE id=$1 AND workspace_id=$2 FOR UPDATE", [sessionId, meta.actor.workspaceId])).rows); await assertHumanTeam(tx, meta.actor, session.team_id); if (expectedRevision !== undefined) assertRevision(expectedRevision, session.revision);
     await tx.query("INSERT INTO agent_session_prompts(session_id,author_actor_id,body_markdown,plan_revision,work_item_revision) VALUES($1,$2,$3,$4,$5)", [sessionId, meta.actor.id, input.bodyMarkdown, input.planRevision ?? null, input.workItemRevision ?? null]);
     const state = session.state === "awaiting_input" ? "executing" : session.state;
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2,sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, state])).rows);
@@ -2784,7 +2784,7 @@ export async function prompt(db: Pool, meta: RequestMeta, sessionId: string, inp
   });
 }
 
-export async function signal(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { signal: "stop" | "pause" | "resume"; reason: string }) {
+export async function signal(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { signal: "stop" | "pause" | "resume"; reason: string; stopMode?: "graceful" | "immediate" }) {
   if (meta.actor.kind !== "human") throw new DomainError("FORBIDDEN", "Only a human can control an agent session");
   return agentMutate(db, meta, async tx => {
     assertSafeText(input.reason, "signal reason");
@@ -2796,8 +2796,9 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
       for (const lease of leases) await event(tx, meta, "lease.released", "lease", lease.id, 1, { reason: "stop requested", sessionId }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
     }
     const eventType=`agent.session.signal.${input.signal}`;
-    const eventId = await event(tx, meta, eventType, "agent_session", sessionId, Number((row as { revision: number }).revision), { signal: input.signal, reason: input.reason, state: next }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
-    await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, eventType, sessionId, { sessionId, signal: input.signal, reason: input.reason, state:next }); return row;
+    const stopMode = input.signal === "stop" ? input.stopMode ?? "graceful" : undefined;
+    const eventId = await event(tx, meta, eventType, "agent_session", sessionId, Number((row as { revision: number }).revision), { signal: input.signal, reason: input.reason, state: next, ...(stopMode ? { stopMode } : {}) }, session.team_id, sessionId, Number((row as { sequence: number }).sequence));
+    await queueWebhookDeliveries(tx, (await tx.query<{ agent_id: string }>("SELECT agent_id FROM agent_sessions WHERE id=$1", [sessionId])).rows[0]!.agent_id, eventId, eventType, sessionId, { sessionId, signal: input.signal, reason: input.reason, state:next, ...(stopMode ? { stopMode } : {}) }); return row;
   });
 }
 

@@ -50,6 +50,7 @@ const collectionPaths = [
   '/api/v1/artifacts',
   '/api/v1/approvals',
   '/api/v1/human-attention',
+  '/api/v1/recovery-items',
   '/api/v1/control-center',
   '/api/v1/projects/{projectId}/control-center',
   '/api/v1/rooms/{id}/timeline',
@@ -72,6 +73,7 @@ const collectionPaths = [
 const limit100Paths = new Set<string>([
   '/api/v1/control-center',
   '/api/v1/projects/{projectId}/control-center',
+  '/api/v1/recovery-items',
 ])
 
 describe('pagination OpenAPI contract', () => {
@@ -105,7 +107,7 @@ describe('pagination OpenAPI contract', () => {
         },
       ]))
       expect(operation?.responses?.['200']?.$ref, path).toMatch(
-        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|ControlCenter|InboxItems|Milestones|WorkItemRelations)$/,
+        /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|RecoveryItems|ControlCenter|InboxItems|Milestones|WorkItemRelations)$/,
       )
     }
     const opaqueCursorPaths = Object.entries(openapi.paths)
@@ -122,6 +124,9 @@ describe('pagination OpenAPI contract', () => {
     const eventParameters = openapi.paths['/api/v1/events']?.get?.parameters ?? []
     expect(eventParameters).not.toContainEqual({ $ref: '#/components/parameters/Cursor' })
     expect(eventParameters).not.toContainEqual({ $ref: '#/components/parameters/Limit' })
+    const runParameters = openapi.paths['/api/v1/agent-sessions/{sessionId}/explanation']?.get?.parameters ?? []
+    expect(runParameters).toContainEqual({ $ref: '#/components/parameters/RunSequenceCursor' })
+    expect(runParameters).not.toContainEqual({ $ref: '#/components/parameters/Cursor' })
     expect(
       openapi.components.schemas.Error
         ?.properties?.error?.properties?.code?.enum,

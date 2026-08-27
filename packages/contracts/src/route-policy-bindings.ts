@@ -392,6 +392,16 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/recovery-items",
+    "operationId": "listRecoveryItems"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/recovery-items/{id}",
+    "operationId": "getRecoveryItem"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/control-center",
     "operationId": "listControlCenter"
   },

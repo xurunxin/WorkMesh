@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Request } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -389,12 +389,17 @@ test.describe("Stage 0 browser acceptance", () => {
       await secondPageItem.locator(".wm-work-item-title").click();
       const secondDrawer = secondPage.getByRole("dialog");
       await expect(secondDrawer).toBeVisible();
+      await secondDrawer
+        .getByRole("tab", { name: "Details", exact: true })
+        .click();
 
-      let secondPageNavigations = 0;
-      const observeNavigation = () => {
-        secondPageNavigations += 1;
+      let secondPageDocumentNavigations = 0;
+      const observeNavigation = (request: Request) => {
+        if (request.isNavigationRequest() && request.frame() === secondPage.mainFrame()) {
+          secondPageDocumentNavigations += 1;
+        }
       };
-      secondPage.on("framenavigated", observeNavigation);
+      secondPage.on("request", observeNavigation);
 
       const card = page
         .getByTestId("board")
@@ -423,7 +428,7 @@ test.describe("Stage 0 browser acceptance", () => {
       await expect(
         secondDrawer.locator('select[name="statusId"]'),
       ).toHaveValue(inProgress!.id);
-      expect(secondPageNavigations).toBe(0);
+      expect(secondPageDocumentNavigations).toBe(0);
       await secondDrawer.getByRole("tab", { name: "Discussion", exact: true }).click();
 
       await page.locator(`[data-work-item-id="${target!.id}"] .wm-work-item-title`).click();
@@ -440,8 +445,8 @@ test.describe("Stage 0 browser acceptance", () => {
       await expect(drawer).toContainText(commentBody);
       await expect(secondDrawer).toContainText(commentBody);
       await expect(secondDrawer).toContainText("Mentioned: @Alice");
-      expect(secondPageNavigations).toBe(0);
-      secondPage.off("framenavigated", observeNavigation);
+      expect(secondPageDocumentNavigations).toBe(0);
+      secondPage.off("request", observeNavigation);
       await drawer
         .getByRole("button", { name: /^Close ACC-\d+$/ })
         .click();

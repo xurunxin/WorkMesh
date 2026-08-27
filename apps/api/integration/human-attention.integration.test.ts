@@ -173,12 +173,28 @@ describe('Human Attention projection acceptance', () => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1_000).toISOString(),
     })
     expect(approval.statusCode, JSON.stringify(approval.json())).toBe(200)
+    const approvalId = approval.json<{ id: string }>().id
 
     const agentActorId = (await db.query<{ actor_id: string }>(
       'SELECT actor_id FROM agent_definitions WHERE id=$1',
       [agent.id],
     )).rows[0]!.actor_id
-    for (const kind of ['waiting_input', 'blocker', 'session_stale'] as const) {
+    const clarificationMessage = (await db.query<{ id: string }>(
+      `INSERT INTO room_messages(channel_id,workspace_id,author_actor_id,session_id,intent,recipient_actor_id,body,requires_response)
+       SELECT channel.id,$1,$2,$3,'ask',$4,'Which release branch should execution use?',true
+         FROM work_room_channels channel
+        WHERE channel.workspace_id=$1 AND channel.subject_kind='session' AND channel.subject_id=$3
+       RETURNING id`,
+      [actor.workspace_id, agentActorId, session.id, actor.id],
+    )).rows[0]!
+    await db.query(
+      `INSERT INTO inbox_items(
+         workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,
+         team_id,kind,source_type,source_id,source_room_message_id,requires_response,payload
+       ) VALUES($1,$2,$2,$3,$4,'waiting_input','room_message',$5,$5,true,$6)`,
+      [actor.workspace_id, actor.id, session.id, teamId, clarificationMessage.id, { summary: 'waiting_input fixture' }],
+    )
+    for (const kind of ['blocker', 'session_stale'] as const) {
       await db.query(
         `INSERT INTO inbox_items(
            workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,
@@ -232,11 +248,11 @@ describe('Human Attention projection acceptance', () => {
         WHERE id=$1`,
       [session.id, planVersion.id, planStepId],
     )
-    await db.query(
+    const runningEvidence = (await db.query<{ id: string }>(
       `INSERT INTO artifacts(workspace_id,session_id,work_item_id,producer_actor_id,type,title,uri)
-       VALUES($1,$2,$3,$4,'test','Control Center running evidence','https://example.test/running-evidence')`,
+       VALUES($1,$2,$3,$4,'test_report','Control Center running evidence','https://example.test/running-evidence') RETURNING id`,
       [actor.workspace_id, session.id, work.id, agentActorId],
-    )
+    )).rows[0]!
 
     const completedWithoutEvidence = (await db.query<{ id: string }>(
       `INSERT INTO agent_sessions(
@@ -321,6 +337,33 @@ describe('Human Attention projection acceptance', () => {
     const readyFirstIds = new Set(readyFirst.collections.ready_work.items.map(item => item.id))
     expect(readySecond.collections.ready_work.items.some(item => readyFirstIds.has(item.id))).toBe(false)
 
+    const rejectedSensitiveActivity = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Sensitive invocation must never persist', artifactIds: [], references: [], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { authorization: 'Bearer secret-value-12345' }, status: 'started' },
+    })
+    expect(rejectedSensitiveActivity.statusCode).toBe(400)
+    expect(rejectedSensitiveActivity.json<{ error: { code: string } }>()).toMatchObject({ error: { code: 'VALIDATION_ERROR' } })
+    expect((await db.query<{ count: number }>("SELECT count(*)::int AS count FROM agent_activities WHERE session_id=$1 AND summary='Sensitive invocation must never persist'", [session.id])).rows[0]!.count).toBe(0)
+
+    const decisionActivity = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'decision_request', summary: 'Human approval is required before recovery', artifactIds: [],
+      references: [{ type: 'approval', id: approvalId }, { type: 'plan_step', id: planStepId }], visibility: 'team', ephemeral: false,
+    })
+    expect(decisionActivity.statusCode, JSON.stringify(decisionActivity.json())).toBe(200)
+
+    const failedValidation = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Focused validation failed', artifactIds: [],
+      references: [{ type: 'plan_step', id: planStepId }], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { suite: 'run-explanation' }, status: 'failed', resultSummary: 'One focused assertion failed.' },
+    })
+    expect(failedValidation.statusCode, JSON.stringify(failedValidation.json())).toBe(200)
+    const recoveredValidation = await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/activities`, {
+      kind: 'action_completed', summary: 'Focused validation passed', artifactIds: [runningEvidence.id],
+      references: [{ type: 'plan_step', id: planStepId }, { type: 'artifact', id: runningEvidence.id }], visibility: 'team', ephemeral: false,
+      toolInvocation: { toolName: 'ci.test', inputSanitized: { suite: 'run-explanation' }, status: 'succeeded', resultSummary: 'All focused assertions passed.' },
+    })
+    expect(recoveredValidation.statusCode, JSON.stringify(recoveredValidation.json())).toBe(200)
+
     const explanationResponse = await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation`)
     expect(explanationResponse.statusCode, JSON.stringify(explanationResponse.json())).toBe(200)
     expect(explanationResponse.headers.etag).toMatch(/^"run-explanation-v1-/)
@@ -328,20 +371,61 @@ describe('Human Attention projection acceptance', () => {
     expect(explanation.session.id).toBe(session.id)
     expect(explanation.causalGroups).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'action_completed', count: 3, sourceActivityIds: expect.any(Array) }),
+      expect.objectContaining({ phase: 'validation', failure: true, count: 1, validation: expect.objectContaining({ state: 'failed' }) }),
+      expect.objectContaining({ phase: 'validation', failure: false, count: 1, planStepId, evidence: expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id })]) }),
     ]))
+    expect(explanation.planVersions).toEqual(expect.arrayContaining([expect.objectContaining({ id: planVersion.id, steps: expect.arrayContaining([expect.objectContaining({ id: planStepId, causalGroupIds: expect.any(Array) })]) })]))
+    expect(explanation.evidenceDetails).toEqual(expect.arrayContaining([expect.objectContaining({ id: runningEvidence.id, validationState: 'verified' })]))
+    expect(explanation.verification.state).toBe('failed')
     expect(explanation.pendingAttention.length).toBeGreaterThanOrEqual(3)
+
+    const attentionExplanation = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?attention=true&timeWindow=24h`)).json())
+    expect(attentionExplanation.causalGroups.length).toBeGreaterThan(0)
+    expect(attentionExplanation.causalGroups.every(group => group.attention)).toBe(true)
+    expect(attentionExplanation.causalGroups).toEqual(expect.arrayContaining([expect.objectContaining({ actionType: 'decision', planStepId })]))
+    expect(attentionExplanation.verification.state).toBe('failed')
+
+    const currentMaxSequence = (await db.query<{ sequence: number }>('SELECT max(sequence)::int AS sequence FROM agent_activities WHERE session_id=$1', [session.id])).rows[0]!.sequence
+    await db.query(
+      `INSERT INTO agent_activities(session_id,actor_id,sequence,kind,summary,artifact_ids,references_json,visibility,ephemeral)
+       SELECT $1,$2,$3+ordinal,'action_completed','Pagination fixture '||ordinal,'{}'::uuid[],'[]'::jsonb,'team',false
+         FROM generate_series(1,45) ordinal`,
+      [session.id, agentActorId, currentMaxSequence],
+    )
+    const explanationFirstPage = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?limit=20`)).json())
+    expect(explanationFirstPage.causalGroups).toHaveLength(20)
+    expect(explanationFirstPage.nextCursor).not.toBeNull()
+    const explanationSecondPage = runExplanationResponseSchema.parse((await humanCall(human, 'GET', `/api/v1/agent-sessions/${session.id}/explanation?limit=20&cursor=${explanationFirstPage.nextCursor}`)).json())
+    expect(explanationSecondPage.causalGroups).toHaveLength(20)
+    const firstPageSources = new Set(explanationFirstPage.causalGroups.flatMap(group => group.sourceActivityIds))
+    expect(explanationSecondPage.causalGroups.some(group => group.sourceActivityIds.some(id => firstPageSources.has(id)))).toBe(false)
 
     const executionResponse = await humanCall(human, 'GET', `/api/v1/work-items/${work.id}/execution-summary`)
     expect(executionResponse.statusCode, JSON.stringify(executionResponse.json())).toBe(200)
     const execution = workItemExecutionSummaryResponseSchema.parse(executionResponse.json())
     expect(execution.activeRuns).toEqual(expect.arrayContaining([
-      expect.objectContaining({ sessionId: session.id }),
+      expect.objectContaining({
+        sessionId: session.id,
+        responsibleHuman: expect.objectContaining({ id: actor.id, kind: 'human' }),
+        activeAgent: expect.objectContaining({ id: agentActorId, kind: 'agent' }),
+        currentStep: expect.objectContaining({ id: planStepId }),
+        health: expect.objectContaining({ heartbeat: 'healthy' }),
+        lastActivity: expect.objectContaining({ kind: 'action_completed' }),
+        pendingHumanActionCount: expect.any(Number),
+        evidenceCount: expect.any(Number),
+      }),
     ]))
 
-    const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })
+    const previewResponse = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop', stopMode: 'immediate' })
     expect(previewResponse.statusCode, JSON.stringify(previewResponse.json())).toBe(200)
     const preview = actionPreviewResponseSchema.parse(previewResponse.json())
-    expect(preview).toMatchObject({ action: 'stop', allowed: true, releaseLease: true, advisory: true })
+    expect(preview).toMatchObject({ action: 'stop', allowed: true, releaseLease: true, advisory: true, stopMode: 'immediate', leaseBehavior: 'release_now', resultResource: 'same_session' })
+    expect(preview.supportedStopModes).toHaveLength(2)
+    expect(preview.currentPlan).toMatchObject({ id: planVersion.id })
+    expect(preview.currentStep).toMatchObject({ id: planStepId })
+    const steerPreview = actionPreviewResponseSchema.parse((await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'steer', steeringScope: 'remaining_plan' })).json())
+    expect(steerPreview).toMatchObject({ steeringScope: 'remaining_plan', resultResource: 'plan_version_request' })
+    expect(steerPreview.supportedSteeringScopes).toHaveLength(4)
     expect((await agentCall(token, 'POST', `/api/v1/agent-sessions/${session.id}/control-preview`, { action: 'stop' })).statusCode).toBe(200)
     await db.query('UPDATE agent_sessions SET revision=revision+1,updated_at=now() WHERE id=$1', [session.id])
     const staleFinal = await humanCall(human, 'POST', `/api/v1/agent-sessions/${session.id}/signals`, { signal: 'stop', reason: 'stale preview race' }, { 'if-match': `"revision-${preview.sourceRevision}"` })
@@ -364,7 +448,17 @@ describe('Human Attention projection acceptance', () => {
       severity: 'high',
       urgency: 'immediate',
       options: [{ id: 'approve' }, { id: 'reject' }],
+      bulk: { eligible: false, prohibitedReason: 'bulk.risk_prohibited' },
     })
+    expect(firstPage.items.every(item => item.audience.relationship === 'assigned_to_me')).toBe(true)
+    const assigned = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', `/api/v1/human-attention?view=active&audience=assigned_to_me&projectId=${project.id}&limit=50`)).json(),
+    )
+    expect(assigned.items.map(item => item.id).sort()).toEqual(firstPage.items.map(item => item.id).sort())
+    const immediate = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?view=active&urgency=immediate&limit=50')).json(),
+    )
+    expect(immediate.items.every(item => item.urgency === 'immediate')).toBe(true)
 
     const rebuilt = humanAttentionListResponseSchema.parse(
       (await humanCall(human, 'GET', '/api/v1/human-attention?status=open&limit=50')).json(),
@@ -382,6 +476,22 @@ describe('Human Attention projection acceptance', () => {
       kind: selected.kind,
       status: selected.status,
     })
+
+    const clarification = firstPage.items.find(item => item.kind === 'clarification')!
+    const clarificationOption = clarification.options.find(option => option.command === 'replyInboxItem')!
+    const humanReply = await humanCall(human, 'POST', clarificationOption.path, {
+      body: 'Use the current release branch and preserve the published evidence.',
+      payload: { attentionId: clarification.id },
+    }, { 'if-match': `"revision-${clarificationOption.targetRevision}"` })
+    expect(humanReply.statusCode, JSON.stringify(humanReply.json())).toBe(200)
+    expect(humanReply.json<{ status: string; replyMessageId: string }>()).toMatchObject({
+      status: 'resolved',
+      replyMessageId: expect.any(String),
+    })
+    const afterReply = humanAttentionListResponseSchema.parse(
+      (await humanCall(human, 'GET', '/api/v1/human-attention?kind=clarification&view=active&limit=50')).json(),
+    )
+    expect(afterReply.items.some(item => item.id === clarification.id)).toBe(false)
 
     const otherProject = (await humanCall(human, 'POST', '/api/v1/projects', {
       teamId,

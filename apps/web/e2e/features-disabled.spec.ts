@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+test.use({ storageState: { cookies: [], origins: [] } })
+
 const apiUrl = 'http://127.0.0.1:3101'
 const headers = {
   'Access-Control-Allow-Origin': 'http://127.0.0.1:3100',

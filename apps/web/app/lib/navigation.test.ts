@@ -8,12 +8,14 @@ describe('home navigation', () => {
     expect(homeScopeHref('backlog')).toBe('/?view=backlog')
     expect(homeScopeHref('projects')).toBe('/?view=projects')
     expect(homeScopeHref('inbox')).toBe('/?view=inbox')
+    expect(homeScopeHref('recovery')).toBe('/?view=recovery')
     expect(homeScopeHref('guidance')).toBe('/?view=guidance')
   })
 
   it('restores a valid scope and fails safely to My Work', () => {
     expect(parseHomeScope('?view=projects')).toBe('projects')
     expect(parseHomeScope('?view=inbox')).toBe('inbox')
+    expect(parseHomeScope('?view=recovery')).toBe('recovery')
     expect(parseHomeScope('?view=unknown')).toBe('my-work')
     expect(parseHomeScope('')).toBe('my-work')
   })

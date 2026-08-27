@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "programIssue": 87,
+  "finalGateIssue": 100,
+  "topologies": [
+    { "id": "unit-component", "productionData": false },
+    { "id": "root-mixed-real-local", "productionData": false, "requires": ["dedicated-test-postgresql", "redis"] },
+    { "id": "mocked-dev", "productionData": false },
+    { "id": "production-web-plus-mocked-api", "productionData": false }
+  ],
+  "primarySurfaces": ["project", "work_item", "attention", "run", "governed_control", "inbox_thread", "recovery", "evidence"],
+  "requiredStates": ["loading", "refresh_with_data", "empty", "partial", "forbidden", "not_found", "conflict", "offline", "reconnecting", "resync_required", "feature_disabled", "expired", "superseded", "replayed_event", "out_of_order_event", "authority_changed", "partial_failure_retry", "large_collection"],
+  "viewports": [
+    { "width": 390, "height": 844 },
+    { "width": 768, "height": 1024 },
+    { "width": 1440, "height": 1000 },
+    { "width": 1920, "height": 1080 }
+  ],
+  "performanceBudgets": {
+    "paginationMsMax": 1500,
+    "interactionMsMax": 250,
+    "workItems": 300,
+    "agents": 300,
+    "documentHorizontalOverflowPxMax": 0
+  },
+  "telemetry": {
+    "transport": "browser-performance-timeline-only",
+    "retention": "document-lifetime",
+    "maxEntries": 200,
+    "externalTransmission": false,
+    "optOut": ["navigator.doNotTrack", "window.__WORKMESH_DISABLE_PRODUCT_TELEMETRY__"],
+    "forbiddenFields": ["body", "prompt", "secret", "credential", "path", "url", "resourceId", "payload", "evidenceMetadata", "hiddenReasoning", "correlationId"]
+  },
+  "optionalIntegrations": {
+    "manifest": "docs/acceptance/human-control-plane-optional-integrations.json",
+    "stableClosureBlockedWhenUnavailable": false
+  },
+  "claims": {
+    "completeWcagConformance": false,
+    "productionDataExercised": false,
+    "enabledGraphAutonomyExercised": false
+  }
+}

@@ -123,7 +123,7 @@ export function inboxCommand(item: Readonly<{ id: string; kind: string; source_t
     title,
     subtitle: `${item.kind.replaceAll('_', ' ')}${item.requires_response ? ' · response required' : ''}`,
     keywords: [item.id, item.kind, item.source_type, item.source_id],
-    href: `/?view=inbox#inbox-${encodeURIComponent(item.id)}`,
+    href: `/?view=inbox&queue=messages&inboxItem=${encodeURIComponent(item.id)}`,
     resourceId: item.id,
     source: 'inbox',
   }

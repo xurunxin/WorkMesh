@@ -81,6 +81,17 @@ async function installFixture(page: Page, agentsPlan?: Promise<JsonResponse>) {
     if (path === '/api/v1/actors/humans') return list([human])
     if (path === '/api/v1/projects') return list([project])
     if (path === `/api/v1/projects/${project.id}`) return body(project)
+    if (path === `/api/v1/projects/${project.id}/control-center`) {
+      const empty = { items: [], nextCursor: null }
+      return body({
+        projectionVersion: 1,
+        scope: { workspaceId: 'workspace-preview', projectId: project.id },
+        project: { id: project.id, name: project.name, status: project.status, targetDate: project.target_date, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: project.revision },
+        revision: project.revision,
+        freshness: { state: 'fresh', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+        collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
+      })
+    }
     if (path === `/api/v1/projects/${project.id}/milestones`) return list([])
     if (path === `/api/v1/projects/${project.id}/delivery`) return body({ milestones: [], updates: [], artifacts: [], dependencies: [], completionSuggestions: [], providerPullRequests: [], providerReviews: [], workMeshStructuredReviews: [], mergeApprovals: [] })
     if (path === '/api/v1/views') return list([])
@@ -90,6 +101,15 @@ async function installFixture(page: Page, agentsPlan?: Promise<JsonResponse>) {
     }
     if (path === `/api/v1/work-items/${workItem.id}` && request.method() === 'PATCH') return body({ ...workItem, status_id: states[1]!.id, status_name: states[1]!.name, status_category: states[1]!.category, revision: 3 })
     if (path === `/api/v1/work-items/${workItem.id}`) return body(workItem)
+    if (path === `/api/v1/work-items/${workItem.id}/execution-summary`) return body({
+      projectionVersion: 1,
+      workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision, status: workItem.status_name },
+      activeRuns: [],
+      recentRuns: [],
+      evidence: [],
+      freshness: { state: 'current', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },
+    })
+    if (path === '/api/v1/human-attention') return list([])
     if (path === `/api/v1/work-items/${workItem.id}/comments` || path === `/api/v1/work-items/${workItem.id}/relations`) return list([])
     if (path === '/api/v1/agents') {
       if (agentsPlan) { const result = await agentsPlan; return body(result.body, result.status) }

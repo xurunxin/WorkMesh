@@ -1052,9 +1052,18 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
       return row
     })
   })
-  app.post('/api/v1/messages/:id/resolve', async request => command(h.db, h.meta(request, {}, { id: id(request) }), async tx => {
-    const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]; if(!row) throw new DomainError('NOT_FOUND','Message not found'); await assertHumanTeam(tx,actor(request),row.team_id); await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved']); await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id]); await emit(tx,h.meta(request,{}),'room.message.resolved','room_message',row.id,{},row.team_id); return {id:row.id,resolved:true}
-  }))
+  app.post('/api/v1/messages/:id/resolve', async request => {
+    const body = z.object({ reason: z.string().min(1).max(10000).optional() }).parse(request.body ?? {})
+    return command(h.db, h.meta(request, body, { id: id(request) }), async tx => {
+      const row = (await tx.query<{ id:string; channel_id:string; team_id:string }>('SELECT m.id,m.channel_id,c.team_id FROM room_messages m JOIN work_room_channels c ON c.id=m.channel_id WHERE m.id=$1 AND m.workspace_id=$2 FOR UPDATE',[id(request),actor(request).workspaceId])).rows[0]
+      if(!row) throw new DomainError('NOT_FOUND','Message not found')
+      await assertHumanTeam(tx,actor(request),row.team_id)
+      await tx.query('INSERT INTO room_message_response_resolutions(message_id,resolved_by_actor_id,resolution) VALUES($1,$2,$3)',[row.id,actor(request).id,'human_resolved'])
+      await tx.query("UPDATE inbox_items SET status='resolved',resolved_at=now(),resolved_by_actor_id=$2,revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND source_type='room_message' AND source_id=$3 AND status='open'",[actor(request).workspaceId,actor(request).id,row.id])
+      await emit(tx,h.meta(request,body),'room.message.resolved','room_message',row.id,{ reason: body.reason ?? null },row.team_id)
+      return {id:row.id,resolved:true}
+    })
+  })
 
   app.post('/api/v1/work-items/:id/decisions', async request => createDecision(h, request, 'work_item', id(request)))
   app.post('/api/v1/projects/:id/decisions', async request => createDecision(h, request, 'project', id(request)))
@@ -1116,6 +1125,7 @@ export function registerCollaborationRoutes(app: FastifyInstance, h: Helpers): v
     const row=(await tx.query<{id:string;revision:number;status:string;work_item_id:string|null;project_id:string|null;session_id:string|null;team_id:string}>("SELECT d.*,COALESCE(s.team_id,w.team_id,p.team_id) AS team_id FROM decisions d LEFT JOIN agent_sessions s ON s.id=d.session_id LEFT JOIN work_items w ON w.id=d.work_item_id LEFT JOIN projects p ON p.id=d.project_id WHERE d.id=$1 AND d.workspace_id=$2 FOR UPDATE OF d",[id(request),actor(request).workspaceId])).rows[0]
     if(!row) throw new DomainError('NOT_FOUND','Decision not found'); await assertHumanTeam(tx,actor(request),row.team_id); assertRevision(parseRevision(h.header(request,'if-match')),row.revision)
     const selected=z.object({selectedOption:z.string().max(2000).optional(),reason:z.string().min(1).max(10000).optional(),replacementDecisionId:uuid.optional()}).parse(request.body)
+    if (action !== 'finalize' && !selected.reason) throw new DomainError('VALIDATION_ERROR','Superseding or reversing a Decision requires a Human-authored reason')
     if (action === 'finalize') {
       if(row.status!=='proposed') throw new DomainError('DECISION_TRANSITION_CONFLICT','Only a proposed decision may be finalized')
       const result=(await tx.query("INSERT INTO decisions(workspace_id,work_item_id,project_id,session_id,proposed_by_actor_id,finalized_by_actor_id,title,rationale,options,selected_option,evidence,status,finalized_at) SELECT workspace_id,work_item_id,project_id,session_id,$2,$2,title,COALESCE($3,rationale),options,COALESCE($4,selected_option),evidence,'final',now() FROM decisions WHERE id=$1 RETURNING *",[row.id,actor(request).id,selected.reason??null,selected.selectedOption??null])).rows[0]
