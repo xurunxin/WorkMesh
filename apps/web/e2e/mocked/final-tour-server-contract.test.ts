@@ -11,6 +11,26 @@ describe('final-tour deterministic preview contract', () => {
     expect(source.indexOf("activeScenario === 'final-tour'")).toBeLessThan(source.indexOf("activeScenario === 'large-list'"))
   })
 
+  it('registers the stateful fake-Agent approval journey fixture', () => {
+    expect(source).toContain("'approval-journey',")
+    expect(source).toContain("if (activeScenario === 'approval-journey') return handleApprovalJourneyRoute(request, response, url)")
+    expect(source).toContain("path === '/__test/agent/request-approval'")
+    expect(source).toContain("path === '/__test/agent/state'")
+    expect(source).toContain("path === '/api/v1/approvals'")
+    expect(source).toContain("path === '/api/v1/human-attention'")
+    expect(source).toContain("path === `/api/v1/agent-sessions/${approvalJourneySession.id}/activities`")
+
+    const handlerStart = source.indexOf('const handleApprovalJourneyRoute')
+    const handlerEnd = source.indexOf('const handleFinalTourRoute')
+    expect(handlerStart).toBeGreaterThanOrEqual(0)
+    expect(handlerEnd).toBeGreaterThan(handlerStart)
+    const handler = source.slice(handlerStart, handlerEnd)
+    // Scenario handlers must return a truthy dispatch result after sending;
+    // otherwise the outer router falls through and attempts a second response.
+    expect(handler).not.toContain('return send(')
+    expect(handler).toContain('send(response, { error: { code: \'UNEXPECTED_APPROVAL_JOURNEY_REQUEST\'')
+  })
+
   it('freezes the final visual-tour records and the paginated Team boundary', () => {
     for (const fixture of [
       "id: 'team-1'",

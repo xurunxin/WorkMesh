@@ -17,7 +17,34 @@ export interface FakeAgentOptions {
   confirmStop?: boolean
   writeAfterStop?: boolean
 }
-interface DeliveryEvent { id?: string; type?: string; sessionId?: string; session_id?: string; payload?: { sessionId?: string; exchangeToken?: string; workItem?: { id?: string }; signal?: 'stop' | 'pause' | 'resume'; state?: string } }
+interface ApprovalDecisionPayload {
+  actor_id?: string
+  decision?: 'approved' | 'rejected' | string
+  reason?: string
+  source?: string
+}
+interface DeliveryEvent {
+  id?: string
+  type?: string
+  sessionId?: string
+  session_id?: string
+  payload?: {
+    sessionId?: string
+    exchangeToken?: string
+    approvalId?: string
+    decision?: ApprovalDecisionPayload
+    workItem?: { id?: string }
+    signal?: 'stop' | 'pause' | 'resume'
+    state?: string
+  }
+}
+export type FakeAgentApprovalDecision = {
+  sessionId: string
+  approvalId: string
+  decision: 'approved' | 'rejected'
+  reason: string
+  immutable: true
+}
 type PendingPhase = 'running' | 'awaiting_input' | 'awaiting_approval'
 
 export class FakeAgent {
@@ -28,6 +55,12 @@ export class FakeAgent {
   private readonly askedForInput = new Set<string>()
   private readonly requestedApproval = new Set<string>()
   private readonly active = new Set<Promise<void>>()
+  private readonly eventChains = new Map<string, Promise<void>>()
+  private readonly decisionReasons = new Map<string, FakeAgentApprovalDecision>()
+  private readonly pendingApprovalTerminals = new Map<string, { type: 'approval.approved' | 'approval.rejected'; workItemId?: string }>()
+  readonly approvalDecisions: FakeAgentApprovalDecision[] = []
+  readonly resultSummaries: string[] = []
+  readonly errors: string[] = []
   constructor(readonly options: FakeAgentOptions, private readonly newClient = () => new WorkMeshClient({ baseUrl: options.apiUrl })) {}
 
   accept(rawBody: Buffer, headers: Record<string, string | undefined>): boolean {
@@ -44,7 +77,21 @@ export class FakeAgent {
   async whenIdle(): Promise<void> { await Promise.all([...this.active]) }
 
   private start(event: DeliveryEvent): void {
-    const task = this.handle(event).catch(error => console.error('Fake Agent event failed', error instanceof Error ? error.message : 'unknown error')).finally(() => this.active.delete(task))
+    const sessionId = event.sessionId ?? event.session_id ?? event.payload?.sessionId
+    const previous = sessionId ? this.eventChains.get(sessionId) : undefined
+    let task: Promise<void>
+    task = (previous ?? Promise.resolve())
+      .then(() => this.handle(event))
+      .catch(error => {
+        const message = error instanceof Error ? error.message : 'unknown error'
+        this.errors.push(message)
+        console.error('Fake Agent event failed', message)
+      })
+      .finally(() => {
+        this.active.delete(task)
+        if (sessionId && this.eventChains.get(sessionId) === task) this.eventChains.delete(sessionId)
+      })
+    if (sessionId) this.eventChains.set(sessionId, task)
     this.active.add(task)
   }
 
@@ -75,9 +122,49 @@ export class FakeAgent {
       if (client) await client.appendActivity(sessionId, { kind: 'status', summary: 'Fake Agent resumed after a server signal.' })
       return
     }
-    if (event.type === 'approval.approved' && client && this.phases.get(sessionId) === 'awaiting_approval') {
+    if (event.type === 'approval.decision.recorded' && client) {
+      const approvalId = event.payload?.approvalId
+      const decision = event.payload?.decision?.decision
+      const reason = event.payload?.decision?.reason?.trim()
+      if (!approvalId || (decision !== 'approved' && decision !== 'rejected') || !reason) {
+        throw new WorkMeshSdkError('Approval decision event is missing a valid decision or reason', { code: 'APPROVAL_DECISION_INVALID' })
+      }
+      const recorded: FakeAgentApprovalDecision = { sessionId, approvalId, decision, reason, immutable: true }
+      this.approvalDecisions.push(recorded)
+      this.decisionReasons.set(`${sessionId}:${approvalId}`, recorded)
+      if (this.options.appendActivity !== false) {
+        await client.appendActivity(sessionId, {
+          kind: 'message',
+          summary: `Fake Agent received Human ${decision} decision.`,
+          detailsMarkdown: `Decision reason: ${reason}`,
+        }, { idempotencyKey: stableIdempotencyKey(sessionId, `approval-decision:${approvalId}`) })
+      }
+      const terminal = this.pendingApprovalTerminals.get(`${sessionId}:${approvalId}`)
+      if (terminal && this.phases.get(sessionId) === 'awaiting_approval') {
+        this.pendingApprovalTerminals.delete(`${sessionId}:${approvalId}`)
+        this.phases.set(sessionId, 'running')
+        await this.completeFlow(sessionId, client, terminal.workItemId, {
+          decision: terminal.type === 'approval.approved' ? 'approved' : 'rejected',
+          reason,
+        })
+      }
+      return
+    }
+    if ((event.type === 'approval.approved' || event.type === 'approval.rejected') && client && this.phases.get(sessionId) === 'awaiting_approval') {
+      const approvalId = event.payload?.approvalId
+      const recorded = approvalId ? this.decisionReasons.get(`${sessionId}:${approvalId}`) : undefined
+      if (approvalId && !recorded) {
+        this.pendingApprovalTerminals.set(`${sessionId}:${approvalId}`, {
+          type: event.type,
+          workItemId: event.payload?.workItem?.id,
+        })
+        return
+      }
       this.phases.set(sessionId, 'running')
-      await this.completeFlow(sessionId, client, event.payload?.workItem?.id)
+      await this.completeFlow(sessionId, client, event.payload?.workItem?.id, {
+        decision: event.type === 'approval.approved' ? 'approved' : 'rejected',
+        reason: recorded?.reason,
+      })
       return
     }
     if (event.type !== 'agent.session.created') return
@@ -90,6 +177,16 @@ export class FakeAgent {
     this.sessionClients.set(sessionId, createdClient)
     await createdClient.acknowledge(sessionId, { summary: 'Fake Agent received the session and is preparing an observable plan.' })
     await createdClient.getSessionContext(sessionId)
+    const acknowledgedSession = await createdClient.getSession<{ revision: number }>(sessionId)
+    await createdClient.transitionState(
+      sessionId,
+      'executing',
+      'Fake Agent began deterministic conformance execution.',
+      {
+        ifMatch: acknowledgedSession.revision,
+        idempotencyKey: stableIdempotencyKey(sessionId, 'execute'),
+      },
+    )
     if (this.options.publishPlan !== false) {
       const session = await createdClient.getSession<{ revision: number }>(sessionId)
       await createdClient.publishPlan(sessionId, { changeSummary: 'Fake Agent standard conformance plan.', steps: [{ id: randomUUID(), title: 'Produce a deterministic conformance result', ordinal: 0, status: 'in_progress', dependsOn: [], acceptanceCriteria: ['A test report artifact is published'], expectedArtifacts: ['test_report'] }] }, { ifMatch: session.revision })
@@ -120,11 +217,29 @@ export class FakeAgent {
     await this.completeFlow(sessionId, client, workItemId)
   }
 
-  private async completeFlow(sessionId: string, client: WorkMeshClient, workItemId?: string): Promise<void> {
-    const artifact = await client.publishArtifact({ sessionId, workItemId, type: 'test_report', title: 'Fake Agent conformance report', sourceTool: 'fake-agent', metadata: { status: 'passed', command: 'fake-agent conformance' } }) as { id: string }
+  private async completeFlow(sessionId: string, client: WorkMeshClient, workItemId?: string, decisionContext?: { decision: 'approved' | 'rejected'; reason?: string }): Promise<void> {
+    const decisionSummary = decisionContext
+      ? ` after Human ${decisionContext.decision} decision.`
+      : '.'
+    const reasonSummary = decisionContext?.reason ? ` Decision reason: ${decisionContext.reason}` : ''
+    const summary = `Fake Agent conformance flow completed${decisionSummary}${reasonSummary}`
+    this.resultSummaries.push(summary)
+    const artifact = await client.publishArtifact({
+      sessionId,
+      workItemId,
+      type: 'test_report',
+      title: 'Fake Agent conformance report',
+      sourceTool: 'fake-agent',
+      metadata: {
+        status: decisionContext?.decision === 'rejected' ? 'rejected' : 'passed',
+        command: 'fake-agent conformance',
+        humanDecision: decisionContext?.decision ?? null,
+        humanDecisionReason: decisionContext?.reason ?? null,
+      },
+    }) as { id: string }
     if (this.options.complete !== false) {
       const session = await client.getSession<{ revision: number }>(sessionId)
-      await client.complete(sessionId, { summary: 'Fake Agent conformance flow completed.', artifactIds: [artifact.id], checks: [{ name: 'fake-agent-conformance', command: 'fake-agent conformance', status: 'passed', summary: 'passed' }], limitations: [] }, { ifMatch: session.revision })
+      await client.complete(sessionId, { summary, artifactIds: [artifact.id], checks: [{ name: 'fake-agent-conformance', command: 'fake-agent conformance', status: 'passed', summary: 'passed' }], limitations: [] }, { ifMatch: session.revision })
     }
   }
 

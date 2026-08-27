@@ -130,6 +130,42 @@ describe('Human Attention deterministic projection', () => {
     })
   })
 
+  it('uses Approval actionability to remove dead decisions and expose recovery', () => {
+    const item = projectHumanAttentionRow({
+      ...row('approval', 'approval'),
+      payload: { actionPayloadHash: `sha256:${'a'.repeat(64)}` },
+    }, new Date('2026-08-26T00:02:00.000Z'), {
+      id: uuid(8),
+      kind: 'human',
+      workspaceRole: 'member',
+    }, {
+      status: 'blocked',
+      reason: 'session_inactive',
+    })
+
+    expect(item.status).toBe('failed')
+    expect(item.options).toEqual([])
+    expect(item.audience.canRespond).toBe(false)
+    expect(item.reasonCodes).toEqual(['approval.session_inactive'])
+    expect(item.freshness.state).toBe('stale')
+    expect(item.bulk.eligible).toBe(false)
+    expect(item.bulk.prohibitedReason).toBe('bulk.approval_not_actionable')
+    expect(item.response.requiresReason).toBe(false)
+  })
+
+  it('keeps a quorum-pending viewer decision visible without another response action', () => {
+    const item = projectHumanAttentionRow(
+      row('approval', 'approval'),
+      new Date('2026-08-26T00:02:00.000Z'),
+      { id: uuid(8), kind: 'human', workspaceRole: 'member' },
+      { status: 'blocked', reason: 'viewer_already_decided' },
+    )
+
+    expect(item.status).toBe('seen')
+    expect(item.options).toEqual([])
+    expect(item.reasonCodes).toEqual(['approval.viewer_already_decided'])
+  })
+
   it('does not advertise an Inbox reply to a workspace admin who is not the exact recipient', () => {
     const item = projectHumanAttentionRow({
       ...row('inbox_item', 'clarification'),

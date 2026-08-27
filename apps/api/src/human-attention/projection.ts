@@ -1,5 +1,6 @@
 import {
   humanAttentionItemSchema,
+  type ApprovalViewerActionability,
   type HumanAttentionItem,
   type HumanAttentionKind,
   type HumanAttentionStatus,
@@ -108,9 +109,14 @@ const urgency = (
     : 'normal'
 }
 
-const reasonCodes = (row: HumanAttentionRow): string[] => {
+const reasonCodes = (
+  row: HumanAttentionRow,
+  approvalActionability?: ApprovalViewerActionability,
+): string[] => {
   if (row.kind === 'decision')
     return [row.status === 'open' ? 'decision.response_required' : `decision.${row.status}`]
+  if (row.kind === 'approval' && approvalActionability?.status === 'blocked')
+    return [`approval.${approvalActionability.reason}`]
   if (row.kind === 'approval')
     return [row.status === 'open' ? 'approval.response_required' : `approval.${row.status}`]
   if (row.kind === 'clarification') return ['clarification.input_required']
@@ -144,11 +150,15 @@ const option = (
   ...(consequencePreviewPath ? { consequencePreviewPath } : {}),
 })
 
-const options = (row: HumanAttentionRow) => {
+const options = (
+  row: HumanAttentionRow,
+  approvalActionability?: ApprovalViewerActionability,
+) => {
   if (row.status !== 'open') return []
   const payload = record(row.payload)
   if (row.kind === 'decision')
     return [option('finalize', 'Finalize decision', 'finalizeDecision', `/api/v1/decisions/${row.source_id}/finalize`, row.target_revision)]
+  if (row.kind === 'approval' && approvalActionability?.status === 'blocked') return []
   if (row.kind === 'approval')
     return [
       option('approve', 'Approve', 'decideApproval', `/api/v1/approvals/${row.source_id}/decide`, row.target_revision),
@@ -206,27 +216,35 @@ const response = (row: HumanAttentionRow) => {
     : []
   return {
     workflow: row.kind,
-    requiresReason: ['decision', 'approval', 'conflict', 'recovery'].includes(row.kind),
+    // Approval commands retain a non-empty audit reason, but the Human UI may
+    // submit a stable default for direct Approve/Reject actions.
+    requiresReason: ['decision', 'conflict', 'recovery'].includes(row.kind),
     requiresMessage: row.kind === 'clarification' || (row.kind === 'completion_review' && row.source_type === 'inbox_item'),
     choices,
     expectedStatus: row.kind === 'decision' || row.kind === 'approval' ? 'decided' as const : 'verified' as const,
   }
 }
 
-const bulk = (row: HumanAttentionRow) => {
+const bulk = (
+  row: HumanAttentionRow,
+  approvalActionability?: ApprovalViewerActionability,
+) => {
   const payload = record(row.payload)
   const payloadHash = typeof payload.actionPayloadHash === 'string' ? payload.actionPayloadHash : null
   const eligible = row.status === 'open'
     && row.kind === 'approval'
+    && approvalActionability?.status !== 'blocked'
     && (row.risk_level === 'info' || row.risk_level === 'low')
     && payloadHash !== null
   const prohibitedReason = eligible
     ? null
     : row.kind !== 'approval'
       ? 'bulk.kind_not_supported'
-      : row.risk_level !== 'info' && row.risk_level !== 'low'
-        ? 'bulk.risk_prohibited'
-        : 'bulk.exact_payload_required'
+      : approvalActionability?.status === 'blocked'
+        ? 'bulk.approval_not_actionable'
+        : row.risk_level !== 'info' && row.risk_level !== 'low'
+          ? 'bulk.risk_prohibited'
+          : 'bulk.exact_payload_required'
   return {
     eligible,
     compatibilityKey: eligible ? `approval:${payloadHash}` : null,
@@ -239,15 +257,28 @@ export function projectHumanAttentionRow(
   row: HumanAttentionRow,
   observedAt = new Date(),
   viewer?: HumanAttentionViewer,
+  approvalActionability?: ApprovalViewerActionability,
 ): HumanAttentionItem {
-  const availableOptions = options(row)
-  const sourceUpdatedAt = iso(row.updated_at)
+  const effectiveStatus: HumanAttentionStatus = row.kind !== 'approval'
+    || !approvalActionability
+    || approvalActionability.status === 'actionable'
+    ? row.status
+    : approvalActionability.reason === 'expired'
+      ? 'expired'
+      : approvalActionability.reason === 'already_decided'
+        ? 'decided'
+        : approvalActionability.reason === 'viewer_already_decided'
+          ? 'seen'
+          : 'failed'
+  const effectiveRow = effectiveStatus === row.status ? row : { ...row, status: effectiveStatus }
+  const availableOptions = options(effectiveRow, approvalActionability)
+  const sourceUpdatedAt = iso(effectiveRow.updated_at)
   const correlationId = row.correlation_id ?? `source:${row.source_type}:${row.source_id}`
   return humanAttentionItemSchema.parse({
     projectionVersion: 1,
     id: `v1:${row.source_type}:${row.source_id}`,
-    kind: row.kind,
-    status: row.status,
+    kind: effectiveRow.kind,
+    status: effectiveRow.status,
     workspaceId: row.workspace_id,
     teamId: row.team_id,
     projectId: row.project_id,
@@ -258,9 +289,9 @@ export function projectHumanAttentionRow(
     title: row.title,
     summary: row.summary,
     summaryDerived: true,
-    reasonCodes: reasonCodes(row),
-    severity: row.risk_level,
-    urgency: urgency(row, observedAt),
+    reasonCodes: reasonCodes(effectiveRow, approvalActionability),
+    severity: effectiveRow.risk_level,
+    urgency: urgency(effectiveRow, observedAt),
     requestedBy: {
       id: row.requested_by_actor_id,
       kind: row.requested_by_kind,
@@ -271,9 +302,9 @@ export function projectHumanAttentionRow(
       : null,
     options: availableOptions,
     recommendedOptionId: availableOptions[0]?.id ?? null,
-    audience: audience(row, availableOptions, viewer),
-    response: response(row),
-    bulk: bulk(row),
+    audience: audience(effectiveRow, availableOptions, viewer),
+    response: response(effectiveRow),
+    bulk: bulk(effectiveRow, approvalActionability),
     impactSummary: row.impact_summary,
     affectedResources: affectedResources(row),
     evidence: evidence(row),
@@ -281,7 +312,10 @@ export function projectHumanAttentionRow(
     sourceRevision: row.source_revision,
     source: { type: row.source_type, id: row.source_id, status: row.source_status },
     freshness: {
-      state: row.source_status === 'stale'
+      state: approvalActionability?.status === 'blocked'
+        && (approvalActionability.reason === 'session_inactive' || approvalActionability.reason === 'authority_revoked')
+        ? 'stale'
+        : row.source_status === 'stale'
         ? 'stale'
         : row.correlation_id ? 'current' : 'partial',
       observedAt: observedAt.toISOString(),

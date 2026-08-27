@@ -43,7 +43,7 @@ import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
-import { Markdown } from '../features/rich-content/markdown'
+import { RichContent } from '../features/rich-content/markdown'
 import { RichTextEditor } from '../features/rich-content/editor'
 
 type Actor = AuthenticatedActor
@@ -798,7 +798,7 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
             />
           : <section className="guidance-rendered" aria-label={copy.renderedPreviewLabel}>
               {markdown.trim()
-                ? <Markdown source={markdown} />
+                ? <RichContent density="document" source={markdown} />
                 : <p className="guidance-preview-empty">{copy.previewEmpty}</p>}
             </section>}
         <label>{copy.changeSummary}<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>

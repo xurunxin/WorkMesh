@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { createElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { Tabs, Toast } from './index.js'
+import { DataTableFrame, DescriptionList, Field, OverflowText, ResponsiveActionBar, Tabs, Toast } from './index.js'
 
 vi.mock('react', async importOriginal => {
   const actual = await importOriginal<typeof import('react')>()
@@ -75,6 +76,17 @@ describe('UI authority and token boundary', () => {
     expect(source).toContain('aria-label={`${categoryLabel}: ${label}`}')
   })
 
+  it('exports API-free responsive content primitives', () => {
+    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
+    for (const component of ['ResponsiveActionBar', 'DataTableFrame', 'DescriptionList', 'Field', 'OverflowText']) {
+      expect(source).toMatch(new RegExp(`export function ${component}`))
+    }
+    const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
+    for (const className of ['wm-responsive-action-bar', 'wm-data-table-frame', 'wm-description-list', 'wm-field', 'wm-overflow-text']) {
+      expect(css).toContain(`.${className}`)
+    }
+  })
+
   it('owns the complete M1 token vocabulary and reduced-motion fallback', () => {
     const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
     for (const token of ['--wm-canvas', '--wm-font-sans', '--wm-space-4', '--wm-radius-md', '--wm-shadow-md', '--wm-motion-normal', '--wm-focus-ring']) {
@@ -90,6 +102,36 @@ describe('UI authority and token boundary', () => {
     for (const type of ['LifecycleState', 'RunHealth', 'RiskLevel', 'UrgencyLevel', 'FreshnessState']) expect(source).toContain(`export type ${type}`)
     const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
     for (const value of ['healthy', 'stalled', 'critical', 'urgent', 'fresh', 'stale', 'verified']) expect(css).toContain(`.wm-semantic-${value}`)
+  })
+})
+
+describe('responsive content primitives', () => {
+  it('labels action and horizontally scrollable table regions', () => {
+    const actions = ResponsiveActionBar({ children: 'Actions', label: 'Approval actions' })
+    const table = DataTableFrame({ children: 'Table', label: 'Approvals' })
+    expect(actions.props.role).toBe('toolbar')
+    expect(actions.props['aria-label']).toBe('Approval actions')
+    expect(table.props.role).toBe('region')
+    expect(table.props.tabIndex).toBe(0)
+    expect(table.props['aria-label']).toBe('Approvals')
+  })
+
+  it('renders description, field, and overflow semantics without application authority', () => {
+    const descriptions = DescriptionList({ items: [{ id: 'scope', term: 'Scope', description: '/projects/one' }] })
+    const terms = elementsIn(descriptions)
+    expect(terms.some(element => element.props.children === 'Scope')).toBe(true)
+    expect(terms.some(element => element.props.children === '/projects/one')).toBe(true)
+
+    const field = Field({ children: createElement('textarea'), description: 'Optional context', error: 'Required', htmlFor: 'approval-note', label: 'Decision note' })
+    const fieldElements = elementsIn(field)
+    expect(fieldElements.find(element => element.props.htmlFor === 'approval-note')?.props.children).toBeTruthy()
+    expect(fieldElements.find(element => element.props.role === 'alert')?.props.children).toBe('Required')
+    const control = fieldElements.find(element => element.props.id === 'approval-note')
+    expect(control?.props['aria-invalid']).toBe(true)
+    expect(String(control?.props['aria-describedby'])).toContain('ui-test-')
+
+    const overflow = OverflowText({ children: 'Long relationship title', lines: 2 })
+    expect(overflow.props.className).toContain('wm-overflow-text-2')
   })
 })
 

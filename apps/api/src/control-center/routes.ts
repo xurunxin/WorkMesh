@@ -7,9 +7,12 @@ import {
   agentSessionControlPreviewInputSchema,
   controlCenterCollectionSchema,
   controlCenterResponseSchema,
+  runExplanationCursorPayloadSchema,
+  runExplanationCursorSchema,
   runExplanationResponseSchema,
   workItemExecutionSummaryResponseSchema,
   type ActionPreview,
+  type RunExplanation,
 } from '@workmesh/contracts'
 import {
   DomainError,
@@ -423,7 +426,7 @@ const controlActions = agentSessionControlActionSchema.options
 type RunActivityRow = QueryResultRow & {
   id: string; sequence: string | number; kind: string; summary: string; details_markdown: string | null
   tool_invocation: unknown; artifact_ids: string[]; references_json: unknown
-  actor_id: string; actor_name: string; actor_kind: 'human' | 'agent' | 'service'; created_at: Date | string
+  actor_id: string; actor_name: string; actor_kind: 'human' | 'agent' | 'service'; created_at: Date | string; created_at_cursor: string
   correlation_id: string | null; event_cursor: string | number | null
 }
 type RunPlanRow = QueryResultRow & {
@@ -437,6 +440,35 @@ type RunArtifactRow = QueryResultRow & {
   id: string; type: string; title: string; uri: string | null; checksum: string | null; source_tool: string | null
   repository: unknown; metadata: unknown; created_at: Date | string
 }
+type RunApprovalDecisionRow = QueryResultRow & {
+  decision_id: string; approval_id: string; session_id: string; work_item_id: string | null
+  action_name: string; risk_level: 'low' | 'medium' | 'high' | 'critical'
+  decision: 'approved' | 'rejected'; reason: string; decided_at: Date | string; decision_at_cursor: string
+  actor_id: string; actor_name: string; actor_kind: 'human' | 'agent' | 'service'
+  event_id: string | null; event_cursor: string | number | null; event_session_sequence: string | number | null; event_correlation_id: string | null
+}
+
+type RunExplanationCursor =
+  | { kind: 'sequence'; sequence: bigint }
+  | { kind: 'keyset'; sequence: string; at: string; source: 'activity' | 'approval'; id: string }
+
+const parseRunExplanationCursor = (value: string | undefined): RunExplanationCursor | null => {
+  if (!value) return null
+  if (!runExplanationCursorSchema.safeParse(value).success)
+    throw new DomainError('PAGINATION_CURSOR_INVALID', 'Pagination cursor is invalid')
+  if (!value.startsWith('r1.')) return { kind: 'sequence', sequence: BigInt(value) }
+  try {
+    const encoded = value.slice(3)
+    if (!/^[A-Za-z0-9_-]+$/.test(encoded) || encoded.length % 4 === 1) throw new Error('invalid cursor encoding')
+    const payload = runExplanationCursorPayloadSchema.parse(JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')))
+    return { kind: 'keyset', ...payload, sequence: payload.sequence }
+  } catch {
+    throw new DomainError('PAGINATION_CURSOR_INVALID', 'Pagination cursor is invalid')
+  }
+}
+
+const encodeRunExplanationCursor = (cursor: Omit<Extract<RunExplanationCursor, { kind: 'keyset' }>, 'kind'>): string =>
+  `r1.${Buffer.from(JSON.stringify({ v: 1, ...cursor }), 'utf8').toString('base64url')}`
 
 const objectValue = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const stringValue = (value: unknown): string | null => typeof value === 'string' && value.length > 0 ? value : null
@@ -476,22 +508,19 @@ const phaseFor = (row: RunActivityRow, actionType: ReturnType<typeof actionTypeF
   return 'implementation' as const
 }
 
+type RunCausalGroup = RunExplanation['causalGroups'][number]
+type RunCausalGroupWithCursor = Omit<RunCausalGroup, 'technicalRecords'> & {
+  cursorAt: string
+  technicalRecords: Array<Record<string, unknown>>
+}
+
 const groupActivities = (
   rows: RunActivityRow[],
   planVersions: Array<{ id: string; createdAt: string; steps: Array<{ id: string }> }>,
   artifacts: RunArtifactRow[],
-) => {
+): RunCausalGroupWithCursor[] => {
   const artifactById = new Map(artifacts.map(item => [item.id, item]))
-  const groups: Array<{
-    id: string; kind: string; phase: ReturnType<typeof phaseFor>; actionType: ReturnType<typeof actionTypeFor>; summary: string
-    trigger: { kind: string; summary: string; sourceActivityId: string }; actor: { id: string; kind: 'human' | 'agent' | 'service'; displayName: string }
-    planVersionId: string | null; planStepId: string | null; risk: 'low' | 'medium' | 'high' | 'critical' | null
-    count: number; firstSequence: number; lastSequence: number; sourceActivityIds: string[]
-    affectedResources: Array<{ type: string; id: string; label?: string }>; evidence: Array<{ type: string; id: string; title: string; uri?: string }>
-    validation: { state: 'not_verified' | 'pending' | 'verified' | 'failed'; summary: string | null }
-    startedAt: string; endedAt: string; durationMs: number; collapsed: boolean; material: boolean; failure: boolean; attention: boolean
-    technicalRecords: Array<Record<string, unknown>>
-  }> = []
+  const groups: RunCausalGroupWithCursor[] = []
   for (const row of rows) {
     const sequence = Number(row.sequence)
     const references = activityReferences(row.references_json)
@@ -522,7 +551,12 @@ const groupActivities = (
       toolInvocation: row.tool_invocation ?? null, references,
     }
     const previous = groups.at(-1)
-    const collapsible = lowValue && !failed && risk === null && previous
+    // A missing session sequence may contain a material event (for example an
+    // approval decision) that is not an agent activity. Keep those boundaries
+    // visible instead of folding activities on both sides into one page-spanning
+    // group.
+    const collapsible = sequence === (previous?.lastSequence ?? sequence) + 1
+      && lowValue && !failed && risk === null && previous
       && previous.phase === phase && previous.actionType === actionType && previous.kind === row.kind
       && previous.summary === row.summary && previous.actor.id === row.actor_id
       && previous.planVersionId === (planVersion?.id ?? null) && previous.planStepId === stepId
@@ -536,16 +570,82 @@ const groupActivities = (
       actor: { id: row.actor_id, kind: row.actor_kind, displayName: row.actor_name }, planVersionId: planVersion?.id ?? null, planStepId: stepId, risk,
       count: 1, firstSequence: sequence, lastSequence: sequence, sourceActivityIds: [row.id], affectedResources, evidence,
       validation: { state: validationState, summary: actionType === 'validation' ? (stringValue(tool.resultSummary) ?? row.summary) : null },
-      startedAt: createdAt, endedAt: createdAt, durationMs: 0, collapsed: false, material, failure: failed,
+      startedAt: createdAt, endedAt: createdAt, cursorAt: row.created_at_cursor, durationMs: 0, collapsed: false, material, failure: failed,
       attention: ['question', 'decision_request'].includes(row.kind), technicalRecords: [technicalRecord],
     })
   }
   return groups
 }
 
+/**
+ * Project the immutable approval decision fact into the same human-visible run
+ * story as Agent Activities. A decision is deliberately not represented as an
+ * invented agent_activity: sourceActivityIds stays empty and the trigger points
+ * at the persisted approval event (or, for legacy rows, the decision fact).
+ */
+const approvalDecisionGroup = (row: RunApprovalDecisionRow): RunCausalGroupWithCursor => {
+  const decidedAt = iso(row.decided_at)
+  const eventSequence = row.event_session_sequence === null ? null : Number(row.event_session_sequence)
+  const sequence = Number.isSafeInteger(eventSequence) && eventSequence !== null && eventSequence > 0
+    ? eventSequence
+    : 1
+  const sourceId = row.event_id ?? row.decision_id
+  const decisionLabel = row.decision === 'approved' ? 'approved' : 'rejected'
+  const reason = row.reason
+  const actor = { id: row.actor_id, kind: row.actor_kind, displayName: row.actor_name }
+  return {
+    id: `approval-decision-group:${row.decision_id}`,
+    kind: 'approval_decision',
+    phase: 'human_input',
+    actionType: 'approval',
+    summary: `Human ${decisionLabel} approval for ${row.action_name}. Decision reason: ${reason}`,
+    trigger: {
+      kind: 'approval.decision.recorded',
+      summary: `Human ${decisionLabel} decision recorded for ${row.action_name}.`,
+      sourceActivityId: sourceId,
+    },
+    actor,
+    planVersionId: null,
+    planStepId: null,
+    risk: row.risk_level,
+    count: 1,
+    firstSequence: sequence,
+    lastSequence: sequence,
+    sourceActivityIds: [],
+    affectedResources: [
+      { type: 'approval', id: row.approval_id, label: row.action_name },
+      { type: 'agent_session', id: row.session_id },
+      ...(row.work_item_id ? [{ type: 'work_item', id: row.work_item_id }] : []),
+    ],
+    evidence: [],
+    validation: { state: 'not_verified', summary: null },
+    startedAt: decidedAt,
+    endedAt: decidedAt,
+    cursorAt: row.decision_at_cursor,
+    durationMs: 0,
+    collapsed: false,
+    material: true,
+    failure: false,
+    attention: false,
+    technicalRecords: [{
+      id: row.decision_id,
+      sequence,
+      kind: 'approval.decision.recorded',
+      summary: `Immutable Human decision reason: ${reason}`,
+      detailsSummary: null,
+      actor,
+      createdAt: decidedAt,
+      correlationId: row.event_correlation_id,
+      eventCursor: row.event_cursor === null ? null : String(row.event_cursor),
+      toolInvocation: null,
+      references: [{ type: 'approval', id: row.approval_id }],
+    }],
+  }
+}
+
 async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: FastifyReply, sessionId: string) {
   const query = z.object({
-    cursor: z.string().regex(/^[1-9][0-9]{0,18}$/).optional(), limit: z.coerce.number().int().min(1).max(MAX_LIMIT).default(MAX_LIMIT),
+    cursor: z.string().min(1).max(8_192).optional(), limit: z.coerce.number().int().min(1).max(MAX_LIMIT).default(MAX_LIMIT),
     phase: z.enum(['intake', 'investigation', 'planning', 'implementation', 'validation', 'human_input', 'recovery', 'completion']).optional(),
     planStepId: z.string().uuid().optional(), actorId: z.string().uuid().optional(),
     actionType: z.enum(['acknowledgement', 'read', 'write', 'tool', 'state_transition', 'plan', 'message', 'approval', 'decision', 'evidence', 'validation', 'handoff', 'heartbeat', 'other']).optional(),
@@ -597,12 +697,51 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
   const activityAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', activityValues)
   const artifactValues: unknown[] = [sessionId, current.workspaceId]
   const artifactAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', artifactValues)
-  const cursorClause = query.cursor ? `AND source.sequence < $${activityValues.push(query.cursor)}` : ''
+  const runCursor = parseRunExplanationCursor(query.cursor)
+  const approvalValues: unknown[] = [sessionId, current.workspaceId]
+  const approvalAuth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', approvalValues)
+  let cursorClause = ''
+  if (runCursor?.kind === 'sequence') {
+    cursorClause = `AND source.sequence < $${activityValues.push(runCursor.sequence.toString())}`
+  } else if (runCursor?.kind === 'keyset') {
+    const sequenceParameter = `$${activityValues.push(runCursor.sequence)}`
+    const atParameter = `$${activityValues.push(runCursor.at)}`
+    const sameKey = runCursor.source === 'activity'
+      ? `source.id < $${activityValues.push(runCursor.id)}::uuid`
+      : 'true'
+    cursorClause = `AND (
+      source.sequence < ${sequenceParameter}
+      OR (source.sequence = ${sequenceParameter} AND (
+        source.created_at < ${atParameter}::timestamptz
+        OR (source.created_at = ${atParameter}::timestamptz AND ${sameKey})
+      ))
+    )`
+  }
   const activityLimitParameter = `$${activityValues.push(query.limit + 1)}`
-  const [activityResult, artifactResult, planResult, attention, validationResult] = await Promise.all([
+  let approvalCursorClause = ''
+  if (runCursor?.kind === 'sequence') {
+    approvalCursorClause = `WHERE COALESCE(source.event_session_sequence, 1) < $${approvalValues.push(runCursor.sequence.toString())}`
+  } else if (runCursor?.kind === 'keyset') {
+    const sequenceParameter = `$${approvalValues.push(runCursor.sequence)}`
+    const atParameter = `$${approvalValues.push(runCursor.at)}`
+    const sameKey = runCursor.source === 'approval'
+      ? `source.decision_id < $${approvalValues.push(runCursor.id)}::uuid`
+      : 'false'
+    approvalCursorClause = `WHERE (
+      COALESCE(source.event_session_sequence, 1) < ${sequenceParameter}
+      OR (COALESCE(source.event_session_sequence, 1) = ${sequenceParameter} AND (
+        source.decided_at < ${atParameter}::timestamptz
+        OR (source.decided_at = ${atParameter}::timestamptz AND ${sameKey})
+      ))
+    )`
+  }
+  const approvalLimitParameter = `$${approvalValues.push(query.limit + 1)}`
+  const [activityResult, artifactResult, planResult, attention, validationResult, approvalDecisionResult] = await Promise.all([
     boundedQuery<RunActivityRow>(h.db,
       `SELECT activity.id,activity.sequence,activity.kind,activity.summary,activity.details_markdown,activity.tool_invocation,activity.artifact_ids,activity.references_json,
-              activity.actor_id,actor.display_name AS actor_name,actor.kind AS actor_kind,activity.created_at,event.correlation_id,event.cursor AS event_cursor
+              activity.actor_id,actor.display_name AS actor_name,actor.kind AS actor_kind,activity.created_at,
+              to_char(activity.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS created_at_cursor,
+              event.correlation_id,event.cursor AS event_cursor
          FROM agent_sessions session
          JOIN LATERAL (SELECT source.* FROM agent_activities source WHERE source.session_id=session.id ${cursorClause} ORDER BY source.sequence DESC,source.id DESC LIMIT ${activityLimitParameter}) activity ON true
          JOIN actors actor ON actor.id=activity.actor_id AND actor.workspace_id=session.workspace_id
@@ -631,9 +770,49 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
       `SELECT COALESCE(bool_or(kind='error' OR tool_invocation->>'status'='failed'),false) AS failed,
               COALESCE(bool_or(tool_invocation->>'status'='succeeded' AND lower(COALESCE(tool_invocation->>'toolName','')) ~ '(test|check|lint|build|review|validat)'),false) AS verified
          FROM agent_activities WHERE session_id=$1`, [sessionId]),
+    boundedQuery<RunApprovalDecisionRow>(h.db,
+      `SELECT page.*
+         FROM (
+           SELECT source.*
+             FROM (
+           SELECT decision.id AS decision_id,decision.approval_id,approval.session_id,session.work_item_id,
+                  approval.action_name,approval.risk_level::text AS risk_level,
+                  decision.decision,decision.reason,decision.decided_at,
+                  to_char(decision.decided_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS decision_at_cursor,
+                   actor.id AS actor_id,actor.display_name AS actor_name,actor.kind AS actor_kind,
+                   decision_event.id AS event_id,decision_event.cursor AS event_cursor,
+                   decision_event.session_sequence AS event_session_sequence,
+                   decision_event.correlation_id AS event_correlation_id
+             FROM agent_sessions session
+             JOIN approvals approval
+               ON approval.session_id=session.id AND approval.workspace_id=session.workspace_id
+             JOIN approval_decisions decision ON decision.approval_id=approval.id
+             JOIN actors actor ON actor.id=decision.actor_id AND actor.workspace_id=session.workspace_id
+             LEFT JOIN LATERAL (
+               SELECT event.id,event.cursor,event.session_sequence,event.correlation_id
+                 FROM domain_events event
+                WHERE event.workspace_id=session.workspace_id
+                  AND event.aggregate_type='approval'
+                  AND event.aggregate_id=approval.id
+                  AND event.event_type='approval.decision.recorded'
+                  AND event.payload->'decision'->>'actor_id'=decision.actor_id::text
+                  AND event.payload->'decision'->>'decision'=decision.decision
+                  AND event.payload->'decision'->>'reason'=decision.reason
+                ORDER BY event.cursor DESC
+                LIMIT 1
+             ) decision_event ON true
+            WHERE session.id=$1 AND session.workspace_id=$2 AND ${approvalAuth}
+             ) source
+             ${approvalCursorClause}
+            ORDER BY COALESCE(source.event_session_sequence, 1) DESC,source.decided_at DESC,source.decision_id DESC
+            LIMIT ${approvalLimitParameter}
+         ) page
+        ORDER BY COALESCE(page.event_session_sequence, 1),page.decided_at,page.decision_id`, approvalValues),
   ])
   const hasOlder = activityResult.rows.length > query.limit
   const activityRows = hasOlder ? activityResult.rows.slice(1) : activityResult.rows
+  const decisionsHaveOlder = approvalDecisionResult.rows.length > query.limit
+  const decisionRows = decisionsHaveOlder ? approvalDecisionResult.rows.slice(1) : approvalDecisionResult.rows
   const artifacts = artifactResult.rows
   const planMap = new Map<string, {
     id: string; revision: number; parentVersionId: string | null; changeSummary: string
@@ -652,7 +831,15 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
     })
   }
   const planVersions = [...planMap.values()]
-  const allGroups = groupActivities(activityRows, planVersions, artifacts)
+  const mergedGroups = [
+    ...groupActivities(activityRows, planVersions, artifacts),
+    ...decisionRows.map(approvalDecisionGroup),
+  ].sort((left, right) => {
+    const sequence = left.lastSequence - right.lastSequence
+    return sequence || left.cursorAt.localeCompare(right.cursorAt) || left.id.localeCompare(right.id)
+  })
+  const allGroups = mergedGroups.length > query.limit ? mergedGroups.slice(-query.limit) : mergedGroups
+  const hasOlderGroups = hasOlder || decisionsHaveOlder || mergedGroups.length > query.limit
   for (const version of planVersions) for (const step of version.steps) {
     step.causalGroupIds = allGroups.filter(group => group.planVersionId === version.id && group.planStepId === step.id).map(group => group.id)
     step.evidenceIds = [...new Set(allGroups.filter(group => group.planVersionId === version.id && group.planStepId === step.id).flatMap(group => group.evidence.map(item => item.id)))]
@@ -667,7 +854,7 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
     && (!query.failure || group.failure)
     && (!query.attention || group.attention)
     && (!query.timeWindow || Date.parse(group.startedAt) >= Date.now() - ({ '24h': 86_400_000, '7d': 604_800_000, '30d': 2_592_000_000 }[query.timeWindow]))
-  )
+  ).map(({ cursorAt: _cursorAt, ...group }) => group)
   const artifactGroupIds = new Map<string, string[]>()
   for (const group of allGroups) for (const item of group.evidence) artifactGroupIds.set(item.id, [...(artifactGroupIds.get(item.id) ?? []), group.id])
   const evidenceDetails = artifacts.map(item => {
@@ -696,6 +883,24 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
   const observedAt = new Date().toISOString()
   const policies = controlActions.map(action => evaluateAgentSessionControl(row.state, action))
   reply.header('ETag', `"run-explanation-v1-${row.revision}"`)
+  const decisionByGroupId = new Map(decisionRows.map(decision => [`approval-decision-group:${decision.decision_id}`, decision]))
+  const nextCursorGroup = allGroups[0]
+  const nextCursorDecision = nextCursorGroup ? decisionByGroupId.get(nextCursorGroup.id) : undefined
+  const nextCursor = hasOlderGroups && nextCursorGroup
+    ? nextCursorDecision
+      ? encodeRunExplanationCursor({
+        sequence: String(nextCursorGroup.firstSequence),
+        at: nextCursorGroup.cursorAt,
+        source: 'approval',
+        id: nextCursorDecision.decision_id,
+      })
+      : encodeRunExplanationCursor({
+        sequence: String(nextCursorGroup.firstSequence),
+        at: nextCursorGroup.cursorAt,
+        source: 'activity',
+        id: nextCursorGroup.trigger.sourceActivityId,
+      })
+    : null
   return runExplanationResponseSchema.parse({
     projectionVersion: 1,
     session: { id: row.id, state: row.state, revision: row.revision, stateReason: row.state_reason, budget: Object.fromEntries(Object.entries(objectValue(row.budget)).filter((entry): entry is [string, number] => typeof entry[1] === 'number')), updatedAt: iso(row.updated_at) },
@@ -707,7 +912,7 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
     currentStep: row.step_id ? { id: row.step_id, title: row.step_title!, status: row.step_status!, ordinal: row.step_ordinal! } : null,
     planVersions,
     causalGroups,
-    nextCursor: hasOlder && activityRows.length > 0 ? String(activityRows[0]!.sequence) : null,
+    nextCursor,
     pendingAttention: attention.rows.map(item => projectHumanAttentionRow(item)),
     changes: [
       { type: 'agent_session', id: row.id, revision: row.revision },

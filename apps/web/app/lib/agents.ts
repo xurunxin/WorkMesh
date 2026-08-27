@@ -1,6 +1,10 @@
 'use client'
 
 import { ApiError, apiListRequest, apiMutation, apiRequest, json, type ListResponse } from './api'
+import type {
+  ApprovalDecisionResponse as TransportApprovalDecisionResponse,
+  ApprovalViewerActionability as TransportApprovalViewerActionability,
+} from '@workmesh/contracts'
 
 export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
 
@@ -27,7 +31,33 @@ export type PlanStep = { id: string; title: string; description?: string; status
 export type PlanVersion = { id: string; revision: number; parent_version_id: string | null; change_summary: string; created_at: string; steps: PlanStep[] }
 export type AgentActivity = { id: string; kind: string; summary: string; detailsMarkdown?: string; artifactIds: string[]; ephemeral: boolean; created_at: string; toolInvocation?: { toolName: string; status: string; resultSummary?: string } }
 export type Artifact = { id: string; session_id: string; work_item_id?: string | null; type: string; title: string; uri?: string; source_tool?: string; created_at: string }
-export type Approval = { id: string; session_id: string; approval_type: string; action_name: string; risk_level: string; rationale_summary: string; status: string; revision: number; expires_at: string; created_at: string }
+export type ApprovalViewerActionability = TransportApprovalViewerActionability
+export type ApprovalDecision = Extract<ApprovalViewerActionability, { status: 'actionable' }>['allowed_decisions'][number]
+export type ApprovalBlockedReason = Extract<ApprovalViewerActionability, { status: 'blocked' }>['reason']
+export type ApprovalDecisionRecord = TransportApprovalDecisionResponse['approval']['decisions'][number]
+export type Approval = {
+  id: string
+  session_id: string
+  approval_type: string
+  action_name: string
+  /** Server-sanitized action scope. React renders this as text only. */
+  action_payload_sanitized?: Record<string, unknown>
+  /** Stable hash of the exact sanitized action payload. */
+  action_payload_hash?: string
+  risk_level: string
+  rationale_summary: string
+  status: string
+  revision: number
+  expires_at: string
+  created_at: string
+  /** Immutable votes returned by the authoritative Approval projection. */
+  decisions?: ApprovalDecisionRecord[]
+  /** The complete approval quorum at the same projection point as decisions. */
+  quorum?: ApprovalQuorum
+  viewer_actionability?: ApprovalViewerActionability
+}
+export type ApprovalQuorum = TransportApprovalDecisionResponse['quorum']
+export type ApprovalDecisionResponse = Omit<TransportApprovalDecisionResponse, 'approval'> & { approval: Approval }
 export type AgentConnection = { id: string; workspace_id: string; team_id: string; agent_actor_id: string; principal_human_actor_id: string; name: string; agent_slug: string; client_type: 'codex'|'opencode'|'pi'|'generic_mcp'; status: 'pending'|'active'|'rotating'|'revoked'; source: 'manual'|'enrollment'; enrollment_policy_id: string|null; requested_capabilities: string[]; granted_capabilities: string[]; grant_agent_delegate: boolean; skill_version: string|null; skill_sha256: string|null; credential_fingerprint_prefix: string|null; pairing_code_expires_at: string|null; last_used_at: string|null; rotated_at: string|null; revoked_at: string|null; revision: number; redacted_token: true; created_at: string; updated_at: string }
 export type AgentConnectionCreateResponse = { connection: AgentConnection; connect_url: string; skill: { name: 'workmesh'; version: string; sha256: string; signature: string } }
 
@@ -66,7 +96,113 @@ export const normalizePlan = (value: Record<string, unknown>): PlanVersion => ({
 })
 export const normalizeActivity = (value: Record<string, unknown>): AgentActivity => ({ id: String(value.id), kind: String(value.kind), summary: String(value.summary), detailsMarkdown: (value.detailsMarkdown ?? value.details_markdown) as string | undefined, artifactIds: (value.artifactIds ?? value.artifact_ids ?? []) as string[], ephemeral: Boolean(value.ephemeral), created_at: String(value.created_at), toolInvocation: (value.toolInvocation ?? value.tool_invocation) as AgentActivity['toolInvocation'] })
 export const normalizeArtifact = (value: Record<string, unknown>): Artifact => ({ id: String(value.id), session_id: String(value.session_id ?? value.sessionId), work_item_id: (value.work_item_id ?? value.workItemId) as string | null | undefined, type: String(value.type), title: String(value.title), uri: value.uri as string | undefined, source_tool: (value.source_tool ?? value.sourceTool) as string | undefined, created_at: String(value.created_at) })
-export const normalizeApproval = (value: Record<string, unknown>): Approval => ({ id: String(value.id), session_id: String(value.session_id ?? value.sessionId), approval_type: String(value.approval_type ?? value.approvalType), action_name: String(value.action_name ?? value.actionName), risk_level: String(value.risk_level ?? value.riskLevel), rationale_summary: String(value.rationale_summary ?? value.rationaleSummary), status: String(value.status), revision: Number(value.revision), expires_at: String(value.expires_at ?? value.expiresAt), created_at: String(value.created_at) })
+const approvalBlockedReasons: readonly ApprovalBlockedReason[] = ['viewer_already_decided', 'expired', 'session_inactive', 'authority_revoked', 'already_decided']
+const approvalDecisionSources: readonly ApprovalDecisionRecord['source'][] = ['human', 'workspace_policy']
+
+const normalizeApprovalDecision = (value: unknown): ApprovalDecisionRecord | undefined => {
+  if (!value || typeof value !== 'object') return undefined
+  const item = value as Record<string, unknown>
+  if (item.decision !== 'approved' && item.decision !== 'rejected') return undefined
+  if (!approvalDecisionSources.includes(item.source as ApprovalDecisionRecord['source'])) return undefined
+  const policyRevision = item.policy_revision ?? item.policyRevision
+  return {
+    actor_id: String(item.actor_id ?? item.actorId),
+    decision: item.decision,
+    reason: String(item.reason ?? ''),
+    source: item.source as ApprovalDecisionRecord['source'],
+    policy_workspace_id: (item.policy_workspace_id ?? item.policyWorkspaceId ?? null) as string | null,
+    policy_revision: policyRevision === undefined || policyRevision === null ? null : Number(policyRevision),
+    decided_at: String(item.decided_at ?? item.decidedAt),
+  }
+}
+
+const normalizeApprovalDecisions = (value: unknown): ApprovalDecisionRecord[] => Array.isArray(value)
+  ? value.map(normalizeApprovalDecision).filter((decision): decision is ApprovalDecisionRecord => decision !== undefined)
+  : []
+
+const normalizeApprovalQuorum = (value: unknown): ApprovalQuorum | undefined => {
+  if (!value || typeof value !== 'object') return undefined
+  const item = value as Record<string, unknown>
+  const required = Number(item.required)
+  const approved = Number(item.approved)
+  const rejected = Number(item.rejected)
+  if (!Number.isInteger(required) || required < 1 || !Number.isInteger(approved) || approved < 0 || !Number.isInteger(rejected) || rejected < 0 || typeof item.reached !== 'boolean') return undefined
+  return { required, approved, rejected, reached: item.reached }
+}
+
+const normalizeApprovalActionability = (value: unknown): ApprovalViewerActionability | undefined => {
+  if (!value || typeof value !== 'object') return undefined
+  const item = value as Record<string, unknown>
+  if (item.status === 'actionable') {
+    const rawDecisions = item.allowed_decisions ?? item.allowedDecisions
+    if (Array.isArray(rawDecisions) && rawDecisions.length === 2 && rawDecisions[0] === 'approved' && rawDecisions[1] === 'rejected') {
+      return { status: 'actionable', allowed_decisions: ['approved', 'rejected'] }
+    }
+    return undefined
+  }
+  if (item.status === 'blocked' && approvalBlockedReasons.includes(item.reason as ApprovalBlockedReason)) {
+    return { status: 'blocked', reason: item.reason as ApprovalBlockedReason }
+  }
+  return undefined
+}
+
+const normalizeApprovalPayload = (value: unknown): Record<string, unknown> => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(Object.entries(value))
+}
+
+/**
+ * Serialize the server-sanitized scope without treating it as markup. The
+ * fallback keeps a malformed legacy response readable without exposing the
+ * original object through an unsafe renderer.
+ */
+export const formatApprovalPayload = (payload: Record<string, unknown> | undefined): string => {
+  try {
+    return JSON.stringify(payload ?? {}, null, 2) ?? '{}'
+  } catch {
+    return '{}'
+  }
+}
+
+export const normalizeApproval = (value: Record<string, unknown>): Approval => ({
+  id: String(value.id),
+  session_id: String(value.session_id ?? value.sessionId),
+  approval_type: String(value.approval_type ?? value.approvalType),
+  action_name: String(value.action_name ?? value.actionName),
+  action_payload_sanitized: normalizeApprovalPayload(value.action_payload_sanitized ?? value.actionPayloadSanitized),
+  action_payload_hash: typeof (value.action_payload_hash ?? value.actionPayloadHash) === 'string'
+    ? String(value.action_payload_hash ?? value.actionPayloadHash)
+    : undefined,
+  risk_level: String(value.risk_level ?? value.riskLevel),
+  rationale_summary: String(value.rationale_summary ?? value.rationaleSummary),
+  status: String(value.status),
+  revision: Number(value.revision),
+  expires_at: String(value.expires_at ?? value.expiresAt),
+  created_at: String(value.created_at ?? value.createdAt),
+  decisions: normalizeApprovalDecisions(value.decisions),
+  quorum: normalizeApprovalQuorum(value.quorum),
+  viewer_actionability: normalizeApprovalActionability(value.viewer_actionability ?? value.viewerActionability),
+})
+
+/** Load one complete Human Approval projection, including immutable decisions and quorum. */
+export async function getApproval(id: string): Promise<Approval> {
+  const value = await apiRequest<Record<string, unknown>>(`/api/v1/approvals/${encodeURIComponent(id)}`)
+  return normalizeApproval(value)
+}
+
+/**
+ * Read the server-authoritative viewer actionability. Human Approval reads
+ * guarantee this projection; an omitted or malformed field must fail closed
+ * instead of exposing a decision that the server may reject.
+ */
+export function approvalActionability(approval: Approval, now = Date.now()): ApprovalViewerActionability {
+  if (approval.status !== 'pending') return { status: 'blocked', reason: 'already_decided' }
+  const expiresAt = Date.parse(approval.expires_at)
+  if (!Number.isFinite(expiresAt) || expiresAt <= now) return { status: 'blocked', reason: 'expired' }
+  return approval.viewer_actionability ?? { status: 'blocked', reason: 'authority_revoked' }
+}
+
+export const isApprovalActionable = (approval: Approval, now = Date.now()): boolean => approvalActionability(approval, now).status === 'actionable'
 
 /** Stage 1 read routes are optional while an installation is being upgraded from Stage 0. */
 export async function optionalAgentRequest<T>(path: string): Promise<T | null> {
@@ -89,8 +225,23 @@ export async function revokeAgentTeamAccess(agentId: string, teamId: string): Pr
   return apiRequest<AgentTeamAccess>(`/api/v1/agents/${agentId}/team-access/${teamId}`, { method: 'DELETE' })
 }
 
-/** Outcomes a Human can record for a pending Approval. */
-export type ApprovalDecision = 'approved' | 'rejected'
+export const defaultApprovalDecisionReason = (decision: ApprovalDecision): string => decision === 'approved'
+  ? 'Human approved without additional requirements'
+  : 'Human rejected without additional feedback'
+
+export type ApprovalDecisionFailureKind = 'forbidden' | 'conflict' | 'expired' | 'authority_inactive' | 'network' | 'server' | 'unknown'
+
+export function classifyApprovalDecisionFailure(reason: unknown): ApprovalDecisionFailureKind {
+  if (reason instanceof ApiError) {
+    if (reason.code === 'APPROVAL_EXPIRED') return 'expired'
+    if (reason.code === 'DELEGATION_NOT_ACTIVE') return 'authority_inactive'
+    if (reason.status === 401 || reason.status === 403) return 'forbidden'
+    if (reason.status === 409 || reason.status === 412 || reason.code === 'REVISION_CONFLICT' || reason.code === 'STALE_REVISION') return 'conflict'
+    if (reason.status >= 500) return 'server'
+    return 'unknown'
+  }
+  return reason instanceof TypeError ? 'network' : 'unknown'
+}
 
 /**
  * Resolve a pending Approval by recording the Human's decision.
@@ -101,12 +252,13 @@ export type ApprovalDecision = 'approved' | 'rejected'
  * the same URL+body so a double-click on the bulk bar cannot produce two
  * independent writes to the same approval.
  */
-export async function decideApproval(approval: Approval, decision: ApprovalDecision, reason?: string): Promise<Approval> {
-  return apiMutation<Approval>(`decide-approval:${approval.id}`, `/api/v1/approvals/${approval.id}/decide`, {
+export async function decideApproval(approval: Approval, decision: ApprovalDecision, reason?: string): Promise<ApprovalDecisionResponse> {
+  const result = await apiMutation<ApprovalDecisionResponse>(`decide-approval:${approval.id}`, `/api/v1/approvals/${approval.id}/decide`, {
     method: 'POST',
     headers: { ...json({}), 'If-Match': `"revision-${approval.revision}"` },
-    body: JSON.stringify({ decision, reason: reason ?? `Human ${decision} from the approval inbox.` }),
+    body: JSON.stringify({ decision, reason: reason ?? defaultApprovalDecisionReason(decision) }),
   })
+  return { ...result, approval: normalizeApproval(result.approval as unknown as Record<string, unknown>) }
 }
 
 export async function createAgentConnection(input: { name: string; agentSlug: string; clientType: AgentConnection['client_type']; teamId: string; principalHumanActorId?: string; requestedCapabilities: string[]; grantAgentDelegate: boolean; notes?: string }): Promise<AgentConnectionCreateResponse> { return apiRequest('/api/v1/agent-connections', { method: 'POST', headers: json({}), body: JSON.stringify(input) }) }

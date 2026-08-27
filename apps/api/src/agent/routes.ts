@@ -18,6 +18,7 @@ import type { Paginator } from "../pagination.js";
 import { liveSessionReadPredicate } from "../live-read-authorization.js";
 import { attachWorkItemExecutors } from "../work-item-executors.js";
 import { guidancePinsFromSnapshot } from "../guidance.js";
+import { projectApprovalResponses } from "./approval-projection.js";
 
 type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator };
 const id = (request: FastifyRequest) => z.object({ id: z.string().uuid() }).parse(request.params).id;
@@ -343,7 +344,9 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
       values.push(query.status);
       where.push(`approvals.status=$${values.length}`);
     }
-    return h.paginator.query(h.db,request,request.query,{
+    const page=await h.paginator.query<{
+      id:string;required_approvals:number;status:string;expires_at:Date|string;
+    } & Record<string,unknown>>(h.db,request,request.query,{
       route:"/api/v1/approvals",
       filters:{sessionId:query.sessionId??null,status:query.status??null},
       sort:[
@@ -351,8 +354,9 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
         {key:"id",sql:"approvals.id",direction:"DESC"},
       ],
     },`SELECT approvals.* FROM approvals WHERE ${where.join(" AND ")}`,values);
+    return {...page,items:await projectApprovalResponses(h.db,page.items,current)};
   });
-  app.get("/api/v1/approvals/:id", async request => { const row = (await h.db.query<{session_id:string}>("SELECT session_id FROM approvals WHERE id=$1 AND workspace_id=$2", [id(request), actor(request).workspaceId])).rows[0]; if (!row) throw new DomainError("NOT_FOUND", "Approval not found"); await readableSession(request,h,row.session_id); return (await h.db.query("SELECT * FROM approvals WHERE id=$1",[id(request)])).rows[0]; });
+  app.get("/api/v1/approvals/:id", async request => { const current=actor(request); const row = (await h.db.query<{id:string;session_id:string;required_approvals:number;status:string;expires_at:Date|string}&Record<string,unknown>>("SELECT * FROM approvals WHERE id=$1 AND workspace_id=$2", [id(request), current.workspaceId])).rows[0]; if (!row) throw new DomainError("NOT_FOUND", "Approval not found"); await readableSession(request,h,row.session_id); return (await projectApprovalResponses(h.db,[row],current))[0]; });
   app.post("/api/v1/approvals/:id/decide", async request => { const body = decideApprovalInputSchema.parse(request.body); return commands.decideApproval(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });
   app.post("/api/v1/approvals/:id/consume", async request => { const body=consumeApprovalInputSchema.parse(request.body); return commands.consumeApproval(h.db,h.meta(request,body,{id:id(request)}),id(request),parseRevision(h.header(request,"if-match")),body); });
 

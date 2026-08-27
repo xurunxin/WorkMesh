@@ -267,6 +267,11 @@ main#workmesh-main:focus-visible {
 .app-shell .attention-banner.error { border-color: color-mix(in srgb, var(--wm-danger) 45%, var(--wm-border)); color: var(--wm-danger); }
 .app-shell .attention-bulk-bar { position: sticky; top: .5rem; z-index: 3; display: flex; align-items: flex-end; flex-wrap: wrap; gap: .65rem; padding: .8rem; border: 1px solid var(--wm-info); border-radius: var(--wm-radius-lg); background: var(--wm-surface); box-shadow: var(--wm-shadow-md); }
 .app-shell .attention-bulk-bar label { min-width: min(320px, 100%); flex: 1; }
+.app-shell .attention-bulk-results { display: grid; flex: 1 1 100%; min-width: 0; gap: .5rem; padding-top: .65rem; border-top: 1px solid var(--wm-border); }
+.app-shell .attention-bulk-results > strong { font-size: .82rem; }
+.app-shell .attention-bulk-results ul { display: grid; gap: .4rem; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.app-shell .attention-bulk-results li { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1.5fr) auto; align-items: center; gap: .5rem; min-width: 0; padding: .5rem .6rem; border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
+.app-shell .attention-bulk-results li > span { min-width: 0; overflow-wrap: anywhere; }
 .app-shell .attention-workbench { display: grid; grid-template-columns: minmax(310px, .78fr) minmax(0, 1.5fr); min-height: 640px; overflow: hidden; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
 .app-shell .attention-queue { min-width: 0; max-height: 820px; overflow: auto; padding: .75rem; border-right: 1px solid var(--wm-border); background: var(--wm-surface-subtle); }
 .app-shell .attention-queue-group + .attention-queue-group { margin-top: 1rem; }
@@ -298,6 +303,10 @@ main#workmesh-main:focus-visible {
 .app-shell .attention-boundary-grid > div { padding: .8rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
 .app-shell .attention-boundary-grid p { color: var(--wm-muted); font-size: .85rem; }
 .app-shell .attention-response-form { position: sticky; bottom: 0; z-index: 2; display: grid; gap: .7rem; padding: .9rem 1.15rem; border-top: 1px solid var(--wm-border); background: color-mix(in srgb, var(--wm-surface) 96%, transparent); box-shadow: 0 -8px 22px rgb(15 23 42 / 7%); backdrop-filter: blur(10px); }
+.app-shell .attention-approval-decision { position: sticky; bottom: 0; z-index: 2; display: grid; gap: .7rem; padding: .9rem 1.15rem; border-top: 1px solid var(--wm-border); background: color-mix(in srgb, var(--wm-surface) 96%, transparent); box-shadow: 0 -8px 22px rgb(15 23 42 / 7%); backdrop-filter: blur(10px); }
+.app-shell .attention-approval-decision > h3 { margin: 0; font-size: .92rem; }
+.app-shell .attention-recovery-links { display: flex; flex-wrap: wrap; gap: .45rem; }
+.app-shell .attention-recovery-links a { min-height: 44px; display: inline-flex; align-items: center; padding: .45rem .65rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); overflow-wrap: anywhere; }
 .app-shell .attention-response-form textarea { min-height: 5rem; resize: vertical; }
 .app-shell .attention-choice-list { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; border: 0; }
 .app-shell .attention-choice-list legend { margin-bottom: .35rem; color: var(--wm-muted); font-size: .82rem; }
@@ -311,7 +320,8 @@ main#workmesh-main:focus-visible {
   .app-shell .attention-filters { grid-template-columns: minmax(0, 1fr); }
   .app-shell .attention-workbench { grid-template-columns: 1fr; min-height: 0; overflow: visible; }
   .app-shell .attention-queue { max-height: none; border-right: 0; border-bottom: 1px solid var(--wm-border); }
-  .app-shell .attention-decision-context { min-height: 420px; }
+  .app-shell .attention-decision-context { min-height: 0; }
+  .app-shell .attention-select-prompt { margin: 0; padding: 1.25rem; }
   .app-shell .attention-decision-context > .attention-detail { overflow: visible; }
   .app-shell .attention-bulk-check { grid-template-columns: auto 1fr; padding-bottom: 0; }
   .app-shell .attention-detail dl { grid-template-columns: 1fr; }
@@ -595,7 +605,7 @@ main#workmesh-main:focus-visible {
 .relationship-panel > header h3 { margin: .2rem 0 .6rem; }
 .relation-list { display: grid; gap: .4rem; }
 .relation-list article { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .6rem; align-items: center; padding: .55rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 7px; }
-.relation-list article strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.relation-list article strong { display: -webkit-box; min-width: 0; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; white-space: normal; }
 .relation-blocks { color: #9a3412; background: #fff7ed; border-color: #fed7aa; }
 .relation-related { color: #4338ca; background: #eef2ff; border-color: #c7d2fe; }
 .relation-create { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: .55rem; align-items: flex-end; margin-top: .65rem; }
@@ -938,19 +948,66 @@ main#workmesh-main:focus-visible {
 .app-shell .enrollment-policy-table article > div, .app-shell .archived-agent-table article > div { display: grid; gap: .2rem; min-width: 0; }
 .app-shell .enrollment-policy-table article span, .app-shell .enrollment-policy-table time, .app-shell .archived-agent-table article span, .app-shell .archived-agent-table article time { color: var(--wm-muted); font-size: .8rem; }
 .app-shell .archived-agent-table article { grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(170px, .65fr) auto; }
-/* Phase 3 Task 3.4 — bulk approval table. The Approvals tab stopped using
- * the old per-row <article> cards; instead it renders one row per pending
- * approval in a real <table> so the Human can scan risk + rationale side
- * by side and check the rows they want to act on in bulk. The
- * `.approval-bulk-bar` is the action bar that appears above the table
- * whenever at least one row is checked; it reuses the shared
- * .wm-button tokens for the Approve / Reject / Clear buttons. */
+/* Authority-first approval workspace. A single semantic grid aligns scan
+ * columns on desktop and becomes cards on narrow screens without duplicating
+ * controls. Direct decisions live on every row; bulk remains secondary. */
 .app-shell .approval-bulk-bar { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .25rem 0 .65rem; padding: .55rem .75rem; border: 1px solid var(--wm-border); border-radius: 10px; background: var(--wm-surface); }
 .app-shell .approval-bulk-bar .approval-bulk-count { font-size: .82rem; font-weight: 650; color: var(--wm-text); margin-right: .15rem; }
 .app-shell .approval-bulk-bar .approval-bulk-clear { margin-left: auto; }
 .app-shell .approval-inbox, .app-shell .approval-inbox .wm-tabs, .app-shell .approval-inbox .wm-tab-panel, .app-shell .approval-projection { min-width: 0; }
 .app-shell .approval-inbox > .wm-tabs { margin-top: .8rem; }
 .app-shell .approval-projection { display: grid; gap: .75rem; padding-top: .75rem; }
+.app-shell .approval-grid { width: 100%; min-width: 0; overflow: hidden; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
+.app-shell .approval-grid-header, .app-shell .approval-grid-row { display: grid; grid-template-columns: 38px minmax(150px, 1.1fr) minmax(88px, .42fr) minmax(124px, .58fr) minmax(132px, .62fr) minmax(270px, 1.4fr); gap: .7rem; align-items: start; min-width: 0; }
+.app-shell .approval-grid-header { padding: .55rem .7rem; color: var(--wm-muted); background: var(--wm-surface-subtle); border-bottom: 1px solid var(--wm-border); font-size: .72rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+.app-shell .approval-grid-header > *, .app-shell .approval-grid-row > * { min-width: 0; }
+.app-shell .approval-grid-row { padding: .8rem .7rem; border-bottom: 1px solid var(--wm-border); }
+.app-shell .approval-grid-row:last-child { border-bottom: 0; }
+.app-shell .approval-grid-row.is-selected { background: color-mix(in srgb, var(--wm-accent, var(--wm-text)) 8%, transparent); }
+.app-shell .approval-grid-row.is-blocked { background: var(--wm-surface-subtle); }
+.app-shell .approval-cell-label { display: none; color: var(--wm-muted); font-size: .7rem; font-weight: 650; letter-spacing: .035em; text-transform: uppercase; }
+.app-shell .approval-cell-checkbox { display: flex; align-items: flex-start; justify-content: center; }
+.app-shell .approval-row-checkbox-label { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; cursor: pointer; }
+.app-shell .approval-cell-action { display: grid; gap: .3rem; overflow-wrap: anywhere; }
+.app-shell .approval-cell-action strong { font-weight: 680; }
+.app-shell .approval-cell-action p { margin: 0; color: var(--wm-muted); font-size: .82rem; line-height: 1.5; }
+.app-shell .approval-cell-risk, .app-shell .approval-cell-expires, .app-shell .approval-cell-session, .app-shell .approval-cell-decision { display: grid; align-content: start; gap: .35rem; min-width: 0; }
+.app-shell .approval-cell-expires { color: var(--wm-muted); font-size: .8rem; }
+.app-shell .approval-cell-session a { overflow-wrap: anywhere; font-size: .8rem; }
+.app-shell .approval-authority-context { color: var(--wm-muted); font-size: .78rem; overflow-wrap: anywhere; }
+.app-shell .approval-scope-details { min-width: 0; margin-top: .1rem; padding: .45rem .5rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); background: var(--wm-surface-subtle); }
+.app-shell .approval-scope-details summary { cursor: pointer; color: var(--wm-text); font-size: .76rem; font-weight: 650; }
+.app-shell .approval-payload { width: 100%; max-width: 100%; margin: .45rem 0 0; padding: .5rem; overflow-x: auto; overflow-wrap: anywhere; white-space: pre-wrap; color: var(--wm-text); background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); font: .72rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.app-shell .approval-payload-hash { display: block; max-width: 100%; margin-top: .35rem; color: var(--wm-muted); font-size: .68rem; overflow-wrap: anywhere; }
+.app-shell .approval-context-links { display: flex; flex-wrap: wrap; gap: .3rem .65rem; min-width: 0; }
+.app-shell .approval-context-links a { min-width: 0; overflow-wrap: anywhere; }
+.app-shell .approval-selection-placeholder { color: var(--wm-muted); }
+.app-shell .approval-grid .risk-pill, .app-shell .agent-session-detail .approval-inbox .risk-low, .app-shell .agent-session-detail .approval-inbox .risk-medium, .app-shell .agent-session-detail .approval-inbox .risk-high, .app-shell .agent-session-detail .approval-inbox .risk-critical { display: inline-flex; width: fit-content; align-items: center; padding: .15rem .55rem; border-radius: 999px; font-size: .72rem; font-weight: 650; letter-spacing: .03em; text-transform: uppercase; background: var(--wm-surface); color: var(--wm-muted); border: 1px solid var(--wm-border); }
+.app-shell .approval-grid .risk-pill.risk-high, .app-shell .approval-grid .risk-pill.risk-critical, .app-shell .agent-session-detail .approval-inbox .risk-high, .app-shell .agent-session-detail .approval-inbox .risk-critical { color: #8a2433; background: #fde8ec; border-color: #f4b9c4; }
+.app-shell .approval-grid .risk-pill.risk-medium, .app-shell .agent-session-detail .approval-inbox .risk-medium { color: #8a5a00; background: #fff4d6; border-color: #f5d791; }
+.app-shell .approval-grid .risk-pill.risk-low, .app-shell .agent-session-detail .approval-inbox .risk-low { color: #0c6b3f; background: #e8f6ee; border-color: #b6e1c5; }
+.app-shell .approval-decision-controls { display: grid; gap: .55rem; min-width: 0; }
+.app-shell .approval-row-actions, .app-shell .approval-feedback-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; min-width: 0; }
+.app-shell .approval-row-actions .wm-button, .app-shell .approval-feedback-actions .wm-button { white-space: nowrap; }
+.app-shell .approval-feedback-composer, .app-shell .approval-scope-confirmation { display: grid; gap: .5rem; min-width: 0; padding: .65rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
+.app-shell .approval-feedback-composer label { color: var(--wm-text); font-size: .78rem; font-weight: 650; }
+.app-shell .approval-feedback-composer textarea { width: 100%; min-width: 0; resize: vertical; padding: .55rem .65rem; border: 1px solid var(--wm-border-strong); border-radius: var(--wm-radius-sm); color: var(--wm-text); background: var(--wm-surface); font: inherit; line-height: 1.5; overflow-wrap: anywhere; }
+.app-shell .approval-feedback-error, .app-shell .approval-confirm-rationale, .app-shell .approval-scope-confirmation p { margin: 0; font-size: .8rem; line-height: 1.45; }
+.app-shell .approval-feedback-error { color: var(--wm-danger, #a6243b); }
+.app-shell .approval-confirm-rationale { color: var(--wm-muted); }
+.app-shell .approval-confirm-payload { display: grid; gap: .15rem; min-width: 0; }
+.app-shell .approval-confirm-payload > span { color: var(--wm-text); font-size: .76rem; font-weight: 650; }
+.app-shell .approval-confirm-payload .approval-payload { max-height: 12rem; margin-top: .2rem; }
+.app-shell .approval-detail-gate { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; padding: .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); color: var(--wm-muted); font-size: .8rem; line-height: 1.45; }
+.app-shell .approval-detail-gate.is-error { border-color: #f4b9c4; background: #fde8ec; color: #8a2433; }
+.app-shell .approval-decision-status, .app-shell .approval-decision-blocked { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; min-width: 0; padding: .5rem .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); color: var(--wm-muted); font-size: .78rem; line-height: 1.45; overflow-wrap: anywhere; }
+.app-shell .approval-decision-status.is-success { color: #0c6b3f; background: #e8f6ee; border-color: #b6e1c5; }
+.app-shell .approval-decision-status.is-error { color: #8a2433; background: #fde8ec; border-color: #f4b9c4; }
+.app-shell .approval-decision-blocked { display: grid; gap: .2rem; }
+.app-shell .approval-decision-reason { min-width: 0; overflow-wrap: anywhere; }
+.app-shell .approval-history-decisions { display: grid; gap: .35rem; margin-top: .45rem; }
+.app-shell .approval-history-decision { display: grid; gap: .15rem; min-width: 0; margin: 0; padding: .4rem .5rem; border-left: 3px solid var(--wm-border-strong); background: var(--wm-surface-subtle); color: var(--wm-text); }
+.app-shell .approval-history-decision > strong { font-size: .72rem; text-transform: capitalize; }
 .app-shell .approval-table-wrap, .app-shell .approval-history-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border: 1px solid var(--wm-border); border-radius: 8px; }
 .app-shell .approval-table-wrap:focus-visible, .app-shell .approval-history-table-wrap:focus-visible { outline: 2px solid var(--wm-focus); outline-offset: 2px; }
 .app-shell .approval-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
@@ -981,11 +1038,9 @@ main#workmesh-main:focus-visible {
 .app-shell .approval-status-approved, .app-shell .approval-status-consumed { color: #0c6b3f; background: #e8f6ee; border-color: #b6e1c5; }
 .app-shell .approval-status-rejected, .app-shell .approval-status-canceled { color: #8a2433; background: #fde8ec; border-color: #f4b9c4; }
 .app-shell .approval-status-expired { color: #8a5a00; background: #fff4d6; border-color: #f5d791; }
-/* Session-detail approval inbox keeps its per-approval card layout. Scope
- * these rules through the detail root so another `.approval-inbox` surface
- * (including the Agents approvals table) cannot inherit the card styles. */
+/* Session detail keeps its compact card shell while reusing the same decision
+ * controls and authority messages as the full approvals workspace. */
 .app-shell .agent-session-detail .approval-inbox article { display: grid; gap: .45rem; padding: .8rem .9rem; }
-.app-shell .agent-session-detail .approval-inbox .approval-actions { display: inline-flex; flex-wrap: wrap; gap: .45rem; margin-top: .35rem; }
 .app-shell .heartbeat-toggle { display: inline-flex; align-items: center; gap: .4rem; color: var(--wm-muted); font-size: .82rem; }
 .app-shell .plan-panel > header { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
 .app-shell .plan-panel > header h3 { margin: 0; }
@@ -1025,13 +1080,29 @@ main#workmesh-main:focus-visible {
   .app-shell .drawer .work-room-attribution { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .timeline-attribution { align-items: flex-start; }
 }
+@media (max-width: 1100px) {
+  .app-shell .approval-grid { overflow: visible; border: 0; background: transparent; }
+  .app-shell .approval-grid-header { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .app-shell .approval-grid-body { display: grid; gap: .75rem; }
+  .app-shell .approval-grid-row { grid-template-columns: 44px minmax(0, 1fr); gap: .65rem .75rem; padding: .85rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); }
+  .app-shell .approval-grid-row:last-child { border-bottom: 1px solid var(--wm-border); }
+  .app-shell .approval-grid-row .approval-cell-checkbox { grid-column: 1; grid-row: 1; }
+  .app-shell .approval-grid-row .approval-cell-action { grid-column: 2; grid-row: 1; }
+  .app-shell .approval-grid-row .approval-cell-risk, .app-shell .approval-grid-row .approval-cell-expires, .app-shell .approval-grid-row .approval-cell-session, .app-shell .approval-grid-row .approval-cell-decision { grid-column: 1 / -1; }
+  .app-shell .approval-cell-label { display: block; }
+  .app-shell .approval-cell-decision { padding-top: .2rem; border-top: 1px solid var(--wm-border); }
+}
 @media (max-width: 760px) {
   .app-shell button,
   .app-shell select,
   .app-shell summary { min-width: 44px; min-height: 44px; }
   .app-shell .wm-button { min-width: 44px; min-height: 44px; }
   .app-shell input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='date']):not([type='time']):not([type='color']) { min-height: 42px; }
-  .app-shell :where(.checkbox-field, .approval-row-checkbox-label) { min-width: 40px; min-height: 40px; align-items: center; }
+  .app-shell .checkbox-field { min-width: 40px; min-height: 40px; align-items: center; }
+  .app-shell .approval-row-checkbox-label { min-width: 44px; min-height: 44px; align-items: center; }
+  .app-shell .approval-bulk-bar { display: flex; width: 100%; }
+  .app-shell .approval-bulk-bar .approval-bulk-count { flex: 1 0 100%; }
+  .app-shell .approval-bulk-bar .approval-bulk-clear { margin-left: 0; }
   .mobile-navigation summary { display: flex; align-items: center; }
 }
 @media (max-width: 430px) {
@@ -1039,6 +1110,9 @@ main#workmesh-main:focus-visible {
   .app-shell .agent-summary-card-affordance, .app-shell .agent-detail-management { align-items: flex-start; flex-direction: column; }
   .app-shell .agent-summary-card-actions { justify-content: stretch; }
   .app-shell .agent-summary-card-actions button { width: 100%; }
+  .app-shell .approval-row-actions .wm-button, .app-shell .approval-feedback-actions .wm-button { flex: 1 1 100%; width: 100%; }
+  .app-shell .attention-bulk-results li { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+  .app-shell .attention-bulk-results .wm-button { width: 100%; }
 }
 
 /* v28 Work Item detail: one authority-safe model, rendered as Sheet or Full Page. */
@@ -1064,6 +1138,8 @@ main#workmesh-main:focus-visible {
 .work-item-needs-you, .work-item-current-execution, .work-item-run-history { display: grid; gap: .75rem; }
 .work-item-needs-you > header, .work-item-current-execution > header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
 .work-item-needs-you article { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem; border-left: 3px solid var(--wm-warning); background: var(--wm-surface-subtle); border-radius: var(--wm-radius-md); }
+.work-item-needs-you article.has-inline-approval { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .9fr); align-items: start; }
+.work-item-needs-you article.has-inline-approval > .wm-button { grid-column: 2; justify-self: start; }
 .work-item-needs-you article p, .work-item-needs-you article small { display: block; margin: .2rem 0 0; color: var(--wm-muted); overflow-wrap: anywhere; }
 .work-item-current-execution > article { display: grid; gap: .75rem; }
 .work-item-current-run-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
@@ -1154,6 +1230,8 @@ main#workmesh-main:focus-visible {
   .work-item-detail-form { grid-template-columns: 1fr; }
   .work-item-execution-facts, .work-item-current-execution article dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .work-item-needs-you article { align-items: stretch; flex-direction: column; }
+  .work-item-needs-you article.has-inline-approval { grid-template-columns: minmax(0, 1fr); }
+  .work-item-needs-you article.has-inline-approval > .wm-button { grid-column: auto; justify-self: stretch; }
   .work-item-detail-actions { grid-column: 1; }
   .agent-execution-projection article { grid-template-columns: 1fr; }
   .agent-execution-projection article strong { grid-column: 1; }
@@ -1357,8 +1435,8 @@ main#workmesh-main:focus-visible {
 .wm-work-item-card-board > .wm-work-item-status-control { display: none; }
 .wm-work-item-card-board .wm-work-item-title { display: -webkit-box; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: .86rem; }
 .wm-work-item-card-board .wm-work-item-project-slot { min-height: 1.85rem; }
-.wm-work-item-card-board .wm-work-item-project { max-height: 1.85rem; overflow: hidden; }
-.wm-work-item-card-board .wm-work-item-project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-work-item-card-board .wm-work-item-project { max-height: 2.85rem; overflow: hidden; }
+.wm-work-item-card-board .wm-work-item-project span { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-card-board .wm-work-item-metadata { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; font-size: .72rem; }
 .wm-work-item-card-board .wm-work-item-labels { align-content: flex-start; min-height: 1.55rem; max-height: 3.5rem; overflow: hidden; }
 .wm-work-item-card-board .wm-work-item-facts { min-height: 1.1rem; padding-top: .35rem; }
@@ -1427,8 +1505,8 @@ main#workmesh-main:focus-visible {
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive > .wm-work-item-status-control { display: none; }
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-title { display: -webkit-box; min-height: 2.6rem; max-height: 2.6rem; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: .86rem; }
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-project-slot { min-height: 1.85rem; }
-.wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-project { max-height: 1.85rem; overflow: hidden; }
-.wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-project { max-height: 2.85rem; overflow: hidden; }
+.wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-project span { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-metadata { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; font-size: .72rem; }
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-labels { align-content: flex-start; min-height: 1.55rem; max-height: 3.5rem; overflow: hidden; }
 .wm-work-item-adaptive[data-layout='board'] .wm-work-item-card-adaptive .wm-work-item-facts { min-height: 1.1rem; padding-top: .35rem; }
@@ -1488,6 +1566,7 @@ main#workmesh-main:focus-visible {
 .autonomy-banner-facts, .autonomy-banner-actions { display: grid; min-width: 0; gap: .4rem; color: var(--wm-muted); font-size: .78rem; }
 .autonomy-banner-actions { justify-items: stretch; }
 .autonomy-banner-actions .wm-button { min-width: 0; max-width: 100%; white-space: normal; }
+.autonomy-banner-actions .wm-button-label { white-space: normal; overflow-wrap: anywhere; }
 .autonomy-switch { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem .65rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface); color: var(--wm-text); font-weight: 650; }
 .autonomy-switch input { width: 2.3rem; height: 1.25rem; accent-color: var(--wm-warning); }
 .autonomy-push-help, .autonomy-banner-error { margin: 0; color: var(--wm-muted); font-size: .75rem; }

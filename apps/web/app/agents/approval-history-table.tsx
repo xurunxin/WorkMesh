@@ -59,15 +59,26 @@ export function ApprovalHistoryTable({
         </tr>
       </thead>
       <tbody>
-        {rows.map(approval => <tr data-testid={`approval-history-row-${approval.id}`} key={approval.id}>
+        {rows.map(approval => {
+          const humanDecisions = approval.decisions?.filter(decision => decision.source === 'human') ?? []
+          return <tr data-testid={`approval-history-row-${approval.id}`} key={approval.id}>
           <td><span className={`approval-status approval-status-${approvalStatus}`}>{copy.statusLabel(approvalStatus)}</span></td>
           <td className="approval-cell-action"><strong>{approval.action_name}</strong><small>{approval.approval_type}</small></td>
           <td className="approval-cell-risk"><span className={`risk-pill risk-${approval.risk_level}`}>{copy.riskLabel(approval.risk_level)}</span></td>
-          <td className="approval-cell-rationale">{approval.rationale_summary}</td>
+          <td className="approval-cell-rationale">
+            <span>{approval.rationale_summary}</span>
+            {humanDecisions.length > 0 && <div className="approval-history-decisions" data-testid={`approval-history-decisions-${approval.id}`}>
+              {humanDecisions.map((decision, index) => <p className="approval-history-decision" data-testid={`approval-history-decision-${approval.id}-${index}`} key={`${decision.actor_id}-${decision.decided_at}`}>
+                <strong>{decision.decision}</strong>
+                <span className="approval-decision-reason" data-testid={`approval-history-decision-reason-${approval.id}-${index}`}>{decision.reason}</span>
+              </p>)}
+            </div>}
+          </td>
           <td className="approval-cell-created">{formatTime(approval.created_at)}</td>
           <td className="approval-cell-expires">{formatTime(approval.expires_at)}</td>
           <td className="approval-cell-session"><a href={`/agent-sessions/${approval.session_id}`}>{copy.reviewSession}</a></td>
-        </tr>)}
+        </tr>
+        })}
       </tbody>
     </table>
   </div>

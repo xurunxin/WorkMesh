@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../lib/api'
-import type { Approval } from '../lib/agents'
+import type { Approval, ApprovalDecision, ApprovalDecisionResponse } from '../lib/agents'
 import { LocaleProvider } from '../lib/i18n'
 import type { PagedCollection } from '../lib/pagination'
 import { ToastViewport } from '../lib/toast-viewport'
@@ -133,13 +133,36 @@ function approval(id: string, actionName: string): Approval {
     action_name: actionName,
     approval_type: 'tool',
     created_at: '2026-08-23T00:00:00.000Z',
-    expires_at: '2026-08-24T00:00:00.000Z',
+    expires_at: '2099-08-24T00:00:00.000Z',
     id,
     rationale_summary: 'Operator review required',
     revision: 1,
     risk_level: 'medium',
     session_id: `session-${id}`,
     status: 'pending',
+    viewer_actionability: {
+      status: 'actionable',
+      allowed_decisions: ['approved', 'rejected'],
+    },
+  }
+}
+
+function decisionResponse(item: Approval, decision: ApprovalDecision): ApprovalDecisionResponse {
+  const approved = decision === 'approved' ? 1 : 0
+  const rejected = decision === 'rejected' ? 1 : 0
+  return {
+    approval: { ...item, status: decision, revision: item.revision + 1 },
+    decision: {
+      actor_id: authMock.actor.id,
+      decision,
+      source: 'human',
+      policy_workspace_id: null,
+      policy_revision: null,
+      reason: 'Recorded by the fixture.',
+      decided_at: '2026-08-28T00:00:00.000Z',
+    },
+    quorum: { approved, reached: approved === 1, rejected, required: 1 },
+    status: decision,
   }
 }
 
@@ -198,7 +221,7 @@ beforeEach(() => {
     return history
   })
   agentsMock.decideApproval.mockReset()
-  agentsMock.decideApproval.mockResolvedValue(undefined)
+  agentsMock.decideApproval.mockImplementation((item: Approval, decision: ApprovalDecision) => Promise.resolve(decisionResponse(item, decision)))
 })
 
 afterEach(() => {
@@ -549,6 +572,7 @@ describe('Agents bulk approval outcomes', () => {
       id: 'v1:agent_session:00000000-0000-4000-8000-000000000001',
       title: 'Authoritative recovery item',
       summary: 'The server projection requires a Human recovery decision.',
+      audience: { canRespond: true },
       sessionId: 'failed-session',
     }]
     view.rerender(<LocaleProvider><AgentsPage /><ToastViewport /></LocaleProvider>)
@@ -557,6 +581,49 @@ describe('Agents bulk approval outcomes', () => {
     expect(screen.getByRole('link', { name: 'Authoritative recovery item' }))
       .toHaveAttribute('href', '/agent-sessions/failed-session')
     expect(screen.getByText('The server projection requires a Human recovery decision.')).toBeVisible()
+  })
+
+  it('submits a direct approval without bulk selection and reports success on that row', async () => {
+    renderPage()
+
+    fireEvent.click(screen.getAllByRole('button', { name: '通过' })[0]!)
+
+    await waitFor(() => expect(agentsMock.decideApproval).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'approval-1' }),
+      'approved',
+      undefined,
+    ))
+    expect(await screen.findByText('已记录通过决定。')).toBeVisible()
+    expect(screen.queryByText('已选 1 项')).toBeNull()
+  })
+
+  it('shows a safe per-row revision conflict and refreshes instead of replaying the decision', async () => {
+    agentsMock.decideApproval.mockRejectedValueOnce(new ApiError(409, 'private revision diagnostic', 'REVISION_CONFLICT'))
+    renderPage()
+
+    fireEvent.click(screen.getAllByRole('button', { name: '通过' })[0]!)
+
+    expect(await screen.findByText('审批已发生变化，列表已刷新，请重新确认。')).toBeVisible()
+    await waitFor(() => expect(pending.refresh).toHaveBeenCalledTimes(1))
+    expect(agentsMock.decideApproval).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText('private revision diagnostic')).toBeNull()
+  })
+
+  it('keeps a quorum-pending decision visible as waiting for other reviewers', async () => {
+    const item = pending.items[0] as Approval
+    agentsMock.decideApproval.mockResolvedValueOnce({
+      ...decisionResponse(item, 'approved'),
+      approval: { ...item, revision: 2 },
+      quorum: { approved: 1, reached: false, rejected: 0, required: 2 },
+      status: 'pending',
+    })
+    renderPage()
+
+    fireEvent.click(screen.getAllByRole('button', { name: '通过' })[0]!)
+
+    const row = screen.getByTestId('approval-row-approval-1')
+    expect(await within(row).findByText(/当前 1\/2 票通过/)).toBeVisible()
+    expect(screen.queryByRole('button', { name: '重试' })).toBeNull()
   })
 
   it('emits one localized success toast only after every selected decision succeeds', async () => {
@@ -580,7 +647,7 @@ describe('Agents bulk approval outcomes', () => {
         ? Promise.reject(new ApiError(409, 'private revision diagnostic', 'REVISION_CONFLICT'))
         : Promise.reject(new TypeError('private transport diagnostic'))],
   ])('keeps %s aggregate detail contextual, retains only failed selection, and emits no toast', async (_label, outcome) => {
-    agentsMock.decideApproval.mockImplementation((item: Approval) => outcome(item.id))
+    agentsMock.decideApproval.mockImplementation((item: Approval, decision: ApprovalDecision) => outcome(item.id).then(() => decisionResponse(item, decision)))
     renderPage()
     selectAllAndApprove()
 

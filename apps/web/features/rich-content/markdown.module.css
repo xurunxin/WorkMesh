@@ -1,0 +1,246 @@
+.root {
+  min-width: 0;
+  color: var(--wm-text);
+  overflow-wrap: anywhere;
+}
+
+.document {
+  font-size: 14px;
+  line-height: 1.625;
+}
+
+.compact {
+  font-size: 14px;
+  line-height: 1.625;
+}
+
+.content {
+  position: relative;
+  min-width: 0;
+}
+
+.content > :first-child,
+.content > :first-child > :first-child {
+  margin-top: 0;
+}
+
+.content > :last-child,
+.content > :last-child > :last-child {
+  margin-bottom: 0;
+}
+
+.root :where(h1, h2, h3, h4, h5, h6) {
+  margin: 1.35em 0 .45em;
+  color: var(--wm-text);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.root h1 { font-size: 22px; }
+.root h2 { font-size: 18px; }
+.root h3 { font-size: 15px; }
+.root h4 { font-size: 14px; }
+.root h5 { font-size: 13px; }
+.root h6 { font-size: 12px; }
+
+.root p { margin: 10px 0; }
+.compact p { margin: 4px 0; }
+
+.root :where(ul, ol) {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.root ol { padding-left: 24px; }
+.root li + li { margin-top: .2em; }
+.root li > :where(ul, ol) { margin: .25em 0; }
+
+.root blockquote {
+  margin: 12px 0;
+  padding-left: 12px;
+  color: var(--wm-muted);
+  border-left: 3px solid var(--wm-border-strong);
+}
+
+.root hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--wm-border);
+}
+
+.root a {
+  color: var(--wm-focus);
+  text-underline-offset: .16em;
+}
+
+.root img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 12px 0;
+  border-radius: var(--wm-radius-sm);
+}
+
+.root :not(pre) > code {
+  padding: .08em .28em;
+  font-family: var(--wm-font-mono);
+  font-size: .92em;
+  overflow-wrap: anywhere;
+  background: var(--wm-surface-subtle);
+  border: 1px solid var(--wm-border);
+  border-radius: 4px;
+}
+
+.root input[type='checkbox'] {
+  width: 1em;
+  height: 1em;
+  margin: 0 .45em 0 0;
+  vertical-align: -.08em;
+}
+
+.root :global(.contains-task-list),
+.root :global(.task-list-item) {
+  list-style: none;
+}
+
+.codeFrame {
+  min-width: 0;
+  margin: 12px 0;
+  overflow: hidden;
+  background: var(--wm-surface-subtle);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-md);
+}
+
+.codeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  min-height: 34px;
+  padding: .3rem .55rem;
+  color: var(--wm-muted);
+  border-bottom: 1px solid var(--wm-border);
+  font-family: var(--wm-font-sans);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.codeCopy,
+.overflowToggle {
+  min-height: 30px;
+  padding: .25rem .5rem;
+  color: var(--wm-text);
+  background: var(--wm-surface);
+  border: 1px solid var(--wm-border-strong);
+  border-radius: var(--wm-radius-sm);
+  font: inherit;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.codeCopy:hover,
+.overflowToggle:hover { background: var(--wm-surface-hover); }
+
+.codeCopy:focus-visible,
+.overflowToggle:focus-visible,
+.tableFrame:focus-visible {
+  outline: 0;
+  box-shadow: var(--wm-focus-ring);
+}
+
+.codePre {
+  max-width: 100%;
+  margin: 0;
+  padding: .75rem;
+  overflow-x: auto;
+  color: var(--wm-text);
+  font-family: var(--wm-font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre;
+  overscroll-behavior-inline: contain;
+}
+
+.codePre code {
+  overflow-wrap: normal;
+  white-space: inherit;
+}
+
+.tableFrame {
+  max-width: 100%;
+  margin: 12px 0;
+  overflow-x: auto;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+  overscroll-behavior-inline: contain;
+}
+
+.tableFrame table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+}
+
+.tableFrame :where(th, td) {
+  max-width: min(32rem, 70vw);
+  padding: .48rem .6rem;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--wm-border);
+}
+
+.tableFrame th {
+  background: var(--wm-surface-subtle);
+  font-weight: 700;
+}
+
+.tableFrame tr:last-child td { border-bottom: 0; }
+
+.collapsed {
+  max-height: 18rem;
+  overflow: hidden;
+}
+
+.collapsed::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4.5rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--wm-surface));
+  content: '';
+}
+
+.overflowToggle { margin-top: .4rem; }
+
+.imageFallback {
+  color: var(--wm-muted);
+  font-style: italic;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 390px) {
+  .tableFrame :where(th, td) { max-width: 82vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    scroll-behavior: auto !important;
+  }
+}

@@ -110,6 +110,7 @@ export type PreparedPage = {
   predicate: string
   orderBy: string
   beforeQuery: () => Promise<void>
+  cursorFor: <T extends Record<string, unknown>>(row: T) => string
   finish: <T extends Record<string, unknown>>(rows: T[]) => ListResponse<T>
 }
 
@@ -231,28 +232,27 @@ export function createPaginator(
     }
     const orderBy = binding.sort.map(field => `${field.sql} ${field.direction}`).join(',')
     const pageLimit = query.limit
+    const cursorFor = <T extends Record<string, unknown>>(row: T): string => encode({
+      route: binding.route,
+      workspaceId: current.workspaceId,
+      actorId: current.id,
+      filterHash,
+      sort: boundSort,
+      values: binding.sort.map(field => normalizeScalar(
+        field.value ? field.value(row) : row[field.key],
+      )),
+    })
     const finish = <T extends Record<string, unknown>>(rows: T[]): ListResponse<T> => {
       const hasMore = rows.length > pageLimit
       const items = rows.slice(0, pageLimit)
       const last = items.at(-1)
-      const nextCursor = hasMore && last
-        ? encode({
-            route: binding.route,
-            workspaceId: current.workspaceId,
-            actorId: current.id,
-            filterHash,
-            sort: boundSort,
-            values: binding.sort.map(field => normalizeScalar(
-              field.value ? field.value(last) : last[field.key],
-            )),
-          })
-        : null
+      const nextCursor = hasMore && last ? cursorFor(last) : null
       return { items, nextCursor }
     }
     const beforeQuery = async (): Promise<void> => {
       await beforePagedQuery?.(binding.route)
     }
-    return { limit: pageLimit, values, predicate, orderBy, beforeQuery, finish }
+    return { limit: pageLimit, values, predicate, orderBy, beforeQuery, cursorFor, finish }
   }
 
   const query = async <T extends Record<string, unknown>>(

@@ -25,7 +25,7 @@ import {
 } from './lib/project-work'
 import { ProjectDelivery } from './project-delivery'
 import { ProjectControlCenter, projectControlCenterFeatureEnabled } from './project-control-center'
-import { Markdown } from '../features/rich-content/markdown'
+import { RichContent } from '../features/rich-content/markdown'
 import type { WorkItemDto } from '../features/work-items/contracts'
 
 type Project = Readonly<{
@@ -195,7 +195,7 @@ export function ProjectWorkspace({
       <div className="project-plan-copy">
         <span className="project-status">{text.status(project.status)}</span>
         <h2>{project.name}</h2>
-        {project.description ? <Markdown source={project.description} /> : <p>{project.summary || text.noBrief}</p>}
+        {project.description ? <RichContent density="document" source={project.description} /> : <p>{project.summary || text.noBrief}</p>}
       </div>
       <div className="project-progress" aria-label={`${summary.progressPercent}% ${text.complete}`}>
         <strong>{summary.progressPercent}%</strong>

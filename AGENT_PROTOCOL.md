@@ -1114,7 +1114,29 @@ Coordinator 或 Human 可选择其他 Agent。
 }
 ```
 
-## 13.2 消费
+## 13.2 Human 决策与可操作性
+
+Approval 列表和详情对 Human viewer 返回 `viewer_actionability`。它是便于 UI
+解释当前状态的即时投影，不是授权票据：
+
+- `actionable` 固定允许 `approved`、`rejected`；
+- `viewer_already_decided` 表示当前 Human 已投票但 quorum 尚未结束；
+- `expired`、`session_inactive`、`authority_revoked` 与 `already_decided`
+  必须替代无效操作控件，并给出恢复或刷新路径；
+- Agent 仍可读取自己 Session 的 Approval 上下文，但响应可以省略
+  `viewer_actionability`，因为 Agent 不能代替 Human 决策。
+
+该投影与决定命令复用相同的 domain evaluator。决定命令仍必须在持锁状态下
+重新校验 Human Team membership、Agent definition、Team grant、Delegation、
+Session、资源 Scope、过期时间、quorum、revision 与 idempotency；客户端不得把
+先前读取到的 `actionable` 当作继续写入的权限。
+
+`reason` 始终是非空、不可变审计事实。Human 可直接通过或驳回，由客户端提交
+稳定的默认 reason；也可在相同 `approved` / `rejected` 决策上附加意见。通过时
+附加的要求进入 Approval decision、事件和 Agent 可见上下文，但不会创建第三种
+Approval 状态或第二次隐式审批。
+
+## 13.3 消费
 
 批准后执行前必须再次校验：
 

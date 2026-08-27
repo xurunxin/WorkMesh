@@ -219,6 +219,25 @@ export const durableEventCursorSchema = z
     DURABLE_EVENT_CURSOR_PATTERN,
     'Cursor exceeds the PostgreSQL bigint range',
   )
+export const RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN = /^r1\.[A-Za-z0-9_-]{1,8189}$/
+export const runExplanationOpaqueCursorSchema = z
+  .string()
+  .max(8_192)
+  .regex(
+    RUN_EXPLANATION_OPAQUE_CURSOR_PATTERN,
+    'Run Explanation cursor must be an r1 keyset cursor',
+  )
+export const runExplanationCursorPayloadSchema = z.object({
+  v: z.literal(1),
+  sequence: durableEventCursorSchema.refine(value => value !== '0'),
+  at: timestampSchema,
+  source: z.enum(['activity', 'approval']),
+  id: idSchema,
+}).strict()
+export const runExplanationCursorSchema = z.union([
+  durableEventCursorSchema,
+  runExplanationOpaqueCursorSchema,
+])
 export const eventResourceTypeSchema = z.enum([
   'workspace',
   'team',
@@ -904,7 +923,7 @@ export const runExplanationResponseSchema = z.object({
   currentStep: z.object({ id: idSchema, title: z.string(), status: planStepStatusSchema, ordinal: z.number().int().nonnegative() }).strict().nullable(),
   planVersions: z.array(runPlanVersionSchema).max(50),
   causalGroups: z.array(causalEventGroupSchema).max(100),
-  nextCursor: durableEventCursorSchema.nullable(),
+  nextCursor: runExplanationCursorSchema.nullable(),
   pendingAttention: z.array(humanAttentionItemSchema).max(100),
   changes: z.array(controlPlaneResourceReferenceSchema).max(200),
   evidence: z.array(attentionEvidenceReferenceSchema).max(200),
@@ -1214,6 +1233,22 @@ export const guidanceDiffResponseSchema = z.object({
 export const requestApprovalInputSchema = z.object({ sessionId: idSchema, approvalType: z.string().min(1).max(160), actionName: z.string().min(1).max(300), actionPayloadSanitized: z.record(z.unknown()), actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/), riskLevel: approvalRiskLevelSchema, rationaleSummary: z.string().min(1).max(10_000), requiredApprovals: z.number().int().positive().max(20).default(1), expiresAt: timestampSchema })
 export const decideApprovalInputSchema = z.object({ decision: z.enum(['approved', 'rejected']), reason: z.string().min(1).max(10_000) })
 export const approvalQuorumSchema = z.object({ required: z.number().int().positive(), approved: z.number().int().nonnegative(), rejected: z.number().int().nonnegative(), reached: z.boolean() })
+export const approvalViewerActionabilitySchema = z.discriminatedUnion('status', [
+  z.object({
+    status: z.literal('actionable'),
+    allowed_decisions: z.tuple([z.literal('approved'), z.literal('rejected')]),
+  }).strict(),
+  z.object({
+    status: z.literal('blocked'),
+    reason: z.enum([
+      'viewer_already_decided',
+      'expired',
+      'session_inactive',
+      'authority_revoked',
+      'already_decided',
+    ]),
+  }).strict(),
+])
 export const approvalDecisionSourceSchema = z.enum(['human', 'workspace_policy'])
 export const approvalDecisionSchema = z.object({
   actor_id: idSchema,
@@ -1223,8 +1258,34 @@ export const approvalDecisionSchema = z.object({
   policy_workspace_id: idSchema.nullable(),
   policy_revision: revisionSchema.nullable(),
   decided_at: timestampSchema,
-})
-export const approvalResponseSchema = requestApprovalInputSchema.extend({ id: idSchema, requested_by_actor_id: idSchema, status: approvalStatusSchema, decisions: z.array(approvalDecisionSchema), quorum: approvalQuorumSchema, consumed_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })
+}).strict()
+export const approvalResponseSchema = z.object({
+  id: idSchema,
+  workspace_id: idSchema,
+  session_id: idSchema,
+  requested_by_actor_id: idSchema,
+  approval_type: z.string().min(1).max(160),
+  action_name: z.string().min(1).max(300),
+  action_payload_sanitized: z.record(z.unknown()),
+  action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  risk_level: approvalRiskLevelSchema,
+  rationale_summary: z.string().min(1).max(10_000),
+  required_approvals: z.number().int().positive().max(20),
+  status: approvalStatusSchema,
+  expires_at: timestampSchema,
+  consumed_at: timestampSchema.nullable(),
+  revision: revisionSchema,
+  created_at: timestampSchema,
+  updated_at: timestampSchema,
+  decisions: z.array(approvalDecisionSchema),
+  quorum: approvalQuorumSchema,
+  // Approval reads remain available to the requesting Agent. Only Human reads
+  // carry this viewer-specific decision preview.
+  viewer_actionability: approvalViewerActionabilitySchema.optional(),
+}).strict()
+export const humanApprovalResponseSchema = approvalResponseSchema.extend({
+  viewer_actionability: approvalViewerActionabilitySchema,
+}).strict()
 export const approvalDecisionResponseSchema = z.object({ approval: approvalResponseSchema, decision: approvalDecisionSchema, quorum: approvalQuorumSchema, status: approvalStatusSchema })
 export const consumeApprovalInputSchema = z.object({ actionPayloadHash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
 export const approvalConsumptionResponseSchema = z.object({ approval_id: idSchema, status: z.literal('consumed'), consumed_at: timestampSchema, action_payload_hash: z.string().regex(/^sha256:[a-f0-9]{64}$/) })
@@ -1699,6 +1760,11 @@ export type PublishGuidanceInput = z.infer<typeof publishGuidanceInputSchema>
 export type ArchiveGuidanceInput = z.infer<typeof archiveGuidanceInputSchema>
 export type RollbackGuidanceInput = z.infer<typeof rollbackGuidanceInputSchema>
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
+export type ApprovalStatus = z.infer<typeof approvalStatusSchema>
+export type ApprovalViewerActionability = z.infer<typeof approvalViewerActionabilitySchema>
+export type ApprovalResponse = z.infer<typeof approvalResponseSchema>
+export type HumanApprovalResponse = z.infer<typeof humanApprovalResponseSchema>
+export type ApprovalDecisionResponse = z.infer<typeof approvalDecisionResponseSchema>
 export type Capability = z.infer<typeof capabilitySchema>
 export type PlanStepInput = z.infer<typeof planStepInputSchema>
 export type CompleteAgentSessionInput = z.infer<typeof completeAgentSessionInputSchema>

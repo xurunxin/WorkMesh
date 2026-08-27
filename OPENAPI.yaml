@@ -2119,8 +2119,8 @@ components:
       {
         name: cursor,
         in: query,
-        description: Canonical decimal Agent Activity sequence for one Session; distinct from opaque collection and domain-event cursors,
-        schema: { $ref: "#/components/schemas/DurableEventCursor" },
+        description: Backward-compatible decimal Agent Activity sequence or opaque r1 keyset cursor for one Session; distinct from opaque collection and domain-event cursors,
+        schema: { $ref: "#/components/schemas/RunExplanationCursor" },
       }
     LastEventId:
       {
@@ -3640,7 +3640,7 @@ components:
         currentStep: { type: [object, "null"], additionalProperties: true }
         planVersions: { type: array, maxItems: 50, items: { $ref: "#/components/schemas/RunPlanVersion" } }
         causalGroups: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/CausalEventGroup" } }
-        nextCursor: { type: [string, "null"], pattern: "^[0-9]{1,19}$" }
+        nextCursor: { anyOf: [{ $ref: "#/components/schemas/RunExplanationCursor" }, { type: "null" }] }
         pendingAttention: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/HumanAttentionItem" } }
         changes: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/ControlPlaneResourceReference" } }
         evidence: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/HumanAttentionEvidenceReference" } }
@@ -4558,6 +4558,15 @@ components:
         maxLength: 19,
         examples: ["9007199254740993"],
       }
+    RunExplanationOpaqueCursor:
+      type: string
+      pattern: "^r1\\.[A-Za-z0-9_-]{1,8189}$"
+      maxLength: 8192
+      description: Versioned base64url keyset cursor. The encoded payload is strictly validated by the API.
+    RunExplanationCursor:
+      oneOf:
+        - { $ref: "#/components/schemas/DurableEventCursor" }
+        - { $ref: "#/components/schemas/RunExplanationOpaqueCursor" }
     EventResource:
       {
         type: object,
@@ -5527,64 +5536,105 @@ components:
             },
           ],
       }
-    Approval:
+    ApprovalViewerActionability:
       {
-        allOf:
+        description: Viewer-specific advisory decision availability. Human Approval reads always include this field; Agent context reads omit it. The decide command revalidates live authority and revision.,
+        oneOf:
           [
-            { $ref: "#/components/schemas/RequestApprovalInput" },
             {
               type: object,
-              required:
-                [
-                  id,
-                  requested_by_actor_id,
-                  status,
-                  decisions,
-                  quorum,
-                  created_at,
-                  updated_at,
-                ],
+              additionalProperties: false,
+              required: [status, allowed_decisions],
               properties:
                 {
-                  id: { $ref: "#/components/schemas/Id" },
-                  requested_by_actor_id: { $ref: "#/components/schemas/Id" },
-                  status: { $ref: "#/components/schemas/ApprovalStatus" },
-                  decisions:
+                  status: { const: actionable },
+                  allowed_decisions:
                     {
                       type: array,
-                      items:
-                        {
-                          type: object,
-                          required: [actor_id, decision, reason, decided_at],
-                          properties:
-                            {
-                              actor_id: { $ref: "#/components/schemas/Id" },
-                              decision:
-                                { type: string, enum: [approved, rejected] },
-                              reason: { type: string },
-                              decided_at:
-                                { $ref: "#/components/schemas/Timestamp" },
-                            },
-                        },
+                      prefixItems: [{ const: approved }, { const: rejected }],
+                      minItems: 2,
+                      maxItems: 2,
                     },
-                  quorum:
+                },
+            },
+            {
+              type: object,
+              additionalProperties: false,
+              required: [status, reason],
+              properties:
+                {
+                  status: { const: blocked },
+                  reason:
                     {
-                      type: object,
-                      required: [required, approved, rejected, reached],
-                      properties:
-                        {
-                          required: { type: integer, minimum: 1 },
-                          approved: { type: integer, minimum: 0 },
-                          rejected: { type: integer, minimum: 0 },
-                          reached: { type: boolean },
-                        },
+                      type: string,
+                      enum:
+                        [
+                          viewer_already_decided,
+                          expired,
+                          session_inactive,
+                          authority_revoked,
+                          already_decided,
+                        ],
                     },
-                  consumed_at: { type: [string, "null"], format: date-time },
-                  created_at: { $ref: "#/components/schemas/Timestamp" },
-                  updated_at: { $ref: "#/components/schemas/Timestamp" },
                 },
             },
           ],
+        discriminator: { propertyName: status },
+      }
+    Approval:
+      {
+        type: object,
+        additionalProperties: false,
+        required:
+          [
+            id,
+            workspace_id,
+            session_id,
+            requested_by_actor_id,
+            approval_type,
+            action_name,
+            action_payload_sanitized,
+            action_payload_hash,
+            risk_level,
+            rationale_summary,
+            required_approvals,
+            status,
+            expires_at,
+            consumed_at,
+            revision,
+            decisions,
+            quorum,
+            created_at,
+            updated_at,
+          ],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Id" },
+            workspace_id: { $ref: "#/components/schemas/Id" },
+            session_id: { $ref: "#/components/schemas/Id" },
+            requested_by_actor_id: { $ref: "#/components/schemas/Id" },
+            approval_type: { type: string, minLength: 1, maxLength: 160 },
+            action_name: { type: string, minLength: 1, maxLength: 300 },
+            action_payload_sanitized: { type: object, additionalProperties: true },
+            action_payload_hash: { type: string, pattern: "^sha256:[a-f0-9]{64}$" },
+            risk_level: { type: string, enum: [low, medium, high, critical] },
+            rationale_summary: { type: string, minLength: 1, maxLength: 10000 },
+            required_approvals: { type: integer, minimum: 1, maximum: 20 },
+            status: { $ref: "#/components/schemas/ApprovalStatus" },
+            expires_at: { $ref: "#/components/schemas/Timestamp" },
+            consumed_at: { type: [string, "null"], format: date-time },
+            revision: { $ref: "#/components/schemas/Revision" },
+            decisions:
+              {
+                type: array,
+                items: { $ref: "#/components/schemas/ApprovalDecisionRecord" },
+              },
+            quorum: { $ref: "#/components/schemas/ApprovalQuorum" },
+            viewer_actionability:
+              { $ref: "#/components/schemas/ApprovalViewerActionability" },
+            created_at: { $ref: "#/components/schemas/Timestamp" },
+            updated_at: { $ref: "#/components/schemas/Timestamp" },
+          },
       }
     ApprovalDecision:
       {

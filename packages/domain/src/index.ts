@@ -1,6 +1,7 @@
 import type { AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput, StatusCategory } from '@workmesh/contracts'
 
 export * from './authorization.js'
+export * from './approval.js'
 
 export class DomainError extends Error { constructor(readonly code: string, message: string, readonly details?: unknown) { super(message) } }
 export const defaultStates: ReadonlyArray<{ name: string; category: StatusCategory; color: string; position: number }> = [

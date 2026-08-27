@@ -17,11 +17,11 @@ import { agentSessionResponseSchema } from "@workmesh/contracts";
 import {
   assertAgentSessionTransition, assertAgentSessionControlAllowed, assertCompletionEvidence, assertRevision,
   assertWorkItemSelfClaimable,
-  DomainError, validatePlanSteps,
+  DomainError, evaluateApprovalViewerActionability, validatePlanSteps,
 } from "@workmesh/domain";
 import type {
   AgentSessionState, Capability, ClaimWorkItemInput, CompleteAgentSessionInput,
-  PlanStepInput, StatusCategory,
+  ApprovalStatus, PlanStepInput, StatusCategory,
 } from "@workmesh/contracts";
 import { authIdempotentTransaction } from "../auth-idempotency.js";
 import { isHeartbeatReplay, recordHeartbeatKey } from "../heartbeat-idempotency.js";
@@ -32,6 +32,7 @@ import {
   locateConnectionInstallationTokenId,
   reconcileConnectionInstallationToken,
 } from "../connection-installation-token.js";
+import { normalizeApprovalResponse, projectApprovalResponses } from "./approval-projection.js";
 
 const one = <T>(rows: T[]): T => { const value = rows[0]; if (!value) throw new DomainError("NOT_FOUND", "Resource not found"); return value; };
 const normalizedSensitiveKeys = new Set([
@@ -2964,7 +2965,7 @@ export async function requestApproval(db: Pool, meta: RequestMeta, input: { sess
       const approvedEventId = await event(tx, meta, 'approval.approved', 'approval', approvalId, Number(row.revision), approvedPayload, session.team_id, input.sessionId);
       await queueWebhookDeliveries(tx, session.agent_id, approvedEventId, 'approval.approved', input.sessionId, { ...approvedPayload, sessionId: input.sessionId });
       await event(tx, meta, 'approval.auto_approved', 'approval', approvalId, Number(row.revision), { approvalId, policyRevision: policy.revision, projectId: responsible.project_id }, session.team_id, input.sessionId);
-      return { ...row, decisions: [decision], quorum };
+      return normalizeApprovalResponse(row, [decision], quorum);
     }
     await tx.query("INSERT INTO inbox_items(workspace_id,recipient_human_actor_id,recipient_actor_id,session_id,team_id,kind,source_type,source_id,payload) VALUES($1,$2,$2,$3,$4,'approval','approval',$5,$6)", [meta.actor.workspaceId, responsible.responsible_human_actor_id, input.sessionId, session.team_id, approvalId, { action: input.actionName }]);
     await admitNotification(tx, {
@@ -2981,7 +2982,7 @@ export async function requestApproval(db: Pool, meta: RequestMeta, input: { sess
     });
     const requestedPayload={approvalId,sessionId:input.sessionId,status:"pending" as const,actionName:input.actionName,actionPayloadHash:input.actionPayloadHash,requiredApprovals:input.requiredApprovals,expiresAt:new Date(row.expires_at as Date).toISOString()};
     await event(tx, meta, "approval.requested", "approval", approvalId, 1, requestedPayload, session.team_id, input.sessionId);
-    return { ...row, decisions: [], quorum: { required: input.requiredApprovals, approved: 0, rejected: 0, reached: false } };
+    return normalizeApprovalResponse(row, [], { required: input.requiredApprovals, approved: 0, rejected: 0, reached: false });
   });
 }
 
@@ -3078,11 +3079,18 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
       agent_id:string;delegation_id:string;team_id:string;work_item_id:string|null;
       project_id:string|null;work_item_project_id:string|null;state:string;
       definition_active:boolean;grant_revoked_at:Date|null;delegation_status:string;
+      definition_capabilities:Capability[];grant_capabilities:Capability[];
+      permissions_snapshot:Capability[];
+      capability_scope:{teamIds?:string[];workItemIds?:string[];projectIds?:string[]};
       work_item_exists:boolean;project_exists:boolean;
     }>(`SELECT session.agent_id,session.delegation_id,session.team_id,
-               session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
-               session.state,definition.is_active AS definition_active,
-               access.revoked_at AS grant_revoked_at,delegation.status AS delegation_status,
+                session.work_item_id,session.project_id,item.project_id AS work_item_project_id,
+                session.state,definition.is_active AS definition_active,
+                definition.approved_capabilities AS definition_capabilities,
+                access.revoked_at AS grant_revoked_at,
+                access.approved_capabilities AS grant_capabilities,
+                delegation.status AS delegation_status,
+                delegation.permissions_snapshot,delegation.capability_scope,
                (session.work_item_id IS NULL OR item.id IS NOT NULL) AS work_item_exists,
                (coalesce(item.project_id,session.project_id) IS NULL OR project.id IS NOT NULL)
                  AS project_exists
@@ -3100,16 +3108,6 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
            AND project.workspace_id=session.workspace_id AND project.deleted_at IS NULL
          WHERE session.id=$1 AND session.workspace_id=$2`,
     [locator.session_id,meta.actor.workspaceId])).rows);
-    if(
-      live.agent_id!==locator.agent_id||live.delegation_id!==locator.delegation_id
-      ||live.team_id!==locator.team_id||live.work_item_id!==locator.work_item_id
-      ||live.project_id!==locator.project_id
-      ||live.work_item_project_id!==locator.work_item_project_id
-      ||!live.definition_active||live.grant_revoked_at!==null
-      ||live.delegation_status!=='active'
-      ||!live.work_item_exists||!live.project_exists
-      ||!['queued','acknowledged','executing','awaiting_input','awaiting_approval'].includes(live.state)
-    ) throw new DomainError('DELEGATION_NOT_ACTIVE','Approval Session authority is no longer active');
     const approval=one((await tx.query<{
       revision:number;session_id:string;status:string;required_approvals:number;expires_at:Date;
       team_id:string;agent_id:string;
@@ -3122,8 +3120,47 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
     if(approval.session_id!==locator.session_id)
       throw new DomainError('CONFLICT','Approval Session binding changed');
     await assertHumanTeam(tx, meta.actor, approval.team_id); assertRevision(expectedRevision, approval.revision);
-    if (approval.status !== "pending") throw new DomainError("CONFLICT", "Approval is no longer pending");
-    if (approval.expires_at.getTime() <= Date.now()) { const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[approvalId])).rows); const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,approval.session_id); await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",approval.session_id,{...payload,sessionId:approval.session_id}); return {expired:true}; }
+    const bindingStable = live.agent_id===locator.agent_id
+      && live.delegation_id===locator.delegation_id
+      && live.team_id===locator.team_id
+      && live.work_item_id===locator.work_item_id
+      && live.project_id===locator.project_id
+      && live.work_item_project_id===locator.work_item_project_id;
+    const viewerAlreadyDecided=Boolean((await tx.query(
+      'SELECT 1 FROM approval_decisions WHERE approval_id=$1 AND actor_id=$2',
+      [approvalId,meta.actor.id],
+    )).rowCount);
+    const scope=live.capability_scope??{};
+    const resourceInScope=scope.teamIds?.includes(live.team_id)===true
+      && (live.work_item_id
+        ? scope.workItemIds?.includes(live.work_item_id)===true
+        : !(live.project_id??live.work_item_project_id)
+          || scope.projectIds?.includes((live.project_id??live.work_item_project_id)!)===true);
+    const actionability=evaluateApprovalViewerActionability({
+      status:approval.status as ApprovalStatus,
+      expiresAt:approval.expires_at,
+      sessionState:live.state as AgentSessionState,
+      definitionActive:bindingStable&&live.definition_active&&live.definition_capabilities?.includes('work:write')===true,
+      teamGrantActive:live.grant_revoked_at===null&&live.grant_capabilities?.includes('work:write')===true,
+      delegationActive:live.delegation_status==='active'&&live.permissions_snapshot?.includes('work:write')===true,
+      resourceScopeActive:live.work_item_exists&&live.project_exists&&resourceInScope,
+      viewerAlreadyDecided,
+    });
+    if(actionability.status==='blocked'){
+      if(actionability.reason==='expired'){
+        if(approval.status!=='pending') return {expired:true};
+        const expired=one((await tx.query("UPDATE approvals SET status='expired',revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *",[approvalId])).rows);
+        const payload={approvalId,status:"expired" as const,expiredAt:new Date((expired as {updated_at:Date}).updated_at).toISOString()};
+        const eventId=await event(tx,meta,"approval.expired","approval",approvalId,Number((expired as {revision:number}).revision),payload,approval.team_id,approval.session_id);
+        await queueWebhookDeliveries(tx,approval.agent_id,eventId,"approval.expired",approval.session_id,{...payload,sessionId:approval.session_id});
+        return {expired:true};
+      }
+      if(actionability.reason==='session_inactive'||actionability.reason==='authority_revoked')
+        throw new DomainError('DELEGATION_NOT_ACTIVE','Approval Session authority is no longer active');
+      if(actionability.reason==='viewer_already_decided')
+        throw new DomainError('CONFLICT','Actor already decided this approval');
+      throw new DomainError('CONFLICT','Approval is no longer pending');
+    }
     const inserted=await tx.query("INSERT INTO approval_decisions(approval_id,actor_id,decision,reason,source) VALUES($1,$2,$3,$4,'human') ON CONFLICT(approval_id,actor_id) DO NOTHING RETURNING actor_id,decision,reason,source,policy_workspace_id,policy_revision,decided_at", [approvalId, meta.actor.id, input.decision, input.reason]); if(!inserted.rowCount) throw new DomainError("CONFLICT","Actor already decided this approval");
     const counts=one((await tx.query<{approved:number;rejected:number}>("SELECT count(*) FILTER(WHERE decision='approved')::int AS approved,count(*) FILTER(WHERE decision='rejected')::int AS rejected FROM approval_decisions WHERE approval_id=$1",[approvalId])).rows);
     const status=input.decision==='rejected' ? 'rejected' : counts.approved>=approval.required_approvals ? 'approved' : 'pending';
@@ -3136,7 +3173,8 @@ export async function decideApproval(db: Pool, meta: RequestMeta, approvalId: st
     const decisionEventId=await event(tx, meta, "approval.decision.recorded", "approval", approvalId, Number((row as { revision: number }).revision), decisionPayload, approval.team_id, approval.session_id);
     await queueWebhookDeliveries(tx,approval.agent_id,decisionEventId,"approval.decision.recorded",approval.session_id,{...decisionPayload,sessionId:approval.session_id});
     if(status!=="pending") { const eventType=status==="approved" ? "approval.approved" : "approval.rejected"; const payload={approvalId,status,quorum,finalizedAt:new Date((row as {updated_at:Date}).updated_at).toISOString()}; const eventId=await event(tx, meta, eventType, "approval", approvalId, Number((row as { revision: number }).revision), payload, approval.team_id, approval.session_id); await queueWebhookDeliveries(tx,approval.agent_id,eventId,eventType,approval.session_id,{...payload,sessionId:approval.session_id}); }
-    return {approval:row,decision:inserted.rows[0],quorum:{required:approval.required_approvals,approved:counts.approved,rejected:counts.rejected,reached:counts.approved>=approval.required_approvals},status};
+    const projected=one(await projectApprovalResponses(tx,[row as {id:string;required_approvals:number;status:string;expires_at:Date}&Record<string,unknown>],meta.actor));
+    return {approval:projected,decision,quorum,status};
   });
   if ("expired" in result && result.expired) throw new DomainError("APPROVAL_EXPIRED","Approval has expired");
   return result;

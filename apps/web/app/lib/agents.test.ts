@@ -4,19 +4,24 @@ import {
   type AgentSession,
   type AgentState,
   type Approval,
+  approvalActionability,
   approvedAgentCapabilitiesForTeam,
   agentDelegationScopeKey,
   canAgentExecuteWorkForTeam,
   canManageAgentTeamAccess,
   canPauseAgentSession,
   canRetryAgentSession,
+  classifyApprovalDecisionFailure,
   decideApproval,
+  formatApprovalPayload,
   createAgentSession,
   grantAgentTeamAccess,
   revokeAgentTeamAccess,
   retryAgentSession,
   isCurrentAgentDelegationScope,
+  normalizeApproval,
 } from './agents'
+import { ApiError } from './api'
 
 const agentTeamId = '00000000-0000-4000-8000-000000000030'
 
@@ -354,6 +359,20 @@ describe('decideApproval', () => {
     expires_at: '2026-08-23T00:00:00.000Z',
     created_at: '2026-08-22T22:00:00.000Z',
   }
+  const decisionResponse = (status: 'pending' | 'approved' | 'rejected') => ({
+    approval: { ...approval, status, revision: approval.revision + 1 },
+    decision: {
+      actor_id: '00000000-0000-4000-8000-0000000000a3',
+      decision: status === 'rejected' ? 'rejected' as const : 'approved' as const,
+      source: 'human' as const,
+      policy_workspace_id: null,
+      policy_revision: null,
+      reason: 'Recorded reason',
+      decided_at: '2026-08-22T22:10:00.000Z',
+    },
+    quorum: { required: 1, approved: status === 'approved' ? 1 : 0, rejected: status === 'rejected' ? 1 : 0, reached: status === 'approved' },
+    status,
+  })
 
   let storageValues: Map<string, string>
 
@@ -380,10 +399,10 @@ describe('decideApproval', () => {
 
   it('posts to /decide with the correct method, headers, and body', async () => {
     const { decideApproval: decideFresh } = await import('./agents')
-    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'approved' }))
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse(decisionResponse('approved')))
     vi.stubGlobal('fetch', fetchMock)
 
-    await expect(decideFresh(approval, 'approved', 'Manual override')).resolves.toMatchObject({ status: 'approved' })
+    await expect(decideFresh(approval, 'approved', 'Manual override')).resolves.toMatchObject({ status: 'approved', approval: { status: 'approved' } })
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const [url, init] = fetchMock.mock.calls[0]!
@@ -398,18 +417,18 @@ describe('decideApproval', () => {
 
   it('falls back to a default reason when none is supplied', async () => {
     const { decideApproval: decideFresh } = await import('./agents')
-    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'rejected' }))
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse(decisionResponse('rejected')))
     vi.stubGlobal('fetch', fetchMock)
 
     await decideFresh(approval, 'rejected')
 
     const [, init] = fetchMock.mock.calls[0]!
-    expect(JSON.parse(String(init?.body))).toEqual({ decision: 'rejected', reason: 'Human rejected from the approval inbox.' })
+    expect(JSON.parse(String(init?.body))).toEqual({ decision: 'rejected', reason: 'Human rejected without additional feedback' })
   })
 
   it('reuses the same idempotency key on identical URL+body so a double-click cannot double-write', async () => {
     const { decideApproval: decideFresh } = await import('./agents')
-    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'approved' }))
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse(decisionResponse('approved')))
     vi.stubGlobal('fetch', fetchMock)
 
     await Promise.all([
@@ -430,7 +449,7 @@ describe('decideApproval', () => {
 
   it('generates a fresh idempotency key when the decision changes', async () => {
     const { decideApproval: decideFresh } = await import('./agents')
-    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse({ ...approval, status: 'rejected' }))
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => jsonResponse(decisionResponse('rejected')))
     vi.stubGlobal('fetch', fetchMock)
 
     await decideFresh(approval, 'approved')
@@ -442,6 +461,102 @@ describe('decideApproval', () => {
     expect(firstKey).toBeTruthy()
     expect(secondKey).toBeTruthy()
     expect(secondKey).not.toBe(firstKey)
+  })
+})
+
+describe('approval viewer actionability', () => {
+  const rawApproval = {
+    id: 'approval-a',
+    session_id: 'session-a',
+    approval_type: 'deploy',
+    action_name: 'Deploy release',
+    risk_level: 'high',
+    rationale_summary: 'Ship the accepted release.',
+    status: 'pending',
+    revision: 2,
+    expires_at: '2099-01-01T00:00:00.000Z',
+    created_at: '2026-01-01T00:00:00.000Z',
+    action_payload_sanitized: { repository: 'acme/workmesh', scope: 'release' },
+    action_payload_hash: `sha256:${'b'.repeat(64)}`,
+  }
+
+  it('normalizes snake-case and camel-case actionability projections', () => {
+    expect(normalizeApproval({
+      ...rawApproval,
+      viewer_actionability: { status: 'actionable', allowed_decisions: ['approved', 'rejected'] },
+    }).viewer_actionability).toEqual({ status: 'actionable', allowed_decisions: ['approved', 'rejected'] })
+    expect(normalizeApproval({
+      ...rawApproval,
+      viewerActionability: { status: 'blocked', reason: 'authority_revoked' },
+    }).viewer_actionability).toEqual({ status: 'blocked', reason: 'authority_revoked' })
+  })
+
+  it('retains the server-sanitized action scope and payload in the Web model', () => {
+    const approval = normalizeApproval(rawApproval)
+    expect(approval.action_payload_sanitized).toEqual({ repository: 'acme/workmesh', scope: 'release' })
+    expect(approval.action_payload_hash).toBe(`sha256:${'b'.repeat(64)}`)
+    expect(formatApprovalPayload(approval.action_payload_sanitized)).toContain('acme/workmesh')
+  })
+
+  it('retains immutable decision reasons and quorum facts in approval projections', () => {
+    const approval = normalizeApproval({
+      ...rawApproval,
+      decisions: [{
+        actor_id: 'human-a',
+        decision: 'approved',
+        reason: 'Keep rollback evidence attached before proceeding.',
+        source: 'human',
+        policy_workspace_id: null,
+        policy_revision: null,
+        decided_at: '2026-08-28T00:01:00.000Z',
+      }],
+      quorum: { required: 2, approved: 1, rejected: 0, reached: false },
+    })
+
+    expect(approval.decisions).toEqual([expect.objectContaining({
+      decision: 'approved',
+      reason: 'Keep rollback evidence attached before proceeding.',
+      source: 'human',
+    })])
+    expect(approval.quorum).toEqual({ required: 2, approved: 1, rejected: 0, reached: false })
+  })
+
+  it('normalizes camel-case decision fields without losing attached requirements', () => {
+    const approval = normalizeApproval({
+      ...rawApproval,
+      decisions: [{
+        actorId: 'human-a',
+        decision: 'approved',
+        reason: 'Run the migration only after the backup check.',
+        source: 'human',
+        policyWorkspaceId: null,
+        policyRevision: null,
+        decidedAt: '2026-08-28T00:01:00.000Z',
+      }],
+      quorum: { required: 1, approved: 1, rejected: 0, reached: true },
+    })
+
+    expect(approval.decisions?.[0]).toMatchObject({
+      actor_id: 'human-a',
+      reason: 'Run the migration only after the backup check.',
+      decided_at: '2026-08-28T00:01:00.000Z',
+    })
+  })
+
+  it('fails closed when an old or malformed Human projection omits actionability', () => {
+    const legacy = normalizeApproval(rawApproval)
+    expect(approvalActionability(legacy, Date.parse('2027-01-01T00:00:00.000Z'))).toEqual({ status: 'blocked', reason: 'authority_revoked' })
+    expect(approvalActionability({ ...legacy, expires_at: '2020-01-01T00:00:00.000Z' }, Date.parse('2027-01-01T00:00:00.000Z'))).toEqual({ status: 'blocked', reason: 'expired' })
+    expect(approvalActionability({ ...legacy, status: 'approved' })).toEqual({ status: 'blocked', reason: 'already_decided' })
+  })
+
+  it('classifies recoverable and authority failures without exposing private diagnostics', () => {
+    expect(classifyApprovalDecisionFailure(new ApiError(403, 'private detail'))).toBe('forbidden')
+    expect(classifyApprovalDecisionFailure(new ApiError(409, 'private detail', 'REVISION_CONFLICT'))).toBe('conflict')
+    expect(classifyApprovalDecisionFailure(new ApiError(422, 'private detail', 'APPROVAL_EXPIRED'))).toBe('expired')
+    expect(classifyApprovalDecisionFailure(new ApiError(409, 'private detail', 'DELEGATION_NOT_ACTIVE'))).toBe('authority_inactive')
+    expect(classifyApprovalDecisionFailure(new ApiError(503, 'private detail'))).toBe('server')
+    expect(classifyApprovalDecisionFailure(new TypeError('Failed to fetch'))).toBe('network')
   })
 })
 

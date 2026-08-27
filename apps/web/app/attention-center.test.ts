@@ -4,6 +4,7 @@ import {
   type HumanAttentionItem,
 } from "@workmesh/contracts";
 import {
+  approvalFromAttentionItem,
   attentionResourceHref,
   describeAttentionMutation,
 } from "./attention-center";
@@ -129,15 +130,17 @@ describe("Attention Center governed response adapter", () => {
     });
   });
 
-  it("requires source-policy fields and emits resource deep links without UUID copying", () => {
-    expect(() =>
-      describeAttentionMutation(item("approval", "decideApproval", "reject"), {
-        optionId: "reject",
-        reason: "",
-        message: "",
-        choice: "",
-      }),
-    ).toThrow("reason");
+  it("supplies stable approval audit reasons and emits resource deep links without UUID copying", () => {
+    const rejection = describeAttentionMutation(item("approval", "decideApproval", "reject"), {
+      optionId: "reject",
+      reason: "",
+      message: "",
+      choice: "",
+    });
+    expect(JSON.parse(String(rejection.init.body))).toEqual({
+      decision: "rejected",
+      reason: "Human rejected without additional feedback",
+    });
     const work = item("recovery", "retryAgentSession", "retry");
     expect(attentionResourceHref(work, "work_item", uuid(5))).toBe(
       `/?workItemId=${uuid(5)}`,
@@ -145,5 +148,25 @@ describe("Attention Center governed response adapter", () => {
     expect(attentionResourceHref(work, "session", uuid(6))).toBe(
       `/agent-sessions/${uuid(6)}`,
     );
+  });
+
+  it("adapts actionable and invalid Approval attention items to the shared decision model", () => {
+    const actionable = item("approval", "decideApproval", "approve");
+    expect(approvalFromAttentionItem(actionable)).toMatchObject({
+      id: uuid(1),
+      status: "pending",
+      viewer_actionability: { status: "actionable", allowed_decisions: ["approved", "rejected"] },
+    });
+
+    const blocked = humanAttentionItemSchema.parse({
+      ...actionable,
+      status: "failed",
+      reasonCodes: ["approval.authority_revoked"],
+      options: [],
+      recommendedOptionId: null,
+      audience: { ...actionable.audience, canRespond: false },
+      bulk: { ...actionable.bulk, eligible: false, compatibilityKey: null, prohibitedReason: "bulk.approval_not_actionable" },
+    });
+    expect(approvalFromAttentionItem(blocked)?.viewer_actionability).toEqual({ status: "blocked", reason: "authority_revoked" });
   });
 });

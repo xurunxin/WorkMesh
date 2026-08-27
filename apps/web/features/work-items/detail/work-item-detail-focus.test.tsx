@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { cleanup, fireEvent, render as testingRender, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { LocaleProvider } from '../../../app/lib/i18n'
 import { WorkItemDetail, WorkItemDetailUnavailable } from './work-item-detail'
 import { toWorkItemDetailModel } from './view-model'
 import type { StructuredDetailError, WorkItemDetailDto, WorkItemDetailOptions } from './contracts'
@@ -65,6 +67,7 @@ const conflict: StructuredDetailError = {
 
 const noop = () => {}
 const resolveSave = async () => {}
+const render = (ui: ReactElement) => testingRender(ui, { wrapper: LocaleProvider })
 
 describe('WorkItemDetail focus on revision conflict', () => {
   it('moves focus to the Save button when a revision conflict is reported', () => {

@@ -60,6 +60,23 @@ describe('ApprovalHistoryTable', () => {
     expect(screen.queryByText(/undo/i)).not.toBeInTheDocument()
   })
 
+  it('renders the immutable Human decision reason, including attached requirements', () => {
+    render(<ApprovalHistoryTable approvalStatus="approved" approvals={[baseApproval({
+      decisions: [{
+        actor_id: 'human-1',
+        decision: 'approved',
+        reason: 'Keep rollback evidence attached before proceeding.',
+        source: 'human',
+        policy_workspace_id: null,
+        policy_revision: null,
+        decided_at: '2026-08-23T00:01:00.000Z',
+      }],
+      quorum: { required: 1, approved: 1, rejected: 0, reached: true },
+    })]} copy={copy} />)
+
+    expect(screen.getByTestId('approval-history-decision-reason-approval-1-0')).toHaveTextContent('Keep rollback evidence attached before proceeding.')
+  })
+
   it('keeps horizontal scrolling inside a labelled region for narrow viewports', () => {
     render(<ApprovalHistoryTable approvalStatus="approved" approvals={[baseApproval()]} copy={copy} />)
 
