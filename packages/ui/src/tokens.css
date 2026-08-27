@@ -46,6 +46,8 @@
 .wm-theme :where(a, button, input, textarea, select, summary):focus-visible { outline: 0; box-shadow: var(--wm-focus-ring); }
 
 .wm-button { min-height: 36px; padding: .48rem .72rem; color: var(--wm-text); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); font-weight: 600; transition: background var(--wm-motion-fast) var(--wm-ease-standard), border-color var(--wm-motion-fast) var(--wm-ease-standard); }
+.wm-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--wm-space-2); min-width: 0; max-width: 100%; }
+.wm-button-label { min-width: 0; white-space: nowrap; }
 .wm-button:hover { background: var(--wm-surface-hover); }
 .wm-button-primary { color: #fff; background: #292927; border-color: #292927; }
 .wm-button-primary:hover { background: #151513; }
@@ -281,6 +283,70 @@
 .wm-reason-list dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
 .wm-reason-list dd { color: var(--wm-muted); font-size: var(--wm-text-sm); }
 .wm-capability-bar { display: flex; flex-wrap: wrap; gap: .35rem; padding: .35rem; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 8px; }
+
+/* Content and responsive layout primitives remain API-free and composable. */
+.wm-responsive-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--wm-space-2);
+  min-width: 0;
+}
+.wm-responsive-action-bar > * { min-width: 0; }
+.wm-responsive-action-bar-start { justify-content: flex-start; }
+.wm-responsive-action-bar-end { justify-content: flex-end; }
+.wm-responsive-action-bar-space-between { justify-content: space-between; }
+
+.wm-data-table-frame {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-md);
+  scrollbar-width: thin;
+}
+.wm-data-table-frame:focus-visible { outline: 0; box-shadow: var(--wm-focus-ring); }
+.wm-data-table-frame > table { width: 100%; min-width: max-content; border-collapse: collapse; }
+
+.wm-description-list { display: grid; gap: 0; min-width: 0; margin: 0; }
+.wm-description-list > div { display: grid; grid-template-columns: minmax(7rem, .32fr) minmax(0, 1fr); gap: var(--wm-space-3); min-width: 0; padding: .55rem 0; border-bottom: 1px solid var(--wm-border); }
+.wm-description-list > div:last-child { border-bottom: 0; }
+.wm-description-list dt,
+.wm-description-list dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.wm-description-list dt { color: var(--wm-muted); font-size: var(--wm-text-sm); font-weight: 650; }
+.wm-description-list dd { color: var(--wm-text); }
+.wm-description-list-stacked > div { grid-template-columns: 1fr; gap: .2rem; }
+
+.wm-field { display: grid; gap: .35rem; min-width: 0; }
+.wm-field > label { display: flex; flex-wrap: wrap; gap: .3rem; min-width: 0; color: var(--wm-text); font-size: var(--wm-text-sm); font-weight: 650; overflow-wrap: anywhere; }
+.wm-field > :where(input, select, textarea) { min-width: 0; max-width: 100%; }
+.wm-field-optional { margin-left: auto; color: var(--wm-muted); font-size: var(--wm-text-xs); font-weight: 500; }
+.wm-field-required,
+.wm-field-error { color: var(--wm-danger); }
+.wm-field-description,
+.wm-field-error { margin: 0; font-size: var(--wm-text-xs); line-height: 1.45; overflow-wrap: anywhere; }
+.wm-field-description { color: var(--wm-muted); }
+
+.wm-overflow-text {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+}
+.wm-overflow-text-1 { -webkit-line-clamp: 1; }
+.wm-overflow-text-2 { -webkit-line-clamp: 2; }
+.wm-overflow-text-3 { -webkit-line-clamp: 3; }
+
+@media (max-width: 560px) {
+  .wm-description-list-responsive > div { grid-template-columns: 1fr; gap: .2rem; }
+}
+
+@media (max-width: 390px) {
+  .wm-responsive-action-bar { align-items: stretch; }
+  .wm-responsive-action-bar > .wm-button-primary { flex: 1 1 100%; }
+  .wm-field-optional { width: 100%; margin-left: 0; }
+}
 
 @media (max-width: 760px) {
   .wm-attention-item { grid-template-columns: 1fr; }

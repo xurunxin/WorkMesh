@@ -1,8 +1,11 @@
+// @vitest-environment jsdom
+
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { clearDraft, draftKey, findReconciliationDraft, readDraft, recordEditorChange, redoEditorChange, RichTextEditor, undoEditorChange, writeDraft, type DraftIdentity } from './editor'
-import { allowedLink, Markdown } from './markdown'
+import { allowedLink, Markdown, safeMarkdownUrl } from './markdown'
 import { uploadRecoveryActions } from './artifacts'
 
 const identity: DraftIdentity = {
@@ -11,12 +14,14 @@ const identity: DraftIdentity = {
 }
 
 describe('rich-content safety boundary', () => {
-  it('renders only the deterministic Markdown allowlist and leaves unsafe HTML as text', () => {
-    const html = renderToStaticMarkup(createElement(Markdown, { source: '## Heading\n<script>alert(1)</script>\n[safe](https://example.com)\n[unsafe](javascript:alert(1))' }))
-    expect(html).toContain('<h2>Heading</h2>')
-    expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
+  it('renders CommonMark and GFM while skipping raw HTML', () => {
+    const html = renderToStaticMarkup(createElement(Markdown, { source: '# Heading\n\n<script>alert(1)</script>\n\n[safe](https://example.com)\n\n- [x] done\n\n| Key | Value |\n| --- | --- |\n| one | **two** |' }))
+    expect(html).toContain('<h1>Heading</h1>')
+    expect(html).toContain('type="checkbox"')
+    expect(html).toContain('<table>')
+    expect(html).toContain('<strong>two</strong>')
+    expect(html).not.toContain('alert(1)')
     expect(html).toContain('href="https://example.com"')
-    expect(html).not.toContain('href="javascript:')
     expect(html).not.toContain('<script>')
   })
 
@@ -24,9 +29,63 @@ describe('rich-content safety boundary', () => {
     expect(allowedLink('/projects/one')).toBe(true)
     expect(allowedLink('https://example.com/docs')).toBe(true)
     expect(allowedLink('https://user:secret@example.com')).toBe(false)
+    expect(allowedLink(' https://example.com')).toBe(false)
     expect(allowedLink('//example.com')).toBe(false)
+    expect(allowedLink('/\\example.com')).toBe(false)
     expect(allowedLink('data:text/html,boom')).toBe(false)
     expect(allowedLink('javascript:alert(1)')).toBe(false)
+    expect(safeMarkdownUrl('javascript:alert(1)')).toBe('')
+  })
+
+  it('keeps soft-wrapped Markdown in one paragraph and handles nested lists', () => {
+    const { container } = render(createElement(Markdown, { source: 'First line\nsecond line\n\n- parent\n  - child' }))
+    expect(container.querySelectorAll('p')).toHaveLength(1)
+    expect(container.querySelector('p')?.textContent).toContain('First line')
+    expect(container.querySelector('p')?.textContent).toContain('second line')
+    expect(container.querySelectorAll('ul')).toHaveLength(2)
+  })
+
+  it('covers the readable document grammar in one renderer', () => {
+    const source = [
+      '# H1', '## H2', '### H3', '#### H4', '##### H5', '###### H6', '',
+      '1. ordered', '', '> quoted', '', '---', '', '~~removed~~', '',
+      '<https://example.com/docs>', '', '![diagram](/artifacts/diagram.png)',
+    ].join('\n')
+    const { container } = render(createElement(Markdown, { source }))
+    for (const heading of ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) expect(container.querySelector(heading)).not.toBeNull()
+    expect(container.querySelector('ol')).not.toBeNull()
+    expect(container.querySelector('blockquote')).not.toBeNull()
+    expect(container.querySelector('hr')).not.toBeNull()
+    expect(container.querySelector('del')).toHaveTextContent('removed')
+    expect(container.querySelector('a')).toHaveAttribute('href', 'https://example.com/docs')
+    expect(container.querySelector('img')).toHaveAttribute('src', '/artifacts/diagram.png')
+  })
+
+  it('removes unsafe link and image attributes while retaining useful labels', () => {
+    const { container } = render(createElement(Markdown, { source: '[unsafe](javascript:alert(1))\n\n![diagram](data:text/html,boom)' }))
+    expect(container.querySelector('a')).toBeNull()
+    expect(container.querySelector('img')).toBeNull()
+    expect(container.textContent).toContain('unsafe')
+    expect(container.textContent).toContain('diagram')
+  })
+
+  it('collapses only oversized compact content and exposes an accessible toggle', () => {
+    const source = Array.from({ length: 15 }, (_, index) => `Line ${index + 1}`).join('\n\n')
+    render(createElement(Markdown, { density: 'compact', source }))
+    const toggle = screen.getByRole('button', { name: 'Show all' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(toggle).toHaveTextContent('Show less')
+  })
+
+  it('copies fenced code and announces the result', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
+    render(createElement(Markdown, { source: '```ts\nconst value = 1\n```' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Copy code: ts' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith('const value = 1'))
+    expect(screen.getByRole('status')).toHaveTextContent('Copied')
   })
 })
 
