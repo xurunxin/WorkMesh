@@ -10,6 +10,7 @@ import {
 } from '@workmesh/contracts'
 import { DomainError } from '@workmesh/domain'
 import type { ApiActor } from '../agent/types.js'
+import { loadApprovalViewerActionability } from '../agent/approval-projection.js'
 import {
   liveHumanTeamReadPredicate,
   liveSessionReadPredicate,
@@ -179,9 +180,20 @@ export function registerHumanAttentionRoutes(
       values,
     )
     const observedAt = new Date()
+    const approvalActionability = await loadApprovalViewerActionability(
+      h.db,
+      page.items.filter(row => row.source_type === 'approval').map(row => row.source_id),
+      current,
+      observedAt.getTime(),
+    )
     return {
       ...page,
-      items: page.items.map(row => projectHumanAttentionRow(row, observedAt, current)),
+      items: page.items.map(row => projectHumanAttentionRow(
+        row,
+        observedAt,
+        current,
+        approvalActionability.get(row.source_id),
+      )),
     }
   })
 
@@ -203,6 +215,18 @@ export function registerHumanAttentionRoutes(
     )
     const row = result.rows[0]
     if (!row) throw new DomainError('NOT_FOUND', 'Human attention item not found')
-    return humanAttentionItemSchema.parse(projectHumanAttentionRow(row, new Date(), current))
+    const observedAt = new Date()
+    const approvalActionability = await loadApprovalViewerActionability(
+      h.db,
+      row.source_type === 'approval' ? [row.source_id] : [],
+      current,
+      observedAt.getTime(),
+    )
+    return humanAttentionItemSchema.parse(projectHumanAttentionRow(
+      row,
+      observedAt,
+      current,
+      approvalActionability.get(row.source_id),
+    ))
   })
 }
