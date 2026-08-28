@@ -1,33 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { readSettingsRoute, writeSettingsRoute } from './route-state'
+import { legacySettingsOperationsHref, readSettingsRoute, writeSettingsRoute } from './route-state'
 
 describe('Settings route state', () => {
-  it('reads Operations and Team while defaulting invalid tabs to Workspace', () => {
-    expect(readSettingsRoute('?tab=operations&team=team-1')).toEqual({
-      tab: 'operations',
-      teamId: 'team-1',
-    })
-    expect(readSettingsRoute('?tab=unknown&team=')).toEqual({ tab: 'workspace', teamId: null })
-    expect(readSettingsRoute('')).toEqual({ tab: 'workspace', teamId: null })
+  it('reads the Team while ignoring retired settings tabs', () => {
+    expect(readSettingsRoute('?tab=operations&team=team-1')).toEqual({ teamId: 'team-1' })
+    expect(readSettingsRoute('?tab=unknown&team=')).toEqual({ teamId: null })
+    expect(readSettingsRoute('')).toEqual({ teamId: null })
   })
 
-  it('writes one partial field without losing Team, query, hash, or stable parameter order', () => {
+  it('writes Team without losing unrelated query or hash state', () => {
     const source = new URL('https://wm.test/settings?team=team-1&opsQuery=retry&x=1#operations-runs')
-    const result = writeSettingsRoute(source, { tab: 'operations' })
+    const result = writeSettingsRoute(source, { teamId: 'team-2' })
 
-    expect(result.href).toBe('https://wm.test/settings?team=team-1&opsQuery=retry&x=1&tab=operations#operations-runs')
+    expect(result.href).toBe('https://wm.test/settings?team=team-2&opsQuery=retry&x=1#operations-runs')
     expect(source.href).toBe('https://wm.test/settings?team=team-1&opsQuery=retry&x=1#operations-runs')
     expect(result).not.toBe(source)
   })
 
-  it('distinguishes omitted Team from explicit deletion and canonicalizes the default tab', () => {
+  it('distinguishes omitted Team from explicit deletion', () => {
     const source = new URL('https://wm.test/settings?tab=operations&team=team-1&x=keep#operations-templates')
-
-    const workspace = writeSettingsRoute(source, { tab: 'workspace' })
-    expect(workspace.searchParams.has('tab')).toBe(false)
-    expect(workspace.searchParams.get('team')).toBe('team-1')
-    expect(workspace.searchParams.get('x')).toBe('keep')
-    expect(workspace.hash).toBe('#operations-templates')
 
     const omitted = writeSettingsRoute(source, {})
     expect(omitted.searchParams.get('team')).toBe('team-1')
@@ -45,5 +36,13 @@ describe('Settings route state', () => {
     expect(replaced.searchParams.get('x')).toBe('keep')
     expect(replaced.hash).toBe('#operations-templates')
     expect(removed.searchParams.has('team')).toBe(false)
+  })
+
+  it('redirects legacy embedded Operations URLs to the sole Operations page', () => {
+    const legacy = new URL('https://wm.test/settings?tab=operations&team=team-1&opsQuery=retry&x=keep#operations-runs')
+
+    expect(legacySettingsOperationsHref(legacy)).toBe('/operations?opsQuery=retry&x=keep#operations-runs')
+    expect(legacySettingsOperationsHref(new URL('https://wm.test/settings?team=team-1'))).toBeNull()
+    expect(legacy.href).toBe('https://wm.test/settings?tab=operations&team=team-1&opsQuery=retry&x=keep#operations-runs')
   })
 })

@@ -13,7 +13,7 @@ describe('human UI layout contract', () => {
   it('keeps project planning inside the viewport while allowing local project navigation scroll', () => {
     const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
 
-    expect(styles).toMatch(/\.app-shell,\s*\.app-workspace,\s*\.app-content,\s*\.content,\s*\.project-workspace,\s*\.project-plan-header,\s*\.project-plan-copy\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%;/s)
+    expect(styles).toMatch(/\.app-shell,\s*\.app-workspace,\s*\.app-content,\s*\.content,\s*\.project-workspace,\s*\.project-plan-header,\s*\.project-plan-copy,\s*\.project-work-context,\s*\.project-work-context-copy\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%;/s)
     expect(styles).toMatch(/\.project-plan-copy\s+:where\(h2,\s*p\)\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
     expect(styles).toMatch(/\.project-strip\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*nowrap;[^}]*max-width:\s*100%;[^}]*overflow-x:\s*auto;[^}]*overscroll-behavior-inline:\s*contain;/s)
     expect(styles).toMatch(/\.project-strip\s*>\s*\*\s*\{[^}]*flex:\s*0\s+0\s+auto;/s)
@@ -77,10 +77,8 @@ describe('human UI layout contract', () => {
     }
     expect(home).toContain('ErrorState')
     expect(agents).toContain('ErrorState')
-    // Operations content is now embedded inside the Settings page as a tab.
-    expect(settings).toContain('OperationsContent')
-    // The standalone /operations route is a thin wrapper that redirects and re-uses
-    // the same AppShell. It must still render via the unified shell.
+    // Operations has one canonical top-level surface; Settings no longer embeds it.
+    expect(settings).not.toContain('OperationsContent')
     expect(operations).toContain('AppShell')
     expect(operations).toContain('OperationsContent')
   })

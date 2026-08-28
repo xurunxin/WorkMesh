@@ -88,7 +88,7 @@ export function ProjectWorkspace({
     unknownStatus: 'Unknown status', overview: 'Overview', list: 'List', board: 'Board', backlog: 'Backlog', viewIssues: 'View Issues', viewMilestoneIssues: (name: string) => `View ${name} Issues`, updateError: 'Unable to update the project plan.', deleteMilestone: (name: string) => `Delete milestone “${name}”?`, noBrief: 'No project brief has been published yet.', complete: 'complete', progress: (completed: number, total: number) => `${completed} of ${total} complete`, projectSummary: 'Project work summary', inProgress: 'In progress', needsHuman: 'Needs a responsible Human', activeAgents: 'Active Agent executors', notSet: 'Not set', targetDate: 'Target date', views: 'Project views', reloadMilestones: 'Reload milestones', plan: 'Plan', roadmap: 'Milestone roadmap', cancel: 'Cancel', addMilestone: 'Add milestone', name: 'Name', description: 'Description', createMilestone: 'Create milestone', target: 'Target', save: 'Save', delete: 'Delete', noMilestones: 'No milestones yet', noMilestonesHelp: 'Start with an outcome and target date; Work Items can then be assigned to it.', milestones: 'milestones', status: (status: string) => status.replaceAll('_', ' '),
   }
   const milestones = usePagedApiList<Milestone>(
-    tab === 'list' || (tab === 'overview' && !projectControlCenterEnabled)
+    tab === 'overview' && !projectControlCenterEnabled
       ? `/api/v1/projects/${encodeURIComponent(project.id)}/milestones`
       : null,
   )
@@ -191,7 +191,7 @@ export function ProjectWorkspace({
   }
 
   return <section className={`project-workspace project-tab-${tab}`} data-testid="project-workspace">
-    {(!projectControlCenterEnabled || tab !== 'overview') && <div className="project-plan-header">
+    {tab === 'overview' && !projectControlCenterEnabled && <div className="project-plan-header">
       <div className="project-plan-copy">
         <span className="project-status">{text.status(project.status)}</span>
         <h2>{project.name}</h2>
@@ -204,7 +204,19 @@ export function ProjectWorkspace({
       </div>
     </div>}
 
-    {(!projectControlCenterEnabled || tab !== 'overview') && <div className="project-metrics" aria-label={text.projectSummary}>
+    {tab !== 'overview' && <header className="project-work-context">
+      <div className="project-work-context-copy">
+        <span className="project-status">{text.status(project.status)}</span>
+        <h2>{project.name}</h2>
+      </div>
+      <div className="project-progress" aria-label={`${summary.progressPercent}% ${text.complete}`}>
+        <strong>{summary.progressPercent}%</strong>
+        <span>{text.progress(summary.completed, summary.total)}</span>
+        <progress max={100} value={summary.progressPercent} />
+      </div>
+    </header>}
+
+    {tab === 'overview' && !projectControlCenterEnabled && <div className="project-metrics" aria-label={text.projectSummary}>
       <article><strong>{summary.inProgress}</strong><span>{text.inProgress}</span></article>
       <article><strong>{summary.withoutResponsibleHuman}</strong><span>{text.needsHuman}</span></article>
       <article><strong>{summary.activeAgents}</strong><span>{text.activeAgents}</span></article>
@@ -234,7 +246,7 @@ export function ProjectWorkspace({
 
     {tab !== 'overview' && workSurface}
 
-    {((tab === 'overview' && !projectControlCenterEnabled) || tab === 'list') && <div className="project-overview-grid project-plan-management">
+    {tab === 'overview' && !projectControlCenterEnabled && <div className="project-overview-grid project-plan-management">
       <section className="roadmap-panel" aria-labelledby="roadmap-heading">
         <header><div><span className="eyebrow">{text.plan}</span><h3 id="roadmap-heading">{text.roadmap}</h3></div><Button icon={creating ? <XIcon aria-hidden="true" size={16} /> : <PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => setCreating(value => !value)} variant="secondary">{creating ? text.cancel : text.addMilestone}</Button></header>
         {creating && <form className="milestone-create" onSubmit={event => void createMilestone(event)}>

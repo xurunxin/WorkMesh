@@ -28,12 +28,6 @@ vi.mock('../lib/api', async importOriginal => {
 vi.mock('../lib/use-authenticated-actor', () => ({
   useAuthenticatedActor: () => authMock,
 }))
-vi.mock('../operations-content', () => ({
-  OperationsContent: ({ embedded }: { embedded?: boolean }) => (
-    <button data-testid="operations-content" type="button">{embedded ? 'Embedded Operations' : 'Operations'}</button>
-  ),
-}))
-
 type TestItem = { id: string } & Record<string, unknown>
 type TestCollection = PagedCollection<TestItem>
 type MediaStub = {
@@ -138,7 +132,7 @@ beforeEach(() => {
   window.history.replaceState({ retained: 'task-5.1' }, '', '/settings?team=team-1&opsQuery=Archived&x=keep#operations-templates')
 })
 
-describe('SettingsPage routed shared Tabs', () => {
+describe('SettingsPage workspace administration', () => {
   it('synchronously retires actor-owned destructive state when authenticated authority changes', async () => {
     const view = renderPage()
     expect(await screen.findByText('Planned')).toBeVisible()
@@ -299,23 +293,6 @@ describe('SettingsPage routed shared Tabs', () => {
     for (const current of screen.getAllByRole('combobox', { name: '当前团队' }))
       expect(current).not.toHaveTextContent('Runtime')
   })
-  it('treats the URL Team as latent on Operations and hides the Team selector', async () => {
-    window.history.replaceState(
-      { retained: 'task-5.2' },
-      '',
-      '/settings?tab=operations&team=team-second-page&x=keep#operations-runs',
-    )
-
-    renderPage()
-    const operations = await screen.findByRole('tab', { name: /运营与规划|Planning & Operations/ })
-    await waitFor(() => expect(operations).toHaveAttribute('aria-selected', 'true'))
-
-    expect(screen.queryByRole('combobox', { name: /当前团队|Current team/ })).toBeNull()
-    expect(requestedPaths.filter((path): path is string => path !== null)).toEqual([])
-    expect(new URL(window.location.href).searchParams.get('team')).toBe('team-second-page')
-    expect(window.history.state).toEqual({ retained: 'task-5.2' })
-  })
-
   it('serially drains Team pages until the requested Team resolves, then requests its states', async () => {
     const loadMore = vi.fn(async () => undefined)
     teams = collection(
@@ -412,7 +389,7 @@ describe('SettingsPage routed shared Tabs', () => {
     const replaceState = vi.spyOn(window.history, 'replaceState')
 
     const view = renderPage()
-    await screen.findByRole('tab', { name: /工作区|Workspace/ })
+    await screen.findByRole('heading', { name: /设置|Settings/, level: 1 })
     expect(replaceState).not.toHaveBeenCalled()
     expect(requestedPaths.some(path => path?.endsWith('/states'))).toBe(false)
 
@@ -435,7 +412,7 @@ describe('SettingsPage routed shared Tabs', () => {
     const replaceState = vi.spyOn(window.history, 'replaceState')
 
     const view = renderPage()
-    await screen.findByRole('tab', { name: /工作区|Workspace/ })
+    await screen.findByRole('heading', { name: /设置|Settings/, level: 1 })
     expect(new URL(window.location.href).searchParams.get('team')).toBe('removed')
     expect(replaceState).not.toHaveBeenCalled()
 
@@ -489,7 +466,7 @@ describe('SettingsPage routed shared Tabs', () => {
     window.history.replaceState({ retained: 'pending-team' }, '', '/settings?team=team-2')
 
     renderPage()
-    await screen.findByRole('tab', { name: /工作区|Workspace/ })
+    await screen.findByRole('heading', { name: /设置|Settings/, level: 1 })
 
     expect(screen.queryByText('新建团队后即可配置工作流。')).toBeNull()
     const status = screen.getByRole('status', { name: '正在加载设置…' })
@@ -499,39 +476,6 @@ describe('SettingsPage routed shared Tabs', () => {
     expect(screen.getAllByRole('combobox', { name: '当前团队' }).every(selector => !selector.textContent?.includes('无团队'))).toBe(true)
     expect(screen.queryByRole('group', { name: '状态颜色' })).toBeNull()
     expect(requestedPaths.some(path => path?.endsWith('/states'))).toBe(false)
-  })
-
-  it('resets committed request evidence across StrictMode active-inactive-active before accepting an empty page', async () => {
-    window.history.replaceState(
-      { retained: 'strict-empty' },
-      '',
-      '/settings?team=team-1&x=keep#team-settings-heading',
-    )
-    const replaceState = vi.spyOn(window.history, 'replaceState')
-
-    const view = renderStrictPage()
-    await waitFor(() => expect(requestedPaths).toContain('/api/v1/teams/team-1/states'))
-    fireEvent.click(screen.getByRole('tab', { name: /运营与规划|Planning & Operations/ }))
-    await waitFor(() => expect(screen.getByRole('tab', { name: /运营与规划|Planning & Operations/ })).toHaveAttribute('aria-selected', 'true'))
-    expect(screen.queryByRole('combobox', { name: /当前团队|Current team/ })).toBeNull()
-
-    teams = collection([], { initialized: false, loading: true })
-    fireEvent.click(screen.getByRole('tab', { name: /工作区|Workspace/ }))
-    await waitFor(() => expect(screen.getByRole('tab', { name: /工作区|Workspace/ })).toHaveAttribute('aria-selected', 'true'))
-    expect(new URL(window.location.href).searchParams.get('team')).toBe('team-1')
-    expect(replaceState).not.toHaveBeenCalled()
-    expect(screen.queryByText('新建团队后即可配置工作流。')).toBeNull()
-
-    teams.loading = false
-    teams.initialized = true
-    view.rerender(<StrictMode><LocaleProvider><SettingsPage /></LocaleProvider></StrictMode>)
-    await waitFor(() => expect(new URL(window.location.href).searchParams.has('team')).toBe(false))
-
-    expect(replaceState).toHaveBeenCalledTimes(1)
-    expect(window.history.state).toEqual({ retained: 'strict-empty' })
-    expect(new URL(window.location.href).searchParams.get('x')).toBe('keep')
-    expect(new URL(window.location.href).hash).toBe('#team-settings-heading')
-    expect(screen.getAllByText('新建团队后即可配置工作流。')).toHaveLength(2)
   })
 
   it('refreshes the authorized Team collection before routing to a newly created Team', async () => {
@@ -617,89 +561,24 @@ describe('SettingsPage routed shared Tabs', () => {
     expect(new URL(window.location.href).hash).toBe('#team-settings-heading')
   })
 
-  it('hydrates from the URL and passively follows popstate without stealing connected focus', async () => {
+  it('renders one Workspace settings surface and passively follows Team popstate without stealing focus', async () => {
     renderPage()
-    const workspace = await screen.findByRole('tab', { name: /工作区|Workspace/ })
-    expect(workspace).toHaveAttribute('aria-selected', 'true')
+    await screen.findByRole('heading', { name: /设置|Settings/, level: 1 })
+    expect(screen.queryByRole('tablist')).toBeNull()
+    expect(screen.queryByText(/运营与规划|Planning & Operations/)).toBeNull()
 
     const localeControl = screen.getByRole('button', { name: '中' })
     localeControl.focus()
     window.history.replaceState(
       window.history.state,
       '',
-      '/settings?team=team-1&opsQuery=Archived&x=keep&tab=operations#operations-templates',
+      '/settings?team=team-1&x=keep#team-settings-heading',
     )
     act(() => { window.dispatchEvent(new PopStateEvent('popstate')) })
 
-    const operations = await screen.findByRole('tab', { name: /运营与规划|Planning & Operations/ })
-    await waitFor(() => expect(operations).toHaveAttribute('aria-selected', 'true'))
-    expect(screen.getByTestId('operations-content')).toBeVisible()
+    await waitFor(() => expect(new URL(window.location.href).searchParams.get('team')).toBe('team-1'))
     expect(document.activeElement).toBe(localeControl)
     expect(window.history.state).toEqual({ retained: 'task-5.1' })
-  })
-
-  it('uses shared desktop Arrow/Home/End focus behavior and pushes only different tabs', async () => {
-    const pushState = vi.spyOn(window.history, 'pushState')
-    renderPage()
-    const workspace = await screen.findByRole('tab', { name: /工作区|Workspace/ })
-    const operations = screen.getByRole('tab', { name: /运营与规划|Planning & Operations/ })
-
-    workspace.focus()
-    fireEvent.keyDown(workspace, { key: 'ArrowRight' })
-    await waitFor(() => expect(operations).toHaveAttribute('aria-selected', 'true'))
-    expect(document.activeElement).toBe(operations)
-    expect(pushState).toHaveBeenCalledTimes(1)
-
-    fireEvent.keyDown(operations, { key: 'End' })
-    expect(pushState).toHaveBeenCalledTimes(1)
-    expect(document.activeElement).toBe(operations)
-
-    fireEvent.keyDown(operations, { key: 'Home' })
-    await waitFor(() => expect(workspace).toHaveAttribute('aria-selected', 'true'))
-    expect(document.activeElement).toBe(workspace)
-    expect(pushState).toHaveBeenCalledTimes(2)
-
-    fireEvent.keyDown(workspace, { key: 'ArrowLeft' })
-    await waitFor(() => expect(operations).toHaveAttribute('aria-selected', 'true'))
-    expect(document.activeElement).toBe(operations)
-    expect(pushState).toHaveBeenCalledTimes(3)
-    fireEvent.click(operations)
-    expect(pushState).toHaveBeenCalledTimes(3)
-
-    const url = new URL(window.location.href)
-    expect(url.searchParams.get('tab')).toBe('operations')
-    expect(url.searchParams.get('team')).toBe('team-1')
-    expect(url.searchParams.get('opsQuery')).toBe('Archived')
-    expect(url.searchParams.get('x')).toBe('keep')
-    expect(url.hash).toBe('#operations-templates')
-    expect(window.history.state).toEqual({ retained: 'task-5.1' })
-  })
-
-  it('uses one named compact select, keeps its focus, and preserves state across media changes', async () => {
-    const media = installMatchMedia(true)
-    renderPage()
-    const selector = await screen.findByRole('combobox', { name: /设置分区|Settings sections/ })
-    expect(screen.queryByRole('tablist')).toBeNull()
-    expect(screen.queryByRole('tab')).toBeNull()
-    expect(screen.getAllByRole('tabpanel')).toHaveLength(1)
-
-    selector.focus()
-    fireEvent.change(selector, { target: { value: 'operations' } })
-    await waitFor(() => expect(selector).toHaveValue('operations'))
-    expect(document.activeElement).toBe(selector)
-    expect(new URL(window.location.href).searchParams.get('tab')).toBe('operations')
-    expect(new URL(window.location.href).hash).toBe('#operations-templates')
-
-    act(() => { media.trigger(false) })
-    const operations = await screen.findByRole('tab', { name: /运营与规划|Planning & Operations/ })
-    expect(operations).toHaveAttribute('aria-selected', 'true')
-    expect(screen.queryByRole('combobox', { name: /设置分区|Settings sections/ })).toBeNull()
-
-    act(() => { media.trigger(true) })
-    const restored = await screen.findByRole('combobox', { name: /设置分区|Settings sections/ })
-    expect(restored).toHaveValue('operations')
-    expect(new URL(window.location.href).searchParams.get('team')).toBe('team-1')
-    expect(new URL(window.location.href).searchParams.get('opsQuery')).toBe('Archived')
   })
 
   it('posts only the selected stable preset color and reports success even when refresh has no new row', async () => {

@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 
 const projectId = '3f12de4f-b117-4a78-9e10-da102c892ae1'
-const milestoneId = 'd0000000-0000-4000-8000-000000000001'
 
 test.describe('frontend layout and shell unification', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,20 +42,34 @@ test.describe('frontend layout and shell unification', () => {
     }
   })
 
-  test('keeps overview project-only and opens milestone-filtered global Issues', async ({ page }) => {
+  test('separates project Overview from the work panel without overlapping layout layers', async ({ page }) => {
     await page.goto(`/?view=projects&project=${projectId}`)
     const projectControl = page.getByTestId('project-control-center')
     await expect(projectControl.locator('.wm-project-navigation a').first()).toHaveAttribute('aria-current', 'page')
     await expect(page.getByRole('region', { name: 'Work surfaces' })).toHaveCount(0)
+
     await page.getByTestId('project-control-view-work').click()
     await expect(page.getByTestId('project-tab-list')).toBeVisible()
     await expect(page.getByTestId('project-tab-board')).toBeVisible()
     await expect(page.getByTestId('project-tab-backlog')).toBeVisible()
-
-    await page.getByRole('region', { name: '里程碑路线图' }).getByRole('link', { name: '查看 Foundation Issues' }).click()
-    await expect(page).toHaveURL(new RegExp(`view=my-work.*layout=list.*projectId=${projectId}.*milestoneId=${milestoneId}`))
-    await expect(page.getByRole('combobox', { name: '项目' })).toHaveValue(projectId)
-    await expect(page.getByRole('combobox', { name: '里程碑' })).toHaveValue(milestoneId)
+    await expect(page.locator('.project-plan-copy .rich-markdown')).toHaveCount(0)
+    await expect(page.getByRole('region', { name: '里程碑路线图' })).toHaveCount(0)
+    const layers = await page.evaluate(() => {
+      const context = document.querySelector<HTMLElement>('.project-work-context')?.getBoundingClientRect()
+      const tabs = document.querySelector<HTMLElement>('.project-tabs')?.getBoundingClientRect()
+      const work = document.querySelector<HTMLElement>('.work-surfaces')?.getBoundingClientRect()
+      if (!context || !tabs || !work) throw new Error('Project work panel did not render all layout layers')
+      return {
+        contextBottom: context.bottom,
+        tabsTop: tabs.top,
+        tabsBottom: tabs.bottom,
+        workTop: work.top,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }
+    })
+    expect(layers.contextBottom).toBeLessThanOrEqual(layers.tabsTop + 1)
+    expect(layers.tabsBottom).toBeLessThanOrEqual(layers.workTop + 1)
+    expect(layers.overflow).toBeLessThanOrEqual(0)
   })
 
   test('keeps Agents and Session details in the localized workspace shell', async ({ page }) => {

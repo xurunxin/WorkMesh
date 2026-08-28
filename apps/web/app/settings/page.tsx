@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import { AppShell, Button, Tabs } from '@workmesh/ui'
+import { AppShell, Button } from '@workmesh/ui'
 import { ArrowLeft, FloppyDisk, Gear, Plus, Trash } from '@phosphor-icons/react'
 import { ApiError, apiMutation, apiRequest, json } from '../lib/api'
 import { isCollectionAuthorityRevoked } from '../lib/collection-authority'
@@ -12,10 +12,8 @@ import { actorAuthorityScopeKey, actorDisplayName, type AuthenticatedActor } fro
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { useAuthorityLifetime } from '../lib/use-authority-lifetime'
-import { useMediaQuery } from '../lib/use-media-query'
 import { useToast } from '../lib/use-toast'
-import { OperationsContent } from '../operations-content'
-import { readSettingsRoute, type SettingsRoute, type SettingsTab, writeSettingsRoute } from './route-state'
+import { legacySettingsOperationsHref, readSettingsRoute, type SettingsRoute, writeSettingsRoute } from './route-state'
 import { resolveTeamSelection } from './team-resolution'
 import { DeleteTeamDialog, type DeleteTeamSnapshot } from './delete-team-dialog'
 import {
@@ -80,7 +78,7 @@ function SettingsPageScope({
   const isAuthorityCurrent = useAuthorityLifetime()
   const authorityScopeKey = actorAuthorityScopeKey(actor)
   const [error, setError] = useState('')
-  const [route, setRoute] = useState<SettingsRoute>({ tab: 'workspace', teamId: null })
+  const [route, setRoute] = useState<SettingsRoute>({ teamId: null })
   const [routeReady, setRouteReady] = useState(false)
   const [workflowColorMode, setWorkflowColorMode] = useState<WorkflowColorMode>('neutral')
   const [customWorkflowColor, setCustomWorkflowColor] = useState(CUSTOM_WORKFLOW_COLOR)
@@ -97,12 +95,11 @@ function SettingsPageScope({
     deletedTeamId: string
     reconciledTeamId: string | null | undefined
   } | null>(null)
-  const compactTabs = useMediaQuery('(max-width: 720px)')
-  const teamCollectionActive = Boolean(actor && routeReady && route.tab === 'workspace')
+  const teamCollectionActive = Boolean(actor && routeReady)
   const teamsPage = usePagedApiList<Team>(teamCollectionActive ? '/api/v1/teams' : null, { scopeKey: authorityScopeKey })
   const teamsAuthorized = !isCollectionAuthorityRevoked(teamsPage.error)
   const teams = teamsAuthorized ? teamsPage.items : []
-  const teamResolution = useMemo(() => routeReady && route.tab === 'workspace'
+  const teamResolution = useMemo(() => routeReady
     ? resolveTeamSelection({
         initialized: teamsPage.initialized,
         items: teams,
@@ -114,7 +111,6 @@ function SettingsPageScope({
       })
     : null, [
       route.teamId,
-      route.tab,
       routeReady,
       teams,
       teamsPage.error,
@@ -176,7 +172,6 @@ function SettingsPageScope({
     if (!postDeleteFocusPending
       || !postDeleteRefreshSettled
       || !routeReady
-      || route.tab !== 'workspace'
       || teamResolution === null
       || teamsPage.loading
       || teamsPage.loadingMore
@@ -199,7 +194,6 @@ function SettingsPageScope({
   }, [
     postDeleteFocusPending,
     postDeleteRefreshSettled,
-    route.tab,
     route.teamId,
     routeReady,
     teamResolution,
@@ -216,6 +210,11 @@ function SettingsPageScope({
         setPostDeleteFocusPending(false)
         setPostDeleteRefreshSettled(false)
       }
+      const operationsHref = legacySettingsOperationsHref(new URL(window.location.href))
+      if (operationsHref) {
+        window.location.replace(operationsHref)
+        return
+      }
       setRoute(readSettingsRoute(window.location.search))
       setRouteReady(true)
     }
@@ -227,7 +226,6 @@ function SettingsPageScope({
 
   useEffect(() => {
     if (!routeReady
-      || route.tab !== 'workspace'
       || teamResolution?.status !== 'pending'
       || teamsPage.loading
       || teamsPage.loadingMore
@@ -236,7 +234,6 @@ function SettingsPageScope({
       return
     void teamsPage.loadMore()
   }, [
-    route.tab,
     routeReady,
     teamResolution?.status,
     teamsPage.error,
@@ -247,7 +244,7 @@ function SettingsPageScope({
   ])
 
   useEffect(() => {
-    if (!routeReady || route.tab !== 'workspace' || !teamResolution) return
+    if (!routeReady || !teamResolution) return
 
     let correctedTeamId: string | null | undefined
     if (teamResolution.status === 'resolved' && route.teamId === null)
@@ -264,7 +261,7 @@ function SettingsPageScope({
     const url = writeSettingsRoute(new URL(window.location.href), { teamId: correctedTeamId })
     window.history.replaceState(window.history.state, '', url)
     setRoute(readSettingsRoute(url.search))
-  }, [route.tab, route.teamId, routeReady, teamResolution, teams])
+  }, [route.teamId, routeReady, teamResolution, teams])
 
   const selectTeam = (teamId: string) => {
     if (typeof window === 'undefined') return
@@ -274,18 +271,6 @@ function SettingsPageScope({
     setPostDeleteFocusPending(false)
     setPostDeleteRefreshSettled(false)
     const url = writeSettingsRoute(new URL(window.location.href), { teamId })
-    window.history.pushState(window.history.state, '', url)
-    setRoute(readSettingsRoute(url.search))
-  }
-
-  const selectTab = (value: string) => {
-    if (typeof window === 'undefined') return
-    const next: SettingsTab = value === 'operations' ? 'operations' : 'workspace'
-    if (readSettingsRoute(window.location.search).tab === next) return
-    postDeleteFocusIntentRef.current = null
-    setPostDeleteFocusPending(false)
-    setPostDeleteRefreshSettled(false)
-    const url = writeSettingsRoute(new URL(window.location.href), { tab: next })
     window.history.pushState(window.history.state, '', url)
     setRoute(readSettingsRoute(url.search))
   }
@@ -380,14 +365,11 @@ function SettingsPageScope({
       setDeleteError('')
       setDeleteSnapshot(null)
       const currentRoute = readSettingsRoute(window.location.search)
-      const shouldRestoreWorkspaceFocus = currentRoute.tab === 'workspace'
-      postDeleteFocusIntentRef.current = shouldRestoreWorkspaceFocus
-        ? {
-            deletedTeamId: snapshot.id,
-            reconciledTeamId: currentRoute.teamId === snapshot.id ? undefined : currentRoute.teamId,
-          }
-        : null
-      setPostDeleteFocusPending(shouldRestoreWorkspaceFocus)
+      postDeleteFocusIntentRef.current = {
+        deletedTeamId: snapshot.id,
+        reconciledTeamId: currentRoute.teamId === snapshot.id ? undefined : currentRoute.teamId,
+      }
+      setPostDeleteFocusPending(true)
       setPostDeleteRefreshSettled(false)
       setCommittedDeletion(sequence => sequence + 1)
       pushToast({
@@ -458,7 +440,7 @@ function SettingsPageScope({
     navigation={[{ href: '/?view=my-work', icon: <ArrowLeft aria-hidden size={18} />, label: text.back }]}
     productName="WorkMesh"
     skipLabel={text.skip}
-    teamSwitcher={routeReady && route.tab === 'workspace' ? <label aria-busy={teamsRefreshBusy || undefined} className="team-switcher">{text.team}{teamResolution?.status === 'resolved'
+    teamSwitcher={routeReady ? <label aria-busy={teamsRefreshBusy || undefined} className="team-switcher">{text.team}{teamResolution?.status === 'resolved'
       ? <select aria-label={text.currentTeam} value={selectedTeam?.id ?? ''} onChange={event => selectTeam(event.currentTarget.value)}><option value="" disabled>{text.noTeam}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select>
       : <select aria-label={text.currentTeam} disabled value=""><option value="">{teamResolution?.status === 'empty' ? text.noTeam : teamResolution?.status === 'blocked' || teamResolution?.status === 'unavailable' ? text.teamUnavailable : text.loading}</option></select>}</label> : undefined}
     utilityNavigation={[{ active: true, href: '/settings', icon: <Gear aria-hidden size={18} />, label: text.settings }]}
@@ -467,21 +449,12 @@ function SettingsPageScope({
     <section aria-busy={workspaceBusy || undefined} className="content settings-page">
       <header><div><h1>{text.title}</h1><p>{text.subtitle}</p></div></header>
       {actorError && <p className="error" role="alert">{text.loadFailed}</p>}
-      <Tabs
-        ariaLabel={text.settingsTabsLabel}
-        compact={compactTabs}
-        onValueChange={selectTab}
-        tabs={[
-          {
-            id: 'workspace',
-            label: text.tabWorkspace,
-            panel: <>
-              {!canManage && <p className="settings-notice">{text.reviewOnly}</p>}
-              {(error || teamsPage.error || statesPage.error) && <>
-                <p className="error" role="alert">{error || (teamResolution?.status === 'blocked' ? text.teamUnavailable : text.loadFailed)}</p>
-                {(teamsPage.error || statesPage.error) && <Button data-post-delete-focus-recovery onClick={() => void Promise.all([teamsPage.refresh(), statesPage.refresh()])}>{text.retry}</Button>}
-              </>}
-              <div className="settings-grid">
+      {!canManage && <p className="settings-notice">{text.reviewOnly}</p>}
+      {(error || teamsPage.error || statesPage.error) && <>
+        <p className="error" role="alert">{error || (teamResolution?.status === 'blocked' ? text.teamUnavailable : text.loadFailed)}</p>
+        {(teamsPage.error || statesPage.error) && <Button data-post-delete-focus-recovery onClick={() => void Promise.all([teamsPage.refresh(), statesPage.refresh()])}>{text.retry}</Button>}
+      </>}
+      <div className="settings-grid">
                 {teamResolutionPending ? <div className="settings-loading-skeleton"><SkeletonList columns={2} items={3} label={text.loading} /></div> : <>
                 <section aria-busy={teamsPage.loading || teamsPage.loadingMore || undefined} className="settings-card" aria-labelledby="team-settings-heading">
                   <header><div><p className="eyebrow">{text.workspaceStructure}</p><h2 id="team-settings-heading" tabIndex={-1}>{text.teams}</h2></div></header>
@@ -555,13 +528,7 @@ function SettingsPageScope({
                   </> : <p className="empty">{unresolvedTeamCopy}</p>}
                 </section>
                 </>}
-              </div>
-            </>,
-          },
-          { id: 'operations', label: text.tabOperations, panel: <OperationsContent authorityKey={authorityScopeKey} embedded /> },
-        ]}
-        value={route.tab}
-      />
+      </div>
       <DeleteTeamDialog
         busy={deleteBusy}
         copy={{

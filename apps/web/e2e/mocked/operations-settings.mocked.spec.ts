@@ -24,7 +24,8 @@ test.beforeEach(async ({ context, request }) => {
   await resetMock(request, 'settings-workspace')
 })
 
-test.afterEach(async ({ request }) => {
+test.afterEach(async ({ page, request }) => {
+  await page.close()
   await restoreDefaultMock(request)
 })
 
@@ -62,10 +63,10 @@ test('keeps a second-page Team authoritative and posts only the exact custom wor
   await writeMockEvidence({ ledger: after, name: 'settings-workflow-green', page, testInfo })
 })
 
-test('does not request Teams or workflow states while the Operations settings tab owns the route', async ({ page, request }, testInfo) => {
+test('canonicalizes the retired Settings Operations tab without requesting Teams or workflow states', async ({ page, request }, testInfo) => {
   const operationsUrl = `/settings?tab=operations&team=${mockIds.targetTeam}&opsQuery=Boundary#operations-cycles`
   await page.goto(operationsUrl)
-  await expect(page).toHaveURL(`${webUrl}${operationsUrl}`)
+  await expect(page).toHaveURL(`${webUrl}/operations?opsQuery=Boundary#operations-cycles`)
   await expect(page.getByText('Boundary Cycle')).toBeVisible()
   await expect(page.getByText('Boundary Initiative')).toBeVisible()
 
@@ -73,7 +74,7 @@ test('does not request Teams or workflow states while the Operations settings ta
   expect(ledger.requests.filter(entry => entry.path === '/api/v1/teams' || /\/states$/.test(entry.path))).toEqual([])
   expect(requestsFor(ledger, 'GET', '/api/v1/cycles')).toHaveLength(1)
   expect(requestsFor(ledger, 'GET', '/api/v1/initiatives')).toHaveLength(1)
-  await writeMockEvidence({ ledger, name: 'settings-operations-boundary-green', page, testInfo })
+  await writeMockEvidence({ ledger, name: 'settings-operations-redirect-green', page, testInfo })
 })
 
 test('freezes delete confirmation, blocks synchronous duplicates, retries the same failed intent, and restores focus', async ({ page, request }, testInfo) => {

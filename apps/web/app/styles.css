@@ -42,7 +42,9 @@ button, input, textarea, select { font: inherit; }
 .content,
 .project-workspace,
 .project-plan-header,
-.project-plan-copy { min-width: 0; max-width: 100%; }
+.project-plan-copy,
+.project-work-context,
+.project-work-context-copy { min-width: 0; max-width: 100%; }
 .app-sidebar {
   position: sticky;
   top: 0;
@@ -239,13 +241,7 @@ main#workmesh-main:focus-visible {
 .workflow-state-create-form > .wm-button { justify-self: start; }
 .workflow-state-create-status { align-self: center; margin: 0; color: var(--wm-success, #15803d); font-size: .84rem; }
 
-.settings-page, .settings-page > .wm-tabs, .settings-page > .wm-tabs > .wm-tab-panel { width: 100%; min-width: 0; }
-.settings-page > .wm-tabs > .wm-tab-list { margin-bottom: 1.1rem; }
-.settings-page > .wm-tabs-compact > .wm-tab-list-compact { display: grid; width: min(32rem, 100%); max-width: 100%; gap: .35rem; margin-bottom: .25rem; }
-.settings-page > .wm-tabs-compact .wm-tab-select { width: 100%; min-width: 0; }
-.settings-tab-actions { display: flex; justify-content: flex-end; margin-bottom: 1rem; }
-.settings-tab-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-.settings-tab-heading h2 { margin: 0; font-size: 1.2rem; letter-spacing: -.02em; }
+.settings-page { width: 100%; min-width: 0; }
 @media (max-width: 720px) {
   .settings-grid { grid-template-columns: 1fr; }
   .settings-loading-skeleton .skeleton-list { grid-template-columns: minmax(0, 1fr); }
@@ -534,18 +530,9 @@ main#workmesh-main:focus-visible {
 .project-tabs button:hover, .project-tabs button.selected { color: var(--wm-text); background: transparent; border-bottom-color: var(--wm-text); box-shadow: none; transform: none; }
 .project-tabs .wm-button-label { display: inline-flex; align-items: center; gap: .35rem; }
 .project-tabs .wm-button-label > span { display: inline-grid; min-width: 1.25rem; min-height: 1.25rem; place-items: center; padding: 0 .25rem; background: var(--wm-surface-subtle); border-radius: 999px; font-size: .7rem; }
-.project-tab-list .project-plan-header,
-.project-tab-board .project-plan-header,
-.project-tab-backlog .project-plan-header { grid-template-columns: minmax(0, 1fr) minmax(200px, 260px); gap: 1rem; padding: .85rem 1rem; }
-.project-tab-list .project-plan-copy p,
-.project-tab-board .project-plan-copy p,
-.project-tab-backlog .project-plan-copy p,
-.project-tab-list .project-metrics,
-.project-tab-board .project-metrics,
-.project-tab-backlog .project-metrics { display: none; }
-.project-tab-list .project-plan-copy h2,
-.project-tab-board .project-plan-copy h2,
-.project-tab-backlog .project-plan-copy h2 { margin: .2rem 0 0; font-size: 1.15rem; }
+.project-work-context { display: flex; align-items: center; gap: 1rem; padding: .65rem 1rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 12px 12px 0 0; }
+.project-work-context-copy { display: flex; flex: 1 1 auto; align-items: center; gap: .65rem; }
+.project-work-context-copy h2 { margin: 0; overflow-wrap: anywhere; font-size: 1rem; letter-spacing: -.02em; }
 .project-overview-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(380px, .9fr); gap: 1rem; margin-top: 1rem; align-items: start; }
 .roadmap-panel { min-width: 0; padding: 1.15rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 10px; }
 .roadmap-panel > header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -640,9 +627,6 @@ main#workmesh-main:focus-visible {
   .workflow-color-presets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .danger-zone { align-items: flex-start; flex-direction: column; }
   .project-plan-header { grid-template-columns: 1fr; gap: 1rem; }
-  .project-tab-list .project-plan-header,
-  .project-tab-board .project-plan-header,
-  .project-tab-backlog .project-plan-header { grid-template-columns: 1fr; }
   .app-shell .compact-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-shell .compact-filters > :first-child,
   .app-shell .compact-filters .save-view { grid-column: 1 / -1; }
@@ -1301,7 +1285,7 @@ main#workmesh-main:focus-visible {
   min-height: 0;
   margin: 0;
 }
-.content--project-workspace .project-plan-header {
+.content--project-workspace .project-work-context {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -1312,13 +1296,13 @@ main#workmesh-main:focus-visible {
   border-bottom: 1px solid #e8e8e4;
   border-radius: 0;
 }
-.content--project-workspace .project-plan-copy {
+.content--project-workspace .project-work-context-copy {
   display: flex;
   align-items: center;
   gap: .65rem;
   flex: 1 1 auto;
 }
-.content--project-workspace .project-plan-copy h2 { order: -1; margin: 0; font-size: 1rem; letter-spacing: -.02em; }
+.content--project-workspace .project-work-context-copy h2 { order: -1; margin: 0; font-size: 1rem; letter-spacing: -.02em; }
 .content--project-workspace .project-status {
   padding: .16rem .42rem;
   color: #5d635d;
@@ -1472,8 +1456,8 @@ main#workmesh-main:focus-visible {
 @media (max-width: 760px) {
   .app-team-switcher select { min-height: 40px; }
   .content--project-workspace { height: auto; min-height: calc(100dvh - 46px); overflow: visible; }
-  .content--project-workspace .project-plan-header { align-items: flex-start; flex-direction: column; gap: .45rem; }
-  .content--project-workspace .project-plan-copy { width: 100%; }
+  .content--project-workspace .project-work-context { align-items: flex-start; flex-direction: column; gap: .45rem; }
+  .content--project-workspace .project-work-context-copy { width: 100%; }
   .content--project-workspace .project-progress { width: 100%; margin-left: 0; }
   .work-surface-toolbar { align-items: stretch; flex-direction: column; }
   .work-surface-toolbar .wm-work-item-filter-row { flex-wrap: wrap; }
