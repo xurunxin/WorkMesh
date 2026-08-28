@@ -72,6 +72,7 @@ export function ProjectWorkspace({
   items,
   tab,
   workSurface,
+  actions,
   onTabChange,
 }: {
   actor?: Readonly<{ id: string; workspace_id?: string; workspace_role: 'admin' | 'member' }>
@@ -79,6 +80,7 @@ export function ProjectWorkspace({
   items: WorkItemDto[]
   tab: ProjectWorkspaceTab
   workSurface: ReactNode
+  actions?: ReactNode
   onTabChange: (tab: ProjectWorkspaceTab) => void
 }) {
   const { locale } = useLocale()
@@ -197,10 +199,13 @@ export function ProjectWorkspace({
         <h2>{project.name}</h2>
         {project.description ? <RichContent density="document" source={project.description} /> : <p>{project.summary || text.noBrief}</p>}
       </div>
-      <div className="project-progress" aria-label={`${summary.progressPercent}% ${text.complete}`}>
-        <strong>{summary.progressPercent}%</strong>
-        <span>{text.progress(summary.completed, summary.total)}</span>
-        <progress max={100} value={summary.progressPercent} />
+      <div className="project-plan-header-aside">
+        {actions && <div className="project-plan-actions">{actions}</div>}
+        <div className="project-progress" aria-label={`${summary.progressPercent}% ${text.complete}`}>
+          <strong>{summary.progressPercent}%</strong>
+          <span>{text.progress(summary.completed, summary.total)}</span>
+          <progress max={100} value={summary.progressPercent} />
+        </div>
       </div>
     </div>}
 

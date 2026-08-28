@@ -172,6 +172,7 @@ const humanOnlyOperations = new Set([
   'listAgents',
   'getAgent',
   'createWorkflowState',
+  'updateWorkflowState',
   'getDelegation',
   'revokeDelegation',
   'promptAgentSession',

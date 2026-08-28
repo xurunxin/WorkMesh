@@ -467,6 +467,52 @@ export const commands = {
       return item;
     }),
 
+  updateState: (
+    db: Pool,
+    c: CommandContext,
+    teamId: string,
+    stateId: string,
+    revision: number,
+    input: { name?: string; color?: string },
+  ) =>
+    mutate(db, c, async (tx) => {
+      await teamAccess(tx, c, teamId, "manage");
+      const current = one(
+        (
+          await tx.query<{ revision: number }>(
+            "SELECT revision FROM workflow_states WHERE id=$1 AND workspace_id=$2 AND team_id=$3 AND is_archived=false FOR UPDATE",
+            [stateId, c.actor.workspaceId, teamId],
+          )
+        ).rows,
+      );
+      assertRevision(revision, current.revision);
+      const item = one(
+        (
+          await tx.query<{ id: string; revision: number }>(
+            "UPDATE workflow_states SET name=COALESCE($1,name),color=COALESCE($2,color),revision=revision+1,updated_at=now() WHERE id=$3 AND workspace_id=$4 AND team_id=$5 AND is_archived=false RETURNING id,revision",
+            [
+              input.name ?? null,
+              input.color ?? null,
+              stateId,
+              c.actor.workspaceId,
+              teamId,
+            ],
+          )
+        ).rows,
+      );
+      await event(
+        tx,
+        c,
+        "workflow_state.updated",
+        "workflow_state",
+        item.id,
+        item.revision,
+        input,
+        teamId,
+      );
+      return item;
+    }),
+
   createProject: (
     db: Pool,
     c: CommandContext,

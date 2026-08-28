@@ -129,6 +129,12 @@ export const agentSessionStateSchema = z.enum([
 export const workspaceInputSchema = z.object({ name: z.string().min(1).max(120), slug: z.string().regex(/^[a-z0-9-]+$/).max(80) })
 export const teamInputSchema = z.object({ name: z.string().min(1).max(120), key: z.string().regex(/^[A-Z][A-Z0-9]{1,9}$/) })
 export const stateInputSchema = z.object({ name: z.string().min(1).max(80), category: statusCategorySchema, color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), position: z.number().int().nonnegative().optional() })
+export const workflowStatePatchSchema = z.object({
+  name: z.string().min(1).max(80).optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+}).strict().refine(value => value.name !== undefined || value.color !== undefined, {
+  message: 'At least one of name or color is required',
+})
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
 export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional(), parentId: idSchema.optional() }).strict()
 export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional(), parentId: idSchema.nullable().optional() }).strict()
@@ -417,6 +423,7 @@ export const stage0RouteManifest = [
   { method: 'DELETE', path: '/api/v1/teams/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/teams/{id}/states', authenticated: true },
   { method: 'POST', path: '/api/v1/teams/{id}/states', authenticated: true, mutation: true },
+  { method: 'PATCH', path: '/api/v1/teams/{id}/states/{stateId}', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/projects', authenticated: true },
   { method: 'POST', path: '/api/v1/projects', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/projects/{id}', authenticated: true },

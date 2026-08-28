@@ -49,6 +49,12 @@ describe('WorkItemCard density modifier', () => {
 })
 
 describe('WorkItemCard status name pill', () => {
+  it('uses the matching workflow status color as the shared CSS custom property', () => {
+    const { container } = render(<WorkItemCard item={baseItem} layout="list" statusOptions={[{ id: 'status-1', name: 'Open', color: '#2563EB' }]} />)
+    const article = container.querySelector<HTMLElement>('.wm-work-item-card')
+    expect(article?.style.getPropertyValue('--wm-status-color')).toBe('#2563EB')
+  })
+
   it('renders the status name as a pill next to the identifier', () => {
     const { container } = render(<WorkItemCard item={baseItem} layout="list" />)
     const pill = container.querySelector('.wm-work-item-status-pill')

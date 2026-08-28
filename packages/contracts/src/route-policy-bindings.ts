@@ -101,6 +101,11 @@ export const routeOperationBindings = [
     "operationId": "createWorkflowState"
   },
   {
+    "method": "PATCH",
+    "path": "/api/v1/teams/{id}/states/{stateId}",
+    "operationId": "updateWorkflowState"
+  },
+  {
     "method": "GET",
     "path": "/api/v1/projects",
     "operationId": "listProjects"

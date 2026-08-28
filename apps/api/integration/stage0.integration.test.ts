@@ -13,7 +13,7 @@ type InstallResponse = { csrfToken: string };
 type AuthResponse = { actor: { id: string } };
 type Created = { id: string; revision: number };
 type Page<T> = { items: T[]; nextCursor: string | null };
-type WorkflowState = { id: string; name: string };
+type WorkflowState = { id: string; name: string; color: string; revision: number };
 type WorkItem = Created & {
   title: string;
   description: string | null;
@@ -540,6 +540,61 @@ describe("Stage 0 PostgreSQL API acceptance", () => {
     expect([left.statusCode, right.statusCode]).toEqual([200, 200]);
     expect(left.json<Created>()).toEqual(right.json<Created>());
   }, 30_000);
+
+  it("updates workflow state names and colors with revisioned idempotent event delivery", async () => {
+    const beforeStates = (await call("GET", `/api/v1/teams/${teamId}/states`)).json<Page<WorkflowState>>().items;
+    const ready = beforeStates.find((state) => state.id === readyId)!;
+    const eventCountBefore = Number((await db.query<{ count: string }>(
+      "SELECT count(*) AS count FROM domain_events WHERE aggregate_id=$1 AND event_type='workflow_state.updated'",
+      [ready.id],
+    )).rows[0]!.count);
+    const outboxCountBefore = Number((await db.query<{ count: string }>(
+      "SELECT count(*) AS count FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.aggregate_id=$1 AND event.event_type='workflow_state.updated'",
+      [ready.id],
+    )).rows[0]!.count);
+    const key = "workflow-state-update-replay";
+    const patch = { name: "Ready for QA", color: "#7C3AED" };
+    const updated = await call(
+      "PATCH",
+      `/api/v1/teams/${teamId}/states/${ready.id}`,
+      patch,
+      { "if-match": `"revision-${ready.revision}"`, "idempotency-key": key },
+    );
+    expect(updated.statusCode).toBe(200);
+    const updatedCommand = updated.json<Created>();
+    expect(updatedCommand.revision).toBe(ready.revision + 1);
+
+    const replay = await call(
+      "PATCH",
+      `/api/v1/teams/${teamId}/states/${ready.id}`,
+      patch,
+      { "if-match": `"revision-${ready.revision}"`, "idempotency-key": key },
+    );
+    expect(replay.statusCode).toBe(200);
+    expect(replay.json<Created>()).toEqual(updatedCommand);
+
+    const latest = (await call("GET", `/api/v1/teams/${teamId}/states`)).json<Page<WorkflowState>>().items.find(state => state.id === ready.id)!;
+    expect(latest).toMatchObject({ name: patch.name, color: patch.color, revision: updatedCommand.revision });
+    expect(Number((await db.query<{ count: string }>(
+      "SELECT count(*) AS count FROM domain_events WHERE aggregate_id=$1 AND event_type='workflow_state.updated'",
+      [ready.id],
+    )).rows[0]!.count)).toBe(eventCountBefore + 1);
+    expect(Number((await db.query<{ count: string }>(
+      "SELECT count(*) AS count FROM outbox_events outbox JOIN domain_events event ON event.id=outbox.domain_event_id WHERE event.aggregate_id=$1 AND event.event_type='workflow_state.updated'",
+      [ready.id],
+    )).rows[0]!.count)).toBe(outboxCountBefore + 1);
+
+    const empty = await call("PATCH", `/api/v1/teams/${teamId}/states/${ready.id}`, {}, { "if-match": `"revision-${latest.revision}"` });
+    const invalidColor = await call("PATCH", `/api/v1/teams/${teamId}/states/${ready.id}`, { color: "purple" }, { "if-match": `"revision-${latest.revision}"` });
+    const stale = await call("PATCH", `/api/v1/teams/${teamId}/states/${ready.id}`, { name: "Stale" }, { "if-match": `"revision-${ready.revision}"` });
+    const keyConflict = await call("PATCH", `/api/v1/teams/${teamId}/states/${ready.id}`, { name: "Different payload" }, { "if-match": `"revision-${latest.revision}"`, "idempotency-key": key });
+    const duplicateName = await call("PATCH", `/api/v1/teams/${teamId}/states/${ready.id}`, { name: beforeStates.find(state => state.id !== ready.id)!.name }, { "if-match": `"revision-${latest.revision}"` });
+    expect(empty.statusCode).toBe(400);
+    expect(invalidColor.statusCode).toBe(400);
+    expect(stale.statusCode).toBe(409);
+    expect(keyConflict.statusCode).toBe(409);
+    expect(duplicateName.statusCode).toBe(409);
+  });
 
   it("protects the sole active team and lets admins recover zero-team workspaces", async () => {
     const workspace = (

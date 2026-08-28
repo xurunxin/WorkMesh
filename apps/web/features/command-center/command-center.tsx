@@ -107,6 +107,7 @@ export type GlobalCommandCenterProps = {
 export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerLabel, locale = 'en' }: GlobalCommandCenterProps) {
   const text = commandCenterText[locale]
   const [mounted, setMounted] = useState(false)
+  const [triggerSlot, setTriggerSlot] = useState<HTMLElement | null>(null)
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [snapshot, setSnapshot] = useState<AuthorizedCommandSnapshot>(emptySnapshot)
@@ -123,9 +124,17 @@ export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerL
     setOpen(true)
   }
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    setMounted(true)
+    const updateTriggerSlot = () => setTriggerSlot(document.getElementById('workmesh-command-center-trigger-slot'))
+    updateTriggerSlot()
+    const observer = new MutationObserver(updateTriggerSlot)
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [])
   useEffect(() => {
     const restoreTriggerFocus = () => {
+      if (!triggerRef.current) return
       if (!consumeReturnFocusMarker()) return
       const activeElement = document.activeElement
       if (activeElement === triggerRef.current) return
@@ -138,7 +147,7 @@ export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerL
     restoreTriggerFocus()
     window.addEventListener('pageshow', handlePageShow)
     return () => window.removeEventListener('pageshow', handlePageShow)
-  }, [])
+  }, [mounted, triggerSlot])
   useEffect(() => {
     const update = () => setOnline(navigator.onLine)
     update()
@@ -263,10 +272,12 @@ export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerL
     document.body,
   ) : null
 
-  return <>
-    <Button aria-keyshortcuts="Control+K Meta+K" aria-label={triggerLabel ?? text.search} className="command-center-trigger" data-testid="command-center-trigger" icon={<MagnifyingGlass aria-hidden size={16} />} onClick={openCommandCenter} ref={triggerRef} type="button" variant="ghost">
+  const trigger = <Button aria-keyshortcuts="Control+K Meta+K" aria-label={triggerLabel ?? text.search} className="command-center-trigger" data-testid="command-center-trigger" icon={<MagnifyingGlass aria-hidden size={16} />} onClick={openCommandCenter} ref={triggerRef} type="button" variant="ghost">
       <span>{triggerLabel ?? text.search}</span><kbd>Ctrl K</kbd>
     </Button>
+
+  return <>
+    {mounted ? (triggerSlot ? createPortal(trigger, triggerSlot) : trigger) : null}
     {dialog}
   </>
 }

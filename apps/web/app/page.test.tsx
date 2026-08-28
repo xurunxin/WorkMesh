@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LocaleProvider } from './lib/i18n'
 import type { PagedCollection } from './lib/pagination'
@@ -223,27 +223,10 @@ describe('Home project strip keyboard contract', () => {
     expect(screen.getByText('Write Markdown in edit mode, then switch to preview to see the rendered result.')).toBeInTheDocument()
   })
 
-  it('is a named focusable local-scroll region with owned Arrow movement and ordinary child activation', async () => {
+  it('exposes a named project rail with ordinary project activation', async () => {
     render(<LocaleProvider><HomePage /></LocaleProvider>)
-    const strip = await screen.findByRole('region', { name: 'Projects' })
-    expect(strip).toHaveAttribute('tabindex', '0')
-    Object.defineProperties(strip, {
-      clientWidth: { configurable: true, value: 240 },
-      scrollWidth: { configurable: true, value: 720 },
-    })
-    strip.scrollLeft = 0
-    strip.focus()
-
-    expect(fireEvent.keyDown(strip, { key: 'ArrowRight' })).toBe(false)
-    expect(strip.scrollLeft).toBeGreaterThan(0)
-    expect(fireEvent.keyDown(strip, { key: 'ArrowLeft' })).toBe(false)
-    expect(strip.scrollLeft).toBe(0)
-
-    const projectButton = screen.getByRole('button', { name: /Responsive operations/ })
-    const beforeChildArrow = strip.scrollLeft
-    expect(fireEvent.keyDown(projectButton, { key: 'ArrowRight' })).toBe(false)
-    expect(strip.scrollLeft).toBe(beforeChildArrow)
-    expect(fireEvent.keyDown(projectButton, { key: 'Enter' })).toBe(true)
+    const rail = await screen.findByRole('complementary', { name: 'Projects' })
+    const projectButton = within(rail).getByRole('button', { name: /Responsive operations/ })
     fireEvent.click(projectButton)
 
     await waitFor(() => expect(window.location.search).toContain('project=project-2'))

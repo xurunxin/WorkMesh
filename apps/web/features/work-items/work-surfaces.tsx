@@ -14,7 +14,7 @@ import { createWorkItemMoveCommandAdapter, recoverMoveNetworkFailure } from './m
 import { createWorkSurfaceViewModel, workSurfaceErrorState } from './view-model'
 import { type SavedViewPreference, type StatusCategory, type WorkItemDto, type WorkSurfaceDensity, type WorkSurfaceLayout, type WorkSurfaceQuery, type WorkSurfaceScope, WORK_SURFACE_DENSITIES } from './contracts'
 
-export type WorkSurfaceStatus = { id: string; name: string; category?: StatusCategory }
+export type WorkSurfaceStatus = { id: string; name: string; category?: StatusCategory; color?: string }
 export type WorkSurfaceHuman = { id: string; display_name?: string; displayName?: string }
 export type WorkSurfaceProject = { id: string; name: string }
 export type WorkSurfaceMilestone = { id: string; name: string }
@@ -147,7 +147,7 @@ const workItemIdSelector = (id: string): string => `[data-work-item-id="${CSS.es
 const displayName = (human: WorkSurfaceHuman): string => human.display_name ?? human.displayName ?? human.id
 
 function statusOptions(statuses: WorkSurfaceStatus[]): WorkItemStatusOption[] {
-  return statuses.map(status => ({ id: status.id, name: status.name, category: status.category }))
+  return statuses.map(status => ({ id: status.id, name: status.name, category: status.category, color: status.color }))
 }
 
 function sameStatusOptions(left: WorkItemStatusOption[], right: WorkItemStatusOption[]): boolean {

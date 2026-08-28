@@ -16,6 +16,7 @@ import {
   type HTMLAttributes,
   type InputHTMLAttributes,
   type ChangeEvent,
+  type CSSProperties,
   type DragEvent,
   type FormEvent,
   type KeyboardEvent,
@@ -150,6 +151,7 @@ export function AppShell({
           {footer && <footer className="app-sidebar-footer mobile-navigation-footer">{footer}</footer>}
         </details>}
         <p>{contextLabel}</p>
+        <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" />
         {headerActions && <div className="wm-shell-actions">{headerActions}</div>}
       </header>
       <main className="app-content" id="workmesh-main" tabIndex={-1}>{children}</main>
@@ -1132,7 +1134,7 @@ function resolveWorkItemCopy(copy?: Partial<WorkItemCopy>): WorkItemCopy {
   return { ...defaultWorkItemCopy, ...copy }
 }
 
-export type WorkItemStatusOption = { id: string; name: string; category?: string }
+export type WorkItemStatusOption = { id: string; name: string; category?: string; color?: string }
 export type WorkItemMoveSource = 'pointer' | 'keyboard' | 'explicit-status-selector'
 export type WorkItemMoveCallback = (item: WorkItemCardData, targetStatusId: string, source: WorkItemMoveSource) => void | Promise<void>
 export type WorkItemLabelChangeCallback = (item: WorkItemCardData, nextLabels: string[]) => void | Promise<void>
@@ -1157,6 +1159,9 @@ export type WorkItemCardProps = {
 }
 
 function workItemClassNames(...values: Array<string | false | null | undefined>): string { return values.filter(Boolean).join(' ') }
+function workflowStatusStyle(color?: string): CSSProperties {
+  return { '--wm-status-color': color || 'var(--wm-muted)' } as CSSProperties
+}
 function handlePresentationPromise(callback: (() => void | Promise<void>) | undefined): void {
   if (!callback) return
   try {
@@ -1348,6 +1353,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
   const hasFacts = Boolean(item.blockedByCount || item.blockingCount || item.subIssueCount)
   const hasLabels = Boolean(item.labels && item.labels.length > 0)
   const statusCategory = item.statusCategory ?? 'unknown'
+  const statusColor = statusOptions.find(status => status.id === item.statusId)?.color
   const subIssueTotal = item.subIssueCount ?? 0
   const subIssueDone = item.completedSubIssueCount ?? 0
   const subIssuePct = subIssueTotal > 0 ? Math.round((subIssueDone / subIssueTotal) * 100) : 0
@@ -1366,7 +1372,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
     setLabelMenuAnchorVersion(version => version + 1)
     setLabelMenuOpen(true)
   }
-  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown}>
+  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown} style={workflowStatusStyle(statusColor)}>
     <div className="wm-work-item-card-heading">
       <span className="wm-work-item-identifier">{item.identifier}</span>
       <span className={workItemClassNames('wm-work-item-status-pill', `status-${statusCategory}`)}>{item.statusName}</span>
@@ -1472,7 +1478,7 @@ export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, de
     target_el.addEventListener('pointerup', onUpPointer)
     target_el.addEventListener('pointercancel', onUpPointer)
   }
-  return <section aria-label={text.boardLabel} className={workItemClassNames('wm-work-item-board', isPanning && 'is-panning')} data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" onPointerDown={onPointerDownBoard} ref={scrollRef} role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); const statusCategory = column.category ?? 'unknown'; const width = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH; return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-status-category={statusCategory} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} style={{ flex: `0 0 ${width}px` }} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`} className="wm-column-count">{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} density={density} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p>{onColumnWidthChange ? <div aria-hidden className="wm-work-item-column-resize" onPointerDown={startResize(column)} title="拖动调整列宽"><span className="wm-work-item-column-resize-grip" /></div> : null}</div> })}</div></section>
+  return <section aria-label={text.boardLabel} className={workItemClassNames('wm-work-item-board', isPanning && 'is-panning')} data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" onPointerDown={onPointerDownBoard} ref={scrollRef} role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); const statusCategory = column.category ?? 'unknown'; const width = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH; return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-status-category={statusCategory} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`} className="wm-column-count">{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} density={density} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p>{onColumnWidthChange ? <div aria-hidden className="wm-work-item-column-resize" onPointerDown={startResize(column)} title="拖动调整列宽"><span className="wm-work-item-column-resize-grip" /></div> : null}</div> })}</div></section>
 }
 
 export type WorkItemAdaptiveCollectionProps = WorkItemBoardProps & {
@@ -1534,7 +1540,7 @@ const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, col
     onKeyDown={board ? event => onColumnKeyDown(columnIndex, event) : undefined}
     onPointerUp={board ? () => onColumnPointerUp(column) : undefined}
     role={board ? 'group' : 'presentation'}
-    style={{ flex: `0 0 ${width}px` }}
+    style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }}
     tabIndex={board ? 0 : -1}
   >
     <header className="wm-work-item-column-header" hidden={!board}><h3>{column.name}</h3><span aria-label={`${count} items`} className="wm-column-count">{count}</span></header>
