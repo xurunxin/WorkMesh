@@ -80,6 +80,7 @@ test.describe('Issues workbench', () => {
     page.on('request', request => { if (request.url().includes('/api/v1/views')) methods.push(request.method()) })
     await page.goto('/?view=my-work')
     await useChinese(page)
+    await page.getByTestId('work-item-filters-more').click()
     await page.getByRole('textbox', { name: '保存视图名称' }).fill('My dogfood view')
     await page.getByRole('button', { name: '保存视图' }).click()
     await expect(page.getByRole('combobox', { name: '保存的视图' })).toBeVisible()

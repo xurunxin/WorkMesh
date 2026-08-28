@@ -66,6 +66,7 @@ export type WorkSurfaceItem = {
   id: string
   identifier: string
   title: string
+  description: string | null
   statusId: string
   statusName: string
   statusCategory: StatusCategory | 'unknown'

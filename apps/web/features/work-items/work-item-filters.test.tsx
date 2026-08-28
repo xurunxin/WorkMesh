@@ -16,8 +16,12 @@ describe('WorkItemFilters compact mode', () => {
     expect(document.querySelectorAll('[data-hotkey-filter="true"]')).toHaveLength(1)
   })
 
-  it('hides Milestone and Label when compact is true', () => {
-    render(<WorkItemFilters compact value={{}} onChange={() => {}} />)
+  it('keeps only search and filter actions visible when compact is true', () => {
+    render(<WorkItemFilters compact projects={[{ id: 'project-1', label: 'Project' }]} statuses={[{ id: 'status-1', label: 'Ready' }]} value={{}} onChange={() => {}} />)
+    expect(screen.queryByLabelText(/^Status$/i)).toBeNull()
+    expect(screen.queryByLabelText(/^Priority$/i)).toBeNull()
+    expect(screen.queryByLabelText(/responsible human/i)).toBeNull()
+    expect(screen.queryByLabelText(/^Project$/i)).toBeNull()
     expect(screen.queryByLabelText(/milestone/i)).toBeNull()
     expect(screen.queryByLabelText(/label/i)).toBeNull()
   })
@@ -40,9 +44,11 @@ describe('WorkItemFilters compact mode', () => {
   })
 
   it('expands the advanced fields when the More filters button is pressed', () => {
-    render(<WorkItemFilters compact value={{}} onChange={() => {}} />)
+    render(<WorkItemFilters compact projects={[{ id: 'project-1', label: 'Project' }]} statuses={[{ id: 'status-1', label: 'Ready' }]} value={{}} onChange={() => {}} />)
     expect(screen.queryByLabelText(/milestone/i)).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: /more filters/i }))
+    expect(screen.getByLabelText(/^Status$/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^Project$/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/milestone/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/label/i)).toBeInTheDocument()
   })

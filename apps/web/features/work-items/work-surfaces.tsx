@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Button, WorkItemAdaptiveCollection, WorkItemFilters, WorkSurfacePagination, WorkSurfaceState, type WorkItemCardData, type WorkItemCopy, type WorkItemFilterOption, type WorkItemMoveSource, type WorkItemStatusOption } from '@workmesh/ui'
 import { KanbanIcon } from '@phosphor-icons/react/dist/csr/Kanban'
 import { RowsIcon } from '@phosphor-icons/react/dist/csr/Rows'
@@ -102,6 +102,7 @@ export type WorkSurfacesProps = {
   surfaceCopy?: Partial<WorkSurfaceCopy>
   columnWidths?: Record<string, number>
   onColumnWidthChange?: (columnId: string, width: number) => void
+  primaryAction?: ReactNode
 }
 
 const emptyFilters: WorkSurfaceQuery = {}
@@ -114,14 +115,6 @@ export const readCompactPreference = (): boolean => {
     return stored === null ? true : stored === 'true'
   } catch {
     return true
-  }
-}
-const writeCompactPreference = (next: boolean): void => {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.setItem(FILTERS_COMPACT_STORAGE_KEY, next ? 'true' : 'false')
-  } catch {
-    /* localStorage may be unavailable (private mode, quota); ignore. */
   }
 }
 const readDensityPreference = (): WorkSurfaceDensity => {
@@ -252,7 +245,7 @@ export function WorkSurfaces(props: WorkSurfacesProps) {
   return <WorkSurfacesScope key={props.authorityKey} {...props} />
 }
 
-function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, humans = [], initialFilters, initialLayout = 'list', milestones = [], onApplySavedView, onColumnWidthChange, onError, onItemsChange, onLayoutChange, onOpenItem, onOpenProject, onQueryChange, onRefreshReady, onSelectionReset, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], surfaceCopy, teamId = null }: WorkSurfacesProps) {
+function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, humans = [], initialFilters, initialLayout = 'list', milestones = [], onApplySavedView, onColumnWidthChange, onError, onItemsChange, onLayoutChange, onOpenItem, onOpenProject, onQueryChange, onRefreshReady, onSelectionReset, primaryAction, projects = [], realtimeResources = [], scope, selectedProjectId = null, statuses = [], surfaceCopy, teamId = null }: WorkSurfacesProps) {
   const isAuthorityCurrent = useAuthorityLifetime()
   const text = { ...defaultCopy, ...surfaceCopy }
   const controller = useWorkSurfaceController({ actorId, authorityKey, initialFilters, initialLayout, realtimeResources, scope, selectedProjectId, teamId })
@@ -267,16 +260,10 @@ function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, h
   const [views, setViews] = useState<WorkSurfaceView[]>([])
   const [viewsError, setViewsError] = useState<unknown>()
   const [viewsLoading, setViewsLoading] = useState(false)
-  // The filter row's compact preference is a UI choice, not a query input —
-  // it lives in localStorage so the user's choice survives page reloads and
-  // does not leak into URL/query state. The lazy initializer runs once on
-  // mount so the first render already reflects the saved preference without
-  // a follow-up effect that would flash the wrong layout.
-  const [filtersCompact, setFiltersCompact] = useState<boolean>(() => readCompactPreference())
-  const updateFiltersCompact = useCallback((next: boolean) => {
-    setFiltersCompact(next)
-    writeCompactPreference(next)
-  }, [])
+  // The filter row's compact preference is presentation-only. Its disclosure
+  // stays local to WorkItemFilters so expanding facets never remounts the
+  // toolbar or removes the control needed to collapse them again.
+  const [filtersCompact] = useState<boolean>(() => readCompactPreference())
   // Card density follows the same pattern: persisted locally so the
   // preference survives reloads but never becomes part of the shareable
   // query / URL state. The lazy initializer mirrors the saved choice into
@@ -376,10 +363,13 @@ function WorkSurfacesScope({ actorId = null, authorityKey, columnWidths, copy, h
     className="work-surfaces"
     data-testid="work-surfaces"
   >
-    <WorkItemFilters compact={filtersCompact} copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCompactChange={updateFiltersCompact} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
+    <div className="work-surface-toolbar">
+      <WorkItemFilters compact={filtersCompact} copy={copy} humans={toFilterOptions(humans)} milestones={toFilterOptions(milestones)} onApplySavedView={applyView} onChange={value => changeQuery({ ...value, priority: value.priority as WorkSurfaceQuery['priority'], statusCategory: value.statusCategory as WorkSurfaceQuery['statusCategory'] })} onClear={() => changeQuery({})} onCreateSavedView={createView} projects={toFilterOptions(projects)} savedViews={views.filter((view): view is WorkSurfaceView & { id: string } => Boolean(view.id)).map(view => ({ id: view.id, name: view.name }))} statuses={toFilterOptions(statuses)} value={filters} />
+      {primaryAction && <div className="work-surface-primary-action">{primaryAction}</div>}
+      <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button><Button aria-label={text.densityLabel} aria-pressed={density === 'compact'} className={density === 'compact' ? 'selected' : undefined} data-testid="work-surface-density-toggle" onClick={toggleDensity} type="button" variant="ghost">{density === 'compact' ? text.densityComfortable : text.densityCompact}</Button></div>
+    </div>
     {filterErrorState && <WorkSurfaceState description={text.savedViewsDescription} state="forbidden" title={text.savedViewsTitle} />}
     {viewsLoading && views.length === 0 && <p className="wm-work-surface-loading-note">{text.loadingViews}</p>}
-    <div aria-label={text.layoutLabel} className="work-surface-layout-toggle"><Button aria-pressed={layout === 'list'} className={layout === 'list' ? 'selected' : undefined} icon={<RowsIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('list')} type="button" variant="ghost">{text.list}</Button><Button aria-pressed={layout === 'board'} className={layout === 'board' ? 'selected' : undefined} icon={<KanbanIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => requestLayout('board')} type="button" variant="ghost">{text.board}</Button><Button aria-label={text.densityLabel} aria-pressed={density === 'compact'} className={density === 'compact' ? 'selected' : undefined} data-testid="work-surface-density-toggle" onClick={toggleDensity} type="button" variant="ghost">{density === 'compact' ? text.densityComfortable : text.densityCompact}</Button></div>
     {vm.state === 'loading' && (layout === 'board'
       ? <div className="work-surface-board-loading"><SkeletonList columns={skeletonColumns} items={skeletonColumns} label={text.loadingTitle} /></div>
       : <SkeletonList columns={skeletonColumns} items={6} label={text.loadingTitle} />)}

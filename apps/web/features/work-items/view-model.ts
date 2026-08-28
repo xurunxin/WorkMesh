@@ -20,6 +20,7 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
     id: item.id,
     identifier,
     title: text(item.title) || identifier,
+    description: text(item.description) || null,
     statusId: text(item.status_id) || text(item.statusId),
     statusName: text(item.status_name) || text(item.statusName) || 'Unknown status',
     statusCategory: enumValue(item.status_category ?? item.statusCategory, STATUS_CATEGORIES),

@@ -263,6 +263,9 @@ test.describe("Stage 0 browser acceptance", () => {
     );
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
+    const moreFilters = filters.getByTestId("work-item-filters-more");
+    await expect(moreFilters).toHaveAttribute("aria-expanded", "false");
+    await moreFilters.click();
     await filters.getByLabel("Status", { exact: true }).selectOption({ label: "Ready" });
     await expect(page.getByTestId("work-list")).toContainText(issueTitle);
     await expect(page.getByTestId("work-list")).not.toContainText(
@@ -293,9 +296,7 @@ test.describe("Stage 0 browser acceptance", () => {
     await expect(page.getByTestId("work-list")).toContainText(startedDecoyTitle);
     await filters.getByRole("button", { name: "Clear filters" }).click();
 
-    const moreFilters = filters.getByRole("button", { name: "More filters", exact: true });
-    await expect(moreFilters).toHaveAttribute("aria-expanded", "false");
-    await moreFilters.click();
+    await expect(moreFilters).toHaveAttribute("aria-expanded", "true");
     const labelFilter = filters.getByLabel("Label", { exact: true });
     await expect(labelFilter).toBeVisible();
     await labelFilter.fill("focus");

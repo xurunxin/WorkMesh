@@ -414,6 +414,7 @@ function HomePageScope({
     }}
     onRefreshReady={refresh => { surfaceRefreshRef.current = refresh }}
     onSelectionReset={() => { setSelectedProject(null); setSelectedItem(null) }}
+    primaryAction={scope === 'projects' ? <Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => { setCreateWorkItemError(''); setCreateWorkItemOpen(true) }} variant="primary">{t('newIssue')}</Button> : undefined}
     projects={teamProjects}
     realtimeResources={realtimeResources}
     scope={surfaceScope}
@@ -585,10 +586,13 @@ function HomePageScope({
     <section
       aria-busy={actorLoading || teamAuthorityRefreshBusy || undefined}
       aria-hidden={fullPageDetailActive || undefined}
-      className="content"
+      className={[
+        'content',
+        scope === 'projects' && selectedProject && projectTab !== 'overview' ? 'content--project-workspace' : undefined,
+      ].filter(Boolean).join(' ')}
       inert={fullPageDetailActive ? true : undefined}
     >
-      <header hidden={fullPageDetailActive}>
+      <header className="workspace-page-header" hidden={fullPageDetailActive}>
         <div><h1>{pageTitle}</h1>{selectedProject && <p>{selectedProject.summary || t('projectOverview')}</p>}</div>
         <div className="page-actions">
           {scope === 'projects' && <Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="secondary">{t('newProject')}</Button>}

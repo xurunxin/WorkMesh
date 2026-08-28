@@ -1015,6 +1015,7 @@ export type WorkItemCardData = {
   id: string
   identifier: string
   title: string
+  description?: string | null
   statusId: string
   statusName: string
   statusCategory?: string
@@ -1373,8 +1374,9 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
       {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}>{text.priorityName(item.priority)}</span>}
     </div>
     <button className="wm-work-item-title" onClick={() => handlePresentationPromise(onOpen ? () => onOpen(item) : undefined)} onPointerDown={stopPointer} type="button">{item.title}</button>
+    {item.description && <p className="wm-work-item-description">{item.description}</p>}
     {(showStableLayoutSlots || (item.projectId && item.projectName)) && <div aria-hidden={!item.projectId || !item.projectName || undefined} className={workItemClassNames('wm-work-item-project-slot', (!item.projectId || !item.projectName) && 'is-empty')}>{item.projectId && item.projectName && <button aria-label={text.openProject(item.projectName)} className="wm-work-item-project" onClick={() => handlePresentationPromise(onOpenProject ? () => onOpenProject(item.projectId!) : undefined)} onPointerDown={stopPointer} type="button"><FolderSimpleIcon aria-hidden="true" size={13} weight="bold" /><span>{item.projectName}</span></button>}</div>}
-    <div className="wm-work-item-metadata"><span><UserCircleIcon aria-hidden="true" size={15} weight="fill" />{item.responsibleHuman ?? text.noResponsibleHuman}</span><span><RobotIcon aria-hidden="true" size={15} weight="duotone" />{item.activeAgent ? `${item.activeAgent}${item.activeAgentState ? ` · ${text.agentExecutionState(item.activeAgentState)}` : ''}` : text.noActiveAgent}</span></div>
+    <div className="wm-work-item-metadata"><span><UserCircleIcon aria-hidden="true" size={15} weight="fill" />{item.responsibleHuman ?? text.noResponsibleHuman}</span><span className={item.activeAgent ? undefined : 'is-empty-agent'}><RobotIcon aria-hidden="true" size={15} weight="duotone" />{item.activeAgent ? `${item.activeAgent}${item.activeAgentState ? ` · ${text.agentExecutionState(item.activeAgentState)}` : ''}` : text.noActiveAgent}</span></div>
     {showLabelRow && <div aria-hidden={!hasLabels || undefined} className={workItemClassNames('wm-work-item-labels', !hasLabels && 'is-empty')}>
       {shownLabels.map(label => canEditLabels
         ? <button aria-controls={labelMenuId} aria-expanded={labelMenuOpen} aria-haspopup="dialog" aria-label={text.labelMenuAriaLabel(item.title)} className={`wm-work-item-label wm-label-${workItemLabelTone(label)}`} key={label} onClick={openLabelMenu} onPointerDown={stopPointer} type="button">{label}</button>
@@ -1409,8 +1411,8 @@ export function WorkItemList({ availableLabels, copy, density, empty = 'No work 
 }
 
 export type WorkItemBoardProps = { items: WorkItemCardData[]; columns: WorkItemStatusOption[]; density?: WorkItemCardDensity; onOpen?: (item: WorkItemCardData) => void; onOpenProject?: (projectId: string) => void; onMove?: WorkItemMoveCallback; onLabelsChange?: WorkItemLabelChangeCallback; availableLabels?: string[]; maxVisibleLabels?: number; copy?: Partial<WorkItemCopy>; columnWidths?: Record<string, number>; onColumnWidthChange?: (columnId: string, width: number) => void; pannable?: boolean; minColumnWidth?: number; maxColumnWidth?: number }
-const DEFAULT_COLUMN_WIDTH = 320
-const MIN_COLUMN_WIDTH = 240
+const DEFAULT_COLUMN_WIDTH = 232
+const MIN_COLUMN_WIDTH = 220
 const MAX_COLUMN_WIDTH = 600
 export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, density, items, maxColumnWidth = MAX_COLUMN_WIDTH, maxVisibleLabels, minColumnWidth = MIN_COLUMN_WIDTH, onColumnWidthChange, onLabelsChange, onMove, onOpen, onOpenProject, pannable = true }: WorkItemBoardProps) {
   const text = resolveWorkItemCopy(copy)
@@ -1723,7 +1725,9 @@ export type WorkItemFiltersProps = { value: WorkItemFilterValues; statuses?: Wor
 export function WorkItemFilters({ compact, humans = [], milestones = [], onApplySavedView, onChange, onClear, onCompactChange, onCreateSavedView, projects = [], savedViews = [], statuses = [], value, copy }: WorkItemFiltersProps) {
   const text = resolveWorkItemCopy(copy)
   const [savedViewName, setSavedViewName] = useState('')
-  // In compact mode, Milestone/Label collapse behind a "More filters" toggle.
+  // In compact mode, the board keeps search visible and moves all facets and
+  // saved-view controls behind a single disclosure. This preserves the full
+  // filtering model without making the toolbar dominate the work canvas.
   // The user-driven state is local to the component so the parent's filter
   // values never change just from expanding the row. When the parent supplies
   // an onCompactChange handler, the toggle also reports the new preference
@@ -1744,16 +1748,16 @@ export function WorkItemFilters({ compact, humans = [], milestones = [], onApply
   return <section aria-label={text.filtersLabel} className="wm-work-item-filters">
     <div className="wm-work-item-filter-row">
       <label>{text.search}<input aria-label={text.search} data-hotkey-filter="true" onChange={event => set('search', event.currentTarget.value)} placeholder={text.searchPlaceholder} value={value.search ?? ''} /></label>
-      <label>{text.filterStatus}<select aria-label={text.filterStatus} onChange={event => set('statusId', event.currentTarget.value)} value={value.statusId ?? ''}><option value="">{text.allStatuses}</option>{statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-      <label>{text.filterPriority}<select aria-label={text.filterPriority} onChange={event => set('priority', event.currentTarget.value)} value={value.priority ?? ''}><option value="">{text.allPriorities}</option>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label>
-      <label>{text.filterResponsibleHuman}<select aria-label={text.filterResponsibleHuman} onChange={event => setResponsibleHuman(event.currentTarget.value)} value={value.responsibleHumanActorId ?? value.ownerId ?? ''}><option value="">{text.allHumans}</option>{humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-      <label>{text.filterProject}<select aria-label={text.filterProject} onChange={event => setProject(event.currentTarget.value)} value={value.projectId ?? ''}><option value="">{text.allProjects}</option>{projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      {showAdvanced && <label>{text.filterStatus}<select aria-label={text.filterStatus} onChange={event => set('statusId', event.currentTarget.value)} value={value.statusId ?? ''}><option value="">{text.allStatuses}</option>{statuses.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>}
+      {showAdvanced && <label>{text.filterPriority}<select aria-label={text.filterPriority} onChange={event => set('priority', event.currentTarget.value)} value={value.priority ?? ''}><option value="">{text.allPriorities}</option>{['none', 'urgent', 'high', 'medium', 'low'].map(priority => <option key={priority} value={priority}>{text.priorityName(priority)}</option>)}</select></label>}
+      {showAdvanced && <label>{text.filterResponsibleHuman}<select aria-label={text.filterResponsibleHuman} onChange={event => setResponsibleHuman(event.currentTarget.value)} value={value.responsibleHumanActorId ?? value.ownerId ?? ''}><option value="">{text.allHumans}</option>{humans.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>}
+      {showAdvanced && <label>{text.filterProject}<select aria-label={text.filterProject} onChange={event => setProject(event.currentTarget.value)} value={value.projectId ?? ''}><option value="">{text.allProjects}</option>{projects.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>}
       {showAdvanced && <label>{text.filterMilestone}<select aria-label={text.filterMilestone} disabled={!value.projectId} onChange={event => set('milestoneId', event.currentTarget.value)} value={value.milestoneId ?? ''}><option value="">{value.projectId ? text.allMilestones : text.selectProjectFirst}</option>{milestones.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>}
       {showAdvanced && <label>{text.filterLabel}<input aria-label={text.filterLabel} onChange={event => set('label', event.currentTarget.value)} placeholder={text.filterLabel} value={value.label ?? ''} /></label>}
       {compact && <Button aria-expanded={advancedExpanded} aria-label={advancedExpanded ? text.filterLess : text.filterMore} className="wm-work-item-filters-more" data-testid="work-item-filters-more" onClick={toggleAdvanced} type="button" variant="ghost">{advancedExpanded ? text.filterLess : text.filterMore}</Button>}
       {onClear && <Button icon={<FunnelXIcon size={16} weight="bold" />} onClick={onClear} type="button" variant="ghost">{text.clearFilters}</Button>}
     </div>
-    {(savedViews.length > 0 || onCreateSavedView) && <div className="wm-work-item-filter-saved">
+    {showAdvanced && (savedViews.length > 0 || onCreateSavedView) && <div className="wm-work-item-filter-saved">
       {savedViews.length > 0 && <label className="wm-work-item-saved-views">{text.savedView}<select aria-label={text.savedView} defaultValue="" onChange={event => { if (event.currentTarget.value) onApplySavedView?.(event.currentTarget.value); event.currentTarget.value = '' }}><option value="">{text.savedView}</option>{savedViews.map(view => <option key={view.id} value={view.id}>{view.name}</option>)}</select></label>}
       {onCreateSavedView && <form className="wm-work-item-save-view" onSubmit={submitSavedView}><label className="wm-visually-hidden" htmlFor="wm-save-view-name">{text.saveViewName}</label><input id="wm-save-view-name" onChange={event => setSavedViewName(event.currentTarget.value)} placeholder={text.saveView} required value={savedViewName} /><Button icon={<FloppyDiskIcon size={16} weight="bold" />} type="submit">{text.saveView}</Button></form>}
     </div>}

@@ -6,6 +6,7 @@ const workItem: WorkItemDto = {
   id: 'work-1',
   revision: 1,
   title: 'Keep the resolved row',
+  description: 'A concise board summary.',
 }
 
 describe('work surface initialization authority', () => {
@@ -42,6 +43,7 @@ describe('work surface initialization authority', () => {
 
     expect(model.state).toBe('refreshing')
     expect(model.items.map(item => item.id)).toEqual(['work-1'])
+    expect(model.items[0]?.description).toBe('A concise board summary.')
   })
 
   it('keeps a retained refresh failure distinguishable from an initial failure', () => {
