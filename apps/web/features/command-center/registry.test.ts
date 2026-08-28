@@ -1,6 +1,8 @@
+// @vitest-environment jsdom
+
 import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
+import { cleanup, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
 import {
   GlobalCommandCenter,
   agentCommand,
@@ -15,6 +17,8 @@ import {
   type Command,
   type RecentCommandRef,
 } from './index'
+
+afterEach(() => cleanup())
 
 describe('authority-aware command registry', () => {
   it('keeps Operations feature-gated and create commands navigation-only', () => {
@@ -110,12 +114,15 @@ describe('command-center state projection', () => {
     ])
   })
 
-  it('renders a visible mobile trigger and accessible shortcut metadata', () => {
-    const html = renderToStaticMarkup(createElement(GlobalCommandCenter))
-    expect(html).toContain('data-testid="command-center-trigger"')
-    expect(html).toContain('aria-keyshortcuts="Control+K Meta+K"')
-    expect(html).toContain('aria-label="Search"')
-    expect(html).toContain('Search')
-    expect(html).not.toContain('role="dialog"')
+  it('portals a visible mobile trigger with accessible shortcut metadata into the shell header', async () => {
+    const slot = document.createElement('div')
+    slot.id = 'workmesh-command-center-trigger-slot'
+    document.body.append(slot)
+    render(createElement(GlobalCommandCenter))
+    const trigger = await screen.findByTestId('command-center-trigger')
+    expect(trigger).toHaveAttribute('aria-keyshortcuts', 'Control+K Meta+K')
+    expect(trigger).toHaveAccessibleName('Search')
+    expect(trigger).toHaveTextContent('Search')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })

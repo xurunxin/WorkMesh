@@ -25,6 +25,7 @@ import {
   savedViewInputSchema,
   stateInputSchema,
   teamInputSchema,
+  workflowStatePatchSchema,
   workItemInputSchema,
   workItemPatchSchema,
   workspaceInputSchema,
@@ -866,6 +867,18 @@ export const buildApp = (options: {
       db,
       commandContext(request, body, { id }),
       id,
+      body,
+    );
+  });
+  app.patch("/api/v1/teams/:id/states/:stateId", async (request) => {
+    const body = workflowStatePatchSchema.parse(request.body);
+    const { id, stateId } = request.params as { id: string; stateId: string };
+    return commands.updateState(
+      db,
+      commandContext(request, body, { id, stateId }),
+      id,
+      stateId,
+      parseRevision(header(request, "if-match")),
       body,
     );
   });

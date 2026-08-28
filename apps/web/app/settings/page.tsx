@@ -1,8 +1,8 @@
 'use client'
 
-import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { AppShell, Button, Tabs } from '@workmesh/ui'
-import { ArrowLeft, FloppyDisk, Gear, Plus, Trash } from '@phosphor-icons/react'
+import { ArrowLeft, FloppyDisk, Gear, PencilSimple, Plus, Trash, X } from '@phosphor-icons/react'
 import { ApiError, apiMutation, apiRequest, json } from '../lib/api'
 import { isCollectionAuthorityRevoked } from '../lib/collection-authority'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
@@ -14,6 +14,7 @@ import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { useAuthorityLifetime } from '../lib/use-authority-lifetime'
 import { useMediaQuery } from '../lib/use-media-query'
 import { useToast } from '../lib/use-toast'
+import { useRealtimeSubscription, type RealtimeResource } from '../lib/realtime'
 import { OperationsContent } from '../operations-content'
 import { readSettingsRoute, type SettingsRoute, type SettingsTab, writeSettingsRoute } from './route-state'
 import { resolveTeamSelection } from './team-resolution'
@@ -27,6 +28,7 @@ import {
 
 type Team = { id: string; name: string; key: string; revision: number }
 type WorkflowState = { id: string; name: string; category: string; color: string; revision: number }
+type WorkflowStateDraft = { id: string; name: string; color: string; revision: number; conflict: boolean }
 type WorkflowColorMode = WorkflowColorPresetId | 'custom'
 
 const requestError = (reason: unknown): string => reason instanceof Error ? reason.message : 'Something went wrong.'
@@ -84,6 +86,7 @@ function SettingsPageScope({
   const [routeReady, setRouteReady] = useState(false)
   const [workflowColorMode, setWorkflowColorMode] = useState<WorkflowColorMode>('neutral')
   const [customWorkflowColor, setCustomWorkflowColor] = useState(CUSTOM_WORKFLOW_COLOR)
+  const [stateDraft, setStateDraft] = useState<WorkflowStateDraft | null>(null)
   const [deleteSnapshot, setDeleteSnapshot] = useState<DeleteTeamSnapshot | null>(null)
   const [deleteBusy, setDeleteBusy] = useState(false)
   const [deleteError, setDeleteError] = useState('')
@@ -136,6 +139,11 @@ function SettingsPageScope({
   const statesAuthorized = !isCollectionAuthorityRevoked(statesPage.error)
   const statesInitialized = statesPage.initialized && statesAuthorized
   const states = statesAuthorized ? statesPage.items : []
+  const realtimeResources = useMemo<RealtimeResource[]>(
+    () => selectedTeam ? [{ type: 'team', id: selectedTeam.id }] : [],
+    [selectedTeam?.id],
+  )
+  useRealtimeSubscription(realtimeResources, () => { void statesPage.refresh() })
   const teamResolutionPending = teamResolution === null || teamResolution.status === 'pending'
   const teamAuthorityReadyForMutation = teamResolution?.status === 'resolved' || teamResolution?.status === 'empty'
   const teamsRefreshBusy = teamsPage.initialized && teamsAuthorized && (teamsPage.loading || teamsPage.loadingMore)
@@ -145,6 +153,16 @@ function SettingsPageScope({
   useEffect(() => {
     if (workflowColorMode === 'custom') customColorInputRef.current?.focus()
   }, [workflowColorMode])
+
+  useEffect(() => { setStateDraft(null) }, [route.teamId])
+  useEffect(() => {
+    if (!stateDraft) return
+    const latest = states.find(state => state.id === stateDraft.id)
+    if (latest && latest.revision !== stateDraft.revision)
+      setStateDraft(current => current?.id === latest.id
+        ? { ...current, revision: latest.revision }
+        : current)
+  }, [stateDraft?.id, stateDraft?.revision, states])
 
   useEffect(() => {
     if (committedDeletion === 0 || reconciledDeletionRef.current === committedDeletion) return
@@ -445,6 +463,30 @@ function SettingsPageScope({
     }
   }
 
+  const saveState = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!selectedTeam || !stateDraft) return
+    try {
+      setError('')
+      await apiRequest(`/api/v1/teams/${selectedTeam.id}/states/${stateDraft.id}`, {
+        method: 'PATCH',
+        headers: revisionHeader(stateDraft.revision),
+        body: JSON.stringify({ name: stateDraft.name.trim(), color: stateDraft.color }),
+      })
+      if (!isAuthorityCurrent()) return
+      setStateDraft(null)
+      await statesPage.refresh()
+    } catch (reason) {
+      if (!isAuthorityCurrent()) return
+      if (reason instanceof ApiError && reason.status === 409) {
+        setStateDraft(current => current ? { ...current, conflict: true } : current)
+        try { await statesPage.refresh() } catch { /* The preserved draft remains available for a manual retry. */ }
+        return
+      }
+      setError(requestError(reason))
+    }
+  }
+
   const canManage = canManageWorkspace(actor.workspace_role)
 
   return <AppShell
@@ -508,7 +550,21 @@ function SettingsPageScope({
                   {selectedTeam ? !statesInitialized
                     ? (statesPage.error ? null : <div className="settings-states-loading"><SkeletonList columns={5} items={5} label={text.loading} /></div>)
                     : <>
-                    <div className="workflow-state-list">{states.map(state => <article key={state.id}><span className="workflow-color" style={{ backgroundColor: state.color }} aria-hidden="true" /><div><strong>{state.name}</strong><small>{text.categories[state.category as keyof typeof text.categories] ?? state.category}</small></div></article>)}{states.length === 0 && <p className="empty">{text.noStates}</p>}</div>
+                    <div className="workflow-state-list">{states.map(state => {
+                      const editing = stateDraft?.id === state.id
+                      return <article className={editing ? 'is-editing' : undefined} key={state.id} style={{ '--wm-status-color': state.color } as CSSProperties}>
+                        {editing ? <form className="workflow-state-editor" onSubmit={saveState}>
+                          <label>{text.statusName}<input autoFocus maxLength={80} onChange={event => { const name = event.currentTarget.value; setStateDraft(current => current ? { ...current, name, conflict: false } : current) }} required value={stateDraft.name} /></label>
+                          <label>{text.color}<span className="workflow-color-input"><input aria-label={text.color} onChange={event => { const color = event.currentTarget.value; setStateDraft(current => current ? { ...current, color, conflict: false } : current) }} type="color" value={stateDraft.color} /><code>{stateDraft.color.toUpperCase()}</code></span></label>
+                          <div className="workflow-state-editor-actions"><Button icon={<FloppyDisk aria-hidden size={15} />} type="submit" variant="primary">{text.saveState}</Button><Button icon={<X aria-hidden size={15} />} onClick={() => setStateDraft(null)} type="button" variant="ghost">{text.cancel}</Button></div>
+                          {stateDraft.conflict && <p className="workflow-state-conflict" role="alert">{text.stateConflict}</p>}
+                        </form> : <>
+                          <span className="workflow-color" style={{ backgroundColor: state.color }} aria-hidden="true" />
+                          <div><strong>{state.name}</strong><small>{text.categories[state.category as keyof typeof text.categories] ?? state.category}</small></div>
+                          {canManage && <Button aria-label={text.editState(state.name)} className="workflow-state-edit" icon={<PencilSimple aria-hidden size={15} />} onClick={() => setStateDraft({ id: state.id, name: state.name, color: state.color, revision: state.revision, conflict: false })} type="button" variant="ghost">{text.edit}</Button>}
+                        </>}
+                      </article>
+                    })}{states.length === 0 && <p className="empty">{text.noStates}</p>}</div>
                     {canManage && <form className="settings-form workflow-state-create-form" onSubmit={createState}>
                       <label>{text.statusName}<input name="name" required /></label>
                       <label>{text.category}<select name="category" defaultValue="planned">{Object.entries(text.categories).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>

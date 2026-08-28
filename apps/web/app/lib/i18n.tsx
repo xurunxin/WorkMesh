@@ -742,6 +742,11 @@ export type SettingsCopy = {
   customColorInput: string
   colorValue: string
   createStatus: string
+  edit: string
+  editState: (name: string) => string
+  saveState: string
+  cancel: string
+  stateConflict: string
   statusCreated: (name: string) => string
   selectTeam: string
   loadingMore: string
@@ -808,6 +813,11 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     customColorInput: '自定义颜色',
     colorValue: '颜色值',
     createStatus: '新建状态',
+    edit: '编辑',
+    editState: name => `编辑状态 ${name}`,
+    saveState: '保存状态',
+    cancel: '取消',
+    stateConflict: '该状态已被其他操作更新。已刷新最新版本并保留你的草稿，请核对后重试。',
     statusCreated: name => `已创建工作流状态 ${name}。`,
     selectTeam: '请选择团队以管理工作流。',
     loadingMore: '正在加载…',
@@ -872,6 +882,11 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     customColorInput: 'Custom color',
     colorValue: 'Color value',
     createStatus: 'Create status',
+    edit: 'Edit',
+    editState: name => `Edit status ${name}`,
+    saveState: 'Save status',
+    cancel: 'Cancel',
+    stateConflict: 'This status changed elsewhere. The latest revision is loaded and your draft is preserved; review it and retry.',
     statusCreated: name => `Created workflow state ${name}.`,
     selectTeam: 'Select a team to manage its workflow.',
     loadingMore: 'Loading…',

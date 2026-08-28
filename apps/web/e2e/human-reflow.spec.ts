@@ -13,7 +13,7 @@ const project = {
 const projects = [
   project,
   { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae2', name: 'A very long secondary planning project name' },
-  { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae3', name: 'Another long project for local strip scrolling' },
+  { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae3', name: 'Another long project for local rail scrolling' },
   { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae4', name: 'Operations reliability acceptance' },
   { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae5', name: 'Agent collaboration interaction polish' },
   { ...project, id: '3f12de4f-b117-4a78-9e10-da102c892ae6', name: 'Human workflow responsive recovery' },
@@ -94,50 +94,52 @@ async function measure(page: Page) {
       const element = document.querySelector<HTMLElement>(selector)
       if (!element) throw new Error(`Missing ${selector}`)
       const value = element.getBoundingClientRect()
-      return { clientWidth: element.clientWidth, height: value.height, left: value.left, right: value.right, scrollWidth: element.scrollWidth, width: value.width }
+      return { bottom: value.bottom, clientHeight: element.clientHeight, clientWidth: element.clientWidth, height: value.height, left: value.left, right: value.right, scrollHeight: element.scrollHeight, scrollWidth: element.scrollWidth, top: value.top, width: value.width }
     }
     const visible = (selector: string) => Array.from(document.querySelectorAll<HTMLElement>(selector)).filter(element => {
       const value = element.getBoundingClientRect()
       const style = getComputedStyle(element)
       return style.display !== 'none' && style.visibility !== 'hidden' && value.width > 0 && value.height > 0
     }).length
-    const strip = document.querySelector<HTMLElement>('.project-strip')
-    if (!strip) throw new Error('Missing project strip')
+    const rail = document.querySelector<HTMLElement>('.project-rail')
+    const railList = document.querySelector<HTMLElement>('.project-rail-list')
+    if (!rail || !railList) throw new Error('Missing project rail')
     return {
       body: { clientWidth: document.body.clientWidth, scrollWidth: document.body.scrollWidth }, content: read('.content'),
       document: { clientWidth: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth },
       main: read('#workmesh-main'), navigation: { mobile: visible('.mobile-navigation'), sidebar: visible('.app-sidebar') },
       shell: read('.app-shell'),
-      strip: { ...read('.project-strip'), display: getComputedStyle(strip).display, flexWrap: getComputedStyle(strip).flexWrap, role: strip.getAttribute('role'), tabIndex: strip.tabIndex },
+      rail: { ...read('.project-rail'), display: getComputedStyle(rail).display },
+      railList: { ...read('.project-rail-list'), display: getComputedStyle(railList).display, overflowX: getComputedStyle(railList).overflowX, overflowY: getComputedStyle(railList).overflowY },
       workspace: read('.app-workspace'),
     }
   })
 }
 
-async function tabToPrimary(page: Page): Promise<{ height: number; left: number; right: number; top: number; width: number } | null> {
+async function tabToProjectAction(page: Page): Promise<{ height: number; left: number; right: number; top: number; width: number } | null> {
   await page.evaluate(() => { if (document.activeElement instanceof HTMLElement) document.activeElement.blur() })
   for (let index = 0; index < 48; index += 1) {
     await page.keyboard.press('Tab')
-    const primary = await page.evaluate(() => {
+    const action = await page.evaluate(() => {
       const active = document.activeElement
-      if (!(active instanceof HTMLElement) || !active.matches('#workmesh-main .wm-button-primary')) return null
+      if (!(active instanceof HTMLElement) || !active.matches('#workmesh-main .project-rail button')) return null
       const value = active.getBoundingClientRect()
       return { height: value.height, left: value.left, right: value.right, top: value.top, width: value.width }
     })
-    if (primary) return primary
+    if (action) return action
   }
   return null
 }
 
 for (const viewport of viewports) {
-  test(`project strip and shell reflow at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+  test(`project rail and shell reflow at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
     await page.setViewportSize(viewport)
     const unexpected = await installRoutes(page)
     await page.context().addCookies([{ name: 'workmesh_locale', value: 'en', url: String(testInfo.project.use.baseURL) }])
     await page.goto('/?view=projects', { waitUntil: 'domcontentloaded' })
-    const strip = page.getByRole('region', { name: 'Projects' })
-    await expect(strip).toBeVisible()
-    await expect(strip).toHaveAttribute('tabindex', '0')
+    const rail = page.getByRole('complementary', { name: 'Projects' })
+    const railList = page.locator('.project-rail-list')
+    await expect(rail).toBeVisible()
 
     const geometry = await measure(page)
     expect(geometry.document.scrollWidth).toBeLessThanOrEqual(geometry.document.clientWidth)
@@ -151,31 +153,30 @@ for (const viewport of viewports) {
     expect(geometry.navigation.mobile + geometry.navigation.sidebar).toBe(1)
     expect(geometry.navigation.mobile).toBe(viewport.width <= 760 ? 1 : 0)
     expect(geometry.navigation.sidebar).toBe(viewport.width <= 760 ? 0 : 1)
-    expect(geometry.strip.display).toBe('flex')
-    expect(geometry.strip.flexWrap).toBe('nowrap')
-    expect(geometry.strip.role).toBe('region')
-    expect(geometry.strip.tabIndex).toBe(0)
-    expect(geometry.strip.right).toBeLessThanOrEqual(viewport.width + .5)
+    expect(geometry.rail.display).toBe('flex')
+    expect(geometry.rail.right).toBeLessThanOrEqual(viewport.width + .5)
+    expect(geometry.rail.bottom).toBeLessThanOrEqual(viewport.height + .5)
 
-    const primary = await tabToPrimary(page)
-    expect(primary).not.toBeNull()
-    expect(primary!.width).toBeGreaterThan(0)
-    expect(primary!.height).toBeGreaterThanOrEqual(viewport.width <= 760 ? 40 : 36)
-    expect(primary!.left).toBeGreaterThanOrEqual(-.5)
-    expect(primary!.right).toBeLessThanOrEqual(viewport.width + .5)
+    const projectAction = await tabToProjectAction(page)
+    expect(projectAction).not.toBeNull()
+    expect(projectAction!.width).toBeGreaterThan(0)
+    expect(projectAction!.height).toBeGreaterThanOrEqual(viewport.width <= 760 ? 40 : 36)
+    expect(projectAction!.left).toBeGreaterThanOrEqual(-.5)
+    expect(projectAction!.right).toBeLessThanOrEqual(viewport.width + .5)
 
-    if (viewport.width <= 768) {
-      expect(geometry.strip.scrollWidth).toBeGreaterThan(geometry.strip.clientWidth)
-      await strip.focus()
-      await strip.evaluate(element => { element.scrollLeft = 0 })
-      await page.keyboard.press('ArrowRight')
-      await expect.poll(() => strip.evaluate(element => element.scrollLeft)).toBeGreaterThan(0)
-      await page.keyboard.press('ArrowLeft')
-      await expect.poll(() => strip.evaluate(element => element.scrollLeft)).toBe(0)
+    if (geometry.railList.display === 'flex') {
+      expect(geometry.railList.overflowX).toBe('auto')
+      expect(geometry.railList.scrollWidth).toBeGreaterThan(geometry.railList.clientWidth)
+      await railList.evaluate(element => { element.scrollLeft = element.scrollWidth })
+      await expect.poll(() => railList.evaluate(element => element.scrollLeft)).toBeGreaterThan(0)
+      await railList.evaluate(element => { element.scrollLeft = 0 })
+    } else {
+      expect(geometry.railList.display).toBe('grid')
+      expect(geometry.railList.overflowY).toBe('auto')
     }
 
     if (viewport.width <= 760) {
-      const controls = await page.locator('.mobile-navigation summary, #workmesh-main .page-actions .wm-button, .project-strip .wm-button, .mobile-navigation select').evaluateAll(elements => elements.flatMap(element => {
+      const controls = await page.locator('.mobile-navigation summary, #workmesh-main .page-actions .wm-button, .project-rail .wm-button, .mobile-navigation select').evaluateAll(elements => elements.flatMap(element => {
         const value = element.getBoundingClientRect()
         const style = getComputedStyle(element)
         return style.display === 'none' || style.visibility === 'hidden' || value.width === 0 || value.height === 0
@@ -188,11 +189,8 @@ for (const viewport of viewports) {
       ).toEqual([])
     }
 
-    const child = strip.getByRole('button', { name: /secondary planning project/i })
+    const child = rail.getByRole('button', { name: /secondary planning project/i })
     await child.focus()
-    const beforeChildArrow = await strip.evaluate(element => element.scrollLeft)
-    await page.keyboard.press('ArrowRight')
-    expect(await strip.evaluate(element => element.scrollLeft)).toBe(beforeChildArrow)
     await page.keyboard.press('Enter')
     await expect(page).toHaveURL(new RegExp(`project=${projects[1]!.id}`))
     await expect(page.getByRole('heading', { name: projects[1]!.name })).toBeVisible()
@@ -200,14 +198,12 @@ for (const viewport of viewports) {
     const resolved = await measure(page)
     expect(resolved.document.scrollWidth).toBeLessThanOrEqual(resolved.document.clientWidth)
     if (viewport.width === 1920) {
-      const ratio = resolved.content.width / resolved.workspace.width
       const leftMargin = resolved.content.left - resolved.workspace.left
       const rightMargin = resolved.workspace.right - resolved.content.right
-      expect(ratio).toBeGreaterThanOrEqual(.85)
-      expect(ratio).toBeLessThanOrEqual(.9)
+      expect(Math.abs(resolved.content.width - resolved.workspace.width)).toBeLessThanOrEqual(1)
       expect(Math.abs(leftMargin - rightMargin)).toBeLessThanOrEqual(2)
     }
     expect(unexpected).toEqual([])
-    await persistEvidence(page, testInfo, `project-strip-${viewport.width}x${viewport.height}`, { initial: geometry, primary, resolved, unexpected })
+    await persistEvidence(page, testInfo, `project-rail-${viewport.width}x${viewport.height}`, { initial: geometry, projectAction, resolved, unexpected })
   })
 }

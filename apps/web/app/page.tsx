@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, type KeyboardEvent, type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type FormEvent, type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AppShell, AsyncStateSurface, Button, Dialog, ErrorState } from '@workmesh/ui'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
@@ -66,20 +66,6 @@ type Filters = WorkSurfaceQuery
 const requestError = (reason: unknown): string => reason instanceof Error ? reason.message : 'Something went wrong.'
 const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Match': `"revision-${revision}"` })
 const emptyFilters: Filters = {}
-
-function handleProjectStripKeyDown(event: KeyboardEvent<HTMLElement>): void {
-  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
-  if (event.currentTarget !== event.target) {
-    if (event.target instanceof HTMLButtonElement) event.preventDefault()
-    return
-  }
-  event.preventDefault()
-  const strip = event.currentTarget
-  const direction = event.key === 'ArrowRight' ? 1 : -1
-  const step = Math.max(160, Math.round(strip.clientWidth * .72))
-  const limit = Math.max(0, strip.scrollWidth - strip.clientWidth)
-  strip.scrollLeft = Math.max(0, Math.min(limit, strip.scrollLeft + direction * step))
-}
 
 export default function HomePage() {
   const { surfaceCopy, t } = useLocale()
@@ -281,6 +267,8 @@ function HomePageScope({
     }
     if (targets.has('teams')) void teamsPage.refresh()
     if (targets.has('states')) void statesPage.refresh()
+    if (targets.has('states') && selectedItem)
+      void apiRequest<WorkItem>(`/api/v1/work-items/${selectedItem.id}`).then(setSelectedItem)
     if (targets.has('humans')) void humansPage.refresh()
     if (targets.has('projects')) void projectsPage.refresh()
     if (targets.has('items')) void refreshWorkSurface()
@@ -422,6 +410,14 @@ function HomePageScope({
     surfaceCopy={surfaceCopy}
     teamId={selectedTeam.id}
   /> : null
+  useEffect(() => {
+    if (scope !== 'projects' || selectedProject || teamProjects.length === 0) return
+    const first = teamProjects[0]!
+    setSelectedProject(first)
+    setProjectTab('overview')
+    setFilters(current => ({ ...current, projectId: first.id, milestoneId: undefined }))
+    window.history.replaceState({}, '', projectWorkspaceHref({ projectId: first.id, tab: 'overview' }))
+  }, [scope, selectedProject, teamProjects])
   const closeItem = () => {
     setSelectedItem(null)
     setRequestedItem(null)
@@ -585,25 +581,39 @@ function HomePageScope({
     <section
       aria-busy={actorLoading || teamAuthorityRefreshBusy || undefined}
       aria-hidden={fullPageDetailActive || undefined}
-      className="content"
+      className={`content${scope === 'projects' ? ' projects-page' : ''}`}
       inert={fullPageDetailActive ? true : undefined}
     >
-      <header hidden={fullPageDetailActive}>
+      {scope !== 'projects' && <header hidden={fullPageDetailActive}>
         <div><h1>{pageTitle}</h1>{selectedProject && <p>{selectedProject.summary || t('projectOverview')}</p>}</div>
         <div className="page-actions">
-          {scope === 'projects' && <Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="secondary">{t('newProject')}</Button>}
           {scope !== 'inbox' && scope !== 'recovery' && scope !== 'guidance' && <Button icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>}
         </div>
-      </header>
+      </header>}
       {collectionError && <ErrorState description={collectionError.message} title={t('workViewCouldNotRefresh')} />}
       {actorError && <ErrorState actionLabel={t('retry')} description={actorError} onAction={() => void refreshActor()} title={t('workViewCouldNotRefresh')} />}
       {error && <ErrorState description={error} title={t('actionCouldNotComplete')} />}
       {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">{t('reloadLatestWork')}</Button></aside>}
       {scope === 'inbox' ? <ActionableCollaborationQueues actor={actor} /> : scope === 'recovery' ? <RecoveryCenter actor={actor} /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
-        {scope === 'projects' && <section className="project-strip" aria-label={t('projects')} onKeyDown={handleProjectStripKeyDown} role="region" tabIndex={0}>{teamProjects.map(project => <Button icon={<FolderSimpleIcon aria-hidden="true" size={16} weight="bold" />} key={project.id} data-testid={`project-${project.id}`} className={selectedProject?.id === project.id ? 'selected' : ''} onClick={() => void openProject(project.id)} variant="ghost">{project.name}</Button>)}{teamProjects.length === 0 && <span className="empty">{t('noProjects')}</span>}</section>}
         {scope !== 'projects' && workSurfaces}
-        {scope === 'projects' && selectedProject && <ProjectWorkspace actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} />}
+        {scope === 'projects' && <div className="project-workbench">
+          <aside className="project-rail" aria-label={t('projects')}>
+            <header><div><span className="eyebrow">Workspace</span><h1>{t('projects')}</h1></div><Button aria-label={t('newProject')} icon={<FolderPlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="ghost" /></header>
+            <div className="project-rail-list">
+              {teamProjects.map(project => <button aria-current={selectedProject?.id === project.id ? 'page' : undefined} className={selectedProject?.id === project.id ? 'selected' : ''} data-testid={`project-${project.id}`} key={project.id} onClick={() => void openProject(project.id)} type="button">
+                <span className="project-rail-status"><i aria-hidden="true" />{project.status.replaceAll('_', ' ')}</span>
+                <strong>{project.name}</strong>
+                <small>{project.summary || t('projectOverview')}</small>
+                <time dateTime={project.target_date ?? undefined}>{t('targetDate')} · {project.target_date?.slice(0, 10) || '—'}</time>
+              </button>)}
+              {teamProjects.length === 0 && <div className="project-rail-empty"><FolderSimpleIcon aria-hidden="true" size={28} /><strong>{t('noProjects')}</strong></div>}
+            </div>
+          </aside>
+          <section className="project-detail-pane">
+            {selectedProject ? <ProjectWorkspace actions={<Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>} actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
+          </section>
+        </div>}
       </> : teamAuthoritiesInitialized
         ? <section className="empty">{t('noTeam')} · {t('settings')}</section>
         : teamAuthorityError

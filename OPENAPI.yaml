@@ -425,6 +425,37 @@ paths:
             "409": { $ref: "#/components/responses/Conflict" },
           },
       }
+  /api/v1/teams/{id}/states/{stateId}:
+    parameters:
+      [
+        { $ref: "#/components/parameters/Id" },
+        { $ref: "#/components/parameters/StateId" },
+      ]
+    patch:
+      {
+        x-workmesh-policy-id: route.updateWorkflowState,
+        x-workmesh-actor-kinds: [human],
+        x-workmesh-feature-key: none,
+        x-workmesh-feature-tier: stable,
+        security: [{ SessionCookie: [] }],
+        operationId: updateWorkflowState,
+        parameters:
+          [
+            { $ref: "#/components/parameters/IdempotencyKey" },
+            { $ref: "#/components/parameters/CsrfToken" },
+            { $ref: "#/components/parameters/IfMatch" },
+          ],
+        requestBody: { $ref: "#/components/requestBodies/WorkflowStatePatch" },
+        responses:
+          {
+            "200": { $ref: "#/components/responses/Command" },
+            "400": { $ref: "#/components/responses/BadRequest" },
+            "401": { $ref: "#/components/responses/Unauthorized" },
+            "403": { $ref: "#/components/responses/Forbidden" },
+            "404": { $ref: "#/components/responses/NotFound" },
+            "409": { $ref: "#/components/responses/Conflict" },
+          },
+      }
   /api/v1/projects:
     get:
       {
@@ -2066,6 +2097,13 @@ components:
         required: true,
         schema: { type: string, format: uuid },
       }
+    StateId:
+      {
+        name: stateId,
+        in: path,
+        required: true,
+        schema: { type: string, format: uuid },
+      }
     IdempotencyKey:
       {
         name: Idempotency-Key,
@@ -2253,6 +2291,15 @@ components:
           {
             application/json:
               { schema: { $ref: "#/components/schemas/WorkflowStateInput" } },
+          },
+      }
+    WorkflowStatePatch:
+      {
+        required: true,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/WorkflowStatePatch" } },
           },
       }
     ProjectInput:
@@ -3981,6 +4028,17 @@ components:
             category: { $ref: "#/components/schemas/StatusCategory" },
             color: { type: string, pattern: "^#[0-9a-fA-F]{6}$" },
             position: { type: integer, minimum: 0 },
+          },
+      }
+    WorkflowStatePatch:
+      {
+        type: object,
+        minProperties: 1,
+        additionalProperties: false,
+        properties:
+          {
+            name: { type: string, minLength: 1, maxLength: 80 },
+            color: { type: string, pattern: "^#[0-9a-fA-F]{6}$" },
           },
       }
     ProjectInput:
