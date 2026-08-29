@@ -78,6 +78,7 @@ export type NavigationItem = Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'onCl
 export type AppShellProps = PropsWithChildren<{
   administrationNavigationLabel?: string
   actorName?: string
+  brandIcon?: ReactNode
   contextLabel?: string
   footer?: ReactNode
   headerActions?: ReactNode
@@ -109,6 +110,7 @@ function NavigationLinks({ items, onNavigate, testIds = true }: { items: Navigat
 export function AppShell({
   administrationNavigationLabel = 'Administration',
   actorName,
+  brandIcon,
   children,
   contextLabel = 'Workspace',
   footer,
@@ -129,7 +131,7 @@ export function AppShell({
   return <div className={`app-shell wm-theme${hasNavigation ? '' : ' app-shell--no-sidebar'}`}>
     <a className="wm-skip-link" href="#workmesh-main">{skipLabel}</a>
     {hasNavigation && <aside className="app-sidebar" aria-label={mainNavigationLabel}>
-      <header className="app-brand"><strong>{productName}</strong>{actorName && <small>{actorName}</small>}</header>
+      <header className="app-brand"><span className="app-brand-title">{brandIcon}<strong>{productName}</strong></span>{actorName && <small>{actorName}</small>}</header>
       {teamSwitcher && <div className="app-team-switcher">{teamSwitcher}</div>}
       <nav className="app-navigation" aria-label={workspaceNavigationLabel}><NavigationLinks items={navigation} /></nav>
       {utilityNavigation.length > 0 && <nav className="app-navigation app-utility-navigation" aria-label={administrationNavigationLabel}><NavigationLinks items={utilityNavigation} /></nav>}
@@ -137,6 +139,7 @@ export function AppShell({
     </aside>}
     <div className="app-workspace">
       <header className="wm-shell-header">
+        {!hasNavigation && <header className="app-brand app-brand-inline"><span className="app-brand-title">{brandIcon}<strong>{productName}</strong></span></header>}
         {hasNavigation && <details className="mobile-navigation" onToggle={event => setMobileOpen(event.currentTarget.open)} open={mobileOpen}>
           <summary onKeyDown={event => {
             if (event.key !== 'Enter' && event.key !== ' ') return
@@ -144,14 +147,14 @@ export function AppShell({
             setMobileOpen(open => !open)
           }}>{menuLabel}</summary>
           <div className="mobile-navigation-context">
-            <header className="app-brand"><strong>{productName}</strong>{actorName && <small>{actorName}</small>}</header>
+            <header className="app-brand"><span className="app-brand-title">{brandIcon}<strong>{productName}</strong></span>{actorName && <small>{actorName}</small>}</header>
             {teamSwitcher && <div className="app-team-switcher">{teamSwitcher}</div>}
           </div>
           <nav aria-label={mobileNavigationLabel}><NavigationLinks items={allNavigation} onNavigate={() => setMobileOpen(false)} testIds={false} /></nav>
           {footer && <footer className="app-sidebar-footer mobile-navigation-footer">{footer}</footer>}
         </details>}
         <p>{contextLabel}</p>
-        <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" />
+        <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" suppressHydrationWarning />
         {headerActions && <div className="wm-shell-actions">{headerActions}</div>}
       </header>
       <main className="app-content" id="workmesh-main" tabIndex={-1}>{children}</main>
@@ -845,7 +848,15 @@ export function Popover({ align = 'start', children, label, onOpenChange, open, 
   </div>
 }
 
-export type TabItem = { id: string; label: string; panel: ReactNode }
+export type TabOption = { badge?: number | string; id: string; label: string }
+export type TabItem = TabOption & { panel: ReactNode }
+export type TabBarProps = {
+  ariaLabel: string
+  idPrefix?: string
+  onValueChange: (value: string) => void
+  tabs: readonly TabOption[]
+  value: string
+}
 export type TabsProps = {
   ariaLabel: string
   compact?: boolean
@@ -854,10 +865,10 @@ export type TabsProps = {
   value: string
 }
 
-export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }: TabsProps) {
-  const baseId = useId()
+export function TabBar({ ariaLabel, idPrefix, onValueChange, tabs, value }: TabBarProps) {
+  const generatedId = useId()
+  const baseId = idPrefix ?? generatedId
   const selected = tabs.find(tab => tab.id === value) ?? tabs[0]
-  const compactLabelId = `${baseId}-compact-label`
   const move = (event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
     let targetIndex: number | null = null
     if (event.key === 'ArrowRight') targetIndex = (currentIndex + 1) % tabs.length
@@ -871,6 +882,24 @@ export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }:
     onValueChange(target.id)
     document.getElementById(`${baseId}-tab-${target.id}`)?.focus()
   }
+  return <div aria-label={ariaLabel} className="wm-tab-list" role="tablist">{tabs.map((tab, index) => <button
+    aria-controls={idPrefix ? `${baseId}-panel-${tab.id}` : undefined}
+    aria-selected={tab.id === selected?.id}
+    className={classNames('wm-tab', tab.id === selected?.id && 'is-active')}
+    id={`${baseId}-tab-${tab.id}`}
+    key={tab.id}
+    onClick={() => onValueChange(tab.id)}
+    onKeyDown={event => move(event, index)}
+    role="tab"
+    tabIndex={tab.id === selected?.id ? 0 : -1}
+    type="button"
+  ><span>{tab.label}</span>{tab.badge !== undefined && <span className="wm-tab-badge">{tab.badge}</span>}</button>)}</div>
+}
+
+export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }: TabsProps) {
+  const baseId = useId()
+  const selected = tabs.find(tab => tab.id === value) ?? tabs[0]
+  const compactLabelId = `${baseId}-compact-label`
   // When compact, render a native <select> so the tab list collapses into
   // a single form control on narrow viewports. The select still drives the
   // same onValueChange handler so the active panel and any controlled
@@ -880,25 +909,14 @@ export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }:
       <label className="wm-tab-list-compact">
         <span className="wm-visually-hidden" id={compactLabelId}>{selected?.label ?? ariaLabel}</span>
         <Select aria-label={ariaLabel} className="wm-tab-select" value={selected?.id ?? ''} onChange={event => onValueChange(event.currentTarget.value)}>
-          {tabs.map(tab => <option key={tab.id} value={tab.id}>{tab.label}</option>)}
+          {tabs.map(tab => <option key={tab.id} value={tab.id}>{tab.label}{tab.badge !== undefined ? ` (${tab.badge})` : ''}</option>)}
         </Select>
       </label>
       {selected && <div aria-labelledby={compactLabelId} className="wm-tab-panel" id={`${baseId}-panel-${selected.id}`} role="tabpanel">{selected.panel}</div>}
     </div>
   }
   return <div className="wm-tabs">
-    <div aria-label={ariaLabel} className="wm-tab-list" role="tablist">{tabs.map((tab, index) => <button
-      aria-controls={`${baseId}-panel-${tab.id}`}
-      aria-selected={tab.id === selected?.id}
-      className={classNames('wm-tab', tab.id === selected?.id && 'is-active')}
-      id={`${baseId}-tab-${tab.id}`}
-      key={tab.id}
-      onClick={() => onValueChange(tab.id)}
-      onKeyDown={event => move(event, index)}
-      role="tab"
-      tabIndex={tab.id === selected?.id ? 0 : -1}
-      type="button"
-    >{tab.label}</button>)}</div>
+    <TabBar ariaLabel={ariaLabel} idPrefix={baseId} onValueChange={onValueChange} tabs={tabs} value={selected?.id ?? ''} />
     {tabs.map(tab => {
       const active = tab.id === selected?.id
       return <div
@@ -1808,18 +1826,6 @@ export function ActorAttribution({ activeAgent, relationshipLabel, responsibleHu
     {activeAgent && <div className="wm-actor-agent"><dt><RobotIcon aria-hidden="true" size={16} />{activeAgent.label}</dt><dd>{activeAgent.name}</dd></div>}
     {activeAgent && relationshipLabel && <div className="wm-actor-relationship"><dt>{relationshipLabel}</dt><dd>{activeAgent.name} / {responsibleHuman.name}</dd></div>}
   </dl>
-}
-
-export type ProjectControlNavigationItem = Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick'> & {
-  active?: boolean
-  badge?: string
-  href: string
-  id: string
-  label: string
-}
-
-export function ProjectControlNavigation({ items, label }: { items: readonly ProjectControlNavigationItem[]; label: string }) {
-  return <nav aria-label={label} className="wm-project-navigation"><ul>{items.map(item => <li key={item.id}><a aria-current={item.active ? 'page' : undefined} className={item.active ? 'is-active' : undefined} href={item.href} onClick={item.onClick}>{item.label}{item.badge && <span>{item.badge}</span>}</a></li>)}</ul></nav>
 }
 
 export type ControlCenterSectionProps = PropsWithChildren<{

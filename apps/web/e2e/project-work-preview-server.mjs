@@ -14,6 +14,19 @@ const cors = {
 }
 const team = { id: '7d13dccc-2210-44db-b030-76d56db1b998', name: 'WorkMesh Product', key: 'WM', revision: 3 }
 const human = { id: '1ea95f79-9388-4418-bdd3-56a72871d70e', display_name: 'Alex Morgan', email: 'alex@workmesh.test' }
+const completeAgent = input => ({
+  icon: null,
+  endpoint_url: null,
+  output_artifact_types: [],
+  metadata: {},
+  lifecycle_status: 'active',
+  archived_at: null,
+  archived_by_actor_id: null,
+  archived_reason: null,
+  created_at: '2026-08-16T00:00:00.000Z',
+  updated_at: '2026-08-22T09:30:00.000Z',
+  ...input,
+})
 const project = { id: '3f12de4f-b117-4a78-9e10-da102c892ae1', team_id: team.id, name: 'Kaneo UI Adoption', summary: 'Bring a calm, dense planning workflow to WorkMesh.', description: 'Adopt Kaneo’s strongest project-planning patterns while preserving WorkMesh Human authority, Agent execution state, and durable operational facts.', status: 'in_progress', lead_actor_id: human.id, target_date: '2026-09-15', revision: 4 }
 const states = [
   { id: 'f0000000-0000-4000-8000-000000000001', name: 'Backlog', category: 'backlog', color: '#a8a29e', revision: 1 },
@@ -28,7 +41,7 @@ let milestones = [
   { id: 'd0000000-0000-4000-8000-000000000003', workspace_id: 'workspace-preview', project_id: project.id, name: 'Dogfood closure', description: 'Run the imported Kaneo plan from WorkMesh.', target_date: '2026-09-15', revision: 1, deleted_at: null, created_at: '2026-08-03T00:00:00Z', updated_at: '2026-08-09T00:00:00Z' },
 ]
 const executor = { agent_id: 'agent-codex', agent_actor_id: 'actor-codex', agent_slug: 'codex', agent_display_name: 'Codex', session_id: 'session-codex', lease_id: 'lease-codex', lease_kind: 'exclusive', resource_type: 'work_item', resource_id: '', execution_state: 'executing', heartbeat_health: 'healthy', last_heartbeat_at: '2026-08-10T07:00:00Z', lease_heartbeat_at: '2026-08-10T07:00:00Z', lease_expires_at: '2026-08-10T09:00:00Z' }
-const agent = { id: 'agent-preview', workspace_id: 'workspace-preview', actor_id: 'actor-agent-preview', name: 'Codex Preview', slug: 'codex-preview', description: 'Frontend preview agent.', provider: 'openai', version: '1.0.0', supported_protocols: ['native_http'], skills: ['frontend'], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], max_concurrency: 1, heartbeat_interval_seconds: 30, is_active: true, revision: 1, team_access: [] }
+const agent = completeAgent({ id: 'agent-preview', workspace_id: 'workspace-preview', actor_id: 'actor-agent-preview', name: 'Codex Preview', slug: 'codex-preview', description: 'Frontend preview agent.', provider: 'openai', version: '1.0.0', supported_protocols: ['native_http'], skills: ['frontend'], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], max_concurrency: 1, heartbeat_interval_seconds: 30, is_active: true, revision: 1, team_access: [] })
 const session = { id: 'session-preview', agent_id: agent.id, agent_actor_id: agent.actor_id, principal_human_actor_id: human.id, delegation_id: 'delegation-preview', work_item_id: null, state: 'executing', state_reason: null, revision: 1, current_plan_version_id: null, budget: {}, last_heartbeat_at: '2026-08-16T00:00:00Z', retry_of_session_id: null, stop_requested_at: null, error_code: null, error_summary: null, created_at: '2026-08-16T00:00:00Z', updated_at: '2026-08-16T00:00:00Z' }
 const titles = [
   'Define Project information hierarchy', 'Build responsive planning shell', 'Add Milestone roadmap', 'Model parent and child Work Items',
@@ -81,7 +94,7 @@ const scenarioStates = [
   { id: 'state-runtime-active', name: 'Runtime Active', category: 'started', color: '#2563eb', revision: 1 },
 ]
 const scenarioAgents = [
-  {
+  completeAgent({
     id: 'agent/route', workspace_id: 'workspace-preview', actor_id: 'actor-agent-route', name: 'Orbit Agent', slug: 'orbit-agent',
     description: 'Stable route and interaction fixture.', provider: 'openai', version: '7.1.0', supported_protocols: ['native_http'],
     skills: ['planning'], requested_capabilities: ['work:read', 'work:write'], approved_capabilities: ['work:read', 'work:write'],
@@ -90,13 +103,13 @@ const scenarioAgents = [
       agent_id: 'agent/route', team_id: 'team-runtime', approved_capabilities: ['work:read'], status: 'active',
       approved_by_actor_id: human.id, revision: 2, created_at: '2026-08-20T08:00:00.000Z', updated_at: fixedNow, revoked_at: null,
     }],
-  },
-  {
+  }),
+  completeAgent({
     id: 'agent-inactive', workspace_id: 'workspace-preview', actor_id: 'actor-agent-inactive', name: 'Archive Agent', slug: 'archive-agent',
     description: 'Inactive deterministic fixture.', provider: 'openai', version: '7.1.0', supported_protocols: ['native_http'],
     skills: ['archive'], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], max_concurrency: 1,
     heartbeat_interval_seconds: 60, is_active: false, revision: 1, team_access: [],
-  },
+  }),
 ]
 const approvalFixture = (id, status, action, sessionId) => ({
   id, session_id: sessionId, approval_type: 'tool', action_name: action, risk_level: status === 'pending' ? 'medium' : 'low',
@@ -239,7 +252,7 @@ const finalTourTeamAccess = agentId => ({
   revoked_at: null,
 })
 const finalTourAgents = [
-  {
+  completeAgent({
     id: 'agent/1',
     workspace_id: 'workspace-preview',
     actor_id: 'actor-agent-final-tour-1',
@@ -264,8 +277,8 @@ const finalTourAgents = [
         approved_capabilities: ['work:read', 'work:write'],
       },
     ],
-  },
-  {
+  }),
+  completeAgent({
     id: 'agent/2',
     workspace_id: 'workspace-preview',
     actor_id: 'actor-agent-final-tour-2',
@@ -283,7 +296,7 @@ const finalTourAgents = [
     is_active: true,
     revision: 2,
     team_access: [finalTourTeamAccess('agent/2')],
-  },
+  }),
 ]
 const finalTourSession = {
   id: 'session-1',
@@ -499,7 +512,7 @@ const largeListWorkItems = Array.from({ length: 300 }, (_, index) => {
 const largeListAgents = Array.from({ length: 300 }, (_, index) => {
   const ordinal = index + 1
   const padded = String(ordinal).padStart(3, '0')
-  return {
+  return completeAgent({
     id: `large-agent-${padded}`,
     workspace_id: 'workspace-preview',
     actor_id: `large-agent-actor-${padded}`,
@@ -517,7 +530,7 @@ const largeListAgents = Array.from({ length: 300 }, (_, index) => {
     is_active: true,
     revision: 1,
     team_access: [],
-  }
+  })
 })
 const commandAgent = {
   ...scenarioAgents[0],

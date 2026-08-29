@@ -125,9 +125,7 @@ function Probe() {
     sessionLoadingZh: ctx.sessionDetailCopy.loading,
     liveAgentsZh: ctx.agentWorkCopy.liveAgents,
     relationsTitleZh: ctx.relationsCopy.title,
-    evidenceTitleZh: ctx.evidenceCopy.title,
     workRoomTitleZh: ctx.workRoomCopy.title,
-    healthOnTrackZh: ctx.projectDeliveryHealthLabel('on_track'),
     humanControlPlaneZh: [ctx.humanControlPlaneCopy.needsYou, ctx.humanControlPlaneCopy.running, ctx.humanControlPlaneCopy.atRisk],
   }))
 }
@@ -244,7 +242,6 @@ describe('web i18n entry', () => {
       'agentsCopy',
       'connectCopy',
       'detailCopy',
-      'evidenceCopy',
       'guidanceCopy',
       'humanControlPlaneCopy',
       'inboxCopy',
@@ -253,7 +250,6 @@ describe('web i18n entry', () => {
       'locale',
       'loginCopy',
       'operationsCopy',
-      'projectDeliveryHealthLabel',
       'relationsCopy',
       'sessionDetailCopy',
       'setLocale',
@@ -365,9 +361,7 @@ describe('web i18n entry', () => {
     expect(payload.sessionLoadingZh).toBe('正在加载智能体 Session…')
     expect(payload.liveAgentsZh).toBe('在线智能体')
     expect(payload.relationsTitleZh).toBe('阻塞与关联工作')
-    expect(payload.evidenceTitleZh).toBe('协作状态展示')
     expect(payload.workRoomTitleZh).toBe('Work Room')
-    expect(payload.healthOnTrackZh).toBe('进展顺利')
   })
 
   it('maps every Operations API enum to complete English display copy', async () => {

@@ -46,7 +46,7 @@ test.describe('frontend layout and shell unification', () => {
   test('keeps overview project-only and opens milestone-filtered global Issues', async ({ page }) => {
     await page.goto(`/?view=projects&project=${projectId}`)
     const projectControl = page.getByTestId('project-control-center')
-    await expect(projectControl.locator('.wm-project-navigation a').first()).toHaveAttribute('aria-current', 'page')
+    await expect(projectControl.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true')
     await expect(page.getByRole('region', { name: 'Work surfaces' })).toHaveCount(0)
     await page.getByTestId('project-control-view-work').click()
     await expect(page.getByTestId('project-tab-list')).toBeVisible()

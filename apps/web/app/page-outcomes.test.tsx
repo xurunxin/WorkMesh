@@ -30,6 +30,22 @@ const currentTeamMock = vi.hoisted(() => ({
 }))
 const boardWidthsMock = vi.hoisted(() => ({ setWidth: vi.fn(), widths: {} }))
 const workSurfacesMock = vi.hoisted(() => ({ refresh: vi.fn(async () => undefined) }))
+const routerMock = vi.hoisted(() => ({
+  push: vi.fn((href: string) => { window.history.pushState({}, '', href); window.dispatchEvent(new PopStateEvent('popstate')) }),
+  replace: vi.fn((href: string) => { window.history.replaceState({}, '', href); window.dispatchEvent(new PopStateEvent('popstate')) }),
+}))
+
+vi.mock('next/navigation', async () => {
+  const { useSyncExternalStore } = await import('react')
+  return {
+    useRouter: () => routerMock,
+    useSearchParams: () => new URLSearchParams(useSyncExternalStore(
+      callback => { window.addEventListener('popstate', callback); return () => window.removeEventListener('popstate', callback) },
+      () => window.location.search,
+      () => '',
+    )),
+  }
+})
 
 vi.mock('./lib/api', async importOriginal => {
   const actual = await importOriginal<typeof import('./lib/api')>()
@@ -79,7 +95,9 @@ vi.mock('./agent-work-panel', () => ({
   }),
 }))
 vi.mock('./work-room', () => ({ InboxPanel: () => null, WorkRoom: () => null }))
-vi.mock('./project-workspace', () => ({ ProjectWorkspace: () => null }))
+vi.mock('./project-workspace', () => ({
+  ProjectWorkspace: ({ project }: { project: { name: string } }) => <div data-testid="project-workspace">{project.name}</div>,
+}))
 vi.mock('./realtime-status', () => ({ RealtimeStatus: () => null }))
 
 type TestItem = { id: string } & Record<string, unknown>
@@ -164,6 +182,47 @@ afterEach(() => {
 })
 
 describe('Home mutation outcomes', () => {
+  it('retries a URL-owned Project after authority invalidates the in-flight request', async () => {
+    const firstProjectRequest = deferred<Record<string, unknown>>()
+    const routeProject = {
+      id: 'project-1',
+      team_id: 'team-1',
+      name: 'Authority-current Project',
+      summary: null,
+      description: null,
+      status: 'in_progress',
+      lead_actor_id: null,
+      target_date: null,
+      revision: 2,
+    }
+    projects.items = [routeProject]
+    window.history.replaceState({}, '', '/?view=projects&project=project-1')
+    let projectRequests = 0
+    apiMock.apiRequest.mockImplementation((path: string) => {
+      if (path === '/api/v1/features') return Promise.resolve({ features: [] })
+      if (path === '/api/v1/projects/project-1') {
+        projectRequests += 1
+        return projectRequests === 1 ? firstProjectRequest.promise : Promise.resolve(routeProject)
+      }
+      return Promise.resolve({ id: 'work-item-1' })
+    })
+
+    const view = render(<LocaleProvider><HomePage /><ToastViewport /></LocaleProvider>)
+    await waitFor(() => expect(projectRequests).toBe(1))
+
+    authMock.actor = { id: 'human-2', display_name: 'Grace', workspace_id: 'workspace-2', workspace_role: 'member' }
+    view.rerender(<LocaleProvider><HomePage /><ToastViewport /></LocaleProvider>)
+
+    expect(await screen.findByTestId('project-workspace')).toHaveTextContent('Authority-current Project')
+    expect(projectRequests).toBe(2)
+
+    await act(async () => {
+      firstProjectRequest.resolve({ ...routeProject, name: 'Stale Project response' })
+      await firstProjectRequest.promise
+    })
+    expect(screen.getByTestId('project-workspace')).toHaveTextContent('Authority-current Project')
+  })
+
   it('synchronously retires actor-owned dialog state when authenticated authority changes', async () => {
     const view = render(<LocaleProvider><HomePage /><ToastViewport /></LocaleProvider>)
     fireEvent.click(await screen.findByRole('button', { name: '新建 Issue' }))

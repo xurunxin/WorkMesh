@@ -409,32 +409,12 @@ for (const viewport of viewports) {
       await assertBackgroundRestored(page, background)
 
       if (viewport.width === 390) {
-        await page.goto('/preview-issues')
-        const labelTriggers = page.locator('.wm-work-item-label-more')
-        await expect.poll(() => labelTriggers.count()).toBeGreaterThanOrEqual(2)
-        await labelTriggers.nth(0).evaluate(element => element.focus({ preventScroll: true }))
-        await page.keyboard.press('Enter')
-        await expect(page.locator('.wm-work-item-label-menu-panel')).toHaveCount(1)
-        const firstMenuLabel = await page.locator('.wm-work-item-label-menu-panel').getAttribute('aria-label')
-        await labelTriggers.nth(1).evaluate(element => element.focus({ preventScroll: true }))
-        await page.keyboard.press('Space')
-        await expect(page.locator('.wm-work-item-label-menu-panel')).toHaveCount(1)
-        const secondMenuLabel = await page.locator('.wm-work-item-label-menu-panel').getAttribute('aria-label')
-        expect(secondMenuLabel).not.toBe(firstMenuLabel)
-        const pointerChain = await page.locator('.wm-work-item-label-menu-panel').evaluate(element => ({
-          ariaLabel: element.getAttribute('aria-label'),
-          documentClientWidth: document.documentElement.clientWidth,
-          documentScrollWidth: document.documentElement.scrollWidth,
-        }))
-        expect(pointerChain.documentScrollWidth).toBe(pointerChain.documentClientWidth)
-        await persistEvidence(page, testInfo, 'keyboard-dismissal-chain-390x844', {
-          firstActivation: 'Enter',
-          firstMenuLabel,
-          geometry: pointerChain,
-          panelCount: 1,
-          secondActivation: 'Space',
-          secondMenuLabel,
-        })
+        const removedRoutes = ['/preview-issues', '/preview-round2', '/human-control-plane-preview', '/evidence/collaboration-faults']
+        for (const removedRoute of removedRoutes) {
+          const response = await page.goto(removedRoute)
+          expect(response?.status(), `${removedRoute} returns 404`).toBe(404)
+        }
+        await persistEvidence(page, testInfo, 'removed-preview-routes-390x844', { routes: removedRoutes, status: 404 })
       }
 
       await page.evaluate(() => document.querySelector('[data-task62-spacer="true"]')?.remove())

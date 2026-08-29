@@ -1,6 +1,7 @@
 'use client'
 
-import { type FormEvent, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { ControlCenterResponse } from '@workmesh/contracts'
 import {
   ActorAttribution,
@@ -12,7 +13,7 @@ import {
   FreshnessBadge,
   LifecycleBadge,
   PlanStepRail,
-  ProjectControlNavigation,
+  TabBar,
   RiskBadge,
   RunDigestCard,
   RunHealthBadge,
@@ -44,7 +45,6 @@ type Filters = Readonly<{
 }>
 
 const collectionOrder: readonly Collection[] = ['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work']
-export const projectControlCenterFeatureEnabled = (value = process.env.NEXT_PUBLIC_WORKMESH_HCP_PROJECT_CONTROL_CENTER): boolean => value !== '0'
 const filterKeys = ['responsibleHumanActorId', 'agentActorId', 'risk', 'workItemState', 'timeWindow'] as const
 
 const readFilters = (search: string): Filters => {
@@ -102,10 +102,14 @@ const refreshItems = (current: readonly Digest[], incoming: readonly Digest[]): 
   return [...retained, ...incoming.filter(item => !currentIds.has(item.id))]
 }
 
-export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-000000000000', workspace_role: 'member' }, project, onOpenWork }: {
+export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-0000-0000-000000000000', workspace_role: 'member' }, backlogCount, project, workSurface, workView, onWorkViewChange }: {
+  actions?: ReactNode
   actor?: Readonly<{ id: string; workspace_id?: string; workspace_role: 'admin' | 'member' }>
+  backlogCount: number
   project: Project
-  onOpenWork: () => void
+  workSurface: ReactNode
+  workView: 'list' | 'board' | 'backlog'
+  onWorkViewChange: (tab: 'list' | 'board' | 'backlog') => void
 }) {
   const { humanControlPlaneCopy: copy, locale } = useLocale()
   const local = locale === 'zh-CN' ? {
@@ -122,6 +126,9 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
   const [filters, setFilters] = useState<Filters>(() => typeof window === 'undefined' ? {} : readFilters(window.location.search))
   const [draftFilters, setDraftFilters] = useState<Filters>(() => typeof window === 'undefined' ? {} : readFilters(window.location.search))
   const connectionState = useRealtimeConnectionState()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentSearch = searchParams.toString()
 
   const refreshAll = useCallback(async () => {
     setError('')
@@ -146,19 +153,18 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
 
   useEffect(() => { void refreshAll() }, [refreshAll])
   useEffect(() => {
-    const restore = () => {
-      const route = readProjectControlRoute(window.location.search)
-      const restoredFilters = readFilters(window.location.search)
+      const search = currentSearch ? `?${currentSearch}` : ''
+      const route = readProjectControlRoute(search)
+      const restoredFilters = readFilters(search)
       setActiveSurface(route.surface)
       setFilters(current => JSON.stringify(current) === JSON.stringify(restoredFilters) ? current : restoredFilters)
       setDraftFilters(current => JSON.stringify(current) === JSON.stringify(restoredFilters) ? current : restoredFilters)
       if (!route.selectedId) setSelected(null)
       else setSelected(current => current?.id === route.selectedId ? current : data ? collectionOrder.flatMap(collection => data.collections[collection].items).find(item => item.id === route.selectedId) ?? null : null)
-    }
-    restore()
-    window.addEventListener('popstate', restore)
-    return () => window.removeEventListener('popstate', restore)
-  }, [data])
+  // The page-level route projector is the single owner of Project work-view
+  // state. Re-projecting the old URL into the parent during a local click can
+  // race Next navigation and immediately undo List/Board changes.
+  }, [currentSearch, data])
   useRealtimeSubscription([{ type: 'project', id: project.id }], invalidation => {
     if (invalidation.reason === 'resync') void refreshAll()
     else eventCollections(invalidation.event).forEach(collection => void refreshCollection(collection))
@@ -166,24 +172,24 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
 
   const navigation = useMemo(() => projectControlNavigation({
     active: activeSurface,
-    copy: { overview: copy.overview, work: copy.work, attention: copy.attention, runs: copy.runs, graph: copy.graph, activity: copy.activity, settings: copy.projectSettings, beta: copy.beta },
-    currentSearch: typeof window === 'undefined' ? '' : window.location.search,
+    copy: { overview: copy.overview, work: copy.work, attention: copy.attention, runs: copy.runs },
+    currentSearch,
     projectId: project.id,
-  }).map(item => ({ ...item, onClick: (event: MouseEvent<HTMLAnchorElement>) => {
-    if (item.id === 'work') { event.preventDefault(); onOpenWork(); return }
-    if (!['overview', 'attention', 'runs'].includes(item.id)) return
-    event.preventDefault()
-    setActiveSurface(item.id)
-    window.history.pushState({}, '', item.href)
-  } })), [activeSurface, copy, onOpenWork, project.id])
+  }), [activeSurface, copy.attention, copy.overview, copy.runs, copy.work, currentSearch, project.id])
+
+  const navigateSurface = (surface: ProjectControlSurface): void => {
+    setActiveSurface(surface)
+    const href = projectControlHref({ currentSearch, projectId: project.id, surface, workView })
+    router.push(href, { scroll: false })
+  }
 
   const openDetails = (item: Digest) => {
     setSelected(item)
-    window.history.pushState({}, '', projectControlHref({ currentSearch: window.location.search, drawerId: 'digest', projectId: project.id, selectedId: item.id, surface: activeSurface }))
+    router.push(projectControlHref({ currentSearch, drawerId: 'digest', projectId: project.id, selectedId: item.id, surface: activeSurface, workView }), { scroll: false })
   }
   const closeDetails = () => {
     setSelected(null)
-    window.history.replaceState({}, '', projectControlHref({ currentSearch: window.location.search, projectId: project.id, surface: activeSurface }))
+    router.replace(projectControlHref({ currentSearch, projectId: project.id, surface: activeSurface, workView }), { scroll: false })
   }
   const loadMore = async (collection: Collection) => {
     const cursor = data?.collections[collection].nextCursor
@@ -197,14 +203,14 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
     } finally { setLoadingMore(null) }
   }
   const writeFilters = (next: Filters) => {
-    const params = new URLSearchParams(window.location.search)
+    const params = new URLSearchParams(currentSearch)
     for (const key of filterKeys) {
       if (next[key]) params.set(key, next[key]!)
       else params.delete(key)
     }
     params.delete('selected')
     params.delete('drawer')
-    window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`)
+    router.push(`/?${params.toString()}`, { scroll: false })
     setSelected(null)
     setFilters(next)
     setDraftFilters(next)
@@ -242,10 +248,10 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
 
   const projectHeader = <>
     <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.description || project.summary ? <RichContent density="document" source={project.description || project.summary || ''} /> : <p>{local.empty}</p>}</div><div className="hcp-project-actions"><Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={onOpenWork} type="button">{copy.viewWork}</Button></div></div>
+      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.description || project.summary ? <RichContent density="document" source={project.description || project.summary || ''} /> : <p>{local.empty}</p>}</div><div className="hcp-project-actions">{actions}<Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></div></div>
       <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data?.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data?.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>{data ? `rev ${data.revision}` : '-'}</dd></div></dl>
     </header>
-    <ProjectControlNavigation items={navigation} label={copy.projectNavigation} />
+    <TabBar ariaLabel={copy.projectNavigation} onValueChange={value => navigateSurface(value as ProjectControlSurface)} tabs={navigation} value={activeSurface} />
   </>
 
   if (!data && !error) return <div className="hcp-reference project-control-center" data-testid="project-control-center">{projectHeader}<div className="project-control-loading" role="status">{local.loading}</div></div>
@@ -262,20 +268,22 @@ export function ProjectControlCenter({ actor = { id: '00000000-0000-0000-0000-00
   const verified = genericSection('recently_verified', copy.recentlyVerified, copy.recentlyVerifiedDescription, 'verified', () => <LifecycleBadge categoryLabel={copy.lifecycle} label={copy.statusVerified} value="verified" />)
   const ready = genericSection('ready_work', copy.ready, local.readyDescription, 'verified', () => <LifecycleBadge categoryLabel={copy.lifecycle} label={copy.ready} value="open" />)
   const blocked = genericSection('blocked_work', copy.blocked, local.blockedDescription, 'risk', () => <RiskBadge categoryLabel={copy.risk} label={copy.blocked} value="high" />)
-  const surfaces: Record<ProjectControlSurface, ReactNode> = { overview: <>{attention}{running}{risks}{verified}{ready}{blocked}</>, attention: <AttentionCenter actor={actor} projectId={project.id} />, runs: running, work: null, graph: null, activity: null, settings: null }
+  const workTabs = [{ id: 'list', label: locale === 'zh-CN' ? '列表' : 'List' }, { id: 'board', label: locale === 'zh-CN' ? '看板' : 'Board' }, { id: 'backlog', label: locale === 'zh-CN' ? '待办' : 'Backlog', badge: backlogCount }]
+  const work = <section className="hcp-project-work"><TabBar ariaLabel={copy.work} onValueChange={value => onWorkViewChange(value as 'list' | 'board' | 'backlog')} tabs={workTabs} value={workView} /><div className="hcp-project-work-surface">{workSurface}</div></section>
+  const surfaces: Record<ProjectControlSurface, ReactNode> = { overview: <>{attention}{running}{risks}{verified}{ready}{blocked}</>, attention: <AttentionCenter actor={actor} projectId={project.id} />, runs: running, work }
 
   return <div className="hcp-reference project-control-center" data-testid="project-control-center">
     {projectHeader}
-    <form aria-label={local.filters} className="project-control-filters" onSubmit={applyFilters}>
+    {activeSurface !== 'work' && <form aria-label={local.filters} className="project-control-filters" onSubmit={applyFilters}>
       <label>{local.responsibleHumanFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, responsibleHumanActorId: value || undefined })) }} value={draftFilters.responsibleHumanActorId ?? ''}><option value="">{local.all}</option>{humanOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <label>{copy.activeAgent}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, agentActorId: value || undefined })) }} value={draftFilters.agentActorId ?? ''}><option value="">{local.all}</option>{agentOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <label>{local.riskFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, risk: value === 'at_risk' ? 'at_risk' : undefined })) }} value={draftFilters.risk ?? ''}><option value="">{local.all}</option><option value="at_risk">{copy.atRisk}</option></select></label>
       <label>{local.stateFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, workItemState: value ? value as Filters['workItemState'] : undefined })) }} value={draftFilters.workItemState ?? ''}><option value="">{local.all}</option>{['backlog', 'planned', 'started', 'completed', 'canceled'].map(state => <option key={state} value={state}>{state.replaceAll('_', ' ')}</option>)}</select></label>
       <label>{local.timeFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, timeWindow: value ? value as Filters['timeWindow'] : undefined })) }} value={draftFilters.timeWindow ?? ''}><option value="">{local.all}</option><option value="24h">24h</option><option value="7d">7d</option><option value="30d">30d</option></select></label>
       <div className="project-control-filter-actions"><Button type="submit">{local.applyFilters}</Button><Button onClick={() => writeFilters({})} type="button" variant="ghost">{local.clearFilters}</Button></div>
-    </form>
-    <section aria-label={copy.summaryLabel} className="hcp-summary-strip">{collectionOrder.map(collection => { const labels: Record<Collection, string> = { attention: copy.needsYou, running: copy.running, risks: copy.atRisk, recently_verified: copy.recentlyVerified, ready_work: copy.ready, blocked_work: copy.blocked }; const tones: Record<Collection, string> = { attention: 'attention', running: 'running', risks: 'risk', recently_verified: 'verified', ready_work: 'ready', blocked_work: 'blocked' }; return <article className={`tone-${tones[collection]}`} key={collection}><strong>{data.collections[collection].items.length}</strong><span>{labels[collection]}</span></article> })}</section>
+    </form>}
+    {activeSurface !== 'work' && <section aria-label={copy.summaryLabel} className="hcp-summary-strip">{collectionOrder.map(collection => { const labels: Record<Collection, string> = { attention: copy.needsYou, running: copy.running, risks: copy.atRisk, recently_verified: copy.recentlyVerified, ready_work: copy.ready, blocked_work: copy.blocked }; const tones: Record<Collection, string> = { attention: 'attention', running: 'running', risks: 'risk', recently_verified: 'verified', ready_work: 'ready', blocked_work: 'blocked' }; return <article className={`tone-${tones[collection]}`} key={collection}><strong>{data.collections[collection].items.length}</strong><span>{labels[collection]}</span></article> })}</section>}
     <div className="hcp-control-grid">{surfaces[activeSurface] ?? <div className="project-control-section-state">{local.empty}</div>}</div>
-    <EvidenceDrawer closeLabel={copy.close} description={selected?.summary} onClose={closeDetails} open={Boolean(selected)} title={selected?.title ?? copy.evidence}>{selected && <>{attribution(selected)}{metadata(selected)}<Button onClick={onOpenWork} type="button">{copy.viewWork}</Button></>}</EvidenceDrawer>
+    <EvidenceDrawer closeLabel={copy.close} description={selected?.summary} onClose={closeDetails} open={Boolean(selected)} title={selected?.title ?? copy.evidence}>{selected && <>{attribution(selected)}{metadata(selected)}<Button onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></>}</EvidenceDrawer>
   </div>
 }

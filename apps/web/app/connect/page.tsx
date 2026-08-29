@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Button } from '@workmesh/ui'
+import { AppShell, Button } from '@workmesh/ui'
 import { publicRequest } from '../lib/api'
-import { useLocale } from '../lib/i18n'
+import { LocaleToggle, useLocale } from '../lib/i18n'
+import { WorkMeshBrandIcon } from '../lib/brand'
+import { useWorkMeshDocumentTitle } from '../lib/document-title'
 import {
   buildMcpClientGuide,
   classifyMcpOnboardingFailure,
@@ -34,6 +36,7 @@ export default function ConnectPage() {
   const [configCopied, setConfigCopied] = useState(false)
   const [linkCopied, setLinkCopied] = useState(false)
   const [copyAnnouncement, setCopyAnnouncement] = useState<'config' | 'link' | null>(null)
+  useWorkMeshDocumentTitle(text.title)
 
   useEffect(() => {
     setFragmentPresent(window.location.hash.length > 1)
@@ -111,9 +114,8 @@ export default function ConnectPage() {
     setCopyAnnouncement(current => current === 'config' ? null : current)
   }
 
-  return <>
-    <a className="wm-skip-link" href="#workmesh-main">{t('skipToContent')}</a>
-    <main className="center connect-page" id="workmesh-main" tabIndex={-1}><section className="connection-instruction onboarding-shell" aria-labelledby="connect-title">
+  return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
+    <div className="center connect-page"><section className="connection-instruction onboarding-shell" aria-labelledby="connect-title">
     <header className="onboarding-heading">
       <div><p className="eyebrow">{text.eyebrow}</p><h1 id="connect-title">{text.title}</h1></div>
       <span className="health-pill health-neutral">{text.healthPill}</span>
@@ -159,6 +161,6 @@ export default function ConnectPage() {
     </section>}
     <p className="onboarding-authority-note"><strong>{text.authorityTitle}</strong> {text.authorityBody}</p>
     <span className="sr-only" aria-live="polite">{copyAnnouncement === 'config' ? text.configCopiedAnnouncement : copyAnnouncement === 'link' ? text.linkCopiedAnnouncement : ''}</span>
-    </section></main>
-  </>
+    </section></div>
+  </AppShell>
 }

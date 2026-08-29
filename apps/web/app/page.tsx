@@ -1,7 +1,8 @@
 'use client'
 
-import { type FormEvent, type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppShell, AsyncStateSurface, Button, Dialog, ErrorState } from '@workmesh/ui'
+import { type FormEvent, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { AsyncStateSurface, Button, Dialog, ErrorState } from '@workmesh/ui'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
@@ -12,7 +13,8 @@ import { NotePencilIcon } from '@phosphor-icons/react/dist/csr/NotePencil'
 import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
-import { ApiError, apiMutation, apiRequest, clearCsrfToken, json, publicRequest, saveCsrfToken } from './lib/api'
+import { ApiError, apiMutation, apiRequest, json, publicRequest } from './lib/api'
+import { AuthenticatedWorkspaceShell } from './authenticated-workspace-shell'
 import { AgentWorkPanel, useAgentDelegationController } from './agent-work-panel'
 import { WorkRoom } from './work-room'
 import { ActionableCollaborationQueues } from './collaboration-queues'
@@ -31,6 +33,7 @@ import { useBoardColumnWidths } from './lib/use-board-column-widths'
 import { useCurrentTeam } from './lib/use-current-team'
 import { useToast } from './lib/use-toast'
 import { workspaceNavigation, workspaceUtilityNavigation } from './lib/workspace-navigation'
+import { LatestRequestGate } from './lib/latest-request'
 import { ProjectWorkspace } from './project-workspace'
 import { RealtimeStatus } from './realtime-status'
 import {
@@ -41,16 +44,14 @@ import {
 } from './lib/project-work'
 import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
-import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
+import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, serializeWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
 import { RichContent } from '../features/rich-content/markdown'
 import { RichTextEditor } from '../features/rich-content/editor'
 
 type Actor = AuthenticatedActor
-type AuthMe = { actor: Actor; csrfToken: string }
 type InstallStatus = { installed: boolean }
 type FeatureRegistry = { features: Array<{ key: string; tier: 'beta' | 'experimental'; enabled: boolean }> }
-type ReleaseInfo = { serverVersion: string; buildSha: string; schemaBaseline: number }
 type Team = { id: string; name: string; key: string; revision: number }
 type StatusCategory = 'backlog' | 'planned' | 'started' | 'completed' | 'canceled'
 type WorkflowState = { id: string; name: string; category: StatusCategory; color: string; revision: number }
@@ -69,9 +70,20 @@ const emptyFilters: Filters = {}
 
 export default function HomePage() {
   const { surfaceCopy, t } = useLocale()
+  const routeSearchParams = useSearchParams()
+  const routeScope = parseHomeScope(routeSearchParams?.toString() ?? '')
+  const routeTitle = routeScope === 'inbox' ? t('inbox') : routeScope === 'recovery' ? t('recovery') : routeScope === 'guidance' ? t('guidance') : routeScope === 'projects' ? t('projects') : t('issues')
   const { actor, loading: actorLoading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
-  if (actorLoading && !actor) return <main className="center foundation-center wm-theme" data-testid="loading"><AsyncStateSurface description={surfaceCopy.loadingDescription ?? t('loading')} state="loading" title={surfaceCopy.loadingTitle ?? t('loading')} /></main>
-  if (!actor) return <main className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel={surfaceCopy.retry ?? t('retry')} description={actorError || surfaceCopy.errorDescription || t('workViewCouldNotRefresh')} onAction={() => void refreshActor()} title={surfaceCopy.errorTitle ?? t('workViewCouldNotRefresh')} /></main>
+  const stateShell = (content: ReactNode) => <AuthenticatedWorkspaceShell
+    contextLabel={routeTitle}
+    documentTitle={routeTitle}
+    headerActions={<LocaleToggle />}
+    navigation={workspaceNavigation({ active: routeScope, t })}
+    skipLabel={t('skipToContent')}
+    utilityNavigation={workspaceUtilityNavigation({ t })}
+  >{content}</AuthenticatedWorkspaceShell>
+  if (actorLoading && !actor) return stateShell(<div className="center foundation-center wm-theme" data-testid="loading"><AsyncStateSurface description={surfaceCopy.loadingDescription ?? t('loading')} state="loading" title={surfaceCopy.loadingTitle ?? t('loading')} /></div>)
+  if (!actor) return stateShell(<div className="center foundation-center wm-theme" data-testid="load-error"><ErrorState actionLabel={surfaceCopy.retry ?? t('retry')} description={actorError || surfaceCopy.errorDescription || t('workViewCouldNotRefresh')} onAction={() => void refreshActor()} title={surfaceCopy.errorTitle ?? t('workViewCouldNotRefresh')} /></div>)
   return <HomePageScope
     actor={actor}
     actorError={actorError}
@@ -94,6 +106,9 @@ function HomePageScope({
 }) {
   const { agentWorkCopy, detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
   const { push: pushToast } = useToast()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentSearch = searchParams?.toString() ?? ''
   const authorityScopeKey = actorAuthorityScopeKey(actor)
   const isAuthorityCurrent = useAuthorityLifetime()
   const {
@@ -117,12 +132,14 @@ function HomePageScope({
   const [detailResetKey, setDetailResetKey] = useState(0)
   const [filters, setFilters] = useState<Filters>({})
   const [error, setError] = useState('')
-  const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
   const [createProjectOpen, setCreateProjectOpen] = useState(false)
   const [createWorkItemOpen, setCreateWorkItemOpen] = useState(false)
   const [createWorkItemError, setCreateWorkItemError] = useState('')
   const [workSurfaceItems, setWorkSurfaceItems] = useState<WorkItemDto[]>([])
   const surfaceRefreshRef = useRef<(() => Promise<void>) | null>(null)
+  const projectRequestGateRef = useRef(new LatestRequestGate<string>())
+  const requestedProjectIdRef = useRef<string | null>(null)
+  const restoredSearchRef = useRef<string | null>(null)
 
   // Local `teamsPage` is kept for the team LoadMoreButton and realtime refresh; the
   // hook's `teams` drives the rendered team list so this subscription only carries
@@ -207,7 +224,7 @@ function HomePageScope({
     commentsPage.error,
   ].find(Boolean)
 
-  // Bootstraps the install check and release info; the auth chain is owned by
+  // Bootstraps the install check; the auth chain is owned by
   // `useAuthenticatedActor` and runs in parallel.
   const bootstrap = useCallback(async () => {
     try {
@@ -218,12 +235,8 @@ function HomePageScope({
         window.location.replace('/install')
         return
       }
-      const [info] = await Promise.all([
-        publicRequest<ReleaseInfo>('/api/v1/info'),
-        apiRequest<FeatureRegistry>('/api/v1/features').catch(() => null),
-      ])
+      await apiRequest<FeatureRegistry>('/api/v1/features').catch(() => null)
       if (!isAuthorityCurrent()) return
-      setReleaseInfo(info)
     } catch (reason) {
       if (!isAuthorityCurrent()) return
       if (reason instanceof ApiError && reason.status === 401) return
@@ -306,7 +319,7 @@ function HomePageScope({
   }
   const navigateScope = (event: MouseEvent<HTMLAnchorElement>, nextScope: Scope) => {
     event.preventDefault()
-    window.history.pushState({}, '', homeScopeHref(nextScope))
+    router.push(homeScopeHref(nextScope), { scroll: false })
     chooseScope(nextScope)
   }
   const openItem = async (id: string, full = false, updateHistory = true) => {
@@ -320,34 +333,41 @@ function HomePageScope({
       const item = await apiRequest<WorkItem>(`/api/v1/work-items/${id}`)
       if (!isAuthorityCurrent()) return
       setSelectedItem(item)
-      if (full && updateHistory) window.history.pushState({}, '', projectWorkspaceHref({
+      if (full && updateHistory) router.push(projectWorkspaceHref({
         projectId: item.project_id ?? selectedProject?.id,
         tab: projectTab,
         workItemId: item.id,
-      }))
+      }), { scroll: false })
     } catch (reason) { if (isAuthorityCurrent()) setDetailErrorState(detailError(reason)) }
   }
   const openProject = async (id: string, tab: ProjectWorkspaceTab = 'overview', updateHistory = true) => {
     if (!isAuthorityCurrent()) return
+    const request = projectRequestGateRef.current.begin(id)
+    requestedProjectIdRef.current = id
     try {
       setError('')
       setScope('projects')
       setSelectedItem(null)
       setFullItemView(false)
-      const project = await apiRequest<Project>(`/api/v1/projects/${id}`)
-      if (!isAuthorityCurrent()) return
+      setProjectTab(tab)
+      if (updateHistory) router.push(projectWorkspaceHref({ projectId: id, tab }), { scroll: false })
+      const project = await apiRequest<Project>(`/api/v1/projects/${id}`, { signal: request.signal })
+      if (!isAuthorityCurrent() || !request.isCurrent() || requestedProjectIdRef.current !== id) return
       setSelectedProject(project)
       setProjectTab(tab)
       setFilters(current => ({ ...current, projectId: project.id, milestoneId: undefined }))
-      if (updateHistory) window.history.pushState({}, '', projectWorkspaceHref({ projectId: project.id, tab }))
-    } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
+    } catch (reason) {
+      if (!request.isCurrent()) return
+      if (isAuthorityCurrent()) { setSelectedProject(null); setError(requestError(reason)) }
+    }
   }
-  const selectProjectTab = (tab: ProjectWorkspaceTab) => {
+  useEffect(() => () => projectRequestGateRef.current.cancel(), [])
+  const selectProjectTab = useCallback((tab: ProjectWorkspaceTab) => {
     setProjectTab(tab)
     if (tab === 'board') layoutRef.current = 'board'
     else if (tab === 'list' || tab === 'backlog') layoutRef.current = 'list'
-    if (selectedProject) window.history.pushState({}, '', projectWorkspaceHref({ projectId: selectedProject.id, tab }))
-  }
+    if (selectedProject) router.push(projectWorkspaceHref({ filterSearch: serializeWorkSurfaceQuery(filters), projectId: selectedProject.id, tab }), { scroll: false })
+  }, [filters, router, selectedProject])
   const applySavedView = (view: SavedViewPreference) => {
     const fallbackScope = scope === 'projects' ? 'project-work-items' : scope === 'my-work' || scope === 'active' || scope === 'backlog' ? scope : 'my-work'
     const nextScope = workSurfaceScopeForQuery(view.filters, fallbackScope)
@@ -360,11 +380,11 @@ function HomePageScope({
       setScope('projects')
       setSelectedProject(project)
       setProjectTab(tab)
-      window.history.pushState({}, '', projectWorkspaceHref({ projectId: project?.id, tab }))
+      router.push(projectWorkspaceHref({ filterSearch: serializeWorkSurfaceQuery(view.filters), projectId: project?.id, tab }), { scroll: false })
     } else {
       setScope(nextScope)
       setSelectedProject(null)
-      window.history.pushState({}, '', workSurfaceHref('my-work', view.filters, view.layout))
+      router.push(workSurfaceHref('my-work', view.filters, view.layout), { scroll: false })
     }
   }
   const surfaceFilters = useMemo<Filters>(() => {
@@ -392,13 +412,14 @@ function HomePageScope({
     onLayoutChange={next => {
       layoutRef.current = next
       if (scope === 'projects') selectProjectTab(next)
-      else window.history.pushState({}, '', workSurfaceHref('my-work', filters, next))
+      else router.push(workSurfaceHref('my-work', filters, next), { scroll: false })
     }}
     onOpenItem={id => openItem(id)}
     onOpenProject={id => openProject(id)}
     onQueryChange={next => {
       setFilters(next)
-      if (scope !== 'projects') window.history.pushState({}, '', workSurfaceHref('my-work', next, layoutRef.current))
+      if (scope === 'projects' && selectedProject) router.replace(projectWorkspaceHref({ filterSearch: serializeWorkSurfaceQuery(next), projectId: selectedProject.id, tab: projectTab }), { scroll: false })
+      else if (scope !== 'projects') router.push(workSurfaceHref('my-work', next, layoutRef.current), { scroll: false })
     }}
     onRefreshReady={refresh => { surfaceRefreshRef.current = refresh }}
     onSelectionReset={() => { setSelectedProject(null); setSelectedItem(null) }}
@@ -412,12 +433,14 @@ function HomePageScope({
   /> : null
   useEffect(() => {
     if (scope !== 'projects' || selectedProject || teamProjects.length === 0) return
+    if (new URLSearchParams(currentSearch).get('project')) return
     const first = teamProjects[0]!
     setSelectedProject(first)
+    requestedProjectIdRef.current = first.id
     setProjectTab('overview')
     setFilters(current => ({ ...current, projectId: first.id, milestoneId: undefined }))
-    window.history.replaceState({}, '', projectWorkspaceHref({ projectId: first.id, tab: 'overview' }))
-  }, [scope, selectedProject, teamProjects])
+    router.replace(projectWorkspaceHref({ projectId: first.id, tab: 'overview' }), { scroll: false })
+  }, [currentSearch, router, scope, selectedProject, teamProjects])
   const closeItem = () => {
     setSelectedItem(null)
     setRequestedItem(null)
@@ -425,7 +448,7 @@ function HomePageScope({
     setDetailConflict(null)
     if (fullItemView) {
       setFullItemView(false)
-      window.history.replaceState({}, '', projectWorkspaceHref({ projectId: selectedProject?.id, tab: projectTab }))
+      router.replace(projectWorkspaceHref({ projectId: selectedProject?.id, tab: projectTab }), { scroll: false })
     }
   }
   const openCreateWorkItem = () => {
@@ -439,37 +462,52 @@ function HomePageScope({
   useEffect(() => {
     if (!actor) return
     const restoreRoute = () => {
-      const requestedScope = parseHomeScope(window.location.search)
+      const search = currentSearch ? `?${currentSearch}` : ''
+      const routeChanged = restoredSearchRef.current !== currentSearch
+      restoredSearchRef.current = currentSearch
+      const requestedScope = parseHomeScope(search)
       const nextScope: Scope = requestedScope === 'active' || requestedScope === 'backlog' ? 'my-work' : requestedScope
-      const route = readProjectWorkspaceRoute(window.location.search)
-      const params = new URLSearchParams(window.location.search)
+      const route = readProjectWorkspaceRoute(search)
+      const params = new URLSearchParams(search)
       const intent = params.get('intent')
-      const routeFilters = parseWorkSurfaceQuery(window.location.search)
+      const sectionItemId = params.get('workItemSectionItem')
+      const routeFilters = parseWorkSurfaceQuery(search)
       if (requestedScope === 'active') routeFilters.statusCategory = 'started'
       if (requestedScope === 'backlog') routeFilters.statusCategory = 'backlog'
       if (requestedScope === 'active' || requestedScope === 'backlog') {
         params.set('view', 'my-work')
         params.set('statusCategory', routeFilters.statusCategory ?? (requestedScope === 'active' ? 'started' : 'backlog'))
-        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`)
+        router.replace(`/?${params.toString()}`, { scroll: false })
       }
       setScope(nextScope)
-      layoutRef.current = parseWorkSurfaceLayout(window.location.search)
+      layoutRef.current = parseWorkSurfaceLayout(search)
       setFilters(routeFilters)
-      setSelectedItem(null)
-      setSelectedProject(null)
+      // Data refreshes can re-render the route projector without changing the
+      // URL. Keep an open sheet stable across those refreshes; clear it only
+      // when the user actually navigates to a different route.
+      if (routeChanged && sectionItemId !== selectedItem?.id) setSelectedItem(null)
+      if (nextScope !== 'projects') {
+        projectRequestGateRef.current.cancel()
+        setSelectedProject(null)
+        requestedProjectIdRef.current = null
+      }
       setFullItemView(false)
       if (intent === 'create-work-item') openCreateWorkItem()
       if (intent === 'create-project') setCreateProjectOpen(true)
       if (intent) {
         params.delete('intent')
-        window.history.replaceState({}, '', `${window.location.pathname}${params.size ? `?${params.toString()}` : ''}${window.location.hash}`)
+        router.replace(`/${params.size ? `?${params.toString()}` : ''}`, { scroll: false })
       }
       if (nextScope !== 'projects') {
         if (route.workItemId) void openItem(route.workItemId, true, false)
         return
       }
       setProjectTab(route.tab)
-      if (route.projectId) {
+      // A Project request can be invalidated while the authenticated/Team
+      // authority is still settling. Re-run the URL-owned selection on the
+      // next authority projection; LatestRequestGate cancels any superseded
+      // request and prevents an older response from committing.
+      if (route.projectId && route.projectId !== selectedProject?.id) {
         void openProject(route.projectId, route.tab, false).then(() => {
           if (!isAuthorityCurrent()) return
           if (route.workItemId) void openItem(route.workItemId, true, false)
@@ -477,9 +515,7 @@ function HomePageScope({
       } else if (route.workItemId) void openItem(route.workItemId, true, false)
     }
     restoreRoute()
-    window.addEventListener('popstate', restoreRoute)
-    return () => window.removeEventListener('popstate', restoreRoute)
-  }, [authorityScopeKey, isAuthorityCurrent])
+  }, [authorityScopeKey, currentSearch, isAuthorityCurrent, router, selectedProject?.id])
   const createWorkItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!selectedTeam || !actor) return
@@ -554,23 +590,20 @@ function HomePageScope({
       await commentsPage.refresh()
     } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
   }
-  const signOut = async () => { try { await apiMutation('logout', '/api/v1/auth/logout', { method: 'POST', headers: json({}) }) } catch { /* Cookie may already be expired. */ }; if (!isAuthorityCurrent()) return; clearCsrfToken(); window.location.assign('/login') }
-
   const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'recovery' ? t('recovery') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const fullPageDetailActive = fullItemView && (selectedItem !== null || (requestedItem?.mode === 'full_page' && detailErrorState !== null))
   const scopeNavigation = workspaceNavigation({ active: scope, onHomeNavigate: (event, value) => navigateScope(event, value), t })
   const utilityNavigation = workspaceUtilityNavigation({ t })
-  return <AppShell
+  return <AuthenticatedWorkspaceShell
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actorDisplayName(actor)}
     contextLabel={pageTitle}
+    documentTitle={scope === 'projects' && selectedProject ? selectedProject.name : pageTitle}
     headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
-    footer={<><Button data-testid="logout" onClick={() => void signOut()} variant="ghost">{t('signOut')}</Button>{releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · {t('build')} {releaseInfo.buildSha} · {t('schema')} {releaseInfo.schemaBaseline}</small>}</>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}
     mobileNavigationLabel={t('mobileNavigation')}
     navigation={scopeNavigation}
-    productName="WorkMesh"
     skipLabel={t('skipToContent')}
     teamSwitcher={<><label aria-busy={teamAuthorityRefreshBusy || undefined} className="team-switcher">{t('team')}{teamAuthoritiesInitialized
       ? <select aria-label={t('currentTeam')} value={selectedTeam?.id ?? ''} onChange={event => chooseTeam(event.currentTarget.value)}><option value="" disabled>{t('noTeam')}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select>
@@ -680,7 +713,7 @@ function HomePageScope({
       requestedKey={requestedItem.id}
       copy={detailCopy}
     />}
-  </AppShell>
+  </AuthenticatedWorkspaceShell>
 }
 
 type GuidanceScope = 'workspace' | 'team' | 'project'

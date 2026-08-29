@@ -103,8 +103,8 @@ const allOperationsFeatures: readonly FeatureKey[] = [
 ]
 const scrollIntoView = vi.fn()
 
-function renderContent(embedded = false, authorityKey: string | null = 'test-authority') {
-  return render(<LocaleProvider><OperationsContent authorityKey={authorityKey} embedded={embedded} /><ToastViewport /></LocaleProvider>)
+function renderContent(authorityKey: string | null = 'test-authority') {
+  return render(<LocaleProvider><OperationsContent authorityKey={authorityKey} /><ToastViewport /></LocaleProvider>)
 }
 
 const deferred = <T,>() => {
@@ -138,27 +138,22 @@ describe('shouldReanchorOperationsSection', () => {
   it.each([
     {
       expected: true,
-      input: { embedded: false, hash: '#operations-runs', layoutDidInitialize: true, section: 'runs', targetIsActive: true },
+      input: { hash: '#operations-runs', layoutDidInitialize: true, section: 'runs', targetIsActive: true },
       label: 'a focused standalone target after initial layout growth',
     },
     {
       expected: false,
-      input: { embedded: true, hash: '#operations-runs', layoutDidInitialize: true, section: 'runs', targetIsActive: true },
-      label: 'an embedded target',
-    },
-    {
-      expected: false,
-      input: { embedded: false, hash: '#operations-loops', layoutDidInitialize: true, section: 'runs', targetIsActive: true },
+      input: { hash: '#operations-loops', layoutDidInitialize: true, section: 'runs', targetIsActive: true },
       label: 'a changed hash',
     },
     {
       expected: false,
-      input: { embedded: false, hash: '#operations-runs', layoutDidInitialize: true, section: 'runs', targetIsActive: false },
+      input: { hash: '#operations-runs', layoutDidInitialize: true, section: 'runs', targetIsActive: false },
       label: 'a target after the user moved focus',
     },
     {
       expected: false,
-      input: { embedded: false, hash: '#operations-runs', layoutDidInitialize: false, section: 'runs', targetIsActive: true },
+      input: { hash: '#operations-runs', layoutDidInitialize: false, section: 'runs', targetIsActive: true },
       label: 'an ordinary refresh without an initialization transition',
     },
   ] as const)('returns $expected for $label', ({ expected, input }) => {
@@ -510,46 +505,6 @@ describe('OperationsContent section navigation', () => {
     expect(screen.queryByText('111')).toBeNull()
   })
 
-  it('renders the same anchor membership when embedded in Settings', async () => {
-    mockFeatures([operations, 'WORKMESH_EXPERIMENTAL_AUTOMATION'])
-    renderContent(true)
-
-    const navigation = await screen.findByRole('navigation', { name: '运营分区' })
-    expect(within(navigation).getAllByRole('link').map(link => link.getAttribute('href'))).toEqual([
-      '#operations-automation',
-      '#operations-runs',
-    ])
-    expect(screen.queryByRole('link', { name: '返回工作区' })).toBeNull()
-  })
-
-  it('restores embedded current state on mount and popstate without passive focus or scrolling', async () => {
-    window.history.replaceState(null, '', '/settings?tab=operations#operations-runs')
-    mockFeatures(allOperationsFeatures)
-    render(<LocaleProvider>
-      <button data-testid="connected-focus" type="button">Connected focus</button>
-      <OperationsContent authorityKey="test-authority" embedded />
-    </LocaleProvider>)
-    const connected = screen.getByTestId('connected-focus')
-    connected.focus()
-
-    const navigation = await screen.findByRole('navigation', { name: '运营分区' })
-    const runs = within(navigation).getByRole('link', { name: '近期运行' })
-    await waitFor(() => expect(runs).toHaveAttribute('aria-current', 'location'))
-    expect(document.activeElement).toBe(connected)
-    expect(scrollIntoView).not.toHaveBeenCalled()
-
-    window.history.replaceState(null, '', '/settings?tab=operations#operations-loops')
-    act(() => { window.dispatchEvent(new PopStateEvent('popstate')) })
-    const loops = within(navigation).getByRole('link', { name: 'Agent 循环' })
-    await waitFor(() => expect(loops).toHaveAttribute('aria-current', 'location'))
-    expect(runs).not.toHaveAttribute('aria-current')
-    expect(document.activeElement).toBe(connected)
-    expect(scrollIntoView).not.toHaveBeenCalled()
-
-    fireEvent.click(loops)
-    expect(document.activeElement).toBe(document.getElementById('operations-loops'))
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start' })
-  })
 })
 
 describe('OperationsContent dry-run outcomes', () => {
@@ -596,7 +551,7 @@ describe('OperationsContent dry-run outcomes', () => {
     const runs = prepareAutomation()
     const pendingDryRun = deferred<{ id: string }>()
     vi.mocked(apiRequest).mockReturnValueOnce(pendingDryRun.promise)
-    const view = renderContent(false, 'workspace-a:actor-a:admin')
+    const view = renderContent('workspace-a:actor-a:admin')
     fireEvent.click(await screen.findByRole('button', { name: '试运行' }))
     await waitFor(() => expect(vi.mocked(apiRequest).mock.calls.some(([path]) => path === '/api/v1/automation-rules/rule-1/dry-run')).toBe(true))
     vi.mocked(apiRequest).mockResolvedValueOnce(featureRegistry([operations, 'WORKMESH_EXPERIMENTAL_AUTOMATION']))
@@ -781,7 +736,7 @@ describe('OperationsContent loaded-record search', () => {
 
   it('synchronously clears Operations local projections and aborts an old authority refresh', async () => {
     mockFeatures([operations, 'WORKMESH_BETA_PLANNING'])
-    const view = renderContent(false, 'workspace-a:actor-a:admin')
+    const view = renderContent('workspace-a:actor-a:admin')
     const search = await screen.findByRole('searchbox', { name: '搜索已加载的运营记录' })
     fireEvent.change(search, { target: { value: 'actor A private filter' } })
 
@@ -803,7 +758,7 @@ describe('OperationsContent loaded-record search', () => {
   it('stamps an initial unowned route query and clears it before a new authority can hydrate it', async () => {
     window.history.replaceState(null, '', '/operations?scope=team&opsQuery=A-private#operations-cycles')
     mockFeatures([operations, 'WORKMESH_BETA_PLANNING'])
-    const view = renderContent(false, 'workspace-a:actor-a:admin')
+    const view = renderContent('workspace-a:actor-a:admin')
     expect((await screen.findByRole('searchbox', { name: '搜索已加载的运营记录' }) as HTMLInputElement).value).toBe('A-private')
     expect(window.history.state).toEqual({ workmeshOperationsAuthorityKey: 'workspace-a:actor-a:admin' })
 
@@ -874,26 +829,6 @@ describe('OperationsContent loaded-record search', () => {
     expect(new URLSearchParams(window.location.search).has('opsQuery')).toBe(false)
     expect(new URLSearchParams(window.location.search).get('scope')).toBe('team')
     expect(window.location.hash).toBe('#operations-cycles')
-  })
-
-  it('rereads same-Operations-tab popstate without taking over a Settings cross-tab URL', async () => {
-    mockCollection('/api/v1/cycles', { items: [
-      { id: 'cycle-first', name: 'First cycle', state: 'current', starts_at: '2026-08-01T00:00:00Z', ends_at: '2026-08-31T00:00:00Z', total_items: 1, completed_items: 0 },
-      { id: 'cycle-second', name: 'Second cycle', state: 'upcoming', starts_at: '2026-09-01T00:00:00Z', ends_at: '2026-09-30T00:00:00Z', total_items: 1, completed_items: 0 },
-    ] })
-    window.history.replaceState(null, '', '/settings?tab=operations&opsQuery=first')
-    mockFeatures([operations, 'WORKMESH_BETA_PLANNING'])
-    renderContent(true)
-    const search = await screen.findByRole('searchbox', { name: '搜索已加载的运营记录' })
-    await waitFor(() => expect(search).toHaveValue('first'))
-
-    window.history.pushState(null, '', '/settings?tab=operations&opsQuery=second')
-    window.dispatchEvent(new PopStateEvent('popstate'))
-    await waitFor(() => expect(search).toHaveValue('second'))
-
-    window.history.replaceState(null, '', '/settings?tab=workspace&opsQuery=first')
-    window.dispatchEvent(new PopStateEvent('popstate'))
-    expect(search).toHaveValue('second')
   })
 
   it('distinguishes initial loading, exhausted server-empty, and loaded no-match states', async () => {

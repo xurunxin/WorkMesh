@@ -277,7 +277,7 @@ export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerL
     </Button>
 
   return <>
-    {mounted ? (triggerSlot ? createPortal(trigger, triggerSlot) : trigger) : null}
+    {mounted && triggerSlot ? createPortal(trigger, triggerSlot) : null}
     {dialog}
   </>
 }

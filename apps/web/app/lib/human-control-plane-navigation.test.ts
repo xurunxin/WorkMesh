@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { projectControlHref, projectControlNavigation, readProjectControlRoute } from './human-control-plane-navigation'
 
 const copy = {
-  overview: 'Overview', work: 'Work', attention: 'Attention', runs: 'Runs', graph: 'Graph', activity: 'Activity', settings: 'Project Settings', beta: 'Beta',
+  overview: 'Overview', work: 'Work', attention: 'Attention', runs: 'Runs',
 } as const
 
 describe('Human Control Plane URL state', () => {
@@ -24,8 +24,7 @@ describe('Human Control Plane URL state', () => {
 
   it('publishes the complete task-oriented Project navigation order', () => {
     const items = projectControlNavigation({ active: 'attention', copy, projectId: 'p1' })
-    expect(items.map(item => item.label)).toEqual(['Overview', 'Work', 'Attention', 'Runs', 'Graph', 'Activity', 'Project Settings'])
-    expect(items.find(item => item.id === 'graph')?.badge).toBe('Beta')
+    expect(items.map(item => item.label)).toEqual(['Overview', 'Work', 'Attention', 'Runs'])
     expect(items.find(item => item.id === 'attention')?.active).toBe(true)
   })
 })

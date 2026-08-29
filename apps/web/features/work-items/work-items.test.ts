@@ -28,6 +28,10 @@ describe('Work Surface query boundary', () => {
     expect(workSurfaceHref('my-work', query, 'board')).toBe('/?view=my-work&projectId=project-1&milestoneId=milestone-1&label=security&statusCategory=started&layout=board')
   })
 
+  it('projects the canonical Project route key into the Work filter', () => {
+    expect(parseWorkSurfaceQuery('?view=projects&project=project-1&tab=board').projectId).toBe('project-1')
+  })
+
   it('passes the opaque server cursor through and appends by stable id', () => {
     expect(normalizeWorkSurfacePage({ items: [{ id: 'a' }], nextCursor: 'opaque.cursor' })).toEqual({ items: [{ id: 'a' }], nextCursor: 'opaque.cursor' })
     expect(appendWorkSurfacePage({ items: [{ id: 'a', value: 1 }], nextCursor: 'one' }, { items: [{ id: 'a', value: 2 }, { id: 'b', value: 3 }], nextCursor: null })).toEqual({ items: [{ id: 'a', value: 2 }, { id: 'b', value: 3 }], nextCursor: null })

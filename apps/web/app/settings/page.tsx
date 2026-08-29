@@ -1,7 +1,9 @@
 'use client'
 
-import { type CSSProperties, type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import { AppShell, Button, Tabs } from '@workmesh/ui'
+import { type CSSProperties, type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { notFound, useSearchParams } from 'next/navigation'
+import { Button, Tabs } from '@workmesh/ui'
+import { AuthenticatedWorkspaceShell } from '../authenticated-workspace-shell'
 import { ArrowLeft, FloppyDisk, Gear, PencilSimple, Plus, Trash, X } from '@phosphor-icons/react'
 import { ApiError, apiMutation, apiRequest, json } from '../lib/api'
 import { isCollectionAuthorityRevoked } from '../lib/collection-authority'
@@ -15,8 +17,7 @@ import { useAuthorityLifetime } from '../lib/use-authority-lifetime'
 import { useMediaQuery } from '../lib/use-media-query'
 import { useToast } from '../lib/use-toast'
 import { useRealtimeSubscription, type RealtimeResource } from '../lib/realtime'
-import { OperationsContent } from '../operations-content'
-import { readSettingsRoute, type SettingsRoute, type SettingsTab, writeSettingsRoute } from './route-state'
+import { readSettingsRoute, type SettingsRoute, writeSettingsRoute } from './route-state'
 import { resolveTeamSelection } from './team-resolution'
 import { DeleteTeamDialog, type DeleteTeamSnapshot } from './delete-team-dialog'
 import {
@@ -53,10 +54,20 @@ function focusVisibleTeamContext(): void {
 }
 
 export default function SettingsPage() {
-  const { settingsCopy: text } = useLocale()
+  const { settingsCopy: text, t } = useLocale()
+  const searchParams = useSearchParams()
+  if (searchParams?.has('tab')) notFound()
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
-  if (loading && !actor) return <main className="center foundation-center">{text.loading}</main>
-  if (!actor) return <main className="center foundation-center"><p className="error">{actorError || text.loadFailed}</p><Button icon={<ArrowLeft aria-hidden size={16} />} onClick={() => void refreshActor()}>{text.retry}</Button></main>
+  const stateShell = (content: ReactNode) => <AuthenticatedWorkspaceShell
+    contextLabel={text.title}
+    documentTitle={text.title}
+    headerActions={<LocaleToggle />}
+    navigation={[{ href: '/?view=my-work', icon: <ArrowLeft aria-hidden size={18} />, label: text.back }]}
+    skipLabel={t('skipToContent')}
+    utilityNavigation={[{ active: true, href: '/settings', icon: <Gear aria-hidden size={18} />, label: text.settings }]}
+  >{content}</AuthenticatedWorkspaceShell>
+  if (loading && !actor) return stateShell(<div className="center foundation-center">{text.loading}</div>)
+  if (!actor) return stateShell(<div className="center foundation-center"><p className="error">{actorError || text.loadFailed}</p><Button icon={<ArrowLeft aria-hidden size={16} />} onClick={() => void refreshActor()}>{text.retry}</Button></div>)
   return <SettingsPageScope
     actor={actor}
     actorError={actorError}
@@ -296,18 +307,6 @@ function SettingsPageScope({
     setRoute(readSettingsRoute(url.search))
   }
 
-  const selectTab = (value: string) => {
-    if (typeof window === 'undefined') return
-    const next: SettingsTab = value === 'operations' ? 'operations' : 'workspace'
-    if (readSettingsRoute(window.location.search).tab === next) return
-    postDeleteFocusIntentRef.current = null
-    setPostDeleteFocusPending(false)
-    setPostDeleteRefreshSettled(false)
-    const url = writeSettingsRoute(new URL(window.location.href), { tab: next })
-    window.history.pushState(window.history.state, '', url)
-    setRoute(readSettingsRoute(url.search))
-  }
-
   const createTeam = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formElement = event.currentTarget
@@ -489,16 +488,16 @@ function SettingsPageScope({
 
   const canManage = canManageWorkspace(actor.workspace_role)
 
-  return <AppShell
+  return <AuthenticatedWorkspaceShell
     administrationNavigationLabel={text.administrationNavigation}
     actorName={actorDisplayName(actor)}
     contextLabel={text.workspace}
+    documentTitle={text.title}
     headerActions={<div className="shell-action-cluster"><LocaleToggle /></div>}
     mainNavigationLabel={text.mainNavigation}
     menuLabel={text.menu}
     mobileNavigationLabel={text.mobileNavigation}
     navigation={[{ href: '/?view=my-work', icon: <ArrowLeft aria-hidden size={18} />, label: text.back }]}
-    productName="WorkMesh"
     skipLabel={text.skip}
     teamSwitcher={routeReady && route.tab === 'workspace' ? <label aria-busy={teamsRefreshBusy || undefined} className="team-switcher">{text.team}{teamResolution?.status === 'resolved'
       ? <select aria-label={text.currentTeam} value={selectedTeam?.id ?? ''} onChange={event => selectTeam(event.currentTarget.value)}><option value="" disabled>{text.noTeam}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name} ({team.key})</option>)}</select>
@@ -512,7 +511,7 @@ function SettingsPageScope({
       <Tabs
         ariaLabel={text.settingsTabsLabel}
         compact={compactTabs}
-        onValueChange={selectTab}
+        onValueChange={() => undefined}
         tabs={[
           {
             id: 'workspace',
@@ -614,7 +613,6 @@ function SettingsPageScope({
               </div>
             </>,
           },
-          { id: 'operations', label: text.tabOperations, panel: <OperationsContent authorityKey={authorityScopeKey} embedded /> },
         ]}
         value={route.tab}
       />
@@ -639,5 +637,5 @@ function SettingsPageScope({
         team={deleteSnapshot}
       />
     </section>
-  </AppShell>
+  </AuthenticatedWorkspaceShell>
 }

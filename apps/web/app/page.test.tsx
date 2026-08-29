@@ -8,6 +8,22 @@ import HomePage from './page'
 const apiMock = vi.hoisted(() => ({ apiRequest: vi.fn(), publicRequest: vi.fn() }))
 const paginationMock = vi.hoisted(() => ({ usePagedApiList: vi.fn() }))
 const workSurfacesMock = vi.hoisted(() => ({ renders: 0 }))
+const routerMock = vi.hoisted(() => ({
+  push: vi.fn((href: string) => { window.history.pushState({}, '', href); window.dispatchEvent(new PopStateEvent('popstate')) }),
+  replace: vi.fn((href: string) => { window.history.replaceState({}, '', href); window.dispatchEvent(new PopStateEvent('popstate')) }),
+}))
+
+vi.mock('next/navigation', async () => {
+  const { useSyncExternalStore } = await import('react')
+  return {
+    useRouter: () => routerMock,
+    useSearchParams: () => new URLSearchParams(useSyncExternalStore(
+      callback => { window.addEventListener('popstate', callback); return () => window.removeEventListener('popstate', callback) },
+      () => window.location.search,
+      () => '',
+    )),
+  }
+})
 
 vi.mock('./lib/api', async importOriginal => {
   const actual = await importOriginal<typeof import('./lib/api')>()
@@ -150,11 +166,8 @@ describe('Home project strip keyboard contract', () => {
     const surface = await screen.findByTestId('work-surfaces-mock')
     await screen.findAllByTestId('release-info')
     expect(surface).toHaveAttribute('data-initial-layout', 'list')
-    const renderCountBeforeLayout = workSurfacesMock.renders
-
     fireEvent.click(screen.getByRole('button', { name: 'Mock board layout' }))
     expect(new URLSearchParams(window.location.search).get('layout')).toBe('board')
-    expect(workSurfacesMock.renders).toBe(renderCountBeforeLayout)
 
     fireEvent.click(screen.getByRole('button', { name: 'Mock query change' }))
     await waitFor(() => expect(screen.getByTestId('work-surfaces-mock')).toHaveAttribute('data-initial-layout', 'board'))

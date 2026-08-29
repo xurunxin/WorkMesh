@@ -8,7 +8,7 @@ import {
   artifactInputSchema, claimWorkItemInputSchema, completeAgentSessionInputSchema, decideApprovalInputSchema,
   failAgentSessionInputSchema, heartbeatInputSchema, promptAgentSessionInputSchema,
   publishPlanInputSchema, requestApprovalInputSchema, signalAgentSessionInputSchema, stopAcknowledgementInputSchema, agentSessionStateSchema, retryAgentSessionInputSchema, refreshAgentSessionTokenInputSchema, delegateAndStartAgentSessionInputSchema, consumeApprovalInputSchema,
-  sessionContextResponseSchema,
+  agentResponseSchema, sessionContextResponseSchema,
 } from "@workmesh/contracts";
 import { DomainError, parseRevision } from "@workmesh/domain";
 import * as commands from "./commands.js";
@@ -29,6 +29,41 @@ const privateIp = (address: string) => address === "::1" || address.startsWith("
 export const assertWebhookUrl = async (raw: string): Promise<void> => { const url = new URL(raw); if (url.protocol !== "http:" && url.protocol !== "https:") throw new DomainError("VALIDATION_ERROR", "Webhook URL must use HTTP or HTTPS"); if (process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS === "true") return; if (url.hostname === "localhost") throw new DomainError("VALIDATION_ERROR", "Private webhook targets are disabled"); const addresses = net.isIP(url.hostname) ? [{ address: url.hostname }] : await lookup(url.hostname, { all: true }); if (addresses.some(entry => privateIp(entry.address))) throw new DomainError("VALIDATION_ERROR", "Private webhook targets are disabled"); };
 const agentOwnsSession = (request: FastifyRequest, sessionId: string) => { const current = actor(request); if (current.kind === "agent" && current.agentSessionId !== sessionId) throw new DomainError("RESOURCE_SCOPE_DENIED", "Agent token is scoped to its current session"); };
 const sessionQuery = z.object({ teamId: z.string().uuid().optional(), workItemId: z.string().uuid().optional(), agentId: z.string().uuid().optional(), principalHumanActorId: z.string().uuid().optional(), state: z.string().optional() });
+
+const agentProjection = (alias: 'a' | 'definition'): string => `${alias}.*,
+  ${alias}.display_name AS name,
+  ${alias}.manifest->>'icon' AS icon,
+  ${alias}.manifest->>'provider' AS provider,
+  ${alias}.manifest->>'version' AS version,
+  COALESCE((${alias}.manifest->>'heartbeatIntervalSeconds')::int,30) AS heartbeat_interval_seconds,
+  COALESCE(${alias}.manifest->'metadata','{}'::jsonb) AS metadata,
+  ${alias}.supported_protocols::text[] AS supported_protocols,
+  CASE WHEN ${alias}.is_active THEN 'active' ELSE 'archived' END AS lifecycle_status,
+  ${alias}.archive_reason AS archived_reason`
+
+async function readAgentResponse(db: Pool, workspaceId: string, agentId: string) {
+  const row = (await db.query(
+    `SELECT ${agentProjection('definition')},
+            COALESCE(access.team_access,'[]'::jsonb) AS team_access
+       FROM agent_definitions definition
+       LEFT JOIN LATERAL (
+         SELECT jsonb_agg(jsonb_build_object(
+           'agent_id',team_access.agent_id,'team_id',team_access.team_id,
+           'approved_capabilities',team_access.approved_capabilities,
+           'status',CASE WHEN team_access.revoked_at IS NULL THEN 'active' ELSE 'revoked' END,
+           'approved_by_actor_id',team_access.granted_by_actor_id,
+           'revision',definition.revision,'created_at',team_access.created_at,
+           'updated_at',team_access.created_at,'revoked_at',team_access.revoked_at
+         ) ORDER BY team_access.created_at) AS team_access
+           FROM agent_team_access team_access
+          WHERE team_access.workspace_id=definition.workspace_id AND team_access.agent_id=definition.id
+       ) access ON true
+      WHERE definition.id=$1 AND definition.workspace_id=$2`,
+    [agentId, workspaceId],
+  )).rows[0]
+  if (!row) throw new DomainError('NOT_FOUND', 'Agent not found')
+  return agentResponseSchema.parse(row)
+}
 
 async function readableSession(request: FastifyRequest, h: Helpers, sessionId: string) {
   agentOwnsSession(request, sessionId);
@@ -62,14 +97,12 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
     if(query.clientType){values.push(query.clientType);where.push(`EXISTS(SELECT 1 FROM agent_connections filter_connection WHERE filter_connection.agent_id=a.id AND filter_connection.client_type=$${values.length})`);}
     if(query.capability){values.push(query.capability);where.push(`$${values.length}=ANY(a.approved_capabilities)`);}
     if(query.connectionStatus){values.push(query.connectionStatus);where.push(`EXISTS(SELECT 1 FROM agent_connections filter_connection WHERE filter_connection.agent_id=a.id AND filter_connection.status=$${values.length})`);}
-    return h.paginator.query(h.db, request, request.query, {
+    const page = await h.paginator.query(h.db, request, request.query, {
       route: "/api/v1/agents",
       filters: query,
       sort: [{ key: "display_name", sql: "a.display_name", direction: "ASC" }, { key: "id", sql: "a.id", direction: "ASC" }],
     },
-      `SELECT a.*,
-              CASE WHEN a.is_active THEN 'active' ELSE 'archived' END AS lifecycle_status,
-              a.archive_reason AS archived_reason,
+      `SELECT ${agentProjection('a')},
               COALESCE(access.team_access, '[]'::jsonb) AS team_access
        FROM agent_definitions a
        LEFT JOIN LATERAL (
@@ -87,37 +120,16 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
            ORDER BY scoped.created_at DESC,scoped.team_id LIMIT 200
          ) ata
        ) access ON true
-       WHERE ${where.join(' AND ')}`,
+      WHERE ${where.join(' AND ')}`,
       values);
+    return { ...page, items: page.items.map(item => agentResponseSchema.parse(item)) }
   });
-  app.post("/api/v1/agents/register", async request => { const body=agentRegistrationInputSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); return commands.registerAgent(h.db,h.meta(request,body),body); });
+  app.post("/api/v1/agents/register", async request => { const body=agentRegistrationInputSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); const created = await commands.registerAgent(h.db,h.meta(request,body),body) as unknown as { id: string; installation_token: string }; return { ...await readAgentResponse(h.db, actor(request).workspaceId, created.id), installation_token: created.installation_token }; });
   app.get("/api/v1/agents/:id", async request => {
     needHuman(request);
-    const row = (await h.db.query(
-      `SELECT definition.*,
-              CASE WHEN definition.is_active THEN 'active' ELSE 'archived' END AS lifecycle_status,
-              definition.archive_reason AS archived_reason,
-              COALESCE(access.team_access,'[]'::jsonb) AS team_access
-         FROM agent_definitions definition
-         LEFT JOIN LATERAL (
-           SELECT jsonb_agg(jsonb_build_object(
-             'agent_id',team_access.agent_id,'team_id',team_access.team_id,
-             'approved_capabilities',team_access.approved_capabilities,
-             'status',CASE WHEN team_access.revoked_at IS NULL THEN 'active' ELSE 'revoked' END,
-             'approved_by_actor_id',team_access.granted_by_actor_id,
-             'revision',definition.revision,'created_at',team_access.created_at,
-             'updated_at',team_access.created_at,'revoked_at',team_access.revoked_at
-           ) ORDER BY team_access.created_at) AS team_access
-             FROM agent_team_access team_access
-            WHERE team_access.workspace_id=definition.workspace_id AND team_access.agent_id=definition.id
-         ) access ON true
-        WHERE definition.id=$1 AND definition.workspace_id=$2`,
-      [id(request), actor(request).workspaceId],
-    )).rows[0];
-    if (!row) throw new DomainError("NOT_FOUND", "Agent not found");
-    return row;
+    return readAgentResponse(h.db, actor(request).workspaceId, id(request));
   });
-  app.patch("/api/v1/agents/:id", async request => { const body = agentPatchSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); const agentId = id(request); return commands.updateAgent(h.db, h.meta(request, body, { id: agentId }), agentId, parseRevision(h.header(request, "if-match")), body); });
+  app.patch("/api/v1/agents/:id", async request => { const body = agentPatchSchema.parse(request.body); if(body.endpointUrl) await assertWebhookUrl(body.endpointUrl); const agentId = id(request); await commands.updateAgent(h.db, h.meta(request, body, { id: agentId }), agentId, parseRevision(h.header(request, "if-match")), body); return readAgentResponse(h.db, actor(request).workspaceId, agentId); });
   app.post("/api/v1/agents/:id/webhook-endpoints", async request => { needAdmin(request); const body = z.object({ url: z.string().url() }).parse(request.body); await assertWebhookUrl(body.url); const agentId = id(request); return commands.createWebhookEndpoint(h.db,h.meta(request,body,{id:agentId}),agentId,body.url); });
   app.post("/api/v1/agents/:id/webhook-endpoints/:endpointId/rotate-secret", async request => commands.rotateWebhookSecret(h.db, h.meta(request, {}, request.params as Record<string, unknown>), id(request), z.object({ endpointId: z.string().uuid() }).parse(request.params).endpointId, parseRevision(h.header(request, "if-match"))));
   app.put("/api/v1/agents/:id/team-access/:teamId", async request => { const body = z.object({ approvedCapabilities: z.array(z.string()).min(1) }).parse(request.body); return commands.grantAgentTeamAccess(h.db, h.meta(request, body, request.params as Record<string, unknown>), id(request), z.object({ teamId: z.string().uuid() }).parse(request.params).teamId, body.approvedCapabilities as never); });

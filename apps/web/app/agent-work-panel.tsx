@@ -3,7 +3,7 @@
 import { type FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button } from '@workmesh/ui'
 import { ApiError, apiRequest, json } from './lib/api'
-import { agentDelegationScopeKey, type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canAgentExecuteWorkForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, createAgentSession, formatTime, isCurrentAgentDelegationScope, normalizeApproval, normalizePlan } from './lib/agents'
+import { agentDelegationScopeKey, type Agent, type AgentSession, type Approval, type PlanVersion, activeAgentTeamAccess, agentName, agentProvider, agentStateClass, agentStateLabel, approvedAgentCapabilitiesForTeam, canAgentExecuteWorkForTeam, canPauseAgentSession, canRetryAgentSession, canStopAgentSession, createAgentSession, formatTime, isCurrentAgentDelegationScope, normalizeApproval, normalizePlan, parseAgent } from './lib/agents'
 import { LoadMoreButton, type PagedCollection, usePagedApiList } from './lib/pagination'
 import { type RealtimeResource, useRealtimeSubscription } from './lib/realtime'
 import { agentWorkRefreshTargets } from './lib/realtime-refresh'
@@ -48,7 +48,7 @@ export function useAgentDelegationController(input: DelegationControllerInput): 
   const generationKey = agentDelegationScopeKey(input)
   const generationRef = useRef(generationKey)
   if (generationRef.current !== generationKey) generationRef.current = generationKey
-  const agentsPage = usePagedApiList<Agent>(input.workItemId ? '/api/v1/agents' : null, { optional: true, scopeKey: input.scopeKey })
+  const agentsPage = usePagedApiList<Agent, Agent>(input.workItemId ? '/api/v1/agents' : null, { map: parseAgent, optional: true, scopeKey: input.scopeKey })
   const [state, setState] = useState<DelegationControllerState>(() => emptyDelegationControllerState(generationKey))
   // React preserves hook state for a rerender. Mask the old scope during the
   // render that observes a new Issue so a pending request cannot flash in the
