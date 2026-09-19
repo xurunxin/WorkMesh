@@ -60,6 +60,22 @@ export type RecoveryRow = Readonly<{
   budget: unknown
 }>
 
+export const completionEvidenceMissingSql = `
+  CASE jsonb_typeof(session.artifacts)
+    WHEN 'array' THEN jsonb_array_length(session.artifacts)=0
+    ELSE true
+  END
+  AND CASE jsonb_typeof(session.result_evidence)
+    WHEN 'array' THEN jsonb_array_length(session.result_evidence)=0
+    WHEN 'object' THEN
+      CASE WHEN jsonb_typeof(session.result_evidence->'artifactIds')='array'
+        THEN jsonb_array_length(session.result_evidence->'artifactIds')=0 ELSE true END
+      AND CASE WHEN jsonb_typeof(session.result_evidence->'checks')='array'
+        THEN jsonb_array_length(session.result_evidence->'checks')=0 ELSE true END
+    ELSE true
+  END
+  AND session.no_artifact_reason IS NULL`
+
 const terminalStates = new Set(['completed', 'failed', 'canceled'])
 const iso = (value: Date | string): string => value instanceof Date
   ? value.toISOString()
@@ -325,7 +341,7 @@ export const recoveryProjectionSql = `WITH recovery_sessions AS (
       UNION ALL SELECT 'lease_lost',session.lease_expires_at WHERE session.lease_id IS NOT NULL AND session.state NOT IN ('completed','failed','canceled')
       UNION ALL SELECT 'approval_expired',session.approval_expires_at WHERE session.approval_id IS NOT NULL
       UNION ALL SELECT 'validation_attempts_exhausted',session.updated_at WHERE session.failed_validation_count>=3 AND NOT session.validation_passed
-      UNION ALL SELECT 'completion_evidence_missing',COALESCE(session.ended_at,session.updated_at) WHERE session.state='completed' AND jsonb_array_length(session.artifacts)=0 AND jsonb_array_length(session.result_evidence)=0 AND session.no_artifact_reason IS NULL
+      UNION ALL SELECT 'completion_evidence_missing',COALESCE(session.ended_at,session.updated_at) WHERE session.state='completed' AND ${completionEvidenceMissingSql}
       UNION ALL SELECT 'budget_exhausted',COALESCE(session.ended_at,session.updated_at) WHERE session.state='failed' AND (session.error_code ILIKE '%BUDGET%' OR session.state_reason ILIKE '%budget%' OR session.error_summary ILIKE '%budget%')
     ) condition
 )

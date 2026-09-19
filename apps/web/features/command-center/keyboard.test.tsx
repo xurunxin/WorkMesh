@@ -1,9 +1,15 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { GlobalCommandCenter } from './command-center'
 
 const returnFocusStateKey = '__workmeshCommandCenterReturnFocusV1'
+
+beforeEach(() => {
+  const slot = document.createElement('div')
+  slot.id = 'workmesh-command-center-trigger-slot'
+  document.body.appendChild(slot)
+})
 
 afterEach(() => {
   cleanup()

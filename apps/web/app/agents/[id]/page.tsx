@@ -1,8 +1,9 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
-import { AppShell, AsyncStateSurface, ErrorState } from '@workmesh/ui'
-import { type Agent, agentName } from '../../lib/agents'
+import { AsyncStateSurface, ErrorState } from '@workmesh/ui'
+import { AuthenticatedWorkspaceShell } from '../../authenticated-workspace-shell'
+import { type Agent, agentName, parseAgent } from '../../lib/agents'
 import { ApiError, apiRequest } from '../../lib/api'
 import { LocaleToggle, useLocale } from '../../lib/i18n'
 import { useAuthenticatedActor } from '../../lib/use-authenticated-actor'
@@ -38,8 +39,8 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
     setAgent(null)
     setNotFound(false)
     setRequestError('')
-    void apiRequest<Agent>(`/api/v1/agents/${encodeURIComponent(agentId)}`)
-      .then(value => { if (current) setAgent(value) })
+    void apiRequest<unknown>(`/api/v1/agents/${encodeURIComponent(agentId)}`)
+      .then(value => { if (current) setAgent(parseAgent(value)) })
       .catch((reason: unknown) => {
         if (!current) return
         if (reason instanceof ApiError && reason.status === 404) setNotFound(true)
@@ -53,18 +54,18 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
     if (!actor) void refreshActor()
     else setReloadKey(current => current + 1)
   }
-  const title = agent ? agentName(agent) : agentId ?? text.title
+  const title = agent ? agentName(agent) : text.title
 
-  return <AppShell
+  return <AuthenticatedWorkspaceShell
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actor?.display_name}
     contextLabel={text.context}
+    documentTitle={title}
     headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}
     mobileNavigationLabel={t('mobileNavigation')}
     navigation={workspaceNavigation({ active: 'agents', t })}
-    productName="WorkMesh"
     skipLabel={t('skipToContent')}
     utilityNavigation={workspaceUtilityNavigation({ t })}
     workspaceNavigationLabel={t('workspaceNavigation')}
@@ -98,5 +99,5 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
         }
       </div>
     </section>
-  </AppShell>
+  </AuthenticatedWorkspaceShell>
 }

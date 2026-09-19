@@ -3,7 +3,15 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ControlCenterResponse } from '@workmesh/contracts'
 import { LocaleProvider } from './lib/i18n'
-import { ProjectControlCenter, projectControlCenterFeatureEnabled } from './project-control-center'
+import { ProjectControlCenter } from './project-control-center'
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: (href: string) => window.history.pushState({}, '', href),
+    replace: (href: string) => window.history.replaceState({}, '', href),
+  }),
+  useSearchParams: () => new URLSearchParams(window.location.search),
+}))
 
 const projectId = '11111111-1111-4111-8111-111111111111'
 const digest = (overrides: Partial<ControlCenterResponse['collections']['running']['items'][number]> = {}) => ({
@@ -53,16 +61,10 @@ afterEach(() => {
 })
 
 describe('Project Control Center', () => {
-  it('preserves the Stable Project Overview when the feature is disabled', () => {
-    expect(projectControlCenterFeatureEnabled('0')).toBe(false)
-    expect(projectControlCenterFeatureEnabled('1')).toBe(true)
-    expect(projectControlCenterFeatureEnabled(undefined)).toBe(true)
-  })
-
   it('loads one bounded projection and renders the complete Run digest', async () => {
     const fetchMock = vi.fn(async (_input: string) => ({ ok: true, status: 200, json: async () => response }))
     vi.stubGlobal('fetch', fetchMock)
-    render(<LocaleProvider><ProjectControlCenter onOpenWork={() => undefined} project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
 
     expect(await screen.findByRole('heading', { name: 'Project Control Center' })).toBeVisible()
     expect(screen.getAllByText('Bind production projection').length).toBeGreaterThan(0)
@@ -74,21 +76,20 @@ describe('Project Control Center', () => {
   })
 
   it('keeps Project identity and the work escape available while the projection fails', async () => {
-    const onOpenWork = vi.fn()
     vi.stubGlobal('fetch', vi.fn(async () => ({ headers: new Headers(), ok: false, status: 503, json: async () => ({ error: { message: 'Projection unavailable' } }) })))
-    render(<LocaleProvider><ProjectControlCenter onOpenWork={onOpenWork} project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
 
     expect(screen.getByRole('heading', { name: 'Runtime Reliability' })).toBeVisible()
     expect(await screen.findByRole('alert')).toHaveTextContent('Projection unavailable')
     fireEvent.click(screen.getByTestId('project-control-view-work'))
-    expect(onOpenWork).toHaveBeenCalledTimes(1)
+    expect(window.location.search).toContain('surface=work')
   })
 
   it('paginates a collection independently and restores focus after closing detail', async () => {
     const next = { ...response, collections: { ...response.collections, running: { items: [digest({ id: 'agent_session:99999999-9999-4999-8999-999999999999', sessionId: '99999999-9999-4999-8999-999999999999', title: 'Second Agent' })], nextCursor: null } } }
     const fetchMock = vi.fn(async (input: string) => ({ ok: true, status: 200, json: async () => input.includes('cursor=') ? next : response }))
     vi.stubGlobal('fetch', fetchMock)
-    render(<LocaleProvider><ProjectControlCenter onOpenWork={() => undefined} project={{ id: projectId, name: 'Runtime Reliability', summary: null, description: null, status: 'active' }} /></LocaleProvider>)
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: null, description: null, status: 'active' }} /></LocaleProvider>)
 
     const details = (await screen.findAllByRole('button', { name: '查看详情' }))[0]!
     details.focus()
@@ -108,7 +109,7 @@ describe('Project Control Center', () => {
   it('owns server-side filters in the URL and projection request', async () => {
     const fetchMock = vi.fn(async (_input: string) => ({ ok: true, status: 200, json: async () => response }))
     vi.stubGlobal('fetch', fetchMock)
-    render(<LocaleProvider><ProjectControlCenter onOpenWork={() => undefined} project={{ id: projectId, name: 'Runtime Reliability', summary: null, description: null, status: 'active' }} /></LocaleProvider>)
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: null, description: null, status: 'active' }} /></LocaleProvider>)
     await screen.findByRole('heading', { name: 'Project Control Center' })
 
     fireEvent.change(screen.getByRole('combobox', { name: '负责人' }), { target: { value: '44444444-4444-4444-8444-444444444444' } })

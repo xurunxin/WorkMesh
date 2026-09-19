@@ -14,7 +14,7 @@ import type {
   InboxListItem,
   ListResponse,
 } from "@workmesh/contracts";
-import { Badge, Button, Card, WorkSurfaceState } from "@workmesh/ui";
+import { Badge, Button, Card, TabBar, WorkSurfaceState } from "@workmesh/ui";
 import { AttentionCenter } from "./attention-center";
 import { AutonomyBanner } from "./autonomy-banner";
 import { CollaborationHub } from "../features/collaboration/collaboration-hub";
@@ -376,7 +376,7 @@ export function ActionableCollaborationQueues({ actor }: { actor: Actor }) {
   return <section className="actionable-collaboration" data-testid="actionable-collaboration" ref={rootRef}>
     <header className="surface-header"><div><p className="eyebrow">Human Control Plane</p><h2>{copy.title}</h2><p>{copy.intro}</p></div><Badge tone={connection === "connected" ? "success" : "warning"}>{connection === "connected" ? copy.current : copy.offline}</Badge></header>
     <AutonomyBanner actor={actor} />
-    <nav aria-label={copy.title} className="collaboration-queue-tabs" role="tablist">{(["needs-you", "messages", "agent-delivery", "updates"] as CollaborationQueue[]).map(queue => <button aria-selected={route.queue === queue} key={queue} onClick={() => selectQueue(queue)} role="tab" type="button">{queue === "needs-you" ? copy.needs : queue === "messages" ? copy.messages : queue === "agent-delivery" ? copy.agents : copy.updates}</button>)}</nav>
+    <TabBar ariaLabel={copy.title} onValueChange={value => selectQueue(value as CollaborationQueue)} tabs={(["needs-you", "messages", "agent-delivery", "updates"] as CollaborationQueue[]).map(queue => ({ id: queue, label: queue === "needs-you" ? copy.needs : queue === "messages" ? copy.messages : queue === "agent-delivery" ? copy.agents : copy.updates }))} value={route.queue} />
     {pendingRefresh && <div className="collaboration-update-notice" role="status"><span>{copy.pendingUpdates}</span><Button onClick={() => void refreshQueues()} type="button" variant="secondary">{copy.showUpdates}</Button></div>}
     {filters}
     {detailError && <p className="error" role="alert">{detailError}</p>}

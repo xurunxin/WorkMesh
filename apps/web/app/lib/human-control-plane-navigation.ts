@@ -1,4 +1,4 @@
-export type ProjectControlSurface = 'overview' | 'work' | 'attention' | 'runs' | 'graph' | 'activity' | 'settings'
+export type ProjectControlSurface = 'overview' | 'work' | 'attention' | 'runs'
 export type ProjectWorkView = 'list' | 'board' | 'backlog'
 
 export type ProjectControlRoute = Readonly<{
@@ -9,7 +9,7 @@ export type ProjectControlRoute = Readonly<{
   workView: ProjectWorkView
 }>
 
-const surfaces = new Set<ProjectControlSurface>(['overview', 'work', 'attention', 'runs', 'graph', 'activity', 'settings'])
+const surfaces = new Set<ProjectControlSurface>(['overview', 'work', 'attention', 'runs'])
 const workViews = new Set<ProjectWorkView>(['list', 'board', 'backlog'])
 
 export function readProjectControlRoute(search: string): ProjectControlRoute {
@@ -51,7 +51,7 @@ export function projectControlHref(input: Readonly<{
   return `/?${params.toString()}`
 }
 
-export type ProjectNavigationCopy = Record<ProjectControlSurface, string> & { beta: string }
+export type ProjectNavigationCopy = Record<ProjectControlSurface, string>
 
 export function projectControlNavigation(input: Readonly<{
   active: ProjectControlSurface
@@ -59,10 +59,9 @@ export function projectControlNavigation(input: Readonly<{
   currentSearch?: string
   projectId: string
 }>) {
-  const order: ProjectControlSurface[] = ['overview', 'work', 'attention', 'runs', 'graph', 'activity', 'settings']
+  const order: ProjectControlSurface[] = ['overview', 'work', 'attention', 'runs']
   return order.map(surface => ({
     active: surface === input.active,
-    badge: surface === 'graph' ? input.copy.beta : undefined,
     href: projectControlHref({ currentSearch: input.currentSearch, projectId: input.projectId, surface }),
     id: surface,
     label: input.copy[surface],

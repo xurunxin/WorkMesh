@@ -237,21 +237,37 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
 
 test('makes a later Agent registry record reachable through explicit continuation', async ({ page }) => {
   const agentRequests: URL[] = []
-  const agent = (id: string, name: string) => ({
+  const firstAgentId = '00000000-0000-4000-8000-000000000301'
+  const laterAgentId = '00000000-0000-4000-8000-000000000302'
+  const agent = (id: string, actorId: string, name: string) => ({
     id,
-    workspace_id: 'workspace-page',
-    actor_id: `${id}-actor`,
+    workspace_id: '00000000-0000-4000-8000-000000000300',
+    actor_id: actorId,
+    name,
     display_name: name,
-    slug: id,
+    slug: name.toLowerCase().replaceAll(' ', '-'),
     description: `${name} description`,
+    icon: null,
+    provider: 'playwright',
+    version: '1.0.0',
+    endpoint_url: null,
     supported_protocols: ['native_http'],
     skills: [],
     requested_capabilities: [],
     approved_capabilities: [],
+    output_artifact_types: [],
     max_concurrency: 1,
+    heartbeat_interval_seconds: 30,
+    metadata: {},
     is_active: true,
+    lifecycle_status: 'active',
     revision: 1,
     team_access: [],
+    archived_at: null,
+    archived_by_actor_id: null,
+    archived_reason: null,
+    created_at: '2026-08-29T00:00:00.000Z',
+    updated_at: '2026-08-29T00:00:00.000Z',
   })
   await page.route(`${apiUrl}/api/v1/**`, async route => {
     const url = new URL(route.request().url())
@@ -271,8 +287,8 @@ test('makes a later Agent registry record reachable through explicit continuatio
     if (path === '/api/v1/agents') {
       agentRequests.push(url)
       return url.searchParams.get('cursor') === 'opaque-agent-page-2'
-        ? body({ items: [agent('agent-later', 'Later Agent')], nextCursor: null })
-        : body({ items: [agent('agent-first', 'First Agent')], nextCursor: 'opaque-agent-page-2' })
+        ? body({ items: [agent(laterAgentId, '00000000-0000-4000-8000-000000000312', 'Later Agent')], nextCursor: null })
+        : body({ items: [agent(firstAgentId, '00000000-0000-4000-8000-000000000311', 'First Agent')], nextCursor: 'opaque-agent-page-2' })
     }
     if (path === '/api/v1/teams'
       || path === '/api/v1/agent-sessions'
@@ -284,10 +300,10 @@ test('makes a later Agent registry record reachable through explicit continuatio
   })
 
   await page.goto('/agents')
-  await expect(page.getByTestId('agent-registry-agent-first')).toBeVisible()
-  await expect(page.getByTestId('agent-registry-agent-later')).toHaveCount(0)
+  await expect(page.getByTestId(`agent-registry-${firstAgentId}`)).toBeVisible()
+  await expect(page.getByTestId(`agent-registry-${laterAgentId}`)).toHaveCount(0)
   await page.getByTestId('load-more-agents').click()
-  await expect(page.getByTestId('agent-registry-agent-later')).toContainText('Later Agent')
+  await expect(page.getByTestId(`agent-registry-${laterAgentId}`)).toContainText('Later Agent')
   expect(agentRequests.some(request =>
     request.searchParams.get('cursor') === 'opaque-agent-page-2'
       && request.searchParams.get('limit') === '100')).toBe(true)

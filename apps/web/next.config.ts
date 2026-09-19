@@ -6,7 +6,7 @@ import type { NextConfig } from 'next'
 const apiUpstream = process.env.NEXT_DEV_API_UPSTREAM ?? 'http://localhost:3001'
 const nextConfig:NextConfig={
   output:'standalone',
-  transpilePackages:['@workmesh/ui'],
+  transpilePackages:['@workmesh/ui', '@workmesh/contracts'],
   async rewrites() {
     if (process.env.NODE_ENV === 'production') return []
     return [{

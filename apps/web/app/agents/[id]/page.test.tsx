@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { Suspense } from 'react'
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LocaleProvider } from '../../lib/i18n'
 import type { Agent } from '../../lib/agents'
@@ -25,11 +25,13 @@ vi.mock('../agent-workspace', () => ({ AgentWorkspace: ({ agentId }: { agentId: 
 afterEach(() => { cleanup() })
 beforeEach(() => { vi.mocked(apiRequest).mockReset() })
 
+const agentId = '10000000-0000-4000-8000-000000000001'
 const agent = (overrides: Partial<Agent> = {}): Agent => ({
-  id: 'agent-1', workspace_id: 'workspace-1', actor_id: 'actor-1', name: 'Coder Bot', slug: 'coder',
+  id: agentId, workspace_id: '10000000-0000-4000-8000-000000000002', actor_id: '10000000-0000-4000-8000-000000000003', name: 'Coder Bot', slug: 'coder',
   description: 'Plans scoped work.', provider: 'openai', version: '1.2.3', supported_protocols: ['mcp'],
-  skills: [], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], max_concurrency: 2,
-  heartbeat_interval_seconds: 30, is_active: true, revision: 1, ...overrides,
+  icon: null, endpoint_url: null, skills: [], requested_capabilities: ['work:read'], approved_capabilities: ['work:read'], output_artifact_types: [], max_concurrency: 2,
+  heartbeat_interval_seconds: 30, metadata: {}, team_access: [], is_active: true, lifecycle_status: 'active', revision: 1,
+  archived_at: null, archived_by_actor_id: null, archived_reason: null, created_at: '2026-08-29T00:00:00.000Z', updated_at: '2026-08-29T00:00:00.000Z', ...overrides,
 })
 
 function renderRoute(id: string) {
@@ -39,44 +41,24 @@ function renderRoute(id: string) {
 }
 
 describe('Agent detail route', () => {
-  it('renders definition facts without claiming omitted Team Access is empty', async () => {
+  it('renders validated definition facts and the authoritative empty Team Access projection', async () => {
     vi.mocked(apiRequest).mockResolvedValue(agent())
-    renderRoute('agent-1')
+    renderRoute(agentId)
 
     expect(await screen.findByRole('heading', { name: 'Coder Bot' })).toBeInTheDocument()
-    expect(apiRequest).toHaveBeenCalledWith('/api/v1/agents/agent-1')
+    expect(apiRequest).toHaveBeenCalledWith(`/api/v1/agents/${agentId}`)
     expect(screen.getByRole('link', { name: /注册表|registry/i })).toHaveAttribute('href', '/agents?tab=agents')
-    expect(screen.getByRole('link', { name: /Coder Bot/ })).toHaveAttribute('href', '/agents?tab=agents&teamAccessAgent=agent-1')
-    expect(screen.queryByTestId('agent-team-access-projection')).toBeNull()
-    expect(screen.getByTestId('agent-workspace')).toHaveTextContent('agent-1')
+    expect(screen.getByRole('link', { name: /Coder Bot/ })).toHaveAttribute('href', `/agents?tab=agents&teamAccessAgent=${agentId}`)
+    expect(screen.getByTestId('agent-team-access-projection')).toBeInTheDocument()
+    expect(screen.getByTestId('agent-workspace')).toHaveTextContent(agentId)
   })
 
-  it('decodes the raw Next segment once, then encodes the logical id once for API and management URLs', async () => {
-    vi.mocked(apiRequest).mockResolvedValue(agent({ id: 'agent/1' }))
-    renderRoute('agent%2F1')
-    await screen.findByRole('heading', { name: 'Coder Bot' })
-    expect(apiRequest).toHaveBeenCalledWith('/api/v1/agents/agent%2F1')
-    expect(screen.getByRole('link', { name: /Coder Bot/ })).toHaveAttribute('href', '/agents?tab=agents&teamAccessAgent=agent%2F1')
-  })
+  it('contains malformed Agent payloads as a retryable local error', async () => {
+    vi.mocked(apiRequest).mockResolvedValue({ ...agent(), supported_protocols: '{mcp}' })
+    renderRoute(agentId)
 
-  it('displays the once-decoded logical id while its definition is loading', async () => {
-    let resolveAgent: (value: Agent) => void = () => undefined
-    const pending = new Promise<Agent>(resolve => { resolveAgent = resolve })
-    vi.mocked(apiRequest).mockReturnValue(pending)
-    renderRoute('agent%2F1')
-
-    expect(screen.getByRole('heading', { name: 'agent/1' })).toBeInTheDocument()
-    expect(apiRequest).toHaveBeenCalledWith('/api/v1/agents/agent%2F1')
-    await act(async () => { resolveAgent(agent()); await pending })
-    expect(await screen.findByRole('heading', { name: 'Coder Bot' })).toBeInTheDocument()
-  })
-
-  it('round-trips an Agent id that contains the literal characters %2F without decoding twice', async () => {
-    vi.mocked(apiRequest).mockResolvedValue(agent({ id: 'agent%2F1' }))
-    renderRoute('agent%252F1')
-    await screen.findByRole('heading', { name: 'Coder Bot' })
-    expect(apiRequest).toHaveBeenCalledWith('/api/v1/agents/agent%252F1')
-    expect(screen.getByRole('link', { name: /Coder Bot/ })).toHaveAttribute('href', '/agents?tab=agents&teamAccessAgent=agent%252F1')
+    await waitFor(() => expect(document.querySelector('.wm-state-error')).not.toBeNull())
+    expect(document.querySelector('.app-shell')).not.toBeNull()
   })
 
   it('renders malformed percent encoding as a safe not-found state without requesting the API', async () => {

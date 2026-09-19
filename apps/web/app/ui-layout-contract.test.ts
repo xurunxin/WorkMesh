@@ -10,13 +10,15 @@ describe('human UI layout contract', () => {
     expect(styles).toMatch(/\.content > \.conflict-notice\s*\{[^}]*z-index:\s*30;/s)
   })
 
-  it('keeps project planning inside the viewport while allowing local project navigation scroll', () => {
+  it('keeps Project list and long detail content independently accessible', () => {
     const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
 
-    expect(styles).toMatch(/\.app-shell,\s*\.app-workspace,\s*\.app-content,\s*\.content,\s*\.project-workspace,\s*\.project-plan-header,\s*\.project-plan-copy\s*\{[^}]*min-width:\s*0;[^}]*max-width:\s*100%;/s)
-    expect(styles).toMatch(/\.project-plan-copy\s+:where\(h2,\s*p\)\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
-    expect(styles).toMatch(/\.project-strip\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*nowrap;[^}]*max-width:\s*100%;[^}]*overflow-x:\s*auto;[^}]*overscroll-behavior-inline:\s*contain;/s)
-    expect(styles).toMatch(/\.project-strip\s*>\s*\*\s*\{[^}]*flex:\s*0\s+0\s+auto;/s)
+    expect(styles).toMatch(/\.project-rail-list\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s)
+    expect(styles).toMatch(/\.project-detail-pane\s*\{[^}]*container-name:\s*project-detail;[^}]*overflow-x:\s*hidden;[^}]*overflow-y:\s*auto;/s)
+    expect(styles).toMatch(/\.hcp-reference\s*\{[^}]*box-sizing:\s*border-box;[^}]*width:\s*100%;/s)
+    expect(styles).toMatch(/@container\s+project-detail\s*\(max-width:\s*960px\)\s*\{[^}]*\.hcp-project-heading\s*\{[^}]*flex-wrap:\s*wrap;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*820px\)\s*\{[\s\S]*?\.hcp-project-heading\s*>\s*div:first-child\s*\{[^}]*flex:\s*none;[^}]*width:\s*100%;/s)
+    expect(styles).toMatch(/\.hcp-project-heading \.rich-markdown\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
   })
 
   it('removes the real Work Surface pulse under reduced motion without hiding its state', () => {
@@ -36,7 +38,7 @@ describe('human UI layout contract', () => {
   it('keeps the 760/761 shell boundary and mobile discrete controls explicit', () => {
     const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
 
-    expect(styles).toMatch(/\.app-brand\s*>\s*strong\s*\{[^}]*font-size:\s*1\.08rem;[^}]*letter-spacing:\s*-\.02em;/s)
+    expect(styles).toMatch(/\.app-brand-title\s*>\s*strong\s*\{[^}]*font-size:\s*1\.08rem;[^}]*letter-spacing:\s*-\.02em;/s)
     expect(styles).not.toMatch(/\.app-brand\s+h1\s*\{/)
     expect(styles).toMatch(/main#workmesh-main:focus-visible\s*\{[^}]*outline:\s*0;[^}]*box-shadow:\s*inset\s+0\s+3px\s+0\s+var\(--wm-focus\);/s)
     expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)\s*\{[^}]*\.app-shell\s*\{\s*display:\s*block;/s)
@@ -69,7 +71,7 @@ describe('human UI layout contract', () => {
     expect(styles).not.toMatch(/--wm-color-canvas\s*:/)
     expect(layout).toContain("import '@workmesh/ui/tokens.css'")
     for (const route of [home, settings, agents, operations]) {
-      expect(route).toContain('AppShell')
+      expect(route).toContain('AuthenticatedWorkspaceShell')
     }
     // settings intentionally omits RealtimeStatus (administrative surface, no live workspace data)
     for (const route of [home, agents, operations]) {
@@ -77,11 +79,9 @@ describe('human UI layout contract', () => {
     }
     expect(home).toContain('ErrorState')
     expect(agents).toContain('ErrorState')
-    // Operations content is now embedded inside the Settings page as a tab.
-    expect(settings).toContain('OperationsContent')
-    // The standalone /operations route is a thin wrapper that redirects and re-uses
-    // the same AppShell. It must still render via the unified shell.
-    expect(operations).toContain('AppShell')
+    expect(settings).not.toContain('OperationsContent')
+    // The standalone /operations route owns the only production Operations surface.
+    expect(operations).toContain('AuthenticatedWorkspaceShell')
     expect(operations).toContain('OperationsContent')
   })
 
@@ -129,7 +129,7 @@ describe('human UI layout contract', () => {
       expect(route, 'route should import LocaleToggle/useLocale').toMatch(/useLocale|from '[^']*lib\/i18n'/)
     }
     for (const route of [home, settings, operations, agents]) {
-      expect(route, 'workspace route should wrap in AppShell').toContain('AppShell')
+      expect(route, 'workspace route should wrap in the authenticated shell').toContain('AuthenticatedWorkspaceShell')
     }
     for (const route of [login, install]) {
       expect(route, 'public route should wrap in AppShell').toContain('AppShell')

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { DataTableFrame, DescriptionList, Field, OverflowText, ResponsiveActionBar, Tabs, Toast } from './index.js'
+import { DataTableFrame, DescriptionList, Field, OverflowText, ResponsiveActionBar, TabBar, Tabs, Toast } from './index.js'
 
 vi.mock('react', async importOriginal => {
   const actual = await importOriginal<typeof import('react')>()
@@ -67,7 +67,7 @@ describe('UI authority and token boundary', () => {
 
   it('exports the API-free Human Control Plane component inventory', () => {
     const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    for (const component of ['ProjectControlNavigation', 'AttentionCard', 'AttentionListItem', 'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge', 'RunStatusBar', 'RunDigestCard', 'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceDrawer', 'EvidenceReferenceList', 'ConsequencePreviewDialog', 'ActorAttribution', 'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar', 'ControlCenterSection']) {
+    for (const component of ['TabBar', 'AttentionCard', 'AttentionListItem', 'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge', 'RunStatusBar', 'RunDigestCard', 'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceDrawer', 'EvidenceReferenceList', 'ConsequencePreviewDialog', 'ActorAttribution', 'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar', 'ControlCenterSection']) {
       expect(source).toMatch(new RegExp(`export function ${component}`))
     }
     expect(source).not.toContain('window.prompt')
@@ -145,6 +145,13 @@ describe('WorkItemCard status name pill', () => {
 })
 
 describe('Tabs compact accessibility', () => {
+  it('renders counts through the shared tab badge vocabulary', () => {
+    const bar = TabBar({ ariaLabel: 'Work views', onValueChange: () => undefined, tabs: [{ id: 'list', label: 'List' }, { badge: 12, id: 'backlog', label: 'Backlog' }], value: 'backlog' })
+    const elements = elementsIn(bar)
+    expect(elements.find(element => element.props.className === 'wm-tab-badge')?.props.children).toBe(12)
+    expect(elements.filter(element => element.props.role === 'tab' && element.props['aria-selected'] === true)).toHaveLength(1)
+  })
+
   it('gives nested compact tabpanels valid, instance-local accessible names', () => {
     const inner = Tabs({
       ariaLabel: 'Approval views',

@@ -93,6 +93,50 @@ final result: passed
 
 ---
 
+# Human Control Plane full-site unification QA (2026-08-29)
+
+## Sources compared
+
+- Visual source: `docs/evidence/human-control-plane/hcp-option-2-1440x1024.png`.
+- Production implementation: `artifacts/design-qa/hcp-unification-desktop-1440x1024.png`.
+- Mobile implementation: `artifacts/design-qa/hcp-unification-mobile-390x844.png`.
+- Combined review input: `artifacts/design-qa/hcp-unification-comparison-1440x1024.png`.
+
+## Required fidelity surfaces
+
+- Typography and density remain aligned with the existing compact Human Control Plane: neutral sans-serif hierarchy, restrained labels, and information-dense cards.
+- Navigation, header controls, Project rail, filters, metrics, tabs, cards, empty states, and sidebar footer share one token and component language.
+- The generated node-W brand mark uses the approved deep gray and blue palette, retains a transparent background, and remains recognizable at 16, 24, 32, and 180 pixels.
+- Desktop keeps independent Project-list and detail scrolling; mobile uses natural document flow with no horizontal overflow.
+- Agent, Recovery, Operations, Settings, and Session routes use the same authenticated shell, title rules, icon treatment, and footer.
+
+## Browser and interaction checks
+
+- Desktop 1440x1024: Project switching remains URL-owned without document reload or fallback to the first Project; long detail content is fully scrollable.
+- Mobile 390x844: Project selection, heading, filters, metrics, and work surfaces reflow without clipping or document-level horizontal overflow.
+- Agent list and `/agents/agent%2F1` render valid projected DTOs; the detail title is `Codex · WorkMesh` and no full-page error boundary appears.
+- Recovery Center, Operations, and Agent Session render with stable route/entity titles and the authenticated sidebar footer.
+- Removed preview routes render the application Not Found state.
+- The final Project desktop and mobile captures were checked with no page-level overflow or visible layout shift.
+
+## Findings resolved during QA
+
+- Fixed the authority-initialization race that could discard a successful Project deep-link response without retrying.
+- Fixed compact detail-pane wrapping and filter overflow with a container-owned responsive layout.
+- Fixed Agent identifiers containing routed opaque IDs such as `agent/1` while retaining boundary validation.
+- Fixed the command-center portal hydration path so authenticated routes do not render a transient duplicate trigger.
+- Normalized final-tour Agent fixtures to the same response contract used by production routes.
+
+## Findings
+
+- P0: none.
+- P1: none.
+- P2: none.
+
+final result: passed
+
+---
+
 # Project and workflow visual QA
 
 Reference: selected direction 3 image at `C:/Users/xurx/.codex/generated_images/01a04884-a7e4-7473-abd1-53655231417e/exec-74721f34-d220-469a-9615-edb4d58515e4.png`.

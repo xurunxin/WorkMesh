@@ -54,7 +54,9 @@ export function parseWorkSurfaceQuery(search: string): WorkSurfaceQuery {
     statusId: optionalText(params.get('statusId')),
     priority: priority && (PRIORITIES as readonly string[]).includes(priority) ? priority as WorkSurfaceQuery['priority'] : undefined,
     responsibleHumanActorId: optionalText(params.get('responsibleHumanActorId') ?? params.get('ownerId')),
-    projectId: optionalText(params.get('projectId')),
+    // Project workspaces use `project` as the canonical route key. Generic
+    // Work Surfaces retain `projectId`; both project into one filter field.
+    projectId: optionalText(params.get('projectId') ?? params.get('project')),
     milestoneId: optionalText(params.get('milestoneId')),
     label: optionalText(params.get('label')),
     statusCategory: statusCategory && (STATUS_CATEGORIES as readonly string[]).includes(statusCategory) ? statusCategory as WorkSurfaceQuery['statusCategory'] : undefined,

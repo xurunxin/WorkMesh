@@ -78,7 +78,7 @@ describe('AuthenticatedRuntime', () => {
   it('mounts realtime, page hotkeys and one command center on an authenticated workspace route', async () => {
     navigation.pathname = '/agents'
     window.history.replaceState(null, '', '/agents')
-    render(<LocaleProvider><AuthenticatedRuntime commandCenter={<CommandCenterMount />}><main>Agents content</main></AuthenticatedRuntime></LocaleProvider>)
+    render(<LocaleProvider><AuthenticatedRuntime commandCenter={<CommandCenterMount />}><><div id="workmesh-command-center-trigger-slot" /><main>Agents content</main></></AuthenticatedRuntime></LocaleProvider>)
 
     expect(screen.getAllByTestId('command-center-trigger')).toHaveLength(1)
     await waitFor(() => expect(fetch).toHaveBeenCalledWith(

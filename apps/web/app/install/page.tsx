@@ -4,6 +4,8 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { AppShell, Button, Card } from '@workmesh/ui'
 import { ApiError, publicMutation, publicRequest, saveCsrfToken } from '../lib/api'
 import { LocaleToggle, useLocale } from '../lib/i18n'
+import { WorkMeshBrandIcon } from '../lib/brand'
+import { useWorkMeshDocumentTitle } from '../lib/document-title'
 
 type InstallResponse = { csrfToken: string }
 type InstallStatus = { installed: boolean }
@@ -14,6 +16,7 @@ export default function InstallPage() {
   const [submitting, setSubmitting] = useState(false)
   const textRef = useRef(text)
   textRef.current = text
+  useWorkMeshDocumentTitle(text.title)
 
   useEffect(() => {
     void publicRequest<InstallStatus>('/api/v1/install-status').then(status => {
@@ -51,7 +54,7 @@ export default function InstallPage() {
     }
   }
 
-  return <AppShell productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
+  return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
     <div className="auth-shell auth-shell-centered">
       <Card title={text.title} subtitle={text.subtitle} className="auth-card" headingLevel={1}>
         <form onSubmit={submit} data-testid="install-form">

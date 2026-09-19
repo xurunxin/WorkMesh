@@ -14,7 +14,7 @@ import { ApprovalDecisionControls, type ApprovalDecisionUiState } from './agents
 import { RichContent } from '../features/rich-content/markdown'
 
 type DetailTab = 'conversation' | 'plan' | 'activity' | 'artifacts'
-type Props = { sessionId: string; compact?: boolean; tab?: DetailTab }
+type Props = { sessionId: string; compact?: boolean; onDocumentTitleChange?: (title: string) => void; tab?: DetailTab }
 type ActivityFilter = 'all' | 'actions' | 'questions' | 'evidence' | 'errors'
 type HumanActor = { id: string; display_name: string }
 
@@ -27,7 +27,7 @@ const matchesActivity = (activity: AgentActivity, filter: ActivityFilter): boole
   return ['error', 'warning'].includes(activity.kind)
 }
 
-export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
+export function AgentSessionDetail({ sessionId, compact = false, onDocumentTitleChange, tab }: Props) {
   const { agentsCopy, sessionDetailCopy: text } = useLocale()
   const [session, setSession] = useState<AgentSession | null>(null)
   const [filter, setFilter] = useState<ActivityFilter>('all')
@@ -66,9 +66,14 @@ export function AgentSessionDetail({ sessionId, compact = false, tab }: Props) {
   const load = useCallback(async () => {
     try {
       setError('')
-      setSession(await apiRequest<AgentSession>(`/api/v1/agent-sessions/${sessionId}`))
+      const next = await apiRequest<AgentSession>(`/api/v1/agent-sessions/${sessionId}`)
+      setSession(next)
+      if (!onDocumentTitleChange) return
+      if (!next.work_item_id) { onDocumentTitleChange('Agent Session'); return }
+      const workItem = await apiRequest<{ title: string }>(`/api/v1/work-items/${next.work_item_id}`).catch(() => null)
+      onDocumentTitleChange(workItem?.title?.trim() || 'Agent Session')
     } catch (reason) { setError(reason instanceof Error ? reason.message : text.loadError) }
-  }, [sessionId, text.loadError])
+  }, [onDocumentTitleChange, sessionId, text.loadError])
   useEffect(() => { void load() }, [load])
   useEffect(() => {
     setSelectedPlanId(current => current || session?.current_plan_version_id || plans.at(-1)?.id || '')

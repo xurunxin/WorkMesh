@@ -1,5 +1,13 @@
 import { z } from 'zod'
 import {
+  agentLifecycleStatusSchema,
+  agentProtocolSchema,
+  agentResponseSchema,
+  agentTeamAccessResponseSchema,
+  artifactTypeSchema,
+  capabilitySchema,
+} from './agent-response.js'
+import {
   createRoutePolicyManifest,
   mcpPolicyBindings,
   type RoutePolicyFeatureTier,
@@ -7,6 +15,14 @@ import {
 
 export * from './route-policy.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
+export {
+  agentLifecycleStatusSchema,
+  agentProtocolSchema,
+  agentResponseSchema,
+  agentTeamAccessResponseSchema,
+  artifactTypeSchema,
+  capabilitySchema,
+} from './agent-response.js'
 
 export const releaseMetadata = Object.freeze({
   serverVersion: '1.0.0',
@@ -451,12 +467,6 @@ export type EventEnvelope = z.infer<typeof eventEnvelopeSchema>
 
 // Stage 1: agent execution contracts. These stay transport-only: authorization
 // and state-machine policy belong to @workmesh/domain.
-export const agentProtocolSchema = z.enum(['native_http', 'mcp', 'a2a'])
-export const capabilitySchema = z.enum([
-  'work:read', 'work:write', 'comment:write', 'plan:write', 'message:write', 'artifact:write',
-  'repo:read', 'repo:write_branch', 'repo:open_pr', 'repo:merge', 'ci:run', 'deploy:staging',
-  'deploy:production', 'secrets:use', 'automation:manage', 'admin:*', 'agent:delegate',
-])
 export const delegationRoleSchema = z.enum(['executor', 'reviewer', 'researcher', 'coordinator', 'triager'])
 export const delegationScopeTypeSchema = z.enum(['work_item', 'plan_step', 'project', 'automation', 'team'])
 export const delegationStatusSchema = z.enum(['active', 'revoked', 'expired', 'completed'])
@@ -470,7 +480,6 @@ export const approvalStatusSchema = z.enum(['pending', 'approved', 'rejected', '
 export const approvalRiskLevelSchema = z.enum(['low', 'medium', 'high', 'critical'])
 export const checkStatusSchema = z.enum(['passed', 'failed', 'skipped'])
 export const visibilitySchema = z.enum(['workspace', 'team', 'private'])
-export const artifactTypeSchema = z.enum(['branch', 'commit', 'diff', 'pull_request', 'test_report', 'build', 'preview', 'code_review', 'document', 'link', 'file', 'other'])
 
 // Stage 2: all collaboration messages are visible to authorized humans.  This
 // intentionally has no private/hidden visibility option for agent-to-agent use.
@@ -1075,20 +1084,6 @@ export const agentPatchSchema = agentRegistrationFieldsSchema.partial().omit({ s
   if (value.requestedCapabilities && !approvedCapabilitiesAreRequested(value.requestedCapabilities, value.approvedCapabilities)) context.addIssue({ code: z.ZodIssueCode.custom, message: 'Approved capabilities must be a subset of requested capabilities', path: ['approvedCapabilities'] })
 })
 export const agentTeamAccessInputSchema = z.object({ approvedCapabilities: z.array(capabilitySchema).min(1).max(50) })
-export const agentTeamAccessResponseSchema = z.object({
-  agent_id: idSchema, team_id: idSchema, approved_capabilities: z.array(capabilitySchema), status: z.enum(['active', 'revoked']),
-  approved_by_actor_id: idSchema, revision: revisionSchema, created_at: timestampSchema, updated_at: timestampSchema, revoked_at: timestampSchema.nullable(),
-})
-export const agentLifecycleStatusSchema = z.enum(['active', 'archived'])
-export const agentResponseSchema = z.object({
-  id: idSchema, workspace_id: idSchema, actor_id: idSchema, name: z.string(), slug: z.string(), description: z.string().nullable(),
-  icon: z.string().nullable(), provider: z.string(), version: z.string(), endpoint_url: z.string().nullable(),
-  supported_protocols: z.array(agentProtocolSchema), skills: z.array(z.string()), requested_capabilities: z.array(capabilitySchema),
-  approved_capabilities: z.array(capabilitySchema), output_artifact_types: z.array(artifactTypeSchema), max_concurrency: z.number().int().positive(),
-  heartbeat_interval_seconds: z.number().int().positive(), metadata: z.record(z.unknown()), team_access: z.array(agentTeamAccessResponseSchema), is_active: z.boolean(), lifecycle_status: agentLifecycleStatusSchema, revision: revisionSchema,
-  archived_at: timestampSchema.nullable(), archived_by_actor_id: idSchema.nullable(), archived_reason: z.string().nullable(), created_at: timestampSchema, updated_at: timestampSchema,
-})
-
 export const capabilityScopeSchema = z.object({
   workspaceId: idSchema,
   teamIds: z.array(idSchema).max(100).default([]),

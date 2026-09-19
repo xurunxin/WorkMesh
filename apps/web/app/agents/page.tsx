@@ -1,8 +1,9 @@
 'use client'
 
-import { memo, type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppShell, AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
+import { memo, type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
 import type { HumanAttentionItem } from '@workmesh/contracts'
+import { AuthenticatedWorkspaceShell } from '../authenticated-workspace-shell'
 import {
   type Agent,
   type AgentSession,
@@ -18,6 +19,7 @@ import {
   grantAgentTeamAccess,
   isApprovalActionable,
   normalizeApproval,
+  parseAgent,
   revokeAgentTeamAccess,
 } from '../lib/agents'
 import { LoadMoreButton, usePagedApiList } from '../lib/pagination'
@@ -61,10 +63,18 @@ const attentionHref = (item: HumanAttentionItem): string => {
 }
 
 export default function AgentsPage() {
-  const { agentsCopy: text } = useLocale()
+  const { agentsCopy: text, t } = useLocale()
   const { actor, loading, error: actorError, refresh: refreshActor } = useAuthenticatedActor()
-  if (loading && !actor) return <main className="center foundation-center wm-theme"><AsyncStateSurface description={text.loadingDescription} state="loading" title={text.loadingTitle} /></main>
-  if (!actor) return <main className="center foundation-center wm-theme"><ErrorState actionLabel={text.retry} description={actorError || text.loadError} onAction={() => void refreshActor()} title={text.attentionTitle} /></main>
+  const stateShell = (content: ReactNode) => <AuthenticatedWorkspaceShell
+    contextLabel={text.title}
+    documentTitle={text.title}
+    headerActions={<LocaleToggle />}
+    navigation={workspaceNavigation({ active: 'agents', t })}
+    skipLabel={t('skipToContent')}
+    utilityNavigation={workspaceUtilityNavigation({ t })}
+  >{content}</AuthenticatedWorkspaceShell>
+  if (loading && !actor) return stateShell(<div className="center foundation-center wm-theme"><AsyncStateSurface description={text.loadingDescription} state="loading" title={text.loadingTitle} /></div>)
+  if (!actor) return stateShell(<div className="center foundation-center wm-theme"><ErrorState actionLabel={text.retry} description={actorError || text.loadError} onAction={() => void refreshActor()} title={text.attentionTitle} /></div>)
   return <AgentsPageScope
     actor={actor}
     actorError={actorError}
@@ -114,8 +124,8 @@ function AgentsPageScope({
     if (capabilityFilter) params.set('capability', capabilityFilter)
     return `/api/v1/agents?${params.toString()}`
   }, [capabilityFilter, nameFilter, teamFilter])
-  const agentsPage = usePagedApiList<Agent>(agentsPath, { scopeKey: `${authorityScopeKey}:${agentsPath}` })
-  const archivedAgentsPage = usePagedApiList<Agent>('/api/v1/agents?lifecycle=archived', { scopeKey: `${authorityScopeKey}:archived` })
+  const agentsPage = usePagedApiList<Agent, Agent>(agentsPath, { map: parseAgent, scopeKey: `${authorityScopeKey}:${agentsPath}` })
+  const archivedAgentsPage = usePagedApiList<Agent, Agent>('/api/v1/agents?lifecycle=archived', { map: parseAgent, scopeKey: `${authorityScopeKey}:archived` })
   const teamsPage = usePagedApiList<Team>('/api/v1/teams', { scopeKey: authorityScopeKey })
   const humansPage = usePagedApiList<Human>('/api/v1/actors/humans', { scopeKey: authorityScopeKey })
   const sessionsPage = usePagedApiList<AgentSession>('/api/v1/agent-sessions', { optional: true, scopeKey: authorityScopeKey })
@@ -524,15 +534,15 @@ function AgentsPageScope({
     updateRoute({ teamAccessAgentId: '' })
   }, [updateRoute])
 
-  return <AppShell
+  return <AuthenticatedWorkspaceShell
     administrationNavigationLabel={t('administrationNavigation')}
     actorName={actor?.display_name}
     contextLabel={text.context}
+    documentTitle={text.title}
     headerActions={<div className="shell-action-cluster"><LocaleToggle /><RealtimeStatus labels={{ connected: t('live'), connecting: t('connecting'), reconnecting: t('reconnecting'), offline: t('offline') }} /></div>}
     mainNavigationLabel={t('mainNavigation')}
     menuLabel={t('menu')}
     mobileNavigationLabel={t('mobileNavigation')}
-    productName="WorkMesh"
     navigation={workspaceNavigation({ active: 'agents', t })}
     skipLabel={t('skipToContent')}
     utilityNavigation={workspaceUtilityNavigation({ t })}
@@ -714,7 +724,7 @@ function AgentsPageScope({
       open={teamAccessAgent !== null && teamsPage.initialized && teamsAuthorized}
       teams={teams}
     />
-  </AppShell>
+  </AuthenticatedWorkspaceShell>
 }
 
 type AgentRegistryListProps = {

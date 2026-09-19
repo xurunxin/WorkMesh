@@ -153,9 +153,13 @@ test.describe('Stage 1 agent browser acceptance', () => {
     const memberActor = { id: '00000000-0000-4000-8000-000000000203', display_name: 'Read-only member', workspace_role: 'member' }
     const agent = {
       id: agentId, workspace_id: '00000000-0000-4000-8000-000000000204', actor_id: '00000000-0000-4000-8000-000000000205',
-      display_name: 'Controlled agent', slug: 'controlled-agent', description: 'A real registry projection.', supported_protocols: ['native_http'],
-      skills: [], requested_capabilities: ['work:read', 'work:write'], approved_capabilities: ['work:read'], max_concurrency: 2,
+      name: 'Controlled agent', display_name: 'Controlled agent', slug: 'controlled-agent', description: 'A real registry projection.',
+      icon: null, provider: 'playwright', version: '1.0.0', endpoint_url: null, supported_protocols: ['native_http'],
+      skills: [], requested_capabilities: ['work:read', 'work:write'], approved_capabilities: ['work:read'], output_artifact_types: [], max_concurrency: 2,
+      heartbeat_interval_seconds: 30, metadata: {},
       is_active: true, revision: 1, manifest: { provider: 'playwright', version: '1.0.0', heartbeatIntervalSeconds: 30 },
+      lifecycle_status: 'active', archived_at: null, archived_by_actor_id: null, archived_reason: null,
+      created_at: '2026-07-23T00:00:00.000Z', updated_at: '2026-07-23T00:01:00.000Z',
       team_access: [{
         agent_id: agentId, team_id: teamId, approved_capabilities: ['work:read'], status: 'active',
         approved_by_actor_id: memberActor.id, revision: 2, created_at: '2026-07-23T00:00:00.000Z',

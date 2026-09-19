@@ -5,13 +5,14 @@ import type {
   ApprovalDecisionResponse as TransportApprovalDecisionResponse,
   ApprovalViewerActionability as TransportApprovalViewerActionability,
 } from '@workmesh/contracts'
+import { agentResponseSchema } from '@workmesh/contracts/agent-response'
 
 export type AgentState = 'queued' | 'acknowledged' | 'planning' | 'executing' | 'awaiting_input' | 'awaiting_approval' | 'blocked' | 'paused' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled'
 
 export type Agent = {
   id: string; workspace_id: string; actor_id: string; name?: string; display_name?: string; slug: string; description: string | null; provider?: string; version?: string
-  manifest?: { provider?: string; version?: string; heartbeatIntervalSeconds?: number }; supported_protocols: string[]; skills: string[]; requested_capabilities: string[]; approved_capabilities: string[]
-  max_concurrency: number; heartbeat_interval_seconds?: number; is_active: boolean; lifecycle_status?: 'active'|'archived'; archived_at?: string|null; archived_by_actor_id?: string|null; archived_reason?: string|null; revision: number; team_access?: AgentTeamAccess[]
+  icon?: string | null; endpoint_url?: string | null; manifest?: { provider?: string; version?: string; heartbeatIntervalSeconds?: number }; supported_protocols: string[]; skills: string[]; requested_capabilities: string[]; approved_capabilities: string[]; output_artifact_types?: string[]
+  max_concurrency: number; heartbeat_interval_seconds?: number; metadata?: Record<string, unknown>; is_active: boolean; lifecycle_status?: 'active'|'archived'; archived_at?: string|null; archived_by_actor_id?: string|null; archived_reason?: string|null; created_at?: string; updated_at?: string; revision: number; team_access?: AgentTeamAccess[]
 }
 
 export type AgentTeamAccess = {
@@ -65,6 +66,7 @@ export const agentStateLabel = (state: AgentState): string => state.replaceAll('
 export const agentStateClass = (state: AgentState): string => `agent-state state-${state}`
 export const formatTime = (value: string | null | undefined): string => value ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Not reported'
 export const agentName = (agent: Agent | undefined): string => agent?.name ?? agent?.display_name ?? agent?.slug ?? 'Agent'
+export const parseAgent = (value: unknown): Agent => agentResponseSchema.parse(value) as unknown as Agent
 export const agentProvider = (agent: Agent): string => agent.provider ?? agent.manifest?.provider ?? 'Unknown provider'
 export const agentVersion = (agent: Agent): string => agent.version ?? agent.manifest?.version ?? ''
 export const agentHeartbeat = (agent: Agent): number => agent.heartbeat_interval_seconds ?? agent.manifest?.heartbeatIntervalSeconds ?? 30

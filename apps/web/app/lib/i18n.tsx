@@ -2875,50 +2875,6 @@ const relationsCopies: Record<Locale, RelationsCopy> = {
   },
 }
 
-export type EvidenceCopy = {
-  metaTitle: string
-  eyebrow: string
-  title: string
-  intro: string
-  nav: string
-  conflict: string
-  expired: string
-  returnHome: string
-  navAria: string
-}
-
-const evidenceCopies: Record<Locale, EvidenceCopy> = {
-  'zh-CN': {
-    metaTitle: '协作状态证据 · WorkMesh',
-    eyebrow: '只读证据夹具',
-    title: '协作状态展示',
-    intro: '此未链接页面仅用于模拟展示。它不会发送任何服务端请求或写入，也不代表真实的服务端故障。',
-    nav: '协作证据状态',
-    conflict: '冲突',
-    expired: '过期',
-    returnHome: '返回 WorkMesh',
-    navAria: '协作证据状态',
-  },
-  en: {
-    metaTitle: 'Collaboration state evidence · WorkMesh',
-    eyebrow: 'Read-only evidence fixture',
-    title: 'Collaboration state presentation',
-    intro: 'This unlinked page simulates presentation only. It performs no server request or mutation and does not claim that a real server fault occurred.',
-    nav: 'Collaboration evidence states',
-    conflict: 'Conflict',
-    expired: 'Expired',
-    returnHome: 'Return to WorkMesh',
-    navAria: 'Collaboration evidence states',
-  },
-}
-
-export type ProjectDeliveryHealthLabel = (state: string) => string
-
-const projectDeliveryHealthLabels: Record<Locale, ProjectDeliveryHealthLabel> = {
-  'zh-CN': state => ({ on_track: '进展顺利', at_risk: '存在风险', off_track: '已偏离轨道' }[state] ?? state),
-  en: state => ({ on_track: 'on track', at_risk: 'at risk', off_track: 'off track' }[state] ?? state),
-}
-
 // Work Room copy (apps/web/app/work-room.tsx) covers the SessionTree,
 // LeaseCard, HandoffCard, DecisionCard, and the main WorkRoom panel.
 export type WorkRoomCopy = {
@@ -3618,9 +3574,7 @@ type LocaleContextValue = {
   sessionDetailCopy: SessionDetailCopy
   agentWorkCopy: AgentWorkCopy
   relationsCopy: RelationsCopy
-  evidenceCopy: EvidenceCopy
   workRoomCopy: WorkRoomCopy
-  projectDeliveryHealthLabel: ProjectDeliveryHealthLabel
   humanControlPlaneCopy: HumanControlPlaneCopy
 }
 
@@ -3661,9 +3615,7 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     sessionDetailCopy: sessionDetailCopies[locale],
     agentWorkCopy: agentWorkCopies[locale],
     relationsCopy: relationsCopies[locale],
-    evidenceCopy: evidenceCopies[locale],
     workRoomCopy: workRoomCopies[locale],
-    projectDeliveryHealthLabel: projectDeliveryHealthLabels[locale],
     humanControlPlaneCopy: humanControlPlaneCopies[locale],
   }), [locale])
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>

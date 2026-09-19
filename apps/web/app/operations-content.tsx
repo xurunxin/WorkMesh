@@ -69,19 +69,16 @@ const message = (reason: unknown) => reason instanceof Error ? reason.message : 
 const OPERATIONS_AUTHORITY_HISTORY_KEY = 'workmeshOperationsAuthorityKey'
 
 export function shouldReanchorOperationsSection(input: Readonly<{
-  embedded: boolean
   hash: string
   layoutDidInitialize: boolean
   section: OperationsSectionId | null
   targetIsActive: boolean
 }>): boolean {
-  if (input.embedded || !input.layoutDidInitialize || !input.section || !input.targetIsActive) return false
+  if (!input.layoutDidInitialize || !input.section || !input.targetIsActive) return false
   return input.hash === `#operations-${input.section}`
 }
 
 export type OperationsContentProps = {
-  /** When true, omit the page-level header (title, refresh, back link) so the content fits inside a tab. */
-  embedded?: boolean
   /** Non-secret authenticated authority tuple. A changed tuple synchronously retires every retained projection. */
   authorityKey: string | null
 }
@@ -93,7 +90,7 @@ export function OperationsContent(props: OperationsContentProps) {
   return <OperationsContentScope key={props.authorityKey} {...props} authorityKey={props.authorityKey} />
 }
 
-function OperationsContentScope({ authorityKey, embedded = false }: OperationsContentProps & { authorityKey: string }) {
+function OperationsContentScope({ authorityKey }: OperationsContentProps & { authorityKey: string }) {
   const { locale, t, operationsCopy, toastCopy } = useLocale()
   const { push: pushToast } = useToast()
   const isAuthorityCurrent = useAuthorityLifetime()
@@ -254,17 +251,13 @@ function OperationsContentScope({ authorityKey, embedded = false }: OperationsCo
       setQuery(readOperationsQuery(window.location.search))
     }
     const synchronizeHistory = () => {
-      const parameters = new URLSearchParams(window.location.search)
-      const sameOperationsTab = embedded
-        ? window.location.pathname === '/settings' && parameters.get('tab') === 'operations'
-        : window.location.pathname === '/operations'
-      if (!sameOperationsTab || rootRef.current?.closest('[hidden]')) return
+      if (window.location.pathname !== '/operations') return
       readFromUrl()
     }
     readFromUrl()
     window.addEventListener('popstate', synchronizeHistory)
     return () => window.removeEventListener('popstate', synchronizeHistory)
-  }, [authorityKey, embedded])
+  }, [authorityKey])
 
   const updateQuery = (event: ChangeEvent<HTMLInputElement>) => {
     const nextQuery = event.currentTarget.value
@@ -339,7 +332,6 @@ function OperationsContentScope({ authorityKey, embedded = false }: OperationsCo
       return
     }
     const root = rootRef.current
-    const tabPanel = root?.closest<HTMLElement>('[role="tabpanel"]') ?? null
     const synchronize = (allowStandaloneFocus: boolean) => {
       if (root?.closest('[hidden]')) {
         setCurrentSection(null)
@@ -347,24 +339,19 @@ function OperationsContentScope({ authorityKey, embedded = false }: OperationsCo
       }
       const section = visibleSections.find(candidate => window.location.hash === `#operations-${candidate}`) ?? null
       setCurrentSection(section)
-      if (section && !embedded && allowStandaloneFocus) focusSection(section)
+      if (section && allowStandaloneFocus) focusSection(section)
     }
     const allowInitialFocus = !initialSectionFocusRef.current
     synchronize(allowInitialFocus)
     initialSectionFocusRef.current = true
     const synchronizeFromNavigation = () => synchronize(true)
-    const synchronizeFromVisibility = () => synchronize(false)
     window.addEventListener('hashchange', synchronizeFromNavigation)
     window.addEventListener('popstate', synchronizeFromNavigation)
-    const visibilityObserver = tabPanel ? new MutationObserver(synchronizeFromVisibility) : null
-    if (visibilityObserver && tabPanel)
-      visibilityObserver.observe(tabPanel, { attributeFilter: ['hidden'], attributes: true })
     return () => {
       window.removeEventListener('hashchange', synchronizeFromNavigation)
       window.removeEventListener('popstate', synchronizeFromNavigation)
-      visibilityObserver?.disconnect()
     }
-  }, [embedded, focusSection, sectionsReady, visibleSections])
+  }, [focusSection, sectionsReady, visibleSections])
 
   useEffect(() => {
     const previous = sectionInitializationRef.current
@@ -375,13 +362,12 @@ function OperationsContentScope({ authorityKey, embedded = false }: OperationsCo
     const section = visibleSections.find(candidate => window.location.hash === `#operations-${candidate}`) ?? null
     const target = section ? document.getElementById(`operations-${section}`) : null
     if (shouldReanchorOperationsSection({
-      embedded,
       hash: window.location.hash,
       layoutDidInitialize,
       section,
       targetIsActive: target !== null && document.activeElement === target,
     })) target?.scrollIntoView({ block: 'start' })
-  }, [embedded, sectionInitialization, visibleSections])
+  }, [sectionInitialization, visibleSections])
 
   const activateSection = (event: MouseEvent<HTMLAnchorElement>, section: OperationsSectionId) => {
     if (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
@@ -479,15 +465,14 @@ function OperationsContentScope({ authorityKey, embedded = false }: OperationsCo
   }
   return (
     <div aria-busy={refreshBusy || undefined} className="operations-tab" ref={rootRef}>
-      {!embedded && <header className="operations-header">
+      <header className="operations-header">
         <div>
           <a href="/">{operationsCopy.backToWork}</a>
           <h1>{operationsCopy.title}</h1>
           <p>{operationsCopy.subtitle}</p>
         </div>
         <Button onClick={refreshAll}>{operationsCopy.refresh}</Button>
-      </header>}
-      {embedded && <div className="settings-tab-heading"><h2>{operationsCopy.title}</h2><div className="settings-tab-actions"><Button onClick={refreshAll}>{operationsCopy.refresh}</Button></div></div>}
+      </header>
       {refreshBusy && <span aria-live="polite" className="sr-only" role="status">{operationsCopy.loading}</span>}
       {(mutationError || loadError) && <ErrorState actionLabel={operationsCopy.retry} description={mutationError || operationsCopy.errorDescription} onAction={refreshAll} title={operationsCopy.error} />}
       {!features && !loadError && <div className="operations-loading"><SkeletonList columns={2} items={6} label={operationsCopy.loading} /></div>}

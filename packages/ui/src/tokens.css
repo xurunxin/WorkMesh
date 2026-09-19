@@ -91,7 +91,9 @@
 
 .wm-tab-list { display: flex; gap: var(--wm-space-1); overflow-x: auto; border-bottom: 1px solid var(--wm-border); }
 .wm-tab { min-height: 40px; padding: .35rem .65rem; color: var(--wm-muted); background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; }
+.wm-tab { display: inline-flex; align-items: center; gap: var(--wm-space-2); }
 .wm-tab.is-active { color: var(--wm-text); border-bottom-color: var(--wm-text); }
+.wm-tab-badge { display: inline-grid; place-items: center; min-width: 1.3rem; min-height: 1.3rem; padding: 0 .3rem; color: var(--wm-info); background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--wm-radius-pill); font-size: .7rem; font-weight: 700; }
 .wm-tab-panel { padding-top: var(--wm-space-4); }
 
 .wm-badge { display: inline-flex; align-items: center; width: fit-content; min-height: 22px; padding: .12rem .48rem; color: var(--wm-text); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-pill); font-size: var(--wm-text-xs); font-weight: 650; }
@@ -189,13 +191,6 @@
 .wm-actor-human dt { color: #175cd3; }
 .wm-actor-agent dt { color: #087443; }
 .wm-actor-relationship { flex-basis: 100%; }
-
-.wm-project-navigation { min-width: 0; overflow-x: auto; border-bottom: 1px solid var(--wm-border); scrollbar-width: thin; }
-.wm-project-navigation ul { display: flex; width: max-content; min-width: 100%; margin: 0; padding: 0; list-style: none; }
-.wm-project-navigation a { display: inline-flex; align-items: center; gap: .35rem; min-height: 42px; padding: .55rem .75rem; color: var(--wm-muted); border-bottom: 2px solid transparent; text-decoration: none; white-space: nowrap; }
-.wm-project-navigation a:hover { color: var(--wm-text); background: var(--wm-surface-subtle); }
-.wm-project-navigation a.is-active { color: var(--wm-text); border-bottom-color: #175cd3; font-weight: 650; }
-.wm-project-navigation a span { padding: .08rem .3rem; color: #175cd3; background: #eff8ff; border: 1px solid #b2ddff; border-radius: 4px; font-size: .65rem; font-weight: 700; text-transform: uppercase; }
 
 .wm-control-section { min-width: 0; overflow: hidden; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
 .wm-control-section > header { display: flex; align-items: center; justify-content: space-between; gap: var(--wm-space-3); min-height: 44px; padding: .65rem .85rem; border-bottom: 1px solid var(--wm-border); }
