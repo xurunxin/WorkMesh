@@ -389,8 +389,14 @@ requireCondition(
 )
 
 const postgresImage = 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777'
-const minioImage = 'minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e'
-const mcImage = 'minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3'
+// MinIO withdrew the `minio/minio` and `minio/mc` repositories from Docker Hub
+// (hub.docker.com/v2/repositories/minio/minio/ now returns 404), so the
+// unqualified names no longer resolve and every job that starts MinIO dies in
+// its infrastructure step. MinIO's own quay.io namespace still serves the same
+// tags. The digest is unchanged, and a digest is content-addressed, so these
+// remain the exact reviewed builds — only the registry differs.
+const minioImage = 'quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e'
+const mcImage = 'quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3'
 requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 5, 'five isolated jobs must use the reviewed PostgreSQL image')
 const api = jobSections.get('api-integration') ?? ''
 requireCondition(api.includes(minioImage), 'API integration must use the reviewed MinIO image')
