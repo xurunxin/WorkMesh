@@ -252,7 +252,7 @@ jobs:
               --publish 9000:9000 \
               --env MINIO_ROOT_USER=workmesh \
               --env MINIO_ROOT_PASSWORD=workmesh-ci-minio-password \
-              minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
+              quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
               server /data
             ready=false
             for attempt in $(seq 1 30); do
@@ -272,7 +272,7 @@ jobs:
           set -o pipefail
           docker run --rm --network host \
             --entrypoint /bin/sh \
-            minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3 \
+            quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3 \
             -c "mc alias set ci http://127.0.0.1:9000 workmesh workmesh-ci-minio-password && mc mb --ignore-existing ci/workmesh-artifacts" \
             2>&1 | tee ci-logs/minio-init.log
       - name: Run API integration
@@ -547,7 +547,7 @@ jobs:
               --env MINIO_ROOT_USER=workmesh \
               --env MINIO_ROOT_PASSWORD=WmCiRecoveryS3_2026_Z8k4P6n2R9t5 \
               --publish 9000:9000 \
-              minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
+              quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
               server /data
             docker run --detach --name workmesh-ci-recovery-redis \
               --publish 6379:6379 redis:7-alpine
