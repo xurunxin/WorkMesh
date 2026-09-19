@@ -526,6 +526,109 @@ describe('WorkMesh MCP adapter', () => {
     } finally { await protocol.close(); await server.close() }
   })
 
+  it('applies a prepared import whose plan is schema-valid but not yet normalized', async () => {
+    const team = { id: teamId, key: 'WM', name: 'WorkMesh', revision: 2 }
+    const states = [
+      { id: repositoryId, team_id: teamId, name: 'Backlog', category: 'backlog', position: 0 },
+      { id: pullRequestId, team_id: teamId, name: 'Ready', category: 'planned', position: 1 },
+    ]
+    // Mirrors the server: the same Idempotency-Key always resolves to one entity.
+    const stored = new Map<string, unknown>()
+    const replay = <T>(key: string, create: () => T): T => {
+      if (!stored.has(key)) stored.set(key, create())
+      return stored.get(key) as T
+    }
+    let workItemNumber = 0
+    const createProject = vi.fn(async (_input: unknown, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, () => ({ id: projectId, revision: 1 })))
+    const createMilestone = vi.fn(async (_projectId: string, _input: unknown, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, () => ({ id: repositoryId, project_id: projectId, name: 'Foundation', revision: 1 })))
+    const createWorkItem = vi.fn(async (_input: unknown, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, () => ({ id: workItemId, revision: 1, number: ++workItemNumber })))
+    const createWorkItemRelation = vi.fn(async (_workItemId: string, _input: unknown, options: { idempotencyKey: string }) =>
+      replay(options.idempotencyKey, () => ({ id: sessionId, revision: 1 })))
+    const api = {
+      listTeams: vi.fn().mockResolvedValue({ items: [team], nextCursor: null }),
+      listWorkflowStates: vi.fn().mockResolvedValue({ items: states, nextCursor: null }),
+      createProject,
+      createMilestone,
+      createWorkItem,
+      createWorkItemRelation,
+      listWorkItems: vi.fn(),
+      getWorkItem: vi.fn(),
+    } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-write', api, true)
+    // Padded and lowercased values, reversed order: prepare_project_import canonicalizes all of it.
+    const source = {
+      teamRef: '  wm  ',
+      defaultStatus: '  Ready  ',
+      project: { sourceId: '  project  ', name: '  Kaneo UI Adoption  ' },
+      milestones: [{ sourceId: ' m1 ', name: '  Foundation  ' }],
+      workItems: [
+        { sourceId: 'issue-2', title: ' Child delivery ', parentSourceId: ' issue-1 ', labels: ['zeta', 'alpha'] },
+        { sourceId: ' issue-1 ', title: ' Parent delivery ', milestoneSourceId: ' m1 ' },
+      ],
+      relations: [{ sourceId: 'r1', sourceWorkItemId: 'issue-2', targetWorkItemId: 'issue-1', kind: 'related' }],
+    }
+    try {
+      const prepared = await protocol.callTool({ name: 'prepare_project_import', arguments: source })
+      expect(prepared.isError, JSON.stringify(prepared.structuredContent)).not.toBe(true)
+      const preparation = (prepared.structuredContent as { data: { contentHash: string; plan: { teamRef: string } } }).data
+      expect(preparation.plan.teamRef).toBe('WM')
+
+      // A client may replay the plan with any schema-valid spelling of fields that prepare
+      // canonicalizes. The hash describes the normalized plan, so apply must normalize again
+      // instead of hashing the caller's serialization verbatim.
+      const replayed = { ...preparation, plan: { ...preparation.plan, teamRef: 'wm' } }
+      const applied = await protocol.callTool({ name: 'apply_project_import', arguments: replayed })
+      expect(applied.isError, JSON.stringify(applied.structuredContent)).not.toBe(true)
+      expect(applied.structuredContent).toMatchObject({
+        data: {
+          contentHash: preparation.contentHash,
+          complete: true,
+          mapping: {
+            project: { sourceId: 'project', targetId: projectId },
+            milestones: [{ sourceId: 'm1', targetId: repositoryId }],
+            workItems: [
+              { sourceId: 'issue-1', targetId: workItemId, targetRef: 'WM-1' },
+              { sourceId: 'issue-2', targetId: workItemId, targetRef: 'WM-2' },
+            ],
+          },
+        },
+      })
+      expect(createProject).toHaveBeenCalledTimes(1)
+      expect(createMilestone).toHaveBeenCalledTimes(1)
+      expect(createWorkItem).toHaveBeenCalledTimes(2)
+      expect(createWorkItemRelation).toHaveBeenCalledTimes(1)
+      // Values are persisted from the normalized plan, not the caller's spelling.
+      expect(createProject).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Kaneo UI Adoption' }),
+        expect.anything(),
+      )
+      expect(createMilestone).toHaveBeenCalledWith(
+        projectId,
+        expect.objectContaining({ name: 'Foundation' }),
+        expect.anything(),
+      )
+
+      // Resume with the hash exactly as prepare returned it stays fully idempotent.
+      const keysAfterFirstApply = [...stored.keys()].sort()
+      const resumed = await protocol.callTool({ name: 'apply_project_import', arguments: preparation })
+      expect(resumed.isError, JSON.stringify(resumed.structuredContent)).not.toBe(true)
+      expect(resumed.structuredContent).toEqual(applied.structuredContent)
+      expect([...stored.keys()].sort()).toEqual(keysAfterFirstApply)
+      expect(stored.size).toBe(5)
+
+      // A hash that does not describe this plan must still be rejected.
+      const mismatched = await protocol.callTool({
+        name: 'apply_project_import',
+        arguments: { ...preparation, contentHash: `sha256:${'0'.repeat(64)}` },
+      })
+      expect(mismatched.isError).toBe(true)
+      expect(mismatched.structuredContent).toMatchObject({ error: { code: 'IMPORT_HASH_MISMATCH' } })
+    } finally { await protocol.close(); await server.close() }
+  })
+
   it('returns actionable revision conflicts with correlation and current revision', async () => {
     const updateProject = vi.fn().mockRejectedValue(new WorkMeshSdkError(
       'Resource has changed',

@@ -120,16 +120,26 @@ function normalizeProvenance(value: z.infer<typeof provenanceSchema> | undefined
   }
 }
 
+/**
+ * Deterministic code-unit ordering. `localeCompare` is locale/ICU dependent, and a
+ * hash must not depend on the runtime locale of whichever process happens to
+ * compute it.
+ */
+const compareKeys = (left: string, right: string): number => (left < right ? -1 : left > right ? 1 : 0)
+
 function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`
   if (value && typeof value === 'object') {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, entry]) => entry !== undefined)
-      .sort(([left], [right]) => left.localeCompare(right))
+      .sort(([left], [right]) => compareKeys(left, right))
     return `{${entries.map(([key, entry]) => `${JSON.stringify(key)}:${canonicalJson(entry)}`).join(',')}}`
   }
   return JSON.stringify(value)
 }
+
+/** Plan ordering feeds the content hash, so it must not depend on the runtime locale. */
+const bySourceId = <T extends { sourceId: string }>(left: T, right: T): number => compareKeys(left.sourceId, right.sourceId)
 
 const planHash = (plan: NormalizedProjectImportPlan): string =>
   `sha256:${createHash('sha256').update(canonicalJson(plan)).digest('hex')}`
@@ -166,8 +176,14 @@ function assertAcyclic(nodes: readonly string[], edges: ReadonlyMap<string, read
   for (const node of nodes) visit(node)
 }
 
-export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectImport {
-  const input = projectImportSchema.parse(raw)
+/**
+ * The single canonicalization rule set for a Project import.
+ *
+ * Both prepare_project_import and apply_project_import must funnel through this
+ * function, so the content hash always fingerprints the normalized plan rather
+ * than whichever serialization the caller happened to send.
+ */
+function normalizeProjectImportPlan(input: ProjectImportInput): NormalizedProjectImportPlan {
   const project = {
     sourceId: input.project.sourceId.trim(),
     name: input.project.name.trim(),
@@ -182,7 +198,7 @@ export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectIm
     ...optional('description', trimOptional(item.description)),
     ...optional('targetDate', item.targetDate),
     ...optional('provenance', normalizeProvenance(item.provenance)),
-  })).sort((left, right) => left.sourceId.localeCompare(right.sourceId))
+  })).sort(bySourceId)
   const workItems = input.workItems.map(item => ({
     sourceId: item.sourceId.trim(),
     title: item.title.trim(),
@@ -194,7 +210,7 @@ export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectIm
     ...optional('milestoneSourceId', trimOptional(item.milestoneSourceId)),
     ...optional('parentSourceId', trimOptional(item.parentSourceId)),
     ...optional('provenance', normalizeProvenance(item.provenance)),
-  })).sort((left, right) => left.sourceId.localeCompare(right.sourceId))
+  })).sort(bySourceId)
   const relations = input.relations.map(item => {
     const sourceWorkItemId = item.sourceWorkItemId.trim()
     const targetWorkItemId = item.targetWorkItemId.trim()
@@ -207,7 +223,7 @@ export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectIm
       targetWorkItemId: canonicalTarget,
       kind: item.kind,
     }
-  }).sort((left, right) => left.sourceId.localeCompare(right.sourceId))
+  }).sort(bySourceId)
   const plan = normalizedProjectImportPlanSchema.parse({
     schemaVersion: 1,
     teamRef: input.teamRef.trim().toUpperCase(),
@@ -261,6 +277,11 @@ export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectIm
     blockerEdges.set(relation.sourceWorkItemId, targets)
   }
   assertAcyclic([...workItemIds], blockerEdges, 'IMPORT_BLOCKER_CYCLE')
+  return plan
+}
+
+export function prepareProjectImport(raw: ProjectImportInput): PreparedProjectImport {
+  const plan = normalizeProjectImportPlan(projectImportSchema.parse(raw))
   return {
     contentHash: planHash(plan),
     plan,
@@ -298,7 +319,7 @@ function topologicalWorkItems(plan: NormalizedProjectImportPlan): NormalizedProj
   while (remaining.size) {
     const ready = [...remaining.values()]
       .filter(item => !item.parentSourceId || completed.has(item.parentSourceId))
-      .sort((left, right) => left.sourceId.localeCompare(right.sourceId))
+      .sort(bySourceId)
     if (!ready.length) {
       throw new WorkMeshSdkError('The normalized parent graph cannot be scheduled', {
         code: 'IMPORT_PARENT_CYCLE',
@@ -320,19 +341,24 @@ export async function applyProjectImport(
   raw: z.infer<typeof applyProjectImportSchema>,
 ): Promise<unknown> {
   const input = applyProjectImportSchema.parse(raw)
-  const actualHash = planHash(input.plan)
+  // Re-run the exact canonicalization prepare used, so the hash fingerprints the
+  // normalized plan instead of the caller's serialization. Normalization is
+  // idempotent, so replaying a verbatim prepare response is unaffected.
+  const { schemaVersion: _schemaVersion, ...planInput } = input.plan
+  const plan = normalizeProjectImportPlan(projectImportSchema.parse(planInput))
+  const actualHash = planHash(plan)
   if (input.contentHash !== actualHash) {
     throw new WorkMeshSdkError('The prepared import content hash does not match the normalized plan', {
       code: 'IMPORT_HASH_MISMATCH',
       details: { expectedContentHash: actualHash, suppliedContentHash: input.contentHash },
     })
   }
-  const team = await resolveTeam(client, input.plan.teamRef)
+  const team = await resolveTeam(client, plan.teamRef)
   const workflowStates = await collectPages<WorkflowStateRow>(cursor =>
     client.listWorkflowStates(team.id, { cursor, limit: 200 }),
   )
   const statusByName = new Map(workflowStates.map(state => [state.name.trim().toLowerCase(), state]))
-  for (const item of input.plan.workItems) {
+  for (const item of plan.workItems) {
     if (!statusByName.has(item.status.trim().toLowerCase())) {
       throw new WorkMeshSdkError(`Workflow state ${item.status} was not found in Team ${team.key}`, {
         code: 'IMPORT_WORKFLOW_STATE_NOT_FOUND',
@@ -342,16 +368,16 @@ export async function applyProjectImport(
   }
   const project = await client.createProject<{ id: string; revision: number }>({
     teamId: team.id,
-    name: input.plan.project.name,
-    summary: input.plan.project.summary,
-    description: descriptionWithProvenance(input.plan.project.description, input.plan.project.provenance, 20_000),
-    status: input.plan.project.status,
+    name: plan.project.name,
+    summary: plan.project.summary,
+    description: descriptionWithProvenance(plan.project.description, plan.project.provenance, 20_000),
+    status: plan.project.status,
   }, {
-    idempotencyKey: importKey(input.contentHash, 'project', input.plan.project.sourceId),
+    idempotencyKey: importKey(input.contentHash, 'project', plan.project.sourceId),
   })
-  const projectRef = projectReference({ id: project.id, name: input.plan.project.name }, team.key)
+  const projectRef = projectReference({ id: project.id, name: plan.project.name }, team.key)
   const milestoneMapping = new Map<string, EntityMapping>()
-  for (const milestone of input.plan.milestones) {
+  for (const milestone of plan.milestones) {
     const created = await client.createMilestone<MilestoneRow>(project.id, {
       name: milestone.name,
       description: descriptionWithProvenance(milestone.description, milestone.provenance, 10_000),
@@ -367,7 +393,7 @@ export async function applyProjectImport(
     })
   }
   const workItemMapping = new Map<string, EntityMapping>()
-  for (const item of topologicalWorkItems(input.plan)) {
+  for (const item of topologicalWorkItems(plan)) {
     const status = statusByName.get(item.status.trim().toLowerCase())!
     const created = await client.createWorkItem<{ id: string; revision: number; number: number }>({
       teamId: team.id,
@@ -391,7 +417,7 @@ export async function applyProjectImport(
     })
   }
   const relationMappings: EntityMapping[] = []
-  for (const relation of input.plan.relations) {
+  for (const relation of plan.relations) {
     const source = workItemMapping.get(relation.sourceWorkItemId)!
     const target = workItemMapping.get(relation.targetWorkItemId)!
     const created = await client.createWorkItemRelation<{ id: string; revision: number }>(source.targetId, {
@@ -409,14 +435,14 @@ export async function applyProjectImport(
   }
   const mapping = {
     project: {
-      sourceId: input.plan.project.sourceId,
+      sourceId: plan.project.sourceId,
       targetId: project.id,
       targetRef: projectRef,
       revision: project.revision,
     },
-    milestones: [...milestoneMapping.values()].sort((left, right) => left.sourceId.localeCompare(right.sourceId)),
-    workItems: [...workItemMapping.values()].sort((left, right) => left.sourceId.localeCompare(right.sourceId)),
-    relations: relationMappings.sort((left, right) => left.sourceId.localeCompare(right.sourceId)),
+    milestones: [...milestoneMapping.values()].sort(bySourceId),
+    workItems: [...workItemMapping.values()].sort(bySourceId),
+    relations: relationMappings.sort(bySourceId),
   }
   return {
     contentHash: input.contentHash,
