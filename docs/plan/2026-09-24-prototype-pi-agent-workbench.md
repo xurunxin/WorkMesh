@@ -567,7 +567,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/126
 <!-- WM-WEBPI-20260924:W05 -->
 # W05 统一 Markdown 编辑、阅读、草稿与附件体验
 
-阶段：M1；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M1；优先级：P0；估算：3–5 人日（W01 后复估）。状态：已实现（2026-09-25，分支 `codex/wm-webpi-w05-rich-content`，基于 W03）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -621,11 +621,20 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/127
 ## 交付记录模板
 
 - 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
+  - 分支 `codex/wm-webpi-w05-rich-content`（base=`codex/wm-webpi-w03-shell-nav`，叠 #144）；PR 见 issue #127 关闭评论；本机 Windows 11 + Docker compose（postgres/redis/minio/api/web 全容器）。
+  - 变更文件：`features/rich-content/editor.tsx`（编辑/分栏/预览三视图、`DraftSaveState` 五态、`ServerSave` 管线与 409 冲突识别、IME 合成守卫、Ctrl+S、beforeunload 离页保护）、`features/rich-content/artifacts.tsx`（上传中取消：AbortController + 取消 API）、`app/lib/i18n.tsx`（zh/en 编辑器文案 + `useLocale().editorCopy` 暴露）、`app/page.tsx`（指南页统一到编辑器内置三视图 + 字数统计 + 本地化文案）、`app/work-room.tsx`（Work Room 评论编辑器接本地化文案）、`features/work-items/detail/work-item-detail.tsx`（内联 editorCopy 补全新键）、`app/styles.css`（分栏网格、状态配色、预览面板、删除旧 guidance 预览样式）。
+- 数据迁移 / API / events / Skill 变更：无（纯 web 层；草稿仍在 localStorage，附件 API 未变）。
 - 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
+  - `pnpm lint`（17/17 包通过）、`pnpm typecheck`（17/17 包通过）。
+  - `pnpm test`：全仓单测通过，其中 apps/web 109 文件 720 用例（含新增 rich-content 28 用例：三视图/selection 保持/草稿隔离/IME/服务器保存管线 409 与重试/离页守卫；artifacts 上传取消用例）。
+  - `pnpm test:integration`：db 77/77、api 123/123、worker 78+1skip、recovery 1/1（本机配方见项目记忆，含限流 burst 环境变量）。
+  - `pnpm test:e2e`：本机 BLOCKED（`next dev` 因 S:/G: 同卷双盘符无法启动；证据 `.evidence/roadmap-20260924/w05-rich-content/e2e-blocked.log`）；`e2e/rich-content.spec.ts` 已存在由 CI 执行，本机未新增 e2e 用例（D5：未知不记通过）。
+  - 存量问题（与 W05 无关，git stash 基线验证）：`check:i18n` 9 个 I18N_HARDCODED_UI_COPY 错误（work-room.tsx、collaboration-hub.tsx、work-item-execution-workspace.tsx）。
+- 浏览器/真实模型/恢复证据（适用时）：Docker web 容器（localhost:3000，light 主题 + 中文 locale）截图 7 张：`.evidence/roadmap-20260924/w05-rich-content/`（login-light、guidance-edit/split/preview 三视图含草稿状态区与字数统计、workitem-detail-editor、workroom-comment-editor、workitem-attachments）。
 - 演示步骤、已知限制、规范偏差及 follow-up：
-
+  - 演示：登录 → 指南页输入 Markdown（草稿状态"已存本地草稿"）→ 工具栏切换 编辑/分栏/预览；Issue 详情 → 详情页签描述编辑器；完整页面 → 讨论 → 会话（评论编辑器）/ 证据（附件区，上传中可取消）。
+  - 已知限制：`onSave` 服务器保存管线当前无内置调用方（Issue 描述保存仍走表单提交），供 W04+ 接入；分栏视图 ≤640px 自动退化为单列；guidance/Work Room 编辑器文案本地化在本次补齐，其余硬编码文案属存量问题。
+  - follow-up：W04 接入 `onSave` 管线实现描述/评论的服务器保存与 409 冲突 UI；check:i18n 存量 9 错误另开清理任务。
 
 ---
 
