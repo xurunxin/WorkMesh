@@ -51,9 +51,14 @@ export function normalizeLlmBaseUrl(raw: string, allowPrivate: boolean): string 
   if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash)
     throw new DomainError('VALIDATION_ERROR', 'Use an HTTPS base URL without credentials, query, or fragment')
   const host = url.hostname.toLowerCase()
-  const privateHost = isIP(host) !== 0 || host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')
-  const allowlist = (process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST ?? '').split(',').map(value => value.trim().toLowerCase())
-  if (privateHost && (!allowPrivate || !allowlist.includes(host)))
+  if (host.endsWith('.')) throw new DomainError('VALIDATION_ERROR', 'Use a canonical model hostname without a trailing dot')
+  // URL.hostname encloses IPv6 literals in brackets; net.isIP expects the
+  // bare address. Treat every literal as private until Runner egress pins it.
+  const bareHost = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host
+  const privateHost = isIP(bareHost) !== 0 || host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')
+  const allowlist = (process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST ?? '').split(',')
+    .map(value => value.trim().toLowerCase().replace(/^\[(.*)\]$/, '$1'))
+  if (privateHost && (!allowPrivate || !allowlist.includes(bareHost)))
     throw new DomainError('FORBIDDEN', 'Private model endpoint must be explicitly allowlisted by the deployment and configured by a workspace administrator')
   if (/%2f|%5c|%00/i.test(url.pathname))
     throw new DomainError('VALIDATION_ERROR', 'Encoded path separators are not allowed in model base URLs')

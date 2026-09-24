@@ -119,6 +119,8 @@ export default defineConfig({
         ALLOW_PRIVATE_AGENT_WEBHOOKS: "true",
       },
     },
+    // A prestarted Web server lets Windows hosts use a Linux Next dev container
+    // when package-store paths cross drives. The API fixture remains local.
     ...(process.env.WORKMESH_E2E_EXTERNAL_WEB === "1" ? [] : [{
       command: `pnpm --dir apps/web exec next dev --port ${webPort}`,
       url: webUrl,

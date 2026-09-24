@@ -25,7 +25,7 @@
     "mcp:inspector": "pnpm --filter @workmesh/mcp inspector",
     "smoke:agents": "pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke",
     "test:conformance": "pnpm --filter @workmesh/conformance conformance",
-    "test:live:minimax:m3": "node scripts/probe-minimax-m3.mjs && node scripts/probe-minimax-openai-protocols.mjs && node scripts/probe-minimax-m3-tools.mjs",
+    "test:live:minimax:m3": "node scripts/probe-minimax-m3.mjs && node scripts/probe-minimax-openai-protocols.mjs && node scripts/probe-minimax-m3-tools.mjs && pnpm --filter @workmesh/agent-runner test:live:minimax:m3",
     "generate:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts",
     "check:route-policy": "pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts --check",
     "generate:workmesh-skill": "node scripts/generate-workmesh-skill-artifact.mjs",

@@ -18,15 +18,18 @@ describe('LLM base URL policy', () => {
     for (const url of [
       'http://api.minimax.cn/v1', 'https://user:pass@api.minimax.cn/v1',
       'https://api.minimax.cn/v1?key=x', 'https://api.minimax.cn/v1#key',
-      'https://api.minimax.cn/v1%2fprivate',
+      'https://api.minimax.cn/v1%2fprivate', 'https://localhost./v1',
     ]) expect(() => normalizeLlmBaseUrl(url, false)).toThrow()
   })
 
   it('requires both workspace administrator authority and a deployment allowlist for private hosts', () => {
     delete process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST
     expect(() => normalizeLlmBaseUrl('https://127.0.0.1:9000/v1', true)).toThrow()
-    process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = '127.0.0.1'
+    expect(() => normalizeLlmBaseUrl('https://[::1]:9000/v1', true)).toThrow()
+    expect(() => normalizeLlmBaseUrl('https://[::ffff:127.0.0.1]:9000/v1', true)).toThrow()
+    process.env.WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST = '127.0.0.1,::1'
     expect(() => normalizeLlmBaseUrl('https://127.0.0.1:9000/v1', false)).toThrow()
     expect(normalizeLlmBaseUrl('https://127.0.0.1:9000/v1', true)).toBe('https://127.0.0.1:9000/v1')
+    expect(normalizeLlmBaseUrl('https://[::1]:9000/v1', true)).toBe('https://[::1]:9000/v1')
   })
 })

@@ -51,6 +51,8 @@ Spike 工程（仓库外，`G:\Projects\MetronX\wm-pi-spike\`）对 `@earendil-w
 
 `pnpm test:live:minimax:m3` 使用本地 `MINIMAX_CN_API_KEY` 对中国区 `MiniMax-M3` 实测文本和两类协议的工具调用/工具结果/最终回复，输出仅含状态元数据。Responses 路径以完整历史重建成功；`previous_response_id` 的一次测试返回 HTTP 400，因此 WorkMesh 不把该参数作为恢复依赖。此项只证明真实上游协议调用，不证明 Pi Runner、会话持久化、流式边界、控制权限或生产部署。
 
+`apps/agent-runner` 现将 Pi SDK 固定在 `0.87.1`，其受限探测使用 `noTools: 'builtin'`、唯一只读探测工具、独立 agent/state/work 目录和模型配置中的固定 `$MINIMAX_CN_API_KEY` 环境引用。真实 MiniMax-M3 上，Chat Completions 与 Responses 各完成一次 Pi 工具调用、最终文本与 `agent_settled`。这证明固定 SDK 可驱动两种协议的实际模型循环；该程序仍是探测器，尚无 WorkMesh 会话、授权工具、持久队列、Stop 栅栏或服务镜像，不构成 W08–W10 的完成验收。
+
 **契约冻结（先于实现）：**
 
 - 传输 DTO 与事件：`packages/contracts/src/pi-workbench-contracts.ts` —— Conversation/Turn/RunnerAttempt（单 writer/fencing、队列、幂等、Stop、权限撤销、上下文 pin、恢复协议）、LlmConnection/LlmModel（owner/scope、revision、api 类型、baseUrl、能力/限制、secret 仅服务端解析）、runner 工具调用账本、`workbench.*` 事件（过去时命名）与最小关系模型 `workbenchRelationModel`。新增 13 个显式错误码进入统一 `apiErrorCodeSchema`。DDL 不在本任务（后续编号迁移）。
