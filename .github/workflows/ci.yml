@@ -679,7 +679,7 @@ jobs:
       - name: Set up exact Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: 22.15.0
+          node-version: 22.19.0
       - name: Aggregate required results
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}

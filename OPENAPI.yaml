@@ -3,6 +3,10 @@ info:
   title: WorkMesh API
   version: "1.0"
   description: WorkMesh server 1.0.0 REST API 1.0. Non-stable capabilities are deployment-gated and default disabled.
+# WM-WEBPI-20260924 W01: no API change in this task. Workbench conversation,
+# turn, runner-attempt, and LLM connection DTOs are frozen in
+# packages/contracts/src/pi-workbench-contracts.ts; their REST endpoints and
+# `workbench.*` events are introduced by later roadmap tasks (W06/W07/W09/W10).
 servers:
   - url: http://localhost:3001
 security:

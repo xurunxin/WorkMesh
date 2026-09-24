@@ -1734,3 +1734,16 @@ authorized response is not inferable through detail errors, counts, timing, or
 debug metadata. Projection payloads contain bounded operational summaries and
 references only; hidden model reasoning, private prompts, secrets, and
 unsanitized tool input are prohibited.
+
+# 25. Workbench conversation 与 Pi Runner（规划中）
+
+WM-WEBPI-20260924 W01 冻结了工作台对话层的传输契约：Conversation、Turn、
+RunnerAttempt（单 writer/fencing）、用户配置的 LlmConnection/LlmModel 以及
+runner 工具调用账本。DTO 与 `workbench.*` 事件 schema 位于
+`packages/contracts/src/pi-workbench-contracts.ts`；对应 REST 端点、事件接入
+与 Runner 进程协议由后续路线图任务（W06/W07/W09/W10）以带编号的变更引入。
+
+本节当前不定义任何新的协议行为或端点；现有 Session 控制面（创建、ACK、
+Prompt、Stop/Pause/Resume、完成）保持权威。既有限制继续适用：Runner 只获得
+显式提供的模型连接与工具；Stop 之后普通写入被服务端拒绝；对话层不隐式获得
+Team 写权，写权仍只经由绑定 Agent Session 的委派授予。

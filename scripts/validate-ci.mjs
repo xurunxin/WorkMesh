@@ -439,10 +439,10 @@ requireCondition(
 )
 requireCondition(required.includes('if: ${{ always() }}'), 'required-ci must aggregate with always()')
 requireCondition(required.includes("result !== 'success'"), 'required-ci must fail unless every dependency succeeds')
-requireCondition(required.includes('node-version: 22.15.0'), 'required-ci must pin its Node runtime')
+requireCondition(required.includes('node-version: 22.19.0'), 'required-ci must pin its Node runtime')
 
 requireCondition(packageJson.packageManager === 'pnpm@9.15.4', 'packageManager must be pnpm@9.15.4')
-requireCondition(nodeVersion === '22.15.0', 'Node must be pinned to 22.15.0')
+requireCondition(nodeVersion === '22.19.0', 'Node must be pinned to 22.19.0')
 requireCondition(
   occurrences(/corepack prepare pnpm@9\.15\.4 --activate/g) === executableJobs.length,
   'every executable job must activate pnpm@9.15.4 with Corepack',

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.17.1-alpine3.22 AS build
+FROM node:22.19.0-alpine3.21 AS build
 ENV COREPACK_HOME=/opt/corepack
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 WORKDIR /workspace
@@ -15,7 +15,7 @@ RUN pnpm --filter @workmesh/config build \
     && pnpm --filter @workmesh/mcp --prod deploy /out \
     && node infra/docker/prepare-production-deploy.mjs /out
 
-FROM node:22.17.1-alpine3.22 AS runtime
+FROM node:22.19.0-alpine3.21 AS runtime
 ARG WORKMESH_BUILD_SHA
 RUN apk upgrade --no-cache \
     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22 \
