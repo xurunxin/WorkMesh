@@ -1,7 +1,8 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import * as UiBarrel from './index.js'
 import { DataTableFrame, DescriptionList, Field, OverflowText, ResponsiveActionBar, TabBar, Tabs, Toast } from './index.js'
 
 vi.mock('react', async importOriginal => {
@@ -26,60 +27,118 @@ function elementsIn(node: unknown): TestElement[] {
   return [element, ...descendants]
 }
 
+const barrelSource = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
+
+function collectModuleFiles(dir: URL): URL[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+    if (entry.isDirectory()) return collectModuleFiles(new URL(`./${entry.name}/`, dir))
+    if (!/\.(ts|tsx)$/.test(entry.name) || /\.test\./.test(entry.name)) return []
+    return [new URL(`./${entry.name}`, dir)]
+  })
+}
+
+const barrelUrl = new URL('./index.tsx', import.meta.url)
+const moduleSources = collectModuleFiles(new URL('./', import.meta.url))
+  .filter(url => url.href !== barrelUrl.href)
+  .map(url => ({
+    path: fileURLToPath(url),
+    source: readFileSync(url, 'utf8'),
+  }))
+const combinedModuleSource = moduleSources.map(module => module.source).join('\n')
+
+const FORBIDDEN_AUTHORITY_STRINGS = [
+  "from 'next/",
+  'apps/web',
+  'packages/domain',
+  'packages/db',
+  'packages/contracts',
+  'fetch(',
+  'EventSource',
+  'credentials:',
+  'localStorage',
+  'sessionStorage',
+  'window.prompt',
+  'window.confirm',
+  'apiRequest',
+]
+
+const RUNTIME_BARREL_INVENTORY = [
+  'Button', 'Input', 'Select', 'Dialog', 'Sheet', 'Popover', 'TabBar', 'Tabs', 'Badge', 'Card', 'Toast', 'Skeleton',
+  'AsyncStateSurface', 'EmptyState', 'ErrorState', 'ForbiddenState', 'ConflictState',
+  'AppShell',
+  'WorkItemCard', 'WorkItemList', 'WorkItemBoard', 'WorkItemAdaptiveCollection', 'WorkItemFilters', 'WorkSurfaceState', 'WorkSurfacePagination',
+  'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge',
+  'ActorAttribution', 'ControlCenterSection', 'AttentionListItem', 'AttentionCard', 'RunStatusBar', 'RunDigestCard',
+  'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceReferenceList', 'EvidenceDrawer', 'ConsequencePreviewDialog',
+  'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar',
+  'ResponsiveActionBar', 'DataTableFrame', 'DescriptionList', 'Field', 'OverflowText',
+]
+
 describe('UI authority and token boundary', () => {
-  it('declares the shared interactive component barrel as a client boundary', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    expect(source.split(/\r?\n/, 1)[0]).toBe("'use client'")
+  it('splits the barrel into implementation modules', () => {
+    expect(moduleSources.length).toBeGreaterThanOrEqual(14)
+    const modulePaths = moduleSources.map(module => module.path.replaceAll('\\', '/'))
+    for (const required of ['/internal/', '/primitives/', '/layout/', '/domain/']) {
+      expect(modulePaths.some(path => path.includes(required))).toBe(true)
+    }
   })
 
-  it('contains no application, transport, domain or persistence authority', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    for (const forbidden of ["from 'next/", 'apps/web', 'packages/domain', 'packages/db', 'fetch(', 'EventSource', 'credentials:']) {
-      expect(source).not.toContain(forbidden)
+  it('declares every implementation module as a client boundary', () => {
+    for (const module of moduleSources) {
+      expect(module.source.split(/\r?\n/, 1)[0], module.path).toBe("'use client'")
+    }
+  })
+
+  it('keeps the barrel a pure re-export surface covering the full inventory', () => {
+    const lines = barrelSource.split(/\r?\n/).map(line => line.trim()).filter(line => line !== '' && !line.startsWith('//'))
+    expect(lines.length).toBeGreaterThan(0)
+    for (const line of lines) expect(line.startsWith('export'), line).toBe(true)
+    for (const component of RUNTIME_BARREL_INVENTORY) expect(component in UiBarrel, component).toBe(true)
+    expect(barrelSource).not.toContain('internal/')
+  })
+
+  it('contains no application, transport, domain or persistence authority in any module', () => {
+    const allSources = [...moduleSources, { path: 'index.tsx', source: barrelSource }]
+    for (const forbidden of FORBIDDEN_AUTHORITY_STRINGS) {
+      const offenders = allSources.filter(module => module.source.includes(forbidden)).map(module => module.path)
+      expect(offenders, `forbidden string: ${forbidden}`).toEqual([])
     }
   })
 
   it('exports the complete M1.1 component Interface', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
     for (const component of ['Button', 'Input', 'Select', 'Dialog', 'Sheet', 'Popover', 'Tabs', 'Badge', 'Card', 'Toast', 'Skeleton', 'AsyncStateSurface', 'EmptyState', 'ErrorState', 'ForbiddenState', 'ConflictState']) {
-      expect(source).toMatch(new RegExp(`export (?:function|const) ${component}`))
+      expect(combinedModuleSource).toMatch(new RegExp(`export (?:function|const) ${component}`))
     }
-    expect(source).toContain('initialFocusRef?: RefObject<HTMLElement | null>')
-    expect(source).toContain('dismissible?: boolean')
+    expect(combinedModuleSource).toContain('initialFocusRef?: RefObject<HTMLElement | null>')
+    expect(combinedModuleSource).toContain('dismissible?: boolean')
   })
 
   it('exports API-free v27 Work Surface primitives', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
     for (const component of ['WorkItemList', 'WorkItemBoard', 'WorkItemAdaptiveCollection', 'WorkItemCard', 'WorkItemFilters', 'WorkSurfaceState', 'WorkSurfacePagination']) {
-      expect(source).toMatch(new RegExp(`export function ${component}`))
+      expect(combinedModuleSource).toMatch(new RegExp(`export function ${component}`))
     }
-    for (const forbidden of ['fetch(', 'apiRequest', 'localStorage', 'sessionStorage', 'EventSource', 'apps/web']) expect(source).not.toContain(forbidden)
-    expect(source).toContain('aria-label={text.boardColumnsLabel}')
-    expect(source).toContain('const AdaptiveWorkItemCard = memo(')
-    expect(source).toContain('layout="adaptive"')
-    expect(source).toContain('data-hotkey-filter="true"')
-    expect(source).toContain('explicit-status-selector')
-    expect(source).not.toContain('showStatusControl={false}')
-    expect(source).toContain('wm-work-item-project')
-    expect(source).toContain('onOpenProject')
-    expect(source).not.toContain('role="button"')
+    expect(combinedModuleSource).toContain('aria-label={text.boardColumnsLabel}')
+    expect(combinedModuleSource).toContain('const AdaptiveWorkItemCard = memo(')
+    expect(combinedModuleSource).toContain('layout="adaptive"')
+    expect(combinedModuleSource).toContain('data-hotkey-filter="true"')
+    expect(combinedModuleSource).toContain('explicit-status-selector')
+    expect(combinedModuleSource).not.toContain('showStatusControl={false}')
+    expect(combinedModuleSource).toContain('wm-work-item-project')
+    expect(combinedModuleSource).toContain('onOpenProject')
+    expect(combinedModuleSource).not.toContain('role="button"')
   })
 
   it('exports the API-free Human Control Plane component inventory', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
     for (const component of ['TabBar', 'AttentionCard', 'AttentionListItem', 'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge', 'RunStatusBar', 'RunDigestCard', 'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceDrawer', 'EvidenceReferenceList', 'ConsequencePreviewDialog', 'ActorAttribution', 'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar', 'ControlCenterSection']) {
-      expect(source).toMatch(new RegExp(`export function ${component}`))
+      expect(combinedModuleSource).toMatch(new RegExp(`export function ${component}`))
     }
-    expect(source).not.toContain('window.prompt')
-    expect(source).not.toContain('window.confirm')
-    expect(source).toContain('initialFocusRef={cancelRef}')
-    expect(source).toContain('aria-label={`${categoryLabel}: ${label}`}')
+    expect(combinedModuleSource).toContain('initialFocusRef={cancelRef}')
+    expect(combinedModuleSource).toContain('aria-label={`${categoryLabel}: ${label}`}')
   })
 
   it('exports API-free responsive content primitives', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
     for (const component of ['ResponsiveActionBar', 'DataTableFrame', 'DescriptionList', 'Field', 'OverflowText']) {
-      expect(source).toMatch(new RegExp(`export function ${component}`))
+      expect(combinedModuleSource).toMatch(new RegExp(`export function ${component}`))
     }
     const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
     for (const className of ['wm-responsive-action-bar', 'wm-data-table-frame', 'wm-description-list', 'wm-field', 'wm-overflow-text']) {
@@ -98,8 +157,7 @@ describe('UI authority and token boundary', () => {
   })
 
   it('keeps lifecycle, health, risk, urgency, and freshness as separate semantic values', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    for (const type of ['LifecycleState', 'RunHealth', 'RiskLevel', 'UrgencyLevel', 'FreshnessState']) expect(source).toContain(`export type ${type}`)
+    for (const type of ['LifecycleState', 'RunHealth', 'RiskLevel', 'UrgencyLevel', 'FreshnessState']) expect(combinedModuleSource).toContain(`export type ${type}`)
     const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8')
     for (const value of ['healthy', 'stalled', 'critical', 'urgent', 'fresh', 'stale', 'verified']) expect(css).toContain(`.wm-semantic-${value}`)
   })
@@ -137,10 +195,9 @@ describe('responsive content primitives', () => {
 
 describe('WorkItemCard status name pill', () => {
   it('renders a status name pill colored by statusCategory', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    expect(source).toContain('wm-work-item-status-pill')
-    expect(source).toMatch(/`status-\$\{statusCategory\}`/)
-    expect(source).toMatch(/\{item\.statusName\}/)
+    expect(combinedModuleSource).toContain('wm-work-item-status-pill')
+    expect(combinedModuleSource).toMatch(/`status-\$\{statusCategory\}`/)
+    expect(combinedModuleSource).toMatch(/\{item\.statusName\}/)
   })
 })
 
@@ -205,10 +262,9 @@ describe('Tabs compact accessibility', () => {
   })
 
   it('keeps the complete shared desktop keyboard contract in the shared implementation', () => {
-    const source = readFileSync(fileURLToPath(new URL('./index.tsx', import.meta.url)), 'utf8')
-    for (const key of ['ArrowRight', 'ArrowLeft', 'Home', 'End']) expect(source).toContain(`event.key === '${key}'`)
-    expect(source).toContain('onValueChange(target.id)')
-    expect(source).toContain('document.getElementById(`${baseId}-tab-${target.id}`)?.focus()')
+    for (const key of ['ArrowRight', 'ArrowLeft', 'Home', 'End']) expect(combinedModuleSource).toContain(`event.key === '${key}'`)
+    expect(combinedModuleSource).toContain('onValueChange(target.id)')
+    expect(combinedModuleSource).toContain('document.getElementById(`${baseId}-tab-${target.id}`)?.focus()')
   })
 })
 
