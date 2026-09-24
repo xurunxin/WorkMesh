@@ -611,6 +611,11 @@ function SettingsPageScope({
                 </section>
                 </>}
               </div>
+              <section aria-labelledby="agent-workbench-service-heading" className="settings-card settings-card-wide workbench-llm-settings">
+                <header><div><p className="eyebrow">Agent workbench</p><h2 id="agent-workbench-service-heading">{text.workbenchServiceTitle}</h2></div></header>
+                <p>{text.workbenchServiceDescription}</p>
+                <a className="wm-button" href="/settings/agent-workbench">{text.workbenchServiceOpen}</a>
+              </section>
             </>,
           },
         ]}

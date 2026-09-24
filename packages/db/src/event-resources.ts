@@ -68,6 +68,8 @@ export const supportedEventAggregateTypes = [
   'agent',
   'agent_team_access',
   'agent_connection',
+  'workbench_llm_connection',
+  'workbench_llm_model',
   'agent_enrollment_policy',
   'browser_push_subscription',
   'delegation',
@@ -151,6 +153,8 @@ export const privateEventAudienceForms = [
   'aggregate:notification',
   'aggregate:advanced_saved_view:private',
   'aggregate:browser_push_subscription',
+  'aggregate:workbench_llm_connection:personal',
+  'aggregate:workbench_llm_model:personal',
   'event:notification.preferences_updated',
 ] as const
 
@@ -224,6 +228,16 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
   agent_connection:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_connections WHERE id=$1 AND workspace_id=$2`,
+  workbench_llm_connection:
+    `SELECT CASE WHEN scope='team' THEN 'team' ELSE 'workspace' END AS resource_type,
+            COALESCE(team_id,workspace_id) AS resource_id
+       FROM workbench_llm_connections WHERE id=$1 AND workspace_id=$2`,
+  workbench_llm_model:
+    `SELECT CASE WHEN connection.scope='team' THEN 'team' ELSE 'workspace' END AS resource_type,
+            COALESCE(connection.team_id,connection.workspace_id) AS resource_id
+       FROM workbench_llm_models model
+       JOIN workbench_llm_connections connection ON connection.id=model.connection_id
+      WHERE model.id=$1 AND model.workspace_id=$2 AND connection.workspace_id=$2`,
   agent_enrollment_policy:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_enrollment_policies WHERE id=$1 AND workspace_id=$2`,
@@ -692,6 +706,17 @@ async function resolveAudienceActorId(
     privateAudienceSql =
       `SELECT actor_id AS audience_actor_id,true AS is_private
          FROM browser_push_subscriptions WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_llm_connection') {
+    privateAudienceSql =
+      `SELECT owner_actor_id AS audience_actor_id,scope='personal' AS is_private
+         FROM workbench_llm_connections WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_llm_model') {
+    privateAudienceSql =
+      `SELECT connection.owner_actor_id AS audience_actor_id,
+              connection.scope='personal' AS is_private
+         FROM workbench_llm_models model
+         JOIN workbench_llm_connections connection ON connection.id=model.connection_id
+        WHERE model.id=$1 AND model.workspace_id=$2 AND connection.workspace_id=$2`
   } else if (input.aggregateType === 'advanced_saved_view') {
     privateAudienceSql =
       `SELECT owner_actor_id AS audience_actor_id,

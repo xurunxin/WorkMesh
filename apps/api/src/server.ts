@@ -106,6 +106,7 @@ import {
 } from "./agent-connections.js";
 import type { AgentConnectionCurrentIdentity } from "@workmesh/contracts";
 import { registerAutonomousControlPlaneRoutes } from "./autonomous-control-plane.js";
+import { registerWorkbenchLlmConnectionRoutes } from "./workbench-llm-connections.js";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -1193,6 +1194,7 @@ export const buildApp = (options: {
   registerDeliveryRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerOperationsRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, features, paginator });
   registerAdminRetentionRoutes(app, db);
+  registerWorkbenchLlmConnectionRoutes(app, { db, meta: commandContext, header, paginator });
   registerAgentConnectionRoutes(app, {
     db,
     webOrigin: config.WEB_ORIGIN,

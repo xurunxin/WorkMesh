@@ -8,9 +8,10 @@ export default async function resetAcceptanceDatabase(): Promise<void> {
   if (!pnpmCli) {
     throw new Error("pnpm did not expose npm_execpath to Playwright global setup");
   }
+  const pnpmScript = /\.(?:cjs|mjs|js)$/i.test(pnpmCli);
   await execFileAsync(
-    process.execPath,
-    [pnpmCli, "--filter", "@workmesh/db", "exec", "tsx", "scripts/reset-test.ts"],
+    pnpmScript ? process.execPath : pnpmCli,
+    [...(pnpmScript ? [pnpmCli] : []), "--filter", "@workmesh/db", "exec", "tsx", "scripts/reset-test.ts"],
     {
       env: process.env,
       windowsHide: true,

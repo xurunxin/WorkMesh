@@ -119,14 +119,18 @@ export default defineConfig({
         ALLOW_PRIVATE_AGENT_WEBHOOKS: "true",
       },
     },
-    {
+    ...(process.env.WORKMESH_E2E_EXTERNAL_WEB === "1" ? [] : [{
       command: `pnpm --dir apps/web exec next dev --port ${webPort}`,
       url: webUrl,
       reuseExistingServer: false,
       timeout: 90_000,
-      stdout: "pipe",
-      stderr: "pipe",
-      env: { ...process.env, NEXT_PUBLIC_API_URL: apiUrl },
-    },
+      stdout: "pipe" as const,
+      stderr: "pipe" as const,
+      env: {
+        ...process.env,
+        NEXT_PUBLIC_API_URL: apiUrl,
+        NEXT_DEV_API_UPSTREAM: apiUrl,
+      },
+    }]),
   ],
 });

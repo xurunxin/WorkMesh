@@ -102,6 +102,8 @@ describe('durable domain-event writer inventory', () => {
       'aggregate:notification',
       'aggregate:advanced_saved_view:private',
       'aggregate:browser_push_subscription',
+      'aggregate:workbench_llm_connection:personal',
+      'aggregate:workbench_llm_model:personal',
       'event:notification.preferences_updated',
     ])
     const server = await readFile(join(root, 'apps/api/src/server.ts'), 'utf8')

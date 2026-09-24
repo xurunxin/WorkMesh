@@ -245,6 +245,7 @@ export const llmConnectionResponseSchema = z.object({
   status: llmConnectionStatusSchema,
   // Only the status is exposed — never the secret material nor its ref.
   secret_status: llmSecretStatusSchema,
+  can_manage: z.boolean(),
   created_by_actor_id: idSchema,
   revision: revisionSchema,
   created_at: timestampSchema,
@@ -349,6 +350,8 @@ export const workbenchEventTypeSchema = z.enum([
   'workbench.llm_connection.created',
   'workbench.llm_connection.updated',
   'workbench.llm_connection.revoked',
+  'workbench.llm_model.created',
+  'workbench.llm_model.updated',
 ])
 
 // Events never carry secret material or fence tokens.

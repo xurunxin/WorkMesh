@@ -69,6 +69,7 @@ const llmConnection = {
   base_url: 'https://llm.example.internal/v1',
   status: 'active' as const,
   secret_status: 'configured' as const,
+  can_manage: true,
   created_by_actor_id: otherId,
   revision: 1,
   created_at: timestamp,

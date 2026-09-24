@@ -474,6 +474,12 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/llm-connections', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/llm-connections', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/workbench/llm-connections/{id}/models', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/admin/retention/status', authenticated: true },
 ] as const
 

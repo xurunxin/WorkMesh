@@ -194,6 +194,9 @@ main#workmesh-main:focus-visible {
 .settings-page > header { margin-bottom: 1rem; }
 .settings-notice { margin: 0 0 1rem; padding: .75rem 1rem; color: var(--wm-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 8px; }
 .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.workbench-llm-settings { margin-top: 1rem; }
+.workbench-llm-list { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 1rem 0; }
+.workbench-llm-settings .settings-form { border-top: 1px solid var(--wm-border); padding-top: 1rem; margin-top: 1rem; }
 .settings-card { padding: 1.15rem; }
 .settings-card-wide { grid-column: 1 / -1; }
 .settings-card > header h2 { margin: .15rem 0 0; font-size: 1.05rem; }

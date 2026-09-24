@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed — 2026-09-24. 本 ADR 是实施路线图的设计输入。W01 已完成兼容性 Spike（5/5 通过）、Node 基线升级与传输契约冻结，钉住结果见下文"W01 验证结果与钉住基线"；实现版本以此为准。当前没有修改运行时、数据库或 API。
+Proposed — 2026-09-24. 本 ADR 是实施路线图的设计输入。W01 已完成兼容性 Spike（5/5 通过）、Node 基线升级与传输契约冻结，钉住结果见下文"W01 验证结果与钉住基线"；实现版本以此为准。W07 的连接与模型配置实现正在进行，尚未满足整项路线图的发布门槛。
 
 稳定规划标识：`WM-WEBPI-20260924`。本地执行计划：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md`；GitHub 与 WorkMesh 映射见同目录的 `.index.json`。
 
@@ -42,6 +42,14 @@ Spike 工程（仓库外，`G:\Projects\MetronX\wm-pi-spike\`）对 `@earendil-w
 - `ModelRuntime.create()` 默认会在 agent 目录旁写入 `auth.json` 与 `models-store.json`。WorkMesh Runner 模式必须用 `authPath`/`modelsStorePath` 把可写状态重定向到独立 scratch 目录，agent 目录只保留只读 `models.json`（P6 已验证密封）。
 - 正确用法：`ModelRuntime.create({ modelsPath, authPath, modelsStorePath, refreshOnCreate })` + `createAgentSession({ model, modelRuntime, sessionManager, noTools: 'builtin', customTools, agentDir })`；customTools 参数 schema 用 TypeBox；`agent_settled` 经 `session.subscribe` 观察；`getLastAssistantText()` 取结果。
 - 双协议（`openai-completions` / `openai-responses`）由 models.json 中 provider 的 `api` 字段显式选择，同一自定义工具在两个协议下均正常完成多轮工具调用。
+
+## W07 实施进展与真实模型边界（2026-09-25）
+
+编号迁移 `v1/0009_workbench_llm_connections.sql` 新增 Connection 与 Model 配置表，连接支持 personal/team/workspace 范围，凭据由 API 使用 `WORKMESH_MASTER_KEY` 加密；响应只暴露状态。API 的创建、列表、读取、修订、吊销与模型登记使用现有 Human session、幂等、revision 和事务事件/outbox。模型目录变更也推进连接 revision。设置页新增独立的 Agent 工作台服务接入入口。测试数据库的迁移与权限/加密/幂等/修订集成测试通过。
+
+部署变量 `WORKMESH_LLM_PRIVATE_HOST_ALLOWLIST` 是逗号分隔的精确主机名或 IP。只有 Workspace Admin 且命中该名单时，配置才允许显式私有主机；实际出站请求还须在 W08/W10 的 Runner 边界校验 DNS 解析地址并固定连接目标。当前 API 不向配置目标发送网络请求，故不能把配置保存视为安全的出站探测通过。未配置该变量时，私有主机默认拒绝。
+
+`pnpm test:live:minimax:m3` 使用本地 `MINIMAX_CN_API_KEY` 对中国区 `MiniMax-M3` 实测文本和两类协议的工具调用/工具结果/最终回复，输出仅含状态元数据。Responses 路径以完整历史重建成功；`previous_response_id` 的一次测试返回 HTTP 400，因此 WorkMesh 不把该参数作为恢复依赖。此项只证明真实上游协议调用，不证明 Pi Runner、会话持久化、流式边界、控制权限或生产部署。
 
 **契约冻结（先于实现）：**
 

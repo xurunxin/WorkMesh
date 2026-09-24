@@ -765,6 +765,9 @@ export type SettingsCopy = {
   settingsTabsLabel: string
   tabWorkspace: string
   tabOperations: string
+  workbenchServiceTitle: string
+  workbenchServiceDescription: string
+  workbenchServiceOpen: string
 }
 
 const settingsCopies: Record<Locale, SettingsCopy> = {
@@ -780,6 +783,9 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     title: '设置',
     workspace: '工作区',
     subtitle: '工作区管理与日常规划保持分离。',
+    workbenchServiceTitle: '模型服务接入',
+    workbenchServiceDescription: '管理 Chat Completions 与 Responses 模型服务、凭据和模型目录。',
+    workbenchServiceOpen: '打开接入设置',
     reviewOnly: '你可以查看团队设置；工作区管理员负责管理团队和工作流状态。',
     workspaceStructure: '工作区结构',
     teams: '团队',
@@ -849,6 +855,9 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     title: 'Settings',
     workspace: 'Workspace',
     subtitle: 'Workspace administration stays separate from daily planning.',
+    workbenchServiceTitle: 'Model service connections',
+    workbenchServiceDescription: 'Manage Chat Completions and Responses providers, credentials, and models.',
+    workbenchServiceOpen: 'Open connection settings',
     reviewOnly: 'You can review team settings. Workspace admins manage teams and workflow states.',
     workspaceStructure: 'Workspace structure',
     teams: 'Teams',

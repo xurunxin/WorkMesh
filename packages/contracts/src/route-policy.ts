@@ -167,6 +167,12 @@ const workspaceAdminOperations = new Set([
 
 const humanOnlyOperations = new Set([
   ...workspaceAdminOperations,
+  'listWorkbenchLlmConnections',
+  'createWorkbenchLlmConnection',
+  'getWorkbenchLlmConnection',
+  'updateWorkbenchLlmConnection',
+  'revokeWorkbenchLlmConnection',
+  'upsertWorkbenchLlmModel',
   'logout',
   'listHumanActors',
   'listAgents',
@@ -242,6 +248,8 @@ const agentOnlyOperations = new Set([
 ])
 
 const revisionedOperations = new Set([
+  'updateWorkbenchLlmConnection',
+  'revokeWorkbenchLlmConnection',
   'updateWorkspace',
   'updateTeam',
   'deleteTeam',

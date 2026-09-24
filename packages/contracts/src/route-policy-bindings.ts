@@ -1159,5 +1159,11 @@ export const routeOperationBindings = [
     "method": "GET",
     "path": "/api/v1/admin/retention/status",
     "operationId": "getRetentionStatus"
-  }
+  },
+  { "method": "GET", "path": "/api/v1/workbench/llm-connections", "operationId": "listWorkbenchLlmConnections" },
+  { "method": "POST", "path": "/api/v1/workbench/llm-connections", "operationId": "createWorkbenchLlmConnection" },
+  { "method": "GET", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "getWorkbenchLlmConnection" },
+  { "method": "PATCH", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "updateWorkbenchLlmConnection" },
+  { "method": "DELETE", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "revokeWorkbenchLlmConnection" },
+  { "method": "POST", "path": "/api/v1/workbench/llm-connections/{id}/models", "operationId": "upsertWorkbenchLlmModel" }
 ] as const

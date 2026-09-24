@@ -2008,6 +2008,66 @@ paths:
     delete: { x-workmesh-policy-id: route.revokeAgentEnrollmentPolicy, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: revokeAgentEnrollmentPolicy, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "204": { description: Enrollment policy revoked }, "409": { $ref: "#/components/responses/RevisionConflict" } } }
   /api/v1/agent-enrollments/redeem:
     post: { x-workmesh-policy-id: route.redeemAgentEnrollment, x-workmesh-actor-kinds: [], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentEnrollment, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentEnrollmentRedeemInput" } } } }, responses: { "200": { description: Agent enrolled, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "409": { $ref: "#/components/responses/Conflict" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
+  /api/v1/workbench/llm-connections:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchLlmConnections
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listWorkbenchLlmConnections
+      parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }]
+      responses: { "200": { $ref: "#/components/responses/PagedJson" } }
+    post:
+      x-workmesh-policy-id: route.createWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: createWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionCreateInput" } } } }
+      responses: { "201": { description: Connection created; credential is never returned, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnection" } } } } }
+  /api/v1/workbench/llm-connections/{id}:
+    get:
+      x-workmesh-policy-id: route.getWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Connection with model catalog, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionDetail" } } } } }
+    patch:
+      x-workmesh-policy-id: route.updateWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: updateWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionPatchInput" } } } }
+      responses: { "200": { description: Updated connection, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnection" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+    delete:
+      x-workmesh-policy-id: route.revokeWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: revokeWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      responses: { "204": { description: Connection revoked and stored secret destroyed }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/llm-connections/{id}/models:
+    post:
+      x-workmesh-policy-id: route.upsertWorkbenchLlmModel
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: upsertWorkbenchLlmModel
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmModelInput" } } } }
+      responses: { "201": { description: Model catalog entry created or updated, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmModel" } } } } }
   /api/v1/admin/retention/status:
     get:
       x-workmesh-policy-id: route.getRetentionStatus
@@ -3274,6 +3334,83 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    WorkbenchLlmConnection:
+      type: object
+      additionalProperties: false
+      required: [id, workspace_id, scope, scope_id, name, api_type, base_url, status, secret_status, can_manage, created_by_actor_id, revision, created_at, updated_at, revoked_at]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        workspace_id: { $ref: "#/components/schemas/Id" }
+        scope: { type: string, enum: [personal, team, workspace] }
+        scope_id: { type: [string, "null"], format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        api_type: { type: string, enum: [openai-completions, openai-responses] }
+        base_url: { type: string, format: uri }
+        status: { type: string, enum: [active, disabled, revoked] }
+        secret_status: { type: string, enum: [configured, missing], description: Only credential presence is returned }
+        can_manage: { type: boolean, description: Current human may edit and revoke this connection }
+        created_by_actor_id: { $ref: "#/components/schemas/Id" }
+        revision: { $ref: "#/components/schemas/Revision" }
+        created_at: { $ref: "#/components/schemas/Timestamp" }
+        updated_at: { $ref: "#/components/schemas/Timestamp" }
+        revoked_at: { type: [string, "null"], format: date-time }
+    WorkbenchLlmConnectionDetail:
+      allOf:
+        - { $ref: "#/components/schemas/WorkbenchLlmConnection" }
+        - { type: object, required: [models], properties: { models: { type: array, items: { $ref: "#/components/schemas/WorkbenchLlmModel" } } } }
+    WorkbenchLlmConnectionCreateInput:
+      type: object
+      additionalProperties: false
+      required: [scope, name, apiType, baseUrl, secretMaterial]
+      properties:
+        scope: { type: string, enum: [personal, team, workspace] }
+        teamId: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri }
+        secretMaterial: { type: string, writeOnly: true, minLength: 1, maxLength: 4096 }
+    WorkbenchLlmConnectionPatchInput:
+      type: object
+      additionalProperties: false
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri }
+        status: { type: string, enum: [active, disabled] }
+        secretMaterial: { type: string, writeOnly: true, minLength: 1, maxLength: 4096 }
+    WorkbenchLlmModelInput:
+      type: object
+      additionalProperties: false
+      required: [externalModelId, displayName, capabilities]
+      properties:
+        externalModelId: { type: string, minLength: 1, maxLength: 200 }
+        displayName: { type: string, minLength: 1, maxLength: 200 }
+        enabled: { type: boolean, default: true }
+        capabilities: { $ref: "#/components/schemas/WorkbenchLlmModelCapabilities" }
+    WorkbenchLlmModelCapabilities:
+      type: object
+      additionalProperties: false
+      required: [inputModalities, toolCalling, reasoning, contextWindowTokens, maxOutputTokens]
+      properties:
+        inputModalities: { type: array, minItems: 1, items: { type: string, enum: [text, image] } }
+        toolCalling: { type: boolean }
+        reasoning: { type: boolean }
+        contextWindowTokens: { type: integer, minimum: 1 }
+        maxOutputTokens: { type: integer, minimum: 1 }
+    WorkbenchLlmModel:
+      type: object
+      additionalProperties: false
+      required: [id, connection_id, external_model_id, display_name, enabled, capabilities, revision, created_at, updated_at]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        connection_id: { $ref: "#/components/schemas/Id" }
+        external_model_id: { type: string }
+        display_name: { type: string }
+        enabled: { type: boolean }
+        capabilities: { $ref: "#/components/schemas/WorkbenchLlmModelCapabilities" }
+        revision: { $ref: "#/components/schemas/Revision" }
+        created_at: { $ref: "#/components/schemas/Timestamp" }
+        updated_at: { $ref: "#/components/schemas/Timestamp" }
     AgentConnectionAuthenticatedCredential:
       description: "Redacted proof of the exact credential that authenticated this request. No credential ID, token, complete hash, or header is returned."
       oneOf:
