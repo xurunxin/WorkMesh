@@ -1,0 +1,351 @@
+{
+  "roadmapId": "WM-WEBPI-20260924",
+  "baselineSha": "71f45fc8132051600b468876932155a9b72f9469",
+  "status": "planned",
+  "github": "https://github.com/xurunxin/WorkMesh/issues/121",
+  "workmeshProjectId": "4170a135-df8a-4f1f-bbab-a4cf0a80b2a1",
+  "tasks": [
+    {
+      "id": "W00",
+      "title": "冻结代码、原型、路由和现有能力基线",
+      "phase": "M0",
+      "dependsOn": [],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/122",
+      "githubNumber": 122,
+      "workmeshId": "e56e506d-8064-4ea5-9710-abc1e75c2249",
+      "workmeshRevision": 2,
+      "identifier": "GEN-551",
+      "synced": true,
+      "githubId": 5567466330,
+      "subIssueLinked": true,
+      "bodySha256": "5b795afe291da59bd960cd89f3fc31b29f4965feab258af5c8b375b17839a5dc"
+    },
+    {
+      "id": "W01",
+      "title": "完成 Pi 兼容性 Spike 与工作台架构契约",
+      "phase": "M0",
+      "dependsOn": [
+        "W00"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/123",
+      "githubNumber": 123,
+      "workmeshId": "9d692d9e-6eac-484c-b30b-3c2d5aa6d54d",
+      "workmeshRevision": 2,
+      "identifier": "GEN-552",
+      "synced": true,
+      "githubId": 5567466960,
+      "subIssueLinked": true,
+      "bodySha256": "110ddfe1f67f261cff6822c6a72ce7e83d8f3f2b685f536e104672feffaf1db9"
+    },
+    {
+      "id": "W02",
+      "title": "将原型令牌与全部基础控件收敛到共享组件库",
+      "phase": "M1",
+      "dependsOn": [
+        "W01"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/124",
+      "githubNumber": 124,
+      "workmeshId": "46d0c2af-2f95-4556-b4ad-c15a7b8faa40",
+      "workmeshRevision": 2,
+      "identifier": "GEN-553",
+      "synced": true,
+      "githubId": 5567467430,
+      "subIssueLinked": true,
+      "bodySha256": "7271b9dde4d2ed0ab9b8b4be15192acab2b3238d9242aa1bcf2ee8f0d766a5b5"
+    },
+    {
+      "id": "W03",
+      "title": "迁移统一应用外壳、导航、URL 与命令中心",
+      "phase": "M1",
+      "dependsOn": [
+        "W02"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/125",
+      "githubNumber": 125,
+      "workmeshId": "4937dd69-5b0d-429b-9871-e12178c33587",
+      "workmeshRevision": 2,
+      "identifier": "GEN-554",
+      "synced": true,
+      "githubId": 5567468048,
+      "subIssueLinked": true,
+      "bodySha256": "2f1938aa29c81078560b604f319d93ffa6e2580240d3232d963ccb917dac9606"
+    },
+    {
+      "id": "W04",
+      "title": "替换 Projects 与 Issues 主工作流页面",
+      "phase": "M1",
+      "dependsOn": [
+        "W03",
+        "W05"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/126",
+      "githubNumber": 126,
+      "workmeshId": "3ad20f14-df9c-4f0d-a909-dad7bb7c1ce0",
+      "workmeshRevision": 2,
+      "identifier": "GEN-555",
+      "synced": true,
+      "githubId": 5567468749,
+      "subIssueLinked": true,
+      "bodySha256": "097e837aa85a3b8c6ecac658eb6db7d2315040ca16bb68f0f8d88e143990df32"
+    },
+    {
+      "id": "W05",
+      "title": "统一 Markdown 编辑、阅读、草稿与附件体验",
+      "phase": "M1",
+      "dependsOn": [
+        "W02"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/127",
+      "githubNumber": 127,
+      "workmeshId": "1cd36e62-ee3e-470f-a7bf-4022ca4e9bd1",
+      "workmeshRevision": 2,
+      "identifier": "GEN-556",
+      "synced": true,
+      "githubId": 5567469460,
+      "subIssueLinked": true,
+      "bodySha256": "2957c07cf3741efc07168d55d48d859bb259f6dd63994ad0cf4edbe6b68d7d22"
+    },
+    {
+      "id": "W06",
+      "title": "补齐 Project 与 Issue 的版本化普通文档",
+      "phase": "M1",
+      "dependsOn": [
+        "W01",
+        "W04",
+        "W05"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/128",
+      "githubNumber": 128,
+      "workmeshId": "1ff6448e-a739-4db8-bed8-13b79df5be86",
+      "workmeshRevision": 2,
+      "identifier": "GEN-557",
+      "synced": true,
+      "githubId": 5567470068,
+      "subIssueLinked": true,
+      "bodySha256": "df8c1bdff877001f790de86bfbc2dc50e582d62185b05f85d922d1da165883ff"
+    },
+    {
+      "id": "W07",
+      "title": "实现用户 LLM 连接、模型目录与凭据管理域",
+      "phase": "M2",
+      "dependsOn": [
+        "W01"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/129",
+      "githubNumber": 129,
+      "workmeshId": "1f7f1909-4984-4ef0-a235-c02828f22416",
+      "workmeshRevision": 2,
+      "identifier": "GEN-558",
+      "synced": true,
+      "githubId": 5567470702,
+      "subIssueLinked": true,
+      "bodySha256": "49e8e4e969167e43f6ea6a52ecd7470e0b9c67fabc34b3a722992b461705907d"
+    },
+    {
+      "id": "W08",
+      "title": "交付 Chat Completions 与 Responses 双协议适配及验证套件",
+      "phase": "M2",
+      "dependsOn": [
+        "W07"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/130",
+      "githubNumber": 130,
+      "workmeshId": "b8e339b6-2f39-4e9a-bc2f-85db770f05a0",
+      "workmeshRevision": 2,
+      "identifier": "GEN-559",
+      "synced": true,
+      "githubId": 5567471203,
+      "subIssueLinked": true,
+      "bodySha256": "d1635836fdcbacda91b69439210a6def682ed7f69b717f5fc5acc7ba09bff9cb"
+    },
+    {
+      "id": "W09",
+      "title": "实现工作台对话、Turn 与可恢复事件流",
+      "phase": "M2",
+      "dependsOn": [
+        "W01"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/131",
+      "githubNumber": 131,
+      "workmeshId": "8f34d0cd-2ade-43c4-9a0b-402ce470e895",
+      "workmeshRevision": 2,
+      "identifier": "GEN-560",
+      "synced": true,
+      "githubId": 5567471776,
+      "subIssueLinked": true,
+      "bodySha256": "79726ef5644ea5f58ba897493882ae4d045761958ad498e68dd8dc0d7220ce3b"
+    },
+    {
+      "id": "W10",
+      "title": "引入隔离 Pi Runner 并接入授权、控制与恢复",
+      "phase": "M2",
+      "dependsOn": [
+        "W08",
+        "W09"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/132",
+      "githubNumber": 132,
+      "workmeshId": "80547fd9-4eca-45b6-94b9-5de35eb4a0bf",
+      "workmeshRevision": 2,
+      "identifier": "GEN-561",
+      "synced": true,
+      "githubId": 5567472538,
+      "subIssueLinked": true,
+      "bodySha256": "c1d377c97d045809a983eab78703795489f00eb96738ca6f40723d502105e46a"
+    },
+    {
+      "id": "W11",
+      "title": "建立 WorkMesh 操作工具集与 Agent 行为权限矩阵",
+      "phase": "M2",
+      "dependsOn": [
+        "W06",
+        "W10"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/133",
+      "githubNumber": 133,
+      "workmeshId": "3999d97e-9aa1-4b39-b899-f05834cb6e50",
+      "workmeshRevision": 2,
+      "identifier": "GEN-562",
+      "synced": true,
+      "githubId": 5567473112,
+      "subIssueLinked": true,
+      "bodySha256": "c03e99cb8ab35d0fd9a693e9b695b2fd5e436cdcc3f9bb5b36906710df0e8d39"
+    },
+    {
+      "id": "W12",
+      "title": "编写可执行操作 Skills、用户指南和评测场景",
+      "phase": "M2",
+      "dependsOn": [
+        "W11"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/134",
+      "githubNumber": 134,
+      "workmeshId": "4d1146fd-5fa2-47f1-8edf-ab8644c97594",
+      "workmeshRevision": 2,
+      "identifier": "GEN-563",
+      "synced": true,
+      "githubId": 5567473755,
+      "subIssueLinked": true,
+      "bodySha256": "1c5fc13899114e69f5152fb09d8e286edd1ebe16c04d1bc0128efbfa68cb1250"
+    },
+    {
+      "id": "W13",
+      "title": "实装 Agent 工作台对话、上下文与执行控制",
+      "phase": "M3",
+      "dependsOn": [
+        "W03",
+        "W05",
+        "W09",
+        "W10",
+        "W11",
+        "W12"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/135",
+      "githubNumber": 135,
+      "workmeshId": "b7bf000d-f1a3-4aff-b57f-f0066897406a",
+      "workmeshRevision": 2,
+      "identifier": "GEN-564",
+      "synced": true,
+      "githubId": 5567474489,
+      "subIssueLinked": true,
+      "bodySha256": "1a8a1441c25cde9fde86dfe3513a08b9a4eb601b86c26b8b336dfd7f1b778590"
+    },
+    {
+      "id": "W14",
+      "title": "实现制品检查器、修订反馈与成果验收闭环",
+      "phase": "M3",
+      "dependsOn": [
+        "W06",
+        "W13"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/136",
+      "githubNumber": 136,
+      "workmeshId": "0e227dfd-db77-4cfb-8ff8-62c97e27b859",
+      "workmeshRevision": 3,
+      "identifier": "GEN-565",
+      "synced": true,
+      "githubId": 5567475141,
+      "subIssueLinked": true,
+      "bodySha256": "0d04e679924ade13382d5f610b7751f2eaa835104bbf43698dfd8f9681197c8b"
+    },
+    {
+      "id": "W15",
+      "title": "迁移审批、Agents、Sessions、Recovery 与 Operations",
+      "phase": "M3",
+      "dependsOn": [
+        "W03",
+        "W04",
+        "W10"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/137",
+      "githubNumber": 137,
+      "workmeshId": "48eb7fc9-575c-4005-a2d4-1749de992163",
+      "workmeshRevision": 3,
+      "identifier": "GEN-566",
+      "synced": true,
+      "githubId": 5567475573,
+      "subIssueLinked": true,
+      "bodySha256": "1f5c41498b22e1093b491ff46f5db86c7663efe061e44375ce49a775598de71d"
+    },
+    {
+      "id": "W16",
+      "title": "完善模型设置、接入引导和全站配置体验",
+      "phase": "M3",
+      "dependsOn": [
+        "W03",
+        "W07",
+        "W08",
+        "W10"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/138",
+      "githubNumber": 138,
+      "workmeshId": "39886405-a0cb-4530-bcf5-75112ccd0e9f",
+      "workmeshRevision": 2,
+      "identifier": "GEN-567",
+      "synced": true,
+      "githubId": 5567476121,
+      "subIssueLinked": true,
+      "bodySha256": "5138e8a162d87eaf2d2c8c2bc7db5b31eba6f1c5704605a89048bb379197f1f1"
+    },
+    {
+      "id": "W17",
+      "title": "完成可靠性、性能、可访问性与隔离验证",
+      "phase": "M4",
+      "dependsOn": [
+        "W04",
+        "W06",
+        "W12",
+        "W14",
+        "W15",
+        "W16"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/139",
+      "githubNumber": 139,
+      "workmeshId": "8a05fd8e-6b5a-490c-a42d-35a973b1a047",
+      "workmeshRevision": 2,
+      "identifier": "GEN-568",
+      "synced": true,
+      "githubId": 5567476581,
+      "subIssueLinked": true,
+      "bodySha256": "bcbea288123727a1ccc3c4edc0d8ead3d42be2c94dba3c9c3f1f38fc6663e9b2"
+    },
+    {
+      "id": "W18",
+      "title": "真实环境验收、发布切换、回滚演练与旧 UI 清理",
+      "phase": "M4",
+      "dependsOn": [
+        "W17"
+      ],
+      "githubUrl": "https://github.com/xurunxin/WorkMesh/issues/140",
+      "githubNumber": 140,
+      "workmeshId": "eb2687f3-41ab-4be4-acb8-6ee635289eeb",
+      "workmeshRevision": 2,
+      "identifier": "GEN-569",
+      "synced": true,
+      "githubId": 5567477289,
+      "subIssueLinked": true,
+      "bodySha256": "e0ed0ebb3a98b7631e5fa3477144853661bfc621f1370ae39142817d98e3ec80"
+    }
+  ]
+}
