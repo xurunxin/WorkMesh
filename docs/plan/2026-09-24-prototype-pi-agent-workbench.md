@@ -434,7 +434,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/124
 <!-- WM-WEBPI-20260924:W03 -->
 # W03 迁移统一应用外壳、导航、URL 与命令中心
 
-阶段：M1；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M1；优先级：P0；估算：3–5 人日（W01 后复估）。状态：实现完成，待评审合并（2026-09-24，交付记录见下）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -485,13 +485,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/125
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-24）
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：分支 `codex/wm-webpi-w03-shell-nav`（基于 39c651f，PR 叠放于 #143）。环境：Windows 11，宿主 Node v24.20.0（仓库钉住 22.19.0）；渲染证据经 Docker compose web 容器（`next dev` 于容器内，localhost:3000，compose api/postgres/redis/minio 全栈）产出——规避本机 G:/S: 双盘符分裂（同 W01/W02 已知限制）。浏览器证据 Chromium 1280×900 桌面 + 390×844 移动视口。
+- 数据迁移 / API / events / Skill 变更：数据迁移无。REST API 无变更（OPENAPI.yaml 无需改动）。events 无变更。Skill 无变更。前端新增 `apps/web/features/navigation/`（`theme.tsx`：`data-wm-theme` 挂 `<html>`、localStorage 键 `workmesh.theme`、`?theme=` URL 参数覆盖、`<head>` 前内联 bootstrap 脚本 SSR 无闪烁、`ThemeToggle` 控件与 i18n 双语标签）与 `apps/web/app/workbench/` 占位路由（W13 实装前的导航首项目的地）。全部认证页经 `AuthenticatedWorkspaceShell` 自动获得页头主题切换与既有 team/actor/连接状态/版本/退出入口；login/install/connect 独立认证外壳接入同一 `ThemeToggle`；命令中心 registry 新增静态导航项 `navigate:workbench`（双语标题、权限无关）；`shortcut-scope` 认证路由表加入 `/workbench`；`ui-unification-contract` shell 路由清单加入 workbench。canonical URL/Project tabs/browser history 单一所有权未动（无 hash router、无第二套鉴权/导航状态）。
+- 实际测试命令、结果、失败/skip：`pnpm lint` 17/17 成功；`pnpm typecheck` 17/17 成功；`pnpm test` 全过（`@workmesh/web` 109 文件 709 用例，含新增 theme bootstrap jsdom 用例组——默认 light/存储 dark/`?theme=` 覆盖/非法值忽略防 XSS/applyTheme 持久化/ThemeToggle 切换、workbench 页壳与导航断言、workspace-navigation workbench 一等目的地、command-center registry、shortcut-scope；`@workmesh/api` 32 文件 168 用例、`@workmesh/worker` 23 文件 163 过 2 skip 均既有）。`pnpm test:integration:db` 77/77；`:api` 123/123（主跑 121 过，stage3-delivery 2 用例首跑因宿主缺 `S3_*` 环境变量报 500 INTERNAL_ERROR `S3_BUCKET, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY are required`——补齐 MinIO 配置后该文件 12/12 全过，属宿主环境缺配非代码回归）；`:worker` 78 过 1 skip（既有 skip）；`:recovery` 1/1（需 `RUN_RECOVERY_INTEGRATION=1` + 源/目标 test 库 + MinIO S3 + `WORKMESH_POSTGRES_TOOL_CONTAINER` 变量，本轮补齐后通过）。`pnpm test:e2e` 本机 BLOCKED（与 W01/W02 同因：pnpm virtual store 在 G:（NTFS）、仓库经 S:（ReFS Dev Drive）访问——webServer `next dev` 报 `Module not found: Can't resolve './G:/Projects/MetronX/.wm-virtual-store/next@…/app-next-dev.js' in 'S:\…\apps\web'` 与 `ENOENT …\.next\fallback-build-manifest.json`，`/` 500），由 PR CI 的 Linux e2e job 门禁覆盖；各套件日志归档于 `.evidence/roadmap-20260924/w03-shell-nav/logs/`。
+- 浏览器/真实模型/恢复证据：Playwright 驱动 Docker compose web 截 8 张存档 `.evidence/roadmap-20260924/w03-shell-nav/`：login light/dark（独立认证外壳含主题切换）、home dark/light（全站主题生效、侧栏「工作台」居首、页头 ThemeToggle、页脚版本/退出完整）、workbench light（占位空态+导航激活）、命令中心搜 "work" 命中工作台导航项、390×844 手机抽屉完整（版本/退出在列）；重载后 `document.documentElement.dataset.wmTheme` 持久化断言输出通过。真实模型证据不适用（无 LLM/执行语义改动）。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 登录 → 点页头 ThemeToggle 观察全站无闪烁明暗切换 → 刷新验证主题保持 → `/?theme=dark` 验证 URL 覆盖 → 侧栏首位「工作台」进入 `/workbench` 占位 → Ctrl+K 搜 "work" 跳转 → 390px 宽验证手机抽屉。已知限制：(1) `/workbench` 为占位页，对话式工作台实装属 W13；(2) 主题默认 light（延续当前生产身份），原型默认 dark——按钮或 `?theme=dark` 可达，属 W02 记录的规范收敛延续；(3) e2e 本机阻塞同 W01/W02。规范偏差：无。follow-up：W04 Projects/Issues 主工作流页面、W13 工作台实装、W15 审批/运营页迁移。
 
 
 ---

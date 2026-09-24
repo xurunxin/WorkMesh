@@ -34,6 +34,7 @@ export function staticCommands(operationsEnabled: boolean): Command[] {
     navigation('navigate:backlog', 'Issues · Backlog', '/?view=my-work&statusCategory=backlog', ['planned', 'queued']),
     navigation('navigate:projects', 'Projects', '/?view=projects', ['planning']),
     navigation('navigate:agents', 'Agents', '/agents', ['sessions', 'connections']),
+    navigation('navigate:workbench', 'Workbench', '/workbench', ['agent', 'conversation', 'chat']),
     navigation('navigate:settings', 'Settings', '/settings', ['workspace', 'teams']),
     create('create:work-item', 'Create issue', '/?view=my-work&intent=create-work-item', ['new task', 'new issue']),
     create('create:project', 'Create project', '/?view=projects&intent=create-project', ['new project']),
