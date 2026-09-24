@@ -31,6 +31,7 @@ import type { WorkItemCopy } from '@workmesh/ui'
 import type { WorkSurfaceCopy } from '../../features/work-items/work-surfaces'
 import type { WorkItemDetailCopy } from '../../features/work-items/detail/work-item-detail'
 import type { WorkItemArtifactsCopy } from '../../features/rich-content/artifacts'
+import type { RichTextEditorCopy } from '../../features/rich-content/editor'
 import type { McpClientType, McpGuideCopyFacts } from './mcp-onboarding'
 
 export type Locale = 'zh-CN' | 'en'
@@ -576,13 +577,21 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
       link: '链接',
       preview: '预览',
       edit: '编辑',
+      split: '分栏',
+      save: '保存到服务器',
+      saving: '正在保存…',
+      serverSaved: '已保存到服务器',
+      saveFailed: '保存失败，本地草稿已保留',
+      versionConflict: '服务器已有新版本，未覆盖你的草稿',
+      conflictHelp: '请先加载最新版本再保存；本地草稿已保留。',
+      retrySave: '重试保存',
       draftRestored: '已恢复本地草稿。',
       discardDraft: '放弃草稿',
       revisionDraft: (draftRevision, currentRevision) => `发现版本 ${draftRevision} 的草稿。请先检查，再基于版本 ${currentRevision} 保存。`,
       restoreForReview: '恢复并检查',
       discardOldDraft: '放弃旧草稿',
       notSaved: '尚未保存',
-      savedAgo: seconds => `${seconds} 秒前已保存`,
+      savedLocally: seconds => `已存本地草稿 · ${seconds} 秒前`,
     },
     executionState: '执行状态',
     fullWorkItem: '完整 Issue',
@@ -658,13 +667,21 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
       link: 'Link',
       preview: 'Preview',
       edit: 'Edit',
+      split: 'Split view',
+      save: 'Save to server',
+      saving: 'Saving…',
+      serverSaved: 'Saved to server',
+      saveFailed: 'Save failed. Local draft kept.',
+      versionConflict: 'Server has a newer revision. Your draft was not applied.',
+      conflictHelp: 'Load the latest version before saving. Your local draft is kept.',
+      retrySave: 'Retry save',
       draftRestored: 'Local draft restored.',
       discardDraft: 'Discard draft',
       revisionDraft: (draftRevision, currentRevision) => `Found a draft from revision ${draftRevision}. Review first, then save against revision ${currentRevision}.`,
       restoreForReview: 'Restore for review',
       discardOldDraft: 'Discard old draft',
       notSaved: 'Not saved yet',
-      savedAgo: seconds => `Saved ${seconds}s ago`,
+      savedLocally: seconds => `Local draft saved ${seconds}s ago`,
     },
     executionState: 'Execution state',
     fullWorkItem: 'Full Issue',
@@ -3578,6 +3595,7 @@ type LocaleContextValue = {
   issueCopy: Partial<WorkItemCopy>
   surfaceCopy: Partial<WorkSurfaceCopy>
   detailCopy: Partial<WorkItemDetailCopy>
+  editorCopy: RichTextEditorCopy | undefined
   guidanceCopy: GuidanceCopy
   settingsCopy: SettingsCopy
   loginCopy: LoginCopy
@@ -3619,6 +3637,7 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     issueCopy: issueCopies[locale],
     surfaceCopy: surfaceCopies[locale],
     detailCopy: detailCopies[locale],
+    editorCopy: detailCopies[locale].editorCopy,
     guidanceCopy: guidanceCopies[locale],
     settingsCopy: settingsCopies[locale],
     loginCopy: loginCopies[locale],

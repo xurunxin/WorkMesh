@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { apiMutation, apiRequest, json } from '../../app/lib/api'
 import { createHash } from './hash'
 
@@ -71,6 +71,8 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
   const [error, setError] = useState('')
   const [intent, setIntent] = useState<Intent | null>(null)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+  const canceledRef = useRef(false)
   const refresh = useCallback(async () => {
     setItems(await apiRequest<Artifact[]>(`/api/v1/work-items/${workItemId}/artifacts`))
   }, [workItemId])
@@ -80,6 +82,7 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
 
   const upload = async (file: File, existingIntent: Intent | null = null) => {
     let currentIntent = existingIntent
+    canceledRef.current = false
     try {
       setError('')
       setPendingFile(file)
@@ -101,9 +104,12 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
         setIntent(currentIntent)
       }
       setPhase('uploading')
+      const controller = new AbortController()
+      abortRef.current = controller
       const put = await fetch(currentIntent.uploadUrl, {
-        method: 'PUT', headers: currentIntent.requiredHeaders, body: file,
+        method: 'PUT', headers: currentIntent.requiredHeaders, body: file, signal: controller.signal,
       })
+      abortRef.current = null
       if (!put.ok) throw new Error(copy.objectUploadFailed(put.status))
       setPhase('verifying')
       await apiMutation(
@@ -121,6 +127,15 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
       setPendingFile(null)
       setPhase('idle')
     } catch (reason) {
+      abortRef.current = null
+      // A user-initiated cancel aborts the in-flight PUT; that abort is not a
+      // failure and must not surface as one.
+      if (canceledRef.current || (reason instanceof DOMException && reason.name === 'AbortError')) {
+        setIntent(null)
+        setPendingFile(null)
+        setPhase('idle')
+        return
+      }
       setPhase('failed')
       setError(reason instanceof Error ? reason.message : copy.uploadErrorFallback)
     }
@@ -129,6 +144,8 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
   const cancel = async () => {
     try {
       setError('')
+      canceledRef.current = true
+      abortRef.current?.abort()
       if (intent) {
         await apiMutation(
           `artifact-upload-cancel:${intent.id}`,
@@ -142,7 +159,7 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
     } catch (reason) {
       setPhase('failed')
       setError(reason instanceof Error ? reason.message : copy.cancelErrorFallback)
-    }
+    } finally { canceledRef.current = false }
   }
   const download = async (id: string) => {
     const result = await apiRequest<{ downloadUrl: string }>(`/api/v1/artifact-upload-intents/${id}/download`)
@@ -154,7 +171,7 @@ export function WorkItemArtifacts({ copy, workItemId }: { copy: WorkItemArtifact
     <header><div><h3>{copy.title}</h3><p>{copy.provenance}</p></div>
       <label className="attachment-picker">{copy.attachFile}<input aria-label={copy.inputLabel} disabled={phase !== 'idle'} onChange={event => { const file = event.currentTarget.files?.[0]; if (file) void upload(file); event.currentTarget.value = '' }} type="file" /></label>
     </header>
-    {phase !== 'idle' && phase !== 'failed' && <div aria-live="polite">{copy.phaseAnnouncement(copy.phases[phase])} {intent && <button onClick={() => void cancel()} type="button">{copy.cancel}</button>}</div>}
+    {phase !== 'idle' && phase !== 'failed' && <div aria-live="polite">{copy.phaseAnnouncement(copy.phases[phase])} <button onClick={() => void cancel()} type="button">{copy.cancel}</button></div>}
     {error && <div className="attachment-error" role="alert"><span>{error}</span>{recovery.retry && <button onClick={() => pendingFile && void upload(pendingFile, intent)} type="button">{copy.retryUpload}</button>}{recovery.cancel && <button onClick={() => void cancel()} type="button">{copy.cancelUpload}</button>}</div>}
     <ul>{items.map(item => <li key={item.id}>{item.upload_intent_id
       ? <button onClick={() => void download(item.upload_intent_id!)} type="button"><strong>{item.title}</strong><span>{item.mime_type ?? copy.fileFallback} · {copy.formatBytes(item.size_bytes ?? 0)}</span><small>{item.producer_display_name} · {item.producer_kind}</small></button>

@@ -1577,7 +1577,7 @@ function LegacyCommentComposer({
   humans: LegacyHuman[];
   onSubmit: Props["onLegacyComment"];
 }) {
-  const { workRoomCopy: text } = useLocale();
+  const { editorCopy, workRoomCopy: text } = useLocale();
   const [body, setBody] = useState("");
   return (
     <form
@@ -1587,6 +1587,7 @@ function LegacyCommentComposer({
       }}
     >
       <RichTextEditor
+        copy={editorCopy}
         identity={{ ...draftIdentity, field: "comment", baseRevision: 0 }}
         label={text.legacyAria}
         mode="comment"

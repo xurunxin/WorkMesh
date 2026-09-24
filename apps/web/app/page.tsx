@@ -7,9 +7,7 @@ import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react/dist/csr/ArrowsLeftRight'
-import { EyeIcon } from '@phosphor-icons/react/dist/csr/Eye'
 import { FolderPlusIcon } from '@phosphor-icons/react/dist/csr/FolderPlus'
-import { NotePencilIcon } from '@phosphor-icons/react/dist/csr/NotePencil'
 import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
@@ -46,7 +44,6 @@ import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, serializeWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
-import { RichContent } from '../features/rich-content/markdown'
 import { RichTextEditor } from '../features/rich-content/editor'
 
 type Actor = AuthenticatedActor
@@ -723,6 +720,7 @@ type GuidanceHistory = { scope: GuidanceScope; scopeId: string; documentId: stri
 type GuidanceDiff = { from: GuidanceRevision; to: GuidanceRevision; changes: Array<{ kind: 'context' | 'removed' | 'added'; oldLine: number | null; newLine: number | null; text: string }> }
 
 function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: GuidanceCopy; workspaceId: string; team: Team | null; projects: Project[]; actorId: string }) {
+  const { editorCopy } = useLocale()
   const isAuthorityCurrent = useAuthorityLifetime()
   const [scope, setScope] = useState<GuidanceScope>('workspace')
   const [projectId, setProjectId] = useState('')
@@ -734,7 +732,6 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
   const [fromRevisionId, setFromRevisionId] = useState('')
   const [toRevisionId, setToRevisionId] = useState('')
   const [diff, setDiff] = useState<GuidanceDiff | null>(null)
-  const [viewMode, setViewMode] = useState<'editor' | 'preview'>('editor')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -824,26 +821,18 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
     {loading && <p>{copy.loading}</p>}
     {root && current && <>
       <form className="guidance-editor" onSubmit={event => void publish(event)}>
-        <div className="guidance-view-toggle" role="tablist" aria-label={copy.markdown}>
-          <Button aria-pressed={viewMode === 'editor'} icon={<NotePencilIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('editor')} role="tab" type="button" variant={viewMode === 'editor' ? 'primary' : 'ghost'}>{copy.edit}</Button>
-          <Button aria-pressed={viewMode === 'preview'} icon={<EyeIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('preview')} role="tab" type="button" variant={viewMode === 'preview' ? 'primary' : 'ghost'}>{copy.preview}</Button>
-          {viewMode === 'editor' ? null : <span className="guidance-view-toggle-meta">{copy.characterCount(markdown.length)}</span>}
-        </div>
-        {viewMode === 'editor'
-          ? <RichTextEditor
-              identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
-              label={copy.markdown}
-              name="markdown"
-              value={markdown}
-              onChange={setMarkdown}
-              required
-              testId="guidance-markdown"
-            />
-          : <section className="guidance-rendered" aria-label={copy.renderedPreviewLabel}>
-              {markdown.trim()
-                ? <RichContent density="document" source={markdown} />
-                : <p className="guidance-preview-empty">{copy.previewEmpty}</p>}
-            </section>}
+        <RichTextEditor
+          copy={editorCopy}
+          defaultView="edit"
+          identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
+          label={copy.markdown}
+          name="markdown"
+          onChange={setMarkdown}
+          required
+          testId="guidance-markdown"
+          value={markdown}
+        />
+        <span className="guidance-character-count">{copy.characterCount(markdown.length)}</span>
         <label>{copy.changeSummary}<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
         <Button data-testid="publish-guidance" icon={<UploadSimpleIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{copy.publishRevision}</Button>
       </form>

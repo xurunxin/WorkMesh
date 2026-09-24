@@ -242,6 +242,7 @@ describe('web i18n entry', () => {
       'agentsCopy',
       'connectCopy',
       'detailCopy',
+      'editorCopy',
       'guidanceCopy',
       'humanControlPlaneCopy',
       'inboxCopy',
