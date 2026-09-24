@@ -24,7 +24,7 @@ const commandCenterText = {
     sources: { projects: 'Projects', 'work-items': 'Issues', agents: 'Agents', sessions: 'Agent sessions', inbox: 'Inbox' },
     sourceState: { loading: 'loading', empty: 'has no matching results', truncated: 'has more matching results', forbidden: 'is unavailable for this user', error: 'is temporarily unavailable', ready: 'ready' },
     kinds: { navigation: 'navigation', create: 'create', project: 'project', 'work-item': 'Issue', agent: 'Agent', session: 'session', inbox: 'inbox' },
-    staticTitles: { 'navigate:inbox': 'Inbox', 'navigate:issues': 'Issues', 'navigate:active-work': 'Issues · Active', 'navigate:backlog': 'Issues · Backlog', 'navigate:projects': 'Projects', 'navigate:agents': 'Agents', 'navigate:settings': 'Settings', 'navigate:operations': 'Planning & Operations', 'create:work-item': 'Create Issue', 'create:project': 'Create project' },
+    staticTitles: { 'navigate:inbox': 'Inbox', 'navigate:issues': 'Issues', 'navigate:active-work': 'Issues · Active', 'navigate:backlog': 'Issues · Backlog', 'navigate:projects': 'Projects', 'navigate:agents': 'Agents', 'navigate:workbench': 'Workbench', 'navigate:settings': 'Settings', 'navigate:operations': 'Planning & Operations', 'create:work-item': 'Create Issue', 'create:project': 'Create project' },
   },
   'zh-CN': {
     search: '搜索', close: '关闭', title: '搜索 WorkMesh', description: '搜索当前有权访问的 WorkMesh 资源，并打开安全的导航命令。', field: '搜索项目、Issue、智能体、会话和收件箱', placeholder: '输入名称、编号或命令…', retry: '重试搜索', sourceStatus: '搜索来源状态', offline: '当前离线。重新连接前无法查询资源。', stale: '正在刷新权限感知的结果…', idle: '输入至少一个字符以搜索有权限访问的资源。', ready: '输入至少一个字符以搜索有权限访问的资源。', loading: '正在搜索当前有权访问的 WorkMesh 资源…', error: '资源搜索暂不可用，导航命令仍可使用。', partial: '结果不完整，部分来源不可用或仍有更多匹配项。', empty: '没有符合搜索条件且有权访问的结果。', results: (count: number) => `找到 ${count} 个结果。`,
@@ -32,7 +32,7 @@ const commandCenterText = {
     sources: { projects: '项目', 'work-items': 'Issues', agents: '智能体', sessions: '智能体会话', inbox: '收件箱' },
     sourceState: { loading: '正在加载', empty: '没有匹配结果', truncated: '还有更多匹配结果', forbidden: '当前用户无权访问', error: '暂时不可用', ready: '可用' },
     kinds: { navigation: '导航', create: '新建', project: '项目', 'work-item': 'Issue', agent: '智能体', session: '会话', inbox: '收件箱' },
-    staticTitles: { 'navigate:inbox': '收件箱', 'navigate:issues': 'Issues', 'navigate:active-work': 'Issues · 活跃', 'navigate:backlog': 'Issues · 待办', 'navigate:projects': '项目', 'navigate:agents': '智能体', 'navigate:settings': '设置', 'navigate:operations': '规划与运营', 'create:work-item': '新建 Issue', 'create:project': '新建项目' },
+    staticTitles: { 'navigate:inbox': '收件箱', 'navigate:issues': 'Issues', 'navigate:active-work': 'Issues · 活跃', 'navigate:backlog': 'Issues · 待办', 'navigate:projects': '项目', 'navigate:agents': '智能体', 'navigate:workbench': '工作台', 'navigate:settings': '设置', 'navigate:operations': '规划与运营', 'create:work-item': '新建 Issue', 'create:project': '新建项目' },
   },
 } as const
 

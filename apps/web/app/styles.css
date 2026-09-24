@@ -1467,6 +1467,9 @@ main#workmesh-main:focus-visible {
 .locale-toggle { display: inline-flex; gap: 1px; padding: 2px; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 7px; }
 .locale-toggle button { min-width: 2rem; min-height: 28px; padding: .1rem .35rem; color: var(--wm-muted); background: transparent; border: 0; border-radius: 5px; font-size: .72rem; font-weight: 700; }
 .locale-toggle button[aria-pressed='true'] { color: var(--wm-text); background: var(--wm-surface); box-shadow: var(--wm-shadow-sm); }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; min-height: 30px; padding: 0; color: var(--wm-text-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 7px; transition: color var(--wm-motion-fast) var(--wm-ease-out), background var(--wm-motion-fast) var(--wm-ease-out), border-color var(--wm-motion-fast) var(--wm-ease-out); }
+.theme-toggle:hover { color: var(--wm-text); background: var(--wm-surface-hover); border-color: var(--wm-border-strong); }
+.theme-toggle svg { display: block; }
 @media (max-width: 1180px) {
   .wm-work-item-filter-row { grid-template-columns: minmax(160px, 1.4fr) repeat(3, minmax(120px, 1fr)) auto; }
   .wm-work-item-filter-row > label:nth-child(5),

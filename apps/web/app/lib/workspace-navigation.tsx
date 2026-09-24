@@ -1,6 +1,7 @@
 import React, { type MouseEvent } from 'react'
 import type { NavigationItem } from '@workmesh/ui'
 import { BookOpenTextIcon } from '@phosphor-icons/react/dist/csr/BookOpenText'
+import { ChatsCircleIcon } from '@phosphor-icons/react/dist/csr/ChatsCircle'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { GearIcon } from '@phosphor-icons/react/dist/csr/Gear'
 import { GitBranchIcon } from '@phosphor-icons/react/dist/csr/GitBranch'
@@ -10,7 +11,7 @@ import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { homeScopeHref, type HomeScope } from './navigation'
 
-export type WorkspaceNavigationKey = HomeScope | 'agents' | 'operations'
+export type WorkspaceNavigationKey = HomeScope | 'agents' | 'operations' | 'workbench'
 
 type NavigationTranslationKey =
   | 'agents'
@@ -21,6 +22,7 @@ type NavigationTranslationKey =
   | 'projects'
   | 'recovery'
   | 'settings'
+  | 'workbench'
 
 type WorkspaceNavigationOptions = Readonly<{
   active: WorkspaceNavigationKey
@@ -47,6 +49,13 @@ export function workspaceNavigation({ active, onHomeNavigate, t }: WorkspaceNavi
     testId: `view-${scope}`,
   })
   return [
+    {
+      active: active === 'workbench',
+      href: '/workbench',
+      icon: <ChatsCircleIcon aria-hidden="true" size={20} weight="regular" />,
+      label: t('workbench'),
+      testId: 'view-workbench',
+    },
     ...primaryHomeItems.map(homeItem),
     {
       active: active === 'agents',

@@ -11,6 +11,8 @@ describe('authenticated shortcut scope', () => {
     '/agent-sessions/session-1',
     '/settings',
     '/operations',
+    '/workbench',
+    '/workbench/',
   ])('allows the known authenticated workspace route %s', pathname => {
     expect(isAuthenticatedWorkspacePath(pathname)).toBe(true)
   })

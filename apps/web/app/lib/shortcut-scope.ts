@@ -6,6 +6,7 @@ const authenticatedWorkspaceRoutes: readonly RegExp[] = [
   /^\/agent-sessions\/[^/]+\/?$/,
   /^\/settings\/?$/,
   /^\/operations\/?$/,
+  /^\/workbench\/?$/,
 ]
 
 export function shortcutScope(pathname: string | null | undefined): ShortcutScope {

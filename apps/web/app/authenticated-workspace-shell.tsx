@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { AppShell, Button, type AppShellProps } from '@workmesh/ui'
+import { ThemeToggle } from '../features/navigation'
 import { apiMutation, clearCsrfToken, publicRequest } from './lib/api'
 import { WorkMeshBrandIcon } from './lib/brand'
 import { useWorkMeshDocumentTitle } from './lib/document-title'
@@ -14,7 +15,7 @@ export type AuthenticatedWorkspaceShellProps = Omit<AppShellProps, 'brandIcon' |
   footerExtra?: ReactNode
 }
 
-export function AuthenticatedWorkspaceShell({ children, documentTitle, footerExtra, ...props }: AuthenticatedWorkspaceShellProps) {
+export function AuthenticatedWorkspaceShell({ children, documentTitle, footerExtra, headerActions, ...props }: AuthenticatedWorkspaceShellProps) {
   const { t } = useLocale()
   const [releaseInfo, setReleaseInfo] = useState<ReleaseInfo | null>(null)
 
@@ -41,5 +42,5 @@ export function AuthenticatedWorkspaceShell({ children, documentTitle, footerExt
     {releaseInfo && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · {t('build')} {releaseInfo.buildSha} · {t('schema')} {releaseInfo.schemaBaseline}</small>}
   </>
 
-  return <AppShell {...props} brandIcon={<WorkMeshBrandIcon />} footer={footer} productName="WorkMesh">{children}</AppShell>
+  return <AppShell {...props} brandIcon={<WorkMeshBrandIcon />} footer={footer} productName="WorkMesh" headerActions={<><ThemeToggle />{headerActions}</>}>{children}</AppShell>
 }

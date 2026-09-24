@@ -23,7 +23,7 @@ describe('authenticated UI unification contract', () => {
   })
 
   it('routes every authenticated top-level page through the shared shell', () => {
-    for (const relative of ['page.tsx', 'agents/page.tsx', 'agents/[id]/page.tsx', 'agent-sessions/[id]/page.tsx', 'operations/page.tsx', 'settings/page.tsx']) {
+    for (const relative of ['page.tsx', 'agents/page.tsx', 'agents/[id]/page.tsx', 'agent-sessions/[id]/page.tsx', 'operations/page.tsx', 'settings/page.tsx', 'workbench/page.tsx']) {
       expect(readFileSync(join(appRoot, relative), 'utf8')).toContain('AuthenticatedWorkspaceShell')
     }
   })

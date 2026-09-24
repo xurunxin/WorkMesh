@@ -100,6 +100,11 @@ type TranslationKey =
   | 'notFoundTitle'
   | 'pageLoadError'
   | 'retry'
+  | 'workbench'
+  | 'workbenchPlaceholderTitle'
+  | 'workbenchPlaceholderDescription'
+  | 'themeToDark'
+  | 'themeToLight'
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   'zh-CN': {
@@ -167,6 +172,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     notFoundTitle: '未找到页面',
     pageLoadError: '页面加载出错',
     retry: '重试',
+    workbench: '工作台',
+    workbenchPlaceholderTitle: 'Agent 工作台准备中',
+    workbenchPlaceholderDescription: '对话式 Agent 工作台将在后续里程碑上线。智能体注册、会话与执行视角当前可从「智能体」进入。',
+    themeToDark: '切换到深色主题',
+    themeToLight: '切换到浅色主题',
   },
   en: {
     agents: 'Agents',
@@ -231,8 +241,13 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     backToHome: 'Back to home',
     notFoundDescription: 'The page you are looking for does not exist or has been moved.',
     notFoundTitle: 'Page not found',
-    pageLoadError: 'Page failed to load',
+    pageLoadError: 'The page failed to load',
     retry: 'Retry',
+    workbench: 'Workbench',
+    workbenchPlaceholderTitle: 'Agent workbench is being prepared',
+    workbenchPlaceholderDescription: 'The conversational agent workbench arrives in an upcoming milestone. Agent registry, sessions, and the execution view remain available under Agents.',
+    themeToDark: 'Switch to the dark theme',
+    themeToLight: 'Switch to the light theme',
   },
 }
 
