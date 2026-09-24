@@ -1,0 +1,11 @@
+{
+  "name": "WorkMesh Design System Builder",
+  "id": "workmesh-design-system-builder",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": [],
+    "reasoning": "No network access required; the builder runs entirely against the local Figma document."
+  }
+}
