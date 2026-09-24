@@ -285,7 +285,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/122
 <!-- WM-WEBPI-20260924:W01 -->
 # W01 完成 Pi 兼容性 Spike 与工作台架构契约
 
-阶段：M0；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M0；优先级：P0；估算：3–5 人日（W01 后复估）。状态：完成（2026-09-24，交付记录见下）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -346,6 +346,14 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/123
 - 实际测试命令、结果、失败/skip：
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
+
+### W01 交付记录（2026-09-24）
+
+- 实现提交/PR 与精确环境：分支 `codex/wm-webpi-w01-pi-spike`（基于 W00 分支，PR 叠放于 #141）。环境：Windows 11，宿主 Node v24.20.0（仓库 CI/Docker 钉住 22.19.0），docker compose 全栈 postgres:16-alpine / redis:7-alpine / MinIO，`@earendil-works/pi-coding-agent@0.87.1`（MIT，engines node ≥22.19.0）。Spike 工程位于仓库外 `G:\Projects\MetronX\wm-pi-spike\`。
+- 数据迁移 / API / events / Skill 变更：数据迁移无（DDL 属后续编号迁移，本任务只冻结 `workbenchRelationModel`）。REST API 无变更（OPENAPI.yaml 仅加注释声明）。事件无投递变更（`workbench.*` 12 个事件 schema 冻结于 `packages/contracts/src/pi-workbench-contracts.ts`，未接入 outbox）。新增 13 个错误码进入统一 `apiErrorCodeSchema`。AGENT_PROTOCOL.md 新增 §25 规划边界声明。Skill 无变更。
+- 实际测试命令、结果、失败/skip：Spike `node spike.mjs` 5/5 PASS（P1 身份 / P2 chat-completions 多轮工具 / P3 responses 多轮工具 / P4 无宿主工具泄漏 / P5 abort→settle+上游断连 / P6 密封 agent 目录），证据存档 `.evidence/roadmap-20260924/w01-pi-spike/`。`pnpm lint` 17/17 任务成功；`pnpm typecheck` 17/17；`pnpm test` 28/28（contracts 新增 25 用例）。`pnpm test:integration:db` 77/77；`:api` 123/123；`:worker` 78 过 1 skip（既有 skip）；`:recovery` 1/1。`pnpm test:e2e` 本机 BLOCKED：pnpm virtual store 在 G:（NTFS，.npmrc 本地配置规避 ReFS EPERM），仓库经 S:（ReFS Dev Drive）访问，跨盘符号链接使 `next dev` 编译报 `Can't resolve './G:/...'` 与 `fallback-build-manifest.json ENOENT`；该限制先于本任务存在（W00 基线已记录），由 PR CI 的 Linux e2e job 作为门禁覆盖。
+- 浏览器/真实模型/恢复证据：不适用（本任务无 UI/真实模型改动）。恢复协议在契约层冻结：单 writer fencing（`RUNNER_FENCE_STALE`）、attempt_no 单调、`external_effects_reconciled` 对账门槛（测试断言见 `pi-workbench-contracts.test.ts`）；真实 Runner 恢复演练属 W10。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 阅读 ADR 0065"W01 验证结果与钉住基线"+ 运行 spike 工程。已知限制：e2e 本机阻塞如上；契约未接线实现。follow-up：W02 组件库、W06/W07/W09 领域契约与端点、W10 Runner 执行/恢复。
 
 
 ---

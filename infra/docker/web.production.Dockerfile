@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.17.1-alpine3.22 AS build
+FROM node:22.19.0-alpine3.21 AS build
 ARG NEXT_PUBLIC_API_URL
 ENV COREPACK_HOME=/opt/corepack NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN test -n "$NEXT_PUBLIC_API_URL" \
@@ -21,7 +21,7 @@ RUN pnpm check:workmesh-skill \
     && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static \
     && cp -R apps/web/public apps/web/.next/standalone/apps/web/public
 
-FROM node:22.17.1-alpine3.22 AS runtime
+FROM node:22.19.0-alpine3.21 AS runtime
 ARG WORKMESH_BUILD_SHA
 ARG NEXT_PUBLIC_API_URL
 RUN apk upgrade --no-cache \

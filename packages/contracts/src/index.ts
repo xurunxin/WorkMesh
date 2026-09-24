@@ -14,6 +14,7 @@ import {
 } from './route-policy.js'
 
 export * from './route-policy.js'
+export * from './pi-workbench-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 export {
   agentLifecycleStatusSchema,
@@ -367,6 +368,21 @@ export const apiErrorCodeSchema = z.enum([
   'COORDINATOR_PRINCIPAL_HUMAN_INVALID',
   'AGENT_SKILL_VERSION_MISMATCH',
   'AGENT_SKILL_SIGNATURE_INVALID',
+  // WM-WEBPI-20260924 W01 — workbench conversation/runner/LLM connection
+  // contracts (see pi-workbench-contracts.ts for the frozen shapes).
+  'CONVERSATION_NOT_FOUND',
+  'CONVERSATION_ARCHIVED',
+  'CONVERSATION_TURN_QUEUE_LIMIT_EXCEEDED',
+  'WORKBENCH_AUTHORITY_REVOKED',
+  'WORKBENCH_STOP_REQUIRED',
+  'RUNNER_FENCE_STALE',
+  'RUNNER_ATTEMPT_SUPERSEDED',
+  'LLM_CONNECTION_NOT_FOUND',
+  'LLM_CONNECTION_FORBIDDEN',
+  'LLM_CONNECTION_PROTOCOL_UNSUPPORTED',
+  'LLM_CONNECTION_EGRESS_BLOCKED',
+  'LLM_CONNECTION_SECRET_UNRESOLVED',
+  'LLM_MODEL_NOT_FOUND',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
 
