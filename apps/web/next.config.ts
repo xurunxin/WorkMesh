@@ -7,6 +7,15 @@ const apiUpstream = process.env.NEXT_DEV_API_UPSTREAM ?? 'http://localhost:3001'
 const nextConfig:NextConfig={
   output:'standalone',
   transpilePackages:['@workmesh/ui', '@workmesh/contracts'],
+  webpack: config => {
+    // Workspace packages ship TypeScript sources and use NodeNext-style
+    // `.js` specifiers; teach webpack to resolve them to `.ts`/`.tsx`.
+    config.resolve.extensionAlias = {
+      '.js': ['.tsx', '.ts', '.jsx', '.js'],
+      '.mjs': ['.mts', '.mjs'],
+    }
+    return config
+  },
   async rewrites() {
     if (process.env.NODE_ENV === 'production') return []
     return [{
