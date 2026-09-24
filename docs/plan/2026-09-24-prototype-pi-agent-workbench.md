@@ -347,6 +347,14 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/123
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
 
+### W02 交付记录（2026-09-24）
+
+- 实现提交/PR 与精确环境：分支 `codex/wm-webpi-w02-ui-library`（基于 297d6c7，PR 叠放于 #142）。环境：Windows 11，宿主 Node v24.20.0（仓库钉住 22.19.0）；web 生产级渲染证据经 Docker Linux 容器（node:22-alpine，`next dev` 于容器内）产出——容器方案规避本机 G:/S: 双盘符分裂（见已知限制）。
+- 数据迁移 / API / events / Skill 变更：数据迁移无。REST API 无变更（OPENAPI.yaml 无需改动）；新增页面路由 `apps/web/app/ui-catalog/`（纯视觉 fixtures，无 API 调用，不受鉴权影响）。events 无变更。Skill 无变更。`packages/ui` 拆分为 internal/primitives/layout/domain 模块 + barrel 纯导出；import-boundary 契约测试（`index.test.ts` FORBIDDEN_AUTHORITY_STRINGS 递归扫描全部模块）确保不引用 Next router、API、contracts/domain/db。
+- 实际测试命令、结果、失败/skip：`pnpm lint` 17/17 成功；`pnpm typecheck` 17/17；`pnpm test` 28 项目全过（`@workmesh/ui` 45 用例：controls 契约 + SSR 渲染 + catalog fixtures；`@workmesh/web` 696 用例，含新增 `ui-layout-contract` 零 hex 契约 13 用例——styles.css 硬编码主题色 333 处 → 3 处 allowlist）。`pnpm test:integration:db` 77/77；`:api` 123/123；`:worker` 78 过 1 skip（既有 skip）；`:recovery` 1/1（配方与 CI 一致：RUN_INTEGRATION=1、专用可重置库 workmesh_integration_test、规范 base64url bootstrap token、限流 burst 调高、跑前 redis flushdb）。`pnpm test:e2e` 本机 BLOCKED（与 W01 同因：pnpm virtual store 在 G:（NTFS），仓库经 S:（ReFS Dev Drive）访问，跨盘符号链接使 `next dev` 编译报 `fallback-build-manifest.json ENOENT`，本轮复现日志在案）；由 PR CI 的 Linux e2e job 作为门禁覆盖。
+- 浏览器/真实模型/恢复证据：Docker 构建镜像后起临时容器，playwright 同 viewport（1280×900）截取 `/ui-catalog` dark/light 对比、dark+compact 密度、390×844 触控视口、deviceScaleFactor=2（200% 缩放）共 5 张，存档 `.evidence/roadmap-20260924/w02-ui-library/`。真实模型/恢复证据不适用（本任务无 LLM/执行语义改动）。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 访问 `/ui-catalog` 切换 light/dark/密度，对照 `design/prototype` 同 viewport 视觉。已知限制：(1) `styles.css` 保留 3 处 allowlist hex（`.config-preview` 恒暗终端风面板专用前景/背景/边框，双模式下刻意不翻转，待未来新增恒暗表面令牌后移出，契约测试防新增）；(2) 旧硬编码色（如亮橙 #d97706、亮红 #dc2626）映射语义家族后明度略降，属迁移设计系统调色板的预期视觉收敛；(3) e2e 本机阻塞同 W01。规范偏差：无。follow-up：W03 将应用外壳/导航/命令中心迁移到共享控件；功能页逐步替换自实现控件（W03+）。
+
 ### W01 交付记录（2026-09-24）
 
 - 实现提交/PR 与精确环境：分支 `codex/wm-webpi-w01-pi-spike`（基于 W00 分支，PR 叠放于 #141）。环境：Windows 11，宿主 Node v24.20.0（仓库 CI/Docker 钉住 22.19.0），docker compose 全栈 postgres:16-alpine / redis:7-alpine / MinIO，`@earendil-works/pi-coding-agent@0.87.1`（MIT，engines node ≥22.19.0）。Spike 工程位于仓库外 `G:\Projects\MetronX\wm-pi-spike\`。
@@ -361,7 +369,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/123
 <!-- WM-WEBPI-20260924:W02 -->
 # W02 将原型令牌与全部基础控件收敛到共享组件库
 
-阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：实现完成，待评审合并（2026-09-24）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 

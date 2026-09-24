@@ -114,6 +114,30 @@ describe('human UI layout contract', () => {
     expect(styles, '.operations-shell { should be gone').not.toContain('.operations-shell {')
   })
 
+  it('keeps styles.css on --wm-* tokens with zero hardcoded hex theme colors', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+    // Allowlisted literals are structural, mode-independent colors with no
+    // --wm-* counterpart yet; each entry documents why it cannot be tokenized.
+    // Do not grow this list for theme colors — map them to a token instead.
+    const allowlist: Array<{ hex: string; reason: string }> = [
+      { hex: '#e7e5e4', reason: 'config-preview code panel foreground: intentional always-dark terminal-style surface' },
+      { hex: '#292524', reason: 'config-preview code panel background: intentional always-dark terminal-style surface' },
+      { hex: '#44403c', reason: 'config-preview code panel border: intentional always-dark terminal-style surface' },
+    ]
+    const matches = styles.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []
+    const offenders = matches.filter((hex) => !allowlist.some((entry) => entry.hex === hex.toLowerCase()))
+    expect(
+      offenders,
+      `hardcoded hex colors must move to --wm-* tokens (or join the documented allowlist): ${[...new Set(offenders)].join(', ')}`,
+    ).toEqual([])
+    // An allowlist entry that no longer occurs is stale and must be pruned.
+    for (const { hex, reason } of allowlist) {
+      expect(styles, `allowlisted ${hex} (${reason}) no longer occurs; prune the entry`).toContain(hex)
+    }
+    // Shadow/scrim alpha colors ride the --wm-shadow-* / --wm-scrim tokens too.
+    expect(styles, 'raw rgb()/rgba() colors must use --wm-* tokens').not.toMatch(/rgba?\(/)
+  })
+
   it('renders the four migrated routes inside the unified AppShell', () => {
     const layout = readFileSync(new URL('./layout.tsx', import.meta.url), 'utf8')
     const home = readFileSync(new URL('./page.tsx', import.meta.url), 'utf8')
