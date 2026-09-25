@@ -1049,7 +1049,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 
 ## 交付记录模板
 
-- 实现提交/PR 与精确环境：W11 改动尚未提交；隔离 Docker Compose 项目 `workmesh-webpi-stage`，Web `127.0.0.1:3110`，API `127.0.0.1:3111`，Agent Runner 容器由 `agent` profile 启动。
+- 实现提交/PR 与精确环境：本地提交 `2249e05`；隔离 Docker Compose 项目 `workmesh-webpi-stage`，Web `127.0.0.1:3110`，API `127.0.0.1:3111`，Agent Runner 容器由 `agent` profile 启动。
 - 数据迁移 / API / events / Skill 变更：W11 本段无迁移、REST API、事件或 Skill 变更；Pi Runner 新增受 live capability manifest 控制的 WorkMesh 工具。Compose API 服务补齐与 Runner 共用的服务令牌环境变量。
 - 实际测试命令、结果、失败/skip：新增 plan/活动工具后 `pnpm lint` 18/18 PASS、`pnpm typecheck` 18/18 PASS、`pnpm test` 29/29 PASS（Runner 11/11）；`pnpm test:integration`：DB 77/77、API 135 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip；单独启用真实 M3 的 Runner 集成测试 4/4 PASS；`pnpm test:e2e` 68/68 PASS；Docker `agent` profile 最终镜像构建与 API health PASS。
 - 浏览器/真实模型/恢复证据：2026-09-25，最终 Runner 镜像在隔离 Docker 环境以真实 `MiniMax-M3` 执行 Turn `cf23e217-a387-4c5f-b091-aeb1ec637439`，状态 `settled`，生成 Issue `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3` 的普通文档 `Docker M3 proof 24328233`；首次运行的 Runner 日志证实调用 `workmesh_session_context`、`workmesh_create_document` 两个工具。密钥在 API vault 中，Runner 未接收模型密钥。此前 `RUNNER_ASSIGNMENT_DISCOVERY_FAILED` 定位为 Compose API 未传入服务令牌，补齐后发现接口 200，Runner 正常执行。
