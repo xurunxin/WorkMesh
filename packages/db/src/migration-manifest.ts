@@ -59,6 +59,7 @@ export const v1MigrationManifest = [
   { version: '0009_workbench_llm_connections', file: 'v1/0009_workbench_llm_connections.sql', checksumSha256: '5d41a6e5035a30619691a8f59e1dbe836345ef0f826a87776b99c6f272ea4b68' },
   { version: '0010_workbench_conversations', file: 'v1/0010_workbench_conversations.sql', checksumSha256: '3ed3f9c50099cf8d5f255b79d34c11f7c00881149ee707a9cd49d1461115ff42' },
   { version: '0011_versioned_documents', file: 'v1/0011_versioned_documents.sql', checksumSha256: 'b647d04ded7720ee3b993721f72097c3a2e642bb0c0010bb4b764a9dcb4384b6' },
+  { version: '0012_workbench_turn_lineage_and_tools', file: 'v1/0012_workbench_turn_lineage_and_tools.sql', checksumSha256: 'ca928f0cbd79cb608ad355a4fc60b96a4f418cb3d6a70698876ede53631865d3' },
 ] as const satisfies readonly MigrationManifestEntry[]
 
 export const legacyUpgradeBundleManifest = [

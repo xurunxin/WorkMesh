@@ -17,7 +17,8 @@ vi.mock('../rich-content/markdown', () => ({ RichContent: ({ source }: { source:
 const actor = { id: 'human-a', workspace_id: 'workspace-a' } as AuthenticatedActor
 const conversation = { id: 'conversation-a', title: 'Real work', status: 'active', revision: 3,
   team_id: 'team-a', agent_session_id: 'session-a', default_llm_connection_id: 'connection-a',
-  default_llm_model_id: 'model-a', work_item_id: 'item-a', project_id: null, updated_at: '2026-09-25T00:00:00.000Z' }
+  default_llm_model_id: 'model-a', work_item_id: 'item-a', project_id: null, updated_at: '2026-09-25T00:00:00.000Z',
+  context_pins: [{ kind: 'work_item', refId: 'item-a', revision: null, resolved_revision: 2 }] }
 const otherConversation = { ...conversation, id: 'conversation-b', title: 'Other work', revision: 1 }
 let sessionState = 'executing'
 let includeSecondConversation = false

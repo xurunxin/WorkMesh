@@ -120,6 +120,7 @@ export const turnResponseSchema = z.object({
   current_runner_attempt_id: idSchema.nullable(),
   stop_reason: turnStopReasonSchema.nullable(),
   error_code: z.string().min(1).max(120).nullable(),
+  retry_of_turn_id: idSchema.nullable(),
   queued_at: timestampSchema,
   dispatch_requested_at: timestampSchema.nullable(),
   started_at: timestampSchema.nullable(),
@@ -152,6 +153,27 @@ export const conversationTurnCreateInputSchema = z.object({
   messageMarkdown: z.string().min(1).max(50_000),
   llmConnectionId: idSchema.optional(),
   llmModelId: idSchema.optional(),
+}).strict()
+
+// Steering adds context to a running turn without cancelling its attempt; the runner
+// consumes the message on its next status poll. Follow-up and retry both create a new
+// turn so the terminal fact stays immutable.
+export const conversationTurnSteerInputSchema = z.object({
+  messageMarkdown: z.string().min(1).max(50_000),
+}).strict()
+
+export const conversationTurnFollowupInputSchema = z.object({
+  messageMarkdown: z.string().min(1).max(50_000),
+  // Set when this turn re-runs a terminal turn's request (same conversation, new fact).
+  retryOfTurnId: idSchema.optional(),
+  llmConnectionId: idSchema.optional(),
+  llmModelId: idSchema.optional(),
+}).strict()
+
+// Context-pin edits replace the whole pin list; the server re-validates every pin's
+// scope and resolved revision, so the client cannot smuggle an out-of-scope reference.
+export const conversationContextPinsUpdateInputSchema = z.object({
+  pins: z.array(conversationContextPinSchema).max(50),
 }).strict()
 
 export const conversationTurnStopInputSchema = z.object({
@@ -258,11 +280,20 @@ export const workbenchSessionCompletionRequestSchema = z.object({
     || Boolean(value.noArtifactReason), { message: 'Completion requires evidence or noArtifactReason' }),
 }).strict()
 
+// Per-tool settlement detail. Sanitization mirrors the tool-activity contract: the
+// runner sends a bounded summary of the sanitized input shape, never raw arguments.
+export const workbenchToolInvocationSummarySchema = z.object({
+  toolName: z.string().min(1).max(160),
+  callCount: z.number().int().min(1).max(10_000),
+  sanitizedInputSummary: z.string().min(1).max(2_000),
+}).strict()
+
 export const workbenchRunnerSettleInputSchema = z.object({
   fenceToken: z.string().min(16).max(128),
   assistantMessageMarkdown: z.string().min(1).max(50_000).optional(),
   settlement: runnerAttemptSettleInputSchema,
   sessionCompletion: workbenchSessionCompletionRequestSchema.optional(),
+  toolInvocations: z.array(workbenchToolInvocationSummarySchema).max(200).optional(),
 }).strict().refine(value => value.settlement.outcome !== 'settled' || Boolean(value.assistantMessageMarkdown),
   { path: ['assistantMessageMarkdown'], message: 'Settled turns require a public assistant response' })
   .refine(value => !value.sessionCompletion || value.settlement.outcome === 'settled',
