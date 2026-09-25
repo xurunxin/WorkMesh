@@ -1071,7 +1071,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 
 ### W11 原子结算追加记录（2026-09-25）
 
-- 决策与范围：ADR 0068 将公开回答、Turn 结算、Session 完成及其 domain event/outbox 归入同一事务，取代上述两次提交的崩溃窗口。Runner 使用稳定结算幂等键；完成被明确拒绝时，以独立幂等键结算 Turn 并尝试记录 warning。W11 仍需完整权限、Stop、重放和外部效果对账矩阵。
+- 实现提交与决策：本地 `codex/wm-webpi-implementation` 提交 `415b60d`，未推送或创建 PR。ADR 0068 将公开回答、Turn 结算、Session 完成及其 domain event/outbox 归入同一事务，取代上述两次提交的崩溃窗口。Runner 使用稳定结算幂等键；完成被明确拒绝时，以独立幂等键结算 Turn 并尝试记录 warning。W11 仍需完整权限、Stop、重放和外部效果对账矩阵。
 - 数据迁移 / API / events：无迁移、无新增事件类型；`OPENAPI.yaml` 和共享契约为 Runner settle 请求增加可选 `sessionCompletion`，响应标明完成结果。现有 `agent.session.completed` 与 `workbench.*` 事件在同一提交中写入。
 - 集成证据：独立 Docker 测试库的 Runner API 集成 4 PASS/1 skip；新用例证明旧 Session revision 与强制 outbox 事务失败时，Turn/公开回答/Session 均回滚，再以同一幂等键重试后同时提交，且完成事件只有一条。成功响应同键重放初轮发现路由前置策略把终态 Session 拦在幂等账本之前（`SESSION_NOT_ACTIVE`）；结算路由现容许该重放进入事务，而新写入由事务内 active-Session guard 以 `SESSION_STOPPED` 拒绝。完整集成最终 DB 77/77、API 136 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip。
 - 完整检查与真实模型：`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29、`pnpm test:e2e` 68/68 PASS。首次全量单测因命令抽取后的锁顺序静态清单与守卫源扫描未更新而失败，修正清单与守卫测试后复跑通过。E2E 在并行测试压力下曾因 Windows `net::ERR_NO_BUFFER_SPACE` 为 67/68，非产品断言失败；串行完整复测 68/68 PASS，原失败的 Issue 列表/看板用例通过。重建 Docker API/Runner 后，真实中国区 `MiniMax-M3` Turn `f9548e9c-385e-49d6-8ab0-2aa4180c7c95` 调用受控工具并返回 `sessionCompletion: completed`；API 回读 Turn `settled`、Session `completed` 和新 Issue 文档 `Docker completion proof 8600f8d8`。本地忽略证据 `.evidence/webpi-stage-live-m3-complete.json`。W11 仍需完整权限/恢复矩阵，不据此关闭。
