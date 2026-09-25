@@ -2876,6 +2876,7 @@ export type RelationsCopy = {
   fieldWorkItemPlaceholder: string
   add: string
   loadMore: string
+  loadMoreCandidates: string
   reload: string
   conflictTitle: string
   conflictAction: string
@@ -2897,6 +2898,7 @@ const relationsCopies: Record<Locale, RelationsCopy> = {
     fieldWorkItemPlaceholder: '选择 Work Item',
     add: '添加关系',
     loadMore: '加载更多关系',
+    loadMoreCandidates: '加载更多可关联工作项',
     reload: '重新加载关系',
     conflictTitle: '关系已变更',
     conflictAction: '服务端已写入新版本，重新加载后重试。',
@@ -2916,6 +2918,7 @@ const relationsCopies: Record<Locale, RelationsCopy> = {
     fieldWorkItemPlaceholder: 'Select Work Item',
     add: 'Add relationship',
     loadMore: 'Load more relations',
+    loadMoreCandidates: 'Load more work items',
     reload: 'Reload relations',
     conflictTitle: 'Relations changed',
     conflictAction: 'A newer version was written server-side. Reload to continue.',

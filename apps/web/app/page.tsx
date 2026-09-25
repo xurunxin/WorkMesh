@@ -862,6 +862,8 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   const { relationsCopy: text } = useLocale()
   const isAuthorityCurrent = useAuthorityLifetime()
   const relations = usePagedApiList<WorkItemRelation>(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { scopeKey: authorityKey })
+  const candidates = usePagedApiList<WorkItemDto>(`/api/v1/work-items?teamId=${encodeURIComponent(item.team_id)}`, { scopeKey: authorityKey })
+  const candidateItems = [...new Map([...projectItems, ...candidates.items].map(candidate => [candidate.id, candidate])).values()]
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState<ReturnType<typeof revisionConflictNotice>>(null)
   useRealtimeSubscription([{ type: 'work_item', id: item.id }], invalidation => {
@@ -872,7 +874,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
       return relations.refresh()
   })
   const workLabel = (id: string) => {
-    const target = projectItems.find(candidate => candidate.id === id)
+    const target = candidateItems.find(candidate => candidate.id === id)
     return target ? `${target.team_key}-${target.number} · ${target.title}` : id
   }
   const add = async (event: FormEvent<HTMLFormElement>) => {
@@ -881,7 +883,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
     const form = new FormData(formElement)
     setError('')
     try {
-      await apiRequest(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { method: 'POST', headers: json({}), body: JSON.stringify({ targetWorkItemId: form.get('targetWorkItemId'), kind: form.get('kind') }) })
+      await apiMutation(`work-item:relation:add:${item.id}`, `/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { method: 'POST', headers: json({}), body: JSON.stringify({ targetWorkItemId: form.get('targetWorkItemId'), kind: form.get('kind') }) })
       if (!isAuthorityCurrent()) return
       formElement.reset(); await relations.refresh()
     } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
@@ -889,7 +891,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   const remove = async (relation: WorkItemRelation) => {
     setError('')
     try {
-      await apiRequest(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations/${encodeURIComponent(relation.id)}`, { method: 'DELETE', headers: revisionHeader(relation.revision) })
+      await apiMutation(`work-item:relation:remove:${relation.id}`, `/api/v1/work-items/${encodeURIComponent(item.id)}/relations/${encodeURIComponent(relation.id)}`, { method: 'DELETE', headers: revisionHeader(relation.revision) })
       if (!isAuthorityCurrent()) return
       await relations.refresh()
     } catch (reason) {
@@ -900,14 +902,15 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   }
   return <section className="relationship-panel" aria-labelledby="relationships-heading">
     <header><div><span className="eyebrow">{text.eyebrow}</span><h3 id="relationships-heading">{text.title}</h3></div></header>
-    {(error || relations.error) && <p className="error" role="alert">{error || relations.error?.message}</p>}
+    {(error || relations.error || candidates.error) && <p className="error" role="alert">{error || relations.error?.message || candidates.error?.message} {candidates.error && <button onClick={() => void candidates.refresh()} type="button">{text.reload}</button>}</p>}
     {conflict && <aside className="conflict-notice" role="alert"><div><strong>{text.conflictTitle}</strong><p>{text.conflictAction}</p></div><button onClick={() => { setConflict(null); void relations.refresh() }} type="button">{text.reload}</button></aside>}
     <div className="relation-list">{relations.items.map(relation => {
       const otherId = relation.source_work_item_id === item.id ? relation.target_work_item_id : relation.source_work_item_id
       const direction = relation.kind === 'related' ? text.related : relation.source_work_item_id === item.id ? text.blocks : text.blockedBy
       return <article key={relation.id}><span className={`relation-kind relation-${relation.kind}`}>{direction}</span><strong>{workLabel(otherId)}</strong><button onClick={() => void remove(relation)} type="button">{text.remove}</button></article>
     })}{!relations.loading && relations.items.length === 0 && <p className="empty">{text.empty}</p>}</div>
-    <form className="relation-create" onSubmit={event => void add(event)}><label>{text.fieldKind}<select name="kind"><option value="blocks">{text.kindBlocks}</option><option value="related">{text.kindRelated}</option></select></label><label>{text.fieldWorkItem}<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>{text.fieldWorkItemPlaceholder}</option>{projectItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={projectItems.length < 2} type="submit">{text.add}</button></form>
+    <form className="relation-create" onSubmit={event => void add(event)}><label>{text.fieldKind}<select name="kind"><option value="blocks">{text.kindBlocks}</option><option value="related">{text.kindRelated}</option></select></label><label>{text.fieldWorkItem}<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>{text.fieldWorkItemPlaceholder}</option>{candidateItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={candidateItems.every(candidate => candidate.id === item.id)} type="submit">{text.add}</button></form>
+    <LoadMoreButton collection={candidates} label={text.fieldWorkItem} loadMoreLabel={text.loadMoreCandidates} />
     <LoadMoreButton collection={relations} label={text.loadMore} />
   </section>
 }
