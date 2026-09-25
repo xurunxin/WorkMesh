@@ -6,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { buildApp } from '../src/server.js'
 import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
+import { createSessionLifecycleWorker } from '../../worker/src/session-lifecycle.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
@@ -273,4 +274,76 @@ describe('exact-session Pi Runner API', () => {
       expect(messages.body).not.toContain(process.env.MINIMAX_CN_API_KEY!)
     }, 240_000,
   )
+
+  it('fences a crashed running attempt after session authority is lost without replaying unknown effects', async () => {
+    const connection = await humanCall('POST', '/api/v1/workbench/llm-connections', {
+      scope: 'workspace', name: 'Crash recovery fixture', apiType: 'openai-completions',
+      baseUrl: 'https://api.minimax.cn/v1', secretMaterial: 'recovery-fixture-secret',
+    })
+    expect(connection.statusCode, connection.body).toBe(201)
+    const connectionId = connection.json<{ id: string }>().id
+    const model = await humanCall('POST', `/api/v1/workbench/llm-connections/${connectionId}/models`, {
+      externalModelId: 'MiniMax-M3', displayName: 'MiniMax M3', enabled: true,
+      capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false,
+        contextWindowTokens: 204800, maxOutputTokens: 4096 },
+    }, { 'if-match': '"revision-1"' })
+    expect(model.statusCode, model.body).toBe(201)
+    const created = await humanCall('POST', '/api/v1/workbench/conversations', {
+      title: 'Crash recovery', workItemId, agentSessionId: sessionId,
+      llmConnectionId: connectionId, llmModelId: model.json<{ id: string }>().id,
+    })
+    expect(created.statusCode, created.body).toBe(201)
+    const conversationId = created.json<{ id: string }>().id
+    const sent = await humanCall('POST', `/api/v1/workbench/conversations/${conversationId}/turns`,
+      { messageMarkdown: 'Do not replay this turn after a crash.' }, { 'if-match': '"revision-1"' })
+    expect(sent.statusCode, sent.body).toBe(201)
+    const turnId = sent.json<{ turn: { id: string } }>().turn.id
+    const claim = await runnerCall('POST', `/api/v1/workbench/turns/${turnId}/claim`)
+    expect(claim.statusCode, claim.body).toBe(200)
+    const attemptId = claim.json<{ runnerAttemptId: string }>().runnerAttemptId
+    const credential = await runnerCall('GET', `/api/v1/workbench/runner-attempts/${attemptId}/credential`)
+    expect(credential.statusCode, credential.body).toBe(200)
+    const fenceToken = credential.json<{ fenceToken: string }>().fenceToken
+    expect((await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`,
+      { fenceToken })).statusCode).toBe(200)
+    await db.query("UPDATE agent_sessions SET state='stale',state_reason='runner_crash' WHERE id=$1", [sessionId])
+    const worker = createSessionLifecycleWorker({ db, workerId: 'workbench-crash-test' })
+    await db.query(`CREATE FUNCTION workbench_recovery_reject_outbox() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN IF NEW.topic='workbench.turn.settled' THEN RAISE EXCEPTION 'workbench recovery outbox failure'; END IF;
+      RETURN NEW; END $$`)
+    await db.query(`CREATE TRIGGER workbench_recovery_reject_outbox BEFORE INSERT ON outbox_events
+      FOR EACH ROW EXECUTE FUNCTION workbench_recovery_reject_outbox()`)
+    try {
+      await expect(worker.reconcileWorkbenchAttempts()).rejects.toThrow('workbench recovery outbox failure')
+      const rolledBack = (await db.query<{ attempt_status: string; turn_status: string }>(
+        `SELECT attempt.status AS attempt_status,turn.status AS turn_status
+         FROM workbench_runner_attempts attempt JOIN workbench_turns turn ON turn.id=attempt.turn_id
+         WHERE attempt.id=$1`, [attemptId])).rows[0]!
+      expect(rolledBack).toEqual({ attempt_status: 'running', turn_status: 'running' })
+    } finally {
+      await db.query('DROP TRIGGER workbench_recovery_reject_outbox ON outbox_events')
+      await db.query('DROP FUNCTION workbench_recovery_reject_outbox()')
+    }
+    const concurrentRecovery = await Promise.all([
+      worker.reconcileWorkbenchAttempts(), worker.reconcileWorkbenchAttempts(),
+    ])
+    expect(concurrentRecovery.sort()).toEqual([0, 1])
+    expect(await worker.reconcileWorkbenchAttempts()).toBe(0)
+    const recovered = (await db.query<{ attempt_status: string; turn_status: string;
+      external_effects_reconciled: boolean; error_code: string }>(
+      `SELECT attempt.status AS attempt_status,turn.status AS turn_status,
+        attempt.external_effects_reconciled,turn.error_code
+       FROM workbench_runner_attempts attempt JOIN workbench_turns turn ON turn.id=attempt.turn_id
+       WHERE attempt.id=$1`, [attemptId])).rows[0]!
+    expect(recovered).toEqual({ attempt_status: 'failed', turn_status: 'failed',
+      external_effects_reconciled: false, error_code: 'RUNNER_AUTHORITY_LOST' })
+    const staleWriter = await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
+      fenceToken, assistantMessageMarkdown: 'A stale answer must not persist.',
+      settlement: { outcome: 'settled', summaryMarkdown: 'Stale answer', noArtifactReason: 'Text only' },
+    })
+    expect(staleWriter.statusCode).toBeGreaterThanOrEqual(400)
+    expect((await db.query<{ count: number }>(
+      "SELECT count(*)::int AS count FROM workbench_messages WHERE runner_attempt_id=$1",
+      [attemptId])).rows[0]?.count).toBe(0)
+  })
 })

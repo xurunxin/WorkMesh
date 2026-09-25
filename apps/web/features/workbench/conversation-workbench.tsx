@@ -233,6 +233,10 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
           {latestTurn && <div className={styles.turnState} role="status">{zh ? '最近一次执行' : 'Latest turn'}: {latestTurn.status}{latestTurn.error_code ? ` · ${latestTurn.error_code}` : ''}
             {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{zh ? '停止' : 'Stop'}</Button>}
           </div>}
+          {latestTurn && ['RUNNER_AUTHORITY_LOST', 'RUNNER_TIMEOUT'].includes(latestTurn.error_code ?? '') &&
+            <p className={styles.error} role="alert">{zh
+              ? '执行进程中断，外部操作结果尚未对账。请先核对 Issue、文档和制品，再发送新消息。'
+              : 'The runner stopped before settlement. External effects are unverified. Check the Issue, documents, and artifacts before sending another message.'}</p>}
         </div>
         {selected.status === 'active' && draftIdentity && <form className={styles.composer} onSubmit={event => void send(event)}>
           <RichTextEditor identity={draftIdentity} label={zh ? '消息（Markdown）' : 'Message (Markdown)'} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} />
@@ -244,8 +248,8 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     <aside className={styles.context} aria-label={zh ? '执行上下文' : 'Execution context'}>
       <h2>{zh ? '执行上下文' : 'Execution context'}</h2>
       {selected ? <><p>{zh ? '执行写操作由服务端授权。' : 'The server authorizes each write.'}</p>
-        {selected.work_item_id && <a href={`/?workItemId=${encodeURIComponent(selected.work_item_id)}`}>Issue {selected.work_item_id.slice(0, 8)}</a>}
-        {selected.project_id && <a href={`/?view=projects&projectId=${encodeURIComponent(selected.project_id)}`}>Project {selected.project_id.slice(0, 8)}</a>}
+        {selected.work_item_id && <a href={`/?view=issues&workItem=${encodeURIComponent(selected.work_item_id)}`}>Issue {selected.work_item_id.slice(0, 8)}</a>}
+        {selected.project_id && <a href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>Project {selected.project_id.slice(0, 8)}</a>}
         {selected.agent_session_id && <a href={`/agent-sessions/${selected.agent_session_id}`}>{zh ? '查看 Agent 会话与证据' : 'View Agent session and evidence'}</a>}
         <small>{zh ? '对话版本' : 'Conversation revision'} {selected.revision}</small></> : <p>{zh ? '选择对话后显示上下文。' : 'Select a conversation to view context.'}</p>}
     </aside>

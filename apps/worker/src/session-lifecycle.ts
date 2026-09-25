@@ -41,6 +41,7 @@ export type SessionLifecycleWorker = {
   expireApprovals: (limit?: number) => Promise<number>
   reconcileApprovalAutonomy: (limit?: number) => Promise<number>
   expireLeases: (limit?: number) => Promise<number>
+  reconcileWorkbenchAttempts: (limit?: number) => Promise<number>
   rebuildExecutorProjections: (workspaceId?: string, workItemId?: string) => Promise<number>
   cleanupAuthIdempotency: (limit?: number) => Promise<{ wiped: number; deleted: number }>
   tick: () => Promise<void>
@@ -705,6 +706,77 @@ export function createSessionLifecycleWorker({
     return { wiped: wiped.rowCount ?? 0, deleted: removed.rowCount ?? 0 }
   })
 
+  const reconcileWorkbenchAttempts = async (limit = 50): Promise<number> => {
+    const candidates = await db.query<{
+      id: string; workspace_id: string; conversation_id: string; turn_id: string
+      agent_session_id: string; delegation_id: string
+    }>(`SELECT attempt.id,attempt.workspace_id,attempt.conversation_id,attempt.turn_id,
+        attempt.agent_session_id,session.delegation_id
+      FROM workbench_runner_attempts attempt
+      JOIN agent_sessions session ON session.id=attempt.agent_session_id
+      JOIN delegations delegation ON delegation.id=session.delegation_id
+      WHERE attempt.status IN ('preparing','running')
+        AND (session.state IN ('stale','stopping','completed','failed','canceled')
+          OR delegation.status<>'active'
+          OR attempt.updated_at <= now() - interval '5 minutes')
+      ORDER BY attempt.updated_at,attempt.id LIMIT $1`, [Math.max(1, Math.min(100, limit))])
+    let changed = 0
+    for (const candidate of candidates.rows) {
+      changed += await withTx(db, async tx => {
+        const delegation = (await tx.query<{ status: string }>(
+          'SELECT status FROM delegations WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+          [candidate.workspace_id, candidate.delegation_id])).rows[0]
+        const session = (await tx.query<{ state: string }>(
+          'SELECT state FROM agent_sessions WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+          [candidate.workspace_id, candidate.agent_session_id])).rows[0]
+        if (!delegation || !session) return 0
+        const conversation = (await tx.query<{
+          team_id: string | null; responsible_human_actor_id: string
+        }>('SELECT team_id,responsible_human_actor_id FROM workbench_conversations WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+          [candidate.workspace_id, candidate.conversation_id])).rows[0]
+        const turn = (await tx.query<{ status: string; current_runner_attempt_id: string | null }>(
+          'SELECT status,current_runner_attempt_id FROM workbench_turns WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+          [candidate.workspace_id, candidate.turn_id])).rows[0]
+        const attempt = (await tx.query<{ status: string; attempt_no: number; updated_at: Date }>(
+          'SELECT status,attempt_no,updated_at FROM workbench_runner_attempts WHERE workspace_id=$1 AND id=$2 FOR UPDATE',
+          [candidate.workspace_id, candidate.id])).rows[0]
+        if (!conversation || !turn || !attempt || !['preparing','running'].includes(attempt.status)
+          || !['dispatching','running'].includes(turn.status)
+          || turn.current_runner_attempt_id !== candidate.id) return 0
+        const authorityLost = delegation.status !== 'active'
+          || ['stale','stopping','completed','failed','canceled'].includes(session.state)
+        const timedOut = Date.now() - attempt.updated_at.getTime() >= 5 * 60_000
+        if (!authorityLost && !timedOut) return 0
+        const errorCode = authorityLost ? 'RUNNER_AUTHORITY_LOST' : 'RUNNER_TIMEOUT'
+        await tx.query(`UPDATE workbench_runner_attempts SET status='failed',error_code=$3,
+          external_effects_reconciled=false,settled_at=now(),updated_at=now()
+          WHERE workspace_id=$1 AND id=$2`, [candidate.workspace_id, candidate.id, errorCode])
+        await tx.query(`UPDATE workbench_turns SET status='failed',error_code=$3,
+          settled_at=now(),updated_at=now() WHERE workspace_id=$1 AND id=$2`,
+        [candidate.workspace_id, candidate.turn_id, errorCode])
+        await tx.query(`UPDATE workbench_conversations SET revision=revision+1,updated_at=now()
+          WHERE workspace_id=$1 AND id=$2`, [candidate.workspace_id, candidate.conversation_id])
+        const actorId = await systemActorId(tx, candidate.workspace_id)
+        const common = { workspaceId: candidate.workspace_id,
+          teamId: conversation.team_id ?? undefined,
+          audienceActorId: conversation.team_id ? undefined : conversation.responsible_human_actor_id,
+          actorId, correlationId: `${workerId}:workbench-reconcile:${candidate.id}`,
+          sessionId: candidate.agent_session_id }
+        await appendEvent(tx, { ...common, type: 'workbench.runner_attempt.settled',
+          aggregateType: 'workbench_runner_attempt', aggregateId: candidate.id,
+          payload: { conversationId: candidate.conversation_id, turnId: candidate.turn_id,
+            runnerAttemptId: candidate.id, attemptNo: attempt.attempt_no, outcome: 'failed',
+            errorCode, externalEffectsReconciled: false } })
+        await appendEvent(tx, { ...common, type: 'workbench.turn.settled',
+          aggregateType: 'workbench_turn', aggregateId: candidate.turn_id,
+          payload: { conversationId: candidate.conversation_id, turnId: candidate.turn_id,
+            runnerAttemptId: candidate.id, outcome: 'failed', stopReason: null, errorCode } })
+        return 1
+      })
+    }
+    return changed
+  }
+
   const tick = async (): Promise<void> => {
     await expireAckDeadlines()
     await reconcileHeartbeatLiveness()
@@ -712,8 +784,9 @@ export function createSessionLifecycleWorker({
     await expireApprovals()
     await reconcileApprovalAutonomy()
     await expireLeases()
+    await reconcileWorkbenchAttempts()
     await cleanupAuthIdempotency()
   }
 
-  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, reconcileApprovalAutonomy, expireLeases, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
+  return { expireAckDeadlines, reconcileHeartbeatLiveness, expireStopGrace, expireApprovals, reconcileApprovalAutonomy, expireLeases, reconcileWorkbenchAttempts, rebuildExecutorProjections, cleanupAuthIdempotency, tick }
 }

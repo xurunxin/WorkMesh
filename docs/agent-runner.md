@@ -17,8 +17,8 @@ Runner 每次发现自己的 queued Session 后，经现有 Agent API 完成 ACK
 
 - `pnpm --filter @workmesh/agent-runner typecheck` 与 `pnpm --filter @workmesh/agent-runner test` 校验模型映射。
 - 使用隔离的测试数据库、Redis 与 `RUN_INTEGRATION=1` 运行 `apps/api/integration/workbench-runner.integration.test.ts`。`RUN_WORKBENCH_LIVE=1` 且本地存在 `MINIMAX_CN_API_KEY` 时，该文件还会通过真实 MiniMax-M3 执行一个只读工具调用与持久结果回写。测试子进程不会继承该模型密钥、数据库 URL、主密钥或 bootstrap token。
-- 运行中的工作台以服务端分页快照恢复对话，约每 3 秒刷新当前对话；运行时失败显示原始稳定错误码及重试入口。
+- 运行中的工作台订阅持久事件游标并从服务端分页快照恢复对话，约每 3 秒再次刷新当前对话；运行时失败显示稳定错误码及重试入口。
 
 ## 当前恢复边界
 
-Runner 崩溃时，处于 `dispatching` 或 `running` 的 Attempt 不会自动重做。操作员应在 Workbench 中停止该 Turn，以废除旧 fence 并记录停止事实，再确认外部副作用后新建 Turn。尚未提供自动对账、租约恢复与预算执行，因此此服务目前只适合受控试运行，不能按本路线图 W18 切换生产旧 UI。
+Runner 崩溃并使 Session 失去权威，或 Attempt 超过五分钟未结算时，Worker 将 `dispatching` / `running` Attempt 与 Turn 标记为 failed，并在同一事务中记录事件和 outbox。`external_effects_reconciled=false` 保留未知副作用，旧 fence 被拒绝，不自动重做。操作员应核对外部效果，再由 Human 发送新 Turn。尚未提供外部效果对账、租约恢复与预算执行，因此此服务目前只适合受控试运行，不能按本路线图 W18 切换生产旧 UI。

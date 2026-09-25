@@ -1758,8 +1758,13 @@ Agent Session bearer。API 对模型密钥响应设置 `Cache-Control: no-store`
 Runner Attempt 的 fence token 仅用于该 Turn 的当前写入。Human 停止 Turn 时，
 服务端先废除 Attempt 栅栏；旧结算返回 `RUNNER_FENCE_STALE`。
 
+Session 失去权威或 Attempt 超过五分钟仍未结算时，Worker 在单一事务中将当前
+Attempt 和 Turn 标为 failed、推进 Conversation revision，并追加事件/outbox。
+`external_effects_reconciled=false` 表示外部效果未知；旧 Runner 写入仍被栅栏
+拒绝，系统不会自动重做 Turn。Human 可查看错误并在核对效果后发送新 Turn。
+
 当前 Pi 工具仅有只读 `workmesh_session_context`。写工具、工具调用账本、预算、
-崩溃后对账与安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
+崩溃后外部效果对账与安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
 不得把上述纵向路径解释为 W10 或整项路线图验收通过。现有 Session 控制面
 （创建、ACK、Prompt、Stop/Pause/Resume、完成）继续保持权威，对话层不隐式
 获得 Team 写权，写权仍只经由绑定 Agent Session 的委派授予。

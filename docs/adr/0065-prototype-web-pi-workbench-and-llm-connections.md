@@ -59,7 +59,7 @@ Spike 工程（仓库外，`G:\Projects\MetronX\wm-pi-spike\`）对 `@earendil-w
 
 独立 `apps/agent-runner` 使用固定 Pi SDK、临时隔离目录、禁用内建宿主工具，当前仅注册只读 `workmesh_session_context`。Runner 需要部署级 token 加精确 Agent Session bearer 才能领取 Turn；模型凭据只通过受控的 no-store API 响应交给 Runner，不进入领取结果、事件或浏览器。开发与生产 Compose 增加可选 Runner 服务，生产镜像固定 Node 22.19。私有 Compose HTTP 仅允许显式开关且目标主机名为 `api`。真实 MiniMax-M3 集成测试已验证此链路的 Pi 工具调用、公开回复与持久结算，Runner 子进程不持有测试进程的数据库或主密钥。
 
-该纵向路径仍有发布阻断项：Runner 崩溃后 `dispatching/running` attempt 尚无安全对账和人工恢复入口；未建立工具调用账本、预算、租约与写操作矩阵；模型出口 DNS/IP 固定与内网出站策略未完成；Responses 通过独立真实探针，但尚未在完整持久 Turn 链做第二种协议验收。工作台订阅已有持久游标 SSE 的工作台事件并保留快照重取，但尚未对断线恢复和大量事件做浏览器验收；上下文 pin、制品和审阅界面也未完成。因此不能将 W09/W10/W13 或整项路线图标记为完成，也不能执行旧 UI 切换。
+该纵向路径已由 Worker 对失去 Session 权威或超时的 `dispatching/running` Attempt 做事务性失败标记和旧 writer 栅栏，保留 `external_effects_reconciled=false`，不自动重放。发布阻断项仍包括外部效果对账与安全重试、工具调用账本、预算、租约与写操作矩阵；模型出口 DNS/IP 固定与内网出站策略未完成；Responses 通过独立真实探针，但尚未在完整持久 Turn 链做第二种协议验收。工作台订阅已有持久游标 SSE 的工作台事件并保留快照重取，但尚未对断线恢复和大量事件做浏览器验收；上下文 pin、制品和审阅界面也未完成。因此不能将 W09/W10/W13 或整项路线图标记为完成，也不能执行旧 UI 切换。
 
 **契约冻结（先于实现）：**
 
