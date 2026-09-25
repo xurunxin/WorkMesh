@@ -11,7 +11,8 @@ type Connection = {
   status: 'active' | 'disabled' | 'revoked'; secret_status: 'configured' | 'missing'; revision: number
   can_manage: boolean
 }
-type Model = { id: string; external_model_id: string; display_name: string; enabled: boolean; revision: number }
+type Model = { id: string; external_model_id: string; display_name: string; enabled: boolean; revision: number
+  capabilities: { inputModalities: string[]; toolCalling: boolean; reasoning: boolean; contextWindowTokens: number; maxOutputTokens: number } }
 type Detail = Connection & { models: Model[] }
 type Team = { id: string; name: string }
 
@@ -128,6 +129,27 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
     finally { setBusy(false) }
   }
 
+  const toggleModel = async (model: Model) => {
+    if (!detail || !detail.can_manage) return
+    const connectionId = detail.id
+    setBusy(true); setError(''); setNotice('')
+    try {
+      await apiRequest(`${root}/${connectionId}/models`, {
+        method: 'POST', headers: { ...json({}), 'If-Match': `"revision-${detail.revision}"` },
+        body: JSON.stringify({
+          externalModelId: model.external_model_id, displayName: model.display_name,
+          enabled: !model.enabled, capabilities: model.capabilities,
+        }),
+      })
+      const latest = await apiRequest<Detail>(`${root}/${connectionId}`)
+      setDetail(current => current?.id === connectionId ? latest : current)
+      setNotice(model.enabled
+        ? zh ? '模型已停用。' : 'Model disabled.'
+        : zh ? '模型已启用。' : 'Model enabled.')
+    } catch (reason) { setError(errorText(reason)) }
+    finally { setBusy(false) }
+  }
+
   const revoke = async () => {
     if (!detail) return
     setBusy(true); setError(''); setNotice('')
@@ -175,7 +197,12 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
         {!detail.can_manage && <p>{zh ? '此服务由其他管理员维护，你可以查看已登记的模型。' : 'Another administrator manages this service. You can view its models.'}</p>}
         <div className="settings-form">
           <h3>{zh ? '模型目录' : 'Model catalog'}</h3>
-          <ul>{detail.models.map(model => <li key={model.id}>{model.display_name} <code>{model.external_model_id}</code></li>)}</ul>
+          <ul>{detail.models.map(model => <li key={model.id}>{model.display_name} <code>{model.external_model_id}</code>
+            {' · '}{model.enabled ? zh ? '已启用' : 'Enabled' : zh ? '已停用' : 'Disabled'}
+            {detail.can_manage && <Button disabled={busy} onClick={() => void toggleModel(model)} type="button" variant="ghost">
+              {model.enabled ? zh ? '停用模型' : 'Disable model' : zh ? '启用模型' : 'Enable model'}
+            </Button>}
+          </li>)}</ul>
           {detail.models.length === 0 && <p>{zh ? '尚未登记模型。' : 'No models added.'}</p>}
         </div>
         {detail.can_manage && <>

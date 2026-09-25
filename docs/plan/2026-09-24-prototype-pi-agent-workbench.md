@@ -722,7 +722,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/128
 <!-- WM-WEBPI-20260924:W07 -->
 # W07 实现用户 LLM 连接、模型目录与凭据管理域
 
-阶段：M2；优先级：P0；估算：4–6 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：4–6 人日（W01 后复估）。状态：部分实现；连接/模型/加密密钥 API、设置界面与真实 MiniMax-M3 执行已存在，完整出站目标约束、无密钥本地服务、受限探测及权限/轮换矩阵仍待完成。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -779,11 +779,11 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/129
 
 ## 交付记录模板
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：当前分支 `codex/wm-webpi-implementation`，独立 Docker stage `workmesh-webpi-stage`；本段新增模型启停 UI，提交 SHA 待验证后记录。
+- 数据迁移 / API / events / Skill 变更：本段无迁移、API、事件或 Skill 变更。复用现有 `POST /api/v1/workbench/llm-connections/{id}/models` upsert、连接 revision `If-Match` 与幂等键；界面保留模型能力元数据并读回最新状态。
+- 实际测试命令、结果、失败/skip：目标单测 2/2、Web typecheck、`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29（Web 726/726）PASS；独立 Docker 测试库中 `pnpm test:integration` 为 DB 77 PASS、API 136 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip。单 worker `pnpm test:e2e` 最终 68/68 PASS。首次全量 E2E 67/68 因预启动 Web 测试容器仍是旧镜像而找不到新增按钮；重建当前源码的镜像后定向 W07 8/8 PASS。第二次全量 67/68 暴露 Project 编辑 E2E 仍查找已移除的标题 `h2`；按当前可展开 Project 说明更新断言后，定向 Project/文档 9/9、最终全量 68/68 PASS。
+- 浏览器/真实模型/恢复证据：390×844 浏览器设置场景验证新增服务、登记 MiniMax-M3、停用、刷新读回、启用与吊销，页面正文不含测试密钥；已在 Docker stage 使用中国区 MiniMax `MiniMax-M3` 连接完成真实 Turn 和 Session。成功 E2E 只证明 UI/本地 API 业务链，真实模型证据来自单独的 Docker stage 执行。
+- 演示步骤、已知限制、规范偏差及 follow-up：设置 → Agent 工作台服务接入 → 登记连接与模型 → 在模型目录停用/启用；刷新应保留状态。现有 API 的 URL 保存校验仅按主机文本限制，尚无 Runner 出站 DNS/重定向目标 pin；无密钥本地 provider 与受限探测未交付；W07 保持开放。
 
 
 ---
