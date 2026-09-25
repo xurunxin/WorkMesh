@@ -781,4 +781,50 @@ describe("S3 artifact verification", () => {
     ).rejects.toBe(missing);
     expect(retentionPuts).toBe(0);
   });
+
+  it("signs every header an uploader is told to send", async () => {
+    // An upload intent returns a URL plus the headers to send with it. If the
+    // presigner hoists a header into the query string while the route still tells
+    // the client to send it as a header, strict S3 servers reject the upload as
+    // carrying unsigned headers and the object metadata never lands. Keep the two
+    // in agreement: every documented header must appear in the signature.
+    const body = Buffer.from("upload contract");
+    const checksum = `sha256:${createHash("sha256").update(body).digest("hex")}`;
+    const storage = new S3ArtifactStorage({
+      bucket: "artifacts",
+      config: {
+        region: "us-east-1",
+        endpoint: "http://127.0.0.1:9000",
+        forcePathStyle: true,
+        credentials: { accessKeyId: "test", secretAccessKey: "test" },
+      },
+    });
+
+    const { url, requiredHeaders } = await storage.createUploadUrl({
+      key: "workspace/upload/evidence.txt",
+      checksum,
+      sizeBytes: body.length,
+      mimeType: "text/plain",
+      archiveIdentity: {
+        segmentId: "segment-1",
+        snapshotDigest: `sha256:${"a".repeat(64)}`,
+        fixedCutoffAt: "2026-07-01T00:00:00.000Z",
+      },
+    });
+
+    const signedHeaders = new URL(url).searchParams.get("X-Amz-SignedHeaders")?.split(";") ?? [];
+    for (const name of Object.keys(requiredHeaders))
+      expect(signedHeaders).toContain(name.toLowerCase());
+
+    // The values the uploader sends must be the ones the signature covers.
+    expect(requiredHeaders["x-amz-checksum-sha256"]).toBe(
+      Buffer.from(checksum.slice(7), "hex").toString("base64"),
+    );
+    expect(requiredHeaders["x-amz-meta-workmeshchecksum"]).toBe(checksum);
+    expect(requiredHeaders["x-amz-meta-workmeshsegmentid"]).toBe("segment-1");
+
+    // Hoisting any of them into the query string would leave the header unsigned.
+    for (const name of Object.keys(requiredHeaders))
+      expect(new URL(url).searchParams.has(name)).toBe(false);
+  });
 });

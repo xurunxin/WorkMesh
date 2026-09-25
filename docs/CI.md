@@ -28,13 +28,13 @@ cached.
 
 - `db-integration` uses its own PostgreSQL 16 test database.
 - `api-integration` uses its own PostgreSQL 16 test database plus isolated
-  MinIO storage and an `mc` bucket initialization step.
+  RustFS object storage and a signed-request bucket initialization step.
 - `worker-integration` uses its own PostgreSQL 16 test database. The current
   worker integration suites do not require Redis.
 - `e2e` uses its own PostgreSQL 16 test database, installs only Playwright
   Chromium, and runs the existing acceptance suite.
 - `recovery-integration` uses isolated source and empty target PostgreSQL 16
-  databases plus versioned MinIO buckets, restores a complete authenticated
+  databases plus versioned RustFS buckets, restores a complete authenticated
   bundle, and starts the restored API, Worker, and Web for an Agent heartbeat.
 - `agent-smoke` exercises SDK construction and protocol/adaptor smoke paths,
   then runs the Agent Collaboration Client Profile suite through Native HTTP

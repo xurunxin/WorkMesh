@@ -99,21 +99,54 @@ export class S3ArtifactStorage {
     this.#client = input.client ?? this.#signingClient;
   }
 
-  async createUploadUrl(expectation: ArtifactObjectExpectation, expiresIn = 900): Promise<string> {
-    return getSignedUrl(this.#signingClient, new PutObjectCommand({
+  /**
+   * Creates the presigned PUT for an upload intent together with the exact headers
+   * the uploader must send.
+   *
+   * The two are returned as one value on purpose. The checksum and the object
+   * metadata are sent as headers, so the signature must cover them; if they were
+   * only hoisted into the query string, a strict S3 server rejects the upload as
+   * carrying unsigned headers, and the metadata never lands on the object. Deriving
+   * both from the same expectation keeps the signed request and the documented
+   * headers from drifting apart.
+   */
+  async createUploadUrl(
+    expectation: ArtifactObjectExpectation,
+    expiresIn = 900,
+  ): Promise<{ url: string; requiredHeaders: Record<string, string> }> {
+    const metadata = objectMetadata(expectation);
+    const metaHeaders = Object.keys(metadata).map((name) => `x-amz-meta-${name}`);
+    const checksumHeader = "x-amz-checksum-sha256";
+    const checksumValue = checksumBase64(expectation.checksum);
+
+    const url = await getSignedUrl(this.#signingClient, new PutObjectCommand({
       Bucket: this.#bucket,
       Key: expectation.key,
       ContentType: expectation.mimeType,
       ContentLength: expectation.sizeBytes,
-      ChecksumSHA256: checksumBase64(expectation.checksum),
-      Metadata: objectMetadata(expectation),
+      ChecksumSHA256: checksumValue,
+      Metadata: metadata,
       ...(expectation.retainUntil
         ? {
             ObjectLockMode: "COMPLIANCE" as const,
             ObjectLockRetainUntilDate: expectation.retainUntil,
           }
         : {}),
-    }), { expiresIn, signableHeaders: new Set(["content-type", "content-length", "x-amz-checksum-sha256"]) });
+    }), {
+      expiresIn,
+      signableHeaders: new Set(["content-type", "content-length", checksumHeader, ...metaHeaders]),
+      unhoistableHeaders: new Set([checksumHeader, ...metaHeaders]),
+    });
+
+    return {
+      url,
+      requiredHeaders: {
+        "content-type": expectation.mimeType,
+        "content-length": String(expectation.sizeBytes),
+        [checksumHeader]: checksumValue,
+        ...Object.fromEntries(Object.entries(metadata).map(([name, value]) => [`x-amz-meta-${name}`, value])),
+      },
+    };
   }
 
   async createDownloadUrl(key: string, expiresIn = 300): Promise<string> {

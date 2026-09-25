@@ -248,33 +248,43 @@ jobs:
         run: |
           set -o pipefail
           {
-            docker run --detach --name workmesh-ci-minio \
+            docker run --detach --name workmesh-ci-rustfs \
               --publish 9000:9000 \
-              --env MINIO_ROOT_USER=workmesh \
-              --env MINIO_ROOT_PASSWORD=workmesh-ci-minio-password \
-              quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
-              server /data
+              --env RUSTFS_ACCESS_KEY=workmesh \
+              --env RUSTFS_SECRET_KEY=workmesh-ci-minio-password \
+              rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff
             ready=false
             for attempt in $(seq 1 30); do
-              if curl --fail --silent http://127.0.0.1:9000/minio/health/ready > /dev/null; then
+              if curl --fail --silent http://127.0.0.1:9000/health/ready > /dev/null; then
                 ready=true
                 break
               fi
               sleep 2
             done
             if [ "$ready" != "true" ]; then
-              docker logs workmesh-ci-minio
+              docker logs workmesh-ci-rustfs
               exit 1
             fi
-          } 2>&1 | tee ci-logs/minio-start.log
+          } 2>&1 | tee ci-logs/rustfs-start.log
       - name: Initialize artifact bucket
         run: |
           set -o pipefail
-          docker run --rm --network host \
-            --entrypoint /bin/sh \
-            quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3 \
-            -c "mc alias set ci http://127.0.0.1:9000 workmesh workmesh-ci-minio-password && mc mb --ignore-existing ci/workmesh-artifacts" \
-            2>&1 | tee ci-logs/minio-init.log
+          {
+            # The server image ships curl with --aws-sigv4, so bucket creation needs no
+            # second image. A 409 means the bucket is already owned by us, which keeps
+            # this step idempotent the way `mc mb --ignore-existing` was.
+            status=$(docker run --rm --network host \
+              --entrypoint /usr/bin/curl \
+              rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff \
+              --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --aws-sigv4 'aws:amz:us-east-1:s3' \
+              --user 'workmesh:workmesh-ci-minio-password' \
+              --request PUT 'http://127.0.0.1:9000/workmesh-artifacts')
+            case "$status" in
+              200|409) printf '%s\n' "artifact bucket ready (HTTP $status)" ;;
+              *) printf '%s\n' "artifact bucket initialization failed (HTTP $status)"; exit 1 ;;
+            esac
+          } 2>&1 | tee ci-logs/rustfs-init.log
       - name: Run API integration
         run: |
           set -o pipefail
@@ -543,17 +553,16 @@ jobs:
               --env POSTGRES_DB=workmesh_recovery_source_test \
               --publish 5432:5432 \
               postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
-            docker run --detach --name workmesh-ci-recovery-minio \
-              --env MINIO_ROOT_USER=workmesh \
-              --env MINIO_ROOT_PASSWORD=WmCiRecoveryS3_2026_Z8k4P6n2R9t5 \
+            docker run --detach --name workmesh-ci-recovery-rustfs \
+              --env RUSTFS_ACCESS_KEY=workmesh \
+              --env RUSTFS_SECRET_KEY=WmCiRecoveryS3_2026_Z8k4P6n2R9t5 \
               --publish 9000:9000 \
-              quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
-              server /data
+              rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff
             docker run --detach --name workmesh-ci-recovery-redis \
               --publish 6379:6379 redis:7-alpine
             for attempt in $(seq 1 30); do
               if docker exec workmesh-ci-recovery-postgres pg_isready -U workmesh -d workmesh_recovery_source_test \
-                && curl --fail --silent http://127.0.0.1:9000/minio/health/ready > /dev/null \
+                && curl --fail --silent http://127.0.0.1:9000/health/ready > /dev/null \
                 && docker exec workmesh-ci-recovery-redis redis-cli ping | grep -q PONG; then
                 break
               fi
