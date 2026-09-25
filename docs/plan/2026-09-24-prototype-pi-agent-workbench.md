@@ -205,7 +205,7 @@ flowchart LR
 - [ ] W10 https://github.com/xurunxin/WorkMesh/issues/132 — 引入隔离 Pi Runner 并接入授权、控制与恢复
 - [ ] W11 https://github.com/xurunxin/WorkMesh/issues/133 — 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵
 - [ ] W12 https://github.com/xurunxin/WorkMesh/issues/134 — 编写可执行操作 Skills、用户指南和评测场景
-- [ ] W13 https://github.com/xurunxin/WorkMesh/issues/135 — 实装 Agent 工作台对话、上下文与执行控制
+- [ ] W13 https://github.com/xurunxin/WorkMesh/issues/135 — 实装 Agent 工作台对话、上下文与执行控制（进行中：对话主路径已实装并通过全部门禁，上下文/工具卡/steer 等仍缺，见 W13 交付记录 2026-09-25）
 - [ ] W14 https://github.com/xurunxin/WorkMesh/issues/136 — 实现制品检查器、修订反馈与成果验收闭环
 - [ ] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations
 - [ ] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验
@@ -1150,7 +1150,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/134
 <!-- WM-WEBPI-20260924:W13 -->
 # W13 实装 Agent 工作台对话、上下文与执行控制
 
-阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：进行中——工作台对话主路径（每 Turn 模型选择、绑定 Session 状态门禁、迟到响应隔离、手机折叠表单）已实装并通过全部门禁，路线其余工作见交付记录。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1213,6 +1213,15 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/135
 - 实际测试命令、结果、失败/skip：
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
+
+## 交付记录（2026-09-25，W13 阶段一）
+
+- 实现提交/PR 与精确环境：分支 `codex/wm-webpi-implementation`，本轮工作树起点 `fa79237`（未推送、未建 PR）。环境：Windows 11 + PowerShell 7；隔离 Docker stage `workmesh-webpi-stage`（Web `127.0.0.1:3110`、API `127.0.0.1:3111`、Postgres `127.0.0.1:55434`）；E2E Web 容器 `workmesh-webpi-e2e-web`（`127.0.0.1:3100`，镜像按当前源码重建）。宿主 `pnpm build` 仍受 G:/S: 跨卷 pnpm 虚拟仓库限制，不入成功记录。
+- 本轮范围：composer 支持每个 Turn 选择真实服务/模型并随 POST body 提交 `llmConnectionId`/`llmModelId`；显示绑定 Session 状态并阻止已结束 Session 发送；迟到响应不再清空新会话草稿；手机端新建表单折叠。发现并修复一个真实竞态：对话加载后「本次模型服务/模型」默认值可能迟到覆盖用户已显式做出的选择（用 per-conversation 显式选择记录固定在 UI，20 轮复跑 0 失败；修复前冷启动首跑必现）。
+- 数据迁移 / API / events / Skill 变更：无。`WorkbenchConversationCreateInput` 与 `WorkbenchTurnCreateInput` 的 `llmConnectionId`/`llmModelId` 字段此前已记录于 `OPENAPI.yaml`（3584–3585、3624–3625 行），本轮无 schema、契约、事件或 Skill 变更，前端仅按要求传值。
+- 实际测试命令、结果、失败/skip：`pnpm lint` 18/18；`pnpm typecheck` 18/18；`pnpm test` 29/29（Web 111 文件 729/729、API 171、Worker 163 通过 2 skip）；`pnpm test:integration` 全绿（DB 77/77、API 136 通过 1 skip、Worker 78 通过 1 skip、Recovery 1 skip）；`pnpm test:e2e` 完整 68 passed（4.2 分钟，含新增手机折叠断言 `workbench-conversation.spec.ts`）。
+- 浏览器/真实模型/恢复证据：真实浏览器（Chromium）+ 中国区 MiniMax `MiniMax-M3`（Docker stage，隔离凭据仅读自本机环境）：Conversation `91882193-9b58-41b6-9f56-0ed93aaf529d`、Turn `8b969cb5-3d74-4e58-9e6c-1a7feabc0db3` = `settled`，Session `0f4cc0fe-3be8-4327-ba5b-8aaa82b7c0cb` 保持 `executing`，助手回答含脚本 marker；`workbench_turns` 行中 `llm_connection_id`/`llm_model_id` 与界面覆盖选择 ID 完全一致（PostgreSQL 直查）。证据文件：`.evidence/webpi-stage-w13-browser.json`、`...-running/settled/mobile-collapsed/mobile-expanded.png`。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 打开 `/workbench` → 选择对话 → 在 composer 选择「本次模型服务/模型」→ 发送 → 观察 Turn 状态与公开回答；手机 390px 下点「新建对话」展开/收起表单。已知限制：(1) W13 尚未完成——上下文选择 chips、工具/证据卡、steer/follow-up/retry、等待输入/审批矩阵仍缺，本记录不代表 W13 关闭；(2) 手机端 toggle 与表单提交按钮同名「新建对话」，E2E 已改为按 `aria-controls` 定位，产品层文案合并留待后续统一；(3) stage Web 镜像含本轮全部改动，E2E 容器镜像已同步重建。规范偏差：无。follow-up：W13 剩余矩阵、W14 制品检查器。
 
 
 ---

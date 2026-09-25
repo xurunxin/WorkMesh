@@ -8,5 +8,15 @@ test('the authenticated Agent workbench opens on desktop and mobile with a real 
     await expect(page.getByRole('link', { name: /模型服务设置|Model settings/ })).toHaveAttribute('href', '/settings/agent-workbench')
     await expect(page.getByRole('button', { name: /新建对话|Create conversation/ })).toBeVisible()
     await expect(page.locator('[data-testid="conversation-workbench"]')).toBeVisible()
+    if (width === 390) {
+      // The expanded form contains a submit button with the same accessible name, so target
+      // the toggle by its aria-controls relationship instead of by name.
+      const toggle = page.locator('button[aria-controls="workbench-create-form"]')
+      await expect(toggle).toBeVisible()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await toggle.click()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+      await expect(page.getByLabel(/新对话标题|New conversation title/)).toBeVisible()
+    }
   }
 })
