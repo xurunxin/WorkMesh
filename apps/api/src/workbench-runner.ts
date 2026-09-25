@@ -257,8 +257,33 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         JOIN delegations delegation ON delegation.id=session.delegation_id
         WHERE turn.workspace_id=$1 AND turn.id=$2`,
       [current.workspaceId, attempt.turn_id])).rows, 'Turn')
+    // Injected steering: a steering user message written after the attempt started is
+    // handed to the runner once. The steer command already emitted the durable
+    // workbench.turn.steered event; this read-only lookup selects the newest steering
+    // message that has no such event, so the event stream is the dedupe authority and
+    // a poll retry cannot invent facts.
+    let pendingSteeringMessage: string | null = null
+    if (attempt.status === 'running' && state.turn_status === 'running') {
+      const steering = (await h.db.query<{ content_markdown: string }>(
+        `SELECT message.content_markdown FROM workbench_messages message
+           JOIN workbench_runner_attempts attempt ON attempt.workspace_id=message.workspace_id
+            AND attempt.id=$4
+          WHERE message.workspace_id=$1 AND message.turn_id=$2 AND message.role='user'
+            AND message.created_at >= attempt.started_at
+            AND message.author_actor_id = (SELECT initiated_by_actor_id FROM workbench_turns
+              WHERE workspace_id=$1 AND id=$2)
+            AND NOT EXISTS (
+              SELECT 1 FROM domain_events event
+              WHERE event.aggregate_type='workbench_turn' AND event.aggregate_id=$3
+                AND event.event_type='workbench.turn.steered'
+                AND event.payload->>'messageId'=message.id::text)
+          ORDER BY message.sequence DESC LIMIT 1`,
+        [current.workspaceId, attempt.turn_id, attempt.turn_id, attempt.id])).rows[0]
+      pendingSteeringMessage = steering?.content_markdown ?? null
+    }
     return { attemptStatus: attempt.status, turnStatus: state.turn_status,
-      sessionState: state.session_state, delegationStatus: state.delegation_status }
+      sessionState: state.session_state, delegationStatus: state.delegation_status,
+      pendingSteeringMessage }
   })
 
   app.post('/api/v1/workbench/runner-attempts/:id/settle', async request => {
@@ -288,6 +313,23 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
       await tx.query(`UPDATE workbench_runner_attempts SET status=$3,usage=$4,error_code=$5,
         settled_at=now(),updated_at=now() WHERE workspace_id=$1 AND id=$2`,
       [current.workspaceId, attempt.id, outcome, usage, body.settlement.errorCode ?? null])
+      // The runner summarizes its tool usage at settlement (per-tool counts over the
+      // sanitized input shape). The ledger is append-only audit material: raw
+      // arguments stay with the runner and are reducible to a digest, so nothing here
+      // can smuggle hidden chain-of-thought or secrets into the durable record.
+      if (body.toolInvocations?.length) {
+        let invocationSequence = 0
+        for (const invocation of body.toolInvocations) {
+          invocationSequence += 1
+          await tx.query(
+            `INSERT INTO workbench_tool_invocations(workspace_id,turn_id,conversation_id,
+              runner_attempt_id,tool_name,call_count,sanitized_input_summary,usage,sequence)
+             VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+            [current.workspaceId, turn.id, turn.conversation_id, attempt.id,
+              invocation.toolName, invocation.callCount,
+              invocation.sanitizedInputSummary, usage ?? {}, invocationSequence])
+        }
+      }
       await tx.query(`UPDATE workbench_turns SET status=$3,error_code=$4,settled_at=now(),updated_at=now()
         WHERE workspace_id=$1 AND id=$2`,
       [current.workspaceId, turn.id, turnStatus, body.settlement.errorCode ?? null])

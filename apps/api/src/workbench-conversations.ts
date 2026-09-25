@@ -2,9 +2,11 @@ import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
 import {
-  conversationCreateInputSchema, conversationMessageResponseSchema,
-  conversationResponseSchema, conversationTurnCreateInputSchema,
-  conversationTurnStopInputSchema, turnResponseSchema,
+  conversationContextPinsUpdateInputSchema, conversationCreateInputSchema,
+  conversationMessageResponseSchema, conversationResponseSchema,
+  conversationTurnCreateInputSchema, conversationTurnFollowupInputSchema,
+  conversationTurnSteerInputSchema, conversationTurnStopInputSchema,
+  conversationContextPinResponseSchema, turnResponseSchema,
 } from '@workmesh/contracts'
 import { appendEvent } from '@workmesh/db'
 import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
@@ -30,6 +32,7 @@ type Turn = {
   id: string; conversation_id: string; sequence: number; status: string
   initiated_by_actor_id: string; agent_session_id: string | null
   current_runner_attempt_id: string | null; stop_reason: string | null; error_code: string | null
+  retry_of_turn_id: string | null
   queued_at: Date; dispatch_requested_at: Date | null; started_at: Date | null
   settled_at: Date | null; created_at: Date; updated_at: Date
 }
@@ -72,6 +75,7 @@ const turnResponse = (row: Turn) => turnResponseSchema.parse({
   agent_session_id: row.agent_session_id,
   current_runner_attempt_id: row.current_runner_attempt_id,
   stop_reason: row.stop_reason, error_code: row.error_code,
+  retry_of_turn_id: row.retry_of_turn_id,
   queued_at: iso(row.queued_at), dispatch_requested_at: iso(row.dispatch_requested_at),
   started_at: iso(row.started_at), settled_at: iso(row.settled_at),
   created_at: iso(row.created_at), updated_at: iso(row.updated_at),
@@ -357,5 +361,158 @@ export function registerWorkbenchConversationRoutes(app: FastifyInstance, h: Hel
           outcome: 'stopped', stopReason: 'user_stop', errorCode: null })
       return { turn: turnResponse(stopped), conversationRevision: row.revision + 1 }
     }, { authorizeReplay: async tx => authorize(tx, current, await load(tx, current, conversationId)) })
+  })
+
+  // Context pins are limited to the conversation's own bound scope (decision
+  // 2026-09-26): guidance/document/work_item refs inside the conversation's team and
+  // project. The server re-resolves each ref so the client cannot pin an
+  // out-of-scope or nonexistent resource, and reports the revision that was current.
+  app.patch('/api/v1/workbench/conversations/:id/context-pins', async request => {
+    const body = conversationContextPinsUpdateInputSchema.parse(request.body)
+    const current = actor(request); human(current)
+    const conversationId = id(request)
+    const context = h.meta(request, body, { id: conversationId })
+    return mutate(h.db, context, async tx => {
+      const row = await load(tx, current, conversationId, true); await authorize(tx, current, row)
+      assertRevision(parseRevision(h.header(request, 'if-match')), row.revision)
+      if (row.status !== 'active') throw new DomainError('INVALID_STATE', 'Conversation is archived')
+      const resolved = []
+      for (const pin of body.pins) {
+        let resolvedRevision: number | null = null
+        if (pin.kind === 'work_item') {
+          if (row.work_item_id !== pin.refId)
+            throw new DomainError('FORBIDDEN', 'Pins are limited to the conversation bound work item')
+          const item = one((await tx.query<{ revision: number }>(
+            'SELECT revision FROM work_items WHERE workspace_id=$1 AND id=$2 AND deleted_at IS NULL',
+            [current.workspaceId, pin.refId])).rows, 'Work item')
+          resolvedRevision = item.revision
+        } else if (pin.kind === 'document') {
+          if (!row.project_id && !row.work_item_id)
+            throw new DomainError('FORBIDDEN', 'Document pins require a bound project or work item')
+          const doc = one((await tx.query<{ revision: number; project_id: string | null; work_item_id: string | null }>(
+            'SELECT revision,project_id,work_item_id FROM documents WHERE workspace_id=$1 AND id=$2 AND deleted_at IS NULL',
+            [current.workspaceId, pin.refId])).rows, 'Document')
+          if (doc.project_id !== row.project_id || doc.work_item_id !== row.work_item_id)
+            throw new DomainError('FORBIDDEN', 'Document belongs to a different context')
+          resolvedRevision = doc.revision
+        } else {
+          if (!row.team_id)
+            throw new DomainError('FORBIDDEN', 'Guidance pins require a bound team')
+          const guidance = one((await tx.query<{ revision: number; team_id: string }>(
+            'SELECT revision,team_id FROM guidances WHERE workspace_id=$1 AND id=$2 AND deleted_at IS NULL',
+            [current.workspaceId, pin.refId])).rows, 'Guidance')
+          if (guidance.team_id !== row.team_id)
+            throw new DomainError('FORBIDDEN', 'Guidance belongs to a different team')
+          resolvedRevision = guidance.revision
+        }
+        // A null pin.revision follows the live head; the response records what head was.
+        resolved.push({
+          kind: pin.kind, refId: pin.refId, revision: pin.revision,
+          resolvedRevision: pin.revision ?? resolvedRevision,
+          pinnedByActorId: current.id, pinnedAt: new Date().toISOString(),
+        })
+      }
+      const updated = one((await tx.query<Conversation>(
+        `UPDATE workbench_conversations SET context_pins=$3::jsonb,revision=revision+1,updated_at=now()
+          WHERE workspace_id=$1 AND id=$2 RETURNING *`,
+        [current.workspaceId, row.id, JSON.stringify(resolved)])).rows, 'Conversation')
+      await event(tx, current, context, row, 'workbench.conversation.pins_updated',
+        'workbench_conversation', row.id, updated.revision,
+        { conversationId: row.id, pinCount: resolved.length })
+      return response(updated)
+    }, { authorizeReplay: async tx => authorize(tx, current, await load(tx, current, conversationId)) })
+  })
+
+  // Steering adds a user message to a running turn. The attempt is not cancelled:
+  // the runner picks the message up on its next status poll and injects it as extra
+  // context, so the in-flight work continues with the new instruction.
+  app.post('/api/v1/workbench/conversations/:id/turns/:turnId/steer', async (request, reply) => {
+    const body = conversationTurnSteerInputSchema.parse(request.body)
+    const current = actor(request); human(current)
+    const conversationId = id(request); const targetTurnId = turnId(request)
+    const context = h.meta(request, body, { id: conversationId, turnId: targetTurnId })
+    const result = await mutate(h.db, context, async tx => {
+      const row = await load(tx, current, conversationId, true); await authorize(tx, current, row)
+      assertRevision(parseRevision(h.header(request, 'if-match')), row.revision)
+      const turn = one((await tx.query<Turn>(
+        'SELECT * FROM workbench_turns WHERE workspace_id=$1 AND conversation_id=$2 AND id=$3 FOR UPDATE',
+        [current.workspaceId, row.id, targetTurnId])).rows, 'Turn')
+      if (turn.status !== 'running')
+        throw new DomainError('INVALID_STATE', 'Only a running turn can be steered')
+      if (!turn.current_runner_attempt_id)
+        throw new DomainError('INVALID_STATE', 'A running turn must have an attempt')
+      const message = one((await tx.query<Message>(
+        `INSERT INTO workbench_messages(workspace_id,conversation_id,turn_id,sequence,role,
+          author_actor_id,content_markdown) VALUES($1,$2,$3,$4,'user',$5,$6) RETURNING *`,
+        [current.workspaceId, row.id, turn.id, row.next_message_sequence, current.id, body.messageMarkdown])).rows, 'Message')
+      await tx.query(`UPDATE workbench_conversations SET next_message_sequence=next_message_sequence+1,
+        revision=revision+1,updated_at=now() WHERE workspace_id=$1 AND id=$2`, [current.workspaceId, row.id])
+      await event(tx, current, context, row, 'workbench.message.appended', 'workbench_message',
+        message.id, undefined, { conversationId: row.id, messageId: message.id, turnId: turn.id,
+          role: 'user', sequence: message.sequence, steering: true })
+      await event(tx, current, context, row, 'workbench.turn.steered', 'workbench_turn',
+        turn.id, undefined, { conversationId: row.id, turnId: turn.id,
+          messageId: message.id, runnerAttemptId: turn.current_runner_attempt_id })
+      return { message: messageResponse(message), conversationRevision: row.revision + 1 }
+    }, { authorizeReplay: async tx => authorize(tx, current, await load(tx, current, conversationId)) })
+    return reply.code(201).send(result)
+  })
+
+  // Follow-up and retry both create a NEW turn: the terminal turn is immutable, and
+  // the new fact references what prompted it through retry_of_turn_id.
+  app.post('/api/v1/workbench/conversations/:id/turns/:turnId/followup', async (request, reply) => {
+    const body = conversationTurnFollowupInputSchema.parse(request.body)
+    const current = actor(request); human(current)
+    const conversationId = id(request); const targetTurnId = turnId(request)
+    const context = h.meta(request, body, { id: conversationId, turnId: targetTurnId })
+    const result = await mutate(h.db, context, async tx => {
+      const row = await load(tx, current, conversationId, true); await authorize(tx, current, row)
+      assertRevision(parseRevision(h.header(request, 'if-match')), row.revision)
+      if (row.status !== 'active') throw new DomainError('INVALID_STATE', 'Conversation is archived')
+      const prior = one((await tx.query<Turn>(
+        'SELECT * FROM workbench_turns WHERE workspace_id=$1 AND conversation_id=$2 AND id=$3',
+        [current.workspaceId, row.id, targetTurnId])).rows, 'Turn')
+      if (!['settled','failed','canceled','stopped'].includes(prior.status))
+        throw new DomainError('INVALID_STATE', 'Follow-up requires a terminal turn')
+      if (row.agent_session_id) {
+        const session = one((await tx.query<{ state: string; delegation_status: string }>(
+          `SELECT session.state,delegation.status AS delegation_status
+            FROM agent_sessions session JOIN delegations delegation ON delegation.id=session.delegation_id
+            WHERE session.workspace_id=$1 AND session.id=$2 AND delegation.workspace_id=$1`,
+          [current.workspaceId, row.agent_session_id])).rows, 'Agent session')
+        if (session.delegation_status !== 'active'
+          || ['stopping','stale','completed','failed','canceled'].includes(session.state))
+          throw new DomainError('INVALID_STATE', 'Bound agent session cannot accept a new turn')
+      }
+      const connectionId = body.llmConnectionId ?? row.default_llm_connection_id
+      const modelId = body.llmModelId ?? row.default_llm_model_id
+      if (!connectionId || !modelId) throw new DomainError('VALIDATION_ERROR', 'Choose an active connection and model before sending')
+      await authorizeModel(tx, current, row.team_id, connectionId, modelId)
+      // A retry names the prior turn when it re-runs it; a plain follow-up does not.
+      const retryOfTurnId = body.retryOfTurnId === targetTurnId ? targetTurnId : null
+      if (body.retryOfTurnId && retryOfTurnId === null)
+        throw new DomainError('VALIDATION_ERROR', 'retryOfTurnId must name the turn being followed up')
+      const turn = one((await tx.query<Turn>(
+        `INSERT INTO workbench_turns(workspace_id,conversation_id,sequence,initiated_by_actor_id,
+          agent_session_id,llm_connection_id,llm_model_id,retry_of_turn_id)
+          VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+        [current.workspaceId, row.id, row.next_turn_sequence, current.id,
+          row.agent_session_id, connectionId, modelId, retryOfTurnId])).rows, 'Turn')
+      const message = one((await tx.query<Message>(
+        `INSERT INTO workbench_messages(workspace_id,conversation_id,turn_id,sequence,role,
+          author_actor_id,content_markdown) VALUES($1,$2,$3,$4,'user',$5,$6) RETURNING *`,
+        [current.workspaceId, row.id, turn.id, row.next_message_sequence, current.id, body.messageMarkdown])).rows, 'Message')
+      await tx.query(`UPDATE workbench_conversations SET next_turn_sequence=next_turn_sequence+1,
+        next_message_sequence=next_message_sequence+1,revision=revision+1,updated_at=now()
+        WHERE workspace_id=$1 AND id=$2`, [current.workspaceId, row.id])
+      await event(tx, current, context, row, 'workbench.message.appended', 'workbench_message',
+        message.id, undefined, { conversationId: row.id, messageId: message.id, turnId: turn.id,
+          role: 'user', sequence: message.sequence })
+      await event(tx, current, context, row, 'workbench.turn.queued', 'workbench_turn', turn.id,
+        undefined, { conversationId: row.id, turnId: turn.id, initiatedByActorId: current.id,
+          retryOfTurnId })
+      return { message: messageResponse(message), turn: turnResponse(turn), conversationRevision: row.revision + 1 }
+    }, { authorizeReplay: async tx => authorize(tx, current, await load(tx, current, conversationId)) })
+    return reply.code(201).send(result)
   })
 }

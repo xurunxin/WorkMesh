@@ -2184,6 +2184,39 @@ paths:
       parameters: [{ $ref: "#/components/parameters/Id" }, { name: turnId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [reason], properties: { reason: { type: string, maxLength: 2000 }, stopMode: { type: string, enum: [graceful, immediate] } } } } } }
       responses: { "200": { description: Queued turn stopped, content: { application/json: { schema: { type: object, properties: { turn: { $ref: "#/components/schemas/WorkbenchTurn" }, conversationRevision: { type: integer } } } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/conversations/{id}/turns/{turnId}/steer:
+    post:
+      x-workmesh-policy-id: route.steerWorkbenchTurn
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: steerWorkbenchTurn
+      parameters: [{ $ref: "#/components/parameters/Id" }, { name: turnId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchTurnSteerInput" } } } }
+      responses: { "201": { description: Steering message appended to the running turn, content: { application/json: { schema: { type: object, properties: { message: { $ref: "#/components/schemas/WorkbenchMessage" }, conversationRevision: { type: integer } } } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/conversations/{id}/turns/{turnId}/followup:
+    post:
+      x-workmesh-policy-id: route.followupWorkbenchTurn
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: followupWorkbenchTurn
+      parameters: [{ $ref: "#/components/parameters/Id" }, { name: turnId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchTurnFollowupInput" } } } }
+      responses: { "201": { description: New turn created after a terminal turn, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchTurnAdmission" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/conversations/{id}/context-pins:
+    patch:
+      x-workmesh-policy-id: route.updateWorkbenchConversationContextPins
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: updateWorkbenchConversationContextPins
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversationContextPinsUpdateInput" } } } }
+      responses: { "200": { description: Conversation with replaced context pins, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
   /api/v1/workbench/llm-connections:
     get:
       x-workmesh-policy-id: route.listWorkbenchLlmConnections
@@ -3599,7 +3632,7 @@ components:
         created_at: { type: string, format: date-time }
     WorkbenchTurn:
       type: object
-      required: [id, conversation_id, sequence, status, initiated_by_actor_id, agent_session_id, current_runner_attempt_id, stop_reason, error_code, queued_at, dispatch_requested_at, started_at, settled_at, created_at, updated_at]
+      required: [id, conversation_id, sequence, status, initiated_by_actor_id, agent_session_id, current_runner_attempt_id, stop_reason, error_code, retry_of_turn_id, queued_at, dispatch_requested_at, started_at, settled_at, created_at, updated_at]
       properties:
         id: { type: string, format: uuid }
         conversation_id: { type: string, format: uuid }
@@ -3610,6 +3643,7 @@ components:
         current_runner_attempt_id: { type: string, format: uuid, nullable: true }
         stop_reason: { type: string, nullable: true }
         error_code: { type: string, nullable: true }
+        retry_of_turn_id: { type: string, format: uuid, nullable: true }
         queued_at: { type: string, format: date-time }
         dispatch_requested_at: { type: string, format: date-time, nullable: true }
         started_at: { type: string, format: date-time, nullable: true }
@@ -3630,6 +3664,37 @@ components:
         message: { $ref: "#/components/schemas/WorkbenchMessage" }
         turn: { $ref: "#/components/schemas/WorkbenchTurn" }
         conversationRevision: { type: integer, minimum: 1 }
+    WorkbenchTurnSteerInput:
+      type: object
+      additionalProperties: false
+      required: [messageMarkdown]
+      properties:
+        messageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+    WorkbenchTurnFollowupInput:
+      type: object
+      additionalProperties: false
+      required: [messageMarkdown]
+      properties:
+        messageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+        retryOfTurnId: { type: string, format: uuid }
+        llmConnectionId: { type: string, format: uuid }
+        llmModelId: { type: string, format: uuid }
+    WorkbenchConversationContextPinsUpdateInput:
+      type: object
+      additionalProperties: false
+      required: [pins]
+      properties:
+        pins:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, refId]
+            properties:
+              kind: { type: string, enum: [guidance, document, work_item] }
+              refId: { type: string, format: uuid }
+              revision: { type: integer, minimum: 1, nullable: true }
     WorkbenchLlmConnection:
       type: object
       additionalProperties: false

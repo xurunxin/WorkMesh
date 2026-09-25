@@ -14,9 +14,10 @@ type Conversation = {
   id: string; title: string; status: 'active' | 'archived'; revision: number
   team_id: string | null; agent_session_id: string | null; default_llm_connection_id: string | null
   default_llm_model_id: string | null; work_item_id: string | null; project_id: string | null; updated_at: string
+  context_pins: Array<{ kind: 'guidance' | 'document' | 'work_item'; refId: string; revision: number | null; resolved_revision?: number | null }>
 }
 type Message = { id: string; role: 'user' | 'assistant' | 'system'; sequence: number; content_markdown: string; created_at: string }
-type Turn = { id: string; status: string; sequence: number; error_code: string | null }
+type Turn = { id: string; status: string; sequence: number; error_code: string | null; retry_of_turn_id: string | null }
 type Session = { id: string; state: string; principal_human_actor_id: string; work_item_id: string | null; project_id: string | null }
 type Connection = { id: string; name: string; status: string; secret_status: string }
 type Model = { id: string; display_name: string; enabled: boolean }
@@ -50,6 +51,7 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
   const [turns, setTurns] = useState<Turn[]>([])
   const [olderBefore, setOlderBefore] = useState<number | null>(null)
   const [draft, setDraft] = useState('')
+  const [steerDraft, setSteerDraft] = useState('')
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -214,6 +216,38 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     } catch (reason) { setError(errorText(reason)); await refreshSelected(selected.id).catch(() => undefined) }
     finally { setBusy(false) }
   }
+  // Steering adds context to a running turn without cancelling its attempt.
+  const steer = async (turn: Turn) => {
+    if (!selected || busy || !steerDraft.trim()) return
+    setBusy(true); setError('')
+    try {
+      await apiMutation(`workbench:steer:${turn.id}`, `${root}/${selected.id}/turns/${turn.id}/steer`,
+        { method: 'POST', headers: { ...json({}), 'If-Match': etag(selected.revision) },
+          body: JSON.stringify({ messageMarkdown: steerDraft.trim() }) })
+      setSteerDraft('')
+      await refreshSelected(selected.id)
+    } catch (reason) { setError(errorText(reason)); await refreshSelected(selected.id).catch(() => undefined) }
+    finally { setBusy(false) }
+  }
+  // Follow-up (and retry) create a NEW turn: the terminal fact stays immutable.
+  const followUp = async (turn: Turn, retry: boolean) => {
+    if (!selected || busy) return
+    const message = retry ? (zh ? '重试上一次请求。' : 'Retry the previous request.') : draft.trim()
+    if (!message) return
+    setBusy(true); setError('')
+    const identity: DraftIdentity = { workspaceId: actor.workspace_id ?? '', teamId: selected.team_id ?? '', actorId: actor.id,
+      resourceType: 'workbench_conversation', resourceId: selected.id, field: 'message', baseRevision: 0 }
+    try {
+      await apiMutation(`workbench:followup:${turn.id}`, `${root}/${selected.id}/turns/${turn.id}/followup`,
+        { method: 'POST', headers: { ...json({}), 'If-Match': etag(selected.revision) },
+          body: JSON.stringify({ messageMarkdown: message, llmConnectionId: turnConnectionId || selected.default_llm_connection_id,
+            llmModelId: turnModelId || selected.default_llm_model_id, ...(retry ? { retryOfTurnId: turn.id } : {}) }) })
+      clearDraft(localStorage, identity)
+      if (selectedRef.current === selected.id) setDraft('')
+      if (selectedRef.current === selected.id) await refreshSelected(selected.id)
+    } catch (reason) { setError(errorText(reason)); await refreshSelected(selected.id).catch(() => undefined) }
+    finally { setBusy(false) }
+  }
   const archive = async () => {
     if (!selected || busy) return
     setBusy(true); setError('')
@@ -288,7 +322,18 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
               <RichContent density="compact" source={message.content_markdown} />
             </article>)}
           {latestTurn && <div className={styles.turnState} role="status">{zh ? '最近一次执行' : 'Latest turn'}: {latestTurn.status}{latestTurn.error_code ? ` · ${latestTurn.error_code}` : ''}
+            {latestTurn.retry_of_turn_id && <small> · {zh ? '重试自' : 'retry of'} {latestTurn.retry_of_turn_id.slice(0, 8)}</small>}
             {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{zh ? '停止' : 'Stop'}</Button>}
+            {pending(latestTurn) && latestTurn.status === 'running' &&
+              <form className={styles.steerForm} onSubmit={event => { event.preventDefault(); void steer(latestTurn) }}>
+                <input aria-label={zh ? '转向指令（追加到执行中的回合）' : 'Steering instruction (appended to the running turn)'}
+                  maxLength={50_000} onChange={event => setSteerDraft(event.target.value)} placeholder={zh ? '追加指示…' : 'Add steering…'}
+                  value={steerDraft} />
+                <Button disabled={busy || !steerDraft.trim()} type="submit" variant="ghost">{zh ? '追加指示' : 'Steer'}</Button>
+              </form>}
+            {!pending(latestTurn) && ['failed', 'stopped'].includes(latestTurn.status) &&
+              <Button disabled={busy} onClick={() => void followUp(latestTurn, true)} variant="ghost">{zh ? '重试' : 'Retry'}</Button>}
+            {!pending(latestTurn) && <Button disabled={busy || !draft.trim()} onClick={() => void followUp(latestTurn, false)} variant="ghost">{zh ? '追问' : 'Follow up'}</Button>}
           </div>}
           {latestTurn && ['RUNNER_AUTHORITY_LOST', 'RUNNER_TIMEOUT'].includes(latestTurn.error_code ?? '') &&
             <p className={styles.error} role="alert">{zh
@@ -317,8 +362,14 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     <aside className={styles.context} aria-label={zh ? '执行上下文' : 'Execution context'}>
       <h2>{zh ? '执行上下文' : 'Execution context'}</h2>
       {selected ? <><p>{zh ? '执行写操作由服务端授权。' : 'The server authorizes each write.'}</p>
-        {selected.work_item_id && <a href={`/?view=issues&workItem=${encodeURIComponent(selected.work_item_id)}`}>Issue {selected.work_item_id.slice(0, 8)}</a>}
-        {selected.project_id && <a href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>Project {selected.project_id.slice(0, 8)}</a>}
+        <ul className={styles.contextPins} data-testid="workbench-context-pins">
+          {selected.project_id && <li><a href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>Project {selected.project_id.slice(0, 8)}</a></li>}
+          {selected.work_item_id && <li><a href={`/?view=issues&workItem=${encodeURIComponent(selected.work_item_id)}`}>Issue {selected.work_item_id.slice(0, 8)}</a></li>}
+          {selected.context_pins.map((pin, index) => <li key={`${pin.kind}-${pin.refId}-${index}`}>
+            {pin.kind === 'work_item' ? 'Issue' : pin.kind === 'document' ? 'Document' : 'Guidance'} {pin.refId.slice(0, 8)}
+            {pin.revision !== null ? ` · r${pin.revision}` : (pin.resolved_revision !== null && pin.resolved_revision !== undefined ? ` · r${pin.resolved_revision}` : ` · ${zh ? '跟随最新' : 'live head'}`)}
+          </li>)}
+        </ul>
         {selected.agent_session_id && <a href={`/agent-sessions/${selected.agent_session_id}`}>{zh ? '查看 Agent 会话与证据' : 'View Agent session and evidence'}</a>}
         {selected.agent_session_id && <span role="status">{zh ? '执行会话状态' : 'Execution session state'}: {boundSession?.state ?? (zh ? '正在读取' : 'Loading')}</span>}
         <small>{zh ? '对话版本' : 'Conversation revision'} {selected.revision}</small></> : <p>{zh ? '选择对话后显示上下文。' : 'Select a conversation to view context.'}</p>}

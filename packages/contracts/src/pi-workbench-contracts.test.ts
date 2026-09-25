@@ -89,6 +89,7 @@ const turn = (status: string, overrides: Record<string, unknown> = {}) => ({
   current_runner_attempt_id: null,
   stop_reason: null,
   error_code: null,
+  retry_of_turn_id: null,
   queued_at: timestamp,
   dispatch_requested_at: null,
   started_at: null,

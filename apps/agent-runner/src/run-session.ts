@@ -13,7 +13,8 @@ import { createWorkbenchSkillLoader } from './workbench-skill.js'
 type Credential = ReturnType<typeof workbenchRunnerCredentialSchema.parse>
 type TokenExchange = { sessionToken: string; expiresAt: string }
 type WorkItem = { turnId: string; conversationId: string }
-type AttemptStatus = { attemptStatus: string; turnStatus: string; sessionState: string; delegationStatus: string }
+type AttemptStatus = { attemptStatus: string; turnStatus: string; sessionState: string; delegationStatus: string
+  pendingSteeringMessage?: string | null }
 type AgentSession = { id: string; state: string; revision: number; created_at: string }
 
 // Exported for the isolation/resource-limit evidence tests (W10). The behaviours are
@@ -127,7 +128,9 @@ export function removeScratch(rootPath: string): void {
 }
 
 async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{
-  answer: string; toolCalls: number; toolNames: string[]; completionIntent?: SessionCompletionIntent
+  answer: string; toolCalls: number; toolNames: string[]
+  toolInvocations: Array<{ toolName: string; callCount: number; sanitizedInputSummary: string }>
+  completionIntent?: SessionCompletionIntent
 }> {
   const root = mkdtempSync(join(tmpdir(), 'workmesh-runner-'))
   const agentDir = join(root, 'agent'), stateDir = join(root, 'state'), workDir = join(root, 'work')
@@ -148,13 +151,29 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
     let toolCalls = 0
     const toolNames: string[] = []
     let completionIntent: SessionCompletionIntent | undefined
+    // Per-tool settlement detail: name -> count, plus one sanitized summary of the
+    // arguments each tool saw. Raw arguments never leave the runner process.
+    const toolInvocationCounts = new Map<string, number>()
+    const toolInvocationSummaries = new Map<string, string>()
+    const recordInvocation = (name: string, input?: unknown): void => {
+      toolCalls += 1
+      toolInvocationCounts.set(name, (toolInvocationCounts.get(name) ?? 0) + 1)
+      if (toolNames.length < 50) toolNames.push(name)
+      if (!toolInvocationSummaries.has(name)) {
+        const shape = input === undefined ? 'no arguments'
+          : Array.isArray(input) ? `array of ${input.length}`
+          : typeof input === 'object' && input !== null
+            ? `keys: ${Object.keys(input as Record<string, unknown>).slice(0, 12).join(', ') || 'none'}`
+          : typeof input
+        toolInvocationSummaries.set(name, shape.slice(0, 2_000))
+      }
+    }
     const contextTool = {
       name: 'workmesh_session_context', label: 'WorkMesh session context',
       description: 'Read the current authorized WorkMesh Agent Session context. This tool never mutates WorkMesh.',
       parameters: Type.Object({}),
       execute: async () => {
-        toolCalls += 1
-        toolNames.push('workmesh_session_context')
+        recordInvocation('workmesh_session_context')
         const context = await api.request<unknown>('GET', `/api/v1/agent-sessions/${api.sessionId}/context`)
         const encoded = JSON.stringify(context)
         if (encoded.length > 20_000) throw new Error('RUNNER_CONTEXT_TOO_LARGE')
@@ -162,8 +181,7 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
       },
     }
     const workmeshTools = await createWorkMeshTools(api, attemptId, name => {
-      toolCalls += 1
-      if (toolNames.length < 50) toolNames.push(name)
+      recordInvocation(name)
     }, intent => {
       if (completionIntent && JSON.stringify(completionIntent) !== JSON.stringify(intent))
         throw new Error('RUNNER_COMPLETION_INTENT_CONFLICT')
@@ -179,6 +197,15 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
     const onShutdown = () => { stopped = true; void session.abort() }
     shutdown.addEventListener('abort', onShutdown, { once: true })
     if (shutdown.aborted) onShutdown()
+    // Injected steering: the human can add context to the running turn. The server
+    // hands the message once through the status poll; it is delivered as an extra
+    // user prompt to the live session without cancelling the attempt.
+    const consumedSteering = new Set<string>()
+    const deliverSteering = async (message: string): Promise<void> => {
+      if (consumedSteering.has(message)) return
+      consumedSteering.add(message)
+      try { await session.prompt(message) } catch { consumedSteering.delete(message) }
+    }
     timer = setInterval(() => {
       if (polling || stopped) return
       polling = true
@@ -187,7 +214,10 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
           if (status.attemptStatus !== 'running' || status.turnStatus !== 'running'
             || status.sessionState !== 'executing' || status.delegationStatus !== 'active') {
             stopped = true; void session.abort()
+            return
           }
+          const steering = status.pendingSteeringMessage
+          if (steering) void deliverSteering(steering)
         })
         .catch(() => { stopped = true; void session.abort() })
         .finally(() => { polling = false })
@@ -199,7 +229,11 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
       if (stopped) throw new Error('RUNNER_ABORTED')
       const answer = session.getLastAssistantText()?.trim()
       if (!answer || answer.length > 50_000) throw new Error('RUNNER_ANSWER_INVALID')
-      return { answer, toolCalls, toolNames, ...(completionIntent ? { completionIntent } : {}) }
+      const toolInvocations = [...toolInvocationCounts.entries()].map(([toolName, callCount]) => ({
+        toolName, callCount,
+        sanitizedInputSummary: toolInvocationSummaries.get(toolName) ?? 'no arguments',
+      }))
+      return { answer, toolCalls, toolNames, toolInvocations, ...(completionIntent ? { completionIntent } : {}) }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
       session.dispose()
@@ -228,12 +262,13 @@ async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal
     fenceToken = credential.fenceToken
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken })
     started = true
-    const { answer, toolCalls, toolNames, completionIntent } = await runPi(api, credential, attemptId, shutdown)
+    const { answer, toolCalls, toolNames, toolInvocations, completionIntent } = await runPi(api, credential, attemptId, shutdown)
     const settlePath = `/api/v1/workbench/runner-attempts/${attemptId}/settle`
     const settledTurn = {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
         noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
+      toolInvocations,
     } as const
     const sendSettle = (body: unknown, key: string) =>
       api.request<{ status: string; sessionCompletion: string }>('POST', settlePath, body, undefined, key)
