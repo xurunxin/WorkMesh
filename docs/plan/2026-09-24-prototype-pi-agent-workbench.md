@@ -641,13 +641,15 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/127
 <!-- WM-WEBPI-20260924:W06 -->
 # W06 补齐 Project 与 Issue 的版本化普通文档
 
-阶段：M1；优先级：P1；估算：4–7 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M1；优先级：P1；估算：4–7 人日（W01 后复估）。状态：功能实现与独立测试完成（2026-09-25）；前置 W04 的主流程替换仍待完成，暂不关闭任务。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
 本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W06。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`。
 
 WorkMesh：`GEN-557` / `1ff6448e-a739-4db8-bed8-13b79df5be86`。
+
+独立 Docker 测试 WorkMesh：Project `f5884215-8b1c-48bb-9b7f-717fa9994cd5`，W06 WorkItem `9007b561-aabd-4a9a-b5fc-42b006a7db3b`。该环境与上述持久 WorkMesh 实例隔离。
 
 GitHub：https://github.com/xurunxin/WorkMesh/issues/128
 
@@ -700,13 +702,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/128
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-25）
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现环境：`codex/wm-webpi-implementation` 本地分支；隔离 Docker Compose `workmesh-webpi-stage`，Web `http://127.0.0.1:3110`、API `http://127.0.0.1:3111`；原有服务端口未变。实现提交待本轮审计后填写，无 PR。
+- 迁移 / API / events：新增 `v1/0011_versioned_documents.sql`，Project/Issue 多文档 CRUD、历史、diff、恢复、归档、Markdown 导出；`document.*` 领域事件与事务 outbox；OpenAPI、contracts、route policy、SDK、MCP 和 ADR 0066 同步。Skill 尚未变更，归 W12。
+- 测试：从 `v1/0008` 和空库迁移及注入失败回滚通过；`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29、`pnpm test:integration` DB 77/77、API 132 通过/4 skip、Worker 78 通过/1 skip、Recovery 1 skip、`pnpm test:e2e` 68/68、`pnpm check:route-policy` 通过。集成和 E2E 使用独立可重置数据库、Redis 与 Docker Web。
+- 运行证据：Docker API 探针完成 Project/Issue 创建、修订、过期修订冲突、历史、Markdown 导出与 hash 验证；浏览器 Project/Issue 文档用例通过。该任务不涉及真实模型请求。
+- 演示：打开 Project 或 Issue 的“文档”，创建 Markdown 文档，修改后查看历史与 diff、恢复旧版本、导出 `.md`。已知限制：W04 主页面改造尚未通过前置门禁；持久 WorkMesh `GEN-557` 与隔离 Docker 测试实例不互通，后者已同步本地 ADR 与 W06 正文，前者待可用控制面同步。
 
 
 ---

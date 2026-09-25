@@ -17,6 +17,7 @@ import { z } from 'zod'
 import { mutate } from './commands.js'
 import { assertSafeText } from './agent/commands.js'
 import type { ApiActor, RequestMeta } from './agent/types.js'
+import { resolveDocumentPins } from './documents.js'
 
 type Queryable = Pick<Pool | PoolClient, 'query'>
 type GuidanceHelpers = {
@@ -226,15 +227,20 @@ export async function materializeSessionContextSnapshot(
   },
 ): Promise<{ id: string; guidancePins: GuidancePin[] }> {
   const pins = await resolveGuidancePins(tx, input)
+  const documentPins = await resolveDocumentPins(tx, input)
   const manifest = {
     scope: { workspaceId: input.workspaceId, teamId: input.teamId, projectId: input.projectId ?? null },
     workItem: input.workItem,
     guidance: { precedence: guidancePrecedence, revisions: pins },
+    documents: { revisions: documentPins },
   }
-  const sources = pins.map(pin => ({
+  const sources = [...pins.map(pin => ({
     sourceType: 'guidance', uri: pin.uri, hash: pin.contentHash,
     revisionId: pin.revisionId, revisionNumber: pin.revisionNumber,
-  }))
+  })), ...documentPins.map(pin => ({
+    sourceType: 'document', sourceId: pin.documentId, uri: pin.uri, hash: pin.contentHash,
+    revisionId: pin.revisionId, revisionNumber: pin.revisionNumber,
+  }))]
   const contentHash = sha256(JSON.stringify(manifest))
   const created = await tx.query<{ id: string }>(
     `INSERT INTO context_snapshots(

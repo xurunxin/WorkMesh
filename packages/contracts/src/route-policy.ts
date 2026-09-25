@@ -19,6 +19,7 @@ export type ResourceResolverId =
   | 'team'
   | 'project'
   | 'milestone'
+  | 'document'
   | 'work_item'
   | 'comment'
   | 'agent_definition'
@@ -247,6 +248,8 @@ const humanOnlyOperations = new Set([
   'listBrowserPushSubscriptions',
   'createBrowserPushSubscription',
   'revokeBrowserPushSubscription',
+  'archiveDocument',
+  'unarchiveDocument',
 ])
 
 const agentOnlyOperations = new Set([
@@ -277,6 +280,10 @@ const revisionedOperations = new Set([
   'deleteWorkItem',
   'updateMilestone',
   'deleteMilestone',
+  'updateDocument',
+  'archiveDocument',
+  'unarchiveDocument',
+  'restoreDocumentRevision',
   'deleteWorkItemRelation',
   'updateComment',
   'updateAgent',
@@ -323,6 +330,9 @@ const readOnlyPostOperations = new Set(['previewAgentSessionControl'])
 
 const memberMutationOperations = new Set([
   'decideApproval',
+  'createDocument',
+  'updateDocument',
+  'restoreDocumentRevision',
 ])
 
 const leaseOperations = new Set([
@@ -379,6 +389,7 @@ function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (path.includes('/agents')) return 'agent_definition'
   if (path.includes('/agent-connections')) return 'agent_connection'
   if (path.includes('/comments')) return 'comment'
+  if (path.includes('/documents')) return 'document'
   if (path.includes('/work-items')) return 'work_item'
   if (path.includes('/milestones')) return 'milestone'
   if (path.includes('/projects')) return 'project'
@@ -538,6 +549,7 @@ const mcpOperationIds = {
   'resource:workspace-guidance': 'getWorkspaceGuidance',
   'resource:team-guidance': 'getTeamGuidance',
   'resource:project-guidance': 'getProjectGuidance',
+  'resource:document-revision': 'getDocumentRevision',
   'resource:repository-context': 'getRepositoryContext',
   'tool:list_work_items': 'listWorkItems',
   'tool:list_events': 'listEvents',
@@ -545,6 +557,14 @@ const mcpOperationIds = {
   'tool:get_work_item': 'getWorkItem',
   'tool:list_project_milestones': 'listProjectMilestones',
   'tool:get_milestone': 'getMilestone',
+  'tool:list_documents': 'listDocuments',
+  'tool:create_document': 'createDocument',
+  'tool:get_document': 'getDocument',
+  'tool:update_document': 'updateDocument',
+  'tool:list_document_history': 'listDocumentHistory',
+  'tool:get_document_revision': 'getDocumentRevision',
+  'tool:diff_document_revisions': 'diffDocumentRevisions',
+  'tool:restore_document_revision': 'restoreDocumentRevision',
   'tool:list_work_item_relations': 'listWorkItemRelations',
   'tool:get_work_room': 'getWorkRoom',
   'tool:create_repository_branch': 'requestProviderAction',

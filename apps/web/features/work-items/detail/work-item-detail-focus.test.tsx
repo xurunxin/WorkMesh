@@ -287,6 +287,28 @@ describe('WorkItemDetail tab continuity', () => {
     expect(screen.getByDisplayValue('Updated detail')).toBeVisible()
   })
 
+  it('keeps the owning Issue in the route when returning to Overview', () => {
+    render(
+      <WorkItemDetail
+        draftIdentity={draftIdentity}
+        mode="sheet"
+        model={toWorkItemDetailModel(item)}
+        onClose={noop}
+        onOpenFull={noop}
+        onReloadLatest={noop}
+        onSave={resolveSave}
+        options={options}
+        resetKey={0}
+        supplemental={null}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('tab', { name: /^Details$/ }))
+    fireEvent.click(screen.getByRole('tab', { name: /^Overview$/ }))
+    expect(window.location.search).toContain('workItemSection=overview')
+    expect(window.location.search).toContain('workItemSectionItem=w1')
+  })
+
   it('resets the selected tab when the Issue changes or an explicit reset is requested', () => {
     const { rerender } = render(
       <WorkItemDetail

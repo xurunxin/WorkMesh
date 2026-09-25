@@ -84,6 +84,7 @@ import {
 import { createPaginator, type Paginator } from "./pagination.js";
 import { attachWorkItemExecutors } from "./work-item-executors.js";
 import { registerGuidanceRoutes } from "./guidance.js";
+import { registerDocumentRoutes } from "./documents.js";
 import { registerClientProfileRoutes } from "./client-profile.js";
 import {
   liveHumanTeamReadPredicate,
@@ -1188,6 +1189,7 @@ export const buildApp = (options: {
   registerAgentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerClientProfileRoutes(app, { db, features });
   registerGuidanceRoutes(app, { db, meta: commandContext, header });
+  registerDocumentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
   registerHumanAttentionRoutes(app, { db, paginator });

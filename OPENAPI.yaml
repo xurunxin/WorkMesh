@@ -1883,6 +1883,26 @@ paths:
     get: { x-workmesh-policy-id: route.getMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getMilestone, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Milestone" } } }
     patch: { x-workmesh-policy-id: route.updateMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: updateMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MilestonePatch" } } } }, responses: { "200": { $ref: "#/components/responses/Milestone" }, "409": { $ref: "#/components/responses/Conflict" } } }
     delete: { x-workmesh-policy-id: route.deleteMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: deleteMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Command" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents:
+    get: { x-workmesh-policy-id: route.listDocuments, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listDocuments, parameters: [{ name: ownerType, in: query, required: true, schema: { type: string, enum: [project, work_item] } }, { name: ownerId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { x-workmesh-policy-id: route.createDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createDocument, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CreateDocumentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}:
+    get: { x-workmesh-policy-id: route.getDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getDocument, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    patch: { x-workmesh-policy-id: route.updateDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: updateDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/UpdateDocumentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/history:
+    get: { x-workmesh-policy-id: route.listDocumentHistory, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listDocumentHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/revisions/{revisionId}:
+    get: { x-workmesh-policy-id: route.getDocumentRevision, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getDocumentRevision, parameters: [{ $ref: "#/components/parameters/Id" }, { name: revisionId, in: path, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/diff:
+    get: { x-workmesh-policy-id: route.diffDocumentRevisions, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: diffDocumentRevisions, parameters: [{ $ref: "#/components/parameters/Id" }, { name: fromRevisionId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }, { name: toRevisionId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/export:
+    get: { x-workmesh-policy-id: route.exportDocumentMarkdown, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: exportDocumentMarkdown, parameters: [{ $ref: "#/components/parameters/Id" }, { name: revisionId, in: query, required: false, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { description: Exact Markdown revision, content: { text/markdown: { schema: { type: string } } } } } }
+  /api/v1/documents/{id}/archive:
+    post: { x-workmesh-policy-id: route.archiveDocument, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: archiveDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DocumentArchiveInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/unarchive:
+    post: { x-workmesh-policy-id: route.unarchiveDocument, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: unarchiveDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DocumentArchiveInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/restore:
+    post: { x-workmesh-policy-id: route.restoreDocumentRevision, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: restoreDocumentRevision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RestoreDocumentRevisionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/work-items/{id}/relations:
     get: { x-workmesh-policy-id: route.listWorkItemRelations, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listWorkItemRelations, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/WorkItemRelations" } } }
     post: { x-workmesh-policy-id: route.createWorkItemRelation, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createWorkItemRelation, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkItemRelationInput" } } } }, responses: { "200": { $ref: "#/components/responses/WorkItemRelation" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -6375,7 +6395,7 @@ components:
     SessionContext:
       {
         type: object,
-        required: [session, workItem, plan, contextSnapshotId, guidanceUris, guidancePins],
+        required: [session, workItem, plan, contextSnapshotId, guidanceUris, guidancePins, documentPins],
         properties:
           {
             session: { $ref: "#/components/schemas/AgentSession" },
@@ -6395,8 +6415,56 @@ components:
             contextSnapshotId: { type: [string, "null"], format: uuid },
             guidanceUris: { type: array, items: { type: string, format: uri } },
             guidancePins: { type: array, items: { $ref: "#/components/schemas/GuidancePin" } },
+            documentPins: { type: array, items: { $ref: "#/components/schemas/DocumentPin" } },
           },
       }
+    CreateDocumentInput:
+      type: object
+      additionalProperties: false
+      required: [ownerType, ownerId, title, markdown]
+      properties:
+        ownerType: { type: string, enum: [project, work_item] }
+        ownerId: { $ref: "#/components/schemas/Id" }
+        title: { type: string, minLength: 1, maxLength: 180 }
+        markdown: { type: string, maxLength: 200000 }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    UpdateDocumentInput:
+      type: object
+      additionalProperties: false
+      required: [title, markdown, baseRevisionId, baseContentHash]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 180 }
+        markdown: { type: string, maxLength: 200000 }
+        baseRevisionId: { $ref: "#/components/schemas/Id" }
+        baseContentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    DocumentArchiveInput:
+      type: object
+      additionalProperties: false
+      required: [reason]
+      properties:
+        reason: { type: string, minLength: 1, maxLength: 2000 }
+    RestoreDocumentRevisionInput:
+      type: object
+      additionalProperties: false
+      required: [revisionId, baseRevisionId, baseContentHash, changeSummary]
+      properties:
+        revisionId: { $ref: "#/components/schemas/Id" }
+        baseRevisionId: { $ref: "#/components/schemas/Id" }
+        baseContentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    DocumentPin:
+      type: object
+      additionalProperties: false
+      required: [documentId, ownerType, ownerId, uri, revisionId, revisionNumber, contentHash]
+      properties:
+        documentId: { $ref: "#/components/schemas/Id" }
+        ownerType: { type: string, enum: [project, work_item] }
+        ownerId: { $ref: "#/components/schemas/Id" }
+        uri: { type: string, format: uri }
+        revisionId: { $ref: "#/components/schemas/Id" }
+        revisionNumber: { type: integer, minimum: 1 }
+        contentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
     GuidanceRevisionMetadata:
       {
         type: object,

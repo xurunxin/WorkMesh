@@ -246,13 +246,10 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     setActiveTab(next)
     if (!writeHistory) return
     const url = new URL(window.location.href)
-    if (next === 'overview') {
-      url.searchParams.delete('workItemSection')
-      url.searchParams.delete('workItemSectionItem')
-    } else {
-      url.searchParams.set('workItemSection', next)
-      url.searchParams.set('workItemSectionItem', model.id)
-    }
+    // Keep the owning Issue in the route even on Overview. Removing it makes
+    // the workspace route projector interpret a tab change as closing the sheet.
+    url.searchParams.set('workItemSection', next)
+    url.searchParams.set('workItemSectionItem', model.id)
     window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`)
   }
   const agentActionHint = agentAction?.hint ?? agentAction?.reason

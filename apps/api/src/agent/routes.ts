@@ -18,6 +18,7 @@ import type { Paginator } from "../pagination.js";
 import { liveSessionReadPredicate } from "../live-read-authorization.js";
 import { attachWorkItemExecutors } from "../work-item-executors.js";
 import { guidancePinsFromSnapshot } from "../guidance.js";
+import { documentPinsFromSnapshot } from "../documents.js";
 import { projectApprovalResponses } from "./approval-projection.js";
 
 type Helpers = { db: Pool; meta: (request: FastifyRequest, body: unknown, params?: Record<string, unknown>) => RequestMeta; header: (request: FastifyRequest, name: string) => string | undefined; readableTeam: (request: FastifyRequest, teamId: string) => Promise<void>; paginator: Paginator };
@@ -281,8 +282,9 @@ export function registerAgentRoutes(app: FastifyInstance, h: Helpers): void {
     }));
     const planWithSteps=plan?{...plan as object,steps}:null;
     const guidancePins=await guidancePinsFromSnapshot(h.db,actor(request).workspaceId,rawSession.context_snapshot_id);
+    const documentPins=await documentPinsFromSnapshot(h.db,actor(request).workspaceId,rawSession.context_snapshot_id);
     const guidanceUris=guidancePins.map(pin=>pin.uri);
-    const response={session,workItem,plan:planWithSteps,contextSnapshotId:rawSession.context_snapshot_id,guidanceUris,guidancePins};
+    const response={session,workItem,plan:planWithSteps,contextSnapshotId:rawSession.context_snapshot_id,guidanceUris,guidancePins,documentPins};
     return sessionContextResponseSchema.parse(JSON.parse(JSON.stringify(response)) as unknown);
   });
   app.put("/api/v1/agent-sessions/:id/plan", async request => { const body = publishPlanInputSchema.parse(request.body); return commands.publishPlan(h.db, h.meta(request, body, { id: id(request) }), id(request), parseRevision(h.header(request, "if-match")), body); });

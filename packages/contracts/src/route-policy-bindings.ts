@@ -810,6 +810,17 @@ export const routeOperationBindings = [
     "path": "/api/v1/milestones/{id}",
     "operationId": "deleteMilestone"
   },
+  { "method": "GET", "path": "/api/v1/documents", "operationId": "listDocuments" },
+  { "method": "POST", "path": "/api/v1/documents", "operationId": "createDocument" },
+  { "method": "GET", "path": "/api/v1/documents/{id}", "operationId": "getDocument" },
+  { "method": "PATCH", "path": "/api/v1/documents/{id}", "operationId": "updateDocument" },
+  { "method": "GET", "path": "/api/v1/documents/{id}/history", "operationId": "listDocumentHistory" },
+  { "method": "GET", "path": "/api/v1/documents/{id}/revisions/{revisionId}", "operationId": "getDocumentRevision" },
+  { "method": "GET", "path": "/api/v1/documents/{id}/diff", "operationId": "diffDocumentRevisions" },
+  { "method": "GET", "path": "/api/v1/documents/{id}/export", "operationId": "exportDocumentMarkdown" },
+  { "method": "POST", "path": "/api/v1/documents/{id}/archive", "operationId": "archiveDocument" },
+  { "method": "POST", "path": "/api/v1/documents/{id}/unarchive", "operationId": "unarchiveDocument" },
+  { "method": "POST", "path": "/api/v1/documents/{id}/restore", "operationId": "restoreDocumentRevision" },
   {
     "method": "GET",
     "path": "/api/v1/work-items/{id}/relations",

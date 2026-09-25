@@ -65,6 +65,7 @@ export const supportedEventAggregateTypes = [
   'saved_view',
   'workflow_state',
   'comment',
+  'document',
   'agent',
   'agent_team_access',
   'agent_connection',
@@ -280,6 +281,10 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
        JOIN channels channel ON channel.id=comment.channel_id
       WHERE comment.id=$1 AND comment.workspace_id=$2
         AND channel.workspace_id=$2`,
+  document:
+    `SELECT CASE WHEN project_id IS NOT NULL THEN 'project' ELSE 'work_item' END AS resource_type,
+            COALESCE(project_id,work_item_id) AS resource_id
+       FROM documents WHERE id=$1 AND workspace_id=$2`,
   agent:
     `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id
        FROM agent_definitions WHERE id=$1 AND workspace_id=$2`,

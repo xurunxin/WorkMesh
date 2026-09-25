@@ -1975,3 +1975,14 @@ main#workmesh-main:focus-visible {
   .wm-shell-header > p, .wm-shell-actions { display: none; }
   .project-rail-list > button { flex-basis: min(78vw, 240px); }
 }
+.document-manager { display: grid; gap: 1rem; min-width: min(100%, 38rem); max-height: min(76vh, 54rem); overflow: auto; }
+.document-manager-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.document-list, .document-history ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.document-list li button, .document-history li button { width: 100%; text-align: left; border: 1px solid var(--wm-border); border-radius: .7rem; background: transparent; color: inherit; padding: .7rem .85rem; cursor: pointer; }
+.document-list li button { display: flex; justify-content: space-between; gap: .75rem; align-items: baseline; }
+.document-list li button:hover, .document-history li button:hover { background: var(--wm-surface-subtle); }
+.document-list li span, .document-reading small, .document-history small { color: var(--wm-text-muted); overflow-wrap: anywhere; }
+.document-reading, .document-history { display: grid; gap: .8rem; min-width: 0; }
+.document-reading label, .document-history label { display: grid; gap: .3rem; }
+.document-diff { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; padding: .8rem; border-radius: .6rem; background: var(--wm-surface-subtle); }
+@media (max-width: 640px) { .document-manager { min-width: 0; width: 100%; } .document-list li button { align-items: flex-start; flex-direction: column; } }
