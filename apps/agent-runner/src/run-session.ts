@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-works/pi-coding-agent'
 import { workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
@@ -15,7 +16,9 @@ type WorkItem = { turnId: string; conversationId: string }
 type AttemptStatus = { attemptStatus: string; turnStatus: string; sessionState: string; delegationStatus: string }
 type AgentSession = { id: string; state: string; revision: number; created_at: string }
 
-function validatedApiUrl(value: string): URL {
+// Exported for the isolation/resource-limit evidence tests (W10). The behaviours are
+// the same ones the entry script enforces at runtime.
+export function validatedApiUrl(value: string): URL {
   const url = new URL(value)
   if (url.username || url.password || url.search || url.hash)
     throw new Error('WORKMESH_API_URL_INVALID')
@@ -106,7 +109,7 @@ async function ensureExecuting(api: RunnerApi, knownState?: string): Promise<Age
   return session.state === 'executing' ? session : null
 }
 
-const promptFor = (messages: Credential['messages']): string => {
+export const promptFor = (messages: Credential['messages']): string => {
   const latest = messages.at(-1)
   if (!latest || latest.role !== 'user') throw new Error('RUNNER_LAST_MESSAGE_NOT_USER')
   const history = messages.slice(0, -1).map((message, index) =>
@@ -116,7 +119,7 @@ const promptFor = (messages: Credential['messages']): string => {
     : latest.content_markdown
 }
 
-function removeScratch(rootPath: string): void {
+export function removeScratch(rootPath: string): void {
   const root = realpathSync(rootPath), parent = realpathSync(tmpdir())
   if (!root.startsWith(`${parent}${sep}`) || !root.includes(`${sep}workmesh-runner-`))
     throw new Error('RUNNER_SCRATCH_PATH_INVALID')
@@ -351,8 +354,21 @@ async function discoverAssignments(): Promise<Array<{ sessionId: string; state: 
   return payload.items.map(item => ({ sessionId: item.sessionId as string, state: item.state as string }))
 }
 
-main().catch(error => {
-  const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_FATAL_ERROR'
-  console.error(JSON.stringify({ status: 'fatal', code: code.slice(0, 120) }))
-  process.exitCode = 1
-})
+// Run the loop only when this file is the process entry point, so the isolation
+// evidence tests can import the validation helpers without starting the runner.
+// `tsx src/run-session.ts` keeps argv[1] pointing at this file, which is exactly
+// what the package.json scripts use.
+const isEntrypoint = (() => {
+  const entry = process.argv[1]
+  if (!entry) return false
+  const resolved = realpathSync(entry)
+  return resolved === realpathSync(fileURLToPath(import.meta.url)) || resolved.endsWith('run-session.ts')
+})()
+
+if (isEntrypoint) {
+  main().catch(error => {
+    const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_FATAL_ERROR'
+    console.error(JSON.stringify({ status: 'fatal', code: code.slice(0, 120) }))
+    process.exitCode = 1
+  })
+}

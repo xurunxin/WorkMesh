@@ -793,7 +793,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/129
 <!-- WM-WEBPI-20260924:W08 -->
 # W08 交付 Chat Completions 与 Responses 双协议适配及验证套件
 
-阶段：M2；优先级：P0；估算：4–6 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：4–6 人日（W01 后复估）。状态：验收证据补齐（2026-09-26）——wire fixtures 与错误矩阵驱动真实 Pi SDK 完成，双协议真实 endpoint（MiniMax M3）证据在案，完成条件已满足。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -846,13 +846,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/130
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-26）—— W08 验收证据
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：W08 验收证据（2026-09-26）：分支基于 main `dadbc6e`；Windows 11 + PowerShell 7；wire fixtures 与错误矩阵通过本地 `http.createServer` 假上游驱动真实 Pi SDK（`@earendil-works/pi-coding-agent` 0.87.1，协议归一由 SDK 承担，仓库只做配置与凭据隔离）。
+- 数据迁移 / API / events / Skill 变更（无则明确写无）：无迁移、无 REST/契约变更、无事件变更、无 Skill 变更。新增两个测试文件：`apps/agent-runner/src/model-wire.test.ts`（wire fixtures）、`apps/agent-runner/src/model-errors.test.ts`（错误矩阵）。
+- 实际测试命令、结果、失败/skip：`pnpm --filter @workmesh/agent-runner test` —— 7 个文件全部通过（新增 wire 6 用例 + 错误矩阵 6 用例）；覆盖：工具 arguments 任意分片重组、多字节 UTF-8 跨 chunk 切分重组（`中文参数`）、空 delta、usage-only chunk、未知事件类型、重复终态 + 重复 `[DONE]`、缺失终态（SDK 表现为重试后仍产出文本，固定该行为）；错误矩阵固定"上游失败不得产出可发布答案"不变式：500/429/断流（SDK 重试 4 次后无文本）、401/invalid JSON/`finish_reason:'length'`（单次请求内失败）——全部以空答案收场，由 runner 的 `RUNNER_ANSWER_INVALID` 守卫结算为失败。真实 endpoint：`node scripts/probe-minimax-openai-protocols.mjs` 双协议均 200 且有助手文本（chat `providerCode=0`、responses `responseStatus=completed`）；`node scripts/probe-minimax-m3-tools.mjs` 双协议工具调用→工具结果→最终文本往返成功。日志存档 `.evidence/w08-openai-protocols.log`、`.evidence/w08-m3-tools.log`。
+- 浏览器/真实模型/恢复证据（适用时）：真实 MiniMax-M3（中国区）双协议（chat/completions 与 responses）+ 工具往返，见上；输出不含任何密钥值。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 本地起假上游 → 运行两个测试文件 → 观察 wire 断言与错误矩阵输出；真实协议演示 = 运行两个 probe 脚本。已知限制：(1) 双协议适配器由 Pi SDK 承担，SDK 版本升级可能改变重试/错误归一行为，fixtures 会即时暴露；(2) 错误矩阵固定的是"无答案可发布"不变式与重试次数区间，不钉 SDK 内部错误码（upstream 契约）。规范偏差：无。follow-up：若未来接入第二个真实上游（非 MiniMax），按同一 fixtures 套件补一轮证据。W08 完成条件「两种上游协议都通过同一语义 conformance，探测结果按能力展示」已满足。
 
 
 ---
@@ -860,7 +860,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/130
 <!-- WM-WEBPI-20260924:W09 -->
 # W09 实现工作台对话、Turn 与可恢复事件流
 
-阶段：M2；优先级：P0；估算：4–7 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：4–7 人日（W01 后复估）。状态：验收证据补齐（2026-09-26）——durable cursor 重放/断线重连/过期拒绝/进程重启幸存/outbox 幂等 6 项集成断言通过，完成条件已满足。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -915,13 +915,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/131
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-26）—— W09 验收证据
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：W09 验收证据（2026-09-26）：分支基于 main `dadbc6e`；隔离测试库（`workmesh_webpi_test`）+ 测试 Redis；新增 `apps/api/integration/workbench-recovery.integration.test.ts`。
+- 数据迁移 / API / events / Skill 变更（无则明确写无）：无迁移、无 REST/契约变更、无事件变更、无 Skill 变更。仅新增集成测试文件，复用既有 durable event cursor（`/api/v1/events`）与 outbox 事实。
+- 实际测试命令、结果、失败/skip：`pnpm --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts integration/workbench-recovery.integration.test.ts` —— **6/6 通过**：① 从 cursor 0 重放全部 workbench 事件且 cursor 唯一、有序；② 断线重连语义：从最后已知 cursor 续读只拿到未见过的事件（严格大于、不含旧 aggregate）；③ 过期/非法 cursor 返回结构化拒绝（409 `CURSOR_EXPIRED` 携带 `resyncRequired`/`resyncCursor`，或 400），不静默归零；④ **API 进程重启后**同一数据库继续完整重放且 turn 仍为 `queued`（durable intent 幸存）；⑤ outbox 重放幂等：`workbench.turn.queued` 的 outbox 行存在、runner attempt 为 0、重复 admission 不会产生第二个 queued turn；⑥ 长会话分页 `limit=1` 稳定返回单条。全量单测以 `--force=true` 旁路 turbo 缓存运行（见本轮门禁记录）。
+- 浏览器/真实模型/恢复证据（适用时）：恢复语义以数据库与 API 级证据为主；浏览器侧断线重连由 ④⑤ 的 durable cursor 语义覆盖（浏览器重连即按 cursor 续读）。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = reset 测试库 → 运行该测试文件 → 观察 6 项恢复断言。已知限制：(1) ④ 的"重启"以"重新打开同一数据库的应用句柄 + 进程级重新初始化"表达，未在 CI 内执行真实 SIGKILL；容器重启恢复与 recovery-integration 的既有重启矩阵互补；(2) SSE 传输层背压/容量已由 `apps/api/src/realtime/routes.test.ts` 与 `apps/api/load/sse.test.ts` 覆盖，本套件不重复。规范偏差：无。follow-up：无。W09 完成条件「关闭页面、刷新或断网不丢已接受输入，不自动重复触发业务写入」「PostgreSQL 是业务事实唯一来源」已满足。
 
 
 ---
@@ -929,7 +929,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/131
 <!-- WM-WEBPI-20260924:W10 -->
 # W10 引入隔离 Pi Runner 并接入授权、控制与恢复
 
-阶段：M2；优先级：P0；估算：5–8 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：5–8 人日（W01 后复估）。状态：验收证据补齐（2026-09-26）——隔离/出站约束（精确内部主机名匹配）/scratch 边界/资源上限 + 崩溃 fencing 演练证据在案，完成条件已满足。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -985,13 +985,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/132
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-26）—— W10 验收证据
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：W10 隔离与资源限制证据（2026-09-26）：分支基于 main `dadbc6e`；Windows 11 + PowerShell 7；容器层隔离沿用既有 `infra/docker/agent-runner.Dockerfile`（非 root `workmesh` 用户）与 `docker-compose.production.yml` 的 `app-hardening` 锚（只读文件系统、drop capabilities）。
+- 数据迁移 / API / events / Skill 变更（无则明确写无）：无迁移、无 REST/契约变更、无事件变更、无 Skill 变更。`apps/agent-runner/src/run-session.ts` 将 `validatedApiUrl`/`promptFor`/`removeScratch` 导出以便测试（行为不变），并把 `main()` 的执行限定为入口脚本运行（`tsx src/run-session.ts` 不受影响，测试导入不再启动 runner 循环）。新增 `apps/agent-runner/src/isolation.test.ts`。
+- 实际测试命令、结果、失败/skip：`pnpm --filter @workmesh/agent-runner test` —— **7 个文件全部通过**（含新增 8 项隔离/资源断言）：① HTTPS API 无条件接受；② 明文 HTTP 仅接受 loopback（localhost/127.0.0.1/[::1]）；③ 非 loopback 明文 HTTP 被拒（`WORKMESH_API_URL_HTTPS_REQUIRED`）；④ `WORKMESH_RUNNER_ALLOW_INTERNAL_HTTP=1` 的明文例外**精确匹配** `api` 主机名——`api.evil.test`、`apis` 均被拒（非后缀匹配，防绕过）；⑤ URL 中夹带凭据/query/fragment 一律拒绝（`WORKMESH_API_URL_INVALID`）；⑥ scratch 目录清理拒绝 runner 专属 temp 根之外的任何路径（`RUNNER_SCRATCH_PATH_INVALID`，防指向任意目录删除）；⑦ 自身 scratch 清理完整、不留残余；⑧ prompt 派生把历史标记为 untrusted 且尾消息必须为 user（`RUNNER_LAST_MESSAGE_NOT_USER`）。资源上限核实：runner abort 超时 120s、状态轮询 1s、session context ≤ 20,000、answer ≤ 50,000（`run-session.ts`）。崩溃恢复演练由既有集成测试 `fences a crashed running attempt after session authority is lost without replaying unknown effects` 固定：crash → session 置 `stale` → 恢复事务失败则整体回滚；并发恢复恰收敛一次（`[0,1]`）；终态 `failed` + `RUNNER_AUTHORITY_LOST` + `external_effects_reconciled: false`；旧 fenceToken 结算被拒；**消息数为 0（未知副作用不自动重做）**。
+- 浏览器/真实模型/恢复证据（适用时）：恢复证据见上（fencing + 不自动重做，数据库级断言）；进程边界证据 = runner 代码仅存在于独立镜像与独立进程，API/Web 不 import `apps/agent-runner`（构建期即分离）。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = 运行 `isolation.test.ts` 与 workbench-runner 集成套件的 crash 用例。已知限制：(1) `WORKMESH_RUNNER_ALLOW_INTERNAL_HTTP` 是 compose 显式提供的部署选择（`"1"`），语义已在 ④ 固定为"仅精确匹配内部服务名"；DNS 层 pin 属 W07 的出站约束范围，不在 W10；(2) 容器层 seccomp/cgroup 资源上限依赖部署方的 compose 加固锚，测试钉的是 runner 进程内的应用级上限。规范偏差：无。follow-up：无。W10 完成条件中隔离、出站约束、资源限制、崩溃恢复四项均已有证据；Issue 层面随本轮 PR 验收。
 
 
 ---
