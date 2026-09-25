@@ -16,6 +16,8 @@ import {
   llmModelUpsertInputSchema,
   runnerAttemptResponseSchema,
   runnerAttemptSettleInputSchema,
+  workbenchRunnerSettleInputSchema,
+  completeAgentSessionInputSchema,
   turnResponseSchema,
   workbenchEventTypeSchema,
   workbenchLlmConnectionCreatedEventPayloadSchema,
@@ -234,6 +236,23 @@ describe('Workbench runner attempt contracts', () => {
     expect(() => runnerAttemptSettleInputSchema.parse({ outcome: 'settled', summaryMarkdown: 'done' })).toThrow()
     expect(runnerAttemptSettleInputSchema.parse({ outcome: 'settled', summaryMarkdown: 'done', noArtifactReason: 'pure analysis' }).noArtifactReason).toBe('pure analysis')
     expect(runnerAttemptSettleInputSchema.parse({ outcome: 'failed', summaryMarkdown: 'upstream unreachable', errorCode: 'LLM_CONNECTION_EGRESS_BLOCKED' }).outcome).toBe('failed')
+  })
+
+  it('accepts an atomic Session completion only with a settled public Turn and matching completion contract', () => {
+    const sessionCompletion = { ifMatch: 2, operationKey: `pi-${'a'.repeat(64)}`,
+      body: { summary: 'Done', checks: [{ name: 'Document', status: 'passed', summary: 'Stored' }] } }
+    const input = { fenceToken: 'f'.repeat(32), assistantMessageMarkdown: 'The document is ready.',
+      settlement: { outcome: 'settled', summaryMarkdown: 'Answered', noArtifactReason: 'Workbench document' },
+      sessionCompletion }
+    const parsed = workbenchRunnerSettleInputSchema.parse(input)
+    expect(completeAgentSessionInputSchema.parse(parsed.sessionCompletion?.body))
+      .toMatchObject({ summary: 'Done', checks: [{ name: 'Document', status: 'passed' }] })
+    expect(() => workbenchRunnerSettleInputSchema.parse({ ...input,
+      assistantMessageMarkdown: undefined })).toThrow()
+    expect(() => workbenchRunnerSettleInputSchema.parse({ ...input,
+      settlement: { outcome: 'failed', summaryMarkdown: 'Failed' } })).toThrow()
+    expect(() => workbenchRunnerSettleInputSchema.parse({ ...input,
+      sessionCompletion: { ...sessionCompletion, body: { summary: 'Done' } } })).toThrow()
   })
 
   it('records usage with non-negative token counts', () => {

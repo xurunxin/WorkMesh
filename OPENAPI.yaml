@@ -2102,7 +2102,7 @@ paths:
       operationId: settleWorkbenchAttempt
       parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchRunnerSettleInput" } } } }
-      responses: { "200": { description: Attempt, message and turn facts committed atomically } }
+      responses: { "200": { description: Attempt, public message, turn and optional Agent Session completion committed atomically } }
   /api/v1/workbench/conversations:
     get:
       x-workmesh-policy-id: route.listWorkbenchConversations
@@ -3532,6 +3532,14 @@ components:
       properties:
         fenceToken: { type: string, minLength: 16, maxLength: 128 }
         assistantMessageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+        sessionCompletion:
+          type: object
+          description: Available only for a settled Turn with a public assistant message; the exact Agent Session completion is committed in the same database transaction.
+          required: [ifMatch, operationKey, body]
+          properties:
+            ifMatch: { type: integer, minimum: 1 }
+            operationKey: { type: string, pattern: '^pi-[a-f0-9]{64}$' }
+            body: { $ref: "#/components/schemas/CompleteAgentSessionInput" }
         settlement:
           type: object
           required: [outcome, summaryMarkdown]

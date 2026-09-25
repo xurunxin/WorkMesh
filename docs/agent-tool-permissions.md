@@ -1,6 +1,6 @@
 # Pi Runner WorkMesh operation matrix
 
-Source: ADR 0067, W11, and the live `GET /api/v1/agent-capabilities` manifest. The matrix describes the Runner's available tools as of 2026-09-25. A tool appears only when the manifest marks its operation supported and eligible; every call is checked again by the API. An absent tool never implies that a similar request is allowed through another channel.
+Source: ADR 0067, ADR 0068, W11, and the live `GET /api/v1/agent-capabilities` manifest. The matrix describes the Runner's available tools as of 2026-09-25. A tool appears only when the manifest marks its operation supported and eligible; every call is checked again by the API. An absent tool never implies that a similar request is allowed through another channel.
 
 | Operation family | Pi tool / status | Authority and recovery |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ Source: ADR 0067, W11, and the live `GET /api/v1/agent-capabilities` manifest. T
 | Handoff offer | `workmesh_offer_handoff` / available when eligible | Exact source Session bound by the Runner; target acceptance and delegated authority remain server controlled. |
 | Whole plan publication | `workmesh_publish_plan` / available with `plan:write` | Exact Session and If-Match; step IDs remain stable. The command's domain event is the initial audit fact, then the Runner appends a tool completion activity so the revision is not consumed before the command. |
 | Session activity | `workmesh_append_activity` / available when eligible | Exact Session bound by the Runner; one visible team activity with tool-call and attempt IDs. No separate audit activity is appended around the activity command itself. |
-| Session completion | `workmesh_complete_session` / available with an executing Session and eligible capability | The model supplies a summary, evidence or an explicit no-artifact reason, and current Session revision. The Runner queues the intent and calls the completion API only after the public answer is durably settled. A failed completion leaves the Turn settled and adds a visible warning when Session writes remain allowed. Crash recovery between Turn settlement and completion is still pending W11. |
+| Session completion | `workmesh_complete_session` / available with an executing Session and eligible capability | The model supplies a summary, evidence or an explicit no-artifact reason, and current Session revision. The Runner submits that intent with the public answer and Turn settlement in one database transaction. An explicit completion rejection rolls back that request; the Runner then settles the Turn alone and adds a visible warning when Session writes remain allowed. |
 | Handoff acceptance | Human-only | `acceptHandoff` requires a Human session in OpenAPI; Pi can offer a handoff but cannot accept it. |
 | Approval decision, Guidance publication, Team/Agent policy, credential administration, irreversible deletion | Human-only | No Pi tool. Human authentication and server approval policy remain required. |
 | Unrestricted shell, filesystem write/edit, Pi extension discovery | Disabled | Runner starts Pi without built-in tools in an isolated scratch directory. |

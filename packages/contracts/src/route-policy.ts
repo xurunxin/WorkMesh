@@ -478,7 +478,10 @@ export function createRoutePolicyManifest(
           ? capabilityFor(binding.method, binding.path, binding.operationId)
           : [],
         sessionBinding: authentication === 'installation_target' ? 'installation_target' : agentAuthentication ? 'current_session' : 'none',
-        requireActiveSession: authentication !== 'installation_target' && agentAuthentication,
+        // Settle has a durable idempotency replay path after atomic Session completion.
+        // A new write still passes the in-transaction active-Session guard.
+        requireActiveSession: authentication !== 'installation_target' && agentAuthentication
+          && binding.operationId !== 'settleWorkbenchAttempt',
         requireActiveDelegation: authentication !== 'installation_target' && agentAuthentication,
         requireLiveGrantIntersection: authentication !== 'installation_target' && agentAuthentication,
         resourceScope: resolver === 'none' ? 'none' : 'resolved_resource',

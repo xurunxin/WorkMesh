@@ -223,34 +223,49 @@ async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken })
     started = true
     const { answer, toolCalls, toolNames, completionIntent } = await runPi(api, credential, attemptId, shutdown)
-    await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
+    const settlePath = `/api/v1/workbench/runner-attempts/${attemptId}/settle`
+    const settledTurn = {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
         noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
-    })
-    let sessionCompletion = 'not_requested'
-    if (completionIntent) {
-      try {
-        await api.request('POST', `/api/v1/agent-sessions/${api.sessionId}/complete`,
-          completionIntent.body, completionIntent.ifMatch, completionIntent.idempotencyKey)
-        sessionCompletion = 'completed'
-      } catch (error) {
-        const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_COMPLETION_FAILED'
-        sessionCompletion = 'failed'
-        try {
-          await api.request('POST', `/api/v1/agent-sessions/${api.sessionId}/activities`, {
-            kind: 'warning', summary: 'The public answer was saved, but Session completion failed.',
-            detailsMarkdown: `Completion request failed with ${code.slice(0, 120)}. Review the Session and retry with its current revision.`,
-            visibility: 'team', ephemeral: false, artifactIds: [], references: [],
-          }, undefined, `${completionIntent.idempotencyKey}-warning`)
-        } catch { /* Stop or revocation may also prohibit a warning activity. */ }
-        console.error(JSON.stringify({ turnId: item.turnId, attemptId,
-          status: 'session_completion_failed', code: code.slice(0, 120) }))
+    } as const
+    const sendSettle = (body: unknown, key: string) =>
+      api.request<{ status: string; sessionCompletion: string }>('POST', settlePath, body, undefined, key)
+    const replayableSettle = async (body: unknown, key: string) => {
+      try { return await sendSettle(body, key) }
+      catch (error) {
+        // A committed transaction can lose its HTTP response. Reuse the same
+        // idempotency key so the API returns the durable result on retry.
+        if (error instanceof RunnerApiError && error.status < 500) throw error
+        return sendSettle(body, key)
       }
     }
+    let completionFailure: string | null = null
+    let settled: { status: string; sessionCompletion: string }
+    try {
+      settled = await replayableSettle(completionIntent ? { ...settledTurn,
+        sessionCompletion: { ifMatch: completionIntent.ifMatch,
+          operationKey: completionIntent.idempotencyKey, body: completionIntent.body } }
+        : settledTurn, `runner-settle-${attemptId}`)
+    } catch (error) {
+      if (!completionIntent || !(error instanceof RunnerApiError) || error.status >= 500)
+        throw error
+      completionFailure = error.code
+      settled = await replayableSettle(settledTurn, `runner-settle-fallback-${attemptId}`)
+      try {
+        await api.request('POST', `/api/v1/agent-sessions/${api.sessionId}/activities`, {
+          kind: 'warning', summary: 'The public answer was saved, but Session completion was rejected.',
+          detailsMarkdown: `Completion request failed with ${completionFailure.slice(0, 120)}. Review the Session and retry with its current revision.`,
+          visibility: 'team', ephemeral: false, artifactIds: [], references: [],
+        }, undefined, `${completionIntent.idempotencyKey}-warning`)
+      } catch { /* Stop or revocation may also prohibit a warning activity. */ }
+      console.error(JSON.stringify({ turnId: item.turnId, attemptId,
+        status: 'session_completion_failed', code: completionFailure.slice(0, 120) }))
+    }
     console.log(JSON.stringify({ turnId: item.turnId, attemptId,
-      status: 'settled', sessionCompletion, toolCalls, toolNames }))
-    return sessionCompletion === 'completed'
+      status: settled.status, sessionCompletion: completionFailure ? 'failed' : settled.sessionCompletion,
+      toolCalls, toolNames }))
+    return settled.sessionCompletion === 'completed'
   } catch (error) {
     const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_UNKNOWN_ERROR'
     if (started && fenceToken && code !== 'RUNNER_FENCE_STALE' && code !== 'RUNNER_ABORTED') {

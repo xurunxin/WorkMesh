@@ -1001,7 +1001,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/132
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
-本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W11。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`、`docs/adr/0067-governed-pi-workmesh-tools.md`；操作矩阵：`docs/agent-tool-permissions.md`。
+本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W11。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`、`docs/adr/0067-governed-pi-workmesh-tools.md`、`docs/adr/0068-atomic-workbench-turn-session-completion.md`；操作矩阵：`docs/agent-tool-permissions.md`。
 
 WorkMesh：`GEN-562` / `3999d97e-9aa1-4b39-b899-f05834cb6e50`。
 
@@ -1068,6 +1068,13 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 - 实际测试命令、结果、失败/skip：Runner 工具单测 13/13 PASS；最终 `pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29 PASS（Web 725/725，API 171/171）。`pnpm test:integration` 第一次因未设置专用测试环境变量被环境保护脚本拒绝，未运行 DB 重置；使用 `.evidence/run-webpi-integration.ps1` 指向独立测试库后 DB 77/77、API 135 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip。E2E 首轮 Project 编辑场景因 W04 子/父路由状态不一致而 67/68，通过修复后聚焦用例 9/9、最终完整 `pnpm test:e2e` 68/68 PASS。
 - 浏览器/真实模型/恢复证据：真实中国区 `MiniMax-M3`，Docker Turn `3ab00210-848e-4251-a54e-76ec045c8139`；Runner 日志工具顺序为 `workmesh_session_context`、`workmesh_create_document`、`workmesh_get_session`、`workmesh_complete_session`，输出 `sessionCompletion: completed`。API 回读 Turn `settled`、Session `completed`，Issue 文档 `Docker completion proof 84a85db4` 存在；记录存于本地忽略的 `.evidence/webpi-stage-live-m3-complete.json`。
 - 演示步骤、已知限制、规范偏差及 follow-up：在测试环境以 M3 发送创建 Issue 文档并完成 Session 的任务，回读公开回答、Session 状态与文档。Runner 若在 Turn 落库与 Session 完成请求之间崩溃，当前内存中的完成意图可能丢失；须增加持久对账与恢复测试。仍需完整权限/Stop/旧 revision/幂等矩阵、跨传输一致性与 W04 主流程，W11 保持实施中。
+
+### W11 原子结算追加记录（2026-09-25）
+
+- 决策与范围：ADR 0068 将公开回答、Turn 结算、Session 完成及其 domain event/outbox 归入同一事务，取代上述两次提交的崩溃窗口。Runner 使用稳定结算幂等键；完成被明确拒绝时，以独立幂等键结算 Turn 并尝试记录 warning。W11 仍需完整权限、Stop、重放和外部效果对账矩阵。
+- 数据迁移 / API / events：无迁移、无新增事件类型；`OPENAPI.yaml` 和共享契约为 Runner settle 请求增加可选 `sessionCompletion`，响应标明完成结果。现有 `agent.session.completed` 与 `workbench.*` 事件在同一提交中写入。
+- 集成证据：独立 Docker 测试库的 Runner API 集成 4 PASS/1 skip；新用例证明旧 Session revision 与强制 outbox 事务失败时，Turn/公开回答/Session 均回滚，再以同一幂等键重试后同时提交，且完成事件只有一条。成功响应同键重放初轮发现路由前置策略把终态 Session 拦在幂等账本之前（`SESSION_NOT_ACTIVE`）；结算路由现容许该重放进入事务，而新写入由事务内 active-Session guard 以 `SESSION_STOPPED` 拒绝。完整集成最终 DB 77/77、API 136 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip。
+- 完整检查与真实模型：`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29、`pnpm test:e2e` 68/68 PASS。首次全量单测因命令抽取后的锁顺序静态清单与守卫源扫描未更新而失败，修正清单与守卫测试后复跑通过。E2E 在并行测试压力下曾因 Windows `net::ERR_NO_BUFFER_SPACE` 为 67/68，非产品断言失败；串行完整复测 68/68 PASS，原失败的 Issue 列表/看板用例通过。重建 Docker API/Runner 后，真实中国区 `MiniMax-M3` Turn `f9548e9c-385e-49d6-8ab0-2aa4180c7c95` 调用受控工具并返回 `sessionCompletion: completed`；API 回读 Turn `settled`、Session `completed` 和新 Issue 文档 `Docker completion proof 8600f8d8`。本地忽略证据 `.evidence/webpi-stage-live-m3-complete.json`。W11 仍需完整权限/恢复矩阵，不据此关闭。
 
 
 ---

@@ -362,4 +362,113 @@ describe('exact-session Pi Runner API', () => {
       "SELECT count(*)::int AS count FROM workbench_messages WHERE runner_attempt_id=$1",
       [attemptId])).rows[0]?.count).toBe(0)
   })
+
+  it('commits the public answer and exact Session completion together, or rolls both back', async () => {
+    const states = (await humanCall('GET', `/api/v1/teams/${teamId}/states`))
+      .json<{ items: Array<{ id: string; name: string }> }>().items
+    const work = await humanCall('POST', '/api/v1/work-items', {
+      teamId, title: 'Atomic completion acceptance', statusId: states.find(state => state.name === 'Ready')!.id,
+      responsibleHumanActorId: actorId,
+    })
+    expect(work.statusCode, work.body).toBe(200)
+    const newWorkItemId = work.json<{ id: string; revision: number }>().id
+    const registered = await humanCall('POST', '/api/v1/agents/register', {
+      name: 'Atomic Pi Fixture', slug: `pi-atomic-${randomUUID().slice(0, 8)}`,
+      provider: 'fake', version: '1', supportedProtocols: ['native_http'],
+      requestedCapabilities: ['work:read', 'work:write'], approvedCapabilities: ['work:read', 'work:write'],
+    })
+    expect(registered.statusCode, registered.body).toBe(200)
+    const atomicAgentId = registered.json<{ id: string }>().id
+    expect((await humanCall('PUT', `/api/v1/agents/${atomicAgentId}/team-access/${teamId}`,
+      { approvedCapabilities: ['work:read', 'work:write'] })).statusCode).toBe(200)
+    const workRevision = (await db.query<{ revision: number }>(
+      'SELECT revision FROM work_items WHERE id=$1', [newWorkItemId])).rows[0]!.revision
+    const delegated = await humanCall('POST', `/api/v1/work-items/${newWorkItemId}/agent-session`, {
+      agentId: atomicAgentId, principalHumanActorId: actorId, role: 'executor',
+      requestedCapabilities: ['work:read', 'work:write'], initialPrompt: 'Complete one Workbench Turn', budget: {},
+    }, { 'if-match': `"revision-${workRevision}"` })
+    expect(delegated.statusCode, delegated.body).toBe(200)
+    const exactSessionId = delegated.json<{ session: { id: string } }>().session.id
+    bearer = await seedAgentSessionBearer(db, exactSessionId, atomicAgentId)
+    const ack = await runnerCall('POST', `/api/v1/agent-sessions/${exactSessionId}/ack`,
+      { summary: 'Runner ready', externalUrls: [] })
+    expect(ack.statusCode, ack.body).toBe(200)
+    const executing = await runnerCall('POST', `/api/v1/agent-sessions/${exactSessionId}/state`,
+      { state: 'executing', reason: 'Atomic completion test' },
+      { 'if-match': `"revision-${ack.json<{ revision: number }>().revision}"` })
+    expect(executing.statusCode, executing.body).toBe(200)
+    const sessionRevision = executing.json<{ revision: number }>().revision
+    const connection = await humanCall('POST', '/api/v1/workbench/llm-connections', {
+      scope: 'workspace', name: 'Atomic completion model', apiType: 'openai-completions',
+      baseUrl: 'https://api.minimax.cn/v1', secretMaterial: 'fixture-only-secret',
+    })
+    expect(connection.statusCode, connection.body).toBe(201)
+    const connectionId = connection.json<{ id: string }>().id
+    const model = await humanCall('POST', `/api/v1/workbench/llm-connections/${connectionId}/models`, {
+      externalModelId: 'MiniMax-M3', displayName: 'MiniMax M3', enabled: true,
+      capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false,
+        contextWindowTokens: 204800, maxOutputTokens: 4096 },
+    }, { 'if-match': '"revision-1"' })
+    expect(model.statusCode, model.body).toBe(201)
+    const conversation = await humanCall('POST', '/api/v1/workbench/conversations', {
+      title: 'Atomic completion', workItemId: newWorkItemId, agentSessionId: exactSessionId,
+      llmConnectionId: connectionId, llmModelId: model.json<{ id: string }>().id,
+    })
+    expect(conversation.statusCode, conversation.body).toBe(201)
+    const conversationId = conversation.json<{ id: string }>().id
+    const sent = await humanCall('POST', `/api/v1/workbench/conversations/${conversationId}/turns`,
+      { messageMarkdown: 'Finish this exact Session.' }, { 'if-match': '"revision-1"' })
+    expect(sent.statusCode, sent.body).toBe(201)
+    const turnId = sent.json<{ turn: { id: string } }>().turn.id
+    const claimed = await runnerCall('POST', `/api/v1/workbench/turns/${turnId}/claim`)
+    expect(claimed.statusCode, claimed.body).toBe(200)
+    const attemptId = claimed.json<{ runnerAttemptId: string }>().runnerAttemptId
+    const credential = await runnerCall('GET', `/api/v1/workbench/runner-attempts/${attemptId}/credential`)
+    const fenceToken = credential.json<{ fenceToken: string }>().fenceToken
+    expect((await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`,
+      { fenceToken })).statusCode).toBe(200)
+    const settlePath = `/api/v1/workbench/runner-attempts/${attemptId}/settle`
+    const completion = { ifMatch: sessionRevision, operationKey: `pi-${'a'.repeat(64)}`,
+      body: { summary: 'Completed with evidence', checks: [{ name: 'Answer', status: 'passed',
+        summary: 'Public answer persisted' }] } }
+    const payload = { fenceToken, assistantMessageMarkdown: 'Completed.',
+      settlement: { outcome: 'settled', summaryMarkdown: 'Answered.', noArtifactReason: 'Text answer' },
+      sessionCompletion: completion }
+    const stale = await runnerCall('POST', settlePath,
+      { ...payload, sessionCompletion: { ...completion, ifMatch: sessionRevision - 1 } })
+    expect(stale.statusCode, stale.body).toBe(409)
+    expect((await db.query<{ status: string }>('SELECT status FROM workbench_turns WHERE id=$1', [turnId])).rows[0]?.status).toBe('running')
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM workbench_messages WHERE runner_attempt_id=$1', [attemptId])).rows[0]?.count).toBe(0)
+    await db.query(`CREATE FUNCTION reject_atomic_session_completion() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN IF NEW.topic='agent.session.completed' THEN RAISE EXCEPTION 'atomic completion failure'; END IF;
+      RETURN NEW; END $$`)
+    await db.query(`CREATE TRIGGER reject_atomic_session_completion BEFORE INSERT ON outbox_events
+      FOR EACH ROW EXECUTE FUNCTION reject_atomic_session_completion()`)
+    const retryKey = randomUUID()
+    try {
+      const failed = await runnerCall('POST', settlePath, payload, { 'idempotency-key': retryKey })
+      expect(failed.statusCode).toBe(500)
+      expect((await db.query<{ status: string }>('SELECT status FROM workbench_turns WHERE id=$1', [turnId])).rows[0]?.status).toBe('running')
+      expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM workbench_messages WHERE runner_attempt_id=$1', [attemptId])).rows[0]?.count).toBe(0)
+    } finally {
+      await db.query('DROP TRIGGER reject_atomic_session_completion ON outbox_events')
+      await db.query('DROP FUNCTION reject_atomic_session_completion()')
+    }
+    const settled = await runnerCall('POST', settlePath, payload, { 'idempotency-key': retryKey })
+    expect(settled.statusCode, settled.body).toBe(200)
+    expect(settled.json<{ sessionCompletion: string }>().sessionCompletion).toBe('completed')
+    const replayed = await runnerCall('POST', settlePath, payload, { 'idempotency-key': retryKey })
+    expect(replayed.statusCode, replayed.body).toBe(200)
+    expect(replayed.json()).toEqual(settled.json())
+    const newWriteAfterCompletion = await runnerCall('POST', settlePath, payload)
+    expect(newWriteAfterCompletion.statusCode).toBe(409)
+    expect(newWriteAfterCompletion.json<{ error: { code: string } }>().error.code)
+      .toBe('SESSION_STOPPED')
+    expect((await db.query<{ state: string }>('SELECT state FROM agent_sessions WHERE id=$1', [exactSessionId])).rows[0]?.state).toBe('completed')
+    expect((await db.query<{ status: string }>('SELECT status FROM workbench_turns WHERE id=$1', [turnId])).rows[0]?.status).toBe('settled')
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM workbench_messages WHERE turn_id=$1', [turnId])).rows[0]?.count).toBe(2)
+    expect((await db.query<{ count: number }>(
+      "SELECT count(*)::int AS count FROM domain_events WHERE aggregate_id=$1 AND event_type='agent.session.completed'",
+      [exactSessionId])).rows[0]?.count).toBe(1)
+  }, 120_000)
 })

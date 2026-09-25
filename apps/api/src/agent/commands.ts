@@ -2873,7 +2873,12 @@ export async function signal(db: Pool, meta: RequestMeta, sessionId: string, exp
 }
 
 export async function finishSession(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: CompleteAgentSessionInput | { code: string; summary: string; retryable: boolean; evidence: string[] }, failed = false) {
-  return agentMutate(db, meta, async tx => {
+  return agentMutate(db, meta, tx => finishSessionInTransaction(tx, meta, sessionId, expectedRevision, input, failed));
+}
+
+/** Shared command policy for direct completion and atomic Workbench Turn settlement. */
+export async function finishSessionInTransaction(tx: PoolClient, meta: RequestMeta, sessionId: string,
+  expectedRevision: number, input: CompleteAgentSessionInput | { code: string; summary: string; retryable: boolean; evidence: string[] }, failed = false) {
     assertSafeText(input.summary,"session summary");
     assertSanitized(failed ? { evidence: (input as { evidence: string[] }).evidence } : { checks: (input as CompleteAgentSessionInput).checks, limitations: (input as CompleteAgentSessionInput).limitations, noArtifactReason: (input as CompleteAgentSessionInput).noArtifactReason });
     const session = await loadAgentSessionForMutation(tx, meta.actor, sessionId);
@@ -2892,7 +2897,6 @@ export async function finishSession(db: Pool, meta: RequestMeta, sessionId: stri
     const next: AgentSessionState = failed ? "failed" : "completed"; assertAgentSessionTransition(session.state, next);
     const row = one((await tx.query("UPDATE agent_sessions SET state=$2,state_reason=$3,result_summary=$3,result_evidence=$4,no_artifact_reason=$5,error_code=$6,error_summary=$7,ended_at=now(),sequence=sequence+1,revision=revision+1,updated_at=now() WHERE id=$1 RETURNING *", [sessionId, next, input.summary, failed ? { evidence:(input as { evidence: string[] }).evidence,retryable:(input as { retryable:boolean }).retryable } : { artifactIds: completion.artifactIds, checks: completion.checks, limitations: completion.limitations }, failed ? null : completion.noArtifactReason ?? null, failed ? (input as { code: string }).code : null, failed ? input.summary : null])).rows);
     await event(tx, meta, failed ? "agent.session.failed" : "agent.session.completed", "agent_session", sessionId, Number((row as { revision: number }).revision), { summary: input.summary }, session.team_id, sessionId, Number((row as { sequence: number }).sequence)); return row;
-  });
 }
 
 export async function stopAck(db: Pool, meta: RequestMeta, sessionId: string, expectedRevision: number, input: { cleanupSummary: string; residualRisks: string[] }) {

@@ -2,10 +2,10 @@ import { createHash, randomBytes, timingSafeEqual } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import { z } from 'zod'
-import { workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema } from '@workmesh/contracts'
+import { completeAgentSessionInputSchema, workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema } from '@workmesh/contracts'
 import { appendEvent, withTx } from '@workmesh/db'
 import { DomainError } from '@workmesh/domain'
-import { agentMutate } from './agent/commands.js'
+import { agentMutate, finishSessionInTransaction } from './agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from './agent/guard.js'
 import type { ApiActor } from './agent/types.js'
 import type { CommandContext } from './commands.js'
@@ -317,7 +317,14 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
         { conversationId: turn.conversation_id, turnId: turn.id,
           runnerAttemptId: attempt.id, outcome: turnStatus, stopReason: null,
           errorCode: body.settlement.errorCode ?? null })
-      return { runnerAttemptId: attempt.id, turnId: turn.id, status: turnStatus }
+      if (body.sessionCompletion) {
+        const completion = completeAgentSessionInputSchema.parse(body.sessionCompletion.body)
+        await finishSessionInTransaction(tx,
+          { ...context, idempotencyKey: body.sessionCompletion.operationKey },
+          sessionId, body.sessionCompletion.ifMatch, completion)
+      }
+      return { runnerAttemptId: attempt.id, turnId: turn.id, status: turnStatus,
+        sessionCompletion: body.sessionCompletion ? 'completed' : 'not_requested' }
     })
   })
 }

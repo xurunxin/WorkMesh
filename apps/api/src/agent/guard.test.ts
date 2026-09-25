@@ -126,7 +126,6 @@ describe('shared Agent mutation resource liveness', () => {
       'appendActivity',
       'transitionState',
       'publishPlan',
-      'finishSession',
       'stopAck',
       'publishArtifact',
       'requestApproval',
@@ -143,6 +142,13 @@ describe('shared Agent mutation resource liveness', () => {
         'assertAgentWrite',
       )
     }
+    const completionStart = source.indexOf('export async function finishSession(')
+    const completionPolicyStart = source.indexOf('export async function finishSessionInTransaction(')
+    const completionPolicyEnd = source.indexOf('\nexport async function ', completionPolicyStart + 1)
+    expect(source.slice(completionStart, completionPolicyStart)).toContain('finishSessionInTransaction(tx, meta')
+    const completionPolicy = source.slice(completionPolicyStart, completionPolicyEnd)
+    expect(completionPolicy).toContain('loadAgentSessionForMutation')
+    expect(completionPolicy).toContain('assertAgentWrite')
   })
 
   it('locks the Session scope anchor before checking the exact Decision subject', async () => {

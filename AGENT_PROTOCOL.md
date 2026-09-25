@@ -1763,8 +1763,13 @@ Attempt 和 Turn 标为 failed、推进 Conversation revision，并追加事件/
 `external_effects_reconciled=false` 表示外部效果未知；旧 Runner 写入仍被栅栏
 拒绝，系统不会自动重做 Turn。Human 可查看错误并在核对效果后发送新 Turn。
 
-当前 Pi 工具仅有只读 `workmesh_session_context`。写工具、工具调用账本、预算、
-崩溃后外部效果对账与安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
-不得把上述纵向路径解释为 W10 或整项路线图验收通过。现有 Session 控制面
+W11 的 Pi 工具按当前 Session 的 live capability manifest 暴露，调用时由 API 再次
+检查授权。`workmesh_complete_session` 仅记录带 exact revision 与证据的完成意图；
+Runner 将公开回答、Turn 结算和可选 Session 完成在同一 PostgreSQL 事务提交，
+沿用现有完成命令的权限、状态与证据规则。完成被明确拒绝时，Runner 用独立幂等键
+只结算 Turn，并尽可能写入可见 warning；不冒充 Session 已完成。Runner 在提交前
+崩溃仍由 stale Attempt 机制处理，已发生的外部工具效果须另行对账。工具调用账本、
+预算、完整外部效果安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
+不得把上述纵向路径解释为 W10/W11 或整项路线图验收通过。现有 Session 控制面
 （创建、ACK、Prompt、Stop/Pause/Resume、完成）继续保持权威，对话层不隐式
 获得 Team 写权，写权仍只经由绑定 Agent Session 的委派授予。

@@ -242,12 +242,31 @@ export const workbenchRunnerCredentialSchema = z.object({
     content_markdown: z.string().min(1).max(50_000) }).strict()).max(100),
 }).strict()
 
+export const workbenchSessionCompletionRequestSchema = z.object({
+  ifMatch: revisionSchema,
+  operationKey: z.string().regex(/^pi-[a-f0-9]{64}$/),
+  body: z.object({
+    summary: z.string().min(1).max(20_000),
+    artifactIds: z.array(idSchema).max(100).default([]),
+    checks: z.array(z.object({ name: z.string().min(1).max(160),
+      command: z.string().max(10_000).optional(),
+      status: z.enum(['passed', 'failed', 'skipped']),
+      summary: z.string().min(1).max(10_000) })).max(100).default([]),
+    limitations: z.array(z.string().min(1).max(2_000)).max(100).default([]),
+    noArtifactReason: z.string().min(1).max(2_000).optional(),
+  }).strict().refine(value => value.artifactIds.length > 0 || value.checks.length > 0
+    || Boolean(value.noArtifactReason), { message: 'Completion requires evidence or noArtifactReason' }),
+}).strict()
+
 export const workbenchRunnerSettleInputSchema = z.object({
   fenceToken: z.string().min(16).max(128),
   assistantMessageMarkdown: z.string().min(1).max(50_000).optional(),
   settlement: runnerAttemptSettleInputSchema,
+  sessionCompletion: workbenchSessionCompletionRequestSchema.optional(),
 }).strict().refine(value => value.settlement.outcome !== 'settled' || Boolean(value.assistantMessageMarkdown),
   { path: ['assistantMessageMarkdown'], message: 'Settled turns require a public assistant response' })
+  .refine(value => !value.sessionCompletion || value.settlement.outcome === 'settled',
+    { path: ['sessionCompletion'], message: 'Session completion requires a settled public Turn' })
 
 // ---------------------------------------------------------------------------
 // LLM connections / models / secrets (Decision 5 + 6 of ADR 0065)
