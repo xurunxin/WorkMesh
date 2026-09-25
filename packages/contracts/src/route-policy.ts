@@ -110,6 +110,7 @@ const publicOperations = new Set([
 ])
 
 const installationTargetOperations = new Set([
+  'listWorkbenchRunnerAssignments',
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
   'inspectExactTargetHandoff',
@@ -173,6 +174,14 @@ const humanOnlyOperations = new Set([
   'updateWorkbenchLlmConnection',
   'revokeWorkbenchLlmConnection',
   'upsertWorkbenchLlmModel',
+  'listWorkbenchConversations',
+  'createWorkbenchConversation',
+  'getWorkbenchConversation',
+  'archiveWorkbenchConversation',
+  'listWorkbenchMessages',
+  'listWorkbenchTurns',
+  'queueWorkbenchTurn',
+  'stopWorkbenchTurn',
   'logout',
   'listHumanActors',
   'listAgents',
@@ -241,6 +250,12 @@ const humanOnlyOperations = new Set([
 ])
 
 const agentOnlyOperations = new Set([
+  'listAgentWorkbenchTurns',
+  'claimWorkbenchTurn',
+  'getWorkbenchAttemptCredential',
+  'startWorkbenchAttempt',
+  'getWorkbenchAttemptStatus',
+  'settleWorkbenchAttempt',
   'getAgentCapabilityManifest',
   'getCurrentAgentConnectionIdentity',
   'claimInboxItem',
@@ -248,6 +263,9 @@ const agentOnlyOperations = new Set([
 ])
 
 const revisionedOperations = new Set([
+  'archiveWorkbenchConversation',
+  'queueWorkbenchTurn',
+  'stopWorkbenchTurn',
   'updateWorkbenchLlmConnection',
   'revokeWorkbenchLlmConnection',
   'updateWorkspace',
@@ -337,6 +355,7 @@ const selfAuthorizedProjectionOperations = new Set([
 ])
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {
+  if (path.startsWith('/api/v1/workbench/')) return 'none'
   if (selfAuthorizedProjectionOperations.has(operationId)) return 'none'
   if (operationId === 'getCurrentAgentConnectionIdentity') return 'none'
   if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'

@@ -1,20 +1,18 @@
 'use client'
 
-import { AsyncStateSurface } from '@workmesh/ui'
 import { AuthenticatedWorkspaceShell } from '../authenticated-workspace-shell'
+import { ConversationWorkbench } from '../../features/workbench/conversation-workbench'
+import { actorDisplayName } from '../lib/actor'
 import { LocaleToggle, useLocale } from '../lib/i18n'
-import { useWorkMeshDocumentTitle } from '../lib/document-title'
+import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 
-/**
- * W03 placeholder for the conversational agent workbench (real surfaces land
- * in W13). It exists so the workbench is a first-class, reachable navigation
- * destination from every page while keeping a single canonical URL.
- */
 export default function WorkbenchPage() {
-  const { t } = useLocale()
-  useWorkMeshDocumentTitle(t('workbench'))
+  const { locale, t } = useLocale()
+  const { actor, loading, error, refresh } = useAuthenticatedActor()
+  const zh = locale === 'zh-CN'
   return <AuthenticatedWorkspaceShell
+    actorName={actor ? actorDisplayName(actor) : undefined}
     administrationNavigationLabel={t('administrationNavigation')}
     contextLabel={t('workbench')}
     documentTitle={t('workbench')}
@@ -27,8 +25,10 @@ export default function WorkbenchPage() {
     utilityNavigation={workspaceUtilityNavigation({ t })}
     workspaceNavigationLabel={t('workspaceNavigation')}
   >
-    <section className="content" data-testid="workbench-placeholder">
-      <AsyncStateSurface description={t('workbenchPlaceholderDescription')} state="empty" title={t('workbenchPlaceholderTitle')} />
+    <section className="content">
+      {loading && !actor ? <p>{zh ? '正在加载工作台…' : 'Loading workbench…'}</p>
+        : !actor ? <div role="alert"><p>{error || (zh ? '无法加载账户。' : 'Could not load account.')}</p><button onClick={() => void refresh()} type="button">{zh ? '重试' : 'Retry'}</button></div>
+          : <ConversationWorkbench actor={actor} key={`${actor.workspace_id}:${actor.id}`} />}
     </section>
   </AuthenticatedWorkspaceShell>
 }

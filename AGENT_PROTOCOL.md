@@ -1735,7 +1735,7 @@ debug metadata. Projection payloads contain bounded operational summaries and
 references only; hidden model reasoning, private prompts, secrets, and
 unsanitized tool input are prohibited.
 
-# 25. Workbench conversation 与 Pi Runner（规划中）
+# 25. Workbench conversation 与 Pi Runner（纵向接入中）
 
 WM-WEBPI-20260924 W01 冻结了工作台对话层的传输契约：Conversation、Turn、
 RunnerAttempt（单 writer/fencing）、用户配置的 LlmConnection/LlmModel 以及
@@ -1743,7 +1743,23 @@ runner 工具调用账本。DTO 与 `workbench.*` 事件 schema 位于
 `packages/contracts/src/pi-workbench-contracts.ts`；对应 REST 端点、事件接入
 与 Runner 进程协议由后续路线图任务（W06/W07/W09/W10）以带编号的变更引入。
 
-本节当前不定义任何新的协议行为或端点；现有 Session 控制面（创建、ACK、
-Prompt、Stop/Pause/Resume、完成）保持权威。既有限制继续适用：Runner 只获得
-显式提供的模型连接与工具；Stop 之后普通写入被服务端拒绝；对话层不隐式获得
-Team 写权，写权仍只经由绑定 Agent Session 的委派授予。
+W09/W10 当前纵向路径：Human 以 `POST /api/v1/workbench/conversations` 建立
+对话并绑定有效 Agent Session、模型；`POST /api/v1/workbench/conversations/{id}/turns`
+带 `If-Match` 与 `Idempotency-Key`，在一笔事务中追加公开用户消息、排队 Turn、
+`workbench.message.appended` / `workbench.turn.queued` 事件与 outbox。消息、Turn
+按序分页读取；只读该对话有权限的 Human 可见。当前上下文 pin 尚不可提交。
+
+独立 Pi Runner 用 Agent installation bearer 加部署级 Runner token 读取
+`/api/v1/workbench/runner/assignments`。新委派的 queued Session 仍须经现有
+`ack` 与带 revision 的 `state` 命令进入 executing，并定期发送诊断 heartbeat；
+Runner 不借用 Human cookie。Turn 领取、凭据读取、开始和结算还要求精确
+Agent Session bearer。API 对模型密钥响应设置 `Cache-Control: no-store`；
+密钥只交给受控 Runner 进程，不能进入模型提示、事件、活动或浏览器。
+Runner Attempt 的 fence token 仅用于该 Turn 的当前写入。Human 停止 Turn 时，
+服务端先废除 Attempt 栅栏；旧结算返回 `RUNNER_FENCE_STALE`。
+
+当前 Pi 工具仅有只读 `workmesh_session_context`。写工具、工具调用账本、预算、
+崩溃后对账与安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
+不得把上述纵向路径解释为 W10 或整项路线图验收通过。现有 Session 控制面
+（创建、ACK、Prompt、Stop/Pause/Resume、完成）继续保持权威，对话层不隐式
+获得 Team 写权，写权仍只经由绑定 Agent Session 的委派授予。

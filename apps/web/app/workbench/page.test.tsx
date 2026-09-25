@@ -9,13 +9,19 @@ vi.mock('../lib/api', () => ({
   apiMutation: vi.fn(async () => undefined),
   clearCsrfToken: vi.fn(),
 }))
+vi.mock('../lib/use-authenticated-actor', () => ({
+  useAuthenticatedActor: () => ({ actor: { id: 'human-a', workspace_id: 'workspace-a', workspace_role: 'member' }, loading: false, error: '', refresh: vi.fn() }),
+}))
+vi.mock('../../features/workbench/conversation-workbench', () => ({
+  ConversationWorkbench: () => <div data-testid="conversation-workbench">Persistent conversations</div>,
+}))
 
 afterEach(() => cleanup())
 
-describe('WorkbenchPage (W03 navigation destination)', () => {
+describe('WorkbenchPage', () => {
   it('renders inside the unified shell with the workbench as the only active destination', () => {
     render(<LocaleProvider><WorkbenchPage /></LocaleProvider>)
-    expect(screen.getByTestId('workbench-placeholder')).toBeInTheDocument()
+    expect(screen.getByTestId('conversation-workbench')).toBeInTheDocument()
     expect(screen.getByTestId('view-workbench')).toHaveClass('is-active')
     expect(screen.getByTestId('view-agents')).not.toHaveClass('is-active')
     expect([
@@ -37,12 +43,12 @@ describe('WorkbenchPage (W03 navigation destination)', () => {
     ])
   })
 
-  it('keeps the shell footer contract (sign out + release info) and the empty-state explanation', async () => {
+  it('keeps the shell footer contract and theme control', async () => {
     render(<LocaleProvider><WorkbenchPage /></LocaleProvider>)
     // The footer renders in both the desktop sidebar and the mobile navigation.
     expect(screen.getAllByTestId('logout').length).toBeGreaterThanOrEqual(1)
     await waitFor(() => expect(screen.getAllByTestId('release-info').length).toBeGreaterThanOrEqual(1))
-    expect(screen.getByText('Agent 工作台准备中')).toBeInTheDocument()
+    expect(screen.getByText('Persistent conversations')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '切换到深色主题' })).toBeInTheDocument()
   })
 })

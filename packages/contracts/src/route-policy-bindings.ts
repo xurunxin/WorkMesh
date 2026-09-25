@@ -1165,5 +1165,20 @@ export const routeOperationBindings = [
   { "method": "GET", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "getWorkbenchLlmConnection" },
   { "method": "PATCH", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "updateWorkbenchLlmConnection" },
   { "method": "DELETE", "path": "/api/v1/workbench/llm-connections/{id}", "operationId": "revokeWorkbenchLlmConnection" },
-  { "method": "POST", "path": "/api/v1/workbench/llm-connections/{id}/models", "operationId": "upsertWorkbenchLlmModel" }
+  { "method": "POST", "path": "/api/v1/workbench/llm-connections/{id}/models", "operationId": "upsertWorkbenchLlmModel" },
+  { "method": "GET", "path": "/api/v1/workbench/conversations", "operationId": "listWorkbenchConversations" },
+  { "method": "POST", "path": "/api/v1/workbench/conversations", "operationId": "createWorkbenchConversation" },
+  { "method": "GET", "path": "/api/v1/workbench/conversations/{id}", "operationId": "getWorkbenchConversation" },
+  { "method": "POST", "path": "/api/v1/workbench/conversations/{id}/archive", "operationId": "archiveWorkbenchConversation" },
+  { "method": "GET", "path": "/api/v1/workbench/conversations/{id}/messages", "operationId": "listWorkbenchMessages" },
+  { "method": "GET", "path": "/api/v1/workbench/conversations/{id}/turns", "operationId": "listWorkbenchTurns" },
+  { "method": "POST", "path": "/api/v1/workbench/conversations/{id}/turns", "operationId": "queueWorkbenchTurn" },
+  { "method": "POST", "path": "/api/v1/workbench/conversations/{id}/turns/{turnId}/stop", "operationId": "stopWorkbenchTurn" },
+  { "method": "GET", "path": "/api/v1/agent-sessions/{id}/workbench-turns", "operationId": "listAgentWorkbenchTurns" },
+  { "method": "GET", "path": "/api/v1/workbench/runner/assignments", "operationId": "listWorkbenchRunnerAssignments" },
+  { "method": "POST", "path": "/api/v1/workbench/turns/{id}/claim", "operationId": "claimWorkbenchTurn" },
+  { "method": "GET", "path": "/api/v1/workbench/runner-attempts/{id}/credential", "operationId": "getWorkbenchAttemptCredential" },
+  { "method": "POST", "path": "/api/v1/workbench/runner-attempts/{id}/start", "operationId": "startWorkbenchAttempt" },
+  { "method": "GET", "path": "/api/v1/workbench/runner-attempts/{id}/status", "operationId": "getWorkbenchAttemptStatus" },
+  { "method": "POST", "path": "/api/v1/workbench/runner-attempts/{id}/settle", "operationId": "settleWorkbenchAttempt" }
 ] as const

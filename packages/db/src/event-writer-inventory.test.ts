@@ -104,6 +104,10 @@ describe('durable domain-event writer inventory', () => {
       'aggregate:browser_push_subscription',
       'aggregate:workbench_llm_connection:personal',
       'aggregate:workbench_llm_model:personal',
+      'aggregate:workbench_conversation:personal',
+      'aggregate:workbench_message:personal',
+      'aggregate:workbench_turn:personal',
+      'aggregate:workbench_runner_attempt:personal',
       'event:notification.preferences_updated',
     ])
     const server = await readFile(join(root, 'apps/api/src/server.ts'), 'utf8')
@@ -116,6 +120,8 @@ describe('durable domain-event writer inventory', () => {
       join(root, 'apps/worker/src/automation.ts'),
       'utf8',
     )
+    const workbench = await readFile(join(root, 'apps/api/src/workbench-conversations.ts'), 'utf8')
+    expect(workbench).toContain('audienceActorId: row.team_id ? undefined : row.responsible_human_actor_id')
     expect(server).toMatch(
       /type: "auth\.session\.deleted"[\s\S]{0,300}audienceActorId: request\.actor!\.id/,
     )

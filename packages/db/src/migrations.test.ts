@@ -27,7 +27,7 @@ describe('v1 migration manifest', () => {
     expect(v1MigrationManifest[0]?.checksumSha256).toBe(
       '1fc1297ef9b4600d56368c6734b318b41b48776de82d5d9fe307d09427ce3f83',
     )
-    expect(v1MigrationManifest.at(-1)?.version).toBe('0009_workbench_llm_connections')
+    expect(v1MigrationManifest.at(-1)?.version).toBe('0010_workbench_conversations')
     expect(supportedLegacyUpgradeEndpoints).toEqual([
       '0002_stage0_integrity_delivery',
       '0006_stage1_review_fixes',

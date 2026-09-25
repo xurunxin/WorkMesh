@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed — 2026-09-24. 本 ADR 是实施路线图的设计输入。W01 已完成兼容性 Spike（5/5 通过）、Node 基线升级与传输契约冻结，钉住结果见下文"W01 验证结果与钉住基线"；实现版本以此为准。W07 的连接与模型配置实现正在进行，尚未满足整项路线图的发布门槛。
+Proposed — 2026-09-24. 本 ADR 是实施路线图的设计输入。W01 已完成兼容性 Spike（5/5 通过）、Node 基线升级与传输契约冻结，钉住结果见下文"W01 验证结果与钉住基线"；实现版本以此为准。W07–W10 与 W13 的纵向路径正在实装，尚未满足整项路线图的发布门槛。
 
 稳定规划标识：`WM-WEBPI-20260924`。本地执行计划：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md`；GitHub 与 WorkMesh 映射见同目录的 `.index.json`。
 
@@ -52,6 +52,14 @@ Spike 工程（仓库外，`G:\Projects\MetronX\wm-pi-spike\`）对 `@earendil-w
 `pnpm test:live:minimax:m3` 使用本地 `MINIMAX_CN_API_KEY` 对中国区 `MiniMax-M3` 实测文本和两类协议的工具调用/工具结果/最终回复，输出仅含状态元数据。Responses 路径以完整历史重建成功；`previous_response_id` 的一次测试返回 HTTP 400，因此 WorkMesh 不把该参数作为恢复依赖。此项只证明真实上游协议调用，不证明 Pi Runner、会话持久化、流式边界、控制权限或生产部署。
 
 `apps/agent-runner` 现将 Pi SDK 固定在 `0.87.1`，其受限探测使用 `noTools: 'builtin'`、唯一只读探测工具、独立 agent/state/work 目录和模型配置中的固定 `$MINIMAX_CN_API_KEY` 环境引用。真实 MiniMax-M3 上，Chat Completions 与 Responses 各完成一次 Pi 工具调用、最终文本与 `agent_settled`。这证明固定 SDK 可驱动两种协议的实际模型循环；该程序仍是探测器，尚无 WorkMesh 会话、授权工具、持久队列、Stop 栅栏或服务镜像，不构成 W08–W10 的完成验收。
+
+## W09/W10/W13 纵向实装进展（2026-09-25）
+
+`v1/0010_workbench_conversations.sql` 建立 Conversation、Turn、公开 Message、Runner Attempt。Human 对话 API 按责任人/Team 隔离，创建时可绑定经过授权的 Agent Session；发送在同一事务内写入消息、Turn、领域事件与 outbox，要求 Idempotency-Key 和 If-Match。历史读取有分页，Stop 在服务端将当前 attempt 栅栏化；Runner 对旧 fence 的结算被拒绝。客户端工作台从这些 API 恢复对话和 Turn，提供模型/执行会话选择、Markdown 草稿、停止和归档。
+
+独立 `apps/agent-runner` 使用固定 Pi SDK、临时隔离目录、禁用内建宿主工具，当前仅注册只读 `workmesh_session_context`。Runner 需要部署级 token 加精确 Agent Session bearer 才能领取 Turn；模型凭据只通过受控的 no-store API 响应交给 Runner，不进入领取结果、事件或浏览器。开发与生产 Compose 增加可选 Runner 服务，生产镜像固定 Node 22.19。私有 Compose HTTP 仅允许显式开关且目标主机名为 `api`。真实 MiniMax-M3 集成测试已验证此链路的 Pi 工具调用、公开回复与持久结算，Runner 子进程不持有测试进程的数据库或主密钥。
+
+该纵向路径仍有发布阻断项：Runner 崩溃后 `dispatching/running` attempt 尚无安全对账和人工恢复入口；未建立工具调用账本、预算、租约与写操作矩阵；模型出口 DNS/IP 固定与内网出站策略未完成；Responses 通过独立真实探针，但尚未在完整持久 Turn 链做第二种协议验收。工作台订阅已有持久游标 SSE 的工作台事件并保留快照重取，但尚未对断线恢复和大量事件做浏览器验收；上下文 pin、制品和审阅界面也未完成。因此不能将 W09/W10/W13 或整项路线图标记为完成，也不能执行旧 UI 切换。
 
 **契约冻结（先于实现）：**
 

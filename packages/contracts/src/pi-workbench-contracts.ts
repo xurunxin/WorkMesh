@@ -75,6 +75,7 @@ export const conversationCreateInputSchema = z.object({
   teamId: idSchema.nullable().optional(),
   projectId: idSchema.nullable().optional(),
   workItemId: idSchema.nullable().optional(),
+  agentSessionId: idSchema.optional(),
   title: z.string().min(1).max(180),
   llmConnectionId: idSchema.optional(),
   llmModelId: idSchema.optional(),
@@ -224,6 +225,30 @@ export const runnerAttemptSettleInputSchema = z.object({
   { message: 'Completion requires evidence or noArtifactReason', path: ['noArtifactReason'] },
 )
 
+// Runner-only wire payload. Never store or expose this response through the
+// Human workbench, event stream, generic idempotency ledger, or activity log.
+export const workbenchRunnerCredentialSchema = z.object({
+  runnerAttemptId: idSchema,
+  fenceToken: z.string().min(16).max(128),
+  baseUrl: z.string().url(),
+  apiType: z.enum(['openai-completions', 'openai-responses']),
+  apiKey: z.string().min(1),
+  modelId: z.string().min(1).max(200),
+  modelName: z.string().min(1).max(200),
+  capabilities: z.unknown(),
+  connectionRevision: revisionSchema,
+  modelRevision: revisionSchema,
+  messages: z.array(z.object({ role: conversationMessageRoleSchema,
+    content_markdown: z.string().min(1).max(50_000) }).strict()).max(100),
+}).strict()
+
+export const workbenchRunnerSettleInputSchema = z.object({
+  fenceToken: z.string().min(16).max(128),
+  assistantMessageMarkdown: z.string().min(1).max(50_000).optional(),
+  settlement: runnerAttemptSettleInputSchema,
+}).strict().refine(value => value.settlement.outcome !== 'settled' || Boolean(value.assistantMessageMarkdown),
+  { path: ['assistantMessageMarkdown'], message: 'Settled turns require a public assistant response' })
+
 // ---------------------------------------------------------------------------
 // LLM connections / models / secrets (Decision 5 + 6 of ADR 0065)
 // ---------------------------------------------------------------------------
@@ -360,6 +385,11 @@ export const workbenchConversationCreatedEventPayloadSchema = z.object({
   responsibleHumanActorId: idSchema,
   workItemId: idSchema.nullable(),
   agentSessionId: idSchema.nullable(),
+}).strict()
+
+export const workbenchConversationArchivedEventPayloadSchema = z.object({
+  conversationId: idSchema,
+  revision: revisionSchema,
 }).strict()
 
 export const workbenchMessageAppendedEventPayloadSchema = z.object({
