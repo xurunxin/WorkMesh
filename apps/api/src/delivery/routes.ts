@@ -709,17 +709,13 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
           current.id, storageKey, body.filename, body.mimeType, body.sizeBytes, body.checksum],
       )).rows)
       const expires = row.expires_at.toISOString()
-      const uploadUrl = await artifactStorageFromEnvironment().createUploadUrl({
+      const upload = await artifactStorageFromEnvironment().createUploadUrl({
         key: storageKey, checksum: body.checksum, sizeBytes: body.sizeBytes, mimeType: body.mimeType,
       }, 900)
       await emit(tx, h.meta(request, body), 'artifact.upload.requested', 'artifact_upload_intent', row.id, { checksum: body.checksum, sizeBytes: body.sizeBytes, requesterKind: current.kind }, workItem.team_id)
       return {
-        id: row.id, uploadUrl, expiresAt: expires, requiredChecksum: body.checksum,
-        requiredHeaders: {
-          'content-type': body.mimeType,
-          'content-length': String(body.sizeBytes),
-          'x-amz-checksum-sha256': Buffer.from(body.checksum.slice(7), 'hex').toString('base64'),
-        },
+        id: row.id, uploadUrl: upload.url, expiresAt: expires, requiredChecksum: body.checksum,
+        requiredHeaders: upload.requiredHeaders,
       }
     })
   })

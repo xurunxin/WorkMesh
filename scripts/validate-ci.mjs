@@ -390,27 +390,37 @@ requireCondition(
 
 const postgresImage = 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777'
 // MinIO withdrew the `minio/minio` and `minio/mc` repositories from Docker Hub
-// (hub.docker.com/v2/repositories/minio/minio/ now returns 404), so the
-// unqualified names no longer resolve and every job that starts MinIO dies in
-// its infrastructure step. MinIO's own quay.io namespace still serves the same
-// tags. The digest is unchanged, and a digest is content-addressed, so these
-// remain the exact reviewed builds — only the registry differs.
-const minioImage = 'quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e'
-const mcImage = 'quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z@sha256:aead63c77f9db9107f1696fb08ecb0faeda23729cde94b0f663edf4fe09728e3'
+// (hub.docker.com/v2/repositories/minio/minio/ now returns 404), and its quay.io
+// namespace then began answering unauthenticated manifest requests with 401, so
+// both the server and the `mc` bucket-initializer image became unpullable and
+// every job that started artifact storage died in its infrastructure step.
+// Artifact storage now runs on RustFS, which is actively published and passes the
+// S3 semantics WorkMesh depends on (versioning, Object Lock on create, COMPLIANCE
+// retention, legal hold, delete markers, ListObjectVersions). One image covers
+// both roles: it ships curl with --aws-sigv4, so the bucket step no longer needs
+// a second image. The digest pins the exact reviewed build.
+const artifactStorageImage = 'rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff'
 requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 5, 'five isolated jobs must use the reviewed PostgreSQL image')
 const api = jobSections.get('api-integration') ?? ''
-requireCondition(api.includes(minioImage), 'API integration must use the reviewed MinIO image')
-requireCondition(api.includes(mcImage), 'API integration must initialize MinIO with the reviewed mc image')
-const recovery = jobSections.get('recovery-integration') ?? ''
-requireCondition(recovery.includes(minioImage), 'recovery integration must use the reviewed MinIO image')
-requireCondition(recovery.includes('http://127.0.0.1:9000/minio/health/ready'), 'recovery integration must wait for MinIO readiness')
+requireCondition(api.includes(artifactStorageImage), 'API integration must use the reviewed artifact-storage image')
 requireCondition(
-  api.includes('http://127.0.0.1:9000/minio/health/ready'),
-  'API integration must wait for MinIO readiness before bucket initialization',
+  api.includes('--aws-sigv4') && api.includes('workmesh-artifacts'),
+  'API integration must initialize the artifact bucket through a signed request',
+)
+const recovery = jobSections.get('recovery-integration') ?? ''
+requireCondition(recovery.includes(artifactStorageImage), 'recovery integration must use the reviewed artifact-storage image')
+requireCondition(recovery.includes('http://127.0.0.1:9000/health/ready'), 'recovery integration must wait for artifact-storage readiness')
+requireCondition(
+  api.includes('http://127.0.0.1:9000/health/ready'),
+  'API integration must wait for artifact-storage readiness before bucket initialization',
 )
 requireCondition(
-  !api.includes('/minio/health/live'),
-  'API integration must not use MinIO liveness as its bucket-initialization gate',
+  !api.includes('9000/health/live'),
+  'API integration must not use artifact-storage liveness as its bucket-initialization gate',
+)
+requireCondition(
+  !api.includes('quay.io/minio') && !recovery.includes('quay.io/minio'),
+  'artifact storage must not reference the withdrawn MinIO images',
 )
 for (const database of [
   'workmesh_db_integration_test',

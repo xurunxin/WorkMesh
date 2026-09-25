@@ -15,28 +15,40 @@ services:
     volumes: [redis-data:/data]
     healthcheck: { test: ["CMD","redis-cli","ping"], interval: 5s, timeout: 3s, retries: 20 }
   minio:
-    # MinIO withdrew minio/minio from Docker Hub; quay.io serves the same tag.
-    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
-    command: server /data --console-address :9001
+    # MinIO withdrew its Docker Hub repositories and then began rejecting
+    # unauthenticated pulls from its quay.io namespace, so artifact storage runs
+    # on RustFS. It is S3-compatible for everything WorkMesh uses, including the
+    # versioning and Object Lock semantics the retention/recovery path depends on.
+    # The service name and MINIO_ROOT_* credential variables are kept as the
+    # contract shared with the release flow; RustFS reads those names natively.
+    image: rustfs/rustfs:1.0.0
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
       # Development-only fallback. Set this explicitly to a unique secret before deployment.
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
     ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000"]
     volumes: [minio-data:/data]
-    healthcheck: { test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null"], interval: 10s, timeout: 5s, retries: 10 }
+    healthcheck: { test: ["CMD-SHELL", "curl -fsS http://localhost:9000/health/ready >/dev/null"], interval: 10s, timeout: 5s, retries: 10 }
   minio-init:
-    image: quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z
+    # The server image already ships curl with --aws-sigv4, so bucket creation no
+    # longer needs a separate client image. Object Lock must be enabled at create
+    # time, hence the x-amz-bucket-object-lock-enabled header.
+    image: rustfs/rustfs:1.0.0
     depends_on: { minio: { condition: service_healthy } }
     entrypoint: ["/bin/sh", "-c"]
     command:
       - >-
-        mc alias set workmesh http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
-        mc mb --with-lock --ignore-existing workmesh/"$${S3_BUCKET}"
+        status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}'
+        --aws-sigv4 'aws:amz:${S3_REGION:-us-east-1}:s3'
+        --user "$${MINIO_ROOT_USER}:$${MINIO_ROOT_PASSWORD}"
+        --header 'x-amz-bucket-object-lock-enabled: true'
+        --request PUT "http://minio:9000/$${S3_BUCKET}") &&
+        case "$$status" in 200|409) exit 0 ;; *) echo "bucket init failed (HTTP $$status)"; exit 1 ;; esac
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
       S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_REGION: ${S3_REGION:-us-east-1}
     restart: "no"
   migrate:
     build: { context: ., dockerfile: infra/docker/api.Dockerfile }
