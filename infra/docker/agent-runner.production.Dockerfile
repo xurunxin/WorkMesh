@@ -25,6 +25,7 @@ RUN apk upgrade --no-cache \
     && adduser -S -D -H -u 10001 -G workmesh workmesh
 WORKDIR /app
 COPY --from=build --chown=10001:10001 /out ./
+COPY --chown=10001:10001 apps/agent-runner/skills ./skills
 COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
 COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh ./
 RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod 0555 /app/entrypoint.sh

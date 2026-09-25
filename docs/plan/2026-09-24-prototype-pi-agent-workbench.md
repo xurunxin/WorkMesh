@@ -1082,7 +1082,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 <!-- WM-WEBPI-20260924:W12 -->
 # W12 编写可执行操作 Skills、用户指南和评测场景
 
-阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：部分实现；Runner 内嵌固定 Skill 已通过 Docker MiniMax-M3 验证，公开签名发布、Session 持久 pin、全场景评测和指南仍待完成；W11 前置门禁尚未关闭。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1138,11 +1138,11 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/134
 
 ## 交付记录模板
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：当前分支 `codex/wm-webpi-implementation`，Docker Compose `workmesh-webpi-stage`，内嵌 Runner Skill 的精确 SHA 由 `apps/agent-runner/src/workbench-skill-manifest.ts` 固定。发布前仍需提交 SHA 与镜像 digest 记录。
+- 数据迁移 / API / events / Skill 变更：无迁移、REST API、事件变更。新增 `apps/agent-runner/skills/workmesh-workbench/SKILL.md` 0.1.0、生成与 `--check` 脚本；Pi Runner 在建会话前验证 Skill 字节 SHA，只加载这一份 Skill，禁用宿主扩展、其他 Skills、prompt/template/theme/context 文件。公开签名 Skill 1.1.0 未改动，旧 Connection pin 不受影响。
+- 实际测试命令、结果、失败/skip：`pnpm check:runner-skill` PASS；`pnpm check:workmesh-skill` PASS；Skill `quick_validate.py` PASS；`pnpm --filter @workmesh/agent-runner test` 15 PASS；`pnpm lint` 18/18 PASS；`pnpm typecheck` 18/18 PASS；`pnpm test` PASS。独立 Docker 测试库中 `pnpm test:integration`：DB 77 PASS；API 136 PASS/1 skip；Worker 78 PASS/1 skip；Recovery 1 skip。串行 `pnpm test:e2e` 68/68 PASS。Docker stage Runner 镜像构建与重建 PASS。Windows 宿主 `pnpm build` 为 17/18，Web 在 S: 工作树与 G: pnpm 虚拟仓库跨卷映射下解析 `./G:/.../next.js` 失败；生产 Docker 镜像验证另行记录，不将此项记为通过。
+- 浏览器/真实模型/恢复证据：本地 Docker stage 使用中国区 MiniMax `MiniMax-M3`，Turn `a7b5e49d-f882-4a4b-beaa-1ac5752d52bf` 为 `settled`，Session `33bf864d-e065-479e-b1b3-7dcdaef0529b` 为 `completed`，Issue 文档读回存在；可在本地忽略目录 `.evidence/webpi-stage-live-m3-complete.json` 查验。该证据仅证明内嵌 Skill 的一条真实流程。
+- 演示步骤、已知限制、规范偏差及 follow-up：`pnpm check:runner-skill` 校验固定字节；Docker stage 配置连接后启动 Agent Runner，再从工作台发送 Issue 文档任务。当前 0.1.0 是镜像内嵌 Skill SHA pin，未作为公开签名 Skill 版本发布，也未写入 Session 持久 context；W12 其余验收矩阵保持开放。设计决策见 ADR 0069。
 
 
 ---

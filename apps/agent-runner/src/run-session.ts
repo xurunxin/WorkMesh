@@ -7,6 +7,7 @@ import { workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
 import { createWorkMeshTools, type SessionCompletionIntent } from './workmesh-tools.js'
+import { createWorkbenchSkillLoader } from './workbench-skill.js'
 
 type Credential = ReturnType<typeof workbenchRunnerCredentialSchema.parse>
 type TokenExchange = { sessionToken: string; expiresAt: string }
@@ -165,9 +166,11 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
         throw new Error('RUNNER_COMPLETION_INTENT_CONFLICT')
       completionIntent = intent
     })
+    const resourceLoader = await createWorkbenchSkillLoader(workDir, agentDir)
     const { session } = await createAgentSession({
       cwd: workDir, agentDir, model, modelRuntime: runtime,
-      sessionManager: SessionManager.inMemory(), noTools: 'builtin', customTools: [contextTool, ...workmeshTools],
+      resourceLoader, sessionManager: SessionManager.inMemory(), noTools: 'builtin',
+      customTools: [contextTool, ...workmeshTools],
     })
     let stopped = false, polling = false
     const onShutdown = () => { stopped = true; void session.abort() }
