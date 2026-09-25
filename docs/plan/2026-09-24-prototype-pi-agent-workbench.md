@@ -1152,7 +1152,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/134
 <!-- WM-WEBPI-20260924:W13 -->
 # W13 实装 Agent 工作台对话、上下文与执行控制
 
-阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：进行中——工作台对话主路径（每 Turn 模型选择、绑定 Session 状态门禁、迟到响应隔离、手机折叠表单）已实装并通过全部门禁，路线其余工作见交付记录。
+阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：完成（2026-09-26，PR #151 `b897e0f`，CI 8/8）——主路径之外补齐转向（注入式 steer）、追问/重试血缘（迁移 0012 的 `retry_of_turn_id` + 终态触发器）、上下文 pins 编辑（服务端重做绑定范围校验）与工具调用账本（`workbench_tool_invocations`），完成条件已满足，GitHub #135 已关闭。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1208,13 +1208,14 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/135
 - D7：本地任务正文与 GitHub/WorkMesh 互链；Issue 完成必须附实际测试结果、已知限制和残留工作，不能以“已实现按钮”结项。
 
 
-## 交付记录模板
+## 交付记录（2026-09-26，W13 阶段二——完成）
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：分支 `feat/wm-webpi-w13-controls`，PR #151 squash 合入 main（`b897e0f`，CI 8/8 全绿，含 Browser acceptance 与 Complete disaster recovery）。环境：Windows 11 + PowerShell 7；隔离测试库（`workmesh_webpi_test`）+ 本地 RustFS 探测容器（artifact bucket 以 object lock 重建）。
+- 数据迁移 / API / events / Skill 变更：**迁移 0012**（`workbench_turns.retry_of_turn_id` 列 + 可延迟约束触发器 `workbench_turns_retry_target_terminal`（只允许指向终态 turn，探针验证两分支）+ `workbench_tool_invocations` append-only 账本表）；**新增三个路由**（`PATCH /conversations/{id}/context-pins`、`POST /turns/{turnId}/steer`、`POST /turns/{turnId}/followup`，全部 human_session + revisioned）；**新增事件** `workbench.conversation.pins_updated`、`workbench.turn.steered`；settle 契约扩展 `toolInvocations` per-tool 摘要；runner status 轮询响应扩展 `pendingSteeringMessage`。Skill 无变更。
+- 实际测试命令、结果、失败/skip：`pnpm lint` 18/18；`pnpm typecheck` 18/18；`pnpm test -- --force=true` **29/29（Cached: 0 cached，真实执行）**；contracts **23/23**（路由清单对等 267 条）；db **8/8**（含 0012 manifest 校验）；新增 `workbench-controls.integration.test.ts` **7/7**（pins 越权 403、旧 revision 409、steer 非 running 400 `INVALID_STATE`、followup 非终态 400、终态事实不可变、账本 schema 与初始为空）；runner/recovery/stage3 集成对本地 RustFS + object-lock bucket 全绿（stage3 曾因本地探测容器缺失 `workmesh-artifacts` bucket 出现 2 个 404，属环境问题，重建 bucket 后通过；CI 无此问题）。触发器不变式以 psql 探针直接验证：指向 settled turn 的 retry 插入成功、指向 running turn 的被 `RETRY_OF_TURN_NOT_TERMINAL` 拒绝。
+- 浏览器/真实模型/恢复证据（适用时）：PR #151 CI 的 Browser acceptance 全绿；恢复语义证据见 PR #150（W09/W10）。
+- 演示步骤、已知限制、规范偏差及 follow-up：演示 = `/workbench` → running turn 状态行输入「追加指示」→ runner ≤1s 注入（不取消）；终态 turn 点「重试」（新 turn 带 `retry_of_turn_id`）或「追问」；上下文面板查看绑定 Project/Issue 与 pins chips（含 revision 徽标）。已知限制：(1) steer 交付延迟上界 = 1s 轮询间隔，更低延迟需 SSE 推送；(2) 工具账本 usage 为结算时聚合（per-tool 计数 + 形状摘要），逐次精度需逐次上报；(3) Document/File chips 超出会话绑定范围的部分按 2026-09-26 决策记 follow-up。规范偏差：无。follow-up：上述三条；W14 制品检查器（本任务为其前置）。阶段一记录中列出的「上下文 chips、工具/证据卡、steer/follow-up/retry」缺口本轮全部关闭，#135 已关闭。
+
 
 ## 交付记录（2026-09-25，W13 阶段一）
 
