@@ -45,6 +45,7 @@ type TranslationKey =
   | 'close'
   | 'createIssue'
   | 'createProject'
+  | 'editProject'
   | 'connecting'
   | 'guidance'
   | 'description'
@@ -82,6 +83,7 @@ type TranslationKey =
   | 'responsibleHuman'
   | 'reconnecting'
   | 'search'
+  | 'saveChanges'
   | 'schema'
   | 'settings'
   | 'signOut'
@@ -117,6 +119,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     close: '关闭',
     createIssue: '创建 Issue',
     createProject: '创建项目',
+    editProject: '编辑项目',
     connecting: '正在连接',
     guidance: '指南',
     description: '描述',
@@ -154,6 +157,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: '负责人',
     reconnecting: '正在重新连接',
     search: '搜索',
+    saveChanges: '保存更改',
     schema: '数据库架构',
     settings: '设置',
     signOut: '退出登录',
@@ -188,6 +192,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     close: 'Close',
     createIssue: 'Create issue',
     createProject: 'Create project',
+    editProject: 'Edit project',
     connecting: 'Connecting',
     guidance: 'Guidance',
     description: 'Description',
@@ -225,6 +230,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: 'Responsible human',
     reconnecting: 'Reconnecting',
     search: 'Search',
+    saveChanges: 'Save changes',
     schema: 'schema',
     settings: 'Settings',
     signOut: 'Sign out',

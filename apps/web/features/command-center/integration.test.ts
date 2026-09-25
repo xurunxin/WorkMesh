@@ -29,7 +29,7 @@ describe('command-center integration contract', () => {
     expect(home).toContain("intent === 'create-project'")
     expect(home).toContain("params.delete('intent')")
     expect(home).toContain('if (route.workItemId) void openItem(route.workItemId, true, false)')
-    expect(home).toContain('data-testid="create-project"')
+    expect(home).toContain('<ProjectEditor')
     expect(home).toContain('data-testid="create-work-item"')
   })
 

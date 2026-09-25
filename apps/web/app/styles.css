@@ -191,6 +191,13 @@ main#workmesh-main:focus-visible {
 .app-shell .modal-form { margin: 0; padding: 0; background: transparent; }
 .modal-form .form-span { grid-column: 1 / -1; }
 .form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: .5rem; padding-top: .4rem; }
+.project-milestone-manager { display: grid; gap: 1rem; min-width: min(100%, 30rem); }
+.project-milestone-manager > button { justify-self: start; }
+.project-milestone-list { display: grid; gap: .7rem; margin: 0; padding: 0; list-style: none; }
+.project-milestone-list li { display: grid; gap: .4rem; padding: .8rem; border: 1px solid var(--wm-border); border-radius: .65rem; }
+.project-milestone-list li > div:first-child { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.project-milestone-list time { color: var(--wm-muted); font-size: .8rem; }
+.project-milestone-list li > button { justify-self: start; }
 .settings-page > header { margin-bottom: 1rem; }
 .settings-notice { margin: 0 0 1rem; padding: .75rem 1rem; color: var(--wm-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 8px; }
 .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }

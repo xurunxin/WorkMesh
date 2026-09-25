@@ -44,7 +44,9 @@ import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, serializeWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
-import { RichTextEditor } from '../features/rich-content/editor'
+import { clearDraft, RichTextEditor, type DraftIdentity } from '../features/rich-content/editor'
+import { ProjectEditor, type EditableProject } from '../features/projects/project-editor'
+import { ProjectMilestones } from '../features/projects/project-milestones'
 
 type Actor = AuthenticatedActor
 type InstallStatus = { installed: boolean }
@@ -53,7 +55,7 @@ type Team = { id: string; name: string; key: string; revision: number }
 type StatusCategory = 'backlog' | 'planned' | 'started' | 'completed' | 'canceled'
 type WorkflowState = { id: string; name: string; category: StatusCategory; color: string; revision: number }
 type Human = { id: string; display_name: string; email: string }
-type Project = { id: string; team_id: string; name: string; summary: string | null; description: string | null; status: string; lead_actor_id: string | null; target_date: string | null; revision: number }
+type Project = EditableProject
 type WorkItem = WorkItemDetailDto
 type Comment = { id: string; body: string; revision: number; parent_comment_id: string | null; reply_to_comment_id: string | null; author_name: string; author_kind: 'human'; is_resolved: boolean; created_at: string; mentions: string[] }
 type Scope = HomeScope
@@ -101,7 +103,7 @@ function HomePageScope({
   actorLoading: boolean
   refreshActor: () => Promise<void>
 }) {
-  const { agentWorkCopy, detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
+  const { agentWorkCopy, detailCopy, editorCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
   const { push: pushToast } = useToast()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -130,8 +132,13 @@ function HomePageScope({
   const [filters, setFilters] = useState<Filters>({})
   const [error, setError] = useState('')
   const [createProjectOpen, setCreateProjectOpen] = useState(false)
+  const [editProjectOpen, setEditProjectOpen] = useState(false)
+  const [milestonesOpen, setMilestonesOpen] = useState(false)
   const [createWorkItemOpen, setCreateWorkItemOpen] = useState(false)
   const [createWorkItemError, setCreateWorkItemError] = useState('')
+  const [createWorkItemBusy, setCreateWorkItemBusy] = useState(false)
+  const [createWorkItemDescription, setCreateWorkItemDescription] = useState('')
+  const createWorkItemBusyRef = useRef(false)
   const [workSurfaceItems, setWorkSurfaceItems] = useState<WorkItemDto[]>([])
   const surfaceRefreshRef = useRef<(() => Promise<void>) | null>(null)
   const projectRequestGateRef = useRef(new LatestRequestGate<string>())
@@ -152,6 +159,10 @@ function HomePageScope({
   const selectedTeam = teamAuthoritiesInitialized
     ? teamsPage.items.find(team => team.id === teamId) ?? null
     : null
+  const newIssueDraftIdentity: DraftIdentity = {
+    workspaceId: actor.workspace_id ?? '', teamId: selectedTeam?.id ?? '', actorId: actor.id,
+    resourceType: 'work_item', resourceId: 'new', field: 'description', baseRevision: 0,
+  }
   const agentController = useAgentDelegationController({
     humanActorId: selectedItem?.responsible_human_actor_id ?? '',
     scopeKey: authorityScopeKey,
@@ -339,6 +350,7 @@ function HomePageScope({
   }
   const openProject = async (id: string, tab: ProjectWorkspaceTab = 'overview', updateHistory = true) => {
     if (!isAuthorityCurrent()) return
+    if (selectedProject?.id !== id) setMilestonesOpen(false)
     const request = projectRequestGateRef.current.begin(id)
     requestedProjectIdRef.current = id
     try {
@@ -450,9 +462,11 @@ function HomePageScope({
   }
   const openCreateWorkItem = () => {
     setCreateWorkItemError('')
+    setCreateWorkItemDescription('')
     setCreateWorkItemOpen(true)
   }
   const closeCreateWorkItem = () => {
+    if (createWorkItemBusyRef.current) return
     setCreateWorkItemError('')
     setCreateWorkItemOpen(false)
   }
@@ -515,12 +529,14 @@ function HomePageScope({
   }, [authorityScopeKey, currentSearch, isAuthorityCurrent, router, selectedProject?.id])
   const createWorkItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!selectedTeam || !actor) return
+    if (!selectedTeam || !actor || createWorkItemBusyRef.current) return
+    createWorkItemBusyRef.current = true
+    setCreateWorkItemBusy(true)
     const formElement = event.currentTarget; const form = new FormData(formElement); const state = states.find(candidate => candidate.id === form.get('statusId'))
     const title = String(form.get('title') ?? '')
     setCreateWorkItemError('')
     try {
-      await apiRequest('/api/v1/work-items', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, title, description: String(form.get('description') ?? '') || undefined, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || undefined, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : undefined), projectId: String(form.get('projectId') ?? '') || undefined, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
+      await apiMutation(`work-item:create:${selectedTeam.id}`, '/api/v1/work-items', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, title, description: String(form.get('description') ?? '') || undefined, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || undefined, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : undefined), projectId: String(form.get('projectId') ?? '') || undefined, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
       if (!isAuthorityCurrent()) return
     } catch (reason) {
       if (!isAuthorityCurrent()) return
@@ -530,7 +546,12 @@ function HomePageScope({
         setCreateWorkItemError(`${toastCopy.issueCreateFailedTitle}. ${toastCopy.issueCreateFailedDescription}`)
       }
       return
+    } finally {
+      createWorkItemBusyRef.current = false
+      setCreateWorkItemBusy(false)
     }
+    clearDraft(window.localStorage, newIssueDraftIdentity)
+    setCreateWorkItemDescription('')
     formElement.reset(); closeCreateWorkItem()
     pushToast({
       dedupeKey: 'home:create-work-item',
@@ -556,18 +577,6 @@ function HomePageScope({
       if (structured.httpStatus === 409) setDetailConflict(structured)
       else setDetailErrorState(structured)
     }
-  }
-  const createProject = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!selectedTeam) return
-    const formElement = event.currentTarget; const form = new FormData(formElement)
-    try {
-      const project = await apiRequest<{ id: string }>('/api/v1/projects', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, name: String(form.get('name') ?? ''), summary: String(form.get('summary') ?? '') || undefined, description: String(form.get('description') ?? '') || undefined, leadActorId: String(form.get('leadActorId') ?? '') || null, targetDate: String(form.get('targetDate') ?? '') || null }) })
-      if (!isAuthorityCurrent()) return
-      formElement.reset(); setCreateProjectOpen(false); await projectsPage.refresh()
-      if (!isAuthorityCurrent()) return
-      await openProject(project.id)
-    } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
   }
   const createComment = async (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => {
     event.preventDefault()
@@ -641,7 +650,7 @@ function HomePageScope({
             </div>
           </aside>
           <section className="project-detail-pane">
-            {selectedProject ? <ProjectWorkspace actions={<Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>} actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
+            {selectedProject ? <ProjectWorkspace actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{locale === 'zh-CN' ? '里程碑' : 'Milestones'}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
           </section>
         </div>}
       </> : teamAuthoritiesInitialized
@@ -650,28 +659,24 @@ function HomePageScope({
           ? null
           : <SkeletonList columns={1} items={4} label={`${t('loading')} ${t('team')}`} />}</>}
     </section>
-    <Dialog closeLabel={t('close')} onClose={() => setCreateProjectOpen(false)} open={createProjectOpen} title={t('createProject')}>
-      <form className="project-form modal-form" onSubmit={createProject} data-testid="create-project">
-        <label>{t('projectName')}<input name="name" required /></label>
-        <label>{t('summary')}<input name="summary" /></label>
-        <label>{t('targetDate')}<input name="targetDate" type="date" /></label>
-        <label>{t('lead')}<select name="leadActorId"><option value="">{t('noLead')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label className="form-span">{t('description')}<textarea name="description" /></label>
-        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={() => setCreateProjectOpen(false)} type="button">{t('cancel')}</Button><Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createProject')}</Button></div>
-      </form>
-    </Dialog>
+    <ProjectEditor actor={actor} humans={humans} mode={editProjectOpen ? 'edit' : 'create'}
+      onClose={() => { setCreateProjectOpen(false); setEditProjectOpen(false) }}
+      onReload={async () => { if (selectedProject) await openProject(selectedProject.id, projectTab, false) }}
+      onSaved={id => { if (!isAuthorityCurrent()) return; void projectsPage.refresh(); void openProject(id, projectTab, createProjectOpen) }}
+      open={createProjectOpen || editProjectOpen} project={selectedProject} teamId={selectedTeam?.id ?? ''} />
+    {selectedProject && <ProjectMilestones actor={actor} key={selectedProject.id} onChanged={() => { void issueMilestonesPage.refresh(); void detailMilestonesPage.refresh() }} onClose={() => setMilestonesOpen(false)} open={milestonesOpen} projectId={selectedProject.id} teamId={selectedProject.team_id} />}
     <Dialog closeLabel={t('close')} onClose={closeCreateWorkItem} open={createWorkItemOpen} title={t('createIssue')}>
       <form className="work-form modal-form" onSubmit={createWorkItem} data-testid="create-work-item">
         {createWorkItemError && <p className="error" role="alert">{createWorkItemError}</p>}
         <label className="form-span">{t('title')}<input name="title" required /></label>
-        <label className="form-span">{t('description')}<textarea name="description" /></label>
+        <div className="form-span"><RichTextEditor copy={editorCopy} identity={newIssueDraftIdentity} label={t('description')} mode="description" name="description" onChange={setCreateWorkItemDescription} value={createWorkItemDescription} /></div>
         <label>{t('status')}<select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label>
         <label>{t('priority')}<select name="priority"><option value="none">{t('noPriority')}</option><option value="urgent">{t('urgent')}</option><option value="high">{t('high')}</option><option value="medium">{t('medium')}</option><option value="low">{t('low')}</option></select></label>
         <label>{t('dueDate')}<input name="dueDate" type="date" /></label>
         <label>{t('responsibleHuman')}<select name="ownerId"><option value="">{t('unassigned')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label>{t('projects')}<select name="projectId"><option value="">{t('noProject')}</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
+        <label>{t('projects')}<select defaultValue={scope === 'projects' ? selectedProject?.id ?? '' : ''} key={scope === 'projects' ? selectedProject?.id ?? 'none' : 'none'} name="projectId"><option value="">{t('noProject')}</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
         <label>{t('labels')}<input name="labels" /></label>
-        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={closeCreateWorkItem} type="button">{t('cancel')}</Button><Button disabled={!states[0]} data-testid="create-work-item-submit" icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createIssue')}</Button></div>
+        <div className="form-actions"><Button disabled={createWorkItemBusy} icon={<XIcon aria-hidden="true" size={16} />} onClick={closeCreateWorkItem} type="button">{t('cancel')}</Button><Button disabled={createWorkItemBusy || !states[0]} data-testid="create-work-item-submit" icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createIssue')}</Button></div>
       </form>
     </Dialog>
     {selectedItem && <WorkItemDetail

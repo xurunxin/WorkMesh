@@ -278,8 +278,11 @@ describe('Home mutation outcomes', () => {
 
   it('ignores a completed A-authority create after switching to B without toast, refresh, URL, or focus side effects', async () => {
     const pendingCreate = deferred<unknown>()
-    apiMock.apiRequest.mockImplementation((path: string, init?: RequestInit) => {
+    apiMock.apiRequest.mockImplementation((path: string) => {
       if (path === '/api/v1/features') return Promise.resolve({ features: [] })
+      return Promise.resolve({ id: 'work-item-1' })
+    })
+    apiMock.apiMutation.mockImplementation((_operation: string, path: string, init?: RequestInit) => {
       if (path === '/api/v1/work-items' && init?.method === 'POST') return pendingCreate.promise
       return Promise.resolve({ id: 'work-item-1' })
     })
@@ -289,7 +292,7 @@ describe('Home mutation outcomes', () => {
     const title = within(dialog).getByRole('textbox', { name: '标题' })
     fireEvent.change(title, { target: { value: 'A private issue' } })
     fireEvent.click(within(dialog).getByRole('button', { name: '创建 Issue' }))
-    await waitFor(() => expect(apiMock.apiRequest).toHaveBeenCalledWith('/api/v1/work-items', expect.objectContaining({ method: 'POST' })))
+    await waitFor(() => expect(apiMock.apiMutation).toHaveBeenCalledWith('work-item:create:team-1', '/api/v1/work-items', expect.objectContaining({ method: 'POST' })))
     const urlBeforeSwitch = window.location.href
 
     authMock.actor = { id: 'human-2', display_name: 'Grace', workspace_id: 'workspace-2', workspace_role: 'member' }
@@ -442,8 +445,11 @@ describe('Home mutation outcomes', () => {
   })
 
   it('keeps a structured conflict in the top modal, preserves the form, emits no toast, and clears it on reopen', async () => {
-    apiMock.apiRequest.mockImplementation(async (path: string, init?: RequestInit) => {
+    apiMock.apiRequest.mockImplementation(async (path: string) => {
       if (path === '/api/v1/features') return { features: [] }
+      return { id: 'work-item-1' }
+    })
+    apiMock.apiMutation.mockImplementation(async (_operation: string, _path: string, init?: RequestInit) => {
       if (init?.method === 'POST') throw new ApiError(409, 'This title conflicts with a current issue.', 'REVISION_CONFLICT')
       return { id: 'work-item-1' }
     })
