@@ -12,9 +12,11 @@ The isolated Pi Runner could read Session context but could not use WorkMesh com
 
 The Runner fetches the server's live `agent-capabilities` manifest for its exact Agent Session before creating Pi tools. Only supported operations eligible under the current capability set are presented. Every exposed tool maps to a published REST/SDK/MCP operation and validates its input at the boundary. The server remains the final authority and rechecks every request.
 
-The current slice exposes the exact Session revision, authorized Project, Issue, and ordinary Document reads; ordinary Project/Issue creation and edits, Issue relations, Document creation/revision, evidence artifacts, approval requests, lease acquisition, handoff offers, whole plan publication, and Session activities. Human-only archive, Guidance publication, approval decisions, and administrator operations are absent. Pi's built-in shell, filesystem, and extension tools remain disabled.
+The current slice exposes the exact Session revision, authorized Project, Issue, and ordinary Document reads; ordinary Project/Issue creation and edits, Issue relations, Document creation/revision, evidence artifacts, approval requests, lease listing/acquisition/release, handoff offers, whole plan publication, Session activities, and an evidence-backed Session completion request. Human-only archive, Guidance publication, approval decisions, handoff acceptance, and administrator operations are absent. Pi's built-in shell, filesystem, and extension tools remain disabled.
 
 For a write, the Runner derives a stable idempotency key from exact Session ID, Runner attempt ID, Pi tool-call ID, and operation ID. Ordinary writes append sanitized `started` and `succeeded` or `failed` Agent activities using distinct stable keys. Plan publication omits the pre-command activity because it would consume the required exact Session revision; the domain event records the command and a completion activity follows. The activity tool itself creates one visible activity without a recursive wrapper. The activity records the operation and payload hash, never the document body or a credential. The WorkMesh command runs through the normal API with the stable key, so the database idempotency ledger and domain event/outbox retain the authoritative result. Tool output is bounded; an oversized successful response returns its resource identity and revision rather than an ambiguous error.
+
+Session completion is a Runner intent, not an immediate Pi REST write. The tool validates the shared completion contract and captures the model's current Session revision and stable operation key. The Runner first settles the public Turn and only then submits `completeAgentSession`, because the settlement endpoint requires an executing Session. A failed completion does not rewrite a settled Turn; the Runner attempts a visible warning and logs a bounded code. If the Runner crashes after settlement and before completion, the in-memory intent can be lost; W11 recovery work must persist or reconcile that boundary before claiming full completion coverage. Handoff acceptance remains Human-only per OpenAPI and is never a Pi tool.
 
 ## Alternatives
 
@@ -25,7 +27,7 @@ For a write, the Runner derives a stable idempotency key from exact Session ID, 
 
 ## Consequences
 
-Each governed write adds activity records and API round trips. Activity recording is at least once across crash boundaries; the command's idempotency ledger and domain event are authoritative. Live capability changes may remove authority after the Pi tool list is built; the API rejects those later calls. Lease release, handoff acceptance, Session completion, and full recovery tests remain open in W11.
+Each governed write adds activity records and API round trips. Activity recording is at least once across crash boundaries; the command's idempotency ledger and domain event are authoritative. Live capability changes may remove authority after the Pi tool list is built; the API rejects those later calls. Full recovery and denial tests remain open in W11.
 
 ## Migration
 

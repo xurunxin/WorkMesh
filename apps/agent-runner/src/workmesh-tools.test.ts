@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { appendActivityInputSchema, createAgentCapabilityManifest, featureKeySchema,
   type AgentCapabilityManifest } from '@workmesh/contracts'
-import { createWorkMeshTools, type RunnerToolApi } from './workmesh-tools.js'
+import { createWorkMeshTools, type RunnerToolApi, type SessionCompletionIntent } from './workmesh-tools.js'
 import type { Capability } from '@workmesh/contracts'
 
 const sessionId = '11111111-1111-4111-8111-111111111111'
@@ -203,5 +203,59 @@ describe('Pi WorkMesh tools', () => {
       visibility: 'team', toolInvocation: { toolName: 'appendAgentActivity',
         inputSanitized: { toolCallId: 'call-progress', runnerAttemptId: 'attempt-8' } },
     })
+  })
+
+  it('releases only a versioned lease through the exact Session API authority', async () => {
+    const calls: Array<{ path: string; body: unknown; ifMatch?: number; key?: string }> = []
+    const api: RunnerToolApi = { sessionId,
+      async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
+        body?: unknown, ifMatch?: number, key?: string): Promise<T> {
+        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        calls.push({ path, body, ifMatch, key })
+        return { id: documentId, version: 2 } as T
+      },
+    }
+    const tools = await createWorkMeshTools(api, 'attempt-release', () => undefined)
+    const list = tools.find(tool => tool.name === 'workmesh_list_leases')!
+    expect(list).toBeDefined()
+    await list.execute('list-call', {}, undefined, undefined, {} as never)
+    expect(calls[0]?.path).toBe(`/api/v1/leases?sessionId=${sessionId}&limit=50`)
+    const release = tools.find(tool => tool.name === 'workmesh_release_lease')!
+    expect(release).toBeDefined()
+    await expect(release.execute('bad-version', { leaseId: documentId, ifMatch: 0 },
+      undefined, undefined, {} as never)).rejects.toThrow()
+    expect(calls).toHaveLength(1)
+    await release.execute('release-call', { leaseId: documentId, ifMatch: 1,
+      reason: 'Work finished' }, undefined, undefined, {} as never)
+    expect(calls.find(call => call.path === `/api/v1/leases/${documentId}/release`))
+      .toMatchObject({ body: { reason: 'Work finished' }, ifMatch: 1,
+        key: expect.stringMatching(/^pi-[a-f0-9]{64}$/) })
+  })
+
+  it('queues evidence-backed completion without ending the Session before the public answer', async () => {
+    const calls: string[] = []
+    const intents: SessionCompletionIntent[] = []
+    const api: RunnerToolApi = { sessionId,
+      async request<T>(_method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string): Promise<T> {
+        calls.push(path)
+        if (path === '/api/v1/agent-capabilities') return manifest(['work:read', 'work:write']) as T
+        return {} as T
+      },
+    }
+    const tools = await createWorkMeshTools(api, 'attempt-complete', () => undefined,
+      intent => intents.push(intent))
+    const complete = tools.find(tool => tool.name === 'workmesh_complete_session')!
+    expect(complete).toBeDefined()
+    expect(tools.map(tool => tool.name)).not.toContain('workmesh_accept_handoff')
+    await expect(complete.execute('invalid', { ifMatch: 2, summary: 'Done' },
+      undefined, undefined, {} as never)).rejects.toThrow('Completion requires evidence')
+    const result = await complete.execute('complete-call', { ifMatch: 2,
+      summary: 'Document published', noArtifactReason: 'The document is stored on the Issue.' },
+    undefined, undefined, {} as never)
+    expect(result.content[0]).toMatchObject({ type: 'text', text: expect.stringContaining('queued_after_turn_settlement') })
+    expect(calls).toEqual(['/api/v1/agent-capabilities'])
+    expect(intents).toEqual([{ body: { summary: 'Document published', artifactIds: [], checks: [],
+      limitations: [], noArtifactReason: 'The document is stored on the Issue.' },
+      ifMatch: 2, idempotencyKey: expect.stringMatching(/^pi-[a-f0-9]{64}$/) }])
   })
 })

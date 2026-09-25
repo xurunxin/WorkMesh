@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent'
 import {
   acquireLeaseInputSchema, agentCapabilityManifestResponseSchema, appendActivityInputSchema,
+  completeAgentSessionInputSchema,
   artifactInputSchema,
   createDocumentInputSchema, handoffInputSchema, projectInputSchema, publishPlanInputSchema,
   requestApprovalInputSchema, updateDocumentInputSchema, workItemInputSchema,
@@ -15,6 +16,12 @@ export interface RunnerToolApi {
   request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
     body?: unknown, ifMatch?: number, idempotencyKey?: string): Promise<T>
 }
+
+export type SessionCompletionIntent = Readonly<{
+  body: z.infer<typeof completeAgentSessionInputSchema>
+  ifMatch: number
+  idempotencyKey: string
+}>
 
 const id = z.string().uuid()
 const idParameter = Type.String({ format: 'uuid' })
@@ -115,7 +122,8 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
   }
 }
 
-export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void): Promise<ToolDefinition[]> {
+export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void,
+  onCompletionIntent?: (intent: SessionCompletionIntent) => void): Promise<ToolDefinition[]> {
   const manifest = agentCapabilityManifestResponseSchema.parse(
     await api.request<unknown>('GET', '/api/v1/agent-capabilities'))
   if (manifest.agent.sessionId !== api.sessionId || manifest.agent.sessionState !== 'executing')
@@ -274,6 +282,12 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'POST', path: '/api/v1/approvals',
         body: requestApprovalInputSchema.parse({ sessionId: api.sessionId, ...parsed }) }
     })
+  add('workmesh_list_leases', 'listLeases',
+    'Read leases for this exact Session, including the current version needed for release.',
+    Type.Object({ limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })) }), input => {
+      const { limit } = z.object({ limit: z.number().int().min(1).max(100).optional() }).parse(input)
+      return { method: 'GET', path: `/api/v1/leases?sessionId=${api.sessionId}&limit=${limit ?? 50}` }
+    })
   add('workmesh_acquire_lease', 'acquireLease',
     'Acquire a short coordination lease for an authorized Issue or plan step. A lease never grants authority.',
     Type.Object({ resourceType: Type.Union([Type.Literal('work_item'), Type.Literal('plan_step')]),
@@ -283,6 +297,15 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
         resourceId: id, reason: z.string(), ttlSeconds: z.number().int().optional() }).parse(input)
       return { method: 'POST', path: '/api/v1/leases',
         body: acquireLeaseInputSchema.parse({ sessionId: api.sessionId, ...parsed }) }
+    })
+  add('workmesh_release_lease', 'releaseLease',
+    'Release an active lease held by this Session. Read its current version first; releasing a lease never changes authorization.',
+    Type.Object({ leaseId: idParameter, ifMatch: Type.Integer({ minimum: 1 }),
+      reason: Type.Optional(Type.String({ minLength: 1, maxLength: 2000 })) }), input => {
+      const parsed = z.object({ leaseId: id, ifMatch: z.number().int().positive(),
+        reason: z.string().min(1).max(2000).optional() }).parse(input)
+      return { method: 'POST', path: `/api/v1/leases/${parsed.leaseId}/release`,
+        body: parsed.reason ? { reason: parsed.reason } : {}, ifMatch: parsed.ifMatch }
     })
   add('workmesh_offer_handoff', 'offerHandoff',
     'Offer visible, structured work to another Agent. The target and server must accept before work transfers.',
@@ -332,5 +355,38 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
       return { method: 'PUT', path: `/api/v1/agent-sessions/${api.sessionId}/plan`,
         body: publishPlanInputSchema.parse(plan), ifMatch }
     }, false)
+  if (onCompletionIntent && eligible.has('completeAgentSession')) {
+    available.push({
+      name: 'workmesh_complete_session', label: 'workmesh complete session',
+      description: 'Request completion of this exact Session. Give an evidence-backed summary and current Session revision. The Runner commits completion only after its public answer is durably settled; verify the final Session state afterward.',
+      parameters: Type.Object({ ifMatch: Type.Integer({ minimum: 1 }),
+        summary: Type.String({ minLength: 1, maxLength: 20_000 }),
+        artifactIds: Type.Optional(Type.Array(idParameter, { maxItems: 100 })),
+        checks: Type.Optional(Type.Array(Type.Object({ name: Type.String({ minLength: 1, maxLength: 160 }),
+          command: Type.Optional(Type.String({ maxLength: 10_000 })),
+          status: Type.Union([Type.Literal('passed'), Type.Literal('failed'), Type.Literal('skipped')]),
+          summary: Type.String({ minLength: 1, maxLength: 10_000 }) }), { maxItems: 100 })),
+        limitations: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: 2000 }), { maxItems: 100 })),
+        noArtifactReason: Type.Optional(Type.String({ minLength: 1, maxLength: 2000 })) }),
+      execute: async (toolCallId, input, signal) => {
+        onCall('workmesh_complete_session')
+        if (signal?.aborted) throw new Error('RUNNER_ABORTED')
+        const { ifMatch, ...body } = z.object({ ifMatch: z.number().int().positive(),
+          summary: z.string(), artifactIds: z.array(id).optional(),
+          checks: z.array(z.unknown()).optional(), limitations: z.array(z.string()).optional(),
+          noArtifactReason: z.string().optional() }).parse(input)
+        const intent: SessionCompletionIntent = {
+          body: completeAgentSessionInputSchema.parse(body), ifMatch,
+          idempotencyKey: operationKey(api.sessionId, attemptId, toolCallId, 'completeAgentSession'),
+        }
+        onCompletionIntent(intent)
+        return { content: [{ type: 'text' as const, text: boundedResult({
+          status: 'queued_after_turn_settlement', sessionId: api.sessionId,
+          message: 'Completion is pending. Give the user a public answer; then inspect the Session state.',
+        }) }], details: { source: 'workmesh_runner', operationId: 'completeAgentSession',
+          operationKey: intent.idempotencyKey } }
+      },
+    })
+  }
   return available
 }

@@ -190,6 +190,12 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
 
   const navigateSurface = (surface: ProjectControlSurface): void => {
     setActiveSurface(surface)
+    if (surface === 'work') {
+      // The page owns the Work tab and query state. Keep it in sync so a
+      // subsequent item refresh cannot restore the old Overview route.
+      onWorkViewChange(workView)
+      return
+    }
     const href = projectControlHref({ currentSearch, projectId: project.id, surface, workView })
     router.push(href, { scroll: false })
   }

@@ -104,12 +104,13 @@ describe('Project Control Center', () => {
 
   it('keeps Project identity and the work escape available while the projection fails', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ headers: new Headers(), ok: false, status: 503, json: async () => ({ error: { message: 'Projection unavailable' } }) })))
-    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
+    const onWorkViewChange = vi.fn()
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={onWorkViewChange} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: 'Reliable Agent runs', description: null, status: 'active' }} /></LocaleProvider>)
 
     expect(screen.getByRole('heading', { name: 'Runtime Reliability' })).toBeVisible()
     expect(await screen.findByRole('alert')).toHaveTextContent('Projection unavailable')
     fireEvent.click(screen.getByTestId('project-control-view-work'))
-    expect(window.location.search).toContain('surface=work')
+    expect(onWorkViewChange).toHaveBeenCalledWith('list')
   })
 
   it('paginates a collection independently and restores focus after closing detail', async () => {

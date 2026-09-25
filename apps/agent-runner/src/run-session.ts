@@ -6,7 +6,7 @@ import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-work
 import { workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
-import { createWorkMeshTools } from './workmesh-tools.js'
+import { createWorkMeshTools, type SessionCompletionIntent } from './workmesh-tools.js'
 
 type Credential = ReturnType<typeof workbenchRunnerCredentialSchema.parse>
 type TokenExchange = { sessionToken: string; expiresAt: string }
@@ -122,7 +122,9 @@ function removeScratch(rootPath: string): void {
   rmSync(root, { recursive: true, force: true })
 }
 
-async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{ answer: string; toolCalls: number; toolNames: string[] }> {
+async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{
+  answer: string; toolCalls: number; toolNames: string[]; completionIntent?: SessionCompletionIntent
+}> {
   const root = mkdtempSync(join(tmpdir(), 'workmesh-runner-'))
   const agentDir = join(root, 'agent'), stateDir = join(root, 'state'), workDir = join(root, 'work')
   for (const directory of [agentDir, stateDir, workDir]) mkdirSync(directory, { recursive: true })
@@ -141,6 +143,7 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
     if (!model) throw new Error('RUNNER_MODEL_NOT_RESOLVED')
     let toolCalls = 0
     const toolNames: string[] = []
+    let completionIntent: SessionCompletionIntent | undefined
     const contextTool = {
       name: 'workmesh_session_context', label: 'WorkMesh session context',
       description: 'Read the current authorized WorkMesh Agent Session context. This tool never mutates WorkMesh.',
@@ -157,6 +160,10 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
     const workmeshTools = await createWorkMeshTools(api, attemptId, name => {
       toolCalls += 1
       if (toolNames.length < 50) toolNames.push(name)
+    }, intent => {
+      if (completionIntent && JSON.stringify(completionIntent) !== JSON.stringify(intent))
+        throw new Error('RUNNER_COMPLETION_INTENT_CONFLICT')
+      completionIntent = intent
     })
     const { session } = await createAgentSession({
       cwd: workDir, agentDir, model, modelRuntime: runtime,
@@ -186,7 +193,7 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
       if (stopped) throw new Error('RUNNER_ABORTED')
       const answer = session.getLastAssistantText()?.trim()
       if (!answer || answer.length > 50_000) throw new Error('RUNNER_ANSWER_INVALID')
-      return { answer, toolCalls, toolNames }
+      return { answer, toolCalls, toolNames, ...(completionIntent ? { completionIntent } : {}) }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
       session.dispose()
@@ -202,7 +209,7 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
   }
 }
 
-async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal): Promise<void> {
+async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal): Promise<boolean> {
   let attemptId = ''
   let fenceToken = ''
   let started = false
@@ -215,13 +222,35 @@ async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal
     fenceToken = credential.fenceToken
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken })
     started = true
-    const { answer, toolCalls, toolNames } = await runPi(api, credential, attemptId, shutdown)
+    const { answer, toolCalls, toolNames, completionIntent } = await runPi(api, credential, attemptId, shutdown)
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
         noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
     })
-    console.log(JSON.stringify({ turnId: item.turnId, attemptId, status: 'settled', toolCalls, toolNames }))
+    let sessionCompletion = 'not_requested'
+    if (completionIntent) {
+      try {
+        await api.request('POST', `/api/v1/agent-sessions/${api.sessionId}/complete`,
+          completionIntent.body, completionIntent.ifMatch, completionIntent.idempotencyKey)
+        sessionCompletion = 'completed'
+      } catch (error) {
+        const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_COMPLETION_FAILED'
+        sessionCompletion = 'failed'
+        try {
+          await api.request('POST', `/api/v1/agent-sessions/${api.sessionId}/activities`, {
+            kind: 'warning', summary: 'The public answer was saved, but Session completion failed.',
+            detailsMarkdown: `Completion request failed with ${code.slice(0, 120)}. Review the Session and retry with its current revision.`,
+            visibility: 'team', ephemeral: false, artifactIds: [], references: [],
+          }, undefined, `${completionIntent.idempotencyKey}-warning`)
+        } catch { /* Stop or revocation may also prohibit a warning activity. */ }
+        console.error(JSON.stringify({ turnId: item.turnId, attemptId,
+          status: 'session_completion_failed', code: code.slice(0, 120) }))
+      }
+    }
+    console.log(JSON.stringify({ turnId: item.turnId, attemptId,
+      status: 'settled', sessionCompletion, toolCalls, toolNames }))
+    return sessionCompletion === 'completed'
   } catch (error) {
     const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_UNKNOWN_ERROR'
     if (started && fenceToken && code !== 'RUNNER_FENCE_STALE' && code !== 'RUNNER_ABORTED') {
@@ -234,6 +263,7 @@ async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal
     }
     console.error(JSON.stringify({ turnId: item.turnId, attemptId: attemptId || null,
       status: 'failed', code: code.slice(0, 120) }))
+    return false
   }
 }
 
@@ -274,7 +304,7 @@ async function main(): Promise<void> {
           `/api/v1/agent-sessions/${api.sessionId}/workbench-turns`)
         for (const item of result.items) {
           if (shutdown.signal.aborted) break
-          await executeTurn(api, item, shutdown.signal)
+          if (await executeTurn(api, item, shutdown.signal)) break
         }
         } finally { clearInterval(heartbeatTimer) }
       } catch (error) {
