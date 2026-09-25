@@ -1,6 +1,6 @@
 'use client'
 
-import { type FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FormEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { ControlCenterResponse } from '@workmesh/contracts'
 import {
@@ -129,6 +129,9 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
   const router = useRouter()
   const searchParams = useSearchParams()
   const currentSearch = searchParams.toString()
+  // Tracks the query string the projector last saw so a data-only refresh cannot
+  // reset an unapplied filter draft. Undefined until the first projection runs.
+  const appliedSearchRef = useRef<string | undefined>(undefined)
 
   const refreshAll = useCallback(async () => {
     setError('')
@@ -156,11 +159,19 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
       const search = currentSearch ? `?${currentSearch}` : ''
       const route = readProjectControlRoute(search)
       const restoredFilters = readFilters(search)
+      // Only a real URL change may re-project filters into the draft or drop a detail
+      // selection. A projection refresh (a new `data` object) alone must not stomp local
+      // UI state: it used to silently discard a filter draft the Human had not applied
+      // yet, and could close a drawer that was just opened.
+      const searchChanged = appliedSearchRef.current !== undefined && appliedSearchRef.current !== search
+      appliedSearchRef.current = search
       setActiveSurface(route.surface)
       setFilters(current => JSON.stringify(current) === JSON.stringify(restoredFilters) ? current : restoredFilters)
-      setDraftFilters(current => JSON.stringify(current) === JSON.stringify(restoredFilters) ? current : restoredFilters)
-      if (!route.selectedId) setSelected(null)
-      else setSelected(current => current?.id === route.selectedId ? current : data ? collectionOrder.flatMap(collection => data.collections[collection].items).find(item => item.id === route.selectedId) ?? null : null)
+      if (searchChanged) {
+        setDraftFilters(current => JSON.stringify(current) === JSON.stringify(restoredFilters) ? current : restoredFilters)
+        if (!route.selectedId) setSelected(null)
+      }
+      if (route.selectedId) setSelected(current => current?.id === route.selectedId ? current : data ? collectionOrder.flatMap(collection => data.collections[collection].items).find(item => item.id === route.selectedId) ?? null : null)
   // The page-level route projector is the single owner of Project work-view
   // state. Re-projecting the old URL into the parent during a local click can
   // race Next navigation and immediately undo List/Board changes.

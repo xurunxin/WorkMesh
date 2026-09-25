@@ -106,6 +106,24 @@ describe('Project Control Center', () => {
     expect(fetchMock.mock.calls[1]?.[0]).toContain('cursor=next-running')
   })
 
+  it('keeps an unapplied filter draft when the projection refreshes with new data', async () => {
+    const paged = { ...response, collections: { ...response.collections, running: { items: [digest(), digest({ id: 'agent_session:99999999-9999-4999-8999-999999999999', sessionId: '99999999-9999-4999-8999-999999999999', title: 'Second Agent' })], nextCursor: null } } }
+    const fetchMock = vi.fn(async (input: string) => ({ ok: true, status: 200, json: async () => input.includes('cursor=') ? paged : response }))
+    vi.stubGlobal('fetch', fetchMock)
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined} workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability', summary: null, description: null, status: 'active' }} /></LocaleProvider>)
+    await screen.findByRole('heading', { name: 'Project Control Center' })
+
+    fireEvent.change(screen.getByRole('combobox', { name: '负责人' }), { target: { value: '44444444-4444-4444-8444-444444444444' } })
+
+    fireEvent.click(screen.getByRole('button', { name: '加载更多工作项' }))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
+    // The second page merges into the same section; each digest renders its Work Item
+    // title as the card heading, so two headings prove the refreshed projection landed.
+    await waitFor(() => expect(screen.getAllByRole('heading', { name: 'Project Control Center' })).toHaveLength(2))
+
+    expect(screen.getByRole('combobox', { name: '负责人' })).toHaveValue('44444444-4444-4444-8444-444444444444')
+  })
+
   it('owns server-side filters in the URL and projection request', async () => {
     const fetchMock = vi.fn(async (_input: string) => ({ ok: true, status: 200, json: async () => response }))
     vi.stubGlobal('fetch', fetchMock)
