@@ -563,6 +563,10 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/126
 - 浏览器/真实模型/恢复证据：改动前隔离 Docker Projects 页面截图见 `.evidence/webpi-stage-projects.png`；改动后 Project、Work、Issue 详情和深色工作页截图见 `.evidence/webpi-stage-w04-project.png`、`.evidence/webpi-stage-w04-work.png`、`.evidence/webpi-stage-w04-issue.png`、`.evidence/webpi-stage-w04-work-dark.png`（均为忽略目录）。真实容器浏览器验证项目说明折叠/展开、Project 切换无旧数据、工作列表使用完整内容宽度且筛选器无横向溢出；真实 API 进度 `total=1, completed=0` 与页面 `0/1` 一致，未出现 hydration 错误。E2E 覆盖项目工作区几何、进度和 hydration。
 - 演示步骤、已知限制、规范偏差及 follow-up：登录 Docker 测试环境 → 打开 W04 Project → 看到摘要和 `0/1` 完成进度 → 展开项目说明 → 切换“工作”查看全宽列表和 Issue 详情 → 切换 W11 Project 检查无旧内容。Project header 优先展示摘要，长描述保留在可展开区域；命令中心在页头 hydration 后挂载，避免开发环境报错。W04 仍需完成页面整体替换、Issue 全路径与权限/并发/移动交互矩阵，不能关闭任务。
 
+### W04 追加验证与修复（2026-09-25）
+
+Project 编辑 E2E 在创建第二个 Issue 后曾从“工作”跳回“概览”，原因是子组件只更新本地 surface，父页面仍保留旧 tab；刷新 Issue 后旧 URL 重新投影覆盖了当前视图。现由 `ProjectControlCenter` 的工作入口调用父页面 `onWorkViewChange`，由单一页面路由负责状态；代码提交 `2a8ff3f`。相关浏览器用例 9/9 通过，完整 E2E 68/68 通过；Web 组件单测 725/725，通过真实隔离 Docker Web 镜像重建与首页 200 检查。W04 仍是进行中；未扩充 REST、迁移或事件。
+
 
 ---
 
@@ -993,7 +997,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/132
 <!-- WM-WEBPI-20260924:W11 -->
 # W11 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵
 
-阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：实施中（2026-09-25）；受控 Project/Issue/Document 读取、普通创建/编辑、Issue 关系、证据制品、审批申请、lease 获取、handoff 提议、完整 plan 发布与 Session 活动已接入 Pi；完成等操作族仍待实现。
+阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：实施中（2026-09-25）；受控 Project/Issue/Document 读取、普通创建/编辑、Issue 关系、证据制品、审批申请、lease 查询/获取/释放、handoff 提议、完整 plan 发布、Session 活动与完成意图已接入 Pi；崩溃恢复和完整权限拒绝矩阵仍待实现。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1055,7 +1059,15 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 - 数据迁移 / API / events / Skill 变更：W11 本段无迁移、REST API、事件或 Skill 变更；Pi Runner 新增受 live capability manifest 控制的 WorkMesh 工具。Compose API 服务补齐与 Runner 共用的服务令牌环境变量。
 - 实际测试命令、结果、失败/skip：新增 plan/活动工具后 `pnpm lint` 18/18 PASS、`pnpm typecheck` 18/18 PASS、`pnpm test` 29/29 PASS（Runner 11/11）；`pnpm test:integration`：DB 77/77、API 135 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip；单独启用真实 M3 的 Runner 集成测试 4/4 PASS；`pnpm test:e2e` 68/68 PASS；Docker `agent` profile 最终镜像构建与 API health PASS。
 - 浏览器/真实模型/恢复证据：2026-09-25，最终 Runner 镜像在隔离 Docker 环境以真实 `MiniMax-M3` 执行 Turn `cf23e217-a387-4c5f-b091-aeb1ec637439`，状态 `settled`，生成 Issue `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3` 的普通文档 `Docker M3 proof 24328233`；首次运行的 Runner 日志证实调用 `workmesh_session_context`、`workmesh_create_document` 两个工具。密钥在 API vault 中，Runner 未接收模型密钥。此前 `RUNNER_ASSIGNMENT_DISCOVERY_FAILED` 定位为 Compose API 未传入服务令牌，补齐后发现接口 200，Runner 正常执行。
-- 演示步骤、已知限制、规范偏差及 follow-up：使用有授权的 Agent 与 M3 连接创建 Workbench 对话并发送“读取会话上下文并创建 Issue 文档”请求，查看 Turn、文档和 Session 审计活动。当前 W11 尚未完成 lease 释放、handoff 接受、Session 完成工具和完整权限拒绝矩阵；plan 与活动工具已有单元测试，尚无真实 Session 验收；前置 W04 主流程也未完成，不关闭 W11。持久 WorkMesh `GEN-562` 与隔离 Docker 测试实例不互通，前者待可用控制面同步。
+- 演示步骤、已知限制、规范偏差及 follow-up：使用有授权的 Agent 与 M3 连接创建 Workbench 对话并发送“读取会话上下文并创建 Issue 文档”请求，查看 Turn、文档和 Session 审计活动。该首段验收时尚未覆盖 lease 释放、Session 完成和完整权限拒绝矩阵；后续真实完成验收见下。`acceptHandoff` 是 Human-only，不列为待实现 Agent 工具。前置 W04 主流程未完成，不关闭 W11。持久 WorkMesh `GEN-562` 与隔离 Docker 测试实例不互通，前者待可用控制面同步。
+
+### W11 追加交付记录（2026-09-25）
+
+- 实现提交/PR 与精确环境：本地 `codex/wm-webpi-implementation` 分支代码提交 `2a8ff3f`，未推送或创建 PR；隔离 Compose 项目 `workmesh-webpi-stage` 的新 Runner 镜像。重建 Runner 容器须使用 `.evidence/webpi-docker.env` 中的安装令牌和共享服务令牌；首次未传 env 文件时 Runner 报 `WORKMESH_AGENT_INSTALLATION_TOKEN_REQUIRED`，补齐后同一待执行 Turn 成功。
+- 数据迁移 / API / events / Skill 变更：本段无迁移、REST API、事件或 Skill 变更。Runner 增加 lease 列表/释放工具；Session 完成工具先验证共享契约并排队，公开 Turn `settled` 后再用指定 If-Match 和稳定幂等键调用现有完成端点。若完成失败，Turn 保持已提交，Runner 尝试写可见 warning。handoff 接受始终由 Human 执行。
+- 实际测试命令、结果、失败/skip：Runner 工具单测 13/13 PASS；最终 `pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29 PASS（Web 725/725，API 171/171）。`pnpm test:integration` 第一次因未设置专用测试环境变量被环境保护脚本拒绝，未运行 DB 重置；使用 `.evidence/run-webpi-integration.ps1` 指向独立测试库后 DB 77/77、API 135 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip。E2E 首轮 Project 编辑场景因 W04 子/父路由状态不一致而 67/68，通过修复后聚焦用例 9/9、最终完整 `pnpm test:e2e` 68/68 PASS。
+- 浏览器/真实模型/恢复证据：真实中国区 `MiniMax-M3`，Docker Turn `3ab00210-848e-4251-a54e-76ec045c8139`；Runner 日志工具顺序为 `workmesh_session_context`、`workmesh_create_document`、`workmesh_get_session`、`workmesh_complete_session`，输出 `sessionCompletion: completed`。API 回读 Turn `settled`、Session `completed`，Issue 文档 `Docker completion proof 84a85db4` 存在；记录存于本地忽略的 `.evidence/webpi-stage-live-m3-complete.json`。
+- 演示步骤、已知限制、规范偏差及 follow-up：在测试环境以 M3 发送创建 Issue 文档并完成 Session 的任务，回读公开回答、Session 状态与文档。Runner 若在 Turn 落库与 Session 完成请求之间崩溃，当前内存中的完成意图可能丢失；须增加持久对账与恢复测试。仍需完整权限/Stop/旧 revision/幂等矩阵、跨传输一致性与 W04 主流程，W11 保持实施中。
 
 
 ---
