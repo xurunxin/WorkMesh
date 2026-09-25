@@ -9,6 +9,8 @@ export const runtimeSecretEnvironmentNames = [
   'WORKMESH_SESSION_TOKEN',
   'WORKMESH_MCP_ACCESS_TOKEN',
   'WORKMESH_WEB_PUSH_PRIVATE_KEY',
+  'WORKMESH_RUNNER_SERVICE_TOKEN',
+  'WORKMESH_AGENT_INSTALLATION_TOKEN',
 ]
 
 /** @type {Record<string, readonly string[]>} */
@@ -40,6 +42,7 @@ const requiredByService = {
   mcp: ['WORKMESH_API_URL', 'WORKMESH_SESSION_TOKEN', 'WORKMESH_MCP_ACCESS_TOKEN'],
   web: ['NEXT_PUBLIC_API_URL'],
   migrate: ['DATABASE_URL'],
+  'agent-runner': ['WORKMESH_API_URL', 'WORKMESH_RUNNER_SERVICE_TOKEN', 'WORKMESH_AGENT_INSTALLATION_TOKEN'],
 }
 
 const minimumLengths = {
@@ -50,6 +53,8 @@ const minimumLengths = {
   WORKMESH_SESSION_TOKEN: 32,
   WORKMESH_MCP_ACCESS_TOKEN: 32,
   WORKMESH_WEB_PUSH_PRIVATE_KEY: 32,
+  WORKMESH_RUNNER_SERVICE_TOKEN: 32,
+  WORKMESH_AGENT_INSTALLATION_TOKEN: 32,
 }
 
 const urlNames = [

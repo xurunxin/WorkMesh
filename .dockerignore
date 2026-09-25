@@ -5,6 +5,8 @@ node_modules
 # Build and test output.
 .next
 **/.next
+.next-e2e
+**/.next-e2e
 dist
 **/dist
 coverage
@@ -26,6 +28,9 @@ test-results
 *.tsbuildinfo
 .turbo
 .cache
+.codegraph
+.evidence
+scripts/.local-*
 .DS_Store
 Thumbs.db
 

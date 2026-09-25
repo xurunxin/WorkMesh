@@ -10,6 +10,7 @@ const labels = {
   projects: '项目',
   recovery: '恢复中心',
   settings: '设置',
+  workbench: '工作台',
 } as const
 
 describe('shared workspace navigation', () => {
@@ -17,9 +18,15 @@ describe('shared workspace navigation', () => {
 
   it('publishes task-oriented destinations first and keeps Stable workflows reachable', () => {
     const navigation = workspaceNavigation({ active: 'agents', t })
-    expect(navigation.map(item => item.label)).toEqual(['收件箱', '恢复中心', '项目', '智能体', '运营', 'Issues', '指南'])
+    expect(navigation.map(item => item.label)).toEqual(['工作台', '收件箱', '恢复中心', '项目', '智能体', '运营', 'Issues', '指南'])
     expect(navigation.filter(item => item.active).map(item => item.href)).toEqual(['/agents'])
     expect(navigation.map(item => item.href)).toEqual(expect.arrayContaining(['/?view=my-work', '/?view=guidance', '/operations']))
+  })
+
+  it('keeps the agent workbench a first-class destination with a canonical URL', () => {
+    const navigation = workspaceNavigation({ active: 'workbench', t })
+    expect(navigation[0]).toMatchObject({ active: true, href: '/workbench', label: '工作台', testId: 'view-workbench' })
+    expect(navigation.filter(item => item.active)).toHaveLength(1)
   })
 
   it('keeps only Settings in utility navigation (Operations is now a Settings tab)', () => {

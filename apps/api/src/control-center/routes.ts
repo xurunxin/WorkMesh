@@ -78,7 +78,7 @@ type DigestRow = QueryResultRow & Readonly<{
   evidence_count?: string | number | null
   verified?: boolean | null
 }>
-type ProjectRow = QueryResultRow & Readonly<{ id: string; name: string; status: string; target_date: Date | string | null; lead_actor_id: string | null; lead_name: string | null; revision: number; updated_at: Date | string }>
+type ProjectRow = QueryResultRow & Readonly<{ id: string; name: string; status: string; target_date: Date | string | null; lead_actor_id: string | null; lead_name: string | null; revision: number; updated_at: Date | string; work_total: number; work_completed: number; work_revision: number | null; work_updated_at: Date | string | null }>
 
 const requestActor = (request: FastifyRequest): ApiActor => request.actor as ApiActor
 const iso = (value: Date | string): string => value instanceof Date ? value.toISOString() : new Date(value).toISOString()
@@ -384,7 +384,21 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
       session: 'NULL::uuid', workItem: 'NULL::uuid',
     }, values)
     project = (await boundedQuery<ProjectRow>(h.db,
-      `SELECT project.id,project.name,project.status,project.target_date,project.lead_actor_id,lead.display_name AS lead_name,project.revision,project.updated_at FROM projects project LEFT JOIN actors lead ON lead.id=project.lead_actor_id AND lead.workspace_id=project.workspace_id AND lead.kind='human' WHERE project.id=$1 AND project.workspace_id=$2 AND project.deleted_at IS NULL AND ${auth}`,
+      `SELECT project.id,project.name,project.status,project.target_date,project.lead_actor_id,
+              lead.display_name AS lead_name,project.revision,project.updated_at,
+              work_progress.total AS work_total,work_progress.completed AS work_completed,
+              work_progress.revision AS work_revision,work_progress.updated_at AS work_updated_at
+         FROM projects project
+         LEFT JOIN actors lead ON lead.id=project.lead_actor_id AND lead.workspace_id=project.workspace_id AND lead.kind='human'
+         LEFT JOIN LATERAL (
+           SELECT count(*) FILTER (WHERE state.category <> 'canceled')::int AS total,
+                  count(*) FILTER (WHERE state.category = 'completed')::int AS completed,
+                  max(work.revision) AS revision,max(work.updated_at) AS updated_at
+             FROM work_items work
+             JOIN workflow_states state ON state.id=work.status_id
+            WHERE work.project_id=project.id AND work.workspace_id=project.workspace_id AND work.deleted_at IS NULL
+         ) work_progress ON true
+        WHERE project.id=$1 AND project.workspace_id=$2 AND project.deleted_at IS NULL AND ${auth}`,
       values,
     )).rows[0] ?? null
     if (!project) throw new DomainError('NOT_FOUND', 'Project Control Center not found')
@@ -400,10 +414,12 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
   }))
   const sectionMap = Object.fromEntries(pages)
   const allItems = pages.flatMap(([, page]) => page.items as Array<{ revision: number; updatedAt: string }>)
-  const revision = Math.max(project?.revision ?? 1, ...allItems.map(item => item.revision))
-  const sourceUpdatedAt = allItems.map(item => item.updatedAt).sort().at(-1) ?? project?.updated_at ?? new Date()
+  const revision = Math.max(project?.revision ?? 1, project?.work_revision ?? 1, ...allItems.map(item => item.revision))
+  const sourceUpdatedAt = [...allItems.map(item => item.updatedAt), project?.updated_at, project?.work_updated_at]
+    .filter((value): value is string | Date => value !== null && value !== undefined)
+    .map(iso).sort().at(-1) ?? new Date().toISOString()
   const observedAt = new Date().toISOString()
-  reply.header('ETag', `"control-center-v1-${revision}"`)
+  reply.header('ETag', `"control-center-v1-${revision}-${project?.work_total ?? 0}-${project?.work_completed ?? 0}"`)
   return controlCenterResponseSchema.parse({
     projectionVersion: 1,
     scope: { workspaceId: current.workspaceId, projectId: projectId ?? null },
@@ -414,6 +430,7 @@ async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: Fa
       targetDate: project.target_date ? dateOnly(project.target_date) : null,
       responsibleHuman: project.lead_actor_id && project.lead_name ? { id: project.lead_actor_id, kind: 'human', displayName: project.lead_name } : null,
       revision: project.revision,
+      progress: { total: project.work_total, completed: project.work_completed },
     } : null,
     revision,
     freshness: { state: 'current', observedAt, sourceUpdatedAt: iso(sourceUpdatedAt) },

@@ -31,6 +31,7 @@ import type { WorkItemCopy } from '@workmesh/ui'
 import type { WorkSurfaceCopy } from '../../features/work-items/work-surfaces'
 import type { WorkItemDetailCopy } from '../../features/work-items/detail/work-item-detail'
 import type { WorkItemArtifactsCopy } from '../../features/rich-content/artifacts'
+import type { RichTextEditorCopy } from '../../features/rich-content/editor'
 import type { McpClientType, McpGuideCopyFacts } from './mcp-onboarding'
 
 export type Locale = 'zh-CN' | 'en'
@@ -44,6 +45,7 @@ type TranslationKey =
   | 'close'
   | 'createIssue'
   | 'createProject'
+  | 'editProject'
   | 'connecting'
   | 'guidance'
   | 'description'
@@ -81,6 +83,7 @@ type TranslationKey =
   | 'responsibleHuman'
   | 'reconnecting'
   | 'search'
+  | 'saveChanges'
   | 'schema'
   | 'settings'
   | 'signOut'
@@ -100,6 +103,11 @@ type TranslationKey =
   | 'notFoundTitle'
   | 'pageLoadError'
   | 'retry'
+  | 'workbench'
+  | 'workbenchPlaceholderTitle'
+  | 'workbenchPlaceholderDescription'
+  | 'themeToDark'
+  | 'themeToLight'
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   'zh-CN': {
@@ -111,6 +119,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     close: '关闭',
     createIssue: '创建 Issue',
     createProject: '创建项目',
+    editProject: '编辑项目',
     connecting: '正在连接',
     guidance: '指南',
     description: '描述',
@@ -148,6 +157,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: '负责人',
     reconnecting: '正在重新连接',
     search: '搜索',
+    saveChanges: '保存更改',
     schema: '数据库架构',
     settings: '设置',
     signOut: '退出登录',
@@ -167,6 +177,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     notFoundTitle: '未找到页面',
     pageLoadError: '页面加载出错',
     retry: '重试',
+    workbench: '工作台',
+    workbenchPlaceholderTitle: 'Agent 工作台准备中',
+    workbenchPlaceholderDescription: '对话式 Agent 工作台将在后续里程碑上线。智能体注册、会话与执行视角当前可从「智能体」进入。',
+    themeToDark: '切换到深色主题',
+    themeToLight: '切换到浅色主题',
   },
   en: {
     agents: 'Agents',
@@ -177,6 +192,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     close: 'Close',
     createIssue: 'Create issue',
     createProject: 'Create project',
+    editProject: 'Edit project',
     connecting: 'Connecting',
     guidance: 'Guidance',
     description: 'Description',
@@ -214,6 +230,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     responsibleHuman: 'Responsible human',
     reconnecting: 'Reconnecting',
     search: 'Search',
+    saveChanges: 'Save changes',
     schema: 'schema',
     settings: 'Settings',
     signOut: 'Sign out',
@@ -231,8 +248,13 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     backToHome: 'Back to home',
     notFoundDescription: 'The page you are looking for does not exist or has been moved.',
     notFoundTitle: 'Page not found',
-    pageLoadError: 'Page failed to load',
+    pageLoadError: 'The page failed to load',
     retry: 'Retry',
+    workbench: 'Workbench',
+    workbenchPlaceholderTitle: 'Agent workbench is being prepared',
+    workbenchPlaceholderDescription: 'The conversational agent workbench arrives in an upcoming milestone. Agent registry, sessions, and the execution view remain available under Agents.',
+    themeToDark: 'Switch to the dark theme',
+    themeToLight: 'Switch to the light theme',
   },
 }
 
@@ -561,13 +583,21 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
       link: '链接',
       preview: '预览',
       edit: '编辑',
+      split: '分栏',
+      save: '保存到服务器',
+      saving: '正在保存…',
+      serverSaved: '已保存到服务器',
+      saveFailed: '保存失败，本地草稿已保留',
+      versionConflict: '服务器已有新版本，未覆盖你的草稿',
+      conflictHelp: '请先加载最新版本再保存；本地草稿已保留。',
+      retrySave: '重试保存',
       draftRestored: '已恢复本地草稿。',
       discardDraft: '放弃草稿',
       revisionDraft: (draftRevision, currentRevision) => `发现版本 ${draftRevision} 的草稿。请先检查，再基于版本 ${currentRevision} 保存。`,
       restoreForReview: '恢复并检查',
       discardOldDraft: '放弃旧草稿',
       notSaved: '尚未保存',
-      savedAgo: seconds => `${seconds} 秒前已保存`,
+      savedLocally: seconds => `已存本地草稿 · ${seconds} 秒前`,
     },
     executionState: '执行状态',
     fullWorkItem: '完整 Issue',
@@ -643,13 +673,21 @@ const detailCopies: Record<Locale, Partial<WorkItemDetailCopy>> = {
       link: 'Link',
       preview: 'Preview',
       edit: 'Edit',
+      split: 'Split view',
+      save: 'Save to server',
+      saving: 'Saving…',
+      serverSaved: 'Saved to server',
+      saveFailed: 'Save failed. Local draft kept.',
+      versionConflict: 'Server has a newer revision. Your draft was not applied.',
+      conflictHelp: 'Load the latest version before saving. Your local draft is kept.',
+      retrySave: 'Retry save',
       draftRestored: 'Local draft restored.',
       discardDraft: 'Discard draft',
       revisionDraft: (draftRevision, currentRevision) => `Found a draft from revision ${draftRevision}. Review first, then save against revision ${currentRevision}.`,
       restoreForReview: 'Restore for review',
       discardOldDraft: 'Discard old draft',
       notSaved: 'Not saved yet',
-      savedAgo: seconds => `Saved ${seconds}s ago`,
+      savedLocally: seconds => `Local draft saved ${seconds}s ago`,
     },
     executionState: 'Execution state',
     fullWorkItem: 'Full Issue',
@@ -765,6 +803,9 @@ export type SettingsCopy = {
   settingsTabsLabel: string
   tabWorkspace: string
   tabOperations: string
+  workbenchServiceTitle: string
+  workbenchServiceDescription: string
+  workbenchServiceOpen: string
 }
 
 const settingsCopies: Record<Locale, SettingsCopy> = {
@@ -780,6 +821,9 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     title: '设置',
     workspace: '工作区',
     subtitle: '工作区管理与日常规划保持分离。',
+    workbenchServiceTitle: '模型服务接入',
+    workbenchServiceDescription: '管理 Chat Completions 与 Responses 模型服务、凭据和模型目录。',
+    workbenchServiceOpen: '打开接入设置',
     reviewOnly: '你可以查看团队设置；工作区管理员负责管理团队和工作流状态。',
     workspaceStructure: '工作区结构',
     teams: '团队',
@@ -849,6 +893,9 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     title: 'Settings',
     workspace: 'Workspace',
     subtitle: 'Workspace administration stays separate from daily planning.',
+    workbenchServiceTitle: 'Model service connections',
+    workbenchServiceDescription: 'Manage Chat Completions and Responses providers, credentials, and models.',
+    workbenchServiceOpen: 'Open connection settings',
     reviewOnly: 'You can review team settings. Workspace admins manage teams and workflow states.',
     workspaceStructure: 'Workspace structure',
     teams: 'Teams',
@@ -2829,6 +2876,7 @@ export type RelationsCopy = {
   fieldWorkItemPlaceholder: string
   add: string
   loadMore: string
+  loadMoreCandidates: string
   reload: string
   conflictTitle: string
   conflictAction: string
@@ -2850,6 +2898,7 @@ const relationsCopies: Record<Locale, RelationsCopy> = {
     fieldWorkItemPlaceholder: '选择 Work Item',
     add: '添加关系',
     loadMore: '加载更多关系',
+    loadMoreCandidates: '加载更多可关联工作项',
     reload: '重新加载关系',
     conflictTitle: '关系已变更',
     conflictAction: '服务端已写入新版本，重新加载后重试。',
@@ -2869,6 +2918,7 @@ const relationsCopies: Record<Locale, RelationsCopy> = {
     fieldWorkItemPlaceholder: 'Select Work Item',
     add: 'Add relationship',
     loadMore: 'Load more relations',
+    loadMoreCandidates: 'Load more work items',
     reload: 'Reload relations',
     conflictTitle: 'Relations changed',
     conflictAction: 'A newer version was written server-side. Reload to continue.',
@@ -3563,6 +3613,7 @@ type LocaleContextValue = {
   issueCopy: Partial<WorkItemCopy>
   surfaceCopy: Partial<WorkSurfaceCopy>
   detailCopy: Partial<WorkItemDetailCopy>
+  editorCopy: RichTextEditorCopy | undefined
   guidanceCopy: GuidanceCopy
   settingsCopy: SettingsCopy
   loginCopy: LoginCopy
@@ -3604,6 +3655,7 @@ export function LocaleProvider({ children }: PropsWithChildren) {
     issueCopy: issueCopies[locale],
     surfaceCopy: surfaceCopies[locale],
     detailCopy: detailCopies[locale],
+    editorCopy: detailCopies[locale].editorCopy,
     guidanceCopy: guidanceCopies[locale],
     settingsCopy: settingsCopies[locale],
     loginCopy: loginCopies[locale],

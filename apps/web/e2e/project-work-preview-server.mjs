@@ -970,7 +970,7 @@ const handleApprovalJourneyRoute = async (request, response, url) => {
     send(response, {
       projectionVersion: 1,
       scope: { workspaceId: approvalJourneyIds.workspace, projectId: approvalJourneyProject.id },
-      project: { id: approvalJourneyProject.id, name: approvalJourneyProject.name, status: approvalJourneyProject.status, targetDate: null, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: approvalJourneyProject.revision },
+      project: { id: approvalJourneyProject.id, name: approvalJourneyProject.name, status: approvalJourneyProject.status, targetDate: null, responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' }, revision: approvalJourneyProject.revision, progress: { total: 1, completed: 0 } },
       revision: approvalJourneyProject.revision,
       freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: fixedNow },
       collections: { attention: empty, running: empty, risks: empty, recently_verified: empty, ready_work: empty, blocked_work: empty },
@@ -1176,6 +1176,7 @@ const handleFinalTourRoute = (request, response, url) => {
         targetDate: finalTourProject.target_date,
         responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' },
         revision: finalTourProject.revision,
+        progress: { total: finalTourWorkItems.length, completed: finalTourWorkItems.filter(item => item.status_category === 'completed').length },
       },
       revision: finalTourProject.revision,
       freshness: { state: 'current', observedAt: fixedNow, sourceUpdatedAt: fixedNow },
@@ -1570,6 +1571,7 @@ createServer(async (request, response) => {
   if (controlCenterMatch) {
     const projectId = controlCenterMatch[1]
     const empty = page([])
+    const progressItems = items.filter(item => item.project_id === projectId && item.status_category !== 'canceled')
     return send(response, {
       projectionVersion: 1,
       scope: { workspaceId: 'workspace-preview', projectId },
@@ -1580,6 +1582,7 @@ createServer(async (request, response) => {
         targetDate: null,
         responsibleHuman: { id: human.id, displayName: human.display_name, kind: 'human' },
         revision: 1,
+        progress: { total: progressItems.length, completed: progressItems.filter(item => item.status_category === 'completed').length },
       },
       revision: 1,
       freshness: { state: 'fresh', observedAt: '2026-08-27T00:00:00.000Z', sourceUpdatedAt: '2026-08-27T00:00:00.000Z' },

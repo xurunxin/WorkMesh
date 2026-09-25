@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AppShell, Button } from '@workmesh/ui'
 import { publicRequest } from '../lib/api'
+import { ThemeToggle } from '../../features/navigation'
 import { LocaleToggle, useLocale } from '../lib/i18n'
 import { WorkMeshBrandIcon } from '../lib/brand'
 import { useWorkMeshDocumentTitle } from '../lib/document-title'
@@ -114,7 +115,7 @@ export default function ConnectPage() {
     setCopyAnnouncement(current => current === 'config' ? null : current)
   }
 
-  return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<LocaleToggle />} skipLabel={t('skipToContent')}>
+  return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<div className="shell-action-cluster"><ThemeToggle /><LocaleToggle /></div>} skipLabel={t('skipToContent')}>
     <div className="center connect-page"><section className="connection-instruction onboarding-shell" aria-labelledby="connect-title">
     <header className="onboarding-heading">
       <div><p className="eyebrow">{text.eyebrow}</p><h1 id="connect-title">{text.title}</h1></div>

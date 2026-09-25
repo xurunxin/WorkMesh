@@ -55,6 +55,7 @@ describe('OperationsPage navigation', () => {
     expect(screen.getByTestId('view-operations')).toHaveClass('is-active')
     expect([...document.querySelectorAll<HTMLAnchorElement>('.app-navigation-link.is-active')].map(link => link.getAttribute('href'))).toEqual(['/operations', '/operations'])
     expect([
+      'view-workbench',
       'view-inbox',
       'view-projects',
       'view-agents',
@@ -62,6 +63,7 @@ describe('OperationsPage navigation', () => {
       'view-my-work',
       'view-guidance',
     ].map(testId => screen.getByTestId(testId).getAttribute('href'))).toEqual([
+      '/workbench',
       '/?view=inbox',
       '/?view=projects',
       '/agents',

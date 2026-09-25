@@ -91,7 +91,7 @@ const defaultCopy: WorkItemDetailCopy = {
   dueDate: 'Due date',
   editProjection: 'Edit the authorized Issue projection.',
   editorCopy: {
-    formatting: label => `${label} formatting`, undo: 'Undo', redo: 'Redo', heading: 'Heading', bold: 'Bold', italic: 'Italic', strike: 'Strike', bullets: 'Bulleted list', numbered: 'Numbered list', quote: 'Quote', code: 'Inline code', codeBlock: 'Code block', link: 'Link', preview: 'Preview', edit: 'Edit', draftRestored: 'A local draft was restored.', discardDraft: 'Discard draft', revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`, restoreForReview: 'Restore for review', discardOldDraft: 'Discard old draft', notSaved: 'Not saved yet', savedAgo: seconds => `Saved ${seconds}s ago`,
+    formatting: label => `${label} formatting`, undo: 'Undo', redo: 'Redo', heading: 'Heading', bold: 'Bold', italic: 'Italic', strike: 'Strike', bullets: 'Bulleted list', numbered: 'Numbered list', quote: 'Quote', code: 'Inline code', codeBlock: 'Code block', link: 'Link', edit: 'Edit', split: 'Split view', preview: 'Preview', save: 'Save to server', saving: 'Saving…', serverSaved: 'Saved to server', saveFailed: 'Save failed. Local draft kept.', versionConflict: 'Server has a newer revision. Your draft was not applied.', conflictHelp: 'Load the latest version before saving. Your local draft is kept.', retrySave: 'Retry save', draftRestored: 'A local draft was restored.', discardDraft: 'Discard draft', revisionDraft: (draftRevision, currentRevision) => `A draft from revision ${draftRevision} is available. Review it before saving against revision ${currentRevision}.`, restoreForReview: 'Restore for review', discardOldDraft: 'Discard old draft', notSaved: 'Not saved yet', savedLocally: seconds => `Local draft saved ${seconds}s ago`,
   },
   executionState: 'Execution state',
   fullWorkItem: 'Full Issue',
@@ -246,13 +246,10 @@ function WorkItemDetailContent({ mode, model, options, error, conflict, suppleme
     setActiveTab(next)
     if (!writeHistory) return
     const url = new URL(window.location.href)
-    if (next === 'overview') {
-      url.searchParams.delete('workItemSection')
-      url.searchParams.delete('workItemSectionItem')
-    } else {
-      url.searchParams.set('workItemSection', next)
-      url.searchParams.set('workItemSectionItem', model.id)
-    }
+    // Keep the owning Issue in the route even on Overview. Removing it makes
+    // the workspace route projector interpret a tab change as closing the sheet.
+    url.searchParams.set('workItemSection', next)
+    url.searchParams.set('workItemSectionItem', model.id)
     window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`)
   }
   const agentActionHint = agentAction?.hint ?? agentAction?.reason

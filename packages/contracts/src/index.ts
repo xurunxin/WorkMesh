@@ -14,6 +14,7 @@ import {
 } from './route-policy.js'
 
 export * from './route-policy.js'
+export * from './pi-workbench-contracts.js'
 export { workmeshSkillManifest } from './workmesh-skill-manifest.js'
 export {
   agentLifecycleStatusSchema,
@@ -367,6 +368,21 @@ export const apiErrorCodeSchema = z.enum([
   'COORDINATOR_PRINCIPAL_HUMAN_INVALID',
   'AGENT_SKILL_VERSION_MISMATCH',
   'AGENT_SKILL_SIGNATURE_INVALID',
+  // WM-WEBPI-20260924 W01 — workbench conversation/runner/LLM connection
+  // contracts (see pi-workbench-contracts.ts for the frozen shapes).
+  'CONVERSATION_NOT_FOUND',
+  'CONVERSATION_ARCHIVED',
+  'CONVERSATION_TURN_QUEUE_LIMIT_EXCEEDED',
+  'WORKBENCH_AUTHORITY_REVOKED',
+  'WORKBENCH_STOP_REQUIRED',
+  'RUNNER_FENCE_STALE',
+  'RUNNER_ATTEMPT_SUPERSEDED',
+  'LLM_CONNECTION_NOT_FOUND',
+  'LLM_CONNECTION_FORBIDDEN',
+  'LLM_CONNECTION_PROTOCOL_UNSUPPORTED',
+  'LLM_CONNECTION_EGRESS_BLOCKED',
+  'LLM_CONNECTION_SECRET_UNRESOLVED',
+  'LLM_MODEL_NOT_FOUND',
 ])
 export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
 
@@ -458,6 +474,27 @@ export const stage0RouteManifest = [
   { method: 'POST', path: '/api/v1/views', authenticated: true, mutation: true },
   { method: 'GET', path: '/api/v1/events', authenticated: true },
   { method: 'GET', path: '/api/v1/events/stream', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/llm-connections', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/conversations', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/conversations', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/workbench/conversations/{id}', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/conversations/{id}/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/workbench/conversations/{id}/messages', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/conversations/{id}/turns', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/conversations/{id}/turns', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/workbench/conversations/{id}/turns/{turnId}/stop', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/agent-sessions/{id}/workbench-turns', authenticated: true },
+  { method: 'GET', path: '/api/v1/workbench/runner/assignments', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/turns/{id}/claim', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/workbench/runner-attempts/{id}/credential', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/runner-attempts/{id}/start', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/workbench/runner-attempts/{id}/status', authenticated: true },
+  { method: 'POST', path: '/api/v1/workbench/runner-attempts/{id}/settle', authenticated: true, mutation: true },
+  { method: 'POST', path: '/api/v1/workbench/llm-connections', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'DELETE', path: '/api/v1/workbench/llm-connections/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/workbench/llm-connections/{id}/models', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/admin/retention/status', authenticated: true },
 ] as const
 
@@ -843,6 +880,7 @@ export const controlCenterResponseSchema = z.object({
     targetDate: dateSchema.nullable(),
     responsibleHuman: attentionActorReferenceSchema.nullable(),
     revision: revisionSchema,
+    progress: z.object({ total: z.number().int().nonnegative(), completed: z.number().int().nonnegative() }).strict(),
   }).strict().nullable(),
   revision: revisionSchema,
   freshness: humanAttentionFreshnessSchema,
@@ -1182,7 +1220,12 @@ export const guidancePinSchema = z.object({
   revisionNumber: z.number().int().positive(),
   contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
 }).strict()
-export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()), guidancePins: z.array(guidancePinSchema) })
+export const documentPinSchema = z.object({
+  documentId: idSchema, ownerType: z.enum(['project', 'work_item']), ownerId: idSchema,
+  uri: z.string().url(), revisionId: idSchema, revisionNumber: z.number().int().positive(),
+  contentHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+}).strict()
+export const sessionContextResponseSchema = z.object({ session: agentSessionResponseSchema, workItem: workItemResponseSchema.nullable(), plan: planVersionResponseSchema.nullable(), contextSnapshotId: idSchema.nullable(), guidanceUris: z.array(z.string().url()), guidancePins: z.array(guidancePinSchema), documentPins: z.array(documentPinSchema) })
 export const guidanceRevisionMetadataSchema = z.object({
   id: idSchema,
   revisionNumber: z.number().int().positive(),
@@ -1229,6 +1272,66 @@ export const guidanceDiffResponseSchema = z.object({
   scopeId: idSchema,
   from: guidanceRevisionMetadataSchema,
   to: guidanceRevisionMetadataSchema,
+  changes: z.array(z.object({ kind: z.enum(['context', 'removed', 'added']), oldLine: z.number().int().positive().nullable(), newLine: z.number().int().positive().nullable(), text: z.string() }).strict()),
+}).strict()
+
+export const documentOwnerTypeSchema = z.enum(['project', 'work_item'])
+export const documentContentHashSchema = z.string().regex(/^sha256:[a-f0-9]{64}$/)
+export const createDocumentInputSchema = z.object({
+  ownerType: documentOwnerTypeSchema,
+  ownerId: idSchema,
+  title: z.string().trim().min(1).max(180),
+  markdown: z.string().max(200_000),
+  changeSummary: z.string().trim().min(1).max(500).optional(),
+}).strict()
+export const updateDocumentInputSchema = z.object({
+  title: z.string().trim().min(1).max(180),
+  markdown: z.string().max(200_000),
+  baseRevisionId: idSchema,
+  baseContentHash: documentContentHashSchema,
+  changeSummary: z.string().trim().min(1).max(500).optional(),
+}).strict()
+export const documentRevisionSchema = z.object({
+  id: idSchema,
+  revisionNumber: z.number().int().positive(),
+  baseRevisionId: idSchema.nullable(),
+  restoredFromRevisionId: idSchema.nullable(),
+  title: z.string().min(1).max(180),
+  markdown: z.string().max(200_000),
+  contentHash: documentContentHashSchema,
+  changeSummary: z.string().nullable(),
+  authorActorId: idSchema,
+  createdAt: timestampSchema,
+}).strict()
+export const documentResponseSchema = z.object({
+  id: idSchema,
+  ownerType: documentOwnerTypeSchema,
+  ownerId: idSchema,
+  teamId: idSchema,
+  title: z.string().min(1).max(180),
+  status: z.enum(['active', 'archived']),
+  revision: z.number().int().positive(),
+  currentRevision: documentRevisionSchema,
+  createdByActorId: idSchema,
+  archivedAt: timestampSchema.nullable(),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+}).strict()
+export const documentHistoryResponseSchema = z.object({
+  document: documentResponseSchema,
+  revisions: z.array(documentRevisionSchema.omit({ markdown: true })),
+  nextCursor: z.string().nullable(),
+}).strict()
+export const documentArchiveInputSchema = z.object({ reason: z.string().trim().min(1).max(2_000) }).strict()
+export const restoreDocumentRevisionInputSchema = z.object({
+  revisionId: idSchema,
+  baseRevisionId: idSchema,
+  baseContentHash: documentContentHashSchema,
+  changeSummary: z.string().trim().min(1).max(500),
+}).strict()
+export const documentDiffResponseSchema = z.object({
+  from: documentRevisionSchema.omit({ markdown: true }),
+  to: documentRevisionSchema.omit({ markdown: true }),
   changes: z.array(z.object({ kind: z.enum(['context', 'removed', 'added']), oldLine: z.number().int().positive().nullable(), newLine: z.number().int().positive().nullable(), text: z.string() }).strict()),
 }).strict()
 
@@ -1732,6 +1835,17 @@ export const stage3RouteManifest = [
   { method: 'GET', path: '/api/v1/milestones/{id}', authenticated: true },
   { method: 'PATCH', path: '/api/v1/milestones/{id}', authenticated: true, mutation: true, revisioned: true },
   { method: 'DELETE', path: '/api/v1/milestones/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/documents', authenticated: true },
+  { method: 'POST', path: '/api/v1/documents', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/documents/{id}', authenticated: true },
+  { method: 'PATCH', path: '/api/v1/documents/{id}', authenticated: true, mutation: true, revisioned: true },
+  { method: 'GET', path: '/api/v1/documents/{id}/history', authenticated: true },
+  { method: 'GET', path: '/api/v1/documents/{id}/revisions/{revisionId}', authenticated: true },
+  { method: 'GET', path: '/api/v1/documents/{id}/diff', authenticated: true },
+  { method: 'GET', path: '/api/v1/documents/{id}/export', authenticated: true },
+  { method: 'POST', path: '/api/v1/documents/{id}/archive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/documents/{id}/unarchive', authenticated: true, mutation: true, revisioned: true },
+  { method: 'POST', path: '/api/v1/documents/{id}/restore', authenticated: true, mutation: true, revisioned: true },
   { method: 'GET', path: '/api/v1/work-items/{id}/relations', authenticated: true },
   { method: 'POST', path: '/api/v1/work-items/{id}/relations', authenticated: true, mutation: true },
   { method: 'DELETE', path: '/api/v1/work-items/{id}/relations/{relationId}', authenticated: true, mutation: true, revisioned: true },
@@ -1761,6 +1875,15 @@ export type GuidancePin = z.infer<typeof guidancePinSchema>
 export type PublishGuidanceInput = z.infer<typeof publishGuidanceInputSchema>
 export type ArchiveGuidanceInput = z.infer<typeof archiveGuidanceInputSchema>
 export type RollbackGuidanceInput = z.infer<typeof rollbackGuidanceInputSchema>
+export type CreateDocumentInput = z.infer<typeof createDocumentInputSchema>
+export type UpdateDocumentInput = z.infer<typeof updateDocumentInputSchema>
+export type DocumentResponse = z.infer<typeof documentResponseSchema>
+export type DocumentRevision = z.infer<typeof documentRevisionSchema>
+export type DocumentPin = z.infer<typeof documentPinSchema>
+export type DocumentHistoryResponse = z.infer<typeof documentHistoryResponseSchema>
+export type DocumentDiffResponse = z.infer<typeof documentDiffResponseSchema>
+export type DocumentArchiveInput = z.infer<typeof documentArchiveInputSchema>
+export type RestoreDocumentRevisionInput = z.infer<typeof restoreDocumentRevisionInputSchema>
 export type AgentSessionState = z.infer<typeof agentSessionStateSchema>
 export type ApprovalStatus = z.infer<typeof approvalStatusSchema>
 export type ApprovalViewerActionability = z.infer<typeof approvalViewerActionabilitySchema>

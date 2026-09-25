@@ -188,6 +188,9 @@ jobs:
       AUTH_RATE_LIMIT_INSTALL_BURST: '100'
       SESSION_SECRET: workmesh-ci-session-secret-api-00000001
       WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      # The workbench runner integration test authenticates every runner call with
+      # this shared secret, and the route rejects anything shorter than 32 chars.
+      WORKMESH_RUNNER_SERVICE_TOKEN: workmesh-ci-runner-service-token-00000001
       S3_ENDPOINT: http://127.0.0.1:9000
       S3_BUCKET: workmesh-artifacts
       S3_REGION: us-east-1
@@ -688,7 +691,7 @@ jobs:
       - name: Set up exact Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: 22.15.0
+          node-version: 22.19.0
       - name: Aggregate required results
         env:
           NEEDS_JSON: ${{ toJSON(needs) }}

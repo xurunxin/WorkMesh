@@ -457,6 +457,27 @@ describe('Human Attention projection acceptance', () => {
     const controlCenter = controlCenterResponseSchema.parse(controlCenterResponse.json())
     expect(controlCenter.project?.id).toBe(project.id)
     expect(controlCenter.project).toMatchObject({ targetDate: '2026-09-30', responsibleHuman: { id: actor.id, kind: 'human' } })
+    // Finished Agent Sessions do not complete their parent Issue. Progress
+    // follows the workflow state of non-canceled Issues across the Project.
+    expect(controlCenter.project?.progress).toEqual({ total: 1, completed: 0 })
+    const progressStates = (await db.query<{ id: string; category: string }>(
+      "SELECT id,category FROM workflow_states WHERE team_id=$1 AND category IN ('completed','canceled')",
+      [teamId],
+    )).rows
+    const completedStateId = progressStates.find(state => state.category === 'completed')?.id
+    const canceledStateId = progressStates.find(state => state.category === 'canceled')?.id
+    expect(completedStateId).toBeDefined()
+    expect(canceledStateId).toBeDefined()
+    await db.query(
+      `INSERT INTO work_items(workspace_id,team_id,number,title,status_id,priority,responsible_human_actor_id,labels,project_id)
+       VALUES($1,$2,900,'Completed Issue',$3,'medium',$5,'{}'::text[],$6),
+             ($1,$2,901,'Canceled Issue',$4,'medium',$5,'{}'::text[],$6)`,
+      [actor.workspace_id, teamId, completedStateId, canceledStateId, actor.id, project.id],
+    )
+    const progressAfterResponse = await humanCall(human, 'GET', `/api/v1/projects/${project.id}/control-center`)
+    const progressAfter = controlCenterResponseSchema.parse(progressAfterResponse.json())
+    expect(progressAfter.project?.progress).toEqual({ total: 2, completed: 1 })
+    expect(progressAfterResponse.headers.etag).not.toBe(controlCenterResponse.headers.etag)
     expect(controlCenter.collections.running.items).toEqual(expect.arrayContaining([
       expect.objectContaining({
         sessionId: session.id,
@@ -499,6 +520,7 @@ describe('Human Attention projection acceptance', () => {
       'GET',
       `/api/v1/projects/${project.id}/control-center?collection=ready_work&limit=100`,
     )).json())
+    expect(readyFirst.project?.progress).toEqual({ total: 152, completed: 1 })
     expect(readyFirst.collections.ready_work.items).toHaveLength(100)
     expect(readyFirst.collections.ready_work.nextCursor).not.toBeNull()
     const readySecond = controlCenterResponseSchema.parse((await humanCall(

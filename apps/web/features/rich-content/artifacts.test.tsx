@@ -106,4 +106,29 @@ describe('WorkItemArtifacts localized copy', () => {
     expect(screen.getByRole('button', { name: copy.cancelUpload })).toBeVisible()
     await waitFor(() => expect(mockApiMutation).toHaveBeenCalledTimes(1))
   })
+
+  it('aborts the in-flight PUT and returns to idle without a failure alert when cancel is clicked during uploading', async () => {
+    vi.stubGlobal('fetch', vi.fn((_url: string, init: { signal: AbortSignal }) => new Promise<never>((_resolve, reject) => {
+      init.signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+    })))
+    mockApiMutation.mockResolvedValueOnce({
+      id: 'intent-1',
+      uploadUrl: 'https://uploads.example.test/object',
+      requiredHeaders: {},
+    })
+
+    render(<WorkItemArtifacts copy={copy} workItemId="work-1" />)
+    fireEvent.change(screen.getByLabelText(copy.inputLabel), {
+      target: { files: [new File(['body'], 'note.txt', { type: 'text/plain' })] },
+    })
+    expect(await screen.findByText(copy.phaseAnnouncement(copy.phases.uploading))).toBeVisible()
+    expect(screen.getByRole('button', { name: copy.cancel })).toBeVisible()
+
+    fireEvent.click(screen.getByRole('button', { name: copy.cancel }))
+    await waitFor(() => expect(mockApiMutation).toHaveBeenCalledTimes(2))
+    // the abort must not surface as a failure and the progress line must clear
+    await new Promise(resolve => setTimeout(resolve, 0))
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.queryByText(copy.phaseAnnouncement(copy.phases.uploading))).toBeNull()
+  })
 })

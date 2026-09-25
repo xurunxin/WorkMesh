@@ -457,7 +457,9 @@ test.describe("Stage 0 browser acceptance", () => {
 
     await page.getByRole("link", { name: "Settings", exact: true }).click();
     await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
-    await page.getByRole("region", { name: "Team details" }).getByRole("button", { name: "Delete team" }).click();
+    const deleteTeamDetails = page.getByRole("region", { name: "Team details" });
+    await expect(deleteTeamDetails.getByRole("textbox", { name: "Team name" })).toHaveValue(editedTeamName);
+    await deleteTeamDetails.getByRole("button", { name: "Delete team" }).click();
     const deleteDialog = page.getByRole("dialog", { name: "Delete Team" });
     await expect(deleteDialog).toContainText(editedTeamName);
     await deleteDialog.getByRole("button", { name: `Delete Team ${editedTeamName}` }).click();

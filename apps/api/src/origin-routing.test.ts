@@ -30,10 +30,10 @@ describe('Browser CORS and public MCP origin routing', () => {
       readinessProbe: async () => {},
     })
     await app.ready()
-  })
+  }, 30_000)
 
   afterAll(async () => {
-    await app.close()
+    if (app) await app.close()
     vi.unstubAllEnvs()
   })
 

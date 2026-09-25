@@ -57,14 +57,14 @@ test.describe('unified light theme', () => {
       for (const legacy of legacyDarkBackgrounds) {
         expect(bg, `body background should not be the legacy dark ${legacy}`).not.toBe(legacy)
       }
-      // zh-CN smoke text. Default locale is zh-CN; if the page falls back to
-      // packages/ui English defaults the smoke text is allowed to be missing
-      // (logged by the dev console.warn). The assertion is therefore a
-      // best-effort visibility check, not a hard requirement.
+      // A protected route may finish its client redirect after the initial
+      // document paints. Check route text only while that route remains active.
       const smoke = page.getByText(route.zhSmokeText, { exact: false }).first()
-      if ((await smoke.count()) > 0) {
-        await expect(smoke).toBeVisible()
-      }
+      await expect.poll(async () => {
+        if (new URL(page.url()).pathname !== route.path) return true
+        if ((await smoke.count()) === 0) return true
+        return smoke.isVisible().catch(() => false)
+      }).toBe(true)
     })
   }
 })

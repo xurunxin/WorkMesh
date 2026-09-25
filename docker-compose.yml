@@ -69,6 +69,7 @@ services:
       AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS: ${AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS:-750}
       AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: ${AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS:-60000}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
     depends_on: { postgres: { condition: service_healthy } }
     command: ["pnpm", "db:migrate"]
     restart: "no"
@@ -101,6 +102,7 @@ services:
       AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
       PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       WORKMESH_WEB_PUSH_PUBLIC_KEY: ${WORKMESH_WEB_PUSH_PUBLIC_KEY:-}
@@ -184,6 +186,16 @@ services:
       PORT: 3002
     ports: ["127.0.0.1:${MCP_HOST_PORT:-3002}:3002"]
     depends_on: { api: { condition: service_healthy } }
+  agent-runner:
+    profiles: ["agent"]
+    build: { context: ., dockerfile: infra/docker/agent-runner.Dockerfile }
+    environment:
+      WORKMESH_API_URL: http://api:3001
+      WORKMESH_RUNNER_ALLOW_INTERNAL_HTTP: "1"
+      WORKMESH_AGENT_INSTALLATION_TOKEN: ${WORKMESH_AGENT_INSTALLATION_TOKEN:-}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
+    depends_on: { api: { condition: service_healthy } }
+    restart: unless-stopped
   web:
     build: { context: ., dockerfile: infra/docker/web.Dockerfile }
     environment:

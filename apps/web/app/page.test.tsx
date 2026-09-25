@@ -229,11 +229,11 @@ describe('Home project strip keyboard contract', () => {
     })
     render(<LocaleProvider><HomePage /></LocaleProvider>)
 
-    expect(await screen.findByRole('tab', { name: 'Edit' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('tab', { name: 'Preview' }))
+    expect(await screen.findByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Preview' }))
     expect(screen.getByText('0 characters')).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'Rendered Markdown preview' })).toBeInTheDocument()
-    expect(screen.getByText('Write Markdown in edit mode, then switch to preview to see the rendered result.')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Preview' })).toBeInTheDocument()
+    expect(screen.getByTestId('guidance-markdown')).toBeInTheDocument()
   })
 
   it('exposes a named project rail with ordinary project activation', async () => {

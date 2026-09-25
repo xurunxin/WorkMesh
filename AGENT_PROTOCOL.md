@@ -1734,3 +1734,42 @@ authorized response is not inferable through detail errors, counts, timing, or
 debug metadata. Projection payloads contain bounded operational summaries and
 references only; hidden model reasoning, private prompts, secrets, and
 unsanitized tool input are prohibited.
+
+# 25. Workbench conversation 与 Pi Runner（纵向接入中）
+
+WM-WEBPI-20260924 W01 冻结了工作台对话层的传输契约：Conversation、Turn、
+RunnerAttempt（单 writer/fencing）、用户配置的 LlmConnection/LlmModel 以及
+runner 工具调用账本。DTO 与 `workbench.*` 事件 schema 位于
+`packages/contracts/src/pi-workbench-contracts.ts`；对应 REST 端点、事件接入
+与 Runner 进程协议由后续路线图任务（W06/W07/W09/W10）以带编号的变更引入。
+
+W09/W10 当前纵向路径：Human 以 `POST /api/v1/workbench/conversations` 建立
+对话并绑定有效 Agent Session、模型；`POST /api/v1/workbench/conversations/{id}/turns`
+带 `If-Match` 与 `Idempotency-Key`，在一笔事务中追加公开用户消息、排队 Turn、
+`workbench.message.appended` / `workbench.turn.queued` 事件与 outbox。消息、Turn
+按序分页读取；只读该对话有权限的 Human 可见。当前上下文 pin 尚不可提交。
+
+独立 Pi Runner 用 Agent installation bearer 加部署级 Runner token 读取
+`/api/v1/workbench/runner/assignments`。新委派的 queued Session 仍须经现有
+`ack` 与带 revision 的 `state` 命令进入 executing，并定期发送诊断 heartbeat；
+Runner 不借用 Human cookie。Turn 领取、凭据读取、开始和结算还要求精确
+Agent Session bearer。API 对模型密钥响应设置 `Cache-Control: no-store`；
+密钥只交给受控 Runner 进程，不能进入模型提示、事件、活动或浏览器。
+Runner Attempt 的 fence token 仅用于该 Turn 的当前写入。Human 停止 Turn 时，
+服务端先废除 Attempt 栅栏；旧结算返回 `RUNNER_FENCE_STALE`。
+
+Session 失去权威或 Attempt 超过五分钟仍未结算时，Worker 在单一事务中将当前
+Attempt 和 Turn 标为 failed、推进 Conversation revision，并追加事件/outbox。
+`external_effects_reconciled=false` 表示外部效果未知；旧 Runner 写入仍被栅栏
+拒绝，系统不会自动重做 Turn。Human 可查看错误并在核对效果后发送新 Turn。
+
+W11 的 Pi 工具按当前 Session 的 live capability manifest 暴露，调用时由 API 再次
+检查授权。`workmesh_complete_session` 仅记录带 exact revision 与证据的完成意图；
+Runner 将公开回答、Turn 结算和可选 Session 完成在同一 PostgreSQL 事务提交，
+沿用现有完成命令的权限、状态与证据规则。完成被明确拒绝时，Runner 用独立幂等键
+只结算 Turn，并尽可能写入可见 warning；不冒充 Session 已完成。Runner 在提交前
+崩溃仍由 stale Attempt 机制处理，已发生的外部工具效果须另行对账。工具调用账本、
+预算、完整外部效果安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
+不得把上述纵向路径解释为 W10/W11 或整项路线图验收通过。现有 Session 控制面
+（创建、ACK、Prompt、Stop/Pause/Resume、完成）继续保持权威，对话层不隐式
+获得 Team 写权，写权仍只经由绑定 Agent Session 的委派授予。

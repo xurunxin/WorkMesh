@@ -256,6 +256,14 @@ for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 
   )
 requireCondition((jobSections.get('db-integration') ?? '').includes('pnpm test:integration:db'), 'db integration command is missing')
 requireCondition((jobSections.get('api-integration') ?? '').includes('pnpm test:integration:api'), 'API integration command is missing')
+// The workbench runner integration suite authenticates with this shared secret,
+// and the route rejects a missing or shorter value. Without it the suite fails
+// with `invalid value "undefined" for header x-workmesh-runner-token`, which no
+// other assertion would catch because the failure is inside the test run.
+requireCondition(
+  /^\s{6}WORKMESH_RUNNER_SERVICE_TOKEN:\s*\S{32,}\s*$/m.test(jobSections.get('api-integration') ?? ''),
+  'API integration must declare a WORKMESH_RUNNER_SERVICE_TOKEN of at least 32 characters',
+)
 requireCondition((jobSections.get('worker-integration') ?? '').includes('pnpm test:integration:worker'), 'worker integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery test:integration'), 'recovery integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery smoke:restored'), 'restored service and Agent smoke command is missing')
@@ -449,10 +457,10 @@ requireCondition(
 )
 requireCondition(required.includes('if: ${{ always() }}'), 'required-ci must aggregate with always()')
 requireCondition(required.includes("result !== 'success'"), 'required-ci must fail unless every dependency succeeds')
-requireCondition(required.includes('node-version: 22.15.0'), 'required-ci must pin its Node runtime')
+requireCondition(required.includes('node-version: 22.19.0'), 'required-ci must pin its Node runtime')
 
 requireCondition(packageJson.packageManager === 'pnpm@9.15.4', 'packageManager must be pnpm@9.15.4')
-requireCondition(nodeVersion === '22.15.0', 'Node must be pinned to 22.15.0')
+requireCondition(nodeVersion === '22.19.0', 'Node must be pinned to 22.19.0')
 requireCondition(
   occurrences(/corepack prepare pnpm@9\.15\.4 --activate/g) === executableJobs.length,
   'every executable job must activate pnpm@9.15.4 with Corepack',

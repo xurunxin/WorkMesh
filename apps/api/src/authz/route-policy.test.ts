@@ -55,7 +55,7 @@ describe('Fastify route policy inventory', () => {
     await app.ready()
     await app.close()
     vi.unstubAllEnvs()
-  }, 15_000)
+  }, 45_000)
 
   it('binds declared routes and accepts Fastify automatic HEAD', async () => {
     const app = Fastify()

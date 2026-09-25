@@ -3,6 +3,10 @@ info:
   title: WorkMesh API
   version: "1.0"
   description: WorkMesh server 1.0.0 REST API 1.0. Non-stable capabilities are deployment-gated and default disabled.
+# WM-WEBPI-20260924 W01: no API change in this task. Workbench conversation,
+# turn, runner-attempt, and LLM connection DTOs are frozen in
+# packages/contracts/src/pi-workbench-contracts.ts; their REST endpoints and
+# `workbench.*` events are introduced by later roadmap tasks (W06/W07/W09/W10).
 servers:
   - url: http://localhost:3001
 security:
@@ -1879,6 +1883,26 @@ paths:
     get: { x-workmesh-policy-id: route.getMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getMilestone, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Milestone" } } }
     patch: { x-workmesh-policy-id: route.updateMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: updateMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/MilestonePatch" } } } }, responses: { "200": { $ref: "#/components/responses/Milestone" }, "409": { $ref: "#/components/responses/Conflict" } } }
     delete: { x-workmesh-policy-id: route.deleteMilestone, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: deleteMilestone, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], responses: { "200": { $ref: "#/components/responses/Command" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents:
+    get: { x-workmesh-policy-id: route.listDocuments, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listDocuments, parameters: [{ name: ownerType, in: query, required: true, schema: { type: string, enum: [project, work_item] } }, { name: ownerId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    post: { x-workmesh-policy-id: route.createDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createDocument, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CreateDocumentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}:
+    get: { x-workmesh-policy-id: route.getDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getDocument, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+    patch: { x-workmesh-policy-id: route.updateDocument, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: updateDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/UpdateDocumentInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/history:
+    get: { x-workmesh-policy-id: route.listDocumentHistory, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listDocumentHistory, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/revisions/{revisionId}:
+    get: { x-workmesh-policy-id: route.getDocumentRevision, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getDocumentRevision, parameters: [{ $ref: "#/components/parameters/Id" }, { name: revisionId, in: path, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/diff:
+    get: { x-workmesh-policy-id: route.diffDocumentRevisions, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: diffDocumentRevisions, parameters: [{ $ref: "#/components/parameters/Id" }, { name: fromRevisionId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }, { name: toRevisionId, in: query, required: true, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { $ref: "#/components/responses/Json" } } }
+  /api/v1/documents/{id}/export:
+    get: { x-workmesh-policy-id: route.exportDocumentMarkdown, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: exportDocumentMarkdown, parameters: [{ $ref: "#/components/parameters/Id" }, { name: revisionId, in: query, required: false, schema: { $ref: "#/components/schemas/Id" } }], responses: { "200": { description: Exact Markdown revision, content: { text/markdown: { schema: { type: string } } } } } }
+  /api/v1/documents/{id}/archive:
+    post: { x-workmesh-policy-id: route.archiveDocument, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: archiveDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DocumentArchiveInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/unarchive:
+    post: { x-workmesh-policy-id: route.unarchiveDocument, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: unarchiveDocument, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/DocumentArchiveInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
+  /api/v1/documents/{id}/restore:
+    post: { x-workmesh-policy-id: route.restoreDocumentRevision, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: restoreDocumentRevision, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }, { $ref: "#/components/parameters/IfMatch" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/RestoreDocumentRevisionInput" } } } }, responses: { "200": { $ref: "#/components/responses/Json" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/work-items/{id}/relations:
     get: { x-workmesh-policy-id: route.listWorkItemRelations, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listWorkItemRelations, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/WorkItemRelations" } } }
     post: { x-workmesh-policy-id: route.createWorkItemRelation, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: createWorkItemRelation, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkItemRelationInput" } } } }, responses: { "200": { $ref: "#/components/responses/WorkItemRelation" }, "409": { $ref: "#/components/responses/Conflict" } } }
@@ -2004,6 +2028,222 @@ paths:
     delete: { x-workmesh-policy-id: route.revokeAgentEnrollmentPolicy, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: revokeAgentEnrollmentPolicy, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "204": { description: Enrollment policy revoked }, "409": { $ref: "#/components/responses/RevisionConflict" } } }
   /api/v1/agent-enrollments/redeem:
     post: { x-workmesh-policy-id: route.redeemAgentEnrollment, x-workmesh-actor-kinds: [], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentEnrollment, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentEnrollmentRedeemInput" } } } }, responses: { "200": { description: Agent enrolled, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "409": { $ref: "#/components/responses/Conflict" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
+  /api/v1/workbench/runner/assignments:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchRunnerAssignments
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentInstallationToken: [] }]
+      operationId: listWorkbenchRunnerAssignments
+      description: Runner discovery for one active Agent installation; requires the deployment Runner credential as well.
+      responses: { "200": { description: Owned sessions awaiting ACK or ready for workbench turns, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { type: object, properties: { sessionId: { type: string, format: uuid }, state: { type: string, enum: [queued, acknowledged, executing] } } } } } } } } } }
+  /api/v1/agent-sessions/{id}/workbench-turns:
+    get:
+      x-workmesh-policy-id: route.listAgentWorkbenchTurns
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: listAgentWorkbenchTurns
+      description: Exact Agent Session and deployment Runner credential are both required.
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Queued bound turns, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { type: object, properties: { turnId: { type: string, format: uuid }, conversationId: { type: string, format: uuid } } } } } } } } } }
+  /api/v1/workbench/turns/{id}/claim:
+    post:
+      x-workmesh-policy-id: route.claimWorkbenchTurn
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: claimWorkbenchTurn
+      description: Single-writer claim; the deployment Runner credential is required in addition to the exact Agent Session credential.
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      responses: { "200": { description: Attempt identifier; fence and model credential are available only through the guarded credential endpoint, content: { application/json: { schema: { type: object, properties: { runnerAttemptId: { type: string, format: uuid }, turnId: { type: string, format: uuid } } } } } } }
+  /api/v1/workbench/runner-attempts/{id}/credential:
+    get:
+      x-workmesh-policy-id: route.getWorkbenchAttemptCredential
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: getWorkbenchAttemptCredential
+      description: Short-lived Runner-only model credential response; never cache or log.
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Active model configuration and conversation context, headers: { Cache-Control: { schema: { type: string, enum: [no-store] } } }, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchRunnerCredential" } } } } }
+  /api/v1/workbench/runner-attempts/{id}/start:
+    post:
+      x-workmesh-policy-id: route.startWorkbenchAttempt
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: startWorkbenchAttempt
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [fenceToken], properties: { fenceToken: { type: string, minLength: 16, maxLength: 128 } } } } } }
+      responses: { "200": { description: Attempt running } }
+  /api/v1/workbench/runner-attempts/{id}/status:
+    get:
+      x-workmesh-policy-id: route.getWorkbenchAttemptStatus
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: getWorkbenchAttemptStatus
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Current attempt, turn, session, and delegation states } }
+  /api/v1/workbench/runner-attempts/{id}/settle:
+    post:
+      x-workmesh-policy-id: route.settleWorkbenchAttempt
+      x-workmesh-actor-kinds: [agent]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ AgentSessionToken: [] }]
+      operationId: settleWorkbenchAttempt
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchRunnerSettleInput" } } } }
+      responses: { "200": { description: Attempt, public message, turn and optional Agent Session completion committed atomically } }
+  /api/v1/workbench/conversations:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchConversations
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listWorkbenchConversations
+      parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }]
+      responses: { "200": { $ref: "#/components/responses/PagedJson" } }
+    post:
+      x-workmesh-policy-id: route.createWorkbenchConversation
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: createWorkbenchConversation
+      parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversationCreateInput" } } } }
+      responses: { "201": { description: Conversation created, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } } }
+  /api/v1/workbench/conversations/{id}:
+    get:
+      x-workmesh-policy-id: route.getWorkbenchConversation
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getWorkbenchConversation
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Conversation, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } } }
+  /api/v1/workbench/conversations/{id}/archive:
+    post:
+      x-workmesh-policy-id: route.archiveWorkbenchConversation
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: archiveWorkbenchConversation
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      responses: { "200": { description: Conversation archived after all turns settle, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchConversation" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/conversations/{id}/messages:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchMessages
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listWorkbenchMessages
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Limit" }, { name: before, in: query, schema: { type: integer, minimum: 1 } }]
+      responses: { "200": { description: Newest messages with a sequence cursor, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { $ref: "#/components/schemas/WorkbenchMessage" } }, nextBefore: { type: integer, nullable: true } } } } } } }
+  /api/v1/workbench/conversations/{id}/turns:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchTurns
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listWorkbenchTurns
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/Limit" }, { name: before, in: query, schema: { type: integer, minimum: 1 } }]
+      responses: { "200": { description: Newest turns with a sequence cursor, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { $ref: "#/components/schemas/WorkbenchTurn" } }, nextBefore: { type: integer, nullable: true } } } } } } }
+    post:
+      x-workmesh-policy-id: route.queueWorkbenchTurn
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: queueWorkbenchTurn
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchTurnCreateInput" } } } }
+      responses: { "201": { description: Message and queued turn committed with outbox intent, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchTurnAdmission" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/conversations/{id}/turns/{turnId}/stop:
+    post:
+      x-workmesh-policy-id: route.stopWorkbenchTurn
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: stopWorkbenchTurn
+      parameters: [{ $ref: "#/components/parameters/Id" }, { name: turnId, in: path, required: true, schema: { type: string, format: uuid } }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [reason], properties: { reason: { type: string, maxLength: 2000 }, stopMode: { type: string, enum: [graceful, immediate] } } } } } }
+      responses: { "200": { description: Queued turn stopped, content: { application/json: { schema: { type: object, properties: { turn: { $ref: "#/components/schemas/WorkbenchTurn" }, conversationRevision: { type: integer } } } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/llm-connections:
+    get:
+      x-workmesh-policy-id: route.listWorkbenchLlmConnections
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listWorkbenchLlmConnections
+      parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }]
+      responses: { "200": { $ref: "#/components/responses/PagedJson" } }
+    post:
+      x-workmesh-policy-id: route.createWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: createWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionCreateInput" } } } }
+      responses: { "201": { description: Connection created; credential is never returned, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnection" } } } } }
+  /api/v1/workbench/llm-connections/{id}:
+    get:
+      x-workmesh-policy-id: route.getWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: getWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses: { "200": { description: Connection with model catalog, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionDetail" } } } } }
+    patch:
+      x-workmesh-policy-id: route.updateWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: updateWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnectionPatchInput" } } } }
+      responses: { "200": { description: Updated connection, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmConnection" } } } }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+    delete:
+      x-workmesh-policy-id: route.revokeWorkbenchLlmConnection
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: revokeWorkbenchLlmConnection
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      responses: { "204": { description: Connection revoked and stored secret destroyed }, "409": { $ref: "#/components/responses/RevisionConflict" } }
+  /api/v1/workbench/llm-connections/{id}/models:
+    post:
+      x-workmesh-policy-id: route.upsertWorkbenchLlmModel
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: upsertWorkbenchLlmModel
+      parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmModelInput" } } } }
+      responses: { "201": { description: Model catalog entry created or updated, content: { application/json: { schema: { $ref: "#/components/schemas/WorkbenchLlmModel" } } } } }
   /api/v1/admin/retention/status:
     get:
       x-workmesh-policy-id: route.getRetentionStatus
@@ -3270,6 +3510,203 @@ components:
     GuidanceDiff:
       { description: Authorized line diff between two immutable Guidance revisions., content: { application/json: { schema: { $ref: "#/components/schemas/GuidanceDiff" } } } }
   schemas:
+    WorkbenchRunnerCredential:
+      type: object
+      description: Runner-only response. The apiKey and fenceToken must never be persisted in client state, logs, activities, events, or artifacts.
+      required: [runnerAttemptId, fenceToken, baseUrl, apiType, apiKey, modelId, modelName, capabilities, connectionRevision, modelRevision, messages]
+      properties:
+        runnerAttemptId: { type: string, format: uuid }
+        fenceToken: { type: string }
+        baseUrl: { type: string, format: uri }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        apiKey: { type: string }
+        modelId: { type: string }
+        modelName: { type: string }
+        capabilities: { $ref: "#/components/schemas/WorkbenchLlmModelCapabilities" }
+        connectionRevision: { type: integer, minimum: 1 }
+        modelRevision: { type: integer, minimum: 1 }
+        messages: { type: array, items: { type: object, required: [role, content_markdown], properties: { role: { type: string, enum: [user, assistant, system] }, content_markdown: { type: string } } } }
+    WorkbenchRunnerSettleInput:
+      type: object
+      required: [fenceToken, settlement]
+      properties:
+        fenceToken: { type: string, minLength: 16, maxLength: 128 }
+        assistantMessageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+        sessionCompletion:
+          type: object
+          description: Available only for a settled Turn with a public assistant message; the exact Agent Session completion is committed in the same database transaction.
+          required: [ifMatch, operationKey, body]
+          properties:
+            ifMatch: { type: integer, minimum: 1 }
+            operationKey: { type: string, pattern: '^pi-[a-f0-9]{64}$' }
+            body: { $ref: "#/components/schemas/CompleteAgentSessionInput" }
+        settlement:
+          type: object
+          required: [outcome, summaryMarkdown]
+          properties:
+            outcome: { type: string, enum: [settled, aborted, failed] }
+            summaryMarkdown: { type: string, minLength: 1, maxLength: 20000 }
+            artifactIds: { type: array, items: { type: string, format: uuid } }
+            noArtifactReason: { type: string, maxLength: 2000 }
+            usage: { type: object }
+            errorCode: { type: string, maxLength: 120 }
+            externalEffectsReconciled: { type: boolean }
+    WorkbenchConversation:
+      type: object
+      required: [id, workspace_id, team_id, project_id, work_item_id, responsible_human_actor_id, title, status, agent_session_id, default_llm_connection_id, default_llm_model_id, context_pins, revision, created_by_actor_id, created_at, updated_at, archived_at]
+      properties:
+        id: { type: string, format: uuid }
+        workspace_id: { type: string, format: uuid }
+        team_id: { type: string, format: uuid, nullable: true }
+        project_id: { type: string, format: uuid, nullable: true }
+        work_item_id: { type: string, format: uuid, nullable: true }
+        responsible_human_actor_id: { type: string, format: uuid }
+        title: { type: string, minLength: 1, maxLength: 180 }
+        status: { type: string, enum: [active, archived] }
+        agent_session_id: { type: string, format: uuid, nullable: true }
+        default_llm_connection_id: { type: string, format: uuid, nullable: true }
+        default_llm_model_id: { type: string, format: uuid, nullable: true }
+        context_pins: { type: array, items: { type: object } }
+        revision: { type: integer, minimum: 1 }
+        created_by_actor_id: { type: string, format: uuid }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        archived_at: { type: string, format: date-time, nullable: true }
+    WorkbenchConversationCreateInput:
+      type: object
+      required: [title]
+      properties:
+        teamId: { type: string, format: uuid, nullable: true }
+        projectId: { type: string, format: uuid, nullable: true }
+        workItemId: { type: string, format: uuid, nullable: true }
+        agentSessionId: { type: string, format: uuid }
+        title: { type: string, minLength: 1, maxLength: 180 }
+        llmConnectionId: { type: string, format: uuid }
+        llmModelId: { type: string, format: uuid }
+        contextPins: { type: array, maxItems: 20, items: { type: object }, description: Nonempty pins require later context admission and currently return VALIDATION_ERROR }
+    WorkbenchMessage:
+      type: object
+      required: [id, conversation_id, turn_id, sequence, role, author_actor_id, content_markdown, runner_attempt_id, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        conversation_id: { type: string, format: uuid }
+        turn_id: { type: string, format: uuid, nullable: true }
+        sequence: { type: integer, minimum: 1 }
+        role: { type: string, enum: [user, assistant, system] }
+        author_actor_id: { type: string, format: uuid, nullable: true }
+        content_markdown: { type: string, minLength: 1, maxLength: 50000 }
+        runner_attempt_id: { type: string, format: uuid, nullable: true }
+        created_at: { type: string, format: date-time }
+    WorkbenchTurn:
+      type: object
+      required: [id, conversation_id, sequence, status, initiated_by_actor_id, agent_session_id, current_runner_attempt_id, stop_reason, error_code, queued_at, dispatch_requested_at, started_at, settled_at, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        conversation_id: { type: string, format: uuid }
+        sequence: { type: integer, minimum: 1 }
+        status: { type: string, enum: [queued, dispatching, running, settled, failed, canceled, stopped] }
+        initiated_by_actor_id: { type: string, format: uuid }
+        agent_session_id: { type: string, format: uuid, nullable: true }
+        current_runner_attempt_id: { type: string, format: uuid, nullable: true }
+        stop_reason: { type: string, nullable: true }
+        error_code: { type: string, nullable: true }
+        queued_at: { type: string, format: date-time }
+        dispatch_requested_at: { type: string, format: date-time, nullable: true }
+        started_at: { type: string, format: date-time, nullable: true }
+        settled_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    WorkbenchTurnCreateInput:
+      type: object
+      required: [messageMarkdown]
+      properties:
+        messageMarkdown: { type: string, minLength: 1, maxLength: 50000 }
+        llmConnectionId: { type: string, format: uuid }
+        llmModelId: { type: string, format: uuid }
+    WorkbenchTurnAdmission:
+      type: object
+      required: [message, turn, conversationRevision]
+      properties:
+        message: { $ref: "#/components/schemas/WorkbenchMessage" }
+        turn: { $ref: "#/components/schemas/WorkbenchTurn" }
+        conversationRevision: { type: integer, minimum: 1 }
+    WorkbenchLlmConnection:
+      type: object
+      additionalProperties: false
+      required: [id, workspace_id, scope, scope_id, name, api_type, base_url, status, secret_status, can_manage, created_by_actor_id, revision, created_at, updated_at, revoked_at]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        workspace_id: { $ref: "#/components/schemas/Id" }
+        scope: { type: string, enum: [personal, team, workspace] }
+        scope_id: { type: [string, "null"], format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        api_type: { type: string, enum: [openai-completions, openai-responses] }
+        base_url: { type: string, format: uri }
+        status: { type: string, enum: [active, disabled, revoked] }
+        secret_status: { type: string, enum: [configured, missing], description: Only credential presence is returned }
+        can_manage: { type: boolean, description: Current human may edit and revoke this connection }
+        created_by_actor_id: { $ref: "#/components/schemas/Id" }
+        revision: { $ref: "#/components/schemas/Revision" }
+        created_at: { $ref: "#/components/schemas/Timestamp" }
+        updated_at: { $ref: "#/components/schemas/Timestamp" }
+        revoked_at: { type: [string, "null"], format: date-time }
+    WorkbenchLlmConnectionDetail:
+      allOf:
+        - { $ref: "#/components/schemas/WorkbenchLlmConnection" }
+        - { type: object, required: [models], properties: { models: { type: array, items: { $ref: "#/components/schemas/WorkbenchLlmModel" } } } }
+    WorkbenchLlmConnectionCreateInput:
+      type: object
+      additionalProperties: false
+      required: [scope, name, apiType, baseUrl, secretMaterial]
+      properties:
+        scope: { type: string, enum: [personal, team, workspace] }
+        teamId: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri }
+        secretMaterial: { type: string, writeOnly: true, minLength: 1, maxLength: 4096 }
+    WorkbenchLlmConnectionPatchInput:
+      type: object
+      additionalProperties: false
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        apiType: { type: string, enum: [openai-completions, openai-responses] }
+        baseUrl: { type: string, format: uri }
+        status: { type: string, enum: [active, disabled] }
+        secretMaterial: { type: string, writeOnly: true, minLength: 1, maxLength: 4096 }
+    WorkbenchLlmModelInput:
+      type: object
+      additionalProperties: false
+      required: [externalModelId, displayName, capabilities]
+      properties:
+        externalModelId: { type: string, minLength: 1, maxLength: 200 }
+        displayName: { type: string, minLength: 1, maxLength: 200 }
+        enabled: { type: boolean, default: true }
+        capabilities: { $ref: "#/components/schemas/WorkbenchLlmModelCapabilities" }
+    WorkbenchLlmModelCapabilities:
+      type: object
+      additionalProperties: false
+      required: [inputModalities, toolCalling, reasoning, contextWindowTokens, maxOutputTokens]
+      properties:
+        inputModalities: { type: array, minItems: 1, items: { type: string, enum: [text, image] } }
+        toolCalling: { type: boolean }
+        reasoning: { type: boolean }
+        contextWindowTokens: { type: integer, minimum: 1 }
+        maxOutputTokens: { type: integer, minimum: 1 }
+    WorkbenchLlmModel:
+      type: object
+      additionalProperties: false
+      required: [id, connection_id, external_model_id, display_name, enabled, capabilities, revision, created_at, updated_at]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        connection_id: { $ref: "#/components/schemas/Id" }
+        external_model_id: { type: string }
+        display_name: { type: string }
+        enabled: { type: boolean }
+        capabilities: { $ref: "#/components/schemas/WorkbenchLlmModelCapabilities" }
+        revision: { $ref: "#/components/schemas/Revision" }
+        created_at: { $ref: "#/components/schemas/Timestamp" }
+        updated_at: { $ref: "#/components/schemas/Timestamp" }
     AgentConnectionAuthenticatedCredential:
       description: "Redacted proof of the exact credential that authenticated this request. No credential ID, token, complete hash, or header is returned."
       oneOf:
@@ -3632,8 +4069,10 @@ components:
         updatedAt: { type: string, format: date-time }
     ControlCenterSection:
       { type: object, additionalProperties: false, required: [items, nextCursor], properties: { items: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/ControlCenterDigest" } }, nextCursor: { type: [string, "null"] } } }
+    ControlCenterProjectProgress:
+      { type: object, additionalProperties: false, required: [total, completed], properties: { total: { type: integer, minimum: 0, description: Non-canceled Issues in the Project. }, completed: { type: integer, minimum: 0, description: Issues in a completed workflow state. } } }
     ControlCenterResponse:
-      { type: object, additionalProperties: false, required: [projectionVersion, scope, project, revision, freshness, collections], properties: { projectionVersion: { const: 1 }, scope: { type: object, additionalProperties: false, required: [workspaceId, projectId], properties: { workspaceId: { type: string, format: uuid }, projectId: { type: [string, "null"], format: uuid } } }, project: { type: [object, "null"], additionalProperties: false, required: [id, name, status, targetDate, responsibleHuman, revision], properties: { id: { type: string, format: uuid }, name: { type: string }, status: { type: string }, targetDate: { type: [string, "null"], format: date }, responsibleHuman: { anyOf: [{ $ref: "#/components/schemas/HumanAttentionActorReference" }, { type: "null" }] }, revision: { type: integer, minimum: 1 } } }, revision: { type: integer, minimum: 1 }, freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }, collections: { type: object, additionalProperties: false, required: [attention, running, risks, recently_verified, ready_work, blocked_work], properties: { attention: { $ref: "#/components/schemas/ControlCenterSection" }, running: { $ref: "#/components/schemas/ControlCenterSection" }, risks: { $ref: "#/components/schemas/ControlCenterSection" }, recently_verified: { $ref: "#/components/schemas/ControlCenterSection" }, ready_work: { $ref: "#/components/schemas/ControlCenterSection" }, blocked_work: { $ref: "#/components/schemas/ControlCenterSection" } } } } }
+      { type: object, additionalProperties: false, required: [projectionVersion, scope, project, revision, freshness, collections], properties: { projectionVersion: { const: 1 }, scope: { type: object, additionalProperties: false, required: [workspaceId, projectId], properties: { workspaceId: { type: string, format: uuid }, projectId: { type: [string, "null"], format: uuid } } }, project: { type: [object, "null"], additionalProperties: false, required: [id, name, status, targetDate, responsibleHuman, revision, progress], properties: { id: { type: string, format: uuid }, name: { type: string }, status: { type: string }, targetDate: { type: [string, "null"], format: date }, responsibleHuman: { anyOf: [{ $ref: "#/components/schemas/HumanAttentionActorReference" }, { type: "null" }] }, revision: { type: integer, minimum: 1 }, progress: { $ref: "#/components/schemas/ControlCenterProjectProgress" } } }, revision: { type: integer, minimum: 1 }, freshness: { $ref: "#/components/schemas/ControlPlaneFreshness" }, collections: { type: object, additionalProperties: false, required: [attention, running, risks, recently_verified, ready_work, blocked_work], properties: { attention: { $ref: "#/components/schemas/ControlCenterSection" }, running: { $ref: "#/components/schemas/ControlCenterSection" }, risks: { $ref: "#/components/schemas/ControlCenterSection" }, recently_verified: { $ref: "#/components/schemas/ControlCenterSection" }, ready_work: { $ref: "#/components/schemas/ControlCenterSection" }, blocked_work: { $ref: "#/components/schemas/ControlCenterSection" } } } } }
     ControlCapability:
       { type: object, additionalProperties: false, required: [action, allowed, reasonCode, targetState], properties: { action: { $ref: "#/components/schemas/AgentSessionControlAction" }, allowed: { type: boolean }, reasonCode: { type: string }, targetState: { anyOf: [{ $ref: "#/components/schemas/AgentSessionState" }, { type: "null" }] } } }
     CausalEventGroup:
@@ -5966,7 +6405,7 @@ components:
     SessionContext:
       {
         type: object,
-        required: [session, workItem, plan, contextSnapshotId, guidanceUris, guidancePins],
+        required: [session, workItem, plan, contextSnapshotId, guidanceUris, guidancePins, documentPins],
         properties:
           {
             session: { $ref: "#/components/schemas/AgentSession" },
@@ -5986,8 +6425,56 @@ components:
             contextSnapshotId: { type: [string, "null"], format: uuid },
             guidanceUris: { type: array, items: { type: string, format: uri } },
             guidancePins: { type: array, items: { $ref: "#/components/schemas/GuidancePin" } },
+            documentPins: { type: array, items: { $ref: "#/components/schemas/DocumentPin" } },
           },
       }
+    CreateDocumentInput:
+      type: object
+      additionalProperties: false
+      required: [ownerType, ownerId, title, markdown]
+      properties:
+        ownerType: { type: string, enum: [project, work_item] }
+        ownerId: { $ref: "#/components/schemas/Id" }
+        title: { type: string, minLength: 1, maxLength: 180 }
+        markdown: { type: string, maxLength: 200000 }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    UpdateDocumentInput:
+      type: object
+      additionalProperties: false
+      required: [title, markdown, baseRevisionId, baseContentHash]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 180 }
+        markdown: { type: string, maxLength: 200000 }
+        baseRevisionId: { $ref: "#/components/schemas/Id" }
+        baseContentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    DocumentArchiveInput:
+      type: object
+      additionalProperties: false
+      required: [reason]
+      properties:
+        reason: { type: string, minLength: 1, maxLength: 2000 }
+    RestoreDocumentRevisionInput:
+      type: object
+      additionalProperties: false
+      required: [revisionId, baseRevisionId, baseContentHash, changeSummary]
+      properties:
+        revisionId: { $ref: "#/components/schemas/Id" }
+        baseRevisionId: { $ref: "#/components/schemas/Id" }
+        baseContentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
+        changeSummary: { type: string, minLength: 1, maxLength: 500 }
+    DocumentPin:
+      type: object
+      additionalProperties: false
+      required: [documentId, ownerType, ownerId, uri, revisionId, revisionNumber, contentHash]
+      properties:
+        documentId: { $ref: "#/components/schemas/Id" }
+        ownerType: { type: string, enum: [project, work_item] }
+        ownerId: { $ref: "#/components/schemas/Id" }
+        uri: { type: string, format: uri }
+        revisionId: { $ref: "#/components/schemas/Id" }
+        revisionNumber: { type: integer, minimum: 1 }
+        contentHash: { type: string, pattern: '^sha256:[a-f0-9]{64}$' }
     GuidanceRevisionMetadata:
       {
         type: object,

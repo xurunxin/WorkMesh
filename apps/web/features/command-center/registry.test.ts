@@ -25,6 +25,8 @@ describe('authority-aware command registry', () => {
     expect(staticCommands(false).some(command => command.id === 'navigate:operations')).toBe(false)
     const enabled = staticCommands(true)
     expect(enabled.find(command => command.id === 'navigate:operations')?.href).toBe('/operations')
+    // W03: the workbench is a first-class navigation destination.
+    expect(enabled.find(command => command.id === 'navigate:workbench')?.href).toBe('/workbench')
     expect(enabled.filter(command => command.kind === 'create')).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'create:work-item', href: '/?view=my-work&intent=create-work-item', source: 'static' }),
       expect.objectContaining({ id: 'create:project', href: '/?view=projects&intent=create-project', source: 'static' }),
@@ -119,6 +121,8 @@ describe('command-center state projection', () => {
     slot.id = 'workmesh-command-center-trigger-slot'
     document.body.append(slot)
     render(createElement(GlobalCommandCenter))
+    expect(screen.queryByTestId('command-center-trigger')).not.toBeInTheDocument()
+    slot.dataset.wmHydrated = 'true'
     const trigger = await screen.findByTestId('command-center-trigger')
     expect(trigger).toHaveAttribute('aria-keyshortcuts', 'Control+K Meta+K')
     expect(trigger).toHaveAccessibleName('Search')

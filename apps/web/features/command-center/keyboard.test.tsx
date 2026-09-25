@@ -8,6 +8,7 @@ const returnFocusStateKey = '__workmeshCommandCenterReturnFocusV1'
 beforeEach(() => {
   const slot = document.createElement('div')
   slot.id = 'workmesh-command-center-trigger-slot'
+  slot.dataset.wmHydrated = 'true'
   document.body.appendChild(slot)
 })
 

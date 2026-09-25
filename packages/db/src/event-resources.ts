@@ -65,9 +65,16 @@ export const supportedEventAggregateTypes = [
   'saved_view',
   'workflow_state',
   'comment',
+  'document',
   'agent',
   'agent_team_access',
   'agent_connection',
+  'workbench_llm_connection',
+  'workbench_llm_model',
+  'workbench_conversation',
+  'workbench_message',
+  'workbench_turn',
+  'workbench_runner_attempt',
   'agent_enrollment_policy',
   'browser_push_subscription',
   'delegation',
@@ -151,6 +158,12 @@ export const privateEventAudienceForms = [
   'aggregate:notification',
   'aggregate:advanced_saved_view:private',
   'aggregate:browser_push_subscription',
+  'aggregate:workbench_llm_connection:personal',
+  'aggregate:workbench_llm_model:personal',
+  'aggregate:workbench_conversation:personal',
+  'aggregate:workbench_message:personal',
+  'aggregate:workbench_turn:personal',
+  'aggregate:workbench_runner_attempt:personal',
   'event:notification.preferences_updated',
 ] as const
 
@@ -224,6 +237,38 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
   agent_connection:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_connections WHERE id=$1 AND workspace_id=$2`,
+  workbench_llm_connection:
+    `SELECT CASE WHEN scope='team' THEN 'team' ELSE 'workspace' END AS resource_type,
+            COALESCE(team_id,workspace_id) AS resource_id
+       FROM workbench_llm_connections WHERE id=$1 AND workspace_id=$2`,
+  workbench_llm_model:
+    `SELECT CASE WHEN connection.scope='team' THEN 'team' ELSE 'workspace' END AS resource_type,
+            COALESCE(connection.team_id,connection.workspace_id) AS resource_id
+       FROM workbench_llm_models model
+       JOIN workbench_llm_connections connection ON connection.id=model.connection_id
+      WHERE model.id=$1 AND model.workspace_id=$2 AND connection.workspace_id=$2`,
+  workbench_conversation:
+    `SELECT CASE WHEN team_id IS NULL THEN 'workspace' ELSE 'team' END AS resource_type,
+            COALESCE(team_id,workspace_id) AS resource_id
+       FROM workbench_conversations WHERE id=$1 AND workspace_id=$2`,
+  workbench_message:
+    `SELECT CASE WHEN conversation.team_id IS NULL THEN 'workspace' ELSE 'team' END AS resource_type,
+            COALESCE(conversation.team_id,conversation.workspace_id) AS resource_id
+       FROM workbench_messages message JOIN workbench_conversations conversation
+         ON conversation.id=message.conversation_id
+      WHERE message.id=$1 AND message.workspace_id=$2`,
+  workbench_turn:
+    `SELECT CASE WHEN conversation.team_id IS NULL THEN 'workspace' ELSE 'team' END AS resource_type,
+            COALESCE(conversation.team_id,conversation.workspace_id) AS resource_id
+       FROM workbench_turns turn JOIN workbench_conversations conversation
+         ON conversation.id=turn.conversation_id
+      WHERE turn.id=$1 AND turn.workspace_id=$2`,
+  workbench_runner_attempt:
+    `SELECT CASE WHEN conversation.team_id IS NULL THEN 'workspace' ELSE 'team' END AS resource_type,
+            COALESCE(conversation.team_id,conversation.workspace_id) AS resource_id
+       FROM workbench_runner_attempts attempt JOIN workbench_conversations conversation
+         ON conversation.id=attempt.conversation_id
+      WHERE attempt.id=$1 AND attempt.workspace_id=$2`,
   agent_enrollment_policy:
     `SELECT 'team'::text AS resource_type,team_id AS resource_id
        FROM agent_enrollment_policies WHERE id=$1 AND workspace_id=$2`,
@@ -236,6 +281,10 @@ export const aggregateSeedSql: Readonly<Record<string, string>> = {
        JOIN channels channel ON channel.id=comment.channel_id
       WHERE comment.id=$1 AND comment.workspace_id=$2
         AND channel.workspace_id=$2`,
+  document:
+    `SELECT CASE WHEN project_id IS NOT NULL THEN 'project' ELSE 'work_item' END AS resource_type,
+            COALESCE(project_id,work_item_id) AS resource_id
+       FROM documents WHERE id=$1 AND workspace_id=$2`,
   agent:
     `SELECT 'workspace'::text AS resource_type,workspace_id AS resource_id
        FROM agent_definitions WHERE id=$1 AND workspace_id=$2`,
@@ -692,6 +741,35 @@ async function resolveAudienceActorId(
     privateAudienceSql =
       `SELECT actor_id AS audience_actor_id,true AS is_private
          FROM browser_push_subscriptions WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_llm_connection') {
+    privateAudienceSql =
+      `SELECT owner_actor_id AS audience_actor_id,scope='personal' AS is_private
+         FROM workbench_llm_connections WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_llm_model') {
+    privateAudienceSql =
+      `SELECT connection.owner_actor_id AS audience_actor_id,
+              connection.scope='personal' AS is_private
+         FROM workbench_llm_models model
+         JOIN workbench_llm_connections connection ON connection.id=model.connection_id
+        WHERE model.id=$1 AND model.workspace_id=$2 AND connection.workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_conversation') {
+    privateAudienceSql = `SELECT responsible_human_actor_id AS audience_actor_id,
+      team_id IS NULL AS is_private FROM workbench_conversations WHERE id=$1 AND workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_message') {
+    privateAudienceSql = `SELECT conversation.responsible_human_actor_id AS audience_actor_id,
+      conversation.team_id IS NULL AS is_private FROM workbench_messages message
+      JOIN workbench_conversations conversation ON conversation.id=message.conversation_id
+      WHERE message.id=$1 AND message.workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_turn') {
+    privateAudienceSql = `SELECT conversation.responsible_human_actor_id AS audience_actor_id,
+      conversation.team_id IS NULL AS is_private FROM workbench_turns turn
+      JOIN workbench_conversations conversation ON conversation.id=turn.conversation_id
+      WHERE turn.id=$1 AND turn.workspace_id=$2`
+  } else if (input.aggregateType === 'workbench_runner_attempt') {
+    privateAudienceSql = `SELECT conversation.responsible_human_actor_id AS audience_actor_id,
+      conversation.team_id IS NULL AS is_private FROM workbench_runner_attempts attempt
+      JOIN workbench_conversations conversation ON conversation.id=attempt.conversation_id
+      WHERE attempt.id=$1 AND attempt.workspace_id=$2`
   } else if (input.aggregateType === 'advanced_saved_view') {
     privateAudienceSql =
       `SELECT owner_actor_id AS audience_actor_id,

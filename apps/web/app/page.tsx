@@ -7,9 +7,7 @@ import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive'
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react/dist/csr/ArrowsLeftRight'
-import { EyeIcon } from '@phosphor-icons/react/dist/csr/Eye'
 import { FolderPlusIcon } from '@phosphor-icons/react/dist/csr/FolderPlus'
-import { NotePencilIcon } from '@phosphor-icons/react/dist/csr/NotePencil'
 import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
 import { UploadSimpleIcon } from '@phosphor-icons/react/dist/csr/UploadSimple'
 import { XIcon } from '@phosphor-icons/react/dist/csr/X'
@@ -46,8 +44,10 @@ import { WorkSurfaces } from '../features/work-items/work-surfaces'
 import type { SavedViewPreference, WorkItemDto, WorkSurfaceQuery } from '../features/work-items/contracts'
 import { parseWorkSurfaceLayout, parseWorkSurfaceQuery, serializeWorkSurfaceQuery, workSurfaceHref, workSurfaceScopeForQuery } from '../features/work-items/query'
 import { WorkItemDetail, WorkItemDetailUnavailable, detailError, toWorkItemDetailModel, updateWorkItemDetail, type StructuredDetailError, type WorkItemDetailDraft, type WorkItemDetailDto } from '../features/work-items/detail'
-import { RichContent } from '../features/rich-content/markdown'
-import { RichTextEditor } from '../features/rich-content/editor'
+import { clearDraft, RichTextEditor, type DraftIdentity } from '../features/rich-content/editor'
+import { ProjectEditor, type EditableProject } from '../features/projects/project-editor'
+import { ProjectMilestones } from '../features/projects/project-milestones'
+import { DocumentManager } from '../features/documents/document-manager'
 
 type Actor = AuthenticatedActor
 type InstallStatus = { installed: boolean }
@@ -56,7 +56,7 @@ type Team = { id: string; name: string; key: string; revision: number }
 type StatusCategory = 'backlog' | 'planned' | 'started' | 'completed' | 'canceled'
 type WorkflowState = { id: string; name: string; category: StatusCategory; color: string; revision: number }
 type Human = { id: string; display_name: string; email: string }
-type Project = { id: string; team_id: string; name: string; summary: string | null; description: string | null; status: string; lead_actor_id: string | null; target_date: string | null; revision: number }
+type Project = EditableProject
 type WorkItem = WorkItemDetailDto
 type Comment = { id: string; body: string; revision: number; parent_comment_id: string | null; reply_to_comment_id: string | null; author_name: string; author_kind: 'human'; is_resolved: boolean; created_at: string; mentions: string[] }
 type Scope = HomeScope
@@ -104,7 +104,7 @@ function HomePageScope({
   actorLoading: boolean
   refreshActor: () => Promise<void>
 }) {
-  const { agentWorkCopy, detailCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
+  const { agentWorkCopy, detailCopy, editorCopy, guidanceCopy, issueCopy, locale, relationsCopy, surfaceCopy, t, toastCopy } = useLocale()
   const { push: pushToast } = useToast()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -120,6 +120,7 @@ function HomePageScope({
     setTeamId,
   } = useCurrentTeam(actor)
   const [selectedItem, setSelectedItem] = useState<WorkItem | null>(null)
+  const detailRequestEpochRef = useRef(0)
   const [requestedItem, setRequestedItem] = useState<{ id: string; mode: 'sheet' | 'full_page' } | null>(null)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [scope, setScope] = useState<Scope>('my-work')
@@ -133,13 +134,19 @@ function HomePageScope({
   const [filters, setFilters] = useState<Filters>({})
   const [error, setError] = useState('')
   const [createProjectOpen, setCreateProjectOpen] = useState(false)
+  const [editProjectOpen, setEditProjectOpen] = useState(false)
+  const [milestonesOpen, setMilestonesOpen] = useState(false)
+  const [documentOwner, setDocumentOwner] = useState<{ type: 'project' | 'work_item'; id: string; teamId: string } | null>(null)
   const [createWorkItemOpen, setCreateWorkItemOpen] = useState(false)
   const [createWorkItemError, setCreateWorkItemError] = useState('')
+  const [createWorkItemBusy, setCreateWorkItemBusy] = useState(false)
+  const [createWorkItemDescription, setCreateWorkItemDescription] = useState('')
+  const createWorkItemBusyRef = useRef(false)
   const [workSurfaceItems, setWorkSurfaceItems] = useState<WorkItemDto[]>([])
   const surfaceRefreshRef = useRef<(() => Promise<void>) | null>(null)
   const projectRequestGateRef = useRef(new LatestRequestGate<string>())
   const requestedProjectIdRef = useRef<string | null>(null)
-  const restoredSearchRef = useRef<string | null>(null)
+  const restoredRouteIdentityRef = useRef<string | null>(null)
 
   // Local `teamsPage` is kept for the team LoadMoreButton and realtime refresh; the
   // hook's `teams` drives the rendered team list so this subscription only carries
@@ -155,6 +162,10 @@ function HomePageScope({
   const selectedTeam = teamAuthoritiesInitialized
     ? teamsPage.items.find(team => team.id === teamId) ?? null
     : null
+  const newIssueDraftIdentity: DraftIdentity = {
+    workspaceId: actor.workspace_id ?? '', teamId: selectedTeam?.id ?? '', actorId: actor.id,
+    resourceType: 'work_item', resourceId: 'new', field: 'description', baseRevision: 0,
+  }
   const agentController = useAgentDelegationController({
     humanActorId: selectedItem?.responsible_human_actor_id ?? '',
     scopeKey: authorityScopeKey,
@@ -260,6 +271,11 @@ function HomePageScope({
       : []),
   ], [actor?.workspace_id, selectedItem?.id, selectedProject?.id, teamId])
   useRealtimeSubscription(realtimeResources, invalidation => {
+    const refreshDetail = (id: string) => {
+      const detailEpoch = detailRequestEpochRef.current
+      return apiRequest<WorkItem>(`/api/v1/work-items/${id}`)
+        .then(item => { if (detailRequestEpochRef.current === detailEpoch) setSelectedItem(item) })
+    }
     const targets = homeRefreshTargets(invalidation, {
       teamId: teamId ?? undefined,
       projectId: selectedProject?.id,
@@ -271,17 +287,14 @@ function HomePageScope({
         projectsPage.refresh(), refreshWorkSurface(),
       ]
       if (selectedItem) {
-        snapshots.push(apiRequest<WorkItem>(
-          `/api/v1/work-items/${selectedItem.id}`,
-        ).then(setSelectedItem))
+        snapshots.push(refreshDetail(selectedItem.id))
         snapshots.push(commentsPage.refresh())
       }
       return Promise.all(snapshots).then(() => undefined)
     }
     if (targets.has('teams')) void teamsPage.refresh()
     if (targets.has('states')) void statesPage.refresh()
-    if (targets.has('states') && selectedItem)
-      void apiRequest<WorkItem>(`/api/v1/work-items/${selectedItem.id}`).then(setSelectedItem)
+    if (targets.has('states') && selectedItem) void refreshDetail(selectedItem.id)
     if (targets.has('humans')) void humansPage.refresh()
     if (targets.has('projects')) void projectsPage.refresh()
     if (targets.has('items')) void refreshWorkSurface()
@@ -291,14 +304,13 @@ function HomePageScope({
         && invalidation.event.invalidates.some(resource =>
           resource.type === 'work_item' && resource.id === selectedItem.id)
       ) {
-        void apiRequest<WorkItem>(
-          `/api/v1/work-items/${selectedItem.id}`,
-        ).then(setSelectedItem)
+        void refreshDetail(selectedItem.id)
       }
     }
   })
 
   const chooseTeam = (nextTeamId: string) => {
+    detailRequestEpochRef.current += 1
     setTeamId(nextTeamId)
     setFilters(emptyFilters)
     setSelectedItem(null)
@@ -307,6 +319,7 @@ function HomePageScope({
     setFullItemView(false)
   }
   const chooseScope = (nextScope: Scope) => {
+    detailRequestEpochRef.current += 1
     setScope(nextScope)
     setSelectedProject(null)
     setSelectedItem(null)
@@ -324,6 +337,7 @@ function HomePageScope({
   }
   const openItem = async (id: string, full = false, updateHistory = true) => {
     if (!isAuthorityCurrent()) return
+    const detailEpoch = ++detailRequestEpochRef.current
     setRequestedItem({ id, mode: full ? 'full_page' : 'sheet' })
     setFullItemView(full)
     if (selectedItem?.id !== id) setSelectedItem(null)
@@ -331,17 +345,19 @@ function HomePageScope({
       setError('')
       setDetailErrorState(null)
       const item = await apiRequest<WorkItem>(`/api/v1/work-items/${id}`)
-      if (!isAuthorityCurrent()) return
+      if (!isAuthorityCurrent() || detailRequestEpochRef.current !== detailEpoch) return
       setSelectedItem(item)
       if (full && updateHistory) router.push(projectWorkspaceHref({
         projectId: item.project_id ?? selectedProject?.id,
         tab: projectTab,
         workItemId: item.id,
       }), { scroll: false })
-    } catch (reason) { if (isAuthorityCurrent()) setDetailErrorState(detailError(reason)) }
+    } catch (reason) { if (isAuthorityCurrent() && detailRequestEpochRef.current === detailEpoch) setDetailErrorState(detailError(reason)) }
   }
   const openProject = async (id: string, tab: ProjectWorkspaceTab = 'overview', updateHistory = true) => {
     if (!isAuthorityCurrent()) return
+    detailRequestEpochRef.current += 1
+    if (selectedProject?.id !== id) setMilestonesOpen(false)
     const request = projectRequestGateRef.current.begin(id)
     requestedProjectIdRef.current = id
     try {
@@ -369,6 +385,7 @@ function HomePageScope({
     if (selectedProject) router.push(projectWorkspaceHref({ filterSearch: serializeWorkSurfaceQuery(filters), projectId: selectedProject.id, tab }), { scroll: false })
   }, [filters, router, selectedProject])
   const applySavedView = (view: SavedViewPreference) => {
+    detailRequestEpochRef.current += 1
     const fallbackScope = scope === 'projects' ? 'project-work-items' : scope === 'my-work' || scope === 'active' || scope === 'backlog' ? scope : 'my-work'
     const nextScope = workSurfaceScopeForQuery(view.filters, fallbackScope)
     layoutRef.current = view.layout
@@ -422,7 +439,7 @@ function HomePageScope({
       else if (scope !== 'projects') router.push(workSurfaceHref('my-work', next, layoutRef.current), { scroll: false })
     }}
     onRefreshReady={refresh => { surfaceRefreshRef.current = refresh }}
-    onSelectionReset={() => { setSelectedProject(null); setSelectedItem(null) }}
+    onSelectionReset={() => { detailRequestEpochRef.current += 1; setSelectedProject(null); setSelectedItem(null) }}
     projects={teamProjects}
     realtimeResources={realtimeResources}
     scope={surfaceScope}
@@ -442,6 +459,7 @@ function HomePageScope({
     router.replace(projectWorkspaceHref({ projectId: first.id, tab: 'overview' }), { scroll: false })
   }, [currentSearch, router, scope, selectedProject, teamProjects])
   const closeItem = () => {
+    detailRequestEpochRef.current += 1
     setSelectedItem(null)
     setRequestedItem(null)
     setDetailErrorState(null)
@@ -453,9 +471,11 @@ function HomePageScope({
   }
   const openCreateWorkItem = () => {
     setCreateWorkItemError('')
+    setCreateWorkItemDescription('')
     setCreateWorkItemOpen(true)
   }
   const closeCreateWorkItem = () => {
+    if (createWorkItemBusyRef.current) return
     setCreateWorkItemError('')
     setCreateWorkItemOpen(false)
   }
@@ -463,14 +483,15 @@ function HomePageScope({
     if (!actor) return
     const restoreRoute = () => {
       const search = currentSearch ? `?${currentSearch}` : ''
-      const routeChanged = restoredSearchRef.current !== currentSearch
-      restoredSearchRef.current = currentSearch
       const requestedScope = parseHomeScope(search)
       const nextScope: Scope = requestedScope === 'active' || requestedScope === 'backlog' ? 'my-work' : requestedScope
       const route = readProjectWorkspaceRoute(search)
       const params = new URLSearchParams(search)
       const intent = params.get('intent')
       const sectionItemId = params.get('workItemSectionItem')
+      const routeIdentity = [nextScope, route.projectId ?? '', route.tab, route.workItemId ?? '', sectionItemId ?? ''].join(':')
+      const routeChanged = restoredRouteIdentityRef.current !== routeIdentity
+      restoredRouteIdentityRef.current = routeIdentity
       const routeFilters = parseWorkSurfaceQuery(search)
       if (requestedScope === 'active') routeFilters.statusCategory = 'started'
       if (requestedScope === 'backlog') routeFilters.statusCategory = 'backlog'
@@ -485,7 +506,10 @@ function HomePageScope({
       // Data refreshes can re-render the route projector without changing the
       // URL. Keep an open sheet stable across those refreshes; clear it only
       // when the user actually navigates to a different route.
-      if (routeChanged && sectionItemId !== selectedItem?.id) setSelectedItem(null)
+      if (routeChanged && sectionItemId !== selectedItem?.id) {
+        detailRequestEpochRef.current += 1
+        setSelectedItem(null)
+      }
       if (nextScope !== 'projects') {
         projectRequestGateRef.current.cancel()
         setSelectedProject(null)
@@ -518,12 +542,14 @@ function HomePageScope({
   }, [authorityScopeKey, currentSearch, isAuthorityCurrent, router, selectedProject?.id])
   const createWorkItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!selectedTeam || !actor) return
+    if (!selectedTeam || !actor || createWorkItemBusyRef.current) return
+    createWorkItemBusyRef.current = true
+    setCreateWorkItemBusy(true)
     const formElement = event.currentTarget; const form = new FormData(formElement); const state = states.find(candidate => candidate.id === form.get('statusId'))
     const title = String(form.get('title') ?? '')
     setCreateWorkItemError('')
     try {
-      await apiRequest('/api/v1/work-items', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, title, description: String(form.get('description') ?? '') || undefined, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || undefined, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : undefined), projectId: String(form.get('projectId') ?? '') || undefined, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
+      await apiMutation(`work-item:create:${selectedTeam.id}`, '/api/v1/work-items', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, title, description: String(form.get('description') ?? '') || undefined, statusId: form.get('statusId'), priority: form.get('priority'), dueDate: String(form.get('dueDate') ?? '') || undefined, responsibleHumanActorId: String(form.get('ownerId') ?? '') || (state?.category === 'started' ? actor.id : undefined), projectId: String(form.get('projectId') ?? '') || undefined, labels: String(form.get('labels') ?? '').split(',').map(label => label.trim()).filter(Boolean) }) })
       if (!isAuthorityCurrent()) return
     } catch (reason) {
       if (!isAuthorityCurrent()) return
@@ -533,7 +559,13 @@ function HomePageScope({
         setCreateWorkItemError(`${toastCopy.issueCreateFailedTitle}. ${toastCopy.issueCreateFailedDescription}`)
       }
       return
+    } finally {
+      createWorkItemBusyRef.current = false
+      setCreateWorkItemBusy(false)
     }
+    try { await refreshWorkSurface() } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
+    clearDraft(window.localStorage, newIssueDraftIdentity)
+    setCreateWorkItemDescription('')
     formElement.reset(); closeCreateWorkItem()
     pushToast({
       dedupeKey: 'home:create-work-item',
@@ -541,7 +573,6 @@ function HomePageScope({
       title: toastCopy.issueCreatedTitle,
       tone: 'success',
     })
-    try { await refreshWorkSurface() } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
   }
   const saveItem = async (draft: WorkItemDetailDraft) => {
     if (!selectedItem || !actor) return
@@ -559,18 +590,6 @@ function HomePageScope({
       if (structured.httpStatus === 409) setDetailConflict(structured)
       else setDetailErrorState(structured)
     }
-  }
-  const createProject = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!selectedTeam) return
-    const formElement = event.currentTarget; const form = new FormData(formElement)
-    try {
-      const project = await apiRequest<{ id: string }>('/api/v1/projects', { method: 'POST', headers: json({}), body: JSON.stringify({ teamId: selectedTeam.id, name: String(form.get('name') ?? ''), summary: String(form.get('summary') ?? '') || undefined, description: String(form.get('description') ?? '') || undefined, leadActorId: String(form.get('leadActorId') ?? '') || null, targetDate: String(form.get('targetDate') ?? '') || null }) })
-      if (!isAuthorityCurrent()) return
-      formElement.reset(); setCreateProjectOpen(false); await projectsPage.refresh()
-      if (!isAuthorityCurrent()) return
-      await openProject(project.id)
-    } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
   }
   const createComment = async (event: FormEvent<HTMLFormElement>, parentCommentId?: string) => {
     event.preventDefault()
@@ -644,7 +663,7 @@ function HomePageScope({
             </div>
           </aside>
           <section className="project-detail-pane">
-            {selectedProject ? <ProjectWorkspace actions={<Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button>} actor={actor} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
+            {selectedProject ? <ProjectWorkspace actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{locale === 'zh-CN' ? '里程碑' : 'Milestones'}</Button><Button onClick={() => setDocumentOwner({ type: 'project', id: selectedProject.id, teamId: selectedProject.team_id })} variant="secondary">{locale === 'zh-CN' ? '文档' : 'Documents'}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} key={selectedProject.id} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
           </section>
         </div>}
       </> : teamAuthoritiesInitialized
@@ -653,28 +672,24 @@ function HomePageScope({
           ? null
           : <SkeletonList columns={1} items={4} label={`${t('loading')} ${t('team')}`} />}</>}
     </section>
-    <Dialog closeLabel={t('close')} onClose={() => setCreateProjectOpen(false)} open={createProjectOpen} title={t('createProject')}>
-      <form className="project-form modal-form" onSubmit={createProject} data-testid="create-project">
-        <label>{t('projectName')}<input name="name" required /></label>
-        <label>{t('summary')}<input name="summary" /></label>
-        <label>{t('targetDate')}<input name="targetDate" type="date" /></label>
-        <label>{t('lead')}<select name="leadActorId"><option value="">{t('noLead')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label className="form-span">{t('description')}<textarea name="description" /></label>
-        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={() => setCreateProjectOpen(false)} type="button">{t('cancel')}</Button><Button icon={<FolderPlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createProject')}</Button></div>
-      </form>
-    </Dialog>
+    <ProjectEditor actor={actor} humans={humans} mode={editProjectOpen ? 'edit' : 'create'}
+      onClose={() => { setCreateProjectOpen(false); setEditProjectOpen(false) }}
+      onReload={async () => { if (selectedProject) await openProject(selectedProject.id, projectTab, false) }}
+      onSaved={id => { if (!isAuthorityCurrent()) return; void projectsPage.refresh(); void openProject(id, projectTab, createProjectOpen) }}
+      open={createProjectOpen || editProjectOpen} project={selectedProject} teamId={selectedTeam?.id ?? ''} />
+    {selectedProject && <ProjectMilestones actor={actor} key={selectedProject.id} onChanged={() => { void issueMilestonesPage.refresh(); void detailMilestonesPage.refresh() }} onClose={() => setMilestonesOpen(false)} open={milestonesOpen} projectId={selectedProject.id} teamId={selectedProject.team_id} />}
     <Dialog closeLabel={t('close')} onClose={closeCreateWorkItem} open={createWorkItemOpen} title={t('createIssue')}>
       <form className="work-form modal-form" onSubmit={createWorkItem} data-testid="create-work-item">
         {createWorkItemError && <p className="error" role="alert">{createWorkItemError}</p>}
         <label className="form-span">{t('title')}<input name="title" required /></label>
-        <label className="form-span">{t('description')}<textarea name="description" /></label>
+        <div className="form-span"><RichTextEditor copy={editorCopy} identity={newIssueDraftIdentity} label={t('description')} mode="description" name="description" onChange={setCreateWorkItemDescription} value={createWorkItemDescription} /></div>
         <label>{t('status')}<select name="statusId" required>{states.map(state => <option key={state.id} value={state.id}>{state.name}</option>)}</select></label>
         <label>{t('priority')}<select name="priority"><option value="none">{t('noPriority')}</option><option value="urgent">{t('urgent')}</option><option value="high">{t('high')}</option><option value="medium">{t('medium')}</option><option value="low">{t('low')}</option></select></label>
         <label>{t('dueDate')}<input name="dueDate" type="date" /></label>
         <label>{t('responsibleHuman')}<select name="ownerId"><option value="">{t('unassigned')}</option>{humans.map(human => <option key={human.id} value={human.id}>{human.display_name}</option>)}</select></label>
-        <label>{t('projects')}<select name="projectId"><option value="">{t('noProject')}</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
+        <label>{t('projects')}<select defaultValue={scope === 'projects' ? selectedProject?.id ?? '' : ''} key={scope === 'projects' ? selectedProject?.id ?? 'none' : 'none'} name="projectId"><option value="">{t('noProject')}</option>{teamProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
         <label>{t('labels')}<input name="labels" /></label>
-        <div className="form-actions"><Button icon={<XIcon aria-hidden="true" size={16} />} onClick={closeCreateWorkItem} type="button">{t('cancel')}</Button><Button disabled={!states[0]} data-testid="create-work-item-submit" icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createIssue')}</Button></div>
+        <div className="form-actions"><Button disabled={createWorkItemBusy} icon={<XIcon aria-hidden="true" size={16} />} onClick={closeCreateWorkItem} type="button">{t('cancel')}</Button><Button disabled={createWorkItemBusy || !states[0]} data-testid="create-work-item-submit" icon={<PlusIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{t('createIssue')}</Button></div>
       </form>
     </Dialog>
     {selectedItem && <WorkItemDetail
@@ -701,6 +716,7 @@ function HomePageScope({
         parents: items.filter(candidate => candidate.id !== selectedItem.id).map(candidate => ({ id: candidate.id, label: `${candidate.team_key}-${candidate.number} · ${candidate.title}` })),
       }}
       supplemental={<>
+        <Button onClick={() => setDocumentOwner({ type: 'work_item', id: selectedItem.id, teamId: selectedItem.team_id })} type="button" variant="secondary">{locale === 'zh-CN' ? '文档' : 'Documents'}</Button>
         <WorkRoom workItemId={selectedItem.id} draftIdentity={{ workspaceId: actor.workspace_id ?? '', teamId: selectedItem.team_id, actorId: actor.id, resourceType: 'work_item', resourceId: selectedItem.id }} legacyComments={comments} legacyHumans={humans} onLegacyComment={createComment} onLegacyUpdate={updateComment} onLegacyRefresh={commentsPage.refresh} />
         <LoadMoreButton collection={commentsPage} label="comments" />
       </>}
@@ -713,6 +729,7 @@ function HomePageScope({
       requestedKey={requestedItem.id}
       copy={detailCopy}
     />}
+    {documentOwner && <DocumentManager actor={actor} key={`${documentOwner.type}:${documentOwner.id}`} onClose={() => setDocumentOwner(null)} owner={documentOwner} />}
   </AuthenticatedWorkspaceShell>
 }
 
@@ -723,6 +740,7 @@ type GuidanceHistory = { scope: GuidanceScope; scopeId: string; documentId: stri
 type GuidanceDiff = { from: GuidanceRevision; to: GuidanceRevision; changes: Array<{ kind: 'context' | 'removed' | 'added'; oldLine: number | null; newLine: number | null; text: string }> }
 
 function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: GuidanceCopy; workspaceId: string; team: Team | null; projects: Project[]; actorId: string }) {
+  const { editorCopy } = useLocale()
   const isAuthorityCurrent = useAuthorityLifetime()
   const [scope, setScope] = useState<GuidanceScope>('workspace')
   const [projectId, setProjectId] = useState('')
@@ -734,7 +752,6 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
   const [fromRevisionId, setFromRevisionId] = useState('')
   const [toRevisionId, setToRevisionId] = useState('')
   const [diff, setDiff] = useState<GuidanceDiff | null>(null)
-  const [viewMode, setViewMode] = useState<'editor' | 'preview'>('editor')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -824,26 +841,18 @@ function GuidancePanel({ copy, workspaceId, team, projects, actorId }: { copy: G
     {loading && <p>{copy.loading}</p>}
     {root && current && <>
       <form className="guidance-editor" onSubmit={event => void publish(event)}>
-        <div className="guidance-view-toggle" role="tablist" aria-label={copy.markdown}>
-          <Button aria-pressed={viewMode === 'editor'} icon={<NotePencilIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('editor')} role="tab" type="button" variant={viewMode === 'editor' ? 'primary' : 'ghost'}>{copy.edit}</Button>
-          <Button aria-pressed={viewMode === 'preview'} icon={<EyeIcon aria-hidden="true" size={15} weight="bold" />} onClick={() => setViewMode('preview')} role="tab" type="button" variant={viewMode === 'preview' ? 'primary' : 'ghost'}>{copy.preview}</Button>
-          {viewMode === 'editor' ? null : <span className="guidance-view-toggle-meta">{copy.characterCount(markdown.length)}</span>}
-        </div>
-        {viewMode === 'editor'
-          ? <RichTextEditor
-              identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
-              label={copy.markdown}
-              name="markdown"
-              value={markdown}
-              onChange={setMarkdown}
-              required
-              testId="guidance-markdown"
-            />
-          : <section className="guidance-rendered" aria-label={copy.renderedPreviewLabel}>
-              {markdown.trim()
-                ? <RichContent density="document" source={markdown} />
-                : <p className="guidance-preview-empty">{copy.previewEmpty}</p>}
-            </section>}
+        <RichTextEditor
+          copy={editorCopy}
+          defaultView="edit"
+          identity={{ workspaceId, teamId: team?.id ?? '', actorId, resourceType: 'guidance', resourceId: current.documentId ?? scope, field: 'markdown', baseRevision: current.revision }}
+          label={copy.markdown}
+          name="markdown"
+          onChange={setMarkdown}
+          required
+          testId="guidance-markdown"
+          value={markdown}
+        />
+        <span className="guidance-character-count">{copy.characterCount(markdown.length)}</span>
         <label>{copy.changeSummary}<input data-testid="guidance-change-summary" value={changeSummary} onChange={event => setChangeSummary(event.currentTarget.value)} maxLength={500} required /></label>
         <Button data-testid="publish-guidance" icon={<UploadSimpleIcon aria-hidden="true" size={17} weight="bold" />} type="submit" variant="primary">{copy.publishRevision}</Button>
       </form>
@@ -868,6 +877,8 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   const { relationsCopy: text } = useLocale()
   const isAuthorityCurrent = useAuthorityLifetime()
   const relations = usePagedApiList<WorkItemRelation>(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { scopeKey: authorityKey })
+  const candidates = usePagedApiList<WorkItemDto>(`/api/v1/work-items?teamId=${encodeURIComponent(item.team_id)}`, { scopeKey: authorityKey })
+  const candidateItems = [...new Map([...projectItems, ...candidates.items].map(candidate => [candidate.id, candidate])).values()]
   const [error, setError] = useState('')
   const [conflict, setConflict] = useState<ReturnType<typeof revisionConflictNotice>>(null)
   useRealtimeSubscription([{ type: 'work_item', id: item.id }], invalidation => {
@@ -878,7 +889,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
       return relations.refresh()
   })
   const workLabel = (id: string) => {
-    const target = projectItems.find(candidate => candidate.id === id)
+    const target = candidateItems.find(candidate => candidate.id === id)
     return target ? `${target.team_key}-${target.number} · ${target.title}` : id
   }
   const add = async (event: FormEvent<HTMLFormElement>) => {
@@ -887,7 +898,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
     const form = new FormData(formElement)
     setError('')
     try {
-      await apiRequest(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { method: 'POST', headers: json({}), body: JSON.stringify({ targetWorkItemId: form.get('targetWorkItemId'), kind: form.get('kind') }) })
+      await apiMutation(`work-item:relation:add:${item.id}`, `/api/v1/work-items/${encodeURIComponent(item.id)}/relations`, { method: 'POST', headers: json({}), body: JSON.stringify({ targetWorkItemId: form.get('targetWorkItemId'), kind: form.get('kind') }) })
       if (!isAuthorityCurrent()) return
       formElement.reset(); await relations.refresh()
     } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
@@ -895,7 +906,7 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   const remove = async (relation: WorkItemRelation) => {
     setError('')
     try {
-      await apiRequest(`/api/v1/work-items/${encodeURIComponent(item.id)}/relations/${encodeURIComponent(relation.id)}`, { method: 'DELETE', headers: revisionHeader(relation.revision) })
+      await apiMutation(`work-item:relation:remove:${relation.id}`, `/api/v1/work-items/${encodeURIComponent(item.id)}/relations/${encodeURIComponent(relation.id)}`, { method: 'DELETE', headers: revisionHeader(relation.revision) })
       if (!isAuthorityCurrent()) return
       await relations.refresh()
     } catch (reason) {
@@ -906,14 +917,15 @@ function WorkItemRelationships({ authorityKey, item, projectItems }: { authority
   }
   return <section className="relationship-panel" aria-labelledby="relationships-heading">
     <header><div><span className="eyebrow">{text.eyebrow}</span><h3 id="relationships-heading">{text.title}</h3></div></header>
-    {(error || relations.error) && <p className="error" role="alert">{error || relations.error?.message}</p>}
+    {(error || relations.error || candidates.error) && <p className="error" role="alert">{error || relations.error?.message || candidates.error?.message} {candidates.error && <button onClick={() => void candidates.refresh()} type="button">{text.reload}</button>}</p>}
     {conflict && <aside className="conflict-notice" role="alert"><div><strong>{text.conflictTitle}</strong><p>{text.conflictAction}</p></div><button onClick={() => { setConflict(null); void relations.refresh() }} type="button">{text.reload}</button></aside>}
     <div className="relation-list">{relations.items.map(relation => {
       const otherId = relation.source_work_item_id === item.id ? relation.target_work_item_id : relation.source_work_item_id
       const direction = relation.kind === 'related' ? text.related : relation.source_work_item_id === item.id ? text.blocks : text.blockedBy
       return <article key={relation.id}><span className={`relation-kind relation-${relation.kind}`}>{direction}</span><strong>{workLabel(otherId)}</strong><button onClick={() => void remove(relation)} type="button">{text.remove}</button></article>
     })}{!relations.loading && relations.items.length === 0 && <p className="empty">{text.empty}</p>}</div>
-    <form className="relation-create" onSubmit={event => void add(event)}><label>{text.fieldKind}<select name="kind"><option value="blocks">{text.kindBlocks}</option><option value="related">{text.kindRelated}</option></select></label><label>{text.fieldWorkItem}<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>{text.fieldWorkItemPlaceholder}</option>{projectItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={projectItems.length < 2} type="submit">{text.add}</button></form>
+    <form className="relation-create" onSubmit={event => void add(event)}><label>{text.fieldKind}<select name="kind"><option value="blocks">{text.kindBlocks}</option><option value="related">{text.kindRelated}</option></select></label><label>{text.fieldWorkItem}<select name="targetWorkItemId" required defaultValue=""><option value="" disabled>{text.fieldWorkItemPlaceholder}</option>{candidateItems.filter(candidate => candidate.id !== item.id).map(candidate => <option key={candidate.id} value={candidate.id}>{workLabel(candidate.id)}</option>)}</select></label><button disabled={candidateItems.every(candidate => candidate.id === item.id)} type="submit">{text.add}</button></form>
+    <LoadMoreButton collection={candidates} label={text.fieldWorkItem} loadMoreLabel={text.loadMoreCandidates} />
     <LoadMoreButton collection={relations} label={text.loadMore} />
   </section>
 }

@@ -19,6 +19,7 @@ export type ResourceResolverId =
   | 'team'
   | 'project'
   | 'milestone'
+  | 'document'
   | 'work_item'
   | 'comment'
   | 'agent_definition'
@@ -110,6 +111,7 @@ const publicOperations = new Set([
 ])
 
 const installationTargetOperations = new Set([
+  'listWorkbenchRunnerAssignments',
   'exchangeAgentSessionToken',
   'refreshAgentSessionToken',
   'inspectExactTargetHandoff',
@@ -167,6 +169,20 @@ const workspaceAdminOperations = new Set([
 
 const humanOnlyOperations = new Set([
   ...workspaceAdminOperations,
+  'listWorkbenchLlmConnections',
+  'createWorkbenchLlmConnection',
+  'getWorkbenchLlmConnection',
+  'updateWorkbenchLlmConnection',
+  'revokeWorkbenchLlmConnection',
+  'upsertWorkbenchLlmModel',
+  'listWorkbenchConversations',
+  'createWorkbenchConversation',
+  'getWorkbenchConversation',
+  'archiveWorkbenchConversation',
+  'listWorkbenchMessages',
+  'listWorkbenchTurns',
+  'queueWorkbenchTurn',
+  'stopWorkbenchTurn',
   'logout',
   'listHumanActors',
   'listAgents',
@@ -232,9 +248,17 @@ const humanOnlyOperations = new Set([
   'listBrowserPushSubscriptions',
   'createBrowserPushSubscription',
   'revokeBrowserPushSubscription',
+  'archiveDocument',
+  'unarchiveDocument',
 ])
 
 const agentOnlyOperations = new Set([
+  'listAgentWorkbenchTurns',
+  'claimWorkbenchTurn',
+  'getWorkbenchAttemptCredential',
+  'startWorkbenchAttempt',
+  'getWorkbenchAttemptStatus',
+  'settleWorkbenchAttempt',
   'getAgentCapabilityManifest',
   'getCurrentAgentConnectionIdentity',
   'claimInboxItem',
@@ -242,6 +266,11 @@ const agentOnlyOperations = new Set([
 ])
 
 const revisionedOperations = new Set([
+  'archiveWorkbenchConversation',
+  'queueWorkbenchTurn',
+  'stopWorkbenchTurn',
+  'updateWorkbenchLlmConnection',
+  'revokeWorkbenchLlmConnection',
   'updateWorkspace',
   'updateTeam',
   'deleteTeam',
@@ -251,6 +280,10 @@ const revisionedOperations = new Set([
   'deleteWorkItem',
   'updateMilestone',
   'deleteMilestone',
+  'updateDocument',
+  'archiveDocument',
+  'unarchiveDocument',
+  'restoreDocumentRevision',
   'deleteWorkItemRelation',
   'updateComment',
   'updateAgent',
@@ -297,6 +330,9 @@ const readOnlyPostOperations = new Set(['previewAgentSessionControl'])
 
 const memberMutationOperations = new Set([
   'decideApproval',
+  'createDocument',
+  'updateDocument',
+  'restoreDocumentRevision',
 ])
 
 const leaseOperations = new Set([
@@ -329,6 +365,7 @@ const selfAuthorizedProjectionOperations = new Set([
 ])
 
 function resolverFor(path: string, operationId: string): ResourceResolverId {
+  if (path.startsWith('/api/v1/workbench/')) return 'none'
   if (selfAuthorizedProjectionOperations.has(operationId)) return 'none'
   if (operationId === 'getCurrentAgentConnectionIdentity') return 'none'
   if (operationId === 'listEvents' || operationId === 'streamEvents') return 'event_audience'
@@ -352,6 +389,7 @@ function resolverFor(path: string, operationId: string): ResourceResolverId {
   if (path.includes('/agents')) return 'agent_definition'
   if (path.includes('/agent-connections')) return 'agent_connection'
   if (path.includes('/comments')) return 'comment'
+  if (path.includes('/documents')) return 'document'
   if (path.includes('/work-items')) return 'work_item'
   if (path.includes('/milestones')) return 'milestone'
   if (path.includes('/projects')) return 'project'
@@ -440,7 +478,10 @@ export function createRoutePolicyManifest(
           ? capabilityFor(binding.method, binding.path, binding.operationId)
           : [],
         sessionBinding: authentication === 'installation_target' ? 'installation_target' : agentAuthentication ? 'current_session' : 'none',
-        requireActiveSession: authentication !== 'installation_target' && agentAuthentication,
+        // Settle has a durable idempotency replay path after atomic Session completion.
+        // A new write still passes the in-transaction active-Session guard.
+        requireActiveSession: authentication !== 'installation_target' && agentAuthentication
+          && binding.operationId !== 'settleWorkbenchAttempt',
         requireActiveDelegation: authentication !== 'installation_target' && agentAuthentication,
         requireLiveGrantIntersection: authentication !== 'installation_target' && agentAuthentication,
         resourceScope: resolver === 'none' ? 'none' : 'resolved_resource',
@@ -511,6 +552,7 @@ const mcpOperationIds = {
   'resource:workspace-guidance': 'getWorkspaceGuidance',
   'resource:team-guidance': 'getTeamGuidance',
   'resource:project-guidance': 'getProjectGuidance',
+  'resource:document-revision': 'getDocumentRevision',
   'resource:repository-context': 'getRepositoryContext',
   'tool:list_work_items': 'listWorkItems',
   'tool:list_events': 'listEvents',
@@ -518,6 +560,14 @@ const mcpOperationIds = {
   'tool:get_work_item': 'getWorkItem',
   'tool:list_project_milestones': 'listProjectMilestones',
   'tool:get_milestone': 'getMilestone',
+  'tool:list_documents': 'listDocuments',
+  'tool:create_document': 'createDocument',
+  'tool:get_document': 'getDocument',
+  'tool:update_document': 'updateDocument',
+  'tool:list_document_history': 'listDocumentHistory',
+  'tool:get_document_revision': 'getDocumentRevision',
+  'tool:diff_document_revisions': 'diffDocumentRevisions',
+  'tool:restore_document_revision': 'restoreDocumentRevision',
   'tool:list_work_item_relations': 'listWorkItemRelations',
   'tool:get_work_room': 'getWorkRoom',
   'tool:create_repository_branch': 'requestProviderAction',
