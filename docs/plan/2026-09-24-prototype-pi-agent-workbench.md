@@ -3,6 +3,8 @@
 
 状态：规划完成后进入逐项实现；本路线图不代表功能已经交付。基线日期：2026-09-24。
 
+W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W04、W08、W09、W10、W13 的交付记录为空模板或自述仍有缺口，W14–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
+
 ## 目标与交付边界
 
 将 `design/prototype` 的视觉与交互体系迁入现有 Next.js Web，补齐 Projects、Issues、Markdown 文档、模型配置和 Agent 工作台的真实业务闭环。引入 Pi 作为独立执行进程中的 Agent 引擎，通过 WorkMesh 的受控工具操作系统；用户可配置支持 Chat Completions 或 Responses 的 LLM 服务。
