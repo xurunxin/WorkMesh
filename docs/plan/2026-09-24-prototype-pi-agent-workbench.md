@@ -499,13 +499,15 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/125
 <!-- WM-WEBPI-20260924:W04 -->
 # W04 替换 Projects 与 Issues 主工作流页面
 
-阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：实施中（2026-09-25）；开始收敛 Project 主流程，整页替换与 Issue 闭环仍待完成。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
 本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W04。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`。
 
 WorkMesh：`GEN-555` / `3ad20f14-df9c-4f0d-a909-dad7bb7c1ce0`。
+
+独立 Docker 测试 WorkMesh：Project `630b5ede-448f-4a60-8170-f3552b17d2ed`，W04 WorkItem `b2d94868-3609-4e72-816e-8e9396ddbf52`；与持久 WorkMesh 实例隔离。
 
 GitHub：https://github.com/xurunxin/WorkMesh/issues/126
 
@@ -555,11 +557,11 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/126
 
 ## 交付记录模板
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：W04 本段实现提交 `1c523da`；隔离 Docker Compose `workmesh-webpi-stage`，Web `127.0.0.1:3110`、API `127.0.0.1:3111`。本轮未推送或创建 PR。
+- 数据迁移 / API / events / Skill 变更：无迁移、事件或 Skill 变更。`GET /api/v1/projects/{projectId}/control-center` 的 `project.progress` 新增整个 Project 中非取消 Issue 总数和已完成 workflow Issue 数；OpenAPI 和 contracts 同步。进度与 Agent Session 完成态分离；ETag 和数据新鲜度纳入整个 Project 的 Issue 修订、更新时间及数量。
+- 实际测试命令、结果、失败/skip：`pnpm lint` 18/18 PASS；`pnpm typecheck` 18/18 PASS；`pnpm test` 29/29 PASS（Web 725/725，API 171/171）；聚焦 Web 28/28 PASS，追加空 Project 检查 6/6 PASS；`pnpm test:e2e` 68/68 PASS。`pnpm test:integration` 最终完整重跑：DB 77/77、API 135 PASS / 1 skip、Worker 78 PASS / 1 skip、Recovery 1 skip；随后新增跨分页进度断言的 Human Attention 集成单测 1/1 PASS。首轮集成运行时 ETag 修复尚未加载，产生 1 个失败；最终代码复测通过，保留此诊断记录。
+- 浏览器/真实模型/恢复证据：改动前隔离 Docker Projects 页面截图见 `.evidence/webpi-stage-projects.png`；改动后 Project、Work、Issue 详情和深色工作页截图见 `.evidence/webpi-stage-w04-project.png`、`.evidence/webpi-stage-w04-work.png`、`.evidence/webpi-stage-w04-issue.png`、`.evidence/webpi-stage-w04-work-dark.png`（均为忽略目录）。真实容器浏览器验证项目说明折叠/展开、Project 切换无旧数据、工作列表使用完整内容宽度且筛选器无横向溢出；真实 API 进度 `total=1, completed=0` 与页面 `0/1` 一致，未出现 hydration 错误。E2E 覆盖项目工作区几何、进度和 hydration。
+- 演示步骤、已知限制、规范偏差及 follow-up：登录 Docker 测试环境 → 打开 W04 Project → 看到摘要和 `0/1` 完成进度 → 展开项目说明 → 切换“工作”查看全宽列表和 Issue 详情 → 切换 W11 Project 检查无旧内容。Project header 优先展示摘要，长描述保留在可展开区域；命令中心在页头 hydration 后挂载，避免开发环境报错。W04 仍需完成页面整体替换、Issue 全路径与权限/并发/移动交互矩阵，不能关闭任务。
 
 
 ---
