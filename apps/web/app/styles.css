@@ -1629,6 +1629,16 @@ main#workmesh-main:focus-visible {
 .hcp-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
 .hcp-title-row h1 { margin: 0; font-size: 1.45rem; letter-spacing: 0; }
 .hcp-project-heading p { margin: .3rem 0 0; color: var(--wm-muted); }
+.hcp-project-summary { max-width: 68ch; overflow-wrap: anywhere; }
+.hcp-project-description { min-width: 0; color: var(--wm-muted); font-size: .82rem; }
+.hcp-project-description summary { width: fit-content; cursor: pointer; color: var(--wm-accent); }
+.hcp-project-description .rich-markdown { max-width: 72rem; padding: .8rem 0 0; overflow-wrap: anywhere; color: var(--wm-text); }
+.hcp-project-description .rich-markdown :is(pre, table) { max-width: 100%; overflow-x: auto; }
+.project-control-progress { display: grid; gap: .35rem; max-width: 24rem; }
+.project-control-progress > div { display: flex; align-items: baseline; gap: .65rem; }
+.project-control-progress strong { font-size: 1.2rem; }
+.project-control-progress span { color: var(--wm-muted); font-size: .78rem; }
+.project-control-progress progress { width: 100%; height: .45rem; accent-color: var(--wm-accent); }
 .hcp-project-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem; }
 .hcp-reference > .wm-tab-list { margin-inline: -2rem; padding-inline: 1.25rem; }
 .hcp-summary-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 1rem 0; overflow: hidden; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
@@ -1643,6 +1653,8 @@ main#workmesh-main:focus-visible {
 .hcp-summary-strip .tone-verified strong,
 .hcp-summary-strip .tone-ready strong { color: var(--wm-success); }
 .hcp-control-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; min-width: 0; align-items: start; }
+.hcp-control-grid--work { grid-template-columns: minmax(0, 1fr); }
+.hcp-control-grid--work .wm-work-item-filter-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .hcp-control-grid .wm-control-section { min-height: 15rem; }
 .hcp-control-grid .wm-control-section-running .wm-run-digest-details { padding-top: .75rem; border-top: 1px solid var(--wm-border); }
 .hcp-reference .wm-evidence-list + .wm-causal-timeline { margin-top: 1rem; }

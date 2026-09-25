@@ -113,9 +113,9 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
 }) {
   const { humanControlPlaneCopy: copy, locale } = useLocale()
   const local = locale === 'zh-CN' ? {
-    activeAgent: '运行中的智能体', all: '全部', applyFilters: '应用筛选', blockedDescription: '被执行状态或依赖阻塞的工作。', clearFilters: '清除筛选', currentStep: '当前计划步骤', details: '查看详情', empty: '当前没有项目。', evidenceCount: '证据', filters: 'Project Control Center 筛选', heartbeat: '心跳', lastActivity: '最近活动', loadError: '无法加载 Project Control Center。', loading: '正在加载 Project Control Center...', loadingMore: '正在加载…', loadMore: '加载更多工作项', noActivity: '暂无可显示的活动', noHuman: '未指定负责人', noItems: '当前没有此类项目。', pendingHuman: '待 Human 处理', projectStatus: '项目状态', readyDescription: '已满足服务端就绪条件、可进入执行的工作。', responsibleHumanFilter: '负责人', retry: '重试', riskFilter: '风险', stateFilter: '工作状态', timeFilter: '时间窗口', workItem: '工作项',
+    activeAgent: '运行中的智能体', all: '全部', applyFilters: '应用筛选', blockedDescription: '被执行状态或依赖阻塞的工作。', clearFilters: '清除筛选', currentStep: '当前计划步骤', description: '项目说明', details: '查看详情', empty: '当前没有项目。', evidenceCount: '证据', filters: 'Project Control Center 筛选', heartbeat: '心跳', lastActivity: '最近活动', loadError: '无法加载 Project Control Center。', loading: '正在加载 Project Control Center...', loadingMore: '正在加载…', loadMore: '加载更多工作项', noActivity: '暂无可显示的活动', noHuman: '未指定负责人', noItems: '当前没有此类项目。', pendingHuman: '待 Human 处理', projectStatus: '项目状态', readyDescription: '已满足服务端就绪条件、可进入执行的工作。', responsibleHumanFilter: '负责人', retry: '重试', riskFilter: '风险', stateFilter: '工作状态', timeFilter: '时间窗口', workItem: '工作项',
   } : {
-    activeAgent: 'Active Agent Executor', all: 'All', applyFilters: 'Apply filters', blockedDescription: 'Work blocked by execution state or dependencies.', clearFilters: 'Clear filters', currentStep: 'Current Plan Step', details: 'View details', empty: 'There is nothing in this Project yet.', evidenceCount: 'Evidence', filters: 'Project Control Center filters', heartbeat: 'Heartbeat', lastActivity: 'Last activity', loadError: 'Unable to load the Project Control Center.', loading: 'Loading Project Control Center...', loadingMore: 'Loading…', loadMore: 'Load more work items', noActivity: 'No meaningful activity recorded', noHuman: 'No responsible Human', noItems: 'No items in this section.', pendingHuman: 'Pending Human actions', projectStatus: 'Project status', readyDescription: 'Work that satisfies the server-side readiness projection.', responsibleHumanFilter: 'Responsible Human', retry: 'Retry', riskFilter: 'Risk', stateFilter: 'Work Item state', timeFilter: 'Time window', workItem: 'Work Item',
+    activeAgent: 'Active Agent Executor', all: 'All', applyFilters: 'Apply filters', blockedDescription: 'Work blocked by execution state or dependencies.', clearFilters: 'Clear filters', currentStep: 'Current Plan Step', description: 'Project description', details: 'View details', empty: 'There is nothing in this Project yet.', evidenceCount: 'Evidence', filters: 'Project Control Center filters', heartbeat: 'Heartbeat', lastActivity: 'Last activity', loadError: 'Unable to load the Project Control Center.', loading: 'Loading Project Control Center...', loadingMore: 'Loading…', loadMore: 'Load more work items', noActivity: 'No meaningful activity recorded', noHuman: 'No responsible Human', noItems: 'No items in this section.', pendingHuman: 'Pending Human actions', projectStatus: 'Project status', readyDescription: 'Work that satisfies the server-side readiness projection.', responsibleHumanFilter: 'Responsible Human', retry: 'Retry', riskFilter: 'Risk', stateFilter: 'Work Item state', timeFilter: 'Time window', workItem: 'Work Item',
   }
   const [data, setData] = useState<ControlCenterResponse | null>(null)
   const [error, setError] = useState('')
@@ -257,10 +257,22 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
     </ControlCenterSection>
   }
 
+  const progress = data?.project?.progress
+  const progressPercent = progress && progress.total > 0 ? Math.round(progress.completed / progress.total * 100) : 0
+  const progressLabel = !progress || progress.total === 0
+    ? locale === 'zh-CN' ? '暂无 Issue' : 'No Issues yet'
+    : locale === 'zh-CN'
+      ? `${progress.completed}/${progress.total} 个 Issue 已完成`
+      : `${progress.completed}/${progress.total} Issues completed`
   const projectHeader = <>
     <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.description || project.summary ? <RichContent density="document" source={project.description || project.summary || ''} /> : <p>{local.empty}</p>}</div><div className="hcp-project-actions">{actions}<Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></div></div>
+      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.summary && <p className="hcp-project-summary">{project.summary}</p>}{!project.summary && !project.description && <p>{local.empty}</p>}</div><div className="hcp-project-actions">{actions}<Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></div></div>
+      {project.description && <details className="hcp-project-description"><summary>{local.description}</summary><RichContent density="document" source={project.description} /></details>}
       <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data?.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data?.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>{data ? `rev ${data.revision}` : '-'}</dd></div></dl>
+      {progress && <div className="project-control-progress">
+        <div><strong>{progress.total > 0 ? `${progressPercent}%` : '—'}</strong><span>{progressLabel}</span></div>
+        {progress.total > 0 && <progress aria-label={locale === 'zh-CN' ? '项目 Issue 完成进度' : 'Project Issue completion progress'} max={progress.total} value={progress.completed} />}
+      </div>}
     </header>
     <TabBar ariaLabel={copy.projectNavigation} onValueChange={value => navigateSurface(value as ProjectControlSurface)} tabs={navigation} value={activeSurface} />
   </>
@@ -294,7 +306,7 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
       <div className="project-control-filter-actions"><Button type="submit">{local.applyFilters}</Button><Button onClick={() => writeFilters({})} type="button" variant="ghost">{local.clearFilters}</Button></div>
     </form>}
     {activeSurface !== 'work' && <section aria-label={copy.summaryLabel} className="hcp-summary-strip">{collectionOrder.map(collection => { const labels: Record<Collection, string> = { attention: copy.needsYou, running: copy.running, risks: copy.atRisk, recently_verified: copy.recentlyVerified, ready_work: copy.ready, blocked_work: copy.blocked }; const tones: Record<Collection, string> = { attention: 'attention', running: 'running', risks: 'risk', recently_verified: 'verified', ready_work: 'ready', blocked_work: 'blocked' }; return <article className={`tone-${tones[collection]}`} key={collection}><strong>{data.collections[collection].items.length}</strong><span>{labels[collection]}</span></article> })}</section>}
-    <div className="hcp-control-grid">{surfaces[activeSurface] ?? <div className="project-control-section-state">{local.empty}</div>}</div>
+    <div className={`hcp-control-grid${activeSurface === 'work' ? ' hcp-control-grid--work' : ''}`}>{surfaces[activeSurface] ?? <div className="project-control-section-state">{local.empty}</div>}</div>
     <EvidenceDrawer closeLabel={copy.close} description={selected?.summary} onClose={closeDetails} open={Boolean(selected)} title={selected?.title ?? copy.evidence}>{selected && <>{attribution(selected)}{metadata(selected)}<Button onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></>}</EvidenceDrawer>
   </div>
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type AnchorHTMLAttributes, type PropsWithChildren, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type AnchorHTMLAttributes, type PropsWithChildren, type ReactNode } from 'react'
 import { classNames } from '../internal/utils.js'
 
 export type NavigationItem = Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick'> & {
@@ -62,6 +62,15 @@ export function AppShell({
   workspaceNavigationLabel = 'Workspace',
 }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const commandCenterSlot = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const slot = commandCenterSlot.current
+    if (!slot) return
+    // The command center lives in the root layout. It must wait until this
+    // streamed page boundary has hydrated before it portals into the header.
+    slot.dataset.wmHydrated = 'true'
+    return () => { delete slot.dataset.wmHydrated }
+  }, [])
   const allNavigation = [...navigation, ...utilityNavigation]
   const hasNavigation = navigation.length > 0 || utilityNavigation.length > 0
   return <div className={`app-shell wm-theme${hasNavigation ? '' : ' app-shell--no-sidebar'}`}>
@@ -90,7 +99,7 @@ export function AppShell({
           {footer && <footer className="app-sidebar-footer mobile-navigation-footer">{footer}</footer>}
         </details>}
         <p>{contextLabel}</p>
-        <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" suppressHydrationWarning />
+        <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" ref={commandCenterSlot} />
         {headerActions && <div className="wm-shell-actions">{headerActions}</div>}
       </header>
       <main className="app-content" id="workmesh-main" tabIndex={-1}>{children}</main>

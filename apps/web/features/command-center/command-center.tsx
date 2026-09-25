@@ -126,10 +126,13 @@ export function GlobalCommandCenter({ getLayerOpen = semanticLayerOpen, triggerL
 
   useEffect(() => {
     setMounted(true)
-    const updateTriggerSlot = () => setTriggerSlot(document.getElementById('workmesh-command-center-trigger-slot'))
+    const updateTriggerSlot = () => {
+      const slot = document.getElementById('workmesh-command-center-trigger-slot')
+      setTriggerSlot(slot?.dataset.wmHydrated === 'true' ? slot : null)
+    }
     updateTriggerSlot()
     const observer = new MutationObserver(updateTriggerSlot)
-    observer.observe(document.body, { childList: true, subtree: true })
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-wm-hydrated'], childList: true, subtree: true })
     return () => observer.disconnect()
   }, [])
   useEffect(() => {

@@ -880,6 +880,7 @@ export const controlCenterResponseSchema = z.object({
     targetDate: dateSchema.nullable(),
     responsibleHuman: attentionActorReferenceSchema.nullable(),
     revision: revisionSchema,
+    progress: z.object({ total: z.number().int().nonnegative(), completed: z.number().int().nonnegative() }).strict(),
   }).strict().nullable(),
   revision: revisionSchema,
   freshness: humanAttentionFreshnessSchema,

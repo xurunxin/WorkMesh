@@ -121,6 +121,8 @@ describe('command-center state projection', () => {
     slot.id = 'workmesh-command-center-trigger-slot'
     document.body.append(slot)
     render(createElement(GlobalCommandCenter))
+    expect(screen.queryByTestId('command-center-trigger')).not.toBeInTheDocument()
+    slot.dataset.wmHydrated = 'true'
     const trigger = await screen.findByTestId('command-center-trigger')
     expect(trigger).toHaveAttribute('aria-keyshortcuts', 'Control+K Meta+K')
     expect(trigger).toHaveAccessibleName('Search')

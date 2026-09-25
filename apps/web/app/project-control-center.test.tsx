@@ -41,7 +41,7 @@ const digest = (overrides: Partial<ControlCenterResponse['collections']['running
 const response: ControlCenterResponse = {
   projectionVersion: 1,
   scope: { workspaceId: '88888888-8888-4888-8888-888888888888', projectId },
-  project: { id: projectId, name: 'Runtime Reliability', status: 'active', targetDate: '2026-09-30', responsibleHuman: { id: '44444444-4444-4444-8444-444444444444', kind: 'human', displayName: 'Xu Runxin' }, revision: 4 },
+  project: { id: projectId, name: 'Runtime Reliability', status: 'active', targetDate: '2026-09-30', responsibleHuman: { id: '44444444-4444-4444-8444-444444444444', kind: 'human', displayName: 'Xu Runxin' }, revision: 4, progress: { total: 5, completed: 2 } },
   revision: 4,
   freshness: { state: 'current', observedAt: '2026-08-26T06:22:00.000Z', sourceUpdatedAt: '2026-08-26T06:21:00.000Z' },
   collections: {
@@ -61,6 +61,21 @@ afterEach(() => {
 })
 
 describe('Project Control Center', () => {
+  it('keeps a long Project description available without overwhelming the overview', () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => response })))
+    const longDescription = `# Project background\n\n${'Detailed planning context. '.repeat(100)}`
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined}
+      workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability',
+        summary: 'Reliable Agent runs', description: longDescription, status: 'active' }} /></LocaleProvider>)
+    expect(screen.getByText('Reliable Agent runs')).toBeVisible()
+    const disclosure = screen.getByText('项目说明').closest('details')
+    expect(disclosure).not.toBeNull()
+    expect(disclosure).not.toHaveAttribute('open')
+    fireEvent.click(screen.getByText('项目说明'))
+    expect(disclosure).toHaveAttribute('open')
+    expect(screen.getByRole('heading', { name: 'Project background' })).toBeVisible()
+  })
+
   it('loads one bounded projection and renders the complete Run digest', async () => {
     const fetchMock = vi.fn(async (_input: string) => ({ ok: true, status: 200, json: async () => response }))
     vi.stubGlobal('fetch', fetchMock)
@@ -71,8 +86,20 @@ describe('Project Control Center', () => {
     expect(screen.getAllByText('Contract typecheck passed.').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Xu Runxin').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Codex').length).toBeGreaterThan(0)
+    expect(screen.getByText('2/5 个 Issue 已完成')).toBeVisible()
+    expect(screen.getByRole('progressbar', { name: '项目 Issue 完成进度' })).toHaveAttribute('value', '2')
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(fetchMock.mock.calls[0]?.[0]).toBe(`/api/v1/projects/${projectId}/control-center?limit=10`)
+  })
+
+  it('shows an empty project without implying it is complete', async () => {
+    const emptyProject = { ...response, project: { ...response.project!, progress: { total: 0, completed: 0 } } }
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => emptyProject })))
+    render(<LocaleProvider><ProjectControlCenter backlogCount={0} onWorkViewChange={() => undefined}
+      workSurface={null} workView="list" project={{ id: projectId, name: 'Runtime Reliability',
+        summary: null, description: null, status: 'active' }} /></LocaleProvider>)
+    expect(await screen.findByText('暂无 Issue')).toBeVisible()
+    expect(screen.queryByRole('progressbar')).toBeNull()
   })
 
   it('keeps Project identity and the work escape available while the projection fails', async () => {

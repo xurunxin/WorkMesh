@@ -44,14 +44,27 @@ test.describe('frontend layout and shell unification', () => {
   })
 
   test('keeps overview project-only and opens milestone-filtered global Issues', async ({ page }) => {
+    const hydrationErrors: string[] = []
+    page.on('pageerror', error => { if (error.message.includes('Hydration failed')) hydrationErrors.push(error.message) })
     await page.goto(`/?view=projects&project=${projectId}`)
     const projectControl = page.getByTestId('project-control-center')
     await expect(projectControl.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true')
+    await expect(projectControl.getByRole('progressbar', { name: '项目 Issue 完成进度' })).toBeVisible()
     await expect(page.getByRole('region', { name: 'Work surfaces' })).toHaveCount(0)
     await page.getByTestId('project-control-view-work').click()
     await expect(page.getByTestId('project-tab-list')).toBeVisible()
     await expect(page.getByTestId('project-tab-board')).toBeVisible()
     await expect(page.getByTestId('project-tab-backlog')).toBeVisible()
+    const workGeometry = await page.evaluate(() => {
+      const grid = document.querySelector<HTMLElement>('.hcp-control-grid--work')
+      const surface = document.querySelector<HTMLElement>('.hcp-project-work-surface')
+      const filters = document.querySelector<HTMLElement>('.wm-work-item-filters')
+      if (!grid || !surface || !filters) throw new Error('Project Work surface did not render')
+      return { gridWidth: grid.clientWidth, surfaceWidth: surface.clientWidth, filtersOverflow: filters.scrollWidth - filters.clientWidth }
+    })
+    expect(Math.abs(workGeometry.gridWidth - workGeometry.surfaceWidth)).toBeLessThanOrEqual(2)
+    expect(workGeometry.filtersOverflow).toBeLessThanOrEqual(2)
+    expect(hydrationErrors).toEqual([])
 
     await page.getByRole('region', { name: '里程碑路线图' }).getByRole('link', { name: '查看 Foundation Issues' }).click()
     await expect(page).toHaveURL(new RegExp(`view=my-work.*layout=list.*projectId=${projectId}.*milestoneId=${milestoneId}`))
