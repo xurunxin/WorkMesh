@@ -231,14 +231,20 @@ describe('exact-session Pi Runner API', () => {
       }, { 'if-match': '"revision-1"' })
       expect(model.statusCode).toBe(201)
       const modelId = model.json<{ id: string }>().id
+      const capabilities = await runnerCall('GET', '/api/v1/agent-capabilities')
+      expect(capabilities.statusCode, capabilities.body).toBe(200)
+      expect(capabilities.json<{ operations: Array<{ operationId: string; supported: boolean; eligibleByCapability: boolean }> }>()
+        .operations.find(operation => operation.operationId === 'createDocument'))
+        .toMatchObject({ supported: true, eligibleByCapability: true })
       const created = await humanCall('POST', '/api/v1/workbench/conversations', {
         title: 'MiniMax live acceptance', workItemId, agentSessionId: sessionId,
         llmConnectionId: connectionId, llmModelId: modelId,
       })
       expect(created.statusCode, created.body).toBe(201)
       const conversationId = created.json<{ id: string }>().id
+      const proofTitle = `MiniMax governed document ${randomUUID().slice(0, 8)}`
       const sent = await humanCall('POST', `/api/v1/workbench/conversations/${conversationId}/turns`, {
-        messageMarkdown: 'Call workmesh_session_context exactly once, then answer in one brief sentence that the session context is ready.',
+        messageMarkdown: `Call workmesh_session_context exactly once. Then call workmesh_create_document to create a normal Issue document with ownerType work_item, ownerId ${workItemId}, title "${proofTitle}". Its Markdown must have the heading "# MiniMax governed tool proof", one blank line, and the sentence "Created by the authorized Pi tool." Do not include a code fence or quotation marks in the document. Answer in one brief sentence after the tool succeeds.`,
       }, { 'if-match': '"revision-1"' })
       expect(sent.statusCode, sent.body).toBe(201)
       const turnId = sent.json<{ turn: { id: string } }>().turn.id
@@ -252,20 +258,30 @@ describe('exact-session Pi Runner API', () => {
       delete runnerEnv.WORKMESH_BOOTSTRAP_TOKEN
       const runnerRoot = join(import.meta.dirname, '../../agent-runner')
       let stdout = ''
+      let toolDiagnostics = ''
       try {
         const result = await execFileAsync(process.execPath,
           [join(runnerRoot, 'node_modules/tsx/dist/cli.mjs'),
             join(runnerRoot, 'src/run-session.ts'), '--once'],
           { cwd: runnerRoot, env: runnerEnv, timeout: 180_000, maxBuffer: 1_000_000 })
         stdout = result.stdout
+        toolDiagnostics = result.stderr.split('\n').filter(line => line.includes('"stage":')).join('\n').slice(0, 500)
       } catch (error) {
         const diagnostic = (error as { stderr?: string }).stderr?.trim().split('\n').at(-1) ?? 'no runner diagnostic'
         throw new Error(`LIVE_RUNNER_FAILED: ${diagnostic.slice(0, 200)}`)
       }
       const resultLine = stdout.trim().split('\n').at(-1) ?? '{}'
-      const result = JSON.parse(resultLine) as { turnId: string; status: string; toolCalls: number }
+      const result = JSON.parse(resultLine) as { turnId: string; status: string; toolCalls: number; toolNames: string[] }
       expect(result).toMatchObject({ turnId, status: 'settled' })
-      expect(result.toolCalls).toBeGreaterThanOrEqual(1)
+      expect(result.toolCalls).toBeGreaterThanOrEqual(2)
+      expect(result.toolNames).toContain('workmesh_create_document')
+      const document = (await db.query<{ id: string; markdown: string; author_actor_id: string }>(
+        `SELECT d.id,r.markdown,r.author_actor_id FROM documents d
+         JOIN document_revisions r ON r.id=d.current_revision_id
+         WHERE d.work_item_id=$1 AND d.title=$2`, [workItemId, proofTitle])).rows[0]
+      expect(document?.markdown, toolDiagnostics).toContain('# MiniMax governed tool proof')
+      expect(document?.markdown, toolDiagnostics).toContain('Created by the authorized Pi tool.')
+      expect(document?.author_actor_id).not.toBe(actorId)
       const turns = await humanCall('GET', `/api/v1/workbench/conversations/${conversationId}/turns`)
       expect(turns.json<{ items: Array<{ status: string }> }>().items[0]?.status).toBe('settled')
       const messages = await humanCall('GET', `/api/v1/workbench/conversations/${conversationId}/messages`)

@@ -6,6 +6,7 @@ import { createAgentSession, ModelRuntime, SessionManager } from '@earendil-work
 import { workbenchRunnerCredentialSchema } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { configuredModels } from './configured-model.js'
+import { createWorkMeshTools } from './workmesh-tools.js'
 
 type Credential = ReturnType<typeof workbenchRunnerCredentialSchema.parse>
 type TokenExchange = { sessionToken: string; expiresAt: string }
@@ -62,15 +63,16 @@ class RunnerApi {
     this.#sessionToken = payload.sessionToken
     this.#expiresAt = Date.parse(payload.expiresAt)
   }
-  async request<T>(method: 'GET' | 'POST', path: string, body?: unknown, ifMatch?: number): Promise<T> {
+  async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
+    body?: unknown, ifMatch?: number, explicitIdempotencyKey?: string): Promise<T> {
     if (!this.#sessionToken || this.#expiresAt - Date.now() < 60_000) await this.#refresh()
-    const idempotencyKey = randomUUID()
+    const idempotencyKey = explicitIdempotencyKey ?? randomUUID()
     const send = () => fetch(new URL(path, this.#baseUrl), {
       method, headers: { 'Authorization': `Bearer ${this.#sessionToken}`,
         'X-WorkMesh-Runner-Token': this.#runnerToken,
         'Idempotency-Key': idempotencyKey, 'Content-Type': 'application/json',
         ...(ifMatch === undefined ? {} : { 'If-Match': `"revision-${ifMatch}"` }) },
-      body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined,
+      body: method === 'GET' || method === 'DELETE' ? undefined : JSON.stringify(body ?? {}),
       signal: AbortSignal.timeout(15_000),
     })
     let response = await send()
@@ -120,7 +122,7 @@ function removeScratch(rootPath: string): void {
   rmSync(root, { recursive: true, force: true })
 }
 
-async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{ answer: string; toolCalls: number }> {
+async function runPi(api: RunnerApi, credential: Credential, attemptId: string, shutdown: AbortSignal): Promise<{ answer: string; toolCalls: number; toolNames: string[] }> {
   const root = mkdtempSync(join(tmpdir(), 'workmesh-runner-'))
   const agentDir = join(root, 'agent'), stateDir = join(root, 'state'), workDir = join(root, 'work')
   for (const directory of [agentDir, stateDir, workDir]) mkdirSync(directory, { recursive: true })
@@ -138,21 +140,27 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
     const model = runtime.getModel('workmesh-configured', credential.modelId)
     if (!model) throw new Error('RUNNER_MODEL_NOT_RESOLVED')
     let toolCalls = 0
+    const toolNames: string[] = []
     const contextTool = {
       name: 'workmesh_session_context', label: 'WorkMesh session context',
       description: 'Read the current authorized WorkMesh Agent Session context. This tool never mutates WorkMesh.',
       parameters: Type.Object({}),
       execute: async () => {
         toolCalls += 1
+        toolNames.push('workmesh_session_context')
         const context = await api.request<unknown>('GET', `/api/v1/agent-sessions/${api.sessionId}/context`)
         const encoded = JSON.stringify(context)
         if (encoded.length > 20_000) throw new Error('RUNNER_CONTEXT_TOO_LARGE')
         return { content: [{ type: 'text' as const, text: encoded }], details: { source: 'workmesh_session_context' } }
       },
     }
+    const workmeshTools = await createWorkMeshTools(api, attemptId, name => {
+      toolCalls += 1
+      if (toolNames.length < 50) toolNames.push(name)
+    })
     const { session } = await createAgentSession({
       cwd: workDir, agentDir, model, modelRuntime: runtime,
-      sessionManager: SessionManager.inMemory(), noTools: 'builtin', customTools: [contextTool],
+      sessionManager: SessionManager.inMemory(), noTools: 'builtin', customTools: [contextTool, ...workmeshTools],
     })
     let stopped = false, polling = false
     const onShutdown = () => { stopped = true; void session.abort() }
@@ -178,7 +186,7 @@ async function runPi(api: RunnerApi, credential: Credential, attemptId: string, 
       if (stopped) throw new Error('RUNNER_ABORTED')
       const answer = session.getLastAssistantText()?.trim()
       if (!answer || answer.length > 50_000) throw new Error('RUNNER_ANSWER_INVALID')
-      return { answer, toolCalls }
+      return { answer, toolCalls, toolNames }
     } finally {
       shutdown.removeEventListener('abort', onShutdown)
       session.dispose()
@@ -207,13 +215,13 @@ async function executeTurn(api: RunnerApi, item: WorkItem, shutdown: AbortSignal
     fenceToken = credential.fenceToken
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`, { fenceToken })
     started = true
-    const { answer, toolCalls } = await runPi(api, credential, attemptId, shutdown)
+    const { answer, toolCalls, toolNames } = await runPi(api, credential, attemptId, shutdown)
     await api.request('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
       fenceToken, assistantMessageMarkdown: answer,
       settlement: { outcome: 'settled', summaryMarkdown: 'Pi completed the WorkMesh turn.',
         noArtifactReason: 'Text-only answer; no artifact was produced.', externalEffectsReconciled: true },
     })
-    console.log(JSON.stringify({ turnId: item.turnId, attemptId, status: 'settled', toolCalls }))
+    console.log(JSON.stringify({ turnId: item.turnId, attemptId, status: 'settled', toolCalls, toolNames }))
   } catch (error) {
     const code = error instanceof RunnerApiError ? error.code : error instanceof Error ? error.message : 'RUNNER_UNKNOWN_ERROR'
     if (started && fenceToken && code !== 'RUNNER_FENCE_STALE' && code !== 'RUNNER_ABORTED') {

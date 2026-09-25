@@ -704,7 +704,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/128
 
 ## 交付记录（2026-09-25）
 
-- 实现环境：`codex/wm-webpi-implementation` 本地分支；隔离 Docker Compose `workmesh-webpi-stage`，Web `http://127.0.0.1:3110`、API `http://127.0.0.1:3111`；原有服务端口未变。实现提交待本轮审计后填写，无 PR。
+- 实现环境：`codex/wm-webpi-implementation` 本地提交 `5ac75d0`；隔离 Docker Compose `workmesh-webpi-stage`，Web `http://127.0.0.1:3110`、API `http://127.0.0.1:3111`；原有服务端口未变，无 PR。
 - 迁移 / API / events：新增 `v1/0011_versioned_documents.sql`，Project/Issue 多文档 CRUD、历史、diff、恢复、归档、Markdown 导出；`document.*` 领域事件与事务 outbox；OpenAPI、contracts、route policy、SDK、MCP 和 ADR 0066 同步。Skill 尚未变更，归 W12。
 - 测试：从 `v1/0008` 和空库迁移及注入失败回滚通过；`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29、`pnpm test:integration` DB 77/77、API 132 通过/4 skip、Worker 78 通过/1 skip、Recovery 1 skip、`pnpm test:e2e` 68/68、`pnpm check:route-policy` 通过。集成和 E2E 使用独立可重置数据库、Redis 与 Docker Web。
 - 运行证据：Docker API 探针完成 Project/Issue 创建、修订、过期修订冲突、历史、Markdown 导出与 hash 验证；浏览器 Project/Issue 文档用例通过。该任务不涉及真实模型请求。
@@ -991,13 +991,15 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/132
 <!-- WM-WEBPI-20260924:W11 -->
 # W11 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵
 
-阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M2；优先级：P0；估算：3–5 人日（W01 后复估）。状态：实施中（2026-09-25）；受控 Project/Issue/Document 读取、普通创建/编辑、Issue 关系、证据制品、审批申请、lease 获取、handoff 提议、完整 plan 发布与 Session 活动已接入 Pi；完成等操作族仍待实现。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
-本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W11。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`。
+本地源：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md` / W11。ADR：`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md`、`docs/adr/0067-governed-pi-workmesh-tools.md`；操作矩阵：`docs/agent-tool-permissions.md`。
 
 WorkMesh：`GEN-562` / `3999d97e-9aa1-4b39-b899-f05834cb6e50`。
+
+独立 Docker 测试 WorkMesh：Project `19a58123-88c7-4d5e-9bc7-619165bfc818`，W11 WorkItem `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3`；与持久 WorkMesh 实例隔离。
 
 GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 
@@ -1047,11 +1049,11 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/133
 
 ## 交付记录模板
 
-- 实现提交/PR 与精确环境：
-- 数据迁移 / API / events / Skill 变更（无则明确写无）：
-- 实际测试命令、结果、失败/skip：
-- 浏览器/真实模型/恢复证据（适用时）：
-- 演示步骤、已知限制、规范偏差及 follow-up：
+- 实现提交/PR 与精确环境：W11 改动尚未提交；隔离 Docker Compose 项目 `workmesh-webpi-stage`，Web `127.0.0.1:3110`，API `127.0.0.1:3111`，Agent Runner 容器由 `agent` profile 启动。
+- 数据迁移 / API / events / Skill 变更：W11 本段无迁移、REST API、事件或 Skill 变更；Pi Runner 新增受 live capability manifest 控制的 WorkMesh 工具。Compose API 服务补齐与 Runner 共用的服务令牌环境变量。
+- 实际测试命令、结果、失败/skip：新增 plan/活动工具后 `pnpm lint` 18/18 PASS、`pnpm typecheck` 18/18 PASS、`pnpm test` 29/29 PASS（Runner 11/11）；`pnpm test:integration`：DB 77/77、API 135 PASS/1 skip、Worker 78 PASS/1 skip、Recovery 1 skip；单独启用真实 M3 的 Runner 集成测试 4/4 PASS；`pnpm test:e2e` 68/68 PASS；Docker `agent` profile 最终镜像构建与 API health PASS。
+- 浏览器/真实模型/恢复证据：2026-09-25，最终 Runner 镜像在隔离 Docker 环境以真实 `MiniMax-M3` 执行 Turn `cf23e217-a387-4c5f-b091-aeb1ec637439`，状态 `settled`，生成 Issue `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3` 的普通文档 `Docker M3 proof 24328233`；首次运行的 Runner 日志证实调用 `workmesh_session_context`、`workmesh_create_document` 两个工具。密钥在 API vault 中，Runner 未接收模型密钥。此前 `RUNNER_ASSIGNMENT_DISCOVERY_FAILED` 定位为 Compose API 未传入服务令牌，补齐后发现接口 200，Runner 正常执行。
+- 演示步骤、已知限制、规范偏差及 follow-up：使用有授权的 Agent 与 M3 连接创建 Workbench 对话并发送“读取会话上下文并创建 Issue 文档”请求，查看 Turn、文档和 Session 审计活动。当前 W11 尚未完成 lease 释放、handoff 接受、Session 完成工具和完整权限拒绝矩阵；plan 与活动工具已有单元测试，尚无真实 Session 验收；前置 W04 主流程也未完成，不关闭 W11。持久 WorkMesh `GEN-562` 与隔离 Docker 测试实例不互通，前者待可用控制面同步。
 
 
 ---
