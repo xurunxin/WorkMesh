@@ -32,7 +32,7 @@ import { useCurrentTeam } from './lib/use-current-team'
 import { useToast } from './lib/use-toast'
 import { workspaceNavigation, workspaceUtilityNavigation } from './lib/workspace-navigation'
 import { LatestRequestGate } from './lib/latest-request'
-import { ProjectWorkspace } from './project-workspace'
+import { ProjectsWorkbench } from './projects-workbench'
 import { RealtimeStatus } from './realtime-status'
 import {
   projectWorkspaceHref,
@@ -649,23 +649,7 @@ function HomePageScope({
       {scope === 'inbox' ? <ActionableCollaborationQueues actor={actor} /> : scope === 'recovery' ? <RecoveryCenter actor={actor} /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
         {scope !== 'projects' && workSurfaces}
-        {scope === 'projects' && <div className="project-workbench">
-          <aside className="project-rail" aria-label={t('projects')}>
-            <header><div><span className="eyebrow">Workspace</span><h1>{t('projects')}</h1></div><Button aria-label={t('newProject')} icon={<FolderPlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={() => setCreateProjectOpen(true)} variant="ghost" /></header>
-            <div className="project-rail-list">
-              {teamProjects.map(project => <button aria-current={selectedProject?.id === project.id ? 'page' : undefined} className={selectedProject?.id === project.id ? 'selected' : ''} data-testid={`project-${project.id}`} key={project.id} onClick={() => void openProject(project.id)} type="button">
-                <span className="project-rail-status"><i aria-hidden="true" />{project.status.replaceAll('_', ' ')}</span>
-                <strong>{project.name}</strong>
-                <small>{project.summary || t('projectOverview')}</small>
-                <time dateTime={project.target_date ?? undefined}>{t('targetDate')} · {project.target_date?.slice(0, 10) || '—'}</time>
-              </button>)}
-              {teamProjects.length === 0 && <div className="project-rail-empty"><FolderSimpleIcon aria-hidden="true" size={28} /><strong>{t('noProjects')}</strong></div>}
-            </div>
-          </aside>
-          <section className="project-detail-pane">
-            {selectedProject ? <ProjectWorkspace actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{locale === 'zh-CN' ? '里程碑' : 'Milestones'}</Button><Button onClick={() => setDocumentOwner({ type: 'project', id: selectedProject.id, teamId: selectedProject.team_id })} variant="secondary">{locale === 'zh-CN' ? '文档' : 'Documents'}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} key={selectedProject.id} project={selectedProject} items={items} tab={projectTab} workSurface={workSurfaces} onTabChange={selectProjectTab} /> : teamProjects.length > 0 ? <p className="empty">{t('projectOverview')}</p> : null}
-          </section>
-        </div>}
+        {scope === 'projects' && <ProjectsWorkbench actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{locale === 'zh-CN' ? '里程碑' : 'Milestones'}</Button><Button onClick={() => setDocumentOwner({ type: 'project', id: selectedProject!.id, teamId: selectedProject!.team_id })} variant="secondary">{locale === 'zh-CN' ? '文档' : 'Documents'}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} items={items} labels={{ documents: locale === 'zh-CN' ? '文档' : 'Documents', editProject: t('editProject'), milestones: locale === 'zh-CN' ? '里程碑' : 'Milestones', newIssue: t('newIssue'), newProject: t('newProject'), noProjects: t('noProjects'), projects: t('projects'), projectOverview: t('projectOverview'), targetDate: t('targetDate'), workspace: 'Workspace' }} locale={locale} onCreateProject={() => setCreateProjectOpen(true)} onOpenProject={id => void openProject(id)} onSelectTab={selectProjectTab} projectTab={projectTab} projects={teamProjects} selectedProject={selectedProject} workSurface={workSurfaces} />}
       </> : teamAuthoritiesInitialized
         ? <section className="empty">{t('noTeam')} · {t('settings')}</section>
         : teamAuthorityError
