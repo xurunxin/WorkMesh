@@ -14,7 +14,9 @@ const ownerId = '22222222-2222-4222-8222-222222222222'
 const documentId = '33333333-3333-4333-8333-333333333333'
 const baseRevisionId = '44444444-4444-4444-8444-444444444444'
 
-function manifest(capabilities: Capability[], sessionState = 'executing'): AgentCapabilityManifest {
+function manifest(capabilities: Capability[],
+  sessionState: 'queued' | 'acknowledged' | 'executing' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled' = 'executing',
+): AgentCapabilityManifest {
   const features = Object.fromEntries(featureKeySchema.options.map(key => [key, true])) as
     Record<(typeof featureKeySchema.options)[number], boolean>
   return createAgentCapabilityManifest({
@@ -27,7 +29,9 @@ function manifest(capabilities: Capability[], sessionState = 'executing'): Agent
 }
 
 /** A runner API whose capability manifest answers with the given scenario. */
-function apiFor(capabilities: Capability[], sessionState = 'executing'): RunnerToolApi & { calls: string[] } {
+function apiFor(capabilities: Capability[],
+  sessionState: 'queued' | 'acknowledged' | 'executing' | 'stopping' | 'stale' | 'completed' | 'failed' | 'canceled' = 'executing',
+): RunnerToolApi & { calls: string[] } {
   const calls: string[] = []
   return {
     calls,
