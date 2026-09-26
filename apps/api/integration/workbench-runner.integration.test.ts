@@ -2,8 +2,9 @@ import { randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { applyMigrations, createDb } from '@workmesh/db'
+import { deriveTurnTelemetry, emitTurnTelemetry, summarizeWorkbenchSlo, type WorkbenchTurnStatus } from '@workmesh/observability'
 import { buildApp } from '../src/server.js'
 import { seedAgentSessionBearer } from './agent-session-test-credentials.js'
 import { createSessionLifecycleWorker } from '../../worker/src/session-lifecycle.js'
@@ -470,5 +471,121 @@ describe('exact-session Pi Runner API', () => {
     expect((await db.query<{ count: number }>(
       "SELECT count(*)::int AS count FROM domain_events WHERE aggregate_id=$1 AND event_type='agent.session.completed'",
       [exactSessionId])).rows[0]?.count).toBe(1)
+  }, 120_000)
+
+  // W17: the derived telemetry must be reproducible from the durable settled row,
+  // and a settled Turn must expose every latency clock the SLO baseline reads.
+  it('derives reproducible Turn latency and token telemetry from the settled durable row', async () => {
+    const states = (await humanCall('GET', `/api/v1/teams/${teamId}/states`))
+      .json<{ items: Array<{ id: string; name: string }> }>().items
+    const work = await humanCall('POST', '/api/v1/work-items', {
+      teamId, title: 'Telemetry acceptance', statusId: states.find(state => state.name === 'Ready')!.id,
+      responsibleHumanActorId: actorId,
+    })
+    expect(work.statusCode, work.body).toBe(200)
+    const telemetryWorkItemId = work.json<{ id: string; revision: number }>().id
+    const registered = await humanCall('POST', '/api/v1/agents/register', {
+      name: 'Telemetry Pi Fixture', slug: `pi-telemetry-${randomUUID().slice(0, 8)}`,
+      provider: 'fake', version: '1', supportedProtocols: ['native_http'],
+      requestedCapabilities: ['work:read', 'work:write'], approvedCapabilities: ['work:read', 'work:write'],
+    })
+    expect(registered.statusCode, registered.body).toBe(200)
+    const telemetryAgentId = registered.json<{ id: string }>().id
+    expect((await humanCall('PUT', `/api/v1/agents/${telemetryAgentId}/team-access/${teamId}`,
+      { approvedCapabilities: ['work:read', 'work:write'] })).statusCode).toBe(200)
+    const workRevision = (await db.query<{ revision: number }>(
+      'SELECT revision FROM work_items WHERE id=$1', [telemetryWorkItemId])).rows[0]!.revision
+    const delegated = await humanCall('POST', `/api/v1/work-items/${telemetryWorkItemId}/agent-session`, {
+      agentId: telemetryAgentId, principalHumanActorId: actorId, role: 'executor',
+      requestedCapabilities: ['work:read', 'work:write'], initialPrompt: 'Emit telemetry for one Turn', budget: {},
+    }, { 'if-match': `"revision-${workRevision}"` })
+    expect(delegated.statusCode, delegated.body).toBe(200)
+    const telemetrySessionId = delegated.json<{ session: { id: string } }>().session.id
+    bearer = await seedAgentSessionBearer(db, telemetrySessionId, telemetryAgentId)
+    const ack = await runnerCall('POST', `/api/v1/agent-sessions/${telemetrySessionId}/ack`,
+      { summary: 'Runner ready', externalUrls: [] })
+    expect(ack.statusCode, ack.body).toBe(200)
+    expect((await runnerCall('POST', `/api/v1/agent-sessions/${telemetrySessionId}/state`,
+      { state: 'executing', reason: 'Telemetry test' },
+      { 'if-match': `"revision-${ack.json<{ revision: number }>().revision}"` })).statusCode).toBe(200)
+    const connection = await humanCall('POST', '/api/v1/workbench/llm-connections', {
+      scope: 'workspace', name: 'Telemetry model', apiType: 'openai-completions',
+      baseUrl: 'https://api.minimax.cn/v1', secretMaterial: 'fixture-only-secret',
+    })
+    expect(connection.statusCode, connection.body).toBe(201)
+    const connectionId = connection.json<{ id: string }>().id
+    const model = await humanCall('POST', `/api/v1/workbench/llm-connections/${connectionId}/models`, {
+      externalModelId: 'MiniMax-M3', displayName: 'MiniMax M3', enabled: true,
+      capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false,
+        contextWindowTokens: 204800, maxOutputTokens: 4096 },
+    }, { 'if-match': '"revision-1"' })
+    expect(model.statusCode, model.body).toBe(201)
+    const conversation = await humanCall('POST', '/api/v1/workbench/conversations', {
+      title: 'Telemetry turn', workItemId: telemetryWorkItemId, agentSessionId: telemetrySessionId,
+      llmConnectionId: connectionId, llmModelId: model.json<{ id: string }>().id,
+    })
+    expect(conversation.statusCode, conversation.body).toBe(201)
+    const conversationId = conversation.json<{ id: string }>().id
+    const sent = await humanCall('POST', `/api/v1/workbench/conversations/${conversationId}/turns`,
+      { messageMarkdown: 'Produce a measurable Turn.' }, { 'if-match': '"revision-1"' })
+    expect(sent.statusCode, sent.body).toBe(201)
+    const turnId = sent.json<{ turn: { id: string } }>().turn.id
+    const claimed = await runnerCall('POST', `/api/v1/workbench/turns/${turnId}/claim`)
+    expect(claimed.statusCode, claimed.body).toBe(200)
+    const attemptId = claimed.json<{ runnerAttemptId: string }>().runnerAttemptId
+    const fenceToken = (await runnerCall('GET', `/api/v1/workbench/runner-attempts/${attemptId}/credential`))
+      .json<{ fenceToken: string }>().fenceToken
+    expect((await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/start`,
+      { fenceToken })).statusCode).toBe(200)
+    // Settle with a deliberately failing telemetry sink to prove the W17
+    // availability claim: observability can never change a settlement outcome.
+    const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => { throw new Error('sink down') })
+    let settled: Reply
+    try {
+      settled = await runnerCall('POST', `/api/v1/workbench/runner-attempts/${attemptId}/settle`, {
+        fenceToken, assistantMessageMarkdown: 'Measured answer.',
+        settlement: { outcome: 'settled', summaryMarkdown: 'Answered.', noArtifactReason: 'Text-only answer',
+          usage: { inputTokens: 900, outputTokens: 100, cacheReadTokens: 0, totalTokens: 1000 } },
+        toolInvocations: [{ toolName: 'workmesh_probe', callCount: 2, sanitizedInputSummary: '{"marker":"<uuid>"}' }],
+      })
+    } finally {
+      infoSpy.mockRestore()
+    }
+    expect(settled.statusCode, settled.body).toBe(200)
+    // Derive telemetry from the durable row exactly as the emitter does, and assert
+    // every clock the SLO baseline reads is present and non-negative.
+    const row = (await db.query<{
+      status: string; queued_at: Date; dispatch_requested_at: Date | null
+      started_at: Date | null; settled_at: Date | null; error_code: string | null
+    }>(`SELECT status,queued_at,dispatch_requested_at,started_at,settled_at,error_code
+          FROM workbench_turns WHERE id=$1`, [turnId])).rows[0]!
+    const telemetry = deriveTurnTelemetry({
+      turnId, conversationId, status: row.status as WorkbenchTurnStatus,
+      errorCode: row.error_code, stopReason: null,
+      queuedAt: row.queued_at.toISOString(),
+      dispatchRequestedAt: row.dispatch_requested_at?.toISOString() ?? null,
+      startedAt: row.started_at?.toISOString() ?? null,
+      settledAt: row.settled_at?.toISOString() ?? null,
+    }, {
+      attemptId, turnId, attemptNo: 1, outcome: 'settled', usage: { totalTokens: 1000 },
+    })
+    expect(telemetry).toMatchObject({ status: 'settled', terminal: true, outcome: 'settled', totalTokens: 1000 })
+    expect(telemetry.queueWaitMs).toBeGreaterThanOrEqual(0)
+    expect(telemetry.runDurationMs).toBeGreaterThanOrEqual(0)
+    expect(telemetry.totalDurationMs).toBeGreaterThanOrEqual(0)
+    // The same signal set an operator would read from SQL must match the derived one.
+    const summary = summarizeWorkbenchSlo([telemetry])
+    expect(summary).toMatchObject({ turns: 1, terminalTurns: 1, settled: 1, errorRate: 0, totalTokens: 1000 })
+    expect(summary.runDurationMs.p95).toBe(telemetry.runDurationMs)
+    // The per-tool ledger and the token usage are durable and append-only.
+    expect((await db.query<{ count: number }>(
+      'SELECT count(*)::int AS count FROM workbench_tool_invocations WHERE runner_attempt_id=$1',
+      [attemptId])).rows[0]?.count).toBe(1)
+    expect((await db.query<{ usage: { totalTokens: number } }>(
+      'SELECT usage FROM workbench_runner_attempts WHERE id=$1', [attemptId])).rows[0]?.usage.totalTokens).toBe(1000)
+    // The emitter itself is a pure passthrough; the settle route owns the guard
+    // that keeps a failing sink from changing a committed settlement.
+    expect(() => emitTurnTelemetry({ info: () => undefined }, { telemetry, attemptNo: 1, sessionId: telemetrySessionId })).not.toThrow()
+    expect((await db.query<{ status: string }>('SELECT status FROM workbench_turns WHERE id=$1', [turnId])).rows[0]?.status).toBe('settled')
   }, 120_000)
 })

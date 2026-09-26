@@ -5,6 +5,10 @@ import { z } from 'zod'
 import { completeAgentSessionInputSchema, workbenchRunnerCredentialSchema, workbenchRunnerSettleInputSchema, workbenchUsageSchema } from '@workmesh/contracts'
 import { appendEvent, withTx } from '@workmesh/db'
 import { DomainError } from '@workmesh/domain'
+import {
+  deriveTurnTelemetry, emitTurnTelemetry, logger,
+  type WorkbenchTurnStatus, type WorkbenchTurnTelemetry,
+} from '@workmesh/observability'
 import { agentMutate, finishSessionInTransaction } from './agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from './agent/guard.js'
 import type { ApiActor } from './agent/types.js'
@@ -20,6 +24,10 @@ type TurnRow = {
   status: string; sequence: number; current_runner_attempt_id: string | null
   llm_connection_id: string | null; llm_model_id: string | null
   team_id: string | null; responsible_human_actor_id: string; conversation_status: string
+  // W17 telemetry reads the durable latency/token clocks from the settled row.
+  error_code: string | null; stop_reason: string | null
+  queued_at: Date; dispatch_requested_at: Date | null
+  started_at: Date | null; settled_at: Date | null
 }
 type AttemptRow = {
   id: string; workspace_id: string; conversation_id: string; turn_id: string
@@ -294,7 +302,10 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
     const context = h.meta(request, {
       ...body, fenceToken: undefined, fenceFingerprint: fenceFingerprint(body.fenceToken),
     }, { id: attemptId })
-    return agentMutate(h.db, context, async tx => {
+    // W17 telemetry: populated inside the transaction, emitted only after commit.
+    let telemetrySample: WorkbenchTurnTelemetry | null = null
+    let telemetryLineage: { attemptNo: number; sessionId: string | null; correlationId: string | null } | null = null
+    const result = await agentMutate(h.db, context, async tx => {
       const session = await loadAgentSessionForMutation(tx, current, sessionId)
       assertAgentWrite({ actor: current, session, sessionId, capability: 'work:write',
         operation: 'activity', idempotencyKey: context.idempotencyKey })
@@ -365,8 +376,33 @@ export function registerWorkbenchRunnerRoutes(app: FastifyInstance, h: Helpers):
           { ...context, idempotencyKey: body.sessionCompletion.operationKey },
           sessionId, body.sessionCompletion.ifMatch, completion)
       }
+      // W17 telemetry: capture the durable timestamps inside the transaction, but
+      // emit only after it commits so a failing log sink can never change the
+      // settlement outcome (observability must not affect availability).
+      const settledTurn = await turnRow(tx, current.workspaceId, turn.id)
+      telemetrySample = deriveTurnTelemetry({
+        turnId: settledTurn.id, conversationId: settledTurn.conversation_id,
+        status: settledTurn.status as WorkbenchTurnStatus,
+        errorCode: settledTurn.error_code, stopReason: settledTurn.stop_reason,
+        queuedAt: settledTurn.queued_at.toISOString(),
+        dispatchRequestedAt: settledTurn.dispatch_requested_at?.toISOString() ?? null,
+        startedAt: settledTurn.started_at?.toISOString() ?? null,
+        settledAt: settledTurn.settled_at?.toISOString() ?? null,
+      }, {
+        attemptId: attempt.id, turnId: settledTurn.id, attemptNo: attempt.attempt_no,
+        outcome, usage: usage ? { totalTokens: usage.totalTokens } : null,
+      })
+      telemetryLineage = { attemptNo: attempt.attempt_no, sessionId: attempt.agent_session_id, correlationId: context.correlationId }
       return { runnerAttemptId: attempt.id, turnId: turn.id, status: turnStatus,
         sessionCompletion: body.sessionCompletion ? 'completed' : 'not_requested' }
     })
+    if (telemetrySample) {
+      try {
+        emitTurnTelemetry(logger, { telemetry: telemetrySample, ...telemetryLineage! })
+      } catch {
+        // A failing telemetry sink is never an execution or settlement signal.
+      }
+    }
+    return result
   })
 }
