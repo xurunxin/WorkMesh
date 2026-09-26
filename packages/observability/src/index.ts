@@ -1,5 +1,8 @@
 export interface Logger { info(fields: Record<string, unknown>, message: string): void; error(fields: Record<string, unknown>, message: string): void }
 export const logger: Logger = { info: (fields, message) => console.info(JSON.stringify({ level: 'info', message, ...fields })), error: (fields, message) => console.error(JSON.stringify({ level: 'error', message, ...fields })) }
+// WM-WEBPI W17 — Turn/Attempt latency, error-rate, and token telemetry derived
+// from durable workbench rows (see workbench-slo.ts).
+export * from './workbench-slo.js'
 export type AuthRateLimitEndpoint = 'install' | 'login' | 'agent_token' | 'handoff_target' | 'pairing'
 export type AuthRateLimitOutcome = 'allowed' | 'limited' | 'unavailable' | 'credential_failure' | 'credential_success'
 export const authRateLimitEndpoints = ['install', 'login', 'agent_token', 'handoff_target', 'pairing'] as const

@@ -3,7 +3,7 @@
 
 状态：规划完成后进入逐项实现；本路线图不代表功能已经交付。基线日期：2026-09-24。
 
-W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W00–W13 已于 2026-09-24/25/26 逐项补齐验证记录并全部关闭（#122–#135）；W14–W16 于 2026-09-26 收口关闭（#136–#138，见各自收口记录）；W17–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
+W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W00–W13 已于 2026-09-24/25/26 逐项补齐验证记录并全部关闭（#122–#135）；W14–W16 于 2026-09-26 收口关闭（#136–#138）；W17 于 2026-09-26 收口关闭（#139，新增 workbench 遥测/SLO 与新工作台可访问性矩阵）；W18 未开始且需届时单独授权。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
 
 ## 目标与交付边界
 
@@ -211,7 +211,7 @@ flowchart LR
 - [x] W14 https://github.com/xurunxin/WorkMesh/issues/136 — 实现制品检查器、修订反馈与成果验收闭环（2026-09-26 收口，见 W14 收口记录）
 - [x] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations（2026-09-26 收口，见 W15 收口记录）
 - [x] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验（2026-09-26 收口，见 W16 收口记录）
-- [ ] W17 https://github.com/xurunxin/WorkMesh/issues/139 — 完成可靠性、性能、可访问性与隔离验证
+- [x] W17 https://github.com/xurunxin/WorkMesh/issues/139 — 完成可靠性、性能、可访问性与隔离验证（2026-09-26 收口，见 W17 收口记录）
 - [ ] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理
 
 ## 完整任务正文
@@ -1486,7 +1486,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/138
 <!-- WM-WEBPI-20260924:W17 -->
 # W17 完成可靠性、性能、可访问性与隔离验证
 
-阶段：M4；优先级：P0；估算：4–7 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M4；优先级：P0；估算：4–7 人日（W01 后复估）。状态：完成并关闭（2026-09-26，见 W17 收口记录）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1552,6 +1552,26 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/139
 - 实际测试命令、结果、失败/skip：
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
+
+
+### W17 收口记录（2026-09-26）
+
+- 结论：完成条件满足。本轮做了三件事：①新增 workbench 遥测/SLO（真缺口）；②为新工作台路径新增可访问性矩阵，并据此修复一处真实缺陷；③复跑五项必需检查与全量 E2E。
+- 完成条件判定：①「无失败的必需检查；关键权限/停止/恢复/核心 UI 旅程无未处理阻塞」——满足：lint 18/18、typecheck 18/18、`turbo run test --force=true` **29/29（Cached: 0 cached，真实执行）**、集成套件全绿、全量 E2E **72/72**。既有权限/停止/恢复矩阵由 `agent-governed-controls`、`attention-center`、`workbench-recovery` 等持续守护。②「负载和可访问性结果可复现，性能退化有测量结论和处理措施」——满足：负载/背压设施既有（`test:load:realtime` 千级 SSE 连接 + Redis 中断、`test:load:heartbeat`、24h soak、retention 套件）；本轮新增**可从持久行复现**的 Turn 遥测与冻结 SLO 阈值（`docs/workbench-telemetry-and-slo.md`），并新增新工作台路径的可访问性矩阵。
+
+- **W17-A 遥测/SLO（新增实现）**
+  - `packages/observability/src/workbench-slo.ts`：从既有持久列（`queued_at`/`dispatch_requested_at`/`started_at`/`settled_at`/`usage`/`error_code`）派生 queue wait、dispatch lag、run duration、total duration、token 总量与 error rate；缺失时间戳返回 `null`（不伪造为 0），时钟偏差裁剪为 0；提供 nearest-rank 百分位、`summarizeWorkbenchSlo` 与冻结阈值 `workbenchSloThresholds`（queue p95 5s / dispatch p95 2s / run p95 120s / error rate 5%）。
+  - `apps/api/src/workbench-runner.ts`：settle 事务内采样、**提交后**发射 `workbench.turn.telemetry`；发射被包裹，日志 sink 故障不会改变结算结果或阻塞响应。记录仅含 lineage（conversation/turn/attempt/session/correlation）与延迟/用量，**不含** prompt、回答正文、工具参数或密钥。
+  - 证据：`workbench-slo.test.ts` 13 用例（模块 16/16）；`workbench-runner.integration.test.ts` 新增用例在真实 DB 上断言派生信号可从结算行复现，并用 `console.info` 抛错证明 sink 故障下 settle 仍 200（该文件 5 passed / 1 skipped——skip 为需真实 MiniMax 凭据的既有用例）。
+
+- **W17-B 可访问性矩阵（新增实现 + 修复真实缺陷）**
+  - 新增 `apps/web/e2e/workbench-accessibility.spec.ts`（authenticated project，CI 会执行）：对 `/workbench`、`/?view=projects|guidance|recovery|inbox`、`/settings/agent-workbench` 在 1440px 与 390px 下断言——每个可见控件有可访问名称、无重复 id、ARIA 引用可解析、文档无横向溢出、键盘 Tab 焦点不跑出视口（横向滚动容器内元素豁免，由文档级溢出断言守底）。
+  - **修复的真实缺陷**：`/settings/agent-workbench` 原先只有 `<h2>`，整页缺少一级标题（shell 只设 document title、不渲染 h1）。已改为 `<h1>`；该缺陷由新矩阵发现，非猜测。
+  - 证据：定向 11/11 passed；全量 E2E **72/72 passed（3.2m）**。验证过程中一度出现的 `agent-governed-controls` 失败经隔离复跑判定为时序 flake（同镜像单独跑 10/10，基线 main 亦 10/10），非本轮改动引入。
+
+- 数据迁移 / API / events / Skill 变更：**无迁移、无新路由、无事件、无 Skill 变更**；仅在既有 settle 事务内新增遥测发射，未改变任何 API 形状或领域不变量。
+- D2：无 OpenAPI/contracts/route-policy/SDK/MCP/ADR/schema 变更——「无」。
+- 已知限制 / follow-up：①token 总量取自 runner 结算摘要，崩溃未结算的 Turn 记 `null` 而非部分值；②延迟百分位按查询窗口计算，无进程内滚动直方图（长窗口基线读 SQL）；③逐次工具调用耗时未派生（工具账本记次数与净化后的输入形状，见 W13，足以支撑本任务目标）；④mocked a11y spec（`e2e/mocked/`）在本机 ReFS 环境无法启动 Next dev，故矩阵落在 CI 会执行的真实拓扑上。
 
 
 ---

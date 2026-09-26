@@ -165,8 +165,12 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
     finally { setBusy(false) }
   }
 
+  // W17: this page is a full route, so its title is the page-level heading. The
+  // shell sets the document title but renders no <h1>, which left the route with
+  // no heading for assistive technology to anchor (found by the accessibility
+  // matrix in apps/web/e2e/workbench-accessibility.spec.ts).
   return <section aria-labelledby="workbench-llm-heading" className="settings-card settings-card-wide workbench-llm-settings">
-    <header><div><p className="eyebrow">{zh ? 'Agent 工作台' : 'Agent workbench'}</p><h2 id="workbench-llm-heading">{zh ? '模型服务接入' : 'Model service connections'}</h2></div></header>
+    <header><div><p className="eyebrow">{zh ? 'Agent 工作台' : 'Agent workbench'}</p><h1 id="workbench-llm-heading">{zh ? '模型服务接入' : 'Model service connections'}</h1></div></header>
     <p>{zh ? '选择 Chat Completions 或 Responses 协议。密钥由服务端加密保存，页面仅显示配置状态。' : 'Choose Chat Completions or Responses. The server stores credentials encrypted and only shows their status.'}</p>
     {error && <div role="alert"><p className="error">{error}</p><Button onClick={() => { setError(''); void refresh().catch(reason => setError(errorText(reason))) }}>{zh ? '重试' : 'Retry'}</Button></div>}
     {notice && <p role="status">{notice}</p>}
