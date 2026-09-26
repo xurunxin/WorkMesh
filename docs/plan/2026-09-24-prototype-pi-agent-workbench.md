@@ -3,7 +3,7 @@
 
 状态：规划完成后进入逐项实现；本路线图不代表功能已经交付。基线日期：2026-09-24。
 
-W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W04、W08、W09、W10、W13 的交付记录为空模板或自述仍有缺口，W14–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
+W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W08、W09、W10、W13 已于 2026-09-25/26 补齐验证记录并关闭（#130–#132、#135），W04 于 2026-09-26 完成收口并关闭（#126，PR #155/#156/#157），W14–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
 
 ## 目标与交付边界
 
@@ -198,7 +198,7 @@ flowchart LR
 - [ ] W01 https://github.com/xurunxin/WorkMesh/issues/123 — 完成 Pi 兼容性 Spike 与工作台架构契约
 - [ ] W02 https://github.com/xurunxin/WorkMesh/issues/124 — 将原型令牌与全部基础控件收敛到共享组件库
 - [ ] W03 https://github.com/xurunxin/WorkMesh/issues/125 — 迁移统一应用外壳、导航、URL 与命令中心
-- [ ] W04 https://github.com/xurunxin/WorkMesh/issues/126 — 替换 Projects 与 Issues 主工作流页面
+- [x] W04 https://github.com/xurunxin/WorkMesh/issues/126 — 替换 Projects 与 Issues 主工作流页面（2026-09-26 完成并关闭，见 W04 收口记录）
 - [ ] W05 https://github.com/xurunxin/WorkMesh/issues/127 — 统一 Markdown 编辑、阅读、草稿与附件体验
 - [ ] W06 https://github.com/xurunxin/WorkMesh/issues/128 — 补齐 Project 与 Issue 的版本化普通文档
 - [ ] W07 https://github.com/xurunxin/WorkMesh/issues/129 — 实现用户 LLM 连接、模型目录与凭据管理域
@@ -501,7 +501,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/125
 <!-- WM-WEBPI-20260924:W04 -->
 # W04 替换 Projects 与 Issues 主工作流页面
 
-阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：实施中（2026-09-25）；开始收敛 Project 主流程，整页替换与 Issue 闭环仍待完成。
+阶段：M1；优先级：P0；估算：5–8 人日（W01 后复估）。状态：完成并关闭（2026-09-26）；完成条件按存量生产动作口径满足，删除入口口径核查见收口记录。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -568,6 +568,14 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/126
 ### W04 追加验证与修复（2026-09-25）
 
 Project 编辑 E2E 在创建第二个 Issue 后曾从“工作”跳回“概览”，原因是子组件只更新本地 surface，父页面仍保留旧 tab；刷新 Issue 后旧 URL 重新投影覆盖了当前视图。现由 `ProjectControlCenter` 的工作入口调用父页面 `onWorkViewChange`，由单一页面路由负责状态；代码提交 `2a8ff3f`。相关浏览器用例 9/9 通过，完整 E2E 68/68 通过；Web 组件单测 725/725，通过真实隔离 Docker Web 镜像重建与首页 200 检查。W04 仍是进行中；未扩充 REST、迁移或事件。
+
+### W04 收口记录（2026-09-26）
+
+- 实现提交/PR 与精确环境：外壳收敛收尾经两段独立 PR 完成——PR #156（`017a912`，Projects workbench 抽取）与 PR #157（`259529f`，GuidancePanel 与 WorkItemRelationships 抽取），均基于 main、CI 8/8 绿后 squash 合入；验证环境为本地工作区 `pnpm` 全量命令（turbo/Next/Vitest）。
+- 完成条件判定：Projects/Issues 的全部已有生产动作在新 UI 有真实入口，无占位成功提示——列表/看板/退路（WorkSurfaces 37 交互组件测试 + 5 条 e2e 守护）、Project 列表/创建/编辑/里程碑/进度（ProjectsWorkbench→ProjectWorkspace→ProjectControlCenter）、Issue 创建/详情/编辑/评论/关系/文档/委派（page.tsx 接线保留，本轮 PR #157 仅把 GuidancePanel 与 WorkItemRelationships 抽为独立文件、page.tsx 897→706 行，行为零变更，Web 730/730、tsc 干净）。不丢领域约束、不用 Agent 替换 responsible human、不用 Session 完成自动改 Issue 状态——维持既有实现，未触碰。
+- 删除入口口径核查（`.evidence/w04-route-policy-delete-audit.md`）：`DELETE /api/v1/work-items/{id}` 服务端声明链完整（route-policy-bindings L159→`deleteWorkItem`→revisionedOperations L286→contracts L469→server.ts:1014 真实挂载），但全 UI（含旧 UI 历史）从未提供删除 Issue 入口。完成条件限定“全部**已有**生产动作”，按此口径满足，无需产品决策；是否新增删除能力属产品决策，登记为 follow-up 不阻断本任务。
+- 规范偏差：无。D2 逐项：OpenAPI/contracts/route-policy/SDK/MCP——无影响（纯前端组件文件重组，无 API/契约变更）；ADR——0065 仍有效，无新增不变量；schema——无迁移；操作文档——无影响。
+- 已知限制与 follow-up：① `MentionPicker` 为全仓库无渲染调用的死代码，本轮随迁移原样保留（收口记录明示），删除与否留待独立清理；② my-work 分支的 `workSurfaces` 构造（约 35 个绑定）是页面控制器接线本体，保留在 page.tsx 内联，未强拆；③ steer 走 Workbench 侧控件，不在此页面范围；④ 是否提供删除 Issue 入口（需 route-policy/OpenAPI/契约同步 + 阻断确认流程）建议另立 Issue 评估。
 
 
 ---
