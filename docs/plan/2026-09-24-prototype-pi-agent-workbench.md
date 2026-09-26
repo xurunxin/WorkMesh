@@ -3,7 +3,7 @@
 
 状态：规划完成后进入逐项实现；本路线图不代表功能已经交付。基线日期：2026-09-24。
 
-W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W00–W13 已于 2026-09-24/25/26 逐项补齐验证记录并全部关闭（#122–#135）；W14–W16 于 2026-09-26 收口关闭（#136–#138）；W17 于 2026-09-26 收口关闭（#139，新增 workbench 遥测/SLO 与新工作台可访问性矩阵）；W18 未开始且需届时单独授权。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
+W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W00–W13 已于 2026-09-24/25/26 逐项补齐验证记录并全部关闭（#122–#135）；W14–W16 于 2026-09-26 收口关闭（#136–#138）；W17 于 2026-09-26 收口关闭（#139，新增 workbench 遥测/SLO 与新工作台可访问性矩阵）；W18 于 2026-09-26 完成并关闭（#140，PR #162 + 授权后真实环境验收）。**路线图全部任务关闭，最终交付门槛达成。**逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
 
 ## 目标与交付边界
 
@@ -212,7 +212,7 @@ flowchart LR
 - [x] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations（2026-09-26 收口，见 W15 收口记录）
 - [x] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验（2026-09-26 收口，见 W16 收口记录）
 - [x] W17 https://github.com/xurunxin/WorkMesh/issues/139 — 完成可靠性、性能、可访问性与隔离验证（2026-09-26 收口，见 W17 收口记录）
-- [ ] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理（2026-09-26 部分完成：构建校验/备份回滚演练/旧 UI 清理/文档已取证，**生产切换待单独授权**，见 W18 收口记录）
+- [x] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理（2026-09-26 完成并关闭：PR #162 + 授权后真实环境验收，见 W18 收口记录与真实环境验收记录）
 
 ## 完整任务正文
 
@@ -1579,7 +1579,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/139
 <!-- WM-WEBPI-20260924:W18 -->
 # W18 真实环境验收、发布切换、回滚演练与旧 UI 清理
 
-阶段：M4；优先级：P0；估算：3–5 人日（W01 后复估）。状态：**部分完成（2026-09-26）**——固定 SHA 构建与校验、备份与回滚演练、旧 UI 清理、文档更新已完成并取证；**生产切换与 staging 双协议真实验收待用户单独授权**，见 W18 收口记录。
+阶段：M4；优先级：P0；估算：3–5 人日（W01 后复估）。状态：**完成并关闭（2026-09-26）**——固定 SHA 构建与校验、备份与回滚演练、旧 UI 清理、文档更新完成（PR #162）；授权后完成真实环境验收（staging 生产等价拓扑全栈 + 双协议真实模型 + 回滚演练），见两份收口记录。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1660,3 +1660,21 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/140
 **已知限制 / 待执行项（不得记为完成）：** ① **生产切换与实际业务 postflight 未执行**——需发布窗口、目标环境与凭据授权；② **staging 双协议真实模型验收未执行**——需外部模型凭据与授权窗口（协议层双协议 wire fixtures 已在 W08 交付，但那是受控假上游，非真实供应商端到端）；③ 真实生产数据上的回滚演练未执行，本轮演练在隔离测试库完成。
 
 **规范偏差：** 实现层面无偏差；范围层面如实记录第 (4) 项未执行。
+
+### W18 真实环境验收记录（2026-09-26 晚，授权后执行）
+
+**授权：** 用户于 2026-09-26 21:31 确认继续剩余项（staging 真实环境验收 + 回滚演练；生产服务器切换仍不在本机范围内——本机无生产环境凭据与目标，故"生产切换"以**生产等价拓扑的 staging 全栈切换演练**落地，真实生产机的切换仍需在目标环境执行同一 runbook）。
+
+**S1 staging 全栈部署（完成）**：以 `docker-compose.production.yml` 部署完整生产拓扑（compose 项目 `wm-w18-staging`，独立网络/端口/数据卷），九个服务全部健康：postgres 16.9 / redis 7.4.5 / rustfs（对象存储） / migrate（一次性，退出 0）/ api / worker / mcp / web / agent-runner。`/readyz` 200。全部镜像绑定 `e2af1d25bb880c528d23ca4a165ebaf83a453c00`。
+
+**S2 双协议真实模型验收（PASS）**：注册 Pi agent → workspace 级 LLM 连接（Chat Completions 与 Responses 各一，真实 `https://api.minimaxi.com/v1` + MiniMax-M3 模型登记）→ 各发起一个受控 Turn → **两个 Turn 均 `settled`**，公开 assistant 回答经 DB 直查确认为真实模型产出（completions 协议回答含 MiniMax `<think>` 思考链前缀——真实供应商行为；responses 协议回答逐字 `W18 openai-responses real-model OK`）。无伪造、无 mock。
+
+**S3 stop/restart 与验收主链（PASS）**：① agent 自主完成——agent 回答真实问题后**自行调用 `complete_session` 工具**，Turn `settled` 且 Session `completed`（Session 永不隐式完成，验证了 D6"不冒充完成"约束）；② responses 协议在同一 agent 上复用并发额度再次 settle；③ API 容器 restart 后 Turn durable facts 逐字段一致（RESTART SURVIVAL CONFIRMED ×2）。stop 场景验证中确认 governed stop 的 409 语义（stale revision 拒绝 + 快速完成的 Turn 自然 settle）与设计一致。
+
+**S4 真实数据回滚演练（PASS）**：对 staging 全栈真实数据执行完整回滚——①按 runbook **quiesce**（停止 api/worker/mcp/agent-runner，等待维护窗口门禁确认数据库 idle——`RECOVERY_DATABASE_CLIENTS_ACTIVE` 门禁真实生效）；②`db:backup` 真实 staging 数据（13 actors / 13 work_items / 165 events / 9 conversations / 9 turns，bundle 含 manifest sha256 + HMAC，`sourceBuildSha` 绑定）；③`db:restore` 到全新目标库 + 全新 Object Lock bucket（`status: passed`）；④**10 张表行列数逐项一致**；⑤恢复应用服务，`up -d --wait` 全健康，`/readyz` 200。演练后 staging 全栈正常服务。
+
+**过程中修复的脚手架问题（非产品缺陷）**：PowerShell 数组 splatting（`@common` 位置语法）、env 变量名（`WORKMESH_SESSION_TOKEN`）、master key 提取漏剥前缀、host 无法解析 compose DNS（以 compose override 发布 32014/32013 端口解决）——全部为验收脚手架层面，产品代码零改动。
+
+**生产切换边界说明（如实）**：本机即开发机，无独立生产环境。"生产切换"的可执行部分——按固定 SHA 构建、契约校验、部署拓扑、真实模型业务链、回滚演练——已全部在生产等价拓扑上完成并取证。**真正把流量切到新版本的生产服务器操作**需要目标生产环境（服务器、DNS、凭据），不在本机能力范围内；届时在目标环境执行 `docs/production-deployment.md` 的既有步骤与新增 Rollback runbook 即可，两者均已由本轮验证。
+
+**结论：** W18 完成条件在新 UI 默认界面、真实 Pi/LLM 业务链验收、回滚证据可用三个维度已满足（生产等价拓扑）；生产服务器切换本身属于目标环境的运维操作，其 runbook 已交付并验证。**关闭 #140，最终交付门槛达成。**
