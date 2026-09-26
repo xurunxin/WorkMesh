@@ -258,6 +258,79 @@ Other upgrades still require one exact application SHA: publish all images,
 resolve all four digests, update the four image references and
 `WORKMESH_BUILD_SHA`, and do not mix application revisions.
 
+## Rollback
+
+Rollback is a forward operation: you deploy a previously known-good revision
+again. **Do not treat a schema downgrade as the rollback plan** — migrations are
+apply-only, and a reverse migration would destroy facts the domain treats as
+immutable. Two independent paths exist, and which one applies depends on whether
+the failing revision changed the schema.
+
+### Path A — application rollback (schema unchanged)
+
+When the candidate and the previous release share a schema (the common case for
+UI, workbench, and worker changes), roll back by pointing the four image
+references and `WORKMESH_BUILD_SHA` at the previous revision and re-creating the
+services. PostgreSQL keeps its data; nothing is replayed.
+
+```powershell
+# 1. Re-identify the previous good revision and its immutable digests.
+$previousSha = '<known-good-40-char-sha>'
+docker image inspect "ghcr.io/$namespace/workmesh-api:$previousSha" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}'
+
+# 2. Repoint every reference. All four must move together; never mix revisions.
+$env:WORKMESH_API_IMAGE    = "ghcr.io/$namespace/workmesh-api@sha256:<previous-api-digest>"
+$env:WORKMESH_WORKER_IMAGE = "ghcr.io/$namespace/workmesh-worker@sha256:<previous-worker-digest>"
+$env:WORKMESH_MCP_IMAGE    = "ghcr.io/$namespace/workmesh-mcp@sha256:<previous-mcp-digest>"
+$env:WORKMESH_WEB_IMAGE    = "ghcr.io/$namespace/workmesh-web@sha256:<previous-web-digest>"
+$env:WORKMESH_BUILD_SHA    = $previousSha
+
+# 3. Recreate and wait for readiness rather than trusting the running state.
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
+docker compose --env-file .env.production -f docker-compose.production.yml ps
+```
+
+The migrator is idempotent, so leaving it in the compose run is safe; it will
+find the ledger already at the current version and apply nothing.
+
+### Path B — data recovery (schema changed, or facts corrupted)
+
+When the failing revision already committed a migration, the old application is
+no longer schema-compatible and must not be restarted against the current
+database. Recover the data instead, into a clean target, using the authenticated
+recovery bundle:
+
+```powershell
+# 1. Take a bundle of the current database before changing anything.
+$env:WORKMESH_MAINTENANCE_CONFIRMED = '1'   # explicit maintenance-window ack
+pnpm db:backup ./.recovery-bundles/rollback-$(Get-Date -Format yyyyMMdd-HHmmss)
+
+# 2. Restore that bundle into a fresh, empty target database and an empty
+#    object-lock bucket, then point the deployment at it.
+$env:RECOVERY_TARGET_DATABASE_URL = 'postgresql://<user>:<password>@<host>:5432/<fresh-db>'
+$env:RECOVERY_TARGET_S3_BUCKET    = '<empty-bucket-with-object-lock>'
+pnpm db:restore ./.recovery-bundles/rollback-<timestamp>
+
+# 3. Deploy the known-good revision against the restored target.
+```
+
+Both commands refuse to run unless they are pointed at a database whose name
+contains `test`, unless the maintenance window is explicitly acknowledged, and
+unless no other client is connected. Restore additionally refuses a
+non-empty target bucket, or one created without Object Lock. See
+[Disaster recovery](operations/disaster-recovery.md) for the bundle format and
+the verification the restore performs.
+
+### After either path
+
+- Confirm `/readyz` on API, Worker, MCP, and Web before reopening traffic.
+- Reconcile any external effect the failed revision may have started; a rolled
+  back application does not undo outbound calls. The outbox and the delivery
+  ledgers are the record of what was attempted.
+- Record the rolled-back SHA, the reason, and the recovery path used in the
+  release notes. Do not delete the failed revision's images; they are the
+  evidence for the postmortem.
+
 ## Health and lifecycle
 
 Each runtime owns independent endpoints:

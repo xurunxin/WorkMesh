@@ -385,9 +385,16 @@ assert(
   ),
   'PostgreSQL readiness must use TCP so the temporary init server cannot satisfy it',
 )
+// Bucket creation must enable Object Lock *at creation time* — it cannot be
+// turned on later. The production compose provisions the bucket with a signed
+// curl PUT carrying the x-amz-bucket-object-lock-enabled header (the RustFS
+// server image already ships curl with --aws-sigv4, so no separate mc client
+// image is needed). Accept either that header or the equivalent mc flag so the
+// check tracks the invariant rather than one particular implementation.
 assert(
-  source.includes('mc mb --with-lock --ignore-existing'),
-  'production MinIO bucket creation must enable Object Lock at creation time',
+  source.includes('x-amz-bucket-object-lock-enabled: true')
+    || source.includes('mc mb --with-lock --ignore-existing'),
+  'production bucket creation must enable Object Lock at creation time',
 )
 const retentionPolicyActions = new Set(
   retentionPolicy.Statement.flatMap((statement) => statement.Action),
