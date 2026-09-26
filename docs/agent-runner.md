@@ -24,3 +24,10 @@ Runner 每次发现自己的 queued Session 后，经现有 Agent API 完成 ACK
 ## 当前恢复边界
 
 Runner 崩溃并使 Session 失去权威，或 Attempt 超过五分钟未结算时，Worker 将 `dispatching` / `running` Attempt 与 Turn 标记为 failed，并在同一事务中记录事件和 outbox。`external_effects_reconciled=false` 保留未知副作用，旧 fence 被拒绝，不自动重做。操作员应核对外部效果，再由 Human 发送新 Turn。尚未提供外部效果对账、租约恢复与预算执行，因此此服务目前只适合受控试运行，不能按本路线图 W18 切换生产旧 UI。
+
+## 公开发布与评测（W12）
+
+- 内嵌 pin（`pnpm check:runner-skill`）是 Runner 的完整性检查，与公开发布相互独立。
+- 公开发布：`scripts/generate-workbench-skill-artifact.mjs` 以 `skills/workmesh/public-key.pem` 同源的 ed25519 私钥（`WORKMESH_SKILL_SIGNING_PRIVATE_KEY_FILE`，仅发布者持有）对 `apps/agent-runner/skills/workmesh-workbench/SKILL.md` 的规范 LF 字节签名，产物写入 `apps/web/public/skills/workmesh-workbench-1.0.0.md`，manifest 写入 `packages/contracts/src/workbench-skill-release-manifest.ts`；`node scripts/generate-workbench-skill-artifact.mjs --check` 校验字节、哈希与签名（已提交公钥验证路径）。
+- 评测场景：`docs/workbench-skill-evaluation.md`（S1–S8 + 拒绝矩阵引用）。
+- Session 持久 pin：Runner 以镜像内嵌字节为权威（`SessionManager.inMemory()` + 每会话验证），Pi 上下文可重建、不是业务恢复权威（ADR 0065 决策 3）；公开 manifest（`workbenchSkillReleaseManifest`）使部署方可核对内嵌 pin 与公开签名产物一致。
