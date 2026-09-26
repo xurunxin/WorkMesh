@@ -3,7 +3,7 @@
 
 状态：规划完成后进入逐项实现；本路线图不代表功能已经交付。基线日期：2026-09-24。
 
-W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W08、W09、W10、W13 已于 2026-09-25/26 补齐验证记录并关闭（#130–#132、#135），W04 于 2026-09-26 完成收口并关闭（#126，PR #155/#156/#157），W14–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
+W00–W13 的实现已于 2026-09-25 通过 PR #148 squash 合并入 main（`d9cf1e1`，CI 8/8 全绿）。**合并表示实现进入主线，不表示各 W 任务的完成条件已经满足**：W00–W13 已于 2026-09-24/25/26 逐项补齐验证记录并全部关闭（#122–#135）；W14–W16 于 2026-09-26 收口关闭（#136–#138，见各自收口记录）；W17–W18 未开始。逐项状态见下方各节，Issue 层面的判定记录见 https://github.com/xurunxin/WorkMesh/issues/121。
 
 ## 目标与交付边界
 
@@ -195,22 +195,22 @@ flowchart LR
 ## 执行 Checklist
 
 - [x] W00 https://github.com/xurunxin/WorkMesh/issues/122 — 冻结代码、原型、路由和现有能力基线（2026-09-24 完成，基线报告见同目录 `.baseline.md`）
-- [ ] W01 https://github.com/xurunxin/WorkMesh/issues/123 — 完成 Pi 兼容性 Spike 与工作台架构契约
-- [ ] W02 https://github.com/xurunxin/WorkMesh/issues/124 — 将原型令牌与全部基础控件收敛到共享组件库
-- [ ] W03 https://github.com/xurunxin/WorkMesh/issues/125 — 迁移统一应用外壳、导航、URL 与命令中心
+- [x] W01 https://github.com/xurunxin/WorkMesh/issues/123 — 完成 Pi 兼容性 Spike 与工作台架构契约（2026-09-24 完成，见各段状态行；#125 已关闭）
+- [x] W02 https://github.com/xurunxin/WorkMesh/issues/124 — 将原型令牌与全部基础控件收敛到共享组件库（2026-09-24 完成；#124 已关闭）
+- [x] W03 https://github.com/xurunxin/WorkMesh/issues/125 — 迁移统一应用外壳、导航、URL 与命令中心（2026-09-24 完成；#125 已关闭）
 - [x] W04 https://github.com/xurunxin/WorkMesh/issues/126 — 替换 Projects 与 Issues 主工作流页面（2026-09-26 完成并关闭，见 W04 收口记录）
-- [ ] W05 https://github.com/xurunxin/WorkMesh/issues/127 — 统一 Markdown 编辑、阅读、草稿与附件体验
-- [ ] W06 https://github.com/xurunxin/WorkMesh/issues/128 — 补齐 Project 与 Issue 的版本化普通文档（2026-09-26 完成并关闭，见 W06 收口记录）
-- [ ] W07 https://github.com/xurunxin/WorkMesh/issues/129 — 实现用户 LLM 连接、模型目录与凭据管理域
-- [ ] W08 https://github.com/xurunxin/WorkMesh/issues/130 — 交付 Chat Completions 与 Responses 双协议适配及验证套件
-- [ ] W09 https://github.com/xurunxin/WorkMesh/issues/131 — 实现工作台对话、Turn 与可恢复事件流
-- [ ] W10 https://github.com/xurunxin/WorkMesh/issues/132 — 引入隔离 Pi Runner 并接入授权、控制与恢复
-- [ ] W11 https://github.com/xurunxin/WorkMesh/issues/133 — 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵
-- [ ] W12 https://github.com/xurunxin/WorkMesh/issues/134 — 编写可执行操作 Skills、用户指南和评测场景
-- [ ] W13 https://github.com/xurunxin/WorkMesh/issues/135 — 实装 Agent 工作台对话、上下文与执行控制（进行中：对话主路径已实装并通过全部门禁，上下文/工具卡/steer 等仍缺，见 W13 交付记录 2026-09-25）
-- [ ] W14 https://github.com/xurunxin/WorkMesh/issues/136 — 实现制品检查器、修订反馈与成果验收闭环
-- [ ] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations
-- [ ] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验
+- [x] W05 https://github.com/xurunxin/WorkMesh/issues/127 — 统一 Markdown 编辑、阅读、草稿与附件体验（2026-09-25 完成；#127 已关闭）
+- [x] W06 https://github.com/xurunxin/WorkMesh/issues/128 — 补齐 Project 与 Issue 的版本化普通文档（2026-09-26 完成并关闭，见 W06 收口记录）
+- [x] W07 https://github.com/xurunxin/WorkMesh/issues/129 — 实现用户 LLM 连接、模型目录与凭据管理域（2026-09-26 验证补齐；#129 已关闭）
+- [x] W08 https://github.com/xurunxin/WorkMesh/issues/130 — 交付 Chat Completions 与 Responses 双协议适配及验证套件（2026-09-26 验证补齐；#130 已关闭）
+- [x] W09 https://github.com/xurunxin/WorkMesh/issues/131 — 实现工作台对话、Turn 与可恢复事件流（2026-09-26 验证补齐；#131 已关闭）
+- [x] W10 https://github.com/xurunxin/WorkMesh/issues/132 — 引入隔离 Pi Runner 并接入授权、控制与恢复（2026-09-26 验证补齐；#132 已关闭）
+- [x] W11 https://github.com/xurunxin/WorkMesh/issues/133 — 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵（2026-09-26 验证补齐；#133 已关闭）
+- [x] W12 https://github.com/xurunxin/WorkMesh/issues/134 — 编写可执行操作 Skills、用户指南和评测场景（2026-09-26 验证补齐；#134 已关闭）
+- [x] W13 https://github.com/xurunxin/WorkMesh/issues/135 — 实装 Agent 工作台对话、上下文与执行控制（2026-09-26 完成并关闭，见 W13 交付记录；#135 已关闭）
+- [x] W14 https://github.com/xurunxin/WorkMesh/issues/136 — 实现制品检查器、修订反馈与成果验收闭环（2026-09-26 收口，见 W14 收口记录）
+- [x] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations（2026-09-26 收口，见 W15 收口记录）
+- [x] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验（2026-09-26 收口，见 W16 收口记录）
 - [ ] W17 https://github.com/xurunxin/WorkMesh/issues/139 — 完成可靠性、性能、可访问性与隔离验证
 - [ ] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理
 
@@ -1248,7 +1248,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/135
 <!-- WM-WEBPI-20260924:W14 -->
 # W14 实现制品检查器、修订反馈与成果验收闭环
 
-阶段：M3；优先级：P0；估算：4–6 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M3；优先级：P0；估算：4–6 人日（W01 后复估）。状态：完成并关闭（2026-09-26 收口，见 W14 收口记录）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1312,12 +1312,20 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/136
 - 演示步骤、已知限制、规范偏差及 follow-up：
 
 
+### W14 收口记录（2026-09-26）
+
+- 结论：完成条件满足。实现主体在 PR #148（`d9cf1e1`）合入时已具备，本轮无新增实现；收口 = 证据核对 + 记录写回 + #136 关闭。
+- 完成条件判定：①「用户可从结果定位证据、审阅修改、反馈并读回最终状态，全链路有真实对象引用」——满足：EvidenceDrawer + canonical links（`apps/web/app/evidence-drawer.tsx`，canonical-object 深链、checksum/provenance/head-drift 展示）；制品下载走 `GET /api/v1/artifact-upload-intents/{id}/download`（服务端每次请求重新鉴权 + 300s 预签名 URL，`apps/api/src/delivery/routes.ts:850`，Agent 受 session/live-scope 双重限定）；附件与上传生命周期在 Work Room 实装（`apps/web/features/rich-content/artifacts.tsx`，upload→verify→轮询→失败重试/取消）；反馈→Agent 读回→完成读回闭环由 `approval-real-agent.spec.ts` 全真实路径覆盖（真实 worker→fake Agent→Human 批准（含 requirements 文本）→`approval.approved` webhook→fake Agent 消费→Session `completed` + state_reason 含要求文本→artifact metadata `humanDecision` 读回）。②「验收按钮不会直接修改前端本地状态冒充领域完成」——满足：所有验收/反馈走 `decideApproval`/completion 命令（revision 化），e2e 断言决策持久化到审批行、Session 与 artifact metadata，而非仅前端状态。
+- 验证证据（本轮补跑，旁路缓存）：全量 e2e **68/68 passed（2.9m）**，真实 Web 容器 + 本地 API + 测试库；其中 `approval-real-agent.spec.ts`（真实 worker 闭环）、`stage3-delivery.integration.test.ts` L1147/L1187 双侧 download 200 + 字节比对、`live-read-authorization.test.ts` / `pagination-inventory.test.ts` 守护 `/api/v1/artifacts` 授权形状。
+- D2：本轮无 API/契约/schema/ADR 变更——「无」。历史（PR #148）已同步 OpenAPI/contracts/route-policy/SDK/MCP 与 ADR 0066。
+- 已知限制 / follow-up：①制品预签名下载 URL 有效期 300s（服务端设计值，重复打开由前端每次重新请求）；②超大文件与不支持预览类型走 fileFallback 文案分支（`artifacts.tsx` copy 已本地化，无内联渲染）；③「用户编辑产生新的文档/制品修订或受控 patch proposal」中文档修订路径由 W06 Document 版本化覆盖，制品本体 immutable（设计约束，PR head 变化使旧证据失效由 head-drift 展示 + exact-head 校验守护）。
+
 ---
 
 <!-- WM-WEBPI-20260924:W15 -->
 # W15 迁移审批、Agents、Sessions、Recovery 与 Operations
 
-阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M3；优先级：P0；估算：5–8 人日（W01 后复估）。状态：完成并关闭（2026-09-26 收口，见 W15 收口记录）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1383,12 +1391,22 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/137
 - 演示步骤、已知限制、规范偏差及 follow-up：
 
 
+### W15 收口记录（2026-09-26）
+
+- 结论：完成条件满足。实现主体在 PR #148（`d9cf1e1`）合入时已具备，本轮无新增实现；收口 = 证据核对 + 记录写回 + #137 关闭。
+- 完成条件判定：①「治理和运营页面完成替换，平台对 Agent 的监督与恢复能力不退化」——满足：Agents 页（注册/Connections/自动加入/归档/Team access 抽屉，`apps/web/app/agents/`，26 文件含 69 个 `it` 断言组件测试）；Sessions 详情 + Run Timeline（会话事实/计划/活动/制品四视图 + 控制对话框，`agent-session-detail.tsx`、`agent-run-timeline.tsx`）；Recovery Center（生命周期/条件/严重度过滤 + 证据保留 + retry/handoff 治理动作，`recovery-center.tsx`）；Operations（feature-tier 分区 + usage metrics + 真实 rule/loop 控制 + dry-run，`operations-content.tsx`，禁用特性不出假空态由 `features-disabled.spec.ts` 守护）。②「运行控制与 Project/Issue workflow 各走正确命令，无假数据/假完成」——满足：运行控制统一走 `control-preview` → `signals`/`retry`/`prompt`（`apps/api/src/agent/routes.ts:201/291/295`，全部 revision 化 + preview 源 revision If-Match）；审批过期由 worker `expireApprovals` 真实调度（`apps/worker/src/session-lifecycle.ts:342`）。
+- 治理控制矩阵证据：`agent-governed-controls.spec.ts` 3 用例（立即停止保留 Human 草稿并要求显式重发；Plan 域 steering 绑定当前 Plan revision；retry 恰好创建一个新 Session）；`attention-center.spec.ts`（URL 状态、治理表单、批量部分失败保留、stale 恢复阻断）；`stage1.spec.ts`（委派原子命令 + 失败 retry 导航 + 非 admin 只读投影）；`stage2.spec.ts`（多 Agent Work Room + lease force-release 确认 + handoff 卡片）；`recovery-center.spec.ts`（证据保留 + 治理动作 + 响应式布局）；`agent-run-timeline.spec.ts`（因果 URL 状态、100 组分页 DOM 上界）。preview→commit 竞态服务端证据：`human-attention.integration.test.ts` L638-652（preview 后 bump revision 再提交 → 409 REVISION_CONFLICT）。
+- 验证证据（本轮补跑）：全量 e2e **68/68 passed（2.9m）**。
+- D2：本轮无 API/契约/schema/ADR 变更——「无」。
+- 已知限制 / follow-up：①Operations 页不展示 Runner 进程健康聚合（现有 runs/metrics/usage 覆盖执行与用量；进程级健康由 `/readyz`、`/livez` 与 worker retention 套件守护，聚合面板记 follow-up）；②「缺失计费说明」的显式提示在 usage metrics 的 unknown_cost_records 字段呈现（`usage-metrics.tsx`），语义为「存在未知成本记录」而非空成功；③ attention bulk 动作仅覆盖 approval/decision 类（`prohibitedReason` 对不支持 kind 显式给码）。
+
+
 ---
 
 <!-- WM-WEBPI-20260924:W16 -->
 # W16 完善模型设置、接入引导和全站配置体验
 
-阶段：M3；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M3；优先级：P0；估算：3–5 人日（W01 后复估）。状态：完成并关闭（2026-09-26 收口，见 W16 收口记录）。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1451,6 +1469,16 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/138
 - 实际测试命令、结果、失败/skip：
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
+
+
+### W16 收口记录（2026-09-26）
+
+- 结论：完成条件满足。实现主体在 PR #148（`d9cf1e1`）合入时已具备，本轮无新增实现；收口 = 证据核对 + 记录写回 + #138 关闭。
+- 完成条件判定：①「用户无需修改服务器文件即可在授权范围接入 LLM，并能判断为何不可用」——满足：`/settings/agent-workbench` 页（`workbench-llm-settings.tsx`，222 行）支持 Chat Completions / Responses 双协议、personal/team/workspace 三级 scope、密钥服务端 `pgp_sym_encrypt` 加密存储（`workbench-llm-connections.ts:186`）且页面只回显 `secret_status`（e2e 断言 secret 不落 body）；模型登记（能力字段 + If-Match 修订）、启用/停用、吊销（确认对话）齐全；不可用原因经 `connection-diagnostics.spec.ts` 3 用例覆盖（过期/轮换/吊销/权限不足分类 + 不渲染原始诊断）；无 `/models` provider 场景由手输 modelId 表单路径覆盖（`workbench-llm-settings.spec.ts`）。②「设置、connect、工作台模型状态一致，无凭据写入浏览器持久化存储」——满足：工作台 composer 仅读 `status === 'active' && secret_status === 'configured'` 的连接（`conversation-workbench.tsx:119`），草稿 localStorage 仅存对话草稿（`clearDraft`），无密钥字段。
+- 双协议真实验证证据：runner 侧双协议 wire fixtures（`model-wire.test.ts` 6 用例，真实 Pi SDK + 本地假上游，W08 交付）；MiniMax-M3 双协议探测脚本 `probe-minimax-m3.ts`（真实协议测试由 W08/W13 阶段一记录：真实 MiniMax-M3 完成 Conversation→settled）。
+- 验证证据（本轮补跑）：全量 e2e **68/68 passed（2.9m）**，含 `workbench-llm-settings.spec.ts`（创建→不回显→登记模型→停用→重载后状态保持→启用→吊销）与 `connection-diagnostics.spec.ts`。
+- D2：本轮无 API/契约/schema/ADR 变更——「无」。历史（PR #148）已同步；连接/模型路由在 `route-policy-bindings.ts` L1174-1179（human_only）。
+- 已知限制 / follow-up：①连接「测试」目前为「能力需通过真实协议测试确认」的指引文案（登记后由工作台真实 Turn 验证），独立 connectivity probe 端点未实现，记 follow-up；②Guidance 发布入口在 `/settings` 与 `/?view=guidance` 复用同一面板（W04 抽取为 `guidance-panel.tsx`），权限沿既有 human-only 路由；③「外部 Agent 配对/Skill pin 版本显示」由 Agents 页 Connections/Enrollment tab 与 `agent-connections-panel` 实装，Skill pin 显示（`skill_version`/`skill_sha256` 字段）已回读，版本升级流程归 W17/W18 运维验收。
 
 
 ---
