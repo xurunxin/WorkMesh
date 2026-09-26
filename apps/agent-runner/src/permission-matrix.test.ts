@@ -81,7 +81,8 @@ describe('W11 permission-denial matrix', () => {
     // A session that is acknowledged/stale/completed must yield zero tools, no matter
     // which capabilities were granted: the manifest gate fails closed before any
     // HTTP call can be issued.
-    for (const state of ['queued', 'acknowledged', 'stopping', 'stale', 'completed', 'failed', 'canceled']) {
+    const nonExecuting = ['queued', 'acknowledged', 'stopping', 'stale', 'completed', 'failed', 'canceled'] as const
+    for (const state of nonExecuting) {
       const api = apiFor(['work:read', 'work:write'], state)
       await expect(createWorkMeshTools(api, 'attempt-1', () => {}))
         .rejects.toThrow('RUNNER_CAPABILITY_SESSION_MISMATCH')
