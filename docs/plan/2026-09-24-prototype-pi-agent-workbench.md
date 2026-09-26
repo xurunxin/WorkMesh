@@ -212,7 +212,7 @@ flowchart LR
 - [x] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations（2026-09-26 收口，见 W15 收口记录）
 - [x] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验（2026-09-26 收口，见 W16 收口记录）
 - [x] W17 https://github.com/xurunxin/WorkMesh/issues/139 — 完成可靠性、性能、可访问性与隔离验证（2026-09-26 收口，见 W17 收口记录）
-- [ ] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理
+- [ ] W18 https://github.com/xurunxin/WorkMesh/issues/140 — 真实环境验收、发布切换、回滚演练与旧 UI 清理（2026-09-26 部分完成：构建校验/备份回滚演练/旧 UI 清理/文档已取证，**生产切换待单独授权**，见 W18 收口记录）
 
 ## 完整任务正文
 
@@ -1579,7 +1579,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/139
 <!-- WM-WEBPI-20260924:W18 -->
 # W18 真实环境验收、发布切换、回滚演练与旧 UI 清理
 
-阶段：M4；优先级：P0；估算：3–5 人日（W01 后复估）。状态：计划，未开始实现。
+阶段：M4；优先级：P0；估算：3–5 人日（W01 后复估）。状态：**部分完成（2026-09-26）**——固定 SHA 构建与校验、备份与回滚演练、旧 UI 清理、文档更新已完成并取证；**生产切换与 staging 双协议真实验收待用户单独授权**，见 W18 收口记录。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -1640,3 +1640,23 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/140
 - 实际测试命令、结果、失败/skip：
 - 浏览器/真实模型/恢复证据（适用时）：
 - 演示步骤、已知限制、规范偏差及 follow-up：
+
+### W18 收口记录（2026-09-26，生产切换待授权）
+
+**范围说明：** W18 含四项——(1) 按固定 SHA 构建与校验、(2) 备份与回滚演练、(3) 旧 UI 清理、(4) 生产切换与 postflight。**第 (4) 项按约定需用户单独授权，本次未执行**；staging 双协议真实验收同样需要授权的外部模型凭据与窗口。以下明确区分“已完成并取得证据”与“未执行”，不以本地结果冒充上线。
+
+**已执行并取得证据的部分：**
+
+- **固定 SHA 构建与校验（完成）**：以 main `257fecee2974a3fab4d544836658d2541c973fbb` 构建四个生产镜像（`api`/`worker`/`mcp`/`web`），全部成功且 `org.opencontainers.image.revision` 标签逐字绑定该 SHA（`docker image inspect` 核对）。`validate:production-images` **退出码 0**，覆盖：四个镜像引用必须为 GHCR 精确 SHA/摘要（浮动 tag 被拒）、Compose 健康检查与产物契约、PostgreSQL 就绪探针走 TCP、Object Lock 建桶不变式、保留策略 IAM 动作，以及 **WorkMesh Skill 的 LF 字节 / 清单 SHA-256 / Ed25519 签名校验 + 真实容器运行时探针**（`Production Web Skill runtime probe passed (artifact sha256:8dd4c67f…; image sha256:1623ec76…)`）。
+  - 本轮修复的真实缺陷：该校验器仍断言旧的 `mc mb --with-lock` 字符串，而生产 Compose 已改为 signed-curl PUT + `x-amz-bucket-object-lock-enabled: true` 头（RustFS 替换 MinIO 后）。修正为接受两种等价实现，使检查追踪**不变量**而非某一种实现；并以反向验证确认仍守得住（把头部改为 `false` 后校验器正确失败）。
+- **备份与恢复演练（完成）**：对隔离测试库执行真实 `db:backup` → 加密 recovery bundle（`manifest.sha256`、`manifest.hmac-sha256`、`database.dump.enc`、6 个对象密文、`sourceBuildSha` 绑定 `257fece`），再 `db:restore` 到**另一个**独立库与**独立** object-lock bucket，两侧均 `status: passed`（恢复侧报告 `restoredObjectVersions: 6`、`restoredDeleteMarkers: 2`），行列数逐项一致（`workspaces=1 actors=6 work_items=4 events=80`）。**回滚以“恢复 bundle”证明，不使用 schema downgrade。**
+  - 本机无 `pg_dump`/`pg_restore`；演练用 `WORKMESH_POSTGRES_TOOL_CONTAINER` 走容器内工具，且该容器就是**生产 API 镜像本人**（内置 `postgresql16-client`），因此同时实证“生产镜像确实携带恢复所依赖的工具”。
+- **旧 UI 清理与零 live import（完成，结论为无需删除）**：`apps/web/app` 下 44 个组件经模块孤儿审计（任意形式的 import/export specifier 均计为消费方）**0 孤儿**；`page.tsx` 路由集合为 12 个真实页面，无原型遗留页面；全仓库无临时迁移开关（`LEGACY_UI`/`PROTOTYPE_UI` 类命中仅为测试 fixture 的错误码字面量）。`ui-catalog` 判定**保留**：它是 `@workmesh/ui` 的可视化对照 fixture，非“旧 UI 页面”，删除会削弱组件库回归能力。
+  - 原型操作矩阵无空洞：W00 baseline 记录的 13 个原型入口全部有承载且有测试守护（`#/home`→`/?view=my-work`、`#/active`→`/?view=active`、`#/board`→`?layout=board`、`#/backlog`→`/?view=backlog`、`#/inbox`→`/?view=inbox`、`#/agents`→`/agents`、`#/sessions`→`/agents?tab=sessions` + `/agent-sessions/[id]`、`#/recovery`→`/?view=recovery`、`#/connect`→`/connect`、`#/ops`→`/operations`、`#/settings`→`/settings` + `/settings/agent-workbench`、`#/login|#/install`→`/login` + `/install`、`#/agent`→`/workbench`）。deep-link 形态由 e2e 守护，未见破坏。
+- **文档更新（完成）**：`docs/production-deployment.md` 新增 `## Rollback` 章节，给出两条**可执行**回滚路径——Path A 应用回滚（schema 未变：重指四个镜像引用 + SHA 并 `up -d --wait`）、Path B 数据恢复（schema 已变：`db:backup`/`db:restore` 恢复到干净目标），并明确“不以 schema downgrade 作为回滚方案”、维护窗口确认、目标 bucket 必须为空且带 Object Lock、回滚后核对 `/readyz` 并对账外部副作用。
+
+**数据迁移 / API / events / Skill 变更：** 无迁移、无 API 变更、无事件变更、无 Skill 变更。本轮改动为 `scripts/validate-production-images.mjs`（校正过期断言）、`docs/production-deployment.md`（新增回滚章节），以及本计划文档。
+
+**已知限制 / 待执行项（不得记为完成）：** ① **生产切换与实际业务 postflight 未执行**——需发布窗口、目标环境与凭据授权；② **staging 双协议真实模型验收未执行**——需外部模型凭据与授权窗口（协议层双协议 wire fixtures 已在 W08 交付，但那是受控假上游，非真实供应商端到端）；③ 真实生产数据上的回滚演练未执行，本轮演练在隔离测试库完成。
+
+**规范偏差：** 实现层面无偏差；范围层面如实记录第 (4) 项未执行。
