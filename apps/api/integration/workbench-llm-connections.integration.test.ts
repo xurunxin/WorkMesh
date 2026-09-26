@@ -94,6 +94,40 @@ describe('Workbench LLM connection settings', () => {
     expect(unsafe.statusCode).toBe(400)
   })
 
+  it('rotates the secret through PATCH so the previous credential stops authenticating model calls', async () => {
+    // W07 rotation matrix: a rotated connection keeps serving its models under a new
+    // secret revision, and the stored secret material is the rotated one — never the
+    // original. A revoked connection serves nothing at all (covered above).
+    const endpoint = '/api/v1/workbench/llm-connections'
+    const original = `rotate-original-${randomUUID()}`
+    const created = await call('POST', endpoint, {
+      scope: 'workspace', name: 'Rotation Target', apiType: 'openai-completions',
+      baseUrl: 'https://api.minimax.cn/v1', secretMaterial: original,
+    })
+    expect(created.statusCode, created.body).toBe(201)
+    const connectionId = created.json<{ id: string; revision: number }>().id
+
+    const rotated = `rotate-new-${randomUUID()}`
+    const patched = await call('PATCH', `${endpoint}/${connectionId}`, { secretMaterial: rotated },
+      { 'if-match': `"revision-${created.json<{ revision: number }>().revision}"` })
+    expect(patched.statusCode, patched.body).toBe(200)
+
+    const stored = (await db.query<{ plaintext: string }>(
+      'SELECT pgp_sym_decrypt(secret_ciphertext,$2) AS plaintext FROM workbench_llm_connections WHERE id=$1',
+      [connectionId, process.env.WORKMESH_MASTER_KEY])).rows[0]!.plaintext
+    expect(stored).toBe(rotated)
+    expect(stored).not.toBe(original)
+
+    // The rotation event is durable and outbox-backed like every other mutation.
+    const events = await db.query<{ event_type: string }>(
+      `SELECT event_type FROM domain_events WHERE aggregate_id=$1 ORDER BY cursor`, [connectionId])
+    expect(events.rows.at(-1)?.event_type).toBe('workbench.llm_connection.updated')
+    expect((await db.query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM outbox_events outbox JOIN domain_events event
+        ON event.id=outbox.domain_event_id WHERE event.aggregate_id=$1`,
+      [connectionId])).rows[0]?.count).toBe(2)
+  })
+
   it('keeps personal connections private even from workspace admins and grants team members read-only access', async () => {
     const endpoint = '/api/v1/workbench/llm-connections'
     const secret = `authorization-${randomUUID()}`
