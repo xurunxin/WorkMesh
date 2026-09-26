@@ -200,7 +200,7 @@ flowchart LR
 - [ ] W03 https://github.com/xurunxin/WorkMesh/issues/125 — 迁移统一应用外壳、导航、URL 与命令中心
 - [x] W04 https://github.com/xurunxin/WorkMesh/issues/126 — 替换 Projects 与 Issues 主工作流页面（2026-09-26 完成并关闭，见 W04 收口记录）
 - [ ] W05 https://github.com/xurunxin/WorkMesh/issues/127 — 统一 Markdown 编辑、阅读、草稿与附件体验
-- [ ] W06 https://github.com/xurunxin/WorkMesh/issues/128 — 补齐 Project 与 Issue 的版本化普通文档
+- [ ] W06 https://github.com/xurunxin/WorkMesh/issues/128 — 补齐 Project 与 Issue 的版本化普通文档（2026-09-26 完成并关闭，见 W06 收口记录）
 - [ ] W07 https://github.com/xurunxin/WorkMesh/issues/129 — 实现用户 LLM 连接、模型目录与凭据管理域
 - [ ] W08 https://github.com/xurunxin/WorkMesh/issues/130 — 交付 Chat Completions 与 Responses 双协议适配及验证套件
 - [ ] W09 https://github.com/xurunxin/WorkMesh/issues/131 — 实现工作台对话、Turn 与可恢复事件流
@@ -657,7 +657,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/127
 <!-- WM-WEBPI-20260924:W06 -->
 # W06 补齐 Project 与 Issue 的版本化普通文档
 
-阶段：M1；优先级：P1；估算：4–7 人日（W01 后复估）。状态：功能实现与独立测试完成（2026-09-25）；前置 W04 的主流程替换仍待完成，暂不关闭任务。
+阶段：M1；优先级：P1；估算：4–7 人日（W01 后复估）。状态：完成并关闭（2026-09-26）；前置 W04 已于同日关闭，收口记录见下。
 
 总路线图：https://github.com/xurunxin/WorkMesh/issues/121
 
@@ -725,6 +725,14 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/128
 - 测试：从 `v1/0008` 和空库迁移及注入失败回滚通过；`pnpm lint` 18/18、`pnpm typecheck` 18/18、`pnpm test` 29/29、`pnpm test:integration` DB 77/77、API 132 通过/4 skip、Worker 78 通过/1 skip、Recovery 1 skip、`pnpm test:e2e` 68/68、`pnpm check:route-policy` 通过。集成和 E2E 使用独立可重置数据库、Redis 与 Docker Web。
 - 运行证据：Docker API 探针完成 Project/Issue 创建、修订、过期修订冲突、历史、Markdown 导出与 hash 验证；浏览器 Project/Issue 文档用例通过。该任务不涉及真实模型请求。
 - 演示：打开 Project 或 Issue 的“文档”，创建 Markdown 文档，修改后查看历史与 diff、恢复旧版本、导出 `.md`。已知限制：W04 主页面改造尚未通过前置门禁；持久 WorkMesh `GEN-557` 与隔离 Docker 测试实例不互通，后者已同步本地 ADR 与 W06 正文，前者待可用控制面同步。
+
+### W06 收口记录（2026-09-26）
+
+- 完成条件判定：①「Project 和 Issue 均可管理多个真实文档，历史不可变、来源可追溯」——满足（`documents/` feature 走真实 API：创建/编辑/历史/diff/恢复/导出，迁移 `0011_versioned_documents.sql` 的 immutable revision + content hash 由既有集成测试守护）。②「已有描述/Guidance/附件无隐式重分类，新增 API/SDK/MCP/事件/文档同步」——满足（交付记录所列 OpenAPI/contracts/route-policy/SDK/MCP/ADR 0066 同步在 2026-09-25 已完成，本轮无新变更）。
+- 前置门禁：W04 已于 2026-09-26 完成并关闭（#126），本任务关闭门禁解除。
+- 收口新增证据（定向 e2e，真实 Web 容器 `workmesh-webpi-e2e-web` + 本地 API `3101` + 测试库 `workmesh_webpi_e2e_test`，旁路缓存）：`e2e/documents.spec.ts` 全流程 **8/8 passed（51.2s）**——stage0 bootstrap 安装 → Project 创建 → Project 文档创建/二次修订/历史 2 条/恢复 r1 为新修订 r3 → Issue 创建 → Issue 文档创建；日志确认 `POST /api/v1/documents`、`GET /api/v1/documents?ownerType=work_item` 等 200。工作区代码自 PR #148 合入后未变更（PR #156/#157 仅重组页面文件、行为零变更），无新增实现提交。
+- D2 复核：本轮无 API/契约/schema/ADR 变更，声明为「无」。
+- 已知限制（延续）：e2e bootstrap 依赖显式 `WORKMESH_BOOTSTRAP_TOKEN` + `WORKMESH_MASTER_KEY`（64-hex）；本地复跑环境变量样例见 `.evidence/w06-bootstrap-token.txt` / `.evidence/w06-master-key.txt`（均为一次性测试值，非密钥）。持久 WorkMesh `GEN-557` 同步仍待可用控制面（WorkMesh MCP 会话停止）。
 
 
 ---
