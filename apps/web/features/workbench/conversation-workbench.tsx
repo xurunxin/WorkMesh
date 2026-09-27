@@ -282,6 +282,8 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
   return <div className={styles.layout} data-testid="conversation-workbench">
     <aside className={styles.sidebar} aria-label={zh ? '对话列表' : 'Conversations'}>
       <div className={styles.heading}><h1>{zh ? 'Agent 工作台' : 'Agent workbench'}</h1><a href="/settings/agent-workbench">{zh ? '模型服务设置' : 'Model settings'}</a></div>
+      <button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.newConversation}
+        onClick={() => setShowCreate(current => !current)} type="button">{zh ? '＋ 新对话' : '＋ New conversation'}</button>
       <button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.createToggle}
         onClick={() => setShowCreate(current => !current)} type="button">{zh ? '新建对话' : 'Create conversation'}</button>
       <form className={styles.create} data-open={showCreate} id="workbench-create-form" onSubmit={event => void create(event)}>
@@ -300,29 +302,60 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
         <Button disabled={busy || !sessionId || !connectionId || !modelId || !title.trim()} type="submit">{zh ? '新建对话' : 'Create conversation'}</Button>
         {sessions.length === 0 && <a href="/agents">{zh ? '前往智能体创建委派会话' : 'Open Agents to start a delegated session'}</a>}
       </form>
+      <p className={styles.sectionLabel}>{zh ? '会话' : 'Conversations'}</p>
       <div className={styles.list} role="list">
         {loading ? <p>{zh ? '正在加载…' : 'Loading…'}</p> : conversations.length === 0 ? <p>{zh ? '尚无对话' : 'No conversations yet'}</p> : conversations.map(item =>
-          <button aria-current={selectedId === item.id ? 'page' : undefined} className={selectedId === item.id ? styles.active : ''}
+          <button aria-current={selectedId === item.id ? 'page' : undefined}
+            className={`${styles.listItem} ${selectedId === item.id ? styles.listItemActive : ''}`}
             key={item.id} onClick={() => { setSelectedId(item.id); setShowCreate(false); setDraft(''); setError('') }} type="button">
-            <strong>{item.title}</strong><small>{item.status} · {new Date(item.updated_at).toLocaleString(locale)}</small>
+            <span aria-hidden="true" className={`${styles.statusDot} ${item.status === 'active' ? styles.statusDotActive : styles.statusDotArchived}`} />
+            <span className={styles.listTitle}>{item.title}</span>
+            <span className={styles.listMeta}>{item.status} · {new Date(item.updated_at).toLocaleString(locale)}</span>
           </button>)}
         {nextConversationCursor && <button onClick={() => void loadMoreConversations()} type="button">{zh ? '加载更多对话' : 'Load more conversations'}</button>}
+      </div>
+      <p className={styles.sectionLabel}>{zh ? '执行器' : 'Executors'}</p>
+      <div className={styles.rail}>
+        {connections.map(item => <div className={styles.railRow} key={item.id}>
+          <span aria-hidden="true" className={`${styles.railDot} ${item.status === 'active' ? styles.railDotReady : item.status === 'error' ? styles.railDotBad : styles.railDotIdle}`} />
+          <span className={styles.railName}>{item.name}</span>
+          <span className={styles.railValue}>{item.status}</span>
+        </div>)}
+        {connections.length === 0 && <p className={styles.hint}>{zh ? '尚未配置模型服务' : 'No model service configured'}</p>}
+        <div className={styles.railRow}>
+          <span aria-hidden="true" className={`${styles.railDot} ${selected?.agent_session_id ? styles.railDotReady : styles.railDotIdle}`} />
+          <span className={styles.railName}>{zh ? '委派执行会话' : 'Delegated session'}</span>
+          <span className={styles.railValue}>{boundSession?.state ?? '—'}</span>
+        </div>
       </div>
     </aside>
     <section className={styles.main} aria-label={zh ? '对话内容' : 'Conversation'}>
       {error && <div role="alert" className={styles.error}>{error} <button onClick={() => { setError(''); void refreshList(); if (selectedId) void refreshSelected(selectedId) }} type="button">{zh ? '重试' : 'Retry'}</button></div>}
       {!selected ? <p className={styles.empty}>{zh ? '选择或新建对话。' : 'Select or create a conversation.'}</p> : <>
         <header className={styles.conversationHeader}><div><h2>{selected.title}</h2><p>{zh ? '公开对话记录与执行状态' : 'Public conversation record and execution state'}</p></div>
-          <Button disabled={busy || selected.status !== 'active' || turns.some(pending)} onClick={() => void archive()} variant="ghost">{zh ? '归档' : 'Archive'}</Button></header>
+          <div className={styles.conversationFacts}>
+            {boundSession && <span className={styles.chip}>{zh ? '会话' : 'session'} {boundSession.id.slice(0, 8)} · {boundSession.state}</span>}
+            <Button disabled={busy || selected.status !== 'active' || turns.some(pending)} onClick={() => void archive()} variant="ghost">{zh ? '归档' : 'Archive'}</Button>
+          </div></header>
         <div className={styles.timeline} aria-live="polite">
           {olderBefore && <button onClick={() => void loadOlder()} type="button">{zh ? '加载更早消息' : 'Load earlier messages'}</button>}
           {messages.length === 0 ? <p className={styles.empty}>{zh ? '发送第一条消息以开始。' : 'Send the first message to begin.'}</p> : messages.map(message =>
             <article className={message.role === 'user' ? styles.userMessage : styles.agentMessage} key={message.id}>
-              <div><strong>{message.role === 'user' ? (zh ? '你' : 'You') : message.role === 'assistant' ? 'Agent' : 'System'}</strong><time dateTime={message.created_at}>{new Date(message.created_at).toLocaleTimeString(locale)}</time></div>
-              <RichContent density="compact" source={message.content_markdown} />
+              <div className={styles.messageHead}>
+                <span aria-hidden="true" className={`${styles.actorBadge} ${message.role === 'user' ? styles.actorBadgeHuman : message.role === 'system' ? styles.actorBadgeSystem : ''}`}>
+                  {message.role === 'user' ? (zh ? '人' : 'H') : message.role === 'assistant' ? 'A' : 'S'}
+                </span>
+                <span className={styles.actorName}>{message.role === 'user' ? (zh ? '你' : 'You') : message.role === 'assistant' ? 'Agent' : 'System'}</span>
+                <time className={styles.listMeta} dateTime={message.created_at}>{new Date(message.created_at).toLocaleTimeString(locale)}</time>
+              </div>
+              <div className={styles.messageBody}><RichContent density="compact" source={message.content_markdown} /></div>
             </article>)}
-          {latestTurn && <div className={styles.turnState} role="status">{zh ? '最近一次执行' : 'Latest turn'}: {latestTurn.status}{latestTurn.error_code ? ` · ${latestTurn.error_code}` : ''}
-            {latestTurn.retry_of_turn_id && <small> · {zh ? '重试自' : 'retry of'} {latestTurn.retry_of_turn_id.slice(0, 8)}</small>}
+          {latestTurn && <div className={styles.turnState} role="status">
+            <span className={`${styles.chip} ${latestTurn.status === 'settled' ? styles.chipSettled : latestTurn.status === 'failed' || latestTurn.status === 'stopped' ? styles.chipFailed : styles.chipPending}`}>
+              {zh ? '回合' : 'turn'} #{latestTurn.sequence} · {latestTurn.status}
+            </span>
+            {latestTurn.error_code && <span className={`${styles.chip} ${styles.chipFailed}`}>{latestTurn.error_code}</span>}
+            {latestTurn.retry_of_turn_id && <span className={styles.chip}>{zh ? '重试自' : 'retry of'} {latestTurn.retry_of_turn_id.slice(0, 8)}</span>}
             {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{zh ? '停止' : 'Stop'}</Button>}
             {pending(latestTurn) && latestTurn.status === 'running' &&
               <form className={styles.steerForm} onSubmit={event => { event.preventDefault(); void steer(latestTurn) }}>
@@ -341,20 +374,36 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
               : 'The runner stopped before settlement. External effects are unverified. Check the Issue, documents, and artifacts before sending another message.'}</p>}
         </div>
         {selected.status === 'active' && draftIdentity && <form className={styles.composer} onSubmit={event => void send(event)}>
-          <div className={styles.turnModelSelection}>
-            <label>{zh ? '本次模型服务' : 'Service for this turn'}<select aria-label={zh ? '本次模型服务' : 'Service for this turn'} disabled={busy} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: event.target.value, modelId: null }; setTurnConnectionId(event.target.value) }} value={turnConnectionId}>
-              {connections.length === 0 && <option value="">{zh ? '请先配置服务' : 'Configure a service'}</option>}
-              {connections.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-            </select></label>
-            <label>{zh ? '本次模型' : 'Model for this turn'}<select aria-label={zh ? '本次模型' : 'Model for this turn'} disabled={busy || !turnConnectionId} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: turnConnectionId, modelId: event.target.value }; setTurnModelId(event.target.value) }} value={turnModelId}>
-              {turnModels.length === 0 && <option value="">{zh ? '无可用模型' : 'No available model'}</option>}
-              {turnModels.map(item => <option key={item.id} value={item.id}>{item.display_name}</option>)}
-            </select></label>
+          <div className={styles.composerPills}>
+            {selected.work_item_id
+              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=my-work&workItem=${encodeURIComponent(selected.work_item_id)}`}>⨯ @{zh ? '工作项' : 'work item'} {selected.work_item_id.slice(0, 8)}</a>
+              : <span className={styles.contextPill}>＋ @{zh ? '工作项' : 'work item'}</span>}
+            {selected.project_id
+              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>⨯ @{zh ? '项目' : 'project'} {selected.project_id.slice(0, 8)}</a>
+              : <span className={styles.contextPill}>＋ @{zh ? '项目' : 'project'}</span>}
+            <span className={styles.contextPill}>{selected.context_pins.length > 0 ? `⨯ @${zh ? '文件' : 'files'} ${selected.context_pins.length}` : `＋ @${zh ? '文件' : 'files'}`}</span>
+            <span className={styles.contextPill}>＋ @{zh ? '终端' : 'terminal'}</span>
           </div>
           <RichTextEditor identity={draftIdentity} label={zh ? '消息（Markdown）' : 'Message (Markdown)'} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} />
-          <Button disabled={busy || !draft.trim() || !sessionCanRun || !turnConnectionId || !turnModelId} type="submit">{zh ? '发送' : 'Send'}</Button>
-          {!selected.agent_session_id && <p>{zh ? '此对话尚未绑定执行会话。' : 'This conversation has no execution session.'}</p>}
-          {selected.agent_session_id && boundSession && !sessionCanRun && <p role="status">{zh ? '绑定的执行会话已结束，请创建新的委派会话。' : 'The bound execution session has ended. Start a new delegated session.'}</p>}
+          <div className={styles.composerFooter}>
+            <div className={styles.turnModelSelection}>
+              <label>{zh ? '本次模型服务' : 'Service for this turn'}<select aria-label={zh ? '本次模型服务' : 'Service for this turn'} disabled={busy} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: event.target.value, modelId: null }; setTurnConnectionId(event.target.value) }} value={turnConnectionId}>
+                {connections.length === 0 && <option value="">{zh ? '请先配置服务' : 'Configure a service'}</option>}
+                {connections.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+              </select></label>
+              <label>{zh ? '本次模型' : 'Model for this turn'}<select aria-label={zh ? '本次模型' : 'Model for this turn'} disabled={busy || !turnConnectionId} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: turnConnectionId, modelId: event.target.value }; setTurnModelId(event.target.value) }} value={turnModelId}>
+                {turnModels.length === 0 && <option value="">{zh ? '无可用模型' : 'No available model'}</option>}
+                {turnModels.map(item => <option key={item.id} value={item.id}>{item.display_name}</option>)}
+              </select></label>
+            </div>
+            <div className={styles.composerActions}>
+              <span className={styles.composerFacts}>{zh ? 'Enter 发送 · Shift+Enter 换行' : 'Enter to send · Shift+Enter for a new line'}</span>
+              <Button disabled={busy || !draft.trim() || !sessionCanRun || !turnConnectionId || !turnModelId} type="submit">{zh ? '发送' : 'Send'}</Button>
+            </div>
+          </div>
+          {!selected.agent_session_id && <p className={`${styles.hint} ${styles.hintBlocked}`}>{zh ? '此对话尚未绑定执行会话。' : 'This conversation has no execution session.'}</p>}
+          {selected.agent_session_id && boundSession && !sessionCanRun && <p className={`${styles.hint} ${styles.hintBlocked}`} role="status">{zh ? '绑定的执行会话已结束，请创建新的委派会话。' : 'The bound execution session has ended. Start a new delegated session.'}</p>}
+          {sessionCanRun && <p className={`${styles.hint} ${styles.hintReady}`}>● {zh ? '执行会话可运行' : 'Execution session can run'}{boundSession ? ` · ${boundSession.state}` : ''}</p>}
           {connections.length === 0 && <a href="/settings/agent-workbench">{zh ? '配置模型服务' : 'Configure a model service'}</a>}
         </form>}
       </>}
