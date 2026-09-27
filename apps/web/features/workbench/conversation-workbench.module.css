@@ -1,39 +1,292 @@
-.layout { display: grid; grid-template-columns: minmax(230px, 260px) minmax(0, 1fr) minmax(190px, 230px); min-height: min(80vh, 850px); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-lg); background: var(--wm-surface); overflow: hidden; }
-.sidebar, .context { padding: 1rem; min-width: 0; background: var(--wm-surface-muted, var(--wm-surface)); }
-.sidebar { border-right: 1px solid var(--wm-border); display: flex; flex-direction: column; gap: 1rem; }
-.context { border-left: 1px solid var(--wm-border); display: flex; flex-direction: column; gap: .75rem; }
-.heading h1, .context h2, .conversationHeader h2 { margin: 0; font-size: 1.2rem; }
-.heading a, .context a, .create a { font-size: .85rem; }
-.createToggle { display: none; }
-.create { display: grid; gap: .6rem; padding: .75rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
-.create label { display: grid; gap: .25rem; font-size: .8rem; }
-.create input, .create select { width: 100%; min-width: 0; padding: .5rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); color: var(--wm-text); background: var(--wm-surface); }
-.list { display: grid; align-content: start; gap: .25rem; overflow: auto; }
-.list button { display: grid; gap: .2rem; width: 100%; padding: .7rem; border: 0; border-radius: var(--wm-radius-sm); text-align: left; color: var(--wm-text); background: transparent; cursor: pointer; }
-.list button:hover, .list .active { background: var(--wm-accent-soft, var(--wm-canvas)); }
-.list small { color: var(--wm-text-muted); }
-.main { display: flex; flex-direction: column; min-width: 0; }
-.conversationHeader { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--wm-border); }
-.conversationHeader p { margin: .3rem 0 0; color: var(--wm-text-muted); font-size: .85rem; }
-.timeline { flex: 1; display: flex; flex-direction: column; gap: 1rem; overflow: auto; padding: 1rem; }
-.timeline article { max-width: min(88%, 760px); padding: .85rem 1rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); overflow-wrap: anywhere; }
-.timeline article > div:first-child { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; }
-.timeline time { color: var(--wm-text-muted); }
-.userMessage { align-self: flex-end; background: var(--wm-accent-soft, var(--wm-canvas)); }
-.agentMessage { align-self: flex-start; background: var(--wm-surface); }
-.turnState { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; color: var(--wm-text-muted); font-size: .85rem; }
-.steerForm { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1 1 240px; }
-.steerForm input { flex: 1; min-width: 0; padding: .4rem .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); color: var(--wm-text); background: var(--wm-surface); }
-.contextPins { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; }
-.contextPins li { padding: .25rem .6rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); font-size: .78rem; color: var(--wm-text-muted); }
+/* Workbench composition follows design/prototype #/agent: three edge-anchored
+   columns separated by hairlines (no wrapping card), a gradient primary action,
+   conversation rows built from a status dot + title + meta, an actor-badged
+   message thread, and a composer whose context affordances sit above the input
+   and whose connection facts sit below it. The previous generic card/form
+   layout is deliberately gone rather than restyled. */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 288px) minmax(0, 1fr) minmax(200px, 248px);
+  min-height: min(84vh, 900px);
+  background: var(--wm-canvas);
+  overflow: hidden;
+}
+
+.sidebar,
+.context {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  min-width: 0;
+  padding: 1rem .9rem;
+  background: var(--wm-surface-subtle);
+}
+.sidebar { border-right: 1px solid var(--wm-border); }
+.context { border-left: 1px solid var(--wm-border); }
+
+/* ---------- Left column ---------- */
+
+.heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.heading h1, .context h2, .conversationHeader h2 { margin: 0; font-size: 1.05rem; font-weight: 650; }
+.heading a, .context a, .create a { font-size: .8rem; }
+
+.sectionLabel {
+  margin: .35rem 0 .1rem;
+  color: var(--wm-text-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+/* Gradient primary action, per the prototype's --grad-accent. */
+.newConversation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0 .8rem;
+  color: var(--wm-accent-fg);
+  background: linear-gradient(135deg, var(--wm-accent), color-mix(in srgb, var(--wm-accent) 60%, var(--wm-violet, var(--wm-accent))));
+  border: 1px solid transparent;
+  border-radius: var(--wm-radius-md);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--wm-accent) 30%, transparent);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter var(--wm-motion-fast) var(--wm-ease-out);
+}
+.newConversation:hover { filter: brightness(1.06); }
+.newConversation:disabled { cursor: not-allowed; opacity: .5; }
+
+.create {
+  display: grid;
+  gap: .5rem;
+  padding: .7rem;
+  background: var(--wm-surface-raised);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-md);
+}
+/* The prototype keeps the conversation list as the resting state and reveals
+   creation behind the gradient action. The old layout left this form pinned
+   open on desktop, which is exactly the composition being replaced. */
+.create[data-open="false"] { display: none; }
+.create label { display: grid; gap: .2rem; font-size: .78rem; color: var(--wm-text-muted); }
+.create input, .create select {
+  width: 100%;
+  min-width: 0;
+  padding: .4rem .5rem;
+  color: var(--wm-text);
+  background: var(--wm-surface);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+}
+
+.list { display: grid; align-content: start; gap: .15rem; min-height: 0; overflow: auto; }
+.listItem {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  align-items: start;
+  gap: .1rem .5rem;
+  width: 100%;
+  padding: .5rem .55rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--wm-radius-sm);
+  cursor: pointer;
+}
+.listItem:hover { background: var(--wm-surface-hover); }
+.listItemActive { background: var(--wm-surface-hover); }
+.listItemActive:hover { background: var(--wm-surface-active); }
+.listTitle {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--wm-text-strong);
+  font-size: .84rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listMeta {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  color: var(--wm-text-muted);
+  font-size: .72rem;
+}
+
+/* 5px status dot, per the prototype's .badge-dot::before. */
+.statusDot { width: 5px; height: 5px; margin-top: .4rem; background: currentColor; border-radius: 50%; }
+.statusDotActive { color: var(--wm-success); }
+.statusDotArchived { color: var(--wm-text-subtle); }
+
+/* Connector facts pinned to the bottom of the conversations column. */
+.rail { display: grid; gap: .3rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--wm-border); }
+.railRow { display: flex; align-items: center; gap: .45rem; color: var(--wm-text-muted); font-size: .76rem; }
+.railName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.railValue { margin-left: auto; color: var(--wm-text-subtle); font-family: var(--wm-font-mono); font-size: .7rem; }
+.railDot { width: 6px; height: 6px; flex: none; border-radius: 50%; }
+.railDotReady { background: var(--wm-success); }
+.railDotIdle { background: var(--wm-text-subtle); }
+.railDotBad { background: var(--wm-danger); }
+
+/* ---------- Main column ---------- */
+
+.main { display: flex; flex-direction: column; min-width: 0; background: var(--wm-canvas); }
+.conversationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem 1.1rem;
+  border-bottom: 1px solid var(--wm-border);
+}
+.conversationHeader p { margin: .25rem 0 0; color: var(--wm-text-muted); font-size: .8rem; }
+.conversationFacts { display: flex; align-items: center; gap: .5rem; color: var(--wm-text-muted); font-size: .75rem; }
+
+.timeline { display: flex; flex: 1; flex-direction: column; gap: .85rem; min-height: 0; overflow: auto; padding: 1.1rem; }
+
+/* User turn reads as a tinted block, as in the prototype's .msg-user. */
+.userMessage {
+  align-self: flex-end;
+  max-width: min(78%, 720px);
+  padding: .7rem .9rem;
+  background: var(--wm-accent-bg);
+  border: 1px solid var(--wm-accent-border);
+  border-radius: var(--wm-radius-lg);
+  overflow-wrap: anywhere;
+}
+
+/* Agent turn is a card fronted by a circular actor badge. */
+.agentMessage {
+  align-self: flex-start;
+  max-width: min(88%, 820px);
+  overflow: hidden;
+  background: var(--wm-surface-raised);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-lg);
+}
+.messageHead { display: flex; align-items: center; gap: .5rem; padding: .6rem .9rem 0; }
+.actorBadge {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  color: var(--wm-accent-fg);
+  background: var(--wm-accent);
+  border-radius: 50%;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.actorBadgeHuman { background: var(--wm-neutral, var(--wm-text-muted)); }
+.actorBadgeSystem { background: var(--wm-text-subtle); }
+.actorName { color: var(--wm-text-strong); font-size: .8rem; font-weight: 600; }
+.messageBody { padding: .5rem .9rem .8rem; }
+.userMessage .messageHead { padding: 0 0 .35rem; }
+.userMessage .messageBody { padding: 0; }
+
+/* Turn facts row, rendered with the prototype's .chip metrics. */
+.chipRow { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 8px;
+  color: var(--wm-text-muted);
+  background: var(--wm-surface-subtle);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+  font-family: var(--wm-font-mono);
+  font-size: 11px;
+}
+.chipPending { color: var(--wm-warning); border-color: var(--wm-warning-border); background: var(--wm-warning-bg); }
+.chipFailed { color: var(--wm-danger); border-color: var(--wm-danger-border); background: var(--wm-danger-bg); }
+.chipSettled { color: var(--wm-success); border-color: var(--wm-success-border); background: var(--wm-success-bg); }
+
+.turnState { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.steerForm { display: flex; flex: 1 1 240px; align-items: center; gap: .4rem; min-width: 0; }
+.steerForm input {
+  flex: 1;
+  min-width: 0;
+  padding: .4rem .6rem;
+  color: var(--wm-text);
+  background: var(--wm-surface);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+}
+
+/* ---------- Composer ---------- */
+
+.composer { display: grid; gap: .5rem; padding: .75rem 1.1rem .9rem; border-top: 1px solid var(--wm-border); background: var(--wm-canvas); }
+.composerPills { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.contextPill {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  height: 24px;
+  padding: 0 .55rem;
+  color: var(--wm-text-muted);
+  background: var(--wm-surface-subtle);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-pill);
+  font-size: .74rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+.contextPillBound { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
+.composerFooter { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.composerFacts { display: flex; align-items: center; gap: .5rem; min-width: 0; color: var(--wm-text-muted); font-size: .75rem; }
+.composerActions { display: flex; align-items: center; gap: .5rem; }
+.turnModelSelection { display: flex; align-items: center; gap: .35rem; min-width: 0; }
+.turnModelSelection label { display: inline-flex; align-items: center; gap: .25rem; min-width: 0; color: var(--wm-text-subtle); font-size: .72rem; }
+.turnModelSelection select {
+  min-width: 0;
+  max-width: 11rem;
+  padding: .25rem .4rem;
+  color: var(--wm-text);
+  background: var(--wm-surface);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+  font-size: .75rem;
+}
+.hint { margin: 0; color: var(--wm-text-subtle); font-size: .7rem; }
+.hintReady { color: var(--wm-success); }
+.hintBlocked { color: var(--wm-warning); }
+
+/* ---------- Context column ---------- */
+
+.contextPins { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+.contextPins li {
+  padding: .2rem .5rem;
+  color: var(--wm-text-muted);
+  background: var(--wm-surface-raised);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+  font-family: var(--wm-font-mono);
+  font-size: .72rem;
+}
 .contextPins a { color: var(--wm-text); text-decoration: none; }
-.composer { display: grid; gap: .5rem; padding: 1rem; border-top: 1px solid var(--wm-border); }
-.turnModelSelection { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
-.turnModelSelection label { display: grid; gap: .25rem; min-width: 0; font-size: .8rem; }
-.turnModelSelection select { width: 100%; min-width: 0; padding: .5rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); color: var(--wm-text); background: var(--wm-surface); }
-.composer > button { justify-self: end; }
+.context p { margin: 0; color: var(--wm-text-muted); font-size: .8rem; }
+
 .empty { margin: auto; color: var(--wm-text-muted); }
-.error { padding: .7rem 1rem; background: var(--wm-danger-soft, var(--wm-canvas)); }
-.context p { margin: 0; color: var(--wm-text-muted); font-size: .85rem; }
-@media (max-width: 1100px) { .layout { grid-template-columns: minmax(200px, 240px) minmax(0, 1fr); } .context { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--wm-border); } }
-@media (max-width: 700px) { .layout { display: flex; flex-direction: column; min-height: 0; } .sidebar { border-right: 0; border-bottom: 1px solid var(--wm-border); } .createToggle { display: block; width: 100%; padding: .55rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); color: var(--wm-text); background: var(--wm-surface); } .create[data-open="false"] { display: none; } .list { max-height: 170px; } .main { min-height: 520px; } .timeline article { max-width: 100%; } .turnModelSelection { grid-template-columns: 1fr; } }
+.error { padding: .6rem .8rem; color: var(--wm-danger); background: var(--wm-danger-bg); border: 1px solid var(--wm-danger-border); border-radius: var(--wm-radius-sm); }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(210px, 250px) minmax(0, 1fr); }
+  .context { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--wm-border); }
+}
+@media (max-width: 700px) {
+  .layout { display: flex; min-height: 0; flex-direction: column; }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--wm-border); }
+  .list { max-height: 190px; }
+  .main { min-height: 520px; }
+  .userMessage, .agentMessage { max-width: 100%; align-self: stretch; }
+  .turnModelSelection { flex-wrap: wrap; }
+}
