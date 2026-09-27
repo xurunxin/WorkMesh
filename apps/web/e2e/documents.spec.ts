@@ -7,7 +7,7 @@ test('Project and Issue documents keep immutable revisions through the real Web 
   const createProject = page.getByTestId('create-project')
   await createProject.locator('input[name="name"]').fill(projectName)
   await createProject.getByRole('button', { name: /创建项目|Create project/ }).click()
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(projectName)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(projectName)
 
   await page.locator('.project-detail-pane').getByRole('button', { name: /^(文档|Documents)$/ }).click()
   const manager = page.getByTestId('document-manager')
