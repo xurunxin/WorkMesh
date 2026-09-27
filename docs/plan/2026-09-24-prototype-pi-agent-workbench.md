@@ -208,6 +208,7 @@ flowchart LR
 - [x] W11 https://github.com/xurunxin/WorkMesh/issues/133 — 建立 WorkMesh 操作工具集与 Agent 行为权限矩阵（2026-09-26 验证补齐；#133 已关闭）
 - [x] W12 https://github.com/xurunxin/WorkMesh/issues/134 — 编写可执行操作 Skills、用户指南和评测场景（2026-09-26 验证补齐；#134 已关闭）
 - [x] W13 https://github.com/xurunxin/WorkMesh/issues/135 — 实装 Agent 工作台对话、上下文与执行控制（2026-09-26 完成并关闭，见 W13 交付记录；#135 已关闭）
+- [x] W19 — 路线图收尾核验：补齐两个降级的签名组件并统一原型入口口径（2026-09-27 完成，见 W19 交付记录）
 - [x] W14 https://github.com/xurunxin/WorkMesh/issues/136 — 实现制品检查器、修订反馈与成果验收闭环（2026-09-26 收口，见 W14 收口记录）
 - [x] W15 https://github.com/xurunxin/WorkMesh/issues/137 — 迁移审批、Agents、Sessions、Recovery 与 Operations（2026-09-26 收口，见 W15 收口记录）
 - [x] W16 https://github.com/xurunxin/WorkMesh/issues/138 — 完善模型设置、接入引导和全站配置体验（2026-09-26 收口，见 W16 收口记录）
@@ -1652,7 +1653,7 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/140
 - **备份与恢复演练（完成）**：对隔离测试库执行真实 `db:backup` → 加密 recovery bundle（`manifest.sha256`、`manifest.hmac-sha256`、`database.dump.enc`、6 个对象密文、`sourceBuildSha` 绑定 `257fece`），再 `db:restore` 到**另一个**独立库与**独立** object-lock bucket，两侧均 `status: passed`（恢复侧报告 `restoredObjectVersions: 6`、`restoredDeleteMarkers: 2`），行列数逐项一致（`workspaces=1 actors=6 work_items=4 events=80`）。**回滚以“恢复 bundle”证明，不使用 schema downgrade。**
   - 本机无 `pg_dump`/`pg_restore`；演练用 `WORKMESH_POSTGRES_TOOL_CONTAINER` 走容器内工具，且该容器就是**生产 API 镜像本人**（内置 `postgresql16-client`），因此同时实证“生产镜像确实携带恢复所依赖的工具”。
 - **旧 UI 清理与零 live import（完成，结论为无需删除）**：`apps/web/app` 下 44 个组件经模块孤儿审计（任意形式的 import/export specifier 均计为消费方）**0 孤儿**；`page.tsx` 路由集合为 12 个真实页面，无原型遗留页面；全仓库无临时迁移开关（`LEGACY_UI`/`PROTOTYPE_UI` 类命中仅为测试 fixture 的错误码字面量）。`ui-catalog` 判定**保留**：它是 `@workmesh/ui` 的可视化对照 fixture，非“旧 UI 页面”，删除会削弱组件库回归能力。
-  - 原型操作矩阵无空洞：W00 baseline 记录的 13 个原型入口全部有承载且有测试守护（`#/home`→`/?view=my-work`、`#/active`→`/?view=active`、`#/board`→`?layout=board`、`#/backlog`→`/?view=backlog`、`#/inbox`→`/?view=inbox`、`#/agents`→`/agents`、`#/sessions`→`/agents?tab=sessions` + `/agent-sessions/[id]`、`#/recovery`→`/?view=recovery`、`#/connect`→`/connect`、`#/ops`→`/operations`、`#/settings`→`/settings` + `/settings/agent-workbench`、`#/login|#/install`→`/login` + `/install`、`#/agent`→`/workbench`）。deep-link 形态由 e2e 守护，未见破坏。
+  - 原型操作矩阵无空洞：**按原型源码（`app.js` 的 `SCREENS` + NAV + `SHELL_FREE`）重新枚举为 15 屏**——12 个侧栏导航项 + 1 个工作项下钻屏 `#/detail` + 2 个无外壳认证屏。W18 原文按"12 导航 + 认证对（计 1）"记为 13，遗漏了 `#/detail`；`design/README.md` 的路由表则相反，列了 `#/detail` 却漏了 `#/agent`（原型的默认路由与侧栏首项）。两份清单已各自补全。逐屏核对 15/15 全部有生产承载且有测试守护（`#/home`→`/?view=my-work`、`#/active`→`/?view=active`、`#/board`→`?layout=board`、`#/backlog`→`/?view=backlog`、`#/inbox`→`/?view=inbox`、`#/agents`→`/agents`、`#/sessions`→`/agents?tab=sessions` + `/agent-sessions/[id]`、`#/detail`→`app/work-room.tsx` + `features/work-items/detail/work-item-detail.tsx`、`#/recovery`→`/?view=recovery`、`#/connect`→`/connect`、`#/ops`→`/operations`、`#/settings`→`/settings` + `/settings/agent-workbench`、`#/login|#/install`→`/login` + `/install`、`#/agent`→`/workbench`）。deep-link 形态由 e2e 守护，未见破坏。
 - **文档更新（完成）**：`docs/production-deployment.md` 新增 `## Rollback` 章节，给出两条**可执行**回滚路径——Path A 应用回滚（schema 未变：重指四个镜像引用 + SHA 并 `up -d --wait`）、Path B 数据恢复（schema 已变：`db:backup`/`db:restore` 恢复到干净目标），并明确“不以 schema downgrade 作为回滚方案”、维护窗口确认、目标 bucket 必须为空且带 Object Lock、回滚后核对 `/readyz` 并对账外部副作用。
 
 **数据迁移 / API / events / Skill 变更：** 无迁移、无 API 变更、无事件变更、无 Skill 变更。本轮改动为 `scripts/validate-production-images.mjs`（校正过期断言）、`docs/production-deployment.md`（新增回滚章节），以及本计划文档。
@@ -1678,3 +1679,41 @@ GitHub：https://github.com/xurunxin/WorkMesh/issues/140
 **生产切换边界说明（如实）**：本机即开发机，无独立生产环境。"生产切换"的可执行部分——按固定 SHA 构建、契约校验、部署拓扑、真实模型业务链、回滚演练——已全部在生产等价拓扑上完成并取证。**真正把流量切到新版本的生产服务器操作**需要目标生产环境（服务器、DNS、凭据），不在本机能力范围内；届时在目标环境执行 `docs/production-deployment.md` 的既有步骤与新增 Rollback runbook 即可，两者均已由本轮验证。
 
 **结论：** W18 完成条件在新 UI 默认界面、真实 Pi/LLM 业务链验收、回滚证据可用三个维度已满足（生产等价拓扑）；生产服务器切换本身属于目标环境的运维操作，其 runbook 已交付并验证。**关闭 #140，最终交付门槛达成。**
+
+<!-- WM-WEBPI-20260924:W19 -->
+
+# W19 路线图收尾核验：签名组件补齐与原型入口口径统一
+
+阶段：M4 收尾；状态：**完成（2026-09-27）**。触发：路线图 #121 收尾核验时对"是否已用最新原型完成 Web UI 替换"的复查。
+
+## 1. 原型基线未被超越（用哈希回答"是不是最新原型"）
+
+W00 冻结的原型校验值与 `main` 当前版本逐字节比对（LF 归一化后）：
+
+| 文件 | W00 基线 SHA-256（前 16）/字节 | main 当前 | 结论 |
+|---|---|---|---|
+| `design/prototype/index.html` | `3ABD11844A043C79` / 8,805 | `3ABD11844A043C79…` / 8,805 | 逐字节相同 |
+| `design/prototype/app.css` | `08541428FD868F52` / 97,471 | `08541428FD868F52…` / 97,471 | 逐字节相同 |
+| `design/prototype/serve.mjs` | `046F556F6B2ACCA9` / 1,724 | `046F556F6B2ACCA9…` / 1,724 | 逐字节相同 |
+| `design/prototype/app.js` | `4FCBE64D6F63A191` / 102,230 | `915BD36533A331FD…` / 102,229 | 差 1 字节 |
+
+**结论：不存在"更新的原型被落下"。** 需特别记录的判别陷阱：工作区显示 `app.js` 104,424 B、`app.css` 101,270 B（看似"长大 6KB"），但 `git ls-files --eol` 为 `i/lf w/crlf`，且每个文件的字节增量恰等于其行数（`app.js` +2,194 = 2,195 行；`app.css` +3,799 = 3,800 行）——那是 Windows 检出把 LF 转 CRLF，与 W12 Skill pin 假红同类。真实差异仅 `app.js` 1 字节，且导航 12 个 id 与 W00 记录一致、14 个 `SCREENS` 函数齐全。`design/` 全仓库仅 `d9cf1e1`（PR #148）一次提交，此后原型未再改动。
+
+## 2. 补齐的两个降级签名组件
+
+复查发现 `design/README.md` §3 声明的 4 个签名组件中，有 2 个在生产侧只落地了一部分。本轮补齐：
+
+- **Session 遥测条**（主张"心跳 + 预算并排，预算 >85% 自动转红"）。原实现把预算渲染为裸文本 `maxRuntimeSeconds: 600`，全仓库无 85% 阈值。补齐方式不是在前端算比例，而是把比例做成**服务端派生的投影事实**：`packages/domain/src/session-budget.ts` 新增纯函数 `deriveSessionBudgetUtilization`（冻结阈值 `sessionBudgetWarningRatio = 0.85`），`RunExplanation.session` 新增 `startedAt` + `budgetUtilization`，由 `apps/api/src/control-center/routes.ts` 一次派生后下发；Web 的 `SessionBudgetMeter` 只负责渲染。两条不变量：无法观测的用量报 `measurable: false` + `ratio: null`（**绝不渲染成 0**，符合"未知用量显示未知、不按零计费"）；时钟偏移不产生负消耗，超 cap 比例收敛为 1。
+- **优先级条形**（主张"三格递增条 + 文字，色盲可读，不只靠色相"）。原实现是彩色 pill（颜色 + 文字 2 通道），缺形状通道。`WorkItemCard` 现渲染原型同款三格条（urgent 3 格 / high 2 格 / medium 1 格 / low 0 格，恒为 3 格以稳定形状），填充色取 `currentColor`，与既有 pill 文字并存。填充色用 `opacity` 切换而非新 token，故零 hex 契约测试的 allowlist 无需变更。
+
+## 3. 统一原型入口口径为 15 屏
+
+W18 记录按"12 导航 + 认证对（计 1）"记 13，遗漏 `#/detail`；`design/README.md` 的路由表则列了 `#/detail` 却漏了 `#/agent`——而 `#/agent` 是原型的**默认路由**（`app.js` 中 `location.hash` 缺省回落到 `agent`）与侧栏首项。按源码重新枚举为 **15 屏**（12 导航 + `#/detail` 下钻 + 2 认证），两份清单已各自补全，逐屏 15/15 有生产承载。
+
+## 4. 变更清单
+
+- 新增：`packages/domain/src/session-budget.ts`、`packages/domain/src/session-budget.test.ts`、`packages/ui/src/domain/control-plane.test.tsx`
+- 改：`packages/contracts/src/index.ts`（`sessionBudgetUtilizationSchema` + `RunExplanation.session`）、`apps/api/src/control-center/routes.ts`（`session.created_at` + 派生）、`OPENAPI.yaml`（`SessionBudgetUtilization` + `session` 两字段）、`packages/ui/src/domain/control-plane.tsx`（`SessionBudgetMeter`）、`packages/ui/src/domain/work-item.tsx`（`PriorityBars`）、`apps/web/app/styles.css`（两条组件样式）、`apps/web/app/agent-run-timeline.tsx`（接线 + 双语文案）、`packages/ui/src/index.test.ts`（barrel 清单）、e2e 三处 `RunExplanation` 假数据（`.strict()` 契约必须补新字段）+ 预算条断言、`apps/web/features/work-items/work-item-card.test.tsx`、`design/README.md`、本计划文档
+- 无数据迁移、无新增/变更事件、无 Skill 变更；`RunExplanation` 为 GET 投影，无破坏性写路径。契约新增字段对旧消费者是增量（消费者须忽略未知字段）。
+- `apps/api/src/control-center/routes.ts` 不在 `agent-lock-order-manifest` 覆盖的 15 个文件内，故本次改 SELECT 不触发语句清单重生成。
+

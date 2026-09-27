@@ -16,6 +16,7 @@ import {
 } from '@workmesh/contracts'
 import {
   DomainError,
+  deriveSessionBudgetUtilization,
   evaluateAgentSessionControl,
   type AgentSessionControlAction,
 } from '@workmesh/domain'
@@ -673,7 +674,7 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
   const values: unknown[] = [sessionId, current.workspaceId]
   const auth = liveSessionReadPredicate(current, 'session.id', 'session.workspace_id', values)
   const result = await boundedQuery<QueryResultRow & {
-    id: string; state: z.infer<typeof import('@workmesh/contracts').agentSessionStateSchema>; revision: number; state_reason: string | null; updated_at: Date | string
+    id: string; state: z.infer<typeof import('@workmesh/contracts').agentSessionStateSchema>; revision: number; state_reason: string | null; created_at: Date | string; updated_at: Date | string
     work_item_id: string | null; work_item_title: string | null; work_item_revision: number | null
     responsible_id: string | null; responsible_name: string | null; agent_actor_id: string; agent_name: string
     plan_id: string | null; plan_revision: number | null; change_summary: string | null
@@ -682,7 +683,7 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
     result_summary: string | null; result_evidence: unknown
     heartbeat_health: 'healthy' | 'degraded' | 'stale'; last_heartbeat_at: Date | string | null; lease_count: string; approval_count: string
   }>(h.db, `
-    SELECT session.id,session.state,session.revision,session.state_reason,session.updated_at,
+    SELECT session.id,session.state,session.revision,session.state_reason,session.created_at,session.updated_at,
            session.work_item_id,item.title AS work_item_title,item.revision AS work_item_revision,
            responsible.id AS responsible_id,responsible.display_name AS responsible_name,
            session.agent_actor_id,agent.display_name AS agent_name,
@@ -920,7 +921,17 @@ async function readRunExplanation(h: Helpers, request: FastifyRequest, reply: Fa
     : null
   return runExplanationResponseSchema.parse({
     projectionVersion: 1,
-    session: { id: row.id, state: row.state, revision: row.revision, stateReason: row.state_reason, budget: Object.fromEntries(Object.entries(objectValue(row.budget)).filter((entry): entry is [string, number] => typeof entry[1] === 'number')), updatedAt: iso(row.updated_at) },
+    session: (() => {
+      const budget = Object.fromEntries(Object.entries(objectValue(row.budget)).filter((entry): entry is [string, number] => typeof entry[1] === 'number'))
+      const startedAt = iso(row.created_at)
+      return {
+        id: row.id, state: row.state, revision: row.revision, stateReason: row.state_reason, budget, startedAt,
+        // Derived here so the Web renders one server-owned signal instead of
+        // re-deriving a ratio (and mis-reading an unknown usage figure as zero).
+        budgetUtilization: deriveSessionBudgetUtilization({ budget, startedAt, observedAt }),
+        updatedAt: iso(row.updated_at),
+      }
+    })(),
     project: row.project_id ? { id: row.project_id, name: row.project_name!, revision: row.project_revision! } : null,
     workItem: row.work_item_id ? { id: row.work_item_id, title: row.work_item_title!, revision: row.work_item_revision! } : null,
     responsibleHuman: row.responsible_id ? { id: row.responsible_id, kind: 'human', displayName: row.responsible_name! } : null,

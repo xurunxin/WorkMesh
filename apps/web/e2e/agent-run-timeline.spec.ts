@@ -36,7 +36,7 @@ const olderGroups = Array.from({ length: 20 }, (_, index) => group(20 + index, '
 
 const explanation: RunExplanation = {
   projectionVersion: 1,
-  session: { id: sessionId, state: 'completed', revision: 12, stateReason: 'Roadmap slice completed.', budget: { maxRuntimeSeconds: 3600 }, updatedAt: timestamp(12) },
+  session: { id: sessionId, state: 'completed', revision: 12, stateReason: 'Roadmap slice completed.', budget: { maxRuntimeSeconds: 3600 }, startedAt: timestamp(0), budgetUtilization: [{ limit: 'runtimeSeconds', cap: 3600, used: 12, ratio: 0.003, measurable: true, warning: false, exhausted: false }], updatedAt: timestamp(12) },
   project: { id: uuid(60), name: 'Human Control Plane', revision: 6 }, workItem: { id: uuid(40), title: 'Causal Agent Run Timeline', revision: 4 },
   responsibleHuman: human, activeAgent: actor, plan: { id: planTwo, revision: 2, changeSummary: 'Recover after failed validation' }, currentStep: { id: stepRecover, title: 'Recover and verify', status: 'completed', ordinal: 2 },
   planVersions: [
@@ -81,6 +81,13 @@ test('Run Timeline preserves causal URL state, Plan comparison, provenance discl
   await expect(timeline.getByText('Verified', { exact: true }).first()).toBeVisible()
   await expect(timeline.locator('.run-causal-group')).toHaveCount(8)
   await expect(timeline.getByText('Read repository and current requirements', { exact: true })).toBeVisible()
+
+  // Signature Session telemetry bar: the server-derived budget ratio renders as
+  // text so its value never depends on the fill colour alone.
+  const budgetMeter = timeline.getByTestId('session-budget-meter')
+  await expect(budgetMeter).toBeVisible()
+  await expect(budgetMeter.getByRole('meter')).toHaveAttribute('aria-valuetext', '0%')
+  await expect(budgetMeter.locator('.wm-budget-ok')).toBeVisible()
 
   await timeline.getByLabel('Compare version').selectOption(planOne)
   await expect(page).toHaveURL(/runCompare=/)
