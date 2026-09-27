@@ -18,9 +18,12 @@ import {
   AttentionKindBadge,
   AttentionListItem,
   Button,
+  FilterDisclosure,
   FreshnessBadge,
   LifecycleBadge,
   RiskBadge,
+  TabBar,
+  Tag,
   UrgencyBadge,
   WorkSurfacePagination,
 } from "@workmesh/ui";
@@ -180,6 +183,49 @@ const isDangerous = (item: HumanAttentionItem): boolean =>
   item.severity === "high" ||
   item.severity === "critical" ||
   ["approval", "conflict", "recovery"].includes(item.kind);
+
+const durationLabel = (ms: number, zh: boolean): string => {
+  const minutes = Math.round(Math.abs(ms) / 60_000);
+  if (minutes < 60) return zh ? `${minutes} 分钟` : `${minutes}m`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return zh ? `${hours} 小时` : `${hours}h`;
+  return zh ? `${Math.round(hours / 24)} 天` : `${Math.round(hours / 24)}d`;
+};
+
+/**
+ * The prototype's right-aligned head fact. An attention item carries a real
+ * expiry, so an overdue item is stated as overdue rather than left for the
+ * Human to infer from a timestamp.
+ */
+const formatAttentionAge = (item: HumanAttentionItem, locale: string): { text: string; urgent: boolean } | null => {
+  const zh = locale === "zh-CN";
+  const now = Date.parse(item.freshness.observedAt);
+  if (item.expiresAt) {
+    const expiry = Date.parse(item.expiresAt);
+    if (Number.isFinite(expiry) && expiry < now) {
+      return { text: zh ? `逾期 ${durationLabel(now - expiry, true)}` : `overdue ${durationLabel(now - expiry, false)}`, urgent: true };
+    }
+    if (Number.isFinite(expiry)) {
+      return { text: zh ? `剩余 ${durationLabel(expiry - now, true)}` : `due in ${durationLabel(expiry - now, false)}`, urgent: false };
+    }
+  }
+  const updated = Date.parse(item.freshness.sourceUpdatedAt);
+  if (!Number.isFinite(updated)) return null;
+  return { text: `${durationLabel(now - updated, zh)}`, urgent: false };
+};
+
+/**
+ * The prototype's tag pills. Every pill is a real identifier or a real count on
+ * the item, so nothing here is decoration standing in for data.
+ */
+const attentionScopePills = (item: HumanAttentionItem): string[] => {
+  const pills: string[] = [];
+  if (item.workItemId) pills.push(item.workItemId.slice(0, 8).toUpperCase());
+  if (item.projectId) pills.push(`project:${item.projectId.slice(0, 8)}`);
+  if (item.affectedResources.length > 0) pills.push(`resources ×${item.affectedResources.length}`);
+  if (item.evidence.length > 0) pills.push(`evidence ×${item.evidence.length}`);
+  return pills;
+};
 
 export function AttentionCenter({
   actor,
@@ -861,6 +907,12 @@ export function AttentionCenter({
         ? "partial"
         : "fresh";
   const items = page?.items ?? [];
+  // The list projection returns a page rather than a total, so a count is only
+  // stated for the view whose items are actually loaded.
+  const viewTabs = [
+    { badge: route.view === "active" && !page ? items.length : undefined, id: "active", label: copy.active },
+    { badge: route.view === "history" && !page ? items.length : undefined, id: "history", label: copy.history },
+  ];
   const groupedItems = useMemo(() => {
     const groups = {
       immediate: [] as HumanAttentionItem[],
@@ -900,37 +952,19 @@ export function AttentionCenter({
           value={freshness}
         />
       </header>
-      <div
-        aria-label={copy.status}
-        className="attention-view-switch"
-        role="tablist"
-      >
-        {(["active", "history"] as AttentionView[]).map((view) => (
-          <Button
-            aria-selected={route.view === view}
-            key={view}
-            onClick={() =>
-              writeRoute({
-                ...route,
-                view,
-                status: undefined,
-                cursor: undefined,
-                selectedId: undefined,
-              })
-            }
-            role="tab"
-            type="button"
-            variant={route.view === view ? "primary" : "ghost"}
-          >
-            {view === "active" ? copy.active : copy.history}
-          </Button>
-        ))}
-      </div>
-      <form
-        aria-label={copy.filters}
-        className="attention-filters"
-        onSubmit={applyFilters}
-      >
+      {/* Shared control, not a bespoke tab switch: the prototype's tab row
+          already exists in @workmesh/ui, so the page composes it instead of
+          restating the rule. */}
+      <TabBar
+        ariaLabel={copy.status}
+        onValueChange={(view) => writeRoute({ ...route, view: view as AttentionView, status: undefined, cursor: undefined, selectedId: undefined })}
+        tabs={viewTabs}
+        value={route.view}
+      />
+      {/* The prototype shows the queue with no filter grid in its resting state.
+          The filters stay reachable rather than being deleted, but they no longer
+          own the screen. */}
+      <FilterDisclosure label={copy.filters} onSubmit={applyFilters} testId="attention-filters">
         <label>
           {copy.kind}
           <select
@@ -1050,7 +1084,7 @@ export function AttentionCenter({
             </select>
           </label>
         )}
-        <div className="attention-filter-actions">
+        <div className="wm-filter-actions">
           <Button type="submit">{copy.apply}</Button>
           <Button
             onClick={() => writeRoute({ view: route.view })}
@@ -1060,7 +1094,7 @@ export function AttentionCenter({
             {copy.clear}
           </Button>
         </div>
-      </form>
+      </FilterDisclosure>
       {(error || applying || bulkMessage) && (
         <div
           className={error ? "attention-banner error" : "attention-banner"}
@@ -1155,6 +1189,7 @@ export function AttentionCenter({
                     const incompatible = Boolean(bulkCompatibility && item.bulk.compatibilityKey !== bulkCompatibility);
                     const risk = item.severity === "info" ? "none" : item.severity;
                     const urgency = item.urgency === "immediate" ? "urgent" : item.urgency;
+                    const age = formatAttentionAge(item, locale);
                     return (
                       <div className={`attention-row${selected?.id === item.id ? " selected" : ""}`} key={item.id} role="listitem">
                         {item.bulk.eligible && (
@@ -1176,6 +1211,7 @@ export function AttentionCenter({
                             </Button>
                           }
                           actor={<span className="attention-queue-actor">{item.requestedBy.displayName}</span>}
+                          age={age?.text}
                           badges={
                             <>
                               <AttentionKindBadge categoryLabel={copy.kind} label={item.kind.replaceAll("_", " ")} value={item.kind} />
@@ -1184,8 +1220,12 @@ export function AttentionCenter({
                               <LifecycleBadge categoryLabel={copy.status} label={item.status} value={item.status} />
                             </>
                           }
+                          consequence={item.impactSummary}
                           description={item.summary}
+                          risk={risk}
+                          scope={attentionScopePills(item).map(pill => <Tag key={pill}>{pill}</Tag>)}
                           title={item.title}
+                          urgent={age?.urgent ?? false}
                         />
                       </div>
                     );

@@ -184,11 +184,15 @@
   --wm-space-11: 5rem;
   --wm-space-12: 6rem;
 
-  --wm-radius-sm: 6px;
-  --wm-radius-md: 10px;
-  --wm-radius-lg: 14px;
-  --wm-radius-xl: 20px;
-  --wm-radius-2xl: 28px;
+  /* The prototype's own radius scale (app.css: --r-sm 9px, --r-md 14px,
+     --r-lg 18px, --r-xl 26px). The previous 6/10/14/20/28 was a different
+     scale, so every rounded surface in the product disagreed with the design
+     baseline and controls looked inconsistently cornered. */
+  --wm-radius-sm: 9px;
+  --wm-radius-md: 14px;
+  --wm-radius-lg: 18px;
+  --wm-radius-xl: 26px;
+  --wm-radius-2xl: 34px;
   --wm-radius-pill: 999px;
 
   /* Control heights — prototype geometry: 26/32/40, dense input 38. */
@@ -234,10 +238,15 @@
 
 /* ---------- Buttons ---------- */
 
-.wm-button { min-height: var(--wm-control-h-md); padding: 0 .72rem; color: var(--wm-text); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-pill); font-weight: 600; transition: background var(--wm-motion-fast) var(--wm-ease-out), border-color var(--wm-motion-fast) var(--wm-ease-out), color var(--wm-motion-fast) var(--wm-ease-out), transform var(--wm-motion-normal) var(--wm-ease-spring), box-shadow var(--wm-motion-normal) var(--wm-ease-out); }
-.wm-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--wm-space-2); min-width: 0; max-width: 100%; }
-.wm-button:hover { background: var(--wm-surface-hover); border-color: var(--wm-border-strong); transform: translateY(-1px); box-shadow: var(--wm-shadow-sm); }
-.wm-button:active { background: var(--wm-surface-active); transform: translateY(0) scale(.97); }
+/* Button, following the prototype's .btn: a 32px control, 0 11px padding, 13px
+   type at weight 550, an --r-sm corner and no resting shadow. The app stylesheet
+   used to restate all of this at .app-shell .wm-button with different values,
+   which meant the shipped control matched neither the library nor the
+   prototype. */
+.wm-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; max-width: 100%; min-height: var(--wm-control-h-md); padding: 0 11px; color: var(--wm-text); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-sm); font-size: 13px; font-weight: 550; line-height: 1; white-space: nowrap; cursor: pointer; transition: background var(--wm-motion-fast) var(--wm-ease-out), border-color var(--wm-motion-fast) var(--wm-ease-out), color var(--wm-motion-fast) var(--wm-ease-out); }
+.wm-button:hover { background: var(--wm-surface-hover); border-color: var(--wm-border-strong); }
+.wm-button:active { background: var(--wm-surface-active); }
+.wm-button:disabled { cursor: not-allowed; opacity: .55; }
 .wm-button-sm { min-height: var(--wm-control-h-sm); padding: 0 .5rem; font-size: var(--wm-text-xs); }
 .wm-button-lg { min-height: var(--wm-control-h-lg); padding: 0 1rem; }
 .wm-button-label { min-width: 0; white-space: nowrap; }
@@ -297,10 +306,17 @@
 .app-navigation-group + .app-navigation-group { margin-top: 18px; }
 .app-navigation-group-label { margin: 0; padding: 0 8px 6px; color: var(--wm-text-subtle); font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .app-navigation-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.app-navigation-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: auto; padding: 0 7px; color: var(--wm-text-muted); background: var(--wm-surface-hover); border-radius: var(--wm-radius-pill); font-family: var(--wm-font-mono); font-size: 11px; font-weight: 600; line-height: 1; }
-.app-navigation-link.is-active .app-navigation-count { color: var(--wm-accent); background: var(--wm-accent-bg); }
-.wm-shell-search { display: flex; flex: 1 1 auto; justify-content: center; min-width: 0; }
+.app-navigation-count { margin-left: auto; }
+.app-navigation-link.is-active .app-navigation-count { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
 .wm-shell-actions { display: flex; gap: var(--wm-space-2); margin-left: auto; }
+/* The search control is the one elastic item in the header row. Without an
+   explicit min-width: 0 its content width becomes the flex floor, so the
+   action cluster on the right is pushed past the viewport between roughly
+   760px and 900px. The breadcrumb is the opposite: it is short and must keep
+   its intrinsic width, otherwise the search absorbs all the space and the
+   current destination wraps one character per line. */
+.wm-shell-search { display: flex; flex: 1 1 auto; justify-content: center; min-width: 0; }
+.wm-shell-breadcrumb { flex: 0 0 auto; white-space: nowrap; }
 
 /* ---------- Overlays ---------- */
 
@@ -372,12 +388,15 @@
 
 /* ---------- Tabs ---------- */
 
-.wm-tab-list { display: flex; gap: var(--wm-space-1); overflow-x: auto; border-bottom: 1px solid var(--wm-border); }
-.wm-tab { min-height: var(--wm-control-h-lg); padding: .35rem .65rem; color: var(--wm-text-muted); background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; }
-.wm-tab { display: inline-flex; align-items: center; gap: var(--wm-space-2); }
+/* Tab row, following the prototype: a wide gutter between tabs, the active tab
+   marked by a strong label and an accent rule (not a filled pill), and a count
+   pill that is neutral until its own tab is selected. */
+.wm-tab-list { display: flex; gap: 1.1rem; overflow-x: auto; border-bottom: 1px solid var(--wm-border); }
+.wm-tab { display: inline-flex; align-items: center; gap: .4rem; min-height: var(--wm-control-h-lg); margin-bottom: -1px; padding: .5rem .1rem; color: var(--wm-text-muted); background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; font-size: var(--wm-text-sm); white-space: nowrap; }
 .wm-tab:hover { color: var(--wm-text); }
-.wm-tab.is-active { color: var(--wm-text); border-bottom-color: var(--wm-text); }
-.wm-tab-badge { display: inline-grid; place-items: center; min-width: 1.3rem; min-height: 1.3rem; padding: 0 .3rem; color: var(--wm-accent); background: var(--wm-accent-bg); border: 1px solid var(--wm-accent-border); border-radius: var(--wm-radius-pill); font-size: var(--wm-text-2xs); font-weight: 700; }
+.wm-tab.is-active { color: var(--wm-text-strong); border-bottom-color: var(--wm-accent); font-weight: 650; }
+.wm-tab-badge { }
+.wm-tab.is-active .wm-tab-badge { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
 .wm-tab-panel { padding-top: var(--wm-space-4); }
 
 /* ---------- Badge ---------- */
@@ -533,18 +552,78 @@
 .wm-control-section-content { min-width: 0; }
 .wm-control-section-content > :not(:last-child) { border-bottom: 1px solid var(--wm-border); }
 
-.wm-attention-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--wm-space-4); align-items: center; min-width: 0; padding: .9rem; }
-.wm-attention-card { overflow: hidden; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
-.wm-attention-item-main { min-width: 0; }
-.wm-attention-item-badges,
+/* Attention card, following the prototype's .attn anatomy: a 3px risk rail, a
+   head that puts the age opposite the title, tag pills, and an inset
+   consequence preview. The rail repeats the risk the badges already state, so
+   risk survives without hue. */
+.wm-attention-item { position: relative; display: flex; min-width: 0; padding: .85rem 1rem .85rem 0; background: var(--wm-surface); overflow: hidden; }
+.wm-attention-rail { width: 3px; flex: none; margin-right: 1rem; background: var(--wm-neutral, var(--wm-text-muted)); border-radius: 0 2px 2px 0; }
+.wm-attention-risk-low .wm-attention-rail { background: var(--wm-info, var(--wm-accent)); }
+.wm-attention-risk-medium .wm-attention-rail { background: var(--wm-warning); }
+.wm-attention-risk-high .wm-attention-rail,
+.wm-attention-risk-critical .wm-attention-rail { background: var(--wm-danger); }
+.wm-attention-body { flex: 1 1 auto; min-width: 0; }
+.wm-attention-head { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+.wm-attention-badges,
 .wm-run-digest-badges { display: flex; flex-wrap: wrap; gap: .35rem; }
-.wm-attention-item h3,
-.wm-run-digest h3 { margin: .45rem 0 0; font-size: var(--wm-text-sm); overflow-wrap: anywhere; }
-.wm-attention-item p,
-.wm-run-digest p { margin: .25rem 0 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); line-height: 1.45; }
+.wm-attention-title { margin: 0; font-size: var(--wm-text-md, .875rem); font-weight: 600; color: var(--wm-text-strong); overflow-wrap: anywhere; }
+.wm-attention-age { margin-left: auto; color: var(--wm-text-subtle); font-size: var(--wm-text-xs); white-space: nowrap; }
+.wm-attention-age.is-urgent { color: var(--wm-warning); font-weight: 600; }
+.wm-attention-desc { margin: .4rem 0 0; max-width: 72ch; color: var(--wm-text-muted); font-size: var(--wm-text-sm); line-height: 1.45; }
+.wm-attention-actor { margin-right: .35rem; color: var(--wm-text); font-weight: 600; }
+/* Page and section framing, following the prototype's .page-head and
+   .section-head. Every screen opens with this pair, so it is defined once. */
+.wm-page-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.wm-page-head-text { min-width: 0; }
+.wm-page-title-row { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.wm-page-head h1 { margin: 0; color: var(--wm-text-strong); font-size: 22px; font-weight: 650; letter-spacing: -.02em; }
+.wm-page-head p { margin: 3px 0 0; color: var(--wm-text-muted); font-size: 13px; }
+.wm-page-actions { display: flex; flex: none; gap: 8px; margin-left: auto; }
+.wm-section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.wm-section-head h2 { margin: 0; color: var(--wm-text-muted); font-size: 13px; font-weight: 650; letter-spacing: .02em; text-transform: uppercase; }
+.wm-section-actions { display: flex; gap: 8px; margin-left: auto; }
+
+/* Filters stay reachable, but they no longer own the resting layout. The
+   prototype shows no filter grid at rest, and two screens needed the same
+   collapsed arrangement, so it is one control. */
+.wm-filter-disclosure { margin-bottom: .25rem; }
+.wm-filter-disclosure > summary { color: var(--wm-text-muted); font-size: .8rem; cursor: pointer; list-style: none; }
+.wm-filter-disclosure > summary::before { content: '\25B8 '; }
+.wm-filter-disclosure[open] > summary::before { content: '\25BE '; }
+.wm-filter-disclosure[open] > summary { margin-bottom: .55rem; }
+.wm-filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .65rem; padding: .85rem; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); background: var(--wm-surface-subtle); }
+.wm-filter-grid label { display: grid; min-width: 0; gap: .35rem; color: var(--wm-text-muted); font-size: .82rem; }
+.wm-filter-grid select { width: 100%; min-width: 0; max-width: 100%; }
+.wm-filter-actions { display: flex; align-items: flex-end; gap: .45rem; grid-column: 1 / -1; }
+
+/* Autonomy strip: one compact row, not a panel stack. */
+.wm-autonomy { min-width: 0; padding: 12px 16px; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
+.wm-autonomy-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wm-autonomy-label { display: inline-flex; align-items: center; gap: 7px; color: var(--wm-text-strong); font-size: 13px; font-weight: 650; }
+.wm-autonomy-dot { width: 6px; height: 6px; flex: none; background: var(--wm-warning); border-radius: 50%; }
+.wm-autonomy.is-active .wm-autonomy-dot { background: var(--wm-success); }
+.wm-autonomy-note { color: var(--wm-text-subtle); font-size: 12px; }
+.wm-autonomy-action { display: flex; gap: 8px; margin-left: auto; }
+.wm-autonomy-description { margin: 6px 0 0; color: var(--wm-text-muted); font-size: 13px; line-height: 1.5; }
+
+@media (max-width: 760px) {
+  .wm-page-head { flex-wrap: wrap; }
+  .wm-page-actions { margin-left: 0; }
+  .wm-autonomy-action { margin-left: 0; }
+}
+
+/* One pill for every identity the prototype repeats: nav counters, work item
+   tags, resource and evidence counts, tab counts. */
+.wm-tag { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 7px; color: var(--wm-text-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-pill); font-family: var(--wm-font-mono); font-size: 11px; font-weight: 600; line-height: 1; }
+.wm-tag-accent { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
+.wm-attention-scope { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .55rem; }
+.wm-attention-consequence { display: flex; align-items: center; flex-wrap: wrap; row-gap: .25rem; gap: .6rem; margin-top: .65rem; padding: .55rem .7rem; color: var(--wm-text-muted); background: var(--wm-surface-inset); border: 1px solid var(--wm-border-subtle); border-radius: var(--wm-radius-sm); font-size: var(--wm-text-xs); }
+.wm-attention-meta { margin-top: .6rem; color: var(--wm-text-muted); font-size: var(--wm-text-xs); }
+.wm-attention-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
+.wm-attention-card { overflow: hidden; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: 8px; }
 .wm-attention-item .wm-actor-attribution { margin-top: .65rem; }
-.wm-attention-item-meta { margin-top: .6rem; color: var(--wm-text-muted); font-size: var(--wm-text-xs); }
-.wm-attention-item-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+.wm-run-digest h3 { margin: .45rem 0 0; font-size: var(--wm-text-sm); overflow-wrap: anywhere; }
+.wm-run-digest p { margin: .25rem 0 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); line-height: 1.45; }
 
 .wm-run-digest { min-width: 0; padding: .9rem; }
 .wm-run-digest > header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--wm-space-4); }
@@ -673,9 +752,9 @@
 }
 
 @media (max-width: 760px) {
-  .wm-attention-item { grid-template-columns: 1fr; }
-  .wm-attention-item-actions { justify-content: stretch; }
-  .wm-attention-item-actions .wm-button { flex: 1 1 auto; }
+  .wm-attention-age { width: 100%; margin-left: 0; }
+  .wm-attention-actions { justify-content: stretch; }
+  .wm-attention-actions .wm-button { flex: 1 1 auto; }
   .wm-run-digest > header { flex-direction: column; }
   .wm-run-digest-status { width: 100%; }
   .wm-run-status-segments { width: min(16rem, 70vw); }
