@@ -5,23 +5,45 @@ import { classNames } from '../internal/utils.js'
 
 export type NavigationItem = Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'onClick'> & {
   active?: boolean
+  /** Right-aligned count pill, mirroring the prototype's nav counters. */
+  count?: number | null
   href: string
   icon?: ReactNode
   label: string
   testId?: string
 }
 
+/**
+ * The prototype groups its sidebar into labelled sections (Workbench /
+ * Governance / Operations) instead of one flat list. A bare item list is still
+ * accepted so a caller can opt out of grouping.
+ */
+export type NavigationSection = { label?: string; items: NavigationItem[] }
+export type NavigationEntries = NavigationItem[] | NavigationSection[]
+
+const isSection = (entry: NavigationItem | NavigationSection): entry is NavigationSection =>
+  Array.isArray((entry as NavigationSection).items)
+
+const flattenNavigation = (entries: NavigationEntries): NavigationItem[] =>
+  entries.flatMap(entry => (isSection(entry) ? entry.items : [entry]))
+
 export type AppShellProps = PropsWithChildren<{
   administrationNavigationLabel?: string
   actorName?: string
   brandIcon?: ReactNode
   contextLabel?: string
+  /**
+   * Optional breadcrumb trail, outermost first. The prototype shows
+   * "Workbench / Agent workbench"; the last entry renders in the strong
+   * foreground and the rest stay muted.
+   */
+  contextTrail?: readonly string[]
   footer?: ReactNode
   headerActions?: ReactNode
   mainNavigationLabel?: string
   menuLabel?: string
   mobileNavigationLabel?: string
-  navigation: NavigationItem[]
+  navigation: NavigationEntries
   productName: string
   skipLabel?: string
   teamSwitcher?: ReactNode
@@ -40,7 +62,17 @@ function NavigationLinks({ items, onNavigate, testIds = true }: { items: Navigat
       item.onClick?.(event)
       onNavigate?.()
     }}
-  >{item.icon && <span aria-hidden="true" className="app-navigation-icon">{item.icon}</span>}{item.label}</a>)}</>
+  >{item.icon && <span aria-hidden="true" className="app-navigation-icon">{item.icon}</span>}<span className="app-navigation-label">{item.label}</span>{item.count !== undefined && item.count !== null && <span aria-hidden="true" className="app-navigation-count">{item.count}</span>}</a>)}</>
+}
+
+function NavigationGroups({ entries, onNavigate, testIds }: { entries: NavigationEntries; onNavigate?: () => void; testIds: boolean }) {
+  if (!entries.some(isSection)) return <NavigationLinks items={flattenNavigation(entries)} onNavigate={onNavigate} testIds={testIds} />
+  return <>{entries.map((entry, index) => isSection(entry)
+    ? <div className="app-navigation-group" key={`${entry.label ?? 'group'}:${index}`}>
+      {entry.label && <p className="app-navigation-group-label">{entry.label}</p>}
+      <NavigationLinks items={entry.items} onNavigate={onNavigate} testIds={testIds} />
+    </div>
+    : <NavigationLinks items={[entry]} key={`${entry.href}:${entry.label}`} onNavigate={onNavigate} testIds={testIds} />)}</>
 }
 
 export function AppShell({
@@ -49,6 +81,7 @@ export function AppShell({
   brandIcon,
   children,
   contextLabel = 'Workspace',
+  contextTrail,
   footer,
   headerActions,
   mainNavigationLabel = 'Main navigation',
@@ -71,14 +104,15 @@ export function AppShell({
     slot.dataset.wmHydrated = 'true'
     return () => { delete slot.dataset.wmHydrated }
   }, [])
-  const allNavigation = [...navigation, ...utilityNavigation]
-  const hasNavigation = navigation.length > 0 || utilityNavigation.length > 0
+  const allNavigation = [...flattenNavigation(navigation), ...utilityNavigation]
+  const hasNavigation = allNavigation.length > 0
+  const breadcrumb = contextTrail?.length ? contextTrail : [contextLabel]
   return <div className={`app-shell wm-theme${hasNavigation ? '' : ' app-shell--no-sidebar'}`}>
     <a className="wm-skip-link" href="#workmesh-main">{skipLabel}</a>
     {hasNavigation && <aside className="app-sidebar" aria-label={mainNavigationLabel}>
       <header className="app-brand"><span className="app-brand-title">{brandIcon}<strong>{productName}</strong></span>{actorName && <small>{actorName}</small>}</header>
       {teamSwitcher && <div className="app-team-switcher">{teamSwitcher}</div>}
-      <nav className="app-navigation" aria-label={workspaceNavigationLabel}><NavigationLinks items={navigation} /></nav>
+      <nav className="app-navigation" aria-label={workspaceNavigationLabel}><NavigationGroups entries={navigation} testIds /></nav>
       {utilityNavigation.length > 0 && <nav className="app-navigation app-utility-navigation" aria-label={administrationNavigationLabel}><NavigationLinks items={utilityNavigation} /></nav>}
       {footer && <footer className="app-sidebar-footer">{footer}</footer>}
     </aside>}
@@ -98,7 +132,12 @@ export function AppShell({
           <nav aria-label={mobileNavigationLabel}><NavigationLinks items={allNavigation} onNavigate={() => setMobileOpen(false)} testIds={false} /></nav>
           {footer && <footer className="app-sidebar-footer mobile-navigation-footer">{footer}</footer>}
         </details>}
-        <p>{contextLabel}</p>
+        <p className="wm-shell-breadcrumb">
+          {breadcrumb.map((segment, index) => <span key={`${segment}:${index}`}>
+            {index > 0 && <span aria-hidden="true" className="wm-shell-breadcrumb-sep"> / </span>}
+            {index === breadcrumb.length - 1 ? <b>{segment}</b> : segment}
+          </span>)}
+        </p>
         <div className="wm-shell-search" id="workmesh-command-center-trigger-slot" ref={commandCenterSlot} />
         {headerActions && <div className="wm-shell-actions">{headerActions}</div>}
       </header>

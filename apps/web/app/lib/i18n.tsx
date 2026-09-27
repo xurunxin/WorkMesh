@@ -56,6 +56,9 @@ type TranslationKey =
   | 'live'
   | 'loading'
   | 'loadMore'
+  | 'navGroupGovernance'
+  | 'navGroupOperations'
+  | 'navGroupWorkbench'
   | 'labels'
   | 'language'
   | 'lead'
@@ -178,6 +181,9 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     pageLoadError: '页面加载出错',
     retry: '重试',
     workbench: '工作台',
+    navGroupWorkbench: '工作台',
+    navGroupGovernance: '治理',
+    navGroupOperations: '运营',
     workbenchPlaceholderTitle: 'Agent 工作台准备中',
     workbenchPlaceholderDescription: '对话式 Agent 工作台将在后续里程碑上线。智能体注册、会话与执行视角当前可从「智能体」进入。',
     themeToDark: '切换到深色主题',
@@ -251,6 +257,9 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     pageLoadError: 'The page failed to load',
     retry: 'Retry',
     workbench: 'Workbench',
+    navGroupWorkbench: 'Workbench',
+    navGroupGovernance: 'Governance',
+    navGroupOperations: 'Operations',
     workbenchPlaceholderTitle: 'Agent workbench is being prepared',
     workbenchPlaceholderDescription: 'The conversational agent workbench arrives in an upcoming milestone. Agent registry, sessions, and the execution view remain available under Agents.',
     themeToDark: 'Switch to the dark theme',

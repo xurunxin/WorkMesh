@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { LocaleProvider } from '../../app/lib/i18n'
-import { applyTheme, currentTheme, isThemeChoice, ThemeToggle, themeBootstrapScript, themeStorageKey } from './theme'
+import { applyTheme, currentTheme, defaultTheme, isThemeChoice, ThemeToggle, themeBootstrapScript, themeStorageKey } from './theme'
 
 afterEach(() => {
   cleanup()
@@ -13,17 +13,18 @@ afterEach(() => {
 })
 
 describe('theme bootstrap script (SSR no-flash contract)', () => {
-  it('defaults to light when nothing is stored or forced', () => {
+  it('defaults to the prototype hero mode (dark) when nothing is stored or forced', () => {
     new Function(themeBootstrapScript)()
-    expect(document.documentElement.dataset.wmTheme).toBe('light')
-    expect(document.documentElement.style.colorScheme).toBe('light')
+    expect(defaultTheme).toBe('dark')
+    expect(document.documentElement.dataset.wmTheme).toBe('dark')
+    expect(document.documentElement.style.colorScheme).toBe('dark')
   })
 
   it('applies the stored preference before first paint', () => {
-    window.localStorage.setItem(themeStorageKey, 'dark')
+    window.localStorage.setItem(themeStorageKey, 'light')
     new Function(themeBootstrapScript)()
-    expect(document.documentElement.dataset.wmTheme).toBe('dark')
-    expect(document.documentElement.style.colorScheme).toBe('dark')
+    expect(document.documentElement.dataset.wmTheme).toBe('light')
+    expect(document.documentElement.style.colorScheme).toBe('light')
   })
 
   it('lets an explicit ?theme= link parameter win over storage', () => {
@@ -37,16 +38,16 @@ describe('theme bootstrap script (SSR no-flash contract)', () => {
     window.localStorage.setItem(themeStorageKey, 'dark"><img src=x onerror=alert(1)>')
     window.history.replaceState(null, '', '/?theme=rainbow')
     new Function(themeBootstrapScript)()
-    expect(document.documentElement.dataset.wmTheme).toBe('light')
+    expect(document.documentElement.dataset.wmTheme).toBe('dark')
   })
 })
 
 describe('theme state helpers', () => {
   it('round-trips a choice through the document and storage', () => {
-    expect(currentTheme()).toBe('light')
-    applyTheme('dark')
     expect(currentTheme()).toBe('dark')
-    expect(window.localStorage.getItem(themeStorageKey)).toBe('dark')
+    applyTheme('light')
+    expect(currentTheme()).toBe('light')
+    expect(window.localStorage.getItem(themeStorageKey)).toBe('light')
   })
 
   it('validates choices without trusting raw input', () => {
@@ -59,22 +60,22 @@ describe('theme state helpers', () => {
 
 describe('ThemeToggle', () => {
   it('reads the bootstrapped theme after mount, toggles, and persists the choice', () => {
-    window.localStorage.setItem(themeStorageKey, 'dark')
+    window.localStorage.setItem(themeStorageKey, 'light')
     new Function(themeBootstrapScript)()
     render(<LocaleProvider><ThemeToggle /></LocaleProvider>)
     const toggle = screen.getByTestId('theme-toggle')
-    expect(toggle.getAttribute('aria-label')).toBe('切换到浅色主题')
-    fireEvent.click(toggle)
-    expect(document.documentElement.dataset.wmTheme).toBe('light')
-    expect(window.localStorage.getItem(themeStorageKey)).toBe('light')
     expect(toggle.getAttribute('aria-label')).toBe('切换到深色主题')
     fireEvent.click(toggle)
     expect(document.documentElement.dataset.wmTheme).toBe('dark')
     expect(window.localStorage.getItem(themeStorageKey)).toBe('dark')
+    expect(toggle.getAttribute('aria-label')).toBe('切换到浅色主题')
+    fireEvent.click(toggle)
+    expect(document.documentElement.dataset.wmTheme).toBe('light')
+    expect(window.localStorage.getItem(themeStorageKey)).toBe('light')
   })
 
-  it('falls back to the light identity with a dark-switch label when no bootstrap ran', () => {
+  it('falls back to the prototype hero mode with a light-switch label when no bootstrap ran', () => {
     render(<LocaleProvider><ThemeToggle /></LocaleProvider>)
-    expect(screen.getByTestId('theme-toggle').getAttribute('aria-label')).toBe('切换到深色主题')
+    expect(screen.getByTestId('theme-toggle').getAttribute('aria-label')).toBe('切换到浅色主题')
   })
 })

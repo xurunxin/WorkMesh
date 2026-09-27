@@ -608,7 +608,14 @@ function HomePageScope({
   }
   const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'recovery' ? t('recovery') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const fullPageDetailActive = fullItemView && (selectedItem !== null || (requestedItem?.mode === 'full_page' && detailErrorState !== null))
-  const scopeNavigation = workspaceNavigation({ active: scope, onHomeNavigate: (event, value) => navigateScope(event, value), t })
+  // Nav counters come from data this scope already loaded, so a pill is never a
+  // fabricated number. Destinations without a sourced count render no pill.
+  const scopeNavigation = workspaceNavigation({
+    active: scope,
+    counts: { 'my-work': workSurfaceItems.length, projects: projects.length },
+    onHomeNavigate: (event, value) => navigateScope(event, value),
+    t,
+  })
   const utilityNavigation = workspaceUtilityNavigation({ t })
   return <AuthenticatedWorkspaceShell
     administrationNavigationLabel={t('administrationNavigation')}
