@@ -62,7 +62,6 @@
 .newConversation:hover { filter: brightness(1.06); }
 .newConversation:disabled { cursor: not-allowed; opacity: .5; }
 
-.createToggle { display: none; }
 .create {
   display: grid;
   gap: .5rem;
@@ -286,15 +285,6 @@
 @media (max-width: 700px) {
   .layout { display: flex; min-height: 0; flex-direction: column; }
   .sidebar { border-right: 0; border-bottom: 1px solid var(--wm-border); }
-  .createToggle {
-    display: block;
-    width: 100%;
-    padding: .5rem;
-    color: var(--wm-text);
-    background: var(--wm-surface);
-    border: 1px solid var(--wm-border);
-    border-radius: var(--wm-radius-sm);
-  }
   .list { max-height: 190px; }
   .main { min-height: 520px; }
   .userMessage, .agentMessage { max-width: 100%; align-self: stretch; }

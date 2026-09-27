@@ -283,9 +283,7 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     <aside className={styles.sidebar} aria-label={zh ? '对话列表' : 'Conversations'}>
       <div className={styles.heading}><h1>{zh ? 'Agent 工作台' : 'Agent workbench'}</h1><a href="/settings/agent-workbench">{zh ? '模型服务设置' : 'Model settings'}</a></div>
       <button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.newConversation}
-        onClick={() => setShowCreate(current => !current)} type="button">{zh ? '＋ 新对话' : '＋ New conversation'}</button>
-      <button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.createToggle}
-        onClick={() => setShowCreate(current => !current)} type="button">{zh ? '新建对话' : 'Create conversation'}</button>
+        onClick={() => setShowCreate(current => !current)} type="button">{zh ? '＋ 新建对话' : '＋ Create conversation'}</button>
       <form className={styles.create} data-open={showCreate} id="workbench-create-form" onSubmit={event => void create(event)}>
         <label>{zh ? '新对话标题' : 'New conversation title'}<input maxLength={180} onChange={event => setTitle(event.target.value)} required value={title} /></label>
         <label>{zh ? '执行会话' : 'Execution session'}<select onChange={event => setSessionId(event.target.value)} required value={sessionId}>
