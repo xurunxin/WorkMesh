@@ -165,6 +165,26 @@ const header = (request: FastifyRequest, name: string) =>
   request.headers[name] as string | undefined;
 const idParam = (request: FastifyRequest) =>
   z.object({ id: z.string().uuid() }).parse(request.params).id;
+
+/**
+ * A self-hosted Browser reaches the same deployment through either loopback
+ * spelling, and `http://127.0.0.1:3000` and `http://localhost:3000` are the
+ * same origin in practice. Accepting only one of them makes every API call fail
+ * CORS in the other, so a Human sees "Failed to fetch" on every screen with no
+ * hint about the cause. The alias is derived from the configured origin (same
+ * scheme and port) rather than wildcarded, so a genuinely foreign origin is
+ * still refused and credentialed CORS stays pinned to this deployment.
+ */
+export function browserCorsOrigins(webOrigin: string): string[] {
+  try {
+    const parsed = new URL(webOrigin);
+    const aliasHost = parsed.hostname === "localhost" ? "127.0.0.1" : parsed.hostname === "127.0.0.1" ? "localhost" : null;
+    if (!aliasHost) return [webOrigin];
+    return [webOrigin, `${parsed.protocol}//${aliasHost}${parsed.port ? `:${parsed.port}` : ""}`];
+  } catch {
+    return [webOrigin];
+  }
+}
 const oneRow = <T>(result: { rows: T[] }): T => {
   const row = result.rows[0];
   if (!row) throw new DomainError("NOT_FOUND", "Resource not found");
@@ -349,7 +369,7 @@ export const buildApp = (options: {
   installBootstrapAuthentication(app, config);
   void app.register(cookie);
   void app.register(cors, {
-    origin: config.WEB_ORIGIN,
+    origin: browserCorsOrigins(config.WEB_ORIGIN),
     credentials: true,
     methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: [

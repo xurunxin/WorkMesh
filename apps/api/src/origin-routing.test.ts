@@ -52,6 +52,36 @@ describe('Browser CORS and public MCP origin routing', () => {
     expect(response.headers['access-control-allow-credentials']).toBe('true')
   })
 
+  it('treats the loopback alias of WEB_ORIGIN as the same origin', async () => {
+    // WEB_ORIGIN is http://127.0.0.1:3300 here, so http://localhost:3300 is the
+    // same deployment and must not fail CORS.
+    const response = await app.inject({
+      method: 'OPTIONS',
+      url: '/api/v1/auth/me',
+      headers: {
+        origin: 'http://localhost:3300',
+        'access-control-request-method': 'GET',
+      },
+    })
+
+    expect(response.statusCode).toBe(204)
+    expect(response.headers['access-control-allow-origin']).toBe('http://localhost:3300')
+    expect(response.headers['access-control-allow-credentials']).toBe('true')
+  })
+
+  it('still refuses a foreign origin on another port', async () => {
+    const response = await app.inject({
+      method: 'OPTIONS',
+      url: '/api/v1/auth/me',
+      headers: {
+        origin: 'http://localhost:4400',
+        'access-control-request-method': 'GET',
+      },
+    })
+
+    expect(response.headers['access-control-allow-origin']).toBeUndefined()
+  })
+
   it('derives public discovery URLs from PUBLIC_MCP_ORIGIN', async () => {
     const response = await app.inject({ method: 'GET', url: '/.well-known/workmesh-agent' })
     expect(response.statusCode).toBe(200)

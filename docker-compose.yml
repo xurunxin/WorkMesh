@@ -199,7 +199,13 @@ services:
   web:
     build: { context: ., dockerfile: infra/docker/web.Dockerfile }
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+      # The Browser must stay same-origin with the API so the session cookie is
+      # first-party. NEXT_PUBLIC_API_URL is intentionally left empty: a relative
+      # base makes the Browser call this server, and the Next.js proxy forwards
+      # to the API. Naming the API host here made the cookie third-party and
+      # bounced the Human straight back to /login.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+      NEXT_API_UPSTREAM: http://api:3001
     ports: ["127.0.0.1:${WEB_HOST_PORT:-3000}:3000"]
     depends_on: { api: { condition: service_healthy } }
 volumes: { postgres-data: {}, redis-data: {}, minio-data: {} }
