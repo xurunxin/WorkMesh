@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { RunExplanation } from '@workmesh/contracts'
-import { ActorAttribution, Button, FreshnessBadge, RiskBadge, RunHealthBadge, TechnicalEventGroup } from '@workmesh/ui'
+import { ActorAttribution, Button, FreshnessBadge, RiskBadge, RunHealthBadge, SessionBudgetMeter, TechnicalEventGroup, type SessionBudgetLimitKind } from '@workmesh/ui'
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from './evidence-drawer'
 import { apiRequest } from './lib/api'
 import { useLocale } from './lib/i18n'
@@ -44,6 +44,9 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
     evidenceTitle: '证据与变更', notVerified: '未验证', pending: '待验证', verified: '已验证', failed: '验证失败', older: '查看更早事件',
     pause: '暂停', resume: '继续', stop: '停止', handoff: '移交', replan: '重新规划', steer: '引导', unavailable: '当前不可用', offline: '当前投影较旧；危险控制保持禁用。',
     phaseLabels: { all: '全部阶段', intake: '接收', investigation: '调查', planning: '计划 / 重计划', implementation: '实现 / 变更', validation: '验证 / 评审', human_input: '人类输入', recovery: '恢复 / 移交', completion: '完成 / 失败' }, timeLabels: { all: '全部时间', '24h': '最近 24 小时', '7d': '最近 7 天', '30d': '最近 30 天' },
+    budgetLimit: { runtimeSeconds: '运行时长', inputTokens: '输入 tokens', outputTokens: '输出 tokens', costUsd: '成本' } satisfies Record<SessionBudgetLimitKind, string>,
+    budgetUnknown: '用量未知', budgetPercent: (ratio: number) => `${Math.round(ratio * 100)}%`,
+    budgetValue: (limit: SessionBudgetLimitKind, value: number | null) => value === null ? '—' : limit === 'runtimeSeconds' ? `${Math.round(value)}s` : limit === 'costUsd' ? `$${value.toFixed(2)}` : String(value),
   } : {
     title: 'Causal Run Timeline', loading: 'Loading the execution story…', loadError: 'The execution story could not be loaded.', retry: 'Retry',
     project: 'Project', workItem: 'Work Item', session: 'Session', revision: 'Revision', currentPlan: 'Current Plan', currentStep: 'Current Step', budget: 'Budget / limits', attention: 'Pending Human Attention',
@@ -54,6 +57,9 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
     evidenceTitle: 'Evidence and changes', notVerified: 'Not verified', pending: 'Pending verification', verified: 'Verified', failed: 'Validation failed', older: 'View older events',
     pause: 'Pause', resume: 'Resume', stop: 'Stop', handoff: 'Handoff', replan: 'Replan', steer: 'Steer', unavailable: 'Currently unavailable', offline: 'This projection is stale; dangerous controls remain disabled.',
     phaseLabels: { all: 'All phases', intake: 'Intake', investigation: 'Investigation', planning: 'Planning / replan', implementation: 'Implementation / change', validation: 'Validation / review', human_input: 'Human input', recovery: 'Recovery / handoff', completion: 'Completion / failure' }, timeLabels: { all: 'All time', '24h': 'Last 24 hours', '7d': 'Last 7 days', '30d': 'Last 30 days' },
+    budgetLimit: { runtimeSeconds: 'Runtime', inputTokens: 'Input tokens', outputTokens: 'Output tokens', costUsd: 'Cost' } satisfies Record<SessionBudgetLimitKind, string>,
+    budgetUnknown: 'usage unknown', budgetPercent: (ratio: number) => `${Math.round(ratio * 100)}%`,
+    budgetValue: (limit: SessionBudgetLimitKind, value: number | null) => value === null ? '—' : limit === 'runtimeSeconds' ? `${Math.round(value)}s` : limit === 'costUsd' ? `$${value.toFixed(2)}` : String(value),
   }
 
   const updateState = useCallback((patch: Partial<RunTimelineRouteState>) => {
@@ -126,7 +132,7 @@ export function AgentRunTimeline({ compact = false, onControl, sessionId }: Prop
   const actors = [...new Map(explanation.causalGroups.map(group => [group.actor.id, group.actor])).values()]
 
   return <section aria-busy={refreshing || undefined} className={`agent-run-timeline ${compact ? 'compact' : 'full'}`} data-testid="run-timeline">
-    <header className="run-timeline-header"><div><p className="eyebrow">{text.title}</p><h2>{explanation.workItem?.title ?? `${text.session} ${sessionId.slice(0, 8)}`}</h2><p>{explanation.session.stateReason ?? explanation.verification.summary}</p></div><div className="run-timeline-badges"><span className={`verification verification-${explanation.verification.state}`}>{verificationLabel}</span><RunHealthBadge categoryLabel={text.health} label={explanation.health.heartbeat} value={healthValue(explanation.health.heartbeat)} /><FreshnessBadge categoryLabel={text.freshness} label={explanation.freshness.state} value={stale ? 'stale' : 'fresh'} /></div></header>
+    <header className="run-timeline-header"><div><p className="eyebrow">{text.title}</p><h2>{explanation.workItem?.title ?? `${text.session} ${sessionId.slice(0, 8)}`}</h2><p>{explanation.session.stateReason ?? explanation.verification.summary}</p></div><div className="run-timeline-badges"><span className={`verification verification-${explanation.verification.state}`}>{verificationLabel}</span><RunHealthBadge categoryLabel={text.health} label={explanation.health.heartbeat} value={healthValue(explanation.health.heartbeat)} /><FreshnessBadge categoryLabel={text.freshness} label={explanation.freshness.state} value={stale ? 'stale' : 'fresh'} /><SessionBudgetMeter entries={explanation.session.budgetUtilization} entryLabel={(limit, used, cap) => `${text.budgetLimit[limit]}: ${text.budgetValue(limit, used)} / ${text.budgetValue(limit, cap)}`} label={text.budget} percentLabel={text.budgetPercent} unknownLabel={(limit, cap) => `${text.budgetLimit[limit]}: ${text.budgetUnknown} (${text.budgetValue(limit, cap)})`} /></div></header>
     <dl className="run-timeline-facts"><div><dt>{text.project}</dt><dd>{explanation.project?.name ?? '—'}</dd></div><div><dt>{text.workItem}</dt><dd>{explanation.workItem?.title ?? '—'}</dd></div><div><dt>{text.session}</dt><dd><code>{sessionId}</code></dd></div><div><dt>{text.revision}</dt><dd>{explanation.session.revision}</dd></div><div><dt>{text.currentPlan}</dt><dd>{explanation.plan ? `v${explanation.plan.revision} · ${explanation.plan.changeSummary}` : '—'}</dd></div><div><dt>{text.currentStep}</dt><dd>{explanation.currentStep?.title ?? '—'}</dd></div><div><dt>{text.budget}</dt><dd>{Object.keys(explanation.session.budget).length ? Object.entries(explanation.session.budget).map(([key, value]) => `${key}: ${value}`).join(' · ') : '—'}</dd></div><div><dt>{text.attention}</dt><dd>{explanation.pendingAttention.length}</dd></div></dl>
     <ActorAttribution activeAgent={{ label: text.agent, name: explanation.activeAgent.displayName }} relationshipLabel={text.relationship} responsibleHuman={{ label: text.responsible, name: explanation.responsibleHuman?.displayName ?? '—' }} />
     {stale && <p className="run-stale-warning" role="status">{text.offline}</p>}

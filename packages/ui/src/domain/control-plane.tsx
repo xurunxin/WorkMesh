@@ -31,6 +31,47 @@ export function FreshnessBadge(props: SemanticBadgeProps<FreshnessState>) { retu
 export function RunHealthBadge(props: SemanticBadgeProps<RunHealth>) { return <SemanticBadge {...props} /> }
 export function LifecycleBadge(props: SemanticBadgeProps<LifecycleState>) { return <SemanticBadge {...props} /> }
 
+export type SessionBudgetLimitKind = 'runtimeSeconds' | 'inputTokens' | 'outputTokens' | 'costUsd'
+
+/** Mirrors the server-derived RunExplanation budget entry; the Web never re-derives it. */
+export type SessionBudgetUtilizationView = Readonly<{
+  limit: SessionBudgetLimitKind
+  cap: number
+  used: number | null
+  ratio: number | null
+  measurable: boolean
+  warning: boolean
+  exhausted: boolean
+}>
+
+export type SessionBudgetMeterProps = Readonly<{
+  entries: readonly SessionBudgetUtilizationView[]
+  label: string
+  percentLabel: (ratio: number) => string
+  entryLabel: (limit: SessionBudgetLimitKind, used: number | null, cap: number) => string
+  unknownLabel: (limit: SessionBudgetLimitKind, cap: number) => string
+}>
+
+/**
+ * Signature "Session telemetry" budget bar. A Session that declares no budget
+ * renders nothing rather than an invented bar, and a limit whose usage the
+ * projection cannot observe renders an explicit unknown state instead of an
+ * empty meter. The percentage text carries the value, so the bar's colour is
+ * never the only channel.
+ */
+export function SessionBudgetMeter({ entries, label, percentLabel, entryLabel, unknownLabel }: SessionBudgetMeterProps) {
+  if (entries.length === 0) return null
+  return <div className="wm-session-budget" data-testid="session-budget-meter">
+    <span className="wm-session-budget-label">{label}</span>
+    {entries.map(entry => entry.measurable && entry.ratio !== null
+      ? <span className={`wm-budget-meter wm-budget-${entry.exhausted ? 'exhausted' : entry.warning ? 'warning' : 'ok'}`} key={entry.limit}>
+        <span aria-hidden="true" className="wm-budget-track"><span className="wm-budget-fill" style={{ width: `${Math.round(entry.ratio * 100)}%` }} /></span>
+        <span aria-label={entryLabel(entry.limit, entry.used, entry.cap)} aria-valuemax={1} aria-valuemin={0} aria-valuenow={entry.ratio} aria-valuetext={percentLabel(entry.ratio)} role="meter">{percentLabel(entry.ratio)}</span>
+      </span>
+      : <span className="wm-budget-meter wm-budget-unknown" key={entry.limit}>{unknownLabel(entry.limit, entry.cap)}</span>)}
+  </div>
+}
+
 export type ActorAttributionProps = {
   activeAgent?: { label: string; name: string } | null
   relationshipLabel?: string

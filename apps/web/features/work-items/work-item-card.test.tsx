@@ -48,6 +48,39 @@ describe('WorkItemCard density modifier', () => {
   })
 })
 
+describe('WorkItemCard priority bars', () => {
+  // The prototype's signature priority glyph encodes the level in the filled
+  // bar count as well as in colour and text, so priority survives a missing hue.
+  const filledBars = (priority: string) => {
+    const { container } = render(<WorkItemCard item={{ ...baseItem, priority }} layout="list" />)
+    return container.querySelectorAll('.wm-priority-bar[data-on="true"]').length
+  }
+
+  it('fills three bars for urgent, two for high, one for medium and none for low', () => {
+    expect(filledBars('urgent')).toBe(3)
+    expect(filledBars('high')).toBe(2)
+    expect(filledBars('medium')).toBe(1)
+    expect(filledBars('low')).toBe(0)
+  })
+
+  it('renders exactly three bars so the shape is stable across priorities', () => {
+    const { container } = render(<WorkItemCard item={{ ...baseItem, priority: 'urgent' }} layout="list" />)
+    expect(container.querySelectorAll('.wm-priority-bar')).toHaveLength(3)
+  })
+
+  it('keeps the text label alongside the bars as the accessible channel', () => {
+    const { container } = render(<WorkItemCard item={{ ...baseItem, priority: 'urgent' }} layout="list" />)
+    const badge = container.querySelector('.wm-work-item-priority')
+    expect(badge?.textContent).toContain('Urgent')
+    expect(badge?.querySelector('.wm-priority-bars')?.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it('renders no bars when the work item has no priority', () => {
+    const { container } = render(<WorkItemCard item={baseItem} layout="list" />)
+    expect(container.querySelector('.wm-priority-bars')).toBeNull()
+  })
+})
+
 describe('WorkItemCard status name pill', () => {
   it('uses the matching workflow status color as the shared CSS custom property', () => {
     const { container } = render(<WorkItemCard item={baseItem} layout="list" statusOptions={[{ id: 'status-1', name: 'Open', color: '#2563EB' }]} />)

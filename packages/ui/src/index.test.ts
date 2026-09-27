@@ -70,7 +70,7 @@ const RUNTIME_BARREL_INVENTORY = [
   'AttentionKindBadge', 'RiskBadge', 'UrgencyBadge', 'FreshnessBadge', 'RunHealthBadge', 'LifecycleBadge',
   'ActorAttribution', 'ControlCenterSection', 'AttentionListItem', 'AttentionCard', 'RunStatusBar', 'RunDigestCard',
   'PlanStepRail', 'CausalTimeline', 'TechnicalEventGroup', 'EvidenceReferenceList', 'EvidenceDrawer', 'ConsequencePreviewDialog',
-  'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar',
+  'AffectedResourceList', 'ReasonCodeList', 'ControlCapabilityBar', 'SessionBudgetMeter',
   'ResponsiveActionBar', 'DataTableFrame', 'DescriptionList', 'Field', 'OverflowText',
 ]
 

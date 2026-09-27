@@ -1281,6 +1281,30 @@ main#workmesh-main:focus-visible {
 .wm-work-item-priority.priority-low { color: var(--wm-neutral); background: var(--wm-neutral-bg); border: 1px solid var(--wm-neutral-border); }
 .wm-work-item-priority.priority-none { display: none; }
 
+/* Priority bar glyph — the prototype's third signature component. The filled
+   bar count repeats the priority the text label already states, so priority is
+   never carried by hue alone. */
+.wm-priority-bars { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 10px; }
+.wm-priority-bar { display: block; width: 2.5px; background: currentColor; opacity: .3; }
+.wm-priority-bar:nth-child(1) { height: 4px; }
+.wm-priority-bar:nth-child(2) { height: 7px; }
+.wm-priority-bar:nth-child(3) { height: 10px; }
+.wm-priority-bar[data-on="true"] { opacity: 1; }
+
+/* Session budget meter — the prototype's Session telemetry bar. Percentage
+   text carries the value; the fill colour is a redundant second channel. */
+.wm-session-budget { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.wm-session-budget-label { color: var(--wm-muted); font-size: .7rem; font-weight: 650; }
+.wm-budget-meter { display: inline-flex; align-items: center; gap: .35rem; font-size: .7rem; font-variant-numeric: tabular-nums; }
+.wm-budget-track { display: block; width: 56px; height: 6px; border-radius: 999px; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); overflow: hidden; }
+.wm-budget-fill { display: block; height: 100%; background: var(--wm-accent-active); }
+.wm-budget-ok { color: var(--wm-muted); }
+.wm-budget-warning { color: var(--wm-warning); }
+.wm-budget-warning .wm-budget-fill { background: var(--wm-warning); }
+.wm-budget-exhausted { color: var(--wm-danger); font-weight: 700; }
+.wm-budget-exhausted .wm-budget-fill { background: var(--wm-danger); }
+.wm-budget-unknown { color: var(--wm-muted); font-style: italic; }
+
 /* Status name pill — shows the workflow state name in the card heading,
    colored by status category so the eye can read the bucket at a glance. */
 .wm-work-item-status-pill { padding: .15rem .45rem; border-radius: 999px; font-size: .7rem; font-weight: 650; background: var(--wm-surface-subtle); color: var(--wm-muted); border: 1px solid var(--wm-border); }

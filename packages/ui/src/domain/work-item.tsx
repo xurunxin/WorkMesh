@@ -174,6 +174,18 @@ export type WorkItemCardProps = {
 }
 
 function workItemClassNames(...values: Array<string | false | null | undefined>): string { return values.filter(Boolean).join(' ') }
+
+// Filled-bar count per priority, mirroring the prototype's three-segment glyph.
+// The bar count and the text label encode priority independently, so priority
+// stays readable when hue is unavailable (design/README.md §3 signature component).
+const priorityBarCount: Readonly<Record<string, number>> = { urgent: 3, high: 2, medium: 1, low: 0, none: 0 }
+
+function PriorityBars({ priority }: Readonly<{ priority: string }>) {
+  const filled = priorityBarCount[priority] ?? 0
+  return <span aria-hidden="true" className={workItemClassNames('wm-priority-bars', `priority-${priority}`)} data-filled={filled} data-testid="work-item-priority-bars">
+    {[0, 1, 2].map(index => <i className="wm-priority-bar" data-on={index < filled} key={index} />)}
+  </span>
+}
 function workflowStatusStyle(color?: string): CSSProperties {
   return { '--wm-status-color': color || 'var(--wm-muted)' } as CSSProperties
 }
@@ -391,7 +403,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
     <div className="wm-work-item-card-heading">
       <span className="wm-work-item-identifier">{item.identifier}</span>
       <span className={workItemClassNames('wm-work-item-status-pill', `status-${statusCategory}`)}>{item.statusName}</span>
-      {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}>{text.priorityName(item.priority)}</span>}
+      {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}><PriorityBars priority={item.priority} />{text.priorityName(item.priority)}</span>}
     </div>
     <button className="wm-work-item-title" onClick={() => handlePresentationPromise(onOpen ? () => onOpen(item) : undefined)} onPointerDown={stopPointer} type="button">{item.title}</button>
     {(showStableLayoutSlots || (item.projectId && item.projectName)) && <div aria-hidden={!item.projectId || !item.projectName || undefined} className={workItemClassNames('wm-work-item-project-slot', (!item.projectId || !item.projectName) && 'is-empty')}>{item.projectId && item.projectName && <button aria-label={text.openProject(item.projectName)} className="wm-work-item-project" onClick={() => handlePresentationPromise(onOpenProject ? () => onOpenProject(item.projectId!) : undefined)} onPointerDown={stopPointer} type="button"><FolderSimpleIcon aria-hidden="true" size={13} weight="bold" /><span>{item.projectName}</span></button>}</div>}

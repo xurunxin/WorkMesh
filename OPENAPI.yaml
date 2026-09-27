@@ -4176,13 +4176,26 @@ components:
       { type: object, additionalProperties: false, required: [id, revision, parentVersionId, changeSummary, author, createdAt, steps], properties: { id: { type: string, format: uuid }, revision: { type: integer, minimum: 1 }, parentVersionId: { type: [string, "null"], format: uuid }, changeSummary: { type: string }, author: { $ref: "#/components/schemas/HumanAttentionActorReference" }, createdAt: { type: string, format: date-time }, steps: { type: array, maxItems: 500, items: { type: object, additionalProperties: false, required: [id, title, description, status, ordinal, dependsOn, acceptanceCriteria, expectedArtifacts, causalGroupIds, evidenceIds], properties: { id: { type: string, format: uuid }, title: { type: string }, description: { type: [string, "null"] }, status: { $ref: "#/components/schemas/PlanStepStatus" }, ordinal: { type: integer, minimum: 0 }, dependsOn: { type: array, maxItems: 100, items: { type: string, format: uuid } }, acceptanceCriteria: { type: array, maxItems: 100, items: { type: string } }, expectedArtifacts: { type: array, maxItems: 50, items: { type: string } }, causalGroupIds: { type: array, maxItems: 200, items: { type: string } }, evidenceIds: { type: array, maxItems: 200, items: { type: string, format: uuid } } } } } } }
     RunEvidenceDetail:
       { type: object, additionalProperties: false, required: [type, id, checksum, sourceTool, createdAt, planStepId, causalGroupIds, validationState, repository], properties: { type: { type: string }, id: { type: string }, title: { type: string }, uri: { type: string, format: uri }, status: { type: string }, checksum: { type: [string, "null"] }, sourceTool: { type: [string, "null"] }, createdAt: { type: string, format: date-time }, planStepId: { type: [string, "null"], format: uuid }, causalGroupIds: { type: array, maxItems: 200, items: { type: string } }, validationState: { type: string, enum: [not_verified, pending, verified, failed] }, repository: { type: [object, "null"], additionalProperties: false, required: [repository, branch, commit, pullRequest], properties: { repository: { type: [string, "null"] }, branch: { type: [string, "null"] }, commit: { type: [string, "null"] }, pullRequest: { type: [string, "null"], format: uri } } } } }
+    SessionBudgetUtilization:
+      description: Server-derived consumption for one Session budget cap. A limit whose usage the projection cannot observe reports measurable false with a null ratio and null used, so a consumer never renders an unknown figure as zero.
+      type: object
+      additionalProperties: false
+      required: [limit, cap, used, ratio, measurable, warning, exhausted]
+      properties:
+        limit: { type: string, enum: [runtimeSeconds, inputTokens, outputTokens, costUsd] }
+        cap: { type: number, minimum: 0 }
+        used: { type: [number, "null"], minimum: 0 }
+        ratio: { type: [number, "null"], minimum: 0, maximum: 1 }
+        measurable: { type: boolean }
+        warning: { type: boolean }
+        exhausted: { type: boolean }
     RunExplanation:
       type: object
       additionalProperties: false
       required: [projectionVersion, session, project, workItem, responsibleHuman, activeAgent, plan, currentStep, planVersions, causalGroups, nextCursor, pendingAttention, changes, evidence, evidenceDetails, verification, health, freshness, allowedControls]
       properties:
         projectionVersion: { const: 1 }
-        session: { type: object, additionalProperties: false, required: [id, state, revision, stateReason, budget, updatedAt], properties: { id: { type: string, format: uuid }, state: { $ref: "#/components/schemas/AgentSessionState" }, revision: { type: integer, minimum: 1 }, stateReason: { type: [string, "null"] }, budget: { type: object, additionalProperties: { type: number } }, updatedAt: { type: string, format: date-time } } }
+        session: { type: object, additionalProperties: false, required: [id, state, revision, stateReason, budget, startedAt, budgetUtilization, updatedAt], properties: { id: { type: string, format: uuid }, state: { $ref: "#/components/schemas/AgentSessionState" }, revision: { type: integer, minimum: 1 }, stateReason: { type: [string, "null"] }, budget: { type: object, additionalProperties: { type: number } }, startedAt: { type: string, format: date-time }, budgetUtilization: { type: array, maxItems: 8, items: { $ref: "#/components/schemas/SessionBudgetUtilization" } }, updatedAt: { type: string, format: date-time } } }
         project: { type: [object, "null"], additionalProperties: false, required: [id, name, revision], properties: { id: { type: string, format: uuid }, name: { type: string }, revision: { type: integer, minimum: 1 } } }
         workItem: { type: [object, "null"], additionalProperties: false, required: [id, title, revision], properties: { id: { type: string, format: uuid }, title: { type: string }, revision: { type: integer, minimum: 1 } } }
         responsibleHuman: { anyOf: [{ $ref: "#/components/schemas/HumanAttentionActorReference" }, { type: "null" }] }

@@ -969,9 +969,24 @@ export const runEvidenceDetailSchema = attentionEvidenceReferenceSchema.extend({
   validationState: runValidationStateSchema,
   repository: z.object({ repository: z.string().max(2_000).nullable(), branch: z.string().max(500).nullable(), commit: z.string().max(500).nullable(), pullRequest: z.string().url().nullable() }).strict().nullable(),
 }).strict()
+export const sessionBudgetLimitSchema = z.enum(['runtimeSeconds', 'inputTokens', 'outputTokens', 'costUsd'])
+/**
+ * Server-derived budget consumption for one Session. A limit whose usage the
+ * projection cannot observe reports measurable:false with a null ratio, so a
+ * consumer never renders an unknown figure as zero.
+ */
+export const sessionBudgetUtilizationSchema = z.object({
+  limit: sessionBudgetLimitSchema,
+  cap: z.number().nonnegative(),
+  used: z.number().nonnegative().nullable(),
+  ratio: z.number().min(0).max(1).nullable(),
+  measurable: z.boolean(),
+  warning: z.boolean(),
+  exhausted: z.boolean(),
+}).strict()
 export const runExplanationResponseSchema = z.object({
   projectionVersion: controlPlaneProjectionVersionSchema,
-  session: z.object({ id: idSchema, state: agentSessionStateSchema, revision: revisionSchema, stateReason: z.string().nullable(), budget: z.record(z.number()), updatedAt: timestampSchema }).strict(),
+  session: z.object({ id: idSchema, state: agentSessionStateSchema, revision: revisionSchema, stateReason: z.string().nullable(), budget: z.record(z.number()), startedAt: timestampSchema, budgetUtilization: z.array(sessionBudgetUtilizationSchema).max(8), updatedAt: timestampSchema }).strict(),
   project: z.object({ id: idSchema, name: z.string().min(1).max(500), revision: revisionSchema }).strict().nullable(),
   workItem: z.object({ id: idSchema, title: z.string(), revision: revisionSchema }).strict().nullable(),
   responsibleHuman: attentionActorReferenceSchema.nullable(),

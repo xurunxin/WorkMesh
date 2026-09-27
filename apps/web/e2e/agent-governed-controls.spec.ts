@@ -49,7 +49,7 @@ async function installBaseRoutes(page: Page, initialState: 'executing' | 'failed
   await page.route('**/api/v1/teams**', route => list(route, [{ id: uuid(21), name: 'Roadmap team', key: 'ROADMAP', revision: 1 }]))
   await page.route(`**/api/v1/agent-sessions/${sessionId}`, route => fulfill(route, current))
   await page.route(`**/api/v1/agent-sessions/${sessionId}/explanation**`, route => fulfill(route, {
-    projectionVersion: 1, session: { id: sessionId, state: current.state, revision: current.revision, stateReason: current.state_reason, budget: current.budget, updatedAt: timestamp },
+    projectionVersion: 1, session: { id: sessionId, state: current.state, revision: current.revision, stateReason: current.state_reason, budget: current.budget, startedAt: timestamp, budgetUtilization: [{ limit: 'runtimeSeconds', cap: 600, used: 1, ratio: 0.002, measurable: true, warning: false, exhausted: false }], updatedAt: timestamp },
     project: null, workItem: { id: uuid(14), title: 'Governed controls', revision: 2 }, responsibleHuman: { id: uuid(12), kind: 'human', displayName: 'Roadmap Human' }, activeAgent: { id: uuid(11), kind: 'agent', displayName: 'Roadmap Agent' },
     plan: { id: planId, revision: 3, changeSummary: 'Governed execution' }, currentStep: { id: stepId, title: 'Verify governed controls', status: 'in_progress', ordinal: 0 },
     planVersions: [], causalGroups: [], nextCursor: null, pendingAttention: [], changes: [{ type: 'agent_session', id: sessionId, revision: current.revision }], evidence: [], evidenceDetails: [],

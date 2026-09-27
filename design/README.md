@@ -17,6 +17,7 @@ npx serve .          # 或任何静态服务器
 
 | #/ 路径 | 页面 |
 |---|---|
+| `#/agent` | **Agent 工作台**（默认路由，侧栏首项）：三栏对话、工具条、制品卡、验收区 |
 | `#/home` | 我的工作 —— 审批注意力队列 + 工作项 + Session 遥测 |
 | `#/active` `#/backlog` | 工作项列表（筛选栏） |
 | `#/board` | 看板 |
@@ -29,6 +30,10 @@ npx serve .          # 或任何静态服务器
 | `#/connect` | MCP 接入引导 |
 | `#/install` `#/login` | 无外壳认证页 |
 | `#/settings` | 工作流状态、成员 |
+
+共 **15 屏**：12 个侧栏导航项（`agent`…`settings`）+ 1 个工作项下钻屏（`detail`）
++ 2 个无外壳认证屏。`#/agent` 是默认路由（`app.js` 中 `location.hash` 缺省回落到
+`agent`），`#/detail` 不在侧栏 NAV 中，由单击工作项跳转。
 
 **主题**：默认深色（本设计的英雄模式）。`?theme=light` 强制浅色，左下角按钮切换，
 选择记忆于 localStorage。

@@ -319,7 +319,7 @@ export class AccessibilityFixture {
     } }
     if (path === `/api/v1/agent-sessions/${ids.session}/explanation`) return { body: {
       projectionVersion: 1,
-      session: { id: session.id, state: session.state, revision: session.revision, stateReason: session.state_reason, budget: session.budget, updatedAt: session.updated_at },
+      session: { id: session.id, state: session.state, revision: session.revision, stateReason: session.state_reason, budget: session.budget, startedAt: session.created_at, budgetUtilization: [{ limit: 'runtimeSeconds', cap: 120, used: 1, ratio: 0.008, measurable: true, warning: false, exhausted: false }], updatedAt: session.updated_at },
       project: { id: project.id, name: project.name, revision: project.revision },
       workItem: { id: workItem.id, title: workItem.title, revision: workItem.revision },
       responsibleHuman: { id: human.id, kind: 'human', displayName: human.display_name },
