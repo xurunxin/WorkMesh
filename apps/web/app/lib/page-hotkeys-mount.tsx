@@ -8,7 +8,9 @@ import { isAvailableHotkeyFilter, type PageHotkeyDestination, useHotkeys } from 
 import { workspaceNavigation, workspaceUtilityNavigation } from './workspace-navigation'
 
 const navigationItems = [
-  ...workspaceNavigation({ active: 'my-work', t: key => key }),
+  // workspaceNavigation returns prototype-style groups; hotkeys address the
+  // canonical href regardless of which group an item lives in.
+  ...workspaceNavigation({ active: 'my-work', t: key => key }).flatMap(section => section.items),
   ...workspaceUtilityNavigation({ t: key => key }),
 ]
 

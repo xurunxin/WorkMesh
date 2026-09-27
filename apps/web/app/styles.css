@@ -67,6 +67,7 @@ button, input, textarea, select { font: inherit; }
 .app-team-switcher { display: grid; gap: .4rem; }
 .app-navigation { display: grid; gap: .2rem; }
 .app-navigation-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: .65rem;
@@ -78,8 +79,21 @@ button, input, textarea, select { font: inherit; }
   text-decoration: none;
 }
 .app-navigation-link:hover { color: var(--wm-text); background: var(--wm-surface-hover); }
-.app-navigation-link.is-active { color: var(--wm-accent-fg); background: var(--wm-accent-active); font-weight: 650; }
-.app-navigation-link.is-active:hover { color: var(--wm-accent-fg); background: color-mix(in srgb, var(--wm-accent-active) 85%, black); }
+/* The prototype marks the current destination with a raised neutral surface,
+   stronger text and a 2px accent rail, not a filled accent block. */
+.app-navigation-link.is-active { color: var(--wm-text-strong); background: var(--wm-surface-hover); font-weight: 650; }
+.app-navigation-link.is-active::before {
+  content: '';
+  position: absolute;
+  left: -.5rem;
+  top: 50%;
+  width: 2px;
+  height: 16px;
+  background: var(--wm-accent);
+  border-radius: 0 2px 2px 0;
+  transform: translateY(-50%);
+}
+.app-navigation-link.is-active:hover { color: var(--wm-text-strong); background: var(--wm-surface-active); }
 .app-navigation-icon { display: inline-flex; flex: 0 0 auto; }
 .app-utility-navigation { margin-top: auto; padding-top: .85rem; border-top: 1px solid var(--wm-border); }
 .app-sidebar-footer { display: grid; gap: .55rem; min-width: 0; }

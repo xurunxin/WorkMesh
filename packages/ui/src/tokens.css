@@ -286,6 +286,19 @@
 
 .wm-shell-header { position: sticky; top: 0; z-index: var(--wm-z-sticky); display: flex; align-items: center; gap: var(--wm-space-3); min-height: var(--wm-header-h); padding: 0 1.25rem; background: color-mix(in srgb, var(--wm-canvas) 92%, transparent); border-bottom: 1px solid var(--wm-border); backdrop-filter: blur(10px); }
 .wm-shell-header > p { margin: 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); font-weight: 600; }
+/* Breadcrumb mirrors the prototype .crumb: muted segments with the current
+   surface in the strong foreground, separated by a subtle slash. */
+.wm-shell-breadcrumb { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); font-weight: 500; }
+.wm-shell-breadcrumb b { color: var(--wm-text-strong); font-weight: 600; }
+.wm-shell-breadcrumb-sep { color: var(--wm-text-subtle); }
+/* Sidebar grouping and counters mirror the prototype .nav-group / .nav-label /
+   .nav-count. Grouping is presentational: the flat list remains the fallback. */
+.app-navigation-group { display: grid; gap: .2rem; }
+.app-navigation-group + .app-navigation-group { margin-top: 18px; }
+.app-navigation-group-label { margin: 0; padding: 0 8px 6px; color: var(--wm-text-subtle); font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.app-navigation-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-navigation-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: auto; padding: 0 7px; color: var(--wm-text-muted); background: var(--wm-surface-hover); border-radius: var(--wm-radius-pill); font-family: var(--wm-font-mono); font-size: 11px; font-weight: 600; line-height: 1; }
+.app-navigation-link.is-active .app-navigation-count { color: var(--wm-accent); background: var(--wm-accent-bg); }
 .wm-shell-search { display: flex; flex: 1 1 auto; justify-content: center; min-width: 0; }
 .wm-shell-actions { display: flex; gap: var(--wm-space-2); margin-left: auto; }
 
@@ -443,7 +456,7 @@
 
 @media (max-width: 760px) {
   .wm-shell-header { min-height: 0; padding: 0; }
-  .wm-shell-header > p { display: none; }
+  .wm-shell-breadcrumb { display: none; }
   .wm-shell-actions { padding-right: var(--wm-space-4); }
   .wm-shell-search { padding-block: var(--wm-space-2); }
   .wm-state-surface { grid-template-columns: 1fr; }

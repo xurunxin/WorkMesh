@@ -49,6 +49,8 @@ describe('WorkbenchPage', () => {
     expect(screen.getAllByTestId('logout').length).toBeGreaterThanOrEqual(1)
     await waitFor(() => expect(screen.getAllByTestId('release-info').length).toBeGreaterThanOrEqual(1))
     expect(screen.getByText('Persistent conversations')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '切换到深色主题' })).toBeInTheDocument()
+    // The prototype declares dark as the hero mode, so a fresh document offers
+    // the light deviation rather than the dark one.
+    expect(screen.getByRole('button', { name: '切换到浅色主题' })).toBeInTheDocument()
   })
 })

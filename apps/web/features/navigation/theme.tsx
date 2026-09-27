@@ -10,12 +10,22 @@ export const themeStorageKey = 'workmesh.theme'
 
 /**
  * Inline bootstrap executed before hydration so the first paint already carries
- * the persisted theme — no light→dark flash on load. Precedence mirrors the
+ * the persisted theme — no dark→light flash on load. Precedence mirrors the
  * prototype: an explicit ?theme= link parameter wins, then the stored
- * preference, then light (the shipped production identity). The dataset write
- * needs suppressHydrationWarning on <html> in the root layout.
+ * preference, then the prototype's declared hero mode.
+ *
+ * The design system in design/README.md states "dark is the hero mode" and
+ * design/prototype/app.css ships `color-scheme: dark` on :root with the cold
+ * neutral #0B0C0E canvas, with light as the opt-in `[data-theme="light"]`
+ * deviation. Shipping light as the default made the first paint disagree with
+ * the visual baseline the prototype defines, so the default is now dark and
+ * light is what a Human opts into. The dataset write needs
+ * suppressHydrationWarning on <html> in the root layout.
  */
-export const themeBootstrapScript = `(function(){try{var d=document.documentElement;var p=new URLSearchParams(location.search).get('theme');var s=null;try{s=window.localStorage.getItem('${themeStorageKey}')}catch(e){};var t=(p==='light'||p==='dark')?p:(s==='dark'?'dark':'light');d.dataset.wmTheme=t;d.style.colorScheme=t}catch(e){}})();`
+export const themeBootstrapScript = `(function(){try{var d=document.documentElement;var p=new URLSearchParams(location.search).get('theme');var s=null;try{s=window.localStorage.getItem('${themeStorageKey}')}catch(e){};var t=(p==='light'||p==='dark')?p:(s==='light'||s==='dark'?s:'dark');d.dataset.wmTheme=t;d.style.colorScheme=t}catch(e){}})();`
+
+/** The prototype's hero mode, used whenever no explicit choice was persisted. */
+export const defaultTheme: ThemeChoice = 'dark'
 
 export function isThemeChoice(value: unknown): value is ThemeChoice {
   return value === 'light' || value === 'dark'
@@ -23,7 +33,7 @@ export function isThemeChoice(value: unknown): value is ThemeChoice {
 
 /** Reads the choice the bootstrap script (or a prior toggle) left on <html>. */
 export function currentTheme(doc: Document = document): ThemeChoice {
-  return doc.documentElement.dataset.wmTheme === 'dark' ? 'dark' : 'light'
+  return doc.documentElement.dataset.wmTheme === 'light' ? 'light' : defaultTheme
 }
 
 export function applyTheme(theme: ThemeChoice, doc: Document = document): void {
