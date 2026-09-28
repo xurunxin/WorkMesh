@@ -806,6 +806,9 @@
 .wm-settings-card { padding: 1.15rem; }
 .wm-settings-card-wide { grid-column: 1 / -1; }
 .wm-settings-card-title { margin: .15rem 0 0; font-size: 1.05rem; }
+/* A card that is the route's primary surface keeps page-title weight, so
+   promoting it to h1 does not shrink it into a section heading. */
+.wm-settings-card h1.wm-settings-card-title { font-size: 1.35rem; letter-spacing: -.02em; }
 .wm-settings-form { display: grid; gap: .75rem; margin-top: 1rem; }
 .wm-settings-form > label { display: grid; gap: .3rem; min-width: 0; color: var(--wm-text-muted); font-size: .78rem; }
 .wm-settings-form-inline { grid-template-columns: 1.4fr 1fr .65fr auto; align-items: flex-end; }

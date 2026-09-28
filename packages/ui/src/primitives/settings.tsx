@@ -14,7 +14,12 @@ export type SettingsCardProps = Omit<HTMLAttributes<HTMLElement>, 'title'> & {
   kicker?: ReactNode
   /** Full-bleed card that spans the grid. */
   wide?: boolean
-  headingLevel?: 2 | 3
+  /**
+   * The card's own heading level. A card that is the page's primary surface
+   * takes 1 so the route still has a heading to anchor to; a card inside a
+   * page that already has one stays at 2.
+   */
+  headingLevel?: 1 | 2 | 3
   title?: ReactNode
 }
 
@@ -28,7 +33,7 @@ export function SettingsGrid({ children, className, ...props }: SettingsGridProp
 }
 
 export function SettingsCard({ children, className, headingLevel = 2, kicker, title, wide, ...props }: SettingsCardProps) {
-  const Heading = headingLevel === 2 ? 'h2' : 'h3'
+  const Heading = headingLevel === 1 ? 'h1' : headingLevel === 2 ? 'h2' : 'h3'
   return <section className={classNames('wm-card', 'wm-settings-card', wide && 'wm-settings-card-wide', className)} {...props}>
     {kicker && <Eyebrow>{kicker}</Eyebrow>}
     {title && <Heading className="wm-settings-card-title">{title}</Heading>}
