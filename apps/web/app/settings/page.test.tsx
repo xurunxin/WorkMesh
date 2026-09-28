@@ -200,8 +200,8 @@ describe('SettingsPage routed shared Tabs', () => {
     const view = renderPage()
     const workflow = await screen.findByRole('region', { name: '工作流状态' })
     expect(within(workflow).getByRole('status', { name: '正在加载设置…' })).toBeVisible()
-    expect(workflow.querySelector('.settings-states-loading')).not.toBeNull()
-    expect(workflow.querySelectorAll('.settings-states-loading .skeleton-list-cell')).toHaveLength(5)
+    expect(workflow.querySelector('.wm-settings-loading')).not.toBeNull()
+    expect(workflow.querySelectorAll('.wm-settings-loading .skeleton-list-cell')).toHaveLength(5)
     expect(within(workflow).queryByText('尚未配置工作流状态。')).toBeNull()
     expect(within(workflow).queryByRole('textbox', { name: '状态名称' })).toBeNull()
     expect(screen.queryByTestId('load-more-workflow-states')).toBeNull()
@@ -605,7 +605,7 @@ describe('SettingsPage routed shared Tabs', () => {
 
     renderPage()
     const item = (await screen.findByText('Legacy')).closest('article')
-    expect(item?.querySelector<HTMLElement>('.workflow-color')?.style.backgroundColor).toBe('rgb(18, 58, 188)')
+    expect(item?.querySelector<HTMLElement>('.wm-status-dot')?.style.backgroundColor).toBe('rgb(18, 58, 188)')
   })
 
   it('renders and focuses the native custom color control only for Custom, preserving it after failure', async () => {

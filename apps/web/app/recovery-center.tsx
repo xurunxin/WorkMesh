@@ -2,7 +2,7 @@
 
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { FreshnessState, RecoveryCondition, RecoveryItem } from '@workmesh/contracts'
-import { Badge, Button, FreshnessBadge, TabBar, WorkSurfaceState } from '@workmesh/ui'
+import { Badge, Button, Eyebrow, FreshnessBadge, TabBar, WorkSurfaceState } from '@workmesh/ui'
 import { AgentControlDialog, type AgentControlAction } from './agent-control-dialog'
 import { EvidenceDrawer, useEvidenceDrawer, type EvidenceDrawerItem } from './evidence-drawer'
 import { apiRequest } from './lib/api'
@@ -137,7 +137,7 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
       return <a aria-disabled={disabled || undefined} className={`wm-button wm-button-secondary${disabled ? ' disabled' : ''}`} href={disabled ? undefined : `/agent-sessions/${selected.scope.sessionId ?? ''}`} key={item.id} title={item.tradeoff}>{item.label}</a>
     }
     return <aside aria-labelledby="recovery-detail-title" className="recovery-detail">
-      <header><div><p className="eyebrow">{selected.condition.replaceAll('_', ' ')}</p><h3 id="recovery-detail-title">{selected.title}</h3><p>{selected.summary}</p></div><Button onClick={closeItem} type="button" variant="secondary">{copy.close}</Button></header>
+      <header><div><Eyebrow>{selected.condition.replaceAll('_', ' ')}</Eyebrow><h3 id="recovery-detail-title">{selected.title}</h3><p>{selected.summary}</p></div><Button onClick={closeItem} type="button" variant="secondary">{copy.close}</Button></header>
       <div className="recovery-detail-badges"><Badge tone={selected.severity === 'critical' ? 'danger' : 'warning'}>{selected.severity}</Badge><Badge tone={selected.lifecycle === 'resolved' ? 'success' : 'warning'}>{selected.lifecycle}</Badge><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel(fresh)} value={freshnessValue(fresh)} /></div>
       {!current && <p className="recovery-trust-warning" role="status">{trust !== 'current' ? copy.pending : copy.unsafe}</p>}
       <section><h4>{copy.executor}</h4><dl className="recovery-facts"><div><dt>{copy.executor}</dt><dd>{executorLabel(selected)} · {selected.executor.agent?.displayName ?? '—'}</dd></div><div><dt>{copy.session}</dt><dd>{selected.authority.sessionState ?? '—'}</dd></div><div><dt>{copy.delegation}</dt><dd>{selected.authority.delegationStatus ?? '—'}</dd></div><div><dt>{copy.connection}</dt><dd>{selected.authority.connectionStatus ?? '—'}</dd></div><div><dt>{copy.lease}</dt><dd>{selected.lease.status}{selected.lease.expiresAt ? ` · ${new Date(selected.lease.expiresAt).toLocaleString(locale)}` : ''}</dd></div></dl></section>
@@ -151,7 +151,7 @@ export function RecoveryCenter({ actor }: { actor: Actor }) {
   })()
 
   return <section className="recovery-center" data-testid="recovery-center">
-    <header className="surface-header"><div><p className="eyebrow">Human Control Plane</p><h2>{copy.title}</h2><p>{copy.intro}</p></div>{page.items[0] && <FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel(effectiveFreshness(page.items[0]))} value={freshnessValue(effectiveFreshness(page.items[0]))} />}</header>
+    <header className="surface-header"><div><Eyebrow>Human Control Plane</Eyebrow><h2>{copy.title}</h2><p>{copy.intro}</p></div>{page.items[0] && <FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel(effectiveFreshness(page.items[0]))} value={freshnessValue(effectiveFreshness(page.items[0]))} />}</header>
     <TabBar ariaLabel={copy.lifecycle} onValueChange={value => writeRoute({ ...route, lifecycle: value as RecoveryRoute['lifecycle'], selectedId: undefined })} tabs={[{ id: 'active', label: copy.active }, { id: 'resolved', label: copy.history }]} value={route.lifecycle} />
     <form className="recovery-filters" onSubmit={submitFilters}><label>{copy.condition}<select onChange={event => setDraftRoute(value => ({ ...value, condition: event.currentTarget.value ? event.currentTarget.value as RecoveryCondition : undefined }))} value={draftRoute.condition ?? ''}><option value="">{copy.all}</option>{conditions.map(condition => <option key={condition} value={condition}>{condition.replaceAll('_', ' ')}</option>)}</select></label><label>{copy.severity}<select onChange={event => setDraftRoute(value => ({ ...value, severity: event.currentTarget.value === 'medium' || event.currentTarget.value === 'high' || event.currentTarget.value === 'critical' ? event.currentTarget.value : undefined }))} value={draftRoute.severity ?? ''}><option value="">{copy.all}</option><option value="medium">medium</option><option value="high">high</option><option value="critical">critical</option></select></label><Button type="submit" variant="secondary">{copy.apply}</Button></form>
     {trust !== 'current' && <p className="recovery-update-notice" role="status">{copy.pending}</p>}

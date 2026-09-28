@@ -87,7 +87,7 @@ test('diagnoses expired, rotating, revoked, and mis-scoped Connections without r
 
   connection = { ...baseConnection, client_type: 'generic_mcp', name: 'Generic gateway' }
   await page.goto(connectionsUrl)
-  await expect(page.getByTestId('connection-diagnostic').locator('.eyebrow')).toHaveText('Generic MCP')
+  await expect(page.getByTestId('connection-diagnostic').locator('.wm-eyebrow')).toHaveText('Generic MCP')
 
   await page.getByRole('button', { name: 'New connection' }).click()
   const clientSelect = page.getByLabel('Client')

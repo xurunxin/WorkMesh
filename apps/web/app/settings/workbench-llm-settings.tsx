@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useState } from 'react'
-import { Button } from '@workmesh/ui'
+import { Button, Eyebrow, SettingsCard, SettingsForm } from '@workmesh/ui'
 import { apiRequest, json, type ListResponse } from '../lib/api'
 import { useLocale } from '../lib/i18n'
 
@@ -169,8 +169,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
   // shell sets the document title but renders no <h1>, which left the route with
   // no heading for assistive technology to anchor (found by the accessibility
   // matrix in apps/web/e2e/workbench-accessibility.spec.ts).
-  return <section aria-labelledby="workbench-llm-heading" className="settings-card settings-card-wide workbench-llm-settings">
-    <header><div><p className="eyebrow">{zh ? 'Agent 工作台' : 'Agent workbench'}</p><h1 id="workbench-llm-heading">{zh ? '模型服务接入' : 'Model service connections'}</h1></div></header>
+  return <SettingsCard aria-labelledby="workbench-llm-heading" className="workbench-llm-settings" headingLevel={1} kicker={zh ? 'Agent 工作台' : 'Agent workbench'} title={<span id="workbench-llm-heading">{zh ? '模型服务接入' : 'Model service connections'}</span>} wide>
     <p>{zh ? '选择 Chat Completions 或 Responses 协议。密钥由服务端加密保存，页面仅显示配置状态。' : 'Choose Chat Completions or Responses. The server stores credentials encrypted and only shows their status.'}</p>
     {error && <div role="alert"><p className="error">{error}</p><Button onClick={() => { setError(''); void refresh().catch(reason => setError(errorText(reason))) }}>{zh ? '重试' : 'Retry'}</Button></div>}
     {notice && <p role="status">{notice}</p>}
@@ -183,7 +182,7 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
         >{connection.name} · {connection.api_type === 'openai-completions' ? 'Chat' : 'Responses'} · {connection.status}</Button>)}
         {connections.length === 0 && <p>{zh ? '暂无模型服务。' : 'No model services configured.'}</p>}
       </div>
-      <form className="settings-form" onSubmit={create}>
+      <SettingsForm onSubmit={create}>
         <h3>{zh ? '添加服务' : 'Add service'}</h3>
         <label>{zh ? '名称' : 'Name'}<input maxLength={120} name="name" required /></label>
         <label>{zh ? '使用范围' : 'Scope'}<select defaultValue="personal" name="scope">
@@ -196,10 +195,10 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
         <label>{zh ? '服务地址' : 'Base URL'}<input autoComplete="url" name="baseUrl" placeholder="https://api.minimax.cn/v1" required type="url" /></label>
         <label>{zh ? 'API 密钥' : 'API key'}<input autoComplete="new-password" name="secretMaterial" required type="password" /></label>
         <Button disabled={busy} type="submit" variant="primary">{zh ? '保存服务' : 'Save service'}</Button>
-      </form>
+      </SettingsForm>
       {detail && detail.status !== 'revoked' && <>
         {!detail.can_manage && <p>{zh ? '此服务由其他管理员维护，你可以查看已登记的模型。' : 'Another administrator manages this service. You can view its models.'}</p>}
-        <div className="settings-form">
+        <SettingsForm>
           <h3>{zh ? '模型目录' : 'Model catalog'}</h3>
           <ul>{detail.models.map(model => <li key={model.id}>{model.display_name} <code>{model.external_model_id}</code>
             {' · '}{model.enabled ? zh ? '已启用' : 'Enabled' : zh ? '已停用' : 'Disabled'}
@@ -208,9 +207,9 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
             </Button>}
           </li>)}</ul>
           {detail.models.length === 0 && <p>{zh ? '尚未登记模型。' : 'No models added.'}</p>}
-        </div>
+        </SettingsForm>
         {detail.can_manage && <>
-        <form className="settings-form" key={`${detail.id}:${detail.revision}`} onSubmit={update}>
+        <SettingsForm key={`${detail.id}:${detail.revision}`} onSubmit={update}>
           <h3>{zh ? '编辑服务' : 'Edit service'}</h3>
           <label>{zh ? '名称' : 'Name'}<input defaultValue={detail.name} maxLength={120} name="name" required /></label>
           <label>{zh ? 'API 协议' : 'API protocol'}<select defaultValue={detail.api_type} name="apiType"><option value="openai-completions">Chat Completions</option><option value="openai-responses">Responses</option></select></label>
@@ -218,8 +217,8 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
           <label>{zh ? '状态' : 'Status'}<select defaultValue={detail.status} name="status"><option value="active">{zh ? '启用' : 'Active'}</option><option value="disabled">{zh ? '停用' : 'Disabled'}</option></select></label>
           <label>{zh ? '替换密钥（留空则保留）' : 'Replace key (leave blank to keep)'}<input autoComplete="new-password" name="secretMaterial" type="password" /></label>
           <Button disabled={busy} type="submit">{zh ? '保存更改' : 'Save changes'}</Button>
-        </form>
-        <form className="settings-form" onSubmit={addModel}>
+        </SettingsForm>
+        <SettingsForm onSubmit={addModel}>
           <label>{zh ? '模型 ID' : 'Model ID'}<input name="modelId" placeholder="MiniMax-M3" required /></label>
           <label>{zh ? '显示名称' : 'Display name'}<input name="displayName" placeholder="MiniMax M3" required /></label>
           <label>{zh ? '上下文上限（token）' : 'Context limit (tokens)'}<input min={1} name="contextWindowTokens" required type="number" /></label>
@@ -227,11 +226,11 @@ export function WorkbenchLlmSettings({ canManageWorkspace, teams }: { canManageW
           <label><input name="toolCalling" type="checkbox" />{zh ? '工具调用' : 'Tool calling'}</label>
           <label><input name="reasoning" type="checkbox" />{zh ? '推理能力' : 'Reasoning'}</label>
           <Button disabled={busy} type="submit">{zh ? '登记模型' : 'Add model'}</Button>
-        </form>
+        </SettingsForm>
         {confirmRevoke ? <div role="group" aria-label={zh ? '确认吊销' : 'Confirm revocation'}><p>{zh ? '吊销后无法恢复此密钥。' : 'Revocation permanently erases this credential.'}</p><Button disabled={busy} onClick={() => void revoke()} type="button" variant="danger">{zh ? '确认吊销' : 'Confirm revoke'}</Button><Button onClick={() => setConfirmRevoke(false)} type="button">{zh ? '取消' : 'Cancel'}</Button></div>
           : <Button onClick={() => setConfirmRevoke(true)} type="button" variant="danger">{zh ? '吊销服务' : 'Revoke service'}</Button>}
         </>}
       </>}
     </>}
-  </section>
+  </SettingsCard>
 }

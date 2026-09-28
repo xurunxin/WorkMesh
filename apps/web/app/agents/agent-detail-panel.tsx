@@ -2,6 +2,7 @@
 
 import type { Agent, AgentTeamAccess } from '../lib/agents'
 import { type AgentDetailLocaleCopy, type AgentsCopy, useLocale } from '../lib/i18n'
+import { Eyebrow } from '@workmesh/ui'
 
 type AgentDetailPanelCopy = AgentsCopy & AgentDetailLocaleCopy
 
@@ -25,7 +26,7 @@ export function AgentDetailPanel({ agent, copy, loadedTeamAccess }: AgentDetailP
 
   return <section className="agent-detail-panel" aria-label={text.agentDetailFacts}>
     <header className="agent-detail-panel-header">
-      <div><p className="eyebrow">{text.agentDetailEyebrow}</p><h2>{text.agentDetailFacts}</h2></div>
+      <div><Eyebrow>{text.agentDetailEyebrow}</Eyebrow><h2>{text.agentDetailFacts}</h2></div>
       <span className={agent.is_active ? 'registry-active' : 'registry-inactive'}>{agent.is_active ? text.registryStatusActive : text.registryStatusInactive}</span>
     </header>
     <div className="agent-detail-description"><strong>{text.agentDescription}</strong><p>{agent.description || text.noRegistryDescription}</p></div>
@@ -52,3 +53,4 @@ export function AgentDetailPanel({ agent, copy, loadedTeamAccess }: AgentDetailP
     </section>}
   </section>
 }
+

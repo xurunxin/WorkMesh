@@ -1,7 +1,7 @@
 'use client'
 
 import { memo, type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AsyncStateSurface, Button, ErrorState, Tabs } from '@workmesh/ui'
+import { AsyncStateSurface, Button, ErrorState, Eyebrow, Tabs } from '@workmesh/ui'
 import type { HumanAttentionItem } from '@workmesh/contracts'
 import { AuthenticatedWorkspaceShell } from '../authenticated-workspace-shell'
 import {
@@ -549,7 +549,7 @@ function AgentsPageScope({
     workspaceNavigationLabel={t('workspaceNavigation')}
   >
     <section aria-busy={loading || undefined} className="agent-center">
-      <header className="page-header"><div><p className="eyebrow">{text.eyebrow}</p><h1>{text.title}</h1><p>{text.intro}</p></div><Button onClick={refresh}>{text.refresh}</Button></header>
+      <header className="page-header"><div><Eyebrow>{text.eyebrow}</Eyebrow><h1>{text.title}</h1><p>{text.intro}</p></div><Button onClick={refresh}>{text.refresh}</Button></header>
       {(error || actorError || collectionError) && <ErrorState actionLabel={text.retry} description={error || actorError || collectionError?.message || text.attentionDescription} onAction={refresh} title={text.attentionTitle} />}
 
       {summaryInitialized ? <section
@@ -572,7 +572,7 @@ function AgentsPageScope({
             id: 'agents',
             label: text.tabAgents,
             panel: <section aria-busy={registryInitialized && ((agentsPage.loading || agentsPage.loadingMore) || (teamsPage.initialized && teamsAuthorized && (teamsPage.loading || teamsPage.loadingMore))) || undefined} className="surface-panel agent-registry" aria-label={text.registry}>
-              <header className="surface-header"><div><p className="eyebrow">{text.registry}</p><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentStateFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => updateRoute({ status: value })}>{text[value]}</button>)}</div></header>
+              <header className="surface-header"><div><Eyebrow>{text.registry}</Eyebrow><h2>{text.title}</h2><p>{text.registryIntro}</p></div><div className="activity-filters">{(['all', 'active', 'inactive'] as AgentStateFilter[]).map(value => <button key={value} className={filter === value ? 'selected' : ''} onClick={() => updateRoute({ status: value })}>{text[value]}</button>)}</div></header>
               <div className="agent-registry-filters" role="group" aria-label={text.filterAriaLabel}>
                 <label><span>{text.filterName}</span><input aria-label={text.filterName} className="wm-input" data-hotkey-filter="true" placeholder={text.filterNamePlaceholder} type="search" value={nameFilter} onChange={event => updateRoute({ name: event.currentTarget.value })} /></label>
                 <label><span>{text.filterTeam}</span><select aria-label={text.filterTeam} value={teamFilter} onChange={event => updateRoute({ teamId: event.currentTarget.value })}><option value="">{text.allTeams}</option>{teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>)}</select></label>
@@ -598,15 +598,15 @@ function AgentsPageScope({
             id: 'sessions',
             label: text.tabSessions,
             panel: <div className="agent-side-stack">
-              <section aria-busy={sessionsInitialized && (sessionsPage.loading || sessionsPage.loadingMore) || undefined} className="surface-panel" aria-label={text.sessions}><header className="surface-header"><div><p className="eyebrow">{text.execution}</p><h2>{text.sessions}</h2></div></header>{!sessionsInitialized ? (sessionsPage.error ? null : <div className="agent-sessions-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>) : sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}{sessionsInitialized && <LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} />}</section>
-              <section aria-busy={attentionPage.initialized && (attentionPage.loading || attentionPage.loadingMore) || undefined} className="surface-panel diagnostics" aria-label={text.diagnostics}><header className="surface-header"><div><p className="eyebrow">{text.durableState}</p><h2>{text.diagnostics}</h2></div></header>{attentionPage.initialized && attentionAuthorized ? <><p>{text.diagnosticsIntro}</p><ul>{attentionItems.map(item => <li key={item.id}><a href={attentionHref(item)}>{item.title}</a><span>{item.summary}</span></li>)}{attentionItems.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></> : attentionPage.error ? null : <SkeletonList columns={1} items={3} label={text.loadingTitle} />}</section>
+              <section aria-busy={sessionsInitialized && (sessionsPage.loading || sessionsPage.loadingMore) || undefined} className="surface-panel" aria-label={text.sessions}><header className="surface-header"><div><Eyebrow>{text.execution}</Eyebrow><h2>{text.sessions}</h2></div></header>{!sessionsInitialized ? (sessionsPage.error ? null : <div className="agent-sessions-loading"><SkeletonList columns={4} items={4} label={text.loadingTitle} /></div>) : sessions.length === 0 ? <p className="empty">{text.noSessions}</p> : <div className="session-card-list">{sessions.map(session => <SessionCard agentName={agentName(agents.find(agent => agent.id === session.agent_id))} copy={text} session={session} key={session.id} />)}</div>}{sessionsInitialized && <LoadMoreButton collection={sessionsPage} label="sessions" loadMoreLabel={text.loadMoreSessions} />}</section>
+              <section aria-busy={attentionPage.initialized && (attentionPage.loading || attentionPage.loadingMore) || undefined} className="surface-panel diagnostics" aria-label={text.diagnostics}><header className="surface-header"><div><Eyebrow>{text.durableState}</Eyebrow><h2>{text.diagnostics}</h2></div></header>{attentionPage.initialized && attentionAuthorized ? <><p>{text.diagnosticsIntro}</p><ul>{attentionItems.map(item => <li key={item.id}><a href={attentionHref(item)}>{item.title}</a><span>{item.summary}</span></li>)}{attentionItems.length === 0 && <li><strong>{text.allClear}</strong><span>{text.allClearDetail}</span></li>}</ul></> : attentionPage.error ? null : <SkeletonList columns={1} items={3} label={text.loadingTitle} />}</section>
             </div>,
           },
           {
             id: 'approvals',
             label: text.tabApprovals,
             panel: <div className="agent-side-stack">
-              <section className="surface-panel approval-inbox" aria-label={text.approvals}><header className="surface-header"><div><p className="eyebrow">{text.humanQueue}</p><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>
+              <section className="surface-panel approval-inbox" aria-label={text.approvals}><header className="surface-header"><div><Eyebrow>{text.humanQueue}</Eyebrow><h2>{text.approvals}</h2></div><a href="/?view=inbox">{text.openInbox}</a></header>
                 <Tabs
                   ariaLabel={text.approvalViewsAriaLabel}
                   compact={isCompact}
@@ -703,7 +703,7 @@ function AgentsPageScope({
             id: 'archived',
             label: locale === 'zh-CN' ? '已归档' : 'Archived',
             panel: <section className="surface-panel archived-agent-registry" aria-label={locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}>
-              <header className="surface-header"><div><p className="eyebrow">Agent lifecycle</p><h2>{locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}</h2><p>{locale === 'zh-CN' ? '撤销最后一项有效授权后归档的智能体；保留历史，不进入默认工作列表。' : 'Agents are archived after their last valid authority is revoked. History remains available outside the default work list.'}</p></div></header>
+              <header className="surface-header"><div><Eyebrow>Agent lifecycle</Eyebrow><h2>{locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}</h2><p>{locale === 'zh-CN' ? '撤销最后一项有效授权后归档的智能体；保留历史，不进入默认工作列表。' : 'Agents are archived after their last valid authority is revoked. History remains available outside the default work list.'}</p></div></header>
               {archivedAgentsPage.loading && !archivedAgentsPage.initialized ? <SkeletonList columns={1} items={4} label={text.loadingTitle} /> : archivedAgentsPage.items.length === 0 ? <p className="empty">{locale === 'zh-CN' ? '当前没有已归档智能体。' : 'There are no archived agents.'}</p> : <div className="archived-agent-table" role="table" aria-label={locale === 'zh-CN' ? '已归档智能体' : 'Archived agents'}>{archivedAgentsPage.items.map(agent => <article key={agent.id} role="row"><div><strong>{agentName(agent)}</strong><code>{agent.slug}</code></div><span>{agent.archived_reason ?? (locale === 'zh-CN' ? '授权已撤销' : 'Authority revoked')}</span><time>{formatTime(agent.archived_at)}</time><a href={`/agents/${encodeURIComponent(agent.id)}`}>{locale === 'zh-CN' ? '查看历史' : 'View history'}</a></article>)}</div>}
               {archivedAgentsPage.initialized && <LoadMoreButton collection={archivedAgentsPage} label="archived-agents" loadMoreLabel={text.loadMoreAgents} />}
             </section>,

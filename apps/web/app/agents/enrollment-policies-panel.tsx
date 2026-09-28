@@ -2,7 +2,7 @@
 
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import type { AgentEnrollmentPolicy, ListResponse } from "@workmesh/contracts";
-import { Badge, Button } from "@workmesh/ui";
+import { Badge, Button, Eyebrow } from '@workmesh/ui';
 import { apiMutation, apiRequest, json } from "../lib/api";
 import { useLocale } from "../lib/i18n";
 
@@ -137,7 +137,7 @@ export function EnrollmentPoliciesPanel({ admin, teams }: { admin: boolean; team
   };
 
   return <section className="surface-panel enrollment-policies" aria-label={copy.title}>
-    <header className="surface-header"><div><p className="eyebrow">{copy.eyebrow}</p><h2>{copy.title}</h2><p>{copy.intro}</p></div></header>
+    <header className="surface-header"><div><Eyebrow>{copy.eyebrow}</Eyebrow><h2>{copy.title}</h2><p>{copy.intro}</p></div></header>
     {!admin ? <p className="empty">{copy.adminOnly}</p> : <>
       <form className="enrollment-policy-form" onSubmit={submit}>
         <label><span>{copy.name}</span><input required maxLength={120} onChange={(event) => setName(event.currentTarget.value)} value={name} /></label>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, FreshnessBadge } from '@workmesh/ui'
+import { Button, Eyebrow, FreshnessBadge } from '@workmesh/ui'
 import { canonicalObjectHref, evidenceDrawerHref, safeExternalHref, type CanonicalObject } from './lib/canonical-route'
 import { productMetricSurface, recordProductMetric } from './lib/product-telemetry'
 
@@ -91,7 +91,7 @@ export function EvidenceDrawer({ item, onClose }: { item: EvidenceDrawerItem | n
   const freshness = item.freshness ?? 'partial'
   const headDrift = Boolean(item.validation?.exactHeadSha && item.validation.currentHeadSha && item.validation.exactHeadSha !== item.validation.currentHeadSha)
   return <aside aria-labelledby="evidence-drawer-title" aria-modal="true" className="evidence-drawer" role="dialog">
-    <header><div><p className="eyebrow">Evidence · {item.type}</p><h2 id="evidence-drawer-title">{item.title ?? 'Untitled evidence'}</h2><p>{item.summary ?? 'No sanitized preview was published.'}</p></div><Button onClick={onClose} ref={closeRef} type="button" variant="secondary">Close evidence</Button></header>
+    <header><div><Eyebrow>Evidence · {item.type}</Eyebrow><h2 id="evidence-drawer-title">{item.title ?? 'Untitled evidence'}</h2><p>{item.summary ?? 'No sanitized preview was published.'}</p></div><Button onClick={onClose} ref={closeRef} type="button" variant="secondary">Close evidence</Button></header>
     <div className="evidence-drawer-status"><span className={`verification verification-${state === 'unknown' ? 'not_verified' : state}`}>{state}</span><FreshnessBadge categoryLabel="Evidence freshness" label={freshness} value={freshness === 'current' ? 'fresh' : freshness === 'offline' ? 'offline' : freshness === 'partial' ? 'partial' : 'stale'} />{headDrift && <strong className="error">Head drift invalidates this validation</strong>}</div>
     <section><h3>Provenance and responsibility</h3><dl>{item.producer && <div><dt>Producer</dt><dd>{item.producer.label} · {item.producer.kind}</dd></div>}{item.principalHuman && <div><dt>Principal Human</dt><dd>{item.principalHuman.label}</dd></div>}<div><dt>Created / published</dt><dd>{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown'}</dd></div><div><dt>Source tool</dt><dd>{item.sourceTool ?? 'Unknown'}</dd></div><div><dt>Checksum / content hash</dt><dd>{item.checksum ?? 'Unknown'}</dd></div></dl></section>
     <section><h3>Work and validation context</h3><ul className="evidence-context-links">{item.workItem && <li>{link({ kind: 'work_item', id: item.workItem.id, projectId: item.workItem.projectId }, item.workItem.label)}</li>}{item.sessionId && <li>{link({ kind: 'run', id: item.sessionId }, 'Producing Run')}</li>}{item.plan?.versionId && item.sessionId && <li>{link({ kind: 'plan_version', id: item.plan.versionId, sessionId: item.sessionId }, 'Plan version')}</li>}{item.plan?.stepId && item.sessionId && <li>{link({ kind: 'plan_step', id: item.plan.stepId, sessionId: item.sessionId, planVersionId: item.plan.versionId }, item.plan.stepLabel ?? 'Plan step')}</li>}{item.action && <li>{item.action.label}{item.action.correlationId ? ` · ${item.action.correlationId}` : ''}</li>}</ul><dl>{item.validation && <div><dt>Validation</dt><dd>{item.validation.label}</dd></div>}{item.validation?.exactHeadSha && <div><dt>Validated head</dt><dd><code>{item.validation.exactHeadSha}</code></dd></div>}{item.validation?.currentHeadSha && <div><dt>Current head</dt><dd><code>{item.validation.currentHeadSha}</code></dd></div>}</dl></section>
