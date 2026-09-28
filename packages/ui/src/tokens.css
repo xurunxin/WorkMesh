@@ -761,3 +761,36 @@
   .wm-plan-step-rail { grid-template-columns: 1fr; }
   .wm-reason-list > div { grid-template-columns: 1fr; gap: .2rem; }
 }
+
+/* ---------- Versioned document ---------- */
+
+/* The prototype has no document screen, so this surface is assembled from the
+   vocabulary it does declare: a titled row list, a heading over a muted caption
+   line, and pill identities. Every Project and Work Item opens the same three
+   faces - the list, one revision being read, and the revision timeline - so the
+   anatomy is declared once here rather than per screen. */
+.wm-document-surface { display: grid; gap: 1rem; min-width: min(100%, 38rem); max-height: min(76vh, 54rem); overflow: auto; }
+.wm-document-list { display: grid; gap: .5rem; min-width: 0; }
+.wm-document-row { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; width: 100%; padding: .7rem .85rem; text-align: left; color: inherit; background: transparent; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); cursor: pointer; }
+.wm-document-row:hover { background: var(--wm-surface-hover); }
+.wm-document-row.is-current { background: var(--wm-surface); border-color: var(--wm-border-strong); }
+.wm-document-row-meta { color: var(--wm-text-muted); font-size: var(--wm-text-xs); overflow-wrap: anywhere; }
+.wm-document-reading, .wm-document-history { display: grid; gap: .8rem; min-width: 0; }
+.wm-document-reading-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
+.wm-document-reading-head h3 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -.01em; }
+.wm-document-reading-head small { color: var(--wm-text-muted); font-family: var(--wm-font-mono); font-size: var(--wm-text-xs); overflow-wrap: anywhere; }
+.wm-document-body { min-width: 0; }
+.wm-document-body .rich-markdown { max-width: 72rem; overflow-wrap: anywhere; }
+.wm-document-body .rich-markdown :is(pre, table) { max-width: 100%; overflow-x: auto; }
+.wm-document-history ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.wm-document-history li button { display: flex; align-items: baseline; gap: .55rem; width: 100%; padding: .7rem .85rem; text-align: left; color: inherit; background: transparent; border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); cursor: pointer; }
+.wm-document-history li button:hover { background: var(--wm-surface-hover); }
+.wm-document-history li button[aria-current="true"] { background: var(--wm-surface); border-color: var(--wm-border-strong); }
+.wm-document-revision-number { flex: none; color: var(--wm-text-strong); font-family: var(--wm-font-mono); font-size: var(--wm-text-xs); }
+.wm-document-revision-label { min-width: 0; color: var(--wm-text-muted); font-size: var(--wm-text-xs); overflow-wrap: anywhere; }
+.wm-diff { max-height: 24rem; margin: 0; padding: .8rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--wm-font-mono); font-size: var(--wm-text-xs); line-height: 1.55; background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
+.wm-diff-marker { display: inline-block; width: 1ch; color: var(--wm-text-subtle); }
+.wm-diff-added { color: var(--wm-success); background: var(--wm-success-bg); }
+.wm-diff-removed { color: var(--wm-danger); background: var(--wm-danger-bg); }
+.wm-diff-context { color: var(--wm-text-muted); }
+.wm-diff-empty { margin: 0; color: var(--wm-text-muted); font-size: var(--wm-text-xs); }
