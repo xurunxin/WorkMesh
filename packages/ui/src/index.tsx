@@ -3,6 +3,7 @@
 // them is a client module. Keep this file a pure re-export surface.
 
 export * from './domain/control-plane.js'
+export * from './domain/versioned-document.js'
 export * from './domain/work-item.js'
 export * from './layout/app-shell.js'
 export * from './primitives/badge.js'
@@ -21,7 +22,6 @@ export * from './primitives/input.js'
 export * from './primitives/menu.js'
 export * from './primitives/page-header.js'
 export * from './primitives/overlay-surfaces.js'
-export * from './primitives/page-header.js'
 export * from './primitives/pagination.js'
 export * from './primitives/select.js'
 export * from './primitives/skeleton.js'

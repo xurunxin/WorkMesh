@@ -2,7 +2,19 @@
 
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import type { DocumentDiffResponse, DocumentHistoryResponse, DocumentResponse, DocumentRevision } from '@workmesh/contracts'
-import { Button, Dialog } from '@workmesh/ui'
+import { DownloadSimpleIcon } from '@phosphor-icons/react/dist/csr/DownloadSimple'
+import {
+  Button,
+  Dialog,
+  DiffView,
+  DocumentList,
+  DocumentReading,
+  DocumentRevisionList,
+  DocumentRow,
+  DocumentRowGroup,
+  SectionHeader,
+  TabBar,
+} from '@workmesh/ui'
 import { ApiError, apiBase, apiMutation, apiRequest, json } from '../../app/lib/api'
 import { useLocale } from '../../app/lib/i18n'
 import { usePagedApiList } from '../../app/lib/pagination'
@@ -11,6 +23,8 @@ import { RichContent } from '../rich-content/markdown'
 
 type Owner = Readonly<{ type: 'project' | 'work_item'; id: string; teamId: string }>
 type Actor = Readonly<{ id: string; workspace_id?: string }>
+
+type Mode = 'view' | 'edit' | 'history'
 
 export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClose: () => void; owner: Owner }) {
   const { editorCopy, locale } = useLocale()
@@ -22,6 +36,7 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
     summary: '修订说明', export: '导出 Markdown', restore: '恢复此版本为新修订',
     archive: '归档', unarchive: '恢复归档', reason: '原因', compare: '与当前版本比较',
     close: '关闭', current: '当前版本', archived: '已归档', noChanges: '无内容差异。',
+    revisions: '修订历史', noRevisions: '尚无历史修订。', inspect: '查看此修订',
   } : {
     heading: 'Documents', new: 'New document', title: 'Title', content: 'Content', save: 'Save revision', cancel: 'Back to list',
     edit: 'Edit', history: 'History', view: 'Read', empty: 'No documents yet.', loading: 'Loading documents…',
@@ -29,13 +44,14 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
     summary: 'Revision summary', export: 'Export Markdown', restore: 'Restore this version as a new revision',
     archive: 'Archive', unarchive: 'Unarchive', reason: 'Reason', compare: 'Compare with current',
     close: 'Close', current: 'Current revision', archived: 'Archived', noChanges: 'No content differences.',
+    revisions: 'Revision history', noRevisions: 'No earlier revisions yet.', inspect: 'Inspect this revision',
   }
   const path = `/api/v1/documents?ownerType=${owner.type}&ownerId=${encodeURIComponent(owner.id)}`
   const collection = usePagedApiList<DocumentResponse>(path, {
     scopeKey: `${actor.workspace_id ?? ''}:${owner.teamId}:${actor.id}:${owner.type}:${owner.id}`,
   })
   const [selected, setSelected] = useState<DocumentResponse | 'new' | null>(null)
-  const [mode, setMode] = useState<'view' | 'edit' | 'history'>('view')
+  const [mode, setMode] = useState<Mode>('view')
   const [title, setTitle] = useState('')
   const [markdown, setMarkdown] = useState('')
   const [changeSummary, setChangeSummary] = useState('')
@@ -115,8 +131,12 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
     setError('')
     try {
       const result = await apiRequest<DocumentHistoryResponse>(`/api/v1/documents/${encodeURIComponent(document.id)}/history?limit=100`)
-      setHistory(result); setOlderRevision(null); setDiff(null); setMode('history')
+      setHistory(result); setOlderRevision(null); setDiff(null)
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)) }
+  }
+  const changeMode = (next: Mode) => {
+    if (next === 'history' && !history) void loadHistory()
+    setMode(next)
   }
   const moreHistory = async () => {
     if (!document || !history?.nextCursor) return
@@ -188,50 +208,80 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
     } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)) }
   }
 
+  const editor = <form className="project-form modal-form" onSubmit={event => void save(event)}>
+    <label>{copy.title}<input maxLength={180} onChange={event => setTitle(event.currentTarget.value)} required value={title} /></label>
+    <div className="form-span"><RichTextEditor copy={editorCopy} identity={identity} label={copy.content} mode="description" name="markdown" onChange={setMarkdown} value={markdown} /></div>
+    <label>{copy.summary}<input maxLength={500} onChange={event => setChangeSummary(event.currentTarget.value)} value={changeSummary} /></label>
+    <div className="form-actions"><Button disabled={busy} type="submit" variant="primary">{copy.save}</Button></div>
+  </form>
+
   return <Dialog closeLabel={copy.close} onClose={() => { if (!busyRef.current) onClose() }} open title={copy.heading}>
-    <div className="document-manager" data-testid="document-manager">
+    <div className="wm-document-surface" data-testid="document-manager">
       {error && <div role="alert"><p>{conflict ? copy.conflict : error}</p>{conflict && document && <Button onClick={() => void reload()} type="button" variant="secondary">{copy.reload}</Button>}</div>}
+
       {selected === null ? <>
-        <Button onClick={() => choose('new')} type="button" variant="primary">{copy.new}</Button>
+        {/* The dialog already names this surface, so the resting state opens with the
+            action rather than a second heading saying the same thing. */}
+        <div className="wm-responsive-action-bar">
+          <Button onClick={() => choose('new')} type="button" variant="primary">{copy.new}</Button>
+        </div>
         {collection.loading && !collection.initialized && <p>{copy.loading}</p>}
         {collection.error && <div role="alert"><p>{collection.error.message}</p><Button onClick={() => void collection.refresh()} type="button">{copy.retry}</Button></div>}
-        {collection.initialized && collection.items.length === 0 && <p>{copy.empty}</p>}
-        <ul className="document-list">{collection.items.map(item => <li key={item.id}>
-          <button onClick={() => choose(item)} type="button"><strong>{item.title}</strong><span>r{item.currentRevision.revisionNumber}{item.status === 'archived' ? ` · ${copy.archived}` : ''}</span></button>
-        </li>)}</ul>
+        <DocumentList empty={collection.initialized && collection.items.length === 0 ? <p>{copy.empty}</p> : null} testId="document-list">
+          <DocumentRowGroup label={copy.heading}>
+            {collection.items.map(item => <DocumentRow
+              data={{ id: item.id, meta: <>{`r${item.currentRevision.revisionNumber}`}{item.status === 'archived' ? ` · ${copy.archived}` : ''}</>, title: item.title }}
+              key={item.id}
+              onSelect={() => choose(item)}
+            />)}
+          </DocumentRowGroup>
+        </DocumentList>
         {collection.nextCursor && <Button disabled={collection.loadingMore} onClick={() => void collection.loadMore()} type="button">{copy.loadMore}</Button>}
       </> : <>
-        <div className="document-manager-actions"><Button onClick={() => choose(null)} type="button">{copy.cancel}</Button>
-          {document && <><Button onClick={() => setMode('view')} type="button" variant={mode === 'view' ? 'primary' : 'secondary'}>{copy.view}</Button>
-            {document.status === 'active' && <Button onClick={() => setMode('edit')} type="button" variant={mode === 'edit' ? 'primary' : 'secondary'}>{copy.edit}</Button>}
-            <Button onClick={() => void loadHistory()} type="button" variant={mode === 'history' ? 'primary' : 'secondary'}>{copy.history}</Button>
-            <Button onClick={() => void exportMarkdown()} type="button" variant="secondary">{copy.export}</Button></>}
-        </div>
-        {mode === 'edit' && <form className="project-form modal-form" onSubmit={event => void save(event)}>
-          <label>{copy.title}<input maxLength={180} onChange={event => setTitle(event.currentTarget.value)} required value={title} /></label>
-          <div className="form-span"><RichTextEditor copy={editorCopy} identity={identity} label={copy.content} mode="description" name="markdown" onChange={setMarkdown} value={markdown} /></div>
-          <label>{copy.summary}<input maxLength={500} onChange={event => setChangeSummary(event.currentTarget.value)} value={changeSummary} /></label>
-          <div className="form-actions"><Button disabled={busy} type="submit" variant="primary">{copy.save}</Button></div>
-        </form>}
-        {document && mode === 'view' && <div className="document-reading"><h3>{document.title}</h3><small>r{document.currentRevision.revisionNumber} · {document.currentRevision.contentHash}</small>
-          <RichContent source={document.currentRevision.markdown} />
-          <label>{copy.reason}<input maxLength={2000} onChange={event => setStatusReason(event.currentTarget.value)} value={statusReason} /></label>
-          <Button disabled={busy || !statusReason.trim()} onClick={() => void changeArchive()} type="button" variant="secondary">{document.status === 'active' ? copy.archive : copy.unarchive}</Button>
-        </div>}
-        {document && mode === 'history' && <div className="document-history">
-          <ul>{history?.revisions.map(revision => <li key={revision.id}><button onClick={() => void inspectRevision(revision.id)} type="button">r{revision.revisionNumber} · {revision.title} · {new Date(revision.createdAt).toLocaleString(locale)}</button></li>)}</ul>
-          {history?.nextCursor && <Button onClick={() => void moreHistory()} type="button">{copy.loadMore}</Button>}
-          {olderRevision && <div><h3>r{olderRevision.revisionNumber} · {olderRevision.title}</h3><small>{olderRevision.contentHash}</small>
-            <RichContent source={olderRevision.markdown} />
-            <div className="document-manager-actions"><Button onClick={() => void exportMarkdown(olderRevision.id)} type="button">{copy.export}</Button>
-              <Button onClick={() => void compare()} type="button">{copy.compare}</Button></div>
-            {diff && <pre className="document-diff">{diff.changes.length ? diff.changes.map(change => `${change.kind === 'added' ? '+' : change.kind === 'removed' ? '-' : ' '}${change.text}`).join('\n') : copy.noChanges}</pre>}
-            {olderRevision.id !== document.currentRevision.id && document.status === 'active' && <>
-              <label>{copy.summary}<input maxLength={500} onChange={event => setChangeSummary(event.currentTarget.value)} value={changeSummary} /></label>
-              <Button disabled={busy} onClick={() => void restore()} type="button" variant="secondary">{copy.restore}</Button>
-            </>}
-          </div>}
-        </div>}
+        <SectionHeader actions={<>
+          <Button onClick={() => choose(null)} type="button">{copy.cancel}</Button>
+          {document && <Button icon={<DownloadSimpleIcon aria-hidden="true" size={16} />} onClick={() => void exportMarkdown()} type="button" variant="secondary">{copy.export}</Button>}
+        </>} label={document ? document.title : copy.heading} />
+
+        {selected === 'new' ? editor : <>
+          <TabBar ariaLabel={copy.heading} onValueChange={value => changeMode(value as Mode)} tabs={[
+            { id: 'view', label: copy.view },
+            ...(document?.status === 'active' ? [{ id: 'edit' as const, label: copy.edit }] : []),
+            { id: 'history', label: copy.history, badge: history?.revisions.length },
+          ]} value={mode} />
+
+          {mode === 'edit' && editor}
+          {document && mode === 'view' && <DocumentReading
+            revisionLabel={`r${document.currentRevision.revisionNumber} · ${document.currentRevision.contentHash}`}
+            status={document.status === 'archived' ? copy.archived : copy.current}
+          >
+            <RichContent source={document.currentRevision.markdown} />
+            <label>{copy.reason}<input maxLength={2000} onChange={event => setStatusReason(event.currentTarget.value)} value={statusReason} /></label>
+            <Button disabled={busy || !statusReason.trim()} onClick={() => void changeArchive()} type="button" variant="secondary">{document.status === 'active' ? copy.archive : copy.unarchive}</Button>
+          </DocumentReading>}
+
+          {document && mode === 'history' && <>
+            <DocumentRevisionList
+              empty={<p>{copy.noRevisions}</p>}
+              onInspect={revisionId => void inspectRevision(revisionId)}
+              revisions={(history?.revisions ?? []).map(revision => ({ id: revision.id, label: `${revision.title} · ${new Date(revision.createdAt).toLocaleString(locale)}`, title: `r${revision.revisionNumber}` }))}
+              selectedRevisionId={olderRevision?.id ?? null}
+            />
+            {history?.nextCursor && <Button onClick={() => void moreHistory()} type="button">{copy.loadMore}</Button>}
+            {olderRevision && <DocumentReading revisionLabel={`r${olderRevision.revisionNumber} · ${olderRevision.contentHash}`} title={olderRevision.title}>
+              <RichContent source={olderRevision.markdown} />
+              <div className="wm-responsive-action-bar">
+                <Button onClick={() => void exportMarkdown(olderRevision.id)} type="button">{copy.export}</Button>
+                <Button onClick={() => void compare()} type="button">{copy.compare}</Button>
+              </div>
+              {diff && <DiffView changes={diff.changes} emptyLabel={copy.noChanges} />}
+              {olderRevision.id !== document.currentRevision.id && document.status === 'active' && <>
+                <label>{copy.summary}<input maxLength={500} onChange={event => setChangeSummary(event.currentTarget.value)} value={changeSummary} /></label>
+                <Button disabled={busy} onClick={() => void restore()} type="button" variant="secondary">{copy.restore}</Button>
+              </>}
+            </DocumentReading>}
+          </>}
+        </>}
       </>}
     </div>
   </Dialog>
