@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { AppShell, Button } from '@workmesh/ui'
+import { AppShell, Button, Eyebrow } from '@workmesh/ui'
 import { publicRequest } from '../lib/api'
 import { ThemeToggle } from '../../features/navigation'
 import { LocaleToggle, useLocale } from '../lib/i18n'
@@ -118,7 +118,7 @@ export default function ConnectPage() {
   return <AppShell brandIcon={<WorkMeshBrandIcon />} productName="WorkMesh" navigation={[]} utilityNavigation={[]} headerActions={<div className="shell-action-cluster"><ThemeToggle /><LocaleToggle /></div>} skipLabel={t('skipToContent')}>
     <div className="center connect-page"><section className="connection-instruction onboarding-shell" aria-labelledby="connect-title">
     <header className="onboarding-heading">
-      <div><p className="eyebrow">{text.eyebrow}</p><h1 id="connect-title">{text.title}</h1></div>
+      <div><Eyebrow>{text.eyebrow}</Eyebrow><h1 id="connect-title">{text.title}</h1></div>
       <span className="health-pill health-neutral">{text.healthPill}</span>
     </header>
 
@@ -132,7 +132,7 @@ export default function ConnectPage() {
     {guide && environment?.clientType && <>
       <div className="onboarding-grid" data-mcp-guide-client={guide.clientType}>
         <section className="onboarding-card" aria-labelledby="client-config-title">
-          <header><p className="eyebrow">{text.step1}</p><h2 id="client-config-title">{text.chooseClient}</h2></header>
+          <header><Eyebrow>{text.step1}</Eyebrow><h2 id="client-config-title">{text.chooseClient}</h2></header>
           <ClientPicker copy={text} onChange={selectClient} supportedClients={environment.supportedClients} value={environment.clientType} />
           <dl className="connection-facts compact-facts">
             <div><dt>{text.transport}</dt><dd>{guide.transport}</dd></div>
@@ -143,21 +143,21 @@ export default function ConnectPage() {
           </dl>
         </section>
         <section className="onboarding-card" aria-labelledby="config-template-title">
-          <header className="onboarding-card-actions"><div><p className="eyebrow">{text.step2}</p><h2 id="config-template-title">{guide.configLabel}</h2></div><Button onClick={() => void copy('config', guide.config)} type="button" variant="secondary">{configCopied ? text.copied : text.copyConfig}</Button></header>
+          <header className="onboarding-card-actions"><div><Eyebrow>{text.step2}</Eyebrow><h2 id="config-template-title">{guide.configLabel}</h2></div><Button onClick={() => void copy('config', guide.config)} type="button" variant="secondary">{configCopied ? text.copied : text.copyConfig}</Button></header>
           <pre aria-label={text.configRegionLabel(guide.configLabel)} className="config-preview" role="region" tabIndex={0}><code>{guide.config}</code></pre>
           {guide.localStdioFallback && <p>{guide.localStdioFallback}</p>}
           <p className="secret-safety"><strong>{text.secretBoundary}</strong></p>
         </section>
       </div>
       <section className="onboarding-card" aria-labelledby="bootstrap-title">
-        <header><p className="eyebrow">{text.step3}</p><h2 id="bootstrap-title">{text.bootstrapChecklist}</h2></header>
+        <header><Eyebrow>{text.step3}</Eyebrow><h2 id="bootstrap-title">{text.bootstrapChecklist}</h2></header>
         <ol className="bootstrap-checklist">{guide.bootstrapChecks.map(check => <li key={check}>{check}</li>)}</ol>
         <details><summary>{text.environmentChecks}</summary><ul>{guide.environmentChecks.map(check => <li key={check}>{check}</li>)}</ul></details>
       </section>
     </>}
 
     {fragmentPresent === true && <section className="onboarding-card pairing-card" aria-labelledby="pairing-title">
-      <header><div><p className="eyebrow">{text.handoffEyebrow}</p><h2 id="pairing-title">{text.handoffTitle}</h2></div><Button onClick={() => void copy('link', window.location.href)} type="button" variant="secondary">{linkCopied ? text.copiedLink : text.copyLink}</Button></header>
+      <header><div><Eyebrow>{text.handoffEyebrow}</Eyebrow><h2 id="pairing-title">{text.handoffTitle}</h2></div><Button onClick={() => void copy('link', window.location.href)} type="button" variant="secondary">{linkCopied ? text.copiedLink : text.copyLink}</Button></header>
       <p>{text.handoffBody}</p>
     </section>}
     <p className="onboarding-authority-note"><strong>{text.authorityTitle}</strong> {text.authorityBody}</p>

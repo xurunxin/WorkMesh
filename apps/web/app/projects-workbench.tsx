@@ -7,7 +7,7 @@
 // receives the already-built actions node and work surface, and never talks to the
 // API itself.
 
-import { Button } from '@workmesh/ui'
+import { Button, Eyebrow } from '@workmesh/ui'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { FolderPlusIcon } from '@phosphor-icons/react/dist/csr/FolderPlus'
 import { PlusIcon } from '@phosphor-icons/react/dist/csr/Plus'
@@ -49,7 +49,7 @@ export function ProjectsWorkbench({ actions, actor, items, labels, locale, onCre
 }) {
   return <div className="project-workbench">
     <aside className="project-rail" aria-label={labels.projects}>
-      <header><div><span className="eyebrow">{labels.workspace}</span><h1>{labels.projects}</h1></div>
+      <header><div><Eyebrow as="span">{labels.workspace}</Eyebrow><h1>{labels.projects}</h1></div>
         <Button aria-label={labels.newProject} icon={<FolderPlusIcon aria-hidden="true" size={16} weight="bold" />}
           onClick={onCreateProject} variant="ghost" /></header>
       <div className="project-rail-list">

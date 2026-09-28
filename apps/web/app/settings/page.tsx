@@ -2,7 +2,7 @@
 
 import { type CSSProperties, type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
-import { Button, Tabs } from '@workmesh/ui'
+import { Button, ColorPicker, DangerZone, DescriptionList, Eyebrow, SettingsCard, SettingsForm, SettingsGrid, SettingsNotice, Tabs, WorkflowStateEditor, WorkflowStateIdentity, WorkflowStateList } from '@workmesh/ui'
 import { AuthenticatedWorkspaceShell } from '../authenticated-workspace-shell'
 import { ArrowLeft, FloppyDisk, Gear, PencilSimple, Plus, Trash, X } from '@phosphor-icons/react'
 import { ApiError, apiMutation, apiRequest, json } from '../lib/api'
@@ -522,100 +522,74 @@ function SettingsPageScope({
                 <p className="error" role="alert">{error || (teamResolution?.status === 'blocked' ? text.teamUnavailable : text.loadFailed)}</p>
                 {(teamsPage.error || statesPage.error) && <Button data-post-delete-focus-recovery onClick={() => void Promise.all([teamsPage.refresh(), statesPage.refresh()])}>{text.retry}</Button>}
               </>}
-              <div className="settings-grid">
-                {teamResolutionPending ? <div className="settings-loading-skeleton"><SkeletonList columns={2} items={3} label={text.loading} /></div> : <>
-                <section aria-busy={teamsPage.loading || teamsPage.loadingMore || undefined} className="settings-card" aria-labelledby="team-settings-heading">
-                  <header><div><p className="eyebrow">{text.workspaceStructure}</p><h2 id="team-settings-heading" tabIndex={-1}>{text.teams}</h2></div></header>
-                  {canManage && teamAuthorityReadyForMutation && <form className="settings-form" onSubmit={createTeam}>
+              <SettingsGrid>
+                {teamResolutionPending ? <div className="wm-settings-loading"><SkeletonList columns={2} items={3} label={text.loading} /></div> : <>
+                <SettingsCard aria-busy={teamsPage.loading || teamsPage.loadingMore || undefined} aria-labelledby="team-settings-heading" kicker={text.workspaceStructure} title={<span id="team-settings-heading" tabIndex={-1}>{text.teams}</span>}>
+                  {canManage && teamAuthorityReadyForMutation && <SettingsForm onSubmit={createTeam}>
                     <label>{text.teamName}<input name="name" required /></label>
                     <label>{text.teamKey}<input name="key" pattern="[A-Z][A-Z0-9]{1,9}" placeholder="ENG" required /></label>
                     <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createTeam}</Button>
-                  </form>}
+                  </SettingsForm>}
                   {teamsPage.initialized && teamsAuthorized && <LoadMoreButton collection={teamsPage} label="teams" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreTeams} />}
-                </section>
-                <section aria-busy={teamsPage.loading || teamsPage.loadingMore || undefined} className="settings-card" aria-labelledby="current-team-heading">
-                  <header><div><p className="eyebrow">{text.selectedTeam}</p><h2 id="current-team-heading">{text.teamDetails}</h2></div></header>
+                </SettingsCard>
+                <SettingsCard aria-busy={teamsPage.loading || teamsPage.loadingMore || undefined} aria-labelledby="current-team-heading" kicker={text.selectedTeam} title={<span id="current-team-heading">{text.teamDetails}</span>}>
                   {selectedTeam ? <>
-                    {canManage ? <form className="settings-form" key={`${selectedTeam.id}:${selectedTeam.revision}`} onSubmit={updateTeam}>
+                    {canManage ? <SettingsForm key={`${selectedTeam.id}:${selectedTeam.revision}`} onSubmit={updateTeam}>
                       <label>{text.teamName}<input name="name" defaultValue={selectedTeam.name} required /></label>
                       <label>{text.teamKey}<input name="key" defaultValue={selectedTeam.key} pattern="[A-Z][A-Z0-9]{1,9}" required /></label>
                       <Button icon={<FloppyDisk aria-hidden size={16} />} type="submit">{text.saveChanges}</Button>
-                    </form> : <dl className="settings-summary"><div><dt>{text.teamName}</dt><dd>{selectedTeam.name}</dd></div><div><dt>{text.teamKey}</dt><dd>{selectedTeam.key}</dd></div></dl>}
-                    {canManage && <div className="danger-zone"><div><strong>{text.deleteTeam}</strong><p>{text.deleteHelp}</p></div><Button data-post-delete-focus-origin icon={<Trash aria-hidden size={16} />} onClick={openDeleteTeam} type="button" variant="danger">{text.deleteTeam}</Button></div>}
+                    </SettingsForm> : <DescriptionList className="wm-settings-summary" items={[{ id: 'team-name', term: text.teamName, description: selectedTeam.name }, { id: 'team-key', term: text.teamKey, description: selectedTeam.key }]} layout="stacked" />}
+                    {canManage && <DangerZone actions={<Button data-post-delete-focus-origin icon={<Trash aria-hidden size={16} />} onClick={openDeleteTeam} type="button" variant="danger">{text.deleteTeam}</Button>} title={text.deleteTeam}>{text.deleteHelp}</DangerZone>}
                   </> : <p className="empty">{unresolvedTeamCopy}</p>}
-                </section>
-                <section aria-busy={statesInitialized && (statesPage.loading || statesPage.loadingMore) || undefined} className="settings-card settings-card-wide" aria-labelledby="workflow-settings-heading">
-                  <header><div><p className="eyebrow">{text.teamWorkflow}</p><h2 id="workflow-settings-heading">{text.workflowStates}</h2></div></header>
+                </SettingsCard>
+                <SettingsCard aria-busy={statesInitialized && (statesPage.loading || statesPage.loadingMore) || undefined} aria-labelledby="workflow-settings-heading" kicker={text.teamWorkflow} title={<span id="workflow-settings-heading">{text.workflowStates}</span>} wide>
                   {selectedTeam ? !statesInitialized
-                    ? (statesPage.error ? null : <div className="settings-states-loading"><SkeletonList columns={5} items={5} label={text.loading} /></div>)
+                    ? (statesPage.error ? null : <div className="wm-settings-loading"><SkeletonList columns={5} items={5} label={text.loading} /></div>)
                     : <>
-                    <div className="workflow-state-list">{states.map(state => {
-                      const editing = stateDraft?.id === state.id
-                      return <article className={editing ? 'is-editing' : undefined} key={state.id} style={{ '--wm-status-color': state.color } as CSSProperties}>
-                        {editing ? <form className="workflow-state-editor" onSubmit={saveState}>
-                          <label>{text.statusName}<input autoFocus maxLength={80} onChange={event => { const name = event.currentTarget.value; setStateDraft(current => current ? { ...current, name, conflict: false } : current) }} required value={stateDraft.name} /></label>
-                          <label>{text.color}<span className="workflow-color-input"><input aria-label={text.color} onChange={event => { const color = event.currentTarget.value; setStateDraft(current => current ? { ...current, color, conflict: false } : current) }} type="color" value={stateDraft.color} /><code>{stateDraft.color.toUpperCase()}</code></span></label>
-                          <div className="workflow-state-editor-actions"><Button icon={<FloppyDisk aria-hidden size={15} />} type="submit" variant="primary">{text.saveState}</Button><Button icon={<X aria-hidden size={15} />} onClick={() => setStateDraft(null)} type="button" variant="ghost">{text.cancel}</Button></div>
-                          {stateDraft.conflict && <p className="workflow-state-conflict" role="alert">{text.stateConflict}</p>}
-                        </form> : <>
-                          <span className="workflow-color" style={{ backgroundColor: state.color }} aria-hidden="true" />
-                          <div><strong>{state.name}</strong><small>{text.categories[state.category as keyof typeof text.categories] ?? state.category}</small></div>
-                          {canManage && <Button aria-label={text.editState(state.name)} className="workflow-state-edit" icon={<PencilSimple aria-hidden size={15} />} onClick={() => setStateDraft({ id: state.id, name: state.name, color: state.color, revision: state.revision, conflict: false })} type="button" variant="ghost">{text.edit}</Button>}
-                        </>}
-                      </article>
-                    })}{states.length === 0 && <p className="empty">{text.noStates}</p>}</div>
-                    {canManage && <form className="settings-form workflow-state-create-form" onSubmit={createState}>
+                    <WorkflowStateList
+                      editingId={stateDraft?.id ?? null}
+                      empty={<p className="empty">{text.noStates}</p>}
+                      renderEditor={state => <WorkflowStateEditor
+                        actions={<><Button icon={<FloppyDisk aria-hidden size={15} />} type="submit" variant="primary">{text.saveState}</Button><Button icon={<X aria-hidden size={15} />} onClick={() => setStateDraft(null)} type="button" variant="ghost">{text.cancel}</Button></>}
+                        conflict={stateDraft?.conflict ? <p className="wm-workflow-state-conflict" role="alert">{text.stateConflict}</p> : null}
+                        onSubmit={saveState}
+                      >
+                        <label>{text.statusName}<input autoFocus maxLength={80} onChange={event => { const name = event.currentTarget.value; setStateDraft(current => current ? { ...current, name, conflict: false } : current) }} required value={stateDraft?.name ?? state.name} /></label>
+                        <label>{text.color}<span className="wm-color-inline"><input aria-label={text.color} onChange={event => { const color = event.currentTarget.value; setStateDraft(current => current ? { ...current, color, conflict: false } : current) }} type="color" value={stateDraft?.color ?? state.color} /><code>{(stateDraft?.color ?? state.color).toUpperCase()}</code></span></label>
+                      </WorkflowStateEditor>}
+                      renderRow={state => <>
+                        <WorkflowStateIdentity categoryLabel={text.categories[state.category as keyof typeof text.categories] ?? state.category} state={state} />
+                        {canManage && <Button aria-label={text.editState(state.name)} className="wm-workflow-state-edit" icon={<PencilSimple aria-hidden size={15} />} onClick={() => setStateDraft({ id: state.id, name: state.name, color: state.color, revision: state.revision, conflict: false })} type="button" variant="ghost">{text.edit}</Button>}
+                      </>}
+                      states={states}
+                    />
+                    {canManage && <SettingsForm className="wm-workflow-state-create-form" onSubmit={createState}>
                       <label>{text.statusName}<input name="name" required /></label>
                       <label>{text.category}<select name="category" defaultValue="planned">{Object.entries(text.categories).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-                      <fieldset className="workflow-color-fieldset">
-                        <legend>{text.workflowColorLegend}</legend>
-                        <div className="workflow-color-presets">
-                          {WORKFLOW_COLOR_PRESETS.map(preset => <label className="workflow-color-option" key={preset.id}>
-                            <input
-                              checked={workflowColorMode === preset.id}
-                              name="workflowColor"
-                              onChange={() => setWorkflowColorMode(preset.id)}
-                              type="radio"
-                              value={preset.id}
-                            />
-                            <span aria-hidden="true" className="workflow-color-swatch" style={{ backgroundColor: preset.value }} />
-                            <span>{text.workflowColorPresets[preset.id]}</span>
-                          </label>)}
-                          <label className="workflow-color-option">
-                            <input
-                              checked={workflowColorMode === 'custom'}
-                              name="workflowColor"
-                              onChange={() => setWorkflowColorMode('custom')}
-                              type="radio"
-                              value="custom"
-                            />
-                            <span aria-hidden="true" className="workflow-color-swatch" style={{ backgroundColor: customWorkflowColor }} />
-                            <span>{text.customColor}</span>
-                          </label>
-                        </div>
-                        {workflowColorMode === 'custom' && <div className="workflow-color-custom-editor">
-                          <label>{text.customColorInput}<input
-                            aria-label={text.customColorInput}
-                            onChange={event => setCustomWorkflowColor(event.currentTarget.value)}
-                            ref={customColorInputRef}
-                            type="color"
-                            value={customWorkflowColor}
-                          /></label>
-                          <output aria-label={text.colorValue}>{customWorkflowColor}</output>
-                        </div>}
-                      </fieldset>
+                      <ColorPicker
+                        colorValueLabel={text.colorValue}
+                        customColor={customWorkflowColor}
+                        customColorRef={customColorInputRef}
+                        customInputLabel={text.customColorInput}
+                        customLabel={text.customColor}
+                        legend={text.workflowColorLegend}
+                        name="workflowColor"
+                        onCustomColorChange={setCustomWorkflowColor}
+                        onModeChange={mode => setWorkflowColorMode(mode as WorkflowColorMode)}
+                        presets={WORKFLOW_COLOR_PRESETS.map(preset => ({ ...preset, label: text.workflowColorPresets[preset.id] }))}
+                        value={workflowColorMode}
+                      />
                       <Button icon={<Plus aria-hidden size={16} />} type="submit" variant="primary">{text.createStatus}</Button>
-                    </form>}
+                    </SettingsForm>}
                     <LoadMoreButton collection={statesPage} label="workflow states" loadingLabel={text.loadingMore} loadMoreLabel={text.loadMoreStates} />
                   </> : <p className="empty">{unresolvedTeamCopy}</p>}
-                </section>
+                </SettingsCard>
                 </>}
-              </div>
-              <section aria-labelledby="agent-workbench-service-heading" className="settings-card settings-card-wide workbench-llm-settings">
-                <header><div><p className="eyebrow">Agent workbench</p><h2 id="agent-workbench-service-heading">{text.workbenchServiceTitle}</h2></div></header>
+              </SettingsGrid>
+              <SettingsCard aria-labelledby="agent-workbench-service-heading" className="workbench-llm-settings" kicker="Agent workbench" title={<span id="agent-workbench-service-heading">{text.workbenchServiceTitle}</span>} wide>
                 <p>{text.workbenchServiceDescription}</p>
                 <a className="wm-button" href="/settings/agent-workbench">{text.workbenchServiceOpen}</a>
-              </section>
+              </SettingsCard>
             </>,
           },
         ]}

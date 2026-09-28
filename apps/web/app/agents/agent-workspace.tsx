@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Button } from '@workmesh/ui'
+import { Button, Eyebrow } from '@workmesh/ui'
 import { AgentSessionDetail } from '../agent-session-detail'
 import { apiRequest } from '../lib/api'
 import { type AgentSession, agentStateLabel, formatTime } from '../lib/agents'
@@ -96,7 +96,7 @@ export function AgentWorkspace({ agentId }: { agentId: string }) {
 
   return <section aria-label={text.title} className={styles.workspace} data-testid="agent-workspace">
     <header className={styles.header}>
-      <div><p className="eyebrow">{text.eyebrow}</p><h2>{text.title}</h2><p>{text.intro}</p></div>
+      <div><Eyebrow>{text.eyebrow}</Eyebrow><h2>{text.title}</h2><p>{text.intro}</p></div>
       <Button onClick={() => void sessions.refresh()} type="button" variant="secondary">{text.refresh}</Button>
     </header>
 

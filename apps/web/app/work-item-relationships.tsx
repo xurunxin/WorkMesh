@@ -12,6 +12,7 @@ import { useAuthorityLifetime } from './lib/use-authority-lifetime'
 import { useRealtimeSubscription } from './lib/realtime'
 import { revisionConflictNotice } from './lib/project-work'
 import type { WorkItemDto } from '../features/work-items/contracts'
+import { Eyebrow } from '@workmesh/ui'
 
 const requestError = (reason: unknown): string => reason instanceof Error ? reason.message : 'Something went wrong.'
 const revisionHeader = (revision: number): HeadersInit => ({ ...json({}), 'If-Match': `"revision-${revision}"` })
@@ -69,7 +70,7 @@ export function WorkItemRelationships({ authorityKey, item, projectItems }: { au
     }
   }
   return <section className="relationship-panel" aria-labelledby="relationships-heading">
-    <header><div><span className="eyebrow">{text.eyebrow}</span><h3 id="relationships-heading">{text.title}</h3></div></header>
+    <header><div><Eyebrow as="span">{text.eyebrow}</Eyebrow><h3 id="relationships-heading">{text.title}</h3></div></header>
     {(error || relations.error || candidates.error) && <p className="error" role="alert">{error || relations.error?.message || candidates.error?.message} {candidates.error && <button onClick={() => void candidates.refresh()} type="button">{text.reload}</button>}</p>}
     {conflict && <aside className="conflict-notice" role="alert"><div><strong>{text.conflictTitle}</strong><p>{text.conflictAction}</p></div><button onClick={() => { setConflict(null); void relations.refresh() }} type="button">{text.reload}</button></aside>}
     <div className="relation-list">{relations.items.map(relation => {
@@ -84,3 +85,4 @@ export function WorkItemRelationships({ authorityKey, item, projectItems }: { au
 }
 
 export type { Milestone }
+

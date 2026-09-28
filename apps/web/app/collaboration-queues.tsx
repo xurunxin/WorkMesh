@@ -14,7 +14,7 @@ import type {
   InboxListItem,
   ListResponse,
 } from "@workmesh/contracts";
-import { Badge, Button, Card, TabBar, WorkSurfaceState } from "@workmesh/ui";
+import { Badge, Button, Card, Eyebrow, TabBar, WorkSurfaceState } from '@workmesh/ui';
 import { AttentionCenter } from "./attention-center";
 import { AutonomyBanner } from "./autonomy-banner";
 import { CollaborationHub } from "../features/collaboration/collaboration-hub";
@@ -357,7 +357,7 @@ export function ActionableCollaborationQueues({ actor }: { actor: Actor }) {
 
   const detail = selected && (
     <aside className="collaboration-thread" aria-labelledby="collaboration-thread-title">
-      <header><div><p className="eyebrow">{copy.thread}</p><h3 id="collaboration-thread-title">{selected.source_message_intent?.replaceAll("_", " ") ?? selected.kind.replaceAll("_", " ")}</h3></div><Button onClick={closeItem} type="button" variant="secondary">{copy.closeThread}</Button></header>
+      <header><div><Eyebrow>{copy.thread}</Eyebrow><h3 id="collaboration-thread-title">{selected.source_message_intent?.replaceAll("_", " ") ?? selected.kind.replaceAll("_", " ")}</h3></div><Button onClick={closeItem} type="button" variant="secondary">{copy.closeThread}</Button></header>
       <Card title={selected.source_message_body ?? copy.source} subtitle={`${selected.source_subject_kind ?? selected.source_type} · ${formatTime(selected.created_at)}`}>
         <dl className="collaboration-thread-facts"><div><dt>{copy.participants}</dt><dd>{selected.source_author_actor_id ?? copy.none} → {selected.recipient_actor_id}</dd></div><div><dt>{copy.lifecycle}</dt><dd>{selected.status} · revision {selected.revision}</dd></div><div><dt>{copy.receipts}</dt><dd>{selected.receipts.map(receipt => `${receipt.kind} ${formatTime(receipt.created_at)}`).join(" · ") || copy.none}</dd></div></dl>
         <p>{copy.acknowledgedNotResolved}</p><p>{copy.readNotResolved}</p>
@@ -370,11 +370,11 @@ export function ActionableCollaborationQueues({ actor }: { actor: Actor }) {
     </aside>
   );
   const agentDetail = selectedAgent && (
-    <aside className="collaboration-thread" aria-labelledby="agent-delivery-title"><header><div><p className="eyebrow">{copy.agents}</p><h3 id="agent-delivery-title">{selectedAgent.source_subject_title ?? selectedAgent.source_summary}</h3></div><Button onClick={closeItem} type="button" variant="secondary">{copy.closeThread}</Button></header><p>{copy.observable}</p><dl className="collaboration-thread-facts"><div><dt>{copy.recipient}</dt><dd>{selectedAgent.recipient_actor_name ?? selectedAgent.recipient_actor_id} · {selectedAgent.recipient_session_id ? copy.exactSession : copy.agentActor}</dd></div><div><dt>{copy.claim}</dt><dd>{selectedAgent.claimed_by_session_id ?? copy.none} {selectedAgent.claimed_by_session_state ? `· ${selectedAgent.claimed_by_session_state}` : ""}</dd></div><div><dt>{copy.receipts}</dt><dd>{receiptText(selectedAgent)}</dd></div><div><dt>{copy.lifecycle}</dt><dd>{selectedAgent.status} · {selectedAgent.stale_recipient ? copy.stale : copy.active}</dd></div></dl>{selectedAgent.stale_recipient && (selectedAgent.claimed_by_session_id ?? selectedAgent.recipient_session_id) && <a href={`/agent-sessions/${encodeURIComponent((selectedAgent.claimed_by_session_id ?? selectedAgent.recipient_session_id)!)}`}>{copy.recovery}</a>}<details><summary>{copy.technical}</summary><p>{selectedAgent.source_type} · {selectedAgent.source_id}</p><p>Inbox · {selectedAgent.id}</p></details></aside>
+    <aside className="collaboration-thread" aria-labelledby="agent-delivery-title"><header><div><Eyebrow>{copy.agents}</Eyebrow><h3 id="agent-delivery-title">{selectedAgent.source_subject_title ?? selectedAgent.source_summary}</h3></div><Button onClick={closeItem} type="button" variant="secondary">{copy.closeThread}</Button></header><p>{copy.observable}</p><dl className="collaboration-thread-facts"><div><dt>{copy.recipient}</dt><dd>{selectedAgent.recipient_actor_name ?? selectedAgent.recipient_actor_id} · {selectedAgent.recipient_session_id ? copy.exactSession : copy.agentActor}</dd></div><div><dt>{copy.claim}</dt><dd>{selectedAgent.claimed_by_session_id ?? copy.none} {selectedAgent.claimed_by_session_state ? `· ${selectedAgent.claimed_by_session_state}` : ""}</dd></div><div><dt>{copy.receipts}</dt><dd>{receiptText(selectedAgent)}</dd></div><div><dt>{copy.lifecycle}</dt><dd>{selectedAgent.status} · {selectedAgent.stale_recipient ? copy.stale : copy.active}</dd></div></dl>{selectedAgent.stale_recipient && (selectedAgent.claimed_by_session_id ?? selectedAgent.recipient_session_id) && <a href={`/agent-sessions/${encodeURIComponent((selectedAgent.claimed_by_session_id ?? selectedAgent.recipient_session_id)!)}`}>{copy.recovery}</a>}<details><summary>{copy.technical}</summary><p>{selectedAgent.source_type} · {selectedAgent.source_id}</p><p>Inbox · {selectedAgent.id}</p></details></aside>
   );
 
   return <section className="actionable-collaboration" data-testid="actionable-collaboration" ref={rootRef}>
-    <header className="surface-header"><div><p className="eyebrow">Human Control Plane</p><h2>{copy.title}</h2><p>{copy.intro}</p></div><Badge tone={connection === "connected" ? "success" : "warning"}>{connection === "connected" ? copy.current : copy.offline}</Badge></header>
+    <header className="surface-header"><div><Eyebrow>Human Control Plane</Eyebrow><h2>{copy.title}</h2><p>{copy.intro}</p></div><Badge tone={connection === "connected" ? "success" : "warning"}>{connection === "connected" ? copy.current : copy.offline}</Badge></header>
     <AutonomyBanner actor={actor} />
     <TabBar ariaLabel={copy.title} onValueChange={value => selectQueue(value as CollaborationQueue)} tabs={(["needs-you", "messages", "agent-delivery", "updates"] as CollaborationQueue[]).map(queue => ({ id: queue, label: queue === "needs-you" ? copy.needs : queue === "messages" ? copy.messages : queue === "agent-delivery" ? copy.agents : copy.updates }))} value={route.queue} />
     {pendingRefresh && <div className="collaboration-update-notice" role="status"><span>{copy.pendingUpdates}</span><Button onClick={() => void refreshQueues()} type="button" variant="secondary">{copy.showUpdates}</Button></div>}

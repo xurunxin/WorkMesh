@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useMemo, useState } from 'react'
-import { Button, Dialog } from '@workmesh/ui'
+import { Button, Dialog, Eyebrow } from '@workmesh/ui'
 import {
   type AgentConnection,
   confirmAgentConnectionRotation,
@@ -209,7 +209,7 @@ function AgentConnectionsPanelScope({ admin, authorityKey, contextError, context
 
   return <section aria-busy={admin && panelInitialized && (connections.loading || contextLoading) || undefined} className="connection-panel" aria-label={text.connectionsTitle}>
     <header className="surface-header">
-      <div><p className="eyebrow">{text.connectionsEyebrow}</p><h2>{text.connectionsTitle}</h2><p>{text.connectionsIntro}</p></div>
+      <div><Eyebrow>{text.connectionsEyebrow}</Eyebrow><h2>{text.connectionsTitle}</h2><p>{text.connectionsIntro}</p></div>
       {admin && <div className="page-actions"><Button disabled={connections.loading || contextLoading} onClick={refreshPanel}>{text.refreshConnections}</Button><Button variant="primary" onClick={() => setCreateOpen(true)}>{text.newConnection}</Button></div>}
     </header>
 
@@ -220,7 +220,7 @@ function AgentConnectionsPanelScope({ admin, authorityKey, contextError, context
     {admin && panelInitialized && connections.items.length > 0 && <><div className="connection-list" aria-label={text.existingConnections}>{connections.items.map(item => { const statusKey = `connectionStatus${item.status[0]!.toUpperCase()}${item.status.slice(1)}` as keyof typeof text; const statusLabel = typeof text[statusKey] === 'string' ? (text[statusKey] as string) : item.status; return <button type="button" key={item.id} className={item.id === authoritativeConnection?.id ? 'selected' : ''} aria-pressed={item.id === authoritativeConnection?.id} onClick={() => selectConnection(item)}><span><strong>{item.name}</strong><small>{item.agent_slug} · {teams.find(team => team.id === item.team_id)?.name ?? text.unavailableTeam}</small></span><span className={`connection-status connection-status-${item.status}`}>{statusLabel}</span></button>; })}</div><LoadMoreButton collection={connections} label={text.connectionsTitle} /></>}
 
     {admin && authoritativeConnection && diagnostic && facts && <article className="connection-overview" data-testid="connection-diagnostic">
-      <header><div><p className="eyebrow">{mcpClientFacts(authoritativeConnection.client_type).label}</p><h3>{authoritativeConnection.name}</h3><p>{authoritativeConnection.agent_slug}</p></div><span className={`health-pill health-${diagnostic.tone}`}>{diagnostic.label}</span></header>
+      <header><div><Eyebrow>{mcpClientFacts(authoritativeConnection.client_type).label}</Eyebrow><h3>{authoritativeConnection.name}</h3><p>{authoritativeConnection.agent_slug}</p></div><span className={`health-pill health-${diagnostic.tone}`}>{diagnostic.label}</span></header>
       <section className={`diagnostic-callout diagnostic-${diagnostic.tone}`} aria-label={text.connectionsTitle}>
         <strong>{diagnostic.summary}</strong><p>{diagnostic.nextAction}</p>
       </section>
@@ -258,7 +258,7 @@ function AgentConnectionsPanelScope({ admin, authorityKey, contextError, context
     </article>}
 
     {admin && authoritativeConnection && <article className="connection-overview mcp-onboarding-overview" data-testid="mcp-onboarding-diagnostic">
-      <header><div><p className="eyebrow">{text.mcpOnboardingEyebrow}</p><h3>{text.mcpOnboardingTitle}</h3><p>{text.mcpOnboardingIntro(mcpClientFacts(authoritativeConnection.client_type).label)}</p></div>{mcpEnvironmentLoading && <span className="health-pill health-neutral">{text.mcpLoading}</span>}</header>
+      <header><div><Eyebrow>{text.mcpOnboardingEyebrow}</Eyebrow><h3>{text.mcpOnboardingTitle}</h3><p>{text.mcpOnboardingIntro(mcpClientFacts(authoritativeConnection.client_type).label)}</p></div>{mcpEnvironmentLoading && <span className="health-pill health-neutral">{text.mcpLoading}</span>}</header>
       {mcpFailureState && mcpEnvironmentFailure && <section className={`diagnostic-callout diagnostic-${mcpFailureState.tone}`} data-onboarding-state={mcpEnvironmentFailure} role="alert"><strong>{mcpFailureState.label}</strong><p>{mcpFailureState.summary}</p><p>{mcpFailureState.nextAction}</p></section>}
       {mcpGuide && mcpState && <>
         <section className={`diagnostic-callout diagnostic-${mcpState.tone}`} data-onboarding-state={mcpGuide.state} aria-label={text.mcpOnboardingTitle}><strong>{mcpState.label}</strong><p>{mcpState.summary}</p><p>{mcpState.nextAction}</p></section>
@@ -276,7 +276,7 @@ function AgentConnectionsPanelScope({ admin, authorityKey, contextError, context
       </>}
     </article>}
 
-    {admin && panelInitialized && instruction && <article className="connection-instruction"><header><div><p className="eyebrow">{text.handoffEyebrow}</p><h3>{text.handoffTitle}</h3><p>{text.handoffIntro}</p></div><Button type="button" onClick={() => void navigator.clipboard.writeText(instruction)}>{text.copyFullInstructions}</Button></header><pre className="agent-connection-instruction"><code>{instruction}</code></pre><small>{text.handoffExpiryNote}</small></article>}
+    {admin && panelInitialized && instruction && <article className="connection-instruction"><header><div><Eyebrow>{text.handoffEyebrow}</Eyebrow><h3>{text.handoffTitle}</h3><p>{text.handoffIntro}</p></div><Button type="button" onClick={() => void navigator.clipboard.writeText(instruction)}>{text.copyFullInstructions}</Button></header><pre className="agent-connection-instruction"><code>{instruction}</code></pre><small>{text.handoffExpiryNote}</small></article>}
 
     <Dialog closeLabel={t('close')} open={admin && createOpen} onClose={() => setCreateOpen(false)} title={text.newConnectionTitle}>
       <form onSubmit={create} className="agent-connection-form">
