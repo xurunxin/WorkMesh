@@ -62,7 +62,7 @@ function NavigationLinks({ items, onNavigate, testIds = true }: { items: Navigat
       item.onClick?.(event)
       onNavigate?.()
     }}
-  >{item.icon && <span aria-hidden="true" className="app-navigation-icon">{item.icon}</span>}<span className="app-navigation-label">{item.label}</span>{item.count !== undefined && item.count !== null && <span aria-hidden="true" className="app-navigation-count">{item.count}</span>}</a>)}</>
+  >{item.icon && <span aria-hidden="true" className="app-navigation-icon">{item.icon}</span>}<span className="app-navigation-label">{item.label}</span>{item.count !== undefined && item.count !== null && <span aria-hidden="true" className="wm-tag app-navigation-count">{item.count}</span>}</a>)}</>
 }
 
 function NavigationGroups({ entries, onNavigate, testIds }: { entries: NavigationEntries; onNavigate?: () => void; testIds: boolean }) {

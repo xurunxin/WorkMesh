@@ -105,17 +105,45 @@ export function ControlCenterSection({ action, children, count, description, tit
 
 export type AttentionListItemProps = {
   actions?: ReactNode
+  /** Rendered bold at the head of the description, as the prototype does. */
   actor?: ReactNode
+  /** Right-aligned head fact: an overdue marker or a relative age. */
+  age?: ReactNode
   badges?: ReactNode
+  /** The prototype's inset consequence preview; renders only when supplied. */
+  consequence?: ReactNode
   description: string
   metadata?: ReactNode
+  /** Drives the 3px left rail, exactly as the prototype's .attn-rail does. */
+  risk?: 'none' | 'low' | 'medium' | 'high' | 'critical'
+  /** Tag pills: work item identifier, repository, artifact counts. */
+  scope?: ReactNode
   title: string
+  /** Marks `age` as an overdue fact so it takes the warning colour. */
+  urgent?: boolean
 }
 
-export function AttentionListItem({ actions, actor, badges, description, metadata, title }: AttentionListItemProps) {
-  return <article className="wm-attention-item">
-    <div className="wm-attention-item-main"><div className="wm-attention-item-badges">{badges}</div><h3>{title}</h3><p>{description}</p>{actor}{metadata && <div className="wm-attention-item-meta">{metadata}</div>}</div>
-    {actions && <div className="wm-attention-item-actions">{actions}</div>}
+/**
+ * The prototype's attention card: a 3px risk rail, a head carrying the kind
+ * badges / title / right-aligned age, tag pills, an inset consequence preview
+ * and an action row. The rail is a redundant channel beside the badges, so risk
+ * is never carried by hue alone.
+ */
+export function AttentionListItem({ actions, actor, age, badges, consequence, description, metadata, risk = 'none', scope, title, urgent }: AttentionListItemProps) {
+  return <article className={`wm-attention-item wm-attention-risk-${risk}`}>
+    <span aria-hidden="true" className="wm-attention-rail" />
+    <div className="wm-attention-body">
+      <div className="wm-attention-head">
+        {badges && <div className="wm-attention-badges">{badges}</div>}
+        <h3 className="wm-attention-title">{title}</h3>
+        {age && <span className={`wm-attention-age${urgent ? ' is-urgent' : ''}`}>{age}</span>}
+      </div>
+      <p className="wm-attention-desc">{actor && <b className="wm-attention-actor">{actor}</b>}{description}</p>
+      {scope && <div className="wm-attention-scope">{scope}</div>}
+      {consequence && <div className="wm-attention-consequence">{consequence}</div>}
+      {metadata && <div className="wm-attention-meta">{metadata}</div>}
+      {actions && <div className="wm-attention-actions">{actions}</div>}
+    </div>
   </article>
 }
 

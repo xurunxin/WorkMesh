@@ -205,7 +205,10 @@ describe('Tabs compact accessibility', () => {
   it('renders counts through the shared tab badge vocabulary', () => {
     const bar = TabBar({ ariaLabel: 'Work views', onValueChange: () => undefined, tabs: [{ id: 'list', label: 'List' }, { badge: 12, id: 'backlog', label: 'Backlog' }], value: 'backlog' })
     const elements = elementsIn(bar)
-    expect(elements.find(element => element.props.className === 'wm-tab-badge')?.props.children).toBe(12)
+    const badge = elements.find(element => String(element.props.className).includes('wm-tab-badge'))
+    // The count reuses the one pill primitive rather than restating the metrics.
+    expect(String(badge?.props.className).split(' ')).toContain('wm-tag')
+    expect(badge?.props.children).toBe(12)
     expect(elements.filter(element => element.props.role === 'tab' && element.props['aria-selected'] === true)).toHaveLength(1)
   })
 

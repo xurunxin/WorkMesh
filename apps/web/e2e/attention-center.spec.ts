@@ -135,6 +135,13 @@ test('Attention Center preserves URL state, uses governed forms, retains partial
   await expect(center).toBeVisible()
   await expect(queueItems).toHaveCount(4)
 
+  // The filter grid is a collapsed native disclosure in the resting layout, so
+  // the comboboxes do not exist until the summary is opened. <summary> carries
+  // no ARIA role, so the component's test id addresses the disclosure itself.
+  const filters = page.getByTestId('attention-filters')
+  await expect(center.getByRole('combobox', { name: 'Kind', exact: true })).toHaveCount(0)
+  await filters.locator('summary').click()
+  await expect(filters).toHaveAttribute('open', '')
   await center.getByRole('combobox', { name: 'Kind', exact: true }).selectOption('clarification')
   await center.getByRole('button', { name: 'Apply filters' }).click()
   await expect(page).toHaveURL(/attentionKind=clarification/)

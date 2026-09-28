@@ -49,7 +49,7 @@ export function TabBar({ ariaLabel, idPrefix, onValueChange, tabs, value }: TabB
     role="tab"
     tabIndex={tab.id === selected?.id ? 0 : -1}
     type="button"
-  ><span>{tab.label}</span>{tab.badge !== undefined && <span className="wm-tab-badge">{tab.badge}</span>}</button>)}</div>
+  ><span>{tab.label}</span>{tab.badge !== undefined && <span className="wm-tag wm-tab-badge">{tab.badge}</span>}</button>)}</div>
 }
 
 export function Tabs({ ariaLabel, compact = false, onValueChange, tabs, value }: TabsProps) {

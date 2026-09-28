@@ -10,8 +10,10 @@ import {
   Button,
   ControlCenterSection,
   EvidenceDrawer,
+  FilterDisclosure,
   FreshnessBadge,
   LifecycleBadge,
+  PageHeader,
   PlanStepRail,
   TabBar,
   RiskBadge,
@@ -271,15 +273,19 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
       ? `${progress.completed}/${progress.total} 个 Issue 已完成`
       : `${progress.completed}/${progress.total} Issues completed`
   const projectHeader = <>
-    <header className="hcp-project-header">
-      <div className="hcp-project-heading"><div><div className="hcp-title-row"><h1>{project.name}</h1><FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} /></div>{project.summary && <p className="hcp-project-summary">{project.summary}</p>}{!project.summary && !project.description && <p>{local.empty}</p>}</div><div className="hcp-project-actions">{actions}<Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></div></div>
+    {/* Shared framing: the prototype's page head, not a private header block. */}
+    <PageHeader
+      actions={<>{actions}<Button data-testid="project-control-view-work" icon={<FolderOpenIcon aria-hidden="true" size={16} />} onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></>}
+      description={project.summary || (!project.summary && !project.description ? local.empty : undefined)}
+      title={project.name}
+      titleMeta={<FreshnessBadge categoryLabel={copy.freshness} label={freshnessLabel} value={freshness} />}
+    />
       {project.description && <details className="hcp-project-description"><summary>{local.description}</summary><RichContent density="document" source={project.description} /></details>}
       <dl className="project-control-project-status"><div><dt>{local.projectStatus}</dt><dd>{project.status.replaceAll('_', ' ')}</dd></div><div><dt>{copy.responsibleHuman}</dt><dd>{data?.project?.responsibleHuman?.displayName ?? local.noHuman}</dd></div><div><dt>{locale === 'zh-CN' ? '目标日期' : 'Target date'}</dt><dd>{data?.project?.targetDate ?? '-'}</dd></div><div><dt>{copy.freshness}</dt><dd>{data ? `rev ${data.revision}` : '-'}</dd></div></dl>
       {progress && <div className="project-control-progress">
         <div><strong>{progress.total > 0 ? `${progressPercent}%` : '—'}</strong><span>{progressLabel}</span></div>
         {progress.total > 0 && <progress aria-label={locale === 'zh-CN' ? '项目 Issue 完成进度' : 'Project Issue completion progress'} max={progress.total} value={progress.completed} />}
       </div>}
-    </header>
     <TabBar ariaLabel={copy.projectNavigation} onValueChange={value => navigateSurface(value as ProjectControlSurface)} tabs={navigation} value={activeSurface} />
   </>
 
@@ -303,14 +309,14 @@ export function ProjectControlCenter({ actions, actor = { id: '00000000-0000-000
 
   return <div className="hcp-reference project-control-center" data-testid="project-control-center">
     {projectHeader}
-    {activeSurface !== 'work' && <form aria-label={local.filters} className="project-control-filters" onSubmit={applyFilters}>
+    {activeSurface !== 'work' && <FilterDisclosure label={local.filters} onSubmit={applyFilters}>
       <label>{local.responsibleHumanFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, responsibleHumanActorId: value || undefined })) }} value={draftFilters.responsibleHumanActorId ?? ''}><option value="">{local.all}</option>{humanOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <label>{copy.activeAgent}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, agentActorId: value || undefined })) }} value={draftFilters.agentActorId ?? ''}><option value="">{local.all}</option>{agentOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <label>{local.riskFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, risk: value === 'at_risk' ? 'at_risk' : undefined })) }} value={draftFilters.risk ?? ''}><option value="">{local.all}</option><option value="at_risk">{copy.atRisk}</option></select></label>
       <label>{local.stateFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, workItemState: value ? value as Filters['workItemState'] : undefined })) }} value={draftFilters.workItemState ?? ''}><option value="">{local.all}</option>{['backlog', 'planned', 'started', 'completed', 'canceled'].map(state => <option key={state} value={state}>{state.replaceAll('_', ' ')}</option>)}</select></label>
       <label>{local.timeFilter}<select onChange={event => { const value = event.currentTarget.value; setDraftFilters(current => ({ ...current, timeWindow: value ? value as Filters['timeWindow'] : undefined })) }} value={draftFilters.timeWindow ?? ''}><option value="">{local.all}</option><option value="24h">24h</option><option value="7d">7d</option><option value="30d">30d</option></select></label>
-      <div className="project-control-filter-actions"><Button type="submit">{local.applyFilters}</Button><Button onClick={() => writeFilters({})} type="button" variant="ghost">{local.clearFilters}</Button></div>
-    </form>}
+      <div className="wm-filter-actions"><Button type="submit">{local.applyFilters}</Button><Button onClick={() => writeFilters({})} type="button" variant="ghost">{local.clearFilters}</Button></div>
+    </FilterDisclosure>}
     {activeSurface !== 'work' && <section aria-label={copy.summaryLabel} className="hcp-summary-strip">{collectionOrder.map(collection => { const labels: Record<Collection, string> = { attention: copy.needsYou, running: copy.running, risks: copy.atRisk, recently_verified: copy.recentlyVerified, ready_work: copy.ready, blocked_work: copy.blocked }; const tones: Record<Collection, string> = { attention: 'attention', running: 'running', risks: 'risk', recently_verified: 'verified', ready_work: 'ready', blocked_work: 'blocked' }; return <article className={`tone-${tones[collection]}`} key={collection}><strong>{data.collections[collection].items.length}</strong><span>{labels[collection]}</span></article> })}</section>}
     <div className={`hcp-control-grid${activeSurface === 'work' ? ' hcp-control-grid--work' : ''}`}>{surfaces[activeSurface] ?? <div className="project-control-section-state">{local.empty}</div>}</div>
     <EvidenceDrawer closeLabel={copy.close} description={selected?.summary} onClose={closeDetails} open={Boolean(selected)} title={selected?.title ?? copy.evidence}>{selected && <>{attribution(selected)}{metadata(selected)}<Button onClick={() => navigateSurface('work')} type="button">{copy.viewWork}</Button></>}</EvidenceDrawer>

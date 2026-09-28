@@ -6,7 +6,7 @@ import type {
   BrowserPushSubscription,
   ListResponse,
 } from "@workmesh/contracts";
-import { Badge, Button } from "@workmesh/ui";
+import { AutonomyRow, Button } from "@workmesh/ui";
 import { apiMutation, apiRequest, json } from "./lib/api";
 import { useLocale } from "./lib/i18n";
 import { useRealtimeSubscription } from "./lib/realtime";
@@ -179,29 +179,35 @@ export function AutonomyBanner({ actor }: { actor: Actor }) {
   };
 
   const reconciliation = policy?.reconciliation;
+  const active = policy?.mode === "yolo";
   return (
-    <section className={`autonomy-banner${policy?.mode === "yolo" ? " yolo" : ""}`} data-testid="autonomy-banner">
-      <div className="autonomy-banner-copy">
-        <p className="eyebrow">{copy.eyebrow}</p>
-        <div className="autonomy-banner-title"><h3>{copy.title}</h3><Badge tone={policy?.mode === "yolo" ? "warning" : "neutral"}>{policy?.mode === "yolo" ? copy.on : copy.off}</Badge></div>
-        <p>{copy.description}</p>
-      </div>
-      <div className="autonomy-banner-facts">
-        <span>{copy.exclusions(policy?.excluded_project_ids?.length ?? 0)}</span>
-        <span>{reconciliation ? `${copy.sync}: ${reconciliation.status} · ${reconciliation.completed_count}/${reconciliation.pending_count + reconciliation.completed_count + reconciliation.skipped_count}` : copy.noSync}</span>
-        {actor.workspace_role !== "admin" && <span>{copy.readonly}</span>}
-      </div>
-      <div className="autonomy-banner-actions">
-        <label className="autonomy-switch">
-          <input checked={policy?.mode === "yolo"} disabled={busy || !policy || actor.workspace_role !== "admin"} onChange={() => void toggleYolo()} role="switch" type="checkbox" />
-          <span>{busy ? copy.saving : policy?.mode === "yolo" ? copy.on : copy.off}</span>
-        </label>
-        <Button disabled={busy || !config?.configured} onClick={() => void togglePush()} type="button" variant="secondary">
-          {activeSubscription ? copy.pushOn : copy.pushOff}
-        </Button>
-        {!config?.configured && config && <span className="autonomy-push-help">{copy.pushUnavailable}</span>}
-      </div>
-      {error && <p className="autonomy-banner-error" role="alert">{error}</p>}
-    </section>
+    <AutonomyRow
+      action={
+        <>
+          <label className="autonomy-switch">
+            <input aria-label={copy.title} checked={active} disabled={busy || !policy || actor.workspace_role !== "admin"} onChange={() => void toggleYolo()} role="switch" type="checkbox" />
+            <span>{busy ? copy.saving : active ? copy.on : copy.off}</span>
+          </label>
+          <Button disabled={busy || !config?.configured} onClick={() => void togglePush()} type="button" variant="secondary">
+            {activeSubscription ? copy.pushOn : copy.pushOff}
+          </Button>
+        </>
+      }
+      className="autonomy-banner"
+      testId="autonomy-banner"
+      description={
+        <>
+          {copy.description}
+          <span className="autonomy-banner-facts">
+            <span>{copy.exclusions(policy?.excluded_project_ids?.length ?? 0)}</span>
+            <span>{reconciliation ? `${copy.sync}: ${reconciliation.status} · ${reconciliation.completed_count}/${reconciliation.pending_count + reconciliation.completed_count + reconciliation.skipped_count}` : copy.noSync}</span>
+          </span>
+          {error && <span className="autonomy-banner-error" role="alert">{error}</span>}
+        </>
+      }
+      label={copy.eyebrow}
+      note={actor.workspace_role !== "admin" ? copy.readonly : undefined}
+      tone={active ? "active" : "neutral"}
+    />
   );
 }

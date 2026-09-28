@@ -16,9 +16,8 @@ describe('human UI layout contract', () => {
     expect(styles).toMatch(/\.project-rail-list\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s)
     expect(styles).toMatch(/\.project-detail-pane\s*\{[^}]*container-name:\s*project-detail;[^}]*overflow-x:\s*hidden;[^}]*overflow-y:\s*auto;/s)
     expect(styles).toMatch(/\.hcp-reference\s*\{[^}]*box-sizing:\s*border-box;[^}]*width:\s*100%;/s)
-    expect(styles).toMatch(/@container\s+project-detail\s*\(max-width:\s*960px\)\s*\{[^}]*\.hcp-project-heading\s*\{[^}]*flex-wrap:\s*wrap;/s)
-    expect(styles).toMatch(/@media\s*\(max-width:\s*820px\)\s*\{[\s\S]*?\.hcp-project-heading\s*>\s*div:first-child\s*\{[^}]*flex:\s*none;[^}]*width:\s*100%;/s)
-    expect(styles).toMatch(/\.hcp-project-heading \.rich-markdown\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
+    expect(styles).toMatch(/@container\s+project-detail\s*\(max-width:\s*960px\)\s*\{[^}]*\.wm-page-head\s*\{[^}]*flex-wrap:\s*wrap;/s)
+    expect(styles).toMatch(/\.hcp-project-description \.rich-markdown\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
   })
 
   it('removes the real Work Surface pulse under reduced motion without hiding its state', () => {

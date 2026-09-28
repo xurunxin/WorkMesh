@@ -10,7 +10,7 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   await create.locator('input[name="summary"]').fill('Project summary')
   await create.locator('textarea[name="description"]').fill('## First revision\n\nReal Markdown description.')
   await create.getByRole('button', { name: /创建项目|Create project/ }).click()
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(originalName)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(originalName)
   await expect(page).toHaveURL(/view=projects.*project=/)
 
   const milestoneName = `Milestone ${Date.now()}`
@@ -78,19 +78,19 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   await expect(page.locator('.work-item-full-page .relation-list')).toContainText(relatedIssueTitle)
   await page.locator('.work-item-full-page').getByRole('button', { name: /关闭|Close/ }).click()
   await expect(page).not.toHaveURL(/workItem=/)
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(originalName)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(originalName)
 
   await page.getByRole('button', { name: /编辑项目|Edit project/ }).click()
   const edit = page.getByTestId('edit-project')
   await edit.locator('input[name="name"]').fill(updatedName)
   await edit.locator('textarea[name="description"]').fill('## Second revision\n\nPersisted after reload.')
   await edit.getByRole('button', { name: /保存更改|Save changes/ }).click()
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(updatedName)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(updatedName)
   await page.locator('.hcp-project-description summary').click()
   await expect(page.locator('.hcp-project-description')).toContainText('Second revision')
 
   await page.reload()
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(updatedName)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(updatedName)
   await page.locator('.hcp-project-description summary').click()
   await expect(page.locator('.hcp-project-description')).toContainText('Persisted after reload.')
 
@@ -98,12 +98,12 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   const staleEdit = page.getByTestId('edit-project')
   const other = await page.context().newPage()
   await other.goto(page.url())
-  await expect(other.locator('.hcp-project-heading h1')).toHaveText(updatedName)
+  await expect(other.locator('.wm-page-head h1')).toHaveText(updatedName)
   await other.getByRole('button', { name: /编辑项目|Edit project/ }).click()
   const otherEdit = other.getByTestId('edit-project')
   await otherEdit.locator('input[name="name"]').fill(`${updatedName} by another editor`)
   await otherEdit.getByRole('button', { name: /保存更改|Save changes/ }).click()
-  await expect(other.locator('.hcp-project-heading h1')).toHaveText(`${updatedName} by another editor`)
+  await expect(other.locator('.wm-page-head h1')).toHaveText(`${updatedName} by another editor`)
   await other.close()
 
   const pendingMarkdown = '## Reviewed after conflict\n\nMy draft survives a stale revision.'
@@ -117,6 +117,6 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   await reconciliation.getByRole('button', { name: /恢复并检查|Restore for review/ }).click()
   await expect(staleEdit.locator('textarea[name="description"]')).toHaveValue(pendingMarkdown)
   await staleEdit.getByRole('button', { name: /保存更改|Save changes/ }).click()
-  await expect(page.locator('.hcp-project-heading h1')).toHaveText(`${updatedName} by another editor`)
+  await expect(page.locator('.wm-page-head h1')).toHaveText(`${updatedName} by another editor`)
   await expect(page.locator('.hcp-project-description')).toContainText('My draft survives a stale revision.')
 })

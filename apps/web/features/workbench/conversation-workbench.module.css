@@ -40,27 +40,10 @@
   text-transform: uppercase;
 }
 
-/* Gradient primary action, per the prototype's --grad-accent. */
-.newConversation {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .4rem;
-  width: 100%;
-  min-height: 2.25rem;
-  padding: 0 .8rem;
-  color: var(--wm-accent-fg);
-  background: linear-gradient(135deg, var(--wm-accent), color-mix(in srgb, var(--wm-accent) 60%, var(--wm-violet, var(--wm-accent))));
-  border: 1px solid transparent;
-  border-radius: var(--wm-radius-md);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--wm-accent) 30%, transparent);
-  font-size: .85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter var(--wm-motion-fast) var(--wm-ease-out);
-}
-.newConversation:hover { filter: brightness(1.06); }
-.newConversation:disabled { cursor: not-allowed; opacity: .5; }
+/* Placement only. The control's own metrics belong to the shared Button
+   (prototype .btn: 32px, 0 11px, 13px/550, --r-sm); restating them here is
+   what let the two build up different buttons for the same action. */
+.newConversation { width: 100%; }
 
 .create {
   display: grid;
