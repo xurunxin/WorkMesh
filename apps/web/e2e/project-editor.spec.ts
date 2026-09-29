@@ -54,6 +54,11 @@ test('Project creation and revisioned edit keep Markdown and the selected URL af
   await detail.getByRole('tab', { name: /详情|Details/ }).click()
   await detail.locator('select[name="milestoneId"]').selectOption({ label: milestoneName })
   await detail.getByRole('button', { name: /保存更改|Save changes/ }).click()
+  // The sheet applies a save by round-tripping the projection and re-seeding
+  // its draft, so the form only reports no unsaved edits once that lands.
+  // Closing a still-dirty sheet answers a native discard prompt instead, which
+  // Playwright dismisses, leaving the sheet open.
+  await expect(detail.locator('.work-item-detail-actions').getByText(/Unsaved changes|有未保存的更改/)).toHaveCount(0)
   await expect(detail.locator('select[name="milestoneId"]')).toHaveValue(/.+/)
   await detail.getByRole('button', { name: /^(关闭|Close) / }).click()
   await expect(detail).toBeHidden()
