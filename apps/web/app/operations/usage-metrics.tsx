@@ -1,4 +1,5 @@
 import type { Locale, OperationsCopy } from '../lib/i18n';
+import { StatCard, StatGrid } from '@workmesh/ui';
 
 export type Usage = {
   input_tokens: string;
@@ -189,55 +190,37 @@ export function UsageMetrics({ usage, locale, copy }: UsageMetricsProps) {
 
   const totalTokens = validated.inputTokens + validated.outputTokens;
   return (
-    <ul aria-label={copy.metricsTitle} className="operations-metrics-grid">
+    <StatGrid label={copy.metricsTitle}>
       <MetricCard label={copy.metricsTokens} value={formatBigInt(totalTokens, locale)} />
       <MetricCard label={copy.metricsRuntime} value={formatDuration(validated.runtimeMs, locale, copy)} />
       <MetricCard label={copy.metricsToolCalls} value={formatBigInt(validated.toolCalls, locale)} />
-      <li aria-label={copy.metricsUnknownCost} className="operations-metric-card operations-metric-card-unknown">
-        <dl>
-          <div>
-            <dt>{copy.metricsUnknownCost}</dt>
-            <dd><strong>{formatBigInt(validated.unknownCostRecords, locale)}</strong> <span>{copy.metricsRecords}</span></dd>
-          </div>
-        </dl>
-        {validated.unknownCostRecords > 0n ? <small>{copy.metricsNeverTreatedAsZero}</small> : null}
-      </li>
+      <StatCard className="wm-stat-card-unknown" label={copy.metricsUnknownCost} note={validated.unknownCostRecords > 0n ? copy.metricsNeverTreatedAsZero : null} rows={[{
+        label: copy.metricsUnknownCost,
+        value: <><strong>{formatBigInt(validated.unknownCostRecords, locale)}</strong> <span>{copy.metricsRecords}</span></>,
+      }]} />
       {validated.currencyBuckets.length === 0 ? (
-        <li aria-label={copy.metricsKnownCost} className="operations-metric-card operations-metric-card-cost-empty">
-          <dl><div><dt>{copy.metricsKnownCost}</dt><dd>{copy.metricsNoKnownCost}</dd></div></dl>
-        </li>
+        <StatCard className="wm-stat-card-cost-empty" label={copy.metricsKnownCost} rows={[{ label: copy.metricsKnownCost, value: copy.metricsNoKnownCost }]} />
       ) : validated.currencyBuckets.map((bucket, index) => {
         const supportedCost = formatSupportedCurrencyMinor(bucket.knownCostMinor, bucket.currency, locale);
-        return (
-          <li
-            aria-label={bucket.currency}
-            className="operations-metric-card operations-metric-card-currency"
-            data-testid="usage-currency-bucket"
-            key={`${bucket.currency}-${index}`}
-          >
-            <h3>{bucket.currency}</h3>
-            <dl>
-              <div>
-                <dt>{supportedCost === null ? copy.metricsMinorUnits(bucket.currency) : copy.metricsKnownCost}</dt>
-                <dd><strong>{supportedCost ?? formatBigInt(bucket.knownCostMinor, locale)}</strong></dd>
-              </div>
-              <div>
-                <dt>{copy.metricsUnknownCost}</dt>
-                <dd><strong>{formatBigInt(bucket.unknownCostRecords, locale)}</strong> <span>{copy.metricsRecords}</span></dd>
-              </div>
-            </dl>
-            {bucket.unknownCostRecords > 0n ? <small>{copy.metricsNeverTreatedAsZero}</small> : null}
-          </li>
-        );
+        return <StatCard
+          caption={bucket.currency}
+          className="wm-stat-card-currency"
+          key={`${bucket.currency}-${index}`}
+          label={bucket.currency}
+          note={bucket.unknownCostRecords > 0n ? copy.metricsNeverTreatedAsZero : null}
+          rows={[
+            { label: supportedCost === null ? copy.metricsMinorUnits(bucket.currency) : copy.metricsKnownCost, value: <strong>{supportedCost ?? formatBigInt(bucket.knownCostMinor, locale)}</strong> },
+            { label: copy.metricsUnknownCost, value: <><strong>{formatBigInt(bucket.unknownCostRecords, locale)}</strong> <span>{copy.metricsRecords}</span></> },
+          ]}
+          testId="usage-currency-bucket"
+        />
       })}
-    </ul>
+    </StatGrid>
   );
 }
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <li aria-label={label} className="operations-metric-card">
-      <dl><div><dt>{label}</dt><dd><strong>{value}</strong></dd></div></dl>
-    </li>
+    <StatCard label={label} rows={[{ label, value: <strong>{value}</strong> }]} />
   );
 }

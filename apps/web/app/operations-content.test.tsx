@@ -787,7 +787,7 @@ describe('OperationsContent loaded-record search', () => {
     expect(screen.getByRole('button', { name: '试运行' })).toBe(action)
     expect(document.activeElement).toBe(action)
     expect(screen.getByTestId('automation-panel')).toHaveAttribute('aria-busy', 'true')
-    expect(document.querySelectorAll('.operations-tab > .sr-only[role="status"]')).toHaveLength(1)
+    expect(document.querySelectorAll('.operations-tab > .wm-visually-hidden[role="status"]')).toHaveLength(1)
 
     rules.loading = false
     rules.error = new TypeError('private collection refresh diagnostic')

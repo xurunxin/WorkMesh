@@ -863,3 +863,27 @@
   .wm-color-presets { grid-template-columns: repeat(2, minmax(112px, 1fr)); }
   .wm-danger-zone { flex-direction: column; align-items: stretch; }
 }
+/* ---------- Stat ---------- */
+
+/* A labelled figure: a kicker-style label, a large tabular value, and an
+   optional caveat. The prototype states one per card; the product needs the
+   same wherever a projection reports a number. */
+.wm-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 18rem)); justify-content: start; gap: .75rem; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.wm-stat-card { display: grid; align-content: start; gap: .5rem; min-width: 0; padding: .9rem 1rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
+.wm-stat-card h3 { margin: 0; font-family: var(--wm-font-mono); font-size: .82rem; letter-spacing: .04em; }
+.wm-stat-card dl { display: grid; gap: .65rem; min-width: 0; margin: 0; }
+.wm-stat-card dl > div { display: grid; gap: .2rem; min-width: 0; }
+.wm-stat-card dt { color: var(--wm-text-muted); font-size: .72rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+.wm-stat-card dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.wm-stat-card dd strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.wm-stat-card dd span, .wm-stat-card small { color: var(--wm-text-muted); font-size: .76rem; }
+
+@media (max-width: 640px) {
+  .wm-stat-grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* Density ladder: a medium-wide window fits more columns if each tile is
+   slightly narrower, which is the same intent the Operations screen stated for
+   its own grid. */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .wm-stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 17rem)); }
+}

@@ -119,6 +119,12 @@ describe('UsageMetrics', () => {
     expect(within(caseDistinct).getByText('5')).toBeVisible();
     expect(within(caseDistinct).getByText('usd minor units')).toBeVisible();
     expect(screen.getAllByTestId('usage-currency-bucket')).toHaveLength(5);
+
+    // A bucket states two figures and has to keep both: the known cost is only
+    // meaningful read against the records whose cost the server does not know.
+    for (const bucket of screen.getAllByTestId('usage-currency-bucket')) {
+      expect(within(bucket).getAllByRole('term')).toHaveLength(2);
+    }
   });
 
   it('shows global and per-bucket unknown-only aggregates without presenting unknown cost as zero', async () => {
