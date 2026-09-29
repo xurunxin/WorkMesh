@@ -224,7 +224,10 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
     await loginForm.getByPlaceholder('Password').fill('password-acceptance')
     await loginForm.getByTestId('login-submit').click()
   }
-  await page.waitForURL(url => url.pathname === '/')
+  // Address the surface this suite is about. A bare "/" is the default landing,
+  // which is the Agent workbench, so the Issues list must be requested.
+  await page.goto('/?view=my-work')
+  await page.waitForURL(url => url.pathname === '/' && url.searchParams.get('view') === 'my-work')
   await expect(page.getByRole('main').getByRole('heading', { name: 'Issues', exact: true })).toBeVisible()
 
   const me = await humanApi<{ actor: { id: string } }>(page, '/api/v1/auth/me')
