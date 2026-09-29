@@ -216,7 +216,10 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
   </form>
 
   return <Dialog closeLabel={copy.close} onClose={() => { if (!busyRef.current) onClose() }} open title={copy.heading}>
-    <div className="wm-document-surface" data-testid="document-manager">
+    {/* The dialog refuses to close while a mutation is in flight. Saying so
+        turns a keypress that appears to do nothing into a legible state, for a
+        reader and for assistive technology alike. */}
+    <div aria-busy={busy || undefined} className="wm-document-surface" data-busy={busy ? 'true' : 'false'} data-testid="document-manager">
       {error && <div role="alert"><p>{conflict ? copy.conflict : error}</p>{conflict && document && <Button onClick={() => void reload()} type="button" variant="secondary">{copy.reload}</Button>}</div>}
 
       {selected === null ? <>
