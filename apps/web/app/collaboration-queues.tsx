@@ -194,6 +194,23 @@ export function ActionableCollaborationQueues({ actor }: { actor: Actor }) {
   const rootRef = useRef<HTMLElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const connection = useRealtimeConnectionState();
+  // Every queue is counted, not just the selected one, because the tab row has
+  // to state all four. A queue the server did not count would read as empty, so
+  // the tab shows nothing until the counts arrive rather than a zero.
+  const [counts, setCounts] = useState<Record<CollaborationQueue, number> | null>(null);
+  const refreshCounts = useCallback(async () => {
+    try {
+      const next = await apiRequest<{ queues: Record<CollaborationQueue, number> }>(
+        "/api/v1/collaboration/queue-counts",
+      );
+      setCounts(next.queues);
+    } catch {
+      setCounts(null);
+    }
+  }, []);
+  useEffect(() => {
+    void refreshCounts();
+  }, [refreshCounts, route.status]);
   const humanPage = usePagedApiList<InboxListItem>(
     `/api/v1/inbox?scope=mine&status=${encodeURIComponent(route.status)}`,
     { scopeKey: `human:${route.status}` },
@@ -376,7 +393,7 @@ export function ActionableCollaborationQueues({ actor }: { actor: Actor }) {
   return <section className="actionable-collaboration" data-testid="actionable-collaboration" ref={rootRef}>
     <header className="surface-header"><div><Eyebrow>Human Control Plane</Eyebrow><h2>{copy.title}</h2><p>{copy.intro}</p></div><Badge tone={connection === "connected" ? "success" : "warning"}>{connection === "connected" ? copy.current : copy.offline}</Badge></header>
     <AutonomyBanner actor={actor} />
-    <TabBar ariaLabel={copy.title} onValueChange={value => selectQueue(value as CollaborationQueue)} tabs={(["needs-you", "messages", "agent-delivery", "updates"] as CollaborationQueue[]).map(queue => ({ id: queue, label: queue === "needs-you" ? copy.needs : queue === "messages" ? copy.messages : queue === "agent-delivery" ? copy.agents : copy.updates }))} value={route.queue} />
+    <TabBar ariaLabel={copy.title} onValueChange={value => selectQueue(value as CollaborationQueue)} tabs={(["needs-you", "messages", "agent-delivery", "updates"] as CollaborationQueue[]).map(queue => ({ badge: counts?.[queue], id: queue, label: queue === "needs-you" ? copy.needs : queue === "messages" ? copy.messages : queue === "agent-delivery" ? copy.agents : copy.updates }))} value={route.queue} />
     {pendingRefresh && <div className="collaboration-update-notice" role="status"><span>{copy.pendingUpdates}</span><Button onClick={() => void refreshQueues()} type="button" variant="secondary">{copy.showUpdates}</Button></div>}
     {filters}
     {detailError && <p className="error" role="alert">{detailError}</p>}

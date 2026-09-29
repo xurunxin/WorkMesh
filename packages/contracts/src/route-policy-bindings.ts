@@ -452,6 +452,11 @@ export const routeOperationBindings = [
   },
   {
     "method": "GET",
+    "path": "/api/v1/collaboration/queue-counts",
+    "operationId": "listCollaborationQueueCounts"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/inbox",
     "operationId": "listInbox"
   },

@@ -1706,6 +1706,25 @@ paths:
   /api/v1/inbox:
     get:
       { x-workmesh-policy-id: route.listInbox, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: listInbox, parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }, { name: status, in: query, schema: { type: string, enum: [open, resolved], default: open } }, { name: scope, in: query, description: Human-only bounded Agent delivery observability; Agent principals use mine., schema: { type: string, enum: [mine, agent_observability], default: mine } }], responses: { "200": { $ref: "#/components/responses/InboxItems" } } }
+  /api/v1/collaboration/queue-counts:
+    get:
+      x-workmesh-policy-id: route.listCollaborationQueueCounts
+      x-workmesh-actor-kinds: [human]
+      x-workmesh-feature-key: none
+      x-workmesh-feature-tier: stable
+      security: [{ SessionCookie: [] }]
+      operationId: listCollaborationQueueCounts
+      description: >-
+        Per-queue counts for the collaboration tab row. Each count is computed with
+        the same authorization predicate as the list it summarises, so the tab row
+        never reports an item the reader cannot open.
+      responses:
+        "200":
+          description: Counts for every collaboration queue.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CollaborationQueueCounts" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /api/v1/inbox/{id}:
     get: { x-workmesh-policy-id: route.getInboxItem, x-workmesh-actor-kinds: [human, agent], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }, { AgentSessionToken: [] }], operationId: getInboxItem, parameters: [{ $ref: "#/components/parameters/Id" }], responses: { "200": { $ref: "#/components/responses/InboxItem" }, "404": { $ref: "#/components/responses/NotFound" } } }
   /api/v1/inbox/{id}/claim:
@@ -4359,6 +4378,24 @@ components:
       { type: object, additionalProperties: false, required: [intent, body], properties: { intent: { type: string, enum: [inform, ask, answer, propose, decide, claim, handoff, blocker, review_request, review_result, status] }, body: { type: string }, recipientActorId: { type: string, format: uuid }, recipientActorIds: { type: array, minItems: 1, maxItems: 50, items: { type: string, format: uuid } }, recipientSessionId: { type: string, format: uuid }, recipientSessionIds: { type: array, minItems: 1, maxItems: 50, items: { type: string, format: uuid } }, replyToMessageId: { type: string, format: uuid }, threadId: { type: string, format: uuid }, payload: { type: object, additionalProperties: true }, requiresResponse: { type: boolean }, sessionId: { type: string, format: uuid } } }
     InboxReplyInput:
       { type: object, additionalProperties: false, required: [body], properties: { body: { type: string, minLength: 1, maxLength: 50000 }, payload: { type: object, additionalProperties: true } } }
+    CollaborationQueueCounts:
+      type: object
+      description: >-
+        Per-queue counts for the collaboration tab row. Every queue is always
+        counted, which is what lets a reader tell "none" from "not counted": a
+        missing key would be indistinguishable from an empty queue.
+      additionalProperties: false
+      required: [queues]
+      properties:
+        queues:
+          type: object
+          additionalProperties: false
+          required: [needs-you, messages, agent-delivery, updates]
+          properties:
+            needs-you: { type: integer, minimum: 0, description: Open attention items awaiting this Human. }
+            messages: { type: integer, minimum: 0, description: Open inbox items addressed to this Human. }
+            agent-delivery: { type: integer, minimum: 0, description: Open inbox items this Human may observe as Agent deliveries. }
+            updates: { type: integer, minimum: 0, description: This Human's unread notifications. }
     InboxListItem:
       type: object
       additionalProperties: false

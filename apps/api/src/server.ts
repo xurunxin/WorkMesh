@@ -55,6 +55,7 @@ import {
 import { registerAgentRoutes } from "./agent/routes.js";
 import { registerCollaborationRoutes } from "./collaboration/routes.js";
 import { registerInboxRoutes } from "./inbox/routes.js";
+import { registerCollaborationQueueCountRoutes } from "./collaboration/queue-counts.js";
 import { registerHumanAttentionRoutes } from "./human-attention/routes.js";
 import { registerControlCenterRoutes } from "./control-center/routes.js";
 import { registerRecoveryRoutes } from "./recovery/routes.js";
@@ -1212,6 +1213,7 @@ export const buildApp = (options: {
   registerDocumentRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam });
   registerCollaborationRoutes(app, { db, meta: commandContext, header, readableTeam: assertReadableTeam, paginator });
   registerInboxRoutes(app, { db, meta: commandContext, header, paginator });
+  registerCollaborationQueueCountRoutes(app, { db });
   registerHumanAttentionRoutes(app, { db, paginator });
   registerControlCenterRoutes(app, { db, paginator });
   registerRecoveryRoutes(app, { db, paginator });
