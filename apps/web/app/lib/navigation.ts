@@ -1,6 +1,7 @@
-export type HomeScope = 'my-work' | 'active' | 'backlog' | 'inbox' | 'recovery' | 'projects' | 'guidance'
+export type HomeScope = 'home' | 'my-work' | 'active' | 'backlog' | 'inbox' | 'recovery' | 'projects' | 'guidance'
 
 const homeScopes = new Set<HomeScope>([
+  'home',
   'my-work',
   'active',
   'backlog',

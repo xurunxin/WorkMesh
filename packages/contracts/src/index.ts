@@ -867,6 +867,22 @@ export type RecoveryListResponse = z.infer<typeof recoveryListResponseSchema>
 export const controlPlaneProjectionVersionSchema = z.literal(1)
 export const controlCenterCollectionSchema = z.enum(['attention', 'running', 'risks', 'recently_verified', 'ready_work', 'blocked_work'])
 export const controlPlaneResourceReferenceSchema = z.object({ type: z.string().min(1).max(100), id: idSchema, revision: revisionSchema.optional(), label: z.string().min(1).max(500).optional() }).strict()
+// Declared ahead of the control-center digest, which carries one worst entry.
+export const sessionBudgetLimitSchema = z.enum(['runtimeSeconds', 'inputTokens', 'outputTokens', 'costUsd'])
+/**
+ * Server-derived budget consumption for one Session. A limit whose usage the
+ * projection cannot observe reports measurable:false with a null ratio, so a
+ * consumer never renders an unknown figure as zero.
+ */
+export const sessionBudgetUtilizationSchema = z.object({
+  limit: sessionBudgetLimitSchema,
+  cap: z.number().nonnegative(),
+  used: z.number().nonnegative().nullable(),
+  ratio: z.number().min(0).max(1).nullable(),
+  measurable: z.boolean(),
+  warning: z.boolean(),
+  exhausted: z.boolean(),
+}).strict()
 export const controlCenterDigestSchema = z.object({
   id: z.string().min(1).max(200),
   kind: z.string().min(1).max(100),
@@ -891,6 +907,13 @@ export const controlCenterDigestSchema = z.object({
     heartbeat: z.enum(['healthy', 'degraded', 'stale']),
     lastHeartbeatAt: timestampSchema.nullable(),
   }).strict().nullable(),
+  /**
+   * A session-sourced row's worst measurable run budget, derived in this same
+   * projection so a list never fans out to /explanation per row. Null is never
+   * a zero: a non-session row, or a run whose usage cannot be observed, is a
+   * different fact from a run that has spent nothing.
+   */
+  budgetUtilization: sessionBudgetUtilizationSchema.nullable(),
   lastActivity: z.object({
     id: idSchema,
     kind: z.string().min(1).max(100),
@@ -903,6 +926,7 @@ export const controlCenterDigestSchema = z.object({
   updatedAt: timestampSchema,
 }).strict()
 export const controlCenterSectionSchema = z.object({ items: z.array(controlCenterDigestSchema).max(100), nextCursor: z.string().nullable() }).strict()
+export type ControlCenterDigest = z.infer<typeof controlCenterDigestSchema>
 export const controlCenterResponseSchema = z.object({
   projectionVersion: controlPlaneProjectionVersionSchema,
   scope: z.object({ workspaceId: idSchema, projectId: idSchema.nullable() }).strict(),
@@ -998,21 +1022,6 @@ export const runEvidenceDetailSchema = attentionEvidenceReferenceSchema.extend({
   causalGroupIds: z.array(z.string().min(1).max(200)).max(200),
   validationState: runValidationStateSchema,
   repository: z.object({ repository: z.string().max(2_000).nullable(), branch: z.string().max(500).nullable(), commit: z.string().max(500).nullable(), pullRequest: z.string().url().nullable() }).strict().nullable(),
-}).strict()
-export const sessionBudgetLimitSchema = z.enum(['runtimeSeconds', 'inputTokens', 'outputTokens', 'costUsd'])
-/**
- * Server-derived budget consumption for one Session. A limit whose usage the
- * projection cannot observe reports measurable:false with a null ratio, so a
- * consumer never renders an unknown figure as zero.
- */
-export const sessionBudgetUtilizationSchema = z.object({
-  limit: sessionBudgetLimitSchema,
-  cap: z.number().nonnegative(),
-  used: z.number().nonnegative().nullable(),
-  ratio: z.number().min(0).max(1).nullable(),
-  measurable: z.boolean(),
-  warning: z.boolean(),
-  exhausted: z.boolean(),
 }).strict()
 export const runExplanationResponseSchema = z.object({
   projectionVersion: controlPlaneProjectionVersionSchema,

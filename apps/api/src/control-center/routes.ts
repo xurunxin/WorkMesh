@@ -18,6 +18,7 @@ import {
   DomainError,
   deriveSessionBudgetUtilization,
   evaluateAgentSessionControl,
+  worstSessionBudgetUtilization,
   type AgentSessionControlAction,
 } from '@workmesh/domain'
 import type { ApiActor } from '../agent/types.js'
@@ -69,6 +70,8 @@ type DigestRow = QueryResultRow & Readonly<{
   plan_step_title?: string | null
   plan_step_status?: z.infer<typeof import('@workmesh/contracts').planStepStatusSchema> | null
   plan_step_ordinal?: number | null
+  session_budget?: Record<string, number> | null
+  session_created_at?: Date | string | null
   heartbeat_health?: 'healthy' | 'degraded' | 'stale' | null
   last_heartbeat_at?: Date | string | null
   last_activity_id?: string | null
@@ -130,7 +133,7 @@ const sourceScopePredicate = (
   )`
 }
 
-const digest = (row: DigestRow) => ({
+const digest = (row: DigestRow, observedAt: string) => ({
   id: `${row.source_type}:${row.id}`,
   kind: row.kind,
   title: row.title,
@@ -156,6 +159,19 @@ const digest = (row: DigestRow) => ({
   health: row.heartbeat_health
     ? { heartbeat: row.heartbeat_health, lastHeartbeatAt: row.last_heartbeat_at ? iso(row.last_heartbeat_at) : null }
     : null,
+  // Only a session-sourced row carries a run budget. Derived here, in one
+  // projection, so a list of running Sessions never has to fan out to
+  // /explanation per row. A row without a measurable entry stays null and
+  // never renders as a zero.
+  budgetUtilization: row.session_id
+    ? worstSessionBudgetUtilization(
+        deriveSessionBudgetUtilization({
+          budget: row.session_budget ?? {},
+          startedAt: row.session_created_at ? iso(row.session_created_at) : null,
+          observedAt,
+        }),
+      )
+    : null,
   lastActivity: row.last_activity_id && row.last_activity_kind && row.last_activity_summary && row.last_activity_at
     ? { id: row.last_activity_id, kind: row.last_activity_kind, summary: row.last_activity_summary, createdAt: iso(row.last_activity_at) }
     : null,
@@ -171,6 +187,7 @@ const sessionDigestColumns = `
         item_state.category::text AS work_item_state,
         step.id AS plan_step_id,step.title AS plan_step_title,step.status AS plan_step_status,step.ordinal AS plan_step_ordinal,
         session.heartbeat_health,session.last_heartbeat_at,
+        session.budget AS session_budget,session.created_at AS session_created_at,
         activity.id AS last_activity_id,activity.kind AS last_activity_kind,
         activity.summary AS last_activity_summary,activity.created_at AS last_activity_at,
         ((SELECT count(*) FROM decisions decision WHERE decision.session_id=session.id AND decision.status='proposed')
@@ -311,6 +328,10 @@ async function readAttentionPage(h: Helpers, request: FastifyRequest, projectId:
       workItem: null,
       currentStep: null,
       health: null,
+      // An attention item is a request about a run, not the run's own digest.
+      // The run's budget is a fact the `running` collection owns, so this
+      // projection states null rather than deriving a second, looser figure.
+      budgetUtilization: null,
       lastActivity: null,
       pendingHumanActionCount: item.status === 'open' ? 1 : 0,
       evidenceCount: item.evidence.length,
@@ -355,7 +376,8 @@ async function readDigestPage(
     page.values,
   )
   const resultPage = page.finish<DigestRow>(result.rows)
-  return { ...resultPage, items: resultPage.items.map(digest) }
+  const observedAt = new Date().toISOString()
+  return { ...resultPage, items: resultPage.items.map(row => digest(row, observedAt)) }
 }
 
 async function buildControlCenter(h: Helpers, request: FastifyRequest, reply: FastifyReply, projectId?: string) {
@@ -981,6 +1003,7 @@ async function readExecutionSummary(h: Helpers, request: FastifyRequest, reply: 
       ${sessionDigestJoins}
      WHERE session.work_item_id=$1 AND session.workspace_id=$2 AND ${runAuth}
      ORDER BY session.updated_at DESC,session.id DESC LIMIT 100`, runValues)).rows
+  const runObservedAt = new Date().toISOString()
   const artifactValues: unknown[] = [workItemId, current.workspaceId]
   const artifactAuth = sourceScopePredicate(current, {
     workspace: 'item.workspace_id', team: 'item.team_id', project: 'item.project_id', session: 'artifact.session_id', workItem: 'item.id',
@@ -992,8 +1015,8 @@ async function readExecutionSummary(h: Helpers, request: FastifyRequest, reply: 
   return workItemExecutionSummaryResponseSchema.parse({
     projectionVersion: 1,
     workItem: { id: item.id, title: item.title, revision: item.revision, status: item.status },
-    activeRuns: runs.filter(row => active.has(row.state)).map(digest),
-    recentRuns: runs.filter(row => !active.has(row.state)).map(digest),
+    activeRuns: runs.filter(row => active.has(row.state)).map(row => digest(row, runObservedAt)),
+    recentRuns: runs.filter(row => !active.has(row.state)).map(row => digest(row, runObservedAt)),
     evidence: artifacts.map(artifact => ({ type: artifact.type, id: artifact.id, title: artifact.title, ...(artifact.uri ? { uri: artifact.uri } : {}) })),
     freshness: { state: 'current', observedAt: new Date().toISOString(), sourceUpdatedAt: iso(item.updated_at) },
   })

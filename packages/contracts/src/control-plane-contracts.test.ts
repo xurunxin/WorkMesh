@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   actionPreviewResponseSchema,
   agentRouteManifest,
+  controlCenterDigestSchema,
   controlCenterResponseSchema,
   controlPlaneInvalidationsForEvent,
   mcpPolicyBindings,
@@ -30,6 +31,40 @@ describe('Human Control Plane read contracts', () => {
         blocked_work: section,
       },
     }).projectionVersion).toBe(1)
+  })
+
+  it('requires every digest to state its run budget, so no producer can omit it', () => {
+    const digest = {
+      id: 'agent_session:00000000-0000-4000-8000-000000000002',
+      kind: 'run',
+      title: 'Atlas',
+      summary: 'Executing the assigned step.',
+      projectId: null,
+      workItemId: null,
+      sessionId: '00000000-0000-4000-8000-000000000002',
+      state: 'executing',
+      revision: 1,
+      source: { type: 'agent_session', id: '00000000-0000-4000-8000-000000000002', revision: 1 },
+      responsibleHuman: null,
+      activeAgent: null,
+      workItem: null,
+      currentStep: null,
+      health: null,
+      lastActivity: null,
+      pendingHumanActionCount: 0,
+      evidenceCount: 0,
+      verified: false,
+      updatedAt: now,
+    }
+    // Both projections that build a digest - the run collection and the
+    // attention collection - must set it. Dropping it once broke the whole
+    // response, because the attention rows are digests too.
+    expect(controlCenterDigestSchema.safeParse(digest).success).toBe(false)
+    expect(controlCenterDigestSchema.safeParse({ ...digest, budgetUtilization: null }).success).toBe(true)
+    expect(controlCenterDigestSchema.safeParse({
+      ...digest,
+      budgetUtilization: { limit: 'runtimeSeconds', cap: 600, used: 480, ratio: 0.8, measurable: true, warning: true, exhausted: false },
+    }).success).toBe(true)
   })
 
   it('makes Action Preview advisory, revision-bound, expiring, and non-authoritative', () => {

@@ -48,6 +48,7 @@ type TranslationKey =
   | 'editProject'
   | 'connecting'
   | 'guidance'
+  | 'home'
   | 'description'
   | 'dueDate'
   | 'high'
@@ -124,6 +125,8 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     createProject: '创建项目',
     editProject: '编辑项目',
     connecting: '正在连接',
+    home: '我的工作',
+
     guidance: '指南',
     description: '描述',
     dueDate: '截止日期',
@@ -200,6 +203,8 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     createProject: 'Create project',
     editProject: 'Edit project',
     connecting: 'Connecting',
+    home: 'My work',
+
     guidance: 'Guidance',
     description: 'Description',
     dueDate: 'Due date',

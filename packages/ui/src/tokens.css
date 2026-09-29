@@ -544,6 +544,7 @@
 .wm-control-section h2 { margin: 0; font-size: var(--wm-text-sm); }
 .wm-control-section-marker { width: .55rem; height: .55rem; flex: 0 0 auto; background: var(--wm-text-muted); border-radius: 50%; }
 .wm-control-section-count { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; color: var(--wm-text-muted); background: var(--wm-surface-subtle); border-radius: var(--wm-radius-pill); font-size: var(--wm-text-xs); font-weight: 700; }
+.wm-control-section-work .wm-control-section-marker { background: var(--wm-accent); }
 .wm-control-section-attention .wm-control-section-marker { background: var(--wm-warning); }
 .wm-control-section-running .wm-control-section-marker { background: var(--wm-info); }
 .wm-control-section-risk .wm-control-section-marker { background: var(--wm-danger); }
@@ -920,3 +921,27 @@
    the list row, so board hides it here rather than through a prop - a prop
    would re-render every card on each switch. */
 .wm-work-item-adaptive[data-layout='board'] .wm-budget-chip { display: none; }
+/* ---------- Run digest row ---------- */
+
+/* The prototype's session card in row form: reference line, agent line, then
+   two telemetry figures. Heartbeat stays its own column so a run with no
+   measurable budget still states its liveness. */
+.wm-run-digest { display: grid; gap: .45rem; padding: .7rem .8rem; background: var(--wm-surface); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-md); }
+.wm-run-digest-head { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+.wm-run-digest-ref { min-width: 0; overflow: hidden; color: var(--wm-text-subtle); font-family: var(--wm-font-mono); font-size: var(--wm-text-2xs); text-overflow: ellipsis; white-space: nowrap; }
+.wm-run-digest-work-item { margin-left: auto; }
+.wm-run-digest-dot { width: 7px; height: 7px; flex: none; border-radius: var(--wm-radius-pill); background: var(--wm-text-subtle); }
+.wm-run-digest-dot-healthy { background: var(--wm-success); }
+.wm-run-digest-dot-degraded { background: var(--wm-warning); }
+.wm-run-digest-dot-stalled { background: var(--wm-danger); }
+.wm-run-digest-dot-failed { background: var(--wm-danger); }
+.wm-run-digest-subject { display: flex; align-items: center; gap: .35rem; min-width: 0; color: var(--wm-text); font-size: var(--wm-text-sm); }
+.wm-run-digest-subject > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-run-digest-sep { flex: none; color: var(--wm-text-subtle); }
+.wm-run-digest-step { min-width: 0; color: var(--wm-text-muted); font-family: var(--wm-font-mono); font-size: var(--wm-text-2xs); }
+.wm-run-digest-step-empty { font-family: var(--wm-font-sans); font-style: italic; }
+.wm-run-digest-telemetry { display: flex; align-items: center; flex-wrap: wrap; gap: .9rem; margin: 0; padding-top: .45rem; border-top: 1px solid var(--wm-border-subtle); }
+.wm-run-digest-telemetry > div { display: flex; align-items: center; gap: .35rem; min-width: 0; }
+.wm-run-digest-telemetry dt { color: var(--wm-text-subtle); font-size: var(--wm-text-2xs); }
+.wm-run-digest-telemetry dd { display: flex; align-items: center; margin: 0; }
+.wm-run-digest-actions { margin-left: auto; gap: .35rem !important; }

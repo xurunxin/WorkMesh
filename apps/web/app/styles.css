@@ -1245,6 +1245,19 @@ main#workmesh-main:focus-visible {
 .wm-work-item-project-slot { min-width: 0; padding-top: .25rem; padding-bottom: .25rem; }
 .wm-work-item-project span { overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-metadata { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; color: var(--wm-muted); font-size: .74rem; }
+/* The prototype's `#/home`: attention on its own row, then work items and
+   running agents side by side. The 1.6/1 split and the 1080px stack point come
+   from the prototype's `.split-wide`. */
+.wm-landing { display: grid; gap: 1.25rem; }
+.wm-landing-split { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.wm-landing-split > .wm-control-section { min-width: 0; }
+.wm-landing-all { color: var(--wm-text-muted); font-size: var(--wm-text-xs); }
+.wm-landing-all:hover { color: var(--wm-accent); }
+.wm-landing-note { margin: 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); }
+.wm-control-section-content > * + * { margin-top: .5rem; }
+@media (max-width: 1080px) { .wm-landing-split { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Work Item fact strips ---------- */
 /* The app owns the fact spans it renders itself. Shared controls mounted in the
    same strip - the run budget chip - keep their own geometry, so this must not
    out-specify `packages/ui` on their subtree. */
