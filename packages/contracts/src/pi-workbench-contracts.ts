@@ -110,6 +110,24 @@ export const turnStatusSchema = z.enum(['queued', 'dispatching', 'running', 'set
 export const terminalTurnStatusSchema = z.enum(['settled', 'failed', 'canceled', 'stopped'])
 export const turnStopReasonSchema = z.enum(['user_stop', 'authority_revoked', 'budget_exhausted', 'server_policy', 'upstream_error'])
 
+/**
+ * One tool's contribution to a turn, as the runner recorded it at settlement.
+ * The row is an audit fact: sanitized shape only, never raw arguments. Absent
+ * rows mean "not recorded", not "none called" - a turn that has not settled yet
+ * has no ledger at all, and a caller must not read an empty list as zero calls.
+ */
+export const toolInvocationResponseSchema = z.object({
+  id: idSchema,
+  turn_id: idSchema,
+  tool_name: z.string().min(1).max(160),
+  call_count: z.number().int().positive(),
+  sanitized_input_summary: z.string().min(1).max(2000),
+  /** Provider-reported cost and token accounting; shape is provider-specific. */
+  usage: z.record(z.string(), z.unknown()).default({}),
+  sequence: z.number().int().positive(),
+  created_at: timestampSchema,
+}).strict()
+
 export const turnResponseSchema = z.object({
   id: idSchema,
   conversation_id: idSchema,
@@ -127,6 +145,7 @@ export const turnResponseSchema = z.object({
   settled_at: timestampSchema.nullable(),
   created_at: timestampSchema,
   updated_at: timestampSchema,
+  tool_invocations: z.array(toolInvocationResponseSchema).default([]),
 }).strict().superRefine((turn, context) => {
   const nonQueued = turn.status !== 'queued'
   if (nonQueued && !turn.dispatch_requested_at) {

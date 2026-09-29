@@ -9,7 +9,7 @@ if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]
 const db = createDb(databaseUrl)
 const app = buildApp({ logger: { level: 'error' } })
 type Reply = { statusCode: number; headers: Record<string, string | string[] | number | undefined>; json: <T>() => T; body: string }
-let cookie = '', csrf = '', workspaceId = ''
+let cookie = '', csrf = '', workspaceId = '', humanActorId = ''
 const call = (method: 'GET' | 'POST', url: string, payload?: object, headers: Record<string, string> = {}): Promise<Reply> =>
   app.inject({ method, url, payload, headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID(), ...headers } }) as unknown as Promise<Reply>
 
@@ -27,6 +27,8 @@ describe('durable workbench conversation admission', () => {
     cookie = String(rawCookie ?? '').split(';')[0] ?? ''
     csrf = installed.json<{ csrfToken: string }>().csrfToken
     workspaceId = (await db.query<{ id: string }>('SELECT id FROM workspaces LIMIT 1')).rows[0]!.id
+    humanActorId = (await db.query<{ id: string }>(
+      `SELECT id FROM actors WHERE workspace_id=$1 AND kind='human' LIMIT 1`, [workspaceId])).rows[0]!.id
   }, 300_000)
   afterAll(async () => { await app.close(); await db.end() })
 
@@ -105,6 +107,94 @@ describe('durable workbench conversation admission', () => {
     expect(list.statusCode, list.body).toBe(200)
     expect(list.json<{ items: Array<{ id: string }> }>().items.some(item => item.id === conversationId)).toBe(false)
     expect((await call('GET', `/api/v1/workbench/conversations/${conversationId}/messages`, undefined, other)).statusCode).toBe(404)
+  })
+
+  it('exposes the recorded tool ledger on a turn and never across workspaces', async () => {
+    const connection = (await db.query<{ id: string }>(
+      "SELECT id FROM workbench_llm_connections WHERE status='active' LIMIT 1")).rows[0]!
+    const model = (await db.query<{ id: string }>(
+      'SELECT id FROM workbench_llm_models WHERE connection_id=$1 LIMIT 1', [connection.id])).rows[0]!
+    const created = await call('POST', '/api/v1/workbench/conversations', {
+      title: 'Tool ledger', llmConnectionId: connection.id, llmModelId: model.id,
+    })
+    expect(created.statusCode, created.body).toBe(201)
+    const conversationId = created.json<{ id: string }>().id
+    const endpoint = `/api/v1/workbench/conversations/${conversationId}/turns`
+    const admitted = await call('POST', endpoint, { messageMarkdown: 'Create the Issue.' },
+      { 'if-match': '"revision-1"' })
+    expect(admitted.statusCode, admitted.body).toBe(201)
+    const turnId = admitted.json<{ turn: { id: string } }>().turn.id
+
+    // A turn that has not settled has no ledger at all. The projection must say
+    // "nothing recorded" rather than "this turn called no tools".
+    const queued = await call('GET', `${endpoint}?limit=10`)
+    expect(queued.statusCode, queued.body).toBe(200)
+    expect(queued.json<{ items: Array<{ id: string; tool_invocations: unknown[] }> }>()
+      .items.find(item => item.id === turnId)?.tool_invocations).toEqual([])
+
+    // The runner writes the ledger at settlement, so the read path is exercised
+    // against rows shaped exactly as the runner writes them. The attempt hangs off
+    // an execution Session, so the fixture seeds the delegation chain the attempt's
+    // foreign keys require.
+    const [team] = (await db.query<{ id: string }>('SELECT id FROM teams WHERE workspace_id=$1 LIMIT 1', [workspaceId])).rows
+    const agentActor = (await db.query<{ id: string }>(
+      `INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Ledger Agent') RETURNING id`,
+      [workspaceId])).rows[0]!.id
+    const agent = (await db.query<{ id: string }>(
+      `INSERT INTO agent_definitions(workspace_id,actor_id,slug,display_name)
+       VALUES($1,$2,$3,'Ledger Agent') RETURNING id`,
+      [workspaceId, agentActor, `ledger-${randomUUID().slice(0, 8)}`])).rows[0]!.id
+    const delegation = (await db.query<{ id: string }>(
+      `INSERT INTO delegations(workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,
+         role,scope_type,scope_id)
+       VALUES($1,$2,$3,$4,$5,'executor','team',$2) RETURNING id`,
+      [workspaceId, team.id, agent, agentActor, humanActorId])).rows[0]!.id
+    // An execution Session must name exactly one scope, so the chain carries a
+    // Project for the Session to belong to.
+    const project = (await db.query<{ id: string }>(
+      `INSERT INTO projects(workspace_id,team_id,name,lead_actor_id) VALUES($1,$2,$3,$4) RETURNING id`,
+      [workspaceId, team.id, `Ledger project ${randomUUID().slice(0, 8)}`, humanActorId])).rows[0]!
+    const session = (await db.query<{ id: string }>(
+      `INSERT INTO agent_sessions(workspace_id,agent_id,agent_actor_id,delegation_id,state,project_id)
+       VALUES($1,$2,$3,$4,'executing',$5) RETURNING id`,
+      [workspaceId, agent, agentActor, delegation, project.id])).rows[0]!.id
+    const attemptId = (await db.query<{ id: string }>(
+      `INSERT INTO workbench_runner_attempts
+         (workspace_id,conversation_id,turn_id,agent_session_id,attempt_no,fence_token,
+          status,llm_connection_id,llm_model_id,external_effects_reconciled,settled_at)
+       VALUES($1,$2,$3,$4,1,$7,'settled',$5,$6,true,now())
+       RETURNING id`,
+      [workspaceId, conversationId, turnId, session, connection.id, model.id, `test-fence-${randomUUID()}`])).rows[0]!.id
+    await db.query(
+      `INSERT INTO workbench_tool_invocations
+         (workspace_id,turn_id,conversation_id,runner_attempt_id,tool_name,call_count,
+          sanitized_input_summary,usage,sequence)
+       VALUES($1,$2,$3,$4,'create_work_item',3,'title, statusId',$5,1)`,
+      [workspaceId, turnId, conversationId, attemptId, { inputTokens: 1200, outputTokens: 340 }])
+
+    const afterLedger = await call('GET', `${endpoint}?limit=10`)
+    expect(afterLedger.statusCode, afterLedger.body).toBe(200)
+    const recorded = afterLedger.json<{ items: Array<{ id: string; tool_invocations: Array<{ tool_name: string; call_count: number; sanitized_input_summary: string; usage: Record<string, unknown> }> }> }>()
+      .items.find(item => item.id === turnId)?.tool_invocations
+    expect(recorded).toHaveLength(1)
+    expect(recorded?.[0]).toMatchObject({
+      call_count: 3,
+      sanitized_input_summary: 'title, statusId',
+      tool_name: 'create_work_item',
+      usage: { inputTokens: 1200, outputTokens: 340 },
+    })
+
+    // A second workspace's admin must not be able to read another workspace's
+    // ledger, even holding the exact turn id.
+    const otherActor = (await db.query<{ id: string }>(
+      `INSERT INTO actors(workspace_id,kind,workspace_role,email,display_name,password_hash)
+       VALUES($1,'human','admin',$2,'Ledger Other','unused') RETURNING id`,
+      [workspaceId, `${randomUUID()}@conversation.test`])).rows[0]!.id
+    const otherToken = opaqueToken(), otherCsrf = opaqueToken()
+    await db.query(`INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at)
+      VALUES($1,$2,$3,now()+interval '1 hour')`, [otherActor, tokenHash(otherToken), otherCsrf])
+    const other = { cookie: `workmesh_session=${otherToken}`, 'x-csrf-token': otherCsrf }
+    expect((await call('GET', `${endpoint}?limit=10`, undefined, other)).statusCode).toBe(404)
   })
 
   it('serializes concurrent sends and rolls back all facts when outbox insertion fails', async () => {

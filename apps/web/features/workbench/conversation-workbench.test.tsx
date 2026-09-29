@@ -22,10 +22,12 @@ const conversation = { id: 'conversation-a', title: 'Real work', status: 'active
 const otherConversation = { ...conversation, id: 'conversation-b', title: 'Other work', revision: 1 }
 let sessionState = 'executing'
 let includeSecondConversation = false
+let toolLedger: Array<Record<string, unknown>> = []
 
 beforeEach(() => {
   sessionState = 'executing'
   includeSecondConversation = false
+  toolLedger = []
   mocks.request.mockReset(); mocks.mutate.mockReset()
   mocks.request.mockImplementation(async (path: string) => {
     if (path === '/api/v1/workbench/conversations') return { items: includeSecondConversation ? [conversation, otherConversation] : [conversation], nextCursor: null }
@@ -41,7 +43,7 @@ beforeEach(() => {
     if (path === '/api/v1/workbench/conversations/conversation-b') return otherConversation
     if (path === '/api/v1/agent-sessions/session-a') return { id: 'session-a', state: sessionState }
     if (path.endsWith('/messages?limit=50')) return { items: [], nextBefore: null }
-    if (path.endsWith('/turns?limit=50')) return { items: [], nextBefore: null }
+    if (path.endsWith('/turns?limit=50')) return { items: toolLedger, nextBefore: null }
     throw new Error(`Unexpected request: ${path}`)
   })
   mocks.mutate.mockResolvedValue({})
@@ -49,6 +51,32 @@ beforeEach(() => {
 afterEach(() => cleanup())
 
 describe('ConversationWorkbench', () => {
+  it('states the recorded tools for a settled turn and does not imply a count it does not have', async () => {
+    toolLedger = [{
+      id: 'turn-a', conversation_id: 'conversation-a', sequence: 1, status: 'failed',
+      error_code: 'RUNNER_TIMEOUT', retry_of_turn_id: null,
+      tool_invocations: [{
+        id: 'invocation-a', turn_id: 'turn-a', tool_name: 'create_work_item', call_count: 3,
+        sanitized_input_summary: 'title, statusId', usage: {}, sequence: 1,
+        created_at: '2026-09-27T00:00:00.000Z',
+      }],
+    }]
+    render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
+
+    // A turn that has settled with a recorded tool.
+    expect(await screen.findByText('create_work_item')).toBeInTheDocument()
+    expect(screen.getByText('×3')).toBeInTheDocument()
+    // The dot follows the turn, so a failed turn never presents its tools as done.
+    const chip = screen.getByTitle('title, statusId')
+    expect(chip.className).toContain('is-failed')
+    expect(chip.className).not.toContain('is-done')
+    expect(screen.getByText('did not complete')).toBeInTheDocument()
+
+    // A turn with no ledger must not claim it called no tools: the row is absent,
+    // and nothing anywhere states a zero.
+    expect(screen.queryByText('×0')).toBeNull()
+    expect(screen.queryByText('0 tools')).toBeNull()
+  })
   it('sends a Markdown turn with the current conversation revision and keeps the bound session on the server', async () => {
     render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
     expect(await screen.findByText('Real work')).toBeInTheDocument()
