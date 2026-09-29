@@ -1,7 +1,7 @@
 'use client'
 
 import { type ChangeEvent } from 'react'
-import { Button } from '@workmesh/ui'
+import { Button, DataTableFrame } from '@workmesh/ui'
 import { CheckCircleIcon, XCircleIcon } from '@phosphor-icons/react'
 import type { Agent, AgentSession, Approval, ApprovalDecision } from '../lib/agents'
 import { agentName, approvalActionability, formatApprovalPayload, formatTime } from '../lib/agents'
@@ -51,7 +51,7 @@ export function ApprovalsTable({
   const allSelected = actionableIds.length > 0 && selectedLiveCount === actionableIds.length
   const someSelected = selectedLiveCount > 0 && !allSelected
 
-  return <div aria-label={copy.approvalTableAriaLabel} className="approval-table-region" role="region">
+  return <DataTableFrame className="approval-table-region" label={copy.approvalTableAriaLabel}>
     {pendingApprovals.length === 0 ? <p className="empty">{copy.noApprovals}</p> : <>
       {selectedLiveCount > 0 && <div className="approval-bulk-bar" role="group" aria-label={copy.approvalBulkActions}>
       <span className="approval-bulk-count">{copy.selectedApprovalsCount(selectedLiveCount)}</span>
@@ -138,7 +138,7 @@ export function ApprovalsTable({
       </div>
       </div>
     </>}
-  </div>
+  </DataTableFrame>
 }
 
 export type { ApprovalDecisionUiState } from './approval-decision-controls'

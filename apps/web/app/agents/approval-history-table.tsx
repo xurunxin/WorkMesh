@@ -1,5 +1,6 @@
 'use client'
 
+import { DataTableFrame } from '@workmesh/ui'
 import type { Approval } from '../lib/agents'
 import { formatTime } from '../lib/agents'
 import type { ApprovalTerminalStatus } from './approval-route-state'
@@ -45,7 +46,7 @@ export function ApprovalHistoryTable({
   if (!resolved) return <SkeletonList columns={1} items={4} label={copy.loading} />
   if (rows.length === 0) return <p className="empty">{copy.empty}</p>
 
-  return <div aria-busy={loading || undefined} aria-label={copy.ariaLabel} className="approval-history-table-wrap" role="region" tabIndex={0}>
+  return <DataTableFrame aria-busy={loading || undefined} className="approval-history-table-wrap" label={copy.ariaLabel}>
     <table aria-label={copy.ariaLabel} className="approval-table approval-history-table">
       <thead>
         <tr>
@@ -81,5 +82,5 @@ export function ApprovalHistoryTable({
         })}
       </tbody>
     </table>
-  </div>
+  </DataTableFrame>
 }
