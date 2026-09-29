@@ -480,7 +480,16 @@ function HomePageScope({
   useEffect(() => {
     if (!actor) return
     const restoreRoute = () => {
-      const search = currentSearch ? `?${currentSearch}` : ''
+      // A bare `/` is not a destination; it means "take me where the Human
+      // starts". The Agent workbench is that landing, matching the prototype,
+      // so the Issues list is reached deliberately rather than by default.
+      // Any explicit parameter - a view, a project, an intent, a deep link -
+      // still addresses this route and is left alone.
+      if (!currentSearch) {
+        router.replace('/workbench', { scroll: false })
+        return
+      }
+      const search = `?${currentSearch}`
       const requestedScope = parseHomeScope(search)
       const nextScope: Scope = requestedScope === 'active' || requestedScope === 'backlog' ? 'my-work' : requestedScope
       const route = readProjectWorkspaceRoute(search)
