@@ -6,7 +6,7 @@ import {
   conversationMessageResponseSchema, conversationResponseSchema,
   conversationTurnCreateInputSchema, conversationTurnFollowupInputSchema,
   conversationTurnSteerInputSchema, conversationTurnStopInputSchema,
-  conversationContextPinResponseSchema, turnResponseSchema,
+  conversationContextPinResponseSchema, toolInvocationResponseSchema, turnResponseSchema,
 } from '@workmesh/contracts'
 import { appendEvent } from '@workmesh/db'
 import { DomainError, assertRevision, parseRevision } from '@workmesh/domain'
@@ -35,6 +35,11 @@ type Turn = {
   retry_of_turn_id: string | null
   queued_at: Date; dispatch_requested_at: Date | null; started_at: Date | null
   settled_at: Date | null; created_at: Date; updated_at: Date
+}
+type ToolInvocation = {
+  id: string; turn_id: string; tool_name: string; call_count: number
+  sanitized_input_summary: string; usage: Record<string, unknown>
+  sequence: number; created_at: Date
 }
 type Helpers = {
   db: Pool
@@ -69,7 +74,42 @@ const messageResponse = (row: Message) => conversationMessageResponseSchema.pars
   content_markdown: row.content_markdown, runner_attempt_id: row.runner_attempt_id,
   created_at: row.created_at.toISOString(),
 })
-const turnResponse = (row: Turn) => turnResponseSchema.parse({
+/**
+ * The runner writes the tool ledger when a turn settles, so a turn that has not
+ * settled has no rows at all. That is why an empty list must not be read as
+ * "this turn called no tools" - it means nothing was recorded yet.
+ */
+const toolInvocationResponse = (row: ToolInvocation) => toolInvocationResponseSchema.parse({
+  id: row.id, turn_id: row.turn_id, tool_name: row.tool_name,
+  call_count: row.call_count, sanitized_input_summary: row.sanitized_input_summary,
+  usage: row.usage, sequence: row.sequence, created_at: row.created_at.toISOString(),
+})
+
+/**
+ * One extra query for the whole page, keyed by turn. Fetching per turn would
+ * turn a twenty-row page into twenty-one round trips for data most turns do
+ * not have.
+ */
+async function loadToolInvocations(
+  queryable: PoolClient, workspaceId: string, turnIds: readonly string[],
+): Promise<Map<string, ToolInvocation[]>> {
+  const byTurn = new Map<string, ToolInvocation[]>()
+  if (turnIds.length === 0) return byTurn
+  const result = await queryable.query<ToolInvocation>(
+    `SELECT id,turn_id,tool_name,call_count,sanitized_input_summary,usage,sequence,created_at
+       FROM workbench_tool_invocations
+      WHERE workspace_id=$1 AND turn_id = ANY($2::uuid[])
+      ORDER BY turn_id, sequence`,
+    [workspaceId, [...turnIds]])
+  for (const row of result.rows) {
+    const existing = byTurn.get(row.turn_id)
+    if (existing) existing.push(row)
+    else byTurn.set(row.turn_id, [row])
+  }
+  return byTurn
+}
+
+const turnResponse = (row: Turn, toolInvocations: readonly ToolInvocation[] = []) => turnResponseSchema.parse({
   id: row.id, conversation_id: row.conversation_id, sequence: row.sequence,
   status: row.status, initiated_by_actor_id: row.initiated_by_actor_id,
   agent_session_id: row.agent_session_id,
@@ -79,6 +119,7 @@ const turnResponse = (row: Turn) => turnResponseSchema.parse({
   queued_at: iso(row.queued_at), dispatch_requested_at: iso(row.dispatch_requested_at),
   started_at: iso(row.started_at), settled_at: iso(row.settled_at),
   created_at: iso(row.created_at), updated_at: iso(row.updated_at),
+  tool_invocations: toolInvocations.map(toolInvocationResponse),
 })
 
 async function load(tx: PoolClient, current: ApiActor, conversationId: string, lock = false): Promise<Conversation> {
@@ -275,7 +316,11 @@ export function registerWorkbenchConversationRoutes(app: FastifyInstance, h: Hel
           AND ($3::integer IS NULL OR sequence < $3) ORDER BY sequence DESC LIMIT $4`,
         [current.workspaceId, row.id, before ?? null, limit + 1])
       const items = result.rows.slice(0, limit)
-      return { items: items.map(turnResponse), nextBefore: result.rows.length > limit ? items.at(-1)?.sequence : null }
+      const toolInvocations = await loadToolInvocations(client, current.workspaceId, items.map(item => item.id))
+      return {
+        items: items.map(turn => turnResponse(turn, toolInvocations.get(turn.id) ?? [])),
+        nextBefore: result.rows.length > limit ? items.at(-1)?.sequence : null,
+      }
     } finally { client.release() }
   })
 

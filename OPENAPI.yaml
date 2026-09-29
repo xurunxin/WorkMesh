@@ -3630,9 +3630,30 @@ components:
         content_markdown: { type: string, minLength: 1, maxLength: 50000 }
         runner_attempt_id: { type: string, format: uuid, nullable: true }
         created_at: { type: string, format: date-time }
+    WorkbenchToolInvocation:
+      type: object
+      description: >-
+        One tool's contribution to a turn, as the runner recorded it at
+        settlement. The row is an audit fact holding sanitized shape only, never
+        raw arguments. Absence means "not recorded", not "not called": a turn
+        that has not settled has no ledger at all, and a caller must not read an
+        empty list as zero calls.
+      required: [id, turn_id, tool_name, call_count, sanitized_input_summary, usage, sequence, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        turn_id: { type: string, format: uuid }
+        tool_name: { type: string, minLength: 1, maxLength: 160 }
+        call_count: { type: integer, minimum: 1 }
+        sanitized_input_summary: { type: string, minLength: 1, maxLength: 2000 }
+        usage:
+          type: object
+          description: Provider-reported cost and token accounting; shape is provider-specific.
+          additionalProperties: true
+        sequence: { type: integer, minimum: 1 }
+        created_at: { type: string, format: date-time }
     WorkbenchTurn:
       type: object
-      required: [id, conversation_id, sequence, status, initiated_by_actor_id, agent_session_id, current_runner_attempt_id, stop_reason, error_code, retry_of_turn_id, queued_at, dispatch_requested_at, started_at, settled_at, created_at, updated_at]
+      required: [id, conversation_id, sequence, status, initiated_by_actor_id, agent_session_id, current_runner_attempt_id, stop_reason, error_code, retry_of_turn_id, queued_at, dispatch_requested_at, started_at, settled_at, created_at, updated_at, tool_invocations]
       properties:
         id: { type: string, format: uuid }
         conversation_id: { type: string, format: uuid }
@@ -3650,6 +3671,10 @@ components:
         settled_at: { type: string, format: date-time, nullable: true }
         created_at: { type: string, format: date-time }
         updated_at: { type: string, format: date-time }
+        tool_invocations:
+          type: array
+          description: The tool ledger for this turn. Empty until the turn settles.
+          items: { $ref: '#/components/schemas/WorkbenchToolInvocation' }
     WorkbenchTurnCreateInput:
       type: object
       required: [messageMarkdown]

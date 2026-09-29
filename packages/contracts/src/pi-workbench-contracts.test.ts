@@ -18,6 +18,7 @@ import {
   runnerAttemptSettleInputSchema,
   workbenchRunnerSettleInputSchema,
   completeAgentSessionInputSchema,
+  toolInvocationResponseSchema,
   turnResponseSchema,
   workbenchEventTypeSchema,
   workbenchLlmConnectionCreatedEventPayloadSchema,
@@ -200,6 +201,29 @@ describe('Workbench turn contracts', () => {
 
   it('binds authority_revoked stop reason to stopped turns', () => {
     expect(() => turnResponseSchema.parse(turn('failed', { dispatch_requested_at: timestamp, settled_at: timestamp, stop_reason: 'authority_revoked' }))).toThrow()
+  })
+
+  it('carries the tool ledger on a settled turn and defaults it to empty elsewhere', () => {
+    expect(turnResponseSchema.parse(turn('running', { dispatch_requested_at: timestamp, started_at: timestamp })).tool_invocations)
+      .toEqual([])
+    const settled = turnResponseSchema.parse(turn('settled', {
+      dispatch_requested_at: timestamp, started_at: timestamp, settled_at: timestamp,
+      tool_invocations: [{
+        id: otherId,
+        turn_id: id,
+        tool_name: 'create_work_item',
+        call_count: 3,
+        sanitized_input_summary: 'title, statusId',
+        usage: { inputTokens: 1200, outputTokens: 340 },
+        sequence: 1,
+        created_at: timestamp,
+      }],
+    }))
+    expect(settled.tool_invocations[0]?.tool_name).toBe('create_work_item')
+    expect(settled.tool_invocations[0]?.call_count).toBe(3)
+    // An invocation is a counted fact: zero or negative would be a claim the
+    // runner never made.
+    expect(() => toolInvocationResponseSchema.parse({ id: otherId, turn_id: id, tool_name: 'read', call_count: 0, sanitized_input_summary: 'x', sequence: 1, created_at: timestamp })).toThrow()
   })
 
   it('keeps turn creation idempotency in the transport header, not the body', () => {

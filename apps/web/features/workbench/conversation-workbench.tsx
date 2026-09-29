@@ -1,7 +1,7 @@
 'use client'
 
 import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { Button } from '@workmesh/ui'
+import { Button, ToolChip, ToolChipRow } from '@workmesh/ui'
 import { apiMutation, apiRequest, json, type ListResponse } from '../../app/lib/api'
 import type { AuthenticatedActor } from '../../app/lib/actor'
 import { useLocale } from '../../app/lib/i18n'
@@ -17,7 +17,21 @@ type Conversation = {
   context_pins: Array<{ kind: 'guidance' | 'document' | 'work_item'; refId: string; revision: number | null; resolved_revision?: number | null }>
 }
 type Message = { id: string; role: 'user' | 'assistant' | 'system'; sequence: number; content_markdown: string; created_at: string }
-type Turn = { id: string; status: string; sequence: number; error_code: string | null; retry_of_turn_id: string | null }
+type ToolInvocation = {
+  id: string
+  tool_name: string
+  call_count: number
+  sanitized_input_summary: string
+}
+/**
+ * The runner writes this ledger when a turn settles. An absent or empty list
+ * means nothing was recorded - never "this turn called no tools", which would
+ * be a claim the product cannot make about a turn that is still running.
+ */
+type Turn = {
+  id: string; status: string; sequence: number; error_code: string | null; retry_of_turn_id: string | null
+  tool_invocations?: ToolInvocation[]
+}
 type Session = { id: string; state: string; principal_human_actor_id: string; work_item_id: string | null; project_id: string | null }
 type Connection = { id: string; name: string; status: string; secret_status: string }
 type Model = { id: string; display_name: string; enabled: boolean }
@@ -354,6 +368,14 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
             </span>
             {latestTurn.error_code && <span className={`${styles.chip} ${styles.chipFailed}`}>{latestTurn.error_code}</span>}
             {latestTurn.retry_of_turn_id && <span className={styles.chip}>{zh ? '重试自' : 'retry of'} {latestTurn.retry_of_turn_id.slice(0, 8)}</span>}
+            {latestTurn.tool_invocations && latestTurn.tool_invocations.length > 0 && <ToolChipRow>
+              {latestTurn.tool_invocations.map(invocation => <ToolChip
+                data={{ callCount: invocation.call_count, inputSummary: invocation.sanitized_input_summary, toolName: invocation.tool_name }}
+                key={invocation.id}
+                outcome={latestTurn.status === 'settled' ? 'done' : ['failed', 'canceled', 'stopped'].includes(latestTurn.status) ? 'failed' : 'unknown'}
+                timesLabel={zh ? ' ×' : ' ×'}
+              />)}
+            </ToolChipRow>}
             {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{zh ? '停止' : 'Stop'}</Button>}
             {pending(latestTurn) && latestTurn.status === 'running' &&
               <form className={styles.steerForm} onSubmit={event => { event.preventDefault(); void steer(latestTurn) }}>

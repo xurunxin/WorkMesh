@@ -887,3 +887,18 @@
 @media (min-width: 1200px) and (max-width: 1599px) {
   .wm-stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 17rem)); }
 }
+/* ---------- Tool chip ---------- */
+
+/* The prototype's pill: glyph, name, call count, and a dot that flips on
+   completion. The dot follows the turn rather than the tool, so a failed turn
+   can never present its work as finished. */
+.wm-tool-chip-row { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.wm-tool-chip { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; min-height: 22px; padding: 0 8px; color: var(--wm-text-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: var(--wm-radius-pill); font-size: var(--wm-text-xs); }
+.wm-tool-chip-glyph { flex: 0 0 auto; color: var(--wm-text-subtle); }
+.wm-tool-chip-label { min-width: 0; overflow: hidden; font-family: var(--wm-font-mono); text-overflow: ellipsis; white-space: nowrap; }
+.wm-tool-chip-count, .wm-tool-chip-stat { flex: 0 0 auto; color: var(--wm-text-subtle); font-variant-numeric: tabular-nums; }
+.wm-tool-chip-dot { flex: 0 0 auto; width: 6px; height: 6px; border-radius: var(--wm-radius-pill); background: var(--wm-text-subtle); }
+.wm-tool-chip.is-done { color: var(--wm-text); }
+.wm-tool-chip.is-done .wm-tool-chip-dot { background: var(--wm-success); }
+.wm-tool-chip.is-failed { color: var(--wm-text); }
+.wm-tool-chip.is-failed .wm-tool-chip-dot { background: var(--wm-danger); }
