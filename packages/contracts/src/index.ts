@@ -669,6 +669,22 @@ export const attentionBulkPolicySchema = z.object({
   revalidateIndividually: z.literal(true),
 }).strict()
 export const humanAttentionFreshnessSchema = z.object({ state: freshnessStateSchema, observedAt: timestampSchema, sourceUpdatedAt: timestampSchema, invalidAfter: timestampSchema.optional() }).strict()
+/**
+ * Per-queue counts for the collaboration tab row.
+ *
+ * A count is a disclosure surface, so each one is computed with the same
+ * authorization predicate as the list it summarises. The queue set is closed and
+ * every queue is always counted, which is what lets a reader tell "none" from
+ * "not counted": an absent key would be indistinguishable from an empty queue.
+ */
+export const collaborationQueueCountsSchema = z.object({
+  queues: z.object({
+    'needs-you': z.number().int().nonnegative(),
+    messages: z.number().int().nonnegative(),
+    'agent-delivery': z.number().int().nonnegative(),
+    updates: z.number().int().nonnegative(),
+  }).strict(),
+}).strict()
 export const humanAttentionItemSchema = z.object({
   projectionVersion: humanAttentionProjectionVersionSchema,
   id: z.string().regex(/^v1:[a-z_]+:[0-9a-f-]{36}$/),
@@ -1603,6 +1619,7 @@ export const stage2RouteManifest = [
   { method: 'GET', path: '/api/v1/rooms/{id}/timeline', authenticated: true },
   { method: 'POST', path: '/api/v1/rooms/{id}/messages', authenticated: true, mutation: true },
   { method: 'POST', path: '/api/v1/messages/{id}/resolve', authenticated: true, mutation: true },
+  { method: 'GET', path: '/api/v1/collaboration/queue-counts', authenticated: true },
   { method: 'GET', path: '/api/v1/inbox', authenticated: true },
   { method: 'GET', path: '/api/v1/inbox/{id}', authenticated: true },
   { method: 'POST', path: '/api/v1/inbox/{id}/claim', authenticated: true, mutation: true },

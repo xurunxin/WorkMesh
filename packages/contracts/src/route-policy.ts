@@ -169,6 +169,10 @@ const workspaceAdminOperations = new Set([
 
 const humanOnlyOperations = new Set([
   ...workspaceAdminOperations,
+  // The queue counts are a Human-only disclosure: each count reuses the
+  // authorization predicate of the list it summarises, and an Agent has no queue
+  // of its own to summarise.
+  'listCollaborationQueueCounts',
   'listWorkbenchLlmConnections',
   'createWorkbenchLlmConnection',
   'getWorkbenchLlmConnection',
