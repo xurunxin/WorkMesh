@@ -473,7 +473,7 @@ function OperationsContentScope({ authorityKey }: OperationsContentProps & { aut
         </div>
         <Button onClick={refreshAll}>{operationsCopy.refresh}</Button>
       </header>
-      {refreshBusy && <span aria-live="polite" className="sr-only" role="status">{operationsCopy.loading}</span>}
+      {refreshBusy && <span aria-live="polite" className="wm-visually-hidden" role="status">{operationsCopy.loading}</span>}
       {(mutationError || loadError) && <ErrorState actionLabel={operationsCopy.retry} description={mutationError || operationsCopy.errorDescription} onAction={refreshAll} title={operationsCopy.error} />}
       {!features && !loadError && <div className="operations-loading"><SkeletonList columns={2} items={6} label={operationsCopy.loading} /></div>}
       {features && !operationsEnabled && <div className="center" data-testid="operations-disabled"><EmptyState description={operationsCopy.disabledDescription} title={operationsCopy.disabledTitle} /></div>}

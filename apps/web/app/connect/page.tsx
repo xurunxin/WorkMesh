@@ -161,7 +161,7 @@ export default function ConnectPage() {
       <p>{text.handoffBody}</p>
     </section>}
     <p className="onboarding-authority-note"><strong>{text.authorityTitle}</strong> {text.authorityBody}</p>
-    <span className="sr-only" aria-live="polite">{copyAnnouncement === 'config' ? text.configCopiedAnnouncement : copyAnnouncement === 'link' ? text.linkCopiedAnnouncement : ''}</span>
+    <span className="wm-visually-hidden" aria-live="polite">{copyAnnouncement === 'config' ? text.configCopiedAnnouncement : copyAnnouncement === 'link' ? text.linkCopiedAnnouncement : ''}</span>
     </section></div>
   </AppShell>
 }

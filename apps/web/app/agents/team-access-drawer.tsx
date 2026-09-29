@@ -201,7 +201,7 @@ function TeamAccessCard({ access, agent, busy, canManage, compact, copy, onGrant
         <form className="team-access-form" key={`${access?.revision ?? 0}:${isActive}`} onSubmit={submit}>
           {compact ? <>
             <label className="team-access-toggle-compact">
-              <span className="sr-only" id={`${viewBaseId}-compact-label`}>{text.teamAccessViewLabel}: {selectedView.label}</span>
+              <span className="wm-visually-hidden" id={`${viewBaseId}-compact-label`}>{text.teamAccessViewLabel}: {selectedView.label}</span>
               <select
                 aria-label={text.teamAccessViewLabel}
                 className="team-access-toggle-select"

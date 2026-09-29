@@ -55,7 +55,9 @@ describe('human UI layout contract', () => {
   it('keeps standalone Operations metrics dense without crossing the padded content box', () => {
     const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
 
-    expect(styles).toMatch(/@media\s*\(min-width:\s*1200px\)\s*and\s*\(max-width:\s*1599px\)\s*\{[\s\S]*?\.content--full\s+\.operations-usage-loading\s+\.skeleton-list,\s*\.content--full\s+\.operations-metrics-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*13rem\),\s*17rem\)\);/s)
+    // The metric grid's own density lives in @workmesh/ui now; what stays here
+    // is the loading placeholder, which is this screen's arrangement.
+    expect(styles).toMatch(/@media\s*\(min-width:\s*1200px\)\s*and\s*\(max-width:\s*1599px\)\s*\{[\s\S]*?\.content--full\s+\.operations-usage-loading\s+\.skeleton-list\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*13rem\),\s*17rem\)\);/s)
     expect(styles).toMatch(/@media\s*\(min-width:\s*1600px\)\s*\{[\s\S]*?\.content--full\s+\.operations-metrics\s*\{[^}]*width:\s*calc\(85%\s*\+\s*3rem\s*\+\s*1px\);/s)
   })
 
