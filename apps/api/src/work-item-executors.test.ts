@@ -119,9 +119,59 @@ describe('Work Item executor response projection', () => {
       session_id: '66666666-6666-4666-8666-666666666666',
       session_state: 'queued',
       assigned_at: assignedAt.toISOString(),
+      // A queued Session has not started, so no budget entry is measurable. It
+      // stays null rather than becoming a zero the row would report as spend.
+      budget_utilization: null,
     })
     expect(projected?.active_executor).toBeNull()
     expect(String(query.mock.calls[0]?.[0])).toContain("delegation.status='active'")
+  })
+
+  it('states the assigned Session budget, and nothing when the Session declares none', async () => {
+    const assignedAt = new Date('2026-08-03T10:00:00.000Z')
+    const startedAt = new Date('2026-08-03T10:00:00.000Z')
+    const base = {
+      work_item_id: item.id,
+      responsible_human_actor_id: item.responsible_human_actor_id,
+      responsible_human_display_name: 'Release owner',
+      assignment_delegation_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      assignment_agent_id: '44444444-4444-4444-8444-444444444444',
+      assignment_agent_actor_id: '55555555-5555-4555-8555-555555555555',
+      assignment_agent_slug: 'budgeted-agent',
+      assignment_agent_display_name: 'Budgeted Agent',
+      assignment_session_id: '66666666-6666-4666-8666-666666666666',
+      assignment_session_state: 'executing',
+      assignment_session_created_at: startedAt,
+      assignment_assigned_at: assignedAt,
+      projection_role: null,
+      agent_id: null,
+      agent_actor_id: null,
+      agent_slug: null,
+      agent_display_name: null,
+      session_id: null,
+      lease_id: null,
+      lease_kind: null,
+      resource_type: null,
+      resource_id: null,
+      execution_state: null,
+      heartbeat_health: null,
+      last_heartbeat_at: null,
+      lease_heartbeat_at: null,
+      lease_expires_at: null,
+    }
+
+    const budgeted = vi.fn().mockResolvedValue({ rows: [{ ...base, assignment_session_budget: { maxRuntimeSeconds: 7200 } }] })
+    const [withBudget] = await attachWorkItemExecutors({ query: budgeted } as never, [item])
+    expect(withBudget?.active_assignment?.budget_utilization).toMatchObject({
+      cap: 7200,
+      limit: 'runtimeSeconds',
+      measurable: true,
+    })
+    expect(withBudget?.active_assignment?.budget_utilization?.ratio).not.toBeNull()
+
+    const undeclared = vi.fn().mockResolvedValue({ rows: [{ ...base, assignment_session_budget: {} }] })
+    const [withoutBudget] = await attachWorkItemExecutors({ query: undeclared } as never, [item])
+    expect(withoutBudget?.active_assignment?.budget_utilization).toBeNull()
   })
 
   it('keeps terminal assignment history separate from active runtime execution', async () => {

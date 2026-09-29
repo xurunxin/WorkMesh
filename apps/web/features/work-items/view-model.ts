@@ -5,6 +5,34 @@ const enumValue = <T extends readonly string[]>(value: unknown, values: T): T[nu
 const text = (value: unknown): string => typeof value === 'string' ? value : ''
 const count = (value: unknown): number => typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0
 
+/**
+ * Reads the assignment's budget entry without inventing one. A missing or
+ * malformed entry stays null, so the row shows no chip rather than claiming the
+ * Session spent nothing.
+ */
+function budgetOf(assignment: WorkItemDto['active_assignment']): WorkSurfaceItem['activeBudget'] {
+  const entry = assignment?.budget_utilization
+  if (!entry || typeof entry !== 'object') return null
+  const ratio = typeof entry.ratio === 'number' && Number.isFinite(entry.ratio) ? entry.ratio : null
+  const cap = typeof entry.cap === 'number' && Number.isFinite(entry.cap) ? entry.cap : null
+  const used = typeof entry.used === 'number' && Number.isFinite(entry.used) ? entry.used : null
+  const limit = (LIMIT_KINDS as readonly string[]).includes(entry.limit)
+    ? entry.limit as WorkSurfaceItem['activeBudget'] extends null ? never : NonNullable<WorkSurfaceItem['activeBudget']>['limit']
+    : null
+  if (cap === null || limit === null) return null
+  return {
+    cap,
+    exhausted: entry.exhausted === true || (ratio !== null && ratio >= 1),
+    limit,
+    measurable: entry.measurable === true && ratio !== null,
+    ratio,
+    used,
+    warning: entry.warning === true,
+  }
+}
+
+const LIMIT_KINDS = ['runtimeSeconds', 'inputTokens', 'outputTokens', 'costUsd'] as const
+
 export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
   const teamKey = text(item.team_key)
   const number = typeof item.number === 'number' ? String(item.number) : ''
@@ -32,6 +60,9 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
     revision: typeof item.revision === 'number' ? item.revision : 0,
     activeAgent: executor?.agent_display_name ?? null,
     activeAgentState: executor?.execution_state ?? null,
+    // The assigned Session's worst measurable budget entry, or null. Null means
+    // the projection could not measure one - it is never a zero.
+    activeBudget: budgetOf(item.active_assignment),
     blockedByCount: count(item.surface_summary?.blocked_by_count),
     blockingCount: count(item.surface_summary?.blocking_count),
     subIssueCount: count(item.surface_summary?.sub_issue_count),

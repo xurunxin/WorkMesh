@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render } from '@testing-library/react'
-import { WorkItemAdaptiveCollection, type WorkItemCardData, type WorkItemStatusOption } from '@workmesh/ui'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { WorkItemAdaptiveCollection, WorkItemCard, type WorkItemCardData, type WorkItemStatusOption } from '@workmesh/ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 afterEach(() => { cleanup() })
@@ -134,5 +136,43 @@ describe('WorkItemAdaptiveCollection persistent DOM', () => {
     expect(onMove).toHaveBeenLastCalledWith(items[0], 'ready', 'pointer')
     fireEvent.dragEnd(firstCard!)
     expect(firstCard).not.toHaveClass('wm-work-item-card-dragging')
+  })
+})
+
+describe('WorkItemAdaptiveCollection run budget row', () => {
+  const budgeted: WorkItemCardData = {
+    ...items[0]!,
+    activeAgent: 'Atlas',
+    activeAgentState: 'executing',
+    activeBudget: { cap: 3600, exhausted: false, limit: 'runtimeSeconds', measurable: true, ratio: 0.42, used: 1512, warning: false },
+  }
+
+  // The collection hands its cards `layout="adaptive"` and keeps one keyed card
+  // tree across list/board, so a card may not learn the resolved layout through
+  // a prop. Board placement is CSS on the collection's own `data-layout`, and
+  // this asserts the card-level half: only a real board card drops the figure.
+  it('states the assigned run budget on a list row and on an adaptive card, but not on a board card', () => {
+    const list = render(<WorkItemAdaptiveCollection columns={columns} items={[budgeted]} layout="list" />)
+    expect(list.container.querySelectorAll('.wm-budget-chip')).toHaveLength(1)
+    expect(list.container.querySelector('.wm-budget-chip')?.textContent).toContain('42%')
+    // It rides the row's small-facts strip, not a line of its own.
+    expect(list.container.querySelector('.wm-work-item-facts .wm-budget-chip')).not.toBeNull()
+
+    const board = render(<WorkItemCard item={budgeted} layout="board" />)
+    expect(board.container.querySelectorAll('.wm-budget-chip')).toHaveLength(0)
+  })
+
+  it('keeps the card tree keyed and the budget mounted across the layout switch', () => {
+    const view = render(<WorkItemAdaptiveCollection columns={columns} items={[budgeted]} layout="list" />)
+    const firstCard = cardNodes(view.container)[0]
+    const chip = view.container.querySelector('.wm-budget-chip')
+    view.rerender(<WorkItemAdaptiveCollection columns={columns} items={[budgeted]} layout="board" />)
+    expect(cardNodes(view.container)[0]).toBe(firstCard)
+    expect(view.container.querySelector('.wm-budget-chip')).toBe(chip)
+  })
+
+  it('hides the budget in board through the collection stylesheet, not through a prop', () => {
+    const tokens = readFileSync(resolve(process.cwd(), '../../packages/ui/src/tokens.css'), 'utf8')
+    expect(tokens).toMatch(/\.wm-work-item-adaptive\[data-layout='board'\] \.wm-budget-chip \{ display: none; \}/)
   })
 })

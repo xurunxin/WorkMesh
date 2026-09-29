@@ -1245,7 +1245,10 @@ main#workmesh-main:focus-visible {
 .wm-work-item-project-slot { min-width: 0; padding-top: .25rem; padding-bottom: .25rem; }
 .wm-work-item-project span { overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-metadata { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; color: var(--wm-muted); font-size: .74rem; }
-.wm-work-item-metadata span, .wm-work-item-facts span { display: inline-flex; align-items: center; gap: .3rem; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+/* The app owns the fact spans it renders itself. Shared controls mounted in the
+   same strip - the run budget chip - keep their own geometry, so this must not
+   out-specify `packages/ui` on their subtree. */
+.wm-work-item-metadata span:not(.wm-budget-chip):not(.wm-budget-chip *), .wm-work-item-facts span:not(.wm-budget-chip):not(.wm-budget-chip *) { display: inline-flex; align-items: center; gap: .3rem; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 .wm-work-item-labels { display: flex; gap: .3rem; flex-wrap: wrap; align-items: center; min-height: 1.55rem; }
 .wm-work-item-labels.is-empty { min-height: 0; }
 .wm-work-item-labels .wm-work-item-label, .wm-work-item-labels button.wm-work-item-label { padding: .14rem .55rem; color: var(--wm-muted); background: var(--wm-surface-subtle); border: 1px solid var(--wm-border); border-radius: 999px; font-size: .68rem; line-height: 1.35; cursor: pointer; transition: filter .12s ease, transform .12s ease; }

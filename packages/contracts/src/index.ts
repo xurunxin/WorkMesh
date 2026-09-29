@@ -223,6 +223,20 @@ export const workItemAssignmentProjectionSchema = z.object({
   session_id: idSchema.nullable(),
   session_state: agentSessionStateSchema.nullable(),
   assigned_at: timestampSchema,
+  // The assigned Session's worst measurable budget entry, or null. Null means
+  // "not measurable here" - either the Session declares no budget, or the
+  // projection could not observe its usage. It is never a zero: a work item
+  // that has spent nothing and a work item whose spend is unknown are
+  // different facts, and the row must not collapse them.
+  budget_utilization: z.object({
+    limit: z.string(),
+    cap: z.number(),
+    used: z.number().nullable(),
+    ratio: z.number().nullable(),
+    measurable: z.boolean(),
+    warning: z.boolean(),
+    exhausted: z.boolean(),
+  }).strict().nullable().default(null),
 }).strict()
 export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_assignment: workItemAssignmentProjectionSchema.nullable().default(null), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()

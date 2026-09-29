@@ -162,6 +162,18 @@ describe('human UI layout contract', () => {
     }
   })
 
+  it('keeps the work item fact strips from re-specifying shared controls', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    // The app styles the fact spans it renders. The run budget chip is a shared
+    // control from packages/ui, and a bare `span` rule here out-specified it:
+    // the chip lost its 6px gap, its inline-flex box, and its tabular figures.
+    expect(styles).not.toMatch(/\.wm-work-item-(?:metadata|facts)\s+span\s*\{/)
+    expect(styles).not.toMatch(/\.wm-work-item-(?:metadata|facts)\s+span\s*,\s*\.wm-work-item-(?:metadata|facts)\s+span\s*\{/)
+    expect(styles).toMatch(/\.wm-work-item-metadata span:not\(\.wm-budget-chip\):not\(\.wm-budget-chip \*\)/)
+    expect(styles).toMatch(/\.wm-work-item-facts span:not\(\.wm-budget-chip\):not\(\.wm-budget-chip \*\)/)
+  })
+
   it('no longer carries an inline text object in settings/page.tsx', () => {
     const settings = readFileSync(new URL('./settings/page.tsx', import.meta.url), 'utf8')
     expect(settings).not.toContain("locale === 'zh-CN' ?")
