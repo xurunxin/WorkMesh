@@ -34,9 +34,8 @@ test('Project and Issue documents keep immutable revisions through the real Web 
   await expect(manager.locator('.wm-document-reading small')).toContainText('r3')
   // The restore commits its visible effect before the collection refresh settles,
   // and the dialog refuses to close while a mutation is in flight. Wait for the
-  // surface to be idle - the restore action re-enables - before asserting that
-  // Escape dismisses it.
-  await expect(manager.getByRole('button', { name: /恢复此版本为新修订|Restore this version as a new revision/ })).toBeEnabled()
+  // surface to report idle before asserting that Escape dismisses it - the
+  // restore action itself is gone by then, because the view returns to reading.
   await expect(manager).toHaveAttribute('data-busy', 'false')
   await page.keyboard.press('Escape')
   await expect(manager).toBeHidden()
