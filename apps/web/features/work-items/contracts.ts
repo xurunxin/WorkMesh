@@ -52,7 +52,7 @@ export type WorkItemDto = {
   milestone_id?: string | null
   parent_id?: string | null
   labels?: string[]
-  active_assignment?: { agent_display_name?: string; session_state?: string | null } | null
+  active_assignment?: { agent_display_name?: string; session_state?: string | null; budget_utilization?: { limit: string; cap: number; used: number | null; ratio: number | null; measurable: boolean; warning: boolean; exhausted: boolean } | null } | null
   active_executor?: { agent_display_name?: string; execution_state?: string } | null
   surface_summary?: {
     blocked_by_count?: number
@@ -78,6 +78,20 @@ export type WorkSurfaceItem = {
   revision: number
   activeAgent: string | null
   activeAgentState: string | null
+  /**
+   * The assigned Session's worst measurable budget entry, or null when the
+   * projection could not measure one. Null is never a zero: a run that has spent
+   * nothing and a run whose spend is unknown are different facts.
+   */
+  activeBudget: {
+    cap: number
+    exhausted: boolean
+    limit: 'runtimeSeconds' | 'inputTokens' | 'outputTokens' | 'costUsd'
+    measurable: boolean
+    ratio: number | null
+    used: number | null
+    warning: boolean
+  } | null
   blockedByCount: number
   blockingCount: number
   subIssueCount: number

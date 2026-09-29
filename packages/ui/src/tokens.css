@@ -902,3 +902,21 @@
 .wm-tool-chip.is-done .wm-tool-chip-dot { background: var(--wm-success); }
 .wm-tool-chip.is-failed { color: var(--wm-text); }
 .wm-tool-chip.is-failed .wm-tool-chip-dot { background: var(--wm-danger); }
+/* ---------- Budget chip ---------- */
+
+/* The row-sized budget figure: a hairline track, a fill, and the percentage as
+   text so colour is never the only channel. Geometry follows the prototype's
+   `.wi-budget`: a 44x3 rail with a 6px gap to a 10px monospace number. */
+.wm-budget-chip { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+.wm-budget-chip-track { display: inline-block; width: 44px; height: 3px; flex: none; overflow: hidden; background: var(--wm-surface-hover); border-radius: var(--wm-radius-pill); }
+.wm-budget-chip-fill { display: block; height: 100%; background: var(--wm-accent); border-radius: var(--wm-radius-pill); }
+.wm-budget-chip-value { color: var(--wm-text-subtle); font-family: var(--wm-font-mono); font-size: 10px; font-variant-numeric: tabular-nums; }
+.wm-budget-chip-warning .wm-budget-chip-fill { background: var(--wm-warning); }
+.wm-budget-chip-exhausted .wm-budget-chip-fill { background: var(--wm-danger); }
+.wm-budget-chip-unknown .wm-budget-chip-fill.is-unknown { width: 100%; background: repeating-linear-gradient(135deg, var(--wm-border) 0 2px, transparent 2px 4px); }
+.wm-budget-chip-value.is-unknown { font-style: italic; }
+/* The adaptive collection keeps one keyed card tree across list/board and
+   expresses the resolved layout on its own `data-layout`. The budget belongs to
+   the list row, so board hides it here rather than through a prop - a prop
+   would re-render every card on each switch. */
+.wm-work-item-adaptive[data-layout='board'] .wm-budget-chip { display: none; }

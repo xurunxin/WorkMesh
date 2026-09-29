@@ -26,6 +26,12 @@ import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
 import { UserCircleIcon } from '@phosphor-icons/react/dist/csr/UserCircle'
 import { coordinateDismissalTriggerActivation, useDismissalLayer } from '../internal/overlay.js'
 import { Button } from '../primitives/button.js'
+import { BudgetChip, type SessionBudgetLimitKind } from './control-plane.js'
+
+/** The share at which a row-sized budget chip starts warning, and the share at
+ *  which it reads as spent. Both follow the prototype's dense-row budget bar. */
+const BUDGET_WARNING_RATIO = 0.7
+const BUDGET_DANGER_RATIO = 0.85
 
 /** Presentation-only work-item data; transport DTOs are mapped by the feature layer. */
 export type WorkItemCardData = {
@@ -44,6 +50,15 @@ export type WorkItemCardData = {
   revision?: number
   activeAgent?: string | null
   activeAgentState?: string | null
+  activeBudget?: {
+    cap: number
+    exhausted: boolean
+    limit: SessionBudgetLimitKind
+    measurable: boolean
+    ratio: number | null
+    used: number | null
+    warning: boolean
+  } | null
   blockedByCount?: number
   blockingCount?: number
   subIssueCount?: number
@@ -60,6 +75,14 @@ export type WorkItemCopy = {
   boardColumn: (name: string) => string
   clearFilters: string
   completedSubIssues: (completed: number, total: number) => string
+  /**
+   * The row's budget figure. `budgetLabel` is the accessible description of a
+   * measurable entry and `budgetUnknown` states that the projection could not
+   * observe usage - it never reports a zero it did not measure.
+   */
+  budgetLabel: (limit: string, used: number | null, cap: number) => string
+  budgetPercent: (ratio: number) => string
+  budgetUnknown: (limit: string, cap: number) => string
   dropWorkHere: string
   filterLabel: string
   filterLess: string
@@ -108,6 +131,9 @@ const defaultWorkItemCopy: WorkItemCopy = {
   allProjects: 'All projects',
   allStatuses: 'All statuses',
   boardColumn: name => `${name} column`,
+  budgetLabel: (limit, used, cap) => `Assigned run budget ${limit}: ${used ?? 'unknown'} of ${cap}`,
+  budgetPercent: ratio => `${Math.round(ratio * 100)}%`,
+  budgetUnknown: (limit, cap) => `${limit} ?/${cap}`,
   clearFilters: 'Clear filters',
   completedSubIssues: (completed, total) => `Sub-issues ${completed}/${total}`,
   dropWorkHere: 'Drop work here',
@@ -378,6 +404,12 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
   }
   const stopPointer = (event: ReactPointerEvent<HTMLElement>) => event.stopPropagation()
   const hasFacts = Boolean(item.blockedByCount || item.blockingCount || item.subIssueCount)
+  // The assigned run's budget is a fact about this row, so it rides the same
+  // strip as the other small counts. A card the collection has not yet placed
+  // is `adaptive`, not `board`, so it keeps the chip; the collection hides it in
+  // board through CSS, because pushing the resolved layout into props would
+  // re-render every card on each list/board switch.
+  const budget = layout === 'board' ? null : item.activeBudget ?? null
   const hasLabels = Boolean(item.labels && item.labels.length > 0)
   const statusCategory = item.statusCategory ?? 'unknown'
   const statusColor = statusOptions.find(status => status.id === item.statusId)?.color
@@ -429,7 +461,18 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
         title={item.title}
       />}
     </div>}
-    {(showStableLayoutSlots || hasFacts) && <div aria-hidden={!hasFacts || undefined} className={workItemClassNames('wm-work-item-facts', !hasFacts && 'is-empty')}>{item.blockedByCount ? <span className="wm-fact-blocker" title="被阻塞"><ProhibitIcon aria-hidden="true" size={14} weight="bold" />{item.blockedByCount}</span> : null}{item.blockingCount ? <span className="wm-fact-blocking" title="阻塞下游"><ProhibitIcon aria-hidden="true" size={14} weight="regular" />{item.blockingCount}</span> : null}{subIssueTotal > 0 ? <span className="wm-fact-sub-issue" title="子 Issue 进度"><span className="wm-sub-progress" aria-hidden="true"><span className="wm-sub-progress-fill" style={{ width: `${subIssuePct}%` }} /></span><GitBranchIcon aria-hidden="true" size={14} weight="bold" />{text.completedSubIssues(subIssueDone, subIssueTotal)}</span> : null}</div>}
+    {(showStableLayoutSlots || hasFacts || budget) && <div aria-hidden={!hasFacts && !budget || undefined} className={workItemClassNames('wm-work-item-facts', !hasFacts && !budget && 'is-empty')}>{item.blockedByCount ? <span className="wm-fact-blocker" title="被阻塞"><ProhibitIcon aria-hidden="true" size={14} weight="bold" />{item.blockedByCount}</span> : null}{item.blockingCount ? <span className="wm-fact-blocking" title="阻塞下游"><ProhibitIcon aria-hidden="true" size={14} weight="regular" />{item.blockingCount}</span> : null}{subIssueTotal > 0 ? <span className="wm-fact-sub-issue" title="子 Issue 进度"><span className="wm-sub-progress" aria-hidden="true"><span className="wm-sub-progress-fill" style={{ width: `${subIssuePct}%` }} /></span><GitBranchIcon aria-hidden="true" size={14} weight="bold" />{text.completedSubIssues(subIssueDone, subIssueTotal)}</span> : null}
+      {/* The prototype states the assigned run's budget on the list row and not on
+          the board card, so it is absent from board and from an unresolved card. */}
+      {budget && <BudgetChip
+        entry={budget}
+        exhaustedRatio={BUDGET_DANGER_RATIO}
+        label={text.budgetLabel(budget.limit, budget.used, budget.cap)}
+        percentLabel={text.budgetPercent}
+        unknownLabel={text.budgetUnknown(budget.limit, budget.cap)}
+        warningRatio={BUDGET_WARNING_RATIO}
+      />}
+    </div>}
     {showStatusControl && onMove && statusOptions.length > 0 && <label className="wm-work-item-status-control" onClick={event => event.stopPropagation()} onPointerDown={event => event.stopPropagation()}><span className="wm-visually-hidden">{text.moveItem(item.title)}</span><select aria-label={text.moveItem(item.title)} disabled={dragState === 'pending'} onChange={(event: ChangeEvent<HTMLSelectElement>) => move(event.currentTarget.value, 'explicit-status-selector')} value={item.statusId}>{statusOptions.map(status => <option key={status.id} value={status.id}>{status.name}</option>)}</select></label>}
   </article>
 }

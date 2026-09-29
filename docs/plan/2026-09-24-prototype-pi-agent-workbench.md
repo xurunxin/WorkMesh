@@ -1717,3 +1717,116 @@ W18 记录按"12 导航 + 认证对（计 1）"记 13，遗漏 `#/detail`；`des
 - 无数据迁移、无新增/变更事件、无 Skill 变更；`RunExplanation` 为 GET 投影，无破坏性写路径。契约新增字段对旧消费者是增量（消费者须忽略未知字段）。
 - `apps/api/src/control-center/routes.ts` 不在 `agent-lock-order-manifest` 覆盖的 15 个文件内，故本次改 SELECT 不触发语句清单重生成。
 
+<!-- WM-WEBPI-20260924:W20 -->
+
+# W20 审批中心按原型解剖重建（PR #168，合并 `3e469b1`）
+
+阶段：M5 改造；状态：**完成（2026-09-28）**。触发：路线图 #121 逐屏对照，发现审批中心的卡片解剖与原型 `.attn` 卡不符。
+
+## 1. 改了什么
+
+审批中心整体按原型重建为 `.attn` 卡结构。同一个 PR 修掉了 4 个 CI 失败，其中三个是**误删**而非引入：工作台双新建按钮、折叠筛选、`.wm-page-head` 容器查询，以及 `.wm-shell-search` 的弹性规则——最后一条是"重建时顺手清 CSS"清掉了仍在用的规则。
+
+## 2. 判别方法
+
+四个失败里有三个指向 PR 未触碰的模式。按既定规则先判"是不是本来就红"：`git show origin/main:path/to/file` 确认后，其中三条是 PR 自己删的，只有一条属于既有缺陷。结论：**CI 红不是"仓库坏了"，是"我删错了"**。重建类改动清 CSS 前必须逐条确认零调用，而不是按类名相似度删。
+
+<!-- WM-WEBPI-20260924:W21 -->
+
+# W21 版本化文档域组件化 + 团队访问（PR #169 / #170，合并 `dcb978b` / `407c66a`）
+
+阶段：M5 改造；状态：**完成（2026-09-28）**。
+
+## 1. 文档域
+
+抽 `DocumentList` / `DocumentReading` / `DocumentRevisionList` / `DiffView` 四个域组件。模式切换由"变体按钮"改为 `TabBar`。过程中发现一条旧断言本身有问题：「历史容器内含被检视正文」——旧实现把历史和正文塞在同一容器里，断言把这个 bug 当成了正确行为，已改正。
+
+## 2. 团队访问
+
+新增 `Eyebrow`（12 文件 32 处）、`SettingsGrid` / `SettingsCard` / `SettingsForm` / `SettingsNotice` / `DangerZone` 与 `domain/workflow.tsx`，清掉 67 条死 CSS，顺带修掉 `index.tsx` 的重复导出。
+
+**判别记录**：清死 CSS 用脚本扫，但必须人工复核每一条。一个组件（`SettingsGrid`）在库中零调用——这正是"看起来死其实没接上"的信号，与 `DataTableFrame` 同类。
+
+<!-- WM-WEBPI-20260924:W22 -->
+
+# W22 运营统计条与数据表框收敛（PR #171 / #172，合并 `55c822e` / `70f80c5`）
+
+阶段：M5 改造；状态：**完成（2026-09-28）**。
+
+- 运营统计条 `StatGrid` / `StatCard`。发现并折叠 `.sr-only` 与库中 `.wm-visually-hidden` 的**逐字节重复**。补两行币种桶时差点被静默压成一行——多行结构必须断言行数，不能只断言有内容。
+- 四处可滚动表格区域收敛到 `DataTableFrame`（该组件此前在库中**零调用**，四处产品代码各自手搓）。顺带修掉文档对话框的 in-flight 守卫（`aria-busy` + spec 等空闲）。
+
+<!-- WM-WEBPI-20260924:W23 -->
+
+# W23 工具账本读路径 + 队列计数（PR #173 / #174，合并 `c7a2699` / `71dff45`）
+
+阶段：M5 改造；状态：**完成（2026-09-29）**。
+
+## 1. 两条路线都是"暴露既有事实"，不是新造来源
+
+- **工具账本**：迁移 `0012`（W13 Phase B）**早已建好** `workbench_tool_invocations` 表（`tool_name` / `call_count` / `sanitized_input_summary` / `usage` / `sequence`），runner **早已在写**。缺的只是读路径。`ToolChip` / `ToolChipRow` 随之落地。
+- **队列 tab 计数**：`/api/v1/collaboration/queue-counts`。两条设计约束：
+  1. **计数是披露面，必须复用列表同一套授权谓词**——否则计数本身成为越权信道。
+  2. `needs-you` 计数跑注意力投影自身的 SQL，因为它是 `decisions` / `approvals` / `inbox_items` / `sessions` / `completion_suggestions` 的 **UNION，不是表**。
+
+## 2. 共享的两条底线
+
+- **计数/预算 null ≠ 零**：契约文档、API 注释、Web 类型三处都写明；组件无条目时渲染 `null`。
+- **不编造图标分类法**：账本只记工具名不记类别，`ToolChip` 用中性字形，不按名字猜类别。
+- **完成点跟随 turn 而非工具**：失败 turn 不能把工具呈现为已完成。
+
+<!-- WM-WEBPI-20260924:W24 -->
+
+# W24 工作项行的运行预算（PR #175）
+
+阶段：M5 改造；状态：**完成（2026-09-30）**。触发：用户在确认原型 `#/home` 视觉后批准先做"工作项行的预算条"这一最小可复用项。
+
+## 1. 契约
+
+`workItemAssignmentProjectionSchema` 新增 `budget_utilization`，为被委派 Session 中最差的那一条可测预算，`.nullable().default(null)`。
+
+**null 不是零**：一次什么都没花的运行，与一次用量无法观测的运行，是两个不同事实。行保持沉默，而不是画一条读起来像 0 的空条。契约文档、API 注释、Web 类型三处都写明。
+
+投影读 `agent_sessions.budget` 与 `created_at`，经 `@workmesh/domain` 的 `deriveSessionBudgetUtilization` / `worstSessionBudgetUtilization` 换算——预算算术的唯一真相源仍在 domain，前端不参与计算。
+
+## 2. 几何与阈值：照抄原型，不重新推导
+
+| 项 | 原型 `.wi-budget` | 生产 `.wm-budget-chip` |
+|---|---|---|
+| 轨道 | 44 × 3 px | 44 × 3 px |
+| 轨道↔数字 | 6 px | 6 px |
+| 数字 | 10px 等宽 | 10px 等宽 |
+| 预警 / 耗尽 | 0.70 / 0.85 | 0.70 / 0.85 |
+
+百分比固定一种中性色——**色调由填充承担，不是由文字承担**。第一版把正常态填成灰色、文字随色调变色，与原型相反，已改回。
+
+## 3. 三个真实缺陷（都是这轮暴露的）
+
+1. **列表行面整体不显示。** `AdaptiveWorkItemCard` 给每张卡硬编码 `layout="adaptive"`，于是 `layout === 'list'` 判据在整个产品里**永远为假**，一个 chip 都渲染不出来。同一轮还发现外层 SELECT 漏了 `assignment_session.budget` / `created_at` 两个别名，行里读不到，预算恒为 null。
+2. **应用样式表压过共享控件。** `apps/web/app/styles.css` 一条裸的 `.wm-work-item-facts span` 规则比库规则更 specific，把共享控件的 6px 间距压成 4.8px、`display` 从 `inline-flex` 变 `flex`、塞进 `white-space`。已隔离并补契约测试守住"应用样式表不得重述共享控件规格"这条边界。
+3. **我自己打破了持久 DOM 契约。** 第一版给卡加 `listRow` prop 并塞进 memo 依赖，全量跑时两个 300 卡 DOM 套件双双超时（5000ms / 15000ms）。用 `git stash` 在干净 main 上复跑确认 **65/65 全绿**，判定为本 PR 引入而非既有问题。根因不是逻辑错，而是违背 `WorkItemAdaptiveCollection` 的契约——*列表/看板切换不重渲染卡片，布局只由祖先 `data-layout` + CSS 表达*。
+
+## 4. 看板用 CSS 而非 prop
+
+改用 `.wm-work-item-adaptive[data-layout='board'] .wm-budget-chip { display: none; }`：
+
+| | prop 方案 | CSS 方案 |
+|---|---|---|
+| `work-item-adaptive.test.tsx` | 4025 ms | **970 ms** |
+| web 全量 | 58.7 s | **52.1 s** |
+
+因此 `work-surfaces-pagination` 的"每张卡只渲染一次"契约重新成立。**教训：把派生状态从"已经用 CSS 表达的祖先"推进 props，会同时破坏性能契约与 memo 化。**
+
+## 5. 真实栈验证（数据来自真实委派的 `elapsed / cap`，非 mock）
+
+预警 `79%`（35/44px）、耗尽 `100%`、正常 `2%`；看板态 DOM 保留 7 枚（零重渲染）、可见 0。
+
+全量 `lint` + `typecheck` + `test` **65/65 通过，0 cached**（`--force` 真实执行，非 turbo 缓存复述）。
+
+## 6. 已知取舍
+
+低于 0.5% 的用量显示为 `0%`（原型同样 `Math.round`）。它与"用量未知"是两条不同通道：未知是斜纹填充 + 斜体文案，tooltip 始终带精确值。
+
+## 7. 范围外
+
+未建原型 `#/home` 的三段组合落地屏，未加运行栏——按既定顺序各自单独一轮。

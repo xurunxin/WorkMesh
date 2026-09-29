@@ -72,6 +72,50 @@ export function SessionBudgetMeter({ entries, label, percentLabel, entryLabel, u
   </div>
 }
 
+export type BudgetChipProps = Readonly<{
+  /** The single entry to show. Null renders nothing. */
+  entry: SessionBudgetUtilizationView | null
+  label: string
+  percentLabel: (ratio: number) => string
+  unknownLabel: string
+  /** Above this share the chip is a warning; at or above it, it is a stop. */
+  warningRatio?: number
+  exhaustedRatio?: number
+}>
+
+/**
+ * The row-sized form of the budget meter: a hairline track, a fill, and the
+ * percentage as text. A list row states a budget as one glanceable figure, and
+ * a full meter there would compete with the title for the row's rhythm.
+ *
+ * It keeps SessionBudgetMeter's two refusals. No entry means no chip - a work
+ * item with no run, or a run that declares no budget, shows nothing rather than
+ * an empty track. An entry whose usage cannot be observed says so instead of
+ * rendering an empty bar that reads as zero.
+ */
+export function BudgetChip({ entry, exhaustedRatio = 1, label, percentLabel, unknownLabel, warningRatio }: BudgetChipProps) {
+  if (!entry) return null
+  // A budget the domain already calls exhausted is never softened into a
+  // warning by a lower presentation threshold.
+  const tone = !entry.measurable || entry.ratio === null
+    ? 'unknown'
+    : entry.exhausted || entry.ratio >= exhaustedRatio
+      ? 'exhausted'
+      : warningRatio !== undefined && entry.ratio >= warningRatio
+        ? 'warning'
+        : 'ok'
+  return <span className={`wm-budget-chip wm-budget-chip-${tone}`} title={label}>
+    {entry.measurable && entry.ratio !== null
+      ? <span aria-hidden="true" className="wm-budget-chip-track">
+        <span className="wm-budget-chip-fill" style={{ width: `${Math.round(entry.ratio * 100)}%` }} />
+      </span>
+      : <span className="wm-budget-chip-track"><span className="wm-budget-chip-fill is-unknown" /></span>}
+    {entry.measurable && entry.ratio !== null
+      ? <span aria-valuemax={1} aria-valuemin={0} aria-valuenow={entry.ratio} aria-valuetext={percentLabel(entry.ratio)} className="wm-budget-chip-value" role="meter">{percentLabel(entry.ratio)}</span>
+      : <span className="wm-budget-chip-value is-unknown">{unknownLabel}</span>}
+  </span>
+}
+
 export type ActorAttributionProps = {
   activeAgent?: { label: string; name: string } | null
   relationshipLabel?: string

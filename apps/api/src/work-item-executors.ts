@@ -4,6 +4,7 @@ import type {
   WorkItemExecutorProjection,
   WorkItemResponse,
 } from '@workmesh/contracts'
+import { deriveSessionBudgetUtilization, worstSessionBudgetUtilization } from '@workmesh/domain'
 
 type Queryable = Pick<Pool | PoolClient, 'query'>
 type WorkItemBase = Record<string, unknown> & {
@@ -22,6 +23,8 @@ type ProjectionRow = {
   assignment_agent_display_name: string | null
   assignment_session_id: string | null
   assignment_session_state: WorkItemAssignmentProjection['session_state']
+  assignment_session_budget: Record<string, number> | null
+  assignment_session_created_at: Date | null
   assignment_assigned_at: Date | null
   projection_role: 'primary' | 'reviewer' | null
   agent_id: string | null
@@ -40,7 +43,7 @@ type ProjectionRow = {
   lease_expires_at: Date | null
 }
 
-const assignment = (row: ProjectionRow): WorkItemAssignmentProjection | null => {
+const assignment = (row: ProjectionRow, observedAt: string): WorkItemAssignmentProjection | null => {
   if (
     !row.assignment_delegation_id
     || !row.assignment_agent_id
@@ -58,6 +61,13 @@ const assignment = (row: ProjectionRow): WorkItemAssignmentProjection | null => 
     session_id: row.assignment_session_id,
     session_state: row.assignment_session_state,
     assigned_at: row.assignment_assigned_at.toISOString(),
+    budget_utilization: worstSessionBudgetUtilization(
+      deriveSessionBudgetUtilization({
+        budget: row.assignment_session_budget ?? {},
+        startedAt: row.assignment_session_created_at?.toISOString() ?? null,
+        observedAt: observedAt,
+      }),
+    ),
   }
 }
 
@@ -121,6 +131,8 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
             assignment_actor.display_name AS assignment_agent_display_name,
             assignment_session.id AS assignment_session_id,
             assignment_session.state AS assignment_session_state,
+            assignment_session.budget AS assignment_session_budget,
+            assignment_session.created_at AS assignment_session_created_at,
             assignment.created_at AS assignment_assigned_at,
             projection.projection_role,projection.agent_id,
             projection.agent_actor_id,definition.slug AS agent_slug,
@@ -152,7 +164,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
          ON assignment_actor.id=assignment.agent_actor_id
         AND assignment_actor.workspace_id=item.workspace_id
        LEFT JOIN LATERAL (
-         SELECT session.id,session.state
+         SELECT session.id,session.state,session.budget,session.created_at
            FROM agent_sessions session
           WHERE session.workspace_id=item.workspace_id
             AND session.delegation_id=assignment.id
@@ -176,6 +188,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
     [workspaceIds[0],items.map(item => item.id)],
   )
 
+  const observedAt = new Date().toISOString()
   const projections = new Map<string, {
     responsible_human: WorkItemResponse['responsible_human']
     active_assignment: WorkItemAssignmentProjection | null
@@ -187,7 +200,7 @@ export async function attachWorkItemExecutors<T extends WorkItemBase>(
       responsible_human: row.responsible_human_actor_id && row.responsible_human_display_name
         ? { actor_id: row.responsible_human_actor_id, display_name: row.responsible_human_display_name }
         : null,
-      active_assignment: assignment(row),
+      active_assignment: assignment(row, observedAt),
       active_executor: null,
       shared_reviewers: [],
     }
