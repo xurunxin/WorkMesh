@@ -1,4 +1,5 @@
 import type { Locale, OperationsCopy } from '../lib/i18n';
+import { DataTableFrame } from '@workmesh/ui';
 
 export type OperationsRun = {
   id: string;
@@ -71,13 +72,7 @@ type RunsTableProps = {
 
 export function RunsTable({ runs, locale, copy }: RunsTableProps) {
   return (
-    <div
-      aria-label={copy.runs}
-      className="operations-table-scroll"
-      data-testid="operations-table-scroll"
-      role="region"
-      tabIndex={0}
-    >
+    <DataTableFrame className="operations-table-scroll" data-testid="operations-table-scroll" label={copy.runs}>
       <table className="operations-runs-table">
         <caption className="wm-visually-hidden">{copy.runs}</caption>
         <colgroup>
@@ -115,7 +110,7 @@ export function RunsTable({ runs, locale, copy }: RunsTableProps) {
           })}
         </tbody>
       </table>
-    </div>
+    </DataTableFrame>
   );
 }
 

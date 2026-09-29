@@ -11,6 +11,7 @@ import {
 } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { DataTableFrame } from '@workmesh/ui'
 import styles from './markdown.module.css'
 
 export const COMPACT_MARKDOWN_LINE_LIMIT = 14
@@ -135,9 +136,9 @@ function markdownComponents(copy: MarkdownCopy): Components {
       return <CodeBlock copy={copy}>{children}</CodeBlock>
     },
     table({ children, node: _node, ...props }) {
-      return <div aria-label={copy.table} className={styles.tableFrame} role="region" tabIndex={0}>
+      return <DataTableFrame className={styles.tableFrame} label={copy.table}>
         <table {...props}>{children}</table>
-      </div>
+      </DataTableFrame>
     },
   }
 }

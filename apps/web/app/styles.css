@@ -356,7 +356,6 @@ main#workmesh-main:focus-visible {
 .automation-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: .65rem; }
 .automation-row > div { display: grid; gap: .15rem; min-width: 0; }
 .operations-table-scroll { width: min(100%, 70rem); min-width: 0; max-width: 100%; max-height: min(22rem, 55vh); overflow: auto; overscroll-behavior: contain; border: 1px solid var(--wm-border); border-radius: 9px; background: var(--wm-surface); }
-.operations-table-scroll:focus-visible { outline: 2px solid var(--wm-focus); outline-offset: 2px; }
 .operations-runs-table { width: min(100%, 70rem); min-width: 48rem; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: .82rem; }
 .operations-runs-table .operations-run-column-id { width: 15%; }
 .operations-runs-table .operations-run-column-kind { width: 12%; }
@@ -891,7 +890,6 @@ main#workmesh-main:focus-visible {
 .app-shell .approval-history-decision { display: grid; gap: .15rem; min-width: 0; margin: 0; padding: .4rem .5rem; border-left: 3px solid var(--wm-border-strong); background: var(--wm-surface-subtle); color: var(--wm-text); }
 .app-shell .approval-history-decision > strong { font-size: .72rem; text-transform: capitalize; }
 .app-shell .approval-table-wrap, .app-shell .approval-history-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border: 1px solid var(--wm-border); border-radius: 8px; }
-.app-shell .approval-table-wrap:focus-visible, .app-shell .approval-history-table-wrap:focus-visible { outline: 2px solid var(--wm-focus); outline-offset: 2px; }
 .app-shell .approval-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
 .app-shell .approval-table-wrap .approval-table { min-width: 720px; }
 .app-shell .approval-history-table-wrap .approval-table { min-width: 920px; }

@@ -143,8 +143,7 @@
 .overflowToggle:hover { background: var(--wm-surface-hover); }
 
 .codeCopy:focus-visible,
-.overflowToggle:focus-visible,
-.tableFrame:focus-visible {
+.overflowToggle:focus-visible {
   outline: 0;
   box-shadow: var(--wm-focus-ring);
 }
