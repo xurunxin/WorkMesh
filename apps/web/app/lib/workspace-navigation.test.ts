@@ -4,6 +4,7 @@ import { workspaceNavigation, workspaceUtilityNavigation } from './workspace-nav
 const labels = {
   agents: '智能体',
   guidance: '指南',
+  home: '我的工作',
   inbox: '收件箱',
   issues: 'Issues',
   navGroupGovernance: '治理',
@@ -25,7 +26,7 @@ describe('shared workspace navigation', () => {
     const sections = workspaceNavigation({ active: 'agents', t })
     expect(sections.map(section => section.label)).toEqual(['工作台', '治理', '运营'])
     expect(sections.map(section => section.items.map(item => item.label))).toEqual([
-      ['工作台', 'Issues', '指南'],
+      ['工作台', '我的工作', 'Issues', '指南'],
       ['收件箱', '恢复中心', '项目', '智能体'],
       ['运营'],
     ])
@@ -33,9 +34,9 @@ describe('shared workspace navigation', () => {
 
   it('publishes task-oriented destinations first and keeps Stable workflows reachable', () => {
     const navigation = flatten(workspaceNavigation({ active: 'agents', t }))
-    expect(navigation.map(item => item.label)).toEqual(['工作台', 'Issues', '指南', '收件箱', '恢复中心', '项目', '智能体', '运营'])
+    expect(navigation.map(item => item.label)).toEqual(['工作台', '我的工作', 'Issues', '指南', '收件箱', '恢复中心', '项目', '智能体', '运营'])
     expect(navigation.filter(item => item.active).map(item => item.href)).toEqual(['/agents'])
-    expect(navigation.map(item => item.href)).toEqual(expect.arrayContaining(['/?view=my-work', '/?view=guidance', '/operations']))
+    expect(navigation.map(item => item.href)).toEqual(expect.arrayContaining(['/?view=home', '/?view=my-work', '/?view=guidance', '/operations']))
   })
 
   it('keeps the agent workbench a first-class destination with a canonical URL', () => {

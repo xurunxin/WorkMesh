@@ -5,6 +5,7 @@ import { ChatsCircleIcon } from '@phosphor-icons/react/dist/csr/ChatsCircle'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { GearIcon } from '@phosphor-icons/react/dist/csr/Gear'
 import { GitBranchIcon } from '@phosphor-icons/react/dist/csr/GitBranch'
+import { HouseIcon } from '@phosphor-icons/react/dist/csr/House'
 import { ListBulletsIcon } from '@phosphor-icons/react/dist/csr/ListBullets'
 import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
 import { TrayIcon } from '@phosphor-icons/react/dist/csr/Tray'
@@ -16,6 +17,7 @@ export type WorkspaceNavigationKey = HomeScope | 'agents' | 'operations' | 'work
 type NavigationTranslationKey =
   | 'agents'
   | 'guidance'
+  | 'home'
   | 'inbox'
   | 'issues'
   | 'navGroupGovernance'
@@ -46,6 +48,7 @@ export function workspaceNavigation({ active, counts, onHomeNavigate, t }: Works
     ['projects', t('projects'), <FolderSimpleIcon aria-hidden="true" size={20} weight="regular" />],
   ]
   const legacyHomeItems: Array<[HomeScope, string, NavigationItem['icon']]> = [
+    ['home', t('home'), <HouseIcon aria-hidden="true" size={20} weight="regular" />],
     ['my-work', t('issues'), <ListBulletsIcon aria-hidden="true" size={20} weight="regular" />],
     ['guidance', t('guidance'), <BookOpenTextIcon aria-hidden="true" size={20} weight="regular" />],
   ]

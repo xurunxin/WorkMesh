@@ -30,6 +30,7 @@ import { useToast } from './lib/use-toast'
 import { workspaceNavigation, workspaceUtilityNavigation } from './lib/workspace-navigation'
 import { LatestRequestGate } from './lib/latest-request'
 import { ProjectsWorkbench } from './projects-workbench'
+import LandingScreen from './landing-screen'
 import { RealtimeStatus } from './realtime-status'
 import {
   projectWorkspaceHref,
@@ -606,7 +607,7 @@ function HomePageScope({
       await commentsPage.refresh()
     } catch (reason) { if (isAuthorityCurrent()) setError(requestError(reason)) }
   }
-  const pageTitle = scope === 'inbox' ? t('inbox') : scope === 'recovery' ? t('recovery') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
+  const pageTitle = scope === 'home' ? t('home') : scope === 'inbox' ? t('inbox') : scope === 'recovery' ? t('recovery') : scope === 'guidance' ? t('guidance') : scope === 'projects' ? t('projects') : t('issues')
   const fullPageDetailActive = fullItemView && (selectedItem !== null || (requestedItem?.mode === 'full_page' && detailErrorState !== null))
   // Nav counters come from data this scope already loaded, so a pill is never a
   // fabricated number. Destinations without a sourced count render no pill.
@@ -650,7 +651,7 @@ function HomePageScope({
       {actorError && <ErrorState actionLabel={t('retry')} description={actorError} onAction={() => void refreshActor()} title={t('workViewCouldNotRefresh')} />}
       {error && <ErrorState description={error} title={t('actionCouldNotComplete')} />}
       {conflictNotice && !selectedItem && <aside className="conflict-notice" role="alert" data-testid="work-item-conflict"><div><strong>{conflictNotice.title}</strong><p>{conflictNotice.action}</p></div><Button icon={<ArrowCounterClockwiseIcon aria-hidden="true" size={17} weight="bold" />} onClick={() => { setConflictNotice(null); void refreshWorkSurface() }} variant="secondary">{t('reloadLatestWork')}</Button></aside>}
-      {scope === 'inbox' ? <ActionableCollaborationQueues actor={actor} /> : scope === 'recovery' ? <RecoveryCenter actor={actor} /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
+      {scope === 'home' ? <LandingScreen locale={locale} /> : scope === 'inbox' ? <ActionableCollaborationQueues actor={actor} /> : scope === 'recovery' ? <RecoveryCenter actor={actor} /> : scope === 'guidance' ? <GuidancePanel actorId={actor.id} copy={guidanceCopy} workspaceId={actor.workspace_id ?? ''} team={selectedTeam} projects={teamProjects} /> : <>{selectedTeam ? <>
         <div className="collection-continuation"><LoadMoreButton collection={statesPage} label={t('status')} /><LoadMoreButton collection={humansPage} label={t('responsibleHuman')} /><LoadMoreButton collection={projectsPage} label={t('projects')} /></div>
         {scope !== 'projects' && workSurfaces}
         {scope === 'projects' && <ProjectsWorkbench actions={<><Button onClick={() => setEditProjectOpen(true)} variant="secondary">{t('editProject')}</Button><Button onClick={() => setMilestonesOpen(true)} variant="secondary">{locale === 'zh-CN' ? '里程碑' : 'Milestones'}</Button><Button onClick={() => setDocumentOwner({ type: 'project', id: selectedProject!.id, teamId: selectedProject!.team_id })} variant="secondary">{locale === 'zh-CN' ? '文档' : 'Documents'}</Button><Button icon={<PlusIcon aria-hidden="true" size={16} weight="bold" />} onClick={openCreateWorkItem} variant="primary">{t('newIssue')}</Button></>} actor={actor} items={items} labels={{ documents: locale === 'zh-CN' ? '文档' : 'Documents', editProject: t('editProject'), milestones: locale === 'zh-CN' ? '里程碑' : 'Milestones', newIssue: t('newIssue'), newProject: t('newProject'), noProjects: t('noProjects'), projects: t('projects'), projectOverview: t('projectOverview'), targetDate: t('targetDate'), workspace: 'Workspace' }} locale={locale} onCreateProject={() => setCreateProjectOpen(true)} onOpenProject={id => void openProject(id)} onSelectTab={selectProjectTab} projectTab={projectTab} projects={teamProjects} selectedProject={selectedProject} workSurface={workSurfaces} />}

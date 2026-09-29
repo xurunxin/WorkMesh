@@ -30,6 +30,7 @@ const digest = (overrides: Partial<ControlCenterResponse['collections']['running
   workItem: { id: '33333333-3333-4333-8333-333333333333', title: 'Project Control Center' },
   currentStep: { id: '66666666-6666-4666-8666-666666666666', title: 'Bind production projection', status: 'in_progress' as const, ordinal: 1 },
   health: { heartbeat: 'healthy' as const, lastHeartbeatAt: '2026-08-26T06:20:00.000Z' },
+  budgetUtilization: null,
   lastActivity: { id: '77777777-7777-4777-8777-777777777777', kind: 'action_completed', summary: 'Contract typecheck passed.', createdAt: '2026-08-26T06:21:00.000Z' },
   pendingHumanActionCount: 1,
   evidenceCount: 2,

@@ -44,6 +44,14 @@ export type SessionBudgetUtilizationView = Readonly<{
   exhausted: boolean
 }>
 
+/**
+ * A run row warns before it is spent. The row is a glanceable figure, so it
+ * turns at the prototype's 0.70 mark rather than waiting for the detail
+ * surface's 0.85; a budget the domain already calls exhausted is never
+ * softened by that lower threshold.
+ */
+const RUN_DIGEST_WARNING_RATIO = 0.7
+
 export type SessionBudgetMeterProps = Readonly<{
   entries: readonly SessionBudgetUtilizationView[]
   label: string
@@ -135,7 +143,7 @@ export type ControlCenterSectionProps = PropsWithChildren<{
   count: number
   description?: string
   title: string
-  tone: 'attention' | 'running' | 'risk' | 'verified'
+  tone: 'attention' | 'running' | 'risk' | 'verified' | 'work'
 }>
 
 export function ControlCenterSection({ action, children, count, description, title, tone }: ControlCenterSectionProps) {
@@ -145,6 +153,73 @@ export function ControlCenterSection({ action, children, count, description, tit
     {description && <p className="wm-control-section-description">{description}</p>}
     <div className="wm-control-section-content">{children}</div>
   </section>
+}
+
+export type RunDigestRowCopy = {
+  budget: string
+  budgetLabel: (limit: string, used: number | null, cap: number) => string
+  budgetPercent: (ratio: number) => string
+  budgetUnknown: (limit: string, cap: number) => string
+  heartbeat: string
+  intervene: string
+  noStep: string
+  pause: string
+  stop: string
+}
+
+export type RunDigestRowProps = Readonly<{
+  /** The server-derived worst budget entry, or null when none was measurable. */
+  budget: SessionBudgetUtilizationView | null
+  copy: RunDigestRowCopy
+  heartbeat: RunHealth
+  /** The short Session id the prototype shows in monospace. */
+  sessionRef: string
+  stateLabel: string
+  stateTone: 'info' | 'warning' | 'violet' | 'danger' | 'neutral'
+  agentName: string
+  /** The work item this run is executing, shown as a monospace reference. */
+  workItemRef?: string | null
+  stepTitle?: string | null
+  onPause?: () => void
+  onStop?: () => void
+  onIntervene?: () => void
+}>
+
+/**
+ * The prototype's session card in row form: a state dot and reference, the
+ * agent and its current step, then heartbeat and budget as two figures.
+ *
+ * The heartbeat is a liveness signal, not spend, so it keeps its own column
+ * even when no budget entry exists. A missing or unmeasurable budget renders no
+ * meter at all rather than an empty track, because "no run" and "a run that has
+ * spent nothing" are different facts.
+ */
+export function RunDigestRow({ agentName, budget, copy, heartbeat, onIntervene, onPause, onStop, sessionRef, stateLabel, stateTone, stepTitle, workItemRef }: RunDigestRowProps) {
+  return <article className="wm-run-digest">
+    <div className="wm-run-digest-head">
+      <span aria-hidden="true" className={`wm-run-digest-dot wm-run-digest-dot-${heartbeat === 'unknown' ? 'neutral' : heartbeat}`} />
+      <span className="wm-run-digest-ref">{sessionRef}</span>
+      <Badge className={`wm-run-digest-state wm-run-digest-state-${stateTone}`}>{stateLabel}</Badge>
+      {workItemRef && <span className="wm-run-digest-ref wm-run-digest-work-item">{workItemRef}</span>}
+    </div>
+    <div className="wm-run-digest-subject">
+      <RobotIcon aria-hidden="true" size={13} weight="duotone" />
+      <span>{agentName}</span>
+      {stepTitle && <><span aria-hidden="true" className="wm-run-digest-sep">·</span><span className="wm-run-digest-step">{stepTitle}</span></>}
+      {!stepTitle && <span className="wm-run-digest-step wm-run-digest-step-empty">{copy.noStep}</span>}
+    </div>
+    <dl className="wm-run-digest-telemetry">
+      <div><dt>{copy.heartbeat}</dt><dd><RunHealthBadge categoryLabel={copy.heartbeat} label={heartbeat} value={heartbeat} /></dd></div>
+      <div><dt>{copy.budget}</dt><dd>{budget
+        ? <BudgetChip entry={budget} label={copy.budgetLabel(budget.limit, budget.used, budget.cap)} percentLabel={copy.budgetPercent} unknownLabel={copy.budgetUnknown(budget.limit, budget.cap)} warningRatio={RUN_DIGEST_WARNING_RATIO} />
+        : null}</dd></div>
+      {(onPause || onStop || onIntervene) && <div className="wm-run-digest-actions">
+        {onPause && <Button aria-label={`${copy.pause}: ${sessionRef}`} onClick={onPause} size="sm" type="button" variant="secondary">{copy.pause}</Button>}
+        {onStop && <Button aria-label={`${copy.stop}: ${sessionRef}`} onClick={onStop} size="sm" type="button" variant="secondary">{copy.stop}</Button>}
+        {onIntervene && <Button aria-label={`${copy.intervene}: ${sessionRef}`} onClick={onIntervene} size="sm" type="button" variant="ghost">{copy.intervene}</Button>}
+      </div>}
+    </dl>
+  </article>
 }
 
 export type AttentionListItemProps = {
