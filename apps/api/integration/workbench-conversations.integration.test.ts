@@ -136,7 +136,8 @@ describe('durable workbench conversation admission', () => {
     // against rows shaped exactly as the runner writes them. The attempt hangs off
     // an execution Session, so the fixture seeds the delegation chain the attempt's
     // foreign keys require.
-    const [team] = (await db.query<{ id: string }>('SELECT id FROM teams WHERE workspace_id=$1 LIMIT 1', [workspaceId])).rows
+    const team = (await db.query<{ id: string }>(
+      `SELECT id FROM teams WHERE workspace_id=$1 LIMIT 1`, [workspaceId])).rows[0]!
     const agentActor = (await db.query<{ id: string }>(
       `INSERT INTO actors(workspace_id,kind,display_name) VALUES($1,'agent','Ledger Agent') RETURNING id`,
       [workspaceId])).rows[0]!.id
