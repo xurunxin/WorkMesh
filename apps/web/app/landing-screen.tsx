@@ -1,20 +1,17 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { ControlCenterDigest, HumanAttentionItem, ListResponse } from '@workmesh/contracts'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import type { HumanAttentionItem, ListResponse } from '@workmesh/contracts'
 import {
   AttentionKindBadge,
   AttentionListItem,
   ControlCenterSection,
   RiskBadge,
-  RunDigestRow,
-  RunHealthBadge,
   UrgencyBadge,
   WorkItemList,
-  type RunHealth,
   type WorkItemCardData,
 } from '@workmesh/ui'
-import { AgentControlDialog, type AgentControlAction } from './agent-control-dialog'
+import { RunDigestSummary } from '../features/sessions/run-digest-list'
 import { apiRequest } from './lib/api'
 import { toWorkSurfaceItem } from '../features/work-items/view-model'
 import type { WorkItemDto } from '../features/work-items/contracts'
@@ -46,32 +43,12 @@ function errorText(reason: unknown): string {
   return 'Unavailable'
 }
 
-const RUN_STATE_TONE: Record<string, 'info' | 'warning' | 'violet' | 'danger' | 'neutral'> = {
-  executing: 'info',
-  awaiting_input: 'warning',
-  awaiting_approval: 'warning',
-  awaiting_review: 'violet',
-  planning: 'info',
-  blocked: 'warning',
-  paused: 'neutral',
-  stale: 'danger',
-  failed: 'danger',
-}
-
-const RUN_HEALTH: Record<string, RunHealth> = {
-  healthy: 'healthy',
-  degraded: 'degraded',
-  stale: 'stalled',
-}
-
 export default function LandingScreen({ locale }: Readonly<{ locale: 'en' | 'zh-CN' }>) {
   const [attention, setAttention] = useState<HumanAttentionItem[] | null>(null)
   const [attentionSegment, setAttentionSegment] = useState<Segment>(initialSegment)
   const [workItems, setWorkItems] = useState<WorkItemCardData[] | null>(null)
   const [workSegment, setWorkSegment] = useState<Segment>(initialSegment)
-  const [runs, setRuns] = useState<ControlCenterDigest[] | null>(null)
-  const [runSegment, setRunSegment] = useState<Segment>(initialSegment)
-  const [control, setControl] = useState<{ action: AgentControlAction; sessionId: string } | null>(null)
+  const [runCount, setRunCount] = useState<number | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -98,21 +75,6 @@ export default function LandingScreen({ locale }: Readonly<{ locale: 'en' | 'zh-
       .catch(reason => { if (!cancelled) setWorkSegment({ state: 'failed', reason: errorText(reason) }) })
     return () => { cancelled = true }
   }, [])
-
-  const loadRuns = useCallback(() => {
-    setRunSegment(initialSegment)
-    // Ask for the running collection explicitly. The endpoint also projects an
-    // `attention` collection whose declared response shape does not match what
-    // it returns, so an unqualified request fails validation today.
-    return apiRequest<{ collections: { running: { items: ControlCenterDigest[] } } }>(`/api/v1/control-center?collection=running&limit=${RUN_LIMIT}`)
-      .then(response => {
-        setRuns(response.collections.running.items.slice(0, RUN_LIMIT))
-        setRunSegment({ state: 'ready', count: response.collections.running.items.length })
-      })
-      .catch(reason => { setRunSegment({ state: 'failed', reason: errorText(reason) }) })
-  }, [])
-
-  useEffect(() => { void loadRuns().catch(() => undefined) }, [loadRuns])
 
   const copy = useMemo(() => locale === 'zh-CN' ? {
     attention: '需要你',
@@ -202,29 +164,12 @@ export default function LandingScreen({ locale }: Readonly<{ locale: 'en' | 'zh-
       </ControlCenterSection>
 
       <ControlCenterSection
-        count={runSegment.state === 'ready' ? runSegment.count : 0}
+        count={runCount ?? 0}
         title={copy.runs}
         tone="running"
       >
-        {segmentBody(runSegment, runs?.length
-          ? runs.map(({ sessionId, ...run }) => <RunDigestRow
-            agentName={run.activeAgent?.displayName ?? run.title}
-            budget={run.budgetUtilization}
-            copy={copy}
-            heartbeat={RUN_HEALTH[run.health?.heartbeat ?? ''] ?? 'unknown'}
-            key={run.id}
-            onIntervene={sessionId ? () => setControl({ action: 'steer', sessionId }) : undefined}
-            onPause={sessionId ? () => setControl({ action: 'pause', sessionId }) : undefined}
-            onStop={sessionId ? () => setControl({ action: 'stop', sessionId }) : undefined}
-            sessionRef={run.id}
-            stateLabel={run.state}
-            stateTone={RUN_STATE_TONE[run.state] ?? 'neutral'}
-            stepTitle={run.currentStep?.title}
-            workItemRef={run.workItem?.id}
-          />)
-          : <p className="wm-landing-note">{copy.runEmpty}</p>, copy.runEmpty)}
+        <RunDigestSummary locale={locale} onCount={setRunCount} />
       </ControlCenterSection>
     </div>
-    {control && <AgentControlDialog action={control.action} onClose={() => setControl(null)} onCommitted={() => { setControl(null); void loadRuns() }} open sessionId={control.sessionId} />}
   </div>
 }
