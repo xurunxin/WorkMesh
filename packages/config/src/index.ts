@@ -390,3 +390,17 @@ export const loadReleaseInfo = (env: NodeJS.ProcessEnv = process.env) => ({
   ...releaseMetadata,
   buildSha: buildShaSchema.safeParse(env.WORKMESH_BUILD_SHA).data ?? 'unknown',
 })
+
+// The Lite image starts four roles from one filesystem tree and needs the same
+// table the container entrypoint uses. Re-exported here so the image resolves it
+// through the package entry point rather than a private path.
+export {
+  isLiteServiceRole,
+  liteServiceCommands,
+  liteServiceRoot,
+  liteServiceRoles,
+  resolveServiceCommand,
+  UnknownServiceRoleError,
+  unknownServiceRoleExitCode,
+} from './service-command.js'
+export type { LiteServiceCommand, LiteServiceRole } from './service-command.js'
