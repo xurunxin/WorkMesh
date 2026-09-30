@@ -34,6 +34,7 @@
     "check:runner-skill": "node scripts/generate-runner-skill-manifest.mjs --check",
     "validate:production-images": "node -- scripts/validate-production-images.mjs",
     "validate:lite": "node scripts/validate-lite-compose.mjs",
+    "validate:lite:self-test": "node scripts/validate-lite-compose.mjs --self-test",
     "test:load:realtime": "pnpm --filter @workmesh/api test:load:realtime",
     "test:load:heartbeat": "pnpm -C apps/api exec tsx ../../scripts/heartbeat-load.mts",
     "provision:soak:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-soak-provision.mts",
