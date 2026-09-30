@@ -43,6 +43,8 @@ type TranslationKey =
   | 'build'
   | 'cancel'
   | 'close'
+  | 'collapseSidebar'
+  | 'expandSidebar'
   | 'createIssue'
   | 'createProject'
   | 'editProject'
@@ -120,6 +122,8 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     actionCouldNotComplete: '操作未能完成',
     build: '构建',
     cancel: '取消',
+    collapseSidebar: '收起导航栏',
+    expandSidebar: '展开导航栏',
     close: '关闭',
     createIssue: '创建 Issue',
     createProject: '创建项目',
@@ -198,6 +202,8 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     actionCouldNotComplete: 'Action could not be completed',
     build: 'build',
     cancel: 'Cancel',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar',
     close: 'Close',
     createIssue: 'Create issue',
     createProject: 'Create project',

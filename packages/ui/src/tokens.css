@@ -195,6 +195,9 @@
   --wm-radius-2xl: 34px;
   --wm-radius-pill: 999px;
 
+  /* Icon-only sidebar width: room for a 20px glyph plus its own padding. */
+  --wm-sidebar-collapsed-w: 56px;
+
   /* Control heights — prototype geometry: 26/32/40, dense input 38. */
   --wm-control-h-xs: 24px;
   --wm-control-h-sm: 26px;
@@ -308,6 +311,34 @@
 .app-navigation-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-navigation-count { margin-left: auto; }
 .app-navigation-link.is-active .app-navigation-count { color: var(--wm-accent); background: var(--wm-accent-bg); border-color: var(--wm-accent-border); }
+/* ---------- Collapsible sidebar ---------- */
+
+/* Collapsing to icons is the workspace preference, so it is remembered: the
+   point of collapsing is to reclaim width, and a width that snaps back on every
+   reload makes the gesture feel broken. */
+.app-sidebar-collapse { display: grid; place-items: center; width: 100%; min-height: 28px; color: var(--wm-text-muted); background: transparent; border: 1px solid transparent; border-radius: var(--wm-radius-sm); cursor: pointer; }
+.app-sidebar-collapse:hover { color: var(--wm-text); background: var(--wm-surface-hover); border-color: var(--wm-border); }
+.app-sidebar-collapse:focus-visible { outline: 0; box-shadow: var(--wm-focus-ring); }
+.app-sidebar-collapse-icon { transition: transform var(--wm-motion-fast) var(--wm-ease-out); }
+/* The attribute selector outranks the shell's plain width rule, so the
+   collapsed geometry lives with the control instead of being restated by the
+   application stylesheet. */
+.app-shell[data-sidebar-collapsed] { grid-template-columns: var(--wm-sidebar-collapsed-w) minmax(0, 1fr); }
+.app-shell[data-sidebar-collapsed] .app-navigation-link { justify-content: center; padding-inline: 0; }
+.app-shell[data-sidebar-collapsed] .app-navigation-count { display: none; }
+.app-shell[data-sidebar-collapsed] .app-brand-title { justify-content: center; }
+.app-shell[data-sidebar-collapsed] .app-sidebar-collapse-icon { transform: rotate(180deg); }
+/* A collapsed icon has to keep its name. These are hidden visually and stay in
+   the accessibility tree, so the sidebar is still navigable without sight of
+   the rail. */
+.app-shell[data-sidebar-collapsed] .app-navigation-label,
+.app-shell[data-sidebar-collapsed] .app-brand-title strong,
+.app-shell[data-sidebar-collapsed] .app-brand small,
+.app-shell[data-sidebar-collapsed] .app-team-switcher { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* The group headings would stack unreadable at rail width, so they become a
+   divider that still groups the icons visually. */
+.app-shell[data-sidebar-collapsed] .app-sidebar-footer-content { align-items: center; }
+.app-shell[data-sidebar-collapsed] .app-navigation-group-label { display: block; height: 1px; margin: .45rem .5rem; padding: 0; overflow: hidden; color: transparent; background: var(--wm-border); }
 .wm-shell-actions { display: flex; gap: var(--wm-space-2); margin-left: auto; }
 /* The search control is the one elastic item in the header row. Without an
    explicit min-width: 0 its content width becomes the flex floor, so the
