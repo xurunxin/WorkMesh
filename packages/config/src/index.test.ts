@@ -402,3 +402,59 @@ describe('release and feature configuration', () => {
     })).toThrow(/mailto: or https:/)
   })
 })
+
+describe('Web runtime public API URL requirement', () => {
+  const webEnvironment = {
+    NODE_ENV: 'production',
+    WORKMESH_SERVICE: 'web',
+    WORKMESH_BUILD_SHA: 'a'.repeat(40),
+  }
+
+  it('requires an absolute public API URL when the Web server does not proxy the API', () => {
+    expect(() => validateRuntimeEnvironment({ ...webEnvironment })).toThrow(
+      /NEXT_PUBLIC_API_URL is required/,
+    )
+    expect(() =>
+      validateRuntimeEnvironment({
+        ...webEnvironment,
+        NEXT_PUBLIC_API_URL: 'https://workmesh.test/api',
+      }),
+    ).not.toThrow()
+  })
+
+  it('allows a relative base when the Web server declares an API upstream to proxy to', () => {
+    // This is the Lite topology: a device reached by LAN address, hostname, or
+    // tunnel name, none of which are knowable when the bundle is built.
+    expect(() =>
+      validateRuntimeEnvironment({
+        ...webEnvironment,
+        NEXT_API_UPSTREAM: 'http://api:3001',
+        NEXT_PUBLIC_API_URL: '',
+      }),
+    ).not.toThrow()
+  })
+
+  it('still validates a public API URL that is supplied alongside the proxy', () => {
+    expect(() =>
+      validateRuntimeEnvironment({
+        ...webEnvironment,
+        NEXT_API_UPSTREAM: 'http://api:3001',
+        NEXT_PUBLIC_API_URL: 'https://change-me.example.com/api',
+      }),
+    ).toThrow(/NEXT_PUBLIC_API_URL must not contain placeholder material/)
+  })
+
+  it('leaves every other service requirement untouched', () => {
+    // The Web relaxation is scoped to service `web`. Migrate still enforces the
+    // PostgreSQL password even when a Web-style proxy variable is present.
+    expect(() =>
+      validateRuntimeEnvironment({
+        NODE_ENV: 'production',
+        WORKMESH_SERVICE: 'migrate',
+        WORKMESH_BUILD_SHA: 'a'.repeat(40),
+        DATABASE_URL: 'postgres://workmesh:too-short@postgres/workmesh',
+        NEXT_API_UPSTREAM: 'http://api:3001',
+      }),
+    ).toThrow(/at least 32 characters/)
+  })
+})
