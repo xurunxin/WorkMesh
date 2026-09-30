@@ -176,6 +176,36 @@ export const assertRuntimeSecretSeparation = (environment, comparisonEnvironment
 }
 
 /**
+ * The Web image bakes NEXT_PUBLIC_API_URL into the bundle. A deployment where
+ * the Web server proxies the API itself does not need one: the Browser then
+ * uses a relative base, calls the Web origin, and the Next.js rewrite forwards
+ * to NEXT_API_UPSTREAM, which is what keeps the session cookie first-party.
+ *
+ * NEXT_API_UPSTREAM is the variable `apps/web/next.config.ts` already reads to
+ * build those rewrites, so its presence is the deployment's own statement that
+ * the Web server terminates /api. A value that *is* supplied is still validated
+ * for placeholders and shape: only the presence requirement is relaxed.
+ *
+ * This is deliberately not tied to WORKMESH_WEB_SAME_ORIGIN_API, which means the
+ * opposite thing: that one removes the Next rewrites because something other
+ * than the Web server routes /api.
+ *
+ * @param {NodeJS.ProcessEnv} environment
+ */
+const webProxiesApi = (environment) =>
+  (environment.NEXT_API_UPSTREAM ?? '').trim() !== ''
+
+/**
+ * @param {NodeJS.ProcessEnv} environment
+ * @param {string} service
+ * @param {string} name
+ */
+const presenceRequired = (environment, service, name) => {
+  if (service === 'web' && name === 'NEXT_PUBLIC_API_URL') return !webProxiesApi(environment)
+  return true
+}
+
+/**
  * @param {NodeJS.ProcessEnv} environment
  * @param {NodeJS.ProcessEnv | undefined} comparisonEnvironment
  */
@@ -190,7 +220,11 @@ export const validateRuntimeEnvironment = (environment, comparisonEnvironment = 
 
   for (const name of requiredNames) {
     const value = environment[name]?.trim()
-    if (!value) throw new Error(`${name} is required`)
+    if (!value) {
+      if (presenceRequired(environment, service, name))
+        throw new Error(`${name} is required`)
+      continue
+    }
     if (placeholder.test(value)) throw new Error(`${name} must not contain placeholder material`)
   }
 
