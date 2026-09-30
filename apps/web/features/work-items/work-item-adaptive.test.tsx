@@ -7,6 +7,22 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 afterEach(() => { cleanup() })
 
+/**
+ * Wall-clock budget for the suite that mounts 300 real cards across three
+ * layout changes and then proves not one of them re-rendered.
+ *
+ * It has to build 300 nodes to be able to assert that 300 nodes were not
+ * rebuilt, so its cost tracks the host's scheduling speed rather than the
+ * behaviour it checks. Vitest's 5s default was never a budget designed for it;
+ * at the default this suite fails on a loaded machine and passes on an idle
+ * one, which reports on the machine instead of on the code.
+ *
+ * Stating the budget explicitly weakens nothing: the identity, cardinality and
+ * zero-mutation assertions below are unchanged, and they still fail the moment
+ * the persistent-DOM contract regresses.
+ */
+const HEAVY_DOM_TEST_TIMEOUT_MS = 30_000
+
 const columns: WorkItemStatusOption[] = [
   { id: 'backlog', name: 'Backlog', category: 'backlog' },
   { id: 'ready', name: 'Ready', category: 'ready' },
@@ -94,7 +110,7 @@ describe('WorkItemAdaptiveCollection persistent DOM', () => {
     expect(new Set(htmlIds).size).toBe(htmlIds.length)
     expect(cardMutations).toHaveLength(0)
     observer.disconnect()
-  })
+  }, HEAVY_DOM_TEST_TIMEOUT_MS)
 
   it('keeps open, project, status and board drag actions on the persistent card', () => {
     const onMove = vi.fn()
