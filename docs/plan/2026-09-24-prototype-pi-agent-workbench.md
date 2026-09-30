@@ -2046,3 +2046,69 @@ worker 上限解决了过度订阅，但这三个套件仍贴边。它们的存�
 ## 8. 必需检查
 
 `lint` + `typecheck` + `test` **65/65 通过，0 cached**（`--force` 真实执行）；Web 113 文件 / 754 用例全绿；CI **8/8 全绿**。
+
+<!-- WM-WEBPI-20260924:W31 -->
+
+# W31 十五屏逐屏终验（原型 vs 生产并排）
+
+阶段：M5 收尾核验；状态：**完成（2026-09-30）**。触发：W30 完成后对全部 15 屏做一次并排终验。
+
+## 方法
+
+不是「逐屏看一眼」，而是**同一把尺子量两边**：对每屏的原型与生产分别采集同一组 DOM 度量（标题、导航高亮、加载中标记、`role="alert"` 文本、空状态、按钮/链接/输入数量、卡片数），落到 `sweep.json`，再对差异项**看图确认**。共 15 屏 × 2 = 30 张截图。
+
+## 逐屏结论
+
+| # | 原型 | 生产路由 | 状态 | 备注 |
+|---|---|---|---|---|
+| 1 | `#/agent` | `/workbench` | ✅ 已验 | 默认落地；铺满整页 + 返回按钮 |
+| 2 | `#/home` | `/?view=home` | ✅ 已验 | 三段组合：需要你 / 我的工作项 / 智能体运行 |
+| 3 | `#/active` | `/?view=my-work&statusCategory=started` | ✅ 已验 | **与 active/backlog/board 合并进 Issues 屏**（既定取舍） |
+| 4 | `#/board` | `/?view=my-work&layout=board` | ✅ 已验 | 同上 |
+| 5 | `#/backlog` | `/?view=my-work&statusCategory=backlog` | ⚠️ 数据为空 | 验收库无 backlog 类工作项；**空状态诚实**，非缺陷 |
+| 6 | `#/inbox` | `/?view=inbox` | ✅ 已验 | `.attn` 卡 + 批量操作 |
+| 7 | `#/agents` | `/agents` | ✅ 已验 | — |
+| 8 | `#/sessions` | `/?view=sessions` | ✅ 已验 | 与落地屏共用同一模块 |
+| 9 | `#/recovery` | `/?view=recovery` | ⚠️ 数据为空 | 验收库无恢复事项；空状态诚实 |
+| 10 | `#/ops` | `/operations` | ✅ 已验（**需开 feature flag**） | 见下 |
+| 11 | `#/connect` | `/connect` | ⚠️ 部分 | 「Pairing fragment missing」是**数据状态**，非缺陷 |
+| 12 | `#/settings` | `/settings` | ✅ 已验 | — |
+| 13 | `#/login` | `/login` | ✅ 已验 | — |
+| 14 | `#/install` | `/install` | ✅ 已验 | 已认证时按设计落到 Sign in |
+| 15 | `#/detail` | 工作项详情抽屉 | ✅ 已验（形态不同） | 原型是独立下钻屏；生产是**点击开抽屉**，不是独立路由 |
+
+**15/15 均有生产承载；其中 11 屏在真实数据下直接验过，3 屏因验收库数据为空而只验到「诚实空状态」，1 屏（detail）形态不同但已验。**
+
+## 这一轮最有价值的一条发现
+
+**「有承载面」不等于「验证过」。**
+
+首轮 sweep 里 `#/ops` 显示 0 卡片，看图是：
+
+> Operations is disabled — This deployment has not enabled the Operations UI feature.
+
+开 `WORKMESH_BETA_OPERATIONS_UI` 后变成：
+
+> No Operations modules are available — This deployment enables the Operations page, but no Operations modules are enabled yet.
+
+再开 `WORKMESH_BETA_PLANNING` / `COSTS` / `TEMPLATES` 后，Operations 才真正落地：4 个 tab、统计条、以及**诚实的空状态**（"No Cycles configured — Create a Cycle when a planning window is ready"）。
+
+也就是说：**首轮我差点把「feature flag 关闭」写成「这一屏没实现」**。两者在验收报告里长得一模一样，但结论完全相反——一个是部署配置，一个是产品缺失。
+
+**判别方法**：看到「disabled / unavailable」先查 flag，再下结论。**一个可以靠配置打开的屏幕，不该被记成缺陷；但一个从没打开过的屏幕，也不该被记成已验。**
+
+## 另一条：探针会骗人
+
+`#/ops` 第二次 sweep 仍报 0 卡片，但看图有 4 个 tab 和完整内容——因为我的选择器只数 `article/.card/.wm-work-item-card/.wm-attention-item/.wm-run-digest`，**Operations 的模块是 section/grid，不在列表里**。
+
+**度量的选择器本身也要被质疑**：读数异常时要先确认「这把尺子量的是不是那个东西」。
+
+## 与原型仍存在的已知差异（均为已声明取舍）
+
+1. `#/active` / `#/backlog` / `#/board` 三屏在生产侧**合并进 Issues 屏**（靠筛选器 + 布局切换覆盖），不是三个独立路由。
+2. `#/detail` 在生产侧是**点击开抽屉**，不是独立下钻屏。
+3. 组合落地屏第二段沿用原型文案「我的工作项」，但取数是**全量列表**——生产侧 `my-work` 本身就是无筛选口径（已按决定保留）。
+
+## 产出
+
+`.evidence/screen-sweep-20260930/`：`sweep.json`（15 屏 × 双侧 DOM 度量）+ 30 张并排截图。`.evidence` 为 gitignored，不入仓库。
