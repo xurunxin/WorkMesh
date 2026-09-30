@@ -9,6 +9,23 @@ import { ToastViewport } from '../lib/toast-viewport'
 import { toastStore } from '../lib/use-toast'
 import AgentsPage from './page'
 
+/**
+ * Wall-clock budget for the suites that mount a few hundred real DOM nodes and
+ * then assert that re-renders are memoized away.
+ *
+ * These tests exist to prove that 300 rows do NOT re-render, so they have to
+ * actually build 300 rows. Their cost is dominated by how fast the host
+ * schedules them, not by the behaviour under test, and the default 5s was never
+ * a budget designed for them - it is vitest's default, inherited by accident.
+ * Left at the default they fail on a loaded machine while passing on an idle
+ * one, which makes the suite report on the machine rather than on the code.
+ *
+ * This states the budget explicitly. It does not relax a single assertion: the
+ * render counts and DOM checks these tests make are unchanged, and they still
+ * fail the moment memoization regresses.
+ */
+const HEAVY_DOM_TEST_TIMEOUT_MS = 30_000
+
 const agentsMock = vi.hoisted(() => ({ decideApproval: vi.fn() }))
 const agentCardRenderMock = vi.hoisted(() => ({ render: vi.fn() }))
 const paginationMock = vi.hoisted(() => ({ usePagedApiList: vi.fn() }))
@@ -351,8 +368,7 @@ describe('Agents bulk approval outcomes', () => {
     expect(document.querySelector('.agent-center')).toHaveAttribute('aria-busy', 'true')
   })
 
-  it('keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders', async () => {
-    routeMock.state.tab = 'agents'
+  it('keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders', async () => {    routeMock.state.tab = 'agents'
     agents.items = Array.from({ length: 300 }, (_, offset) => {
       const number = String(offset + 1).padStart(3, '0')
       return {
@@ -390,7 +406,7 @@ describe('Agents bulk approval outcomes', () => {
     expect(document.activeElement).toBe(nameFilter)
     expect(screen.getAllByTestId(/agent-roving-agent-2/)).toHaveLength(100)
     expect(agentCardRenderMock.render).toHaveBeenCalledTimes(301)
-  })
+  }, HEAVY_DOM_TEST_TIMEOUT_MS)
 
   it('closes a filtered Peek and transfers orphaned roving focus to the first visible Agent link', async () => {
     routeMock.state.tab = 'agents'

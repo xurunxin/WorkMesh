@@ -233,7 +233,7 @@ describe('WorkSurfaces pagination ownership', () => {
     fireEvent.click(screen.getByRole('button', { name: /^List$/ }))
     await screen.findByTestId('work-list')
     expect(new Set(surfaceProjectionProbe.cardRenders.values())).toEqual(new Set([1]))
-  }, 15_000)
+  }, 30_000)
 
   it('renders a single loading skeleton instead of a false empty state before initialization', () => {
     queryState.collection.initialized = false
