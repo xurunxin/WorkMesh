@@ -231,25 +231,35 @@ for (const name of documentedVariables) {
 }
 
 if (arguments_.includes('--self-test')) {
+  // Every mutation below is a literal string match, and a checkout on Windows
+  // with core.autocrlf turns the tracked files into CRLF. A mutation that fails
+  // to match is a no-op, and a no-op mutation makes the validator accept a
+  // violating compose — the self-test would report a broken validator while
+  // proving nothing. Normalising to LF first makes the cases reproducible on
+  // any platform, and the YAML parser is line-ending agnostic regardless.
+  const canonical = (value) => value.replace(/\r\n/g, '\n')
+  const composeText = canonical(source)
+  const exampleText = canonical(exampleSource)
+
   // Every mutation below is a realistic mistake. Each one must be rejected, and
   // with the specific message, so a passing validation means something.
   const cases = [
-    ['uncapped service', source.replace('    mem_limit: 640m\n', ''), null, /api must declare an explicit mem_limit/u],
+    ['uncapped service', composeText.replace('    mem_limit: 640m\n', ''), null, /api must declare an explicit mem_limit/u],
     [
       'heap above the container limit',
-      source.replace('--max-old-space-size=320', '--max-old-space-size=1024'),
+      composeText.replace('--max-old-space-size=320', '--max-old-space-size=1024'),
       null,
       /api heap \(1024m\) must stay below mem_limit \(640m\)/u,
     ],
     [
       'unbounded log',
-      source.replace('  driver: json-file\n  options:\n    max-size: "10m"\n    max-file: "3"\n', '  driver: json-file\n'),
+      composeText.replace('  driver: json-file\n  options:\n    max-size: "10m"\n    max-file: "3"\n', '  driver: json-file\n'),
       null,
       /must bound its log file size/u,
     ],
     [
       'literal application image',
-      source.replace(
+      composeText.replace(
         '    image: *lite-image\n    environment:\n      <<: *feature-flags\n      NODE_ENV: production\n      WORKMESH_SERVICE: api',
         '    image: workmesh-lite:latest\n    environment:\n      <<: *feature-flags\n      NODE_ENV: production\n      WORKMESH_SERVICE: api',
       ),
@@ -258,7 +268,7 @@ if (arguments_.includes('--self-test')) {
     ],
     [
       'role selected by compose command',
-      source.replace(
+      composeText.replace(
         '    image: *lite-image\n    environment:\n      <<: *feature-flags\n      NODE_ENV: production\n      WORKMESH_SERVICE: worker\n',
         '    image: *lite-image\n    command: ["node", "dist/index.js"]\n    environment:\n      <<: *feature-flags\n      NODE_ENV: production\n      WORKMESH_SERVICE: worker\n',
       ),
@@ -267,19 +277,19 @@ if (arguments_.includes('--self-test')) {
     ],
     [
       'root user instead of the fixed identity',
-      source.replace('  user: "10001:10001"\n', '  user: "0:0"\n'),
+      composeText.replace('  user: "10001:10001"\n', '  user: "0:0"\n'),
       null,
       /must run as the fixed non-root identity/u,
     ],
     [
       'writable root filesystem',
-      source.replace('  read_only: true\n', '  read_only: false\n'),
+      composeText.replace('  read_only: true\n', '  read_only: false\n'),
       null,
       /must use a read-only root filesystem/u,
     ],
     [
       'Agent Runner added to the Lite device',
-      source.replace(
+      composeText.replace(
         '\nvolumes:\n',
         '\n  agent-runner:\n    image: *lite-image\n    mem_limit: 256m\n    logging: *logging\n\nvolumes:\n',
       ),
@@ -288,31 +298,31 @@ if (arguments_.includes('--self-test')) {
     ],
     [
       'PostgreSQL durability disabled',
-      source.replace('      - -c\n      - shared_buffers=32MB', '      - -c\n      - synchronous_commit=off\n      - -c\n      - shared_buffers=32MB'),
+      composeText.replace('      - -c\n      - shared_buffers=32MB', '      - -c\n      - synchronous_commit=off\n      - -c\n      - shared_buffers=32MB'),
       null,
       /must not weaken synchronous_commit=off/u,
     ],
     [
       'Redis memory capped',
-      source.replace('"--save", "900 1"', '"--save", "900 1", "--maxmemory", "48mb"'),
+      composeText.replace('"--save", "900 1"', '"--save", "900 1", "--maxmemory", "48mb"'),
       null,
       /must not cap maxmemory/u,
     ],
     [
       'Redis AOF re-enabled',
-      source.replace('"--appendonly", "no"', '"--appendonly", "yes"'),
+      composeText.replace('"--appendonly", "no"', '"--appendonly", "yes"'),
       null,
       /must drop AOF persistence/u,
     ],
     [
       'PostgreSQL published to the LAN',
-      source.replace('    mem_limit: 384m', '    ports:\n      - "0.0.0.0:5432:5432"\n    mem_limit: 384m'),
+      composeText.replace('    mem_limit: 384m', '    ports:\n      - "0.0.0.0:5432:5432"\n    mem_limit: 384m'),
       null,
       /postgres must not publish a port/u,
     ],
     [
       'required secret given a default',
-      source.replace(
+      composeText.replace(
         '${SESSION_SECRET:?SESSION_SECRET is required}',
         '${SESSION_SECRET:-development-only-session-secret-value}',
       ),
@@ -321,31 +331,31 @@ if (arguments_.includes('--self-test')) {
     ],
     [
       'bootstrap loopback escape hatch',
-      source.replace('      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"', '      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "true"'),
+      composeText.replace('      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"', '      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "true"'),
       null,
       /loopback bootstrap escape hatch must stay disabled/u,
     ],
     [
       'compose variable missing from the example',
-      source,
-      exampleSource.replace('WORKMESH_REALTIME_REDIS_MAXLEN=10000\n', ''),
+      composeText,
+      exampleText.replace('WORKMESH_REALTIME_REDIS_MAXLEN=10000\n', ''),
       /WORKMESH_REALTIME_REDIS_MAXLEN is read by the Lite compose but absent/u,
     ],
     [
       'example variable the compose never reads',
-      source,
-      `${exampleSource}WORKMESH_UNUSED_LEFTOVER=false\n`,
+      composeText,
+      `${exampleText}WORKMESH_UNUSED_LEFTOVER=false\n`,
       /WORKMESH_UNUSED_LEFTOVER is documented in .env.lite.example but never read/u,
     ],
   ]
 
   const directory = await mkdtemp(path.join(tmpdir(), 'workmesh-lite-selftest-'))
   try {
-    for (const [name, composeText, exampleText, expected] of cases) {
+    for (const [name, mutatedCompose, mutatedExample, expected] of cases) {
       const composeFile = path.join(directory, 'compose.yml')
       const exampleFile = path.join(directory, 'example.env')
-      await writeFile(composeFile, composeText)
-      await writeFile(exampleFile, exampleText ?? exampleSource)
+      await writeFile(composeFile, mutatedCompose ?? composeText)
+      await writeFile(exampleFile, mutatedExample ?? exampleText)
       const result = spawnSync(process.execPath, [
         selfPath,
         `--compose=${composeFile}`,
