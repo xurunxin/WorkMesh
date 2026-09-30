@@ -5,7 +5,10 @@ const legacyDarkBackgrounds = new Set(['rgb(15, 23, 42)', 'rgb(17, 24, 39)'])
 const routes: Array<{ path: string; zhSmokeText: string }> = [
   { path: '/login', zhSmokeText: '登录' },
   { path: '/install', zhSmokeText: '安装 WorkMesh' },
-  { path: '/', zhSmokeText: 'Issues' },
+  // A bare "/" is the default landing, which is the Agent workbench. The
+  // Issues list has to be addressed to be checked.
+  { path: '/?view=my-work', zhSmokeText: 'Issues' },
+  { path: '/workbench', zhSmokeText: '工作台' },
   { path: '/agents', zhSmokeText: '智能体' },
   { path: '/operations', zhSmokeText: '运营与规划' },
   { path: '/connect', zhSmokeText: '连接智能体到 WorkMesh' },
@@ -36,12 +39,15 @@ test.describe('unified light theme', () => {
         try {
           await page.waitForURL(
             (url) => {
-              const pathname = new URL(url).pathname
+              // Compare the whole address, because a route may carry a query -
+              // a bare "/" and the Issues list share a pathname.
+              const target = new URL(route.path, url.origin)
               return (
-                pathname === route.path ||
-                pathname === '/install' ||
-                pathname === '/login'
-              )
+                url.pathname === target.pathname &&
+                url.searchParams.toString() === target.searchParams.toString()
+              ) ||
+                url.pathname === '/install' ||
+                url.pathname === '/login'
             },
             { waitUntil: 'load' },
           )

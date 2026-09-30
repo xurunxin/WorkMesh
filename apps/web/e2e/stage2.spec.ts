@@ -154,7 +154,7 @@ test('renders auditable multi-agent Work Room cards and confirms force release',
     return body({ error: { message: `Unexpected ${method} ${path}` } }, 404)
   })
 
-  await page.goto('/')
+  await page.goto('/?view=my-work')
   await page.locator('[data-work-item-id="work-1"] .wm-work-item-title').click()
   await expect(page.getByTestId('responsible-human')).toContainText('Alex')
   const issueSections = page.getByRole('tablist', { name: 'Issue sections' })
@@ -224,7 +224,13 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
     await loginForm.getByPlaceholder('Password').fill('password-acceptance')
     await loginForm.getByTestId('login-submit').click()
   }
-  await page.waitForURL(url => url.pathname === '/')
+  // Address the surface this suite is about. Signing in hard-navigates to a
+  // bare "/", which is the default landing and therefore the Agent workbench,
+  // so the Issues list is reached through its own nav link once that landing
+  // has finished rendering. A second `goto` here would race that navigation
+  // and abort.
+  await page.getByTestId('view-my-work').click()
+  await page.waitForURL(url => url.pathname === '/' && url.searchParams.get('view') === 'my-work')
   await expect(page.getByRole('main').getByRole('heading', { name: 'Issues', exact: true })).toBeVisible()
 
   const me = await humanApi<{ actor: { id: string } }>(page, '/api/v1/auth/me')
@@ -278,7 +284,7 @@ test('renders a real API-backed multi-agent Work Room and controls durable colla
   expect(projectedWork.body.active_executor).toMatchObject({ session_id: created.body.session.id, lease_id: lease.body.id, execution_state: 'executing' })
   expect(projectedWork.body.shared_reviewers).toEqual([])
 
-  await page.goto('/')
+  await page.goto('/?view=my-work')
   await page.getByLabel('Current team').first().selectOption(team.body.id)
   await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
   await expect(page.getByTestId('responsible-human')).toContainText(projectedWork.body.responsible_human!.display_name)

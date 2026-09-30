@@ -112,6 +112,12 @@ main#workmesh-main:focus-visible {
 .mobile-navigation { display: none; }
 .content { width: 100%; max-width: 1480px; margin: 0 auto; padding: 1.5rem 2rem; flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .content--full { max-width: none; padding: 1.25rem 1.75rem 0; }
+/* The workbench is the default landing, so it fills the shell edge to edge
+   instead of sitting in the centred, padded content column. It owns its own
+   internal rhythm, and letterboxing a full-height surface only wastes the
+   viewport the Human came here to use. The compound selector outranks the
+   generic `.content` padding rules, including the narrow-viewport ones. */
+.content.workbench-page { display: grid; grid-template-rows: minmax(0, 1fr); max-width: none; padding: 0; flex: 1 1 auto; min-height: 0; }
 .content > header { padding-bottom: 1.25rem; border-bottom: 1px solid var(--wm-border); }
 .content > header h1, .content > header h2 { margin: 0; font-size: 1.45rem; letter-spacing: -.025em; }
 .content > header p { color: var(--wm-muted); }

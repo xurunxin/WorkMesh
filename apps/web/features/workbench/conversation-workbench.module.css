@@ -8,7 +8,9 @@
 .layout {
   display: grid;
   grid-template-columns: minmax(240px, 288px) minmax(0, 1fr) minmax(200px, 248px);
-  min-height: min(84vh, 900px);
+  /* The workbench is the default landing, so it fills the shell rather than
+     sitting in a letterboxed column with empty space beneath it. */
+  min-height: 100%;
   background: var(--wm-canvas);
   overflow: hidden;
 }
@@ -30,6 +32,23 @@
 .heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
 .heading h1, .context h2, .conversationHeader h2 { margin: 0; font-size: 1.05rem; font-weight: 650; }
 .heading a, .context a, .create a { font-size: .8rem; }
+
+/* Return path to the classic interactive screen. It sits above the workbench
+   title so it reads as leaving the workbench, not as another workbench tool. */
+.backToIssues {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: .3rem .55rem;
+  color: var(--wm-text-muted);
+  background: var(--wm-surface-subtle);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--wm-radius-sm);
+  font-size: .78rem;
+  text-decoration: none;
+}
+.backToIssues:hover { color: var(--wm-text); border-color: var(--wm-border-strong); }
+.backToIssues:focus-visible { outline: 0; box-shadow: var(--wm-focus-ring); }
 
 .sectionLabel {
   margin: .35rem 0 .1rem;

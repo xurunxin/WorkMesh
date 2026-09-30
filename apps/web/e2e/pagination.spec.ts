@@ -85,7 +85,7 @@ test('loads an opaque second page, de-duplicates it, and resets on filter change
     return body({ error: { message: `Unexpected ${route.request().method()} ${path}` } }, 404)
   })
 
-  await page.goto('/')
+  await page.goto('/?view=my-work')
   await expect(page.locator('[data-work-item-id="work-first"]')).toBeVisible()
   await expect(page.locator('[data-work-item-id="work-later"]')).toHaveCount(0)
 
@@ -197,7 +197,7 @@ test('isolates changed scopes immediately while retaining same-scope refresh con
     return body({ error: { message: `Unexpected ${route.request().method()} ${path}` } }, 404)
   })
 
-  await page.goto('/')
+  await page.goto('/?view=my-work')
   await expect(page.locator('[data-work-item-id="work-scope-a"]')).toContainText('Scope A result')
 
   await page.getByRole('button', { name: 'New issue', exact: true }).click()

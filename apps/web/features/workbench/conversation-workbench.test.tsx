@@ -51,6 +51,14 @@ beforeEach(() => {
 afterEach(() => cleanup())
 
 describe('ConversationWorkbench', () => {
+  it('offers a return path to the classic screen now that it is the default landing', () => {
+    render(<LocaleProvider><ConversationWorkbench actor={actor} /></LocaleProvider>)
+    // The workbench is where a bare "/" lands, so the classic Issues screen must
+    // be reachable from inside it without going back through the sidebar.
+    const back = screen.getByTestId('workbench-back-to-issues')
+    expect(back.getAttribute('href')).toBe('/?view=my-work')
+  })
+
   it('states the recorded tools for a settled turn and does not imply a count it does not have', async () => {
     toolLedger = [{
       id: 'turn-a', conversation_id: 'conversation-a', sequence: 1, status: 'failed',

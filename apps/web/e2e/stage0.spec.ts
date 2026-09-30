@@ -375,6 +375,9 @@ test.describe("Stage 0 browser acceptance", () => {
       await login.getByPlaceholder("Email").fill("alice@example.test");
       await login.getByPlaceholder("Password").fill("password-acceptance");
       await login.getByTestId("login-submit").click();
+      // Address the surface this test is about. Signing in lands on the
+      // default landing, which is the Agent workbench, not the Issues list.
+      await secondPage.getByTestId("view-my-work").click();
       const secondEnglishLocale = secondPage.getByRole("button", { name: "EN", exact: true });
       await secondEnglishLocale.click();
       await expect(secondEnglishLocale).toHaveAttribute("aria-pressed", "true");

@@ -13,7 +13,10 @@ async function humanApi<T>(page: Page, path: string, method = 'GET', body?: unkn
 }
 
 async function openAuthenticatedWorkspace(page: Page) {
-  await page.goto('/')
+  // Address the Issues home explicitly. A bare "/" is the default landing and
+  // therefore the Agent workbench, which contributes its own "Conversations"
+  // and "Execution context" asides and makes the shell sidebar ambiguous.
+  await page.goto('/?view=my-work')
   const sidebar = page.getByRole('complementary')
   await expect(sidebar).toBeVisible({ timeout: 30_000 })
   await expect(sidebar).toContainText('WorkMesh')
@@ -45,7 +48,9 @@ test.describe('Stage 1 agent browser acceptance', () => {
     const work = await humanApi<{ id: string; revision: number }>(page, '/api/v1/work-items', 'POST', { teamId: team.body.id, title: 'Agent session browser flow', statusId: ready.body.id, priority: 'high', responsibleHumanActorId: me.body.actor.id })
     expect(work.status).toBeLessThan(300)
 
-    await page.goto('/')
+    // The delegation flow drives the work-item detail drawer, so address the
+    // Issues list rather than the default landing.
+    await page.goto('/?view=my-work')
     await page.getByLabel('Current team').first().selectOption(team.body.id)
     await page.locator(`[data-work-item-id="${work.body.id}"] .wm-work-item-title`).click()
     const drawer = page.getByRole('dialog')

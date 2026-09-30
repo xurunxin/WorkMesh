@@ -295,6 +295,11 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     resourceType: 'workbench_conversation', resourceId: selected.id, field: 'message', baseRevision: 0 } : null
   return <div className={styles.layout} data-testid="conversation-workbench">
     <aside className={styles.sidebar} aria-label={zh ? '对话列表' : 'Conversations'}>
+      {/* The workbench is the default landing, so it owes the Human a way back
+          to the classic screen without going through the sidebar. */}
+      <a className={styles.backToIssues} data-testid="workbench-back-to-issues" href="/?view=my-work">
+        {zh ? '返回传统交互页面' : 'Back to the classic screen'}
+      </a>
       <div className={styles.heading}><h1>{zh ? 'Agent 工作台' : 'Agent workbench'}</h1><a href="/settings/agent-workbench">{zh ? '模型服务设置' : 'Model settings'}</a></div>
       <Button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.newConversation}
         onClick={() => setShowCreate(current => !current)} type="button" variant="primary">{zh ? '新建对话' : 'Create conversation'}</Button>

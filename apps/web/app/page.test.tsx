@@ -158,6 +158,24 @@ afterEach(() => {
   document.cookie = 'workmesh_locale=; Path=/; Max-Age=0'
 })
 
+describe('Home default landing', () => {
+  it('sends a bare / to the Agent workbench', async () => {
+    // A bare "/" is not a destination. The Human starts at the Agent
+    // workbench, matching the prototype, and reaches Issues deliberately.
+    window.history.replaceState({}, '', '/')
+    render(<LocaleProvider><HomePage /></LocaleProvider>)
+    await waitFor(() => expect(window.location.pathname).toBe('/workbench'))
+  })
+
+  it('leaves an addressed route alone instead of bouncing it to the workbench', async () => {
+    routerMock.replace.mockClear()
+    window.history.replaceState({}, '', '/?view=my-work&layout=board')
+    render(<LocaleProvider><HomePage /></LocaleProvider>)
+    await screen.findByTestId('work-surfaces-mock')
+    expect(routerMock.replace).not.toHaveBeenCalledWith('/workbench', expect.anything())
+  })
+})
+
 describe('Home project strip keyboard contract', () => {
   it('updates the Work Surface layout URL without a duplicate HomePage render and reuses the latest layout on the next query render', async () => {
     window.history.replaceState({}, '', '/?view=my-work&layout=list')

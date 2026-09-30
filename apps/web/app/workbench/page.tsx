@@ -25,7 +25,7 @@ export default function WorkbenchPage() {
     utilityNavigation={workspaceUtilityNavigation({ t })}
     workspaceNavigationLabel={t('workspaceNavigation')}
   >
-    <section className="content">
+    <section className="content workbench-page">
       {loading && !actor ? <p>{zh ? '正在加载工作台…' : 'Loading workbench…'}</p>
         : !actor ? <div role="alert"><p>{error || (zh ? '无法加载账户。' : 'Could not load account.')}</p><button onClick={() => void refresh()} type="button">{zh ? '重试' : 'Retry'}</button></div>
           : <ConversationWorkbench actor={actor} key={`${actor.workspace_id}:${actor.id}`} />}
