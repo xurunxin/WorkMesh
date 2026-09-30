@@ -1,0 +1,331 @@
+# Lite single-node deployment class.
+#
+# Not a release class: the application image is one local tag, there is no digest
+# ring, no release manifest, and this file is not covered by the RC workflow or by
+# scripts/validate-production-images.mjs. What it does keep is the full hardening
+# baseline from docker-compose.production.yml — read-only root filesystem, the
+# fixed non-root identity, every Linux capability dropped, and an explicit noexec
+# tmpfs. Lite drops release provenance, not hardening.
+#
+# The Agent Runner and MCP are deliberately absent. Untrusted code needs a real
+# operating-system isolation boundary, which a resource-capped container on the
+# same small host is not, so both run on the operator's own machine and reach this
+# host over the LAN with an installation token.
+#
+# Render and inspect with:
+#   docker compose --env-file .env.lite -f docker-compose.lite.yml config
+
+name: workmesh-lite
+
+x-app-hardening: &app-hardening
+  init: true
+  read_only: true
+  user: "10001:10001"
+  cap_drop: ["ALL"]
+  security_opt: ["no-new-privileges:true"]
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,nodev,size=64m
+  stop_grace_period: 35s
+  restart: unless-stopped
+
+# An uncapped json-file log is the ordinary way a small disk fills up.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# One tag, four roles. WORKMESH_SERVICE selects what starts; the image entrypoint
+# resolves the entry point through packages/config/src/service-command.ts.
+x-lite-image: &lite-image ${WORKMESH_LITE_IMAGE:?WORKMESH_LITE_IMAGE is required}
+
+x-feature-flags: &feature-flags
+  WORKMESH_BETA_PLANNING: ${WORKMESH_BETA_PLANNING:-false}
+  WORKMESH_BETA_TEMPLATES: ${WORKMESH_BETA_TEMPLATES:-false}
+  WORKMESH_BETA_COSTS: ${WORKMESH_BETA_COSTS:-false}
+  WORKMESH_BETA_GITEA: ${WORKMESH_BETA_GITEA:-false}
+  WORKMESH_BETA_OPERATIONS_UI: ${WORKMESH_BETA_OPERATIONS_UI:-false}
+  WORKMESH_BETA_COORDINATION_MCP: ${WORKMESH_BETA_COORDINATION_MCP:-false}
+  WORKMESH_EXPERIMENTAL_AUTOMATION: ${WORKMESH_EXPERIMENTAL_AUTOMATION:-false}
+  WORKMESH_EXPERIMENTAL_AGENT_LOOPS: ${WORKMESH_EXPERIMENTAL_AGENT_LOOPS:-false}
+  WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
+  WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
+  WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+
+services:
+  postgres:
+    image: postgres:16.9-alpine
+    # Tuning only, no custom postgresql.conf. track_activities=off is the single
+    # largest shared-memory saving, because that memory is allocated per
+    # max_connections slot. synchronous_commit and fsync are deliberately absent
+    # from this list: they are durability settings and they are cheap on an SSD.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=32MB
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - work_mem=1MB
+      - -c
+      - maintenance_work_mem=16MB
+      - -c
+      - max_connections=20
+      - -c
+      - track_activities=off
+      - -c
+      - max_worker_processes=2
+      - -c
+      - max_parallel_workers=0
+      - -c
+      - max_parallel_workers_per_gather=0
+      - -c
+      - max_wal_size=256MB
+      - -c
+      - min_wal_size=64MB
+      - -c
+      - checkpoint_completion_target=0.9
+      - -c
+      - statement_timeout=30s
+      - -c
+      - idle_in_transaction_session_timeout=30s
+      - -c
+      - log_min_duration_statement=1000
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-workmesh}
+      POSTGRES_USER: ${POSTGRES_USER:-workmesh}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - lite-postgres-data:/var/lib/postgresql/data
+    mem_limit: 384m
+    logging: *logging
+    healthcheck:
+      # The image's temporary init server accepts only Unix-socket connections.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.5-alpine
+    # AOF is dropped and a single RDB snapshot is kept. Both Redis roles are lossy
+    # by design: domain-event stream entries are wake hints that PostgreSQL
+    # reconciliation re-derives, and rate-limit token buckets rebuild from empty.
+    #
+    # maxmemory is deliberately NOT capped. The auth rate limiter fails closed, so
+    # a full Redis turns "log in" into "refuse to log in" — a worse failure than
+    # the few megabytes an uncapped Redis would cost. The only growth driver is
+    # the stream, and WORKMESH_REALTIME_REDIS_MAXLEN already bounds it.
+    command: ["redis-server", "--appendonly", "no", "--save", "900 1", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - lite-redis-data:/data
+    mem_limit: 128m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    # The service name and MINIO_ROOT_* credential variables are the contract
+    # shared with the release flow; RustFS reads those names natively. Object Lock
+    # and COMPLIANCE retention are invariants here, not tuning, so this service is
+    # not trimmed.
+    image: rustfs/rustfs:1.0.0
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+    volumes:
+      - lite-object-data:/data
+    # Published only because the Browser uploads straight to the object store with
+    # a presigned PUT. The filesystem artifact store removes this publication
+    # entirely; until then the endpoint must be reachable from the LAN.
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-0.0.0.0}:${S3_HOST_PORT:-9000}:9000"
+    mem_limit: 256m
+    logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/health/ready >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  minio-init:
+    image: rustfs/rustfs:1.0.0
+    depends_on:
+      minio: { condition: service_healthy }
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - >-
+        status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}'
+        --aws-sigv4 'aws:amz:${S3_REGION:-us-east-1}:s3'
+        --user "$${MINIO_ROOT_USER}:$${MINIO_ROOT_PASSWORD}"
+        --header 'x-amz-bucket-object-lock-enabled: true'
+        --request PUT "http://minio:9000/$${S3_BUCKET}");
+        case "$$status" in 200|409) exit 0 ;; *) echo "bucket init failed (HTTP $$status)"; exit 1 ;; esac
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_REGION: ${S3_REGION:-us-east-1}
+    mem_limit: 64m
+    logging: *logging
+    restart: "no"
+
+  migrate:
+    <<: *app-hardening
+    image: *lite-image
+    environment:
+      NODE_ENV: production
+      WORKMESH_SERVICE: migrate
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+    depends_on:
+      postgres: { condition: service_healthy }
+    mem_limit: 256m
+    logging: *logging
+    restart: "no"
+
+  api:
+    <<: *app-hardening
+    image: *lite-image
+    environment:
+      <<: *feature-flags
+      NODE_ENV: production
+      WORKMESH_SERVICE: api
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      # The heap must stay below mem_limit. V8 garbage-collects under heap
+      # pressure; the cgroup limit is a kernel OOM kill, and a heap that reaches
+      # it means the process dies without a clean shutdown.
+      NODE_OPTIONS: --max-old-space-size=320
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: redis://redis:6379
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-10000}
+      WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: ${WORKMESH_RETENTION_PROGRESS_STALE_SECONDS:-7200}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:?WORKMESH_MASTER_KEY is required}
+      WORKMESH_BOOTSTRAP_TOKEN: ${WORKMESH_BOOTSTRAP_TOKEN:?WORKMESH_BOOTSTRAP_TOKEN is required}
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"
+      PAGINATION_CURSOR_KEYS: ${PAGINATION_CURSOR_KEYS:?PAGINATION_CURSOR_KEYS is required}
+      PAGINATION_CURSOR_ACTIVE_KID: ${PAGINATION_CURSOR_ACTIVE_KID:?PAGINATION_CURSOR_ACTIVE_KID is required}
+      PAGINATION_CURSOR_TTL_SECONDS: ${PAGINATION_CURSOR_TTL_SECONDS:-900}
+      AUTH_RATE_LIMIT_HMAC_KEY: ${AUTH_RATE_LIMIT_HMAC_KEY:?AUTH_RATE_LIMIT_HMAC_KEY is required}
+      AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
+      AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
+      # LAN-only default. A LAN deployment with no TLS is the documented Lite
+      # default; a deployment that terminates TLS must set this to true and put
+      # Caddy (or something else) in front of Web.
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:?S3_PUBLIC_ENDPOINT is required}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?S3_ACCESS_KEY_ID is required}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?S3_SECRET_ACCESS_KEY is required}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      SHUTDOWN_TIMEOUT_MS: 30000
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+      migrate: { condition: service_completed_successfully }
+    mem_limit: 640m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  worker:
+    <<: *app-hardening
+    image: *lite-image
+    environment:
+      <<: *feature-flags
+      NODE_ENV: production
+      WORKMESH_SERVICE: worker
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      NODE_OPTIONS: --max-old-space-size=256
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: redis://redis:6379
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-10000}
+      WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
+      WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
+      WORKMESH_EVENT_ONLINE_DAYS: ${WORKMESH_EVENT_ONLINE_DAYS:-90}
+      WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: ${WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS:-365}
+      # Relaxed from the 3600 s default so archive traffic does not compete with
+      # the UI on a slow disk. Deletion stays disabled in both directions.
+      WORKMESH_RETENTION_CLEANUP_DAYS: ${WORKMESH_RETENTION_CLEANUP_DAYS:-30}
+      WORKMESH_RETENTION_BATCH_SIZE: ${WORKMESH_RETENTION_BATCH_SIZE:-100}
+      WORKMESH_RETENTION_LEASE_SECONDS: ${WORKMESH_RETENTION_LEASE_SECONDS:-120}
+      WORKMESH_RETENTION_INTERVAL_SECONDS: ${WORKMESH_RETENTION_INTERVAL_SECONDS:-21600}
+      WORKMESH_RETENTION_IO_TIMEOUT_SECONDS: ${WORKMESH_RETENTION_IO_TIMEOUT_SECONDS:-300}
+      WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: ${WORKMESH_RETENTION_PROGRESS_STALE_SECONDS:-7200}
+      WORKMESH_RETENTION_ARCHIVE_PREFIX: ${WORKMESH_RETENTION_ARCHIVE_PREFIX:-retention/events}
+      WORKMESH_RETENTION_ARCHIVE_ENABLED: "true"
+      WORKMESH_RETENTION_CLEANUP_ENABLED: "false"
+      WORKMESH_EVENT_PRUNE_ENABLED: "false"
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:?WORKMESH_MASTER_KEY is required}
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?S3_ACCESS_KEY_ID is required}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?S3_SECRET_ACCESS_KEY is required}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
+      WORKER_HEALTH_HOST: 0.0.0.0
+      WORKER_HEALTH_PORT: 3003
+      SHUTDOWN_TIMEOUT_MS: 30000
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+      migrate: { condition: service_completed_successfully }
+    mem_limit: 448m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  web:
+    <<: *app-hardening
+    image: *lite-image
+    environment:
+      NODE_ENV: production
+      WORKMESH_SERVICE: web
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
+      NODE_OPTIONS: --max-old-space-size=256
+      # NEXT_PUBLIC_API_URL is intentionally empty: a relative base makes the
+      # Browser call this server, and the Next.js proxy forwards to the API, which
+      # is what keeps the session cookie first-party. A device can be reached by
+      # LAN address, hostname, or tunnel name, and none of those are knowable when
+      # the bundle is built. Declaring NEXT_API_UPSTREAM is what tells the runtime
+      # guard that the Web server terminates /api.
+      NEXT_API_UPSTREAM: http://api:3001
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-0.0.0.0}:${WEB_HOST_PORT:-3000}:3000"
+    depends_on:
+      api: { condition: service_healthy }
+    mem_limit: 448m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3000/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+volumes:
+  lite-postgres-data: {}
+  lite-redis-data: {}
+  lite-object-data: {}
