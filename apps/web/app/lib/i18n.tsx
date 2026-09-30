@@ -43,6 +43,7 @@ type TranslationKey =
   | 'build'
   | 'cancel'
   | 'close'
+  | 'sessions'
   | 'collapseSidebar'
   | 'expandSidebar'
   | 'createIssue'
@@ -124,6 +125,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     cancel: '取消',
     collapseSidebar: '收起导航栏',
     expandSidebar: '展开导航栏',
+    sessions: 'Session',
     close: '关闭',
     createIssue: '创建 Issue',
     createProject: '创建项目',
@@ -204,6 +206,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     cancel: 'Cancel',
     collapseSidebar: 'Collapse sidebar',
     expandSidebar: 'Expand sidebar',
+    sessions: 'Session',
     close: 'Close',
     createIssue: 'Create issue',
     createProject: 'Create project',

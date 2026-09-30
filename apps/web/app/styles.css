@@ -1261,6 +1261,8 @@ main#workmesh-main:focus-visible {
 .wm-landing-all:hover { color: var(--wm-accent); }
 .wm-landing-note { margin: 0; color: var(--wm-text-muted); font-size: var(--wm-text-sm); }
 .wm-control-section-content > * + * { margin-top: .5rem; }
+/* The Session destination is one column, matching the prototype's `.rows`. */
+.wm-run-list { display: grid; gap: .5rem; }
 @media (max-width: 1080px) { .wm-landing-split { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Work Item fact strips ---------- */

@@ -85,10 +85,26 @@ describe('LandingScreen', () => {
     // The work-item list is capped rather than paging the whole surface.
     expect(requests).toContain('/api/v1/work-items?limit=5')
     expect(requests).toContain('/api/v1/human-attention?view=active&limit=3')
-    expect(requests).toContain('/api/v1/control-center?collection=running&limit=4')
+    // The run section asks for a page and shows four of it. The cap belongs on
+    // what the screen renders, not on what the projection returns: the count in
+    // the section head has to be the projection's own total, so asking the
+    // server for a truncated page would make the header a smaller number than
+    // the truth.
+    expect(requests).toContain('/api/v1/control-center?collection=running&limit=20')
     // The bounded section never becomes a second place to work: it defers to
     // the surface that owns the full list.
     expect(screen.getByRole('link', { name: 'Handle all' }).getAttribute('href')).toBe('/?view=inbox')
+  })
+
+  it('shows four run rows however many the projection returns', async () => {
+    stubFetch(Array.from({ length: 9 }, (_, index) => runDigest({ id: `agent_session:run-${index}` })))
+    const { default: LandingScreen } = await import('./landing-screen')
+    const { container } = render(<LandingScreen locale="en" />)
+
+    await waitFor(() => expect(screen.getByText('Agent runs')).toBeTruthy())
+    expect(container.querySelectorAll('.wm-run-digest')).toHaveLength(4)
+    // The head count stays the projection's own total, not the shown count.
+    expect(container.querySelector('.wm-control-section-running .wm-control-section-count')?.textContent).toBe('9')
   })
 
   it('states heartbeat but no meter when a run has no measurable budget', async () => {
