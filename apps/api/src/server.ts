@@ -1673,15 +1673,14 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       label: query.label ?? null,
       search: query.search ?? null,
     },
-    // Humans read Issues in the order they arranged them, so a board reorder is
-// visible on the next read without a second query. This is deliberately NOT
-// opt-in: a layout toggle must reuse the same projection, so the board cannot
-// ask for a different order than the list without re-projecting every row.
-    // Agents keep updated_at DESC -- their reads are scoped to one Session's
-    // own Issues and are not a triage surface.
+    // Order stays updated_at DESC for both kinds of actor. The server owns
+    // ASSIGNING board_rank; the board owns PRESENTING it, ordering each column
+    // client-side from the rank already in the projection. Changing the default
+    // here instead would silently reorder every list consumer, and a layout
+    // toggle cannot opt into a different order without re-projecting every row.
     sort: [
-      { key: "board_rank", sql: "w.board_rank", direction: "ASC" as const },
-      { key: "number", sql: "w.number", direction: "ASC" as const },
+      { key: "updated_at", sql: "w.updated_at", direction: "DESC" as const },
+      { key: "id", sql: "w.id", direction: "DESC" as const },
     ],
   } as const;
   if (request.actor!.kind !== "human") {

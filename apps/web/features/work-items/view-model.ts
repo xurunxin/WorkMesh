@@ -4,6 +4,16 @@ import { PRIORITIES, STATUS_CATEGORIES, type WorkItemDto, type WorkSurfaceItem, 
 const enumValue = <T extends readonly string[]>(value: unknown, values: T): T[number] | 'unknown' => typeof value === 'string' && (values as readonly string[]).includes(value) ? value as T[number] : 'unknown'
 const text = (value: unknown): string => typeof value === 'string' ? value : ''
 const count = (value: unknown): number => typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0
+/**
+ * PostgreSQL returns `numeric` as a string. A row with no rank yet (or one this
+ * projection could not read) stays null so the board falls back to the order
+ * the server sent rather than inventing one.
+ */
+const boardRankOf = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === '') return null
+  const rank = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(rank) ? rank : null
+}
 
 /**
  * Reads the assignment's budget entry without inventing one. A missing or
@@ -55,6 +65,7 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
     // The API returns a calendar date; the card only needs the day, and keeping
     // it a plain YYYY-MM-DD string means the card never re-derives a timezone.
     dueDate: text(item.due_date).slice(0, 10) || null,
+    boardRank: boardRankOf(item.board_rank),
     responsibleHuman: human ? text(human) : null,
     responsibleHumanActorId: typeof item.responsible_human_actor_id === 'string' ? item.responsible_human_actor_id : null,
     projectId: text(item.project_id) || null,

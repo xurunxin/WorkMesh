@@ -46,6 +46,7 @@ export type WorkItemDto = {
   team_key?: string
   priority?: string
   due_date?: string | null
+  board_rank?: number | string | null
   responsible_human_actor_id?: string | null
   responsible_human?: { actor_id?: string; display_name?: string } | null
   project_id?: string | null
@@ -73,6 +74,8 @@ export type WorkSurfaceItem = {
   priority: Priority | 'unknown'
   /** ISO date (YYYY-MM-DD) the Issue is due, or null when no date is set. */
   dueDate: string | null
+  /** Fractional position the server assigned inside the status column. */
+  boardRank: number | null
   responsibleHuman: string | null
   responsibleHumanActorId: string | null
   projectId: string | null

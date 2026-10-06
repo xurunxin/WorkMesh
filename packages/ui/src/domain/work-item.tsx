@@ -44,6 +44,8 @@ export type WorkItemCardData = {
   priority?: string
   /** ISO calendar date (YYYY-MM-DD) the Issue is due, or null when unset. */
   dueDate?: string | null
+  /** Fractional position the server assigned inside the status column. */
+  boardRank?: number | null
   responsibleHuman?: string | null
   responsibleHumanActorId?: string | null
   projectId?: string | null
@@ -754,7 +756,21 @@ export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, colu
       const columnId = byColumn.has(item.statusId) ? item.statusId : fallbackColumnId
       if (columnId) byColumn.get(columnId)?.push({ item, order })
     })
-    return effectiveColumns.map(column => ({ column, entries: byColumn.get(column.id) ?? [] }))
+    return effectiveColumns.map(column => {
+      const entries = byColumn.get(column.id) ?? []
+      // The server assigns board_rank; the board is what presents it. Sorting
+      // here rather than in the query is deliberate: the list and the board
+      // share one projection, so a layout toggle never re-orders or re-fetches
+      // the other view. A column whose rows have no rank keeps the order the
+      // server sent, which is the only safe fallback.
+      const ranked = entries.every(entry => entry.item.boardRank !== null && entry.item.boardRank !== undefined)
+      return {
+        column,
+        entries: ranked
+          ? [...entries].sort((left, right) => left.item.boardRank! - right.item.boardRank! || left.order - right.order)
+          : entries,
+      }
+    })
   }, [effectiveColumns, items])
 
   const onCardPointerDown = useCallback((itemId: string, event: ReactPointerEvent<HTMLElement>) => {
