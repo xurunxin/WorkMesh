@@ -1316,8 +1316,8 @@ export function AttentionCenter({
                   />
                   {selectedApproval.viewer_actionability?.status === "blocked" && (
                     <div className="attention-recovery-links">
-                      {selected.sessionId && <a href={attentionResourceHref(selected, "session", selected.sessionId)}>{copy.source}: Session</a>}
-                      {selected.workItemId && <a href={attentionResourceHref(selected, "work_item", selected.workItemId)}>{copy.source}: WorkItem</a>}
+                      {selected.sessionId && <a href={attentionResourceHref(selected, "session", selected.sessionId)}>{copy.source}{agentsCopy.approvalSourceSession}</a>}
+                      {selected.workItemId && <a href={attentionResourceHref(selected, "work_item", selected.workItemId)}>{copy.source}{agentsCopy.approvalSourceWorkItem}</a>}
                     </div>
                   )}
                 </section>
@@ -1350,9 +1350,9 @@ export function AttentionCenter({
                         variant={["reject", "dismiss"].includes(option.id) ? "danger" : "primary"}
                       >
                         {selected.kind === "approval" && option.id === "approve"
-                          ? (locale === "zh-CN" ? "批准并继续" : "Approve and continue")
+                          ? agentsCopy.approvalApproveAndContinue
                           : selected.kind === "approval" && option.id === "reject"
-                            ? (locale === "zh-CN" ? "拒绝" : "Reject")
+                            ? agentsCopy.approvalRejectAction
                           : option.label}
                       </Button>
                     ))}

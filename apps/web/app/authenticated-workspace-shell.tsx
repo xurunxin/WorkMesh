@@ -69,7 +69,7 @@ export function AuthenticatedWorkspaceShell({ children, documentTitle, footerExt
     >
       {sidebarCollapsed ? <span className="wm-visually-hidden">{t('signOut')}</span> : t('signOut')}
     </Button>
-    {releaseInfo && !sidebarCollapsed && <small className="release-info" data-testid="release-info">v{releaseInfo.serverVersion} · {t('build')} {releaseInfo.buildSha} · {t('schema')} {releaseInfo.schemaBaseline}</small>}
+    {releaseInfo && !sidebarCollapsed && <small className="release-info" data-testid="release-info">{t('versionPrefix')}{releaseInfo.serverVersion} · {t('build')} {releaseInfo.buildSha} · {t('schema')} {releaseInfo.schemaBaseline}</small>}
   </div>
 
   return <AppShell {...props} brandIcon={<WorkMeshBrandIcon />} collapseSidebarLabel={t('collapseSidebar')} expandSidebarLabel={t('expandSidebar')} footer={footer} onSidebarCollapsedChange={changeSidebarCollapsed} productName="WorkMesh" sidebarCollapsed={sidebarCollapsed} headerActions={<><ThemeToggle />{headerActions}</>}>{children}</AppShell>

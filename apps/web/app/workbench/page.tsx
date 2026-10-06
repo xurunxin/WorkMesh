@@ -8,9 +8,8 @@ import { useAuthenticatedActor } from '../lib/use-authenticated-actor'
 import { workspaceNavigation, workspaceUtilityNavigation } from '../lib/workspace-navigation'
 
 export default function WorkbenchPage() {
-  const { locale, t } = useLocale()
+  const { agentWorkCopy: text, locale, t } = useLocale()
   const { actor, loading, error, refresh } = useAuthenticatedActor()
-  const zh = locale === 'zh-CN'
   return <AuthenticatedWorkspaceShell
     actorName={actor ? actorDisplayName(actor) : undefined}
     administrationNavigationLabel={t('administrationNavigation')}
@@ -26,8 +25,8 @@ export default function WorkbenchPage() {
     workspaceNavigationLabel={t('workspaceNavigation')}
   >
     <section className="content workbench-page">
-      {loading && !actor ? <p>{zh ? '正在加载工作台…' : 'Loading workbench…'}</p>
-        : !actor ? <div role="alert"><p>{error || (zh ? '无法加载账户。' : 'Could not load account.')}</p><button onClick={() => void refresh()} type="button">{zh ? '重试' : 'Retry'}</button></div>
+      {loading && !actor ? <p>{text.routeLoading}</p>
+        : !actor ? <div role="alert"><p>{error || text.routeAccountError}</p><button onClick={() => void refresh()} type="button">{text.retry}</button></div>
           : <ConversationWorkbench actor={actor} key={`${actor.workspace_id}:${actor.id}`} />}
     </section>
   </AuthenticatedWorkspaceShell>

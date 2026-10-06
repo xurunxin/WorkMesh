@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { LocaleProvider } from './lib/i18n'
 import { EvidenceDrawer, type EvidenceDrawerItem } from './evidence-drawer'
 
 const item: EvidenceDrawerItem = {
@@ -19,7 +20,7 @@ afterEach(cleanup)
 describe('EvidenceDrawer', () => {
   it('renders rich provenance, canonical relationships, exact-head drift, and technical IDs', () => {
     const close = vi.fn()
-    render(<EvidenceDrawer item={item} onClose={close} />)
+    render(<LocaleProvider><EvidenceDrawer item={item} onClose={close} /></LocaleProvider>)
     expect(screen.getByRole('dialog', { name: 'Acceptance commit' })).toBeVisible()
     expect(screen.getByText('Delivery Agent · agent')).toBeVisible()
     expect(screen.getByText(/Head drift invalidates/)).toBeVisible()
@@ -33,7 +34,7 @@ describe('EvidenceDrawer', () => {
   })
 
   it('shows unsafe external URIs as unavailable and keeps unknown fields explicit', () => {
-    render(<EvidenceDrawer item={{ id: 'artifact-2', type: 'file', uri: 'https://secret@example.test/file' }} onClose={() => undefined} />)
+    render(<LocaleProvider><EvidenceDrawer item={{ id: 'artifact-2', type: 'file', uri: 'https://secret@example.test/file' }} onClose={() => undefined} /></LocaleProvider>)
     expect(screen.getByText('External URI is not safe to open.')).toBeVisible()
     expect(screen.getAllByText(/Unknown/).length).toBeGreaterThan(2)
   })

@@ -27,7 +27,7 @@ type Actor = Readonly<{ id: string; workspace_id?: string }>
 type Mode = 'view' | 'edit' | 'history'
 
 export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClose: () => void; owner: Owner }) {
-  const { editorCopy, locale } = useLocale()
+  const { editorCopy, guidanceCopy, locale } = useLocale()
   const zh = locale === 'zh-CN'
   const copy = zh ? {
     heading: '文档', new: '新建文档', title: '标题', content: '内容', save: '保存修订', cancel: '返回列表',
@@ -233,7 +233,7 @@ export function DocumentManager({ actor, onClose, owner }: { actor: Actor; onClo
         <DocumentList empty={collection.initialized && collection.items.length === 0 ? <p>{copy.empty}</p> : null} testId="document-list">
           <DocumentRowGroup label={copy.heading}>
             {collection.items.map(item => <DocumentRow
-              data={{ id: item.id, meta: <>{`r${item.currentRevision.revisionNumber}`}{item.status === 'archived' ? ` · ${copy.archived}` : ''}</>, title: item.title }}
+              data={{ id: item.id, meta: <>{guidanceCopy.revisionPointer(item.currentRevision.revisionNumber)}{item.status === 'archived' ? ` · ${copy.archived}` : ''}</>, title: item.title }}
               key={item.id}
               onSelect={() => choose(item)}
             />)}

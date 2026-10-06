@@ -43,8 +43,7 @@ const etag = (value: number) => `"revision-${value}"`
 const pending = (turn: Turn) => ['queued', 'dispatching', 'running'].includes(turn.status)
 
 export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) {
-  const { locale } = useLocale()
-  const zh = locale === 'zh-CN'
+  const { locale, agentWorkCopy: text } = useLocale()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [nextConversationCursor, setNextConversationCursor] = useState<string | null>(null)
   const [sessions, setSessions] = useState<Session[]>([])
@@ -225,7 +224,7 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
     try {
       await apiMutation(`workbench:stop:${turn.id}`, `${root}/${selected.id}/turns/${turn.id}/stop`, { method: 'POST',
         headers: { ...json({}), 'If-Match': etag(selected.revision) },
-        body: JSON.stringify({ reason: zh ? '用户从工作台停止' : 'Stopped from workbench', stopMode: 'immediate' }) })
+        body: JSON.stringify({ reason: text.stopReason, stopMode: 'immediate' }) })
       await refreshSelected(selected.id)
     } catch (reason) { setError(errorText(reason)); await refreshSelected(selected.id).catch(() => undefined) }
     finally { setBusy(false) }
@@ -246,7 +245,7 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
   // Follow-up (and retry) create a NEW turn: the terminal fact stays immutable.
   const followUp = async (turn: Turn, retry: boolean) => {
     if (!selected || busy) return
-    const message = retry ? (zh ? '重试上一次请求。' : 'Retry the previous request.') : draft.trim()
+    const message = retry ? text.retryPreviousRequest : draft.trim()
     if (!message) return
     setBusy(true); setError('')
     const identity: DraftIdentity = { workspaceId: actor.workspace_id ?? '', teamId: selected.team_id ?? '', actorId: actor.id,
@@ -294,34 +293,34 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
   const draftIdentity: DraftIdentity | null = selected ? { workspaceId: actor.workspace_id ?? '', teamId: selected.team_id ?? '', actorId: actor.id,
     resourceType: 'workbench_conversation', resourceId: selected.id, field: 'message', baseRevision: 0 } : null
   return <div className={styles.layout} data-testid="conversation-workbench">
-    <aside className={styles.sidebar} aria-label={zh ? '对话列表' : 'Conversations'}>
+    <aside className={styles.sidebar} aria-label={text.conversationListLabel}>
       {/* The workbench is the default landing, so it owes the Human a way back
           to the classic screen without going through the sidebar. */}
       <a className={styles.backToIssues} data-testid="workbench-back-to-issues" href="/?view=my-work">
-        {zh ? '返回传统交互页面' : 'Back to the classic screen'}
+        {text.backToClassicScreen}
       </a>
-      <div className={styles.heading}><h1>{zh ? 'Agent 工作台' : 'Agent workbench'}</h1><a href="/settings/agent-workbench">{zh ? '模型服务设置' : 'Model settings'}</a></div>
+      <div className={styles.heading}><h1>{text.workbenchTitle}</h1><a href="/settings/agent-workbench">{text.modelSettingsLink}</a></div>
       <Button aria-controls="workbench-create-form" aria-expanded={showCreate} className={styles.newConversation}
-        onClick={() => setShowCreate(current => !current)} type="button" variant="primary">{zh ? '新建对话' : 'Create conversation'}</Button>
+        onClick={() => setShowCreate(current => !current)} type="button" variant="primary">{text.createConversation}</Button>
       <form className={styles.create} data-open={showCreate} id="workbench-create-form" onSubmit={event => void create(event)}>
-        <label>{zh ? '新对话标题' : 'New conversation title'}<input maxLength={180} onChange={event => setTitle(event.target.value)} required value={title} /></label>
-        <label>{zh ? '执行会话' : 'Execution session'}<select onChange={event => setSessionId(event.target.value)} required value={sessionId}>
-          {sessions.length === 0 && <option value="">{zh ? '暂无可用执行会话' : 'No available session'}</option>}
-          {sessions.map(item => <option key={item.id} value={item.id}>{item.work_item_id ? `Issue ${item.work_item_id.slice(0, 8)}` : `Project ${item.project_id?.slice(0, 8)}`} · {item.id.slice(0, 8)} · {item.state}</option>)}
+        <label>{text.newConversationTitle}<input maxLength={180} onChange={event => setTitle(event.target.value)} required value={title} /></label>
+        <label>{text.executionSessionLabel}<select onChange={event => setSessionId(event.target.value)} required value={sessionId}>
+          {sessions.length === 0 && <option value="">{text.noAvailableSession}</option>}
+          {sessions.map(item => <option key={item.id} value={item.id}>{item.work_item_id ? text.sessionOptionIssue(item.work_item_id.slice(0, 8)) : text.sessionOptionProject(item.project_id?.slice(0, 8))} · {item.id.slice(0, 8)} · {item.state}</option>)}
         </select></label>
-        <label>{zh ? '模型服务' : 'Model service'}<select onChange={event => setConnectionId(event.target.value)} required value={connectionId}>
-          {connections.length === 0 && <option value="">{zh ? '请先配置服务' : 'Configure a service'}</option>}
+        <label>{text.modelServiceLabel}<select onChange={event => setConnectionId(event.target.value)} required value={connectionId}>
+          {connections.length === 0 && <option value="">{text.configureServiceOption}</option>}
           {connections.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
         </select></label>
-        <label>{zh ? '模型' : 'Model'}<select onChange={event => setModelId(event.target.value)} required value={modelId}>
+        <label>{text.modelLabel}<select onChange={event => setModelId(event.target.value)} required value={modelId}>
           {modelOptions.map(item => <option key={item.id} value={item.id}>{item.display_name}</option>)}
         </select></label>
-        <Button disabled={busy || !sessionId || !connectionId || !modelId || !title.trim()} type="submit">{zh ? '新建对话' : 'Create conversation'}</Button>
-        {sessions.length === 0 && <a href="/agents">{zh ? '前往智能体创建委派会话' : 'Open Agents to start a delegated session'}</a>}
+        <Button disabled={busy || !sessionId || !connectionId || !modelId || !title.trim()} type="submit">{text.createConversation}</Button>
+        {sessions.length === 0 && <a href="/agents">{text.openAgentsForDelegation}</a>}
       </form>
-      <p className={styles.sectionLabel}>{zh ? '会话' : 'Conversations'}</p>
+      <p className={styles.sectionLabel}>{text.conversationsSection}</p>
       <div className={styles.list} role="list">
-        {loading ? <p>{zh ? '正在加载…' : 'Loading…'}</p> : conversations.length === 0 ? <p>{zh ? '尚无对话' : 'No conversations yet'}</p> : conversations.map(item =>
+        {loading ? <p>{text.loadingConversations}</p> : conversations.length === 0 ? <p>{text.noConversations}</p> : conversations.map(item =>
           <button aria-current={selectedId === item.id ? 'page' : undefined}
             className={`${styles.listItem} ${selectedId === item.id ? styles.listItemActive : ''}`}
             key={item.id} onClick={() => { setSelectedId(item.id); setShowCreate(false); setDraft(''); setError('') }} type="button">
@@ -329,124 +328,122 @@ export function ConversationWorkbench({ actor }: { actor: AuthenticatedActor }) 
             <span className={styles.listTitle}>{item.title}</span>
             <span className={styles.listMeta}>{item.status} · {new Date(item.updated_at).toLocaleString(locale)}</span>
           </button>)}
-        {nextConversationCursor && <button onClick={() => void loadMoreConversations()} type="button">{zh ? '加载更多对话' : 'Load more conversations'}</button>}
+        {nextConversationCursor && <button onClick={() => void loadMoreConversations()} type="button">{text.loadMoreConversations}</button>}
       </div>
-      <p className={styles.sectionLabel}>{zh ? '执行器' : 'Executors'}</p>
+      <p className={styles.sectionLabel}>{text.executorsSection}</p>
       <div className={styles.rail}>
         {connections.map(item => <div className={styles.railRow} key={item.id}>
           <span aria-hidden="true" className={`${styles.railDot} ${item.status === 'active' ? styles.railDotReady : item.status === 'error' ? styles.railDotBad : styles.railDotIdle}`} />
           <span className={styles.railName}>{item.name}</span>
           <span className={styles.railValue}>{item.status}</span>
         </div>)}
-        {connections.length === 0 && <p className={styles.hint}>{zh ? '尚未配置模型服务' : 'No model service configured'}</p>}
+        {connections.length === 0 && <p className={styles.hint}>{text.noModelServiceConfigured}</p>}
         <div className={styles.railRow}>
           <span aria-hidden="true" className={`${styles.railDot} ${selected?.agent_session_id ? styles.railDotReady : styles.railDotIdle}`} />
-          <span className={styles.railName}>{zh ? '委派执行会话' : 'Delegated session'}</span>
+          <span className={styles.railName}>{text.delegatedSessionLabel}</span>
           <span className={styles.railValue}>{boundSession?.state ?? '—'}</span>
         </div>
       </div>
     </aside>
-    <section className={styles.main} aria-label={zh ? '对话内容' : 'Conversation'}>
-      {error && <div role="alert" className={styles.error}>{error} <button onClick={() => { setError(''); void refreshList(); if (selectedId) void refreshSelected(selectedId) }} type="button">{zh ? '重试' : 'Retry'}</button></div>}
-      {!selected ? <p className={styles.empty}>{zh ? '选择或新建对话。' : 'Select or create a conversation.'}</p> : <>
-        <header className={styles.conversationHeader}><div><h2>{selected.title}</h2><p>{zh ? '公开对话记录与执行状态' : 'Public conversation record and execution state'}</p></div>
+    <section className={styles.main} aria-label={text.conversationRegionLabel}>
+      {error && <div role="alert" className={styles.error}>{error} <button onClick={() => { setError(''); void refreshList(); if (selectedId) void refreshSelected(selectedId) }} type="button">{text.retry}</button></div>}
+      {!selected ? <p className={styles.empty}>{text.selectOrCreateConversation}</p> : <>
+        <header className={styles.conversationHeader}><div><h2>{selected.title}</h2><p>{text.publicRecordNote}</p></div>
           <div className={styles.conversationFacts}>
-            {boundSession && <span className={styles.chip}>{zh ? '会话' : 'session'} {boundSession.id.slice(0, 8)} · {boundSession.state}</span>}
-            <Button disabled={busy || selected.status !== 'active' || turns.some(pending)} onClick={() => void archive()} variant="ghost">{zh ? '归档' : 'Archive'}</Button>
+            {boundSession && <span className={styles.chip}>{text.sessionChipLabel} {boundSession.id.slice(0, 8)} · {boundSession.state}</span>}
+            <Button disabled={busy || selected.status !== 'active' || turns.some(pending)} onClick={() => void archive()} variant="ghost">{text.archive}</Button>
           </div></header>
         <div className={styles.timeline} aria-live="polite">
-          {olderBefore && <button onClick={() => void loadOlder()} type="button">{zh ? '加载更早消息' : 'Load earlier messages'}</button>}
-          {messages.length === 0 ? <p className={styles.empty}>{zh ? '发送第一条消息以开始。' : 'Send the first message to begin.'}</p> : messages.map(message =>
+          {olderBefore && <button onClick={() => void loadOlder()} type="button">{text.loadEarlierMessages}</button>}
+          {messages.length === 0 ? <p className={styles.empty}>{text.sendFirstMessage}</p> : messages.map(message =>
             <article className={message.role === 'user' ? styles.userMessage : styles.agentMessage} key={message.id}>
               <div className={styles.messageHead}>
                 <span aria-hidden="true" className={`${styles.actorBadge} ${message.role === 'user' ? styles.actorBadgeHuman : message.role === 'system' ? styles.actorBadgeSystem : ''}`}>
-                  {message.role === 'user' ? (zh ? '人' : 'H') : message.role === 'assistant' ? 'A' : 'S'}
+                  {message.role === 'user' ? text.humanBadge : message.role === 'assistant' ? text.agentBadge : text.systemBadge}
                 </span>
-                <span className={styles.actorName}>{message.role === 'user' ? (zh ? '你' : 'You') : message.role === 'assistant' ? 'Agent' : 'System'}</span>
+                <span className={styles.actorName}>{message.role === 'user' ? text.humanActorName : message.role === 'assistant' ? text.agentActorName : text.systemActorName}</span>
                 <time className={styles.listMeta} dateTime={message.created_at}>{new Date(message.created_at).toLocaleTimeString(locale)}</time>
               </div>
               <div className={styles.messageBody}><RichContent density="compact" source={message.content_markdown} /></div>
             </article>)}
           {latestTurn && <div className={styles.turnState} role="status">
             <span className={`${styles.chip} ${latestTurn.status === 'settled' ? styles.chipSettled : latestTurn.status === 'failed' || latestTurn.status === 'stopped' ? styles.chipFailed : styles.chipPending}`}>
-              {zh ? '回合' : 'turn'} #{latestTurn.sequence} · {latestTurn.status}
+              {text.turnChipLabel} #{latestTurn.sequence} · {latestTurn.status}
             </span>
             {latestTurn.error_code && <span className={`${styles.chip} ${styles.chipFailed}`}>{latestTurn.error_code}</span>}
-            {latestTurn.retry_of_turn_id && <span className={styles.chip}>{zh ? '重试自' : 'retry of'} {latestTurn.retry_of_turn_id.slice(0, 8)}</span>}
+            {latestTurn.retry_of_turn_id && <span className={styles.chip}>{text.retryOf} {latestTurn.retry_of_turn_id.slice(0, 8)}</span>}
             {latestTurn.tool_invocations && latestTurn.tool_invocations.length > 0 && <ToolChipRow>
               {latestTurn.tool_invocations.map(invocation => <ToolChip
                 data={{ callCount: invocation.call_count, inputSummary: invocation.sanitized_input_summary, toolName: invocation.tool_name }}
                 key={invocation.id}
                 outcome={latestTurn.status === 'settled' ? 'done' : ['failed', 'canceled', 'stopped'].includes(latestTurn.status) ? 'failed' : 'unknown'}
-                timesLabel={zh ? ' ×' : ' ×'}
+                timesLabel=" ×"
               />)}
             </ToolChipRow>}
-            {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{zh ? '停止' : 'Stop'}</Button>}
+            {pending(latestTurn) && <Button disabled={busy} onClick={() => void stop(latestTurn)} variant="ghost">{text.stop}</Button>}
             {pending(latestTurn) && latestTurn.status === 'running' &&
               <form className={styles.steerForm} onSubmit={event => { event.preventDefault(); void steer(latestTurn) }}>
-                <input aria-label={zh ? '转向指令（追加到执行中的回合）' : 'Steering instruction (appended to the running turn)'}
-                  maxLength={50_000} onChange={event => setSteerDraft(event.target.value)} placeholder={zh ? '追加指示…' : 'Add steering…'}
+                <input aria-label={text.steerInputLabel}
+                  maxLength={50_000} onChange={event => setSteerDraft(event.target.value)} placeholder={text.steerInputPlaceholder}
                   value={steerDraft} />
-                <Button disabled={busy || !steerDraft.trim()} type="submit" variant="ghost">{zh ? '追加指示' : 'Steer'}</Button>
+                <Button disabled={busy || !steerDraft.trim()} type="submit" variant="ghost">{text.steerSubmit}</Button>
               </form>}
             {!pending(latestTurn) && ['failed', 'stopped'].includes(latestTurn.status) &&
-              <Button disabled={busy} onClick={() => void followUp(latestTurn, true)} variant="ghost">{zh ? '重试' : 'Retry'}</Button>}
-            {!pending(latestTurn) && <Button disabled={busy || !draft.trim()} onClick={() => void followUp(latestTurn, false)} variant="ghost">{zh ? '追问' : 'Follow up'}</Button>}
+              <Button disabled={busy} onClick={() => void followUp(latestTurn, true)} variant="ghost">{text.retry}</Button>}
+            {!pending(latestTurn) && <Button disabled={busy || !draft.trim()} onClick={() => void followUp(latestTurn, false)} variant="ghost">{text.followUp}</Button>}
           </div>}
           {latestTurn && ['RUNNER_AUTHORITY_LOST', 'RUNNER_TIMEOUT'].includes(latestTurn.error_code ?? '') &&
-            <p className={styles.error} role="alert">{zh
-              ? '执行进程中断，外部操作结果尚未对账。请先核对 Issue、文档和制品，再发送新消息。'
-              : 'The runner stopped before settlement. External effects are unverified. Check the Issue, documents, and artifacts before sending another message.'}</p>}
+            <p className={styles.error} role="alert">{text.runnerInterrupted}</p>}
         </div>
         {selected.status === 'active' && draftIdentity && <form className={styles.composer} onSubmit={event => void send(event)}>
           <div className={styles.composerPills}>
             {selected.work_item_id
-              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=my-work&workItem=${encodeURIComponent(selected.work_item_id)}`}>⨯ @{zh ? '工作项' : 'work item'} {selected.work_item_id.slice(0, 8)}</a>
-              : <span className={styles.contextPill}>＋ @{zh ? '工作项' : 'work item'}</span>}
+              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=my-work&workItem=${encodeURIComponent(selected.work_item_id)}`}>⨯ @{text.workItemPill} {selected.work_item_id.slice(0, 8)}</a>
+              : <span className={styles.contextPill}>＋ @{text.workItemPill}</span>}
             {selected.project_id
-              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>⨯ @{zh ? '项目' : 'project'} {selected.project_id.slice(0, 8)}</a>
-              : <span className={styles.contextPill}>＋ @{zh ? '项目' : 'project'}</span>}
-            <span className={styles.contextPill}>{selected.context_pins.length > 0 ? `⨯ @${zh ? '文件' : 'files'} ${selected.context_pins.length}` : `＋ @${zh ? '文件' : 'files'}`}</span>
-            <span className={styles.contextPill}>＋ @{zh ? '终端' : 'terminal'}</span>
+              ? <a className={`${styles.contextPill} ${styles.contextPillBound}`} href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>⨯ @{text.projectPill} {selected.project_id.slice(0, 8)}</a>
+              : <span className={styles.contextPill}>＋ @{text.projectPill}</span>}
+            <span className={styles.contextPill}>{selected.context_pins.length > 0 ? `⨯ @${text.filesPill} ${selected.context_pins.length}` : `＋ @${text.filesPill}`}</span>
+            <span className={styles.contextPill}>＋ @{text.terminalPill}</span>
           </div>
-          <RichTextEditor identity={draftIdentity} label={zh ? '消息（Markdown）' : 'Message (Markdown)'} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} />
+          <RichTextEditor identity={draftIdentity} label={text.messageFieldLabel} mode="comment" name="messageMarkdown" onChange={setDraft} required value={draft} />
           <div className={styles.composerFooter}>
             <div className={styles.turnModelSelection}>
-              <label>{zh ? '本次模型服务' : 'Service for this turn'}<select aria-label={zh ? '本次模型服务' : 'Service for this turn'} disabled={busy} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: event.target.value, modelId: null }; setTurnConnectionId(event.target.value) }} value={turnConnectionId}>
-                {connections.length === 0 && <option value="">{zh ? '请先配置服务' : 'Configure a service'}</option>}
+              <label>{text.turnServiceLabel}<select aria-label={text.turnServiceLabel} disabled={busy} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: event.target.value, modelId: null }; setTurnConnectionId(event.target.value) }} value={turnConnectionId}>
+                {connections.length === 0 && <option value="">{text.configureServiceOption}</option>}
                 {connections.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
               </select></label>
-              <label>{zh ? '本次模型' : 'Model for this turn'}<select aria-label={zh ? '本次模型' : 'Model for this turn'} disabled={busy || !turnConnectionId} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: turnConnectionId, modelId: event.target.value }; setTurnModelId(event.target.value) }} value={turnModelId}>
-                {turnModels.length === 0 && <option value="">{zh ? '无可用模型' : 'No available model'}</option>}
+              <label>{text.turnModelLabel}<select aria-label={text.turnModelLabel} disabled={busy || !turnConnectionId} onChange={event => { turnPickRef.current = { conversationId: selected.id, connectionId: turnConnectionId, modelId: event.target.value }; setTurnModelId(event.target.value) }} value={turnModelId}>
+                {turnModels.length === 0 && <option value="">{text.noAvailableModel}</option>}
                 {turnModels.map(item => <option key={item.id} value={item.id}>{item.display_name}</option>)}
               </select></label>
             </div>
             <div className={styles.composerActions}>
-              <span className={styles.composerFacts}>{zh ? 'Enter 发送 · Shift+Enter 换行' : 'Enter to send · Shift+Enter for a new line'}</span>
-              <Button disabled={busy || !draft.trim() || !sessionCanRun || !turnConnectionId || !turnModelId} type="submit">{zh ? '发送' : 'Send'}</Button>
+              <span className={styles.composerFacts}>{text.composerKeyboardHint}</span>
+              <Button disabled={busy || !draft.trim() || !sessionCanRun || !turnConnectionId || !turnModelId} type="submit">{text.send}</Button>
             </div>
           </div>
-          {!selected.agent_session_id && <p className={`${styles.hint} ${styles.hintBlocked}`}>{zh ? '此对话尚未绑定执行会话。' : 'This conversation has no execution session.'}</p>}
-          {selected.agent_session_id && boundSession && !sessionCanRun && <p className={`${styles.hint} ${styles.hintBlocked}`} role="status">{zh ? '绑定的执行会话已结束，请创建新的委派会话。' : 'The bound execution session has ended. Start a new delegated session.'}</p>}
-          {sessionCanRun && <p className={`${styles.hint} ${styles.hintReady}`}>● {zh ? '执行会话可运行' : 'Execution session can run'}{boundSession ? ` · ${boundSession.state}` : ''}</p>}
-          {connections.length === 0 && <a href="/settings/agent-workbench">{zh ? '配置模型服务' : 'Configure a model service'}</a>}
+          {!selected.agent_session_id && <p className={`${styles.hint} ${styles.hintBlocked}`}>{text.noBoundSession}</p>}
+          {selected.agent_session_id && boundSession && !sessionCanRun && <p className={`${styles.hint} ${styles.hintBlocked}`} role="status">{text.boundSessionEnded}</p>}
+          {sessionCanRun && <p className={`${styles.hint} ${styles.hintReady}`}>● {text.sessionCanRun}{boundSession ? ` · ${boundSession.state}` : ''}</p>}
+          {connections.length === 0 && <a href="/settings/agent-workbench">{text.configureModelServiceLink}</a>}
         </form>}
       </>}
     </section>
-    <aside className={styles.context} aria-label={zh ? '执行上下文' : 'Execution context'}>
-      <h2>{zh ? '执行上下文' : 'Execution context'}</h2>
-      {selected ? <><p>{zh ? '执行写操作由服务端授权。' : 'The server authorizes each write.'}</p>
+    <aside className={styles.context} aria-label={text.contextRegionLabel}>
+      <h2>{text.contextRegionLabel}</h2>
+      {selected ? <><p>{text.serverAuthorizesWrites}</p>
         <ul className={styles.contextPins} data-testid="workbench-context-pins">
-          {selected.project_id && <li><a href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>Project {selected.project_id.slice(0, 8)}</a></li>}
-          {selected.work_item_id && <li><a href={`/?view=issues&workItem=${encodeURIComponent(selected.work_item_id)}`}>Issue {selected.work_item_id.slice(0, 8)}</a></li>}
+          {selected.project_id && <li><a href={`/?view=projects&project=${encodeURIComponent(selected.project_id)}`}>{text.contextProject(selected.project_id.slice(0, 8))}</a></li>}
+          {selected.work_item_id && <li><a href={`/?view=issues&workItem=${encodeURIComponent(selected.work_item_id)}`}>{text.contextIssue(selected.work_item_id.slice(0, 8))}</a></li>}
           {selected.context_pins.map((pin, index) => <li key={`${pin.kind}-${pin.refId}-${index}`}>
-            {pin.kind === 'work_item' ? 'Issue' : pin.kind === 'document' ? 'Document' : 'Guidance'} {pin.refId.slice(0, 8)}
-            {pin.revision !== null ? ` · r${pin.revision}` : (pin.resolved_revision !== null && pin.resolved_revision !== undefined ? ` · r${pin.resolved_revision}` : ` · ${zh ? '跟随最新' : 'live head'}`)}
+            {pin.kind === 'work_item' ? text.pinKindIssue : pin.kind === 'document' ? text.pinKindDocument : text.pinKindGuidance} {pin.refId.slice(0, 8)}
+            {pin.revision !== null ? text.pinRevisionLabel(pin.revision) : (pin.resolved_revision !== null && pin.resolved_revision !== undefined ? text.pinRevisionLabel(pin.resolved_revision) : text.pinLiveHeadLabel)}
           </li>)}
         </ul>
-        {selected.agent_session_id && <a href={`/agent-sessions/${selected.agent_session_id}`}>{zh ? '查看 Agent 会话与证据' : 'View Agent session and evidence'}</a>}
-        {selected.agent_session_id && <span role="status">{zh ? '执行会话状态' : 'Execution session state'}: {boundSession?.state ?? (zh ? '正在读取' : 'Loading')}</span>}
-        <small>{zh ? '对话版本' : 'Conversation revision'} {selected.revision}</small></> : <p>{zh ? '选择对话后显示上下文。' : 'Select a conversation to view context.'}</p>}
+        {selected.agent_session_id && <a href={`/agent-sessions/${selected.agent_session_id}`}>{text.viewAgentSessionLink}</a>}
+        {selected.agent_session_id && <span role="status">{text.sessionStateLabel}: {boundSession?.state ?? text.sessionStateLoading}</span>}
+        <small>{text.conversationRevisionLabel} {selected.revision}</small></> : <p>{text.selectConversationForContext}</p>}
     </aside>
   </div>
 }
