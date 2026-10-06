@@ -23,3 +23,4 @@
 \ir packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql
 
 \ir packages/db/migrations/v1/0011_versioned_documents.sql
+\ir packages/db/migrations/v1/0013_work_item_board_rank.sql

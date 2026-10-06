@@ -4696,6 +4696,15 @@ components:
             projectId: { type: [string, "null"], format: uuid },
             milestoneId: { type: [string, "null"], format: uuid },
             parentId: { type: [string, "null"], format: uuid },
+            placement:
+              {
+                description: "Where the Issue should land inside its (possibly new) status column. beforeItemId names the card to sit immediately above; null means the end of the column. The server computes the rank.",
+                type: object,
+                additionalProperties: false,
+                required: [beforeItemId],
+                properties:
+                  { beforeItemId: { type: [string, "null"], format: uuid } },
+              },
           },
       }
     CommentInput:

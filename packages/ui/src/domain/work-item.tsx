@@ -188,7 +188,7 @@ function resolveWorkItemCopy(copy?: Partial<WorkItemCopy>): WorkItemCopy {
 
 export type WorkItemStatusOption = { id: string; name: string; category?: string; color?: string }
 export type WorkItemMoveSource = 'pointer' | 'keyboard' | 'explicit-status-selector'
-export type WorkItemMoveCallback = (item: WorkItemCardData, targetStatusId: string, source: WorkItemMoveSource) => void | Promise<void>
+export type WorkItemMoveCallback = (item: WorkItemCardData, targetStatusId: string, source: WorkItemMoveSource, beforeItemId?: string | null) => void | Promise<void>
 export type WorkItemLabelChangeCallback = (item: WorkItemCardData, nextLabels: string[]) => void | Promise<void>
 export type WorkItemCardDensity = 'compact' | 'comfortable'
 export type WorkItemCardProps = {
@@ -652,12 +652,17 @@ type AdaptiveWorkItemCardProps = Pick<WorkItemCardProps,
   | 'onOpenProject'
   | 'statusOptions'
 > & {
+  columnId: string
+  onCardDragOver: (columnId: string, itemId: string, event: DragEvent<HTMLDivElement>) => void
   onCardPointerDown: (itemId: string, event: ReactPointerEvent<HTMLElement>) => void
   order: number
 }
 
-const AdaptiveWorkItemCard = memo(function AdaptiveWorkItemCard({ item, onCardPointerDown, order, ...props }: AdaptiveWorkItemCardProps) {
-  return <div className="wm-work-item-adaptive-card-slot" style={{ order }}>
+// The handler is built inside the memo rather than passed as a closure from the
+// collection: an inline arrow would change identity on every render and defeat
+// the memo that keeps 300 cards from re-rendering when a sibling changes.
+const AdaptiveWorkItemCard = memo(function AdaptiveWorkItemCard({ columnId, item, onCardDragOver, onCardPointerDown, order, ...props }: AdaptiveWorkItemCardProps) {
+  return <div className="wm-work-item-adaptive-card-slot" onDragOver={event => onCardDragOver(columnId, item.id, event)} style={{ order }}>
     <WorkItemCard {...props} draggable item={item} layout="adaptive" onPointerDown={event => onCardPointerDown(item.id, event)} />
   </div>
 })
@@ -724,6 +729,10 @@ export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, colu
   const draggedItem = useRef<string | null>(null)
   const [pointerItem, setPointerItem] = useState<string | null>(null)
   const [dropColumn, setDropColumn] = useState<string | null>(null)
+  // Where the dragged card would land inside that column. beforeItemId: null
+  // means the end of it. The server resolves this to a rank, so the board only
+  // has to say which card to sit above (ADR 0073).
+  const [dropBefore, setDropBefore] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const panning = useRef<{ x: number; y: number; left: number; top: number } | null>(null)
   const [isPanning, setIsPanning] = useState(false)
@@ -755,48 +764,89 @@ export function WorkItemAdaptiveCollection({ availableLabels, columnWidths, colu
     setPointerItem(itemId)
   }, [])
 
-  const cardColumns = useMemo(() => columnModels.map(({ column, entries }) => ({
-    cards: entries.map(({ item, order }) => <AdaptiveWorkItemCard
-      availableLabels={availableLabels}
-      copy={copy}
-      density={density}
-      item={item}
-      key={item.id}
-      maxVisibleLabels={maxVisibleLabels}
-      onCardPointerDown={onCardPointerDown}
-      onLabelsChange={onLabelsChange}
-      onMove={onMove}
-      onOpen={onOpen}
-      onOpenProject={onOpenProject}
-      order={order}
-      statusOptions={effectiveColumns}
-    />),
-    column,
-    count: entries.length,
-  })), [availableLabels, columnModels, copy, density, effectiveColumns, maxVisibleLabels, onCardPointerDown, onLabelsChange, onMove, onOpen, onOpenProject])
+  const onColumnDragOver = useCallback((columnId: string, event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setDropColumn(columnId)
+    // Over the column's own padding rather than a card: the card lands last.
+    if (event.target === event.currentTarget) setDropBefore(null)
+  }, [])
+  const onCardDragOver = useCallback((columnId: string, itemId: string, event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const box = event.currentTarget.getBoundingClientRect()
+    // Top half inserts above this card, bottom half below it. That is the rule
+    // every board uses, and it is what makes "drop it here" predictable.
+    const below = event.clientY - box.top > box.height / 2
+    const entries = columnModels.find(entry => entry.column.id === columnId)?.entries ?? []
+    const index = entries.findIndex(entry => entry.item.id === itemId)
+    const next = entries.slice(index + 1).find(entry => entry.item.id !== draggedItem.current)
+    setDropColumn(columnId)
+    setDropBefore(below ? (next?.item.id ?? null) : itemId)
+  }, [columnModels])
 
-  const moveTo = useCallback((column: WorkItemStatusOption, source: WorkItemMoveSource, id: string | null) => {
+  const cardColumns = useMemo(() => columnModels.map(({ column, entries }) => {
+    const inserting = dropColumn === column.id
+    const indicator = <div aria-hidden className="wm-work-item-insert" />
+    const cards = entries.map(({ item, order }) => <>
+      {inserting && dropBefore === item.id && indicator}
+      <AdaptiveWorkItemCard
+        availableLabels={availableLabels}
+        columnId={column.id}
+        copy={copy}
+        density={density}
+        item={item}
+        key={item.id}
+        maxVisibleLabels={maxVisibleLabels}
+        onCardDragOver={onCardDragOver}
+        onCardPointerDown={onCardPointerDown}
+        onLabelsChange={onLabelsChange}
+        onMove={onMove}
+        onOpen={onOpen}
+        onOpenProject={onOpenProject}
+        order={order}
+        statusOptions={effectiveColumns}
+      />
+    </>)
+    if (inserting && (dropBefore === null || !entries.some(entry => entry.item.id === dropBefore))) cards.push(<>{indicator}</>)
+    return { cards, column, count: entries.length }
+  }), [availableLabels, columnModels, copy, density, dropBefore, dropColumn, effectiveColumns, maxVisibleLabels, onCardDragOver, onCardPointerDown, onLabelsChange, onMove, onOpen, onOpenProject])
+
+  const moveTo = useCallback((column: WorkItemStatusOption, source: WorkItemMoveSource, id: string | null, beforeItemId: string | null = null) => {
     const item = id ? itemById.get(id) : undefined
     draggedItem.current = null
     setPointerItem(null)
     setDropColumn(null)
-    if (item && item.statusId !== column.id) handlePresentationPromise(onMove ? () => onMove(item, column.id, source) : undefined)
-  }, [itemById, onMove])
+    setDropBefore(null)
+    if (!item) return
+    const entries = columnModels.find(entry => entry.column.id === column.id)?.entries ?? []
+    // Decide by comparing the resulting order against the current one. Index
+    // arithmetic on the column minus the dragged card is off by one for every
+    // card that is not last, and a wrong "already there" verdict would burn a
+    // revision on a drop that changed nothing.
+    const currentIds = entries.map(entry => entry.item.id)
+    const withoutIds = currentIds.filter(id => id !== item.id)
+    const at = beforeItemId === null ? -1 : withoutIds.indexOf(beforeItemId)
+    const nextIds = at < 0
+      ? [...withoutIds, item.id]
+      : [...withoutIds.slice(0, at), item.id, ...withoutIds.slice(at)]
+    const unchanged = currentIds.length === nextIds.length
+      && currentIds.every((id, index) => id === nextIds[index])
+    if (item.statusId === column.id && unchanged) return
+    handlePresentationPromise(onMove
+      ? () => onMove(item, column.id, source, beforeItemId)
+      : undefined)
+  }, [columnModels, itemById, onMove])
 
-  const onColumnDragOver = useCallback((columnId: string, event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    setDropColumn(columnId)
-  }, [])
   const onColumnDragLeave = useCallback((columnId: string) => {
     setDropColumn(current => current === columnId ? null : current)
   }, [])
   const onColumnDrop = useCallback((column: WorkItemStatusOption, event: DragEvent<HTMLDivElement>) => {
     event.preventDefault()
-    moveTo(column, 'pointer', event.dataTransfer.getData('text/plain') || draggedItem.current)
-  }, [moveTo])
+    moveTo(column, 'pointer', event.dataTransfer.getData('text/plain') || draggedItem.current, dropBefore)
+  }, [dropBefore, moveTo])
   const onColumnPointerUp = useCallback((column: WorkItemStatusOption) => {
-    moveTo(column, 'pointer', pointerItem ?? draggedItem.current)
-  }, [moveTo, pointerItem])
+    moveTo(column, 'pointer', pointerItem ?? draggedItem.current, dropBefore)
+  }, [dropBefore, moveTo, pointerItem])
   const onColumnKeyDown = useCallback((columnIndex: number, event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
     event.preventDefault()

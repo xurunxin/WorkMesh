@@ -1391,6 +1391,9 @@ main#workmesh-main:focus-visible {
 .wm-work-item-column > header .wm-column-count { color: var(--wm-text-subtle); font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .wm-work-item-column-items { display: grid; align-content: start; gap: .6rem; padding: 0 .7rem .7rem; min-height: 0; flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; overscroll-behavior: contain; }
 .wm-work-item-column-items::after { content: ''; display: block; height: .1rem; }
+/* Insertion point while dragging. Without it the Human is told which COLUMN
+   will accept the drop but not WHERE inside it, so a reorder would be a guess. */
+.wm-work-item-insert { height: 3px; margin: -.15rem 0; border-radius: var(--wm-radius-pill); background: var(--wm-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--wm-focus) 18%, transparent); }
 .wm-work-item-column-resize { position: absolute; top: 0; right: 0; bottom: 0; width: 8px; cursor: col-resize; z-index: 2; display: flex; align-items: center; justify-content: center; }
 .wm-work-item-column-resize:hover .wm-work-item-column-resize-grip,
 .wm-work-item-column-resize:active .wm-work-item-column-resize-grip { background: var(--wm-focus); }

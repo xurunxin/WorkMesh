@@ -44,6 +44,113 @@ const workItemPlanningCodes = [
   "WORK_ITEM_HAS_ACTIVE_RELATIONS",
 ] as const;
 
+/**
+ * Spacing between two neighbouring ranks in a column, and the largest usable
+ * exponent for it. A power of two keeps every midpoint exact in `numeric`
+ * until the gap is halved away this many times.
+ */
+const BOARD_RANK_SPACING = 1024
+const BOARD_RANK_MIN_SPLIT = 1 / 1024
+
+/**
+ * Resolves a placement intent into a concrete rank for one Issue (ADR 0073).
+ *
+ * The client says "immediately before this card" (or "at the end"); the server
+ * owns the number. Two people reordering the same column serialise on an
+ * advisory lock keyed by (workspace, team, column) rather than by row, so the
+ * read of the neighbours and the write cannot interleave.
+ *
+ * Re-spacing writes `board_rank` on the column's other rows WITHOUT bumping
+ * their revision and WITHOUT an event or outbox row. That is the whole point:
+ * `board_rank` is layout state, not a domain fact. Renumbering on every move
+ * would change rows the Human never touched and manufacture If-Match conflicts
+ * for edits those rows' owners made in good faith.
+ */
+async function resolveBoardRank(
+  tx: PoolClient,
+  input: {
+    actor: { workspaceId: string }
+    itemId: string
+    teamId: string
+    targetStatusId: string
+    beforeItemId: string | null
+  },
+): Promise<number> {
+  const { actor, itemId, teamId, targetStatusId, beforeItemId } = input;
+  await tx.query(
+    "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+    [`board:${actor.workspaceId}:${teamId}:${targetStatusId}`],
+  );
+  if (beforeItemId === itemId)
+    throw new DomainError(
+      "INVALID_INPUT",
+      "An Issue cannot be placed before itself",
+    );
+  let anchorRank: number | null = null;
+  if (beforeItemId) {
+    const anchor = (
+      await tx.query<{ board_rank: string }>(
+        "SELECT board_rank::text AS board_rank FROM work_items WHERE id=$1 AND workspace_id=$2 AND team_id=$3 AND status_id=$4 AND deleted_at IS NULL",
+        [beforeItemId, actor.workspaceId, teamId, targetStatusId],
+      )
+    ).rows[0];
+    if (!anchor)
+      throw new DomainError(
+        "INVALID_INPUT",
+        "The card to place before is not in the target column",
+      );
+    anchorRank = Number(anchor.board_rank);
+  }
+  const tail = (
+    await tx.query<{ board_rank: string }>(
+      "SELECT board_rank::text AS board_rank FROM work_items WHERE workspace_id=$1 AND team_id=$2 AND status_id=$3 AND deleted_at IS NULL AND id<>$4 ORDER BY board_rank DESC LIMIT 1",
+      [actor.workspaceId, teamId, targetStatusId, itemId],
+    )
+  ).rows[0];
+  const upperBound = anchorRank;
+  const lowerBound =
+    upperBound === null
+      ? tail
+        ? Number(tail.board_rank) + BOARD_RANK_SPACING
+        : BOARD_RANK_SPACING
+      : (
+          await tx.query<{ board_rank: string }>(
+            "SELECT board_rank::text AS board_rank FROM work_items WHERE workspace_id=$1 AND team_id=$2 AND status_id=$3 AND deleted_at IS NULL AND id<>$4 AND board_rank<$5 ORDER BY board_rank DESC LIMIT 1",
+            [actor.workspaceId, teamId, targetStatusId, itemId, upperBound],
+          )
+        ).rows[0]?.board_rank ?? null;
+  const above = lowerBound === null ? null : Number(lowerBound);
+  const below = upperBound;
+  if (above !== null && below !== null && below - above <= BOARD_RANK_MIN_SPLIT) {
+    // The gap has been halved away. Re-space the column, then re-read the
+    // neighbour. Layout-only: no revision, no event, no outbox row.
+    await respacedColumn(tx, actor.workspaceId, teamId, targetStatusId, itemId);
+    return resolveBoardRank(tx, { ...input, beforeItemId });
+  }
+  if (above === null) return below === null ? BOARD_RANK_SPACING : below + BOARD_RANK_SPACING;
+  if (below === null) return above - BOARD_RANK_SPACING;
+  return (above + below) / 2;
+}
+
+/** Reassigns even spacing across a column, leaving `skipId` untouched. */
+async function respacedColumn(
+  tx: PoolClient,
+  workspaceId: string,
+  teamId: string,
+  statusId: string,
+  skipId: string,
+): Promise<void> {
+  await tx.query(
+    `WITH ordered AS (
+       SELECT id, row_number() OVER (ORDER BY board_rank, number) * $5 AS rank
+       FROM work_items
+       WHERE workspace_id=$1 AND team_id=$2 AND status_id=$3 AND deleted_at IS NULL AND id<>$4
+     )
+     UPDATE work_items item SET board_rank = ordered.rank FROM ordered WHERE ordered.id = item.id`,
+    [workspaceId, teamId, statusId, skipId, BOARD_RANK_SPACING],
+  );
+}
+
 async function planningWorkItemWrite<T>(operation: () => Promise<T>): Promise<T> {
   try {
     return await operation();
@@ -775,11 +882,12 @@ export const commands = {
           await tx.query<{
             revision: number;
             team_id: string;
+            status_id: string;
             responsible_human_actor_id: string | null;
             category: StatusCategory;
             project_id: string | null;
           }>(
-            "SELECT w.revision,w.team_id,w.responsible_human_actor_id,w.project_id,s.category FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL FOR UPDATE",
+            "SELECT w.revision,w.team_id,w.status_id,w.responsible_human_actor_id,w.project_id,s.category FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND w.workspace_id=$2 AND w.deleted_at IS NULL FOR UPDATE",
             [id, c.actor.workspaceId],
           )
         ).rows,
@@ -813,15 +921,26 @@ export const commands = {
           "A milestone requires a project",
         );
       assertResponsibleHumanForStarted(status, owner);
+      const boardRank = has("placement")
+        ? await resolveBoardRank(tx, {
+            actor: c.actor,
+            itemId: id,
+            teamId: current.team_id,
+            targetStatusId: has("statusId") ? (input.statusId as string) : current.status_id,
+            beforeItemId:
+              (input.placement as { beforeItemId?: string | null } | undefined)
+                ?.beforeItemId ?? null,
+          })
+        : null;
       const item = one(
         (
           await planningWorkItemWrite(() => tx.query<{ id: string; revision: number }>(
-            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,revision=revision+1,updated_at=now() WHERE id=$21 RETURNING id,revision",
+            "UPDATE work_items SET title=CASE WHEN $1 THEN $2 ELSE title END,description=CASE WHEN $3 THEN $4 ELSE description END,status_id=CASE WHEN $5 THEN $6 ELSE status_id END,priority=CASE WHEN $7 THEN $8 ELSE priority END,due_date=CASE WHEN $9 THEN $10 ELSE due_date END,responsible_human_actor_id=CASE WHEN $11 THEN $12 ELSE responsible_human_actor_id END,labels=CASE WHEN $13 THEN $14 ELSE labels END,project_id=CASE WHEN $15 THEN $16 ELSE project_id END,milestone_id=CASE WHEN $17 THEN $18 ELSE CASE WHEN $15 THEN NULL ELSE milestone_id END END,parent_id=CASE WHEN $19 THEN $20 ELSE parent_id END,board_rank=CASE WHEN $21 THEN $22 ELSE board_rank END,revision=revision+1,updated_at=now() WHERE id=$23 RETURNING id,revision",
             [
               has("title"),
               input.title ?? null,
-              has("description"),
               input.description ?? null,
+              has("description"),
               has("statusId"),
               input.statusId ?? null,
               has("priority"),
@@ -838,6 +957,8 @@ export const commands = {
               input.milestoneId ?? null,
               has("parentId"),
               input.parentId ?? null,
+              boardRank !== null,
+              boardRank,
               id,
             ],
           ))

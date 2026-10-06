@@ -1673,7 +1673,16 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       label: query.label ?? null,
       search: query.search ?? null,
     },
-    sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
+    // Humans read Issues in the order they arranged them, so a board reorder is
+// visible on the next read without a second query. This is deliberately NOT
+// opt-in: a layout toggle must reuse the same projection, so the board cannot
+// ask for a different order than the list without re-projecting every row.
+    // Agents keep updated_at DESC -- their reads are scoped to one Session's
+    // own Issues and are not a triage surface.
+    sort: [
+      { key: "board_rank", sql: "w.board_rank", direction: "ASC" as const },
+      { key: "number", sql: "w.number", direction: "ASC" as const },
+    ],
   } as const;
   if (request.actor!.kind !== "human") {
     const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(

@@ -119,6 +119,13 @@ export type WorkItemMoveIntent = {
   targetStatusId: string
   currentRevision: number
   responsibleHumanActorId: string | null
+  /**
+   * The card this one should land immediately above in the target column, or
+   * null for the end of it. Part of the intent, not a transient UI detail: two
+   * different drops of the same card into the same column are two different
+   * commands and must not collapse into one idempotent replay.
+   */
+  beforeItemId?: string | null
   source: 'pointer' | 'keyboard' | 'explicit-status-selector'
 }
 
