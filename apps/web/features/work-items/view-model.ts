@@ -52,6 +52,9 @@ export function toWorkSurfaceItem(item: WorkItemDto): WorkSurfaceItem {
     statusName: text(item.status_name) || text(item.statusName) || 'Unknown status',
     statusCategory: enumValue(item.status_category ?? item.statusCategory, STATUS_CATEGORIES),
     priority: enumValue(item.priority, PRIORITIES),
+    // The API returns a calendar date; the card only needs the day, and keeping
+    // it a plain YYYY-MM-DD string means the card never re-derives a timezone.
+    dueDate: text(item.due_date).slice(0, 10) || null,
     responsibleHuman: human ? text(human) : null,
     responsibleHumanActorId: typeof item.responsible_human_actor_id === 'string' ? item.responsible_human_actor_id : null,
     projectId: text(item.project_id) || null,

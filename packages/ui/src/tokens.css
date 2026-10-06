@@ -80,6 +80,12 @@
   --wm-shadow-sm: 0 1px 2px rgba(17, 17, 17, .05), 0 2px 8px rgba(17, 17, 17, .04);
   --wm-shadow-md: 0 4px 14px rgba(17, 17, 17, .06), 0 16px 40px rgba(17, 17, 17, .10);
   --wm-shadow-lg: 0 8px 28px rgba(17, 17, 17, .08), 0 32px 80px rgba(17, 17, 17, .14);
+  /* Rounded-language elevation. A card resting on a recessed panel needs a
+     tighter, ambient shadow than a modal: the panel already carries the depth,
+     so the card only has to lift off it. */
+  --wm-shadow-card: 0 1px 2px rgba(17, 17, 17, .04), 0 1px 3px rgba(17, 17, 17, .03);
+  --wm-shadow-card-hover: 0 2px 6px rgba(17, 17, 17, .06), 0 8px 20px rgba(17, 17, 17, .07);
+  --wm-shadow-panel: 0 1px 2px rgba(17, 17, 17, .03);
   --wm-focus-ring: 0 0 0 3px color-mix(in srgb, var(--wm-focus) 32%, transparent);
 }
 
@@ -148,6 +154,11 @@
   --wm-shadow-sm: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .22);
   --wm-shadow-md: 0 4px 14px rgba(0, 0, 0, .28), 0 16px 40px rgba(0, 0, 0, .32);
   --wm-shadow-lg: 0 8px 28px rgba(0, 0, 0, .32), 0 32px 80px rgba(0, 0, 0, .42);
+  /* On a dark panel a card separates through the surface step first and the
+     shadow second, so the card shadow stays shallower than the light-mode one. */
+  --wm-shadow-card: 0 1px 2px rgba(0, 0, 0, .32);
+  --wm-shadow-card-hover: 0 2px 8px rgba(0, 0, 0, .44);
+  --wm-shadow-panel: 0 1px 2px rgba(0, 0, 0, .24);
   --wm-focus-ring: 0 0 0 3px color-mix(in srgb, var(--wm-focus) 40%, transparent);
 }
 
@@ -194,6 +205,21 @@
   --wm-radius-xl: 26px;
   --wm-radius-2xl: 34px;
   --wm-radius-pill: 999px;
+
+  /* Rounded design language — the "soft card on a soft panel" scale used by
+     the Issue board, the work surface chrome, and any nested grouped surface.
+     It is deliberately softer than the control radius above: a board is made
+     of large flat regions, so its corners read as shape rather than as a
+     button, while controls keep the tighter radius so they still read as
+     pressable. */
+  --wm-radius-card: 16px;
+  --wm-radius-panel: 22px;
+
+  /* The recessed surface a group of items sits on. Derived from the existing
+     surface ramp rather than a new literal, so the panel tracks the theme:
+     in light it lands one step below the white cards, in dark one step above. */
+  --wm-surface-panel: color-mix(in srgb, var(--wm-surface-subtle) 92%, var(--wm-canvas));
+  --wm-border-panel: color-mix(in srgb, var(--wm-border) 70%, transparent);
 
   /* Icon-only sidebar width: room for a 20px glyph plus its own padding. */
   --wm-sidebar-collapsed-w: 56px;
