@@ -939,8 +939,8 @@ export const commands = {
             [
               has("title"),
               input.title ?? null,
-              input.description ?? null,
               has("description"),
+              input.description ?? null,
               has("statusId"),
               input.statusId ?? null,
               has("priority"),
