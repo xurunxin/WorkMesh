@@ -17,13 +17,13 @@ import {
   type RefObject,
 } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
+import { CalendarBlankIcon } from '@phosphor-icons/react/dist/csr/CalendarBlank'
 import { FolderSimpleIcon } from '@phosphor-icons/react/dist/csr/FolderSimple'
 import { FloppyDiskIcon } from '@phosphor-icons/react/dist/csr/FloppyDisk'
 import { FunnelXIcon } from '@phosphor-icons/react/dist/csr/FunnelX'
 import { GitBranchIcon } from '@phosphor-icons/react/dist/csr/GitBranch'
 import { ProhibitIcon } from '@phosphor-icons/react/dist/csr/Prohibit'
 import { RobotIcon } from '@phosphor-icons/react/dist/csr/Robot'
-import { UserCircleIcon } from '@phosphor-icons/react/dist/csr/UserCircle'
 import { coordinateDismissalTriggerActivation, useDismissalLayer } from '../internal/overlay.js'
 import { Button } from '../primitives/button.js'
 import { BudgetChip, type SessionBudgetLimitKind } from './control-plane.js'
@@ -42,6 +42,8 @@ export type WorkItemCardData = {
   statusName: string
   statusCategory?: string
   priority?: string
+  /** ISO calendar date (YYYY-MM-DD) the Issue is due, or null when unset. */
+  dueDate?: string | null
   responsibleHuman?: string | null
   responsibleHumanActorId?: string | null
   projectId?: string | null
@@ -84,6 +86,13 @@ export type WorkItemCopy = {
   budgetPercent: (ratio: number) => string
   budgetUnknown: (limit: string, cap: number) => string
   dropWorkHere: string
+  /**
+   * The due-date chip's visible label. It receives the raw ISO day so each
+   * locale owns its own date formatting rather than the card picking one.
+   */
+  dueChipLabel: (dueDate: string, kind: WorkItemDueKind) => string
+  /** Announces how a focused card moves between columns without a pointer. */
+  moveCardHint: string
   filterLabel: string
   filterLess: string
   filterMilestone: string
@@ -137,6 +146,8 @@ const defaultWorkItemCopy: WorkItemCopy = {
   clearFilters: 'Clear filters',
   completedSubIssues: (completed, total) => `Sub-issues ${completed}/${total}`,
   dropWorkHere: 'Drop work here',
+  dueChipLabel: (dueDate, kind) => kind === 'overdue' ? `Overdue ${shortDay(dueDate)}` : kind === 'today' ? 'Due today' : `Due ${shortDay(dueDate)}`,
+  moveCardHint: 'Hold Control with Left or Right Arrow to move this card to the adjacent column.',
   filterLabel: 'Label',
   filterLess: 'Fewer filters',
   filterMilestone: 'Milestone',
@@ -201,10 +212,61 @@ export type WorkItemCardProps = {
 
 function workItemClassNames(...values: Array<string | false | null | undefined>): string { return values.filter(Boolean).join(' ') }
 
+// A native drag can still deliver a click to the element under the pointer when
+// it ends, which would open the Issue the Human was trying to move. Recording
+// the end lets the card swallow that one activation.
+let lastDragEndedAt = 0
+const DRAG_CLICK_GUARD_MS = 250
+const wasJustDragged = (): boolean => Date.now() - lastDragEndedAt < DRAG_CLICK_GUARD_MS
+
+/**
+ * Initials for the card's avatar. The avatar is decorative — the Human's name
+ * is always rendered next to it as text — so an unrecognizable name renders a
+ * neutral "?" rather than pretending to know the person.
+ */
+function personInitials(name?: string | null): string {
+  const source = (name ?? '').trim()
+  if (!source) return '?'
+  const parts = source.split(/[\s._\-/]+/).filter(Boolean)
+  const first = parts[0]
+  if (!first) return '?'
+  const last = parts.length > 1 ? parts[parts.length - 1] : undefined
+  const head = [...first][0] ?? ''
+  const tail = last ? [...last][0] ?? '' : [...first][1] ?? ''
+  return `${head}${tail}`.toUpperCase()
+}
+
 // Filled-bar count per priority, mirroring the prototype's three-segment glyph.
 // The bar count and the text label encode priority independently, so priority
 // stays readable when hue is unavailable (design/README.md §3 signature component).
 const priorityBarCount: Readonly<Record<string, number>> = { urgent: 3, high: 2, medium: 1, low: 0, none: 0 }
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
+const padDay = (value: number): string => String(value).padStart(2, '0')
+
+/** M/D from an ISO day. Locale bundles format their own; this is the fallback. */
+const shortDay = (isoDay: string): string => {
+  const [, month, day] = isoDay.split('-')
+  return month && day ? `${Number(month)}/${Number(day)}` : isoDay
+}
+
+/**
+ * How a due date reads to the Human looking at the card right now.
+ *
+ * A due date is a calendar day, not an instant, so "overdue" is decided against
+ * the viewer's own local day rather than a UTC timestamp — an Issue due today
+ * must not read as overdue because the server stored it in another zone. The
+ * comparison is a string compare because both sides are already YYYY-MM-DD.
+ */
+export type WorkItemDueKind = 'overdue' | 'today' | 'upcoming'
+
+export function workItemDueKind(dueDate?: string | null, now: Date = new Date()): WorkItemDueKind | null {
+  const day = (dueDate ?? '').slice(0, 10)
+  if (!ISO_DAY.test(day)) return null
+  const today = `${now.getFullYear()}-${padDay(now.getMonth() + 1)}-${padDay(now.getDate())}`
+  if (day < today) return 'overdue'
+  return day === today ? 'today' : 'upcoming'
+}
 
 function PriorityBars({ priority }: Readonly<{ priority: string }>) {
   const filled = priorityBarCount[priority] ?? 0
@@ -401,6 +463,26 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
   }
   const handleDragEnd = (event: DragEvent<HTMLElement>) => {
     if (layout === 'adaptive') event.currentTarget.classList.remove('wm-work-item-card-dragging')
+    // A drag that ends over a card still delivers a click to some browsers.
+    // Recording the end lets the next activation be swallowed instead of
+    // opening the Issue the Human just moved.
+    lastDragEndedAt = Date.now()
+  }
+  // The board has no visible status selector, so a pointer-less move needs a
+  // keyboard path or the card can only ever be moved by dragging. Ctrl (or
+  // Cmd on macOS) with Left/Right Arrow steps one column at a time; the move
+  // command already restores focus to the same card afterwards.
+  const moveByKeyboard = (event: KeyboardEvent<HTMLElement>) => {
+    if (!onMove || statusOptions.length === 0) return
+    if (!event.ctrlKey && !event.metaKey) return
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+    const index = statusOptions.findIndex(status => status.id === item.statusId)
+    if (index < 0) return
+    const next = statusOptions[index + (event.key === 'ArrowRight' ? 1 : -1)]
+    if (!next) return
+    event.preventDefault()
+    event.stopPropagation()
+    move(next.id, 'keyboard')
   }
   const stopPointer = (event: ReactPointerEvent<HTMLElement>) => event.stopPropagation()
   const hasFacts = Boolean(item.blockedByCount || item.blockingCount || item.subIssueCount)
@@ -413,6 +495,7 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
   const hasLabels = Boolean(item.labels && item.labels.length > 0)
   const statusCategory = item.statusCategory ?? 'unknown'
   const statusColor = statusOptions.find(status => status.id === item.statusId)?.color
+  const dueKind = workItemDueKind(item.dueDate)
   const subIssueTotal = item.subIssueCount ?? 0
   const subIssueDone = item.completedSubIssueCount ?? 0
   const subIssuePct = subIssueTotal > 0 ? Math.round((subIssueDone / subIssueTotal) * 100) : 0
@@ -431,15 +514,16 @@ export function WorkItemCard({ availableLabels, className, copy, density = 'comf
     setLabelMenuAnchorVersion(version => version + 1)
     setLabelMenuOpen(true)
   }
-  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onPointerDown={onPointerDown} style={workflowStatusStyle(statusColor)}>
+  return <article aria-busy={dragState === 'pending' || undefined} aria-label={`${item.identifier}: ${item.title}`} className={workItemClassNames('wm-work-item-card', `wm-work-item-card-${layout}`, density === 'compact' && 'wm-work-item-card--compact', `wm-work-item-card-${dragState}`, labelMenuOpen && 'is-label-menu-open', className)} data-status-category={statusCategory} data-density={density} data-work-item-id={item.id} draggable={draggable && dragState !== 'pending'} onDragEnd={draggable ? handleDragEnd : undefined} onDragStart={draggable ? handleDragStart : undefined} onKeyDown={showStatusControl ? moveByKeyboard : undefined} onPointerDown={onPointerDown} style={workflowStatusStyle(statusColor)}>
     <div className="wm-work-item-card-heading">
       <span className="wm-work-item-identifier">{item.identifier}</span>
       <span className={workItemClassNames('wm-work-item-status-pill', `status-${statusCategory}`)}>{item.statusName}</span>
       {item.priority && <span className={workItemClassNames('wm-work-item-priority', `priority-${item.priority}`)}><PriorityBars priority={item.priority} />{text.priorityName(item.priority)}</span>}
+      {dueKind && <span className={workItemClassNames('wm-work-item-due', `is-${dueKind}`)}><CalendarBlankIcon aria-hidden="true" size={13} weight="bold" />{text.dueChipLabel((item.dueDate ?? '').slice(0, 10), dueKind)}</span>}
     </div>
-    <button className="wm-work-item-title" onClick={() => handlePresentationPromise(onOpen ? () => onOpen(item) : undefined)} onPointerDown={stopPointer} type="button">{item.title}</button>
+    <button className="wm-work-item-title" onClick={() => { if (wasJustDragged()) return; handlePresentationPromise(onOpen ? () => onOpen(item) : undefined) }} onPointerDown={stopPointer} type="button">{item.title}</button>
     {(showStableLayoutSlots || (item.projectId && item.projectName)) && <div aria-hidden={!item.projectId || !item.projectName || undefined} className={workItemClassNames('wm-work-item-project-slot', (!item.projectId || !item.projectName) && 'is-empty')}>{item.projectId && item.projectName && <button aria-label={text.openProject(item.projectName)} className="wm-work-item-project" onClick={() => handlePresentationPromise(onOpenProject ? () => onOpenProject(item.projectId!) : undefined)} onPointerDown={stopPointer} type="button"><FolderSimpleIcon aria-hidden="true" size={13} weight="bold" /><span>{item.projectName}</span></button>}</div>}
-    <div className="wm-work-item-metadata"><span><UserCircleIcon aria-hidden="true" size={15} weight="fill" />{item.responsibleHuman ?? text.noResponsibleHuman}</span><span><RobotIcon aria-hidden="true" size={15} weight="duotone" />{item.activeAgent ? `${item.activeAgent}${item.activeAgentState ? ` · ${text.agentExecutionState(item.activeAgentState)}` : ''}` : text.noActiveAgent}</span></div>
+    <div className="wm-work-item-metadata"><span className="wm-work-item-person"><b aria-hidden="true" className="wm-work-item-avatar">{personInitials(item.responsibleHuman)}</b>{item.responsibleHuman ?? text.noResponsibleHuman}</span><span className="wm-work-item-agent"><RobotIcon aria-hidden="true" size={15} weight="duotone" />{item.activeAgent ? `${item.activeAgent}${item.activeAgentState ? ` · ${text.agentExecutionState(item.activeAgentState)}` : ''}` : text.noActiveAgent}</span></div>
     {showLabelRow && <div aria-hidden={!hasLabels || undefined} className={workItemClassNames('wm-work-item-labels', !hasLabels && 'is-empty')}>
       {shownLabels.map(label => canEditLabels
         ? <button aria-controls={labelMenuId} aria-expanded={labelMenuOpen} aria-haspopup="dialog" aria-label={text.labelMenuAriaLabel(item.title)} className={`wm-work-item-label wm-label-${workItemLabelTone(label)}`} key={label} onClick={openLabelMenu} onPointerDown={stopPointer} type="button">{label}</button>
@@ -548,7 +632,7 @@ export function WorkItemBoard({ availableLabels, columnWidths, columns, copy, de
     target_el.addEventListener('pointerup', onUpPointer)
     target_el.addEventListener('pointercancel', onUpPointer)
   }
-  return <section aria-label={text.boardLabel} className={workItemClassNames('wm-work-item-board', isPanning && 'is-panning')} data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" onPointerDown={onPointerDownBoard} ref={scrollRef} role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); const statusCategory = column.category ?? 'unknown'; const width = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH; return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-status-category={statusCategory} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`} className="wm-column-count">{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} density={density} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p>{onColumnWidthChange ? <div aria-hidden className="wm-work-item-column-resize" onPointerDown={startResize(column)} title="拖动调整列宽"><span className="wm-work-item-column-resize-grip" /></div> : null}</div> })}</div></section>
+  return <section aria-label={text.boardLabel} className={workItemClassNames('wm-work-item-board', isPanning && 'is-panning')} data-testid="board" tabIndex={0}><div aria-label={text.boardColumnsLabel} className="wm-work-item-board-scroll" onPointerDown={onPointerDownBoard} ref={scrollRef} role="region" tabIndex={0}>{columns.map((column, columnIndex) => { const columnItems = items.filter(item => item.statusId === column.id); const statusCategory = column.category ?? 'unknown'; const width = columnWidths?.[column.id] ?? DEFAULT_COLUMN_WIDTH; return <div aria-label={text.boardColumn(column.name)} className={workItemClassNames('wm-work-item-column', dropColumn === column.id && 'is-drop-target')} data-status-category={statusCategory} data-testid={`column-${column.id}`} data-workflow-state-id={column.id} key={column.id} style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }} onDragOver={event => { event.preventDefault(); setDropColumn(column.id) }} onDragLeave={() => setDropColumn(current => current === column.id ? null : current)} onDrop={event => handleDrop(column, event)} onPointerUp={() => moveTo(column, 'pointer', pointerItem ?? draggedItem.current)} onKeyDown={event => { if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return; event.preventDefault(); const next = columns[columnIndex + (event.key === 'ArrowRight' ? 1 : -1)]; if (next) document.querySelector<HTMLElement>(`[data-workflow-state-id="${CSS.escape(next.id)}"]`)?.focus() }} role="group" tabIndex={0}><header><span aria-hidden="true" className="wm-work-item-column-dot" /><h3>{column.name}</h3><span aria-label={`${columnItems.length} items`} className="wm-column-count">{columnItems.length}</span></header><div className="wm-work-item-column-items">{columnItems.map(item => <WorkItemCard availableLabels={availableLabels} copy={copy} density={density} draggable dragState={draggedItem.current === item.id ? 'dragging' : 'idle'} item={item} key={item.id} layout="board" maxVisibleLabels={maxVisibleLabels} onLabelsChange={onLabelsChange} onMove={onMove} onOpen={onOpen} onOpenProject={onOpenProject} onPointerDown={event => { if (event.target instanceof HTMLSelectElement) return; draggedItem.current = item.id; setPointerItem(item.id) }} statusOptions={columns} />)}</div><p className="wm-work-item-drop-hint">{text.dropWorkHere}</p>{onColumnWidthChange ? <div aria-hidden className="wm-work-item-column-resize" onPointerDown={startResize(column)} title="拖动调整列宽"><span className="wm-work-item-column-resize-grip" /></div> : null}</div> })}</div></section>
 }
 
 export type WorkItemAdaptiveCollectionProps = WorkItemBoardProps & {
@@ -598,7 +682,12 @@ type AdaptiveColumnProps = {
 
 const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, column, columnIndex, count, dropTarget, layout, onColumnDragLeave, onColumnDragOver, onColumnDrop, onColumnKeyDown, onColumnPointerUp, onColumnResize, showResize, text, width }: AdaptiveColumnProps) {
   const board = layout === 'board'
+  // The keyboard move lives on every card, but describing it on every card
+  // would repeat it once per Issue. One description per column keeps the
+  // shortcut discoverable without turning board traversal into a wall of text.
+  const hintId = useId()
   return <div
+    aria-describedby={board ? hintId : undefined}
     aria-label={board ? text.boardColumn(column.name) : undefined}
     className={workItemClassNames('wm-work-item-column', 'wm-work-item-adaptive-column', dropTarget && 'is-drop-target')}
     data-status-category={column.category ?? 'unknown'}
@@ -613,7 +702,12 @@ const AdaptiveWorkItemColumn = memo(function AdaptiveWorkItemColumn({ cards, col
     style={{ ...workflowStatusStyle(column.color), flex: `0 0 ${width}px` }}
     tabIndex={board ? 0 : -1}
   >
-    <header className="wm-work-item-column-header" hidden={!board}><h3>{column.name}</h3><span aria-label={`${count} items`} className="wm-column-count">{count}</span></header>
+    {/* The dot carries the column's status color at the point of use. The
+        previous full-width top stripe read as a divider across the panel and
+        fought the rounded corner; a small circle keeps the color cue while
+        letting the column header stay one left-aligned line. */}
+    <header className="wm-work-item-column-header" hidden={!board}><span aria-hidden="true" className="wm-work-item-column-dot" /><h3>{column.name}</h3><span aria-label={`${count} items`} className="wm-column-count">{count}</span></header>
+    <span className="wm-visually-hidden" id={hintId}>{text.moveCardHint}</span>
     <div className="wm-work-item-column-items wm-work-item-adaptive-column-items">{cards}</div>
     <p className="wm-work-item-drop-hint" hidden={!board}>{text.dropWorkHere}</p>
     {showResize && <div aria-hidden className="wm-work-item-column-resize" hidden={!board} onPointerDown={event => onColumnResize(column, event)}><span className="wm-work-item-column-resize-grip" /></div>}

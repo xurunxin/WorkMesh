@@ -36,11 +36,39 @@ import type { McpClientType, McpGuideCopyFacts } from './mcp-onboarding'
 
 export type Locale = 'zh-CN' | 'en'
 
+/**
+ * M/D from an ISO calendar day. The Issue's due date is a day, not an instant,
+ * so the label formats the string the server sent instead of building a Date —
+ * that keeps the chip from drifting a day in another timezone.
+ */
+function shortDueDay(isoDay: string): string {
+  const [year, month, day] = isoDay.split('-')
+  return year && month && day ? `${Number(month)}/${Number(day)}` : isoDay
+}
+
+/**
+ * Budget limit kind -> readable phrase. The server sends an enum key; showing
+ * `runtimeSeconds` to a Human is a projection leak, so each locale names it.
+ */
+const BUDGET_LIMIT_LABELS = Object.freeze({
+  'zh-CN': { runtimeSeconds: '运行时长', inputTokens: '输入 Token', outputTokens: '输出 Token', costUsd: '费用' },
+  en: { runtimeSeconds: 'runtime', inputTokens: 'input tokens', outputTokens: 'output tokens', costUsd: 'cost' },
+})
+const budgetLimitLabel = (locale: Locale, limit: string): string => BUDGET_LIMIT_LABELS[locale][limit as keyof typeof BUDGET_LIMIT_LABELS.en] ?? limit
+
 type TranslationKey =
   | 'agents'
   | 'administrationNavigation'
   | 'actionCouldNotComplete'
   | 'build'
+  | 'catalogBoardHint'
+  | 'catalogBoardLayout'
+  | 'catalogBoardTitle'
+  | 'catalogThemeCompact'
+  | 'catalogThemeDark'
+  | 'catalogThemeLight'
+  | 'catalogViewBoard'
+  | 'catalogViewList'
   | 'cancel'
   | 'close'
   | 'sessions'
@@ -122,6 +150,14 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     administrationNavigation: '管理导航',
     actionCouldNotComplete: '操作未能完成',
     build: '构建',
+    catalogBoardHint: '把卡片拖到其他列，或聚焦卡片后按 Ctrl 加左右方向键。上次移动：',
+    catalogBoardLayout: '示例布局',
+    catalogBoardTitle: 'Issue 看板 — 可交互',
+    catalogThemeCompact: '紧凑密度',
+    catalogThemeDark: '深色',
+    catalogThemeLight: '浅色',
+    catalogViewBoard: '看板',
+    catalogViewList: '列表',
     cancel: '取消',
     collapseSidebar: '收起导航栏',
     expandSidebar: '展开导航栏',
@@ -203,6 +239,14 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     administrationNavigation: 'Administration navigation',
     actionCouldNotComplete: 'Action could not be completed',
     build: 'build',
+    catalogBoardHint: 'Drag a card to another column, or focus one and press Control with Left/Right Arrow. Last move:',
+    catalogBoardLayout: 'Fixture layout',
+    catalogBoardTitle: 'Work Item board — live',
+    catalogThemeCompact: 'Compact density',
+    catalogThemeDark: 'Dark',
+    catalogThemeLight: 'Light',
+    catalogViewBoard: 'Board',
+    catalogViewList: 'List',
     cancel: 'Cancel',
     collapseSidebar: 'Collapse sidebar',
     expandSidebar: 'Expand sidebar',
@@ -429,9 +473,14 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
     allProjects: '全部项目',
     allStatuses: '全部状态',
     boardColumn: name => `${name} 列`,
+    budgetLabel: (limit, used, cap) => `本次运行预算 ${budgetLimitLabel('zh-CN', limit)}：${used ?? '未知'} / ${cap}`,
+    budgetPercent: ratio => `${Math.round(ratio * 100)}%`,
+    budgetUnknown: (limit, cap) => `${budgetLimitLabel('zh-CN', limit)} ?/${cap}`,
     clearFilters: '清除筛选',
     completedSubIssues: (completed, total) => `子问题 ${completed}/${total}`,
     dropWorkHere: '拖放 Issue 至此',
+    dueChipLabel: (dueDate, kind) => `${shortDueDay(dueDate)}${kind === 'overdue' ? ' 已逾期' : kind === 'today' ? ' 今天到期' : ' 到期'}`,
+    moveCardHint: '按 Ctrl 加左右方向键可把 Issue 移到相邻列。',
     filterLabel: '标签',
     filterLess: '收起筛选',
     filterMilestone: '里程碑',
@@ -473,9 +522,14 @@ const issueCopies: Record<Locale, Partial<WorkItemCopy>> = {
     allProjects: 'All projects',
     allStatuses: 'All statuses',
     boardColumn: name => `${name} column`,
+    budgetLabel: (limit, used, cap) => `Assigned run budget ${budgetLimitLabel('en', limit)}: ${used ?? 'unknown'} of ${cap}`,
+    budgetPercent: ratio => `${Math.round(ratio * 100)}%`,
+    budgetUnknown: (limit, cap) => `${budgetLimitLabel('en', limit)} ?/${cap}`,
     clearFilters: 'Clear filters',
     completedSubIssues: (completed, total) => `sub-issues ${completed}/${total}`,
     dropWorkHere: 'Drop Issue here',
+    dueChipLabel: (dueDate, kind) => kind === 'overdue' ? `Overdue ${shortDueDay(dueDate)}` : kind === 'today' ? `Due today · ${shortDueDay(dueDate)}` : `Due ${shortDueDay(dueDate)}`,
+    moveCardHint: 'Hold Control with Left or Right Arrow to move an Issue to the adjacent column.',
     filterLabel: 'Label',
     filterLess: 'Fewer filters',
     filterMilestone: 'Milestone',

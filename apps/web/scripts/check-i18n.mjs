@@ -36,8 +36,6 @@ export const PRODUCTION_HARDCODED_COPY_ALLOWLIST = Object.freeze([
   { path: 'apps/web/app/agents/agent-registry-card.tsx', kind: 'jsx-text', literal: 's' },
   { path: 'apps/web/app/lib/i18n.tsx', kind: 'jsx-text', literal: '中' },
   { path: 'apps/web/app/lib/i18n.tsx', kind: 'jsx-text', literal: 'EN' },
-  { path: 'apps/web/app/page.tsx', kind: 'jsx-text', literal: 'v' },
-  { path: 'apps/web/app/page.tsx', kind: 'jsx-text', literal: 'SHA-256' },
   { path: 'apps/web/app/work-room.tsx', kind: 'jsx-text', literal: '${…}s' },
   { path: 'apps/web/features/command-center/command-center.tsx', kind: 'jsx-text', literal: 'Ctrl K' },
 ])

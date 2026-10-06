@@ -44,6 +44,16 @@ describe('Work Surface view model and mutation seams', () => {
     requestWorkSurfaceLayout('board', layout => calls.push(`local:${layout}`), layout => calls.push(`parent:${layout}`))
     expect(calls).toEqual(['local:board', 'parent:board'])
   })
+  it('reduces the due date to a calendar day and keeps an unset date null', () => {
+    // The card compares this string against the viewer's own local day, so it
+    // must be the day and nothing else - a full timestamp would let a UTC
+    // boundary flip an Issue between "due today" and "overdue".
+    const dated = toWorkSurfaceItem({ id: '1', title: 'Dated', revision: 1, status_id: 's', status_name: 'Open', priority: 'none', due_date: '2026-06-15T00:00:00.000Z' })
+    expect(dated.dueDate).toBe('2026-06-15')
+    const undated = toWorkSurfaceItem({ id: '2', title: 'Undated', revision: 1, status_id: 's', status_name: 'Open', priority: 'none', due_date: null })
+    expect(undated.dueDate).toBeNull()
+    expect(toWorkSurfaceItem({ id: '3', title: 'Missing', revision: 1, status_id: 's', status_name: 'Open', priority: 'none' }).dueDate).toBeNull()
+  })
   it('maps unknown enum values safely, exposes card summaries, and exposes structured authorization state', () => {
     const item = toWorkSurfaceItem({ id: '1', title: 'Unknown', revision: 3, status_id: 's', status_name: 'Custom', status_category: 'future', priority: 'critical', project_id: 'project-1', project_name: 'Gateway', surface_summary: { blocked_by_count: 2, blocking_count: 1, sub_issue_count: 4, completed_sub_issue_count: 3 } })
     expect(item.statusCategory).toBe('unknown')
