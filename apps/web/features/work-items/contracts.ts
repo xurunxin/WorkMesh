@@ -46,6 +46,7 @@ export type WorkItemDto = {
   team_key?: string
   priority?: string
   due_date?: string | null
+  board_rank?: number | string | null
   responsible_human_actor_id?: string | null
   responsible_human?: { actor_id?: string; display_name?: string } | null
   project_id?: string | null
@@ -73,6 +74,8 @@ export type WorkSurfaceItem = {
   priority: Priority | 'unknown'
   /** ISO date (YYYY-MM-DD) the Issue is due, or null when no date is set. */
   dueDate: string | null
+  /** Fractional position the server assigned inside the status column. */
+  boardRank: number | null
   responsibleHuman: string | null
   responsibleHumanActorId: string | null
   projectId: string | null
@@ -119,6 +122,13 @@ export type WorkItemMoveIntent = {
   targetStatusId: string
   currentRevision: number
   responsibleHumanActorId: string | null
+  /**
+   * The card this one should land immediately above in the target column, or
+   * null for the end of it. Part of the intent, not a transient UI detail: two
+   * different drops of the same card into the same column are two different
+   * commands and must not collapse into one idempotent replay.
+   */
+  beforeItemId?: string | null
   source: 'pointer' | 'keyboard' | 'explicit-status-selector'
 }
 

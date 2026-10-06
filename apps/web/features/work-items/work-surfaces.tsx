@@ -238,9 +238,9 @@ export function useWorkSurfaceController({
       if (isAuthorityCurrent()) document.querySelector<HTMLElement>(workItemIdSelector(activeId))?.focus()
     })
   }, [isAuthorityCurrent])
-  const move = useCallback((item: { id: string; revision?: number; responsibleHumanActorId?: string | null }, targetStatusId: string, source: WorkItemMoveSource) => {
+  const move = useCallback((item: { id: string; revision?: number; responsibleHumanActorId?: string | null }, targetStatusId: string, source: WorkItemMoveSource, beforeItemId?: string | null) => {
     if (item.revision === undefined) return Promise.reject(new Error('A Work Item revision is required to move it.'))
-    return adapter.move({ workItemId: item.id, targetStatusId, currentRevision: item.revision, responsibleHumanActorId: item.responsibleHumanActorId ?? null, source })
+    return adapter.move({ workItemId: item.id, targetStatusId, currentRevision: item.revision, responsibleHumanActorId: item.responsibleHumanActorId ?? null, beforeItemId, source })
   }, [actorId, adapter])
   return { actorId, adapter, actionError, collection, conflict, filters, layout, lastRefresh, move, pendingMoves, query, refresh, scope, setFilters, setLayout: setLayoutAndRestoreFocus, setQuery, teamId }
 }

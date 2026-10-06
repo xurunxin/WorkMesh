@@ -149,12 +149,62 @@ describe('WorkItemAdaptiveCollection persistent DOM', () => {
     expect(firstCard).toHaveClass('wm-work-item-card-dragging')
     expect(view.container.querySelectorAll('.wm-work-item-card-dragging')).toHaveLength(1)
     fireEvent.drop(view.container.querySelector('[data-workflow-state-id="ready"]')!, { dataTransfer })
-    expect(onMove).toHaveBeenLastCalledWith(items[0], 'ready', 'pointer')
+    // Dropping on the column body rather than a card means "end of that
+    // column"; the server turns that intent into a rank (ADR 0073).
+    expect(onMove).toHaveBeenLastCalledWith(items[0], 'ready', 'pointer', null)
     fireEvent.dragEnd(firstCard!)
     expect(firstCard).not.toHaveClass('wm-work-item-card-dragging')
   })
 })
 
+describe('WorkItemAdaptiveCollection within-column placement', () => {
+  const pair: WorkItemCardData[] = [
+    { id: 'a', identifier: 'WM-1', title: 'First', statusId: 'ready', statusName: 'Ready', revision: 1 },
+    { id: 'b', identifier: 'WM-2', title: 'Second', statusId: 'ready', statusName: 'Ready', revision: 1 },
+    { id: 'c', identifier: 'WM-3', title: 'Third', statusId: 'ready', statusName: 'Ready', revision: 1 },
+  ]
+  const readyColumns: WorkItemStatusOption[] = [{ id: 'ready', name: 'Ready', category: 'ready' }]
+
+  const renderBoard = (onMove: ReturnType<typeof vi.fn>) => render(
+    <WorkItemAdaptiveCollection columns={readyColumns} items={pair} layout="board" onMove={onMove} />,
+  )
+
+  const transfer = () => {
+    const store = new Map<string, string>()
+    return { effectAllowed: 'none', getData: (f: string) => store.get(f) ?? '', setData: (f: string, v: string) => { store.set(f, v) } }
+  }
+
+  /** Dragging over the upper half of a slot means "land above this card". */
+  const dragOverSlot = (container: HTMLElement, id: string, dataTransfer: ReturnType<typeof transfer>, lowerHalf: boolean) => {
+    const slot = container.querySelector<HTMLElement>(`[data-work-item-id="${id}"]`)!.closest('.wm-work-item-adaptive-card-slot')!
+    const box = { top: 0, height: 100 }
+    vi.spyOn(slot, 'getBoundingClientRect').mockReturnValue({ ...box, bottom: 100, left: 0, right: 200, width: 200, x: 0, y: 0, toJSON: () => ({}) } as DOMRect)
+    fireEvent.dragOver(slot, { dataTransfer, clientY: lowerHalf ? 80 : 20 })
+  }
+
+  it('reports the card the drop should sit above', () => {
+    const onMove = vi.fn()
+    const dataTransfer = transfer()
+    const { container } = renderBoard(onMove)
+    fireEvent.dragStart(container.querySelector('[data-work-item-id="c"]')!, { dataTransfer })
+    dragOverSlot(container, 'a', dataTransfer, false)
+    expect(container.querySelector('.wm-work-item-insert')).not.toBeNull()
+    fireEvent.drop(container.querySelector('[data-workflow-state-id="ready"]')!, { dataTransfer })
+    expect(onMove).toHaveBeenLastCalledWith(pair[2], 'ready', 'pointer', 'a')
+  })
+
+
+  it('does not move a card that is already exactly where it was dropped', () => {
+    const onMove = vi.fn()
+    const dataTransfer = transfer()
+    const { container } = renderBoard(onMove)
+    // "b" is dropped directly above "c", where it already sits.
+    fireEvent.dragStart(container.querySelector('[data-work-item-id="b"]')!, { dataTransfer })
+    dragOverSlot(container, 'c', dataTransfer, false)
+    fireEvent.drop(container.querySelector('[data-workflow-state-id="ready"]')!, { dataTransfer })
+    expect(onMove).not.toHaveBeenCalled()
+  })
+})
 describe('WorkItemAdaptiveCollection run budget row', () => {
   const budgeted: WorkItemCardData = {
     ...items[0]!,

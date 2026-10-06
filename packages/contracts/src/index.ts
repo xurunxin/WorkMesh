@@ -122,6 +122,15 @@ export const idSchema = z.string().uuid()
 export const timestampSchema = z.string().datetime({ offset: true })
 export const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 export const revisionSchema = z.number().int().positive()
+/**
+ * A PostgreSQL `numeric` column arrives as a string. `z.coerce.number()` is the
+ * wrong tool here: it turns an absent key into NaN before `nullable` or
+ * `optional` can see it. This leaves absent absent and null null.
+ */
+export const numericColumnSchema = z.preprocess(
+  value => (typeof value === 'string' && value.trim() !== '' ? Number(value) : value),
+  z.number().nullable().optional(),
+)
 export const pageQuerySchema = z.object({
   cursor: z.string().min(1).max(8_192).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
@@ -154,7 +163,14 @@ export const workflowStatePatchSchema = z.object({
 })
 export const projectInputSchema = z.object({ teamId: idSchema, name: z.string().min(1).max(180), summary: z.string().max(500).optional(), description: z.string().max(20000).nullable().optional(), status: z.string().max(80).optional(), leadActorId: idSchema.nullable().optional(), targetDate: z.coerce.date().nullable().optional() })
 export const workItemInputSchema = z.object({ teamId: idSchema, title: z.string().min(1).max(500), description: z.string().max(50000).optional(), statusId: idSchema, priority: prioritySchema.default('none'), dueDate: z.coerce.date().optional(), responsibleHumanActorId: idSchema.optional(), labels: z.array(z.string().min(1).max(60)).max(30).default([]), projectId: idSchema.optional(), milestoneId: idSchema.optional(), parentId: idSchema.optional() }).strict()
-export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional(), parentId: idSchema.nullable().optional() }).strict()
+/**
+ * Where the Issue should land inside its (possibly new) status column.
+ * `beforeItemId` names the card to sit immediately above; `null` means the end
+ * of the column. The client expresses intent and the server computes the rank
+ * (ADR 0073) — a client-supplied rank would be a collision waiting to happen.
+ */
+export const workItemPlacementSchema = z.object({ beforeItemId: idSchema.nullable() }).strict()
+export const workItemPatchSchema = workItemInputSchema.partial().omit({ teamId: true }).extend({ description: z.string().max(50000).nullable().optional(), dueDate: z.coerce.date().nullable().optional(), responsibleHumanActorId: idSchema.nullable().optional(), projectId: idSchema.nullable().optional(), milestoneId: idSchema.nullable().optional(), parentId: idSchema.nullable().optional(), placement: workItemPlacementSchema.optional() }).strict()
 export const workItemRelationKindSchema = z.enum(['blocks', 'related'])
 export const workItemRelationInputSchema = z.object({ targetWorkItemId: idSchema, kind: workItemRelationKindSchema }).strict()
 export const commentInputSchema = z.object({ body: z.string().min(1).max(50000), parentCommentId: idSchema.optional(), replyToCommentId: idSchema.optional(), mentions: z.array(idSchema).max(20).default([]) })
@@ -238,7 +254,7 @@ export const workItemAssignmentProjectionSchema = z.object({
     exhausted: z.boolean(),
   }).strict().nullable().default(null),
 }).strict()
-export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_assignment: workItemAssignmentProjectionSchema.nullable().default(null), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
+export const workItemResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, number: z.number().int().positive(), title: z.string(), description: z.string().nullable(), status_id: idSchema, priority: prioritySchema, due_date: dateSchema.nullable(), responsible_human_actor_id: idSchema.nullable(), responsible_human: responsibleHumanProjectionSchema.nullable(), active_assignment: workItemAssignmentProjectionSchema.nullable().default(null), active_executor: workItemExecutorProjectionSchema.nullable(), shared_reviewers: z.array(workItemExecutorProjectionSchema), labels: z.array(z.string()), board_rank: numericColumnSchema, project_id: idSchema.nullable(), project_name: z.string().nullable().optional(), milestone_id: idSchema.nullable(), parent_id: idSchema.nullable(), surface_summary: workItemSurfaceSummarySchema.optional(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema, team_key: z.string(), status_name: z.string(), status_category: statusCategorySchema }).strict()
 export const workItemRelationResponseSchema = z.object({ id: idSchema, workspace_id: idSchema, team_id: idSchema, source_work_item_id: idSchema, target_work_item_id: idSchema, kind: workItemRelationKindSchema, created_by_actor_id: idSchema.nullable(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema }).strict()
 export const mentionResponseSchema = z.object({ actor_id: idSchema, display_name: z.string().optional() })
 export const commentResponseSchema = z.object({ id: idSchema, channel_id: idSchema, author_actor_id: idSchema, author_name: z.string(), author_kind: z.literal('human'), parent_comment_id: idSchema.nullable(), reply_to_comment_id: idSchema.nullable(), body: z.string(), mentions: z.array(idSchema), is_resolved: z.boolean(), revision: revisionSchema, deleted_at: timestampSchema.nullable(), created_at: timestampSchema, updated_at: timestampSchema })

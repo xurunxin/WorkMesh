@@ -1673,7 +1673,15 @@ async function listWorkItems(request: FastifyRequest, paginator: Paginator) {
       label: query.label ?? null,
       search: query.search ?? null,
     },
-    sort: [{ key: "updated_at", sql: "w.updated_at", direction: "DESC" }, { key: "id", sql: "w.id", direction: "DESC" }],
+    // Order stays updated_at DESC for both kinds of actor. The server owns
+    // ASSIGNING board_rank; the board owns PRESENTING it, ordering each column
+    // client-side from the rank already in the projection. Changing the default
+    // here instead would silently reorder every list consumer, and a layout
+    // toggle cannot opt into a different order without re-projecting every row.
+    sort: [
+      { key: "updated_at", sql: "w.updated_at", direction: "DESC" as const },
+      { key: "id", sql: "w.id", direction: "DESC" as const },
+    ],
   } as const;
   if (request.actor!.kind !== "human") {
     const page = await paginator.query<Record<string, unknown> & { id: string; workspace_id: string; responsible_human_actor_id: string | null }>(

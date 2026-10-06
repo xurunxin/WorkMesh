@@ -13,7 +13,7 @@ export type MoveCommandCallbacks = {
   onOffline?: (intent: MoveCommandRequest, reason: unknown) => void
 }
 
-const identity = (intent: WorkItemMoveIntent): string => [intent.workItemId, intent.targetStatusId, intent.currentRevision, intent.responsibleHumanActorId ?? ''].join(':')
+const identity = (intent: WorkItemMoveIntent): string => [intent.workItemId, intent.targetStatusId, intent.beforeItemId ?? '', intent.currentRevision, intent.responsibleHumanActorId ?? ''].join(':')
 
 export function createStableMoveOperationId(intent: WorkItemMoveIntent): string {
   // UUIDs are generated once per exact intent and retained by the adapter for replay.
@@ -32,7 +32,7 @@ export function buildMoveRequest(intent: WorkItemMoveIntent, stableOperationId =
         'Idempotency-Key': stableOperationId,
         'If-Match': `"revision-${intent.currentRevision}"`,
       },
-      body: JSON.stringify({ statusId: intent.targetStatusId, responsibleHumanActorId: intent.responsibleHumanActorId }),
+      body: JSON.stringify({ statusId: intent.targetStatusId, responsibleHumanActorId: intent.responsibleHumanActorId, ...(intent.beforeItemId === undefined ? {} : { placement: { beforeItemId: intent.beforeItemId } }) }),
     },
   }
 }
@@ -71,7 +71,7 @@ export function createWorkItemMoveCommandAdapter(options: AdapterOptions = {}): 
           'Idempotency-Key': operation.stableOperationId,
           'If-Match': `"revision-${intent.currentRevision}"`,
         },
-        body: JSON.stringify({ statusId: intent.targetStatusId, responsibleHumanActorId: intent.responsibleHumanActorId }),
+        body: JSON.stringify({ statusId: intent.targetStatusId, responsibleHumanActorId: intent.responsibleHumanActorId, ...(intent.beforeItemId === undefined ? {} : { placement: { beforeItemId: intent.beforeItemId } }) }),
       })
       const result = { item: response, intent: operation }
       operations.delete(intent.workItemId)

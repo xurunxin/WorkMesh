@@ -98,6 +98,8 @@ export const projects = pgTable('projects', {
 export const workItems = pgTable('work_items', {
   id: uuid('id').primaryKey(), workspaceId: uuid('workspace_id').notNull(), teamId: uuid('team_id').notNull(), number: integer('number').notNull(),
   title: text('title').notNull(), description: text('description'), statusId: uuid('status_id').notNull(), priority: text('priority').notNull(), dueDate: date('due_date'),
+  /** Fractional position inside a status column. Layout state, not a domain fact — ADR 0073. */
+  boardRank: numeric('board_rank', { precision: 20, scale: 6 }).notNull().default(sql`1024`),
   responsibleHumanActorId: uuid('responsible_human_actor_id'), labels: text('labels').array().notNull(), projectId: uuid('project_id'), milestoneId: uuid('milestone_id'), cycleId: uuid('cycle_id'), parentId: uuid('parent_id'), revision: integer('revision').notNull(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }), createdAt: timestamp('created_at', { withTimezone: true }).notNull(), updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
 })
