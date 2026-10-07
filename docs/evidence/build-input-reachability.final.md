@@ -10,15 +10,21 @@
 
 当前24项清单双字节口径在 `reviewRevision.manifestVerification`：主计划blob `8f750e94de3899cf96410da26b32b5a5cc862e42`，提交 71897 字节/SHA-256 `f3e3f86e78a4d8a32b2b9104df5ff5810fba960853a77490b70b0ebcebdf20e3`；工作树 72663 字节/SHA-256 `b281674517f63f34fcdbbc59cf8e4947d4d7aa05178f452283d2f3109962323a`。记录不包含证据自身hash；旧 `latestIntegration`、`handoff` 的hash及“当前”等措辞只指各自历史版本。
 
-本轮必需检查版本：待提交整合版本，已成功0/5项。
+本轮必需检查版本：`9619f462249055d72593d379dafc0a3a62407262`，已成功5/5项。
 
 | 命令 | 退出码 | 实际结果 |
 |---|---:|---|
-| 待提交后执行本轮五项必需命令 | — | 历史通过不代替本轮门禁 |
+| `pnpm lint` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm typecheck` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm test` | 0 | @workmesh/conformance:test:       Tests  1 passed (1)；@workmesh/mcp:test:  Test Files  2 passed (2)；@workmesh/mcp:test:       Tests  38 passed (38)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed \| 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)； Tasks:    29 successful, 29 total |
+| `pnpm test:integration` | 0 | Test Files  17 passed (17)；      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm test:e2e` | 0 | @workmesh/web:test:e2e:   74 passed (4.0m)； Tasks:    12 successful, 12 total |
 
 本轮核验记录见 [review-validation.json](build-input-reachability.current/review-validation.json)；本机Node v24.20.0 / pnpm9.15.4，当前PR CI仍须使用仓库固定版本。
 
 **G1最终门禁保持关闭**：原PR #196合入及其CI不自动验收本构建的新证据；待总管定向复核本轮修复、当前PR最新head全部required CI通过及实际合入。
+
+本轮E2E独立执行，一次通过74/74；集成310 passed、2 skipped，显式recovery 1/1通过。两项跳过分别是live供应商及retention upgrade未启用，不记作通过。Turbo默认缓存配置见 `turbo.json`，实际命中数保留在日志；五项命令均在本轮准确版本执行，未手工免除或用旧CI替代。验证器自测3/3及整合版本44/44读取通过，命令与版本另列JSON。
 
 ## 前次90386ae交付的历史记录
 

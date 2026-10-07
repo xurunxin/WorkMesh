@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-07T16:55:47.404Z",
+  "verifiedHead": "9619f462249055d72593d379dafc0a3a62407262",
+  "testedHead": "9619f462249055d72593d379dafc0a3a62407262",
+  "sourceUserCommit": "08ce81a6738407c90cf2629fbb70088a4a899841",
+  "latestMain": "3cdfb9ea02496261a3f68369167165b76d953afa",
+  "sourceF5BodyAndRiskAndConclusionMatch": true,
+  "quotedLocationReread": "用户在 [R1 #3](todo:q_1zKPuGsG-2ZRUwOwQx4) 原问题卡\n于 2026-10-07 23:29:53（Asia/Shanghai）选择“有审计的重新投递”（来源：本次 G1 修订 spec）。\n决定已交 R1，ADR 0078 已随 PR #198 记录；ADR 0037 与全批计划的规格同步仍由 R1 单独验收。\nPR #198 仅改 ADR 0078，本次无冲突整合其原文并新增最新 main 读取 checkpoint；\n本任务按本轮独审要求选择性吸收用户提交 `08ce81a6738407c90cf2629fbb70088a4a899841`\n中的 F5 计划修订：正文、依赖图、风险表及规格分歧均采用已决的有审计重新投递契约。\n保留当前 G1 门禁与完整交付历史；不在 G1 修改 ADR 0037 或实现恢复协议。",
+  "originalStatementRemovedAtLocation": true,
+  "historyIncluded": [
+    "90386ae5e95436aedd3da306a35b987829b799f6",
+    "3cdfb9ea02496261a3f68369167165b76d953afa",
+    "af583f71f310e68ade588f9922694dfd8aba7a65"
+  ],
+  "historicalJsonUnchanged": true,
+  "historicalLogsUnchanged": 13,
+  "p1BodyUnchanged": true,
+  "sourceOriginals": 38,
+  "sourceMismatches": 0,
+  "manifestEntries": 24,
+  "manifestMismatches": 0,
+  "committedBlobChecks": 24,
+  "currentIntegrationRead": {
+    "commit": "9619f462249055d72593d379dafc0a3a62407262",
+    "files": 44,
+    "p1": 16,
+    "exitCode": 0
+  },
+  "latestMainRead": {
+    "commit": "3cdfb9ea02496261a3f68369167165b76d953afa",
+    "files": 44,
+    "p1": 16,
+    "additionalFiles": 3,
+    "exitCode": 0
+  },
+  "currentChecksPassed": 5,
+  "currentLogs": 5,
+  "testedSourcesAndInputsUnchanged": true,
+  "errors": []
+}
