@@ -143,6 +143,10 @@ type TranslationKey =
   | 'workbenchPlaceholderDescription'
   | 'themeToDark'
   | 'themeToLight'
+  | 'documents'
+  | 'milestones'
+  | 'workDescription'
+  | 'versionPrefix'
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   'zh-CN': {
@@ -233,6 +237,10 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     workbenchPlaceholderDescription: '对话式 Agent 工作台将在后续里程碑上线。智能体注册、会话与执行视角当前可从「智能体」进入。',
     themeToDark: '切换到深色主题',
     themeToLight: '切换到浅色主题',
+    documents: '文档',
+    milestones: '里程碑',
+    workDescription: '工作说明',
+    versionPrefix: 'v',
   },
   en: {
     agents: 'Agents',
@@ -322,6 +330,10 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     workbenchPlaceholderDescription: 'The conversational agent workbench arrives in an upcoming milestone. Agent registry, sessions, and the execution view remain available under Agents.',
     themeToDark: 'Switch to the dark theme',
     themeToLight: 'Switch to the light theme',
+    documents: 'Documents',
+    milestones: 'Milestones',
+    workDescription: 'Work description',
+    versionPrefix: 'v',
   },
 }
 
@@ -448,6 +460,8 @@ export type GuidanceCopy = {
   noPointerChanges: string
   projectDescription: string
   formatDate: (value: string) => string
+  contentHashAlgorithm: string
+  revisionPointer: (revision: number) => string
 }
 
 const guidanceCopies: Record<Locale, GuidanceCopy> = {
@@ -455,12 +469,12 @@ const guidanceCopies: Record<Locale, GuidanceCopy> = {
     intro: '为智能体维护可追溯、版本化的工作指南。已发布版本不可变，会话上下文会固定其准确版本与 SHA-256 哈希。',
     scope: '作用域', scopeLabel: '指南作用域', workspace: '工作区', team: '团队', project: '项目', noTeamSelected: '未选择团队', noProject: '请选择项目', projectLabel: '指南项目',
     status: status => ({ unpublished: '未发布', active: '已生效', archived: '已归档', unavailable: '不可用' }[status] ?? status),
-    documentRevision: revision => `文档版本 ${revision}`, selectScope: '请选择或创建所需作用域后再编辑指南。', loading: '正在加载指南…', markdown: 'Markdown 内容', edit: '编辑', preview: '预览', characterCount: count => `${count} 个字符`, renderedPreviewLabel: 'Markdown 渲染预览', previewEmpty: '在编辑模式下撰写 Markdown，切换到预览即可查看渲染结果。', changeSummary: '变更摘要', publishRevision: '发布不可变版本', currentRevision: '当前版本', author: '作者', published: '发布时间', auditReason: '审计原因', auditPlaceholder: '归档或回滚时必填', archiveCurrent: '归档当前指南', revisionHistory: '版本历史', rollbackPointer: '回滚至此版本', noRevisions: '尚无已发布版本。', compareRevisions: '比较版本', fromRevision: '起始指南版本', toRevision: '目标指南版本', showDiff: '显示差异', pointerAudit: '指针审计', action: action => ({ published: '已发布', archived: '已归档', rolled_back: '已回滚' }[action] ?? action.replaceAll('_', ' ')), by: '操作人', noPointerChanges: '尚无指针变更。', projectDescription: '项目描述（不属于指南）', formatDate: value => new Date(value).toLocaleString('zh-CN'),
+    documentRevision: revision => `文档版本 ${revision}`, selectScope: '请选择或创建所需作用域后再编辑指南。', loading: '正在加载指南…', markdown: 'Markdown 内容', edit: '编辑', preview: '预览', characterCount: count => `${count} 个字符`, renderedPreviewLabel: 'Markdown 渲染预览', previewEmpty: '在编辑模式下撰写 Markdown，切换到预览即可查看渲染结果。', changeSummary: '变更摘要', publishRevision: '发布不可变版本', currentRevision: '当前版本', author: '作者', published: '发布时间', auditReason: '审计原因', auditPlaceholder: '归档或回滚时必填', archiveCurrent: '归档当前指南', revisionHistory: '版本历史', rollbackPointer: '回滚至此版本', noRevisions: '尚无已发布版本。', compareRevisions: '比较版本', fromRevision: '起始指南版本', toRevision: '目标指南版本', showDiff: '显示差异', pointerAudit: '指针审计', action: action => ({ published: '已发布', archived: '已归档', rolled_back: '已回滚' }[action] ?? action.replaceAll('_', ' ')), by: '操作人', noPointerChanges: '尚无指针变更。', projectDescription: '项目描述（不属于指南）', formatDate: value => new Date(value).toLocaleString('zh-CN'), contentHashAlgorithm: 'SHA-256', revisionPointer: revision => `r${revision}`,
   },
   en: {
     intro: 'Versioned instructions for agents. Published revisions are immutable and Session context pins the exact revision and SHA-256 hash it used.',
     scope: 'Scope', scopeLabel: 'Guidance scope', workspace: 'Workspace', team: 'Team', project: 'Project', noTeamSelected: 'No team selected', noProject: 'No project', projectLabel: 'Guidance project',
-    status: status => status, documentRevision: revision => `Document revision ${revision}`, selectScope: 'Select or create the required scope before editing Guidance.', loading: 'Loading Guidance…', markdown: 'Markdown', edit: 'Edit', preview: 'Preview', characterCount: count => `${count} characters`, renderedPreviewLabel: 'Rendered Markdown preview', previewEmpty: 'Write Markdown in edit mode, then switch to preview to see the rendered result.', changeSummary: 'Change summary', publishRevision: 'Publish immutable revision', currentRevision: 'Current revision', author: 'Author', published: 'Published', auditReason: 'Audit reason', auditPlaceholder: 'Required for archive or rollback', archiveCurrent: 'Archive current Guidance', revisionHistory: 'Revision history', rollbackPointer: 'Roll back pointer', noRevisions: 'No published revisions.', compareRevisions: 'Compare revisions', fromRevision: 'From Guidance revision', toRevision: 'To Guidance revision', showDiff: 'Show diff', pointerAudit: 'Pointer audit', action: action => action.replaceAll('_', ' '), by: 'by', noPointerChanges: 'No pointer changes yet.', projectDescription: 'Project description (not Guidance)', formatDate: value => new Date(value).toLocaleString('en'),
+    status: status => status, documentRevision: revision => `Document revision ${revision}`, selectScope: 'Select or create the required scope before editing Guidance.', loading: 'Loading Guidance…', markdown: 'Markdown', edit: 'Edit', preview: 'Preview', characterCount: count => `${count} characters`, renderedPreviewLabel: 'Rendered Markdown preview', previewEmpty: 'Write Markdown in edit mode, then switch to preview to see the rendered result.', changeSummary: 'Change summary', publishRevision: 'Publish immutable revision', currentRevision: 'Current revision', author: 'Author', published: 'Published', auditReason: 'Audit reason', auditPlaceholder: 'Required for archive or rollback', archiveCurrent: 'Archive current Guidance', revisionHistory: 'Revision history', rollbackPointer: 'Roll back pointer', noRevisions: 'No published revisions.', compareRevisions: 'Compare revisions', fromRevision: 'From Guidance revision', toRevision: 'To Guidance revision', showDiff: 'Show diff', pointerAudit: 'Pointer audit', action: action => action.replaceAll('_', ' '), by: 'by', noPointerChanges: 'No pointer changes yet.', projectDescription: 'Project description (not Guidance)', formatDate: value => new Date(value).toLocaleString('en'), contentHashAlgorithm: 'SHA-256', revisionPointer: revision => `r${revision}`,
   },
 }
 
@@ -885,7 +899,79 @@ export type SettingsCopy = {
   workbenchServiceOpen: string
 }
 
-const settingsCopies: Record<Locale, SettingsCopy> = {
+/**
+ * Copy for the Agent workbench model-service settings route
+ * (`app/settings/workbench-llm-settings.tsx`). It is a separate contract so the
+ * route stays readable, intersected into the registered `settingsCopies` table
+ * because `check-i18n.mjs` freezes the locale-table inventory. `retry`,
+ * `cancel`, and `saveChanges` are deliberately reused from `SettingsCopy`
+ * rather than redeclared: a key repeated across the two members of the
+ * intersection would collapse to `never`.
+ *
+ * Protocol names, the base-URL placeholder, and the model ID placeholders are
+ * provider identifiers, so both locales carry the same literal.
+ */
+export type LlmSettingsCopy = {
+  routeLoading: string
+  routeAccountError: string
+  pageTitle: string
+  backToSettings: string
+  workbenchKicker: string
+  pageDescription: string
+  loadingServices: string
+  configuredServicesLabel: string
+  protocolChat: string
+  protocolResponses: string
+  apiProtocolChatCompletions: string
+  apiProtocolResponses: string
+  noServices: string
+  addServiceHeading: string
+  nameLabel: string
+  scopeLabel: string
+  scopePersonal: string
+  scopeTeam: string
+  scopeWorkspace: string
+  teamScopeLabel: string
+  selectTeamOption: string
+  apiProtocolLabel: string
+  baseUrlLabel: string
+  baseUrlPlaceholder: string
+  apiKeyLabel: string
+  saveService: string
+  managedElsewhereNote: string
+  modelCatalogHeading: string
+  modelEnabled: string
+  modelDisabled: string
+  disableModel: string
+  enableModel: string
+  noModels: string
+  editServiceHeading: string
+  statusLabel: string
+  statusActive: string
+  statusDisabled: string
+  replaceKeyLabel: string
+  modelIdLabel: string
+  modelIdPlaceholder: string
+  displayNameLabel: string
+  displayNamePlaceholder: string
+  contextLimitLabel: string
+  outputLimitLabel: string
+  toolCallingLabel: string
+  reasoningLabel: string
+  addModelSubmit: string
+  confirmRevocationLabel: string
+  revocationWarning: string
+  confirmRevoke: string
+  revokeService: string
+  connectionSavedNotice: string
+  connectionUpdatedNotice: string
+  modelAddedNotice: string
+  modelDisabledNotice: string
+  modelEnabledNotice: string
+  connectionRevokedNotice: string
+}
+
+const settingsCopies: Record<Locale, SettingsCopy & LlmSettingsCopy> = {
   'zh-CN': {
     loading: '正在加载设置…',
     loadFailed: '无法加载设置。',
@@ -957,6 +1043,63 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     settingsTabsLabel: '设置分区',
     tabWorkspace: '工作区',
     tabOperations: '运营与规划',
+    routeLoading: '正在加载…',
+    routeAccountError: '无法加载账户。',
+    pageTitle: 'Agent 工作台服务接入',
+    backToSettings: '返回设置',
+    workbenchKicker: 'Agent 工作台',
+    pageDescription: '选择 Chat Completions 或 Responses 协议。密钥由服务端加密保存，页面仅显示配置状态。',
+    loadingServices: '正在加载服务…',
+    configuredServicesLabel: '已配置服务',
+    protocolChat: 'Chat',
+    protocolResponses: 'Responses',
+    apiProtocolChatCompletions: 'Chat Completions',
+    apiProtocolResponses: 'Responses',
+    noServices: '暂无模型服务。',
+    addServiceHeading: '添加服务',
+    nameLabel: '名称',
+    scopeLabel: '使用范围',
+    scopePersonal: '仅自己',
+    scopeTeam: '团队',
+    scopeWorkspace: '全工作区',
+    teamScopeLabel: '团队（仅团队范围需要）',
+    selectTeamOption: '选择团队',
+    apiProtocolLabel: 'API 协议',
+    baseUrlLabel: '服务地址',
+    baseUrlPlaceholder: 'https://api.minimax.cn/v1',
+    apiKeyLabel: 'API 密钥',
+    saveService: '保存服务',
+    managedElsewhereNote: '此服务由其他管理员维护，你可以查看已登记的模型。',
+    modelCatalogHeading: '模型目录',
+    modelEnabled: '已启用',
+    modelDisabled: '已停用',
+    disableModel: '停用模型',
+    enableModel: '启用模型',
+    noModels: '尚未登记模型。',
+    editServiceHeading: '编辑服务',
+    statusLabel: '状态',
+    statusActive: '启用',
+    statusDisabled: '停用',
+    replaceKeyLabel: '替换密钥（留空则保留）',
+    modelIdLabel: '模型 ID',
+    modelIdPlaceholder: 'MiniMax-M3',
+    displayNameLabel: '显示名称',
+    displayNamePlaceholder: 'MiniMax M3',
+    contextLimitLabel: '上下文上限（token）',
+    outputLimitLabel: '输出上限（token）',
+    toolCallingLabel: '工具调用',
+    reasoningLabel: '推理能力',
+    addModelSubmit: '登记模型',
+    confirmRevocationLabel: '确认吊销',
+    revocationWarning: '吊销后无法恢复此密钥。',
+    confirmRevoke: '确认吊销',
+    revokeService: '吊销服务',
+    connectionSavedNotice: '连接已保存。请登记可用模型。',
+    connectionUpdatedNotice: '连接已更新。',
+    modelAddedNotice: '模型已登记。能力需通过真实协议测试确认。',
+    modelDisabledNotice: '模型已停用。',
+    modelEnabledNotice: '模型已启用。',
+    connectionRevokedNotice: '连接已吊销，凭据已清除。',
   },
   en: {
     loading: 'Loading Settings…',
@@ -1029,6 +1172,63 @@ const settingsCopies: Record<Locale, SettingsCopy> = {
     settingsTabsLabel: 'Settings sections',
     tabWorkspace: 'Workspace',
     tabOperations: 'Planning & Operations',
+    workbenchKicker: 'Agent workbench',
+    pageDescription: 'Choose Chat Completions or Responses. The server stores credentials encrypted and only shows their status.',
+    routeLoading: 'Loading…',
+    routeAccountError: 'Could not load account.',
+    pageTitle: 'Agent workbench services',
+    backToSettings: 'Back to settings',
+    loadingServices: 'Loading services…',
+    configuredServicesLabel: 'Configured services',
+    protocolChat: 'Chat',
+    protocolResponses: 'Responses',
+    apiProtocolChatCompletions: 'Chat Completions',
+    apiProtocolResponses: 'Responses',
+    noServices: 'No model services configured.',
+    addServiceHeading: 'Add service',
+    nameLabel: 'Name',
+    scopeLabel: 'Scope',
+    scopePersonal: 'Personal',
+    scopeTeam: 'Team',
+    scopeWorkspace: 'Workspace',
+    teamScopeLabel: 'Team (for team scope)',
+    selectTeamOption: 'Select a team',
+    apiProtocolLabel: 'API protocol',
+    baseUrlLabel: 'Base URL',
+    baseUrlPlaceholder: 'https://api.minimax.cn/v1',
+    apiKeyLabel: 'API key',
+    saveService: 'Save service',
+    managedElsewhereNote: 'Another administrator manages this service. You can view its models.',
+    modelCatalogHeading: 'Model catalog',
+    modelEnabled: 'Enabled',
+    modelDisabled: 'Disabled',
+    disableModel: 'Disable model',
+    enableModel: 'Enable model',
+    noModels: 'No models added.',
+    editServiceHeading: 'Edit service',
+    statusLabel: 'Status',
+    statusActive: 'Active',
+    statusDisabled: 'Disabled',
+    replaceKeyLabel: 'Replace key (leave blank to keep)',
+    modelIdLabel: 'Model ID',
+    modelIdPlaceholder: 'MiniMax-M3',
+    displayNameLabel: 'Display name',
+    displayNamePlaceholder: 'MiniMax M3',
+    contextLimitLabel: 'Context limit (tokens)',
+    outputLimitLabel: 'Output limit (tokens)',
+    toolCallingLabel: 'Tool calling',
+    reasoningLabel: 'Reasoning',
+    addModelSubmit: 'Add model',
+    confirmRevocationLabel: 'Confirm revocation',
+    revocationWarning: 'Revocation permanently erases this credential.',
+    confirmRevoke: 'Confirm revoke',
+    revokeService: 'Revoke service',
+    connectionSavedNotice: 'Connection saved. Add a model before using it.',
+    connectionUpdatedNotice: 'Connection updated.',
+    modelAddedNotice: 'Model added. Verify capabilities with a live protocol test.',
+    modelDisabledNotice: 'Model disabled.',
+    modelEnabledNotice: 'Model enabled.',
+    connectionRevokedNotice: 'Connection revoked and credential erased.',
   },
 }
 
@@ -1888,9 +2088,10 @@ export type AgentDetailLocaleCopy = {
 export type AgentControlLocaleCopy = {
   controlSummaryAriaLabel: string
   fieldAgentNamePlaceholder: string
+  invalidatedApprovalsWarning: string
 }
 
-const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy> = {
+const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy & AgentsArchiveCopy & AttentionApprovalCopy> = {
   'zh-CN': {
     agents: '智能体',
     loadingDescription: '正在加载智能体、Session、审批和连接信息。',
@@ -2137,6 +2338,7 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     fieldClient: '客户端',
     fieldAgentName: '智能体名称',
     fieldAgentNamePlaceholder: '规划协调员',
+    invalidatedApprovalsWarning: 'Approval(s) will be invalidated.',
     fieldAgentSlug: '智能体标识',
     fieldTeam: '团队',
     fieldPrincipal: '负责人',
@@ -2152,6 +2354,16 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     connectionStatusRotating: '轮换中',
     connectionStatusRevoked: '已撤销',
     credentialPending: '等待中',
+    archivedLifecycleEyebrow: 'Agent lifecycle',
+    archivedAgentsLabel: '已归档智能体',
+    archivedAgentsDescription: '撤销最后一项有效授权后归档的智能体；保留历史，不进入默认工作列表。',
+    archivedAgentsEmpty: '当前没有已归档智能体。',
+    archivedAuthorityRevoked: '授权已撤销',
+    archivedViewHistory: '查看历史',
+    approvalSourceSession: ': Session',
+    approvalSourceWorkItem: ': WorkItem',
+    approvalApproveAndContinue: '批准并继续',
+    approvalRejectAction: '拒绝',
   },
   en: {
     agents: 'Agents',
@@ -2398,6 +2610,7 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     fieldClient: 'Client',
     fieldAgentName: 'Agent name',
     fieldAgentNamePlaceholder: 'Planning coordinator',
+    invalidatedApprovalsWarning: 'Approval(s) will be invalidated.',
     fieldAgentSlug: 'Agent slug',
     fieldTeam: 'Team',
     fieldPrincipal: 'Principal Human',
@@ -2413,10 +2626,21 @@ const agentsCopies: Record<Locale, AgentsCopy & ApprovalHistoryLocaleCopy & Agen
     connectionStatusRotating: 'rotating',
     connectionStatusRevoked: 'revoked',
     credentialPending: 'Pending',
+    archivedLifecycleEyebrow: 'Agent lifecycle',
+    archivedAgentsLabel: 'Archived agents',
+    archivedAgentsDescription: 'Agents are archived after their last valid authority is revoked. History remains available outside the default work list.',
+    archivedAgentsEmpty: 'There are no archived agents.',
+    archivedAuthorityRevoked: 'Authority revoked',
+    archivedViewHistory: 'View history',
+    approvalSourceSession: ': Session',
+    approvalSourceWorkItem: ': WorkItem',
+    approvalApproveAndContinue: 'Approve and continue',
+    approvalRejectAction: 'Reject',
   },
 }
 
 export type InboxCopy = {
+  durableNotifications: (count: number) => string
   title: string
   intro: string
   status: string
@@ -2534,6 +2758,7 @@ const inboxCopies: Record<Locale, InboxCopy> = {
     deliveryFailed: '投递失败。保存偏好不会让本次投递成功；重试仍由服务端控制。',
     deliveryRecordedError: '已记录错误',
     deliveryHealthLabel: title => `${title} 的投递状态`,
+    durableNotifications: count => `${count} 条持久通知`,
   },
   en: {
     title: 'Inbox',
@@ -2591,6 +2816,7 @@ const inboxCopies: Record<Locale, InboxCopy> = {
     deliveryFailed: 'Delivery failed. Saving preferences did not make this delivery successful; retry remains server-owned.',
     deliveryRecordedError: 'error recorded',
     deliveryHealthLabel: title => `Delivery health for ${title}`,
+    durableNotifications: count => `${count} durable notifications`,
   },
 }
 
@@ -2655,7 +2881,111 @@ export type SessionDetailCopy = {
   activityKind: (kind: string) => string
 }
 
-const sessionDetailCopies: Record<Locale, SessionDetailCopy> = {
+/**
+ * Copy for the shared evidence drawer (`app/evidence-drawer.tsx`). The drawer
+ * is opened from several surfaces, so its copy is its own contract intersected
+ * into the registered `sessionDetailCopies` table. Evidence records hang off an
+ * agent Session, and that table already carries artifact vocabulary.
+ *
+ * The drawer rendered English-only before this table existed, so `zh-CN`
+ * deliberately carries the same English literal. That keeps this change a
+ * zero-copy-diff pass-through; translating the drawer is a separate change that
+ * has to land together with its assertions in
+ * `app/evidence-drawer.test.tsx` and
+ * `features/work-items/detail/work-item-execution-workspace.test.tsx`.
+ */
+export type EvidenceDrawerCopy = {
+  linkUnsupportedSuffix: string
+  eyebrow: string
+  untitledTitle: string
+  noPreview: string
+  closeButton: string
+  freshnessCategory: string
+  headDriftWarning: string
+  provenanceTitle: string
+  producerLabel: string
+  principalHumanLabel: string
+  createdLabel: string
+  unknownValue: string
+  sourceToolLabel: string
+  checksumLabel: string
+  contextTitle: string
+  producingRunLabel: string
+  planVersionLabel: string
+  planStepLabel: string
+  validationLabel: string
+  validatedHeadLabel: string
+  currentHeadLabel: string
+  providerFactsTitle: string
+  repositoryLabel: string
+  branchLabel: string
+  commitLabel: string
+  pullRequestLabel: string
+  openProviderRecord: string
+  unsupportedUnknown: string
+  openExternalEvidence: string
+  unsafeExternalUri: string
+  relatedTitle: string
+  technicalDetailsSummary: string
+  evidenceIdLabel: string
+  statusSourceLabel: string
+  sessionIdLabel: string
+  actionIdLabel: string
+  validationIdLabel: string
+}
+
+/**
+ * Copy for the Work Room governed-action dialogs and the legacy comment
+ * editor. `legacyEditPrompt` and `legacyDelete` already exist on `WorkRoomCopy`
+ * and are reused rather than redeclared.
+ */
+export type WorkRoomDialogCopy = {
+  legacyCommentTitle: string
+  legacyCommentClose: string
+  legacyCommentBody: string
+  legacyCommentDeleteWarning: string
+  legacyCommentSave: string
+  legacyCommentCancel: string
+  governedForceReleaseTitle: string
+  governedDecisionTitle: (action: 'reverse' | 'supersede') => string
+  governedHandoffTitle: (action: 'reject' | 'cancel') => string
+}
+
+/**
+ * Copy for the archived Agent registry section of the /agents page. This page
+ * renders the section in both locales, so the eyebrow is localized here even
+ * though the panel heading next to it already was.
+ */
+export type AgentsArchiveCopy = {
+  archivedLifecycleEyebrow: string
+  archivedAgentsLabel: string
+  archivedAgentsDescription: string
+  archivedAgentsEmpty: string
+  archivedAuthorityRevoked: string
+  archivedViewHistory: string
+}
+
+/** Copy for the attention centre's approval decision links and actions. */
+export type AttentionApprovalCopy = {
+  approvalSourceSession: string
+  approvalSourceWorkItem: string
+  approvalApproveAndContinue: string
+  approvalRejectAction: string
+}
+
+/**
+ * Plan-revision and step-fact labels shared by the run timeline, the Agent
+ * workspace, and the Agent control dialog. Intersected into the registered
+ * `sessionDetailCopies` table. The `v`/`rev`/`r` markers are machine format
+ * prefixes and carry the same literal in both locales.
+ */
+export type SessionPlanLabelCopy = {
+  planVersionPointer: (revision: number) => string
+  planVersionSummary: (revision: number, summary: string) => string
+  stepEvidenceSummary: (status: string, groups: number, evidence: number) => string
+}
+
+const sessionDetailCopies: Record<Locale, SessionDetailCopy & EvidenceDrawerCopy & SessionPlanLabelCopy> = {
   'zh-CN': {
     loading: '正在加载智能体 Session…',
     headerTitle: id => `Session ${id}`,
@@ -2715,6 +3045,46 @@ const sessionDetailCopies: Record<Locale, SessionDetailCopy> = {
     loadMoreArtifacts: '加载更多制品',
     planStepStatus: status => status.replaceAll('_', ' '),
     activityKind: kind => kind.replaceAll('_', ' '),
+    linkUnsupportedSuffix: ' · unsupported',
+    eyebrow: 'Evidence ·',
+    untitledTitle: 'Untitled evidence',
+    noPreview: 'No sanitized preview was published.',
+    closeButton: 'Close evidence',
+    freshnessCategory: 'Evidence freshness',
+    headDriftWarning: 'Head drift invalidates this validation',
+    provenanceTitle: 'Provenance and responsibility',
+    producerLabel: 'Producer',
+    principalHumanLabel: 'Principal Human',
+    createdLabel: 'Created / published',
+    unknownValue: 'Unknown',
+    sourceToolLabel: 'Source tool',
+    checksumLabel: 'Checksum / content hash',
+    contextTitle: 'Work and validation context',
+    producingRunLabel: 'Producing Run',
+    planVersionLabel: 'Plan version',
+    planStepLabel: 'Plan step',
+    validationLabel: 'Validation',
+    validatedHeadLabel: 'Validated head',
+    currentHeadLabel: 'Current head',
+    providerFactsTitle: 'Provider facts',
+    repositoryLabel: 'Repository',
+    branchLabel: 'Branch',
+    commitLabel: 'Commit / head SHA',
+    pullRequestLabel: 'Pull request',
+    openProviderRecord: 'Open provider record',
+    unsupportedUnknown: 'Unsupported / unknown',
+    openExternalEvidence: 'Open external evidence',
+    unsafeExternalUri: 'External URI is not safe to open.',
+    relatedTitle: 'Related and superseded evidence',
+    technicalDetailsSummary: 'Technical Details',
+    evidenceIdLabel: 'Evidence ID',
+    statusSourceLabel: 'Status source',
+    sessionIdLabel: 'Session ID',
+    actionIdLabel: 'Action ID',
+    validationIdLabel: 'Validation ID',
+    planVersionPointer: revision => `v${revision}`,
+    planVersionSummary: (revision, summary) => `v${revision} · ${summary}`,
+    stepEvidenceSummary: (status, groups, evidence) => `${status} · ${groups} groups · ${evidence} evidence`,
   },
   en: {
     loading: 'Loading agent session…',
@@ -2775,6 +3145,46 @@ const sessionDetailCopies: Record<Locale, SessionDetailCopy> = {
     loadMoreArtifacts: 'Load more artifacts',
     planStepStatus: status => status.replaceAll('_', ' '),
     activityKind: kind => kind.replaceAll('_', ' '),
+    linkUnsupportedSuffix: ' · unsupported',
+    eyebrow: 'Evidence ·',
+    untitledTitle: 'Untitled evidence',
+    noPreview: 'No sanitized preview was published.',
+    closeButton: 'Close evidence',
+    freshnessCategory: 'Evidence freshness',
+    headDriftWarning: 'Head drift invalidates this validation',
+    provenanceTitle: 'Provenance and responsibility',
+    producerLabel: 'Producer',
+    principalHumanLabel: 'Principal Human',
+    createdLabel: 'Created / published',
+    unknownValue: 'Unknown',
+    sourceToolLabel: 'Source tool',
+    checksumLabel: 'Checksum / content hash',
+    contextTitle: 'Work and validation context',
+    producingRunLabel: 'Producing Run',
+    planVersionLabel: 'Plan version',
+    planStepLabel: 'Plan step',
+    validationLabel: 'Validation',
+    validatedHeadLabel: 'Validated head',
+    currentHeadLabel: 'Current head',
+    providerFactsTitle: 'Provider facts',
+    repositoryLabel: 'Repository',
+    branchLabel: 'Branch',
+    commitLabel: 'Commit / head SHA',
+    pullRequestLabel: 'Pull request',
+    openProviderRecord: 'Open provider record',
+    unsupportedUnknown: 'Unsupported / unknown',
+    openExternalEvidence: 'Open external evidence',
+    unsafeExternalUri: 'External URI is not safe to open.',
+    relatedTitle: 'Related and superseded evidence',
+    technicalDetailsSummary: 'Technical Details',
+    evidenceIdLabel: 'Evidence ID',
+    statusSourceLabel: 'Status source',
+    sessionIdLabel: 'Session ID',
+    actionIdLabel: 'Action ID',
+    validationIdLabel: 'Validation ID',
+    planVersionPointer: revision => `v${revision}`,
+    planVersionSummary: (revision, summary) => `v${revision} · ${summary}`,
+    stepEvidenceSummary: (status, groups, evidence) => `${status} · ${groups} groups · ${evidence} evidence`,
   },
 }
 
@@ -2831,7 +3241,94 @@ export type AgentWorkCopy = {
   projectionFailedStatus: string
 }
 
-const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
+/**
+ * Copy for the conversation workbench
+ * (`features/workbench/conversation-workbench.tsx`). Intersected into the
+ * registered `agentWorkCopies` table because `check-i18n.mjs` freezes the
+ * locale-table inventory. `retry` and `stop` are reused from `AgentWorkCopy`.
+ *
+ * `Issue`, `Project`, `A`, `S`, `Agent`, `System`, `Document`, and `Guidance`
+ * are the WorkMesh domain and actor-kind names this surface already showed
+ * untranslated in both locales, so both dictionaries keep the same literal.
+ */
+export type ConversationWorkbenchCopy = {
+  routeLoading: string
+  routeAccountError: string
+  conversationListLabel: string
+  backToClassicScreen: string
+  workbenchTitle: string
+  modelSettingsLink: string
+  createConversation: string
+  newConversationTitle: string
+  executionSessionLabel: string
+  noAvailableSession: string
+  sessionOptionIssue: (id: string) => string
+  /** Accepts `undefined` so the option text keeps the source's exact render. */
+  sessionOptionProject: (id: string | undefined) => string
+  modelServiceLabel: string
+  configureServiceOption: string
+  modelLabel: string
+  openAgentsForDelegation: string
+  conversationsSection: string
+  loadingConversations: string
+  noConversations: string
+  loadMoreConversations: string
+  executorsSection: string
+  noModelServiceConfigured: string
+  delegatedSessionLabel: string
+  conversationRegionLabel: string
+  selectOrCreateConversation: string
+  publicRecordNote: string
+  sessionChipLabel: string
+  archive: string
+  loadEarlierMessages: string
+  sendFirstMessage: string
+  humanBadge: string
+  agentBadge: string
+  systemBadge: string
+  humanActorName: string
+  agentActorName: string
+  systemActorName: string
+  turnChipLabel: string
+  retryOf: string
+  steerInputLabel: string
+  steerInputPlaceholder: string
+  steerSubmit: string
+  retryPreviousRequest: string
+  followUp: string
+  runnerInterrupted: string
+  stopReason: string
+  workItemPill: string
+  projectPill: string
+  filesPill: string
+  terminalPill: string
+  messageFieldLabel: string
+  turnServiceLabel: string
+  turnModelLabel: string
+  noAvailableModel: string
+  composerKeyboardHint: string
+  send: string
+  noBoundSession: string
+  boundSessionEnded: string
+  sessionCanRun: string
+  configureModelServiceLink: string
+  contextRegionLabel: string
+  serverAuthorizesWrites: string
+  contextProject: (id: string) => string
+  contextIssue: (id: string) => string
+  pinKindIssue: string
+  pinKindDocument: string
+  pinKindGuidance: string
+  pinRevisionLabel: (revision: number) => string
+  pinLiveHeadLabel: string
+  viewAgentSessionLink: string
+  sessionStateLabel: string
+  sessionStateLoading: string
+  conversationRevisionLabel: string
+  selectConversationForContext: string
+}
+
+const agentWorkCopies: Record<Locale, AgentWorkCopy & ConversationWorkbenchCopy> = {
   'zh-CN': {
     liveAgents: '在线智能体',
     liveAgentsHint: 'Session 从持久化服务端状态刷新。',
@@ -2883,6 +3380,79 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     unavail: reason => `不可用：${reason}`,
     badgeAria: state => `智能体 Session 状态：${state}`,
     projectionFailedStatus: '预测失败',
+    routeLoading: '正在加载工作台…',
+    routeAccountError: '无法加载账户。',
+    conversationListLabel: '对话列表',
+    backToClassicScreen: '返回传统交互页面',
+    workbenchTitle: 'Agent 工作台',
+    modelSettingsLink: '模型服务设置',
+    createConversation: '新建对话',
+    newConversationTitle: '新对话标题',
+    executionSessionLabel: '执行会话',
+    noAvailableSession: '暂无可用执行会话',
+    sessionOptionIssue: id => `Issue ${id}`,
+    sessionOptionProject: id => `Project ${id}`,
+    modelServiceLabel: '模型服务',
+    configureServiceOption: '请先配置服务',
+    modelLabel: '模型',
+    openAgentsForDelegation: '前往智能体创建委派会话',
+    conversationsSection: '会话',
+    loadingConversations: '正在加载…',
+    noConversations: '尚无对话',
+    loadMoreConversations: '加载更多对话',
+    executorsSection: '执行器',
+    noModelServiceConfigured: '尚未配置模型服务',
+    delegatedSessionLabel: '委派执行会话',
+    conversationRegionLabel: '对话内容',
+    selectOrCreateConversation: '选择或新建对话。',
+    publicRecordNote: '公开对话记录与执行状态',
+    sessionChipLabel: '会话',
+    archive: '归档',
+    loadEarlierMessages: '加载更早消息',
+    sendFirstMessage: '发送第一条消息以开始。',
+    humanBadge: '人',
+    agentBadge: 'A',
+    systemBadge: 'S',
+    humanActorName: '你',
+    agentActorName: 'Agent',
+    systemActorName: 'System',
+    turnChipLabel: '回合',
+    retryOf: '重试自',
+    steerInputLabel: '转向指令（追加到执行中的回合）',
+    steerInputPlaceholder: '追加指示…',
+    steerSubmit: '追加指示',
+    retryPreviousRequest: '重试上一次请求。',
+    followUp: '追问',
+    runnerInterrupted: '执行进程中断，外部操作结果尚未对账。请先核对 Issue、文档和制品，再发送新消息。',
+    stopReason: '用户从工作台停止',
+    workItemPill: '工作项',
+    projectPill: '项目',
+    filesPill: '文件',
+    terminalPill: '终端',
+    messageFieldLabel: '消息（Markdown）',
+    turnServiceLabel: '本次模型服务',
+    turnModelLabel: '本次模型',
+    noAvailableModel: '无可用模型',
+    composerKeyboardHint: 'Enter 发送 · Shift+Enter 换行',
+    send: '发送',
+    noBoundSession: '此对话尚未绑定执行会话。',
+    boundSessionEnded: '绑定的执行会话已结束，请创建新的委派会话。',
+    sessionCanRun: '执行会话可运行',
+    configureModelServiceLink: '配置模型服务',
+    contextRegionLabel: '执行上下文',
+    serverAuthorizesWrites: '执行写操作由服务端授权。',
+    contextProject: id => `Project ${id}`,
+    contextIssue: id => `Issue ${id}`,
+    pinKindIssue: 'Issue',
+    pinKindDocument: 'Document',
+    pinKindGuidance: 'Guidance',
+    pinRevisionLabel: revision => ` · r${revision}`,
+    pinLiveHeadLabel: ' · 跟随最新',
+    viewAgentSessionLink: '查看 Agent 会话与证据',
+    sessionStateLabel: '执行会话状态',
+    sessionStateLoading: '正在读取',
+    conversationRevisionLabel: '对话版本',
+    selectConversationForContext: '选择对话后显示上下文。',
   },
   en: {
     liveAgents: 'Live agents',
@@ -2935,6 +3505,79 @@ const agentWorkCopies: Record<Locale, AgentWorkCopy> = {
     unavail: reason => reason,
     badgeAria: state => `Agent session ${state}`,
     projectionFailedStatus: 'Projection failed',
+    routeLoading: 'Loading workbench…',
+    routeAccountError: 'Could not load account.',
+    conversationListLabel: 'Conversations',
+    backToClassicScreen: 'Back to the classic screen',
+    workbenchTitle: 'Agent workbench',
+    modelSettingsLink: 'Model settings',
+    createConversation: 'Create conversation',
+    newConversationTitle: 'New conversation title',
+    executionSessionLabel: 'Execution session',
+    noAvailableSession: 'No available session',
+    sessionOptionIssue: id => `Issue ${id}`,
+    sessionOptionProject: id => `Project ${id}`,
+    modelServiceLabel: 'Model service',
+    configureServiceOption: 'Configure a service',
+    modelLabel: 'Model',
+    openAgentsForDelegation: 'Open Agents to start a delegated session',
+    conversationsSection: 'Conversations',
+    loadingConversations: 'Loading…',
+    noConversations: 'No conversations yet',
+    loadMoreConversations: 'Load more conversations',
+    executorsSection: 'Executors',
+    noModelServiceConfigured: 'No model service configured',
+    delegatedSessionLabel: 'Delegated session',
+    conversationRegionLabel: 'Conversation',
+    selectOrCreateConversation: 'Select or create a conversation.',
+    publicRecordNote: 'Public conversation record and execution state',
+    sessionChipLabel: 'session',
+    archive: 'Archive',
+    loadEarlierMessages: 'Load earlier messages',
+    sendFirstMessage: 'Send the first message to begin.',
+    humanBadge: 'H',
+    agentBadge: 'A',
+    systemBadge: 'S',
+    humanActorName: 'You',
+    agentActorName: 'Agent',
+    systemActorName: 'System',
+    turnChipLabel: 'turn',
+    retryOf: 'retry of',
+    steerInputLabel: 'Steering instruction (appended to the running turn)',
+    steerInputPlaceholder: 'Add steering…',
+    steerSubmit: 'Steer',
+    retryPreviousRequest: 'Retry the previous request.',
+    followUp: 'Follow up',
+    runnerInterrupted: 'The runner stopped before settlement. External effects are unverified. Check the Issue, documents, and artifacts before sending another message.',
+    stopReason: 'Stopped from workbench',
+    workItemPill: 'work item',
+    projectPill: 'project',
+    filesPill: 'files',
+    terminalPill: 'terminal',
+    messageFieldLabel: 'Message (Markdown)',
+    turnServiceLabel: 'Service for this turn',
+    turnModelLabel: 'Model for this turn',
+    noAvailableModel: 'No available model',
+    composerKeyboardHint: 'Enter to send · Shift+Enter for a new line',
+    send: 'Send',
+    noBoundSession: 'This conversation has no execution session.',
+    boundSessionEnded: 'The bound execution session has ended. Start a new delegated session.',
+    sessionCanRun: 'Execution session can run',
+    configureModelServiceLink: 'Configure a model service',
+    contextRegionLabel: 'Execution context',
+    serverAuthorizesWrites: 'The server authorizes each write.',
+    contextProject: id => `Project ${id}`,
+    contextIssue: id => `Issue ${id}`,
+    pinKindIssue: 'Issue',
+    pinKindDocument: 'Document',
+    pinKindGuidance: 'Guidance',
+    pinRevisionLabel: revision => ` · r${revision}`,
+    pinLiveHeadLabel: ' · live head',
+    viewAgentSessionLink: 'View Agent session and evidence',
+    sessionStateLabel: 'Execution session state',
+    sessionStateLoading: 'Loading',
+    conversationRevisionLabel: 'Conversation revision',
+    selectConversationForContext: 'Select a conversation to view context.',
   },
 }
 
@@ -3192,7 +3835,7 @@ export type WorkRoomCopy = {
   none: string
 }
 
-const workRoomCopies: Record<Locale, WorkRoomCopy> = {
+const workRoomCopies: Record<Locale, WorkRoomCopy & WorkRoomDialogCopy> = {
   'zh-CN': {
     title: 'Work Room',
     intro: '持久、人类可见的协作状态。智能体之间的消息从不隐藏。',
@@ -3383,6 +4026,15 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     noHandoffSummary: '未上报交接摘要。',
     noArtifacts: '无',
     none: '无',
+    legacyCommentTitle: '删除评论',
+    legacyCommentClose: '关闭',
+    legacyCommentBody: '评论内容',
+    legacyCommentDeleteWarning: '该评论将从当前工作区视图删除。',
+    legacyCommentSave: '保存',
+    legacyCommentCancel: '取消',
+    governedForceReleaseTitle: '强制释放租约',
+    governedDecisionTitle: action => `${action === 'reverse' ? '反转' : '替代'}决策`,
+    governedHandoffTitle: action => `${action === 'reject' ? '拒绝' : '取消'}移交`,
   },
   en: {
     title: 'Work Room',
@@ -3574,6 +4226,15 @@ const workRoomCopies: Record<Locale, WorkRoomCopy> = {
     noHandoffSummary: 'No handoff summary reported.',
     noArtifacts: 'none',
     none: 'none',
+    legacyCommentTitle: 'Delete comment',
+    legacyCommentClose: 'Close',
+    legacyCommentBody: 'Comment body',
+    legacyCommentDeleteWarning: 'This comment will be deleted from the current workspace view.',
+    legacyCommentSave: 'Save',
+    legacyCommentCancel: 'Cancel',
+    governedForceReleaseTitle: 'Force-release Lease',
+    governedDecisionTitle: action => `${action === 'reverse' ? 'Reverse' : 'Supersede'} Decision`,
+    governedHandoffTitle: action => `${action === 'reject' ? 'Reject' : 'Cancel'} Handoff`,
   },
 }
 
@@ -3673,12 +4334,76 @@ export type HumanControlPlaneCopy = {
   activity: string
 }
 
-const humanControlPlaneCopies: Record<Locale, HumanControlPlaneCopy> = {
+/**
+ * Copy for the Human Control Plane sub-surfaces that still carried inline
+ * literals: the recovery centre, the collaboration queues, and the project
+ * control centre. `controlPlaneEyebrow` is shared because all three render the
+ * same section eyebrow. `rev` and the `24h`/`7d`/`30d` window markers are
+ * machine formats and carry the same literal in both locales.
+ *
+ * Every string in this contract rendered English-only before, so `zh-CN` keeps
+ * the same English literal and this change stays a zero-copy-diff
+ * pass-through, with one exception: `projectIssueProgressLabel` already had a
+ * `zh-CN`/`en` pair and keeps its Chinese value. See `EvidenceDrawerCopy` for
+ * the translation follow-up.
+ */
+export type ControlPlaneSurfaceCopy = {
+  controlPlaneEyebrow: string
+  recoveryRecordLabel: string
+  severityMedium: string
+  severityHigh: string
+  severityCritical: string
+  queueRevisionSuffix: string
+  queueInboxLabel: string
+  queueThreadLabel: string
+  queueChannelLabel: string
+  queueInboxPrefix: string
+  projectTargetDateLabel: string
+  projectRevisionPrefix: (revision: number) => string
+  projectIssueProgressLabel: string
+  projectTimeWindow24h: string
+  projectTimeWindow7d: string
+  projectTimeWindow30d: string
+}
+
+const humanControlPlaneCopies: Record<Locale, HumanControlPlaneCopy & ControlPlaneSurfaceCopy> = {
   'zh-CN': {
     activeAgent: '运行中的智能体', affectedResources: '受影响资源', agentRelationship: '智能体代表负责人执行', atRisk: '存在风险', atRiskDescription: '需要恢复或重新同步的执行。', attention: '关注事项', attentionKind: '关注类型', beta: 'Beta', blocked: '阻塞', close: '关闭', completionReview: '完成审阅', consequenceDescription: '暂停前请确认对当前执行和后续步骤的影响。', consequenceImpact: { stop: '当前步骤将在安全边界停止。', lease: '租约仍由服务端规则处理，不会因预览而改变。', resume: '恢复执行需要重新验证权限和 Session revision。' }, consequenceTitle: '暂停这次运行？', continueReview: '继续审阅', decision: '决策', evidence: '证据', evidenceDescription: '本次运行的可追溯产物与因果记录。', evidenceLabel: '证据引用', evidenceType: '测试证据', freshness: '新鲜度', freshNow: '刚刚更新', graph: '图谱', health: '执行健康度', lifecycle: '生命周期', needsYou: '需要我处理', needsYouDescription: '等待负责人决策或审阅的事项。', overview: '概览', pauseRun: '暂停运行', planSteps: '计划步骤', projectDescription: 'Agent 运行可靠性、恢复与可验证交付。', projectNavigation: '项目导航', projectSettings: '项目设置', ready: '就绪', reasonCodes: '原因代码', recentlyVerified: '最近已验证', recentlyVerifiedDescription: '已完成验证并留有证据的工作。', resync: '重新同步', responsibleHuman: '负责人', risk: '风险', riskHigh: '高风险', runDescription: '将 Session 恢复规则应用到稳定执行路径。', runHealthy: '健康', running: '运行中', runningDescription: 'Agent 当前正在执行的工作。', runs: '运行', stale: '已过期', staleDescription: '心跳已过期，投影需要重新同步。', statusOpen: '待处理', statusVerified: '已验证', summaryLabel: '项目运行摘要', stepImplement: '实现恢复规则', stepReview: '审阅变更', stepVerify: '验证集成路径', technicalDetails: '技术详情', timeline: '因果时间线', title: 'Runtime Reliability', urgency: '紧迫度', urgencySoon: '尽快', verifiedDescription: '本地集成验证通过，证据已关联。', verifiedTitle: '连接恢复验证', viewEvidence: '查看证据', viewWork: '查看工作', work: '工作', activity: '活动',
+    controlPlaneEyebrow: 'Human Control Plane',
+    recoveryRecordLabel: 'Recovery',
+    severityMedium: 'medium',
+    severityHigh: 'high',
+    severityCritical: 'critical',
+    queueRevisionSuffix: ' · revision',
+    queueInboxLabel: 'Inbox',
+    queueThreadLabel: 'Thread',
+    queueChannelLabel: 'Channel',
+    queueInboxPrefix: 'Inbox · ',
+    projectTargetDateLabel: 'Target date',
+    projectRevisionPrefix: revision => `rev ${revision}`,
+    projectIssueProgressLabel: '项目 Issue 完成进度',
+    projectTimeWindow24h: '24h',
+    projectTimeWindow7d: '7d',
+    projectTimeWindow30d: '30d',
   },
   en: {
     activeAgent: 'Active Agent Executor', affectedResources: 'Affected resources', agentRelationship: 'Agent acting on behalf of Human', atRisk: 'At Risk', atRiskDescription: 'Execution that needs recovery or resynchronization.', attention: 'Attention', attentionKind: 'Attention kind', beta: 'Beta', blocked: 'Blocked', close: 'Close', completionReview: 'Completion review', consequenceDescription: 'Review the effect on the current execution and later steps before pausing.', consequenceImpact: { stop: 'The current step will stop at a safe boundary.', lease: 'Lease behavior remains server-controlled and is not changed by this preview.', resume: 'Resume will revalidate authority and the Session revision.' }, consequenceTitle: 'Pause this run?', continueReview: 'Continue review', decision: 'Decision', evidence: 'Evidence', evidenceDescription: 'Traceable artifacts and causal records for this run.', evidenceLabel: 'Evidence references', evidenceType: 'Test evidence', freshness: 'Freshness', freshNow: 'Updated just now', graph: 'Graph', health: 'Execution health', lifecycle: 'Lifecycle', needsYou: 'Needs You', needsYouDescription: 'Items waiting for the responsible Human to decide or review.', overview: 'Overview', pauseRun: 'Pause run', planSteps: 'Plan steps', projectDescription: 'Agent runtime reliability, recovery, and verifiable delivery.', projectNavigation: 'Project navigation', projectSettings: 'Project Settings', ready: 'Ready', reasonCodes: 'Reason codes', recentlyVerified: 'Recently Verified', recentlyVerifiedDescription: 'Work with completed verification and linked evidence.', resync: 'Resync', responsibleHuman: 'Responsible Human', risk: 'Risk', riskHigh: 'High risk', runDescription: 'Apply Session recovery rules to the stable execution path.', runHealthy: 'Healthy', running: 'Running', runningDescription: 'Work currently being executed by Agents.', runs: 'Runs', stale: 'Stale', staleDescription: 'Heartbeat is stale and the projection needs resynchronization.', statusOpen: 'Open', statusVerified: 'Verified', summaryLabel: 'Project operational summary', stepImplement: 'Implement recovery rule', stepReview: 'Review changes', stepVerify: 'Verify integration path', technicalDetails: 'Technical details', timeline: 'Causal timeline', title: 'Runtime Reliability', urgency: 'Urgency', urgencySoon: 'Soon', verifiedDescription: 'Local integration verification passed and evidence is linked.', verifiedTitle: 'Connection recovery verification', viewEvidence: 'View evidence', viewWork: 'View Work', work: 'Work', activity: 'Activity',
+    controlPlaneEyebrow: 'Human Control Plane',
+    recoveryRecordLabel: 'Recovery',
+    severityMedium: 'medium',
+    severityHigh: 'high',
+    severityCritical: 'critical',
+    queueRevisionSuffix: ' · revision',
+    queueInboxLabel: 'Inbox',
+    queueThreadLabel: 'Thread',
+    queueChannelLabel: 'Channel',
+    queueInboxPrefix: 'Inbox · ',
+    projectTargetDateLabel: 'Target date',
+    projectRevisionPrefix: revision => `rev ${revision}`,
+    projectIssueProgressLabel: 'Project Issue completion progress',
+    projectTimeWindow24h: '24h',
+    projectTimeWindow7d: '7d',
+    projectTimeWindow30d: '30d',
   },
 }
 
@@ -3692,18 +4417,18 @@ type LocaleContextValue = {
   detailCopy: Partial<WorkItemDetailCopy>
   editorCopy: RichTextEditorCopy | undefined
   guidanceCopy: GuidanceCopy
-  settingsCopy: SettingsCopy
+  settingsCopy: SettingsCopy & LlmSettingsCopy
   loginCopy: LoginCopy
   installCopy: InstallCopy
   operationsCopy: OperationsCopy
   connectCopy: ConnectCopy
-  agentsCopy: AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy
+  agentsCopy: AgentsCopy & ApprovalHistoryLocaleCopy & AgentDetailLocaleCopy & AgentControlLocaleCopy & AgentsArchiveCopy & AttentionApprovalCopy
   inboxCopy: InboxCopy
-  sessionDetailCopy: SessionDetailCopy
-  agentWorkCopy: AgentWorkCopy
+  sessionDetailCopy: SessionDetailCopy & EvidenceDrawerCopy & SessionPlanLabelCopy
+  agentWorkCopy: AgentWorkCopy & ConversationWorkbenchCopy
   relationsCopy: RelationsCopy
-  workRoomCopy: WorkRoomCopy
-  humanControlPlaneCopy: HumanControlPlaneCopy
+  workRoomCopy: WorkRoomCopy & WorkRoomDialogCopy
+  humanControlPlaneCopy: HumanControlPlaneCopy & ControlPlaneSurfaceCopy
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null)

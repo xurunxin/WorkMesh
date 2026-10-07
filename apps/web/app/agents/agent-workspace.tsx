@@ -41,7 +41,7 @@ type SessionContext = {
 const terminalStates = new Set<AgentSession['state']>(['completed', 'failed', 'canceled'])
 
 export function AgentWorkspace({ agentId }: { agentId: string }) {
-  const { locale } = useLocale()
+  const { locale, sessionDetailCopy: labels } = useLocale()
   const text = locale === 'zh-CN' ? {
     eyebrow: '人与智能体协同', title: '智能体工作区', intro: '这里展示权威 Session、当前计划、上下文来源、待审批动作与完成证据，不保存隐藏推理。',
     refresh: '刷新', loading: '正在加载智能体工作区…', loadError: '无法加载智能体工作区。', noSessions: '这个智能体尚无可见 Session。', recentSessions: '最近 Session', loadMore: '更多 Session',
@@ -131,7 +131,7 @@ export function AgentWorkspace({ agentId }: { agentId: string }) {
         {context && <>
           <dl className={styles.contextFacts}>
             <div><dt>{text.context}</dt><dd>{context.contextSnapshotId ?? text.none}</dd></div>
-            <div><dt>{text.plan}</dt><dd>{context.plan ? `v${context.plan.revision} · ${context.plan.changeSummary ?? context.plan.change_summary ?? context.plan.id}` : text.notPublished}</dd></div>
+            <div><dt>{text.plan}</dt><dd>{context.plan ? labels.planVersionSummary(context.plan.revision, context.plan.changeSummary ?? context.plan.change_summary ?? context.plan.id) : text.notPublished}</dd></div>
           </dl>
           <section><h4>{text.guidance}</h4>{guidance.length ? <ul className={styles.guidanceList}>{guidance.map(item => <li key={item.uri}><a href={item.uri} rel="noreferrer" target="_blank">{item.title ?? item.uri}</a></li>)}</ul> : <p className={styles.status}>{text.noGuidance}</p>}</section>
           <section><h4>{text.steps}</h4>{planSteps.length ? <ol className={styles.stepList}>{planSteps.map(step => <li data-current={step.status === 'in_progress'} key={step.id}><strong>{step.title}</strong><span>{step.status.replaceAll('_', ' ')}{step.status === 'in_progress' ? ` · ${text.current}` : ''}</span>{step.description && <RichContent density="compact" source={step.description} />}</li>)}</ol> : <p className={styles.status}>{text.noPlan}</p>}</section>

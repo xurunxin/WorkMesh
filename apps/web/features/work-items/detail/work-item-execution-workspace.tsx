@@ -59,7 +59,7 @@ async function findHumanAttention(
 }
 
 export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, locale = 'en' }: Props) {
-  const { agentsCopy } = useLocale()
+  const { agentsCopy, t } = useLocale()
   const [summary, setSummary] = useState<WorkItemExecutionSummary | null>(null)
   const [attention, setAttention] = useState<HumanAttentionItem | null>(null)
   const [approvalDecisionState, setApprovalDecisionState] = useState<ApprovalDecisionUiState>({ status: 'idle' })
@@ -209,7 +209,7 @@ export function WorkItemExecutionWorkspace({ model, onOpenAgent, relationships, 
       <div><dt>{text.evidence}</dt><dd><span className={`verification verification-${evidenceState === 'unknown' ? 'not_verified' : evidenceState}`}>{!summary ? text.notLoaded : evidenceState === 'verified' ? text.verified : evidenceState === 'missing' ? text.missing : text.unknown}</span></dd></div>
     </dl>
 
-    {model.description && <section className="work-item-overview-description" aria-labelledby="work-item-overview-description-title"><h3 id="work-item-overview-description-title">{locale === 'zh-CN' ? '工作说明' : 'Work description'}</h3><RichContent density="document" source={model.description} /></section>}
+    {model.description && <section className="work-item-overview-description" aria-labelledby="work-item-overview-description-title"><h3 id="work-item-overview-description-title">{t('workDescription')}</h3><RichContent density="document" source={model.description} /></section>}
 
     {!summary && !error && <p className="empty" role="status">{text.loading}</p>}
     {error && <div className="error-state"><p className="error" role="alert">{error}</p><Button onClick={() => void load(false)} type="button" variant="secondary">{text.refresh}</Button></div>}

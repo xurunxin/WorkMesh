@@ -551,16 +551,16 @@ type GovernedRoomAction =
 type LegacyDialog = { action: "edit" | "delete"; comment: LegacyComment };
 
 function LegacyCommentDialog({ dialog, onClose, onSubmit }: { dialog: LegacyDialog | null; onClose: () => void; onSubmit: (body?: string) => void | Promise<void> }) {
-  const { locale } = useLocale();
+  const { workRoomCopy: text } = useLocale();
   const [body, setBody] = useState("");
   useEffect(() => { setBody(dialog?.comment.body ?? ""); }, [dialog]);
   if (!dialog) return null;
   const editing = dialog.action === "edit";
-  const title = locale === "zh-CN" ? (editing ? "编辑评论" : "删除评论") : (editing ? "Edit comment" : "Delete comment");
-  return <Dialog closeLabel={locale === "zh-CN" ? "关闭" : "Close"} onClose={onClose} open title={title}>
+  const title = editing ? text.legacyEditPrompt : text.legacyCommentTitle;
+  return <Dialog closeLabel={text.legacyCommentClose} onClose={onClose} open title={title}>
     <form className="agent-control-form" onSubmit={event => { event.preventDefault(); void onSubmit(editing ? body.trim() : undefined); }}>
-      {editing ? <label>{locale === "zh-CN" ? "评论内容" : "Comment body"}<textarea autoFocus onChange={event => setBody(event.currentTarget.value)} required value={body} /></label> : <p>{locale === "zh-CN" ? "该评论将从当前工作区视图删除。" : "This comment will be deleted from the current workspace view."}</p>}
-      <div className="agent-control-actions"><Button disabled={editing && !body.trim()} type="submit" variant={editing ? "primary" : "danger"}>{locale === "zh-CN" ? (editing ? "保存" : "删除") : (editing ? "Save" : "Delete")}</Button><Button onClick={onClose} type="button" variant="secondary">{locale === "zh-CN" ? "取消" : "Cancel"}</Button></div>
+      {editing ? <label>{text.legacyCommentBody}<textarea autoFocus onChange={event => setBody(event.currentTarget.value)} required value={body} /></label> : <p>{text.legacyCommentDeleteWarning}</p>}
+      <div className="agent-control-actions"><Button disabled={editing && !body.trim()} type="submit" variant={editing ? "primary" : "danger"}>{editing ? text.legacyCommentSave : text.legacyDelete}</Button><Button onClick={onClose} type="button" variant="secondary">{text.legacyCommentCancel}</Button></div>
     </form>
   </Dialog>;
 }
@@ -1558,10 +1558,10 @@ export function WorkRoom({
         }}
         open={governedAction !== null}
         title={governedAction?.kind === "force-release"
-          ? (locale === "zh-CN" ? "强制释放租约" : "Force-release Lease")
+          ? text.governedForceReleaseTitle
           : governedAction?.kind === "decision"
-            ? (locale === "zh-CN" ? `${governedAction.action === "reverse" ? "反转" : "替代"}决策` : `${governedAction.action === "reverse" ? "Reverse" : "Supersede"} Decision`)
-            : (locale === "zh-CN" ? `${governedAction?.action === "reject" ? "拒绝" : "取消"}移交` : `${governedAction?.action === "reject" ? "Reject" : "Cancel"} Handoff`)}
+            ? text.governedDecisionTitle(governedAction.action as "reverse" | "supersede")
+            : text.governedHandoffTitle(governedAction?.action as "reject" | "cancel")}
       />
       <LegacyCommentDialog dialog={legacyDialog} onClose={() => setLegacyDialog(null)} onSubmit={async body => { if (!legacyDialog) return; await onLegacyUpdate(legacyDialog.comment, legacyDialog.action === "edit" ? { body: body! } : { deleted: true }); setLegacyDialog(null); }} />
     </section>

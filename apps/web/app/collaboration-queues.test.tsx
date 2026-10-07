@@ -23,7 +23,7 @@ vi.mock('./lib/realtime', () => ({
 }))
 vi.mock('./attention-center', () => ({ AttentionCenter: () => <div>Governed attention controls</div> }))
 vi.mock('../features/collaboration/collaboration-hub', () => ({ CollaborationHub: () => <div>Grouped notification feed</div> }))
-vi.mock('./lib/i18n', () => ({ useLocale: () => ({ locale: 'en-US' }) }))
+vi.mock('./lib/i18n', () => ({ useLocale: () => ({ locale: 'en-US', humanControlPlaneCopy: { controlPlaneEyebrow: 'Human Control Plane', queueRevisionSuffix: ' · revision', queueInboxLabel: 'Inbox', queueThreadLabel: 'Thread', queueChannelLabel: 'Channel', queueInboxPrefix: 'Inbox · ' } }) }))
 
 const ids = {
   agent: '11111111-1111-4111-8111-111111111111',

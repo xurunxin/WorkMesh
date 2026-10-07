@@ -11,8 +11,7 @@ import { WorkbenchLlmSettings } from '../workbench-llm-settings'
 type Team = { id: string; name: string }
 
 export default function AgentWorkbenchSettingsPage() {
-  const { locale, t } = useLocale()
-  const zh = locale === 'zh-CN'
+  const { settingsCopy: text, t } = useLocale()
   const { actor, loading, error, refresh } = useAuthenticatedActor()
   const [teams, setTeams] = useState<Team[]>([])
   useEffect(() => {
@@ -23,19 +22,19 @@ export default function AgentWorkbenchSettingsPage() {
     }).catch(() => { if (active) setTeams([]) })
     return () => { active = false }
   }, [actor?.id, actor?.workspace_id])
-  const title = zh ? 'Agent 工作台服务接入' : 'Agent workbench services'
+  const title = text.pageTitle
   return <AuthenticatedWorkspaceShell
     actorName={actor ? actorDisplayName(actor) : undefined}
     contextLabel={title}
     documentTitle={title}
     headerActions={<LocaleToggle />}
-    navigation={[{ href: '/settings', label: zh ? '返回设置' : 'Back to settings' }]}
+    navigation={[{ href: '/settings', label: text.backToSettings }]}
     skipLabel={t('skipToContent')}
     utilityNavigation={[{ active: true, href: '/settings/agent-workbench', label: title }]}
   >
     <section className="content settings-page">
-      {loading && !actor ? <p>{zh ? '正在加载…' : 'Loading…'}</p>
-        : !actor ? <div role="alert"><p>{error || (zh ? '无法加载账户。' : 'Could not load account.')}</p><button onClick={() => void refresh()} type="button">{zh ? '重试' : 'Retry'}</button></div>
+      {loading && !actor ? <p>{text.routeLoading}</p>
+        : !actor ? <div role="alert"><p>{error || text.routeAccountError}</p><button onClick={() => void refresh()} type="button">{text.retry}</button></div>
           : <WorkbenchLlmSettings canManageWorkspace={actor.workspace_role === 'admin'} key={`${actor.workspace_id}:${actor.id}`} teams={teams} />}
     </section>
   </AuthenticatedWorkspaceShell>

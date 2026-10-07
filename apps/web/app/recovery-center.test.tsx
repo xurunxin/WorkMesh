@@ -13,7 +13,7 @@ vi.mock('./lib/realtime', () => ({
   useRealtimeSubscription: (_resources: unknown, callback: typeof realtimeMock.callback) => { realtimeMock.callback = callback },
 }))
 vi.mock('./agent-control-dialog', () => ({ AgentControlDialog: ({ open }: { open: boolean }) => open ? <div>Governed control preview</div> : null }))
-vi.mock('./lib/i18n', () => ({ useLocale: () => ({ locale: 'en' }) }))
+vi.mock('./lib/i18n', () => ({ useLocale: () => ({ locale: 'en', humanControlPlaneCopy: { controlPlaneEyebrow: 'Human Control Plane', recoveryRecordLabel: 'Recovery', severityMedium: 'medium', severityHigh: 'high', severityCritical: 'critical' } }) }))
 
 const id = (suffix: number) => `00000000-0000-4000-8000-${String(suffix).padStart(12, '0')}`
 const item: RecoveryItem = {
