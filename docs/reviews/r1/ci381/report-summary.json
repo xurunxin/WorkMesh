@@ -1,0 +1,1005 @@
+{
+  "stats": {
+    "total": 32,
+    "expected": 31,
+    "unexpected": 1,
+    "flaky": 0,
+    "skipped": 0,
+    "ok": false
+  },
+  "files": [
+    {
+      "fileId": "c6809aa511c285603ec2",
+      "fileName": "project-editor.spec.ts",
+      "tests": [
+        {
+          "testId": "c6809aa511c285603ec2-cd8b70a8968934a66a04",
+          "title": "Project creation and revisioned edit keep Markdown and the selected URL after reload",
+          "projectName": "authenticated",
+          "location": {
+            "file": "project-editor.spec.ts",
+            "line": 3,
+            "column": 1
+          },
+          "duration": 93896,
+          "annotations": [],
+          "tags": [],
+          "outcome": "unexpected",
+          "path": [],
+          "ok": false,
+          "results": [
+            {
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "data/7f03e1eccb5f8712260295855acac146ab03d272.png"
+                },
+                {
+                  "name": "video",
+                  "contentType": "video/webm",
+                  "path": "data/0337529f5db3b8efcf04c2d93931631f8fac7cf4.webm"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "data/444c4ba542d8b20124e288f8b6a7201b901790f9.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "data/d4844fbd99fe634ef682ea3527b9b9b5b04581e4.zip"
+                }
+              ],
+              "startTime": "2026-10-07T21:15:24.101Z",
+              "workerIndex": 1
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 0,
+        "unexpected": 1,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": false
+      }
+    },
+    {
+      "fileId": "21558093fca67d8a6a37",
+      "fileName": "stage0.spec.ts",
+      "tests": [
+        {
+          "testId": "21558093fca67d8a6a37-5d49f3ffb8fba579dc67",
+          "title": "installs, manages work, synchronizes drag and mentions over SSE, and rejects child writes after team deletion",
+          "projectName": "bootstrap",
+          "location": {
+            "file": "stage0.spec.ts",
+            "line": 156,
+            "column": 3
+          },
+          "duration": 44018,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Stage 0 browser acceptance"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:14:17.473Z",
+              "workerIndex": 0
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "ffb96fb2c9977d04c390",
+      "fileName": "pagination.spec.ts",
+      "tests": [
+        {
+          "testId": "ffb96fb2c9977d04c390-e263f01614f4e249dbdd",
+          "title": "loads an opaque second page, de-duplicates it, and resets on filter change",
+          "projectName": "authenticated",
+          "location": {
+            "file": "pagination.spec.ts",
+            "line": 30,
+            "column": 1
+          },
+          "duration": 4407,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:15:05.823Z",
+              "workerIndex": 1
+            }
+          ]
+        },
+        {
+          "testId": "ffb96fb2c9977d04c390-645d89736cc067421c4b",
+          "title": "isolates changed scopes immediately while retaining same-scope refresh content",
+          "projectName": "authenticated",
+          "location": {
+            "file": "pagination.spec.ts",
+            "line": 115,
+            "column": 1
+          },
+          "duration": 4362,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:15:10.359Z",
+              "workerIndex": 1
+            }
+          ]
+        },
+        {
+          "testId": "ffb96fb2c9977d04c390-7b2164f4dc09e3f7ce0e",
+          "title": "makes a later Agent registry record reachable through explicit continuation",
+          "projectName": "authenticated",
+          "location": {
+            "file": "pagination.spec.ts",
+            "line": 238,
+            "column": 1
+          },
+          "duration": 9337,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:15:14.735Z",
+              "workerIndex": 1
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "2551d8d2a83c34fae587",
+      "fileName": "recovery-center.spec.ts",
+      "tests": [
+        {
+          "testId": "2551d8d2a83c34fae587-53e6c7141ee592ec0172",
+          "title": "Recovery Center preserves evidence, governed actions, canonical state, and responsive layout",
+          "projectName": "authenticated",
+          "location": {
+            "file": "recovery-center.spec.ts",
+            "line": 64,
+            "column": 1
+          },
+          "duration": 6969,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:16:58.804Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "8f348d9c1343968c0ac2",
+      "fileName": "rich-content.spec.ts",
+      "tests": [
+        {
+          "testId": "8f348d9c1343968c0ac2-5cc74a271b946b3038de",
+          "title": "edits Markdown, keeps unsafe HTML inert, and preserves keyboard access",
+          "projectName": "authenticated",
+          "location": {
+            "file": "rich-content.spec.ts",
+            "line": 4,
+            "column": 3
+          },
+          "duration": 4123,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "v29 Human rich content"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:05.898Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "8f348d9c1343968c0ac2-64a39936596ac6eb585e",
+          "title": "reflows the Work Room and attachments at narrow viewports",
+          "projectName": "authenticated",
+          "location": {
+            "file": "rich-content.spec.ts",
+            "line": 16,
+            "column": 3
+          },
+          "duration": 3972,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "v29 Human rich content"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:10.037Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "256aba07ec52fc01c968",
+      "fileName": "stage1.spec.ts",
+      "tests": [
+        {
+          "testId": "256aba07ec52fc01c968-03ae674a17015209b1f1",
+          "title": "delegates and starts one queued session with the atomic work-item command",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage1.spec.ts",
+            "line": 26,
+            "column": 3
+          },
+          "duration": 10057,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Stage 1 agent browser acceptance"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:14.034Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "256aba07ec52fc01c968-0fcbc8c285407be7476f",
+          "title": "offers retry for a failed session and navigates to the new queued session",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage1.spec.ts",
+            "line": 99,
+            "column": 3
+          },
+          "duration": 17327,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Stage 1 agent browser acceptance"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:24.104Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "256aba07ec52fc01c968-416d656af7fc023a58e4",
+          "title": "shows projected team access data read-only to non-admin humans",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage1.spec.ts",
+            "line": 153,
+            "column": 3
+          },
+          "duration": 6202,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Stage 1 agent browser acceptance"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:41.444Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "62b586f9f775176e4782",
+      "fileName": "stage2.spec.ts",
+      "tests": [
+        {
+          "testId": "62b586f9f775176e4782-09abc9f76447e0e1620a",
+          "title": "renders auditable multi-agent Work Room cards and confirms force release",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage2.spec.ts",
+            "line": 46,
+            "column": 1
+          },
+          "duration": 5003,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:47.676Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "62b586f9f775176e4782-80664e6d9cf958d00076",
+          "title": "renders a real API-backed multi-agent Work Room and controls durable collaboration state",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage2.spec.ts",
+            "line": 203,
+            "column": 1
+          },
+          "duration": 17926,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:17:52.692Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "549f282d885f5a8e3d92",
+      "fileName": "stage4.spec.ts",
+      "tests": [
+        {
+          "testId": "549f282d885f5a8e3d92-6ee0dfcd6205fd2c52e3",
+          "title": "renders durable Stage 4 operations and invokes real rule controls",
+          "projectName": "authenticated",
+          "location": {
+            "file": "stage4.spec.ts",
+            "line": 23,
+            "column": 1
+          },
+          "duration": 5222,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:10.639Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "f7bfd8980c2f4d3a803b",
+      "fileName": "theme-unification.spec.ts",
+      "tests": [
+        {
+          "testId": "f7bfd8980c2f4d3a803b-0d8ba5d3030fddf30442",
+          "title": "renders /login on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 2297,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:15.881Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-23b7fb0cc823bd01f19e",
+          "title": "renders /install on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 5336,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:18.190Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-5640a4afed2d7d77374c",
+          "title": "renders /?view=my-work on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 3457,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:23.540Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-e840b3f4ec61c94c5001",
+          "title": "renders /workbench on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 2671,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:27.009Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-f70a1f04cbc41f85ece2",
+          "title": "renders /agents on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 2913,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:29.691Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-6bf6e3cc65313efa31a1",
+          "title": "renders /operations on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 2597,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:32.618Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "f7bfd8980c2f4d3a803b-b039452b5289eade67e0",
+          "title": "renders /connect on the unified light theme",
+          "projectName": "authenticated",
+          "location": {
+            "file": "theme-unification.spec.ts",
+            "line": 24,
+            "column": 5
+          },
+          "duration": 4763,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "unified light theme"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:35.230Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "e9382935432feff991df",
+      "fileName": "work-item-detail.spec.ts",
+      "tests": [
+        {
+          "testId": "e9382935432feff991df-ad6254e510d9f9c10513",
+          "title": "shares the Work Item projection across Sheet and Full Page",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-item-detail.spec.ts",
+            "line": 9,
+            "column": 3
+          },
+          "duration": 5213,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "v28 Work Item detail"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:40.019Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "e9382935432feff991df-f47bfbcc571287847806",
+          "title": "warns before discarding unsaved edits and keeps revisioned mutation headers",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-item-detail.spec.ts",
+            "line": 25,
+            "column": 3
+          },
+          "duration": 4466,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "v28 Work Item detail"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:45.247Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "e9382935432feff991df-721955b3bee77aa392ac",
+          "title": "keeps narrow detail views within the document and actions reachable",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-item-detail.spec.ts",
+            "line": 46,
+            "column": 3
+          },
+          "duration": 7321,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "v28 Work Item detail"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:49.727Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "31ad8620ad9f73f517e8",
+      "fileName": "work-surfaces.spec.ts",
+      "tests": [
+        {
+          "testId": "31ad8620ad9f73f517e8-11a8d793697dc7b31f92",
+          "title": "defaults to Chinese, persists the language switch, and renders the same collection in List and Board",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-surfaces.spec.ts",
+            "line": 14,
+            "column": 3
+          },
+          "duration": 6538,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Issues workbench"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:18:57.070Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "31ad8620ad9f73f517e8-2c42cc7261a7c93f6f9e",
+          "title": "moves by explicit selector and sends one stable revisioned mutation",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-surfaces.spec.ts",
+            "line": 37,
+            "column": 3
+          },
+          "duration": 3637,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Issues workbench"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:03.622Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "31ad8620ad9f73f517e8-1673275be5eeac1c62f0",
+          "title": "recovers a rolled-back network move through canonical Retry",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-surfaces.spec.ts",
+            "line": 53,
+            "column": 3
+          },
+          "duration": 4869,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Issues workbench"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:07.273Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "31ad8620ad9f73f517e8-ec6fbc47201ac8efbc61",
+          "title": "creates and applies a Saved View without update/delete controls",
+          "projectName": "authenticated",
+          "location": {
+            "file": "work-surfaces.spec.ts",
+            "line": 78,
+            "column": 3
+          },
+          "duration": 3703,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [
+            "Issues workbench"
+          ],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:12.158Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 4,
+        "expected": 4,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "dd0a620dd4e23ab690b6",
+      "fileName": "workbench-accessibility.spec.ts",
+      "tests": [
+        {
+          "testId": "dd0a620dd4e23ab690b6-c9227969be22db995bcc",
+          "title": "workbench surfaces keep structural and keyboard boundaries at 1440px",
+          "projectName": "authenticated",
+          "location": {
+            "file": "workbench-accessibility.spec.ts",
+            "line": 95,
+            "column": 3
+          },
+          "duration": 21595,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:15.881Z",
+              "workerIndex": 2
+            }
+          ]
+        },
+        {
+          "testId": "dd0a620dd4e23ab690b6-b71acfc11105e4a8acb5",
+          "title": "workbench surfaces keep structural and keyboard boundaries at 390px",
+          "projectName": "authenticated",
+          "location": {
+            "file": "workbench-accessibility.spec.ts",
+            "line": 95,
+            "column": 3
+          },
+          "duration": 16654,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:37.489Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "1df3d4e6f4351baf1209",
+      "fileName": "workbench-conversation.spec.ts",
+      "tests": [
+        {
+          "testId": "1df3d4e6f4351baf1209-43274403e50d3740159f",
+          "title": "the authenticated Agent workbench opens on desktop and mobile with a real service settings path",
+          "projectName": "authenticated",
+          "location": {
+            "file": "workbench-conversation.spec.ts",
+            "line": 3,
+            "column": 1
+          },
+          "duration": 5305,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:54.161Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    {
+      "fileId": "2480410a45cdb7beb87c",
+      "fileName": "workbench-llm-settings.spec.ts",
+      "tests": [
+        {
+          "testId": "2480410a45cdb7beb87c-47547b6968e7d182d62e",
+          "title": "an administrator configures and revokes a model service without exposing its credential",
+          "projectName": "authenticated",
+          "location": {
+            "file": "workbench-llm-settings.spec.ts",
+            "line": 3,
+            "column": 1
+          },
+          "duration": 4951,
+          "annotations": [],
+          "tags": [],
+          "outcome": "expected",
+          "path": [],
+          "ok": true,
+          "results": [
+            {
+              "attachments": [],
+              "startTime": "2026-10-07T21:19:59.479Z",
+              "workerIndex": 2
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "total": 1,
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    }
+  ]
+}

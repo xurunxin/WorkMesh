@@ -187,7 +187,21 @@ try {
   }
   assert.ok(mainPlan.includes('用户对各卡实现范围的确认后才可派发实现'))
   const protectedPaths = ['apps', 'packages', 'scripts', '.github', 'turbo.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'CONTEXT.md', 'docs/evidence', 'docs/references']
-  assert.equal(git('diff', '--name-only', index.baseCommit, '--', ...protectedPaths).trim(), '', '本R1不修改产品/CI/G1原件')
+  // CI381 定位后仅允许原 Project E2E 增加导航断言；不开放产品/CI/G1修改。
+  const acceptancePath = 'apps/web/e2e/project-editor.spec.ts'
+  const changedProtected = git('diff', '--name-only', index.baseCommit, '--', ...protectedPaths).trim().split('\n').filter(Boolean)
+  assert.ok(changedProtected.every(path => path === acceptancePath), '本R1不修改产品/CI/G1原件，仅允许已记录的测试导航断言')
+  const reviewedAcceptance = git('show', `65f0aef5da465bdbfe9a80730e417a3bc14ee24c:${acceptancePath}`)
+  const expectedAcceptance = reviewedAcceptance.replace(
+    "  await page.getByTestId('project-control-view-work').click()\n",
+    "  const selectedProjectId = new URL(page.url()).searchParams.get('project')\n"
+      + "  await page.getByTestId('project-control-view-work').click()\n"
+      + "  // The list renders before the App Router applies its URL. Complete that\n"
+      + "  // navigation before opening a sheet that route restoration would clear.\n"
+      + "  await expect(page).toHaveURL(url => url.searchParams.get('view') === 'projects'\n"
+      + "    && url.searchParams.get('project') === selectedProjectId && url.searchParams.get('tab') === 'list')\n",
+  )
+  assert.equal(read(acceptancePath).replaceAll('\r\n', '\n'), expectedAcceptance, '仅增加导航断言，原断言/超时/测试范围不得删改')
   const historicalPaths = ['plan.md', 'todo-inputs.json', 'r1-spec-source.md', 'r1-spec-source.json', 'main-inputs.json', 'plan-review-response.md', 'checks.md', 'handoff-manifest.json', 'verify-handoff.mjs'].map(p => directory + p)
   assert.equal(git('diff', '--name-only', '1e1659974a3ade1eedd46bdf0ffb0899a93ec715', '--', ...historicalPaths).trim(), '', '历史规划/截断来源被改写')
   const evidenceIndex = json(directory + 'execution-logs/raw-checks-index.json')

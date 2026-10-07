@@ -1,0 +1,162 @@
+{
+  "capturedAt": "2026-10-07T21:43:22.664Z",
+  "reviewedHead": "65f0aef5da465bdbfe9a80730e417a3bc14ee24c",
+  "actualMain": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "finalHead": "本回合平台自动提交后生成；不冒作已产生或CI已通过",
+  "node": "v24.20.0",
+  "platform": "win32",
+  "ciRuntime": {
+    "node": "22.19.0",
+    "platform": "ubuntu-24.04",
+    "playwright": "1.61.1",
+    "browserUserAgentVersion": "HeadlessChrome/149.0.7827.55",
+    "source": "实际job.log setup + actual trace context/network，不把Action宿主Node24警告当测试Node"
+  },
+  "localPlaywright": "1.61.1",
+  "testSource": {
+    "path": "apps/web/e2e/project-editor.spec.ts",
+    "reviewedBlob": "2f999a65d3cf0cbaa855cb06eee9ed9b3ea810b1",
+    "newExpectedBlob": "7e6421ab3d7b55939d256019f686647caafdcefe",
+    "gitUtf8Sha256": "631f3526359978eba30c94f92c9c304aeea6517b08867b272c8448b1175dde72",
+    "controlSourceSha256": "f7da81547719230d04ca01c1a42b6b8ff92a9387e9a3c46d6d1b7e95de1ef254",
+    "fixedControlSourceSha256": "01681f9b10b9cc648606d72d9af957363e6b14305a7a58f6e49377075cc37f8a",
+    "controlByteScope": "控制源码hash为实际执行前原字节；可读副本只规范行尾/EOF，原字节在readable-source.redacted.zip，前后hash见evidence-index.json。"
+  },
+  "collection": "Browser coverage: 65 unique cases; shards 34 + 32; only bootstrap repeats.",
+  "localRuns": [
+    {
+      "name": "control",
+      "source": "docs/reviews/r1/ci381/control/service-results.json",
+      "command": "pnpm test:e2e -- --grep \"Project creation\"",
+      "startedAt": "2026-10-07T21:33:57.141Z",
+      "endedAt": "2026-10-07T21:34:22.510Z",
+      "exitCode": 1,
+      "interpretation": "命令参数引号错误，No tests found，不是产品失败；失败保留"
+    },
+    {
+      "name": "control2",
+      "source": "docs/reviews/r1/ci381/control2/service-results.json",
+      "command": "pnpm test:e2e -- project-editor.spec.ts",
+      "startedAt": "2026-10-07T21:35:02.994Z",
+      "endedAt": "2026-10-07T21:37:32.765Z",
+      "exitCode": 1,
+      "interpretation": "临时1000ms RSC延迟：bootstrap通过，后续再次打开Issue超时；不是CI line54的精确复现"
+    },
+    {
+      "name": "fixed-control",
+      "source": "docs/reviews/r1/ci381/fixed-control/service-results.json",
+      "command": "pnpm test:e2e -- project-editor.spec.ts",
+      "startedAt": "2026-10-07T21:38:06.820Z",
+      "endedAt": "2026-10-07T21:39:12.951Z",
+      "exitCode": 0,
+      "interpretation": "同样延迟+新增导航断言：2/2通过，临时注入不在最终源码"
+    },
+    {
+      "name": "shard2",
+      "source": "docs/reviews/r1/ci381/shard2/service-results.json",
+      "command": "pnpm test:e2e -- --shard=2/2",
+      "startedAt": "2026-10-07T21:39:31.970Z",
+      "endedAt": "2026-10-07T21:42:05.232Z",
+      "exitCode": 0,
+      "interpretation": "标准第二分片，没有诊断注入：32/32通过，仅本机结果"
+    }
+  ],
+  "typecheck": {
+    "command": "pnpm --filter @workmesh/web typecheck",
+    "exitCode": 0,
+    "source": "本轮exec实际退出0，tsc --noEmit；当时已恢复最终源码，无临时延迟注入。未补造启动/结束时间。"
+  },
+  "staticChecks": [
+    {
+      "command": "node --check docs/reviews/r1/verify-specs.mjs",
+      "startedAt": "2026-10-07T21:43:19.882Z",
+      "endedAt": "2026-10-07T21:43:19.972Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/reviews/r1/verify-specs.mjs",
+      "startedAt": "2026-10-07T21:43:19.972Z",
+      "endedAt": "2026-10-07T21:43:20.492Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "{\n  \"cards\": \"29/29\",\n  \"categories\": \"261/261\",\n  \"applicableAssertions\": 139,\n  \"originalChecklistItems\": 154,\n  \"dependencies\": \"实现及验收无环\",\n  \"historicalSource\": \"保留；#6合并前卡片全文缺口见source-gaps.md\",\n  \"result\": \"静态检查通过；非独审/产品新功能通过\"\n}\n",
+      "stderr": "warning: in the working copy of 'apps/web/e2e/project-editor.spec.ts', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": "node docs/reviews/r1/verify-handoff.mjs",
+      "startedAt": "2026-10-07T21:43:20.492Z",
+      "endedAt": "2026-10-07T21:43:20.590Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "已采集工件的字节、哈希、计划副本一致性和卡片元数据校验通过；正文覆盖 29/29。\n历史源包完整；其中 1 卡由总管补交源文。三项 blocking 仍待原复核者，执行前须复读最新 main 与 29 卡。\n",
+      "stderr": ""
+    },
+    {
+      "command": "pnpm ci:validate",
+      "startedAt": "2026-10-07T21:43:20.590Z",
+      "endedAt": "2026-10-07T21:43:22.443Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "\n> workmesh@ ci:validate C:\\Users\\xurx\\.tds\\workspaces\\01a116f8-8172-7082-8d61-867bd9f0b749\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\n\n[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4\nRelease workflow validation passed.\nLite compose validation passed (8 services; 4 roles from one image; 51 documented variables; published: minio, web)\n✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (2.5753ms)\n✔ 相同字节共用member，所有逻辑版本保留 (0.4849ms)\n✔ 拒绝规范化后重复逻辑元组 (0.3554ms)\n✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.1741ms)\n✔ 拒绝规范化后重复ZIP member (0.1692ms)\n✔ 拒绝索引缺项/多项 (0.5519ms)\n✔ 拒绝索引重复元组 (0.2508ms)\n✔ 拒绝归档hash不符 (0.1884ms)\n✔ 拒绝伪造来源blob ID (0.294ms)\n✔ 拒绝member bytes/hash不符 (0.347ms)\n✔ 拒绝软链接 (0.3016ms)\n✔ 拒绝目录 (0.2168ms)\n✔ 拒绝设备 (0.3179ms)\n✔ 拒绝extra元数据/硬链接信息与加密flags (0.3023ms)\n✔ 拒绝本地路径不一致、重叠与解压超额 (0.3739ms)\nℹ tests 15\nℹ suites 0\nℹ pass 15\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.5254\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "startedAt": "2026-10-07T21:43:22.443Z",
+      "endedAt": "2026-10-07T21:43:22.528Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'apps/web/e2e/project-editor.spec.ts', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": "git diff --check 5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+      "startedAt": "2026-10-07T21:43:22.528Z",
+      "endedAt": "2026-10-07T21:43:22.663Z",
+      "exitCode": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'apps/web/e2e/project-editor.spec.ts', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "scope": {
+    "productSourceChanges": 0,
+    "ciPolicyChanges": 0,
+    "migrations": 0,
+    "apiOrEventChanges": 0,
+    "testChange": "仅增加View Work URL导航断言，精确旧源码+新增段落由verify-specs.mjs验证",
+    "historicalArtifacts": "规划原文、快照、G1/P1/D0和失败归档不改写",
+    "notRerun": "已成功且本轮不受影响的全量单元/DB/API/worker/recovery/source检查不重跑；旧完整五项仍按原版本保留，最新head全Required CI仍必须通过",
+    "independentReview": "65f0已审规格结论保留；新增测试/诊断校验器尚需Chief安排定向独审",
+    "currentRequiredCi": "CI381原head失败保留；新head尚未生成，不填通过",
+    "productRace": "快速实际点击的路由/选择竞态候选尚未按产品回归独立验证，未声称修复",
+    "knownRemaining": "#6原卡历史全文缺口、设备/渠道及F4容量门禁、F产品范围授权均保持既有披露"
+  },
+  "toolingFailures": [
+    {
+      "failure": "gh api原完整log因终端escape默认防护未输出",
+      "disposition": "允许日志escape读取后成功，原CI状态不变"
+    },
+    {
+      "failure": "诊断grep多词参数在Windows变成两个参数，No tests found",
+      "source": "control/e2e.log",
+      "disposition": "使用无空格project-editor.spec.ts文件参数，不改用例集合"
+    },
+    {
+      "failure": "Python默认GBK读取UTF-8失败，随后秘密扫描把短locale值en误当秘密",
+      "disposition": "明确UTF-8；已知会话/密钥精确值长度筛选，重新从原下载ZIP生成脱敏件，不把此本地工具错误归为CI根因"
+    },
+    {
+      "failure": "证据校验把没有storageState的test trace上下文也要求有redacted字段；并把原日志行尾空白当新文档错误",
+      "disposition": "只验证实际存在的storageState；原脱敏字节先归档，再规范可读日志/上下文的行尾和EOF，保留前后hash；重新核验，不豁免秘密扫描"
+    }
+  ],
+  "evidenceVerification": {
+    "command": "临时verify-evidence.py核25项索引/trace脱敏/显示原字节归档/文本空白",
+    "exitCode": 0,
+    "observedAt": "2026-10-07T21:46:31.537Z"
+  }
+}

@@ -1,0 +1,67 @@
+
+> workmesh@ test:e2e C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749
+> turbo run test:e2e --filter=@workmesh/web "--" "--grep" "\"Project" "creation\""
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/web
+   • Running test:e2e in 1 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/ui:build: cache miss, executing 7ab248c743768bc4
+@workmesh/contracts:build: cache miss, executing 7ae0073be6cf3cf5
+@workmesh/ui:build:
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build:
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/web:test:e2e: cache bypass, force executing fd035ac18970c8ba
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e: > @workmesh/web@ test:e2e C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web
+@workmesh/web:test:e2e: > playwright test --config ../../playwright.config.ts "--grep" "\"Project" "creation\""
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e: [WebServer] (node:43544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer] (node:37960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer] (node:45272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408843914,"pid":45272,"hostname":"DarkFlame","msg":"Server listening at http://127.0.0.1:3101"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408843917,"pid":45272,"hostname":"DarkFlame","msg":"Server listening at http://100.77.217.65:3101"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408843917,"pid":45272,"hostname":"DarkFlame","msg":"Server listening at http://192.168.31.186:3101"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408843917,"pid":45272,"hostname":"DarkFlame","msg":"Server listening at http://10.173.185.137:3101"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408843917,"pid":45272,"hostname":"DarkFlame","msg":"Server listening at http://172.24.64.1:3101"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408844469,"pid":45272,"hostname":"DarkFlame","reqId":"97853d65-15be-4550-8376-3ef8220453d0","req":{"method":"GET","url":"/health","host":"127.0.0.1:3101","remoteAddress":"127.0.0.1","remotePort":50796},"msg":"incoming request"}
+@workmesh/web:test:e2e: [WebServer] {"level":30,"time":1791408844488,"pid":45272,"hostname":"DarkFlame","reqId":"97853d65-15be-4550-8376-3ef8220453d0","res":{"statusCode":200},"responseTime":19.6241,"msg":"request completed"}
+@workmesh/web:test:e2e: [WebServer] (node:33944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer] (node:15616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer] (node:29256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+@workmesh/web:test:e2e: [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+@workmesh/web:test:e2e: [WebServer]    ▲ Next.js 15.5.22
+@workmesh/web:test:e2e: [WebServer]    - Local:        http://localhost:3100
+@workmesh/web:test:e2e: [WebServer]    - Network:      http://100.77.217.65:3100
+@workmesh/web:test:e2e: [WebServer]
+@workmesh/web:test:e2e: [WebServer]  ✓ Starting...
+@workmesh/web:test:e2e: [WebServer]  ✓ Ready in 3.5s
+@workmesh/web:test:e2e: [WebServer]  ○ Compiling / ...
+@workmesh/web:test:e2e: [WebServer]  ✓ Compiled / in 9.2s (10513 modules)
+@workmesh/web:test:e2e: [WebServer]  GET / 200 in 10056ms
+@workmesh/web:test:e2e: Error: No tests found.
+@workmesh/web:test:e2e: Make sure that arguments are regular expressions matching test files.
+@workmesh/web:test:e2e: You may need to escape symbols like "$" or "*" and quote the arguments.
+@workmesh/web:test:e2e:
+@workmesh/web:test:e2e:  ELIFECYCLE  Command failed with exit code 1.
+@workmesh/web#test:e2e:  ERROR  command (C:\Users\xurx\.tds\workspaces\01a116f8-8172-7082-8d61-867bd9f0b749\apps\web) C:\nvm4w\nodejs\pnpm.cmd run test:e2e --grep "Project creation" exited (1)
+
+ Tasks:    2 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    24.683s
+Failed:    @workmesh/web#test:e2e
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.

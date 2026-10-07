@@ -1,0 +1,303 @@
+{
+  "runId": 37687579146,
+  "originalTraceSha256": "345021ea86db2a74aa434efe3bb60740212072895d87f314f26749d7e4f84d4c",
+  "calls": [
+    {
+      "type": "before",
+      "callId": "call@326",
+      "startTime": 106166.004,
+      "class": "Frame",
+      "method": "click",
+      "params": {
+        "selector": "internal:testid=[data-testid=\"project-control-view-work\"s]",
+        "strict": true,
+        "timeout": 0
+      },
+      "stepId": "pw:api@57",
+      "pageId": "page@67d8532be5583d076e45534445908050",
+      "beforeSnapshot": "before@call@326"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106167.929,
+      "message": "waiting for getByTestId('project-control-view-work')"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106171.031,
+      "message": "  locator resolved to <button type=\"button\" data-testid=\"project-control-view-work\" class=\"wm-button wm-button-secondary ui-button ui-button-secondary\">…</button>"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106171.842,
+      "message": "attempting click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106171.885,
+      "message": "  waiting for element to be visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106199.38,
+      "message": "  element is visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106199.399,
+      "message": "  scrolling into view if needed"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106199.852,
+      "message": "  done scrolling"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106203.806,
+      "message": "  performing click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106274.531,
+      "message": "  click action done"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106274.548,
+      "message": "  waiting for scheduled navigations to finish"
+    },
+    {
+      "type": "log",
+      "callId": "call@326",
+      "time": 106279.205,
+      "message": "  navigations have finished"
+    },
+    {
+      "type": "after",
+      "callId": "call@326",
+      "endTime": 106279.296,
+      "afterSnapshot": "after@call@326"
+    },
+    {
+      "type": "before",
+      "callId": "call@328",
+      "startTime": 106292.614,
+      "title": "Expect \"toBeVisible\"",
+      "class": "Frame",
+      "method": "expect",
+      "params": {
+        "selector": ".project-detail-pane >> internal:role=button[name=\"Project issue 1791407728811\"s]",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 10000
+      },
+      "stepId": "expect@58",
+      "pageId": "page@67d8532be5583d076e45534445908050",
+      "beforeSnapshot": "before@call@328"
+    },
+    {
+      "type": "log",
+      "callId": "call@328",
+      "time": 106315.424,
+      "message": "Expect \"toBeVisible\" with timeout 10000ms"
+    },
+    {
+      "type": "log",
+      "callId": "call@328",
+      "time": 106315.438,
+      "message": "waiting for locator('.project-detail-pane').getByRole('button', { name: 'Project issue 1791407728811', exact: true })"
+    },
+    {
+      "type": "after",
+      "callId": "call@328",
+      "endTime": 106341.656,
+      "afterSnapshot": "after@call@328"
+    },
+    {
+      "type": "before",
+      "callId": "call@330",
+      "startTime": 106357.628,
+      "class": "Frame",
+      "method": "click",
+      "params": {
+        "selector": ".project-detail-pane >> internal:role=button[name=\"Project issue 1791407728811\"s]",
+        "strict": true,
+        "timeout": 0
+      },
+      "stepId": "pw:api@59",
+      "pageId": "page@67d8532be5583d076e45534445908050",
+      "beforeSnapshot": "before@call@330"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106368.494,
+      "message": "waiting for locator('.project-detail-pane').getByRole('button', { name: 'Project issue 1791407728811', exact: true })"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106381.187,
+      "message": "  locator resolved to <button type=\"button\" class=\"wm-work-item-title\">Project issue 1791407728811</button>"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106382.037,
+      "message": "attempting click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106382.089,
+      "message": "  waiting for element to be visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106399.613,
+      "message": "  element is visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106399.631,
+      "message": "  scrolling into view if needed"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106400.782,
+      "message": "  done scrolling"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106405.623,
+      "message": "  performing click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106429.367,
+      "message": "  click action done"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106429.388,
+      "message": "  waiting for scheduled navigations to finish"
+    },
+    {
+      "type": "log",
+      "callId": "call@330",
+      "time": 106437.538,
+      "message": "  navigations have finished"
+    },
+    {
+      "type": "after",
+      "callId": "call@330",
+      "endTime": 106437.767,
+      "afterSnapshot": "after@call@330"
+    },
+    {
+      "type": "before",
+      "callId": "call@332",
+      "startTime": 106449.979,
+      "class": "Frame",
+      "method": "click",
+      "params": {
+        "selector": ".work-item-detail-sheet >> internal:role=tab[name=/详情|Details/]",
+        "strict": true,
+        "timeout": 0
+      },
+      "stepId": "pw:api@60",
+      "pageId": "page@67d8532be5583d076e45534445908050",
+      "beforeSnapshot": "before@call@332"
+    },
+    {
+      "type": "log",
+      "callId": "call@332",
+      "time": 106455.062,
+      "message": "waiting for locator('.work-item-detail-sheet').getByRole('tab', { name: /详情|Details/ })"
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshotName": "before@call@330",
+      "timestamp": 106368.119,
+      "wallTime": 1791407729306,
+      "url": "http://127.0.0.1:3100/?view=projects&project=a886e951-6cbc-4c40-b026-4fa9cee17a9a"
+    },
+    {
+      "snapshotName": "after@call@330",
+      "timestamp": 106448.195,
+      "wallTime": 1791407729386,
+      "url": "http://127.0.0.1:3100/?view=projects&project=a886e951-6cbc-4c40-b026-4fa9cee17a9a&tab=list"
+    },
+    {
+      "snapshotName": "before@call@332",
+      "timestamp": 106454.668,
+      "wallTime": 1791407729393,
+      "url": "http://127.0.0.1:3100/?view=projects&project=a886e951-6cbc-4c40-b026-4fa9cee17a9a&tab=list"
+    }
+  ],
+  "requests": [
+    {
+      "start": 106255.123,
+      "time": 74.01,
+      "url": "http://127.0.0.1:3100/?view=projects&project=a886e951-6cbc-4c40-b026-4fa9cee17a9a&tab=list&_rsc=ZmCQ44b92m4mXe_R",
+      "status": 200
+    },
+    {
+      "start": 106421.5,
+      "time": 12.295,
+      "url": "http://127.0.0.1:3101/api/v1/work-items/c8f61d61-0641-4c90-96d2-528946e07802",
+      "status": 200
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitBlob": "1be752362b60e101265a9d25f3bd9159d7cf245b",
+      "gitUtf8Sha256": "950e9b0063a63c441ca2dd245d8152f9d86db6c623eff05c28dc0dd04dfe7b3a"
+    },
+    {
+      "path": "playwright.config.ts",
+      "gitBlob": "084e53a57a09c9f152398cff76d73e607adbfbe1",
+      "gitUtf8Sha256": "2a15c06c7586da65b859935aff7de5e1bb1dc888ab163fd887b16ecd92453ae5"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "gitBlob": "3a82aa7be5867c98e3de5bbbb7a6c4f91673ce91",
+      "gitUtf8Sha256": "ee132beb6ad55a041faed36fb1da1bc7c855f83a1b461d5a16a4f6d64999584b"
+    },
+    {
+      "path": "apps/web/e2e/project-editor.spec.ts",
+      "gitBlob": "2f999a65d3cf0cbaa855cb06eee9ed9b3ea810b1",
+      "gitUtf8Sha256": "c36a99dbb091fbfc47f7b1ff68f41bc83e67116a5548714f90d35b4875dbe831"
+    },
+    {
+      "path": "apps/web/app/page.tsx",
+      "gitBlob": "34f35e9fbe64fcd224a001fdf4fb3c1363f49848",
+      "gitUtf8Sha256": "ae49730268c671eab48af02b1a9f1b1b9ff55adcc872ee2923244246991ccca3"
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "capturedAt": "2026-10-07T21:37:08.450758+00:00",
+  "runId": 37687579146,
+  "runAttempt": 1,
+  "head": "65f0aef5da465bdbfe9a80730e417a3bc14ee24c",
+  "main": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+  "checkedOutMerge": "bbc6b10d9b58e6ce24d877845a9003b5c7424eee",
+  "artifacts": [
+    {
+      "id": 11511514752,
+      "name": "e2e-playwright-shard-2-37687579146-1",
+      "bytes": 11299823,
+      "sha256": "ac4971b21fde6867329039919ce17c27ecff3c5a5f43aaa8c165f1d6bfbb4809",
+      "expired": false,
+      "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/artifacts/11511514752/zip",
+      "head": "65f0aef5da465bdbfe9a80730e417a3bc14ee24c"
+    },
+    {
+      "id": 11512208027,
+      "name": "e2e-raw-shard-2-37687579146-1",
+      "bytes": 112716,
+      "sha256": "d2dd58da103dba221e4ba13222310c269b134c98ab7254f852acac915fadd8df",
+      "expired": false,
+      "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/artifacts/11512208027/zip",
+      "head": "65f0aef5da465bdbfe9a80730e417a3bc14ee24c"
+    }
+  ],
+  "redaction": "原始ZIP仅临时读取，不提交测试会话、bootstrap或密钥；原ZIP哈希保留。受控归档为脱敏派生件，不冒称原始字节。Cookie/Set-Cookie/Authorization及storageState脱敏，原始平台artifact引用可复核。",
+  "jobLog": {
+    "originalUtf8Sha256": "532ad4da217f14eac70725429199884bd19c120b211a87218cc2d188c9914968",
+    "derivedSha256": "bf9127fe01206dcc8e05e468b9d90fe3cea60127929f4a8103fd6e6152d535c5",
+    "readVia": "已登录gh api actions/jobs/113019330631/logs --allow-escape-sequences；平台workflow_runs仅返回尾部，未调用git远端写操作。",
+    "beforeDisplaySha256": "221d59569e9de4546607908a650f6796eca3420480b43562f99a69d305e0e95a"
+  },
+  "rawMembers": [
+    {
+      "path": "e2e.log",
+      "originalSha256": "e853fdd556ee6bb5235827c3d8aa49fc5d33c1ed3ca894a93b3ef9a2457e2ebd",
+      "derivedSha256": "e853fdd556ee6bb5235827c3d8aa49fc5d33c1ed3ca894a93b3ef9a2457e2ebd",
+      "originalBytes": 984022,
+      "derivedBytes": 984022
+    },
+    {
+      "path": "install.log",
+      "originalSha256": "83dff77934b0ee33949d60570c0663b0e55b824c779fd8c4d62e254e7e3d6722",
+      "derivedSha256": "83dff77934b0ee33949d60570c0663b0e55b824c779fd8c4d62e254e7e3d6722",
+      "originalBytes": 548,
+      "derivedBytes": 548
+    },
+    {
+      "path": "playwright-install.log",
+      "originalSha256": "1190efaf38e0ffa64c26f7f8736df9900142fe5a1e9e2afcf2d4c539a279c6f8",
+      "derivedSha256": "1190efaf38e0ffa64c26f7f8736df9900142fe5a1e9e2afcf2d4c539a279c6f8",
+      "originalBytes": 18742,
+      "derivedBytes": 18742
+    },
+    {
+      "path": "services/0ce912900d9a476d99aee4328c647169_redis7alpine_f41e0b.log",
+      "originalSha256": "411ab86127b7f7754d9bc44ef099bf3c2d2e070a457b1b71884a5ecb1e7b2cf4",
+      "derivedSha256": "411ab86127b7f7754d9bc44ef099bf3c2d2e070a457b1b71884a5ecb1e7b2cf4",
+      "originalBytes": 1043,
+      "derivedBytes": 1043
+    },
+    {
+      "path": "services/58e25acc84b9463f8516b628288605a1_postgres16alpinesha25657c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777_0ad8f7.log",
+      "originalSha256": "106c9e1323777ec23cd56c8c0df0a54dfcf19cb6a4ef9ee5329f3a66e3972384",
+      "derivedSha256": "106c9e1323777ec23cd56c8c0df0a54dfcf19cb6a4ef9ee5329f3a66e3972384",
+      "originalBytes": 3595,
+      "derivedBytes": 3595
+    },
+    {
+      "path": "shard-coverage.log",
+      "originalSha256": "e3fbcb6f8cbc504e47a0da4d5bf294f7e7c4bf00e5a07f6d9b3ace5024f8cd37",
+      "derivedSha256": "e3fbcb6f8cbc504e47a0da4d5bf294f7e7c4bf00e5a07f6d9b3ace5024f8cd37",
+      "originalBytes": 75,
+      "derivedBytes": 75
+    }
+  ],
+  "derivedFiles": [
+    {
+      "path": "README.md",
+      "worktreeBytes": 8468,
+      "worktreeSha256": "14004a88952a44aa634348a25c2c2bec18b345a541e69214ec6610ea86ccafd9",
+      "gitUtf8Bytes": 8468,
+      "gitUtf8Sha256": "14004a88952a44aa634348a25c2c2bec18b345a541e69214ec6610ea86ccafd9",
+      "expectedBlobId": "d060316d157b535823c422070ca75844a99b3e37"
+    },
+    {
+      "path": "ci-failure.png",
+      "worktreeBytes": 108598,
+      "worktreeSha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+      "gitUtf8Bytes": 108598,
+      "gitUtf8Sha256": "01c47565f8bda315a8b8a66d89feab35224da5617ee6219efec032183cb9b37b",
+      "expectedBlobId": "7b3ba14922f2bf7cfc05bf61ab317eb4f69ae144"
+    },
+    {
+      "path": "control-instrumentation.txt",
+      "worktreeBytes": 8869,
+      "worktreeSha256": "fe37545c4059841fe5e36fa9148983f331922e82ead8aadb99c97ca495dec7d1",
+      "gitUtf8Bytes": 8869,
+      "gitUtf8Sha256": "fe37545c4059841fe5e36fa9148983f331922e82ead8aadb99c97ca495dec7d1",
+      "expectedBlobId": "3b18339e7003cedae40ce466a17ce24aae44cd1d"
+    },
+    {
+      "path": "control/e2e.log",
+      "worktreeBytes": 5275,
+      "worktreeSha256": "eb5fc9c0a212826b87b9937b5a8b76d9751123b8d9f99a96e719bd705abfc10f",
+      "gitUtf8Bytes": 5275,
+      "gitUtf8Sha256": "eb5fc9c0a212826b87b9937b5a8b76d9751123b8d9f99a96e719bd705abfc10f",
+      "expectedBlobId": "7df97d20cd71aca23a4bc54da4d2c20ba1c07453"
+    },
+    {
+      "path": "control/service-results.json",
+      "worktreeBytes": 181,
+      "worktreeSha256": "a2067551d09ec0783633575114fe050e8a0834f60a30baf14faa1e84a52fec48",
+      "gitUtf8Bytes": 181,
+      "gitUtf8Sha256": "a2067551d09ec0783633575114fe050e8a0834f60a30baf14faa1e84a52fec48",
+      "expectedBlobId": "29eb67828a44dfffccde6c9949253a42742973b0"
+    },
+    {
+      "path": "control2/e2e.log",
+      "worktreeBytes": 256464,
+      "worktreeSha256": "d1c921233275199e8b3175dee2f5b60dadf1ad52212ca3ea296ce291a349576f",
+      "gitUtf8Bytes": 256464,
+      "gitUtf8Sha256": "d1c921233275199e8b3175dee2f5b60dadf1ad52212ca3ea296ce291a349576f",
+      "expectedBlobId": "b70dabad10fc99614e98258cd4a479d43a0cb066"
+    },
+    {
+      "path": "control2/error-context.md",
+      "worktreeBytes": 24448,
+      "worktreeSha256": "03b2300541f624b7392e1e0dc69003bc9cc2b3373f988475f1c7db221662ffc2",
+      "gitUtf8Bytes": 24448,
+      "gitUtf8Sha256": "03b2300541f624b7392e1e0dc69003bc9cc2b3373f988475f1c7db221662ffc2",
+      "expectedBlobId": "8b99b261f5ee90eb58c6201779efc411ad85ddb5"
+    },
+    {
+      "path": "control2/failure.png",
+      "worktreeBytes": 128289,
+      "worktreeSha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+      "gitUtf8Bytes": 128289,
+      "gitUtf8Sha256": "4f66709a5c88c3e28349a8791dfc2b56f576b45f401a22ba94ae30aea1ca14a5",
+      "expectedBlobId": "7d52bef56e68c019bdae5414e2af6b4f8c691425"
+    },
+    {
+      "path": "control2/service-results.json",
+      "worktreeBytes": 176,
+      "worktreeSha256": "44d14b16add0dc0f9916c83832db42583d7d6af030180f351fcec50538955eef",
+      "gitUtf8Bytes": 176,
+      "gitUtf8Sha256": "44d14b16add0dc0f9916c83832db42583d7d6af030180f351fcec50538955eef",
+      "expectedBlobId": "4bfd1eb55e583126dcb9120716d65fa4f7667da5"
+    },
+    {
+      "path": "diagnostic-checks.json",
+      "worktreeBytes": 9417,
+      "worktreeSha256": "24c3c4dbd4bea2a39e9353d442d3d3e38083213120f6b7e7846898b761d83330",
+      "gitUtf8Bytes": 9417,
+      "gitUtf8Sha256": "24c3c4dbd4bea2a39e9353d442d3d3e38083213120f6b7e7846898b761d83330",
+      "expectedBlobId": "32101019b54466dd71080cf096fcec14aa79bac2"
+    },
+    {
+      "path": "e2e.redacted.log",
+      "worktreeBytes": 983995,
+      "worktreeSha256": "a3375448af2342042bf560697040a79baaae12028355d7bd94d7c125676bd93f",
+      "gitUtf8Bytes": 983995,
+      "gitUtf8Sha256": "a3375448af2342042bf560697040a79baaae12028355d7bd94d7c125676bd93f",
+      "expectedBlobId": "ea73f795772b7fb134f645dd8fc03603a7f58431"
+    },
+    {
+      "path": "error-context.md",
+      "worktreeBytes": 22614,
+      "worktreeSha256": "0ab74e8a58ff9489d25f7d4def49fea917ec5159360fd7833d74a7b97e8965a1",
+      "gitUtf8Bytes": 22614,
+      "gitUtf8Sha256": "0ab74e8a58ff9489d25f7d4def49fea917ec5159360fd7833d74a7b97e8965a1",
+      "expectedBlobId": "dd3bc0786e8b778c9c2a1301bcc589ac96c22c21"
+    },
+    {
+      "path": "fixed-control/e2e.log",
+      "worktreeBytes": 321441,
+      "worktreeSha256": "e04646fc0ad7e2108a18a870cada55b69f3e57ca0508834e57211421b207d13a",
+      "gitUtf8Bytes": 321441,
+      "gitUtf8Sha256": "e04646fc0ad7e2108a18a870cada55b69f3e57ca0508834e57211421b207d13a",
+      "expectedBlobId": "bf3082b86ef13af30d2aac60e3beacb7b490a7d1"
+    },
+    {
+      "path": "fixed-control/service-results.json",
+      "worktreeBytes": 176,
+      "worktreeSha256": "1782e7fe1735396de6d53e60b28fd98699232f0b9e628879f3cf3fcf191bda88",
+      "gitUtf8Bytes": 176,
+      "gitUtf8Sha256": "1782e7fe1735396de6d53e60b28fd98699232f0b9e628879f3cf3fcf191bda88",
+      "expectedBlobId": "906833cec786fbb791fd0b4b58857851061a600b"
+    },
+    {
+      "path": "job.redacted.log",
+      "worktreeBytes": 1181323,
+      "worktreeSha256": "bf9127fe01206dcc8e05e468b9d90fe3cea60127929f4a8103fd6e6152d535c5",
+      "gitUtf8Bytes": 1181323,
+      "gitUtf8Sha256": "bf9127fe01206dcc8e05e468b9d90fe3cea60127929f4a8103fd6e6152d535c5",
+      "expectedBlobId": "d7e059f4fecf92c9a9fe493ff220607565b34817"
+    },
+    {
+      "path": "platform-read.json",
+      "worktreeBytes": 2488,
+      "worktreeSha256": "baf86abd27654fa50455b2a36a2256ded325ee0fa9bc9338327e76f55c7c8a0e",
+      "gitUtf8Bytes": 2488,
+      "gitUtf8Sha256": "baf86abd27654fa50455b2a36a2256ded325ee0fa9bc9338327e76f55c7c8a0e",
+      "expectedBlobId": "9f50d74f4b84817c6c1ad4fd7c71b826c2f401a9"
+    },
+    {
+      "path": "raw.redacted.zip",
+      "worktreeBytes": 115459,
+      "worktreeSha256": "6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec",
+      "gitUtf8Bytes": 115459,
+      "gitUtf8Sha256": "6bf01128f0f1f1518ee59c375e23786b18a376f2e543e399acfe039fd5a2fbec",
+      "expectedBlobId": "7c807762a877bf2ddd1d814dc717687c35d97cf8"
+    },
+    {
+      "path": "readable-source.redacted.zip",
+      "worktreeBytes": 447871,
+      "worktreeSha256": "595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75",
+      "gitUtf8Bytes": 447871,
+      "gitUtf8Sha256": "595115b274cd6cab32d979a2e456bd40b4075d9416ff3dcd46f101862ac39c75",
+      "expectedBlobId": "74f1d2a71351cc7d0b82450dc540397eb7e95e29"
+    },
+    {
+      "path": "report-summary.json",
+      "worktreeBytes": 28792,
+      "worktreeSha256": "59b12cf0091e7d1816fb05e4fb805870f34a16d889dccd980f665a24807935ff",
+      "gitUtf8Bytes": 27787,
+      "gitUtf8Sha256": "23af209d40d602d125ab8aac0f4938f52a6d0b8cbe3c912b8493ebf44f176f7d",
+      "expectedBlobId": "d99d6634ce0dd061563bacb4fc0ec16268ba42ef"
+    },
+    {
+      "path": "shard-coverage.log",
+      "worktreeBytes": 75,
+      "worktreeSha256": "e3fbcb6f8cbc504e47a0da4d5bf294f7e7c4bf00e5a07f6d9b3ace5024f8cd37",
+      "gitUtf8Bytes": 75,
+      "gitUtf8Sha256": "e3fbcb6f8cbc504e47a0da4d5bf294f7e7c4bf00e5a07f6d9b3ace5024f8cd37",
+      "expectedBlobId": "e13ce39e409701403372cda629bc098af99d5986"
+    },
+    {
+      "path": "shard2/e2e.log",
+      "worktreeBytes": 1200145,
+      "worktreeSha256": "763935c0b58ee0058dc730a202dd8728ed7cc083c9f70225b382c0686a141fff",
+      "gitUtf8Bytes": 1200145,
+      "gitUtf8Sha256": "763935c0b58ee0058dc730a202dd8728ed7cc083c9f70225b382c0686a141fff",
+      "expectedBlobId": "1ae93d812744aecdb54c20bc9c593bdf5e4eb87c"
+    },
+    {
+      "path": "shard2/service-results.json",
+      "worktreeBytes": 165,
+      "worktreeSha256": "a59ae8fa1e50ebc260152295b1cf449b895081e258cbf6aabfb599fb893af828",
+      "gitUtf8Bytes": 165,
+      "gitUtf8Sha256": "a59ae8fa1e50ebc260152295b1cf449b895081e258cbf6aabfb599fb893af828",
+      "expectedBlobId": "82bf8a91831415dd1b553d1dcf0f5d8f8f191982"
+    },
+    {
+      "path": "source-hashes.json",
+      "worktreeBytes": 1355,
+      "worktreeSha256": "a2a15b1d3e96888a1324af3b751f127b78ecc0af8339da68dbc5953b0cb8edb1",
+      "gitUtf8Bytes": 1355,
+      "gitUtf8Sha256": "a2a15b1d3e96888a1324af3b751f127b78ecc0af8339da68dbc5953b0cb8edb1",
+      "expectedBlobId": "6ab00ca639e0d9c63ea067139acfd3bfbb29c60f"
+    },
+    {
+      "path": "trace-timeline.json",
+      "worktreeBytes": 8611,
+      "worktreeSha256": "8236ba5927f145199f54308f6881abc7a675b60bbb5e91e3902864b7a936fa7b",
+      "gitUtf8Bytes": 8611,
+      "gitUtf8Sha256": "8236ba5927f145199f54308f6881abc7a675b60bbb5e91e3902864b7a936fa7b",
+      "expectedBlobId": "90c63d2af647a8d556db64a2f9e7a0ebf6aadf9f"
+    },
+    {
+      "path": "trace.redacted.zip",
+      "worktreeBytes": 3860132,
+      "worktreeSha256": "55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93",
+      "gitUtf8Bytes": 3860132,
+      "gitUtf8Sha256": "55ceab6ff77f25b4cd843bb8f0b979e524ca92a71f1c6d3983c99fc7eb1f0c93",
+      "expectedBlobId": "c6c9a07759bfc2e2b09e492015a7af4d8593c526"
+    }
+  ],
+  "selfExcluded": true,
+  "originalArchiveStoredInRepository": false,
+  "latestMainReadback": {
+    "commit": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
+    "source": "本轮末尾平台git fetch main/rev-parse FETCH_HEAD实读",
+    "scope": "main未前进，不改写G1历史验证"
+  },
+  "displayNormalization": {
+    "archive": "readable-source.redacted.zip",
+    "entries": [
+      {
+        "path": "control/e2e.log",
+        "originalDerivedBytes": 5284,
+        "beforeDisplaySha256": "ef45826d91c3b084f30a34aa01dea53d4a855706a9aa4ba6cd845dec601bdb16",
+        "displaySha256": "eb5fc9c0a212826b87b9937b5a8b76d9751123b8d9f99a96e719bd705abfc10f",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "control-instrumentation.txt",
+        "originalDerivedBytes": 8996,
+        "beforeDisplaySha256": "f7da81547719230d04ca01c1a42b6b8ff92a9387e9a3c46d6d1b7e95de1ef254",
+        "displaySha256": "fe37545c4059841fe5e36fa9148983f331922e82ead8aadb99c97ca495dec7d1",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "control2/e2e.log",
+        "originalDerivedBytes": 256489,
+        "beforeDisplaySha256": "effbef28c0385ac275995b1922c24bf7df304ab7b6d4beb97b15c9fe3acd87c5",
+        "displaySha256": "d1c921233275199e8b3175dee2f5b60dadf1ad52212ca3ea296ce291a349576f",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "control2/error-context.md",
+        "originalDerivedBytes": 24583,
+        "beforeDisplaySha256": "8a23eadf5bc49dba72cd16be569fe833fe1319db97cf6e7cfffe6cf83b5f1146",
+        "displaySha256": "03b2300541f624b7392e1e0dc69003bc9cc2b3373f988475f1c7db221662ffc2",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "e2e.redacted.log",
+        "originalDerivedBytes": 984022,
+        "beforeDisplaySha256": "e853fdd556ee6bb5235827c3d8aa49fc5d33c1ed3ca894a93b3ef9a2457e2ebd",
+        "displaySha256": "a3375448af2342042bf560697040a79baaae12028355d7bd94d7c125676bd93f",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "error-context.md",
+        "originalDerivedBytes": 22622,
+        "beforeDisplaySha256": "09108574558b81f9c453caeba1631015b86472f830dd4131a9a011d2df84d7ad",
+        "displaySha256": "0ab74e8a58ff9489d25f7d4def49fea917ec5159360fd7833d74a7b97e8965a1",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "fixed-control/e2e.log",
+        "originalDerivedBytes": 321453,
+        "beforeDisplaySha256": "130d615f8602a45c50fd020249d1dbe9e6937452db27f6667e643a3f15107098",
+        "displaySha256": "e04646fc0ad7e2108a18a870cada55b69f3e57ca0508834e57211421b207d13a",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "job.redacted.log",
+        "originalDerivedBytes": 1181420,
+        "beforeDisplaySha256": "221d59569e9de4546607908a650f6796eca3420480b43562f99a69d305e0e95a",
+        "displaySha256": "bf9127fe01206dcc8e05e468b9d90fe3cea60127929f4a8103fd6e6152d535c5",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      },
+      {
+        "path": "shard2/e2e.log",
+        "originalDerivedBytes": 1200157,
+        "beforeDisplaySha256": "877629a19a081104a260d145a9d52213001b8fc9c03933ac6c1dccba3bcf3298",
+        "displaySha256": "763935c0b58ee0058dc730a202dd8728ed7cc083c9f70225b382c0686a141fff",
+        "scope": "原脱敏字节归档，显示副本仅规范行尾/EOF空白，不改失败内容"
+      }
+    ]
+  }
+}
