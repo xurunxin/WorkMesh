@@ -246,6 +246,30 @@
         "$TURBO_ROOT$/docs/**",
         "$TURBO_ROOT$/scripts/**"
       ]
+    },
+    "@workmesh/api#typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/worker/src/**",
+        "$TURBO_ROOT$/apps/mcp/src/**",
+        "$TURBO_ROOT$/packages/*/src/**",
+        "$TURBO_ROOT$/packages/*/package.json"
+      ]
+    },
+    "@workmesh/web#typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/worker/src/**",
+        "$TURBO_ROOT$/apps/fake-agent/src/**",
+        "$TURBO_ROOT$/packages/*/src/**",
+        "$TURBO_ROOT$/packages/*/package.json"
+      ]
     }
   },
   "globalPassThroughEnv": [
@@ -279,6 +303,8 @@
     "tsconfig*.json",
     "vitest*.ts",
     ".node-version",
-    "scripts/ci-test-inputs.mjs"
+    "scripts/ci-test-inputs.mjs",
+    "scripts/**",
+    "playwright*.ts"
   ]
 }

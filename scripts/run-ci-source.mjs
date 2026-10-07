@@ -36,7 +36,9 @@ if (!names.length) {
   console.log('Lint is identical to typecheck in selected packages; running it once in the typecheck step.')
 } else {
   const args = ['exec', 'turbo', 'run', task, ...names.map(name => `--filter=${name}`)]
-  if (task === 'lint' || task === 'typecheck') args.push('--only')
+  // Typecheck must retain dependency hashes. Its filters already include every
+  // upstream workspace, so retaining the graph adds no duplicate checks.
+  if (task === 'lint') args.push('--only')
   if (task === 'typecheck') args.push('--cache-dir=.turbo/typecheck')
   if (task === 'test') args.push('--concurrency=2')
   console.log(`CI ${task}: ${names.join(', ')}`)
