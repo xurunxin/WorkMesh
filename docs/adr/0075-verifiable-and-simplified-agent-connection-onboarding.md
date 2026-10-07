@@ -66,8 +66,10 @@ redeem endpoints do **not** share one rate-limit budget. Both are classified
 (`apps/api/src/auth-rate-limit/inventory.ts:36-37`), but the actual buckets key
 on `operationId` for the endpoint budget and `operationId + subject + clientIp`
 for the subject budget (`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`),
-and the two operations have different `operationId`s. What is genuinely shared
-is the socket / client-IP budget and the failure backoff. Separately, the
+and the two operations have different `operationId`s. The socket and client-IP
+budgets are shared. The failure backoff is **not** shared: its key includes
+`operationId`, `clientIp`, and subject
+(`apps/api/src/auth-rate-limit/limiter.ts:122-125`). Separately, the
 database `attempts` counter increments only on a *known* identity mismatch — a
 wrong slug or a known client type that does not match the envelope — and only
 for that pairing row; a random wrong code does not consume a valid pairing's

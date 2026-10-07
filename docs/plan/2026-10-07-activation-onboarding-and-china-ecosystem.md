@@ -16,6 +16,17 @@
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
 
+## 本批执行记录约定（用户批准：2026-10-07 18:38，Asia/Shanghai）
+
+本批任务使用 Todos 编排并记录执行进度，仓库保存规格与证据，替代
+`AGENTS.md` 中要求的真实 WorkMesh Project/WorkItem 双轨记录。**例外只适用于本批**：
+不声称已创建真实 WorkMesh Project/WorkItem，也不声称已向其同步活动记录；后续任务
+仍按各自批准的控制面要求执行。领域、安全、测试及代码约束不因该例外放宽。
+
+用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、
+确认计划并合并仓库改动。真实设计分歧、新需求、团队权限变更、凭证授权和仓库外发布，
+仍须单独批准。本 P1 的证据冻结门禁未通过前，B/A/D/C 链不得开始。
+
 ## 审查撤回的四个前提（写在这里以免再犯）
 
 1. **「安装令牌只存在于响应里」是错的。** 服务端已用 AES-256-GCM 把整个兑换响应
@@ -27,7 +38,8 @@
 2. **「两个兑换端点共用同一限流预算」是错的。** 两者虽同为
    `{endpointClass: pairing, subject: pairing}`，但桶按 `operationId` 分
    （`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`），而两个
-   operationId 不同；真正共用的是 socket / client-IP 桶与失败退避。数据库
+   operationId 不同；共用的是 socket / client-IP 桶。失败退避键也包含
+   operationId（`apps/api/src/auth-rate-limit/limiter.ts:122-125`），因此同样隔离。数据库
    `attempts` 只在**已知的**身份不匹配（slug 或已知 clientType 对不上信封）时
    递增，随机错误 code 不会消耗合法 pairing 的预算
    （`apps/api/src/agent-connections.ts:521-525,561-562`）。**不做**
@@ -84,8 +96,8 @@
 | 4 | 兑换入参带有 claim 标识，可用它恢复凭据 | **错误** | `agentConnectionRedeemInputSchema` 严格只接受 `pairingCode`、`agentSlug`、`client`，无 claim 标识字段（`packages/contracts/src/index.ts:2711-2723`）；当前恢复身份来自原幂等请求身份。 |
 | 5 | `POST /api/v1/agent-connections` 只绑定已有 Agent | **错误** | 路由查无定义时会插入 Agent actor 与 `agent_definitions`（`apps/api/src/agent-connections.ts:429-469`）；不可通过文档把现有创建能力描述成不存在。 |
 | 6 | 配对码是短码，或不是 32 随机字节载荷 | **错误** | `opaqueToken()` 生成 32 随机字节并编码为无填充 base64url 的 43 字符；配对前缀 `wmp_` 由连接 token 拼接（`packages/db/src/index.ts:41`、`apps/api/src/agent-connections.ts:32-35,358-360`），完整值再加前缀。 |
-| 7 | 两个兑换端点共用同一 endpoint/subject 限流预算 | **错误** | endpoint 桶按 `operationId`，subject-client 桶也包含 `operationId`；兑换与 enrollment operation ID 不同（`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`、`apps/api/src/auth-rate-limit/inventory.ts:36-37`）。 |
-| 8 | 两个兑换端点完全没有共享限流预算 | **错误** | socket peer 与 client IP 维度不含 operation ID，仍由两个入口共享（`apps/api/src/auth-rate-limit/limiter.ts:129-145`）。准确表述是 operation/subject 预算隔离，IP/socket 预算共享。 |
+| 7 | 两个兑换端点共用同一 endpoint/subject 限流预算或失败退避 | **错误** | endpoint 桶按 `operationId`，subject-client 桶也包含 `operationId`；失败键为 `operationId + clientIp + subject`，而两个 operation ID 不同（`apps/api/src/auth-rate-limit/limiter.ts:122-145,154-159`；`apps/api/src/auth-rate-limit/inventory.ts:36-37`）。 |
+| 8 | 两个兑换端点完全没有共享限流预算 | **错误** | socket peer 与 client IP 维度不含 operation ID，仍由两个入口共享（`apps/api/src/auth-rate-limit/limiter.ts:129-145`）。准确表述是 endpoint、subject-client 和失败退避按 operation 隔离，IP/socket 预算共享。 |
 | 9 | pairing 的 attempts 是错误 code 暴力破解计数 | **错误** | 随机错误 code 在查 pairing 行时失败；仅已知 pairing 的 slug/type mismatch 进入外部 catch 并递增 attempts，达到阈值时拒绝（`apps/api/src/agent-connections.ts:518-525,560-562`）。 |
 | 10 | 配对码十分钟有效期覆盖完整七步安装流程 | **错误** | 十分钟 `expiresAt` 创建于 pairing，redeem 时校验；成功兑换后后续本地配置/Skill 校验不再使用该 code（`apps/api/src/agent-connections.ts:358-365,518-523,546-557`）。15 分钟重放窗口独立定义于 `auth-idempotency.ts:248-249`。 |
 | 11 | 保存模型连接会向供应商真实请求验证密钥 | **错误** | API 对 URL 做格式/策略规范化（`apps/api/src/workbench-llm-connections.ts:49-69`），ADR 0065 明确当前 API 不向配置目标发请求（`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md:48-50`）。 |
@@ -95,7 +107,6 @@
 | 15 | 企业微信、钉钉、飞书、小程序适配器已存在，或可据“零命中”断定所有生态代码不存在 | **未发现适配器；检索结论有边界** | 本次对 `apps/`、`packages/`、`docs/adr/`、`docs/plan/` 与 `docs/agent-integration.md` 显式纳入检索，命令使用 `rg -n -uu -i`，检索词为 `企业微信|wecom|wechat work|wework|钉钉|dingtalk|飞书|feishu|lark|小程序|mini.?program`；排除 `node_modules/`、`.git/`、`dist/`、`.next/`、`coverage/`。命中仅为计划/ADR规划文字，未找到实现证据；结论只写“未发现渠道适配器”，不外推为国内模型/全部文档不存在。 |
 | 16 | Human Attention / Redis wake sink 可直接作为持久通知队列 | **错误** | ADR 0050 将 Attention 定义为派生查询；worker Redis sink 写 cursor/workspace wake hint 并按 `MAXLEN` 裁剪，PostgreSQL outbox 才负责 claim/delivery（`apps/worker/src/index.ts:249-258,291-325`；ADR 0033）。新渠道投递仍需持久契约。 |
 
-本任务是静态事实核查与文档维护，不新增或运行测试。对应测试文件/用例名：**不适用**；
 核查依据为表中逐项代码/文档定位及第 15 项明确列出的搜索词、目录范围和排除项。
 没有发现推翻 ADR 0074–0076 当前决策前提的新证据；本次只补精确事实依据与检索边界，
 不改设计决策。交叉引用：[`ADR 0074`](../adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md)、
@@ -108,7 +119,27 @@
 - [x] 每条被推翻的断言都有替代证据；
 - [x] 搜索未发现项记录检索词、纳入范围和排除项；
 - [x] 结论同步到计划及相关 ADR，计划中的相对链接目标可解析；
-- [x] 测试文件/用例名：不适用（本任务不实现功能，未新增或运行测试）。
+- [x] 每项验证均记录测试/检查命令、实际结果与原因；五项必需检查均已通过。首轮失败和修正后重跑结果均保留在下表。
+
+### 必需检查记录
+
+执行环境：Windows PowerShell，Node `v24.20.0`、pnpm `9.15.4`；专用 Docker PostgreSQL 16、Redis 7、RustFS。集成与 E2E 使用本地回环端口和独立 `*_test` 数据库（包括单独的 E2E 重跑库、恢复源/目标库），未连接生产库，也未复用 D0 分支数据库。E2E 的 bootstrap、cursor、限流密钥为进程内生成的测试值；模型相关 live provider 用例按测试默认跳过，未以真实模型调用代替 fake provider。
+
+| 必需检查 | 执行命令 / 对应测试 | 实际结果 | 结论 |
+|---|---|---|---|
+| lint | `pnpm lint`（Turbo 全仓 lint，18 个任务） | 18/18 任务通过，退出码 0。首次因依赖尚未安装而启动失败；随后按 lockfile 执行 `pnpm install --frozen-lockfile`，重跑通过。 | 通过 |
+| typecheck | `pnpm typecheck`（Turbo 全仓类型检查，18 个任务） | 18/18 任务通过，退出码 0。 | 通过 |
+| test | `pnpm test`（Turbo 全仓单元测试，29 个任务；含 API、Web Vitest） | 29/29 任务通过，退出码 0；Web 报告 113 个文件 / 776 项通过，API 174 项通过。 | 通过 |
+| test:integration | `pnpm test:integration`：DB `@workmesh/db test:integration`（17 文件 / 77 项）；API `@workmesh/api test:integration`（22 文件 / 154 项通过、1 项 live MiniMax 跳过）；Worker `@workmesh/worker test:integration`（8 文件 / 78 项通过、1 项 retention upgrade barrier 跳过）；Recovery `@workmesh/recovery test:integration`（1 文件 / 1 项）。 | 完整命令退出码 0；共 310 项通过、2 项按测试设计跳过。首次 recovery 重跑误指向无 ObjectLock 的预建测试桶而失败；移除桶覆盖配置、由用例创建隔离 ObjectLock 桶后完整重跑通过。 | 通过 |
+| test:e2e | `pnpm test:e2e`，对应 `apps/web/e2e/**/*.spec.ts`（Playwright，1 worker） | 首轮 73 通过 / 1 失败：`e2e/documents.spec.ts` 的“Project and Issue documents keep immutable revisions through the real Web and API”超时，未在详情面板找到“讨论”标签。新建隔离库单独重跑该文件：9/9 项通过；再用全新隔离库重跑完整命令：74/74 项通过，退出码 0。首轮失败保留为重跑前观察，不隐去。 | 通过（完整重跑） |
+
+按你的要求，另补跑了默认关闭的 retention upgrade barrier：设置 `RUN_RETENTION_UPGRADE_INTEGRATION=1`，使用独立 `workmesh_retention_upgrade_test` 数据库和启用 Object Lock/versioning 的 `workmesh-retention-upgrade-test` RustFS 桶，执行 `pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/retention-upgrade-barrier.integration.test.ts`；1/1 项通过，验证一个精确对象版本、versioned HEAD、零 delete marker 及 retention 扩展。此补验与上表完整 `pnpm test:integration` 分开计数。
+
+首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过；**P1 当前状态：待独立复核，尚未冻结**，本条记录不代替该复核或批准。
+
+### P1 完成定义与依赖
+
+**DoD**：16 条断言全部有核实结论；每条被推翻的断言都有替代 `file:line` 证据；检索零命中项写明检索词、范围及排除项；结论已同步到计划与受影响 ADR 且相对引用可解析；五项仓库必需检查的命令、结果及失败/跳过原因均已记录并通过。满足 DoD 后仍须完成独立复核及冻结，之后 B1、A1、D1、C1 才可开工（本项 `blocks：B1, A1, D1, C1`）。
 
 ## 现状与证据（已核实，含被撤回项）
 
