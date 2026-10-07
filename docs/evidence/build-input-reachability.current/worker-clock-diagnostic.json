@@ -1,0 +1,377 @@
+{
+  "recordedAt": "2026-10-07T17:43:57.072Z",
+  "head": "d0806bc257fce1fba7ca7b320b79d6698ec6be45",
+  "sourceBlobs": [
+    {
+      "file": "apps/worker/src/retention-soak-provenance.ts",
+      "previousBlob": "d0290615f46987539c5678b48a09a9e9a72c9bb6",
+      "currentBlob": "d0290615f46987539c5678b48a09a9e9a72c9bb6"
+    },
+    {
+      "file": "apps/worker/src/retention.ts",
+      "previousBlob": "6051da6e8ef30a3cf83eaa7343e0452c9a8a1229",
+      "currentBlob": "6051da6e8ef30a3cf83eaa7343e0452c9a8a1229"
+    },
+    {
+      "file": "apps/worker/integration/retention.integration.test.ts",
+      "previousBlob": "d8c7ae1559584000e017b0c47e06ecaa59906614",
+      "currentBlob": "d8c7ae1559584000e017b0c47e06ecaa59906614"
+    }
+  ],
+  "samples": [
+    {
+      "sentAt": "2026-10-07T17:43:55.998Z",
+      "databaseAt": "2026-10-07T17:43:56.008Z",
+      "observedAt": "2026-10-07T17:43:56.009Z",
+      "ageMs": 1,
+      "roundTripMs": 11
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.034Z",
+      "databaseAt": "2026-10-07T17:43:56.034Z",
+      "observedAt": "2026-10-07T17:43:56.035Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.050Z",
+      "databaseAt": "2026-10-07T17:43:56.050Z",
+      "observedAt": "2026-10-07T17:43:56.051Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.065Z",
+      "databaseAt": "2026-10-07T17:43:56.065Z",
+      "observedAt": "2026-10-07T17:43:56.066Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.081Z",
+      "databaseAt": "2026-10-07T17:43:56.081Z",
+      "observedAt": "2026-10-07T17:43:56.082Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.096Z",
+      "databaseAt": "2026-10-07T17:43:56.096Z",
+      "observedAt": "2026-10-07T17:43:56.097Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.112Z",
+      "databaseAt": "2026-10-07T17:43:56.112Z",
+      "observedAt": "2026-10-07T17:43:56.113Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.130Z",
+      "databaseAt": "2026-10-07T17:43:56.130Z",
+      "observedAt": "2026-10-07T17:43:56.131Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.145Z",
+      "databaseAt": "2026-10-07T17:43:56.145Z",
+      "observedAt": "2026-10-07T17:43:56.146Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.160Z",
+      "databaseAt": "2026-10-07T17:43:56.160Z",
+      "observedAt": "2026-10-07T17:43:56.161Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.176Z",
+      "databaseAt": "2026-10-07T17:43:56.175Z",
+      "observedAt": "2026-10-07T17:43:56.177Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.191Z",
+      "databaseAt": "2026-10-07T17:43:56.191Z",
+      "observedAt": "2026-10-07T17:43:56.192Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.209Z",
+      "databaseAt": "2026-10-07T17:43:56.209Z",
+      "observedAt": "2026-10-07T17:43:56.210Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.225Z",
+      "databaseAt": "2026-10-07T17:43:56.225Z",
+      "observedAt": "2026-10-07T17:43:56.226Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.241Z",
+      "databaseAt": "2026-10-07T17:43:56.240Z",
+      "observedAt": "2026-10-07T17:43:56.242Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.256Z",
+      "databaseAt": "2026-10-07T17:43:56.256Z",
+      "observedAt": "2026-10-07T17:43:56.257Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.271Z",
+      "databaseAt": "2026-10-07T17:43:56.271Z",
+      "observedAt": "2026-10-07T17:43:56.272Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.286Z",
+      "databaseAt": "2026-10-07T17:43:56.286Z",
+      "observedAt": "2026-10-07T17:43:56.288Z",
+      "ageMs": 2,
+      "roundTripMs": 2
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.302Z",
+      "databaseAt": "2026-10-07T17:43:56.301Z",
+      "observedAt": "2026-10-07T17:43:56.303Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.316Z",
+      "databaseAt": "2026-10-07T17:43:56.317Z",
+      "observedAt": "2026-10-07T17:43:56.318Z",
+      "ageMs": 1,
+      "roundTripMs": 2
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.334Z",
+      "databaseAt": "2026-10-07T17:43:56.334Z",
+      "observedAt": "2026-10-07T17:43:56.335Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.350Z",
+      "databaseAt": "2026-10-07T17:43:56.349Z",
+      "observedAt": "2026-10-07T17:43:56.351Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.364Z",
+      "databaseAt": "2026-10-07T17:43:56.364Z",
+      "observedAt": "2026-10-07T17:43:56.365Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.380Z",
+      "databaseAt": "2026-10-07T17:43:56.380Z",
+      "observedAt": "2026-10-07T17:43:56.381Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.396Z",
+      "databaseAt": "2026-10-07T17:43:56.396Z",
+      "observedAt": "2026-10-07T17:43:56.397Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.411Z",
+      "databaseAt": "2026-10-07T17:43:56.411Z",
+      "observedAt": "2026-10-07T17:43:56.412Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.428Z",
+      "databaseAt": "2026-10-07T17:43:56.428Z",
+      "observedAt": "2026-10-07T17:43:56.429Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.444Z",
+      "databaseAt": "2026-10-07T17:43:56.443Z",
+      "observedAt": "2026-10-07T17:43:56.444Z",
+      "ageMs": 1,
+      "roundTripMs": 0
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.459Z",
+      "databaseAt": "2026-10-07T17:43:56.459Z",
+      "observedAt": "2026-10-07T17:43:56.460Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.474Z",
+      "databaseAt": "2026-10-07T17:43:56.474Z",
+      "observedAt": "2026-10-07T17:43:56.475Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.489Z",
+      "databaseAt": "2026-10-07T17:43:56.489Z",
+      "observedAt": "2026-10-07T17:43:56.490Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.505Z",
+      "databaseAt": "2026-10-07T17:43:56.504Z",
+      "observedAt": "2026-10-07T17:43:56.506Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.520Z",
+      "databaseAt": "2026-10-07T17:43:56.520Z",
+      "observedAt": "2026-10-07T17:43:56.521Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.535Z",
+      "databaseAt": "2026-10-07T17:43:56.535Z",
+      "observedAt": "2026-10-07T17:43:56.536Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.551Z",
+      "databaseAt": "2026-10-07T17:43:56.550Z",
+      "observedAt": "2026-10-07T17:43:56.552Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.569Z",
+      "databaseAt": "2026-10-07T17:43:56.568Z",
+      "observedAt": "2026-10-07T17:43:56.570Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.584Z",
+      "databaseAt": "2026-10-07T17:43:56.584Z",
+      "observedAt": "2026-10-07T17:43:56.585Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.599Z",
+      "databaseAt": "2026-10-07T17:43:56.599Z",
+      "observedAt": "2026-10-07T17:43:56.600Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.614Z",
+      "databaseAt": "2026-10-07T17:43:56.614Z",
+      "observedAt": "2026-10-07T17:43:56.615Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.629Z",
+      "databaseAt": "2026-10-07T17:43:56.629Z",
+      "observedAt": "2026-10-07T17:43:56.630Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.645Z",
+      "databaseAt": "2026-10-07T17:43:56.645Z",
+      "observedAt": "2026-10-07T17:43:56.646Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.660Z",
+      "databaseAt": "2026-10-07T17:43:56.660Z",
+      "observedAt": "2026-10-07T17:43:56.661Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.677Z",
+      "databaseAt": "2026-10-07T17:43:56.677Z",
+      "observedAt": "2026-10-07T17:43:56.678Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.692Z",
+      "databaseAt": "2026-10-07T17:43:56.691Z",
+      "observedAt": "2026-10-07T17:43:56.692Z",
+      "ageMs": 1,
+      "roundTripMs": 0
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.708Z",
+      "databaseAt": "2026-10-07T17:43:56.707Z",
+      "observedAt": "2026-10-07T17:43:56.708Z",
+      "ageMs": 1,
+      "roundTripMs": 0
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.723Z",
+      "databaseAt": "2026-10-07T17:43:56.723Z",
+      "observedAt": "2026-10-07T17:43:56.724Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.738Z",
+      "databaseAt": "2026-10-07T17:43:56.738Z",
+      "observedAt": "2026-10-07T17:43:56.739Z",
+      "ageMs": 1,
+      "roundTripMs": 1
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.756Z",
+      "databaseAt": "2026-10-07T17:43:56.755Z",
+      "observedAt": "2026-10-07T17:43:56.756Z",
+      "ageMs": 1,
+      "roundTripMs": 0
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.771Z",
+      "databaseAt": "2026-10-07T17:43:56.770Z",
+      "observedAt": "2026-10-07T17:43:56.771Z",
+      "ageMs": 1,
+      "roundTripMs": 0
+    },
+    {
+      "sentAt": "2026-10-07T17:43:56.786Z",
+      "databaseAt": "2026-10-07T17:43:56.785Z",
+      "observedAt": "2026-10-07T17:43:56.787Z",
+      "ageMs": 2,
+      "roundTripMs": 1
+    }
+  ],
+  "negativeAgeSamples": 0,
+  "minimumAgeMs": 1,
+  "maximumAgeMs": 2,
+  "conclusion": "写入使用PostgreSQL now()，freshness观察使用宿主new Date()且拒绝负age；跨时钟样本仅用于诊断，不回推首败的实际age，也不放宽生产guard"
+}
