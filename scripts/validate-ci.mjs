@@ -239,6 +239,12 @@ requireCondition(
 requireCondition(!/(?:node_modules|\.next|dist\/\*\*)\s*$/m.test(workflow), 'build or install outputs must not be cached or uploaded')
 
 const source = jobSections.get('source-gates') ?? ''
+const browserInstall = parsedWorkflow.jobs.e2e.steps.find(step => step.name === 'Install Playwright Chromium')
+requireCondition(browserInstall?.['timeout-minutes'] === 8, 'browser installation must have an eight-minute bound')
+for (const input of ['https://archive.ubuntu.com/ubuntu/', 'https://security.ubuntu.com/ubuntu/', 'Acquire::Retries "2";', 'Acquire::http::Timeout "15";', 'Acquire::https::Timeout "15";']) {
+  requireCondition(browserInstall?.run?.includes(input), `browser preparation must retain official mirrors and bounded downloads: ${input}`)
+}
+requireCondition(browserInstall?.run?.includes('playwright install --with-deps chromium'), 'browser preparation must retain required OS dependencies')
 const cacheSteps = Object.entries(parsedWorkflow.jobs).flatMap(([jobId, job]) =>
   (job.steps ?? []).filter(step => step.uses?.startsWith('actions/cache/')).map(step => ({ jobId, ...step })))
 requireCondition(cacheSteps.length === 2, 'only one compiler/static cache restore and save pair is allowed')

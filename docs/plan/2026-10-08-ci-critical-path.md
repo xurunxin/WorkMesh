@@ -77,3 +77,13 @@ An actual `ci:source` dry-run also verified that a contracts edit invalidates th
 worker typecheck while unrelated artifact-storage stays cached, with the same
 seven prerequisite tasks. The final runner passed all eighteen typechecks and
 then restored 18/18 in 407ms after changing test credentials and build SHA.
+
+Hosted acceptance additionally exposed repeated APT stalls at the runner image's
+Azure Ubuntu mirror, before any browser tests ran. Prioritize its existing
+official Ubuntu HTTPS fallback mirrors, set 15-second APT connection/data timeouts
+with two retries, and bound browser installation to eight minutes. OS dependency
+installation and failure gating remain required. Validate the workflow and Bash
+syntax, then measure fresh hosted preparation and full CI before merge.
+
+References: [runner image mirror configuration](https://github.com/actions/runner-images/blob/main/images/ubuntu/scripts/build/configure-apt-sources.sh)
+and [APT transport timeouts](https://manpages.ubuntu.com/manpages/noble/man1/apt-transport-http.1.html).
