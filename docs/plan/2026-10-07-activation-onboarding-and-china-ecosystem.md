@@ -1,14 +1,16 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
-状态：Proposed；D0 视觉基线已修订并重放，通用 mocked-dev 失败尚待处置，D0/D1 门禁关闭；其余门禁独立验收。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
+状态：Proposed；**已落地**：D0 视觉基线（`apps/web/e2e/baselines/d0/`；通用 mocked-dev 失败尚待处置，D0/D1 门禁关闭）、G1 输入可达性（`scripts/verify-build-input-reachability.mjs`；P1 十六行证据台账已冻结）、参考材料入库（`docs/references/todos-analysis/`）。**本 PR 新增**：F 链 总管 / agent graph（ADR 0078），F0 阻塞于 F2 的授权收窄待确认。共六条链（A/B/C/D/F），其余门禁独立验收。本稿经 gpt-6-astra / high 多轮对抗式审查，
+
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
 
 **source of truth**：`docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md`、
 `docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md`、
 `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
-`docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`（D 链 UI 重构）。
+`docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`、
+`docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md`（F 链 总管 / agent graph）。
 
 对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，包括 `ui-inventory.md`、`design-tokens.md`、
 `kanban-cards.md`、引用的测量 JSON、截图索引和 28 张原始截图；来源与哈希见该目录的 `SOURCE-MANIFEST.json`。
@@ -82,6 +84,30 @@ P1 冻结与 G1 材料合入不代表 G1 最终门禁通过。材料合入后，
 43 字符载荷（`packages/db/src/index.ts:41`）；十分钟只约束**首次**兑换
 （`agent-connections.ts:358-365,523`），与 15 分钟重放、轮换 overlap 是三个独立
 计时器。
+
+### 第二轮撤回：ADR 0078 的组合性质错误（F 链专属）
+
+`docs/adr/0078-review.md` 查出**2 blocking + 6 high + 3 medium**，其中最要紧的一条
+不是事实错误，而是推理错误：
+
+> **把「构件存在」直接升级成「组合性质已经成立」。** 表和事件确实存在，但缺的
+> 连接恰好负责权限、原子性和崩溃恢复；这些不是接线细节。
+
+具体被推翻的推断（这是我本会话第三次犯同一类错的更隐蔽版本——前两次是编造
+事实，这次是从零件的存在推出了组合的性质）：
+
+| ADR 0078 初稿的推断 | 实际 |
+|---|---|
+| 「短会话 + snapshot/delta/cursor = 跨会话只取新增」 | 三个构件分属不同域（ADR 0033），**没有一个是消费 checkpoint**；且新会话无历史模型上下文，只给增量等于假设它知道未变的名单 |
+| 「enum 加一个值就有 Team 房间了」 | `0001_v1_baseline.sql:599-614` 的 CHECK 只有三个分支，`enforce_room_subject()` 会把 team 走进 session 分支并抛 `WORK_ROOM_SUBJECT_NOT_FOUND` |
+| 「房间沿用现成的创建与归档命令」 | `work_room_channels` **没有归档字段**，也没有通用归档命令 |
+| 「prompt 作者即激活来源」 | `authorActorId` 只记作者，无激活来源/任命版本/授权绑定；且现有 `prompt()` **只接受 Human**（`agent/commands.ts:2843-2853`） |
+| 「Inbox 只有两态所以不能用」 | `inbox_item_receipts` 已有 claimed/read/acknowledged/replied；ACK 不等于 resolve |
+| 「capabilitySchema 16 项」 | **17 项**，初稿的分组只覆盖 15 项，漏了 `repo:read` 与 `artifact:write` |
+
+**留给后续 ADR 的规矩**：凡是写成「A 加 B 已经给出 C」的句子，必须指出**负责
+原子性/权限/崩溃恢复的那个组件**现在在哪。指不出来，就说明 C 是待建工作，不是
+既有性质。
 
 ## 目标与非目标
 
@@ -208,6 +234,12 @@ C3 预置目录（只读，不依赖 A）
 
 D0 视觉基线 ──▶ D1a 新增并存槽/映射 ──▶ D1b 逐面迁移/清理 ──▶ D2 卡片结构契约 ──▶ D3 单暖色不变量
               ──▶ D4 三栏工作台布局 ──▶ D5 卡片交互集（全部走受治理 Command）
+
+F0 团队房间扩展（blocking，最先）──▶ F1 任命与能力派生
+                              ├─▶ F2 分派授权绑定 ──▶ F3 激活与准入
+                              ├─▶ F4 消费协议（最重）
+                              ├─▶ F5 收件恢复选择 ──▶ F6 两个薄工具与交付链
+F-memory 长期记忆（延后，不阻塞上述任何一条）
 
 延后：C-identity（目录首管理员）、C-card（卡片决策）、C-mp（小程序）、
       C-probe（真实模型探测）、C-dingtalk/C-feishu/C-smtp、
@@ -439,6 +471,106 @@ G1、P1、R1、D0；D1b 在 D1a 后执行。下列原 D1 清单是两阶段的�
   （反向断言：不实现无确认的拖拽重置）；`Ctrl` 多选跨列移动原子性；拖卡进对话
   只插入引用、不自动提交（符合 `CONTEXT.md` 的 Draft 规则）。
 
+## F 链 — 总管 / agent graph（ADR 0078）
+
+**前提是「先证明能协调，再谈长期记忆」。** 这也是本批唯一会**收窄一条 Accepted ADR**
+的链：0078 把「总管分派」列为 ADR 0062 的显式例外，并可能修订 ADR 0037 的收件箱
+恢复语义。**这两处必须在实现前由人确认。**
+
+**它也是唯一跨到 WorkMesh 之外那台机器的链**：`clientType` 就是 harness 身份，
+而 WorkMesh **没有内建 runtime**（`harness`/`builtin`/`pi_agent` 全库 0 命中，
+唯一的 `runtime` 字段是 `usage_records.runtimeMs`）。没有 agent 持有效连接时
+**谁也跑不了，包括总管**——这和 A1 里 Runner 只能报 `unknown` 是同一件事的两面。
+
+### F0 — 团队房间的完整扩展（blocking，必须最先做）
+
+- **交付**：两阶段迁移。entry 1 只 `ADD VALUE 'team'` **且不使用它**；entry 2 替换
+  `0001_v1_baseline.sql:599-614` 的 `CHECK` 与 `enforce_room_subject()`，新增
+  `team` 分支（同 workspace、`subject_id = team_id`、其余三列为空）。
+- **约束**：旧 baseline / legacy 迁移与其 checksum **一字不动**，不为加枚举值
+  重生成已发布 baseline；文件内不写 `BEGIN`/`COMMIT`（runner 托管事务）。
+- **测试**：四种 subject 的 DB/API 成功路径；跨 workspace 与跨 Team 拒绝；三种旧
+  subject 无回归；**普通执行 Session 不能借 Team 房间读到兄弟 Session 的私信**；
+  撤权后房间/收件箱/事件/上下文同时收敛；每个 entry 提交前后故障与重跑。
+
+### F1 — 总管任命与能力派生
+
+- **交付**：`chief_appointments` 表 + `(teamId) WHERE status='active'` 部分唯一索引；
+  任命/换届/结束三个 Human 命令（带 revision 与幂等键）；总管委派 =
+  **该 agent 现有授权 ∩ 协调默认集**。
+- **约束**：任命**既不扩权也不缩权**（agent 原有委派不动）；显式放宽是独立的、
+  有审计的人工作为；17 项能力必须被完整、互斥、穷尽地分组。
+- **测试**：conformance 测试对 `capabilitySchema` 做全量分区，**漏一项即失败**；
+  任命一个已持 `repo:merge` 的 agent 后，其普通会话权限不变而总管会话不含
+  `repo:merge`；换届原子性；并发任命只有一个成功。
+
+### F2 — 分派授权绑定（人类消息不是授权）
+
+- **交付**：结构化分派授权，绑定 workspace/Team/appointmentId+revision/principal/
+  目标 Work Item 或计划版本/目标 agent/能力与 scope/预算/**规范化动作摘要**/
+  有效期/最大使用次数；执行命令在状态变更事务内**校验并消费**。
+- **约束**：人类消息只是**输入与来源证据**；房间自由文本**不能**直接创建授权，
+  必须先形成结构化提案；执行命令保留**真实 agent 作者**并引用真实人类决定；
+  0062 例外——只有 `source=human` 满足，`requestApproval` 自动批准与 pending
+  reconciliation **不得**自动批准此类动作。
+- **测试**：普通人类文本不执行；结构化批准只作用于精确内容；换 target/capability/
+  budget/revision 必须重批；两次消费只有一次生效；同 key 重放无第二次效果；消费与
+  session/event/outbox 任一点失败共同回滚；撤权、Stop、换届，以及
+  `delegate_work_item` / `claim_work_item` / `create_child_session` / retry /
+  automation 五个入口**全部**拒绝（共享 guard，不是只查一处）。
+
+### F3 — 激活与准入命令
+
+- **交付**：显式 activation 命令（三源统一），记录真实 source kind/id、发起 actor
+  （若有）、执行 service actor、任命 revision、规则版本与 resulting sessionId；
+  复用 ADR 0023/0024 的 occurrence、admission、budget reservation、fencing。
+- **约束**：**计时器不得伪装成人类指令**；跨 Work Item 分派需要 coordination session
+  + 有效连接 + **principal 等于目标 Work Item 的 Responsible Human**
+  （`agent/commands.ts:826-886`），团队多负责人时保留该等式，不匹配则退回该人。
+- **测试**：同源重复去重；两个消费者竞争；admission/session/prompt/event/outbox 各边界
+  崩溃；**无 runner**；主负责人不匹配；旧任命/被撤权/Stop；**事件自环**；累计预算耗尽
+  （单会话预算挡不住自激活）。
+
+### F4 — 消费协议（本链最重的一块）
+
+- **交付**：checkpoint 键含 workspace/Team/**任命代次**/消费者版本；server cursor 为
+  十进制字符串且不与列表游标混用；baseline 版本与水位冻结；快照—事件衔接协议
+  （不是两个 GET 拼起来）；按事件 id 幂等合并并处理删除与撤权；「已处理至 C」与
+  该批已提交的提案/激活结果**原子关联**。
+- **约束**：**增量读是带量化预算的容量验收要求，不是正确性前提**；首次、游标过期、
+  消费者版本变更、授权变化与修复都允许**有界全量重建**；授权收缩先移除不可见数据。
+- **测试**：checkpoint 保存前后崩溃、重放、长时间离线过期、baseline 构建期间写入、
+  删除/撤权/新获授权、跨 Session/Team 隔离；给定固定 Team/Agent/事件规模断言 token、
+  查询数与延迟预算。**不得再出现「几名 agent 就不可用」这类未实测断言。**
+
+### F5 — 收件箱跨短会话恢复（先决定，再实现）
+
+- **交付**：二选一并写进 ADR：**复用同一非终态 Session 直到终态**，或**显式修订
+  ADR 0037** 引入有审计的 successor/re-delivery。
+- **约束**：claim **不可转移**；**禁止原地改写 `claimedBySessionId`**；旧 claim 保留在
+  原 Session，新输入与之相联。
+- **测试**：claim 后崩溃/Stop；同 actor 两个 Session；错误 recipient；已 ACK 未回复；
+  重复 report/reply 且**回执不伪造**。
+
+### F6 — 两个薄工具与完整交付链
+
+- **交付**：`get_chief`（**纯 Query**，返回 active Chief、appointmentId/revision、
+  房间 id）与 `report_to_chief`（**Command**，投递 + 落回执 + 返回引用）。
+- **约束**：交付链是 REST → contracts/SDK → route-policy/feature registry → MCP
+  bindings → derived manifest（ADR 0042）→ 工具适配（ADR 0067）→ conformance；
+  **只加 API 工具不算交付完成**。复用已有 `request_approval`，不新增同义工具。
+  `report_to_chief` **只保证消息已提交**，返回当时的响应状态，**不代总管写 ACK，
+  也不等模型完成**。
+- **测试**：四种路由失败（无任命 / 越权 Team / 任命已变 / 幂等重放）各返回指定错误码；
+  换届后重放不重复投递给新人；`get` 与 `post` 之间换届被事务重验拦住；工具适配器在
+  unsupported / feature-disabled / revoked / Stopped / 重试 / 载荷超限下行为正确。
+
+### 延后：F-memory（长期记忆）
+
+跨会话注入面，需要自己的权限、来源与脱敏设计。**不是证明协调价值的前提**——先用
+现有不可变上下文与受限派生摘要证明协调有用。详见 ADR 0078 的
+「Memory is deferred out of the first version」。
+
 ## 延后项（保留任务边界，不进 v1）
 
 | 项 | 前置 |
@@ -449,6 +581,8 @@ G1、P1、R1、D0；D1b 在 D1a 后执行。下列原 D1 清单是两阶段的�
 | C-probe 真实模型探测 | 独立设计：受控 runner/worker、在任何数据库事务之外、绑定精确 connection+model revision、走既有出站策略、定义超时/费用上限/秘密脱敏/verified-failed-unknown |
 | C-dingtalk / C-feishu / C-smtp | 各自独立 adapter 与验收，不得用 C2 冒充四渠道覆盖 |
 | D-dark 暗色主题 | 0045 明确只做亮色；参考实测的暗色值已在 ADR 0077 预取，后续 ADR 直接继承，无需重新测量 |
+| F-memory 长期记忆 | 跨会话注入面，需独立权限/来源/脱敏设计；先用现有不可变上下文与受限派生摘要证明协调价值（ADR 0078） |
+| F-parallel 按 Team 切分协调 | 单任命是单写者点但**不串行推理**；扩容优先靠提交期去重，不要求用户拆业务 Team（ADR 0078 的 Alternatives） |
 
 ## 最小验收矩阵（逐项需填测试文件与用例名后方可开工）
 
@@ -477,6 +611,22 @@ G1、P1、R1、D0；D1b 在 D1a 后执行。下列原 D1 清单是两阶段的�
 | 交互 | 每个动作带 `Idempotency-Key` 与 `If-Match`；陈旧 revision 被拒；未授权 actor 在卡片上同样被拒；重复幂等键不产生第二次变更 |
 | 反向断言 | **无确认的破坏性拖拽重置不存在**；拖卡进对话只插入引用、不自动提交 |
 
+**F 链（总管 / agent graph）的验收补充**：
+
+| 类别 | 断言 |
+|---|---|
+| 房间扩展 | 四种 subject 成功路径 + 跨 workspace/Team 拒绝；三种旧 subject 零回归；**普通执行 Session 不能借 Team 房间读兄弟 Session 私信**；撤权后房间/收件箱/事件/上下文同时收敛 |
+| 迁移边界 | enum 扩展与其被引用**分属两个 entry**；旧 baseline/legacy 文件与 checksum 逐字节不变；每 entry 提交前后故障可重跑 |
+| 能力完整性 | conformance 对 `capabilitySchema` 全量分区，**漏一项即失败**；任命不改 agent 原有授权；放宽是独立有审计的人工作为 |
+| 授权绑定 | 人类自由文本**不执行**；结构化批准只作用于精确内容；换 target/capability/budget/revision 必须重批；两次消费只一次生效；同 key 重放无第二次效果 |
+| 入口覆盖 | `delegate_work_item` / `claim_work_item` / `create_child_session` / retry / automation **五个入口全部**经共享 guard，撤权/Stop/换届下一律拒绝 |
+| 0062 例外 | 已启用 YOLO 的 workspace 不会让总管分派被静默放行；`source=workspace_policy` 不被改写成 human |
+| 激活 | 同源去重、消费者竞争、各边界崩溃、无 runner、主负责人不匹配、**事件自环**、累计预算耗尽 |
+| 消费协议 | checkpoint 保存前后崩溃、重放、离线过期、baseline 构建期间写入、删除/撤权/新获授权、跨 Session/Team 隔离；固定规模下断言 token/查询数/延迟预算 |
+| 路由 | 四种失败各返回指定错误码；换届后重放不投递给新人；`get`/`post` 之间换届被事务重验拦住 |
+| 工具语义 | `get_chief` 无副作用；`report_to_chief` 不代总管写 ACK、不等模型完成；工具适配器在 unsupported/feature-off/revoked/Stopped/超限时行为正确 |
+| 收件恢复 | claim 后崩溃/Stop 有确定结果；同 actor 双 Session 行为确定；回执不伪造 |
+
 全量 `pnpm lint` / `typecheck` / `test` / `test:integration` / `test:e2e` 是最终
 回归门槛，**不能代替**上表的新增断言。锁清单用 `UPDATE_AGENT_LOCK_MANIFEST=1`
 重生成后**逐条审查**新增/变更 statement 的 owner、rankSequence 与 canonical lock
@@ -500,6 +650,11 @@ order，**不接受"只许行号位移"**，也不手改伪造匹配。迁移走
 | **改 token 值 = 全站可见变化** | 视觉回归无从评审；有人会把色彩位移读成"变差" | **D0 基线是硬门禁**；先新增后迁移最后删；位移理由（暖中性 vs slate/蓝）在 ADR 0077 里可辩护 |
 | **D 链最易被做歪** | 有人会照抄参考产品的 Tailwind classname，绕过 0028/0045 | ADR 0077 有"采纳/不采纳"对照表；code review 以此表为验收清单 |
 | 卡片零阴影日后可能被"加手感"破坏 | 满屏卡片糊成一片 | D2 写成计算样式断言，而非注释 |
+| **F 链会收窄 ADR 0062** | 已启用 YOLO 的 workspace 可能让总管分派被静默放行 | 0078 明确列为显式例外：只有 `source=human` 满足；`requestApproval` 自动批准与 pending reconciliation 不得自动批准此类动作；必测已启用/后启用 YOLO |
+| **F 链可能修订 ADR 0037** | 收件恢复要么复用非终态会话、要么改既有 ADR | F5 **先决定再实现**，写进 ADR；禁止原地改写 `claimedBySessionId` |
+| **F 链没有内建 runtime** | 没有 agent 持有效连接时总管无法启动 | 与 A1 的 Runner `unknown` 同源；A2/D4 必须在无任命或 feature 关闭时显示明确不可用态，不得让布局暗示"总管可用" |
+| **F 链成本易被低估** | 「基本都有了」会让人把最重的消费协议当成接线 | 0078 的 Correction 段把六条被推翻的推断逐条列出；F4 单列为本链最重一块并给量化预算 |
+| 单任命是单写者点 | 协调判断串行 | 只约束**身份**不约束推理；并行提案 + 提交期去重是扩容路径，不要求用户拆业务 Team |
 
 ## 演示步骤
 
@@ -529,3 +684,8 @@ order，**不接受"只许行号位移"**，也不手改伪造匹配。迁移走
   未来若要做，必须先写一份显式修订 0031 的 ADR。
 - 闸门在领域内是**咨询性**、在界面上是**强制的**。若 A1 的 `ready` 被误当作运行
   许可，是实现缺陷而非本设计意图；`CONTEXT.md` 的 View Model 规则是依据。
+- **F 链是本批唯一的例外集合**：0078 明确把「总管分派」列为 **ADR 0062 的显式例外**
+  （只有 `source=human` 满足），并可能**修订 ADR 0037** 的收件箱恢复语义。两处都写
+  在 0078 的正文里而非藏进实现。**实现前需人确认这两处收窄。**
+- F 链**不新增**人类本已有的权限，只是重组由谁行使；且把重组变成可审计的。
+  任命本身不授予任何能力。
