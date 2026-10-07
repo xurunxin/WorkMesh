@@ -1,47 +1,118 @@
 {
-  "package": "WorkMesh self-hosted human + coding-agent collaboration specification",
+  "package": "WorkMesh 当前权威项目与交接文档",
   "version": "0.1",
-  "snapshot_date": "2026-07-22",
+  "snapshot_date": "2026-10-07",
+  "hash_policy": "MANIFEST 中的 bytes 与 SHA-256 对应本次生成时的工作树原始字节；提交 blob 字节由 G1 可达性脚本另行核验。",
+  "notes": [
+    "WORKMESH_PRD.md 已由 dae4620366f33136d65e533d85823db49b9a3fe1 有意删除，不恢复旧 PRD。",
+    "当前产品依据为 AGENT_PROTOCOL.md、OPENAPI.yaml、SCHEMA.sql、CONTEXT.md 和 docs/adr/。",
+    "运行时可靠性计划与 workbench baseline 记录了现行文档集合及陈旧引用修正方向。"
+  ],
   "files": [
     {
       "name": "README.md",
-      "bytes": 2614,
-      "sha256": "0392177a73163ba39a5f6d45d449fffc87980b6e0ea0c2baa4a2d533658d6ae2"
+      "bytes": 14705,
+      "sha256": "12025b24b04e0d31d90fb8ab1d037a5f7b41e5edecee2cf06c234d4607ce2771"
     },
     {
-      "name": "WORKMESH_PRD.md",
-      "bytes": 65822,
-      "sha256": "d91e3df2873b0e7d14f8cbc4d652ead217e7bba0cfeca7c81155f8efeb7cc2ca"
+      "name": "AGENTS.md",
+      "bytes": 9300,
+      "sha256": "202dab2b4f0c7597d432e8af3d4dc783cb5a9ebca6a2de33f47ef2262197942e"
     },
     {
-      "name": "SCHEMA.sql",
-      "bytes": 36009,
-      "sha256": "e00a2ca17a5f97a1c8b5ae05355efb5b512ddbbb7837558148d6f7e17a20123c"
-    },
-    {
-      "name": "OPENAPI.yaml",
-      "bytes": 57289,
-      "sha256": "b9bb1bc59263057a719c0a68934ade2cc3c6b7d622a8300f05a366e0fbc96a6a"
+      "name": "CONTEXT.md",
+      "bytes": 4173,
+      "sha256": "cc6be739e37ba59e711d1bbaa84624fd78ff127c7dbe2bebe9f6811589fb9f7f"
     },
     {
       "name": "AGENT_PROTOCOL.md",
-      "bytes": 25463,
-      "sha256": "3dce401829dc3809ac386e8ccac8b00ca1ac0e1995202bbff2f69f565da2d855"
+      "bytes": 70190,
+      "sha256": "7c4427ce03ad19b37ec0e3d6c3474af4b7afb42425eba75e62824ed2db0eb2a3"
     },
     {
-      "name": "VIBE_CODING_PROMPTS.md",
-      "bytes": 26557,
-      "sha256": "72ab4aa8be8c8bc6e63393343c99ac3d07ece5c342021f7eb504c6d521b73403"
+      "name": "OPENAPI.yaml",
+      "bytes": 495916,
+      "sha256": "b98891984df512c409a1bc4c6198311eac72cdfc41d9a4fc47ac58cd3c90869b"
     },
     {
-      "name": "AGENTS.example.md",
-      "bytes": 5880,
-      "sha256": "6fd98521f87d48bb6ca37ff81937c7223b7b130ad998072cb4e5132536db8e5a"
+      "name": "SCHEMA.sql",
+      "bytes": 1360,
+      "sha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141"
     },
     {
       "name": "VALIDATION.json",
-      "bytes": 839,
-      "sha256": "557fe7a1a2017eb022cc834d9115552fb062fdd19b07ffd05eb5f98a1aef2d57"
+      "bytes": 1098,
+      "sha256": "3a08b9b7d7ceceb18cac9698be3f0f04602a8253d36fa946ad47dff918d270a9"
+    },
+    {
+      "name": "docs/adr/README.md",
+      "bytes": 16183,
+      "sha256": "68bfd0a7d4d3000a35fd2478919b52137a3aeabaf40bae0cc9f1434887525b33"
+    },
+    {
+      "name": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "bytes": 12639,
+      "sha256": "5467b00c2047b616f557defeeb5eda607c18223ffdc178fd4d6d1d2d8763aa0a"
+    },
+    {
+      "name": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "bytes": 16275,
+      "sha256": "796ddbb99b81e8330b54d9fcd17f147aa68df1873b1e8c3fed9c3e9ec467108d"
+    },
+    {
+      "name": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "bytes": 15831,
+      "sha256": "4a1f7dda076c7d2e0f9bdef71cd9a5ad754563fe337d22bf138ec6c84810b39c"
+    },
+    {
+      "name": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "bytes": 14061,
+      "sha256": "6e9484110d15693af0658352d15b65706e557246ccd2eb55d4cd1332c32652bc"
+    },
+    {
+      "name": "docs/plan/2026-08-22-agent-connection-runtime-reliability.md",
+      "bytes": 9090,
+      "sha256": "9bbf77485b23c75b8576868e2cbfb8515d7ea5811a2282263e5eab4c4eb87299"
+    },
+    {
+      "name": "docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md",
+      "bytes": 12800,
+      "sha256": "e873a7f1cf55a75eb7db5cf93e07a2ec863f5fb01f09871d85bf31f01a2d7ec4"
+    },
+    {
+      "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "bytes": 44982,
+      "sha256": "6add8e45df8b27b7bd657b500f60360f246f945617288fc96034f41242212114"
+    },
+    {
+      "name": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md",
+      "bytes": 44295,
+      "sha256": "f2047c0df73fc47e04a6f174058acf7d1e744988a35690945f28461012c09661"
+    },
+    {
+      "name": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+      "bytes": 10338,
+      "sha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd"
+    },
+    {
+      "name": "docs/evidence/build-input-reachability.md",
+      "bytes": 14571,
+      "sha256": "112fa7ec205c41a09a9f73d4845c9e914bdb5091b327910c2fea09db119e224b"
+    },
+    {
+      "name": "scripts/verify-build-input-reachability.mjs",
+      "bytes": 6254,
+      "sha256": "32fbe93dccca272679418f2115566bbd23c5cf86c3e74e7004f03d34be5f6d13"
+    },
+    {
+      "name": "docs/references/todos-analysis/reviews/todos-review.md",
+      "bytes": 56573,
+      "sha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8"
+    },
+    {
+      "name": "scripts/verify-build-input-reachability.test.mjs",
+      "bytes": 1482,
+      "sha256": "8cdc9f84155de402dff2791bd6101da5db7348e54143e60a153aff6bd7029e78"
     }
   ]
 }

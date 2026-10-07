@@ -1,0 +1,399 @@
+[
+  {
+    "name": "01-workbench-board-dark.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\" [active]\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "02-schedules.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 定时\n- generic: 新建\n- generic: 尚无定时。\n- generic: 按周期或在指定时间自动重新运行任务。每一轮都会依据任务描述从头开始一次全新运行，到达确认或审核关口时暂停，交由负责人接手。\n- generic: 新建定时\n- generic: 查看文档\n- generic: 也可以直接告诉总管某个任务要多久重跑一次，它会替你写好规则。\n- generic: 定时",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n定时\n新建\n尚无定时。\n按周期或在指定时间自动重新运行任务。每一轮都会依据任务描述从头开始一次全新运行，到达确认或审核关口时暂停，交由负责人接手。\n新建定时\n查看文档\n也可以直接告诉总管某个任务要多久重跑一次，它会替你写好规则。\n定时",
+      "theme": "dark",
+      "url": "https://todos.dev/app/schedules"
+    }
+  },
+  {
+    "name": "03-connections.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 连接\n- generic: 自定义连接\n- generic: 连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n- tablist:\n  - tab \"全部\":\n    - generic: 全部\n  - tab \"已连接\":\n    - generic: 已连接\n  - tab \"项目管理\":\n    - generic: 项目管理\n  - tab \"文档\":\n    - generic: 文档\n  - tab \"沟通\":\n    - generic: 沟通\n  - tab \"监控\":\n    - generic: 监控\n  - tab \"数据库\":\n    - generic: 数据库\n  - tab \"云服务\":\n    - generic: 云服务\n  - tab \"支付\":\n    - generic: 支付\n  - tab \"自定义\":\n    - generic: 自定义\n- generic: 全部\n- generic: 已连接\n- generic: 项目管理\n- generic: 文档\n- generic: 沟通\n- generic: 监控\n- generic: 数据库\n- generic: 云服务\n- generic: 支付\n- generic: 自定义\n- generic: 全部\n- button \"Linear, 未连接\":\n  - generic: Linear\n  - generic: Linear 是面向软件团队的项目与工单管理工具。\n  - generic: 项目管理 · 未连接\n- button \"Notion, 未连接\":\n  - generic: Notion\n  - generic: Notion 是集文档、知识库与数据库于一体的协作空间。\n  - generic: 文档 · 未连接\n- button \"Jira / Confluence, 未连接\":\n  - generic: Jira / Confluence\n  - generic: Jira 管理工单与迭代，Confluence 承载团队文档，一次登录同时连接两者。\n  - generic: 项目管理 · 未连接\n- button \"Slack, 未连接\":\n  - generic: Slack\n  - generic: Slack 是团队即时沟通工具，以频道和私信组织对话。\n  - generic: 沟通 · 未连接\n- button \"Sentry, 未连接\":\n  - generic: Sentry\n  - generic: Sentry 是应用错误监控与性能追踪平台。\n  - generic: 监控 · 未连接\n- button \"Datadog, 未连接\":\n  - generic: Datadog\n  - generic: Datadog 是覆盖日志、指标与链路追踪的可观测性平台。\n  - generic: 监控 · 未连接\n- button \"PostHog, 未连接\":\n  - generic: PostHog\n  - generic: PostHog 提供产品分析、功能开关与错误追踪。\n  - generic: 监控 · 未连接\n- button \"Mixpanel, 未连接\":\n  - generic: Mixpanel\n  - generic: Mixpanel 是产品分析平台，覆盖事件、漏斗与留存分析。\n  - generic: 监控 · 未连接\n- button \"Amplitude, 未连接\":\n  - generic: Amplitude\n  - generic: Amplitude 是数字分析平台，覆盖产品使用分析、实验与会话回放。\n  - generic: 监控 · 未连接\n- button \"Supabase, 未连接\":\n  - generic: Supabase\n  - generic: Supabase 是基于 Postgres 的开源后端平台，提供数据库、认证与存储。\n  - generic: 数据库 · 未连接\n- button \"Neon, 未连接\":\n  - generic: Neon\n  - generic: Neon 是 Serverless Postgres 平台，支持数据库分支。\n  - generic: 数据库 · 未连接\n- button \"Cloudflare, 未连接\":\n  - generic: Cloudflare\n  - generic: Cloudflare 提供 CDN、DNS、Workers 等网络与边缘计算服务。\n  - generic: 云服务 · 未连接\n- button \"Netlify, 未连接\":\n  - generic: Netlify\n  - generic: Netlify 是前端项目的构建、部署与托管平台。\n  - generic: 云服务 · 未连接\n- button \"Vercel, 未连接\":\n  - generic: Vercel\n  - generic: Vercel 是前端与全栈应用的部署与托管平台。\n  - generic: 云服务 · 未连接\n- button \"Railway, 未连接\":\n  - generic: Railway\n  - generic: Railway 是一站式应用部署平台，托管服务、数据库与定时任务。\n  - generic: 云服务 · 未连接\n- button \"Expo, 未连接\":\n  - generic: Expo\n  - generic: Expo 通过 EAS 构建、提交和更新 React Native 应用。\n  - generic: 云服务 · 未连接\n- button \"DigitalOcean, 未连接\":\n  - generic: DigitalOcean\n  - generic: DigitalOcean 是面向开发者的云平台，一次登录连接其全部服务。\n  - generic: 云服务 · 未连接\n- button \"Stripe, 未连接\":\n  - generic: Stripe\n  - generic: Stripe 是在线支付与订阅计费平台。\n  - generic: 支付 · 未连接\n- generic: 连接",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n连接\n自定义连接\n连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部\nLinear\nLinear 是面向软件团队的项目与工单管理工具。\n项目管理 · 未连接\nNotion\nNotion 是集文档、知识库与数据库于一体的协作空间。\n文档 · 未连接\nJira / Confluence\nJira 管理工单与迭代，Confluence 承载团队文档，一次登录同时连接两者。\n项目管理 · 未连接\nSlack\nSlack 是团队即时沟通工具，以频道和私信组织对话。\n沟通 · 未连接\nSentry\nSentry 是应用错误监控与性能追踪平台。\n监控 · 未连接\nDatadog\nDatadog 是覆盖日志、指标与链路追踪的可观测性平台。\n监控 · 未连接\nPostHog\nPostHog 提供产品分析、功能开关与错误追踪。\n监控 · 未连接\nMixpanel\nMixpanel 是产品分析平台，覆盖事件、漏斗与留存分析。\n监控 · 未连接\nAmplitude\nAmplitude 是数字分析平台，覆盖产品使用分析、实验与会话回放。\n监控 · 未连接\nSupabase\nSupabase 是基于 Postgres 的开源后端平台，提供数据库、认证与存储。\n数据库 · 未连接\nNeon\nNeon 是 Serverless Postgres 平台，支持数据库分支。\n数据库 · 未连接\nCloudflare\nCloudflare 提供 CDN、DNS、Workers 等网络与边缘计算服务。\n云服务 · 未连接\nNetlify\nNetlify 是前端项目的构建、部署与托管平台。\n云服务 · 未连接\nVercel\nVercel 是前端与全栈应用的部署与托管平台。\n云服务 · 未连接\nRailway\nRailway 是一站式应用部署平台，托管服务、数据库与定时任务。\n云服务 · 未连接\nExpo\nExpo 通过 EAS 构建、提交和更新 React Native 应用。\n云服务 · 未连接\nDigitalOcean\nDigitalOcean 是面向开发者的云平台，一次登录连接其全部服务。\n云服务 · 未连接\nStripe\nStripe 是在线支付与订阅计费平台。\n支付 · 未连接\n连接",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/connections"
+    }
+  },
+  {
+    "name": "04-skills.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 技能\n- generic: 新建\n- generic: 尚无技能。\n- generic: 技能是写给 Agent 的工作手册：一个包含 SKILL.md 的文件夹，用于将可复用的流程传授给 Agent。授予后，Agent 会在合适的任务中主动使用。\n- generic: 添加技能\n- generic: 查看文档\n- generic: 你也可以直接让总管从 GitHub 安装技能，或帮你制作新技能。\n- generic: 技能",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n技能\n新建\n尚无技能。\n技能是写给 Agent 的工作手册：一个包含 SKILL.md 的文件夹，用于将可复用的流程传授给 Agent。授予后，Agent 会在合适的任务中主动使用。\n添加技能\n查看文档\n你也可以直接让总管从 GitHub 安装技能，或帮你制作新技能。\n技能",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/skills"
+    }
+  },
+  {
+    "name": "05-usage-tokens.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 用量\n- tablist:\n  - tab \"Token 用量\":\n    - generic: Token 用量\n  - tab \"订阅用量\":\n    - generic: 订阅用量\n- generic: Token 用量\n- generic: 订阅用量\n- generic: Token 用量\n- generic: 以下数据不含 Cursor 和 Devin，由于它们的 CLI 不上报 token 用量。\n- tablist:\n  - tab \"近 7 天\":\n    - generic: 近 7 天\n  - tab \"30 天\":\n    - generic: 30 天\n  - tab \"一年\":\n    - generic: 一年\n- generic: 近 7 天\n- generic: 30 天\n- generic: 一年\n- generic: 近 7 天\n- generic: 9月30日 – 10月7日\n- button \"运行时\":\n  - generic: 运行时\n  - generic: \"0\"\n- generic: Tokens\n- generic: \"0\"\n- generic: 预估费用\n- generic: —\n- generic: 运行\n- generic: \"0\"\n- generic: 模型调用\n- generic: \"0\"\n- generic: 10月\n- generic: 11月\n- generic: 12月\n- generic: 1月\n- generic: 2月\n- generic: 3月\n- generic: 4月\n- generic: 5月\n- generic: 6月\n- generic: 7月\n- generic: 8月\n- generic: 9月\n- generic: 10月\n- generic: 周一\n- generic: 周二\n- generic: 周三\n- generic: 周四\n- generic: 周五\n- generic: 周六\n- generic: 周日\n- generic \"10月6日周一 · 0 tokens\"\n- generic \"10月7日周二 · 0 tokens\"\n- generic \"10月8日周三 · 0 tokens\"\n- generic \"10月9日周四 · 0 tokens\"\n- generic \"10月10日周五 · 0 tokens\"\n- generic \"10月11日周六 · 0 tokens\"\n- generic \"10月12日周日 · 0 tokens\"\n- generic \"10月13日周一 · 0 tokens\"\n- generic \"10月14日周二 · 0 tokens\"\n- generic \"10月15日周三 · 0 tokens\"\n- generic \"10月16日周四 · 0 tokens\"\n- generic \"10月17日周五 · 0 tokens\"\n- generic \"10月18日周六 · 0 tokens\"\n- generic \"10月19日周日 · 0 tokens\"\n- generic \"10月20日周一 · 0 tokens\"\n- generic \"10月21日周二 · 0 tokens\"\n- generic \"10月22日周三 · 0 tokens\"\n- generic \"10月23日周四 · 0 tokens\"\n- generic \"10月24日周五 · 0 tokens\"\n- generic \"10月25日周六 · 0 tokens\"\n- generic \"10月26日周日 · 0 tokens\"\n- generic \"10月27日周一 · 0 tokens\"\n- generic \"10月28日周二 · 0 tokens\"\n- generic \"10月29日周三 · 0 tokens\"\n- generic \"10月30日周四 · 0 tokens\"\n- generic \"10月31日周五 · 0 tokens\"\n- generic \"11月1日周六 · 0 tokens\"\n- generic \"11月2日周日 · 0 tokens\"\n- generic \"11月3日周一 · 0 tokens\"\n- generic \"11月4日周二 · 0 tokens\"\n- generic \"11月5日周三 · 0 tokens\"\n- generic \"11月6日周四 · 0 tokens\"\n- generic \"11月7日周五 · 0 tokens\"\n- generic \"11月8日周六 · 0 tokens\"\n- generic \"11月9日周日 · 0 tokens\"\n- generic \"11月10日周一 · 0 tokens\"\n- generic \"11月11日周二 · 0 tokens\"\n- generic \"11月12日周三 · 0 tokens\"\n- generic \"11月13日周四 · 0 tokens\"\n- generic \"11月14日周五 · 0 tokens\"\n- generic \"11月15日周六 · 0 tokens\"\n- generic \"11月16日周日 · 0 tokens\"\n- generic \"11月17日周一 · 0 tokens\"\n- generic \"11月18日周二 · 0 tokens\"\n- generic \"11月19日周三 · 0 tokens\"\n- generic \"11月20日周四 · 0 tokens\"\n- generic \"11月21日周五 · 0 tokens\"\n- generic \"11月22日周六 · 0 tokens\"\n- generic \"11月23日周日 · 0 tokens\"\n- generic \"11月24日周一 · 0 tokens\"\n- generic \"11月25日周二 · 0 tokens\"\n- generic \"11月26日周三 · 0 tokens\"\n- generic \"11月27日周四 · 0 tokens\"\n- generic \"11月28日周五 · 0 tokens\"\n- generic \"11月29日周六 · 0 tokens\"\n- generic \"11月30日周日 · 0 tokens\"\n- generic \"12月1日周一 · 0 tokens\"\n- generic \"12月2日周二 · 0 tokens\"\n- generic \"12月3日周三 · 0 tokens\"\n- generic \"12月4日周四 · 0 tokens\"\n- generic \"12月5日周五 · 0 tokens\"\n- generic \"12月6日周六 · 0 tokens\"\n- generic \"12月7日周日 · 0 tokens\"\n- generic \"12月8日周一 · 0 tokens\"\n- generic \"12月9日周二 · 0 tokens\"\n- generic \"12月10日周三 · 0 tokens\"\n- generic \"12月11日周四 · 0 tokens\"\n- generic \"12月12日周五 · 0 tokens\"\n- generic \"12月13日周六 · 0 tokens\"\n- generic \"12月14日周日 · 0 tokens\"\n- generic \"12月15日周一 · 0 tokens\"\n- generic \"12月16日周二 · 0 tokens\"\n- generic \"12月17日周三 · 0 tokens\"\n- generic \"12月18日周四 · 0 tokens\"\n- generic \"12月19日周五 · 0 tokens\"\n- generic \"12月20日周六 · 0 tokens\"\n- generic \"12月21日周日 · 0 tokens\"\n- generic \"12月22日周一 · 0 tokens\"\n- generic \"12月23日周二 · 0 tokens\"\n- generic \"12月24日周三 · 0 tokens\"\n- generic \"12月25日周四 · 0 tokens\"\n- generic \"12月26日周五 · 0 tokens\"\n- generic \"12月27日周六 · 0 tokens\"\n- generic \"12月28日周日 · 0 tokens\"\n- generic \"12月29日周一 · 0 tokens\"\n- generic \"12月30日周二 · 0 tokens\"\n- generic \"12月31日周三 · 0 tokens\"\n- generic \"1月1日周四 · 0 tokens\"\n- generic \"1月2日周五 · 0 tokens\"\n- generic \"1月3日周六 · 0 tokens\"\n- generic \"1月4日周日 · 0 tokens\"\n- generic \"1月5日周一 · 0 tokens\"\n- generic \"1月6日周二 · 0 tokens\"\n- generic \"1月7日周三 · 0 tokens\"\n- generic \"1月8日周四 · 0 tokens\"\n- generic \"1月9日周五 · 0 tokens\"\n- generic \"1月10日周六 · 0 tokens\"\n- generic \"1月11日周日 · 0 tokens\"\n- generic \"1月12日周一 · 0 tokens\"\n- generic \"1月13日周二 · 0 tokens\"\n- generic \"1月14日周三 · 0 tokens\"\n- generic \"1月15日周四 · 0 tokens\"\n- generic \"1月16日周五 · 0 tokens\"\n- generic \"1月17日周六 · 0 tokens\"\n- generic \"1月18日周日 · 0 tokens\"\n- generic \"1月19日周一 · 0 tokens\"\n- generic \"1月20日周二 · 0 tokens\"\n- generic \"1月21日周三 · 0 tokens\"\n- generic \"1月22日周四 · 0 tokens\"\n- generic \"1月23日周五 · 0 tokens\"\n- generic \"1月24日周六 · 0 tokens\"\n- generic \"1月25日周日 · 0 tokens\"\n- generic \"1月26日周一 · 0 tokens\"\n- generic \"1月27日周二 · 0 tokens\"\n- generic \"1月28日周三 · 0 tokens\"\n- generic \"1月29日周四 · 0 tokens\"\n- generic \"1月30日周五 · 0 tokens\"\n- generic \"1月31日周六 · 0 tokens\"\n- generic \"2月1日周日 · 0 tokens\"\n- generic \"2月2日周一 · 0 tokens\"\n- generic \"2月3日周二 · 0 tokens\"\n- generic \"2月4日周三 · 0 tokens\"\n- generic \"2月5日周四 · 0 tokens\"\n- generic \"2月6日周五 · 0 tokens\"\n- generic \"2月7日周六 · 0 tokens\"\n- generic \"2月8日周日 · 0 tokens\"\n- generic \"2月9日周一 · 0 tokens\"\n- generic \"2月10日周二 · 0 tokens\"\n- generic \"2月11日周三 · 0 tokens\"\n- generic \"2月12日周四 · 0 tokens\"\n- generic \"2月13日周五 · 0 tokens\"\n- generic \"2月14日周六 · 0 tokens\"\n- generic \"2月15日周日 · 0 tokens\"\n- generic \"2月16日周一 · 0 tokens\"\n- generic \"2月17日周二 · 0 tokens\"\n- generic \"2月18日周三 · 0 tokens\"\n- generic \"2月19日周四 · 0 tokens\"\n- generic \"2月20日周五 · 0 tokens\"\n- generic \"2月21日周六 · 0 tokens\"\n- generic \"2月22日周日 · 0 tokens\"\n- generic \"2月23日周一 · 0 tokens\"\n- generic \"2月24日周二 · 0 tokens\"\n- generic \"2月25日周三 · 0 tokens\"\n- generic \"2月26日周四 · 0 tokens\"\n- generic \"2月27日周五 · 0 tokens\"\n- generic \"2月28日周六 · 0 tokens\"\n- generic \"3月1日周日 · 0 tokens\"\n- generic \"3月2日周一 · 0 tokens\"\n- generic \"3月3日周二 · 0 tokens\"\n- generic \"3月4日周三 · 0 tokens\"\n- generic \"3月5日周四 · 0 tokens\"\n- generic \"3月6日周五 · 0 tokens\"\n- generic \"3月7日周六 · 0 tokens\"\n- generic \"3月8日周日 · 0 tokens\"\n- generic \"3月9日周一 · 0 tokens\"\n- generic \"3月10日周二 · 0 tokens\"\n- generic \"3月11日周三 · 0 tokens\"\n- generic \"3月12日周四 · 0 tokens\"\n- generic \"3月13日周五 · 0 tokens\"\n- generic \"3月14日周六 · 0 tokens\"\n- generic \"3月15日周日 · 0 tokens\"\n- generic \"3月16日周一 · 0 tokens\"\n- generic \"3月17日周二 · 0 tokens\"\n- generic \"3月18日周三 · 0 tokens\"\n- generic \"3月19日周四 · 0 tokens\"\n- generic \"3月20日周五 · 0 tokens\"\n- generic \"3月21日周六 · 0 tokens\"\n- generic \"3月22日周日 · 0 tokens\"\n- generic \"3月23日周一 · 0 tokens\"\n- generic \"3月24日周二 · 0 tokens\"\n- generic \"3月25日周三 · 0 tokens\"\n- generic \"3月26日周四 · 0 tokens\"\n- generic \"3月27日周五 · 0 tokens\"\n- generic \"3月28日周六 · 0 tokens\"\n- generic \"3月29日周日 · 0 tokens\"\n- generic \"3月30日周一 · 0 tokens\"\n- generic \"3月31日周二 · 0 tokens\"\n- generic \"4月1日周三 · 0 tokens\"\n- generic \"4月2日周四 · 0 tokens\"\n- generic \"4月3日周五 · 0 tokens\"\n- generic \"4月4日周六 · 0 tokens\"\n- generic \"4月5日周日 · 0 tokens\"\n- generic \"4月6日周一 · 0 tokens\"\n- generic \"4月7日周二 · 0 tokens\"\n- generic \"4月8日周三 · 0 tokens\"\n- generic \"4月9日周四 · 0 tokens\"\n- generic \"4月10日周五 · 0 tokens\"\n- generic \"4月11日周六 · 0 tokens\"\n- generic \"4月12日周日 · 0 tokens\"\n- generic \"4月13日周一 · 0 tokens\"\n- generic \"4月14日周二 · 0 tokens\"\n- generic \"4月15日周三 · 0 tokens\"\n- generic \"4月16日周四 · 0 tokens\"\n- generic \"4月17日周五 · 0 tokens\"\n- generic \"4月18日周六 · 0 tokens\"\n- generic \"4月19日周日 · 0 tokens\"\n- generic \"4月20日周一 · 0 tokens\"\n- generic \"4月21日周二 · 0 tokens\"\n- generic \"4月22日周三 · 0 tokens\"\n- generic \"4月23日周四 · 0 tokens\"\n- generic \"4月24日周五 · 0 tokens\"\n- generic \"4月25日周六 · 0 tokens\"\n- generic \"4月26日周日 · 0 tokens\"\n- generic \"4月27日周一 · 0 tokens\"\n- generic \"4月28日周二 · 0 tokens\"\n- generic \"4月29日周三 · 0 tokens\"\n- generic \"4月30日周四 · 0 tokens\"\n- generic \"5月1日周五 · 0 tokens\"\n- generic \"5月2日周六 · 0 tokens\"\n- generic \"5月3日周日 · 0 tokens\"\n- generic \"5月4日周一 · 0 tokens\"\n- generic \"5月5日周二 · 0 tokens\"\n- generic \"5月6日周三 · 0 tokens\"\n- generic \"5月7日周四 · 0 tokens\"\n- generic \"5月8日周五 · 0 tokens\"\n- generic \"5月9日周六 · 0 tokens\"\n- generic \"5月10日周日 · 0 tokens\"\n- generic \"5月11日周一 · 0 tokens\"\n- generic \"5月12日周二 · 0 tokens\"\n- generic \"5月13日周三 · 0 tokens\"\n- generic \"5月14日周四 · 0 tokens\"\n- generic \"5月15日周五 · 0 tokens\"\n- generic \"5月16日周六 · 0 tokens\"\n- generic \"5月17日周日 · 0 tokens\"\n- generic \"5月18日周一 · 0 tokens\"\n- generic \"5月19日周二 · 0 tokens\"\n- generic \"5月20日周三 · 0 tokens\"\n- generic \"5月21日周四 · 0 tokens\"\n- generic \"5月22日周五 · 0 tokens\"\n- generic \"5月23日周六 · 0 tokens\"\n- generic \"5月24日周日 · 0 tokens\"\n- generic \"5月25日周一 · 0 tokens\"\n- generic \"5月26日周二 · 0 tokens\"\n- generic \"5月27日周三 · 0 tokens\"\n- generic \"5月28日周四 · 0 tokens\"\n- generic \"5月29日周五 · 0 tokens\"\n- generic \"5月30日周六 · 0 tokens\"\n- generic \"5月31日周日 · 0 tokens\"\n- generic \"6月1日周一 · 0 tokens\"\n- generic \"6月2日周二 · 0 tokens\"\n- generic \"6月3日周三 · 0 tokens\"\n- generic \"6月4日周四 · 0 tokens\"\n- generic \"6月5日周五 · 0 tokens\"\n- generic \"6月6日周六 · 0 tokens\"\n- generic \"6月7日周日 · 0 tokens\"\n- generic \"6月8日周一 · 0 tokens\"\n- generic \"6月9日周二 · 0 tokens\"\n- generic \"6月10日周三 · 0 tokens\"\n- generic \"6月11日周四 · 0 tokens\"\n- generic \"6月12日周五 · 0 tokens\"\n- generic \"6月13日周六 · 0 tokens\"\n- generic \"6月14日周日 · 0 tokens\"\n- generic \"6月15日周一 · 0 tokens\"\n- generic \"6月16日周二 · 0 tokens\"\n- generic \"6月17日周三 · 0 tokens\"\n- generic \"6月18日周四 · 0 tokens\"\n- generic \"6月19日周五 · 0 tokens\"\n- generic \"6月20日周六 · 0 tokens\"\n- generic \"6月21日周日 · 0 tokens\"\n- generic \"6月22日周一 · 0 tokens\"\n- generic \"6月23日周二 · 0 tokens\"\n- generic \"6月24日周三 · 0 tokens\"\n- generic \"6月25日周四 · 0 tokens\"\n- generic \"6月26日周五 · 0 tokens\"\n- generic \"6月27日周六 · 0 tokens\"\n- generic \"6月28日周日 · 0 tokens\"\n- generic \"6月29日周一 · 0 tokens\"\n- generic \"6月30日周二 · 0 tokens\"\n- generic \"7月1日周三 · 0 tokens\"\n- generic \"7月2日周四 · 0 tokens\"\n- generic \"7月3日周五 · 0 tokens\"\n- generic \"7月4日周六 · 0 tokens\"\n- generic \"7月5日周日 · 0 tokens\"\n- generic \"7月6日周一 · 0 tokens\"\n- generic \"7月7日周二 · 0 tokens\"\n- generic \"7月8日周三 · 0 tokens\"\n- generic \"7月9日周四 · 0 tokens\"\n- generic \"7月10日周五 · 0 tokens\"\n- generic \"7月11日周六 · 0 tokens\"\n- generic \"7月12日周日 · 0 tokens\"\n- generic \"7月13日周一 · 0 tokens\"\n- generic \"7月14日周二 · 0 tokens\"\n- generic \"7月15日周三 · 0 tokens\"\n- generic \"7月16日周四 · 0 tokens\"\n- generic \"7月17日周五 · 0 tokens\"\n- generic \"7月18日周六 · 0 tokens\"\n- generic \"7月19日周日 · 0 tokens\"\n- generic \"7月20日周一 · 0 tokens\"\n- generic \"7月21日周二 · 0 tokens\"\n- generic \"7月22日周三 · 0 tokens\"\n- generic \"7月23日周四 · 0 tokens\"\n- generic \"7月24日周五 · 0 tokens\"\n- generic \"7月25日周六 · 0 tokens\"\n- generic \"7月26日周日 · 0 tokens\"\n- generic \"7月27日周一 · 0 tokens\"\n- generic \"7月28日周二 · 0 tokens\"\n- generic \"7月29日周三 · 0 tokens\"\n- generic \"7月30日周四 · 0 tokens\"\n- generic \"7月31日周五 · 0 tokens\"\n- generic \"8月1日周六 · 0 tokens\"\n- generic \"8月2日周日 · 0 tokens\"\n- generic \"8月3日周一 · 0 tokens\"\n- generic \"8月4日周二 · 0 tokens\"\n- generic \"8月5日周三 · 0 tokens\"\n- generic \"8月6日周四 · 0 tokens\"\n- generic \"8月7日周五 · 0 tokens\"\n- generic \"8月8日周六 · 0 tokens\"\n- generic \"8月9日周日 · 0 tokens\"\n- generic \"8月10日周一 · 0 tokens\"\n- generic \"8月11日周二 · 0 tokens\"\n- generic \"8月12日周三 · 0 tokens\"\n- generic \"8月13日周四 · 0 tokens\"\n- generic \"8月14日周五 · 0 tokens\"\n- generic \"8月15日周六 · 0 tokens\"\n- generic \"8月16日周日 · 0 tokens\"\n- generic \"8月17日周一 · 0 tokens\"\n- generic \"8月18日周二 · 0 tokens\"\n- generic \"8月19日周三 · 0 tokens\"\n- generic \"8月20日周四 · 0 tokens\"\n- generic \"8月21日周五 · 0 tokens\"\n- generic \"8月22日周六 · 0 tokens\"\n- generic \"8月23日周日 · 0 tokens\"\n- generic \"8月24日周一 · 0 tokens\"\n- generic \"8月25日周二 · 0 tokens\"\n- generic \"8月26日周三 · 0 tokens\"\n- generic \"8月27日周四 · 0 tokens\"\n- generic \"8月28日周五 · 0 tokens\"\n- generic \"8月29日周六 · 0 tokens\"\n- generic \"8月30日周日 · 0 tokens\"\n- generic \"8月31日周一 · 0 tokens\"\n- generic \"9月1日周二 · 0 tokens\"\n- generic \"9月2日周三 · 0 tokens\"\n- generic \"9月3日周四 · 0 tokens\"\n- generic \"9月4日周五 · 0 tokens\"\n- generic \"9月5日周六 · 0 tokens\"\n- generic \"9月6日周日 · 0 tokens\"\n- generic \"9月7日周一 · 0 tokens\"\n- generic \"9月8日周二 · 0 tokens\"\n- generic \"9月9日周三 · 0 tokens\"\n- generic \"9月10日周四 · 0 tokens\"\n- generic \"9月11日周五 · 0 tokens\"\n- generic \"9月12日周六 · 0 tokens\"\n- generic \"9月13日周日 · 0 tokens\"\n- generic \"9月14日周一 · 0 tokens\"\n- generic \"9月15日周二 · 0 tokens\"\n- generic \"9月16日周三 · 0 tokens\"\n- generic \"9月17日周四 · 0 tokens\"\n- generic \"9月18日周五 · 0 tokens\"\n- generic \"9月19日周六 · 0 tokens\"\n- generic \"9月20日周日 · 0 tokens\"\n- generic \"9月21日周一 · 0 tokens\"\n- generic \"9月22日周二 · 0 tokens\"\n- generic \"9月23日周三 · 0 tokens\"\n- generic \"9月24日周四 · 0 tokens\"\n- generic \"9月25日周五 · 0 tokens\"\n- generic \"9月26日周六 · 0 tokens\"\n- generic \"9月27日周日 · 0 tokens\"\n- generic \"9月28日周一 · 0 tokens\"\n- generic \"9月29日周二 · 0 tokens\"\n- generic \"9月30日周三 · 0 tokens\"\n- generic \"10月1日周四 · 0 tokens\"\n- generic \"10月2日周五 · 0 tokens\"\n- generic \"10月3日周六 · 0 tokens\"\n- generic \"10月4日周日 · 0 tokens\"\n- generic \"10月5日周一 · 0 tokens\"\n- generic \"10月6日周二 · 0 tokens\"\n- generic \"10月7日周三 · 0 tokens\"\n- generic \"10月8日周四 · 0 tokens\"\n- generic \"10月9日周五 · 0 tokens\"\n- generic \"10月10日周六 · 0 tokens\"\n- generic \"10月11日周日 · 0 tokens\"\n- generic: 少\n- generic: 多\n- generic: 该时段内没有模型调用。\n- generic: 用量",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n用量\nToken 用量\n订阅用量\nToken 用量\n订阅用量\nToken 用量\n以下数据不含 Cursor 和 Devin，由于它们的 CLI 不上报 token 用量。\n近 7 天\n30 天\n一年\n近 7 天\n30 天\n一年\n近 7 天\n9月30日 – 10月7日\n运行时\n0\nTokens\n0\n预估费用\n—\n运行\n0\n模型调用\n0\n10月\n11月\n12月\n1月\n2月\n3月\n4月\n5月\n6月\n7月\n8月\n9月\n10月\n周一\n周二\n周三\n周四\n周五\n周六\n周日\n少\n多\n该时段内没有模型调用。\n用量",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/usage"
+    }
+  },
+  {
+    "name": "06-usage-subscription.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 用量\n- tablist:\n  - tab \"Token 用量\":\n    - generic: Token 用量\n  - tab \"订阅用量\" [active]:\n    - generic: 订阅用量\n- generic: Token 用量\n- generic: 订阅用量\n- generic: 订阅用量\n- generic: 团队机器上登录的全部 coding agent 的额度窗口。\n- tablist:\n  - tab \"Codex\":\n    - generic: Codex\n- generic: Codex\n- generic: Codex\n- generic: x•••@l•••.com\n- button \"显示完整邮箱\":\n- generic: pro\n- generic: 登录于\n- generic: DarkFlame\n- generic \"刷新\":\n- generic: 每周\n- generic: 6 天 19 小时 43 分钟后重置\n- generic: 3%\n- generic: 更新于 2026年10月7日 15:44:15",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n用量\nToken 用量\n订阅用量\nToken 用量\n订阅用量\n订阅用量\n团队机器上登录的全部 coding agent 的额度窗口。\nCodex\nCodex\nCodex\nx•••@l•••.com\npro\n登录于\nDarkFlame\n每周\n6 天 19 小时 43 分钟后重置\n3%\n更新于 2026年10月7日 15:44:15",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/usage?tab=subscription"
+    }
+  },
+  {
+    "name": "07-machines.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 机器\n- generic: Todos 托管机器\n- generic: 随时在线，构建速度快。空闲自动休眠，仅在运行时消耗积分。\n- generic: 未启用\n- generic: DarkFlame\n- generic \"Codex\":\n- generic \"OpenCode\":\n- generic: 6 并发\n- generic: 添加机器\n- generic: 机器",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n机器\nTodos 托管机器\n随时在线，构建速度快。空闲自动休眠，仅在运行时消耗积分。\n未启用\nDarkFlame\n6 并发\n添加机器\n机器",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/machines"
+    }
+  },
+  {
+    "name": "08-machine-detail.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: DarkFlame\n- tablist:\n  - tab \"信息\":\n    - generic: 信息\n  - tab \"构建\":\n    - generic: 构建\n- generic: 信息\n- generic: 构建\n- generic: 信息\n- generic: 名称\n- generic: DarkFlame\n- generic: 机器\n- generic: 6DOlLniZ0sqBYGHeIhRMq\n- generic \"复制\":\n- generic: tds 版本\n- generic: 0.1.59\n- generic: 在线\n- generic: 是\n- generic: 工作目录\n- generic: C:\\Users\\xurx\\.tds\\workspaces\n- generic \"复制\":\n- generic: 远程 shell\n- generic: 允许已授权的 Agent 在该机器上执行命令。\n- switch \"远程 shell\" [disabled]\n- generic: 移除机器",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\nDarkFlame\n信息\n构建\n信息\n构建\n信息\n名称\nDarkFlame\n机器\n6DOlLniZ0sqBYGHeIhRMq\ntds 版本\n0.1.59\n在线\n是\n工作目录\nC:\\Users\\xurx\\.tds\\workspaces\n远程 shell\n允许已授权的 Agent 在该机器上执行命令。\n移除机器",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/machines/6DOlLniZ0sqBYGHeIhRMq?name=DarkFlame"
+    }
+  },
+  {
+    "name": "09-model-providers.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 模型服务\n- generic: 新建\n- tablist:\n  - tab \"内置 (pi)\":\n    - generic: 内置 (pi)\n  - tab \"Codex\":\n    - generic: Codex\n  - tab \"OpenCode\":\n    - generic: OpenCode\n- generic: 内置 (pi)\n- generic: Codex\n- generic: OpenCode\n- generic: 内置 (pi)\n- generic: Todos（内置）\n- generic: 9 模型\n- generic: 未启用\n- generic: DeepSeek\n- generic: API 密钥\n- generic: 4 模型\n- generic \"更多\":\n- generic: 这里只负责给团队添加可用模型。要指定某个 Agent 用哪个模型，请在 Agent 列表 中打开它的页面；总管的模型在 总管设置 里改，也可以直接让总管帮你切换。\n- generic: 模型服务",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n模型服务\n新建\n内置 (pi)\nCodex\nOpenCode\n内置 (pi)\nCodex\nOpenCode\n内置 (pi)\nTodos（内置）\n9 模型\n未启用\nDeepSeek\nAPI 密钥\n4 模型\n这里只负责给团队添加可用模型。要指定某个 Agent 用哪个模型，请在 Agent 列表 中打开它的页面；总管的模型在 总管设置 里改，也可以直接让总管帮你切换。\n模型服务",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/providers"
+    }
+  },
+  {
+    "name": "10-secrets.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 密钥\n- generic: 新建\n- generic: 尚无密钥。\n- generic: 密钥以环境变量注入任务的 shell。团队密钥对所有项目生效；项目密钥只进入该项目的任务，并覆盖同名的团队密钥。\n- generic: 添加密钥\n- generic: 查看文档\n- generic: 也可以让总管添加：它会开一张安全输入卡填写值，值不会进入对话。\n- generic: 密钥",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n密钥\n新建\n尚无密钥。\n密钥以环境变量注入任务的 shell。团队密钥对所有项目生效；项目密钥只进入该项目的任务，并覆盖同名的团队密钥。\n添加密钥\n查看文档\n也可以让总管添加：它会开一张安全输入卡填写值，值不会进入对话。\n密钥",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/secrets"
+    }
+  },
+  {
+    "name": "11-install-app.png",
+    "snap": "- banner:\n  - link \"[todos]\":\n    - /url: /zh\n  - navigation:\n    - link \"功能\":\n      - /url: /zh/features\n    - link \"下载\":\n      - /url: /zh/install\n    - link \"文档\":\n      - /url: /zh/docs\n    - link \"定价\":\n      - /url: /zh/pricing\n  - button \"Toggle theme\":\n  - button \"Switch language\": 简\n  - link \"打开 Todos\":\n    - /url: /app\n- main:\n  - heading \"下载 Todos\" [level=1]\n  - paragraph: 用 Mac、Windows 或 Linux 桌面应用驱动你的 Agent 团队，用手机随时跟进，也可以在任意浏览器中打开。一个账号，处处同步。\n  - link \"下载 Windows 版\":\n    - /url: https://assets.todos.dev/desktop/Todos-win-x64.exe\n  - link \"全部平台\":\n    - /url: \"#platforms\"\n  - paragraph: 适用于 Windows x64\n  - button \"展开侧边栏 Ctrl B\":\n    - generic: 展开侧边栏 Ctrl B\n  - button \"搜索 Ctrl K\":\n    - generic: 搜索 Ctrl K\n  - button \"新任务 N\":\n    - generic: 新任务 N\n  - button \"工作台\":\n    - generic: 工作台\n  - button \"定时\":\n    - generic: 定时\n  - button \"连接\":\n    - generic: 连接\n  - button \"技能\":\n    - generic: 技能\n  - button \"展开项目\":\n    - generic: 展开项目\n  - button \"展开资源\":\n    - generic: 展开资源\n  - button \"主题\":\n    - generic: 🛠️\n    - generic: 功能开发\n    - generic: \"2\"\n  - paragraph: 我想做一个自己的博客：Markdown 写作、代码高亮、标签归档，风格干净简洁。尽快给我看第一版。\n  - paragraph: 🔀 收到，我把它拆成 3 个并行任务同时开工，第一版合出来就请你过目。\n  - generic: 任务\n  - generic: 负责人\n  - text: \"151\"\n  - generic: 搭建首页、文章页和标签归档页，配上简洁主题\n  - text: 前端工程师\n  - text: \"152\"\n  - generic: 渲染 Markdown 文章：代码高亮，并按标签归档\n  - text: 后端工程师\n  - text: \"153\"\n  - generic: 接好 Vercel 部署流水线，并把域名指过去\n  - text: 运维工程师\n  - generic: 完成 41s\n  - paragraph: 11:30\n  - paragraph: 进展顺利：页面和流水线先完成了，架构师已开始把关；Markdown 渲染快好了。\n  - generic: 完成 6s\n  - paragraph: 12:05\n  - paragraph: 🔄 Markdown 渲染也交付了，但审核揪出一个问题：漏了 HTML 转义，后端工程师正在补。\n  - generic: 完成 9s\n  - paragraph: 12:40\n  - paragraph: ✅ 修复过了复审，第一版已合并到 develop，预览跑在 localhost:4321，去看看吧。\n  - generic: 完成 5s\n  - paragraph: 14:10\n  - paragraph: 预览看了，整体不错。两个问题：代码块在手机上横向溢出，标签归档排序是乱的。改好叫我。\n  - paragraph:\n    - text: 🔄 明白，两处分头处理：\n    - text: 前端工程师\n    - text: 修代码块溢出，\n    - text: 后端工程师\n    - text: 修归档排序，都过复审我再叫你。\n  - generic: 完成 23s\n  - paragraph: 15:40\n  - paragraph: ✅ 两处都修好了，复审也通过。要现在上线吗？\n  - generic: 完成 4s\n  - paragraph: 17:05\n  - paragraph: 可以，上线。\n  - paragraph: 17:12\n  - paragraph: 🚀 上线了！inkwell.blog 已经可以访问，去发出你的第一篇文章吧。\n  - generic: 完成 1m 2s\n  - paragraph: 有什么可以帮你的？\n  - generic: 看板\n  - button \"看板指南\":\n  - button \"筛选\":\n  - button \"收起总管聊天\":\n  - button \"看板\" [pressed]:\n  - generic: 待开始\n  - generic: \"0\"\n  - generic: 没有等待开始的任务\n  - generic: 执行中\n  - generic: \"3\"\n  - button \"筛选\":\n  - generic: I\n  - generic: Inkwell\n  - generic: \"#151\"\n  - button \"分支与 PR\":\n  - paragraph: 搭建首页、文章页和标签归档页，配上简洁主题\n  - generic: 1 分钟前\n  - generic: I\n  - generic: Inkwell\n  - generic: \"#152\"\n  - button \"分支与 PR\":\n  - paragraph: 渲染 Markdown 文章：代码高亮，并按标签归档\n  - generic: 1 分钟前\n  - generic: I\n  - generic: Inkwell\n  - generic: \"#153\"\n  - button \"分支与 PR\":\n  - paragraph: 接好 Vercel 部署流水线，并把域名指过去\n  - generic: 1 分钟前\n  - generic: 待处理\n  - generic: \"0\"\n  - button \"筛选\":\n  - generic: 没有等你处理的任务\n  - generic: 已完成\n  - generic: \"0\"\n  - generic: 最近 7 天\n  - generic: 最近 7 天没有完成的任务\n  - dialog \"搜索\":\n    - textbox:\n      - /placeholder: 搜索任务、项目、成员…\n    - tablist:\n      - tab \"全部 Ctrl K\" [selected]:\n        - generic: 全部\n        - generic: Ctrl K\n      - tab \"任务 Ctrl P\":\n        - generic: 任务\n        - generic: Ctrl P\n      - tab \"主题 Ctrl J\":\n        - generic: 主题\n        - generic: Ctrl J\n    - generic: Tab 切换范围\n    - paragraph: 前往\n    - button \"工作台\":\n      - generic: 工作台\n    - button \"定时\":\n      - generic: 定时\n    - button \"团队\":\n      - generic: 团队\n    - button \"连接\":\n      - generic: 连接\n    - button \"技能\":\n      - generic: 技能\n    - button \"密钥\":\n      - generic: 密钥\n    - button \"机器\":\n      - generic: 机器\n    - button \"用量\":\n      - generic: 用量\n    - button \"模型服务\":\n      - generic: 模型服务\n  - heading \"在每台设备上使用 Todos\" [level=2]\n  - paragraph: 同一个账号、同一个团队、同一块看板。在一台设备上停下的工作，换一台接着做。\n  - heading \"桌面端\" [level=3]\n  - heading \"macOS\" [level=4]\n  - paragraph: 支持 Apple Silicon 与 Intel 芯片的 Mac。经 Apple 签名与公证，并自动保持最新。\n  - link \"Apple Silicon\":\n    - /url: https://assets.todos.dev/desktop/Todos-arm64.dmg\n  - link \"Intel\":\n    - /url: https://assets.todos.dev/desktop/Todos-x64.dmg\n  - heading \"Windows\" [level=4]\n  - generic: 当前设备\n  - paragraph: 适用于 64 位 Windows 的安装程序。关闭窗口后，任务仍在系统托盘中继续运行。\n  - link \"Windows x64\":\n    - /url: https://assets.todos.dev/desktop/Todos-win-x64.exe\n  - heading \"Linux\" [level=4]\n  - paragraph: 提供适用于 64 位 Linux 的 AppImage 与 .deb 安装包。\n  - link \"AppImage\":\n    - /url: https://assets.todos.dev/desktop/Todos-linux-x64.AppImage\n  - link \"Debian / Ubuntu (.deb)\":\n    - /url: https://assets.todos.dev/desktop/Todos-linux-x64.deb\n  - heading \"移动端、网页与命令行\" [level=3]\n  - heading \"iPhone 与 Android\" [level=4]\n  - paragraph: 从浏览器安装到主屏幕，Agent 需要你时，推送通知即时送达。\n  - link \"安装方法\":\n    - /url: \"#install\"\n  - heading \"网页版\" [level=4]\n  - paragraph: 无需安装，在任意现代浏览器中使用完整功能。\n  - link \"打开 Todos\":\n    - /url: /app\n  - heading \"命令行\" [level=4]\n  - paragraph: 让任意电脑或无界面服务器作为机器上线，领取并运行任务。\n  - code: npm i -g @todos-dev/cli\n  - link \"安装指南\":\n    - /url: /zh/docs/install\n  - heading \"把 Todos 放到主屏幕\" [level=2]\n  - paragraph: Todos 以网页应用的形式安装到主屏幕，不经应用商店分发，版本始终与线上保持一致。\n  - paragraph: Todos\n  - paragraph: todos.dev\n  - paragraph: Todos 将在独立窗口中打开，拥有独立图标，并可接收通知。\n  - button \"安装 Todos\"\n  - paragraph: 在手机上打开这一页\n  - paragraph: 扫码后即可在手机上安装。\n  - link \"[todos]\":\n    - /url: /zh\n  - link \"登录\":\n    - /url: /login\n  - link \"定价\":\n    - /url: /zh/pricing\n  - link \"文档\":\n    - /url: /zh/docs\n  - link \"更新日志\":\n    - /url: /zh/docs/changelog\n  - link \"隐私政策\":\n    - /url: /zh/privacy\n  - link \"用户协议\":\n    - /url: /zh/terms\n  - generic: © 2026 Todos\n- alert",
+    "info": {
+      "links": [
+        {
+          "href": "/zh",
+          "text": "[todos]"
+        },
+        {
+          "href": "/zh/features",
+          "text": "功能"
+        },
+        {
+          "href": "/zh/install",
+          "text": "下载"
+        },
+        {
+          "href": "/zh/docs",
+          "text": "文档"
+        },
+        {
+          "href": "/zh/pricing",
+          "text": "定价"
+        },
+        {
+          "href": "/zh/install",
+          "text": ""
+        },
+        {
+          "href": "/app",
+          "text": "打开 Todos"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-win-x64.exe",
+          "text": "下载 Windows 版"
+        },
+        {
+          "href": "#platforms",
+          "text": "全部平台"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-arm64.dmg",
+          "text": "Apple Silicon"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-x64.dmg",
+          "text": "Intel"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-win-x64.exe",
+          "text": "Windows x64"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-linux-x64.AppImage",
+          "text": "AppImage"
+        },
+        {
+          "href": "https://assets.todos.dev/desktop/Todos-linux-x64.deb",
+          "text": "Debian / Ubuntu (.deb)"
+        },
+        {
+          "href": "#install",
+          "text": "安装方法"
+        },
+        {
+          "href": "/app",
+          "text": "打开 Todos"
+        },
+        {
+          "href": "/zh/docs/install",
+          "text": "安装指南"
+        },
+        {
+          "href": "/zh",
+          "text": "[todos]"
+        },
+        {
+          "href": "/login",
+          "text": "登录"
+        },
+        {
+          "href": "/zh/pricing",
+          "text": "定价"
+        },
+        {
+          "href": "/zh/docs",
+          "text": "文档"
+        },
+        {
+          "href": "/zh/docs/changelog",
+          "text": "更新日志"
+        },
+        {
+          "href": "/zh/privacy",
+          "text": "隐私政策"
+        },
+        {
+          "href": "/zh/terms",
+          "text": "用户协议"
+        }
+      ],
+      "text": "[todos]\n功能\n下载\n文档\n定价\n简\n打开 Todos\n下载 Todos\n\n用 Mac、Windows 或 Linux 桌面应用驱动你的 Agent 团队，用手机随时跟进，也可以在任意浏览器中打开。一个账号，处处同步。\n\n下载 Windows 版\n全部平台\n\n适用于 Windows x64\n\n展开侧边栏 Ctrl B\n搜索 Ctrl K\n新任务 N\n工作台\n定时\n连接\n技能\n展开项目\n展开资源\n🛠️\n功能开发\n2\n\n我想做一个自己的博客：Markdown 写作、代码高亮、标签归档，风格干净简洁。尽快给我看第一版。\n\n🔀 收到，我把它拆成 3 个并行任务同时开工，第一版合出来就请你过目。\n\n任务\n负责人\n151\n搭建首页、文章页和标签归档页，配上简洁主题\n前端工程师\n152\n渲染 Markdown 文章：代码高亮，并按标签归档\n后端工程师\n153\n接好 Vercel 部署流水线，并把域名指过去\n运维工程师\n完成 41s\n\n11:30\n\n进展顺利：页面和流水线先完成了，架构师已开始把关；Markdown 渲染快好了。\n\n完成 6s\n\n12:05\n\n🔄 Markdown 渲染也交付了，但审核揪出一个问题：漏了 HTML 转义，后端工程师正在补。\n\n完成 9s\n\n12:40\n\n✅ 修复过了复审，第一版已合并到 develop，预览跑在 localhost:4321，去看看吧。\n\n完成 5s\n\n14:10\n\n预览看了，整体不错。两个问题：代码块在手机上横向溢出，标签归档排序是乱的。改好叫我。\n\n🔄 明白，两处分头处理：\n前端工程师 修代码块溢出，\n后端工程师 修归档排序，都过复审我再叫你。\n\n完成 23s\n\n15:40\n\n✅ 两处都修好了，复审也通过。要现在上线吗？\n\n完成 4s\n\n17:05\n\n可以，上线。\n\n17:12\n\n🚀 上线了！inkwell.blog 已经可以访问，去发出你的第一篇文章吧。\n\n完成 1m 2s\n\n有什么可以帮你的？\n\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n3\nI\nInkwell\n#151\n\n搭建首页、文章页和标签归档页，配上简洁主题\n\n1 分钟前\nI\nInkwell\n#152\n\n渲染 Markdown 文章：代码高亮，并按标签归档\n\n1 分钟前\nI\nInkwell\n#153\n\n接好 Vercel 部署流水线，并把域名指过去\n\n1 分钟前\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n全部\nCtrl K\n任务\nCtrl P\n主题\nCtrl J\nTab 切换范围\n\n前往\n\n工作台\n定时\n团队\n连接\n技能\n密钥\n机器\n用量\n模型服务\n在每台设备上使用 Todos\n\n同一个账号、同一个团队、同一块看板。在一台设备上停下的工作，换一台接着做。\n\n桌面端\nmacOS\n\n支持 Apple Silicon 与 Intel 芯片的 Mac。经 Apple 签名与公证，并自动保持最新。\n\nApple Silicon\nIntel\nWindows\n当前设备\n\n适用于 64 位 Windows 的安装程序。关闭窗口后，任务仍在系统托盘中继续运行。\n\nWindows x64\nLinux\n\n提供适用于 64 位 Linux 的 AppImage 与 .deb 安装包。\n\nAppImage\nDebian / Ubuntu (.deb)\n移动端、网页与命令行\niPhone 与 Android\n\n从浏览器安装到主屏幕，Agent 需要你时，推送通知即时送达。\n\n安装方法\n网页版\n\n无需安装，在任意现代浏览器中使用完整功能。\n\n打开 Todos\n命令行\n\n让任意电脑或无界面服务器作为机器上线，领取并运行任务。\n\nnpm i -g @todos-dev/cli\n安装指南\n把 Todos 放到主屏幕\n\nTodos 以网页应用的形式安装到主屏幕，不经应用商店分发，版本始终与线上保持一致。\n\nTodos\n\ntodos.dev\n\nTodos 将在独立窗口中打开，拥有独立图标，并可接收通知。\n\n安装 Todos\n\n在手机上打开这一页\n\n扫码后即可在手机上安装。\n\n[todos]\n登录\n定价\n文档\n更新日志\n隐私政策\n用户协议\n© 2026 Todos",
+      "theme": "__variable_7252a8 __variable_aebc29",
+      "url": "https://todos.dev/zh/install"
+    }
+  },
+  {
+    "name": "12-new-task-entry.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\" [active]\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- generic: 新任务",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n新任务",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "13-search-panel.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- dialog:\n  - textbox \"搜索任务、项目、成员…\" [active]\n  - tablist:\n    - tab \"全部\":\n      - generic: 全部\n      - generic: Ctrl K\n    - tab \"任务\":\n      - generic: 任务\n      - generic: Ctrl P\n    - tab \"主题\":\n      - generic: 主题\n      - generic: Ctrl J\n  - generic: 全部\n  - generic: Ctrl K\n  - generic: 任务\n  - generic: Ctrl P\n  - generic: 主题\n  - generic: Ctrl J\n  - generic: 全部\n  - generic: Ctrl K\n  - generic: Tab 切换范围\n  - generic: 前往\n  - generic: 工作台\n  - generic: 定时\n  - generic: 团队\n  - generic: 连接\n  - generic: 技能\n  - generic: 密钥\n  - generic: 机器\n  - generic: 模型服务\n  - generic: 帐号\n  - generic: API 密钥",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n全部\nCtrl K\n任务\nCtrl P\n主题\nCtrl J\n全部\nCtrl K\n任务\nCtrl P\n主题\nCtrl J\n全部\nCtrl K\nTab 切换范围\n前往\n工作台\n定时\n团队\n连接\n技能\n密钥\n机器\n模型服务\n帐号\nAPI 密钥",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "14-user-menu.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- dialog:\n  - generic: RunXin Xu\n  - generic: xurunxin@gmail.com\n  - generic: 外观\n  - generic: 浅色\n  - generic: 深色\n  - generic: 帐号\n  - generic: API 密钥\n  - generic: MCP\n  - generic: 反馈\n  - generic: 新功能\n  - generic: 快捷键",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\nRunXin Xu\nxurunxin@gmail.com\n外观\n浅色\n深色\n帐号\nAPI 密钥\nMCP\n反馈\n新功能\n快捷键",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "15-workbench-light.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\" [active]:\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务",
+      "theme": "light",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "16-board-full-light.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"展开总管聊天\" [active]:\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务",
+      "theme": "light",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "17-connections-light.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 连接\n- generic: 自定义连接\n- generic: 连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n- tablist:\n  - tab \"全部\":\n    - generic: 全部\n  - tab \"已连接\":\n    - generic: 已连接\n  - tab \"项目管理\":\n    - generic: 项目管理\n  - tab \"文档\":\n    - generic: 文档\n  - tab \"沟通\":\n    - generic: 沟通\n  - tab \"监控\":\n    - generic: 监控\n  - tab \"数据库\":\n    - generic: 数据库\n  - tab \"云服务\":\n    - generic: 云服务\n  - tab \"支付\":\n    - generic: 支付\n  - tab \"自定义\":\n    - generic: 自定义\n- generic: 全部\n- generic: 已连接\n- generic: 项目管理\n- generic: 文档\n- generic: 沟通\n- generic: 监控\n- generic: 数据库\n- generic: 云服务\n- generic: 支付\n- generic: 自定义\n- generic: 全部",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n连接\n自定义连接\n连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部",
+      "theme": "light",
+      "url": "https://todos.dev/app/resources/connections"
+    }
+  },
+  {
+    "name": "17-connections-light.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 连接\n- generic: 自定义连接\n- generic: 连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n- tablist:\n  - tab \"全部\":\n    - generic: 全部\n  - tab \"已连接\":\n    - generic: 已连接\n  - tab \"项目管理\":\n    - generic: 项目管理\n  - tab \"文档\":\n    - generic: 文档\n  - tab \"沟通\":\n    - generic: 沟通\n  - tab \"监控\":\n    - generic: 监控\n  - tab \"数据库\":\n    - generic: 数据库\n  - tab \"云服务\":\n    - generic: 云服务\n  - tab \"支付\":\n    - generic: 支付\n  - tab \"自定义\":\n    - generic: 自定义\n- generic: 全部\n- generic: 已连接\n- generic: 项目管理\n- generic: 文档\n- generic: 沟通\n- generic: 监控\n- generic: 数据库\n- generic: 云服务\n- generic: 支付\n- generic: 自定义\n- generic: 全部\n- button \"Linear, 未连接\":\n  - generic: Linear\n  - generic: Linear 是面向软件团队的项目与工单管理工具。\n  - generic: 项目管理 · 未连接\n- button \"Notion, 未连接\":\n  - generic: Notion\n  - generic: Notion 是集文档、知识库与数据库于一体的协作空间。\n  - generic: 文档 · 未连接\n- button \"Jira / Confluence, 未连接\":\n  - generic: Jira / Confluence\n  - generic: Jira 管理工单与迭代，Confluence 承载团队文档，一次登录同时连接两者。\n  - generic: 项目管理 · 未连接\n- button \"Slack, 未连接\":\n  - generic: Slack\n  - generic: Slack 是团队即时沟通工具，以频道和私信组织对话。\n  - generic: 沟通 · 未连接\n- button \"Sentry, 未连接\":\n  - generic: Sentry\n  - generic: Sentry 是应用错误监控与性能追踪平台。\n  - generic: 监控 · 未连接\n- button \"Datadog, 未连接\":\n  - generic: Datadog\n  - generic: Datadog 是覆盖日志、指标与链路追踪的可观测性平台。\n  - generic: 监控 · 未连接\n- button \"PostHog, 未连接\":\n  - generic: PostHog\n  - generic: PostHog 提供产品分析、功能开关与错误追踪。\n  - generic: 监控 · 未连接\n- button \"Mixpanel, 未连接\":\n  - generic: Mixpanel\n  - generic: Mixpanel 是产品分析平台，覆盖事件、漏斗与留存分析。\n  - generic: 监控 · 未连接\n- button \"Amplitude, 未连接\":\n  - generic: Amplitude\n  - generic: Amplitude 是数字分析平台，覆盖产品使用分析、实验与会话回放。\n  - generic: 监控 · 未连接\n- button \"Supabase, 未连接\":\n  - generic: Supabase\n  - generic: Supabase 是基于 Postgres 的开源后端平台，提供数据库、认证与存储。\n  - generic: 数据库 · 未连接\n- button \"Neon, 未连接\":\n  - generic: Neon\n  - generic: Neon 是 Serverless Postgres 平台，支持数据库分支。\n  - generic: 数据库 · 未连接\n- button \"Cloudflare, 未连接\":\n  - generic: Cloudflare\n  - generic: Cloudflare 提供 CDN、DNS、Workers 等网络与边缘计算服务。\n  - generic: 云服务 · 未连接\n- button \"Netlify, 未连接\":\n  - generic: Netlify\n  - generic: Netlify 是前端项目的构建、部署与托管平台。\n  - generic: 云服务 · 未连接\n- button \"Vercel, 未连接\":\n  - generic: Vercel\n  - generic: Vercel 是前端与全栈应用的部署与托管平台。\n  - generic: 云服务 · 未连接\n- button \"Railway, 未连接\":\n  - generic: Railway\n  - generic: Railway 是一站式应用部署平台，托管服务、数据库与定时任务。\n  - generic: 云服务 · 未连接\n- button \"Expo, 未连接\":\n  - generic: Expo\n  - generic: Expo 通过 EAS 构建、提交和更新 React Native 应用。\n  - generic: 云服务 · 未连接\n- button \"DigitalOcean, 未连接\":\n  - generic: DigitalOcean\n  - generic: DigitalOcean 是面向开发者的云平台，一次登录连接其全部服务。\n  - generic: 云服务 · 未连接\n- button \"Stripe, 未连接\":\n  - generic: Stripe\n  - generic: Stripe 是在线支付与订阅计费平台。\n  - generic: 支付 · 未连接\n- generic: 连接",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n连接\n自定义连接\n连接让 Agent 读取你在其他应用里的数据——工单、文档、报错、数据库。没有你在用的应用？ 建议添加连接\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部\n已连接\n项目管理\n文档\n沟通\n监控\n数据库\n云服务\n支付\n自定义\n全部\nLinear\nLinear 是面向软件团队的项目与工单管理工具。\n项目管理 · 未连接\nNotion\nNotion 是集文档、知识库与数据库于一体的协作空间。\n文档 · 未连接\nJira / Confluence\nJira 管理工单与迭代，Confluence 承载团队文档，一次登录同时连接两者。\n项目管理 · 未连接\nSlack\nSlack 是团队即时沟通工具，以频道和私信组织对话。\n沟通 · 未连接\nSentry\nSentry 是应用错误监控与性能追踪平台。\n监控 · 未连接\nDatadog\nDatadog 是覆盖日志、指标与链路追踪的可观测性平台。\n监控 · 未连接\nPostHog\nPostHog 提供产品分析、功能开关与错误追踪。\n监控 · 未连接\nMixpanel\nMixpanel 是产品分析平台，覆盖事件、漏斗与留存分析。\n监控 · 未连接\nAmplitude\nAmplitude 是数字分析平台，覆盖产品使用分析、实验与会话回放。\n监控 · 未连接\nSupabase\nSupabase 是基于 Postgres 的开源后端平台，提供数据库、认证与存储。\n数据库 · 未连接\nNeon\nNeon 是 Serverless Postgres 平台，支持数据库分支。\n数据库 · 未连接\nCloudflare\nCloudflare 提供 CDN、DNS、Workers 等网络与边缘计算服务。\n云服务 · 未连接\nNetlify\nNetlify 是前端项目的构建、部署与托管平台。\n云服务 · 未连接\nVercel\nVercel 是前端与全栈应用的部署与托管平台。\n云服务 · 未连接\nRailway\nRailway 是一站式应用部署平台，托管服务、数据库与定时任务。\n云服务 · 未连接\nExpo\nExpo 通过 EAS 构建、提交和更新 React Native 应用。\n云服务 · 未连接\nDigitalOcean\nDigitalOcean 是面向开发者的云平台，一次登录连接其全部服务。\n云服务 · 未连接\nStripe\nStripe 是在线支付与订阅计费平台。\n支付 · 未连接\n连接",
+      "theme": "light",
+      "url": "https://todos.dev/app/resources/connections"
+    }
+  },
+  {
+    "name": "18-board-full-dark.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"展开总管聊天\" [active]:\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "19-chief-chat.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\" [active]:",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "20-setup-panel.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- button \"看板\":\n- dialog:\n  - generic: 完成设置\n  - generic: 总管接收消息之前，团队需要一台可运行的机器和一个可用的模型。\n  - generic: 添加机器\n  - generic: 添加运行时\n  - generic: 设置团队\n  - generic: \"4\"\n  - generic: 创建项目\n  - generic: 设置团队\n  - generic: 总管负责规划工作，并分派给团队里的 Agent。先创建总管，再添加 Agent——也可以之后让总管自己组建团队。\n  - generic: 总管\n  - generic: gpt-6.1-sol · 高\n  - generic: worker\n  - generic: gpt-6-luna · 最高\n  - generic: 创建 Agent\n  - generic: 这里的 Agent 可选：之后随时可以在团队页添加，或让总管来添加。\n  - generic: 下一步",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n完成设置\n总管接收消息之前，团队需要一台可运行的机器和一个可用的模型。\n添加机器\n添加运行时\n设置团队\n4\n创建项目\n设置团队\n总管负责规划工作，并分派给团队里的 Agent。先创建总管，再添加 Agent——也可以之后让总管自己组建团队。\n总管\ngpt-6.1-sol · 高\nworker\ngpt-6-luna · 最高\n创建 Agent\n这里的 Agent 可选：之后随时可以在团队页添加，或让总管来添加。\n下一步",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "21-team-agents.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: RunXin Xu's team\n- generic: 设置\n- generic: 2 个成员\n- generic: FREE\n- generic: 升级 →\n- tablist:\n  - tab \"grid\":\n  - tab \"chart\":\n- generic: 总管\n- generic: gpt-6.1-sol · 高\n- generic: worker\n- generic: gpt-6-luna · 最高\n- generic: 创建 Agent",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\nRunXin Xu's team\n设置\n2 个成员\nFREE\n升级 →\n总管\ngpt-6.1-sol · 高\nworker\ngpt-6-luna · 最高\n创建 Agent",
+      "theme": "dark",
+      "url": "https://todos.dev/app/team"
+    }
+  },
+  {
+    "name": "22-agent-detail.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: worker\n- tablist:\n  - tab \"概览\":\n    - generic: 概览\n  - tab \"记忆\":\n    - generic: 记忆\n  - tab \"权限\":\n    - generic: 权限\n- generic: 概览\n- generic: 记忆\n- generic: 权限\n- generic: 概览\n- generic \"更换\":\n- generic: worker\n- generic: 职责\n- generic: 用一两句话说明该 Agent 的职责。该说明会注入它执行的每个任务，也会提供给总管用于分派。\n- generic: 默认 skill\n- generic: 该 Agent 执行任何任务时自动携带的团队技能，无需在消息中 @ 引用。\n- generic: 运行时\n- generic: Codex\n- generic: 使用你机器上安装的 Codex CLI 及其 ChatGPT 登录运行。\n- generic: 模型\n- generic: GPT-6-Luna\n- generic: 思考强度\n- generic: 最高\n- generic: active · 创建于 2026/10/7\n- generic: 进行中\n- generic: 暂无进行中的任务\n- generic: 删除 Agent",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\nworker\n概览\n记忆\n权限\n概览\n记忆\n权限\n概览\nworker\n职责\n用一两句话说明该 Agent 的职责。该说明会注入它执行的每个任务，也会提供给总管用于分派。\n默认 skill\n该 Agent 执行任何任务时自动携带的团队技能，无需在消息中 @ 引用。\n运行时\nCodex\n使用你机器上安装的 Codex CLI 及其 ChatGPT 登录运行。\n模型\nGPT-6-Luna\n思考强度\n最高\nactive · 创建于 2026/10/7\n进行中\n暂无进行中的任务\n删除 Agent",
+      "theme": "dark",
+      "url": "https://todos.dev/app/resources/agents/ylZRCk9jdHaXeh5AuWsvv?name=worker"
+    }
+  },
+  {
+    "name": "23-board-guide.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- dialog:\n  - generic: 创建任务\n  - generic: 看板上的每张卡片对应一个任务，有两种创建方式：\n  - generic: 「新任务」按钮\n  - generic: \"N\"\n  - generic: 点击左侧边栏的「新任务」，填写任务信息后提交。\n  - generic: 主题对话\n  - generic: 在首页的「总管」主题对话中描述需求，任务将自动创建并进入「待开始」列。\n  - generic \"第 1 步，共 5 步\"\n  - generic: 下一步",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n创建任务\n看板上的每张卡片对应一个任务，有两种创建方式：\n「新任务」按钮\nN\n点击左侧边栏的「新任务」，填写任务信息后提交。\n主题对话\n在首页的「总管」主题对话中描述需求，任务将自动创建并进入「待开始」列。\n下一步",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "24-board-guide-states.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- dialog:\n  - generic: 在本机预览改动\n  - generic: 任务的改动保存在其专属分支上。点击看板卡片或任务详情页右上角的下载图标：\n  - generic: 「同步到机器」\n  - generic: Ctrl Alt S\n  - generic: 将任务分支的提交同步到运行 tds 的本机目录，可在本地直接查看与运行。快捷键在任务页生效。\n  - generic: Git\n  - generic: 复制检出命令，在任意本地克隆中切换到任务分支。\n  - generic: 查看全部快捷键\n  - generic: Ctrl /\n  - generic \"第 5 步，共 5 步\"\n  - generic: 上一步\n  - generic: 完成",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n在本机预览改动\n任务的改动保存在其专属分支上。点击看板卡片或任务详情页右上角的下载图标：\n「同步到机器」\nCtrl Alt S\n将任务分支的提交同步到运行 tds 的本机目录，可在本地直接查看与运行。快捷键在任务页生效。\nGit\n复制检出命令，在任意本地克隆中切换到任务分支。\n查看全部快捷键\nCtrl /\n上一步\n完成",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "24-board-guide-states.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- dialog:\n  - generic: 任务阶段与推进\n  - generic: 看板的四列从左到右对应任务的四个阶段。推进任务的方式如下：\n  - generic: \"1\"\n  - generic: 待开始\n  - generic: \"2\"\n  - generic: 执行中\n  - generic: \"3\"\n  - generic: 待处理\n  - generic: \"4\"\n  - generic: 已完成\n  - generic: 卡片操作\n  - generic: 卡片右下角的主按钮随任务状态变化：开始、确认、完成；构建失败时显示重试，等待回复时显示回复。\n  - generic: 卡片菜单\n  - generic: 右键点击卡片打开菜单：下一步操作排在最前，运行中的任务可中断，还可编辑、复制、复制链接、关闭或删除；已完成的卡片可重开。\n  - generic: 拖拽移动\n  - generic: 将卡片直接拖拽至目标列，按住 Ctrl 或 ⌘ 点选可一次拖动多张。已开始的卡片拖回「待开始」会重置任务：中断构建并清空对话、方案和改动记录。\n  - generic: 详情页操作\n  - generic: 任务详情页右上角的主按钮随阶段变化：确认、完成、重跑，运行中会置灰。\n  - generic \"第 2 步，共 5 步\"\n  - generic: 上一步\n  - generic: 下一步",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n任务阶段与推进\n看板的四列从左到右对应任务的四个阶段。推进任务的方式如下：\n1\n待开始\n2\n执行中\n3\n待处理\n4\n已完成\n卡片操作\n卡片右下角的主按钮随任务状态变化：开始、确认、完成；构建失败时显示重试，等待回复时显示回复。\n卡片菜单\n右键点击卡片打开菜单：下一步操作排在最前，运行中的任务可中断，还可编辑、复制、复制链接、关闭或删除；已完成的卡片可重开。\n拖拽移动\n将卡片直接拖拽至目标列，按住 Ctrl 或 ⌘ 点选可一次拖动多张。已开始的卡片拖回「待开始」会重置任务：中断构建并清空对话、方案和改动记录。\n详情页操作\n任务详情页右上角的主按钮随阶段变化：确认、完成、重跑，运行中会置灰。\n上一步\n下一步",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "25-board-filters.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\" [active]:\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- generic: 创建者\n- generic: 我创建的\n- generic: 总管或 Agent 创建的\n- generic: 其他成员创建的\n- generic: 项目\n- generic: 暂无项目",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n创建者\n我创建的\n总管或 Agent 创建的\n其他成员创建的\n项目\n暂无项目",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "26-workbench-restored.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\" [active]:\n- button \"收起总管聊天\":\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- generic: 筛选",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n筛选",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "18-board-full-dark.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"展开总管聊天\" [active]:\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  },
+  {
+    "name": "26-workbench-restored.png",
+    "snap": "- generic \"收起侧边栏\":\n- generic: RunXin Xu's team\n- generic: FREE\n- generic: 搜索\n- generic: Ctrl K\n- generic: 新任务\n- generic: \"N\"\n- generic: 工作台\n- generic: 定时\n- generic: 连接\n- generic: 技能\n- generic \"收起项目\":\n  - generic: 项目\n- generic: 新建项目\n- generic \"收起资源\":\n  - generic: 资源\n- generic: 用量\n- generic: 机器\n- generic: 模型服务\n- generic: 密钥\n- generic \"安装 App\":\n  - generic: 安装 App\n- generic \"RunXin Xu\":\n  - generic: RunXin Xu\n- generic: 新主题\n- generic \"新主题\":\n- generic \"总管设置\":\n- generic: 完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n- generic: 去设置\n- generic: 选择一个主题开始\n- generic: 介绍一下 Todos 这个产品怎么用\n- generic: 帮我组建 Agent 团队\n- generic: 如何让 Agent 在我的电脑上写代码？\n- textbox \"有什么可以帮你的？\"\n- generic \"语音输入\":\n- generic \"添加附件\":\n- generic \"提及\":\n- generic \"发送\":\n- generic \"返回\":\n- generic: 看板\n- generic \"看板指南\":\n- generic \"筛选\":\n- button \"收起总管聊天\" [active]:\n- generic: 待开始\n- generic: \"0\"\n- generic: 没有等待开始的任务\n- generic: 执行中\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有执行中的任务\n- generic: 待处理\n- generic: \"0\"\n- button \"筛选\":\n- generic: 没有等你处理的任务\n- generic: 已完成\n- generic: \"0\"\n- generic: 最近 7 天\n- generic: 最近 7 天没有完成的任务\n- button \"看板\":\n- generic: 收起总管聊天 Ctrl Shift Enter",
+    "info": {
+      "links": [],
+      "text": "RunXin Xu's team\nFREE\n搜索\nCtrl K\n新任务\nN\n工作台\n定时\n连接\n技能\n项目\n新建项目\n资源\n用量\n机器\n模型服务\n密钥\n安装 App\nRunXin Xu\n新主题\n完成设置（机器、模型、Agent 团队和第一个项目），就可以开始和总管协作了。\n去设置\n选择一个主题开始\n介绍一下 Todos 这个产品怎么用\n帮我组建 Agent 团队\n如何让 Agent 在我的电脑上写代码？\n看板\n待开始\n0\n没有等待开始的任务\n执行中\n0\n没有执行中的任务\n待处理\n0\n没有等你处理的任务\n已完成\n0\n最近 7 天\n最近 7 天没有完成的任务\n收起总管聊天 Ctrl Shift Enter",
+      "theme": "dark",
+      "url": "https://todos.dev/app/"
+    }
+  }
+]

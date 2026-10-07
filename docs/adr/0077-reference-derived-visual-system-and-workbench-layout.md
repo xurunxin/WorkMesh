@@ -19,11 +19,10 @@ palette onto a single `--wm-*` token set, deletes a legacy dark theme and an
 "operations" theme, and scopes itself to **light only**, stating that dark mode is
 out of scope and that a future ADR may add `[data-theme="dark"]`.
 
-A full measurement of a reference product is now available locally
-(`G:\Projects\MetronX\todos-dev-analysis\`, with `design-tokens.md`,
-`kanban-cards.md`, and 28 screenshots). It is a strong reference, and adopting it
-naively would violate decisions WorkMesh has already made. Three tensions have to
-be named before anything is copied.
+参考产品的完整测量原件保存在[`docs/references/todos-analysis/`](../references/todos-analysis/)，
+包括 `design-tokens.md`、`kanban-cards.md`、五份引用的测量 JSON、截图索引和 28 张原始截图。
+`SOURCE-MANIFEST.json` 记录原始字节数与 SHA-256。Markdown 文件包含测量值摘要；JSON 和截图是
+支持证据，不能替代原件。直接照搬参考产品会违反 WorkMesh 已作出的决策；复制前必须明确三处张力。
 
 **The reference implements its design with Tailwind utility classes.** A real card
 carries `flex flex-col gap-1.5 rounded-lg border border-line bg-white px-3 py-2.5

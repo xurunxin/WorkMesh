@@ -10,22 +10,41 @@
 `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
 `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`（D 链 UI 重构）。
 
-对照物：todos.dev 的引入过程实测记录在 `G:\Projects\MetronX\todos-dev-analysis\`
-（`README.md`、`ui-inventory.md`、`kanban-cards.md`、28 张截图）。
+对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，包括 `ui-inventory.md`、`design-tokens.md`、
+`kanban-cards.md`、引用的测量 JSON、截图索引和 28 张原始截图；来源与哈希见该目录的 `SOURCE-MANIFEST.json`。
 
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
 
-## 本批执行记录约定（用户批准：2026-10-07 18:38，Asia/Shanghai）
+## 本批执行记录例外
 
-本批任务使用 Todos 编排并记录执行进度，仓库保存规格与证据，替代
-`AGENTS.md` 中要求的真实 WorkMesh Project/WorkItem 双轨记录。**例外只适用于本批**：
-不声称已创建真实 WorkMesh Project/WorkItem，也不声称已向其同步活动记录；后续任务
-仍按各自批准的控制面要求执行。领域、安全、测试及代码约束不因该例外放宽。
+经用户于 2026-10-07 18:38（Asia/Shanghai）明确批准，本批仅以 Todos 编排、以仓库保存
+规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
+此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
+也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
+总管已按 G1 交接映射同步 #5–#17 与 #20–#22 的完整 spec（包括已关闭的 #6）；本地证据记录
+逐项核验结果。本例外只适用于本批 Todo #18 及其映射的批次任务。
 
-用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、
-确认计划并合并仓库改动。真实设计分歧、新需求、团队权限变更、凭证授权和仓库外发布，
-仍须单独批准。本 P1 的证据冻结门禁未通过前，B/A/D/C 链不得开始。
+用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、确认计划并合并仓库改动。
+真实新设计分歧、新需求、团队权限变更、凭证授权及仓库以外发布仍需用户单独批准。
+
+## G1 输入可达性门禁
+
+历史 base `32789cec4d50db0b85a63d91049cc425d9e917a2` 含四份 ADR、主计划和旧 `.review.md`，但不含原件输入包及 P1 台账。
+本 G1 会话分支已纳入 `docs/references/todos-analysis/` 原件和验证脚本，来源及字节哈希见 `SOURCE-MANIFEST.json`；
+它们尚未合入目标分支，不能称为 build 可读。P1 的 16 条事实台账由 `c98ec5f538b3acd9ac052c4ef100e1d111232518`
+引入，已随 `735578d8d0733e04cae5640cedfaf0c6181391c7` 合入 PR #192 merge commit
+`660c74a6247544ffac64e7ef8f968d1025b2a668`。#2 已 done，第二轮独立审查批准合并；PR CI check 344 / run
+`37614969993` 的 8 个 job 全部成功。P1 台账现已冻结为后续输入；#3 是冻结后的独立规格裁决，不是 P1 合并前置。
+
+P1 的合入不代表 G1 材料已合入或最终门禁通过。G1 当前仍处于材料阶段独立合并门禁；材料合入后，由总管在同一 Todo #18
+启动 fresh 隔离 build，以 build 内 `git rev-parse HEAD` 为唯一实际验证 base，逐份读取输入正文并核对 Git blob、提交字节 SHA-256
+及工作树 SHA-256，再由独立复核者确认并将结果写入仓库证据。此真实 build 尚未完成；通过前依赖这些输入的任务保持“待验证”。
+#10 D0 可独立采集当前视觉基线，但不能解除其他任务门禁。
+
+交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
+`docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。
+通用分析 README 和其他采集工具不属于本批依赖输入闭包。
 
 ## 审查撤回的四个前提（写在这里以免再犯）
 
@@ -135,7 +154,7 @@
 
 按你的要求，另补跑了默认关闭的 retention upgrade barrier：设置 `RUN_RETENTION_UPGRADE_INTEGRATION=1`，使用独立 `workmesh_retention_upgrade_test` 数据库和启用 Object Lock/versioning 的 `workmesh-retention-upgrade-test` RustFS 桶，执行 `pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/retention-upgrade-barrier.integration.test.ts`；1/1 项通过，验证一个精确对象版本、versioned HEAD、零 delete marker 及 retention 扩展。此补验与上表完整 `pnpm test:integration` 分开计数。
 
-首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过；**P1 当前状态：待独立复核，尚未冻结**，本条记录不代替该复核或批准。
+首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过。#2 已完成，第二轮独立审查批准合并；PR #192 merge commit `660c74a6247544ffac64e7ef8f968d1025b2a668` 包含修订提交 `735578d8d0733e04cae5640cedfaf0c6181391c7` 与此完整台账；CI run `37614969993`（check 344）8/8 job 成功。P1 16 条事实据此冻结为后续输入；G1 实际 build 可达性仍须单独验证。
 
 ### P1 完成定义与依赖
 
@@ -306,7 +325,7 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
 
 ## D 链 — 参考产品视觉体系与工作台重构（ADR 0077）
 
-参照物：`G:\Projects\MetronX\todos-dev-analysis\`（`design-tokens.md` 实测 token、
+参照物：`docs/references/todos-analysis/`（`design-tokens.md` 实测 token、
 `kanban-cards.md` 卡片结构与 9 类交互、28 张截图）。
 
 **采纳什么、不采纳什么**（这是本链最容易做错的地方）：

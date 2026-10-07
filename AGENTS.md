@@ -4,11 +4,15 @@ This repository implements **WorkMesh**, a self-hosted collaboration platform fo
 
 Read these files before making changes:
 
-1. `WORKMESH_PRD.md`
+1. `CONTEXT.md`
 2. `AGENT_PROTOCOL.md`
 3. `OPENAPI.yaml`
 4. `SCHEMA.sql`
 5. `docs/adr/`
+
+`WORKMESH_PRD.md` 已被有意移除；不得凭记忆重建。以现行协议、API、Schema、上下文和
+已接受的 ADR 作为权威产品依据。运行时可靠性计划与 workbench baseline 计划记录了采用
+这组文档的依据。
 
 ## Repository layout
 

@@ -20,9 +20,17 @@
     "note": "Static consistency checks only; execute the migration against the target PostgreSQL version before production use."
   },
   "documents": {
-    "core_files_present": 7,
     "cross_document_terms_checked": 10,
     "roadmap_phases_present": 5,
-    "standalone_prd_matches_package_prd": true
+    "authoritative_document_set": [
+      "CONTEXT.md",
+      "AGENT_PROTOCOL.md",
+      "OPENAPI.yaml",
+      "SCHEMA.sql",
+      "docs/adr/"
+    ],
+    "standalone_prd_present": false,
+    "removed_prd_commit": "dae4620366f33136d65e533d85823db49b9a3fe1",
+    "authoritative_sources_present": true
   }
 }
