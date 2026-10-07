@@ -1,6 +1,9 @@
 apps/web/public/skills/*.md text eol=lf
 apps/agent-runner/skills/*/SKILL.md text eol=lf
 
+# Preserve source evidence byte-for-byte for provenance checks.
+docs/references/todos-analysis/** -text
+
 # Shell scripts must arrive with LF endings: the production and Lite images normalize
 # theirs with sed at build time, and a host-side script has no such step.
 infra/docker/*.sh text eol=lf

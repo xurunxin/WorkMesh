@@ -1,13 +1,7 @@
 # ADR 索引
 
-本目录共 **79** 份 ADR，编号 `0001` – `0077`。
-
-> **注意 `docs/adr/.gitignore` 的内容是 `*`。** 新增的 ADR 与本索引默认被 git
-> 忽略，`git status` 看不到它们。历史 **75** 份是靠 `git add -f` 强制入库的，因此
-> **新增 ADR 必须同样 `git add -f`**，否则等于没写。
->
-> 当前状态：磁盘上 80 个 `.md`（79 份 ADR + 本索引），git 已跟踪 75 份，
-> **未入库的正是 `0074`–`0077` 四份新 ADR 与本索引**。
+本目录共 **79** 份 ADR，编号 `0001` – `0077`，另有本索引；当前 80 个 Markdown
+文件均由 Git 跟踪。目录中没有 `.gitignore`，新增 ADR 按普通 Git 跟踪规则入库。
 
 状态分布：`Accepted` 61、`Accepted for Stage 4` 5、`Proposed, revision 2, for the repaired GEN-9 contract Gate. Implementation remains blocked until an independent Gate accepts the machine contract. No editor dependency is selected in this slice` 1、`Accepted for v1.1 (Agent-first coordination)` 1、`Proposed` 9、`Accepted for implementation` 1、`Accepted for W12 partial implementation; public Skill release remains open` 1
 

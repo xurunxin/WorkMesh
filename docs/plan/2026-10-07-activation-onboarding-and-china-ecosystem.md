@@ -1,6 +1,15 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
+## 本批执行记录例外
+
+经用户于 2026-10-07 18:38（Asia/Shanghai）明确批准，本批仅以 Todos 编排、以仓库保存
+规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
+此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
+也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
+总管负责同步受影响 Todos 的输入路径和门禁文本，并在证据中记录真实同步结果；未同步前
+状态仍为待同步。本例外只适用于本批 Todo #18 及其映射的批次任务。
+
 状态：Proposed，五条链均未开工。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
@@ -10,8 +19,23 @@
 `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
 `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`（D 链 UI 重构）。
 
-对照物：todos.dev 的引入过程实测记录在 `G:\Projects\MetronX\todos-dev-analysis\`
-（`README.md`、`ui-inventory.md`、`kanban-cards.md`、28 张截图）。
+## G1 输入可达性门禁
+
+本计划与四份 ADR 在基点 `32789cec4d50db0b85a63d91049cc425d9e917a2` 可读；参考原件由本计划同批变更
+纳入 `docs/references/todos-analysis/`，字节来源与 SHA-256 见 `SOURCE-MANIFEST.json`。该基点的审查文件
+`.review.md` 是审查矩阵，不是 P1 台账。P1 的 16 条代码事实表位于提交
+`c98ec5f538b3acd9ac052c4ef100e1d111232518` 的本计划版本，必须先经 #3 独立复核并由 #2 合入目标分支；
+其合入前任何依赖该台账的 build base 均未满足门禁。
+
+G1 第一阶段仅将材料、来源清单、批次例外及陈旧输入引用修正合入仓库，不表示最终可达性通过。后续继续在
+同一 Todo #18 中运行真实隔离 build，以该 build 的 `git rev-parse HEAD` 为唯一验证 base，读取输入正文并核对
+Git blob 与 SHA-256，再由独立复核者确认并将结果写入仓库证据。合入后的实际隔离 build 证据未通过前，依赖
+输入的任务保持“待验证”。#10 D0 可独立采集当前视觉基线，但不能解除其他任务门禁。
+
+对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，含
+`ui-inventory.md`、`design-tokens.md`、`kanban-cards.md`、引用的测量 JSON、截图索引和
+28 张截图；原始字节来源及哈希见该目录的 `SOURCE-MANIFEST.json`。通用分析 README 和采集工具
+不属于本批交接输入。
 
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
@@ -235,7 +259,7 @@ D0 是硬门禁：**没有基线就不许改 token 值**，否则视觉回归无
 
 ## D 链 — 参考产品视觉体系与工作台重构（ADR 0077）
 
-参照物：`G:\Projects\MetronX\todos-dev-analysis\`（`design-tokens.md` 实测 token、
+参照物：`docs/references/todos-analysis/`（`design-tokens.md` 实测 token、
 `kanban-cards.md` 卡片结构与 9 类交互、28 张截图）。
 
 **采纳什么、不采纳什么**（这是本链最容易做错的地方）：
