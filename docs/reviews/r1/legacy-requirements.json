@@ -685,13 +685,13 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "disposition": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
           "acceptanceAssignments": [
             {
               "seqNum": 12,
               "owner": "D2/D3 执行者",
               "spec": "docs/plan/activation-task-specs/12.md",
-              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "scope": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
               "testMapping": "docs/reviews/r1/test-coverage.json",
               "status": "待该任务实现验收；本轮仅映射"
             }
@@ -705,13 +705,13 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "disposition": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
           "acceptanceAssignments": [
             {
               "seqNum": 12,
               "owner": "D2/D3 执行者",
               "spec": "docs/plan/activation-task-specs/12.md",
-              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "scope": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
               "testMapping": "docs/reviews/r1/test-coverage.json",
               "status": "待该任务实现验收；本轮仅映射"
             }
@@ -725,13 +725,13 @@
           "targets": [
             12
           ],
-          "disposition": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+          "disposition": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
           "acceptanceAssignments": [
             {
               "seqNum": 12,
               "owner": "D2/D3 执行者",
               "spec": "docs/plan/activation-task-specs/12.md",
-              "scope": "纠正虚构awaiting_review/未来暗色/任意色距；真实workflow、execution与当前授权Attention明暗回归归#12。",
+              "scope": "撤回虚构状态/任意色距及未来暗色前提；#12按读取授权和audience.canRespond分别判可见/暖色，负责人归属不授权，覆盖他人负责但当前人可响应及已有明暗回归。",
               "testMapping": "docs/reviews/r1/test-coverage.json",
               "status": "待该任务实现验收；本轮仅映射"
             }
@@ -795,13 +795,13 @@
           "targets": [
             13
           ],
-          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "disposition": "布局独立验收归#13-delivery；A2列表组合要求归#13-integration，输入已验收#9及精确提交，不反向阻塞#9。",
           "acceptanceAssignments": [
             {
               "seqNum": 13,
               "owner": "D4 执行者",
               "spec": "docs/plan/activation-task-specs/13.md",
-              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "scope": "布局独立验收归#13-delivery；A2列表组合要求归#13-integration，输入已验收#9及精确提交，不反向阻塞#9。",
               "testMapping": "docs/reviews/r1/test-coverage.json",
               "status": "待该任务实现验收；本轮仅映射"
             }
@@ -907,5 +907,47 @@
         }
       ]
     }
-  ]
+  ],
+  "reviewCorrections": {
+    "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+    "source": "review-feedback-source.json",
+    "removedActiveRequirements": [
+      {
+        "seqNum": 12,
+        "originalText": "其他人的 Attention 对当前调用者不可见。",
+        "disposition": "撤换按负责人归属隐藏的陈旧验收；原文仅作历史，活动要求按读取授权与audience.canRespond分开判定，覆盖负责人是别人但当前人可响应。"
+      },
+      {
+        "seqNum": 12,
+        "originalText": "不新增暗色值/断言",
+        "disposition": "撤回禁止暗色断言；不引入参考暗色值迁移，保留现有暗色及明暗回归。"
+      },
+      {
+        "seqNum": 12,
+        "originalText": "原色值距离阈值在计划中给出依据和待调起始值，不把未指定数字当用户验收标准。",
+        "disposition": "撤回色距起始阈值要求，原文仅作历史；不以未测/未批准数字作验收。"
+      }
+    ],
+    "stageTransfers": [
+      {
+        "from": 9,
+        "to": 13,
+        "stageId": "13-integration",
+        "inputTodoIds": [
+          "0BkezbmWV6k8vwrlSNuF_"
+        ],
+        "requirement": "消费已验收#9后，A2+D4组合面窄屏列表/键盘/焦点/返回列表不丢失，异步Team切换不落旧投影"
+      },
+      {
+        "from": 28,
+        "to": 29,
+        "stageId": "29-integration",
+        "inputTodoIds": [
+          "89f9yFnmIg4nszXIBCByh",
+          "YtFHUCHv8l4JZcYd1qHAU"
+        ],
+        "requirement": "消费已验收#27/#28后，恢复创建和根完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格，REST/MCP重连可追溯"
+      }
+    ]
+  }
 }

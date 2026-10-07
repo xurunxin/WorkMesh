@@ -8,7 +8,9 @@ Status: Proposed。产品链共五条：A/B/C/D/F；P0/P1/G1/D0为各自前置�
 
 G1已done：最终审查head c7a1af7d7b2e125368b29975867b4d392690fc38在main 72dbd5e862a81edc36b1f0ea59df69e6aa4b01b2，head/main tree diff为空。最终MD/JSON/ZIP/index可读，CI376/run37669698793十job成功为G1的历史证据。最新实际main 5743f027ec86e8726d2cfdd38e0e038bdebeae49追加PR202的7个CI/配置文件，未改G1历史门禁；不把G1成功冒作R1检查。原G1计划段完整存于[历史摘录](../reviews/r1/historical-plan-excerpts.json)，原证据文件不改写。
 
-P1已冻结，D0已完成亮色基线，不代表产品仅亮色。R1本轮已获完整规格修订授权，当前修订不启动产品实现；须最终独审、blocking/high闭合、最新PR必需CI成功并正常合入后，Chief才逐项同步看板和放行对应实现。每次下游开工复读最新main及29卡，核对updatedAt/状态/哈希并归因差异；版本推进不是错误，不再要求与旧dcf正文相等。
+P1已冻结，D0已完成亮色基线，不代表产品仅亮色。R1本轮已获完整规格修订授权，当前修订不启动产品实现；须最终独审、blocking/high闭合、最新PR必需CI成功并正常合入后，Chief才逐项同步看板，并放行本批已授权的 B/A/C/D 实现。每次下游开工复读最新main及29卡，核对updatedAt/状态/哈希并归因差异；版本推进不是错误，不再要求与旧dcf正文相等。
+
+F0–F6 产品实现授权门禁：R1 合入和依赖验收不能替代 F 产品实现范围授权；由 Chief 取得并记录用户对各卡实现范围的确认后才可派发实现。F2 自主委派与 F5 有审计重新投递的既有设计决定保留，不重新询问；本轮规格修订授权不自动扩为 F 产品功能实现授权。
 
 ## 输入、范围与复用边界
 
@@ -92,7 +94,7 @@ P1已冻结，D0已完成亮色基线，不代表产品仅亮色。R1本轮已�
 | [#10](todo:MPhtZiff23B33m9i2equq) | [[D0] 视觉基线采集（硬门禁，不写实现）](activation-task-specs/10.md) | done | — | — |
 | [#11](todo:IJQA_DfxU0hF5e8L5Xb3v) | [[D1a] 新增并存语义 token 与参考实测映射](activation-task-specs/11.md) | todo | #1、#2、#18、#3、#10 | — |
 | [#12](todo:MRdRKNdufZ2cFEv3hwaf7) | [[D2] 卡片结构契约 + 单暖色不变量（两条合并，同一组件层）](activation-task-specs/12.md) | todo | #1、#2、#18、#3、#21 | — |
-| [#13](todo:O2iz8mb_26RoIlnpfXwxV) | [[D4] 三栏工作台布局：对话与看板并排，状态被记忆](activation-task-specs/13.md) | todo | #1、#2、#18、#3、#12 | — |
+| [#13](todo:O2iz8mb_26RoIlnpfXwxV) | [[D4] 三栏工作台布局：对话与看板并排，状态被记忆](activation-task-specs/13.md) | todo | #1、#2、#18、#3、#12 | #9（仅组合阶段） |
 | [#14](todo:YLnrl8RaxiZjEjsVQ80B2) | [[D5a] 状态化主动作与菜单：仅领域写入走受治理命令](activation-task-specs/14.md) | todo | #1、#2、#18、#3、#13 | — |
 | [#15](todo:kkG9VeT3_uTzREhjnX2ve) | [[C1] 渠道投递契约：投递意图 + 每目标 attempt + fenced ack](activation-task-specs/15.md) | todo | #1、#2、#18、#3 | — |
 | [#16](todo:kjOs4t_DtMyrkHTBFmpQ5) | [[C2] 企业微信适配器：只提醒 + 深链，卡片不承载决策](activation-task-specs/16.md) | todo | #2、#18、#3、#15 | — |
@@ -119,13 +121,17 @@ graph LR
  R1 --> C15["#15 C1"] --> C16["#16 C2"]
  R1 --> C17["#17 C3"]
  D0["#10 D0"] --> D11["#11 D1a"] --> D21["#21 D1b"] --> D12["#12 D2/D3"] --> D13["#13 D4"] --> D14["#14 D5a"] --> D22["#22 D5b"]
+ A9 -. "#13 组合阶段输入" .-> D13
  R1 --> D11
  R1 --> F23["#23 F0"] --> F24["#24 F1"] --> F25["#25 F2"] --> F26["#26 F3"]
  F26 --> F27["#27 F4"]
  F26 --> F28["#28 F5"] --> F29["#29 F6"]
  F27 --> J["#29 最终联合验收"]
+ F28 --> J
  F29 --> J
 ```
+
+组合验收由下游独立阶段承担：#9 A2 自身验收不等待 D4；#13 布局实现不等待 A2，但最终 A2+D4 组合阶段必须取得已验收 #9，索引 acceptanceRequires=[9]。#28 F5 只验收底层创建/完成恢复，不消费 checkpoint；恢复+checkpoint 联合验收归 #29，使用已验收 #27/#28，不反向阻塞上游。
 
 ## F链共同契约与阶段责任
 

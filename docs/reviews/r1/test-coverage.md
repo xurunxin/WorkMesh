@@ -1,34 +1,34 @@
 # 逐 feature 九类验收矩阵
 
-每一行是待该任务实现的独立断言；现有测试文件不等于新契约已通过。具体原测试与DoD全文、来源哈希及对应owner见 [JSON](test-coverage.json)；本轮实际回归结果见 [检查记录](execution-checks.md)。
+每一行是待该任务实现的独立断言；现有测试文件不等于新契约已通过。原测试/DoD全文、来源哈希及owner见 [JSON](test-coverage.json)，陈旧条款仅留在originalTests/历史台账并明确撤换。组合阶段输入/责任见索引，当前实际检查见 [记录](execution-checks.md)。
 
 ## #1 · 历史任务 owner
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
+| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
 
 ## #2 · 历史任务 owner
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
+| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
 
 ## #3 · R1 独立规格审查者
 
@@ -76,15 +76,15 @@
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
+| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
 
 ## #7 · B3 执行者
 
@@ -118,29 +118,29 @@
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者 |
-| unauthorized actor | 当前用户不可见配置不渲染为可操作项；失权重读清除旧行 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者 |
+| happy path | 缺口列表顺序、对应空状态动作、unknown提示与固定i18n文案正确 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者；阶段 9-delivery |
+| unauthorized actor | 当前用户不可见配置不渲染为可操作项；失权重读清除旧行 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者；阶段 9-delivery |
 | invalid state transition | 不适用：只读投影和导航，没有领域状态转换。 | 按本行依据不新增测试 |
 | duplicate idempotency key | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | stale revision | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | transaction failure | 不适用：固定文案/导航不创建配置或seen事务。 | 按本行依据不新增测试 |
 | webhook/job replay | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
-| concurrent request | A2与D4整合时窄屏/焦点/返回列表不丢失，异步Team切换不落旧投影 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者 |
+| concurrent request | A2自身异步Team切换不落旧投影，canonical返回/焦点/窄屏列表独立可达，不等待D4 | apps/web/e2e/configuration-readiness.spec.ts（待创建；归本feature执行者）；A2 执行者；阶段 9-delivery |
 | server restart/outbox recovery | 不适用：不创建outbox；重载列表仍由当前授权查询。 | 按本行依据不新增测试 |
 
 ## #10 · 历史任务 owner
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
+| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
 
 ## #11 · D1a 执行者
 
@@ -160,28 +160,28 @@
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 三区顺序、2行截断、zero shadow、inset列，真实工作流/执行枚举维度分离 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者 |
-| unauthorized actor | 别人的/expired/decided Attention和无canRespond调用者不渲染为可响应暖色 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者 |
+| happy path | 三区/截断/零阴影与真实状态分维；负责人是别人但当前人可读且audience.canRespond=true的未决Attention可见并用暖色；明暗均成立 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者；阶段 12-delivery |
+| unauthorized actor | 无读取授权不显示；可读不可响应则中性；expired/decided不暖色，relationship/负责人归属不替代读取与响应授权 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者；阶段 12-delivery |
 | invalid state transition | 不适用：卡片显示状态而不改变状态；不写虚构awaiting_review。 | 按本行依据不新增测试 |
 | duplicate idempotency key | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | stale revision | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | transaction failure | 不适用：纯投影与计算样式不发领域写入。 | 按本行依据不新增测试 |
 | webhook/job replay | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
-| concurrent request | 旧请求晚到后不可把旧权限Attention提交到新Team的卡片投影 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者 |
+| concurrent request | 旧请求晚到后不可把旧权限Attention提交到新Team的卡片投影 | apps/web/features/work-items/work-item-card.test.tsx（现有文件，待本feature扩展具体用例）；D2/D3 执行者；阶段 12-delivery |
 | server restart/outbox recovery | 不适用：投影没有outbox；重连使用当前授权读模型。 | 按本行依据不新增测试 |
 
 ## #13 · D4 执行者
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | splitter/hide/maximize状态记忆、键盘和窄屏行为符合既有shell与canonicalURL | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者 |
-| unauthorized actor | 无active任命或feature off明确不可用，不伪造总管/泄露其他Team对话 | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者 |
+| happy path | splitter/hide/maximize状态记忆、键盘和窄屏行为符合既有shell与canonicalURL | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者；阶段 13-delivery |
+| unauthorized actor | 无active任命或feature off明确不可用，不伪造总管/泄露其他Team对话 | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者；阶段 13-delivery |
 | invalid state transition | 不适用：布局本地状态不是领域状态机。 | 按本行依据不新增测试 |
 | duplicate idempotency key | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | stale revision | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
 | transaction failure | 不适用：布局持久化不变更领域资源。 | 按本行依据不新增测试 |
 | webhook/job replay | 不适用：本地布局/投影渲染，不新增领域变更、revision、job或outbox。 | 按本行依据不新增测试 |
-| concurrent request | Team切换/迟到请求保留URL归属与焦点，A2+D4窄屏组合列表仍可达 | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者 |
+| concurrent request | 消费已验收#9后，A2+D4组合面窄屏列表/键盘/焦点/返回列表不丢失，异步Team切换不落旧投影 | apps/web/e2e/workbench-layout.spec.ts（待创建；归本feature执行者）；D4 执行者；阶段 13-integration（已验收输入：0BkezbmWV6k8vwrlSNuF_） |
 | server restart/outbox recovery | 不适用：不新增outbox；布局重载/记忆作为happy path。 | 按本行依据不新增测试 |
 
 ## #14 · D5a 执行者
@@ -244,15 +244,15 @@
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
-| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试；历史输入保留 |
+| happy path | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| unauthorized actor | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| invalid state transition | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| duplicate idempotency key | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| stale revision | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| transaction failure | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| webhook/job replay | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| concurrent request | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
+| server restart/outbox recovery | 不适用：已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。 | 按本行依据不新增测试 |
 
 ## #19 · Chief
 
@@ -384,26 +384,26 @@
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | 合法actor-targeted前驱产生关联successor，root/前驱/根消息引用完整 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| unauthorized actor | 错误recipient/当前失权/跨workspace/exact-session拒绝，不能由新输入授权 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| invalid state transition | 根resolved/前驱会话未终止/Stop抑制不能恢复或claim后继 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| duplicate idempotency key | 同前驱恢复重复返回同successor，同key异体冲突，后继再次终止才下一条 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| stale revision | 锁后重验claim/session/任命/委派状态及revision，变更锁集回滚重定位 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| transaction failure | 创建不改原claim/receipt/status；三完成路径全链status/event/outbox共同提交回滚 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| webhook/job replay | 重复report/reply/恢复不伪ACK；ACK仍不resolve，非消息kind用既有源命令 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
-| concurrent request | 恢复×reply/answer/Human resolve/撤权/换届交叉并发无逆rank死锁；同根只有最终resolution | apps/api/integration/agent-lock-order.integration.test.ts（现有文件，待本feature扩展具体用例）；F5 执行者 |
-| server restart/outbox recovery | 创建与完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者 |
+| happy path | 合法actor-targeted前驱产生关联successor，root/前驱/根消息引用完整 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| unauthorized actor | 错误recipient/当前失权/跨workspace/exact-session拒绝，不能由新输入授权 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| invalid state transition | 根resolved/前驱会话未终止/Stop抑制不能恢复或claim后继 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| duplicate idempotency key | 同前驱恢复重复返回同successor，同key异体冲突，后继再次终止才下一条 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| stale revision | 锁后重验claim/session/任命/委派状态及revision，变更锁集回滚重定位 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| transaction failure | 创建不改原claim/receipt/status；三完成路径全链status/event/outbox共同提交回滚 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| webhook/job replay | 重复report/reply/恢复不伪ACK；ACK仍不resolve，非消息kind用既有源命令 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
+| concurrent request | 恢复×reply/answer/Human resolve/撤权/换届交叉并发无逆rank死锁；同根只有最终resolution | apps/api/integration/agent-lock-order.integration.test.ts（现有文件，待本feature扩展具体用例）；F5 执行者；阶段 28-delivery |
+| server restart/outbox recovery | 底层successor创建与三完成路径提交前后崩溃后重放，保留原claim/归因和当前恢复资格 | apps/api/integration/inbox-redelivery.integration.test.ts（待创建；归本feature执行者）；F5 执行者；阶段 28-delivery |
 
 ## #29 · F6 执行者（最终联合验收）
 
 | 类别 | 具体断言／不适用依据 | 文件与责任 |
 | --- | --- | --- |
-| happy path | REST与MCP get/report贯通SDK/policy/feature/manifest/adapter/conformance及联合F4接口 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| unauthorized actor | 无Team权限NOT_FOUND，unsupported/disabled/revoked/Stopped均拒绝 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| invalid state transition | 无active Chief返回null/CHIEF_NOT_APPOINTED，旧代次不得继续投递 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| duplicate idempotency key | 已提交同key返回原message/recipient不向新人发，同key异体幂等冲突 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| stale revision | get→post间换届CHIEF_APPOINTMENT_CHANGED，事务重验预期appointment/revision/room | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| transaction failure | report消息/inbox/activation引用/event/outbox原子，GET零receipt/event/outbox | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| webhook/job replay | 工具重试/平台job重放不伪ACK/等待模型，旧任命结果不重新路由 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| concurrent request | F3/F4/F5联合恢复/三完成路径并发、Stop/撤权/换届按锁序收敛 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
-| server restart/outbox recovery | 恢复提交和checkpoint前后崩溃联合验收，REST/MCP重连结果可追溯 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收） |
+| happy path | REST与MCP get/report贯通SDK/policy/feature/manifest/adapter/conformance及联合F4接口 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| unauthorized actor | 无Team权限NOT_FOUND，unsupported/disabled/revoked/Stopped均拒绝 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| invalid state transition | 无active Chief返回null/CHIEF_NOT_APPOINTED，旧代次不得继续投递 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| duplicate idempotency key | 已提交同key返回原message/recipient不向新人发，同key异体幂等冲突 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| stale revision | get→post间换届CHIEF_APPOINTMENT_CHANGED，事务重验预期appointment/revision/room | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| transaction failure | report消息/inbox/activation引用/event/outbox原子，GET零receipt/event/outbox | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| webhook/job replay | 工具重试/平台job重放不伪ACK/等待模型，旧任命结果不重新路由 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-delivery |
+| concurrent request | F3/F4/F5联合恢复/三完成路径并发、Stop/撤权/换届按锁序收敛 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-integration（已验收输入：89f9yFnmIg4nszXIBCByh、YtFHUCHv8l4JZcYd1qHAU） |
+| server restart/outbox recovery | 消费已验收#27/#28后，恢复创建和根完成提交前后崩溃及checkpoint联合重放保留原归因和当前资格，REST/MCP重连可追溯 | packages/conformance/src/chief.conformance.test.ts（待创建；归本feature执行者）；F6 执行者（最终联合验收）；阶段 29-integration（已验收输入：89f9yFnmIg4nszXIBCByh、YtFHUCHv8l4JZcYd1qHAU） |

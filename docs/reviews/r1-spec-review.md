@@ -6,7 +6,7 @@
 
 ## blocking
 
-未证实新增该级finding；不表示R1全部门禁或新功能通过。
+本次成果复核新增 R1-H08/H09/H10 三项 high，均为合入前阻塞项；严重性及处置详见下节。生产者修订不替代独立闭合，不放行产品实现。
 
 ## high
 
@@ -93,6 +93,42 @@ owner：R1；各feature执行者；受影响任务：#5、#8、#9、#11、#12、
 具体处置：冻结locator→排序Session advisory→生命周期/appointment前缀→完整authority rank（Chief委派保留delegation rank）→guard重验→root/前驱/后继；变化整事务回滚重试；三完成路径共用，#28逐语句清单与交叉并发，#29联合验收。
 
 owner：R1；#24/#25/#28执行者；#29联合；受影响任务：#24、#25、#26、#28、#29；处置：修改；复核状态：**生产者已修订，待Chief安排最终独立复核**。修订证据按对应任务全文、ADR/main及 [逐类别矩阵](r1/test-coverage.md) 核验，不接受只有摘要的交接。
+
+### R1-H08（合入前阻塞）
+
+来源提交：`18027999536ac9ea34961c06ddba8b6bcf60b37d`；原位置：`docs/plan/activation-task-specs/12.md:34`；证据：apps/api/src/human-attention/projection.ts:195；docs/reviews/r1/review-feedback-source.json。
+
+已读事实：relationship与canRespond分别计算。完整spec和ADR仍按是否属于别人排除合法Attention，另残留禁止暗色断言与色距起始值要求。
+
+影响：隐藏当前人合法可读/可响应内容，暗色回归和单暖色验收矛盾。
+
+具体处置：活动正文以读取授权判可见、audience.canRespond加未决判暖色；他人负责但有权响应仍可见并暖色。移除禁止暗色断言/色距起始值，历史原文只留追踪；明暗/暗色token回归保留。
+
+owner：R1 修订；#12执行者验收；受影响任务：#12、#11、#21；生产者修订证据：`docs/plan/activation-task-specs/12.md:34`、`docs/plan/activation-task-specs/12.md:28`、`docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:124`、`docs/reviews/r1/test-coverage.json`、`docs/reviews/r1/legacy-requirements.json`。**待精确新 head 最终独立复核，不预填闭合**。
+
+### R1-H09（合入前阻塞）
+
+来源提交：`18027999536ac9ea34961c06ddba8b6bcf60b37d`；原位置：`docs/reviews/r1/test-coverage.json:1800；docs/reviews/r1/test-coverage.json:6024`；证据：docs/plan/activation-task-specs/index.json（来源提交的#13 acceptanceRequires=[]）；docs/reviews/r1/review-feedback-source.json。
+
+已读事实：A2阶段仍要求D4组合验收，F5仍要求F4 checkpoint联合重放，未体现下游组合阶段输入。
+
+影响：上游不能独立验收，依赖图未表达实际验收前置。
+
+具体处置：A2+D4归#13-integration并声明acceptanceRequires=[9]；#9自身验收不等D4。#28只验收底层创建/完成恢复，checkpoint组合归#29-integration，已验收输入#27/#28。同步全文/矩阵/索引/主计划图与原条目去向。
+
+owner：R1 修订；#13/#29联合验收；#9/#28独立交付；受影响任务：#9、#13、#28、#29；生产者修订证据：`docs/plan/activation-task-specs/13.md:50`、`docs/plan/activation-task-specs/28.md:15`、`docs/plan/activation-task-specs/29.md:15`、`docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134`、`docs/reviews/r1/test-coverage.json`、`docs/plan/activation-task-specs/index.json`。**待精确新 head 最终独立复核，不预填闭合**。
+
+### R1-H10（合入前阻塞）
+
+来源提交：`18027999536ac9ea34961c06ddba8b6bcf60b37d`；原位置：`docs/plan/activation-task-specs/index.json:1567`；证据：本会话已批准完整spec：F产品功能实现范围仍须另行确认；docs/reviews/r1/review-feedback-source.json。
+
+已读事实：#23–#29各卡仅按依赖/审查门禁，独立同步后无法保留#3全文中的F实现授权限制。
+
+影响：R1合入可能被误当F产品实现范围已授权。
+
+具体处置：七张F卡头部与执行放行段、索引/阶段gate及主计划均明确由Chief取得并记录用户对本卡实现范围的确认后才派发；结构化授权状态待确认。保留F2/F5既有设计决定，不重问。
+
+owner：R1 写入；Chief取得并记录范围确认；#23–#29执行者开工核验；受影响任务：#23、#24、#25、#26、#27、#28、#29；生产者修订证据：`docs/plan/activation-task-specs/23.md:7`、`docs/plan/activation-task-specs/29.md:7`、`docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:13`、`docs/plan/activation-task-specs/index.json`、`docs/reviews/r1/task-contracts.json`。**待精确新 head 最终独立复核，不预填闭合**。
 
 ## medium
 
@@ -260,3 +296,5 @@ owner：Chief 来源交接；R1 映射复核；受影响任务：#3、#5、#20�
 运行 `node docs/reviews/r1/verify-specs.mjs` 与历史交接校验器：29/29全文哈希、261行矩阵、139项适用独立断言、154条原checkbox、完整id/stages/DoD/旧条目、实现与最终验收无环、P1/D0冻结段和原0037 claim段保留。它只证明静态一致性，不是最终独审或待实现组合成功。
 
 实际命令、环境、失败/修正依据、运行范围和最新结果见 [执行检查](r1/execution-checks.md)；精确内容字节清单见 [交付清单](r1/execution-manifest.json)，最终提交由平台回合结束生成，不虚报尚不存在的head。Chief以该head及 [成果复核清单](r1/execution-review.md)安排主力开发独审，blocking/high与来源缺口/失败处置逐项闭合、最新PR/head Required CI成功后再按委托合入并同步逐卡读回。当前不合入、不同步Todos、不放行产品。
+
+本次定向修订与逐处读回证据见 [反馈回复](r1/review-feedback-response.md)，实际检查见 [反馈检查](r1/review-feedback-checks.json)。此前回归结果与失败归档保持历史；新 head 的独审/Required CI 尚待取得。

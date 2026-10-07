@@ -96,11 +96,12 @@
       "seqNum": 9,
       "sourceSha256": "130e16687029a7950d13ebe964a9d230bfa1892e811d77bbfbe050e9201b0286",
       "replacementPath": "docs/plan/activation-task-specs/09.md",
-      "replacementSha256": "1c465a4b3d79b3537bf1cea709a9c064384b6d57e74d95e11c3a4b2238b31d09",
+      "replacementSha256": "a6a9fdd5b76c1e68769e87e255d645b01de81acb4cd30ce227ba34c091437ba2",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
-      "contract": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 与 D4 分别验收自己的面，D4 owner 承担布局整合后的组合回归。",
+      "contract": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 独立验收自己的面，不等待 D4；A2+D4 组合回归归 #13 的独立阶段，以本卡已验收产物为输入。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "MPhtZiff23B33m9i2equq",
@@ -129,22 +130,24 @@
       "seqNum": 12,
       "sourceSha256": "b3048cffd16e90cdf944cf38c9a394de3fb71397d2bf61fa136ee8e8878b3f96",
       "replacementPath": "docs/plan/activation-task-specs/12.md",
-      "replacementSha256": "ed6063baa7cd280ea0c6b4fd9e3dd0b0fd388f09adda95a12319c851e03bf43a",
+      "replacementSha256": "b0398d2215f7099ddd64818c2e232cff80edbd2555edabf88fabbc102c0f58c7",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
-      "contract": "合并卡片结构与授权 Attention 在同一组件层。三区、2行、零阴影、inset列；workflow category 与 execution state 分离。仅当前调用者 canRespond 的未决 Attention 用暖色，blocked/未知/别人的待审批不冒充可操作；颜色不授权。",
+      "contract": "合并卡片结构与授权 Attention 在同一组件层。三区、2行、零阴影、inset列；workflow category 与 execution state 分离。读取授权决定可见性；仅当前调用者 audience.canRespond=true 的未决 Attention 用暖色，relationship/负责人归属不替代授权；颜色不授权。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "O2iz8mb_26RoIlnpfXwxV",
       "seqNum": 13,
       "sourceSha256": "9f57289bb3a484e5ee0f36b5c0f813fd017decb0a9edb437bce3931c5308f5e6",
       "replacementPath": "docs/plan/activation-task-specs/13.md",
-      "replacementSha256": "98afe6fbc905872b1edac24a27b7b580fade682bd2e470b20ef0413e0ddf9ffd",
+      "replacementSha256": "c85f4a67526b1b48f83281d98ab2fe77480a6aa7da4ce31440430a378535af1b",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "导航/对话/看板三栏及 splitter/hide/maximize 状态记忆；同授权read model、canonical URL所有权不变。功能关闭或无 active 任命显示明确不可用，不虚构总管；旧链不整体依赖F。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "YLnrl8RaxiZjEjsVQ80B2",
@@ -250,77 +253,84 @@
       "seqNum": 23,
       "sourceSha256": "9ff5f161ccd1fc96248886af17d35599e06996240726138c6302bd4203564160",
       "replacementPath": "docs/plan/activation-task-specs/23.md",
-      "replacementSha256": "84e51f9065bcf56b7e147ca411cb9a7bcbf9cc2000cc242bd38da2c5831cd07b",
+      "replacementSha256": "8aaa1287b8435f374f922c65622faca7eb45b45afddced8110ee66a92d530768",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "两个新migration entry：只ADD VALUE并提交，然后消费新team值改CHECK/trigger；旧三分支、唯一键、已应用checksum不动，runner托管事务。Team全链DTO/OpenAPI/scope/recipient/audience/context支持，不新增归档。建房属于F1任命事务。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "UQPSqKNzHK_mRc_1wOxBA",
       "seqNum": 24,
       "sourceSha256": "9e46a5690b54ba33c9f1d111e90dbad7bb90c0eef3f7df02df8d0de3fc27f310",
       "replacementPath": "docs/plan/activation-task-specs/24.md",
-      "replacementSha256": "6753f92560f3e23fd5bf0c074563e82bfd36798b42e945f6e828e561c3fc709e",
+      "replacementSha256": "b2a1b6b4d9cfc84392a1523dffb476646a47caa2e29ae0cda5a395e34ab841fe",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "Human任命/换届/结束，Team至多一个active部分唯一索引；任命+同Team房间+专用委派+事件/outbox同事务，现有授权∩协调默认6能力，不改普通委派。17项分区互斥穷尽；显式放宽独立审计；换届旧代次失去新效果资格。 Chief相关事务按ADR0078共用锁前缀，不能先取rank锁再补appointment。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "edIZ0ybOGMRBI6aupNUhU",
       "seqNum": 25,
       "sourceSha256": "6795376a23a35c627e58951d25ae14be24151c195707ca5f8bc29af2d67e77d3",
       "replacementPath": "docs/plan/activation-task-specs/25.md",
-      "replacementSha256": "e02b0ca096785e962f8d0d59c1f4344a8fc773b3d79019b5d75cbb281c8c3bf7",
+      "replacementSha256": "44aa01ef80888def85d38bb2d0117289bec7f47e8a8488bd9e4df8afe73062b0",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "常设有界可撤销委派，范围内自主分派，不恢复逐次人批。五入口共享事务guard；0062有效Approval与委派合取；确切plan/head gate失效规则见ADR0078。直接6能力与下游goal上限分别记录，effective=目标live grants∩goal ceiling∩委派revision。全体旧revision派生会话失效不自动降级；外部进程只能取消请求记录结果。逻辑dispatch计数：同一重放/入口一次，显式新Session retry新use；排队预留、启动转已用、取消释放未用，已用不重置，同事务session/event/outbox。 修订/撤权采用共用appointment前缀再完整authority rank（Chief委派保留delegation rank），与恢复/换届保持一致。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "GKJOdaKtOjiTwP637pyM-",
       "seqNum": 26,
       "sourceSha256": "79f41bbd9d04fdb889869a74c17531d806a7d97510aa8a2ad31880e0d43369af",
       "replacementPath": "docs/plan/activation-task-specs/26.md",
-      "replacementSha256": "6ea92cf479ab413a559799ca908e7e3a9dc8962a8146358778422e9756351531",
+      "replacementSha256": "c6add2f77059fcb379e90874da463fb0b310d3f7a7bbc3f5318f807a9008fda6",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "三源统一activation admission记录真实source/actor/service/rule/任命及结果；定时器不冒Human，排除自身事件、按根source/occurrence去重并跨激活预算。当前Stop相同逻辑输入永久抑制，新successor ID不清除；全局暂停/结束任命服务端重验；Runner unknown不冒充在线。向F4/F5/F6交付持久activation结果id与事务接口，不依赖F6工具验收。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "89f9yFnmIg4nszXIBCByh",
       "seqNum": 27,
       "sourceSha256": "6b58a979f08d72460a3284243425ecdba4cdcb2139a4d09a3650168c6ac5f3e2",
       "replacementPath": "docs/plan/activation-task-specs/27.md",
-      "replacementSha256": "05bd5c511d2e487a8480a28ded81b8899a8d4e1ac4a26cf456f7bd9e8f72bc46",
+      "replacementSha256": "4324c11e58fca3f42234f3f2422e1fc438f65d8d3f690d5074e91bc0a2352606",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "checkpoint(workspace,Team,任命代次,consumerVersion)，十进制event cursor不是列表cursor。baseline版本/水位与并发事件衔接不丢不重；changed-resource按event id合并，当前授权重读，收缩先清除、扩张/过期/版本变更有界重建。独立 logical dispatch 记录/幂等身份去重，委派ID/revision仅授权来源，同一revision多次合法分派分别记账、同请求重放一次；已处理C与proposal/activation/dispatch结果引用同事务，向F6交付已验收接口；不依赖F6。阶段一固定fixture规模与方法实测token/查询数/延迟并形成数字预算建议，Chief确认该验收标准后冻结测试阈值；未测不编数字。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "YtFHUCHv8l4JZcYd1qHAU",
       "seqNum": 28,
       "sourceSha256": "66c7ebb3d4c6fae39ac3be18de983ac5ca2378ac9e3c49a08ad3202ad7b29725",
       "replacementPath": "docs/plan/activation-task-specs/28.md",
-      "replacementSha256": "e45a527b2bd6de271847ddd6096b2df93f4993483952bb6d3d6110359279f079",
+      "replacementSha256": "20a83df7136b3b09b4333837de145e58e1bae6da1264ef6d17c02d90c5256d3d",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
-      "contract": "先使用R1共同契约和F3结果接口完成底层，fixture直接调用Inbox，不依赖F6。actor-targeted nonterminal前驱claim会话终止且当前有权才创建后继；source_id直接前驱、保留逻辑根与source_room_message_id。每前驱unique只产生一后继，后继终止可下一条；先无锁定位参与者，再沿Session advisory排序、连接生命周期前缀、Chief appointment前缀及既有authority rank（Chief委派保留delegation rank）锁定并重验，之后root→前驱→后继业务锁；持业务锁禁止补低rank锁，绑定/锁集变化回滚后用原幂等身份重试。创建不改原claim/receipts/status、不伪ACK或激活；exact-session拒绝。真正根完成时Inbox reply/WorkRoom answer/Human resolve同事务收敛全链投影，非消息来源仍用原领域命令。",
+      "contract": "先使用R1共同契约和F3结果接口完成底层，fixture直接调用Inbox，不依赖F4/F6。actor-targeted nonterminal前驱claim会话终止且当前有权才创建后继；source_id直接前驱、保留逻辑根与source_room_message_id。每前驱unique只产生一后继，后继终止可下一条；先无锁定位参与者，再沿Session advisory排序、连接生命周期前缀、Chief appointment前缀及既有authority rank（Chief委派保留delegation rank）锁定并重验，之后root→前驱→后继业务锁；持业务锁禁止补低rank锁，绑定/锁集变化回滚后用原幂等身份重试。创建不改原claim/receipts/status、不伪ACK或激活；exact-session拒绝。真正根完成时Inbox reply/WorkRoom answer/Human resolve同事务收敛全链投影，非消息来源仍用原领域命令。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     },
     {
       "todoId": "RTVGtGBgj-BvazLLjiXKu",
       "seqNum": 29,
       "sourceSha256": "c4faad6f027e029b535b2125ff64db8fb31eee6b76d6c35aa14ff9b81c1f9c6b",
       "replacementPath": "docs/plan/activation-task-specs/29.md",
-      "replacementSha256": "6ecc0cbf66e6ccf318dc6017b1b0092937d2e3dccb9f447878dc4d03530828c4",
+      "replacementSha256": "263a4d9704bccb48bfb80a7d6ed1df4296ed8fa7e668d9796fa90608aff01bc6",
       "disposition": "完整正文替换；纠正关口/共同契约/九类矩阵和已批准合并拆分",
       "contract": "get_chief纯Query，report_to_chief事务重验当前appointment/revision/room并提交消息到actor，返回当时已知message/inbox/activation引用不等模型不写ACK。实现使用F1/F2/F3/F5；最终联合验收使用已验收F4，无反向依赖。REST→contracts/SDK→policy/feature→MCP→manifest→runner adapter→conformance完整交付；现有request_approval复用。外部runner推理；noRedis/Lite兼容待验收，不假定0072实现。",
       "originalRequirementMapping": "test-coverage.json / legacy-requirements.json",
-      "exception": null
+      "exception": null,
+      "reviewCorrection": "review-feedback-response.md"
     }
   ]
 }

@@ -12,3 +12,5 @@ Chief 按用户委托安排主力开发对该精确 head 定向独立审查。�
 - 对照最新 `docs/CI.md` 的选中任务、实际日志、失败原因和跳过项。待本提交最新 PR/head 的 Required CI；历史 G1 run 不代替本次。
 
 闭合条件是另一 agent 的逐 finding 证据与最新必需检查成功；Chief 之后才按委托确认合入并逐卡同步读回。本轮不合入、不同步 Todos、不放行产品实现。设备矩阵/渠道部署和未测容量的具体关口见 `decisions.md`。
+
+本次复核基点为 `18027999536ac9ea34961c06ddba8b6bcf60b37d`，生产者针对该成果反馈修订三项 high；新提交须逐项复核 R1-H08/H09/H10，具体旧位置、替代正文/矩阵/阶段/门禁证据在 review-feedback-source.json、review-feedback-response.md 及 findings.json。#13 的 #9 仅组合输入，#28 不依赖 #27/#29 进行底层恢复验收；每张 F 卡须独立携带由 Chief 取得并记录用户实现范围确认的门禁。当前未收到修订后新成果独审结论。

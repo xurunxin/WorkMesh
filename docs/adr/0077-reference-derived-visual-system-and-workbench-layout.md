@@ -121,11 +121,13 @@ adding a hover shadow for polish.
 This becomes an explicit, testable invariant for the board and any status
 vocabulary:
 
-> attention 色仅表达当前调用者具有响应权限的未决 Human Attention；投影不授予权限。
+> 当前读取授权决定 Human Attention 可见性，`relationship`/负责人归属不替代权限。
+> attention 色仅表达 `audience.canRespond=true` 的未决 Human Attention；负责人是别人但
+> 当前人有权响应的合法内容仍可见且用暖色，可读不可响应的内容保持中性，不可读不显示。
 > `statusId/statusCategory` 保留自定义工作流，`activeAgentState` 保留真实执行枚举。
-> 两者都不能按 `awaiting_*` 前缀推导暖色。其他人的 Attention、已决定/过期 Attention、
-> 未授权内容及单独 blocked 执行态均不得渲染为可操作 Attention。中性、信息、完成色
-> 按相应维度映射，未知工作流回退中性；blocked 与 attention 使用不同语义槽，不发明色距阈值。
+> 两者都不能按 `awaiting_*` 前缀推导暖色；已决定/过期 Attention 及单独 blocked 执行态
+> 不渲染为可操作 Attention。中性、信息、完成色按相应维度映射，未知工作流回退中性；
+> blocked 与 attention 使用不同语义槽，不发明色距阈值。
 
 The invariant is testable as a rendered assertion over every status the board can
 display, which is the point: a design rule that cannot be asserted is a preference.

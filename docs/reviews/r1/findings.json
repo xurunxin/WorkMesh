@@ -249,7 +249,7 @@
         "docs/plan/activation-task-specs/27.md:41",
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:415",
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:775",
-        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:140",
         "docs/plan/activation-task-specs/25.md:11",
         "docs/reviews/r1/execution-spec-deltas.json",
         "docs/reviews/r1/producer-review-response.md"
@@ -260,7 +260,7 @@
         "docs/plan/activation-task-specs/27.md:41",
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:415",
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:775",
-        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:140",
         "docs/plan/activation-task-specs/25.md:11",
         "docs/plan/activation-task-specs/index.json",
         "docs/reviews/r1/execution-spec-deltas.json"
@@ -346,7 +346,7 @@
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:596",
         "docs/reviews/r1/lock-contract.md:14",
         "docs/reviews/r1/lock-contract.md:22",
-        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:132",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:138",
         "docs/plan/activation-task-specs/24.md:11",
         "docs/plan/activation-task-specs/25.md:11",
         "docs/plan/activation-task-specs/28.md:11",
@@ -358,7 +358,7 @@
         "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md:596",
         "docs/reviews/r1/lock-contract.md:14",
         "docs/reviews/r1/lock-contract.md:22",
-        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:132",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:138",
         "docs/plan/activation-task-specs/24.md:11",
         "docs/plan/activation-task-specs/25.md:11",
         "docs/plan/activation-task-specs/28.md:11",
@@ -382,6 +382,121 @@
       ],
       "disposition": "已形成具体追溯交付；历史来源缺口待核验",
       "reviewStatus": "未闭合；不冒称全文齐全"
+    },
+    {
+      "id": "R1-H08",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/plan/activation-task-specs/12.md:34",
+      "evidence": "apps/api/src/human-attention/projection.ts:195；docs/reviews/r1/review-feedback-source.json",
+      "fact": "relationship与canRespond分别计算。完整spec和ADR仍按是否属于别人排除合法Attention，另残留禁止暗色断言与色距起始值要求。",
+      "impact": "隐藏当前人合法可读/可响应内容，暗色回归和单暖色验收矛盾。",
+      "action": "活动正文以读取授权判可见、audience.canRespond加未决判暖色；他人负责但有权响应仍可见并暖色。移除禁止暗色断言/色距起始值，历史原文只留追踪；明暗/暗色token回归保留。",
+      "owner": "R1 修订；#12执行者验收",
+      "tasks": [
+        12,
+        11,
+        21
+      ],
+      "disposition": "修改活动正文/ADR/矩阵；原测试条目逐项标撤换",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/12.md:34",
+        "docs/plan/activation-task-specs/12.md:28",
+        "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:124",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/legacy-requirements.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/12.md:34",
+        "docs/plan/activation-task-specs/12.md:28",
+        "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md:124",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/reviews/r1/legacy-requirements.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
+    },
+    {
+      "id": "R1-H09",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/reviews/r1/test-coverage.json:1800；docs/reviews/r1/test-coverage.json:6024",
+      "evidence": "docs/plan/activation-task-specs/index.json（来源提交的#13 acceptanceRequires=[]）；docs/reviews/r1/review-feedback-source.json",
+      "fact": "A2阶段仍要求D4组合验收，F5仍要求F4 checkpoint联合重放，未体现下游组合阶段输入。",
+      "impact": "上游不能独立验收，依赖图未表达实际验收前置。",
+      "action": "A2+D4归#13-integration并声明acceptanceRequires=[9]；#9自身验收不等D4。#28只验收底层创建/完成恢复，checkpoint组合归#29-integration，已验收输入#27/#28。同步全文/矩阵/索引/主计划图与原条目去向。",
+      "owner": "R1 修订；#13/#29联合验收；#9/#28独立交付",
+      "tasks": [
+        9,
+        13,
+        28,
+        29
+      ],
+      "disposition": "分开实现/组合阶段，保留测试责任和单向验收依赖",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/13.md:50",
+        "docs/plan/activation-task-specs/28.md:15",
+        "docs/plan/activation-task-specs/29.md:15",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/plan/activation-task-specs/index.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/13.md:50",
+        "docs/plan/activation-task-specs/28.md:15",
+        "docs/plan/activation-task-specs/29.md:15",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:134",
+        "docs/reviews/r1/test-coverage.json",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
+    },
+    {
+      "id": "R1-H10",
+      "severity": "high",
+      "blocking": true,
+      "sourceCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d",
+      "location": "docs/plan/activation-task-specs/index.json:1567",
+      "evidence": "本会话已批准完整spec：F产品功能实现范围仍须另行确认；docs/reviews/r1/review-feedback-source.json",
+      "fact": "#23–#29各卡仅按依赖/审查门禁，独立同步后无法保留#3全文中的F实现授权限制。",
+      "impact": "R1合入可能被误当F产品实现范围已授权。",
+      "action": "七张F卡头部与执行放行段、索引/阶段gate及主计划均明确由Chief取得并记录用户对本卡实现范围的确认后才派发；结构化授权状态待确认。保留F2/F5既有设计决定，不重问。",
+      "owner": "R1 写入；Chief取得并记录范围确认；#23–#29执行者开工核验",
+      "tasks": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "disposition": "修改各卡可独立同步的门禁，范围确认仍待取得",
+      "producerEvidence": [
+        "docs/plan/activation-task-specs/23.md:7",
+        "docs/plan/activation-task-specs/29.md:7",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:13",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json"
+      ],
+      "reviewStatus": "生产者已修订，待Chief安排精确新head的最终独立复核",
+      "producerStatus": "具体修订及静态证据已落盘；不代替独立闭合",
+      "revisionEvidence": [
+        "docs/plan/activation-task-specs/23.md:7",
+        "docs/plan/activation-task-specs/29.md:7",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md:13",
+        "docs/plan/activation-task-specs/index.json",
+        "docs/reviews/r1/task-contracts.json",
+        "docs/reviews/r1/review-feedback-response.md",
+        "docs/reviews/r1/review-feedback-checks.json"
+      ]
     }
   ],
   "actualBase": "5743f027ec86e8726d2cfdd38e0e038bdebeae49",
@@ -389,13 +504,16 @@
   "producerDisposition": {
     "unaddressedBlocking": [],
     "unaddressedHigh": [],
-    "basis": "既有high与初稿三high均已形成具体文档/完整spec修订；并非最终独立审查结论。",
+    "basis": "本次反馈三项blocking high已形成具体修订与定向静态检查；没有生产者未处置项，但独立闭合与实现授权门禁保持。",
     "pending": [
       "全部high最终定向独立复核",
       "R1-M06：#6历史源全文范围核验",
       "R1-M05：设备/渠道阶段决定及F4实测预算",
       "既有UI超时未知根因与稳定性核验",
-      "最终提交最新PR/head Required CI"
+      "最终提交最新PR/head Required CI",
+      "R1-H08/H09/H10按精确新head独立复核",
+      "F各卡实现范围由Chief取得并记录用户确认"
     ]
-  }
+  },
+  "reviewedProducerCommit": "18027999536ac9ea34961c06ddba8b6bcf60b37d"
 }

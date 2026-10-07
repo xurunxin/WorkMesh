@@ -56,7 +56,7 @@
         8
       ],
       "owner": "A2 执行者",
-      "contract": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 与 D4 分别验收自己的面，D4 owner 承担布局整合后的组合回归。",
+      "contract": "有序未满足列表、既有 i18n 固定起始文案与 canonical 页面链接，不新增 wizard/seen/配置写入；未适用项不当故障，unknown 文案不冒称在线。A2 独立验收自己的面，不等待 D4；A2+D4 组合回归归 #13 的独立阶段，以本卡已验收产物为输入。",
       "tests": "空白/已配置/部分撤权/非仓库 Team、canonical 返回与焦点、窄屏列表可达；仅对应缺口有主动作；配置成功不自动激活；Lite 安装兼容待验证不得伪称已交付。",
       "file": "apps/web/e2e/configuration-readiness.spec.ts"
     },
@@ -82,8 +82,8 @@
         21
       ],
       "owner": "D2/D3 执行者",
-      "contract": "合并卡片结构与授权 Attention 在同一组件层。三区、2行、零阴影、inset列；workflow category 与 execution state 分离。仅当前调用者 canRespond 的未决 Attention 用暖色，blocked/未知/别人的待审批不冒充可操作；颜色不授权。",
-      "tests": "真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态；当前人/其他人/已决定/过期 Attention；超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
+      "contract": "合并卡片结构与授权 Attention 在同一组件层。三区、2行、零阴影、inset列；workflow category 与 execution state 分离。读取授权决定可见性；仅当前调用者 audience.canRespond=true 的未决 Attention 用暖色，relationship/负责人归属不替代授权；颜色不授权。",
+      "tests": "真实 workflow categories backlog/planned/started/completed/canceled 和全部真实 Session 枚举；自定义状态。负责人是别人但当前人可读且 audience.canRespond=true 的未决 Attention 正常可见并用暖色；可读不可响应则中性，不可读不显示；已决定/过期不暖色。超长标题、三区顺序、computed shadow none、blocked 槽不同于attention，明暗均成立。",
       "file": "apps/web/features/work-items/work-item-card.test.tsx"
     },
     "13": {
@@ -96,8 +96,15 @@
       ],
       "owner": "D4 执行者",
       "contract": "导航/对话/看板三栏及 splitter/hide/maximize 状态记忆；同授权read model、canonical URL所有权不变。功能关闭或无 active 任命显示明确不可用，不虚构总管；旧链不整体依赖F。",
-      "tests": "键盘、窄屏、焦点、Back/Forward、状态记忆；A2列表布局整合验收由本 owner 承担；无任命/feature off 不显示可用总管。",
-      "file": "apps/web/e2e/workbench-layout.spec.ts"
+      "tests": "阶段一独立验收布局的键盘、窄屏、焦点、Back/Forward、状态记忆及无任命/feature off 不显示可用总管。阶段二由本 owner 消费已验收 #9 A2，验收组合面窄屏列表可达、键盘/焦点与返回列表不丢失，异步 Team 切换不落旧投影；不反向阻塞 #9。",
+      "file": "apps/web/e2e/workbench-layout.spec.ts",
+      "acceptanceRequires": [
+        9
+      ],
+      "integrationStage": "13-integration",
+      "integrationInputTodoIds": [
+        "0BkezbmWV6k8vwrlSNuF_"
+      ]
     },
     "14": {
       "requires": [
@@ -206,7 +213,13 @@
       "owner": "F0 执行者",
       "contract": "两个新migration entry：只ADD VALUE并提交，然后消费新team值改CHECK/trigger；旧三分支、唯一键、已应用checksum不动，runner托管事务。Team全链DTO/OpenAPI/scope/recipient/audience/context支持，不新增归档。建房属于F1任命事务。",
       "tests": "4 subject DB/API、跨workspace/Team、room可见不等于exact消息可见、撤权同时影响房/inbox/events/context、各entry两侧故障/重跑、升级和空库、旧checksum/rows不变。",
-      "file": "packages/db/integration/chief-room-migration.integration.test.ts"
+      "file": "packages/db/integration/chief-room-migration.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "24": {
       "requires": [
@@ -218,7 +231,13 @@
       "owner": "F1 执行者",
       "contract": "Human任命/换届/结束，Team至多一个active部分唯一索引；任命+同Team房间+专用委派+事件/outbox同事务，现有授权∩协调默认6能力，不改普通委派。17项分区互斥穷尽；显式放宽独立审计；换届旧代次失去新效果资格。 Chief相关事务按ADR0078共用锁前缀，不能先取rank锁再补appointment。",
       "tests": "17能力漏项/交叠即失败；普通repo:merge保留而总管会话不含；显式放宽另行事实；并发任命、换届/结束事务失败、房间幂等；无任命查询不建房。",
-      "file": "apps/api/integration/chief-appointments.integration.test.ts"
+      "file": "apps/api/integration/chief-appointments.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "25": {
       "requires": [
@@ -231,7 +250,13 @@
       "owner": "F2 执行者",
       "contract": "常设有界可撤销委派，范围内自主分派，不恢复逐次人批。五入口共享事务guard；0062有效Approval与委派合取；确切plan/head gate失效规则见ADR0078。直接6能力与下游goal上限分别记录，effective=目标live grants∩goal ceiling∩委派revision。全体旧revision派生会话失效不自动降级；外部进程只能取消请求记录结果。逻辑dispatch计数：同一重放/入口一次，显式新Session retry新use；排队预留、启动转已用、取消释放未用，已用不重置，同事务session/event/outbox。 修订/撤权采用共用appointment前缀再完整authority rank（Chief委派保留delegation rank），与恢复/换届保持一致。",
       "tests": "范围内自主正向、自由文本不授权、policy不能扩权/委派不能省Approval；5入口一致、2上限独立、principal等式；排队/运行/子会话/retry/外部进程撤权和换届；余量并发耗尽、异体冲突、预留/启动崩溃恢复、新retry计数、plan/head变更失效，事务全部回滚。",
-      "file": "apps/api/integration/chief-dispatch.integration.test.ts"
+      "file": "apps/api/integration/chief-dispatch.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "26": {
       "requires": [
@@ -245,7 +270,13 @@
       "owner": "F3 执行者",
       "contract": "三源统一activation admission记录真实source/actor/service/rule/任命及结果；定时器不冒Human，排除自身事件、按根source/occurrence去重并跨激活预算。当前Stop相同逻辑输入永久抑制，新successor ID不清除；全局暂停/结束任命服务端重验；Runner unknown不冒充在线。向F4/F5/F6交付持久activation结果id与事务接口，不依赖F6工具验收。",
       "tests": "3源可区分、双消费者去重、selfevent无自环、admission/session/prompt/event/outbox崩溃、跨激活预算/队列限制、无runner、不匹配principal退回、旧代次/revoke/Stop拒绝；恢复根换id仍被抑制。",
-      "file": "apps/api/integration/chief-activation.integration.test.ts"
+      "file": "apps/api/integration/chief-activation.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "27": {
       "requires": [
@@ -259,7 +290,13 @@
       "owner": "F4 执行者",
       "contract": "checkpoint(workspace,Team,任命代次,consumerVersion)，十进制event cursor不是列表cursor。baseline版本/水位与并发事件衔接不丢不重；changed-resource按event id合并，当前授权重读，收缩先清除、扩张/过期/版本变更有界重建。独立 logical dispatch 记录/幂等身份去重，委派ID/revision仅授权来源，同一revision多次合法分派分别记账、同请求重放一次；已处理C与proposal/activation/dispatch结果引用同事务，向F6交付已验收接口；不依赖F6。阶段一固定fixture规模与方法实测token/查询数/延迟并形成数字预算建议，Chief确认该验收标准后冻结测试阈值；未测不编数字。",
       "tests": "baseline期间并发写、checkpoint前后崩溃重放、CURSOR_EXPIRED、删除/撤权/扩大授权、跨Session/Team/任命隔离；固定fixture记录规模/tokenizer/query计数/p50p95与资源配置，按获批预算回归；摘要不成为授权。 同一委派revision下不同逻辑分派均保留；跨入口同请求只一分派/扣量；checkpoint重放不重复，显式新Session retry新增分派/用量。",
-      "file": "apps/api/integration/chief-consumption.integration.test.ts"
+      "file": "apps/api/integration/chief-consumption.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "28": {
       "requires": [
@@ -271,9 +308,15 @@
         26
       ],
       "owner": "F5 执行者",
-      "contract": "先使用R1共同契约和F3结果接口完成底层，fixture直接调用Inbox，不依赖F6。actor-targeted nonterminal前驱claim会话终止且当前有权才创建后继；source_id直接前驱、保留逻辑根与source_room_message_id。每前驱unique只产生一后继，后继终止可下一条；先无锁定位参与者，再沿Session advisory排序、连接生命周期前缀、Chief appointment前缀及既有authority rank（Chief委派保留delegation rank）锁定并重验，之后root→前驱→后继业务锁；持业务锁禁止补低rank锁，绑定/锁集变化回滚后用原幂等身份重试。创建不改原claim/receipts/status、不伪ACK或激活；exact-session拒绝。真正根完成时Inbox reply/WorkRoom answer/Human resolve同事务收敛全链投影，非消息来源仍用原领域命令。",
-      "tests": "claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。 恢复与reply/answer/resolve/撤权/换届交叉并发及死锁验收；实现更新agent-lock-order-manifest符号/statement清单并独审。",
-      "file": "apps/api/integration/inbox-redelivery.integration.test.ts"
+      "contract": "先使用R1共同契约和F3结果接口完成底层，fixture直接调用Inbox，不依赖F4/F6。actor-targeted nonterminal前驱claim会话终止且当前有权才创建后继；source_id直接前驱、保留逻辑根与source_room_message_id。每前驱unique只产生一后继，后继终止可下一条；先无锁定位参与者，再沿Session advisory排序、连接生命周期前缀、Chief appointment前缀及既有authority rank（Chief委派保留delegation rank）锁定并重验，之后root→前驱→后继业务锁；持业务锁禁止补低rank锁，绑定/锁集变化回滚后用原幂等身份重试。创建不改原claim/receipts/status、不伪ACK或激活；exact-session拒绝。真正根完成时Inbox reply/WorkRoom answer/Human resolve同事务收敛全链投影，非消息来源仍用原领域命令。",
+      "tests": "claim崩溃/Stop/revoke、2Session/2恢复请求竞争、错recipient、ACK未resolve、重复report/reply不伪回执；根/前驱重放/链环拒绝/换届、三种完成路径与successor并发收敛、根resolved不得claim或恢复、exact禁止；创建和完成事务失败回滚。 恢复与reply/answer/resolve/撤权/换届交叉并发及死锁验收；实现更新agent-lock-order-manifest符号/statement清单并独审。底层创建与三完成路径提交前后崩溃/重放独立验收，不消费 F4 checkpoint；恢复+checkpoint 联合验收归 #29 的联合阶段。重复 report 的底层语义使用消息投递 fixture，F6 实工具重放验收归 #29。",
+      "file": "apps/api/integration/inbox-redelivery.integration.test.ts",
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     },
     "29": {
       "requires": [
@@ -291,8 +334,19 @@
       ],
       "owner": "F6 执行者（最终联合验收）",
       "contract": "get_chief纯Query，report_to_chief事务重验当前appointment/revision/room并提交消息到actor，返回当时已知message/inbox/activation引用不等模型不写ACK。实现使用F1/F2/F3/F5；最终联合验收使用已验收F4，无反向依赖。REST→contracts/SDK→policy/feature→MCP→manifest→runner adapter→conformance完整交付；现有request_approval复用。外部runner推理；noRedis/Lite兼容待验收，不假定0072实现。",
-      "tests": "NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人；unsupported/disabled/revoked/Stopped/retry/超限；联合恢复提交与checkpoint前后崩溃、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届/重放，GET零receipt/event/outbox；REST/MCP及manifest/adapter/conformance两路径。",
-      "file": "packages/conformance/src/chief.conformance.test.ts"
+      "tests": "实现交付阶段验收 NOT_FOUND/CHIEF_NOT_APPOINTED/CHIEF_APPOINTMENT_CHANGED/幂等异体冲突、换届前后重放不发新人及 unsupported/disabled/revoked/Stopped/retry/超限，GET 零 receipt/event/outbox，REST/MCP 及 manifest/adapter/conformance 两路径。最终联合阶段由本 owner 消费已验收 #27 F4 checkpoint 和 #28 F5 恢复接口，验收创建与完成提交前后崩溃及 checkpoint 联合重放保留原归因和当前资格、重复恢复、三条根完成路径与并发回复、Stop/撤权/换届；不反向阻塞 #27/#28。",
+      "file": "packages/conformance/src/chief.conformance.test.ts",
+      "integrationStage": "29-integration",
+      "integrationInputTodoIds": [
+        "89f9yFnmIg4nszXIBCByh",
+        "YtFHUCHv8l4JZcYd1qHAU"
+      ],
+      "implementationAuthorization": {
+        "status": "待用户确认产品实现范围",
+        "owner": "Chief",
+        "confirmationRecord": null,
+        "required": "取得并记录用户对本卡F产品实现范围的确认后才可派发实现；设计决定和R1合入不替代该确认。"
+      }
     }
   }
 }

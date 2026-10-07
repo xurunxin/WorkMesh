@@ -126,6 +126,66 @@ try {
   const adr78 = read('docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md')
   for (const capability of capabilities) assert.ok(adr78.includes(capability), capability)
   assert.ok(!/授权绑定[^\n]*独立去重/.test(read('docs/plan/activation-task-specs/27.md')))
+  // 可单独同步的正文、验收阶段和授权门禁必须表达同一边界。
+  const d2 = read(bySeq.get(12).path)
+  assert.ok(!d2.includes('其他人的 Attention 对当前调用者不可见。'))
+  assert.ok(!d2.includes('不新增暗色值/断言'))
+  assert.ok(!d2.includes('原色值距离阈值在计划中给出依据和待调起始值'))
+  assert.ok(d2.includes('负责人是别人但当前人可响应的合法 Attention 可见且用暖色'))
+  assert.ok(d2.includes('明暗切换及暗色 token 消费'))
+  const d2Rows = coverage.features.find(f => f.seqNum === 12).matrix
+  assert.ok(d2Rows[0].assertion.includes('负责人是别人') && d2Rows[0].assertion.includes('audience.canRespond=true'))
+  assert.ok(d2Rows[1].assertion.includes('无读取授权不显示') && d2Rows[1].assertion.includes('可读不可响应则中性'))
+  const adr77 = read('docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md')
+  assert.ok(adr77.includes('`relationship`/负责人归属不替代权限'))
+  assert.ok(!adr77.includes('其他人的 Attention、已决定/过期 Attention'))
+  const integration13 = bySeq.get(13).stages.find(s => s.id === '13-integration')
+  assert.deepEqual(bySeq.get(13).acceptanceRequires, [9])
+  assert.deepEqual(contracts.tasks[13].acceptanceRequires, [9])
+  assert.ok(integration13?.input.some(i => i.seqNum === 9 && i.todoId === bySeq.get(9).todoId))
+  assert.ok(![...bySeq.get(9).requires, ...bySeq.get(9).acceptanceRequires].includes(13))
+  assert.ok(![...bySeq.get(28).requires, ...bySeq.get(28).acceptanceRequires].includes(27))
+  const f5Recovery = coverage.features.find(f => f.seqNum === 28).matrix[8]
+  assert.equal(f5Recovery.stageId, '28-delivery')
+  assert.ok(!f5Recovery.assertion.includes('checkpoint'))
+  const jointRecovery = coverage.features.find(f => f.seqNum === 29).matrix[8]
+  assert.equal(jointRecovery.stageId, '29-integration')
+  assert.ok(jointRecovery.assertion.includes('checkpoint联合重放'))
+  assert.deepEqual(jointRecovery.inputTodoIds, [bySeq.get(27).todoId, bySeq.get(28).todoId])
+  for (const task of index.tasks) {
+    const declaredInputs = new Set([...task.requires, ...task.acceptanceRequires])
+    for (const stage of task.stages ?? []) {
+      if (!Array.isArray(stage.input)) continue
+      for (const input of stage.input) {
+        assert.ok(declaredInputs.has(input.seqNum), `#${task.seqNum}/${stage.id} 有未声明的阶段输入 #${input.seqNum}`)
+        assert.equal(input.todoId, bySeq.get(input.seqNum).todoId)
+      }
+    }
+  }
+  const allCases = new Set(coverage.features.flatMap(f => f.matrix.filter(r => r.applicable).map(r => r.caseName)))
+  for (const feature of coverage.features) {
+    for (const original of feature.originalTests) {
+      assert.ok(original.matrixCases.every(name => allCases.has(name)), original.id + ' 指向失效矩阵用例')
+    }
+    for (const row of feature.matrix.filter(r => r.applicable && r.stageId)) {
+      const task = bySeq.get(feature.seqNum)
+      const stage = task.stages.find(s => s.id === row.stageId)
+      assert.ok(stage && stage.owner === row.owner, `#${feature.seqNum} 用例阶段/owner不一致`)
+      const inputs = new Set((Array.isArray(stage.input) ? stage.input : []).map(i => i.todoId))
+      assert.ok(row.inputTodoIds.every(id => inputs.has(id)), row.caseName + ' 缺阶段输入')
+    }
+  }
+  for (let n = 23; n <= 29; n++) {
+    const task = bySeq.get(n), authorization = task.implementationAuthorization
+    assert.equal(authorization?.status, '待用户确认产品实现范围')
+    assert.equal(authorization.owner, 'Chief')
+    assert.equal(authorization.confirmationRecord, null)
+    assert.ok(task.gate.includes('R1 合入和依赖验收不能替代 F 产品实现范围授权'))
+    assert.ok(read(task.path).includes(task.gate))
+    assert.deepEqual(contracts.tasks[n].implementationAuthorization, authorization)
+    assert.ok(task.stages.every(s => s.implementationGate === task.gate))
+  }
+  assert.ok(mainPlan.includes('用户对各卡实现范围的确认后才可派发实现'))
   const protectedPaths = ['apps', 'packages', 'scripts', '.github', 'turbo.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'CONTEXT.md', 'docs/evidence', 'docs/references']
   assert.equal(git('diff', '--name-only', index.baseCommit, '--', ...protectedPaths).trim(), '', '本R1不修改产品/CI/G1原件')
   const historicalPaths = ['plan.md', 'todo-inputs.json', 'r1-spec-source.md', 'r1-spec-source.json', 'main-inputs.json', 'plan-review-response.md', 'checks.md', 'handoff-manifest.json', 'verify-handoff.mjs'].map(p => directory + p)
