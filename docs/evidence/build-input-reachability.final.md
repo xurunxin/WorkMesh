@@ -4,15 +4,18 @@
 
 真实隔离构建已在材料合并后的实际 base 中读到四份 ADR、完整主计划、设计测量原件和完整 R2 审查报告；输入校验退出码为 0，44/44 文件可读，P1 台账为 16/16 条，错误数为 0。完整逐文件记录在 [`build-input-reachability.final.json`](build-input-reachability.final.json)。
 
-正文读取门槛通过。G1 最终门禁仍为**待当前改动 CI 和独立复核**：这两项未在本记录生成时完成，因此不能据此放行 #3 或依赖输入的实现。
+初始 base 的正文读取门槛通过。当前整合计划已吸收 D0 合入 main 的增量；本轮必需检查均通过。G1 最终门禁仍为**待本分支 CI 和用户指定的独立复核**，不能据此放行 #3 或依赖输入的实现。
 
 ## 本次 build 的实际基点
 
 - 构建环境记录的当前分支：`tds/conv-01a11661-dbed-70ca-85d6-05851a0213e1`。
-- 本轮开始时 `git rev-parse HEAD`：`419a1d7af90c09cb9364819977f32ec59cf86f87`；以该完整 SHA 作为验证器输入，没有用工作树改动或历史分支替代。
+- 初始真实隔离 build 在工作树中记录的 `git rev-parse HEAD`：`419a1d7af90c09cb9364819977f32ec59cf86f87`；以该完整 SHA 作为验证器输入，没有用后续工作树改动或历史分支替代。
 - `419a1d7` 是 PR #194 合并提交，父提交为 P1 合并提交 `660c74a6247544ffac64e7ef8f968d1025b2a668` 和 G1 材料提交 `49cd2136fe5109115fb4f3dcff89ed59b0bc7615`。因此本次真实 base 同时含有 P1 冻结表和 G1 原件包。
 - 历史核查 base `32789cec4d50db0b85a63d91049cc425d9e917a2` 与 P1 来源分支提交 `c98ec5f538b3acd9ac052c4ef100e1d111232518` 仅作溯源；本次没有拿它们充当 build base。P1 主分支合入版本是父提交 `660c74a…`。
-- 平台工作流查询在记录时显示 `main@419a1d7` 的 CI #351 / run `37622620354` 为 `in_progress`。这不是当前本轮证据变更的 CI 结果；后者需待本轮提交触发并完成。
+- `419a1d7` 初始读取后，D0 已由 PR #195 合入 main。Chief 于 2026-10-07 21:09 核实 `origin/main=4b287b4e9892bfb4545dbbff94d04f45633c3a64`，其包含 `419a1d7…` 与 D0 提交 `768bbd82fcc52a873168b39a8382d2f14c928abc`。从只读 main clone 的 `FETCH_HEAD` 实读该提交主计划正文，文件为 50187 字节，SHA-256 与 main `MANIFEST.json` 一致；本记录吸收该版本 D0 计划、清单增量和 D1a/D1b 拆分，另行区分初始 build base 与后续整合快照。
+- 当前计划工作树字节为 51373，SHA-256 `2cf9525832711aa99295e76adfbd44a9c102e7665f63e83c3036b35de0b5f661`；本次工作树 Git blob `56a4ea955514f7c6a2d05965d798129d86bd70c8`。这些值描述本分支中修正 D0/G1 状态后的计划，不冒充 `4b287b4` 的原始文件哈希。最新 main 原始计划仍以 blob `2467aad369f707f952a1b35dadfb75a046b306dc`、提交字节 50187、SHA-256 `617d900163bb1ea87b263e3e51bd38cc470121b54d09fb634c2b4078060ee62f` 识别。
+- 最新 main 的 CI #353 / run `37626312217`（push `main@4b287b4`）现已 completed/success，8/8 job 成功。它证明 D0 合入后的 main push CI 通过，不是本分支结果。本轮分支改动尚未提交，故本分支 CI 尚未触发。
+- 材料 PR #194 的 CI #348 / run `37620848480` 对 `49cd213` 的 8/8 job 成功；`main@419a1d7` 的 push CI #351 / run `37622620354` completed/success，8/8；D0 PR #195 CI #352 / run `37623264959` 对 `768bbd8` 的 8/8 job 成功；随后 `main@4b287b4` 的 push CI #353 亦 8/8 成功。分别记录，不以这些 CI 代替本轮分支 CI。
 
 ## 命令与机器记录
 
@@ -51,14 +54,22 @@ errors: 0
 |---|---|
 | `node --test scripts/verify-build-input-reachability.test.mjs` | 退出码 0；3/3 通过（缺文件、旧版本、CRLF 规范化）。 |
 | `node scripts/verify-build-input-reachability.mjs <实际 base> --json-out …` | 退出码 0；44/44 文件，16/16 P1，0 errors。 |
-| `pnpm lint` | 退出码 1；该隔离工作树没有 `node_modules`，`turbo` 不存在。 |
-| `pnpm typecheck` | 退出码 1；同一依赖缺失，`turbo` 不存在。 |
-| `pnpm test`、`pnpm test:integration`、`pnpm test:e2e` | 本轮未运行；材料阶段此前记录的结果不是本轮变更检查，且不可冒充。 |
-| 当前变更的 GitHub CI | 尚无本轮变更提交的完成结果。材料合并 base 的 main CI #351 当时仍在运行；PR #194 材料 CI #348 的通过结果只证明材料提交。 |
+| 初始 `pnpm lint` / `pnpm typecheck` | 均退出码 1；安装依赖前 `node_modules` / `turbo` 不存在。此初始失败保留，不作为最终结果。 |
+| `pnpm install --frozen-lockfile` | 退出码 0；pnpm 9.15.4 按锁文件安装 609 packages，lockfile 未变。Node v24.20.0。 |
+| 安装后 `pnpm lint` / `pnpm typecheck` | 均退出码 0；Turbo 各 18/18 tasks 成功。 |
+| `pnpm test` | 退出码 0；Turbo 29/29 tasks 成功；Web 113 files / 776 tests、API 33 files / 174 tests 通过，其余包测试均通过。 |
+| `pnpm test:integration` | 退出码 0；310 passed、2 skipped。DB 17 files / 77 passed；API 22 files / 154 passed、1 skipped；Worker 8 files / 78 passed、1 skipped；recovery 1/1 passed。 |
+| 首轮 `pnpm test:e2e` | 退出码 1；73 passed、1 failed。`apps/web/e2e/mcp-onboarding.spec.ts:99` 的“Connect an Agent to WorkMesh”标题在 10 秒内未出现。失败记录保留；未覆盖源截图。 |
+| 目标 E2E `pnpm --filter @workmesh/web test:e2e -- e2e/mcp-onboarding.spec.ts` | 退出码 0；16/16 passed。一次直接 Playwright 调用因缺 `npm_execpath` 在测试开始前退出，未执行用例；改用仓库脚本通过。 |
+| 全量 E2E 重跑 `pnpm test:e2e` | 退出码 0；74/74 passed，Turbo 12/12 tasks 成功。使用独立 E2E DB 和 Redis DB 1；未中断健康重跑。 |
+| `node --test scripts/verify-build-input-reachability.test.mjs` | 退出码 0；3/3 通过（缺文件、旧版本、CRLF 规范化）。新增 JSON `worktreeBytes` 字段亦由 44 文件真实 base 输出核对。 |
+| 当前变更的 GitHub CI | 本分支变更尚未提交，CI 未触发。CI #348（材料 PR194）、#351（main@419）、#352（D0 PR195）、#353（main@4b push）均分别成功；不能代替本分支 CI。 |
 | 独立复核 | 尚未完成。 |
 
-当前环境无依赖安装目录，因此本轮不能报告必需 lint/typecheck 已通过。通过本地获取依赖或等待 CI 结果后，仍需独立复核者确认最终证据；完成前门禁保持关闭。系统提供给本轮的 Todos 工具只有读取/受限更新能力，没有 `append_activity` 或可更新既有 #18 的写入操作，本次不能声称已将活动追加到 Todo；仓库证据已落盘，Todo #18 的平台阶段仍由构建流程管理。
+集成测试和 E2E 使用本任务独有容器/端口与随机 fixture：Postgres 15442、Redis 16389、RustFS 19010；数据库和 E2E Redis DB 隔离，不共享 D0 数据库。CI 限流参数、随机 `SESSION_SECRET` 与 32-byte base64url bootstrap 值通过本机临时环境文件传递，未写入证据；恢复工具连接专用容器的 5432 端口，recovery 测试自行创建 ObjectLock bucket。未访问生产服务。首次 E2E 的单项失败及其后目标重跑、全量重跑结果均保留在本表。
+
+必需本地检查已通过，但本轮分支 CI 和用户最终独立复核尚未完成，门禁仍关闭。D0 PR #195 独审/CI 与视觉基线门禁已完成；不将其混作 G1 最终/R1 放行。
 
 ## 规范引用与交接
 
-本次输入路径均为仓库相对路径。权威产品文档继续是 `CONTEXT.md`、`AGENT_PROTOCOL.md`、`OPENAPI.yaml`、`SCHEMA.sql` 和接受的 ADR；旧 PRD 不作为输入。相关 Todo #5–#17、#20–#22 的交接路径、base 缺口与门禁状态见主计划“任务交接映射”；该映射已记录总管之前逐项同步 spec 的结果，本轮仅验证其引用所需正文在真实 base 可读，没有声称本轮再次更新这些 Todo spec。
+本次输入路径均为仓库相对路径。权威产品文档继续是 `CONTEXT.md`、`AGENT_PROTOCOL.md`、`OPENAPI.yaml`、`SCHEMA.sql` 和接受的 ADR；旧 PRD 不作为输入。相关 Todo #5–#17、#20–#22 的交接路径、base 缺口与门禁状态见主计划“任务交接映射”；此次以最新 main 为整合源保留 D0 计划/清单增量及 P1 冻结表。本轮不声称重新同步平台 Todo spec，也不声称同步真实 WorkMesh Project/WorkItem。
