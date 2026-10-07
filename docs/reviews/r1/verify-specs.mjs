@@ -212,6 +212,21 @@ try {
     assert.equal(hash(raw), display.rawSha256)
     assert.equal(hash(readFileSync(resolve(root, display.logicalPath))), display.displaySha256)
   }
+  // 校验实际过滤后的 Git 对象，避免二进制被上层 text/eol 规则转换而清单仍通过。
+  const ci381Directory = directory + 'ci381/'
+  const ci381Index = json(ci381Directory + 'evidence-index.json')
+  for (const entry of ci381Index.derivedFiles) {
+    const path = ci381Directory + entry.path
+    if (/\.(png|zip)$/.test(path)) {
+      assert.ok(git('check-attr', 'text', '--', path).trim().endsWith(': unset'), path + ' 缺少 -text')
+    }
+    const blobId = git('hash-object', '-w', '--path', path, path).trim()
+    const bytes = execFileSync('git', ['cat-file', 'blob', blobId], { cwd: root, maxBuffer: 64 * 1024 * 1024 })
+    assert.equal(blobId, entry.expectedBlobId, path + ' Git对象ID与索引不一致')
+    assert.equal(bytes.length, entry.gitUtf8Bytes, path + ' Git字节数与索引不一致')
+    assert.equal(hash(bytes), entry.gitUtf8Sha256, path + ' Git字节哈希与索引不一致')
+    if (/\.(png|zip)$/.test(path)) assert.equal(hash(bytes), entry.worktreeSha256, path + ' 二进制经转换改变')
+  }
   console.log(JSON.stringify({ cards: '29/29', categories: '261/261', applicableAssertions: applicable, originalChecklistItems: historicalTests, dependencies: '实现及验收无环', historicalSource: '保留；#6合并前卡片全文缺口见source-gaps.md', result: '静态检查通过；非独审/产品新功能通过' }, null, 2))
 } catch (error) {
   console.error('R1规格静态校验失败：', error.message)

@@ -66,3 +66,11 @@ await expect(page).toHaveURL(url => url.searchParams.get('view') === 'projects'
 测试新增断言及诊断校验器须由 Chief 安排另一 agent 定向独审，重点判断它是否正确表达顺序场景及是否应补独立的快速交互产品回归用例；产品竞态候选不能默认为闭合。新增断言通过不等于 CI381 改成成功；该 run 保持失败。平台本回合产生新 head 后，必须取得最新 head 的完整 Required CI 成功及必要独审，Chief 才可按批准流程合入。当前不合入、不同步 Todos、不放行 B/A/C/D 或 F 产品实现。
 
 若后续决定处理快速交互问题，可审方向是在既有路由/详情 request epoch 机制内记录导航与用户打开详情的先后关系，避免旧导航清掉较新的同 Project 选择，同时继续让实际 Team/Project/权限切换失效旧请求；不能简单删掉 `routeChanged` 清理或跨授权保留详情。该方向尚未实现或验证，需独立用例覆盖慢 RSC/慢详情、后退、切换 Project/Team、撤权与不再可读目标，不能把本轮测试同步修订冒作该产品修复。
+
+## 二进制提交修复交接
+
+独审发现 `24a63f347202cdb2f116d2a8f885752b66a50577` 的五个 PNG/ZIP Git blob 被上层 `* text eol=lf` 转换破坏；工作树仍保留与原索引哈希一致的完整脱敏字节。现从该完整来源逐字节恢复，新增本目录 `.gitattributes` 的 `*.png -text`、`*.zip -text`，重新按实际 Git 过滤器输出的对象字节生成索引与执行清单。旧损坏提交、原 CI381 失败、原始 artifact 引用与此前诊断结果均保留。
+
+完整处置、损坏/恢复字节对照及验证边界见 [binary-repair.md](binary-repair.md) 和 [binary-validation.json](binary-validation.json)。`verify-binary-evidence.py --ref <准确新提交>` 从实际提交读取，检查哈希、ZIP 全成员 CRC、PNG 完整像素解码与 trace 结构化脱敏；默认模式生成并读回候选 Git 对象，不等于已产生新提交。`verify-specs.mjs` 同时校验二进制属性及实际 Git 对象哈希，不能再仅以工作树或扩展名推测提交字节。
+
+平台实读 CI382/run `37691965265` 对旧 head `24a63f3` 的十项 job 全部成功；这不修复损坏工件，也不替代本轮新 head 的 Required CI 或二进制修复独审。快速点击竞态仍为中等优先级产品跟进，本次不修改产品或已审规格。
