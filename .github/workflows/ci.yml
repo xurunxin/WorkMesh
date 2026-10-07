@@ -6,6 +6,9 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_call:
+  schedule:
+    - cron: '0 19 * * 0'
+  merge_group:
 
 permissions:
   contents: read
@@ -19,10 +22,59 @@ defaults:
     shell: bash
 
 jobs:
+  changes:
+    name: Classify changes and validate CI selection
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      plan: ${{ steps.scope.outputs.plan }}
+      packages: ${{ steps.scope.outputs.packages }}
+      test-packages: ${{ steps.scope.outputs.test-packages }}
+      source-gates: ${{ steps.scope.outputs.source-gates }}
+      db-integration: ${{ steps.scope.outputs.db-integration }}
+      api-integration: ${{ steps.scope.outputs.api-integration }}
+      worker-integration: ${{ steps.scope.outputs.worker-integration }}
+      e2e: ${{ steps.scope.outputs.e2e }}
+      recovery-integration: ${{ steps.scope.outputs.recovery-integration }}
+      agent-smoke: ${{ steps.scope.outputs.agent-smoke }}
+    steps:
+      - name: Check out comparison history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Validate selection and required-result safety
+        run: |
+          mkdir -p ci-logs
+          set -o pipefail
+          node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log
+      - name: Select required jobs
+        id: scope
+        run: |
+          set -o pipefail
+          node scripts/ci-policy.mjs 2>&1 | tee ci-logs/ci-plan.log
+      - name: Upload change classification logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: changes-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
   source-gates:
     name: Source gates
+    needs: changes
+    if: ${{ needs.changes.outputs.source-gates == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      CI_PACKAGES: ${{ needs.changes.outputs.packages }}
+      CI_TEST_PACKAGES: ${{ needs.changes.outputs.test-packages }}
     steps:
       - name: Check out source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -50,6 +102,15 @@ jobs:
           mkdir -p ci-logs
           set -o pipefail
           pnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log
+      - name: Restore trusted static and compiler caches
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            .turbo/typecheck
+            apps/web/.next/cache
+          key: source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Validate CI policy
         run: |
           set -o pipefail
@@ -57,28 +118,25 @@ jobs:
       - name: Lint
         run: |
           set -o pipefail
-          pnpm lint 2>&1 | tee ci-logs/lint.log
+          pnpm ci:source lint 2>&1 | tee ci-logs/lint.log
       - name: Typecheck
         run: |
           set -o pipefail
-          pnpm typecheck 2>&1 | tee ci-logs/typecheck.log
-      - name: Contracts
-        run: |
-          set -o pipefail
-          pnpm --filter @workmesh/contracts test 2>&1 | tee ci-logs/contracts.log
+          pnpm ci:source typecheck 2>&1 | tee ci-logs/typecheck.log
       - name: Verify generated route policy and signed WorkMesh Skill
         run: |
           set -o pipefail
           pnpm check:route-policy 2>&1 | tee ci-logs/route-policy.log
           pnpm check:workmesh-skill 2>&1 | tee ci-logs/workmesh-skill.log
+          pnpm check:runner-skill 2>&1 | tee ci-logs/runner-skill.log
       - name: Build
         run: |
           set -o pipefail
-          pnpm build 2>&1 | tee ci-logs/build.log
+          pnpm ci:source build 2>&1 | tee ci-logs/build.log
       - name: Unit tests
         run: |
           set -o pipefail
-          pnpm test 2>&1 | tee ci-logs/test.log
+          pnpm ci:source test 2>&1 | tee ci-logs/test.log
       - name: Validate Compose
         run: |
           set -o pipefail
@@ -92,6 +150,14 @@ jobs:
             git diff --cached --exit-code
             git status --short --untracked-files=no
           } 2>&1 | tee ci-logs/clean-tree.log
+      - name: Save trusted static and compiler caches
+        if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            .turbo/typecheck
+            apps/web/.next/cache
+          key: source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
       - name: Upload raw source logs
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -103,7 +169,8 @@ jobs:
 
   db-integration:
     name: Database integration
-    needs: source-gates
+    needs: changes
+    if: ${{ needs.changes.outputs.db-integration == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -174,7 +241,8 @@ jobs:
 
   api-integration:
     name: API integration
-    needs: source-gates
+    needs: changes
+    if: ${{ needs.changes.outputs.api-integration == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -311,7 +379,8 @@ jobs:
 
   worker-integration:
     name: Worker integration
-    needs: source-gates
+    needs: changes
+    if: ${{ needs.changes.outputs.worker-integration == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -382,8 +451,13 @@ jobs:
           retention-days: 14
 
   e2e:
-    name: Browser acceptance
-    needs: source-gates
+    name: Browser acceptance (${{ matrix.shard }}/2)
+    needs: changes
+    if: ${{ needs.changes.outputs.e2e == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
@@ -454,7 +528,8 @@ jobs:
       - name: Run browser acceptance
         run: |
           set -o pipefail
-          pnpm test:e2e 2>&1 | tee ci-logs/e2e.log
+          pnpm --filter @workmesh/web exec node ../../scripts/check-e2e-shards.mjs 2>&1 | tee ci-logs/shard-coverage.log
+          pnpm test:e2e -- --shard=${{ matrix.shard }}/2 2>&1 | tee ci-logs/e2e.log
       - name: Capture service logs
         if: ${{ failure() }}
         run: |
@@ -467,7 +542,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e2e-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          name: e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ci-logs
           if-no-files-found: error
           retention-days: 14
@@ -475,7 +550,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: e2e-playwright-${{ github.run_id }}-${{ github.run_attempt }}
+          name: e2e-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             apps/web/playwright-report
             apps/web/test-results
@@ -484,7 +559,8 @@ jobs:
 
   recovery-integration:
     name: Complete disaster recovery
-    needs: source-gates
+    needs: changes
+    if: ${{ needs.changes.outputs.recovery-integration == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
@@ -639,7 +715,8 @@ jobs:
 
   agent-smoke:
     name: Agent construction and protocol smoke
-    needs: source-gates
+    needs: changes
+    if: ${{ needs.changes.outputs.agent-smoke == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -670,7 +747,7 @@ jobs:
       - name: Construction and protocol smoke
         run: |
           set -o pipefail
-          pnpm smoke:agents 2>&1 | tee ci-logs/agent-smoke.log
+          pnpm smoke:agents:ci 2>&1 | tee ci-logs/agent-smoke.log
           pnpm test:conformance -- --output ../../ci-logs/client-profile-conformance 2>&1 | tee ci-logs/client-profile-conformance.log
       - name: Upload raw agent smoke logs
         if: ${{ always() }}
@@ -683,11 +760,15 @@ jobs:
 
   required-ci:
     name: Required CI
-    needs: [source-gates, db-integration, api-integration, worker-integration, e2e, recovery-integration, agent-smoke]
+    needs: [changes, source-gates, db-integration, api-integration, worker-integration, e2e, recovery-integration, agent-smoke]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Check out aggregate policy
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
       - name: Set up exact Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -698,15 +779,7 @@ jobs:
         run: |
           mkdir -p ci-logs
           set -o pipefail
-          node --input-type=module -e "
-            const needs = JSON.parse(process.env.NEEDS_JSON)
-            const failed = Object.entries(needs).filter(([, value]) => value.result !== 'success')
-            for (const [name, value] of Object.entries(needs)) console.log(name + ': ' + value.result)
-            if (failed.length > 0) {
-              console.error('Required CI failed: ' + failed.map(([name, value]) => name + '=' + value.result).join(', '))
-              process.exit(1)
-            }
-          " 2>&1 | tee ci-logs/required-ci.log
+          node scripts/ci-policy.mjs aggregate 2>&1 | tee ci-logs/required-ci.log
       - name: Upload raw aggregate log
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

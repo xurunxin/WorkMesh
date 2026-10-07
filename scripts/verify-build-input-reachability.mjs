@@ -2,13 +2,15 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readRawEvidenceArchive } from './verify-raw-evidence-archive.mjs';
 
 export const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 function isReadable(bytes, type) {
+  if (type === 'zip') return bytes.length >= 4 && bytes.readUInt32LE(0) === 0x04034b50;
   if (type === 'png') {
     return bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
   }
@@ -85,6 +87,7 @@ function inspectCommittedFile(commit, file, expectedSha256, expectedBytes, type,
       committedBytes: blob.length,
       committedSha256,
       worktreeGitBlobId: worktree.worktreeGitBlobId,
+      worktreeBytes: worktreeBytes?.length ?? null,
       worktreeSha256: worktree.worktreeSha256,
       committedReadable: isReadable(blob, type),
       worktreeReadable: worktree.readable,
@@ -146,7 +149,32 @@ function main() {
     errors.push(`P1 台账核验失败: ${error.message}`);
   }
 
-  console.log(JSON.stringify({ commit, sourceManifest: sourceManifestPath, checkedFiles: results.length, p1Assertions: 16, errors, results }, null, 2));
+  const archiveInputs = [];
+  let archiveVerification = null;
+  const archivePath = 'docs/evidence/build-input-reachability.current/raw-evidence.zip';
+  const indexPath = 'docs/evidence/build-input-reachability.current/raw-evidence-index.json';
+  // 是否要求归档由精确base的树决定，不拿当前HEAD补旧base。
+  const hasArchive = runGit(['ls-tree', '--name-only', commit, archivePath, indexPath]).toString().trim();
+  if (hasArchive) {
+    for (const [file, type] of [[archivePath, 'zip'], [indexPath, 'text'], ['scripts/verify-raw-evidence-archive.mjs', 'text']])
+      inspectCommittedFile(commit, file, undefined, undefined, type, archiveInputs, errors);
+    try {
+      const archive = readRawEvidenceArchive(readJson(runGit(['cat-file', 'blob', `${commit}:${indexPath}`]), indexPath), runGit(['cat-file', 'blob', `${commit}:${archivePath}`]));
+      archiveVerification = { entries: archive.index.entries.length, members: archive.memberCount, bytes: archive.totalBytes, selfContained: true };
+    } catch (error) { errors.push(`归档读取失败: ${error.message}`); }
+  }
+  const report = { commit, sourceManifest: sourceManifestPath, checkedFiles: results.length, p1Assertions: 16, errors, results, archiveInputs, archiveVerification };
+  const json = `${JSON.stringify(report, null, 2)}\n`;
+  const outputIndex = process.argv.indexOf('--json-out');
+  if (outputIndex >= 0) {
+    const outputPath = process.argv[outputIndex + 1];
+    if (!outputPath) {
+      console.error('--json-out 后必须提供仓库相对输出路径');
+      process.exit(2);
+    }
+    writeFileSync(outputPath, json, 'utf8');
+  }
+  process.stdout.write(json);
   if (errors.length > 0) process.exit(1);
 }
 

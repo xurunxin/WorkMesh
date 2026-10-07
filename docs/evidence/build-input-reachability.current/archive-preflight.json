@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-07T18:48:19.994Z",
+  "main": "70199df743da754068831d709a1ae8c428bd2bb0",
+  "version": "当前暂存字节；不冒称已推送head。最终head须回读并取得自身CI",
+  "rangeWhitespace": {
+    "command": "git diff --cached --check 70199df743da754068831d709a1ae8c428bd2bb0",
+    "exitCode": 0,
+    "stdout": "",
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stagedWhitespace": {
+    "command": "git diff --cached --check",
+    "exitCode": 0,
+    "stdout": "",
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitBinary": {
+    "command": "git diff --cached --numstat 70199df743da754068831d709a1ae8c428bd2bb0 -- docs/evidence/build-input-reachability.current/raw-evidence.zip",
+    "exitCode": 0,
+    "stdout": "-\t-\tdocs/evidence/build-input-reachability.current/raw-evidence.zip\n",
+    "stdoutBytes": 68,
+    "stdoutSha256": "a44f110cdda2317f86988ec8c895a1b01558afa629250fd873e2132a3ec12740"
+  },
+  "verificationTests": {
+    "command": "node --test scripts/verify-raw-evidence-archive.test.mjs scripts/verify-build-input-reachability.test.mjs",
+    "exitCode": 0,
+    "passed": 18,
+    "failed": 0,
+    "boundary": "此前本轮直接执行的实际工具结果；归档15项与原可达性3项，源码此后未改"
+  },
+  "archiveSha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+  "indexSha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+  "ciRulesChanged": false,
+  "latestCiBoundary": "CI373只覆盖002c1d61，最终head需独立CI与定向独审"
+}

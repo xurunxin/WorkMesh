@@ -47,6 +47,9 @@ test('Project and Issue documents keep immutable revisions through the real Web 
   await createIssue.getByTestId('create-work-item-submit').click()
   await expect(createIssue).toBeHidden()
   await page.getByTestId('project-control-view-work').click()
+  // The Work surface renders optimistically before Next commits its URL. Opening a
+  // sheet before that navigation finishes races the route projector's reset.
+  await expect(page).toHaveURL(/[?&]tab=list(?:&|$)/)
   await page.locator('.project-detail-pane').getByRole('button', { name: issueTitle, exact: true }).click()
   const detail = page.locator('.work-item-detail-sheet')
   await detail.getByRole('tab', { name: /讨论|Discussion/ }).click()

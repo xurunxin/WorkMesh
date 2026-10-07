@@ -2,9 +2,10 @@
 
 ## 当前状态
 
-- 用户在本轮报告 `origin/main` tip 为 `660c74a6247544ffac64e7ef8f968d1025b2a668`（PR #192 merge），本地只读核对该 commit object 的父提交为 `32789cec4d50db0b85a63d91049cc425d9e917a2` 与 `735578d8d0733e04cae5640cedfaf0c6181391c7`。该 merge 已包含 P1 完整台账；合并提交中的主计划 blob 为 `c3ec3155dca3329d61c1c5eb864878fc4a6cc0c1`，提交字节 42780，SHA-256 `8382ccd0f58a0f28b77b6e6c45a08fe48968262f92681c5d19048089ba5bcd2b`。G1 会话分支变更尚未合入该目标分支。
-- `32789…` base 中新输入包**不可读**；G1 会话分支快照 `5fbe891035f856fdd5046afb76b16f90033d431f` 已有输入材料及修订后的验证脚本，但这两个 base 均不能代替 G1 材料合入后的实际隔离 build。P1 已合入；G1 实际 base 正文读取与独立 build 复核仍待执行。
-- 最终门禁状态：**待验证**。当前没有本批改动合入后的真实隔离 build 正文读取证据，也没有独立复核签字。
+- 历史主线 `660c74a6247544ffac64e7ef8f968d1025b2a668`（PR #192 merge）冻结 P1 16 条台账；材料和 D0 后续分别进入 main。前一轮核实的 main 快照为 `4b287b4e9892bfb4545dbbff94d04f45633c3a64`，包含 G1 材料 main `419a1d7af90c09cb9364819977f32ec59cf86f87` 和 D0 `768bbd82fcc52a873168b39a8382d2f14c928abc`；本轮实际整合的最新 `origin/main` 是 `36c7709a8bd49c640b8dbfa04a09cfb777f943c8`。
+- 本任务真实隔离 build 的**初始实际 base 仍为 `419a1d7af90c09cb9364819977f32ec59cf86f87`**；44/44 文件可读、0 errors、P1 16/16。它是有效初始读取证明，未改写为后来 `4b287b4`。D0 合入后本分支计划吸收了 D0 计划/清单与 D1 拆分增量；计划和根 `MANIFEST.json` 的当前工作树哈希在最终报告中单独列出。
+- 本轮已执行 `git merge origin/main`，将最新 main 的历史及 D0 文件集整合进本分支；主计划状态行冲突已解决。针对精确提交 `4b287b4` 与最新 PR base `36c7709` 分别进行了独立输入读取验证，均为 44/44、P1 16/16、0 errors；结果分别在 final JSON 的 `integration.buildVerification` 和 `integration.pullRequestBaseVerification`，初始 base `419a1d7` 结果保持原样。D0 文件位于 `apps/web/e2e/baselines/d0/verification.md`、`apps/web/e2e/baselines/d0/manifest.json` 和 `apps/web/e2e/baselines/d0/evidence/upstream-scope-verification.json`。
+- 最终门禁状态：**输入读取和本地必需检查通过；待本分支 PR/CI 和用户独立复核**。逐文件初始 base 结果见 [`build-input-reachability.final.json`](build-input-reachability.final.json)，本轮命令、受测版本、退出码、依赖安装、首轮失败与重跑记录见 [`build-input-reachability.final.md`](build-input-reachability.final.md)。材料 PR #194 CI #348、`main@419a1d7` push CI #351、D0 PR #195 CI #352，以及历史 `main@4b287b4` push CI #353 均 8/8 成功；这些 CI 均不能替代当前 `main@36c7709` 之后的本分支 PR/CI。前序证据提交 `70a94f2` 已提交；本轮 merge 尚未收束，后续 PR/CI 待触发，故 G1 最终门禁仍关闭。
 - 批次控制面：用户于 2026-10-07 18:38（Asia/Shanghai）批准本批使用 Todos 编排、仓库保存规格和证据。此例外只适用于本批，不创建、不声称存在 WorkMesh Project/WorkItem，也不改 WorkMesh 产品领域控制面；仅替代 `AGENTS.md` 的双轨记录要求，其他约束有效。
 
 ## 基点、正文和哈希
@@ -66,8 +67,8 @@ P1 的 16 条代码事实台账是**同一路径的另一个提交版本**，不
 
 1. 原件入库后检查来源文件、仓库工作树副本和 `git cat-file blob` 的字节长度/SHA-256；在 `.gitattributes` 规则下应逐字节相等。`SOURCE-MANIFEST.json` 是来源值清单。
 2. #2 的 `run_review` 是 P1 自身的独立审查关口；第二轮独立审查已批准合并，#2 已 done。PR #192 在 merge commit `660c74a6247544ffac64e7ef8f968d1025b2a668` 合入修订提交 `735578d8d0733e04cae5640cedfaf0c6181391c7` 与 16 条事实台账。PR CI check 344 / run `37614969993` 的 8 个 job 全部 success。#3 是 P1/G1 冻结后的独立规格裁决，不是 P1 合入前置。旧 `.review.md` 不替代 P1 台账。
-3. 材料和一致性修正合入后，在同一 Todo #18 继续启动至少一次真实隔离 build。build 内用 `git rev-parse HEAD` 记录实际 base，执行 `node scripts/verify-build-input-reachability.mjs <base-commit>`；脚本逐份核对 `git rev-parse <commit>:<path>`、`git cat-file blob`、`git hash-object --path=<path> <path>`，并分别输出提交 blob 字节与工作树字节的 SHA-256。逐份阅读完整正文；所有输入和 P1 16 条检查通过后由独立复核者签字并追加证据。
-4. 本轮未运行真实隔离 build，不能预填其 base/hash，也未完成独立 build 复核。验证脚本随本轮变更提交后可在 build 中使用；脚本将拒绝没有输入包、工作树缺少必读正文或缺少 P1 16 条表的 base。
+3. 材料合入后，在同一 Todo #18 启动真实隔离 build。该次 build 实测的初始实际 base 为 `419a1d7af90c09cb9364819977f32ec59cf86f87`，执行 `node scripts/verify-build-input-reachability.mjs 419a1d7af90c09cb9364819977f32ec59cf86f87 --json-out docs/evidence/build-input-reachability.final.json`；退出码 0，44/44 文件可读、P1 16/16、0 errors。完整逐文件输出与正文检查范围见最终记录及 JSON。此初始 base 证明保留不变。
+4. main 快照 `4b287b4e9892bfb4545dbbff94d04f45633c3a64` 合入 D0 `768bbd82fcc52a873168b39a8382d2f14c928abc` 并含 G1 材料 `419a1d7…`；本轮再整合最新 main `36c7709a8bd49c640b8dbfa04a09cfb777f943c8`。计划/清单保留 D0 增量；初始实际 base、两次 main 输入读取和最终合并工作树的 plan hash 分开记录，未将旧读取结果冒充新版本，也未因 main 前移而重造 fresh build。
 5. 五项 `pnpm` 仓库检查运行于基于 `ef264842a8e0dcd215151fd2e2d7c0dc7b5d6cdd` 的本轮工作树，时间早于最后一次 verifier 行尾边界微调。该微调后重跑了可达性脚本 3/3 负向/归一化单测、`pnpm lint`、`pnpm typecheck`、`git diff --check` 和清单哈希核验；没有改动应用或 TypeScript 包源码。此 SHA 是检查基线，不是包含本轮改动的最终提交。结果如下：
 
 | 命令 | 退出码 | 结果摘要 |
@@ -82,5 +83,5 @@ P1 的 16 条代码事实台账是**同一路径的另一个提交版本**，不
 
 集成与 E2E 使用本轮新建的专属容器和测试数据库：PostgreSQL 宿主端口 15442、Redis 端口 16389、RustFS 端口 19010；E2E 使用独立数据库和 Redis DB 1。bootstrap/session 值由运行时随机生成且未写入仓库；recovery 测试创建自己的 Object Lock 源桶，容器内 `pg_dump` 连接 5432。曾有两次环境配置尝试未通过：首轮集成漏配 CI 的认证 burst 上限（API 23 条失败），补齐后又因把宿主映射端口传给容器内 `pg_dump`（recovery 1 条失败）；修正为 CI burst 值和容器端口后，完整命令退出码 0。临时运行日志不作为仓库材料保留。
 
-这些是 G1 本地工作树检查结果，不是 G1 最终提交或 CI 结果；P1 自身的最终提交检查以其 PR CI 为准，已记录于上文。P1 已合入 `660c74…`；G1 材料尚未合入，且没有合入后真实隔离 build 的读取证据，故本地通过和 P1 CI 均不解除 G1 最终输入门禁。
-6. 只有合入后的真实隔离 build、正文读取、哈希比对、任务映射同步和独立复核均通过，才关闭 G1 输入门禁；材料第一阶段合入与 D0 完成均不等于最终通过。
+本地 required checks 和历史失败/重跑详情见 [`build-input-reachability.final.md`](build-input-reachability.final.md)。本分支 CI 尚未触发，用户最终独立复核仍待进行。材料 PR #194 CI #348、main@419 push CI #351、D0 PR #195 CI #352、main@4b push CI #353 均为 8/8 成功，不替代 main 更新到 `36c7709` 后的本分支 CI。
+6. 初始真实隔离 build、原件读取和哈希比对已通过；D0 视觉基线门禁亦已完成。G1 最终/R1 门禁仍须等待本分支 CI 与用户独立复核后才能关闭。

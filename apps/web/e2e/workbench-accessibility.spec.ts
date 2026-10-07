@@ -92,11 +92,11 @@ const surfaces = [
 ] as const
 
 for (const viewport of viewports) {
-  test(`workbench surfaces keep the structural boundary at ${viewport.width}px`, async ({ page }) => {
+  test(`workbench surfaces keep structural and keyboard boundaries at ${viewport.width}px`, async ({ page }) => {
     test.setTimeout(120_000)
     await page.setViewportSize({ height: viewport.height, width: viewport.width })
 
-    for (const surface of surfaces) {
+    for (const surface of surfaces) await test.step(surface.label, async () => {
       await page.goto(surface.path)
       await expect(surface.ready(page), `${surface.label} did not render`).toBeVisible({ timeout: 20_000 })
 
@@ -113,17 +113,6 @@ for (const viewport of viewports) {
         audit.overflow.scrollWidth,
         `${surface.label}: the document is horizontally contained at ${viewport.width}px`,
       ).toBe(audit.overflow.clientWidth)
-    }
-  })
-
-  test(`workbench surfaces keep keyboard focus inside the viewport at ${viewport.width}px`, async ({ page }) => {
-    test.setTimeout(120_000)
-    await page.setViewportSize({ height: viewport.height, width: viewport.width })
-
-    for (const surface of surfaces) {
-      await page.goto(surface.path)
-      await expect(surface.ready(page), `${surface.label} did not render`).toBeVisible({ timeout: 20_000 })
-
       // Tab through the first few controls; each focused control must stay inside
       // the viewport so a keyboard user is never stranded off-screen. A control
       // inside a horizontal scroll container is exempt: scrolling to it is the
@@ -158,6 +147,6 @@ for (const viewport of viewports) {
         }
         expect.soft(geometry.top, `${surface.label}: focused control is below the top edge`).toBeGreaterThanOrEqual(-2)
       }
-    }
+    })
   })
 }
