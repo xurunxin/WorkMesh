@@ -251,6 +251,8 @@ for (const step of cacheSteps) {
   }
 }
 requireCondition(!turboJson.globalEnv, 'runtime credentials must not invalidate pure static tasks globally')
+const sourceRunner = readFileSync(resolve(root, 'scripts/run-ci-source.mjs'), 'utf8')
+requireCondition(sourceRunner.includes("if (task === 'lint') args.push('--only')") && !/if\s*\([^\n]*typecheck[^\n]*\)[^\n]*args\.push\('--only'\)/.test(sourceRunner), 'cached typechecks must retain Turbo upstream dependency hashes')
 for (const input of ['scripts/**', 'playwright*.ts']) requireCondition(turboJson.globalDependencies?.includes(input), `static caches must hash imported root input ${input}`)
 for (const [name, inputs] of Object.entries(externalTypecheckInputs)) {
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#typecheck`]?.inputs) === JSON.stringify(['$TURBO_DEFAULT$', ...inputs.map(input => `$TURBO_ROOT$/${input}`)]), `${name} typecheck must hash directly imported fixture source outside runtime dependencies`)

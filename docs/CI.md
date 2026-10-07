@@ -52,6 +52,8 @@ configuration participates in global inputs.
 Root scripts and Playwright configs are also global inputs because tests import
 them during typechecking. API/Web typecheck inputs cover their direct imports of
 worker, MCP, fake-agent and package source from integration/E2E fixtures.
+Typecheck also retains Turbo's upstream task hashes; its selected filters already
+include every prerequisite workspace, so this adds no duplicate checks.
 Runtime environment variables are
 passed through globally but hashed by build/test tasks; changing a bootstrap
 credential does not invalidate pure `tsc --noEmit` checks.

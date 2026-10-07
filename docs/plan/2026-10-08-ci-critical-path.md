@@ -64,9 +64,16 @@ fake-agent and package source outside the runtime dependency graph. Add these
 source inputs to API/Web typecheck tasks, and hash imported root scripts and
 Playwright configuration globally. Preserve upstream typecheck dependencies.
 The existing cache hashes invalidate older incomplete typecheck results.
+Typecheck must retain Turbo's task dependency graph: `--only` discards dependency
+hashes even when upstream workspaces are explicitly filtered. Removing it keeps
+the same expanded workspace set and invalidates consumers after dependency edits.
 
 Tests: complete typecheck, CI validator and all twelve classifier/aggregate
 regressions passed. A Turbo dry-run mutation proof verified eight expected
 consumer invalidations across five external source/configuration files; the
 fixture files were restored byte-for-byte. Hosted full CI is required for this
 follow-up before merge, as for the original implementation.
+An actual `ci:source` dry-run also verified that a contracts edit invalidates the
+worker typecheck while unrelated artifact-storage stays cached, with the same
+seven prerequisite tasks. The final runner passed all eighteen typechecks and
+then restored 18/18 in 407ms after changing test credentials and build SHA.
