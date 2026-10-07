@@ -1,10 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { createRawEvidenceZip, digest, readRawEvidenceArchive, resolveEvidenceBytes, safePath } from './verify-raw-evidence-archive.mjs';
 
 function fixture() {
   const raw = Buffer.from('现场原件\r\n含尾随空白  \r\n'), blob = Buffer.from('现场原件\n含尾随空白  \n');
-  const entries = [raw, blob].map((bytes, i) => ({ logicalPath: 'docs/raw.log', version: 'snapshot-1', byteKind: i ? 'git-blob' : 'worktree', member: `bytes/${digest(bytes)}`, bytes: bytes.length, sha256: digest(bytes), sourceCommit: 'a'.repeat(40), sourceBlobId: 'b'.repeat(40) }));
+  const sourceBlobId = createHash('sha1').update(Buffer.from(`blob ${blob.length}\0`)).update(blob).digest('hex');
+  const entries = [raw, blob].map((bytes, i) => ({ logicalPath: 'docs/raw.log', version: 'snapshot-1', byteKind: i ? 'git-blob' : 'worktree', member: `bytes/${digest(bytes)}`, bytes: bytes.length, sha256: digest(bytes), sourceCommit: 'a'.repeat(40), sourceBlobId }));
   const zip = createRawEvidenceZip(entries.map((row, i) => ({ name: row.member, bytes: [raw, blob][i] })));
   return { raw, blob, zip, index: { schemaVersion: 1, archive: { bytes: zip.length, sha256: digest(zip) }, entries } };
 }
@@ -30,6 +32,7 @@ test('拒绝索引缺项/多项', () => {
 });
 test('拒绝索引重复元组', () => { const f = fixture(); f.index.entries.push({ ...f.index.entries[0] }); assert.throws(() => readRawEvidenceArchive(f.index, f.zip)); });
 test('拒绝归档hash不符', () => { const f = fixture(); f.zip[35] ^= 1; assert.throws(() => readRawEvidenceArchive(f.index, f.zip)); });
+test('拒绝伪造来源blob ID', () => { const f = fixture(); f.index.entries[1].sourceBlobId = 'b'.repeat(40); assert.throws(() => readRawEvidenceArchive(f.index, f.zip)); });
 test('拒绝member bytes/hash不符', () => { const f = fixture(); f.index.entries[0].bytes++; assert.throws(() => readRawEvidenceArchive(f.index, f.zip)); });
 for (const [label, mode] of [['软链接', 0o120777], ['目录', 0o040755], ['设备', 0o020600]]) test(`拒绝${label}`, () => {
   const f = fixture(), central = f.zip.readUInt32LE(f.zip.length - 6); f.zip.writeUInt32LE((mode << 16) >>> 0, central + 38); rehash(f); assert.throws(() => readRawEvidenceArchive(f.index, f.zip));

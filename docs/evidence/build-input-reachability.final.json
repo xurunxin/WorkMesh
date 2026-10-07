@@ -8270,8 +8270,8 @@
   "archiveClosure": {
     "latestMain": "70199df743da754068831d709a1ae8c428bd2bb0",
     "previousHead": "37857eef5a67555564097ace07871ac44ed24195",
-    "testedHead": null,
-    "recordedAt": "2026-10-07T18:21:25.100Z",
+    "testedHead": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+    "recordedAt": "2026-10-07T18:48:24.925Z",
     "integration": {
       "strategy": "同一会话分支正常无冲突merge PR201；不改写合并历史",
       "mainIncrementFiles": 15
@@ -8928,19 +8928,19 @@
     },
     "archive": {
       "snapshot": "g1-archive-2026-10-08",
-      "logicalPaths": 38,
-      "tuples": 212,
-      "members": 44,
-      "totalUncompressedBytes": 17351244,
+      "logicalPaths": 54,
+      "tuples": 280,
+      "members": 61,
+      "totalUncompressedBytes": 21268498,
       "zip": {
         "file": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
-        "bytes": 1880856,
-        "sha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501"
+        "bytes": 2339178,
+        "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b"
       },
       "index": {
         "file": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
-        "bytes": 108511,
-        "sha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e"
+        "bytes": 140663,
+        "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162"
       },
       "selfContained": true,
       "sourceByteKinds": [
@@ -9084,13 +9084,13 @@
         },
         {
           "name": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
-          "bytes": 1880856,
-          "sha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501"
+          "bytes": 2339178,
+          "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b"
         },
         {
           "name": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
-          "bytes": 108511,
-          "sha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e"
+          "bytes": 140663,
+          "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162"
         },
         {
           "name": "docs/evidence/build-input-reachability.current/raw-evidence-reading.md",
@@ -9099,37 +9099,858 @@
         },
         {
           "name": "scripts/verify-raw-evidence-archive.mjs",
-          "bytes": 9390,
-          "sha256": "e6b75940cd9b2f018472969122b1d705e97975ff27918ddf9ec2e2837d7bb4b6"
+          "bytes": 9722,
+          "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
         },
         {
           "name": "scripts/verify-raw-evidence-archive.test.mjs",
-          "bytes": 4533,
-          "sha256": "c109a79ca615e6eb21c3693a573bd8149f19edc40add36d8b83788f83424e798"
+          "bytes": 4852,
+          "sha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
         }
       ],
-      "checkedEntries": 31
+      "checkedEntries": 31,
+      "currentDualBytes": [
+        {
+          "file": "README.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "651bfd1848cea6ab0790870ad776c62e08d72937",
+          "committedBytes": 14557,
+          "committedSha256": "17678a8e20c7a3f13eb6b77f130b50076d3f96c8efb03431f82222884e41a450",
+          "worktreeBytes": 14705,
+          "worktreeSha256": "12025b24b04e0d31d90fb8ab1d037a5f7b41e5edecee2cf06c234d4607ce2771"
+        },
+        {
+          "file": "AGENTS.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
+          "committedBytes": 9050,
+          "committedSha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
+          "worktreeBytes": 9306,
+          "worktreeSha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96"
+        },
+        {
+          "file": "CONTEXT.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "a6fb11c386e837eed2b8e95b35f41a667c87a201",
+          "committedBytes": 4080,
+          "committedSha256": "3398da2c42aa004d61e0e1202f7dccb0847859ce8b8f859217d6c17fc6d8839e",
+          "worktreeBytes": 4173,
+          "worktreeSha256": "cc6be739e37ba59e711d1bbaa84624fd78ff127c7dbe2bebe9f6811589fb9f7f"
+        },
+        {
+          "file": "AGENT_PROTOCOL.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "5a1336db65c7f39fb603c39e3e6a311c6c740f95",
+          "committedBytes": 68415,
+          "committedSha256": "809f309cb179d62b06d3b26ad569aaad0d1cbf794d4061ea829c5777dcfa96e9",
+          "worktreeBytes": 70190,
+          "worktreeSha256": "7c4427ce03ad19b37ec0e3d6c3474af4b7afb42425eba75e62824ed2db0eb2a3"
+        },
+        {
+          "file": "OPENAPI.yaml",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "91a12aedee454d8d89a7c31c4993664c78972849",
+          "committedBytes": 489123,
+          "committedSha256": "18e6ce9f67d9cfbb90931be74f4593725296d9e98e2070085d99d486a44f7968",
+          "worktreeBytes": 495916,
+          "worktreeSha256": "b98891984df512c409a1bc4c6198311eac72cdfc41d9a4fc47ac58cd3c90869b"
+        },
+        {
+          "file": "SCHEMA.sql",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "7d1aed0714dd7d3b74e81ae2493baab7d13a4d0f",
+          "committedBytes": 1334,
+          "committedSha256": "9575ee2ad4619ccc316c57d1003b940d9d16f3999b77ae440009478ca3ef7007",
+          "worktreeBytes": 1360,
+          "worktreeSha256": "776d6d24f0a66ac9d45c1901fe9c25b9d2a7c2ecf78fcc5c8f5fcb4bf03bf141"
+        },
+        {
+          "file": "VALIDATION.json",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "82f9976ba5b1faf3fdcb6b42a56696300a4f2085",
+          "committedBytes": 1062,
+          "committedSha256": "c7127daee91f1c864341c4463d31773eb515d804af26b2007f06cb8fb7d72486",
+          "worktreeBytes": 1098,
+          "worktreeSha256": "3a08b9b7d7ceceb18cac9698be3f0f04602a8253d36fa946ad47dff918d270a9"
+        },
+        {
+          "file": "docs/adr/README.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "9b98ee70c3fd5f521dc7fe060c5f0ea92a597363",
+          "committedBytes": 16064,
+          "committedSha256": "4d30c7b6febddb9d00bbf51be8a4b69a247fe35ef872560f3ded734baef3326e",
+          "worktreeBytes": 16185,
+          "worktreeSha256": "abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8"
+        },
+        {
+          "file": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "2453d156e3609ff5fccb83111ac1cc0826483ec3",
+          "committedBytes": 12420,
+          "committedSha256": "1552ede369a26d3f57e8976fd4b5074ac246db8a0ca5e9b316330114ea72ec1c",
+          "worktreeBytes": 12639,
+          "worktreeSha256": "5467b00c2047b616f557defeeb5eda607c18223ffdc178fd4d6d1d2d8763aa0a"
+        },
+        {
+          "file": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "67450ac4675f0374e7cb191e4c446943679bacd8",
+          "committedBytes": 16275,
+          "committedSha256": "796ddbb99b81e8330b54d9fcd17f147aa68df1873b1e8c3fed9c3e9ec467108d",
+          "worktreeBytes": 16523,
+          "worktreeSha256": "ddf24ece241d40997adec9297229aa34b2abb91edc71426b47febdf19fb8350f"
+        },
+        {
+          "file": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "e72dc4f37c67d83adbc27c23d6b2f25eb6b8fa09",
+          "committedBytes": 15576,
+          "committedSha256": "977644f9a9979702ece38198796e2f3e79df8903fa641cd288a57c955fc7cb5e",
+          "worktreeBytes": 15831,
+          "worktreeSha256": "4a1f7dda076c7d2e0f9bdef71cd9a5ad754563fe337d22bf138ec6c84810b39c"
+        },
+        {
+          "file": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "353cc589f6ad0cc6a98f8c68c0786a8c4bdc229f",
+          "committedBytes": 13822,
+          "committedSha256": "e59978475562b6a1320c050b12589a436890290b8a0fcadcaef4b4800ed49876",
+          "worktreeBytes": 14065,
+          "worktreeSha256": "a6719cadd221f426f79717946915566128bf9e749c995ed731f7e22c2a29935a"
+        },
+        {
+          "file": "docs/plan/2026-08-22-agent-connection-runtime-reliability.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "c0b5b95dd7ff94c46d834deb42f1f13460dbbb0a",
+          "committedBytes": 8924,
+          "committedSha256": "1beff46dd056b03a6e90d6ae40765fb3190b34495ca8a5db5b74405b54193a57",
+          "worktreeBytes": 9090,
+          "worktreeSha256": "9bbf77485b23c75b8576868e2cbfb8515d7ea5811a2282263e5eab4c4eb87299"
+        },
+        {
+          "file": "docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "d8777257793354ac50856e1812f420f435455f29",
+          "committedBytes": 12684,
+          "committedSha256": "0529101b628c3d337a4e1cb52c97a0c355a31a6de25d873b48edee4a4fd8b1ea",
+          "worktreeBytes": 12800,
+          "worktreeSha256": "e873a7f1cf55a75eb7db5cf93e07a2ec863f5fb01f09871d85bf31f01a2d7ec4"
+        },
+        {
+          "file": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "559c64d9150a4b223fdd07974e0a44a457410d41",
+          "committedBytes": 73034,
+          "committedSha256": "381ade3200a661584f77036ae4aa5df921200398b7f18ec872b688f361b96e4a",
+          "worktreeBytes": 73811,
+          "worktreeSha256": "cd1eccdb553ab584fc555e3e37ab09b4a7e8fa80b8bb80de5b2ffd12da01e3b3"
+        },
+        {
+          "file": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "764608c4ad529b2fa80fab87e526a014a98b7872",
+          "committedBytes": 44071,
+          "committedSha256": "7226285a697cb7189e35863f6e5988b702a38bbdf72da9bce138a14a7b3d33bd",
+          "worktreeBytes": 44295,
+          "worktreeSha256": "f2047c0df73fc47e04a6f174058acf7d1e744988a35690945f28461012c09661"
+        },
+        {
+          "file": "docs/references/todos-analysis/SOURCE-MANIFEST.json",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "b5c9bec0892d526d02cd36a14b2ad6c2e17d3e68",
+          "committedBytes": 10338,
+          "committedSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd",
+          "worktreeBytes": 10338,
+          "worktreeSha256": "e49b4c29207521117257cfff788f763392e7a493b50cde9daaed994ad1c38ccd"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "b5a4c33e05031e46e7925927f4a302ebdf17a622",
+          "committedBytes": 15870,
+          "committedSha256": "2018697be288eeea0c81ce9b9459ea2a9544b5a6e518b62f00a533301008f781",
+          "worktreeBytes": 15957,
+          "worktreeSha256": "998d64a84d992d36b816badb9a3403f4306333e5e5c730d9d05e4658d395fa94"
+        },
+        {
+          "file": "scripts/verify-build-input-reachability.mjs",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "4adbf7d797f21871f58ac6f9a72bccad1916658b",
+          "committedBytes": 7993,
+          "committedSha256": "91072837e164ea262b251c4bc72dd1503c564149864562b1e4ad3b67f65c7af0",
+          "worktreeBytes": 8155,
+          "worktreeSha256": "e57c33d288f69f5c16c304d97e2643896147b674f48e6072a10c1beeebfe58cf"
+        },
+        {
+          "file": "docs/references/todos-analysis/reviews/todos-review.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "56adba83ceb95ca4dfd90fdf4d71ae05cb101283",
+          "committedBytes": 56573,
+          "committedSha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8",
+          "worktreeBytes": 56573,
+          "worktreeSha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8"
+        },
+        {
+          "file": "scripts/verify-build-input-reachability.test.mjs",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "4d1d6502c6e73b0d8542708eb620bb90ec3b57e9",
+          "committedBytes": 1482,
+          "committedSha256": "8cdc9f84155de402dff2791bd6101da5db7348e54143e60a153aff6bd7029e78",
+          "worktreeBytes": 1524,
+          "worktreeSha256": "44cb9932fb4213269450ee5626aebd10bcc2360fb869ec9dd035a772d52ef993"
+        },
+        {
+          "file": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "b1781583b75e2ab28d42c1a1cf2265ae326c37b1",
+          "committedBytes": 48859,
+          "committedSha256": "d3ac15e76fa544189bdcf20033553fb2d1a3e1631f7e4b2cd54a4b8e83ca6546",
+          "worktreeBytes": 49643,
+          "worktreeSha256": "c74135dbed77e918b18b8a15b8e554a4f8dd9bdac548e1bd20eec7928eec7f2a"
+        },
+        {
+          "file": "docs/adr/0078-review-round2.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "058c70e617e1020c521d4cad2b9973789efa4ba0",
+          "committedBytes": 24468,
+          "committedSha256": "0f9ec7b53d8ba7dd9e8c11e247c1116fc6dadf932432c77b8cc5b391aca728e9",
+          "worktreeBytes": 24657,
+          "worktreeSha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660"
+        },
+        {
+          "file": "docs/CI.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "851019e2d5103605d0015378cbc7f7bccb359723",
+          "committedBytes": 13295,
+          "committedSha256": "c3f8fce11ad5fc4fbd965150632408b8dbd5c2bdc19bfa75dd0de61aadf8952f",
+          "worktreeBytes": 13539,
+          "worktreeSha256": "361473cedb1ddd1bfb12395d546cc9394fb5d79e5c132a3398a9c0b26d82da6f"
+        },
+        {
+          "file": "docs/plan/2026-10-08-ci-and-test-efficiency.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "597bfeae966a48ce4200aa10b68069dab7bcaa72",
+          "committedBytes": 7416,
+          "committedSha256": "71078cf56763d2c38dd90d10747bcdec00116f45c5d86f4c66f22642fdd35d07",
+          "worktreeBytes": 7524,
+          "worktreeSha256": "3b6ae0279157d699cbec756d69468ca68a576a07b512949e48d219a0e3a278c7"
+        },
+        {
+          "file": "docs/plan/2026-10-08-ci-critical-path.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "c5b3c16797ebe86378c00a7b849de1141e8b036d",
+          "committedBytes": 2706,
+          "committedSha256": "6ec41375093f6271e2ef6a8f0b19fd408d84dd44ca2c0f1532b5aef6e10e2600",
+          "worktreeBytes": 2756,
+          "worktreeSha256": "a20a553cf9c22dd7aa5b941d1a4ec79e22a93671cc6b0ad963b4d3b327982c35"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "1875e8935dee1d406616f6d5e799d4acc739041a",
+          "committedBytes": 2339178,
+          "committedSha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+          "worktreeBytes": 2339178,
+          "worktreeSha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "f5c477c404645a070d5ae7e9aafb6c744da8decb",
+          "committedBytes": 140663,
+          "committedSha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+          "worktreeBytes": 140663,
+          "worktreeSha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/raw-evidence-reading.md",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "ac6d3e9946f851c7e41dbf3853bcfcde91c3f918",
+          "committedBytes": 1743,
+          "committedSha256": "92372f2609ea3240977d92539c1b9bf4e726c9b64d3ee0994aefc7d22e74b545",
+          "worktreeBytes": 1743,
+          "worktreeSha256": "92372f2609ea3240977d92539c1b9bf4e726c9b64d3ee0994aefc7d22e74b545"
+        },
+        {
+          "file": "scripts/verify-raw-evidence-archive.mjs",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "b32919f321b8d42913e7e476989f1c8f389327dd",
+          "committedBytes": 9722,
+          "committedSha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131",
+          "worktreeBytes": 9722,
+          "worktreeSha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+        },
+        {
+          "file": "scripts/verify-raw-evidence-archive.test.mjs",
+          "version": "当前待提交工作树，Git过滤后的预期blob；不是旧checkpoint",
+          "blobId": "39416f3733342cf05326b9336c143b895b204573",
+          "committedBytes": 4852,
+          "committedSha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2",
+          "worktreeBytes": 4852,
+          "worktreeSha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
+        }
+      ]
     },
-    "checks": [],
+    "checks": [
+      {
+        "name": "ci-test",
+        "attempt": 2,
+        "command": "pnpm ci:test",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:22:03.770Z",
+        "completedAt": "2026-10-07T18:22:04.469Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/ci-test.2.log",
+        "summary": "ℹ tests 12；ℹ pass 12",
+        "logBytes": 1545,
+        "logSha256": "31e26a6725c84ba58a18329b5b92b09645f801c11903ed673b1abe22a6419b21"
+      },
+      {
+        "name": "ci-validate",
+        "attempt": 2,
+        "command": "pnpm ci:validate",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:22:05.340Z",
+        "completedAt": "2026-10-07T18:22:07.144Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/ci-validate.2.log",
+        "summary": "[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4；ℹ tests 14；ℹ pass 14",
+        "logBytes": 1586,
+        "logSha256": "09226883e8686867cab3877361e7bf9f749193526c0c63ac076aaa73a9ac6786"
+      },
+      {
+        "name": "typecheck",
+        "attempt": 5,
+        "command": "pnpm typecheck",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:22:47.795Z",
+        "completedAt": "2026-10-07T18:23:34.221Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/typecheck.5.log",
+        "summary": " Tasks:    18 successful, 18 total",
+        "logBytes": 6620,
+        "logSha256": "1e2179eb3b8aced0b80eae7f008807be2c8fb0be3e671747a7e54bc994a35a77"
+      },
+      {
+        "name": "lint",
+        "attempt": 5,
+        "command": "pnpm lint",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:22:47.802Z",
+        "completedAt": "2026-10-07T18:23:34.297Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/lint.5.log",
+        "summary": " Tasks:    18 successful, 18 total",
+        "logBytes": 6060,
+        "logSha256": "d0c877f472346602e9911f84fa618cb280081d9c5eb160511fc2386888585204"
+      },
+      {
+        "name": "e2e-shards",
+        "attempt": 1,
+        "command": "pnpm -C apps/web exec node ../../scripts/check-e2e-shards.mjs",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:24:40.347Z",
+        "completedAt": "2026-10-07T18:24:44.981Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/e2e-shards.1.log",
+        "summary": "Browser coverage: 65 unique cases; shards 34 + 32; only bootstrap repeats.",
+        "logBytes": 264,
+        "logSha256": "1ee824ee4d3cb9c8db1cb5c253f70571d3a5b6ab90967d1a465539116ffaea5e"
+      },
+      {
+        "name": "integration-scene-root",
+        "attempt": 1,
+        "command": "pnpm test:integration",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:22:37.600Z",
+        "completedAt": "2026-10-07T18:27:25.368Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/integration-scene-root.1.log",
+        "summary": "      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed | 1 skipped (155)； Test Files  8 passed | 1 skipped (9)；      Tests  78 passed | 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1)",
+        "logBytes": 1032295,
+        "logSha256": "584d9a45683b9c72ec33257b42487aafa131de6c934cb02838de842ea47a3bdd"
+      },
+      {
+        "name": "lint",
+        "attempt": 6,
+        "command": "pnpm lint",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:28:48.869Z",
+        "completedAt": "2026-10-07T18:31:17.716Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/lint.6.log",
+        "summary": " Tasks:    18 successful, 18 total",
+        "logBytes": 6062,
+        "logSha256": "30a476c51745ecefeabaa3db94136c3eb1afa89c8455467dd81a5dff5c941ebc"
+      },
+      {
+        "name": "typecheck",
+        "attempt": 6,
+        "command": "pnpm typecheck",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:28:48.890Z",
+        "completedAt": "2026-10-07T18:31:20.694Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/typecheck.6.log",
+        "summary": " Tasks:    18 successful, 18 total",
+        "logBytes": 6622,
+        "logSha256": "cfcdc61e684204ef331cdcce8158120e090980745be856f440f3067a8b748863"
+      },
+      {
+        "name": "test",
+        "attempt": 5,
+        "command": "pnpm test",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:27:54.348Z",
+        "completedAt": "2026-10-07T18:31:45.949Z",
+        "exitCode": 1,
+        "logPath": "docs/evidence/build-input-reachability.current/test.5.log",
+        "summary": "@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/api:test:  Test Files  1 failed | 32 passed (33)；@workmesh/api:test:       Tests  170 passed | 4 skipped (174)； Tasks:    27 successful, 29 total",
+        "logBytes": 87064,
+        "logSha256": "d9099df9db167c0962e611602091305f9200d5c1e54ad134b3849221c532dad0"
+      },
+      {
+        "name": "ci-build",
+        "attempt": 2,
+        "command": "pnpm ci:source build",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:27:54.348Z",
+        "completedAt": "2026-10-07T18:32:01.409Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/ci-build.2.log",
+        "summary": " Tasks:    18 successful, 18 total",
+        "logBytes": 9742,
+        "logSha256": "b34ee9ef1494f58c5abaaae647a07728d416e4b8e2b4af6375af77d752737b82"
+      },
+      {
+        "name": "unit-rate-limit",
+        "attempt": 1,
+        "command": "pnpm -C apps/api exec vitest run src/auth-rate-limit/server-rate-limit.test.ts",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:33:41.186Z",
+        "completedAt": "2026-10-07T18:33:46.517Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/unit-rate-limit.1.log",
+        "summary": " Test Files  1 passed (1)；      Tests  4 passed (4)",
+        "logBytes": 549,
+        "logSha256": "b1ebf8f00c1bfd3dcdc16ed4aa00eb74f195c91af99460490ac4e2b3fdb7bb5b"
+      },
+      {
+        "name": "ci-validate",
+        "attempt": 3,
+        "command": "pnpm ci:validate",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:34:16.998Z",
+        "completedAt": "2026-10-07T18:34:19.532Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/ci-validate.3.log",
+        "summary": "[ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4；ℹ tests 15；ℹ pass 15",
+        "sourceOverrides": [
+          {
+            "file": "scripts/verify-raw-evidence-archive.mjs",
+            "blobId": "b32919f321b8d42913e7e476989f1c8f389327dd",
+            "bytes": 9722,
+            "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+          },
+          {
+            "file": "scripts/verify-raw-evidence-archive.test.mjs",
+            "blobId": "39416f3733342cf05326b9336c143b895b204573",
+            "bytes": 4852,
+            "sha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
+          }
+        ],
+        "logBytes": 1626,
+        "logSha256": "f3c2617a7be64a9de930caf1a1014b9106feda1af2f7e9aa07bbf4f65899819d"
+      },
+      {
+        "name": "integration",
+        "attempt": 5,
+        "command": "pnpm test:integration",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:27:44.190Z",
+        "completedAt": "2026-10-07T18:34:32.318Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/integration.5.log",
+        "summary": "      Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed | 1 skipped (155)； Test Files  8 passed | 1 skipped (9)；      Tests  78 passed | 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1)",
+        "logBytes": 1031840,
+        "logSha256": "322b9b4d02b4b87c476810b1e08947089319663e7bc8dfb2d5f41705328635fb"
+      },
+      {
+        "name": "test",
+        "attempt": 6,
+        "command": "pnpm test",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:34:16.998Z",
+        "completedAt": "2026-10-07T18:36:37.284Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/test.6.log",
+        "summary": "@workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)；@workmesh/web:test:  Test Files  113 passed (113)；@workmesh/web:test:       Tests  776 passed (776)； Tasks:    29 successful, 29 total",
+        "sourceOverrides": [
+          {
+            "file": "scripts/verify-raw-evidence-archive.mjs",
+            "blobId": "b32919f321b8d42913e7e476989f1c8f389327dd",
+            "bytes": 9722,
+            "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+          },
+          {
+            "file": "scripts/verify-raw-evidence-archive.test.mjs",
+            "blobId": "39416f3733342cf05326b9336c143b895b204573",
+            "bytes": 4852,
+            "sha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
+          }
+        ],
+        "logBytes": 59993,
+        "logSha256": "83224ee4bdc4634b23ae03605176b96fd62dfc8d47456dc25097776fbe6e6473"
+      },
+      {
+        "name": "e2e",
+        "attempt": 7,
+        "command": "pnpm test:e2e",
+        "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "node": "v24.20.0",
+        "startedAt": "2026-10-07T18:36:51.536Z",
+        "completedAt": "2026-10-07T18:40:41.713Z",
+        "exitCode": 0,
+        "logPath": "docs/evidence/build-input-reachability.current/e2e.7.log",
+        "summary": "@workmesh/web:test:e2e:   65 passed (3.8m)； Tasks:    3 successful, 3 total",
+        "sourceOverrides": [
+          {
+            "file": "scripts/verify-raw-evidence-archive.mjs",
+            "blobId": "b32919f321b8d42913e7e476989f1c8f389327dd",
+            "bytes": 9722,
+            "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+          },
+          {
+            "file": "scripts/verify-raw-evidence-archive.test.mjs",
+            "blobId": "39416f3733342cf05326b9336c143b895b204573",
+            "bytes": 4852,
+            "sha256": "37646f2f6efa14ed18e269a575e9cf8f9b7bdd1d0b232b519defebf4c2bf60f2"
+          }
+        ],
+        "logBytes": 1654242,
+        "logSha256": "364c8bebcf4d5db4df2623fe6a1224140a97873e29c410629d187cf6a45d50c4"
+      }
+    ],
     "localRequiredCommandStatus": {
-      "lint": "尚未完成",
-      "typecheck": "尚未完成",
-      "test": "尚未完成",
-      "integration": "尚未完成",
-      "e2e": "尚未完成"
+      "lint": 0,
+      "typecheck": 0,
+      "test": 0,
+      "integration": 0,
+      "e2e": 0
     },
     "readPolicy": "当前ZIP/索引/读取器为唯一归档输入，历史JSON logPath+head+byteKind通过索引解析，不需要旧Git对象；历史字段hash对应其原snapshot，当前正文不匹配旧hash",
-    "integrationFailure": "d0806bc首败现场不可恢复，仍未分类；用户本轮明确允许带现场采集的标准根命令作进一步诊断，不把未复现归为时钟/基础设施问题",
-    "validation": {
-      "readAt": "2026-10-07T18:21:08.106101+00:00",
-      "independentReader": "Python 3.13.15 zipfile",
-      "members": 44,
-      "allFrozenBytesEqual": true,
-      "archiveSha256": "f089e08efe703b4c8eb90bff81ff310a9f06244f6cd0d8c654d274c165f83501",
-      "indexSha256": "f9d15f096dad1d156c576604a3ebda5f95dc2356c1c26afcd51571fe6030e05e",
+    "integrationFailure": "d0806bc首败现场不可恢复，根因仍未知；带现场采集的标准根诊断成功记录archive_only/workerSeenAt/observedAt/ageMs=5，但未复现不等于分类。恢复原配置后标准pnpm test:integration退出0，310通过、2既有skip。test.5初始化hook超时保留，test.6标准根单测复验退出0。",
+    "integrationDiagnostic": {
+      "command": "pnpm test:integration",
+      "logPath": "docs/evidence/build-input-reachability.current/integration-scene-root.1.log",
+      "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "scenes": [
+        {
+          "workerMode": "archive_only",
+          "workerSeenAt": "2026-10-07T18:27:09.946Z",
+          "observedAt": "2026-10-07T18:27:09.951Z",
+          "ageMs": 5,
+          "maximumAgeMs": 120000,
+          "wrongMode": false,
+          "missingSeenAt": false,
+          "negativeAge": false,
+          "staleAge": false,
+          "identityMatches": true,
+          "conflictCount": "0",
+          "result": "通过"
+        },
+        {
+          "workerMode": "archive_only",
+          "workerSeenAt": "2026-10-07T18:27:09.959Z",
+          "observedAt": "2026-10-07T18:27:09.965Z",
+          "ageMs": 6,
+          "maximumAgeMs": 120000,
+          "wrongMode": false,
+          "missingSeenAt": false,
+          "negativeAge": false,
+          "staleAge": false,
+          "identityMatches": false,
+          "conflictCount": "1",
+          "result": "RETENTION_SOAK_WORKER_IDENTITY_MISMATCH"
+        },
+        {
+          "workerMode": "archive_only",
+          "workerSeenAt": "2026-10-07T18:27:09.966Z",
+          "observedAt": "2026-10-07T18:27:09.973Z",
+          "ageMs": 7,
+          "maximumAgeMs": 120000,
+          "wrongMode": false,
+          "missingSeenAt": false,
+          "negativeAge": false,
+          "staleAge": false,
+          "identityMatches": true,
+          "conflictCount": "2",
+          "expectedConflictCount": "0",
+          "result": "RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED"
+        }
+      ],
+      "classificationBoundary": "这些字段只属于新诊断运行，未恢复旧首败；未复现不作为旧根因分类"
+    },
+    "browserCoverage": {
+      "uniqueTests": 65,
+      "shardCounts": [
+        34,
+        32
+      ],
+      "onlyBootstrapRepeats": true,
+      "standardRootE2eExitCode": 0
+    },
+    "stagedPreflight": {
+      "checkedAt": "2026-10-07T18:48:19.994Z",
+      "main": "70199df743da754068831d709a1ae8c428bd2bb0",
+      "version": "当前暂存字节；不冒称已推送head。最终head须回读并取得自身CI",
+      "rangeWhitespace": {
+        "command": "git diff --cached --check 70199df743da754068831d709a1ae8c428bd2bb0",
+        "exitCode": 0,
+        "stdout": "",
+        "stdoutBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stagedWhitespace": {
+        "command": "git diff --cached --check",
+        "exitCode": 0,
+        "stdout": "",
+        "stdoutBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "gitBinary": {
+        "command": "git diff --cached --numstat 70199df743da754068831d709a1ae8c428bd2bb0 -- docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "exitCode": 0,
+        "stdout": "-\t-\tdocs/evidence/build-input-reachability.current/raw-evidence.zip\n",
+        "stdoutBytes": 68,
+        "stdoutSha256": "a44f110cdda2317f86988ec8c895a1b01558afa629250fd873e2132a3ec12740"
+      },
+      "verificationTests": {
+        "command": "node --test scripts/verify-raw-evidence-archive.test.mjs scripts/verify-build-input-reachability.test.mjs",
+        "exitCode": 0,
+        "passed": 18,
+        "failed": 0,
+        "boundary": "此前本轮直接执行的实际工具结果；归档15项与原可达性3项，源码此后未改"
+      },
+      "archiveSha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+      "indexSha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+      "ciRulesChanged": false,
+      "latestCiBoundary": "CI373只覆盖002c1d61，最终head需独立CI与定向独审"
+    },
+    "historicalLayoutCi": {
+      "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "runId": 37666213669,
+      "number": 373,
+      "conclusion": "success",
+      "successfulJobs": 10,
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/37666213669",
+      "boundary": "只覆盖002c1d61布局，不代新增reader或最终证据head的CI"
+    },
+    "shallowValidation": {
+      "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "validationBoundary": "真实depth1克隆002c1d61，无37857eef旧对象；只覆盖当前三个准确归档输入，不声称未提交字节已在该HEAD",
+      "currentInputs": [
+        {
+          "file": "scripts/verify-raw-evidence-archive.mjs",
+          "bytes": 9722,
+          "sha256": "f6a8289a15ad68c52a3f254dfe804aaafe3039bdb33279d9def3ee3561fd4131"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+          "bytes": 2339178,
+          "sha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b"
+        },
+        {
+          "file": "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+          "bytes": 140663,
+          "sha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162"
+        }
+      ],
+      "shallow": true,
+      "priorBlobUnavailable": true,
+      "archiveReadExit": 0,
+      "exactOldPathRead": {
+        "bytes": 1035182,
+        "sha256": "091bd7135f31eea1680faeb05f7567e43b7123002b1893167e8987c44193cdbc"
+      },
+      "entries": 280,
+      "members": 61,
+      "bytes": 21268498,
       "errors": []
     },
-    "actualPolicy": null,
-    "gate": "关闭；等待本轮必要检查、正式selection与新headCI及定向独审；本轮不merge、不放行R1"
+    "finalLocalValidation": {
+      "checkedAt": "2026-10-07T18:47:25.868Z",
+      "layoutHead": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "main": "70199df743da754068831d709a1ae8c428bd2bb0",
+      "validationVersion": "当前待提交准确字节；Git blob列为Git过滤后预期提交字节，最终远端提交须回读核对",
+      "historicalJsonUnchanged": true,
+      "previousReviewResponseUnchanged": true,
+      "historicalLogMappingsChecked": 54,
+      "historicalRawBlobFilesPreserved": 34,
+      "sourceOriginals": 38,
+      "manifestEntries": 31,
+      "manifestDualBytesEqual": true,
+      "mainIncrementFilesPreserved": 15,
+      "f5AndP1PlanUnchangedFromLayout": true,
+      "productAndCiDecisionRulesUnchanged": true,
+      "byteKindMembers": 61,
+      "archiveEntries": 280,
+      "independentFrozenBytesEqual": true,
+      "shallowWithoutOldObjects": true,
+      "newFixtureSecretsFound": 0,
+      "remainingPlaintextTransportCopies": 0,
+      "localRequiredCommands": {
+        "lint": 0,
+        "typecheck": 0,
+        "test": 0,
+        "integration": 0,
+        "e2e": 0
+      },
+      "oldIntegrationRootCause": "首败现场不可恢复，仍未知；未复现不作根因分类",
+      "localStandardIntegrationSucceeded": true,
+      "standardE2eTestsPassed": 65,
+      "errors": [],
+      "gate": "关闭；等待最终head CI、定向独审与实际main证明；本轮不merge"
+    },
+    "validation": {
+      "readAt": "2026-10-07T18:44:13.190010+00:00",
+      "independentReader": "Python 3.13.15 zipfile",
+      "members": 61,
+      "allFrozenBytesEqual": true,
+      "archiveSha256": "58b9cb552d7cf8ef80b8604d0c2633b8ac3d53ab4389295832b632706ef4584b",
+      "indexSha256": "cd05ecfe6ee4ccde8b2af72ebb378e130486b572ea2cb79a281a1fa4d9d60162",
+      "errors": []
+    },
+    "actualPolicy": {
+      "checkedAt": "2026-10-07T18:22:02.918Z",
+      "base": "70199df743da754068831d709a1ae8c428bd2bb0",
+      "head": "002c1d61a7fc5d529b2d480f4c48716971c4236d",
+      "comparisonBase": "70199df743da754068831d709a1ae8c428bd2bb0",
+      "paths": [
+        "MANIFEST.json",
+        "docs/evidence/build-input-reachability.current/archive-independent-validation.json",
+        "docs/evidence/build-input-reachability.current/ci-alignment-validation.json",
+        "docs/evidence/build-input-reachability.current/conformance-junit.xml",
+        "docs/evidence/build-input-reachability.current/conformance-report.json",
+        "docs/evidence/build-input-reachability.current/conformance-transcript.md",
+        "docs/evidence/build-input-reachability.current/failed-e2e-1/test-failed-1.png",
+        "docs/evidence/build-input-reachability.current/failed-e2e-3/test-failed-1.png",
+        "docs/evidence/build-input-reachability.current/local-validation.json",
+        "docs/evidence/build-input-reachability.current/local-validation.latest.json",
+        "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.37857eef.json",
+        "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.json",
+        "docs/evidence/build-input-reachability.current/raw-evidence-compatibility.md",
+        "docs/evidence/build-input-reachability.current/raw-evidence-index.json",
+        "docs/evidence/build-input-reachability.current/raw-evidence-reading.md",
+        "docs/evidence/build-input-reachability.current/raw-evidence.zip",
+        "docs/evidence/build-input-reachability.current/review-validation.37857eef.json",
+        "docs/evidence/build-input-reachability.current/review-validation.json",
+        "docs/evidence/build-input-reachability.current/worker-clock-diagnostic.json",
+        "docs/evidence/build-input-reachability.current/worker-diagnostic-method.md",
+        "docs/evidence/build-input-reachability.current/worker-failure-classification.review.md",
+        "docs/evidence/build-input-reachability.final.json",
+        "docs/evidence/build-input-reachability.final.md",
+        "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+        "package.json",
+        "scripts/verify-build-input-reachability.mjs",
+        "scripts/verify-raw-evidence-archive.mjs",
+        "scripts/verify-raw-evidence-archive.test.mjs"
+      ],
+      "eventSource": "本地根据已核实PR200的真实base/head构造输入；原样执行仓库正式入口，不更改git/策略调用",
+      "command": "node scripts/ci-policy.mjs",
+      "officialChangesExitCode": 0,
+      "officialOutputs": "mode=full\npackages=[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"]\ntest-packages=[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"]\nplan={\"mode\":\"full\",\"packages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"testPackages\":[\"@workmesh/a2a-adapter\",\"@workmesh/agent-runner\",\"@workmesh/agent-sdk\",\"@workmesh/api\",\"@workmesh/artifact-storage\",\"@workmesh/config\",\"@workmesh/conformance\",\"@workmesh/contracts\",\"@workmesh/db\",\"@workmesh/domain\",\"@workmesh/fake-agent\",\"@workmesh/git-provider\",\"@workmesh/mcp\",\"@workmesh/observability\",\"@workmesh/recovery\",\"@workmesh/ui\",\"@workmesh/web\",\"@workmesh/worker\"],\"checks\":{\"source-gates\":true,\"db-integration\":true,\"api-integration\":true,\"worker-integration\":true,\"e2e\":true,\"recovery-integration\":true,\"agent-smoke\":true}}\nsource-gates=true\ndb-integration=true\napi-integration=true\nworker-integration=true\ne2e=true\nrecovery-integration=true\nagent-smoke=true\n",
+      "whitespaceCheck": {
+        "command": "git diff --check 70199df743da754068831d709a1ae8c428bd2bb0 002c1d61a7fc5d529b2d480f4c48716971c4236d",
+        "exitCode": 0,
+        "stdoutBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "diagnostics": []
+      },
+      "diagnosticClassification": {
+        "mode": "full",
+        "packages": [
+          "@workmesh/a2a-adapter",
+          "@workmesh/agent-runner",
+          "@workmesh/agent-sdk",
+          "@workmesh/api",
+          "@workmesh/artifact-storage",
+          "@workmesh/config",
+          "@workmesh/conformance",
+          "@workmesh/contracts",
+          "@workmesh/db",
+          "@workmesh/domain",
+          "@workmesh/fake-agent",
+          "@workmesh/git-provider",
+          "@workmesh/mcp",
+          "@workmesh/observability",
+          "@workmesh/recovery",
+          "@workmesh/ui",
+          "@workmesh/web",
+          "@workmesh/worker"
+        ],
+        "testPackages": [
+          "@workmesh/a2a-adapter",
+          "@workmesh/agent-runner",
+          "@workmesh/agent-sdk",
+          "@workmesh/api",
+          "@workmesh/artifact-storage",
+          "@workmesh/config",
+          "@workmesh/conformance",
+          "@workmesh/contracts",
+          "@workmesh/db",
+          "@workmesh/domain",
+          "@workmesh/fake-agent",
+          "@workmesh/git-provider",
+          "@workmesh/mcp",
+          "@workmesh/observability",
+          "@workmesh/recovery",
+          "@workmesh/ui",
+          "@workmesh/web",
+          "@workmesh/worker"
+        ],
+        "checks": {
+          "source-gates": true,
+          "db-integration": true,
+          "api-integration": true,
+          "worker-integration": true,
+          "e2e": true,
+          "recovery-integration": true,
+          "agent-smoke": true
+        }
+      },
+      "diagnosticSelectedJobs": [
+        "source-gates",
+        "db-integration",
+        "api-integration",
+        "worker-integration",
+        "e2e",
+        "recovery-integration",
+        "agent-smoke"
+      ],
+      "diagnosticIsOfficialPlan": false,
+      "officialPlanBlockedBeforeOutputs": false,
+      "log": {
+        "file": "docs/evidence/build-input-reachability.current/ci-changes.archive-stage.log",
+        "bytes": 1405,
+        "sha256": "8c035fa7d0a0ae0cdb1115a5c4e1b747d3f476ccf09904b61f69ce571d8ed13e"
+      },
+      "handling": "保留原始日志与失败上下文字节，诊断分类不冒称正式changes输出或成功门禁"
+    },
+    "gate": "关闭；本轮本机必要检查已通过；等待最终提交正式selection、新headCI及定向独审与实际main包含证明；本轮不merge、不放行R1"
   }
 }

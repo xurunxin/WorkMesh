@@ -110,6 +110,11 @@ export function readRawEvidenceArchive(index, zip) {
     contents.set(name, bytes); cursor += 46 + nameSize;
   }
   check(cursor === end && nextLocal === centralStart && contents.size === members.size, '归档缺项/多项/剩余字节');
+  for (const entry of index.entries.filter(row => row.byteKind === 'git-blob')) {
+    const bytes = contents.get(entry.member);
+    const blobId = createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
+    check(blobId === entry.sourceBlobId, '提交字节与来源Git blob ID不一致');
+  }
   return { index, tuples, contents, memberCount: contents.size, totalBytes: total };
 }
 

@@ -4,17 +4,31 @@
 
 用户最新授权允许同一分支整合精确main `70199df743da754068831d709a1ae8c428bd2bb0` 并实施A，无需另等用户裁决。正常无冲突merge保留37857eef/6dbcf33/af583f7与所有合并历史；没有采用B或弱化CI。main的detached checkpoint **44/44、P1 16/16、0 errors**，另逐项完整读取15文件增量，原419a1d7初始base不改。
 
-方案A现已落地：归档 **38个逻辑原件、44种独立字节、212个精确映射**。明文运输副本在原始字节冻结、归档双写与reader逐字节验证后归档；历史JSON所有原字段不改。当前索引自包含worktree与git-blob，两种不同字节单独member，相同字节可共用；当前清单31项已刷新，双字节来源仍分开记录。新日志在检查结束后纳入同一归档，不残留空白报错的新增明文副本。
+方案A现已落地：归档 **54个逻辑原件、61种独立字节、280个精确映射**。明文运输副本在原始字节冻结、归档双写与reader逐字节验证后归档；历史JSON所有原字段不改。当前索引自包含worktree与git-blob，两种不同字节单独member，相同字节可共用；当前清单31项已刷新，双字节来源仍分开记录。新日志在检查结束后纳入同一归档，不残留空白报错的新增明文副本。
 
-[原始证据读取](build-input-reachability.current/raw-evidence-reading.md)说明精确旧路径/执行版本/字节类型映射；深浅克隆或无Git对象环境均不依赖旧blob。安全reader先规范化路径，拒绝链接/非普通文件、重复、缺项/多项和错误hash，内存校验后才允许调用方读取字节。独立Python解包与冻结原件逐字节相等。`pnpm ci:validate` 只向既有source gate添加归档14项安全负例与完整性校验，没有改变selection/空白/Required CI决策规则。
+[原始证据读取](build-input-reachability.current/raw-evidence-reading.md)说明精确旧路径/执行版本/字节类型映射；深浅克隆或无Git对象环境均不依赖旧blob。安全reader先规范化路径，拒绝链接/非普通文件、重复、缺项/多项和错误hash，内存校验后才允许调用方读取字节。独立Python解包与冻结原件逐字节相等。`pnpm ci:validate` 只向既有source gate添加归档15项安全负例与完整性校验，没有改变selection/空白/Required CI决策规则。
 
-本轮测试版本为待提交布局，标准检查尚未记录，Node24.20.0/pnpm9.15.4，线上Node仍22.19.0。标准根命令和PR201新版E2E需实测，旧67/74与历史CI不替代；d0806bc根集成首败保持，现场不可恢复就如实记录，未复现不等于分类。当前五命令状态：{"lint":"尚未完成","typecheck":"尚未完成","test":"尚未完成","integration":"尚未完成","e2e":"尚未完成"}。
+本轮测试版本`002c1d61a7fc5d529b2d480f4c48716971c4236d`，Node24.20.0/pnpm9.15.4，线上Node仍22.19.0。本轮标准根集成310通过、2既有skip，标准根E2E65/65通过，lint/typecheck18/18、根单测29/29、构建18/18任务成功。版本以002c1d61加每条检查的精确sourceOverrides为准，两个reader增强脚本另列blob/bytes/SHA；产品代码及PR201配置未改。test.5启动hook超时首败及test.6成功复验均保留；d0806bc集成首败仍无法恢复和定位，诊断现场已记录mode/两个时间戳/ageMs，未复现不等于分类。旧67/74与历史CI不替代。当前五命令状态：{"lint":0,"typecheck":0,"test":0,"integration":0,"e2e":0}。
 
 | 命令 | 退出码 | 实际结果 |
 |---|---:|---|
-| 待精确布局提交 | — | 不复用旧head结果 |
+| `pnpm ci:test` | 0 | ℹ tests 12；ℹ pass 12 |
+| `pnpm ci:validate` | 0 | [ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4；ℹ tests 14；ℹ pass 14 |
+| `pnpm typecheck` | 0 |  Tasks:    18 successful, 18 total |
+| `pnpm lint` | 0 |  Tasks:    18 successful, 18 total |
+| `pnpm -C apps/web exec node ../../scripts/check-e2e-shards.mjs` | 0 | Browser coverage: 65 unique cases; shards 34 + 32; only bootstrap repeats. |
+| `pnpm test:integration` | 0 |       Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm lint` | 0 |  Tasks:    18 successful, 18 total |
+| `pnpm typecheck` | 0 |  Tasks:    18 successful, 18 total |
+| `pnpm test` | 1 | @workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed \| 2 skipped (165)；@workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/api:test:  Test Files  1 failed \| 32 passed (33)；@workmesh/api:test:       Tests  170 passed \| 4 skipped (174)； Tasks:    27 successful, 29 total |
+| `pnpm ci:source build` | 0 |  Tasks:    18 successful, 18 total |
+| `pnpm -C apps/api exec vitest run src/auth-rate-limit/server-rate-limit.test.ts` | 0 |  Test Files  1 passed (1)；      Tests  4 passed (4) |
+| `pnpm ci:validate` | 0 | [ci:validate] OK: 9 jobs, 37 immutable action references, Node 22.19.0, pnpm@9.15.4；ℹ tests 15；ℹ pass 15 |
+| `pnpm test:integration` | 0 |       Tests  77 passed (77)； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79)； Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm test` | 0 | @workmesh/worker:test:  Test Files  23 passed (23)；@workmesh/worker:test:       Tests  163 passed \| 2 skipped (165)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)；@workmesh/web:test:  Test Files  113 passed (113)；@workmesh/web:test:       Tests  776 passed (776)； Tasks:    29 successful, 29 total |
+| `pnpm test:e2e` | 0 | @workmesh/web:test:e2e:   65 passed (3.8m)； Tasks:    3 successful, 3 total |
 
-正式范围/selection见JSON `archiveClosure.actualPolicy`；ZIP的Git实际二进制、真实PR `diff --check`、正式full/七job、最新head Required CI均要实际验证。**G1/R1继续关闭**，本轮回review定向独审，不直接合入。下文37857eef中的“尚未实施A”等仅为历史阶段，当前方案A已实施但最终门禁未通过。
+当前暂存PR范围及本地diff --check均退出0，ZIP实际numstat为二进制，见JSON archiveClosure.stagedPreflight；局部归档/可达性测试18/18通过。正式范围/selection见JSON `archiveClosure.actualPolicy`；ZIP的Git实际二进制、真实PR `diff --check`、正式full/七job、最新head Required CI均要实际验证。002c1d61布局CI373/run37666213669已10/10成功，含两个浏览器分片；不得代最终证据及reader增强提交的CI。**G1/R1继续关闭**，本轮回review定向独审，不直接合入。下文37857eef中的“尚未实施A”等仅为历史阶段，当前方案A已实施但最终门禁未通过。
 
 ## 前次37857eef证据（历史原文）
 

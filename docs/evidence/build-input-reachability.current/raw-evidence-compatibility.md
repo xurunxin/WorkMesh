@@ -1,6 +1,14 @@
-# 原始证据与范围空白门禁兼容方案（待总管审查）
+# 原始证据与范围空白门禁兼容方案（历史契约与当前实施）
 
-本轮只补契约和精确37857eef审查checkpoint，未执行归档替换、格式化、删除、修改属性或CI规则。以下历史测试提交为 `d0806bc257fce1fba7ca7b320b79d6698ec6be45`，精确main为 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`；其PR200的CI368/run37659092959在changes的Select required jobs失败，Required CI失败、七个执行job因没有plan而skip。最新CI369结论与当前包装集合另列下文，旧CI366的成功不覆盖后续版本。
+## 当前实施状态：PR201 / 70199df
+
+用户本轮已明确授权方案A在既有G1包装范围实施，不再等待额外裁决。当前ZIP与索引已覆盖37857eef的全部34份候选原件，包括22份空白报错文件，并追加所有后来产生的诊断、失败和成功日志。准确当前数量与两列哈希见最终JSON的`archiveClosure.archive`及逐条`raw-evidence-index.json`；51路径/22份/1,144条、17份/842条均保持各自历史版本含义，不表示当前范围。
+
+当前索引自包含工作树原字节与不同的Git提交字节；旧路径、执行版本及字节类型精确解析，不依赖浅克隆中不存在的历史Git对象。归档只替换明文运输副本，未格式化原始字节；原38份来源材料、P1、D0、历史JSON与PNG保持原样。独立Python解包逐字节比较、真实无旧对象的浅克隆读取、规范化路径/链接/普通文件/缺项多项/hash负例与Git实际二进制检查见当前验证记录。B未采用，CI选择和空白规则不改。
+
+布局002c1d61的CI373已成功，但后续证据和读取器增强仍须自身最新head CI和定向独审；旧成功不关闭最终门禁。本轮标准根集成退出0，新版完整E2E65/65；旧集成首败现场不可恢复，未复现不等于根因分类，单测首次启动hook超时及必要复验均保留。G1/R1仍关闭。
+
+以下为37857eef阶段的历史契约：当时只补契约和审查checkpoint，尚未实施归档。以下历史测试提交为 `d0806bc257fce1fba7ca7b320b79d6698ec6be45`，精确main为 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`；其PR200的CI368/run37659092959在changes的Select required jobs失败，Required CI失败、七个执行job因没有plan而skip。最新CI369结论与当前包装集合另列下文，旧CI366的成功不覆盖后续版本。
 
 ## 历史d0806bc冲突与受影响字节
 
@@ -28,7 +36,7 @@
 | `typecheck.2.log` | 36 | 6705 / `67b05fe1b73c8ff10487360a7d6a8f6497227c40f629eddfb31cc5ddeaa90fe0` | 6705 / `67b05fe1b73c8ff10487360a7d6a8f6497227c40f629eddfb31cc5ddeaa90fe0` |
 | `typecheck.3.log` | 36 | 6706 / `efd9b08c9c7f071a4e9b0b3178a91b9a39faa3e755dba739bd91995f4e54df39` | 6706 / `efd9b08c9c7f071a4e9b0b3178a91b9a39faa3e755dba739bd91995f4e54df39` |
 
-## 当前审查checkpoint：37857eef（另增，不覆盖旧记录）
+## 历史审查checkpoint：37857eef（另增，不覆盖旧记录）
 
 精确审查head为 `37857eef5a67555564097ace07871ac44ed24195`，main仍为 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`。真实PR比较范围 **51条路径、22份报错文件、1,144条诊断**；正式入口退出1，内部范围空白检查退出2，outputs为空。CI369/run37662532290在changes/Required CI失败，七job因无plan而skip。旧17份/842条只对应d0806bc；详见 [当前完整字节清单](raw-evidence-compatibility.37857eef.json)，包含全部行号、提交blob和工作树bytes/SHA-256。
 
