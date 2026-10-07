@@ -73,6 +73,12 @@ ADR 0078 / `0078-review-round2.md` / `docs/CI.md` 和本轮检查另记于最终
 不覆盖 `419a1d7`、`4b287b4`、`36c7709` 历史 JSON 记录。原 PR #196 已由用户合入 main（`3cdfb9e`），本任务未关闭或改动该 PR；
 原独审及 CI #357 不代替当前分支独审或最新 PR 的 required CI。当前 G1 最终门禁仍关闭。
 
+本轮按用户允许 rebase 最新 CI 主线的授权对齐精确 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`（PR #199）。
+标准工具没有安全重写已推送分支的 rebase/lease 接口，正常无冲突整合该 main，保留原 `6dbcf33` 及全部合并历史。
+最新 CI 的实际范围、选中任务、输入 checkpoint 与检查版本另记最终证据的 `ciAlignment`；
+原始日志和失败上下文尾随空白可能阻止 `changes` 硬门禁，按原字节保留并记录，不改 CI 规则或豁免。
+旧 run `37656693023` 仅对应 `6dbcf33`；本轮回 review 定向独审后才恢复当前 PR #200 门禁，G1/R1 不提前放行。
+
 F5 决策来源：用户在 [R1 #3](todo:q_1zKPuGsG-2ZRUwOwQx4) 原问题卡
 于 2026-10-07 23:29:53（Asia/Shanghai）选择“有审计的重新投递”（来源：本次 G1 修订 spec）。
 决定已交 R1，ADR 0078 已随 PR #198 记录；ADR 0037 与全批计划的规格同步仍由 R1 单独验收。

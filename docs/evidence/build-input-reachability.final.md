@@ -1,5 +1,36 @@
 # 最终隔离构建输入可达性验证
 
+## 当前producer修订：对齐PR #199的CI主线
+
+用户最新授权是“目前主线更新提高了ci效率，可以rebase这个版本”。本轮精确main为 `f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9`；可用标准工具没有安全更新已推送历史的rebase/lease接口，普通rebase还会丢弃合并提交，保留合并的rebase仍会改写已推送SHA而需要禁止的强推。因此在同一会话分支**正常无冲突merge**该main，保留 `6dbcf336ab09bbdbd42ebe6a7652c66fefad243b`、原af583f7及所有整合历史，不新开构建或分支。
+
+上一轮独审闭合的F5正文、依赖图、风险表、末段及测试要求保持；原始38项、P1冻结、D0基线、旧checkpoint和旧日志不改。JSON全部旧字段保持原样，仅新增 `ciAlignment`；下方此前“当前”等用语均限定为当时版本。
+
+### 精确输入读取及清单
+
+在main的detached工作树运行验证器，退出0，**44/44文件、P1 16/16、0 errors**。ADR0078、round2和CI另读3份完整正文；PR199十项受影响文件（包括新CI计划、策略、runner、validator、workflow和Playwright配置/契约）逐项读取及双字节哈希记录于 `ciAlignment.checkpoint`。去重输入总数 56，旧44不冒称覆盖新材料。初始真实build base仍为历史419a1d7；f4e5915是新增main checkpoint，未改写初始base。
+
+根清单新增必要CI计划，现为**25项**，受影响的主计划/CI文件已校准；工作树字节/SHA-256与提交blob字节/SHA-256分列，准确版本为待提交整合索引（按blobId标识）。不包含证据自身hash。当前整合版本的独立44项读取见 `ciAlignment.integratedRead`。
+
+### 最新CI策略的实际范围与门禁
+
+实际PR #200比较范围、路径、诊断分类和七项job选择见 `ciAlignment.policy`。提交后实测，当前尚未把诊断分类当作正式outputs。
+
+本PR含root MANIFEST、JSON、原始日志/PNG及验证脚本，是保守full范围；不是纯Markdown豁免。若范围空白门禁因原始日志和失败上下文报错，**保留原字节与来源**，不删除证据、不改CI规则/属性绕过、不伪造选中outputs。诊断分类只说明空白门禁通过后会选中的任务，不等于正式changes成功。
+
+### 本轮验证版本
+
+检查版本：待提交整合版本；本机Node v24.20.0 / pnpm9.15.4，线上仍固定Node22.19.0。本轮五项AGENTS命令已成功 0/5；范围确认为full且main更改测试配置，按新CI计划T3执行，原74/74及旧run37656693023只留作对应旧版本。Turbo默认缓存命中见日志，不手工豁免；新策略/validator/runner检查单独列出。
+
+| 命令 | 退出码 | 实际结果 |
+|---|---:|---|
+| 待精确整合提交后执行 | — | 不复用旧版本结果 |
+
+[本轮局部核验](build-input-reachability.current/ci-alignment-validation.json)检查清单、原件、历史日志、F5正文及main十项blob完整继承。全量日志的字节/SHA-256在JSON，本轮健康命令不取消。**G1最终门禁仍关闭**，producer修订回review定向独审后才恢复PR200最新head的门禁；没有直接合入main，不确认R1执行计划。
+
+## 前次6dbcf33交付的历史记录
+
+
 ## 当前交付：补回用户F5计划修订
 
 本轮修复独审high/blocking：从用户精确提交 `08ce81a6738407c90cf2629fbb70088a4a899841` 选择性吸收F5正文、依赖图、风险表、规格分歧及状态口径。**F5收件恢复已定为有审计的重新投递，不再二选一或等待用户决定。** 用户正文包含不可变claim及receipt、数据库 `INBOX_CLAIM_IMMUTABLE`、既有唯一约束重投幂等、exact-session拒绝重投、第二队列成本和未做规模成本benchmark声明；相关测试要求完整补回。G1只同步已批准输入，不改ADR0037或产品实现。

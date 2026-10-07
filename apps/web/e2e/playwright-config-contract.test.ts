@@ -12,7 +12,11 @@ type WebServerContract = Readonly<{
 type ConfigContract = Readonly<{
   outputDir?: string
   projects?: ReadonlyArray<
-    Readonly<{ use?: Readonly<{ storageState?: unknown }> }>
+    Readonly<{
+      use?: Readonly<{ storageState?: unknown }>
+      testMatch?: string | RegExp | Array<string | RegExp>
+      testIgnore?: unknown
+    }>
   >
   reporter?: unknown
   testIgnore?: unknown
@@ -72,6 +76,12 @@ describe('Playwright topology configs', () => {
     expect(root.projects?.[1]?.use?.storageState).toBe(
       path.join(isolatedRunRoot, 'root-mixed', '.auth', 'admin.json'),
     )
+    // Protected-route theme checks must run after login instead of merely
+    // checking the login page reached by an anonymous redirect.
+    expect(patternStrings(root.projects?.[0]?.testMatch)).toEqual([
+      String(/stage0\.spec\.ts/),
+    ])
+    expect(String(root.projects?.[1]?.testIgnore)).not.toContain('theme-unification')
     expect(String(root.testIgnore)).toContain('mocked')
 
     expect(mocked.outputDir).toBe(
