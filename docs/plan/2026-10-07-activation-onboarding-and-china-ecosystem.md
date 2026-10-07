@@ -1,15 +1,6 @@
 <!-- WM-ACTIVATE-20261007:ROADMAP -->
 # 工作台就绪面、可证明的接入恢复、一个通知渠道与国内模型预置
 
-## 本批执行记录例外
-
-经用户于 2026-10-07 18:38（Asia/Shanghai）明确批准，本批仅以 Todos 编排、以仓库保存
-规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
-此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
-也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
-总管已按 G1 交接映射同步 #5–#17 与 #20–#22 的完整 spec（包括已关闭的 #6）；本地证据记录
-逐项核验结果。本例外只适用于本批 Todo #18 及其映射的批次任务。
-
 状态：Proposed，五条链均未开工。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
 第一版的结论与被撤回的主张记录在
 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.review.md`。
@@ -19,30 +10,96 @@
 `docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`、
 `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md`（D 链 UI 重构）。
 
-## G1 输入可达性门禁
-
-本计划与四份 ADR 在原主分支基点 `32789cec4d50db0b85a63d91049cc425d9e917a2` 可读；本 G1 分支首阶段提交
-`ef264842a8e0dcd215151fd2e2d7c0dc7b5d6cdd` 已纳入参考原件，来源与 SHA-256 见
-`docs/references/todos-analysis/SOURCE-MANIFEST.json`。该基点的 `.review.md` 是旧审查矩阵，不是 P1 台账。
-P1 的完整 16 条代码事实台账来自 `c98ec5f538b3acd9ac052c4ef100e1d111232518`，已随修订提交
-`735578d8d0733e04cae5640cedfaf0c6181391c7` 合入 `origin/main` 合并提交
-`660c74a6247544ffac64e7ef8f968d1025b2a668`（PR #192）。#2 已完成，`run_review` 的第二轮独立审查批准合并；
-CI run `37614969993`（PR check 344）的 8 个 job 全部成功。台账已冻结为后续输入，且 ADR 0075 的修正
-明确 endpoint、subject-client 与失败退避按 `operationId` 隔离，socket/client-IP 预算共享。#3 是 P1/G1 冻结后的
-独立规格裁决，不是 P1 合入前置。该 P1 落地不表示 G1 材料已合入，也不表示 G1 最终输入门禁通过。
-
-G1 当前仍处于材料阶段独立合并门禁；G1 材料合入后，由总管在同一 Todo #18 启动 fresh 隔离 build，以该 build 的
-`git rev-parse HEAD` 为唯一验证 base，读取输入正文并核对 Git blob 与 SHA-256，再由独立复核者确认并将结果写入仓库。
-这一步尚未发生。合入后的实际隔离 build 证据未通过前，依赖输入的任务保持“待验证”。#10 D0 可独立采集当前视觉基线，
-但不能解除其他任务门禁。
-
-对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，含
-`ui-inventory.md`、`design-tokens.md`、`kanban-cards.md`、引用的测量 JSON、截图索引和
-28 张截图；#19 索引引用的完整审查原件也保存在 `reviews/todos-review.md`。原始字节来源及哈希见该目录的
-`SOURCE-MANIFEST.json`。通用分析 README 和其他采集工具不属于本批交接输入。
+对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，包括 `ui-inventory.md`、`design-tokens.md`、
+`kanban-cards.md`、引用的测量 JSON、截图索引和 28 张原始截图；来源与哈希见该目录的 `SOURCE-MANIFEST.json`。
 
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
+
+## 本批执行记录例外
+
+经用户于 2026-10-07 18:38（Asia/Shanghai）明确批准，本批仅以 Todos 编排、以仓库保存
+规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
+此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
+也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
+总管已按 G1 交接映射同步 #5–#17 与 #20–#22 的完整 spec（包括已关闭的 #6）；本地证据记录
+逐项核验结果。本例外只适用于本批 Todo #18 及其映射的批次任务。
+
+用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、确认计划并合并仓库改动。
+真实新设计分歧、新需求、团队权限变更、凭证授权及仓库以外发布仍需用户单独批准。
+
+## G1 输入可达性门禁
+
+历史 base `32789cec4d50db0b85a63d91049cc425d9e917a2` 含四份 ADR、主计划和旧 `.review.md`，但不含原件输入包及 P1 台账。
+本 G1 会话分支已纳入 `docs/references/todos-analysis/` 原件和验证脚本，来源及字节哈希见 `SOURCE-MANIFEST.json`；
+它们尚未合入目标分支，不能称为 build 可读。P1 的 16 条事实台账由 `c98ec5f538b3acd9ac052c4ef100e1d111232518`
+引入，已随 `735578d8d0733e04cae5640cedfaf0c6181391c7` 合入 PR #192 merge commit
+`660c74a6247544ffac64e7ef8f968d1025b2a668`。#2 已 done，第二轮独立审查批准合并；PR CI check 344 / run
+`37614969993` 的 8 个 job 全部成功。P1 台账现已冻结为后续输入；#3 是冻结后的独立规格裁决，不是 P1 合并前置。
+
+P1 的合入不代表 G1 材料已合入或最终门禁通过。G1 当前仍处于材料阶段独立合并门禁；材料合入后，由总管在同一 Todo #18
+启动 fresh 隔离 build，以 build 内 `git rev-parse HEAD` 为唯一实际验证 base，逐份读取输入正文并核对 Git blob、提交字节 SHA-256
+及工作树 SHA-256，再由独立复核者确认并将结果写入仓库证据。此真实 build 尚未完成；通过前依赖这些输入的任务保持“待验证”。
+#10 D0 可独立采集当前视觉基线，但不能解除其他任务门禁。
+
+交接原件及其引用的测量 JSON、截图索引和 28 张截图保存在 `docs/references/todos-analysis/`；#19 完整审查原件位于
+`docs/references/todos-analysis/reviews/todos-review.md`。来源相对路径、字节数和 SHA-256 见 `SOURCE-MANIFEST.json`。
+通用分析 README 和其他采集工具不属于本批依赖输入闭包。
+
+## 审查撤回的四个前提（写在这里以免再犯）
+
+1. **「安装令牌只存在于响应里」是错的。** 服务端已用 AES-256-GCM 把整个兑换响应
+   加密写入 `auth_idempotency_records.replay_ciphertext`
+   （`apps/api/src/auth-idempotency.ts:128-144,218,319-339`），并有 worker 到期
+   擦除（`apps/worker/src/session-lifecycle.ts:672-690`）。**真正**的缺口是
+   **客户端没有可重放的稳定请求身份**。因此 v1 不新增 pairing 密文列、不改服务端
+   凭据生命周期。
+2. **「两个兑换端点共用同一限流预算」是错的。** 两者虽同为
+   `{endpointClass: pairing, subject: pairing}`，但桶按 `operationId` 分
+   （`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`），而两个
+   operationId 不同；共用的是 socket / client-IP 桶。失败退避键也包含
+   operationId（`apps/api/src/auth-rate-limit/limiter.ts:122-125`），因此同样隔离。数据库
+   `attempts` 只在**已知的**身份不匹配（slug 或已知 clientType 对不上信封）时
+   递增，随机错误 code 不会消耗合法 pairing 的预算
+   （`apps/api/src/agent-connections.ts:521-525,561-562`）。**不做**
+   `endpointClass` 拆分。
+3. **「保存模型连接前服务端会真实请求验证密钥」是错的。** create/update 只做
+   格式与策略校验并发**不出站请求**，ADR 0065 明写此点。预置目录因此不声称任何
+   兼容性，真实 probe 单列为独立任务。
+4. **「国内生态零覆盖」需要收窄。** 准确说法是：**没有**企业微信/钉钉/飞书/
+   小程序适配器。平台并非没有通知面——ADR 0062 已有人工 Web Push，schema 自
+   `0016_stage4_usage_notifications.sql:6,85-103` 起就有 notification
+   channel/delivery 表。缺的是**渠道（channel）**面。
+
+另有两处我原判断错误、经核实后自我纠正：配对码并非短码，而是 32 随机字节的
+43 字符载荷（`packages/db/src/index.ts:41`）；十分钟只约束**首次**兑换
+（`agent-connections.ts:358-365,523`），与 15 分钟重放、轮换 overlap 是三个独立
+计时器。
+
+## 目标与非目标
+
+**目标**：
+
+- 新装的 WorkMesh 在第一次打开时就说清"还差什么、点哪里补"，并且在平台**确实
+  不知道**时明说不知道（`unknown`），不装作知道。
+- Agent 接入从七步仪式变成一条命令，并消除"丢响应即永久死路"——修法在客户端，
+  不改服务端凭据语义。
+- 投一个通知渠道出去，配一张**不带决策权**的卡片，把决策留在已登录的网页里。
+- 国内模型预置成只读、带出处的版本化目录，让常见场景不用手敲 base URL。
+- **D 链**：把参考产品（todos.dev）实测出的视觉体系、卡片结构与工作台三栏布局
+  搬进 WorkMesh 已定的机制（0028 的 CSS 变量基线 / 0045 的单套 token），
+  并把"只有人工关口是暖色"变成可断言的不变量。
+
+**非目标**（全部来自审查的"建议砍"清单）：
+
+- 不做工作区可编辑的起始提示语（无写入契约，退回固定 i18n 文案）。
+- 不做四渠道同时上线；v1 只做企业微信，钉钉/飞书/SMTP 各自独立后续。
+- 不做卡片内直接决策（需先有一份身份绑定 ADR）。
+- 不做小程序完整客户端（先做只读 + 认证兼容 spike）。
+- 不做目录 OAuth 创建首管理员（会静默改写 ADR 0031 的安全政策）。
+- 不做新的短码协议；沿用现有 43 字符信封。
+- 不做"保存前真实探测密钥"，单列为 probe 任务。
+- 不新增部署拓扑；ADR 0071 / 0072 仍为 **Proposed，未实现**。
 
 ## P1：16 条代码事实断言核实台账（2026-10-07）
 
@@ -97,66 +154,11 @@ G1 当前仍处于材料阶段独立合并门禁；G1 材料合入后，由总�
 
 按你的要求，另补跑了默认关闭的 retention upgrade barrier：设置 `RUN_RETENTION_UPGRADE_INTEGRATION=1`，使用独立 `workmesh_retention_upgrade_test` 数据库和启用 Object Lock/versioning 的 `workmesh-retention-upgrade-test` RustFS 桶，执行 `pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/retention-upgrade-barrier.integration.test.ts`；1/1 项通过，验证一个精确对象版本、versioned HEAD、零 delete marker 及 retention 扩展。此补验与上表完整 `pnpm test:integration` 分开计数。
 
-首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过。#2 已完成，第二轮独立审查批准合并；PR #192 合并提交 `660c74a6247544ffac64e7ef8f968d1025b2a668` 包含修订提交 `735578d8d0733e04cae5640cedfaf0c6181391c7` 与此完整台账；CI run `37614969993`（check 344）8/8 job 成功。P1 16 条事实据此冻结为后续输入；G1 实际 build 可达性仍须单独验证。
+首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过。#2 已完成，第二轮独立审查批准合并；PR #192 merge commit `660c74a6247544ffac64e7ef8f968d1025b2a668` 包含修订提交 `735578d8d0733e04cae5640cedfaf0c6181391c7` 与此完整台账；CI run `37614969993`（check 344）8/8 job 成功。P1 16 条事实据此冻结为后续输入；G1 实际 build 可达性仍须单独验证。
 
 ### P1 完成定义与依赖
 
 **DoD**：16 条断言全部有核实结论；每条被推翻的断言都有替代 `file:line` 证据；检索零命中项写明检索词、范围及排除项；结论已同步到计划与受影响 ADR 且相对引用可解析；五项仓库必需检查的命令、结果及失败/跳过原因均已记录并通过。满足 DoD 后仍须完成独立复核及冻结，之后 B1、A1、D1、C1 才可开工（本项 `blocks：B1, A1, D1, C1`）。
-
-## 审查撤回的四个前提（写在这里以免再犯）
-
-1. **「安装令牌只存在于响应里」是错的。** 服务端已用 AES-256-GCM 把整个兑换响应
-   加密写入 `auth_idempotency_records.replay_ciphertext`
-   （`apps/api/src/auth-idempotency.ts:128-144,218,319-339`），并有 worker 到期
-   擦除（`apps/worker/src/session-lifecycle.ts:672-690`）。**真正**的缺口是
-   **客户端没有可重放的稳定请求身份**。因此 v1 不新增 pairing 密文列、不改服务端
-   凭据生命周期。
-2. **「两个兑换端点共用同一限流预算」是错的。** 两者虽同为
-   `{endpointClass: pairing, subject: pairing}`，但桶按 `operationId` 分
-   （`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`），而两个
-   operationId 不同；失败退避键同样包含 `operationId`，因此也按操作隔离。真正
-   共用的是 socket / client-IP 桶。数据库
-   `attempts` 只在**已知的**身份不匹配（slug 或已知 clientType 对不上信封）时
-   递增，随机错误 code 不会消耗合法 pairing 的预算
-   （`apps/api/src/agent-connections.ts:521-525,561-562`）。**不做**
-   `endpointClass` 拆分。
-3. **「保存模型连接前服务端会真实请求验证密钥」是错的。** create/update 只做
-   格式与策略校验并发**不出站请求**，ADR 0065 明写此点。预置目录因此不声称任何
-   兼容性，真实 probe 单列为独立任务。
-4. **「国内生态零覆盖」需要收窄。** 准确说法是：**没有**企业微信/钉钉/飞书/
-   小程序适配器。平台并非没有通知面——ADR 0062 已有人工 Web Push，schema 自
-   `0016_stage4_usage_notifications.sql:6,85-103` 起就有 notification
-   channel/delivery 表。缺的是**渠道（channel）**面。
-
-另有两处我原判断错误、经核实后自我纠正：配对码并非短码，而是 32 随机字节的
-43 字符载荷（`packages/db/src/index.ts:41`）；十分钟只约束**首次**兑换
-（`agent-connections.ts:358-365,523`），与 15 分钟重放、轮换 overlap 是三个独立
-计时器。
-
-## 目标与非目标
-
-**目标**：
-
-- 新装的 WorkMesh 在第一次打开时就说清"还差什么、点哪里补"，并且在平台**确实
-  不知道**时明说不知道（`unknown`），不装作知道。
-- Agent 接入从七步仪式变成一条命令，并消除"丢响应即永久死路"——修法在客户端，
-  不改服务端凭据语义。
-- 投一个通知渠道出去，配一张**不带决策权**的卡片，把决策留在已登录的网页里。
-- 国内模型预置成只读、带出处的版本化目录，让常见场景不用手敲 base URL。
-- **D 链**：把参考产品（todos.dev）实测出的视觉体系、卡片结构与工作台三栏布局
-  搬进 WorkMesh 已定的机制（0028 的 CSS 变量基线 / 0045 的单套 token），
-  并把"只有人工关口是暖色"变成可断言的不变量。
-
-**非目标**（全部来自审查的"建议砍"清单）：
-
-- 不做工作区可编辑的起始提示语（无写入契约，退回固定 i18n 文案）。
-- 不做四渠道同时上线；v1 只做企业微信，钉钉/飞书/SMTP 各自独立后续。
-- 不做卡片内直接决策（需先有一份身份绑定 ADR）。
-- 不做小程序完整客户端（先做只读 + 认证兼容 spike）。
-- 不做目录 OAuth 创建首管理员（会静默改写 ADR 0031 的安全政策）。
-- 不做新的短码协议；沿用现有 43 字符信封。
-- 不做"保存前真实探测密钥"，单列为 probe 任务。
-- 不新增部署拓扑；ADR 0071 / 0072 仍为 **Proposed，未实现**。
 
 ## 现状与证据（已核实，含被撤回项）
 
@@ -164,7 +166,7 @@ G1 当前仍处于材料阶段独立合并门禁；G1 材料合入后，由总�
 |---|---|---|
 | 兑换响应已有加密重放 + 到期擦除 | `auth-idempotency.ts:128-144,218,319-339`；`session-lifecycle.ts:672-690` | B1 改为纯客户端改动，**零迁移** |
 | 重放需同 key + 同 subject/op/规范化 body/客户端上下文 | `auth-idempotency.ts:205-216,285-304,343-352` | 缺口=客户端丢请求身份 |
-| 丢身份后不可恢复 | `agent-connections.ts:522` `PAIRING_CONSUMED` | 这就是要修的那一个失败 |
+| 丢失原请求身份后，不能用新 key 再兑已消费 code | `agent-connections.ts:522` `PAIRING_CONSUMED`；原 key/body/context 在有效重放窗内仍可重放 | 缺口限定为客户端遗失原请求身份且无法精确重放 |
 | 接入指令确为 7 步 | `mcp-onboarding.ts:141-147` | 压到 2 步 |
 | 其中 4 步是完整性校验，不得删除 | ADR 0043（指纹）、ADR 0046（Skill 原始字节/哈希/签名） | 由 connector **执行**，不由 agent 手工做 |
 | 两个兑换端点预算**已**按 operationId 隔离 | `limiter.ts:129-145,154-159` | 不拆 endpointClass |
@@ -183,7 +185,7 @@ G1 当前仍处于材料阶段独立合并门禁；G1 材料合入后，由总�
 | 锁清单 pin 的是 statementId（owner + 规范 SQL 哈希）与 rankSequence | `agent-lock-order-inventory.test.ts:141-167,373-392` | **不是**只许行号位移 |
 | 路由策略矩阵由脚本生成 | `scripts/generate-route-policy-artifacts.mts`；`pnpm generate:route-policy` | 用生成器，不手改 |
 | ADR 0071/0072 Status 均为 Proposed | 两条 ADR 首行 | 事实表区分"文件存在/提案/已实现/已验收"四态 |
-| 无企业微信/钉钉/飞书/小程序适配器 | 显式纳入 `docs` 后检索 | 渠道面是空白面 |
+| 本次检索范围内未发现企业微信/钉钉/飞书/小程序渠道适配器 | 检索词、目录范围与排除项见 P1 台账第 15 项 | 仅说明未找到适配器，不推断国内模型或全部文档不存在 |
 
 ## 任务链与依赖
 
