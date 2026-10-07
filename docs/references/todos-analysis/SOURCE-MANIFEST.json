@@ -1,7 +1,7 @@
 {
   "source": "G1 提供的 todos.dev 参考采集原件；保留原始文件名",
   "byte_policy": "逐字节复制来源文件；docs/references/todos-analysis/** 关闭 Git 文本换行归一化。",
-  "scope": "仅包含 ui-inventory.md、design-tokens.md、kanban-cards.md 与 screenshots/INDEX.md 直接引用的文件；通用分析 README 和采集工具不属于本批输入。",
+  "scope": "包含 G1 输入 Markdown 直接引用的原件、其引用闭包，以及 #19 索引引用的完整审查原件；通用分析 README 和其他采集工具不属于本批输入。",
   "files": [
     {
       "source_path": "board-guide-observations.json",
@@ -44,6 +44,12 @@
       "repository_path": "docs/references/todos-analysis/observations.json",
       "bytes": 110530,
       "sha256": "6186c63d98f9bbeee576fa247196e95abb45b1c583679ec4cf9d767e2ec21bdf"
+    },
+    {
+      "source_path": "tools/todos-review.md",
+      "repository_path": "docs/references/todos-analysis/reviews/todos-review.md",
+      "bytes": 56573,
+      "sha256": "c4fabf4571c35f41bf11cc022d7260b84b467766875b6e988f96d3afbedae5f8"
     },
     {
       "source_path": "screenshots/00-create-agent-modal.png",

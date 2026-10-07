@@ -7,8 +7,8 @@
 规格和执行证据，替代本仓库 `AGENTS.md` 对 WorkMesh Project/WorkItem 双轨记录的要求。
 此决定覆盖此前「Todos 编排 + WorkMesh 追踪」的答复；不声称已创建或同步 WorkMesh 记录，
 也不改变 WorkMesh 产品自身的领域控制面。其他领域、安全、测试、审批和交付约束继续有效。
-总管负责同步受影响 Todos 的输入路径和门禁文本，并在证据中记录真实同步结果；未同步前
-状态仍为待同步。本例外只适用于本批 Todo #18 及其映射的批次任务。
+总管已按 G1 交接映射同步 #5–#17 与 #20–#22 的完整 spec（包括已关闭的 #6）；本地证据记录
+逐项核验结果。本例外只适用于本批 Todo #18 及其映射的批次任务。
 
 状态：Proposed，五条链均未开工。本稿是 gpt-6-astra / high 对抗式审查后的**第二版**，
 第一版的结论与被撤回的主张记录在
@@ -21,11 +21,12 @@
 
 ## G1 输入可达性门禁
 
-本计划与四份 ADR 在基点 `32789cec4d50db0b85a63d91049cc425d9e917a2` 可读；参考原件由本计划同批变更
-纳入 `docs/references/todos-analysis/`，字节来源与 SHA-256 见 `SOURCE-MANIFEST.json`。该基点的审查文件
-`.review.md` 是审查矩阵，不是 P1 台账。P1 的 16 条代码事实表位于提交
-`c98ec5f538b3acd9ac052c4ef100e1d111232518` 的本计划版本，必须先经 #3 独立复核并由 #2 合入目标分支；
-其合入前任何依赖该台账的 build base 均未满足门禁。
+本计划与四份 ADR 在原主分支基点 `32789cec4d50db0b85a63d91049cc425d9e917a2` 可读；本 G1 分支首阶段提交
+`ef264842a8e0dcd215151fd2e2d7c0dc7b5d6cdd` 已纳入参考原件，来源与 SHA-256 见
+`docs/references/todos-analysis/SOURCE-MANIFEST.json`。该基点的 `.review.md` 是旧审查矩阵，不是 P1 台账。
+P1 的 16 条代码事实表位于提交 `c98ec5f538b3acd9ac052c4ef100e1d111232518` 的本计划版本；#2 已执行
+`run_review`，目前正在修订并运行检查。P1 合入前置是 #2 自身审查关口通过并按流程合入；#3 是 P1/G1
+冻结后的独立规格裁决，不是 P1 合入前置。P1 未合入目标分支前，依赖该台账的 build base 均未满足门禁。
 
 G1 第一阶段仅将材料、来源清单、批次例外及陈旧输入引用修正合入仓库，不表示最终可达性通过。后续继续在
 同一 Todo #18 中运行真实隔离 build，以该 build 的 `git rev-parse HEAD` 为唯一验证 base，读取输入正文并核对
@@ -34,8 +35,8 @@ Git blob 与 SHA-256，再由独立复核者确认并将结果写入仓库证据
 
 对照物：todos.dev 的任务输入原件保存在 `docs/references/todos-analysis/`，含
 `ui-inventory.md`、`design-tokens.md`、`kanban-cards.md`、引用的测量 JSON、截图索引和
-28 张截图；原始字节来源及哈希见该目录的 `SOURCE-MANIFEST.json`。通用分析 README 和采集工具
-不属于本批交接输入。
+28 张截图；#19 索引引用的完整审查原件也保存在 `reviews/todos-review.md`。原始字节来源及哈希见该目录的
+`SOURCE-MANIFEST.json`。通用分析 README 和其他采集工具不属于本批交接输入。
 
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
