@@ -21,6 +21,7 @@ try {
   assert.deepEqual(todos.inputs.map(card => card.seqNum).sort((a, b) => a - b),
     Array.from({ length: 29 }, (_, index) => index + 1));
   let complete = 0;
+  let handoffComplete = 0;
   for (const card of todos.inputs) {
     for (const field of ['id', 'title', 'phase', 'updatedAt', 'requestedAt', 'receivedAt']) {
       assert.ok(typeof card[field] === 'string' && card[field].length > 0, '缺少字段：' + field);
@@ -34,11 +35,35 @@ try {
     assert.ok(match >= 0);
     const captured = card.rawToolText.slice(match + 7).split('\nSaved plan:\n')[0];
     if (card.completeSpec) {
-      assert.equal(card.spec, captured);
-      assert.ok(!captured.includes('…(truncated)'));
+      if (card.specSource?.kind === 'chief_message_handoff') {
+        assert.equal(card.specSource.sourceFile, 'r1-spec-source.md');
+        assert.equal(card.specSource.provenanceFile, 'r1-spec-source.json');
+        const provenance = readJson(card.specSource.provenanceFile);
+        const source = readFileSync(path.join(directory, card.specSource.sourceFile), 'utf8');
+        assert.equal(provenance.id, card.id);
+        assert.equal(provenance.updatedAt, card.updatedAt);
+        assert.equal(provenance.toolsReadFullSpec, false);
+        assert.equal(card.specSource.toolsReadFullSpec, false);
+        assert.equal(provenance.prefixMatchesHistoricalCommit, true);
+        assert.equal(card.specPrefix, captured.replace(/\n…\(truncated\)$/, ''));
+        assert.equal(digest(Buffer.from(card.specPrefix, 'utf8')), card.specPrefixSha256);
+        assert.equal(card.specPrefixSha256, provenance.originalPrefixSha256);
+        assert.equal(card.rawToolTextSha256, provenance.originalToolTextSha256);
+        assert.equal(Buffer.byteLength(card.specPrefix, 'utf8'), card.specPrefixUtf8Bytes);
+        assert.ok(card.rawToolText.includes(card.truncationMarker));
+        assert.equal(provenance.exactSuffix, '台原计划，列具体能力缺口，不编正文。\n');
+        assert.equal(source, card.specPrefix + provenance.exactSuffix);
+        assert.equal(card.spec, source);
+        assert.equal(card.specSha256, provenance.specSha256);
+        assert.equal(card.specUtf8Bytes, provenance.specUtf8Bytes);
+        handoffComplete += 1;
+      } else {
+        assert.equal(card.spec, captured);
+        assert.ok(!captured.includes('…(truncated)'));
+        assert.equal(card.specPrefix, null);
+      }
       assert.equal(digest(Buffer.from(card.spec, 'utf8')), card.specSha256);
       assert.equal(Buffer.byteLength(card.spec, 'utf8'), card.specUtf8Bytes);
-      assert.equal(card.specPrefix, null);
       complete += 1;
     } else {
       assert.equal(card.spec, null);
@@ -50,6 +75,8 @@ try {
     }
   }
   assert.equal(todos.coverage.completeSpecs, complete);
+  assert.equal(todos.coverage.handoffCompletedSpecs, handoffComplete);
+  assert.equal(todos.coverage.toolCompleteSpecs, complete - handoffComplete);
   assert.equal(todos.coverage.metadataCards, todos.inputs.length);
   assert.deepEqual(todos.coverage.incompleteSpecs, todos.inputs.filter(card => !card.completeSpec).map(card => card.id));
   assert.equal(todos.inputs.find(card => card.seqNum === 6).phase, 'closed');
@@ -72,7 +99,8 @@ try {
   }
   console.log('已采集工件的字节、哈希、计划副本一致性和卡片元数据校验通过；正文覆盖 ' + complete + '/29。');
   if (!process.argv.includes('--integrity-only')) {
-    assert.equal(complete, 29, '输入不完整：#3 正文被平台工具截断，三项 blocking 仍待独立复核。');
+    assert.equal(complete, 29, '历史规划输入正文不完整。');
+    console.log('历史源包完整；其中 1 卡由总管补交源文。三项 blocking 仍待原复核者，执行前须复读最新 main 与 29 卡。');
   } else {
     console.log('本模式不证明输入完整或门禁通过，不能用于关闭 blocking。');
   }

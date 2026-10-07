@@ -1,0 +1,40 @@
+{
+  "id": "q_1zKPuGsG-2ZRUwOwQx4",
+  "updatedAt": "2026-10-07T15:52:41.101Z",
+  "originalSentAt": "2026-10-07T23:52:41+08:00",
+  "handoffReceivedAt": "2026-10-07 16:15:42 UTC",
+  "sourceKind": "chief_message_handoff",
+  "sourceDescription": "本轮用户反馈转交总管本会话 message_todo 完整 spec 原调用，精确尾文与末尾换行由总管提供；不是 tools 独立读取全文。",
+  "construction": "依据反馈明确允许的方法，使用原提交中逐字符核验的 specPrefix 加准确尾文生成同版本历史全文；不补写或推断其他字符。",
+  "originalSnapshotCommit": "3317b917f99db25b74e6bdf00dcae6b4d486d556",
+  "originalSnapshotPath": "docs/reviews/r1/todo-inputs.json",
+  "originalPrefixSha256": "8a868ebfa0522027991bb146708bb430886a9af7223d5b347a36f2eb7a11fa7b",
+  "originalToolTextSha256": "a687eaa100fe7bef1d1fc30b87e200e7aaaa7737374ee26ddfa3cf623800c553",
+  "prefixMatchesHistoricalCommit": true,
+  "exactSuffix": "台原计划，列具体能力缺口，不编正文。\n",
+  "sourceFile": "r1-spec-source.md",
+  "specSha256": "b6f0d424fc89565ba76d41b6c05acad0797925acac06548c5d76c035c416dccb",
+  "specUtf8Bytes": 15420,
+  "toolsReadFullSpec": false,
+  "preservedMetadata": [
+    "id",
+    "seqNum",
+    "title",
+    "phase",
+    "createdAt",
+    "updatedAt",
+    "assignedAgentId",
+    "branch",
+    "source",
+    "requestedAt",
+    "receivedAt"
+  ],
+  "preservedRawFields": [
+    "rawToolText",
+    "rawToolTextSha256",
+    "specPrefix",
+    "specPrefixSha256",
+    "specPrefixUtf8Bytes",
+    "truncationMarker"
+  ]
+}

@@ -17,19 +17,19 @@
   "worktreeBase": "36c7709a8bd49c640b8dbfa04a09cfb777f943c8",
   "fetchedMainCommit": "dcf355735341bc6daac4101b8c7d0efbaabbe764",
   "gates": {
-    "g1Final": "未确认；本轮 #18 快照 phase=building，最终 settled/主线合入仍为执行前置。",
+    "g1Final": "未确认；历史 #18 快照 phase=building，不能冒作当前状态；最终 settled/主线合入仍为执行前置。",
     "independentReview": "三项 blocking 均待原复核 agent 按准确提交定向核验，生产者没有独立闭合。",
     "specRevisionExecution": "未放行。",
     "todoSync": "本轮只读卡片；未更新 Todos 或创建真实 WorkMesh 记录。"
   },
   "inputCompleteness": {
     "cardMetadata": "29/29",
-    "cardSpecs": "28/29",
-    "missingFullSpec": [
-      "q_1zKPuGsG-2ZRUwOwQx4"
-    ],
+    "cardSpecs": "29/29（28 卡工具全文 + 1 卡总管源文补交）",
+    "missingFullSpec": [],
     "historicalClosedCardTestMapping": "仅保存当前 #6 全文；旧正文的测试/DoD 迁移仍待历史受控材料核实。",
-    "originalReferencedPlanDoc": "doc:BVfhr56cxlVUURaZjatX_ 未直接读取，待总管可追溯原文交接。"
+    "originalReferencedPlanDoc": "doc:BVfhr56cxlVUURaZjatX_ 未直接读取，待总管可追溯原文交接。",
+    "sourceSupplement": "r1-spec-source.json",
+    "snapshotFreshness": "历史规划输入，不是 PR198 后的最新执行输入；执行前复读最新 main 和全部 29 卡，处理差异后重新冻结。"
   },
   "files": [
     {
@@ -39,8 +39,8 @@
     },
     {
       "path": "docs/reviews/r1/checks.md",
-      "bytes": 3540,
-      "sha256": "09fbbf1fc64b9b61b3ab00ee422a3045252c565bf87fe970e3066443bbb956fb"
+      "bytes": 5483,
+      "sha256": "b574c6ba5b55f8359becb1abaafa93f3e843ccc4892b34b0d75f7aea7d65105b"
     },
     {
       "path": "docs/reviews/r1/main-inputs.json",
@@ -49,8 +49,8 @@
     },
     {
       "path": "docs/reviews/r1/plan-review-response.md",
-      "bytes": 11143,
-      "sha256": "8b7c878b30772d1d1770d07a9f683de07fac63c91689549d23c92f05a9f05dd4"
+      "bytes": 11766,
+      "sha256": "6f61de15ec5348e94523182684a84f30b3a1b8e6df3fa2f46a898ad46ab55808"
     },
     {
       "path": "docs/reviews/r1/plan.md",
@@ -58,14 +58,24 @@
       "sha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed"
     },
     {
+      "path": "docs/reviews/r1/r1-spec-source.json",
+      "bytes": 1573,
+      "sha256": "794f165d1b581918c60f59c717fa43a8490c491696247d4c90700f468c661cbf"
+    },
+    {
+      "path": "docs/reviews/r1/r1-spec-source.md",
+      "bytes": 15420,
+      "sha256": "b6f0d424fc89565ba76d41b6c05acad0797925acac06548c5d76c035c416dccb"
+    },
+    {
       "path": "docs/reviews/r1/todo-inputs.json",
-      "bytes": 326764,
-      "sha256": "24b8de52bc203cef5b74bf817f43a8f43f9c58bd290eddd57b7b0faad7b4e1a9"
+      "bytes": 343283,
+      "sha256": "19db2cfc4d910379d0e3eec255d8563e6f704ccc35cf71a761691640cf37f52c"
     },
     {
       "path": "docs/reviews/r1/verify-handoff.mjs",
-      "bytes": 4272,
-      "sha256": "24bc8a08cdc92637f741ebd04ecfa9e0b0c030eac98a513bf49b2cf6641e74a0"
+      "bytes": 6131,
+      "sha256": "82bc549148d9ceefce08bbfb9c17ad8a0c6970de773fb17f4e9c736152b001b3"
     }
   ],
   "manifestSelfExcluded": true,
