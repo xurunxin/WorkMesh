@@ -66,8 +66,10 @@ redeem endpoints do **not** share one rate-limit budget. Both are classified
 (`apps/api/src/auth-rate-limit/inventory.ts:36-37`), but the actual buckets key
 on `operationId` for the endpoint budget and `operationId + subject + clientIp`
 for the subject budget (`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`),
-and the two operations have different `operationId`s. What is genuinely shared
-is the socket / client-IP budget and the failure backoff. Separately, the
+and the two operations have different `operationId`s. The socket and client-IP
+budgets are shared. The failure backoff is **not** shared: its key includes
+`operationId`, `clientIp`, and subject
+(`apps/api/src/auth-rate-limit/limiter.ts:122-125`). Separately, the
 database `attempts` counter increments only on a *known* identity mismatch — a
 wrong slug or a known client type that does not match the envelope — and only
 for that pairing row; a random wrong code does not consume a valid pairing's
@@ -152,6 +154,14 @@ the same connector drive it; that change gets its own contract.
 behaviour, because doing so is a breaking change that deserves its own
 migration. It is recorded as an ambiguity to resolve before the endpoint is
 narrowed, not silently reinterpreted here.
+
+The redemption input is a strict object containing `pairingCode`, `agentSlug`,
+and `client`, with no separate claim identifier
+(`packages/contracts/src/index.ts:2711-2723`). Pairing codes are prefixed
+32-byte random opaque tokens, yielding a 43-character base64url payload
+(`packages/db/src/index.ts:41`; `apps/api/src/agent-connections.ts:32-35,358-365`).
+The full claim/replay, rate-limit, and attempts findings are tracked in the
+[activation plan's P1 evidence ledger](../plan/2026-10-07-activation-onboarding-and-china-ecosystem.md).
 
 ### Failures name their recovery, and guessing is not abuse
 
