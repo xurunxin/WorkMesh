@@ -1,0 +1,21 @@
+命令: pnpm smoke:agents:ci
+执行HEAD: d0806bc257fce1fba7ca7b320b79d6698ec6be45
+Node: v24.20.0
+开始UTC: 2026-10-07T17:32:38.124Z
+
+
+> workmesh@ smoke:agents:ci C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752
+> pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke
+
+
+> @workmesh/mcp@ smoke C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\apps\mcp
+> tsx src/smoke.ts
+
+MCP smoke: server constructed in read-only mode
+
+> @workmesh/fake-agent@ smoke C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\apps\fake-agent
+> tsx src/smoke.ts
+
+Fake Agent smoke: signed delivery and deduplication passed
+
+退出码: 0

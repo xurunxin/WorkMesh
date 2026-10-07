@@ -1,0 +1,26 @@
+命令: pnpm -C apps/worker exec vitest run integration/retention.integration.test.ts -t retains conflict evidence after an external Worker is overwritten --config C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-worker-diagnostic.config.ts
+执行HEAD: d0806bc257fce1fba7ca7b320b79d6698ec6be45
+Node: v24.20.0
+开始UTC: 2026-10-07T17:44:21.476Z
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a116f7-1027-7c75-90df-32ebc5488752/apps/worker
+
+stdout | integration/retention.integration.test.ts > retention worker destructive-path fences > retains conflict evidence after an external Worker is overwritten
+G1_FRESHNESS_DIAGNOSTIC {"mode":"archive_only","seenAt":"2026-10-07T17:44:24.619Z","observedAt":"2026-10-07T17:44:24.634Z","ageMs":15,"identityMatches":true,"conflictCount":"0","result":"通过"}
+
+stdout | integration/retention.integration.test.ts > retention worker destructive-path fences > retains conflict evidence after an external Worker is overwritten
+G1_FRESHNESS_DIAGNOSTIC {"mode":"archive_only","seenAt":"2026-10-07T17:44:24.658Z","observedAt":"2026-10-07T17:44:24.665Z","ageMs":7,"identityMatches":false,"conflictCount":"1","result":"RETENTION_SOAK_WORKER_IDENTITY_MISMATCH"}
+
+stdout | integration/retention.integration.test.ts > retention worker destructive-path fences > retains conflict evidence after an external Worker is overwritten
+G1_FRESHNESS_DIAGNOSTIC {"mode":"archive_only","seenAt":"2026-10-07T17:44:24.665Z","observedAt":"2026-10-07T17:44:24.672Z","ageMs":7,"identityMatches":true,"conflictCount":"2","expectedConflictCount":"0","result":"RETENTION_SOAK_WORKER_IDENTITY_CONFLICT_DETECTED"}
+
+ ✓ integration/retention.integration.test.ts (36 tests | 35 skipped) 514ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 35 skipped (36)
+   Start at  01:44:22
+   Duration  2.15s (transform 347ms, setup 206ms, collect 1.10s, tests 514ms, environment 0ms, prepare 124ms)
+
+
+退出码: 0

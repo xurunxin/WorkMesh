@@ -10,21 +10,37 @@
 
 在main的detached工作树运行验证器，退出0，**44/44文件、P1 16/16、0 errors**。ADR0078、round2和CI另读3份完整正文；PR199十项受影响文件（包括新CI计划、策略、runner、validator、workflow和Playwright配置/契约）逐项读取及双字节哈希记录于 `ciAlignment.checkpoint`。去重输入总数 56，旧44不冒称覆盖新材料。初始真实build base仍为历史419a1d7；f4e5915是新增main checkpoint，未改写初始base。
 
-根清单新增必要CI计划，现为**25项**，受影响的主计划/CI文件已校准；工作树字节/SHA-256与提交blob字节/SHA-256分列，准确版本为待提交整合索引（按blobId标识）。不包含证据自身hash。当前整合版本的独立44项读取见 `ciAlignment.integratedRead`。
+根清单新增必要CI计划，现为**25项**，受影响的主计划/CI文件已校准；工作树字节/SHA-256与提交blob字节/SHA-256分列，准确版本为 `d0806bc257fce1fba7ca7b320b79d6698ec6be45`。不包含证据自身hash。当前整合版本的独立44项读取见 `ciAlignment.integratedRead`。
 
 ### 最新CI策略的实际范围与门禁
 
-实际PR #200比较范围、路径、诊断分类和七项job选择见 `ciAlignment.policy`。提交后实测，当前尚未把诊断分类当作正式outputs。
+实际PR #200比较范围、路径、诊断分类和七项job选择见 `ciAlignment.policy`。正式changes退出 1，内部范围空白检查退出 2；完整输出和逐项原件核验已保存。
 
-本PR含root MANIFEST、JSON、原始日志/PNG及验证脚本，是保守full范围；不是纯Markdown豁免。若范围空白门禁因原始日志和失败上下文报错，**保留原字节与来源**，不删除证据、不改CI规则/属性绕过、不伪造选中outputs。诊断分类只说明空白门禁通过后会选中的任务，不等于正式changes成功。
+本PR含root MANIFEST、JSON、原始日志/PNG，是保守full范围；不是纯Markdown豁免。若范围空白门禁因原始日志和失败上下文报错，**保留原字节与来源**，不删除证据、不改CI规则/属性绕过、不伪造选中outputs。诊断分类只说明空白门禁通过后会选中的任务，不等于正式changes成功。
 
 ### 本轮验证版本
 
-检查版本：待提交整合版本；本机Node v24.20.0 / pnpm9.15.4，线上仍固定Node22.19.0。本轮五项AGENTS命令已成功 0/5；范围确认为full且main更改测试配置，按新CI计划T3执行，原74/74及旧run37656693023只留作对应旧版本。Turbo默认缓存命中见日志，不手工豁免；新策略/validator/runner检查单独列出。
+检查版本：`d0806bc257fce1fba7ca7b320b79d6698ec6be45`；本机Node v24.20.0 / pnpm9.15.4，线上仍固定Node22.19.0。本轮五项AGENTS命令已成功 4/5；范围确认为full且main更改测试配置，按新CI计划T3执行，原74/74及旧run37656693023只留作对应旧版本。Turbo默认缓存命中见日志，不手工豁免；新策略/validator/runner检查单独列出。
 
 | 命令 | 退出码 | 实际结果 |
 |---|---:|---|
-| 待精确整合提交后执行 | — | 不复用旧版本结果 |
+| `pnpm ci:test` | 0 | ℹ tests 11；ℹ pass 11 |
+| `pnpm ci:validate` | 0 | 命令: pnpm ci:validate；> workmesh@ ci:validate C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752；> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs；[ci:validate] OK: 9 jobs, 35 immutable action references, Node 22.19.0, pnpm@9.15.4；Release workflow validation passed.；Lite compose validation passed (8 services; 4 roles from one image; 51 documented variables; published: minio, web) |
+| `pnpm typecheck` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm lint` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm ci:source build` | 0 | Tasks:    18 successful, 18 total |
+| `pnpm test:conformance` | 0 | WorkMesh client conformance: 6/6 adapter/fixture runs passed. Evidence: C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\packages\conformance\conformance-results |
+| `pnpm smoke:agents:ci` | 0 | Fake Agent smoke: signed delivery and deduplication passed |
+| `pnpm test` | 0 | @workmesh/recovery:test:  Test Files  1 passed (1)；@workmesh/recovery:test:       Tests  7 passed (7)；@workmesh/api:test:  Test Files  33 passed (33)；@workmesh/api:test:       Tests  174 passed (174)；@workmesh/web:test:    ✓ Agent detail route > renders validated definition facts and the authoritative empty Team Access projection  1143ms；@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps create validation and update revision failures contextual without duplicating a toast  543ms；@workmesh/web:test:    ✓ Home mutation outcomes > retries a URL-owned Project after authority invalidates the in-flight request  575ms；@workmesh/web:test:  Test Files  113 passed (113)；@workmesh/web:test:       Tests  776 passed (776)； Tasks:    29 successful, 29 total |
+| `pnpm test:integration` | 1 | ✓ Stage 2 collaboration API acceptance > revalidates claim, acknowledge, and reply idempotency replays against live scope  1279ms；   ✓ Agent authority total lock order > revalidates automation resource, message, and approval authority after exact native lock waits  718ms； Test Files  22 passed (22)；      Tests  154 passed \| 1 skipped (155)；   ✓ Stage 3 provider webhook worker > revalidates the provider allowlist before every provider access and recovers released actions  442ms；   ✓ Stage 3 provider webhook worker > revalidates every queued provider mutation and audits revoked authority without a provider write  540ms；   ✓ Stage 3 provider webhook worker > invalidates exact-head authority and terminally fails when the live provider head drifts  420ms；⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯； Test Files  1 failed \| 7 passed \| 1 skipped (9)；      Tests  1 failed \| 77 passed \| 1 skipped (79) |
+| `pnpm -C apps/worker exec vitest run integration/retention.integration.test.ts -t retains conflict evidence after an external Worker is overwritten --config C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\.tmp\g1-worker-diagnostic.config.ts` | 0 | Test Files  1 passed (1)；      Tests  1 passed \| 35 skipped (36) |
+| `pnpm test:integration:worker` | 0 | ✓ Stage 3 provider webhook worker > revalidates the provider allowlist before every provider access and recovers released actions  454ms；   ✓ Stage 3 provider webhook worker > revalidates every queued provider mutation and audits revoked authority without a provider write  545ms；   ✓ Stage 3 provider webhook worker > invalidates exact-head authority and terminally fails when the live provider head drifts  382ms； Test Files  8 passed \| 1 skipped (9)；      Tests  78 passed \| 1 skipped (79) |
+| `pnpm test:integration:recovery` | 0 | Test Files  1 passed (1)；      Tests  1 passed (1) |
+| `pnpm test:e2e` | 0 | @workmesh/web:test:e2e: [WebServer]  GET /agent-sessions/00000000-0000-4000-8000-000000000001?runCompare=00000000-0000-4000-8000-000000000010&runPhase=validation 200 in 21ms；@workmesh/web:test:e2e: [WebServer]  GET /agent-sessions/00000000-0000-4000-8000-000000000001?runCompare=00000000-0000-4000-8000-000000000010&runPhase=validation&runTechnical=1 200 in 26ms；@workmesh/web:test:e2e: [WebServer]  GET /agent-sessions/00000000-0000-4000-8000-000000000001?runCompare=00000000-0000-4000-8000-000000000010&runGroup=activity-group%3A00000000-0000-4000-8000-000000000107&runPhase=validation&runTechnical=1 200 in 21ms；@workmesh/web:test:e2e:   67 passed (4.3m)； Tasks:    12 successful, 12 total |
+
+根级 `pnpm test:integration` 首轮退出1：DB77、API154通过，worker77通过/1失败/1既有skip，recovery因短路未运行。目标定向诊断1通过/35未执行，initialProof age=15ms；50次跨时钟采样age为1–2ms，无负数，**首败根因未定位**。随后只用标准入口复验worker78通过/1既有skip、补recovery1/1；没有无依据重复已通过的DB/API，也不把根命令首败改记通过。详见 [诊断方法](build-input-reachability.current/worker-diagnostic-method.md)。
+
+[原始证据与CI兼容方案](build-input-reachability.current/raw-evidence-compatibility.md)列明17份原始文件、842项诊断的提交/工作树字节哈希，方案A无损归档及路径映射不改CI规则，方案B改变CI证据校验边界须规范裁决。两方案此轮均未执行，原字节不删不格式化。
 
 [本轮局部核验](build-input-reachability.current/ci-alignment-validation.json)检查清单、原件、历史日志、F5正文及main十项blob完整继承。全量日志的字节/SHA-256在JSON，本轮健康命令不取消。**G1最终门禁仍关闭**，producer修订回review定向独审后才恢复PR200最新head的门禁；没有直接合入main，不确认R1执行计划。
 

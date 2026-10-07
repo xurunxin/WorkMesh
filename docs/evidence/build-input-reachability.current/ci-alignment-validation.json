@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-07T17:51:49.558Z",
+  "verifiedHead": "d0806bc257fce1fba7ca7b320b79d6698ec6be45",
+  "testedHead": "d0806bc257fce1fba7ca7b320b79d6698ec6be45",
+  "latestMain": "f4e5915ea4dbc5e3f3c66a80a2dba518eeb1b9c9",
+  "previousHead": "6dbcf336ab09bbdbd42ebe6a7652c66fefad243b",
+  "historicalJsonUnchanged": true,
+  "previousArtifactsUnchanged": 25,
+  "historicalLogBytesAndHashesUnchanged": 18,
+  "mainIncrementFilesExactlyInherited": 10,
+  "f5BodyRiskAndConclusionUnchanged": true,
+  "p1BodyUnchanged": true,
+  "sourceOriginals": 38,
+  "sourceMismatches": 0,
+  "manifestEntries": 25,
+  "manifestMismatches": 0,
+  "committedBlobChecks": 25,
+  "mainRead": {
+    "files": 44,
+    "p1": 16,
+    "additionalUniqueFiles": 12,
+    "totalUniqueInputs": 56,
+    "exitCode": 0
+  },
+  "integratedRead": {
+    "files": 44,
+    "p1": 16,
+    "exitCode": 0
+  },
+  "localChecksPassed": 9,
+  "requiredLocalCommandsPassed": 4,
+  "rootIntegrationExitCode": 1,
+  "workerTargetedAndStandardFollowUpPassed": true,
+  "recoveryFollowUpPassed": true,
+  "integrationRootCauseIdentified": false,
+  "compatibilityFiles": 17,
+  "compatibilityDiagnosticCount": 842,
+  "testedSourcesAndInputBlobsUnchanged": true,
+  "ciSelection": {
+    "officialChangesExitCode": 1,
+    "whitespaceExitCode": 2,
+    "officialOutputs": "",
+    "diagnosticMode": "full",
+    "diagnosticJobs": 7,
+    "diagnosticIsOfficialPlan": false,
+    "rawLogBytesPreserved": true
+  },
+  "integrityErrors": [],
+  "blocking": [
+    "根级集成首轮worker失败，根因未定位；局部复验不改写根命令退出1",
+    "PR范围原始日志/失败上下文尾随空白，changes/Required CI关闭；未自行格式化或改CI规则",
+    "producer新增证据尚待定向独审与最新head线上门禁"
+  ]
+}

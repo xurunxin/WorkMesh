@@ -1,0 +1,16 @@
+命令: pnpm test:conformance
+执行HEAD: d0806bc257fce1fba7ca7b320b79d6698ec6be45
+Node: v24.20.0
+开始UTC: 2026-10-07T17:32:38.093Z
+
+
+> workmesh@ test:conformance C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752
+> pnpm --filter @workmesh/conformance conformance
+
+
+> @workmesh/conformance@ conformance C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\packages\conformance
+> tsx src/cli.ts
+
+WorkMesh client conformance: 6/6 adapter/fixture runs passed. Evidence: C:\Users\xurx\.tds\workspaces\01a116f7-1027-7c75-90df-32ebc5488752\packages\conformance\conformance-results
+
+退出码: 0
