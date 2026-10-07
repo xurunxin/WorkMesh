@@ -8,7 +8,8 @@ ordinary CI retains read-only repository permissions.
 
 CI runs for every `pull_request` base branch, including stacked pull requests,
 for pushes to `main`, by manual `workflow_dispatch`, and through
-`workflow_call` from an exact candidate tag. Only pull-request runs
+`workflow_call` from an exact candidate tag, merge queues, and a weekly full run
+(Monday 03:00 Asia/Shanghai). Only pull-request runs
 share a concurrency group and cancel an older run for the same pull request.
 Push and manual runs keep independent run IDs and are never auto-cancelled.
 
@@ -22,9 +23,30 @@ root `packageManager` value, `pnpm@9.15.4`, and installation always uses
 addressed store; `node_modules`, build output, and framework caches are not
 cached.
 
-## Required job graph
+## Change selection and required job graph
 
-`source-gates` must pass before the six constituent jobs start:
+`changes` reads the actual PR merge-base/head or main before/after range with
+complete Git history. It checks whitespace in that range and runs the selection
+and aggregation regression tests with Node's built-in runner, without installing
+dependencies. It produces a JSON plan and one explicit boolean per job.
+
+| Change | Checks |
+| --- | --- |
+| Known prose under `docs/`, root README/AGENTS/CONTRIBUTING/CHANGELOG/LICENSE | `changes` and `Required CI`; no dependency install, builds, unit suites or services |
+| Code PR in a workspace | Changed packages and transitive consumers; typecheck/build also include dependencies; relevant integration, E2E and protocol jobs |
+| UI/web PR | UI/web source checks and the complete existing browser suite; unrelated DB/API/worker/recovery/protocol suites are skipped |
+| API or worker PR | Relevant integration, complete browser acceptance and restored-production recovery; worker changes also run API integration because its fixtures import worker implementations |
+| Shared contracts, root/configuration/scripts/lockfile, unknown or removed workspace | Broad dependent checks or full acceptance; unknown paths always use full acceptance |
+| Main code push, manual, weekly, merge queue, release-candidate reuse | Full acceptance |
+
+The small Markdown exception list in `scripts/ci-policy.mjs` retains full checks
+for generated route policy, release/version policy, release operations and the
+coordination ADR/plan that are inputs to executable validators or contract tests.
+Runtime Skills and assets never receive the prose exemption. Empty diffs,
+invalid event metadata and unavailable Git history fall back to full acceptance.
+
+All seven selected check jobs depend only on `changes`, so service setup and
+integration/browser tests can overlap typechecking, builds and unit tests:
 
 - `db-integration` uses its own PostgreSQL 16 test database.
 - `api-integration` uses its own PostgreSQL 16 test database plus isolated
@@ -42,14 +64,29 @@ cached.
   retains JSON, JUnit, and full transcript evidence. It does not prove a live
   provider-backed workflow execution.
 
-`required-ci` runs with `always()` after `source-gates` and all six constituent
-jobs. It succeeds only when every dependency result is `success`, giving branch
+`required-ci` runs with `always()` after `changes` and all seven check jobs.
+It requires successful classification, `success` for every selected job, and
+`skipped` only for jobs explicitly excluded by the plan. A missing plan, missing
+result, failure, cancellation, or unplanned skip fails the gate, giving branch
 protection one stable aggregate check name when an administrator configures it.
 This repository change does not itself modify branch-protection settings.
 
-The source job runs the CI validator, lint, typecheck, the contracts package
-tests explicitly, build, unit tests, `docker compose config`, and a final clean
-tracked-tree check. `format:check` is deliberately absent: the repository has
+Workflow-level path filters are deliberately avoided: GitHub leaves their
+required checks pending when the workflow is skipped. See the official
+[required-check guidance](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
+
+The source job runs the CI validator, selected source tasks, generated route
+policy and both Skill validators, quiet Compose validation, and a final clean
+tracked-tree check. `pnpm ci:source` runs lint only where it differs from
+typecheck: all current packages use `tsc --noEmit` for both, so CI executes that
+check once. Contracts and SDK unit tests run once in the selected unit suites;
+`smoke:agents:ci` retains both construction smoke commands and the conformance
+job retains all protocol drivers. Local `smoke:agents` keeps its self-contained
+SDK test. Theme E2E runs once in the authenticated project, so protected routes
+are actually checked instead of checking an anonymous redirect to login.
+No behavioral assertions are deleted.
+
+`format:check` is deliberately absent: the repository has
 no accepted formatting baseline and introducing one would mechanically touch
 about 139 existing files. That work is deferred to Issue #10B or a separate
 mechanical pull request.
@@ -77,7 +114,16 @@ The workflow policy and static structure can be checked without services:
 
 ```text
 pnpm ci:validate
+pnpm ci:test
+pnpm ci:source typecheck
+pnpm ci:source build
+pnpm ci:source test
 ```
+
+`CI_PACKAGES` may be a JSON array of known workspace names for reproducing a PR
+scope. Without it, `ci:source` selects all packages. `--dry-run` prints Turbo's
+actual task selection. The existing `lint`, `typecheck`, `test`, integration and
+E2E commands remain available as complete local checks.
 
 The production Compose and runtime-startup contract requires a working Docker
 daemon and installed dependencies. It runs in the protected release preflight
