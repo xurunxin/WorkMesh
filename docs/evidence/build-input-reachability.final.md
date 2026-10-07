@@ -12,9 +12,10 @@
 - 初始真实隔离 build 在工作树中记录的 `git rev-parse HEAD`：`419a1d7af90c09cb9364819977f32ec59cf86f87`；以该完整 SHA 作为验证器输入，没有用后续工作树改动或历史分支替代。
 - `419a1d7` 是 PR #194 合并提交，父提交为 P1 合并提交 `660c74a6247544ffac64e7ef8f968d1025b2a668` 和 G1 材料提交 `49cd2136fe5109115fb4f3dcff89ed59b0bc7615`。因此本次真实 base 同时含有 P1 冻结表和 G1 原件包。
 - 历史核查 base `32789cec4d50db0b85a63d91049cc425d9e917a2` 与 P1 来源分支提交 `c98ec5f538b3acd9ac052c4ef100e1d111232518` 仅作溯源；本次没有拿它们充当 build base。P1 主分支合入版本是父提交 `660c74a…`。
-- `419a1d7` 初始读取后，D0 已由 PR #195 合入 main。Chief 于 2026-10-07 21:09 核实 `origin/main=4b287b4e9892bfb4545dbbff94d04f45633c3a64`，其包含 `419a1d7…` 与 D0 提交 `768bbd82fcc52a873168b39a8382d2f14c928abc`。本分支通过 `git merge --no-commit --no-ff 4b287b4e9892bfb4545dbbff94d04f45633c3a64` 实际整合 main，平台本轮 checkpoint 将完成 merge commit；D0 证据文件已进入合并工作树，计划保留 D0 增量、D1a/D1b 拆分和 P1 冻结。
+- `419a1d7` 初始读取后，D0 已由 PR #195 合入 main。Chief 于 2026-10-07 21:09 核实当时的 `origin/main=4b287b4e9892bfb4545dbbff94d04f45633c3a64`，其包含 `419a1d7…` 与 D0 提交 `768bbd82fcc52a873168b39a8382d2f14c928abc`。本轮按要求执行 `git merge origin/main`，实际整合刚获取的 `origin/main=36c7709a8bd49c640b8dbfa04a09cfb777f943c8`；计划文件有一处状态行冲突，已保留两侧状态并记录 G1 三个基点、D0 完成与 ADR 0078/F 链信息。D0 证据文件已进入合并工作树，计划保留 D0 增量、D1a/D1b 拆分和 P1 冻结。
 - 对整合点 `4b287b4` 的 44 项输入另执行 `node scripts/verify-build-input-reachability.mjs 4b287b4e9892bfb4545dbbff94d04f45633c3a64`，在精确 detached checkout 中退出码 0，44/44 文件、P1 16/16、0 errors。逐文件的 commit/worktree 结果保存在同一 JSON 的 `integration.buildVerification`；这次是整合版本定向读取核验，不改写初始 `419a1d7` 记录，也不重造 fresh build。
 - 从只读 main clone 的 `FETCH_HEAD` 读得 `4b287b4` 主计划正文 50187 字节，SHA-256 与该提交的 `MANIFEST.json` 一致；Git blob 为 `2467aad369f707f952a1b35dadfb75a046b306dc`，提交 SHA-256 为 `617d900163bb1ea87b263e3e51bd38cc470121b54d09fb634c2b4078060ee62f`。当前 merge 后计划工作树字节和哈希、Git blob 与根清单一致性在下方清单核对记录中列出，不用当前改后哈希冒充 main 原文哈希。
+- 当前 PR base `36c7709a8bd49c640b8dbfa04a09cfb777f943c8` 另在该提交的精确 detached worktree 中运行 `node scripts/verify-build-input-reachability.mjs 36c7709a8bd49c640b8dbfa04a09cfb777f943c8`，退出码 0，44/44 文件、P1 16/16、0 errors；逐文件结果位于 JSON 的 `integration.pullRequestBaseVerification`。此项只核验 base 原始内容，初始 `419a1d7` 和前次 `4b287b4` 记录均保留。该提交计划的原始提交字节为 63415，SHA-256 `c9da1be493e6d1364550cbf3ea391145c70d914234a57e457d6feb19784767da`，Git blob `0d45cfd9403ed48f6db39aa8ae97971edd03e821`；其自身 `MANIFEST.json` 记录 50187 字节 / `617d900…`，与 base blob 不匹配。冲突解决后的合并工作树计划为 65613 字节、SHA-256 `0605c6d97695b0691734a85d1255bfac31f3d82ddfb5c3e9b89232e25d4ffd57`、Git blob `569955ba8509b2ffd1a7cb72462a416eec436477`；根清单已按最终合并工作树字节重新校准，未沿用 main 的陈旧快照值。
 
 ## 整合后根清单核对
 
@@ -26,11 +27,11 @@
 | `docs/adr/README.md` | 16185 | `abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8` |
 | `docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md` | 16523 | `ddf24ece241d40997adec9297229aa34b2abb91edc71426b47febdf19fb8350f` |
 | `docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md` | 14065 | `a6719cadd221f426f79717946915566128bf9e749c995ed731f7e22c2a29935a` |
-| `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md` | 51385 | `25ef66d59d28390d54bd218f56580b4954f6e2f87cfa3609959cebf5dd439fa1` |
+| `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md` | 65613 | `0605c6d97695b0691734a85d1255bfac31f3d82ddfb5c3e9b89232e25d4ffd57` |
 | `docs/evidence/build-input-reachability.md` | 15741 | `af4678097ea70ecf687be73b3d904e1c192a94740c36e0e5e0d43fa7ec34ab12` |
 | `scripts/verify-build-input-reachability.mjs` | 6844 | `bdb2e2ad79c6eeacc8b4b54dfa5285ef2b52342843f23c8645065246a1de5704` |
 | `scripts/verify-build-input-reachability.test.mjs` | 1524 | `44cb9932fb4213269450ee5626aebd10bcc2360fb869ec9dd035a772d52ef993` |
-- 最新 main 的 CI #353 / run `37626312217`（push `main@4b287b4`）completed/success，8/8 job 成功。前序证据提交 `70a94f21509b49f1d5a70cbb61a0af1729ee9ba8` 已提交；本轮整合变更由平台 checkpoint 形成 merge commit，随后本分支 PR/CI 待触发。
+- `main@4b287b4` 的 CI #353 / run `37626312217` completed/success，8/8 job 成功；它是前次 main 快照，不能代表当前 `origin/main=36c7709` 的 CI。前序证据提交 `70a94f21509b49f1d5a70cbb61a0af1729ee9ba8` 已提交；当前 main 整合仍在本分支 merge 流程中，本分支 PR/CI 待触发。
 - 材料 PR #194 的 CI #348 / run `37620848480` 对 `49cd213` 的 8/8 job 成功；`main@419a1d7` 的 push CI #351 / run `37622620354` completed/success，8/8；D0 PR #195 CI #352 / run `37623264959` 对 `768bbd8` 的 8/8 job 成功；随后 `main@4b287b4` 的 push CI #353 亦 8/8 成功。分别记录，不以这些 CI 代替本轮分支 CI。
 
 ## 命令与机器记录
@@ -66,7 +67,7 @@ errors: 0
 
 ## 检查结果与限制
 
-以下仓库必需检查和依赖安装均对应 `f4820c9a43c4084a47cd1bfd78c1aba8c7143983`（执行时 `git rev-parse HEAD`）；该版本包含被检查的 verifier 实现，应用/TS 源码未在这些检查后变动。之后的 `70a94f2` 仅修改证据文档、计划和根清单（`git diff f4820c9..70a94f2` 可核验）。因此本表不是将历史提交冒充最终 merge commit 的检查；main 新增 D0 文件由 `main@4b287b4` CI #353 覆盖。初始 base 读取则独立发生于 `419a1d7`，并在 JSON 中原样保留。
+以下仓库必需检查和依赖安装均对应 `f4820c9a43c4084a47cd1bfd78c1aba8c7143983`（执行时 `git rev-parse HEAD`）；该版本包含被检查的 verifier 实现，应用/TS 源码未在这些检查后变动。之后的 `70a94f2` 仅修改证据文档、计划和根清单（`git diff f4820c9..70a94f2` 可核验）。因此本表不是将历史提交冒充最终 merge commit 的检查；main 新增 D0 文件由 `main@4b287b4` CI #353 覆盖。初始 base 读取则独立发生于 `419a1d7`，并在 JSON 中原样保留；`36c7709` 的输入可达性定向核验另有独立逐文件记录，不替代五项必需检查。
 
 | 检查 | 结果 |
 |---|---|
@@ -81,7 +82,7 @@ errors: 0
 | 目标 E2E `pnpm --filter @workmesh/web test:e2e -- e2e/mcp-onboarding.spec.ts` | 退出码 0；16/16 passed。一次直接 Playwright 调用因缺 `npm_execpath` 在测试开始前退出，未执行用例；改用仓库脚本通过。 |
 | 全量 E2E 重跑 `pnpm test:e2e` | 退出码 0；74/74 passed，Turbo 12/12 tasks 成功。使用独立 E2E DB 和 Redis DB 1；未中断健康重跑。 |
 | `node --test scripts/verify-build-input-reachability.test.mjs` | 退出码 0；3/3 通过（缺文件、旧版本、CRLF 规范化）。新增 JSON `worktreeBytes` 字段亦由 44 文件真实 base 输出核对。 |
-| 当前整合分支的 GitHub CI | 前序证据提交 `70a94f2` 已提交；本轮 merge commit 随当前 turn checkpoint 形成，随后本分支 PR/CI 待触发。CI #348（材料 PR194）、#351（main@419）、#352（D0 PR195）、#353（main@4b push）均分别成功，不能代替当前整合分支 CI。 |
+| 当前整合分支的 GitHub CI | 前序证据提交 `70a94f2` 已提交；当前对 `origin/main=36c7709` 的 merge 尚待本轮提交收束，随后本分支 PR/CI 待触发。CI #348（材料 PR194）、#351（main@419）、#352（D0 PR195）、#353（main@4b push）均分别成功，不能代替当前整合分支 CI。 |
 | 独立复核 | 尚未完成。 |
 
 补充空白检查：当前 merge 差异的 `git diff --cached --check` 退出码 2，输出 457 行，指出新合入的 D0 历史测试日志有 trailing whitespace/文件末空行。它们来自已审核的 `main@4b287b4`，按用户要求保留原始 D0 证据，不做格式改写；这不是 AGENTS.md 的五项必需检查，本地 lint/typecheck/test/integration/e2e 均通过。
