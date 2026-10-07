@@ -8,7 +8,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 export const SUITE_SCOPE_SCHEMA_VERSION = 1 as const
 
 type GateStatus = 'pass' | 'blocked'
-type TopologyId = 'root-mixed' | 'mocked-dev' | 'production-web-plus-mocked-api'
+type TopologyId = 'root-mixed' | 'mocked-dev' | 'production-web-plus-mocked-api' | 'd0-visual-baseline'
+const d0Spec = 'mocked/d0-visual-baseline.mocked.spec.ts'
 
 type CommandResult = Readonly<{
   ok: boolean
@@ -59,7 +60,7 @@ type CliArguments = Readonly<{
 
 const HELP = `Usage: pnpm exec tsx scripts/verify-playwright-suite-scope.mts --output <file>
 
-Lists the root mixed, mocked-development, and production-Web-plus-mocked-API Playwright suites.
+列出 root mixed、mocked-dev、production Web 与 D0 专用 Playwright 套件。
 The command writes their exact collected files/tests and exits non-zero when suite ownership overlaps.
 `
 
@@ -131,8 +132,8 @@ export const evaluateSuiteAssertions = (
   }
 
   const expected = topology === 'mocked-dev'
-    ? sorted([...declaredMockedSpecs, 'human-reflow.spec.ts'])
-    : sorted([
+    ? sorted([...declaredMockedSpecs.filter(spec => spec !== d0Spec), 'human-reflow.spec.ts'])
+    : topology === 'd0-visual-baseline' ? [d0Spec] : sorted([
       'mocked/final-visual-tour.mocked.spec.ts',
       'mocked/large-list-pagination.mocked.spec.ts',
     ])
@@ -140,8 +141,8 @@ export const evaluateSuiteAssertions = (
   return [{
     name: topology === 'mocked-dev'
       ? 'mocked-dev-collects-declared-mocked-plus-human-reflow'
-      : 'production-collects-only-final-runtime-cases',
-    status: list.tests > 0 && sameStrings(actual, expected) ? 'pass' : 'blocked',
+      : topology === 'd0-visual-baseline' ? 'd0-collects-only-baseline-in-two-viewports' : 'production-collects-only-final-runtime-cases',
+    status: list.tests > 0 && sameStrings(actual, expected) && (topology !== 'd0-visual-baseline' || list.tests === 14) ? 'pass' : 'blocked',
     expected,
     actual,
   }]
@@ -239,6 +240,13 @@ export const runPlaywrightSuiteScope = async (
       cwd: path.join(repositoryRoot, 'apps', 'web'),
       config: 'playwright.mocked.config.ts',
       configPath: 'apps/web/playwright.mocked.config.ts',
+    },
+    {
+      id: 'd0-visual-baseline',
+      label: 'D0 专用亮色基线',
+      cwd: path.join(repositoryRoot, 'apps', 'web'),
+      config: 'playwright.d0.config.ts',
+      configPath: 'apps/web/playwright.d0.config.ts',
     },
     {
       id: 'production-web-plus-mocked-api',

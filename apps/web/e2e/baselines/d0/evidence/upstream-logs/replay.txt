@@ -1,0 +1,85 @@
+[WebServer] (node:35392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] project-work-preview-api:3201
+[WebServer] (node:36228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `pnpm --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:34908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:30100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]    ▲ Next.js 15.5.22
+[WebServer]    - Local:        http://localhost:3200
+[WebServer]    - Network:      http://100.77.217.65:3200
+[WebServer] 
+[WebServer]  ✓ Starting...
+[WebServer]  ✓ Ready in 7.5s
+[WebServer]  ○ Compiling / ...
+[WebServer]  ✓ Compiled / in 9.8s (10513 modules)
+
+Running 14 tests using 1 worker
+
+[WebServer]  GET / 200 in 11292ms
+(node:15544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  ○ Compiling /workbench ...
+[WebServer]  ✓ Compiled /workbench in 2.7s (10525 modules)
+[WebServer]  GET /workbench 200 in 3253ms
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[WebServer]  GET /workbench 200 in 150ms
+  ok  1 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (9.8s)
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 289ms
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 138ms
+  ok  2 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (7.3s)
+[WebServer]  GET /?view=projects&project=project-1 200 in 215ms
+[WebServer]  GET /?view=projects&project=project-1 200 in 120ms
+  ok  3 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (7.0s)
+[WebServer]  ○ Compiling /agents/[id] ...
+[WebServer]  ✓ Compiled /agents/[id] in 3.1s (10543 modules)
+[WebServer] (node:5136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /agents/agent%2F1 200 in 6647ms
+[WebServer]  GET /agents/agent%2F1 200 in 214ms
+[WebServer] (node:23004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ok  4 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (14.9s)
+[WebServer]  GET /?view=my-work 200 in 298ms
+[WebServer]  GET /?view=my-work 200 in 151ms
+  ok  5 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (7.6s)
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 152ms
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 103ms
+  ok  6 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (8.4s)
+[WebServer]  ○ Compiling /settings ...
+[WebServer]  ✓ Compiled /settings in 3.3s (10560 modules)
+[WebServer]  GET /settings?team=team-page-2 200 in 3795ms
+[WebServer]  GET /settings?team=team-page-2 200 in 166ms
+  ok  7 [desktop-1440x1000] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (9.9s)
+(node:39368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /workbench 200 in 270ms
+[WebServer]  GET /workbench 200 in 226ms
+  ok  8 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作台：覆盖、两次采集一致、D1 可直接比对 (7.5s)
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 226ms
+[WebServer]  GET /?view=projects&project=project-1&tab=board 200 in 80ms
+  ok  9 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 看板：覆盖、两次采集一致、D1 可直接比对 (3.8s)
+[WebServer]  GET /?view=projects&project=project-1 200 in 76ms
+[WebServer]  GET /?view=projects&project=project-1 200 in 70ms
+  ok 10 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 项目总览：覆盖、两次采集一致、D1 可直接比对 (4.6s)
+[WebServer]  GET /agents/agent%2F1 200 in 154ms
+[WebServer] (node:31928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  GET /agents/agent%2F1 200 in 110ms
+[WebServer] (node:10368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › Agent 详情：覆盖、两次采集一致、D1 可直接比对 (3.4s)
+[WebServer]  GET /?view=my-work 200 in 70ms
+[WebServer]  GET /?view=my-work 200 in 46ms
+  ok 12 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项列表：覆盖、两次采集一致、D1 可直接比对 (4.4s)
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 44ms
+[WebServer]  GET /?view=my-work&workItem=work-101 200 in 43ms
+  ok 13 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.2s)
+[WebServer]  GET /settings?team=team-page-2 200 in 40ms
+[WebServer]  GET /settings?team=team-page-2 200 in 38ms
+  ok 14 [mobile-390x844] › e2e\mocked\d0-visual-baseline.mocked.spec.ts:90:5 › D0 亮色视觉基线 › 设置：覆盖、两次采集一致、D1 可直接比对 (3.8s)
+
+  14 passed (2.1m)

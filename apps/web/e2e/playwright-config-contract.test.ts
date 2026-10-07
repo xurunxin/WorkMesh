@@ -51,17 +51,20 @@ describe('Playwright topology configs', () => {
     )
     vi.stubEnv('WORKMESH_BOOTSTRAP_TOKEN', 'fixture-only')
     vi.stubEnv('WORKMESH_PLAYWRIGHT_RUN_DIR', isolatedRunRoot)
+    vi.stubEnv('NEXT_DEV_API_UPSTREAM', 'http://127.0.0.1:1/fixture-upstream')
     vi.resetModules()
 
-    const [rootModule, mockedModule, productionModule] =
+    const [rootModule, mockedModule, productionModule, d0Module] =
       await Promise.all([
         import('../../../playwright.config.js'),
         import('../playwright.mocked.config.js'),
         import('../playwright.production.config.js'),
+        import('../playwright.d0.config.js'),
       ])
     const root = rootModule.default as unknown as ConfigContract
     const mocked = mockedModule.default as unknown as ConfigContract
     const production = productionModule.default as unknown as ConfigContract
+    const d0 = d0Module.default as unknown as ConfigContract
 
     expect(root.outputDir).toBe(
       path.join(isolatedRunRoot, 'root-mixed', 'output'),
@@ -78,6 +81,22 @@ describe('Playwright topology configs', () => {
       String(/[\\/]mocked[\\/].*\.mocked\.spec\.ts$/),
       String(/human-reflow\.spec\.ts$/),
     ])
+    expect(String(mocked.testIgnore)).toBe(String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/))
+    expect(patternStrings(d0.testMatch)).toEqual([String(/[\\/]mocked[\\/]d0-visual-baseline\.mocked\.spec\.ts$/)])
+    expect(d0.testIgnore).toEqual([])
+
+    const mockedServers = mocked.webServer
+    const d0Servers = d0.webServer
+    expect(Array.isArray(mockedServers)).toBe(true)
+    expect(Array.isArray(d0Servers)).toBe(true)
+    if (!Array.isArray(mockedServers) || !Array.isArray(d0Servers)) return
+    // 通用入口保留调用环境；只有 D0 覆盖为自己的隔离夹具。
+    expect(mockedServers[1]?.env?.NEXT_DEV_API_UPSTREAM).toBe(
+      'http://127.0.0.1:1/fixture-upstream',
+    )
+    expect(d0Servers[1]?.env?.NEXT_DEV_API_UPSTREAM).toBe(
+      'http://127.0.0.1:3201',
+    )
 
     expect(production.outputDir).toBe(
       path.join(
