@@ -13,7 +13,7 @@
     "test:integration:api": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration",
     "test:integration:worker": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
     "test:integration:recovery": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration",
-    "test:e2e": "turbo run test:e2e",
+    "test:e2e": "turbo run test:e2e --filter=@workmesh/web",
     "ci:validate": "node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs",
     "ci:source": "node scripts/run-ci-source.mjs",
     "ci:test": "node --test scripts/ci-policy.test.mjs",

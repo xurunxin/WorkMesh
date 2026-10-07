@@ -19,9 +19,14 @@ create tags or releases, or mutate repository settings.
 
 Node is pinned to the exact patch in `.node-version`. Corepack activates the
 root `packageManager` value, `pnpm@9.15.4`, and installation always uses
-`pnpm install --frozen-lockfile`. The only dependency cache is pnpm's content
-addressed store; `node_modules`, build output, and framework caches are not
-cached.
+`pnpm install --frozen-lockfile`. Dependencies use pnpm's content addressed
+store. The source job also restores pure typecheck results from
+`.turbo/typecheck` and Next compiler intermediates from `apps/web/.next/cache`.
+Only main pushes that pass all source gates save these caches; PRs only restore.
+Keys bind platform, Node, lockfile and commit, with a same-toolchain/lockfile
+fallback. No `node_modules`, complete `.next`/`dist` artifacts or unit/integration/
+E2E results are persisted between runs. Next build still performs its own type
+validation, including generated route types.
 
 ## Change selection and required job graph
 
@@ -39,6 +44,14 @@ dependencies. It produces a JSON plan and one explicit boolean per job.
 | Shared contracts, root/configuration/scripts/lockfile, unknown or removed workspace | Broad dependent checks or full acceptance; unknown paths always use full acceptance |
 | Main code push, manual, weekly, merge queue, release-candidate reuse | Full acceptance |
 
+`scripts/ci-test-inputs.mjs` separately declares tests reading files outside
+their workspace. An API/worker source PR therefore adds DB unit audits without
+inventing a reverse runtime dependency or selecting DB integration. The same
+inventory is validated against Turbo test inputs. Shared TypeScript/Vitest
+configuration participates in global inputs. Runtime environment variables are
+passed through globally but hashed by build/test tasks; changing a bootstrap
+credential does not invalidate pure `tsc --noEmit` checks.
+
 The small Markdown exception list in `scripts/ci-policy.mjs` retains full checks
 for generated route policy, release/version policy, release operations and the
 coordination ADR/plan that are inputs to executable validators or contract tests.
@@ -53,8 +66,12 @@ integration/browser tests can overlap typechecking, builds and unit tests:
   RustFS object storage and a signed-request bucket initialization step.
 - `worker-integration` uses its own PostgreSQL 16 test database. The current
   worker integration suites do not require Redis.
-- `e2e` uses its own PostgreSQL 16 test database, installs only Playwright
-  Chromium, and runs the existing acceptance suite.
+- `e2e` runs two file shards on separate runners, each with its own PostgreSQL 16
+  test database, Redis, API and Web. Each shard installs Chromium and keeps one
+  browser worker. Before execution, collection checks prove the union matches
+  the complete acceptance suite and that only bootstrap repeats. Matrix
+  `fail-fast: false` preserves evidence from both shards. The logical job passes
+  only when both shards pass, which the strict Required CI aggregate requires.
 - `recovery-integration` uses isolated source and empty target PostgreSQL 16
   databases plus versioned RustFS buckets, restores a complete authenticated
   bundle, and starts the restored API, Worker, and Web for an Agent heartbeat.
@@ -84,7 +101,12 @@ check once. Contracts and SDK unit tests run once in the selected unit suites;
 job retains all protocol drivers. Local `smoke:agents` keeps its self-contained
 SDK test. Theme E2E runs once in the authenticated project, so protected routes
 are actually checked instead of checking an anonymous redirect to login.
-No behavioral assertions are deleted.
+SDK HTTP fixtures retain the real SDK and retry count with an in-memory 1ms
+backoff; production retry behavior is unchanged. Browser accessibility checks
+perform structural and keyboard assertions on each shared page navigation, at
+both existing viewports. The root E2E command selects the web workspace, avoiding
+synthetic E2E tasks and nine unrelated prerequisite builds. No behavioral
+assertions are deleted.
 
 `format:check` is deliberately absent: the repository has
 no accepted formatting baseline and introducing one would mechanically touch
@@ -102,7 +124,9 @@ Raw command logs are uploaded with `always()` and retained for 14 days. Missing
 raw-log paths fail the upload step instead of producing a warning. Jobs with
 service containers also capture container logs on failure. E2E additionally
 uploads `playwright-report` and `test-results` for 14 days, and missing
-Playwright evidence also fails its upload step. A dedicated failure-only service
+Playwright evidence also fails its upload step. Both raw logs and browser
+reports include the shard number in their artifact name to prevent collisions.
+A dedicated failure-only service
 log upload may use `if-no-files-found: ignore`, because a failed setup can leave
 no service container to inspect. Artifact paths are allowlisted and never include
 environment files, database dumps, object-storage contents, `node_modules`, or
@@ -121,7 +145,8 @@ pnpm ci:source test
 ```
 
 `CI_PACKAGES` may be a JSON array of known workspace names for reproducing a PR
-scope. Without it, `ci:source` selects all packages. `--dry-run` prints Turbo's
+scope; `CI_TEST_PACKAGES` supplies additional static test consumers when needed.
+Without them, `ci:source` selects all packages. `--dry-run` prints Turbo's
 actual task selection. The existing `lint`, `typecheck`, `test`, integration and
 E2E commands remain available as complete local checks.
 
