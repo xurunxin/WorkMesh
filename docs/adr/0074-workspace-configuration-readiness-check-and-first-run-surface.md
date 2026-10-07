@@ -178,6 +178,13 @@ otherwise. A durable runner registration and heartbeat, distinct from Session
 heartbeat, is the change that would let that check become real, and it carries a
 migration, so it is named as follow-up work rather than assumed.
 
+The code-fact audit for this premise is recorded in the [activation plan's P1
+evidence ledger](../plan/2026-10-07-activation-onboarding-and-china-ecosystem.md).
+The current runner loop sends heartbeats only after resolving a Session
+assignment (`apps/agent-runner/src/run-session.ts:331-357`), the assignments route
+queries Session/Delegation/grant rows (`apps/api/src/workbench-runner.ts:88-109`),
+and heartbeat columns live on `agent_sessions` (`packages/db/src/schema.ts:316-324`).
+
 ## Migration
 
 No database migration, no backfill, and no new table. Every fact the projection

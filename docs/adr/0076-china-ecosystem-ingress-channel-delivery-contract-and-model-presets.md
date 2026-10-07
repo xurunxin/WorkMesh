@@ -17,6 +17,15 @@ channel and delivery tables since `0016_stage4_usage_notifications.sql:6,85-103`
 What is missing is a **channel** surface, not a notification capability, and this
 ADR is scoped to that difference.
 
+The repository search behind “no existing implementation” and its limits are
+recorded in the [activation plan's P1 evidence ledger](../plan/2026-10-07-activation-onboarding-and-china-ecosystem.md):
+the search explicitly included `apps/`, `packages/`, `docs/adr/`, `docs/plan/`,
+and `docs/agent-integration.md`, using Chinese and English provider/client terms;
+it excluded dependency/build directories and did not treat planning-text hits as
+implementation. This is a bounded “not found” result, not proof that no related
+capability or document exists. Human Web Push and delivery tables are existing
+notification infrastructure; they do not constitute these ecosystem adapters.
+
 Two further corrections to what was assumed before designing this:
 
 **Human Attention is a derived query, not a durable queue.** It has no table, no

@@ -16,6 +16,17 @@
 > 注：ADR 0074/0075/0076 的文件名已按审查结论改过（去掉与实际内容不符的
 > "activation gate"、"recoverable"、"identity" 等承诺性词）。旧文件名不再使用。
 
+## 本批执行记录约定（用户批准：2026-10-07 18:38，Asia/Shanghai）
+
+本批任务使用 Todos 编排并记录执行进度，仓库保存规格与证据，替代
+`AGENTS.md` 中要求的真实 WorkMesh Project/WorkItem 双轨记录。**例外只适用于本批**：
+不声称已创建真实 WorkMesh Project/WorkItem，也不声称已向其同步活动记录；后续任务
+仍按各自批准的控制面要求执行。领域、安全、测试及代码约束不因该例外放宽。
+
+用户已委托总管在门禁和必需检查通过、blocking/high 问题解决后继续派工、独立审查、
+确认计划并合并仓库改动。真实设计分歧、新需求、团队权限变更、凭证授权和仓库外发布，
+仍须单独批准。本 P1 的证据冻结门禁未通过前，B/A/D/C 链不得开始。
+
 ## 审查撤回的四个前提（写在这里以免再犯）
 
 1. **「安装令牌只存在于响应里」是错的。** 服务端已用 AES-256-GCM 把整个兑换响应
@@ -27,7 +38,8 @@
 2. **「两个兑换端点共用同一限流预算」是错的。** 两者虽同为
    `{endpointClass: pairing, subject: pairing}`，但桶按 `operationId` 分
    （`apps/api/src/auth-rate-limit/limiter.ts:129-145,154-159`），而两个
-   operationId 不同；真正共用的是 socket / client-IP 桶与失败退避。数据库
+   operationId 不同；共用的是 socket / client-IP 桶。失败退避键也包含
+   operationId（`apps/api/src/auth-rate-limit/limiter.ts:122-125`），因此同样隔离。数据库
    `attempts` 只在**已知的**身份不匹配（slug 或已知 clientType 对不上信封）时
    递增，随机错误 code 不会消耗合法 pairing 的预算
    （`apps/api/src/agent-connections.ts:521-525,561-562`）。**不做**
@@ -70,13 +82,72 @@
 - 不做"保存前真实探测密钥"，单列为 probe 任务。
 - 不新增部署拓扑；ADR 0071 / 0072 仍为 **Proposed，未实现**。
 
+## P1：16 条代码事实断言核实台账（2026-10-07）
+
+以下结论以当前工作区代码和文档为准，覆盖原草稿中的错误前提及本计划依赖的
+关键代码事实。行号按本次核查时工作树记录；“错误”列出可替代证据，不以关键词
+零命中推导全局不存在。
+
+| # | 断言 | 核实结果 | 修正后的表述与证据 |
+|---:|---|---|---|
+| 1 | 安装令牌只存在于兑换响应，服务端不能恢复响应 | **错误** | 安装令牌明文在兑换响应中生成并返回（`apps/api/src/agent-connections.ts:529-539,553-557`）；完整响应另以 AES-256-GCM 加密存入通用认证幂等表（`apps/api/src/auth-idempotency.ts:128-144,319-339`），不是“只存在于响应”。 |
+| 2 | 加密重放没有到期擦除 | **错误** | worker 按 `replay_expires_at` 清空密文、IV、tag 和重放密钥元数据（`apps/worker/src/session-lifecycle.ts:672-690`）。 |
+| 3 | 精确重放只检查 caller 的幂等 key | **不完整** | 重放还绑定 subject、operation、规范化 request body、client context，且受重放窗口与已完成状态约束（`apps/api/src/auth-idempotency.ts:210-216,285-304`）。 |
+| 4 | 兑换入参带有 claim 标识，可用它恢复凭据 | **错误** | `agentConnectionRedeemInputSchema` 严格只接受 `pairingCode`、`agentSlug`、`client`，无 claim 标识字段（`packages/contracts/src/index.ts:2711-2723`）；当前恢复身份来自原幂等请求身份。 |
+| 5 | `POST /api/v1/agent-connections` 只绑定已有 Agent | **错误** | 路由查无定义时会插入 Agent actor 与 `agent_definitions`（`apps/api/src/agent-connections.ts:429-469`）；不可通过文档把现有创建能力描述成不存在。 |
+| 6 | 配对码是短码，或不是 32 随机字节载荷 | **错误** | `opaqueToken()` 生成 32 随机字节并编码为无填充 base64url 的 43 字符；配对前缀 `wmp_` 由连接 token 拼接（`packages/db/src/index.ts:41`、`apps/api/src/agent-connections.ts:32-35,358-360`），完整值再加前缀。 |
+| 7 | 两个兑换端点共用同一 endpoint/subject 限流预算或失败退避 | **错误** | endpoint 桶按 `operationId`，subject-client 桶也包含 `operationId`；失败键为 `operationId + clientIp + subject`，而两个 operation ID 不同（`apps/api/src/auth-rate-limit/limiter.ts:122-145,154-159`；`apps/api/src/auth-rate-limit/inventory.ts:36-37`）。 |
+| 8 | 两个兑换端点完全没有共享限流预算 | **错误** | socket peer 与 client IP 维度不含 operation ID，仍由两个入口共享（`apps/api/src/auth-rate-limit/limiter.ts:129-145`）。准确表述是 endpoint、subject-client 和失败退避按 operation 隔离，IP/socket 预算共享。 |
+| 9 | pairing 的 attempts 是错误 code 暴力破解计数 | **错误** | 随机错误 code 在查 pairing 行时失败；仅已知 pairing 的 slug/type mismatch 进入外部 catch 并递增 attempts，达到阈值时拒绝（`apps/api/src/agent-connections.ts:518-525,560-562`）。 |
+| 10 | 配对码十分钟有效期覆盖完整七步安装流程 | **错误** | 十分钟 `expiresAt` 创建于 pairing，redeem 时校验；成功兑换后后续本地配置/Skill 校验不再使用该 code（`apps/api/src/agent-connections.ts:358-365,518-523,546-557`）。15 分钟重放窗口独立定义于 `auth-idempotency.ts:248-249`。 |
+| 11 | 保存模型连接会向供应商真实请求验证密钥 | **错误** | API 对 URL 做格式/策略规范化（`apps/api/src/workbench-llm-connections.ts:49-69`），ADR 0065 明确当前 API 不向配置目标发请求（`docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md:48-50`）。 |
+| 12 | 模型只要存在就可用于模型支持命令 | **错误** | 授权查询要求 connection `active` 且 model `enabled=true`（`apps/api/src/workbench-conversations.ts:150-166`）。 |
+| 13 | Runner 有独立的在线/空闲心跳事实 | **未发现；结论限于已读实现** | runner 在获得 Session assignment 并进入执行流程后才发送 Session heartbeat（`apps/agent-runner/src/run-session.ts:331-357`）；assignment 查询关联 Session/Delegation/grant，而不是 runner 注册（`apps/api/src/workbench-runner.ts:88-109`）；heartbeat 字段属于 `agent_sessions`（`packages/db/src/schema.ts:316-324`）。因此当前就绪项应为 `unknown`，不声称未来不存在此能力。 |
+| 14 | 平台完全没有通知投递能力 | **错误** | ADR 0062 已记录人工 Web Push（`docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md:30-32`），schema 有 notification、delivery 与 browser push subscription（`packages/db/src/schema.ts:523-543`）。缺口应限定为目标生态渠道适配器。 |
+| 15 | 企业微信、钉钉、飞书、小程序适配器已存在，或可据“零命中”断定所有生态代码不存在 | **未发现适配器；检索结论有边界** | 本次对 `apps/`、`packages/`、`docs/adr/`、`docs/plan/` 与 `docs/agent-integration.md` 显式纳入检索，命令使用 `rg -n -uu -i`，检索词为 `企业微信|wecom|wechat work|wework|钉钉|dingtalk|飞书|feishu|lark|小程序|mini.?program`；排除 `node_modules/`、`.git/`、`dist/`、`.next/`、`coverage/`。命中仅为计划/ADR规划文字，未找到实现证据；结论只写“未发现渠道适配器”，不外推为国内模型/全部文档不存在。 |
+| 16 | Human Attention / Redis wake sink 可直接作为持久通知队列 | **错误** | ADR 0050 将 Attention 定义为派生查询；worker Redis sink 写 cursor/workspace wake hint 并按 `MAXLEN` 裁剪，PostgreSQL outbox 才负责 claim/delivery（`apps/worker/src/index.ts:249-258,291-325`；ADR 0033）。新渠道投递仍需持久契约。 |
+
+核查依据为表中逐项代码/文档定位及第 15 项明确列出的搜索词、目录范围和排除项。
+没有发现推翻 ADR 0074–0076 当前决策前提的新证据；本次只补精确事实依据与检索边界，
+不改设计决策。交叉引用：[`ADR 0074`](../adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md)、
+[`ADR 0075`](../adr/0075-verifiable-and-simplified-agent-connection-onboarding.md)、
+[`ADR 0076`](../adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md)。
+
+核查任务清单：
+
+- [x] 16 条断言逐条有结论；
+- [x] 每条被推翻的断言都有替代证据；
+- [x] 搜索未发现项记录检索词、纳入范围和排除项；
+- [x] 结论同步到计划及相关 ADR，计划中的相对链接目标可解析；
+- [x] 每项验证均记录测试/检查命令、实际结果与原因；五项必需检查均已通过。首轮失败和修正后重跑结果均保留在下表。
+
+### 必需检查记录
+
+执行环境：Windows PowerShell，Node `v24.20.0`、pnpm `9.15.4`；专用 Docker PostgreSQL 16、Redis 7、RustFS。集成与 E2E 使用本地回环端口和独立 `*_test` 数据库（包括单独的 E2E 重跑库、恢复源/目标库），未连接生产库，也未复用 D0 分支数据库。E2E 的 bootstrap、cursor、限流密钥为进程内生成的测试值；模型相关 live provider 用例按测试默认跳过，未以真实模型调用代替 fake provider。
+
+| 必需检查 | 执行命令 / 对应测试 | 实际结果 | 结论 |
+|---|---|---|---|
+| lint | `pnpm lint`（Turbo 全仓 lint，18 个任务） | 18/18 任务通过，退出码 0。首次因依赖尚未安装而启动失败；随后按 lockfile 执行 `pnpm install --frozen-lockfile`，重跑通过。 | 通过 |
+| typecheck | `pnpm typecheck`（Turbo 全仓类型检查，18 个任务） | 18/18 任务通过，退出码 0。 | 通过 |
+| test | `pnpm test`（Turbo 全仓单元测试，29 个任务；含 API、Web Vitest） | 29/29 任务通过，退出码 0；Web 报告 113 个文件 / 776 项通过，API 174 项通过。 | 通过 |
+| test:integration | `pnpm test:integration`：DB `@workmesh/db test:integration`（17 文件 / 77 项）；API `@workmesh/api test:integration`（22 文件 / 154 项通过、1 项 live MiniMax 跳过）；Worker `@workmesh/worker test:integration`（8 文件 / 78 项通过、1 项 retention upgrade barrier 跳过）；Recovery `@workmesh/recovery test:integration`（1 文件 / 1 项）。 | 完整命令退出码 0；共 310 项通过、2 项按测试设计跳过。首次 recovery 重跑误指向无 ObjectLock 的预建测试桶而失败；移除桶覆盖配置、由用例创建隔离 ObjectLock 桶后完整重跑通过。 | 通过 |
+| test:e2e | `pnpm test:e2e`，对应 `apps/web/e2e/**/*.spec.ts`（Playwright，1 worker） | 首轮 73 通过 / 1 失败：`e2e/documents.spec.ts` 的“Project and Issue documents keep immutable revisions through the real Web and API”超时，未在详情面板找到“讨论”标签。新建隔离库单独重跑该文件：9/9 项通过；再用全新隔离库重跑完整命令：74/74 项通过，退出码 0。首轮失败保留为重跑前观察，不隐去。 | 通过（完整重跑） |
+
+按你的要求，另补跑了默认关闭的 retention upgrade barrier：设置 `RUN_RETENTION_UPGRADE_INTEGRATION=1`，使用独立 `workmesh_retention_upgrade_test` 数据库和启用 Object Lock/versioning 的 `workmesh-retention-upgrade-test` RustFS 桶，执行 `pnpm --filter @workmesh/worker exec vitest run --config ../../vitest.integration.config.ts integration/retention-upgrade-barrier.integration.test.ts`；1/1 项通过，验证一个精确对象版本、versioned HEAD、零 delete marker 及 retention 扩展。此补验与上表完整 `pnpm test:integration` 分开计数。
+
+首轮 E2E 失败未能复现：针对性 9 项组合与完整 74 项重跑均通过。没有因此修改实现或测试。只读静态核查的 16 条断言以台账逐条 `file:line` 证据为准；本任务未新增测试代码。五项本机门禁全部通过；**P1 当前状态：待独立复核，尚未冻结**，本条记录不代替该复核或批准。
+
+### P1 完成定义与依赖
+
+**DoD**：16 条断言全部有核实结论；每条被推翻的断言都有替代 `file:line` 证据；检索零命中项写明检索词、范围及排除项；结论已同步到计划与受影响 ADR 且相对引用可解析；五项仓库必需检查的命令、结果及失败/跳过原因均已记录并通过。满足 DoD 后仍须完成独立复核及冻结，之后 B1、A1、D1、C1 才可开工（本项 `blocks：B1, A1, D1, C1`）。
+
 ## 现状与证据（已核实，含被撤回项）
 
 | 事实 | 证据 | 对计划的影响 |
 |---|---|---|
 | 兑换响应已有加密重放 + 到期擦除 | `auth-idempotency.ts:128-144,218,319-339`；`session-lifecycle.ts:672-690` | B1 改为纯客户端改动，**零迁移** |
 | 重放需同 key + 同 subject/op/规范化 body/客户端上下文 | `auth-idempotency.ts:205-216,285-304,343-352` | 缺口=客户端丢请求身份 |
-| 丢身份后不可恢复 | `agent-connections.ts:522` `PAIRING_CONSUMED` | 这就是要修的那一个失败 |
+| 丢失原请求身份后，不能用新 key 再兑已消费 code | `agent-connections.ts:522` `PAIRING_CONSUMED`；原 key/body/context 在有效重放窗内仍可重放 | 缺口限定为客户端遗失原请求身份且无法精确重放 |
 | 接入指令确为 7 步 | `mcp-onboarding.ts:141-147` | 压到 2 步 |
 | 其中 4 步是完整性校验，不得删除 | ADR 0043（指纹）、ADR 0046（Skill 原始字节/哈希/签名） | 由 connector **执行**，不由 agent 手工做 |
 | 两个兑换端点预算**已**按 operationId 隔离 | `limiter.ts:129-145,154-159` | 不拆 endpointClass |
@@ -95,7 +166,7 @@
 | 锁清单 pin 的是 statementId（owner + 规范 SQL 哈希）与 rankSequence | `agent-lock-order-inventory.test.ts:141-167,373-392` | **不是**只许行号位移 |
 | 路由策略矩阵由脚本生成 | `scripts/generate-route-policy-artifacts.mts`；`pnpm generate:route-policy` | 用生成器，不手改 |
 | ADR 0071/0072 Status 均为 Proposed | 两条 ADR 首行 | 事实表区分"文件存在/提案/已实现/已验收"四态 |
-| 无企业微信/钉钉/飞书/小程序适配器 | 显式纳入 `docs` 后检索 | 渠道面是空白面 |
+| 本次检索范围内未发现企业微信/钉钉/飞书/小程序渠道适配器 | 检索词、目录范围与排除项见 P1 台账第 15 项 | 仅说明未找到适配器，不推断国内模型或全部文档不存在 |
 
 ## 任务链与依赖
 
