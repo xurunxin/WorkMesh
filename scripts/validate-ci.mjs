@@ -119,6 +119,7 @@ const uploadStepsByJob = new Map([...jobSections].map(([jobId, section]) => [
     })),
 ]))
 const requiredJobs = [
+  'changes',
   'source-gates',
   'db-integration',
   'api-integration',
@@ -134,6 +135,7 @@ requireCondition(
 )
 
 const rawArtifacts = new Map([
+  ['changes', 'changes-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['source-gates', 'source-gates-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['db-integration', 'db-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['api-integration', 'api-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
@@ -214,7 +216,7 @@ for (const [jobId, uploads] of uploadStepsByJob) {
   }
 }
 
-const executableJobs = requiredJobs.filter(job => job !== 'required-ci')
+const executableJobs = requiredJobs.filter(job => job !== 'required-ci' && job !== 'changes')
 for (const jobId of executableJobs) {
   const section = jobSections.get(jobId) ?? ''
   requireCondition(
@@ -235,13 +237,13 @@ requireCondition(!/(?:node_modules|\.next|dist\/\*\*)\s*$/m.test(workflow), 'bui
 const source = jobSections.get('source-gates') ?? ''
 for (const command of [
   'pnpm ci:validate',
-  'pnpm lint',
-  'pnpm typecheck',
-  'pnpm --filter @workmesh/contracts test',
+  'pnpm ci:source lint',
+  'pnpm ci:source typecheck',
   'pnpm check:route-policy',
   'pnpm check:workmesh-skill',
-  'pnpm build',
-  'pnpm test',
+  'pnpm check:runner-skill',
+  'pnpm ci:source build',
+  'pnpm ci:source test',
   'docker compose config',
   'git diff --exit-code',
   'git diff --cached --exit-code',
@@ -249,11 +251,31 @@ for (const command of [
   requireCondition(source.includes(command), `source-gates must run ${command}`)
 requireCondition(!source.includes('format:check'), 'format:check is deferred beyond Issue #10A')
 
-for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke'])
+requireCondition(!source.includes('pnpm --filter @workmesh/contracts test'), 'contracts must run only in the selected unit suite')
+requireCondition(!source.includes('pnpm lint 2>&1'), 'CI must not repeat identical lint/typecheck commands')
+for (const jobId of executableJobs) {
   requireCondition(
-    (jobSections.get(jobId) ?? '').includes('needs: source-gates'),
-    `${jobId} must depend on source-gates`,
+    parsedWorkflow.jobs[jobId].needs === 'changes',
+    `${jobId} must start after classification without waiting for the build/unit critical path`,
   )
+  requireCondition(
+    parsedWorkflow.jobs[jobId].if === '${{ needs.changes.outputs.' + jobId + " == 'true' }}",
+    `${jobId} must use exactly the classifier decision`,
+  )
+}
+const changes = jobSections.get('changes') ?? ''
+requireCondition(parsedWorkflow.jobs.changes?.outputs?.plan === '${{ steps.scope.outputs.plan }}', 'changes must expose the exact plan used by the aggregate')
+for (const jobId of executableJobs) {
+  requireCondition(parsedWorkflow.jobs.changes?.outputs?.[jobId] === '${{ steps.scope.outputs.' + jobId + ' }}', `changes must expose ${jobId}`)
+}
+requireCondition(changes.includes('fetch-depth: 0'), 'change classification needs complete comparison history')
+requireCondition(changes.includes('node scripts/ci-policy.mjs'), 'changes must run the classifier')
+requireCondition(changes.includes('node --test scripts/ci-policy.test.mjs'), 'changes must test selection and aggregation before deciding skips')
+requireCondition(!changes.includes('pnpm install'), 'documentation classification must not install the monorepo')
+requireCondition(!parsedWorkflow.on?.pull_request?.paths && !parsedWorkflow.on?.pull_request?.['paths-ignore'], 'required workflow must not be skipped by path filters')
+requireCondition(!parsedWorkflow.on?.push?.paths && !parsedWorkflow.on?.push?.['paths-ignore'], 'main must always produce Required CI')
+requireCondition(Boolean(parsedWorkflow.on?.schedule?.length), 'CI must retain scheduled full acceptance')
+requireCondition(Object.hasOwn(parsedWorkflow.on ?? {}, 'merge_group'), 'merge queues must produce Required CI')
 requireCondition((jobSections.get('db-integration') ?? '').includes('pnpm test:integration:db'), 'db integration command is missing')
 requireCondition((jobSections.get('api-integration') ?? '').includes('pnpm test:integration:api'), 'API integration command is missing')
 // The workbench runner integration suite authenticates with this shared secret,
@@ -390,7 +412,8 @@ requireCondition(
   source.includes("printf '%s\\n' 'Compose configuration is valid.' | tee ci-logs/compose-config.log"),
   'source-gates must record only a constant Compose validation success line',
 )
-requireCondition((jobSections.get('agent-smoke') ?? '').includes('pnpm smoke:agents'), 'agent smoke command is missing')
+requireCondition((jobSections.get('agent-smoke') ?? '').includes('pnpm smoke:agents:ci'), 'agent construction/protocol smoke command is missing')
+requireCondition(packageJson.scripts?.['smoke:agents:ci'] === 'pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke', 'CI smoke must not rerun SDK unit tests')
 requireCondition(
   (jobSections.get('agent-smoke') ?? '').includes('Construction and protocol smoke'),
   'agent smoke must be labelled as construction/protocol evidence',
@@ -456,7 +479,7 @@ requireCondition(
   'required-ci must need source-gates and every constituent job',
 )
 requireCondition(required.includes('if: ${{ always() }}'), 'required-ci must aggregate with always()')
-requireCondition(required.includes("result !== 'success'"), 'required-ci must fail unless every dependency succeeds')
+requireCondition(required.includes('node scripts/ci-policy.mjs aggregate'), 'required-ci must validate successes and only explicitly planned skips')
 requireCondition(required.includes('node-version: 22.19.0'), 'required-ci must pin its Node runtime')
 
 requireCondition(packageJson.packageManager === 'pnpm@9.15.4', 'packageManager must be pnpm@9.15.4')
