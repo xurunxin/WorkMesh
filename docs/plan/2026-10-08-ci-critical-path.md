@@ -1,6 +1,8 @@
 # CI critical path optimization
 
-Status: executing
+Status: implemented; acceptance and measured results are recorded in
+[PR #201](https://github.com/xurunxin/WorkMesh/pull/201), which requires green CI
+before merge.
 
 Reference: PR #199, `docs/CI.md`, `scripts/ci-policy.mjs`.
 The local plan is authoritative. WorkMesh MCP is unavailable in this session;

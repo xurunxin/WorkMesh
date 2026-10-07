@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from 'yaml'
 import { externalTestInputs } from './ci-test-inputs.mjs'
+import { readWorkspaces } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -262,6 +263,7 @@ for (const task of ['test:integration', 'test:e2e']) requireCondition(turboJson.
 requireCondition(parsedWorkflow.jobs.changes.outputs['test-packages'] === '${{ steps.scope.outputs.test-packages }}', 'changes must expose external test consumers')
 requireCondition(parsedWorkflow.jobs['source-gates'].env.CI_TEST_PACKAGES === '${{ needs.changes.outputs.test-packages }}', 'source tests must consume the separate audit selection')
 requireCondition(packageJson.scripts['test:e2e'] === 'turbo run test:e2e --filter=@workmesh/web', 'browser acceptance must avoid synthetic E2E builds in unrelated packages')
+requireCondition(JSON.stringify(readWorkspaces().filter(workspace => workspace.scripts['test:e2e']).map(workspace => workspace.name)) === JSON.stringify(['@workmesh/web']), 'review the E2E scope when another workspace gains an executable acceptance suite')
 requireCondition(JSON.stringify(parsedWorkflow.jobs.e2e.strategy) === JSON.stringify({ 'fail-fast': false, matrix: { shard: [1, 2] } }), 'browser acceptance must run both isolated shards without cancelling evidence')
 requireCondition((jobSections.get('e2e') ?? '').includes('pnpm test:e2e -- --shard=${{ matrix.shard }}/2'), 'E2E must execute the matrix shard')
 requireCondition((jobSections.get('e2e') ?? '').includes('node ../../scripts/check-e2e-shards.mjs'), 'E2E must prove complete and disjoint shard collection before execution')
